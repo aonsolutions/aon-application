@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Delivery.DELIVERY;
 import static com.esferalia.aon.jooq.tables.DeliveryDetail.DELIVERY_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Sales.SALES;
 import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
 
@@ -78,6 +79,7 @@ public class DeliveryDetailDAO {
 			.join(DELIVERY).on(DELIVERY_DETAIL.DELIVERY.eq(DELIVERY.ID))
 			.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(DELIVERY.CUSTOMER))
 			.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+			.leftOuterJoin(PROJECT).on(PROJECT.ID.eq(DELIVERY.PROJECT))
 			.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter));
 	}
 

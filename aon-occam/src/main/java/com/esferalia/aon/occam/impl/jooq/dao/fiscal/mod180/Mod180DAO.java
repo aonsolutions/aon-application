@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod180;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel180.FS_MODEL180;
@@ -29,6 +29,8 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;

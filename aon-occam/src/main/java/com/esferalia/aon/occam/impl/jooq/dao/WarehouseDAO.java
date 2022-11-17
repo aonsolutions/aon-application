@@ -68,9 +68,9 @@ import com.esferalia.aon.occam.api.model.warehouse.Stock;
 import com.esferalia.aon.occam.api.model.warehouse.Warehouse;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransfer;
 import com.esferalia.aon.occam.api.model.warehouse.WarehouseTransferDetail;
-import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDetailDAO.DeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDetailDAO.DeliveryDetailPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.CarrierPackingFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
@@ -175,7 +175,7 @@ public class WarehouseDAO {
 				.from(WAREHOUSE)
 				.where(WAREHOUSE_PROPERTIES.getConditions(filter))
 				.fetch().stream().map(new WarehouseFiller())
-				.findFirst().orElse(null);
+				.findFirst().orElse(new Warehouse());
 	}
 	
 	public static Warehouse save(AONContext ctx, Warehouse warehouse) {

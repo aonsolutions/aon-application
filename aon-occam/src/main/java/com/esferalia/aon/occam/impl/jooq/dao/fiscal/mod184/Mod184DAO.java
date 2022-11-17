@@ -1,5 +1,5 @@
 
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod184;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel184.FS_MODEL184;
@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
-import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.FsModel184Record;
@@ -23,6 +22,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184Partner;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -31,7 +31,12 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod184DAO {
-	private static byte ZERO_BYTE = 0;
+	
+	private static final byte ZERO_BYTE = 0;
+	
+	private Mod184DAO() {
+	}
+	
 
 	public static Stream<Mod184> getHeaders(AONContext ctx, int domain) {
 		return getHeaders(ctx, domain, null);
@@ -67,8 +72,8 @@ public class Mod184DAO {
 			.fetch()
 			.stream()
 			.map(new Mod184Filler())
-			.peek( mod184 -> mod184.setPartners( getPartners(ctx, mod184.getId()) ))
-			.peek( mod184 -> mod184.setIncomes ( getIncomes(ctx, mod184.getId()) ))
+			.map( mod184 -> mod184.setPartners( getPartners(ctx, mod184.getId()) ))
+			.map( mod184 -> mod184.setIncomes ( getIncomes(ctx, mod184.getId()) ))
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
@@ -124,19 +129,17 @@ public class Mod184DAO {
 					.execute();
 			}
 			return fm;
-		} catch (DataAccessException t) {
+		} catch (Exception t) {
 			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
-		} catch (Throwable t) {
-			throw new AonCoreException(t.getMessage());
 		}
 	}
 
 	public static Mod184 save(AONContext ctx, Mod184 mod184) {
 		ctx.checkWrite();
 		if (mod184.getId() == null) {
-			mod184 = insert(ctx, mod184);
+			insert(ctx, mod184);
 		} else {
-			mod184 = update(ctx, mod184);
+			update(ctx, mod184);
 			for (Mod184Income income : mod184.getIncomes()) {
 				saveIncome(ctx, mod184, income);
 			}
@@ -149,11 +152,11 @@ public class Mod184DAO {
 
 	private static Mod184 insert(AONContext ctx, Mod184 mod184) {
 		validate(ctx, mod184);
-		FsModel184Record record = ctx.getDslContext().insertInto(FS_MODEL184)
+		FsModel184Record rec = ctx.getDslContext().insertInto(FS_MODEL184)
 				.set(FS_MODEL184.DOMAIN,mod184.getDomain())
 				.set(FS_MODEL184.ENTERPRISE,mod184.getEnterprise())
 				.set(FS_MODEL184.YEAR,mod184.getYear())
-				.set(FS_MODEL184.ADMINISTRATION, mod184.getAdministration().getValue())
+				.set(FS_MODEL184.ADMINISTRATION, mod184.getAdministration().value())
 				.set(FS_MODEL184.STATUS, ZERO_BYTE )
 				.set(FS_MODEL184.SECURITY_LEVEL,AonEnumUtils.getByte(mod184.isConfidential()) ) 
 				.set(FS_MODEL184.DOCUMENT,mod184.getDocument())
@@ -180,14 +183,14 @@ public class Mod184DAO {
 				.set(FS_MODEL184.CREATION_DATE, new Timestamp( System.currentTimeMillis()) )
 			.returning(FS_MODEL184.ID)
 			.fetchOne();
-		mod184.setId(record.getId());
+		mod184.setId(rec.getId());
 		return mod184;
 	}
 
 	private static Mod184 update(AONContext ctx, Mod184 mod184) {
 		ctx.getDslContext().update(FS_MODEL184)
 			.set(FS_MODEL184.YEAR,mod184.getYear())
-			.set(FS_MODEL184.ADMINISTRATION,mod184.getAdministration().getValue())
+			.set(FS_MODEL184.ADMINISTRATION,mod184.getAdministration().value())
 			.set(FS_MODEL184.STATUS,AonEnumUtils.getByte( mod184.getStatus()  ))
 			.set(FS_MODEL184.SECURITY_LEVEL,AonEnumUtils.getByte(mod184.isConfidential()) ) 
 			.set(FS_MODEL184.DOCUMENT,mod184.getDocument())
@@ -428,7 +431,7 @@ public class Mod184DAO {
 			if (!ctx.getDslContext().selectOne()
 					.from(FS_MODEL184)
 					.where(FS_MODEL184.YEAR.equal(mod184.getYear())
-					.and(FS_MODEL184.ADMINISTRATION.equal(mod184.getAdministration().getValue()))
+					.and(FS_MODEL184.ADMINISTRATION.equal(mod184.getAdministration().value()))
 					.and(FS_MODEL184.ENTERPRISE.equal(mod184.getEnterprise()))
 					)
 					.fetch()
@@ -442,7 +445,7 @@ public class Mod184DAO {
 			if (ctx.getDslContext().selectOne()
 				.from(FS_MODEL184)
 				.where(FS_MODEL184.YEAR.equal(mod184.getYear())
-				.and(FS_MODEL184.ADMINISTRATION.equal(mod184.getAdministration().getValue()))
+				.and(FS_MODEL184.ADMINISTRATION.equal(mod184.getAdministration().value()))
 				.and(FS_MODEL184.ENTERPRISE.equal(mod184.getEnterprise()))
 				.and(FS_MODEL184.REPLACEMENT.equal(ZERO_BYTE))
 				.and(FS_MODEL184.COMPLEMENTARY.equal(ZERO_BYTE)))				
@@ -472,97 +475,97 @@ public class Mod184DAO {
 	private static class Mod184Filler implements Function<Record, Mod184> {
 
 		@Override
-		public Mod184 apply(Record record) {
+		public Mod184 apply(Record rec) {
 			return new Mod184()
-				.setId(record.getValue(FS_MODEL184.ID))
-				.setDomain(record.getValue(FS_MODEL184.DOMAIN))
-				.setDomainName(record.getValue(DOMAIN.DESCRIPTION))
-				.setEnterprise(record.getValue(FS_MODEL184.ENTERPRISE))
-				.setYear(record.getValue(FS_MODEL184.YEAR))
-				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,record.getValue(FS_MODEL184.ADMINISTRATION)))
-				.setReplacement( record.getValue(FS_MODEL184.REPLACEMENT)==1 )
-				.setComplementary(record.getValue(FS_MODEL184.COMPLEMENTARY)==1 )
-				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,record.getValue(FS_MODEL184.STATUS)))
-				.setDocument(record.getValue(FS_MODEL184.DOCUMENT))
-				.setName(record.getValue(FS_MODEL184.NAME))
-				.setContactPerson(record.getValue(FS_MODEL184.CONTACT_PERSON))
-				.setContactPhone(record.getValue(FS_MODEL184.CONTACT_PHONE))
-				.setContactMail(record.getValue(FS_MODEL184.CONTACT_MAIL))
-				.setReceipt(record.getValue(FS_MODEL184.RECEIPT))
-				.setReplacedReceipt(record.getValue(FS_MODEL184.REPLACED_RECEIPT))
-				.setComments(record.getValue(FS_MODEL184.COMMENTS))
-				.setEntityType(record.getValue(FS_MODEL184.ENTITY_TYPE))
-				.setMainActivity(record.getValue(FS_MODEL184.MAIN_ACTIVITY))
-				.setForeignEntityType(record.getValue(FS_MODEL184.FOREIGN_ENTITY_TYPE))
-				.setForeignObject(record.getValue(FS_MODEL184.FOREIGN_OBJECT))
-				.setCountry(record.getValue(FS_MODEL184.COUNTRY))
-				.setResidentPercent(record.getValue(FS_MODEL184.RESIDENT_PERCENT))
-				.setTaxIS(AonEnumUtils.getBoolean( record.getValue(FS_MODEL184.TAX_IS)) )
-				.setNetSalesAmount(record.getValue(FS_MODEL184.NET_SALES_AMOUNT))
-				.setLrDocument(record.getValue(FS_MODEL184.LRDOCUMENT))
-				.setLrName(record.getValue(FS_MODEL184.LRNAME))
-				.setCreationUser(record.getValue(FS_MODEL184.CREATION_USER))
-				.setCreationDate(record.getValue(FS_MODEL184.CREATION_DATE))
-				.setModificationUser(record.getValue(FS_MODEL184.MODIFICATION_USER))
-				.setModificationDate(record.getValue(FS_MODEL184.MODIFICATION_DATE));
+				.setId(rec.getValue(FS_MODEL184.ID))
+				.setDomain(rec.getValue(FS_MODEL184.DOMAIN))
+				.setDomainName(rec.getValue(DOMAIN.DESCRIPTION))
+				.setEnterprise(rec.getValue(FS_MODEL184.ENTERPRISE))
+				.setYear(rec.getValue(FS_MODEL184.YEAR))
+				.setAdministration( com.esferalia.aon.watson.util.AonEnumUtils.enumValue(Administration.class,rec.getValue(FS_MODEL184.ADMINISTRATION)))
+				.setReplacement( rec.getValue(FS_MODEL184.REPLACEMENT)==1 )
+				.setComplementary(rec.getValue(FS_MODEL184.COMPLEMENTARY)==1 )
+				.setStatus(com.esferalia.aon.watson.util.AonEnumUtils.enumValue(FiscalStatus.class,rec.getValue(FS_MODEL184.STATUS)))
+				.setDocument(rec.getValue(FS_MODEL184.DOCUMENT))
+				.setName(rec.getValue(FS_MODEL184.NAME))
+				.setContactPerson(rec.getValue(FS_MODEL184.CONTACT_PERSON))
+				.setContactPhone(rec.getValue(FS_MODEL184.CONTACT_PHONE))
+				.setContactMail(rec.getValue(FS_MODEL184.CONTACT_MAIL))
+				.setReceipt(rec.getValue(FS_MODEL184.RECEIPT))
+				.setReplacedReceipt(rec.getValue(FS_MODEL184.REPLACED_RECEIPT))
+				.setComments(rec.getValue(FS_MODEL184.COMMENTS))
+				.setEntityType(rec.getValue(FS_MODEL184.ENTITY_TYPE))
+				.setMainActivity(rec.getValue(FS_MODEL184.MAIN_ACTIVITY))
+				.setForeignEntityType(rec.getValue(FS_MODEL184.FOREIGN_ENTITY_TYPE))
+				.setForeignObject(rec.getValue(FS_MODEL184.FOREIGN_OBJECT))
+				.setCountry(rec.getValue(FS_MODEL184.COUNTRY))
+				.setResidentPercent(rec.getValue(FS_MODEL184.RESIDENT_PERCENT))
+				.setTaxIS(AonEnumUtils.getBoolean( rec.getValue(FS_MODEL184.TAX_IS)) )
+				.setNetSalesAmount(rec.getValue(FS_MODEL184.NET_SALES_AMOUNT))
+				.setLrDocument(rec.getValue(FS_MODEL184.LRDOCUMENT))
+				.setLrName(rec.getValue(FS_MODEL184.LRNAME))
+				.setCreationUser(rec.getValue(FS_MODEL184.CREATION_USER))
+				.setCreationDate(rec.getValue(FS_MODEL184.CREATION_DATE))
+				.setModificationUser(rec.getValue(FS_MODEL184.MODIFICATION_USER))
+				.setModificationDate(rec.getValue(FS_MODEL184.MODIFICATION_DATE));
 		}
 	}
 			
 	private static class Mod184IncomeFiller implements Function<Record, Mod184Income> {
 
 		@Override
-		public Mod184Income apply(Record record) {
+		public Mod184Income apply(Record rec) {
 			return new Mod184Income()
-				.setId(record.getValue(FS_MODEL184_DETAIL.ID))
-				.setKey(record.getValue(FS_MODEL184_DETAIL.KEY))
-				.setSubKey(record.getValue(FS_MODEL184_DETAIL.SUBKEY))
-				.setCountry(record.getValue(FS_MODEL184_DETAIL.COUNTRY))
-				.setRegime(record.getValue(FS_MODEL184_DETAIL.REGIME))
-				.setActivityType(record.getValue(FS_MODEL184_DETAIL.ACTIVITY_TYPE))
-				.setEpigraph(record.getValue(FS_MODEL184_DETAIL.EPIGRAPH))
-				.setGranteeDocument(record.getValue(FS_MODEL184_DETAIL.GRANTEE_DOCUMENT))
-				.setGranteeName(record.getValue(FS_MODEL184_DETAIL.GRANTEE_NAME))
-				.setAdqDate(record.getValue(FS_MODEL184_DETAIL.ADQ_DATE))
-				.setIncrease(record.getValue(FS_MODEL184_DETAIL.INCREASE))
-				.setDecrease(record.getValue(FS_MODEL184_DETAIL.DECREASE))
-				.setAccountingResult(record.getValue(FS_MODEL184_DETAIL.ACCOUNTING_RESULT))
-				.setExpenses(record.getValue(FS_MODEL184_DETAIL.EXPENSES))
-				.setNetYield(record.getValue(FS_MODEL184_DETAIL.NET_YIELD))
-				.setReductionPercent(record.getValue(FS_MODEL184_DETAIL.REDUCTION_PERCENT))
-				.setDeductionRightRent(record.getValue(FS_MODEL184_DETAIL.DEDUCTION_RIGHT_RENT))
-				.setResult(record.getValue(FS_MODEL184_DETAIL.RESULT))
-				.setDeductionBase(record.getValue(FS_MODEL184_DETAIL.DEDUCTION_BASE))
-				.setRetention(record.getValue(FS_MODEL184_DETAIL.RETENTION))
-				.setLocation(record.getValue(FS_MODEL184_DETAIL.LOCATION))
-				.setCadasdralReference(record.getValue(FS_MODEL184_DETAIL.CADASDRAL_REFERENCE))
+				.setId(rec.getValue(FS_MODEL184_DETAIL.ID))
+				.setKey(rec.getValue(FS_MODEL184_DETAIL.KEY))
+				.setSubKey(rec.getValue(FS_MODEL184_DETAIL.SUBKEY))
+				.setCountry(rec.getValue(FS_MODEL184_DETAIL.COUNTRY))
+				.setRegime(rec.getValue(FS_MODEL184_DETAIL.REGIME))
+				.setActivityType(rec.getValue(FS_MODEL184_DETAIL.ACTIVITY_TYPE))
+				.setEpigraph(rec.getValue(FS_MODEL184_DETAIL.EPIGRAPH))
+				.setGranteeDocument(rec.getValue(FS_MODEL184_DETAIL.GRANTEE_DOCUMENT))
+				.setGranteeName(rec.getValue(FS_MODEL184_DETAIL.GRANTEE_NAME))
+				.setAdqDate(rec.getValue(FS_MODEL184_DETAIL.ADQ_DATE))
+				.setIncrease(rec.getValue(FS_MODEL184_DETAIL.INCREASE))
+				.setDecrease(rec.getValue(FS_MODEL184_DETAIL.DECREASE))
+				.setAccountingResult(rec.getValue(FS_MODEL184_DETAIL.ACCOUNTING_RESULT))
+				.setExpenses(rec.getValue(FS_MODEL184_DETAIL.EXPENSES))
+				.setNetYield(rec.getValue(FS_MODEL184_DETAIL.NET_YIELD))
+				.setReductionPercent(rec.getValue(FS_MODEL184_DETAIL.REDUCTION_PERCENT))
+				.setDeductionRightRent(rec.getValue(FS_MODEL184_DETAIL.DEDUCTION_RIGHT_RENT))
+				.setResult(rec.getValue(FS_MODEL184_DETAIL.RESULT))
+				.setDeductionBase(rec.getValue(FS_MODEL184_DETAIL.DEDUCTION_BASE))
+				.setRetention(rec.getValue(FS_MODEL184_DETAIL.RETENTION))
+				.setLocation(rec.getValue(FS_MODEL184_DETAIL.LOCATION))
+				.setCadasdralReference(rec.getValue(FS_MODEL184_DETAIL.CADASDRAL_REFERENCE))
 				
-				.setStaffExpenses(record.getValue(FS_MODEL184_DETAIL.STAFF_EXPENSES))
-				.setAssetAcquisition(record.getValue(FS_MODEL184_DETAIL.ASSET_ACQUISITION))
-				.setTaxDeduction(record.getValue(FS_MODEL184_DETAIL.TAX_DEDUCTION))
-				.setConsumosExplotacion(record.getValue(FS_MODEL184_DETAIL.CONSUMOS_EXPLOTACION))
-				.setArrendamientosCanones(record.getValue(FS_MODEL184_DETAIL.ARRENDAMIENTOS_CANONES))
+				.setStaffExpenses(rec.getValue(FS_MODEL184_DETAIL.STAFF_EXPENSES))
+				.setAssetAcquisition(rec.getValue(FS_MODEL184_DETAIL.ASSET_ACQUISITION))
+				.setTaxDeduction(rec.getValue(FS_MODEL184_DETAIL.TAX_DEDUCTION))
+				.setConsumosExplotacion(rec.getValue(FS_MODEL184_DETAIL.CONSUMOS_EXPLOTACION))
+				.setArrendamientosCanones(rec.getValue(FS_MODEL184_DETAIL.ARRENDAMIENTOS_CANONES))
 				
-				.setReparacionConservacion(record.getValue(FS_MODEL184_DETAIL.REPARACION_CONSERVACION))
-				.setServProfIndependientes(record.getValue(FS_MODEL184_DETAIL.SERV_PROF_INDEP))
-				.setSuministros(record.getValue(FS_MODEL184_DETAIL.SUMINISTROS))
-				.setGastosFinancieros(record.getValue(FS_MODEL184_DETAIL.GASTOS_FINANCIEROS))
+				.setReparacionConservacion(rec.getValue(FS_MODEL184_DETAIL.REPARACION_CONSERVACION))
+				.setServProfIndependientes(rec.getValue(FS_MODEL184_DETAIL.SERV_PROF_INDEP))
+				.setSuministros(rec.getValue(FS_MODEL184_DETAIL.SUMINISTROS))
+				.setGastosFinancieros(rec.getValue(FS_MODEL184_DETAIL.GASTOS_FINANCIEROS))
 
-				.setAmortizaciones(record.getValue(FS_MODEL184_DETAIL.AMORTIZACIONES))
-				.setProvisiones(record.getValue(FS_MODEL184_DETAIL.PROVISIONES))
-				.setOtherTaxDeduction(record.getValue(FS_MODEL184_DETAIL.OTHER_TAX_DEDUCTION))
-				.setVatAccrualPayment(AonEnumUtils.getBoolean(record.getValue(FS_MODEL184_DETAIL.VAT_ACCRUAL_PAYMENT)))
+				.setAmortizaciones(rec.getValue(FS_MODEL184_DETAIL.AMORTIZACIONES))
+				.setProvisiones(rec.getValue(FS_MODEL184_DETAIL.PROVISIONES))
+				.setOtherTaxDeduction(rec.getValue(FS_MODEL184_DETAIL.OTHER_TAX_DEDUCTION))
+				.setVatAccrualPayment(AonEnumUtils.getBoolean(rec.getValue(FS_MODEL184_DETAIL.VAT_ACCRUAL_PAYMENT)))
 				
-				.setInmInteresFinanciacion(record.getValue(FS_MODEL184_DETAIL.INM_INT_FIN))
-				.setInmReparacionConservacion(record.getValue(FS_MODEL184_DETAIL.INM_REP_CON))		
-				.setInmGastosReparacionConservacionPendientes(record.getValue(FS_MODEL184_DETAIL.INM_GAS_REP_CON))
-				.setInmTributosRecargos(record.getValue(FS_MODEL184_DETAIL.INM_TRIB_REC))
-				.setInmSaldoDudosoCobro(record.getValue(FS_MODEL184_DETAIL.INM_SALD_DUD_COBR))
-				.setInmCantidadesDevengadas(record.getValue(FS_MODEL184_DETAIL.INM_CANT_DEV_TER))
-				.setInmPrimasSeguro(record.getValue(FS_MODEL184_DETAIL.INM_PRIM_SEG))
-				.setInmAmortizacionInmueble(record.getValue(FS_MODEL184_DETAIL.INM_AMORT))
-				.setInmAmortizacionMueble(record.getValue(FS_MODEL184_DETAIL.INM_AMORT_MUEB))
-				.setInmOtrosGastosDeducible(record.getValue(FS_MODEL184_DETAIL.INM_OTR_GAS_DED))
-				.setInmNumeroDiasArrendamiento(record.getValue(FS_MODEL184_DETAIL.INM_NUM_DIAS_ARR))
+				.setInmInteresFinanciacion(rec.getValue(FS_MODEL184_DETAIL.INM_INT_FIN))
+				.setInmReparacionConservacion(rec.getValue(FS_MODEL184_DETAIL.INM_REP_CON))		
+				.setInmGastosReparacionConservacionPendientes(rec.getValue(FS_MODEL184_DETAIL.INM_GAS_REP_CON))
+				.setInmTributosRecargos(rec.getValue(FS_MODEL184_DETAIL.INM_TRIB_REC))
+				.setInmSaldoDudosoCobro(rec.getValue(FS_MODEL184_DETAIL.INM_SALD_DUD_COBR))
+				.setInmCantidadesDevengadas(rec.getValue(FS_MODEL184_DETAIL.INM_CANT_DEV_TER))
+				.setInmPrimasSeguro(rec.getValue(FS_MODEL184_DETAIL.INM_PRIM_SEG))
+				.setInmAmortizacionInmueble(rec.getValue(FS_MODEL184_DETAIL.INM_AMORT))
+				.setInmAmortizacionMueble(rec.getValue(FS_MODEL184_DETAIL.INM_AMORT_MUEB))
+				.setInmOtrosGastosDeducible(rec.getValue(FS_MODEL184_DETAIL.INM_OTR_GAS_DED))
+				.setInmNumeroDiasArrendamiento(rec.getValue(FS_MODEL184_DETAIL.INM_NUM_DIAS_ARR))
 				;
 		}
 	}
@@ -571,29 +574,29 @@ public class Mod184DAO {
 	private static class Mod184PartnerFiller implements Function<Record, Mod184Partner> {
 
 		@Override
-		public Mod184Partner apply(Record record) {
+		public Mod184Partner apply(Record rec) {
 			return new Mod184Partner()
-				.setId(record.getValue(FS_MODEL184_DETAIL.ID))
-				.setDocument(record.getValue(FS_MODEL184_DETAIL.DOCUMENT))
-				.setRepresentativeDocument(record.getValue(FS_MODEL184_DETAIL.REPRESENTATIVE_DOCUMENT))
-				.setName(record.getValue(FS_MODEL184_DETAIL.NAME))
-				.setProvince(record.getValue(FS_MODEL184_DETAIL.PROVINCE))
-				.setCountry(record.getValue(FS_MODEL184_DETAIL.COUNTRY))
-				.setPartType(record.getValue(FS_MODEL184_DETAIL.PART_TYPE))
-				.setMemberEndOfYear(AonEnumUtils.getBoolean( record.getValue(FS_MODEL184_DETAIL.MEMBER_END_OF_YEAR)))
-				.setMemberDays(record.getValue(FS_MODEL184_DETAIL.MEMBER_DAYS))
-				.setPartPercent(record.getValue(FS_MODEL184_DETAIL.PART_PERCENT))
-				.setKey(record.getValue(FS_MODEL184_DETAIL.KEY))
-				.setSubKey(record.getValue(FS_MODEL184_DETAIL.SUBKEY))
-				.setAmount(record.getValue(FS_MODEL184_DETAIL.AMOUNT))
-				.setReduction(record.getValue(FS_MODEL184_DETAIL.REDUCTION))
-				.setAddress(record.getValue(FS_MODEL184_DETAIL.ADDRESS))
-				.setExpenses(AonNumberUtils.zeroIfNull(record.getValue(FS_MODEL184_DETAIL.EXPENSES)))
-				.setNature(record.getValue(FS_MODEL184_DETAIL.NATURE))
-				.setLocation(record.getValue(FS_MODEL184_DETAIL.LOCATION))
-				.setCadasdralReference(record.getValue(FS_MODEL184_DETAIL.CADASDRAL_REFERENCE))
-				.setDeclaredKey(record.getValue(FS_MODEL184_DETAIL.DECLARED_KEY))
-				.setAssetPercent(record.getValue(FS_MODEL184_DETAIL.ASSET_PERCENT))
+				.setId(rec.getValue(FS_MODEL184_DETAIL.ID))
+				.setDocument(rec.getValue(FS_MODEL184_DETAIL.DOCUMENT))
+				.setRepresentativeDocument(rec.getValue(FS_MODEL184_DETAIL.REPRESENTATIVE_DOCUMENT))
+				.setName(rec.getValue(FS_MODEL184_DETAIL.NAME))
+				.setProvince(rec.getValue(FS_MODEL184_DETAIL.PROVINCE))
+				.setCountry(rec.getValue(FS_MODEL184_DETAIL.COUNTRY))
+				.setPartType(rec.getValue(FS_MODEL184_DETAIL.PART_TYPE))
+				.setMemberEndOfYear(AonEnumUtils.getBoolean( rec.getValue(FS_MODEL184_DETAIL.MEMBER_END_OF_YEAR)))
+				.setMemberDays(rec.getValue(FS_MODEL184_DETAIL.MEMBER_DAYS))
+				.setPartPercent(rec.getValue(FS_MODEL184_DETAIL.PART_PERCENT))
+				.setKey(rec.getValue(FS_MODEL184_DETAIL.KEY))
+				.setSubKey(rec.getValue(FS_MODEL184_DETAIL.SUBKEY))
+				.setAmount(rec.getValue(FS_MODEL184_DETAIL.AMOUNT))
+				.setReduction(rec.getValue(FS_MODEL184_DETAIL.REDUCTION))
+				.setAddress(rec.getValue(FS_MODEL184_DETAIL.ADDRESS))
+				.setExpenses(AonNumberUtils.zeroIfNull(rec.getValue(FS_MODEL184_DETAIL.EXPENSES)))
+				.setNature(rec.getValue(FS_MODEL184_DETAIL.NATURE))
+				.setLocation(rec.getValue(FS_MODEL184_DETAIL.LOCATION))
+				.setCadasdralReference(rec.getValue(FS_MODEL184_DETAIL.CADASDRAL_REFERENCE))
+				.setDeclaredKey(rec.getValue(FS_MODEL184_DETAIL.DECLARED_KEY))
+				.setAssetPercent(rec.getValue(FS_MODEL184_DETAIL.ASSET_PERCENT))
 				;
 			
 		}
@@ -616,8 +619,8 @@ public class Mod184DAO {
 				FS_MODEL184.CONTACT_PHONE.getDataType().length()));
 		mod184.setContactMail(AonStringUtils.left(conf.fiscal().getContactMail(),
 				FS_MODEL184.CONTACT_MAIL.getDataType().length()));
-		mod184.setIncomes(new LinkedList<Mod184Income>());
-		mod184.setPartners(new LinkedList<Mod184Partner>());
+		mod184.setIncomes(new LinkedList<>());
+		mod184.setPartners(new LinkedList<>());
 		return mod184;
 	}
 	
@@ -632,38 +635,15 @@ public class Mod184DAO {
 					.execute();
 			}
 			return mod184;
-		} catch (DataAccessException t) {
+		} catch (Exception t) {
 			throw new AonCoreException(t.getCause()!=null?t.getCause().getMessage():t.getMessage());
-		} catch (Throwable t) {
-			throw new AonCoreException(t.getMessage());
 		}
 	}
-	
-//	public static Mod184 duplicateNextYear(AONContext ctx, int id) {
-//		Mod184 mod184 = getById(ctx, id);
-//		mod184.setYear( mod184.getYear() + 1 );
-//		mod184.setId(null);
-//		mod184 = save(ctx, mod184);
-//		Mod184 original = getById(ctx, id);
-//		for (Mod184Income income : original.getIncomes()) {
-//			income.setId(null);
-//			income.setMod184(mod184.getId());
-//			mod184.getIncomes().add(income);
-//		}
-//		for (Mod184Partner partner : original.getPartners()) {
-//			partner.setId(null);
-//			partner.setMod184(mod184.getId());
-//			mod184.getPartners().add(partner);
-//		}
-//		return save(ctx, mod184);
-//	}
 	
 	public static Mod184 duplicate(AONContext ctx, Mod184 mod184) {
 		int id = mod184.getId();
 		mod184.setId(null);
 		mod184 = save(ctx, mod184);
-		
-		// Si la nueva es complementaria, no se duplican las lineas 
 		if (!mod184.isComplementary()) {
 			Mod184 original = getById(ctx, id);
 			for (Mod184Income income : original.getIncomes()) {
@@ -680,6 +660,5 @@ public class Mod184DAO {
 		
 		return save(ctx, mod184);
 	}
-	
 	
 }

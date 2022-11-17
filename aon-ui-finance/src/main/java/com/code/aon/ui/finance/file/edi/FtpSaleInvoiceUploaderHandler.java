@@ -2,7 +2,6 @@ package com.code.aon.ui.finance.file.edi;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Map;
 import java.util.logging.Level;
 
 import javax.faces.event.AbortProcessingException;
@@ -18,10 +17,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.domain.DomainManager;
 import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.config.Tag;
 import com.code.aon.config.util.AppParamUtil;
 import com.code.aon.customer.Customer;
-import com.code.aon.customer.IEdiSupport;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Invoice;
@@ -32,6 +29,9 @@ import com.code.aon.ui.customer.controller.CustomerEdiSupportController;
 import com.code.aon.ui.customer.controller.ICustomerConstants;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.SERES;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
+import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.seres.ftp.FtpException;
 import com.esferalia.aon.seres.ftp.FtpLoginException;
@@ -240,32 +240,14 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 					AonUtil.addErrorMessage(e.getMessage());
 					throw new AbortProcessingException(e.getMessage());
 				}
-				Map<String, String> ediCodes =  ediSupport.getEdiCodes(
-						invoice.getRegistry(), invoice.getRegistryAddress());
-				
-				String customerEdiCabeceraCode = ediCodes.get(IEdiSupport.CABECERA);
-				String customerEdiPtoEntregaCode = ediCodes.get(IEdiSupport.PTO_ENTREGA);
-				String customerEdiFacturaCode = ediCodes.get(IEdiSupport.FACTURA);
-				
-				
-				Tag packingTag = ediSupport.obtainPackingTagInvoice(
-						invoice.getRegistry(),
-						invoice.getRegistryAddress());
-				if(packingTag==null || packingTag.getId()==null){
-					AonUtil.addErrorMessage("No se ha definido el envase para 'mensajería EDI'");
-					throw new AbortProcessingException("No se ha definido el envase para 'mensajería EDI'");
-				}
-				String customerPackage = packingTag.getName();
-
+	
 				CompanyController company = (CompanyController) AonUtil
 						.getRegisteredBean(ICompanyConstants.COMPANY_CONTROLLER_NAME);
-				String companyEdiCode = company.getEdiCompanyCode();
 				
 				// writer file
+				EdiCodes codes = getEdiCodes(invoice);
 				ConnectSaleInvoiceWriter writer = new ConnectSaleInvoiceWriter();
-				output = writer.createFile(invoice, (Company)company.getTo(), isInvoicingMainAddress, companyEdiCode,
-						customerEdiCabeceraCode, customerEdiPtoEntregaCode, customerEdiFacturaCode,
-						customerPackage);
+				output = writer.createFile(invoice, (Company)company.getTo(), isInvoicingMainAddress, codes);
 
 				return output;
 			} else {
@@ -276,5 +258,16 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
         	throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
+	
+	private EdiCodes getEdiCodes(Invoice invoice) {
+		com.esferalia.aon.occam.api.model.finance.Invoice inv = new com.esferalia.aon.occam.api.model.finance.Invoice()
+				.setId(invoice.getId())
+				.setRegistry(invoice.getRegistry().getId())
+				.setAddress(new RegistryAddress().setId(invoice.getRegistryAddress().getId()));
+		String domainName = AonUtil.getDomainName();
+        Integer domainId = DomainManager.getCurrentDomain();
+        String login = UserUtils.getInstance().getLoggedUser().getLogin();
+        return SERES.getEdiCodes(domainName, domainId, login, inv);
+    }
 	
 }

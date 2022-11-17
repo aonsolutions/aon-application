@@ -22,7 +22,6 @@ import com.esferalia.aon.ingenet.api.albaranes.ALBARANES;
 import com.esferalia.aon.ingenet.api.albaranes.ALBARANTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.DATOSAGENCIATRANSPORTETYPE;
 import com.esferalia.aon.ingenet.api.albaranes.DATOSCLIENTETYPE;
-import com.esferalia.aon.ingenet.api.albaranes.DATOSDIRECCIONTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.DATOSLINEAALBARANTYPE;
 import com.esferalia.aon.ingenet.api.albaranes.DATOSLINEAENVASETYPE;
 import com.esferalia.aon.ingenet.api.albaranes.ERRORESTYPE;
@@ -48,8 +47,6 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.registry.Project;
-import com.esferalia.aon.occam.api.model.registry.RAddress;
-import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
@@ -416,7 +413,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 					+ albaran.getDATOSCLIENTE().getDATOSREGISTRO()
 							.getDATOSDOCUMENTO().getDOCUMENTO());
 		}
-		delivery.setAddress(new RegistryAddress().setId(obtainAddress(ctx, customer, albaran.getDATOSDIRECCIONENTREGA()).getId()));
+		delivery.setAddress(ProductUtils.obtainAddress(ctx, customer, albaran.getDATOSDIRECCIONENTREGA()));
 		
 		try {
 			delivery.setIssueTime(getDateFormatter().parse(albaran.getFECHAEMISION()));
@@ -479,6 +476,10 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 				.and(f.getWorkplaceProperty().eq(
 						delivery.getWorkplace().getId())));
 		
+		if(warehouse.isEmpty()) {
+		    warehouse = WarehouseDAO.getWarehouse(ctx, f -> f.getDomainProperty().eq(ctx.getDomainId()).and(f.getActiveProperty().eq((byte) 1)));
+		}
+		Integer warehouseId = warehouse.getId();
 		if (lineasAlbaran != null && lineasAlbaran.size() > 0) {
 			lineasAlbaran.stream()
 			.forEach(
@@ -495,7 +496,7 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 							String description = item.getProduct().getName();
 							description += " #" + item.getSerialNumber();
 							detail.setDescription(description);
-							detail.setWarehouse(warehouse.getId());
+							detail.setWarehouse(warehouseId);
 							detail.setQuantity(Double.valueOf(linea
 									.getCANTIDAD()));
 
@@ -973,30 +974,6 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 			attach.setType(DataAttachType.RESPONSE_ERROR.value());
 		}
 		AON.updateAttach(getDomain(), getDomainId(), getUser(), attach);
-	}
-	
-	/**
-	 * 
-	 * OTHER
-	 * 
-	 */
-	protected RAddress obtainAddress(AONContext ctx, Customer customer,
-			DATOSDIRECCIONTYPE datosdireccionentrega) {
-		RAddress raddress = RegistryOldDAO
-				.getRAddressStream(
-						ctx,
-						f -> f.getDomainProperty()
-								.eq(ctx.getDomainId())
-								.and(f.getRegistryProperty()
-										.eq(customer.getId())
-										.and(f.getCityProperty()
-												.eq(datosdireccionentrega
-														.getCIUDAD())
-												.and(f.getZipProperty()
-														.eq(datosdireccionentrega
-																.getCODIGOPOSTAL())))))
-				.findFirst().orElse(new RAddress());
-		return raddress;
 	}
 	
 	protected Customer obtainCustomer(AONContext ctx, DATOSCLIENTETYPE datoscliente) {

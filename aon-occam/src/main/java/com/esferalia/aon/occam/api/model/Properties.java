@@ -1243,6 +1243,12 @@ public interface Properties {
 		Property<Byte> getSSStatusProperty();
 	}
 	
+	public interface ContractDocProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getContractProperty();
+	}
+
 	public interface ContractDataProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

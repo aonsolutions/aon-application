@@ -57,4 +57,9 @@ public class Idcplccc {
 		
 	}
 
+	public static TrabajadoresTramos getTrabajadoresTramos (byte idcplnss [], TrabajadoresTramosCallback cb) throws IOException, UnknownPDFException {
+		try ( ByteArrayInputStream is = new ByteArrayInputStream(idcplnss) ) {
+			return geTrabajadoresTramos(is, cb);
+		}  
+	}
 }

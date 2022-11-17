@@ -1,0 +1,157 @@
+package com.esferalia.aon.occam.server.fiscal.format.mod184;
+
+import java.io.IOException;
+import java.io.Writer;
+
+import com.esferalia.aon.occam.api.model.fiscal.Mod184;
+import com.esferalia.aon.occam.api.model.fiscal.Mod184Income;
+import com.esferalia.aon.occam.api.model.fiscal.Mod184Partner;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.occam.server.fiscal.format.mod184.Mod184Writer.IPropertyFiller;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+enum Mod184File2019 {
+
+	TYPE_1 (new IPropertyFiller[] {
+
+		(wr, mod184,prt,inc) -> wr.append("1")
+	   ,(wr, mod184,prt,inc) -> wr.append("184")
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(mod184.getYear(), 4,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(mod184.getDocument(),9))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(mod184.getName(),40))
+	   ,(wr, mod184,prt,inc) -> wr.append("T")
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(mod184.getContactPhone(),9))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(mod184.getContactPerson(),40))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(mod184.getReceipt(),13,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(" ")
+	   ,(wr, mod184,prt,inc) -> wr.append(mod184.isReplacement()?"S":" ")
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(mod184.getReplacedReceipt(),13,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(mod184.getPartners().size(),9,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(mod184.getEntityType(),1,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(mod184.getMainActivity(),1,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(mod184.getForeignEntityType(),1,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(mod184.getForeignObject(),1))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(mod184.getCountry(),2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(mod184.getResidentPercent(),5,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(mod184.isTaxIS()?"X":" ")
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(mod184.getNetSalesAmount(),15,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(mod184.getLrDocument(),9))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(mod184.getLrName(),40))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonStringUtils.repeat(' ', 267))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonStringUtils.repeat(' ', 13))
+	   ,(wr, mod184,prt,inc) -> wr.append("\r\n")
+	})
+	
+	,TYPE_2 (new IPropertyFiller[] { 
+		(wr, mod184,prt,inc) -> wr.append("2")
+	   ,(wr, mod184,prt,inc) -> wr.append("184")
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(mod184.getYear(), 4,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(mod184.getDocument(),9))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(mod184.getDocument(),9))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonStringUtils.repeat(" ",9))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(mod184.getName(),40))
+	   ,(wr, mod184,prt,inc) -> wr.append("E")
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(inc.getKey(),1))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(inc.getSubKey(),2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(inc.getCountry(),2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getRegime(),1,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getActivityType(),1,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getEpigraph(),4))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(inc.getGranteeDocument(),9))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(inc.getGranteeName(),20))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.dateZero(inc.getAdqDate()))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getIncrease(),13,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getDecrease(),13,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.signedSpace(inc.getAccountingResult(),14,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getExpenses(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.signedSpace(inc.getNetYield(),14,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getReductionPercent(),5,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.signedSpace(inc.getDeductionRightRent(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getResult(),13,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getDeductionBase(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getRetention(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getLocation(),1,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(inc.getCadasdralReference(),20))
+
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getStaffExpenses(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getConsumosExplotacion(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getTaxDeduction(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getArrendamientosCanones(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getReparacionConservacion(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getServProfIndependientes(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getSuministros(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getGastosFinancieros(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getAmortizaciones(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getProvisiones(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getOtherTaxDeduction(),10,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(inc.isVatAccrualPayment()?"X":" ")
+	   
+	   
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getInmInteresFinanciacion(),11,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getInmReparacionConservacion(),11,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getInmGastosReparacionConservacionPendientes(),11,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getInmTributosRecargos(),10,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getInmSaldoDudosoCobro(),11,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getInmCantidadesDevengadas(),10,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getInmPrimasSeguro(),10,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getInmAmortizacionInmueble(),10,2))	
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getInmAmortizacionMueble(),8,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getInmOtrosGastosDeducible(),9,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(inc.getInmNumeroDiasArrendamiento(),3,0))
+	   
+	   ,(wr, mod184,prt,inc) -> wr.append("\r\n")
+	})
+	,TYPE_3 (new IPropertyFiller[] { 
+		(wr, mod184,prt,inc) -> wr.append("2")
+	   ,(wr, mod184,prt,inc) -> wr.append("184")
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(mod184.getYear(), 4,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(mod184.getDocument(),9))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(prt.getDocument(),9))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(prt.getRepresentativeDocument(),9))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(prt.getName(),40))
+	   ,(wr, mod184,prt,inc) -> wr.append("S")
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getProvince()==0?99:prt.getProvince(),2,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(prt.getCountry(),2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getPartType(),1,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(prt.isMemberEndOfYear()?"X":" ")
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getMemberDays(),3))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getPartPercent(),7,4))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(prt.getKey(),1))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getSubKey(),2,0))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.signedSpace(prt.getAmount(),13,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getReduction(),11,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(prt.getAddress(),40))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getExpenses(),12,2))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(AonStringUtils.defaultIfEmpty(prt.getNature(),"0"),1))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(AonStringUtils.defaultIfEmpty(prt.getLocation(),"0"),1))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(prt.getCadasdralReference(),20))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.text(prt.getDeclaredKey(),1))
+	   ,(wr, mod184,prt,inc) -> wr.append(AonFiscalFileUtils.unsigned(prt.getAssetPercent(),5,2))
+	   
+	   ,(wr, mod184,prt,inc) -> wr.append(AonStringUtils.repeat(' ', 301))
+	   ,(wr, mod184,prt,inc) -> wr.append("\r\n")
+			})
+	;
+
+	private IPropertyFiller[] propertyFillers;
+
+	private Mod184File2019(IPropertyFiller[] pf) {
+		this.propertyFillers = pf;
+	}
+
+	private void fillPage(Mod184 mod184, Mod184Partner prt,Mod184Income inc, Writer wr) throws IOException {
+		for (IPropertyFiller propertyFiller : this.propertyFillers) {
+			propertyFiller.propertyFill(wr, mod184, prt, inc);
+		}
+	}
+
+	static void fill(Mod184 mod184, Writer writer) throws IOException {
+		TYPE_1.fillPage(mod184, null, null, writer);
+		for (Mod184Income inc : mod184.getIncomes()) {
+			TYPE_2.fillPage(mod184, null, inc, writer);	
+		}
+		for (Mod184Partner prt : mod184.getPartners()) {
+			TYPE_3.fillPage(mod184, prt, null, writer);	
+		}
+	}
+}

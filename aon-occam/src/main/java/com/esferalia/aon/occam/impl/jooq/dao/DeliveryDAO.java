@@ -63,11 +63,12 @@ import com.esferalia.aon.occam.api.model.type.TagType;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDetailDAO.DeliveryDetailFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDetailDAO.DeliveryDetailPropertiesDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO.PayMethodFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ProductPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO.ProjectFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO.RegistryAddressFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
@@ -572,8 +573,9 @@ public class DeliveryDAO {
 			return new Delivery()
 					.setId(getValue(r, DELIVERY.ID))
 					.setDomain(getValue(r, DELIVERY.DOMAIN))
-					.setProject(new Project()
-							.setId(getValue(r, DELIVERY.PROJECT)))
+					.setProject(checkField(r, PROJECT.ID)
+					        ? ProjectFiller.build(r)
+					        : new Project().setId(getValue(r, DELIVERY.PROJECT)))
 					.setSeries(getValue(r, DELIVERY.SERIES))
 					.setNumber(getInteger(r, DELIVERY.NUMBER))
 					.setCustomer(checkField(r, CUSTOMER.REGISTRY) || checkField(r, CUSTOMER_ALIAS.ID)
@@ -627,38 +629,5 @@ public class DeliveryDAO {
 					.setModificationDate(getValue(r, DELIVERY.MODIFICATION_DATE))
 					.setModificationUser(getValue(r, DELIVERY.MODIFICATION_USER));
 		}
-	}
-
-	public static class DeliveryDetailFiller extends Filler implements Function<Record, DeliveryDetail> {
-		
-		@Override
-		public DeliveryDetail apply(Record r) {
-			return build(r);
-		}
-		
-		public static DeliveryDetail build(Record r) {
-			return new DeliveryDetail()
-				.setId(getValue(r, DELIVERY_DETAIL.ID))
-				.setDomain(getInteger(r, DELIVERY_DETAIL.DOMAIN))
-				.setDelivery(checkField(r, DELIVERY.ID)
-					? DeliveryFiller.build(r)
-					: new Delivery().setId(getValue(r, DELIVERY_DETAIL.DELIVERY)))
-				.setLine(getShort(r, DELIVERY_DETAIL.LINE))
-				.setItem(checkField(r, ITEM.ID)
-					? ItemFiller.build(r)
-					: new Item().setId(getValue(r, DELIVERY_DETAIL.ITEM)))
-				.setDescription(getValue(r, DELIVERY_DETAIL.DESCRIPTION))
-				.setWarehouse(getValue(r, DELIVERY_DETAIL.WAREHOUSE))
-				.setQuantity(getDouble(r, DELIVERY_DETAIL.QUANTITY))
-				.setPrice(getDouble(r, DELIVERY_DETAIL.PRICE))
-				.setDiscountExpression(getValue(r, DELIVERY_DETAIL.DISCOUNT_EXPR))
-				.setSalesDetail(getValue(r, DELIVERY_DETAIL.SALES_DETAIL))
-				.setPurchaseReference(getValue(r, SALES.PURCHASE_REFERENCE))
-				.setCreationDate(getValue(r, DELIVERY_DETAIL.CREATION_DATE))
-				.setCreationUser(getValue(r, DELIVERY_DETAIL.CREATION_USER))
-				.setModificationDate(getValue(r, DELIVERY_DETAIL.MODIFICATION_DATE))
-				.setModificationUser(getValue(r, DELIVERY_DETAIL.MODIFICATION_USER));
-		}
-	}
-	
+	}	
 }

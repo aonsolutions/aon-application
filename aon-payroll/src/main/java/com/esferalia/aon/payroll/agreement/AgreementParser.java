@@ -361,8 +361,10 @@ public class AgreementParser {
 	    	        	Element elementCI = (Element) nodeCI;
 	    	        	
 	    	        	String name = elementCI.getElementsByTagName("NOMBRE").item(0).getTextContent();
-	    	            String type = elementCI.getElementsByTagName("TIPO_AMDH").item(0).getTextContent();
-	    	            
+	    	        	 String type = (null == elementCI.getElementsByTagName("TIPO_AMDH") || null == elementCI.getElementsByTagName("TIPO_AMDH").item(0))
+		    	            		? null 
+		    	            		: elementCI.getElementsByTagName("TIPO_AMDH").item(0).getTextContent();
+ 	            
 	    	            String realName = getParseName(name, type);
 	    	            
 	    	            System.out.println(realName);
@@ -534,23 +536,28 @@ public class AgreementParser {
 				    	     	            	if (nodeCPTO.getNodeType() == Node.ELEMENT_NODE) {
 				    	     	            		Element elementCPTO = (Element) nodeCPTO;
 				    	     	            		
-				    	     	            		String name = elementCPTO.getElementsByTagName("NOMBRE").item(0).getTextContent();
-						   	    	            	String type = elementCPTO.getElementsByTagName("TIPO_AMDH").item(0).getTextContent();
-						   	    	            	
-						   	    	            	String realName = getParseName(name, type);
-						   	    	            	
-						   	    	            	try {
-						   	    	            		String value = elementCPTO.getElementsByTagName("IMPORTE").item(0).getTextContent();
-						   	    	            		
-						   	    	            		if(null != elementTSI.getElementsByTagName("PERIODO"))
-							   	    	            		agreementLevel.addLevelData(realName, value, startDate.getTime(), endDate.getTime());
-							   	    	            	else
-							   	    	            		agreementLevel.addLevelData(realName, value, startDate.getTime());
+				    	     	            		if(null != elementCPTO.getElementsByTagName("IMPORTE") && null != elementCPTO.getElementsByTagName("IMPORTE").item(0)) {
+				    	     	            		
+					    	     	            		String name = elementCPTO.getElementsByTagName("NOMBRE").item(0).getTextContent();
+					    	     	            		String type = (null == elementCPTO.getElementsByTagName("TIPO_AMDH") || null == elementCPTO.getElementsByTagName("TIPO_AMDH").item(0))
+									    	            		? null 
+									    	            		: elementCPTO.getElementsByTagName("TIPO_AMDH").item(0).getTextContent();
+							    	           
+							   	    	            	String realName = getParseName(name, type);
 							   	    	            	
-						   	    	            	} catch (NullPointerException e) {
-														System.err.println("------- ERROR ------\nName : " + name + "\nType : " + type + "\nRealName : " + realName + "\nDate : " + startDate.getTime());
-													}
-						   	    	         
+							   	    	            	try {
+							   	    	            		String value = elementCPTO.getElementsByTagName("IMPORTE").item(0).getTextContent();
+							   	    	            		
+							   	    	            		if(null != elementTSI.getElementsByTagName("PERIODO"))
+								   	    	            		agreementLevel.addLevelData(realName, value, startDate.getTime(), endDate.getTime());
+								   	    	            	else
+								   	    	            		agreementLevel.addLevelData(realName, value, startDate.getTime());
+								   	    	            	
+							   	    	            	} catch (NullPointerException e) {
+															System.err.println("------- ERROR ------\nName : " + name + "\nType : " + type + "\nRealName : " + realName + "\nDate : " + startDate.getTime());
+														}
+							   	    	            	
+				    	     	            		}
 				    	     	            	}
 				   	    	            	}
 			   	    	            	}
@@ -1058,23 +1065,24 @@ public class AgreementParser {
 		name = name.replaceAll("º", "");
 		name = name.replaceAll("-", "_");
 		
-		switch (type) {
-		case "A":
-			realName = name + "_" + "ANUAL";
-			break;
-		case "M":
-			realName = name + "_" + "MENSUAL";
-			break;
-		case "D":
-			realName = name + "_" + "DIARIO";
-			break;
-		case "H":
-			realName = name + "_" + "HORAS";
-			break;
-		default:
-			realName = name + "_" + "ANUAL";
-			break;
-		}
+		if(null != type)
+			switch (type) {
+				case "A":
+					realName = name + "_" + "ANUAL";
+					break;
+				case "M":
+					realName = name + "_" + "MENSUAL";
+					break;
+				case "D":
+					realName = name + "_" + "DIARIO";
+					break;
+				case "H":
+					realName = name + "_" + "HORAS";
+					break;
+				default:
+					realName = name + "_" + "ANUAL";
+					break;
+			}
 		
 		return realName;
 	}

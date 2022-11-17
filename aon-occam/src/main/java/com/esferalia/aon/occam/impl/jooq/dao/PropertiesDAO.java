@@ -13,6 +13,7 @@ import static com.esferalia.aon.jooq.tables.CommissionType.COMMISSION_TYPE;
 import static com.esferalia.aon.jooq.tables.CommissionTypeCommission.COMMISSION_TYPE_COMMISSION;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
+import static com.esferalia.aon.jooq.tables.ContractDoc.CONTRACT_DOC;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.DataResponse.DATA_RESPONSE;
 import static com.esferalia.aon.jooq.tables.DataResponseDetail.DATA_RESPONSE_DETAIL;
@@ -64,6 +65,7 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
+import com.esferalia.aon.jooq.tables.ContractDoc;
 import com.esferalia.aon.jooq.tables.Raddinfo;
 import com.esferalia.aon.occam.api.model.Filter.AgreementLevelCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
@@ -76,6 +78,7 @@ import com.esferalia.aon.occam.api.model.Filter.CommissionItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionTypeCommissionFilter;
 import com.esferalia.aon.occam.api.model.Filter.CommissionTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.ContractDocFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractLeaveFilter;
 import com.esferalia.aon.occam.api.model.Filter.DataResponseDetailFilter;
@@ -123,6 +126,7 @@ import com.esferalia.aon.occam.api.model.Properties.CommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionTypeCommissionProperties;
 import com.esferalia.aon.occam.api.model.Properties.CommissionTypeProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractDataProperties;
+import com.esferalia.aon.occam.api.model.Properties.ContractDocProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractLeaveProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContractProperties;
 import com.esferalia.aon.occam.api.model.Properties.DataResponseDetailProperties;
@@ -873,6 +877,25 @@ public class PropertiesDAO {
 
 	}
 	
+	protected static class ContractDocPropertiesDAO implements ContractDocProperties{
+		protected Select<Record> build(SelectJoinStep<Record> select, ContractDocFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			return filterDAO.build(select);
+		}
+		
+		protected Condition[] getConditions(ContractDocFilter filter) {
+			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
+			if (filterDAO == null){
+				return new Condition[0];
+			}
+			return new Condition[] { filterDAO.getCondition() };
+		}
+
+		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DOC.ID);}
+		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DOC.DOMAIN);}
+		@Override public Property<Integer> getContractProperty() {return new FilterDAO.PropertyDAO<>(CONTRACT_DOC.CONTRACT);}
+	}
+
 	protected static class ContractDataPropertiesDAO implements ContractDataProperties{
 		protected Select<Record> build(SelectJoinStep<Record> select, ContractDataFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
