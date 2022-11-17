@@ -58,6 +58,7 @@ EOF
         cat << EOF > $TOMCAT_BINDIR/setenv.sh
 CATALINA_OPTS="-Duser.language=es \
 -Duser.country=ES \
+-Dcom.sun.security.enableAIAcaIssuers=true \
 -Djava.security.auth.login.config=$TOMCAT_CONFDIR/login.config \
 -Djavax.xml.validation.SchemaFactory:http://www.w3.org/2001/XMLSchema=com.sun.org.apache.xerces.internal.jaxp.validation.XMLSchemaFactory"
 JDK_JAVA_OPTIONS="--add-opens=java.base/sun.net.www.protocol.jar=ALL-UNNAMED"
