@@ -1,5 +1,6 @@
 export const API = 'ms/api';
 export const COMPANY = `${API}/company`;
+export const COMPANY_SCHEMAS = `${COMPANY}/schemas`;
 export const COMPANY_ONE = `${COMPANY}/one`;
 export const COMPANY_APP = `${COMPANY}/app`;
 export const COMPANY_BOOKING = `${COMPANY}/booking`;

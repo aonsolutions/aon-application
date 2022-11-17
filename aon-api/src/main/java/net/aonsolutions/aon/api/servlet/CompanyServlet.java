@@ -1,4 +1,5 @@
 package net.aonsolutions.aon.api.servlet;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +80,9 @@ public class CompanyServlet extends AonApiHttpServlet{
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, getCompanies(api));
+				break;
+			case "/schemas":
+				response(req, resp, getCompaniesBySchemas(api));
 				break;
 			case "/domain":
 				response(req, resp, getDomainCompanies(api));
@@ -234,6 +238,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 					}
 				});
 			}
+			
 			return jsArray;
 		}
 	}
@@ -253,6 +258,75 @@ public class CompanyServlet extends AonApiHttpServlet{
 	}
 	
 	
+	private Object getCompaniesBySchemas(AonApiData api) {
+		JSONObject params = api.getData();
+		
+		int page = params.optInt(IJsonNames.PAGE)!=0 ? params.optInt(IJsonNames.PAGE) : 1;
+		int perPage = params.optInt(IJsonNames.PER_PAGE)!=0 ? params.optInt(IJsonNames.PER_PAGE) : 30;
+		
+
+		ArrayList<Company> companies = new ArrayList<>();
+		
+		Map<String, List<Integer>> map = AON_SOLUTIONS.getCompanyBySchemaStream(api.getToken(), f-> companyFilter(api, f) , page, perPage);
+		
+		map.forEach((domain, registryIds)->{
+			int totalItems = registryIds.size();
+		    int fromIndex = (page-1)*perPage;
+		    int toIndex = fromIndex+perPage;
+		    
+		    if(fromIndex <= totalItems) {
+		    	Integer[] registrys = registryIds.subList(fromIndex, toIndex).toArray(Integer[]::new);
+				AON.getCompanyStream(domain, 0, "", f -> f.getIdProperty().in(registrys))
+				.forEach(companies::add);
+		    }
+
+			System.out.println("registrys"+registryIds.toString()+" domain"+domain);
+			
+			System.out.println("registrysIds"+registryIds.subList(fromIndex, toIndex).toString());
+		});
+		
+		return CompanyJSON.toJSON(
+				companies.stream().sorted((o1, o2) -> o1.getName().compareTo(o2.getName()))
+		);
+		
+//		JSONArray jsArray = new JSONArray();
+//		JSONObject json = new JSONObject();
+//		String schemas = params.optString(IJsonNames.SCHEMA);
+//		List<String> schemaList = schemas.isEmpty() ? AONContext.getSchemas() : Arrays.asList(schemas.split(","));
+//		List<String> schemasNew = new ArrayList<>();
+//		boolean next = true;
+		
+//		for(String schema : schemaList) {
+//			if(next) {
+//				LinkedList<Integer> ds = new LinkedList<>();	
+//				System.out.println("schema>>"+schema+ " page:"+page);
+//				AON_SOLUTIONS.getCompanyStream(api.getToken(), schema, f-> companyFilter(api, f) , page, perPage)
+//				.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName()))
+//				.forEach(ac -> {
+//					if(!ds.contains(ac.getDomain().getId())){
+//						jsArray.put(
+//							ac.toJSON().put(IJsonNames.SCHEMA, schema)
+//						);
+//						ds.add(ac.getDomain().getId());
+//					}
+//				});	
+//
+//				next = jsArray.length() < perPage;
+//				page = next ? 1 : (page+1);
+//			} 
+//			
+//			if(!next && jsArray.length()>0){
+//				schemasNew.add(schema);
+//			}
+//		}
+	
+//		json.put("companies", jsArray);
+//		json.put("page", page);
+//		json.put("next", !schemasNew.isEmpty());
+//		json.put(IJsonNames.SCHEMA, String.join(",", schemasNew));
+//		
+//		return json;
+	}
 	
 	private Filter companyFilter(AonApiData api, CompanyProperties f) {
 		JSONObject json = api.getData();
