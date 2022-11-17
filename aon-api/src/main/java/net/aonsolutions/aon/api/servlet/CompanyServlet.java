@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -270,19 +271,14 @@ public class CompanyServlet extends AonApiHttpServlet{
 		Map<String, List<Integer>> map = AON_SOLUTIONS.getCompanyBySchemaStream(api.getToken(), f-> companyFilter(api, f) , page, perPage);
 		
 		map.forEach((domain, registryIds)->{
-			int totalItems = registryIds.size();
-		    int fromIndex = (page-1)*perPage;
-		    int toIndex = fromIndex+perPage;
-		    
-		    if(fromIndex <= totalItems) {
-		    	Integer[] registrys = registryIds.subList(fromIndex, toIndex).toArray(Integer[]::new);
-				AON.getCompanyStream(domain, 0, "", f -> f.getIdProperty().in(registrys))
-				.forEach(companies::add);
-		    }
+
+	    	Integer[] registrys = getPage(registryIds, page, perPage).toArray(Integer[]::new);
+			AON.getCompanyStream(domain, 0, "", f -> f.getIdProperty().in(registrys))
+			.forEach(companies::add);
 
 			System.out.println("registrys"+registryIds.toString()+" domain"+domain);
 			
-			System.out.println("registrysIds"+registryIds.subList(fromIndex, toIndex).toString());
+			System.out.println("registrysIds"+ getPage(registryIds, page, perPage).toString());
 		});
 		
 		return CompanyJSON.toJSON(
@@ -522,6 +518,20 @@ public class CompanyServlet extends AonApiHttpServlet{
 		AON.getEnterpriseActivities(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())
 			.forEach(ea -> array.put(EnterpriseActivityJSON.toJSON(ea))); 
 		return array;		
+	}
+	
+	public static <T> List<T> getPage(List<T> sourceList, int page, int pageSize) {
+	    if(pageSize <= 0 || page <= 0) {
+	        throw new IllegalArgumentException("invalid page size: " + pageSize);
+	    }
+	    
+	    int fromIndex = (page - 1) * pageSize;
+	    if(sourceList == null || sourceList.size() <= fromIndex){
+	        return Collections.emptyList();
+	    }
+	    
+	    // toIndex exclusive
+	    return sourceList.subList(fromIndex, Math.min(fromIndex + pageSize, sourceList.size()));
 	}
 	
 	public static List<AonApp> safeValueOf(JSONArray array){
