@@ -76,9 +76,9 @@ export class AonOfficeLinkSimpleList extends AonSimpleList {
 				value: "LINK",
 				icon:  MATERIAL_ICONS.LINK, 
 				fn:()=> {
+					this.getApplication().development();
                     console.log("Vincular a una existente");
-                    this.buildSelectCompany(customer, [], elementHTML);
-                    // this.buildRows();
+                    // this.buildSelectCompany(customer, [], elementHTML);
 				}
 			},
             { 
@@ -86,6 +86,7 @@ export class AonOfficeLinkSimpleList extends AonSimpleList {
 				value: "ENTERPRISE_NEW",
 				icon: MATERIAL_ICONS.OPEN_IN_NEW, 
 				fn:()=> {
+					this.getApplication().development();
                     console.log(`Desea registrar y vincular a ${customer.name} ?`);
 					// this.getApplication().confirmDialog(MSG.REGISTER, `Desea registrar y vincular a ${customer.name} ?`, () => {
 					// 	this.getApplication().startLoading();
@@ -122,30 +123,26 @@ export class AonOfficeLinkSimpleList extends AonSimpleList {
 
 		if(companies.length){
 			let timeOut = null;
-			let isChange = false;
 
 			selectCompany.setOptions(companies.map(c=> ({...c, value:c.id})));
 			
 			selectCompany.addEventListener(EVENT.INPUT, async({target})=>{
-				if(!isChange){
-					clearTimeout(timeOut);
-					const value = target.value;
-					if(value.length > 2 ){
-						timeOut = setTimeout(async() =>{
-							selectCompany.loading(true);
-							const cs = await getCompanies(params);
-							selectCompany.setOptions(cs);
-							selectCompany.loading(false);
-							isChange = true
-						}, 300);
-					}
+				clearTimeout(timeOut);
+				const value = target.value;
+				if(value.length > 2 ){
+					timeOut = setTimeout(async() =>{
+						selectCompany.loading(true);
+						const cs = await getDomainCompanies(customer, value);
+						selectCompany.setOptions(cs);
+						selectCompany.loading(false);
+					}, 300);
 				}
 			});
 		} else {
 			selectCompany.loading(true);
-			this.getCompanies(customer)
+			this.getDomainCompanies(customer)
 			.then(companies=>{
-				selectCompany.setOptions( companies);
+				selectCompany.setOptions(companies);
 			})
 			.finally(()=>{
 				selectCompany.loading(false);
@@ -161,8 +158,11 @@ export class AonOfficeLinkSimpleList extends AonSimpleList {
         return div
 	}   
 
-	async getCompanies(customer){
-		let result = await getDomainCompanies({parentId: customer.domain.parentId});
+	async getDomainCompanies(customer, value=undefined){
+		let params ={parentId: customer.domain.parentId};
+		if(value) params.value = value;
+
+		let result = await getDomainCompanies(params);
 
 		return result.filter(company => company && company.domain && company.domain.id!=customer.domain.id)
 		.map( c=> ({...c, value: c.id}));

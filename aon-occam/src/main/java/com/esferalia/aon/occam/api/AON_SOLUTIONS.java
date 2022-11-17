@@ -21,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
 import com.esferalia.aon.occam.api.model.Filter.CategoryFilter;
+import com.esferalia.aon.occam.api.model.Filter.CompanyFilter;
 import com.esferalia.aon.occam.api.model.Filter.DailyTrackingFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
@@ -442,6 +443,26 @@ public class AON_SOLUTIONS {
 			}
 		} 
 		return stream;
+	}
+	
+	public static Map<String, List<Integer>> getCompanyBySchemaStream(String token, CompanyFilter filter, Integer page, Integer perPage) {	
+		AonToken aonToken = SECURITY.getAonToken(token);
+		
+		Map<String, List<Integer>> map = new HashMap<>();
+		
+		for(String schema: AONContext.getSchemas()) {
+			String domain = AONContext.getSchemaFirstDomain(schema);
+			if(!AonStringUtils.isBlank(domain)) {
+				try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
+					List<Integer> s = getRegistry().getCompanyStream(ctx, aonToken.getAuth(), filter, page, perPage);
+					if(!s.isEmpty()) {
+						map.put(domain, s);
+					}
+				}
+			} 
+		}
+		
+		return map;
 	}
 	
 	public static Domain getDomain(String token, Integer domainId) {
