@@ -17,7 +17,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL193;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.server.fiscal.format.Mod193Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod193.Mod193Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")

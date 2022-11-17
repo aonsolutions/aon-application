@@ -1,5 +1,5 @@
 
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod193;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel193.FS_MODEL193;
@@ -30,6 +30,8 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -42,7 +44,7 @@ public class Mod193DAO {
 		
 	}
 
-	private static byte ZERO_BYTE = 0;
+	private static final byte ZERO_BYTE = 0;
 
 	public static Stream<Mod193> getHeaders(AONContext ctx, int domain) {
 		return getHeaders(ctx, domain, null);
@@ -78,7 +80,7 @@ public class Mod193DAO {
 			.fetch()
 			.stream()
 			.map(new Mod193Filler())
-			.peek( mod193 -> mod193.setDetails( getDetails(ctx, mod193.getId()) ))
+			.map( mod193 -> mod193.setDetails( getDetails(ctx, mod193.getId()) ))
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 
@@ -94,8 +96,8 @@ public class Mod193DAO {
 			.fetch()
 			.stream()
 			.map(new Mod193Filler())
-			.peek( mod193 -> mod193.setDetails( getDetails(ctx, mod193.getId()) ))
-			.peek( mod193 -> mod193.setExpenses( getExpenses(ctx, mod193.getId()) ))
+			.map( mod193 -> mod193.setDetails( getDetails(ctx, mod193.getId()) ))
+			.map( mod193 -> mod193.setExpenses( getExpenses(ctx, mod193.getId()) ))
 			.findFirst()
 			.orElse(null);
 	}
@@ -120,9 +122,9 @@ public class Mod193DAO {
 	public static Mod193 save(AONContext ctx, Mod193 mod193) {
 		ctx.checkWrite();
 		if (mod193.getId() == null) {
-			mod193 = insert(ctx, mod193);
+			insert(ctx, mod193);
 		} else {
-			mod193 = update(ctx, mod193);
+			update(ctx, mod193);
 			ArrayList<Mod193Detail> details = new ArrayList<>();
 			details.addAll(mod193.getDetails());
 			details.addAll(mod193.getExpenses());
@@ -510,8 +512,7 @@ public class Mod193DAO {
 		
 		int id = mod193.getId();
 		mod193.setId(null);
-		mod193 = insert(ctx, mod193, false);
-		
+		insert(ctx, mod193, false);
 		if (!mod193.isComplementary()) {
 			Mod193 original = getById(ctx, id);
 			for (Mod193Detail detail : original.getDetails()) {
