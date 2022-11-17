@@ -250,7 +250,7 @@ export class AonIconButton extends AonElement {
   }
 
   isDisabled() {
-    return this.getButton().disable;
+    return this.getButton().hasAttribute(CONSTANT.DISABLED);
   }
 
   setDisabled(disabled) {
