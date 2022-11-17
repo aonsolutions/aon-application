@@ -326,30 +326,26 @@ export class AonCustomer extends AonReg {
 
 		if(companies.length){
 			let timeOut = null;
-			let isChange = false;
 
 			selectCompany.setOptions(companies.map(c=> ({...c, value:c.id})));
 			
 			selectCompany.addEventListener(EVENT.INPUT, async({target})=>{
-				if(!isChange){
-					clearTimeout(timeOut);
-					const value = target.value;
-					if(value.length > 2 ){
-						timeOut = setTimeout(async() =>{
-							selectCompany.loading(true);
-							const cs = await getCompanies(params);
-							selectCompany.setOptions(cs);
-							selectCompany.loading(false);
-							isChange = true
-						}, 300);
-					}
+				clearTimeout(timeOut);
+				const value = target.value;
+				if(value.length > 2 ){
+					timeOut = setTimeout(async() =>{
+						selectCompany.loading(true);
+						const cs = await this.getDomainCompanies(value);
+						selectCompany.setOptions(cs);
+						selectCompany.loading(false);
+					}, 300);
 				}
 			});
 		} else {
 			selectCompany.loading(true);
-			this.getCompanies()
+			this.getDomainCompanies()
 			.then(companies=>{
-				selectCompany.setOptions( companies);
+				selectCompany.setOptions(companies);
 			})
 			.finally(()=>{
 				selectCompany.loading(false);
@@ -366,8 +362,11 @@ export class AonCustomer extends AonReg {
 		dialog.open();
 	}   
 
-	async getCompanies(){
-		let result = await getDomainCompanies({parentId: this.registry.getDomain().getParentId()});
+	async getDomainCompanies(value){
+		let params = {parentId: this.registry.getDomain().getParentId()};
+		if(value) params.value = value;
+
+		let result = await getDomainCompanies(params);
 
 		return result.filter(company => company && company.domain && company.domain.id!=this.registry.getDomain().getId())
 		.map( c=> ({...c, value: c.id}));

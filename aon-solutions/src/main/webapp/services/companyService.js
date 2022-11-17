@@ -39,6 +39,8 @@ export const getCompanies = () => {
   });
 };
 
+export const getCompaniesBySchemas = (filter) => get(API.COMPANY_SCHEMAS, filter);
+
 export const getCompany = () => {
   const domain = LS.getDomainId();
   return new Promise((resolve, reject) => {

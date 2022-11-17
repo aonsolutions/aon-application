@@ -18,6 +18,7 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -387,6 +388,32 @@ public class CompanyDAO {
 						.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes))))))
 			.orderBy(REGISTRY.NAME)
 			.fetch().stream().map(new AonCompanyFiller());
+	}
+	
+	public static List<Integer> getCompanyStream(AONContext ctx, byte[] auth, CompanyFilter filter, Integer page, Integer perPage){
+		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
+		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
+		
+		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
+
+		return ctx.getDslContext().selectDistinct(REGISTRY.ID)
+		.from(COMPANY)
+		.join(REGISTRY).on(REGISTRY.ID.eq(COMPANY.REGISTRY))
+		.join(domain).on(
+				COMPANY.DOMAIN.eq(domain.ID)
+				.and(
+					domain.ID.in(domains)
+					.or(domain.PARENT.in(domains)
+					.and(
+						domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes)))
+					)
+				)
+		)
+		.join(USER).on(USER.DOMAIN.eq(domain.ID).or(USER.DOMAIN.eq(domain.PARENT)))
+		.where(COMPANY_PROPERTIES.getConditions(filter))
+		.orderBy(REGISTRY.NAME)
+		.fetch()
+		.getValues(REGISTRY.ID);
 	}
 
 	public static LinkedList<CompanyBank> getBanks(AONContext ctx,int enterprise) {

@@ -34,6 +34,8 @@ public class Contract {
 	private String durationTypeJndMin;
 	private String durationTypeCvnHour;
 	private String durationTypeCvnMin;
+	private String durationFormationHour;
+	private String durationFormationMin;
 	private String interinidad;
 	private String titulacion;
 
@@ -197,6 +199,14 @@ public class Contract {
 	public String getDurationTypeCvnMin() {
 		return durationTypeCvnMin;
 	}
+	
+	public String getDurationFormationHour() {
+		return durationFormationHour;
+	}
+
+	public String getDurationFormationMin() {
+		return durationFormationMin;
+	}
 
 	public Optional<String> getInterinidad() {
 		return Optional.ofNullable(interinidad);
@@ -276,6 +286,8 @@ public class Contract {
 		private String durationTypeJndMin;
 		private String durationTypeCvnHour;
 		private String durationTypeCvnMin;
+		private String durationFormationHour;
+		private String durationFormationMin;
 		private String interinidad;
 		private String titulacion;
 
@@ -475,6 +487,16 @@ public class Contract {
 			return this;
 		}
 
+		public ContractBuilder setDurationFormationHour(String durationFormationHour) {
+			this.durationFormationHour = durationFormationHour;
+			return this;
+		}
+
+		public ContractBuilder setDurationFormationMin(String durationFormationMin) {
+			this.durationFormationMin = durationFormationMin;
+			return this;
+		}
+
 		public ContractBuilder setInterinidad(String interinidad) {
 			this.interinidad = interinidad;
 			return this;
@@ -566,6 +588,8 @@ public class Contract {
 			contract.durationTypeJndMin = this.durationTypeJndMin;
 			contract.durationTypeCvnHour = this.durationTypeCvnHour;
 			contract.durationTypeCvnMin = this.durationTypeCvnMin;
+			contract.durationFormationHour = this.durationFormationHour;
+			contract.durationFormationMin = this.durationFormationMin;
 			contract.sepeId = this.sepeId;
 			contract.interinidad = this.interinidad;
 			contract.discontinuo = this.discontinuo;
@@ -799,6 +823,8 @@ public class Contract {
 			+ ", durationTypeJndMin=" + durationTypeJndMin 
 			+ ", durationTypeCvnHour="+ durationTypeCvnHour 
 			+ ", durationTypeCvnMin=" + durationTypeCvnMin 
+			+ ", durationFormationHour="+ durationFormationHour 
+			+ ", durationFormationMin=" + durationFormationMin 
 			+ ", interinidad=" + interinidad
 			+ ", titulacion=" + titulacion 
 			+ ", certificateProfessional=" + certificateProfessional
