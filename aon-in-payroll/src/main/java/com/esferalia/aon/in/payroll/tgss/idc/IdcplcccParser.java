@@ -218,7 +218,13 @@ public class IdcplcccParser {
 				}
 			} while ( m != null );
 		},
-		() -> listener.onNoEmployeeQuotePEC(naf, ccc, start, end)
+		() -> {
+			try {
+				attempt(reader, EMPLOYEE_NO_QUOTE_PEC);
+			} catch (IOException e) {
+			}
+			listener.onNoEmployeeQuotePEC(naf, ccc, start, end);
+		}
 		);	
 	}
 	
@@ -317,7 +323,6 @@ public class IdcplcccParser {
 	private static Optional<Matcher> attempt( BufferedReader reader, Pattern pattern ) throws IOException {
 		reader.mark(256);
 		String line = readLine(reader) ; 
-//		System.out.println(line);
 		Matcher matcher = pattern.matcher(line) ;
 		if ( matcher.matches() )
 			return Optional.of(matcher);
@@ -383,4 +388,8 @@ public class IdcplcccParser {
 	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<colective>[0-9]{4})([^0-9]+)\\s+(?<law>[0-9]{4}[^0-9]+).*$"
 	, Pattern.CASE_INSENSITIVE);
 
+	private static final Pattern EMPLOYEE_NO_QUOTE_PEC = 
+			Pattern.compile(
+			"^\\s*SIN\\s*PECULIARIDADES\\s*DE\\s*COTIZACION.*$"
+			, Pattern.CASE_INSENSITIVE);
 }
