@@ -79,6 +79,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -600,14 +601,19 @@ public class InvoiceTemplate {
 	private interface IssueDateCallback {
 		Date get(InvoiceDetail detail);
 	}
+
+	@FunctionalInterface
+	private interface DescriptionCallback {
+		String get(InvoiceDetail detail);
+	}
 	
-	private static void iterateDetailsBySource(List<InvoiceDetail> details, InvoiceSource source,  Map<DetailCategory, List<InvoiceDetail>> map, IdCallback idCallback, ReferenceCallback referenceCallback, IssueDateCallback issueDateCallback) {
+	private static void iterateDetailsBySource(List<InvoiceDetail> details, InvoiceSource source,  Map<DetailCategory, List<InvoiceDetail>> map, IdCallback idCallback, ReferenceCallback referenceCallback, IssueDateCallback issueDateCallback, DescriptionCallback descriptionCallback) {
 		if (source == null)
 			return;
 		details.stream()
 		.filter(detail -> detail != null && source.equals(detail.getSource()))
 		.forEach(detail -> {
-			DetailCategory key = new DetailCategory(source, idCallback.get(detail), referenceCallback.get(detail), issueDateCallback.get(detail));
+			DetailCategory key = new DetailCategory(source, idCallback.get(detail), referenceCallback.get(detail), issueDateCallback.get(detail), descriptionCallback.get(detail));
 			List<InvoiceDetail> detailList = map.getOrDefault(key, new LinkedList<>());
 			detailList.add(detail);
 			map.put(key, detailList);
@@ -625,32 +631,43 @@ public class InvoiceTemplate {
 		});
 	}
 	
+	private static String safeProjectDescription(Project project) {
+		if (project != null && AonStringUtils.isNotBlank(project.getName())) {
+			return project.getName();
+		}
+		return null;
+	}
+	
 	private static void sortDeliveries(List<InvoiceDetail> details, Map<DetailCategory, List<InvoiceDetail>> map) {
 		iterateDetailsBySource(details, InvoiceSource.DELIVERY, map,
 			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? detail.getDeliveryDetail().getDelivery().getId() : null,
 			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? AonStringUtils.trimToEmpty(detail.getDeliveryDetail().getDelivery().getReferenceCode()) : "",
-			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? detail.getDeliveryDetail().getDelivery().getDate() : null
+			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? detail.getDeliveryDetail().getDelivery().getDate() : null,
+			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? safeProjectDescription(detail.getDeliveryDetail().getDelivery().getProject()) : ""
 		);
 	}
 	private static void sortSales(List<InvoiceDetail> details, Map<DetailCategory, List<InvoiceDetail>> map) {
 		iterateDetailsBySource(details, InvoiceSource.SALES, map,
 			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? detail.getSalesDetail().getSales().getId() : null,
 			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? AonStringUtils.trimToEmpty(detail.getSalesDetail().getSales().getReferenceCode()) : "",
-			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? detail.getSalesDetail().getSales().getDate() : null
+			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? detail.getSalesDetail().getSales().getDate() : null,
+			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? safeProjectDescription(detail.getSalesDetail().getSales().getProject()) : ""
 		);
 	}
 	private static void sortIncome(List<InvoiceDetail> details, Map<DetailCategory, List<InvoiceDetail>> map) {
 		iterateDetailsBySource(details, InvoiceSource.INCOME, map,
 			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? detail.getIncomeDetail().getIncome().getId() : null,
 			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? AonStringUtils.trimToEmpty(detail.getIncomeDetail().getIncome().getReferenceCode()) : "",
-			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? detail.getIncomeDetail().getIncome().getIssueDate() : null
+			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? detail.getIncomeDetail().getIncome().getIssueDate() : null,
+			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? safeProjectDescription(detail.getIncomeDetail().getIncome().getProject()) : ""
 		);
 	}
 	private static void sortOffer(List<InvoiceDetail> details, Map<DetailCategory, List<InvoiceDetail>> map) {
 		iterateDetailsBySource(details, InvoiceSource.OFFER, map,
 			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? detail.getOfferDetail().getOffer().getId() : null,
 			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? AonStringUtils.trimToEmpty(detail.getOfferDetail().getOffer().getReferenceCode()) : "",
-			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? detail.getOfferDetail().getOffer().getIssueDate() : null	
+			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? detail.getOfferDetail().getOffer().getIssueDate() : null,	
+			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? safeProjectDescription(detail.getOfferDetail().getOffer().getProject()) : ""
 		);
 	}
 	
@@ -822,6 +839,10 @@ public class InvoiceTemplate {
 			y-= 5;
 			drawText(contents, category.toString(), x + 5 + (indent ? 10 : 0), y, theme.getTextColor(), boldFont, 9);
 			y-= 10;
+			if (AonStringUtils.isNotBlank(category.getDescription())) {				
+				drawText(contents, category.getDescription(), x + 5 + (indent ? 10 : 0), y, theme.getTextColor(), boldFont, 9);
+				y-= 10;
+			}
 		}
 	}
 	
@@ -834,6 +855,9 @@ public class InvoiceTemplate {
 			}
 			y-= 5;
 			y-= 10;
+			if (AonStringUtils.isNotBlank(category.getDescription())) {				
+				y-= 10;
+			}
 		}
 	}
 
@@ -1896,13 +1920,15 @@ public class InvoiceTemplate {
 		private String reference;
 		private Date date;
 		private String name;
+		private String description;
 		
-		public DetailCategory (InvoiceSource source, Integer id, String reference, Date date) {
+		public DetailCategory (InvoiceSource source, Integer id, String reference, Date date, String description) {
 			super();
 			this.id = id;
 			this.name = source != null ? AonStringUtils.trimToEmpty(source.getDescription()) : null;
 			this.reference = reference;
 			this.date = date;
+			this.description = description;
 		}
 
 		public DetailCategory (ProductType productType) {
@@ -1918,6 +1944,9 @@ public class InvoiceTemplate {
 		}
 		public String getName() {
 			return name;
+		}
+		public String getDescription() {
+			return description;
 		}
 		
 		public DetailCategory setName(String name) {

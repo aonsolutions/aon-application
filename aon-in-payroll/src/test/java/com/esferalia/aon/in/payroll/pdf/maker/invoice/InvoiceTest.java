@@ -76,6 +76,7 @@ import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -287,7 +288,12 @@ public class InvoiceTest {
 		detailOne.setSource(InvoiceSource.DELIVERY);
 		detailOne.setItem(new Item().setProduct(new Product().setType(ProductType.LABOUR)));
 		
-		DeliveryDetail deliveryDetail = new DeliveryDetail().setId(288).setDelivery(new Delivery().setId(123).setIssueTime(new Date()).setSeries("3434"));
+		DeliveryDetail deliveryDetail = new DeliveryDetail()
+				.setId(288)
+				.setDelivery(new Delivery()
+						.setId(123)
+						.setIssueTime(new Date()).setSeries("3434")
+						.setProject(new Project().setName("PUROJEKUTO DI")));
 		detailOne.setDeliveryDetail(deliveryDetail);
 				
 		
@@ -631,12 +637,12 @@ public class InvoiceTest {
 		
 		details.add(detailX);
 		details.add(detailOne);
-//		details.add(detailTwo);
-//		details.add(detailThree);
-//		details.add(detailThreeAndAHalf);
-//		details.add(detailFour);
-//		details.add(detailFive);
-//		details.add(specialDetail);
+		details.add(detailTwo);
+		details.add(detailThree);
+		details.add(detailThreeAndAHalf);
+		details.add(detailFour);
+		details.add(detailFive);
+		details.add(specialDetail);
 //		details.add(specialDetail);
 		details.add(auxDetail);
 		details.add(auxDetail);
