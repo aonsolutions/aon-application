@@ -88,6 +88,9 @@ public class CompanyDAO {
 		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.VAT_ACCRUAL_PAYMENT);}
 		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.E_INVOICE);}
  		@Override public Property<Integer> getDomainParentProperty() {return new FilterDAO.PropertyDAO<>(Domain.DOMAIN.PARENT);}
+ 		
+ 		@Override public Property<Byte> getUserSharedProperty() {return new FilterDAO.PropertyDAO<>(USER.SHARED);}
+ 		@Override public Property<Byte> getDomainTypeProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.TYPE);}
 	}
 	
 	public static class CompanyFiller implements Function<Record, Company> {
@@ -394,22 +397,21 @@ public class CompanyDAO {
 		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
 		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
 		
-		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
-
+	
 		return ctx.getDslContext().selectDistinct(REGISTRY.ID)
 		.from(COMPANY)
 		.join(REGISTRY).on(REGISTRY.ID.eq(COMPANY.REGISTRY))
-		.join(domain).on(
-				COMPANY.DOMAIN.eq(domain.ID)
+		.join(DOMAIN).on(
+				DOMAIN.ID.eq(COMPANY.DOMAIN)
 				.and(
-					domain.ID.in(domains)
-					.or(domain.PARENT.in(domains)
+					DOMAIN.ID.in(domains)
+					.or(DOMAIN.PARENT.in(domains)
 					.and(
-						domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes)))
+						DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes)))
 					)
 				)
 		)
-		.join(USER).on(USER.DOMAIN.eq(domain.ID).or(USER.DOMAIN.eq(domain.PARENT)))
+		.join(USER).on(USER.DOMAIN.eq(DOMAIN.ID).or(USER.DOMAIN.eq(DOMAIN.PARENT)))
 		.where(COMPANY_PROPERTIES.getConditions(filter))
 		.orderBy(REGISTRY.NAME)
 		.fetch()

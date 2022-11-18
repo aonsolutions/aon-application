@@ -340,6 +340,27 @@ public class CompanyServlet extends AonApiHttpServlet{
 			filter =  filter.and(f.getDomainParentProperty().eq(json.optInt(IJsonNames.PARENT_ID)));
 		}
 		
+		if(!json.isNull(IJsonNames.ACTIVE)) {
+			int active = json.optBoolean(IJsonNames.ACTIVE) ? 1 : 0;
+			filter = filter.and(f.getActiveProperty().eq((byte)active));
+		}
+		
+		if(!json.isNull(IJsonNames.SHARED)) {
+			int shared = json.optBoolean(IJsonNames.SHARED) ? 1 : 0;
+			filter = filter.and(f.getUserSharedProperty().eq((byte)shared));
+		}
+		
+		if(!json.isNull(IJsonNames.TYPE)) {
+			DomainType type = DomainType.safeValueOf(json.optString(IJsonNames.TYPE));
+			
+			filter = filter.and(f.getDomainTypeProperty().eq(type.value()));
+			
+			if(type.equals(DomainType.CONSULTANCY)) {
+				filter = filter.and(f.getDomainParentProperty().isNull());
+			}
+		}
+		
+		
 		return filter;
 	}
 	

@@ -1026,6 +1026,9 @@ public interface Properties {
 		Property<Byte> getWithholdingProperty();
 		Property<Byte> getVatAccrualPaymentProperty();
 		Property<Byte> getEInvoiceProperty();
+		
+		Property<Byte> getUserSharedProperty();
+		Property<Byte> getDomainTypeProperty();
 	}
 	
 	public interface PersonProperties extends RegistryProperties{
