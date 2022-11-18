@@ -79,8 +79,8 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 				boxQuantity = boxQuantity / item.getPackUnits().doubleValue();	
 			} else if(item.getStockUnitTag().getId().equals(item.getPackUnitsTag().getId())) {
 				boxQuantity = quantity / item.getPackUnits().doubleValue();	
-			}
-			 
+			}    
+			boxQuantity = AonMathUtils.round(boxQuantity);
 //			String separator = "\u001d";
 //			char separator = 29; 
 			String separator = "\312";
@@ -92,7 +92,7 @@ public class PackagingPdfServlet extends AonApiHttpServlet {
 			String ean128 = "(02)" + barcode + "(37)" + boxQ + separator + "(15)" + AonDateUtils.format(item.getSerialDate(), "yyMMdd") + "(10)" + serialNumber ;
 			String sscc = container.getSerialNumber();
 				
-			PdfMaker.printPackaging(resp.getOutputStream(), company, item, logo.getData(), barcode, AonMathUtils.round(boxQuantity), ean128, sscc);
+			PdfMaker.printPackaging(resp.getOutputStream(), company, item, logo.getData(), barcode, boxQuantity, ean128, sscc);
 
 			responseFile(resp, "packaging", MimeType.PDF);
 		} catch (IOException e) {
