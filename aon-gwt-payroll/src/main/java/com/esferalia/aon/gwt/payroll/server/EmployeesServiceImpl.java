@@ -7347,6 +7347,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setDurationTypeJndMin(employeeContractInfo.getContractSpecificData().getJourneyDurationMinutes());
 		builder.setDurationTypeCvnHour(employeeContractInfo.getContractSpecificData().getAgreementHours());
 		builder.setDurationTypeCvnMin(employeeContractInfo.getContractSpecificData().getAgreementMinutes());
+		builder.setDurationFormationHour(employeeContractInfo.getContractSpecificData().getFormationHours());
+		builder.setDurationFormationMin(employeeContractInfo.getContractSpecificData().getFormationMinutes());
 
 		return builder.build();
 	}

@@ -1,5 +1,5 @@
 
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod190;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
@@ -57,6 +57,8 @@ import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.occam.api.model.type.PaymentType.PaymentTypeVisitor;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -93,12 +95,12 @@ public class Mod190DAO {
 	public static Mod190 save(AONContext ctx, Mod190 mod190) {
 		ctx.checkWrite();
 		if (mod190.getId() == null) {
-			mod190 = insert(ctx, mod190);
+			insert(ctx, mod190);
 			if (mod190.getDetails() != null && !mod190.getDetails().isEmpty()) {
 				insertDetails(ctx, mod190);
 			}
 		} else {
-			mod190 = update(ctx, mod190);
+			update(ctx, mod190);
 			for (Mod190Detail detail : mod190.getDetails()) {
 				saveDetail(ctx, mod190, detail);
 			}
@@ -659,7 +661,7 @@ public class Mod190DAO {
 									subKey = Mod1902016Key.getDefaultSubkeyForFarmerRetentions();
 								}
 							} else if (withholding == WithholdingType.TRANSPORT_OPERATOR) { // TRANSPORTISTAS Y ASIMILADOS - TRANSPORT_OPERATOR
-								if (mod190.getYear() == 2015) {
+								if (mod190.getYear() == 2014) {
 									key = Mod1902014Key.getDefaultKeyForTransportRetentions().getValue();
 									subKey = Mod1902014Key.getDefaultSubkeyForTransportRetentions();
 								} else if (mod190.getYear() == 2015) {
