@@ -529,7 +529,7 @@ public class InvoiceTest {
 		detailFive.setAccountCode("0192831010");
 		
 		String largeDesc = "";
-		for (int i=1; i<=20; i++) {
+		for (int i=1; i<=40; i++) {
 			largeDesc += "abcdefghijklmnño Hola, ¿Qué tal? Esta línea es la línea " + i + "\n";
 		}
 		
@@ -587,7 +587,7 @@ public class InvoiceTest {
 		detailX.setAccountCode("0192831010");
 		
 		String xdesc = "";
-		for (int i=1; i<=12; i++) {
+		for (int i=1; i<=49; i++) {
 			xdesc += "línea" + i + "\n";
 		}
 		
@@ -611,16 +611,40 @@ public class InvoiceTest {
 		specialDetail.setTaxableBase(10);
 		specialDetail.setItem(new Item().setProduct(new Product().setType(ProductType.PREPAYMENT)));
 		
+		InvoiceDetail auxDetail = new InvoiceDetail();
+		auxDetail.setAccountCode("0123");
+		auxDetail.setDescription("ENTE");
+		auxDetail.setPrice(29);
+		auxDetail.setDiscountExpression("0");
+		auxDetail.setQuantity(1);
+		auxDetail.setTaxableBase(10);
+		auxDetail.setItem(new Item().setProduct(new Product().setType(ProductType.AUXILIARY).setId(12)));
+
+		InvoiceDetail auxDetail2 = new InvoiceDetail();
+		auxDetail2.setAccountCode("213123");
+		auxDetail2.setDescription("WEA");
+		auxDetail2.setPrice(300);
+		auxDetail2.setDiscountExpression("0");
+		auxDetail2.setQuantity(1);
+		auxDetail2.setTaxableBase(10);
+		auxDetail2.setItem(new Item().setProduct(new Product().setType(ProductType.AUXILIARY).setId(11)));
+		
 		details.add(detailX);
 		details.add(detailOne);
-		details.add(detailTwo);
+//		details.add(detailTwo);
 //		details.add(detailThree);
-		details.add(detailThreeAndAHalf);
+//		details.add(detailThreeAndAHalf);
 //		details.add(detailFour);
 //		details.add(detailFive);
-		details.add(specialDetail);
 //		details.add(specialDetail);
-		details.add(specialDetail);
+//		details.add(specialDetail);
+		details.add(auxDetail);
+		details.add(auxDetail);
+		details.add(auxDetail);
+		details.add(auxDetail2);
+		details.add(auxDetail2);
+		details.add(auxDetail2);
+		details.add(auxDetail2);
 		
 		
 //		details.add(shortDetail1);
@@ -646,7 +670,7 @@ public class InvoiceTest {
 //			config.setLanguage(AonLanguage.ENGLISH);
 			config.setAdjustImage(false);
 			config.setBackground(attach);
-			config.setDetailed(true);
+//			config.setDetailed(true);
 			config.setAdjustImage(true);
 			config.setHeader(50);
 			config.setFooter(0);
@@ -726,7 +750,7 @@ public class InvoiceTest {
 			
 			Company registry = new Company();
 			registry.setName("COMPAÑÍA FALSA PERO MUY FALSA EH XD S.L.").setDocument("L012345678").setDocumentCountry(Country.JP);
-			registry.setDomain(new Domain().setDomainType(DomainType.GARAGE));
+			registry.setDomain(new Domain().setDomainType(DomainType.GARAGE).setName("UDAPA.com"));
 			
 			LinkedList<RegistryAddress> addressList = new LinkedList<>();
 			addressList.add(new RegistryAddress().setAddress("Rey Don Sancho, Rey Don Sancho, no digas que no te aviso, pero, de dentro de Zamora un alevoso ha salido"));
