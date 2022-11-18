@@ -783,81 +783,75 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			return item;
 		}
 		
-		public void setIsComunica(boolean isComunica) {
-			separatorComunicate.setVisible(isComunica);
-			sendBasicCopy.setVisible(isComunica);
-			sendContract.setVisible(isComunica);
-			sendContractTransform.setVisible(isComunica);
-			sendContractExtension.setVisible(isComunica);
-			removeContract.setVisible(isComunica);
-			removeContractTransform.setVisible(isComunica);
+		public void checkSepeContextMenu() {
+			try {
+				Date endDate = contrataEmployeeObject.getContractData().getEndDate();
+				
+				Integer contractType = Integer.parseInt(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType());
+				
+				boolean hasExtension = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasExtension();
+				boolean hasExtensionComuniation = AonStringUtils.isNotBlank(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getSepeExtensionId());
+				boolean canExtension = contractType == 402 || contractType == 420 || contractType == 421 || contractType == 502 || contractType == 520 || contractType == 521;
+				
+				boolean hasTransform = null != contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getTransformDate();
+				boolean hasTransformComuniation = AonStringUtils.isNotBlank(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getSepeTransformId());
+				boolean canTransform = contractType >= 400;
+				
+				boolean hasCto = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().hasCto();
+				boolean hasCbc = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().hasCbc();
+				
+				cto.setVisible(hasCertificateSEPE);
+				cbc.setVisible(hasCertificateSEPE);
+				ctoTransform.setVisible(hasCertificateSEPE && hasTransformComuniation);
+				ctoExtension.setVisible(hasCertificateSEPE && hasExtensionComuniation);
+				
+				separatorCertifica.setVisible(null != endDate);
+				cetifica2.setVisible(null != endDate);
+				cetifica2PDF.setVisible(hasCertificateSEPE && null != endDate);
+				
+				separatorAdds.setVisible(canExtension || canTransform || hasExtension || hasTransform);
+				contractExtension.setVisible(canExtension && !hasExtension);
+				contractTransform.setVisible(canTransform && !hasTransform);
+				deleteContractExtension.setVisible(hasExtension);
+				deleteContractTransform.setVisible(hasTransform);
+				
+				separatorComunicate.setVisible(hasCertificateSEPE || hasCbc || hasCto || hasTransformComuniation || hasExtensionComuniation);
+				sendBasicCopy.setVisible(hasCertificateSEPE && !hasCbc);
+				sendContract.setVisible(hasCertificateSEPE && !hasCto);
+				sendContractTransform.setVisible(hasCertificateSEPE && hasTransform && !hasTransformComuniation);
+				sendContractExtension.setVisible(hasCertificateSEPE && hasExtension && !hasExtensionComuniation);
+				removeContract.setVisible(hasCertificateSEPE && hasCto);
+				removeContractTransform.setVisible(hasCertificateSEPE && hasTransform && hasTransformComuniation);
+			} catch (Exception e) {
+				setDefaultView();
+			}
 		}
 
-		public void setIsExtension() {
-			contractExtension.setVisible(true);
-			deleteContractExtension.setVisible(true);
-			sendBasicCopy.setVisible(true);
-			sendContract.setVisible(true);
+		private void setDefaultView() {
+			Date endDate = contrataEmployeeObject.getContractData().getEndDate();
 			
-			contractTransform.setVisible(false);
-			deleteContractTransform.setVisible(false);
-			sendContractTransform.setVisible(false);
-			removeContractTransform.setVisible(false);
-			sendContractExtension.setVisible(true);
-		}
-		
-		public void setCanExtension(boolean canExtension) {
-			contractExtension.setVisible(canExtension);
-		}
-		
-		public void setCanTransform(boolean canTranform) {
-			contractTransform.setVisible(canTranform);
-		}
-		
-		public void setIsTransform() {
-			contractExtension.setVisible(false);
-			deleteContractExtension.setVisible(false);
-			sendContract.setVisible(false);
-			
-			contractTransform.setVisible(false);
-			deleteContractTransform.setVisible(true);
-			ctoTransform.setVisible(true);
-			sendBasicCopy.setVisible(true);
-			sendContractTransform.setVisible(true);
-			removeContractTransform.setVisible(true);
-			sendContractExtension.setVisible(false);
-		}
-		
-		public void setDafaultContract() {
-			contractExtension.setVisible(true);
-			deleteContractExtension.setVisible(true);
-			deleteContractTransform.setVisible(true);
-			contractTransform.setVisible(false);
-			sendContractTransform.setVisible(false);
-			removeContractTransform.setVisible(false);
-			sendBasicCopy.setVisible(true);
-			sendContract.setVisible(true);
+			cto.setVisible(hasCertificateSEPE);
+			cbc.setVisible(hasCertificateSEPE);
 			ctoTransform.setVisible(false);
-			sendContractExtension.setVisible(false);
-		}
-		
-		public void setEndDate(Date endDate) {
-			separatorCertifica.setVisible(endDate != null);
-			cetifica2.setVisible(endDate != null);
-			cetifica2PDF.setVisible(endDate != null);
-		}
-		
-		public void setHasCTO(boolean hasCTO) {
-			sendContract.setVisible(!hasCTO);
-			removeContract.setVisible(hasCTO);
-		}
-		
-		public void setHasCBC(boolean hasCBC) {
-			sendBasicCopy.setVisible(!hasCBC);
-		}
-		
-		public MenuItemSeparator getSeparatorAdds() {
-			return separatorAdds;
+			ctoExtension.setVisible(false);
+			
+			separatorCertifica.setVisible(null != endDate);
+			cetifica2.setVisible(null != endDate);
+			cetifica2PDF.setVisible(hasCertificateSEPE && null != endDate);
+			
+			separatorAdds.setVisible(false);
+			contractExtension.setVisible(false);
+			contractTransform.setVisible(false);
+			deleteContractExtension.setVisible(false);
+			deleteContractTransform.setVisible(false);
+			
+			separatorComunicate.setVisible(hasCertificateSEPE);
+			sendBasicCopy.setVisible(hasCertificateSEPE);
+			sendContract.setVisible(hasCertificateSEPE);
+			sendContractTransform.setVisible(hasCertificateSEPE);
+			sendContractExtension.setVisible(hasCertificateSEPE);
+			removeContract.setVisible(hasCertificateSEPE);
+			removeContractTransform.setVisible(hasCertificateSEPE);
 		}
 
 	}
@@ -2551,44 +2545,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	}
 	
 	private void checkSepeContextMenu() {
-		Date endDate = contrataEmployeeObject.getContractData().getEndDate();
-		
-		sepeContextMenu.setDafaultContract();
-		sepeContextMenu.setIsComunica(this.hasCertificateSEPE);
-		
-		// Extension
-		boolean hasExtension = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().isHasExtension();
-		if(Boolean.TRUE.equals(hasExtension)) sepeContextMenu.setIsExtension();
-		
-		// Can Transform
-		String contractTypeStr = contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType();
-
-		if (AonStringUtils.isNotBlank(contractTypeStr)) {
-			Integer contractType = Integer.parseInt(contractTypeStr);
-			sepeContextMenu.setCanTransform(contractType >= 400);
-			sepeContextMenu.setCanExtension(contractType == 402 || contractType == 420 || contractType == 421 || contractType == 502 || contractType == 520 || contractType == 521 );
-		}
-		
-		// Transform
-		ContractTypeRecord contractTypeRecord = null;
-		
-		try {
-			ContractType contractType = new ContractType();
-			contractTypeRecord = contractType.getContractType(Integer.parseInt(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().getContractType()));
-		} catch (Exception e) {
-			// Nothing to do here
-		}
-		
-		boolean hasTransform = null == contractTypeRecord ? false : contractTypeRecord.isTransform();
-		if(Boolean.TRUE.equals(hasTransform)) sepeContextMenu.setIsTransform();
-		
-		if(Boolean.TRUE.equals(hasExtension) && Boolean.TRUE.equals(hasTransform)) sepeContextMenu.getSeparatorAdds().setVisible(false);
-		
-		sepeContextMenu.setEndDate(endDate);
-		if(!hasTransform && !hasExtension) {
-			sepeContextMenu.setHasCTO(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().hasCto());
-			sepeContextMenu.setHasCBC(contrataEmployeeObject.getContractEmployeeInfo().getContractInfo().hasCbc());
-		}
+		sepeContextMenu.checkSepeContextMenu();
 	}
 
 	// ------------------------------------------------- TGSS status
