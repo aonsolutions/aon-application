@@ -15,6 +15,8 @@ public class AonCompany implements Serializable {
     private Company company;
     Administration administration;
 	private boolean shared;
+	private String schema;
+	
 	
 	public AonCompany() {
 
@@ -44,6 +46,16 @@ public class AonCompany implements Serializable {
 
 	public AonCompany setCompany(Company company) {
 		this.company = company;
+		return this;
+	}
+	
+
+	public String getSchema() {
+		return schema;
+	}
+
+	public AonCompany setSchema(String schema) {
+		this.schema = schema;
 		return this;
 	}
 
@@ -81,6 +93,8 @@ public class AonCompany implements Serializable {
 			.put("maxDefinedUsers", getDomain().getMaxDefinedUsers())
 			.put("withholding", getCompany().isWithholding())
 			.put(IJsonNames.VAT_ACCRUAL_PAYMENT, getCompany().isVatAccrualPayment())
-			.put(IJsonNames.SURCHARGE, getCompany().isSurcharge());
+			.put(IJsonNames.SURCHARGE, getCompany().isSurcharge())
+			.put(IJsonNames.SCHEMA, getSchema())
+			;
 	}
 }

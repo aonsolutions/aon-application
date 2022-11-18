@@ -1,5 +1,4 @@
 package net.aonsolutions.aon.api.servlet;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -263,95 +262,69 @@ public class CompanyServlet extends AonApiHttpServlet{
 		JSONObject params = api.getData();
 		
 		int page = params.optInt(IJsonNames.PAGE)!=0 ? params.optInt(IJsonNames.PAGE) : 1;
-		int perPage = params.optInt(IJsonNames.PER_PAGE)!=0 ? params.optInt(IJsonNames.PER_PAGE) : 30;
+		int perPage = params.optInt(IJsonNames.PER_PAGE)!=0 ? params.optInt(IJsonNames.PER_PAGE) : 20;
 		
 
-		ArrayList<Company> companies = new ArrayList<>();
+//		ArrayList<Company> companies = new ArrayList<>();
+//		
+//		Map<String, List<Integer>> map = AON_SOLUTIONS.getCompanyBySchemaStream(api.getToken(), f-> companyFilter(api, f) , page, perPage);
+//		
+//		map.forEach((domain, registryIds)->{
+//
+//	    	Integer[] registrys = getPage(registryIds, page, perPage).toArray(Integer[]::new);
+//			AON.getCompanyStream(domain, 0, "", f -> f.getIdProperty().in(registrys))
+//			.forEach(companies::add);
+//
+//			System.out.println("registrys"+registryIds.toString()+" domain"+domain);
+//			
+//			System.out.println("registrysIds"+ getPage(registryIds, page, perPage).toString());
+//		});
+//		
+//		return CompanyJSON.toJSON(
+//				companies.stream().sorted((o1, o2) -> o1.getName().compareTo(o2.getName()))
+//		);
 		
-		Map<String, List<Integer>> map = AON_SOLUTIONS.getCompanyBySchemaStream(api.getToken(), f-> companyFilter(api, f) , page, perPage);
+		JSONArray jsArray = new JSONArray();
 		
-		map.forEach((domain, registryIds)->{
-
-	    	Integer[] registrys = getPage(registryIds, page, perPage).toArray(Integer[]::new);
-			AON.getCompanyStream(domain, 0, "", f -> f.getIdProperty().in(registrys))
-			.forEach(companies::add);
-
-			System.out.println("registrys"+registryIds.toString()+" domain"+domain);
-			
-			System.out.println("registrysIds"+ getPage(registryIds, page, perPage).toString());
-		});
-		
-		return CompanyJSON.toJSON(
-				companies.stream().sorted((o1, o2) -> o1.getName().compareTo(o2.getName()))
+		AON_SOLUTIONS.getCompanyBySchemaStream(api.getToken(), f-> companyFilter(api, f) , page, perPage)
+		.stream()
+		.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName()))
+		.forEach(ac -> 
+			jsArray.put(ac.toJSON())
 		);
 		
-//		JSONArray jsArray = new JSONArray();
-//		JSONObject json = new JSONObject();
-//		String schemas = params.optString(IJsonNames.SCHEMA);
-//		List<String> schemaList = schemas.isEmpty() ? AONContext.getSchemas() : Arrays.asList(schemas.split(","));
-//		List<String> schemasNew = new ArrayList<>();
-//		boolean next = true;
 		
-//		for(String schema : schemaList) {
-//			if(next) {
-//				LinkedList<Integer> ds = new LinkedList<>();	
-//				System.out.println("schema>>"+schema+ " page:"+page);
-//				AON_SOLUTIONS.getCompanyStream(api.getToken(), schema, f-> companyFilter(api, f) , page, perPage)
-//				.sorted((o1, o2) -> o1.getCompany().getName().compareTo(o2.getCompany().getName()))
-//				.forEach(ac -> {
-//					if(!ds.contains(ac.getDomain().getId())){
-//						jsArray.put(
-//							ac.toJSON().put(IJsonNames.SCHEMA, schema)
-//						);
-//						ds.add(ac.getDomain().getId());
-//					}
-//				});	
-//
-//				next = jsArray.length() < perPage;
-//				page = next ? 1 : (page+1);
-//			} 
-//			
-//			if(!next && jsArray.length()>0){
-//				schemasNew.add(schema);
-//			}
-//		}
-	
-//		json.put("companies", jsArray);
-//		json.put("page", page);
-//		json.put("next", !schemasNew.isEmpty());
-//		json.put(IJsonNames.SCHEMA, String.join(",", schemasNew));
-//		
-//		return json;
+		return jsArray;
 	}
 	
 	private Filter companyFilter(AonApiData api, CompanyProperties f) {
-		JSONObject json = api.getData();
+		JSONObject params = api.getData();
 		Filter filter = f.getIdProperty().isNotNull();
 
-		if(JsonUtils.has(json, IJsonNames.PARENT) && JsonUtils.getboolean(json, IJsonNames.PARENT)) {
+		if(JsonUtils.has(params, IJsonNames.PARENT) && JsonUtils.getboolean(params, IJsonNames.PARENT)) {
 			filter = f.getDomainParentProperty().eq(api.getDomain().getId());
 		}
 
-		if(JsonUtils.has(json, IJsonNames.DOCUMENT) && AonStringUtils.isNotBlank(JsonUtils.getString(json, IJsonNames.DOCUMENT))) {
-			filter =  filter.and(f.getDocumentProperty().eq(JsonUtils.getString(json, IJsonNames.DOCUMENT))) ;
+		if(JsonUtils.has(params, IJsonNames.DOCUMENT) && AonStringUtils.isNotBlank(JsonUtils.getString(params, IJsonNames.DOCUMENT))) {
+			filter =  filter.and(f.getDocumentProperty().eq(JsonUtils.getString(params, IJsonNames.DOCUMENT))) ;
 		}
 		
-		if(!json.isNull(IJsonNames.PARENT_ID)) {
-			filter =  filter.and(f.getDomainParentProperty().eq(json.optInt(IJsonNames.PARENT_ID)));
+		if(!params.isNull(IJsonNames.PARENT_ID)) {
+			filter =  filter.and(f.getDomainParentProperty().eq(params.optInt(IJsonNames.PARENT_ID)));
 		}
 		
-		if(!json.isNull(IJsonNames.ACTIVE)) {
-			int active = json.optBoolean(IJsonNames.ACTIVE) ? 1 : 0;
+		if(!params.isNull(IJsonNames.ACTIVE)) {
+			int active = params.optBoolean(IJsonNames.ACTIVE) ? 1 : 0;
 			filter = filter.and(f.getActiveProperty().eq((byte)active));
 		}
 		
-		if(!json.isNull(IJsonNames.SHARED)) {
-			int shared = json.optBoolean(IJsonNames.SHARED) ? 1 : 0;
+		if(!params.isNull(IJsonNames.SHARED)) {
+			int shared = params.optBoolean(IJsonNames.SHARED) ? 1 : 0;
 			filter = filter.and(f.getUserSharedProperty().eq((byte)shared));
 		}
 		
-		if(!json.isNull(IJsonNames.TYPE)) {
-			DomainType type = DomainType.safeValueOf(json.optString(IJsonNames.TYPE));
+		if(!params.isNull(IJsonNames.TYPE)) {
+			DomainType type = DomainType.safeValueOf(params.optString(IJsonNames.TYPE));
 			
 			filter = filter.and(f.getDomainTypeProperty().eq(type.value()));
 			
@@ -360,6 +333,14 @@ public class CompanyServlet extends AonApiHttpServlet{
 			}
 		}
 		
+		if(!params.isNull(IJsonNames.VALUE)) {
+			String value = params.optString(IJsonNames.VALUE);
+			filter = filter.and(
+				f.getNameProperty().like("%" + value + "%")
+				.or(f.getDocumentProperty().like("%" + value + "%"))
+				.or(f.getAliasProperty().like("%" + value + "%"))
+			);
+		}
 		
 		return filter;
 	}

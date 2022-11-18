@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -445,24 +446,24 @@ public class AON_SOLUTIONS {
 		return stream;
 	}
 	
-	public static Map<String, List<Integer>> getCompanyBySchemaStream(String token, CompanyFilter filter, Integer page, Integer perPage) {	
+	public static List<AonCompany> getCompanyBySchemaStream(String token, CompanyFilter filter, Integer page, Integer perPage) {	
 		AonToken aonToken = SECURITY.getAonToken(token);
-		
-		Map<String, List<Integer>> map = new HashMap<>();
-		
+		List<AonCompany> list = new ArrayList<>();
+		LinkedList<String> domains = new LinkedList<>();	
 		for(String schema: AONContext.getSchemas()) {
 			String domain = AONContext.getSchemaFirstDomain(schema);
-			if(!AonStringUtils.isBlank(domain)) {
+			if(!AonStringUtils.isBlank(domain) && !domains.contains(domain)) {
 				try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
-					List<Integer> s = getRegistry().getCompanyStream(ctx, aonToken.getAuth(), filter, page, perPage);
-					if(!s.isEmpty()) {
-						map.put(domain, s);
-					}
+					
+					getRegistry().getCompanyStream(ctx, aonToken.getAuth(), filter, page, perPage)
+					.forEach(c-> list.add(c.setSchema(schema)));
+					
+					domains.add(domain);
 				}
 			} 
 		}
 		
-		return map;
+		return list;
 	}
 	
 	public static Domain getDomain(String token, Integer domainId) {
