@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.type.RawdocStatus;
 import com.esferalia.aon.occam.api.model.type.RawdocType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 import net.aonsolutions.aon.api.ewok.IConstants;
 
@@ -37,6 +38,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
 
     public static final String INVOICES = "/";
     public static final String INVOICE = "/:id";
+    public static final String ACCEPT = "/accept";
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -45,7 +47,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) {
-        get(req, resp);
+        put(req, resp);
     }
 
     @Override
@@ -79,8 +81,9 @@ public class InvoicesServlet extends AonApiHttpServlet {
         try {
             AonApiData api = initialize(req);
             Object object = new AonRouting(api)
-                    .addRoute(INVOICES, InvoiceServlet::setInvoice)
-                    .addRoute(INVOICE, InvoiceServlet::setInvoice)
+                    .addRoute(INVOICES, InvoicesServlet::saveInvoice)
+                    .addRoute(INVOICE, InvoicesServlet::saveInvoice)
+                    .addRoute(ACCEPT, InvoicesServlet::acceptInvoice)
                     .apply();
 
             response(req, resp, object);
@@ -163,9 +166,18 @@ public class InvoicesServlet extends AonApiHttpServlet {
     }
 
     private static JSONObject saveInvoice(AonApiData api) {
-        return new JSONObject();
+        return InvoiceServlet.setInvoice(api);
     }
 
+    private static JSONObject acceptInvoice(AonApiData api) {
+    	try {
+			return InvoiceServlet.acceptInvoice(api);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AonApiException(e);
+		}
+    }
+    
     private static JSONObject deleteInvoice(AonApiData api) {
         return new JSONObject();
     }
