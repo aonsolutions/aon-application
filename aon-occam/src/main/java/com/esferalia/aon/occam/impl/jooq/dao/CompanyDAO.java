@@ -398,13 +398,11 @@ public class CompanyDAO {
 		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
 		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
 		
-		com.esferalia.aon.jooq.tables.Domain domain = DOMAIN.as("d");
 		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
 		
 		SelectSeekStep1<Record, String> query = ctx.getDslContext()
-//		.select()
 		.select(COMPANY.fields())
-			.select(domain.fields())
+			.select(DOMAIN.fields())
 			.select(REGISTRY.fields())
 			.select(REGISTRY.fields())
 			.select(parent.ID, parent.NAME)
@@ -412,19 +410,19 @@ public class CompanyDAO {
 			.select(APP_PARAM.VALUE)
 		.from(COMPANY)
 		.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
-		.join(domain).on(COMPANY.DOMAIN.eq(domain.ID))
-		.join(USER).on(USER.DOMAIN.eq(domain.ID).or(USER.DOMAIN.eq(domain.PARENT)))
-		.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
-		.leftOuterJoin(APP_PARAM).on(domain.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
-		.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
+		.join(DOMAIN).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
+		.join(USER).on(USER.DOMAIN.eq(DOMAIN.ID).or(USER.DOMAIN.eq(DOMAIN.PARENT)))
+		.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
+		.leftOuterJoin(APP_PARAM).on(DOMAIN.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
+		.leftOuterJoin(parent).on(DOMAIN.PARENT.eq(parent.ID))
 		.where(COMPANY_PROPERTIES.getConditions(filter))
 		.and(
 			USER.AUTH.eq(auth)
 			.and(
-				domain.ID.in(domains)
+					DOMAIN.ID.in(domains)
 				.or(
-					domain.PARENT.in(domains)
-					.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes)))
+					DOMAIN.PARENT.in(domains)
+					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes)))
 				)
 			)
 		)

@@ -1,14 +1,24 @@
 
 import { AonSelect } from '../../components/aon-select.js';
+import { AonButton } from '../../components/aon-button.js';
 import { AonSimpleList } from '../../components/aon-simple-list.js';
 import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
-import { getDomainCompanies } from '../../services/companyService.js';
+import { getDomainCompanies, saveCompany } from '../../services/companyService.js';
+import { saveRelationShip } from '../../services/registryService.js';
 
 export class AonOfficeLinkSimpleList extends AonSimpleList {
-
     option;
     _data;
 
+    getData(){
+        return this._data || [];
+    }
+
+    setData(data){
+        this._data = data;
+        return this;
+    }
+	
     constructor () {
         super();
     }
@@ -45,14 +55,11 @@ export class AonOfficeLinkSimpleList extends AonSimpleList {
 
         const iconHTML = this.getIcon({title:message, icon, color});
 
-        let elementHTML = this.createElement(TAG.DIV);
-
         const liValue = {
             iconHTML,
-            elementHTML,
             title: customer.name,
             subtitle: message,
-            option: success ? null : this.getOptionsLink(data, elementHTML)
+            option: success ? null : this.getOptionsLink(data)
         }
 
         this.addLi(liValue, i, () => {}, null, () => {});
@@ -69,16 +76,14 @@ export class AonOfficeLinkSimpleList extends AonSimpleList {
         return element;
     }
 
-    getOptionsLink({customer}, elementHTML){
+    getOptionsLink({customer}){
         return [
             { 
 				name: "Vincular con una existente", 
 				value: "LINK",
 				icon:  MATERIAL_ICONS.LINK, 
-				fn:()=> {
-					this.getApplication().development();
-                    console.log("Vincular a una existente");
-                    // this.buildSelectCompany(customer, [], elementHTML);
+				fn:(element)=> {
+                    this.openDialogCompanies(customer, element);
 				}
 			},
             { 
@@ -86,40 +91,58 @@ export class AonOfficeLinkSimpleList extends AonSimpleList {
 				value: "ENTERPRISE_NEW",
 				icon: MATERIAL_ICONS.OPEN_IN_NEW, 
 				fn:()=> {
-					this.getApplication().development();
-                    console.log(`Desea registrar y vincular a ${customer.name} ?`);
-					// this.getApplication().confirmDialog(MSG.REGISTER, `Desea registrar y vincular a ${customer.name} ?`, () => {
-					// 	this.getApplication().startLoading();
-					// 	saveCompany({...this.registry, id:null})
-					// 	.then((company)=>{
-					// 		console.log("company", company);
-					// 		this.saveRegistryRelationship(company);
-					// 	})
-					// 	.catch(err=>{
-					// 		this.showError(err);
-					// 	})
-					// 	.finally(()=>{
-					// 		this.getApplication().stopLoading();	
-					// 	});
-					// });
+					if(confirm(`Desea registrar y vincular a ${customer.name} ?`)){
+						this.getApplication().startLoading();
+						saveCompany({...customer, id:null})
+						.then((company)=>{
+							this.saveRegistryRelationship(customer, company);
+						})
+						.catch(err=>{
+							this.showError(err);
+						})
+						.finally(()=>{
+							this.getApplication().stopLoading();	
+						});
+					}
 				}
 			}
         ];
     }
 
-    buildSelectCompany(customer, companies=[], elementHTML){
+	openDialogCompanies(customer, el){
+		const boundingClientRect = el.getBoundingClientRect();
+		const top = boundingClientRect.top;
+		const left = boundingClientRect.left;
 
-        console.log(customer);
+		const dialogMenu = this.getDialogMenu();
+
+		const {div, selectCompany, button} = this.buildSelectCompany(customer, []);
+
+		button.addEventListener(EVENT.CLICK, async () => {
+			if(selectCompany.value){
+				await this.saveRegistryRelationship(customer, selectCompany.getDetail());
+				dialogMenu.close();
+			}
+		});
+
+		dialogMenu.setContent(div, top, left);
+		dialogMenu.open();
+    }
+
+    buildSelectCompany(customer, companies=[]){
 
 		let div = document.createElement(TAG.DIV);
-		div.style.display = "flex";
-        elementHTML.appendChild(div);
-
+		div.style.padding = "12px";
+	
 		let selectCompany   = new AonSelect();
-		selectCompany.id    = "selectCompany";
+		selectCompany.id    = "selectCompany"+ customer.id;
 		selectCompany.title = MSG.COMPANY;
 		selectCompany.autocomplete = true;
 		div.appendChild(selectCompany);
+
+		let button = new AonButton();
+		button.title = "Aceptar";
+		div.appendChild(button);
 
 		if(companies.length){
 			let timeOut = null;
@@ -149,13 +172,7 @@ export class AonOfficeLinkSimpleList extends AonSimpleList {
 			})
 		}
 
-
-		// 	if(selectCompany.value){
-		// 		this.saveRegistryRelationship(selectCompany.getDetail());
-		// 		dialog.close();
-		// 	}
-
-        return div
+        return {div, selectCompany, button};
 	}   
 
 	async getDomainCompanies(customer, value=undefined){
@@ -168,14 +185,38 @@ export class AonOfficeLinkSimpleList extends AonSimpleList {
 		.map( c=> ({...c, value: c.id}));
 	}
 
-    getData(){
-        return this._data || [];
-    }
+	async saveRegistryRelationship(customer, company){
+		this.getApplication().startLoading();
 
-    setData(data){
-        this._data = data;
-        return this;
-    }
+		try {
+			await saveRelationShip({
+				domain: customer.domain,
+				registry: customer.id,
+				related_registry: company.id,
+				comments: (company.domain && company.domain.name ? company.domain.name : "")
+			})
+			.then(()=> {
+				this.showMessage();
+				this.restartData(customer);
+			})
+		} catch (error) {
+			this.showError(err)
+		}
+
+		this.getApplication().stopLoading();
+	}
+
+	restartData(customer){
+		this.getData()
+		.forEach(data=>{
+			if(data && data.customer && data.customer.id == customer.id){
+				data.message = "";
+				data.success = true;
+			}
+		})
+		this.buildRows();
+	}
+	
 }
 if(!window.customElements.get('aon-office-link-simple-list')){
     window.customElements.define('aon-office-link-simple-list', AonOfficeLinkSimpleList);

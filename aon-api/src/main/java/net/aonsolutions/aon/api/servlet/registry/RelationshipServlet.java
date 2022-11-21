@@ -149,7 +149,7 @@ public class RelationshipServlet extends AonApiHttpServlet {
 			 return saveRelationshipAll(api);
 		 } else {
 			 return RegistryRelationshipJSON.toJSON( 
-					 saveRelationship(api, RegistryRelationshipJSON.fromJSON(api.getData())) 
+					saveRelationship(api, RegistryRelationshipJSON.fromJSON(api.getData())) 
 			);
 		 }
 	}

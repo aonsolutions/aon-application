@@ -179,7 +179,7 @@ export class AonOfficePanel extends AonElement {
             saveRelationShip({ add, customers: this.getCustomerSelected() })
             .then((resp)=> {
                 if(resp.length){
-                    this.openDialogRelationship(resp);
+                    OfficeUtils.builDialogRelationship(this, resp);
                 } else {
                     this.showMessage(); 
                 }
@@ -198,8 +198,8 @@ export class AonOfficePanel extends AonElement {
         }
 	}
 
-    openDialogRelationship(data){
-        OfficeUtils.builDialogRelationship(this, data)
+    openDialogRelationship(data){ //DELETE
+        OfficeUtils.builDialogRelationship(this, data) 
     }
 
     async getProjectTypes(){
