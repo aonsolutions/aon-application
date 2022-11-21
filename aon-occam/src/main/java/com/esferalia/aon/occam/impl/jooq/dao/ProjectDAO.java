@@ -213,20 +213,39 @@ public class ProjectDAO {
 				: insert(ctx, project);
 		}
 		
-		Integer projectId = project.getId();
+		setProjectHolders(ctx, project);
 		
+		setProjectActivities(ctx, project);
+		
+		return project.setDirty(false);
+	}
+	
+	
+	private static void setProjectHolders(AONContext ctx, Project project) {
 		if(!project.getProjectHolders().isEmpty()) {
 			project.getProjectHolders()
 			.forEach(holder->{				
-				holder.setProject(projectId);
+				holder.setProject(project.getId());
 				ProjectHolderDAO.save(ctx, holder);
 			});
 	    } else if(!project.getProjectHolder().isEmpty()) {
-			project.getProjectHolder().setProject(projectId);
+			project.getProjectHolder().setProject(project.getId());
 			project.setProjectHolder(ProjectHolderDAO.save(ctx, project.getProjectHolder()));
 		}
-		
-		return project.setDirty(false);
+	}
+	
+	private static void setProjectActivities(AONContext ctx, Project project) {
+		if(!project.getProjectActivities().isEmpty()) {
+			project.getProjectActivities()
+			.forEach(activity->{				
+				activity.setProject(project.getId());
+				if(activity.isRemoved() && activity.getId()!=null) {
+					ProjectActivityDAO.delete(ctx, activity.getId());
+				} else {
+					ProjectActivityDAO.save(ctx, activity);
+				}
+			});
+	    }
 	}
 	
 	public static Project update(AONContext ctx, Project project){
@@ -265,6 +284,7 @@ public class ProjectDAO {
 	
 	public static void delete(AONContext ctx, Integer id) {
 		ProjectHolderDAO.delete(ctx, f -> f.getProjectProperty().eq(id));
+		ProjectActivityDAO.delete(ctx, f -> f.getProjectProperty().eq(id));
 		delete(ctx, f -> f.getIdProperty().eq(id));
 	}
 	

@@ -3,11 +3,15 @@ package com.esferalia.aon.occam.api;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.model.ActivityType;
+import com.esferalia.aon.occam.api.model.Filter.ActivityTypeFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProjectActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectTypeFilter;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
+import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
@@ -39,12 +43,23 @@ public interface IProject {
 	public Stream<ProjectType> getProjectTypeStream(AONContext ctx, ProjectTypeFilter filter);
 	public ProjectType saveProjectType(AONContext ctx, ProjectType projectType);
 	public void deleteProjectType(AONContext ctx, Integer id);
+	
+	
+	// ---------- ACTIVITY TYPE
+	
+	public ActivityType getActivityType(AONContext ctx, ActivityTypeFilter filter);
+	public Stream<ActivityType> getActivityTypeStream(AONContext ctx, ActivityTypeFilter filter);
+	public ActivityType saveActivityType(AONContext ctx, ActivityType activityType);
+	public void deleteActivityType(AONContext ctx, Integer id);
 
 	// ---------- PROJECT HOLDER
-	
 	public ProjectHolder getProjectHolder(AONContext ctx, ProjectHolderFilter filter);
 	public Stream<ProjectHolder> getProjectHolderStream(AONContext ctx, ProjectHolderFilter filter);
 	public List<ProjectHolder> getProjectHolderList(AONContext ctx, ProjectHolderFilter filter);
 	public ProjectHolder saveProjectHolder(AONContext ctx, ProjectHolder holder);
 	public void deleteProjectHolder(AONContext ctx, Integer id);
+	
+	// ---------- PROJECT ACTIVITY
+	public Stream<ProjectActivity> getProjectActivityStream(AONContext ctx, ProjectActivityFilter filter);
+	public void deleteProjectActivity(AONContext ctx, Integer id);
 }

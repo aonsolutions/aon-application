@@ -18,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.json.ActivityTypeJSON;
 import com.esferalia.aon.occam.api.json.AppParamJSON;
 import com.esferalia.aon.occam.api.json.DomainJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
@@ -25,6 +26,7 @@ import com.esferalia.aon.occam.api.json.ProjectHolderJSON;
 import com.esferalia.aon.occam.api.json.ProjectJSON;
 import com.esferalia.aon.occam.api.json.ProjectTypeJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
+import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -32,6 +34,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ProjectHolderProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
+import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -50,6 +53,7 @@ public class ProjectsServlet extends AonApiHttpServlet{
 	private static final String TYPE = "/type";
 	private static final String HOLDERS = "/:id/holders";
 	private static final String HOLDER = "/holder";
+	private static final String ACTIVITY = "/activity";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -98,6 +102,7 @@ public class ProjectsServlet extends AonApiHttpServlet{
 				.addRoute(ROOT, ProjectsServlet::saveProject)
 				.addRoute(HOLDER, ProjectsServlet::saveProjectHolder)
 				.addRoute(TYPE, ProjectsServlet::saveProjectType)
+				.addRoute(ACTIVITY, ProjectsServlet::saveActivity)
 				.apply();
 			
 			response(req, resp, object);
@@ -130,6 +135,7 @@ public class ProjectsServlet extends AonApiHttpServlet{
 			Object object = new AonRouting(api)
 				.addRoute(ROOT, ProjectsServlet::deleteProject)
 				.addRoute(TYPE, ProjectsServlet::deleteProjectType)
+				.addRoute(ACTIVITY, ProjectsServlet::deleteActivity)
 				.addRoute(HOLDER, ProjectsServlet::deleteHolder)
 				.apply();
 			
@@ -144,7 +150,9 @@ public class ProjectsServlet extends AonApiHttpServlet{
 		List<Project> projects = AON.getProjectStream(api.getDomain(), "", f -> projectFilter(api, f)).collect(Collectors.toList());
 
 		setHoldersByProjects(api, projects);
-	
+		
+		setActivityByProjects(api, projects);
+		
 		return ProjectJSON.toJSON(projects);
 	}
 	
@@ -212,9 +220,28 @@ public class ProjectsServlet extends AonApiHttpServlet{
     // ---------- PROJECT TYPE
     
     private static JSONArray getProjectTypes(AonApiData api) {
-    	return ProjectTypeJSON.toJSON(
-    			AON.getProjectTypeStream(api.getDomain(), api.getUser(), f -> 
-    			f.getDomainProperty().eq(api.getDomain().getId())));
+    	List<ProjectType> projectTypes = AON.getProjectTypeStream(api.getDomain(), api.getUser(), f -> 
+		f.getDomainProperty().eq(api.getDomain().getId())).collect(Collectors.toList());
+    	
+    	List<ActivityType> activityType = AON.getActivityTypeStream(api.getDomain(), api.getUser(), f-> f.getDomainProperty().eq(api.getDomain().getId())).collect(Collectors.toList());
+    	
+    	JSONArray array = new JSONArray();
+
+    	projectTypes.forEach(projectType->{
+    		JSONObject json = ProjectTypeJSON.toJSON(projectType);
+    		
+    		JSONArray activityTypeJson = ActivityTypeJSON.toJSON(
+    				activityType.stream().filter(d-> 
+    					d.getProjectType()!=null && d.getProjectType().equals(projectType.getId())
+    				)
+    		);
+    		
+    		json.put(IJsonNames.ACTIVITY_TYPE, activityTypeJson);
+    		
+    		array.put(json);
+    	});
+    	
+    	return array;
 	}
     
     private static JSONObject saveProjectType(AonApiData api) {
@@ -227,6 +254,21 @@ public class ProjectsServlet extends AonApiHttpServlet{
     private static JSONObject deleteProjectType(AonApiData api) {
     	AON.deleteProjectType(api.getDomain(), api.getUser(), JsonUtils.getInteger(api.getData(), IJsonNames.ID)); 
     	return new JSONObject();
+    }
+    
+    
+    // ---------- ACTIVITY TYPE
+    
+    private static JSONObject saveActivity(AonApiData api) {
+    	return ActivityTypeJSON.toJSON(
+    		AON.saveActivityType(api.getDomain(), api.getUser(), ActivityTypeJSON.fromJSON(api.getData()))
+    	);
+    }
+ 
+    private static JSONObject deleteActivity(AonApiData api) {
+	  ActivityType type = ActivityTypeJSON.fromJSON(api.getData());
+	  AON.deleteActivityType(api.getDomain(), api.getUser(), type.getId());
+	  return new JSONObject();
     }
     
     private static Object saveProjectHolder(AonApiData api) {
@@ -274,13 +316,30 @@ public class ProjectsServlet extends AonApiHttpServlet{
 		}
 	}
 	
+	private static void setActivityByProjects(AonApiData api, List<Project>projects) {
+	    Integer[] projectIds  = projects.stream().map(Project::getId).toArray(Integer[]::new);
+	    
+		if(projectIds!=null && projectIds.length>0) {
+			
+			List<ProjectActivity> activities = AON.getProjectActivityStream(api.getDomain(), api.getUser(),  
+					f-> f.getProjectProperty().in(projectIds)
+			).collect(Collectors.toList());
+			
+			projects.forEach(project->
+				activities.stream()
+				.filter(t-> t.getProject().equals(project.getId()))
+				.forEach(project::addProjectActivity)
+			);
+		}
+	}
+	
     private static Filter projectFilter(AonApiData api, ProjectProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId())
 				.and(f.getProjectTypeProperty().isNotNull());
 		
 		Integer registry    = api.getData().optInt(IJsonNames.REGISTRY);
 		String  search      = api.getData().optString(IJsonNames.SEARCH);
-		Integer projectType = api.getData().optInt("projectType");
+		Integer projectType = api.getData().optInt(IJsonNames.PROJECT_TYPE);
 		
 		if(registry!=0) {
 			filter = filter.and(f.getRegistryProperty().eq(registry));

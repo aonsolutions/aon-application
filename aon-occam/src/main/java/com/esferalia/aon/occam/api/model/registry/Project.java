@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 
@@ -29,6 +30,9 @@ public class Project implements Serializable {
 	private ProjectHolder projectHolder;
 	
 	private List<ProjectHolder> projectHolders;
+	
+	private List<ProjectActivity> projectActivities;
+
 
 	private boolean dirty;
 	
@@ -200,6 +204,25 @@ public class Project implements Serializable {
 	public void addProjectHolder(ProjectHolder projectHolder) {
 		setDirty(true);
 		getProjectHolders().add(projectHolder);
+ 	}
+	
+	
+	public List<ProjectActivity> getProjectActivities() {
+		if(this.projectActivities == null) {
+			this.projectActivities = new ArrayList<>();
+		}
+		return projectActivities;
+ 	}
+
+	public Project setProjectActivities(List<ProjectActivity> projectActivities) {
+		setDirty(true);
+		this.projectActivities = projectActivities;
+		return this;
+	}
+	
+	public void addProjectActivity(ProjectActivity projectActivity) {
+		setDirty(true);
+		getProjectActivities().add(projectActivity);
  	}
 	
 	public boolean isDirty() {
