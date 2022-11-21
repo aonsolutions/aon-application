@@ -190,7 +190,7 @@ export class AonMessenger extends AonElement {
 					this.rootPanel(new AonMessenger())
 				);
 
-				if(this.getDur().isMessengerManager()){
+				if(this.getDur().isMessengerManager() || this.isLocal()){
 					this.applicationEl.addToolbarOption2(MessengerSidenav.GRAPHIC, () =>
 						this.showView(MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC)
 					);
@@ -901,8 +901,9 @@ export class AonMessenger extends AonElement {
 	}
 
 	loadGwt(module){
+
 		let application = this.getApplication();
-		
+    
 		this.clearElementById(application.CONTENT);
 
 		GWT.load(module, application.CONTENT);
@@ -927,8 +928,8 @@ export class AonMessenger extends AonElement {
 				if(filter) aonView.setFilter(filter);
 				if(data) aonView.data = data;
 				this.applicationEl.setContent(aonView);
+				resolve(aonView);
 			}
-			resolve(aonView);
 		});
     }
 
