@@ -31,13 +31,13 @@ import com.esferalia.aon.gwt.fiscal.client.model.AonFinishDeclarationPopup.IFini
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelIdentificationPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
-import com.esferalia.aon.gwt.fiscal.shared.mod115.Model115ScriptProvider;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
+import com.esferalia.aon.occam.api.model.fiscal.mod115.Model115ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.watson.util.AonMathUtils;

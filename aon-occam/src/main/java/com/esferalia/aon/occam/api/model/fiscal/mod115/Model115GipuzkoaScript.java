@@ -1,7 +1,6 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod115;
+package com.esferalia.aon.occam.api.model.fiscal.mod115;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
@@ -9,19 +8,19 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 
-public enum Model115AEATScript implements IModelScript<Mod115Key> {
+public enum Model115GipuzkoaScript implements IModelScript<Mod115Key> {
 	
-	 R00 ("Retenciones e ingresos a cuenta",new Mod115Key[]{Mod115Key.CT_C01,Mod115Key.CT_C02,Mod115Key.CT_C03},NONE)
-	,R01 ("A deducir. Resultados a ingresar de anteriores autoliquidaciones por el mismo concepto, ejercicio y periodo." 
-			,new Mod115Key[]{Mod115Key.CT_C04},COMPUTE_KEY)
-	,R02 ("Resultado a ingresar",new Mod115Key[]{Mod115Key.CT_C05},COMPUTE)
+	 R00 ("Rendimientos dinerarios",new Mod115Key[]{Mod115Key.GP_C01,Mod115Key.GP_C02,Mod115Key.GP_C03},NONE)
+	,R01 ("Rendimientos en especie",new Mod115Key[]{Mod115Key.GP_C04,Mod115Key.GP_C05,Mod115Key.GP_C06},NONE)
+	,R02 ("A Ingresar",new Mod115Key[]{Mod115Key.GP_C07},COMPUTE)
+	,X00 ("NIF del Presentador telem\u00E1tico (en caso de ser diferente del declarante)",new Mod115Key[]{Mod115Key.GP_X00},NONE)
 	;
 	
 	private String label;
 	private Mod115Key[] keys;
 	private FiscalModelKeyInfo[] infoKeys;
 	
-	private Model115AEATScript(String label, Mod115Key[] keys,FiscalModelKeyInfo ... infoKeys ) {
+	private Model115GipuzkoaScript(String label, Mod115Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;
@@ -47,10 +46,9 @@ public enum Model115AEATScript implements IModelScript<Mod115Key> {
 	public FiscalModelKeyInfo[] getInfoKeys() {
 		return infoKeys;
 	}
-	
 	@Override
 	public boolean hasGraphicParticularity() {
-		return false;
+		return (this == X00);
 	}
 
 	@Override

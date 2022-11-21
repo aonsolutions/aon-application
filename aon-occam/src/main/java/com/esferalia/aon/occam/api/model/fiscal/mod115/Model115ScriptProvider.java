@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod115;
+package com.esferalia.aon.occam.api.model.fiscal.mod115;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
