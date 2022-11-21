@@ -11,12 +11,14 @@ import com.esferalia.aon.occam.api.fiscal.MODEL111;
 import com.esferalia.aon.occam.api.fiscal.MODEL115;
 import com.esferalia.aon.occam.api.fiscal.MODEL123;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
+import com.esferalia.aon.occam.api.fiscal.MODEL390HF;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -183,6 +185,12 @@ public class FiscalFaker {
 				MODEL303.initialize( params.getOccam(), m);
 			}
 		);
+	}
+
+	public static Mod390HF getMod390HF( FiscalFakerParams params) {
+		return  getFiscalModel(params
+			,Mod390HF::new
+			,m -> MODEL390HF.initialize( params.getOccam(), m.setProratePercent( params.getProrratePercent() )));
 	}
 
 	public static Mod303 createMod303( FiscalFakerParams params) {

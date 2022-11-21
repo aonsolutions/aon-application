@@ -151,7 +151,35 @@ public abstract class Mod390HFDeclaration {
 			key.firstInitialize(ctx, mod);
 		}
 	}
+	
+	void ensureDetails(Mod390HF mod) {
+		Arrays.stream( getKeys() )
+			.forEach(key -> mod.ensureDetail(key.getKey()).setExpression(key.getExpression()));
+	}
 
+	Mod390HF initializeModel(AONContext ctx, Mod390HF mod) {
+		initializeComplementaryAndReplacement(ctx,mod);
+		mod.getMessages().clear();		
+		mod.setDiffCalculationDisabled(true);
+		return mod;
+	}
+	
+	private void initializeComplementaryAndReplacement(AONContext ctx, Mod390HF mod) {
+		mod.setReplacedNumber(null);
+		if ( mod.isComplementaryDeclarationAvailable() || mod.isReplacementDeclarationAvailable()) {
+			Mod390HF previous = Mod390HFDAO.getSamePeriodFiscalModels(ctx, mod).findFirst().orElse(null);
+			if (previous != null) {
+				mod.setComplementary( mod.isComplementaryDeclarationAvailable() );
+				mod.setReplacement( mod.isReplacementDeclarationAvailable() 
+					&& !mod.isComplementary() );
+				mod.setReplacedNumber(previous.getNumber());
+			} else {
+				mod.setComplementary( false );
+				mod.setReplacement( false );
+			}
+		}
+	}
+	
 	
 	protected Set<Integer> createFromInvoices(AONContext ctx, Mod390HF mod) {
 		final Set<Integer> invoices = new HashSet<>();
@@ -196,5 +224,5 @@ public abstract class Mod390HFDeclaration {
 	abstract Mod390Key[] getProrateKeys();
 	abstract Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod);
 	abstract double getResult(final Mod390HF mod);
-
+	abstract Mod390HF initialize(AONContext ctx, Mod390HF mod303);
 }

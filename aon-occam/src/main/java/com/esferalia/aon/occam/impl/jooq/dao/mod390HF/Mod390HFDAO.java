@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -97,7 +98,13 @@ public class Mod390HFDAO extends FiscalModelDAO {
 			mod.setPeriod(Period.YEAR);
 		}
 		initializeFiscalModel(ctx, mod);
+		if (mod.getAdministration() == null || mod.isAEAT()) {
+			mod.setAdministration(Administration.BIZKAIA);
+		}
 		initializeProrrate(ctx, mod);
+		Mod390HFDeclaration dec = Mod390HFDeclaration.getInstance(mod);
+		dec.initialize( ctx, mod );
+		dec.ensureDetails( mod );
 		return mod;
 	}
 
