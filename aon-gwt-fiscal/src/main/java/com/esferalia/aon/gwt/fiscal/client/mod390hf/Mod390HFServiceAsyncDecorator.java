@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -22,9 +23,9 @@ public class Mod390HFServiceAsyncDecorator implements Mod390HFServiceAsync {
 	// ---------------------------------------------------------------MODELO 390HF
 
 	@Override
-	public void getMod390HF(Occam occam, int id, AsyncCallback<Mod390HF> callback) {
+	public void get(Occam occam, int id, AsyncCallback<Mod390HF> callback) {
 		AON.start();
-		fsa.getMod390HF(occam, id, new AsyncCallbackWrapper<>(callback));
+		fsa.get(occam, id, new AsyncCallbackWrapper<>(callback));
 	}
 
 	@Override
@@ -58,18 +59,6 @@ public class Mod390HFServiceAsyncDecorator implements Mod390HFServiceAsync {
 	}
 
 	@Override
-	public void markAsFinished(Occam occam, Mod390HF mod390HF, AsyncCallback<Mod390HF> callback) {
-		AON.start();
-		fsa.markAsFinished(occam, mod390HF, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void markAsPending(Occam occam, Mod390HF mod390HF, AsyncCallback<Mod390HF> callback) {
-		AON.start();
-		fsa.markAsPending(occam, mod390HF, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
 	public void initialize(Occam occam, Mod390HF mod390HF, AsyncCallback<Mod390HF> callback) {
 		AON.start();
 		fsa.initialize(occam, mod390HF, new AsyncCallbackWrapper<>(callback));
@@ -89,12 +78,6 @@ public class Mod390HFServiceAsyncDecorator implements Mod390HFServiceAsync {
 	}
 
 	@Override
-	public void declarationChanged(Occam occam, Mod390HF mod390HF, AsyncCallback<Mod390HF> callback) {
-		AON.start();
-		fsa.declarationChanged(occam, mod390HF, new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
 	public void delete(Occam occam, Mod390HF mod390HF, AsyncCallback<Void> callback) {
 		AON.start();
 		fsa.delete(occam, mod390HF, new AsyncCallbackWrapper<>(callback));
@@ -108,6 +91,18 @@ public class Mod390HFServiceAsyncDecorator implements Mod390HFServiceAsync {
 	}
 
 	@Override
+	public void markAsFinished(Occam occam, Mod390HF mod390HF, AsyncCallback<Mod390HF> callback) {
+		AON.start();
+		fsa.markAsFinished(occam, mod390HF, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void markAsPending(Occam occam, Mod390HF mod390HF, AsyncCallback<Mod390HF> callback) {
+		AON.start();
+		fsa.markAsPending(occam, mod390HF, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void markAsSent(Occam occam, Mod390HF mod390HF, AsyncCallback<Mod390HF> callback) {
 		AON.start();
 		fsa.markAsSent(occam, mod390HF, new AsyncCallbackWrapper<>(callback));
@@ -117,5 +112,23 @@ public class Mod390HFServiceAsyncDecorator implements Mod390HFServiceAsync {
 	public void markAsCustomerCheck(Occam occam, Mod390HF mod390HF, AsyncCallback<Mod390HF> callback) {
 		AON.start();
 		fsa.markAsCustomerCheck(occam, mod390HF, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void markAsCustomerAccepted(Occam occam, Mod390HF mod390HF, AsyncCallback<Mod390HF> callback) {
+		AON.start();
+		fsa.markAsCustomerAccepted(occam, mod390HF, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void markAsCustomerRejected(Occam occam, Mod390HF mod390HF, String reason, AsyncCallback<Mod390HF> callback) {
+		AON.start();
+		fsa.markAsCustomerRejected(occam, mod390HF, reason, new AsyncCallbackWrapper<>(callback));
+	}
+	
+	@Override
+	public void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> callback) {
+		AON.start();
+		fsa.getInvoice(occam, invoiceId, new AsyncCallbackWrapper<>(callback));
 	}
 }

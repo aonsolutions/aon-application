@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.mod390HF;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Set;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
@@ -11,30 +12,19 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod390HFDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class GIPUZKOA_2021_Declaration extends Mod390HFDeclaration {
+public class Mod390HFGipuzkoa2017Declaration extends Mod390HFGIPUZKOADeclaration {
 	
-	protected GIPUZKOA_2021_Declaration() {
+	protected Mod390HFGipuzkoa2017Declaration() {
 		
 	}
 	
-	public static final double PERCENT1 = 21.0;
-	public static final double PERCENT2 = 10.0;
-	public static final double PERCENT3 = 4.0;
-	public static final double PERCENT4 = 10.5;	
-	public static final double PERCENT5 = 12;
-	
-	public static final double SURCHARGE_PERCENT1 = 5.2;
-	public static final double SURCHARGE_PERCENT2 = 1.4;
-	public static final double SURCHARGE_PERCENT3 = 0.5;
-	
 	public static boolean accept(Mod390HF mod) {
-		return  mod.isGipuzkoa() && mod.getYear() >= 2021;
+		return  mod.isGipuzkoa() && mod.getYear() >= 2017 && mod.getYear() < 2021;
 	}
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{
 		  Mod390Key.GP_C018
@@ -60,34 +50,34 @@ public class GIPUZKOA_2021_Declaration extends Mod390HFDeclaration {
 		
 		// Base imponible, porcentaje y cuota al primer tipo.
 		,GP_C002(Mod390Key.GP_C002
-			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent1(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C002,mod,vat.getBase())
 			,null,null,null)
-		,GP_X002(Mod390Key.GP_X002,null,null,(ctx,mod) -> add(Mod390Key.GP_X002,mod,PERCENT1),null,null)
+		,GP_X002(Mod390Key.GP_X002,null,null,(ctx,mod) -> add(Mod390Key.GP_X002,mod,PERCENT_21),null,null)
 		,GP_C003(Mod390Key.GP_C003
-			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent1(vat)
+			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C003,mod,vat.getQuota())
 			,null,null,null)
 		
 		// Base imponible, porcentaje y cuota al segundo tipo.
 		,GP_C004(Mod390Key.GP_C004
-			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent2(vat)
+			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent10(vat)
 			 ,(ctx,mod,vat) -> add(Mod390Key.GP_C004,mod,vat.getBase())
 				,null,null,null)
-		,GP_X004(Mod390Key.GP_X004,null,null,(ctx,mod) -> add(Mod390Key.GP_X004,mod,PERCENT2),null,null)
+		,GP_X004(Mod390Key.GP_X004,null,null,(ctx,mod) -> add(Mod390Key.GP_X004,mod,PERCENT_10),null,null)
 		,GP_C005(Mod390Key.GP_C005
-			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent2(vat)
+			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C005,mod,vat.getQuota())
 			,null,null,null)
 		
 		// Base imponible, porcentaje y cuota al tercer tipo.
 		,GP_C006(Mod390Key.GP_C006
-			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent3(vat)
+			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent4(vat)
 			 ,(ctx,mod,vat) -> add(Mod390Key.GP_C006,mod,vat.getBase())
 			,null,null,null)
-		,GP_X006(Mod390Key.GP_X006,null,null,(ctx,mod) -> add(Mod390Key.GP_X006,mod,PERCENT3),null,null)
+		,GP_X006(Mod390Key.GP_X006,null,null,(ctx,mod) -> add(Mod390Key.GP_X006,mod,PERCENT_4),null,null)
 		,GP_C007(Mod390Key.GP_C007
-			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent3(vat)
+			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C007,mod,vat.getQuota())
 			,null,null,null)
 		
@@ -103,34 +93,34 @@ public class GIPUZKOA_2021_Declaration extends Mod390HFDeclaration {
 		
 		// Recargo equivalencia al primer tipo.
 		,GP_C010(Mod390Key.GP_C010
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent1(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent52(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C010,mod,vat.getBase())
 			,null,null,null)
-		,GP_X010(Mod390Key.GP_X010,null,null,(ctx,mod) -> add(Mod390Key.GP_X010,mod,SURCHARGE_PERCENT1),null,null)
+		,GP_X010(Mod390Key.GP_X010,null,null,(ctx,mod) -> add(Mod390Key.GP_X010,mod,SURCHARGE_PERCENT_52),null,null)
 		,GP_C011(Mod390Key.GP_C011
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent1(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent52(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C011,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
 		// Recargo equivalencia al segundo tipo.
 		,GP_C012(Mod390Key.GP_C012
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent2(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent14(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C012,mod,vat.getBase())
 			,null,null,null)
-		,GP_X012(Mod390Key.GP_X012,null,null,(ctx,mod) -> add(Mod390Key.GP_X012,mod,SURCHARGE_PERCENT2),null,null)
+		,GP_X012(Mod390Key.GP_X012,null,null,(ctx,mod) -> add(Mod390Key.GP_X012,mod,SURCHARGE_PERCENT_14),null,null)
 		,GP_C013(Mod390Key.GP_C013
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent2(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent14(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C013,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
 		// Recargo equivalencia al tercer tipo.
 		,GP_C014(Mod390Key.GP_C014
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent3(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent05(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C014,mod,vat.getBase())
 			,null,null,null)
-		,GP_X014(Mod390Key.GP_X014,null,null,(ctx,mod) -> add(Mod390Key.GP_X014,mod,SURCHARGE_PERCENT3),null,null)
+		,GP_X014(Mod390Key.GP_X014,null,null,(ctx,mod) -> add(Mod390Key.GP_X014,mod,SURCHARGE_PERCENT_05),null,null)
 		,GP_C015(Mod390Key.GP_C015
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent3(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent05(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C015,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
@@ -269,38 +259,38 @@ public class GIPUZKOA_2021_Declaration extends Mod390HFDeclaration {
 
 		// Compras de bienes corrientes
 		,GP_C046 (Mod390Key.GP_C046
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent1(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent21(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C046,mod,vat.getBase())
 			,null,null,null)
-		,GP_X046	(Mod390Key.GP_X046,null,null,(ctx,mod) -> add(Mod390Key.GP_X046,mod,PERCENT1),null,null)
+		,GP_X046	(Mod390Key.GP_X046,null,null,(ctx,mod) -> add(Mod390Key.GP_X046,mod,PERCENT_21),null,null)
 		,GP_C047 (Mod390Key.GP_C047
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent1(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent21(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C047,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		,GP_C048	(Mod390Key.GP_C048
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent2(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent10(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C048,mod,vat.getBase())
 			,null,null,null)
-		,GP_X048	(Mod390Key.GP_X048,null,null,(ctx,mod) -> add(Mod390Key.GP_X048,mod,PERCENT2),null,null)
+		,GP_X048	(Mod390Key.GP_X048,null,null,(ctx,mod) -> add(Mod390Key.GP_X048,mod,PERCENT_10),null,null)
 		,GP_C049	(Mod390Key.GP_C049
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent2(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent10(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C049,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		,GP_C050	(Mod390Key.GP_C050
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent3(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent4(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C050,mod,vat.getBase())
 			,null,null,null)
-		,GP_X050	(Mod390Key.GP_X050,null,null,(ctx,mod) -> add(Mod390Key.GP_X050,mod,PERCENT3),null,null)
+		,GP_X050	(Mod390Key.GP_X050,null,null,(ctx,mod) -> add(Mod390Key.GP_X050,mod,PERCENT_4),null,null)
 		,GP_C051	(Mod390Key.GP_C051
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent3(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent4(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C051,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		,GP_C052	(Mod390Key.GP_C052
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent4(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent10512(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C052,mod,vat.getBase())
 			,null,null,null)
 		,GP_C053	(Mod390Key.GP_C053
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent4(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent10512(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C053,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		,GP_C054	(Mod390Key.GP_C054
@@ -315,32 +305,32 @@ public class GIPUZKOA_2021_Declaration extends Mod390HFDeclaration {
 
 		// GASTOS
 		,GP_C057 (Mod390Key.GP_C057
-				,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService())) && hasPercent1(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+				,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService())) && hasPercent21(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 				,(ctx,mod,vat) -> add(Mod390Key.GP_C057,mod,vat.getBase())
 				,null,null,null)
-		,GP_X057	(Mod390Key.GP_X057,null,null,(ctx,mod) -> add(Mod390Key.GP_X057,mod,PERCENT1),null,null)
+		,GP_X057	(Mod390Key.GP_X057,null,null,(ctx,mod) -> add(Mod390Key.GP_X057,mod,PERCENT_21),null,null)
 		,GP_C058	(Mod390Key.GP_C058
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent1(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent21(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C058,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,GP_C059	(Mod390Key.GP_C059
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent2(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent10(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C059,mod,vat.getBase())
 			,null,null,null)
-		,GP_X059	(Mod390Key.GP_X059,null,null,(ctx,mod) -> add(Mod390Key.GP_X059,mod,PERCENT2),null,null)
+		,GP_X059	(Mod390Key.GP_X059,null,null,(ctx,mod) -> add(Mod390Key.GP_X059,mod,PERCENT_10),null,null)
 		,GP_C060	(Mod390Key.GP_C060
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent2(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent10(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C060,mod,vat.getDeductibleQuota())
 			,null,null,null)
 
 		,GP_C061	(Mod390Key.GP_C061
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent3(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent4(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C061,mod,vat.getBase())
 			,null,null,null)
-		,GP_X061	(Mod390Key.GP_X061,null,null,(ctx,mod) -> add(Mod390Key.GP_X061,mod,PERCENT3),null,null)
+		,GP_X061	(Mod390Key.GP_X061,null,null,(ctx,mod) -> add(Mod390Key.GP_X061,mod,PERCENT_4),null,null)
 		,GP_C062	(Mod390Key.GP_C062
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent3(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent4(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C062,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -357,32 +347,32 @@ public class GIPUZKOA_2021_Declaration extends Mod390HFDeclaration {
 		
 		// Bienes de inversión
 		,GP_C066	(Mod390Key.GP_C066
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent1(vat)
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C066,mod,vat.getBase())
 			,null,null,null)
-		,GP_X066	(Mod390Key.GP_X066,null,null,(ctx,mod) -> add(Mod390Key.GP_X066,mod,PERCENT1),null,null)
+		,GP_X066	(Mod390Key.GP_X066,null,null,(ctx,mod) -> add(Mod390Key.GP_X066,mod,PERCENT_21),null,null)
 		,GP_C067	(Mod390Key.GP_C067
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent1(vat)
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C067,mod,vat.getDeductibleQuota())
 			,null,null,null)
 				
 		,GP_C068	(Mod390Key.GP_C068
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent2(vat)
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C068,mod,vat.getBase())
 			,null,null,null)
-		,GP_X068	(Mod390Key.GP_X068,null,null,(ctx,mod) -> add(Mod390Key.GP_X068,mod,PERCENT2),null,null)
+		,GP_X068	(Mod390Key.GP_X068,null,null,(ctx,mod) -> add(Mod390Key.GP_X068,mod,PERCENT_10),null,null)
 		,GP_C069	(Mod390Key.GP_C069
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent2(vat)
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C069,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,GP_C070	(Mod390Key.GP_C070
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent3(vat)
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C070,mod,vat.getBase())
 			,null,null,null)
-		,GP_X070	(Mod390Key.GP_X070,null,null,(ctx,mod) -> add(Mod390Key.GP_X070,mod,PERCENT3),null,null)
+		,GP_X070	(Mod390Key.GP_X070,null,null,(ctx,mod) -> add(Mod390Key.GP_X070,mod,PERCENT_4),null,null)
 		,GP_C071	(Mod390Key.GP_C071
-				,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent3(vat)
+				,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
 				,(ctx,mod,vat) -> add(Mod390Key.GP_C071,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -401,19 +391,15 @@ public class GIPUZKOA_2021_Declaration extends Mod390HFDeclaration {
 		,GP_C076	(Mod390Key.GP_C076,null,null,null,"GP_C047+GP_C049+GP_C051+GP_C053+GP_C055+GP_C058+GP_C060+GP_C062+GP_C064+GP_C067+GP_C069+GP_C071+GP_C073",null)
 		,GP_C077	(Mod390Key.GP_C077,null,null,null,"GP_C056+GP_C065+GP_C074",null)
 		
-		// OPERACIONES RÉGIMEN GENERAL EXCEPTO REG.ESPECIALES (REBU/AGENCIAS DE VIAJE/CRITERIO CAJA)
-		,GP_C108  	(Mod390Key.GP_C108
+		// OPERACIONES EN RÉGIMEN GENERAL
+		,GP_C082  	(Mod390Key.GP_C082
 			,(mod,vat) -> vat.isNationalSales() && !vat.isInvestment()
-			,(ctx,mod,vat) -> add(Mod390Key.GP_C108,mod,vat.getBase())
+			,(ctx,mod,vat) -> add(Mod390Key.GP_C082,mod,vat.getBase())
 			,null,null,null)
 		// OPERACIONES EN RÉGIMEN ESPECIAL DE AGRICULTURA, GANADER\u00CDA Y PESCA
 		,GP_C083  	(Mod390Key.GP_C083)
 		// OPERACIONES EN RÉGIMEN ESPECIAL DEL RECARGO DE EQUIVALENCIA
 		,GP_C084  	(Mod390Key.GP_C084)
-		// OPERACIONES EN RÉGIMEN ESPECIAL DE BIENES USADOS, OBJETOS DE ARTE, ANTIGÜEDADES Y OBJETOS DE COLECCIÓN
-		,GP_C109  	(Mod390Key.GP_C109)
-		// OPERACIONES EN RÉGIMEN ESPECIAL DE AGENCIAS DE VIAJES
-		,GP_C110  	(Mod390Key.GP_C110)
 		// ENTREGAS INTRACOMUNITARIAS DE BIENES Y DE SERVICIOS
 		,GP_C085  	(Mod390Key.GP_C085
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales()
@@ -426,17 +412,15 @@ public class GIPUZKOA_2021_Declaration extends Mod390HFDeclaration {
 			,null,null,null)
 		// OPERACIONES EXENTAS SIN DERECHO A DEDUCCI\u00D3N
 		,GP_C087  	(Mod390Key.GP_C087)
-		// OPERACIONES NO SUJETAS POR REGLAS DE LOCALIZACIÓN (EXCEPTO LAS INCLUIDAS EN LA CASILLA 112)
-		,GP_C1111  	(Mod390Key.GP_C111)
 		// OPERACIONES QUE DAN LUGAR A LA INVERSI\u00D3N DEL SUJETO PASIVO
 		,GP_C088  	(Mod390Key.GP_C088
 			,(mod,vat) -> vat.isOtherISPSales() 
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C088,mod,vat.getBase())
 			,null,null,null)
-		// OSS. OPERACIONES NO SUJETAS POR REGLAS DE LOCALIZACIÓN ACOGIDAS A LA OSS.
-		,GP_C112  	(Mod390Key.GP_C112)
-		// OSS. OPERACIONES SUJETAS Y ACOGIDAS A LA OSS.
-		,GP_C113  	(Mod390Key.GP_C113)
+		// OPERACIONES NO SUJETAS
+		,GP_C089  	(Mod390Key.GP_C089)
+		// ENTREGAS DE BIENES OBJETO DE INSTALACI\u00D3N O MONTAJE EN OTROS ESTADOS MIEMBROS
+		,GP_C090  	(Mod390Key.GP_C090)
 		// ENTREGAS NO HABITUALES DE BIENES INMUEBLES
 		,GP_C091  	(Mod390Key.GP_C091)
 		// OPERACIONES FINANCIERAS NO HABITUALES
@@ -444,8 +428,7 @@ public class GIPUZKOA_2021_Declaration extends Mod390HFDeclaration {
 		// ENTREGAS DE BIENES DE INVERSI\u00D3N
 		,GP_C093  	(Mod390Key.GP_C093)
 		// TOTAL VOLUMEN DE OPERACIONES
-		,GP_C095	(Mod390Key.GP_C095,null,null,null,
-				"GP_C108+GP_C083+GP_C084+GP_C109+GP_C110+GP_C085+GP_C086+GP_C087+GP_C111+GP_C088+GP_C112+GP_C113-GP_C091-GP_C092-GP_C093+GP_C101",null)
+		,GP_C095	(Mod390Key.GP_C095,null,null,null,"GP_C082+GP_C083+GP_C084+GP_C085+GP_C086+GP_C087+GP_C088+GP_C089+GP_C090+GP_C091+GP_C092+GP_C093",null)
 		// ENTREGAS INTERIORES DE BIENES DEVENGADAS POR INVERSI\u00D3N DEL SUJETO PASIVO COMO CONSECUENCIA DE OPERACIONES TRIANGULARES
 		,GP_C096  	(Mod390Key.GP_C096)
 		// ADQUISICIONES INTERIORES EXENTAS
@@ -458,13 +441,13 @@ public class GIPUZKOA_2021_Declaration extends Mod390HFDeclaration {
 		
 		// Importes de las ventas a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran 
 		// resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA		
-		,GP_C101(Mod390Key.GP_C101,null,null,(ctx,mod) -> add(Mod390Key.GP_C101,mod,Mod390HFDAO.getVatAccrualPaymentOutputBase(ctx,mod)),null,null)
-		,GP_C102(Mod390Key.GP_C102,null,null,(ctx,mod) -> add( Mod390Key.GP_C102, mod, Mod390HFDAO.getVatAccrualPaymentOutputQuota(ctx,mod) ),null,null)
+		,GP_C101(Mod390Key.GP_C101)
+		,GP_C102(Mod390Key.GP_C102)
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea de aplicación o afecte el 
 		// régimen especial del criterio de caja
-		,GP_C103(Mod390Key.GP_C103,null,null,(ctx,mod) -> add(Mod390Key.GP_C103,mod,Mod390HFDAO.getVatAccrualPaymentInputBase(ctx,mod)),null,null)
-		,GP_C104(Mod390Key.GP_C104,null,null,(ctx,mod) -> add(Mod390Key.GP_C104,mod, Mod390HFDAO.getVatAccrualPaymentInputQuota(ctx,mod) ),null,null)
+		,GP_C103(Mod390Key.GP_C103)
+		,GP_C104(Mod390Key.GP_C104)
 		;
 		
 		private Mod390Key key;
@@ -600,44 +583,44 @@ public class GIPUZKOA_2021_Declaration extends Mod390HFDeclaration {
 	//	-----------------------------------------------------------------------	
 	//	--------------------------------------------------------------- FILTROS	
 	//	-----------------------------------------------------------------------
-	private static boolean isCommonNationalSales(VatContext vat) {
+	static boolean isCommonNationalSales(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isNational() && vat.isSales() && !vat.isRectification();
 	}
-	private static boolean hasPercent1(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT1;	
+	static boolean hasPercent21(VatContext vat) {
+		return vat.getPercentage() ==  PERCENT_21;	
 	}
-	private static boolean hasPercent2(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT2; 	
+	static boolean hasPercent10(VatContext vat) {
+		return vat.getPercentage() ==  PERCENT_10; 	
 	}
-	private static boolean hasPercent3(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT3; 	
+	static boolean hasPercent4(VatContext vat) {
+		return vat.getPercentage() ==  PERCENT_4; 	
 	}
-	private static boolean hasPercent4(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT4 || vat.getPercentage() ==  PERCENT5; 	
+	static boolean hasPercent10512(VatContext vat) {
+		return vat.getPercentage() ==  PERCENT_105 || vat.getPercentage() ==  PERCENT_12; 	
 	}
-	private static boolean hasNoPercent(VatContext vat) {
-		return vat.getPercentage() !=  PERCENT1 
-			&& vat.getPercentage() !=  PERCENT2 
-			&& vat.getPercentage() !=  PERCENT3
-			&& vat.getPercentage() !=  PERCENT4
-			&& vat.getPercentage() !=  PERCENT5; 	
+	static boolean hasNoPercent(VatContext vat) {
+		return vat.getPercentage() !=  PERCENT_21 
+			&& vat.getPercentage() !=  PERCENT_10 
+			&& vat.getPercentage() !=  PERCENT_4
+			&& vat.getPercentage() !=  PERCENT_105
+			&& vat.getPercentage() !=  PERCENT_12; 	
 	}
-	private static boolean hasSurchargePercent1(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT1; 
+	static boolean hasSurchargePercent52(VatContext vat) {
+		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_52; 
 	}
-	private static boolean hasSurchargePercent2(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT2; 
+	static boolean hasSurchargePercent14(VatContext vat) {
+		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_14; 
 	}
-	private static boolean hasSurchargePercent3(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT3;
+	static boolean hasSurchargePercent05(VatContext vat) {
+		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_05;
 	}
 	
-	private static boolean modificacionBasesYCuotasFilter(VatContext vat) {
+	static boolean modificacionBasesYCuotasFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isRectification() && (vat.isNationalSales() || operacionesISPFilter(vat));		
 	}
-	private static boolean operacionesISPFilter(VatContext vat) {
+	static boolean operacionesISPFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& (vat.isOtherISPPurchase() 
 				|| vat.isOtherISPExpenses() 
@@ -646,29 +629,37 @@ public class GIPUZKOA_2021_Declaration extends Mod390HFDeclaration {
 				|| (vat.isExtracommunityPurchase() && vat.isService()) 
 				|| (vat.isCanCeuMelPurchase() && vat.isService()));
 	}
-	private static boolean adqIntracomunitariasFilter(VatContext vat) {
+	static boolean adqIntracomunitariasFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& (vat.isIntracommunityPurchase() || vat.isIntracommunityExpenses());
 	}
-	private static boolean operacionesInterioresFilter(VatContext vat) {
+	static boolean operacionesInterioresFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& !vat.isFarmerRegime()
 			&& AonMathUtils.isNotZero(vat.getPercentage())
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
 	}
-	private static boolean importacionesFilter(VatContext vat) {
+	static boolean importacionesFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 			&& !vat.isVatSurchargeRegime()
 			&& !vat.isService()
 			&& (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase());
 	}
-	private static boolean compensacionesRegAgrarioFilter(VatContext vat) {
+	static boolean compensacionesRegAgrarioFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		
 	}
-	private static boolean rectificaciónDeduccionesFilter(VatContext vat) {
+	static boolean rectificaciónDeduccionesFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isRectification() && (vat.isPurchase() || vat.isExpenses()); 
 	}
-	
+
+	@Override
+	double getResult(Mod390HF mod) {
+		return  mod.getAmount(Mod390Key.GP_C040);
+	}
+	@Override
+	Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
+		return null;
+	}
 }

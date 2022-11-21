@@ -3,8 +3,10 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
+import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod390HF extends FiscalModel implements Serializable {
 	
@@ -14,6 +16,54 @@ public class Mod390HF extends FiscalModel implements Serializable {
 		super();
 		setModel(FiscalModelType.M390_HF);
 	}
+	
+	public boolean isManualDeclaration() {
+		return getAmount(Mod390Key.CM_000) == 1;
+	}
+	public Mod390HF setManualDeclaration(boolean manual) {
+		ensureDetail(Mod390Key.CM_000).setAmount(manual?1:0);
+		return this;
+	}
+
+	public Mod390Key getProrateKey() {
+		return Mod390Key.CM_003;
+	}
+
+	public double getProratePercent() {
+		return getAmount(getProrateKey());
+	}
+	public Mod390HF setProratePercent(double prorratePercent) {
+		ensureDetail(getProrateKey()).setAmount( prorratePercent );
+		return this;
+	}
+	
+	public boolean hasProrate() {
+		return AonMathUtils.isNotZero(getProratePercent());
+	}
+	
+	public Mod390Key getProrateTypeKey() {
+		return Mod390Key.CM_006;
+	}
+
+	public boolean isSpecialProrate() {
+		String prorateType = getDescription(getProrateTypeKey());
+		return AonStringUtils.isNotBlank(prorateType) && AonStringUtils.equals(prorateType,"E");
+	}
+	public String getSpecialProrateValue() {
+		return isSpecialProrate()?"E":"G";
+	}
+	public void setSpecialProrateValue(boolean value ) {
+		putDescription(getProrateTypeKey(), (value?"E":"G") );
+	}
+	
+	@Override
+	public boolean isDiffCalculationDisabled() {
+		return true;
+	}
+
+	// ******************************************	
+	// ******************************************	
+	// ******************************************	
 	
 	public boolean isEnrolledInDevolutionRegistry() {
 		if (getAdministration() == null) return false;
@@ -49,6 +99,56 @@ public class Mod390HF extends FiscalModel implements Serializable {
 		return (isComplementaryDeclarationAvailable() && isAEAT() && isComplementary() ); 
 	}
 	
+	public boolean isToCompensate() {
+		return (canBeSent() || isSent()) 
+			&& getDeclarationResultType() == FiscalModelDeclarationType.COMPENSATE;
+	}
+	public boolean isToDeposit() {
+		return (canBeSent() || isSent()) 
+			&& (getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT
+			|| getDeclarationResultType() == FiscalModelDeclarationType.BANK
+			|| getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT_CCT);
+	}
+	
+	public boolean isToPayback() {
+		return (canBeSent() || isSent()) 
+			&& (getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK
+			|| getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK_CCT);
+	}
+
+	
+	// ******************************************
+	// ******************************************
+	// ******************************************
+	@Override
+	@Deprecated
+	public double getResult() {
+		throw new UnsupportedOperationException("Unsupported method! (use getDeclarationResult())");
+	}
+	
+	@Override
+	@Deprecated
+	public Mod303Key getDeclarationTypeKey() {
+		throw new UnsupportedOperationException("Unsupported method! (use getDeclarationResultType())");
+	}
+	
+	@Override
+	@Deprecated
+	public void setDefaultDeclarationType(){
+		throw new UnsupportedOperationException("Unsupported method! (use setDeclarationResultType())");
+	}
+	@Override
+	@Deprecated
+	public FiscalModelDeclarationType getDeclarationType() {
+		throw new UnsupportedOperationException("Unsupported method! (use getDeclarationResultType())");
+	}
+	@Override
+	@Deprecated
+	public void setDeclarationType(FiscalModelDeclarationType type) {
+		throw new UnsupportedOperationException("Unsupported method! (use setDeclarationResultType())");
+	}
+	
+/*
 	@Override
 	public double getResult() {
 		if (getAdministration() == null) return 0;
@@ -64,32 +164,6 @@ public class Mod390HF extends FiscalModel implements Serializable {
 		if (getAdministration() == null) return null;
 		return Mod390Key.CM_004;
 	}
-	
-	public Mod390Key getProrateKey() {
-		return Mod390Key.CM_003;
-	}
-
-	public boolean isToCompensate() {
-		return (isFinished() || isSent()) && getDeclarationType() == FiscalModelDeclarationType.COMPENSATE;
-	}
-	public boolean isToDeposit() {
-		return (isFinished() || isSent()) && (getDeclarationType() == FiscalModelDeclarationType.DEPOSIT
-				|| getDeclarationType() == FiscalModelDeclarationType.BANK
-				|| getDeclarationType() == FiscalModelDeclarationType.DEPOSIT_CCT);
-	}
-	public boolean isToPayback() {
-		return (isFinished() || isSent()) && (getDeclarationType() == FiscalModelDeclarationType.PAYBACK
-				|| getDeclarationType() == FiscalModelDeclarationType.PAYBACK_CCT);
-	}
-	
-	public double getProratePercent() {
-		double proratePercent = 100.0;
-		Mod390Key key = getProrateKey();
-		proratePercent = getAmount(key); 
-		if (AonMathUtils.isZero(proratePercent)) proratePercent = 100.0;  
-		return proratePercent;
-	}
-	
 	@Override
 	public void setDefaultDeclarationType(){
 		if (AonMathUtils.isZero(getResult() )) {
@@ -100,4 +174,5 @@ public class Mod390HF extends FiscalModel implements Serializable {
 			setDeclarationType(FiscalModelDeclarationType.PAYBACK);
 		}
 	}
+*/
 }

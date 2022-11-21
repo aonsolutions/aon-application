@@ -1895,16 +1895,16 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 	}
 
 	private static boolean importacionesCorrientesFilter(VatContext vat, Mod303 mod) {
-		return commonImportacionesInversionFilter(vat, mod) 
+		return commonImportacionesFilter(vat, mod) 
 				&& !vat.isInvestment();
 	}
 
 	private static boolean importacionesInversionFilter(VatContext vat, Mod303 mod) {
-		return commonImportacionesInversionFilter(vat, mod) 
+		return commonImportacionesFilter(vat, mod) 
 				&& vat.isInvestment();
 	}
 
-	private static boolean commonImportacionesInversionFilter(VatContext vat, Mod303 mod) {
+	private static boolean commonImportacionesFilter(VatContext vat, Mod303 mod) {
 		boolean basicFilter = vat.isVatGeneralRegime(mod.getDefaultVATRegime()) 
 				&& !vat.isVatSurchargeRegime() 
 				&& !vat.isRectification() 

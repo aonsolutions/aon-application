@@ -309,11 +309,6 @@ public class Model3902017BIZKAIA extends Model390HFBase {
 		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
 	}
 
-	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-		Model390HFIdentificationData identificationData = new Model390HFIdentificationData( new Model390HFIdentificationDataCallback()) ;
-		tabPanel.add(identificationData, AON.MSG.identification());
-	}
-
 	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
 		IFiscalModelAdmonPanelCallback<Mod390HF, Model390HFModuleOptions> cbk = 
 				new IFiscalModelAdmonPanelCallback<Mod390HF, Model390HFModuleOptions>() {

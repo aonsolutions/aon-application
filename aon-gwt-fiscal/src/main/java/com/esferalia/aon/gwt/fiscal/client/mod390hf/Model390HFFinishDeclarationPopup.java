@@ -62,17 +62,16 @@ public class Model390HFFinishDeclarationPopup extends AonCustomDialog {
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonFontLarger());
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonPaddingRight());
 		tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonBold());
-		tab.setWidget(row, 1, new Label(AON.FMT.format(mod390HF.getResult())));
+		tab.setWidget(row, 1, new Label(AON.FMT.format(mod390HF.getDeclarationResult())));
 		row++;
 
 		tab.getFlexCellFormatter().addStyleName(row, 0, AON.CSS.aonTableLabel());
 		tab.setWidget(row, 0, new Label(AON.MSG.declarationType()));
 
-		// SIN ACTIVIDAD!!!
-		if (mod390HF.getDeclarationType() == FiscalModelDeclarationType.NEGATIVE) {
+		if (!mod390HF.getDeclarationResultType().mustCreateFinance()) {	// SIN ACTIVIDAD!!!
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonTextCenter());
 			tab.getFlexCellFormatter().addStyleName(row, 1, AON.CSS.aonBold());
-			tab.setWidget(row, 1, new Label(mod390HF.getDeclarationType().getDescription()));
+			tab.setWidget(row, 1, new Label(mod390HF.getDeclarationResultType().getDescription()));
 			row++;
 		} else {
 			final AonCreditorBox creditorBox = new AonCreditorBox(callback.getOptions().getOccam());
@@ -80,7 +79,7 @@ public class Model390HFFinishDeclarationPopup extends AonCustomDialog {
 
 			final ListBox listBox = new ListBox();
 			listBox.setSelectedIndex(0);
-			if (AonMathUtils.isLessThanZero(mod390HF.getResult())) {
+			if (AonMathUtils.isLessThanZero(mod390HF.getDeclarationResult())) {
 				listBox.addItem(FiscalModelDeclarationType.PAYBACK.getDescription(),
 						FiscalModelDeclarationType.PAYBACK.getValue());
 				listBox.addItem(FiscalModelDeclarationType.COMPENSATE.getDescription(),
@@ -94,7 +93,7 @@ public class Model390HFFinishDeclarationPopup extends AonCustomDialog {
 			listBox.addChangeHandler(event -> {
 				FiscalModelDeclarationType type = FiscalModelDeclarationType
 						.safeValueOf(listBox.getSelectedValue());
-				mod390HF.setDeclarationType(type);
+				mod390HF.setDeclarationResultType(type);
 				iban.setEnabled(type.isBankRequired());
 				creditorBox.setEnabled(type.mustCreateFinance());
 			});

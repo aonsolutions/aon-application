@@ -39,7 +39,7 @@ public class Mod390HFPrint extends HttpServlet {
 					.setDomainName(domainName)
 					.setDomain(domainId)
 					.setUser(user);
-			Mod390HF mod390  = MODEL390HF.getMod390HF(occam,id);
+			Mod390HF mod390  = MODEL390HF.get(occam,id);
 
 			Mod390HFExcelAction action = new Mod390HFExcelAction(mod390);
 			action.initialize(FiscalModelUtils.getModelName(mod390));

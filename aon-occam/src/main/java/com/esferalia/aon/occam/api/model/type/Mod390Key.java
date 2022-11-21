@@ -14,9 +14,10 @@ public enum Mod390Key implements IFiscalModelKey  {
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
-
-	 CM_003("390-CM003",null,"Porcentaje de prorrata.")
+	 CM_000("390-CM000",null,"Confecci\u00F3n manual")
+	,CM_003("390-CM003",null,"Porcentaje de prorrata.")
 	,CM_004("390-CM004",null,"Tipo de declaraci\u00F3n")
+	,CM_006("390-CM006",null,"Tipo de prorrata (E/G).")
 	
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  GIPUZKOA ---
@@ -690,6 +691,12 @@ public enum Mod390Key implements IFiscalModelKey  {
 			return AonStringUtils.leftPad(box, 3, AonStringUtils.ZERO); 
 		}
 		return box;
+	}
+	public String getBoxFormatted() {
+		return " [" + getBoxAsString() +"] ";
+	}
+	public String getBoxAsString() {
+		return AonStringUtils.leftPad(Integer.toString(getBox()), 3, '0');
 	}
 	public String getDescription() {
 		return description;

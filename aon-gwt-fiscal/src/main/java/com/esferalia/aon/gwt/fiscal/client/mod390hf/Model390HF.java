@@ -97,7 +97,7 @@ public class Model390HF extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+							aonLayout.showErrorPanel(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
 						}
 					});
 		}
@@ -131,6 +131,14 @@ public class Model390HF extends MainEntryPoint {
 		@Override
 		public Model390HFModuleOptions getOptions() {
 			return Model390HF.this.getOptions();
+		}
+
+		public void showInfoPanelWidget(Widget widget) {
+			cleanInfoPanel();
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			breakdownPanel.setWidget(widget);
+			breakdownPanel.scrollToTop();
 		}
 
 	}
@@ -213,7 +221,7 @@ public class Model390HF extends MainEntryPoint {
 
 	private void onSelect(Integer id ) {
 		LOGGER.info("OnSelect Model390HF with a ID: " + getOptions().getFiscalModelId());
-		MOD_SERVICE.getMod390HF(getOptions().getOccam(), id , new AsyncCallback<Mod390HF>() {
+		MOD_SERVICE.get(getOptions().getOccam(), id , new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF selected) {
 						if (selected == null) {
@@ -234,7 +242,7 @@ public class Model390HF extends MainEntryPoint {
 
 	private void onSelectionChange(SelectionEvent<Mod390HF> event) {
 		Mod390HF sel = event.getSelectedItem();
-		MOD_SERVICE.getMod390HF(getOptions().getOccam(),
+		MOD_SERVICE.get(getOptions().getOccam(),
 				sel.getId(), new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF selected) {
@@ -253,7 +261,7 @@ public class Model390HF extends MainEntryPoint {
 	}
 
 	private void showNewDeclarationPopup(Mod390HF m390HF) {
-		Model390HFNewDeclarationPopup newDialog = new Model390HFNewDeclarationPopup( m390HF,
+		Model390HFNewDeclarationPanel newDeclarationPanel = new Model390HFNewDeclarationPanel( m390HF,
 			new Model390HFCallback() {
 
 					@Override
@@ -276,7 +284,7 @@ public class Model390HF extends MainEntryPoint {
 									@Override
 									public void onFailure(Throwable caught) {
 										popup.hide();
-										aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+										aonLayout.showErrorPanel(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
 									}
 								});
 
@@ -289,8 +297,9 @@ public class Model390HF extends MainEntryPoint {
 					}
 				}
 			); 
-			newDialog.center();
-			newDialog.show();
+		declarationContainer.setWidget(newDeclarationPanel);
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
 	}
 	
 	private void closeFootPanel() {

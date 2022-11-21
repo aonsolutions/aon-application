@@ -101,11 +101,6 @@ public class Model3902017ARABA extends Model390HFBase {
 		paintListBox(c909, key, table);
 	}
 
-	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-		Model390HFIdentificationData identificationData = new Model390HFIdentificationData( new Model390HFIdentificationDataCallback()) ;
-		tabPanel.add(identificationData, AON.MSG.identification() );
-	}
-	
 	private void paintGeneralRegimenTab(TabLayoutPanel tabPanel) {
 		ScrollPanel generalRegimeScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();

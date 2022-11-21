@@ -79,11 +79,6 @@ public class Model3902021GIPUZKOA extends Model390HFBase {
 		tabPanel.add(declarationScrollPanel, AON.MSG.declaration());
 	}
 
-	private void paintIdentificationTab(TabLayoutPanel tabPanel) {
-		Model390HFIdentificationData identificationData = new Model390HFIdentificationData( new Model390HFIdentificationDataCallback()) ;
-		tabPanel.add(identificationData, AON.MSG.identification());
-	}
-	
 	private void paintGeneralRegimenTab(TabLayoutPanel tabPanel) {
 		ScrollPanel generalRegimeScrollPanel = new ScrollPanel();
 		FlowPanel container = new FlowPanel();

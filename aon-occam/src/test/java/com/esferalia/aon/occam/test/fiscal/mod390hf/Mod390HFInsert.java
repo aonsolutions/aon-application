@@ -26,9 +26,9 @@ public class Mod390HFInsert extends AbstractOccamTest {
 		mod390HF.setDomain(DOMAIN_ID);
 		mod390HF.setYear(AonDateUtils.getYear(now));
 		mod390HF.setPeriod( Period.YEAR );
-		mod390HF = MODEL390HF.initializeMod390HF(getOccam(), mod390HF);
+		mod390HF = MODEL390HF.initialize(getOccam(), mod390HF);
 		mod390HF.setAdministration(admon);
-		mod390HF = MODEL390HF.createMod390HF(getOccam(), mod390HF);
+		mod390HF = MODEL390HF.create(getOccam(), mod390HF);
 		MODEL390HF.save(getOccam(), mod390HF);
 	}
 }

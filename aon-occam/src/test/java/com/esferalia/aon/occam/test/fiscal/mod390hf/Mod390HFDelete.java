@@ -11,7 +11,7 @@ public class Mod390HFDelete extends AbstractOccamTest {
 	@Test
 	public void test() {
 		for (Mod390HF mod390HF : MODEL390HF.getMod390HFs(getOccam())) {
-			MODEL390HF.deleteMod390HF(getOccam(), mod390HF);
+			MODEL390HF.delete(getOccam(), mod390HF);
 		};
 	}
 		

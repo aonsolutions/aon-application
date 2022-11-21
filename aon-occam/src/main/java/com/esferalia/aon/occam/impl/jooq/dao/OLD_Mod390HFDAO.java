@@ -36,8 +36,8 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod390HFDAO extends FiscalModelDAO {
-	
+public class OLD_Mod390HFDAO extends FiscalModelDAO {
+/*	
 	@FunctionalInterface
 	private static interface IModelInfoProvider {
 		String obtain(AONContext ctx, Mod390HF mod,IModelScript<Mod390Key> script,IMod390KeyDAO keyDAO);
@@ -209,7 +209,7 @@ public class Mod390HFDAO extends FiscalModelDAO {
 		}
 
 		// INTIALIZATION VIA BREAKDOWN		
-		Mod390HFDAO.getVatBreakdown(ctx,mod)
+		OLD_Mod390HFDAO.getVatBreakdown(ctx,mod)
 			.forEach( vat -> dec.initialize(ctx, mod, vat) );
 		
 		if (mod.getProratePercent() != 0 && mod.getProratePercent() != 100) {
@@ -474,5 +474,5 @@ public class Mod390HFDAO extends FiscalModelDAO {
 								.forEach( detail -> model.put( detail) )
 					 );
 	}
-	
+*/	
 }

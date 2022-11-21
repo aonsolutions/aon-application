@@ -38,7 +38,7 @@ public class Mod390HFFile extends HttpServlet {
 					.setDomainName(domainName)
 					.setDomain(domainId)
 					.setUser(user);
-			Mod390HF mod303 = MODEL390HF.getMod390HF(occam,id);
+			Mod390HF mod303 = MODEL390HF.get(occam,id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;

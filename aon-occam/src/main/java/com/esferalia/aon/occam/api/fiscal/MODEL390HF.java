@@ -26,51 +26,81 @@ public class MODEL390HF {
 		}
 	}
 
-	public static Mod390HF getMod390HF(Occam occam, int id) {
+	public static Mod390HF get(Occam occam, int id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().getMod390HF(ctx, id);
+			return getImpl().get(ctx, id);
 		}
 	}
 
 	public static Mod390HF calculate(Occam occam, Mod390HF mod) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().calculateMod390HF(ctx, mod);
+			return getImpl().calculate(ctx, mod);
 		}
 	}
 
 	public static Mod390HF save(Occam occam, Mod390HF mod) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().saveMod390HF(ctx, mod);
+			return getImpl().save(ctx, mod);
 		}
 	}
 
 	public static Mod390HF saveComments(Occam occam, Mod390HF mod) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().saveCommentsMod390HF(ctx, mod);
+			return getImpl().saveComments(ctx, mod);
 		}
 	}
 	
 	public static Mod390HF initializeForFinish(Occam occam, Mod390HF mod) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().initializeForFinishMod390HF(ctx, mod);
+			return getImpl().initializeForFinish(ctx, mod);
 		}
 	}
 
-	public static Mod390HF finish(Occam occam, Mod390HF mod) {
+	public static void delete(Occam occam, Mod390HF mod) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().markAsFinishedMod390HF(ctx, mod);
+			getImpl().delete(ctx, mod);
 		}
 	}
 
-	public static Mod390HF reopen(Occam occam, Mod390HF mod) {
+	public static Mod390HF initialize(Occam occam,Mod390HF mod) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().markAsPendingMod390HF(ctx, mod);
+			return getImpl().initialize(ctx, mod);
+		}
+	}
+
+	public static Mod390HF create(Occam occam,Mod390HF mod) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().create(ctx, mod);
+		}
+	}
+
+	public static String getInfo(Occam occam, Mod390HF mod ,IModelScript<Mod390Key> script,FiscalModelKeyInfo infoKey) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().getInfo(ctx, mod, script, infoKey);
+		}
+	}
+
+	public static Mod390HF reset(Occam occam, Mod390HF mod) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().reset(ctx, mod);
+		}
+	}
+
+	public static Mod390HF markAsFinished(Occam occam, Mod390HF mod) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsFinished(ctx, mod);
+		}
+	}
+
+	public static Mod390HF markAsPending(Occam occam, Mod390HF mod) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().markAsPending(ctx, mod);
 		}
 	}
 	
 	public static Mod390HF markAsSent(Occam occam, Mod390HF mod) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().markAsSentMod390HF(ctx, mod);
+			return getImpl().markAsSent(ctx, mod);
 		}
 	}
 
@@ -79,41 +109,16 @@ public class MODEL390HF {
 			return getImpl().markAsCustomerCheck(ctx, mod);
 		}
 	}
-
-	public static void deleteMod390HF(Occam occam, Mod390HF mod) {
+	
+	public static Mod390HF markAsCustomerAccepted(Occam occam, Mod390HF mod) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			getImpl().deleteMod390HF(ctx, mod);
+			return getImpl().markAsCustomerAccepted(ctx, mod);
 		}
 	}
-
-	public static Mod390HF initializeMod390HF(Occam occam,Mod390HF mod) {
+	
+	public static Mod390HF markAsCustomerRejected(Occam occam, Mod390HF mod, String reason) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().initializeMod390HF(ctx, mod);
+			return getImpl().markAsCustomerRejected(ctx, mod, reason);
 		}
 	}
-
-	public static Mod390HF createMod390HF(Occam occam,Mod390HF mod) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().createMod390HF(ctx, mod);
-		}
-	}
-
-	public static Mod390HF declarationChanged(Occam occam,Mod390HF mod) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().declarationChanged(ctx, mod);
-		}
-	}
-
-	public static String getMod390HFInfo(Occam occam, Mod390HF mod ,IModelScript<Mod390Key> script,FiscalModelKeyInfo infoKey) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().getMod390HFInfo(ctx, mod, script, infoKey);
-		}
-	}
-
-	public static Mod390HF resetMod390HF(Occam occam, Mod390HF mod) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().resetMod390HF(ctx, mod);
-		}
-	}
-
 }
