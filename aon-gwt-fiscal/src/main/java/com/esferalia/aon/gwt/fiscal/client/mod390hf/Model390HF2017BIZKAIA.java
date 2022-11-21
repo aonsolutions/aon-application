@@ -25,10 +25,10 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-public class Model3902017BIZKAIA extends Model390HFBase {
+public class Model390HF2017BIZKAIA extends Model390HFBase {
 	
 	
-	public Model3902017BIZKAIA(Model390HFCallback callback,Mod390HF mod390HF) {
+	public Model390HF2017BIZKAIA(Model390HFCallback callback,Mod390HF mod390HF) {
 		super(mod390HF,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -320,7 +320,7 @@ public class Model3902017BIZKAIA extends Model390HFBase {
 
 					@Override
 					public Mod390HF getModel() {
-						return Model3902017BIZKAIA.this.getModel();
+						return Model390HF2017BIZKAIA.this.getModel();
 					}
 
 					@Override

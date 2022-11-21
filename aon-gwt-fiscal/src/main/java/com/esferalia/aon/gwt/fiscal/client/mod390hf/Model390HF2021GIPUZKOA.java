@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017GIPUZKOAAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017GIPUZKOARScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017GIPUZKOAResultScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017GIPUZKOASpecificOperationsScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902021GIPUZKOASpecificOperationsScript;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -24,9 +24,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-public class Model3902017GIPUZKOA extends Model390HFBase {
+public class Model390HF2021GIPUZKOA extends Model390HFBase {
 	
-	public Model3902017GIPUZKOA(Model390HFCallback callback,Mod390HF mod390HF) {
+	public Model390HF2021GIPUZKOA(Model390HFCallback callback,Mod390HF mod390HF) {
 		super(mod390HF,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -153,7 +153,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		tabPanel.add(additionalDataScrollPanel, "Inf. Adicional");
 		paintDeclaration(table,Model3902017GIPUZKOAAdditionalDataScript.values(),10);
 	}
-	
+
 	private void paintSpecificOperationsTab(TabLayoutPanel tabPanel) {
 		ScrollPanel specificOpDataScrollPanel = new ScrollPanel();
 		FlexTable table = new FlexTable();
@@ -174,7 +174,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(5, "50px");
 		specificOpDataScrollPanel.setWidget(table);
 		tabPanel.add(specificOpDataScrollPanel, "Vol. Oper. / Op. Especif.");
-		paintDeclaration(table,Model3902017GIPUZKOASpecificOperationsScript.values(),4);
+		paintDeclaration(table,Model3902021GIPUZKOASpecificOperationsScript.values(),4);
 	}
 	
 
@@ -418,7 +418,7 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 
 					@Override
 					public Mod390HF getModel() {
-						return Model3902017GIPUZKOA.this.getModel();
+						return Model390HF2021GIPUZKOA.this.getModel();
 					}
 
 					@Override
@@ -465,5 +465,5 @@ public class Model3902017GIPUZKOA extends Model390HFBase {
 			admonPanel = new FiscalModelAdmonPanel<>(cbk);
 			tabPanel.add( admonPanel, AON.MSG.administrationName(getModel().getAdministration()));		
 	}
-	
+
 }

@@ -6,10 +6,10 @@ import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF.Model390HFCallbac
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
-import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017ARABAAdditionalDataScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017ARABARScript1;
-import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017ARABAResultScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017ARABAScript2;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022ARABARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022ARABAResultScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022ARABAScript2;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022ARABAAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-public class Model3902017ARABA extends Model390HFBase {
+public class Model390HF2022ARABA extends Model390HFBase {
 	 
-	public Model3902017ARABA(Model390HFCallback callback,Mod390HF mod390HF) {
+	public Model390HF2022ARABA(Model390HFCallback callback,Mod390HF mod390HF) {
 		super(mod390HF,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -120,9 +120,9 @@ public class Model3902017ARABA extends Model390HFBase {
 		table.getColumnFormatter().setStyleName(5, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table,Model3902017ARABARScript1.values(),8);
+		paintDeclaration(table,Model3902022ARABARScript1.values(),8);
 		
-		paintScript(table,Model3902017ARABAScript2.values() ,8);
+		paintScript(table,Model3902022ARABAScript2.values() ,8);
 		
 		container.add(table);
 		
@@ -145,7 +145,7 @@ public class Model3902017ARABA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(3, "50px");
 		resultScrollPanel.setWidget(table);
 		tabPanel.add(resultScrollPanel, AON.MSG.result());
-		paintDeclaration(table,Model3902017ARABAResultScript.values(),3);
+		paintDeclaration(table,Model3902022ARABAResultScript.values(),3);
 	}
 
 	private void paintAdditionalDataTab(TabLayoutPanel tabPanel) {
@@ -169,7 +169,7 @@ public class Model3902017ARABA extends Model390HFBase {
 		
 		additionalDataScrollPanel.setWidget(table);
 		tabPanel.add(additionalDataScrollPanel, AON.MSG.additionalData());
-		paintDeclaration(table,Model3902017ARABAAdditionalDataScript.values(),3);
+		paintDeclaration(table,Model3902022ARABAAdditionalDataScript.values(),3);
 	}
 	
 	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
@@ -183,7 +183,7 @@ public class Model3902017ARABA extends Model390HFBase {
 
 					@Override
 					public Mod390HF getModel() {
-						return Model3902017ARABA.this.getModel();
+						return Model390HF2022ARABA.this.getModel();
 					}
 
 					@Override

@@ -39,14 +39,18 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 	};
 	
 	private static enum Mod390KeyDAO implements IMod390KeyDAO {
-		 AR_C907	(Mod390Key.AR_C907)
+		 CM_000(Mod390Key.CM_000)
+		,CM_003(Mod390Key.CM_003)
+		,CM_004(Mod390Key.CM_004)
+		,CM_006(Mod390Key.CM_006)
+		
+		,AR_C907	(Mod390Key.AR_C907)
 		,AR_C918(Mod390Key.AR_C918,null,null,(ctx,mod) -> add(Mod390Key.AR_C918,mod,(
 				 AonStringUtils.equals(AppParamDAO.fetchValue(ctx, AppParam.FS_TAX_REFUND_REGISTRY),AonStringUtils.ONE))?1:0),null,null)
 		,AR_C910	(Mod390Key.AR_C910,null,null,(ctx,mod) -> add(Mod390Key.AR_C910,mod,ConfigurationDAO.getConfiguration(ctx).getCompany().isVatAccrualPayment()?1:0),null,null)
 		,AR_C911	(Mod390Key.AR_C911)
 		,AR_C908	(Mod390Key.AR_C908)
 		,AR_C909	(Mod390Key.AR_C909)
-		,CM_003		(Mod390Key.CM_003)
 		,AR_C250	(Mod390Key.AR_C250)
 		,AR_C251	(Mod390Key.AR_C251)
 		,AR_C150	(Mod390Key.AR_C150)
