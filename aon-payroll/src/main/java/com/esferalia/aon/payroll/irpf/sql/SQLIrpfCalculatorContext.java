@@ -636,6 +636,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	private PreparedStatement salaryStmt;
 
 	private double nextIrpfBase;
+	private double nextTotalIrpf;
 	private double nextSocialSecurityContributons;
 
 	private ResultSet irpfDataRs;
@@ -1127,7 +1128,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 	@Override
 	public CausaRegularizacion getCausaRegularizacion() {
 		if (irpfRegularizationRs == null) {
-			return irpfBase > 0.00 ? CausaRegularizacion.ONCE : null;
+			return (irpfBase > 0.00 && 
+					issuedSalaries.size() == AonDateUtils.getMonth(startDate) )? CausaRegularizacion.ONCE : null;
 		}
 		try {
 			return getByOrdinal(
@@ -1244,6 +1246,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			SQLException {
 
 		nextIrpfBase = 0.00;
+		nextTotalIrpf = 0.00;
 		nextSocialSecurityContributons = 0.00;
 
 		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>() {
@@ -1283,6 +1286,12 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 			Salary salary = calculator.calculate(irpfCtx);
 			
+			if (( salary.getIrpfBase() == null 
+				|| salary.getIrpfBase() == 0.00 )
+				&&( salary.getExtraPayProration() == null  
+				|| salary.getExtraPayProration() == 0.00 ))
+				continue;
+			
 			Double irpf = irpfCtx.getIrpfPercent();
 			if (irpf != null && irpf > 0.00) {
 				SALARIES.set(salaries);
@@ -1294,6 +1303,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 
 			double irpfBase = ( salary.getIrpfBase() != null ? salary.getIrpfBase() : 0.00);
 			double proration = ( salary.getExtraPayProration() != null ? salary.getExtraPayProration() : 0.00 ) ;
+
 			if ( proration > 0.00 ) {
 				double extrasPayment = 
 				salary.getSalaryPayments().stream()
@@ -1312,6 +1322,8 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				nextIrpfBase += builder.getProrrated() * size;
 				nextIrpfBase -= (size - 1) * builder.getMonthlyAmount();
 				
+				nextTotalIrpf = ( salary.getTotalIrpf() != null ? salary.getTotalIrpf() : 0.00 )  * size;
+
 				nextSocialSecurityContributons = ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 )  * size;
 				
 				
@@ -1333,6 +1345,10 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				nextIrpfBase += builder.getProrrated() * size;
 				nextIrpfBase -= (size - 1) * builder.getMonthlyAmount();
 				
+				double tirpf = ( salary.getTotalIrpf() != null ? salary.getTotalIrpf() : 0.00 );
+
+				nextTotalIrpf = tirpf / salaryDays * monthDays  * size;
+
 				double socialSecurityContributions = ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 );
 				
 				nextSocialSecurityContributons = socialSecurityContributions / salaryDays * monthDays  * size;
@@ -1343,6 +1359,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			
 //			
 			nextIrpfBase += ( salary.getIrpfBase() != null ? salary.getIrpfBase() : 0.00);
+			nextTotalIrpf += ( salary.getTotalIrpf() != null ? salary.getTotalIrpf() : 0.00 );
 			nextSocialSecurityContributons += ( salary.getSocialSecurityContributions() != null ? salary.getSocialSecurityContributions() : 0.00 );
 
 //			size--;
