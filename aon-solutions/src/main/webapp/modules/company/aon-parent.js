@@ -2,8 +2,8 @@ import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getCompanies, getUserNotice, getUser, getTimeControl, getCompaniesBySchemas} from  '../../services/service.js';
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import {AonSign} from '../timecontrol/aon-sign.js';
-import './aon-desktop.js';
 import { AonApplication } from '../../components/aon-application.js';
+import { AonDesktop } from './aon-desktop.js';
 
 export class AonParent extends AonElement {
 
@@ -43,8 +43,6 @@ export class AonParent extends AonElement {
 			this.init({value: searchBox.value});
 			this.addFilter({value:searchBox.value});
 		});
-
-		// this.getCompaniesSchemas();
 	}
 
 	buildSidenav() {
@@ -348,7 +346,11 @@ export class AonParent extends AonElement {
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
-			this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
+
+			let aonDesktop = new AonDesktop();
+			aonDesktop.id = "aonDesktop";
+
+			this.rootPanel(aonDesktop);
 		});
 	}
 

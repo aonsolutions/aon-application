@@ -173,7 +173,6 @@ const getCustomerStatus = (detail) => {
  * @param {AonOfficePanel} aonOfficePanel 
  */
 const builDialogRelationship = (aonOfficePanel, data) => {
-
     const application = aonOfficePanel.getApplication();
     const dialog = application.getDialog();
     dialog.autoclose = false;
