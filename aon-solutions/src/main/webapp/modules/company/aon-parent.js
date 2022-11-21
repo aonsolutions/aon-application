@@ -357,11 +357,7 @@ export class AonParent extends AonElement {
 
 	getCompaniesSchemas(){
 		getCompaniesBySchemas(this.getFilter())
-		.then((companies) => {
-
-			console.log(companies);
-			getCompaniesBySchemas(this.getFilter()).then(console.log);
-		});
+		.then(console.log);
 	}
 }
 if(!window.customElements.get('aon-parent')){
