@@ -6,9 +6,10 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	Mod390HFDelete.class,
-	Mod390HFInsert.class,
-	 // Mod303AEAT2021C59.class,
+	Mod390HFKeyTest.class,
+	// Mod390HFDelete.class,
+	// Mod390HFInsert.class,
+	// Mod303AEAT2021C59.class,
 })
 public class Mod390HFTestSuite {
 
