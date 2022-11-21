@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod390;
+package com.esferalia.aon.occam.api.model.fiscal.mod390hf;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
@@ -31,7 +31,7 @@ public enum Model3902017PrintARABAScript implements IModelScript<Mod390Key> {
 	 ,DVG19 (Mod390Key.AR_C042.getDescription()	,new Mod390Key[]{null				,null				,Mod390Key.AR_C042})
 	 ,EMPTY0(null						,null)
 	 
-	,DED01 ("IVA deducible",null,null,TITLE)
+	,DED01 ("IVA deducible",null,TITLE)
 	,DED02 (null								,new Mod390Key[]{Mod390Key.AR_C043,Mod390Key.AR_C044,Mod390Key.AR_C045})
 	,DED03 (getDescription(Mod390Key.AR_C846)	,new Mod390Key[]{Mod390Key.AR_C846,Mod390Key.AR_C847,Mod390Key.AR_C848})
 	,DED04 (null								,new Mod390Key[]{Mod390Key.AR_C849,Mod390Key.AR_C850,Mod390Key.AR_C851})

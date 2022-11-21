@@ -752,7 +752,7 @@ class Mod390HFBizkaia2018Declaration extends Mod390HFBizkaiaDeclaration {
 		return Mod390KeyDAO.valueOf(keyValue);
 	}
 	@Override
-	public Mod390Key[] getProrateKeys() {
+	public Mod390Key[] getProratedKeys() {
 		return PRORATE_KEYS;
 	}
 

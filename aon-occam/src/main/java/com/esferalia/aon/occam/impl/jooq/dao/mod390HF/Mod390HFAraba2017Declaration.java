@@ -697,7 +697,7 @@ public class Mod390HFAraba2017Declaration extends Mod390HFArabaDeclaration {
 		return Mod390KeyDAO.valueOf(keyValue);
 	}
 	@Override
-	public Mod390Key[] getProrateKeys() {
+	public Mod390Key[] getProratedKeys() {
 		return PRORATE_KEYS;
 	}
 	

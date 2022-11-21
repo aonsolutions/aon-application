@@ -1,9 +1,9 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod390;
+package com.esferalia.aon.occam.api.model.fiscal.mod390hf;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -11,18 +11,18 @@ import com.esferalia.aon.occam.api.model.fiscal.KeyTypes;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 
-public enum Model3902017BIZKAIAScript2 implements IModelScript<Mod390Key> {
+public enum Model3902022BIZKAIAScript2 implements IModelScript<Mod390Key> {
 	
 	// ---------------------------------------------------------
 	// -------------------- IVA DEDUCIBLE ----------------------
 	// ---------------------------------------------------------
 	 DED01 ("IVA DEDUCIBLE" ,null,null,TITLE)
 	,DED02 ("IVA deducible en operaciones interiores, excluidas operaciones intragrupo"
-																,new Mod390Key[]{null,Mod390Key.BZ_C060},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},INVOICE)
-	,DED03 ("IVA deducible en operaciones interiores"			,new Mod390Key[]{null,Mod390Key.BZ_C061},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},INVOICE)
-	,DED04 ("IVA deducible en importaciones"					,new Mod390Key[]{null,Mod390Key.BZ_C062},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},INVOICE)
-	,DED05 ("IVA deducible en Adquisiciones intracomunitarias"	,new Mod390Key[]{null,Mod390Key.BZ_C063},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},INVOICE)
-	,DED06 ("Compensaciones R\u00E9gimen Especial A.G. y P."	,new Mod390Key[]{null,Mod390Key.BZ_C064},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},INVOICE)
+																,new Mod390Key[]{null,Mod390Key.BZ_C060},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
+	,DED03 ("IVA deducible en operaciones interiores"			,new Mod390Key[]{null,Mod390Key.BZ_C061},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
+	,DED04 ("IVA deducible en importaciones"					,new Mod390Key[]{null,Mod390Key.BZ_C062},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
+	,DED05 ("IVA deducible en Adquisiciones intracomunitarias"	,new Mod390Key[]{null,Mod390Key.BZ_C063},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
+	,DED06 ("Compensaciones R\u00E9gimen Especial A.G. y P."	,new Mod390Key[]{null,Mod390Key.BZ_C064},new KeyTypes[]{KeyTypes.DEDUCTIBLE_QUOTA},PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED07 ("Regularizaci\u00F3n de bienes de inversion"		,new Mod390Key[]{null,Mod390Key.BZ_C065},null,NONE)
 	,DED08 ("Total a deducir"									,new Mod390Key[]{null,Mod390Key.BZ_C066},null,COMPUTE)
 		
@@ -59,7 +59,7 @@ public enum Model3902017BIZKAIAScript2 implements IModelScript<Mod390Key> {
 	private FiscalModelKeyInfo[] infoKeys;
 	private KeyTypes[] keyTypes;
 	
-	private Model3902017BIZKAIAScript2(String label, Mod390Key[] keys,KeyTypes[] keyTypes,FiscalModelKeyInfo ... infoKeys) {
+	private Model3902022BIZKAIAScript2(String label, Mod390Key[] keys,KeyTypes[] keyTypes,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;

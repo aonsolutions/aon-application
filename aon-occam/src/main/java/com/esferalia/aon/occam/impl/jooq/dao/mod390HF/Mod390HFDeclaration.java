@@ -217,11 +217,24 @@ public abstract class Mod390HFDeclaration {
 		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_52;
 	}
 
+	public static boolean mustApplyProrrate(Mod390HF mod,VatContext vat) {
+		return (mod.hasProrate()) && 
+			(!mod.isSpecialProrate() || (mod.isSpecialProrate() && vat.getActivity() == null));
+	}
+	protected boolean isProrrated(Mod390Key key) {
+		if ( key != null && getProratedKeys() != null ) {
+			for (Mod390Key pk : getProratedKeys()) {
+				if (pk == key) return true;			
+			}
+		}
+		return false;
+	}
+
 	void specificInitialization(AONContext ctx, Mod390HF mod) {}
 	abstract IMod390KeyDAO safeValueOf(Mod390HF mod, String key);
 	abstract IMod390KeyDAO valueOf(String string);
 	abstract IMod390KeyDAO[] getKeys();
-	abstract Mod390Key[] getProrateKeys();
+	abstract Mod390Key[] getProratedKeys();
 	abstract Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod);
 	abstract double getResult(final Mod390HF mod);
 	abstract Mod390HF initialize(AONContext ctx, Mod390HF mod303);

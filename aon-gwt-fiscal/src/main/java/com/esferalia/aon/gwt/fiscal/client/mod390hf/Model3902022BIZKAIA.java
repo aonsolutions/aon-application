@@ -10,10 +10,10 @@ import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
 import com.esferalia.aon.gwt.fiscal.client.widget.AonActivityPanel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
-import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017BIZKAIAAdditionalDataScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017BIZKAIAScript1;
-import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017BIZKAIAScript2;
-import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017BIZKAIASpecificOperationsScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022BIZKAIAAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022BIZKAIAScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022BIZKAIAScript2;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022BIZKAIASpecificOperationsScript;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -25,10 +25,10 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-public class Model3902017BIZKAIA extends Model390HFBase {
+public class Model3902022BIZKAIA extends Model390HFBase {
 	
 	
-	public Model3902017BIZKAIA(Model390HFCallback callback,Mod390HF mod390HF) {
+	public Model3902022BIZKAIA(Model390HFCallback callback,Mod390HF mod390HF) {
 		super(mod390HF,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -79,7 +79,7 @@ public class Model3902017BIZKAIA extends Model390HFBase {
 		container.add(table);
 		additionalDataScrollPanel.setWidget(container);
 		tabPanel.add(additionalDataScrollPanel, "Inf. Adicional");
-		paintDeclaration(table,Model3902017BIZKAIAAdditionalDataScript.values(),10);
+		paintDeclaration(table,Model3902022BIZKAIAAdditionalDataScript.values(),10);
 	}
 
 	private FlexTable getExistenciasTable() {
@@ -131,7 +131,7 @@ public class Model3902017BIZKAIA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(5, "50px");
 		specificOpDataScrollPanel.setWidget(table);
 		tabPanel.add(specificOpDataScrollPanel, "Vol. Oper. / Op. Especif.");
-		paintDeclaration(table,Model3902017BIZKAIASpecificOperationsScript.values(),4);
+		paintDeclaration(table,Model3902022BIZKAIASpecificOperationsScript.values(),4);
 	}
 
 	private void paintExtraTab(TabLayoutPanel tabPanel) {
@@ -187,7 +187,7 @@ public class Model3902017BIZKAIA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table,Model3902017BIZKAIAScript1.values(),8);
+		paintDeclaration(table,Model3902022BIZKAIAScript1.values(),8);
 		container.add(table);
 		
 		table = new FlexTable();
@@ -205,7 +205,7 @@ public class Model3902017BIZKAIA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(4, "60px");
 
 		table.getColumnFormatter().setWidth(5, "50px");
-		paintDeclaration(table,Model3902017BIZKAIAScript2.values(),6);
+		paintDeclaration(table,Model3902022BIZKAIAScript2.values(),6);
 		container.add(table);
 		
 		generalRegimeScrollPanel.setWidget(container);
@@ -320,7 +320,7 @@ public class Model3902017BIZKAIA extends Model390HFBase {
 
 					@Override
 					public Mod390HF getModel() {
-						return Model3902017BIZKAIA.this.getModel();
+						return Model3902022BIZKAIA.this.getModel();
 					}
 
 					@Override

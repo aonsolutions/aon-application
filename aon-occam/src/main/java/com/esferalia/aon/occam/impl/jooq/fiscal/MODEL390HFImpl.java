@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390HF.Mod390HFDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390HF.Mod390HFInfoDAO;
 
 public class MODEL390HFImpl implements IMODEL390HF {
 	
@@ -62,8 +63,7 @@ public class MODEL390HFImpl implements IMODEL390HF {
 
 	@Override
 	public String getInfo(AONContext ctx, Mod390HF mod390HF, IModelScript<Mod390Key> script, FiscalModelKeyInfo infoKey) {
-		return null;
-		// TODO return Mod390HFDAO.getMod390HFInfo(ctx, mod390HF, script, infoKey);
+		return Mod390HFInfoDAO.getInfo(ctx, mod390HF, script, infoKey);
 	}
 
 	@Override

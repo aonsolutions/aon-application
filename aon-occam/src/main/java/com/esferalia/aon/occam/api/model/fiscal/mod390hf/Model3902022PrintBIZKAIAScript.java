@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod390;
+package com.esferalia.aon.occam.api.model.fiscal.mod390hf;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
@@ -8,7 +8,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public enum Model3902017PrintBIZKAIAScript implements IModelScript<Mod390Key> {
+public enum Model3902022PrintBIZKAIAScript implements IModelScript<Mod390Key> {
 	
 	 DVG01 ("IVA DEVENGADO",null,TITLE)
 	,DVG02 (null								,new Mod390Key[]{Mod390Key.BZ_C020	,Mod390Key.BZ_X020	,Mod390Key.BZ_C021})
@@ -34,7 +34,7 @@ public enum Model3902017PrintBIZKAIAScript implements IModelScript<Mod390Key> {
 	,DED05 (getDescription(Mod390Key.BZ_C063)	,new Mod390Key[]{null				,null				,Mod390Key.BZ_C063})
 	,DED06 (getDescription(Mod390Key.BZ_C064)	,new Mod390Key[]{null				,null				,Mod390Key.BZ_C064})
 	,DED07 (getDescription(Mod390Key.BZ_C065)	,new Mod390Key[]{null				,null				,Mod390Key.BZ_C065})
-	,DED08 (getDescription(Mod390Key.BZ_C066)	,new Mod390Key[]{null				,null				,Mod390Key.BZ_C066},null,TITLE)
+	,DED08 (getDescription(Mod390Key.BZ_C066)	,new Mod390Key[]{null				,null				,Mod390Key.BZ_C066},TITLE)
 	
 	,TRI00("Tributaci\u00F3n por raz\u00F3n de territorio" ,null,TITLE)
 	,TRI01("Territorio Com\u00FAn"				,new Mod390Key[]{null				,Mod390Key.BZ_C081	,Mod390Key.BZ_C082})
@@ -115,7 +115,7 @@ public enum Model3902017PrintBIZKAIAScript implements IModelScript<Mod390Key> {
 	private Mod390Key[] keys;
 	private FiscalModelKeyInfo[] infoKeys;
 	
-	private Model3902017PrintBIZKAIAScript(String label, Mod390Key[] keys,FiscalModelKeyInfo ... infoKeys) {
+	private Model3902022PrintBIZKAIAScript(String label, Mod390Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;

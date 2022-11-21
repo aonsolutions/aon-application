@@ -141,7 +141,7 @@ public class Mod390HFDAO extends FiscalModelDAO {
 		final Mod390HFDeclaration dec = Mod390HFDeclaration.getInstance(mod);
 		Set<Integer> invoices = dec.createOnTheFly(ctx,mod);
 		if (mod.hasProrate()) {
-			for (Mod390Key key : dec.getProrateKeys()) {
+			for (Mod390Key key : dec.getProratedKeys()) {
 				FiscalModelDetail det = mod.ensureDetail(key);
 				det.setAmount(AonMathUtils.round(det.getAmount() * mod.getProratePercent() / 100));
 			}
