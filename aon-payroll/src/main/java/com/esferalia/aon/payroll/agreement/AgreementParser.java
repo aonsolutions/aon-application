@@ -1063,6 +1063,7 @@ public class AgreementParser {
 		name = name.replaceAll("/", "_");
 		name = name.replaceAll(":", "_");
 		name = name.replaceAll("º", "");
+		name = name.replaceAll("%", "");
 		name = name.replaceAll("-", "_");
 		
 		if(null != type)
