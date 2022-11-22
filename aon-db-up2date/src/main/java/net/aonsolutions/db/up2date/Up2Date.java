@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.fiscal.RefreshMod390HFResult;
 import net.aonsolutions.db.up2date.payroll.FixPreaviso;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 import net.aonsolutions.db.up2date.warehouse.UdapaPfondoUpdateFix;
@@ -282,7 +283,8 @@ public class Up2Date {
     		//AlterContractBonusExpression.ALTER_CONTRACT_BONUS_EXPRESSION,
     		//AlterContractBonusDescription.ALTER_CONTRACT_BONUS_DESCRIPTION,
     		FixPreaviso.FIXPREAVISO,
-
+    		RefreshMod390HFResult.REFRESH_MOD390_RESULT,
+    		
     		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
     };
