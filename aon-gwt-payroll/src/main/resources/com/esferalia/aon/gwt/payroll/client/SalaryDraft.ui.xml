@@ -315,7 +315,7 @@
 		<g:north size="68">
 
 			<g:FlowPanel ui:field="toolbar">
-
+    			
 				<g:FlowPanel styleName="aon-finding-title-toolbar aon-width-all">
 					<g:HorizontalPanel styleName="aon-width-all">
 			
@@ -396,6 +396,8 @@
 					</g:HorizontalPanel>
 				</g:FlowPanel>
 
+				<g:HTMLPanel ui:field="messageContainer"/>
+
 			</g:FlowPanel>
 
 		</g:north>
@@ -403,6 +405,7 @@
 			<g:DeckLayoutPanel ui:field="deckPanel">
 				<g:ScrollPanel ui:field="scrollPanel" styleName="{style.editor} {style.container}">
 					<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
+    					
 						<g:VerticalPanel ui:field="draftPanel" width="auto" styleName="{style.draft}">
 							
 							<g:HorizontalPanel ui:field='timeRulePanel'  debugId='timeRulePanel' visible="false" styleName="aon-width-all {style.vertical-margin}" />
