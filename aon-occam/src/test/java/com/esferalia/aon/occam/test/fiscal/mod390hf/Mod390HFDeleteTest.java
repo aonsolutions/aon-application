@@ -6,7 +6,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL390HF;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 
-public class Mod390HFDelete extends AbstractOccamTest {
+public class Mod390HFDeleteTest extends AbstractOccamTest {
 	
 	@Test
 	public void test() {

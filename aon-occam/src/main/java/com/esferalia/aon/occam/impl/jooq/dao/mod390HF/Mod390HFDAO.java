@@ -14,9 +14,9 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
-import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -228,11 +228,26 @@ public class Mod390HFDAO extends FiscalModelDAO {
 		return mod;
 	}
 
-	public static Stream<Mod303> getM303YearModels(AONContext ctx,FiscalModel mod) {
+	public static Stream<FiscalModel> getM303YearModels(AONContext ctx,Mod390HF mod) {
 		return Mod303DAO.getMod303s(ctx, mod.getDomain(), 
 				p -> p.getAdministrationProperty().eq(mod.getAdministration().value())
-					.and( p.getYearProperty().eq(mod.getYear())));
+					.and( p.getYearProperty().eq(mod.getYear())))
+				.map( mod303 -> (FiscalModel) mod303);
 	}
+	
+	public static Stream<FiscalModel> getM303YearPaybackModels(AONContext ctx,Mod390HF mod) {
+		return Stream.concat(getM303YearModels(ctx,mod),getSamePeriodFiscalModels(ctx, mod))
+			.filter(  fm -> 
+	   	   		fm.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK
+	   	   	 || fm.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK_CCT)				; 
+	}
+	public static Stream<FiscalModel> getM303YearDepositModels(AONContext ctx,Mod390HF mod) {
+		return Stream.concat(getM303YearModels(ctx,mod),getSamePeriodFiscalModels(ctx, mod))
+			.filter(  fm -> 
+			   fm.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT
+			|| fm.getDeclarationResultType() == FiscalModelDeclarationType.BANK
+			|| fm.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT_CCT);
+  }
 	
 	
 }

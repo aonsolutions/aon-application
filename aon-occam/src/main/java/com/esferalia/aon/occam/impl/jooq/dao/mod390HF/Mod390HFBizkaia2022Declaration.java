@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
@@ -285,10 +286,9 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 		// Ingresos efectuados en le Dip. Foral de Bizkaia
 		,BZ_C099	(Mod390Key.BZ_C099,null,null,
 				(ctx,mod) -> {
-					add( Mod390Key.BZ_C099, mod, Mod390HFDAO.getM303YearModels(ctx, mod)
-							.mapToDouble(fm -> fm.getAmount(Mod303Key.BZ_C040))
-							.filter(result -> AonMathUtils.isNotZero(result))
-							.sum());
+					add( Mod390Key.BZ_C099, mod, Mod390HFDAO.getM303YearDepositModels(ctx, mod)
+						.mapToDouble(FiscalModel::getDeclarationResult)
+						.sum());
 				} 
 				,null
 				,"<li>Declaraciones a ingresar en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
@@ -304,11 +304,10 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 		// Devoluciones practicadas en la Dip. Foral de Bizkaia
 		,BZ_C100	(Mod390Key.BZ_C100,null,null,
 				(ctx,mod) -> {
-					add( Mod390Key.BZ_C100, mod, 
-							Mod390HFDAO.getM303YearModels(ctx, mod)
-							.mapToDouble(fm -> fm.getAmount(Mod303Key.BZ_C039))
-							.filter(result -> AonMathUtils.isNotZero(result))
-							.sum());						
+					add( Mod390Key.BZ_C100, mod, Mod390HFDAO.getM303YearPaybackModels(ctx, mod)
+						.mapToDouble(FiscalModel::getDeclarationResult)
+						.map(AonMathUtils::absRounded)
+						.sum());						
 				} 
 				,null
 				,"<li>Declaraciones a devolver en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
