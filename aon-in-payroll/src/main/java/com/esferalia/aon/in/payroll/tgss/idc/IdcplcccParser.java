@@ -140,8 +140,8 @@ public class IdcplcccParser {
 			String group = matcher.group("group");
 			onEmployeeQuoteGroup(listener, group);
 			boolean monthly = matcher.group("monthly") != null;
-			onEmployeeQuoteGroup(listener, group, monthly);
 			parseEmployeePeriodPECs(reader, listener, employeeeNss, enterpriseCCC, startDate, endDate);
+			onEmployeeQuoteGroup(listener, group, monthly);
 			optional = attempt(reader, EMPLOYEE_PERIOD_QUOTE);
 		}
 		
