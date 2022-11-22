@@ -76,6 +76,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @Deprecated
 public abstract class AbstractDeliveryCreator implements Serializable {
@@ -256,8 +257,9 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 	protected Delivery createDelivery(AONContext ctx, ALBARANTYPE albaran, boolean test) {
 		albaran.setERRORES(null);
 		Delivery delivery = new Delivery(); 
-		List<DeliveryDetail> detailList = new LinkedList<DeliveryDetail>();
+		List<DeliveryDetail> detailList = new LinkedList<>();
 		Attach attach = new Attach();
+
 		try {
 			// TODO checkExistingDelivery
 			checkExistingDelivery(ctx, albaran);
@@ -495,6 +497,11 @@ public abstract class AbstractDeliveryCreator implements Serializable {
 							detail.setItem(item);
 							String description = item.getProduct().getName();
 							description += " #" + item.getSerialNumber();
+							String document = albaran.getDATOSCLIENTE().getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO();
+							if(ProductUtils.isEroski(document)
+							        && AonStringUtils.containsIgnoreCase(description, "natur")) {
+							    description += " CUMPLE TOTALMENTE GRASP";
+							}
 							detail.setDescription(description);
 							detail.setWarehouse(warehouseId);
 							detail.setQuantity(Double.valueOf(linea

@@ -156,4 +156,9 @@ public class ProductUtils {
         }
         return filter;
     }
+    
+    public static boolean isEroski(String document) {
+        return "F20033361".equalsIgnoreCase(document)
+                || "B88512975".equalsIgnoreCase(document);
+   }
 }

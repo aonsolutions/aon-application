@@ -86,6 +86,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WarehouseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 @Deprecated
 public class DeliveryCreator implements Serializable {
@@ -494,6 +495,11 @@ public class DeliveryCreator implements Serializable {
 							detail.setItem(item);
 							String description = item.getProduct().getName();
 							description += " #" + item.getSerialNumber();
+							String document = albaran.getDATOSCLIENTE().getDATOSREGISTRO().getDATOSDOCUMENTO().getDOCUMENTO();
+                            if(ProductUtils.isEroski(document)
+                                    && AonStringUtils.containsIgnoreCase(description, "natur")) {
+                                description += " CUMPLE TOTALMENTE GRASP";
+                            }
 							detail.setDescription(description);
 							detail.setWarehouse(warehouseId);
 							detail.setQuantity(Double.valueOf(linea
