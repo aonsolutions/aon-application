@@ -9,10 +9,10 @@ import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF.Model390HFCallbac
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
-import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017GIPUZKOAAdditionalDataScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017GIPUZKOARScript1;
-import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017GIPUZKOAResultScript;
-import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902021GIPUZKOASpecificOperationsScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022GIPUZKOAAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022GIPUZKOARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022GIPUZKOAResultScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902022GIPUZKOASpecificOperationsScript;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -98,7 +98,7 @@ public class Model390HF2022GIPUZKOA extends Model390HFBase {
 		table.getColumnFormatter().setStyleName(5, AON.CSS.aonTextCenter());
 		table.getColumnFormatter().setWidth(6, WIDTH_140PX);
 		table.getColumnFormatter().setWidth(7, "50px");
-		paintDeclaration(table,Model3902017GIPUZKOARScript1.values(),8);
+		paintDeclaration(table,Model3902022GIPUZKOARScript1.values(),8);
 		container.add(table);
 		
 		generalRegimeScrollPanel.setWidget(container);
@@ -120,7 +120,7 @@ public class Model390HF2022GIPUZKOA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(3, "50px");
 		resultScrollPanel.setWidget(table);
 		tabPanel.add(resultScrollPanel, AON.MSG.result());
-		paintDeclaration(table,Model3902017GIPUZKOAResultScript.values(),3);
+		paintDeclaration(table,Model3902022GIPUZKOAResultScript.values(),3);
 	}
 
 	private void paintAdditionalDataTab(TabLayoutPanel tabPanel) {
@@ -151,7 +151,7 @@ public class Model390HF2022GIPUZKOA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(9, "50px");
 		additionalDataScrollPanel.setWidget(table);
 		tabPanel.add(additionalDataScrollPanel, "Inf. Adicional");
-		paintDeclaration(table,Model3902017GIPUZKOAAdditionalDataScript.values(),10);
+		paintDeclaration(table,Model3902022GIPUZKOAAdditionalDataScript.values(),10);
 	}
 
 	private void paintSpecificOperationsTab(TabLayoutPanel tabPanel) {
@@ -174,7 +174,7 @@ public class Model390HF2022GIPUZKOA extends Model390HFBase {
 		table.getColumnFormatter().setWidth(5, "50px");
 		specificOpDataScrollPanel.setWidget(table);
 		tabPanel.add(specificOpDataScrollPanel, "Vol. Oper. / Op. Especif.");
-		paintDeclaration(table,Model3902021GIPUZKOASpecificOperationsScript.values(),4);
+		paintDeclaration(table,Model3902022GIPUZKOASpecificOperationsScript.values(),4);
 	}
 	
 

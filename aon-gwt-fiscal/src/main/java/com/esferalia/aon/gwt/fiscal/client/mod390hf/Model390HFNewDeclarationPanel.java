@@ -22,14 +22,14 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 public class Model390HFNewDeclarationPanel extends DockLayoutPanel {
 	
-	private AdministrationListBox admonList = new AdministrationListBox(true);
-	private AonIntegerBox yearBox = new AonIntegerBox();
-	private CheckBox replacement = new CheckBox();
-	private CheckBox complementary = new CheckBox();
-	private CheckBox withoutActivity = new CheckBox();
-	private AonDoubleBox prorate = new AonDoubleBox(7);
-	private CheckBox specialProrate = new CheckBox("Especial");
-	private CheckBox manualDeclaration = new CheckBox();
+	private AdministrationListBox admonList;
+	private AonIntegerBox yearBox;
+	private CheckBox replacement;
+	private CheckBox complementary;
+	private CheckBox withoutActivity;
+	private AonDoubleBox prorate;
+	private CheckBox specialProrate;
+	private CheckBox manualDeclaration;
 	private boolean running;
 	
 	private FlowPanel rootPanel;
@@ -56,11 +56,20 @@ public class Model390HFNewDeclarationPanel extends DockLayoutPanel {
 		rootPanel.setStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(rootPanel);
 		
-		registerHandlers(model,callback);
 		paint(model,callback);
 	}
 	
 	private void registerHandlers(Mod390HF model, Model390HFCallback callback) {
+		admonList = new AdministrationListBox(true, true);
+		yearBox = new AonIntegerBox();
+		replacement = new CheckBox();
+		complementary = new CheckBox();
+		withoutActivity = new CheckBox();
+		prorate = new AonDoubleBox(7);
+		specialProrate = new CheckBox("Especial");
+		manualDeclaration = new CheckBox();
+		
+		
 		admonList.addChangeHandler( event -> {
 			model.setAdministration( admonList.getValue() );
 			initialize(model, callback );
@@ -120,6 +129,8 @@ public class Model390HFNewDeclarationPanel extends DockLayoutPanel {
 	
 	private void paint(Mod390HF model, Model390HFCallback callback) {
 
+		registerHandlers(model,callback);
+		
 		headerPanel.setWidget(new AonFiscalModelHeader(model));
 
 		rootPanel.clear();

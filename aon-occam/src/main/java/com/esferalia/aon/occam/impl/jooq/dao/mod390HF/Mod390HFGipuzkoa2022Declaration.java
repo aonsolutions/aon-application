@@ -28,11 +28,11 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 		return  mod.isGipuzkoa() && mod.getYear() >= 2022;
 	}
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{
-		  Mod390Key.GP_C018
-		 ,Mod390Key.GP_C020
-		 ,Mod390Key.GP_C022
-		 ,Mod390Key.GP_C046
-		 ,Mod390Key.GP_C023
+		  Mod390Key.GP_C022
+		 ,Mod390Key.GP_C024
+		 ,Mod390Key.GP_C026
+		 ,Mod390Key.GP_C027
+		 ,Mod390Key.GP_C028
 	};
 	
 	private static enum Mod390KeyDAO implements IMod390KeyDAO {

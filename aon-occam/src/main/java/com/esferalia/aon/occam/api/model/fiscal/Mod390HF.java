@@ -73,31 +73,37 @@ public class Mod390HF extends FiscalModel implements Serializable {
 		return false;
 	}
 
-	@Override
-	public boolean isComplementaryDeclarationAvailable() {
-		if (getAdministration() == null) return false;
-		else if (isAraba()) return false;
-		else if (isBizkaia()) return true;
-		else if (isGipuzkoa()) return false;
-		else if (isNavarra()) return false;
-		return false;
-	}
-
-	@Override
-	public boolean isReplacementDeclarationAvailable() {
-		if (getAdministration() == null) return false;
-		else if (isAraba()) return true;
-		else if (isBizkaia()) return false;
-		else if (isGipuzkoa()) return false;
-		else if (isNavarra()) return false;
-		return false;
-	}
-	
+//	@Override
+//	public boolean isComplementaryDeclarationAvailable() {
+//		if (getAdministration() == null) return false;
+//		else if (isAraba()) return false;
+//		else if (isBizkaia()) return true;
+//		else if (isGipuzkoa()) return false;
+//		else if (isNavarra()) return false;
+//		return false;
+//	}
+//	@Override
+//	public boolean isReplacementDeclarationAvailable() {
+//		if (getAdministration() == null) return false;
+//		else if (isAraba()) return true;
+//		else if (isBizkaia()) return false;
+//		else if (isGipuzkoa()) return false;
+//		else if (isNavarra()) return false;
+//		return false;
+//	}
+//	@Override
+//	public boolean isReplacedNumberAvailable() {
+//		if (getAdministration() == null) return false;
+//		return (isComplementaryDeclarationAvailable() && isAEAT() && isComplementary() ); 
+//	}
 	@Override
 	public boolean isReplacedNumberAvailable() {
-		if (getAdministration() == null) return false;
-		return (isComplementaryDeclarationAvailable() && isAEAT() && isComplementary() ); 
+		return  getAdministration() != null 
+			&& (isComplementaryDeclarationAvailable() || isReplacementDeclarationAvailable()) 
+			&& (isComplementary() || isReplacement()); 
 	}
+	
+	
 	
 	public boolean isToCompensate() {
 		return (canBeSent() || isSent()) 
