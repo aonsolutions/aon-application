@@ -734,10 +734,10 @@ public class AgreementParser {
 					String realName = variablesMap.getVariablesMap().getOrDefault(lvlData.getName(), null);
 					
 					if(null != realName) {
-						if((AonStringUtils.containsIgnoreCase(realName, "PAGA") || AonStringUtils.containsIgnoreCase(realName, "P_E_")) && (AonStringUtils.containsIgnoreCase(realName, "VERANO") || AonStringUtils.containsIgnoreCase(realName, "JUNIO")))
+						if((AonStringUtils.containsIgnoreCase(realName, "PAGA") || AonStringUtils.containsIgnoreCase(realName, "P_E_") || AonStringUtils.containsIgnoreCase(realName, "EXTRA")) && (AonStringUtils.containsIgnoreCase(realName, "VERANO") || AonStringUtils.containsIgnoreCase(realName, "JUNIO")))
 							hasSummerPay = true;
 						
-						if((AonStringUtils.containsIgnoreCase(realName, "PAGA") || AonStringUtils.containsIgnoreCase(realName, "P_E_")) && (AonStringUtils.containsIgnoreCase(realName, "NAVIDAD") || AonStringUtils.containsIgnoreCase(realName, "DICIEMBRE")))
+						if((AonStringUtils.containsIgnoreCase(realName, "PAGA") || AonStringUtils.containsIgnoreCase(realName, "P_E_") || AonStringUtils.containsIgnoreCase(realName, "GRATIFICACION")) && (AonStringUtils.containsIgnoreCase(realName, "NAVIDAD") || AonStringUtils.containsIgnoreCase(realName, "DICIEMBRE")))
 							hasWinterPay = true;
 						
 						if(AonStringUtils.equalsIgnoreCase(realName, "PAGA_EXTRA_MENSUAL") || AonStringUtils.equalsIgnoreCase(realName, "VACACIONES")) {
@@ -844,7 +844,7 @@ public class AgreementParser {
 					// Summer agreement extra
 					if(!(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "VERANO") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "NAVIDAD"))) {
 						
-						if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && (AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "VERANO") || AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "JUNIO"))) {
+						if(!hasSummerPay && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && (AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "VERANO") || AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "JUNIO"))) {
 							dslContext.insertInto(AGREEMENT_EXTRA)
 								.set(AGREEMENT_EXTRA.DOMAIN, domainId)
 								.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
@@ -862,7 +862,7 @@ public class AgreementParser {
 						}
 						
 						// Winter agreement extra
-						if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "NAVIDAD")) {
+						if(!hasWinterPay && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "NAVIDAD")) {
 							dslContext.insertInto(AGREEMENT_EXTRA)
 								.set(AGREEMENT_EXTRA.DOMAIN, domainId)
 								.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
