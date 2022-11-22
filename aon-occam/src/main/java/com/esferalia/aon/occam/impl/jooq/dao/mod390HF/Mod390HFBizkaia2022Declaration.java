@@ -53,7 +53,12 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 	};
 	
 	private enum Mod390KeyDAO implements IMod390KeyDAO {
-		 BZ_C001D	(Mod390Key.BZ_C001D)
+		 CM_000(Mod390Key.CM_000)
+		,CM_003(Mod390Key.CM_003)
+		,CM_004(Mod390Key.CM_004)
+		,CM_006(Mod390Key.CM_006)
+
+		,BZ_C001D	(Mod390Key.BZ_C001D)
 		,BZ_C001H	(Mod390Key.BZ_C001H)
 		,BZ_C003	(Mod390Key.BZ_C003,null,null,(ctx,mod) -> add(Mod390Key.BZ_C003,mod,ConfigurationDAO.getConfiguration(ctx).getCompany().isVatAccrualPayment()?1:0),null,null)
 		,BZ_C004	(Mod390Key.BZ_C004)		// Compras Criterio de caja. Se incializa en la casilla 133. Destinatario/a de operaciones a las que se aplica el r\u00E9gimen especial del criterio de caja
@@ -753,7 +758,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 		return Mod390KeyDAO.valueOf(keyValue);
 	}
 	@Override
-	public Mod390Key[] getProrateKeys() {
+	public Mod390Key[] getProratedKeys() {
 		return PRORATE_KEYS;
 	}
 

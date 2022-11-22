@@ -8,11 +8,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF.Model390HFCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
-import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017GIPUZKOAAdditionalDataScript;
-import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017GIPUZKOARScript1;
-import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017GIPUZKOAResultScript;
-import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902021GIPUZKOASpecificOperationsScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017GIPUZKOAAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017GIPUZKOARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017GIPUZKOAResultScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902021GIPUZKOASpecificOperationsScript;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -24,9 +24,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-public class Model3902021GIPUZKOA extends Model390HFBase {
+public class Model390HF2021GIPUZKOA extends Model390HFBase {
 	
-	public Model3902021GIPUZKOA(Model390HFCallback callback,Mod390HF mod390HF) {
+	public Model390HF2021GIPUZKOA(Model390HFCallback callback,Mod390HF mod390HF) {
 		super(mod390HF,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -418,7 +418,7 @@ public class Model3902021GIPUZKOA extends Model390HFBase {
 
 					@Override
 					public Mod390HF getModel() {
-						return Model3902021GIPUZKOA.this.getModel();
+						return Model390HF2021GIPUZKOA.this.getModel();
 					}
 
 					@Override

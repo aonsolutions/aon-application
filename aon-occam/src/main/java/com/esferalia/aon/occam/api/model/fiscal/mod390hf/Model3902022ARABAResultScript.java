@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod390;
+package com.esferalia.aon.occam.api.model.fiscal.mod390hf;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
@@ -9,7 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 
-public enum Model3902017ARABAResultScript implements IModelScript<Mod390Key> {
+public enum Model3902022ARABAResultScript implements IModelScript<Mod390Key> {
 	 R000 ("Resultado",null,TITLE)
 	,R001 (Mod390Key.AR_C114.getDescription(),new Mod390Key[]{Mod390Key.AR_C114},COMPUTE)
 	,R002 (Mod390Key.AR_C120.getDescription(),new Mod390Key[]{Mod390Key.AR_C120},NONE)
@@ -35,7 +35,7 @@ public enum Model3902017ARABAResultScript implements IModelScript<Mod390Key> {
 	private Mod390Key[] keys;
 	private FiscalModelKeyInfo[] infoKeys;
 	
-	private Model3902017ARABAResultScript(String label, Mod390Key[] keys,FiscalModelKeyInfo ... infoKeys) {
+	private Model3902022ARABAResultScript(String label, Mod390Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;

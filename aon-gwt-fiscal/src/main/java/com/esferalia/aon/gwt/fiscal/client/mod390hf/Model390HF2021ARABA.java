@@ -5,11 +5,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF.Model390HFCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalModelAdmonPanelCallback;
-import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017ARABAAdditionalDataScript;
-import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017ARABARScript1;
-import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017ARABAResultScript;
-import com.esferalia.aon.gwt.fiscal.shared.mod390.Model3902017ARABAScript2;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017ARABARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017ARABAResultScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902017ARABAScript2;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model3902021ARABAAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-public class Model3902017ARABA extends Model390HFBase {
+public class Model390HF2021ARABA extends Model390HFBase {
 	 
-	public Model3902017ARABA(Model390HFCallback callback,Mod390HF mod390HF) {
+	public Model390HF2021ARABA(Model390HFCallback callback,Mod390HF mod390HF) {
 		super(mod390HF,callback);
 		
 		TabLayoutPanel tabPanel = new TabLayoutPanel(26, Unit.PX);
@@ -169,7 +169,7 @@ public class Model3902017ARABA extends Model390HFBase {
 		
 		additionalDataScrollPanel.setWidget(table);
 		tabPanel.add(additionalDataScrollPanel, AON.MSG.additionalData());
-		paintDeclaration(table,Model3902017ARABAAdditionalDataScript.values(),3);
+		paintDeclaration(table,Model3902021ARABAAdditionalDataScript.values(),3);
 	}
 	
 	private void paintAdministrationTab(TabLayoutPanel tabPanel) {
@@ -183,7 +183,7 @@ public class Model3902017ARABA extends Model390HFBase {
 
 					@Override
 					public Mod390HF getModel() {
-						return Model3902017ARABA.this.getModel();
+						return Model390HF2021ARABA.this.getModel();
 					}
 
 					@Override

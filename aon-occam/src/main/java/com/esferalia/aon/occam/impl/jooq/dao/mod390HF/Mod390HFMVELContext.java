@@ -12,7 +12,10 @@ public class Mod390HFMVELContext extends ModelMVELContext implements Map<String,
 	public Mod390HFMVELContext(Mod390HF mod) {
 		this.mod = mod;
 	}
-
+	
+	public Mod390HF getMod390HF() {
+		return mod;
+	}
 	public boolean isToCompensate() {
 		return this.mod.isToCompensate();
 	}

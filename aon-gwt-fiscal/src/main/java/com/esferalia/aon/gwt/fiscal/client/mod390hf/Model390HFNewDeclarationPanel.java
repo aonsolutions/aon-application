@@ -96,17 +96,14 @@ public class Model390HFNewDeclarationPanel extends DockLayoutPanel {
 			model.setManualDeclaration(manualDeclaration.getValue());
 			if ( model.isManualDeclaration()) {
 				model.setProratePercent(0);
-//				model.setSpecialProrateValue(false);
+				model.setSpecialProrateValue(false);
 			}
 			initialize(model, callback );
 		});
 		
-		prorate.addValueChangeHandler(event -> model.setProratePercent(prorate.getValue()));
-		
-		
 		prorate.addValueChangeHandler(event -> {
-			if (prorate.getValue() == null) prorate.setValue(0.0,false); 
-			model.ensureDetail(model.getProrateKey()).setAmount(prorate.getValue());
+			if (prorate.getValue() == null) prorate.setValue(0.0,false);
+			model.setProratePercent(prorate.getValue());
 			specialProrate.setVisible(model.hasProrate());
 			calculateProratePanel.setVisible(model.hasProrate());
 			if (!model.hasProrate()) {
