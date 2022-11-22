@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.project;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.ActivityType;
+
 public class ProjectActivity implements Serializable {
 
 	/**
@@ -12,7 +14,7 @@ public class ProjectActivity implements Serializable {
 	private Integer id;
 	private Integer domain;
 	private Integer project;
-	private Integer activityType;
+	private ActivityType activityType;
 	private boolean active;
 	private boolean dirty;
 	private boolean removed;
@@ -48,11 +50,13 @@ public class ProjectActivity implements Serializable {
 		return this;
 	}
 	
-	public Integer getActivityType() {
+	public ActivityType getActivityType() {
+		if(activityType==null)
+			activityType = new ActivityType();
 		return activityType;
 	}
 
-	public ProjectActivity setActivityType(Integer activityType) {
+	public ProjectActivity setActivityType(ActivityType activityType) {
 		setDirty(true);
 		this.activityType = activityType;
 		return this;
@@ -82,6 +86,7 @@ public class ProjectActivity implements Serializable {
 	}
 	
 	public ProjectActivity setRemoved(boolean removed) {
+		setDirty(true);
 		this.removed = removed;
 		return this;
 	}

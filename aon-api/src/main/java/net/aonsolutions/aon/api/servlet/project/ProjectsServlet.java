@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +31,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Properties.ActivityTypeProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectHolderProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProjectProperties;
 import com.esferalia.aon.occam.api.model.project.ProjectActivity;
@@ -54,6 +54,7 @@ public class ProjectsServlet extends AonApiHttpServlet{
 	private static final String HOLDERS = "/:id/holders";
 	private static final String HOLDER = "/holder";
 	private static final String ACTIVITY = "/activity";
+	private static final String ACTIVITY_TYPE = "/activity-type";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -85,6 +86,8 @@ public class ProjectsServlet extends AonApiHttpServlet{
 				.addRoute(OFFICE, ProjectsServlet::getOfficeProjects)
 				.addRoute(TYPE, ProjectsServlet::getProjectTypes)
 				.addRoute(HOLDERS, ProjectsServlet::getHolders)
+				.addRoute(ACTIVITY, ProjectsServlet::getActivitiesType)
+				.addRoute(ACTIVITY_TYPE, ProjectsServlet::getActivitiesType)
 				.apply();
 			
 			response(req, resp, object);
@@ -102,7 +105,7 @@ public class ProjectsServlet extends AonApiHttpServlet{
 				.addRoute(ROOT, ProjectsServlet::saveProject)
 				.addRoute(HOLDER, ProjectsServlet::saveProjectHolder)
 				.addRoute(TYPE, ProjectsServlet::saveProjectType)
-				.addRoute(ACTIVITY, ProjectsServlet::saveActivity)
+				.addRoute(ACTIVITY_TYPE, ProjectsServlet::saveActivityType)
 				.apply();
 			
 			response(req, resp, object);
@@ -135,8 +138,8 @@ public class ProjectsServlet extends AonApiHttpServlet{
 			Object object = new AonRouting(api)
 				.addRoute(ROOT, ProjectsServlet::deleteProject)
 				.addRoute(TYPE, ProjectsServlet::deleteProjectType)
-				.addRoute(ACTIVITY, ProjectsServlet::deleteActivity)
 				.addRoute(HOLDER, ProjectsServlet::deleteHolder)
+				.addRoute(ACTIVITY_TYPE, ProjectsServlet::deleteActivityType)
 				.apply();
 			
 			response(req, resp, object);
@@ -220,28 +223,10 @@ public class ProjectsServlet extends AonApiHttpServlet{
     // ---------- PROJECT TYPE
     
     private static JSONArray getProjectTypes(AonApiData api) {
-    	List<ProjectType> projectTypes = AON.getProjectTypeStream(api.getDomain(), api.getUser(), f -> 
-		f.getDomainProperty().eq(api.getDomain().getId())).collect(Collectors.toList());
-    	
-    	List<ActivityType> activityType = AON.getActivityTypeStream(api.getDomain(), api.getUser(), f-> f.getDomainProperty().eq(api.getDomain().getId())).collect(Collectors.toList());
-    	
-    	JSONArray array = new JSONArray();
-
-    	projectTypes.forEach(projectType->{
-    		JSONObject json = ProjectTypeJSON.toJSON(projectType);
-    		
-    		JSONArray activityTypeJson = ActivityTypeJSON.toJSON(
-    				activityType.stream().filter(d-> 
-    					d.getProjectType()!=null && d.getProjectType().equals(projectType.getId())
-    				)
-    		);
-    		
-    		json.put(IJsonNames.ACTIVITY_TYPE, activityTypeJson);
-    		
-    		array.put(json);
-    	});
-    	
-    	return array;
+    	return ProjectTypeJSON.toJSON(
+    			AON.getProjectTypeStream(api.getDomain(), api.getUser(), f -> 
+    			f.getDomainProperty().eq(api.getDomain().getId()))
+    	);
 	}
     
     private static JSONObject saveProjectType(AonApiData api) {
@@ -258,14 +243,11 @@ public class ProjectsServlet extends AonApiHttpServlet{
     
     
     // ---------- ACTIVITY TYPE
-    
-    private static JSONObject saveActivity(AonApiData api) {
-    	return ActivityTypeJSON.toJSON(
-    		AON.saveActivityType(api.getDomain(), api.getUser(), ActivityTypeJSON.fromJSON(api.getData()))
-    	);
+    private static JSONObject saveActivityType(AonApiData api) {
+    	return ActivityTypeJSON.toJSON(AON.saveActivityType(api.getDomain(), api.getUser(), ActivityTypeJSON.fromJSON(api.getData())));
     }
  
-    private static JSONObject deleteActivity(AonApiData api) {
+    private static JSONObject deleteActivityType(AonApiData api) {
 	  ActivityType type = ActivityTypeJSON.fromJSON(api.getData());
 	  AON.deleteActivityType(api.getDomain(), api.getUser(), type.getId());
 	  return new JSONObject();
@@ -288,14 +270,16 @@ public class ProjectsServlet extends AonApiHttpServlet{
     }
     
 	private static JSONArray getHolders(AonApiData api) {
-	
-		Stream<ProjectHolder> holders = AON.getProjectHolderStream(api.getDomain(), api.getUser().getLogin(), 
-			f ->projectHolderFilter(api, f) 
-		);
-	
-		return ProjectHolderJSON.toJSON(holders);
+		return ProjectHolderJSON.toJSON(AON.getProjectHolderStream(api.getDomain(), api.getUser().getLogin(), 
+				f ->projectHolderFilter(api, f) 
+		));
 	}
 	
+	private static JSONArray getActivitiesType(AonApiData api) {
+		return ActivityTypeJSON.toJSON(
+    	    	AON.getActivityTypeStream(api.getDomain(), api.getUser(), f-> activityTypeFilter(api, f))
+    	);
+	}
     
 	private static void setHoldersByProjects(AonApiData api, List<Project>projects) {
 		Timestamp ts = Timestamp.from(Instant.now());
@@ -379,6 +363,17 @@ public class ProjectsServlet extends AonApiHttpServlet{
 			filter = filter.and(f.getEndDateProperty().isNotNull().and(f.getEndDateProperty().le(ts)));
 		}
 
+  		return filter;
+   }
+
+   private static Filter activityTypeFilter(AonApiData api, ActivityTypeProperties f) {
+  		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
+  		JSONObject params = api.getData();
+
+  		if(params.opt(IJsonNames.PROJECT_TYPE) != null) {
+  			filter = filter.and(f.getProjectTypeProperty().eq(params.optInt(IJsonNames.PROJECT_TYPE)));
+  		}
+  		
   		return filter;
    }
 }

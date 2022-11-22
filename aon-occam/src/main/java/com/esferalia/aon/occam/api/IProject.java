@@ -61,5 +61,6 @@ public interface IProject {
 	
 	// ---------- PROJECT ACTIVITY
 	public Stream<ProjectActivity> getProjectActivityStream(AONContext ctx, ProjectActivityFilter filter);
+	public ProjectActivity saveProjectActivity(AONContext ctx, ProjectActivity projectActivity);
 	public void deleteProjectActivity(AONContext ctx, Integer id);
 }

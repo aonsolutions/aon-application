@@ -69,6 +69,7 @@ public class ProjectJSON {
 				.put(IJsonNames.RESERVATION, project.isReservation())
 				.put(IJsonNames.DIRTY, project.isDirty())
 				.put("projectHolders", ProjectHolderJSON.toJSON(project.getProjectHolders()))
+				.put("projectActivities", ProjectActivityJSON.toJSON(project.getProjectActivities()))
 				;
 	}
 }

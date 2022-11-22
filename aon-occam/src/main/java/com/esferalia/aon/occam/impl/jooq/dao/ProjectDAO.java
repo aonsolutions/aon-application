@@ -239,10 +239,10 @@ public class ProjectDAO {
 			project.getProjectActivities()
 			.forEach(activity->{				
 				activity.setProject(project.getId());
-				if(activity.isRemoved() && activity.getId()!=null) {
-					ProjectActivityDAO.delete(ctx, activity.getId());
-				} else {
+				if(!activity.isRemoved()) {
 					ProjectActivityDAO.save(ctx, activity);
+				} else if(activity.getId()!=null) {
+					ProjectActivityDAO.delete(ctx, activity.getId());	
 				}
 			});
 	    }

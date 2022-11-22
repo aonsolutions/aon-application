@@ -3897,6 +3897,12 @@ public class AON {
 		}
 	}
 	
+	public static ProjectActivity saveProjectActivity(Domain domain, User user, ProjectActivity projectActivity) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			return getProject().saveProjectActivity(ctx, projectActivity);
+		}
+	}
+	
 	// ---------- PROJECT COMMERCIAL
 	
 	public static Integer insertProjectCommercial(String domainName, Integer domainId,

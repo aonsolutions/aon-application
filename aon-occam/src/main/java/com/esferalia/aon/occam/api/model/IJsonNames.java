@@ -391,6 +391,7 @@ public final class IJsonNames {
 	public static final String PROGRESS = "progress";
 	public static final String PROJECT = "project";
 	public static final String PROJECT_TYPE = "projectType";
+	public static final String PROJECT_ACTIVITY = "projectActivity";
 	public static final String PROJECT_GROUPED = "ProjectGrouped";
  	public static final String PROJECTS = "projects";
 	public static final String PROJECT_HOLDER = "projectHolder";

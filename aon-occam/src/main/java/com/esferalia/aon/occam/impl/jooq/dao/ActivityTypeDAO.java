@@ -84,6 +84,7 @@ public class ActivityTypeDAO {
 	}
 
 	public static void delete(AONContext ctx, Integer id) {
+		ProjectActivityDAO.delete(ctx, f-> f.getActivityTypeProperty().eq(id));
 		delete(ctx, f -> f.getIdProperty().eq(id));
 		ctx.log().debug("DELETE ACTIVITY TYPE id: " + id);		
 	}

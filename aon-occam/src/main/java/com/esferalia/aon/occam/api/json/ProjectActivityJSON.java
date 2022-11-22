@@ -30,7 +30,7 @@ public class ProjectActivityJSON {
 		return new ProjectActivity().setId(JsonUtils.optInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.optInteger(json, IJsonNames.DOMAIN))
 				.setProject(JsonUtils.optInteger(json, IJsonNames.PROJECT))
-				.setActivityType(JsonUtils.optInteger(json, "activityType"))
+				.setActivityType(ActivityTypeJSON.fromJSON(json.optJSONObject("activityType")))
 				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
 				.setDirty(JsonUtils.getboolean(json, IJsonNames.DIRTY))
 				.setRemoved(JsonUtils.getboolean(json, IJsonNames.REMOVED));
@@ -50,7 +50,7 @@ public class ProjectActivityJSON {
 		return new JSONObject().put(IJsonNames.ID, projectActivity.getId())
 				.put(IJsonNames.DOMAIN, projectActivity.getDomain())
 				.put(IJsonNames.PROJECT, projectActivity.getProject())
-				.put("activityType", projectActivity.getActivityType())
+				.put("activityType", ActivityTypeJSON.toJSON(projectActivity.getActivityType()))
 				.put(IJsonNames.ACTIVE, projectActivity.isActive())
 				.put(IJsonNames.DIRTY, projectActivity.isDirty());
 

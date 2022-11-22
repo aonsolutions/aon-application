@@ -182,7 +182,6 @@ public class ProjectImpl implements IProject{
 	
 	// --------- PROJECT ACTIVITY
 	
-
 	@Override
 	public Stream<ProjectActivity> getProjectActivityStream(AONContext ctx, ProjectActivityFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> ProjectActivityDAO.getStream(ctx, filter));
@@ -193,4 +192,8 @@ public class ProjectImpl implements IProject{
 		ctx.getDslContext().transaction(configuration -> ProjectActivityDAO.delete(ctx, holderId));
 	}
 	
+	@Override
+	public ProjectActivity saveProjectActivity(AONContext ctx, ProjectActivity projectActivity) {
+		return ctx.getDslContext().transactionResult(configuration -> ProjectActivityDAO.save(ctx, projectActivity));
+	}
 }
