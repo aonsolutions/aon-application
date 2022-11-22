@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
@@ -2966,6 +2967,8 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	HorizontalPanel footerHorizontalPanel;
 	
+	@UiField
+	HTMLPanel messageContainer;
 	
 
 	private int zoom;
@@ -3364,6 +3367,32 @@ public class SalaryDraft extends ResizeComposite
 		printSettle();
 	}
 	
+	// ------------------------------------------------- Aon Messages panel
+	
+	protected Panel getMessagePanel() {
+		return messageContainer;
+	}
+	
+	protected void hideMessage() {
+		AonMessagePanel.hideMessage(getMessagePanel());
+	}
+
+	protected void showLoading(String message) {
+		AonMessagePanel.showLoading(getMessagePanel(), message);
+	}
+
+	protected void showError(String title, String message) {
+		Map<String, String> errorMap = new HashMap<>();
+		errorMap.put(title, message);
+		AonMessagePanel.showError(getMessagePanel(), errorMap);
+	}
+	
+	protected void showSuccess(String title, String message) {
+		Map<String, String> successMap = new HashMap<>();
+		successMap.put(title, message);
+		AonMessagePanel.showSuccess(getMessagePanel(), successMap);
+	}
+
 	private void setFiscalModelIcon(Widget widget) {
 		if ( salaryDraftObject == null )
 			return;
@@ -5608,8 +5637,7 @@ public class SalaryDraft extends ResizeComposite
 		salaryDraftObject.downloadIrpf("application/pdf", new AsyncCallback<String>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-
+				showError("IRPF", caught.getLocalizedMessage());
 			}
 
 			@Override

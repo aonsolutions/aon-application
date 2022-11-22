@@ -3384,7 +3384,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	public SalaryDraft getSalaryDraft() {
 		if (salaryDraft == null)
-			(salaryDraft = new SalaryDraft()).addListener(this); 
+			(salaryDraft = new SalaryDraft() {
+				@Override
+				protected Panel getMessagePanel() {
+					return EmployeeTree.this.getMessagePanel();
+				}
+			}).addListener(this); 
 		return salaryDraft;
 	}
 
