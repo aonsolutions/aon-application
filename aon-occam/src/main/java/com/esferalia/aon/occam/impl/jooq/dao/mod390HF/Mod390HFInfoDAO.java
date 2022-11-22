@@ -18,10 +18,12 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.json.VatContextJSON;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
@@ -241,9 +243,32 @@ public class Mod390HFInfoDAO extends FiscalModelDAO {
 	private static String getComputeKey(AONContext ctx, Mod390HF mod, IModelScript<Mod390Key> script,IMod390KeyDAO keyDAO) {
 		Mod390HFMVELContext mvelCtx = new Mod390HFMVELContext(mod); 
 		mvelCtx.put("mod", mod);
-		mvelCtx.put("periodModels", FiscalModelDAO.getSamePeriodModels(ctx, mod, Mod390HF::new).collect(Collectors.toCollection(LinkedList::new)));
-		mvelCtx.put("lastPeriodModels", FiscalModelDAO.getLastPeriodModels(ctx, mod, Mod390HF::new).collect(Collectors.toCollection(LinkedList::new)));
-		mvelCtx.put("models", Mod390HFDAO.getMod390HFs(ctx, ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)));
+		
+		LinkedList<FiscalModel> periodModels = new LinkedList<>();
+		periodModels.addAll(Mod390HFDAO.getSamePeriodModels(ctx, mod)
+				.collect(Collectors.toCollection(LinkedList::new)));
+		
+		LinkedList<FiscalModel> m303Models = new LinkedList<>();
+		m303Models.addAll(Mod390HFDAO.getM303YearModels(ctx, mod).collect(Collectors.toCollection(LinkedList::new)));
+		m303Models.addAll(periodModels);
+		
+		LinkedList<FiscalModel> depositModels = m303Models
+			.stream()
+			.filter( m -> m.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT
+				|| m.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT_CCT
+				|| m.getDeclarationResultType() == FiscalModelDeclarationType.BANK)
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
+		LinkedList<FiscalModel> paybackModels = m303Models
+			.stream()
+			.filter( m -> 
+			m.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK
+				|| m.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK_CCT)
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
+		mvelCtx.put("periodModels",periodModels);
+		mvelCtx.put("paybackModels",paybackModels);
+		mvelCtx.put("depositModels",depositModels);
 		StringBuilder buf = new StringBuilder();
 		for (Mod390Key key : script.getKeys() ) {
 			if (key != null) {

@@ -7,7 +7,6 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
-import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
@@ -492,15 +491,13 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 						.sum());
 				} 
 				,null
-				,"<li>Declaraciones a ingresar en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
-						+"@code{c80Key='"+ Mod303Key.AR_C080.getValue() +"';}"
-						+"@foreach{fm : m303Models}"
-							+"@if{ fm.getAmount(c80Key) > 0 }"
-								+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [080] --> @{fm.getAmount(c80Key)}</li>"
-							+"@end{}"
-						+"@end{}"
-						+"</ul></li>"
-						+"<li>Resultado: <b>@{AR_C126}</b></li>"
+				,"{messages : ["
+					+ "\"Declaraciones a ingresar en ejercicio:\"," 
+					+"@foreach{fm : depositModels}" 
+						+ "\"Resultado @{fm.getModelFullName()}: --> @{fm.getDeclarationResult()}\","
+					+"@end{}"
+					+ "\"Resultado: @{AR_C126}\","
+				+"]}"
 			)
 		// Devoluciónes practicadas/solicitadas en la Diputación Foral de Álava
 		,AR_C127	(Mod390Key.AR_C127,null,null,
@@ -511,15 +508,13 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 						.sum());
 				} 
 				,null
-				,"<li>Declaraciones a devolver en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
-						+"@code{c81Key='"+ Mod303Key.AR_C081.getValue() +"';}"
-						+"@foreach{fm : m303Models}"
-							+"@if{ fm.getAmount(c81Key) > 0 }"
-								+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [081] --> @{fm.getAmount(c81Key)}</li>"
-							+"@end{}"
-						+"@end{}"
-						+"</ul></li>"
-						+"<li>Resultado: <b>@{AR_C127}</b></li>"
+				,"{messages : ["
+					+ "\"Declaraciones a devolver en ejercicio:\"," 
+					+"@foreach{fm : paybackModels}" 
+						+ "\"Resultado @{fm.getModelFullName()}: --> @{fm.getDeclarationResult()}\","
+					+"@end{}"
+					+ "\"Resultado: @{AR_C127}\","
+				+"]}"
 			)
 		// DIFERENCIA
 		,AR_C128	(Mod390Key.AR_C128,null,null,null,"AR_C126-AR_C127",null)

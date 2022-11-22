@@ -24,7 +24,7 @@ public class Mod390HF extends FiscalModel implements Serializable {
 		ensureDetail(Mod390Key.CM_000).setAmount(manual?1:0);
 		return this;
 	}
-
+	
 	public Mod390Key getProrateKey() {
 		return Mod390Key.CM_003;
 	}
@@ -60,11 +60,16 @@ public class Mod390HF extends FiscalModel implements Serializable {
 	public boolean isDiffCalculationDisabled() {
 		return true;
 	}
-
-	// ******************************************	
-	// ******************************************	
-	// ******************************************	
 	
+	@Override
+	public void setDefaultDeclarationType(){
+		if (AonMathUtils.isGreatherThanZero(getDeclarationResult() )) {
+			setDeclarationResultType(FiscalModelDeclarationType.DEPOSIT);
+		} else {
+			setDeclarationResultType(FiscalModelDeclarationType.PAYBACK);
+		}
+	}
+
 	public boolean isEnrolledInDevolutionRegistry() {
 		if (getAdministration() == null) return false;
 		else if (isAraba()) return getAmount(Mod390Key.AR_C918) == 1;
@@ -73,37 +78,12 @@ public class Mod390HF extends FiscalModel implements Serializable {
 		return false;
 	}
 
-//	@Override
-//	public boolean isComplementaryDeclarationAvailable() {
-//		if (getAdministration() == null) return false;
-//		else if (isAraba()) return false;
-//		else if (isBizkaia()) return true;
-//		else if (isGipuzkoa()) return false;
-//		else if (isNavarra()) return false;
-//		return false;
-//	}
-//	@Override
-//	public boolean isReplacementDeclarationAvailable() {
-//		if (getAdministration() == null) return false;
-//		else if (isAraba()) return true;
-//		else if (isBizkaia()) return false;
-//		else if (isGipuzkoa()) return false;
-//		else if (isNavarra()) return false;
-//		return false;
-//	}
-//	@Override
-//	public boolean isReplacedNumberAvailable() {
-//		if (getAdministration() == null) return false;
-//		return (isComplementaryDeclarationAvailable() && isAEAT() && isComplementary() ); 
-//	}
 	@Override
 	public boolean isReplacedNumberAvailable() {
 		return  getAdministration() != null 
 			&& (isComplementaryDeclarationAvailable() || isReplacementDeclarationAvailable()) 
 			&& (isComplementary() || isReplacement()); 
 	}
-	
-	
 	
 	public boolean isToCompensate() {
 		return (canBeSent() || isSent()) 
@@ -122,9 +102,7 @@ public class Mod390HF extends FiscalModel implements Serializable {
 			|| getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK_CCT);
 	}
 
-	
-	// ******************************************
-	// ******************************************
+
 	// ******************************************
 	@Override
 	@Deprecated
@@ -138,11 +116,6 @@ public class Mod390HF extends FiscalModel implements Serializable {
 		throw new UnsupportedOperationException("Unsupported method! (use getDeclarationResultType())");
 	}
 	
-	@Override
-	@Deprecated
-	public void setDefaultDeclarationType(){
-		throw new UnsupportedOperationException("Unsupported method! (use setDeclarationResultType())");
-	}
 	@Override
 	@Deprecated
 	public FiscalModelDeclarationType getDeclarationType() {
@@ -179,6 +152,30 @@ public class Mod390HF extends FiscalModel implements Serializable {
 		} else {
 			setDeclarationType(FiscalModelDeclarationType.PAYBACK);
 		}
+	}
+
+	@Override
+	public boolean isComplementaryDeclarationAvailable() {
+		if (getAdministration() == null) return false;
+		else if (isAraba()) return false;
+		else if (isBizkaia()) return true;
+		else if (isGipuzkoa()) return false;
+		else if (isNavarra()) return false;
+		return false;
+	}
+	@Override
+	public boolean isReplacementDeclarationAvailable() {
+		if (getAdministration() == null) return false;
+		else if (isAraba()) return true;
+		else if (isBizkaia()) return false;
+		else if (isGipuzkoa()) return false;
+		else if (isNavarra()) return false;
+		return false;
+	}
+	@Override
+	public boolean isReplacedNumberAvailable() {
+		if (getAdministration() == null) return false;
+		return (isComplementaryDeclarationAvailable() && isAEAT() && isComplementary() ); 
 	}
 */
 }
