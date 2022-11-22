@@ -200,6 +200,9 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		SEH1P mainPackage = createSEH1PRecord(1, ssccList.size(), "201", null);
 		mainPackage.seh1lList = new ArrayList<>();
 		list.add(mainPackage);
+
+		LinkedList<Integer> lineList = new LinkedList<>();
+		Integer auxLine = ssccList.size();
 		for (Integer i = 0; i < ssccList.size(); i++) {
 			IngenetPackaging sscc = ssccList.get(i);
 
@@ -214,7 +217,13 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 			packaging.setNumeroDeJerarquiaPadreDeEmbalaje(mainPackage.getNumeroDeJerarquiaDeEmbalaje());
 
 			packaging.seh1lList = new ArrayList<>();
-			packaging.seh1lList.add(createSEH1LRecord( sscc.getLin(), delivery, detail, quantity, codes));
+			Integer line = sscc.getLin();
+			if(lineList.contains(line)) {
+			    line = auxLine;
+			    auxLine = auxLine - 1;
+			}
+			lineList.add(line);
+			packaging.seh1lList.add(createSEH1LRecord(line, delivery, detail, quantity, codes));
 			list.add(packaging);
 		}
 		
