@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
@@ -28,11 +29,11 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 		return  mod.isGipuzkoa() && mod.getYear() >= 2022;
 	}
 	private static final Mod390Key[] PRORATE_KEYS = new Mod390Key[]{
-		  Mod390Key.GP_C018
-		 ,Mod390Key.GP_C020
-		 ,Mod390Key.GP_C022
-		 ,Mod390Key.GP_C046
-		 ,Mod390Key.GP_C023
+		  Mod390Key.GP_C022
+		 ,Mod390Key.GP_C024
+		 ,Mod390Key.GP_C026
+		 ,Mod390Key.GP_C027
+		 ,Mod390Key.GP_C028
 	};
 	
 	private static enum Mod390KeyDAO implements IMod390KeyDAO {
@@ -226,24 +227,40 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 		// Total INGRESOS efectuados durante el presente ejercicion
 		,GP_C038(Mod390Key.GP_C038,null,null,
 				(ctx,mod) -> {
-					add( Mod390Key.GP_C038, mod, Mod390HFDAO.getM303YearModels(ctx, mod)
-							.mapToDouble(fm -> fm.getAmount(Mod303Key.GP_C035))
-							.filter(result -> AonMathUtils.isGreatherThanZero(result))
-							.sum());
+					add( Mod390Key.GP_C038, mod, Mod390HFDAO.getM303YearDepositModels(ctx, mod)
+						.mapToDouble(FiscalModel::getDeclarationResult)
+						.sum());
 				} 
 				,null
 				,"<li>Declaraciones a ingresar en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
-						+"@code{c35Key='"+ Mod303Key.GP_C035.getValue() +"';}"
-						+"@foreach{fm : m303Models}"
-							+"@if{ fm.getAmount(c35Key) > 0 }"
-								+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [035] --> @{fm.getAmount(c35Key)}</li>"
-							+"@end{}"
+					+"@code{c35Key='"+ Mod303Key.GP_C035.getValue() +"';}"
+					+"@foreach{fm : m303Models}"
+						+"@if{ fm.getAmount(c35Key) > 0 }"
+							+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [035] --> @{fm.getAmount(c35Key)}</li>"
 						+"@end{}"
-						+"</ul></li>"
-						+"<li>Resultado: <b>@{GP_C038}</b></li>"
-			)
+					+"@end{}"
+					+"</ul></li>"
+					+"<li>Resultado: <b>@{GP_C038}</b></li>"
+		)
 		// Total DEVOLUCIONES practicadas durante el presente ejercicion
-		,GP_C039(Mod390Key.GP_C039)
+		,GP_C039(Mod390Key.GP_C039,null,null,
+				(ctx,mod) -> {
+					add( Mod390Key.GP_C039, mod, Mod390HFDAO.getM303YearPaybackModels(ctx, mod)
+						.mapToDouble(FiscalModel::getDeclarationResult)
+						.map(AonMathUtils::absRounded)
+						.sum());
+				} 
+				,null
+				,"<li>Declaraciones a devolver en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
+					+"@code{c35Key='"+ Mod303Key.GP_C035.getValue() +"';}"
+					+"@foreach{fm : m303Models}"
+						+"@if{ fm.getAmount(c35Key) > 0 }"
+							+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [035] --> @{fm.getAmount(c35Key)}</li>"
+						+"@end{}"
+					+"@end{}"
+					+"</ul></li>"
+					+"<li>Resultado: <b>@{GP_C039}</b></li>"
+				)
 		// RESULTADO DE LA AUTOLIQUIDACIÓN	
 		,GP_C040(Mod390Key.GP_C040,null,null,null,"GP_C036-GP_C037-GP_C038+GP_C039",null)
 		

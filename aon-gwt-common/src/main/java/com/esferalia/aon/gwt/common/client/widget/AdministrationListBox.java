@@ -8,15 +8,21 @@ public class AdministrationListBox extends ListBox {
 
 	
 	public AdministrationListBox() {
-		this(false);
+		this(false, false);
 	}
 
-	public AdministrationListBox( boolean onlyForal) {
+	public AdministrationListBox(boolean onlyForal) {
+		this(onlyForal, false);
+	}
+
+	public AdministrationListBox( boolean onlyForal, boolean hideNavarra) {
 		setWidth("130px");
 		this.addItem( Administration.ALAVA.getDescription());
 		this.addItem( Administration.BIZKAIA.getDescription());
 		this.addItem( Administration.GIPUZKOA.getDescription());
-		this.addItem( Administration.NAVARRA.getDescription());
+		if (!hideNavarra) {
+			this.addItem( Administration.NAVARRA.getDescription());
+		}
 		if (!onlyForal)
 			this.addItem( Administration.COMMON_TERRITORY.getDescription());
 	}

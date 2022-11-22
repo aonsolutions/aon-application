@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.mod390HF;
 import java.util.Set;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -486,10 +487,9 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		// Ingresos efectuados en la Diputación Foral de Álava
 		,AR_C126	(Mod390Key.AR_C126,null,null,
 				(ctx,mod) -> {
-					add( Mod390Key.AR_C126, mod, Mod390HFDAO.getM303YearModels(ctx, mod)
-							.mapToDouble(fm -> fm.getAmount(Mod303Key.AR_C080))
-							.filter(result -> AonMathUtils.isGreatherThanZero(result))
-							.sum());
+					add( Mod390Key.AR_C126, mod, Mod390HFDAO.getM303YearDepositModels(ctx, mod)
+						.mapToDouble(FiscalModel::getDeclarationResult)
+						.sum());
 				} 
 				,null
 				,"<li>Declaraciones a ingresar en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
@@ -505,10 +505,10 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		// Devoluciónes practicadas/solicitadas en la Diputación Foral de Álava
 		,AR_C127	(Mod390Key.AR_C127,null,null,
 				(ctx,mod) -> {
-					add( Mod390Key.AR_C127, mod, Mod390HFDAO.getM303YearModels(ctx, mod)
-							.mapToDouble(fm -> fm.getAmount(Mod303Key.AR_C081))
-							.filter(result -> AonMathUtils.isNotZero(result))
-							.sum());
+					add( Mod390Key.AR_C127, mod, Mod390HFDAO.getM303YearPaybackModels(ctx, mod)
+						.mapToDouble(FiscalModel::getDeclarationResult)
+						.map(AonMathUtils::absRounded)
+						.sum());
 				} 
 				,null
 				,"<li>Declaraciones a devolver en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
@@ -522,7 +522,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 						+"<li>Resultado: <b>@{AR_C127}</b></li>"
 			)
 		// DIFERENCIA
-		,AR_C128	(Mod390Key.AR_C128,null,null,null,"AR_C126+AR_C127",null)
+		,AR_C128	(Mod390Key.AR_C128,null,null,null,"AR_C126-AR_C127",null)
 		// Resultado a compensar o a devolver o a ingresar del ejercicio
 		,AR_C129	(Mod390Key.AR_C129,null,null,null,"AR_C125-AR_C128",null)
 		// A compensar en el Territorio Histórico de \u00C1lava según declaración anual ejercicio anterior
