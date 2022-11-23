@@ -35,7 +35,6 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
@@ -242,14 +241,6 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void createWorkplaceInfo(WorkplaceInfo workplaceInfo, Integer enterpriseId, AsyncCallback<WorkplaceInfo> asyncCallback) {
 		enterprisesServiceAsync.createWorkplaceInfo(workplaceInfo, enterpriseId, getCurrentDomainName(), asyncCallback);
-	}
-	
-	public void getEnterpriseInfo(Integer enterpriseId, AsyncCallback<EnterpriseInfo> asyncCallback) {
-		enterprisesServiceAsync.getEnterpriseInfo(enterpriseId, getCurrentDomainName(), asyncCallback);
-	}
-	
-	public void updateEnterprise(EnterpriseInfo enterpriseInfo, AsyncCallback<EnterpriseInfo> asyncCallback) {
-		enterprisesServiceAsync.updateEnterprise(enterpriseInfo, getCurrentDomainName(), asyncCallback);
 	}
 	
 	public void getEmployeeAgrarianJourney(long findingDate, List<String> cccList, AsyncCallback<Map<Integer, List<AgrarianJourney>>> asyncCallback) {
@@ -658,6 +649,16 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void deletePayments(List<Integer> paymentIds, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.deletePayments(getCurrentDomainName(), paymentIds, asyncCallback);
+	}
+	
+	// ------------------------------------------------ Enterprise (API)
+
+	public void getEnterprise(Integer id, AsyncCallback<com.esferalia.aon.occam.api.model.payroll.Enterprise> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getEnterprise(getCurrentDomainName(), getCurrentUser(), id, asyncCallback);
+	}
+
+	public void saveEnterprise(com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.saveEnterprise(getCurrentDomainName(), getCurrentUser(), enterprise, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

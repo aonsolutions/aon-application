@@ -1274,8 +1274,18 @@ public interface Properties {
 	public interface ContractDataProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
-		Property<String> getNameProperty();
 		Property<Integer> getContractProperty();
+		Property<String> getNameProperty();
+		Property<String> getExpressionProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+	}
+	
+	public interface EnterpriseDataProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getEnterpriseProperty();
+		Property<String> getNameProperty();
 		Property<String> getExpressionProperty();
 		Property<Date> getStartDateProperty();
 		Property<Date> getEndDateProperty();
@@ -1315,6 +1325,13 @@ public interface Properties {
 		Property<Double> getRequestIrpfProperty();
 		Property<Byte> getContractTypeProperty();
 		Property<Byte> getCeutaMelillaProperty();
+	}
+	
+	public interface EnterpriseProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getScopeProperty();
+		Property<Integer> getCalendarProperty();
 	}
 	
 	public interface AgreementLevelCategoryProperties{

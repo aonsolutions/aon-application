@@ -486,6 +486,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface EnterpriseDataFilter{
+		Filter filter(EnterpriseDataProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface ContractLeaveFilter{
 		Filter filter(ContractLeaveProperties properties);
 	}
@@ -500,6 +505,11 @@ public interface Filter extends Serializable{
 	@FunctionalInterface
 	public interface IrpfDataFilter{
 		Filter filter(IrpfDataProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface EnterpriseFilter{
+		Filter filter(com.esferalia.aon.occam.api.model.Properties.EnterpriseProperties properties);
 	}
 	
 	@FunctionalInterface

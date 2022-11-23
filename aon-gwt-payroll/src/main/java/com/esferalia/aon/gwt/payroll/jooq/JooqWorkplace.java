@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Holiday.HOLIDAY;
 import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
@@ -340,6 +341,52 @@ public class JooqWorkplace {
 		}
 		
 		return payMethods;
+	}
+	
+	public static Map<Integer, String> getScopes(Connection conn, Integer domainId) {
+		return getScopesDB(DSL.using(conn, getDefaultSettings()), domainId);
+	}
+	
+	private static Map<Integer, String> getScopesDB(DSLContext dslContext, Integer domainId) {
+		Map<Integer, String> scopes = new HashMap<>();
+		
+		Record domainRecord = dslContext.select().from(DOMAIN)
+				.where(DOMAIN.ID.eq(domainId))
+				.fetchOne();
+		
+		Integer parentDomianId = domainRecord.get(DOMAIN.PARENT);
+		String domainDescription = domainRecord.get(DOMAIN.DESCRIPTION);
+		
+		if(null == parentDomianId) {
+			Result<Record> scopeRecords = dslContext.select().from(SCOPE)
+					.where(SCOPE.DOMAIN.eq(domainId))
+					.fetch();
+			
+			if(null != scopeRecords && !scopeRecords.isEmpty())
+				for(Record r : scopeRecords)
+					scopes.put(r.get(SCOPE.ID), r.get(SCOPE.DESCRIPTION) + " (" + domainDescription +")");
+			
+		}else {
+			Result<Record> scopeRecords = dslContext.select().from(SCOPE)
+					.where(SCOPE.DOMAIN.eq(domainId)
+							.or(SCOPE.DOMAIN.eq(parentDomianId))
+					)
+					.fetch();
+			
+			if(null != scopeRecords && !scopeRecords.isEmpty()) {
+				Record parentDomainRecord = dslContext.select().from(DOMAIN)
+					.where(DOMAIN.ID.eq(parentDomianId))
+					.fetchOne();
+			
+				String parentDescription = parentDomainRecord.get(DOMAIN.DESCRIPTION);
+			
+				for(Record r : scopeRecords)			
+					scopes.put(r.get(SCOPE.ID), r.get(SCOPE.DESCRIPTION) + " (" + parentDescription +")");
+		
+			}
+		}
+		
+		return scopes;
 	}
 
 }

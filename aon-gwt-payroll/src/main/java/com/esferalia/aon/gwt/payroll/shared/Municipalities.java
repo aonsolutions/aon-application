@@ -8164,18 +8164,18 @@ public class Municipalities {
 	public HashMap<String, String> getMunicipalitiesByProvinceCode(String provinceCode){
 		HashMap<String, String> provinceMunicipalities = new HashMap<String, String>();
 		for(Entry<String, String> e: this.municipalities.entrySet()) {
-			if(provinceCode.equals(e.getKey().substring(0, 2)))
+			if(provinceCode.substring(0, 2).equals(e.getKey().substring(0, 2)))
 				provinceMunicipalities.put(e.getKey(), e.getValue());
 		}
 		return provinceMunicipalities;
 	}
 	
-	public Integer getZipByMunicipalityName(String municipality) {
+	public String getZipByMunicipalityName(String municipality) {
 		for(Entry<String, String> e : municipalities.entrySet())
 			if(municipality.equals(e.getValue()))
-				return Integer.parseInt(e.getKey());
+				return e.getKey();
 		
-		return -1;
+		return null;
 	}
 	
 	public Integer getMunicipalityIndex(String provinceCode, String municipalityCode){

@@ -35,7 +35,6 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
@@ -152,10 +151,6 @@ public interface EnterprisesService extends RemoteService {
 	WorkplaceInfo createWorkplaceInfo(WorkplaceInfo workplaceInfo, Integer enterpriseId, String domain);
 
 	Map<Integer, String> getEnterpiseScopes(Integer enterpriseId, String domain);
-
-	EnterpriseInfo getEnterpriseInfo(Integer enterpriseId, String domain);
-
-	EnterpriseInfo updateEnterprise(EnterpriseInfo enterpriseInfo, String domain);
 
 	Map<Integer, List<AgrarianJourney>> getAgrarianJourney(long findingDate, List<String> cccList, String domain);
 
@@ -377,5 +372,11 @@ public interface EnterprisesService extends RemoteService {
 
 	void deletePayments(String currentDomainName, List<Integer> paymentIds) throws IllegalArgumentException;
 	
-
+	// --------------------------- Enterprise (API)
+	
+	com.esferalia.aon.occam.api.model.payroll.Enterprise getEnterprise(String currentDomainName, String user, Integer id) throws IllegalArgumentException;
+	
+	void saveEnterprise(String currentDomainName, String user, com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise) throws IllegalArgumentException;
+	
+	
 }
