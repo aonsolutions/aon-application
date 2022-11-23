@@ -318,6 +318,21 @@ public enum Country implements Serializable {
 			return null;
 		}
 	}
+	
+	public static Country getCountryByName(String name) {
+		if (AonStringUtils.isBlank(name)) {
+			return null;
+		}
+		try {
+			for(int i=0; i<Country.values().length; i++)
+				if(AonStringUtils.equalsIgnoreCase(Country.values()[i].getName(), name))
+					return Country.values()[i];
+			
+			return null;
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+	}
 
 	public static String safeIso2(Country country) {
 		if (country == null) {
