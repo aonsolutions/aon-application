@@ -19,6 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.accounting.AlterRbankAddRequisition;
+import net.aonsolutions.db.up2date.accounting.AlterRbankAddSepaMandateRef;
 import net.aonsolutions.db.up2date.fiscal.RefreshMod390HFResult;
 import net.aonsolutions.db.up2date.payroll.FixPreaviso;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
@@ -284,6 +286,8 @@ public class Up2Date {
     		//AlterContractBonusDescription.ALTER_CONTRACT_BONUS_DESCRIPTION,
     		FixPreaviso.FIXPREAVISO,
     		RefreshMod390HFResult.REFRESH_MOD390_RESULT,
+    		AlterRbankAddRequisition.ALTER_RBANK_ADD_REQUISITION,
+    		AlterRbankAddSepaMandateRef.ALTER_RBANK_ADD_SEPA_MANDATE_REF,
     		
     		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE

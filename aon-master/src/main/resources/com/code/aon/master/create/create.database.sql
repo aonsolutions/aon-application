@@ -7080,6 +7080,8 @@ CREATE TABLE `rbank` (
   `alias` varchar(25) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Alias de la Cuenta Bancaria',
   `active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Indica si la Cuenta Bancaria esta activa o no',
   `account` int DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable',
+  `requisition` varchar(50) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `sepa_mandate_ref` char(20) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mandate reference',
   PRIMARY KEY (`id`),
   KEY `IDX_RBANK_REGISTRY` (`registry`),
   KEY `IDX_RBANK_DOMAIN` (`domain`),
