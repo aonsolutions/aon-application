@@ -19,6 +19,8 @@ public class RegistryBank implements Serializable {
 	private String suffix;
 	private String alias;
 	private Account account;
+	private String requisition;
+	private String sepaMandateRef;
 	private Boolean active;
 	private boolean dirty;
 	private boolean removed;
@@ -123,6 +125,24 @@ public class RegistryBank implements Serializable {
 	public RegistryBank setAlias(String alias) {
 		this.setDirty(isDirty()?true:AonUtils.notEquals(this.alias, alias));
 		this.alias = alias;
+		return this;
+	}
+	
+	public String getRequisition() {
+		return requisition;
+	}
+	public RegistryBank setRequisition(String requisition) {
+		this.setDirty(isDirty()?true:AonUtils.notEquals(this.requisition , requisition));
+		this.requisition = requisition;
+		return this;
+	}
+	
+	public String getSepaMandateRef() {
+		return sepaMandateRef;
+	}
+	public RegistryBank setSepaMandateRef(String sepaMandateRef) {
+		this.setDirty(isDirty()?true:AonUtils.notEquals(this.sepaMandateRef, sepaMandateRef));
+		this.sepaMandateRef = sepaMandateRef;
 		return this;
 	}
 	

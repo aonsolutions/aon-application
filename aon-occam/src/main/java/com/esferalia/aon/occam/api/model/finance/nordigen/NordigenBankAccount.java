@@ -28,6 +28,7 @@ public class NordigenBankAccount implements Serializable {
 	private String bankAlias;
 	private Date lastMovementDate;
 	private Set<String> logs;
+	private String requisitionId;
 	
 	private List<NordigenBankStatement> notInsertedMovements;
 	
@@ -78,6 +79,13 @@ public class NordigenBankAccount implements Serializable {
 	}
 	public NordigenBankAccount setIban(String iban) {
 		this.iban = iban;
+		return this;
+	}
+	public String getRequisitionId() {
+		return requisitionId;
+	}
+	public NordigenBankAccount setRequisitionId(String requisitionId) {
+		this.requisitionId = requisitionId;
 		return this;
 	}
 	public String getBankAlias() {

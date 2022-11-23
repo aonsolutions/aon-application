@@ -39,6 +39,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.StatementConcept;
 import com.esferalia.aon.occam.api.model.type.StatementStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CheckItDAO;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -1096,8 +1097,10 @@ public class CheckItAPI implements IParamNames{
 			
 			Date operationDate = clearDate(parseTZDate(transactionJson.optString("fecha_operacion")));
 			
-			if ((maximumId == null && operationDate.after(nextOperationDate)) 
-					|| (maximumId != null && maximumId != 0 && movementId > maximumId)) {
+			if (
+					 (maximumId == null && operationDate.after(nextOperationDate)) ||
+					 (maximumId != null && maximumId != 0 && movementId > maximumId)
+			) {
 				CheckItBankStatement bankStatement = bankStatementFromJson(transactionJson);
 				bankStatements.add(bankStatement);
 			}
@@ -1213,7 +1216,12 @@ public class CheckItAPI implements IParamNames{
 			RegistryBank rBank = CheckItDAO.getRbankByIban(aonContext, iban);
 			Date lastDate = CheckItDAO.getLastOperationDateDB(aonContext, domainId, rBank);
 			Pair<String, Date> idAndDate = CheckItDAO.getMaxMovementIdAndDate(aonContext, domainId, rBank);
-			Integer movId = idAndDate != null ? Integer.valueOf(idAndDate.getKey()) : null;
+			Integer movId = null;
+			if (AonDateUtils.isSameDay(lastDate, idAndDate != null ? idAndDate.getValue() : null)) {				
+				movId = idAndDate != null ? Integer.valueOf(idAndDate.getKey()) : null;
+			} else {
+				lastDate = AonDateUtils.addDays(lastDate, 1);
+			}
 			List<CheckItBankStatement> bankStatements = getBankStatements(empresaId, getAccountIdByIBAN(empresaId, iban), lastDate, movId);
 			CheckItDAO.completeBankStatements(aonContext, domainId, iban, bankStatements);
 			return bankStatements;

@@ -28,6 +28,7 @@ import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.impl.jooq.validation.BankStatementValidator;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -151,36 +152,33 @@ public class CheckItDAO {
 				.and(BANK_STATEMENT.DOMAIN.eq(domainId))
 				.fetchSingle().get(lot)) + 1;
 	}
+	
+	public static Date getLastMovementDateNoId(AONContext aonContext, Integer domainId, RegistryBank rbank) {
+		java.sql.Date date = (java.sql.Date) aonContext.getDslContext()
+				.select(DSL.max(BANK_STATEMENT.OPERATION_DATE).as("date"))
+				.from(BANK_STATEMENT)
+				.where(BANK_STATEMENT.DOMAIN.eq(domainId))
+				.and(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+				.fetchSingle().get("date");
+		if (date != null) {
+			return new Date(date.getTime());
+		}
+		return null;
+	}
 
 	public static Date getLastOperationDateDB(AONContext aonContext, Integer domainId, RegistryBank rbank) {
 		
-		Pair<String, Date> max = getMaxMovementIdAndDate(aonContext, domainId, rbank);
-		String maxId = null;
+		Pair<String, Date> maxWithId = getMaxMovementIdAndDate(aonContext, domainId, rbank);
+		Date maxWithNoId = getLastMovementDateNoId(aonContext, domainId, rbank);
+		
 		Date lastOperationDate = null;
-		if (max == null) {
-			java.sql.Date date = (java.sql.Date) aonContext.getDslContext()
-					.select(DSL.max(BANK_STATEMENT.OPERATION_DATE).as("date"))
-					.from(BANK_STATEMENT)
-					.where(BANK_STATEMENT.DOMAIN.eq(domainId))
-					.and(BANK_STATEMENT.RBANK.eq(rbank.getId()))
-					.fetchSingle().get("date");
-					if (date == null)
-						lastOperationDate = null;
-					else
-						lastOperationDate = new Date(date.getTime());
+		if (com.esferalia.aon.watson.util.AonDateUtils.compare(maxWithNoId, maxWithId != null ? maxWithId.getValue() : null) > 0) {
+			lastOperationDate = maxWithNoId;
 		} else {
-			maxId = max.getKey();
-			if (maxId != null) {				
-				lastOperationDate = max.getValue();
-				// AÑADIR 1 DÍA MÁS PARA QUE NO HAYA DUPLICADOS
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(lastOperationDate);
-				calendar.add(Calendar.DATE, 1);
-				lastOperationDate = calendar.getTime();
-			}
+			lastOperationDate = maxWithId != null ? maxWithId.getValue() : null;
 		}
-
-		if (maxId == null && lastOperationDate == null) {
+		
+		if (lastOperationDate == null) {
 			lastOperationDate = cleanDate(31, Calendar.DECEMBER, Calendar.getInstance().get(Calendar.YEAR) - 1);
 		}
 		return lastOperationDate;
@@ -188,14 +186,20 @@ public class CheckItDAO {
 	
 	public static Pair<String, Date> getMaxMovementIdAndDate(AONContext aonContext, Integer domainId, RegistryBank rbank) {
 		Record2<String, java.sql.Date> result = aonContext.getDslContext()
-		.select(DSL.max(BANK_STATEMENT.REFERENCE2).as("maximum"), BANK_STATEMENT.OPERATION_DATE)
+		.select(BANK_STATEMENT.REFERENCE2, BANK_STATEMENT.OPERATION_DATE)
 		.from(BANK_STATEMENT)
 		.where(BANK_STATEMENT.REFERENCE1.eq(CHECKIT_R1))
 		.and(BANK_STATEMENT.RBANK.eq(rbank.getId()))
 		.and(BANK_STATEMENT.DOMAIN.eq(domainId))
-		.fetchSingle();
+		.and(BANK_STATEMENT.REFERENCE2.eq(
+				DSL.select(DSL.max(BANK_STATEMENT.REFERENCE2))
+				.from(BANK_STATEMENT)
+				.where(BANK_STATEMENT.REFERENCE1.eq(CHECKIT_R1))
+				.and(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+				.and(BANK_STATEMENT.DOMAIN.eq(domainId)))
+		).fetchSingle();
 		
-		String id = (String) result.get("maximum");
+		String id = (String) result.get(BANK_STATEMENT.REFERENCE2);
 		java.sql.Date date = result.get(BANK_STATEMENT.OPERATION_DATE);
 		Date utilDate = date != null ? new Date(date.getTime()) : null;
 		
