@@ -164,8 +164,6 @@ export class AonCustomer extends AonReg {
 		const entepriseLinked = this.getElement(this.entepriseLinked);
 		entepriseLinked.innerHTML = "";
 
-		console.log(resp);
-
 		const {rrelationship, companies} = resp;
 		
 		const link = rrelationship && rrelationship.id;

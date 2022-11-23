@@ -14,3 +14,9 @@ export const deleteProjectHolder = (data) => remove(`${API.PROJECTS}/holder`, da
 export const getProjectTypes = (data) => get(`${API.PROJECTS}/type`, data);
 export const saveProjectType = (data) => post(`${API.PROJECTS}/type`, data);
 export const deleteProjectType = (data) => remove(`${API.PROJECTS}/type`, data);
+
+
+export const getActivitiesType = (data) => get(`${API.PROJECTS}/activity-type`, data);
+export const deleteActivityType = (data) => remove(`${API.PROJECTS}/activity-type`, data);
+export const saveActivityType = (data) => post(`${API.PROJECTS}/activity-type`, data);
+

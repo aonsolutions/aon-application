@@ -78,10 +78,27 @@ public interface Properties {
 		Property<Integer> getTaskHolderProperty();
 	}
 	
+	public interface ProjectActivityProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getProjectProperty();
+		Property<Integer> getActivityTypeProperty();
+		Property<Byte> getActiveProperty();
+	}
+	
 	public interface ProjectTypeProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<String> getDescriptionProperty();
+		Property<Byte> getActiveProperty();
+	}
+	
+	
+	public interface ActivityTypeProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+		Property<Integer> getProjectTypeProperty();
 		Property<Byte> getActiveProperty();
 	}
 	

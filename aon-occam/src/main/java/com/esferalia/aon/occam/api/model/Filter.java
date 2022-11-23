@@ -326,8 +326,18 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface ProjectActivityFilter{
+		Filter filter(ProjectActivityProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface ProjectTypeFilter{
 		Filter filter(ProjectTypeProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface ActivityTypeFilter{
+		Filter filter(ActivityTypeProperties properties);
 	}
 	
 	@FunctionalInterface

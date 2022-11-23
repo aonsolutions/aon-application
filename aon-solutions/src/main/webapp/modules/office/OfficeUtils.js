@@ -1,50 +1,8 @@
 import { AonSelect } from "../../components/aon-select.js";
-import { MSG, EVENT, MATERIAL_ICONS } from "../../environments/environments.js";
+import { MSG, EVENT } from "../../environments/environments.js";
 import { Project } from "../../models/project/Project.js";
 import { AonOfficeLinkSimpleList } from "./aon-office-link-simple-list.js";
 
-/**
- * 
- * @param {AonOfficePanel} aonOfficePanel 
- * @param {HTMLElement} element 
- */
-const buildDialogMenu = (aonOfficePanel, element) => {
-
-    const application = aonOfficePanel.getApplication();
-	let options = [
-        { 
-            name: "Vincular empresa", 
-            value: "LINK",
-            icon:  MATERIAL_ICONS.LINK, 
-            fn:()=> {
-                aonOfficePanel.onSaveRelationByCustomers(true);
-            }
-        },
-        { 
-            name: "Desvincular Empresa", 
-            value: "UNLINK",
-            icon: MATERIAL_ICONS.LINK_OFF, 
-            fn:()=> {
-                aonOfficePanel.onSaveRelationByCustomers(false);
-            }
-        },
-        { 
-            name: "Asignar expediente", 
-            value: "assignedExpediente",
-            icon: MATERIAL_ICONS.OPEN_IN_NEW, 
-            fn:()=> {
-                buildDialogExpediente(aonOfficePanel);
-            }
-        }
-    ];
-    
-
-    const top = element.getBoundingClientRect().top + 24;
-    const left = element.getBoundingClientRect().left + 3;
-    let d = application.getOptionDialog();
-    d.setMenuOptions(options, top, left);
-    d.open();
-}   
 
 
 /**
@@ -191,7 +149,7 @@ const builDialogRelationship = (aonOfficePanel, data) => {
 }   
 
 export const OfficeUtils = {
-    buildDialogMenu,
+    buildDialogExpediente,
     getCustomerStatus,
     builDialogRelationship
 }

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.Alarm;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -42,6 +43,7 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.Expedient;
+import com.esferalia.aon.occam.api.model.Filter.ActivityTypeFilter;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.BrandFilter;
@@ -89,6 +91,7 @@ import com.esferalia.aon.occam.api.model.Filter.PersonFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductCategoryFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductTagFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProjectActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
@@ -205,6 +208,7 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductCategory;
 import com.esferalia.aon.occam.api.model.product.ProductTag;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
@@ -3795,6 +3799,33 @@ public class AON {
 		}
 	}
 	
+	// ---------- ACTIVITY TYPE
+	
+	public static Stream<ActivityType> getActivityTypeStream(Domain domain, User user, ActivityTypeFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getProject().getActivityTypeStream(ctx, filter);
+		}
+	}
+	
+	public static ActivityType getActivityType(Domain domain, User user, ActivityTypeFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getProject().getActivityType(ctx, filter);
+		}
+	}
+
+	public static ActivityType saveActivityType(Domain domain, User user, ActivityType activityType){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getProject().saveActivityType(ctx, activityType);
+		}
+	}
+	
+	public static void deleteActivityType(Domain domain, User user, Integer activityTypeId){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			getProject().deleteActivityType(ctx, activityTypeId);
+		}
+	}
+	
+	
 	// ---------- PROJECT HOLDER
 	
 	public static ProjectHolder getProjectHolder(Domain domain, User user, ProjectHolderFilter filter) {
@@ -3848,6 +3879,27 @@ public class AON {
 	public static void deleteProjectHolder(Domain domain, User user, Integer id) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
 			getProject().deleteProjectHolder(ctx, id);
+		}
+	}
+	
+	// ---------- PROJECT ACTIVITY
+	
+	
+	public static Stream<ProjectActivity> getProjectActivityStream(Domain domain, User user, ProjectActivityFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			return getProject().getProjectActivityStream(ctx, filter);
+		}
+	}
+	
+	public static void deleteProjectActivity(Domain domain, User user, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			getProject().deleteProjectActivity(ctx, id);
+		}
+	}
+	
+	public static ProjectActivity saveProjectActivity(Domain domain, User user, ProjectActivity projectActivity) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			return getProject().saveProjectActivity(ctx, projectActivity);
 		}
 	}
 	

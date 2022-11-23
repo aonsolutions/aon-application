@@ -1,5 +1,6 @@
 import { Domain } from '../Domain.js';
 import { Registry } from '../registry/Registry.js';
+import { ProjectActivity } from './ProjectActivity.js';
 import { ProjectHolder } from './ProjectHolder.js';
 import { ProjectType } from './ProjectType.js';
 
@@ -17,6 +18,7 @@ export class Project {
     active;
     projectHolder;
     projectHolders;
+    projectActivities;
     dirty;
 
     constructor(project) {
@@ -31,10 +33,11 @@ export class Project {
             this.tas = project.tas || false;
             this.commercial = project.commercial || false;
             this.reservation = project.reservation || false;
-            this.active = project.active || true;
             this.projectHolder = new ProjectHolder(project.projectHolder);
-            this.dirty = project.dirty || false;
             this.projectHolders = project.projectHolders || undefined;
+            this.projectActivities = project.projectActivities || [];
+            this.active = project.active || true;
+            this.dirty  = project.dirty || false;
         } else {
             this.domain = new Domain();
             this.type = new ProjectType();
@@ -48,6 +51,7 @@ export class Project {
             this.active = true;
             this.projectHolder = new ProjectHolder();
             this.dirty = false;
+            this.projectActivities = [];
         }
     }
 
@@ -138,6 +142,36 @@ export class Project {
         return this;
     }
 
+    addProjectActivity(projectActivity) {
+        let opt = this.findProjectActivityByActivityType(projectActivity);
+        if(opt){
+            opt.removed = false;
+        } else {
+            this.projectActivities.push(new ProjectActivity(projectActivity).setDirty(true));
+        }
+    }
+    
+    removeProjectActivity(projectActivity) {
+        let opt = this.findProjectActivityByActivityType(projectActivity);
+        if(opt){
+            opt.removed = true;
+        }
+    }
+
+    getProjectActivities() {
+        return this.projectActivities;
+    }
+
+    setProjectActivities(projectActivities) {
+        this.setDirty(true);
+        this.projectActivities = projectActivities.map(d => new ProjectActivity(d).setDirty(true));
+        return this;
+    }
+
+    findProjectActivityByActivityType({activityType}){
+        return this.getProjectActivities().find(d=> d.activityType && d.activityType.id === activityType.id);
+    }
+    
     isTas() {
         return this.tas;
     }
