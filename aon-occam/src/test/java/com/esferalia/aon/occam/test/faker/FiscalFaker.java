@@ -132,7 +132,7 @@ public class FiscalFaker {
 		T t = modelSupplier.get();
 		t.setDomain(params.getOccam().getDomain());
 		t.setYear(AonDateUtils.getYear(params.getIssueDate()));
-		if (t.getModel().isYearly()) {
+		if (t.getModel() != null && t.getModel().isYearly()) {
 			t.setPeriod( Period.YEAR );
 		} else {
 			t.setPeriod( params.isMonthly()
