@@ -39,7 +39,6 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
@@ -389,20 +388,6 @@ public class EnterprisesServiceAsyncDecorator implements
 				new AsyncCallbackWrapper<Map<Integer, String>>(callback));
 	}
 
-	@Override
-	public void getEnterpriseInfo(Integer enterpriseId, String domain, AsyncCallback<EnterpriseInfo> callback) {
-		AON.start();
-		enterprisesServiceAsync.getEnterpriseInfo(enterpriseId, domain,
-				new AsyncCallbackWrapper<EnterpriseInfo>(callback));
-	}
-
-	@Override
-	public void updateEnterprise(EnterpriseInfo enterpriseInfo, String domain, AsyncCallback<EnterpriseInfo> callback) {
-		AON.start();
-		enterprisesServiceAsync.updateEnterprise(enterpriseInfo, domain,
-				new AsyncCallbackWrapper<EnterpriseInfo>(callback));
-	}
-	
 	@Override
 	public void getCCCEmployees(String domain, Date month, List<Integer> cccIds,
 			AsyncCallback<List<Employee>> callback) {

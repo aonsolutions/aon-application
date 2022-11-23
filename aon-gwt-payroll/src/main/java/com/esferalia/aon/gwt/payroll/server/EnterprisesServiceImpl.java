@@ -106,7 +106,6 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AndEnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
@@ -1855,35 +1854,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(domain);
 			return JooqEnterprise.getEnterpriseScopes(connection, enterpriseId);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (SQLException logOrIgnrore) {
-				}
-			}
-		}
-	}
-
-	@Override
-	public EnterpriseInfo getEnterpriseInfo(Integer enterpriseId, String domain) {
-		try(Connection connection = AonServletUtils.getConnection(domain)) {
-			EnterpriseInfo enterpriseInfo = JooqEnterprise.getEnterpriseInfo(connection, enterpriseId);
-			enterpriseInfo.setScopes(JooqEnterprise.getEnterpriseScopes(connection, enterpriseId));			
-			return enterpriseInfo;
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} 
-	}
-
-	@Override
-	public EnterpriseInfo updateEnterprise(EnterpriseInfo enterpriseInfo, String domain) {
-		Connection connection = null;
-		try {
-			connection = AonServletUtils.getConnection(domain);
-			return JooqEnterprise.setEnterpriseInfo(connection, enterpriseInfo);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
