@@ -377,5 +377,11 @@ public interface EnterprisesService extends RemoteService {
 
 	void deletePayments(String currentDomainName, List<Integer> paymentIds) throws IllegalArgumentException;
 	
-
+	// --------------------------- Enterprise (API)
+	
+	com.esferalia.aon.occam.api.model.payroll.Enterprise getEnterprise(String currentDomainName, String user, Integer id) throws IllegalArgumentException;
+	
+	void saveEnterprise(String currentDomainName, String user, com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise) throws IllegalArgumentException;
+	
+	
 }

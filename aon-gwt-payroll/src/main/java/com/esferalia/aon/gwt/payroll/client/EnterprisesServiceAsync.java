@@ -255,4 +255,10 @@ public interface EnterprisesServiceAsync {
 	
 	void deletePayments(String currentDomainName, List<Integer> paymentIds, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
+	// --------------------------- Enterprise (API)
+	
+	void getEnterprise(String currentDomainName, String user, Integer id, AsyncCallback<com.esferalia.aon.occam.api.model.payroll.Enterprise> asyncCallback) throws IllegalArgumentException;
+	
+	void saveEnterprise(String currentDomainName, String user, com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
 }

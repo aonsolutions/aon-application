@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Filter.ContractAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
@@ -23,11 +24,13 @@ import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractAttach;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
+import com.esferalia.aon.occam.api.model.payroll.Enterprise;
 import com.esferalia.aon.occam.impl.jooq.dao.CCCDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractAttachDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.EmployeeDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDAO;
 
 public class PayrollImpl implements IPayroll {
 	
@@ -169,6 +172,18 @@ public class PayrollImpl implements IPayroll {
 	@Override
 	public void deleteContractAttach(AONContext ctx, Integer id) {
 		ctx.getDslContext().transaction(configuration -> ContractAttachDAO.delete(ctx, id));
+	}
+	
+	// -------------------- ENTERPRISE
+	
+	@Override
+	public Enterprise getEnterprise(AONContext ctx, EnterpriseFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> EnterpriseDAO.get(ctx, filter));
+	}
+
+	@Override
+	public void saveEnterprise(AONContext ctx, Enterprise enterprise) {
+		ctx.getDslContext().transaction(configuration -> EnterpriseDAO.save(ctx, enterprise));
 	}
 
 }

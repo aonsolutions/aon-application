@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
+import com.esferalia.aon.occam.api.model.EnterpriseData;
 import com.esferalia.aon.occam.api.model.Expedient;
 import com.esferalia.aon.occam.api.model.Filter.ApplicationParameterFilter;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
@@ -70,6 +71,7 @@ import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailCompositionFilt
 import com.esferalia.aon.occam.api.model.Filter.ElaborationDetailFilter;
 import com.esferalia.aon.occam.api.model.Filter.ElaborationFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseCCCFilter;
+import com.esferalia.aon.occam.api.model.Filter.EnterpriseDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.GeoZoneFilter;
 import com.esferalia.aon.occam.api.model.Filter.IncomeDetailFilter;
@@ -7529,6 +7531,35 @@ public class AON {
 	public static DomainLinked saveDomainLinked(String domainName, Integer domainId, String login, DomainLinked domainLinked) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getRegistry().saveDomainLinked(ctx, domainLinked);
+		}
+	}
+	
+	// ---------------- Enterprise Data
+	
+	public static LinkedList<EnterpriseData> getEnterpriseDataList(String domainName, Integer domainId, String login, EnterpriseDataFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getEnterprise().getEnterpriseDataList(ctx, filter);
+		}
+	}
+
+
+	public static void insertEnterpriseData(String domainName, Integer domainId, String login, List<EnterpriseData> enterpriseData) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getEnterprise().insertEnterpriseData(ctx, enterpriseData);
+		}
+	}
+
+
+	public static void updateEnterpriseData(String domainName, Integer domainId, String login, EnterpriseData enterpriseData) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getEnterprise().updateEnterpriseData(ctx, enterpriseData);
+		}
+	}
+
+
+	public static void deleteEnterpriseData(String domainName, Integer domainId, String login, Integer id) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getEnterprise().deleteEnterpriseData(ctx, id);
 		}
 	}
 }

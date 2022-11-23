@@ -1026,5 +1026,23 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.deletePayments(domainName, paymentIds, callback);
 	}
+	
+	// ------------------------------------------------ Enterprise (API)
+
+	@Override
+	public void getEnterprise(String domainName, String user, Integer id,
+			AsyncCallback<com.esferalia.aon.occam.api.model.payroll.Enterprise> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getEnterprise(domainName, user, id, callback);
+	}
+
+	@Override
+	public void saveEnterprise(String domainName, String user,
+			com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise, AsyncCallback<Void> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.saveEnterprise(domainName, user, enterprise, callback);
+	}
 
 }

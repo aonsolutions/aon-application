@@ -136,7 +136,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.DOC;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -3460,6 +3459,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			enterpriseContext.setAgreements(JooqAgreement.getAgreements(connection, true, domainId, parentDomainId));
 			enterpriseContext.setActivitiesCCC(JooqWorkplace.getActivitiesCCC(domainId, connection));
 			enterpriseContext.setPayMethods(JooqWorkplace.getPayMethods(connection, domainId));
+			enterpriseContext.setScopes(JooqWorkplace.getScopes(connection, domainId));
 			
 			return enterpriseContext;
 		} catch (SQLException e) {
@@ -3973,6 +3973,32 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	private static double getOrZero(Double value) {
 		return value != null ? value : 0.00;
 	}
+	
+	// ------------------------------------------------ Enterprise (API)
+	
+	@Override
+	public com.esferalia.aon.occam.api.model.payroll.Enterprise getEnterprise(String domainName, String userLogin,Integer id) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return PAYROLL.getEnterprise(domainName, domainId, userLogin, f -> f.getIdProperty().eq(id));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void saveEnterprise(String domainName, String userLogin, com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			PAYROLL.saveEnterprise(domainName, domainId, userLogin, enterprise);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	// ------------------------------------------------ Partes IT
 
 	@Override
 	public void communicateITPart(String domainName, String userLogin, ITEmployee empIt, IT it, ITPart part)  throws IllegalArgumentException {

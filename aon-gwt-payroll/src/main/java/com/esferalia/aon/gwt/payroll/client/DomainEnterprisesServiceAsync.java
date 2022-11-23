@@ -660,6 +660,16 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.deletePayments(getCurrentDomainName(), paymentIds, asyncCallback);
 	}
 	
+	// ------------------------------------------------ Enterprise (API)
+
+	public void getEnterprise(Integer id, AsyncCallback<com.esferalia.aon.occam.api.model.payroll.Enterprise> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getEnterprise(getCurrentDomainName(), getCurrentUser(), id, asyncCallback);
+	}
+
+	public void saveEnterprise(com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.saveEnterprise(getCurrentDomainName(), getCurrentUser(), enterprise, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {

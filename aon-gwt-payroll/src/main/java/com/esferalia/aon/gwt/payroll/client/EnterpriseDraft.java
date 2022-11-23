@@ -8,8 +8,11 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
+import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.Province;
+import com.esferalia.aon.occam.api.model.type.StreetType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
@@ -51,13 +54,14 @@ public abstract class EnterpriseDraft extends Composite {
 
 		@Override
 		public void onEnterpriseNationalityChange() {
-			enterpriseDraftObject.setNationality(this.nationality.getValue());
+			enterpriseDraftObject.setNationality(Country.getCountryByName(this.nationality.getValue()));
 		}
 
 		@Override
 		public void onEnterpriseStreetTypeChange() {
 			String streetType = String.valueOf(this.streetType.getSelectedValue());
-			enterpriseDraftObject.setAddressStreetType(streetType);
+			StreetType streetTypeObj = StreetType.valueOf(streetType);
+			enterpriseDraftObject.setAddressStreetType(streetTypeObj);
 		}
 
 		@Override
@@ -75,17 +79,15 @@ public abstract class EnterpriseDraft extends Composite {
 		@Override
 		public void onEnterpriseAddressZipChange() {
 			String value = this.addressZip.getValue();
-			if(value.length() >= 2) {
-				String zipCode = this.addressZip.getValue().substring(0, 2);
-				setSelectedValueLB(addressProvince, zipCode); 
-				enterpriseDraftObject.setAddressZip(value);
-				DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressProvince);
-			}
+			enterpriseDraftObject.setAddressZip(value);
+			updateMunicipalities();
+			updateProvince();
 		}
 
 		@Override
 		public void onEnterpriseAddressCityChange() {
-			enterpriseDraftObject.setAddressCity(municipalities.getZipByMunicipalityName(this.addressCity.getSelectedItemText()).toString());
+			enterpriseDraftObject.setAddressCity(this.addressCity.getSelectedItemText());
+			enterpriseDraftObject.setAddressMunicipalityCode(municipalities.getZipByMunicipalityName(this.addressCity.getSelectedItemText()));
 		}
 
 		@Override
@@ -232,7 +234,7 @@ public abstract class EnterpriseDraft extends Composite {
 	
 	private Municipalities municipalities = new Municipalities();
 	
-	private Consumer<EnterpriseInfo> onSaved ;
+	private Consumer<com.esferalia.aon.occam.api.model.payroll.Enterprise> onSaved ;
 	
 	private NewContextMenu contextMenu;
 	
@@ -306,10 +308,12 @@ public abstract class EnterpriseDraft extends Composite {
 		enterprise.addressNum.setValue(enterpriseDraftObject.getAddressNum());
 		enterprise.addressZip.setValue(enterpriseDraftObject.getAddressZip());
 		
+		updateProvince();
 		setSelectedValueLB(enterprise.addressProvince, enterpriseDraftObject.getAddressProvince());
+		
 		if(null != enterpriseDraftObject.getAddressProvince()) {
 			updateMunicipalities();
-			setSelectedValueLB(enterprise.addressCity, enterpriseDraftObject.getAddressCity());
+			setSelectedValueLB(enterprise.addressCity, enterpriseDraftObject.getMunicipalityCode());
 		}
 		
 		enterprise.mobile.setValue(enterpriseDraftObject.getMobile());
@@ -340,7 +344,7 @@ public abstract class EnterpriseDraft extends Composite {
 	    String text = str;
 	    int indexToFind = 0;
 	    for (int i = 0; i < lBox.getItemCount(); i++) {
-	        if (lBox.getValue(i).equals(text)) {
+	        if (AonStringUtils.equalsIgnoreCase(lBox.getValue(i), text)) {
 	            indexToFind = i;
 	            break;
 	        }
@@ -349,11 +353,21 @@ public abstract class EnterpriseDraft extends Composite {
 	}
 	
 	public void updateMunicipalities() {
-		String provinceCode = enterprise.addressProvince.getSelectedValue();
+		String zip = enterprise.addressZip.getValue();
 		enterprise.addressCity.clear();
 		enterprise.addressCity.addItem("-", "-1");
-		HashMap<String, String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
+		HashMap<String, String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(zip);
 		municipalitiesOfProvince.entrySet().forEach(e -> enterprise.addressCity.addItem(e.getValue(), e.getKey()));
+	}
+	
+	public void updateProvince() {
+		String zip = enterprise.addressZip.getValue();
+		if(AonStringUtils.isNotBlank(zip)) {
+			Integer zipCode = Integer.parseInt(zip.substring(0, 2));
+			setSelectedValueLB(enterprise.addressProvince, Province.values()[zipCode] + "");
+			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), enterprise.addressProvince);
+		}
+		
 	}
 	
 	// -------------------------------------------------- Toolbar
@@ -383,7 +397,7 @@ public abstract class EnterpriseDraft extends Composite {
 	}
 	
 	private void onAccept() {
-		enterpriseDraftObject.updateEnterprise(
+		enterpriseDraftObject.saveEnterprise(
 				r -> {
 					Map<String, String> messageMap = new HashMap<>();
 					messageMap.put("Guardado", "La empresa " + enterpriseDraftObject.getEnterpriseInfo().getName() + " ha sido actualizada correctamente");
@@ -427,12 +441,12 @@ public abstract class EnterpriseDraft extends Composite {
 	
 	// -------------------------------------------------- Saved Methods
 	
-	public EnterpriseDraft setOnSaved(Consumer<EnterpriseInfo> onSaved) {
+	public EnterpriseDraft setOnSaved(Consumer<com.esferalia.aon.occam.api.model.payroll.Enterprise> onSaved) {
 		this.onSaved = onSaved;
 		return this;
 	}
 	
-	protected void onSavedNoop(EnterpriseInfo enterpriseInfo) {}
+	protected void onSavedNoop(com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise) {}
 	
 	// -------------------------------------------------- Abstract Methods
 	
