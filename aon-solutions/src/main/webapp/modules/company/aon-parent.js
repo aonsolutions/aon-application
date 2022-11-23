@@ -2,8 +2,8 @@ import {AonElement} from '../../components/AonElement.js';
 import {closeSession, getCompanies, getUserNotice, getUser, getTimeControl, getCompaniesBySchemas} from  '../../services/service.js';
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import {AonSign} from '../timecontrol/aon-sign.js';
-import './aon-desktop.js';
 import { AonApplication } from '../../components/aon-application.js';
+import { AonDesktop } from './aon-desktop.js';
 
 export class AonParent extends AonElement {
 
@@ -18,17 +18,19 @@ export class AonParent extends AonElement {
 		this.filter = filter;
 	}
 
-	addFilter(filter){
-		this.filter = {...this.filter, ...filter};
+	getFilter(){
+		return this.filter;
 	}
 
-	getFilter(){
-		return this.filter ?  this.filter : {page:1, perPage:2}
+	addFilter(filter){
+		this.filter = {...this.getFilter(), ...filter};
 	}
+
 
 	constructor () {
 		super();
 		this.id = 'aonParent';
+		this.filter= {};
 	}
 
 	connectedCallback () {
@@ -39,9 +41,8 @@ export class AonParent extends AonElement {
 		let searchBox = this.getElement('aonHeaderSearchBox');
 		searchBox.addEventListener(EVENT.KEYUP, () => {
 			this.init({value: searchBox.value});
+			this.addFilter({value:searchBox.value});
 		});
-
-		// this.getCompaniesSchemas();
 	}
 
 	buildSidenav() {
@@ -83,7 +84,7 @@ export class AonParent extends AonElement {
 			}, {
 				name: MSG.INACTIVES,
 				icon: 'domain_disabled',
-				fn: () => this.init({inactive: true})
+				fn: () => this.init({inactive: true, active:false})
 			}, {
 				name: MSG.SHARED,
 				icon: 'share',
@@ -91,11 +92,11 @@ export class AonParent extends AonElement {
 			}, {
 				name: MSG.ENVIRONMENT,
 				icon: 'apartment',
-				fn: () => this.init({entorno:true})
+				fn: () => this.init({entorno:true, type:"CONSULTANCY"})
 			},{
 				name: MSG.OFFICE,
 				icon: 'work',
-				fn: () => this.init({despacho:true})
+				fn: () => this.init({despacho:true, type:"OFFICE"})
 			}
 		];
 		
@@ -111,8 +112,6 @@ export class AonParent extends AonElement {
 		});
 
 		this.getNotices();
-		
-		
 	}
 
 	init(filter) {
@@ -143,38 +142,41 @@ export class AonParent extends AonElement {
 
 		let value = true;
 
-		if(q && q.value) {
-			const document = f.document && f.document.toUpperCase().includes(q.value.toUpperCase());
-			const name = f.name && f.name.toUpperCase().includes(q.value.toUpperCase());
-			value = document || name;
-		}
+		if(q){
 
-		if(q && q.active) {
-			value = f.active && (f.parentId || f.type !== 'CONSULTANCY');
-		}
-
-		if(q && q.inactive) {
-			value = !f.active;
-		}
-
-		if(q && q.shared) {
-			value = f.shared;
-		}
-
-		if(q && q.entorno) {
-			value = !f.parentId && f.type === 'CONSULTANCY';
-		}
-
-		if(q && q.despacho) {
-			value = f.type === 'OFFICE';
-		}
-
-		if(q && q.ids) {
-			let idFilter;
-			q.ids.forEach((item, i) => {
-				idFilter = f.id == item || idFilter;
-			});
-			value = idFilter;
+			if(q.value) {
+				const document = f.document && f.document.toUpperCase().includes(q.value.toUpperCase());
+				const name = f.name && f.name.toUpperCase().includes(q.value.toUpperCase());
+				value = document || name;
+			}
+	
+			if(q.active) {
+				value = f.active && (f.parentId || f.type !== 'CONSULTANCY');
+			}
+	
+			if(q.inactive) {
+				value = !f.active;
+			}
+	
+			if(q.shared) {
+				value = f.shared;
+			}
+	
+			if(q.entorno) {
+				value = !f.parentId && f.type === 'CONSULTANCY';
+			}
+	
+			if(q.despacho) {
+				value = f.type === 'OFFICE';
+			}
+	
+			if(q.ids) {
+				let idFilter;
+				q.ids.forEach((item, i) => {
+					idFilter = f.id == item || idFilter;
+				});
+				value = idFilter;
+			}
 		}
 
 		return value;
@@ -344,18 +346,18 @@ export class AonParent extends AonElement {
 
 		getUser().then(user => {
 			localStorage.setItem('aon_domain_login', user.login);
-			this.rootPanelHtml('<aon-desktop id="aonDesktop"></aon-desktop>');
+
+			let aonDesktop = new AonDesktop();
+			aonDesktop.id = "aonDesktop";
+
+			this.rootPanel(aonDesktop);
 		});
 	}
 
 
 	getCompaniesSchemas(){
 		getCompaniesBySchemas(this.getFilter())
-		.then((companies) => {
-
-			console.log(companies);
-			getCompaniesBySchemas(this.getFilter()).then(console.log);
-		});
+		.then(console.log);
 	}
 }
 if(!window.customElements.get('aon-parent')){

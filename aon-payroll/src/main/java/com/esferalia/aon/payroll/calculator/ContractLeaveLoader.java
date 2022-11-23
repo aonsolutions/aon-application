@@ -9,6 +9,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_S
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EFECTIVE_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EFECTIVE_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
@@ -637,22 +638,22 @@ public class ContractLeaveLoader {
 		} catch (Exception e) {
 		}
 
-		//		try {
+//		try {
 //			if (!ctx.getVariable(FULL_TIME, p.getStart(), p.getEnd(), Boolean.class))
 //				return days;
 //		} catch (Exception e) {
 //		}
 
-		try {
-			boolean isPartial = 
-			ctx.getVariables(ContextVariable.PARTIAL_FACTOR, p.getStart(), p.getEnd())
-			.stream().map( v -> v.getValue(v.getPeriod()))
-			.filter( v -> v != null && v instanceof Number )
-			.anyMatch( v -> ((Number)v).doubleValue() < 1.00) ;
-			if (isPartial)
-				return days;
-		} catch (Exception e) {
-		}
+//		try {
+//			boolean isPartial = 
+//			ctx.getVariables(ContextVariable.PARTIAL_FACTOR, p.getStart(), p.getEnd())
+//			.stream().map( v -> v.getValue(v.getPeriod()))
+//			.filter( v -> v != null && v instanceof Number )
+//			.anyMatch( v -> ((Number)v).doubleValue() < 1.00) ;
+//			if (isPartial)
+//				return days;
+//		} catch (Exception e) {
+//		}
 
 //		try {
 //			Number paternityFactor =  ctx.getVariable(PATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);

@@ -29,21 +29,22 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 class Model303NewDeclarationPanel extends DockLayoutPanel {
 	
-	private AdministrationListBox admonList = new AdministrationListBox();
-	private AonIntegerBox yearBox = new AonIntegerBox();
-	private CheckBox replacement = new CheckBox();
-	private CheckBox complementary = new CheckBox();
-	private CheckBox withoutActivity = new CheckBox();
-	private Label defaultVatRegimeLabel = new Label();
-	private ListBox defaultVatRegime = new ListBox();
-	private final CheckBox generateFromYearStart = new CheckBox();
-	private final CheckBox diffCalculationMandatory = new CheckBox();
-	private AonDoubleBox previousProrate = new AonDoubleBox(7);
-	private AonDoubleBox prorate = new AonDoubleBox(7);
-	private CheckBox specialProrate = new CheckBox("Especial");
-	private PeriodListBox periodList = new PeriodListBox(true);
-	private CheckBox manualDeclaration = new CheckBox();
 	private boolean running;
+
+	private AdministrationListBox admonList;
+	private AonIntegerBox yearBox;
+	private CheckBox replacement;
+	private CheckBox complementary;
+	private CheckBox withoutActivity;
+	private Label defaultVatRegimeLabel;
+	private ListBox defaultVatRegime;
+	private CheckBox generateFromYearStart;
+	private CheckBox diffCalculationMandatory;
+	private AonDoubleBox previousProrate;
+	private AonDoubleBox prorate;
+	private CheckBox specialProrate;
+	private PeriodListBox periodList;
+	private CheckBox manualDeclaration;
 	
 	private FlowPanel rootPanel;
 	private FlowPanel calculateProratePanel = new FlowPanel();	
@@ -69,12 +70,28 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		rootPanel.setStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(rootPanel);
 		
-		registerHandlers(model,callback);
 		paint(model,callback);
 		
 	}
 	
 	private void registerHandlers(Mod303 model, Model303Callback callback) {
+		admonList = new AdministrationListBox();
+		yearBox = new AonIntegerBox();
+		replacement = new CheckBox();
+		complementary = new CheckBox();
+		withoutActivity = new CheckBox();
+		defaultVatRegimeLabel = new Label();
+		defaultVatRegime = new ListBox();
+		generateFromYearStart = new CheckBox();
+		diffCalculationMandatory = new CheckBox();
+		previousProrate = new AonDoubleBox(7);
+		prorate = new AonDoubleBox(7);
+		specialProrate = new CheckBox("Especial");
+		periodList = new PeriodListBox(true);
+		manualDeclaration = new CheckBox();
+		
+		
+		
 		admonList.addChangeHandler( event -> {
 			model.setAdministration( admonList.getValue() );
 			initialize(model, callback );
@@ -156,6 +173,8 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 	}
 
 	private void paint(Mod303 model, Model303Callback callback) {
+		
+		registerHandlers(model,callback);
 		
 		headerPanel.setWidget(new AonFiscalModelHeader(model));
 

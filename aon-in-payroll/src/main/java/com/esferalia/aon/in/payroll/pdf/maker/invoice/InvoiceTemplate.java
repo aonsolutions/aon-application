@@ -79,6 +79,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
 import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
@@ -149,6 +150,8 @@ public class InvoiceTemplate {
 	
 	List<InvoiceDetail> specialTaxes;
 	
+	Map<DetailCategory, List<InvoiceDetail>> detailMap;
+	
 	public InvoiceTemplate(CompanyFull company, List<Invoice> invoices, PrintInvoiceConfiguration config, String qrUrl, byte[] logo, String tbaiId) throws CanNotCreatePdfException {
 //		company.getRegistry().getDomain().getDomainType(); DomainType.GARAGE;
 //		Invoice inv = new Invoice();
@@ -196,6 +199,8 @@ public class InvoiceTemplate {
 
 				if (config.getBackground() != null)
 					this.background = config.getBackground().getData();
+				
+				detailMap = sortInvoiceDetails(invoice.getDetails(), company);
 
 				this.contents = this.drawFirstPage(document, company, invoice, config);
 				
@@ -267,6 +272,8 @@ public class InvoiceTemplate {
 
 			if (config.getBackground() != null)
 				this.background = config.getBackground().getData();
+			
+			detailMap = sortInvoiceDetails(invoice.getDetails(), company);
 
 			this.contents = this.drawFirstPage(document, company, invoice, config);
 			
@@ -594,23 +601,28 @@ public class InvoiceTemplate {
 	private interface IssueDateCallback {
 		Date get(InvoiceDetail detail);
 	}
+
+	@FunctionalInterface
+	private interface DescriptionCallback {
+		String get(InvoiceDetail detail);
+	}
 	
-	private static void iterateDetailsBySource(Invoice invoice, InvoiceSource source,  Map<DetailCategory, List<InvoiceDetail>> map, IdCallback idCallback, ReferenceCallback referenceCallback, IssueDateCallback issueDateCallback) {
+	private static void iterateDetailsBySource(List<InvoiceDetail> details, InvoiceSource source,  Map<DetailCategory, List<InvoiceDetail>> map, IdCallback idCallback, ReferenceCallback referenceCallback, IssueDateCallback issueDateCallback, DescriptionCallback descriptionCallback) {
 		if (source == null)
 			return;
-		invoice.getDetails().stream()
+		details.stream()
 		.filter(detail -> detail != null && source.equals(detail.getSource()))
 		.forEach(detail -> {
-			DetailCategory key = new DetailCategory(source, idCallback.get(detail), referenceCallback.get(detail), issueDateCallback.get(detail));
+			DetailCategory key = new DetailCategory(source, idCallback.get(detail), referenceCallback.get(detail), issueDateCallback.get(detail), descriptionCallback.get(detail));
 			List<InvoiceDetail> detailList = map.getOrDefault(key, new LinkedList<>());
 			detailList.add(detail);
 			map.put(key, detailList);
 		});
 	}
 	
-	private static void sortOtherSources(Invoice invoice, Map<DetailCategory, List<InvoiceDetail>> map) {
+	private static void sortOtherSources(List<InvoiceDetail> details, Map<DetailCategory, List<InvoiceDetail>> map) {
 		List<InvoiceSource> sortedTypes = Arrays.asList(SORTED_SOURCES);
-		invoice.getDetails().stream()
+		details.stream()
 		.filter(detail -> detail != null && !sortedTypes.contains(detail.getSource()))
 		.forEach(detail -> {
 			List<InvoiceDetail> detailList = map.getOrDefault(null, new LinkedList<>());
@@ -619,51 +631,62 @@ public class InvoiceTemplate {
 		});
 	}
 	
-	private static void sortDeliveries(Invoice invoice, Map<DetailCategory, List<InvoiceDetail>> map) {
-		iterateDetailsBySource(invoice, InvoiceSource.DELIVERY, map,
+	private static String safeProjectDescription(Project project) {
+		if (project != null && AonStringUtils.isNotBlank(project.getName())) {
+			return project.getName();
+		}
+		return null;
+	}
+	
+	private static void sortDeliveries(List<InvoiceDetail> details, Map<DetailCategory, List<InvoiceDetail>> map) {
+		iterateDetailsBySource(details, InvoiceSource.DELIVERY, map,
 			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? detail.getDeliveryDetail().getDelivery().getId() : null,
 			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? AonStringUtils.trimToEmpty(detail.getDeliveryDetail().getDelivery().getReferenceCode()) : "",
-			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? detail.getDeliveryDetail().getDelivery().getDate() : null
+			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? detail.getDeliveryDetail().getDelivery().getDate() : null,
+			detail -> detail.getDeliveryDetail() != null && detail.getDeliveryDetail().getDelivery() != null ? safeProjectDescription(detail.getDeliveryDetail().getDelivery().getProject()) : ""
 		);
 	}
-	private static void sortSales(Invoice invoice, Map<DetailCategory, List<InvoiceDetail>> map) {
-		iterateDetailsBySource(invoice, InvoiceSource.SALES, map,
+	private static void sortSales(List<InvoiceDetail> details, Map<DetailCategory, List<InvoiceDetail>> map) {
+		iterateDetailsBySource(details, InvoiceSource.SALES, map,
 			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? detail.getSalesDetail().getSales().getId() : null,
 			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? AonStringUtils.trimToEmpty(detail.getSalesDetail().getSales().getReferenceCode()) : "",
-			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? detail.getSalesDetail().getSales().getDate() : null
+			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? detail.getSalesDetail().getSales().getDate() : null,
+			detail -> detail.getSalesDetail() != null && detail.getSalesDetail().getSales() != null ? safeProjectDescription(detail.getSalesDetail().getSales().getProject()) : ""
 		);
 	}
-	private static void sortIncome(Invoice invoice, Map<DetailCategory, List<InvoiceDetail>> map) {
-		iterateDetailsBySource(invoice, InvoiceSource.INCOME, map,
+	private static void sortIncome(List<InvoiceDetail> details, Map<DetailCategory, List<InvoiceDetail>> map) {
+		iterateDetailsBySource(details, InvoiceSource.INCOME, map,
 			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? detail.getIncomeDetail().getIncome().getId() : null,
 			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? AonStringUtils.trimToEmpty(detail.getIncomeDetail().getIncome().getReferenceCode()) : "",
-			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? detail.getIncomeDetail().getIncome().getIssueDate() : null
+			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? detail.getIncomeDetail().getIncome().getIssueDate() : null,
+			detail -> detail.getIncomeDetail() != null && detail.getIncomeDetail().getIncome() != null ? safeProjectDescription(detail.getIncomeDetail().getIncome().getProject()) : ""
 		);
 	}
-	private static void sortOffer(Invoice invoice, Map<DetailCategory, List<InvoiceDetail>> map) {
-		iterateDetailsBySource(invoice, InvoiceSource.OFFER, map,
+	private static void sortOffer(List<InvoiceDetail> details, Map<DetailCategory, List<InvoiceDetail>> map) {
+		iterateDetailsBySource(details, InvoiceSource.OFFER, map,
 			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? detail.getOfferDetail().getOffer().getId() : null,
 			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? AonStringUtils.trimToEmpty(detail.getOfferDetail().getOffer().getReferenceCode()) : "",
-			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? detail.getOfferDetail().getOffer().getIssueDate() : null	
+			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? detail.getOfferDetail().getOffer().getIssueDate() : null,	
+			detail -> detail.getOfferDetail() != null && detail.getOfferDetail().getOffer() != null ? safeProjectDescription(detail.getOfferDetail().getOffer().getProject()) : ""
 		);
 	}
 	
 	
-	private static Map<DetailCategory, List<InvoiceDetail>> groupBySource(Invoice invoice) {
+	private static Map<DetailCategory, List<InvoiceDetail>> groupBySource(List<InvoiceDetail> details) {
 		Map<DetailCategory, List<InvoiceDetail>> map = new LinkedHashMap<>();
-		if (invoice == null)
+		if (details == null)
 			return map;
 		
 		//OTROS
-		sortOtherSources(invoice, map);
+		sortOtherSources(details, map);
 		//DELIVERIES
-		sortDeliveries(invoice, map);
+		sortDeliveries(details, map);
 		//SALES
-		sortSales(invoice, map);
+		sortSales(details, map);
 		//INCOME
-		sortIncome(invoice, map);
+		sortIncome(details, map);
 		//OFFER
-		sortOffer(invoice, map);
+		sortOffer(details, map);
 		
 		return map;
 	}
@@ -694,7 +717,7 @@ public class InvoiceTemplate {
 		return map;
 	}
 	
-	private static Map<DetailCategory, List<InvoiceDetail>> groupByProductType(List<InvoiceDetail> details) {
+	private static Map<DetailCategory, List<InvoiceDetail>> groupByProductType(List<InvoiceDetail> details, CompanyFull company) {
 		Map<DetailCategory, List<InvoiceDetail>> map = new LinkedHashMap<>();
 		if (details == null)
 			return map;
@@ -704,6 +727,11 @@ public class InvoiceTemplate {
 				if (detail.getItem() != null && detail.getItem().getProduct() != null) {
 					ProductType productType = detail.getItem().getProduct().getType();
 					DetailCategory category = new DetailCategory(productType);
+					
+					if (ProductType.AUXILIARY.equals(productType) && isUdapa(company)) {
+						category.setName("");
+					}
+					
 					List<InvoiceDetail> detailList = map.getOrDefault(category, new LinkedList<>());
 					detailList.add(detail);
 					map.put(category, detailList);
@@ -718,20 +746,53 @@ public class InvoiceTemplate {
 		return map;
 	}
 	
-	private static Map<DetailCategory, List<InvoiceDetail>> sortInvoiceDetails(Invoice invoice, CompanyFull company) {
-		Map<DetailCategory, List<InvoiceDetail>> detailMap = null;		
-//		if (isGarage(company)) {
-//			detailMap = groupByProductType(invoice);
-//		} else {
-			detailMap = groupBySource(invoice);			
-//		}
+	private static Map<DetailCategory, List<InvoiceDetail>> sortInvoiceDetails(List<InvoiceDetail> details, CompanyFull company) {
+		LinkedList<InvoiceDetail> udapaAuxiliaryList = new LinkedList<>();
+		LinkedList<InvoiceDetail> filteredList = new LinkedList<>();
+		filteredList.addAll(details);
+		
+		if (isUdapa(company)) {
+			details.stream().filter(d ->
+			d.getItem() != null && d.getItem().getProduct() != null &&
+			ProductType.AUXILIARY.equals(d.getItem().getProduct().getType())
+					).forEach(d -> {
+						udapaAuxiliaryList.add(d);
+						filteredList.remove(d);
+					});			
+		}
+		
+		Map<DetailCategory, List<InvoiceDetail>> detailMap = groupBySource(filteredList);
+		
+		if (!udapaAuxiliaryList.isEmpty()) {
+			DetailCategory auxCat = new DetailCategory(ProductType.AUXILIARY);
+			auxCat.setName("ENVASES");
+			Map<Integer, InvoiceDetail> auxiliaryMap = new LinkedHashMap<>();
+			List<InvoiceDetail> auxiliarySortedList = new LinkedList<>();
+			udapaAuxiliaryList.forEach(d -> {
+				if (d != null &&
+					d.getItem() != null &&
+					d.getItem().getProduct() != null &&
+					d.getItem().getProduct().getId() != null
+				) {
+					InvoiceDetail detail = auxiliaryMap.getOrDefault(d.getItem().getProduct().getId(), copyInvoiceDetail(d));
+					if (auxiliaryMap.containsKey(d.getItem().getProduct().getId())) {
+						detail.setQuantity(AonNumberUtils.zeroIfNull(detail.getQuantity()) + AonNumberUtils.zeroIfNull(d.getQuantity()));
+					}
+					auxiliaryMap.put(d.getItem().getProduct().getId(), detail);
+				} else {
+					auxiliarySortedList.add(d);
+				}
+			});
+			auxiliarySortedList.addAll(auxiliaryMap.values());
+			detailMap.put(auxCat, auxiliarySortedList);
+		}
+		
 		return detailMap;
 	}
 
 	// DRAW DETAILED ENTRIES
 	public void drawDetailedEntries(PDDocument doc, CompanyFull company, Invoice invoice) throws IOException {
 		PrintInvoiceThemeConfiguration theme = config.getTheme();
-		Map<DetailCategory, List<InvoiceDetail>> detailMap = sortInvoiceDetails(invoice, company);
 		
 		AtomicInteger atomicI = new AtomicInteger();
 		detailMap.entrySet().stream().sorted((a, b) -> {
@@ -744,7 +805,7 @@ public class InvoiceTemplate {
 					DetailCategory category = entry.getKey();
 						drawCategoryName(category, doc, invoice, theme, false);
 	
-					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue());
+					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue(), company);
 					
 					productMap.entrySet().stream().sorted((a, b) -> {
 						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
@@ -769,7 +830,7 @@ public class InvoiceTemplate {
 	}
 	
 	private void drawCategoryName(DetailCategory category, PDDocument doc, Invoice invoice, PrintInvoiceThemeConfiguration theme, boolean indent) throws IOException {
-		if (category != null) {
+		if (category != null && !AonStringUtils.isBlank(category.getName())) {
 			if (y - 15 < bottom + 5) {
 				jumpToNewPage(doc, company, invoice, config);
 				y = entriesStart - 10;
@@ -778,11 +839,15 @@ public class InvoiceTemplate {
 			y-= 5;
 			drawText(contents, category.toString(), x + 5 + (indent ? 10 : 0), y, theme.getTextColor(), boldFont, 9);
 			y-= 10;
+			if (AonStringUtils.isNotBlank(category.getDescription())) {				
+				drawText(contents, category.getDescription(), x + 5 + (indent ? 10 : 0), y, theme.getTextColor(), boldFont, 9);
+				y-= 10;
+			}
 		}
 	}
 	
 	private void simulateCategoryName(DetailCategory category, Invoice invoice, boolean indent, AtomicInteger numberOfPages) throws IOException {
-		if (category != null) {
+		if (category != null && !AonStringUtils.isBlank(category.getName())) {
 			if (y - 15 < bottom + 5) {
 				fictionalPageJump(invoice);
 				numberOfPages.getAndIncrement();
@@ -790,6 +855,9 @@ public class InvoiceTemplate {
 			}
 			y-= 5;
 			y-= 10;
+			if (AonStringUtils.isNotBlank(category.getDescription())) {				
+				y-= 10;
+			}
 		}
 	}
 
@@ -861,7 +929,6 @@ public class InvoiceTemplate {
 	private int predictNumberOfDetailedPages(Invoice invoice) throws IOException {
 		AtomicInteger numberOfPages = new AtomicInteger(1);
 		PrintInvoiceThemeConfiguration theme = config.getTheme();
-		Map<DetailCategory, List<InvoiceDetail>> detailMap = sortInvoiceDetails(invoice, company);
 		
 		AtomicInteger atomicI = new AtomicInteger();
 		detailMap.entrySet().stream().sorted((a, b) -> {
@@ -874,7 +941,7 @@ public class InvoiceTemplate {
 					DetailCategory category = entry.getKey();
 					simulateCategoryName(category, invoice, false, numberOfPages);
 	
-					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue());
+					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue(), company);
 					
 					productMap.entrySet().stream().sorted((a, b) -> {
 						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
@@ -1077,7 +1144,11 @@ public class InvoiceTemplate {
 			}
 			
 		}
-		if (dy < limit + 5 && i == invoice.getDetails().size() - 1) {
+		
+		List<InvoiceDetail> realDetails = new LinkedList<>();
+		detailMap.values().forEach(vals -> realDetails.addAll(vals));
+		
+		if (dy < limit + 5 && i == realDetails/*invoice.getDetails()*/.size() - 1) {
 			jumpToNewPage(doc, company, invoice, config);
 			dy = entriesStart - 10;
 		}
@@ -1095,7 +1166,10 @@ public class InvoiceTemplate {
 				dy = entriesStart - 10;
 			}
 		}
-		if (dy < limit + 5 && i == invoice.getDetails().size() - 1) {
+		List<InvoiceDetail> realDetails = new LinkedList<>();
+		detailMap.values().forEach(vals -> realDetails.addAll(vals));
+		
+		if (dy < limit + 5 && i == realDetails/*invoice.getDetails()*/.size() - 1) {
 			fictionalPageJump(invoice);
 			numberOfPages.getAndIncrement();
 			dy = entriesStart - 10;
@@ -1107,8 +1181,6 @@ public class InvoiceTemplate {
 	public int predictSimplifiedPages (Invoice invoice) throws IOException {
 		AtomicInteger numberOfPages = new AtomicInteger(1);
 		
-		Map<DetailCategory, List<InvoiceDetail>> detailMap = sortInvoiceDetails(invoice, company);
-		
 		detailMap.entrySet().stream().sorted((a, b) -> {
 			String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
 			String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
@@ -1118,7 +1190,7 @@ public class InvoiceTemplate {
 				if (isGarage(company)) {
 					DetailCategory category = entry.getKey();
 					simulateCategoryName(category, invoice, false, numberOfPages);
-					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue());
+					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue(), company);
 					productMap.entrySet().stream().sorted((a, b) -> {
 						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
 						String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
@@ -1148,7 +1220,6 @@ public class InvoiceTemplate {
 	// DRAW SIMPLIFIED ENTRIES
 	public void drawSimplifiedEntries(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config) throws IOException {
 		PrintInvoiceThemeConfiguration theme = config.getTheme();
-		Map<DetailCategory, List<InvoiceDetail>> detailMap = sortInvoiceDetails(invoice, company);
 		
 		detailMap.entrySet().stream().sorted((a, b) -> {
 			String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
@@ -1159,18 +1230,18 @@ public class InvoiceTemplate {
 				if (isGarage(company)) {
 					DetailCategory category = entry.getKey();
 					drawCategoryName(category, doc, invoice, theme, false);
-					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue());
+					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue(), company);
 					productMap.entrySet().stream().sorted((a, b) -> {
 						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
 						String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
 						return aKey.compareTo(bKey);
 					}).forEach(productEntry -> {
-						try {							
+						try {
 							drawSimplifiedCategory(productEntry, invoice, doc, company, config, theme, category != null);
 						} catch (IOException e ) {
 						}
 					});
-				} else {				
+				} else {
 					drawSimplifiedCategory(entry, invoice, doc, company, config, theme, false);
 				}
 			} catch (IOException e) {
@@ -1849,13 +1920,15 @@ public class InvoiceTemplate {
 		private String reference;
 		private Date date;
 		private String name;
+		private String description;
 		
-		public DetailCategory (InvoiceSource source, Integer id, String reference, Date date) {
+		public DetailCategory (InvoiceSource source, Integer id, String reference, Date date, String description) {
 			super();
 			this.id = id;
 			this.name = source != null ? AonStringUtils.trimToEmpty(source.getDescription()) : null;
 			this.reference = reference;
 			this.date = date;
+			this.description = description;
 		}
 
 		public DetailCategory (ProductType productType) {
@@ -1872,6 +1945,14 @@ public class InvoiceTemplate {
 		public String getName() {
 			return name;
 		}
+		public String getDescription() {
+			return description;
+		}
+		
+		public DetailCategory setName(String name) {
+			this.name = name;
+			return this;
+		}
 		
 		@Override
 		public String toString() {
@@ -1880,6 +1961,7 @@ public class InvoiceTemplate {
 			String typeStr = AonStringUtils.trimToEmpty(getName());
 			return (!typeStr.isEmpty() ? typeStr + ": " : "") + ref + (!dateStr.isEmpty() ? " del " + dateStr : "");
 		}
+		
 
 		@Override
 		public int hashCode() {
@@ -1913,4 +1995,54 @@ public class InvoiceTemplate {
 		}
 		
 	}
+	
+	private static boolean isUdapa(CompanyFull company) {
+		if (company != null &&
+				company.getRegistry() != null &&
+				company.getRegistry().getDomain() != null) {
+			return AonStringUtils.containsIgnoreCase(company.getRegistry().getDomain().getName(), "udapa");
+		}
+			return false;
+	}
+	
+	private static InvoiceDetail copyInvoiceDetail(InvoiceDetail original) {
+		InvoiceDetail newInvoiceDetail = new InvoiceDetail()
+				.setId(original.getId())
+				.setDomain(original.getDomain())
+				.setInvoice(original.getInvoice());
+		newInvoiceDetail.setInvestAsset(original.getInvestAsset());
+		newInvoiceDetail.setInvestAssetData(original.getInvestAssetData());
+		newInvoiceDetail.setProject(original.getProject());
+		newInvoiceDetail.setProjectName(original.getProjectName());
+		newInvoiceDetail.setSeller(original.getSeller());
+		newInvoiceDetail.setItem(original.getItem());
+		newInvoiceDetail.setLine(original.getLine());
+		newInvoiceDetail.setDescription(original.getDescription());
+		newInvoiceDetail.setQuantity(original.getQuantity());
+		newInvoiceDetail.setPrice(original.getPrice());
+		newInvoiceDetail.setDiscountExpression(original.getDiscountExpression());
+		newInvoiceDetail.setTaxableBase(original.getTaxableBase());
+		newInvoiceDetail.setTaxes(original.getTaxes());
+		newInvoiceDetail.setSurcharge(original.getSurcharge());
+		newInvoiceDetail.setPrepayment(original.isPrepayment());
+		newInvoiceDetail.setWarehouse(original.getWarehouse());
+		newInvoiceDetail.setWarehouseName(original.getWarehouseName());
+		newInvoiceDetail.setWorkplace(original.getWorkplace());
+		newInvoiceDetail.setWorkPlace(original.getWorkPlace());
+		newInvoiceDetail.setWorkPlaceName(original.getWorkPlaceName());
+		newInvoiceDetail.setAccount(original.getAccount());
+		newInvoiceDetail.setAccountCode(original.getAccountCode());
+		newInvoiceDetail.setAccountDescription(original.getAccountDescription());
+		newInvoiceDetail.setInvoiceTaxes(original.getInvoiceTaxes());
+		newInvoiceDetail.setSource(original.getSource());
+		newInvoiceDetail.setSourceId(original.getSourceId());
+		newInvoiceDetail.setPurchaseDetail(original.getPurchaseDetail());
+		newInvoiceDetail.setSalesDetail(original.getSalesDetail());
+		newInvoiceDetail.setDeliveryDetail(original.getDeliveryDetail());
+		newInvoiceDetail.setIncomeDetail(original.getIncomeDetail());
+		newInvoiceDetail.setOfferDetail(original.getOfferDetail());
+		
+		return newInvoiceDetail;
+	}
+	
 }

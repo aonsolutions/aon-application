@@ -8,9 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,7 +37,6 @@ import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenInstitution;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenRequisition;
-import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.StatementConcept;
@@ -220,6 +217,30 @@ public class AonNordigen {
 		}
 	}
 	
+	
+	public static List<NordigenAccountTransaction> getBookedAccountTransactionsByBookingDate(NordigenAccessToken token, NordigenRequisition requisition, String nordigenAccountId, Date dateFrom) throws Exception {
+		try {
+			JSONObject json = NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, null, null);
+			if (json != null) {
+				JSONObject transactionsJson = json.optJSONObject("transactions");
+				JSONArray bookedTransactionsJson = null;
+				if (transactionsJson != null) {
+					bookedTransactionsJson = transactionsJson.optJSONArray("booked");
+				}
+				List<NordigenAccountTransaction> allTransactions = NordigenAccountTransactionJSON.fromJSONArray(bookedTransactionsJson);
+				if (allTransactions != null) {
+					return allTransactions.stream().filter(tr -> {
+						Date bookingDate = tr.getBookingDate() != null ? tr.getBookingDate() : new Date();
+						return com.esferalia.aon.watson.util.AonDateUtils.compare(bookingDate, dateFrom) >= 0;
+					}).collect(Collectors.toList());
+				}
+			}
+			return Collections.emptyList();
+		} catch (NordigenException e) {
+			throw new Exception(e.getMessage());
+		}
+	}
+	
 	public static List<NordigenAccountTransaction> getBookedAccountTransactions(NordigenAccessToken token, String nordigenAccountId, Date dateFrom) throws Exception {
 		try {
 			JSONObject json = NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, dateFrom, new Date());
@@ -262,14 +283,13 @@ public class AonNordigen {
 	public static NordigenBankAccount getAccountByRbank(Domain domain, String login, Integer rbankId) throws Exception {
 		try {
 			RegistryBank rbank = AON.getRegistryBank(domain, login, f -> f.getIdProperty().eq(rbankId));
-			RegistryAddInfo raddInfo = NordigenDAO.getRaddInfoByRaddressId(domain, login, rbankId);
 			Date lastMovementDate = getLastMovementDate(domain, login, rbankId);
 			return new NordigenBankAccount()
 					.setRbank(rbank)
-					.setRaddInfo(raddInfo)
 					.setIban(rbank != null && rbank.getBankAccount() != null ? rbank.getBankAccount().getIban() : null)
 					.setBankAlias(rbank != null ? rbank.getAlias() : null)
-					.setLinked(raddInfo != null && AonStringUtils.isNotBlank(raddInfo.getValue()))
+					.setLinked(AonStringUtils.isNotBlank(rbank.getRequisition()))
+					.setRequisitionId(rbank.getRequisition())
 					.setLastMovementDate(lastMovementDate);
 		} catch (NordigenException e) {
 			throw new Exception(e.getMessage());
@@ -280,9 +300,8 @@ public class AonNordigen {
 	public static NordigenBankAccount setNordigenBankAccountValues(Domain domain, String user, NordigenAccessToken token, NordigenBankAccount account) throws Exception {
 		try {
 			RegistryBank rbank = account.getRbank();
-			RegistryAddInfo raddInfo = account.getRaddInfo();
-			if (raddInfo != null) {
-				String reqId = raddInfo.getValue();
+			if (rbank.getRequisition() != null) {
+				String reqId = rbank.getRequisition();
 				if (AonStringUtils.isNotBlank(reqId)) {
 					account.setLinked(true);
 					System.out.println("req");
@@ -365,122 +384,25 @@ public class AonNordigen {
 		return list;
 	}
 	
-	public static Map<Integer, NordigenRequisition> getStoredActiveRequisitions(NordigenAccessToken token, Domain domain, String login) {
-		Map<Integer, NordigenRequisition> requisitions = new HashMap<>();
-		final Stream<RegistryAddInfo> infos = NordigenDAO.getAllNordigenRaddInfos(domain, login);;
-		infos.forEach(info -> {
-			Integer rbankId = NordigenUtils.getRbankIdFromRaddinfo(info);
-			if (rbankId != null) {				
-				final String requisitionId = info.getValue();
-				try {
-					requisitions.put(rbankId, getRequisition(token, requisitionId));
-					
-				} catch (Exception e) {
-					requisitions.put(rbankId, null);
-				}
-			}
-		});
-		return requisitions;
-	}
-	
-	public static Map<Integer, NordigenRequisition> getStoredRequisitions(NordigenAccessToken token, Domain domain, final String login) {
-		Map<Integer, NordigenRequisition> requisitions = new HashMap<>();
-		final Stream<RegistryAddInfo> infos = NordigenDAO.getAllNordigenRaddInfos(domain, login);
-		infos.forEach(info -> {
-			Integer rbankId = NordigenUtils.getRbankIdFromRaddinfo(info);
-			if (rbankId != null) {				
-				final String requisitionId = info.getValue();
-				try {
-					requisitions.put(rbankId, getRequisition(token, requisitionId));
-					
-				} catch (Exception e) {
-					requisitions.put(rbankId, null);
-				}
-			}
-		});
-		return requisitions;
-	}
-	
-	public static NordigenRequisition getRequisitionByRbank(NordigenAccessToken token, Domain domain, final String login, Integer rbankId) {
-		Map<Integer, NordigenRequisition> allReqs = getStoredRequisitions(token, domain, login);
-		if (rbankId != null) {
-			return allReqs.getOrDefault(rbankId, null);
-		}
-		return null;
-	}
-	
-	public static Map<Integer, NordigenRequisition> getStoredLinkedRequisitions(NordigenAccessToken token, Domain domain, final String login) {
-		Map<Integer, NordigenRequisition> linked = new HashMap<>();
-		Map<Integer, NordigenRequisition> allReqs = getStoredRequisitions(token, domain, login);
-		allReqs.entrySet().stream()
-		.filter(Objects::nonNull)
-		.filter(entry -> entry.getValue() != null && NORDIGEN_REQUISITION_STATUS.LN.equals(entry.getValue().getStatus()))
-		.forEach(entry -> linked.put(entry.getKey(), entry.getValue()));
-		return linked;
-	}
-	
-	public static RegistryAddInfo insertNewRequisitionId(Domain domain, String login, NordigenRequisition requisition, Integer rbank) {
+	public static RegistryBank updateRequisitionId(Domain domain, String login, NordigenRequisition requisition, Integer rbank) {
 		if (requisition != null && requisition.getId() != null && AonNumberUtils.zeroIfNull(rbank) > 0) {
 			String requisitionId = requisition.getId();
 			RegistryBank registryBank = AON.getRegistryBank(domain, login, f -> f.getIdProperty().eq(rbank));
-			String rbankAttr = INordigenConstants.RADD_INFO_REQUISITION_ATTRIBUTE_PROFIX + rbank + INordigenConstants.RADD_INFO_REQUISITION_ATTRIBUTE_SUFFIX;
-			RegistryAddInfo radd = NordigenDAO.getRaddInfoByRaddressId(domain, login, rbank);
-			if (radd == null && registryBank != null) {
-				Integer rbDomain = registryBank.getDomain();
-				Integer rbRegistry = registryBank.getRegistry();
-				RegistryAddInfo raddInfo = new RegistryAddInfo()
-						.setDomain(rbDomain)
-						.setRegistry(rbRegistry)
-						.setDate(new Date())
-						.setAttribute(rbankAttr)
-						.setValue(requisitionId);
-					
-				AON.insertRegistryAddInfo(domain.getName(), domain.getId(), login, raddInfo);
-				return NordigenDAO.getRaddInfoByRaddressId(domain, login, rbank);
+			if (registryBank != null) {
+				registryBank.setRequisition(requisitionId);
+				return AON.saveRegistryBank(domain, login, registryBank);
 			}
 		}
 		return null;
-	}
-	
-	public static RegistryAddInfo updateExistingRequisitionId(Domain domain, String login, NordigenRequisition requisition, Integer rbank) {
-		if (requisition != null && requisition.getId() != null && AonNumberUtils.zeroIfNull(rbank) > 0) {
-			String requisitionId = requisition.getId();
-			RegistryBank registryBank = AON.getRegistryBank(domain, login, f -> f.getIdProperty().eq(rbank));
-			RegistryAddInfo radd = NordigenDAO.getRaddInfoByRaddressId(domain, login, rbank);
-			if (radd != null && registryBank != null) {
-				RegistryAddInfo updatedRaddInfo = radd.setValue(requisitionId);
-				AON.updateRegistryAddInfo(domain.getName(), domain.getId(), login, updatedRaddInfo);
-				return NordigenDAO.getRaddInfoByRaddressId(domain, login, rbank);
-			}
-		}
-		return null;
-	}
-	
-	public static RegistryAddInfo insertOrUpdateRequisitionId(Domain domain, String login, NordigenRequisition requisition, Integer rbank) {
-		final RegistryAddInfo radd = NordigenDAO.getRaddInfoByRaddressId(domain, login, rbank);		
-		if (radd != null) {
-			return updateExistingRequisitionId(domain, login, requisition, rbank);
-		} else {
-			return insertNewRequisitionId(domain, login, requisition, rbank);
-		}
 	}
 	
 	//DELETES FROM DATABASE AND NORDIGEN
 	public static void deleteRequisitionByRbank(NordigenAccessToken token, Domain domain, String login, Integer rbank) {
-		final Stream<RegistryAddInfo> infos = NordigenDAO.getAllNordigenRaddInfos(domain, login);
-		infos.filter(info -> info != null && (("NORDIGEN[" + rbank + "]").equals(info.getAttribute()))).forEach(info -> {
-			Integer id = info.getId();
-			if (id != null && info.getId() > 0) {
-				AON.deleteRegistryAddInfo(domain, login, info.getId());
-				try {
-					if (AonStringUtils.isNotBlank(info.getValue())) {
-						deleteRequisition(token, info.getValue());						
-					}
-				} catch (Exception e) {
-					//It was already deleted on Nordigen
-				}
-			}
-		});
+		if (rbank != null) {
+			RegistryBank rbankObj = AON.getRegistryBank(domain, login, f -> f.getIdProperty().eq(rbank));
+			rbankObj.setRequisition(null);
+			AON.saveRegistryBank(domain, login, rbankObj);
+		}
 	}
 	
 	public static NordigenAccountMetadata getRbankNordigenAccountId(NordigenAccessToken token, NordigenRequisition requisition, RegistryBank rbank) {
@@ -519,35 +441,6 @@ public class AonNordigen {
 		return nonValid;
 	}
 	
-//	public static List<NordigenAccountTransaction> getNewTransactions(NordigenAccessToken token, Domain domain, String login, Integer rbankId) {
-//		String lastTransactionId = null;
-//		Date lastTransactionDate = null;
-//		Pair<String, Date> lastIdAndDate = NordigenDAO.getMaxMovementIdAndDate(domain, login, rbankId);
-//		if (lastIdAndDate != null) {			
-//			lastTransactionId = lastIdAndDate.getKey();
-//			lastTransactionDate = lastIdAndDate.getValue();
-//		}
-//		lastTransactionDate = lastTransactionDate != null ? lastTransactionDate : NordigenDAO.getLastOperationDateDB(domain, login, rbankId);
-//		
-//		NordigenRequisition requisition = getRequisitionByRbank(token, domain, login, rbankId);
-//		String nordigenAccountId = getRbankNordigenAccountId(token, domain, login, requisition, rbankId);
-//		
-//		if (AonStringUtils.isNotBlank(nordigenAccountId)) {
-//			List<NordigenAccountTransaction> transactions = Collections.emptyList();
-//			try {
-//				transactions = getBookedAccountTransactions(token, nordigenAccountId, lastTransactionDate);
-//			} catch (Exception e) {
-//			}
-//			if (AonStringUtils.isNotBlank(lastTransactionId)) {
-//				Integer lastTransactionIdInt = AonNumberUtils.toInteger(lastTransactionId);
-//				return transactions.stream().filter(tr -> AonNumberUtils.toInteger(tr.getTransactionId()) > lastTransactionIdInt).collect(Collectors.toList());
-//			}
-//			return transactions;
-//		}
-//		
-//		return Collections.emptyList();
-//		
-//	}
 	
 	public static NordigenBankStatement nordigenToBankStatement(NordigenBankAccount account, NordigenAccountTransaction transaction) {
 		if (transaction != null) {
@@ -574,7 +467,7 @@ public class AonNordigen {
 			statement
 			.setDomain(account.getRbank().getDomain())
 			.setRegistryBank(account.getRbank())
-			.setOperationDate(transaction.getValueDate())
+			.setOperationDate(transaction.getBookingDate() != null ? transaction.getBookingDate() : new Date())
 			.setCommonConcept(StatementConcept.UNKNOWN)
 			.setPayment(bpayment)
 			.setAmount(Math.abs(amount))
@@ -637,7 +530,7 @@ public class AonNordigen {
 				});
 				Thread thread2 = new Thread(() -> {
 					try {
-						List<NordigenAccountTransaction> ptr = getBookedAccountTransactions(token, accId, from);
+						List<NordigenAccountTransaction> ptr = getBookedAccountTransactionsByBookingDate(token, account.getRequisition(), accId, from);
 						for (NordigenAccountTransaction t : ptr) {
 							NordigenBankStatement st = nordigenToBankStatement(account, t);
 							bookedStatements.add(st);
@@ -711,7 +604,7 @@ public class AonNordigen {
 		NordigenAccessToken token = new NordigenAccessToken().setAccess(access);
 		Domain domain = new Domain().setId(7138).setName("b72384936-ayudat.aonsolutions.net");
 		String reqId = "4a7c2d29-6ab0-4afe-99bd-84c7ad7f76d7";
-		insertNewRequisitionId(domain, "", getRequisition(token, reqId), rbank);
+		updateRequisitionId(domain, "", getRequisition(token, reqId), rbank);
 //		List<NordigenAccountTransaction> newTr = getNewTransactions(token, domain, "", rbank);
 //		List<NordigenBankAccount> allAccounts = getAllAccounts(token, domain, "");
 //		allAccounts.forEach(acc -> {

@@ -209,10 +209,15 @@ export class AonHeader extends AonElement {
 					}
 
 					if(this.dur.hasApiService()) {
+						let iframe = this.createElement(TAG.IFRAME);
+						iframe.src = 'https://aonsolutions.github.io/apidoc';
+						iframe.style.height = '100%';
+						iframe.style.width = '100%';
+						iframe.style.border = '0';
 						options.push({
 							name: MSG.API_DOCUMENTATION,
 							icon: MATERIAL_ICONS.API,
-							fn: () => this.rootPanel(new AonApiDoc())
+							fn: () => this.rootPanel(iframe)
 						});
 					}
 

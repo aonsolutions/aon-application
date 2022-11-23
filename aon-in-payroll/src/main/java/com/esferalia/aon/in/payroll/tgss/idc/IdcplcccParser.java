@@ -113,7 +113,10 @@ public class IdcplcccParser {
 					onEmployee(listener, employeeeNss, employeeName);
 					
 					parseEmployeePeriods(listener, reader, enterpriseCCC, employeeeNss);
-									
+					
+					if ( attempt(reader, HOLIDAYS).isPresent() )
+						return getHolidayspageParser(enterpriseCCC, employeeeNss);
+
 				} catch ( UnknownPDFException e ) {
 					// No more Employees
 					break;
@@ -137,8 +140,8 @@ public class IdcplcccParser {
 			String group = matcher.group("group");
 			onEmployeeQuoteGroup(listener, group);
 			boolean monthly = matcher.group("monthly") != null;
-			onEmployeeQuoteGroup(listener, group, monthly);
 			parseEmployeePeriodPECs(reader, listener, employeeeNss, enterpriseCCC, startDate, endDate);
+			onEmployeeQuoteGroup(listener, group, monthly);
 			optional = attempt(reader, EMPLOYEE_PERIOD_QUOTE);
 		}
 		
@@ -148,6 +151,10 @@ public class IdcplcccParser {
 		return (text, listener ) ->  parseNextPage(text, listener, enterpriseCCC, employeeeNss);
 	}
 	
+	protected static Parser getHolidayspageParser(String enterpriseCCC, String employeeeNss) {
+		return (text, listener ) ->  getHolidayspageParser(enterpriseCCC, employeeeNss);
+	}
+
 	private static Parser parseNextPage(String text, IdcParserListener listener, String enterpriseCCC, String employeeeNss ) throws IOException, UnknownPDFException {
 
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
@@ -176,6 +183,11 @@ public class IdcplcccParser {
 					onEmployee(listener, employeeeNss, employeeName);
 					
 					parseEmployeePeriods(listener, reader, enterpriseCCC, employeeeNss);
+					
+					if ( attempt(reader, HOLIDAYS).isPresent() )
+						return getHolidayspageParser(enterpriseCCC, employeeeNss);
+					
+					
 				} catch ( UnknownPDFException e ) {
 					// No more Employees
 					break;
@@ -218,7 +230,13 @@ public class IdcplcccParser {
 				}
 			} while ( m != null );
 		},
-		() -> listener.onNoEmployeeQuotePEC(naf, ccc, start, end)
+		() -> {
+			try {
+				attempt(reader, EMPLOYEE_NO_QUOTE_PEC);
+			} catch (IOException e) {
+			}
+			listener.onNoEmployeeQuotePEC(naf, ccc, start, end);
+		}
 		);	
 	}
 	
@@ -317,7 +335,6 @@ public class IdcplcccParser {
 	private static Optional<Matcher> attempt( BufferedReader reader, Pattern pattern ) throws IOException {
 		reader.mark(256);
 		String line = readLine(reader) ; 
-//		System.out.println(line);
 		Matcher matcher = pattern.matcher(line) ;
 		if ( matcher.matches() )
 			return Optional.of(matcher);
@@ -383,4 +400,14 @@ public class IdcplcccParser {
 	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<colective>[0-9]{4})([^0-9]+)\\s+(?<law>[0-9]{4}[^0-9]+).*$"
 	, Pattern.CASE_INSENSITIVE);
 
+	private static final Pattern EMPLOYEE_NO_QUOTE_PEC = 
+			Pattern.compile(
+			"^\\s*SIN\\s*PECULIARIDADES\\s*DE\\s*COTIZACION.*$"
+			, Pattern.CASE_INSENSITIVE);
+	
+	//---- VACACIONES RETRIBUIDAS Y NO DISFRUTADAS ----
+	private static final Pattern HOLIDAYS = 
+			Pattern.compile(
+			"^.*VACACIONES\\s*RETRIBUIDAS\\s*Y\\s*NO\\s*DISFRUTADAS.*$"
+			, Pattern.CASE_INSENSITIVE);
 }

@@ -576,6 +576,8 @@ public interface Properties {
 		Property<String> getAliasProperty();
 		Property<Byte> getActiveProperty();
 		Property<Integer> getAccountProperty();
+		Property<String> getRequisitionProperty();
+		Property<String> getSepaMandateRefProperty();
 	}
 	
 	public interface RegistryPayMethodProperties{
@@ -1026,6 +1028,9 @@ public interface Properties {
 		Property<Byte> getWithholdingProperty();
 		Property<Byte> getVatAccrualPaymentProperty();
 		Property<Byte> getEInvoiceProperty();
+		
+		Property<Byte> getUserSharedProperty();
+		Property<Byte> getDomainTypeProperty();
 	}
 	
 	public interface PersonProperties extends RegistryProperties{

@@ -97,7 +97,7 @@ public class Model390HF extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+							aonLayout.showErrorPanel(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
 						}
 					});
 		}
@@ -131,6 +131,14 @@ public class Model390HF extends MainEntryPoint {
 		@Override
 		public Model390HFModuleOptions getOptions() {
 			return Model390HF.this.getOptions();
+		}
+
+		public void showInfoPanelWidget(Widget widget) {
+			cleanInfoPanel();
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			breakdownPanel.setWidget(widget);
+			breakdownPanel.scrollToTop();
 		}
 
 	}
@@ -213,7 +221,7 @@ public class Model390HF extends MainEntryPoint {
 
 	private void onSelect(Integer id ) {
 		LOGGER.info("OnSelect Model390HF with a ID: " + getOptions().getFiscalModelId());
-		MOD_SERVICE.getMod390HF(getOptions().getOccam(), id , new AsyncCallback<Mod390HF>() {
+		MOD_SERVICE.get(getOptions().getOccam(), id , new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF selected) {
 						if (selected == null) {
@@ -234,7 +242,7 @@ public class Model390HF extends MainEntryPoint {
 
 	private void onSelectionChange(SelectionEvent<Mod390HF> event) {
 		Mod390HF sel = event.getSelectedItem();
-		MOD_SERVICE.getMod390HF(getOptions().getOccam(),
+		MOD_SERVICE.get(getOptions().getOccam(),
 				sel.getId(), new AsyncCallback<Mod390HF>() {
 					@Override
 					public void onSuccess(Mod390HF selected) {
@@ -253,7 +261,7 @@ public class Model390HF extends MainEntryPoint {
 	}
 
 	private void showNewDeclarationPopup(Mod390HF m390HF) {
-		Model390HFNewDeclarationPopup newDialog = new Model390HFNewDeclarationPopup( m390HF,
+		Model390HFNewDeclarationPanel newDeclarationPanel = new Model390HFNewDeclarationPanel( m390HF,
 			new Model390HFCallback() {
 
 					@Override
@@ -276,7 +284,7 @@ public class Model390HF extends MainEntryPoint {
 									@Override
 									public void onFailure(Throwable caught) {
 										popup.hide();
-										aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+										aonLayout.showErrorPanel(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
 									}
 								});
 
@@ -289,8 +297,9 @@ public class Model390HF extends MainEntryPoint {
 					}
 				}
 			); 
-			newDialog.center();
-			newDialog.show();
+		declarationContainer.setWidget(newDeclarationPanel);
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
 	}
 	
 	private void closeFootPanel() {
@@ -329,15 +338,51 @@ public class Model390HF extends MainEntryPoint {
 	}
 	
 	enum Mod390HFDeclarations {
-		ARABA_2021 {
+		BIZKAIA_2022 {
 			@Override
 			public boolean accept(Mod390HF mod390HF) {
-				return (mod390HF.isAraba() && mod390HF.getYear() >= 2021);
+				return (mod390HF.isBizkaia() && mod390HF.getYear() >= 2022);
 			}
 
 			@Override
 			public Widget getDeclarationWidget(Mod390HF mod390HF, Model390HFCallback cbk) {
-				return new Model3902021ARABA(cbk,mod390HF);
+				return new Model390HF2022BIZKAIA(cbk,mod390HF);
+			}
+		},
+
+		BIZKAIA_2017 {
+			@Override
+			public boolean accept(Mod390HF mod390HF) {
+				return (mod390HF.isBizkaia() && mod390HF.getYear() < 2022);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod390HF mod390HF, Model390HFCallback cbk) {
+				return new Model390HF2017BIZKAIA(cbk,mod390HF);
+			}
+		},
+
+		ARABA_2022 {
+			@Override
+			public boolean accept(Mod390HF mod390HF) {
+				return (mod390HF.isAraba() && mod390HF.getYear() >= 2022);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod390HF mod390HF, Model390HFCallback cbk) {
+				return new Model390HF2022ARABA(cbk,mod390HF);
+			}
+		},
+
+		ARABA_2021 {
+			@Override
+			public boolean accept(Mod390HF mod390HF) {
+				return (mod390HF.isAraba() && mod390HF.getYear() == 2021);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod390HF mod390HF, Model390HFCallback cbk) {
+				return new Model390HF2021ARABA(cbk,mod390HF);
 			}
 		},
 		ARABA_2017 {
@@ -348,29 +393,29 @@ public class Model390HF extends MainEntryPoint {
 
 			@Override
 			public Widget getDeclarationWidget(Mod390HF mod390HF, Model390HFCallback cbk) {
-				return new Model3902017ARABA(cbk,mod390HF);
+				return new Model390HF2017ARABA(cbk,mod390HF);
 			}
 		},
-		BIZKAIA_2017 {
+		GIPUZKOA_2022 {
 			@Override
 			public boolean accept(Mod390HF mod390HF) {
-				return (mod390HF.isBizkaia());
+				return (mod390HF.isGipuzkoa() && mod390HF.getYear() >= 2022);
 			}
 
 			@Override
 			public Widget getDeclarationWidget(Mod390HF mod390HF, Model390HFCallback cbk) {
-				return new Model3902017BIZKAIA(cbk,mod390HF);
+				return new Model390HF2022GIPUZKOA(cbk,mod390HF);
 			}
 		},
 		GIPUZKOA_2021 {
 			@Override
 			public boolean accept(Mod390HF mod390HF) {
-				return (mod390HF.isGipuzkoa() && mod390HF.getYear() >= 2021);
+				return (mod390HF.isGipuzkoa() && mod390HF.getYear() == 2021);
 			}
 
 			@Override
 			public Widget getDeclarationWidget(Mod390HF mod390HF, Model390HFCallback cbk) {
-				return new Model3902021GIPUZKOA(cbk,mod390HF);
+				return new Model390HF2021GIPUZKOA(cbk,mod390HF);
 			}
 		},
 		GIPUZKOA_2017 {
@@ -381,7 +426,7 @@ public class Model390HF extends MainEntryPoint {
 
 			@Override
 			public Widget getDeclarationWidget(Mod390HF mod390HF, Model390HFCallback cbk) {
-				return new Model3902017GIPUZKOA(cbk,mod390HF);
+				return new Model390HF2017GIPUZKOA(cbk,mod390HF);
 			}
 		},
 		;

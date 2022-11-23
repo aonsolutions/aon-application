@@ -91,6 +91,10 @@ import junit.framework.Assert;
 public class SQLIrpfTestCase extends AbstractSQLTestCase {
 
 	private static final double DELTA = 0.0000001;
+	
+	private static class SuccesExcpetion extends RuntimeException {
+		
+	}
 
 	private static class DefaultIrpfCalculatorContext implements IIrpfCalculatorContext {
 		@Override
@@ -1809,6 +1813,64 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testAllYearNoPaymentsI() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		ContractRecord contract = newContract(aonContext, 
+				getFirstDayOfYear(getToday()), 
+				null, 
+				Collections.emptyMap(), 
+				new String [] {}, 
+				new String [] {
+						"PORCENTAJE_IRPF / 100.00 * BASE_IRPF"
+				}, 
+				null);
+		
+		// Be care that the first day of the month has value 1.
+		Date startDate = getFirstDayOfYear(getToday());
+		startDate = add(startDate, Calendar.MONTH, 11); 
+		Date endDate = add( getLastDayOfMonth(startDate), Calendar.DAY_OF_MONTH, -20 );
+		
+		addPayment(aonContext, contract, add(startDate, Calendar.MONTH, -1), null, "SALARIO BASE", "2500.00", "_P", "_P", PaymentType.CRA_0001 );
+		addPayment(aonContext, contract, add(startDate, Calendar.MONTH, -1), null, "PLUS SALARIAL", "250.00", "_P", "_P", PaymentType.CRA_0001 );
+		
+		addPayment(aonContext, contract, contract.getStartDate(), null, "INDEMNIZACIÓN", "10000.00", "_P", null, PaymentType.CRA_0054, SalaryType.SETTLE  );
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+
+		ISQLContractSalaryCalculatorContext ctx =
+		getContractSettleCalculatorContext(connection, contract.getStartDate(), endDate, endDate, criteria);
+		
+		ctx.setListener( new Listener() {
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				super.onIrpf(irpfOutcome);
+				
+				System.out.printf("%tB\r\n", endDate );
+				
+				System.out.println("Irpf:" + irpfOutcome.getIrpfResult().getIrpf());
+				System.out.println("BaseIrpf:" + irpfOutcome.getIrpfResult().getBaseIrpf());
+				System.out.println("AnnualIrpf:" + irpfOutcome.getIrpfResult().getAnnualIrpf());
+				System.out.println("AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
+				assertAnnualRemuneration(2750.00 * 12 + 10000.00, irpfOutcome.getIrpfResult().getAnnualRemuneration(), 0.00 );
+				
+//				System.out.println("PaidIrpf:" + irpfOutcome.getIrpfRegularization().getPaidIrpf());
+//				System.out.println("PaidRemuenration:" + irpfOutcome.getIrpfRegularization().getPaidRemuneration());
+				
+				
+							
+			}
+		});
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		System.out.println( "I.R.P.F : " + salary.getTotalIrpf());
+		org.junit.Assert.assertTrue(salary.getTotalPayment() > 0.00 );
+		org.junit.Assert.assertTrue(salary.getTotalIrpf() > 0.00 );
+	}
 
 	@Test
 	public void testExtrasI() throws ExpressionException,

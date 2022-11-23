@@ -33,6 +33,8 @@
 #        "no-create-db": "true",
 #        "user": "aonsolutons",
 #        "password": "40ns0lut10ns",
+#        "ignore-table": "invoice_attach",
+#	 ...
 #    },
 #    ...
 #}
@@ -52,6 +54,8 @@ function handler () {
     NO_CREATE_DB=$(echo ${EVENT_DATA} | jq -r .queryStringParameters.no_create_db | sed -e 's/null//')
     SKIP_COMMENTS=$(echo ${EVENT_DATA} | jq -r .queryStringParameters.skip_comments | sed -e 's/null//')
     NO_CREATE_INFO=$(echo ${EVENT_DATA} | jq -r .queryStringParameters.no_create_info | sed -e 's/null//')
+
+    IGNORE_TABLES=$(echo ${EVENT_DATA} | jq -r .queryStringParameters.ignore_table | sed -e 's/null//' -e 's/,/ /g' -e 's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e )
 
     MYSQL="mysql -h $HOST -u $USER --password=$PASSWORD $DATABASE"
     DUMP="mysqldump $SKIP_COMMENTS $REPLACE -h $HOST -u $USER --password=$PASSWORD --single-transaction"
@@ -73,6 +77,9 @@ function handler () {
         if [ "$table" = "domain" ]; then
                 continue;
         fi
+	if [[ " ${IGNORE_TABLES[*]} " =~ " ${table} " ]]; then
+		continue;
+	fi ;
         $MYSQL -e "SELECT \`domain\` FROM \`$table\` LIMIT 1" &>/dev/null && echo $table ;
     done))
 
@@ -85,13 +92,14 @@ function handler () {
         $MYSQL -e "SELECT \`domain\` FROM \`$table\` LIMIT 1" &>/dev/null || echo $table ;
     done))
 
+
     $DUMP --no-data $NO_CREATE_DB $NO_CREATE_INFO --databases $DATABASE 2>/dev/null | gzip >/tmp/${DOMAIN}.sql.gz
 
     $DUMP --no-create-info  $DATABASE $(printf "%s "  "${SYSTEM_TABLES[@]}") 2>/dev/null | gzip >>/tmp/${DOMAIN}.sql.gz
 
-    $DUMP --no-create-info --where="id=0"  $DATABASE domain 2>/dev/null | gzip >>/tmp/${DOMAIN}.sql.gz
+    $DUMP --no-create-info --where="id<=0"  $DATABASE domain 2>/dev/null | gzip >>/tmp/${DOMAIN}.sql.gz
 
-    $DUMP --no-create-info --where="domain=0"  $DATABASE $(printf "%s "  "${DOMAIN_TABLES[@]}") 2>/dev/null | gzip >>/tmp/${DOMAIN}.sql.gz
+    $DUMP --no-create-info --where="domain<=0"  $DATABASE $(printf "%s "  "${DOMAIN_TABLES[@]}") 2>/dev/null | gzip >>/tmp/${DOMAIN}.sql.gz
 
     $DUMP --no-create-info --where="domain IS NULL"  $DATABASE $(printf "%s "  "${DOMAIN_TABLES[@]}") 2>/dev/null | gzip >>/tmp/${DOMAIN}.sql.gz
 

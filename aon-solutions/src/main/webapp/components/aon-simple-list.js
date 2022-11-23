@@ -168,12 +168,19 @@ export class AonSimpleList extends AonElement {
 
   createAonDialog() {
     const id = this.id + "aonDialogAddOption";
-    let div = this.createElement(TAG.DIV);
+    
+    const div = this.createElement(TAG.DIV);
+    this.appendChild(div);
+
     let aonDialogM = new AonDialogMenu();
     aonDialogM.id = id;
     div.appendChild(aonDialogM);
-    this.appendChild(div);
+
     return aonDialogM;
+  }
+
+  getDialogMenu(){
+    return this.getElement(this.id + "aonDialogAddOption");
   }
 
   getOptions(el, options) {
@@ -181,7 +188,7 @@ export class AonSimpleList extends AonElement {
     const top = boundingClientRect.top;
     const left = boundingClientRect.left;
 
-    const d = this.getElement(this.id + "aonDialogAddOption") || this.createAonDialog();
+    const d = this.getDialogMenu() || this.createAonDialog();
 
     options = options.map(({ aonIcon, icon, name, fn }) => ({
         aonIcon,

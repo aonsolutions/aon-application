@@ -1436,12 +1436,12 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		.count();
 		Assert.assertEquals(1, count);
 		
-		// + 7 ( NOT ADJUST PARTIAL)
+		// + 6 ( ADJUST PARTIAL)
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 25)
 		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),31))
-		.peek(data->Assert.assertEquals(100.00 * 7.00, Double.parseDouble(data.getExpression())))
+		.peek(data->Assert.assertEquals(100.00 * 6.00, Double.parseDouble(data.getExpression())))
 		.count();
 		Assert.assertEquals(1, count);
 		
@@ -1472,10 +1472,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
 		
-		// One period , 31 ( NO adjust partial ) 
+		// One period , 30 ( adjust partial ) 
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.peek(data->Assert.assertEquals(100.00 * 31.00, Double.parseDouble(data.getExpression())))
+		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
 		.count();
 		Assert.assertEquals(1, count);
 	}
@@ -6058,7 +6058,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		
 		Assert.assertEquals( (1750.00 / 30.00 ) * 31 * 0.5 , salary.getTotalPayment(), 0.05);
-		Assert.assertEquals( (1750.00 / 30.00 ) * 31 * 0.5 , salary.getCommonBase(), 0.05);
+		Assert.assertEquals( (1750.00 / 30.00 ) * 30 * 0.5 , salary.getCommonBase(), 0.05);
 
 	}
 

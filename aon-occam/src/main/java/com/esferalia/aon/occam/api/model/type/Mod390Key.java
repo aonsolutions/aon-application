@@ -14,9 +14,10 @@ public enum Mod390Key implements IFiscalModelKey  {
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
-
-	 CM_003("390-CM003",null,"Porcentaje de prorrata.")
+	 CM_000("390-CM000",null,"Confecci\u00F3n manual")
+	,CM_003("390-CM003",null,"Porcentaje de prorrata.")
 	,CM_004("390-CM004",null,"Tipo de declaraci\u00F3n")
+	,CM_006("390-CM006",null,"Tipo de prorrata (E/G).")
 	
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  GIPUZKOA ---
@@ -142,31 +143,35 @@ public enum Mod390Key implements IFiscalModelKey  {
 	,GP_P1D ("390-GPP1D" ,null,"Imp. tot. Oper. con der. ded.")
 	,GP_P1T ("390-GPP1T" ,null,"Tipo")
 	,GP_P1P ("390-GPP1P" ,null,"% prorrata")
-	,GP_P1S ("390-GPP1P" ,null,"IVA Soportado")
+	,GP_P1S ("390-GPP1S" ,null,"IVA Soportado")
+	
 	,GP_P2C ("390-GPP2C" ,null,"CNAE")
 	,GP_P2I ("390-GPP2I" ,null,"Imp. tot. Operaciones ")
 	,GP_P2D ("390-GPP2D" ,null,"Imp. tot. Oper. con der. ded.")
 	,GP_P2T ("390-GPP2T" ,null,"Tipo")
 	,GP_P2P ("390-GPP2P" ,null,"% prorrata")
-	,GP_P2S ("390-GPP1P" ,null,"IVA Soportado")
+	,GP_P2S ("390-GPP2S" ,null,"IVA Soportado")
+	
 	,GP_P3C ("390-GPP3C" ,null,"CNAE")
 	,GP_P3I ("390-GPP3I" ,null,"Imp. tot. Operaciones ")
 	,GP_P3D ("390-GPP3D" ,null,"Imp. tot. Oper. con der. ded.")
 	,GP_P3T ("390-GPP3T" ,null,"Tipo")
 	,GP_P3P ("390-GPP3P" ,null,"% prorrata")
-	,GP_P3S ("390-GPP1P" ,null,"IVA Soportado")
+	,GP_P3S ("390-GPP3S" ,null,"IVA Soportado")
+	
 	,GP_P4C ("390-GPP4C" ,null,"CNAE")
 	,GP_P4I ("390-GPP4I" ,null,"Imp. tot. Operaciones ")
 	,GP_P4D ("390-GPP4D" ,null,"Imp. tot. Oper. con der. ded.")
 	,GP_P4T ("390-GPP4T" ,null,"Tipo")
 	,GP_P4P ("390-GPP4P" ,null,"% prorrata")
-	,GP_P4S ("390-GPP1P" ,null,"IVA Soportado")
+	,GP_P4S ("390-GPP4S" ,null,"IVA Soportado")
+	
 	,GP_P5C ("390-GPP5C" ,null,"CNAE")
 	,GP_P5I ("390-GPP5I" ,null,"Imp. tot. Operaciones ")
 	,GP_P5D ("390-GPP5D" ,null,"Imp. tot. Oper. con der. ded.")
 	,GP_P5T ("390-GPP5T" ,null,"Tipo")
 	,GP_P5P ("390-GPP5P" ,null,"% prorrata")
-	,GP_P5S ("390-GPP1P" ,null,"IVA Soportado")
+	,GP_P5S ("390-GPP5S" ,null,"IVA Soportado")
 	
 	,GP_C082 ("390-GPC082" ,"82"  ,"OPERACIONES EN R\u00C9GIMEN GENERAL")
 	,GP_C108 ("390-GPC108" ,"108" ,"OPERACIONES R\u00C9GIMEN GENERAL EXCEPTO REG.ESPECIALES (REBU/AGENCIAS DE VIAJE/CRITERIO CAJA)")
@@ -216,7 +221,7 @@ public enum Mod390Key implements IFiscalModelKey  {
 	,GP_SE5N("390-GPSE5N",null,"5.- Facturas emitidas. Serie")
 	,GP_SE5D("390-GPSE5D",null,"5.- Facturas emitidas. N. Inicio")
 	,GP_SE5H("390-GPSE5H",null,"5.- Facturas emitidas. N. Terminaci\u00F3n")
-	,GP_SE5X("390-GPSR5X",null,"1.- Facturas emitidas. N. Registros")
+	,GP_SE5X("390-GPSE5X",null,"1.- Facturas emitidas. N. Registros")
 	
 	,GP_SR1N("390-GPSR1N",null,"1.- Facturas recibidas. Serie")
 	,GP_SR1D("390-GPSR1D",null,"1.- Facturas recibidas. N. Inicio")
@@ -690,6 +695,12 @@ public enum Mod390Key implements IFiscalModelKey  {
 			return AonStringUtils.leftPad(box, 3, AonStringUtils.ZERO); 
 		}
 		return box;
+	}
+	public String getBoxFormatted() {
+		return " [" + getBoxAsString() +"] ";
+	}
+	public String getBoxAsString() {
+		return AonStringUtils.leftPad(Integer.toString(getBox()), 3, '0');
 	}
 	public String getDescription() {
 		return description;

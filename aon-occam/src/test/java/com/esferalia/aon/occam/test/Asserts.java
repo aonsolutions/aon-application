@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.management.Offer;
 import com.esferalia.aon.occam.api.model.management.OfferDetail;
@@ -836,7 +837,6 @@ public class Asserts {
 		assertEquals("ContactEmail", expected.getContactEmail(), actual.getContactEmail());
 		assertEquals("Iban", expected.getIban(), actual.getIban());
 	}
-	
 	public static void assertMod111(Mod111 expected, Mod111 actual) {
 		assertFiscalModel(expected, actual);
 	}
@@ -847,6 +847,9 @@ public class Asserts {
 		assertFiscalModel(expected, actual);
 	}
 	public static void assertMod303(Mod303 expected, Mod303 actual) {
+		assertFiscalModel(expected, actual);
+	}
+	public static void assertMod390HF(Mod390HF expected, Mod390HF actual) {
 		assertFiscalModel(expected, actual);
 	}
 	
