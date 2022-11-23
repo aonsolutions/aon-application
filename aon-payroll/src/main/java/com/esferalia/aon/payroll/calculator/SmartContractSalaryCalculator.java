@@ -1523,7 +1523,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 				
 		if ( payments.size() == expected )
-			return Optional.ofNullable(payments.stream().collect(Collectors.summingDouble(p -> p.getQuote())) * amount/total  + amount / 12.00);
+			return Optional.ofNullable(payments.stream().collect(Collectors.summingDouble(p -> p.getQuote() - p.getAmount() )) * amount/total  + amount / 12.00);
 		return Optional.empty();
 	}
 	
