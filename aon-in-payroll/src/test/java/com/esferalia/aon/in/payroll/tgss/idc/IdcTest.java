@@ -4806,6 +4806,7 @@ public class IdcTest extends AbstractSQLTestCase {
 					Assert.assertEquals((double)20.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaDesde().getDia()), 0.00);
 					Assert.assertEquals((double)21.0, Double.valueOf(trabajador.getTramos().getTramo().get(1).getFechaHasta().getDia()), 0.00);
 					assertTramoITATEPPagoDelegado(trabajador.getTramos().getTramo().get(1));
+					assertDatosSolicitado(trabajador.getTramos().getTramo().get(1), "I", "51", "P");
 
 					Assert.assertEquals((double)22.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaDesde().getDia()), 0.00);
 					Assert.assertEquals((double)31.0, Double.valueOf(trabajador.getTramos().getTramo().get(2).getFechaHasta().getDia()), 0.00);

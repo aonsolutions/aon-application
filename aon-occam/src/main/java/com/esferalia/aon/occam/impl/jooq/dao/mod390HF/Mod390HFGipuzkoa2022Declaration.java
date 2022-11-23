@@ -9,7 +9,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
@@ -232,15 +231,13 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 						.sum());
 				} 
 				,null
-				,"<li>Declaraciones a ingresar en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
-					+"@code{c35Key='"+ Mod303Key.GP_C035.getValue() +"';}"
-					+"@foreach{fm : m303Models}"
-						+"@if{ fm.getAmount(c35Key) > 0 }"
-							+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [035] --> @{fm.getAmount(c35Key)}</li>"
-						+"@end{}"
+				,"{messages : ["
+					+ "\"Declaraciones a ingresar en ejercicio:\"," 
+					+"@foreach{fm : depositModels}" 
+						+ "\"Resultado @{fm.getModelFullName()}: --> @{fm.getDeclarationResult()}\","
 					+"@end{}"
-					+"</ul></li>"
-					+"<li>Resultado: <b>@{GP_C038}</b></li>"
+					+ "\"Resultado: @{GP_C038}\","
+				+"]}"
 		)
 		// Total DEVOLUCIONES practicadas durante el presente ejercicion
 		,GP_C039(Mod390Key.GP_C039,null,null,
@@ -251,15 +248,13 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 						.sum());
 				} 
 				,null
-				,"<li>Declaraciones a devolver en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
-					+"@code{c35Key='"+ Mod303Key.GP_C035.getValue() +"';}"
-					+"@foreach{fm : m303Models}"
-						+"@if{ fm.getAmount(c35Key) > 0 }"
-							+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [035] --> @{fm.getAmount(c35Key)}</li>"
-						+"@end{}"
+				,"{messages : ["
+					+ "\"Declaraciones a devolver en ejercicio:\"," 
+					+"@foreach{fm : paybackModels}" 
+						+ "\"Resultado @{fm.getModelFullName()}: --> @{fm.getDeclarationResult()}\","
 					+"@end{}"
-					+"</ul></li>"
-					+"<li>Resultado: <b>@{GP_C039}</b></li>"
+					+ "\"Resultado: @{GP_C039}\","
+				+"]}"
 				)
 		// RESULTADO DE LA AUTOLIQUIDACIÓN	
 		,GP_C040(Mod390Key.GP_C040,null,null,null,"GP_C036-GP_C037-GP_C038+GP_C039",null)

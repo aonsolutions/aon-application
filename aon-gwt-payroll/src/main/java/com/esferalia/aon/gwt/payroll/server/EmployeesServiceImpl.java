@@ -1849,9 +1849,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return dataUri;
 
 		} catch (ReportException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(getRootCause(e).getMessage());
 		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
+			throw new IllegalArgumentException(getRootCause(e).getMessage());
 		}
 
 	}
@@ -2405,7 +2405,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return out.toString();
 
 		} catch (ReportException e) {
-			throw new IllegalArgumentException(e);
+			Throwable cause = getRootCause(e);
+			throw new IllegalArgumentException(cause);
 		}
 	}
 
@@ -7439,6 +7440,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e);
 		}
 		return certs;
+	}
+	
+	private static Throwable getRootCause(Throwable throwable) {
+		Throwable cause = throwable;
+		while ( cause.getCause() != null )
+			cause = cause.getCause();
+		return cause;
 	}
 
 }

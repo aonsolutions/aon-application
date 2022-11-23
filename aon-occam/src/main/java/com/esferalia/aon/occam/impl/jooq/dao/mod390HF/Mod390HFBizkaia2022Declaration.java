@@ -10,7 +10,6 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
-import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -291,15 +290,13 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 						.sum());
 				} 
 				,null
-				,"<li>Declaraciones a ingresar en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
-						+"@code{c40Key='"+ Mod303Key.BZ_C040.getValue() +"';}"
-						+"@foreach{fm : m303Models}"
-							+"@if{ fm.getAmount(c40Key) > 0 }"
-								+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [040] --> @{fm.getAmount(c40Key)}</li>"
-							+"@end{}"
-						+"@end{}"
-						+"</ul></li>"
-						+"<li>Resultado: <b>@{BZ_C099}</b></li>"
+				,"{messages : ["
+					+ "\"Declaraciones a ingresar en ejercicio:\"," 
+					+"@foreach{fm : depositModels}" 
+						+ "\"Resultado @{fm.getModelFullName()}: --> @{fm.getDeclarationResult()}\","
+					+"@end{}"
+					+ "\"Resultado: @{BZ_C099}\","
+				+"]}"
 			)
 		// Devoluciones practicadas en la Dip. Foral de Bizkaia
 		,BZ_C100	(Mod390Key.BZ_C100,null,null,
@@ -310,15 +307,13 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 						.sum());						
 				} 
 				,null
-				,"<li>Declaraciones a devolver en el mismo ejercicio:<ul style=\"padding-left: 20px;\">" 
-						+"@code{c39Key='"+ Mod303Key.BZ_C039.getValue() +"';}"
-						+"@foreach{fm : m303Models}"
-							+"@if{ fm.getAmount(c39Key) > 0 }"
-								+"<li>Resultado @{fm.getPeriod().getName()} @{fm.isComplementary()?' (C) ':'     '}:	Casilla [039] --> @{fm.getAmount(c39Key)}</li>"
-							+"@end{}"
-						+"@end{}"
-						+"</ul></li>"
-						+"<li>Resultado: <b>@{BZ_C100}</b></li>"
+				,"{messages : ["
+					+ "\"Declaraciones a devolver en ejercicio:\"," 
+					+"@foreach{fm : paybackModels}" 
+						+ "\"Resultado @{fm.getModelFullName()}: --> @{fm.getDeclarationResult()}\","
+					+"@end{}"
+					+ "\"Resultado: @{BZ_C100}\","
+				+"]}"
 			)
 
 		// Resultado

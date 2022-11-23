@@ -25,5 +25,4 @@ public class Mod390HFMVELContext extends ModelMVELContext implements Map<String,
 	public boolean isToPayback() {
 		return this.mod.isToPayback();
 	}
-
 }
