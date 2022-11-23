@@ -423,6 +423,17 @@ public enum StreetType {
 		return null;
 	}
 	
+	public static StreetType getForAeatCode( String aeatCode, AonLanguage lenguage ) {
+		if (aeatCode != null) {
+			for (StreetType st : StreetType.values()) {
+				if (st.getAeatCode().equals(aeatCode) && st.getLanguage().equals(lenguage)){
+					return st;
+				}
+			}
+		}
+		return null;
+	}
+	
 	public static StreetType safeValueOf( String value ) {
 		if (AonStringUtils.isBlank(value)) {
 			return null;
