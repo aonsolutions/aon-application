@@ -120,8 +120,6 @@ public class ProjectsServlet extends AonApiHttpServlet{
 			AonApiData api = initialize(req);
 			
 			Object object = new AonRouting(api)
-//				.addRoute(HOLDER, ProjectsServlet::)
-//				.addRoute(CUSTOMER, ProjectsServlet::saveCustomer)
 				.apply();
 			
 			response(req, resp, object);
@@ -334,13 +332,12 @@ public class ProjectsServlet extends AonApiHttpServlet{
 		}
 		
 		if(!search.isEmpty()) {
-
-			Filter searchFilter = f.getNameProperty().like("%" + search + "%")
+			filter = filter.and(
+				f.getNameProperty().like("%" + search + "%")
 				.or(f.getAliasProperty().like("%" + search + "%"))
 				.or(f.getRegistryNameProperty().like("%" + search + "%"))
 				.or(f.getTypeDescriptionProperty().like("%" + search + "%"))
-				;
-			filter = filter.and(searchFilter);
+			);
 		}
 
 		return filter;
@@ -368,10 +365,10 @@ public class ProjectsServlet extends AonApiHttpServlet{
 
    private static Filter activityTypeFilter(AonApiData api, ActivityTypeProperties f) {
   		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
-  		JSONObject params = api.getData();
+  		int projectType = api.getData().optInt(IJsonNames.PROJECT_TYPE);
 
-  		if(params.opt(IJsonNames.PROJECT_TYPE) != null) {
-  			filter = filter.and(f.getProjectTypeProperty().eq(params.optInt(IJsonNames.PROJECT_TYPE)));
+  		if(projectType!=0) {
+  			filter = filter.and(f.getProjectTypeProperty().eq(projectType));
   		}
   		
   		return filter;

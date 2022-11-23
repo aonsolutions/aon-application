@@ -230,8 +230,9 @@ export class AonTable extends AonElement {
         td.addEventListener(EVENT.CLICK, fn);
 
         list.forEach(d => {
+          let iconHtml = d.icon ?  `<i class="material-icons aonVerticalMiddle">${d.icon}</i>`: "*";
           let li = this.createElement(TAG.LI);
-          li.innerHTML = `<i class="material-icons aonVerticalMiddle">${d.icon}</i>`+d.name;
+          li.innerHTML = iconHtml+" "+d.name;
           if(d.fn){
             li.addEventListener(EVENT.CLICK, d.fn);
           }
@@ -329,8 +330,6 @@ export class AonTable extends AonElement {
     .forEach(el => {
       el.style.backgroundColor = "#ffffff";
     });
-
-    console.log(tr);
 
     if(tr){
       tr.style.backgroundColor = color;
