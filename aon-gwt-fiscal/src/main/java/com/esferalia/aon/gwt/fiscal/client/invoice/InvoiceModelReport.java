@@ -150,12 +150,13 @@ public class InvoiceModelReport extends MainEntryPoint {
 			activity = new ListBox();
 			activity.addStyleName(AON.CSS.aonMarginLeft());
 			activity.setWidth("300px");
+			activity.addItem(" ----- ");
 			int i = 0;
 			for (EnterpriseActivity ea : options.getConfiguration().getActivities()) {
-				
-				activity.addItem(ea.getDescription() + (ea.getIae().isEmpty()?"":(" ("+ea.getEpigraph()+")")), AonNumberUtils.toString( ea.getId()));
+				String description =  ea.getDescription() + (ea.getIae().isEmpty()?"":(" ("+ea.getEpigraph()+")"));
+				activity.addItem(description, AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
-					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
+					activity.setItemText(i, ea.getDescription() + AonStringUtils.SPACE + AonStringUtils.ASTERISK);
 					indexMainActivity = i; // Se quedará marcada la actividad principal, por defecto
 				}
 				i++;
@@ -261,7 +262,10 @@ public class InvoiceModelReport extends MainEntryPoint {
 			.setToDate(toDate.getValue())
 			.setUnbound(unboundCheck.getValue())
 			;
-		if (options.getConfiguration() != null && options.getConfiguration().hasActivities() ) {
+		if (options.getConfiguration() != null 
+			&& options.getConfiguration().hasActivities() 
+			&& activity.getSelectedIndex() > 0 ) {
+			
 			params.setActivity( AonNumberUtils.toInteger( activity.getSelectedValue()));
 			params.setActivityDescription( activity.getSelectedItemText() == null ? "" : activity.getSelectedItemText().replace("*",""));
 		}
