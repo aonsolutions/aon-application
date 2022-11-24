@@ -11,3 +11,15 @@ export const PACKAGING = {
   name: MSG.PACKAGING,
   icon: MATERIAL_ICONS.PALLET
 }
+
+export const WarehouseSidenav = {
+  WAREHOUSES: {
+    id: CONSTANT.WAREHOUSES.initCap(),
+    name: MSG.WAREHOUSES.toUpperCase()
+  },
+  ELABORATION: {
+    id: CONSTANT.ELABORATION.initCap(),
+    name: MSG.ELABORATION.toUpperCase(),
+    options: [ELABORATION, PACKAGING]
+  }
+}

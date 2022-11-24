@@ -21,12 +21,12 @@ import { AonLaboral } from '../laboral/aon-laboral.js';
 import { AonSaltra } from '../laboral/aon-saltra.js';
 import '../../components/aon-icon.js';
 import '../../components/aon-application.js';
-import '../marketplace/aon-marketplace.js';
 import { getOfficeProjects } from '../../services/projectService.js';
 import { Project } from '../../models/project/Project.js';
 import { getNoteCount } from '../../services/noteService.js';
 import { AonAccounting } from '../accounting/aon-accounting.js';
 import { Attach } from '../../models/Attach.js';
+import { AonWarehouse } from '../warehouse/aon-warehouse.js';
 
 export class AonDesktop extends AonElement {
 
@@ -509,37 +509,40 @@ export class AonDesktop extends AonElement {
 	appSelection(app) {
 		if(!this.appOption)
 			switch(app){
-			case Apps.DOCUMENTAL.app:
-				this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
-				break;
-			case Apps.ACCOUNTING.app:
-				this.rootPanel(new AonAccounting());
-				break;
-			case Apps.FISCAL.app:
-				this.rootPanel(new AonFiscal());
-				break;
-			case Apps.COMUNICA.app:
-				const comunica = new AonLaboral();
-				comunica.title = MSG.COMUNICA;
-				this.rootPanel(comunica);
-				break;
-			case Apps.PAYROLL.app:
-				const payroll = new AonLaboral();
-				payroll.title = MSG.PAYROLL;
-				this.rootPanel(payroll);
-				break;
-			case Apps.INVOICE.app:
-				this.rootPanel(new AonInvoicePanel());
-				break;
-			case Apps.TIMECONTROL.app:
-				this.rootPanel(new AonTimecontrol());
-				break;
-			case Apps.MESSENGER.app:
-				this.rootPanel(new AonMessenger());
-				break;
-			case Apps.AON_SALTRA.app:
-				this.rootPanel(new AonSaltra());
-				break;
+				case Apps.DOCUMENTAL.app:
+					this.rootPanel(this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental());
+					break;
+				case Apps.ACCOUNTING.app:
+					this.rootPanel(new AonAccounting());
+					break;
+				case Apps.FISCAL.app:
+					this.rootPanel(new AonFiscal());
+					break;
+				case Apps.COMUNICA.app:
+					const comunica = new AonLaboral();
+					comunica.title = MSG.COMUNICA;
+					this.rootPanel(comunica);
+					break;
+				case Apps.PAYROLL.app:
+					const payroll = new AonLaboral();
+					payroll.title = MSG.PAYROLL;
+					this.rootPanel(payroll);
+					break;
+				case Apps.INVOICE.app:
+					this.rootPanel(new AonInvoicePanel());
+					break;
+				case Apps.TIMECONTROL.app:
+					this.rootPanel(new AonTimecontrol());
+					break;
+				case Apps.MESSENGER.app:
+					this.rootPanel(new AonMessenger());
+					break;
+				case Apps.AON_SALTRA.app:
+					this.rootPanel(new AonSaltra());
+					break;
+				case Apps.WAREHOUSE.app:
+					this.rootPanel(new AonWarehouse());
+					break;
 			}
 	}
 
@@ -567,7 +570,10 @@ export class AonDesktop extends AonElement {
 			return this.getDur().isMessenger();
 		else if(Apps.AON_SALTRA.app === app.app)
 			return !this.getDur().isComunica() && !this.getDur().isPayroll() && this.getDur().isSaltra();
-		else return false;
+		else if(Apps.WAREHOUSE.app === app.app){
+			const domain = this.getDur().getDomain();
+			return domain.getName() && (domain.getName().includes("udapa") || domain.getName().includes("paturpat") || this.isLocal());
+		} else return false;
 	}
 
 	isOpenMenu(app) {

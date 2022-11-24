@@ -9,7 +9,6 @@ import { AonDocumental } from './documental/aon-documental.js';
 import { AonSaltra } from'./laboral/aon-saltra.js';
 import '../components/aon-icon.js';
 import '../components/aon-application.js';
-import './marketplace/aon-marketplace.js';
 import './invoice/aon-invoice-panel.js';
 import './laboral/aon-laboral.js';
 import './messenger/aon-messenger.js';
