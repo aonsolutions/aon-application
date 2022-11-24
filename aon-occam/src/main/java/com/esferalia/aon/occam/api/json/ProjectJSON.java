@@ -38,6 +38,7 @@ public class ProjectJSON {
 				.setActive(JsonUtils.getboolean(json, IJsonNames.ACTIVE))
 				.setProjectHolder(ProjectHolderJSON.fromJSON(json.optJSONObject(IJsonNames.PROJECT_HOLDER)))
 				.setProjectHolders(ProjectHolderJSON.fromJSON(json.optJSONArray("projectHolders")))
+				.setProjectActivities(ProjectActivityJSON.fromJSON(json.optJSONArray("projectActivities")))
 				.setDirty(JsonUtils.getboolean(json, IJsonNames.DIRTY));
 	}
 	
@@ -68,6 +69,7 @@ public class ProjectJSON {
 				.put(IJsonNames.RESERVATION, project.isReservation())
 				.put(IJsonNames.DIRTY, project.isDirty())
 				.put("projectHolders", ProjectHolderJSON.toJSON(project.getProjectHolders()))
+				.put("projectActivities", ProjectActivityJSON.toJSON(project.getProjectActivities()))
 				;
 	}
 }

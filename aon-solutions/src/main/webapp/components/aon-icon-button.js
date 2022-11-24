@@ -1,11 +1,13 @@
 import { AonElement } from "./AonElement.js";
 
-import "./aon-icon.js";
 import { CONSTANT } from "../environments/environments.js";
+import { AonIcon } from "./aon-icon.js";
 
 export class AonIconButton extends AonElement {
   BUTTON;
+  BUTTON_ELEMENT;
   ICON;
+  ICON_ELEMENT;
   AON_ICON;
   IMAGE;
 
@@ -104,7 +106,7 @@ export class AonIconButton extends AonElement {
   attributeChangedCallback(name, oldValue, newValue) {
     this.initialize();
     if (CONSTANT.DISABLED === name) {
-      this.getElement(this.BUTTON).disabled = newValue;
+      this.getButton().disabled = newValue;
     }
 
     if (CONSTANT.VISIBLE === name) {
@@ -121,7 +123,7 @@ export class AonIconButton extends AonElement {
     }
 
     if ("icon" === name) {
-      let icon = this.getElement(this.ICON);
+      let icon = this.getIcon();
       if (icon) icon.innerHTML = this.getAttribute("icon");
     }
 
@@ -131,7 +133,7 @@ export class AonIconButton extends AonElement {
     }
 
     if ("color" === name) {
-      let button = this.getElement(this.BUTTON);
+      let button = this.getButton();
       if (button)
         button.style.color = this.getAttribute("color")
           ? this.getAttribute("color")
@@ -139,7 +141,7 @@ export class AonIconButton extends AonElement {
     }
 
     if ("background" === name) {
-      let button = this.getElement(this.BUTTON);
+      let button = this.getButton();
       if (button)
         button.style.backgroundColor = this.hasAttribute("background")
           ? this.getAttribute("background")
@@ -151,16 +153,19 @@ export class AonIconButton extends AonElement {
     super();
   }
 
+  connectedCallback() {
+    this.initialize();
+    this.build();
+  }
+
+
   initialize() {
     this.BUTTON = this.id + "IconButton";
     this.ICON = this.id + "Icon";
     this.AON_ICON = this.id + "AonIcon";
     this.IMAGE = this.id + "Image";
-  }
-
-  connectedCallback() {
-    this.initialize();
-    this.build();
+    this.BUTTON_ELEMENT = document.createElement("button");    
+    this.ICON_ELEMENT   = document.createElement("i");
   }
 
   build() {
@@ -168,19 +173,20 @@ export class AonIconButton extends AonElement {
     let background = this.hasAttribute("background")
       ? this.getAttribute("background")
       : "transparent";
-    let button = document.createElement("button");
-    button.setAttribute("id", this.BUTTON);
-    button.className = "aonIconButton";
-    button.style.color = this.getAttribute("color")
+
+
+    this.BUTTON_ELEMENT.id = this.BUTTON;
+    this.BUTTON_ELEMENT.className = "aonIconButton";
+    this.BUTTON_ELEMENT.style.color = this.getAttribute("color")
       ? this.getAttribute("color")
       : "#5f6368";
-    button.style.backgroundColor = background;
+    this.BUTTON_ELEMENT.style.backgroundColor = background;
     if (this.hasAttribute(CONSTANT.TITLE)) {
-      button.title = this.getAttribute(CONSTANT.TITLE);
+      this.BUTTON_ELEMENT.title = this.getAttribute(CONSTANT.TITLE);
     }
 
     if (this.getAttribute(CONSTANT.DISABLED)) {
-      button.setAttribute(CONSTANT.DISABLED, true);
+      this.BUTTON_ELEMENT.setAttribute(CONSTANT.DISABLED, true);
     }
 
     if (
@@ -192,43 +198,52 @@ export class AonIconButton extends AonElement {
     }
 
     if (!this.getAttribute("noHover")) {
-      button.addEventListener("mouseover", () => {
-        button.style.backgroundColor = "#f1f1f1";
-        button.style.color = "black";
+      this.BUTTON_ELEMENT.addEventListener("mouseover", () => {
+        this.BUTTON_ELEMENT.style.backgroundColor = "#f1f1f1";
+        this.BUTTON_ELEMENT.style.color = "black";
       });
 
-      button.addEventListener("mouseleave", () => {
-        button.style.backgroundColor = background;
-        button.style.color = this.getAttribute("color")
+      this.BUTTON_ELEMENT.addEventListener("mouseleave", () => {
+        this.BUTTON_ELEMENT.style.backgroundColor = background;
+        this.BUTTON_ELEMENT.style.color = this.getAttribute("color")
           ? this.getAttribute("color")
           : "#5f6368";
       });
 
       this.addEventListener("click", () => {
-        button.style.backgroundColor = "#ddd";
+        this.BUTTON_ELEMENT.style.backgroundColor = "#ddd";
       });
     }
 
     if (this.hasAttribute("icon")) {
-      let icon = document.createElement("i");
-      icon.id = this.ICON;
-      icon.className = this.getAttribute("outlined")
+      this.ICON_ELEMENT.id = this.ICON;
+      this.ICON_ELEMENT.className = this.getAttribute("outlined")
         ? "material-icons-outlined"
         : "material-icons";
-      icon.innerHTML = this.getAttribute("icon");
-      button.appendChild(icon);
+      this.ICON_ELEMENT.innerHTML = this.getAttribute("icon");
+      this.BUTTON_ELEMENT.appendChild(this.ICON_ELEMENT);
     } else if (this.hasAttribute("image")) {
       let image = document.createElement("img");
       image.id = this.IMAGE;
       image.style.width = "24px";
       image.style.height = "24px";
       image.src = this.getAttribute("image");
-      button.appendChild(image);
+      this.BUTTON_ELEMENT.appendChild(image);
     }
+
     if (this.hasAttribute("aonIcon")) {
-      button.innerHTML = `<aon-icon id="${this.AON_ICON}" icon="${this.aonIcon}"></aon-icon>`;
+      this.BUTTON_ELEMENT.innerHTML = "";
+      let aonIcon = new AonIcon();
+      aonIcon.id = this.AON_ICON;
+      aonIcon.icon = this.aonIcon;
+      this.BUTTON_ELEMENT.appendChild(aonIcon);
+      
+      if(this.hasAttribute("color")){
+        aonIcon.color = this.getAttribute("color")
+      }
     }
-    this.appendChild(button);
+
+    this.appendChild(this.BUTTON_ELEMENT);
   }
 
   clear() {
@@ -240,13 +255,23 @@ export class AonIconButton extends AonElement {
       (this.hasAttribute(CONSTANT.VISIBLE) && CONSTANT.FALSE !== this.getAttribute(CONSTANT.VISIBLE));
   }
 
+  isDisabled() {
+    return this.getButton().hasAttribute(CONSTANT.DISABLED);
+  }
+
   setDisabled(disabled) {
     this.disabled = disabled;
-    this.getElement(this.BUTTON).disabled = disabled;
+    if(disabled) {
+      this.getButton().disabled = disabled;
+    } else this.getButton().removeAttribute(CONSTANT.DISABLED);
+  }
+
+  getIcon(){
+    return this.ICON_ELEMENT;
   }
   
   getButton(){
-    return this.getElement(this.BUTTON);
+    return this.BUTTON_ELEMENT;
   }
 }
 if(!window.customElements.get('aon-icon-button')){

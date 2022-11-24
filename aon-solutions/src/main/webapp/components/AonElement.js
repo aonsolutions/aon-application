@@ -60,10 +60,12 @@ export class AonElement extends HTMLElement{
     return el;
   }
 
-  createAonElement(el, id, title){
+  createAonElement(el, id, title, main){
     el.id = id || '';
     el.title = title || '';
     el.description = title || '';
+    if(main)
+      el.main = true;
     return el;
   }
 
@@ -138,8 +140,8 @@ export class AonElement extends HTMLElement{
     return document.querySelector(TAG.AON_MODULE);
   }
 
-  createApplication(id, title, application) {
-    const app = this.createAonElement(application, id, title);
+  createApplication(id, title, application, main) {
+    const app = this.createAonElement(application, id, title, main);
     this.appendChild(app);
     return app;
   }

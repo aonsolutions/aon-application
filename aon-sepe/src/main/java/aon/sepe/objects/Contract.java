@@ -34,6 +34,8 @@ public class Contract {
 	private String durationTypeJndMin;
 	private String durationTypeCvnHour;
 	private String durationTypeCvnMin;
+	private String durationFormationHour;
+	private String durationFormationMin;
 	private String interinidad;
 	private String titulacion;
 
@@ -49,6 +51,8 @@ public class Contract {
 	private boolean isDiscapacidad; // ¿ Posee discapacidad ?
 	
 	private boolean isBonus; // ¿ Posee bonificacion ?
+	
+	private boolean planRecovery;  // SE ACOGE AL PLAN DE TRANSFORMACION, RECUPERACION Y RESILIENCIA?
 	
 	private Over52Years over52Years; // ¿ Mayores de 25 años ?
 	
@@ -167,6 +171,10 @@ public class Contract {
 	public OfferType getOffer() {
 		return offer;
 	}
+	
+	public boolean getPlanRecovery() {
+		return planRecovery;
+	}
 
 	public JndType getJndType() {
 		return jndType;
@@ -190,6 +198,14 @@ public class Contract {
 
 	public String getDurationTypeCvnMin() {
 		return durationTypeCvnMin;
+	}
+	
+	public String getDurationFormationHour() {
+		return durationFormationHour;
+	}
+
+	public String getDurationFormationMin() {
+		return durationFormationMin;
 	}
 
 	public Optional<String> getInterinidad() {
@@ -270,6 +286,8 @@ public class Contract {
 		private String durationTypeJndMin;
 		private String durationTypeCvnHour;
 		private String durationTypeCvnMin;
+		private String durationFormationHour;
+		private String durationFormationMin;
 		private String interinidad;
 		private String titulacion;
 
@@ -284,6 +302,8 @@ public class Contract {
 		private boolean isDiscapacidad; // ¿ Posee discapacidad ?
 		
 		private boolean isBonus; // ¿ Posee bonificacion ?
+		
+		private boolean planRecovery;
 		
 		private Over52Years over52Years; // ¿ Mayores de 52 años ?
 		
@@ -431,7 +451,12 @@ public class Contract {
 			this.offer = offer;
 			return this;
 		}
-
+		
+		public ContractBuilder setPlanRecovery(boolean planRecovery) {
+			this.planRecovery = planRecovery;
+			return this;
+		}
+		
 		public ContractBuilder setJndType(JndType jndType) {
 			this.jndType = jndType;
 			return this;
@@ -459,6 +484,16 @@ public class Contract {
 
 		public ContractBuilder setDurationTypeCvnMin(String durationTypeCvnMin) {
 			this.durationTypeCvnMin = durationTypeCvnMin;
+			return this;
+		}
+
+		public ContractBuilder setDurationFormationHour(String durationFormationHour) {
+			this.durationFormationHour = durationFormationHour;
+			return this;
+		}
+
+		public ContractBuilder setDurationFormationMin(String durationFormationMin) {
+			this.durationFormationMin = durationFormationMin;
 			return this;
 		}
 
@@ -546,12 +581,15 @@ public class Contract {
 			contract.dateFinContract = this.dateFinContract;
 			contract.codContract = this.codContract;
 			contract.offer = this.offer;
+			contract.planRecovery = this.planRecovery;
 			contract.jndType = this.jndType;
 			contract.discontinuoReason = this.discontinuoReason;
 			contract.durationTypeJndHour = this.durationTypeJndHour;
 			contract.durationTypeJndMin = this.durationTypeJndMin;
 			contract.durationTypeCvnHour = this.durationTypeCvnHour;
 			contract.durationTypeCvnMin = this.durationTypeCvnMin;
+			contract.durationFormationHour = this.durationFormationHour;
+			contract.durationFormationMin = this.durationFormationMin;
 			contract.sepeId = this.sepeId;
 			contract.interinidad = this.interinidad;
 			contract.discontinuo = this.discontinuo;
@@ -778,12 +816,15 @@ public class Contract {
 			+ ", dateBirth=" + dateBirth 
 			+ ", dateComContract=" + dateComContract 
 			+ ", offer=" + offer
+			+ ", planRecovery=" + planRecovery
 			+ ", jndType=" + jndType 
 			+ ", discontinuoReason=" + discontinuoReason 
 			+ ", durationTypeJndHour="+ durationTypeJndHour 
 			+ ", durationTypeJndMin=" + durationTypeJndMin 
 			+ ", durationTypeCvnHour="+ durationTypeCvnHour 
 			+ ", durationTypeCvnMin=" + durationTypeCvnMin 
+			+ ", durationFormationHour="+ durationFormationHour 
+			+ ", durationFormationMin=" + durationFormationMin 
 			+ ", interinidad=" + interinidad
 			+ ", titulacion=" + titulacion 
 			+ ", certificateProfessional=" + certificateProfessional

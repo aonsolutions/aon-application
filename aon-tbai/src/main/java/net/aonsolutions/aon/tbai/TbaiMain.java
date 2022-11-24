@@ -37,12 +37,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 
-import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
@@ -71,13 +69,6 @@ import ticketbai.anulacion.AnulaTicketBai;
 import ticketbai.emision.TicketBai;
 
 public class TbaiMain {
-
-	public static void main(String[] args) {
-		DataRequest dr = AON.getDataRequest("despacho-serval.aibanez.net", 5749, "pramirez", f -> f.getIdProperty().eq(938));
-		JSONObject json = new JSONObject(dr.getBlackBox());
-		JSONObject invoiceJSON = json.getJSONObject("invoice");
-		Invoice invoice = InvoiceJSON.fromJSON(invoiceJSON);		
-	}
 	
 	public void createEmisionLROE(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws Exception, TbaiException, JAXBException, ParserConfigurationException, SAXException, IOException {
 		LROEInformation lroe = LroeData.get(company.getDomain(), new User().setLogin(""), invoice.getId());
@@ -164,7 +155,7 @@ public class TbaiMain {
 			} else if (tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
 				LROEResponse lroeResponse = null;
 				LROEInfo info = null;
-				if (AonDocumentUtil.isValidCIF(company.getDocument())) {
+				if(!isPersonaFisica(company.getDocument())) {
 					LROE240_1_1 lroe240 = new LROE240_1_1();
 					info = lroe240.buildInfo(OperacionEnum.A_00);
 					lroeResponse = lroe240.alta(company, tbaiConfiguration, invoice, xml);
@@ -190,6 +181,11 @@ public class TbaiMain {
 				HandleLroeResponse(lroeResponse);
 			}
 		}
+	}
+	
+	public boolean isPersonaFisica(String document) {
+		return !AonDocumentUtil.isValidCIF(document) || AonDocumentUtil.isAssetCommunity(document)
+			|| AonDocumentUtil.isOwnerCommunity(document) || AonDocumentUtil.isCivilSociety(document);
 	}
 	
 	public void createAnulacionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)

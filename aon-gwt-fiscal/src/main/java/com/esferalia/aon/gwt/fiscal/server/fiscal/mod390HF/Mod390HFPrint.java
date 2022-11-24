@@ -11,11 +11,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.shared.mod390.Model390ScriptProvider;
 import com.esferalia.aon.occam.api.fiscal.MODEL390HF;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
+import com.esferalia.aon.occam.api.model.fiscal.mod390hf.Model390ScriptProvider;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
@@ -39,7 +39,7 @@ public class Mod390HFPrint extends HttpServlet {
 					.setDomainName(domainName)
 					.setDomain(domainId)
 					.setUser(user);
-			Mod390HF mod390  = MODEL390HF.getMod390HF(occam,id);
+			Mod390HF mod390  = MODEL390HF.get(occam,id);
 
 			Mod390HFExcelAction action = new Mod390HFExcelAction(mod390);
 			action.initialize(FiscalModelUtils.getModelName(mod390));

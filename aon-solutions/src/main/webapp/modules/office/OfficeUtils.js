@@ -1,12 +1,15 @@
 import { AonSelect } from "../../components/aon-select.js";
 import { MSG, EVENT } from "../../environments/environments.js";
 import { Project } from "../../models/project/Project.js";
+import { AonOfficeLinkSimpleList } from "./aon-office-link-simple-list.js";
+
+
 
 /**
  * 
  * @param {AonOfficePanel} aonOfficePanel 
  */
-const buildDialog = (aonOfficePanel) => {
+const buildDialogExpediente = (aonOfficePanel) => {
 
     let project = new Project();
 
@@ -31,7 +34,6 @@ const buildDialog = (aonOfficePanel) => {
 
         application.stopLoading();
 
- 
     }, MSG.SAVE);
 
     dialog.open();
@@ -122,7 +124,32 @@ const getCustomerStatus = (detail) => {
     return status.length > 0 ? status : ["ACTIVE", "BLOCKED"];
 }
 
+
+
+/**
+ * 
+ * @param {AonOfficePanel} aonOfficePanel 
+ */
+const builDialogRelationship = (aonOfficePanel, data) => {
+    const application = aonOfficePanel.getApplication();
+    const dialog = application.getDialog();
+    dialog.autoclose = false;
+    dialog.width = '60%';
+    dialog.clear();
+    dialog.setTitle("Vinculaciones");
+
+    let simpleList = new AonOfficeLinkSimpleList();
+    simpleList.setData(data);
+
+    dialog.setContent(simpleList);
+    
+    dialog.addAcceptAction(()=>{});
+
+    dialog.open();
+}   
+
 export const OfficeUtils = {
-    buildDialog,
-    getCustomerStatus
+    buildDialogExpediente,
+    getCustomerStatus,
+    builDialogRelationship
 }

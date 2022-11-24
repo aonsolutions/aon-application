@@ -23,8 +23,9 @@ import net.aonsolutions.db.up2date.payroll.AlterContractBonusDescription;
 import net.aonsolutions.db.up2date.payroll.AlterContractBonusExpression;
 import net.aonsolutions.db.up2date.payroll.AlterContractPaymentDescription;
 import net.aonsolutions.db.up2date.payroll.AlterSalaryBonusConcept;
-import net.aonsolutions.db.up2date.payroll.FixPreaviso;
-import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
+import net.aonsolutions.db.up2date.accounting.AlterRbankAddRequisition;
+import net.aonsolutions.db.up2date.accounting.AlterRbankAddSepaMandateRef;
+import net.aonsolutions.db.up2date.warehouse.UdapaPfondoUpdateFix;
 
 public class Up2Date {
 
@@ -257,36 +258,39 @@ public class Up2Date {
     		//AlterAgreement4Log.ALTERAGREEMENTLOG,
     		//RealDecreeLaw322021Art151Fix.REALDECREELAW322021ART151FIX,
     		//FellowsITIMS2022UpdateII.FELLOWSITIMS2022UPDATEII,
-	   		//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE
-    		//AgriculturalMonthlyQuote2022Fix.AGRICULTURALMONTHLYQUOTE2022FIX
+	   		//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE,
+    		//AgriculturalMonthlyQuote2022Fix.AGRICULTURALMONTHLYQUOTE2022FIX,
     		//ContractTransfromUnify.CONTRACTTRANSFORMUNIFY,
     		//AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT,
     		//TaskSourceUpdate.TASK_SOURCE_UPDATE,
     		//DocumentalUpdateFix.DOCUMENTAL_UPDATE_FIX,
     		//AlterFsMod200FsModel.ALTER_FS_MOD200_FS_MODEL,
     		//ElaborationDetailUpdate.ELABORATION_DETAIL_UPDATE,
-    		//IrpfEuskadiSeptember2022Insert.IRPFEUSKADISEPTEMBER2022INSERT
+    		//IrpfEuskadiSeptember2022Insert.IRPFEUSKADISEPTEMBER2022INSERT,
     		//AlterSalaryAddIndexSocialSecurityNumber.ALTER_SALARY_ADD_INDEX_SOCIALSECURITYNUMBER,
     		//MaxEmbargableFix.MAXEMBARGABLEFIX,
     		//ContractExtraCreation.CONTRACTEXTRACREATION,
     		//IrpfInKindSystemInsert.IRPFINKINDSYSTEMINSERT,
     		//TrainingBases2022Fix.TRAININGBASES2022FIX,
-    		//TrainingBases2022FixII.TRAININGBASES2022FIXII
-    		//UdapaPfondoUpdateFix.UDAPA_PFONDO_UPDATE_FIX,
+    		//TrainingBases2022FixII.TRAININGBASES2022FIXII,
+    		UdapaPfondoUpdateFix.UDAPA_PFONDO_UPDATE_FIX,
     		//SevenConsultingDomainNameUpdate.SEVEN_CONSULTING_DOMAIN_NAME_UPDATE,
     		//InvoiceAddAnnulledColumn.INVOICE_ADD_ANNULLED_COLUMN,
     		//HomeQuote2022Update.HOMEQUOTE2022UPDATE,
     		//ContractDocCreate.CONTRACTDOCCREATE
     		AlterSalaryBonusConcept.ALTERSALARYBONUSCONCEPT,
     		//HomeBonus2012Update.HOMEBONUS2012UPDATE,
-    		//DefaultPaymentConcepts.DEFAULTPAYMENTCONCEPTS
-    		//AgriculturalITRemove.AGRICULTURALITREMOVE
+    		//DefaultPaymentConcepts.DEFAULTPAYMENTCONCEPTS,
+    		//AgriculturalITRemove.AGRICULTURALITREMOVE,
     		//AlterBankStatementReference2.ALTER_BANK_STATEMENT_REFERENCE_2,
     		AlterContractBonusExpression.ALTER_CONTRACT_BONUS_EXPRESSION,
     		AlterContractBonusDescription.ALTER_CONTRACT_BONUS_DESCRIPTION,
     		AlterContractPaymentDescription.ALTERCONTRACTPAYMENTDESCRIPTION,
     		FixPreaviso.FIXPREAVISO,
-
+    		//RefreshMod390HFResult.REFRESH_MOD390_RESULT,
+    		AlterRbankAddRequisition.ALTER_RBANK_ADD_REQUISITION,
+    		AlterRbankAddSepaMandateRef.ALTER_RBANK_ADD_SEPA_MANDATE_REF,
+    		
     		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
     };

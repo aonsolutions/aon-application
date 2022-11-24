@@ -6,7 +6,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.fiscal.IMODEL184;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod184;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod184DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod184.Mod184DAO;
 
 public class MODEL184Impl implements IMODEL184 {
 

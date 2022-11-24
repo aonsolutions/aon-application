@@ -11,9 +11,10 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.shared.Dni;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
-import com.esferalia.aon.gwt.payroll.shared.StreetType;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.Province;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -28,7 +29,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -189,12 +189,13 @@ public abstract class Enterprise extends ResizeComposite {
 	private void initializeListBox() {
 		//STREET TYPE
 		for(int i=0; i<StreetType.values().length; i++)
-			this.streetType.addItem(StreetType.values()[i].getDescription(), StreetType.values()[i].getShortCode());
+			if(null != StreetType.values()[i].getLanguage() && StreetType.values()[i].getLanguage().equals(AonLanguage.SPANISH))
+				this.streetType.addItem(StreetType.values()[i].getDescription(), StreetType.values()[i].getIneCode());
 		
 		//PROVINCE
 		this.addressProvince.addItem("-");
-		for( Entry<String, String> provinces : ProvinceContract.getProvinces().entrySet())
-			this.addressProvince.addItem(provinces.getValue(), provinces.getKey());
+		for(int i=0; i<Province.values().length; i++)
+			this.addressProvince.addItem(Province.values()[i].getName(), Province.values()[i] + "");
 		
 		//PAYSHEET MODEL
 		this.enterprisePaysheetModel.addItem("Est\u00E1ndar", "salary");
@@ -240,7 +241,7 @@ public abstract class Enterprise extends ResizeComposite {
 	}
 	
 	@UiHandler("nationality")
-	void onEnterpriseNationalityChangeValue(ValueChangeEvent<String> event) {
+	void onEnterpriseNationalitySelection(SelectionEvent<Suggestion> event) {
 		onEnterpriseNationalityChange();
 	}
 	

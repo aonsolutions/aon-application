@@ -7305,6 +7305,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		Boolean trueDate = employeeContractInfo.getContractSpecificData().getTrueDate();
 		builder.setNoCertainDate(null != trueDate && trueDate);
 		
+		if(contractType == 420)
+			builder.setPlanRecovery(employeeContractInfo.getContractSpecificData().getPlanRecovery());
+		
 		ContractTypeRecord contractTypeRecord = null;
 		try {
 			ContractType contractTypeC = new ContractType();
@@ -7345,6 +7348,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setDurationTypeJndMin(employeeContractInfo.getContractSpecificData().getJourneyDurationMinutes());
 		builder.setDurationTypeCvnHour(employeeContractInfo.getContractSpecificData().getAgreementHours());
 		builder.setDurationTypeCvnMin(employeeContractInfo.getContractSpecificData().getAgreementMinutes());
+		builder.setDurationFormationHour(employeeContractInfo.getContractSpecificData().getFormationHours());
+		builder.setDurationFormationMin(employeeContractInfo.getContractSpecificData().getFormationMinutes());
 
 		return builder.build();
 	}

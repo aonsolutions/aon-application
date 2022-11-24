@@ -138,6 +138,7 @@ export const GROUPS = 'groups';
 
 // ----- H
 export const HIGHLIGHT_OFF = 'highlight_off';
+export const HDR_AUTO = 'hdr_auto';
 
 // ----- I
 
@@ -159,6 +160,7 @@ export const LOCAL_MALL = 'local_mall';
 export const LOGIN = 'login';
 export const LOGOUT = 'logout';
 export const LINK = 'link';
+export const LINK_OFF = 'link_off';
 export const LIST = 'list';
 export const LABEL = 'label';
 
@@ -204,6 +206,7 @@ export const ROOM = 'room';
 // ----- S
 
 export const SAVE = 'save';
+export const SHARE = 'share';
 export const SCHEDULE = 'schedule';
 export const SEARCH = 'search';
 export const SECURITY = 'security';

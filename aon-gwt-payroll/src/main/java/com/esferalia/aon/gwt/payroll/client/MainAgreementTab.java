@@ -507,7 +507,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		
 		deckPanel.setAnimationEnabled(true);
 		mainDeckPanel.setAnimationEnabled(true);
-		mainDeckPanel.setHeight((Window.getClientHeight() - 200) + "px");
+		mainDeckPanel.setHeight((Window.getClientHeight() - 185) + "px");
 		showAgreements();
 		
 		agreements.addStyleName(style.borderR());
@@ -598,10 +598,10 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 		this.agreement = agreement;		
 		this.contextMenu.setVisibleCopyItem(agreement.getId());		
 		
-		this.contextMenu.setVisibleMoveItem( (parentDomain != null) && 
-				parentDomain.intValue() != agreement.getDomain().intValue() && agreement.getDomain().intValue() != 0);
-		
-		this.contextMenu.setVisibleMoveDownItem(agreement.getDomain().intValue() != 0 && domain != agreement.getDomain().intValue());
+		if(null != agreement.getDomain()) {
+			this.contextMenu.setVisibleMoveItem( (parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue() && agreement.getDomain().intValue() != 0);
+			this.contextMenu.setVisibleMoveDownItem(agreement.getDomain().intValue() != 0 && domain != agreement.getDomain().intValue());
+		}
 		
 		agreementPreview.showLoading("Cargando convenio...");
 		getAgreement(agreement.getId(), agreeementInfo -> {
@@ -609,6 +609,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 			showAgreementContainer();
 			selectAgreementTab();
 		});
+		
 	}
 	
 	public void addEditionOptions(EditionListener2 listener) {
@@ -849,8 +850,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 
 					@Override
 					public void onFailure(Throwable caught) {
-						AonDialog dialog = new AonDialog("Error", new HTML(caught.getMessage()));
-						dialog.warning();
+						agreementPreview.showError("Error importaci\u00f3n", caught.getMessage());
 					}
 
 					@Override
@@ -897,7 +897,7 @@ public class MainAgreementTab extends MainEntryPoint implements Listener,
 	}
 	
 	private void getAgreement(Integer agreementId, Consumer<AgreementInfo> success) {
-		impl.getAgreementInfo(agreementId, new AsyncCallback<AgreementInfo>() {
+		impl.getAgreementInfo(agreementId, false, new AsyncCallback<AgreementInfo>() {
 
 			@Override
 			public void onFailure(Throwable caught) {

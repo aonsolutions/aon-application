@@ -2294,8 +2294,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			Integer agreementId = salaryDraft.getEmployee().getCategory().getAgreement().getId();
 			Integer levelId = salaryDraft.getEmployee().getCategory().getLevelId();
 			
+			AonMessagePanel.showLoading(getMessagePanel(), "Obteniendo convenio " + salaryDraft.getEmployee().getCategory().getAgreement().getDescription()  + " ...");
+			showMessagePanel();
+			
 			DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
-			impl.getAgreementInfo(agreementId, new AsyncCallback<AgreementInfo>() {
+			impl.getAgreementInfo(agreementId, false, new AsyncCallback<AgreementInfo>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -2305,7 +2308,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				@Override
 				public void onSuccess(AgreementInfo agreementInfo) {
 					getAgreementPreview().setAgreementPreview(agreementInfo);
-					getAgreementPreview().setSelectedLevel(levelId);
+					getAgreementPreview().setSelectedLevel(levelId, getTitle(salaryDraft.getEmployee()));
+					hideMessagePanel();
 				}
 			});
 			
@@ -2408,15 +2412,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 		
 		void checkWorkplaceAgreements() {
-			if(null == this.workplace || null == this.workplace.getAgreement()) return;
+			if(null == this.workplace || null == this.workplace.getAgreement() || this.getTabCount() > 6) return;
 			add("Convenio", getAgreementPreview(), this::onAgreementTabSelected);
 		}
 		
 		void onAgreementTabSelected(){
 			Integer agreementId = workplace.getAgreement().getId();
 			
+			AonMessagePanel.showLoading(getMessagePanel(), "Obteniendo convenio " + workplace.getAgreement().getDescription()  + " ...");
+			showMessagePanel();
+			
 			DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
-			impl.getAgreementInfo(agreementId, new AsyncCallback<AgreementInfo>() {
+			impl.getAgreementInfo(agreementId, true, new AsyncCallback<AgreementInfo>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -2427,6 +2434,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				public void onSuccess(AgreementInfo agreementInfo) {
 					getAgreementPreview().setAgreementPreview(agreementInfo);
 					getAgreementPreview().payrollPreview();
+					hideMessagePanel();
 				}
 			});
 			
@@ -2890,6 +2898,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		getEnterprisePanel().setEnterprise(enterprise);
 		getEnterprisePanel().selectWidget(getEnterpriseDraft());
 		enterpriseDraftObject.setAgreements(employees.getEnterpriseContext().getAgreements());
+		enterpriseDraftObject.setScopes(employees.getEnterpriseContext().getScopes());
+		enterpriseDraftObject.setScopes(employees.getEnterpriseContext().getScopes());
 		getEnterpriseDraft().setEnterpriseDraftObject(enterpriseDraftObject);
 
 //		checkStatus(enterpriseDraftObject);

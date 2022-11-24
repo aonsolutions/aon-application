@@ -51,6 +51,8 @@ public class RegistryBankDAO {
 		@Override public Property<String> getAliasProperty() {return new FilterDAO.PropertyDAO<>(RBANK.ALIAS);}
 		@Override public Property<Byte> getActiveProperty() {return new FilterDAO.PropertyDAO<>(RBANK.ACTIVE);}
 		@Override public Property<Integer> getAccountProperty() {return new FilterDAO.PropertyDAO<>(RBANK.REGISTRY);}
+		@Override public Property<String> getRequisitionProperty() {return new FilterDAO.PropertyDAO<>(RBANK.REQUISITION);}
+		@Override public Property<String> getSepaMandateRefProperty() {return new FilterDAO.PropertyDAO<>(RBANK.SEPA_MANDATE_REF);}
 	}
 	
 	public static class RegistryBankFiller extends Filler implements Function<Record, RegistryBank> {
@@ -71,6 +73,8 @@ public class RegistryBankDAO {
 					.setActive(getBoolean(r, RBANK.ACTIVE))
 					.setAlias(r.getValue(RBANK.ALIAS))
 					.setBankAccount(new BankAccount(r.getValue(RBANK.BANK_ACCOUNT)))
+					.setRequisition(r.getValue(RBANK.REQUISITION))
+					.setSepaMandateRef(r.getValue(RBANK.SEPA_MANDATE_REF))
 					.setBic(r.getValue(RBANK.BIC))
 					.setSuffix(r.getValue(RBANK.SUFIX))
 					.setDirty(false)
@@ -121,6 +125,8 @@ public class RegistryBankDAO {
 			.set(RBANK.ALIAS, rbank.getAlias())
 			.set(RBANK.ACTIVE, rbank.getActive())
 			.set(RBANK.ACCOUNT, rbank.getAccount().getId())
+			.set(RBANK.REQUISITION, rbank.getRequisition())
+			.set(RBANK.SEPA_MANDATE_REF, rbank.getSepaMandateRef())
 			.returning(RBANK.ID)
 			.fetchOne()
 			.getValue(RBANK.ID);
@@ -136,6 +142,8 @@ public class RegistryBankDAO {
 				.set(RBANK.BIC, rbank.getBic())
 				.set(RBANK.SUFIX, rbank.getSuffix())
 				.set(RBANK.ALIAS, rbank.getAlias())
+				.set(RBANK.REQUISITION, rbank.getRequisition())
+				.set(RBANK.SEPA_MANDATE_REF, rbank.getSepaMandateRef())
 				.set(RBANK.ACTIVE, rbank.getActive())
 				.set(RBANK.ACCOUNT, rbank.getAccount().getId())
 			.where(RBANK.ID.eq(rbank.getId()))

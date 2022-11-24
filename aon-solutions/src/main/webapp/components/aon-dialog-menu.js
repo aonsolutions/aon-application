@@ -359,14 +359,21 @@ export class AonDialogMenu extends AonElement {
 	}
 
 	addButton(button, parent) {
-		const color = button.permission ? button.backgroundColor : '#bbb';
+		const backgroundColor = button.permission ? button.backgroundColor : '#bbb';
+
 		let icon = new AonIconButton();
 		icon.classList.add(CSS.FLEX_COLUMN, CSS.FLEX_ALIGN_CENTER);
 		icon.id = button.id || Math.random().toString(36).substring(7);
-		icon.icon = button.icon || 'help_outline';
+		
+		if(button.aonIcon){
+			icon.aonIcon = button.aonIcon;
+		} else {
+			icon.icon = button.icon || 'help_outline';
+		}
+
 		icon.color = button.color || 'white';
 		icon.noHover = true;
-		icon.background = color;
+		icon.background = backgroundColor;
 		icon.style.flexBasis ="30%";
 		icon.style.gap = "10px";
 		icon.style.margin = "10px 0";

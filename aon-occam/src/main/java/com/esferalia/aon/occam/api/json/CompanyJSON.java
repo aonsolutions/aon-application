@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api.json;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,6 +28,16 @@ public class CompanyJSON {
 			list.add(fromJSON(json.getJSONObject(i)));
 		}
  		return list;
+	}
+	
+	public static JSONArray toJSON(List<Company> list) {
+		return toJSON(list.stream());
+	}
+	
+	public static JSONArray toJSON(Stream<Company> companys) {
+		JSONArray array = new JSONArray();
+		companys.forEach(t -> array.put(toJSON(t)));
+		return array;
 	}
 	
 	public static JSONObject toJSON(Company company) {

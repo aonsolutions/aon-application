@@ -1,7 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390hf;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AonToast;
@@ -9,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
@@ -17,11 +20,20 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeInfo;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeInfoGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeKeyInfo;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeKeyInfoGridPanel;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatContext;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatContextBreakdownGridPanel;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF.Model390HFCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HFFinishDeclarationPopup.FinishDeclarationPopupCallback;
-import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HFIdentificationData.IModel390HFIdentificationDataCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
+import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelIdentificationPanel;
 import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel;
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalModelKeyInfoVisitor;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
@@ -32,7 +44,11 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -44,6 +60,7 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 
 public abstract class Model390HFBase extends DockLayoutPanel  {
@@ -68,7 +85,9 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	private EnumMap<Mod390Key,AonDoubleBox> fieldsMap;
 	private boolean dirty;
 	
+	protected AonFiscalModelIdentificationPanel<Mod390HF> identificationData;
 	protected FiscalModelAdmonPanel<Mod390HF, Model390HFModuleOptions> admonPanel;
+	
 	protected final AonToolbar toolbarPanel = new AonToolbar(); 
 	protected final AonToolbarButton newButton = new AonToolbarButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
 	protected final AonToolbarButton saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave());
@@ -287,6 +306,18 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	protected EnumMap<Mod390Key, AonDoubleBox> getFieldsMap() {
 		return fieldsMap;
 	}
+	
+	void paintIdentificationTab(TabLayoutPanel tabPanel) {
+//		Model390HFIdentificationData identificationData = new Model390HFIdentificationData( new Model390HFIdentificationDataCallback()) ;
+//		tabPanel.add(identificationData, AON.MSG.identification() );
+		identificationData = new AonFiscalModelIdentificationPanel<>( getModel() ) ;
+		identificationData.addValueChangeHandler(event -> {
+			toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
+			markAsDirty();			
+		});
+		tabPanel.add(identificationData, AON.MSG.identification());
+	}
+	
 	protected void paintAdditionalData(FlexTable table) {
 		
 	}
@@ -541,7 +572,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		}
 		marksPanels.add(replacedLabel);
 
-		if (AonMathUtils.isNotZero(mod390HF.getProratePercent()) &&  !AonMathUtils.equals(mod390HF.getProratePercent(), 100.0)) {
+		if ( mod390HF.hasProrate()) {
 			prorataLabel.setStyleName(AON.CSS.aonMarginLeft());
 			prorataLabel.setText(AON.MSG.prorrata() + ": " + mod390HF.getProratePercent() + "%");
 			prorataLabel.addStyleName(AON.CSS.aonBold());
@@ -603,10 +634,10 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		if (mod.isFinished() || mod.isSent()) {
 			StringBuilder buff = new StringBuilder(AON.MSG.result());
 			buff.append(AonStringUtils.SPACE);
-			buff.append(AON.FMT.format(mod.getResult()));
-			if (mod.getDeclarationType() != null) {
+			buff.append(AON.FMT.format(mod.getDeclarationResult()));
+			if (mod.getDeclarationResultType() != null) {
 				buff.append(AonStringUtils.SPACE);
-				buff.append(mod.getDeclarationType().getDescription());
+				buff.append(mod.getDeclarationResultType().getDescription());
 			}
 			if (mod.getFinance() != null && mod.getFinance().getBankAccount() != null && AonStringUtils.isNotBlank(mod.getFinance().getBankAccount().getIban())) {
 				buff.append(AonStringUtils.SPACE);
@@ -857,37 +888,196 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		FlowPanel buttonContainer = new FlowPanel();
 		buttonContainer.setStyleName(AON.CSS.aonNowrap());
 		for (final FiscalModelKeyInfo infoKey : script.getInfoKeys()) {
-			
-			if 	(infoKey == FiscalModelKeyInfo.NONE) continue;
+			infoKey.visit(new IFiscalModelKeyInfoVisitor<Void>() {
 
-			final AonTableButton button = new AonTableButton(infoKey.getLabel());
-			if 	(infoKey == FiscalModelKeyInfo.INVOICE || infoKey == FiscalModelKeyInfo.OUT_ACCRUAL_INVOICE 
-			  || infoKey == FiscalModelKeyInfo.IN_ACCRUAL_INVOICE) {
-				button.addStyleName(AON.CSS.aonIconList());
-			}
-			if 	(infoKey == FiscalModelKeyInfo.DIFF_INVOICE || infoKey == FiscalModelKeyInfo.DIFF_IN_ACCRUAL_INVOICE 
-			  || infoKey == FiscalModelKeyInfo.DIFF_OUT_ACCRUAL_INVOICE) {
-				button.addStyleName(AON.CSS.aonIconDiff());
-			}
-			if 	(infoKey == FiscalModelKeyInfo.COMPUTE) button.addStyleName(AON.CSS.aonIconCalc());
-			if 	(infoKey == FiscalModelKeyInfo.COMPUTE_KEY) button.addStyleName(AON.CSS.aonIconData());
-			button.setTabIndex(-2); // NO FOCUS
-			button.addClickHandler(event -> 
-				Model390HF.MOD_SERVICE.getInfo(getCallback().getOptions().getOccam(),getModel(),script, infoKey,new AsyncCallback<String>() {
-
+				private void showComputeKeyInfo(AonTableButton button) {
+					button.setEnabled(false);
+					final PopupPanel popup = new PopupPanel(false, true);
+					popup.add(new AonSplash());
+					popup.setGlassEnabled(true);
+					popup.setAnimationEnabled(true);
+					popup.center();
+					
+					Model390HF.MOD_SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
 						@Override
 						public void onFailure(Throwable caught) {
+							popup.hide();
+							button.setEnabled(true);
 							callback.showError(AON.MSG.errorMessage());
 						}
-
+	
 						@Override
 						public void onSuccess(String result) {
-							callback.showInfoPanel(result);
+							popup.hide();
+							FlowPanel gridContainer = new FlowPanel();
+							JsVatComputeKeyInfo info = JsonUtils.safeEval(result);
+							JsVatComputeKeyInfoGridPanel grid = new JsVatComputeKeyInfoGridPanel();
+							grid.setTitle(AON.MSG.calcDetail());
+							grid.setSubTitle(AonStringUtils.join(
+								Arrays.stream(script.getKeys())
+									.filter( Objects::nonNull )
+									.map( Mod390Key::getBoxFormatted )
+									.reduce("", String::concat)
+								, " " 
+								, script.getLabel()));
+							grid.addContent(info);
+							gridContainer.add(grid);
+							callback.showInfoPanelWidget(gridContainer);
+							button.setEnabled(true);
 						}
+					});
+				}
 				
+				private void showInvoiceVatBreakdownInfo(AonTableButton button, boolean prorrated) {
+					button.setEnabled(false);
+					final PopupPanel popup = new PopupPanel(false, true);
+					popup.add(new AonSplash());
+					popup.setGlassEnabled(true);
+					popup.setAnimationEnabled(true);
+					popup.center();
+					Model390HF.MOD_SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							popup.hide();
+							callback.showError(AON.MSG.errorMessage());
+							button.setEnabled(true);
+						}
+	
+						@Override
+						public void onSuccess(String result) {
+							popup.hide();
+							JsVatContextBreakdownGridPanel grid = new JsVatContextBreakdownGridPanel( prorrated && getModel().hasProrate() );
+							grid.addSelectionHandler(event -> showInvoice(event.getSelectedItem()));
+							grid.setTitle(AON.MSG.modelRelatedInvoices(getModel().getModelFullName()));
+							grid.setSubTitle(AonStringUtils.join(
+								Arrays.stream(script.getKeys())
+									.filter( Objects::nonNull )
+									.map( Mod390Key::getBoxFormatted )
+									.reduce("", String::concat)
+								, " " 
+								, script.getLabel()));
+							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+							JsArray<JsVatContext> array = arrayObject.cast();
+							for (int i = 0; i < array.length(); i++) {
+								grid.addRow(array.get(i));
+							}
+							grid.addFooterRow();
+							callback.showInfoPanelWidget(grid);
+							button.setEnabled(true);
+						}
+					});
+				}
+
+				private void showComputeInfo(AonTableButton button) {
+					button.setEnabled(false);
+					final PopupPanel popup = new PopupPanel(false, true);
+					popup.add(new AonSplash());
+					popup.setGlassEnabled(true);
+					popup.setAnimationEnabled(true);
+					popup.center();
+					Model390HF.MOD_SERVICE.getInfo(callback.getOptions().getOccam(),getModel(),script, infoKey, new AsyncCallback<String>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							popup.hide();
+							callback.showError(AON.MSG.errorMessage());
+							button.setEnabled(true);
+						}
+	
+						@Override
+						public void onSuccess(String result) {
+							popup.hide();
+							FlowPanel gridContainer = new FlowPanel();
+							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
+							JsArray<JsVatComputeInfo> array = arrayObject.cast();
+							for (int i = 0; i < array.length(); i++) {
+								JsVatComputeInfo computeInfo = array.get(i);
+								Mod390Key key = Mod390Key.valueOf(computeInfo.getKey());
+								JsVatComputeInfoGridPanel grid = new JsVatComputeInfoGridPanel() {
+
+									@Override
+									protected String resolveKey(String keyString) {
+										Mod390Key key = Mod390Key.valueOf(keyString);
+										return key.getBoxAsString();
+									}
+									
+								};
+
+								grid.setTitle(AON.MSG.calcDetail());
+								grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
+								grid.addContent(computeInfo);
+								gridContainer.add(grid);
+							}
+							callback.showInfoPanelWidget(gridContainer);
+							button.setEnabled(true);
+						}
+					});
+				}
+				
+				private AonTableButton addButton() {
+					final AonTableButton button = new AonTableButton(infoKey.getLabel(),AON.CSS.aonIconHelp());
+					button.setTabIndex(-2);
+					buttonContainer.add(button);
+					return button;
+				}
+				
+				@Override 
+				public Void visitModelInvoiceVatBreakdown() {
+					if (!getModel().isManualDeclaration()) {
+						final AonTableButton button = addButton();
+						button.addClickHandler(event -> showInvoiceVatBreakdownInfo(button, false));
 					}
-				));
-			buttonContainer.add(button);
+					return null;
+				}
+				
+				@Override 
+				public Void visitProrratedModelInvoiceVatBreakdown() {
+					if (!getModel().isManualDeclaration()) {
+						final AonTableButton button = addButton();
+						button.addClickHandler(event -> showInvoiceVatBreakdownInfo(button,true));
+					}
+					return null;
+				}
+				@Override 
+				public Void visitModelInVatAccrualInvoice() {
+					return visitModelInvoiceVatBreakdown();	
+				}
+				
+				@Override 
+				public Void visitModelOutVatAccrualInvoice() {
+					return visitModelInvoiceVatBreakdown();
+				}
+
+
+				@Override public Void visitCompute() { 
+					final AonTableButton button = addButton();
+					button.addClickHandler(event -> showComputeInfo(button));
+					return null; 
+				}
+				@Override 
+				public Void visitComputeKey() {
+					if (!getModel().isManualDeclaration()) {
+						final AonTableButton button = addButton();
+						button.addClickHandler(event -> showComputeKeyInfo(button));
+					}
+					return null; 
+				}
+				
+				@Override public Void visitInvoice() {return null;}
+				@Override public Void visitModelInvoiceIrpfBreakdown() {return null;}
+				@Override public Void visitSalary() { return null; }
+				@Override public Void visitModelSalaryIrpfBreakdown() { return null; }
+				@Override public Void visitDiffInvoice() {return null;}
+				@Override public Void visitDiffSalary() { return null;}
+				@Override public Void visitNone() { return null; }
+				@Override public Void visitInAccrualInvoice() { return null; }
+				@Override public Void visitOutAccrualInvoice() { return null; }
+				@Override public Void visitDiffInAccrualInvoice() { return null; }
+				@Override public Void visitDiffOutAccrualInvoice() { return null; }
+				@Override public Void visitActAccount() { return null; }
+				@Override public Void visitTitle() { return null; }
+				@Override public Void visitIrpfActivity() { return null; }
+				@Override public Void visitCorporate() { return null; }
+			});
 		}
 		table.setWidget(row, col, buttonContainer);
 	}
@@ -954,103 +1144,28 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 		calculateAndRefresh(null);
 	}
 
-	protected class Model390HFIdentificationDataCallback implements IModel390HFIdentificationDataCallback {
+	private void showInvoice(JsVatContext vt) {
+		int invoiceId = vt.getInvoice();
+		Model390HF.MOD_SERVICE.getInvoice(getCallback().getOptions().getOccam(), invoiceId,new AsyncCallback<Invoice>() {
+			@Override
+			public void onSuccess(Invoice inv) {
+				AonCustomPopup dialog = new AonCustomPopup();
+				dialog.setWidth((Window.getClientWidth() - 100) + "px");
+				dialog.setHeight((Window.getClientHeight() - 100) + "px");
+				dialog.setAnimationEnabled(true);
+				dialog.setGlassEnabled(true);
+				dialog.setModal(true);
+				dialog.setCaption(AON.MSG.invoice());
+				dialog.add(new AonInvoiceViewer(inv));
+				dialog.center();
+				dialog.show();
+			}
 
-		@Override public boolean isFinished() 		{ return getModel().isFinished() || getModel().isSent();}
-		
-		@Override public String getDocument() 		{return getModel().getDocument();			}
-		@Override public String getName() 			{return getModel().getName(); 				}
-		@Override public String getSurname() 		{return getModel().getSurname();			}
-		@Override public String getPhone() 			{return getModel().getPhone();				}
-		@Override public String getStreetInitial() 	{return getModel().getStreetInitial();		}
-		@Override public String getStreetName() 	{return getModel().getStreetName();		}
-		@Override public String getStreetNumber() 	{return getModel().getStreetNumber();		}
-		@Override public String getStreetStair() 	{return getModel().getStreetStair();		}
-		@Override public String getStreetFloor() 	{return getModel().getStreetFloor();		}
-		@Override public String getStreetDoor() 	{return getModel().getStreetDoor();		}
-		@Override public String getTown() 			{return getModel().getTown();				}
-		@Override public String getProvince() 		{return getModel().getProvince();			}
-		@Override public String getZip() 			{return getModel().getZip();				}
-		@Override public String getContactPerson() 	{return getModel().getContactPerson();		}
-		@Override public String getContactPhone() 	{return getModel().getContactPhone();		}
-		@Override public String getContactCellular(){return getModel().getContactCellular();	}
-		@Override public String getContactEmail() 	{return getModel().getContactEmail();		}
-	
-		@Override public void documentChanged(String value) {
-			getModel().setDocument(value);
-			identificationLabelChanged();
-			markAsDirty();			
-		}
-		@Override public void nameChanged(String value) {
-			getModel().setName(value);
-			identificationLabelChanged();
-			markAsDirty();			
-		}
-		@Override public void surnameChanged(String value) {
-			getModel().setSurname(value);
-			identificationLabelChanged();
-			markAsDirty();			
-		}
-		@Override public void phoneChanged(String value) {
-			getModel().setPhone(value);
-			markAsDirty();			
-		}
-		@Override public void streetInitialChanged(String value) {
-			getModel().setStreetInitial(value);
-			markAsDirty();			
-		}
-		@Override public void streetNameChanged(String value) {
-			getModel().setStreetName(value);
-			markAsDirty();			
-		}
-		@Override public void streetNumberChanged(String value) {
-			getModel().setStreetNumber(value);
-			markAsDirty();			
-		}
-		@Override public void streetStairChanged(String value) {
-			getModel().setStreetStair(value);
-			markAsDirty();			
-		}
-		@Override public void streetFloorChanged(String value) {
-			getModel().setStreetFloor(value);
-			markAsDirty();			
-		}
-		@Override public void streetDoorChanged(String value) {
-			getModel().setStreetDoor(value);
-			markAsDirty();			
-		}
-		@Override public void townChanged(String value) {
-			getModel().setTown(value);
-			markAsDirty();			
-		}
-		@Override public void provinceChanged(String value) {
-			getModel().setProvince(value);
-			markAsDirty();			
-		}
-		@Override public void zipChanged(String value) {
-			getModel().setZip(value);
-			markAsDirty();			
-		}
-		@Override public void contactPersonChanged(String value) {
-			getModel().setContactPerson(value);
-			markAsDirty();			
-		}
-		@Override public void contactPhoneChanged(String value) {
-			getModel().setContactPhone(value);
-			markAsDirty();			
-		}
-		@Override public void contactCellularChanged(String value) {
-			getModel().setContactCellular(value);
-			markAsDirty();			
-		}
-		@Override public void contactMailChanged(String value) {
-			getModel().setContactEmail(value);
-			markAsDirty();			
-		}
-		
-		private void identificationLabelChanged() {
-			toolbarPanel.setTitle(AonStringUtils.join(getModel().getDocument(),AonStringUtils.SPACE,getModel().getFullName()));
-		}
+			@Override
+			public void onFailure(Throwable caught) {
+				getCallback().showError(caught.getMessage());
+			}
+		});
 	}
-	
+
 }

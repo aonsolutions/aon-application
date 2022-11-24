@@ -49,6 +49,8 @@ public final class IJsonNames {
 	public static final String AUTH = "auth";
 	public static final String AUTOSEND = "autosend";
 	public static final String AVATAR = "avatar";
+	public static final String ADVERTISING = "advertising";
+	
 	
 	// ---------------------------------------------------------------------------------------------	[B] 
 	public static final String BACKGROUND = "background";
@@ -121,6 +123,7 @@ public final class IJsonNames {
 	public static final String CREATION_USER = "creation_user";
 	public static final String CREDIT = "credit";
 	public static final String CUSTOMER = "customer";
+	public static final String CUSTOMERS = "customers";
 	public static final String CUSTOMER_BACKGROUND_COLOR = "customerBackgroundColor";
 	
 	// ---------------------------------------------------------------------------------------------	[D] 
@@ -387,6 +390,8 @@ public final class IJsonNames {
 	public static final String PROFIT_PERCENT = "profitPercent";
 	public static final String PROGRESS = "progress";
 	public static final String PROJECT = "project";
+	public static final String PROJECT_TYPE = "projectType";
+	public static final String PROJECT_ACTIVITY = "projectActivity";
 	public static final String PROJECT_GROUPED = "ProjectGrouped";
  	public static final String PROJECTS = "projects";
 	public static final String PROJECT_HOLDER = "projectHolder";

@@ -34,7 +34,7 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 public abstract class Mod303Declaration {
 	
 	// 1 de Julio del 2021		
-	protected static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
+	public static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
 
 	private enum Declarations {
 		 AEAT_2022 {

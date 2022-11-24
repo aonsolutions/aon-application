@@ -39,7 +39,6 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
@@ -389,20 +388,6 @@ public class EnterprisesServiceAsyncDecorator implements
 				new AsyncCallbackWrapper<Map<Integer, String>>(callback));
 	}
 
-	@Override
-	public void getEnterpriseInfo(Integer enterpriseId, String domain, AsyncCallback<EnterpriseInfo> callback) {
-		AON.start();
-		enterprisesServiceAsync.getEnterpriseInfo(enterpriseId, domain,
-				new AsyncCallbackWrapper<EnterpriseInfo>(callback));
-	}
-
-	@Override
-	public void updateEnterprise(EnterpriseInfo enterpriseInfo, String domain, AsyncCallback<EnterpriseInfo> callback) {
-		AON.start();
-		enterprisesServiceAsync.updateEnterprise(enterpriseInfo, domain,
-				new AsyncCallbackWrapper<EnterpriseInfo>(callback));
-	}
-	
 	@Override
 	public void getCCCEmployees(String domain, Date month, List<Integer> cccIds,
 			AsyncCallback<List<Employee>> callback) {
@@ -992,9 +977,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	// ------------------------------------------------ Agreement Tab (New)
 
 	@Override
-	public void getAgreementInfo(String domainName, Integer agreementId, AsyncCallback<AgreementInfo> callback) throws IllegalArgumentException {
+	public void getAgreementInfo(String domainName, Integer agreementId, boolean withContracts, AsyncCallback<AgreementInfo> callback) throws IllegalArgumentException {
 		AON.start();
-		enterprisesServiceAsync.getAgreementInfo(domainName, agreementId, callback);
+		enterprisesServiceAsync.getAgreementInfo(domainName, agreementId, withContracts, callback);
 	}
 
 	@Override
@@ -1025,6 +1010,24 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void deletePayments(String domainName, List<Integer> paymentIds, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.deletePayments(domainName, paymentIds, callback);
+	}
+	
+	// ------------------------------------------------ Enterprise (API)
+
+	@Override
+	public void getEnterprise(String domainName, String user, Integer id,
+			AsyncCallback<com.esferalia.aon.occam.api.model.payroll.Enterprise> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getEnterprise(domainName, user, id, callback);
+	}
+
+	@Override
+	public void saveEnterprise(String domainName, String user,
+			com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise, AsyncCallback<Void> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.saveEnterprise(domainName, user, enterprise, callback);
 	}
 
 }

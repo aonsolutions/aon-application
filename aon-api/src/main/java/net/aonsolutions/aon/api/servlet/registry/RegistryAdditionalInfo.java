@@ -8,7 +8,8 @@ public enum RegistryAdditionalInfo {
 	PAYMETHOD,
 	MEDIA,
 	RECORD_DATA,
-	RSEGMENT
+	RSEGMENT,
+	RRELATIONSHIP
 	;
 
 	private RegistryAdditionalInfo() {

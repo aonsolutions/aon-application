@@ -78,10 +78,27 @@ public interface Properties {
 		Property<Integer> getTaskHolderProperty();
 	}
 	
+	public interface ProjectActivityProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getProjectProperty();
+		Property<Integer> getActivityTypeProperty();
+		Property<Byte> getActiveProperty();
+	}
+	
 	public interface ProjectTypeProperties {
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
 		Property<String> getDescriptionProperty();
+		Property<Byte> getActiveProperty();
+	}
+	
+	
+	public interface ActivityTypeProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+		Property<Integer> getProjectTypeProperty();
 		Property<Byte> getActiveProperty();
 	}
 	
@@ -278,6 +295,21 @@ public interface Properties {
 		Property<String> getAttributeProperty();
 		Property<String> getValueProperty();
 		Property<Date> getValueDate();
+	}
+	
+	public interface RRelationshipProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getRegistryProperty();
+		Property<Integer> getRelatedRegistryProperty();
+		Property<Integer> getRelationshipProperty();
+		Property<String> getCommentsProperty();
+	}
+	
+	public interface RelationshipProperties {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
 	}
 	
 	public interface RDirStaffProperties {
@@ -561,6 +593,8 @@ public interface Properties {
 		Property<String> getAliasProperty();
 		Property<Byte> getActiveProperty();
 		Property<Integer> getAccountProperty();
+		Property<String> getRequisitionProperty();
+		Property<String> getSepaMandateRefProperty();
 	}
 	
 	public interface RegistryPayMethodProperties{
@@ -817,6 +851,8 @@ public interface Properties {
 		Property<Byte> getDeliveryValuatedProperty();
 		Property<Integer> getAccountProperty();
 		Property<Integer> getProjectTypeProperty();
+		
+		Property<Integer> getRegistryRelationProperty();
 	}
 	
 	public interface CreditorProperties extends RegistryProperties, AuditProperties{
@@ -1009,6 +1045,9 @@ public interface Properties {
 		Property<Byte> getWithholdingProperty();
 		Property<Byte> getVatAccrualPaymentProperty();
 		Property<Byte> getEInvoiceProperty();
+		
+		Property<Byte> getUserSharedProperty();
+		Property<Byte> getDomainTypeProperty();
 	}
 	
 	public interface PersonProperties extends RegistryProperties{
@@ -1235,8 +1274,18 @@ public interface Properties {
 	public interface ContractDataProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();
-		Property<String> getNameProperty();
 		Property<Integer> getContractProperty();
+		Property<String> getNameProperty();
+		Property<String> getExpressionProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+	}
+	
+	public interface EnterpriseDataProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getEnterpriseProperty();
+		Property<String> getNameProperty();
 		Property<String> getExpressionProperty();
 		Property<Date> getStartDateProperty();
 		Property<Date> getEndDateProperty();
@@ -1276,6 +1325,13 @@ public interface Properties {
 		Property<Double> getRequestIrpfProperty();
 		Property<Byte> getContractTypeProperty();
 		Property<Byte> getCeutaMelillaProperty();
+	}
+	
+	public interface EnterpriseProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getScopeProperty();
+		Property<Integer> getCalendarProperty();
 	}
 	
 	public interface AgreementLevelCategoryProperties{

@@ -17,13 +17,6 @@ export class AonCustomerList extends AonRegistryList {
 	async getRegistries() {
 		let customers = await getCustomers(this.filter);
 
-		if(this.selectable){
-			customers = customers.map(customer => {
-				customer.option = this.getOptionsLink(customer);
-				return customer;
-			});
-		}
-
 		return customers;
 	}
 
@@ -48,31 +41,7 @@ export class AonCustomerList extends AonRegistryList {
 			this.getApplication().setContent(aonCustomer);
 		});
 	}
-
-	getOptionsLink(){
-		let option = [];
-
-		option.push({
-			name: 'Vincular dominio',
-			icon: 'link',
-			id: 'domain_link',
-			permission:true,
-			backgroundColor: "grey",
-			fn: () => this.getApplication().development()
-		});
-
-		option.push({
-			name: 'Crear empresa',
-			icon: 'apartment',
-			id: 'create_enterprise',
-			permission:true,
-			backgroundColor: "grey",
-			fn: () => this.getApplication().development()
-		});
-		
-		return option;
-	}
-
+	
 	buildToolbar(){
 		this.getApplication().removeToolbarOptions();
 		this.getApplication().addToolbarOption2(ACTION.ADD, () => this.buildRegistry());
@@ -92,6 +61,7 @@ export class AonCustomerList extends AonRegistryList {
 					value:detail.search,
 					scope:detail.scope,
 					projectType: detail.projectType,
+					rrelationship: detail.rrelationship,
 					status: OfficeUtils.getCustomerStatus(detail),
 					page:1
 				}
@@ -127,12 +97,23 @@ export class AonCustomerList extends AonRegistryList {
             }
         })
 
+        const rrelationshipEl = this.getElement("rrelationship");
+        rrelationshipEl.setOptions([
+			{name:'Con empresa', value:true},
+			{name:'Sin empresa', value:false}
+		]);
+
+		const rrelationship = this.filter.rrelationship;
+		if(rrelationship!=null){
+			rrelationshipEl.value = rrelationship;
+		}
+
         let active = this.getElement("active");
         active.value = (this.filter.status ||  []).includes("ACTIVE");
         
         let inactive = this.getElement("inactive");
         inactive.value = (this.filter.status ||  []).includes("INACTIVE");
-  
+
         let blocked = this.getElement("blocked");
         blocked.value = (this.filter.status ||  []).includes("BLOCKED");
 	}

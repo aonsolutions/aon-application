@@ -431,7 +431,7 @@ export class AonApplication extends AonElement {
     let ul = this.createElement(TAG.UL);
     ul.classList.add(CSS.AON_UL);
     ul.classList.add(CSS.AON_CLIP);
-    ul.style.marginLeft = '12px';
+    ul.style.paddingLeft = '12px';
     options.forEach((option, i) => {
       this.addSidenavOptionsListValue(data, option, ul);
     });
@@ -539,23 +539,24 @@ export class AonApplication extends AonElement {
           button.style.right = i * 30 + "px";
           button.style.position = "absolute";
           let aonIconButton = new AonIconButton();
+          aonIconButton.noHover = true;
           aonIconButton.icon = item.icon;
           aonIconButton.id = li.id + item.id;
           button.appendChild(aonIconButton);
           actionDiv.appendChild(button);
-          let aib = this.getElement(li.id + item.id);
-          let b = this.getElement(aib.BUTTON);
+          let b = aonIconButton.getButton();
           b.style.height = "30px";
           b.style.minWidth = "30px";
           b.style.width = "30px";
-          let ic = this.getElement(aib.ICON);
+          let ic = aonIconButton.getIcon();
           ic.style.fontSize = "1.3rem";
-          aib.addEventListener(EVENT.CLICK, (ev)=>{
+          aonIconButton.addEventListener(EVENT.CLICK, (ev)=>{
             ev.stopPropagation();
             item.action(ev)
           });
         });
       }
+
       if(!option.options || option.clickable){
         li.addEventListener(EVENT.CLICK, () => {
           let backgroundEl = li.style.backgroundColor;
@@ -613,6 +614,25 @@ export class AonApplication extends AonElement {
     this.addSidenavOptionsTitle(data, newButton);
     this.addSidenavOptionsList(data, options);
   }
+
+  buildOptionsMenu(el, options) {
+    const boundingClientRect = el.getBoundingClientRect();
+    const top = boundingClientRect.top;
+    const left = boundingClientRect.left;
+
+    const d = this.getOptionDialog();
+
+    options = options.map(({ aonIcon, icon, name, fn }) => ({
+        aonIcon,
+        icon,
+        name,
+        fn: () => fn(el),
+    }));
+
+    d.setMenuOptions(options, top, left);
+    d.open();
+  }
+
 
   removeBackgroundSidenavAll(){
     const sidenavId = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT: this.SIDENAV;

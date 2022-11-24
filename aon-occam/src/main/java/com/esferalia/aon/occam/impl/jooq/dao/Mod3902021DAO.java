@@ -52,7 +52,6 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.PrevMod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.AEATIVA2021;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.AEATIVA2021toMod390;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2021.Mod390toAEATIVA2021;
@@ -615,11 +614,11 @@ public class Mod3902021DAO {
 		mod303.setAdministration(Administration.COMMON_TERRITORY);
 		mod303.setModel( FiscalModelType.M303 );
 		mod303.setPeriod(Period.YEAR);
-		FiscalModel fm  = PrevMod303DAO.getPreviousModels(ctx,mod303, true)
+		FiscalModel fm  = Mod303DAO.getPreviousModels(ctx,mod303, true, Mod303::new)
 			.findFirst()
 			.orElse(null);
 		if (fm != null) {
-			mod303 = PrevMod303DAO.getMod303(ctx, fm.getId());
+			mod303 = Mod303DAO.get(ctx, fm.getId());
 			if (mod303 != null) {
 				double reg = mod303.getAmount(Mod303Key.CT_C44);
 				Mod390Detail detail = map.get(Mod3902021DetailKey.C0522);

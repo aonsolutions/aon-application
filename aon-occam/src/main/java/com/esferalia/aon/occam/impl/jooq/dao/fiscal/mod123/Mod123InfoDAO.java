@@ -33,8 +33,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod123InfoDAO {
 	private static final DecimalFormat DEC2 = new DecimalFormat("#,##0.00");		
-	private static final String INFO_MSG = "<pre class='aon_margin_bottom'>{0}<pre>";
-	private static final String NONE_INFO = "No hay datos";
 	
 	private Mod123InfoDAO() {
 		
@@ -65,7 +63,7 @@ public class Mod123InfoDAO {
 						
 					@Override 
 					public String visitNone()    {
-						return MessageFormat.format(INFO_MSG, NONE_INFO); 
+						return AonStringUtils.EMPTY; 
 					} 
 					
 					@Override 

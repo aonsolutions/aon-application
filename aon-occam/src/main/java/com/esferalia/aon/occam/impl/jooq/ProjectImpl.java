@@ -5,16 +5,22 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IProject;
+import com.esferalia.aon.occam.api.model.ActivityType;
+import com.esferalia.aon.occam.api.model.Filter.ActivityTypeFilter;
+import com.esferalia.aon.occam.api.model.Filter.ProjectActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectCommercialFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectHolderFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectReservationFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProjectTypeFilter;
 import com.esferalia.aon.occam.api.model.ProjectFilter;
+import com.esferalia.aon.occam.api.model.project.ProjectActivity;
 import com.esferalia.aon.occam.api.model.project.ProjectCommercial;
 import com.esferalia.aon.occam.api.model.project.ProjectHolder;
 import com.esferalia.aon.occam.api.model.project.ProjectReservation;
 import com.esferalia.aon.occam.api.model.project.ProjectType;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.impl.jooq.dao.ActivityTypeDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectActivityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectHolderDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProjectTypeDAO;
@@ -114,6 +120,33 @@ public class ProjectImpl implements IProject{
 					.and(f.getIdProperty().eq(id))));
 	}
 	
+	// --------- ACTIVITY TYPE	
+
+	@Override
+	public Stream<ActivityType> getActivityTypeStream(AONContext ctx, ActivityTypeFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> ActivityTypeDAO.getStream(ctx, filter));
+	}
+	
+	@Override
+	public ActivityType getActivityType(AONContext ctx, ActivityTypeFilter filter) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> ActivityTypeDAO.get(ctx, filter));
+	}
+	
+	@Override
+	public ActivityType saveActivityType(AONContext ctx, ActivityType activityType) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> ActivityTypeDAO.save(ctx, activityType));
+	}
+	
+	@Override
+	public void deleteActivityType(AONContext ctx, Integer id) {
+		ctx.getDslContext().transaction(
+				configuration -> ActivityTypeDAO.delete(ctx, f ->
+					f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getIdProperty().eq(id))));
+	}
+		
 	
 	// --------- PROJECT HOLDER
 	
@@ -145,5 +178,22 @@ public class ProjectImpl implements IProject{
 	public void deleteProjectHolder(AONContext ctx, Integer holderId) {
 		ctx.getDslContext().transaction(
 				configuration -> ProjectHolderDAO.delete(ctx, holderId));
+	}
+	
+	// --------- PROJECT ACTIVITY
+	
+	@Override
+	public Stream<ProjectActivity> getProjectActivityStream(AONContext ctx, ProjectActivityFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> ProjectActivityDAO.getStream(ctx, filter));
+	}
+
+	@Override
+	public void deleteProjectActivity(AONContext ctx, Integer holderId) {
+		ctx.getDslContext().transaction(configuration -> ProjectActivityDAO.delete(ctx, holderId));
+	}
+	
+	@Override
+	public ProjectActivity saveProjectActivity(AONContext ctx, ProjectActivity projectActivity) {
+		return ctx.getDslContext().transactionResult(configuration -> ProjectActivityDAO.save(ctx, projectActivity));
 	}
 }

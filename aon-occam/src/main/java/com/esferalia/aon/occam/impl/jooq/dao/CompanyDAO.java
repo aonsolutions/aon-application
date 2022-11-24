@@ -28,6 +28,7 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.SelectSeekStep1;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.Domain;
@@ -87,6 +88,9 @@ public class CompanyDAO {
 		@Override public Property<Byte> getVatAccrualPaymentProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.VAT_ACCRUAL_PAYMENT);}
 		@Override public Property<Byte> getEInvoiceProperty() {return new FilterDAO.PropertyDAO<>(COMPANY.E_INVOICE);}
  		@Override public Property<Integer> getDomainParentProperty() {return new FilterDAO.PropertyDAO<>(Domain.DOMAIN.PARENT);}
+ 		
+ 		@Override public Property<Byte> getUserSharedProperty() {return new FilterDAO.PropertyDAO<>(USER.SHARED);}
+ 		@Override public Property<Byte> getDomainTypeProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.TYPE);}
 	}
 	
 	public static class CompanyFiller implements Function<Record, Company> {
@@ -388,7 +392,49 @@ public class CompanyDAO {
 			.orderBy(REGISTRY.NAME)
 			.fetch().stream().map(new AonCompanyFiller());
 	}
-
+	
+	
+	public static Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth,  CompanyFilter filter, Integer page, Integer perPage){
+		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
+		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
+		
+		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
+		
+		SelectSeekStep1<Record, String> query = ctx.getDslContext()
+		.select(COMPANY.fields())
+			.select(DOMAIN.fields())
+			.select(REGISTRY.fields())
+			.select(REGISTRY.fields())
+			.select(parent.ID, parent.NAME)
+			.select(USER.SHARED)
+			.select(APP_PARAM.VALUE)
+		.from(COMPANY)
+		.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
+		.join(DOMAIN).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
+		.join(USER).on(USER.DOMAIN.eq(DOMAIN.ID).or(USER.DOMAIN.eq(DOMAIN.PARENT)))
+		.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
+		.leftOuterJoin(APP_PARAM).on(DOMAIN.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
+		.leftOuterJoin(parent).on(DOMAIN.PARENT.eq(parent.ID))
+		.where(COMPANY_PROPERTIES.getConditions(filter))
+		.and(
+			USER.AUTH.eq(auth)
+			.and(
+					DOMAIN.ID.in(domains)
+				.or(
+					DOMAIN.PARENT.in(domains)
+					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes)))
+				)
+			)
+		)
+		.orderBy(REGISTRY.NAME);
+			
+		if(page!=null && perPage!=null) {
+			query.limit(perPage).offset(perPage * (page -1));
+		}
+		
+		return query.fetch().stream().map(new AonCompanyFiller());
+	}
+	
 	public static LinkedList<CompanyBank> getBanks(AONContext ctx,int enterprise) {
 		LinkedList<CompanyBank> list = new LinkedList<>();
 		list.addAll(

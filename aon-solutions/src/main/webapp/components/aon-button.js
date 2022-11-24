@@ -1,5 +1,4 @@
 import {AonElement} from './AonElement.js';
-import {icons} from '../assets/icons/icons.js';
 import { CONSTANT, CSS, TAG } from '../environments/environments.js';
 
 export class AonButton extends AonElement {

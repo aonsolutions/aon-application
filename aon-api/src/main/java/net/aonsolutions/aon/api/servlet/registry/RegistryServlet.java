@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.PayMethodJSON;
 import com.esferalia.aon.occam.api.json.RecordDataJSON;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
@@ -18,7 +19,9 @@ import com.esferalia.aon.occam.api.json.RegistryBankJSON;
 import com.esferalia.aon.occam.api.json.RegistryJSON;
 import com.esferalia.aon.occam.api.json.RegistryMediaJSON;
 import com.esferalia.aon.occam.api.json.RegistryPaymethodJSON;
+import com.esferalia.aon.occam.api.json.RegistryRelationshipJSON;
 import com.esferalia.aon.occam.api.json.RegistrySegmentJSON;
+import com.esferalia.aon.occam.api.model.Filter.RRelationshipFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistrySegmentFilter;
@@ -178,6 +181,13 @@ public class RegistryServlet extends AonApiHttpServlet {
 						RegistrySegmentJSON.toJSON(AON.getRegistrySegmentStream(api.getDomain(), api.getUser(), filter))
 					);
 				}
+				
+				if(RegistryAdditionalInfo.RRELATIONSHIP.equals(rai)) {
+					RRelationshipFilter filter  = f -> f.getRegistryProperty().eq(registryId).and(f.getRelationshipProperty().eq(-1));
+					object.put(rai.name().toLowerCase(),
+						RegistryRelationshipJSON.toJSON(AON_SOLUTIONS.getRegistryRelationshipStream(api.getDomain(), api.getUser(), filter))
+					);
+				}
 			});
 		}
 		return object;
@@ -230,9 +240,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 		if(json.opt(RegistryAdditionalInfo.RSEGMENT.name().toLowerCase()) != null) {
 			JSONArray arr = json.optJSONArray(RegistryAdditionalInfo.RSEGMENT.name().toLowerCase());
 			RegistrySegmentJSON.fromJSON(arr)
-			.stream()
-			.filter(s-> !s.getSegment().isEmpty())
-			.forEach(rsegment -> {
+			.stream().filter(s-> !s.getSegment().isEmpty()).forEach(rsegment -> {
 				if(rsegment.getRegistry() == null) rsegment.setRegistry(registryId);
 				AON.saveRegistrySegment(rsegment.getDomain(), api.getUser(), rsegment);
 			});

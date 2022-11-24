@@ -3,7 +3,7 @@ import * as ACTION from '../actions.js';
 import { CSS, EVENT, MATERIAL_ICONS, MSG, TAG} from '../../environments/environments.js';
 import { AonTable } from '../../components/aon-table.js';
 import { AonProject } from './aon-project.js';
-import { deleteProject, getProjects, getProjectTypes, saveProject } from '../../services/projectService.js';
+import { deleteProject, getActivitiesType, getProjects, getProjectTypes, saveProject } from '../../services/projectService.js';
 import { AonIconButton } from '../../components/aon-icon-button.js';
 import { AonHolderSimpleList} from './aon-holder-simple-list.js';
 import { ProjectUtils } from './ProjectUtils.js';
@@ -77,8 +77,9 @@ export class AonProjectList extends AonElement {
 
 		div.appendChild(this.TABLE);
 		this.TABLE.addColumn(MSG.TYPE, 'string', 'typeName', '30%');
-		this.TABLE.addColumn(MSG.DATE, 'date', 'date', '20%');
 		this.TABLE.addColumn("Asignados", 'list', 'projectHolders', '30%');
+		this.TABLE.addColumn("Actividades", 'list', 'projectActivities', '20%');
+		this.TABLE.addColumn(MSG.DATE, 'date', 'date', '20%');
 		this.TABLE.addColumnIcon({title:MSG.ADD+" expediente", name:MATERIAL_ICONS.ADD, type:"string", width:"5%", id:"option"}, 
 		()=>{
 			let project = new Project();
@@ -135,9 +136,15 @@ export class AonProjectList extends AonElement {
 			.map(p =>{
 				p.typeName = p.type.description;
 				p.registryName = p.registry.name;
+
 				if(p.projectHolders && p.projectHolders.length){
 					p.projectHolders = p.projectHolders.map(holder => this.parseHolderData(holder));
 				}
+
+				if(p.projectActivities && p.projectActivities.length){
+					p.projectActivities = p.projectActivities.map(activity => ({...activity, name:activity.activityType.description, icon:MATERIAL_ICONS.HDR_AUTO}));
+				}
+
 				return p;
 			});
 		} catch (error) {
@@ -240,12 +247,7 @@ export class AonProjectList extends AonElement {
 		holderList.addEventListener(EVENT.CHANGE,() => {
 			this.init();
 		});
-
-		// let projectHolders = project.projectHolders;
-		// if(projectHolders && projectHolders.length){
-		// 	holderList.setData(projectHolders);
-		// }
-  
+		
         return holderList;
     }
 
@@ -344,6 +346,17 @@ export class AonProjectList extends AonElement {
 			this.taskHolders = ths.map((r) => ({...r, value: r.id}))
 		} 
 		return this.taskHolders;
+	}
+
+
+	async getActivitiesType(){
+		const activities = await getActivitiesType()
+		.catch((error)=> {
+			this.showError(error);
+			return [];
+		});
+		this.activitiesType = activities.map(a=> ({...a, value:a.id, name:a.description}));
+		return this.activitiesType;
 	}
 }
 

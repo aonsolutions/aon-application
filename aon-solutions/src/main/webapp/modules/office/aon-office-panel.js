@@ -1,8 +1,8 @@
 import {AonElement} from '../../components/AonElement.js';
 import { AonApplication } from '../../components/aon-application.js';
 import { OfficeEnums } from './OfficeEnums.js';
-import { MSG } from '../../environments/environments.js';
-import { getProjectTypes, saveProject} from '../../services/projectService.js';
+import { EVENT, MATERIAL_ICONS, MSG } from '../../environments/environments.js';
+import { deleteActivityType, getActivitiesType, getProjectTypes, saveProject} from '../../services/projectService.js';
 import { DocumentalSidenav } from '../documental/DocumentalEnums.js';
 import { AonCustomer } from '../registry/customer/aon-customer.js';
 import { AonCustomerList } from '../registry/customer/aon-customer-list.js';
@@ -12,12 +12,15 @@ import { OfficeUtils } from './OfficeUtils.js';
 import { getTastHolders } from '../../services/taskHolderService.js';
 import { getWorkgroups } from '../../services/workgroupService.js';
 import { ProjectUtils } from '../project/ProjectUtils.js';
+import { saveRelationShip } from '../../services/registryService.js';
 
 export class AonOfficePanel extends AonElement {
     projectTypes;
     workgroups;
     taskHolders;
+    activitiesType;
     customerSelected;
+    customerSelectedAll;
 
     filterCustomers;
     
@@ -26,10 +29,17 @@ export class AonOfficePanel extends AonElement {
     }
 
     getCustomerSelected(){
-        return this.customerSelected
-        .filter((value,index) => // remove repeated customersSelected
+        return this.customerSelected.filter((value,index) => // remove repeated customersSelected
             this.customerSelected.findIndex((m) => m.id === value.id) === index 
         ) 
+    }
+
+    setCustomerSelectedAll(customerSelectedAll){
+        this.customerSelectedAll = customerSelectedAll;
+    }
+
+    getCustomerSelectedAll(){
+        return this.customerSelectedAll;
     }
 
     addFilterCustomers(filter){
@@ -50,8 +60,8 @@ export class AonOfficePanel extends AonElement {
 
 	connectedCallback () {
 		this.initialize();
-    	this.build();
- 	}
+        this.build();
+    }
 
 	initialize(){
 		this.id = this.id || OfficeEnums.OfficeViews.AON_OFFICE_PANEL;
@@ -63,11 +73,11 @@ export class AonOfficePanel extends AonElement {
         this.setFilterCustomers({
             page: 1,
             perPage:50,
-            status:["ACTIVE", "BLOCKED"]
+            status:["ACTIVE", "BLOCKED"],
         });
 	}
 
- 	build() {
+    build() {
         this.createApplication(this.id, MSG.OFFICE, new AonApplication());
         this.buildSidenav();
 
@@ -78,7 +88,7 @@ export class AonOfficePanel extends AonElement {
         const application = this.getApplication();
 
         const {OfficeViews, OfficeOptions} = OfficeEnums;
- 
+
         let options = [];
 
         let customer = OfficeOptions.AON_CUSTOMER;
@@ -91,46 +101,189 @@ export class AonOfficePanel extends AonElement {
 
         application.addSidenavOptions(MSG.OFFICE, options);
 
-        application.addSidenavOptions2({...DocumentalSidenav.TYPES, name:"Tipos de expediente"}, [], () => ProjectUtils.buildDialogProjectType(this));
+        application.addSidenavOptions2({...DocumentalSidenav.TYPES, name:"Tipos de expediente"}, [], ({target}) =>
+            this.getApplication().buildOptionsMenu(target, [
+                {
+                    name: "Añadir expediente",
+                    icon: MATERIAL_ICONS.OPEN_IN_NEW,
+                    fn: () => ProjectUtils.buildDialogProjectType(this)
+                },
+                {
+                    name: "Añadir actividad",
+                    icon: MATERIAL_ICONS.OPEN_IN_NEW,
+                    fn: () => ProjectUtils.buildDialogActivityType(this)
+                },
+            ])
+        );
+
         this.loadProjectType();
     }
     
-    loadProjectType() {
-        getProjectTypes({})
-        .then(types => {
-            this.projectTypes = (types || []).map((r) => ({...r, name: r.description, value: r.id}));
-            
-            this.clearElementById(this.getApplication().SIDENAV + DocumentalSidenav.TYPES.id + 'List');
-            types.forEach(item => {
-                let option = {
-                    name: item.description,
-                    icon: 'label',
-                    fn: () => {}, 
+    async loadProjectType() {
+        const [types, activitiesType] = await Promise.all([
+            getProjectTypes({}),
+            getActivitiesType({})
+        ]);
+
+        this.projectTypes = (types || []).map((r) => ({...r, name: r.description, value: r.id}));
+        this.activitiesType = (activitiesType || []).map((r) => ({...r, name: r.description, value: r.id}));
+
+
+        this.loadActivitiesType();
+
+        this.clearElementById(this.getApplication().SIDENAV + DocumentalSidenav.TYPES.id + 'List');
+    
+        this.projectTypes.forEach(item => {
+            let option = {
+                name: item.description,
+                icon: MATERIAL_ICONS.LABEL,
+                actions: [{
+                        id: MATERIAL_ICONS.MORE_VERT,
+                        icon:  MATERIAL_ICONS.MORE_VERT,
+                        action: ({target}) => this.getApplication().buildOptionsMenu(target, [
+                            {
+                                name: "Añadir actividad",
+                                icon: MATERIAL_ICONS.OPEN_IN_NEW,
+                                fn: () => ProjectUtils.buildDialogActivityType(this, null, item.id)
+                            },
+                            {
+                                name: MSG.EDIT,
+                                icon: MATERIAL_ICONS.EDIT,
+                                fn: () => ProjectUtils.buildDialogProjectType(this, item)
+                            },
+                            {
+                                name: MSG.DELETE,
+                                icon:  MATERIAL_ICONS.DELETE,
+                                fn: () => ProjectUtils.projectTypeDelete(this, item)
+                            }
+                        ])
+                }]
+            };
+
+            const opt = this.activitiesType.filter(a=> a.projectType == item.id);
+            if(opt.length){
+                option.options = opt.map(activity=>({
+                    name: activity.description,
+                    icon: MATERIAL_ICONS.HDR_AUTO,
                     actions: [{
-                      id: 'Delete',
-                      icon: 'delete',
-                      action: () => ProjectUtils.projectTypeDelete(this, item)
-                    },{
-                      id: 'Edit',
-                      icon: 'edit',
-                      action: () => ProjectUtils.buildDialogProjectType(this, item)
+                        id: MATERIAL_ICONS.MORE_VERT+"2",
+                        icon:  MATERIAL_ICONS.MORE_VERT,
+                        action: ({target}) => this.getApplication().buildOptionsMenu(target, [
+                            {
+                                name: MSG.EDIT,
+                                icon: MATERIAL_ICONS.EDIT,
+                                fn: () => ProjectUtils.buildDialogActivityType(this, activity, activity.projectType)
+                            },
+                            {
+                                name: MSG.DELETE,
+                                icon:  MATERIAL_ICONS.DELETE,
+                                fn: () => {
+                                    this.getApplication().confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
+                                        this.getApplication().startLoading();
+                                        try {
+                                            await deleteActivityType(activity);
+                                            this.showToast({ message: MSG.DELETED_DATA });
+                                            this.loadProjectType();
+                                        } catch (error) {
+                                            this.showToast(error);
+                                        }
+                                        this.getApplication().stopLoading();
+                                    });
+                                }
+                            }
+                        ])
                     }]
-                };
-                this.getApplication().addSidenavOptionsListValue(DocumentalSidenav.TYPES, option);
-           });
-       });
+                }));
+            }
+            
+            this.getApplication().addSidenavOptionsListValue(DocumentalSidenav.TYPES, option);
+        });
+    }
+
+    loadActivitiesType(){
+        let sidenav = this.getElement(this.getApplication().SIDENAV + "ActivitiesAll");
+        if(sidenav) sidenav.remove();
+        
+        const opt = this.activitiesType.filter(a=> !a.projectType );
+        if(opt.length){
+            let options = opt.map(activity=>({
+                name: activity.description,
+                icon: MATERIAL_ICONS.SHARE,
+                actions: [{
+                    id: MATERIAL_ICONS.MORE_VERT+"2",
+                    icon:  MATERIAL_ICONS.MORE_VERT,
+                    action: ({target}) => this.getApplication().buildOptionsMenu(target, [
+                        {
+                            name: MSG.EDIT,
+                            icon: MATERIAL_ICONS.EDIT,
+                            fn: () => ProjectUtils.buildDialogActivityType(this, activity, activity.projectType)
+                        },
+                        {
+                            name: MSG.DELETE,
+                            icon:  MATERIAL_ICONS.DELETE,
+                            fn: () => {
+                                this.getApplication().confirmDialog(MSG.DELETE, MSG.DELETE_CONFIRM, async()=>{
+                                    this.getApplication().startLoading();
+                                    try {
+                                        await deleteActivityType(activity);
+                                        this.showToast({ message: MSG.DELETED_DATA });
+                                        this.loadProjectType();
+                                    } catch (error) {
+                                        this.showToast(error);
+                                    }
+                                    this.getApplication().stopLoading();
+                                });
+                            }
+                        }
+                    ])
+                }]
+            }));
+
+            this.getApplication().addSidenavOptions2({id:"ActivitiesAll", name:"Otras actividades"}, options, ()=> {
+                ProjectUtils.buildDialogActivityType(this)
+            });
+
+        }
     }
 
     addCustomerListSelectable(view){
         const application = this.getApplication();
         view.selectable = true;
-        view.addEventListener("select", ({detail}) => {
-            let {table:{selected}} = detail;
+        view.addEventListener(EVENT.SELECT, ({detail}) => {
+            let {table:{selected, selectedAll}} = detail;
 
             this.setCustomerSelected(selected);
+            this.setCustomerSelectedAll(selectedAll);
 
             if(selected.length > 0 ) {
-                application.addToolbarOption2(OfficeEnums.OfficeSidenav.ADD_FOLDER, () => OfficeUtils.buildDialog(this));
+                application.addToolbarOption2(OfficeEnums.OfficeSidenav.MORE_VERT, ({target}) => {
+                    application.buildOptionsMenu(target, [
+                        { 
+                            name: "Asignar expediente", 
+                            value: "assignedExpediente",
+                            icon: MATERIAL_ICONS.OPEN_IN_NEW, 
+                            fn:()=> {
+                                OfficeUtils.buildDialogExpediente(this);
+                            }
+                        },
+                        { 
+                            name: "Vincular empresa", 
+                            value: "LINK",
+                            icon:  MATERIAL_ICONS.LINK, 
+                            fn:()=> {
+                                this.onSaveRelationByCustomers(true);
+                            }
+                        },
+                        { 
+                            name: "Desvincular Empresa", 
+                            value: "UNLINK",
+                            icon: MATERIAL_ICONS.LINK_OFF, 
+                            fn:()=> {
+                                this.onSaveRelationByCustomers(false);
+                            }
+                        }
+                    ]);
+                });
 			} else {
                 this.removeActionFolder();
 			}   
@@ -139,9 +292,10 @@ export class AonOfficePanel extends AonElement {
 
     removeActionFolder(){
         this.setCustomerSelected([]);
-        this.getApplication().removeToolbarOption(OfficeEnums.OfficeSidenav.ADD_FOLDER);
+        this.setCustomerSelectedAll(false);
+        this.getApplication().removeToolbarOption(OfficeEnums.OfficeSidenav.MORE_VERT);
     }
- 
+
     async onSaveExpedientes(project){
         let selected = this.getCustomerSelected();
         let projects = selected
@@ -155,6 +309,38 @@ export class AonOfficePanel extends AonElement {
 
             this.showMessage();
         }
+    }
+    
+	onSaveRelationByCustomers(add){
+        const aonView = this.getElement(OfficeEnums.OfficeViews.AON_CUSTOMER_LIST);
+
+        if(aonView){
+            this.getApplication().startLoading();
+    
+            saveRelationShip({ add, customers: this.getCustomerSelected() })
+            .then((resp)=> {
+                if(resp.length){
+                    OfficeUtils.builDialogRelationship(this, resp);
+                } else {
+                    this.showMessage(); 
+                }
+        
+                const table = aonView.TABLE;
+                if(table){
+                    table.clearSelected();
+                    aonView.setFilter({...this.getFilterCustomers(), page:1 });
+                    this.setCustomerSelected([]);
+                }
+            })
+            .catch((err)=> this.showError(err))
+            .finally(()=>{
+                this.getApplication().stopLoading();
+            });
+        }
+	}
+
+    openDialogRelationship(data){ //DELETE
+        OfficeUtils.builDialogRelationship(this, data) 
     }
 
     async getProjectTypes(){
@@ -230,9 +416,8 @@ export class AonOfficePanel extends AonElement {
                         aonView.data = data;
                     }
                 }
-          
-				application.setContent(aonView);
 
+				application.setContent(aonView);
 
                 if([officeViews.AON_CUSTOMER_LIST].includes(view) && aonView.buildToolbar){
                     aonView.buildToolbar();

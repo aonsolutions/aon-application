@@ -104,10 +104,16 @@ class InvoiceModelReportPanel extends ScrollPanel{
 						if (ifm.getModels() != null) {
 							ifm.getModels().stream()
 							.forEach(model -> {
-								InlineLabel modelLabel = new InlineLabel( model.getModelFullName());
+								String labelText = FiscalModelUtils.getModelName(model)
+									+ " "
+									+ ((model.getPeriod().isQuarterPeriod() || model.getPeriod().isMonthPeriod())
+											? model.getPeriod().getName():"");
+								InlineLabel modelLabel = new InlineLabel( labelText );
+								modelLabel.setTitle( model.getModelFullName() );
 								modelLabel.addStyleName(AON.CSS.aonClickableLabel());
 								modelLabel.addStyleName(AON.CSS.aonMarginLeft());
 								modelLabel.addStyleName(AON.CSS.aonBorder());
+								modelLabel.addStyleName(AON.CSS.aonBold());
 								modelLabel.getElement().getStyle().setMarginTop(1.0, Unit.PX);
 								modelLabel.getElement().getStyle().setMarginBottom(1.0, Unit.PX);
 								modelLabel.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB( model.getStatus() ));

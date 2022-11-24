@@ -8,6 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	// MVEL expresions syntax check en las declaraciones
 	Mod115ExpressionsTest.class,
+	Mod115ScriptTest.class,
 	
 	// Modelos mensuale
 	Mod115ReopenTest.class,

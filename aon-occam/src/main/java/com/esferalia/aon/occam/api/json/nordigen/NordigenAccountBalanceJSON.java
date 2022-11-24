@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.json.nordigen.NordigenJSONFunctionalInterface
 import com.esferalia.aon.occam.api.model.finance.nordigen.NORDIGEN_BALANCE_TYPE;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountBalance;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum NordigenAccountBalanceJSON {
 	BALANCE_AMOUNT(
@@ -22,8 +23,12 @@ public enum NordigenAccountBalanceJSON {
 			(balance, json) -> json.put("balanceType", balance.getBalanceType() != null ? balance.getBalanceType().getValue() : null)
 	),
 	REFERENCE_DATE(
-			(agreement, json) -> agreement.setReferenceDate(AonDateUtils.parse(json.optString("referenceDate", null), AonDateUtils.SIMPLE_DATE_FORMAT4)),
-			(agreement, json) -> json.put("referenceDate", AonDateUtils.format(agreement.getReferenceDate(), AonDateUtils.SIMPLE_DATE_FORMAT4))
+			(balance, json) -> balance.setReferenceDate(AonDateUtils.parse(json.optString("referenceDate", null), AonDateUtils.SIMPLE_DATE_FORMAT4)),
+			(balance, json) -> json.put("referenceDate", AonDateUtils.format(balance.getReferenceDate(), AonDateUtils.SIMPLE_DATE_FORMAT4))
+	),
+	ORIGINAL_JSON(
+			(balance, json) -> balance.setOriginalJson(AonStringUtils.isNotBlank(json.optString("originalJson")) ? json.optString("originalJson") : json.toString(4)),
+			(balance, json) -> json.put("originalJson", balance.getOriginalJson())
 	)
 	;
 	private INordigenAccountBalanceFromJSON fromJSON;

@@ -56,7 +56,7 @@ public class UdapaPfondoUpdateFix implements Update {
 	
 	private void updatePfondo(DSLContext dslContext, List<Integer> ids) {
 		dslContext.update(DataResponseDetail.DATA_RESPONSE_DETAIL)
-			.set(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VALUE, "0.32")
+			.set(DataResponseDetail.DATA_RESPONSE_DETAIL.DATA_VALUE, "0.356")
 			.where(DataResponseDetail.DATA_RESPONSE_DETAIL.ID.in(ids)).execute();
 	}
 	

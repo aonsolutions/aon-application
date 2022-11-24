@@ -78,7 +78,7 @@ public class Model193 extends MainEntryPoint {
 
 		@Override
 		public void onNew() {
-			newModel(getOptions(), 2021);
+			newModel(getOptions(), 2022);
 		}
 
 		@Override

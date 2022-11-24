@@ -1,11 +1,10 @@
 import { AonElement } from "./AonElement.js";
-import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS } from '../environments/environments.js';
 import { AonIconButton } from "./aon-icon-button.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
 import { AonIcon } from "./aon-icon.js";
 
 export class AonSimpleList extends AonElement {
- 
   UL;
   filter;
 
@@ -52,13 +51,13 @@ export class AonSimpleList extends AonElement {
     if(aonAplication){
       let content = aonAplication.getContent();
       if (content)
-        content.addEventListener("scroll", () => {
+        content.addEventListener(EVENT.SCROLL, () => {
           let scrollTop = content.scrollTop;
           let offsetHeight = content.offsetHeight;
           let physicalSize = content.scrollHeight;
           let maxScrollPosition = physicalSize - offsetHeight;
           if (scrollTop >= maxScrollPosition) {
-            this.dispatchEvent(new CustomEvent("more"));
+            this.dispatchEvent(new CustomEvent(EVENT.MORE));
           }
         });
     }
@@ -68,7 +67,6 @@ export class AonSimpleList extends AonElement {
     let li = this.createElement(TAG.LI);
     li.className = "aonLi aonAppLi";
     li.style.height = '48px';
-
     li.addEventListener(EVENT.CLICK, fn);
 
     let span = this.createElement(TAG.SPAN);
@@ -81,35 +79,46 @@ export class AonSimpleList extends AonElement {
       aonIcon.size      = "24";
       spanHtml = aonIcon.outerHTML;
     } else if (data.icon) {
-      let ic = this.createElement("i");
-      ic.classList.add(data.icon_class||"material-icons","aonAvatar");
+      let ic = this.createElement(TAG.I);
+      ic.classList.add(data.icon_class|| CONSTANT.MATERIAL_ICONS, "aonAvatar");
       ic.textContent = data.icon;
       if(data.icon_color) ic.style.color = data.icon_color;
       spanHtml = ic.outerHTML;
+    }  else if (data.iconHTML) {
+      spanHtml = data.iconHTML.outerHTML;
+      span.style.display = "flex";
     } else if (data.iconHtmlCustom) {
       spanHtml = `${data.iconHtmlCustom}`;
       span.style.display = "flex";
     }
+
     span.innerHTML = spanHtml;
 
-    let remove = this.createElement("i");
-    remove.classList.add("material-icons");
-    remove.classList.add("aonAvatar");
-    remove.textContent = icon;
-    remove.style.display = 'none';
-    remove.style.position = 'absolute';
-    remove.style.right = '0px';
-    remove.addEventListener(EVENT.CLICK, iconFn);
-    span.appendChild(remove);
+    if(icon){
+      let remove = this.createElement(TAG.I);
+      remove.classList.add(CONSTANT.MATERIAL_ICONS);
+      remove.classList.add("aonAvatar");
+      remove.textContent = icon;
+      remove.style.display = 'none';
+      remove.style.position = 'absolute';
+      remove.style.right = '0px';
+      remove.addEventListener(EVENT.CLICK, iconFn);
+      span.appendChild(remove);
+      
+      li.addEventListener(EVENT.MOUSEOVER, () => remove.style.display  = 'block');
+      li.addEventListener(EVENT.MOUSELEAVE, () => remove.style.display = 'none');
+  
+    }
 
-    li.addEventListener(EVENT.MOUSEOVER, () => remove.style.display = 'block');
-    li.addEventListener(EVENT.MOUSELEAVE, () => remove.style.display = 'none');
 
     let div = this.createElement(TAG.DIV);
     div.className = "aonListText";
     div.style.marginTop = '10px';
-    if(data.paddingTopTitle) div.style.paddingTop = data.paddingTopTitle;
     div.innerHTML = data.title;
+    
+    if(data.paddingTopTitle) {
+      div.style.paddingTop = data.paddingTopTitle;
+    }
 
     span.appendChild(div);
 
@@ -121,22 +130,30 @@ export class AonSimpleList extends AonElement {
       div.appendChild(span3);
     }
 
-
     li.appendChild(span);
 
     ///OPTIONS
     if (data.option) {
       let span4 = this.createElement(TAG.SPAN);
       span4.className = "aonListMoreVert";
+      span4.style.top = "0px";
+      div.appendChild(span4);
+
       let aonIconButton = new AonIconButton();
       aonIconButton.id = this.id+"IconOption";
-      aonIconButton.icon = "more_vert";
+      aonIconButton.icon = MATERIAL_ICONS.MORE_VERT;
       span4.appendChild(aonIconButton);
+
       span4.addEventListener(EVENT.CLICK, (ev) => {
+        ev.preventDefault();
         ev.stopPropagation();
         this.getOptions(span4, data.option);
       });
-      li.appendChild(span4);
+    }
+
+    //ELEMENT HTML
+    if (data.elementHTML) {
+      div.appendChild(data.elementHTML);
     }
 
     this.getElement(this.UL).appendChild(li);
@@ -151,32 +168,41 @@ export class AonSimpleList extends AonElement {
 
   createAonDialog() {
     const id = this.id + "aonDialogAddOption";
-    let div = this.createElement(TAG.DIV);
+    
+    const div = this.createElement(TAG.DIV);
+    this.appendChild(div);
+
     let aonDialogM = new AonDialogMenu();
     aonDialogM.id = id;
     div.appendChild(aonDialogM);
-    if (this) this.appendChild(div);
+
+    return aonDialogM;
+  }
+
+  getDialogMenu(){
+    return this.getElement(this.id + "aonDialogAddOption");
   }
 
   getOptions(el, options) {
-    const top = el.getBoundingClientRect().top;
-    const left = el.getBoundingClientRect().left;
-    let d = this.getElement(this.id + "aonDialogAddOption");
-    options = options.map(({ aonIcon, icon, name, fn }) => {
-      return {
+    const boundingClientRect = el.getBoundingClientRect();
+    const top = boundingClientRect.top;
+    const left = boundingClientRect.left;
+
+    const d = this.getDialogMenu() || this.createAonDialog();
+
+    options = options.map(({ aonIcon, icon, name, fn }) => ({
         aonIcon,
         icon,
         name,
         fn: () => fn(el),
-      };
-    });
+    }));
 
     d.setMenuOptions(options, top, left);
     d.open();
   }
 
   getFilter() {
-      return this.filter || {};
+    return this.filter || {};
   }
 
   setFilter(filter) {

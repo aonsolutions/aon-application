@@ -37,6 +37,10 @@ class InvoiceRecordTest extends AonHibernateTestBasic {
 		bean.getList( c )
 			.stream()
 			.map( to -> (Invoice) to)
+			.map( to -> {
+				System.out.println( to.getDocumentNumber());
+				return to;
+			})
 			.forEach( inv->  assertDoesNotThrow( () ->  getAccountEntryInvoiceWriter().recordAndUpdateInvoice( inv )) );
 		List<ITransferObject> list =  bean.getList( c );
 		Asserts.assertEmptyCollection("Quedan facturas sin contabilizar", list);

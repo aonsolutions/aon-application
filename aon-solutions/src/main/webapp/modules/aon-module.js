@@ -5,11 +5,13 @@ import { AonHome } from './aon-home.js';
 import { TAG } from '../environments/environments.js'; 
 import * as LS  from '../services/localStorageService.js';
 import './company/aon-mobile-parent.js';
+import { AonLoader } from '../components/aon-loader.js';
 
 export class AonModule extends AonElement {
 
 	AON_LOGIN;
 	AON_HOME;
+	AON_MODULE_LOADER;
 
 	constructor () {
 		super();
@@ -23,7 +25,9 @@ export class AonModule extends AonElement {
 	initialize(){
 		this.AON_LOGIN = 'aonLogin';
 		this.AON_HOME = 'aonHome';
+		this.AON_MODULE_LOADER = 'aonModuleLoader';
 	}
+	
 
 	buildLogin(){
 		this.clear();
@@ -37,7 +41,18 @@ export class AonModule extends AonElement {
 		let home = new AonHome();
 		home.id = this.AON_HOME;
 		this.appendChild(home);
+		let loader = new AonLoader();
+		loader.id = this.AON_MODULE_LOADER;
+		this.appendChild(loader);
 		this.orientationLocked();
+	}
+
+	startLoading() {
+		this.getElement(this.AON_MODULE_LOADER).startLoading();
+	}
+
+	stopLoading() {
+		this.getElement(this.AON_MODULE_LOADER).stopLoading();
 	}
 
 	async load() {
@@ -46,16 +61,29 @@ export class AonModule extends AonElement {
 			LS.removeDomain();
 			this.buildHome();
 
-			getCompanies().then(companies => {
-				if(companies.length === 1){
-					this.companySelection(companies[0], true);
-				} else {
-					this.getElement(this.AON_HOME).showMenu(false);
-					this.rootPanelHtml(this.isMobile()
-					 	? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
-					 	: '<aon-parent id="aonParent"></aon-parent>');
-				}
-			});
+			if(this.isMobile() && LS.getCompany()) {
+				this.companySelection(LS.getCompany(), false);
+				let home = this.getElement(this.AON_HOME);
+				let aonHeader = this.getElement(home.AON_HEADER);
+				let companyListButton = this.getElement(aonHeader.COMPANY_LIST_BUTTON);
+				companyListButton.setDisabled(true);
+				companyListButton.color = 'lightgray';
+				getCompanies().then(() => {
+					 companyListButton.setDisabled(false);
+					 companyListButton.color = 'white';
+				});
+			} else {
+				getCompanies().then(companies => {
+					if(companies.length === 1){
+						this.companySelection(companies[0], true);
+					} else {
+						this.getElement(this.AON_HOME).showMenu(false);
+						this.rootPanelHtml(this.isMobile()
+						 	? '<aon-mobile-parent id="aonParent"></aon-mobile-parent>'
+						 	: '<aon-parent id="aonParent"></aon-parent>');
+					}
+				});
+			}
 		} else {
 			this.buildLogin();
 		}

@@ -21,6 +21,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
@@ -166,9 +167,6 @@ public class AonHibernateTestFaker {
 			} else {
 				item =  getServiceItem();
 			}
-			if (item == null) {
-				System.out.println( "NULL ITEM");
-			}
 			detail.setItem( item );
 			detail.setDescription(item.getFullName());
 			detail.setQuantity(AonHibernateTestRandom.getDouble(0, 10));
@@ -197,6 +195,7 @@ public class AonHibernateTestFaker {
 	//		detail.setSource(InvoiceSource.DIRECT_INVOICE);
 			detail.setPrepayment(AonHibernateTestRandom.gt(98));
 			detail.setTaxableBase(getPriceStrategy().getBasePrice(detail));
+			detail.setSource(InvoiceSource.DIRECT_INVOICE);
 			details.add(detail);
 		}
 		return details;

@@ -55,35 +55,34 @@ public class Traspaso {
 
 					// Calendarios
 					TraspasoCalendarios.execute(dsiConn, ctx);
-
 				});
-
+				
 			}
 			
+			// Empresas y Trabajadores
 			TraspasoEmpresas.execute(dsiConn, domainName, parentDom, user);
-			
-			Date date2 = new Date();
-			info("HORA FIN = " + date2);
-			long diff = date2.getTime() - date1.getTime();
-			info("DURACION DEL TRASPASO = " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg.");
-			info("[FIN DEL TRASPASO]");
 
 		} catch (Exception e) {
 			try {
 				error("ERROR:");
 				error(e.getClass().getSimpleName() + ": " + e.getMessage());
-				
-				Date date2 = new Date();
-				info("HORA FIN = " + date2);
-				long diff = date2.getTime() - date1.getTime();
-				info("DURACION DEL TRASPASO = " + (diff / (60 * 1000) % 60) + " min. " + (diff / 1000 % 60) + " seg.");
 				error("[EL TRASPASO NO SE HA COMPLETADO]");
 				throw e.getCause();
 			} catch (Throwable throwable) {
 				throw e;
 			}
-		}
-		
+		} finally {
+			Date date2 = new Date();
+			info("HORA FIN = " + date2);
+			
+			long diff = (date2.getTime() - date1.getTime()) / 1000;  // Segundos totales
+			long hour = diff / 3600;
+			long minute = (diff % 3600) / 60;
+			long second = (diff % 3600) % 60;
+			info("DURACION DEL TRASPASO = " + hour + "h " + minute + "m " + second + "s");
+			
+			info("[FIN DEL TRASPASO]");
+		}		
 
 	}
 

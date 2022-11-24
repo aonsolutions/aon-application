@@ -13,6 +13,7 @@ public class EnterpriseContext implements Serializable {
 	private ActivitiesCCC activitiesCCC;
 	private List<Agreement> agreements;
 	private Map<String, String> payMethods;
+	private Map<Integer, String> scopes;
 	
 	public EnterpriseContext() {
 		super();
@@ -55,6 +56,15 @@ public class EnterpriseContext implements Serializable {
 
 	public EnterpriseContext setPayMethods(Map<String, String> payMethods) {
 		this.payMethods = payMethods;
+		return this;
+	}
+	
+	public Map<Integer, String> getScopes() {
+		return scopes;
+	}
+
+	public EnterpriseContext setScopes(Map<Integer, String> scopes) {
+		this.scopes = scopes;
 		return this;
 	}
 	

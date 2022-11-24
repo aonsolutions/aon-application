@@ -196,8 +196,8 @@ class Model390HFTable extends SimpleLayoutPanel implements HasSelectionHandlers<
 				.addCell( sust , AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod390HF.getDocument()))
 				.addCell( new InlineLabel(mod390HF.getFullName()))
-				.addCell( new InlineLabel(AON.FMT.format(mod390HF.getResult())), AON.CSS.aonTextRight())
-				.addCell( new InlineLabel(mod390HF.getDeclarationType() == null ? "" : mod390HF.getDeclarationType().getDescription()))
+				.addCell( new InlineLabel(AON.FMT.format(mod390HF.getDeclarationResult())), AON.CSS.aonTextRight())
+				.addCell( new InlineLabel(mod390HF.getDeclarationResultType() == null ? "" : mod390HF.getDeclarationResultType().getDescription()))
 				.addCell( new InlineLabel(
 						(mod390HF.getFinance() != null && mod390HF.getFinance().getFinanceStatus() != null)
 							?mod390HF.getFinance().getFinanceStatus().getDescription()

@@ -190,6 +190,16 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface RRelationshipFilter{
+		Filter filter(RRelationshipProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface RelationshipFilter{
+		Filter filter(RelationshipProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface SegmentFilter{
 		Filter filter(SegmentProperties properties);
 	}
@@ -316,8 +326,18 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface ProjectActivityFilter{
+		Filter filter(ProjectActivityProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface ProjectTypeFilter{
 		Filter filter(ProjectTypeProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface ActivityTypeFilter{
+		Filter filter(ActivityTypeProperties properties);
 	}
 	
 	@FunctionalInterface
@@ -466,6 +486,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface EnterpriseDataFilter{
+		Filter filter(EnterpriseDataProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface ContractLeaveFilter{
 		Filter filter(ContractLeaveProperties properties);
 	}
@@ -480,6 +505,11 @@ public interface Filter extends Serializable{
 	@FunctionalInterface
 	public interface IrpfDataFilter{
 		Filter filter(IrpfDataProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface EnterpriseFilter{
+		Filter filter(com.esferalia.aon.occam.api.model.Properties.EnterpriseProperties properties);
 	}
 	
 	@FunctionalInterface

@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Filter.ContractAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractAttach;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
+import com.esferalia.aon.occam.api.model.payroll.Enterprise;
 import com.esferalia.aon.occam.impl.jooq.PayrollImpl;
 
 public class PAYROLL {
@@ -320,6 +322,20 @@ public class PAYROLL {
 			if (ctx != null){
 				ctx.close();
 			}
+		}
+	}
+	
+	// -------------------- ENTERPRISE
+
+	public static Enterprise getEnterprise(String domainName, Integer domainId, String login, EnterpriseFilter filter) {
+		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			return getPayroll().getEnterprise(ctx, filter);
+		}
+	}
+	
+	public static void saveEnterprise(String domainName, Integer domainId, String login, Enterprise enterprise) {
+		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			getPayroll().saveEnterprise(ctx, enterprise);
 		}
 	}
 	

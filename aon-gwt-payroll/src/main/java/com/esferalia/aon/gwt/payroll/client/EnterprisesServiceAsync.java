@@ -35,7 +35,6 @@ import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.IT;
@@ -104,8 +103,6 @@ public interface EnterprisesServiceAsync {
 	void getEnterpiseActivities(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> asyncCallback);
 	void createWorkplaceInfo(WorkplaceInfo workplaceInfo, Integer enterpriseId, String domain, AsyncCallback<WorkplaceInfo> asyncCallback);
 	void getEnterpiseScopes(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> asyncCallback);
-	void getEnterpriseInfo(Integer enterpriseId, String domain, AsyncCallback<EnterpriseInfo> asyncCallback);
-	void updateEnterprise(EnterpriseInfo enterpriseInfo, String domain, AsyncCallback<EnterpriseInfo> asyncCallback);
 	void getAgrarianJourney(long findingDate, List<String> cccList, String domain, AsyncCallback<Map<Integer, List<AgrarianJourney>>> asyncCallback);
 	void getCRAs(String domain, String string, long liquidDateTime, AsyncCallback<List<CRA>> asyncCallback);
 	void createNewCRA(String domainName, String user, long findingDate, List<String> ccc, ArrayList<Integer> cccIdList, Integer cccId, String type, AsyncCallback<String> asyncCallback);
@@ -243,7 +240,7 @@ public interface EnterprisesServiceAsync {
 	
 	// --------------------------- Agreements Tabs (New)
 	
-	void getAgreementInfo(String currentDomainName, Integer agreementId, AsyncCallback<AgreementInfo> asyncCallback) throws IllegalArgumentException;
+	void getAgreementInfo(String currentDomainName, Integer agreementId, boolean withContracts, AsyncCallback<AgreementInfo> asyncCallback) throws IllegalArgumentException;
 	
 	void setAgreementInfo(String currentDomainName, AgreementInfo agreementInfo, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
@@ -254,5 +251,11 @@ public interface EnterprisesServiceAsync {
 	void checkAndUpdateServiAgreement(String currentDomainName, String currentUser, AgreementInfo agreement, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
 	void deletePayments(String currentDomainName, List<Integer> paymentIds, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	// --------------------------- Enterprise (API)
+	
+	void getEnterprise(String currentDomainName, String user, Integer id, AsyncCallback<com.esferalia.aon.occam.api.model.payroll.Enterprise> asyncCallback) throws IllegalArgumentException;
+	
+	void saveEnterprise(String currentDomainName, String user, com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
 }

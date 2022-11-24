@@ -1,27 +1,29 @@
 import { AonReg } from '../aon-reg.js';
-import { EVENT, MSG, TAG } from '../../../environments/environments.js'; 
+import { COLORS, CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js'; 
 import { AonCard } from '../../../components/aon-card.js';
 import { AonSelect } from '../../../components/aon-select.js';
 import { AonSwitch } from '../../../components/aon-switch.js';
 import { AonBasicTable } from '../../../components/aon-basic-table.js';
 import { Transactions } from '../../../services/transaction.js';
 import { Customer } from '../../../models/registry/Customer.js';
-import { saveCustomer } from '../../../services/registryService.js';
+import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer } from '../../../services/registryService.js';
 import { AonCustomerList } from './aon-customer-list.js';
 import { getScopes } from '../../../services/documentalService.js';
+import { getDomainCompanies, saveCompany } from '../../../services/companyService.js';
 
 export class AonCustomer extends AonReg {
 
 	saveBool;
-
+	entepriseLinked;
 	connectedCallback () {
 		this.customerInitialize();
 		this.initialize();
 		this.build();
-  	}
+	}
 	
 	customerInitialize() {
 		this.type = "customer";
+		this.entepriseLinked= "enterpriseLinked";
 		this.saveBool = true;
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
@@ -138,6 +140,257 @@ export class AonCustomer extends AonReg {
 		table.addCell(withholding, 1);
 	}	
 
+	buildEnterpriseLinked(){
+		const card = this.getElement(this.GENERAL_CARD);
+		
+		let divOne = this.getElement(this.entepriseLinked);
+
+		if(!divOne){
+			divOne =  this.createElement(TAG.DIV);
+			divOne.id = this.entepriseLinked;
+			card.addSection2(divOne);
+		}
+
+		getRelationShip({registry:this.registry.getId(), parentId:this.registry.getDomain().getParentId(), document: this.registry.getDocument()})
+		.then(resp=>{
+			this.buildEnterpriseLinkedView(resp);
+		})
+		.catch((err)=>{
+			this.showError(err);
+		});
+	}
+
+	buildEnterpriseLinkedView(resp){
+		const entepriseLinked = this.getElement(this.entepriseLinked);
+		entepriseLinked.innerHTML = "";
+
+		const {rrelationship, companies} = resp;
+		
+		const link = rrelationship && rrelationship.id;
+
+		const color = link ? CSS.variable(COLORS.ONLINE_GREEN) : COLORS.ORANGE;
+	
+		let main = this.createElement(TAG.DIV);
+		main.title = "Vinculo con empresa " + (link ? `(${rrelationship.comments})` : "(No existe)");
+		main.style.display = "flex";
+		main.style.columnGap = "5px";
+		main.style.border = "1px solid";
+		main.style.borderColor = "lightgray";
+		main.style.borderRadius = "10px";
+		main.style.padding = "4px";
+		main.style.cursor = "pointer";
+		main.style.marginRight = "6px";
+		entepriseLinked.appendChild(main);
+
+		let statusBox = this.createElement(TAG.DIV);
+		statusBox.className = CONSTANT.MATERIAL_ICONS;
+		statusBox.style.fontSize = "18px";
+		statusBox.style.color    = color;
+		statusBox.innerText      = link ? MATERIAL_ICONS.LINK : MATERIAL_ICONS.LINK_OFF;
+		main.appendChild(statusBox);
+
+		let statusText = this.createElement(TAG.DIV);
+		statusText.innerText = link ? "Vinculado" : "Desvinculado";
+		statusText.style.fontSize = "14px";
+		statusText.style.fontWeight = "500";
+		statusText.style.color = "#5f6368";
+		main.appendChild(statusText);
+
+		let iconArrowDown = this.createElement(TAG.DIV);
+		iconArrowDown.style.fontSize = "18px";
+		iconArrowDown.className = CONSTANT.MATERIAL_ICONS;
+		iconArrowDown.innerText = MATERIAL_ICONS.KEYBOARD_ARROW_DOWN;
+
+		if(link || !companies.length){
+			main.appendChild(iconArrowDown);
+		}
+
+		if(link){
+			main.addEventListener(EVENT.CLICK, () => {
+				this.getOptionsLinked(iconArrowDown, rrelationship);
+			});	
+		} 
+		else {
+			statusText.style.marginRight = "5px";
+			main.addEventListener(EVENT.CLICK, () => {
+				const countCompany = companies.length;
+
+				if(countCompany === 1){
+					this.saveRegistryRelationship(companies[0]);
+				} else if(countCompany > 1){
+					this.openDialogCompany(companies);
+				} else {
+					this.getOptionsLinked(iconArrowDown);
+				}
+			});
+		}
+	}
+
+	getOptionsLinked(element, rrelationship=undefined){
+		let options = [];
+
+		if(rrelationship){
+			options.push({ 
+				name: "Abrir", 
+				value:"OPEN",
+				icon:  MATERIAL_ICONS.OPEN_IN_NEW, 
+				fn:()=> {
+					if(rrelationship.comments){
+						window.open("https://"+ rrelationship.comments);
+					}
+				}
+			},
+			{ 
+				name: "Desvincular", 
+				value: "UNLINK",
+				icon: MATERIAL_ICONS.LINK_OFF, 
+				fn:()=> {
+
+					this.getApplication().startLoading();
+
+					removeRelationShip(rrelationship)
+					.then(()=> {
+						this.showMessage();
+						this.buildEnterpriseLinked();
+					})
+					.catch((err)=> this.showError(err))
+					.finally(()=>{
+						this.getApplication().stopLoading();
+					});
+				}
+			});
+		} else {
+			options.push({ 
+				name: "Vincular con una existente", 
+				value: "LINK",
+				icon:  MATERIAL_ICONS.LINK, 
+				fn:()=> {
+					this.openDialogCompany();
+				}
+			},
+			{ 
+				name: "Crear nueva empresa", 
+				value: "ENTERPRISE_NEW",
+				icon: MATERIAL_ICONS.OPEN_IN_NEW, 
+				fn:()=> {
+					this.getApplication().confirmDialog(MSG.REGISTER, `Desea registrar y vincular a ${this.registry.getName()} ?`, () => {
+						this.getApplication().startLoading();
+						saveCompany({...this.registry, id:null})
+						.then((company)=>{
+							console.log("company", company);
+							this.saveRegistryRelationship(company);
+						})
+						.catch(err=>{
+							this.showError(err);
+						})
+						.finally(()=>{
+							this.getApplication().stopLoading();	
+						});
+					});
+				}
+			});
+		}
+
+		const top = element.getBoundingClientRect().top + 24;
+		const left = element.getBoundingClientRect().left + 3;
+		let d = this.getApplication().getOptionDialog();
+		d.setMenuOptions(options, top, left);
+		d.open();
+	}
+
+	openDialogCompany(companies=[]){
+		const dialog = this.getApplication().getDialog();
+		dialog.clear();
+	
+		if(this.isMobile()) {
+			dialog.type = "fullscreen";
+		} else  {
+			dialog.width = "30%";
+		}
+	
+		dialog.setTitle(companies.length ? "Sugerencias para el vinculo": MSG.ENTERPRISE);
+	
+		let div = document.createElement(TAG.DIV);
+		div.style.display = "flex";
+		div.style.flexDirection = "column";
+		div.style.marginTop = "10px";
+		dialog.setContent(div);
+
+		let selectCompany   = new AonSelect();
+		selectCompany.id    = "selectCompany";
+		selectCompany.title = MSG.COMPANY;
+		selectCompany.autocomplete = true;
+		div.appendChild(selectCompany);
+
+		if(companies.length){
+			let timeOut = null;
+
+			selectCompany.setOptions(companies.map(c=> ({...c, value:c.id})));
+			
+			selectCompany.addEventListener(EVENT.INPUT, async({target})=>{
+				clearTimeout(timeOut);
+				const value = target.value;
+				if(value.length > 2 ){
+					timeOut = setTimeout(async() =>{
+						selectCompany.loading(true);
+						const cs = await this.getDomainCompanies(value);
+						selectCompany.setOptions(cs);
+						selectCompany.loading(false);
+					}, 300);
+				}
+			});
+		} else {
+			selectCompany.loading(true);
+			this.getDomainCompanies()
+			.then(companies=>{
+				selectCompany.setOptions(companies);
+			})
+			.finally(()=>{
+				selectCompany.loading(false);
+			})
+		}
+
+		dialog.addSendAction(()=>{
+			if(selectCompany.value){
+				this.saveRegistryRelationship(selectCompany.getDetail());
+				dialog.close();
+			}
+		}, MSG.LINK);
+
+		dialog.open();
+	}   
+
+	async getDomainCompanies(value){
+		let params = {parentId: this.registry.getDomain().getParentId()};
+		if(value) params.value = value;
+
+		let result = await getDomainCompanies(params);
+
+		return result.filter(company => company && company.domain && company.domain.id!=this.registry.getDomain().getId())
+		.map( c=> ({...c, value: c.id}));
+	}
+
+	saveRegistryRelationship(company){
+		this.getApplication().startLoading();
+
+		let relationship = {
+			domain: this.registry.getDomain(),
+			registry: this.registry.getId(),
+			related_registry: company.id,
+			comments: (company.domain && company.domain.name ? company.domain.name : "")
+		}
+
+		saveRelationShip(relationship)
+		.then(()=> {
+			this.showMessage();
+			this.buildEnterpriseLinked();
+		})
+		.catch((err)=> this.showError(err))
+		.finally(()=>{
+			this.getApplication().stopLoading();
+		});
+	}
+
 	back() {
 		let list = new AonCustomerList();
 		list.id = this.getApplication().id + 'CustomerList';
@@ -154,13 +407,13 @@ export class AonCustomer extends AonReg {
 				this.saveBool = true;
 				this.showToast({
 					type: 'success',
-					 message: 'Datos Guardados Correctamente'
-				 });
-			
-			}).catch(error => {
+					message: 'Datos Guardados Correctamente'
+				});
+			})
+			.catch(error => {
 				this.saveBool = true;
 				this.showToast(error);
-			 });
+			});
 		}
 
 	}

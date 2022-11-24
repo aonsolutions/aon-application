@@ -174,14 +174,17 @@ export class AonMobileList extends AonElement {
     const top = el.getBoundingClientRect().top;
     const left = el.getBoundingClientRect().left;
     let d = this.getElement(this.id + "aonDialogAddOption");
-    options = options.map(({ aonIcon, icon, name, fn }) => {
-      return {
+    options = options.map(({ aonIcon, icon, name, title, backgroundColor, permission, fn }) => 
+      ({
         aonIcon,
         icon,
         name,
+        title,
+        backgroundColor,
+        permission,
         fn: () => fn(el),
-      };
-    });
+      })
+    );
 
     d.setMenuOptions(options, top, left);
     d.open();

@@ -4,9 +4,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AON;
@@ -282,10 +284,11 @@ public class AonRandom {
 	
 	public static EnterpriseActivity getRandomActivity(AONContext ctx) {
 		boolean mainActivity =  gt(85);
-		return CompanyDAO.getEnterpriseActivities(ctx, ctx.getDomainId(), null)
+		LinkedList<EnterpriseActivity> list = CompanyDAO.getEnterpriseActivities(ctx, ctx.getDomainId(), null)
 			.filter(act -> act.isPrincipal() == mainActivity)
-			.findFirst()
-			.orElse(new EnterpriseActivity());
+			.collect(Collectors.toCollection(LinkedList::new));
+		if ( list == null || list.isEmpty()) return new EnterpriseActivity();
+		return list.get( AonRandom.getInt(0, list.size() -1));
 	}
 	
 	public static Administration getRandomAdministration() {

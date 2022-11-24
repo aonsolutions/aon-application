@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
@@ -13,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Filter.ContractAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
@@ -21,6 +23,7 @@ import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractAttach;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
+import com.esferalia.aon.occam.api.model.payroll.Enterprise;
 
 
 public interface IPayroll {
@@ -86,4 +89,10 @@ public interface IPayroll {
 	public ContractAttach getContractAttach(AONContext ctx, ContractAttachFilter filter);
 	public ContractAttach saveContractAttach(AONContext ctx, ContractAttach attach);
 	public void deleteContractAttach(AONContext ctx, Integer id);
+	
+	// ----------ENTERPRISE
+	
+	public Enterprise getEnterprise(AONContext ctx, EnterpriseFilter filter);
+
+	public void saveEnterprise(AONContext ctx, Enterprise enterprise);
 }

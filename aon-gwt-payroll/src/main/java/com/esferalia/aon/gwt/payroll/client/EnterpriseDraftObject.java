@@ -3,16 +3,22 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.Undoable;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.Enterprise;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
+import com.esferalia.aon.occam.api.model.EnterpriseData;
+import com.esferalia.aon.occam.api.model.payroll.Enterprise;
+import com.esferalia.aon.occam.api.model.registry.RegistryMedia;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.DocumentType;
+import com.esferalia.aon.occam.api.model.type.MediaType;
+import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 
 public class EnterpriseDraftObject extends AbstractDraftObject {
 
@@ -21,13 +27,12 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	
 	private Map<Integer, String> scopes;
 	private List<Agreement> agreements;
-	
-	private EnterpriseInfo enterpriseInfo;
 		
 	// ------------------------------------------------- CLASS METHODS -------------------------------------------------	
 	
-	public EnterpriseDraftObject(Enterprise enterprise) {
-		this.enterprise = enterprise;
+	public EnterpriseDraftObject(com.esferalia.aon.gwt.payroll.shared.Enterprise enterprise) {
+		this.enterprise = new Enterprise();
+		this.enterprise.setId(enterprise.getId());
 		this.undoManager = new UndoManager<Undoable>();
 	}
 	
@@ -47,9 +52,9 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		});
 	}
 
-	public void initializeEnterprise(Consumer<EnterpriseInfo> success, Consumer<Throwable> failure) {
+	public void initializeEnterprise(Consumer<Enterprise> success, Consumer<Throwable> failure) {
 	
-		enterprisesService.getEnterpriseInfo(this.enterprise.getId() , new AsyncCallback<EnterpriseInfo>() {
+		enterprisesService.getEnterprise(this.enterprise.getId() , new AsyncCallback<Enterprise>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -57,12 +62,31 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 			}
 
 			@Override
-			public void onSuccess(EnterpriseInfo enterpriseInfoIn) {
-				enterpriseInfo = enterpriseInfoIn;
-				scopes = enterpriseInfo.getScopes();
-				success.accept(enterpriseInfoIn);
+			public void onSuccess(Enterprise enterpriseIn) {
+				enterprise = enterpriseIn;
+				success.accept(enterprise);
 			}
 		});	
+	}
+	
+	public void saveEnterprise(Consumer<Void> success, Consumer<Throwable> failure) {
+		
+		enterprisesService.saveEnterprise(this.enterprise , new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);	
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+		});	
+	}
+	
+	public void setScopes(Map<Integer, String> scopesContext) {
+		scopes = scopesContext;
 	}
 	
 	public void setAgreements(List<Agreement> agreementsContext) {
@@ -78,26 +102,11 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		return activeAgreements;
 	}
 	
-	public void updateEnterprise(Consumer<EnterpriseInfo> success, Consumer<Throwable> failure) {
-		
-		enterprisesService.updateEnterprise(this.enterpriseInfo , new AsyncCallback<EnterpriseInfo>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);	
-			}
-
-			@Override
-			public void onSuccess(EnterpriseInfo result) {
-				success.accept(result);
-			}
-		});	
-	}
 	
 	// ---------------------------------------------- GETTERS  -------------------------------------------------
 	
-	public EnterpriseInfo getEnterpriseInfo() {
-		return this.enterpriseInfo;
+	public Enterprise getEnterpriseInfo() {
+		return this.enterprise;
 	}
 
 	public List<Agreement> getEnterpriseAgreements() {
@@ -109,95 +118,100 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	}
 	
 	public String getName() {
-		return this.enterpriseInfo.getName();
+		return this.enterprise.getName();
 	}
 	
 	public String getAlias() {
-		return this.enterpriseInfo.getAlias();
+		return this.enterprise.getAlias();
 	}
 	
 	public Byte getDocumentType() {
-		return this.enterpriseInfo.getDocumentType();
+		return (byte) this.enterprise.getDocumentType().ordinal();
 	}
 	
 	public String getDocument() {
-		return this.enterpriseInfo.getDocument();
+		return this.enterprise.getDocument();
 	}
 	
 	public String getDocumentCountry() {
-		return getNationality(this.enterpriseInfo.getDocumentCountry());
-	}
-	
-	private String getNationality(String iso2) {
-		for (int i = 0; i < Country.values().length; i++) {
-			if (Country.values()[i].getIso2().equals(iso2))
-				return Country.values()[i].getName();
-		}
-		return null;
+		return this.enterprise.getDocumentCountry().getName();
 	}
 	
 	public String getSteetType() {
-		return this.enterpriseInfo.getStreetType();
+		return this.enterprise.getAddress().getStreetType().getIneCode();
 	}
 	
 	public String getAddress() {
-		return this.enterpriseInfo.getAddress();
+		return this.enterprise.getAddress().getAddress();
 	}
 	
 	public String getAddressNum() {
-		return this.enterpriseInfo.getAddressNum();
+		return this.enterprise.getAddress().getNumber();
 	}
 	
 	public String getAddressZip() {
-		return this.enterpriseInfo.getAddressZip();
+		return this.enterprise.getAddress().getZip();
 	}
 	
 	public String getAddressCity() {
-		return this.enterpriseInfo.getAddressCity();
+		return this.enterprise.getAddress().getCity();
+	}
+	
+	public String getMunicipalityCode() {
+		return this.enterprise.getAddress().getMunicipalityCode();
 	}
 	
 	public String getAddressProvince() {
-		return this.enterpriseInfo.getAddressProvince();
-	}
-	
-	public String getPhone() {
-		return this.enterpriseInfo.getPhone();
+		return this.enterprise.getAddress().getProvince();
 	}
 	
 	public String getMobile() {
-		return this.enterpriseInfo.getMobile();
+		Optional<RegistryMedia> mobile = this.enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.CELLULAR).findFirst();
+		return mobile.isPresent() ? mobile.get().getValue() : null;
+	}
+	
+	public String getPhone() {
+		Optional<RegistryMedia> phone = this.enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.FIXED_PHONE).findFirst();
+		return phone.isPresent() ? phone.get().getValue() : null;
 	}
 	
 	public String getEmail() {
-		return this.enterpriseInfo.getEmail();
+		Optional<RegistryMedia> email = this.enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.EMAIL).findFirst();
+		return email.isPresent() ? email.get().getValue() : null;
 	}
 	
 	public String getWeb() {
-		return this.enterpriseInfo.getWeb();
+		Optional<RegistryMedia> web = this.enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.WEB).findFirst();
+		return web.isPresent() ? web.get().getValue() : null;
 	}
 	
 	public Integer getScope() {
-		return this.enterpriseInfo.getScopeId();
+		return this.enterprise.getScope();
 	}
 	
 	public String getPaySheetModel() {
-		return this.enterpriseInfo.getPaysheetModel();
+		Optional<EnterpriseData> paySheetModel = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_REPORT_salary_PAY")).findFirst();
+		return paySheetModel.isPresent() ? paySheetModel.get().getExpression() : null;
 	}
 	
 	public String getCostsModel() {
-		return this.enterpriseInfo.getCostsModel();
+		Optional<EnterpriseData> costModel = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_REPORT_enterpriseSalary_PAY")).findFirst();
+		return costModel.isPresent() ? costModel.get().getExpression() : null;
 	}
 	
 	public String getPaysheetSend() {
-		return this.enterpriseInfo.getPaysheetSendType();
+		Optional<EnterpriseData> paysheetSend = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySendingMethod_PAY")).findFirst();
+		return paysheetSend.isPresent() ? paysheetSend.get().getExpression() : null;
 	}
 	
 	public String getPaysheetSendEmail() {
-		return this.enterpriseInfo.getPaysheetEmail();
+		Optional<EnterpriseData> paysheetSendEmail = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySending_email_PAY")).findFirst();
+		return paysheetSendEmail.isPresent() ? paysheetSendEmail.get().getExpression() : null;
 	}
 	
 	public String getAgreement() {
-		return this.enterpriseInfo.getEnterpriseAgreementId();
+		Optional<EnterpriseData> agreement = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("agreement")).findFirst();
+		return agreement.isPresent() ? agreement.get().getExpression() : null;
 	}
 	
 	public String getAgreementDescription() {
@@ -216,186 +230,247 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 	// ----------------------------------------------  SETTERS  -------------------------------------------------
 	
 	public void setName(String name) {
-		add(enterpriseInfo::setName, 
-			enterpriseInfo.getName(), 
+		add(enterprise::setName, 
+			enterprise.getName(), 
 			name );
 		
-		enterpriseInfo.setName(name);
+		enterprise.setName(name);
 	}
 	
 	public void setAlias(String alias) {
-		add(enterpriseInfo::setAlias, 
-			enterpriseInfo.getAlias(), 
+		add(enterprise::setAlias, 
+				enterprise.getAlias(), 
 			alias );
 		
-		enterpriseInfo.setAlias(alias);
+		enterprise.setAlias(alias);
 	}
 	
-	public void setDocumentType(String documentType) {
-		byte documentTypeByte = getDocumentTypeByte(documentType);
+	public void setDocumentType(DocumentType documentType) {
+		add(enterprise::setDocumentType, 
+			enterprise.getDocumentType(), 
+			documentType );
 		
-		add(enterpriseInfo::setDocumentType, 
-			enterpriseInfo.getDocumentType(), 
-			documentTypeByte );
-		
-		enterpriseInfo.setDocumentType(documentTypeByte);
-	}
-	
-	public byte getDocumentTypeByte(String documentType) {
-		switch (documentType) {
-		case "DNI":
-			return (byte) 0;
-		case "CIF":
-			return (byte) 1;
-		case "Pasaporte":
-			return (byte) 3;
-		default:
-			return (byte) 0;
-		}
+		enterprise.setDocumentType(documentType);
 	}
 	
 	public void setDocument(String document) {
-		add(enterpriseInfo::setDocument, 
-			enterpriseInfo.getDocument(), 
+		add(enterprise::setDocument, 
+				enterprise.getDocument(), 
 			document );
 		
-		enterpriseInfo.setDocument(document);
+		enterprise.setDocument(document);
 	}
 	
-	public void setNationality(String nationality) {
-		add(enterpriseInfo::setDocumentCountry, 
-			enterpriseInfo.getDocumentCountry(), 
-			nationality );
+	public void setNationality(Country country) {
+		add(enterprise::setDocumentCountry, 
+				enterprise.getDocumentCountry(), 
+				country );
 		
-		enterpriseInfo.setDocumentCountry(nationality);
+		enterprise.setDocumentCountry(country);
 	}
 	
-	public void setAddressStreetType(String streetType){
-		add(enterpriseInfo::setStreetType, 
-			enterpriseInfo.getStreetType(), 
-			streetType);
+	public void setAddressStreetType(StreetType streetType){
+		enterprise.getAddress().setStreetType(streetType);
 		
-		enterpriseInfo.setStreetType(streetType);
+		add(enterprise::setAddress, 
+			enterprise.getAddress(), 
+			enterprise.getAddress() );
+		
+		enterprise.setAddress(enterprise.getAddress());
 	}
 	
 	public void setAddress(String address) {
-		add(enterpriseInfo::setAddress, 
-			enterpriseInfo.getAddress(), 
-			address );
+		enterprise.getAddress().setAddress(address);
 		
-		enterpriseInfo.setAddress(address);
+		add(enterprise::setAddress, 
+			enterprise.getAddress(), 
+			enterprise.getAddress() );
+		
+		enterprise.setAddress(enterprise.getAddress());
 	}
 	
-	public void setAddressNum(String addressNum) {
-		add(enterpriseInfo::setAddressNum, 
-			enterpriseInfo.getAddressNum(), 
-			addressNum );
+	public void setAddressNum(String number) {
+		enterprise.getAddress().setNumber(number);
 		
-		enterpriseInfo.setAddressNum(addressNum);
+		add(enterprise::setAddress, 
+			enterprise.getAddress(), 
+			enterprise.getAddress() );
+		
+		enterprise.setAddress(enterprise.getAddress());
 	}
 	
-	public void setAddressZip(String addressZip) {
-		add(enterpriseInfo::setAddressZip, 
-			enterpriseInfo.getAddressZip(), 
-			addressZip );
+	public void setAddressZip(String zip) {
+		enterprise.getAddress().setZip(zip);
 		
-		enterpriseInfo.setAddressZip(addressZip);
+		add(enterprise::setAddress, 
+			enterprise.getAddress(), 
+			enterprise.getAddress() );
+		
+		enterprise.setAddress(enterprise.getAddress());
 	}
 	
-	public void setAddressCity(String addressCity) {
-		add(enterpriseInfo::setAddressCity, 
-			enterpriseInfo.getAddressCity(), 
-			addressCity );
+	public void setAddressCity(String city) {
+		enterprise.getAddress().setCity(city);
 		
-		enterpriseInfo.setAddressCity(addressCity);
+		add(enterprise::setAddress, 
+			enterprise.getAddress(), 
+			enterprise.getAddress() );
+		
+		enterprise.setAddress(enterprise.getAddress());
 	}
 	
-	public void setAddressProvince(String addressProvince) {
-		add(enterpriseInfo::setAddressProvince, 
-			enterpriseInfo.getAddressProvince(), 
-			addressProvince );
+	public void setAddressMunicipalityCode(String municipalityCode) {
+		enterprise.getAddress().setMunicipalityCode(municipalityCode);
 		
-		enterpriseInfo.setAddressProvince(addressProvince);
+		add(enterprise::setAddress, 
+			enterprise.getAddress(), 
+			enterprise.getAddress() );
+		
+		enterprise.setAddress(enterprise.getAddress());
+	}
+	
+	public void setAddressProvince(String province) {
+		enterprise.getAddress().setProvince(province);
+		
+		add(enterprise::setAddress, 
+			enterprise.getAddress(), 
+			enterprise.getAddress() );
+		
+		enterprise.setAddress(enterprise.getAddress());
 	}
 	
 	public void setMobile (String mobile) {
-		add(enterpriseInfo::setMobile, 
-			enterpriseInfo.getMobile(), 
-			mobile );
-		
-		enterpriseInfo.setMobile(mobile);
+		Optional<RegistryMedia> mobileRM = this.enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.CELLULAR).findFirst();
+		if(mobileRM.isPresent()) {
+			mobileRM.get().setValue(mobile);
+			mobileRM.get().setRemoved(AonStringUtils.isBlank(mobile));
+		} else
+			this.enterprise.getMedias().add(new RegistryMedia()
+				.setDomain(enterprise.getDomain())
+				.setRegistry(enterprise.getId())
+				.setMedia(MediaType.CELLULAR)
+				.setRaddress(enterprise.getAddress() != null ? enterprise.getAddress().getId() : null)
+				.setValue(mobile));
 	}
 	
 	public void setPhone(String phone) {
-		add(enterpriseInfo::setPhone, 
-			enterpriseInfo.getPhone(), 
-			phone );
-		
-		enterpriseInfo.setPhone(phone);
+		Optional<RegistryMedia> phoneRM = this.enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.FIXED_PHONE).findFirst();
+		if(phoneRM.isPresent()) {
+			phoneRM.get().setValue(phone);
+			phoneRM.get().setRemoved(AonStringUtils.isBlank(phone));
+		} else
+			this.enterprise.getMedias().add(new RegistryMedia()
+				.setDomain(enterprise.getDomain())
+				.setRegistry(enterprise.getId())
+				.setMedia(MediaType.FIXED_PHONE)
+				.setRaddress(enterprise.getAddress() != null ? enterprise.getAddress().getId() : null)
+				.setValue(phone));
 	}
 	
 	public void setEmail(String email) {
-		add(enterpriseInfo::setEmail, 
-			enterpriseInfo.getEmail(), 
-			email );
-		
-		enterpriseInfo.setEmail(email);
+		Optional<RegistryMedia> emailRM = this.enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.EMAIL).findFirst();
+		if(emailRM.isPresent()) {
+			emailRM.get().setValue(email);
+			emailRM.get().setRemoved(AonStringUtils.isBlank(email));
+		} else
+			this.enterprise.getMedias().add(new RegistryMedia()
+				.setDomain(enterprise.getDomain())
+				.setRegistry(enterprise.getId())
+				.setMedia(MediaType.EMAIL)
+				.setRaddress(enterprise.getAddress() != null ? enterprise.getAddress().getId() : null)
+				.setValue(email));
 	}
 	
 	public void setWeb(String web) {
-		add(enterpriseInfo::setWeb, 
-			enterpriseInfo.getWeb(), 
-			web );
-		
-		enterpriseInfo.setWeb(web);
+		Optional<RegistryMedia> webRM = this.enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.WEB).findFirst();
+		if(webRM.isPresent()) {
+			webRM.get().setValue(web);
+			webRM.get().setRemoved(AonStringUtils.isBlank(web));
+		} else 
+			this.enterprise.getMedias().add(new RegistryMedia()
+				.setDomain(enterprise.getDomain())
+				.setRegistry(enterprise.getId())
+				.setMedia(MediaType.WEB)
+				.setRaddress(enterprise.getAddress() != null ? enterprise.getAddress().getId() : null)
+				.setValue(web));
 	}
 	
-	public void setScope(Integer scopeId) {
-		add(enterpriseInfo::setScopeId, 
-			enterpriseInfo.getScopeId(), 
-			scopeId );
+	public void setScope(Integer scope) {
+		add(enterprise::setScope, 
+			enterprise.getScope(), 
+			scope );
 		
-		enterpriseInfo.setScopeId(scopeId);
+		enterprise.setScope(scope);
 	}
 	
 	public void setPaySheetModel(String paySheetModel) {
-		add(enterpriseInfo::setPaysheetModel, 
-			enterpriseInfo.getPaysheetModel(), 
-			paySheetModel );
-		
-		enterpriseInfo.setPaysheetModel(paySheetModel);
+		Optional<EnterpriseData> paySheetModelRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_REPORT_salary_PAY")).findFirst();
+		if(paySheetModelRM.isPresent()) {
+			paySheetModelRM.get().setExpression(paySheetModel);
+			paySheetModelRM.get().setIsRemoved(AonStringUtils.isBlank(paySheetModel));
+		} else
+			this.enterprise.getDatas().add(new EnterpriseData()
+				.setDomain(enterprise.getDomain())
+				.setEnterprise(enterprise.getId())
+				.setName("PAY_REPORT_salary_PAY")
+				.setExpression(paySheetModel));
 	}
 	
 	public void setCostModel(String costModel) {
-		add(enterpriseInfo::setCostsModel, 
-			enterpriseInfo.getCostsModel(), 
-			costModel );
-		
-		enterpriseInfo.setCostsModel(costModel);
+		Optional<EnterpriseData> costModelRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_REPORT_enterpriseSalary_PAY")).findFirst();
+		if(costModelRM.isPresent()) {
+			costModelRM.get().setExpression(costModel);
+			costModelRM.get().setIsRemoved(AonStringUtils.isBlank(costModel));
+		} else
+			this.enterprise.getDatas().add(new EnterpriseData()
+				.setDomain(enterprise.getDomain())
+				.setEnterprise(enterprise.getId())
+				.setName("PAY_REPORT_enterpriseSalary_PAY")
+				.setExpression(costModel));
 	}
 	
 	public void setPaySheetSendType(String paySheetModelTypeSend) {
-		add(enterpriseInfo::setPaysheetSendType, 
-			enterpriseInfo.getPaysheetSendType(), 
-			paySheetModelTypeSend );
+		Optional<EnterpriseData> paySheetModelTypeSendRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySendingMethod_PAY")).findFirst();
+		if(paySheetModelTypeSendRM.isPresent()) {
+			paySheetModelTypeSendRM.get().setExpression(paySheetModelTypeSend);
+			paySheetModelTypeSendRM.get().setIsRemoved(AonStringUtils.isBlank(paySheetModelTypeSend));
+		} else
+			this.enterprise.getDatas().add(new EnterpriseData()
+				.setDomain(enterprise.getDomain())
+				.setEnterprise(enterprise.getId())
+				.setName("PAY_salarySendingMethod_PAY")
+				.setExpression(paySheetModelTypeSend));
 		
-		enterpriseInfo.setPaysheetSendType(paySheetModelTypeSend);
+		if(!AonStringUtils.equals(paySheetModelTypeSend, "EMAIL")) {
+			Optional<EnterpriseData> email = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySending_email_PAY")).findFirst();
+			email.ifPresent(emailIt -> emailIt.setIsRemoved(true));
+		}
 	}
 	
 	public void setPaySheetSendEmail(String email) {
-		add(enterpriseInfo::setPaysheetEmail, 
-			enterpriseInfo.getPaysheetEmail(), 
-			email );
-		
-		enterpriseInfo.setPaysheetEmail(email);
+		Optional<EnterpriseData> emailRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySending_email_PAY")).findFirst();
+		if(emailRM.isPresent()) {
+			emailRM.get().setExpression(email);
+			emailRM.get().setIsRemoved(AonStringUtils.isBlank(email));
+		} else
+			this.enterprise.getDatas().add(new EnterpriseData()
+				.setDomain(enterprise.getDomain())
+				.setEnterprise(enterprise.getId())
+				.setName("PAY_salarySending_email_PAY")
+				.setExpression(email));
 	}
 	
 	public void setAgreement(String agreementId) {
-		add(enterpriseInfo::setEnterpriseAgreementId, 
-			enterpriseInfo.getEnterpriseAgreementId(), 
-			agreementId);
-		
-		enterpriseInfo.setEnterpriseAgreementId(agreementId);
+		Optional<EnterpriseData> agreementRM = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("agreement")).findFirst();
+		if(agreementRM.isPresent()) {
+			agreementRM.get().setExpression(agreementId);
+			agreementRM.get().setIsRemoved(AonStringUtils.isBlank(agreementId));
+		} else
+			this.enterprise.getDatas().add(new EnterpriseData()
+				.setDomain(enterprise.getDomain())
+				.setEnterprise(enterprise.getId())
+				.setName("agreement")
+				.setExpression(agreementId));
 	}
 		
 }

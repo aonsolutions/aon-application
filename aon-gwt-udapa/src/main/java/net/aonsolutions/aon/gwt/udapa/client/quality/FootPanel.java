@@ -241,7 +241,20 @@ public class FootPanel extends Composite {
 			
 			String col = parent.getMap().containsKey(QualitySheetCode.UFQAC8.getName()) ?  parent.getMap().get(QualitySheetCode.UFQAC8.getName()) : "0.0";
 			Double color = "1".equals(col) || "1.0".equals(col) ? 0.003 : 0.0; 
-		
+			
+			String transportDateAux =  parent.getMap().get("transport_delivery_date");
+			Date issueDateAux = new Date();
+			if(transportDateAux != null && !"".equals(transportDateAux)
+					&& !"-".equals(transportDateAux)){
+				issueDateAux = Utils.parseDateTime(transportDateAux);
+			}
+			Date startAux = new Date((2022-1900), 7, 1);
+			
+			String aptitudLavado = parent.getMap().get(QualitySheetCode.UFQAC6.getName());
+			Double lav = "4".equals(aptitudLavado) || "4.0".equals(aptitudLavado) ? 0.03 : 0.0;
+			if(issueDateAux.compareTo(startAux) >= 0)
+				lav = "4".equals(aptitudLavado) || "4.0".equals(aptitudLavado) ? 0.05 : 0.0;
+			Double lavado = lav;
 			String product_price =  parent.getMap().containsKey("product_price") ?  parent.getMap().get("product_price") : "0.0";
 			Double contractPrice = Double.parseDouble(product_price);
 
@@ -350,7 +363,7 @@ public class FootPanel extends Composite {
 			table.setWidget(5, 2, new Label(Double.toString(AonMathUtils.round(kgNet))));
 			Double primaNet = temp < 17.0 ?  price * 1.03 : price;
 			table.setWidget(5, 3, new Label(Double.toString(AonMathUtils.round(primaNet, 3))));
-			Double eurosNet = kgNet * (primaNet + color);
+			Double eurosNet = kgNet * (primaNet + color + lavado);
 			table.setWidget(5, 4, new Label(Double.toString(AonMathUtils.round(eurosNet))));
 		
 			// -------------------- RESULTADOS
@@ -440,7 +453,6 @@ public class FootPanel extends Composite {
 					boolean b2 = temp >= 22.5 && temp <= 24.0 && issueDate.compareTo(start2) >= 0;
 					boolean c = temp > 24.0 && issueDate.compareTo(start) >= 0;
 					boolean d = temp < 17.0 && issueDate.compareTo(start) < 0;
-
 					
 					Double tempVar = 1.0;
 					if(a || d) tempVar = 1.03;
@@ -455,7 +467,7 @@ public class FootPanel extends Composite {
 					
 					Double primaNet = price *  tempVar;
 					table.setWidget(5, 3, new Label(Double.toString(AonMathUtils.round(primaNet, 3))));
-					Double eurosNet = kgNet * (primaNet + color);
+					Double eurosNet = kgNet * (primaNet + color + lavado);
 					table.setWidget(5, 4, new Label(Double.toString(AonMathUtils.round(eurosNet))));
 					
 					Double totalEuros = eurosPeq + eurosGor + eurosNet;

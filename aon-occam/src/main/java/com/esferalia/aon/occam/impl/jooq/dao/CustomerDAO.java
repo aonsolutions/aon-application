@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
+import static com.esferalia.aon.jooq.tables.Rrelationship.RRELATIONSHIP;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -79,6 +80,8 @@ public class CustomerDAO {
 		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_USER);}
 		@Override public Property<Timestamp> getModificationDateProperty() {return new FilterDAO.PropertyDAO<>(CUSTOMER.MODIFICATION_DATE);}
         @Override public Property<Integer> getProjectTypeProperty() {return new FilterDAO.PropertyDAO<>(PROJECT.PROJECT_TYPE);}	
+        
+        @Override public Property<Integer> getRegistryRelationProperty() {return new FilterDAO.PropertyDAO<>(RRELATIONSHIP.ID);}	
 	}
 
 	protected static class CustomerFiller extends Filler  implements Function<Record, Customer> {
@@ -110,7 +113,8 @@ public class CustomerDAO {
 					.setTariff(getValue(r, CUSTOMER.TARIFF))
 					.setTransaction(InvoiceTransactionType.safeValueOf(getValue(r, CUSTOMER.TRANSACTION)))
 					.setWithholding(getBoolean(r, CUSTOMER.WITHHOLDING))
-					.setStatus(RegistryStatus.safeValueOf(getValue(r, CUSTOMER.STATUS)));
+					.setStatus(RegistryStatus.safeValueOf(getValue(r, CUSTOMER.STATUS)))
+					.setRelationship(r.getValue(RRELATIONSHIP.ID)!=null);
 		}
 	}
 	
@@ -119,10 +123,12 @@ public class CustomerDAO {
 	            .selectDistinct(CUSTOMER.fields())
 	            .select(REGISTRY.fields())
 	            .select(DOMAIN.fields())
+	            .select(RRELATIONSHIP.ID)
 	        .from(CUSTOMER)
 	        .join(REGISTRY).on(REGISTRY.ID.eq(CUSTOMER.REGISTRY))
 	        .join(DOMAIN).on(CUSTOMER.DOMAIN.eq(DOMAIN.ID))
 	        .leftOuterJoin(PROJECT).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+	        .leftOuterJoin(RRELATIONSHIP).on(RRELATIONSHIP.REGISTRY.eq(REGISTRY.ID).and(RRELATIONSHIP.RELATIONSHIP.eq(-1)))
 	        .where(CUSTOMER_PROPERTIES.getConditions(filter));
 		
 	}

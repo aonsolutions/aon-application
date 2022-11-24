@@ -33,16 +33,19 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod115InfoDAO {
 	private static final DecimalFormat DEC2 = new DecimalFormat("#,##0.00");		
-	private static final String INFO_MSG = "<pre class='aon_margin_bottom'>{0}<pre>";
-	private static final String NONE_INFO = "No hay datos";
 	
 	private Mod115InfoDAO() {
+
 	}
 	
 	public static String getInfo(AONContext ctx, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) {
 		Mod115Declaration dec = Mod115Declaration.getInstance(mod115);
-		return Arrays.stream(dec.getKeys())
-			.filter( keyDAO -> keyDAO.getKey() == script.getKeys()[0])
+		return  Stream.of(script)
+			.map(IModelScript::getKeys)
+			.filter( Objects::nonNull )
+			.flatMap(Arrays::stream)
+			.filter( Objects::nonNull )
+			.map( dec::getKey )
 			.map(keyDAO -> 	infoKey.visit( new IFiscalModelKeyInfoVisitor<String>() {
 					@Override public String visitInvoice() {return visitNone(); }
 					@Override public String visitInAccrualInvoice() {return visitNone(); }
@@ -64,7 +67,7 @@ public class Mod115InfoDAO {
 					
 					@Override 
 					public String visitNone()    {
-						return MessageFormat.format(INFO_MSG, NONE_INFO); 
+						return AonStringUtils.EMPTY; 
 					} 
 					
 					@Override 

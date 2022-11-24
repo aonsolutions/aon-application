@@ -478,6 +478,11 @@ public class Contrata {
 				if (ofertaEmpleo != null) {
 					((HtmlSelect) ofertaEmpleo).setSelectedAttribute(cto.getOffer().getValue(), true);
 				}
+				
+				DomNode planRecovery = form.querySelector("select[name=preguntaAcogePRTR]");
+				if (planRecovery != null) {
+					((HtmlSelect) planRecovery).setSelectedAttribute(cto.getPlanRecovery() ? "S": "N", true);
+				}
 			}
 
 			{// --------------------OTHERS DATA CONTRACT (OPTIONAL)-----------------
@@ -490,28 +495,47 @@ public class Contrata {
 						form.getInputByName("anniofechafin").setValueAttribute(dateFinContract[2]);
 					}
 				}
+				
+				{ //------------------ DATA JORNADA--------------------
+					DomNode tipoJornada = form.querySelector("select[name=codtipojornada]");
+					if (cto.getJndType() != null && tipoJornada!=null) {
+						((HtmlSelect) tipoJornada).setSelectedAttribute(cto.getJndType().getValue(), true);
+						
+						// ----------HORAS DE JORNADA
+						DomNode jornadaHour = form.querySelector("[name=\"horasduracionjornada\"]");
+						if (jornadaHour!=null && cto.getDurationTypeJndHour() != null) {
+							((HtmlInput)jornadaHour).setValueAttribute(cto.getDurationTypeJndHour());
+						}
 
-				if (cto.getJndType() != null) {
-					((HtmlSelect) form.querySelector("select[name=codtipojornada]")).setSelectedAttribute(cto.getJndType().getValue(), true);
+						DomNode jornadaMin = form.querySelector("[name=\"minutosduracionjornada\"]");
+						if (jornadaMin!=null && cto.getDurationTypeJndMin() != null) {
+							((HtmlInput)jornadaMin).setValueAttribute(cto.getDurationTypeJndMin());
+						}
+
+						// ----------HORAS DE CONVENIO
+						DomNode convenioHour = form.querySelector("[name=\"horasduracionconvenio\"]");
+						if (convenioHour!=null && cto.getDurationTypeCvnHour() != null) {
+							((HtmlInput)convenioHour).setValueAttribute(cto.getDurationTypeCvnHour());
+						}
+						
+						DomNode convenioMin = form.querySelector("[name=\"minutosduracionconvenio\"]"); 
+						if (convenioMin!=null && cto.getDurationTypeCvnMin() != null) {
+							((HtmlInput)convenioMin).setValueAttribute(cto.getDurationTypeCvnMin());
+						}
+						
+						// ---------- HORAS DE FORMACION
+						DomNode formationHour = form.querySelector("[name=\"horasformacion\"]");
+						if (formationHour!=null && cto.getDurationFormationHour() != null) {
+							((HtmlInput)formationHour).setValueAttribute(cto.getDurationFormationHour());
+						}
+						
+						DomNode formationMin = form.querySelector("[name=\"minutosformacion\"]");
+						if (formationMin!=null && cto.getDurationFormationMin() != null) {
+							((HtmlInput)formationMin).setValueAttribute(cto.getDurationFormationMin());
+						}
+					}
 				}
-
-				if (cto.getDurationTypeJndHour() != null) {
-					form.getInputByName("horasduracionjornada").setValueAttribute(cto.getDurationTypeJndHour());
-				}
-
-				if (cto.getDurationTypeJndMin() != null) {
-					form.getInputByName("minutosduracionjornada").setValueAttribute(cto.getDurationTypeJndMin());
-				}
-
-				// TIEMPO PARCIAL
-				if (cto.getDurationTypeCvnHour() != null) {
-					form.getInputByName("horasduracionconvenio").setValueAttribute(cto.getDurationTypeCvnHour());
-				}
-
-				if (cto.getDurationTypeCvnMin() != null) {
-					form.getInputByName("minutosduracionconvenio").setValueAttribute(cto.getDurationTypeCvnMin());
-				}
-
+			
 				// Titulacion academica
 				DomNode numNivelForm = form.querySelector("[name=\"numNivelForm\"]");
 				if (numNivelForm != null) {
@@ -596,7 +620,7 @@ public class Contrata {
 					if(collectiveType.isPresent()) {		
 						String collective = collectiveType.get();
 						
-						outerloop:
+						outerLoop:
 						for (final DomNode element : htmlPage.querySelectorAll(".fila")) {
 							DomNode radioNode = element.querySelector("[type=radio]");
 							
@@ -613,7 +637,7 @@ public class Contrata {
 												((HtmlRadioButtonInput) radioNode).click();
 												
 												select.setSelectedAttribute(collective, true);
-												break outerloop;
+												break outerLoop;
 											} catch (IOException e) { 
 												e.printStackTrace();
 											}
@@ -627,8 +651,7 @@ public class Contrata {
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				}
 				
-
-//				//------------MAYORES DE 52
+				//------------MAYORES DE 52
 				if(cto.getOver52Years().isPresent()) {
 					page++;
 					form.getInputByName("pagina2").setValueAttribute(page.toString());
@@ -650,7 +673,7 @@ public class Contrata {
 					form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				}
 			}
-			
+
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 			handleSepeAlert(alertHandler.getCollectedAlerts());
 			
@@ -949,8 +972,7 @@ public class Contrata {
 
 				{// DATA JORNADA
 					DomNode tipoJornada = form.querySelector("select[name=tipoJornada]");
-					if (tipoJornada != null && cto.getJndType() != null && cto.getDurationTypeJndHour() != null
-							&& cto.getDurationTypeJndMin() != null) {
+					if (tipoJornada != null && cto.getJndType() != null && cto.getDurationTypeJndHour() != null && cto.getDurationTypeJndMin() != null) {
 						((HtmlSelect) tipoJornada).setSelectedAttribute(cto.getJndType().getValue(), true);
 						String hours = Toolkit.fillStringLeft(cto.getDurationTypeJndHour(), "0", 4);
 						String min = cto.getDurationTypeJndMin();

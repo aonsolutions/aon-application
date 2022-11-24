@@ -4,10 +4,14 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.esferalia.aon.occam.test.fiscal.mod115.Mod115ScriptTest;
+
 @RunWith(Suite.class)
 @SuiteClasses({
 	// MVEL expresions syntax check en las declaraciones
 	Mod123ExpressionsTest.class,
+	Mod123ScriptTest.class,
+	
 	// Modelos mensuale
 	Mod123ReopenTest.class,
 	Mod123DeleteTest.class,

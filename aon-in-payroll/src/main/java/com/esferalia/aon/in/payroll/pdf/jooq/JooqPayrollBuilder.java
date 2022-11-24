@@ -772,7 +772,10 @@ public class JooqPayrollBuilder {
 				Double value = getExpressionValue(sd.getExpression());
 				if (value != null && value > 0) {
 					List<Date> daysList = workedDaysSet.stream().filter(period::contains).collect(Collectors.toList());
-					if (!daysList.isEmpty()) {
+					if (!daysList.isEmpty() || AonDateUtils.isSameDay(sdStart, sdEnd)) {
+						if (AonDateUtils.isSameDay(sdStart, sdEnd) && daysList.isEmpty()) {
+							daysList.add(sdStart);
+						}
 						int days = daysList.size();
 						while (daysList.size() > 1 && value / days < limit) {
 							daysList.remove(daysList.size() - 1);
