@@ -235,7 +235,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C044	(Mod390Key.AR_C044,null,null,(ctx,mod) -> add(Mod390Key.AR_C044,mod,PERCENT_4),null,null)
 		,AR_C045	(Mod390Key.AR_C045
 			,(mod,vat) -> operacionesInterioresCorrientesFilter(vat) && hasPercent4(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C045,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C045,mod,vat)
 			,null,null,null)
 		// IVA deducible en operaciones interiores de bienes y servicios corrientes. Tipo 2.
 		,AR_C846	(Mod390Key.AR_C846
@@ -245,7 +245,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C847	(Mod390Key.AR_C847,null,null,(ctx,mod) -> add(Mod390Key.AR_C847,mod,PERCENT_10),null,null)
 		,AR_C848	(Mod390Key.AR_C848
 			,(mod,vat) -> operacionesInterioresCorrientesFilter(vat) && hasPercent10(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C848,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C848,mod,vat)
 			,null,null,null)
 		// IVA deducible en operaciones interiores de bienes y servicios corrientes. Tipo 3.
 		,AR_C849	(Mod390Key.AR_C849
@@ -255,7 +255,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C850	(Mod390Key.AR_C850,null,null,(ctx,mod) -> add(Mod390Key.AR_C850,mod,PERCENT_21),null,null)
 		,AR_C851	(Mod390Key.AR_C851
 			,(mod,vat) -> operacionesInterioresCorrientesFilter(vat) && hasPercent21(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C851,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C851,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en operaciones interiores de bienes de inversión. Tipo 1.
@@ -266,7 +266,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C077	(Mod390Key.AR_C077,null,null,(ctx,mod) -> add(Mod390Key.AR_C077,mod,PERCENT_4),null,null)
 		,AR_C078	(Mod390Key.AR_C078
 			,(mod,vat) -> operacionesInterioresInversionFilter ( vat ) && hasPercent4(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C078,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C078,mod,vat)
 			,null,null,null)
 		// IVA deducible en operaciones interiores de bienes de inversión. Tipo 2.
 		,AR_C879	(Mod390Key.AR_C879
@@ -276,7 +276,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C880	(Mod390Key.AR_C880,null,null,(ctx,mod) -> add(Mod390Key.AR_C880,mod,PERCENT_10),null,null)
 		,AR_C881	(Mod390Key.AR_C881
 			,(mod,vat) -> operacionesInterioresInversionFilter ( vat ) && hasPercent10(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C881,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C881,mod,vat)
 			,null,null,null)
 		// IVA deducible en operaciones interiores de bienes de inversión. Tipo 3.
 		,AR_C882	(Mod390Key.AR_C882
@@ -286,7 +286,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C883	(Mod390Key.AR_C883,null,null,(ctx,mod) -> add(Mod390Key.AR_C883,mod,PERCENT_21),null,null)
 		,AR_C884	(Mod390Key.AR_C884
 			,(mod,vat) -> operacionesInterioresInversionFilter ( vat ) && hasPercent21(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C884,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C884,mod,vat)
 			,null,null,null)
 		
 		// Rectificación de deducciones en operaciones interiores
@@ -296,7 +296,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 			,null,null,null)
 		,AR_C356	(Mod390Key.AR_C356
 			,(mod,vat) -> operacionesInterioresRectifiedFilter(vat) 
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C356,mod,vat.getQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C356,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en importaciones de bienes corrientes. Tipo 1.
@@ -307,7 +307,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C055	(Mod390Key.AR_C055,null,null,(ctx,mod) -> add(Mod390Key.AR_C055,mod,PERCENT_4),null,null)
 		,AR_C056	(Mod390Key.AR_C056
 			,(mod,vat) -> importacionesCorrientesFilter(vat,mod) && hasPercent4(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C056,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C056,mod,vat)
 			,null,null,null)
 		// IVA deducible en importaciones de bienes corrientes. Tipo 2.
 		,AR_C857	(Mod390Key.AR_C857
@@ -317,7 +317,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C858	(Mod390Key.AR_C858,null,null,(ctx,mod) -> add(Mod390Key.AR_C858,mod,PERCENT_10),null,null)
 		,AR_C859	(Mod390Key.AR_C859
 			,(mod,vat) -> importacionesCorrientesFilter(vat,mod) && hasPercent10(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C859,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C859,mod,vat)
 			,null,null,null)
 		// IVA deducible en importaciones de bienes corrientes. Tipo 3.
 		,AR_C860	(Mod390Key.AR_C860
@@ -327,7 +327,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C861	(Mod390Key.AR_C861,null,null,(ctx,mod) -> add(Mod390Key.AR_C861,mod,PERCENT_21),null,null)
 		,AR_C862	(Mod390Key.AR_C862
 			,(mod,vat) -> importacionesCorrientesFilter(vat,mod) && hasPercent21(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C862,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C862,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en operaciones interiores de bienes de inversión. Tipo 1.
@@ -338,7 +338,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C088	(Mod390Key.AR_C088,null,null,(ctx,mod) -> add(Mod390Key.AR_C088,mod,PERCENT_4),null,null)
 		,AR_C089	(Mod390Key.AR_C089
 			,(mod,vat) -> importacionesInversionFilter(vat,mod) && hasPercent4(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C089,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C089,mod,vat)
 			,null,null,null)
 		// IVA deducible en operaciones interiores de bienes de inversión. Tipo 2.
 		,AR_C890	(Mod390Key.AR_C890
@@ -348,7 +348,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C891	(Mod390Key.AR_C891,null,null,(ctx,mod) -> add(Mod390Key.AR_C891,mod,PERCENT_10),null,null)
 		,AR_C892	(Mod390Key.AR_C892
 			,(mod,vat) -> importacionesInversionFilter(vat,mod) && hasPercent10(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C892,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C892,mod,vat)
 			,null,null,null)
 		// IVA deducible en operaciones interiores de bienes de inversión. Tipo 3.
 		,AR_C893	(Mod390Key.AR_C893
@@ -358,7 +358,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C894	(Mod390Key.AR_C894,null,null,(ctx,mod) -> add(Mod390Key.AR_C894,mod,PERCENT_21),null,null)
 		,AR_C895	(Mod390Key.AR_C895
 			,(mod,vat) -> importacionesInversionFilter(vat,mod) && hasPercent21(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C895,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C895,mod,vat)
 			,null,null,null)
 		
 		// Rectificación de deducciones en importaciones
@@ -368,7 +368,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 			,null,null,null)
 		,AR_C358	(Mod390Key.AR_C358
 			,(mod,vat) -> importacionesRectifiedFilter(vat,mod) 
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C358,mod,vat.getQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C358,mod,vat)
 			,null,null,null)
 
 
@@ -380,7 +380,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C066	(Mod390Key.AR_C066,null,null,(ctx,mod) -> add(Mod390Key.AR_C066,mod,PERCENT_4),null,null)
 		,AR_C067	(Mod390Key.AR_C067
 			,(mod,vat) -> adqIntracomunitariasCorrientesFilter(vat) && hasPercent4(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C067,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C067,mod,vat)
 			,null,null,null)
 		// IVA deducible en adquisiciones intracomunitarias de bienes y servicios corrientes. Tipo 2.
 		,AR_C868	(Mod390Key.AR_C868
@@ -390,7 +390,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C869	(Mod390Key.AR_C869,null,null,(ctx,mod) -> add(Mod390Key.AR_C869,mod,PERCENT_10),null,null)
 		,AR_C870	(Mod390Key.AR_C870
 			,(mod,vat) -> adqIntracomunitariasCorrientesFilter(vat) && hasPercent10(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C870,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C870,mod,vat)
 			,null,null,null)
 		// IVA deducible en adquisiciones intracomunitarias de bienes y servicios corrientes. Tipo 3.
 		,AR_C871	(Mod390Key.AR_C871
@@ -400,7 +400,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C872	(Mod390Key.AR_C872,null,null,(ctx,mod) -> add(Mod390Key.AR_C872,mod,PERCENT_21),null,null)
 		,AR_C873	(Mod390Key.AR_C873
 			,(mod,vat) -> adqIntracomunitariasCorrientesFilter(vat) && hasPercent21(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C873,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C873,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en adquisiciones intracomunitarias de bienes de inversión. Tipo 1.
@@ -411,7 +411,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C099	(Mod390Key.AR_C099,null,null,(ctx,mod) -> add(Mod390Key.AR_C099,mod,PERCENT_4),null,null)
 		,AR_C100	(Mod390Key.AR_C100
 			,(mod,vat) -> adqIntracomunitariasInversionFilter(vat) && hasPercent4(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C100,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C100,mod,vat)
 			,null,null,null)
 		// IVA deducible en adquisiciones intracomunitarias de bienes de inversión. Tipo 2.
 		,AR_C361	(Mod390Key.AR_C361
@@ -421,7 +421,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C362	(Mod390Key.AR_C362,null,null,(ctx,mod) -> add(Mod390Key.AR_C362,mod,PERCENT_10),null,null)
 		,AR_C363	(Mod390Key.AR_C363
 			,(mod,vat) -> adqIntracomunitariasInversionFilter(vat) && hasPercent10(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C363,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C363,mod,vat)
 			,null,null,null)
 		// IVA deducible en adquisiciones intracomunitarias de bienes de inversión. Tipo 3.
 		,AR_C364	(Mod390Key.AR_C364
@@ -431,7 +431,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		,AR_C365	(Mod390Key.AR_C365,null,null,(ctx,mod) -> add(Mod390Key.AR_C365,mod,PERCENT_21),null,null)
 		,AR_C366	(Mod390Key.AR_C366
 			,(mod,vat) -> adqIntracomunitariasInversionFilter(vat) && hasPercent21(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C366,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C366,mod,vat)
 			,null,null,null)
 		
 		// Rectificación de deducciones en adquisiciones intracomunitarias
@@ -441,7 +441,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 			,null,null,null)
 		,AR_C360	(Mod390Key.AR_C360
 			,(mod,vat) -> adqIntracomunitariasRectifiedFilter(vat) 
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C360,mod,vat.getQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C360,mod,vat)
 			,null,null,null)
 
 		// Compensaciones Régimen Especial A.G. y P .
@@ -451,7 +451,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 			,null,null,null)
 		,AR_C110	(Mod390Key.AR_C110
 			,(mod,vat) -> compensacionesRegAgrarioFilter(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.AR_C110,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.AR_C110,mod,vat)
 			,null,null,null)
 		
 		// Regularización Inversiones
@@ -814,6 +814,5 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 	Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
 		return null;
 	}
-	
 	
 }

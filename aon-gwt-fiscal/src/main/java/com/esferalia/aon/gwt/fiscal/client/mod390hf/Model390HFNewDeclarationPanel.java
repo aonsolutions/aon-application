@@ -3,13 +3,16 @@ package com.esferalia.aon.gwt.fiscal.client.mod390hf;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.AdministrationListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonIntegerBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.mod390hf.Model390HF.Model390HFCallback;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
+import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -27,9 +30,12 @@ public class Model390HFNewDeclarationPanel extends DockLayoutPanel {
 	private CheckBox replacement;
 	private CheckBox complementary;
 	private CheckBox withoutActivity;
+	private CheckBox manualDeclaration;
 	private AonDoubleBox prorate;
 	private CheckBox specialProrate;
-	private CheckBox manualDeclaration;
+	private AonDoubleBox previousProrate;
+	
+	
 	private boolean running;
 	
 	private FlowPanel rootPanel;
@@ -65,9 +71,10 @@ public class Model390HFNewDeclarationPanel extends DockLayoutPanel {
 		replacement = new CheckBox();
 		complementary = new CheckBox();
 		withoutActivity = new CheckBox();
+		manualDeclaration = new CheckBox();
 		prorate = new AonDoubleBox(7);
 		specialProrate = new CheckBox("Especial");
-		manualDeclaration = new CheckBox();
+		previousProrate = new AonDoubleBox(7);
 		
 		
 		admonList.addChangeHandler( event -> {
@@ -132,11 +139,8 @@ public class Model390HFNewDeclarationPanel extends DockLayoutPanel {
 		registerHandlers(model,callback);
 		
 		headerPanel.setWidget(new AonFiscalModelHeader(model));
-
 		rootPanel.clear();
-		
 		paintMessages(model);
-
 		
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.addStyleName(AON.CSS.aonMarginTop());
@@ -152,6 +156,9 @@ public class Model390HFNewDeclarationPanel extends DockLayoutPanel {
 		paintWithoutActivity(model,callback,tab);
 		paintManualDeclaration(model,callback,tab);
 		paintProrrate(model,callback,tab);
+		if ( !model.isManualDeclaration() ) {
+			rootPanel.add(calculateProratePanel);
+		}
 		
 		rootPanel.add(getButtonsPanel(model,callback));
 	}
@@ -205,16 +212,115 @@ public class Model390HFNewDeclarationPanel extends DockLayoutPanel {
 		tab.addLabelWidgetRow("", withoutActivity);
 	}
 	private void paintProrrate(Mod390HF model, Model390HFCallback callback, AonDisplayTable tab) {
+		if (model.hasPreviousProrate()) {
+			previousProrate.setEnabled(false);
+			tab.addLabelWidgetRow(AON.MSG.prorrataYearPercent(), previousProrate);
+		}
+		
 		FlowPanel proratePanel = new FlowPanel();
 		proratePanel.setStyleName(AON.CSS.aonFlexBlock());
 		specialProrate.setStyleName(AON.CSS.aonMarginLeft());  
 		proratePanel.add(prorate);
 		proratePanel.add(specialProrate);
-		tab.addLabelWidgetRow( model.getPeriod().isLastPeriod()
-				?AON.MSG.prorrataFinalPercent()
-				:AON.MSG.prorrataPercent(), proratePanel);
+		
+		if (model.hasProrate() || model.hasPreviousProrate()) {
+			AonTableButton showProrrateInfo = new AonTableButton("Mostrar informaci\u00F3n sobre el c\u00E1lculo",AON.CSS.aonIconInfo());
+			showProrrateInfo.addStyleName(AON.CSS.aonMarginLeft());
+			AonTableButton hideProrrateInfo = new AonTableButton("Ocultar informaci\u00F3n sobre el c\u00E1lculo",AON.CSS.aonIconClose());
+			hideProrrateInfo.addStyleName(AON.CSS.aonMarginLeft());
+			hideProrrateInfo.setVisible(false);
+			
+			hideProrrateInfo.addClickHandler(event -> {
+				showProrrateInfo.setVisible(true);
+				hideProrrateInfo.setVisible(false);
+				calculateProratePanel.clear();
+			});
+			showProrrateInfo.addClickHandler(event -> {
+				showProrrateInfo.setVisible(false);
+				hideProrrateInfo.setVisible(true);
+				paintCalculateProratePanel(model,callback);
+			});
+			
+			proratePanel.add(showProrrateInfo);	
+			proratePanel.add(hideProrrateInfo);
+		}
+		
+		tab.addLabelWidgetRow( AON.MSG.prorrataFinalPercent(), proratePanel);
 	}
 	
+	private void paintCalculateProratePanel(Mod390HF model, Model390HFCallback callback) {
+		calculateProratePanel.clear();
+		calculateProratePanel.setStyleName(AON.CSS.aonMargin());
+		calculateProratePanel.addStyleName(AON.CSS.aonBlockCenter());
+		
+		Label proLabel = new Label("Datos utilizados para c\u00E1lculo de la prorrata definitiva");
+		proLabel.setStyleName(AON.CSS.aonBold());
+		proLabel.addStyleName(AON.CSS.aonTextUnderline());
+		proLabel.addStyleName(AON.CSS.aonTextCenter());
+		proLabel.addStyleName(AON.CSS.aonMarginTop());
+		proLabel.addStyleName(AON.CSS.aonMarginBottom());
+		calculateProratePanel.add(proLabel);
+		
+		AonDisplayTable proTab = new AonDisplayTable();
+		proTab.addStyleName(AON.CSS.aonBlockCenter());
+		fillRow(model,callback,proTab.addRow(),Mod390Key.CM_070);
+		fillRow(model,callback,proTab.addRow(),Mod390Key.CM_071);
+		calculateProratePanel.add(proTab);
+		Label calcLabel = new Label();
+		calcLabel.setStyleName(AON.CSS.aonMarginTop());
+		calcLabel.addStyleName(AON.CSS.aonBorderTop());
+		calcLabel.addStyleName(AON.CSS.aonTextCenter());
+		calcLabel.addStyleName(AON.CSS.aonBold());
+		double c70 = model.ensureDetail(Mod390Key.CM_070).getAmount();
+		double c71 = model.ensureDetail(Mod390Key.CM_071).getAmount();
+		String calc =  AON.FMT.format(c70) 
+			+ " * " 
+			+ AON.FMT.format(c71)
+			+ " / 100 = "
+			+ AON.FMT.format(model.getProratePercent())
+			+ " % ";
+		calcLabel.setText(calc);
+		calculateProratePanel.add(calcLabel);
+	}
+	
+	private void fillRow(Mod390HF model,Model390HFCallback callback, AonDisplayTableRow row, Mod390Key key) {
+		row.addCell(getLabel(key), AON.CSS.aonWidth400())
+			.addCell(getDoubleBox(model,callback,key));
+	}
+	
+	private Label getLabel(Mod390Key key) {
+		return new Label(key.getDescription());
+	}
+	
+	
+	private AonDoubleBox getDoubleBox(Mod390HF model, Model390HFCallback callback,Mod390Key key) {
+		AonDoubleBox box = new AonDoubleBox();
+		box.setValue(model.ensureDetail(key).getAmount());
+		box.addValueChangeHandler( event -> {
+			if (box.getValue() == null) box.setValue(0.0,false);
+			model.ensureDetail(key).setAmount(box.getValue());	
+			calculateProrrate(model,callback);
+		});
+		return box;
+	}
+	
+	private void calculateProrrate(Mod390HF model, Model390HFCallback callback) {
+		Model390HF.MOD_SERVICE.calculateProrrate(callback.getOptions().getOccam(), model, new AsyncCallback<Mod390HF>() {
+			
+			@Override
+			public void onSuccess(Mod390HF result) {
+				populate(result);
+				paintCalculateProratePanel(result,callback); 
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.showError(caught.getMessage());
+			}
+		});
+	}
+	
+
 	private void paintManualDeclaration(Mod390HF model, Model390HFCallback callback, AonDisplayTable tab) {
 		manualDeclaration.setText(AON.MSG.manualDeclaration());
 		manualDeclaration.addClickHandler(event -> {
@@ -230,10 +336,13 @@ public class Model390HFNewDeclarationPanel extends DockLayoutPanel {
 	private void populate(Mod390HF model) {
 		admonList.setSelectedIndex( model.getAdministration().ordinal());
 		yearBox.setValue(model.getYear());
-		prorate.setValue(model.ensureDetail(model.getProrateKey()).getAmount());
 		complementary.setValue(model.isComplementary());
 		replacement.setValue(model.isReplacement());
 		withoutActivity.setValue(model.isWithoutActivity());
+		previousProrate.setValue(model.ensureDetail(model.getPreviousProrateKey()).getAmount(),false,false);
+		specialProrate.setValue(model.isSpecialProrate());
+		specialProrate.setVisible(model.hasProrate());
+		prorate.setValue(model.ensureDetail(model.getProrateKey()).getAmount(),false,true);
 	}
 	
 	

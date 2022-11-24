@@ -42,6 +42,11 @@ public class Mod390HFServiceImpl extends AonStatelessRemoteServiceServlet implem
 	}
 
 	@Override
+	public Mod390HF calculateProrrate(Occam occam, Mod390HF model) {
+		return MODEL390HF.calculateProrrate(occam, model);
+	}
+	
+	@Override
 	public Mod390HF save(Occam occam, Mod390HF mod303) {
 		return MODEL390HF.save(occam, mod303);
 	}

@@ -39,6 +39,12 @@ public class Mod390HFServiceAsyncDecorator implements Mod390HFServiceAsync {
 		AON.start();
 		fsa.calculate(occam, mod390HF, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void calculateProrrate(Occam occam, Mod390HF model, AsyncCallback<Mod390HF> callback) {
+		AON.start();
+		fsa.calculate(occam, model, new AsyncCallbackWrapper<>(callback));
+	}
 
 	@Override
 	public void save(Occam occam, Mod390HF mod390HF, AsyncCallback<Mod390HF> callback) {

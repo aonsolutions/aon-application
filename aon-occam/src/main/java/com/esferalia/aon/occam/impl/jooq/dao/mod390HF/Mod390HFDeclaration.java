@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public abstract class Mod390HFDeclaration {
 
@@ -104,6 +105,16 @@ public abstract class Mod390HFDeclaration {
 	protected static void add(Mod390Key key,Mod390HF mod,double amount) {
 		mod.ensureDetail(key).addAmount(amount);
 	}
+
+	protected static void addProrrated(Mod390Key key,Mod390HF mod,VatContext vat) {
+		double amount = vat.getDeductibleQuota();
+		if (mustApplyProrrate(mod,vat)) {
+			mod.ensureDetail(Mod390Key.CM_072).addAmount(amount);
+			amount = AonMathUtils.round(amount * mod.getProratePercent() / 100);	
+		}
+		add( key, mod, amount);
+	}
+	
 	
 	public IMod390KeyDAO getKey(Mod390Key key) {
 		for (IMod390KeyDAO keyDAO : getKeys()) {
@@ -230,12 +241,44 @@ public abstract class Mod390HFDeclaration {
 		return false;
 	}
 
+	public void prorrateRegularization(AONContext ctx, Mod390HF mod){
+		if (getRegularizationKey() != null) {
+			double lastPercent = mod.getProratePercent();
+			double prevPercent = mod.getPreviousProratePercent();
+			if ((mod.hasProrate() || mod.hasPreviousProrate()) 
+				&& AonNumberUtils.notEquals(lastPercent, prevPercent)) {
+				if (mod.isDiffCalculationDisabled()) {
+					final Mod390HF dupl = new Mod390HF();
+					dupl.setDomain(mod.getDomain());
+					dupl.setDomainName(mod.getDomainName());
+					dupl.setYear(mod.getYear());
+					dupl.setModel(mod.getModel());
+					dupl.setPeriod(mod.getPeriod());
+					dupl.setAdministration(mod.getAdministration());
+					dupl.setDiffCalculationDisabled(false);
+					dupl.ensureDetail( dupl.getProrateKey() ).setAmount( mod.getProratePercent() );
+					dupl.ensureDetail( dupl.getPreviousProrateKey() ).setAmount( mod.getPreviousProratePercent() );
+					Mod390HFDeclaration draftDec = Mod390HFDeclaration.getInstance(dupl); 
+					draftDec.createOnTheFly(ctx, dupl);
+					double amount = dupl.ensureDetail(Mod390Key.CM_072).getAmount();
+					mod.ensureDetail(Mod390Key.CM_072).setAmount( amount );
+				}
+				double amount = mod.ensureDetail(Mod390Key.CM_072).getAmount();
+				double declared = AonMathUtils.round(amount * prevPercent / 100);
+				double mustDeclared = AonMathUtils.round(amount * lastPercent / 100);
+				mod.putAmount(getRegularizationKey(), AonMathUtils.round(mustDeclared - declared));
+			}
+		}
+	}
+
 	void specificInitialization(AONContext ctx, Mod390HF mod) {}
 	abstract IMod390KeyDAO safeValueOf(Mod390HF mod, String key);
 	abstract IMod390KeyDAO valueOf(String string);
 	abstract IMod390KeyDAO[] getKeys();
 	abstract Mod390Key[] getProratedKeys();
+	abstract Mod390Key getRegularizationKey();
 	abstract Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod);
 	abstract double getResult(final Mod390HF mod);
 	abstract Mod390HF initialize(AONContext ctx, Mod390HF mod303);
+	
 }

@@ -19,13 +19,16 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.FixPreaviso;
+import net.aonsolutions.db.up2date.payroll.AlterContractBonusDescription;
+import net.aonsolutions.db.up2date.payroll.AlterContractBonusExpression;
+import net.aonsolutions.db.up2date.payroll.AlterContractPaymentDescription;
+import net.aonsolutions.db.up2date.payroll.AlterSalaryBonusConcept;
 import net.aonsolutions.db.up2date.accounting.AlterRbankAddRequisition;
 import net.aonsolutions.db.up2date.accounting.AlterRbankAddSepaMandateRef;
-import net.aonsolutions.db.up2date.fiscal.RefreshMod390HFResult;
-import net.aonsolutions.db.up2date.payroll.FixPreaviso;
-import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 import net.aonsolutions.db.up2date.warehouse.UdapaPfondoUpdateFix;
 
+import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 public class Up2Date {
 
     private static Update [] UPDATES  = {
@@ -276,16 +279,17 @@ public class Up2Date {
     		//SevenConsultingDomainNameUpdate.SEVEN_CONSULTING_DOMAIN_NAME_UPDATE,
     		//InvoiceAddAnnulledColumn.INVOICE_ADD_ANNULLED_COLUMN,
     		//HomeQuote2022Update.HOMEQUOTE2022UPDATE,
-    		//ContractDocCreate.CONTRACTDOCCREATE,
-    		//AlterSalaryBonusConcept.ALTERSALARYBONUSCONCEPT,
+    		//ContractDocCreate.CONTRACTDOCCREATE
+    		AlterSalaryBonusConcept.ALTERSALARYBONUSCONCEPT,
     		//HomeBonus2012Update.HOMEBONUS2012UPDATE,
     		//DefaultPaymentConcepts.DEFAULTPAYMENTCONCEPTS,
     		//AgriculturalITRemove.AGRICULTURALITREMOVE,
     		//AlterBankStatementReference2.ALTER_BANK_STATEMENT_REFERENCE_2,
-    		//AlterContractBonusExpression.ALTER_CONTRACT_BONUS_EXPRESSION,
-    		//AlterContractBonusDescription.ALTER_CONTRACT_BONUS_DESCRIPTION,
+    		AlterContractBonusExpression.ALTER_CONTRACT_BONUS_EXPRESSION,
+    		AlterContractBonusDescription.ALTER_CONTRACT_BONUS_DESCRIPTION,
+    		AlterContractPaymentDescription.ALTERCONTRACTPAYMENTDESCRIPTION,
     		FixPreaviso.FIXPREAVISO,
-    		RefreshMod390HFResult.REFRESH_MOD390_RESULT,
+    		//RefreshMod390HFResult.REFRESH_MOD390_RESULT,
     		AlterRbankAddRequisition.ALTER_RBANK_ADD_REQUISITION,
     		AlterRbankAddSepaMandateRef.ALTER_RBANK_ADD_SEPA_MANDATE_REF,
     		
