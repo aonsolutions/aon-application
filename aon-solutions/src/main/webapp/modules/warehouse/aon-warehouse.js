@@ -3,10 +3,11 @@ import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonMobileElaborationList } from './elaboration/aon-mobile-elaboration-list.js';
 import Apps from '../../services/app.js';
-import {WarehouseSidenav, ELABORATION, PACKAGING } from './WarehouseOptions.js';
+import {WarehouseSidenav, ELABORATION, PACKAGING, TAGS } from './WarehouseOptions.js';
 import { AonMobilePackaging } from './packaging/aon-mobile-packaging.js';
 import * as ACTION from '../actions.js';
 import { getWarehouses } from '../../services/warehouseService.js';
+import { AonDeliveryTag } from './deliveryTag/aon-delivery-tag.js';
 
 export class AonWarehouse extends AonElement {
 
@@ -47,7 +48,7 @@ export class AonWarehouse extends AonElement {
 	buildWarehouseOptions() {
 		this.getApplication().addSidenavOptions3(WarehouseSidenav.WAREHOUSES, () => this.getApplication().development(MSG.NEW_WAREHOUSE));
 		getWarehouses().then(warehouses => {
-			this.clearElementById(application.SIDENAV + WarehouseSidenav.WAREHOUSES.id + 'List');
+			this.clearElementById(this.getApplication().SIDENAV + WarehouseSidenav.WAREHOUSES.id + 'List');
 			warehouses.forEach((warehouse, i) => {
 				let option = {
 				  name: warehouse.name,
@@ -64,7 +65,7 @@ export class AonWarehouse extends AonElement {
 				  		}
 					]
 				};
-				application.addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
+				this.getApplication().addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
 			});
 		});
 	}
@@ -80,6 +81,9 @@ export class AonWarehouse extends AonElement {
 			break;
 		case PACKAGING.id:
 			this.aonPackaging();
+			break;
+		case TAGS.id:
+			this.aonDeliveryTag();
 			break;
 		default:
 			this.aonElaboration();
@@ -111,6 +115,11 @@ export class AonWarehouse extends AonElement {
 	aonPackaging() {
 		this.getApplication().removeFloatOption();
 		this.getApplication().setContent(new AonMobilePackaging());
+	}
+
+	aonDeliveryTag() {
+		this.getApplication().removeFloatOption();
+		this.getApplication().setContent(new AonDeliveryTag());
 	}
 
 }

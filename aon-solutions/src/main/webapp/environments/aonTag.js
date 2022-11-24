@@ -61,6 +61,7 @@ export const AON_UPLOAD = 'aon-upload';
 export const AON_IBAN = 'aon-iban';
 export const AON_TEXTAREA ='aon-textarea';
 
+export const AON_DELIVERY_TAG = 'aon-delivery-tag';
 // MODULES - COMPANY
 
 export const AON_MODULE = 'aon-module';

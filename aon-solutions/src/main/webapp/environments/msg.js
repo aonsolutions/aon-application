@@ -176,6 +176,7 @@ export const DELETE_WORKGROUP = "Borrar Grupo de trabajo"; // TODO
 export const DELETE_TAX = MSG.DELETE_TAX;
 export const DELETE_WAREHOUSE = MSG.DELETE_WAREHOUSE;
 export const DELETED_DATA = MSG.DELETED_DATA;
+export const DELIVERY_TAG = "Etiqueta de Envío";
 export const DESCRIPTION = MSG.DESCRIPTION;
 export const DETAILED = MSG.DETAILED;
 export const DEUTSCH = MSG.DEUTSCH;

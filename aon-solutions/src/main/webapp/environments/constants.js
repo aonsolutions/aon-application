@@ -277,6 +277,7 @@ export const SURNAME = 'surname';
 export const TABLE = 'table';
 export const TABS = 'tabs';
 export const TAG = 'tag';
+export const TAGS = 'tags';
 export const TAXES = 'taxes';
 export const TEXT = 'text';
 export const TIMECONTROL = 'timecontrol';
