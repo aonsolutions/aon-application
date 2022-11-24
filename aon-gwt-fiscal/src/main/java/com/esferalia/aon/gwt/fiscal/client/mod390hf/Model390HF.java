@@ -75,11 +75,16 @@ public class Model390HF extends MainEntryPoint {
 		
 		@Override
 		public void onCancel(Mod390HF mod390HF) {
+			aonLayout.hideErrorPanel();
 			cleanInfoPanel();
-			declarationContainer.setWidget(model390HFTable);
-			model390HFTable.refresh( new Model390HFCallback() );
-			tabLayout.selectTab(INFORMATION_TAB);
-			closeFootPanel();
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(mod390HF);
+			} else {
+				declarationContainer.setWidget(model390HFTable);
+				model390HFTable.refresh( new Model390HFCallback() );
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
+			}
 		}
 		
 		@Override

@@ -38,6 +38,13 @@ public class MODEL390HF {
 		}
 	}
 
+	public static Mod390HF calculateProrrate(Occam occam, Mod390HF mod) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().calculateProrrate(ctx, mod);
+		}
+	}
+	
+	
 	public static Mod390HF save(Occam occam, Mod390HF mod) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().save(ctx, mod);
@@ -121,4 +128,5 @@ public class MODEL390HF {
 			return getImpl().markAsCustomerRejected(ctx, mod, reason);
 		}
 	}
+
 }

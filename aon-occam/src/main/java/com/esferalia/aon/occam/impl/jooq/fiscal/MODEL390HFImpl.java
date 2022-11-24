@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.fiscal.IMODEL390HF;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
@@ -29,6 +30,11 @@ public class MODEL390HFImpl implements IMODEL390HF {
 	@Override
 	public Mod390HF calculate(AONContext ctx, Mod390HF mod390HF) {
 		return Mod390HFDAO.calculate(mod390HF);
+	}
+
+	@Override
+	public Mod390HF calculateProrrate(CloseableAONContext ctx, Mod390HF mod) {
+		return Mod390HFDAO.calculateProrrate(mod);
 	}
 
 	@Override

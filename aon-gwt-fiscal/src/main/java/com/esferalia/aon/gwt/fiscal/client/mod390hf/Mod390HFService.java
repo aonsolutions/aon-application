@@ -25,6 +25,7 @@ public interface Mod390HFService extends RemoteService {
 	Mod390HF saveComments(Occam occam, Mod390HF mod) throws AonCoreException;
 	Mod390HF initializeForFinish(Occam occam, Mod390HF mod) throws AonCoreException;
 	Mod390HF calculate(Occam occam, Mod390HF mod) throws AonCoreException;
+	Mod390HF calculateProrrate(Occam occam, Mod390HF model);
 	String getInfo(Occam occam, Mod390HF mod, IModelScript<Mod390Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 	
 	Mod390HF markAsFinished(Occam occam, Mod390HF mod) throws AonCoreException;

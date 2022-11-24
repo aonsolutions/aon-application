@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
-import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -28,7 +27,6 @@ public class Mod390HF extends FiscalModel implements Serializable {
 	public Mod390Key getProrateKey() {
 		return Mod390Key.CM_003;
 	}
-
 	public double getProratePercent() {
 		return getAmount(getProrateKey());
 	}
@@ -36,7 +34,6 @@ public class Mod390HF extends FiscalModel implements Serializable {
 		ensureDetail(getProrateKey()).setAmount( prorratePercent );
 		return this;
 	}
-	
 	public boolean hasProrate() {
 		return AonMathUtils.isNotZero(getProratePercent());
 	}
@@ -44,7 +41,6 @@ public class Mod390HF extends FiscalModel implements Serializable {
 	public Mod390Key getProrateTypeKey() {
 		return Mod390Key.CM_006;
 	}
-
 	public boolean isSpecialProrate() {
 		String prorateType = getDescription(getProrateTypeKey());
 		return AonStringUtils.isNotBlank(prorateType) && AonStringUtils.equals(prorateType,"E");
@@ -56,6 +52,19 @@ public class Mod390HF extends FiscalModel implements Serializable {
 		putDescription(getProrateTypeKey(), (value?"E":"G") );
 	}
 	
+	public Mod390Key getPreviousProrateKey() {
+		return Mod390Key.CM_007;
+	}
+	public double getPreviousProratePercent() {
+		Mod390Key key = getPreviousProrateKey();
+		double previousProratePercent = getAmount(key); 
+		if (AonMathUtils.isZero(previousProratePercent)) previousProratePercent = 100.0;  
+		return previousProratePercent;
+	}
+	public boolean hasPreviousProrate() {
+		return getPreviousProratePercent() != 0 && getPreviousProratePercent() != 100;
+	}
+
 	@Override
 	public boolean isDiffCalculationDisabled() {
 		return true;
@@ -112,7 +121,7 @@ public class Mod390HF extends FiscalModel implements Serializable {
 	
 	@Override
 	@Deprecated
-	public Mod303Key getDeclarationTypeKey() {
+	public Mod390Key getDeclarationTypeKey() {
 		throw new UnsupportedOperationException("Unsupported method! (use getDeclarationResultType())");
 	}
 	

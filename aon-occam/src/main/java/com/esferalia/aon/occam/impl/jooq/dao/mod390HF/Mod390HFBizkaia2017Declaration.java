@@ -847,4 +847,5 @@ class Mod390HFBizkaia2017Declaration extends Mod390HFBizkaiaDeclaration {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		
 	}
+	
 }

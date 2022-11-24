@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.mod390HF;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
+import com.esferalia.aon.occam.api.model.type.Mod390Key;
 
 abstract  class Mod390HFArabaDeclaration extends Mod390HFDeclaration {
 
@@ -12,4 +13,8 @@ abstract  class Mod390HFArabaDeclaration extends Mod390HFDeclaration {
 		return super.initializeModel(ctx, mod);
 	}	
 
+	@Override
+	Mod390Key getRegularizationKey() {
+		return Mod390Key.AR_C115;
+	}
 }
