@@ -40,6 +40,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 	private ListBox defaultVatRegime;
 	private CheckBox generateFromYearStart;
 	private CheckBox diffCalculationMandatory;
+	private CheckBox forceDiffCalculation;
 	private AonDoubleBox previousProrate;
 	private AonDoubleBox prorate;
 	private CheckBox specialProrate;
@@ -84,6 +85,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		defaultVatRegime = new ListBox();
 		generateFromYearStart = new CheckBox();
 		diffCalculationMandatory = new CheckBox();
+		forceDiffCalculation = new CheckBox();
 		previousProrate = new AonDoubleBox(7);
 		prorate = new AonDoubleBox(7);
 		specialProrate = new CheckBox("Especial");
@@ -170,6 +172,12 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		});
 
 		specialProrate.addClickHandler(event -> model.setSpecialProrateValue( specialProrate.getValue() ));
+		
+		forceDiffCalculation.addClickHandler(event -> {
+			model.setDiffCalculationMandatory(forceDiffCalculation.getValue());
+			model.setDiffCalculationDisabled(!forceDiffCalculation.getValue());
+		});
+		
 	}
 
 	private void paint(Mod303 model, Model303Callback callback) {
@@ -429,6 +437,13 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 			tab.addRow()
 				.addCell(new Label(),AON.CSS.aonTableLabel())
 				.addCell(diffCalculationMandatory,AON.CSS.aonWidth400());
+		} else {
+			forceDiffCalculation.setText( "Forzar c\u00E1lculo por diferencia" );
+			forceDiffCalculation.setValue(false);
+			forceDiffCalculation.setEnabled(true);
+			tab.addRow()
+				.addCell(new Label(),AON.CSS.aonTableLabel())
+				.addCell(forceDiffCalculation,AON.CSS.aonWidth400());
 		}
 	}
 	

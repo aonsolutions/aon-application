@@ -261,7 +261,7 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 		JSONObject json = new JSONObject();
 		JSONArray messages = new JSONArray();
 		for (Mod303Key key : script.getKeys() ) {
-			if (key != null) {
+			if (key != null && key.isDiffEnabled()) {
 				messages.put("\u2022 Resultado de la casilla " + key.getBoxFormatted());
 				messages.put(" - (A) Total acumulado " + DEC2.format(mod303.getAccumulatedAmount(key)));
 				double keyTotal = FiscalModelDAO.getPreviousModels(ctx, mod303, Mod303::new)
