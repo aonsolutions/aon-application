@@ -449,7 +449,7 @@ public class InvoiceDAO {
 					        SalesDetailDAO.get(ctx, detail.getSourceId()));
 				} else if(InvoiceSource.DELIVERY.equals(detail.getSource())) {
 				    invoice.getDetails().get(i).setDeliveryDetail(
-				            DeliveryDetailDAO.get(ctx, detail.getSourceId()));
+				            DeliveryDetailDAO.getFull(ctx, detail.getSourceId()));
 				} else if(InvoiceSource.INCOME.equals(detail.getSource())) {
                     // TODO IncomeDetailDAO.get(ctx, detail.getSourceId());
 					IncomeDetail d = IncomeDAO.getIncomeDetailStream(ctx, f -> f.getDomainProperty().eq(invoice.getDomain())

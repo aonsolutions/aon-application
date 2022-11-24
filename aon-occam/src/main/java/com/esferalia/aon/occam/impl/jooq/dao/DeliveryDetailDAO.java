@@ -83,6 +83,14 @@ public class DeliveryDetailDAO {
 			.where(DELIVERY_DETAIL_PROPERTIES.getConditions(filter));
 	}
 
+	public static DeliveryDetail getFull(AONContext ctx, Integer id){
+		DeliveryDetail dd = get(ctx, f -> f.getIdProperty().eq(id));
+		if(dd.getSalesDetail() != null) {
+			dd.setSalesDetailData(SalesDetailDAO.get(ctx, dd.getSalesDetail()));
+		}
+		return dd;
+	}
+	
 	public static DeliveryDetail get(AONContext ctx, Integer id){
 		return get(ctx, f -> f.getIdProperty().eq(id));
 	}
