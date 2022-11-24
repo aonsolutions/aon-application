@@ -1249,7 +1249,7 @@ export class AonInvoice extends AonElement {
 		// ----- TAX BASE
 
 		let base = this.createAonNumber(this.TAX_BASE + i, MSG.BASE, tax.base);
-		base.onChange(() => this.onChangeTaxBase(tax, tax.base, i))
+		base.onChange(() => this.onChangeTaxBase(tax, base.value, i))
 		taxesTable.addCell(base);
 		base.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 

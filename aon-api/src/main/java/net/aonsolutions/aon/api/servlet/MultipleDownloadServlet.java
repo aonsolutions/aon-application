@@ -159,7 +159,7 @@ public class MultipleDownloadServlet extends HttpServlet{
         				.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value())), AttachType.INVOICE);
     			try {
     				if(attach != null && attach.getId() != null) {
-    					String prefix = attach.getDescription() != null || attach.getDescription().length() > 2 
+    					String prefix = attach.getDescription() != null && attach.getDescription().length() > 2 
     							? attach.getDescription() : "invoice" + AonRandomStringUtils.random(5);
     					File file = File.createTempFile(prefix, "." + attach.getMimeType().getExtension());
     					AonFileUtils.writeByteArrayToFile(file, attach.getData());

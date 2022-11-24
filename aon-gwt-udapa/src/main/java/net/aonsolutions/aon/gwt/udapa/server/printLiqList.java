@@ -401,14 +401,10 @@ public class printLiqList extends HttpServlet{
 							// COLOR
 							String col = map.containsKey(QualitySheetCode.UFQAC8.getName()) ? map.get(QualitySheetCode.UFQAC8.getName()) : "0.0";
 							Double color = "1".equals(col) || "1.0".equals(col) ? 0.003 : 0.0; 
+                            if(issueDate.compareTo(start2) >= 0)
+                                color = "1".equals(col) || "1.0".equals(col) ? 0.005 : 0.0; 
 							cell(libro, row, style3, 30, color);
-							// PRIMA LAVADO
-							
-							String aptitudLavado = map.get(QualitySheetCode.UFQAC6.getName());
-							Double lav = "4".equals(aptitudLavado) || "4.0".equals(aptitudLavado) ? 0.03 : 0.0;
-							if(issueDate.compareTo(start2) >= 0)
-								lav = "4".equals(aptitudLavado) || "4.0".equals(aptitudLavado) ? 0.05 : 0.0;
-							cell(libro, row, style3, 31, lav);
+							cell(libro, row, style3, 31, color);
 
 							// PRIMA PEQUEÑA
 							Double primaPeq = Destiny.BASERRI.equals(destiny) ? 0.06 : 0.08;
@@ -426,7 +422,7 @@ public class printLiqList extends HttpServlet{
 									: 0.7 * kgGor * prima;
 							cell(libro, row, style3, 34, AonMathUtils.round(eurosGor));
 							
-							Double eurosNet = kgNet * (prima + color + lav);
+							Double eurosNet = kgNet * (prima + color);
 							cell(libro, row, style3, 35, AonMathUtils.round(eurosNet));				
 							
 							Double totalEuros = eurosPeq + eurosGor + eurosNet;
