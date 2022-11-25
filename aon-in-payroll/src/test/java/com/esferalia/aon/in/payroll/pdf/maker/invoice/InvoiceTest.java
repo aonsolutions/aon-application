@@ -287,13 +287,49 @@ public class InvoiceTest {
 		detailOne.setTaxableBase(712382113);
 		detailOne.setSource(InvoiceSource.DELIVERY);
 		detailOne.setItem(new Item().setProduct(new Product().setType(ProductType.LABOUR)));
+
+		SalesDetail salesDetail1 = new SalesDetail()
+				.setSales(
+						new Sales()
+						.setSeries("199")
+						.setNumber(200)
+						.setPurchaseReference("mondongo")
+						.setId(5000)
+				);
+		
+		SalesDetail salesDetail2 = new SalesDetail()
+				.setSales(
+						new Sales()
+						.setSeries("299")
+						.setNumber(300)
+						.setPurchaseReference("cachapa")
+						.setId(4000)
+						);
 		
 		DeliveryDetail deliveryDetail = new DeliveryDetail()
 				.setId(288)
 				.setDelivery(new Delivery()
 						.setId(123)
 						.setIssueTime(new Date()).setSeries("3434")
-						.setProject(new Project().setName("PUROJEKUTO DI")));
+						.setProject(new Project().setName("PUROJEKUTO DI"))
+				).setSalesDetailData(salesDetail1);
+		
+		DeliveryDetail deliveryDetail2 = new DeliveryDetail()
+				.setId(288)
+				.setDelivery(new Delivery()
+						.setId(123)
+						.setIssueTime(new Date()).setSeries("3434")
+						.setProject(new Project().setName("PUROJEKUTO DI"))
+				).setSalesDetailData(salesDetail2);
+		
+		DeliveryDetail deliveryDetail3 = new DeliveryDetail()
+				.setId(288)
+				.setDelivery(new Delivery()
+						.setId(123)
+						.setIssueTime(new Date()).setSeries("3434")
+						.setProject(new Project().setName("PUROJEKUTO DI"))
+				).setSalesDetailData(null);
+		
 		detailOne.setDeliveryDetail(deliveryDetail);
 				
 		
@@ -307,8 +343,7 @@ public class InvoiceTest {
 		detailTwo.setSource(InvoiceSource.DELIVERY);
 //		detailTwo.setItem(new Item().setProduct(new Product().setType(ProductType.COMMERCIAL_PRODUCT)));
 		
-		SalesDetail deliveryDetailTwo = new SalesDetail().setId(288).setSales(new Sales().setId(123).setIssueDate(new Date()).setPurchaseReference("123456/12345"));
-		detailTwo.setDeliveryDetail(deliveryDetail);
+		detailTwo.setDeliveryDetail(deliveryDetail2);
 		
 		InvoiceDetail detailThree = new InvoiceDetail();
 		detailThree.setAccountCode("0192831010");
@@ -349,6 +384,9 @@ public class InvoiceTest {
 		detailThree.setQuantity(781212783);
 		detailThree.setTaxableBase(712382113);
 		detailThree.setItem(new Item().setProduct(new Product().setType(ProductType.SERVICE)));
+		detailThree.setSource(InvoiceSource.DELIVERY);
+		detailThree.setDeliveryDetail(deliveryDetail3);
+		
 		
 		InvoiceDetail detailThreeAndAHalf = new InvoiceDetail();
 		detailThreeAndAHalf.setAccountCode("0192831010");
@@ -593,7 +631,7 @@ public class InvoiceTest {
 		detailX.setAccountCode("0192831010");
 		
 		String xdesc = "";
-		for (int i=1; i<=49; i++) {
+		for (int i=1; i<=30; i++) {
 			xdesc += "línea" + i + "\n";
 		}
 		
@@ -640,17 +678,17 @@ public class InvoiceTest {
 		details.add(detailTwo);
 		details.add(detailThree);
 		details.add(detailThreeAndAHalf);
-		details.add(detailFour);
-		details.add(detailFive);
-		details.add(specialDetail);
+//		details.add(detailFour);
+//		details.add(detailFive);
 //		details.add(specialDetail);
-		details.add(auxDetail);
-		details.add(auxDetail);
-		details.add(auxDetail);
-		details.add(auxDetail2);
-		details.add(auxDetail2);
-		details.add(auxDetail2);
-		details.add(auxDetail2);
+//		details.add(specialDetail);
+//		details.add(auxDetail);
+//		details.add(auxDetail);
+//		details.add(auxDetail);
+//		details.add(auxDetail2);
+//		details.add(auxDetail2);
+//		details.add(auxDetail2);
+//		details.add(auxDetail2);
 		
 		
 //		details.add(shortDetail1);
@@ -676,7 +714,7 @@ public class InvoiceTest {
 //			config.setLanguage(AonLanguage.ENGLISH);
 			config.setAdjustImage(false);
 			config.setBackground(attach);
-//			config.setDetailed(true);
+			config.setDetailed(true);
 			config.setAdjustImage(true);
 			config.setHeader(50);
 			config.setFooter(0);
@@ -756,7 +794,7 @@ public class InvoiceTest {
 			
 			Company registry = new Company();
 			registry.setName("COMPAÑÍA FALSA PERO MUY FALSA EH XD S.L.").setDocument("L012345678").setDocumentCountry(Country.JP);
-			registry.setDomain(new Domain().setDomainType(DomainType.GARAGE).setName("UDAPA.com"));
+			registry.setDomain(new Domain().setDomainType(DomainType.ENTERPRISE).setName("UDAPA.com"));
 			
 			LinkedList<RegistryAddress> addressList = new LinkedList<>();
 			addressList.add(new RegistryAddress().setAddress("Rey Don Sancho, Rey Don Sancho, no digas que no te aviso, pero, de dentro de Zamora un alevoso ha salido"));
