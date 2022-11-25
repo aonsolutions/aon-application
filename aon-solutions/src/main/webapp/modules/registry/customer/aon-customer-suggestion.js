@@ -80,6 +80,7 @@ export class AonCustomerSuggestion extends AonElement {
     this.selected = -1;
     this.showAddress = this.showAddress || false;
     this.showAddressList = true;
+    this.customer = this.customer || {name: '', document: ''};
   }
 
   build(){
@@ -175,7 +176,6 @@ export class AonCustomerSuggestion extends AonElement {
 
     let document = this.createAonElement(new AonSuggestion(), this.DOCUMENT, MSG.NIF);
     document.readonly = this.isReadonly();
-    console.log("DOCUMENT"  +this.customer.document);
     document.value = this.customer.document;
     document.addEventListener(EVENT.KEYUP, (e) => this.onKeyupDocument(e, document.value));
     document.addEventListener(EVENT.CHANGE, () => this.onChangeDocument(document.value));
