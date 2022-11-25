@@ -476,7 +476,7 @@ public class JooqEmployee {
 		if(null != contractData.getMdTBT())
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domain)
-				.set(CONTRACT_DATA.NAME, "TIPO_TRIBUTACION")
+				.set(CONTRACT_DATA.NAME, "IRPF_TYPE")
 				.set(CONTRACT_DATA.CONTRACT, contractId)
 				.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getMdTBT()+""))
 				.set(CONTRACT_DATA.START_DATE, contractStartDate)
@@ -993,7 +993,7 @@ public class JooqEmployee {
 				contractData.setRlce(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "COLECTIVO_TRABAJADORES")) {
 				contractData.setEmployeesColective(r.get(CONTRACT_DATA.EXPRESSION));
-			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "TIPO_TRIBUTACION")) {
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "IRPF_TYPE")) {
 				contractData.setMdTBT(Byte.parseByte(parseContractTable(r.get(CONTRACT_DATA.EXPRESSION))));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "SEPE_ID")) {
 				contractData.setSepeId(r.get(CONTRACT_DATA.EXPRESSION));
@@ -1935,14 +1935,14 @@ public class JooqEmployee {
 		
 		// Employees Colective
 		dslContext.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.eq("TIPO_TRIBUTACION"))
+			.where(CONTRACT_DATA.NAME.eq("IRPF_TYPE"))
 			.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
 			.execute();
 		
 		if(null != contractData.getMdTBT()) {
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domain)
-				.set(CONTRACT_DATA.NAME, "TIPO_TRIBUTACION")
+				.set(CONTRACT_DATA.NAME, "IRPF_TYPE")
 				.set(CONTRACT_DATA.CONTRACT, contractData.getContractId())
 				.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getMdTBT() + ""))
 				.set(CONTRACT_DATA.START_DATE, startDate)
