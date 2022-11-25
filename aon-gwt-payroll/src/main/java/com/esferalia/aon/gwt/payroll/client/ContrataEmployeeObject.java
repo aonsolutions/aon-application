@@ -902,6 +902,10 @@ public class ContrataEmployeeObject {
 		contractData.setSsRegimen(ssRegime);
 	}
 	
+	public void setMdTBT(String tbtType) {
+		contractData.setMdTBT(Byte.parseByte(tbtType));
+	}
+	
 	public void setContractActivityId(Integer activityID) {
 		contractData.setActivityId(activityID);
 	}

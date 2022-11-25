@@ -122,6 +122,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		public void onContractSSRegimenChange(byte ssRegime) {
 			employeeDialogObject.setSSRegime(ssRegime);
 		}
+	
+		@Override
+		public void onContractMdTBThange(String tbtType) {
+			employeeDialogObject.setMdTBT(Byte.parseByte(tbtType));
+		}
 		
 		@Override
 		public void onContractActiviesCCCChange(String activityCCC) {

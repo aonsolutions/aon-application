@@ -473,6 +473,16 @@ public class JooqEmployee {
 			
 		}
 		
+		if(null != contractData.getMdTBT())
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "TIPO_TRIBUTACION")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getMdTBT()+""))
+				.set(CONTRACT_DATA.START_DATE, contractStartDate)
+				.set(CONTRACT_DATA.END_DATE, contractEndDate)
+				.execute();
+		
 		if(AonStringUtils.isNotBlank(contractData.getRlce()))
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domain)
@@ -983,6 +993,8 @@ public class JooqEmployee {
 				contractData.setRlce(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "COLECTIVO_TRABAJADORES")) {
 				contractData.setEmployeesColective(r.get(CONTRACT_DATA.EXPRESSION));
+			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "TIPO_TRIBUTACION")) {
+				contractData.setMdTBT(Byte.parseByte(parseContractTable(r.get(CONTRACT_DATA.EXPRESSION))));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "SEPE_ID")) {
 				contractData.setSepeId(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "SEPE_EXTENSION_ID")) {
@@ -1921,6 +1933,23 @@ public class JooqEmployee {
 			}
 		}
 		
+		// Employees Colective
+		dslContext.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.NAME.eq("TIPO_TRIBUTACION"))
+			.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
+			.execute();
+		
+		if(null != contractData.getMdTBT()) {
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "TIPO_TRIBUTACION")
+				.set(CONTRACT_DATA.CONTRACT, contractData.getContractId())
+				.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getMdTBT() + ""))
+				.set(CONTRACT_DATA.START_DATE, startDate)
+				.set(CONTRACT_DATA.END_DATE, endDate)
+				.execute();
+		}
+		
 		Integer contractType = AonStringUtils.isBlank(contractData.getContractType()) ? null : Integer.parseInt(contractData.getContractType());
 		
 		if(null == contractType || !isCompleteJourneyContract(contractType)) {
@@ -2207,8 +2236,12 @@ public class JooqEmployee {
 	public static String parseContractTable(String exp) {
 		if(null == exp)
 			return null;
-		
-		return exp.split("\"")[1];
+		try {
+			exp = exp.split("\"")[1];
+			return exp;
+		}catch (Exception e) {
+			return exp;
+		}
 	}
 	
 	public static String getPaymentTypeName(byte type) {
