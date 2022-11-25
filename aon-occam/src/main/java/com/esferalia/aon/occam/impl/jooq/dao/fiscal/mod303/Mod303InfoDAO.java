@@ -257,28 +257,87 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 		return buf.toString();
 	}
 
-	private static JSONObject getDiffInvoicesInfo(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script,IMod303KeyDAO keyDAO) {
-		JSONObject json = new JSONObject();
-		JSONArray messages = new JSONArray();
+	private static String getDiffInvoicesInfo(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script,IMod303KeyDAO keyDAO) {
+		StringBuilder buf = new StringBuilder();
+		buf.append("<div style=\"" +
+				  "padding-right: 15px; padding-left: 15px; margin-right: auto; "
+				+ "margin-left: auto; width:100%; display: flex;flex-wrap: wrap; "
+				+ "justify-content: center; box-sizing: border-box"
+				+ "\">");
 		for (Mod303Key key : script.getKeys() ) {
 			if (key != null && key.isDiffEnabled()) {
-				messages.put("\u2022 Resultado de la casilla " + key.getBoxFormatted());
-				messages.put(" - (A) Total acumulado " + DEC2.format(mod303.getAccumulatedAmount(key)));
-				double keyTotal = FiscalModelDAO.getPreviousModels(ctx, mod303, Mod303::new)
-					.map( fm ->  putMessage(fm,messages," - >>>>> Resultado del modelo " + fm.getModelFullName() + " " + DEC2.format(fm.getAmount(key))))
-					.mapToDouble(fm -> fm.getAmount(key))
-					.sum();
-				messages.put("- (B) Total declarado " + DEC2.format(keyTotal));
-				messages.put("\u2022 Total a declarar (A-B) ->	" + DEC2.format(AonMathUtils.round(mod303.getAccumulatedAmount(key) - keyTotal)));
-				messages.put(" ------------------------------ ");
+				String styledTag = "<{0} style = \"{1}\">"; 
+				String marginTop = "margin-top: 20px;";
+				String border = "border: solid gray 0.5px;";
+				String fontLarger = "font-size: 1.2em;";
+				String textCenter = "text-align: center;";
+				String textRight= "text-align: right;";
+				String paddingLeft = "padding-left: 15px;";
+				String width400 = "width: 400px;";
+				String width150 = "width: 150px;";
+				String bold = "font-weight: bold;";
+				String blockCenter = "margin-left: auto;margin-right: auto;";
+				
+				buf.append("<div style=\"" 
+					+ "border-radius: 4px; background: #fff; box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);"
+					+ "transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);"
+					+ "padding: 4px 5px 5px 10px; margin: 20px 10px 10px 10px; cursor: pointer;"
+					+ "flex: 0 1 40%; min-height: 120px; min-width: 350px;"
+					+ "\">")
+					.append( MessageFormat.format(styledTag, "table cellspacing=\"0\"",  blockCenter+marginTop+border ) )
+					.append("<tr>")
+						.append( MessageFormat.format(styledTag, "td colspan=\"2\"",  textCenter+bold+fontLarger+border) )
+							.append("Casilla " + key.getBoxFormatted())
+						.append("</td>")
+					.append("</tr>")
+					.append("<tr>")
+						.append( MessageFormat.format(styledTag, "td",  bold+border+width400) )
+							.append("(A) Total acumulado desde inicio ejercicio")
+						.append("</td>")
+						.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border) )
+							.append(DEC2.format(mod303.getAccumulatedAmount(key)))
+						.append("</td>")
+					.append("</tr>");
+					
+					double keyTotal = FiscalModelDAO.getPreviousModels(ctx, mod303, Mod303::new)
+							.map( fm ->  {
+								buf.append("<tr>")
+									.append( MessageFormat.format(styledTag, "td", paddingLeft+border) )
+										.append("Resultado del modelo " + fm.getModelFullName())
+									.append("</td>")
+									.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
+										.append(DEC2.format(fm.getAmount(key)))
+									.append("</td>")
+								.append("</tr>");
+								return fm;
+							})
+							.mapToDouble(fm -> fm.getAmount(key))
+							.sum();
+					
+					buf.append("<tr>")
+						.append( MessageFormat.format(styledTag, "td",  bold+border) )
+							.append("(B) Total declarado ")
+						.append("</td>")
+						.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border) )
+							.append(DEC2.format(keyTotal))
+						.append("</td>")
+					.append("</tr>");
+
+					buf.append("<tr>")
+						.append( MessageFormat.format(styledTag, "td",  bold+fontLarger+border) )
+							.append("(A - B) Total a declarar")
+						.append("</td>")
+						.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+fontLarger+border) )
+							.append(DEC2.format(AonMathUtils.round(mod303.getAccumulatedAmount(key) - keyTotal)))
+						.append("</td>")
+					.append("</tr>");
+				
+				buf.append("</table>");
+				buf.append("</div>");
 			}
 		}
-		return json.put( IJsonNames.MESSAGES, messages) ;
-	}
-
-	private static Mod303 putMessage(Mod303 mod303,JSONArray messages, String message) {
-		messages.put(message);
-		return mod303;
+		buf.append("</div>");
+		return buf.toString();
 	}
 }
 
