@@ -111,6 +111,11 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		public void onContractSSRegimenChange(byte ssRegime) {
 			contrataEmployeeObject.setSSRegime(ssRegime);
 		}
+
+		@Override
+		public void onContractMdTBThange(String tbtType) {
+			contrataEmployeeObject.setMdTBT(tbtType);
+		}
 		
 		@Override
 		public void onContractActiviesCCCChange(String activityCCC) {
@@ -522,6 +527,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	private void fillContractFreelancerTable(ContractInfo contractData) {
 		// RETA
 		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
+		setSelectedValueLB(employee.mdTBTLB, contractData.getMdTBT()+"");
 		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
 		
 		employee.startDate.setValue(contractData.getStartDate());
@@ -558,6 +564,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	
 	private void fillContractTable(ContractInfo contractData) {
 		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
+		setSelectedValueLB(employee.mdTBTLB, contractData.getMdTBT()+"");
 		
 		setSelectedValueLB(employee.activityCCC, contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
 		

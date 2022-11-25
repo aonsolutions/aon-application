@@ -589,6 +589,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		contractData.setSsRegimen(ssRegime);
 	}
 	
+	public void setMdTBT(byte mdTbt) {
+		add(contractData::setMdTBT, 
+				contractData.getMdTBT(), 
+				mdTbt );
+		
+		contractData.setMdTBT(mdTbt);
+	}
+	
 	public void setActivityInfo(String activityInfo) {
 		Integer activityId = null;
 		Integer cccId = null;
