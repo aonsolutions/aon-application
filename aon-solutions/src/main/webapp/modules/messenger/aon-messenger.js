@@ -58,17 +58,14 @@ export class AonMessenger extends AonElement {
 			this.dur = new DomainUserRoles(r);
 			this.build();
 		});
- 	}
+	}
 
 	disconnectedCallback(){
 		localStorage.removeItem("taskCau");
 	}
 
 	initialize(){
-		if(this.type && this.type === TASK_SOURCE.CAU) {
-			this.cau = 1;
-			this._filter.source = TASK_SOURCE.CAU;
-		}
+		this.id = MESSENGER_VIEWS.AON_MESSENGER;
 		this.AON_MESSENGER = MESSENGER_VIEWS.AON_MESSENGER;
 		this._workgroups = [];
 		this._tags = [];
@@ -86,6 +83,12 @@ export class AonMessenger extends AonElement {
 			page:0, 
 			perPage:30
 		};
+				
+		if(this.type && this.type === TASK_SOURCE.CAU) {
+			this.cau = 1;
+			this._filter.source = TASK_SOURCE.CAU;
+		}
+		
 	}
 
 	build() {
@@ -900,14 +903,14 @@ export class AonMessenger extends AonElement {
 		return this.APP_PARAMS;
 	}
 
-	loadGwt(module){
-
-		let application = this.getApplication();
+	loadGraph(){
+		let contentId = this.getApplication().CONTENT;
     
-		this.clearElementById(application.CONTENT);
+		this.clearElementById(contentId);
 
-		GWT.load(module, application.CONTENT);
+		GWT.load(GWT.TASK_STAT, contentId);
 	}
+
 
 	showView(view, data = undefined, filter = undefined){
 		return new Promise(async(resolve)=>{
@@ -920,7 +923,7 @@ export class AonMessenger extends AonElement {
 					aonView = new AonMessengerChat();
 				break;
 				case MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC:
-					this.loadGwt(GWT.TASK_STAT);
+					this.loadGraph();
 				break;
 			}
 			if(aonView){
