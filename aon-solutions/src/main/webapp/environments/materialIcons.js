@@ -56,6 +56,7 @@ export const AUTORENEW = 'autorenew';
 export const BACKUP = 'backup';
 export const BACKUP_TABLE = 'backup_table';
 export const BAR_CHART = 'bar_chart';
+export const BARCODE = 'barcode';
 export const BATCH_PREDICTION = 'batch_prediction';
 export const BOOK = 'book';
 export const BOOK_ONLINE = 'book_online';
@@ -177,6 +178,7 @@ export const NOTIFICATION_ADD = "notification_add";
 // ----- P
 
 export const PALLET = 'pallet';
+export const PASSWORD = 'password';
 export const PAYMENT = 'payment';
 export const PENDING_ACTIONS = 'pending_actions';
 export const PERSON = 'person';
@@ -231,6 +233,8 @@ export const VERIFIED = 'verified';
 export const VISIBILITY = 'visibility';
 export const VISIBILITY_OFF = 'visibility_off';
 
+// ----- W
+export const WAREHOUSE = 'warehouse';
 
 export const OPEN_IN_FULL = "open_in_full";
 export const OPEN_IN_NEW  = "open_in_new";

@@ -131,6 +131,9 @@ public abstract class Employee extends ResizeComposite {
 	ListBox ssRegimeType;
 	
 	@UiField
+	ListBox mdTBTLB;
+	
+	@UiField
 	ListBox activityCCC;
 	
 	@UiField
@@ -417,6 +420,12 @@ public abstract class Employee extends ResizeComposite {
 			this.hideElementsFreelancerTable();
 		
 		onContractSSRegimenChange(ssRegime);
+	}
+	
+	@UiHandler("mdTBTLB")
+	void onContractMdTBTChangeValue(ChangeEvent event) {
+		String mdTbt = mdTBTLB.getSelectedValue();
+		onContractMdTBThange(mdTbt);
 	}
 
 	@UiHandler("activityCCC")
@@ -787,6 +796,7 @@ public abstract class Employee extends ResizeComposite {
 	public abstract void onEmployeeFirstSurnameChange(String surname);
 	public abstract void onEmployeeSecondSurnameChange(String secondSurname);
 	public abstract void onContractSSRegimenChange(byte ssRegime);
+	public abstract void onContractMdTBThange(String tbtType);
 	public abstract void onContractActiviesCCCChange(String activityCCC);
 	public abstract void onContractMdCTZhange(String mdCtz);
 	public abstract void onContractWorkplaceChange(Integer workplaceId);
@@ -852,6 +862,7 @@ public abstract class Employee extends ResizeComposite {
 		this.ssRegimeType.clear();
 		this.activityCCC.clear();
 		this.mdCTZLB.clear();
+		this.mdTBTLB.clear();
 		this.workplace.clear();
 		this.contractTypeLB.clear();
 		this.modality.clear();
@@ -894,11 +905,17 @@ public abstract class Employee extends ResizeComposite {
 		// TABLA DATOS CONTRATO
 		
 		// TIPO DE COTIZACIÓN
-		this.ssRegimeType.addItem("COMUN", "0");
+		this.ssRegimeType.addItem("COM\u00daN", "0");
 		this.ssRegimeType.addItem("RETA", "3");
 		this.ssRegimeType.addItem("SOCIOS COOP", "1");
 		this.ssRegimeType.addItem("JUBILACION ACTIVA", "2");
 		this.ssRegimeType.addItem("GARANTIA JUVENIL", "4");
+		this.ssRegimeType.addItem("ASIMILADO AL R\u00C9GIMEN GENERAL", "5");
+		
+		// MODALIDAD DE COTIZACION
+		this.mdTBTLB.addItem("COM\u00daN", "0");
+		this.mdTBTLB.addItem("Adm./Consejero Negocio < 100.000 \u20ac", "1");
+		this.mdTBTLB.addItem("Adm./Consejero Negocio > 100.000 \u20ac", "2");
 		
 		// MODALIDAD DE COTIZACION
 		this.mdCTZLB.addItem("-", "-1");

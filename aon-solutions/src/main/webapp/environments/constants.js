@@ -51,12 +51,15 @@ export const CARD = 'card';
 export const CARRIER = 'carrier';
 export const CATEGORY = 'category';
 export const CATEGORY_NAME = 'categoryName';
+export const CHANGE_PASSWORD = 'changePassword';
 export const CHANGE_TYPE = 'changeType';
 export const CHARGES_PAYMENTS = 'chargesPayments';
 export const CHECKED = 'checked';
 export const CODE = 'code';
 export const COMMENT = 'comment';
 export const COMMENTS = 'comments';
+export const COMMERCE = 'commerce';
+export const COMMERCIAL = 'commercial';
 export const COMPANY = 'company';
 export const COMPOSITION = 'composition';
 export const COMUNICA = 'comunica';
@@ -157,6 +160,7 @@ export const LOGO = 'logo';
 
 // ----- M
 
+export const MARKETING = 'marketing';
 export const MAX = 'max';
 export const MESSENGER = 'messenger';
 export const MIN = 'min';
@@ -244,6 +248,7 @@ export const ROW = 'row';
 // ----- S
 export const SALTRA = 'saltra';
 export const SAVE = 'save';
+export const SCROLLING = 'scrolling';
 export const SELECT = 'select';
 export const SELECTED = 'selected';
 export const SEND = 'send';
@@ -260,6 +265,7 @@ export const SHOW_FILE = 'showFile';
 export const SHOW_PASSWORD = 'showPassword';
 export const SHOW_TOOLBAR = 'showToolbar';
 export const SPAN = 'span';
+export const SRC = 'src';
 export const STATUS = 'status';
 export const STRING = 'string';
 export const SUCCESS = "success";
@@ -271,6 +277,7 @@ export const SURNAME = 'surname';
 export const TABLE = 'table';
 export const TABS = 'tabs';
 export const TAG = 'tag';
+export const TAGS = 'tags';
 export const TAXES = 'taxes';
 export const TEXT = 'text';
 export const TIMECONTROL = 'timecontrol';
@@ -282,6 +289,7 @@ export const TRANSACTION = 'transaction';
 export const TRANSACTION_TYPE = 'transactionType';
 export const TRANSPORT_OPERATOR = 'transportOperator';
 export const TRASH = 'trash';
+export const TREASURY = 'treasury';
 export const TRUE = 'true';
 export const TYPE = 'type';
 export const TYPE_NAME = 'typeName';
@@ -305,6 +313,7 @@ export const VISIBLE = 'visible';
 
 // ----- W
 export const WAREHOUSE = 'warehouse';
+export const WAREHOUSES = 'warehouses';
 export const WITHHOLDING = 'withholding';
 export const WITHHOLDING_FARMER = 'withholdingFarmer';
 export const WORKPLACE = 'workplace';

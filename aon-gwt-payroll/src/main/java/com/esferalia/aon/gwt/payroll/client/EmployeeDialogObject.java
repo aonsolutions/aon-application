@@ -307,6 +307,10 @@ public class EmployeeDialogObject {
 		contractData.setSsRegimen(ssRegime);
 	}
 	
+	public void setMdTBT(byte mdTBT) {
+		contractData.setMdTBT(mdTBT);
+	}
+	
 	public void setContractActivityId(Integer activityID) {
 		contractData.setActivityId(activityID);
 	}

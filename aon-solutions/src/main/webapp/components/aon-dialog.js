@@ -171,6 +171,7 @@ export class AonDialog extends AonElement {
 		let title = this.createElement(TAG.DIV);
 		title.style.fontSize = "22px";
 		title.style.fontWeight = "bold";
+		title.style.marginBottom = "10px";
 		title.id = this.TITLE;
 		main.appendChild(title);
 
@@ -220,6 +221,7 @@ export class AonDialog extends AonElement {
 		let title = this.createElement(TAG.DIV);
 		title.style.fontSize = "22px";
 		title.style.fontWeight = "bold";
+		title.style.fontWeight = "10px";
 		title.id = this.TITLE;
 
 		let content = this.createElement(TAG.DIV);

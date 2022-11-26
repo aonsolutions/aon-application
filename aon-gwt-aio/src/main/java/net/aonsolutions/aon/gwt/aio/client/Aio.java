@@ -94,7 +94,7 @@ public class Aio implements EntryPoint {
 			impl.getAonData(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonData>() {
 				
 				@Override public void onSuccess(AonData result) {
-					result.setRootPanel("rootPanel");
+					result.setRootPanel(getRootPanel() != null ? getRootPanel() : "rootPanel");
 					selection(entryPoint, result);
 				}
 				

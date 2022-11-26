@@ -614,6 +614,12 @@ export class AonApplication extends AonElement {
     this.addSidenavOptionsTitle(data, newButton);
     this.addSidenavOptionsList(data, options);
   }
+  
+  addSidenavOptions3(data, newButton) {
+    this.SIDENAV = this.isMobile() ? this.MOBILE_SIDENAV_CONTENT : this.SIDENAV;
+    this.addSidenavOptionsTitle(data, newButton);
+    this.addSidenavOptionsList(data, data.options || []);
+  }
 
   buildOptionsMenu(el, options) {
     const boundingClientRect = el.getBoundingClientRect();
