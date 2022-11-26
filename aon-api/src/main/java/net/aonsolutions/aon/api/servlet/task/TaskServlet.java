@@ -1,5 +1,7 @@
 package net.aonsolutions.aon.api.servlet.task;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -57,6 +59,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.excel.TaskExcel;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
 @SuppressWarnings("serial")
@@ -108,6 +111,9 @@ public class TaskServlet extends AonApiHttpServlet{
 					break;
 				case "/daily-tracking-by-task":
 					response(req, resp, getDailyTrackingByTask(api));
+					break;
+				case "/excel":
+					responseFile(resp, getTaskExcel(api), MimeType.MS_EXCEL);
 					break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -439,6 +445,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		counts.keySet().stream().forEach(k-> json.put(k, counts.get(k)) );
 		
+		
 //		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 //		AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
 //			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
@@ -713,6 +720,15 @@ public class TaskServlet extends AonApiHttpServlet{
 				}
 			}
 		} catch (Exception e) {}
+	}
+	
+	private File getTaskExcel(AonApiData api) throws Exception {
+		LOGGER.info("[GET] TASK SERVLET EXCEL");
+
+
+		File file = File.createTempFile("task", "");
+		TaskExcel.buildExcel(new FileOutputStream(file), api);
+		return file;
 	}
 	
 	//---------DAILY_TRACKING----------

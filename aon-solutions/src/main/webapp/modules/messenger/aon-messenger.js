@@ -7,7 +7,7 @@ import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
 import { APP_PARAMS_REQUEST, MessengerOptions, MessengerSidenav, MESSENGER_VIEWS, TAG_TYPE, TASK_FILTER, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder, getTastHolders } from '../../services/taskHolderService.js';
-import { getTaskStatusCount, getTaskGeneralCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag } from '../../services/taskService.js';
+import { getTaskStatusCount, getTaskGeneralCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag, getTaskExcel } from '../../services/taskService.js';
 import { getApplicationParametersIsSig } from '../../services/applicationParameterService.js';
 import { AonInput } from '../../components/aon-input.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
@@ -187,6 +187,12 @@ export class AonMessenger extends AonElement {
 			this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
 			);
+
+			if(this.isLocal()){
+				this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, () =>
+					this.getExcel()
+				);
+			}
 			
 			if(!this.cau){
 				this.applicationEl.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name:MSG.UPDATE}, () =>
@@ -1005,6 +1011,16 @@ export class AonMessenger extends AonElement {
 			document = this.cauInfo.company.document;
 		}
 		return document;
+	}
+
+	async getExcel(){
+		this.getApplication().startLoading();
+		try{
+			await getTaskExcel(this.getListFilter());
+		} catch(e){
+			console.log(e);
+		}
+		this.getApplication().stopLoading();
 	}
 
 	markReadNotification(taskId){
