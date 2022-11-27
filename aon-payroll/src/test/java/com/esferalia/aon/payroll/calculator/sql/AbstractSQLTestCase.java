@@ -1247,6 +1247,20 @@ public abstract class AbstractSQLTestCase {
 			ContractRecord contract,
 			Date startDate,
 			Date endDate,
+			PaymentConceptRecord concept,
+			String description,
+			String expression,
+			String irpfExpression,
+			String quoteExpression,
+			PaymentType type,
+			Month month) {
+		return addPayment(aonContext, contract, startDate, endDate, concept, description, expression, irpfExpression, quoteExpression, type, (byte)month.ordinal());
+	}
+
+		public static final ContractPaymentRecord addPayment(AONContext aonContext,
+			ContractRecord contract,
+			Date startDate,
+			Date endDate,
 			String description,
 			String expression,
 			String irpfExpression,
