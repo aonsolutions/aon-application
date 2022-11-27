@@ -527,8 +527,8 @@ public class  DSLPDFSalaryBuilder extends CompositeSalaryBuilder<Salary, ISalary
 		payrollWorkplace.setWorkplace(workplace.getId());
 		payrollWorkplace.setDomain(enterprise.getDomain());		
 		payrollWorkplace.setEnterpriseActivity(enterpriseCcc.getEnterpriseActivity());
-		//workplace.setAddress(value);
-		workplace.insert();
+		//payrollWorkplace.setAddress(value);
+		payrollWorkplace.insert();
 		
 		return payrollWorkplace;
 	}

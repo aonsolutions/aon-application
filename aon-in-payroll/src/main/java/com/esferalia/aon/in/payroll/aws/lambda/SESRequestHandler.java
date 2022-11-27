@@ -166,10 +166,14 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 	private static Optional<String> getOptionalDomain(String ccc, String cif) throws AonConnectionException, SQLException, ClassNotFoundException {
 		ConnectionInfo connectionInfo = ConnectionInfo.getConnectionInfo(new File(DEFAULT_CONFIG_FILE));
 		for ( String schema : connectionInfo.getSchemas() ) {
-			Connection connection = getSchemaConnection(schema);
-			Optional<String> domain = getOptionalDomain(connection, ccc, cif );
-			if ( domain.isPresent() )
-				return domain;
+			try {
+				Connection connection = getSchemaConnection(schema);
+				Optional<String> domain = getOptionalDomain(connection, ccc, cif );
+				if ( domain.isPresent() )
+					return domain;
+			} catch ( Throwable t) {
+				System.err.printf("ERROR [%s]: %s \r\n", schema, t.getMessage() );
+			}
 		}
 		return Optional.empty();
 	}
@@ -502,24 +506,51 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 	
 	public static void main(String[] args) throws Exception {
 		
-		try ( FileInputStream is = new FileInputStream(args[0])){
+//		try ( FileInputStream is = new FileInputStream(args[0])){
+//		
+//    		MimeCallback callback = new MimeCallback();
+//    		MimeMessage mimeMessage = 
+//    		handleMIME(
+//			is , 
+//			callback, 
+//			SESRequestHandler::handleZIP, 
+//			SESRequestHandler::handlePDF);
+//			
+//    		try {
+//    			Address[] to = getTo(mimeMessage);		    			
+//    			SESSMTPSender.send(to, callback.getInserted());
+//    		} catch ( Exception e ) {
+//    			System.out.println("ERROR: " +  callback.getInserted() + " Nóminas insertadas. " + e.getMessage());
+//    		}
+//		}
+		String bucket = "aon-ses-inbox" ;
 		
+		for ( String messageId: args ) {
+
+			System.out.println("messageId: " + messageId );
+	    	String key = String.format("laboral@aon.solutions/%s", messageId);
     		MimeCallback callback = new MimeCallback();
-    		MimeMessage mimeMessage = 
-    		handleMIME(
-			is , 
+    		Optional<MimeMessage> mimeMessage = 
+    		handleMessage(
+			bucket, 
+			key, 
 			callback, 
-			SESRequestHandler::handleZIP, 
-			SESRequestHandler::handlePDF);
+			SESRequestHandler::handleZIP, 			   					
+			SESRequestHandler::handlePDF
+			);
 			
     		try {
     			
-    			Address[] to = getTo(mimeMessage);		    			
+    			Address[] to = mimeMessage.map( SESRequestHandler::getTo ).orElse( new Address[] {});		    			
     			SESSMTPSender.send(to, callback.getInserted());
     		} catch ( Exception e ) {
-    			System.out.println("ERROR: " +  callback.getInserted() + " Nóminas insertadas. " + e.getMessage());
+    			System.out.println("ERROR:" + e.getMessage());
     		}
+
 		}
+		
+		System.out.println("That's all Folks!");
+		
 		
 	}
 }

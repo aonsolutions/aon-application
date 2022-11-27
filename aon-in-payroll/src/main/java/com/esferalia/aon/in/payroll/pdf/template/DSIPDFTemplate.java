@@ -4,6 +4,7 @@ import static com.esferalia.aon.salary.enumeration.DeductionType.COMMON_CONTINGE
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.Calendar;
 import java.util.Collections;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.pdf.template.AltaiPDFTemplate.PDFContract;
+import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -39,320 +41,32 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 		salaryBuilder.setRegistration(Integer.MIN_VALUE);
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
 
-			Double totalSS = 0d;
+			PDFContract pdfContract = parseSalaryHeader(reader, salaryBuilder);
+			Period salaryPeriod = parseSalaryPeriod(reader, salaryBuilder);
 
-			Matcher matcher = find(reader, ENTERPRISE_WORKER);
-			String employeeName = AonStringUtils.trimToNull(matcher.group("name"));
-			salaryBuilder.setEmployeeName(employeeName);
-			String enterpriseName = AonStringUtils.trimToNull(matcher.group("enterprise"));
-			salaryBuilder.setEnterpriseName(enterpriseName);
-			matcher = find(reader, HOME_NIF);
-			salaryBuilder.setEnterpriseAddress(AonStringUtils.trimToNull(matcher.group("home")));
-			String nif = AonStringUtils.trimToNull(matcher.group("nif"));
-			salaryBuilder.setEmployeeDocument(nif);
-			matcher = find(reader, CIF_NSS);
-			String cif = AonStringUtils.trimToNull(matcher.group("cif"));
-			salaryBuilder.setEnterpriseDocument(cif);
-			String naf = AonStringUtils.trimToNull(matcher.group("nss").replace("/", ""));
-			salaryBuilder.setSocialSecurityNumber(naf);
-			matcher = find(reader, CATEGORY);
-			salaryBuilder.setCategory(AonStringUtils.trimToNull(matcher.group("category")));
-			matcher = find(reader, NSS_GROUP_OLD);
-			String ccc = AonStringUtils.trimToNull(matcher.group("nss"));
-			if (ccc != null) {
-				ccc = ccc.replace("/", "");
-			}
-			String seniority = AonStringUtils.trimToNull(matcher.group("seniority"));
-			if (seniority != null) {
-				try {
-					String[] dmy = seniority.split("/");
-					if (dmy.length != 3)
-						throw new Exception();
-					Integer day = Integer.parseInt(dmy[0]);
-					Integer month = Integer.parseInt(dmy[1]);
-					Integer year = Integer.parseInt(dmy[2]);
-					Calendar calendar = Calendar.getInstance();
-					calendar.set(Calendar.DAY_OF_MONTH, day);
-					calendar.set(Calendar.MONTH, month - 1);
-					calendar.set(Calendar.YEAR, year);
+			salaryBuilder.setContract(
+					pdfContract
+					.setEndDate(salaryPeriod.getEnd())
+					.setStartDate(salaryPeriod.getStart()));
+			salaryBuilder.addData(
+			"GRUPO_COTIZACION", 
+			new TimedObject<String>(pdfContract.getQuoteGroup(), salaryPeriod));
 
-					calendar.set(Calendar.HOUR_OF_DAY, 12);
-					calendar.set(Calendar.MINUTE, 0);
-					calendar.set(Calendar.SECOND, 0);
-					calendar.set(Calendar.MILLISECOND, 0);
-					calendar.set(Calendar.ZONE_OFFSET, 2);
+			parseSalaryPayments(reader, salaryBuilder, salaryPeriod);
+			Double totalSocialSecurity = parseSalaryDeductions(reader, salaryBuilder, salaryPeriod);
 
-					salaryBuilder.setSeniorityDate(calendar.getTime());
-				} catch (Exception e) {
-				}
-			}
-			salaryBuilder.setCcc(ccc);
-			String quoteGroup = AonStringUtils.trimToNull(matcher.group("quotegroup"));
-			salaryBuilder.setQuoteGroup(quoteGroup);
-			// salaryBuilder.setSeniorityDate(seniorityDate);
-			matcher = find(reader, LIQPERIOD_TOTDAYS);
-			String liqString = AonStringUtils.trimToNull(matcher.group("liqper"));
-			Date dFrom = null;
-			Date dTo = null;
-			Integer timeUnits = null;
-			{
-				String strDays = AonStringUtils.trimToNull(matcher.group("totdays"));
-				if (strDays != null) {
-					try {
-						timeUnits = Integer.parseInt(strDays);
-					} catch (NumberFormatException e) {
-					}
-					salaryBuilder.setTimeUnits(timeUnits);
-				}
-			}
-			if (liqString != null && liqString.contains("del") && liqString.contains("al")) {
-				matcher = LIQPERIOD.matcher(liqString);
-				if (matcher.matches()) {
+			parseSalaryLiquid(reader, salaryBuilder);
+			parseSalaryIssueDate(reader, salaryBuilder);
+			
+			// Enterprise costs 
+			String line;
+			Matcher matcher;
 
-					String strFrom = matcher.group("dayfrom") + " "
-							+ AonStringUtils.trimToNull(matcher.group("monthfrom")) + " "
-							+ AonStringUtils.trimToNull(matcher.group("year"));
-					String strTo = matcher.group("dayto") + " " + AonStringUtils.trimToNull(matcher.group("monthto"))
-							+ " " + matcher.group("year");
-					try {
-						dFrom = dsiDateParser(strFrom);
-						dTo = dsiDateParser(strTo);
-						salaryBuilder.setStartDate(dFrom);
-						salaryBuilder.setEndDate(dTo);
-						salaryBuilder.setChargeDate(dTo);
-					} catch (NullPointerException e) {
-					}
-
-				}
-			}
-			Period per = new Period(dFrom, dTo);
-			salaryBuilder.setContract(new PDFContract().setCcc(ccc).setNaf(naf).setNif(nif).setCif(cif).setEndDate(dTo)
-					.setStartDate(dFrom).setEmployeeName(employeeName).setEnterpriseName(enterpriseName));
-			if (timeUnits != null)
-				salaryBuilder.addData("DIAS_NOMINA", new TimedObject<Integer>(timeUnits, per));
-			salaryBuilder.addData("GRUPO_COTIZACION", new TimedObject<String>(quoteGroup, per));
-			matcher = find(reader, PAYMENTS_HEADER);
-			String line = reader.readLine();
-			matcher = TOTAL_PAYMENT.matcher(line);
-			while (!matcher.matches()) {
-				matcher = NUMBER.matcher(line);
-				while (matcher.find()) {
-//					System.out.println(matcher.group());
-					String strAmount = AonStringUtils
-							.trimToNull(matcher.group("amount").replace(".", "").replace(",", "."));
-					String concept = matcher.group("concept");
-					matcher = DOUBLE_CONCEPT.matcher(concept);
-					if (matcher.matches()) {
-						concept = AonStringUtils.trimToNull(matcher.group("concept"));
-					}
-//					System.out.println("\t"+concept);
-//					System.out.println("\t"+strAmount);
-					try {
-						Double amount = Double.parseDouble(strAmount);
-						PaymentType pt = PaymentType.CRA_0001;
-						String description = null;
-						switch (concept) {
-						case "SALARIO BASE":
-							description = "SALARIO_BASE";
-							break;
-						case "HORAS EXTRAORDINARIAS":
-							description = "HORAS_EXTRAS";
-							pt = PaymentType.CRA_0002;
-							break;
-						}
-
-						salaryBuilder.addPayment(amount, amount, amount, concept, dFrom, dTo,
-								new Payment().setType(pt).setName(description), Collections.emptyMap());
-					} catch (NumberFormatException e) {}
-
-				}
-				line = reader.readLine();
-				try {
-					matcher = TOTAL_PAYMENT.matcher(line);
-				} catch (Exception e) {
-					throw new UnknownPDFException();
-				}
-
-			}
-
-			if (matcher.group("totalpayment") != null) {
-				String strTotalPayment = AonStringUtils.trimToNull(matcher.group("totalpayment")).replace(".", "")
-						.replace(",", ".");
-				try {
-					salaryBuilder.setTotalPayment(Double.parseDouble(strTotalPayment));
-				} catch (NumberFormatException e) {}
-			}
-			matcher = find(reader, DEDUCTIONS_HEADER);
-			line = reader.readLine();
-			matcher = TOTAL_APPORT.matcher(line);
-			while (!matcher.matches()) {
-
-				matcher = DEDUCTION.matcher(line);
-				while (matcher.find()) {
-					
-					
-					/*
-					 * 
-					 * CORREGIR PROBLEMA CON IRPF
-					 * 
-					 * 
-					 */
-
-					Double amount = null;
-
-					String concept = AonStringUtils.trimToNull(matcher.group("concept")).toUpperCase();
-					String strBase = AonStringUtils.trimToNull(matcher.group("base"));
-					ContextVariable con = ContextVariable.NULL;
-
-					String context = null;// concept;
-					DeductionType dt = DeductionType.OTHER;
-
-					String percentConcept = null;
-					Double percent = null;
-
-					try {
-
-						amount = Double
-								.parseDouble(matcher.group("deduction").replace(".", "").replace(",", "."));
-						Double base;
-						try {
-							base = Double.parseDouble(strBase.replace(".", "").replace(",", "."));
-						} catch (NullPointerException e) {
-							base = null;
-						}
-
-						if (concept.contains("FÍSICAS")) {
-							dt = DeductionType.IRPF;
-							concept = dt.getName(new Locale("es", "ES"));
-							context = "IRPF";
-							con = ContextVariable.IRPF_BASE;
-							try {
-								percent = dsiDoubleParser(AonStringUtils.trimToNull(matcher.group("percent")));
-								percentConcept = "PORCENTAJE_IRPF";
-							} catch (NullPointerException e) {
-							}
-						} else if (concept.contains("DESEMPLEO")) {
-							dt = DeductionType.UNEMPLOYMENT;
-							concept = dt.getName(new Locale("es", "ES"));
-							context = "DESMPL";
-							con = ContextVariable.UNEMPLOY_EMPLOYEE;
-							if(base!=null)
-								salaryBuilder.setCgpBase(base);
-							try {
-								percent = dsiDoubleParser(AonStringUtils.trimToNull(matcher.group("percent")));
-								percentConcept = "PORCENTAJE_DESMPL";
-							} catch (NullPointerException e) {
-							}
-						} else if (concept.contains("CONTINGENCIAS COMUNES")) {
-							dt = DeductionType.COMMON_CONTINGENCY;
-							concept = dt.getName(new Locale("es", "ES"));
-							context = "CGC";
-							con = ContextVariable.CGC_EMPLOYEE;
-							if(base!=null) {
-								salaryBuilder.setCgcBase(base);
-								salaryBuilder.setRawCgcBase(base);
-							}
-							try {
-								percent = dsiDoubleParser(AonStringUtils.trimToNull(matcher.group("percent")));
-								percentConcept = "PORCENTAJE_CGC";
-							} catch (NullPointerException e) {
-							}
-						} else if (concept.contains("HORAS EXTRAORDINARIAS")) {
-							// dt = DeductionType.NON_STRUCTURAL_OVERTIME;
-							// description=dt.getName(new Locale("es", "ES"));
-							con = ContextVariable.EXTRA_HOURS;
-						} else if (concept.contains("FORMACIÓN PROFESIONAL")) {
-							dt = DeductionType.JOB_TRAINING;
-							concept = dt.getName(new Locale("es", "ES"));
-							context = "FP";
-							con = ContextVariable.FP_EMPLOYEE;
-							try {
-								percent = dsiDoubleParser(AonStringUtils.trimToNull(matcher.group("percent")));
-								percentConcept = "PORCENTAJE_FP";
-							} catch (NullPointerException e) {
-							}
-						}
-
-						if (amount != null) {
-							salaryBuilder.addDeduction(amount, concept, dFrom, dTo,
-									new Deduction().setType(dt).setName(context), Collections.emptyMap());
-						}
-						if (strBase != null) {
-							if (con != ContextVariable.NULL)
-								salaryBuilder.addData(con.getName(), new TimedObject<Double>(base, per));
-							else {
-								salaryBuilder.addData(concept, new TimedObject<Double>(base, per));
-							}
-						}
-						if (percent != null) {
-							salaryBuilder.addData(percentConcept, new TimedObject<Double>(percent, per));
-						}
-					} catch (NumberFormatException | NullPointerException e) {
-					}
-
-				}
-
-				line = reader.readLine();
-				matcher = TOTAL_APPORT.matcher(line);
-			}
-			{
-				String stramount = AonStringUtils.trimToNull(matcher.group("deduction"));
-				if (stramount != null) {
-					stramount = stramount.replace(".", "").replace(",", ".");
-					try {
-						totalSS += (Double.parseDouble(stramount));
-					} catch (NumberFormatException e) {
-						// TODO: handle exception
-					}
-				}
-			}
-
-			matcher = find(reader, TOTAL_DEDUCTION);
-			{
-				String stramount = AonStringUtils.trimToNull(matcher.group("amount"));
-				if (stramount != null) {
-					stramount = stramount.replace(".", "").replace(",", ".");
-					try {
-						salaryBuilder.setTotalDeduction(Double.parseDouble(stramount));
-					} catch (NumberFormatException e) {
-						// TODO: handle exception
-					}
-				}
-			}
-
-			matcher = find(reader, TOTAL_LIQUID);
-			try {
-				Double totalLiquid = Double.parseDouble(
-						AonStringUtils.trimToNull(matcher.group("amount").replace(".", "").replace(",", ".")));
-				salaryBuilder.setTotalLiquid(totalLiquid);
-			} catch (NullPointerException | NumberFormatException e) {
-			}
-
-			matcher = find(reader, ISSUE_DATE);
-			try {
-				Integer day = Integer.parseInt(AonStringUtils.trimToNull(matcher.group("day")));
-				Integer month = Integer.parseInt(monthChooser(AonStringUtils.trimToNull(matcher.group("month"))));
-				Integer year = Integer.parseInt(AonStringUtils.trimToNull(matcher.group("year")));
-				Calendar calendar = Calendar.getInstance();
-				calendar.set(Calendar.DAY_OF_MONTH, day);
-				calendar.set(Calendar.MONTH, month - 1);
-				calendar.set(Calendar.YEAR, year);
-
-				calendar.set(Calendar.HOUR_OF_DAY, 12);
-				calendar.set(Calendar.MINUTE, 0);
-				calendar.set(Calendar.SECOND, 0);
-				calendar.set(Calendar.MILLISECOND, 0);
-				calendar.set(Calendar.ZONE_OFFSET, 2);
-
-				salaryBuilder.setIssueDate(calendar.getTime());
-			} catch (NullPointerException | DateFormatException | NumberFormatException e) {
-			}
-	
 			matcher = find(reader, ENTERPRISE_APPORT_HEADER_2);
 
 			matcher = find(reader, CC_MONTHLY);
 
-			String remuneration = AonStringUtils.trimToNull(matcher.group("amount"));
+			String remuneration = AonStringUtils.trimToEmpty(matcher.group("amount"));
 			try {
 				if (remuneration != null) {
 					salaryBuilder.setRemuneration(
@@ -365,7 +79,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 
 			matcher = find(reader, CC_EXTRA);
 			{
-				String extraPro = AonStringUtils.trimToNull(matcher.group("amount"));
+				String extraPro = AonStringUtils.trimToEmpty(matcher.group("amount"));
 				try {
 					if (extraPro != null) {
 						salaryBuilder.setProExtBase(
@@ -376,7 +90,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 			}
 			matcher = find(reader, IT_BASE);
 			{
-				String strIt = AonStringUtils.trimToNull(matcher.group("amount"));
+				String strIt = AonStringUtils.trimToEmpty(matcher.group("amount"));
 				try {
 					if (strIt != null) {
 						salaryBuilder.setItBase(Double.parseDouble(strIt.replace(".", "").replace(",", ".")));
@@ -389,18 +103,18 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 			matcher = find(reader, CC);
 
 			{
-				String strCcCost = AonStringUtils.trimToNull(matcher.group("amount3"));
-				String strCcRaw = AonStringUtils.trimToNull(matcher.group("amount1"));
-				String strCcBase = AonStringUtils.trimToNull(matcher.group("amount2"));
-				String strCcPercent = AonStringUtils.trimToNull(matcher.group("percent"));
+				String strCcCost = AonStringUtils.trimToEmpty(matcher.group("amount3"));
+				String strCcRaw = AonStringUtils.trimToEmpty(matcher.group("amount1"));
+				String strCcBase = AonStringUtils.trimToEmpty(matcher.group("amount2"));
+				String strCcPercent = AonStringUtils.trimToEmpty(matcher.group("percent"));
 				if (strCcCost != null) {
 					strCcCost = strCcCost.replace(".", "").replace(",", ".");
 					try {
 						Double ccCost = Double.parseDouble(strCcCost);
 						String description = COMMON_CONTINGENCY.getName(new Locale("es", "ES"));
 						Deduction costDeduction = new Deduction().setType(COMMON_CONTINGENCY).setName("CGC_E");
-						salaryBuilder.addCost(ccCost, description, dFrom, dTo, costDeduction, Collections.emptyMap());
-						totalSS += ccCost;
+						salaryBuilder.addCost(ccCost, description, salaryPeriod.getStart(), salaryPeriod.getEnd(), costDeduction, Collections.emptyMap());
+						totalSocialSecurity += ccCost;
 					} catch (NumberFormatException e) {
 					}
 				}
@@ -408,7 +122,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 					strCcRaw = strCcRaw.replace(".", "").replace(",", ".");
 					try {
 						salaryBuilder.addData(ContextVariable.CGC_BASE_RAW.getName(),
-								new TimedObject<>(Double.parseDouble(strCcRaw), per));
+								new TimedObject<>(Double.parseDouble(strCcRaw), salaryPeriod));
 					} catch (NumberFormatException e) {
 					}
 				}
@@ -416,23 +130,24 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 					strCcBase = strCcBase.replace(".", "").replace(",", ".");
 					try {
 						salaryBuilder.addData(ContextVariable.CGC_BASE.getName(),
-								new TimedObject<>(Double.parseDouble(strCcBase), per));
+								new TimedObject<>(Double.parseDouble(strCcBase), salaryPeriod));
 					} catch (NumberFormatException e) {
 					}
 				}
 				if (strCcPercent != null) {
 					try {
 						salaryBuilder.addData("PORCENTAJE_CGC_E",
-								new TimedObject<>(dsiDoubleParser(strCcPercent), per));
+								new TimedObject<>(dsiDoubleParser(strCcPercent), salaryPeriod));
 					} catch (NullPointerException e) {
 					}
 				}
 			}
+			
 			matcher = find(reader, AT_EP);
 			{
 
-				String strAtEpCost = AonStringUtils.trimToNull(matcher.group("cost"));
-				String strCgpPercent = AonStringUtils.trimToNull(matcher.group("percent"));
+				String strAtEpCost = AonStringUtils.trimToEmpty(matcher.group("cost"));
+				String strCgpPercent = AonStringUtils.trimToEmpty(matcher.group("percent"));
 				if (strAtEpCost != null) {
 					strAtEpCost = strAtEpCost.replace(".", "").replace(",", ".");
 					try {
@@ -440,16 +155,16 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 						String description = DeductionType.PROFESSIONAL_CONTINGENCY.getName(new Locale("es", "ES"));
 						Deduction costDeduction = new Deduction().setType(DeductionType.PROFESSIONAL_CONTINGENCY)
 								.setName("IT_E");
-						salaryBuilder.addCost(atEpCost, description, dFrom, dTo, costDeduction,
+						salaryBuilder.addCost(atEpCost, description, salaryPeriod.getStart(), salaryPeriod.getEnd(), costDeduction,
 								Collections.emptyMap());
-						totalSS += atEpCost;
+						totalSocialSecurity += atEpCost;
 					} catch (NumberFormatException e) {
 					}
 				}
 				if (strCgpPercent != null) {
 					try {
 						salaryBuilder.addData("PORCENTAJE_CGP_E",
-								new TimedObject<>(dsiDoubleParser(strCgpPercent), per));
+								new TimedObject<>(dsiDoubleParser(strCgpPercent), salaryPeriod));
 					} catch (NullPointerException e) {
 					}
 				}
@@ -462,13 +177,13 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 			if (matcher.matches()) {
 				Double profContBase = str2double(matcher.group("normal"));
 				salaryBuilder.addData(ContextVariable.CGP_BASE_ENTERPRISE.getName(),
-						new TimedObject<>(profContBase, per));
+						new TimedObject<>(profContBase, salaryPeriod));
 				salaryBuilder.addData(ContextVariable.UNEMPLOY_ENTERPRISE.getName(),
-						new TimedObject<>(profContBase, per));
+						new TimedObject<>(profContBase, salaryPeriod));
 				salaryBuilder.addData(ContextVariable.FP_ENTERPRISE.getName(),
-						new TimedObject<>(profContBase, per));
+						new TimedObject<>(profContBase, salaryPeriod));
 				salaryBuilder.addData(ContextVariable.FOGASA_ENTERPRISE.getName(),
-						new TimedObject<>(profContBase, per));
+						new TimedObject<>(profContBase, salaryPeriod));
 				
 				Double fpCost = str2double(matcher.group("cost"));
 				Double fpPercent = str2double(matcher.group("percent"));
@@ -476,12 +191,12 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 				if (fpCost != null) {					
 					String description = DeductionType.JOB_TRAINING.getName(new Locale("es", "ES"));
 					Deduction costDeduction = new Deduction().setType(DeductionType.JOB_TRAINING).setName("FP_E");
-					salaryBuilder.addCost(fpCost, description, dFrom, dTo, costDeduction, Collections.emptyMap());
-					totalSS += fpCost;
+					salaryBuilder.addCost(fpCost, description, salaryPeriod.getStart(), salaryPeriod.getEnd(), costDeduction, Collections.emptyMap());
+					totalSocialSecurity += fpCost;
 				}
 				if (fpPercent != null) {
 					salaryBuilder.addData("PORCENTAJE_FP_E",
-							new TimedObject<>(fpPercent, per));
+							new TimedObject<>(fpPercent, salaryPeriod));
 					
 				}
 				
@@ -490,28 +205,28 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 				matcher = find(reader, PROF_CONT_BASES);
 				{
 
-					String strProfContBase = AonStringUtils.trimToNull(matcher.group("normal"));
+					String strProfContBase = AonStringUtils.trimToEmpty(matcher.group("normal"));
 
 					if (strProfContBase != null) {
 						try {
 							strProfContBase = strProfContBase.replace(".", "").replace(",", ".");
 							Double profContBase = Double.parseDouble(strProfContBase);
 							salaryBuilder.addData(ContextVariable.CGP_BASE_ENTERPRISE.getName(),
-									new TimedObject<>(profContBase, per));
+									new TimedObject<>(profContBase, salaryPeriod));
 							salaryBuilder.addData(ContextVariable.UNEMPLOY_ENTERPRISE.getName(),
-									new TimedObject<>(profContBase, per));
+									new TimedObject<>(profContBase, salaryPeriod));
 							salaryBuilder.addData(ContextVariable.FP_ENTERPRISE.getName(),
-									new TimedObject<>(profContBase, per));
+									new TimedObject<>(profContBase, salaryPeriod));
 							salaryBuilder.addData(ContextVariable.FOGASA_ENTERPRISE.getName(),
-									new TimedObject<>(profContBase, per));
+									new TimedObject<>(profContBase, salaryPeriod));
 						} catch (NumberFormatException e) {
 						}
 					}
 				}
 				matcher = find(reader, UNEMPLOYMENT_COST);
 				{
-					String strUnemPercent = AonStringUtils.trimToNull(matcher.group("percent"));
-					String strUnemCost = AonStringUtils.trimToNull(matcher.group("cost"));
+					String strUnemPercent = AonStringUtils.trimToEmpty(matcher.group("percent"));
+					String strUnemCost = AonStringUtils.trimToEmpty(matcher.group("cost"));
 					if (strUnemCost != null) {
 						strUnemCost = strUnemCost.replace(".", "").replace(",", ".");
 						try {
@@ -519,15 +234,15 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 							String description = DeductionType.UNEMPLOYMENT.getName(new Locale("es", "ES"));
 							Deduction costDeduction = new Deduction().setType(DeductionType.UNEMPLOYMENT)
 									.setName("DESMPL_E");
-							salaryBuilder.addCost(unemCost, description, dFrom, dTo, costDeduction,
+							salaryBuilder.addCost(unemCost, description, salaryPeriod.getStart(), salaryPeriod.getEnd(), costDeduction,
 									Collections.emptyMap());
-							totalSS += unemCost;
+							totalSocialSecurity += unemCost;
 						} catch (NumberFormatException e) {
 						}
 						if (strUnemPercent != null) {
 							try {
 								salaryBuilder.addData("PORCENTAJE_DESMPL_E",
-										new TimedObject<>(dsiDoubleParser(strUnemPercent), per));
+										new TimedObject<>(dsiDoubleParser(strUnemPercent), salaryPeriod));
 							} catch (NullPointerException e) {
 							}
 						}
@@ -536,55 +251,55 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 			}
 			
 			matcher = find(reader, FP_COST);
-			String strFpPercent = AonStringUtils.trimToNull(matcher.group("percent"));
-			String strFpCost = AonStringUtils.trimToNull(matcher.group("cost"));
+			String strFpPercent = AonStringUtils.trimToEmpty(matcher.group("percent"));
+			String strFpCost = AonStringUtils.trimToEmpty(matcher.group("cost"));
 			if (strFpCost != null) {
 				strFpCost = strFpCost.replace(".", "").replace(",", ".");
 				try {
 					Double fpCost = Double.parseDouble(strFpCost);
 					String description = DeductionType.JOB_TRAINING.getName(new Locale("es", "ES"));
 					Deduction costDeduction = new Deduction().setType(DeductionType.JOB_TRAINING).setName("FP_E");
-					salaryBuilder.addCost(fpCost, description, dFrom, dTo, costDeduction, Collections.emptyMap());
-					totalSS += fpCost;
+					salaryBuilder.addCost(fpCost, description, salaryPeriod.getStart(), salaryPeriod.getEnd(), costDeduction, Collections.emptyMap());
+					totalSocialSecurity += fpCost;
 				} catch (NumberFormatException e) {
 				}
 			}
 			if (strFpPercent != null) {
 				try {
 					salaryBuilder.addData("PORCENTAJE_FP_E",
-							new TimedObject<>(dsiDoubleParser(strFpPercent), per));
+							new TimedObject<>(dsiDoubleParser(strFpPercent), salaryPeriod));
 				} catch (NullPointerException e) {
 				}
 			}
 			matcher = find(reader, FOGASA_COST);
-			String strFogasaPercent = AonStringUtils.trimToNull(matcher.group("percent"));
-			String strFogasaCost = AonStringUtils.trimToNull(matcher.group("cost"));
+			String strFogasaPercent = AonStringUtils.trimToEmpty(matcher.group("percent"));
+			String strFogasaCost = AonStringUtils.trimToEmpty(matcher.group("cost"));
 			if (strFogasaCost != null) {
 				strFogasaCost = strFogasaCost.replace(".", "").replace(",", ".");
 				try {
 					Double fogasaCost = Double.parseDouble(strFogasaCost);
 					String description = DeductionType.FOGASA.getName(new Locale("es", "ES"));
 					Deduction costDeduction = new Deduction().setType(DeductionType.FOGASA).setName("FOGASA_E");
-					salaryBuilder.addCost(fogasaCost, description, dFrom, dTo, costDeduction, Collections.emptyMap());
-					totalSS += fogasaCost;
+					salaryBuilder.addCost(fogasaCost, description, salaryPeriod.getStart(), salaryPeriod.getEnd(), costDeduction, Collections.emptyMap());
+					totalSocialSecurity += fogasaCost;
 				} catch (NumberFormatException e) {
 				}
 				if (strFogasaPercent != null) {
 					try {
 						salaryBuilder.addData("PORCENTAJE_FOGASA",
-								new TimedObject<>(dsiDoubleParser(strFogasaPercent), per));
+								new TimedObject<>(dsiDoubleParser(strFogasaPercent), salaryPeriod));
 					} catch (NullPointerException e) {
 					}
 				}
 
 				matcher = find(reader, EXTRA_H);
 				{
-					String strHExtra = AonStringUtils.trimToNull(matcher.group("base"));
+					String strHExtra = AonStringUtils.trimToEmpty(matcher.group("base"));
 					if (strHExtra != null) {
 						try {
 							Double hExtra = Double.parseDouble(strHExtra.replace(".", "").replace(",", "."));
 							salaryBuilder.addData(ContextVariable.EXTRA_HOURS.getName(),
-									new TimedObject<>(hExtra, per));
+									new TimedObject<>(hExtra, salaryPeriod));
 							salaryBuilder.setHExtraBase(hExtra);
 						} catch (NumberFormatException e) {
 						}
@@ -592,25 +307,381 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 				}
 				matcher = find(reader, IRPF);
 				{
-					String strIrpf = AonStringUtils.trimToNull(matcher.group("base"));
+					String strIrpf = AonStringUtils.trimToEmpty(matcher.group("base"));
 					if (strIrpf != null) {
 						try {
 							Double irpf = Double.parseDouble(strIrpf.replace(".", "").replace(",", "."));
 							salaryBuilder.addData(ContextVariable.IRPF_BASE.getName(),
-									new TimedObject<>(irpf, per));
+									new TimedObject<>(irpf, salaryPeriod));
 							salaryBuilder.setIrpfBase(irpf);
 						} catch (NumberFormatException e) {
 						}
 					}
 				}
-				totalSS = Math.round(totalSS * 100.0) / 100.0;
-				salaryBuilder.setTotalSS(totalSS);
+				totalSocialSecurity = Math.round(totalSocialSecurity * 100.0) / 100.0;
+				salaryBuilder.setTotalSS(totalSocialSecurity);
 				salaryBuilder.getSalary();
 			}
 			return this;
 		}
 	}
 
+	protected static void parseSalaryIssueDate(BufferedReader reader, ISalaryBuilder<?> salaryBuilder)
+			throws IOException, UnknownPDFException {
+		Matcher matcher;
+		matcher = find(reader, ISSUE_DATE);
+		try {
+			Integer day = Integer.parseInt(AonStringUtils.trimToEmpty(matcher.group("day")));
+			Integer month = Integer.parseInt(monthChooser(AonStringUtils.trimToEmpty(matcher.group("month"))));
+			Integer year = Integer.parseInt(AonStringUtils.trimToEmpty(matcher.group("year")));
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.DAY_OF_MONTH, day);
+			calendar.set(Calendar.MONTH, month - 1);
+			calendar.set(Calendar.YEAR, year);
+
+			calendar.set(Calendar.HOUR_OF_DAY, 12);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+			calendar.set(Calendar.ZONE_OFFSET, 2);
+
+			salaryBuilder.setIssueDate(calendar.getTime());
+		} catch (NullPointerException | DateFormatException | NumberFormatException e) {
+		}
+	}
+
+	protected static void parseSalaryLiquid(BufferedReader reader, ISalaryBuilder<?> salaryBuilder)
+			throws IOException, UnknownPDFException {
+		Matcher matcher;
+		matcher = find(reader, TOTAL_LIQUID);
+		try {
+			Double totalLiquid = Double.parseDouble(
+					AonStringUtils.trimToEmpty(matcher.group("amount").replace(".", "").replace(",", ".")));
+			salaryBuilder.setTotalLiquid(totalLiquid);
+		} catch (NullPointerException | NumberFormatException e) {
+		}
+	}
+
+	protected static Double parseSalaryDeductions(BufferedReader reader, ISalaryBuilder<?> salaryBuilder, Period salaryPeriod)
+			throws IOException, UnknownPDFException {
+		String line;
+		Matcher matcher;
+		Double totalSS = 0d;
+		matcher = find(reader, DEDUCTIONS_HEADER);
+		line = reader.readLine();
+		matcher = TOTAL_APPORT.matcher(line);
+		while (!matcher.matches()) {
+
+			matcher = DEDUCTION.matcher(line);
+			while (matcher.find()) {
+				
+				
+				/*
+				 * 
+				 * CORREGIR PROBLEMA CON IRPF
+				 * 
+				 * 
+				 */
+
+				Double amount = null;
+
+				String concept = AonStringUtils.trimToEmpty(matcher.group("concept")).toUpperCase();
+				String strBase = AonStringUtils.trimToEmpty(matcher.group("base"));
+				ContextVariable con = ContextVariable.NULL;
+
+				String context = null;// concept;
+				DeductionType dt = DeductionType.OTHER;
+
+				String percentConcept = null;
+				Double percent = null;
+
+				try {
+
+					amount = Double
+							.parseDouble(matcher.group("deduction").replace(".", "").replace(",", "."));
+					Double base;
+					try {
+						base = Double.parseDouble(strBase.replace(".", "").replace(",", "."));
+					} catch (NullPointerException e) {
+						base = null;
+					}
+
+					if (concept.contains("FÍSICAS")) {
+						dt = DeductionType.IRPF;
+						concept = dt.getName(new Locale("es", "ES"));
+						context = "IRPF";
+						con = ContextVariable.IRPF_BASE;
+						try {
+							percent = dsiDoubleParser(AonStringUtils.trimToEmpty(matcher.group("percent")));
+							percentConcept = "PORCENTAJE_IRPF";
+						} catch (NullPointerException e) {
+						}
+					} else if (concept.contains("DESEMPLEO")) {
+						dt = DeductionType.UNEMPLOYMENT;
+						concept = dt.getName(new Locale("es", "ES"));
+						context = "DESMPL";
+						con = ContextVariable.UNEMPLOY_EMPLOYEE;
+						if(base!=null)
+							salaryBuilder.setCgpBase(base);
+						try {
+							percent = dsiDoubleParser(AonStringUtils.trimToEmpty(matcher.group("percent")));
+							percentConcept = "PORCENTAJE_DESMPL";
+						} catch (NullPointerException e) {
+						}
+					} else if (concept.contains("CONTINGENCIAS COMUNES")) {
+						dt = DeductionType.COMMON_CONTINGENCY;
+						concept = dt.getName(new Locale("es", "ES"));
+						context = "CGC";
+						con = ContextVariable.CGC_EMPLOYEE;
+						if(base!=null) {
+							salaryBuilder.setCgcBase(base);
+							salaryBuilder.setRawCgcBase(base);
+						} else {
+							
+						}
+						try {
+							percent = dsiDoubleParser(AonStringUtils.trimToEmpty(matcher.group("percent")));
+							percentConcept = "PORCENTAJE_CGC";
+						} catch (NullPointerException e) {
+						}
+					} else if (concept.contains("HORAS EXTRAORDINARIAS")) {
+						// dt = DeductionType.NON_STRUCTURAL_OVERTIME;
+						// description=dt.getName(new Locale("es", "ES"));
+						con = ContextVariable.EXTRA_HOURS;
+					} else if (concept.contains("FORMACIÓN PROFESIONAL")) {
+						dt = DeductionType.JOB_TRAINING;
+						concept = dt.getName(new Locale("es", "ES"));
+						context = "FP";
+						con = ContextVariable.FP_EMPLOYEE;
+						try {
+							percent = dsiDoubleParser(AonStringUtils.trimToEmpty(matcher.group("percent")));
+							percentConcept = "PORCENTAJE_FP";
+						} catch (NullPointerException e) {
+						}
+					}
+
+					if (amount != null) {
+						salaryBuilder.addDeduction(amount, concept, salaryPeriod.getStart(), salaryPeriod.getEnd(),
+								new Deduction().setType(dt).setName(context), Collections.emptyMap());
+					}
+					if (strBase != null) {
+						if (con != ContextVariable.NULL)
+							salaryBuilder.addData(con.getName(), new TimedObject<Double>(base, salaryPeriod));
+						else {
+							salaryBuilder.addData(concept, new TimedObject<Double>(base, salaryPeriod));
+						}
+					}
+					if (percent != null) {
+						salaryBuilder.addData(percentConcept, new TimedObject<Double>(percent, salaryPeriod));
+					}
+				} catch (NumberFormatException | NullPointerException e) {
+				}
+
+			}
+
+			line = reader.readLine();
+			matcher = TOTAL_APPORT.matcher(line);
+		}
+		{
+			String stramount = AonStringUtils.trimToEmpty(matcher.group("deduction"));
+			if (stramount != null) {
+				stramount = stramount.replace(".", "").replace(",", ".");
+				try {
+					totalSS += (Double.parseDouble(stramount));
+				} catch (NumberFormatException e) {
+					// TODO: handle exception
+				}
+			}
+		}
+
+		matcher = find(reader, TOTAL_DEDUCTION);
+		{
+			String stramount = AonStringUtils.trimToEmpty(matcher.group("amount"));
+			if (stramount != null) {
+				stramount = stramount.replace(".", "").replace(",", ".");
+				try {
+					salaryBuilder.setTotalDeduction(Double.parseDouble(stramount));
+				} catch (NumberFormatException e) {
+					// TODO: handle exception
+				}
+			}
+		}
+		return totalSS;
+	}
+
+	protected static Double parseSalaryPayments(BufferedReader reader, ISalaryBuilder<?> salaryBuilder, Period salaryPeriod)
+			throws IOException, UnknownPDFException {
+		Matcher matcher;
+		matcher = find(reader, PAYMENTS_HEADER);
+		String line = reader.readLine();
+		matcher = TOTAL_PAYMENT.matcher(line);
+		while (!matcher.matches()) {
+			matcher = NUMBER.matcher(line);
+			while (matcher.find()) {
+//					System.out.println(matcher.group());
+				String strAmount = AonStringUtils
+						.trimToEmpty(matcher.group("amount").replace(".", "").replace(",", "."));
+				String concept = matcher.group("concept");
+				matcher = DOUBLE_CONCEPT.matcher(concept);
+				if (matcher.matches()) {
+					concept = AonStringUtils.trimToEmpty(matcher.group("concept"));
+				}
+//					System.out.println("\t"+concept);
+//					System.out.println("\t"+strAmount);
+				try {
+					Double amount = Double.parseDouble(strAmount);
+					PaymentType pt = PaymentType.CRA_0001;
+					String description = null;
+					switch (concept) {
+					case "SALARIO BASE":
+						description = "SALARIO_BASE";
+						break;
+					case "HORAS EXTRAORDINARIAS":
+						description = "HORAS_EXTRAS";
+						pt = PaymentType.CRA_0002;
+						break;
+					}
+
+					salaryBuilder.addPayment(amount, amount, amount, concept, salaryPeriod.getStart(), salaryPeriod.getEnd(),
+							new Payment().setType(pt).setName(description), Collections.emptyMap());
+				} catch (NumberFormatException e) {}
+
+			}
+			line = reader.readLine();
+			try {
+				matcher = TOTAL_PAYMENT.matcher(line);
+			} catch (Exception e) {
+				throw new UnknownPDFException();
+			}
+			
+
+		}
+
+		if (matcher.group("totalpayment") != null) {
+			String strTotalPayment = AonStringUtils.trimToEmpty(matcher.group("totalpayment")).replace(".", "")
+					.replace(",", ".");
+			try {
+				double totalPayment = Double.parseDouble(strTotalPayment );
+				salaryBuilder.setTotalPayment(totalPayment);
+				return totalPayment;
+			} catch (NumberFormatException e) {}
+		}
+		
+		return null;
+	}
+
+	protected static Period parseSalaryPeriod(BufferedReader reader, ISalaryBuilder<?> salaryBuilder)
+			throws IOException, UnknownPDFException {
+		Matcher matcher = find(reader, LIQPERIOD_TOTDAYS);
+		String liqString = AonStringUtils.trimToEmpty(matcher.group("liqper"));
+		Date dFrom = null;
+		Date dTo = null;
+		Integer timeUnits = null;
+		{
+			String strDays = AonStringUtils.trimToEmpty(matcher.group("totdays"));
+			if (strDays != null) {
+				try {
+					timeUnits = Integer.parseInt(strDays);
+				} catch (NumberFormatException e) {
+				}
+				salaryBuilder.setTimeUnits(timeUnits);
+			}
+		}
+		if (liqString != null && liqString.contains("del") && liqString.contains("al")) {
+			matcher = LIQPERIOD.matcher(liqString);
+			if (matcher.matches()) {
+
+				String strFrom = matcher.group("dayfrom") + " "
+						+ AonStringUtils.trimToEmpty(matcher.group("monthfrom")) + " "
+						+ AonStringUtils.trimToEmpty(matcher.group("year"));
+				String strTo = matcher.group("dayto") + " " + AonStringUtils.trimToEmpty(matcher.group("monthto"))
+						+ " " + matcher.group("year");
+				try {
+					dFrom = dsiDateParser(strFrom);
+					dTo = dsiDateParser(strTo);
+					salaryBuilder.setStartDate(dFrom);
+					salaryBuilder.setEndDate(dTo);
+					salaryBuilder.setChargeDate(dTo);
+				} catch (NullPointerException e) {
+				}
+
+			}
+		}
+		Period per = new Period(dFrom, dTo);
+		if (timeUnits != null)
+			salaryBuilder.addData("DIAS_NOMINA", new TimedObject<Integer>(timeUnits, per));
+		return per;
+	}
+	
+	protected static PDFContract parseSalaryHeader( BufferedReader reader, ISalaryBuilder<?> salaryBuilder) throws IOException, UnknownPDFException {
+		
+		Matcher matcher = find(reader, ENTERPRISE_WORKER);
+		String employeeName = AonStringUtils.trimToEmpty(matcher.group("name"));
+		salaryBuilder.setEmployeeName(employeeName);
+		String enterpriseName = AonStringUtils.trimToEmpty(matcher.group("enterprise"));
+		salaryBuilder.setEnterpriseName(enterpriseName);
+		matcher = find(reader, HOME_NIF);
+		salaryBuilder.setEnterpriseAddress(AonStringUtils.trimToEmpty(matcher.group("home")));
+		String nif = AonStringUtils.trimToEmpty(matcher.group("nif"));
+		salaryBuilder.setEmployeeDocument(nif);
+		matcher = find(reader, CIF_NSS);
+		String cif = AonStringUtils.trimToEmpty(matcher.group("cif"));
+		salaryBuilder.setEnterpriseDocument(cif);
+		String naf = AonStringUtils.trimToEmpty(matcher.group("nss").replace("/", ""));
+		salaryBuilder.setSocialSecurityNumber(naf);
+		matcher = find(reader, CATEGORY);
+		salaryBuilder.setCategory(AonStringUtils.trimToEmpty(matcher.group("category")));
+		matcher = find(reader, NSS_GROUP_OLD);
+		String ccc = AonStringUtils.trimToEmpty(matcher.group("nss"));
+		if (ccc != null) {
+			ccc = ccc.replace("/", "");
+		}
+		
+		Date seniorityDate = null; 
+		String seniority = AonStringUtils.trimToEmpty(matcher.group("seniority"));
+		if (seniority != null) {
+			try {
+				String[] dmy = seniority.split("/");
+				if (dmy.length != 3)
+					throw new Exception();
+				Integer day = Integer.parseInt(dmy[0]);
+				Integer month = Integer.parseInt(dmy[1]);
+				Integer year = Integer.parseInt(dmy[2]);
+				Calendar calendar = Calendar.getInstance();
+				calendar.set(Calendar.DAY_OF_MONTH, day);
+				calendar.set(Calendar.MONTH, month - 1);
+				calendar.set(Calendar.YEAR, year);
+
+				calendar.set(Calendar.HOUR_OF_DAY, 12);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				calendar.set(Calendar.MILLISECOND, 0);
+				calendar.set(Calendar.ZONE_OFFSET, 2);
+				
+				seniorityDate = calendar.getTime();
+				salaryBuilder.setSeniorityDate(seniorityDate);
+			} catch (Exception e) {
+			}
+		}
+		salaryBuilder.setCcc(ccc);
+		String quoteGroup = AonStringUtils.trimToEmpty(matcher.group("quotegroup"));
+		salaryBuilder.setQuoteGroup(quoteGroup);
+		// salaryBuilder.setSeniorityDate(seniorityDate);
+		
+		return new PDFContract()
+				.setCcc(ccc)
+				.setNaf(naf)
+				.setNif(nif)
+				.setCif(cif)
+				// Later outside of this method
+				//.setEndDate(dTo)
+				//.setStartDate(dFrom)
+				.setEmployeeName(employeeName)
+				.setEnterpriseName(enterpriseName)
+				.setSeniorityDate(seniorityDate)
+				;
+	}
+	
 	private static Double dsiDoubleParser(String strNum) {
 		strNum = strNum.replace(".", "").replace(",", ".");
 		try {
@@ -620,7 +691,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 		}
 	}
 
-	private String monthChooser(String mes) {
+	private static String monthChooser(String mes) {
 		switch (mes.toUpperCase()) {
 		case "ENERO":
 			return "01";
@@ -720,37 +791,38 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 	}
 
 	// Empresa: EMPRESA S.L. Trabajador: ANDREA ANDREA, MARIA
-	private static Pattern ENTERPRISE_WORKER = Pattern.compile(
-			"^\\s*Empresa:\\s*(?<enterprise>.+?)\\s*Trabajador:\\s*(?<name>[\\w\\s,]+)\\s*$", Pattern.CASE_INSENSITIVE);
+	protected static Pattern ENTERPRISE_WORKER = Pattern.compile(
+			"^\\s*Empresa:\\s*(?<enterprise>.+?)\\s*Trabajador:\\s*(?<name>.+)$", Pattern.CASE_INSENSITIVE);
 	// Domicilio: CL VIA, 12 N.I.F.: 37723953C Número Libro de Matrícula:
-	private static Pattern HOME_NIF = Pattern.compile(
-			"\\s*Domicilio:\\s*(?<home>.+?)\\s*N\\.I\\.F\\.:\\s*(?<nif>[\\d\\w]\\d{7}\\w)\\s*Número\\s*Libro\\s*de\\s*Matrícula:(?<matricula>.*)",
+	// Domicilio:    C MADRE VEDRUNA, 9  2 IZ    N.I.F.:    0X8422836Y    Número Libro de Matrícula:
+	protected static Pattern HOME_NIF = Pattern.compile(
+			"\\s*Domicilio:\\s*(?<home>.+?)\\s*N\\.I\\.F\\.:\\s*(?<nif>[^\\s]+)\\s*Número\\s*Libro\\s*de\\s*Matrícula:(?<matricula>.*)?",
 			Pattern.CASE_INSENSITIVE);
 	// C.I.F.: B50671908 Nº de Afiliación a la Seguridad Social: 08/02983860/69
-	private static Pattern CIF_NSS = Pattern
+	protected static Pattern CIF_NSS = Pattern
 			.compile("\\s*C\\.I\\.F\\.:\\s*(?<cif>[\\w\\d]+)\\s*Nº\\s*de\\s*Afiliación\\s*"
 					+ "a\\s*la\\s*Seguridad\\s*Social:\\s*(?<nss>[\\d/]+)\\s*", Pattern.CASE_INSENSITIVE);
 //	Código de Cuenta de Cotización a la Categoría o Grupo Profesional:
-	private static Pattern CATEGORY = Pattern
+	protected static Pattern CATEGORY = Pattern
 			.compile("\\s*Código\\s*de\\s*Cuenta\\s*de\\s*Cotización\\s*a\\s*la\\s*Categoría\\s*o\\s*"
 					+ "Grupo\\s*Profesional:(?<category>.*)", Pattern.CASE_INSENSITIVE);
 //	Seguridad Social: 50/8745111/93 Grupo de Cotización: 02 Fecha antigüedad: 14/09/1972
-	private static Pattern NSS_GROUP_OLD = Pattern.compile(
+	protected static Pattern NSS_GROUP_OLD = Pattern.compile(
 			"\\s*Seguridad\\s*Social:\\s*(?<nss>[\\d/]+)\\s*Grupo\\s*de\\s*Cotización:\\s*(?<quotegroup>\\d+)?\\s*Fecha\\s*antigüedad:\\s*(?<seniority>[\\d/]+)?\\s*",
 			Pattern.CASE_INSENSITIVE);
 //	Periodo de Liquidación:    del 1 de febrero al 29 de febrero de 2020 Total días 30
-	private static Pattern LIQPERIOD_TOTDAYS = Pattern.compile(
+	protected static Pattern LIQPERIOD_TOTDAYS = Pattern.compile(
 			"\\s*Periodo\\s*de\\s*Liquidación:(?<liqper>.+?)Total\\s*días\\s*(?<totdays>\\d+)?\\s*",
 			Pattern.CASE_INSENSITIVE);
 
-	private static Pattern LIQPERIOD = Pattern.compile(
+	protected static Pattern LIQPERIOD = Pattern.compile(
 			"\\s*del\\s*(?<dayfrom>\\d+)\\s*de\\s*(?<monthfrom>\\w+)\\s*al\\s*(?<dayto>\\d+)\\s*de\\s*(?<monthto>\\w+)\\s*de\\s*(?<year>\\d+)\\s*",
 			Pattern.CASE_INSENSITIVE);
 //	I. DEVENGOS TOTALES
-	private static Pattern DEVENGOS_HEADER = Pattern.compile("\\s*I\\.\\s*DEVENGOS\\s*TOTALES\\s*",
+	protected static Pattern DEVENGOS_HEADER = Pattern.compile("\\s*I\\.\\s*DEVENGOS\\s*TOTALES\\s*",
 			Pattern.CASE_INSENSITIVE);
 //	1. Percepciones salariales 2. Percepciones no salariales
-	private static Pattern PAYMENTS_HEADER = Pattern.compile(
+	protected static Pattern PAYMENTS_HEADER = Pattern.compile(
 			"\\s*1\\.\\s*Percepciones\\s*salariales\\s*2\\.\\s*Percepciones\\s*no\\s*salariales\\s*",
 			Pattern.CASE_INSENSITIVE);
 
@@ -850,7 +922,7 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 //	TOTAL..............  746,00 23,60% 176,06
 //	TOTAL..............    1.192,50    1.192,50    23,60%    281,43
 	public static Pattern CC = Pattern.compile(
-			"\\s*TOTAL\\.{2,}\\s*((((?<amount1>\\d[\\.\\d,]*,\\d+)?\\s*(?<amount2>\\d[\\.\\d,]*,\\d+))?\\s*(?<percent>\\d[\\.\\d,]*,\\d+)%\\s*(?<amount3>\\d[\\.\\d,]*,\\d+)?)|%)\\s*$",
+			"\\s*TOTAL\\.{2,}\\s*((((?<amount1>\\d[\\.\\d,]*,\\d+)?\\s*(?<amount2>\\d[\\.\\d,]*,\\d+))?\\s*(?<percent>\\d[\\.\\d,]*,\\d+)?%\\s*(?<amount3>\\d[\\.\\d,]*,\\d+)?)|%)\\s*$",
 			Pattern.CASE_INSENSITIVE);
 //	AT y EP..................... 1,50% 15,75
 	public static Pattern AT_EP = Pattern.compile(
@@ -1055,13 +1127,13 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 
 	}
 
-	private Matcher find(BufferedReader reader, Pattern pattern) throws IOException, UnknownPDFException {
+	protected static Matcher find(BufferedReader reader, Pattern pattern) throws IOException, UnknownPDFException {
 
 		String line;
 		while ((line = reader.readLine()) != null) {
 			Matcher matcher = pattern.matcher(line);
 			if (!matcher.matches()) {
-//				System.out.println(line);
+				//System.out.println(line);
 				continue;
 			}
 
@@ -1071,5 +1143,13 @@ public class DSIPDFTemplate implements SalaryPDFTemplate {
 		throw new UnknownPDFException(String.format("Pattern: '%s' Not found", pattern.pattern()));
 
 	}
-
+	
+	
+	public static void main(String[] args) throws UnknownPDFException {
+		Pattern homeNif = Pattern.compile(
+				"\\s*Domicilio:\\s*(?<home>.+?)\\s*N\\.I\\.F\\.:\\s*(?<nif>0?[\\d\\w]\\d{7}\\w)\\s*Número\\s*Libro\\s*de\\s*Matrícula:(?<matricula>.*)?",
+				Pattern.CASE_INSENSITIVE);
+		if ( !homeNif.matcher("Domicilio:    C MADRE VEDRUNA, 9  2 IZ    N.I.F.:    0X8422836Y    Número Libro de Matrícula:").matches() )
+			throw new UnknownPDFException();
+	}
 }

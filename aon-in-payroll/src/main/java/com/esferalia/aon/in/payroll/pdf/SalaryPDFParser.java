@@ -14,6 +14,7 @@ import com.esferalia.aon.in.payroll.pdf.template.A3PDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.template.AltaiPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.template.AplifisaPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.template.DSIPDFTemplate;
+import com.esferalia.aon.in.payroll.pdf.template.DSIPDFTemplateII;
 import com.esferalia.aon.in.payroll.pdf.template.OmegaPDFTemplate;
 //import com.esferalia.aon.in.payroll.pdf.util.PDFTextStripper;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -22,11 +23,12 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class SalaryPDFParser {
 	
 	private static final SalaryPDFTemplate PDF_TEMPLATES [] = {
-			AltaiPDFTemplate.ALTAI_PDF_TEMPLATE, 
-			A3PDFTemplate.A3_PDF_TEMPLATE, 
-			DSIPDFTemplate.DSI_PDF_TEMPLATE, 
-			AplifisaPDFTemplate.APLIFISA_PDF_TEMPLATE, 
-			OmegaPDFTemplate.OMEGA_PDF_TEMPLATE
+//			AltaiPDFTemplate.ALTAI_PDF_TEMPLATE, 
+//			A3PDFTemplate.A3_PDF_TEMPLATE, 
+//			DSIPDFTemplate.DSI_PDF_TEMPLATE, 
+			DSIPDFTemplateII.DSI_PDF_TEMPLATE_II, 
+//			AplifisaPDFTemplate.APLIFISA_PDF_TEMPLATE, 
+//			OmegaPDFTemplate.OMEGA_PDF_TEMPLATE
 			};
 	
 	
@@ -80,11 +82,9 @@ public class SalaryPDFParser {
 			String text = stripper.getText(doc);
 			if ( AonStringUtils.isBlank(text) || Arrays.stream(partTimeSheetIdentifiers).anyMatch(str -> AonStringUtils.containsIgnoreCase(text, str))) 
 				continue;
-			
-//			System.out.println(text);
+			//System.out.println("Página : " +  p );
 			
 			template = parse(template, text, salaryBuilder);
-			
 		}
 	}
 	
