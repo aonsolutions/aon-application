@@ -1,4 +1,4 @@
-import {  get } from "./request.js";
+import {  get, openFile } from "./request.js";
 import { API_URL } from "../environments/environments.js";
 import { isSigGet, isSigPost, isSigRemove } from "./sigService.js";
 
@@ -17,6 +17,7 @@ export const getTaskNotice = (data) => isSigGet("task/notice",data);
 export const sendTaskHistoric = (data) => isSigPost(`task/historic`,data);
 export const saveTaskBranch = (data) => isSigPost(`task/branch`,data);
 export const getCauInfo = (data) => get(`${API_URL}/task/cau`, data);
+export const getTaskExcel = (data) => openFile(`${API_URL}/task/excel`, data);
 
 //----------------TASK WORKFLOW
 export const getTaskWorkflow = (data) => isSigGet("task/workflow", data);

@@ -91,8 +91,11 @@
 				triggerModuleStart(module);
 			}
 		}
-		if(rootPanel && rootPanel.childNodes && rootPanel.childNodes.length > 0)
-			rootPanel.childNodes[0].style.inset = '0px';
+
+		const element = document.getElementById(panel);
+		if(element && element.firstChild){
+			element.firstChild.style.inset = '0px';
+		}
 	}
 
 
@@ -100,11 +103,11 @@
 	export const triggerModuleStart = (module) => {
 		try{
 			module.onInjectionDone(module);
-	        if ( !window.document.createEventObject ) {
-	           	let evt = window.document.createEvent("HTMLEvents");
-	           	evt.initEvent("DOMContentLoaded", true, true);
-	           	window.document.dispatchEvent(evt);
-	        }
+			if ( !window.document.createEventObject ) {
+				let evt = window.document.createEvent("HTMLEvents");
+				evt.initEvent("DOMContentLoaded", true, true);
+				window.document.dispatchEvent(evt);
+			}
 		} catch ( e ) {
 			// window.setTimeout("triggerModuleStart()", 100 );
 		}

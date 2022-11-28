@@ -59,4 +59,15 @@ public enum TaskSource {
 		return MANUAL;
 	}
 	
+	
+	public String getESName() { // PROVISIONAL!!!!
+		if(this.equals(QUERY)) return "Consulta";
+		if(this.equals(CAU)) return "Call Center";
+		if(this.equals(GROUPED)) return "Agrupadas";
+		if(this.equals(REQUEST)) return "Tr\u00e1mites";
+		if(this.equals(TASK)) return "Tarea";
+		if(this.equals(MANUAL) || this.equals(ASSIGNED) || this.equals(PROCESS) || this.equals(GITHUB)) return getName();
+		else return "";
+    }
+	
 }

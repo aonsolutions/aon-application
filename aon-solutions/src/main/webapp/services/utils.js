@@ -75,7 +75,7 @@ export const isEmptyObject = (obj) => !obj || (obj.constructor === Object &&  Ob
  * @returns obj sin datos vacios
  */
 export const removeEmpty = (obj) => {
-  Object.keys(obj).forEach((key) =>  isEmptyObject(obj[key]) ?  delete obj[key] : null);
+  Object.keys(obj).forEach((key) =>  isEmptyObject(obj[key]) ? delete obj[key] : null);
   return obj;
 };
 

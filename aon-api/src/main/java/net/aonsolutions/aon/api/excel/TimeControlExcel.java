@@ -117,7 +117,7 @@ public class TimeControlExcel {
         }
 		
 		int index = headerRow.getRowNum();
-		Map<String, Long> listValues = new HashMap<String, Long>();
+		Map<String, Long> listValues = new HashMap<>();
 		for (TimeControl tc : tcList) {
 			Row row = sheet.createRow(++index);
 			int e = UtilsExcel.indexOf(columns, "Trabajador");
@@ -137,8 +137,7 @@ public class TimeControlExcel {
 			cellAnio.setCellValue(totalAnio);
 		}
 		
-		
-		
+
 		int lastColumn = sheet.getRow(sheet.getLastRowNum()).getLastCellNum();
 		Row row = sheet.createRow(sheet.getLastRowNum()+1);
 		

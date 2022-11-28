@@ -7,16 +7,17 @@ import { AonMessengerChat } from './aon-messeger-chat.js';
 import { AonMessengerList } from './aon-messenger-list.js';
 import { APP_PARAMS_REQUEST, MessengerOptions, MessengerSidenav, MESSENGER_VIEWS, TAG_TYPE, TASK_FILTER, TASK_SOURCE, TASK_STATUS } from './MessengerEnums.js';
 import { getTaskHolder, getTastHolders } from '../../services/taskHolderService.js';
-import { getTaskStatusCount, getTaskGeneralCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag } from '../../services/taskService.js';
+import { getTaskStatusCount, getTaskGeneralCount, getTaskOne, getCauInfo, getTaskCount, getTaskTags, saveTaskTag, deleteTaskTag, getTaskExcel } from '../../services/taskService.js';
 import { getApplicationParametersIsSig } from '../../services/applicationParameterService.js';
 import { AonInput } from '../../components/aon-input.js';
 import { getDomainUserRoles } from '../../services/companyService.js';
 import { DomainUserRoles } from '../../models/DomainUserRoles.js';
 import { SigninSidenav } from '../timecontrol/signinEnums.js';
-import { sortBy, waitEl } from '../../services/utils.js';
+import { removeEmpty, sortBy, waitEl } from '../../services/utils.js';
 import { getNotificationByDomain, markReadNotification } from '../../services/notificationService.js';
 import { getCustomers } from '../../services/registryService.js';
 import * as GWT from '../../gwt/gwt.js';
+import { TaskUtils } from './utils/TaskUtils.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
@@ -65,6 +66,10 @@ export class AonMessenger extends AonElement {
 	}
 
 	initialize(){
+		const period = TaskUtils.getPeriodMessenger("last_12_months");
+
+		console.log("period", period);
+
 		this.id = MESSENGER_VIEWS.AON_MESSENGER;
 		this.AON_MESSENGER = MESSENGER_VIEWS.AON_MESSENGER;
 		this._workgroups = [];
@@ -81,7 +86,10 @@ export class AonMessenger extends AonElement {
 			email: undefined,
 			search: undefined,
 			page:0, 
-			perPage:30
+			perPage:30,
+			period: period.value,
+			startDate: period.startDate,
+			endDate: period.endDate
 		};
 				
 		if(this.type && this.type === TASK_SOURCE.CAU) {
@@ -94,7 +102,8 @@ export class AonMessenger extends AonElement {
 	build() {
 		
 		let title = this.cau ? MSG.SUPPORT + ' / CAU' : MSG.REQUESTS;
-		this.applicationEl = this.createApplication(this.AON_MESSENGER, title, new AonApplication());
+
+		this.createApplication(this.AON_MESSENGER, title, new AonApplication());
 
 		
 		this.isTaskHolder().then(async (exist) => {
@@ -178,23 +187,28 @@ export class AonMessenger extends AonElement {
 	}
 
 	async buildToolbar(){
+		const application = this.getApplication();
 		if(this.isMobile()){
-			this.applicationEl.addMobileSidenavHeader(Apps.MESSENGER);
-			this.applicationEl.addFloatOption(SigninSidenav.ADD, () => 
+			application.addMobileSidenavHeader(Apps.MESSENGER);
+			application.addFloatOption(SigninSidenav.ADD, () => 
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
 			);
 		} else {
-			this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>
+			application.addToolbarOption2(SigninSidenav.ADD, () =>
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
+			);
+
+			application.addToolbarOption2(SigninSidenav.EXCEL, () =>
+				this.getExcel()
 			);
 			
 			if(!this.cau){
-				this.applicationEl.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name:MSG.UPDATE}, () =>
+				application.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name:MSG.UPDATE}, () =>
 					this.rootPanel(new AonMessenger())
 				);
 
 				if(this.getDur().isMessengerManager() || this.isLocal()){
-					this.applicationEl.addToolbarOption2(MessengerSidenav.GRAPHIC, () =>
+					application.addToolbarOption2(MessengerSidenav.GRAPHIC, () =>
 						this.showView(MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC)
 					);
 				}
@@ -221,7 +235,7 @@ export class AonMessenger extends AonElement {
 	buildToolbarSearch(){
 		const opened = !this.isMobile();
 
-		let btnSearch = this.applicationEl.addSearchOption(opened);
+		let btnSearch = this.getApplication().addSearchOption(opened);
 		let timeOut = null;
 		
 		btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
@@ -235,9 +249,11 @@ export class AonMessenger extends AonElement {
 				perPage:30, 
 				search: detail.search,
 				registry: detail.registry,
-				startDate: detail.startDate,
 				searchtask_holder:detail.searchtask_holder, 
-				searchsender:detail.searchsender
+				searchsender:detail.searchsender,
+				period: detail.period,
+				startDate: detail.startDate,
+				endDate: detail.endDate
 			  });
 			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
 		  }, 300);
@@ -273,10 +289,39 @@ export class AonMessenger extends AonElement {
 
 		let taskHolderEl = this.getElement("task_holder");
 		let senderEl = this.getElement("senderFilter");
-		this.getTaskHoldersEnterprise().then(ths=>{
+		this.getTaskHoldersEnterprise()
+		.then(ths=>{
 			senderEl.setOptions(ths);
 			taskHolderEl.setOptions(ths);
 		});
+
+		const periodEl    = this.getElement("period");
+		const startDateEl = this.getElement("startDate");
+		const endDateEl   = this.getElement("endDate");
+
+		if(periodEl && startDateEl && endDateEl){
+
+			//------------------PERIOD---------
+			periodEl.setOptions(TaskUtils.getPeriodMessenger());
+
+			//------VALUE DEFAULTS
+			if(this._filter.period) periodEl.value = this._filter.period;
+			if(this._filter.startDate) startDateEl.value = this._filter.startDate;
+			if(this._filter.endDate) endDateEl.value = this._filter.endDate;
+			//------END VALUE DEFAULTS
+
+			periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
+				console.log(detail);
+				if(detail.startDate && detail.endDate){
+					startDateEl.value = detail.startDate;
+					endDateEl.value = detail.endDate;
+				}
+			});
+			// ----------PERIOD END ------------
+
+			startDateEl.addEventListener(EVENT.CHANGE, ()=>periodEl.value = "personalized");
+			endDateEl.addEventListener(EVENT.CHANGE, ()=>periodEl.value = "personalized");
+		}
 	}
 
 	inboxNavBar(){
@@ -327,13 +372,12 @@ export class AonMessenger extends AonElement {
 			}
 		});
 
-		this.applicationEl.addSidenavOptions("MI BANDEJA", messengerOpts);
+		this.getApplication().addSidenavOptions("MI BANDEJA", messengerOpts);
 	}
 
 	inboxNavBarCau(){
-		let messengerOpts = [];
-	
-			messengerOpts.push({
+		let messengerOpts = [
+			{
 				name: 'Mi bandeja',
 				icon: MATERIAL_ICONS.MOVE_TO_INBOX,
 				id: MATERIAL_ICONS.MOVE_TO_INBOX,
@@ -354,9 +398,10 @@ export class AonMessenger extends AonElement {
 					this.updateCount();
 					this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this._filter);
 				}
-			});
+			}
+		];
 
-		this.applicationEl.addSidenavOptions("BANDEJA", messengerOpts);
+		this.getApplication().addSidenavOptions("BANDEJA", messengerOpts);
 	}
 
 
@@ -396,30 +441,28 @@ export class AonMessenger extends AonElement {
 			},
 		];
 		
-		this.applicationEl.addSidenavOptions(MSG.STATUS, messengerOpts);
+		this.getApplication().addSidenavOptions(MSG.STATUS, messengerOpts);
 	}
 
     groupNavBar() {
-		let application = this.applicationEl;
-		application.addSidenavOptions2({
+		this.getApplication().addSidenavOptions2({
 			id: 'Workgroup',
 			name: MSG.WORKGROUP
 		}, []);
 	}
 
     tagNavBar() {
-		let application = this.applicationEl;
-		
+
 		const fnTag = this.getDur().isMessengerManager() && !this.cau ? () => this.dialogTag({}, TAG_TYPE.TASK_LABEL) : null; 
 		
-		application.addSidenavOptions2({
+		this.getApplication().addSidenavOptions2({
 			id: TAG_TYPE.TASK_LABEL,
 			name: this.cau ? MSG.APPLICATION : MSG.TAG
 		}, [], fnTag);
 
 		if(!this.cau){
 			const fnTagType = this.getDur().isMessengerManager() ? () => this.dialogTag({}, TAG_TYPE.TASK_TYPE) : null; 
-			application.addSidenavOptions2({
+			this.getApplication().addSidenavOptions2({
 				id: TAG_TYPE.TASK_TYPE,
 				name: MSG.TYPE
 			}, [], fnTagType);
@@ -427,11 +470,10 @@ export class AonMessenger extends AonElement {
 	}
 
 	async loadWorkgroup() {
-		let application = this.applicationEl;
 
 		await this.getMyWorkgroups().then( workgroups => {
-		  this.clearElementById(application.SIDENAV+'WorkgroupList');
-		  let options = [];
+			this.clearElementById(this.getApplication().SIDENAV+'WorkgroupList');
+			let options = [];
 
 		//   if(this.getDur().isMessengerManager()){
 			options.push({
@@ -494,7 +536,7 @@ export class AonMessenger extends AonElement {
 				});
 			}
 
-			application.addSidenavOptionsList({
+			this.getApplication().addSidenavOptionsList({
 				id: 'Workgroup',
 				name: MSG.WORKGROUP.toUpperCase()
 			}, options);
@@ -511,7 +553,6 @@ export class AonMessenger extends AonElement {
 
 	async loadTagLabel() {
 		const type = TAG_TYPE.TASK_LABEL;
-		let application = this.applicationEl;
 
 		let params = {type};
 
@@ -526,7 +567,7 @@ export class AonMessenger extends AonElement {
 
 		this._tags = resp;
 
-		this.clearElementById(application.SIDENAV+type+'List');
+		this.clearElementById(this.getApplication().SIDENAV+type+'List');
 
 		resp.forEach(item => {
 			let option = {
@@ -548,7 +589,7 @@ export class AonMessenger extends AonElement {
 				);
 			}
 
-			application.addSidenavOptionsListValue({
+			this.getApplication().addSidenavOptionsListValue({
 				id: type,
 				name: MSG.TAG.toUpperCase()
 			}, option);
@@ -558,11 +599,10 @@ export class AonMessenger extends AonElement {
 	async loadTagType() {
 		if(!this.cau){
 			const type = TAG_TYPE.TASK_TYPE;
-			let application = this.applicationEl;
-	
+
 			const resp = await this.getTags({type});
 	
-			this.clearElementById(application.SIDENAV+type+'List');
+			this.clearElementById(this.getApplication().SIDENAV+type+'List');
 	
 			resp.forEach(item => {
 				let option = {
@@ -583,7 +623,7 @@ export class AonMessenger extends AonElement {
 						{ id: 'Edit', icon: MATERIAL_ICONS.EDIT, action: () => this.dialogTag(item, type) }
 					);
 				}
-				application.addSidenavOptionsListValue({
+				this.getApplication().addSidenavOptionsListValue({
 					id: type,
 					name: MSG.TYPE.toUpperCase()
 				}, option);
@@ -635,7 +675,6 @@ export class AonMessenger extends AonElement {
 				}
 			}
 	
-
 			switch (filter.status){
 				case TASK_STATUS.IN_PROGRESS:
 					application.addBackgroundSidenav(MessengerOptions.AON_MESSENGER_LIST_IN_PROGRESS.name);
@@ -663,8 +702,10 @@ export class AonMessenger extends AonElement {
 
 	dialogTag(tag={}, type) {
 		const isEdit = tag && tag.id;
+
 		let d = this.getApplication().getDialog();
 		d.clear();
+		
 		if(this.isMobile()) {
 			d.type ="fullscreen";
 		} else {
@@ -713,7 +754,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	updateCount(){
-		let application = this.applicationEl;
+		let application = this.getApplication();
 		let filterCount= {};
 		if(this.cauInfo && this.cauInfo.auth && this.cauInfo.auth.email){
 			filterCount.email = this.cauInfo.auth.email;
@@ -792,7 +833,7 @@ export class AonMessenger extends AonElement {
 
 	updateStatusCount(){
 		if(!this.cau){
-			const application = this.applicationEl;
+			const application = this.getApplication();
 
 			const workgroupStr = this.getWorkgroupsStr();
 
@@ -904,11 +945,16 @@ export class AonMessenger extends AonElement {
 	}
 
 	loadGraph(){
-		let contentId = this.getApplication().CONTENT;
+		const contentId = this.getApplication().CONTENT;
     
 		this.clearElementById(contentId);
 
 		GWT.load(GWT.TASK_STAT, contentId);
+
+		waitEl(`#${contentId} > div:first-child`)
+		.then(element=>{
+			element.style.inset = '0px';
+		});
 	}
 
 
@@ -930,9 +976,9 @@ export class AonMessenger extends AonElement {
 				aonView.id = view;
 				if(filter) aonView.setFilter(filter);
 				if(data) aonView.data = data;
-				this.applicationEl.setContent(aonView);
-				resolve(aonView);
+				this.getApplication().setContent(aonView);
 			}
+			resolve(aonView);
 		});
     }
 
@@ -1005,6 +1051,17 @@ export class AonMessenger extends AonElement {
 			document = this.cauInfo.company.document;
 		}
 		return document;
+	}
+
+	async getExcel(){
+		this.getApplication().startLoading();
+		try{
+			const filter = removeEmpty(this.getListFilter());
+			await getTaskExcel(filter);
+		} catch(e){
+			console.log(e);
+		}
+		this.getApplication().stopLoading();
 	}
 
 	markReadNotification(taskId){
