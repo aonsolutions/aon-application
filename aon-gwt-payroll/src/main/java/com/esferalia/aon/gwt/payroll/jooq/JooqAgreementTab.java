@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -285,22 +286,23 @@ public class JooqAgreementTab {
 		
 		for(AgreementPaymentRecord agreementPaymentRecord : agreementPaymentRecords) {
 			Integer conceptId = agreementPaymentRecord.getPaymentConcept();
-			PaymentConceptRecord conceptRecord = dslContext.selectFrom(PAYMENT_CONCEPT).where(PAYMENT_CONCEPT.ID.eq(conceptId)).fetchOne();
+			Optional<PaymentConceptRecord> conceptRecord = dslContext.selectFrom(PAYMENT_CONCEPT).where(PAYMENT_CONCEPT.ID.eq(conceptId)).fetchOptional();
+			//conceptId = conceptRecord.map(r -> r.getId()).orElse(null); 
 			
 			Payment payment = new Payment();
 			payment.setId(agreementPaymentRecord.getId());
 			payment.setDomain(agreementPaymentRecord.getDomain());
-			payment.setConceptId(conceptId);
-			payment.setName(null != conceptRecord ? conceptRecord.getCode() : null);
-			payment.setType((null != conceptId && null == agreementPaymentRecord.getType()) ? getPaymentType(conceptRecord.getType()) : getPaymentType(agreementPaymentRecord.getType()));
-			payment.setDescription((null != conceptId && AonStringUtils.isBlank(agreementPaymentRecord.getDescription())) ? conceptRecord.getDescription() : agreementPaymentRecord.getDescription());
-			payment.setExpression((null != conceptId && AonStringUtils.isBlank(agreementPaymentRecord.getExpression())) ? conceptRecord.getExpression() : agreementPaymentRecord.getExpression());
+			payment.setConceptId(conceptRecord.map(r -> r.getId()).orElse(null));
+			payment.setName(conceptRecord.map(r -> r.getCode()).orElse(null));
+			payment.setType((conceptRecord.isPresent() && null == agreementPaymentRecord.getType()) ? getPaymentType(conceptRecord.get().getType()) : getPaymentType(agreementPaymentRecord.getType()));
+			payment.setDescription((conceptRecord.isPresent() && AonStringUtils.isBlank(agreementPaymentRecord.getDescription())) ? conceptRecord.get().getDescription() : agreementPaymentRecord.getDescription());
+			payment.setExpression((conceptRecord.isPresent() && AonStringUtils.isBlank(agreementPaymentRecord.getExpression())) ? conceptRecord.get().getExpression() : agreementPaymentRecord.getExpression());
 			payment.setStartDate(parseToJavaDate(agreementPaymentRecord.getStartDate()));
 			payment.setEndDate(parseToJavaDate(agreementPaymentRecord.getEndDate()));
 			payment.setMonth(null == agreementPaymentRecord.getMonth() ? null : (short)agreementPaymentRecord.getMonth());
 			payment.setSalaryType(getSalaryType(agreementPaymentRecord.getSalaryType()));
-			payment.setIrpfExpression((null != conceptId && AonStringUtils.isBlank(agreementPaymentRecord.getIrpfExpression())) ? conceptRecord.getIrpfExpression() : agreementPaymentRecord.getIrpfExpression());
-			payment.setQuoteExpression((null != conceptId && AonStringUtils.isBlank(agreementPaymentRecord.getQuoteExpression())) ? conceptRecord.getQuoteExpression() : agreementPaymentRecord.getQuoteExpression());
+			payment.setIrpfExpression((conceptRecord.isPresent() && AonStringUtils.isBlank(agreementPaymentRecord.getIrpfExpression())) ? conceptRecord.get().getIrpfExpression() : agreementPaymentRecord.getIrpfExpression());
+			payment.setQuoteExpression((conceptRecord.isPresent() && AonStringUtils.isBlank(agreementPaymentRecord.getQuoteExpression())) ? conceptRecord.get().getQuoteExpression() : agreementPaymentRecord.getQuoteExpression());
 			
 			paymentsSet.add(payment);
 		}

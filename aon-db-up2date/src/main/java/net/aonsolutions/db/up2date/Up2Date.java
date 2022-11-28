@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.FixPreaviso;
 import net.aonsolutions.db.up2date.payroll.Holidays2023Insert;
+import net.aonsolutions.db.up2date.payroll.AgreementPaymentsConceptFix;
 import net.aonsolutions.db.up2date.payroll.AlterContractBonusDescription;
 import net.aonsolutions.db.up2date.payroll.AlterContractBonusExpression;
 import net.aonsolutions.db.up2date.payroll.AlterContractPaymentDescription;
@@ -294,6 +295,7 @@ public class Up2Date {
     		//AlterRbankAddRequisition.ALTER_RBANK_ADD_REQUISITION,
     		//AlterRbankAddSepaMandateRef.ALTER_RBANK_ADD_SEPA_MANDATE_REF,
     		Holidays2023Insert.HOLIDAYS2023INSERT,
+    		AgreementPaymentsConceptFix.AGREEMENTPAYMENTSCONCEPTFIX,
     		
     		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
