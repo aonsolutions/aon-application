@@ -3129,8 +3129,8 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 						"BASE_IRPF * 0.00/100" }, 
 						null);
 		
-		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), pagaExtraConcept, "PAGA EXTRAORDINARIA JULIO", "P_0 + P_1 + P_2", "_P", "_P", PaymentType.CRA_0004, null);
-		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), pagaExtraConcept, "PAGA EXTRAORDINARIA DICIEMBRE", "P_0 + P_1 + P_2", "_P", "_P", PaymentType.CRA_0004, null);
+		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), pagaExtraConcept, "PAGA EXTRAORDINARIA JULIO", "P_0 + P_1 + P_2", "_P", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), pagaExtraConcept, "PAGA EXTRAORDINARIA DICIEMBRE", "P_0 + P_1 + P_2", "_P", "_P", PaymentType.CRA_0004);
 		//@formatter:off
 		
 		

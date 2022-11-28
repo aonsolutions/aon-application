@@ -23,6 +23,7 @@ import static java.util.Calendar.YEAR;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +57,6 @@ import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryPayment;
-import com.esferalia.aon.payroll.calculator.TaxCalculator.ExtraException;
 import com.esferalia.aon.payroll.calculator.TaxCalculator.NotNowException;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory.IExtraPayment;
@@ -70,7 +70,6 @@ import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -667,8 +666,27 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			}
 		}
 		
-		super.resolvePayment(contractPayment, start, end, issueDate, expressionContext, taxCalculator, quoteCalculator,
-				leavePeriods, strikePeriods);
+		try {
+			super.resolvePayment(contractPayment, start, end, issueDate, expressionContext, taxCalculator, quoteCalculator,
+					leavePeriods, strikePeriods);
+		} catch ( UndefinedVariablesException e ) {
+			
+			
+			
+			if (paymentType == PaymentType.CRA_0004 
+				&& isAtIT(expressionContext, start, end)) {
+				contractPayment = new DelegateContractPayment(contractPayment) {
+					@Override
+					public String getExpression() {
+						return "0.00";
+					}
+				};
+				super.resolvePayment(contractPayment, start, end, issueDate, expressionContext, taxCalculator, quoteCalculator,
+						leavePeriods, strikePeriods);
+			} else {
+				throw e ;
+			}
+		}
 	}
 	
 
@@ -1514,7 +1532,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 	}
 	
-	private static Optional<Double> getMonthlyQuoted(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate,Double amount, Double total) throws AonException {
+	private static Optional<Double> getMonthlyQuoted(ISQLContractSalaryCalculatorContext ctx, IContractPayment contractPayment, Date endDate,double amount, double total) throws AonException {
 		Collection<Payment> payments = getMonthlyQuotePayments(ctx, contractPayment, endDate);
 		
 		int expected = 0;
@@ -1523,7 +1541,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		
 				
 		if ( payments.size() == expected )
-			return Optional.ofNullable(payments.stream().collect(Collectors.summingDouble(p -> p.getQuote() - p.getAmount() )) * amount/total  + amount / 12.00);
+			return Optional.ofNullable(payments.stream().collect(Collectors.summingDouble(p -> p.getQuote() - p.getAmount() )) * (( amount == total ) ? 1.00 : amount/total ) + amount / 12.00);
 		return Optional.empty();
 	}
 	
@@ -1990,6 +2008,15 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		while ( payment instanceof IHasPayment<?> )
 			payment = ((IHasPayment<?>) payment).getPayment();
 		return ( IExtraPayment) payment;
+	}
+	
+	private static boolean isAtIT(ExpressionContext expressionContext, Date startDate, Date endDate) {
+		try {
+			List<Period> itPeriods = expressionContext.getPeriods(ContextVariable.LEAVE_DAYS);
+			return Period.sub(new Period(startDate, endDate), itPeriods).isEmpty();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 }

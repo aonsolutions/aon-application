@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
@@ -263,8 +264,14 @@
 							<td style="background-color: #f6f6f6; width: 200px;">
 								<g:Label styleName='{style.requiredColor} {style.firstColumnTextStyle}'>Tipo de cotización</g:Label>
 							</td>
-							<td colspan="6">
+							<td colspan="3">
 								<g:ListBox ui:field="ssRegimeType" debugId="ssRegimeType" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
+							</td>
+							<td style="width: 10%;">
+								<g:Label styleName='{style.alignTextCenter}'>Tipo Tributación</g:Label>
+							</td>
+							<td colspan="2">
+								<g:ListBox ui:field="mdTBTLB" debugId="mdTBT" styleName='aon-selectOneMenu {style.maxWidth}'></g:ListBox>
 							</td>
 						</tr>
 						<!-- LINEA 4 -->

@@ -32,6 +32,7 @@ public class ContractInfo implements Serializable{
 	private Integer activityId;
 	private String enterpriseCIF;
 	private Byte ssRegimen;
+	private Byte mdTBT;
 	private String agreementCategory;
 	private Integer agreementLevelId;
 	private Integer agreementId; //¿Innecesario? Posiblemente por que tenemos el nivel
@@ -115,6 +116,7 @@ public class ContractInfo implements Serializable{
 		this.activityId = null;
 		this.enterpriseCIF = null;
 		this.ssRegimen = null;
+		this.mdTBT = null;
 		this.agreementCategory = null;
 		this.agreementLevelId = null;
 		this.agreementId = null;
@@ -392,6 +394,14 @@ public class ContractInfo implements Serializable{
 
 	public void setSsRegimen(Byte ssRegimen) {
 		this.ssRegimen = ssRegimen;
+	}
+	
+	public Byte getMdTBT() {
+		return mdTBT;
+	}
+
+	public void setMdTBT(Byte mdTBT) {
+		this.mdTBT = mdTBT;
 	}
 
 	public Integer getContractId() {
