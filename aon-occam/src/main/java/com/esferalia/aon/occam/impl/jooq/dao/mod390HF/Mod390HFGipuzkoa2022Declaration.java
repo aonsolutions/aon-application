@@ -703,13 +703,7 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 				&& AonMathUtils.isNotZero(vat.getPercentage())
 				&& vat.isService()
-				&& (vat.isNationalExpenses()
-				 || vat.isNationalPurchase() 
-				 || vat.isOtherISPExpenses()
-				 || vat.isExtracommunityExpenses() 
-				 || vat.isCanCeuMelExpenses()
-				 || vat.isExtracommunityPurchase() 
-				 || vat.isCanCeuMelPurchase())
+				&& (vat.isExpenses() || vat.isPurchase())	
 				;
 	}
 	
