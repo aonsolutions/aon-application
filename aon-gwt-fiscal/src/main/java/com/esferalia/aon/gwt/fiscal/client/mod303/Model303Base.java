@@ -24,8 +24,8 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToast;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelUtils;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.SessionLog;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.JsVatComputeInfo;
@@ -80,9 +80,10 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	private static final Logger LOGGER = Logger.getLogger(Model303Base.class.getName());
 	static {
 		LOGGER.addHandler( new ConsoleLogHandler() );
-	}
+	}	
 	protected static final String MODEL303_FILE = "/aon_gwt_fiscal/ms/Model303File";
 	private static final String MODEL303_PRINT = "/aon_gwt_fiscal/ms/Model303Print";
+	private static final String MODEL303_BOX_INFO = "/aon_gwt_fiscal/ms/Model303BoxInfoPrint";
 
 	protected static final String WIDTH_150PX = "150px";
 	protected static final String WIDTH_140PX = "140px";
@@ -125,6 +126,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected final AonToolbar decToolbar = new AonToolbar();
 	protected final InlineLabel dirtyLabel = new InlineLabel();
 	protected final InlineLabel diffLabel = new InlineLabel();
+	protected final InlineLabel invoicesUnboundLabel = new InlineLabel();
 	protected final InlineLabel manualLabel = new InlineLabel();
 	protected final InlineLabel adjLabel = new InlineLabel();
 	protected final InlineLabel replacedLabel = new InlineLabel();
@@ -136,6 +138,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
+	protected Hidden mod303BoxHidden = new Hidden("mod303Box");
 	
 	protected Model303Base(Mod303 mod303,Model303Callback cbk) {
 		super(Unit.PX);
@@ -690,6 +693,9 @@ public abstract class Model303Base extends DockLayoutPanel  {
 							JsVatContextBreakdownGridPanel grid = new JsVatContextBreakdownGridPanel( prorrated && getModel().hasProrate() );
 							grid.addSelectionHandler(event -> showInvoice(event.getSelectedItem()));
 							grid.setTitle(AON.MSG.modelRelatedInvoices(getModel().getModelFullName()));
+							if ( !getModel().hasInvoicesBound() ) {
+								grid.setRemarks("Modelo sin facturas vinculadas. Se muestran los datos relativos al periodo que abarca el modelo.");
+							}
 							grid.setSubTitle(AonStringUtils.join(
 								Arrays.stream(script.getKeys())
 									.filter( Objects::nonNull )
@@ -754,6 +760,13 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					});
 				}
 				
+				private AonTableButton addExcelButton() {
+					final AonTableButton button = new AonTableButton(infoKey.getLabel() + " (Excel)" ,AON.CSS.aonIconExcel());
+					button.setTabIndex(-2);
+					buttonContainer.add(button);
+					return button;
+				}
+
 				private Optional<AonTableButton>  addDiffButton() {
 					if (!getModel().isManualDeclaration() && getModel().isDiffCalculationEnabled()) {
 						boolean diffKey = Arrays.stream(script.getKeys())
@@ -781,6 +794,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					if (!getModel().isManualDeclaration()) {
 						final AonTableButton button = addButton();
 						button.addClickHandler(event -> showInvoiceVatBreakdownInfo(button, false));
+						addExcelButton().addClickHandler(event -> showExcelInfo(script, false));
 						addDiffButton().ifPresent( diffButton -> diffButton.addClickHandler(event -> showDiffInfo(diffButton)) ); 
 					}
 					return null;
@@ -791,6 +805,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 					if (!getModel().isManualDeclaration()) {
 						final AonTableButton button = addButton();
 						button.addClickHandler(event -> showInvoiceVatBreakdownInfo(button,true));
+						addExcelButton().addClickHandler(event -> showExcelInfo(script, true));
 						addDiffButton().ifPresent( diffButton -> diffButton.addClickHandler(event -> showDiffInfo(diffButton)) );
 					}
 					return null;
@@ -1295,6 +1310,12 @@ public abstract class Model303Base extends DockLayoutPanel  {
 		diffLabel.addStyleName(AON.CSS.aonIconDiff());
 		diffLabel.setTitle("C\u00E1lculo por diferencia habilitado");
 		marksPanels.add(diffLabel);
+		
+		invoicesUnboundLabel.setStyleName(AON.CSS.aonMarginLeft());
+		invoicesUnboundLabel.addStyleName(AON.CSS.aonLabelWithIcon());
+		invoicesUnboundLabel.addStyleName(AON.CSS.aonIconWarning());
+		invoicesUnboundLabel.setTitle("Modelo sin facturas vinculadas");
+		marksPanels.add(invoicesUnboundLabel);
 
 		adjLabel.setStyleName(AON.CSS.aonMarginLeft());
 		adjLabel.addStyleName(AON.CSS.aonIconLabel());
@@ -1344,6 +1365,7 @@ public abstract class Model303Base extends DockLayoutPanel  {
 	protected void styleDirtyLabel() {
 		dirtyLabel.setVisible(isDirty());
 		diffLabel.setVisible(!getModel().isDiffCalculationDisabled());
+		invoicesUnboundLabel.setVisible(!getModel().hasInvoicesBound());
 		manualLabel.setVisible(getModel().isManualDeclaration());
 		
 		boolean adjusted = false;
@@ -1487,6 +1509,31 @@ public abstract class Model303Base extends DockLayoutPanel  {
 
 	void decorateDeclarationTab() {
 		
+	}
+	
+	private void showExcelInfo(IModelScript<Mod303Key> script, boolean prorrated) {
+		Mod303Key key = Arrays.stream(script.getKeys())
+				.filter( Objects::nonNull )
+				.findAny()
+				.orElse(null);
+		if (key != null) {
+			diskForm.setMethod(FormPanel.METHOD_POST);
+			diskForm.setAction(GWT.getHostPageBaseURL() + MODEL303_BOX_INFO);
+			diskForm.clear();
+			FlowPanel diskPanel = new FlowPanel();
+			diskPanel.add(mod303Hidden);
+			diskPanel.add(domainIdHidden);
+			diskPanel.add(domainNameHidden);
+			diskPanel.add(userHidden);
+			diskPanel.add(mod303BoxHidden);
+			diskForm.add(diskPanel);
+			mod303Hidden.setValue(String.valueOf(getModel().getId()));
+			domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
+			domainNameHidden.setValue(getCallback().getOptions().getDomainName());
+			userHidden.setValue(getCallback().getOptions().getUser());
+			mod303BoxHidden.setValue(key.toString());
+			diskForm.submit();
+		}
 	}
 	
 }

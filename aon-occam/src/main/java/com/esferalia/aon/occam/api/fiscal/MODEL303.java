@@ -1,12 +1,14 @@
 package com.esferalia.aon.occam.api.fiscal;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.impl.jooq.fiscal.MODEL303Impl;
@@ -118,6 +120,11 @@ public class MODEL303 {
 		}
 	}
 	
+	public static Stream<VatContext> getInfo(Occam occam, Mod303 mod303,Mod303Key key) {
+	 	final CloseableAONContext ctx = AONContext.getAONContext(occam);
+	 	return getImpl().getInfo(ctx, mod303, key, () -> AONContext.closeQuietly(ctx));
+	}
+
 	public static Mod303 aeatPresentation(Occam occam, Mod303 mod303, String aeatResponse) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().aeatPresentation(ctx, mod303, aeatResponse);
