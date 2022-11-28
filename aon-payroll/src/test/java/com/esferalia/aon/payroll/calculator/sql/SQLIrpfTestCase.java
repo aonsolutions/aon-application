@@ -597,7 +597,6 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
-	@Ignore
 	public void testExtrasAtSalarySelfEmployee() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
