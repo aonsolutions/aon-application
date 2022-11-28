@@ -2138,9 +2138,10 @@ public class InvoiceTemplate {
 		if (company != null &&
 				company.getRegistry() != null &&
 				company.getRegistry().getDomain() != null) {
-			return AonStringUtils.containsIgnoreCase(company.getRegistry().getDomain().getName(), "udapa");
+			return AonStringUtils.containsIgnoreCase(company.getRegistry().getDomain().getName(), "udapa")
+				 || AonStringUtils.containsIgnoreCase(company.getRegistry().getDomain().getName(), "paturpat");
 		}
-			return false;
+		return false;
 	}
 	
 	private static InvoiceDetail copyInvoiceDetail(InvoiceDetail original) {
