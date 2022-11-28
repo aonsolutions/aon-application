@@ -147,7 +147,7 @@ export class AonElement extends HTMLElement{
   }
 
   getApplicationParent(){
-    return this.getApplication().getParent();
+    return this.getApplication() ? this.getApplication().getParent() : null;
   }
 
   buildDur() {

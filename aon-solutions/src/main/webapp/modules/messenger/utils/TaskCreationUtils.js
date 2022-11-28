@@ -962,7 +962,7 @@ const openDialogBranch = (task)=> {
 
         dialog.close();
 
-        aonMessengerChat.applicationParentEl.updateCount();
+        aonMessengerChat.getApplicationParent().updateCount();
 
       } catch (error) {
         console.log(error);

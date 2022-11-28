@@ -137,8 +137,7 @@ public class TimeControlExcel {
 			cellAnio.setCellValue(totalAnio);
 		}
 		
-		
-		
+
 		int lastColumn = sheet.getRow(sheet.getLastRowNum()).getLastCellNum();
 		Row row = sheet.createRow(sheet.getLastRowNum()+1);
 		

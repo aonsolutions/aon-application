@@ -18,6 +18,7 @@ export class AonMessengerList extends AonElement {
   TASK_HOLDER;
   AON_TABLE;
   ROWS;
+  
   static get observedAttributes() {
     return [];
   }
@@ -50,9 +51,7 @@ export class AonMessengerList extends AonElement {
     this.TOOLBAR = this.id + "Toolbar";
     this.INDEX = 0;
     this.MORE  = true;
-    this.applicationEl = this.getApplication();
-    this.applicationParentEl = this.getApplicationParent();
-    this.TASK_HOLDER = this.applicationParentEl.TASK_HOLDER;
+    this.TASK_HOLDER = this.getApplicationParent().TASK_HOLDER;
     this.AON_TABLE = null;
     this.ROWS = [];
   }
@@ -60,8 +59,8 @@ export class AonMessengerList extends AonElement {
   async build() {
     this.paintTable();
     if (this.isMobile()) {
-      this.applicationEl.addFloatOption(SigninSidenav.ADD, () =>
-        this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {
+      this.getApplication().addFloatOption(SigninSidenav.ADD, () =>
+        this.getApplicationParent().showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {
           source: TASK_SOURCE.QUERY,
         })
       );
@@ -177,7 +176,7 @@ export class AonMessengerList extends AonElement {
    * @return boolean}
    */
   getIsMyTask(task){
-    const parent = this.applicationParentEl;
+    const parent = this.getApplicationParent();
     const myTaskHolderId = parent.TASK_HOLDER ? parent.TASK_HOLDER.id : undefined;
     const myWorkgroups   = parent._workgroups;
     return TaskUtils.isMyTask(task, myTaskHolderId, myWorkgroups);
@@ -260,12 +259,12 @@ export class AonMessengerList extends AonElement {
 
   async goMessengerChat(res, idx) {
     setIndexTask(idx);
-    if (!this.applicationParentEl) {
+    if (!this.getApplicationParent()) {
       let aonMessenger = new AonMessenger();
       aonMessenger.data = res;
       this.rootPanel(aonMessenger);
     } else if (res && res.id) {
-      this.applicationEl.startLoading();
+      this.getApplication().startLoading();
       try {
         let params = { id: res.id };
 
@@ -275,11 +274,11 @@ export class AonMessengerList extends AonElement {
         }
 
         const data = await getTaskOne(params);
-        this.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, data);
+        this.getApplicationParent().showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, data);
       } catch (err) {
         this.showError(err);
       }
-      this.applicationEl.stopLoading();
+      this.getApplication().stopLoading();
     }
   }
 

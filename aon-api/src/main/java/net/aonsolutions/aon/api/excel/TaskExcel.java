@@ -18,6 +18,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -30,6 +31,10 @@ import net.aonsolutions.aon.api.servlet.task.TaskFilter;
 import net.aonsolutions.aon.api.servlet.task.TaskUtils;
 
 public class TaskExcel {
+	
+	private static final String FORMAT_DATE = "yyyy-MM-dd"; 
+	private static final String START_DATE = "startDate"; 
+	private static final String END_DATE = "endDate"; 
 	
 	 private TaskExcel() {
 		  throw new IllegalStateException("TaskExcel class");
@@ -48,32 +53,43 @@ public class TaskExcel {
 	};
 	
 	public static void buildExcel(OutputStream outputstream, AonApiData api) throws Exception  {
+		
+		JSONObject params = api.getData();
+		
+		onValidate(params);
+		
 		List<Task> tasks = AON_SOLUTIONS.getTaskParentOrChildStream(api.getDomain(), api.getUser(), 
 			f -> TaskFilter.task(api, f, api.getDomain(), new Customer())
 		)
 		.collect(Collectors.toCollection(LinkedList::new));
 		
-		buildExcel(outputstream, tasks);
+		
+		Date startDate = AonDateUtils.parse(params.optString(START_DATE), FORMAT_DATE);
+		
+		Date endDate = AonDateUtils.parse(params.optString(END_DATE), FORMAT_DATE);
+
+	
+		buildExcel(outputstream, tasks, startDate, endDate);
 	}
 
-	public static void buildExcel(OutputStream outputstream, List<Task> tasks) throws Exception {
+	public static void buildExcel(OutputStream outputstream, List<Task> tasks, Date startDate, Date endDate) throws Exception {
 		Workbook workbook = new XSSFWorkbook();
 
-		Sheet sheet = buildHeaders(workbook);
+		Sheet sheet = buildHeaders(workbook, startDate, endDate);
 		
 		tasks.forEach(task->{
 			buildColumn(sheet, task, null);
 		});		
 		
-	    for(int i = 0; i < sheet.getRow(0).getPhysicalNumberOfCells(); i++) {
+	    for(int i = 0; i < sheet.getRow(1).getPhysicalNumberOfCells(); i++) {
             sheet.autoSizeColumn(i);
         }
-
+	    
         workbook.write(outputstream);
         outputstream.close();
 	}
 	
-	private static Sheet buildHeaders(Workbook workbook){
+	private static Sheet buildHeaders(Workbook workbook, Date startDate, Date endDate){
 		
 		Sheet sheet = workbook.createSheet();
 		
@@ -91,7 +107,12 @@ public class TaskExcel {
 		headerCellStyle.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
 		headerCellStyle.setFillPattern(FillPatternType.FINE_DOTS);
 		
-		Row headerRow = sheet.createRow(0);
+		Cell cellFirst = sheet.createRow(0).createCell(0);
+		
+		cellFirst.setCellValue("Fecha: "+getDateBetweenString(startDate, endDate));
+		cellFirst.setCellStyle(headerCellStyle);
+		
+		Row headerRow = sheet.createRow(1);
 		for(int i = 0; i < columns.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(columns[i]);
@@ -143,6 +164,10 @@ public class TaskExcel {
 		 return AonDateUtils.format(date, "dd/MM/yyyy HH:mm");
 	}
 	
+	private static String getDateBetweenString(Date startDate, Date endDate) {
+		 return AonDateUtils.format(startDate, "dd/MM/yyyy")+ " - "+AonDateUtils.format(endDate, "dd/MM/yyyy");
+	}
+	
 	private static String getAssigned(Task task) {
 		 if(task.getTaskHolder().getId()!=null) {
 			 return task.getTaskHolder().getName();
@@ -156,4 +181,21 @@ public class TaskExcel {
 		 return registry!=null ? registry.getName() : "";
 	}
 	
+	/**
+	 * 
+	 * @param validate data required
+	 * @throws Exception
+	 */
+	private static void onValidate(JSONObject params) throws Exception {
+		String error = null;
+		if(params.isNull("startDate")) {
+			error = "Fecha Inicio requerida";
+		} else if(params.isNull("endDate")) {
+			error = "Fecha fin requerida";
+		} 
+		
+		if(error!=null) {
+			throw new Exception(error);
+		}
+	}
 }

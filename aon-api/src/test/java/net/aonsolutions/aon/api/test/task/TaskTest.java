@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,9 +74,12 @@ public class TaskTest extends AbstractOccamTest {
 				f -> f.getDomainProperty().eq(domain.getId()) 
 				.and(f.getStatusProperty().in(Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value()).toArray(Byte[]::new)))
 		).collect(Collectors.toCollection(LinkedList::new));
+		
+		Date startDate = new Date("2022/01/01");
+		Date endDate = new Date("2022/12/31");
 	
 		try{
-			TaskExcel.buildExcel(new FileOutputStream(System.getProperty("user.home")+"/Documentos/test.xls"), tasks);
+			TaskExcel.buildExcel(new FileOutputStream(System.getProperty("user.home")+"/Documentos/test.xls"), tasks, startDate, endDate);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
