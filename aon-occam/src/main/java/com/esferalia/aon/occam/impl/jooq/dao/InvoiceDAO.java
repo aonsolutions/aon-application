@@ -77,9 +77,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
-import com.esferalia.aon.occam.api.model.management.OfferDetail;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
-import com.esferalia.aon.occam.api.model.management.SalesDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
@@ -100,7 +98,6 @@ import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
-import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.api.model.warehouse.IncomeDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
@@ -328,12 +325,19 @@ public class InvoiceDAO {
 				,PRODUCT.NAME
 				,PRODUCT.CODE
 				,PRODUCT.TYPE
+				,PRODUCT.PACKAGED
 				,ITEM.DETAIL
 				,ITEM.DETAIL2
 				,ITEM.DETAIL3
 				,ITEM.DESCRIPTION
 				,ITEM.PURCHASE_PRICE
 				,ITEM.PRICE
+				,ITEM.PACK_FORMAT_TAG
+				,ITEM.PACK_UNITS
+                ,ITEM.PACK_UNITS_TAG
+                ,ITEM.PACK_MEASUREMENT
+                ,ITEM.PACK_MEASUREMENT_TAG
+                ,ITEM.STOCK_UNIT_TAG
 				
 				,INVOICE_DETAIL.DESCRIPTION
 				,INVOICE_DETAIL.DOMAIN
