@@ -1727,7 +1727,14 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			throws AonException {
 		try {
 			IExtraPayment extraPayment = getExtraPayment(contractPayment);
-			Date extraIssueDate = parseExtraDate(extraPayment.getExtraIssueDate(), issueDate).getTime();
+			
+			Date extraIssueDate = null;
+			try {
+				extraIssueDate = parseExtraDate(extraPayment.getExtraIssueDate(), issueDate).getTime();
+			} catch ( Exception e ) { // DateFormatExceptio
+				extraIssueDate = ContextFunctions.getExtraEndDate(extraPayment.getMonth(), end).getTime();
+			}
+
 			if ( !extraIssueDate.equals(issueDate) )
 				throw new NotNowException();
 			

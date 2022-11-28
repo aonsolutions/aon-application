@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.23, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.31, for Linux (x86_64)
 --
 -- Host: localhost    Database: test-aonsolutions-org
 -- ------------------------------------------------------
--- Server version	8.0.23
+-- Server version	8.0.31
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -1600,7 +1600,7 @@ CREATE TABLE `bank_statement` (
   `amount` double(15,2) NOT NULL DEFAULT '0.00' COMMENT 'Importe',
   `document` varchar(10) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Numero de documento',
   `reference1` varchar(12) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Referencia 1',
-  `reference2` varchar(64) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `reference2` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
   `description` varchar(80) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `reliability` tinyint DEFAULT '0' COMMENT 'Fiabilidad del punteo',
   `security_level` tinyint DEFAULT '0' COMMENT 'Nivel de seguridad',
@@ -2992,8 +2992,8 @@ CREATE TABLE `contract_bonus` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador unico',
   `domain` int NOT NULL COMMENT 'Identificador del Dominio',
   `contract` int NOT NULL COMMENT 'Contrato',
-  `description` varchar(256) COLLATE latin1_spanish_ci DEFAULT NULL,
-  `expression` varchar(1024) COLLATE latin1_spanish_ci DEFAULT NULL,
+  `description` varchar(256) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
+  `expression` varchar(1024) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
   `end_date` date DEFAULT NULL COMMENT 'Fecha de finalizacion',
   `bonus_concept` int DEFAULT NULL COMMENT 'Concepto de bonificacion',
@@ -10759,6 +10759,8 @@ CREATE TABLE `rbank` (
   `alias` varchar(25) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Alias de la Cuenta Bancaria',
   `active` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Indica si la Cuenta Bancaria esta activa o no',
   `account` int DEFAULT NULL COMMENT 'Identificador de la Cuenta Contable',
+  `requisition` varchar(50) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Requisition de nordigen',
+  `sepa_mandate_ref` char(20) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Mandate reference',
   PRIMARY KEY (`id`),
   KEY `IDX_RBANK_REGISTRY` (`registry`),
   KEY `IDX_RBANK_DOMAIN` (`domain`),
@@ -14331,4 +14333,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-11-17 13:23:33
+-- Dump completed on 2022-11-28 11:21:06

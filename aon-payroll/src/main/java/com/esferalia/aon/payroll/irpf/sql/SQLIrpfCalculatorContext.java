@@ -85,6 +85,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 			+ " FROM " + SQLConstants.SALARY_PAYMENT
 			+ " WHERE " + SQLConstants.SALARY + "." + SalaryColumns.TYPE + " = 0 "
 			+ " AND " + SalaryPaymentColumns.SALARY + " = " + SQLConstants.SALARY + "." + SalaryColumns.ID
+			+ " AND " + SalaryPaymentColumns.QUOTE + " > 0.00 "  
 			+ " AND " + SalaryPaymentColumns.AMOUNT + " > " + SalaryPaymentColumns.QUOTE 
 			+ " AND " + SalaryPaymentColumns.TYPE + " IN (" + PaymentType.CRA_0004.ordinal() + ", " +PaymentType.CRA_0005.ordinal() + ")"
 			;
