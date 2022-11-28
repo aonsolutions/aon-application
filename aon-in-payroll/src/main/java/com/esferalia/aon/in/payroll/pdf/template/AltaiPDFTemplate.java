@@ -53,10 +53,13 @@ public class AltaiPDFTemplate implements SalaryPDFTemplate {
 		private String naf;
 		private String nif;
 		private String cif;
+		private String quoteGroup;
 		private String employeeCode;
 		private String enterpriseCode;
 		private String employeeName;
 		private String enterpriseName;
+		
+		private Date seniorityDate;
 	
 
 		private Date startDate;
@@ -84,6 +87,14 @@ public class AltaiPDFTemplate implements SalaryPDFTemplate {
 		
 		public Date getEndDate() {
 			return endDate;
+		}
+		
+		public Date getSeniorityDate() {
+			return seniorityDate;
+		}
+		
+		public String getQuoteGroup() {
+			return quoteGroup;
 		}
 		
 		public String getEmployeeCode() {
@@ -129,6 +140,16 @@ public class AltaiPDFTemplate implements SalaryPDFTemplate {
 		
 		public PDFContract setEndDate(Date endDate) {
 			this.endDate = endDate;
+			return this;
+		}
+		
+		public PDFContract setSeniorityDate(Date seniorityDate) {
+			this.seniorityDate = seniorityDate;
+			return this;
+		}
+		
+		public PDFContract setQuoteGroup(String quoteGroup) {
+			this.quoteGroup = quoteGroup;
 			return this;
 		}
 		
