@@ -1,10 +1,14 @@
 package com.esferalia.aon.occam.api.fiscal;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 
@@ -19,9 +23,11 @@ public interface IMODEL303 {
 	public Mod303 initialize(AONContext ctx, Mod303 mod303);
 	public Mod303 create(AONContext ctx, Mod303 mod303);
 	public void delete(AONContext ctx, Mod303 mod303);
-	public String getInfo(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey);
 	public Mod303 aeatPresentation(AONContext ctx, Mod303 mod303, String aeatResponse);
 	public Mod303 reset(AONContext ctx, Mod303 mod303);
+	
+	public String getInfo(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey);
+	public Stream<VatContext> getInfo(CloseableAONContext ctx, Mod303 mod303, Mod303Key key,IDAOCallback daoCallback);
 	
 	public Mod303 markAsFinished(AONContext ctx, Mod303 mod303);
 	public Mod303 markAsPending(AONContext ctx, Mod303 mod303);
@@ -32,5 +38,6 @@ public interface IMODEL303 {
 	
 	public Mod303 doRecord(AONContext ctx, Mod303 mod303);
 	public Mod303 unrecord(AONContext ctx, Mod303 mod303);
+	
 	
 }

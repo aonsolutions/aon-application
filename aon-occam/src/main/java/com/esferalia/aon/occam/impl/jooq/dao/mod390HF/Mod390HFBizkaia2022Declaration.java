@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod390HF;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303Declaration;
+import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -805,7 +807,19 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 	
 	@Override
 	Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
-		return null;
+		final Set<Integer> invoices = new HashSet<>();
+		VATDAO.getAccrualInvoices(ctx,mod).forEach( vc -> {
+			if (vc.isSales()) {
+				add(Mod390Key.BZ_C130, mod, vc.getBase());
+				add(Mod390Key.BZ_C131, mod, vc.getDeductibleQuota());
+			} else {
+				add(Mod390Key.BZ_C132, mod, vc.getBase());
+				add(Mod390Key.BZ_C133, mod, vc.getDeductibleQuota());
+			}
+			invoices.add(vc.getInvoice());
+		});
+		add(Mod390Key.BZ_C004, mod, AonMathUtils.isZero(mod.getAmount(Mod390Key.BZ_C133)) ? (0.0) : (1.0));
+		return invoices;
 	}
 
 	//	-----------------------------------------------------------------------	

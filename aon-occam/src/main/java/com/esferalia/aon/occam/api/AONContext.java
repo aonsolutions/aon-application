@@ -150,6 +150,12 @@ public class AONContext {
 		}
 	}
 	
+	public static void closeQuietly(AONContext ctx) {
+		if (ctx != null && ctx instanceof CloseableAONContext) {
+			((CloseableAONContext) ctx).close();
+		}
+	}
+	
 	public static CloseableAONContext getAONContext(Domain domain, User user) {
 		return getAONContext(domain, user.getLogin());
 	}

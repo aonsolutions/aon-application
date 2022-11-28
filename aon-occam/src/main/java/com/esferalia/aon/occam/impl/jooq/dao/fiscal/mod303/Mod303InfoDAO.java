@@ -135,7 +135,16 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 			.orElse(null);
 	}
 	
+	public static Stream<VatContext> getModelInvoicesInfo(AONContext ctx, final Mod303 mod303, Mod303Key key) {
+		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+		return getModelInvoicesInfo(ctx, mod303, dec.getKey(key)); 
+	}
+	
 	private static Stream<VatContext> getModelInvoicesInfo(AONContext ctx, final Mod303 mod303, IMod303KeyDAO keyDAO) {
+		if (mod303.isManualDeclaration() || !mod303.hasInvoicesBound()) {
+			return VATDAO.getVatBreakdown(ctx, mod303)
+					.filter( br ->  keyDAO.acceptValue(mod303, br));
+		}
 		return VATDAO.getModelVatBreakdown(ctx, mod303)
 			.filter( br ->  keyDAO.acceptValue(mod303, br));
 	}

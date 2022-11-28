@@ -23,6 +23,7 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 	private final boolean showProrrate;
 	private final Label title;
 	private final Label subTitle;
+	private final Label remarks;
 	private final AonDisplayGrid grid;
 	private double sumBase = 0.0;
 	private double sumQuota = 0.0;
@@ -46,6 +47,7 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 		title.addStyleName(AON.CSS.aonTextUppercase());
 		title.addStyleName(AON.CSS.aonFontLarger());
 		add( title );
+		
 		subTitle = new Label();	
 		subTitle.setStyleName(AON.CSS.aonMarginTop());
 		subTitle.addStyleName(AON.CSS.aonBold());
@@ -53,6 +55,17 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 		subTitle.addStyleName(AON.CSS.aonTextCenter());
 		subTitle.addStyleName(AON.CSS.aonFontLarger());
 		add( subTitle );
+
+		remarks = new Label();	
+		remarks.setStyleName(AON.CSS.aonMarginTop());
+		remarks.addStyleName(AON.CSS.aonColorRed());
+		remarks.addStyleName(AON.CSS.aonBold());
+		remarks.addStyleName(AON.CSS.aonWidthAll());
+		remarks.addStyleName(AON.CSS.aonTextCenter());
+		remarks.addStyleName(AON.CSS.aonFontLarger());
+		remarks.setVisible(false);
+		add( remarks );
+
 		grid = new AonDisplayGrid();
 		grid.addStyleName(AON.CSS.aonMarginTop());
 		grid.addStyleName(AON.CSS.aonBlockCenter());
@@ -68,7 +81,11 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 	public void setSubTitle( String subTitle) {
 		this.subTitle.setText(subTitle);	
 	}
-	
+	public void setRemarks( String remarks) {
+		this.remarks.setText(remarks);
+		this.remarks.setVisible( AonStringUtils.isNotBlank(remarks) );
+	}
+
 	private void paintHeader() {
 		Label serviceLabel = new Label("S");
 		serviceLabel.setTitle(AON.MSG.service());

@@ -14,6 +14,7 @@ public class Mod303 extends FiscalModel implements Serializable {
 	
 	private static final long serialVersionUID = -6579562925389189514L;
 	
+	private boolean invoicesBound;
 	private boolean diffCalculationMandatory;
 	
 	private LinkedList<Mod303ActivityFarmer> activityFarmerList;
@@ -188,4 +189,11 @@ public class Mod303 extends FiscalModel implements Serializable {
 		throw new UnsupportedOperationException("Unsupported method! (use setDeclarationResultType())");
 	}
 	
+	public boolean hasInvoicesBound() {
+		return invoicesBound;
+	}
+	public Mod303 setInvoicesBound(boolean invoicesBound) {
+		this.invoicesBound = invoicesBound;
+		return this;
+	}
 }
