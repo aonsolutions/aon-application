@@ -931,7 +931,7 @@ public class InvoiceTemplate {
 						safeString(detail.getDescription())
 							.replace("\t", " ");
 				
-				if (isUdapa(company) && InvoiceSource.DELIVERY.equals(detail.getSource())) {
+				if (isUdapa(company)) {
 					String appended = fillProductPackage("", detail);
 					if (AonStringUtils.isNotBlank(appended)) {
 						description += " (" + appended + ")";
@@ -962,7 +962,7 @@ public class InvoiceTemplate {
 						safeString(detail.getDescription())
 						.replace("\t", " ");
 				
-				if (isUdapa(company) && InvoiceSource.DELIVERY.equals(detail.getSource())) {
+				if (isUdapa(company)) {
 					String appended = fillProductPackage("", detail);
 					if (AonStringUtils.isNotBlank(appended)) {
 						description += " (" + appended + ")";
@@ -1394,7 +1394,7 @@ public class InvoiceTemplate {
 			
 			x -= 430;
 			
-			if (isUdapa(company) && InvoiceSource.DELIVERY.equals(detail.getSource())) {
+			if (isUdapa(company)) {
 				String appended = fillProductPackage("", detail);
 				if (AonStringUtils.isNotBlank(appended)) {
 					description += " (" + appended + ")";
@@ -1433,7 +1433,7 @@ public class InvoiceTemplate {
 			}
 			String description = AonStringUtils.trimToEmpty(detail.getDescription()).replace("\t", " ");
 			
-			if (isUdapa(company) && InvoiceSource.DELIVERY.equals(detail.getSource())) {
+			if (isUdapa(company)) {
 				String appended = fillProductPackage("", detail);
 				if (AonStringUtils.isNotBlank(appended)) {
 					description += " (" + appended + ")";
@@ -2138,9 +2138,10 @@ public class InvoiceTemplate {
 		if (company != null &&
 				company.getRegistry() != null &&
 				company.getRegistry().getDomain() != null) {
-			return AonStringUtils.containsIgnoreCase(company.getRegistry().getDomain().getName(), "udapa");
+			return AonStringUtils.containsIgnoreCase(company.getRegistry().getDomain().getName(), "udapa")
+				 || AonStringUtils.containsIgnoreCase(company.getRegistry().getDomain().getName(), "paturpat");
 		}
-			return false;
+		return false;
 	}
 	
 	private static InvoiceDetail copyInvoiceDetail(InvoiceDetail original) {
@@ -2186,7 +2187,6 @@ public class InvoiceTemplate {
     private static String fillProductPackage(String description, InvoiceDetail invoiceDetail) {
         Item item = invoiceDetail.getItem();
         if(item!=null && item.getProduct().isPackaged() ){
-
                 StringBuilder builder = new StringBuilder("  ");
                 if( item.getPackMeasurementTag()!=null ){
                         builder.append( String.format("%.2f", invoiceDetail.getQuantity()) )
