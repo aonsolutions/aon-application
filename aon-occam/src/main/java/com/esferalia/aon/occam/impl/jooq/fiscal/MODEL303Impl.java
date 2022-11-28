@@ -113,12 +113,9 @@ public class MODEL303Impl implements IMODEL303 {
 	@Override
 	public Stream<VatContext> getInfo(CloseableAONContext ctx, Mod303 mod303, Mod303Key key, IDAOCallback callback) {
 		return  Mod303InfoDAO.getModelInvoicesInfo(ctx, mod303, key)
-			.onClose(new Runnable() {
-				@Override
-				public void run() {
-					if (callback != null) {
-						callback.onFinish();
-					}
+			.onClose(() -> {
+				if (callback != null) {
+					callback.onFinish();
 				}
 			});
 		
