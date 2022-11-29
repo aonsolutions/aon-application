@@ -3,6 +3,8 @@ package net.aonsolutions.aon.api.servlet.task;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -57,7 +59,7 @@ public class TaskFilter {
 		
 		if(!params.optString(START_DATE).isEmpty() && !params.optString(END_DATE).isEmpty()) {
 			Timestamp startDate = new Timestamp(AonDateUtils.parse(params.optString(START_DATE), FORMAT_DATE).getTime());
-			Timestamp endDate = new Timestamp(AonDateUtils.parse(params.optString(END_DATE), FORMAT_DATE).getTime());
+			Timestamp endDate = new Timestamp(getEndOfDay(AonDateUtils.parse(params.optString(END_DATE), FORMAT_DATE)));
 			filter = filter.and(f.getStartDateProperty().ge(startDate).and(f.getStartDateProperty().le(endDate)));
 		}
 		
@@ -462,5 +464,15 @@ public class TaskFilter {
 		}
 		
 		return workgroupList;
+	}
+	
+	private static long getEndOfDay(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.HOUR, 23);
+		c.set(Calendar.MINUTE, 59);
+		c.set(Calendar.SECOND, 59);
+		c.set(Calendar.MILLISECOND, 999);
+		return c.getTime().getTime();
 	}
 }

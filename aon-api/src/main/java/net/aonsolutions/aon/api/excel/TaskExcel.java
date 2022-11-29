@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.Task;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -40,17 +41,18 @@ public class TaskExcel {
 		  throw new IllegalStateException("TaskExcel class");
 	 }
 
-	private static String[] columns = {
-			"Fecha",
-			"N\u00famero",
-			"V\u00ednculo", 
-			"Tipo", 
-			"Estado", 
-			"Asignado", 
-			"Empresa",
-			"Asunto", 
-			"\u00daltima actualizaci\u00f3n",
-	};
+	 private static String[] columns = {
+		"Fecha",
+		"N\u00famero",
+		"V\u00ednculo", 
+		"Tipo", 
+		"Etiquetas", 
+		"Estado", 
+		"Asignado", 
+		"Empresa",
+		"Asunto", 
+		"\u00daltima actualizaci\u00f3n",
+	 };
 	
 	public static void buildExcel(OutputStream outputstream, AonApiData api) throws Exception  {
 		
@@ -63,12 +65,10 @@ public class TaskExcel {
 		)
 		.collect(Collectors.toCollection(LinkedList::new));
 		
-		
 		Date startDate = AonDateUtils.parse(params.optString(START_DATE), FORMAT_DATE);
 		
 		Date endDate = AonDateUtils.parse(params.optString(END_DATE), FORMAT_DATE);
 
-	
 		buildExcel(outputstream, tasks, startDate, endDate);
 	}
 
@@ -139,6 +139,8 @@ public class TaskExcel {
 
 		row.createCell(cell++).setCellValue(task.getSource().getESName()); // SOURCE
 		
+		row.createCell(cell++).setCellValue(getTags(task)); // TAGS
+		
 		row.createCell(cell++).setCellValue(task.getStatus().getESName()); // STATUS
 		
 		row.createCell(cell++).setCellValue(getAssigned(task)); // TASK_HOLDER
@@ -181,6 +183,12 @@ public class TaskExcel {
 		 return registry!=null ? registry.getName() : "";
 	}
 	
+	private static String getTags(Task task) {
+		return !task.getTags().isEmpty() 
+		? task.getTags().stream().filter(t-> t.getId()!=null).map(Tag::getName).collect(Collectors.joining(", ")) 
+		: "";
+	}
+	
 	/**
 	 * 
 	 * @param validate data required
@@ -188,9 +196,9 @@ public class TaskExcel {
 	 */
 	private static void onValidate(JSONObject params) throws Exception {
 		String error = null;
-		if(params.isNull("startDate")) {
+		if(params.isNull(START_DATE)) {
 			error = "Fecha Inicio requerida";
-		} else if(params.isNull("endDate")) {
+		} else if(params.isNull(END_DATE)) {
 			error = "Fecha fin requerida";
 		} 
 		
