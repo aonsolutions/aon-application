@@ -169,8 +169,10 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 			try {
 				Connection connection = getSchemaConnection(schema);
 				Optional<String> domain = getOptionalDomain(connection, ccc, cif );
-				if ( domain.isPresent() )
+				if ( domain.isPresent() ) {
+					System.out.printf("INFO: [%s]: %s\r\n", schema, domain.get());
 					return domain;
+				}
 			} catch ( Throwable t) {
 				System.err.printf("ERROR [%s]: %s \r\n", schema, t.getMessage() );
 			}
@@ -432,15 +434,17 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
     	.where(ENTERPRISE_CCC.CCC.eq(ccc))
     	.fetchOptional(PARENT_DOMAIN.NAME)
     	.or( () ->
-    		dslContext
+    		( AonStringUtils.isBlank(cif) ? 
+    		Optional.ofNullable((String)null) 
+    		: dslContext
     		.selectDistinct(PARENT_DOMAIN.NAME)
 	    	.from(REGISTRY)
 	    	.innerJoin(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
 	    	.innerJoin(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID))
 	    	.innerJoin(PARENT_DOMAIN).on(DOMAIN.PARENT.eq(PARENT_DOMAIN.ID))
 	    	.where(REGISTRY.DOCUMENT.eq(cif))
-	    	.fetchOptional(PARENT_DOMAIN.NAME)
-	    	.or( () -> 
+	    	.fetchOptional(PARENT_DOMAIN.NAME) )
+    		.or( () -> 
 				dslContext
 				.selectDistinct(DOMAIN.NAME)
 		    	.from(ENTERPRISE_CCC)
@@ -448,13 +452,15 @@ public class SESRequestHandler implements RequestHandler<Object, String> {
 		    	.where(ENTERPRISE_CCC.CCC.eq(ccc))
 		    	.fetchOptional(DOMAIN.NAME)
 		    	.or( () ->
-		    		dslContext
+	    			( AonStringUtils.isBlank(cif) ? 
+	    	    	Optional.ofNullable((String)null) 
+		    		: dslContext
 		    		.selectDistinct(DOMAIN.NAME)
 			    	.from(REGISTRY)
 			    	.innerJoin(ENTERPRISE).on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
 			    	.innerJoin(DOMAIN).on(ENTERPRISE.DOMAIN.eq(DOMAIN.ID))
 			    	.where(REGISTRY.DOCUMENT.eq(cif))
-			    	.fetchOptional(DOMAIN.NAME)
+			    	.fetchOptional(DOMAIN.NAME))
 		    	)
 	    	)
 	    	
