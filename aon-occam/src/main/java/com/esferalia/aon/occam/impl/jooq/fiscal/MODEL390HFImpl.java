@@ -2,12 +2,15 @@ package com.esferalia.aon.occam.impl.jooq.fiscal;
 
 import java.util.LinkedList;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.fiscal.IMODEL390HF;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
@@ -70,6 +73,17 @@ public class MODEL390HFImpl implements IMODEL390HF {
 	@Override
 	public String getInfo(AONContext ctx, Mod390HF mod390HF, IModelScript<Mod390Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod390HFInfoDAO.getInfo(ctx, mod390HF, script, infoKey);
+	}
+
+	@Override
+	public Stream<VatContext> getInfo(CloseableAONContext ctx, Mod390HF mod, Mod390Key key, IDAOCallback callback) {
+		return  Mod390HFInfoDAO.getModelInvoicesInfo(ctx, mod, key)
+			.onClose(() -> {
+				if (callback != null) {
+					callback.onFinish();
+				}
+			});
+		
 	}
 
 	@Override

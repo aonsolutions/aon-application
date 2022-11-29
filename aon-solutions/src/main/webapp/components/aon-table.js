@@ -212,12 +212,12 @@ export class AonTable extends AonElement {
         aonIconB.icon = MATERIAL_ICONS.MORE_VERT;
         td.appendChild(aonIconB);
         td.addEventListener(EVENT.CLICK, () => this.getOptions(tr, td, value[id]));
-      } else if("icon" === id && value[id]) {
+      } else if("icon" === item.type && value[id]) {
         let icon = this.createElement(TAG.I);
         icon.id = this.getId() + "Icon";
         icon.className = value.icon_class || "material-icons";
         icon.innerHTML = value[id];
-        icon.style.color = value.icon_color || "#5f6368";
+        icon.style.color = value[id + '_color'] || "#5f6368";
         icon.title = value.icon_title;
         td.appendChild(icon);
       } else if(item.type && item.type === "list" ) {

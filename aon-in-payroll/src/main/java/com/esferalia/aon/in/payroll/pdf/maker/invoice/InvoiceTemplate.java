@@ -70,6 +70,7 @@ import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -79,6 +80,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
 import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -931,8 +933,8 @@ public class InvoiceTemplate {
 						safeString(detail.getDescription())
 							.replace("\t", " ");
 				
-				if (isUdapa(company) && InvoiceSource.DELIVERY.equals(detail.getSource())) {
-					String appended = fillProductPackage("", detail);
+				if (isUdapa(company)) {
+					String appended = fillProductPackage(company, "", detail);
 					if (AonStringUtils.isNotBlank(appended)) {
 						description += " (" + appended + ")";
 					}
@@ -962,8 +964,8 @@ public class InvoiceTemplate {
 						safeString(detail.getDescription())
 						.replace("\t", " ");
 				
-				if (isUdapa(company) && InvoiceSource.DELIVERY.equals(detail.getSource())) {
-					String appended = fillProductPackage("", detail);
+				if (isUdapa(company)) {
+					String appended = fillProductPackage(company, "", detail);
 					if (AonStringUtils.isNotBlank(appended)) {
 						description += " (" + appended + ")";
 					}
@@ -1394,8 +1396,8 @@ public class InvoiceTemplate {
 			
 			x -= 430;
 			
-			if (isUdapa(company) && InvoiceSource.DELIVERY.equals(detail.getSource())) {
-				String appended = fillProductPackage("", detail);
+			if (isUdapa(company)) {
+				String appended = fillProductPackage(company, "", detail);
 				if (AonStringUtils.isNotBlank(appended)) {
 					description += " (" + appended + ")";
 				}
@@ -1433,8 +1435,8 @@ public class InvoiceTemplate {
 			}
 			String description = AonStringUtils.trimToEmpty(detail.getDescription()).replace("\t", " ");
 			
-			if (isUdapa(company) && InvoiceSource.DELIVERY.equals(detail.getSource())) {
-				String appended = fillProductPackage("", detail);
+			if (isUdapa(company)) {
+				String appended = fillProductPackage(company, "", detail);
 				if (AonStringUtils.isNotBlank(appended)) {
 					description += " (" + appended + ")";
 				}
@@ -2138,9 +2140,10 @@ public class InvoiceTemplate {
 		if (company != null &&
 				company.getRegistry() != null &&
 				company.getRegistry().getDomain() != null) {
-			return AonStringUtils.containsIgnoreCase(company.getRegistry().getDomain().getName(), "udapa");
+			return AonStringUtils.containsIgnoreCase(company.getRegistry().getDomain().getName(), "udapa")
+				 || AonStringUtils.containsIgnoreCase(company.getRegistry().getDomain().getName(), "paturpat");
 		}
-			return false;
+		return false;
 	}
 	
 	private static InvoiceDetail copyInvoiceDetail(InvoiceDetail original) {
@@ -2183,38 +2186,41 @@ public class InvoiceTemplate {
 		return newInvoiceDetail;
 	}
 	
-    private static String fillProductPackage(String description, InvoiceDetail invoiceDetail) {
+    private static String fillProductPackage(CompanyFull company, String description, InvoiceDetail invoiceDetail) {
         Item item = invoiceDetail.getItem();
         if(item!=null && item.getProduct().isPackaged() ){
-
                 StringBuilder builder = new StringBuilder("  ");
-                if( item.getPackMeasurementTag()!=null ){
-                        builder.append( String.format("%.2f", invoiceDetail.getQuantity()) )
-                                .append( " " )
-                                .append( item.getPackMeasurementTag().getName() )
-                                .append( ": " );
+                if( item.getPackMeasurementTag() != null ){
+                    Tag tag = AON.getTag(company.getRegistry().getDomain().getName(), company.getRegistry().getDomain().getId(),
+                            "", f -> f.getIdProperty().eq(item.getPackMeasurementTag().getId()));
+                    builder.append( String.format("%.2f", invoiceDetail.getQuantity()) )
+                        .append( " " )
+                        .append( tag.getName() )
+                        .append( ": " );
                 }
-                if( item.getPackUnitsTag()!=null ){
+                if( item.getPackUnitsTag() != null ){
+                        Tag tag = AON.getTag(company.getRegistry().getDomain().getName(), company.getRegistry().getDomain().getId(),
+                            "", f -> f.getIdProperty().eq(item.getPackUnitsTag().getId()));
                         builder.append( String.format("%.2f",invoiceDetail.getQuantity()
                                         / item.getPackMeasurement()) )
                                 .append( " " )
-                                .append( item.getPackUnitsTag().getName() );
+                                .append( tag.getName() );
                 }
-                if( item.getPackUnitsTag()!=null
+                if( item.getPackUnitsTag() != null
                                 && item.getPackFormatTag()!=null ){
                         builder.append( ", " );
                 }
-                if( item.getPackFormatTag()!=null ){
-                        builder.append( String.format("%.2f",(invoiceDetail.getQuantity()
-                                        / item.getPackMeasurement())
-                                        / item.getPackUnits()) )
-                                .append( " " )
-                                .append( item.getPackFormatTag().getName() );
+                if( item.getPackFormatTag() != null ){
+                    Tag tag = AON.getTag(company.getRegistry().getDomain().getName(), company.getRegistry().getDomain().getId(),
+                            "", f -> f.getIdProperty().eq(item.getPackFormatTag().getId()));
+                    builder.append( String.format("%.2f",(invoiceDetail.getQuantity()
+                            / item.getPackMeasurement())
+                            / item.getPackUnits()) )
+                        .append( " " )
+                        .append(tag.getName());
                 }
                 return description + builder.toString();
         }
 		return description;
-}
-
-	
+    }
 }

@@ -9,20 +9,23 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod390HFKeyTest.class,
 	Mod390HFExpressionsTest.class,
 	
-	Mod390HFReopenTest.class,					// Pendiente
+	Mod390HFReopenTest.class,
 	Mod390HFDeleteTest.class,
 	Mod390HFValidationTest.class,
 	
-	Mod390HFReopenTest.class,					// Pendiente
+	Mod390Preapare390InsertTest.class,	
+	Mod390HFReopenTest.class,
 	Mod390HFDeleteTest.class,
 	Mod390HFInsertTest.class,
 	Mod390HFRoundedAmountsTest.class,
 	Mod390HFFinishTest.class,
-
+	
+	Mod390HFInsertInvoicesTest.class,
 	Mod390HFInsertComplementaryTest.class,
 	Mod390HFRoundedAmountsTest.class,
 	Mod390HFFinishTest.class,
 	
+	Mod390HFInsertInvoicesTest.class,
 	Mod390HFInsertReplacementTest.class,
 	Mod390HFRoundedAmountsTest.class,
 	Mod390HFFinishTest.class,
@@ -45,7 +48,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod390HFMarkAsCustomerCheckTest.class,	// Enviado a cliente
 	Mod390HFMarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
 	Mod390HFSentTest.class,					// Presentado
-// Mod303AEAT2021C59.class,
 })
 public class Mod390HFTestSuite {
 

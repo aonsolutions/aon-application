@@ -67,6 +67,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 
 	protected static final String MODEL390HF_FILE = "/aon_gwt_fiscal/Model390HFFile";
 	private static final  String MODEL390HF_PRINT = "/aon_gwt_fiscal/Model390HFPrint";
+	private static final String MODEL390HF_BOX_INFO = "/aon_gwt_fiscal/ms/Model390HFBoxInfoPrint";
 
 	protected static final String WIDTH_250PX = "250px";
 	protected static final String WIDTH_150PX = "150px";
@@ -116,6 +117,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
+	protected Hidden mod390HFBoxHidden = new Hidden("mod390HFBox");
 	
 	protected Model390HFBase(Mod390HF mod390HF,Model390HFCallback cbk) {
 		super(Unit.PX);
@@ -1013,6 +1015,13 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 					});
 				}
 				
+				private AonTableButton addExcelButton() {
+					final AonTableButton button = new AonTableButton(infoKey.getLabel() + " (Excel)" ,AON.CSS.aonIconExcel());
+					button.setTabIndex(-2);
+					buttonContainer.add(button);
+					return button;
+				}
+				
 				private AonTableButton addButton() {
 					final AonTableButton button = new AonTableButton(infoKey.getLabel(),AON.CSS.aonIconHelp());
 					button.setTabIndex(-2);
@@ -1025,6 +1034,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 					if (!getModel().isManualDeclaration()) {
 						final AonTableButton button = addButton();
 						button.addClickHandler(event -> showInvoiceVatBreakdownInfo(button, false));
+						addExcelButton().addClickHandler(event -> showExcelInfo(script, false));
 					}
 					return null;
 				}
@@ -1034,6 +1044,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 					if (!getModel().isManualDeclaration()) {
 						final AonTableButton button = addButton();
 						button.addClickHandler(event -> showInvoiceVatBreakdownInfo(button,true));
+						addExcelButton().addClickHandler(event -> showExcelInfo(script, false));
 					}
 					return null;
 				}
@@ -1166,6 +1177,31 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 				getCallback().showError(caught.getMessage());
 			}
 		});
+	}
+
+	private void showExcelInfo(IModelScript<Mod390Key> script, boolean prorrated) {
+		Mod390Key key = Arrays.stream(script.getKeys())
+			.filter( Objects::nonNull )
+			.findAny()
+			.orElse(null);
+		if (key != null) {
+			diskForm.setMethod(FormPanel.METHOD_POST);
+			diskForm.setAction(GWT.getHostPageBaseURL() + MODEL390HF_BOX_INFO);
+			diskForm.clear();
+			FlowPanel diskPanel = new FlowPanel();
+			diskPanel.add(mod390HFHidden);
+			diskPanel.add(domainIdHidden);
+			diskPanel.add(domainNameHidden);
+			diskPanel.add(userHidden);
+			diskPanel.add(mod390HFBoxHidden);
+			diskForm.add(diskPanel);
+			mod390HFHidden.setValue(String.valueOf(getModel().getId()));
+			domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
+			domainNameHidden.setValue(getCallback().getOptions().getDomainName());
+			userHidden.setValue(getCallback().getOptions().getUser());
+			mod390HFBoxHidden.setValue(key.toString());
+			diskForm.submit();
+		}
 	}
 
 }

@@ -767,7 +767,7 @@ public class ContextFunctions {
 		return calendar;	
 	}
 
-	private static Calendar getExtraEndDate(Month month, Date date) {
+	public static Calendar getExtraEndDate(Month month, Date date) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		calendar.set(Calendar.DATE, 1);
@@ -777,7 +777,7 @@ public class ContextFunctions {
 		return calendar;	
 	}
 
-	private static Calendar getExtraStartDate(Month month, Date date) {
+	public static Calendar getExtraStartDate(Month month, Date date) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		calendar.set(Calendar.DATE, 1);

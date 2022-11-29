@@ -65,7 +65,7 @@ export class AonWarehouse extends AonElement {
 				  		}
 					]
 				};
-				this.getApplication().addSidenavOptionsListValue(DocumentalSidenav.CATEGORIES, option);
+				this.getApplication().addSidenavOptionsListValue(WarehouseSidenav.WAREHOUSES, option);
 			});
 		});
 	}

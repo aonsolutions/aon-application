@@ -20,6 +20,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.FixPreaviso;
+import net.aonsolutions.db.up2date.payroll.Holidays2023Insert;
+import net.aonsolutions.db.up2date.payroll.AgreementPaymentsConceptFix;
 import net.aonsolutions.db.up2date.payroll.AlterContractBonusDescription;
 import net.aonsolutions.db.up2date.payroll.AlterContractBonusExpression;
 import net.aonsolutions.db.up2date.payroll.AlterContractPaymentDescription;
@@ -275,23 +277,25 @@ public class Up2Date {
     		//IrpfInKindSystemInsert.IRPFINKINDSYSTEMINSERT,
     		//TrainingBases2022Fix.TRAININGBASES2022FIX,
     		//TrainingBases2022FixII.TRAININGBASES2022FIXII,
-    		UdapaPfondoUpdateFix.UDAPA_PFONDO_UPDATE_FIX,
+    		//UdapaPfondoUpdateFix.UDAPA_PFONDO_UPDATE_FIX,
     		//SevenConsultingDomainNameUpdate.SEVEN_CONSULTING_DOMAIN_NAME_UPDATE,
     		//InvoiceAddAnnulledColumn.INVOICE_ADD_ANNULLED_COLUMN,
     		//HomeQuote2022Update.HOMEQUOTE2022UPDATE,
     		//ContractDocCreate.CONTRACTDOCCREATE
-    		AlterSalaryBonusConcept.ALTERSALARYBONUSCONCEPT,
+    		//AlterSalaryBonusConcept.ALTERSALARYBONUSCONCEPT,
     		//HomeBonus2012Update.HOMEBONUS2012UPDATE,
     		//DefaultPaymentConcepts.DEFAULTPAYMENTCONCEPTS,
     		//AgriculturalITRemove.AGRICULTURALITREMOVE,
     		//AlterBankStatementReference2.ALTER_BANK_STATEMENT_REFERENCE_2,
-    		AlterContractBonusExpression.ALTER_CONTRACT_BONUS_EXPRESSION,
-    		AlterContractBonusDescription.ALTER_CONTRACT_BONUS_DESCRIPTION,
-    		AlterContractPaymentDescription.ALTERCONTRACTPAYMENTDESCRIPTION,
-    		FixPreaviso.FIXPREAVISO,
+    		//AlterContractBonusExpression.ALTER_CONTRACT_BONUS_EXPRESSION,
+    		//AlterContractBonusDescription.ALTER_CONTRACT_BONUS_DESCRIPTION,
+    		//AlterContractPaymentDescription.ALTERCONTRACTPAYMENTDESCRIPTION,
+    		//FixPreaviso.FIXPREAVISO,
     		//RefreshMod390HFResult.REFRESH_MOD390_RESULT,
-    		AlterRbankAddRequisition.ALTER_RBANK_ADD_REQUISITION,
-    		AlterRbankAddSepaMandateRef.ALTER_RBANK_ADD_SEPA_MANDATE_REF,
+    		//AlterRbankAddRequisition.ALTER_RBANK_ADD_REQUISITION,
+    		//AlterRbankAddSepaMandateRef.ALTER_RBANK_ADD_SEPA_MANDATE_REF,
+    		Holidays2023Insert.HOLIDAYS2023INSERT,
+    		AgreementPaymentsConceptFix.AGREEMENTPAYMENTSCONCEPTFIX,
     		
     		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
@@ -395,7 +399,7 @@ public class Up2Date {
 			System.out.println("Error: " + e.getLocalizedMessage());
 			new HelpFormatter().printHelp(Up2Date.class.getSimpleName(), options);
 		} catch (SQLException e) {
-			System.out.println("Error: " + e.getLocalizedMessage());
+			System.out.println("Error: " + e.getLocalizedMessage() );
 		} catch (ClassNotFoundException e) {
 			System.out.println("Error: " + e.getLocalizedMessage());
 		} finally {

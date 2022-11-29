@@ -137,6 +137,11 @@ public class Mod390HFInfoDAO extends FiscalModelDAO {
 			.orElse(null);
 	}
 	
+	public static Stream<VatContext> getModelInvoicesInfo(AONContext ctx, final Mod390HF mod, Mod390Key key) {
+		Mod390HFDeclaration dec = Mod390HFDeclaration.getInstance(mod);
+		return getModelInvoicesInfo(ctx, mod, dec.getKey(key)); 
+	}
+
 	private static Stream<VatContext> getModelInvoicesInfo(AONContext ctx, final Mod390HF mod, IMod390KeyDAO keyDAO) {
 		return VATDAO.getModelVatBreakdown(ctx, mod)
 			.filter( br ->  keyDAO.acceptValue(mod, br));
