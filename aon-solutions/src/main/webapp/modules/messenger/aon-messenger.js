@@ -38,7 +38,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	set id(id) {
-	   this.setAttribute(CONSTANT.ID, id);
+		this.setAttribute(CONSTANT.ID, id);
 	}
 
 	get type() {
@@ -46,7 +46,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	set type(type) {
-	   this.setAttribute(CONSTANT.TYPE, type);
+		this.setAttribute(CONSTANT.TYPE, type);
 	}
 
 	constructor () {
@@ -198,16 +198,12 @@ export class AonMessenger extends AonElement {
 				this.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, {source:TASK_SOURCE.QUERY})
 			);
 
-			application.addToolbarOption2(SigninSidenav.EXCEL, () =>
-				this.getExcel()
-			);
-			
 			if(!this.cau){
-				application.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name:MSG.UPDATE}, () =>
-					this.rootPanel(new AonMessenger())
-				);
+				application.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name:MSG.UPDATE}, () => this.rootPanel(new AonMessenger()) );
 
 				if(this.getDur().isMessengerManager() || this.isLocal()){
+					application.addToolbarOption2(SigninSidenav.EXCEL, () => this.getExcel());
+
 					application.addToolbarOption2(MessengerSidenav.GRAPHIC, () =>
 						this.showView(MESSENGER_VIEWS.AON_MESSENGER_GRAPHIC)
 					);
