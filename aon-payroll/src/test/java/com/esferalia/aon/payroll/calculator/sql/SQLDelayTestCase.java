@@ -5239,6 +5239,126 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		delay.getSalaryPayments().stream().filter( p -> p.getAmount() > 0.00 ).forEach( p -> org.junit.Assert.assertEquals(PaymentType.CRA_0012, p.getType()) );
 	}
 
+	@Test
+	public void testDelaysBonusI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {
+						"BASE_CGC * 10.00 / 100.00 ",
+				}, null);
+		//@formatter:on
+		
+		addSystemData(aonContext, contract.getStartDate(), 	null, new HashMap<String,String>(){
+			{
+				put("BASE_CGP_MIN",
+						"756.6000 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
+				put("BASE_CGP_MAX",
+						"3606.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)");
+				put("BASE_CGC_MIN",
+						"(1056.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
+				put("BASE_CGC_MAX",
+						"(3606.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30))");
+				
+			}
+		});
+		
+		addData(aonContext, contract, contract.getStartDate(), null,
+				new HashMap<String, String>() {
+					{
+						put("GRUPO_COTIZACION", "\"01\"");
+					}
+				});
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		addBonus(aonContext, contract, startDate, add(startDate, Calendar.DAY_OF_MONTH,25), "10.00", "BONIFICACIÓN");
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+		calculator.setSalaryBuilder(jooqSalaryBuilder);
+		calculator.calculate(ctx);
+		jooqSalaryBuilder.execute();
+		
+
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder());
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		Assert.assertEquals(0.00, delay.getTotalPayment());
+		Assert.assertEquals(0.00, delay.getCommonBase());
+		Assert.assertEquals(0.00, delay.getRawCommonBase());
+		Assert.assertEquals(0.00, delay.getProfessionalBase());
+		Assert.assertEquals(0.00, delay.getIrpfBase());
+		
+		for (com.esferalia.aon.payroll.SalaryDeduction deduction : delay
+				.getSalaryDeductions()) {
+			System.out.println(deduction.getName() + " [ " + deduction.getDescription() + "] :" + deduction.getAmount()
+					+ " (" + deduction.getExpression() + ")");
+		}
+
+		Assert.assertEquals(0.00, delay.getTotalDeduction());
+
+		addPayment(aonContext, contract, "10.00 * DIAS_TRABAJADOS / DIAS_MES");
+
+		criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new SalaryBuilder());
+		delay = delayCalculator.calculate(delayCtx);
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		Assert.assertEquals(10.00, delay.getTotalPayment());
+		Assert.assertEquals(10.00, delay.getCommonBase());
+		Assert.assertEquals(10.00, delay.getRawCommonBase());
+		Assert.assertEquals(10.00, delay.getProfessionalBase());
+		Assert.assertEquals(10.00, delay.getIrpfBase());
+		
+		for (com.esferalia.aon.payroll.SalaryDeduction deduction : delay
+				.getSalaryDeductions()) {
+			System.out.println(deduction.getName() + " [ " + deduction.getDescription() + "] :" + deduction.getAmount()
+					+ " (" + deduction.getExpression() + ")");
+		}
+
+		Assert.assertEquals(10.00 * 10.00 / 100.00, delay.getTotalDeduction());
+	}
+
+
 	// ------------------------------------------
 
 	protected ISQLContractSalaryCalculatorContext getSmartSQLContractSettleContext(Connection connection, Date contractStart,
