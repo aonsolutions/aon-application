@@ -4600,6 +4600,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return Dismissal.RETIREMENT.getDescription();
 		} else if (AonStringUtils.equals(ContextVariable.NOT_PASS_TRIAL_PERIOD.getName(), causeStr)) {
 			return Dismissal.NOT_PASS_TRIAL_PERIOD.getDescription();
+		} else if (AonStringUtils.equals(ContextVariable.DEATH_OF_EMPLOYEE.getName(), causeStr)) {
+			return Dismissal.DEATH_OF_EMPLOYEE.getDescription();
 		}
 		return "";
 	}

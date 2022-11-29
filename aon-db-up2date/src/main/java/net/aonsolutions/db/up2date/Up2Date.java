@@ -26,6 +26,7 @@ import net.aonsolutions.db.up2date.payroll.AlterContractBonusDescription;
 import net.aonsolutions.db.up2date.payroll.AlterContractBonusExpression;
 import net.aonsolutions.db.up2date.payroll.AlterContractPaymentDescription;
 import net.aonsolutions.db.up2date.payroll.AlterSalaryBonusConcept;
+import net.aonsolutions.db.up2date.payroll.DeathOfEmployeeInsert;
 import net.aonsolutions.db.up2date.accounting.AlterRbankAddRequisition;
 import net.aonsolutions.db.up2date.accounting.AlterRbankAddSepaMandateRef;
 import net.aonsolutions.db.up2date.warehouse.UdapaPfondoUpdateFix;
@@ -296,6 +297,7 @@ public class Up2Date {
     		//AlterRbankAddSepaMandateRef.ALTER_RBANK_ADD_SEPA_MANDATE_REF,
     		Holidays2023Insert.HOLIDAYS2023INSERT,
     		AgreementPaymentsConceptFix.AGREEMENTPAYMENTSCONCEPTFIX,
+    		DeathOfEmployeeInsert.DEATHOFEMPLOYEEINSERT,
     		
     		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE

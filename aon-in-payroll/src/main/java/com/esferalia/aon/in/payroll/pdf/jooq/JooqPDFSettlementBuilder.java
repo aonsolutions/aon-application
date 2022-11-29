@@ -62,6 +62,7 @@ public class JooqPDFSettlementBuilder {
 		 DEFINITE_END("Fin Contrato Duración Determinada"),
 		 CONDITIONS_CHANGE("Baja Voluntaria Modificación Condiciones"),
 		 NOT_PASS_TRIAL_PERIOD("Baja por no Superar el Periodo de Prueba"),
+		 DEATH_OF_EMPLOYEE("Fallecimiento del Trabajador"),
 		;
 
 		private String description;

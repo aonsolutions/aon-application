@@ -1164,6 +1164,8 @@ public class SalaryDraft extends ResizeComposite
 						return "CAMBIO_CONDICIONES";
 					case NOT_PASS_TRIAL_PERIOD:
 						return "BAJA_PERIODO_PRUEBA";
+					case DEATH_OF_EMPLOYEE:
+						return "FALLECIMIENTO_TRABAJADOR";
 					}
 					return null;
 				}
@@ -8010,6 +8012,8 @@ public class SalaryDraft extends ResizeComposite
 			return Dismissal.RETIREMENT.getDescription();
 		else if ( AonStringUtils.equals(Dismissal.NOT_PASS_TRIAL_PERIOD.name(),obj.toString()))
 			return Dismissal.NOT_PASS_TRIAL_PERIOD.getDescription();
+		else if ( AonStringUtils.equals(Dismissal.DEATH_OF_EMPLOYEE.name(),obj.toString()))
+			return Dismissal.DEATH_OF_EMPLOYEE.getDescription();
 		
 		try {
 			double value = Double.parseDouble(obj.toString());
