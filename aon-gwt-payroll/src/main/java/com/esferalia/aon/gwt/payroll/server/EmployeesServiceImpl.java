@@ -1907,8 +1907,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			payments.addAll(employeePayments);
 			payments.addAll(enterprisePayments);
 
-			System.out.println("----- Payment Suggest -----");
-			payments.forEach(paymentIt -> System.out.println(paymentIt.getType().getCode() + " - " + paymentIt.getDescription() + " --> " + paymentIt.getExpression() + " (id : " + paymentIt.getId() + ")"));
+//			System.out.println("----- Payment Suggest -----");
+//			payments.forEach(paymentIt -> System.out.println(paymentIt.getType().getCode() + " - " + paymentIt.getDescription() + " --> " + paymentIt.getExpression() + " (id : " + paymentIt.getId() + ")"));
 			
 			return payments;
 
