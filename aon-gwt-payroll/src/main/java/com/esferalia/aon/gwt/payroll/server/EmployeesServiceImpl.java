@@ -1907,8 +1907,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			payments.addAll(employeePayments);
 			payments.addAll(enterprisePayments);
 
-			System.out.println("----- Payment Suggest -----");
-			payments.forEach(paymentIt -> System.out.println(paymentIt.getType().getCode() + " - " + paymentIt.getDescription() + " --> " + paymentIt.getExpression() + " (id : " + paymentIt.getId() + ")"));
+//			System.out.println("----- Payment Suggest -----");
+//			payments.forEach(paymentIt -> System.out.println(paymentIt.getType().getCode() + " - " + paymentIt.getDescription() + " --> " + paymentIt.getExpression() + " (id : " + paymentIt.getId() + ")"));
 			
 			return payments;
 
@@ -4600,6 +4600,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			return Dismissal.RETIREMENT.getDescription();
 		} else if (AonStringUtils.equals(ContextVariable.NOT_PASS_TRIAL_PERIOD.getName(), causeStr)) {
 			return Dismissal.NOT_PASS_TRIAL_PERIOD.getDescription();
+		} else if (AonStringUtils.equals(ContextVariable.DEATH_OF_EMPLOYEE.getName(), causeStr)) {
+			return Dismissal.DEATH_OF_EMPLOYEE.getDescription();
 		}
 		return "";
 	}

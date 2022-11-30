@@ -465,7 +465,17 @@ public class SQLContractDelayCalculatorContext extends
 		}
 
 	}
-
+	
+	@Override
+	protected void loadDaysContextVariables(ContractExpressionContext ctx) throws ExpressionException {
+		override(ctx, 
+				0.00, 
+				ContextVariable.CGC_BASE_MIN, 
+				ContextVariable.CGP_BASE_MIN 
+		);
+		super.loadDaysContextVariables(ctx);
+	}
+	
 	protected String getDescriptionForExtraDelay(IContractPayment payment, int ordinal) {
 		return String
 				.format("Atrasos en la Paga");
@@ -541,6 +551,24 @@ public class SQLContractDelayCalculatorContext extends
 		
 		return payments;
 
+	}
+
+
+	private void override (ContractExpressionContext ctx, Double value, ContextVariable ...ctxVars  ) {
+		for ( ContextVariable ctxVar : ctxVars ) {
+			for ( ITimedVariable<?> var : ctx.getVariables(ctxVar.getName()) ) {
+				ctx.putVariable(ctxVar.getName(), new ITimedVariable<Double>() {
+					@Override
+					public Period getPeriod() {
+						return var.getPeriod();
+					}
+					@Override
+					public Double getValue(Period period) {
+						return value;
+					}
+				});
+			}
+		}
 	}
 
 

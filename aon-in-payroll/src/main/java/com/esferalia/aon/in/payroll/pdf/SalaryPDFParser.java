@@ -23,12 +23,12 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class SalaryPDFParser {
 	
 	private static final SalaryPDFTemplate PDF_TEMPLATES [] = {
-//			AltaiPDFTemplate.ALTAI_PDF_TEMPLATE, 
-//			A3PDFTemplate.A3_PDF_TEMPLATE, 
-//			DSIPDFTemplate.DSI_PDF_TEMPLATE, 
+			AltaiPDFTemplate.ALTAI_PDF_TEMPLATE, 
+			A3PDFTemplate.A3_PDF_TEMPLATE, 
+			DSIPDFTemplate.DSI_PDF_TEMPLATE, 
 			DSIPDFTemplateII.DSI_PDF_TEMPLATE_II, 
-//			AplifisaPDFTemplate.APLIFISA_PDF_TEMPLATE, 
-//			OmegaPDFTemplate.OMEGA_PDF_TEMPLATE
+			AplifisaPDFTemplate.APLIFISA_PDF_TEMPLATE, 
+			OmegaPDFTemplate.OMEGA_PDF_TEMPLATE
 			};
 	
 	

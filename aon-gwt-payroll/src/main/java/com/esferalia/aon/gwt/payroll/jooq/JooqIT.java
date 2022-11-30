@@ -1340,8 +1340,6 @@ public class JooqIT {
 
 	private static String deleteITDB(DSLContext dslContext, Integer domainId, Integer itId) {
 		
-		dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
-		
 		Record contractLeaveRecord = dslContext.select().from(CONTRACT_LEAVE).where(CONTRACT_LEAVE.ID.eq(itId)).fetchOne();
 		
 		Date startDate = contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE);
@@ -1383,10 +1381,6 @@ public class JooqIT {
 		dslContext.delete(CONTRACT_LEAVE)
 			.where(CONTRACT_LEAVE.ID.eq(itId))
 				.execute();
-		
-		
-		
-		dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 		
 		return "Parte IT eliminado correctamente";
 	}
