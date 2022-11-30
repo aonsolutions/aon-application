@@ -81,4 +81,10 @@ public interface IdcParserListener {
 
 	default void onContractAgrarianRealJourneyProvided(String realJourneyProvided) {
 	};
+	
+	// ------------------------------------------------------------------- TGSS
+	
+	default void onAuthorized(Integer number, String name) {
+	};
+
 }
