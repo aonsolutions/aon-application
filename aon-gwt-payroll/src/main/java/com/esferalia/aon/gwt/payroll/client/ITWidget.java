@@ -2046,7 +2046,7 @@ public abstract class ITWidget extends ResizeComposite {
     		
     		@Override
 			protected void onAccept() {
-				accept(itEmployee, false);
+    			accept(itEmployee, false);
 			}
 			
 			@Override

@@ -510,7 +510,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		// Check if exist IT
 		this.itCopy = copyIT(it);
-		this.it = copyIT(it);
+		this.it = it;
 		checkAndPaintIT();
 		
 		// Check type of part
