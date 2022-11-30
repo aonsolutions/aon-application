@@ -4023,7 +4023,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			if(!messages.isEmpty()) {
 				String msg = messages.stream().filter(m-> m!=null && !m.equals("success")).collect(Collectors.joining(", "));
 				if(!msg.isEmpty()) {
-					throw new IllegalArgumentException(msg);
+					throw new SegSocialException(msg);
 				}
 			}
 		} catch (Exception e) {
