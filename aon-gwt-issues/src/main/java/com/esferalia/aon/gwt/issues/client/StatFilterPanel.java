@@ -2,36 +2,21 @@ package com.esferalia.aon.gwt.issues.client;
 
 import java.util.Date;
 
-import com.esferalia.aon.gwt.api.client.JSON;
 import com.esferalia.aon.gwt.api.client.incidence.Incidence;
-import com.esferalia.aon.gwt.api.client.incidence.JsObject;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesCSS;
 import com.esferalia.aon.gwt.issues.client.css.AonGwtIssuesResources;
 import com.esferalia.aon.occam.api.model.stat.task.TaskChartType;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.vaadin.polymer.iron.widget.IronIcon;
-import com.vaadin.polymer.paper.widget.PaperButton;
-
-import net.aonsolutions.polymer.aon.widget.AonComboBox;
 
 public class StatFilterPanel extends Composite {
 	
@@ -63,13 +48,10 @@ public class StatFilterPanel extends Composite {
 		final DateBoxEx from = new DateBoxEx();
 		from.setValue(stat.getParams().getFrom());
 		from.setWidth("70px");
-		from.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				stat.getParams().setFrom(from.getValue());
-				stat.getIssueFilter().setFrom(from.getFormat().format(from, from.getValue()));
-				stat.selectStat(stat.getSelectedChart());
-			}
+		from.addValueChangeHandler(event -> {
+			stat.getParams().setFrom(from.getValue());
+			stat.getIssueFilter().setFrom(from.getFormat().format(from, from.getValue()));
+			stat.selectStat(stat.getSelectedChart());
 		});
 		datePanel.add(from);
 		
@@ -81,81 +63,100 @@ public class StatFilterPanel extends Composite {
 		final DateBoxEx to = new DateBoxEx();
 		to.setValue(stat.getParams().getTo());
 		to.setWidth("70px");
-		to.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<Date> event) {
-				stat.getParams().setTo(to.getValue());
-				stat.getIssueFilter().setTo(to.getFormat().format(to, to.getValue()));
-				stat.selectStat(stat.getSelectedChart());
-			}
+		to.addValueChangeHandler(event -> {
+		    stat.getParams().setTo(to.getValue());
+			stat.getIssueFilter().setTo(to.getFormat().format(to, to.getValue()));
+			stat.selectStat(stat.getSelectedChart());
 		});
 		datePanel.add(to);
 		panel.add(datePanel);
 		
 		// ------------------ FILTER BUTTONS
-		FlowPanel fpanel = new FlowPanel(); 
-		
-		// DATE
-		PaperButton datepb = new PaperButton();
-		datepb.setStyleName(ICSS.aonPaperButtonFilterIssues());
-		
-		InlineLabel dateLabel = new InlineLabel("FECHA");
-		dateLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-		datepb.add(dateLabel);
-		
-		IronIcon dateii = new IronIcon();
-		dateii.setStyleName(ICSS.aonIronIconFilterIssues()); 
-		dateii.setIcon("arrow-drop-down");
-		datepb.add(dateii);
-		datepb.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				incidence.getDateOptions(new AsyncCallback<JSON<JsObject>>() {
-					
-					@Override
-					public void onSuccess(JSON<JsObject> result) {
-						ButtonClick(datepb, result, "Fecha");
-					}
 
-					@Override public void onFailure(Throwable caught) {}
-				});
-			}
-		});
-		fpanel.add(datepb);
-		
-		panel.add(fpanel);
-		
+		FlowPanel dateFilterPanel = new FlowPanel(); 
+		dateFilterPanel.addStyleName(AON.AON_CSS.aonFloatRight());
+		dateFilterPanel.addStyleName(AON.AON_CSS.aonMarginTop());
+        
+        InlineLabel dateFilterLabel = new InlineLabel("Fecha");
+        dateFilterLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+        dateFilterPanel.add(dateFilterLabel);
+        
+        final ListBox dateFilter = new ListBox();
+        dateFilter.setStyleName(AON.AON_CSS.aonMarginRight());
+        
+        dateFilter.addItem("Hoy");
+        dateFilter.addItem("Ayer");
+        dateFilter.addItem("Hace 1 semana");
+        dateFilter.addItem("Hace 1 mes");
+        dateFilter.addItem("Hace 1 a\u00f1o");
+        
+        dateFilter.setSelectedIndex(4);
+        dateFilter.addChangeHandler(event -> {
+            if(dateFilter.getSelectedIndex() == 0) {
+                changeFromValue(new Date());
+            } else if(dateFilter.getSelectedIndex() == 1) {
+                Date d = new Date();
+                d.setDate(d.getDate()-1);
+                changeFromValue(d);
+            } else if(dateFilter.getSelectedIndex() == 2) {
+                Date d = new Date();
+                d.setDate(d.getDate()-7);
+                changeFromValue(d);
+            } else if(dateFilter.getSelectedIndex() == 3) {
+                Date d = new Date();
+                d.setMonth(d.getMonth()-1);
+                changeFromValue(d);
+            } else if(dateFilter.getSelectedIndex() == 4) {
+                Date d = new Date();
+                d.setYear(d.getYear()-1);
+                changeFromValue(d);
+            }   
+            stat.selectStat(stat.getSelectedChart());
+        });
+        
+        dateFilterPanel.add(dateFilter);
+        
+        panel.add(dateFilterPanel);
+				
 		// --------- STATUS
-		PaperButton pb = new PaperButton();
-		pb.setStyleName(ICSS.aonPaperButtonFilterIssues());
 		
-		InlineLabel statusLabel = new InlineLabel("Estado");
-		statusLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-		pb.add(statusLabel);
-		
-		IronIcon ii = new IronIcon();
-		ii.setStyleName(ICSS.aonIronIconFilterIssues()); 
-		ii.setIcon("arrow-drop-down");
-		pb.add(ii);
-		pb.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				incidence.getStatuses(new AsyncCallback<JSON<JsObject>>() {
-					
-					@Override
-					public void onSuccess(JSON<JsObject> result) {
-						ButtonClick(pb, result, "Estado");
-					}
-
-					@Override public void onFailure(Throwable caught) {}
-				});
-			}
-		});
-		fpanel.add(pb);
-		
-		panel.add(fpanel);
+		FlowPanel statusFilterPanel = new FlowPanel(); 
+		statusFilterPanel.addStyleName(AON.AON_CSS.aonFloatRight());
+		statusFilterPanel.addStyleName(AON.AON_CSS.aonMarginTop());
+        
+        InlineLabel statusFilterLabel = new InlineLabel("Estado");
+        statusFilterLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
+        statusFilterPanel.add(statusFilterLabel);
+        
+        final ListBox statusFilter = new ListBox();
+        statusFilter.setStyleName(AON.AON_CSS.aonMarginRight());
+        
+        statusFilter.addItem("Todas");
+        statusFilter.addItem("Abiertas");
+        statusFilter.addItem("Cerradas");
+        statusFilter.addItem("Borradas");
+        
+        statusFilter.setSelectedIndex(0);
+        statusFilter.addChangeHandler( event -> {
+            if(statusFilter.getSelectedIndex() == 0) {
+                statusLabel.setText("");
+                stat.getIssueFilter().setState("all");
+            } else if(statusFilter.getSelectedIndex() == 1) {
+                statusLabel.setText("Estado: ABIERTAS;");
+                stat.getIssueFilter().setState("open");
+            } else if(statusFilter.getSelectedIndex() == 2) {
+                statusLabel.setText("Estado: CERRADAS;");
+                stat.getIssueFilter().setState("closed");
+            } else if(statusFilter.getSelectedIndex() == 3) {
+                statusLabel.setText("Estado: BORRADAS;");
+                stat.getIssueFilter().setState("deleted");
+            }
+            stat.selectStat(stat.getSelectedChart());
+        });
+        
+        statusFilterPanel.add(statusFilter);
+        
+        panel.add(statusFilterPanel);
 
 		// ------------------ TIPO DE GRAFICO
     	FlowPanel chartTypePanel = new FlowPanel(); 
@@ -174,112 +175,19 @@ public class StatFilterPanel extends Composite {
 		}
 		
 		chartType.setSelectedIndex(0);
-		chartType.addChangeHandler( new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				Integer init = TaskChartType.TASK_BY_STATUS.ordinal();
-				stat.selectStat(TaskChartType.values()[chartType.getSelectedIndex() + init]);
-			}
+		chartType.addChangeHandler(event -> {
+		    Integer init = TaskChartType.TASK_BY_STATUS.ordinal();
+            stat.selectStat(TaskChartType.values()[chartType.getSelectedIndex() + init]);
 		});
 		
 		chartTypePanel.add(chartType);
 		
 		panel.add(chartTypePanel);
     }
-    
-    private void ButtonClick(PaperButton pb, JSON<JsObject> result, String label){
-		PopupPanel popup = new PopupPanel();
-		AonComboBox acb = new AonComboBox();
-		acb.setItems(result.getData());
-		acb.setItemLabelPath("name");
-		acb.setItemValuePath("name");
-		acb.setLabel(label);
-		acb.addValueChangedHandler(new net.aonsolutions.polymer.aon.widget.event.ValueChangedEventHandler() {
-			
-			@Override
-			public void onValueChanged(net.aonsolutions.polymer.aon.widget.event.ValueChangedEvent event) {
-				JsObject js = acb.getSelectedItem().cast();
-				if(label.equalsIgnoreCase("estado")){
-					statusClick(js);
-				} else if(label.equalsIgnoreCase("fecha")){
-					dateClick(js);
-				}
-				stat.selectStat(stat.getSelectedChart());
-				
-				popup.hide();
-			}
-		});
-		popup.add(acb);
-		int left = pb.getAbsoluteLeft();
-		int top = pb.getAbsoluteTop()
-				+ pb.getOffsetHeight();
-		Integer width = Window.getClientWidth();
-		if(left > width - 200){
-			left = left - 200;
-		}
-		popup.setAutoHideEnabled(true);
-		popup.addAutoHidePartner(acb.getElementById("overlay"));
-		popup.setPopupPosition(left, top);
-		popup.show();
-		acb.open();
-    }
-    
-    private void statusClick(JsObject js){
-    	if(js.getName().equalsIgnoreCase("TODAS")){
-    		statusLabel.setText("");
-    		stat.getIssueFilter().setState("all");
-    	}
-		if(js.getName().equalsIgnoreCase("ABIERTAS")){
-			statusLabel.setText("Estado: ABIERTAS;");
-			stat.getIssueFilter().setState("open");
-		}
-		if(js.getName().equalsIgnoreCase("CERRADAS")){
-			statusLabel.setText("Estado: CERRADAS;");
-			stat.getIssueFilter().setState("closed");
-		}
-		if(js.getName().equalsIgnoreCase("BORRADAS")){
-			statusLabel.setText("Estado: BORRADAS;");
-			stat.getIssueFilter().setState("deleted");
-		}
-    }
-    
-    private void dateClick(JsObject js){
-    	
-    	if(js.getName().equalsIgnoreCase("HOY")) changeFromValue(new Date());
-		if(js.getName().equalsIgnoreCase("AYER")){
-			Date d = new Date();
-			d.setDate(d.getDate()-1);
-			changeFromValue(d);
-		}
-		if(js.getName().equalsIgnoreCase("HACE 1 SEMANA")){
-			Date d = new Date();
-			d.setDate(d.getDate()-7);
-			changeFromValue(d);
-		}
-		if(js.getName().equalsIgnoreCase("HACE 1 MES")) {
-			Date d = new Date();
-			d.setMonth(d.getMonth()-1);
-			changeFromValue(d);
-		}
-		if(js.getName().equalsIgnoreCase("Hace 1 a\u00f1o")){
-			Date d = new Date();
-			d.setYear(d.getYear()-1);
-			changeFromValue(d);
-		}
-    }
-    
+
     private void changeFromValue(Date date){
     	HorizontalPanel hp = (HorizontalPanel) panel.getWidget(0);
     	DateBoxEx db = (DateBoxEx) hp.getWidget(1);
-    	db.setValue(date);
-    	stat.getParams().setFrom(db.getValue());
-		stat.getIssueFilter().setFrom(db.getFormat().format(db, db.getValue()));
-    }
-    
-    private void changeToValue(Date date){
-    	HorizontalPanel hp = (HorizontalPanel) panel.getWidget(0);
-    	DateBoxEx db = (DateBoxEx) hp.getWidget(3);
     	db.setValue(date);
     	stat.getParams().setFrom(db.getValue());
 		stat.getIssueFilter().setFrom(db.getFormat().format(db, db.getValue()));
