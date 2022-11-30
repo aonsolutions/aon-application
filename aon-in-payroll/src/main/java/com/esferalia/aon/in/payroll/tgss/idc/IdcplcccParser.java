@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +27,7 @@ import org.apache.pdfbox.text.PDFTextStripper;
 
 import com.esferalia.aon.in.payroll.pdf.SalaryPDFTemplate;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
@@ -107,7 +109,7 @@ public class IdcplcccParser {
 			
 			while ( true ) {
 				try {
-					matcher = find(reader, EMPLOYEE_NSS_NAME);
+					matcher = find(reader, EMPLOYEE_NSS_NAME, tryAuthorized(listener));
 					employeeeNss = matcher.group("province") + matcher.group("nss");
 					employeeName  = matcher.group("name");
 					onEmployee(listener, employeeeNss, employeeName);
@@ -177,7 +179,7 @@ public class IdcplcccParser {
 			
 			while ( true ) {
 				try {
-					Matcher matcher = find(reader, EMPLOYEE_NSS_NAME);
+					Matcher matcher = find(reader, EMPLOYEE_NSS_NAME, tryAuthorized(listener));
 					employeeeNss = matcher.group("province") + matcher.group("nss");
 					String employeeName  = matcher.group("name");
 					onEmployee(listener, employeeeNss, employeeName);
@@ -202,6 +204,18 @@ public class IdcplcccParser {
 		} 
 	}
 	
+	private static Consumer<String> tryAuthorized (IdcParserListener listener) {
+		return (String line) -> tryAuthorized(listener, line);
+	}
+
+	private static void tryAuthorized (IdcParserListener listener, String line) {
+		Matcher matcher = AUTHORIZED.matcher(line);
+		if ( matcher.matches() ) {
+			String authorizedName = matcher.group("name");
+			String authorizedNumber = matcher.group("number");
+			onAuthorized(listener, authorizedNumber, authorizedName );
+		}
+	}
 	
 	
 	private static void parseEmployeePeriodPECs(BufferedReader reader, IdcParserListener listener, String naf, String ccc, Date start, Date end) throws IOException {
@@ -316,6 +330,12 @@ public class IdcplcccParser {
 		listener.onEnterprise(socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode, enterpriseActivityDescription, enterpriseRegime, null);
 	}
 	
+	private static void onAuthorized(IdcParserListener listener, String authorizedNumber, String authorizedName) {
+		String name = trim(authorizedName);
+		Integer number = AonNumberUtils.toInteger(authorizedNumber);
+		listener.onAuthorized(number, name);
+	}
+
 	private static Matcher find( BufferedReader reader, Pattern pattern ) throws IOException, UnknownPDFException {
 		
 		String line  ; 
@@ -332,6 +352,23 @@ public class IdcplcccParser {
 				
 	}	
 	
+	private static Matcher find( BufferedReader reader, Pattern pattern, Consumer<String> onUnknow ) throws IOException, UnknownPDFException {
+		
+		String line  ; 
+		while ( ( line = reader.readLine() ) != null  ) {
+			Matcher matcher = pattern.matcher(line) ;
+			if ( !matcher.matches() ) {
+				onUnknow.accept(line);
+				continue;
+			}
+			
+			return matcher;
+		}
+		
+		throw new UnknownPDFException(String.format("Pattern: '%s' Not found" ,  pattern.pattern()) );
+				
+	}	
+
 	private static Optional<Matcher> attempt( BufferedReader reader, Pattern pattern ) throws IOException {
 		reader.mark(256);
 		String line = readLine(reader) ; 
@@ -410,4 +447,11 @@ public class IdcplcccParser {
 			Pattern.compile(
 			"^.*VACACIONES\\s*RETRIBUIDAS\\s*Y\\s*NO\\s*DISFRUTADAS.*$"
 			, Pattern.CASE_INSENSITIVE);
+	
+	//De conformidad con los términos de la autorización número 88233, concedida en fecha a PABLO PRIETO VIZUETE ...
+	private static final Pattern AUTHORIZED = 
+			Pattern.compile(
+			"^\\s*De\\s*conformidad\\s*con\\s*los\\s*términos\\s*de\\s*la\\s*autorización\\s*número\\s*(?<number>\\d+)\\s*,\\s*concedida\\s*en\\s*fecha\\s*a\\s*(?<name>.*)\\s*por.*$"
+			, Pattern.CASE_INSENSITIVE);
+	
 }
