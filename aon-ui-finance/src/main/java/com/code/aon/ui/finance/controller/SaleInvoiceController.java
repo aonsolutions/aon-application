@@ -675,13 +675,13 @@ public class SaleInvoiceController extends InvoiceController {
 			if(Double.toString(detail.getQuantity())
 					.substring(Double.toString(detail.getQuantity()).indexOf(".") + 1)
 					.length() > 2){
-				throw new Exception("La cantidad '"+ detail.getQuantity() + "' no puede tener más de 2 decimales");
+//				throw new Exception("La cantidad '"+ detail.getQuantity() + "' no puede tener más de 2 decimales");
 			}
 			
 			if(Double.toString(detail.getPrice())
 					.substring(Double.toString(detail.getPrice()).indexOf(".") + 1)
 					.length() > 2){
-				throw new Exception("La cantidad '"+ detail.getPrice() + "' no puede tener más de 2 decimales");
+//				throw new Exception("El cantidad '"+ detail.getPrice() + "' no puede tener más de 2 decimales");
 			}
 			
 			if(detail.getDescription().length() >= 249) {
