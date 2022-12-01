@@ -9,8 +9,8 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.AgreementComunicaInfo;
-import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceComunicaInfo;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
@@ -52,9 +52,7 @@ public class MainConfigComunica extends MainEntryPoint{
 		
 		@Override
 		protected void onInsertRows() {
-			for(CCCInfo cccInfo : mainConfigComunicaObject.getCCCs()) {
-				cccWidget.insertRow(cccInfo);
-			}
+			mainConfigComunicaObject.getCCCs().forEach(ccc -> cccWidget.insertRow(ccc));
 		}
 
 		@Override
@@ -63,15 +61,8 @@ public class MainConfigComunica extends MainEntryPoint{
 		}
 
 		@Override
-		protected void onInsertCCC(Integer cccId, int activityId, byte cccRegime, String cccRegimeCode, String account, String province, String provinceCode) {
-			mainConfigComunicaObject.insertCCC(
-					cccId, 
-					activityId, 
-					cccRegime, 
-					cccRegimeCode,  
-					account, 
-					province, 
-					provinceCode);
+		protected void onInsertCCC(EnterpriseCCC ccc) {
+			mainConfigComunicaObject.insertCCC(ccc);
 		}
 
 		@Override
@@ -81,8 +72,7 @@ public class MainConfigComunica extends MainEntryPoint{
 
 		@Override
 		protected void fireWarningMessage(Map<String, String> warningMap) {
-			// TODO Auto-generated method stub
-			
+			// Nothing to do here
 		}
 		
 	}
@@ -177,6 +167,7 @@ public class MainConfigComunica extends MainEntryPoint{
 		this.mainConfigComunicaObject.getComunicaEnterpriseSettings(s -> {
 			workplaceComunicaWidget.setAddresses(mainConfigComunicaObject.getAddresses());
 			workplaceComunicaWidget.onInsertRows();
+			cccWidget.setDomain(mainConfigComunicaObject.getDomain());
 			cccWidget.onInsertRows();
 			agreementComunicaWidget.setServiAgreements(mainConfigComunicaObject.getServiAgreements());
 			agreementComunicaWidget.onInsertRows();

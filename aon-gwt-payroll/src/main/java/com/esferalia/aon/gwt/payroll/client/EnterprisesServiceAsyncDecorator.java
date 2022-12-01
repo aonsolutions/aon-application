@@ -58,6 +58,7 @@ import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -347,10 +348,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getCNAE2009(String domain, AsyncCallback<Map<String, String>> callback) {
+	public void getCNAE2009(String domain, AsyncCallback<Map<Integer, String>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getCNAE2009(domain,
-				new AsyncCallbackWrapper<Map<String, String>>(callback));
+		enterprisesServiceAsync.getCNAE2009(domain, new AsyncCallbackWrapper<Map<Integer, String>>(callback));
 	}
 
 	@Override
@@ -1028,6 +1028,38 @@ public class EnterprisesServiceAsyncDecorator implements
 			throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.saveEnterprise(domainName, user, enterprise, callback);
+	}
+	
+	// ------------------------------------------------ EnterpriseActivity (API)
+
+	@Override
+	public void getActivity(String domainName, String user, Integer id,
+			AsyncCallback<com.esferalia.aon.occam.api.model.payroll.Activity> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getActivity(domainName, user, id, callback);
+	}
+
+	@Override
+	public void saveActivity(String domainName, String user,
+			com.esferalia.aon.occam.api.model.payroll.Activity activity, AsyncCallback<Void> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.saveActivity(domainName, user, activity, callback);
+	}
+
+	@Override
+	public void getActivities(String domainName, String user, AsyncCallback<List<Activity>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getActivities(domainName, user, callback);
+	}
+
+	@Override
+	public void saveActivities(String domainName, String user, List<Activity> activities,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.saveActivities(domainName, user, activities, callback);
 	}
 
 }

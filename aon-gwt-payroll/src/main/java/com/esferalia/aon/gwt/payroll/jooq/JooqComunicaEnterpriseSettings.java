@@ -45,7 +45,6 @@ public class JooqComunicaEnterpriseSettings {
 		comunicaEnterpriseSettings.setEnterpriseId(enterpriseId);
 		
 		comunicaEnterpriseSettings.setWorkplaceComunica(getWorkplaceComunicaDB(dslContext, domainId));
-		comunicaEnterpriseSettings.setMainCCCInfo(JooqMainCCC.getMainCCCInfo(conn, domainId, userId));
 		comunicaEnterpriseSettings.setAgreementComunica(getAgreementComunicaDB(dslContext, domainId));
 		
 		return comunicaEnterpriseSettings;
@@ -61,7 +60,6 @@ public class JooqComunicaEnterpriseSettings {
 		Integer scopeId = enterpriseRecord.get(ENTERPRISE.SCOPE);
 				
 		setWorkplaceComunicaDB(dslContext, domainId, enterpriseId, scopeId, comunicaEnterpriseSettings.getWorkplaceComunica());
-		JooqMainCCC.setMainCCCInfo(conn, domainId, userId, comunicaEnterpriseSettings.getMainCCCInfo());
 		setAgreementComunicaDB(dslContext, domainId, enterpriseId, comunicaEnterpriseSettings.getAgreementComunica());
 	}
 
