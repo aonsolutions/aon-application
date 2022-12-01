@@ -305,6 +305,12 @@ public class EnterprisePayrollCSVTestCase {
 			// TODO Auto-generated method stub
 			return null;
 		}
+
+		@Override
+		public Double getInKind() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	}
 	
