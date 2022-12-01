@@ -164,6 +164,7 @@ public final class IJsonNames {
 	public static final String DOMAIN_MANAGEMENT = "domainManagement";
 	public static final String DOMAIN_NAME = "domainName";
 	public static final String DOMAIN_TYPE = "domainType";
+	public static final String DOMAIN_ACTIVE = "domainActive";
 	public static final String DOMAINS = "domains";
 	public static final String DRIVE_ID = "driveId";
 	public static final String DRIVER = "driver";

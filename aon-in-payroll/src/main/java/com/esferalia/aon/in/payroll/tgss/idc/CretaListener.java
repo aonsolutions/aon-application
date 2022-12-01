@@ -78,6 +78,11 @@ public class CretaListener implements IdcParserListener {
 	protected boolean isTraining421Employee(String ssNum, String ccc, Date start, Date end) {
 		return false;
 	}
+	
+	@Override
+	public void onAuthorized(Integer number, String name) {
+		trabajadoresTramosBuilder.setAutorizado(number);
+	}
 
 	@Override
 	public void onPeriod(Date date) {
@@ -216,6 +221,8 @@ public class CretaListener implements IdcParserListener {
 		LiquidacionMes liquidacionMes = liquidacionMesBuilder.create();
 		trabajadoresTramosBuilder.addLiquidacionMes(liquidacionMes);
 		
+		addBonificacionFormacionContinua(trabajadoresTramosBuilder);
+		
 		return trabajadoresTramosBuilder.create();
 	}
 	
@@ -242,6 +249,14 @@ public class CretaListener implements IdcParserListener {
 	
 	private static boolean isDaily(String quoteGroup) {
 		return Integer.parseInt(quoteGroup) >= 8; 
+	}
+	
+	private static void  addBonificacionFormacionContinua(TrabajadoresTramosBuilder trabajadoresTramosBuilder) {
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("763");
+		dataSolicitadoBuilder.setObligatorio(false);
+		trabajadoresTramosBuilder.addDatoSolicitado(dataSolicitadoBuilder.create());
 	}
 	
 	private static void setDesdeHasta(Date start, Date end, TramoBuilder tramoBuilder) {

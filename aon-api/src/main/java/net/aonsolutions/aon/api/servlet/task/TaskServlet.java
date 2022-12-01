@@ -657,7 +657,7 @@ public class TaskServlet extends AonApiHttpServlet{
 							AON_SOLUTIONS.getTaskAndChildsStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
 							.forEach(tasks::add);
 						} else {
-							AON_SOLUTIONS.getTaskParentOrChildStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
+							AON_SOLUTIONS.getTaskParentOrChildStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer), false)
 							.forEach(tasks::add);
 						}
 					}
@@ -672,10 +672,10 @@ public class TaskServlet extends AonApiHttpServlet{
 	
 	private List<ApplicationParameter> getAppParamsList(AonApiData api, List<String> listNames) {
 		if(!listNames.isEmpty()) {
-		    String[] names = listNames.toArray(String[]::new);
-			
 			return AON.getApplicationParameterStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-					f-> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getNameProperty().in(names))).collect(Collectors.toList());
+					f-> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getNameProperty().in(listNames.toArray(String[]::new)))
+			).collect(Collectors.toList());
 		}
 		return Collections.emptyList();
 	}

@@ -12,6 +12,12 @@ public class EnterpriseCCC implements Serializable {
 	private Byte type;
 	private Integer enterpriseActivity;
 	private Integer geozone;
+	private String geozoneCode;
+	private String geozoneDescription;
+	
+	private boolean useByContracts = false;
+	private boolean useByCra = false;
+	private boolean isDeleted = false;
 	
 	public Integer getId() {
 		return id;
@@ -55,5 +61,40 @@ public class EnterpriseCCC implements Serializable {
 		this.geozone = geozone;
 		return this;
 	}
-
+	public String getGeozoneCode() {
+		return geozoneCode;
+	}
+	public EnterpriseCCC setGeozoneCode(String geozoneCode) {
+		this.geozoneCode = geozoneCode;
+		return this;
+	}
+	public String getGeozoneDescription() {
+		return geozoneDescription;
+	}
+	public EnterpriseCCC setGeozoneDescription(String geozoneDescription) {
+		this.geozoneDescription = geozoneDescription;
+		return this;
+	}
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+	public EnterpriseCCC setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+		return this;
+	}
+	public boolean isUseByContracts() {
+		return useByContracts;
+	}
+	public EnterpriseCCC setUseByContracts(boolean useByContracts) {
+		this.useByContracts = useByContracts;
+		return this;
+	}
+	public boolean isUseByCra() {
+		return useByCra;
+	}
+	public EnterpriseCCC setUseByCra(boolean useByCra) {
+		this.useByCra = useByCra;
+		return this;
+	}
+	
 }

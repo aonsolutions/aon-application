@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class ColManager {
 	
-	private static final int MAX_LENGTH = 12;
+	private static final int MAX_LENGTH = 13;
 
 	private HashMap<String, Integer> indexes;
 	private int[] entriesPerColumn;
@@ -34,12 +34,13 @@ public class ColManager {
 		indexes.put("ssTrab", 3);
 		indexes.put("irpf", 4);
 		indexes.put("Otr. ded.", 5);
-		indexes.put("liquido", 6);
-		indexes.put("ssEmpr", 7);
-		indexes.put("bonificaciones", 8);
-		indexes.put("fundae", 9);
-		indexes.put("ssTotal", 10);
-		indexes.put("costeTotal", 11);
+		indexes.put("inKind", 6);
+		indexes.put("liquido", 7);
+		indexes.put("ssEmpr", 8);
+		indexes.put("bonificaciones", 9);
+		indexes.put("fundae", 10);
+		indexes.put("ssTotal", 11);
+		indexes.put("costeTotal", 12);
 
 	}
 	
@@ -72,18 +73,20 @@ public class ColManager {
 			entriesPerColumn[4]++;
 		if(e.deducciones.isPresent() || e.deduccionesSS.isPresent())
 			entriesPerColumn[5]++;
-		if(e.liquido.isPresent() || e.liquidoSS.isPresent())
+		if(e.inKind.isPresent() || e.inKind.isPresent())
 			entriesPerColumn[6]++;
-		if(e.ssEmpr.isPresent() || e.ssEmprSS.isPresent())
+		if(e.liquido.isPresent() || e.liquidoSS.isPresent())
 			entriesPerColumn[7]++;
-		if(e.bonificaciones.isPresent() || e.bonificacionesSS.isPresent() )
+		if(e.ssEmpr.isPresent() || e.ssEmprSS.isPresent())
 			entriesPerColumn[8]++;
-		if(e.fundae.isPresent())
+		if(e.bonificaciones.isPresent() || e.bonificacionesSS.isPresent() )
 			entriesPerColumn[9]++;
-		if(e.ssTotal.isPresent() || e.ssTotalSS.isPresent() )
+		if(e.fundae.isPresent())
 			entriesPerColumn[10]++;
-		if(e.costeTotal.isPresent() || e.costeTotalSS.isPresent())
+		if(e.ssTotal.isPresent() || e.ssTotalSS.isPresent() )
 			entriesPerColumn[11]++;
+		if(e.costeTotal.isPresent() || e.costeTotalSS.isPresent())
+			entriesPerColumn[12]++;
 	}
 	
 	public void showEnabled() {
@@ -104,22 +107,23 @@ public class ColManager {
 		subtotalAon[3]  += e.ssTrab.orElse(0.00);
 		subtotalAon[4]  += e.irpf.orElse(0.00);
 		subtotalAon[5]  += e.deducciones.orElse(0.00);
-		subtotalAon[6]  += e.liquido.orElse(0.00);
-		subtotalAon[7]  += e.ssEmpr.orElse(0.00);
-		subtotalAon[8]  += e.bonificaciones.orElse(0.00);
-		subtotalAon[9]  += e.fundae.orElse(0.00);
-		subtotalAon[10] += e.ssTotal.orElse(0.00) + e.fundae.orElse(0.00);
-		subtotalAon[11] += e.costeTotal.orElse(0.00);
+		subtotalAon[6]  += e.inKind.orElse(0.00);
+		subtotalAon[7]  += e.liquido.orElse(0.00);
+		subtotalAon[8]  += e.ssEmpr.orElse(0.00);
+		subtotalAon[9]  += e.bonificaciones.orElse(0.00);
+		subtotalAon[10]  += e.fundae.orElse(0.00);
+		subtotalAon[11] += e.ssTotal.orElse(0.00) + e.fundae.orElse(0.00);
+		subtotalAon[12] += e.costeTotal.orElse(0.00);
 		
 		subtotalSs[2]  += 	e.devengadoSS.orElse(0.00);
 		subtotalSs[3]  += 	e.ssTrabSS.orElse(0.00);
 		subtotalSs[4]  += 	e.irpfSS.orElse(0.00);
 		subtotalSs[5]  += 	e.deduccionesSS.orElse(0.00);
-		subtotalSs[6]  += 	e.liquidoSS.orElse(0.00);
-		subtotalSs[7]  += 	e.ssEmprSS.orElse(0.00);
-		subtotalSs[8]  += 	e.bonificacionesSS.orElse(0.00);
-		subtotalSs[10] += 	e.ssTotalSS.orElse(0.00);
-		subtotalSs[11] += 	e.costeTotalSS.orElse(0.00);
+		subtotalSs[7]  += 	e.liquidoSS.orElse(0.00);
+		subtotalSs[8]  += 	e.ssEmprSS.orElse(0.00);
+		subtotalSs[9]  += 	e.bonificacionesSS.orElse(0.00);
+		subtotalSs[11] += 	e.ssTotalSS.orElse(0.00);
+		subtotalSs[12] += 	e.costeTotalSS.orElse(0.00);
 				
 	}
 	
@@ -141,17 +145,18 @@ public class ColManager {
 		totalAon[9]  +=  subtotalAon[9];
 		totalAon[10] +=  subtotalAon[10];
 		totalAon[11] +=  subtotalAon[11];
+		totalAon[12] +=  subtotalAon[12];
 		
 		totalSs[2]  +=  subtotalSs[2];
 		totalSs[3]  +=  subtotalSs[3];
 		totalSs[4]  +=  subtotalSs[4];
 		totalSs[5]  +=  subtotalSs[5];
-		totalSs[6]  +=  subtotalSs[6];
-		totalSs[7]  +=  subtotalSs[7];
-		totalSs[8]  +=  subtotalSs[8];
-		totalSs[9]  +=  subtotalSs[9];
-		totalSs[10] +=  subtotalSs[10];
-		totalSs[11] +=  subtotalSs[11];
+		totalSs[6]  +=  subtotalSs[7];
+		totalSs[7]  +=  subtotalSs[8];
+		totalSs[8]  +=  subtotalSs[9];
+		totalSs[9]  +=  subtotalSs[10];
+		totalSs[10] +=  subtotalSs[11];
+		totalSs[11] +=  subtotalSs[12];
 				
 		subtotalAon = new double[MAX_LENGTH];
 		subtotalSs = new double[MAX_LENGTH];

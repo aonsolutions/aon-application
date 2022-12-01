@@ -113,10 +113,6 @@
 		    			<a:DateBoxEx ui:field="endDate" styleName='rich-calendar-input aon-selectInputDate-inputClass {style.dateBoxStyle}'></a:DateBoxEx>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
-		    			<g:Label styleName='{style.firstColumn}'>Régimen de cotización</g:Label>
-		    			<g:Label ui:field="activityRegime"></g:Label>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.firstColumn}'>Actividad principal</g:Label>
 		    			<g:CheckBox ui:field="activityActive"></g:CheckBox>
 					</g:HTMLPanel>	

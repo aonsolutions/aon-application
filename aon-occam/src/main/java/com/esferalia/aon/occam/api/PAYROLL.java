@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.api;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -16,9 +17,11 @@ import com.esferalia.aon.occam.api.model.Filter.ContractAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
@@ -336,6 +339,32 @@ public class PAYROLL {
 	public static void saveEnterprise(String domainName, Integer domainId, String login, Enterprise enterprise) {
 		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
 			getPayroll().saveEnterprise(ctx, enterprise);
+		}
+	}
+	
+	// -------------------- ACTIVITY
+	
+	public static Activity getActivity(String domainName, Integer domainId, String login, EnterpriseActivityFilter filter) {
+		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			return getPayroll().getActivity(ctx, filter);
+		}
+	}
+	
+	public static void saveActivity(String domainName, Integer domainId, String login, Activity activity) {
+		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			getPayroll().saveActivity(ctx, activity);
+		}
+	}
+	
+	public static List<Activity> getActivities(String domainName, Integer domainId, String login, EnterpriseActivityFilter filter) {
+		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			return getPayroll().getActivities(ctx, filter);
+		}
+	}
+	
+	public static void saveActivities(String domainName, Integer domainId, String login, List<Activity> activity) {
+		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			getPayroll().saveActivities(ctx, activity);
 		}
 	}
 	

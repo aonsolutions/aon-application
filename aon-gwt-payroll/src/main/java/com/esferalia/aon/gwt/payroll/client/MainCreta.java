@@ -1748,6 +1748,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			};
 			dialog.setVisibleReftificationMark(true);
 			dialog.typeListBox.addChangeHandler(event -> dialog.setVisibleI54("L03".equals(dialog.getType())));
+			setupDialog(dialog);
 		}
 	
 		// ---------------------------------------------------------- CCCCommand
@@ -1843,6 +1844,9 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			dialog.setData(employees);
 		}
 		
+		protected void setupDialog(CretaRequestDialog<Employee> dialog) {
+			
+		}
 
 
 	}
@@ -1853,6 +1857,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 		public BasesCCCCretaRequestCommand(File file) {
 			super(file, MainCreta.this.detailPanel);
+		}
+		
+		@Override
+		protected void setupDialog(CretaRequestDialog<Employee> dialog) {
+			super.setupDialog(dialog);
+			dialog.setAuthorized(MainCreta.getAuthorized());
 		}
 	}
 
