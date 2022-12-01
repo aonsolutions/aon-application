@@ -97,7 +97,7 @@ public interface EnterprisesServiceAsync {
 	void updateActivityInfoDataBase(ActivityInfo activityInfo, String domain, AsyncCallback<ActivityInfo> asyncCallback);
 	void createActivityInfoDataBase(ActivityInfo activityInfo, String domain, AsyncCallback<ActivityInfo> asyncCallback);
 	void getDeleteCCCMessage(String currentDomainName, ArrayList<Integer> cccIds, AsyncCallback<String> asyncCallback);
-	void getCNAE2009(String domain, AsyncCallback<Map<String, String>> asyncCallback);
+	void getCNAE2009(String domain, AsyncCallback<Map<Integer, String>> asyncCallback);
 	void getEnterpiseAddresses(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> asyncCallback);
 	void getEnterpiseCalendars(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> asyncCallback);
 	void getEnterpiseActivities(Integer enterpriseId, String domain, AsyncCallback<Map<Integer, String>> asyncCallback);
@@ -257,5 +257,15 @@ public interface EnterprisesServiceAsync {
 	void getEnterprise(String currentDomainName, String user, Integer id, AsyncCallback<com.esferalia.aon.occam.api.model.payroll.Enterprise> asyncCallback) throws IllegalArgumentException;
 	
 	void saveEnterprise(String currentDomainName, String user, com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	// --------------------------- EnterpriseActivity (API)
+	
+	void getActivity(String currentDomainName, String user, Integer id, AsyncCallback<com.esferalia.aon.occam.api.model.payroll.Activity> asyncCallback) throws IllegalArgumentException;
+	
+	void saveActivity(String currentDomainName, String user, com.esferalia.aon.occam.api.model.payroll.Activity activity, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	void getActivities(String currentDomainName, String user, AsyncCallback<List<com.esferalia.aon.occam.api.model.payroll.Activity>> asyncCallback) throws IllegalArgumentException;
+	
+	void saveActivities(String currentDomainName, String user, List<com.esferalia.aon.occam.api.model.payroll.Activity> activity, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
 }

@@ -1335,6 +1335,27 @@ public interface Properties {
 		Property<Integer> getCalendarProperty();
 	}
 	
+	public interface EnterpriseActivityProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+		Property<Integer> getEnterpriseProperty();
+		Property<Integer> getIaeProperty();
+		Property<Integer> getCnaeProperty();
+		Property<Byte> getTypeProperty();
+		Property<Integer> getCnae2009Property();
+		Property<Byte> getSurchargeProperty();
+		Property<Integer> getVatTaxProperty();
+		Property<Integer> getRetentionTaxProperty();
+		Property<Byte> getVatRegimeProperty();
+		Property<Byte> getRetentionRegimeProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+		Property<Double> getProrataProperty();
+		Property<Byte> getProrataTypeProperty();
+		Property<Byte> getPrincipalProperty();
+	}
+	
 	public interface AgreementLevelCategoryProperties{
 		Property<Integer> getIdProperty();
 		Property<Integer> getDomainProperty();

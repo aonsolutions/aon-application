@@ -5,13 +5,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
-import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
@@ -33,7 +34,9 @@ public class ActivityDialog extends AonCustomDialog {
 
 		@Override
 		public void onActivityCNAE2009Change() {
-			activityDialogObject.setActivityCNAE2009(activityCNAE2009.getValue());
+			String cnae2009Value = activityCNAE2009.getValue();
+			Optional<Entry<Integer, String>> cnae2009Opt = activityDialogObject.getAllCNAE2009().entrySet().stream().filter(entry -> AonStringUtils.equalsIgnoreCase(entry.getValue(), cnae2009Value)).findAny();
+			if(cnae2009Opt.isPresent()) activityDialogObject.setActivityCNAE2009(cnae2009Opt.get());
 		}
 
 		@Override
@@ -58,8 +61,8 @@ public class ActivityDialog extends AonCustomDialog {
 		
 		@Override
 		public void onInsertRows() {
-			for(CCCInfo cccInfo : activityDialogObject.getCCCs().values())
-				this.cccWidget.insertRow(cccInfo);
+			activityDialogObject.getCCCs().forEach(ccc -> this.cccWidget.insertRow(ccc));
+			activity.hideActivityColumn();
 		}
 
 		@Override
@@ -68,8 +71,8 @@ public class ActivityDialog extends AonCustomDialog {
 		}
 
 		@Override
-		public void onInsertCCC(Integer cccId, int activityId, byte cccRegime, String cccRegimeCode, String account, String province, String provinceCode) {
-			activityDialogObject.insertCCC(cccId, account, cccRegimeCode, account, cccRegime, province, provinceCode, false, false);
+		public void onInsertCCC(EnterpriseCCC ccc) {
+			activityDialogObject.insertCCC(ccc);
 		}
 
 		@Override
@@ -126,8 +129,8 @@ public class ActivityDialog extends AonCustomDialog {
 		this.activityDialogObject = activityDialogObject;
 		activityDialogObject.getCNAE2009(
 				s -> {
-					activity.activityRegime.setText(activityDialogObject.getActivityRegime());
 					initSuggestBox();
+					activity.cccWidget.setDomain(activityDialogObject.getDomain());
 					activity.hideActivityColumn();
 				},
 				f -> {}
@@ -136,8 +139,8 @@ public class ActivityDialog extends AonCustomDialog {
 	
 	private void initSuggestBox() {
 		List<String> cnae2009Suggest = new ArrayList<>();
-		for(Entry<String, String> entry : activityDialogObject.getAllCNAE2009().entrySet())
-			cnae2009Suggest.add(entry.getKey() + " - " + entry.getValue());
+		for(Entry<Integer, String> entry : activityDialogObject.getAllCNAE2009().entrySet())
+			cnae2009Suggest.add(entry.getValue());
 	
 		MultiWordSuggestOracle orclCNAE2009 = (MultiWordSuggestOracle) activity.activityCNAE2009.getSuggestOracle();
 		orclCNAE2009.addAll(cnae2009Suggest);

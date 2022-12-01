@@ -37,7 +37,7 @@ public class JooqActivity {
 
 	private static Settings SETTINGS = null;
 	
-	public static Map<String, String> getCNAE2009(Connection conn) {
+	public static Map<Integer, String> getCNAE2009(Connection conn) {
 		return getCNAE2009InfoDB(DSL.using(conn, getDefaultSettings()));
 	}
 
@@ -61,16 +61,16 @@ public class JooqActivity {
 		return SETTINGS;
 	}
 	
-	private static Map<String, String> getCNAE2009InfoDB(DSLContext dslContext) {
+	private static Map<Integer, String> getCNAE2009InfoDB(DSLContext dslContext) {
 		
-		Map<String, String> cnae2009Map = new HashMap<>();
+		Map<Integer, String> cnae2009Map = new HashMap<>();
 		
 		Result<Record> cnae2009Records = dslContext.select().from(CNAE2009)
 				.orderBy(CNAE2009.CODE)
 				.fetch();
 		
 		for(Record r : cnae2009Records)
-			cnae2009Map.put(r.get(CNAE2009.CODE), r.get(CNAE2009.TITLE));
+			cnae2009Map.put(r.get(CNAE2009.ID), r.get(CNAE2009.CODE) + " - " + r.get(CNAE2009.TITLE));
 		
 		return cnae2009Map;
 	}
