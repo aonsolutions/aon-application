@@ -437,12 +437,9 @@ public class SQLSpecialDaysTestCase extends AbstractSQLTestCase {
 		for(SalaryPayment p: salary.getSalaryPayments())
 			System.out.println(p.getDescription() + " = " + p.getAmount() + " = " + p.getQuote() );
 		
-		int lastDayOfMonth = AonDateUtils.get(endDate, Calendar.DAY_OF_MONTH);
-		int activeDays = (lastDayOfMonth - 11);
-		int itDays = 30 - activeDays; // adjust
-		Assert.assertEquals(1500.00 * activeDays / 30, salary.getTotalPayment(), DELTA);
+		Assert.assertEquals(1500.00 * 19 / 30, salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(3, salary.getSalaryDatas().stream().filter(sd -> sd.getName().equals("BASE_CGC")).count(), DELTA);
-		Assert.assertEquals(1500.00 * activeDays / 30 + 35.00 * itDays, salary.getCommonBase(), DELTA);
+		Assert.assertEquals(1500.00 * 19 / 30 + 35.00 * 11, salary.getCommonBase(), DELTA);
 		
 	}
 	
