@@ -61,7 +61,8 @@ public class TaskExcel {
 		onValidate(params);
 		
 		List<Task> tasks = AON_SOLUTIONS.getTaskParentOrChildStream(api.getDomain(), api.getUser(), 
-			f -> TaskFilter.task(api, f, api.getDomain(), new Customer())
+			f -> TaskFilter.task(api, f, api.getDomain(), new Customer()),
+			true
 		)
 		.collect(Collectors.toCollection(LinkedList::new));
 		
@@ -139,7 +140,7 @@ public class TaskExcel {
 
 		row.createCell(cell++).setCellValue(task.getSource().getESName()); // SOURCE
 		
-		row.createCell(cell++).setCellValue(getTags(task)); // TAGS
+		row.createCell(cell++).setCellValue(getTags(task.getTags())); // TAGS
 		
 		row.createCell(cell++).setCellValue(task.getStatus().getESName()); // STATUS
 		
@@ -183,9 +184,9 @@ public class TaskExcel {
 		 return registry!=null ? registry.getName() : "";
 	}
 	
-	private static String getTags(Task task) {
-		return !task.getTags().isEmpty() 
-		? task.getTags().stream().filter(t-> t.getId()!=null).map(Tag::getName).collect(Collectors.joining(", ")) 
+	private static String getTags(List<Tag> tags) {
+		return !tags.isEmpty() 
+		? tags.stream().filter(t-> t.getId()!=null).map(Tag::getName).collect(Collectors.joining(", ")) 
 		: "";
 	}
 	

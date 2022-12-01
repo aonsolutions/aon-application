@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
@@ -159,14 +160,12 @@ public class TaskDAO {
 		return getStream(ctx, filter, Optional.of(page), Optional.of(perPage));
 	}
 	
-	public static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter){	
-		System.out.println("getParentOrChildStream");
-		return getParentOrChildStream(ctx, filter, Optional.empty(), Optional.empty());
+	public static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter, boolean excludeDescription){	
+		return getParentOrChildStream(ctx, filter, Optional.empty(), Optional.empty(), excludeDescription);
 	}
 	
 	public static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter, Integer page, Integer perPage){	
-		System.out.println("getParentOrChildStream page perPage");
-		return getParentOrChildStream(ctx, filter, Optional.of(page), Optional.of(perPage));
+		return getParentOrChildStream(ctx, filter, Optional.of(page), Optional.of(perPage), false);
 	}
 	
 	public static Task getTaskAndChilds(AONContext ctx, TaskFilter filter) {
@@ -204,9 +203,9 @@ public class TaskDAO {
 	
 	private static Stream<Task> getTaskAndChildsStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage) {
 
-		List<Task> tasks     =  getStream(ctx, filter, page, perPage).collect(Collectors.toList());
+		List<Task> tasks    =  getStream(ctx, filter, page, perPage).collect(Collectors.toList());
 		
-		Integer[] parentIds  = tasks.stream().map(Task::getId).toArray(Integer[]::new);
+		Integer[] parentIds = tasks.stream().map(Task::getId).toArray(Integer[]::new);
 		
 		if(parentIds!=null && parentIds.length>0) {
 			
@@ -355,7 +354,7 @@ public class TaskDAO {
 	
 	private static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
 		SelectConditionStep<Record> condition = 
-		select(getFields(ctx.getDslContext())) 
+		select(getFields(ctx.getDslContext(), false)) 
 		.where(TASK_PROPERTIES.getConditions(filter));
 	
 		if(page.isPresent() && perPage.isPresent()) {
@@ -380,9 +379,10 @@ public class TaskDAO {
 		return taskMaps.keySet().stream();
 	}
 	
-	private static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
+	private static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage, boolean excludeDescription){	
+		System.out.println("getParentOrChildStream "+page+" "+perPage);
 		SelectConditionStep<Record> condition = 
-		select( getFields(ctx.getDslContext()) )
+		select( getFields(ctx.getDslContext(), excludeDescription))
 		.where(whereCondition(ctx, filter));
 	
 		if(page.isPresent() && perPage.isPresent()) {
@@ -397,35 +397,24 @@ public class TaskDAO {
 		
 	   System.out.println(query.getSQL());
 		
-		Map<Task, List<Tag>> taskMaps = query.fetchGroups( 
+		Map<Task, List<Tag>> taskMaps = query
+		.fetchGroups( 
 			new TaskFiller()::apply,
 			new TagFiller()::apply
 		);
 		
 		taskMaps.forEach((task, tags) -> tags.forEach(task::addTag) );
 
-		List<Task> tasks     = taskMaps.keySet().stream().filter(distinctByKey(Task::getId)).collect(Collectors.toList());
+		List<Task> tasks = taskMaps.keySet().stream().filter(distinctByKey(Task::getId)).collect(Collectors.toList());
 		
-		Integer[] parentIds  = tasks.stream().filter(Task::isParent).map(Task::getId).toArray(Integer[]::new);
-		
-		if(parentIds!=null && parentIds.length>0) {
-			List<Task> childsAll = getTaskAndChildsStream(ctx,  f-> f.getParentProperty().in(parentIds) ).collect(Collectors.toList());
-
-			tasks.forEach(task->{
-				childsAll.stream()
-				.filter(t-> t.getParent().equals(task.getId()))
-				.sorted(Comparator.comparing(Task::getId))
-				.forEach(task::addChild);
-			});
-		}
+		setParent(ctx, tasks);
 
 		return tasks.stream();
 	}
 	
 	
-	private static SelectSelectStep<Record> getFields(DSLContext ctx) {
-		return ctx
-		.select(TASK.fields())
+	private static SelectSelectStep<Record> getFields(DSLContext ctx, boolean excludeDescription) {
+		SelectSelectStep<Record> fields = ctx
 		.select(DOMAIN.fields())
 		.select(TASK_HOLDER.fields())
 		.select(WORKGROUP.fields())
@@ -435,6 +424,21 @@ public class TaskDAO {
 		.select(SENDER_REGISTRY.fields())
 		.select(TASK_TAG.TASK)
 		.select(TAG.fields());
+		
+		Field<?>[] taskFields = TASK.fields();
+
+		if(excludeDescription) {
+			for (Field<?> field : taskFields) {
+				if(!field.equals(TASK.COMMENTS)) {
+					fields.select(field);
+				}		
+			}
+		} else {
+			fields.select(taskFields);
+		}
+		
+		
+		return fields;
 	}
 	
 	private static void setTagIdOrSave(AONContext ctx, Task task) {
@@ -679,8 +683,8 @@ public class TaskDAO {
 						? DomainFiller.build(r)
 						: new Domain().setId(r.getValue(TASK.DOMAIN)))
 				.setActivityType(r.getValue(TASK.ACTIVITY_TYPE))
-				.setDescription(r.getValue(TASK.COMMENTS))
 				.setTitle(r.getValue(TASK.DESCRIPTION))
+				.setDescription(r.indexOf(TASK.COMMENTS)!=-1 ? r.getValue(TASK.COMMENTS) : null)
 				.setDueDate(r.getValue(TASK.DUE_DATE))
 				.setEndDate(r.getValue(TASK.END_DATE))
 				.setGtaskId(r.getValue(TASK.GTASK_ID))
@@ -720,6 +724,21 @@ public class TaskDAO {
 				.setName(r.getValue(TAG.NAME))
 				.setTagType(TagType.safeValueOf(r.getValue(TAG.TYPE)))
 			;
+		}
+	}
+	
+	private static void setParent(AONContext ctx, List<Task> tasks) {
+		Integer[] parentIds  = tasks.stream().filter(Task::isParent).map(Task::getId).toArray(Integer[]::new);
+		
+		if(parentIds!=null && parentIds.length>0) {
+			List<Task> childsAll = getTaskAndChildsStream(ctx,  f-> f.getParentProperty().in(parentIds) ).collect(Collectors.toList());
+
+			tasks.forEach(task->{
+				childsAll.stream()
+				.filter(t-> t.getParent().equals(task.getId()))
+				.sorted(Comparator.comparing(Task::getId))
+				.forEach(task::addChild);
+			});
 		}
 	}
 	

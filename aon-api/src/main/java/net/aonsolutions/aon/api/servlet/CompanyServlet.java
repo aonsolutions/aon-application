@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -264,26 +265,6 @@ public class CompanyServlet extends AonApiHttpServlet{
 		int page = params.optInt(IJsonNames.PAGE)!=0 ? params.optInt(IJsonNames.PAGE) : 1;
 		int perPage = params.optInt(IJsonNames.PER_PAGE)!=0 ? params.optInt(IJsonNames.PER_PAGE) : 20;
 		
-
-//		ArrayList<Company> companies = new ArrayList<>();
-//		
-//		Map<String, List<Integer>> map = AON_SOLUTIONS.getCompanyBySchemaStream(api.getToken(), f-> companyFilter(api, f) , page, perPage);
-//		
-//		map.forEach((domain, registryIds)->{
-//
-//	    	Integer[] registrys = getPage(registryIds, page, perPage).toArray(Integer[]::new);
-//			AON.getCompanyStream(domain, 0, "", f -> f.getIdProperty().in(registrys))
-//			.forEach(companies::add);
-//
-//			System.out.println("registrys"+registryIds.toString()+" domain"+domain);
-//			
-//			System.out.println("registrysIds"+ getPage(registryIds, page, perPage).toString());
-//		});
-//		
-//		return CompanyJSON.toJSON(
-//				companies.stream().sorted((o1, o2) -> o1.getName().compareTo(o2.getName()))
-//		);
-		
 		JSONArray jsArray = new JSONArray();
 		
 		AON_SOLUTIONS.getCompanyBySchemaStream(api.getToken(), f-> companyFilter(api, f) , page, perPage)
@@ -318,9 +299,19 @@ public class CompanyServlet extends AonApiHttpServlet{
 			filter = filter.and(f.getActiveProperty().eq((byte)active));
 		}
 		
+		if(!params.isNull(IJsonNames.DOMAIN_ACTIVE)) {
+			int active = params.optBoolean(IJsonNames.DOMAIN_ACTIVE) ? 1 : 0;
+			filter = filter.and(f.getDomainActiveProperty().eq((byte)active));
+		}
+		
 		if(!params.isNull(IJsonNames.SHARED)) {
 			int shared = params.optBoolean(IJsonNames.SHARED) ? 1 : 0;
 			filter = filter.and(f.getUserSharedProperty().eq((byte)shared));
+		}
+		
+		if(!params.isNull("domainIds")) {
+		    Integer[] domainIds = Stream.of(params.optString("domainIds").split(",")).map(Integer::parseInt).toArray(Integer[]::new); 
+			filter = filter.and(f.getDomainProperty().in(domainIds));
 		}
 		
 		if(!params.isNull(IJsonNames.TYPE)) {
@@ -345,11 +336,10 @@ public class CompanyServlet extends AonApiHttpServlet{
 		return filter;
 	}
 	
-	
 	private JSONObject getCompany(AonApiData api) {
-		Company company =  api.getData().opt("id") != null
+		Company company =  api.getData().opt(IJsonNames.ID) != null
 			? AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
-				f.getIdProperty().eq(api.getData().optInt("id"))) 
+				f.getIdProperty().eq(api.getData().optInt(IJsonNames.ID))) 
 			: AON.getCompany(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> 
 				f.getDomainProperty().eq(api.getDomain().getId()));
 		JSONObject json = CompanyJSON.toJSON(company);

@@ -449,16 +449,13 @@ public class AON_SOLUTIONS {
 	public static List<AonCompany> getCompanyBySchemaStream(String token, CompanyFilter filter, Integer page, Integer perPage) {	
 		AonToken aonToken = SECURITY.getAonToken(token);
 		List<AonCompany> list = new ArrayList<>();
-		LinkedList<String> domains = new LinkedList<>();	
+
 		for(String schema: AONContext.getSchemas()) {
 			String domain = AONContext.getSchemaFirstDomain(schema);
-			if(!AonStringUtils.isBlank(domain) && !domains.contains(domain)) {
+			if(!AonStringUtils.isBlank(domain)) {
 				try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")) {
-					
 					getRegistry().getCompanyStream(ctx, aonToken.getAuth(), filter, page, perPage)
 					.forEach(c-> list.add(c.setSchema(schema)));
-					
-					domains.add(domain);
 				}
 			} 
 		}
@@ -950,9 +947,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static Stream<Task> getTaskParentOrChildStream(Domain domain, User user, TaskFilter filter) {
+	public static Stream<Task> getTaskParentOrChildStream(Domain domain, User user, TaskFilter filter, boolean excludeDescription) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskParentOrChildStream(ctx, filter);
+			return getTask2().getTaskParentOrChildStream(ctx, filter, excludeDescription);
 		}
 	}
 	

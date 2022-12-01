@@ -11,26 +11,29 @@ export class AonParent extends AonElement {
 	selected;
 	notice;
 	filter;
+	_filter; // NEW FILTER
 
 	more;
 
 	setFilter(filter){
-		this.filter = filter;
+		if(filter.ids && filter.ids.length) filter.ids = filter.ids.join(",");
+		this._filter = filter;
 	}
 
 	getFilter(){
-		return this.filter;
+		return this._filter;
 	}
 
 	addFilter(filter){
-		this.filter = {...this.getFilter(), ...filter};
+		this._filter = {...this.getFilter(), ...filter};
 	}
 
 
 	constructor () {
 		super();
 		this.id = 'aonParent';
-		this.filter= {};
+		this.filter = {};
+		this._filter = {};
 	}
 
 	connectedCallback () {
@@ -80,11 +83,11 @@ export class AonParent extends AonElement {
 		let filterOptions = [{
 				name: MSG.ACTIVES,
 				icon: 'domain',
-				fn: () => this.init({active: true})
+				fn: () => this.init({active: true, domainActive:true})
 			}, {
 				name: MSG.INACTIVES,
 				icon: 'domain_disabled',
-				fn: () => this.init({inactive: true, active:false})
+				fn: () => this.init({inactive: true, domainActive:false})
 			}, {
 				name: MSG.SHARED,
 				icon: 'share',
@@ -116,7 +119,9 @@ export class AonParent extends AonElement {
 
 	init(filter) {
 		this.filter = filter;
+
 		let aonParent = this.getElement('aonParentMain');
+		
 		if(aonParent){
 			aonParent.startLoader();
 			this.build();
@@ -131,6 +136,10 @@ export class AonParent extends AonElement {
 				}
 		  	}, () => closeSession());
 		}
+
+		if(filter){
+			this.setFilter(filter);
+		}
    }
 
 	companyFilter(f, q) {
@@ -143,7 +152,7 @@ export class AonParent extends AonElement {
 		let value = true;
 
 		if(q){
-
+			
 			if(q.value) {
 				const document = f.document && f.document.toUpperCase().includes(q.value.toUpperCase());
 				const name = f.name && f.name.toUpperCase().includes(q.value.toUpperCase());

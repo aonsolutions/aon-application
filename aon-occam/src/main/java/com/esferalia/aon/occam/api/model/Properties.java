@@ -1048,6 +1048,7 @@ public interface Properties {
 		
 		Property<Byte> getUserSharedProperty();
 		Property<Byte> getDomainTypeProperty();
+		Property<Byte> getDomainActiveProperty();
 	}
 	
 	public interface PersonProperties extends RegistryProperties{
