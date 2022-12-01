@@ -11,6 +11,7 @@ public class EnterprisePayrollEntry {
 	Optional<Double> irpf;
 	Optional<Double> deducciones;
 	Optional<Double> liquido;
+	Optional<Double> inKind;
 	Optional<Double> ssEmpr;
 	Optional<Double> costeTotal;
 	Optional<Double> ssTotal;
@@ -48,6 +49,7 @@ public class EnterprisePayrollEntry {
 		this.liquido		= Optional.empty();
 		this.ssEmpr			= Optional.empty();
 		this.costeTotal		= Optional.empty();
+		this.inKind		= Optional.empty();
 		this.ssTotal		= Optional.empty();
 		this.fundae 		= Optional.empty();
 		this.bonificaciones	= Optional.empty();
@@ -159,6 +161,10 @@ public class EnterprisePayrollEntry {
 	public Optional<Double> getDeduccionesSS() {
 		return deduccionesSS;
 	}
+	
+	public Optional<Double> getInKind() {
+		return inKind;
+	}
 
 	public Optional<Double> getLiquido() {
 		return liquido;
@@ -253,6 +259,10 @@ public class EnterprisePayrollEntry {
 		this.deduccionesSS = deduccionesSS;
 	}
 
+	public void setInKind(Optional<Double> inKind) {
+		this.inKind = inKind;
+	}
+	
 	public void setLiquido(Optional<Double> liquido) {
 		this.liquido = liquido;
 	}
@@ -326,14 +336,14 @@ public class EnterprisePayrollEntry {
 				&& Objects.equals(irpfSS, that.irpfSS) && Objects.equals(deduccionesSS, that.deduccionesSS)
 				&& Objects.equals(liquidoSS, that.liquidoSS) && Objects.equals(ssEmprSS, that.ssEmprSS)
 				&& Objects.equals(costeTotalSS, that.costeTotalSS) && Objects.equals(ssTotalSS, that.ssTotalSS)
-				&& Objects.equals(fundae, that.fundae);
+				&& Objects.equals(fundae, that.fundae) && Objects.equals(inKind, that.inKind);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(empleado, tipo, devengado, ssTrab, irpf, deducciones, liquido, ssEmpr, costeTotal, ssTotal,
 				empleadoSS, tipoSS, devengadoSS, ssTrabSS, irpfSS, deduccionesSS, liquidoSS, ssEmprSS, costeTotalSS,
-				ssTotalSS, fundae);
+				ssTotalSS, fundae, inKind);
 	}
 
 }
