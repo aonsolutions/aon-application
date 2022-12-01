@@ -11,17 +11,15 @@ export class AonCompany extends AonReg {
 		let medias = this.emails.concat(this.phones).concat(this.webs);
 		this.registry.setMedia(medias);
 		if(this.registry.addresses.length  == 0) {
-			let error = {
+			this.showToast({
 				type: CONSTANT.ERROR,
 				message: 'La dirección está vacia'
-			};
-			this.showToast(error);
+			});
 		} else if(!this.registry.addresses[0].zip || !this.registry.addresses[0].province) {
-			let error = {
+			this.showToast({
 				type: CONSTANT.ERROR,
 				message: 'El código postal o la provincia están vacias'
-			};
-			this.showToast(error);
+			});
 		} else {
 			saveCompany(this.registry).then(cp => {
 				this.registry.id = cp.id;
@@ -29,9 +27,9 @@ export class AonCompany extends AonReg {
 					type: 'success',
 					message: 'Datos Guardados Correctamente'
 				});
-			}).catch(error => {
-				this.showToast(error);
-			});
+			}).catch(error => 
+				this.showToast(error)
+			);
 		}
 	}
 }
