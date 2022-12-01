@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryBonus.SALARY_BONUS;
 import static com.esferalia.aon.jooq.tables.SalaryDeduction.SALARY_DEDUCTION;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 import static com.esferalia.aon.watson.util.AonNumberUtils.zeroIfNull;
 
@@ -550,6 +551,24 @@ public class JooqEnterpriseSalaryBuilder {
 		.fetchStreamInto(SALARY_BONUS)
 		.collect(Collectors.toMap(SalaryBonusRecord::getSalary, SalaryBonusRecord::getAmount, (a1, a2) -> a1 + a2));
 		
+		Map<Integer, Double> inKindDeductions = new LinkedHashMap<>();
+		ctx
+		.select()
+		.from(SALARY_PAYMENT)
+		.innerJoin(SALARY).onKey()
+		.innerJoin(CONTRACT).onKey()
+		.innerJoin(WORKPLACE).onKey()
+		.innerJoin(ENTERPRISE).onKey()
+		.where(condition)
+		.and(SALARY_PAYMENT.TYPE.eq(AonNumberUtils.toByte(13)))
+		.fetchStreamInto(SALARY_PAYMENT)
+		.filter(Objects::nonNull)
+		.forEach(sp -> {
+			double amount = AonNumberUtils.zeroIfNull(inKindDeductions.getOrDefault(sp.getSalary(), 0d)) + AonNumberUtils.zeroIfNull(sp.getAmount());
+			inKindDeductions.put(sp.getSalary(), amount);
+		});
+		
+		
 		Map<Integer, Map<Integer, Double>> deductions = new HashMap<>();
 		ctx.select()
 		.from(SALARY)
@@ -599,10 +618,12 @@ public class JooqEnterpriseSalaryBuilder {
 			
 			try {
 				totalCost = r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS) + r.get(SALARY.TOTAL_ENTERPRISE);
-			} catch (NullPointerException e) {}
+			} catch (NullPointerException e) {
+			}
 			try {
 				totalSS = totalCost + r.get(SALARY.TOTAL_IRPF);
-			} catch (NullPointerException e) {}
+			} catch (NullPointerException e) {
+			}
 			
 			EnterprisePayrollEntry.EnterpriseEntryType enterpriseEntryType = 
 			getEnterpriseEntryType(salaryType);
@@ -635,7 +656,8 @@ public class JooqEnterpriseSalaryBuilder {
 			try {
 				Double advanced = deductions.get(r.get(SALARY.ID)).get(DeductionType.ADVANCE_PAYMENT.ordinal());
 				otherDeductions = otherDeductions != null ? otherDeductions+advanced : advanced;
-			} catch (NullPointerException e) {}
+			} catch (NullPointerException e) {
+			}
 			
 			Double employeeSS = r.get(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
 			
@@ -649,6 +671,7 @@ public class JooqEnterpriseSalaryBuilder {
 				entry.setLiquido(Optional.ofNullable(r.get(SALARY.TOTAL_LIQUID)));
 				entry.setSsEmpr(Optional.ofNullable(r.get(SALARY.TOTAL_ENTERPRISE)));
 				entry.setSsTotal(Optional.ofNullable(entry.getSsEmpr().orElse(0d) + entry.getSsTrab().orElse(0d)));
+				entry.setInKind(Optional.ofNullable(inKindDeductions.getOrDefault(r.get(SALARY.ID), null)));
 				entry.setCosteTotal(
 						Optional.ofNullable(entry.getDevengado().orElse(0d) + entry.getSsEmpr().orElse(0d))
 						);
@@ -669,15 +692,14 @@ public class JooqEnterpriseSalaryBuilder {
 			if (!map.containsKey(r.get(WORKPLACE.DESCRIPTION)))
 				map.put(r.get(WORKPLACE.DESCRIPTION), new LinkedHashMap<>());
 			
-			String key  = String.format("%s-%s-%3$td", 
-			/*!AonStringUtils.isEmpty(r.get(SALARY.SOCIAL_SECURITY_NUMBER)) ? r.get(SALARY.SOCIAL_SECURITY_NUMBER) : r.get(SALARY.EMPLOYEE_DOCUMENT)*/r.get(PERSON.REGISTRY), 
+			String key  = String.format("%s-%s-%3$td",
+			r.get(CONTRACT.ID)/*!AonStringUtils.isEmpty(r.get(SALARY.SOCIAL_SECURITY_NUMBER)) ? r.get(SALARY.SOCIAL_SECURITY_NUMBER) : r.get(SALARY.EMPLOYEE_DOCUMENT)*/, 
 			getSalaryTypeKey(salaryType),
 			r.get(SALARY.END_DATE)
 			);
 			
 			Map<String, EnterprisePayrollEntry> eMap = map.get(r.get(WORKPLACE.DESCRIPTION));
 			eMap.put(key, entry);
-			
 		});
 			
 		return map;
@@ -698,6 +720,23 @@ public class JooqEnterpriseSalaryBuilder {
 		.where(condition)
 		.fetchStreamInto(SALARY_BONUS)
 		.collect(Collectors.toMap(SalaryBonusRecord::getSalary, SalaryBonusRecord::getAmount, (a1, a2) -> a1 + a2));
+		
+		Map<Integer, Double> inKindDeductions = new LinkedHashMap<>();
+		ctx
+		.select()
+		.from(SALARY_PAYMENT)
+		.innerJoin(SALARY).onKey()
+		.innerJoin(CONTRACT).onKey()
+		.innerJoin(WORKPLACE).onKey()
+		.innerJoin(ENTERPRISE).onKey()
+		.where(condition)
+		.and(SALARY_PAYMENT.TYPE.eq(AonNumberUtils.toByte(13)))
+		.fetchStreamInto(SALARY_PAYMENT)
+		.filter(Objects::nonNull)
+		.forEach(sp -> {
+			double amount = AonNumberUtils.zeroIfNull(inKindDeductions.getOrDefault(sp.getSalary(), 0d)) + AonNumberUtils.zeroIfNull(sp.getAmount());
+			inKindDeductions.put(sp.getSalary(), amount);
+		});
 		
 		Map<Integer, Map<Integer, Double>> deductions = new HashMap<>();
 		ctx.select()
@@ -787,6 +826,7 @@ public class JooqEnterpriseSalaryBuilder {
 			entry.setLiquido(Optional.ofNullable(r.get(SALARY.TOTAL_LIQUID)));
 			entry.setSsEmpr(Optional.ofNullable(r.get(SALARY.TOTAL_ENTERPRISE)));
 			entry.setSsTotal(Optional.ofNullable(entry.getSsEmpr().orElse(0d) + entry.getSsTrab().orElse(0d)));
+			entry.setInKind(Optional.ofNullable(inKindDeductions.getOrDefault(r.get(SALARY.ID), null)));
 			entry.setCosteTotal(
 					Optional.ofNullable(entry.getDevengado().orElse(0d) + entry.getSsEmpr().orElse(0d))
 					);
@@ -809,6 +849,7 @@ public class JooqEnterpriseSalaryBuilder {
 				ent.setLiquido(sumOptionalThings(ent.getLiquido(), entry.getLiquido()));
 				ent.setSsEmpr(sumOptionalThings(ent.getSsEmpr(), entry.getSsEmpr()));
 				ent.setCosteTotal(sumOptionalThings(ent.getCosteTotal(), entry.getCosteTotal()));
+				ent.setInKind(sumOptionalThings(ent.getInKind(), entry.getInKind()));
 				ent.setSsTotal(sumOptionalThings(ent.getSsTotal(), entry.getSsTotal()));
 				ent.setBonificaciones(sumOptionalThings(ent.getBonificaciones(), entry.getBonificaciones()));
 				ent.setFundae(sumOptionalThings(ent.getFundae(), entry.getFundae()));
@@ -818,8 +859,6 @@ public class JooqEnterpriseSalaryBuilder {
 			} else {
 				map.get(r.get(WORKPLACE.DESCRIPTION)).put(key, entry);				
 			}
-			
-			
 			
 		});
 			
@@ -839,6 +878,23 @@ public class JooqEnterpriseSalaryBuilder {
 			.where(condition)
 			.fetchStreamInto(SALARY_BONUS)
 			.collect(Collectors.toMap(SalaryBonusRecord::getSalary, SalaryBonusRecord::getAmount, (a1, a2) -> a1 + a2));
+		
+		Map<Integer, Double> inKindDeductions = new LinkedHashMap<>();
+		ctx
+		.select()
+		.from(SALARY_PAYMENT)
+		.innerJoin(SALARY).onKey()
+		.innerJoin(CONTRACT).onKey()
+		.innerJoin(WORKPLACE).onKey()
+		.innerJoin(ENTERPRISE).onKey()
+		.where(condition)
+		.and(SALARY_PAYMENT.TYPE.eq(AonNumberUtils.toByte(13)))
+		.fetchStreamInto(SALARY_PAYMENT)
+		.filter(Objects::nonNull)
+		.forEach(sp -> {
+			double amount = AonNumberUtils.zeroIfNull(inKindDeductions.getOrDefault(sp.getSalary(), 0d)) + AonNumberUtils.zeroIfNull(sp.getAmount());
+			inKindDeductions.put(sp.getSalary(), amount);
+		});
 		
 		Map<Integer, Map<Integer, Double>> deductions = new HashMap<>();
 		ctx.select()
@@ -865,10 +921,6 @@ public class JooqEnterpriseSalaryBuilder {
 		Map<Integer, Map<String, Map<String, List<ContractData>>>> contractDatas = optContractDatas.orElse(Collections.emptyMap());
 		
 		Map<String, Map<String, EnterprisePayrollEntry>> map = new LinkedHashMap<>();
-		
-		
-		
-		
 		
 		ctx.select()
 		.from(SALARY)
@@ -933,6 +985,7 @@ public class JooqEnterpriseSalaryBuilder {
 			entry.setLiquido(Optional.ofNullable(r.get(SALARY.TOTAL_LIQUID)));
 			entry.setSsEmpr(Optional.ofNullable(r.get(SALARY.TOTAL_ENTERPRISE)));
 			entry.setSsTotal(Optional.ofNullable(entry.getSsEmpr().orElse(0d) + entry.getSsTrab().orElse(0d)));
+			entry.setInKind(Optional.ofNullable(inKindDeductions.getOrDefault(r.get(SALARY.ID), null)));
 			entry.setCosteTotal(
 					Optional.ofNullable(entry.getDevengado().orElse(0d) + entry.getSsEmpr().orElse(0d))
 					);
@@ -956,6 +1009,7 @@ public class JooqEnterpriseSalaryBuilder {
 				ent.setLiquido(sumOptionalThings(ent.getLiquido(), entry.getLiquido()));
 				ent.setSsEmpr(sumOptionalThings(ent.getSsEmpr(), entry.getSsEmpr()));
 				ent.setCosteTotal(sumOptionalThings(ent.getCosteTotal(), entry.getCosteTotal()));
+				ent.setInKind(sumOptionalThings(ent.getInKind(), entry.getInKind()));
 				ent.setSsTotal(sumOptionalThings(ent.getSsTotal(), entry.getSsTotal()));
 				ent.setBonificaciones(sumOptionalThings(ent.getBonificaciones(), entry.getBonificaciones()));
 				ent.setFundae(sumOptionalThings(ent.getFundae(), entry.getFundae()));
@@ -965,9 +1019,8 @@ public class JooqEnterpriseSalaryBuilder {
 				map.get(r.get(WORKPLACE.DESCRIPTION)).put(key, entry);				
 			}
 			
-			
-			
 		});
+		
 		
 		return map;
 	}

@@ -47,6 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -1248,10 +1249,14 @@ public class IdcTest extends AbstractSQLTestCase {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplccc.pdf")) {
 			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
 			});
-
+			
 			marshal(trabajadoresTramos, System.out);
 
+			assertEquals(trabajadoresTramos.getAutorizado(), "00228115");
+
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+			
+			assertBonificacionFormacionContinua763(liquidacion);
 
 			assertEquals("0111", liquidacion.getCcc().getRegimen());
 			assertEquals("01", liquidacion.getCcc().getProvincia());
@@ -1290,6 +1295,14 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	private void assertBonificacionFormacionContinua763(Liquidacion liquidacion) {
+		DatoSolicitado datoSolicitado = 
+		liquidacion.getDatosLiquidacion().getDatoSolicitado().get(0);
+		Objects.equals(datoSolicitado.getCodigo(), "763");
+		Objects.equals(datoSolicitado.getTipoDato(), "C");
+		Objects.equals(datoSolicitado.getIndicadorObligatoriedad(), "P");
+	}
+
 	@Test
 	public void testIdcplcccTrabajadoresTramosI()
 			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
@@ -1303,7 +1316,11 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			marshall(trabajadoresTramos, System.out);
 
+			assertEquals(trabajadoresTramos.getAutorizado(), "00228115");
+
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+
+			assertBonificacionFormacionContinua763(liquidacion);
 
 			assertEquals("0111", liquidacion.getCcc().getRegimen());
 			assertEquals("01", liquidacion.getCcc().getProvincia());
@@ -1423,6 +1440,8 @@ public class IdcTest extends AbstractSQLTestCase {
 
 			marshall(trabajadoresTramos, System.out);
 
+			assertEquals(trabajadoresTramos.getAutorizado(), "00228115");
+
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 
 			assertEquals("0111", liquidacion.getCcc().getRegimen());
@@ -1486,6 +1505,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			});
 
 			marshall(trabajadoresTramos, System.out);
+
+			assertEquals(trabajadoresTramos.getAutorizado(), "00088233");
 
 			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
 

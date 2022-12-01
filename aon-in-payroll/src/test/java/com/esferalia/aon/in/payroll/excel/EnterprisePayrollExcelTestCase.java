@@ -272,6 +272,12 @@ public class EnterprisePayrollExcelTestCase {
 			return employeeId;
 		}
 
+		@Override
+		public Double getInKind() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	}
 	
 	@Test
