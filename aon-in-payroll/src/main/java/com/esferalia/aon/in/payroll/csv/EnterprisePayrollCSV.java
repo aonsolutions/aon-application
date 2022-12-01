@@ -516,6 +516,12 @@ public class EnterprisePayrollCSV {
 			return null;
 		}
 
+		@Override
+		public Double getInKind() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 		
 		
 		
