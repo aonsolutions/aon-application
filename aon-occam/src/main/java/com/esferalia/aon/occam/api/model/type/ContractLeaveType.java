@@ -13,6 +13,7 @@ public enum ContractLeaveType {
 	ACCIDENTE_NO_LABORAL(2, "Accidente no laboral"),
 	ENFERMEDAD_COMUN_CARENCIA(5, "Enfermedad com\u00fan periodo de carencia"),
 	ENFERMEDAD_COMUN_PRESTACION(3,"Enfermedad com\u00fan, prestaci\u00f3n profesional (COVID-19)"),
+	PERIODO_OBSERVACION_EP(5,"Periodo de Observaci\u00f3n por Enfermedad Profesional"),
 	;
 	
 //  TGSS

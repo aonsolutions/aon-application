@@ -458,6 +458,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		causeLowPart.addItem("Accidente no laboral", "6");
 		causeLowPart.addItem("Enfermedad com\u00Fan periodo de carencia", "7");
 		causeLowPart.addItem("Enfermedad com\u00Fan, prestaci\u00F3n profesional (COVID-19)", "8");
+		causeLowPart.addItem("Periodo de Observaci\u00f3n por Enfermedad Profesional", "9");
 		
 		causeHighPart.clear();
 		causeHighPart.addItem("-", "-1");
