@@ -30,9 +30,9 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectHavingStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
-import org.jooq.SelectSeekStep1;
 import org.jooq.SelectSelectStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
@@ -352,17 +352,13 @@ public class TaskDAO {
 	}
 	
 	private static Stream<Task> getStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
-		SelectConditionStep<Record> condition = 
-		selects(getFields(ctx.getDslContext())) 
+		SelectHavingStep<Record> query = selects(getFields(ctx.getDslContext())) 
 		.where(
 			TASK.ID.in( 
-				getTaskIds(ctx, page, perPage,TASK_PROPERTIES.getConditions(filter))
+				getTaskIds(ctx, page, perPage, TASK_PROPERTIES.getConditions(filter))
 			)
-		);
-	
-		SelectSeekStep1<Record, Timestamp> query = condition
-	   .groupBy(TASK.ID, TAG.ID, DOMAIN.ID)
-	   .orderBy(TASK.CREATION_DATE.desc());
+		)
+		.groupBy(TASK.ID, TAG.ID, DOMAIN.ID);
 	
 		System.out.println("getStream "+page+" "+perPage);
 			
@@ -370,23 +366,21 @@ public class TaskDAO {
 		
 		taskMaps.forEach((task, tags) -> tags.forEach(task::addTag) );
 		 
-		return taskMaps.keySet().stream();
+		return taskMaps.keySet().stream().sorted((e1, e2) -> e1.getCreationDate().compareTo(e2.getCreationDate()));
 	}
 	
 	private static Stream<Task> getParentOrChildStream(AONContext ctx, TaskFilter filter, Optional<Integer> page, Optional<Integer> perPage){	
-		SelectConditionStep<Record> condition = 
-		selects( getFields(ctx.getDslContext()) )
+		SelectHavingStep<Record> query = selects( getFields(ctx.getDslContext()) )
 		.where(
 			TASK.ID.in( 
 				getTaskIds(ctx, page, perPage, whereParentOrChild(ctx, filter))
 			)
-		);
-
-	   SelectSeekStep1<Record, Timestamp> query = condition
-       .groupBy(TASK.ID, TAG.ID, DOMAIN.ID)
-	   .orderBy(TASK.CREATION_DATE.desc());
+		)
+		.groupBy(TASK.ID, TAG.ID, DOMAIN.ID);
 	   
 		System.out.println("getParentOrChildStream "+page+" "+perPage);
+		
+		System.out.println(query.getSQL());
 		
 		Map<Task, List<Tag>> taskMaps = query.fetchGroups(new TaskFiller()::apply, new TagFiller()::apply);
 		
@@ -396,7 +390,7 @@ public class TaskDAO {
 		
 		setParent(ctx, tasks);
 
-		return tasks.stream();
+		return taskMaps.keySet().stream().sorted((e1, e2) -> e1.getCreationDate().compareTo(e2.getCreationDate()));
 	}
 	
 	private static SelectSelectStep<Record> getFields(DSLContext ctx) {
