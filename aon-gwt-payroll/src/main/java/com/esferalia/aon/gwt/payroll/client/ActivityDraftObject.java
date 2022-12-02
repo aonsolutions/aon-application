@@ -3,14 +3,15 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.payroll.shared.Activity;
-import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
-import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -18,77 +19,74 @@ public class ActivityDraftObject extends AbstractDraftObject {
 	
 	// ------------------------------------------- Variables
 	
-	private ActivityInfo activityInfo;
+	private Activity activity;
 	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-	private Integer activityId;
+	private Map<Integer, String> cnae2009;
+	private Integer domain;
 		
 	// ------------------------------------------- Constructor	
 	
-	public ActivityDraftObject(Activity activity) {
-		this.activityId = activity.getId();
+	public ActivityDraftObject(Integer activityId) {
+		this.activity = new Activity();
+		this.activity.setId(activityId);
+		this.cnae2009 = new HashMap<>();
 	}
 	
 	// ------------------------------------------- Getter Methods
 	
+	public Integer getDomain() {
+		return this.domain;
+	}
+	
 	public String getActivityDescription() {
-		return this.activityInfo.getDescription();
+		return this.activity.getDescription();
 	}
 	
 	public String getActivityCNAE2009() {
-		return this.activityInfo.getCnae2009Code() + " - " + this.activityInfo.getCnae2009Title();
-	}
-	
-	public Map<String, String> getAllCNAE2009() {
-		return this.activityInfo.getAllCNAE2009();
-	}
-	
-	public String getActivityRegime() {
-		return this.activityInfo.getRegime();
+		return this.activity.getCnaeCode() + " - " + this.activity.getCnaeDescription();
 	}
 	
 	public Date getActivityStartDate() {
-		return this.activityInfo.getStartDate();
+		return this.activity.getStartDate();
 	}
 	
 	public Date getActivityEndDate() {
-		return this.activityInfo.getEndDate();
+		return this.activity.getEndDate();
 	}
 	
-	public Boolean getActivityActive() {
-		return this.activityInfo.getActive();
+	public Boolean getActivityPrincipal() {
+		return this.activity.isPrincipal();
 	}
 	
-	public Map<Integer, CCCInfo> getCCCs() {
-		return this.activityInfo.getCccs();
-	}
-	
-	public Map<Integer, CCCInfo> getDeleteCCCs() {
-		return this.activityInfo.getDeleteCccs();
-	}
-
-	public void deleteCCC(Integer cccId) {
-		this.activityInfo.deleteCCC(cccId);
-	}
-	
-	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone, String geozoneCode, Boolean useByContracts, Boolean useByCras) {
-		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozone, geozoneCode, useByContracts, useByCras);
-	}
-	
-	public void insertCCC(Integer cccId, String ccc, String cccRegimeCode, String cccAccount, Byte type, String geozone, String geozoneCode) {
-		this.activityInfo.insertCCC(cccId, ccc, cccRegimeCode, cccAccount, type, geozone, geozoneCode);
+	public List<EnterpriseCCC> getCCCs() {
+		return this.activity.getCccs();
 	}
 	
 	// ------------------------------------------- DataBase Methods
 
-	public void initializeActivity(Consumer<ActivityInfo> success, Consumer<Throwable> failure) {
-		enterprisesService.getActivityInfoDataBase(this.activityId, new AsyncCallback<ActivityInfo>() {
+	public void initializeActivity(Consumer<Activity> success, Consumer<Throwable> failure) {
+		enterprisesService.getCNAE2009(new AsyncCallback<Map<Integer,String>>() {
 			
 			@Override
-			public void onSuccess(ActivityInfo result) {
-				activityInfo = result;
-				success.accept(result);
+			public void onSuccess(Map<Integer, String> result) {
+				cnae2009 = result;
+				
+				enterprisesService.getActivity(activity.getId(), new AsyncCallback<Activity>() {
+					
+					@Override
+					public void onSuccess(Activity result) {
+						domain = result.getDomain();
+						activity = result;
+						success.accept(result);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						failure.accept(caught);
+					}
+				});
 			}
-
+			
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
@@ -96,17 +94,17 @@ public class ActivityDraftObject extends AbstractDraftObject {
 		});
 	}
 
-	public void updateActivity(Consumer<ActivityInfo> success, Consumer<Throwable> failure){
-		enterprisesService.updateActivityInfoDataBase(this.activityInfo, new AsyncCallback<ActivityInfo>() {
-			
-			@Override
-			public void onSuccess(ActivityInfo result) {
-				success.accept(result);
-			}
+	public void updateActivity(Consumer<Void> success, Consumer<Throwable> failure){
+		enterprisesService.saveActivity(activity, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
 			}
 		});
 	}
@@ -131,52 +129,89 @@ public class ActivityDraftObject extends AbstractDraftObject {
 	}
 	
 	// ------------------------------------------------- SET METHODS -------------------------------------------------
+	
 	public void setActivityDescription(String description) {
-		this.activityInfo.setDescription(description);
+		this.activity.setDescription(description);
 	}
 	
-	public void setActivityCNAE2009(String cnae2009) {
-		String cnae2009Code = cnae2009.split(" -")[0];
-		String cnae2009Title = cnae2009.split("- ")[1];
+	public void setActivityCNAE2009(Entry<Integer, String> cnae2009Entry) {
+		Integer cnae = cnae2009Entry.getKey();
+		String cnae2009Code = cnae2009Entry.getValue().split(" -")[0];
+		String cnae2009Title = cnae2009Entry.getValue().split("- ")[1];
 		
-		this.activityInfo.setCnae2009Code(cnae2009Code);
-		this.activityInfo.setCnae2009Title(cnae2009Title);
+		this.activity.setCnae(cnae);
+		this.activity.setCnaeCode(cnae2009Code);
+		this.activity.setCnaeDescription(cnae2009Title);
 	}
 	
 	public void setActivityStartDate(Date startDate) {
-		this.activityInfo.setStartDate(startDate);
+		this.activity.setStartDate(startDate);
 	}
 	
 	public void setActivityEndDate(Date endDate) {
-		this.activityInfo.setEndDate(endDate);
+		this.activity.setEndDate(endDate);
 	}
 	
-	public void setActivityActive(Boolean active) {
-		this.activityInfo.setActive(active);
+	public void setActivityIsPrincipal(Boolean isPrincipal) {
+		this.activity.setPrincipal(isPrincipal);
 	}
 
-	public Pair<String, String> getPrincipalAccount() {
-		Pair<String, String> completeCCC = null;
-		for(CCCInfo cccInfo : activityInfo.getCccs().values()) {
-			if(cccInfo.getType() == (byte)0) {
-				completeCCC = new Pair<>(cccInfo.getCccRegimeCode(), cccInfo.getCcc());
-			}
-		}
-		
-		// If null, get first
-		if(null == completeCCC) {
-			ArrayList<CCCInfo> cccInfoList = new ArrayList<>(activityInfo.getCccs().values());
-			CCCInfo cccInfo = cccInfoList.get(0);
-			completeCCC = new Pair<>(cccInfo.getCccRegimeCode(), cccInfo.getCcc());
-		}
-			
-		return completeCCC;
-	}
-	
 	public Set<Entry<Integer, String>> getActivities(){
 		HashMap<Integer, String> activities = new HashMap<>();
-		activities.put(activityInfo.getId(), activityInfo.getDescription());
+		activities.put(activity.getId(), activity.getDescription());
 		return activities.entrySet();
+	}
+	
+	public Map<Integer, String> getAllCNAE2009() {
+		return this.cnae2009;
+	}
+
+	public void deleteCCC(Integer cccId) {
+		Optional<EnterpriseCCC> ccc = this.activity.getCccs().stream().filter(cccIt -> cccIt.getId().equals(cccId)).findFirst();
+		if(ccc.isPresent()) ccc.get().setDeleted(true);
+	}
+	
+	public void insertCCC(EnterpriseCCC ccc) {
+		if(ccc.getId() == null) this.activity.getCccs().add(ccc);
+		else {
+			this.activity.getCccs().removeIf(cccIt -> cccIt.getId().equals(ccc.getId()));
+			this.activity.getCccs().add(ccc);
+		}
+	}
+	
+	public Pair<String, String> getPrincipalAccount() {
+		Optional<EnterpriseCCC> principalAccount = activity.getCccs().stream().filter(ccc -> ccc.getType() == (byte)0).findFirst();
+		if(principalAccount.isPresent())
+			return new Pair<>(getCCCRegimeCode(principalAccount.get().getType()), principalAccount.get().getCcc());
+		else if(!activity.getCccs().isEmpty()){
+			EnterpriseCCC ccc = activity.getCccs().get(0);
+			return new Pair<>(getCCCRegimeCode(ccc.getType()), ccc.getCcc());
+		} else return null;
+	}
+	
+	private static String getCCCRegimeCode(Byte cccRegime) {
+		switch (cccRegime) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
+		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
+			return "0163";
+		case 8:
+			return "0112";
+		default:
+			return "0111";
+		}
 	}
 
 }

@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -19,7 +20,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
@@ -48,8 +48,8 @@ public abstract class Activity extends ResizeComposite {
 		}
 
 		@Override
-		protected void onInsertCCC(Integer cccId, int activityId, byte cccRegime, String cccRegimeCode, String account, String province, String provinceCode) {
-			Activity.this.onInsertCCC(cccId, activityId, cccRegime, cccRegimeCode, account, province, provinceCode);
+		protected void onInsertCCC(EnterpriseCCC ccc) {
+			Activity.this.onInsertCCC(ccc);
 		}
 
 		@Override
@@ -102,9 +102,6 @@ public abstract class Activity extends ResizeComposite {
 	
 	@UiField
 	DateBoxEx endDate;
-	
-	@UiField
-	Label activityRegime;
 	
 	@UiField
 	CheckBox activityActive;
@@ -183,7 +180,7 @@ public abstract class Activity extends ResizeComposite {
 	public abstract void onInsertRow();
 	public abstract void onInsertRows();
 	public abstract void onDeleteCCC(Integer cccId);
-	public abstract void onInsertCCC(Integer cccId, int activityId, byte cccRegime, String cccRegimeCode, String account, String province, String provinceCode);
+	public abstract void onInsertCCC(EnterpriseCCC ccc);
 	public abstract Set<Entry<Integer, String>> getActivities();
 
 	public abstract void fireWarningMessage(Map<String, String> warningMap);
@@ -194,8 +191,8 @@ public abstract class Activity extends ResizeComposite {
 		cccWidget.resetPreview();
 	}
 	
-	public void addNewCCC(Integer newId) {
-		cccWidget.insertNewRow(newId);
+	public void addNewCCC() {
+		cccWidget.insertNewRow();
 	}
 	
 	public void hideActivityColumn() {

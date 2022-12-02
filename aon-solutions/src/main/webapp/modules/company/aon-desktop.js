@@ -264,12 +264,6 @@ export class AonDesktop extends AonElement {
 		div.style.marginRight = '100px';
 		aonDesktop.setContent(div);
 
-		// if(!this.isBeta()){
-		// 	let divSlide = this.createElement(TAG.DIV);
-		// 	divSlide.appendChild(new AonStat());
-		// 	div.appendChild(divSlide);
-		// }
-
 		div.appendChild(this.buildTitle(MSG.AVAILABLE.toUpperCase()));
 
 		let ul = this.createElement(TAG.UL);
@@ -294,7 +288,7 @@ export class AonDesktop extends AonElement {
 			}
 	
 			this.openFirstApp(this.getDur());
-  		} else {
+		} else {
 			let li = this.createElement(TAG.LI);
 			li.classList.add(CSS.AON_LIST_GROUP_ITEM);
 			li.classList.add(CSS.AON_APP_LI);

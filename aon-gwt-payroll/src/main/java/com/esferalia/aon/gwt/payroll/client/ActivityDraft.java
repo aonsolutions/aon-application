@@ -5,15 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
@@ -21,12 +20,10 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -45,7 +42,9 @@ public class ActivityDraft extends Composite{
 
 		@Override
 		public void onActivityCNAE2009Change() {
-			activityDraftObject.setActivityCNAE2009(activityCNAE2009.getValue());
+			String cnae2009Value = activityCNAE2009.getValue();
+			Optional<Entry<Integer, String>> cnae2009Opt = activityDraftObject.getAllCNAE2009().entrySet().stream().filter(entry -> AonStringUtils.equalsIgnoreCase(entry.getValue(), cnae2009Value)).findAny();
+			if(cnae2009Opt.isPresent()) activityDraftObject.setActivityCNAE2009(cnae2009Opt.get());
 		}
 
 		@Override
@@ -60,7 +59,7 @@ public class ActivityDraft extends Composite{
 
 		@Override
 		public void onActivityActiveChange() {
-			activityDraftObject.setActivityActive(activityActive.getValue());
+			activityDraftObject.setActivityIsPrincipal(activityActive.getValue());
 		}
 		
 		@Override
@@ -70,10 +69,7 @@ public class ActivityDraft extends Composite{
 		
 		@Override
 		public void onInsertRows() {
-			for(CCCInfo cccInfo : activityDraftObject.getCCCs().values()) {
-				this.cccWidget.insertRow(cccInfo);
-			}
-			
+			activityDraftObject.getCCCs().forEach(ccc -> this.cccWidget.insertRow(ccc));
 			activity.hideActivityColumn();
 		}
 
@@ -83,8 +79,8 @@ public class ActivityDraft extends Composite{
 		}
 
 		@Override
-		public void onInsertCCC(Integer cccId, int activityId, byte cccRegime, String cccRegimeCode, String account, String province, String provinceCode) {
-			activityDraftObject.insertCCC(cccId, account, cccRegimeCode, account, cccRegime, province, provinceCode, false, false);
+		public void onInsertCCC(EnterpriseCCC ccc) {
+			activityDraftObject.insertCCC(ccc);
 		}
 
 		@Override
@@ -159,6 +155,7 @@ public class ActivityDraft extends Composite{
 				r -> {
 					initSuggestBox();
 					fillActivityInfo();
+					activity.cccWidget.setDomain(activityDraftObject.getDomain());
 					activity.cccWidget.resetPreview();
 					activity.onInsertRows();
 				}, t -> {}
@@ -167,8 +164,8 @@ public class ActivityDraft extends Composite{
 	
 	private void initSuggestBox() {
 		List<String> cnae2009Suggest = new ArrayList<>();
-		for(Entry<String, String> entry : activityDraftObject.getAllCNAE2009().entrySet())
-			cnae2009Suggest.add(entry.getKey() + " - " + entry.getValue());
+		for(Entry<Integer, String> entry : activityDraftObject.getAllCNAE2009().entrySet())
+			cnae2009Suggest.add(entry.getValue());
 	
 		MultiWordSuggestOracle orclCNAE2009 = (MultiWordSuggestOracle) activity.activityCNAE2009.getSuggestOracle();
 		orclCNAE2009.addAll(cnae2009Suggest);
@@ -178,10 +175,9 @@ public class ActivityDraft extends Composite{
 	private void fillActivityInfo() {
 		activity.activityDescription.setValue(activityDraftObject.getActivityDescription());
 		activity.activityCNAE2009.setValue(activityDraftObject.getActivityCNAE2009());
-		activity.activityRegime.setText(activityDraftObject.getActivityRegime());
 		activity.startDate.setValue(activityDraftObject.getActivityStartDate());
 		activity.endDate.setValue(activityDraftObject.getActivityEndDate());
-		activity.activityActive.setValue(activityDraftObject.getActivityActive());
+		activity.activityActive.setValue(activityDraftObject.getActivityPrincipal());
 	}
 	
 	// ---------------------------------------------- Toolbar
@@ -202,41 +198,7 @@ public class ActivityDraft extends Composite{
 	// ---------------------------------------------- Toolbar.Methods
 
 	private void onAccept() {
-		if(checkIfSaveIsPossible()){
-			Map<Integer, CCCInfo> deleteCCCs = activityDraftObject.getDeleteCCCs();
-			if(!deleteCCCs.isEmpty()) {
-				boolean hasContractsOrCras = hasContractOrCra(deleteCCCs);
-				if(hasContractsOrCras) {
-					activityDraftObject.getDeleteCCCMessage(deleteCCCs.keySet(),
-							message -> {
-								AonDialog dialog = new AonDialog("BORRADO", new HTML(message));
-								dialog.confirm(new AonAcceptDialogCallback() {
-									
-									@Override
-									public void onCancel() {
-										initializeActivity();
-									}
-									
-									@Override
-									public void onAccept() {
-										updateActivity();
-									}
-								});
-							},
-							f -> {});
-				} else 
-					updateActivity();
-			} else
-				updateActivity();
-			
-		}
-	}
-	
-	private boolean hasContractOrCra(Map<Integer, CCCInfo> deleteCCCs) {
-		for(CCCInfo cccInfo : deleteCCCs.values())
-			if(cccInfo.isUseByContracts() || cccInfo.isUseByCRAs())
-				return true;
-		return false;
+		if(checkIfSaveIsPossible()) updateActivity();
 	}
 
 	private void updateActivity() {

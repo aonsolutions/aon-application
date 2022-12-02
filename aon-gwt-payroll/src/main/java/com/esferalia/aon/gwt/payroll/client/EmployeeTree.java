@@ -1407,6 +1407,12 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						}
 					});
 		}
+		
+		@Override
+		protected void setupDialog(CretaRequestDialog<Employee> dialog) {
+			super.setupDialog(dialog);
+			dialog.setAuthorized(AonStringUtils.defaultIfBlank(MainCreta.getAuthorized(), "00000000"));
+		}
 	}
 
 	private class CCCContextMenu extends ContextMenu {
@@ -2933,7 +2939,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	@Override
 	public void onActivitySelected(Activity activity) {
-		ActivityDraftObject activityDraftObject = new ActivityDraftObject(activity);
+		ActivityDraftObject activityDraftObject = new ActivityDraftObject(activity.getId());
 
 		employeeDetail.setWidget(getActivityDraft());
 		getActivityDraft().setActivityDraftObject(activityDraftObject);

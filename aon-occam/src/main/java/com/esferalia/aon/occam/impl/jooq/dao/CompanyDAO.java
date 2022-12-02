@@ -91,6 +91,7 @@ public class CompanyDAO {
  		
  		@Override public Property<Byte> getUserSharedProperty() {return new FilterDAO.PropertyDAO<>(USER.SHARED);}
  		@Override public Property<Byte> getDomainTypeProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.TYPE);}
+ 		@Override public Property<Byte> getDomainActiveProperty() {return new FilterDAO.PropertyDAO<>(Domain.DOMAIN.ACTIVE);}
 	}
 	
 	public static class CompanyFiller implements Function<Record, Company> {
@@ -406,6 +407,9 @@ public class CompanyDAO {
 	public static Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, CompanyFilter filter, Integer page, Integer perPage){
 		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
 		
+		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
+		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
+		
 		SelectSeekStep1<Record, String> query = ctx.getDslContext()
 		.select(COMPANY.fields())
 		.select(DOMAIN.fields())
@@ -421,7 +425,20 @@ public class CompanyDAO {
 		.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.eq(SCOPE.ID))
 		.leftOuterJoin(APP_PARAM).on(DOMAIN.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
 		.leftOuterJoin(parent).on(DOMAIN.PARENT.eq(parent.ID))
-		.where(whereCondition(ctx, auth, filter))
+		.where(COMPANY_PROPERTIES.getConditions(filter))
+		.and(
+			USER.AUTH.eq(auth)
+			.and(
+				DOMAIN.ID.in(domains)
+				.or(
+					DOMAIN.PARENT.in(domains)
+					.and(
+						DOMAIN.SCOPE.isNull()
+						.or(DOMAIN.SCOPE.in(userScopes))
+					)
+				)
+			)
+		)
 		.orderBy(REGISTRY.NAME);
 			
 		if(page!=null && perPage!=null) {
@@ -495,30 +512,6 @@ public class CompanyDAO {
 				.orElse(null);
 	}
 	
-	private static Condition whereCondition(AONContext ctx, byte[] auth, CompanyFilter filter) {
-		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
-		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
-		
-		Condition combined = DSL.trueCondition();
-		for (Condition condition : COMPANY_PROPERTIES.getConditions(filter)) {			  
-			combined = combined.and(condition);
-		}
-
-		return combined.and(
-			USER.AUTH.eq(auth)
-			.and(
-				DOMAIN.ID.in(domains)
-				.or(
-					DOMAIN.PARENT.in(domains)
-					.and(
-						DOMAIN.SCOPE.isNull()
-						.or(DOMAIN.SCOPE.in(userScopes))
-					)
-				)
-			)
-		);
-	}
-
 	public static Stream<InvestAsset> getInvestAssets(AONContext ctx, int domainId, Date atDate) {
 		return ctx.getDslContext()
 				.select()

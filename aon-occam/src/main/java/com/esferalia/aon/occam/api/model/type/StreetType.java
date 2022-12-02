@@ -426,7 +426,7 @@ public enum StreetType {
 	public static StreetType getForAeatCode( String aeatCode, AonLanguage lenguage ) {
 		if (aeatCode != null) {
 			for (StreetType st : StreetType.values()) {
-				if (st.getAeatCode().equals(aeatCode) && st.getLanguage().equals(lenguage)){
+				if ((st.getAeatCode() != null && st.getAeatCode().equals(aeatCode)) && (st.getLanguage() != null && st.getLanguage().equals(lenguage))){
 					return st;
 				}
 			}

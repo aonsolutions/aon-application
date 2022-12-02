@@ -1759,7 +1759,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 
 	@Override
-	public Map<String, String> getCNAE2009(String domain) {
+	public Map<Integer, String> getCNAE2009(String domain) {
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domain);
@@ -3349,10 +3349,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
 			
-			return JooqComunicaEnterpriseSettings.getComunicaEnterpriseSettings(connection, domainId, userId);
+			ComunicaEnterpriseSettings comunicaEnterpriseSettings = JooqComunicaEnterpriseSettings.getComunicaEnterpriseSettings(connection, domainId, userId);
+			comunicaEnterpriseSettings.setActivities(PAYROLL.getActivities(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId)));
 			
+			return comunicaEnterpriseSettings;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -3366,8 +3368,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
 			JooqComunicaEnterpriseSettings.setComunicaEnterpriseSettings(connection, domainId, userId, comunicaEnterpriseSettings);
+			PAYROLL.saveActivities(domainName, domainId, userLogin, comunicaEnterpriseSettings.getActivities());
 			
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -3967,11 +3970,59 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	// ------------------------------------------------ EnterpriseActivity (API)
+	
+	@Override
+	public com.esferalia.aon.occam.api.model.payroll.Activity getActivity(String domainName, String userLogin,Integer id) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return PAYROLL.getActivity(domainName, domainId, userLogin, f -> f.getIdProperty().eq(id));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void saveActivity(String domainName, String userLogin, com.esferalia.aon.occam.api.model.payroll.Activity activity) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			PAYROLL.saveActivity(domainName, domainId, userLogin, activity);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public List<com.esferalia.aon.occam.api.model.payroll.Activity> getActivities(String domainName,
+			String userLogin) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return PAYROLL.getActivities(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void saveActivities(String domainName, String userLogin,
+			List<com.esferalia.aon.occam.api.model.payroll.Activity> activities) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			PAYROLL.saveActivities(domainName, domainId, userLogin, activities);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
 
 	// ------------------------------------------------ Partes IT
 
 	@Override
-	public void communicateITPart(String domainName, String userLogin, ITEmployee empIt, IT it, ITPart part)  throws IllegalArgumentException {
+	public void communicateITPart(String domainName, String userLogin, ITEmployee empIt, IT it, ITPart part) throws IllegalArgumentException {
 		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -4023,7 +4074,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			if(!messages.isEmpty()) {
 				String msg = messages.stream().filter(m-> m!=null && !m.equals("success")).collect(Collectors.joining(", "));
 				if(!msg.isEmpty()) {
-					throw new IllegalArgumentException(msg);
+					throw new SegSocialException(msg);
 				}
 			}
 		} catch (Exception e) {
@@ -4102,7 +4153,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	    	if(!messages.isEmpty()) {
 				String msg = messages.stream().filter(m-> m!=null && !m.equals("success")).collect(Collectors.joining(", "));
 				if(!msg.isEmpty()) {
-					throw new IllegalArgumentException(msg);
+					throw new SegSocialException(msg);
 				}
 			}
 		} catch (Exception e) {
@@ -4124,7 +4175,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	private static void parseITData(EmployeeIT employeeIT, IT it) {
-		
 		if(it.getQuoteDays()!=null) {
 			employeeIT.setQuoteDays(it.getQuoteDays());
 		}
@@ -4144,10 +4194,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		if(it.getDailyCGPBase()!=null) {
 			employeeIT.setDailyCgpBase(it.getDailyCGPBase());
 		}
-	
-//		if(it.getDailyCGCBase()!=null) {
-//			employeeIT.setRegulationBase(it.getDailyCGCBase());
-//		}
 	}
 	
 	private static EmployeeITPart parseITPart(ITPart part) {

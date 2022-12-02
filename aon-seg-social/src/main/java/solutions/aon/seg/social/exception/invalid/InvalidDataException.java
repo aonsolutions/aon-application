@@ -37,7 +37,7 @@ public class InvalidDataException extends SegSocialException{
 		case 3053:		throw new InvalidDateException(msg);
 		case 7:			throw new WrongValueException(msg);
 		case 2204:		throw new WrongIdentifierException(msg);
-		case 3010:      throw new EmployeeNotRegisteredException("El empleado no está en situación de alta");
+		case 3010:      throw new EmployeeNotRegisteredException("El empleado no est\u00e1 en situaci\u00f3n de alta");
 		default:
 			if (msg != null) {
 				if (msg.toUpperCase().contains("SERVICIO") || msg.toUpperCase().contains("NO SE ENCUENTRA DISPONIBLE")) {

@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
 import com.esferalia.aon.occam.api.model.EmployeeITPart;
+import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailStatus;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -510,7 +511,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		
 		// Check if exist IT
 		this.itCopy = copyIT(it);
-		this.it = copyIT(it);
+		this.it = it;
 		checkAndPaintIT();
 		
 		// Check type of part
@@ -910,14 +911,14 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
 	@UiHandler("directPayDate")
-	public void onDirectPayDateChange(ValueChangeEvent<Date> event) {
+	public void onDirectPayDateChange(ValueChangeEvent<Date> ev) {
 		checkAndCreateIT();
 		
 		this.it.setDirectPayDate(directPayDate.getValue());
 	}
 	
 	@UiHandler("raggedList")
-	public void onRaggedListChange(ChangeEvent event) {
+	public void onRaggedListChange(ChangeEvent ev) {
 		checkAndCreateIT();
 		
 		this.it.setParent(Integer.parseInt(raggedList.getSelectedValue()));
@@ -935,34 +936,34 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
 	@UiHandler("applicantTypeList")
-	public void onApplicantTypeListChange(ChangeEvent event) {
+	public void onApplicantTypeListChange(ChangeEvent ev) {
 		createApplicantReasonList();
 		this.it.setMaternityType(Byte.parseByte(applicantTypeList.getSelectedValue()));
 	}
 	
 	@UiHandler("applicantReasonList")
-	public void onApplicantReasonListChange(ChangeEvent event) {
+	public void onApplicantReasonListChange(ChangeEvent ev) {
 		LOGGER.info(applicantReasonList.getSelectedItemText()+" "+applicantReasonList.getSelectedValue());
 		this.it.setMaternityReason(Byte.parseByte(applicantReasonList.getSelectedValue()));
 	}
 	
 	@UiHandler("baseRDBx")
-	public void onBaseRDBxChange(ValueChangeEvent<Double> event) {
-		this.it.setRegulationBase(event.getValue());
-		this.it.setDailyCGCBase(event.getValue());
-		this.it.setDailyCGPBase(event.getValue());
+	public void onBaseRDBxChange(ValueChangeEvent<Double> ev) {
+		this.it.setRegulationBase(ev.getValue());
+		this.it.setDailyCGCBase(ev.getValue());
+		this.it.setDailyCGPBase(ev.getValue());
 	}
 	
 	@UiHandler("baseRDBxN")
-	public void onBaseRDBxNChange(ValueChangeEvent<Double> event) {
-		this.it.setRegulationBase(event.getValue());
-		this.it.setDailyCGCBase(event.getValue());
-		this.it.setDailyCGPBase(event.getValue());
+	public void onBaseRDBxNChange(ValueChangeEvent<Double> ev) {
+		this.it.setRegulationBase(ev.getValue());
+		this.it.setDailyCGCBase(ev.getValue());
+		this.it.setDailyCGPBase(ev.getValue());
 	}
 	
 	@UiHandler("partialityCoefDBx")
-	public void onPartialityCoefDBxChange(ValueChangeEvent<Double> event) {
-		this.it.setPartialityCoef(event.getValue());
+	public void onPartialityCoefDBxChange(ValueChangeEvent<Double> ev) {
+		this.it.setPartialityCoef(ev.getValue());
 	}
 	
 	// --------------------------------------------------- UiHandlers.Methods
@@ -1084,17 +1085,18 @@ public abstract class ITDialog extends AonCustomDialog {
 		if(this.it.getITParts().isEmpty()) {
 			List<ITPart> itParts = new ArrayList<>();
 			itParts.add( 
-					new ITPart()
-					.setType((byte) 2) // ALTA
-					.setCollegeNumber(collegiateNumberITPart.getValue())
-					.setCias(ciasITPart.getValue())
+				new ITPart()
+				.setType((byte) 2) // ALTA
+				.setCollegeNumber(collegiateNumberITPart.getValue())
+				.setCias(ciasITPart.getValue())
 			);
 			this.it.setITParts(itParts);
 		} else {
 			boolean added = false;
 			for(ITPart itPart : this.it.getITParts()) {
-				if(itPart.getType() == (byte) 2) 
-					added = true;
+				if(itPart.getType() == (byte) 2) {				    
+				    added = true;
+				}
 			}
 			if(!added) {
 				ITPart itPart = new ITPart();
@@ -1139,8 +1141,9 @@ public abstract class ITDialog extends AonCustomDialog {
 			this.it.setITParts(itParts);
 		} else {
 			for(ITPart itPart : this.it.getITParts()) {
-				if(itPart.getType() == (byte) 0 || itPart.getType() == (byte) 2) 
-					itPart.setCias(ciasLowPart);
+				if(itPart.getType() == (byte) 0 || itPart.getType() == (byte) 2) {				    
+				    itPart.setCias(ciasLowPart);
+				}
 			}
 		}
 	}
@@ -1227,10 +1230,11 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
 	private void calculateScrollPanelHeight() {
+	    int rows = confirmationPartDataTable.getRowCount();
 		Integer height = 100;
 		Integer extra = 30;
-		int rows = confirmationPartDataTable.getRowCount();
 		Integer newHeight = 0;
+		
 		if(rows < 4) {
 			int mod = rows%4;
 			newHeight = mod*extra+extra;
@@ -1243,8 +1247,9 @@ public abstract class ITDialog extends AonCustomDialog {
 				newHeight = 220;
 		}
 		
-		if(newHeight > 100)
-			newHeight = 95;
+		if(newHeight > 100) {		    
+		    newHeight = 95;
+		}
 		
 		scrollPanel.setHeight(newHeight + "px");
 	}
@@ -1532,19 +1537,16 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
 	private void onShowCertitificateIT(ClickEvent event) {
-		if(null != this.it.getId())
-			onShowCertitificateIT(it);
+		if(null != this.it.getId()) {		    
+		    onShowCertitificateIT(it);
+		}
 		
 		hide();
 	}
 	
 	private void onListIT(ClickEvent event) {
 		// Check type of part
-		if(this.itDialogObject.getEmployeeStatus()) {
-			newIT.setVisible(true);
-		} else {
-			newIT.setVisible(false);
-		}
+		newIT.setVisible(this.itDialogObject.getEmployeeStatus());
 		
 		backListIT.setVisible(true);
 		listIT.setVisible(false);
@@ -1605,17 +1607,15 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
 	//--------------COMMUNICATE IT PART
-	
 	private void printBtnCommunicate(){
 		for(ITPart part : it.getITParts()) {			
 			LOGGER.info("PART: "+part.toString());
 		}
 		
-		if(itDialogObject!=null) {
-			//---ENTERPRISE DATA
+		if(itDialogObject!=null) {    //---ENTERPRISE DATA
 			String completeCcc =  itDialogObject.getContractInfo().getCompleteCCC();
-			if(completeCcc!=null) {
 			
+			if(completeCcc!=null) {
 				Optional<ITPart> bjOptional = this.itDialogObject.getITBaja(it);
 				
 				bjOptional.ifPresent(part-> 
@@ -1729,7 +1729,6 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 	
 	// --------------------------------------------------- NormalizeIT.Methods
-	
 	protected void normalizeITToSave() {
 		if((byte) 1 == Byte.parseByte(causeLowPart.getSelectedValue())) {
 			Date realStartDate = DateUtils.copyDateOnly(this.it.getStartDate());
@@ -1757,7 +1756,6 @@ public abstract class ITDialog extends AonCustomDialog {
 
 	
 	// --------------------------------------------------- Footer
-	
 	private void createFooterButtonsCommunicate() {
 		HTMLPanel panel = new HTMLPanel("");
 		panel.setStyleName(style.buttonsPanel());
@@ -2024,14 +2022,22 @@ public abstract class ITDialog extends AonCustomDialog {
 		panel.add(new Label(itPart.getConfirmOrderNumber().toString()));
 	}
 	
+	protected void changeStatus(ContractLeaveDetailStatus status) {
+        for (ITPart itPart: this.it.getITParts()) {
+            if(itPart.getId().equals(itPartTmp.getId())) {
+                itPart.setStatus(status.value());
+                break;
+            }
+        }
+    }
+	
 	protected void changeStatusProcessed() {
-		for (ITPart itPart: this.it.getITParts()) {
-			if(itPart.getId().equals(itPartTmp.getId())) {
-				itPart.setStatus( (byte)3);
-				break;
-			}
-		}
+	    changeStatus(ContractLeaveDetailStatus.PROCESSED);
 	}
+	
+    protected void changeStatusPending() {
+        changeStatus(ContractLeaveDetailStatus.PENDING);
+    }
 	
 	private void getTramos() {
 		tramos.clear();
@@ -2152,25 +2158,19 @@ public abstract class ITDialog extends AonCustomDialog {
 	}
 
     private void sendItPart() {
-		for (ITPart itPart: this.it.getITParts()) {
-			if(itPart.getId().equals(itPartTmp.getId())) {
-				itPart.setStatus( (byte)3);
-				break;
-			}
-		}
-			
+        changeStatusProcessed();
 		onCommunicateITPart(it, itPartTmp);
 	}
 
 	
 	// --------------------------------------------------- Abstract Methods
-	
 	protected abstract void onShowCertitificateIT(IT it);
+	
 	protected abstract void onDelete(IT it);
 	
 	protected abstract void onCommunicateITPart(IT it, ITPart itPart);
+	
 	protected abstract void onRemoveITPartTGSS(ItNotExist ItNotExist);
 	
 	protected abstract void onAccept();
-	
 }
