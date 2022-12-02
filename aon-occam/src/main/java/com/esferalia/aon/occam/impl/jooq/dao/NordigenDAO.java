@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 import org.jooq.AggregateFunction;
 import org.jooq.InsertValuesStep11;
 import org.jooq.Record2;
+import org.jooq.exception.NoDataFoundException;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
@@ -21,7 +22,6 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.finance.BankStatement;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankAccount;
 import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenBankStatement;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
@@ -36,7 +36,6 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.AonUtils;
 import com.esferalia.aon.watson.util.Pair;
 
 public class NordigenDAO {
@@ -89,6 +88,8 @@ public class NordigenDAO {
 			if (date != null) {
 				return new Date(date.getTime());
 			}
+		} catch (NoDataFoundException e) {			
+			return null;
 		}
 		return null;
 	}
@@ -110,18 +111,20 @@ public class NordigenDAO {
 			
 			if (id == null || id.isEmpty()) {
 				return null;
-			} else
-				return new Pair<>(id, utilDate);
+			} else {
+				return new Pair<>(id, utilDate);				
 			}
+		} catch (NoDataFoundException e) {
+			return null;
+		}
 		
 	}
 	
-	public static Date getLastOperationDateDB(Domain domain, String login, Integer rbankId) {
-		
+	public static Date getLastOperationDateDB(Domain domain, String login, Integer rbankId) {		
+		Date lastOperationDate = null;
 		try (CloseableAONContext aonContext = AONContext.getAONContext(domain, login)) {
 			Pair<String, Date> max = getMaxMovementIdAndDate(domain, login, rbankId);
 			String maxId = null;
-			Date lastOperationDate = null;
 			if (max == null) {
 				java.sql.Date date = (java.sql.Date) aonContext.getDslContext()
 						.select(DSL.max(BANK_STATEMENT.OPERATION_DATE).as("date"))
@@ -143,18 +146,23 @@ public class NordigenDAO {
 			if (maxId == null && lastOperationDate == null) {
 				lastOperationDate = cleanDate(31, Calendar.DECEMBER, Calendar.getInstance().get(Calendar.YEAR) - 1);
 			}
-			return lastOperationDate;
+		} catch (NoDataFoundException e) {
+			lastOperationDate = cleanDate(31, Calendar.DECEMBER, Calendar.getInstance().get(Calendar.YEAR) - 1);
 		}
-		
+		return lastOperationDate;
 	}
 	
 	private static int getNextLotNumber(AONContext aonContext, Integer domainId, RegistryBank rbank) {
-		AggregateFunction<Integer> lot = DSL.max(BANK_STATEMENT.LOT_NUMBER);
-		return AonNumberUtils.zeroIfNull(aonContext.getDslContext().select( lot )
-				.from(BANK_STATEMENT)
-				.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
-				.and(BANK_STATEMENT.DOMAIN.eq(domainId))
-				.fetchSingle().get(lot)) + 1;
+		try  {			
+			AggregateFunction<Integer> lot = DSL.max(BANK_STATEMENT.LOT_NUMBER);
+			return AonNumberUtils.zeroIfNull(aonContext.getDslContext().select( lot )
+					.from(BANK_STATEMENT)
+					.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+					.and(BANK_STATEMENT.DOMAIN.eq(domainId))
+					.fetchSingle().get(lot)) + 1;
+		} catch (NoDataFoundException e) {
+			return 1;
+		}
 	}
 	
 	public static Integer insertStatements(Domain domain, String user, NordigenBankAccount account) throws AonCoreException {
