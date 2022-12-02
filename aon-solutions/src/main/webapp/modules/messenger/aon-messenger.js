@@ -66,9 +66,7 @@ export class AonMessenger extends AonElement {
 	}
 
 	initialize(){
-		const period = TaskUtils.getPeriodMessenger("last_12_months");
-
-		console.log("period", period);
+		// const period = TaskUtils.getPeriodMessenger("last_3_months");
 
 		this.id = MESSENGER_VIEWS.AON_MESSENGER;
 		this.AON_MESSENGER = MESSENGER_VIEWS.AON_MESSENGER;
@@ -87,9 +85,9 @@ export class AonMessenger extends AonElement {
 			search: undefined,
 			page:0, 
 			perPage:30,
-			period: period.value,
-			startDate: period.startDate,
-			endDate: period.endDate
+			// period: period.value,
+			// startDate: period.startDate,
+			// endDate: period.endDate
 		};
 				
 		if(this.type && this.type === TASK_SOURCE.CAU) {
@@ -307,10 +305,12 @@ export class AonMessenger extends AonElement {
 			//------END VALUE DEFAULTS
 
 			periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
-				console.log(detail);
 				if(detail.startDate && detail.endDate){
 					startDateEl.value = detail.startDate;
 					endDateEl.value = detail.endDate;
+				} else {
+					startDateEl.value = "";
+					endDateEl.value = "";
 				}
 			});
 			// ----------PERIOD END ------------
@@ -1054,8 +1054,9 @@ export class AonMessenger extends AonElement {
 		try{
 			const filter = removeEmpty(this.getListFilter());
 			await getTaskExcel(filter);
-		} catch(e){
-			console.log(e);
+		} catch(err){
+			this.showError(err)
+			console.log(err);
 		}
 		this.getApplication().stopLoading();
 	}

@@ -30,9 +30,7 @@ public class EnterpriseIT extends Composite {
 		
 		@Override
 		protected void getITEmployeeListDB(Consumer<List<ITEmployee>> success, Consumer<Throwable> failure) {
-			enterpriseITObject.getEmployeesInfo(true, 
-					success::accept, 
-					f -> {});
+			enterpriseITObject.getEmployeesInfo(true, success::accept, failure::accept);
 		}
 		
 		@Override
@@ -72,86 +70,65 @@ public class EnterpriseIT extends Composite {
 
 		@Override
 		protected void setITEmployeeList(List<ITEmployee> itEmployees, Consumer<List<ITEmployee>> success, Consumer<Throwable> failure) {
-			enterpriseITObject.setEmployeesInfo(itEmployees,
-					success::accept,
-				f -> {}
-			);
+			enterpriseITObject.setEmployeesInfo(itEmployees, success::accept, failure::accept);
 		}
 
 		@Override
 		protected void setITEmployee(ITEmployee itEmployee, Consumer<String> success, Consumer<Throwable> failure) {
-			enterpriseITObject.createUpdateITEmployee(itEmployee,
-				success::accept,
-				f -> {}
-			);
+			enterpriseITObject.createUpdateITEmployee(itEmployee, success::accept, failure::accept);
 		}
 
 		@Override
 		protected void deleteIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
 			enterpriseITObject.removeIT(itEmployee, it,
-					s -> {
-						if(Boolean.TRUE.equals(it.isComunicate()) && enterpriseITObject.isUserComunica())
-							enterpriseITObject.deleteComunicateIT(itEmployee, it, 
-									success::accept, 
-									d -> {}
-							);
-						else
-							success.accept(s);
-					},
-					f -> {});
+				s -> {
+					if(Boolean.TRUE.equals(it.isComunicate()) && enterpriseITObject.isUserComunica()) {
+						enterpriseITObject.deleteComunicateIT(itEmployee, it, success::accept, d -> {});
+				    } else {					    
+					    success.accept(s);
+					}
+				},
+				failure::accept
+			);
 		}
 
 		@Override
 		protected void deletePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
 			enterpriseITObject.deleteIT(it,
-					s -> {
-						if(Boolean.TRUE.equals(it.isComunicate()) && enterpriseITObject.isUserComunica())
-							enterpriseITObject.deleteComunicateIT(itEmployee, it, 
-									success::accept,
-									d -> {}
-							);
-						else
-							success.accept(s);
-					},
-					f -> {});
+				s -> {
+					if(Boolean.TRUE.equals(it.isComunicate()) && enterpriseITObject.isUserComunica()) {
+					    enterpriseITObject.deleteComunicateIT(itEmployee, it, success::accept, d -> {});
+					} else {
+					    success.accept(s);					    
+					}
+				},
+				failure::accept
+			);
 		}
 
 		@Override
 		protected void comunicateIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-			enterpriseITObject.comunicateITBaja(itEmployee, it, 
-				success::accept,
-				d -> {}
-			);
+			enterpriseITObject.comunicateITBaja(itEmployee, it, success::accept, failure::accept);
 		}
 
 		@Override
 		protected void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure) {
-			enterpriseITObject.comunicatePaternityIT(itEmployee, it, 
-				success::accept,
-				d -> {}
-			);
+			enterpriseITObject.comunicatePaternityIT(itEmployee, it, success::accept, failure::accept);
 		}
 
 		@Override
 		protected void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure) {
-			enterpriseITObject.getNafxIpf(itEmployee, 
-					success::accept, 
-					f -> {});
+			enterpriseITObject.getNafxIpf(itEmployee, success::accept, failure::accept);
 		}
 
 		@Override
 		protected void syncITs(Consumer<Void> success, Consumer<Throwable> failure) {
-			enterpriseITObject.syncITs( 
-					success::accept, 
-					failure::accept);
+			enterpriseITObject.syncITs(success::accept, failure::accept);
 		}
 
 		@Override
 		protected void communicateITPart(ITEmployee itEmployee, IT it, ITPart part, Consumer<Void> success, Consumer<Throwable> failure) {
-			enterpriseITObject.communicateITPart( itEmployee, it, part,
-					success::accept, 
-					failure::accept
-			);
+			enterpriseITObject.communicateITPart(itEmployee, it, part, success::accept, failure::accept);
 		}
 
 		@Override
@@ -159,19 +136,14 @@ public class EnterpriseIT extends Composite {
 			enterpriseITObject.checkStatus(success::accept, failure::accept);
 		}
 				
-		
 		@Override
 		protected void saveITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure) {
-			enterpriseITObject.saveITParts(list,
-					success::accept, 
-					failure::accept);
+			enterpriseITObject.saveITParts(list, success::accept, failure::accept);
 		}
 
 		@Override
 		protected void removeITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure) {
-			enterpriseITObject.removeITParts(list,
-					success::accept, 
-					failure::accept);
+			enterpriseITObject.removeITParts(list, success::accept, failure::accept);
 		}
 	}
 	
