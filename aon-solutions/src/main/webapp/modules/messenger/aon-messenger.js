@@ -308,6 +308,9 @@ export class AonMessenger extends AonElement {
 				if(detail.startDate && detail.endDate){
 					startDateEl.value = detail.startDate;
 					endDateEl.value = detail.endDate;
+				} else {
+					startDateEl.value = "";
+					endDateEl.value = "";
 				}
 			});
 			// ----------PERIOD END ------------
