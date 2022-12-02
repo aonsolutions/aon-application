@@ -181,7 +181,7 @@ export class AonParent extends AonElement {
 	
 			if(q.ids) {
 				let idFilter;
-				q.ids.forEach((item, i) => {
+				q.ids.split(',').forEach((item, i) => {
 					idFilter = f.id == item || idFilter;
 				});
 				value = idFilter;
