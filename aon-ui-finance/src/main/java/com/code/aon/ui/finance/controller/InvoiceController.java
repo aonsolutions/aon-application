@@ -2058,13 +2058,27 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 		return isTbai() && !AonStringUtils.isBlank(getTbaiUrl());
 	}
 	
+	String tbaiUrl;
+	Integer invoiceId;
+
 	public String getTbaiUrl() {
+		System.out.println(tbaiUrl);
 		Invoice invoice = (Invoice) this.getTo();
-		if(invoice == null || invoice.getId() == null) return null;
-		Integer domainId = DomainManager.getCurrentDomain();
-		String domainName = AonUtil.getDomainName();
-		String login = UserUtils.getInstance().getLoggedUser().getLogin();
-		return TbaiData.getInstance(getTbaiConfiguration()).getTbaiUrl(domainName, domainId, login, invoice.getId());
+		if(tbaiUrl == null || (invoice != null && invoice.getId() != null 
+				&& !invoice.getId().equals(invoiceId))) {
+			if(invoice == null || invoice.getId() == null) return null;
+			invoiceId = invoice.getId();
+			Integer domainId = DomainManager.getCurrentDomain();
+			String domainName = AonUtil.getDomainName();
+			String login = UserUtils.getInstance().getLoggedUser().getLogin();
+			tbaiUrl = TbaiData.getInstance(getTbaiConfiguration()).getTbaiUrl(domainName, domainId, login, invoice.getId());
+			if(tbaiUrl == null) tbaiUrl = ""; 
+		} 
+		return tbaiUrl;
+	}
+	
+	public void setTbaiUrl(String tbaiUrl) {
+		this.tbaiUrl = tbaiUrl;
 	}
 	
 	public boolean isTbai() {

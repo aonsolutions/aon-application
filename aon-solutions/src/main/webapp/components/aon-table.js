@@ -182,8 +182,6 @@ export class AonTable extends AonElement {
       tdCheckBox.style.width = "5%";
       let aonCheckbox = new AonCheckbox();
       aonCheckbox.id = checkBoxId;
-      tdCheckBox.appendChild(aonCheckbox);
-      tr.appendChild(tdCheckBox);
       aonCheckbox.addEventListener(EVENT.CHANGE, () => {
         if (aonCheckbox.isChecked()) {
           this.selected.push(value);
@@ -198,6 +196,8 @@ export class AonTable extends AonElement {
         }
         this.dispatchEvent(new CustomEvent(EVENT.SELECT));
       });
+      tdCheckBox.appendChild(aonCheckbox);
+      tr.appendChild(tdCheckBox);
     }
 
     this.columns.forEach((item, i) => {
