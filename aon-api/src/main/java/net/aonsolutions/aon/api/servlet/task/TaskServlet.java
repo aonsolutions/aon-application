@@ -211,17 +211,12 @@ public class TaskServlet extends AonApiHttpServlet{
 			tasks.addAll(TaskUtils.getTasksNotAll(api));
 		} 
 		
-		if(page==1) {	//GET TASK ALL DOMAIN
-			List<Task> listOffice = getTasksOffice(api);
-			if(!listOffice.isEmpty()) {
-				tasks.addAll(listOffice);
-			}
-		}
+		
+		setTasksOffice(api, tasks); // set tasks office domains
 
 		JSONArray array = new JSONArray();
 		
-		tasks
-		.forEach(t ->{
+		tasks.forEach(t ->{
 			JSONObject json = TaskJSON.toJSON(t);
 			if(t.getParentObj()!=null) {
 				json.put("parentObj", TaskJSON.toJSON(t.getParentObj()));
@@ -634,12 +629,16 @@ public class TaskServlet extends AonApiHttpServlet{
     }
 	
 	//TODO 
-	private List<Task> getTasksOffice(AonApiData api) {
-		List<Task> tasks = new ArrayList<>();
+	private void setTasksOffice(AonApiData api, List<Task> tasks) {
 		List<String> errors = new ArrayList<>();
 		if(!DomainType.CONSULTANCY.equals(api.getDomain().getDomainType())) {
 			
-			boolean isCau     = TaskUtils.isCau(api.getData());
+			JSONObject params = api.getData();
+			
+			Integer page       = params.optInt(IJsonNames.PAGE);
+			Integer perPage    = params.optInt(IJsonNames.PER_PAGE);
+			
+			boolean isCau     = TaskUtils.isCau(params);
 
 			Company company   = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		
@@ -648,16 +647,17 @@ public class TaskServlet extends AonApiHttpServlet{
 			AON.getDomainOfficeLinked(company)
 			.forEach(domain -> {
 				try {
+					
 					Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", 
 						f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(companyDoc))
 					);
 					
 					if(customer.getId()!=null) {
 						if(isCau) {
-							AON_SOLUTIONS.getTaskAndChildsStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
+							AON_SOLUTIONS.getTaskAndChildsStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer), page, perPage)
 							.forEach(tasks::add);
 						} else {
-							AON_SOLUTIONS.getTaskParentOrChildStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer), false)
+							AON_SOLUTIONS.getTaskParentOrChildStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer), page, perPage)
 							.forEach(tasks::add);
 						}
 					}
@@ -667,7 +667,7 @@ public class TaskServlet extends AonApiHttpServlet{
 				}
 			});
 		}
-		return tasks;
+		
 	}
 	
 	private List<ApplicationParameter> getAppParamsList(AonApiData api, List<String> listNames) {

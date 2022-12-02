@@ -52,9 +52,9 @@ public class Task2Impl implements ITask2 {
 	}
 
 	@Override
-	public Stream<Task> getTaskParentOrChildStream(AONContext ctx, TaskFilter filter, boolean excludeDescription) {
+	public Stream<Task> getTaskParentOrChildStream(AONContext ctx, TaskFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration -> 
-		TaskDAO.getParentOrChildStream(ctx, filter, excludeDescription));	
+		TaskDAO.getParentOrChildStream(ctx, filter));	
 	}
 	
 	@Override

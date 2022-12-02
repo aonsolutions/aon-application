@@ -72,8 +72,7 @@ public class TaskTest extends AbstractOccamTest {
 
 		List<Task> tasks = AON_SOLUTIONS.getTaskParentOrChildStream(domain, new User(), 
 				f -> f.getDomainProperty().eq(domain.getId()) 
-				.and(f.getStatusProperty().in(Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value()).toArray(Byte[]::new))),
-				true
+				.and(f.getStatusProperty().in(Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value()).toArray(Byte[]::new)))
 		).collect(Collectors.toCollection(LinkedList::new));
 		
 		Date startDate = new Date("2022/01/01");
