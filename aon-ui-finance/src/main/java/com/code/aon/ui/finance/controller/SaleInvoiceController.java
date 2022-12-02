@@ -626,6 +626,7 @@ public class SaleInvoiceController extends InvoiceController {
 				}
 			
 				invoice = AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
+				inv.setReferenceCode(invoice.getReferenceCode());
 				updateFinances(domainName, login, invoice);
 
 				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
