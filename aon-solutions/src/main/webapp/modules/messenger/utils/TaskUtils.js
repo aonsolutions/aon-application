@@ -1235,48 +1235,42 @@ const documentExec = (exec) => document.execCommand(exec) ? document.execCommand
 
 
 const getPeriodMessenger = (value=undefined) => {
-    const now = new Date();
-    const dayWeekFirst = new Date().getFirstDayOfWeek();
-    const dayWeekLast = new Date().getLastDayOfWeek();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-
     let jsonArray = [
         {
-            name: "Semana anterior",
-            value: "last_week",
-            startDate: AonDateUtils.formatDateOrigin(  dayWeekFirst.addDay(-7)  ),
-            endDate: AonDateUtils.formatDateOrigin( dayWeekLast.addDay(-7) )
-        },
-        {
-            name: "Mes actual",
-            value: "this_month",
-            startDate: AonDateUtils.formatDateOrigin(new Date(year, month, 1)),
-            endDate: AonDateUtils.formatDateOrigin(new Date(year, month + 1, 0))
-        },
-        {
-            name: "Mes anterior",
-            value: "last_month",
-            startDate: AonDateUtils.formatDateOrigin(new Date(year, (month -1), 1)),
-            endDate: AonDateUtils.formatDateOrigin(new Date(year, (month-1) + 1, 0))
-        },
-        {
-            name: "Últimos 12 meses",
-            value: "last_12_months",
-            startDate: AonDateUtils.formatDateOrigin(new Date().addMonth(-12)),
+            name: "Últimos 10 días",
+            value: "last_10_days",
+            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-10)),
             endDate: AonDateUtils.formatDateOrigin( new Date())
         },
         {
-            name: "Año actual",
-            value: "this_year",
-            startDate: AonDateUtils.formatDateOrigin(new Date(year, 0, 1)),
-            endDate: AonDateUtils.formatDateOrigin(new Date(year, 12, 0))
+            name: "Últimos 30 días",
+            value: "last_30_days",
+            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-30)),
+            endDate: AonDateUtils.formatDateOrigin( new Date())
         },
         {
-            name: "Año anterior",
-            value: "last_year",
-            startDate: AonDateUtils.formatDateOrigin(new Date(year-1, 0, 1)),
-            endDate: AonDateUtils.formatDateOrigin(new Date(year-1, 12, 0))
+            name: "Últimos 60 días",
+            value: "last_60_days",
+            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-60)),
+            endDate: AonDateUtils.formatDateOrigin( new Date())
+        },
+        {
+            name: "Últimos 90 días",
+            value: "last_90_days",
+            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-90)),
+            endDate: AonDateUtils.formatDateOrigin( new Date())
+        },
+        {
+            name: "Últimos 180 días",
+            value: "last_180_days",
+            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-180)),
+            endDate: AonDateUtils.formatDateOrigin( new Date())
+        },
+        {
+            name: "Todos",
+            value: "all",
+            startDate: null,
+            endDate: null
         },
         {
             name: "Personalizado",
