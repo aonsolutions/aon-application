@@ -947,9 +947,9 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
-	public static Stream<Task> getTaskParentOrChildStream(Domain domain, User user, TaskFilter filter, boolean excludeDescription) {
+	public static Stream<Task> getTaskParentOrChildStream(Domain domain, User user, TaskFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			return getTask2().getTaskParentOrChildStream(ctx, filter, excludeDescription);
+			return getTask2().getTaskParentOrChildStream(ctx, filter);
 		}
 	}
 	
