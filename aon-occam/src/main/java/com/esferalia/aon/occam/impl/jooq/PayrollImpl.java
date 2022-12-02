@@ -2,6 +2,7 @@ package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -15,9 +16,11 @@ import com.esferalia.aon.occam.api.model.Filter.ContractAttachFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractDataFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContractFilter;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
+import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
@@ -25,6 +28,7 @@ import com.esferalia.aon.occam.api.model.payroll.ContractAttach;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 import com.esferalia.aon.occam.api.model.payroll.Enterprise;
+import com.esferalia.aon.occam.impl.jooq.dao.ActivityDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.CCCDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractAttachDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractDAO;
@@ -184,6 +188,28 @@ public class PayrollImpl implements IPayroll {
 	@Override
 	public void saveEnterprise(AONContext ctx, Enterprise enterprise) {
 		ctx.getDslContext().transaction(configuration -> EnterpriseDAO.save(ctx, enterprise));
+	}
+	
+	// -------------------- ACTIVITY
+	
+	@Override
+	public Activity getActivity(AONContext ctx, EnterpriseActivityFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> ActivityDAO.get(ctx, filter));
+	}
+
+	@Override
+	public void saveActivity(AONContext ctx, Activity activity) {
+		ctx.getDslContext().transaction(configuration -> ActivityDAO.save(ctx, activity));
+	}
+	
+	@Override
+	public List<Activity> getActivities(AONContext ctx, EnterpriseActivityFilter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> ActivityDAO.getList(ctx, filter));
+	}
+
+	@Override
+	public void saveActivities(AONContext ctx, List<Activity> activities) {
+		ctx.getDslContext().transaction(configuration -> ActivityDAO.saveList(ctx, activities));
 	}
 
 }

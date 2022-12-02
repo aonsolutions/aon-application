@@ -223,7 +223,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getDeleteCCCMessage(getCurrentDomainName(), cccIds, asyncCallback);
 	}
 	
-	public void getCNAE2009(AsyncCallback<Map<String, String>> asyncCallback) {
+	public void getCNAE2009(AsyncCallback<Map<Integer, String>> asyncCallback) {
 		enterprisesServiceAsync.getCNAE2009(getCurrentDomainName(), asyncCallback);
 	}
 	
@@ -659,6 +659,24 @@ public class DomainEnterprisesServiceAsync {
 
 	public void saveEnterprise(com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.saveEnterprise(getCurrentDomainName(), getCurrentUser(), enterprise, asyncCallback);
+	}
+	
+	// ------------------------------------------------ EnterpriseActivity (API)
+	
+	public void getActivity(Integer id, AsyncCallback<com.esferalia.aon.occam.api.model.payroll.Activity> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getActivity(getCurrentDomainName(), getCurrentUser(), id, asyncCallback);
+	}
+
+	public void saveActivity(com.esferalia.aon.occam.api.model.payroll.Activity activity, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.saveActivity(getCurrentDomainName(), getCurrentUser(), activity, asyncCallback);
+	}
+	
+	public void getActivities(AsyncCallback<List<com.esferalia.aon.occam.api.model.payroll.Activity>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getActivities(getCurrentDomainName(), getCurrentUser(), asyncCallback);
+	}
+
+	public void saveActivities(List<com.esferalia.aon.occam.api.model.payroll.Activity> activities, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.saveActivities(getCurrentDomainName(), getCurrentUser(), activities, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

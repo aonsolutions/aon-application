@@ -2939,7 +2939,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	@Override
 	public void onActivitySelected(Activity activity) {
-		ActivityDraftObject activityDraftObject = new ActivityDraftObject(activity);
+		ActivityDraftObject activityDraftObject = new ActivityDraftObject(activity.getId());
 
 		employeeDetail.setWidget(getActivityDraft());
 		getActivityDraft().setActivityDraftObject(activityDraftObject);

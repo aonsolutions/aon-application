@@ -513,6 +513,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface EnterpriseActivityFilter{
+		Filter filter(EnterpriseActivityProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface AgreementLevelCategoryFilter{
 		Filter filter(AgreementLevelCategoryProperties properties);
 	}

@@ -1,13 +1,16 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
-import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -15,27 +18,27 @@ public class MainCCCObject {
 	
 	// -------------------------------------------- Variables
 	
-	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();	
-	private MainCCCInfo mainCCCInfo;
+	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	private List<Activity> activities; 
 	
 	// -------------------------------------------- Constructor
 	
 	public MainCCCObject() {
 		super();
-		this.mainCCCInfo = new MainCCCInfo();
+		this.activities = new ArrayList<>();
 	}
 	
 	// -------------------------------------------- Database Methods
 	
-	public void getMainCCCInfo(Consumer<MainCCCInfo> success, Consumer<Throwable> failure) {
-		impl.getMainCCCInfoDataBase(new AsyncCallback<MainCCCInfo>() {
+	public void getMainCCCInfo(Consumer<List<Activity>> success, Consumer<Throwable> failure) {
+		impl.getActivities(new AsyncCallback<List<Activity>>() {
 			
 			@Override
-			public void onSuccess(MainCCCInfo mainCCCInfoResult) {
-				mainCCCInfo = mainCCCInfoResult;
-				success.accept(mainCCCInfoResult);
+			public void onSuccess(List<Activity> result) {
+				activities = result;
+				success.accept(result);
 			}
-
+			
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
@@ -44,13 +47,13 @@ public class MainCCCObject {
 	}
 	
 	public void setMainCCCInfo(Consumer<Void> success, Consumer<Throwable> failure) {
-		impl.setMainCCCInfoDataBase(this.mainCCCInfo, new AsyncCallback<Void>() {
+		impl.saveActivities(activities, new AsyncCallback<Void>() {
 			
 			@Override
 			public void onSuccess(Void result) {
-				getMainCCCInfo(s -> success.accept(result), f -> {});
+				success.accept(result);
 			}
-
+			
 			@Override
 			public void onFailure(Throwable caught) {
 				failure.accept(caught);
@@ -60,42 +63,71 @@ public class MainCCCObject {
 	
 	// -------------------------------------------- Getters Methods
 	
-	public MainCCCInfo getMainCCCInfo() {
-		return this.mainCCCInfo;
-	}
-	
-	public Collection<CCCInfo> getCCCs() {
-		return this.mainCCCInfo.getCccs().values();
+	public List<EnterpriseCCC> getCCCs() {
+		List<EnterpriseCCC> ccccs = new ArrayList<>();
+		this.activities.forEach(activity -> ccccs.addAll(activity.getCccs()));
+		return ccccs;
 	}
 	
 	public Set<Entry<Integer, String>> getActivities() {
-		return this.mainCCCInfo.getActivities().entrySet();
+		Map<Integer, String> activitiesMap = new HashMap<>();
+		this.activities.forEach(activity -> activitiesMap.put(activity.getId(), activity.getDescription()));
+		return activitiesMap.entrySet();
 	}
 
-	public void insertCCC(Integer cccId, int activityId, byte cccRegimeType, String cccRegimeCode, String ccc, String province, String provinceCode) {
-		this.mainCCCInfo.insertCCC(cccId, activityId, cccRegimeType, cccRegimeCode, ccc, province, provinceCode);
+	public void insertCCC(EnterpriseCCC ccc) {
+		Optional<Activity> activityCCC = this.activities.stream().filter(activity -> activity.getId().equals(ccc.getEnterpriseActivity())).findFirst();
+		if(activityCCC.isPresent()) {
+			if(ccc.getId() == null)activityCCC.get().getCccs().add(ccc);
+			else {
+				activityCCC.get().getCccs().removeIf(cccIt -> cccIt.getId().equals(ccc.getId()));
+				activityCCC.get().getCccs().add(ccc);
+			}
+		}
 	}
 
 	public void deleteCCC(Integer cccId) {
-		this.mainCCCInfo.deleteCCC(cccId);
+		Optional<EnterpriseCCC> deleteCCC = getCCCs().stream().filter(ccc -> ccc.getId().equals(cccId)).findFirst();
+		if(deleteCCC.isPresent()) deleteCCC.get().setDeleted(true);
+	}
+	
+	public Pair<String, String> getPrincipalAccount() {
+		Optional<EnterpriseCCC> principalAccount = getCCCs().stream().filter(ccc -> ccc.getType() == (byte)0).findFirst();
+		if(principalAccount.isPresent())
+			return new Pair<>(getCCCRegimeCode(principalAccount.get().getType()), principalAccount.get().getCcc());
+		else if(!getCCCs().isEmpty()){
+			EnterpriseCCC ccc = getCCCs().get(0);
+			return new Pair<>(getCCCRegimeCode(ccc.getType()), ccc.getCcc());
+		} else return null;
+	}
+	
+	private static String getCCCRegimeCode(Byte cccRegime) {
+		switch (cccRegime) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
+		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
+			return "0163";
+		case 8:
+			return "0112";
+		default:
+			return "0111";
+		}
 	}
 
-	public Pair<String, String> getPrincipalAccount() {
-		Pair<String, String> completeCCC = null;
-		for(CCCInfo cccInfo : mainCCCInfo.getCccs().values()) {
-			if(cccInfo.getType() == (byte)0) {
-				completeCCC = new Pair<>(cccInfo.getCccRegimeCode(), cccInfo.getCcc());
-			}
-		}
-		
-		// If null, get first
-		if(null == completeCCC) {
-			ArrayList<CCCInfo> cccInfoList = new ArrayList<>(mainCCCInfo.getCccs().values());
-			CCCInfo cccInfo = cccInfoList.get(0);
-			completeCCC = new Pair<>(cccInfo.getCccRegimeCode(), cccInfo.getCcc());
-		}
-			
-		return completeCCC;
+	public Integer getDomain() {
+		return activities.isEmpty() ? null : activities.get(0).getDomain();
 	}
 		
 }

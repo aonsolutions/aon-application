@@ -2306,6 +2306,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		.stream().map( v -> ((Number) v.getValue(v.getPeriod())).doubleValue() ).collect(Collectors.summingDouble( v -> v ))
 		;
 
+		activeDays += getExpressionContext().getVariables(ContextVariable.DROP_DAYS, start, end)
+		.stream().map( v -> ((Number) v.getValue(v.getPeriod())).doubleValue() ).collect(Collectors.summingDouble( v -> v ))
+		;
+
 //		for ( ContextVariable ereFactor: ContextVariable.ERE_FACTORS )
 //			activeDays += getExpressionContext().getVariables(ereFactor, start, end)
 //			.stream().map( v -> ((Number) v.getValue(v.getPeriod())).doubleValue() ).collect(Collectors.summingDouble( v -> v ))
@@ -4867,13 +4871,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				@Override
 				public Double getValue(Period p) {
 					Long availableDays = getAvailableDays(p.getStart(), p.getEnd());
+					return availableDays.doubleValue();
 					
-					if ( !isWholeMonth() )
-						return availableDays.doubleValue();
-					
-					double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
-					double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
-					return ctxMonthDays == monthDays ? availableDays : (30 - (monthDays - availableDays));
+//					if ( !isWholeMonth() )
+//						return availableDays.doubleValue();
+//					
+//					double monthDays = getMax(p.getStart(), DAY_OF_MONTH);
+//					double ctxMonthDays = getContexVariable(ctx, p, MONTH_DAYS);
+//					return ctxMonthDays == monthDays ? availableDays : (30 - (monthDays - availableDays));
 				}
 
 			};

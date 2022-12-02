@@ -401,6 +401,7 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 			Double percentCC = null;
 			Double amountCC = null;
 			
+			
 			while (!matcher.matches()) {
 				matcher = BASE_IT_ALT.matcher(line);
 				if (baseIt == null && matcher.matches()) {
@@ -432,11 +433,14 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 				amountCC = str2Double(string(matcher, "amount"));
 			}
 			
+			Double totalEnterprise = 0d;
+			
 			if (amountCC != null) {
 				costs.put(
 						new Deduction().setAmount(amountCC).setDescription(DeductionType.COMMON_CONTINGENCY.getName(SPAIN)).setName("CGC_E").setType(DeductionType.COMMON_CONTINGENCY),
 						Collections.singletonMap("PORCENTAJE_CGC_E", percentCC)
 				);
+				totalEnterprise += amountCC;
 			}
 			
 			
@@ -454,6 +458,7 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 						new Deduction().setAmount(amountAT).setDescription(DeductionType.PROFESSIONAL_CONTINGENCY.getName(SPAIN)).setName("IT_E").setType(DeductionType.PROFESSIONAL_CONTINGENCY),
 						Collections.emptyMap()
 				);
+				totalEnterprise += amountAT;
 			}
 			
 			Double amountUnem = null;
@@ -500,6 +505,7 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 						new Deduction().setAmount(amountUnem).setDescription(DeductionType.UNEMPLOYMENT.getName(SPAIN)).setName("DESMPL_E").setType(DeductionType.UNEMPLOYMENT),
 						Collections.singletonMap("PORCENTAJE_DESMPL_E", percentUnem)
 				);
+				totalEnterprise += amountUnem;
 			}
 			
 			matcher = find(reader, FP_E);
@@ -510,6 +516,7 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 						new Deduction().setAmount(amountFPE).setDescription(DeductionType.JOB_TRAINING.getName(SPAIN)).setName("FP_E").setType(DeductionType.JOB_TRAINING),
 						Collections.singletonMap("PORCENTAJE_FP_E", percentFPE)
 				);
+				totalEnterprise += amountFPE;
 			}
 			
 //			matcher = find(reader, RECAUDACION);
@@ -522,6 +529,7 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 						new Deduction().setAmount(amountFOGASA).setDescription(DeductionType.FOGASA.getName(SPAIN)).setName("FOGASA").setType(DeductionType.FOGASA),
 						Collections.singletonMap("PORCENTAJE_FOGASA", percentFOGASA)
 				);
+				totalEnterprise += amountFOGASA;
 			}
 			
 			matcher = find(reader, EXTRAQUOTE);
@@ -531,6 +539,7 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 						new Deduction().setAmount(amountExtra).setDescription(DeductionType.STRUCTURAL_OVERTIME.getName(SPAIN)).setName("ESTR").setType(DeductionType.STRUCTURAL_OVERTIME),
 						Collections.emptyMap()
 				);
+				totalEnterprise += amountExtra;
 			}
 			
 			matcher = find(reader, IRPF_EE);
@@ -601,6 +610,8 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 			salaryBuilder.setTimeUnits(zeroIfNull(days));
 			salaryBuilder.setTotalPayment(zeroIfNull(totalPayment));
 			salaryBuilder.setIrpfBase(zeroIfNull(irpfBase));
+			salaryBuilder.setTotalEnterprise(zeroIfNull(totalEnterprise));
+			
 			
 			PDFContract contract = new AltaiPDFTemplate.PDFContract()
 					.setCcc(enterpriseCCC) 

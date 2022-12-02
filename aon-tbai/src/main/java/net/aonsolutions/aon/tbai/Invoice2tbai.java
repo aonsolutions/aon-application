@@ -294,7 +294,7 @@ public class Invoice2tbai {
 				description = description.substring(0, 249);
 			}			
 			detalle.setDescripcionDetalle(description);
-			detalle.setImporteUnitario(Double.toString(AonMathUtils.round(detail.getPrice())));
+			detalle.setImporteUnitario(Double.toString(AonMathUtils.round(detail.getPrice(), 4)));
 
 			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().get();
 			
