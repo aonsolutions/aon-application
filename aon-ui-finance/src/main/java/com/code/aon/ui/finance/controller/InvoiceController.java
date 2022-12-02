@@ -2062,8 +2062,8 @@ public class InvoiceController extends HeaderObjectController implements ISignat
 	Integer invoiceId;
 
 	public String getTbaiUrl() {
-		System.out.println(tbaiUrl);
 		Invoice invoice = (Invoice) this.getTo();
+		if(invoice == null || invoice.getId() == null) tbaiUrl = null;
 		if(tbaiUrl == null || (invoice != null && invoice.getId() != null 
 				&& !invoice.getId().equals(invoiceId))) {
 			if(invoice == null || invoice.getId() == null) return null;
