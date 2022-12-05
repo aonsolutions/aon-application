@@ -257,8 +257,12 @@ public class ConnectSaleInvoiceWriter {
 				companyEdiCode, company, companyAddress, recordData));
 		list.add(createSINCPRecord(SINCP.SINCP_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
 				customerEdiPtoEntregaCode, customer, invoiceAddress, null));
-		list.add(createSINCPRecord(SINCP.SINCP_2.DESTINATARIO_FINAL_UC,
+		
+		if(!isECI(invoice.getRegistryDocument())) {
+		    list.add(createSINCPRecord(SINCP.SINCP_2.DESTINATARIO_FINAL_UC,
 				customerEdiCabeceraCode, customer, invoiceAddress, null));
+		}
+		
 		list.add(createSINCPRecord(SINCP.SINCP_2.COMPRADOR_BY,
 				ediBY, customer, invoiceAddress, null, calificadorReferenciaAdicional, referenciaAdicional));
 		list.add(createSINCPRecord(SINCP.SINCP_2.A_QUIEN_SE_FACTURA_IV,
@@ -820,4 +824,7 @@ public class ConnectSaleInvoiceWriter {
 		return "A80782519".equalsIgnoreCase(registry.getDocument());
 	}
 	
+	private boolean isECI(String document) {
+        return "A28017895".equalsIgnoreCase(document);
+    }
 }
