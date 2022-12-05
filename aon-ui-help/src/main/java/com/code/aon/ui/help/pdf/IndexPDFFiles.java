@@ -58,8 +58,8 @@ public class IndexPDFFiles {
 			
 			
 			int last = 0;
-			for (int i = 1; i <= indexPages; i++) {
-				last = IndexPDFFiles.extractPage(doc, i, destinations, namesMap, index , filename, last);
+			for (int i = 2; i <= indexPages; i++) {
+			    last = IndexPDFFiles.extractPage(doc, i, destinations, namesMap, index , filename, last);
 			}
 
 		    // Add map to the names
@@ -98,8 +98,7 @@ public class IndexPDFFiles {
 
 		// Extract annotations
 		destinations.addAll(IndexPDFFiles.extractPageDestinations(doc, page, stripper));		    
-	    stripper.extractRegions(page);
-	    
+		stripper.extractRegions(page);
 	    // Set names	    
 		last = IndexPDFFiles.setPageNameReferences(doc, stripper, destinations, namesMap, index, filename, last);
 		return last;
@@ -132,22 +131,17 @@ public class IndexPDFFiles {
 
 	            // Calculate real Y
 	            PDRectangle pageSize = page.getMediaBox();
-                y = pageSize.getHeight() - y;
+	            y = pageSize.getHeight() - y;
 	    		
-	    		Rectangle2D.Float awtRect = new Rectangle2D.Float(x, y, width, height);
+	            Rectangle2D.Float awtRect = new Rectangle2D.Float(x, y, width, height);
 	            stripper.addRegion("" +region++, awtRect );
-	            
 	            PDDestination destination = link.getDestination();
-	            if(destination instanceof PDPageDestination )
-	            {
+	            if(destination instanceof PDPageDestination ){
 	            	 destinations.add( (PDPageDestination) link.getDestination() );
-	            } 
-	            
-	            if(destination instanceof PDNamedDestination)
-	            {
+	            } else if(destination instanceof PDNamedDestination) {
 	            	PDNamedDestination named = (PDNamedDestination) link.getDestination();
 	            	PDPageXYZDestination d = (PDPageXYZDestination) doc.getDocumentCatalog().getDests().getDestination(named.getNamedDestination());
-                    destinations.add(d);
+	            	destinations.add(d);
 	            }
 	        }
 	    }
@@ -161,7 +155,8 @@ public class IndexPDFFiles {
 		
 		int[] atomicLast = { last - 1 };
 		stripper.getRegions().forEach( r -> {
-	    	
+		    
+		System.out.println(stripper.getTextForRegion(r));
 	    	// Dotted outline 
 	    	final String dotPatternStr = "^\\s*[\\d\\.]*\\s*(((?!\\.{3,}).)*)\\s*\\.{3,}\\s*(\\d+)\\s*$";
 	       	final Pattern dotPattern = Pattern.compile(dotPatternStr,Pattern.CASE_INSENSITIVE);
@@ -177,6 +172,9 @@ public class IndexPDFFiles {
 	    	
 	    	atomicLast[0]++;
 	    	
+	    	if ( atomicLast[0] >= destinations.size()  )
+	    	    return;
+
 	    	if(!dotOutlineMode && !standardOutlineMode) {
 	    		return;
 	    	}
@@ -215,14 +213,14 @@ public class IndexPDFFiles {
 			
 			
 			if(name.trim().length() != 0) {
-				System.out.println("\nDESTINATION NAME: " + name);
+				System.out.println("\nDESTINATION NAME: " + name + "[" + id + "]");
 				index.getDocumentCatalog().getDocumentOutline().getLastChild().addLast(item);
 				namesMap.put(id, destinations.get(atomicLast[0]));
 		    }
 			
 	    });
 		
-		return atomicLast[0];
+	    return Math.max(0,atomicLast[0]);
 	}
 	
 
@@ -251,9 +249,10 @@ public class IndexPDFFiles {
 		try {
 		
 		HashMap<String, PdfIndexProperties> files = new HashMap<>();
-		files.put("payroll", new PdfIndexProperties("LABORAL Manual de USUARIO", 4));
-		files.put("account", new PdfIndexProperties("CONTABILIDAD Manual de USUARIO", 2));
-		files.put("fiscal", new PdfIndexProperties("FISCAL Manual de USUARIO", 1));
+		files.put("config", new PdfIndexProperties("CONFIGURACIÓN Manual de USUARIO", 4));
+		files.put("account", new PdfIndexProperties("CONTABILIDAD Manual de USUARIO", 4));
+		files.put("fiscal", new PdfIndexProperties("FISCAL Manual de USUARIO", 3));
+		files.put("payroll", new PdfIndexProperties("LABORAL Manual de USUARIO", 5));
 		
 	
 		System.out.println("-----------------------------------------------------------");

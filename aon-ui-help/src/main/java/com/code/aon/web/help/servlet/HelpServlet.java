@@ -29,6 +29,7 @@ public class HelpServlet extends HttpServlet {
 		files.put("LABORAL Manual de USUARIO", "payroll_names.pdf");
 		files.put("CONTABILIDAD Manual de USUARIO", "account_names.pdf");
 		files.put("FISCAL Manual de USUARIO", "fiscal_names.pdf");
+		files.put("CONFIGURACIÓN Manual de USUARIO", "config_names.pdf");
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
