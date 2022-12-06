@@ -47,7 +47,18 @@ export class AonDeliveryTag extends AonElement {
 	buildToolbar() {
 		let toolbar = this.createAonElement(new AonToolbar(), this.TOOLBAR, MSG.DELIVERY_TAG);
 		toolbar.type = ToolbarType.SECONDARY;
+		toolbar.removeButtons();
+		toolbar.addButton2({
+			id: CONSTANT.DOWNLOAD.initCap(),
+			name: MSG.DOWNLOAD,
+			title: MSG.DOWNLOAD,
+			icon: 'file'
+		}, () => this.download());
 		this.appendChild(toolbar);
+	}
+
+	download() {
+		
 	}
 
 	buildContent() {
