@@ -313,6 +313,22 @@ public class InvoiceAutoComplete {
 					.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
 			}
 		}	
+		
+		if(inv.getRegistryDocumentType() == null && inv.getRegistryDocumentCountry() == null) {
+		    Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getIdProperty().eq(inv.getRegistry()));
+            inv.setRegistryDocumentType(registry.getDocumentType());
+		    inv.setRegistryDocumentCountry(registry.getDocumentCountry());
+		}
+		
+		if(inv.getRegistryDocumentType() == null) {
+		    Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getIdProperty().eq(inv.getRegistry()));
+            inv.setRegistryDocumentType(registry.getDocumentType());
+        }
+		
+		if(inv.getRegistryDocumentCountry() == null) {
+		    Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getIdProperty().eq(inv.getRegistry()));
+            inv.setRegistryDocumentCountry(registry.getDocumentCountry());
+		}
 	};
 	
 	/**
