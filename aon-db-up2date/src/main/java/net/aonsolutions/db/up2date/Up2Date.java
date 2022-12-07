@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.payroll.FixPreaviso;
 import net.aonsolutions.db.up2date.payroll.Holidays2023Insert;
 import net.aonsolutions.db.up2date.payroll.AgreementPaymentsConceptFix;
+import net.aonsolutions.db.up2date.payroll.AlterAgreementPaymentDescription;
 import net.aonsolutions.db.up2date.payroll.AlterContractBonusDescription;
 import net.aonsolutions.db.up2date.payroll.AlterContractBonusExpression;
 import net.aonsolutions.db.up2date.payroll.AlterContractPaymentDescription;
@@ -298,6 +299,7 @@ public class Up2Date {
     		Holidays2023Insert.HOLIDAYS2023INSERT,
     		AgreementPaymentsConceptFix.AGREEMENTPAYMENTSCONCEPTFIX,
     		DeathOfEmployeeInsert.DEATHOFEMPLOYEEINSERT,
+    		AlterAgreementPaymentDescription.ALTERAGREEMENTPAYMENTDESCRIPTION,
     		
     		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
