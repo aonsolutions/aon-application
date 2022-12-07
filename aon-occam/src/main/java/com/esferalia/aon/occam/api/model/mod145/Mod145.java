@@ -31,6 +31,7 @@ public class Mod145 implements Serializable {
 	private Date issueDate;
 	private Double spousalSupport;
 	private Double foodAnnuity;
+	private Double irpfPercent;
 	private boolean deductionHomeLoan;
 	
 	private List<IrpfDataAscendants> ascendants;
@@ -221,6 +222,15 @@ public class Mod145 implements Serializable {
 
 	public Mod145 setFoodAnnuity(Double foodAnnuity) {
 		this.foodAnnuity = foodAnnuity;
+		return this;
+	}
+
+	public Double getIrpfPercent() {
+		return irpfPercent;
+	}
+
+	public Mod145 setIrpfPercent(Double irpfPercent) {
+		this.irpfPercent = irpfPercent;
 		return this;
 	}
 
