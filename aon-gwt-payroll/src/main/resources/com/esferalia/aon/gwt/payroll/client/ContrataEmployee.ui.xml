@@ -235,6 +235,14 @@
 								    		<a:EmployeeContractIrpf ui:field="employeeContractIrpf" />
 								    	</g:HTMLPanel>
 								  	</g:tab>
+								  	<g:tab>
+								    	<g:customHeader size='7'>
+								      		<g:Label>Mod 145</g:Label>
+								    	</g:customHeader>
+								    	<g:HTMLPanel styleName="{style.mt10}">
+								    		<a:Mod145 ui:field="mod145" />
+								    	</g:HTMLPanel>
+								  	</g:tab>
 								 </g:TabLayoutPanel>
 							</g:HTMLPanel>
 							

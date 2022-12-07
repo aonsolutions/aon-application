@@ -54,6 +54,7 @@ import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -267,5 +268,15 @@ public interface EnterprisesServiceAsync {
 	void getActivities(String currentDomainName, String user, AsyncCallback<List<com.esferalia.aon.occam.api.model.payroll.Activity>> asyncCallback) throws IllegalArgumentException;
 	
 	void saveActivities(String currentDomainName, String user, List<com.esferalia.aon.occam.api.model.payroll.Activity> activity, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	// --------------------------- Mod 145 (API)
+	
+	void getMod145List(String currentDomainName, String currentUser, Integer contractId, AsyncCallback<List<Mod145>> asyncCallback) throws IllegalArgumentException;
+	
+	void getMod145(String currentDomainName, String currentUser, Integer id, AsyncCallback<Mod145> asyncCallback) throws IllegalArgumentException;
+	
+	void saveMod145(String currentDomainName, String currentUser, Mod145 mod145, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	void printMod145(String currentDomainName, String currentUser, Mod145 mod145, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	
 }

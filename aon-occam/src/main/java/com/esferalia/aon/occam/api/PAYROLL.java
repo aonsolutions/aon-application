@@ -20,7 +20,9 @@ import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.Mod145Filter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
+import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
@@ -365,6 +367,26 @@ public class PAYROLL {
 	public static void saveActivities(String domainName, Integer domainId, String login, List<Activity> activity) {
 		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
 			getPayroll().saveActivities(ctx, activity);
+		}
+	}
+	
+	// -------------------- MOD 145
+	
+	public static List<Mod145> getMod145List(String domainName, Integer domainId, String login, Mod145Filter filter) {
+		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			return getPayroll().getMod145List(ctx, filter);
+		}
+	}
+	
+	public static Mod145 getMod145(String domainName, Integer domainId, String login, Mod145Filter filter) {
+		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			return getPayroll().getMod145(ctx, filter);
+		}
+	}
+	
+	public static void saveMod145(String domainName, Integer domainId, String login, Mod145 mod145) {
+		try( CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login) ){
+			getPayroll().saveMod145(ctx, mod145);
 		}
 	}
 	

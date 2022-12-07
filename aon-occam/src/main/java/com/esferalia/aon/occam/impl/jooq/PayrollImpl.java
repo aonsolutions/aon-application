@@ -19,7 +19,9 @@ import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.Mod145Filter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
+import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
@@ -35,6 +37,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ContractDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ContractDataDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.EmployeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.EnterpriseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.mod145.Mod145DAO;
 
 public class PayrollImpl implements IPayroll {
 	
@@ -210,6 +213,23 @@ public class PayrollImpl implements IPayroll {
 	@Override
 	public void saveActivities(AONContext ctx, List<Activity> activities) {
 		ctx.getDslContext().transaction(configuration -> ActivityDAO.saveList(ctx, activities));
+	}
+	
+	// -------------------- MOD 145
+	
+	@Override
+	public List<Mod145> getMod145List(AONContext ctx, Mod145Filter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> Mod145DAO.getList(ctx, filter));
+	}
+	
+	@Override
+	public Mod145 getMod145(AONContext ctx, Mod145Filter filter) {
+		return ctx.getDslContext().transactionResult(configuration -> Mod145DAO.get(ctx, filter));
+	}
+
+	@Override
+	public void saveMod145(AONContext ctx, Mod145 mod145) {
+		ctx.getDslContext().transaction(configuration -> Mod145DAO.save(ctx, mod145));
 	}
 
 }

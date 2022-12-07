@@ -40,4 +40,13 @@ public class Properties  {
 		Property<Double> getSurchargePercentProperty();
 
 	}
+	
+	public static interface Mod145Properties  {
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<Integer> getContractProperty();
+		Property<java.sql.Date> getStartDateProperty();
+		Property<java.sql.Date> getEndDateProperty();
+	}
+	
 }
