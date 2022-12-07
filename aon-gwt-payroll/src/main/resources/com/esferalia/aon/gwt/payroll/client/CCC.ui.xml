@@ -98,7 +98,7 @@
 
 	<g:HTMLPanel styleName="{style.widthAll} {style.flexCenter}" ui:field="centerContainer" debugId="activityHTMLPanel">
    		<g:VerticalPanel styleName="{style.styleBorder}">
-    	<g:Label styleName='{style.tittle}'>Cuentas de cotización</g:Label>
+    		<g:Label styleName='{style.tittle}'>Cuentas de cotización</g:Label>
 	    	<g:HTMLPanel styleName="{style.widthAll}" debugId="paymetDialogHTMLPanel">
 	    		<g:VerticalPanel styleName="{style.container}">
 	    			<g:Grid ui:field="cccDataTableHeader" styleName="{style.gridStyle}"></g:Grid>

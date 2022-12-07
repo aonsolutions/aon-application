@@ -54,6 +54,7 @@ import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -677,6 +678,24 @@ public class DomainEnterprisesServiceAsync {
 
 	public void saveActivities(List<com.esferalia.aon.occam.api.model.payroll.Activity> activities, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.saveActivities(getCurrentDomainName(), getCurrentUser(), activities, asyncCallback);
+	}
+	
+	// ------------------------------------------------ Mod145 (API)
+	
+	public void getMod145List(Integer contractId, AsyncCallback<List<Mod145>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getMod145List(getCurrentDomainName(), getCurrentUser(), contractId, asyncCallback);
+	}
+	
+	public void getMod145(Integer id, AsyncCallback<Mod145> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getMod145(getCurrentDomainName(), getCurrentUser(), id, asyncCallback);
+	}
+	
+	public void saveMod145(Mod145 mod145, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.saveMod145(getCurrentDomainName(), getCurrentUser(), mod145, asyncCallback);
+	}
+	
+	public void printMod145(Mod145 mod145, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.printMod145(getCurrentDomainName(), getCurrentUser(), mod145, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static
