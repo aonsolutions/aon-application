@@ -17,7 +17,9 @@ import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseFilter;
 import com.esferalia.aon.occam.api.model.Filter.IrpfDataFilter;
+import com.esferalia.aon.occam.api.model.Filter.Mod145Filter;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfData;
+import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.esferalia.aon.occam.api.model.payroll.AgreementLevelCategory;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
@@ -107,4 +109,12 @@ public interface IPayroll {
 	public List<Activity> getActivities(AONContext ctx, EnterpriseActivityFilter filter);
 
 	public void saveActivities(AONContext ctx, List<Activity> Activity);
+	
+	// ----------MOD145
+	
+	public List<Mod145> getMod145List(AONContext ctx, Mod145Filter filter);
+	
+	public Mod145 getMod145(AONContext ctx, Mod145Filter filter);
+	
+	public void saveMod145(AONContext ctx, Mod145 mod145);
 }

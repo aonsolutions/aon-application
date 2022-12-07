@@ -144,6 +144,7 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.doc.Doc;
+import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -172,6 +173,7 @@ import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorCont
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.mod145.Mod145PDF;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.BonusConceptColumns;
@@ -4018,6 +4020,62 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	// ------------------------------------------------ Mod145 (API)
+	
+	@Override
+	public List<Mod145> getMod145List(String domainName, String userLogin, Integer contractId) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return PAYROLL.getMod145List(domainName, domainId, userLogin, f -> f.getContractProperty().eq(contractId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public Mod145 getMod145(String domainName, String userLogin, Integer id) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return PAYROLL.getMod145(domainName, domainId, userLogin, f -> f.getIdProperty().eq(id));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public void saveMod145(String domainName, String userLogin, Mod145 mod145) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			PAYROLL.saveMod145(domainName, domainId, userLogin, mod145);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	@Override
+	public String printMod145(String domainName, String userLogin, Mod145 mod145) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			byte[] pdfBytes = Mod145PDF.fillMod145(mod145);
+			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
+
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e);
+		}
+	}
+
 
 	// ------------------------------------------------ Partes IT
 

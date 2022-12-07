@@ -58,6 +58,7 @@ import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -1060,6 +1061,36 @@ public class EnterprisesServiceAsyncDecorator implements
 			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.saveActivities(domainName, user, activities, callback);
+	}
+	
+	// --------------------------- Mod 145 (API)
+
+	@Override
+	public void getMod145List(String domainName, String user, Integer contractId,
+			AsyncCallback<List<Mod145>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getMod145List(domainName, user, contractId, callback);
+	}
+
+	@Override
+	public void getMod145(String domainName, String user, Integer id, AsyncCallback<Mod145> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getMod145(domainName, user, id, callback);
+	}
+
+	@Override
+	public void saveMod145(String domainName, String user, Mod145 mod145,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.saveMod145(domainName, user, mod145, callback);
+	}
+
+	@Override
+	public void printMod145(String domainName, String user, Mod145 mod145,
+			AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.printMod145(domainName, user, mod145, callback);
 	}
 
 }
