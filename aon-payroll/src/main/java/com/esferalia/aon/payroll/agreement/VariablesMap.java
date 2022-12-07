@@ -49,6 +49,18 @@ public class VariablesMap implements Serializable {
 		
 		variablesMap.put("ANTICIPO_HORAS","ANTICIPO_H");
 		
+		variablesMap.put("ANTIGUEDAD_5_DIARIO","ANTIGUEDAD_5_D");
+		variablesMap.put("ANTIGUEDAD_10_DIARIO","ANTIGUEDAD_10_D");
+		variablesMap.put("ANTIGUEDAD_16_DIARIO","ANTIGUEDAD_16_D");
+		variablesMap.put("ANTIGUEDAD_22_DIARIO","ANTIGUEDAD_22_D");
+		variablesMap.put("ANTIGUEDAD_28_DIARIO","ANTIGUEDAD_28_D");
+		variablesMap.put("ANTIGUEDAD_34_DIARIO","ANTIGUEDAD_34_D");
+		variablesMap.put("ANTIGUEDAD_40_DIARIO","ANTIGUEDAD_40_D");
+		variablesMap.put("ANTIGUEDAD_46_DIARIO","ANTIGUEDAD_46_D");
+		variablesMap.put("ANTIGUEDAD_52_DIARIO","ANTIGUEDAD_52_D");
+		variablesMap.put("ANTIGUEDAD_58_DIARIO","ANTIGUEDAD_58_D");
+		variablesMap.put("ANTIGUEDAD_60_DIARIO","ANTIGUEDAD_60_D");
+		
 		variablesMap.put("ANTIGUEDAD_3_MENSUAL","ANTIGUEDAD_3_M");
 		variablesMap.put("ANTIGUEDAD_8_MENSUAL","ANTIGUEDAD_8_M");
 		variablesMap.put("ANTIGUEDAD_16_MENSUAL","ANTIGUEDAD_16_M");
