@@ -1,24 +1,27 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
+import java.util.List;
+
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 
 @SuppressWarnings("serial")
 public class ComunicaEnterpriseSettings implements Serializable {
 
 	private Integer enterpriseId;
 	private WorkplaceComunica workplaceComunica;
-	private MainCCCInfo mainCCCInfo;
+	private List<Activity> activities;
 	private AgreementComunica agreementComunica;
 	
 	public ComunicaEnterpriseSettings() {
 		super();
 	}
 	
-	public ComunicaEnterpriseSettings(Integer enterpriseId, WorkplaceComunica workplaceComunica, MainCCCInfo mainCCCInfo, AgreementComunica agreementComunica) {
+	public ComunicaEnterpriseSettings(Integer enterpriseId, WorkplaceComunica workplaceComunica, List<Activity> activities, AgreementComunica agreementComunica) {
 		super();
 		this.enterpriseId = enterpriseId;
 		this.workplaceComunica = workplaceComunica;
-		this.mainCCCInfo = mainCCCInfo;
+		this.activities = activities;
 		this.agreementComunica = agreementComunica;
 	}
 
@@ -38,12 +41,12 @@ public class ComunicaEnterpriseSettings implements Serializable {
 		this.workplaceComunica = workplaceComunica;
 	}
 
-	public MainCCCInfo getMainCCCInfo() {
-		return mainCCCInfo;
+	public List<Activity> getActivities() {
+		return activities;
 	}
 
-	public void setMainCCCInfo(MainCCCInfo mainCCCInfo) {
-		this.mainCCCInfo = mainCCCInfo;
+	public void setActivities(List<Activity> activities) {
+		this.activities = activities;
 	}
 
 	public AgreementComunica getAgreementComunica() {

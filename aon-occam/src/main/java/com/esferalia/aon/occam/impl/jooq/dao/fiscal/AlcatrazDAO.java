@@ -129,5 +129,15 @@ public class AlcatrazDAO {
 		;
 	}
 	
-
+	public static boolean hasInvoicesBound(AONContext ctx, Integer fiscalModelId) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.where(ALCATRAZ.FS_MODEL.eq(fiscalModelId))
+			.limit(1)
+			.fetch()
+			.stream()
+			.findAny()
+			.isPresent();
+	}
 }

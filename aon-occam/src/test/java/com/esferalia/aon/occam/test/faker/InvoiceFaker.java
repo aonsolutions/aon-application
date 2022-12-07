@@ -1,9 +1,12 @@
 package com.esferalia.aon.occam.test.faker;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
@@ -100,6 +103,9 @@ public class InvoiceFaker {
 	private static enum InvoiceFakerTypes {
 		// Venta Nacional
 		SALES_NATIONAL {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.SALES; }
+			
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -108,6 +114,9 @@ public class InvoiceFaker {
 		},
 		// Venta Nacional
 		SALES_NATIONAL_SURCHARGE {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.SALES; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -117,6 +126,9 @@ public class InvoiceFaker {
 		},
 		// Venta Canarias, Ceuta y Melilla
 		SALES_CAN_CEU_MEL {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.SALES; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
 				invoice.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
@@ -125,6 +137,9 @@ public class InvoiceFaker {
 		},
 		// Prestacion de servicio Canarias, Ceuta y Melilla
 		SALES_CAN_CEU_MEL_SERVICE {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.SALES; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
 				invoice.setTransaction(InvoiceTransactionType.CAN_CEU_MEL);
@@ -134,6 +149,9 @@ public class InvoiceFaker {
 		},
 		// Venta Nacional Criterio de caja
 		SALES_NATIONAL_ACCRUAL_PAYMENT {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.SALES; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -143,6 +161,9 @@ public class InvoiceFaker {
 		},
 		// Compra Nacional 
 		PURCHASE_NATIONAL {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.PURCHASE; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -151,6 +172,9 @@ public class InvoiceFaker {
 		},
 		// Compra Nacional Criterio de caja
 		PURCHASE_NATIONAL_ACCRUAL_PAYMENT {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.PURCHASE; }
+			
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -160,6 +184,9 @@ public class InvoiceFaker {
 		},
 		// Compra Intracomunitaria
 		PURCHASE_INTRACOMMUNITY {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.PURCHASE; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.INTRACOMMUNITY);
@@ -169,6 +196,9 @@ public class InvoiceFaker {
 		},
 		// Compra ISP
 		PURCHASE_ISP {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.PURCHASE; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.OTHER_ISP);
@@ -178,6 +208,9 @@ public class InvoiceFaker {
 		},
 		// Compra Nacional
 		PURCHASE_EXTRACOMMUNITY {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.PURCHASE; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
@@ -187,6 +220,9 @@ public class InvoiceFaker {
 		},
 		// Compra Nacional Reg Importacion
 		PURCHASE_EXTRACOMMUNITY_VAT_IMPORT {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.PURCHASE; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
@@ -196,6 +232,9 @@ public class InvoiceFaker {
 		},
 		// Compra Canarias, Ceuta, Melilla
 		PURCHASE_CAN_CEU_MEL {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.PURCHASE; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
@@ -205,6 +244,9 @@ public class InvoiceFaker {
 		},
 		// Compra Canarias, Ceuta, Melilla Reg Importacion
 		PURCHASE_CAN_CEU_MEL_VAT_IMPORT {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.PURCHASE; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.EXTRACOMMUNITY);
@@ -215,6 +257,9 @@ public class InvoiceFaker {
 		
 		// Gasto Nacional
 		EXPENSES_NATIONAL {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.EXPENSES; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.EXPENSES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -224,6 +269,9 @@ public class InvoiceFaker {
 		},
 		// Gasto Nacional Criterio de caja
 		EXPENSES_NATIONAL_ACCRUAL_PAYMENT {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.EXPENSES; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.EXPENSES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -233,6 +281,9 @@ public class InvoiceFaker {
 		},
 		// Gasto nacional con retención. Se debe suministrar en 
 		EXPENSES_RETENTION {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.EXPENSES; }
+			
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.EXPENSES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -242,6 +293,9 @@ public class InvoiceFaker {
 		},
 		// Compra con retención en régimen agríccola
 		PURCHASE_FARMER_RETENTION{
+			@Override 
+			public InvoiceType getType() { return InvoiceType.PURCHASE; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.PURCHASE);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -252,6 +306,9 @@ public class InvoiceFaker {
 		},
 		// Gasto con retención en régimen agríccola
 		EXPENSE_FARMER_RETENTION{
+			@Override 
+			public InvoiceType getType() { return InvoiceType.EXPENSES; }
+
 			public Invoice get( InvoiceFakerParams params ) {
 				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.EXPENSES);
 				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
@@ -261,7 +318,13 @@ public class InvoiceFaker {
 			}
 		},
 		;
+		
 		public abstract Invoice get( InvoiceFakerParams params );
+		public abstract InvoiceType getType();
+		
+		public boolean isSales() {
+			return getType() == InvoiceType.SALES;
+		}
 		
 	}
 
@@ -610,9 +673,26 @@ public class InvoiceFaker {
 		return tax;
 	}
 
-	public static Invoice getRandom(InvoiceFakerParams params) {
-		InvoiceFakerTypes type = InvoiceFakerTypes.values()[faker.random().nextInt(InvoiceFakerTypes.values().length-1)];
+	public static Invoice getRandomSales(InvoiceFakerParams params) {
+		List<InvoiceFakerTypes> list = Arrays.stream(InvoiceFakerTypes.values())
+			.filter(t -> t.isSales() )
+			.collect(Collectors.toCollection(LinkedList::new));
+		InvoiceFakerTypes type = list.get(faker.random().nextInt(list.size()-1));
 		return type.get(params);
+	}
+	
+	public static Invoice getRandomNotSales(InvoiceFakerParams params) {
+		List<InvoiceFakerTypes> list = Arrays.stream(InvoiceFakerTypes.values())
+			.filter(t -> !t.isSales() )
+			.collect(Collectors.toCollection(LinkedList::new));
+		InvoiceFakerTypes type = list.get(faker.random().nextInt(list.size()-1));
+		return type.get(params);
+	}
+	
+	public static Invoice getRandom(InvoiceFakerParams params) {
+		return AonRandom.gt(60)
+			?getRandomSales(params)
+			:getRandomNotSales(params);
 	}
 	public static Invoice getSalesNational(AONContext ctx, AonConfiguration configuration) {
 		InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration);

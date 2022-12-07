@@ -582,7 +582,7 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		SEH1B seh1b = new SEH1B();
 		seh1b.setCodigoInstrucciones("36E");
 		seh1b.setMarcasDeEnvio(null);
-		seh1b.setFechaDeCaducidad_36__102_203_(null);
+		seh1b.setFechaDeCaducidad_36__102_203_(date);
 		seh1b.setFecha_horaRecepcionDeLaMercancia_50__102_203_(null);
 		seh1b.setConsumirAntesDeFecha_361__102_203_(null);
 		seh1b.setCalificadorDeCantidad_11_12_(null);

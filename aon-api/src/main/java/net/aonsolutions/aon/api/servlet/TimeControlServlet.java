@@ -76,7 +76,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 				responseFile(resp, getTimeControlPdfManual(api), MimeType.PDF);
 				break;
 			case "/excel":
-				responseFile(resp, getTimeControlExcel(req, api), MimeType.MS_EXCEL);
+				responseFile(resp, getTimeControlExcel(api), MimeType.MS_EXCEL);
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -354,7 +354,7 @@ public class TimeControlServlet extends AonApiHttpServlet{
 		return AON_SOLUTIONS.saveTimeControlDetail(tcd.getDomain(), api.getUser().getLogin(), tcd).toJSON();
 	}
 	
-	private File getTimeControlExcel(HttpServletRequest req, AonApiData api) throws Exception {
+	private File getTimeControlExcel(AonApiData api) throws Exception {
 		LOGGER.info("[GET] TIME-CONTROL SERVLET EXCEL");
 
 		Domain domain = AON.getDomain(api.getDomain().getName(), api.getDomain().getId(), "", f -> f.getNameProperty().eq(api.getDomain().getName()));

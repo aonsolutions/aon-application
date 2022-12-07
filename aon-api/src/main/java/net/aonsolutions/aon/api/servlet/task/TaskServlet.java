@@ -1,5 +1,7 @@
 package net.aonsolutions.aon.api.servlet.task;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -57,6 +59,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.excel.TaskExcel;
 import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 
 @SuppressWarnings("serial")
@@ -108,6 +111,9 @@ public class TaskServlet extends AonApiHttpServlet{
 					break;
 				case "/daily-tracking-by-task":
 					response(req, resp, getDailyTrackingByTask(api));
+					break;
+				case "/excel":
+					responseFile(resp, getTaskExcel(api), MimeType.MS_EXCEL);
 					break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -205,17 +211,12 @@ public class TaskServlet extends AonApiHttpServlet{
 			tasks.addAll(TaskUtils.getTasksNotAll(api));
 		} 
 		
-		if(page==1) {	//GET TASK ALL DOMAIN
-			List<Task> listOffice = getTasksOffice(api);
-			if(!listOffice.isEmpty()) {
-				tasks.addAll(listOffice);
-			}
-		}
+		
+		setTasksOffice(api, tasks); // set tasks office domains
 
 		JSONArray array = new JSONArray();
 		
-		tasks
-		.forEach(t ->{
+		tasks.forEach(t ->{
 			JSONObject json = TaskJSON.toJSON(t);
 			if(t.getParentObj()!=null) {
 				json.put("parentObj", TaskJSON.toJSON(t.getParentObj()));
@@ -439,6 +440,7 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		counts.keySet().stream().forEach(k-> json.put(k, counts.get(k)) );
 		
+		
 //		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 //		AON.getDomainOfficeLinked(api.getDomain(), api.getUser().getLogin()).stream().forEach(domain -> {
 //			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(company.getDocument())));
@@ -627,12 +629,16 @@ public class TaskServlet extends AonApiHttpServlet{
     }
 	
 	//TODO 
-	private List<Task> getTasksOffice(AonApiData api) {
-		List<Task> tasks = new ArrayList<>();
+	private void setTasksOffice(AonApiData api, List<Task> tasks) {
 		List<String> errors = new ArrayList<>();
 		if(!DomainType.CONSULTANCY.equals(api.getDomain().getDomainType())) {
 			
-			boolean isCau     = TaskUtils.isCau(api.getData());
+			JSONObject params = api.getData();
+			
+			Integer page       = params.optInt(IJsonNames.PAGE);
+			Integer perPage    = params.optInt(IJsonNames.PER_PAGE);
+			
+			boolean isCau     = TaskUtils.isCau(params);
 
 			Company company   = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
 		
@@ -641,16 +647,17 @@ public class TaskServlet extends AonApiHttpServlet{
 			AON.getDomainOfficeLinked(company)
 			.forEach(domain -> {
 				try {
+					
 					Customer customer = AON.getCustomer(domain.getName(), domain.getId(), "", 
 						f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(companyDoc))
 					);
 					
 					if(customer.getId()!=null) {
 						if(isCau) {
-							AON_SOLUTIONS.getTaskAndChildsStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
+							AON_SOLUTIONS.getTaskAndChildsStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer), page, perPage)
 							.forEach(tasks::add);
 						} else {
-							AON_SOLUTIONS.getTaskParentOrChildStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer))
+							AON_SOLUTIONS.getTaskParentOrChildStream(domain, new User(), f -> TaskFilter.task(api, f, domain, customer), page, perPage)
 							.forEach(tasks::add);
 						}
 					}
@@ -660,15 +667,15 @@ public class TaskServlet extends AonApiHttpServlet{
 				}
 			});
 		}
-		return tasks;
+		
 	}
 	
 	private List<ApplicationParameter> getAppParamsList(AonApiData api, List<String> listNames) {
 		if(!listNames.isEmpty()) {
-		    String[] names = listNames.toArray(String[]::new);
-			
 			return AON.getApplicationParameterStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
-					f-> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getNameProperty().in(names))).collect(Collectors.toList());
+					f-> f.getDomainProperty().eq(api.getDomain().getId())
+					.and(f.getNameProperty().in(listNames.toArray(String[]::new)))
+			).collect(Collectors.toList());
 		}
 		return Collections.emptyList();
 	}
@@ -713,6 +720,15 @@ public class TaskServlet extends AonApiHttpServlet{
 				}
 			}
 		} catch (Exception e) {}
+	}
+	
+	private File getTaskExcel(AonApiData api) throws Exception {
+		LOGGER.info("[GET] TASK SERVLET EXCEL");
+
+
+		File file = File.createTempFile("task", "");
+		TaskExcel.buildExcel(new FileOutputStream(file), api);
+		return file;
 	}
 	
 	//---------DAILY_TRACKING----------

@@ -65,8 +65,8 @@ const buildToolbar = (task) => {
 
     aonMessengerChat.appendChild(toolbar);
 
-    toolbar.addButton2(ACTIONS.NEXT, () => aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getNextTask()) );
-		toolbar.addButton2(ACTIONS.PREVIOUS, () =>  aonMessengerChat.applicationParentEl.showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getPreviousTask()) );
+    toolbar.addButton2(ACTIONS.NEXT, () => aonMessengerChat.getApplicationParent().showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getNextTask()) );
+		toolbar.addButton2(ACTIONS.PREVIOUS, () =>  aonMessengerChat.getApplicationParent().showView(MESSENGER_VIEWS.AON_MESSENGER_CHAT, getPreviousTask()) );
 
     const status = task.getStatus();
 

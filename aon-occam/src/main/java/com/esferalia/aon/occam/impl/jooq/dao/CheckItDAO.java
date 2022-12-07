@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.jooq.AggregateFunction;
 import org.jooq.InsertValuesStep11;
 import org.jooq.Record2;
+import org.jooq.exception.NoDataFoundException;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.BankStatementRecord;
@@ -28,7 +29,6 @@ import com.esferalia.aon.occam.api.model.finance.checkit.CheckItBankStatement;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.impl.jooq.validation.BankStatementValidator;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -146,24 +146,32 @@ public class CheckItDAO {
 
 	private static int getNextLotNumber(AONContext aonContext, Integer domainId, RegistryBank rbank) {
 		AggregateFunction<Integer> lot = DSL.max(BANK_STATEMENT.LOT_NUMBER);
-		return AonNumberUtils.zeroIfNull(aonContext.getDslContext().select( lot )
-				.from(BANK_STATEMENT)
-				.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
-				.and(BANK_STATEMENT.DOMAIN.eq(domainId))
-				.fetchSingle().get(lot)) + 1;
+		try {			
+			return AonNumberUtils.zeroIfNull(aonContext.getDslContext().select( lot )
+					.from(BANK_STATEMENT)
+					.where(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+					.and(BANK_STATEMENT.DOMAIN.eq(domainId))
+					.fetchSingle().get(lot)) + 1;
+		} catch (NoDataFoundException e) {
+			return 1;
+		}
 	}
 	
 	public static Date getLastMovementDateNoId(AONContext aonContext, Integer domainId, RegistryBank rbank) {
-		java.sql.Date date = (java.sql.Date) aonContext.getDslContext()
-				.select(DSL.max(BANK_STATEMENT.OPERATION_DATE).as("date"))
-				.from(BANK_STATEMENT)
-				.where(BANK_STATEMENT.DOMAIN.eq(domainId))
-				.and(BANK_STATEMENT.RBANK.eq(rbank.getId()))
-				.fetchSingle().get("date");
-		if (date != null) {
-			return new Date(date.getTime());
+		try {
+			java.sql.Date date = (java.sql.Date) aonContext.getDslContext()
+					.select(DSL.max(BANK_STATEMENT.OPERATION_DATE).as("date"))
+					.from(BANK_STATEMENT)
+					.where(BANK_STATEMENT.DOMAIN.eq(domainId))
+					.and(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+					.fetchSingle().get("date");
+			if (date != null) {
+				return new Date(date.getTime());
+			}
+			return null;			
+		} catch (NoDataFoundException e) {
+			return null;			
 		}
-		return null;
 	}
 
 	public static Date getLastOperationDateDB(AONContext aonContext, Integer domainId, RegistryBank rbank) {
@@ -184,29 +192,34 @@ public class CheckItDAO {
 		return lastOperationDate;
 	}
 	
-	public static Pair<String, Date> getMaxMovementIdAndDate(AONContext aonContext, Integer domainId, RegistryBank rbank) {
-		Record2<String, java.sql.Date> result = aonContext.getDslContext()
-		.select(BANK_STATEMENT.REFERENCE2, BANK_STATEMENT.OPERATION_DATE)
-		.from(BANK_STATEMENT)
-		.where(BANK_STATEMENT.REFERENCE1.eq(CHECKIT_R1))
-		.and(BANK_STATEMENT.RBANK.eq(rbank.getId()))
-		.and(BANK_STATEMENT.DOMAIN.eq(domainId))
-		.and(BANK_STATEMENT.REFERENCE2.eq(
-				DSL.select(DSL.max(BANK_STATEMENT.REFERENCE2))
-				.from(BANK_STATEMENT)
-				.where(BANK_STATEMENT.REFERENCE1.eq(CHECKIT_R1))
-				.and(BANK_STATEMENT.RBANK.eq(rbank.getId()))
-				.and(BANK_STATEMENT.DOMAIN.eq(domainId)))
-		).fetchSingle();
+	public static Pair<String, Date> getMaxMovementIdAndDate(AONContext aonContext, Integer domainId, RegistryBank rbank) {		
 		
-		String id = (String) result.get(BANK_STATEMENT.REFERENCE2);
-		java.sql.Date date = result.get(BANK_STATEMENT.OPERATION_DATE);
-		Date utilDate = date != null ? new Date(date.getTime()) : null;
-		
-		if (id == null || id.isEmpty()) {
+		try {
+			Record2<String, java.sql.Date> result = aonContext.getDslContext()
+					.select(BANK_STATEMENT.REFERENCE2, BANK_STATEMENT.OPERATION_DATE)
+					.from(BANK_STATEMENT)
+					.where(BANK_STATEMENT.REFERENCE1.eq(CHECKIT_R1))
+					.and(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+					.and(BANK_STATEMENT.DOMAIN.eq(domainId))
+					.and(BANK_STATEMENT.REFERENCE2.eq(
+							DSL.select(DSL.max(BANK_STATEMENT.REFERENCE2))
+							.from(BANK_STATEMENT)
+							.where(BANK_STATEMENT.REFERENCE1.eq(CHECKIT_R1))
+							.and(BANK_STATEMENT.RBANK.eq(rbank.getId()))
+							.and(BANK_STATEMENT.DOMAIN.eq(domainId)))
+					).fetchSingle();
+					
+					String id = (String) result.get(BANK_STATEMENT.REFERENCE2);
+					java.sql.Date date = result.get(BANK_STATEMENT.OPERATION_DATE);
+					Date utilDate = date != null ? new Date(date.getTime()) : null;
+					
+					if (id == null || id.isEmpty()) {
+						return null;
+					} else
+						return new Pair<>(id, utilDate);
+		} catch (NoDataFoundException e) {
 			return null;
-		} else
-			return new Pair<>(id, utilDate);
+		}
 	}
 	
 	public static List<String> getActiveIbans(String domainName, Integer domainId, String user) {

@@ -9,7 +9,7 @@ import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -36,9 +36,7 @@ public class MainCCC extends MainEntryPoint{
 		
 		@Override
 		protected void onInsertRows() {
-			for(CCCInfo cccInfo : mainCCCObject.getCCCs()) {
-				cccWidget.insertRow(cccInfo);
-			}
+			mainCCCObject.getCCCs().forEach(ccc -> cccWidget.insertRow(ccc));
 		}
 
 		@Override
@@ -47,15 +45,8 @@ public class MainCCC extends MainEntryPoint{
 		}
 
 		@Override
-		protected void onInsertCCC(Integer cccId, int activityId, byte cccRegime, String cccRegimeCode, String account, String province, String provinceCode) {
-			mainCCCObject.insertCCC(
-					cccId, 
-					activityId, 
-					cccRegime, 
-					cccRegimeCode,  
-					account, 
-					province, 
-					provinceCode);
+		protected void onInsertCCC(EnterpriseCCC ccc) {
+			mainCCCObject.insertCCC(ccc);
 		}
 
 		@Override
@@ -134,6 +125,7 @@ public class MainCCC extends MainEntryPoint{
 		this.mainCCCObject = mainCCCObject;
 		this.mainCCCObject.getMainCCCInfo(
 				s -> {
+					cccWidget.setDomain(mainCCCObject.getDomain());
 					cccWidget.onInsertRows();
 					cccWidget.calculateScrollPanelHeightMainCCC();
 				}, f -> {});

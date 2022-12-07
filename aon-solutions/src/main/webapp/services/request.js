@@ -33,10 +33,51 @@ const xmlHttpRequestAon = (method, url, token, sendData) =>{
   return xhr;
 }
 
+const xmlHttpRequestXml = (method, url, sendData) =>{
+  let xhr = new XMLHttpRequest();
+  if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
+  xhr.open(method, url);
+  xhr.setRequestHeader("Content-Type", "text/xml");
+  xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+  return xhr;
+}
+
 export const request = (method, url, token, sendData, fn) => {
   try {
     let xhr = xmlHttpRequestAon(method, url, token, sendData);
     xhr.send(JSON.stringify(sendData));
+    xhr.onload = () => {
+      if (xhr.status != 200) {
+        // analyze HTTP status of the response
+        console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        fn(undefined, xhr.response);
+      } else {
+        // show the result
+        console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+        let response = !xhr.response ? "[]" : xhr.response;
+        fn(response);
+      }
+    };
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        console.log(`Received ${event.loaded} of ${event.total} bytes`);
+      } else {
+        console.log(`Received ${event.loaded} bytes`); // no Content-Length
+      }
+    };
+    xhr.onerror = () => {
+      console.log("Request failed");
+    };
+  } catch (error) {
+    console.log("error");
+    fn(undefined, error);
+  }
+};
+
+export const requestXml = (method, url, sendData, fn) => {
+  try {
+    let xhr = xmlHttpRequestXml(method, url, sendData);
+    xhr.send(sendData);
     xhr.onload = () => {
       if (xhr.status != 200) {
         // analyze HTTP status of the response
@@ -142,6 +183,17 @@ export const get = (url, data) => {
 export const post = (url, data) => {
   return new Promise((resolve, reject) => {
     request("POST", url, getToken(), data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
+export const postXml = (url, data) => {
+  return new Promise((resolve, reject) => {
+    request("POST", url, data, (result, error) => {
       try{
         if (error) reject(error);
         else resolve(JSON.parse(result));

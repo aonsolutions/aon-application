@@ -1015,8 +1015,6 @@ public class JooqIT {
 				
 				Integer contractId = contractRecords.get(0).get(CONTRACT.ID);
 				
-				dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
-				
 				ContractLeaveRecord contractLeaveRecord = dslContext.insertInto(CONTRACT_LEAVE)
 					.set(CONTRACT_LEAVE.DOMAIN, domainId)
 					.set(CONTRACT_LEAVE.TYPE, it.getTypeLowPart())
@@ -1031,8 +1029,6 @@ public class JooqIT {
 					.returning(CONTRACT_LEAVE.ID)
 					.fetchOne();
 				
-				dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
-				 
 				Integer contractLeaveId = contractLeaveRecord.get(CONTRACT_LEAVE.ID);
 				
 				for(ITPart itPart : it.getITParts()) {
@@ -1142,8 +1138,6 @@ public class JooqIT {
 				Date startDate = null == it.getStartDate() ? null : new Date(it.getStartDate().getTime());
 				Date endDate = null == it.getEndDate() ? null : new Date(it.getEndDate().getTime());
 				
-				dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
-				
 				dslContext.update(CONTRACT_LEAVE)
 					.set(CONTRACT_LEAVE.TYPE, it.getTypeLowPart())
 					.set(CONTRACT_LEAVE.DESCRIPTION, it.getDescription())
@@ -1156,15 +1150,9 @@ public class JooqIT {
 					.where(CONTRACT_LEAVE.ID.eq(it.getId()))
 					.execute();
 				
-				dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
-				
-				dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
-				
 				dslContext.delete(CONTRACT_LEAVE_DETAIL)
 					.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(it.getId()))
 					.execute();
-				
-				dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 				
 				for(ITPart itPart : it.getITParts()) {
 					
@@ -1340,8 +1328,6 @@ public class JooqIT {
 
 	private static String deleteITDB(DSLContext dslContext, Integer domainId, Integer itId) {
 		
-		dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
-		
 		Record contractLeaveRecord = dslContext.select().from(CONTRACT_LEAVE).where(CONTRACT_LEAVE.ID.eq(itId)).fetchOne();
 		
 		Date startDate = contractLeaveRecord.get(CONTRACT_LEAVE.START_DATE);
@@ -1383,10 +1369,6 @@ public class JooqIT {
 		dslContext.delete(CONTRACT_LEAVE)
 			.where(CONTRACT_LEAVE.ID.eq(itId))
 				.execute();
-		
-		
-		
-		dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 		
 		return "Parte IT eliminado correctamente";
 	}

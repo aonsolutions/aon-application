@@ -67,7 +67,7 @@ export class AonCheckbox extends AonElement {
 				input.removeAttribute(CONSTANT.CHECKED);
 			}
 			
-			this.dispatchEvent(new Event(EVENT.CHANGE));
+			this.dispatchEvent(new Event(EVENT.AON_CHANGE));
 		}
 	}
 

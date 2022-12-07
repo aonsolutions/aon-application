@@ -1,11 +1,15 @@
 package com.esferalia.aon.occam.impl.jooq.fiscal;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.IDAOCallback;
 import com.esferalia.aon.occam.api.fiscal.IMODEL303;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
@@ -104,6 +108,17 @@ public class MODEL303Impl implements IMODEL303 {
 	@Override
 	public String getInfo(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod303InfoDAO.getInfo(ctx,mod303,script,infoKey);
+	}
+	
+	@Override
+	public Stream<VatContext> getInfo(CloseableAONContext ctx, Mod303 mod303, Mod303Key key, IDAOCallback callback) {
+		return  Mod303InfoDAO.getModelInvoicesInfo(ctx, mod303, key)
+			.onClose(() -> {
+				if (callback != null) {
+					callback.onFinish();
+				}
+			});
+		
 	}
 	
 	@Override

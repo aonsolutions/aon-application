@@ -91,6 +91,7 @@ public class CompanyDAO {
  		
  		@Override public Property<Byte> getUserSharedProperty() {return new FilterDAO.PropertyDAO<>(USER.SHARED);}
  		@Override public Property<Byte> getDomainTypeProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.TYPE);}
+ 		@Override public Property<Byte> getDomainActiveProperty() {return new FilterDAO.PropertyDAO<>(Domain.DOMAIN.ACTIVE);}
 	}
 	
 	public static class CompanyFiller implements Function<Record, Company> {
@@ -268,7 +269,7 @@ public class CompanyDAO {
 	}
 
 	/* **********************************************
-	 *					ANTIGUOS MÉTODOS
+	 *					ANTIGUOS Mï¿½TODOS
 	 * **********************************************
 	 */
 	
@@ -385,29 +386,38 @@ public class CompanyDAO {
 			.leftOuterJoin(SCOPE).on(domain.SCOPE.eq(SCOPE.ID))
 			.leftOuterJoin(APP_PARAM).on(domain.ID.eq(APP_PARAM.DOMAIN).and(APP_PARAM.NAME.eq(AppParam.FS_DEFAULT_ADMINISTRATION.getValue())))
 			.leftOuterJoin(parent).on(domain.PARENT.eq(parent.ID))
-			.where(USER.AUTH.eq(auth).and(
+			.where(
+				USER.AUTH.eq(auth)
+				.and(
 					domain.ID.in(domains)
-					.or(domain.PARENT.in(domains)
-						.and(domain.SCOPE.isNull().or(domain.SCOPE.in(userScopes))))))
+					.or(
+						domain.PARENT.in(domains)
+						.and(
+							domain.SCOPE.isNull()
+							.or(domain.SCOPE.in(userScopes))
+						)
+					)
+				)
+			)
 			.orderBy(REGISTRY.NAME)
 			.fetch().stream().map(new AonCompanyFiller());
 	}
 	
 	
-	public static Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth,  CompanyFilter filter, Integer page, Integer perPage){
+	public static Stream<AonCompany> getCompanyStream(AONContext ctx, byte[] auth, CompanyFilter filter, Integer page, Integer perPage){
+		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
+		
 		Integer[] userScopes = SecurityDAO.getAuthScopes(ctx, auth);
 		Integer[] domains = SecurityDAO.getAuthDomains(ctx, auth);
 		
-		com.esferalia.aon.jooq.tables.Domain parent = DOMAIN.as("p");
-		
 		SelectSeekStep1<Record, String> query = ctx.getDslContext()
 		.select(COMPANY.fields())
-			.select(DOMAIN.fields())
-			.select(REGISTRY.fields())
-			.select(REGISTRY.fields())
-			.select(parent.ID, parent.NAME)
-			.select(USER.SHARED)
-			.select(APP_PARAM.VALUE)
+		.select(DOMAIN.fields())
+		.select(REGISTRY.fields())
+		.select(REGISTRY.fields())
+		.select(parent.ID, parent.NAME)
+		.select(USER.SHARED)
+		.select(APP_PARAM.VALUE)
 		.from(COMPANY)
 		.join(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
 		.join(DOMAIN).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
@@ -419,10 +429,13 @@ public class CompanyDAO {
 		.and(
 			USER.AUTH.eq(auth)
 			.and(
-					DOMAIN.ID.in(domains)
+				DOMAIN.ID.in(domains)
 				.or(
 					DOMAIN.PARENT.in(domains)
-					.and(DOMAIN.SCOPE.isNull().or(DOMAIN.SCOPE.in(userScopes)))
+					.and(
+						DOMAIN.SCOPE.isNull()
+						.or(DOMAIN.SCOPE.in(userScopes))
+					)
 				)
 			)
 		)
@@ -498,7 +511,7 @@ public class CompanyDAO {
 				.findFirst()
 				.orElse(null);
 	}
-
+	
 	public static Stream<InvestAsset> getInvestAssets(AONContext ctx, int domainId, Date atDate) {
 		return ctx.getDslContext()
 				.select()

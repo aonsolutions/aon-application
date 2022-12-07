@@ -20,6 +20,7 @@ public interface IEnterprisePayroll {
 	public Double getRaw();
 	public Double getEmployeeSS();
 	public Double getIrpf();
+	public Double getInKind();
 	public Double getLiquid();
 	public Double getEnterpriseSS();
 	public Double getTotalCost();

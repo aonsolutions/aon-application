@@ -11,26 +11,28 @@ export class AonParent extends AonElement {
 	selected;
 	notice;
 	filter;
+	_filter; // NEW FILTER
 
 	more;
 
 	setFilter(filter){
-		this.filter = filter;
+		if(filter.ids && filter.ids.length) filter.ids = filter.ids.join(",");
+		this._filter = filter;
 	}
 
 	getFilter(){
-		return this.filter;
+		return this._filter;
 	}
 
 	addFilter(filter){
-		this.filter = {...this.getFilter(), ...filter};
+		this._filter = {...this.getFilter(), ...filter};
 	}
-
 
 	constructor () {
 		super();
 		this.id = 'aonParent';
-		this.filter= {};
+		this.filter = {};
+		this._filter = {};
 	}
 
 	connectedCallback () {
@@ -80,18 +82,18 @@ export class AonParent extends AonElement {
 		let filterOptions = [{
 				name: MSG.ACTIVES,
 				icon: 'domain',
-				fn: () => this.init({active: true})
+				fn: () => this.init({active: true, domainActive:true})
 			}, {
 				name: MSG.INACTIVES,
 				icon: 'domain_disabled',
-				fn: () => this.init({inactive: true, active:false})
+				fn: () => this.init({inactive: true, domainActive:false})
 			}, {
 				name: MSG.SHARED,
-				icon: 'share',
+				icon: MATERIAL_ICONS.SHARE,
 				fn: () => this.init({shared: true})
 			}, {
 				name: MSG.ENVIRONMENT,
-				icon: 'apartment',
+				icon: MATERIAL_ICONS.APARTMENT,
 				fn: () => this.init({entorno:true, type:"CONSULTANCY"})
 			},{
 				name: MSG.OFFICE,
@@ -116,7 +118,9 @@ export class AonParent extends AonElement {
 
 	init(filter) {
 		this.filter = filter;
+
 		let aonParent = this.getElement('aonParentMain');
+		
 		if(aonParent){
 			aonParent.startLoader();
 			this.build();
@@ -129,9 +133,13 @@ export class AonParent extends AonElement {
 					this.page = 1;
 					this.buildCompanies(companies.filter(f => this.companyFilter(f, filter)).slice(0, 30));
 				}
-		  	}, () => closeSession());
+			}, () => closeSession());
 		}
-   }
+
+		if(filter){
+			this.setFilter(filter);
+		}
+	}
 
 	companyFilter(f, q) {
 		if(!q) {
@@ -143,7 +151,7 @@ export class AonParent extends AonElement {
 		let value = true;
 
 		if(q){
-
+			
 			if(q.value) {
 				const document = f.document && f.document.toUpperCase().includes(q.value.toUpperCase());
 				const name = f.name && f.name.toUpperCase().includes(q.value.toUpperCase());
@@ -172,7 +180,7 @@ export class AonParent extends AonElement {
 	
 			if(q.ids) {
 				let idFilter;
-				q.ids.forEach((item, i) => {
+				q.ids.split(',').forEach((item, i) => {
 					idFilter = f.id == item || idFilter;
 				});
 				value = idFilter;
@@ -204,7 +212,7 @@ export class AonParent extends AonElement {
 		application.updateSidenavCount('RejectedInvoices', rejectedCount);
 	}
 
- 	build() {
+	build() {
 		let aonParent = this.getElement('aonParentMain');
 		let content = this.createElement(TAG.DIV);
 		let div = this.createElement(TAG.DIV);
@@ -217,7 +225,6 @@ export class AonParent extends AonElement {
 		div.innerHTML = MSG.COMPANIES.toUpperCase();
 		content.appendChild(div);
 		
-
 		let ul = this.createElement(TAG.UL);
 		ul.id = "UlCompanies";
 		ul.classList.add(CSS.AON_UL);
@@ -243,10 +250,12 @@ export class AonParent extends AonElement {
 	loadMore() {
 		this.getApplication().startLoader();
 		getCompanies().then( companies => {
-			this.getApplication().stopLoader();
 			let first = this.page * 30;
 			this.page = this.page + 1;
 			this.buildCompanies(companies.filter(f => this.companyFilter(f, this.filter)).slice(first, first + 30));	
+		})
+		.finally(()=>{
+			this.getApplication().stopLoader();
 		});
 	}
 
@@ -276,15 +285,17 @@ export class AonParent extends AonElement {
 		let span = this.createElement(TAG.SPAN);
 		span.className = 'aonLiSpan';
 
-		let i = this.createElement('i');
-		i.className = 'material-icons aonAvatar';
 
-		
-		if(company.type === 'OFFICE') i.innerHTML = 'work';
-		else if(company.parent) i.innerHTML = 'apartment';
-		else if(company.shared) i.innerHTML = 'share';
-		else if(!company.active) i.innerHTML = 'domain_disabled';
-		else i.innerHTML = 'business';
+		let icon = "business";
+		if(company.type === 'OFFICE') icon = 'work';
+		else if(company.parent) icon = MATERIAL_ICONS.APARTMENT;
+		else if(company.shared) icon = MATERIAL_ICONS.SHARE;
+		else if(!company.active) icon = 'domain_disabled';
+
+		let i = this.createElement(TAG.I);
+		i.className = 'material-icons aonAvatar';
+		i.innerHTML = icon;
+
 		let span2 = this.createElement(TAG.SPAN);
 		span2.innerHTML = company.name;
 
@@ -298,9 +309,9 @@ export class AonParent extends AonElement {
 		li.appendChild(span);
 
 		let sp = this.createElement(TAG.SPAN);
-		let i2 = this.createElement('i');
+		let i2 = this.createElement(TAG.I);
 		i2.className = 'material-icons aonAvatar';
-		i2.innerHTML = 'keyboard_arrow_right';
+		i2.innerHTML = MATERIAL_ICONS.KEYBOARD_ARROW_RIGHT;
 		sp.appendChild(i2);
 		li.appendChild(sp);
 		return li;
@@ -358,6 +369,8 @@ export class AonParent extends AonElement {
 	getCompaniesSchemas(){
 		getCompaniesBySchemas(this.getFilter())
 		.then(console.log);
+
+		return "Consultando...."
 	}
 }
 if(!window.customElements.get('aon-parent')){

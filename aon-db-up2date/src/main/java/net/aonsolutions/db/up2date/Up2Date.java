@@ -19,19 +19,16 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.FixPreaviso;
-import net.aonsolutions.db.up2date.payroll.Holidays2023Insert;
+import net.aonsolutions.db.up2date.finance.UpdateInvoiceRegistryDocument;
 import net.aonsolutions.db.up2date.payroll.AgreementPaymentsConceptFix;
 import net.aonsolutions.db.up2date.payroll.AlterAgreementPaymentDescription;
 import net.aonsolutions.db.up2date.payroll.AlterContractBonusDescription;
 import net.aonsolutions.db.up2date.payroll.AlterContractBonusExpression;
 import net.aonsolutions.db.up2date.payroll.AlterContractPaymentDescription;
 import net.aonsolutions.db.up2date.payroll.AlterSalaryBonusConcept;
-import net.aonsolutions.db.up2date.payroll.DeathOfEmployeeInsert;
-import net.aonsolutions.db.up2date.accounting.AlterRbankAddRequisition;
-import net.aonsolutions.db.up2date.accounting.AlterRbankAddSepaMandateRef;
-import net.aonsolutions.db.up2date.warehouse.UdapaPfondoUpdateFix;
 
+import net.aonsolutions.db.up2date.payroll.DeathOfEmployeeInsert;
+import net.aonsolutions.db.up2date.payroll.Holidays2023Insert;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 public class Up2Date {
 
@@ -300,8 +297,9 @@ public class Up2Date {
     		AgreementPaymentsConceptFix.AGREEMENTPAYMENTSCONCEPTFIX,
     		DeathOfEmployeeInsert.DEATHOFEMPLOYEEINSERT,
     		AlterAgreementPaymentDescription.ALTERAGREEMENTPAYMENTDESCRIPTION,
-    		
-    		// Important, not remove
+    		UpdateInvoiceRegistryDocument.UPDATE_INVOICE_REGISTRY_DOCUMENT,
+
+        // Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
     };
 

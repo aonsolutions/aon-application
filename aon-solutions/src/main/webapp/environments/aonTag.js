@@ -30,6 +30,7 @@ export const PRE = 'pre';
 export const AON_ELEMENT = 'aon-element';
 export const AON_ADDRESS = 'aon-address';
 export const AON_APPLICATION = 'aon-application';
+export const AON_AUTH = 'aon-auth';
 export const AON_AUTOSIZE_TEXTAREA = 'aon-autosize-textarea';
 export const AON_BASIC_TABLE = 'aon-basic-table';
 export const AON_BUTTON = 'aon-button';
@@ -61,6 +62,7 @@ export const AON_UPLOAD = 'aon-upload';
 export const AON_IBAN = 'aon-iban';
 export const AON_TEXTAREA ='aon-textarea';
 
+export const AON_DELIVERY_TAG = 'aon-delivery-tag';
 // MODULES - COMPANY
 
 export const AON_MODULE = 'aon-module';

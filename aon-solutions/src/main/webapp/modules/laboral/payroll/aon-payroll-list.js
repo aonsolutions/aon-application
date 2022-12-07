@@ -122,7 +122,7 @@ export class AonPayrollList extends AonElement {
         setValueName('endDate', endDate);
       }
     });
-     // ----------PERIOD END ------------
+    // ----------PERIOD END ------------
 
     this.getElement("startDate").addEventListener(EVENT.CHANGE, ()=>periodEl.value = "personalized");
     this.getElement("endDate").addEventListener(EVENT.CHANGE, ()=>periodEl.value = "personalized");

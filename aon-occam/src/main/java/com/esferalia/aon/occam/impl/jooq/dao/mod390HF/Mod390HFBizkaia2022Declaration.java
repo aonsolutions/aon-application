@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod390HF;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303Declaration;
+import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -400,70 +402,70 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 
 		// Compras de bienes corrientes
 		,BZ_C142	(Mod390Key.BZ_C142
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent4(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> hasPercent4(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C142,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X142	(Mod390Key.BZ_X142,null,null,(ctx,mod) -> add(Mod390Key.BZ_X142,mod,PERCENT_4),null,null)
 		,BZ_C143	(Mod390Key.BZ_C143
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent4(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> hasPercent4(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C143,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C144	(Mod390Key.BZ_C144
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent4(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> hasPercent4(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C144,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C145	(Mod390Key.BZ_C145
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent10(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> hasPercent10(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C145,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X145	(Mod390Key.BZ_X145,null,null,(ctx,mod) -> add(Mod390Key.BZ_X145,mod,PERCENT_10),null,null)
 		,BZ_C146	(Mod390Key.BZ_C146
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent10(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> hasPercent10(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C146,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C147	(Mod390Key.BZ_C147
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent10(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> hasPercent10(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C147,mod,vat.getDeductibleQuota())
 			,null,null,null)
 
 		,BZ_C148	(Mod390Key.BZ_C148
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent21(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> hasPercent21(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C148,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X148	(Mod390Key.BZ_X148,null,null,(ctx,mod) -> add(Mod390Key.BZ_X148,mod,PERCENT_21),null,null)
 		,BZ_C149	(Mod390Key.BZ_C149
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent21(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> hasPercent21(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod) 
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C149,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C150	(Mod390Key.BZ_C150
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasPercent21(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> hasPercent21(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod) 
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C150,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C151	(Mod390Key.BZ_C151
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isPurchase() && !vat.isInvestment() && vat.isFarmerRegime()
+			,(mod,vat) -> vat.isFarmerRegime() && isCommonPurchase(vat,mod) 
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C151,mod,vat.getBase())
 			,null,null,null)
 		,BZ_C152	(Mod390Key.BZ_C152
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isPurchase() && !vat.isInvestment() && vat.isFarmerRegime()
+			,(mod,vat) -> vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C152,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C153	(Mod390Key.BZ_C153
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isPurchase() && !vat.isInvestment() && vat.isFarmerRegime()
+			,(mod,vat) -> vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C153,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C154	(Mod390Key.BZ_C154
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasNoPercent(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> hasNoPercent(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C154,mod,vat.getBase())
 			,null,null,null)
 		,BZ_C155	(Mod390Key.BZ_C155
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasNoPercent(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> hasNoPercent(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C155,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C156	(Mod390Key.BZ_C156
-			,(mod,vat) -> vat.isPurchase() && !vat.isService() && hasNoPercent(vat) && vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> hasNoPercent(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C156,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -473,57 +475,57 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 
 		// Gastos		
 		,BZ_C160	(Mod390Key.BZ_C160
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService())) && hasPercent4(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C160,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X160	(Mod390Key.BZ_X160,null,null,(ctx,mod) -> add(Mod390Key.BZ_X160,mod,PERCENT_4),null,null)
 		,BZ_C161	(Mod390Key.BZ_C161
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent4(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C161,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C162	(Mod390Key.BZ_C162
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent4(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C162,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C163	(Mod390Key.BZ_C163
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent10(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C163,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X163	(Mod390Key.BZ_X163,null,null,(ctx,mod) -> add(Mod390Key.BZ_X163,mod,PERCENT_10),null,null)
 		,BZ_C164	(Mod390Key.BZ_C164
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent10(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C164,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C165	(Mod390Key.BZ_C165
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent10(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C165,mod,vat.getDeductibleQuota())
 			,null,null,null)
 
 		,BZ_C166	(Mod390Key.BZ_C166
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent21(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C166,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X166	(Mod390Key.BZ_X166,null,null,(ctx,mod) -> add(Mod390Key.BZ_X166,mod,PERCENT_21),null,null)
 		,BZ_C167	(Mod390Key.BZ_C167
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent21(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C167,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C168	(Mod390Key.BZ_C168
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasPercent21(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C168,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
 		,BZ_C169	(Mod390Key.BZ_C169
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasNoPercent(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> isCommonExpense(vat) && hasNoPercent(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C169,mod,vat.getBase())
 			,null,null,null)
 		,BZ_C170	(Mod390Key.BZ_C170
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasNoPercent(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> isCommonExpense(vat) && hasNoPercent(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C170,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C171	(Mod390Key.BZ_C171
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && (vat.isExpenses() || (vat.isPurchase() && vat.isService()))  && hasNoPercent(vat) && !vat.isFarmerRegime() && !vat.isInvestment()
+			,(mod,vat) -> isCommonExpense(vat) && hasNoPercent(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C171,mod,vat.getDeductibleQuota())
 			,null,null,null)
 
@@ -805,7 +807,19 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 	
 	@Override
 	Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
-		return null;
+		final Set<Integer> invoices = new HashSet<>();
+		VATDAO.getAccrualInvoices(ctx,mod).forEach( vc -> {
+			if (vc.isSales()) {
+				add(Mod390Key.BZ_C130, mod, vc.getBase());
+				add(Mod390Key.BZ_C131, mod, vc.getDeductibleQuota());
+			} else {
+				add(Mod390Key.BZ_C132, mod, vc.getBase());
+				add(Mod390Key.BZ_C133, mod, vc.getDeductibleQuota());
+			}
+			invoices.add(vc.getInvoice());
+		});
+		add(Mod390Key.BZ_C004, mod, AonMathUtils.isZero(mod.getAmount(Mod390Key.BZ_C133)) ? (0.0) : (1.0));
+		return invoices;
 	}
 
 	//	-----------------------------------------------------------------------	
@@ -851,8 +865,12 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
 	}
 	private static boolean importacionesFilter(VatContext vat, Mod390HF  mod) {
+		return importacionesFilter(vat, mod, !vat.isRectification());
+	}
+
+	private static boolean importacionesFilter(VatContext vat, Mod390HF  mod, boolean rectification) {
 		boolean basicFilter = !vat.isVatSurchargeRegime() 
-				&& !vat.isRectification() 
+				&& rectification 
 				&& !vat.isService();
 		if (basicFilter && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase())) {
 			if (vat.getTaxDate().before( Mod303Declaration.IVA_2021_CHANGE_DATE )) {
@@ -869,4 +887,21 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			&& vat.isFarmerRegime() && vat.isNationalPurchase();		
 	}
 
+	private static boolean isCommonPurchase(VatContext vat,Mod390HF mod) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& AonMathUtils.isNotZero(vat.getPercentage())
+			&& !vat.isService()
+			&& ( vat.isNationalPurchase()
+			 || importacionesFilter(vat, mod, !vat.isRectification())
+			 || vat.isOtherISPPurchase()
+			 || vat.isIntracommunityPurchase()
+			);
+	}
+	private static boolean isCommonExpense(VatContext vat) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+				&& AonMathUtils.isNotZero(vat.getPercentage())
+				&& vat.isService()
+				&& (vat.isExpenses() || vat.isPurchase())	
+				;
+	}
 }

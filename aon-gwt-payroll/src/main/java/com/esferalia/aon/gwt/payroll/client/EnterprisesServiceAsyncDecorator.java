@@ -58,6 +58,8 @@ import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.mod145.Mod145;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -347,10 +349,9 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getCNAE2009(String domain, AsyncCallback<Map<String, String>> callback) {
+	public void getCNAE2009(String domain, AsyncCallback<Map<Integer, String>> callback) {
 		AON.start();
-		enterprisesServiceAsync.getCNAE2009(domain,
-				new AsyncCallbackWrapper<Map<String, String>>(callback));
+		enterprisesServiceAsync.getCNAE2009(domain, new AsyncCallbackWrapper<Map<Integer, String>>(callback));
 	}
 
 	@Override
@@ -1028,6 +1029,68 @@ public class EnterprisesServiceAsyncDecorator implements
 			throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.saveEnterprise(domainName, user, enterprise, callback);
+	}
+	
+	// ------------------------------------------------ EnterpriseActivity (API)
+
+	@Override
+	public void getActivity(String domainName, String user, Integer id,
+			AsyncCallback<com.esferalia.aon.occam.api.model.payroll.Activity> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getActivity(domainName, user, id, callback);
+	}
+
+	@Override
+	public void saveActivity(String domainName, String user,
+			com.esferalia.aon.occam.api.model.payroll.Activity activity, AsyncCallback<Void> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.saveActivity(domainName, user, activity, callback);
+	}
+
+	@Override
+	public void getActivities(String domainName, String user, AsyncCallback<List<Activity>> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getActivities(domainName, user, callback);
+	}
+
+	@Override
+	public void saveActivities(String domainName, String user, List<Activity> activities,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.saveActivities(domainName, user, activities, callback);
+	}
+	
+	// --------------------------- Mod 145 (API)
+
+	@Override
+	public void getMod145List(String domainName, String user, Integer contractId,
+			AsyncCallback<List<Mod145>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getMod145List(domainName, user, contractId, callback);
+	}
+
+	@Override
+	public void getMod145(String domainName, String user, Integer id, AsyncCallback<Mod145> callback)
+			throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getMod145(domainName, user, id, callback);
+	}
+
+	@Override
+	public void saveMod145(String domainName, String user, Mod145 mod145,
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.saveMod145(domainName, user, mod145, callback);
+	}
+
+	@Override
+	public void printMod145(String domainName, String user, Mod145 mod145,
+			AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.printMod145(domainName, user, mod145, callback);
 	}
 
 }

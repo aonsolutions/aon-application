@@ -3,13 +3,14 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -124,9 +125,10 @@ public abstract class CCC extends ResizeComposite {
 	
 	private static final String UNKNOWN = "DESCONOCIDA";
 	private TgssContextMenu contextMenu;
-	private Integer newId = -1;
+	private Integer newId;
 	private String regime;
 	private String ccc;
+	private Integer domain;
 	
 	// -------------------------------------------- Constructor
 
@@ -212,11 +214,14 @@ public abstract class CCC extends ResizeComposite {
 	
 	// --------------------------------------------------	   INSERT ROWS		--------------------------------------------------------
 	
-	public void insertRow(CCCInfo cccInfo) {
+	public void insertRow(EnterpriseCCC cccInfo) {
+		if(cccInfo.isDeleted()) return;
+		
 		int row = cccDataTable.insertRow(cccDataTable.getRowCount());
 		
 		ListBox activitiesLB = createActivitiesListBox();
-		setSelectedValueLB(activitiesLB, cccInfo.getActivityId().toString());
+		if(null != cccInfo.getEnterpriseActivity())
+			setSelectedValueLB(activitiesLB, cccInfo.getEnterpriseActivity().toString());
 		
 		ListBox cccRegimeLB = createCCCRegimeListBox();
 		setSelectedValueLB(cccRegimeLB, cccInfo.getType().toString());
@@ -224,7 +229,7 @@ public abstract class CCC extends ResizeComposite {
 		Label geozone = new Label();
 		String geozoneValue = UNKNOWN;
 		if(null != cccInfo.getGeozone()) {
-			geozoneValue = cccInfo.getGeozone();
+			geozoneValue = cccInfo.getGeozoneDescription();
 			geozone.removeStyleName(style.warningColor());
 		}else 
 			geozone.addStyleName(style.warningColor());
@@ -238,7 +243,7 @@ public abstract class CCC extends ResizeComposite {
 		hPanel.setStyleName(style.flexEvenly());
 		hPanel.addStyleName(style.widthAll());
 		
-		Label typeCode = new Label(cccInfo.getCccRegimeCode());
+		Label typeCode = new Label(getCCCRegimeCode(cccInfo.getType()));
 
 		AonTableButton accountStatus = new AonTableButton("", AON.CSS.aonIconValid());
 		TextBox account = new TextBox();
@@ -265,11 +270,10 @@ public abstract class CCC extends ResizeComposite {
 					fireWarningMessage(warningMap);
 				}
 				
-				onInsertCCC(
-						cccInfo.getCccId(), 
-						Integer.parseInt(activitiesLB.getSelectedValue()), 
+				createEnterpriseCCC(
+						cccInfo.getId(), 
+						(null == activitiesLB || activitiesLB.getItemCount() == 0) ? null : Integer.parseInt(activitiesLB.getSelectedValue()), 
 						Byte.parseByte(cccRegimeLB.getSelectedValue()), 
-						getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
 						account.getValue(), 
 						province, 
 						provinceCode);
@@ -291,11 +295,10 @@ public abstract class CCC extends ResizeComposite {
 		activitiesLB.addChangeHandler(e -> {
 			String newCCCRegimeCode = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
 			typeCode.setText(newCCCRegimeCode);
-			onInsertCCC(
-					cccInfo.getCccId(), 
-					Integer.parseInt(activitiesLB.getSelectedValue()), 
+			createEnterpriseCCC(
+					cccInfo.getId(), 
+					(null == activitiesLB || activitiesLB.getItemCount() == 0) ? null : Integer.parseInt(activitiesLB.getSelectedValue()), 
 					Byte.parseByte(cccRegimeLB.getSelectedValue()), 
-					getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
 					account.getValue(), 
 					province, 
 					provinceCode);
@@ -304,11 +307,10 @@ public abstract class CCC extends ResizeComposite {
 		cccRegimeLB.addChangeHandler(e -> {
 			String newCCCRegimeCode = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
 			typeCode.setText(newCCCRegimeCode);
-			onInsertCCC(
-					cccInfo.getCccId(), 
-					Integer.parseInt(activitiesLB.getSelectedValue()), 
+			createEnterpriseCCC(
+					cccInfo.getId(), 
+					(null == activitiesLB || activitiesLB.getItemCount() == 0) ? null : Integer.parseInt(activitiesLB.getSelectedValue()), 
 					Byte.parseByte(cccRegimeLB.getSelectedValue()), 
-					getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
 					account.getValue(), 
 					province, 
 					provinceCode);
@@ -323,8 +325,12 @@ public abstract class CCC extends ResizeComposite {
 				AonConfirmDialog dialog = new AonConfirmDialog();
 				dialog.info("AVISO: Contratos asociados",  "No se puede eliminar una cuenta de cotizaci\u00F3n que esta "
 						+ "siendo usada por un centro de trabajo y/o por un contrato");
-			}else {
-				onDeleteCCC(cccInfo.getCccId());
+			} else if(Boolean.TRUE.equals(cccInfo.isUseByCra())) {
+				AonConfirmDialog dialog = new AonConfirmDialog();
+				dialog.info("AVISO: CRAs asociados",  "No se puede eliminar una cuenta de cotizaci\u00F3n que esta "
+						+ "siendo referenciada desde un CRA existente");
+			} else {
+				onDeleteCCC(cccInfo.getId());
 				initPreview();
 				onInsertRows();
 			}
@@ -334,7 +340,7 @@ public abstract class CCC extends ResizeComposite {
 	
 		AonTableButton tgssMenu = new AonTableButton("TGSS", AON.CSS.aonIconMoreVertical());
 		tgssMenu.addClickHandler(e -> {
-			this.regime = cccInfo.getCccRegimeCode();
+			this.regime = getCCCRegimeCode(cccInfo.getType());
 			this.ccc = cccInfo.getCcc();
 			NativeEvent nativeEvent = e.getNativeEvent();
 			contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
@@ -350,10 +356,10 @@ public abstract class CCC extends ResizeComposite {
 		
 	}
 	
-	public Integer insertNewRow(Integer newId) {
+	public void insertNewRow() {
 		int row = cccDataTable.insertRow(cccDataTable.getRowCount());
-		this.newId = newId;
-		this.newId--;
+		newId = new Random().nextInt();
+		if(newId > 0) newId = newId * -1;
 		
 		ListBox activitiesLB = createActivitiesListBox();
 		
@@ -393,12 +399,12 @@ public abstract class CCC extends ResizeComposite {
 					warningMap.put("Error formato CCC", "El CCC " + accountValue + " no es correcto, rev\u00EDselo por favor");
 					fireWarningMessage(warningMap);
 				}
-				onInsertCCC(
+				
+				createEnterpriseCCC(
 						newId, 
-						Integer.parseInt(activitiesLB.getSelectedValue()), 
+						((null == activitiesLB || activitiesLB.getItemCount() == 0 || AonStringUtils.isBlank(activitiesLB.getSelectedValue())) ? null : Integer.parseInt(activitiesLB.getSelectedValue())), 
 						Byte.parseByte(cccRegimeLB.getSelectedValue()), 
-						getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
-						account.getValue(), 
+						accountValue, 
 						province, 
 						provinceCode);
 			}
@@ -423,11 +429,10 @@ public abstract class CCC extends ResizeComposite {
 			String newCCCRegimeCodeAux = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
 			typeCode.setText(newCCCRegimeCodeAux);
 		
-			onInsertCCC(
+			createEnterpriseCCC(
 					newId, 
-					Integer.parseInt(activitiesLB.getSelectedValue()), 
+					(null == activitiesLB || activitiesLB.getItemCount() == 0) ? null : Integer.parseInt(activitiesLB.getSelectedValue()), 
 					Byte.parseByte(cccRegimeLB.getSelectedValue()), 
-					getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
 					account.getValue(), 
 					province, 
 					provinceCode);
@@ -442,11 +447,10 @@ public abstract class CCC extends ResizeComposite {
 			}
 			String newCCCRegimeCodeAux = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
 			typeCode.setText(newCCCRegimeCodeAux);
-			onInsertCCC(
+			createEnterpriseCCC(
 					newId, 
-					Integer.parseInt(activitiesLB.getSelectedValue()), 
+					(null == activitiesLB || activitiesLB.getItemCount() == 0) ? null : Integer.parseInt(activitiesLB.getSelectedValue()), 
 					Byte.parseByte(cccRegimeLB.getSelectedValue()), 
-					getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue())),  
 					account.getValue(), 
 					province, 
 					provinceCode);
@@ -469,11 +473,26 @@ public abstract class CCC extends ResizeComposite {
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), activitiesLB);
 		
 		onInsertRow();
-		
-		return newId;
 	}
 	
 	// -------------------------------------------- Auxiliar Methods
+	
+	private void createEnterpriseCCC(Integer cccId, Integer activity, Byte type, String cccAccount, String province, String provinceCode) {
+		EnterpriseCCC ccc = new EnterpriseCCC()
+				.setId(cccId)
+				.setDomain(this.domain)
+				.setEnterpriseActivity(activity)
+				.setType(type)
+				.setCcc(cccAccount)
+				.setGeozone(null)
+				.setGeozoneCode(provinceCode)
+				.setGeozoneDescription(province)
+				.setDeleted(false)
+				.setUseByContracts(false)
+				.setUseByCra(false);
+		
+		onInsertCCC(ccc);
+	}
 	
 	public int getRowCount() {
 		return cccDataTable.getRowCount();
@@ -493,8 +512,6 @@ public abstract class CCC extends ResizeComposite {
 	
 	private ListBox createActivitiesListBox() {
 		ListBox activities = new ListBox();
-		
-		activities.addItem("-", "-1");
 		
 		Set<Entry<Integer, String>> activitiesList = getActivities();
 		if(null != activitiesList)
@@ -580,6 +597,10 @@ public abstract class CCC extends ResizeComposite {
 		}
 	}
 
+	public void setDomain(Integer domain) {
+		this.domain = domain;
+	}
+	
 	// -------------------------------------------- Abstract Methods
 	
 	protected abstract void onInsertRow();
@@ -588,7 +609,7 @@ public abstract class CCC extends ResizeComposite {
 
 	protected abstract void onDeleteCCC(Integer cccId);
 
-	protected abstract void onInsertCCC(Integer cccId, int parseInt, byte parseByte, String cccRegimeCode, String value, String province, String provinceCode);
+	protected abstract void onInsertCCC(EnterpriseCCC ccc);
 
 	protected abstract Set<Entry<Integer, String>> getActivities();
 	
@@ -608,9 +629,9 @@ public abstract class CCC extends ResizeComposite {
 		if(0 != cccDataTable.getRowCount()) {
 			Label firstGeozone = (Label) cccDataTable.getWidget(0, 3);
 			if(null != firstGeozone && AonStringUtils.isNotBlank(firstGeozone.getText()))
-				this.newId = insertNewRow(this.newId);
+				insertNewRow();
 		} else
-			this.newId = insertNewRow(this.newId);
+			insertNewRow();
 	}
 	
 	// -------------------------------------------- Footer Panel TGSS
@@ -637,4 +658,5 @@ public abstract class CCC extends ResizeComposite {
 
 		formPanel.submit();	
 	}
+
 }

@@ -55,7 +55,9 @@ import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDITParts {
-
+	
+	//Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
+	
 	private static String URL_BASE = "https://w2.seg-social.es/isincaA/inicio.do";
 	
 	private static String FORMAT_DATE = "dd/MM/yyyy";
@@ -76,13 +78,20 @@ class SistemaREDITParts {
 		HashMap<ItPartId, Collection<ITPart>> orderedItParts = new HashMap<>();
 
 		for (ITPart itp : itParts) {
-			ItPartId id = new ItPartId(itp.getWorkLeaveDate().get(), itp.getNaf().get());
-			if (orderedItParts.containsKey(id))
-				orderedItParts.get(id).add(itp);
-			else {
-				ArrayList<ITPart> list = new ArrayList<>();
-				list.add(itp);
-				orderedItParts.put(id, list);
+			Optional<Date> workLeaveDate = itp.getWorkLeaveDate();
+			Optional<String> naf = itp.getNaf();
+			
+			if( workLeaveDate.isPresent() && naf.isPresent() ) {
+				
+				ItPartId id = new ItPartId(workLeaveDate.get(), naf.get());
+				
+				if (orderedItParts.containsKey(id)) {					
+					orderedItParts.get(id).add(itp);
+				} else {
+					ArrayList<ITPart> list = new ArrayList<>();
+					list.add(itp);
+					orderedItParts.put(id, list);
+				}
 			}
 		}
 		
@@ -98,12 +107,13 @@ class SistemaREDITParts {
 
 			for (ITPart itp : itParts) {
 				String partStr = itp.getPartType().toLowerCase();
-				if (partStr.indexOf("baja")>=0)
+				if (partStr.indexOf("baja")>=0) {					
 					start = itp;
-				else if (partStr.indexOf("confirmaci\u00F3n")>=0 && !confirmations.contains(itp))
+				} else if (partStr.indexOf("confirmaci\u00F3n")>=0 && !confirmations.contains(itp)) {					
 					confirmations.add(itp);
-				else if (partStr.indexOf("alta")>=0)
+				} else if (partStr.indexOf("alta")>=0) {					
 					end = itp;
+				}
 			}
 			
 			if(null!=start) {
@@ -244,17 +254,20 @@ class SistemaREDITParts {
 		}
 
 	}
+	
 	// REGISTER IT START
 	private static void registerItBajaImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
 			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType,
-			Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation) throws InvalidCertificateException,
-			FailingHttpStatusCodeException, IOException, InvalidDataException, InterruptedException {
+			Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation) throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
 			HtmlPage htmlPage = webClient.getPage(URL_BASE);
+			
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+
 			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situationEmployee, BAJA);
 
 			HtmlForm form = wait4(htmlPage, p -> p.getFormByName("BajaPartesForm")).orElseThrow();
@@ -280,8 +293,9 @@ class SistemaREDITParts {
 				break;
 			}
 			
-			if(null!=contractTypeOption) 
+			if(null!=contractTypeOption) {				
 				contractTypeOption.click();
+			}
 
 			String[] startDateArray = Toolkit.dateString(startdate);
 			form.getInputByName("fechaBaja_dd").setValueAttribute(startDateArray[0]);
@@ -303,8 +317,7 @@ class SistemaREDITParts {
 				form.getInputByName("ncol_2").setValueAttribute(colegiateNumberList.get(2));
 			}
 
-			if(cias.isPresent()) 
-				form.getInputByName("cias").setValueAttribute(cias.get());
+			cias.ifPresent(c-> form.getInputByName("cias").setValueAttribute(c));
 
 			if (fATEP.isPresent()) {
 				String[] fATEPString = Toolkit.dateString(fATEP.get());
@@ -336,27 +349,29 @@ class SistemaREDITParts {
 			HtmlSubmitInput confim = htmlPage.querySelector("#botones input[value=Confirmar]");
 			htmlPage = confim.click();
 			handleItPartErrors(htmlPage);
-
+			
 			DomNode elem = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo");
 			if(null!=elem) {
 				System.out.println(elem.asText());
-				if (elem.asText().contains("no se ha dado"))
+				if (elem.asText().contains("no se ha dado")) {					
 					throw new InvalidDataException(elem.asText());
+				}
 			}
 		}
 	}
-
 
 	// REGISTER IT CONFIRMATION
 	private static void registerItConfirmationImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja,
-			Date fconfirmation, Optional<String> npartConfimation) throws InvalidCertificateException,
-			FailingHttpStatusCodeException, IOException, InvalidDataException, InterruptedException {
+			Date fconfirmation, Optional<String> npartConfimation) throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			
 			HtmlPage htmlPage = webClient.getPage(URL_BASE);
-			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situationEmployee,
-					SistemaRED.PartType.CONFIRMACION);
+			
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			
+			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situationEmployee, SistemaRED.PartType.CONFIRMACION);
 			HtmlForm form = wait4(htmlPage, p -> p.getFormByName("ConfirmacionPartesForm")).orElseThrow();
 
 			String[] fbajaString = Toolkit.dateString(fbaja);
@@ -369,10 +384,9 @@ class SistemaREDITParts {
 			form.getInputByName("fechaParte_dd").setValueAttribute(fconfirmationString[0]);
 			form.getInputByName("fechaParte_mm").setValueAttribute(fconfirmationString[1]);
 			form.getInputByName("fechaParte_aa").setValueAttribute(fconfirmationString[2]);
+			
+			npartConfimation.ifPresent(c-> form.getInputByName("numParte").setValueAttribute(c));
 
-			if (npartConfimation.isPresent()) 
-				form.getInputByName("numParte").setValueAttribute(npartConfimation.get());
-	
 			HtmlSubmitInput validate = form.querySelector("input[value=Validar]");
 			htmlPage = validate.click();
 			handleItPartErrors(htmlPage);
@@ -384,8 +398,9 @@ class SistemaREDITParts {
 			DomNode elem = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo");
 			if(null!=elem) {
 				System.out.println(elem.asText());
-				if (elem.asText().contains("no se ha dado"))
+				if (elem.asText().contains("no se ha dado")) {					
 					throw new InvalidDataException(elem.asText());
+				}
 			}
 		}
 	}
@@ -395,11 +410,13 @@ class SistemaREDITParts {
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Date fbaja, Date falta, Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType, 
 			SistemaRED.CauseType causeType, Optional<String> licenseNumber, Optional<String> cias)
-			throws InvalidCertificateException, FailingHttpStatusCodeException, IOException, InvalidDataException,
-			InterruptedException {
+			throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
 		try (WebClient webClient = getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 
 			HtmlPage htmlPage = webClient.getPage(URL_BASE);
+			
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			
 			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situationEmployee, SistemaRED.PartType.ALTA);
 			HtmlForm form = wait4(htmlPage, p -> p.getFormByName("AltaPartesForm")).orElseThrow();
 
@@ -452,8 +469,9 @@ class SistemaREDITParts {
 			DomNode elem = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo");
 			if(null!=elem) {
 				System.out.println(elem.asText());
-				if (elem.asText().contains("no se ha dado"))
+				if (elem.asText().contains("no se ha dado")) {					
 					throw new InvalidDataException(elem.asText());
+				}
 			}
 		}
 	}
@@ -472,15 +490,15 @@ class SistemaREDITParts {
 		HtmlOption situationOption = null;
 
 		switch (type) {
-		case BAJA:
-			typeOption = htmlPage.querySelector("#tipoParte option:nth-child(2)");
-			break;
-		case CONFIRMACION:
-			typeOption = htmlPage.querySelector("#tipoParte option:nth-child(3)");
-			break;
-		case ALTA:
-			typeOption = htmlPage.querySelector("#tipoParte option:nth-child(4)");
-			break;
+			case BAJA:
+				typeOption = htmlPage.querySelector("#tipoParte option:nth-child(2)");
+				break;
+			case CONFIRMACION:
+				typeOption = htmlPage.querySelector("#tipoParte option:nth-child(3)");
+				break;
+			case ALTA:
+				typeOption = htmlPage.querySelector("#tipoParte option:nth-child(4)");
+				break;
 		}
 		if(null!=typeOption) typeOption.click();
 
@@ -495,21 +513,21 @@ class SistemaREDITParts {
 		if(null!=situationOption) situationOption.click();
 
 		switch (contingency) {
-		case ENFERMEDAD_COMUN:
-			contingencyOption = htmlPage.querySelector("#contingencia option:nth-child(2)");
-			break;
-		case ACCIDENTE_NO_LABORAL:
-			contingencyOption = htmlPage.querySelector("#contingencia option:nth-child(3)");
-			break;
-		case ACCIDENT_LABORAL:
-			contingencyOption = htmlPage.querySelector("#contingencia option:nth-child(4)");
-			break;
-		case ENFERMEDAD_PROFESIONAL:
-			contingencyOption = htmlPage.querySelector("#contingencia option:nth-child(5)");
-			break;
-		case PERIODOS_OBSERVACION:
-			contingencyOption = htmlPage.querySelector("#contingencia option:nth-child(6)");
-			break;
+			case ENFERMEDAD_COMUN:
+				contingencyOption = htmlPage.querySelector("#contingencia option:nth-child(2)");
+				break;
+			case ACCIDENTE_NO_LABORAL:
+				contingencyOption = htmlPage.querySelector("#contingencia option:nth-child(3)");
+				break;
+			case ACCIDENT_LABORAL:
+				contingencyOption = htmlPage.querySelector("#contingencia option:nth-child(4)");
+				break;
+			case ENFERMEDAD_PROFESIONAL:
+				contingencyOption = htmlPage.querySelector("#contingencia option:nth-child(5)");
+				break;
+			case PERIODOS_OBSERVACION:
+				contingencyOption = htmlPage.querySelector("#contingencia option:nth-child(6)");
+				break;
 		}
 		if(null!=contingencyOption) contingencyOption.click();
 
@@ -533,12 +551,14 @@ class SistemaREDITParts {
 	// remove ITImpl
 	private static void removeItImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj,
-			Date dateProcess) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException,
-			InterruptedException, InvalidDataException {
+			Date dateProcess) throws FailingHttpStatusCodeException, IOException,
+			InterruptedException, SegSocialException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
 			HtmlPage htmlPage = webClient.getPage(URL_BASE);
+			
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
 			htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=A").click();
 
@@ -564,8 +584,9 @@ class SistemaREDITParts {
 			String dateProcessString = dateProcessArray[0] + "/" + dateProcessArray[1] + "/" + dateProcessArray[2];
 			HtmlAnchor firstColumn = getOneAnchorPaginate(htmlPage, partType, dateProcessString);
 
-			if (firstColumn == null) 
+			if (firstColumn == null) {				
 				throw new NoQueryData("Sin datos de consulta");
+			}
 
 			htmlPage = setUrlParse(htmlPage, firstColumn).click();
 
@@ -576,12 +597,12 @@ class SistemaREDITParts {
 			htmlPage = confirm.click();
 			handleItPartErrors(htmlPage);
 			
-
 			DomNode elem = htmlPage.querySelector("#miForm > div.importante > div.indent > span.TextoMensaje");
 			if(null!=elem) {
 				System.out.println(elem.asText());
-				if (elem.asText().contains("no se ha dado"))
+				if (elem.asText().contains("no se ha dado")) {					
 					throw new InvalidDataException(elem.asText());
+				}
 			}
 
 		}
@@ -610,6 +631,9 @@ class SistemaREDITParts {
 				certificateType)) {
 
 			HtmlPage htmlPage = webClient.getPage(URL_BASE);
+			
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			
 			htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=E").click();
 
 			String[] cccArray = Toolkit.SplitString(ccc, 2);
@@ -635,15 +659,16 @@ class SistemaREDITParts {
 			String dateProcessString = dateProcessArray[0] + "/" + dateProcessArray[1] + "/" + dateProcessArray[2];
 			HtmlAnchor firstColumn = getOneAnchorPaginate(htmlPage, partType, dateProcessString);
 
-			if (firstColumn == null) 
+			if (firstColumn == null) {				
 				throw new NoQueryData("Sin datos de consulta");
+			}
 
 			htmlPage = setUrlParse(htmlPage, firstColumn).click();
 			Page document = setUrlParse(htmlPage, (HtmlAnchor) htmlPage.querySelector("#botones > p > a")).click();
 
-			if (document instanceof HtmlPage)
+			if (document instanceof HtmlPage) {				
 				manageStatusCode((HtmlPage) document);
-			else {
+			} else {
 				InputStream inp = document.getWebResponse().getContentAsStream();
 				byte[] pdf = inp.readAllBytes();
 				inp.close();
@@ -671,13 +696,17 @@ class SistemaREDITParts {
 			ArrayList<ITPart> itParts = new ArrayList<>();
 			
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
+			
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			
 			handleItPartErrors(htmlPage);
 
 			Optional<DomNode> element = wait4(htmlPage, p -> p.querySelector("[href='"+URL_BASE+"']"));
-			if(element.isPresent()) 
+			if(element.isPresent()) {
 				htmlPage = ((HtmlAnchor)element.get()).click();
-			else 
+			} else {				
 				throw new SegSocialException("Sin permisos para ver esta opci\\u00f3n en TGSS");
+			}
 
 			htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=C").click();
 			
@@ -732,8 +761,9 @@ class SistemaREDITParts {
 							
 									handleItPartErrors(document);
 									ITPart part = infoPart(document);
-									if (!itParts.contains(part))
+									if (!itParts.contains(part)) {										
 										itParts.add(part);
+									}
 								}
 							}
 							i++;
@@ -752,21 +782,25 @@ class SistemaREDITParts {
 					    String decodedQuery = Arrays.stream(query.split("&"))
 			    	    .map(param -> {
 			    	    	param = param.trim();
-			    	    	return param.isEmpty() ? "" : param.split("=")[0] + "=" + 
-					    	    	(param.split("=").length>1 ? encode(param.split("=")[1]): "");
-			    	    }) .collect(Collectors.joining("&"));
+			    	    	if(!param.isEmpty()) {
+			    	    		String[] split = param.split("=");
+			    	    		return split[0] + "=" + (split.length>1 ? encode(split[1]): "");
+			    	    	}
+			    	    	return "";
+			    	    })
+			    	    .collect(Collectors.joining("&"));
 					    
 						anchor.setAttribute("href", "https://w2.seg-social.es"+urlBase+decodedQuery);
 						htmlPage = anchor.click();
-					}  else
-						last = true;
+					}  else {
+						last = true;						
+					}
 				}
 			}
 			return itParts;
 		}
 	}
 
-	// report IT
 	public static ITPart getDataIt(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj,
 			Date dateProcess) throws SegSocialException {
@@ -788,15 +822,17 @@ class SistemaREDITParts {
 		return null;
 	}
 
-	// report IT
 	private static ITPart getDataItImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj,
-			Date dateProcess) throws InvalidCertificateException, FailingHttpStatusCodeException, IOException,
-			InterruptedException, InvalidDataException {
+			Date dateProcess) throws FailingHttpStatusCodeException, IOException,
+			InterruptedException, SegSocialException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
 			HtmlPage htmlPage = webClient.getPage(URL_BASE);
+			
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			
 			htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=C").click();
 
 			String[] cccArray = Toolkit.SplitString(ccc, 2);
@@ -822,12 +858,12 @@ class SistemaREDITParts {
 			String dateProcessString = dateProcessArray[0] + "/" + dateProcessArray[1] + "/" + dateProcessArray[2];
 			HtmlAnchor firstColumn = getOneAnchorPaginate(htmlPage, partType, dateProcessString);
 
-			if (firstColumn == null) 
+			if (firstColumn == null) {				
 				throw new NoQueryData("Sin datos de consulta");
+			}
 
 			htmlPage = setUrlParse(htmlPage, firstColumn).click();
-			htmlPage = ((HtmlSubmitInput) htmlPage
-					.querySelector("form[name=InfoParteForm] input[value=\"Datos Procesados\"]")).click();
+			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("form[name=InfoParteForm] input[value=\"Datos Procesados\"]")).click();
 
 			handleItPartErrors(htmlPage);
 			
@@ -875,10 +911,11 @@ class SistemaREDITParts {
 					}
 				}
 				
-				if (firstColumn == null && next != null) 
+				if (firstColumn == null && next != null) {					
 					htmlPage = setUrlParse(htmlPage, next).click();
-				else 
+				} else {					
 					last = true;
+				}
 			}
 		}
 		return firstColumn;
@@ -951,7 +988,7 @@ class SistemaREDITParts {
 			String dtStr = Toolkit.removeNBSP(dt.getVisibleText()).trim();
 			String ddStr = Toolkit.removeNBSP(Toolkit.getNextSibling(dt).getVisibleText().trim());
 			if (ddStr.length() > 0) {
-				if (dtStr.indexOf("N° colegiado:") >= 0) {
+				if (dtStr.indexOf("Nï¿½ colegiado:") >= 0) {
 					itPart.setCollegiateNumber(Toolkit.noSpaces(ddStr));
 				} else if (dtStr.indexOf("C.I.A.S.:") >= 0) {
 					itPart.setCias(ddStr);
@@ -965,7 +1002,7 @@ class SistemaREDITParts {
 					itPart.setConfirmationDate(Toolkit.parseDate(ddStr, FORMAT_DATE));
 				} else if (dtStr.indexOf("Reca\u00EDda:") >= 0) {
 					itPart.setRelapse(ddStr.equalsIgnoreCase("S\u00ED"));
-				} else if (dtStr.indexOf("N° parte:") >= 0) {
+				} else if (dtStr.indexOf("Nï¿½ parte:") >= 0) {
 					itPart.setPartNum(Integer.parseInt(ddStr));
 				} else if (dtStr.indexOf("Duraci\u00F3n probable en d\u00EDas:") >= 0) {
 					itPart.setDurationDays(parseInt(ddStr));
@@ -1015,7 +1052,7 @@ class SistemaREDITParts {
 		return itPart;
 	}
 	
-	 private static String encode(String url) {
+	private static String encode(String url) {
 	       try {
 	    	   return URLEncoder.encode(url, "UTF-8");
 	       } catch (Exception e) {
@@ -1026,8 +1063,8 @@ class SistemaREDITParts {
 	// HANDLE IT PART ERRORS
 	private static void handleItPartErrors(HtmlPage htmlPage) throws InvalidDataException {
 		DomNode errors = htmlPage.querySelector("#errores > ul");
-		if (errors != null)
+		if (errors != null) {			
 			throw new InvalidDataException(errors.getVisibleText());
+		}
 	}
-
 }

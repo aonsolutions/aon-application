@@ -824,7 +824,6 @@ export class Invoice {
             }
           });
         } else {
-          console.log(detail);
           let tax = {
             tax: TaxType.IVA,
             type: this.isSurcharge() ? TaxType.IVA_RE : TaxType.IVA,

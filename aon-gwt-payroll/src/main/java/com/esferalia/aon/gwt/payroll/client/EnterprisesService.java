@@ -54,6 +54,8 @@ import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.mod145.Mod145;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -140,7 +142,7 @@ public interface EnterprisesService extends RemoteService {
 
 	ActivityInfo createActivityInfoDataBase(ActivityInfo activityInfo, String domain);
 
-	Map<String, String> getCNAE2009(String domain);
+	Map<Integer, String> getCNAE2009(String domain);
 
 	Map<Integer, String> getEnterpiseAddresses(Integer enterpriseId, String domain);
 	
@@ -377,6 +379,25 @@ public interface EnterprisesService extends RemoteService {
 	com.esferalia.aon.occam.api.model.payroll.Enterprise getEnterprise(String currentDomainName, String user, Integer id) throws IllegalArgumentException;
 	
 	void saveEnterprise(String currentDomainName, String user, com.esferalia.aon.occam.api.model.payroll.Enterprise enterprise) throws IllegalArgumentException;
+
+	// --------------------------- EnterpriseActivity (API)
 	
+	Activity getActivity(String currentDomainName, String user, Integer id) throws IllegalArgumentException;
+
+	void saveActivity(String currentDomainName, String user, Activity activity) throws IllegalArgumentException;
+
+	List<Activity> getActivities(String currentDomainName, String user) throws IllegalArgumentException;
+
+	void saveActivities(String currentDomainName, String user, List<Activity> activity) throws IllegalArgumentException;
+
+	// --------------------------- Mod 145 (API)
+	
+	List<Mod145> getMod145List(String currentDomainName, String currentUser, Integer contractId) throws IllegalArgumentException;
+
+	Mod145 getMod145(String currentDomainName, String currentUser, Integer id) throws IllegalArgumentException;
+
+	void saveMod145(String currentDomainName, String currentUser, Mod145 mod145) throws IllegalArgumentException;
+
+	String printMod145(String currentDomainName, String currentUser, Mod145 mod145) throws IllegalArgumentException;
 	
 }

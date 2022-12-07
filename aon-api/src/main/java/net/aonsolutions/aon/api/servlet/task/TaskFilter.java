@@ -1,7 +1,9 @@
 package net.aonsolutions.aon.api.servlet.task;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +31,9 @@ import net.aonsolutions.aon.api.ewok.AonApiData;
 public class TaskFilter {
 	
 	private static final Byte[] PENDING = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value()).toArray(Byte[]::new);
+	private static final String FORMAT_DATE = "yyyy-MM-dd"; 
+	private static final String START_DATE = "startDate"; 
+	private static final String END_DATE = "endDate"; 
 	
 	private TaskFilter() {
 	    throw new IllegalStateException("Utility class");
@@ -50,6 +55,12 @@ public class TaskFilter {
 			filter = filter.and(f.getStatusProperty().eq(TaskStatus.safeValueOf(status).value()));
 		} else {	
 			filter = filter.and(f.getStatusProperty().in(PENDING));
+		}
+		
+		if(!params.optString(START_DATE).isEmpty() && !params.optString(END_DATE).isEmpty()) {
+			Timestamp startDate = new Timestamp(AonDateUtils.parse(params.optString(START_DATE), FORMAT_DATE).getTime());
+			Timestamp endDate = new Timestamp(getEndOfDay(AonDateUtils.parse(params.optString(END_DATE), FORMAT_DATE)));
+			filter = filter.and(f.getStartDateProperty().ge(startDate).and(f.getStartDateProperty().le(endDate)));
 		}
 		
 		if(isParent) {
@@ -151,12 +162,12 @@ public class TaskFilter {
 				filter = filter.and(f.getTagIdProperty().in(arr));
 			} else {
 				filter = filter.and(
-						f.getTagIdProperty().in(arr)
-						.and(
-							f.getTaskHolderProperty().eq(taskHolder)
-							.or(f.getTaskHolderProperty().isNull())
-						)
-						.or(f.getSenderProperty().eq(taskHolder))
+					f.getTagIdProperty().in(arr)
+					.and(
+						f.getTaskHolderProperty().eq(taskHolder)
+						.or(f.getTaskHolderProperty().isNull())
+					)
+					.or(f.getSenderProperty().eq(taskHolder))
 				);
 			}
 		} else {
@@ -308,11 +319,6 @@ public class TaskFilter {
 		List<Integer> workgroupList = getWorkgroupList(workgroupStr);
 		
 		Filter filter = f.getDomainProperty().eq(domain.getId());
-		
-		if(!params.optString("startDate").isEmpty()) {
-			Date startDate = AonDateUtils.parse(params.optString("startDate"), "yyyy-MM-dd");
-			filter = filter.and(f.getStartDateProperty().eq(AonDateUtils.toTimestamp(startDate)));
-		}
 
 		if(registry!=0) {			
 			filter = filter.and(f.getRegistryProperty().eq(registry));
@@ -458,5 +464,15 @@ public class TaskFilter {
 		}
 		
 		return workgroupList;
+	}
+	
+	private static long getEndOfDay(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.HOUR, 23);
+		c.set(Calendar.MINUTE, 59);
+		c.set(Calendar.SECOND, 59);
+		c.set(Calendar.MILLISECOND, 999);
+		return c.getTime().getTime();
 	}
 }

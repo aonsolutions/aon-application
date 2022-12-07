@@ -204,16 +204,18 @@ public class CustomerDAO {
 	}
 	
 	private static void saveTarget(AONContext ctx, Customer customer) {
-		//-----------TARGET
-		Target target = new Target()
-		.copy(customer)
-		.setScope(customer.getScope())
-		.setSurcharge(customer.isSurcharge())
-		.setTariff(customer.getTariff()!=null ? new Tariff().setId(customer.getTariff()) : null)
-		.setTransaction(customer.getTransaction())
-		.setWithholding(customer.isWithholding());
+		Target target = TargetDAO.get(ctx, f -> f.getIdProperty().eq(customer.getId()));
+	    if(target.isEmpty()) {
+	        target = new Target()
+	                .copy(customer)
+	                .setScope(customer.getScope())
+	                .setSurcharge(customer.isSurcharge())
+	                .setTariff(customer.getTariff()!=null ? new Tariff().setId(customer.getTariff()) : null)
+	                .setTransaction(customer.getTransaction())
+	                .setWithholding(customer.isWithholding());
 		
-		TargetDAO.save(ctx, target);
+	        TargetDAO.save(ctx, target);
+	    }
 	}
 
 	private static Customer update(AONContext ctx, Customer customer){

@@ -1,5 +1,8 @@
-import { post, remove } from "./request.js";
+import { get, post, remove } from "./request.js";
 import { API } from "../environments/environments.js";
+
+
+export const getWarehouses = (data) => get(API.WAREHOUSES, data);
 
 export const getElaborations = (data) => post(API.ELABORATION, data);
 export const getElaboration = (id) => post(API.ELABORATION, {id});

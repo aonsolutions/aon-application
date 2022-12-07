@@ -91,6 +91,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.seres.writer.udapa.UdapaSaleInvoiceWriter;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.tbai.TbaiData;
 import net.aonsolutions.aon.tbai.TbaiMain;
 
 public class SaleInvoiceController extends InvoiceController {
@@ -625,6 +626,7 @@ public class SaleInvoiceController extends InvoiceController {
 				}
 			
 				invoice = AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);
+				inv.setReferenceCode(invoice.getReferenceCode());
 				updateFinances(domainName, login, invoice);
 
 				Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), login);
@@ -634,6 +636,7 @@ public class SaleInvoiceController extends InvoiceController {
 				if(tbaiConfiguration.isActive()) {
 					TbaiMain tbai = new TbaiMain();
 					tbai.createEmisionTBAI(company, invoice, tbaiConfiguration);
+					setTbaiUrl(TbaiData.getInstance(getTbaiConfiguration()).getTbaiUrl(company.getDomain().getName(), company.getDomain().getId(), login, invoice.getId()));
 				}
 		
 				// SII
@@ -675,13 +678,13 @@ public class SaleInvoiceController extends InvoiceController {
 			if(Double.toString(detail.getQuantity())
 					.substring(Double.toString(detail.getQuantity()).indexOf(".") + 1)
 					.length() > 2){
-				throw new Exception("La cantidad '"+ detail.getQuantity() + "' no puede tener más de 2 decimales");
+//				throw new Exception("La cantidad '"+ detail.getQuantity() + "' no puede tener más de 2 decimales");
 			}
 			
 			if(Double.toString(detail.getPrice())
 					.substring(Double.toString(detail.getPrice()).indexOf(".") + 1)
 					.length() > 2){
-				throw new Exception("La cantidad '"+ detail.getPrice() + "' no puede tener más de 2 decimales");
+//				throw new Exception("El cantidad '"+ detail.getPrice() + "' no puede tener más de 2 decimales");
 			}
 			
 			if(detail.getDescription().length() >= 249) {

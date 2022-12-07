@@ -1,5 +1,5 @@
 import { AonElement } from "./AonElement.js";
-import { CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, TAG, MATERIAL_ICONS, MSG } from '../environments/environments.js';
 import { AonIconButton } from "./aon-icon-button.js";
 import { AonDialogMenu } from "./aon-dialog-menu.js";
 import { AonIcon } from "./aon-icon.js";
@@ -102,6 +102,7 @@ export class AonSimpleList extends AonElement {
       remove.style.display = 'none';
       remove.style.position = 'absolute';
       remove.style.right = '0px';
+      remove.title = MSG.DELETE;
       remove.addEventListener(EVENT.CLICK, iconFn);
       span.appendChild(remove);
       

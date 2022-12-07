@@ -1,19 +1,22 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.payroll.shared.AgreementComunica;
 import com.esferalia.aon.gwt.payroll.shared.AgreementComunicaInfo;
-import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.ComunicaEnterpriseSettings;
-import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceComunica;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceComunicaInfo;
+import com.esferalia.aon.occam.api.model.EnterpriseCCC;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainConfigComunicaObject {
@@ -23,7 +26,7 @@ public class MainConfigComunicaObject {
 	
 	private ComunicaEnterpriseSettings comunicaEnterpriseSettings;
 	private WorkplaceComunica workplaceComunica;
-	private MainCCCInfo mainCCCInfo;
+	private List<Activity> activities; 
 	private AgreementComunica agreementComunica;
 	
 	private Map<Integer, String> addresses;
@@ -32,9 +35,9 @@ public class MainConfigComunicaObject {
 	public MainConfigComunicaObject() {
 		super();
 		this.workplaceComunica = new WorkplaceComunica();
-		this.mainCCCInfo = new MainCCCInfo();
+		this.activities = new ArrayList<>();
 		this.agreementComunica = new AgreementComunica();
-		this.addresses = new HashMap<Integer, String>();
+		this.addresses = new HashMap<>();
 	}
 	
 	public void getComunicaEnterpriseSettings(Consumer<ComunicaEnterpriseSettings> success, Consumer<Throwable> failure) {
@@ -44,7 +47,7 @@ public class MainConfigComunicaObject {
 			public void onSuccess(ComunicaEnterpriseSettings comunicaEnterpriseSettingsIn) {
 				comunicaEnterpriseSettings = comunicaEnterpriseSettingsIn;
 				workplaceComunica = comunicaEnterpriseSettings.getWorkplaceComunica();
-				mainCCCInfo = comunicaEnterpriseSettings.getMainCCCInfo();
+				activities = comunicaEnterpriseSettings.getActivities();
 				agreementComunica = comunicaEnterpriseSettings.getAgreementComunica();
 				
 				getEnterpriseAddresses(
@@ -111,16 +114,12 @@ public class MainConfigComunicaObject {
 	
 	private void setComunicaEnterpriseSettings() {
 		this.comunicaEnterpriseSettings.setWorkplaceComunica(getWorkplaceComunica());
-		this.comunicaEnterpriseSettings.setMainCCCInfo(getMainCCCInfo());
+		this.comunicaEnterpriseSettings.setActivities(activities);
 		this.comunicaEnterpriseSettings.setAgreementComunica(getAgreementComunica());
 	}
 
 	private WorkplaceComunica getWorkplaceComunica() {
 		return this.workplaceComunica;
-	}
-
-	public MainCCCInfo getMainCCCInfo() {
-		return this.mainCCCInfo;
 	}
 	
 	private AgreementComunica getAgreementComunica() {
@@ -151,20 +150,32 @@ public class MainConfigComunicaObject {
 	
 	// --------------------------------------------------- CCCInfo.Methods
 
-	public Collection<CCCInfo> getCCCs() {
-		return this.mainCCCInfo.getCccs().values();
+	public List<EnterpriseCCC> getCCCs() {
+		List<EnterpriseCCC> ccccs = new ArrayList<>();
+		this.activities.forEach(activity -> ccccs.addAll(activity.getCccs()));
+		return ccccs;
 	}
 	
 	public Set<Entry<Integer, String>> getActivities() {
-		return this.mainCCCInfo.getActivities().entrySet();
+		Map<Integer, String> activitiesMap = new HashMap<>();
+		this.activities.forEach(activity -> activitiesMap.put(activity.getId(), activity.getDescription()));
+		return activitiesMap.entrySet();
 	}
 
-	public void insertCCC(Integer cccId, int activityId, byte cccRegimeType, String cccRegimeCode, String ccc, String province, String provinceCode) {
-		this.mainCCCInfo.insertCCC(cccId, activityId, cccRegimeType, cccRegimeCode, ccc, province, provinceCode);
+	public void insertCCC(EnterpriseCCC ccc) {
+		Optional<Activity> activityCCC = this.activities.stream().filter(activity -> activity.getId().equals(ccc.getEnterpriseActivity())).findFirst();
+		if(activityCCC.isPresent()) {
+			if(ccc.getId() == null) activityCCC.get().getCccs().add(ccc);
+			else {
+				activityCCC.get().getCccs().removeIf(cccIt -> cccIt.getId().equals(ccc.getId()));
+				activityCCC.get().getCccs().add(ccc);
+			}
+		}
 	}
 
 	public void deleteCCC(Integer cccId) {
-		this.mainCCCInfo.deleteCCC(cccId);
+		Optional<EnterpriseCCC> deleteCCC = getCCCs().stream().filter(ccc -> ccc.getId().equals(cccId)).findFirst();
+		if(deleteCCC.isPresent()) deleteCCC.get().setDeleted(true);
 	}
 	
 	// --------------------------------------------------- CCCInfo.Methods
@@ -179,6 +190,10 @@ public class MainConfigComunicaObject {
 
 	public void deleteAgreement(Integer agreementId) {
 		this.agreementComunica.deleteAgreement(agreementId);
+	}
+
+	public Integer getDomain() {
+		return activities.isEmpty() ? null : activities.get(0).getDomain();
 	}
 		
 }

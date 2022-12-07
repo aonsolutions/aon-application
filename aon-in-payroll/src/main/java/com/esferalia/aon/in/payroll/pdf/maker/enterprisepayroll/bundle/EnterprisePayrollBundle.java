@@ -12,6 +12,7 @@ public class EnterprisePayrollBundle extends ListResourceBundle{
 			 {"EMPLOYEE SS","S.S.Trab."},
 			 {"IRPF","I.R.P.F"},
 			 {"DEDUCTIONS","Deducciones"},
+			 {"INKIND","Ret. Esp."},
 			 {"AMOUNT","Liquido"},
 			 {"ENTERPRISE SS","S.S. Empr."},
 			 {"TOTAL COST","Coste total"},

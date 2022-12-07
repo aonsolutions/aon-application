@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import com.esferalia.aon.occam.api.model.Properties.*;
 import com.esferalia.aon.occam.api.model.finance.Properties.IRPFProperties;
+import com.esferalia.aon.occam.api.model.finance.Properties.Mod145Properties;
 
 public interface Filter extends Serializable{
 	
@@ -513,6 +514,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface EnterpriseActivityFilter{
+		Filter filter(EnterpriseActivityProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface AgreementLevelCategoryFilter{
 		Filter filter(AgreementLevelCategoryProperties properties);
 	}
@@ -707,6 +713,11 @@ public interface Filter extends Serializable{
 	@FunctionalInterface
 	public static interface IRPFFilter{
 		Filter filter(IRPFProperties properties);
+	}
+	
+	@FunctionalInterface
+	public interface Mod145Filter{
+		Filter filter(Mod145Properties properties);
 	}
 	
 }

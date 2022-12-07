@@ -183,24 +183,21 @@ public class Mod390HFDAO extends FiscalModelDAO {
 		final Mod390HFDeclaration dec = Mod390HFDeclaration.getInstance(mod);
 		Set<Integer> invoices = dec.createOnTheFly(ctx,mod);
 		dec.prorrateRegularization(ctx,mod);
-//		if (mod.hasProrate()) {
-//			for (Mod390Key key : dec.getProratedKeys()) {
-//				FiscalModelDetail det = mod.ensureDetail(key);
-//				det.setAmount(AonMathUtils.round(det.getAmount() * mod.getProratePercent() / 100));
-//			}
-//		}
 		dec.specificInitialization(ctx, mod);
-//		// Redondeos
-//		for (IMod390KeyDAO key : dec.getKeys()) {
-//			FiscalModelDetail det = mod.ensureDetail(key.getKey());
-//			det.setAmount(AonMathUtils.round(det.getAmount()));
-		//		}
+		round( mod );
 		mod = save(ctx, mod);
 		AlcatrazDAO.deleteFiscalModel(ctx, mod);
 		AlcatrazDAO.saveModelInvoices(ctx, mod, invoices);
 		return mod;
 	}
 
+	private static void round(Mod390HF mod) {
+		for (FiscalModelDetail detail : mod.getMap().values()) {
+			detail.setAccumulatedAmount( AonMathUtils.round(detail.getAccumulatedAmount()));
+			detail.setResultAmount( AonMathUtils.round(detail.getResultAmount()));
+			detail.setAmount( AonMathUtils.round(detail.getAmount()));
+		}
+	}
 	public static Mod390HF markAsPending(AONContext ctx,Mod390HF mod) {
 		FiscalModelValidation.statusChange(mod, FiscalStatus.PENDING);
 		Integer oldFinanceId = FiscalModelDAO.getFinance(ctx, mod);

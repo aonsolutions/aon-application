@@ -1,0 +1,187 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'>
+
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.Mod145.MyStyle">
+
+		.border{
+			border: 1px solid black;
+			margin-top: 1rem;
+			padding: .5rem;
+		}
+		
+		.content {
+			padding: 0 .5rem;
+		}
+
+		.flex {
+			display: flex;
+			gap: .5rem;
+			align-items: center;
+		}
+
+		.flexColumn {
+			display: flex;
+			flex-direction: column;
+		}
+		
+		.footerToolbar{
+			display: flex;
+		    align-items: center;
+		    justify-content: space-between;
+		    padding: 5px;
+		    border-top: 1px solid;
+			padding-bottom: 0;
+			margin-top: 10px;
+		}
+		
+		.scrollBarHide {
+			-ms-overflow-style: none;
+			scrollbar-width: none;
+		}
+		
+		.scrollBarHide::-webkit-scrollbar {
+			display: none;
+		}
+		
+		.tableTitle{
+			position: relative;
+			top: -16px;
+			left: 20px;
+			background-color: white;
+			font-size: 12px;
+			font-weight: bold;
+			text-align: center;
+			width: fit-content;
+			padding: 0 1rem;
+		}
+		
+		.title {
+			background-color: #eaeaea; 
+			width: 400px;
+			padding: .3rem;
+			font-weight: bold;
+		}
+		
+		.titleLong {
+			width: 480px;
+		}
+
+		.heightAll { height: 100%; }
+		.widthAll { width: 100%; }
+		
+		
+	</ui:style>
+
+	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
+		<g:center>
+			<g:ScrollPanel ui:field="scrollPanel" styleName="{style.widthAll} {style.scrollBarHide}">
+				<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.heightAll} {style.widthAll} {style.content}">
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label styleName='{style.title}' text="Vigencia" />
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:Label text="Desde" />
+							<a:DateBoxEx ui:field="startDateBx" />
+							<g:Label text="Hasta" />
+							<a:DateBoxEx ui:field="endDateBx" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label styleName='{style.title}' text="Exclusión a la obligación de tributar" />
+						<g:Button ui:field="fiscalExclusionB" />
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label styleName='{style.title}' text="IRPF Solicitado por el trabajador" />
+						<g:Button ui:field="irpfRequestB" />
+						<g:HTMLPanel styleName="{style.flex}" ui:field="irpfPercentPanel">
+							<g:Label text="Porcentaje" />
+							<a:DoubleBox ui:field="irpfPercentDB" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label styleName='{style.title}' text="Situación familiar" />
+						<g:ListBox ui:field="familySituationLB" />
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel styleName="{style.flex}" ui:field="spouseDocumentPanel">
+						<g:Label styleName='{style.title}' text="NIF del cónyuge" />
+						<g:TextBox ui:field="spouseDocumentTB" />
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label styleName='{style.title}' text="Discapacidad (grado de minusvalía reconocido)" />
+						<g:ListBox ui:field="disabilityLevelLB" />
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel styleName="{style.flex}" ui:field="dependencePanel">
+						<g:Label styleName='{style.title}' text="Necesidad de ayuda de terceras personas o tiene movilidad reducida" />
+						<g:Button ui:field="dependenceB" />
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label styleName='{style.title}' text="Prolongación de la actividad laboral a partir de los 65 años de edad" />
+						<g:Button ui:field="labourProlongationB" />
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label styleName='{style.title}' text="Fecha de traslado" />
+						<a:DateBoxEx ui:field="movingDateBx" />
+					</g:HTMLPanel>
+				
+					<g:HTMLPanel styleName="{style.border} {style.flexColumn}">
+				    	<g:Label styleName='{style.tableTitle}' text="Datos económicos" />
+				    	<g:HTMLPanel styleName="{style.widthAll}">
+				    		
+				    		<g:HTMLPanel styleName="{style.flex}">
+								<g:Label styleName='{style.titleLong} {style.title}' text="Pensión compensatoria a favor del cónyuge. Importe fijado judicialmente" />
+								<a:DoubleBox ui:field="spousalSupportDB" />
+							</g:HTMLPanel>
+							
+							<g:HTMLPanel styleName="{style.flex}">
+								<g:Label styleName='{style.titleLong} {style.title}' text="Anualidades por alimentos en favor de los hijos. Importe fijado judicialmente" />
+								<a:DoubleBox ui:field="foodAnnuityDB" />
+							</g:HTMLPanel>
+							
+							<g:HTMLPanel styleName="{style.flex}">
+								<g:Label styleName='{style.titleLong} {style.title}' 
+									title="Si está Vd. efectuando pagos por préstamos destinados a la adquisición o rehabilitación de su vivienda habitual por los que vaya a tener derecho a deducción por inversión en vivienda habitual en el IRPF y la cuantía total de sus retribuciones íntegras en concepto de rendimientos del trabajo procedentes de todos sus pagadores es inferior a 33.007,20 euros anuales, marque con una 'X' esta casilla lo podrán cumplimentar este apartado los contribuyentes que hayan adquirido su vivienda habitual, o hayan satisfecho cantidades por obras de rehabilitación de la misma, antes del 1 de enero de 2013.)" 
+									text="Comunicación de pagos por la adquisición o rehabilitación de la vivienda habitual utilizando financiación ajena" />
+								<g:Button ui:field="deductionHomeLoanB" />
+							</g:HTMLPanel>
+				    	</g:HTMLPanel>
+				    </g:HTMLPanel>
+				    
+				    <g:HTMLPanel styleName="{style.border} {style.flexColumn}">
+			    		<g:Label styleName='{style.tableTitle}' text="Hijos y otros descendientes menores de 25 años, o mayores de dicha edad si son discapacitados, que conviven con el perceptor" />
+				    	<g:HTMLPanel styleName="{style.widthAll}">
+			    			<g:Grid ui:field="descendientsHeader" styleName="{style.widthAll}" />
+			    			<hr align="left" noshade="noshade" style="margin-bottom:10px; border-width:0.5px;"/>
+			    			<g:ScrollPanel ui:field="descendientsScrollPanel" >
+				    			<g:Grid ui:field="descendientsGrid" styleName="{style.widthAll}" />
+				    		</g:ScrollPanel>
+				    		<g:HTMLPanel styleName="{style.footerToolbar}"  ui:field="descendientsToolbar" />
+				    	</g:HTMLPanel>
+				    </g:HTMLPanel>
+				    
+				    <g:HTMLPanel styleName="{style.border} {style.flexColumn}">
+			    		<g:Label styleName='{style.tableTitle}' text="Ascendientes mayores de 65 años, o menores de dicha edad si son discapacitados, que conviven con el perceptor" />
+				    	<g:HTMLPanel styleName="{style.widthAll}">
+			    			<g:Grid ui:field="ascendantsHeader" styleName="{style.widthAll}" />
+			    			<hr align="left" noshade="noshade" style="margin-bottom:10px; border-width:0.5px;"/>
+			    			<g:ScrollPanel ui:field="ascendantsScrollPanel" >
+				    			<g:Grid ui:field="ascendantsGrid" styleName="{style.widthAll}" />
+				    		</g:ScrollPanel>
+				    		<g:HTMLPanel styleName="{style.footerToolbar}" ui:field="ascendantsToolbar" />
+				    	</g:HTMLPanel>
+				    </g:HTMLPanel>
+				
+				</g:HTMLPanel>
+			</g:ScrollPanel>
+		</g:center>
+	</g:DockLayoutPanel>
+	
+</ui:UiBinder>

@@ -125,6 +125,11 @@ public abstract class EmployeeDraft extends Composite {
 		public void onContractSSRegimenChange(byte ssRegime) {
 			employeeDraftObject.setSSRegime(ssRegime);
 		}
+	
+		@Override
+		public void onContractMdTBThange(String tbtType) {
+			employeeDraftObject.setMdTBT(Byte.parseByte(tbtType));
+		}
 
 		@Override
 		public void onContractActiviesCCCChange(String activityCCC) {
@@ -317,6 +322,7 @@ public abstract class EmployeeDraft extends Composite {
 		public void fireError(String title, String message) {
 			showError(title, message);
 		}
+		
 	}
 	
 	// ------------------------------------------------- UiBinder
@@ -821,6 +827,7 @@ public abstract class EmployeeDraft extends Composite {
 	private void fillContractFreelancerTable(ContractInfo contractData) {
 		// RETA
 		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
+		setSelectedValueLB(employee.mdTBTLB, contractData.getMdTBT()+"");
 		setSelectedValueLB(employee.workplace, contractData.getWorkplaceId()+"");
 		
 		employee.startDate.setValue(contractData.getStartDate());
@@ -858,6 +865,7 @@ public abstract class EmployeeDraft extends Composite {
 
 	private void fillContractTable(ContractInfo contractData) {
 		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
+		setSelectedValueLB(employee.mdTBTLB, contractData.getMdTBT()+"");
 		
 		setSelectedValueLB(employee.activityCCC, contractData.getActivityId()+"/"+contractData.getCccId()+"/"+contractData.getCccType());
 		

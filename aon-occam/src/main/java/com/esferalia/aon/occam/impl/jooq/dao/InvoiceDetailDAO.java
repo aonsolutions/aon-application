@@ -1,13 +1,16 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.Brand.BRAND;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Warehouse.WAREHOUSE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
+import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
@@ -37,6 +40,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 
 public class InvoiceDetailDAO {
+   
+    private InvoiceDetailDAO() {
+     
+    }
 	
 	private static final InvoiceDetailPropertiesDAO INVOICE_DETAIL_PROPERTIES = new InvoiceDetailPropertiesDAO();
 	public static class InvoiceDetailPropertiesDAO implements InvoiceDetailProperties {
@@ -73,6 +80,7 @@ public class InvoiceDetailDAO {
 	}
 	
 	
+	
 	public static SelectConditionStep<Record> select(AONContext ctx, InvoiceDetailFilter filter){	
 		return ctx.getDslContext()
 				.select()
@@ -80,9 +88,28 @@ public class InvoiceDetailDAO {
 				.where(INVOICE_DETAIL_PROPERTIES.getConditions(filter));
 	}
 	
+	public static SelectConditionStep<Record> selectFull(AONContext ctx, InvoiceDetailFilter filter){  
+        return ctx.getDslContext()
+                .select()
+                .from(INVOICE_DETAIL)
+                .join(PROJECT).on(INVOICE_DETAIL.PROJECT.eq(PROJECT.ID))
+                .join(ITEM).on(INVOICE_DETAIL.ITEM.eq(ITEM.ID))
+                .join(PRODUCT).on(ITEM.PRODUCT.eq(PRODUCT.ID))
+                .leftOuterJoin(PCATEGORY).on(PRODUCT.CATEGORY.equal(PCATEGORY.ID))
+                .leftOuterJoin(BRAND).on(PRODUCT.BRAND.equal(BRAND.ID))
+                .leftOuterJoin(SellerDAO.SELLER_ALIAS).on(SellerDAO.SELLER_ALIAS.ID.equal(INVOICE_DETAIL.SELLER))
+                .leftOuterJoin(WAREHOUSE).on(WAREHOUSE.ID.equal(INVOICE_DETAIL.WAREHOUSE))
+                .leftOuterJoin(WORKPLACE).on(WORKPLACE.ID.equal(INVOICE_DETAIL.WORKPLACE))
+                .where(INVOICE_DETAIL_PROPERTIES.getConditions(filter));
+    }
+	
 	public static Stream<InvoiceDetail> getStream(AONContext ctx, InvoiceDetailFilter filter){	
 		return select(ctx, filter).fetch().stream().map(new InvoiceDetailFiller());
 	}
+	
+	public static Stream<InvoiceDetail> getFullStream(AONContext ctx, InvoiceDetailFilter filter){ 
+        return selectFull(ctx, filter).fetch().stream().map(new InvoiceDetailFiller());
+    }
 	
 	public static Stream<InvoiceDetail> getStream(AONContext ctx, InvoiceDetailFilter filter, Integer page, Integer perPage){	
 		return select(ctx, filter)
@@ -91,13 +118,28 @@ public class InvoiceDetailDAO {
 			.fetch().stream().map(new InvoiceDetailFiller());
 	}
 	
-	public static LinkedList<InvoiceDetail> getList(AONContext ctx, InvoiceDetailFilter filter){	
+	public static Stream<InvoiceDetail> getFullStream(AONContext ctx, InvoiceDetailFilter filter, Integer page, Integer perPage){   
+	    return selectFull(ctx, filter)
+	        .limit(perPage)
+	        .offset(perPage * (page -1))
+	        .fetch().stream().map(new InvoiceDetailFiller());
+	}
+	
+	public static List<InvoiceDetail> getList(AONContext ctx, InvoiceDetailFilter filter){	
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	public static LinkedList<InvoiceDetail> getList(AONContext ctx, InvoiceDetailFilter filter, Integer page, Integer perPage){	
+	public static List<InvoiceDetail> getList(AONContext ctx, InvoiceDetailFilter filter, Integer page, Integer perPage){	
 		return getStream(ctx, filter, page, perPage).collect(Collectors.toCollection(LinkedList::new));
 	}
+	
+	public static List<InvoiceDetail> getFullList(AONContext ctx, InvoiceDetailFilter filter) {  
+        return getFullStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
+    }
+	
+	public static List<InvoiceDetail> getFullList(AONContext ctx, InvoiceDetailFilter filter, Integer page, Integer perPage){  
+        return getFullStream(ctx, filter, page, perPage).collect(Collectors.toCollection(LinkedList::new));
+    }
 	
 	public static InvoiceDetail get(AONContext ctx, InvoiceDetailFilter filter) {
 		return select(ctx, filter).limit(1)
@@ -106,7 +148,7 @@ public class InvoiceDetailDAO {
 	}
 	
 	
-	public static LinkedList<InvoiceDetail> save(AONContext ctx, List<InvoiceDetail> invoiceDetails) {
+	public static List<InvoiceDetail> save(AONContext ctx, List<InvoiceDetail> invoiceDetails) {
 		LinkedList<InvoiceDetail> list = new LinkedList<>();
 		invoiceDetails.stream().forEach(invoiceDetail -> 
 			list.add(save(ctx, invoiceDetail)));
@@ -122,7 +164,7 @@ public class InvoiceDetailDAO {
 		return invoiceDetail;
 	}
 	
-	public static LinkedList<InvoiceDetail> update(AONContext ctx, LinkedList<InvoiceDetail> invoiceDetails) {
+	public static List<InvoiceDetail> update(AONContext ctx, List<InvoiceDetail> invoiceDetails) {
 		invoiceDetails.stream().forEach(invoiceDetail -> update(ctx, invoiceDetail));
 		return invoiceDetails;
 	}

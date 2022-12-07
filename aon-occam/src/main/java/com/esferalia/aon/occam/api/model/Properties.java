@@ -1048,6 +1048,7 @@ public interface Properties {
 		
 		Property<Byte> getUserSharedProperty();
 		Property<Byte> getDomainTypeProperty();
+		Property<Byte> getDomainActiveProperty();
 	}
 	
 	public interface PersonProperties extends RegistryProperties{
@@ -1332,6 +1333,27 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<Integer> getScopeProperty();
 		Property<Integer> getCalendarProperty();
+	}
+	
+	public interface EnterpriseActivityProperties{
+		Property<Integer> getIdProperty();
+		Property<Integer> getDomainProperty();
+		Property<String> getDescriptionProperty();
+		Property<Integer> getEnterpriseProperty();
+		Property<Integer> getIaeProperty();
+		Property<Integer> getCnaeProperty();
+		Property<Byte> getTypeProperty();
+		Property<Integer> getCnae2009Property();
+		Property<Byte> getSurchargeProperty();
+		Property<Integer> getVatTaxProperty();
+		Property<Integer> getRetentionTaxProperty();
+		Property<Byte> getVatRegimeProperty();
+		Property<Byte> getRetentionRegimeProperty();
+		Property<Date> getStartDateProperty();
+		Property<Date> getEndDateProperty();
+		Property<Double> getProrataProperty();
+		Property<Byte> getProrataTypeProperty();
+		Property<Byte> getPrincipalProperty();
 	}
 	
 	public interface AgreementLevelCategoryProperties{

@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.io.IOException;
@@ -105,6 +106,7 @@ public class EnterprisePayrollExcel {
 			DEFAULT_HEADER.put("employeeSS", "COTIZAC.");
 			DEFAULT_HEADER.put("irpf", "IRPF");
 			DEFAULT_HEADER.put("other", "DEDUC.");
+			DEFAULT_HEADER.put("inKind", "RET. ESP.");
 			DEFAULT_HEADER.put("liquid", "LÍQUIDO");
 			
 			DEFAULT_HEADER.put("joint2", "");
@@ -158,6 +160,7 @@ public class EnterprisePayrollExcel {
 			COMPLETE_HEADER.put("employeeSS", "COTIZAC.");
 			COMPLETE_HEADER.put("irpf", "IRPF");
 			COMPLETE_HEADER.put("other", "DEDUC.");
+			COMPLETE_HEADER.put("inKind", "RET. ESP.");
 			COMPLETE_HEADER.put("liquid", "LÍQUIDO");
 			
 			COMPLETE_HEADER.put("joint2", "");
@@ -215,6 +218,7 @@ public class EnterprisePayrollExcel {
 			COMPLETE_TOTALS_HEADER.put("employeeSS", "COTIZAC.");
 			COMPLETE_TOTALS_HEADER.put("irpf", "IRPF");
 			COMPLETE_TOTALS_HEADER.put("other", "DEDUC.");
+			COMPLETE_TOTALS_HEADER.put("inKind", "RET. ESP.");
 			COMPLETE_TOTALS_HEADER.put("liquid", "LÍQUIDO");
 			
 			COMPLETE_TOTALS_HEADER.put("joint2", "");
@@ -270,6 +274,7 @@ public class EnterprisePayrollExcel {
 			DEFAULT_HEADER_SUMMARY.put("employeeSS", "COTIZAC.");
 			DEFAULT_HEADER_SUMMARY.put("irpf", "IRPF");
 			DEFAULT_HEADER_SUMMARY.put("other", "DEDUC.");
+			DEFAULT_HEADER_SUMMARY.put("inKind", "RET. ESP.");
 			DEFAULT_HEADER_SUMMARY.put("liquid", "LÍQUIDO");
 			
 			DEFAULT_HEADER_SUMMARY.put("joint2", "");
@@ -785,8 +790,8 @@ public class EnterprisePayrollExcel {
 
 		Map<PayrollCellStyle, CellStyle> stylesMap = PayrollCellStyle.getStyles(wb, format);
 		
-		final int completeLength = 36;
-		final int summaryLength = 11;
+		final int completeLength = 37;
+		final int summaryLength = 12;
 
 		Row row = null;
 
@@ -871,6 +876,10 @@ public class EnterprisePayrollExcel {
 					tgssCell++;
 				if (!checks.isOther())
 					finalHeader.remove("other");
+				else
+					tgssCell++;
+				if (!checks.isInKind())
+					finalHeader.remove("inKind");
 				else
 					tgssCell++;
 				if (!checks.isLiquid())
@@ -1104,6 +1113,10 @@ public class EnterprisePayrollExcel {
 									+(payroll.getOtherDeductions()!=null?payroll.getOtherDeductions():"0");
 								otherCell.setCellFormula(formula);
 								otherCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+							}
+							
+							if (checks.isInKind()) {
+								createDoubleCell(row, column++, payroll.getInKind(), stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
 							}
 							
 							if (checks.isLiquid()) {
@@ -1362,8 +1375,8 @@ public class EnterprisePayrollExcel {
 
 		totalsHeader.put("employee", "CENTRO DE TRABAJO");
 		
-		final int completeLength = 36;
-		final int summaryLength = 11;
+		final int completeLength = 37;
+		final int summaryLength = 12;
 		
 		totals = initializeTotalsSheet(header, enterpriseName, dateString, excelType, wb, stylesMap, completeLength,
 				summaryLength, totals, workplaces, totalsHeader);
@@ -1494,6 +1507,10 @@ public class EnterprisePayrollExcel {
 						tgssCell++;
 					if (!checks.isOther())
 						finalHeader.remove("other");
+					else
+						tgssCell++;
+					if (!checks.isInKind())
+						finalHeader.remove("inKind");
 					else
 						tgssCell++;
 					if (!checks.isLiquid())
@@ -1762,6 +1779,10 @@ public class EnterprisePayrollExcel {
 							+(payroll.getOtherDeductions()!=null?payroll.getOtherDeductions():"0");
 						otherCell.setCellFormula(formula);
 						otherCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
+					}
+					
+					if (checks.isInKind()) {
+						createDoubleCell(row, column++, payroll.getInKind(), stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
 					}
 					
 					if (checks.isLiquid()) {
@@ -2169,6 +2190,24 @@ public class EnterprisePayrollExcel {
 				.where(condition).fetchStream().collect(HashMap::new,
 						(m, v) -> m.put(v.get(SALARY.ID), v.get(WORKPLACE.DESCRIPTION)), HashMap::putAll);
 		
+		
+		Map<Integer, Double> inKindDeductions = new LinkedHashMap<>();
+		aonContext.getDslContext()
+		.select()
+		.from(SALARY_PAYMENT)
+		.innerJoin(SALARY).onKey()
+		.innerJoin(CONTRACT).onKey()
+		.innerJoin(WORKPLACE).onKey()
+		.innerJoin(ENTERPRISE).onKey()
+		.where(condition)
+		.and(SALARY_PAYMENT.TYPE.eq(AonNumberUtils.toByte(13)))
+		.fetchStreamInto(SALARY_PAYMENT)
+		.filter(Objects::nonNull)
+		.forEach(sp -> {
+			double amount = AonNumberUtils.zeroIfNull(inKindDeductions.getOrDefault(sp.getSalary(), 0d)) + AonNumberUtils.zeroIfNull(sp.getAmount());
+			inKindDeductions.put(sp.getSalary(), amount);
+		});
+		
 		Collection<Integer> ids = new LinkedList<>();
 		Collection<Integer> contractIds = new LinkedList<>();
 		Map<Integer, Integer> salaryPerson = new LinkedHashMap<>();
@@ -2208,6 +2247,10 @@ public class EnterprisePayrollExcel {
 			
 			if (s.getId() != null && s.getId() > 0) {
 				enterprisePayroll.employeeId = salaryPerson.get(s.getId());				
+			}
+			
+			if (inKindDeductions.containsKey(s.getId())) {
+				enterprisePayroll.inKind = inKindDeductions.get(s.getId());
 			}
 			
 			
@@ -2421,12 +2464,12 @@ public class EnterprisePayrollExcel {
 			Cell jointCell = row.createCell(5, CellType.STRING);
 			jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 			
-			totals.addMergedRegion(new CellRangeAddress(1, 1, 6, 9));
+			totals.addMergedRegion(new CellRangeAddress(1, 1, 6, 10));
 			epCell = row.createCell(6, CellType.STRING);
 			epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 			epCell.setCellValue("EMPLEADO");
 			
-			jointCell = row.createCell(10, CellType.STRING);
+			jointCell = row.createCell(11, CellType.STRING);
 			jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 			
 			epCell = row.createCell(summaryLength, CellType.STRING);
@@ -2434,19 +2477,19 @@ public class EnterprisePayrollExcel {
 			epCell.setCellValue("TGSS");
 			
 			if (excelType.isComplete()) {
-				jointCell = row.createCell(12, CellType.STRING);
+				jointCell = row.createCell(13, CellType.STRING);
 				jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 				
-				totals.addMergedRegion(new CellRangeAddress(1, 1, 13, 21));
-				Cell entCell = row.createCell(13, CellType.STRING);
+				totals.addMergedRegion(new CellRangeAddress(1, 1, 14, 22));
+				Cell entCell = row.createCell(14, CellType.STRING);
 				entCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 				entCell.setCellValue("COTIZACIÓN EMPRESA");
 				
-				jointCell = row.createCell(22, CellType.STRING);
+				jointCell = row.createCell(23, CellType.STRING);
 				jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 				
-				totals.addMergedRegion(new CellRangeAddress(1, 1, 23, lastCell));
-				epCell= row.createCell(23, CellType.STRING);
+				totals.addMergedRegion(new CellRangeAddress(1, 1, 24, lastCell));
+				epCell= row.createCell(24, CellType.STRING);
 				epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 				epCell.setCellValue("COTIZACIÓN EMPLEADO");
 			}
@@ -2510,12 +2553,12 @@ public class EnterprisePayrollExcel {
 			Cell jointCell = row.createCell(6, CellType.STRING);
 			jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 			
-			totals.addMergedRegion(new CellRangeAddress(1, 1, 7, 10));
+			totals.addMergedRegion(new CellRangeAddress(1, 1, 7, 11));
 			epCell = row.createCell(7, CellType.STRING);
 			epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 			epCell.setCellValue("EMPLEADO");
 			
-			jointCell = row.createCell(11, CellType.STRING);
+			jointCell = row.createCell(12, CellType.STRING);
 			jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 			
 			epCell = row.createCell(summaryLength + 1, CellType.STRING);
@@ -2529,19 +2572,19 @@ public class EnterprisePayrollExcel {
 			
 			
 			if (excelType.isComplete()) {
-				jointCell = row.createCell(13, CellType.STRING);
+				jointCell = row.createCell(14, CellType.STRING);
 				jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 				
-				totals.addMergedRegion(new CellRangeAddress(1, 1, 14, 22));
-				Cell entCell = row.createCell(14, CellType.STRING);
+				totals.addMergedRegion(new CellRangeAddress(1, 1, 15, 23));
+				Cell entCell = row.createCell(15, CellType.STRING);
 				entCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 				entCell.setCellValue("COTIZACIÓN EMPRESA");
 				
-				jointCell = row.createCell(23, CellType.STRING);
+				jointCell = row.createCell(24, CellType.STRING);
 				jointCell.setCellStyle(stylesMap.get(PayrollCellStyle.JOINT_CELL_STYLE));
 				
-				totals.addMergedRegion(new CellRangeAddress(1, 1, 24, lastCell));
-				epCell= row.createCell(24, CellType.STRING);
+				totals.addMergedRegion(new CellRangeAddress(1, 1, 25, lastCell));
+				epCell= row.createCell(25, CellType.STRING);
 				epCell.setCellStyle(stylesMap.get(PayrollCellStyle.HEADER_CELL_STYLE));
 				epCell.setCellValue("COTIZACIÓN EMPLEADO");
 			}
@@ -2973,6 +3016,7 @@ public class EnterprisePayrollExcel {
 			column = addTotalsFormulaCell(checks.isEmployeeSS(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
 			column = addTotalsFormulaCell(checks.isIrpf(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
 			column = addTotalsFormulaCell(checks.isOther(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isInKind(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
 			column = addTotalsFormulaCell(checks.isLiquid(), workplace, stylesMap.get(PayrollCellStyle.BOUND_CELL_STYLE_PREV), row, cell++, totalsRow, column);
 			//--------------------
 			
@@ -3087,6 +3131,7 @@ public class EnterprisePayrollExcel {
 			column = addTotalsFormulaCell(checks.isEmployeeSS(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
 			column = addTotalsFormulaCell(checks.isIrpf(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
 			column = addTotalsFormulaCell(checks.isOther(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isInKind(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
 			column = addTotalsFormulaCell(checks.isLiquid(), workplace, stylesMap.get(PayrollCellStyle.BOUND_CELL_STYLE_PREV), row, cell++, totalsRow, column);
 			//--------------------
 			
@@ -3635,6 +3680,7 @@ public class EnterprisePayrollExcel {
 		protected Double raw;
 		protected Double employeeSS;
 		protected Double irpf;
+		protected Double inKind;
 		protected Double liquid;
 		protected Double enterpriseSS;
 		protected Double totalCost;
@@ -3700,6 +3746,11 @@ public class EnterprisePayrollExcel {
 			return irpf;
 		}
 
+		@Override
+		public Double getInKind() {
+			return inKind;
+		}
+		
 		@Override
 		public Double getLiquid() {
 			return liquid;
@@ -3933,6 +3984,7 @@ public class EnterprisePayrollExcel {
 		private boolean raw;
 		private boolean employeeSS;
 		private boolean irpf;
+		private boolean inKind;
 		private boolean liquid;
 		private boolean enterpriseSS;
 		private boolean itCompensation;
@@ -3970,6 +4022,7 @@ public class EnterprisePayrollExcel {
 			this.employeeSS = !payrolls.stream()
 					.allMatch(p -> p.getEmployeeSS() == null);
 			this.irpf = !payrolls.stream().allMatch(p -> p.getIrpf() == null);
+			this.inKind = !payrolls.stream().allMatch(p -> p.getInKind() == null);			
 			this.liquid = !payrolls.stream().allMatch(p -> p.getLiquid() == null);
 			this.enterpriseSS = !payrolls.stream()
 					.allMatch(p -> p.getEnterpriseSS() == null);
@@ -4060,6 +4113,10 @@ public class EnterprisePayrollExcel {
 			return irpf;
 		}
 
+		public boolean isInKind() {
+			return inKind;
+		}
+		
 		public boolean isLiquid() {
 			return liquid;
 		}

@@ -1,4 +1,5 @@
 import { COLORS, CONSTANT, CSS, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
+import { PRESENCE_FILTER } from "../timecontrol/signinEnums.js";
 
 const AON_MESSENGER_LIST_OPEN = {
     name: 'Abiertas',
@@ -187,13 +188,13 @@ export const MessengerSidenav = {
 
 export const TASK_FILTER = [
     {
-      type: "select",
-      id: "registry",
-      name: "registry",
-      title: MSG.CUSTOMER,
-      autocomplete: true,
-      default:true,
-      emptyclear:true
+        type: "select",
+        id: "registry",
+        name: "registry",
+        title: MSG.CUSTOMER,
+        autocomplete: true,
+        default:true,
+        emptyclear:true
     },
     {
         type: "select",
@@ -213,23 +214,7 @@ export const TASK_FILTER = [
         default:true,
         emptyclear:true
     },
-    // {
-    //     type: "select",
-    //     id: "status",
-    //     name: "status",
-    //     title: MSG.STATUS,
-    //     default:true,
-    //     emptyclear:true
-    // },
-    // {
-    //   type: "select",
-    //   name: "workgroup",
-    //   id: "workgroup",
-    //   title: MSG.WORKGROUP,
-    //   autocomplete: true,
-    //   default:true,
-    //   emptyclear:true
-    // }
+    ...PRESENCE_FILTER
 ];
 
 export const APP_PARAMS_REQUEST = {
@@ -253,4 +238,4 @@ export const APP_PARAMS_REQUEST = {
     APP_REQUESTS_EXT_EMAIL_OPENED:"APP_REQUESTS_EXT_EMAIL_OPENED",
 	APP_REQUESTS_EXT_EMAIL_CLOSED:"APP_REQUESTS_EXT_EMAIL_CLOSED",
     APP_REQUESTS_EMAIL_RATING_CLOSED: "APP_REQUESTS_EMAIL_RATING_CLOSED"
-  }
+}

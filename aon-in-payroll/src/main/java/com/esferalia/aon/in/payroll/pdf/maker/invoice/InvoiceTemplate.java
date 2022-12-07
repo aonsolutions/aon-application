@@ -70,6 +70,7 @@ import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFormats;
 import com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonLanguage;
 import com.esferalia.aon.occam.api.model.finance.Finance;
@@ -78,6 +79,9 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceThemeConfiguration;
+import com.esferalia.aon.occam.api.model.management.Sales;
+import com.esferalia.aon.occam.api.model.office.Tag;
+import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RecordData;
@@ -746,6 +750,36 @@ public class InvoiceTemplate {
 		return map;
 	}
 	
+	private static Map<DetailCategory, List<InvoiceDetail>> groupBySalesReference(List<InvoiceDetail> details, CompanyFull company) {
+		Map<DetailCategory, List<InvoiceDetail>> map = new LinkedHashMap<>();
+		if (details == null)
+			return map;
+		
+		for (InvoiceDetail detail : details) {
+			if (detail != null &&
+				detail.getDeliveryDetail() != null &&
+				detail.getDeliveryDetail().getSalesDetailData() != null &&
+				detail.getDeliveryDetail().getSalesDetailData().getSales() != null &&
+				detail.getDeliveryDetail().getSalesDetailData().getSales().getId() != null
+			) {
+				Sales sales = detail.getDeliveryDetail().getSalesDetailData().getSales();
+				String detailStr = "Pedido de venta: " + AonStringUtils.trimToEmpty(sales.getReferenceCode()) + " con referencia de compra " + AonStringUtils.trimToEmpty(sales.getPurchaseReference());
+				DetailCategory detailCategory = new DetailCategory(null, sales.getId(), null, null, null);
+				detailCategory.setName(detailStr);
+				List<InvoiceDetail> salesList = map.getOrDefault(detailCategory, new LinkedList<>());
+				salesList.add(detail);
+				map.put(detailCategory, salesList);
+			} else {
+				List<InvoiceDetail> othersList = map.getOrDefault(null, new LinkedList<>());
+				othersList.add(detail);
+				map.put(null, othersList);
+				
+			}
+		}
+		
+		return map;
+	}
+	
 	private static Map<DetailCategory, List<InvoiceDetail>> sortInvoiceDetails(List<InvoiceDetail> details, CompanyFull company) {
 		LinkedList<InvoiceDetail> udapaAuxiliaryList = new LinkedList<>();
 		LinkedList<InvoiceDetail> filteredList = new LinkedList<>();
@@ -801,9 +835,23 @@ public class InvoiceTemplate {
 			return aKey.compareTo(bKey);
 		}).forEach(entry -> {
 			try {
-				if (isGarage(company)) {
-					DetailCategory category = entry.getKey();
-						drawCategoryName(category, doc, invoice, theme, false);
+				DetailCategory category = entry.getKey();
+				if (isUdapa(company) && category != null && InvoiceSource.DELIVERY.equals(category.getInvoiceSource())) {
+					drawCategoryName(category, doc, invoice, theme, false, true);
+					Map<DetailCategory, List<InvoiceDetail>> salesMap = groupBySalesReference(entry.getValue(), company);
+					salesMap.entrySet().stream().sorted((a, b) -> {
+						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
+						String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
+						return aKey.compareTo(bKey);
+					}).forEach(detail -> {
+						try {
+							atomicI.set(drawDetailedCategory(doc, detail, company, invoice, theme, atomicI.get(), category != null));
+						} catch (IOException e) {
+						}
+					});
+					
+				} else if (isGarage(company)) {
+					drawCategoryName(category, doc, invoice, theme, false, true);
 	
 					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue(), company);
 					
@@ -829,16 +877,22 @@ public class InvoiceTemplate {
 		});
 	}
 	
-	private void drawCategoryName(DetailCategory category, PDDocument doc, Invoice invoice, PrintInvoiceThemeConfiguration theme, boolean indent) throws IOException {
+	private void drawCategoryName(DetailCategory category, PDDocument doc, Invoice invoice, PrintInvoiceThemeConfiguration theme, boolean indent, boolean detailed) throws IOException {
 		if (category != null && !AonStringUtils.isBlank(category.getName())) {
-			if (y - 15 < bottom + 5) {
+			float lineLength = (detailed ? 240 : 420) - (indent ? 10 : 0);
+			List<String> lines = getLines(category.toString(), lineLength, boldFont, 9);
+			
+			if (y - 5 - 10 * lines.size() < bottom + 5) {
 				jumpToNewPage(doc, company, invoice, config);
 				y = entriesStart - 10;
 			}
 			x = 50;
 			y-= 5;
-			drawText(contents, category.toString(), x + 5 + (indent ? 10 : 0), y, theme.getTextColor(), boldFont, 9);
-			y-= 10;
+			
+			for (String line : lines) {				
+				drawText(contents, AonStringUtils.trim(line), x + 5 + (indent ? 10 : 0), y, theme.getTextColor(), boldFont, 9);
+				y-= 10;
+			}
 			if (AonStringUtils.isNotBlank(category.getDescription())) {				
 				drawText(contents, category.getDescription(), x + 5 + (indent ? 10 : 0), y, theme.getTextColor(), boldFont, 9);
 				y-= 10;
@@ -846,15 +900,20 @@ public class InvoiceTemplate {
 		}
 	}
 	
-	private void simulateCategoryName(DetailCategory category, Invoice invoice, boolean indent, AtomicInteger numberOfPages) throws IOException {
+	private void simulateCategoryName(DetailCategory category, Invoice invoice, boolean indent, boolean detailed, AtomicInteger numberOfPages) throws IOException {
 		if (category != null && !AonStringUtils.isBlank(category.getName())) {
-			if (y - 15 < bottom + 5) {
+			float lineLength = (detailed ? 240 : 420) - (indent ? 10 : 0);
+			List<String> lines = getLines(category.toString(), lineLength, boldFont, 9);
+			
+			if (y - 5 - 10 * lines.size() < bottom + 5) {
 				fictionalPageJump(invoice);
 				numberOfPages.getAndIncrement();
 				y = entriesStart - 10;
 			}
 			y-= 5;
-			y-= 10;
+			for (String line : lines) {				
+				y-= 10;
+			}
 			if (AonStringUtils.isNotBlank(category.getDescription())) {				
 				y-= 10;
 			}
@@ -866,13 +925,20 @@ public class InvoiceTemplate {
 		DetailCategory category = entry.getKey();
 		List<InvoiceDetail> details = entry.getValue();
 		if (details != null && !details.isEmpty()) {
-			drawCategoryName(category, doc, invoice, theme, indent);
+			drawCategoryName(category, doc, invoice, theme, indent, true);
 			
 			for (InvoiceDetail detail : details) {
 				x = 50;
 				String description = 
 						safeString(detail.getDescription())
 							.replace("\t", " ");
+				
+				if (isUdapa(company)) {
+					String appended = fillProductPackage(company, "", detail);
+					if (AonStringUtils.isNotBlank(appended)) {
+						description += " (" + appended + ")";
+					}
+				}
 				
 				ArrayList<String> divided = (ArrayList<String>) PDFToolkit.getLinesRespectOriginal(description, 240 - (indent ? 10 : 0),regularFont, 8);				
 				float lineDiff = 10;
@@ -890,13 +956,20 @@ public class InvoiceTemplate {
 		DetailCategory category = entry.getKey();
 		List<InvoiceDetail> details = entry.getValue();
 		if (details != null && !details.isEmpty()) {
-			simulateCategoryName(category, invoice, indent, numberOfPages);
+			simulateCategoryName(category, invoice, indent, true, numberOfPages);
 			
 			for (InvoiceDetail detail : details) {
 				x = 50;
 				String description = 
 						safeString(detail.getDescription())
 						.replace("\t", " ");
+				
+				if (isUdapa(company)) {
+					String appended = fillProductPackage(company, "", detail);
+					if (AonStringUtils.isNotBlank(appended)) {
+						description += " (" + appended + ")";
+					}
+				}
 				
 				ArrayList<String> divided = (ArrayList<String>) PDFToolkit.getLinesRespectOriginal(description, 240 - (indent ? 10 : 0),regularFont, 8);				
 				float lineDiff = 10;
@@ -937,9 +1010,23 @@ public class InvoiceTemplate {
 			return aKey.compareTo(bKey);
 		}).forEach(entry -> {
 			try {
-				if (isGarage(company)) {
-					DetailCategory category = entry.getKey();
-					simulateCategoryName(category, invoice, false, numberOfPages);
+				DetailCategory category = entry.getKey();
+				if (isUdapa(company) && category != null && InvoiceSource.DELIVERY.equals(category.getInvoiceSource())) {
+					simulateCategoryName(category, invoice, false, true, numberOfPages);
+					Map<DetailCategory, List<InvoiceDetail>> salesMap = groupBySalesReference(entry.getValue(), company);
+					salesMap.entrySet().stream().sorted((a, b) -> {
+						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
+						String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
+						return aKey.compareTo(bKey);
+					}).forEach(detail -> {
+						try {
+							atomicI.set(simulateDetailedCategory(detail, company, invoice, theme, atomicI.get(), category != null, numberOfPages));
+						} catch (IOException e) {
+						}
+					});
+					
+				}else if (isGarage(company)) {
+					simulateCategoryName(category, invoice, false, true, numberOfPages);
 	
 					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue(), company);
 					
@@ -1186,10 +1273,24 @@ public class InvoiceTemplate {
 			String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
 			return aKey.compareTo(bKey);
 		}).forEach(entry -> {
-			try {				
-				if (isGarage(company)) {
-					DetailCategory category = entry.getKey();
-					simulateCategoryName(category, invoice, false, numberOfPages);
+			try {
+				DetailCategory category = entry.getKey();
+				if (isUdapa(company) && category != null && InvoiceSource.DELIVERY.equals(category.getInvoiceSource())) {
+					simulateCategoryName(category, invoice, false, false, numberOfPages);
+					Map<DetailCategory, List<InvoiceDetail>> salesMap = groupBySalesReference(entry.getValue(), company);
+					salesMap.entrySet().stream().sorted((a, b) -> {
+						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
+						String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
+						return aKey.compareTo(bKey);
+					}).forEach(detail -> {
+						try {
+							simulateSimplifiedCategory(detail, invoice, category != null, numberOfPages);
+						} catch (IOException e) {
+						}
+					});
+					
+				} else if (isGarage(company)) {
+					simulateCategoryName(category, invoice, false, false, numberOfPages);
 					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue(), company);
 					productMap.entrySet().stream().sorted((a, b) -> {
 						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
@@ -1226,10 +1327,25 @@ public class InvoiceTemplate {
 			String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
 			return aKey.compareTo(bKey);
 		}).forEach(entry -> {
-			try {				
-				if (isGarage(company)) {
-					DetailCategory category = entry.getKey();
-					drawCategoryName(category, doc, invoice, theme, false);
+			try {
+				
+				DetailCategory category = entry.getKey();
+				if (isUdapa(company) && category != null && InvoiceSource.DELIVERY.equals(category.getInvoiceSource())) {
+					drawCategoryName(category, doc, invoice, theme, false, false);
+					Map<DetailCategory, List<InvoiceDetail>> salesMap = groupBySalesReference(entry.getValue(), company);
+					salesMap.entrySet().stream().sorted((a, b) -> {
+						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
+						String bKey = AonStringUtils.trimToEmpty(b.getKey() != null ? b.getKey().getName() : "");
+						return aKey.compareTo(bKey);
+					}).forEach(detail -> {
+						try {
+							drawSimplifiedCategory(detail, invoice, doc, company, config, theme, category != null);
+						} catch (IOException e) {
+						}
+					});
+					
+				} else if (isGarage(company)) {
+					drawCategoryName(category, doc, invoice, theme, false, false);
 					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue(), company);
 					productMap.entrySet().stream().sorted((a, b) -> {
 						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
@@ -1261,7 +1377,7 @@ public class InvoiceTemplate {
 		List<InvoiceDetail> details = entry.getValue();
 		
 		if (details != null && !details.isEmpty() && category != null) {
-			drawCategoryName(category, doc, invoice, theme, indent);
+			drawCategoryName(category, doc, invoice, theme, indent, false);
 		}
 		for (InvoiceDetail detail : details) {
 			x = 50;
@@ -1280,6 +1396,13 @@ public class InvoiceTemplate {
 			
 			x -= 430;
 			
+			if (isUdapa(company)) {
+				String appended = fillProductPackage(company, "", detail);
+				if (AonStringUtils.isNotBlank(appended)) {
+					description += " (" + appended + ")";
+				}
+			}
+			
 			List<String> lines = PDFToolkit.getLinesRespectOriginal(description, 420 - (indent ? 10 : 0), regularFont, 8);
 			if (lines.isEmpty()) {
 				y -= 10;
@@ -1292,7 +1415,6 @@ public class InvoiceTemplate {
 					y = entriesStart - 10;
 				}
 			}
-
 		}
 	}
 
@@ -1303,7 +1425,7 @@ public class InvoiceTemplate {
 		List<InvoiceDetail> details = entry.getValue();
 		
 		if (details != null && !details.isEmpty() && category != null) {
-			simulateCategoryName(category, invoice, indent, numberOfPages);
+			simulateCategoryName(category, invoice, indent, false, numberOfPages);
 		}
 		for (InvoiceDetail detail : details) {
 			if (y < bottom + 5) {
@@ -1312,6 +1434,14 @@ public class InvoiceTemplate {
 				y = entriesStart - 10;
 			}
 			String description = AonStringUtils.trimToEmpty(detail.getDescription()).replace("\t", " ");
+			
+			if (isUdapa(company)) {
+				String appended = fillProductPackage(company, "", detail);
+				if (AonStringUtils.isNotBlank(appended)) {
+					description += " (" + appended + ")";
+				}
+			}
+			
 			List<String> lines = PDFToolkit.getLinesRespectOriginal(description, 420 - (indent ? 10 : 0), regularFont, 8);
 			if (lines.isEmpty()) {
 				y -= 10;
@@ -1921,10 +2051,12 @@ public class InvoiceTemplate {
 		private Date date;
 		private String name;
 		private String description;
+		private InvoiceSource invoiceSource;
 		
 		public DetailCategory (InvoiceSource source, Integer id, String reference, Date date, String description) {
 			super();
 			this.id = id;
+			this.invoiceSource = source;
 			this.name = source != null ? AonStringUtils.trimToEmpty(source.getDescription()) : null;
 			this.reference = reference;
 			this.date = date;
@@ -1945,6 +2077,9 @@ public class InvoiceTemplate {
 		public String getName() {
 			return name;
 		}
+		public InvoiceSource getInvoiceSource() {
+			return invoiceSource;
+		}
 		public String getDescription() {
 			return description;
 		}
@@ -1959,7 +2094,12 @@ public class InvoiceTemplate {
 			String ref =  AonStringUtils.trimToEmpty(getReference());
 			String dateStr = AonStringUtils.trimToEmpty(AonDateUtils.format(getDate(), "dd/MM/yyyy"));
 			String typeStr = AonStringUtils.trimToEmpty(getName());
-			return (!typeStr.isEmpty() ? typeStr + ": " : "") + ref + (!dateStr.isEmpty() ? " del " + dateStr : "");
+			String str = (!typeStr.isEmpty() ? typeStr + ": " : "") + ref + (!dateStr.isEmpty() ? " del " + dateStr : "");
+			if (AonStringUtils.isBlank(str)) {
+				return getName();
+			} else {				
+				return (!typeStr.isEmpty() ? typeStr + ": " : "") + ref + (!dateStr.isEmpty() ? " del " + dateStr : "");
+			}
 		}
 		
 
@@ -2000,9 +2140,10 @@ public class InvoiceTemplate {
 		if (company != null &&
 				company.getRegistry() != null &&
 				company.getRegistry().getDomain() != null) {
-			return AonStringUtils.containsIgnoreCase(company.getRegistry().getDomain().getName(), "udapa");
+			return AonStringUtils.containsIgnoreCase(company.getRegistry().getDomain().getName(), "udapa")
+				 || AonStringUtils.containsIgnoreCase(company.getRegistry().getDomain().getName(), "paturpat");
 		}
-			return false;
+		return false;
 	}
 	
 	private static InvoiceDetail copyInvoiceDetail(InvoiceDetail original) {
@@ -2045,4 +2186,41 @@ public class InvoiceTemplate {
 		return newInvoiceDetail;
 	}
 	
+    private static String fillProductPackage(CompanyFull company, String description, InvoiceDetail invoiceDetail) {
+        Item item = invoiceDetail.getItem();
+        if(item!=null && item.getProduct().isPackaged() ){
+                StringBuilder builder = new StringBuilder("  ");
+                if( item.getPackMeasurementTag() != null ){
+                    Tag tag = AON.getTag(company.getRegistry().getDomain().getName(), company.getRegistry().getDomain().getId(),
+                            "", f -> f.getIdProperty().eq(item.getPackMeasurementTag().getId()));
+                    builder.append( String.format("%.2f", invoiceDetail.getQuantity()) )
+                        .append( " " )
+                        .append( tag.getName() )
+                        .append( ": " );
+                }
+                if( item.getPackUnitsTag() != null ){
+                        Tag tag = AON.getTag(company.getRegistry().getDomain().getName(), company.getRegistry().getDomain().getId(),
+                            "", f -> f.getIdProperty().eq(item.getPackUnitsTag().getId()));
+                        builder.append( String.format("%.2f",invoiceDetail.getQuantity()
+                                        / item.getPackMeasurement()) )
+                                .append( " " )
+                                .append( tag.getName() );
+                }
+                if( item.getPackUnitsTag() != null
+                                && item.getPackFormatTag()!=null ){
+                        builder.append( ", " );
+                }
+                if( item.getPackFormatTag() != null ){
+                    Tag tag = AON.getTag(company.getRegistry().getDomain().getName(), company.getRegistry().getDomain().getId(),
+                            "", f -> f.getIdProperty().eq(item.getPackFormatTag().getId()));
+                    builder.append( String.format("%.2f",(invoiceDetail.getQuantity()
+                            / item.getPackMeasurement())
+                            / item.getPackUnits()) )
+                        .append( " " )
+                        .append(tag.getName());
+                }
+                return description + builder.toString();
+        }
+		return description;
+    }
 }

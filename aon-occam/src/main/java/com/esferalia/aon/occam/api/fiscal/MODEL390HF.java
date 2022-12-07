@@ -1,12 +1,14 @@
 package com.esferalia.aon.occam.api.fiscal;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
+import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.impl.jooq.fiscal.MODEL390HFImpl;
@@ -85,6 +87,11 @@ public class MODEL390HF {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getInfo(ctx, mod, script, infoKey);
 		}
+	}
+
+	public static Stream<VatContext> getInfo(Occam occam, Mod390HF mod,Mod390Key key) {
+	 	final CloseableAONContext ctx = AONContext.getAONContext(occam);
+	 	return getImpl().getInfo(ctx, mod, key, () -> AONContext.closeQuietly(ctx));
 	}
 
 	public static Mod390HF reset(Occam occam, Mod390HF mod) {

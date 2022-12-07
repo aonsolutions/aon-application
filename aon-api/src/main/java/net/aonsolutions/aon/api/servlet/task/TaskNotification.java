@@ -216,7 +216,7 @@ public class TaskNotification {
 		try {
 			Domain domain = task.getDomain();
 			JSONObject params = api.getData();
-			Company company = AON.getCompany(domain.getName(),domain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
+			Company company = AON.getCompany(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 			if(company!=null) {
 				String logo = TaskUtils.getLogoCompany(company.getDomain().getName());
 				String companyName = company.getName();

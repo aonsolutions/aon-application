@@ -559,9 +559,8 @@ const checkButtonsToolbar = (task, taskId)=>{
 
             const myTaskHolderId = aonMessengerChat.MY_TASKHOLDER && aonMessengerChat.MY_TASKHOLDER.id ? aonMessengerChat.MY_TASKHOLDER.id : undefined;
         
-            const parent         = aonMessengerChat.getApplicationParent();
-
-            parent.getMyWorkgroups()
+            aonMessengerChat.getApplicationParent()
+            .getMyWorkgroups()
             .then(myWorkgroups=>{
                 const is = isMyTask(task, myTaskHolderId, myWorkgroups);
                 toolbar.showButton(MESSENGER_IDS.TOOLBAR_LABELS, is);
@@ -693,12 +692,11 @@ const changeFormProcess = (task, {value,name}) => {
 
     if(task.id && aonMessengerChat.getDur().isDev()){ //BUTTON SHOW JSON
         aonCard.addTitleButton(MSG.VIEW, MATERIAL_ICONS.VISIBILITY, false, () => {
-            let application = aonMessengerChat.getApplication();
-            let d = application.getDialog();
+            let d = aonMessengerChat.getApplication().getDialog();
             if(d){
                 d.clear();
                 if (aonMessengerChat.isMobile()) {
-                  d.type  = "fullscreen";
+                    d.type  = "fullscreen";
                 } else {
                     d.width = '400px';
                 }
@@ -834,7 +832,7 @@ const hideBtnExternal = (type, btnForExternal, divRequest) => {
  */
 const formQuery = (task, dinamicDiv, forExternal = false) => {
     const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
-    const applicationParent = aonMessengerChat.applicationParentEl;
+    const applicationParent = aonMessengerChat.getApplicationParent();
     const isAdvisoryCompany = task.isAdvisoryCompany();
     const hideData = task.getId() && task.getSource() === TASK_SOURCE.CAU && task.isOtherDomain();
 
@@ -875,7 +873,7 @@ const formQuery = (task, dinamicDiv, forExternal = false) => {
     } 
 
     //--------------------------DIV WORKGROUP AND TASKHOLDER
-    if((!forExternal) && !applicationParent.cau && !hideData){
+    if(!forExternal && !applicationParent.cau && !hideData){
         addTaskHolderAndWorkgroup(task, dinamicDiv);
     }
 
@@ -1201,7 +1199,7 @@ const createLabelAnchor = (text, domainName, clickable = true, editable = false)
         anchor.target = "_system";
         anchor.style.cursor = "pointer";
     }
- 
+
     anchor.textContent = domainName;
     label.appendChild(anchor);
 
@@ -1225,7 +1223,7 @@ const isMyTask = (task, myTaskHolderId, myWorkgroups) => {
     const taskSenderId     = task.sender && task.sender.id ? task.sender.id : undefined;
 
     const taskWorkgroup    = task.workgroup && task.workgroup.id ? task.workgroup.id : undefined;
-   
+
     const isMyTaskHolder   = (taskTaskholderId == myTaskHolderId) || (taskSenderId == myTaskHolderId);
 
     const isMyWorkgroup   = myWorkgroups && myWorkgroups.length ? myWorkgroups.some(({id})=> id == taskWorkgroup) : false;
@@ -1234,6 +1232,59 @@ const isMyTask = (task, myTaskHolderId, myWorkgroups) => {
 }
 
 const documentExec = (exec) => document.execCommand(exec) ? document.execCommand("normal") : document.execCommand(exec);
+
+
+const getPeriodMessenger = (value=undefined) => {
+    let jsonArray = [
+        {
+            name: "Últimos 10 días",
+            value: "last_10_days",
+            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-10)),
+            endDate: AonDateUtils.formatDateOrigin( new Date())
+        },
+        {
+            name: "Últimos 30 días",
+            value: "last_30_days",
+            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-30)),
+            endDate: AonDateUtils.formatDateOrigin( new Date())
+        },
+        {
+            name: "Últimos 60 días",
+            value: "last_60_days",
+            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-60)),
+            endDate: AonDateUtils.formatDateOrigin( new Date())
+        },
+        {
+            name: "Últimos 90 días",
+            value: "last_90_days",
+            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-90)),
+            endDate: AonDateUtils.formatDateOrigin( new Date())
+        },
+        {
+            name: "Últimos 180 días",
+            value: "last_180_days",
+            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-180)),
+            endDate: AonDateUtils.formatDateOrigin( new Date())
+        },
+        {
+            name: "Todos",
+            value: "all",
+            startDate: null,
+            endDate: null
+        },
+        {
+            name: "Personalizado",
+            value: "personalized",
+        }
+    ];
+
+    if(value){
+        return jsonArray.find((d)=> d.value==value);
+    }
+
+    return jsonArray;
+};
+
 
 export const TaskUtils = {
     buildTextareaToolbar,
@@ -1254,5 +1305,6 @@ export const TaskUtils = {
     setStyleMessageHistoric,
     setContentMessageChat,
     checkButtonsToolbar,
-    isMyTask
+    isMyTask,
+    getPeriodMessenger
 }
