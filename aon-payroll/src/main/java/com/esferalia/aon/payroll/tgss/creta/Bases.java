@@ -85,6 +85,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
+import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
@@ -155,6 +156,77 @@ public class Bases {
 			}
 			return null;
 		}
+	}
+	
+	public static BasesCallback L03BASESCALLBACK = new AddZeroDatoBasesCallback(				
+		"500", // Base de contingencias comunes
+		"509", // Base de contingencias comunes
+		"563", // Compensación IT contingencias comunes
+
+		"601", // Base de Accidentes de Trabajo
+		"611", // Base de Accidentes de Trabajo
+		"603", // Base de Accidentes de Trabajo en situación de IT
+		"613", // Base de Accidentes de Trabajo en situación de IT
+		"663", // Compensación IT AT y EP
+		
+		"535", // Base de contingencias comunes Maternidad Tiempo Parcial
+		"635", // Base AT Maternidad Tiempo Parcial
+		"634", // Base AT Maternidad Tiempo Parcial
+		
+		"536", // Base de contingencias comunes Expediente de Regulación de Empleo Parcial
+		"636", // Base AT Expediente de Regulación de Empleo Parcial
+		"637"  // Base AT Expediente de Regulación de Empleo Parcial
+	) {
+	    public void zeroDato(String var, Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder, Salary salary) {
+		if ( salary.getSalaryType() == SalaryType.DELAY )
+		    super.zeroDato(var, datoSolicitado, tramo, tramoBuilder, salary);
+	    };
+	    
+	    public void unknownDato(Salary salary, net.aonsolutions.core.tgss.creta.jaxb.Trabajador<?> trabajador, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
+		if ( salary.getSalaryType() == SalaryType.DELAY )
+		    super.unknownDato(salary, trabajador, tramo, datoSolicitado, tramoBuilder);
+	    };
+	};
+
+
+	public static class AddZeroDatoBasesCallback implements BasesCallback {
+	    
+	    private Set<String> codigos = new HashSet<>();
+	    
+	    public AddZeroDatoBasesCallback(String ...codigos) {
+		this(Arrays.asList(codigos)); 
+	    }
+
+	    public AddZeroDatoBasesCallback(Collection<String> codigos) {
+		this.codigos.addAll(codigos); 
+	    }
+	    
+	    @Override
+	    public void zeroDato(String var, Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder, Salary salary) {
+		if ( contains(datoSolicitado ))
+		    addZeroDato(datoSolicitado, tramoBuilder);
+	    }
+	    
+	    @Override
+	    public void noSuchDato(Salary salary, Tramo tramo, Dato datoSolicitado, TramoBuilder tramoBuilder,
+	            boolean optional) {
+		if ( contains(datoSolicitado ))
+		    addZeroDato(datoSolicitado, tramoBuilder);
+	    }
+	    
+	    private boolean contains(Dato datoSolicitado) {
+		return codigos.contains(datoSolicitado.getCodigo());
+	    }
+
+	    private void addZeroDato(Dato datoSolicitado, TramoBuilder tramoBuilder) {
+		DatoBuilder datoBuilder = new DatoBuilder();
+		datoBuilder.setCodigo(datoSolicitado.getCodigo());
+		datoBuilder.setTipo(datoSolicitado.getTipoDato());
+		datoBuilder.setImporteEuros(0d);
+		tramoBuilder.addDato(datoBuilder.create());
+	    }
+	    
+	    
 	}
 
 	public static class ConstantDatoBasesCallback implements BasesCallback {
@@ -470,7 +542,7 @@ public class Bases {
 				if (newValue == 0.00)
 					for (BasesCallback cb : cbs)
 						cb.zeroDato(variable, datoSolicitado, tramo,
-								salary);
+								tramoBuilder, salary);
 
 				DatoBuilder datoBuilder = new DatoBuilder();
 				datoBuilder.setCodigo(datoSolicitado.getCodigo());
@@ -555,7 +627,7 @@ public class Bases {
 		};
 
 		default void zeroDato(String var, Dato datoSolicitado,
-				Tramo tramo, Salary salary) {
+				Tramo tramo, TramoBuilder tramoBuilder, Salary salary) {
 		};
 
 		default void negativeDato(String var, Double value, Dato datoSolicitado,
@@ -926,7 +998,7 @@ public class Bases {
 
 		@Override
 		public void zeroDato(String  var, Dato datoSolicitado,
-				Tramo tramo, Salary salary) {
+				Tramo tramo, TramoBuilder tramoBuilder, Salary salary) {
 			System.err.println(String.format(
 					"WARN: %s (%s) for %s [%s-%s-%s...%s-%s-%s] is zero",
 					var, datoSolicitado.getCodigo(),
@@ -1597,7 +1669,7 @@ public class Bases {
 				Dato datoSolicitado, TramoBuilder tramoBuilder,
 				BasesCallback... cbs) {
 			for (BasesCallback cb : cbs)
-				cb.zeroDato(variable, datoSolicitado, tramo, salary);
+				cb.zeroDato(variable, datoSolicitado, tramo, tramoBuilder, salary);
 		}
 
 		// --------------------------------------------------------------------
@@ -1849,7 +1921,7 @@ public class Bases {
 			} catch (ZeroValueException e) {
 				for (BasesCallback cb : cbs)
 					cb.zeroDato(e.getVariable(), datoSolicitado, tramo,
-							salary);
+							tramoBuilder, salary);
 			} catch (NoSuchVariablesException e) {
 				for (BasesCallback cb : cbs)
 					cb.noSuchDato(salary, tramo, datoSolicitado, tramoBuilder,
@@ -2170,17 +2242,6 @@ public class Bases {
 
 	// ------------------------------------------------------------------------
 
-	private static <D extends DatoSolicitado> void bases(
-			BasesBuilder basesBuilder, 
-			AONContext ctx,
-			Liquidacion<?, ?, ?, ?, ?> liquidacion, 
-			boolean aceptarBasesAnteriores,
-			BasesCallback... cbs) {
-		
-		basesBuilder.addLiquidacion(
-				liquidacion(ctx, liquidacion, aceptarBasesAnteriores, cbs));
-	}
-
 	private static <D extends DatoSolicitado> net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion(
 			AONContext ctx, Liquidacion<?, ?, ?, ?, ?> liquidacion,
 			boolean aceptarBasesAnteriores, BasesCallback... cbs) {
@@ -2206,7 +2267,7 @@ public class Bases {
 					.setMesControl(liquidacion.getFechaControl().getMes())
 					.setAnhoControl(liquidacion.getFechaControl().getAnho());
 
-		datosLiquidacion(ctx, liquidacion, liquidacionBuilder, cbs);
+ 		datosLiquidacion(ctx, liquidacion, liquidacionBuilder, cbs);
 
 		for (LiquidacionMes<?> liquidacionMes : liquidacion
 				.getLiquidacionMes()) {

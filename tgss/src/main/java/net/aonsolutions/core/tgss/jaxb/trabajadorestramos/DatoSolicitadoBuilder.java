@@ -36,8 +36,9 @@ public class DatoSolicitadoBuilder {
 	}
 	
 	
-	public void setObligatorio(boolean obligatorio) {
+	public DatoSolicitadoBuilder setObligatorio(boolean obligatorio) {
 		this.obligatorio = obligatorio;
+		return this;
 	}
 
 	public DatoSolicitadoBuilder setHoras(int horas ) {

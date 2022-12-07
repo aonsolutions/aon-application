@@ -31,8 +31,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOU
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContractCode.C100;
-import static com.esferalia.aon.payroll.enumeration.LeaveType.COMMON_DISEASE;
 import static com.esferalia.aon.payroll.enumeration.LeaveType.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.LeaveType.OCCUPATIONAL_DISEASE;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
@@ -67,6 +67,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -93,6 +94,7 @@ import com.esferalia.aon.jooq.tables.records.ScopeRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.payroll.calculator.CollectSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
@@ -104,6 +106,7 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
+import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.EmptyBasesException;
 import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.ISalary;
@@ -114,7 +117,6 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.mchange.util.AssertException;
 
 import junit.framework.Assert;
@@ -136,6 +138,12 @@ import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.LiquidacionMes;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajador;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.DatoSolicitadoBuilder;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.LiquidacionMesBuilder;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadorBuilder;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadorBuilder.TipoIpf;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TrabajadoresTramosBuilder;
+import net.aonsolutions.core.tgss.jaxb.trabajadorestramos.TramoBuilder;
 
 public class SQLCretaTestCase extends AbstractSQLTestCase {
 
@@ -7747,6 +7755,220 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testDelaysOverrideIT() throws ExpressionException, SQLException,
+			SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		String ccc = "20" + Long.toString(Math.abs(new Random().nextLong()), 10).substring(0,9);
+		//@formatter:off
+		Date startContractDate = add(getFirstDayOfYear(getToday()),Calendar.YEAR, -1);
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C100, "04",CCCType.PRINCIPAL, startContractDate, null, null, Long.toString(Math.abs(new Random().nextLong()), 10).substring(0,10), Long.toString(Math.abs(new Random().nextLong()), 10).substring(0,12));
+		//@formatter:on
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE");
+		addPayment(aonContext, contract, salarioBase 
+			,String.format("1250.00 * %s / %s",  WORKED_DAYS, MONTH_DAYS)
+			,"_P"
+		);
+		
+		PaymentConceptRecord prestIT = addConcept(aonContext, "PREST_IT");
+		addPayment(aonContext, contract, prestIT 
+			,String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS)
+			,String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+		);
+
+		Date startDate = add(getFirstDayOfMonth(getToday()), Calendar.MONTH, -5 );
+		Date endDate = getLastDayOfMonth(startDate);
+
+
+
+		Date itStartDate = add(startDate, DAY_OF_MONTH, 4);  
+		Date itEndDate = add(itStartDate, DAY_OF_MONTH, 1);  
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, itStartDate, itEndDate, null);
+		
+		{
+        		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+        			connection, startDate, endDate, endDate, contract);
+        		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+        		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+        		calculator.setSalaryBuilder(jooqSalaryBuilder);
+        		calculator.calculate(ctx);
+        		jooqSalaryBuilder.execute();
+		}
+		
+		addData(aonContext, contract, itStartDate, itEndDate, "ATRASO", "10.00");
+		{
+        		Criteria criteria = new Criteria();
+        		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+        		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+        				startDate, 
+        				endDate, 
+        				endDate, 
+        				criteria);
+        		delayCtx.next();
+        		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+        		SmartContractSalaryCalculator<ISalary> delayCalculator = new SmartContractSalaryCalculator<ISalary>();
+        		delayCalculator.setSalaryBuilder(jooqSalaryBuilder);
+        		delayCalculator.calculate(delayCtx);
+        		jooqSalaryBuilder.execute();
+		}
+		
+		addData(aonContext, contract, startDate, endDate, "ATRASO", Integer.toString(get(endDate, Calendar.DAY_OF_MONTH) - 2));
+		{
+        		Criteria criteria = new Criteria();
+        		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+        		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+        				startDate, 
+        				endDate, 
+        				getLastDayOfMonth(getToday()), 
+        				criteria);
+        		delayCtx.next();
+        		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+        		SmartContractSalaryCalculator<ISalary> delayCalculator = new SmartContractSalaryCalculator<ISalary>();
+        		delayCalculator.setSalaryBuilder(jooqSalaryBuilder);
+        		delayCalculator.calculate(delayCtx);
+        		jooqSalaryBuilder.execute();
+		}
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(startDate);
+		int anho = calendar.get(YEAR);
+		int mes = calendar.get(MONTH) ;
+		java.time.Month month = java.time.Month.values()[mes];
+		
+		Salary salary = AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId())).findAny().get();
+		
+		TrabajadorBuilder trabajadorBuilder = new TrabajadorBuilder();
+		trabajadorBuilder.setNaf(salary.getEmployeeSSNumber());
+		trabajadorBuilder.setTipoIpf(TipoIpf.DNI);
+		trabajadorBuilder.setNumeroIpf(salary.getEmployeeDocument());
+		trabajadorBuilder.setName(salary.getEmployeeName());
+		trabajadorBuilder.addTramo(
+		new TramoBuilder()
+		.setAnhoDesde(anho)
+		.setMesDesde(month)
+		.setDiaDesde(1)
+		.setAnhoHasta(anho)
+		.setMesHasta(month)
+		.setDiaHasta(4)
+		.setDiasCotizados(4)
+		.setGrupoCotizacion(4)
+		.setTipoDeContrato("100")
+		.addDato(new DatoSolicitadoBuilder().setTipo("I").setCodigo("51").setObligatorio(true).create())
+		.addDato(new DatoSolicitadoBuilder().setTipo("C").setCodigo("500").setObligatorio(false).create())
+		.addDato(new DatoSolicitadoBuilder().setTipo("C").setCodigo("501").setObligatorio(false).create())
+		.addDato(new DatoSolicitadoBuilder().setTipo("C").setCodigo("502").setObligatorio(false).create())
+		.addDato(new DatoSolicitadoBuilder().setTipo("C").setCodigo("601").setObligatorio(false).create())
+		.create()
+		);
+		trabajadorBuilder.addTramo(
+		new TramoBuilder()
+		.setAnhoDesde(anho)
+		.setMesDesde(month)
+		.setDiaDesde(5)
+		.setAnhoHasta(anho)
+		.setMesHasta(month)
+		.setDiaHasta(6)
+		.setDiasCotizados(2)
+		.setGrupoCotizacion(6)
+		.setTipoDeContrato("100")
+		.addDato(new DatoSolicitadoBuilder().setTipo("I").setCodigo("51").setObligatorio(true).create())
+		.addDato(new DatoSolicitadoBuilder().setTipo("C").setCodigo("500").setObligatorio(false).create())
+		.addDato(new DatoSolicitadoBuilder().setTipo("C").setCodigo("603").setObligatorio(false).create())
+		.create()
+		);
+		trabajadorBuilder.addTramo(
+		new TramoBuilder()
+		.setAnhoDesde(anho)
+		.setMesDesde(month)
+		.setDiaDesde(7)
+		.setAnhoHasta(anho)
+		.setMesHasta(month)
+		.setDiaHasta(get(endDate, DAY_OF_MONTH))
+		.setDiasCotizados(get(endDate, DAY_OF_MONTH)-7)
+		.setGrupoCotizacion(4)
+		.setTipoDeContrato("100")
+		.addDato(new DatoSolicitadoBuilder().setTipo("I").setCodigo("51").setObligatorio(true).create())
+		.addDato(new DatoSolicitadoBuilder().setTipo("C").setCodigo("500").setObligatorio(false).create())
+		.addDato(new DatoSolicitadoBuilder().setTipo("C").setCodigo("501").setObligatorio(false).create())
+		.addDato(new DatoSolicitadoBuilder().setTipo("C").setCodigo("502").setObligatorio(false).create())
+		.addDato(new DatoSolicitadoBuilder().setTipo("C").setCodigo("601").setObligatorio(false).create())
+		.create()
+		);
+		
+		LiquidacionMesBuilder liquidacionMesBuilder = new LiquidacionMesBuilder();
+		liquidacionMesBuilder .setAnho(anho);
+		liquidacionMesBuilder .setMes(month);
+		liquidacionMesBuilder .add(trabajadorBuilder.create());
+		
+
+		net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos trabajadoresTramos =  
+		new TrabajadoresTramosBuilder()
+		.setCCC("0111"+ccc)
+		.setTipo("L03")
+		.setAnhoDesde(anho)
+		.setMesDesde(month)
+		.setAnhoHasta(anho)
+		.setMesHasta(month)
+		.setAnhoControl(anho)
+		.setMesControl(month)
+		.setAutorizado(277229)
+		.addLiquidacionMes(liquidacionMesBuilder.create())
+		.create()
+		;
+		
+		//Utils.marshal(trabajadoresTramos, System.out);
+		
+		ByteArrayOutputStream trabajadoresTramosOs = new ByteArrayOutputStream();
+		Utils.marshal(trabajadoresTramos, trabajadoresTramosOs);
+		trabajadoresTramosOs.flush();
+		ByteArrayInputStream trabajadoresTramosIs = new ByteArrayInputStream(trabajadoresTramosOs.toByteArray());
+		
+		ByteArrayOutputStream basesOs = new ByteArrayOutputStream();
+		
+		Bases.generate(connection, 
+			true, 									//comments, 
+			false,									//skipExisting, 
+			false,									//acceptPrevBases, 
+			null,									//nafs, 
+			new String [] {},							//defaultsValues, 
+			trabajadoresTramosIs, 
+			null, 									//respuestaIs, 
+			basesOs,								//os, 
+			new Bases.BasesCallback [] { 						// cbs
+				Bases.L03BASESCALLBACK 
+			}									
+			);
+		basesOs.flush();
+		
+		ByteArrayInputStream basesIs = new ByteArrayInputStream(basesOs.toByteArray());
+		
+		net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = 
+		Utils.unmarshal(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases.class, basesIs);
+		
+		//Utils.marshal(bases, System.out);
+		
+        	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = 
+        	bases.getLiquidacion().get(0).getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0).getTramos().getTramo();
+        	
+        	Assert.assertEquals(3, tramos.size());
+        	
+        	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = tramos.get(0);
+        	assertDato(tramo0.getDatosTramo().getDato(), "C", "500", "400");
+        	assertDato(tramo0.getDatosTramo().getDato(), "C", "601", "400");
+        
+        	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo2 = tramos.get(2);
+        	assertDato(tramo2.getDatosTramo().getDato(), "C", "500", Integer.toString(100*(get(endDate, Calendar.DAY_OF_MONTH) - 6)));
+        	assertDato(tramo2.getDatosTramo().getDato(), "C", "601", Integer.toString(100*(get(endDate, Calendar.DAY_OF_MONTH) - 6)));
+		
+        	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(1);
+        	assertDato(tramo1.getDatosTramo().getDato(), "C", "500", "0");
+        	assertDato(tramo1.getDatosTramo().getDato(), "C", "603", "0");
+        
+		
+	}
+	
+	@Test
 	public void testCretaA999()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError, SAXException {
 		
@@ -7883,22 +8105,22 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup ,Date startDate, Date endDate) {
-		return newContract(aonContext, ccc, contractCode, quoteGroup, CCCType.PRINCIPAL, startDate, endDate, null, Integer.toString((int)(Math.random() * 1000000000.00)));
+		return newContract(aonContext, ccc, contractCode, quoteGroup, CCCType.PRINCIPAL, startDate, endDate, null, Integer.toString((int)(Math.random() * 1000000000.00)), UUID.randomUUID().toString().substring(0, 12));
 	}
 
 	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType) {
-		return newContract(aonContext, ccc, contractCode, quoteGroup, cccType, add(getFirstDayOfYear(getToday()), Calendar.MONTH,-1), null, null, Integer.toString((int)(Math.random() * 1000000000.00)));
+		return newContract(aonContext, ccc, contractCode, quoteGroup, cccType, add(getFirstDayOfYear(getToday()), Calendar.MONTH,-1), null, null, Integer.toString((int)(Math.random() * 1000000000.00)), UUID.randomUUID().toString().substring(0, 12));
 	}
 
 	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType, Date startDate, Date endDate, String dni ) {
-		return newContract(aonContext, ccc, contractCode, quoteGroup, cccType, startDate, endDate, null, dni);
+		return newContract(aonContext, ccc, contractCode, quoteGroup, cccType, startDate, endDate, null, dni, UUID.randomUUID().toString().substring(0, 12));
 	}
 
 	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType, Date startDate, Date endDate, AgreementLevelCategoryRecord category  ) {
-		return newContract(aonContext, ccc, contractCode, quoteGroup, cccType, startDate, endDate, category, Integer.toString((int)(Math.random() * 1000000000.00)));
+		return newContract(aonContext, ccc, contractCode, quoteGroup, cccType, startDate, endDate, category, Integer.toString((int)(Math.random() * 1000000000.00)), UUID.randomUUID().toString().substring(0, 12));
 	}
 
-	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType, Date startDate, Date endDate, AgreementLevelCategoryRecord category , String dni ) {
+	protected static ContractRecord newContract(AONContext aonContext, String ccc, ContractCode contractCode, String quoteGroup, CCCType cccType, Date startDate, Date endDate, AgreementLevelCategoryRecord category , String dni , String nss) {
 		DomainRecord domain = newDomain(aonContext);
 		
 		ScopeRecord scope = newScope(aonContext, domain.getId());
@@ -7924,8 +8146,8 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		RegistryRecord person = newPerson(
 				aonContext, 
 				domain.getId(),
-				dni//"00000000A"
-				//"123456789012"
+				dni,//"00000000A"
+				nss//"123456789012"
 				);
 
 
