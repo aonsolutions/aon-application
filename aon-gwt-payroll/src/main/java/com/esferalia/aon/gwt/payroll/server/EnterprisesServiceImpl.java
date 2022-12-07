@@ -4080,7 +4080,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	// ------------------------------------------------ Partes IT
 
 	@Override
-	public void communicateITPart(String domainName, String userLogin, ITEmployee empIt, IT it, ITPart part)  throws IllegalArgumentException {
+	public void communicateITPart(String domainName, String userLogin, ITEmployee empIt, IT it, ITPart part) throws IllegalArgumentException {
 		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -4211,7 +4211,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	    	if(!messages.isEmpty()) {
 				String msg = messages.stream().filter(m-> m!=null && !m.equals("success")).collect(Collectors.joining(", "));
 				if(!msg.isEmpty()) {
-					throw new IllegalArgumentException(msg);
+					throw new SegSocialException(msg);
 				}
 			}
 		} catch (Exception e) {
@@ -4233,7 +4233,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	private static void parseITData(EmployeeIT employeeIT, IT it) {
-		
 		if(it.getQuoteDays()!=null) {
 			employeeIT.setQuoteDays(it.getQuoteDays());
 		}
@@ -4253,10 +4252,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		if(it.getDailyCGPBase()!=null) {
 			employeeIT.setDailyCgpBase(it.getDailyCGPBase());
 		}
-	
-//		if(it.getDailyCGCBase()!=null) {
-//			employeeIT.setRegulationBase(it.getDailyCGCBase());
-//		}
 	}
 	
 	private static EmployeeITPart parseITPart(ITPart part) {

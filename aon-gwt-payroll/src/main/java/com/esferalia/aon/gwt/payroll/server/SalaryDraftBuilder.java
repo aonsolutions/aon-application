@@ -819,7 +819,12 @@ public class SalaryDraftBuilder
 			}
 		}else {
 			salaryDraft.addPayment(draftPayment);
-			draftPayment.setDescription(formatItemDescription(draftPayment, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
+			if ( isDelay(payment)
+				|| isNotZero(amount) 
+				|| isNotZero(quote)
+				|| isNotZero(tax)) {
+				draftPayment.setDescription(formatItemDescription(draftPayment, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
+			}
 		}
 		
 		
@@ -1589,7 +1594,7 @@ public class SalaryDraftBuilder
 	
 	private String getCompositeDescription(Payment payment1, Payment payment2) {
 		if ( AonStringUtils.equals(payment2.getDescriptionTemplate(), payment2.getDescription()) )
-				return payment1.getDescription();
+				return payment2.getDescription();
 		
 		
 		Map<String, Object> map = new AbstractMap<String, Object>(){

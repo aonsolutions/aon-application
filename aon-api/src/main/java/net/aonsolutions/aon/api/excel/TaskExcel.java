@@ -61,8 +61,7 @@ public class TaskExcel {
 		onValidate(params);
 		
 		List<Task> tasks = AON_SOLUTIONS.getTaskParentOrChildStream(api.getDomain(), api.getUser(), 
-			f -> TaskFilter.task(api, f, api.getDomain(), new Customer()),
-			true
+			f -> TaskFilter.task(api, f, api.getDomain(), new Customer())
 		)
 		.collect(Collectors.toCollection(LinkedList::new));
 		

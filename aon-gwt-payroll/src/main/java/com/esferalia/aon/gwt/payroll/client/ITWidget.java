@@ -157,17 +157,11 @@ public abstract class ITWidget extends ResizeComposite {
 	class TGSSContextMenu extends ContextMenu {
 		
 		private MenuItem fie;
-//		private MenuItem sync;
-		
 		public TGSSContextMenu() {
 			
 			fie = addItem("Mensaje del INSS Empresa (FIE)", new MsjFIECommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			fie.ensureDebugId("fie");
-			
-			// sync = addItem("Sincronizar partes IT (TGSS)", new SyncITCommand(), 
-			// 		AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
-			// sync.ensureDebugId("sync");
 			
 		}
 
@@ -774,33 +768,6 @@ public abstract class ITWidget extends ResizeComposite {
 	}
     
     // --------------------------------------------------- ContextMenu
-	
-//	class ITContextMenu extends ContextMenu {
-//		
-//		DeleteContractCommand deleteContract = new DeleteContractCommand();
-//		ComunicateITCommand comunicateIT = new ComunicateITCommand();
-//		
-//		public ITContextMenu() {
-//			MenuBar popupMenuBar = new MenuBar(true);
-//			
-//			MenuItem deleteMenuItem = addItem(
-//					"Eliminar Baja",
-//					deleteContract,
-//					AON.CSS.aonIconDelete(), style.cmdBtn());
-//			
-//			popupMenuBar.addItem(deleteMenuItem);
-//			
-//			MenuItem comunicateMenuItem = addItem(
-//					"Comunicar IT",
-//					comunicateIT,
-//					AON.CSS.aonIconSend(), style.cmdBtn());
-//			
-//			popupMenuBar.addItem(comunicateMenuItem);
-//			
-//			popupMenuBar.setVisible(true);
-//			popupPanel.add(popupMenuBar);
-//		}
-//	}
 
 	class DeleteContractCommand implements ScheduledCommand {
 		
@@ -822,32 +789,6 @@ public abstract class ITWidget extends ResizeComposite {
 		}
 		
 	}
-	
-//	class ComunicateITCommand implements ScheduledCommand {
-//		
-//		@Override
-//		public void execute() {
-//			try {
-//				popupPanel.hide();	
-//				
-//				int contractId = data.getContractId(posColumn, posCell);				
-//				int leaveId = data.getContractLeaveId(posColumn, posCell);
-//				
-//				IT it = getIT(leaveId);
-//				ITEmployee itEmployee = getITEmployee(contractId);
-//				
-//				// Paternidad / Maternidad
-//				if(it.getTypeLowPart() == (byte)2 || it.getTypeLowPart() == (byte)3)
-//					comunicatePaternity(itEmployee, it);
-//				else
-//					cominicateIT(itEmployee, it);
-//				
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		}
-//
-//	}
 	
 	// --------------------------------------------------- OnModuleLoad
 	
@@ -2073,6 +2014,8 @@ public abstract class ITWidget extends ResizeComposite {
 					startLoading(false);
 			
 				}, e->{
+			        changeStatusPending();
+			        
 					AonDialog dialog = new AonDialog("Error", new HTML(e.getMessage()));
 					dialog.warning();
 					startLoading(false);
@@ -2095,7 +2038,7 @@ public abstract class ITWidget extends ResizeComposite {
 	private void accept(ITEmployee itEmployee, boolean newIT) {
 		setITEmployee(itEmployee, 
 			s -> {
-				if(Boolean.TRUE.equals(newIT))
+				if(newIT)
 					showCreateMessage();
 				else
 					showUpdateMessage();
@@ -2112,23 +2055,36 @@ public abstract class ITWidget extends ResizeComposite {
 		},f -> {});
 	}
 	
+    
+     private void showMessage(String title, String body) {
+          Map<String, String> successMap = new HashMap<>();
+          successMap.put(title, body);
+          AonMessagePanel.showSuccess(messagePanel, successMap);
+     }
+    	
 	private void showCreateMessage() {
-		Map<String, String> successMap = new HashMap<>();
-		successMap.put("Creaci\u00F3n IT", "El parte ha sido creado correctamente");
-		AonMessagePanel.showSuccess(messagePanel, successMap);
+		showMessage("Creaci\u00F3n IT", "El parte ha sido creado correctamente");
 	}
 	
 	private void showUpdateMessage() {
-		Map<String, String> successMap = new HashMap<>();
-		successMap.put("Actualizaci\u00F3n IT", "El parte ha sido actualizado correctamente");
-		AonMessagePanel.showSuccess(messagePanel, successMap);
+	    showMessage("Actualizaci\u00F3n IT", "El parte ha sido actualizado correctamente");
 	}
 	
 	private void showCommunicateIT() {
-		Map<String, String> successMap = new HashMap<>();
-		successMap.put("Comunicaci\u00F3n", "Parte IT comunicada a la TGSS");
-		AonMessagePanel.showSuccess(messagePanel, successMap);
+	    showMessage("Comunicaci\u00F3n", "Parte IT comunicada a la TGSS");
 	}
+	   
+    private void showDeleteMessage() {
+        showMessage("Borrado IT", "El parte ha sido eliminado correctamente");
+    }
+    
+    private void showSyncMessage() {
+        showMessage("Sincronizaci\u00f3n ITs", "Los partes IT se han sincronizaco correctamente con la TGSS");
+    }
+    
+    private void showComunicateMessage() {
+        showMessage("Comunicaci\u00F3 IT", "El parte ha sido comunicado a la TGSS");
+    }
 	
 	private void deleteLeave(ITEmployee itEmployee, IT it) {
 		if(ITDialog.isPartenityPart(it))
@@ -2156,67 +2112,7 @@ public abstract class ITWidget extends ResizeComposite {
 			f -> {}
 		);
 	}
-	
-	private void showDeleteMessage() {
-		Map<String, String> successMap = new HashMap<>();
-		successMap.put("Borrado IT", "El parte ha sido eliminado correctamente");
-		AonMessagePanel.showSuccess(messagePanel, successMap);
-	}
-	
-	private void showSyncMessage() {
-		Map<String, String> successMap = new HashMap<>();
-		successMap.put("Sincronizaci\u00f3n ITs", "Los partes IT se han sincronizaco correctamente con la TGSS");
-		AonMessagePanel.showSuccess(messagePanel, successMap);
-	}
-	
-//	private void cominicateIT(ITEmployee itEmployee, IT it) {
-//		AonConfirmDialog comunicateDialog = new AonConfirmDialog();
-//		comunicateDialog.confirm(
-//				"COMUNIC\u0040", 
-//				"\u00BFDesea comunicar el parte IT?",
-//				new AonConfirmDialogCallback() {
-//					@Override
-//					public void onAccept() {
-//						comunicateIT(itEmployee, it, 
-//							s -> {
-//								getITCertificatePDF(itEmployee, it);
-//								showComunicateMessage();
-//							}, 
-//							f -> {}
-//						);
-//					}
-//					@Override public void onCancel() {}
-//				}
-//		);
-//	}
 
-//	private void comunicatePaternity(ITEmployee itEmployee, IT it) {
-//		AonConfirmDialog comunicateDialog = new AonConfirmDialog();
-//		comunicateDialog.confirm(
-//				"COMUNIC\u0040", 
-//				"\u00BFDesea comunicar el parte IT?",
-//				new AonConfirmDialogCallback() {
-//					@Override
-//					public void onAccept() {
-//						comunicatePaternityIT(itEmployee, it, 
-//							s -> {
-//								getITCertificatePDF(itEmployee, it); 
-//								showComunicateMessage();
-//							},
-//							f -> {}
-//						);
-//					}
-//
-//					@Override public void onCancel() {}
-//				}
-//		);
-//	}
-	
-	private void showComunicateMessage() {
-		Map<String, String> successMap = new HashMap<>();
-		successMap.put("Comunicaci\u00F3 IT", "El parte ha sido comunicado a la TGSS");
-		AonMessagePanel.showSuccess(messagePanel, successMap);
-	}
 	
 	private void getITCertificatePDF(ITEmployee itEmployee, IT it) {
 		getNafxIpf(itEmployee, s -> {
@@ -2340,7 +2236,7 @@ public abstract class ITWidget extends ResizeComposite {
 
 	@Deprecated
 	protected abstract void comunicateIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure);
-	@Deprecated
+	@Deprecated 
 	protected abstract void comunicatePaternityIT(ITEmployee itEmployee, IT it, Consumer<Void> success, Consumer<Throwable> failure);
 	
 	protected abstract void getNafxIpf(ITEmployee itEmployee, Consumer<EmployeeSegSocial> success, Consumer<Throwable> failure);

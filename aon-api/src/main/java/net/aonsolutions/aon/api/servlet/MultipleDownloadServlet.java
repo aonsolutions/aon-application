@@ -155,12 +155,12 @@ public class MultipleDownloadServlet extends HttpServlet{
 		
 		if(!AonStringUtils.isBlank(status) && !isRawdoc(status)) {
     		ids.stream().forEach(id ->{
-    			Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(),  f -> f.getAttachModuleProperty().in(idsArray)
+    			Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(),  f -> f.getAttachModuleProperty().eq(id)
         				.and(f.getTypeProperty().eq(InvoiceAttachmentType.INVOICE.value())), AttachType.INVOICE);
     			try {
     				if(attach != null && attach.getId() != null) {
     					String prefix = attach.getDescription() != null && attach.getDescription().length() > 2 
-    							? attach.getDescription() : "invoice" + AonRandomStringUtils.random(5);
+    							? attach.getDescription() : "invoice";
     					File file = File.createTempFile(prefix, "." + attach.getMimeType().getExtension());
     					AonFileUtils.writeByteArrayToFile(file, attach.getData());
     					list.add(file);
