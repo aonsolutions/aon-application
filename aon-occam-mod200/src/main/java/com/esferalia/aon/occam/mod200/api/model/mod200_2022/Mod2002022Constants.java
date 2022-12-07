@@ -409,44 +409,44 @@ public class Mod2002022Constants {
 	};
 	
 	public static final Mod2002022Key[][] LIQUIDATION_V_KEYS_1 = new Mod2002022Key[][] {
-		 new Mod2002022Key[] {Mod2002022Key.BN1785	,Mod2002022Key.BN1786}
-		,new Mod2002022Key[] {Mod2002022Key.BN1787	,Mod2002022Key.BN1788}
-		,new Mod2002022Key[] {Mod2002022Key.BN1789	,Mod2002022Key.BN1790}
-		,new Mod2002022Key[] {Mod2002022Key.BN1791	,Mod2002022Key.BN1792}
-		,new Mod2002022Key[] {Mod2002022Key.BN1793	,Mod2002022Key.BN1794}
-		,new Mod2002022Key[] {Mod2002022Key.BN1795	,Mod2002022Key.BN1796}
-		,new Mod2002022Key[] {Mod2002022Key.BN597	,Mod2002022Key.BN1797}	
-		,new Mod2002022Key[] {Mod2002022Key.BN1798	,Mod2002022Key.BN1799}
-		,new Mod2002022Key[] {Mod2002022Key.LQ1766	,Mod2002022Key.LQ1784}
+		 new Mod2002022Key[] {Mod2002022Key.BN1785, Mod2002022Key.BN1786}
+		,new Mod2002022Key[] {Mod2002022Key.BN1787, Mod2002022Key.BN1788}
+		,new Mod2002022Key[] {Mod2002022Key.BN1789, Mod2002022Key.BN1790}
+		,new Mod2002022Key[] {Mod2002022Key.BN1791, Mod2002022Key.BN1792}
+		,new Mod2002022Key[] {Mod2002022Key.BN1793, Mod2002022Key.BN1794}
+		,new Mod2002022Key[] {Mod2002022Key.BN1795, Mod2002022Key.BN1796}
+		,new Mod2002022Key[] {Mod2002022Key.BN597 , Mod2002022Key.BN1797}	
+		,new Mod2002022Key[] {Mod2002022Key.BN1798, Mod2002022Key.BN1799}
+		,new Mod2002022Key[] {Mod2002022Key.LQ1766, Mod2002022Key.LQ1784}
 	};
 	
 	public static final Mod2002022Key[][] LIQUIDATION_V_KEYS_2 = new Mod2002022Key[][] {
-		new Mod2002022Key[] {Mod2002022Key.BN599,Mod2002022Key.BN600}
+		new Mod2002022Key[] {Mod2002022Key.BN599, Mod2002022Key.BN600}
 	};
 	
 	public static final Mod2002022Key[][] LIQUIDATION_V_KEYS_3 = new Mod2002022Key[][] {
-		 new Mod2002022Key[] {Mod2002022Key.BN601,Mod2002022Key.BN602}
-		,new Mod2002022Key[] {Mod2002022Key.BN603,Mod2002022Key.BN604}
-		,new Mod2002022Key[] {Mod2002022Key.BN605,Mod2002022Key.BN606}
-		,new Mod2002022Key[] {Mod2002022Key.BN611,Mod2002022Key.BN612}
+		 new Mod2002022Key[] {Mod2002022Key.BN601, Mod2002022Key.BN602}
+		,new Mod2002022Key[] {Mod2002022Key.BN603, Mod2002022Key.BN604}
+		,new Mod2002022Key[] {Mod2002022Key.BN605, Mod2002022Key.BN606}
+		,new Mod2002022Key[] {Mod2002022Key.BN611, Mod2002022Key.BN612}
 	};
 	
 	public static final Mod2002022Key[][] LIQUIDATION_V_KEYS_4 = new Mod2002022Key[][] {
-		 new Mod2002022Key[] {Mod2002022Key.BN615  , Mod2002022Key.BN616}
-		,new Mod2002022Key[] {Mod2002022Key.BN633  , Mod2002022Key.BN642}
-		,new Mod2002022Key[] {Mod2002022Key.BN617  , Mod2002022Key.BN618}				 
+		 new Mod2002022Key[] {Mod2002022Key.BN615, Mod2002022Key.BN616}
+		,new Mod2002022Key[] {Mod2002022Key.BN633, Mod2002022Key.BN642}
+		,new Mod2002022Key[] {Mod2002022Key.BN617, Mod2002022Key.BN618}				 
 	};
 	
 	public static final Mod2002022Key[][] LIQUIDATION_V_KEYS_5 = new Mod2002022Key[][] {
-		 new Mod2002022Key[] {Mod2002022Key.BN1234B, Mod2002022Key.BN083  , Mod2002022Key.BN1332}
-		,new Mod2002022Key[] {Mod2002022Key.BN1200 , Mod2002022Key.BN1042 , Mod2002022Key.BN1333}
-		,new Mod2002022Key[] {null 				   , Mod2002022Key.LQ1586 , Mod2002022Key.LQ1587}
+		 new Mod2002022Key[] {Mod2002022Key.BN1234B, Mod2002022Key.BN083 , Mod2002022Key.BN1332}
+		,new Mod2002022Key[] {Mod2002022Key.BN1200 , Mod2002022Key.BN1042, Mod2002022Key.BN1333}
+		,new Mod2002022Key[] {null 				   , Mod2002022Key.LQ1586, Mod2002022Key.LQ1587}
 	};
 	
 	public static final Mod2002022Key[][] LIQUIDATION_V_KEYS_6 = new Mod2002022Key[][] {
 		 new Mod2002022Key[] {Mod2002022Key.LQ1578, Mod2002022Key.LQ1583}
 		,new Mod2002022Key[] {Mod2002022Key.LQ1584, Mod2002022Key.LQ1585}
-		,new Mod2002022Key[] {Mod2002022Key.BN621, Mod2002022Key.BN622}
+		,new Mod2002022Key[] {Mod2002022Key.BN621 , Mod2002022Key.BN622 }
 	};
 	
 	public static final Mod2002022Key[][] LIQUIDATION_V_KEYS_7 = new Mod2002022Key[][] {
@@ -551,28 +551,28 @@ public class Mod2002022Constants {
 
 	public static Mod2002022Key[][] DEDUCIBLE_LIMITATION_KEYS_1 = new Mod2002022Key[][] {
 		 null
-		,new Mod2002022Key[]{null				 ,Mod2002022Key.LM1240}
-		,new Mod2002022Key[]{Mod2002022Key.LM1241,null				  }
-		,new Mod2002022Key[]{null				 ,Mod2002022Key.LM1242}
-		,new Mod2002022Key[]{null				 ,Mod2002022Key.LM1243}
-		,new Mod2002022Key[]{null				 ,Mod2002022Key.LM1244}
+		,new Mod2002022Key[]{null				 , Mod2002022Key.LM1240}
+		,new Mod2002022Key[]{Mod2002022Key.LM1241, null				  }
+		,new Mod2002022Key[]{null				 , Mod2002022Key.LM1242}
+		,new Mod2002022Key[]{null				 , Mod2002022Key.LM1243}
+		,new Mod2002022Key[]{null				 , Mod2002022Key.LM1244}
 		,null
-		,new Mod2002022Key[]{null				 ,Mod2002022Key.LM1245}
-		,new Mod2002022Key[]{null				 ,Mod2002022Key.LM1246}
-		,new Mod2002022Key[]{Mod2002022Key.LM1247,null				  }
-		,new Mod2002022Key[]{null				 ,Mod2002022Key.LM1248}
-		,new Mod2002022Key[]{Mod2002022Key.LM1249,null				  }
-		,new Mod2002022Key[]{Mod2002022Key.LM1250,null				  }
-		,new Mod2002022Key[]{Mod2002022Key.LM1251,null				  }
-		,new Mod2002022Key[]{Mod2002022Key.LM1252,null				  }
-		,new Mod2002022Key[]{Mod2002022Key.LM1253,null				  }
-		,new Mod2002022Key[]{Mod2002022Key.LM1254,null				  }
-		,new Mod2002022Key[]{Mod2002022Key.LM1255,null				  }
-		,new Mod2002022Key[]{null				 ,Mod2002022Key.LM1256}
-		,new Mod2002022Key[]{null				 ,Mod2002022Key.LM1257}
-		,new Mod2002022Key[]{null				 ,Mod2002022Key.LM1258}
-		,new Mod2002022Key[]{null				 ,Mod2002022Key.LM1259}
-		,new Mod2002022Key[]{null				 ,Mod2002022Key.LM1260}
+		,new Mod2002022Key[]{null				 , Mod2002022Key.LM1245}
+		,new Mod2002022Key[]{null				 , Mod2002022Key.LM1246}
+		,new Mod2002022Key[]{Mod2002022Key.LM1247, null				  }
+		,new Mod2002022Key[]{null				 , Mod2002022Key.LM1248}
+		,new Mod2002022Key[]{Mod2002022Key.LM1249, null				  }
+		,new Mod2002022Key[]{Mod2002022Key.LM1250, null				  }
+		,new Mod2002022Key[]{Mod2002022Key.LM1251, null				  }
+		,new Mod2002022Key[]{Mod2002022Key.LM1252, null				  }
+		,new Mod2002022Key[]{Mod2002022Key.LM1253, null				  }
+		,new Mod2002022Key[]{Mod2002022Key.LM1254, null				  }
+		,new Mod2002022Key[]{Mod2002022Key.LM1255, null				  }
+		,new Mod2002022Key[]{null				 , Mod2002022Key.LM1256}
+		,new Mod2002022Key[]{null				 , Mod2002022Key.LM1257}
+		,new Mod2002022Key[]{null				 , Mod2002022Key.LM1258}
+		,new Mod2002022Key[]{null				 , Mod2002022Key.LM1259}
+		,new Mod2002022Key[]{null				 , Mod2002022Key.LM1260}
 	};
 	
 	// Conversión de activos por impuesto diferido en crédito exigible frente a la Admón. tributaria

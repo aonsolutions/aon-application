@@ -87,10 +87,10 @@ public class Mod2002022Print extends HttpServlet {
 		String encodedFile = URLEncoder.encode(fileString, "ISO-8859-1");
 
 		String urlParameters = "MOD=200" + "&" +
-							   "EJF=2022" + "&" +
+							   "EJF=2022" + "&" +							   
  				               "FIC=" + encodedFile + "&" +
 					           "IDI=ES";
-				               // +"&SINVL="; // Indica que no se desea validación
+				               //+"&SINVL="; // Indica que no se desea validación
 		
 		String request = "https://prewww2.aeat.es/wlpl/PFTW-PICW/ServVali";
 		      

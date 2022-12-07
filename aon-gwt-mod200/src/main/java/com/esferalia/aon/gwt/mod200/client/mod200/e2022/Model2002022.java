@@ -179,7 +179,7 @@ public class Model2002022 extends DockLayoutPanel {
 		resetButton.setVisible(isNotNew && !mod200Object.getMod200().isFinished() && !mod200Object.getMod200().isSent());
 		aeatAccountingFileButton.setVisible(isNotNew);		
 		//aeatFileButton.setVisible(isNotNew && mod200Object.getMod200().isFinished());
-		aeatFileButton.setVisible(isNotNew); // El estado se empezará a usar a partir del 2022, por eso ahora este botón aparece siempre aunque esté pendient
+		aeatFileButton.setVisible(isNotNew); // El estado se empezará a usar a partir del 2022, por eso ahora este botón aparece siempre aunque esté pendiente
 		aeatPrintButton.setVisible(isNotNew);		
 		commentsButton.setVisible(isNotNew);
 		auditButton.setVisible(isNotNew);
@@ -533,12 +533,7 @@ public class Model2002022 extends DockLayoutPanel {
 			mod200Callback.cleanErrorPanel();
 			
 			AonConfirmDialog cd = new AonConfirmDialog();
-//			cd.confirm("Se va a proceder a la generaci\u00F3n de un fichero\n"
-//					+ "con los datos contables, para su importaci\u00F3n en\n"
-//					+ "el programa de ayuda de la Agencia Tributaria.\n\n"
-//					+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
-//					+ "El fichero se genera a partir de los datos guardados.",			
-			cd.confirm("Se procede a generar un fichero con los datos contables, para poder realizar su importaci\u00F3n en el programa de ayuda de la Agencia Tributaria. \u00BFDesea continuar?",			
+			cd.confirm(AON.MSG.confirmAccountingFileMod200(),			
 				new AonConfirmDialogCallback() {
 					
 					@Override
@@ -560,12 +555,7 @@ public class Model2002022 extends DockLayoutPanel {
 			mod200Callback.cleanErrorPanel();
 			
 			AonConfirmDialog cd = new AonConfirmDialog();
-//			cd.confirm("Se va a proceder a la generaci\u00F3n de un fichero\n"
-//					+ "con los datos de la declaraci\u00F3n, para su \n"
-//					+ "presentaci\u00F3n en la web de la Agencia Tributaria.\n\n"
-//					+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
-//					+ "El fichero se genera a partir de los datos guardados.",
-			cd.confirm("Se procede a generar un fichero con los datos de la declaraci\u00F3n, para poder realizar la presentaci\u00F3n del modelo en la Oficina Virtual de la Agencia Tributaria. \u00BFDesea continuar?",			
+			cd.confirm(AON.MSG.confirmAeatFileMod200(),			
 				new AonConfirmDialogCallback() {
 					
 					@Override
@@ -587,12 +577,7 @@ public class Model2002022 extends DockLayoutPanel {
 				mod200Callback.cleanErrorPanel();
 			
 			AonConfirmDialog cd = new AonConfirmDialog();
-//			cd.confirm("La impresi\u00F3n se genera en los servidores de la Agencia Tributaria "
-//					+ "y se realiza a partir de los datos guardados. En el caso de validaci\u00F3n "
-//					+ "correcta se devolver\u00E1 el documento PDF de la declarai\u00F3n. Aseg\u00FArese "
-//					+ "de haber guardado la declaraci\u00F3n."
-//			cd.confirm("Se procede a enviar el modelo al Servicio de Validaci\u00F3n y Prueba de la Agencia Tributaria. Si el fichero es correcto, se obtendr\u00E1 un borrador del modelo. Aseg\u00FArese de haber guardado los datos. \u00BFDesea continuar?"
-			cd.confirm("Se procede a enviar el modelo al Servicio de Validaci\u00F3n y Prueba de Impresi\u00F3n de la Agencia Tributaria. Si la validaci\u00F3n es correcta, se obtendr\u00E1 un borrador PDF de la declaraci\u00F3n. \u00BFDesea continuar? "					
+			cd.confirm(AON.MSG.confirmAeatPrintMod200()					
 				,new AonConfirmDialogCallback() {
 					
 					@Override
