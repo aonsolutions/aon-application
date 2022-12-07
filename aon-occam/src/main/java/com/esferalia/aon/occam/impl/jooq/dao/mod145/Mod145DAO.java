@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao.mod145;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
 import static com.esferalia.aon.jooq.tables.IrpfDataAscendants.IRPF_DATA_ASCENDANTS;
@@ -86,6 +87,7 @@ public class Mod145DAO {
 					.setIssueDate(r.getValue(IRPF_DATA.ISSUE_DATE))
 					.setSpousalSupport(r.getValue(IRPF_DATA.SPOUSAL_SUPPORT))
 					.setFoodAnnuity(r.getValue(IRPF_DATA.FOOD_ANNUITY))
+					.setIrpfPercent(r.getValue(IRPF_DATA.REQUEST_IRPF))
 					.setDeductionHomeLoan(getBoolean(r, IRPF_DATA.DEDUCT_HOME_LOAN))
 					.setDeleted(false)
 					;
@@ -165,6 +167,7 @@ public class Mod145DAO {
 		
 		mod145List.forEach(mod145 -> {
 			mod145.setEnterpriseName(getEnterpriseName(ctx, mod145.getDomain()));
+			mod145.setIrpfPercent(getIrpfPercent(ctx, mod145.getContract(), mod145.getStartDate()));
 			mod145.setAscendants(getAscendants(ctx, mod145.getId()));
 			mod145.setDescendients(getDescendients(ctx, mod145.getId()));
 		});
@@ -192,6 +195,7 @@ public class Mod145DAO {
 				.orElse(new Mod145());
 
 		mod145.setEnterpriseName(getEnterpriseName(ctx, mod145.getDomain()));
+		mod145.setIrpfPercent(getIrpfPercent(ctx, mod145.getContract(), mod145.getStartDate()));
 		mod145.setAscendants(getAscendants(ctx, mod145.getId()));
 		mod145.setDescendients(getDescendients(ctx, mod145.getId()));
 		
@@ -205,6 +209,16 @@ public class Mod145DAO {
 				.on(ENTERPRISE.REGISTRY.eq(REGISTRY.ID))
 				.where(ENTERPRISE.DOMAIN.eq(domain))
 				.fetchOne().getValue(REGISTRY.NAME);
+	}
+
+	private static Double getIrpfPercent(AONContext ctx, Integer contract, java.util.Date startDate) {
+		String irpfPercent = ctx.getDslContext().select(CONTRACT_DATA.EXPRESSION)
+				.from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contract))
+				.and(CONTRACT_DATA.START_DATE.eq(parseToSqlDate(startDate)))
+				.fetchOne(CONTRACT_DATA.EXPRESSION);
+		
+		return AonStringUtils.isBlank(irpfPercent) ? null : Double.parseDouble(irpfPercent);
 	}
 	
 	private static List<IrpfDataAscendants> getAscendants(AONContext ctx, Integer irpfData) {
@@ -253,10 +267,12 @@ public class Mod145DAO {
 			.set(IRPF_DATA.ISSUE_DATE, parseToSqlDate(mod145.getIssueDate()))
 			.set(IRPF_DATA.SPOUSAL_SUPPORT, mod145.getSpousalSupport())
 			.set(IRPF_DATA.FOOD_ANNUITY, mod145.getFoodAnnuity())
+			.set(IRPF_DATA.REQUEST_IRPF, mod145.getIrpfPercent())
 			.set(IRPF_DATA.DEDUCT_HOME_LOAN, mod145.isDeductionHomeLoan() ? (byte)1 : (byte)0)
 			.returning(IRPF_DATA.ID).fetchOne().getId();
 			ctx.log().debug("INSERT IRPF DATA id: " + id);
 			
+		setIrpfPercent(ctx, mod145.getContract(), mod145.getDomain(), mod145.getStartDate(), mod145.getEndDate(), mod145.getIrpfPercent());
 		mod145.getAscendants().forEach(ascendant -> ascendant.setIrpfData(id));
 		mod145.getDescendients().forEach(descendient -> descendient.setIrpfData(id));
 				
@@ -283,11 +299,13 @@ public class Mod145DAO {
 			.set(IRPF_DATA.ISSUE_DATE, parseToSqlDate(mod145.getIssueDate()))
 			.set(IRPF_DATA.SPOUSAL_SUPPORT, mod145.getSpousalSupport())
 			.set(IRPF_DATA.FOOD_ANNUITY, mod145.getFoodAnnuity())
+			.set(IRPF_DATA.REQUEST_IRPF, mod145.getIrpfPercent())
 			.set(IRPF_DATA.DEDUCT_HOME_LOAN, mod145.isDeductionHomeLoan() ? (byte)1 : (byte)0)
 			.where(IRPF_DATA.ID.eq(mod145.getId()))
 			.execute();		
 		ctx.log().debug("UPDATE IRPF DATA id: " + mod145.getId());	
 		
+		setIrpfPercent(ctx, mod145.getContract(), mod145.getDomain(), mod145.getStartDate(), mod145.getEndDate(), mod145.getIrpfPercent());
 		saveAscendants(ctx, mod145);
 		saveDescendents(ctx, mod145);
 		
@@ -309,8 +327,34 @@ public class Mod145DAO {
 		ctx.getDslContext()
 			.delete(IRPF_DATA)
 			.where(IRPF_DATA.ID.eq(mod145.getId()))
-			.execute();		
+			.execute();
+		
+		ctx.getDslContext()
+			.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.NAME.eq("PORCENTAJE_IRPF"))
+			.and(CONTRACT_DATA.START_DATE.eq(parseToSqlDate(mod145.getStartDate())))
+			.execute();
+			
 		ctx.log().debug("DELETE IRPF DATA id: " + mod145.getId());	
+	}
+	
+	private static void setIrpfPercent(AONContext ctx, Integer contract, Integer domain, java.util.Date startDate, java.util.Date endDate, Double irpfPercent) {
+		ctx.getDslContext()
+			.delete(CONTRACT_DATA)
+			.where(CONTRACT_DATA.NAME.eq("PORCENTAJE_IRPF"))
+			.and(CONTRACT_DATA.START_DATE.eq(parseToSqlDate(startDate)))
+			.execute();
+		
+		if(null != irpfPercent)
+			ctx.getDslContext().insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.CONTRACT, contract)
+				.set(CONTRACT_DATA.NAME, "PORCENTAJE_IRPF")
+				.set(CONTRACT_DATA.EXPRESSION, irpfPercent.toString())
+				.set(CONTRACT_DATA.START_DATE, parseToSqlDate(startDate))
+				.set(CONTRACT_DATA.END_DATE, parseToSqlDate(endDate))
+				.execute();
+		
 	}
 	
 	private static void saveAscendants(AONContext ctx, Mod145 mod145) {
