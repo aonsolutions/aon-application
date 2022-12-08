@@ -7,6 +7,7 @@ import { AonToolbar } from '../../../components/aon-toolbar.js';
 import {AonElement} from '../../../components/AonElement.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js';
 import { ToolbarType } from '../../../models/enums.js';
+import { printDeliveryTag } from '../../../services/bartenderService.js';
 import { AonCustomerSuggestion } from '../../registry/customer/aon-customer-suggestion.js';
 export class AonDeliveryTag extends AonElement {
 
@@ -22,6 +23,10 @@ export class AonDeliveryTag extends AonElement {
 	DELIVERY;
 	PRINTER;
 	TAG;
+
+	printer;
+	tag;
+	data;
 	
 	connectedCallback () {
 		this.initialize();
@@ -62,7 +67,7 @@ export class AonDeliveryTag extends AonElement {
 	}
 
 	print() {
-		alert('PRINT');
+		printDeliveryTag(this.printer, this.tag, this.data);
 	}
 
 	buildContent() {
@@ -103,6 +108,10 @@ export class AonDeliveryTag extends AonElement {
 			value: 'ZEBRA 94'
 		}]);
 
+		printer.addEventListener(EVENT.CHANGE, () => {
+			this.printer = printer.value;
+ 		});
+
 		let tag = this.createAonElement(new AonSelect(), this.TAG, MSG.TAG);
 		table.addCell(tag);
 		tag.options = JSON.stringify([{
@@ -124,13 +133,16 @@ export class AonDeliveryTag extends AonElement {
 		tag.addEventListener(EVENT.SELECT, () => {
 			if(tag.value === 'mercadona') {
 				this.buildMercadona(tagContent);
+				this.tag = 'C:\Bartender\Diseños\DiseñoMercadona.btw';
 			} else if(tag.value === 'pingo') {
 				this.buildPingo(tagContent);
-			} else this.buildGenerica(tagContent);
+				this.tag = 'C:\Bartender\Diseños\DiseñoPingoDoce.btw';
+			} else {
+				this.buildGenerica(tagContent);
+				this.tag = 'C:\Bartender\Diseños\DiseñoGenerico.btw';
+			}
+			this.data =  {};
  		});
-
-
-
 	}	
 
 	buildMercadona(tagContent) {
@@ -142,23 +154,37 @@ export class AonDeliveryTag extends AonElement {
 
 		let gtin = this.createAonElement(new AonInput(), this.GTIN, 'GTIN');
 		table.addCell(gtin);
+		gtin.addEventListener(EVENT.CHANGE, () => {
+			this.data.GTIN = gtin.value;
+		});
 
 		let box = this.createAonElement(new AonInput(), this.BOX, 'Cajas');
 		table.addCell(box);
+		box.addEventListener(EVENT.CHANGE, () => {
+			this.data.CANTIDAD = box.value;
+		});
 
 		table.addRow();
 
 		let lote = this.createAonElement(new AonInput(), this.LOTE, 'Lote');
 		table.addCell(lote);
+		lote.addEventListener(EVENT.CHANGE, () => {
+			this.data.LOTE = lote.value;
+		});
 
 		let fecha = this.createAonElement(new AonDate(), this.DATE, 'Fecha');
 		table.addCell(fecha);
+		fecha.addEventListener(EVENT.CHANGE, () => {
+			this.data.F_CONSUMO_PREFERENTE = fecha.value;
+		});
 
 		table.addRow();
 		
 		let sscc = this.createAonElement(new AonInput(), this.SSCC, 'SSCC');
 		table.addCell(sscc, 2);
-
+		sscc.addEventListener(EVENT.CHANGE, () => {
+			this.data.SSCC = sscc.value;
+		});
 	}
 
 	buildPingo(tagContent) {
@@ -170,25 +196,43 @@ export class AonDeliveryTag extends AonElement {
 
 		let gtin = this.createAonElement(new AonInput(), this.GTIN, 'GTIN');
 		table.addCell(gtin);
+		gtin.addEventListener(EVENT.CHANGE, () => {
+			this.data.GTIN = gtin.value;
+		});
 
 		let box = this.createAonElement(new AonInput(), this.BOX, 'Cajas');
 		table.addCell(box);
+		box.addEventListener(EVENT.CHANGE, () => {
+			this.data.CANTIDAD = box.value;
+		});
 
 		table.addRow();
 
 		let lote = this.createAonElement(new AonInput(), this.LOTE, 'Lote');
 		table.addCell(lote);
+		lote.addEventListener(EVENT.CHANGE, () => {
+			this.data.LOTE = lote.value;
+		});
 
 		let fecha = this.createAonElement(new AonDate(), this.DATE, 'Fecha');
 		table.addCell(fecha);
+		fecha.addEventListener(EVENT.CHANGE, () => {
+			this.data.F_CONSUMO_PREFERENTE = fecha.value;
+		});
 
 		table.addRow();
 		
 		let sscc = this.createAonElement(new AonInput(), this.SSCC, 'SSCC');
 		table.addCell(sscc);
+		sscc.addEventListener(EVENT.CHANGE, () => {
+			this.data.SSCC = sscc.value;
+		});
 
 		let sales = this.createAonElement(new AonInput(), this.SALES, 'Pedido');
 		table.addCell(sales);
+		sales.addEventListener(EVENT.CHANGE, () => {
+			this.data.ORDEN_COMPRA = sales.value;
+		});
 	}
 
 	buildGenerica(tagContent) {
@@ -202,19 +246,32 @@ export class AonDeliveryTag extends AonElement {
 		customer.id = this.REGISTRY;
 		customer.showAddress = true;
 		table.addCell(customer, 2);
+		customer.addEventListener(EVENT.CHANGE, () => {
+			this.data.NOMBRE_CLIENTE = '';
+			this.data.DIRECCION_CLIENTE = '';
+		});
 
 		table.addRow();
 		
 		let transporte = this.createAonElement(new AonInput(), this.TRANSPORTE, 'Transporte');
 		table.addCell(transporte, 2);
+		transporte.addEventListener(EVENT.CHANGE, () => {
+			this.data.AGENCIA_TRANSPORTE = '';
+		});
 
 		table.addRow();
 		
 		let sscc = this.createAonElement(new AonInput(), this.SSCC, 'SSCC');
 		table.addCell(sscc);
+		sscc.addEventListener(EVENT.CHANGE, () => {
+			// this.data.SSCC = sscc.value;
+		});
 
 		let delivery = this.createAonElement(new AonInput(), this.DELIVERY, 'Albaran');
 		table.addCell(delivery);
+		delivery.addEventListener(EVENT.CHANGE, () => {
+			// this.data.DELIVERY = delivery.value;
+		});
 	}
 
 }
