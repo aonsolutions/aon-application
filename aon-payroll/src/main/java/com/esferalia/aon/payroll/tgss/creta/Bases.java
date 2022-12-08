@@ -888,8 +888,16 @@ public class Bases {
 						tramo.getFechaHasta().getAnho(), total);
 				throw new Cancel();
 			}
-
-			datoBuilder.setImporteEuros(interpolated);
+			
+			switch (datoSolicitado.getTipoDato()) {
+			case "H":
+			    datoBuilder.setHoras((int)Math.round(interpolated));
+			    break;
+			default:
+			    datoBuilder.setImporteEuros(interpolated);
+			    break;
+			}
+			
 
 			tramoBuilder.addDato(datoBuilder.create());
 			System.err.printf(
@@ -3280,7 +3288,8 @@ public class Bases {
 
 		FixConceptUnMatchedCallback fixConceptsUnMatched = new FixConceptUnMatchedCallback(
 				"500", "501", "502", "509",
-				"601", "603",  "611"
+				"601", "603",  "611",
+				"01"
 				);
 		callbacksList.add(fixConceptsUnMatched);
 
