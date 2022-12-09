@@ -38,8 +38,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model200Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mod200>{
 	
-	public static final int MAX_YEAR = 2021;  // Máximo Ejercicio para el que se puede hacer el modelo 200
-	public static final int BETA_YEAR = 0; // Ejercicio para el cual la creación del modelo 200 aparece solo si el dominio tiene marcado "BETA"	
+	public static final int MAX_YEAR = 2022;  // Máximo Ejercicio para el que se puede hacer el modelo 200
+	public static final int BETA_YEAR = 2022; // Ejercicio para el cual la creación del modelo 200 aparece solo si el dominio tiene marcado "BETA"	
 	
 	// PARA COMPILAR LOS ANTERIORES LO USABA LA CLASE ErrorPage
 	public static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);

@@ -32,6 +32,10 @@ import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Mod2002021Service;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Mod2002021ServiceAsync;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Mod2002021ServiceAsyncDecorator;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2021.Model2002021;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Mod2002022Service;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Mod2002022ServiceAsync;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Mod2002022ServiceAsyncDecorator;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2013.Mod2002013;
@@ -43,6 +47,7 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2019.Mod2002019;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2020.Mod2002020;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2021.Mod2002021;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.logging.client.ConsoleLogHandler;
@@ -81,6 +86,7 @@ public class Model200 extends MainEntryPoint {
 	static Mod2002019ServiceAsync mod2002019Service;
 	static Mod2002020ServiceAsync mod2002020Service;
 	static Mod2002021ServiceAsync mod2002021Service;
+	static Mod2002022ServiceAsync mod2002022Service;
 	
 	private Model200ModuleOptions options;
 
@@ -93,6 +99,14 @@ public class Model200 extends MainEntryPoint {
 //	private AonMinimizePanel footPanel;
 //	private TabLayoutPanel tabLayout;
 //	private ScrollPanel breakdownPanel;
+	
+	public static Mod2002022ServiceAsync getMod2002022Service() {
+		if (mod2002022Service == null) {
+			Mod2002022ServiceAsync mod2002022ServiceRaw = GWT.create(Mod2002022Service.class);
+			mod2002022Service = new Mod2002022ServiceAsyncDecorator(mod2002022ServiceRaw);
+		}
+		return mod2002022Service;
+	}
 	
 	public static Mod2002021ServiceAsync getMod2002021Service() {
 		if (mod2002021Service == null) {
@@ -251,6 +265,8 @@ public class Model200 extends MainEntryPoint {
 				changeView2020(options, (Mod2002020) mod200);
 			else if (mod200.getYear() == 2021)
 				changeView2021(options, (Mod2002021) mod200);
+			else if (mod200.getYear() == 2022)
+				changeView2022(options, (Mod2002022) mod200);
 		}
 		
 		public void cleanErrorPanel() {
@@ -497,10 +513,21 @@ public class Model200 extends MainEntryPoint {
 						public void onFailure(Throwable caught) {
 						}
 					});
-		}		
-		
-		else {
-			Window.alert(AON.MSG.unableToShowData( AON.MSG.noModuleForYear()));
+		} else if (mod.getYear() == 2022) {
+			getMod2002022Service().getMod2002022ById(options.getOccam(), mod.getId()
+					, new AsyncCallback<Mod2002022>() {
+
+						@Override
+						public void onSuccess(Mod2002022 mod200) {
+							changeView2022(options, mod200);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+						}
+					});
+		} else {
+			Window.alert(AON.MSG.unableToShowData(AON.MSG.noModuleForYear()));
 		}
 	}
 
@@ -561,6 +588,10 @@ public class Model200 extends MainEntryPoint {
 		declarationContainer.setWidget(new Model2002021(new Model200Callback(), mod200));
 	}
 	
+	private void changeView2022(Model200ModuleOptions options, Mod2002022 mod200) {
+		declarationContainer.setWidget(new Model2002022(new Model200Callback(), mod200));
+	}
+	
 	protected void newModel(Model200ModuleOptions options, int year) {
 		switch (year) {
 			case 2013:
@@ -589,6 +620,9 @@ public class Model200 extends MainEntryPoint {
 				break;
 			case 2021:
 				new2021(options);	
+				break;
+			case 2022:
+				new2022(options);	
 				break;
 		}
 		
@@ -725,6 +759,21 @@ public class Model200 extends MainEntryPoint {
 			}
 		});
 	}
+	
+	protected void new2022(Model200ModuleOptions options) {
+		getMod2002022Service().createMod2002022(options.getOccam(), 2022
+		, new AsyncCallback<Mod2002022>() {
+
+			@Override
+			public void onSuccess(Mod2002022 mod200) {				
+				changeView2022(options, mod200);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
+	}	
 	
 	public native static double resolve(String expression) /*-{
 		d = eval(expression);
