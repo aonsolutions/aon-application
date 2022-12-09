@@ -47,6 +47,9 @@ export class AonDeliveryTag extends AonElement {
 		this.DELIVERY = this.id + 'Delivery';
 		this.TAG = this.id + 'Tag';
 		this.PRINTER = this.id + 'Printer';
+		this.data = {};
+		this.printer = 'ZEBRA 93';
+		this.tag = 'C:\\Bartender\\Diseños\\DiseñoMercadona.btw';
 	}
 
 	build() {
@@ -107,6 +110,7 @@ export class AonDeliveryTag extends AonElement {
 			name: 'ZEBRA 94',
 			value: 'ZEBRA 94'
 		}]);
+		printer.value = this.printer;
 
 		printer.addEventListener(EVENT.CHANGE, () => {
 			this.printer = printer.value;
@@ -133,13 +137,13 @@ export class AonDeliveryTag extends AonElement {
 		tag.addEventListener(EVENT.SELECT, () => {
 			if(tag.value === 'mercadona') {
 				this.buildMercadona(tagContent);
-				this.tag = 'C:\Bartender\Diseños\DiseñoMercadona.btw';
+				this.tag = 'C:\\Bartender\\Diseños\\DiseñoMercadona.btw';
 			} else if(tag.value === 'pingo') {
 				this.buildPingo(tagContent);
-				this.tag = 'C:\Bartender\Diseños\DiseñoPingoDoce.btw';
+				this.tag = 'C:\\Bartender\\Diseños\\DiseñoPingoDoce.btw';
 			} else {
 				this.buildGenerica(tagContent);
-				this.tag = 'C:\Bartender\Diseños\DiseñoGenerico.btw';
+				this.tag = 'C:\\Bartender\\Diseños\\DiseñoGenerico.btw';
 			}
 			this.data =  {};
  		});

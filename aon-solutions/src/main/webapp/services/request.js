@@ -193,7 +193,7 @@ export const post = (url, data) => {
 
 export const postXml = (url, data) => {
   return new Promise((resolve, reject) => {
-    request("POST", url, data, (result, error) => {
+    requestXml("POST", url, data, (result, error) => {
       try{
         if (error) reject(error);
         else resolve(JSON.parse(result));
