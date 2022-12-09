@@ -94,6 +94,15 @@
 					</g:HTMLPanel>
 					
 					<g:HTMLPanel styleName="{style.flex}">
+						<g:Label styleName='{style.title}' text="IRPF Solicitado por el trabajador" />
+						<g:Button ui:field="irpfRequestB" />
+						<g:HTMLPanel styleName="{style.flex}" ui:field="irpfPercentPanel">
+							<g:Label text="Porcentaje" />
+							<a:DoubleBox ui:field="irpfPercentDB" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label styleName='{style.title}' text="Situación familiar" />
 						<g:ListBox ui:field="familySituationLB" />
 					</g:HTMLPanel>

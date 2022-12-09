@@ -77,6 +77,15 @@ public abstract class Mod145 extends Composite {
 	Button fiscalExclusionB;
 	
 	@UiField
+	Button irpfRequestB;
+	
+	@UiField
+	HTMLPanel irpfPercentPanel;
+	
+	@UiField
+	DoubleBox irpfPercentDB;
+	
+	@UiField
 	ListBox familySituationLB;
 	
 	@UiField
@@ -140,6 +149,9 @@ public abstract class Mod145 extends Composite {
 	private Mod145Object mod145Object;
 	
 	private AonToolbar toolbar;
+	private AonToolbarButton addButton;
+	private AonToolbarButton cancelButton;
+	private AonToolbarButton saveButton;
 	private ListBox datesLB;
 	private AonToolbarButton deleteButton;
 	private AonToolbarButton printPDFButton;
@@ -233,9 +245,11 @@ public abstract class Mod145 extends Composite {
 			initializeYearLB(datesLB);
 			
 			this.mod145 = this.mod145Object.getRecentMod145();
-			deleteButton.setVisible(null != this.mod145);
-			printPDFButton.setVisible(null != this.mod145);
-			if(null == this.mod145) createMod145();
+			if(null == this.mod145) { 
+				onAdd();
+				cancelButton.setVisible(false);
+				showWarningMessage("Mod145", "No existe ning\u00fan Modelo 145 para este contrato. Rellene esta pantalla para generarlo.");
+			} else showMod145Buttons();
 			
 			fillMod145();
 			
@@ -258,6 +272,11 @@ public abstract class Mod145 extends Composite {
 		this.startDateBx.setValue(this.mod145.getStartDate());
 		this.endDateBx.setValue(this.mod145.getEndDate());
 		getEnableDisableButton(this.fiscalExclusionB, this.mod145.isFiscalExclusion());
+		getEnableDisableButton(this.irpfRequestB, null != this.mod145.getIrpfPercent());
+		
+		irpfPercentPanel.setVisible(null != this.mod145.getIrpfPercent());
+		this.irpfPercentDB.setValue(this.mod145.getIrpfPercent());
+		
 		setSelectedValueLB(this.familySituationLB, this.mod145.getFamilySituation() + "");
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), familySituationLB);
 		this.spouseDocumentTB.setValue(this.mod145.getSpouseDocument());
@@ -422,6 +441,10 @@ public abstract class Mod145 extends Composite {
 		endDateBx.setValue(null);
 		
 		getEnableDisableButton(fiscalExclusionB, false);
+		getEnableDisableButton(irpfRequestB, false);
+		
+		irpfPercentPanel.setVisible(true);
+		irpfPercentDB.setValue(null);
 		
 		familySituationLB.clear();
 		familySituationLB.addItem("Soltero/a, viudo/a, divorciado/a o separado/a legalmente con hijos solteros menores de 18 a\u00f1os o incapacitados judicialmente que conviven exclusivamente con Vd., sin convivir tambi\u00e9n con el otro progenitor", "0");
@@ -486,16 +509,10 @@ public abstract class Mod145 extends Composite {
 	public void initializeYearLB(ListBox datesLB) {
 		datesLB.clear();
 		this.mod145Object.getDateList().forEach(date -> datesLB.addItem(formatDate.format(date), formatDate.format(date)));
-		datesLB.addItem("Nuevo", "");
 		
 		datesLB.addChangeHandler(e -> {
 			String datesLBValue = datesLB.getSelectedValue();
-			deleteButton.setVisible(!AonStringUtils.isBlank(datesLBValue));
-			printPDFButton.setVisible(!AonStringUtils.isBlank(datesLBValue));
-			
-			if(AonStringUtils.isBlank(datesLBValue)) createMod145();
-			else this.mod145 = this.mod145Object.getMod145ByDate(formatDate.parse(datesLBValue));
-			
+			this.mod145 = this.mod145Object.getMod145ByDate(formatDate.parse(datesLBValue));
 			fillMod145();
 		});
 	}
@@ -570,6 +587,30 @@ public abstract class Mod145 extends Composite {
 		Boolean value = !oldValue;
 		getEnableDisableButton(fiscalExclusionB, value);
 		this.mod145.setFiscalExclusion(value);
+		
+		if(Boolean.TRUE.equals(value)) {
+			irpfPercentPanel.setVisible(false);
+			this.mod145.setIrpfPercent(null);
+			getEnableDisableButton(irpfRequestB, false);
+		}
+	}
+	
+	@UiHandler("irpfRequestB")
+	void onIrpfPercentBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(irpfRequestB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(irpfRequestB, value);
+		
+		if(Boolean.TRUE.equals(value)) {
+			irpfPercentPanel.setVisible(true);
+			this.mod145.setFiscalExclusion(false);
+			getEnableDisableButton(fiscalExclusionB, false);
+		}
+	}
+	
+	@UiHandler("irpfPercentDB")
+	void onIrpfPercentDBChange(ValueChangeEvent<Double> event) {
+		this.mod145.setIrpfPercent(irpfPercentDB.getValue());
 	}
 	
 	@UiHandler("familySituationLB")
@@ -684,9 +725,17 @@ public abstract class Mod145 extends Composite {
 		
 		this.toolbar = new AonToolbar("Irpf");
 		
-		AonToolbarButton saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		addButton = new AonToolbarButton( AON.MSG.newAction(), AON.CSS.aonIconAdd() );
+		addButton.addClickHandler(e -> onAdd());
+		toolbar.add(addButton);
+		
+		saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		saveButton.addClickHandler(e -> onSave());
 		toolbar.add(saveButton);
+		
+		cancelButton = new AonToolbarButton( AON.MSG.cancelAction(), AON.CSS.aonIconCancel() );
+		cancelButton.addClickHandler(e -> onCancel());
+		toolbar.add(cancelButton);
 		
 		this.datesLB = new ListBox();
 		this.toolbar.add(datesLB);
@@ -701,6 +750,17 @@ public abstract class Mod145 extends Composite {
 	}
 
 	// ----------------------------------------------- Toolbar.Methods
+	
+	public void onAdd() {
+		createMod145();
+		fillMod145();
+		showEmptyMod145Buttons();
+	}
+	
+	public void onCancel() {
+		showMod145Buttons();
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), datesLB);
+	}
 
 	public void onSave() {
 		showLoadingMessage("Guardando Mod145...");
@@ -737,11 +797,41 @@ public abstract class Mod145 extends Composite {
 			f -> showErrorMessage("Error PDF Mod 145", f.getMessage()));
 	}
 	
+	private void showMod145Buttons() {
+		addButton.setVisible(true);
+		cancelButton.setVisible(false);
+		saveButton.setVisible(true);
+		datesLB.setVisible(true);
+		deleteButton.setVisible(true);
+		printPDFButton.setVisible(true);
+	}
+	
+	private void showEmptyMod145Buttons() {
+		addButton.setVisible(false);
+		cancelButton.setVisible(true);
+		saveButton.setVisible(true);
+		datesLB.setVisible(false);
+		deleteButton.setVisible(false);
+		printPDFButton.setVisible(false);
+	}
+	
 	// -------------------------------------------------- ContrataEmployee.Methods
 	
 	public void hideToolbar(){
 		dockLayoutPanel.remove(toolbar);
 		mainPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
+	}
+	
+	public void setAddButton(AonToolbarButton addButton) {
+		this.addButton = addButton;
+	}
+	
+	public void setCancelButton(AonToolbarButton cancelButton) {
+		this.cancelButton = cancelButton;
+	}
+	
+	public void setSaveButton(AonToolbarButton saveButton) {
+		this.saveButton = saveButton;
 	}
 	
 	public void setMod145DatesLB(ListBox datesLB) {

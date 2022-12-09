@@ -66,12 +66,14 @@ public class TramoBuilder {
 	}
 	
 	
-	public void addDato(DatoSolicitado dato) {
+	public TramoBuilder addDato(DatoSolicitado dato) {
 		datos.add(dato);
+		return this;
 	}
 	
-	public void setTipoDeContrato(String tipoDeContrato) {
+	public TramoBuilder setTipoDeContrato(String tipoDeContrato) {
 		this.tipoDeContrato = tipoDeContrato;
+		return this;
 	}
 	
 	public TramoBuilder setDiaDesde(int diaDesde) {
@@ -145,15 +147,18 @@ public class TramoBuilder {
 		return this;
 	}
 	
-	public void setDiasCotizados(int diasCotizados) {
+	public TramoBuilder setDiasCotizados(int diasCotizados) {
 		this.diasCotizados = diasCotizados;
+		return this;
 	}
 	
-	public void setGrupoCotizacion(int grupoCotizacion) {
+	public TramoBuilder setGrupoCotizacion(int grupoCotizacion) {
 		this.grupoCotizacion = grupoCotizacion;
+		return this;
 	}
 
-	public void setGrupoCotizacion(String grupoCotizacion) {
+	public TramoBuilder setGrupoCotizacion(String grupoCotizacion) {
 		this.grupoCotizacion = Integer.parseInt(grupoCotizacion);
+		return this;
 	}
 }

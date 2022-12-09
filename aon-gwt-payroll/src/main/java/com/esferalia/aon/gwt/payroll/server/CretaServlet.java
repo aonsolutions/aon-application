@@ -85,6 +85,7 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
+import com.esferalia.aon.payroll.tgss.creta.Bases.AddZeroDatoBasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.ConstantDatoBasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.CustomizeBasesCallback;
@@ -318,10 +319,10 @@ public class CretaServlet extends HttpServlet
 					pickerBasesCb.noDiffs(liquidacion);
 				}
 			};
-
+			
 			try {
 				String bases = generateBases(connection, true, aceptarBasesAnteriores, aceptarBasesAnteriores, nafs, defaults,
-						trabajadoresYTramosIss, respuestasIss, customBasesCb, noDiffsBasesCb, i54Callback, pickerBasesCb, progressCb );
+						trabajadoresYTramosIss, respuestasIss, customBasesCb, noDiffsBasesCb, i54Callback, pickerBasesCb, progressCb, Bases.L03BASESCALLBACK);
 				os.printf(",\r\n{\"percent\": 100.00, \"msg\":\":-)\"}", CretaService.Message.END);
 				os.flush();
 				os.printf("],\r\n");
@@ -855,19 +856,6 @@ public class CretaServlet extends HttpServlet
 				
 	}
 	
-	private static String generateBases(Connection connection, boolean comments, boolean skipExisting,
-			boolean acceptPrevBases, String nafs[], String defaults[], InputStream is, BasesCallback... cbs)
-					throws EmptyBasesException, JAXBException, XMLStreamException, FactoryConfigurationError,
-					IOException {
-
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		Bases.generate(connection, comments, skipExisting, acceptPrevBases, nafs, defaults, is, null /* respuestaIs */,
-				os, cbs);
-		os.close();
-		return String.format("%s", URLEncoder.encode(os.toString(), "UTF-8"));
-
-	}
-
 	private static String generateBases(Connection connection, boolean comments, boolean skipExisting,
 			boolean acceptPrevBases, String nafs[], String defaults[], List<InputStream> trabajadoresYTramosIss,
 			List<InputStream> respuestasIss, BasesCallback... cbs) throws EmptyBasesException, JAXBException,

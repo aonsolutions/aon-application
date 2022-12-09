@@ -2454,9 +2454,20 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private HTMLPanel initMod145Buttons() {
 		HTMLPanel hPanel = new HTMLPanel("");
 		hPanel.addStyleName(style.flex());
+		
+		AonToolbarButton addMod145Button = new AonToolbarButton(AON.MSG.newAction() + " Mod145", AON.CSS.aonIconAdd());
+		addMod145Button.addClickHandler(e -> mod145.onAdd());
+		mod145.setAddButton(addMod145Button);
+		hPanel.add(addMod145Button);
+		
+		AonToolbarButton cancelMod145Button = new AonToolbarButton(AON.MSG.cancelAction() + " Mod145", AON.CSS.aonIconCancel());
+		cancelMod145Button.addClickHandler(e -> mod145.onCancel());
+		mod145.setCancelButton(cancelMod145Button);
+		hPanel.add(cancelMod145Button);
 
 		AonToolbarButton saveMod145Button = new AonToolbarButton(AON.MSG.saveAction() + " Mod145", AON.CSS.aonIconSave());
 		saveMod145Button.addClickHandler(e -> mod145.onSave());
+		mod145.setSaveButton(saveMod145Button);
 		hPanel.add(saveMod145Button);
 
 		ListBox mod145Dates = new ListBox();
@@ -2720,6 +2731,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		Map<String, String> warningMap = new HashMap<>();
 		warningMap.put(title, message);
 		AonMessagePanel.showWarning(messageContainer, warningMap);
+	}
+	
+	private void showInfo(String title, String message) {
+		Map<String, String> infoMap = new HashMap<>();
+		infoMap.put(title, message);
+		AonMessagePanel.showInfo(messageContainer, infoMap);
 	}
 
 	private void showLoading(String message) {
