@@ -159,6 +159,7 @@ public class ProductUtils {
     
     public static boolean isEroski(String document) {
         return "F20033361".equalsIgnoreCase(document)
-                || "B88512975".equalsIgnoreCase(document);
+                || "B88512975".equalsIgnoreCase(document)
+                || "A08115032".equalsIgnoreCase(document);
    }
 }
