@@ -1485,7 +1485,7 @@ public class CretaServlet extends HttpServlet
 		}
 
 		@Override
-		public void unknownDato(Salary salary, Trabajador<?> trabajador,  Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
+		public void unknownDato(Salary salary, Trabajador<?> trabajador,  Tramo<?> tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
 
 			boolean mandatory = "B".equalsIgnoreCase(datoSolicitado.getIndicadorObligatoriedad());
 			String message = String.format("Lo sentimos. %s (%s) no encontrado en AON SOLUTIONS. %s %s (%s)",
@@ -1541,7 +1541,7 @@ public class CretaServlet extends HttpServlet
 		}
 
 		@Override
-		public void defaultDato(Salary salary, Trabajador<?> trabajador,  Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder, String value) {
+		public void defaultDato(Salary salary, Trabajador<?> trabajador,  Tramo<?> tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder, String value) {
 
 			boolean mandatory = "B".equalsIgnoreCase(datoSolicitado.getIndicadorObligatoriedad());
 			String message ;

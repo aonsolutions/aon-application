@@ -748,6 +748,7 @@ public class SalaryDAO {
 					.setStartDate(rootRecord.get(SALARY.START_DATE))
 					.setEndDate(rootRecord.get(SALARY.END_DATE))
 					.setTotalPayment(rootRecord.get(SALARY.TOTAL_PAYMENT))
+					.setSalaryType(rootRecord.get(SALARY.TYPE))
 					;
 					
 					
