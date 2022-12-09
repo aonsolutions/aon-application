@@ -690,7 +690,7 @@ public class SalaryDAO {
 		.onKey(FK_SALARY_DATA_SALARY)
 		.where(conditions)
 		.orderBy(
-		EMPLOYEE_DOCUMENT)
+		EMPLOYEE_DOCUMENT, SALARY.ISSUE_DATE.asc())
 		.fetchLazy();
 		//@formatter:on
 

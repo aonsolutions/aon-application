@@ -505,17 +505,18 @@ public class SQLContractDelayCalculatorContext extends
 			
 			double totalITDays = getTotalDays(period, ContextVariable.LEAVE_DAYS);
 			
-			ContractPayment payment = new DelayPaymentBuilder.DelayContractPayment();
-			payment.setId(null);
-			payment.setStartDate(period.getStart());
-			payment.setEndDate(period.getEnd());
-			payment.setSalaryType(SalaryType.DELAY);
+			ContractPayment workPayment = 
+			new DelayPaymentBuilder.DelayContractPayment();
+			workPayment.setId(null);
+			workPayment.setStartDate(period.getStart());
+			workPayment.setEndDate(period.getEnd());
+			workPayment.setSalaryType(SalaryType.DELAY);
 
 			// TODO: Generic Delays ? 
-			payment.setType(getPaymentType(PaymentType.CRA_0008));
-			payment.setIrpfExpression(ContextVariable.ALL);
-			payment.setDescription(getDescriptionForSalaryDelay(payment, payments.size()));
-			payment.setExpression(
+			workPayment.setType(getPaymentType(PaymentType.CRA_0008));
+			workPayment.setIrpfExpression(ContextVariable.ALL);
+			workPayment.setDescription(getDescriptionForSalaryDelay(workPayment, payments.size()));
+			workPayment.setExpression(
 					String.format(
 					Locale.ROOT,
 					"/*var:%s*/"
@@ -526,7 +527,7 @@ public class SQLContractDelayCalculatorContext extends
 					totalWorkedDays > 0 ? totalWorkedDays : totalITDays, 
 					totalWorkedDays > 0 ? ContextVariable.WORKED_DAYS.getName() : ContextVariable.LEAVE_DAYS.getName() 
 					));
-			payment.setQuoteExpression(
+			workPayment.setQuoteExpression(
 					String.format(
 					Locale.ROOT,
 					"/*var:%s*/"
@@ -540,7 +541,38 @@ public class SQLContractDelayCalculatorContext extends
 					ContextVariable.ALL
 					));
 
-			payments.add(payment);
+			payments.add(workPayment);
+			
+			if ( totalITDays > 0 && totalWorkedDays > 0 ) {
+        			ContractPayment itPayment = 
+        			new DelayPaymentBuilder.DelayContractPayment();
+        			itPayment.setId(null);
+        			itPayment.setStartDate(period.getStart());
+        			itPayment.setEndDate(period.getEnd());
+        			itPayment.setSalaryType(SalaryType.DELAY);
+        
+        			// TODO: Generic Delays ? 
+        			itPayment.setType(getPaymentType(PaymentType.CRA_0008));
+        			itPayment.setIrpfExpression(ContextVariable.ALL);
+        			itPayment.setDescription(getDescriptionForSalaryDelay(itPayment, payments.size()));
+        			itPayment.setExpression(
+        					String.format(
+        					Locale.ROOT,
+        					"/*var:%s*/"
+        					+ "0.00*%s", 
+        					ContextVariable.DELAY_AMOUNT.getName(), 
+        					ContextVariable.LEAVE_DAYS.getName() 
+        					));
+        			itPayment.setQuoteExpression(
+        					String.format(
+        					Locale.ROOT,
+        					"/*var:%s*/"
+        					+ "%s", 
+        					ContextVariable.DELAY_QUOTE.getName(), 
+        					ContextVariable.ALL
+        					));
+        			payments.add(itPayment);
+			}
 		}
 
 		

@@ -5,7 +5,7 @@ import { AonInput } from '../../../components/aon-input.js';
 import { AonSelect } from '../../../components/aon-select.js';
 import { AonToolbar } from '../../../components/aon-toolbar.js';
 import {AonElement} from '../../../components/AonElement.js';
-import { CONSTANT, EVENT, MSG, TAG } from '../../../environments/environments.js';
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../../environments/environments.js';
 import { ToolbarType } from '../../../models/enums.js';
 import { AonCustomerSuggestion } from '../../registry/customer/aon-customer-suggestion.js';
 export class AonDeliveryTag extends AonElement {
@@ -20,6 +20,9 @@ export class AonDeliveryTag extends AonElement {
 	DATA_TABLE;
 	TRANSPORTE;
 	DELIVERY;
+	PRINTER;
+	TAG;
+	
 	connectedCallback () {
 		this.initialize();
 		this.build();	
@@ -37,6 +40,8 @@ export class AonDeliveryTag extends AonElement {
 		this.DATA_TABLE = this.id + 'DataTable';
 		this.TRANSPORTE = this.id + 'Transporte';
 		this.DELIVERY = this.id + 'Delivery';
+		this.TAG = this.id + 'Tag';
+		this.PRINTER = this.id + 'Printer';
 	}
 
 	build() {
@@ -48,6 +53,16 @@ export class AonDeliveryTag extends AonElement {
 		let toolbar = this.createAonElement(new AonToolbar(), this.TOOLBAR, MSG.DELIVERY_TAG);
 		toolbar.type = ToolbarType.SECONDARY;
 		this.appendChild(toolbar);
+		toolbar.addButton2({
+			id: CONSTANT.DOWNLOAD.initCap(),
+			name: MSG.DOWNLOAD,
+			title: MSG.DOWNLOAD,
+			icon: MATERIAL_ICONS.PRINT
+		}, () => this.print());	
+	}
+
+	print() {
+		alert('PRINT');
 	}
 
 	buildContent() {
@@ -78,8 +93,18 @@ export class AonDeliveryTag extends AonElement {
 
 		table.addRow();
 
+		let printer = this.createAonElement(new AonSelect(), this.PRINTER, MSG.PRINTER);
+		table.addCell(printer);
+		printer.options = JSON.stringify([{
+			name: 'ZEBRA 93',
+			value: 'ZEBRA 93'
+		},{
+			name: 'ZEBRA 94',
+			value: 'ZEBRA 94'
+		}]);
+
 		let tag = this.createAonElement(new AonSelect(), this.TAG, MSG.TAG);
-		table.addCell(tag, 2);
+		table.addCell(tag);
 		tag.options = JSON.stringify([{
 			name: 'Mercadona',
 			value: 'mercadona'

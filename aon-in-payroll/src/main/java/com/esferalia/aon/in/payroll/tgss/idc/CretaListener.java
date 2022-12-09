@@ -36,8 +36,9 @@ public class CretaListener implements IdcParserListener {
 		}
 		
 		@Override
-		public void addDato(DatoSolicitado dato) {
+		public TramoBuilder addDato(DatoSolicitado dato) {
 			datosMap.putIfAbsent(getKey(dato), dato);
+			return this;
 		}
 
 		@Override
