@@ -577,8 +577,8 @@ public class Model2002022 extends DockLayoutPanel {
 				mod200Callback.cleanErrorPanel();
 			
 			AonConfirmDialog cd = new AonConfirmDialog();
-			cd.confirm(AON.MSG.confirmAeatPrintMod200()					
-				,new AonConfirmDialogCallback() {
+			cd.confirm(AON.MSG.confirmAeatPrintMod200(),					
+				new AonConfirmDialogCallback() {
 					
 					@Override
 					public void onCancel() {}

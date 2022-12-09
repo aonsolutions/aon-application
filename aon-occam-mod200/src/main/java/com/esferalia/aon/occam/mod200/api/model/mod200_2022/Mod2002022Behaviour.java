@@ -474,15 +474,8 @@ public class Mod2002022Behaviour {
 		addBreakdown(Mod2002022LQ1032Key.values(), Mod2002022Key.LQ1032);
 
 		// Desglose Casillas 1033 y 1034 (Reserva de nivelación)
-		addBreakdown(Mod2002022LQ1033_1Key.values(), Mod2002022Key.LQ1033);
-		// Además de la columna y fila de totales, las casillas de la columna 2 tambien son calculadas
-		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1145,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1456,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1962,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ2239,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ2411,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1730,new Boolean[]{FALSE,TRUE});
-		addBreakdown(Mod2002022LQ1033_2Key.values(), Mod2002022Key.LQ1158, new byte[]{});  // No lleva columnas de totales
+		addBreakdown(Mod2002022LQ1033_1Key.values(), Mod2002022Key.LQ1033, new byte[] {1,3});  // Dos columnas calculadas
+		addBreakdown(Mod2002022LQ1033_2Key.values(), Mod2002022Key.LQ1158, new byte[]{});      // No lleva columnas de totales
 		
 	}
 	

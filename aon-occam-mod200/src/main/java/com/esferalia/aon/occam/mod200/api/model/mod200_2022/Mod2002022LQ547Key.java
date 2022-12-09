@@ -46,20 +46,8 @@ public enum Mod2002022LQ547Key implements Serializable, IMod200KeysProvider  {
 	;
 	 
     private String description;
-//    private Mod2002022Key previousPendind;
-//    private Mod2002022Key current;
-//    private Mod2002022Key futurePendind;
     private Mod2002022Key[] keys;
 
-//	private Mod2002022LQ547Key(Mod2002022Key previousPendind,
-//			Mod2002022Key current, Mod2002022Key futurePendind, String description) {
-////		this.previousPendind = previousPendind;
-////		this.current = current;
-////		this.futurePendind = futurePendind;
-//		this.description = description;
-//		keys = new Mod2002022Key[]{previousPendind,current,futurePendind};
-//	}
-	
 	private Mod2002022LQ547Key(Mod2002022Key[] keys, String description) {
 		this.keys = keys;
 		this.description = description;	
@@ -68,16 +56,6 @@ public enum Mod2002022LQ547Key implements Serializable, IMod200KeysProvider  {
 	public String getDescription() {
 		return description;
 	}
-
-//	public Mod2002022Key getPreviousPendind() {
-//		return previousPendind;
-//	}
-//	public Mod2002022Key getCurrent() {
-//		return current;
-//	}
-//	public Mod2002022Key getFuturePendind() {
-//		return futurePendind;
-//	}
 	
 	@Override
 	public Mod2002022Key[] getKeys() {

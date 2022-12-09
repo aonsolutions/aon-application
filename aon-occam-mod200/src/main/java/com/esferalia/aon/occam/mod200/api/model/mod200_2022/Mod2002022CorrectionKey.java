@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 
+// Correcciones al resultado de la cuenta de pérdidas y ganancias (casillas y sus desgloses)
 public enum Mod2002022CorrectionKey implements Serializable, IMod200KeysProvider {
 
 	 C01(Mod2002022Key.I0355, Mod2002022Key.D0356, new Mod2002022KeyDC[]{Mod2002022KeyDC.DC2504, Mod2002022KeyDC.DC2501, Mod2002022KeyDC.DC2502, Mod2002022KeyDC.DC2503, Mod2002022KeyDC.DC2505}, new Mod2002022KeyDC[]{Mod2002022KeyDC.DC2509, Mod2002022KeyDC.DC2506, Mod2002022KeyDC.DC2507, Mod2002022KeyDC.DC2508, Mod2002022KeyDC.DC2510}, "Cambio de criterios contables (art. 11.3.2\u00BA LIS)") 

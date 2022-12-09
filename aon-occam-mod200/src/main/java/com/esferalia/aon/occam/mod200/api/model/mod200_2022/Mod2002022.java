@@ -52,22 +52,21 @@ public class Mod2002022 extends Mod200 {
 	private EcpnType ecpnType;
 	private BalanceType pygType;
 	
-	private Secretary secretary = new Secretary(); // Secretario del Consejo de Administración, declarante o representante
-	private LinkedList<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();     // Representantes legales de la entidad
+	private Secretary secretary = new Secretary();    // Secretario del Consejo de Administración, declarante o representante
+	private LinkedList<LegalRepresentative> representatives = new LinkedList<LegalRepresentative>();                 // Representantes legales de la entidad
 	private LinkedList<Mod200CompanyAdministrator> administrators = new LinkedList<Mod200CompanyAdministrator>();    // A. Relación de administradores 
 	private LinkedList<Mod200CompanyParticipation> participationsOut = new LinkedList<Mod200CompanyParticipation>(); // B1. Participaciones directas de la declarante en otras sociedades a la fecha de cierre del período declarado
 	private LinkedList<Mod200CompanyParticipation> participationsIn = new LinkedList<Mod200CompanyParticipation>();  // B2. Participaciones personas o entidades en la declarante a la fecha de cierre del período declarado
-	private LinkedList<MinorEntity> minorEntities = new LinkedList<MinorEntity>();  // C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
-	private LinkedList<UteForeign> uteForeign = new LinkedList<UteForeign>();  // D. Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE 
-	private LinkedList<UteBase> uteBases = new LinkedList<UteBase>(); // UTES - Deducción para evitar la doble imposición
-	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>(); // UTES - Relación de socios
-	private LinkedList<GroupEntitie> groupEntities = new LinkedList<GroupEntitie>();  // Grupos de Sociedades- NIF de las entidades del grupo 
-	private LinkedList<String> establishments = new LinkedList<String>();	// No residentes - NIF de los establecimientos permanentes, en caso de entidad titular
-	private LinkedList<String> filmProductions = new LinkedList<String>();	// Información adicional producciones cinematográficas españolas y espectáculos en vivo 
+	private LinkedList<MinorEntity> minorEntities = new LinkedList<MinorEntity>();                                   // C. Entidades menores dependientes de diócesis, provincia religiosa o entidad eclesiástica integradas en la declaración, previamente autorizadas
+	private LinkedList<UteForeign> uteForeign = new LinkedList<UteForeign>();                                        // D. Información de detalle de EP o UTE que operen en el extranjero y por participación en fórmula de colaboración análoga a UTE 
+	private LinkedList<UteBase> uteBases = new LinkedList<UteBase>();                              // UTES - Deducción para evitar la doble imposición
+	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>();   // UTES - Relación de socios
+	private LinkedList<GroupEntitie> groupEntities = new LinkedList<GroupEntitie>();               // Grupos de Sociedades- NIF de las entidades del grupo 
+	private LinkedList<String> establishments = new LinkedList<String>();	                       // No residentes - NIF de los establecimientos permanentes, en caso de entidad titular
+	private LinkedList<String> filmProductions = new LinkedList<String>();                         // Información adicional producciones cinematográficas españolas y espectáculos en vivo 
 	
 	private String devType;
 	private String payType;
-//	private Double amount;
 	private String iban;
 	private String bic;
 
@@ -253,12 +252,6 @@ public class Mod2002022 extends Mod200 {
 	public void setPayType(String payType) {
 		this.payType = payType;
 	}
-//	public Double getAmount() {
-//		return amount;
-//	}
-//	public void setAmount(Double amount) {
-//		this.amount = amount;
-//	}
 	public String getIban() {
 		return iban;
 	}
@@ -296,17 +289,7 @@ public class Mod2002022 extends Mod200 {
 	public String getDomainName() {
 		return null;
 	}
-//	@Override
-//	public IFiscalModelKey getDeclarationTypeKey() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//	@Override
-//	public double getResult() {
-//		// TODO Auto-generated method stub
-//		return 0;
-//	}
-	
+
 	public String getDominantIdentificationNumber() {
 		return dominantIdentificationNumber;
 	}
