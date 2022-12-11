@@ -106,7 +106,6 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
-import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.EmptyBasesException;
 import com.esferalia.aon.payroll.tgss.creta.TrabajadoresTramos;
 import com.esferalia.aon.salary.ISalary;
@@ -7717,11 +7716,11 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 				false,							//skipExisting, 
 				false,							//acceptPrevBases, 
 				null,							//nafs, 
-				new String [] {},				//defaultsValues, 
+				new String [] {},					//defaultsValues, 
 				trabajadoresTramosIs, 
 				null, 							//respuestaIs, 
 				basesOs,						//os, 
-				new Bases.BasesCallback [] {}	//cbs
+				new Bases.BasesCallback [] {Bases.L03BASESCALLBACK}	//cbs
 				);
 		
 		System.out.println(basesOs.toString());
@@ -7951,19 +7950,16 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
         	List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramos = 
         	bases.getLiquidacion().get(0).getLiquidacionMes().get(0).getTrabajadores().getTrabajador().get(0).getTramos().getTramo();
         	
-        	Assert.assertEquals(3, tramos.size());
+        	Assert.assertEquals(2, tramos.size());
         	
         	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo0 = tramos.get(0);
         	assertDato(tramo0.getDatosTramo().getDato(), "C", "500", "400");
         	assertDato(tramo0.getDatosTramo().getDato(), "C", "601", "400");
         
-        	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo2 = tramos.get(2);
-        	assertDato(tramo2.getDatosTramo().getDato(), "C", "500", Integer.toString(100*(get(endDate, Calendar.DAY_OF_MONTH) - 6)));
-        	assertDato(tramo2.getDatosTramo().getDato(), "C", "601", Integer.toString(100*(get(endDate, Calendar.DAY_OF_MONTH) - 6)));
-		
         	net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramo1 = tramos.get(1);
-        	assertDato(tramo1.getDatosTramo().getDato(), "C", "500", "0");
-        	assertDato(tramo1.getDatosTramo().getDato(), "C", "603", "0");
+        	assertDato(tramo1.getDatosTramo().getDato(), "C", "500", Integer.toString(100*(get(endDate, Calendar.DAY_OF_MONTH) - 6)));
+        	assertDato(tramo1.getDatosTramo().getDato(), "C", "601", Integer.toString(100*(get(endDate, Calendar.DAY_OF_MONTH) - 6)));
+		
         
 		
 	}
