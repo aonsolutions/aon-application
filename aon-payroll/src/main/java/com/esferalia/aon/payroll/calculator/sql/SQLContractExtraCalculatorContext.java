@@ -339,7 +339,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 				
 				@Override
 				public Integer getId() {
-					return  Integer.MIN_VALUE + ( contractPayment.getId() % 1000 ); //;super.getId() * (-1)
+					return  Integer.MIN_VALUE + ( super.getId() % 1000 ); //;super.getId() * (-1)
 				}
 				
 				@Override
