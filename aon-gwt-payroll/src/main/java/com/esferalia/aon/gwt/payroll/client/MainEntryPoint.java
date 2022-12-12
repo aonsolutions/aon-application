@@ -38,9 +38,6 @@ public class MainEntryPoint implements EntryPoint {
 				.equalsIgnoreCase(Constants.MAIN_AGREEMENT_ENTRY_POINT)) {
 			runAsync( MainAgreement.class, new MainAgreement());
 		} else if (entryPoint
-				.equalsIgnoreCase(Constants.MAIN_AGREEMENT_TAB_ENTRY_POINT)) {
-			runAsync( MainAgreementTab.class, new MainAgreementTab());
-		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_TRASH_ENTRY_POINT)) {
 			runAsync(  MainTrash.class, new MainTrash() );
 		} else if (entryPoint
@@ -114,19 +111,6 @@ public class MainEntryPoint implements EntryPoint {
 			});
 		} else if (name == MainAgreement.class ) {
 			GWT.runAsync(MainAgreement.class, new RunAsyncCallback() {
-				
-				@Override
-				public void onSuccess() {
-					entryPoint.onModuleLoad();;
-				}
-				
-				@Override
-				public void onFailure(Throwable reason) {
-	                Window.alert("Error al cargar");
-				}
-			});
-		} else if (name == MainAgreementTab.class ) {
-			GWT.runAsync(MainAgreementTab.class, new RunAsyncCallback() {
 				
 				@Override
 				public void onSuccess() {

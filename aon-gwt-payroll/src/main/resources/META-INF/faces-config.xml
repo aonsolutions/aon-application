@@ -101,14 +101,6 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	<!-- =================== Main Agreement Tab  ========================== -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_main_tab_agreement</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/agreementTab.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
 	<!-- ===================== Main Trash  ============================ -->
 	<navigation-rule>
 		<navigation-case>

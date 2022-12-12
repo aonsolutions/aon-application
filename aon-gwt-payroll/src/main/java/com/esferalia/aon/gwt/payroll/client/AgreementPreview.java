@@ -1325,7 +1325,7 @@ public abstract class AgreementPreview extends Composite {
 	
 	private void goToAgreement(Integer agreementId) {
 		// TODO: Aqui iria la navegacion a los convenios
-		// MainAgreementTab mainAgreementTab = new MainAgreementTab();
+		// MainAgreement mainAgreementTab = new MainAgreement();
 		// mainAgreementTab.onModuleLoad();
 		// mainAgreementTab.agreements.getAgreementsAndSelectImported(agreementId, s -> {});
 	}
