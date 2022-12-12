@@ -4177,6 +4177,15 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Facturas que afectan a la confecci\u00f3n del modelo {0}")
 	String modelRelatedInvoices(String modelFullName);
+	
+	@DefaultMessage("Se procede a generar un fichero con los datos contables, para poder realizar su importaci\u00F3n en el programa de ayuda de la Agencia Tributaria. \u00BFDesea continuar?")	
+	String confirmAccountingFileMod200();
+	
+	@DefaultMessage("Se procede a generar un fichero con los datos de la declaraci\u00F3n, para poder realizar la presentaci\u00F3n del modelo en la Oficina Virtual de la Agencia Tributaria. \u00BFDesea continuar?")
+	String confirmAeatFileMod200();
+	
+	@DefaultMessage("Se procede a enviar el modelo al Servicio de Validaci\u00F3n y Prueba de Impresi\u00F3n de la Agencia Tributaria. Si la validaci\u00F3n es correcta, se obtendr\u00E1 un borrador PDF de la declaraci\u00F3n. \u00BFDesea continuar?")
+	String confirmAeatPrintMod200();
 
 }
 

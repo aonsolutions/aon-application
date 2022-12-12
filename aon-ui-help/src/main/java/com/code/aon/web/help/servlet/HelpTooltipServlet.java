@@ -31,6 +31,7 @@ public class HelpTooltipServlet extends HttpServlet {
 		files.put("LABORAL Manual de USUARIO", "payroll_names.pdf");
 		files.put("CONTABILIDAD Manual de USUARIO", "account_names.pdf");
 		files.put("FISCAL Manual de USUARIO", "fiscal_names.pdf");
+		files.put("CONFIGURACION Manual de USUARIO", "config_names.pdf");
 
 	}
 

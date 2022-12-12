@@ -23,7 +23,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_O
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDay;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
 import static com.esferalia.aon.watson.server.AonDateUtils.getMonthLastDay;
@@ -158,33 +157,17 @@ public class Bases {
 		}
 	}
 	
-	public static BasesCallback L03BASESCALLBACK = new AddZeroDatoBasesCallback(				
-		"500", // Base de contingencias comunes
-		"509", // Base de contingencias comunes
-		"563", // Compensación IT contingencias comunes
+	public static BasesCallback L03BASESCALLBACK = new BasesCallback() {
+	    public void tramoAdded(net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoAon, net.aonsolutions.core.tgss.creta.jaxb.Tramo<?> tramoCreta, Salary salary) {
+		if ( salary.getSalaryType() != SalaryType.DELAY )
+		    return;
 
-		"601", // Base de Accidentes de Trabajo
-		"611", // Base de Accidentes de Trabajo
-		"603", // Base de Accidentes de Trabajo en situación de IT
-		"613", // Base de Accidentes de Trabajo en situación de IT
-		"663", // Compensación IT AT y EP
-		
-		"535", // Base de contingencias comunes Maternidad Tiempo Parcial
-		"635", // Base AT Maternidad Tiempo Parcial
-		"634", // Base AT Maternidad Tiempo Parcial
-		
-		"536", // Base de contingencias comunes Expediente de Regulación de Empleo Parcial
-		"636", // Base AT Expediente de Regulación de Empleo Parcial
-		"637"  // Base AT Expediente de Regulación de Empleo Parcial
-	) {
-	    public void zeroDato(String var, Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder, Salary salary) {
-		if ( salary.getSalaryType() == SalaryType.DELAY )
-		    super.zeroDato(var, datoSolicitado, tramo, tramoBuilder, salary);
-	    };
-	    
-	    public void unknownDato(Salary salary, net.aonsolutions.core.tgss.creta.jaxb.Trabajador<?> trabajador, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
-		if ( salary.getSalaryType() == SalaryType.DELAY )
-		    super.unknownDato(salary, trabajador, tramo, datoSolicitado, tramoBuilder);
+		for (net.aonsolutions.core.tgss.creta.jaxb.bases.Dato dato : tramoAon.getDatosTramo().getDato()) {
+		    if ( AonStringUtils.notEquals("I", dato.getTipoDato()) ) 
+			return;
+		}
+		// only I54 
+		throw new FilterOut();
 	    };
 	};
 
@@ -202,13 +185,13 @@ public class Bases {
 	    }
 	    
 	    @Override
-	    public void zeroDato(String var, Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder, Salary salary) {
+	    public void zeroDato(String var, Dato datoSolicitado, Tramo<?> tramo, TramoBuilder tramoBuilder, Salary salary) {
 		if ( contains(datoSolicitado ))
 		    addZeroDato(datoSolicitado, tramoBuilder);
 	    }
 	    
 	    @Override
-	    public void noSuchDato(Salary salary, Tramo tramo, Dato datoSolicitado, TramoBuilder tramoBuilder,
+	    public void noSuchDato(Salary salary, Tramo<?> tramo, Dato datoSolicitado, TramoBuilder tramoBuilder,
 	            boolean optional) {
 		if ( contains(datoSolicitado ))
 		    addZeroDato(datoSolicitado, tramoBuilder);
@@ -246,7 +229,7 @@ public class Bases {
 
 
 		@Override
-		public void unknownDato(Salary salary, Trabajador<?> trabajador, Tramo tramo, DatoSolicitado datoSolicitado,
+		public void unknownDato(Salary salary, Trabajador<?> trabajador, Tramo<?> tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder) {
 			if ( !StringUtils.equalsIgnoreCase(codigo, datoSolicitado.getCodigo()))
 				return;
@@ -467,15 +450,6 @@ public class Bases {
 	}
 
 	@SuppressWarnings("serial")
-	private static class NegativeValueException extends ZeroValueException {
-
-		public NegativeValueException(String variable) {
-			super(variable);
-		}
-		
-	}
-
-	@SuppressWarnings("serial")
 	private static class AmbiguousVariableException extends Exception {
 
 		private String values[];
@@ -524,7 +498,7 @@ public class Bases {
 		}
 
 		@Override
-		public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
+		public void add(Salary salary, Tramo<?> tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cbs) {
 			// B -> El código del dato solicitado es obligatorio.
 			// P -> El código del dato solicitado es opcional.
@@ -578,23 +552,28 @@ public class Bases {
 
 		}
 		
+		default void tramoAdded(
+			net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo tramoAon,
+			Tramo<?> tramoCreta, Salary salary) {
+		};
+
 		default void trabajadorFound(
-				Trabajador trabajadorCreta, Salary salary) {
+				Trabajador<?> trabajadorCreta, Salary salary) {
 		};
 
 		default void trabajadorAdded(
 				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
-				Trabajador trabajadorCreta, Salary salary) {
+				Trabajador<?> trabajadorCreta, Salary salary) {
 		};
 
 		default void trabajadorSkipped(
 				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
-				Trabajador trabajadorCreta, Salary salary) {
+				Trabajador<?> trabajadorCreta, Salary salary) {
 		};
 
 		default void trabajadorEmpty(
 				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
-				Trabajador trabajadorCreta, Salary salary) {
+				Trabajador<?> trabajadorCreta, Salary salary) {
 		};
 
 		default void unknownSalary(Salary salary) {
@@ -622,19 +601,19 @@ public class Bases {
 
 		default void unMatchedVariable(Salary salary,
 				String var, ContextData contextData,
-				Dato datoSolicitado, Tramo tramo, TramoBuilder tramoBuilder,
+				Dato datoSolicitado, Tramo<?> tramo, TramoBuilder tramoBuilder,
 				boolean optional) {
 		};
 
 		default void zeroDato(String var, Dato datoSolicitado,
-				Tramo tramo, TramoBuilder tramoBuilder, Salary salary) {
+				Tramo<?> tramo, TramoBuilder tramoBuilder, Salary salary) {
 		};
 
 		default void negativeDato(String var, Double value, Dato datoSolicitado,
-				Tramo tramo, Salary salary) {
+				Tramo<?> tramo, Salary salary) {
 		};
 
-		default void noSuchDato(Salary salary, Tramo tramo, Dato datoSolicitado,
+		default void noSuchDato(Salary salary, Tramo<?> tramo, Dato datoSolicitado,
 				TramoBuilder tramoBuilder, boolean optional) {
 		};
 
@@ -649,15 +628,15 @@ public class Bases {
 				String value) {
 		};
 
-		default void unknownDato(Salary salary, Trabajador<?> trabajador, Tramo tramo,
+		default void unknownDato(Salary salary, Trabajador<?> trabajador, Tramo<?> tramo,
 				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
 		};
 
-		default void defaultDato(Salary salary, Tramo tramo,
+		default void defaultDato(Salary salary, Tramo<?> tramo,
 				Dato dato, TramoBuilder tramoBuilder, String value) {
 		};
 
-		default void defaultDato(Salary salary, Trabajador<?> trabajador, Tramo tramo,
+		default void defaultDato(Salary salary, Trabajador<?> trabajador, Tramo<?> tramo,
 				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder, String value) {
 		};
 
@@ -721,7 +700,7 @@ public class Bases {
 		@Override
 		public void trabajadorAdded(
 				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
-				Trabajador trabajadorCreta, Salary salary) {
+				Trabajador<?> trabajadorCreta, Salary salary) {
 			skip(trabajadorAon, trabajadorCreta);
 		}
 	}
@@ -737,14 +716,9 @@ public class Bases {
 				this.nafs.add(naf);
 		}
 
-		public void add(String... nafs) {
-			for (String naf : nafs)
-				this.nafs.add(naf);
-		}
-
 		@Override
 		public void trabajadorFound(
-				Trabajador trabajadorCreta, Salary salary) {
+				Trabajador<?> trabajadorCreta, Salary salary) {
 			
 			if (!nafs.contains(trabajadorCreta.getNaf())) {
 				throw new FilterOut();
@@ -781,20 +755,20 @@ public class Bases {
 		}
 
 		@Override
-		public void noSuchDato(Salary salary, Tramo tramo, Dato datoSolicitado,
+		public void noSuchDato(Salary salary, Tramo<?> tramo, Dato datoSolicitado,
 				TramoBuilder tramoBuilder, boolean optional) {
 			addDefault(salary, tramo, datoSolicitado, tramoBuilder);
 		}
 
 		@Override
-		public void unknownDato(Salary salary, Trabajador<?> trabajador, Tramo tramo,
+		public void unknownDato(Salary salary, Trabajador<?> trabajador, Tramo<?> tramo,
 				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
 			addDefault(salary, tramo, datoSolicitado, tramoBuilder);
 		}
 
 		// --------------------------------------------------------------------
 
-		private void addDefault(Salary salary, Tramo tramo, Dato datoSolicitado,
+		private void addDefault(Salary salary, Tramo<?> tramo, Dato datoSolicitado,
 				TramoBuilder tramoBuilder) {
 
 			String key = datoSolicitado.getCodigo() + salary.getEmployeeSSNumber();
@@ -860,7 +834,7 @@ public class Bases {
 
 		@Override
 		public void unMatchedVariable(Salary salary, String var,
-				ContextData contextData, Dato datoSolicitado, Tramo tramo,
+				ContextData contextData, Dato datoSolicitado, Tramo<?> tramo,
 				TramoBuilder tramoBuilder, boolean optional) {
 
 			if (Arrays.binarySearch(datos, datoSolicitado.getCodigo()) < 0)
@@ -910,177 +884,6 @@ public class Bases {
 					tramo.getFechaHasta().getDia(),
 					tramo.getFechaHasta().getMes(),
 					tramo.getFechaHasta().getAnho(), total);
-		}
-	}
-
-	private static class Errors implements BasesCallback {
-
-		private static Map<String, String> DESCRIPTIONS_MAP = new HashMap<String, String>() {
-			{
-
-				put("01", "Número de horas realizadas a tiempo parcial");
-				put("02", "Número de horas complementarias");
-
-				put("51", "Modalidad de salario");
-				put("54", "Causa que da lugar a la obligación de cotizar");
-
-				put("500", "Base de contingencias comunes");
-				put("509", "Base de contingencias comunes");
-				put("501", "Base de Horas Extras Fuerza Mayor");
-				put("502", "Base de Otras Horas Extras");
-				put("537", "Base de horas complementarias");
-				put("563", "Compensación IT contingencias comunes");
-
-				put("601", "Base de Accidentes de Trabajo");
-				put("611", "Base de Accidentes de Trabajo");
-				put("603", "Base de Accidentes de Trabajo en situación de IT");
-				put("613", "Base de Accidentes de Trabajo en situación de IT");
-				put("663", "Compensación IT AT y EP");
-				
-				put("535", "Base de contingencias comunes Maternidad Tiempo Parcial");
-				put("635", "Base AT Maternidad Tiempo Parcial");
-				put("634", "Base AT Maternidad Tiempo Parcial");
-				
-				put("536", "Base de contingencias comunes Expediente de Regulación de Empleo Parcial");
-				put("636", "Base AT Expediente de Regulación de Empleo Parcial");
-				put("637", "Base AT Expediente de Regulación de Empleo Parcial");
-				
-				put("300", "Percepciones íntegras Régimen Especial de Artistas");
-
-				put("702", "Base de FOGASA");
-				
-				put("03", "Número de horas de formación teórica presencial");
-				put("04", "Número de horas de formación teórica a distancia");
-				put("04", "Número de horas de tutoría");
-				put("737", "Bonificación tutoría");
-
-			}
-		};
-
-		public void unknownDato(Salary salary, Tramo tramo,
-				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
-			boolean mandatory = "B".equalsIgnoreCase(
-					datoSolicitado.getIndicadorObligatoriedad());
-			System.err.println(String.format("%s: Unknown %s Dato '%s'",
-					mandatory ? "ERROR" : "WARN",
-					mandatory ? "Mandatory" : "Optional",
-					datoSolicitado.getCodigo()));
-		}
-
-		@Override
-		public void salaryNotFound(String ccc, Trabajador trabajador,
-				Periodo mes) {
-			System.err.println(
-					String.format("ERROR : Salary not found for %s (%s/%s)",
-							trabajador.getNaf(), mes.getMes(), mes.getAnho()));
-		}
-
-		@Override
-		public void unknownSalary(Salary salary) {
-			System.err.println(String.format(
-					"WARN: Employee %s (%s), not at Cret@ ",
-					salary.getEmployeeName(), salary.getEmployeeDocument()));
-		}
-
-		@Override
-		public void noSuchVariable(Salary salary, String var,
-				Period p, String right) {
-			System.err.println(String
-					.format("WARN: '%s' (%s) not in salary data", var, right));
-		}
-
-		@Override
-		public void rightVariable(String  var, Period p,
-				String right) {
-			System.err.println(String.format(
-					"INFO: '%s' (%s) right valor at salary data", var, right));
-		}
-
-		@Override
-		public void wrongVariable(Salary salary, String  var,
-				Period p, String right, String wrong) {
-			System.err.println(String.format(
-					"ERROR: '%s' (%s) wrong valor (%s) at salary data", var,
-					right, wrong));
-		}
-
-		@Override
-		public void zeroDato(String  var, Dato datoSolicitado,
-				Tramo tramo, TramoBuilder tramoBuilder, Salary salary) {
-			System.err.println(String.format(
-					"WARN: %s (%s) for %s [%s-%s-%s...%s-%s-%s] is zero",
-					var, datoSolicitado.getCodigo(),
-					salary.getEmployeeName(), tramo.getFechaDesde().getDia(),
-					tramo.getFechaDesde().getMes(),
-					tramo.getFechaDesde().getAnho(),
-					tramo.getFechaHasta().getDia(),
-					tramo.getFechaHasta().getMes(),
-					tramo.getFechaHasta().getAnho()));
-		};
-
-		@Override
-		public void negativeDato(String  var, Double value, Dato datoSolicitado,
-				Tramo tramo, Salary salary) {
-			System.err.println(String.format(
-					"WARN: %s (%s) for %s [%s-%s-%s...%s-%s-%s] is negative %.2f",
-					var, datoSolicitado.getCodigo(),
-					salary.getEmployeeName(), tramo.getFechaDesde().getDia(),
-					tramo.getFechaDesde().getMes(),
-					tramo.getFechaDesde().getAnho(),
-					tramo.getFechaHasta().getDia(),
-					tramo.getFechaHasta().getMes(),
-					tramo.getFechaHasta().getAnho(),
-					value));
-		};
-
-
-		@Override
-		public void noSuchDato(Salary salary, Tramo tramo, Dato datoSolicitado,
-				TramoBuilder tramoBuilder, boolean optional) {
-
-			System.err.println(String.format(
-					"%s: Dato '%s' for %s (%s) [%s-%s-%s...%s-%s-%s] not found",
-					(optional ? "WARN" : "ERROR"), datoSolicitado.getCodigo(),
-					salary.getEmployeeName(), salary.getEmployeeSSNumber(),
-					tramo.getFechaDesde().getDia(),
-					tramo.getFechaDesde().getMes(),
-					tramo.getFechaDesde().getAnho(),
-					tramo.getFechaHasta().getDia(),
-					tramo.getFechaHasta().getMes(),
-					tramo.getFechaHasta().getAnho()));
-		}
-
-		@Override
-		public void unMatchedVariable(Salary salary, String var,
-				ContextData contextData, Dato datoSolicitado, Tramo tramo,
-				TramoBuilder tramoBuilder, boolean optional) {
-			// @formatter:off
-			System.err
-					.println(String
-							.format("ERROR: %s for %s [%3$td-%3$tm-%3$tY...%4$td-%4$tm-%4$tY] not match %5$s [%6$s-%7$s-%8$s...%9$s-%10$s-%11$s]",
-
-							var, salary.getEmployeeName(),
-									contextData.getStartDate(), contextData
-											.getEndDate(),
-
-									datoSolicitado.getCodigo(), tramo
-											.getFechaDesde().getDia(), tramo
-											.getFechaDesde().getMes(), tramo
-											.getFechaDesde().getAnho(), tramo
-											.getFechaHasta().getDia(), tramo
-											.getFechaHasta().getMes(), tramo
-											.getFechaHasta().getAnho()));
-			// @formatter:on
-		}
-
-		@Override
-		public void wrongTrabajadoresTramosIs(InputStream trabajadoresTramosIs,
-				Exception e) {
-			// @formatter:off
-			System.err
-					.println(String
-							.format("ERROR: Fichero de Trabajadores y Tramos no válido " ));
-			// @formatter:on
 		}
 	}
 
@@ -1249,7 +1052,7 @@ public class Bases {
 		
 		@Override
 		public void unMatchedVariable(Salary salary, String var, ContextData contextData, Dato datoSolicitado,
-				Tramo tramo, TramoBuilder tramoBuilder, boolean optional) {
+				Tramo<?> tramo, TramoBuilder tramoBuilder, boolean optional) {
 			unmatched.add(new TrabajadorTramoDato() {{
 					this.ss = salary.getEmployeeSSNumber();
 					this.codigo = datoSolicitado.getCodigo();
@@ -1270,7 +1073,8 @@ public class Bases {
 		}
 		
 		@Override
-		public void negativeDato(String var, Double value, Dato datoSolicitado, Tramo tramo, Salary salary) {
+		public void negativeDato(String var, Double value, Dato datoSolicitado, Tramo<?> tramo, Salary salary) {
+		    	
 			negative.add(new TrabajadorTramoDato() {{
 				this.ss = salary.getEmployeeSSNumber();
 				this.codigo = datoSolicitado.getCodigo();
@@ -1289,7 +1093,7 @@ public class Bases {
 		}
 		
 		@Override
-		public void defaultDato(Salary salary, Trabajador<?> trabajador, Tramo tramo, DatoSolicitado datoSolicitado,
+		public void defaultDato(Salary salary, Trabajador<?> trabajador, Tramo<?> tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, String value) {
 			defau1t.add(new TrabajadorTramoDato() {{
 				this.ss = salary.getEmployeeSSNumber();
@@ -1311,7 +1115,7 @@ public class Bases {
 		@Override
 		public void trabajadorAdded(
 				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
-				Trabajador trabajadorCreta, Salary salary) {
+				Trabajador<?> trabajadorCreta, Salary salary) {
 
 			if (!addedTrabajadorDataMap.containsKey(trabajadorCreta.getNaf()))
 				addedTrabajadorDataMap.put(trabajadorCreta.getNaf(),
@@ -1330,7 +1134,7 @@ public class Bases {
 		@Override
 		public void trabajadorSkipped(
 				net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
-				Trabajador trabajadorCreta, Salary salary) {
+				Trabajador<?> trabajadorCreta, Salary salary) {
 			// skippedTrabajadorList.add(new TrabajadorData(salary
 			// .getEmployeeName(), salary.getEmployeeDocument(), salary
 			// .getEmployeeSSNumber(), trabajadorAon));
@@ -1595,13 +1399,13 @@ public class Bases {
 				throws NoSuchVariableException,
 				UnMatchedVariableException;
 
-		protected abstract void zeroValue(Salary salary, Tramo tramo,
+		protected abstract void zeroValue(Salary salary, Tramo<?> tramo,
 				Dato datoSolicitado, TramoBuilder tramoBuilder,
 				BasesCallback... cbs);
 
 		// CretaData ----------------------------------------------------------
 		@Override
-		public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
+		public void add(Salary salary, Tramo<?> tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cbs) {
 			// B -> El código del dato solicitado es obligatorio.
 			// P -> El código del dato solicitado es opcional.
@@ -1640,7 +1444,7 @@ public class Bases {
 			}
 		}
 		
-		protected Double check(Double value, Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
+		protected Double check(Double value, Salary salary, Tramo<?> tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cbs ) {
 			if (value == 0.00)
 				zeroValue(salary, tramo, datoSolicitado, tramoBuilder, cbs);
@@ -1673,7 +1477,7 @@ public class Bases {
 		}
 
 		@Override
-		protected void zeroValue(Salary salary, Tramo tramo,
+		protected void zeroValue(Salary salary, Tramo<?> tramo,
 				Dato datoSolicitado, TramoBuilder tramoBuilder,
 				BasesCallback... cbs) {
 			for (BasesCallback cb : cbs)
@@ -1733,7 +1537,7 @@ public class Bases {
 		}
 		
 		@Override
-		protected Double check(Double value, Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
+		protected Double check(Double value, Salary salary, Tramo<?> tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cbs) {
  			if ( value < 0.00 ) {
 				negativeValue(value, salary, tramo, datoSolicitado, tramoBuilder, cbs);
@@ -1744,7 +1548,7 @@ public class Bases {
 		}
 		
 
-		protected void negativeValue(Double value, Salary salary, Tramo tramo,
+		protected void negativeValue(Double value, Salary salary, Tramo<?> tramo,
 				Dato datoSolicitado, TramoBuilder tramoBuilder,
 				BasesCallback... cbs) {
 			for (BasesCallback cb : cbs)
@@ -1757,7 +1561,7 @@ public class Bases {
 			super(variable);
 		}
 
-		public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder, BasesCallback[] cbs) {
+		public void add(Salary salary, Tramo<?> tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder, BasesCallback[] cbs) {
 			Fecha desde = tramo.getFechaDesde();
 			Fecha hasta = tramo.getFechaHasta();
 			Period period = new Period(toDate(desde), toDate(hasta));
@@ -1787,7 +1591,7 @@ public class Bases {
 			super(variable);
 		}
 
-		public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder, BasesCallback[] cbs) {
+		public void add(Salary salary, Tramo<?> tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder, BasesCallback[] cbs) {
 			Fecha desde = tramo.getFechaDesde();
 			Fecha hasta = tramo.getFechaHasta();
 			Period period = new Period(toDate(desde), toDate(hasta));
@@ -1922,7 +1726,7 @@ public class Bases {
 		}
 
 		@Override
-		public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
+		public void add(Salary salary, Tramo<?> tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cbs) {
 			try {
 				super.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
@@ -1960,7 +1764,7 @@ public class Bases {
 		}
 
 		@Override
-		protected void zeroValue(Salary salary, Tramo tramo,
+		protected void zeroValue(Salary salary, Tramo<?> tramo,
 				Dato datoSolicitado, TramoBuilder tramoBuilder,
 				BasesCallback... cbs) {
 			// Nothing 'ZeroValueException' .
@@ -1998,7 +1802,7 @@ public class Bases {
 		// AbstractCCretaData -------------------------------------------------
 		
 		@Override
-		public void add(Salary salary, Tramo tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder,
+		public void add(Salary salary, Tramo<?> tramo, DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder,
 				BasesCallback... cbs) {
 			try {
 				super.add(salary, tramo, datoSolicitado, tramoBuilder, cbs);
@@ -2065,7 +1869,7 @@ public class Bases {
 	private static class NonNegativeCompositeCCretaData extends  CompositeCCretaData {
 
 		@Override
-		protected Double check(Double value, Salary salary, Tramo tramo, DatoSolicitado datoSolicitado,
+		protected Double check(Double value, Salary salary, Tramo<?> tramo, DatoSolicitado datoSolicitado,
 				TramoBuilder tramoBuilder, BasesCallback... cbs) {
  			if ( value < 0.00 ) {
 				negativeValue(value, salary, tramo, datoSolicitado, tramoBuilder, cbs);
@@ -2074,7 +1878,7 @@ public class Bases {
 			return super.check(value, salary, tramo, datoSolicitado, tramoBuilder, cbs);
 		}
 		
-		protected void negativeValue(Double value, Salary salary, Tramo tramo,
+		protected void negativeValue(Double value, Salary salary, Tramo<?> tramo,
 				Dato datoSolicitado, TramoBuilder tramoBuilder,
 				BasesCallback... cbs) {
 			for (BasesCallback cb : cbs)  {
@@ -2502,10 +2306,18 @@ public class Bases {
 				
 			}
 			net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo basesTramo = tramoBuilder.create();
-			if ( basesTramo.getDatosTramo().getDato().isEmpty())
+			if ( basesTramo.getDatosTramo().getDato().isEmpty()) {
 				;
-			else 
+			}
+			else {
+			    try {
+				for (BasesCallback cb : cbs)
+					cb.tramoAdded(basesTramo, tramo, salary);
 				trabajadorBuilder.addTramo(basesTramo);
+			    } catch ( FilterOut e ) {
+				
+			    }
+			}
 		}
 		
 
@@ -2921,14 +2733,14 @@ public class Bases {
 
 	}
 
-	private static void skip(
+	private static <D extends Dato> void skip(
 			net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
-			Trabajador trabajadorCreta) {
+			Trabajador<D> trabajadorCreta) {
 
 		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> tramosAon = new ArrayList<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo>(
 				(trabajadorAon.getTramos().getTramo()));
 
-		List<Tramo> tramosCreta = trabajadorCreta.getTramos().getTramo();
+		List<Tramo<D>> tramosCreta = trabajadorCreta.getTramos().getTramo();
 
 		if (tramosAon.size() != tramosCreta.size())
 			return; // Don't skip. Different number of 'tramos'.
