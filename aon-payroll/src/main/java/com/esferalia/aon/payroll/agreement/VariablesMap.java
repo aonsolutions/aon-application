@@ -125,6 +125,7 @@ public class VariablesMap implements Serializable {
 		
 		variablesMap.put("ANTIGUEDAD_1_QUINQUENIO_MENSUAL","ANTIGUEDAD_5");
 		
+		variablesMap.put("ANTIGUEDAD_1_AÑO_DIARIO","ANTIGUEDAD_1");
 		variablesMap.put("ANTIGUEDAD_1_AÑOS_DIARIO","ANTIGUEDAD_1");
 		variablesMap.put("ANTIGUEDAD_2_AÑOS_DIARIO","ANTIGUEDAD_2");
 		variablesMap.put("ANTIGUEDAD_3_AÑOS_DIARIO","ANTIGUEDAD_3");
@@ -904,6 +905,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PAGA_BENEFICIOS_DIARIO", "BENEFICIOS_D");
 		variablesMap.put("PAGA_EXTRA_MENSUAL", "PAGA_EXTRA");
 		variablesMap.put("PAGAS_EXTRA_MENSUAL", "PAGAS_EXTRA_MENSUAL");
+		variablesMap.put("PAGAS_EXTRA__VACACIONES_MENSUAL", "PE_VACACIONES_M");
 		variablesMap.put("PAGAS_EXTRA_VERANO_Y_NAVIDAD_ANUAL", "P_E_VERANO_Y_NAVIDAD_A");
 		variablesMap.put("PAGAS_EXTRA_VERANO_Y_NAVIDAD_MENSUAL", "P_E_VERANO_Y_NAVIDAD_M");
 		variablesMap.put("PAGA_EXTRA_MARZO_MENSUAL", "PAGA_EXTRA_MARZO");
