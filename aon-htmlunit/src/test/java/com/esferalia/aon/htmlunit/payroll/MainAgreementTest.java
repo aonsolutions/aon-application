@@ -42,6 +42,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.javascript.host.event.MouseEvent;
 import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
 
+@Ignore
 public class MainAgreementTest {
 
 
