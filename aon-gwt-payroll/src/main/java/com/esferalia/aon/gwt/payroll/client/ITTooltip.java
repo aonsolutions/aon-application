@@ -222,6 +222,8 @@ public abstract class ITTooltip extends DecoratedPopupPanel {
 				return "Enfermedad com" + String.valueOf("\u00FA") + "n periodo de carencia";
 			case (byte)8:
 				return "Enfermedad com" + String.valueOf("\u00FA") + "n, prestaci" + String.valueOf("\u00F3") + "n profesional (COVID-19)";
+			case (byte)9:
+				return "Periodo de Observaci\u00f3n por Enfermedad Profesional";
 			default:
 				return "-";
 		}
@@ -247,6 +249,8 @@ public abstract class ITTooltip extends DecoratedPopupPanel {
 			return "#FFA500";
 		case (byte)8:
 			return "#E3DC14";
+		case (byte)9:
+			return "#f6788e";
 		default:
 			return "white";
 		}

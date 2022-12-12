@@ -457,9 +457,9 @@ public abstract class ITDialog extends AonCustomDialog {
 		causeLowPart.addItem("Riesgo para el embarazo", "4");
 		causeLowPart.addItem("Riesgo durante la lactancia", "5");
 		causeLowPart.addItem("Accidente no laboral", "6");
-//		causeLowPart.addItem("Enfermedad com\u00Fan periodo de carencia", "7");
-		causeLowPart.addItem("Periodo de Observaci\u00f3n por Enfermedad Profesional", "7");
+		causeLowPart.addItem("Enfermedad com\u00Fan periodo de carencia", "7");
 		causeLowPart.addItem("Enfermedad com\u00Fan, prestaci\u00F3n profesional (COVID-19)", "8");
+		causeLowPart.addItem("Periodo de Observaci\u00f3n por Enfermedad Profesional", "9");
 		
 		causeHighPart.clear();
 		causeHighPart.addItem("-", "-1");
@@ -1410,6 +1410,8 @@ public abstract class ITDialog extends AonCustomDialog {
 				return "ECC";
 			case (byte)8:
 				return "COV";
+			case (byte)9:
+				return "OEP";
 			default:
 				return "-";
 		}

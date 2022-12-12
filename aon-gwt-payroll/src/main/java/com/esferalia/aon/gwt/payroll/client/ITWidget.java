@@ -526,6 +526,8 @@ public abstract class ITWidget extends ResizeComposite {
 				return "Enfermedad com\u00FAn periodo de carencia";
 			case (byte)8:
 				return "Enfermedad com\u00FAn, prestaci\u00F3n profesional (COVID-19)";
+			case (byte)9:
+				return "Periodo de Observaci\u00f3n por Enfermedad Profesional";
 			default:
 				return "";
 		}
@@ -1216,6 +1218,8 @@ public abstract class ITWidget extends ResizeComposite {
 			return "#AA0033";
 		case COMMON_OCCUPATIONAL_DISEASE:
 			return "#E3DC14";
+		case OCCUPATIONAL_DISEASE_OBSERVATION:
+			return "#f6788e";
 		default:
 			return "#FFA500";
 		}
@@ -1239,8 +1243,12 @@ public abstract class ITWidget extends ResizeComposite {
 			return "Enfermedad No Profesional";
 		case (byte) 7:
 			return "Enfermedad Com\u00FAn Periodo de Carencia";
-		default:
+		case (byte) 8:
 			return "Enfermedad Com\u00FAn, Prestaci\u00F3n Profesional (COVID-19)";
+		case (byte) 9:
+			return "Periodo de Observaci\u00f3n por Enfermedad Profesional";
+		default:
+			return "-";
 		}
 	}
 
@@ -1632,6 +1640,11 @@ public abstract class ITWidget extends ResizeComposite {
 		leyend += divFlex;
 		leyend += "<a style=\"width: 13px; height: 13px; background-color: #E3DC14;\" title=\"Enfermedad Com&uacute;n, Prestaci&oacute;n Profesional (COVID-19)\"></a>";
 		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Enfermedad Com&uacute;n, Prestaci&oacute;n Profesional (COVID-19)</a>";
+		leyend += divEnd;
+		
+		leyend += divFlex;
+		leyend += "<a style=\"width: 13px; height: 13px; background-color: #f6788e;\" title=\"Periodo de Observaci&oacute;n por Enfermedad Profesional\"></a>";
+		leyend += "<a style=\"text-decoration: none; color: black; font-weight: bold;\">Periodo de Observaci&oacute;n por Enfermedad Profesional</a>";
 		leyend += divEnd;
 		
 		leyend += divEnd;
