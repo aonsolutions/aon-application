@@ -62,27 +62,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	
 	// ------------------------------------------- UndoManager Listener
 	
-	static class DraftObjectListener implements UndoManager.Listener {
-
-		private TreeItem treeItem;
-		private AgreementDraftObject draftObject;
-
-		public DraftObjectListener(TreeItem treeItem,
-				AgreementDraftObject draftObject) {
-			this.treeItem = treeItem;
-			this.draftObject = draftObject;
-		}
-
-		@Override
-		public void onChange(@SuppressWarnings("rawtypes") UndoManager undoManager) {
-			ImageResource resource = AgreementsTree.getImageResource(
-					draftObject.canUndo(), draftObject.hasErrors(),
-					draftObject.hasWarnings());
-			treeItem.setHTML(AgreementsTree.imageItemSafeHtml(resource,
-					draftObject.getDescription()));
-		}
-
-	}
+	
 	
 	// ------------------------------------------- SettingsContextMenu
 	
