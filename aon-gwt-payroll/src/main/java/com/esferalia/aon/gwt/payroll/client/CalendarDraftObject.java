@@ -63,19 +63,7 @@ public class CalendarDraftObject implements Calendar.Listener {
 	
 	// ----------------------------------------------- ValueComparator
 	
-	static class ValueComparator implements Comparator<Integer> {
-		 
-	    Map<Integer, String> map;
-	 
-	    public ValueComparator(Map<Integer, String> base) {
-	        this.map = base;
-	    }
-
-		@Override
-		public int compare(Integer o1, Integer o2) {
-			return map.get(o2).compareTo(map.get(o1));
-		}
-	}
+	
 	
 	// ----------------------------------------------- Variables
 

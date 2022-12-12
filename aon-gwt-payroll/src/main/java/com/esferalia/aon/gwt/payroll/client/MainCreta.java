@@ -935,9 +935,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 	}
 	protected static abstract class AbstractBaseCretaDetail extends CretaDetail {
 		
-		interface Callback {
-		    void callback() throws Exception;
-		}
+		
 		
 		private TimeTask task ;
 		private DetailPanel detailPanel;

@@ -155,23 +155,7 @@ public class AbstractEventsDraftObject {
 	
 		}
 
-	protected static class ConstantEventMetaData extends EventMetaData {
 	
-			public ConstantEventMetaData(String name, DateField... dateFields) {
-				this(name, null, dateFields);
-			}
-	
-			public ConstantEventMetaData(String name, String description, DateField... dateFields) {
-				this(name, name, description, dateFields);
-			}
-	
-			public ConstantEventMetaData(String name, String label,
-					String description, DateField... dateFields) {
-				super(name, label, description, new EventTextCell(),
-						new EventTextCell(), dateFields);
-			}
-	
-		}
 
 	/**
 		 * A custom {@link Cell} used to render the value of a event {@link Event}

@@ -146,13 +146,7 @@ public abstract class ITWidget extends ResizeComposite {
 		}
 	}
 	
-	class SyncITCommand implements ScheduledCommand {
-
-		@Override
-		public void execute() {
-			onSyncIT();
-		}
-	}
+	
 	
 	class TGSSContextMenu extends ContextMenu {
 		
@@ -769,26 +763,7 @@ public abstract class ITWidget extends ResizeComposite {
     
     // --------------------------------------------------- ContextMenu
 
-	class DeleteContractCommand implements ScheduledCommand {
-		
-		@Override
-		public void execute() {
-			try {
-				popupPanel.hide();	
-				
-				int contractId = data.getContractId(posColumn, posCell);				
-				int leaveId = data.getContractLeaveId(posColumn, posCell);
-				
-				IT it = getIT(leaveId);
-				ITEmployee itEmployee = getITEmployee(contractId);
-				
-				deleteLeave(itEmployee, it);	
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-	}
+	
 	
 	// --------------------------------------------------- OnModuleLoad
 	
