@@ -387,25 +387,7 @@ public abstract class EmployeeDraft extends Composite {
 		}
 	}
 	
-	class MovPrevDeleteCommand implements ScheduledCommand {
-
-		@Override
-		public void execute() {
-			AonDialog dialog = new AonDialog("Movimiento Previo", new HTML("\u00bfDesea realmente eliminar el movimiento previo\u003f"));
-			dialog.confirm(new AonAcceptDialogCallback() {
-				
-				@Override
-				public void onCancel() {
-					// Nothing to do here
-				}
-				
-				@Override
-				public void onAccept() {
-					movPrevDelete();
-				}
-			});
-		}
-	}
+	
 
 	class AltaConsolidadaDeleteCommand implements ScheduledCommand {
 

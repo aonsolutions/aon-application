@@ -606,8 +606,7 @@ public class SalaryDraft extends ResizeComposite
 			extends VariableFactory<T> {
 	}
 
-	static interface VariableChangeHandlerFactory<T extends VariableChangeHandler<?>> extends VariableFactory<T> {
-	}
+	
 
 	static class DefaultEditorFactory implements VariableEditorFactory<TextBox> {
 
@@ -784,74 +783,7 @@ public class SalaryDraft extends ResizeComposite
 		}
 	}
 	
-	static class WorkHoursEditorFactory implements VariableEditorFactory<AllFocusSuggestBox> {
-		
-		private String names [];
-		
-		public WorkHoursEditorFactory(String ...names) {
-			this.names = names;
-		}
-
-		@Override
-		public boolean accept(Variable variable) {
-			
-			for ( String name : names )
-				if ( name.equals(variable.getName()))
-					return true;
-			
-			return false;
-		}
-
-		@Override
-		public AllFocusSuggestBox create(Variable variable) {
-			
-			ExpressionBox textBox = new ExpressionBox();
-			textBox.setMaxLength(EXPRESSION_MAX_LENGTH);
-			
-			MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
-			oracle.add("NO_LABORABLE");
-			
-			
-			AllFocusSuggestBox allFocusSuggestBox = new AllFocusSuggestBox(oracle, textBox){
-				
-				@Override
-				public void setValue(String value) {
-					setText(value);
-				}
-
-				@Override
-				public void setText(String text) {
-					if ( text == null ) {
-						text = "NO_LABORABLE";
-						super.setText(text);
-						return;
-					}
-					
-					Double d = null ;
-					try {
-							d = Double.parseDouble(text);
-					} catch ( NullPointerException | NumberFormatException ne){
-						try {
-							d = SalaryDraft.parse(text);
-						} catch ( NullPointerException | NumberFormatException n3){
-						}
-					}
-
-					if ( AonNumberUtils.equals(d, -1.00))
-						text = "NO_LABORABLE";
-					
-					super.setText(text);
-				}
-				
-			};
-			
-			allFocusSuggestBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
-			
-			return allFocusSuggestBox;
-			
-		}
-
-	}
+	
 
 	static class DateEditorFactory<E extends Enum<?> & HasDescription> implements VariableEditorFactory<TextDateBox> {
 
@@ -877,48 +809,7 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
-	static class DaysEditorFactory<E extends Enum<?> & HasDescription> implements VariableEditorFactory<TextListBox> {
-
-		private String name;
-
-		public DaysEditorFactory(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public boolean accept(Variable variable) {
-			return name.equals(variable.getName());
-		}
-
-		@Override
-		public TextListBox create(Variable variable) {
-			TextListBox textListBox = new TextListBox() {
-				@Override
-				public String getValue() {
-					return getValue(getSelectedIndex());
-				}
-
-			};
-
-			int lastDay = DateUtils.getLastDayOfMonth(variable.getStartDate()).getDate();
-			textListBox.addItem(String.valueOf(lastDay), String.valueOf(lastDay));
-
-			textListBox.addItem("30", "30");
-
-			try {
-				int value = Integer.valueOf(variable.getValue().toString());
-				if (value != 30 && value != lastDay)
-					textListBox.addItem(variable.getValue().toString(), variable.getValue().toString());
-			} catch (Exception e) {
-
-			}
-
-			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
-
-			return textListBox;
-		}
-
-	}
+	
 
 	static class MonthDaysEditorFactory<E extends Enum<?> & HasDescription>
 			implements VariableEditorFactory<TextListBox> {
@@ -1184,34 +1075,7 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 
-	static class EnumIntListBoxFactory<E extends Enum<?> & HasDescription>
-			implements VariableEditorFactory<TextListBox> {
-
-		private String name;
-		private Class<E> enunn;
-
-		public EnumIntListBoxFactory(String name, Class<E> enunn) {
-			this.name = name;
-			this.enunn = enunn;
-		}
-
-		@Override
-		public boolean accept(Variable variable) {
-			return name.equals(variable.getName());
-		}
-
-		@Override
-		public TextListBox create(Variable variable) {
-			TextListBox textListBox = new TextListBox();
-			for (E e : enunn.getEnumConstants())
-				textListBox.addItem(e.getDescription(), e.name());
-
-			textListBox.ensureDebugId("editor-" + variable.getName().toLowerCase());
-			
-			return textListBox;
-		}
-
-	}
+	
 
 	static class BooleanEditorFactory implements VariableEditorFactory<TextListBox> {
 

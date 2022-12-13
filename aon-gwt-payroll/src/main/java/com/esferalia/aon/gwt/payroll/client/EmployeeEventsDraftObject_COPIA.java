@@ -46,13 +46,7 @@ public class EmployeeEventsDraftObject_COPIA extends AbstractEventsDraftObject {
 
 	}
 
-	static interface CopyCallback {
-
-		void onCopySucces();
-
-		void onCopyFailure(Throwable throwable);
-
-	}
+	
 
 	static interface Listener {
 		void onEventAdded(Event event);

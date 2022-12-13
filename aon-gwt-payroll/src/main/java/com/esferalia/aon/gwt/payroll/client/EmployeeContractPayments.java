@@ -66,10 +66,7 @@ public class EmployeeContractPayments extends Composite {
 	
 	static class ContractConceptCalcTypeCell extends AbstractCell<String> {
 	   
-		interface Templates extends SafeHtmlTemplates {
-	      @SafeHtmlTemplates.Template("<div style=\"{0}\">{1}</div>")
-	      SafeHtml cell(SafeStyles styles, SafeHtml value);
-	    }
+		
 	    
 	    @Override
 	    public void render(Context context, String value, SafeHtmlBuilder sb) {

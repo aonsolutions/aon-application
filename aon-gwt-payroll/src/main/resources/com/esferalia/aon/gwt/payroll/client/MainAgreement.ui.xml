@@ -4,31 +4,99 @@
 	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:commonsolutions='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources" />
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainAgreement.MyStyle">
 	
-	.stackHeader {
-	  padding: .7em .5em .7em .6em;
-	  
-	}
-
-	@sprite .agreementIcon {
-	     gwt-image: 'agreementgroup';
-	     float: left;
-	     padding-left: 5px;
-	}
+		.stackHeader {
+		  padding: .7em .5em .7em .6em;
+		  
+		}
 	
-	.borderR{
-		border-right: 1px solid #ddd;
-	}
-	
-	.cmdBtn{
-		background-position: center left;
-		background-repeat: no-repeat;
-		padding-left: 25px !important;
-		background-size: contain;
-	}
+		@sprite .agreementIcon {
+		     gwt-image: 'agreementgroup';
+		     float: left;
+		     padding-left: 5px;
+		}
+		
+		.borderR{
+			border-right: 1px solid #ddd;
+		}
+		
+		.cmdBtn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
+		}
+			
+		.flexColumn {
+			display: flex;
+			flex-direction: column;
+		}
+		
+		.flex {
+			display: flex;
+			gap: 1rem;
+			margin: .5rem 1rem;
+		}
+		
+		.dialogGlass {
+			z-index: 7;
+			background-color: #000;
+			opacity: 0.2;
+			filter: opacity(45%);
+		}
+		
+		.dialogZIndex {
+			z-index: 8;
+		}
+		
+		.message {
+			font-weight: bold;
+			text-transform: uppercase;
+			margin-top: 1rem;
+		}
+		
+		.tabPanel {
+			margin: 0 1rem;
+		}
 	 
+		.heigthAll {height: 100%;}
+	
+		.widthAll {width: 100%;}
+		
+		.tabSelected {
+			color: #000;
+			cursor: default;
+			background: none;
+			padding: 4px 8px;
+			border-top: none;
+			border-left: none;
+			border-right: none;
+			border-bottom: 2px solid #2152a5;
+			font-weight: bold;
+		}
+		
+		.tabNotSelected {
+			cursor: pointer;
+			color: #4b4b4b;
+			background: none;
+			padding: 4px 8px;
+			border-top: none;
+			border-left: none;
+			border-right: none;
+			border-bottom: 2px solid #fff;
+		}
+		
+		.flexCenter {
+			display: flex;
+			justify-content: center;
+			margin-bottom: 2rem;
+		}
+		
+		.positionUnset {position: unset !important;}
+	
 	</ui:style>
 
 	<ui:image field='agreementgroup' src='agreementgroup.png' />
@@ -43,20 +111,32 @@
 				<aon:Agreements debugId="agreements" ui:field='agreements' />
 			</g:west>
 			<g:center>
-				<g:DockLayoutPanel ui:field="containerLayoutPanel" unit="PX">
-					<g:center>
-						<g:SimpleLayoutPanel>
-							<aon:AgreementDraft debugId="agreementDraft" ui:field="agreementDraft" />
-						</g:SimpleLayoutPanel>
-					</g:center>
-				</g:DockLayoutPanel>
+				<g:HTMLPanel styleName="{style.flexColumn}">
+					<g:HTMLPanel ui:field="messagePanel" />
+					<g:HTMLPanel ui:field="agreementContainer" styleName="{style.flexColumn}"> 
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:Label text="Convenio" ui:field="agreementTab" />
+							<g:Label text="Nivel / Categoría" ui:field="levelTab" />
+							<g:Label text="Tabla Salarial" ui:field="salaryTableTab" />
+							<g:Label text="Devengos" ui:field="paymentTab" />
+						</g:HTMLPanel>
+						<g:DeckPanel ui:field="mainDeckPanel">
+							<aon:AgreementPreview debugId="agreementPreview" ui:field="agreementPreview" />
+							<aon:AgreementLevelTab debugId="agreementLevelTab" ui:field="agreementLevelTab" />
+							<aon:AgreementSalaryTableTab debugId="agreementSalaryTableTab" ui:field="agreementSalaryTableTab" />
+							<aon:AgreementPaymentTab debugId="agreementPaymentTab" ui:field="agreementPaymentTab" />
+						</g:DeckPanel>
+					</g:HTMLPanel>
+					<!-- AGREEMENT SELECT LABEL -->
+					<g:HTMLPanel ui:field="agreementMessage" styleName="{style.flexCenter}">
+						<g:Label text="SELECCIONE UN CONVENIO PARA SER VISUALIZADO" styleName="{style.message}" />
+					</g:HTMLPanel>
+				</g:HTMLPanel>
 			</g:center>
 		</g:DockLayoutPanel>
 		
 		<aon:MainTrashAgreement debugId="mainTrashAgreement" ui:field='mainTrashAgreement' />
 	
 	</g:DeckPanel>
-
-	
 
 </ui:UiBinder>

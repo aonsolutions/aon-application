@@ -462,15 +462,7 @@ public abstract class CretaDetail extends Composite {
 		}
 	}
 	
-	class DclButtonCommand implements ScheduledCommand {
-		
-		@Override
-		public void execute() {
-			fileUpload.setName(DOCUMENTO_CALCULO_LIQUIDACION.name());
-			formPanel.setAction(CRETA_URL + '/' +DOCUMENTO_CALCULO_LIQUIDACION.name());
-			fileUpload.click();
-		}
-	}
+	
 	
 	// Comunicaciones
 	

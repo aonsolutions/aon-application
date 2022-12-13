@@ -845,23 +845,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 		new TooltipController(tooltip, "UPDATE");
 	}
 
-	class EmployeeContextMenu extends ContextMenu {
-
-		AddContractCommand addContract;
-
-		public EmployeeContextMenu() {
-
-			MenuBar popupMenuBar = new MenuBar(true);
-
-			MenuItem add = addItem("Nuevo Contrato",
-					addContract = new AddContractCommand(), AON.AON_ICON_RESET,
-					AON.AON_ICON_CMD_BUTTON);
-
-			popupMenuBar.addItem(add);
-			popupMenuBar.setVisible(true);
-			popupPanel.add(popupMenuBar);
-		}
-	}
+	
 
 	class AddContractCommand implements ScheduledCommand {
 

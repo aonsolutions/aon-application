@@ -261,7 +261,7 @@ public class Up2Date {
     		//AlterAgreement4Log.ALTERAGREEMENTLOG,
     		//RealDecreeLaw322021Art151Fix.REALDECREELAW322021ART151FIX,
     		//FellowsITIMS2022UpdateII.FELLOWSITIMS2022UPDATEII,
-	   		//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE,
+	   	//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE,
     		//AgriculturalMonthlyQuote2022Fix.AGRICULTURALMONTHLYQUOTE2022FIX,
     		//ContractTransfromUnify.CONTRACTTRANSFORMUNIFY,
     		//AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT,
@@ -293,13 +293,13 @@ public class Up2Date {
     		//RefreshMod390HFResult.REFRESH_MOD390_RESULT,
     		//AlterRbankAddRequisition.ALTER_RBANK_ADD_REQUISITION,
     		//AlterRbankAddSepaMandateRef.ALTER_RBANK_ADD_SEPA_MANDATE_REF,
-    		Holidays2023Insert.HOLIDAYS2023INSERT,
-    		AgreementPaymentsConceptFix.AGREEMENTPAYMENTSCONCEPTFIX,
-    		DeathOfEmployeeInsert.DEATHOFEMPLOYEEINSERT,
-    		AlterAgreementPaymentDescription.ALTERAGREEMENTPAYMENTDESCRIPTION,
-    		UpdateInvoiceRegistryDocument.UPDATE_INVOICE_REGISTRY_DOCUMENT,
+    		//Holidays2023Insert.HOLIDAYS2023INSERT,
+    		//AgreementPaymentsConceptFix.AGREEMENTPAYMENTSCONCEPTFIX,
+    		//DeathOfEmployeeInsert.DEATHOFEMPLOYEEINSERT,
+    		//AlterAgreementPaymentDescription.ALTERAGREEMENTPAYMENTDESCRIPTION,
+    		//UpdateInvoiceRegistryDocument.UPDATE_INVOICE_REGISTRY_DOCUMENT,
 
-        // Important, not remove
+	    	// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
     };
 
