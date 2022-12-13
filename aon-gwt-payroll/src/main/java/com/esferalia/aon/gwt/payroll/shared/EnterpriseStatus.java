@@ -158,22 +158,7 @@ public abstract class EnterpriseStatus implements Serializable {
 		
 	}
 
-	public static class UnknownError extends EnterpriseStatus{
 		
-		private String message;
-		
-		public String getMessage() {
-			return message;
-		}
-		
-		
-		
-
-		@Override
-		public void visit(Visitor visitor) {
-			visitor.unknownError(message);
-		}
-	}	
 	
 	
 	//----------NEW

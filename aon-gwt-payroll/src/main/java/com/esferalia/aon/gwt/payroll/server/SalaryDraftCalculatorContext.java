@@ -272,33 +272,7 @@ public class SalaryDraftCalculatorContext<T extends SQLContractSalaryCalculatorC
 		}
 	}
 
-	class DraftDeferredExpressionVariable extends DeferredExpressionVariable {
-
-		public DraftDeferredExpressionVariable(ExpressionContext ctx,
-				IExpression expression, Date start, Date end) {
-			super(ctx, expression, start, end);
-		}
-
-		@Override
-		public Object getValue(Period period) {
-			try {
-				return super.getValue(period);
-			} catch (ExpressionExceptionWrapper wrapper) {
-				try {
-					throw wrapper.getExpressionException();
-				} catch (UndefinedVariablesException e) {
-					onUndefinedData(getExpression(), e.getMessage(),
-							getPeriod().getStart(), getPeriod().getEnd(),
-							e.getVariableNames());
-					throw new ExpressionExceptionWrapper(
-							new UndefinedVariablesException(getExpression()
-									.getName()));
-				} catch (ExpressionException e) {
-					throw wrapper;
-				}
-			}
-		}
-	}
+	
 
 	class DelegateListener implements IListener {
 		
