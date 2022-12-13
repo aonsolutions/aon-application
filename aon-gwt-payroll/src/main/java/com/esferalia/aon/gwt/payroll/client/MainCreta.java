@@ -1163,14 +1163,14 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 
 				try {
 					CretaService.File file = CretaService.File.valueOf(jsFile.getName());
-					filesEditor.add(fileEditor, file.getFilename(), AON.AON_ICON_SEGSOCIAL_SMALL);
+					filesEditor.add(fileEditor, file.getFilename(), 
+						file == CretaService.File.BASES ? AON.AON_BOLD : AON.AON_ICON_SEGSOCIAL_SMALL);
 				} catch (Exception e) {
 					String name = jsFile.getFile().indexOf("TrabajadoresTramos") >= 0
 							? CretaService.File.TRABAJADORES_TRAMOS.getFilename()
 							: CretaService.File.RESPUESTA.getFilename();
 					filesEditor.add(fileEditor, name, AON.AON_ICON_SEGSOCIAL_SMALL);
 				}
-
 				fileEditor.autoRefresh();
 			}
 
