@@ -18,6 +18,7 @@ public abstract class EnterpriseITStatus implements Serializable {
 		void credentialsNotFound();
 		void itNotExist(ItNotExist itNotExist);
 		void onFinish();
+		void unknownErrorAnd(String message);
 	}
 
 
@@ -74,16 +75,32 @@ public abstract class EnterpriseITStatus implements Serializable {
 		}
 	}		
 	
+    public static class unknownErrorAnd extends AndEmployeeITStatus{
+        private String message;
+        
+        public String getMessage() {
+            return message;
+        }
+        
+        public unknownErrorAnd setMessage(String message) {
+            this.message = message;
+            return this;
+        }
+
+        @Override
+        public void visit(Visitor visitor) {
+            visitor.unknownErrorAnd(message);
+            super.visit(visitor);
+        }
+     }       
+	    
+	
+	
 	public static class ItNotExist extends AndEmployeeITStatus{
 		
 		EmployeeIT employeeIT;
 		EmployeeITPart employeeITPart;
-//		Double base;
-//		Integer quoteDays;
-//		Byte contracTypeLeave;
-//		Byte contractType; // 0 = FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL, 1 = RESTO_Y_AUTONOMOS;
-		
-		
+
 		public ItNotExist setEmployeeIT(EmployeeIT employeeIT) {
 			this.employeeIT = employeeIT;
 			return this;
@@ -206,6 +223,11 @@ public abstract class EnterpriseITStatus implements Serializable {
 			public void onFinish() {
 				enable.run();
 			}
+
+            @Override
+            public void unknownErrorAnd(String message) {
+                disabled.run();
+            }
 		});
 	}
 
@@ -239,6 +261,11 @@ public abstract class EnterpriseITStatus implements Serializable {
 			}
 
 			@Override public void onFinish() {}
+
+            @Override
+            public void unknownErrorAnd(String message) {
+                onError.run();
+            }
 		});
 	}
 
@@ -271,6 +298,11 @@ public abstract class EnterpriseITStatus implements Serializable {
 			}
 
 			@Override public void onFinish() {}
+
+            @Override
+            public void unknownErrorAnd(String message) {
+                System.out.println("unknownErrorAnd");
+            }
 		});
 		return status;
 	}
@@ -298,6 +330,11 @@ public abstract class EnterpriseITStatus implements Serializable {
 			}
 
 			@Override public void onFinish() {}
+
+            @Override
+            public void unknownErrorAnd(String message) {
+                throw new OutOfDateException();
+            }
 		});
 		return status;
 	}
@@ -324,6 +361,11 @@ public abstract class EnterpriseITStatus implements Serializable {
 				throw new OutOfDateException();
 			}
 			@Override public void onFinish() {}
+
+            @Override
+            public void unknownErrorAnd(String message) {
+                throw new OutOfDateException();
+            }
 		});
 		return status;
 	}
