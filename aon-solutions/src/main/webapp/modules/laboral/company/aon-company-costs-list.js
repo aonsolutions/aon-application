@@ -63,9 +63,7 @@ export class AonCompanyCostsList extends AonElement {
   initialize() {
     this.id = this.id || PAYROLL_VIEWS.AON_COMPANY_COSTS_LIST;
     this.TABLE_ID = this.id + "Table";
-    this.applicationEl = this.getApplication();
-    this.applicationParentEl = this.getApplicationParent();
-    this.applicationEl.addToolbarTitle(MSG.COMPANY_COSTS);
+    this.getApplication().addToolbarTitle(MSG.COMPANY_COSTS);
   }
 
   async build() {
@@ -74,16 +72,18 @@ export class AonCompanyCostsList extends AonElement {
   }
 
   buildToolbar() {
-    this.applicationEl.removeToolbarOptions();
-    if(!this.isMobile())this.applicationEl.addToolbarOption2(SigninSidenav.EXCEL, () =>this.getCompanyCostsExcel());
+    this.getApplication().removeToolbarOptions();
+    if(!this.isMobile()){
+      this.getApplication().addToolbarOption2(SigninSidenav.EXCEL, () =>this.getCompanyCostsExcel());
+    }
     this.buildToolbarSearch();
   }
 
   buildToolbarSearch(){
-    let btnSearch = this.applicationEl.addSearchOption();
+    let btnSearch = this.getApplication().addSearchOption();
     btnSearch.disabled = true;
     const searchValueFn = ({detail})=>{
-      if(detail) this.applicationParentEl.setDataFilter(detail);
+      if(detail) this.getApplicationParent().setDataFilter(detail);
     }
 
     btnSearch.addEventListener(EVENT.SEARCH_NEW, searchValueFn);
@@ -122,10 +122,10 @@ export class AonCompanyCostsList extends AonElement {
   }
 
   async getTable() {
-    this.applicationEl = await waitEl("#"+this.applicationEl.id);
-    this.applicationEl.startLoader();
+    await waitEl("#"+this.getApplication().id);
+    this.getApplication().startLoader();
     await this.paintPieChar();
-    this.applicationEl.stopLoader();
+    this.getApplication().stopLoader();
   }
 
   async paintPieChar() {
@@ -204,18 +204,18 @@ export class AonCompanyCostsList extends AonElement {
   }
 
   async getData() {
-    this.applicationEl.startLoader();
+    this.getApplication().startLoader();
     let data = [];
     try {
       let filter = null;
-      try {filter = {...this.applicationParentEl._filter};} catch (error) {}
+      try {filter = {...this.getApplicationParent()._filter};} catch (error) {}
       let datos = await getCompanyCosts(filter);
       if (!isEmptyObject(datos)) {
         if(datos[0] && datos[0].startDate){
           this.changeFilterTime({startDate: datos[0].startDate,endDate: datos[0].endDate, value:"personalized"});
         }
         sortBy(datos, "employee", "asc").map((resp) => {
-          const lettersType = this.applicationParentEl.getTypeSalaryText(
+          const lettersType = this.getApplicationParent().getTypeSalaryText(
             resp.salaryType
           );
           const lettersHtml = `<div class="profile-letters ${lettersType.color}">${lettersType.typeReduce}</div>`;
@@ -234,21 +234,21 @@ export class AonCompanyCostsList extends AonElement {
     } catch (e) {
       console.log(e);
     }
-    this.applicationParentEl.changeFilter();
-    this.applicationEl.stopLoader();
+    this.getApplicationParent().changeFilter();
+    this.getApplication().stopLoader();
     return data;
   }
 
   changeFilterTime(obj = undefined){
     const value = !obj ? getPeriodLaboral("last_month") : obj;
-    this.applicationParentEl._filter = {period:value.value, startDate:value.startDate,endDate: value.endDate};
+    this.getApplicationParent()._filter = {period:value.value, startDate:value.startDate,endDate: value.endDate};
   }
 
   async getCompanyCostsExcel() {
-    let filter = this.applicationParentEl._filter;
-    this.applicationEl.startLoading();
+    let filter = this.getApplicationParent()._filter;
+    this.getApplication().startLoading();
     await getCompanyCostsExcel({ ...filter }).catch(e=>this.showToast(e));
-    this.applicationEl.stopLoading();
+    this.getApplication().stopLoading();
   }
 }
 

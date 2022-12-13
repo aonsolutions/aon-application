@@ -521,6 +521,10 @@ public class SistemaREDITResults extends Composite implements RequiresResize, En
 	private static native <T extends JavaScriptObject> T eval(String javascript)
 	/*-{
 		return eval(javascript);
-	}-*/;	
-	
+	}-*/;
+
+    @Override
+    public void unknownErrorAnd(String message) {
+        unknownError(message);
+    }
 }

@@ -705,7 +705,7 @@ class SistemaREDITParts {
 			if(element.isPresent()) {
 				htmlPage = ((HtmlAnchor)element.get()).click();
 			} else {				
-				throw new SegSocialException("Sin permisos para ver esta opci\\u00f3n en TGSS");
+				throw new SegSocialException("Sin permisos para ver esta opci\u00f3n en TGSS");
 			}
 
 			htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=C").click();

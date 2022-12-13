@@ -49,8 +49,6 @@ export class AonAltaDirecta extends AonElement {
         this.ACTION = 'CREATE';
         this.id = this.id || PAYROLL_VIEWS.AON_ALTA_DIRECTA;
         this.TOOLBAR = this.id + 'Toolbar';
-        this.applicationEl = this.getApplication();
-        this.applicationParentEl = this.getApplicationParent();
         this.APP_PARAMS = [];
     }
 
@@ -75,7 +73,7 @@ export class AonAltaDirecta extends AonElement {
 
 
     paintView() {
-        this.applicationEl.removeToolbarOptions();
+        this.getApplication().removeToolbarOptions();
 
         const toolbar = CreateComponent.createAonToolbar({ id:this.TOOLBAR, type:ToolbarType.SECONDARY, title:"Alta Directa1"});
         this.appendChild(toolbar);
@@ -122,8 +120,8 @@ export class AonAltaDirecta extends AonElement {
             toolbar.addButton2(ACTION_COMUNICA.COMUNICAR, () =>  this.formSubmit());
         }
 
-        if(this.data && this.data.fra && this.applicationParentEl.anularCondition(this.data.situation, this.data.fra)){
-            toolbar.addButton2(CONTRACT_OPTIONS.DELETE, (e) => this.applicationParentEl.deleteMov(this.data, e));
+        if(this.data && this.data.fra && this.getApplicationParent().anularCondition(this.data.situation, this.data.fra)){
+            toolbar.addButton2(CONTRACT_OPTIONS.DELETE, (e) => this.getApplicationParent().deleteMov(this.data, e));
         }
     
         toolbar.addButton2(ACTION_COMUNICA.BACK, () => this.back());
@@ -570,7 +568,7 @@ export class AonAltaDirecta extends AonElement {
     }
 
     formSubmit() {
-        this.applicationEl.confirmDialog(MSG.COMMUNICATE, MSG.COMMUNICATE_CONFIRM, () => {
+        this.getApplication().confirmDialog(MSG.COMMUNICATE, MSG.COMMUNICATE_CONFIRM, () => {
             switch (this.ACTION) {
                 case "CREATE":
                     this.alta();
@@ -588,11 +586,11 @@ export class AonAltaDirecta extends AonElement {
     }
 
     async alta() {
-        this.applicationEl.startLoading();
+        this.getApplication().startLoading();
         try {
             const resp = await sendAlta(this.getContract());
 
-            this.applicationParentEl._movements = [];
+            this.getApplicationParent()._movements = [];
             this.showToast({ message: MSG.PROCESSED_MOVEMENT, type: CONSTANT.SUCCESS, delay: 3000 });
 
             if(resp && resp.file){
@@ -603,11 +601,11 @@ export class AonAltaDirecta extends AonElement {
         } catch (error) {
             this.showToast(error);
         }
-        this.applicationEl.stopLoading();
+        this.getApplication().stopLoading();
     }
 
     async baja(){
-        this.applicationEl.startLoading();
+        this.getApplication().startLoading();
         try {
             const fechaBajaEl = this.getElement("fechaBaja");
             const codBajaEl = this.getElement("codBaja");
@@ -623,10 +621,10 @@ export class AonAltaDirecta extends AonElement {
 
             const resp = await sendBaja(params);
 
-            this.applicationParentEl._movements = [];
+            this.getApplicationParent()._movements = [];
             this.showToast({ message: MSG.PROCESSED_MOVEMENT_BJ, type: CONSTANT.SUCCESS, delay: 3000 });
 
-            this.applicationEl.getOptionDialog().close();
+            this.getApplication().getOptionDialog().close();
 
             if(resp && resp.file){
                 openFileBase64(resp.file, "application/pdf").catch(console.error);
@@ -638,13 +636,13 @@ export class AonAltaDirecta extends AonElement {
         } catch (error) {
             this.showToast(error);
         }
-        this.applicationEl.stopLoading();
+        this.getApplication().stopLoading();
 
         return false;
     }
 
     async update() {
-        this.applicationEl.startLoading();
+        this.getApplication().startLoading();
         let cto_new = this.getContract();
         const cto_old = this._contract;
         for (const property in cto_new) 
@@ -658,18 +656,18 @@ export class AonAltaDirecta extends AonElement {
                 message = resp.errors.join(".");
             else if(resp.contract_edit === true) {
                 message = MSG.UPDATED_CONTRACT;
-                this.applicationParentEl._movements = [];
+                this.getApplicationParent()._movements = [];
             } 
 
             this.showToast({ message, delay: 4500 });
         } catch (error) {
             this.showToast(error);
         }
-        this.applicationEl.stopLoading();
+        this.getApplication().stopLoading();
     }
 
     back() {
-        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
+        this.getApplicationParent().showView(PAYROLL_VIEWS.AON_MOVEMENTS_LIST);
     }
 
     async getNaf() {
@@ -799,13 +797,13 @@ export class AonAltaDirecta extends AonElement {
         //---IDC
         moreActions.push({
             ...CONTRACT_OPTIONS.IDC,
-            fn: () =>  this.applicationParentEl.getIdc(this.data)
+            fn: () =>  this.getApplicationParent().getIdc(this.data)
         });
 
         //----TA
         moreActions.push({
             ...CONTRACT_OPTIONS.TA,
-            fn: () =>  this.applicationParentEl.getTa(this.data)
+            fn: () =>  this.getApplicationParent().getTa(this.data)
         });
 
         d.setMenuOptions(moreActions, top, left);
@@ -813,7 +811,7 @@ export class AonAltaDirecta extends AonElement {
     }
 
     duplicateMov(){
-        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, {...this.data, fra:null, status:null, situation:"AL"}).then(el=>
+        this.getApplicationParent().showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, {...this.data, fra:null, status:null, situation:"AL"}).then(el=>
             disabledForm(`${el.id}TrabajadorCard`)
         );
     }
@@ -851,7 +849,7 @@ export class AonAltaDirecta extends AonElement {
     }
 
     isManager(){
-        let dur = this.applicationParentEl.getDur();
+        let dur = this.getApplicationParent().getDur();
         return dur.isComunicaManager() || dur.isSaltraManager();
     }
 

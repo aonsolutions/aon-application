@@ -33,8 +33,6 @@ export class AonContractList extends AonElement {
     super();
     this.id = this.id || PAYROLL_VIEWS.AON_CONTRACT_LIST;
     this.TABLE_ID = this.id + "Table";
-    this.applicationEl = this.getApplication();
-    this.applicationParentEl = this.getApplicationParent();
     this._filter = {
       contractAll: false 
     };
@@ -57,14 +55,14 @@ export class AonContractList extends AonElement {
   }
 
   buildToobar() {
-    this.applicationEl.removeToolbarOptions();
-    this.applicationEl.addToolbarTitle("Contratos");
+    this.getApplication().removeToolbarOptions();
+    this.getApplication().addToolbarTitle("Contratos");
     this.buildToolbarSearch();
     
   }
 
   buildToolbarSearch(){
-    const btnSearch = this.applicationEl.addSearchOption();
+    const btnSearch = this.getApplication().addSearchOption();
     btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
     btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail:{contractAll, search}})=>{
       this._list = [];
@@ -84,10 +82,10 @@ export class AonContractList extends AonElement {
 
 
   async getTable(){
-    this.applicationEl.startLoader();
+    this.getApplication().startLoader();
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();
-    this.applicationEl.stopLoader();
+    this.getApplication().stopLoader();
   }
 
 
@@ -153,13 +151,13 @@ export class AonContractList extends AonElement {
 
     options.push({
       ...CONTRACT_OPTIONS.TA,
-      fn: (el) => this.applicationParentEl.getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.naf, fra:res.startDate, frb:res.endDate }, el)
+      fn: (el) => this.getApplicationParent().getTa({ regime:res.regime, ctaCti: res.ctaCti, nss:res.naf, fra:res.startDate, frb:res.endDate }, el)
     });
     
     if(!prev){
       options.push({
         ...CONTRACT_OPTIONS.IDC,
-        fn: (el) => this.applicationParentEl.getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.naf, fra:res.startDate }, el)
+        fn: (el) => this.getApplicationParent().getIdc({ regime:res.regime, ctaCti: res.ctaCti, nss:res.naf, fra:res.startDate }, el)
       });
     }
 
@@ -201,14 +199,14 @@ export class AonContractList extends AonElement {
   }
 
   async getContratoPdf(data) {
-    this.applicationEl.startLoading();
+    this.getApplication().startLoading();
     try {
       const { ipf, startDate } = data;
       await getContractSepe({ ipf, startDate });
     } catch (error) {
       this.showToast(error);
 		}
-    this.applicationEl.stopLoading();
+    this.getApplication().stopLoading();
   }
 }
 window.customElements.define("aon-contract-list", AonContractList);

@@ -12,6 +12,7 @@ import static solutions.aon.seg.social.toolkit.Toolkit.parseDate;
 import static solutions.aon.seg.social.toolkit.Toolkit.removeExtraZeros;
 import static solutions.aon.seg.social.toolkit.Toolkit.splitStringMultiple;
 import static solutions.aon.seg.social.toolkit.Toolkit.verifyData;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,11 +20,14 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
@@ -33,11 +37,12 @@ import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
-import solutions.aon.seg.social.exception.RevokedCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
+import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.NoQueryData;
 import solutions.aon.seg.social.object.Employee;
@@ -46,7 +51,11 @@ import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDEmployee {
-
+	
+	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
+	
+	private static final String FORMAT_DATE_ES = "dd/MM/yyyy";
+	
 	// GETS BOTH REAL AND PREVIUS EMPLOYEES
 	public static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String regimen, String ccc)
@@ -80,8 +89,7 @@ class SistemaREDEmployee {
 	// CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIEeS
 	private static Employee employeeFullInfo(String ccc, String nss, WebClient webClient)
 			throws IOException, InterruptedException, SegSocialException {
-		HtmlPage page = webClient
-				.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR61&E=I&AP=AFIR");
+		HtmlPage page = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR61&E=I&AP=AFIR");
 		
 		HtmlForm formParts = wait4(page, p -> p.getFormByName("jacadaform")).orElseThrow();
 		manageStatusCode(page);
@@ -102,81 +110,130 @@ class SistemaREDEmployee {
 				}
 			}
 		}
-
+		
 		manageStatusCode(page);
 
-		String ipf = page.getElementById("SDFNUMIPF").getTextContent().trim().replaceAll("^0+", "");
-		String birthDateStr = page.getElementById("SDFDIANAC").getTextContent() + "-"
-				+ page.getElementById("SDFMESNAC").getTextContent() + "-"
-				+ page.getElementById("SDFAONAC").getTextContent();
-
-		String sex = page.getElementById("SDFSEXO").getTextContent();
-		String name = page.getElementById("SDFAPELNOM").getTextContent();
-		String tlf = page.getElementById("SDFMOVIL").getTextContent();
-		String ctaCot = page.getElementById("SDFTESORCCC").getTextContent()
-				+ page.getElementById("SDFNUMCCC").getTextContent();
-		String regime = page.getElementById("SDFREGIM").getTextContent();
-		String companyId = page.getElementById("SDFEMPRESARIO3").getTextContent();
-		String companyName = page.getElementById("SDFNOMBRE3").getTextContent();
-		String situation = page.getElementById("SDFTSITUACAFI").getTextContent();
-		String gc = page.getElementById("SDFCGRUPOAFI").getTextContent();
-		String gcDesc = page.getElementById("SDFTGRUPOAFI").getTextContent();
-		Boolean agricultPromo = Toolkit.toBoolean(page.getElementById("SDFPFEA").getTextContent());
-
-		Boolean workTimeReduct = Toolkit.toBoolean(domElementExists(page.getElementById("SDFLITRJ")));
-		String fraStr = domElementExists(page.getElementById("SDFFRAAFI"));
-		String feaStr = domElementExists(page.getElementById("SDFFEAAFI"));
-		String contract = domElementExists(page.getElementById("SDFTIPOAFI"));
-		String coef = domElementExists(page.getElementById("SDFCOEFAFI"));
-		String colec = domElementExists(page.getElementById("SDFCOLECTIVO"));
-		String epig = domElementExists(page.getElementById("SDFEPIGAFI"));
-		String ocup = domElementExists(page.getElementById("SDFOCUPACION"));
-		String vinFam = domElementExists(page.getElementById("SDFVINCULO"));
-		String profesCat = domElementExists(page.getElementById("SDFCATEGORIA"));
-		String reducingCoef = domElementExists(page.getElementById("SDFCOEFRED"));
-		String frbStr = domElementExists(page.getElementById("SDFFRBAFI"));
-		String febStr = domElementExists(page.getElementById("SDFFEBAFI"));
+		List<Employee>employees = getEmployeeFullList(page, nss);
+		if(!employees.isEmpty()) {
+			return employees.get(0);
+		}
 		
+		throw new DataDoesNotExist();	
+	}
 	
-		ipf = removeExtraZeros(ipf);
-		companyId = removeExtraZeros(companyId);
-
-		if (birthDateStr.equals(" / / "))
-			birthDateStr = "";
-
-		Date birthDate = parseDate(birthDateStr, "dd-MM-yyyy");
-		Date fra = parseDate(fraStr, "dd/MM/yyyy");
-		Date fea = parseDate(feaStr, "dd/MM/yyyy");
-		Date frb = parseDate(frbStr, "dd/MM/yyyy");
-		Date feb = parseDate(febStr, "dd/MM/yyyy");
+	
+	// CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIEeS
+	private static List<Employee> getEmployeeFullList(HtmlPage page, String nss)
+			throws IOException {
 		
-		if(frb==null) {
-			HtmlInput button = page.querySelector("[name=btn_Sub2207601004]");
-			if(button.isDisplayed()) {
-				page = ((HtmlInput)page.querySelector("[name=btn_Sub2207601004]")).click(); 
-				DomElement frEl = page.getElementById("SDFFRBAFI");
-				if(frEl!=null) {
-					situation = page.getElementById("SDFTSITUACAFI").getTextContent();
-					frbStr = frEl.getTextContent();
-					febStr = page.getElementById("SDFFEBAFI").getTextContent();
-					frb = parseDate(frbStr, "dd/MM/yyyy");
-					feb = parseDate(febStr, "dd/MM/yyyy");	
+		List<Employee> list = new ArrayList<>();
+	   
+	    while (page.getElementById("SDFNUMIPF")!=null) {
+			String ipf = page.getElementById("SDFNUMIPF").getTextContent().trim().replaceAll("^0+", "");
+			String birthDateStr = page.getElementById("SDFDIANAC").getTextContent() + "/"
+					+ page.getElementById("SDFMESNAC").getTextContent() + "/"
+					+ page.getElementById("SDFAONAC").getTextContent();
+
+			String sex = page.getElementById("SDFSEXO").getTextContent();
+			String name = page.getElementById("SDFAPELNOM").getTextContent();
+			String tlf = page.getElementById("SDFMOVIL").getTextContent();
+			String ctaCot = page.getElementById("SDFTESORCCC").getTextContent()
+					+ page.getElementById("SDFNUMCCC").getTextContent();
+			String regime = page.getElementById("SDFREGIM").getTextContent();
+			String companyId = page.getElementById("SDFEMPRESARIO3").getTextContent();
+			String companyName = page.getElementById("SDFNOMBRE3").getTextContent();
+			String situation = page.getElementById("SDFTSITUACAFI").getTextContent();
+			String gc = page.getElementById("SDFCGRUPOAFI").getTextContent();
+			String gcDesc = page.getElementById("SDFTGRUPOAFI").getTextContent();
+			Boolean agricultPromo = Toolkit.toBoolean(page.getElementById("SDFPFEA").getTextContent());
+
+			Boolean workTimeReduct = Toolkit.toBoolean(domElementExists(page.getElementById("SDFLITRJ")));
+			String fraStr = domElementExists(page.getElementById("SDFFRAAFI"));
+			String feaStr = domElementExists(page.getElementById("SDFFEAAFI"));
+			String contract = domElementExists(page.getElementById("SDFTIPOAFI"));
+			String coef = domElementExists(page.getElementById("SDFCOEFAFI"));
+			String colec = domElementExists(page.getElementById("SDFCOLECTIVO"));
+			String epig = domElementExists(page.getElementById("SDFEPIGAFI"));
+			String ocup = domElementExists(page.getElementById("SDFOCUPACION"));
+			String vinFam = domElementExists(page.getElementById("SDFVINCULO"));
+			String profesCat = domElementExists(page.getElementById("SDFCATEGORIA"));
+			String reducingCoef = domElementExists(page.getElementById("SDFCOEFRED"));
+			String frbStr = domElementExists(page.getElementById("SDFFRBAFI"));
+			String febStr = domElementExists(page.getElementById("SDFFEBAFI"));
+			
+		
+			ipf = removeExtraZeros(ipf);
+			companyId = removeExtraZeros(companyId);
+
+			if (birthDateStr.equals(" / / ")) {			
+				birthDateStr = "";
+			}
+
+			Date birthDate = parseDate(birthDateStr, FORMAT_DATE_ES);
+			Date fra = parseDate(fraStr, FORMAT_DATE_ES);
+			Date fea = parseDate(feaStr, FORMAT_DATE_ES);
+			Date frb = parseDate(frbStr, FORMAT_DATE_ES);
+			Date feb = parseDate(febStr, FORMAT_DATE_ES);
+			
+			if(frb==null) {
+				DomNode next = page.querySelector("[value=\"Continuar\"]");
+				if(next!=null) {
+					 page = ((HtmlSubmitInput) next).click();
+					 frbStr = domElementExists(page.getElementById("SDFFRBSAN1"));
+					 febStr = domElementExists(page.getElementById("SDFFEBSAN1"));
+					 if(!frbStr.isEmpty() && !febStr.isEmpty()) {
+						situation = page.getElementById("SDFTSITUACAFI").getTextContent();
+						frb = parseDate(frbStr, FORMAT_DATE_ES);
+						feb = parseDate(febStr, FORMAT_DATE_ES);
+					 }
 				}
 			}
-		}
 
-		// BUILD
-		EmployeeBuilder builder = new EmployeeBuilder();
+			// BUILD
+			Employee employeeData = new EmployeeBuilder()
+			.setNss(nss.replace(" ", ""))
+			.setName(name)
+			.setSituation(situation)
+			.setIpf(ipf.replace(" ", ""))
+			.setNss(nss).setIpf(ipf)
+			.setBirthDate(birthDate)
+			.setSex(sex).setTlf(tlf)
+			.setCtaCti(ctaCot)
+			.setRegime(regime)
+			.setCompanyId(companyId)
+			.setCompanyName(companyName)
+			.setSituation(situation)
+			.setGc(gc)
+			.setGcDesc(gcDesc)
+			.setAgricultPromo(agricultPromo)
+			.setWorkTimeReduct(workTimeReduct)
+			.setFra(fra)
+			.setFea(fea)
+			.setFrb(frb)
+			.setFeb(feb)
+			.setContract(contract)
+			.setCoef(coef)
+			.setColec(colec)
+			.setEpig(epig)
+			.setOcup(ocup)
+			.setVinFam(vinFam)
+			.setProfesCat(profesCat)
+			.setReducingCoefic(reducingCoef)
+			.build();
+			
+			list.add(employeeData);
+			
+			DomNode next = page.querySelector("[value=\"Continuar\"]");
+			if(next!=null) {
+				 page = ((HtmlSubmitInput) next).click();
+			} else {
+				break;
+			}
+	    }
 
-		builder.setNss(nss.replace(" ", "")).setName(name).setSituation(situation).setIpf(ipf.replace(" ", ""))
-				.setNss(nss).setIpf(ipf).setBirthDate(birthDate).setSex(sex).setTlf(tlf).setCtaCti(ctaCot)
-				.setRegime(regime).setCompanyId(companyId).setCompanyName(companyName).setSituation(situation).setGc(gc)
-				.setGcDesc(gcDesc).setAgricultPromo(agricultPromo).setWorkTimeReduct(workTimeReduct).setFra(fra)
-				.setFea(fea).setFrb(frb).setFeb(feb).setContract(contract).setCoef(coef).setColec(colec).setEpig(epig)
-				.setOcup(ocup).setVinFam(vinFam).setProfesCat(profesCat).setReducingCoefic(reducingCoef);
-
-		return builder.build();
+		return list;
 	}
+
 
 	// HANDLE THE EXCEPTIONS OF GETEMPLOYEE METHOD
 	public static Collection<Employee> getEmployees(final InputStream certificateInputStream,
