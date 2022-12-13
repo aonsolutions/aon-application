@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -879,12 +880,18 @@ public abstract class CretaDetail extends Composite {
 					
 					JsBases jsBases = CretaDetail.this.basesMap.get(jsFile.getId());
 					if ( jsBases != null ) {
-						if ( replied(jsBases, jsFiles))
-							jsFiles.add(jsBases);
-
-						for ( JsFile old: MainCreta.getOld(File.BASES, jsBases) )
-							if ( replied(jsBases, jsFiles)) 
-								jsFiles.add(old);
+					    	int i = findReplied(jsBases, jsFiles);
+						if ( i >= 0 ) {
+						    log( i + "-. " + jsBases.getExternalReference());
+						    jsFiles.add(i+1, jsBases);
+						}
+						for ( JsFile old: MainCreta.getOld(File.BASES, jsBases) ) {
+						    	i = findReplied(old, jsFiles);
+							if ( i >= 0 ) {
+							    log( i + "-. " + old.getExternalReference());
+							    jsFiles.add(i+1, old);
+							}
+						}
 					}
 				}
 
@@ -910,6 +917,18 @@ public abstract class CretaDetail extends Composite {
 						return true;
 				
 				return false;
+			}
+
+			int findReplied(JsFile jsBases, Collection<JsFile> jsRespuestas) {
+			    	int i = 0;
+				for ( JsFile jsRespuesta: jsRespuestas ) { 
+					if ( jsBases.getExternalReference().equals(jsRespuesta.getExternalReference()) ) {
+						return i;
+					}
+					i++;
+				}
+				
+				return -1;
 			}
 
 			boolean isSolicitudTrabajdoresYTramosRespuesta(JsFile jsRespuesta, JsFile trabajadoresYTramos) {
