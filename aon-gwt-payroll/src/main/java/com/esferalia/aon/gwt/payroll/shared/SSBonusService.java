@@ -12,15 +12,7 @@ public interface SSBonusService {
 		DOMAIN
 	}
 	
-	public static class JsSSBonusResults extends JavaScriptObject {
-		protected JsSSBonusResults() {
-		}
-		
-		public final native int getEmployeeId() /*-{
-			return this.employeeId;
-		}-*/;
-		
-	}
+	
 
 	public static final String SS_BONUS_URL = URL
 			.encode(GWT.getModuleBaseURL() + "ss-bonus");

@@ -22,12 +22,7 @@ public abstract class EnterpriseStatus implements Serializable {
 		}
 	}
 	
-	public static class NotAuthorizedCCC extends EnterpriseStatus{
-		@Override
-		public void visit(Visitor visitor) {
-			visitor.notAuthorizedCCC();
-		}
-	}	
+		
 
 	public static class CredentialsNotFound extends EnterpriseStatus{
 		@Override
@@ -171,10 +166,7 @@ public abstract class EnterpriseStatus implements Serializable {
 			return message;
 		}
 		
-		public UnknownError setMessage(String message) {
-			this.message = message;
-			return this;
-		}
+		
 		
 
 		@Override

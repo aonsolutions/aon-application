@@ -35,18 +35,8 @@ public abstract class EmployeeStatus implements Serializable {
 
 
 
-	public static class InvalidData extends EmployeeStatus{
-		@Override
-		public void visit(Visitor visitor) {
-			visitor.invalidData();
-		}
-	}
-	public static class EmployeeNotFound extends EmployeeStatus{
-		@Override
-		public void visit(Visitor visitor) {
-			visitor.employeeNotFound();
-		}
-	}
+	
+	
 	
 	public static class Forbidden extends EmployeeStatus{
 		@Override
