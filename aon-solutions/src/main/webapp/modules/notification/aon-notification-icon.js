@@ -128,7 +128,6 @@ export class AonNotificationIcon extends AonElement {
         const total = this.getTotalCount();
         const badge = this.getElement(this.BADGE) || NotificationCreateComponent.createBadge(this.BADGE).element;
         if(total && total > 0){
-            // badge.textContent = total;
             notificationSpan.appendChild(badge);   
         } else {
             badge.remove();
@@ -187,8 +186,7 @@ export class AonNotificationIcon extends AonElement {
         box.style = `
             width: 100%;
             transition: all 0.4s;
-            // border-radius: 0.5rem;
-            // border: 1px solid rgba(0, 0, 0, 0.137);
+
         `;
 
         div.appendChild(box);
