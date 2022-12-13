@@ -270,7 +270,6 @@ public class SistemaRED {
 
 	public static Employee getEmployee(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
-
 		return SistemaREDEmployee.getEmployee(certificateInputStream, certificatePassword, certificateType, regimen,
 				ccc, nss);
 	}
@@ -329,7 +328,6 @@ public class SistemaRED {
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 		try {
 			return getIDCDates(certificateInputStream.readAllBytes(), certificatePassword, certificateType, regimen, ccc, nss);
-//			return SistemaREDI.getIDCDates(certificateInputStream, certificatePassword, certificateType, nss, regimen, ccc);
 		} catch (Exception e) {
 			if(e.getMessage()!=null) {
 				throw new SegSocialException(e.getMessage());
