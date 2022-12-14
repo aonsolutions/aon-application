@@ -15,7 +15,6 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.Level;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.resources.client.CssResource;
@@ -47,13 +46,16 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 	interface MyStyle extends CssResource {
 		String dialogGlass();
 		String dialogZIndex();
+		String gridCell();
 		String gridTitle();
 		String headerColor();
 		String headerFSize();
-		String headerSticky();
+		String headerFixed();
+		String levelCell();
 		String modify();
 		String oddRow();
-		String textCenter();
+		String overflowEllipsis();
+		String textBox();
 	}
 	
 	@UiField
@@ -114,20 +116,21 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 		
 		Label level = new Label("Nivel");
 		level.addStyleName(style.gridTitle());
-		level.addStyleName(style.textCenter());
 		level.addStyleName(style.headerFSize());
 		levelGrid.setWidget(row, 0, level);
+		levelGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
 		
 		Label category = new Label("Categoria");
 		category.addStyleName(style.gridTitle());
 		category.addStyleName(style.headerFSize());
 		levelGrid.setWidget(row, 1, category);
+		levelGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
+
+		levelGrid.getRowFormatter().addStyleName(row, style.headerColor());
 		
 		Label delete = new Label("");
 		levelGrid.setWidget(row, 2, delete);
-		
-		levelGrid.getRowFormatter().addStyleName(row, style.headerSticky());
-		levelGrid.getRowFormatter().addStyleName(row, style.headerColor());
+		levelGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
 	}
 
 	private void fillCategoryTable() {
@@ -149,9 +152,12 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 			
 			TextBox levelCell = new TextBox();
 			levelCell.setValue(level.getDescription());
+			levelCell.setTitle(level.getDescription());
+			levelCell.addStyleName(style.overflowEllipsis());
 			levelCell.addStyleName(style.gridTitle());
-			levelCell.addStyleName(style.textCenter());
-			levelCell.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+			levelCell.addStyleName(style.gridCell());
+			levelCell.addStyleName(style.levelCell());
+			levelCell.addStyleName(style.textBox());
 			if(row % 2 == 0 ) levelCell.addStyleName(style.oddRow());
 			
 			if(level != null && level.isModify())
@@ -172,8 +178,8 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 			});
 			
 			TextBox categoryCell = new TextBox();
-			categoryCell.setWidth("99%");
-			categoryCell.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+			categoryCell.addStyleName(style.levelCell());
+			categoryCell.addStyleName(style.textBox());
 			categoryCell.setValue(categoriesBuilder.toString());
 			categoryCell.setTitle("Categorias nivel " + level.getDescription());
 			if(row % 2 == 0 ) categoryCell.addStyleName(style.oddRow());
@@ -231,8 +237,7 @@ public abstract class AgreementLevelTab extends ResizeComposite {
 	private void categoryTableWidth() {
 		levelGrid.setWidth("100%");
 		levelGrid.getColumnFormatter().setWidth(0, "120px");
-		levelGrid.getColumnFormatter().setWidth(1, "75%");
-		levelGrid.getColumnFormatter().setWidth(2, "5%");
+		levelGrid.getColumnFormatter().setWidth(2, "15px");
 	}
 	
 	// ------------------------------------------ toolbar
