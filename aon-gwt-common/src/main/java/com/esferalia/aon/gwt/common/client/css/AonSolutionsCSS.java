@@ -814,6 +814,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_color_royalblue")
 	String aonColorBlue();
 	
+	@ClassName("aon_color_black")
+	String aonColorBlack();
+
 	@ClassName("aon_color_orange")
 	String aonColorOrange();
 

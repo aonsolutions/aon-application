@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IFiscalStatusVisit
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
@@ -22,8 +21,9 @@ import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
-public class Mod303ValidationTest extends AbstractOccamTest {
+public class Mod303ValidationTest extends Mod303AbstractTest {
 	
 	/**
 	 * No se puede grabar una complementaria sin algo a lo que complementar.
@@ -35,7 +35,7 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 			.setReplacement(false);
 		deleteAllModels();
 		Exception e = assertThrows(AonCoreException.class, () -> {
-			insertModel( params );
+			insertMod303( params );
 	    });
 		String expected = AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage();
 		assertEquals("Wrong Exception", expected, e.getMessage());
@@ -51,7 +51,7 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 			.setReplacement(true);
 		deleteAllModels();
 		Exception e = assertThrows(AonCoreException.class, () -> {
-			insertModel( params );
+			insertMod303( params );
 	    });
 		String expected = AonError.FISCAL_NO_REPLACED_DECLARATION.getMessage();
 		assertEquals("Wrong Exception", expected, e.getMessage());
@@ -66,9 +66,9 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 			.setComplementary(false)
 			.setReplacement(false);
 		deleteAllModels();
-		Mod303 mod303 = insertModel( params );
+		Mod303 mod303 = insertMod303( params );
 		Exception e = assertThrows(AonCoreException.class, () -> {
-			insertModel( params );
+			insertMod303( params );
 	    });
 		String expected = AonError.FISCAL_DECLARATION_ALREADY_EXISTS.format(mod303.getModelFullName());
 		assertEquals("Wrong Exception", expected, e.getMessage());
@@ -83,8 +83,8 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 			.setComplementary(false)
 			.setReplacement(false);
 		deleteAllModels();
-		Mod303 original = insertModel( params );
-		insertModel( params.setComplementary(true) );
+		Mod303 original = insertMod303( params );
+		insertMod303( params.setComplementary(true) );
 		Exception e = assertThrows(AonCoreException.class, () -> {
 			MODEL303.delete(getOccam(), original);
 	    });
@@ -104,7 +104,7 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 
 			private FiscalFakerParams visitRemoved(FiscalStatus status) {
 				deleteAllModels();
-				Mod303 mod = insertModel( params );
+				Mod303 mod = insertMod303( params );
 				mod.setStatus( status );
 				MODEL303.delete(getOccam(), mod);
 				Mod303 model = MODEL303.get(getOccam(), mod.getId());
@@ -114,7 +114,7 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 			
 			private FiscalFakerParams visitNoRemoved(FiscalStatus status) {
 				deleteAllModels();
-				Mod303 mod = insertModel( params );
+				Mod303 mod = insertMod303( params );
 				mod.setStatus(status);
 				Exception e = assertThrows("Status: " + status.getName(), AonCoreException.class, () -> {
 					MODEL303.delete(getOccam(), mod);
@@ -150,14 +150,17 @@ public class Mod303ValidationTest extends AbstractOccamTest {
 	}
 
 	private FiscalFakerParams getParams() {
+		double prorratePercent = AonRandom.gt(10)? 0 : AonRandom.getPercent();
 		return new FiscalFakerParams(ctx,getOccam())
 			.setAdministration(Administration.COMMON_TERRITORY)
 			.setIssueDate(new Date())
 			.setMonthly(true)
-			.setProrratePercent( AonRandom.gt(10)? 0 : AonRandom.getPercent() );
+			.setProrratePercent( prorratePercent )
+			.setSpecialProrrate( AonMathUtils.isNotZero(prorratePercent) && AonRandom.gt(60) )
+			;
 	}
 	
-	private Mod303 insertModel( FiscalFakerParams params) {
+	private Mod303 insertMod303( FiscalFakerParams params) {
 		Mod303 mod303 = FiscalFaker.createMod303(params);
 		MODEL303.save(getOccam(), mod303);
 		Mod303 actual = MODEL303.get(getOccam(), mod303.getId());  

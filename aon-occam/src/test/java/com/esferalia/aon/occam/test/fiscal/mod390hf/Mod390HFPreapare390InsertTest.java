@@ -19,8 +19,9 @@ import com.esferalia.aon.occam.test.faker.InvoiceFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
-public class Mod390Preapare390InsertTest extends AbstractOccamTest {
+public class Mod390HFPreapare390InsertTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
@@ -59,10 +60,13 @@ public class Mod390Preapare390InsertTest extends AbstractOccamTest {
 	
 	public void mod303InsertQuarterly(Date date) {
 		System.out.println( "\t ---------------------");
+		double prorratePercent = AonRandom.gt(10)? 0 : AonRandom.getPercent();
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 			.setIssueDate(date)
 			.setMonthly(false)
-			.setProrratePercent( AonRandom.gt(10)? 0 : AonRandom.getPercent() );
+			.setProrratePercent( prorratePercent )
+			.setSpecialProrrate( AonMathUtils.isNotZero(prorratePercent) && AonRandom.gt(60) )
+			;
 
 		Mod303 araba = insertModel( params.setAdministration(Administration.ALAVA));
 		Mod303 bizkaia = insertModel( params.setAdministration(Administration.BIZKAIA));

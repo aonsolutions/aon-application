@@ -146,6 +146,8 @@ public enum FiscalModelKeyInfo implements Serializable {
 		}
 	}
 	
+	// ------------------------- [DEPRECATED]
+	
 	,@Deprecated INVOICE {
 		@Override
 		public String getLabel() {

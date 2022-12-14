@@ -103,6 +103,10 @@ public class FiscalModelDAO {
 	}
 	
 	protected static class FiscalModelFiller<T extends FiscalModel>  implements BiFunction<Record,Supplier<T>,T> {
+		public FiscalModelFiller() {
+			// TODO Auto-generated constructor stub
+		}
+
 		@Override
 		public T apply(Record rec,Supplier<T> modelSupplier) {
 			T model = modelSupplier.get();
@@ -166,7 +170,7 @@ public class FiscalModelDAO {
 		}
 	}
 
-	public static SelectOnConditionStep<Record> getSelect(final AONContext ctx) {
+	protected static SelectOnConditionStep<Record> getSelect(final AONContext ctx) {
 		return ctx.getDslContext()
 			.select()
 			.from(FS_MODEL)
@@ -249,21 +253,21 @@ public class FiscalModelDAO {
 			.map(mod -> fillModelDetails(ctx,mod));
 	}
 	
-	public static <T extends FiscalModel> Stream<T> getEffectivePreviousModels(AONContext ctx,FiscalModel fiscalModel, Supplier<T> modelSupplier) {
-		LinkedList<T> effectivePreviousModels = new LinkedList<>();
-		LinkedList<T> previousModels = getPreviousModels(ctx, fiscalModel, modelSupplier)
-				.collect(Collectors.toCollection(LinkedList::new));
-		for ( T fm : previousModels ) {
-			if (fm.isComplementary() || (!fm.isComplementary() && 
-				 previousModels.stream().noneMatch(fm2 -> fm2.isComplementary() 
-					&& 	fm2.getYear() == fm.getYear()
-					&& 	fm2.getPeriod().ordinal() == fm.getPeriod().ordinal()
-				))) {
-				effectivePreviousModels.add(fm);
-			}
-		}
-		return effectivePreviousModels.stream();
-	}
+//	public static <T extends FiscalModel> Stream<T> getEffectivePreviousModels(AONContext ctx,FiscalModel fiscalModel, Supplier<T> modelSupplier) {
+//		LinkedList<T> effectivePreviousModels = new LinkedList<>();
+//		LinkedList<T> previousModels = getPreviousModels(ctx, fiscalModel, modelSupplier)
+//				.collect(Collectors.toCollection(LinkedList::new));
+//		for ( T fm : previousModels ) {
+//			if (fm.isComplementary() || (!fm.isComplementary() && 
+//				 previousModels.stream().noneMatch(fm2 -> fm2.isComplementary() 
+//					&& 	fm2.getYear() == fm.getYear()
+//					&& 	fm2.getPeriod().ordinal() == fm.getPeriod().ordinal()
+//				))) {
+//				effectivePreviousModels.add(fm);
+//			}
+//		}
+//		return effectivePreviousModels.stream();
+//	}
 	
 	public static <T extends FiscalModel> Stream<T> getLastPeriodModels(AONContext ctx,FiscalModel fiscalModel, Supplier<T> modelSupplier) {
 		ctx.checkRead();

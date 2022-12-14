@@ -22,6 +22,7 @@ import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod390HFValidationTest extends AbstractOccamTest {
 	
@@ -150,11 +151,14 @@ public class Mod390HFValidationTest extends AbstractOccamTest {
 	}
 
 	private FiscalFakerParams getParams() {
+		double prorratePercent = AonRandom.gt(10)? 0 : AonRandom.getPercent();
 		return new FiscalFakerParams(ctx,getOccam())
 			.setAdministration(Administration.COMMON_TERRITORY)
 			.setIssueDate(new Date())
 			.setMonthly(true)
-			.setProrratePercent( AonRandom.gt(10)? 0 : AonRandom.getPercent() );
+			.setProrratePercent( prorratePercent )
+			.setSpecialProrrate( AonMathUtils.isNotZero(prorratePercent) && AonRandom.gt(60) )
+			;
 	}
 	
 	private Mod390HF insertModel( FiscalFakerParams params) {

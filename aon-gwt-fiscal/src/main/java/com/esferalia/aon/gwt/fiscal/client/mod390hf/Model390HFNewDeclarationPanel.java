@@ -84,7 +84,10 @@ public class Model390HFNewDeclarationPanel extends DockLayoutPanel {
 		
 		yearBox.setMaxLength(4);
 		yearBox.setVisibleLength(4);
-		yearBox.addValueChangeHandler(event -> model.setYear(yearBox.getValue()));
+		yearBox.addValueChangeHandler(event -> {
+			model.setYear(yearBox.getValue());
+			initialize(model, callback );
+		});
 		
 		complementary.setText(AON.MSG.complementary());
 		complementary.addClickHandler(event -> {

@@ -31,10 +31,8 @@ public class Mod390HFInsertComplementaryTest extends AbstractOccamTest {
 	public void modInsertComplementary(Date date) {
 		System.out.println( "\t ---------------------");
 		
-		Mod390HF araba = insertModel( Administration.ALAVA,date);
 		Mod390HF gipuzkoa = insertModel( Administration.GIPUZKOA,date);
-		
-		Asserts.assertEqualsDouble("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", araba.getDeclarationResult(), gipuzkoa.getDeclarationResult());
+		Asserts.assertEqualsDouble("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", gipuzkoa.getDeclarationResult(), gipuzkoa.getDeclarationResult());
 	}
 	
 	private Mod390HF insertModel( Administration admon, Date date) {

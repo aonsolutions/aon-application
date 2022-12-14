@@ -912,7 +912,6 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 						public void onSuccess(String result) {
 							popup.hide();
 							FlowPanel gridContainer = new FlowPanel();
-							JsVatComputeKeyInfo info = JsonUtils.safeEval(result);
 							JsVatComputeKeyInfoGridPanel grid = new JsVatComputeKeyInfoGridPanel();
 							grid.setTitle(AON.MSG.calcDetail());
 							grid.setSubTitle(AonStringUtils.join(
@@ -922,7 +921,13 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 									.reduce("", String::concat)
 								, " " 
 								, script.getLabel()));
-							grid.addContent(info);
+							
+							try {
+								JsVatComputeKeyInfo info = JsonUtils.safeEval(result);
+								grid.addContent(info);
+							} catch (Exception e) {
+								grid.addContent(result);
+							}
 							gridContainer.add(grid);
 							callback.showInfoPanelWidget(gridContainer);
 							button.setEnabled(true);

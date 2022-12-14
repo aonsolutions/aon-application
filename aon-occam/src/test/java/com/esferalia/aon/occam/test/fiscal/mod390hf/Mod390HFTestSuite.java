@@ -8,14 +8,13 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
 	Mod390HFKeyTest.class,
 	Mod390HFExpressionsTest.class,
-	
+	Mod390HFScriptTest.class,
+
 	Mod390HFReopenTest.class,
 	Mod390HFDeleteTest.class,
 	Mod390HFValidationTest.class,
 	
-	Mod390Preapare390InsertTest.class,	
-	Mod390HFReopenTest.class,
-	Mod390HFDeleteTest.class,
+	Mod390HFPreapare390InsertTest.class,	
 	Mod390HFInsertTest.class,
 	Mod390HFRoundedAmountsTest.class,
 	Mod390HFFinishTest.class,

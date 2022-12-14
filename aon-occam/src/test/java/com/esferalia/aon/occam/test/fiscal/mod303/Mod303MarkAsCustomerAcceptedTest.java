@@ -8,10 +8,9 @@ import org.junit.Test;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 
-public class Mod303MarkAsCustomerAcceptedTest extends AbstractOccamTest {
+public class Mod303MarkAsCustomerAcceptedTest extends Mod303AbstractTest {
 	
 	@Test
 	public void markAsCustomerAcceptedTest() {

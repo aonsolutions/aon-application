@@ -493,13 +493,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 						.sum());
 				} 
 				,null
-				,"{messages : ["
-					+ "\"Declaraciones a ingresar en ejercicio:\"," 
-					+"@foreach{fm : depositModels}" 
-						+ "\"Resultado @{fm.getModelFullName()}: --> @{fm.getDeclarationResult()}\","
-					+"@end{}"
-					+ "\"Resultado: @{AR_C126}\","
-				+"]}"
+				,null
 			)
 		// Devoluciónes practicadas/solicitadas en la Diputación Foral de Álava
 		,AR_C127	(Mod390Key.AR_C127,null,null,
@@ -510,20 +504,17 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 						.sum());
 				} 
 				,null
-				,"{messages : ["
-					+ "\"Declaraciones a devolver en ejercicio:\"," 
-					+"@foreach{fm : paybackModels}" 
-						+ "\"Resultado @{fm.getModelFullName()}: --> @{fm.getDeclarationResult()}\","
-					+"@end{}"
-					+ "\"Resultado: @{AR_C127}\","
-				+"]}"
+				,null
 			)
 		// DIFERENCIA
 		,AR_C128	(Mod390Key.AR_C128,null,null,null,"AR_C126-AR_C127",null)
 		// Resultado a compensar o a devolver o a ingresar del ejercicio
 		,AR_C129	(Mod390Key.AR_C129,null,null,null,"AR_C125-AR_C128",null)
 		// A compensar en el Territorio Histórico de \u00C1lava según declaración anual ejercicio anterior
-		,AR_C130	(Mod390Key.AR_C130)
+		,AR_C130	(Mod390Key.AR_C130,null,null
+			,(ctx,mod) -> add(Mod390Key.AR_C130,mod, getPendingCompesateAmounts( ctx, mod ))
+			,null,null)
+		
 		// Resultado
 		,AR_C13X	(Mod390Key.AR_C13X,null,null,null,"AR_C129-AR_C130",null)
 		// Recargo presentación extemporánea	IVA deducible por importaciones de bienes corrientes
@@ -775,7 +766,9 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 			&& importacionesFilter(vat, mod);
 	}
 	private static boolean importacionesFilter(VatContext vat, Mod390HF mod) {
-		boolean basicFilter = !vat.isVatSurchargeRegime() && !vat.isService();
+		boolean basicFilter = vat.isVatGeneralRegime(VATRegime.GENERAL)
+			&& !vat.isVatSurchargeRegime() 
+			&& !vat.isService();
 		if (basicFilter && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase())) {
 			if (vat.getTaxDate().before( Mod303Declaration.IVA_2021_CHANGE_DATE )) {
 				basicFilter = true;
@@ -827,5 +820,26 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 		});
 		add(Mod390Key.AR_C911, mod, AonMathUtils.isZero(mod.getAmount(Mod390Key.AR_C265)) ? (0.0) : (1.0));
 		return invoices;
+	}
+	
+	@Override
+	protected String getCompensationExplain( AONContext ctx, Mod390HF mod, Mod390Key key) {
+		return getExplain(ctx, mod, key
+			, Mod390HFDAO.getLastPeriodEffectiveModels(ctx, mod)
+				.filter(Mod390HF::isToCompensate)
+			, new ExplainRowManager());
+	}
+	
+	@Override
+	protected String getSamePeriodExplain(AONContext ctx, Mod390HF mod, Mod390Key key) {
+		if ( key == Mod390Key.AR_C126) {
+			return getExplain(ctx, mod, key
+				, Mod390HFDAO.getM303YearDepositModels(ctx, mod)
+				, new ExplainRowManager());
+		} else {
+			return getExplain(ctx, mod, key
+				, Mod390HFDAO.getM303YearPaybackModels(ctx, mod)
+				, new ExplainRowManager());
+		}
 	}
 }

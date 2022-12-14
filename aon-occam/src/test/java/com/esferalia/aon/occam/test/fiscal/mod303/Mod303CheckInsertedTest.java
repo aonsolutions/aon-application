@@ -18,9 +18,8 @@ import org.junit.Test;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.type.TaxType;
-import com.esferalia.aon.occam.test.AbstractOccamTest;
 
-public class Mod303CheckInsertedTest extends AbstractOccamTest{
+public class Mod303CheckInsertedTest extends Mod303AbstractTest{
 
 	@Test
 	public void checkInserted() {

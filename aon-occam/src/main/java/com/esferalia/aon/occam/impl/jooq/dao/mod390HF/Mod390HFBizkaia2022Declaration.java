@@ -10,7 +10,6 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -212,26 +211,26 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 		// IVA deducible en operaciones interiores
 		,BZ_C060	(Mod390Key.BZ_C060
 			,(mod,vat) -> operacionesInterioresFilter(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C060,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C060,mod,vat)
 			,null,null,null)
 		,BZ_C061	(Mod390Key.BZ_C061)
 		
 		// IVA deducible en importaciones
 		,BZ_C062	(Mod390Key.BZ_C062
 			,(mod,vat) -> importacionesFilter(vat,mod)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C062,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C062,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en adquisiciones intracomunitarias
 		,BZ_C063	(Mod390Key.BZ_C063
 			,(mod,vat) -> adqIntracomunitariasFilter(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C063,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C063,mod,vat)
 			,null,null,null)
 		
 		// Compensaciones Régimen Especial A.G. y P .
 		,BZ_C064	(Mod390Key.BZ_C064
 			,(mod,vat) -> compensacionesRegAgrarioFilter(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C064,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C064,mod,vat)
 			,null,null,null)
 				
 		// Regularización Inversiones
@@ -256,66 +255,44 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 		,BZ_C085	(Mod390Key.BZ_C085,null,null,(ctx,mod) -> add(Mod390Key.BZ_C085,mod,0.0),null,null)
 		,BZ_C086	(Mod390Key.BZ_C086,null,null,(ctx,mod) -> add(Mod390Key.BZ_C086,mod,0.0),null,null)
 
-		// ***********************************************************************************
-		// ***********************************************************************************
-		// ***********************************************************************************
 		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Bizkaia
 		,BZ_C087	(Mod390Key.BZ_C087,null,null,null,"BZ_C215",null)		  // TODO Respasar
-		// ***********************************************************************************
-		// ***********************************************************************************
-		// ***********************************************************************************
 
 		,BZ_C088	(Mod390Key.BZ_C088,null,null,(ctx,mod) -> add(Mod390Key.BZ_C088,mod,100.0),null,null)
 		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Navarra		
 		,BZ_C089	(Mod390Key.BZ_C089,null,null,(ctx,mod) -> add(Mod390Key.BZ_C089,mod,0.0),null,null)
 		,BZ_C090	(Mod390Key.BZ_C090,null,null,(ctx,mod) -> add(Mod390Key.BZ_C090,mod,0.0),null,null)
 		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Total		
-		,BZ_C091	(Mod390Key.BZ_C091,null,null,null,null,null)
-		,BZ_C092	(Mod390Key.BZ_C092,null,null,null,null,null)
-//		,BZ_C091	(Mod390Key.BZ_C091,null,null,null,"BZ_C081+BZ_C083+BZ_C085+BZ_C087+BZ_C089",null)
-//		,BZ_C092	(Mod390Key.BZ_C092,null,null,null,"BZ_C082+BZ_C084+BZ_C086+BZ_C088+BZ_C090",null)
+		,BZ_C091	(Mod390Key.BZ_C091,null,null,null,"BZ_C081+BZ_C083+BZ_C085+BZ_C087+BZ_C089",null)
+		,BZ_C092	(Mod390Key.BZ_C092,null,null,null,"BZ_C082+BZ_C084+BZ_C086+BZ_C088+BZ_C090",null)
 		
 		// Cuota atribuible a Bizkaia
 		,BZ_C096	(Mod390Key.BZ_C096,null,null,null,"(BZ_C095+BZ_C120)*BZ_C088/100",null)
 		
 		// Cuota a compensar de periodos anteriores
-		,BZ_C097	(Mod390Key.BZ_C097)
+		,BZ_C097	(Mod390Key.BZ_C097,null,null
+			,(ctx,mod) -> add(Mod390Key.BZ_C097,mod, getPendingCompesateAmounts( ctx, mod ))
+			,null,null)
 		
 		// Diferencia
 		,BZ_C098	(Mod390Key.BZ_C098,null,null,null,"BZ_C096-BZ_C097",null)
 
 		// Ingresos efectuados en le Dip. Foral de Bizkaia
 		,BZ_C099	(Mod390Key.BZ_C099,null,null,
-				(ctx,mod) -> {
-					add( Mod390Key.BZ_C099, mod, Mod390HFDAO.getM303YearDepositModels(ctx, mod)
+				(ctx,mod) -> add( Mod390Key.BZ_C099, mod, Mod390HFDAO.getM303YearDepositModels(ctx, mod)
 						.mapToDouble(FiscalModel::getDeclarationResult)
-						.sum());
-				} 
+						.sum())
 				,null
-				,"{messages : ["
-					+ "\"Declaraciones a ingresar en ejercicio:\"," 
-					+"@foreach{fm : depositModels}" 
-						+ "\"Resultado @{fm.getModelFullName()}: --> @{fm.getDeclarationResult()}\","
-					+"@end{}"
-					+ "\"Resultado: @{BZ_C099}\","
-				+"]}"
+				,null
 			)
 		// Devoluciones practicadas en la Dip. Foral de Bizkaia
 		,BZ_C100	(Mod390Key.BZ_C100,null,null,
-				(ctx,mod) -> {
-					add( Mod390Key.BZ_C100, mod, Mod390HFDAO.getM303YearPaybackModels(ctx, mod)
+				(ctx,mod) -> add( Mod390Key.BZ_C100, mod, Mod390HFDAO.getM303YearPaybackModels(ctx, mod)
 						.mapToDouble(FiscalModel::getDeclarationResult)
 						.map(AonMathUtils::absRounded)
-						.sum());						
-				} 
+						.sum())						
 				,null
-				,"{messages : ["
-					+ "\"Declaraciones a devolver en ejercicio:\"," 
-					+"@foreach{fm : paybackModels}" 
-						+ "\"Resultado @{fm.getModelFullName()}: --> @{fm.getDeclarationResult()}\","
-					+"@end{}"
-					+ "\"Resultado: @{BZ_C100}\","
-				+"]}"
+				,null
 			)
 
 		// Resultado
@@ -335,20 +312,12 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 					add( Mod390Key.BZ_C115, mod, 
 						Mod390HFDAO.getSamePeriodModels(ctx, mod)
 							.mapToDouble(fm -> fm.getAmount(Mod390Key.BZ_C110))
-							.filter(result -> AonMathUtils.isGreatherThanZero(result))
+							.filter(AonMathUtils::isGreatherThanZero)
 							.sum());						
 				}
 			} 
 			,null
-			,"<li>Declaraciones en el mismo periodo/ejercicio:<ul style=\"padding-left: 20px;\">" 
-			+"@code{c36Key='"+ Mod390Key.BZ_C110.getValue() +"';}"
-			+"@foreach{fm : periodModels}"
-				+"@if{ fm.getAmount(c36Key) > 0 }"
-					+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [110] --> @{fm.getAmount(c36Key)}</li>"
-				+"@end{}"
-			+"@end{}"
-			+"</ul></li>"
-			+"<li>Resultado: <b>@{BZ_C115}</b></li>"
+			,null
 			)
 		// Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: devuelto anteriormente
 		,BZ_C116	(Mod390Key.BZ_C116,null,null,
@@ -357,22 +326,13 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 					add( Mod390Key.BZ_C116, mod, 
 						Mod390HFDAO.getSamePeriodModels(ctx, mod)
 							.mapToDouble(fm -> fm.getAmount(Mod390Key.BZ_C110))
-							.filter(result -> AonMathUtils.isLessThanZero(result))
-							.sum());						
+							.filter(AonMathUtils::isLessThanZero)
+							.map(AonMathUtils::absRounded)
+							.sum());
 				}
 			} 
 			,null
-			,"<li>Declaraciones en el mismo periodo/ejercicio:<ul style=\"padding-left: 20px;\">" 
-			+"@code{c36Key='"+ Mod390Key.BZ_C110.getValue() +"';}"
-			+"@code{cm04Key='"+ Mod390Key.CM_004.getValue() +"';}"
-			+"@code{compensateValue='"+ FiscalModelDeclarationType.COMPENSATE.getValue() +"';}"
-			+"@foreach{fm : periodModels}"
-				+"@if{ fm.getAmount(c36Key) < 0 && fm.getDescription(cm04Key) != compensateValue}"
-					+"<li>Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [110] --> @{fm.getAmount(c36Key)}</li>"
-				+"@end{}"
-			+"@end{}"
-			+"</ul></li>"
-			+"<li>Resultado: <b>@{BZ_C116}</b></li>"
+			,null
 			)
 		// Total deuda tributaria
 		,BZ_C117 (Mod390Key.BZ_C117,null,null,null,"BZ_C110-BZ_C115+BZ_C116",null)
@@ -412,7 +372,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		,BZ_C144	(Mod390Key.BZ_C144
 			,(mod,vat) -> hasPercent4(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C144,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C144,mod,vat)
 			,null,null,null)
 		
 		,BZ_C145	(Mod390Key.BZ_C145
@@ -426,7 +386,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		,BZ_C147	(Mod390Key.BZ_C147
 			,(mod,vat) -> hasPercent10(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C147,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C147,mod,vat)
 			,null,null,null)
 
 		,BZ_C148	(Mod390Key.BZ_C148
@@ -440,7 +400,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		,BZ_C150	(Mod390Key.BZ_C150
 			,(mod,vat) -> hasPercent21(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod) 
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C150,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C150,mod,vat)
 			,null,null,null)
 		
 		,BZ_C151	(Mod390Key.BZ_C151
@@ -453,7 +413,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		,BZ_C153	(Mod390Key.BZ_C153
 			,(mod,vat) -> vat.isFarmerRegime() && isCommonPurchase(vat,mod)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C153,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C153,mod,vat)
 			,null,null,null)
 		
 		,BZ_C154	(Mod390Key.BZ_C154
@@ -466,7 +426,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		,BZ_C156	(Mod390Key.BZ_C156
 			,(mod,vat) -> hasNoPercent(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C156,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C156,mod,vat)
 			,null,null,null)
 		
 		,BZ_C157	(Mod390Key.BZ_C157,null,null,null,"BZ_C142+BZ_C145+BZ_C148+BZ_C151+BZ_C154",null)
@@ -485,7 +445,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		,BZ_C162	(Mod390Key.BZ_C162
 			,(mod,vat) -> isCommonExpense(vat) && hasPercent4(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C162,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C162,mod,vat)
 			,null,null,null)
 		
 		,BZ_C163	(Mod390Key.BZ_C163
@@ -499,7 +459,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		,BZ_C165	(Mod390Key.BZ_C165
 			,(mod,vat) -> isCommonExpense(vat) && hasPercent10(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C165,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C165,mod,vat)
 			,null,null,null)
 
 		,BZ_C166	(Mod390Key.BZ_C166
@@ -513,7 +473,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		,BZ_C168	(Mod390Key.BZ_C168
 			,(mod,vat) -> isCommonExpense(vat) && hasPercent21(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C168,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C168,mod,vat)
 			,null,null,null)
 		
 		,BZ_C169	(Mod390Key.BZ_C169
@@ -526,7 +486,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		,BZ_C171	(Mod390Key.BZ_C171
 			,(mod,vat) -> isCommonExpense(vat) && hasNoPercent(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C171,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C171,mod,vat)
 			,null,null,null)
 
 		,BZ_C172	(Mod390Key.BZ_C172,null,null,null,"BZ_C160+BZ_C163+BZ_C166+BZ_C169",null)
@@ -545,7 +505,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		,BZ_C177	(Mod390Key.BZ_C177
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C177,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C177,mod,vat)
 			,null,null,null)
 				
 		,BZ_C178	(Mod390Key.BZ_C178
@@ -559,7 +519,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		,BZ_C180	(Mod390Key.BZ_C180
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent10(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C180,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C180,mod,vat)
 			,null,null,null)
 		
 		,BZ_C181	(Mod390Key.BZ_C181
@@ -573,7 +533,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		,BZ_C183	(Mod390Key.BZ_C183
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent21(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C183,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C183,mod,vat)
 			,null,null,null)
 		
 		,BZ_C184	(Mod390Key.BZ_C184
@@ -586,7 +546,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		,BZ_C186	(Mod390Key.BZ_C186
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasNoPercent(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.BZ_C186,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C186,mod,vat)
 			,null,null,null)
 		
 		,BZ_C187	(Mod390Key.BZ_C187,null,null,null,"BZ_C175+BZ_C178+BZ_C181+BZ_C184",null)
@@ -869,7 +829,8 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 	}
 
 	private static boolean importacionesFilter(VatContext vat, Mod390HF  mod, boolean rectification) {
-		boolean basicFilter = !vat.isVatSurchargeRegime() 
+		boolean basicFilter = vat.isVatGeneralRegime(VATRegime.GENERAL)
+				&& !vat.isVatSurchargeRegime() 
 				&& rectification 
 				&& !vat.isService();
 		if (basicFilter && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase())) {
@@ -888,13 +849,14 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 	}
 
 	private static boolean isCommonPurchase(VatContext vat,Mod390HF mod) {
-		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+		return vat.isVatGeneralRegime(VATRegime.GENERAL)
 			&& AonMathUtils.isNotZero(vat.getPercentage())
 			&& !vat.isService()
 			&& ( vat.isNationalPurchase()
-			 || importacionesFilter(vat, mod, !vat.isRectification())
 			 || vat.isOtherISPPurchase()
 			 || vat.isIntracommunityPurchase()
+			 || importacionesFilter(vat, mod, !vat.isRectification())
+			 || importacionesFilter(vat, mod, vat.isRectification())
 			);
 	}
 	private static boolean isCommonExpense(VatContext vat) {
@@ -904,4 +866,31 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 				&& (vat.isExpenses() || vat.isPurchase())	
 				;
 	}
+	
+	
+	
+	@Override
+	protected String getCompensationExplain( AONContext ctx, Mod390HF mod, Mod390Key key) {
+		return getExplain(ctx, mod, key
+			, Mod390HFDAO.getLastPeriodEffectiveModels(ctx, mod)
+				.filter(Mod390HF::isToCompensate)
+			, new ExplainRowManager());
+	}
+	
+	@Override
+	protected String getSamePeriodExplain(AONContext ctx, Mod390HF mod, Mod390Key key) {
+		if (key == Mod390Key.BZ_C099 || key == Mod390Key.BZ_C100) {
+			return getExplain(ctx, mod, key
+					, Mod390HFDAO.getM303EffectiveYearModels(ctx, mod)
+					.filter( m-> (key == Mod390Key.BZ_C099 && m.isToDeposit()) ||  (key == Mod390Key.BZ_C100 && m.isToPayback()))
+					, new ExplainRowManager());
+		} else {
+			return getExplain(ctx, mod, key
+					, Mod390HFDAO.getSamePeriodFiscalModels(ctx, mod)
+					.filter( m-> (key == Mod390Key.BZ_C115 && m.isToDeposit()) ||  (key == Mod390Key.BZ_C116 && m.isToPayback()))
+					, new ExplainRowManager());
+		}
+	}
+	
+	
 }

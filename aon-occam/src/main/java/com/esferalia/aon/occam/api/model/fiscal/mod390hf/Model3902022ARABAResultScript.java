@@ -22,7 +22,7 @@ public enum Model3902022ARABAResultScript implements IModelScript<Mod390Key> {
 	,R009 (Mod390Key.AR_C127.getDescription(),new Mod390Key[]{Mod390Key.AR_C127},COMPUTE_KEY)
 	,R010 (Mod390Key.AR_C128.getDescription(),new Mod390Key[]{Mod390Key.AR_C128},COMPUTE)
 	,R011 (Mod390Key.AR_C129.getDescription(),new Mod390Key[]{Mod390Key.AR_C129},COMPUTE)
-	,R012 (Mod390Key.AR_C130.getDescription(),new Mod390Key[]{Mod390Key.AR_C130},NONE)
+	,R012 (Mod390Key.AR_C130.getDescription(),new Mod390Key[]{Mod390Key.AR_C130},COMPUTE_KEY)
 	,R013 (Mod390Key.AR_C13X.getDescription(),new Mod390Key[]{Mod390Key.AR_C13X},COMPUTE)
 	,R017 (Mod390Key.AR_C134.getDescription(),new Mod390Key[]{Mod390Key.AR_C134},NONE)
 	,R018 (Mod390Key.AR_C135.getDescription(),new Mod390Key[]{Mod390Key.AR_C135},NONE)

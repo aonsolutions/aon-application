@@ -1,9 +1,11 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
@@ -19,6 +21,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -51,15 +54,18 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 		return mod.isAEAT() && mod.getYear() > 2021; 
 	}
 	
-	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[] { Mod303Key.CT_C29, Mod303Key.CT_C31,
-			Mod303Key.CT_C33, Mod303Key.CT_C35, Mod303Key.CT_C37, Mod303Key.CT_C39, Mod303Key.CT_C41,
-			Mod303Key.CT_C42 };
+	private static final Mod303Key[] COMPENSATION_EXPLAIN_KEYS = new Mod303Key[] { Mod303Key.CT_C110 };
+	private static final Mod303Key[] SAME_PERIOD_EXPLAIN_KEYS = new Mod303Key[] { Mod303Key.CT_C70 };
+	
+	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[] { 
+			Mod303Key.CT_C29, Mod303Key.CT_C31, Mod303Key.CT_C33, Mod303Key.CT_C35, 
+			Mod303Key.CT_C37, Mod303Key.CT_C39, Mod303Key.CT_C41, Mod303Key.CT_C42 };
 
 	private enum Mod303KeyDAO implements IMod303KeyDAO {
 
 		 CM_003(Mod303Key.CM_003)
 		,CM_007(Mod303Key.CM_007)
-		,CM_072(Mod303Key.CM_072)
+//		,CM_072(Mod303Key.CM_072)
 
 		,CT_A12(Mod303Key.CT_A12, null, null, (ctx, mod) -> set(Mod303Key.CT_A12, mod, 2), null, null, null, null, true)
 		,CM_002(Mod303Key.CM_002, null, null,
@@ -242,19 +248,20 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 		, CT_C43(Mod303Key.CT_C43)
 
 		// Regularización por aplicación del porcentaje definitivo de prorrata
-		, CT_C44(Mod303Key.CT_C44, null, null, null,
-				null
-				,"{messages : ["
-						+ "\"Total IVA deducible sin prorratear antes del periodo que se liquida: @{CM_072}\","
-						+ "\"IVA deducible con prorrata (@{CM_007}%) de los periodos anteriores:\","
-						+ "\"@{CM_072} * @{CM_007} / 100 = @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100)}\","
-						+ "\"IVA deducible con prorrata definitiva (@{CM_003}%) de los periodos anteriores:\","
-						+ "\"@{CM_072} * @{CM_003} / 100 = @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100)}\","
-						+ "\"Resultado\","
-						+ "\"@{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100)}"
-						+  " - @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100)}"
-						+  " = @{com.esferalia.aon.watson.util.AonMathUtils.round(com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100) - com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100))}\","
-					+"]}"
+		, CT_C44(Mod303Key.CT_C44, null, null, null
+				,null
+				,null
+//				,"{messages : ["
+//						+ "\"Total IVA deducible sin prorratear antes del periodo que se liquida: @{CM_072}\","
+//						+ "\"IVA deducible con prorrata (@{CM_007}%) de los periodos anteriores:\","
+//						+ "\"@{CM_072} * @{CM_007} / 100 = @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100)}\","
+//						+ "\"IVA deducible con prorrata definitiva (@{CM_003}%) de los periodos anteriores:\","
+//						+ "\"@{CM_072} * @{CM_003} / 100 = @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100)}\","
+//						+ "\"Resultado\","
+//						+ "\"@{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100)}"
+//						+  " - @{com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100)}"
+//						+  " = @{com.esferalia.aon.watson.util.AonMathUtils.round(com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_003/100) - com.esferalia.aon.watson.util.AonMathUtils.round(CM_072*CM_007/100))}\","
+//					+"]}"
 		)
 
 		// Total a deducir
@@ -1537,72 +1544,10 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 		//, CT_C67(Mod303Key.CT_C67)
 
 		// Cuotas a compensar de periodos anteriores
-		, CT_C110(Mod303Key.CT_C110, null, null, 
-		  (ctx, mod) -> {
-			if (mod.isFirstPeriod()) {
-				// Primer periodo. Se busca la cuota a compensar del último periodo del
-				// ejercicio anterior.
-				add(Mod303Key.CT_C110, mod,
-						Mod303DAO.getMod303s(ctx, ctx.getDomainId())
-							.filter(m303 -> m303.getYear() == (mod.getYear() - 1))
-							.filter(Mod303::isLastPeriod)
-							.filter(Mod303::isToCompensate)
-							.mapToDouble(fm -> AonMathUtils.round(fm.getDeclarationResult() * (-1)))
-							.findFirst()
-							.orElse(0.0));
-				// Se le suma tambien la nueva casilla 87 a partir de 2021 (Cuotas a compensar
-				// de periodos previos pendientes para periodos posteriores)
-				// Solo para primeros periodos a partir de 2022
-				if (mod.getYear() > 2021)
-					add(Mod303Key.CT_C110, mod, 
-						Mod303DAO.getMod303s(ctx, ctx.getDomainId())
-						   .filter(m303 -> m303.getYear() == (mod.getYear() - 1))
-						   .filter(Mod303::isLastPeriod)
-						   .mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C87)))
-						   .findFirst()
-						   .orElse(0.0));
-
-			} else {
-				// Resto de periodos. Se busca la cuota a compensar del anterior periodo..
-				add(Mod303Key.CT_C110, mod,
-						Mod303DAO.getMod303s(ctx, ctx.getDomainId()).filter(m303 -> m303.getYear() == mod.getYear())
-								.filter(m303 -> m303.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1))
-								.filter(Mod303::isToCompensate)
-								.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C71) * (-1)))
-								.findFirst().orElse(0.0));
-				// Se le suma tambien la nueva casilla 87 a partir de 2021 (Cuotas a compensar
-				// de periodos previos pendientes para periodos posteriores)
-				add(Mod303Key.CT_C110, mod,
-						Mod303DAO.getMod303s(ctx, ctx.getDomainId()).filter(m303 -> m303.getYear() == mod.getYear())
-								.filter(m303 -> m303.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1))
-								.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.CT_C87))).
-								findFirst()
-								.orElse(0.0));
-			}
-		}, 
-		null
-        , "@code{c87Key='" + Mod303Key.CT_C87.getValue() + "';}" 
-		 +"{messages : ["
-	        + "@if{ mod.isFirstPeriod() }"
-				+ "\"\u2022 Declaraciones del \u00FAltimo periodo del ejercicio anterior:\","
-				+ "@foreach{fm : models}"
-					+ "@if{ fm.getYear() == (mod.getYear() - 1) && fm.isLastPeriod() && fm.getAdministration() == mod.getAdministration() }"
-						+ "\"- Cuotas a compensar de periodos previos pendientes para periodos posteriores: Casilla [87] --> @{fm.getAmount(c87Key)}\","
-						+ "\"- Resultado de la liquidaci\u00F3n @{fm.isComplementary()?' (C) ':''}:	Casilla [071] --> @{fm.getDeclarationResult()}\","
-					+ "@end{}" 
-				+ "@end{}" 
-			+ "@else{}"
-				+ "\"\u2022 Declaraciones del periodo anterior:\","
-				+ "@foreach{fm : lastPeriodModels}"
-					+ "@if{ fm.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) }"
-						+ "\"- Cuotas a compensar de periodos previos pendientes para periodos posteriores: Casilla [87] --> @{fm.getAmount(c87Key)}\","
-						+ "\"- Resultado de la liquidaci\u00F3n @{fm.isComplementary()?' (C) ':''}:	Casilla [071] --> @{fm.getDeclarationResult()}\","
-					+ "@end{}" 
-				+ "@end{}" 
-			+ "@end{}"
-			+ "\"Resultado (Cuotas a compensar pendientes de periodos anteriores): @{CT_C110}\","
-			+"]}"
-		)
+		, CT_C110(Mod303Key.CT_C110, null, null, (ctx,mod) -> add( Mod303Key.CT_C110, mod, getPendingCompesateAmounts( ctx, mod ))
+				,null
+				,null
+			)
 
 		// Cuotas a compensar de periodos anteriores aplicadas en este periodo
 		// Validación que hace la Agencia Tributaria:
@@ -1626,19 +1571,15 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 
 		// A deducir (exclusivamente en caso de autoliquidación complementaria)
 		, CT_C70(Mod303Key.CT_C70, null, null, (ctx, mod) -> {
-			if (mod.isComplementary()) {
-				add(Mod303Key.CT_C70, mod, Mod303DAO.getSamePeriodModels(ctx, mod)
-						.mapToDouble(fm -> fm.getAmount(Mod303Key.CT_C71)).sum());
-			}
-		  }, 
-				null
-			,"{messages : ["
-				+ "\"Declaraciones en el mismo periodo/ejercicio:\","
-				+ "@foreach{fm : periodModels}"
-					+ "\"Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [071] --> @{fm.getDeclarationResult()}\","
-				+ "@end{}"
-				+ "\"Resultado: @{CT_C70}\","
-			+"]}"),
+				if (mod.isComplementary()) {
+					add(Mod303Key.CT_C70, mod, Mod303DAO.getSamePeriodEffectiveModels(ctx, mod)
+							.filter( fm -> fm.isToDeposit() || mod.isToPayback())	
+							.mapToDouble(fm -> fm.getAmount(Mod303Key.CT_C71)).sum());
+				}
+			  }
+			,null
+			,null
+		),
 		
 		CT_C71(Mod303Key.CT_C71, null, null, null, "CT_C69-CT_C70", null)
 
@@ -2206,5 +2147,55 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 	public Mod303Key getRegularizationKey() {
 		return Mod303Key.CT_C44;
 	}
+
+	@Override
+	public Mod303Key[] getCompensationExplainKeys() {
+		return COMPENSATION_EXPLAIN_KEYS;
+	}
+	@Override
+	protected String getCompensationExplain( AONContext ctx, Mod303 mod303, Mod303Key key) {
+		return getExplain( ctx, mod303, key, Mod303DAO.getLastPeriodEffectiveModels(ctx, mod303)
+			, new ExplainRowManager() {
+				@Override
+				public String apply(FiscalModel fm) {
+					setSomething(true);
+					sum(fm.getAmount(Mod303Key.CT_C87));
+					sum(fm.getDeclarationResult());
+					return new StringBuilder().append("<tr>")
+						.append( MessageFormat.format(styledTag, "td colspan=\"2\"",  textCenter+fontLarger+border+width500) )
+							.append(fm.getModelFullName())
+						.append("</td>")
+					.append("</tr>")
+					.append("<tr>")
+						.append( MessageFormat.format(styledTag, "td", paddingLeft+border) )
+							.append("Cuotas a compensar de periodos previos pendientes para periodos posteriores ")
+						.append("</td>")
+						.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
+							.append(DEC2.format(fm.getAmount(Mod303Key.CT_C87)))
+						.append("</td>")
+					.append("</tr>")
+					.append("<tr>")
+						.append( MessageFormat.format(styledTag, "td", paddingLeft+border) )
+							.append("Resultado de la liquidaci\u00F3n " +
+								AonObjectUtils.defaultIfNull(fm.getDeclarationResultType(), t -> "(" + t.getDescription() + ")"))
+						.append("</td>")
+						.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
+							.append(DEC2.format(fm.getDeclarationResult()))
+						.append("</td>")
+					.append("</tr>")
+					.toString();
+				}
+			});	
+	}
+		
+	@Override
+	public Mod303Key[] getSamePeriodExplainKeys() {
+		return SAME_PERIOD_EXPLAIN_KEYS;
+	}
+	@Override
+	protected String getSamePeriodExplain( AONContext ctx, Mod303 mod303, Mod303Key key) {
+		return getExplain( ctx, mod303, key, Mod303DAO.getSamePeriodEffectiveModels(ctx, mod303), new ExplainRowManager());	
+	}
+	
 
 }

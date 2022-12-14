@@ -70,7 +70,7 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 					
 					@Override 
 					public String visitComputeKey() {
-						return new JSONObject( getComputeKey(ctx, mod303, script, keyDAO) ).toString();
+						return getComputeKey(ctx, mod303, script, keyDAO);
 					}
 					
 					@Override 
@@ -118,14 +118,16 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 					}
 					
 					private VatContext checkProrrated(Mod303 mod303, VatContext vt) {
-						if (Mod303Declaration.mustApplyProrrate(mod303, vt) &&
-								Arrays.stream(script.getKeys())
-									.filter(Objects::nonNull)
-									.anyMatch(dec::isProrrated)) {
+						if (Arrays.stream(script.getKeys()).filter(Objects::nonNull).anyMatch(dec::isProrrated)) {
+							if (mod303.hasProrate() && mod303.isSpecialProrate()) {
+								vt.setProrrateQuota(AonMathUtils.round(vt.getDeductibleQuota()));	
+							}
+						if (Mod303Declaration.mustApplyProrrate(mod303, vt)) {
 							vt.setProrrated(true);
 							vt.setSpecialProrrate(mod303.isSpecialProrate());
 							vt.setProrratePercent( mod303.getProratePercent());	
 							vt.setProrrateQuota(AonMathUtils.round(vt.getDeductibleQuota() * mod303.getProratePercent() / 100));
+						} 
 						}
 						return vt;
 					}
@@ -248,14 +250,24 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 	}
 	
 	private static String getComputeKey(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script,IMod303KeyDAO keyDAO) {
-		Mod303MVELContext mvelCtx = new Mod303MVELContext(mod303); 
-		mvelCtx.put("mod", mod303);
-		mvelCtx.put("periodModels", FiscalModelDAO.getSamePeriodModels(ctx, mod303, Mod303::new).collect(Collectors.toCollection(LinkedList::new)));
-		mvelCtx.put("lastPeriodModels", FiscalModelDAO.getLastPeriodModels(ctx, mod303, Mod303::new).collect(Collectors.toCollection(LinkedList::new)));
-		mvelCtx.put("models", Mod303DAO.getMod303s(ctx, ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)));
+		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 		StringBuilder buf = new StringBuilder();
 		for (Mod303Key key : script.getKeys() ) {
-			if (key != null) {
+			if (key != null && dec.getRegularizationKey() != null && dec.getRegularizationKey() == key) {
+				buf.append(  dec.getRegularizationExplain( ctx, mod303, key));
+				return buf.toString();
+			} else  if (key != null && Arrays.stream(dec.getCompensationExplainKeys()).anyMatch(k -> k == key)) {
+				buf.append(  dec.getCompensationExplain( ctx, mod303, key));
+				return buf.toString();
+			} else if (key != null && Arrays.stream(dec.getSamePeriodExplainKeys()).anyMatch(k -> k == key)) {
+				buf.append(  dec.getSamePeriodExplain( ctx, mod303, key));
+				return buf.toString();
+			} else {
+				Mod303MVELContext mvelCtx = new Mod303MVELContext(mod303); 
+				mvelCtx.put("mod", mod303);
+				mvelCtx.put("periodModels", Mod303DAO.getSamePeriodEffectiveModels(ctx, mod303).collect(Collectors.toCollection(LinkedList::new)));
+				mvelCtx.put("lastPeriodModels", Mod303DAO.getLastPeriodEffectiveModels(ctx, mod303).collect(Collectors.toCollection(LinkedList::new)));
+				mvelCtx.put("models", Mod303DAO.getMod303s(ctx, ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)));
 				String template = keyDAO.getTemplate();
 				if (AonStringUtils.isNotBlank( template )) {
 					Object result = TemplateRuntime.eval(template, mvelCtx);
@@ -263,7 +275,7 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 				}
 			}
 		}
-		return buf.toString();
+		return new JSONObject(buf.toString()).toString();
 	}
 
 	private static String getDiffInvoicesInfo(AONContext ctx, Mod303 mod303, IModelScript<Mod303Key> script,IMod303KeyDAO keyDAO) {
@@ -308,7 +320,7 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 						.append("</td>")
 					.append("</tr>");
 					
-					double keyTotal = FiscalModelDAO.getPreviousModels(ctx, mod303, Mod303::new)
+					double keyTotal = Mod303DAO.getPreviousEffectiveModels(ctx, mod303)
 							.map( fm ->  {
 								buf.append("<tr>")
 									.append( MessageFormat.format(styledTag, "td", paddingLeft+border) )

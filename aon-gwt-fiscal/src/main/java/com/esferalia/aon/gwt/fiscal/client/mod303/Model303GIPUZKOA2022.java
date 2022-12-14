@@ -31,6 +31,7 @@ class Model303GIPUZKOA2022 extends Model303Base {
 		paintDeclarationTab(tabPanel);
 		paintGeneralRegimenTab(tabPanel);
 		paintResultTab(tabPanel);
+		showPaymentInfo(getModel());
 		paintAdditionalDataTab(tabPanel);
 		paintAdministrationTab(tabPanel);
 	}

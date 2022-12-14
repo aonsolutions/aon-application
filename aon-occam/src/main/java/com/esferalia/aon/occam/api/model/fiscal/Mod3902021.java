@@ -405,8 +405,9 @@ public class Mod3902021 extends Mod390  {
 		public Mod3902021DetailKey getKey() {
 			return key;
 		}
-		public void setKey(Mod3902021DetailKey key) {
+		public Mod390Detail setKey(Mod3902021DetailKey key) {
 			this.key = key;
+			return this;
 		}
 
 		public int getTaxableBaseBox() {
@@ -421,16 +422,18 @@ public class Mod3902021 extends Mod390  {
 			return taxableBase;
 		}
 
-		public void setTaxableBase(double taxableBase) {
+		public Mod390Detail setTaxableBase(double taxableBase) {
 			this.taxableBase = taxableBase;
+			return this;
 		}
 
 		public double getPercent() {
 			return percent;
 		}
 
-		public void setPercent(double percent) {
+		public Mod390Detail setPercent(double percent) {
 			this.percent = percent;
+			return this;
 		}
 
 		public int getBox() {
@@ -441,8 +444,9 @@ public class Mod3902021 extends Mod390  {
 			return quota;
 		}
 
-		public void setQuota(double quota) {
+		public Mod390Detail setQuota(double quota) {
 			this.quota = quota;
+			return this;
 		}
 
 	}

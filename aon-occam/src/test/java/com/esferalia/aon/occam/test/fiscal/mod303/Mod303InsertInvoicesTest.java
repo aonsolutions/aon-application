@@ -7,12 +7,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 
-public class Mod303InsertInvoicesTest extends AbstractOccamTest {
+public class Mod303InsertInvoicesTest extends Mod303AbstractTest {
 
 	@Test
 	public void test() {

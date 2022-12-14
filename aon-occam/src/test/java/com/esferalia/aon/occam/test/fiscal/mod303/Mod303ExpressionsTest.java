@@ -7,11 +7,11 @@ import org.junit.Test;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.Administration;
-import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
-public class Mod303ExpressionsTest extends AbstractOccamTest {
+public class Mod303ExpressionsTest extends Mod303AbstractTest {
 	
 	@Test
 	public void testCommonTerritoryExpressions() {
@@ -38,7 +38,7 @@ public class Mod303ExpressionsTest extends AbstractOccamTest {
 	
 	private void test( Administration admon) {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
-			.setIssueDate(new Date())
+			.setIssueDate(AonDateUtils.getFirstDayOfYear( new Date()))
 			.setMonthly(true)
 			.setAdministration(admon);
 		Mod303 mod303 = FiscalFaker.getMod303(params);

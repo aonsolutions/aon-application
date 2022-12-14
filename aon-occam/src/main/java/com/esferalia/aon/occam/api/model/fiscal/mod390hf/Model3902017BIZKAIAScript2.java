@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod390hf;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
@@ -43,13 +42,13 @@ public enum Model3902017BIZKAIAScript2 implements IModelScript<Mod390Key> {
 	,LQ001(Mod390Key.BZ_C095.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C095},null,COMPUTE)
 	,LQ002(Mod390Key.BZ_C120.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C120},null,NONE)
 	,LQ004(Mod390Key.BZ_C096.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C096},null,COMPUTE)
-	,LQ005(Mod390Key.BZ_C097.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C097},null,COMPUTE_KEY)
+	,LQ005(Mod390Key.BZ_C097.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C097},null,NONE)
 	,LQ006(Mod390Key.BZ_C098.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C098},null,COMPUTE)
-	,LQ007(Mod390Key.BZ_C099.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C099},null,COMPUTE_KEY)
-	,LQ008(Mod390Key.BZ_C100.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C100},null,COMPUTE_KEY)
+	,LQ007(Mod390Key.BZ_C099.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C099},null,NONE)
+	,LQ008(Mod390Key.BZ_C100.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C100},null,NONE)
 	,LQ009(Mod390Key.BZ_C110.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C110},null,COMPUTE)
-	,LQ010(Mod390Key.BZ_C115.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C115},null,COMPUTE_KEY)
-	,LQ011(Mod390Key.BZ_C116.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C116},null,COMPUTE_KEY)
+	,LQ010(Mod390Key.BZ_C115.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C115},null,NONE)
+	,LQ011(Mod390Key.BZ_C116.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C116},null,NONE)
 	,LQ012(Mod390Key.BZ_C117.getDescription()					,new Mod390Key[]{null,Mod390Key.BZ_C117},null,COMPUTE)
 	;
 	
