@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,9 +19,12 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDomain;
 import com.esferalia.aon.gwt.common.shared.HasId;
+import com.esferalia.aon.gwt.payroll.client.DomainEnterprisesServiceAsync;
+import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<Integer> {
+public class AgreementInfo implements IContextProvider, Serializable, HasId<Integer>, HasDomain<Integer> {
 	
 	public static class Level implements Serializable, HasId<Integer>, HasDomain<Integer>, Comparable<Level> {
 
@@ -414,10 +418,28 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 			getAllVariables().stream().forEach(variable -> variables.add(variable));
 		}
 		
-		List<String> variablesList = new ArrayList<String>(variables);
-		variablesList.sort((o1, o2) -> o1.compareTo(o2));
+		List<String> variablesList = new ArrayList<>(variables);
+		variablesList.sort(new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				if(AonStringUtils.containsIgnoreCase(o1, "SALARIO_") && AonStringUtils.containsIgnoreCase(o2, "SALARIO_")) return o1.compareTo(o2);
+				if(AonStringUtils.containsIgnoreCase(o1, "P_E_") && AonStringUtils.containsIgnoreCase(o2, "P_E_")) return o1.compareTo(o2);
+				if(AonStringUtils.containsIgnoreCase(o1, "SALARIO_") && AonStringUtils.containsIgnoreCase(o2, "P_E_")) return -1;
+				if(AonStringUtils.containsIgnoreCase(o1, "P_E_") && AonStringUtils.containsIgnoreCase(o2, "SALARIO_")) return 1;
+				
+				if(AonStringUtils.containsIgnoreCase(o1, "SALARIO_")) return -1;
+				if(AonStringUtils.containsIgnoreCase(o1, "SALARIO_")) return -1;
+				if(AonStringUtils.containsIgnoreCase(o1, "P_E_")) return -1;
+				
+				if(AonStringUtils.containsIgnoreCase(o2, "SALARIO_")) return 1;
+				if(AonStringUtils.containsIgnoreCase(o2, "SALARIO_")) return 1;
+				if(AonStringUtils.containsIgnoreCase(o2, "P_E_")) return 1;
+				
+				return o1.compareTo(o2);
+			}
+		});
 		
-		return new HashSet<String>(variablesList);
+		return new HashSet<>(variablesList);
 	}
 	
 	private void setFilteredVariables() {
@@ -829,6 +851,47 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 		default:
 			return null;
 		}
+	}
+
+	@Override
+	public boolean isEditable(String name) {
+		for (Payment payment : getPayments())
+			if (AonStringUtils.equals(name, payment.getName()))
+				return false;
+		return true;
+	}
+
+	@Override
+	public void getContext(AsyncCallback<ContextDescriptor> callback) {
+		DomainEnterprisesServiceAsync.newInstance().getContext(new AsyncCallback<ContextDescriptor>() {
+			
+			@Override
+			public void onSuccess(ContextDescriptor result) {
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void eval(String expression, List<Variable> vars, AsyncCallback<List<Result>> callback) {
+		
+		DomainEnterprisesServiceAsync.newInstance().eval(expression, this, new AsyncCallback<List<Result>>() {
+			
+			@Override
+			public void onSuccess(List<Result> result) {
+				callback.onSuccess(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				callback.onFailure(caught);
+			}
+		});
 	}
 
 }

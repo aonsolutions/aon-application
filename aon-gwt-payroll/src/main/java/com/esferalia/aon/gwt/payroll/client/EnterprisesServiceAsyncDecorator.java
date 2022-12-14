@@ -47,6 +47,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
@@ -1011,6 +1012,18 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void deletePayments(String domainName, List<Integer> paymentIds, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.deletePayments(domainName, paymentIds, callback);
+	}
+
+	@Override
+	public void getContext(String domainName, AgreementInfo agreementInfo, AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getContext(domainName, agreementInfo, callback);
+	}
+	
+	@Override
+	public void eval(String domainName, String expression, AgreementInfo agreementInfo, AsyncCallback<List<Result>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.eval(domainName, expression, agreementInfo, callback);
 	}
 	
 	// ------------------------------------------------ Enterprise (API)

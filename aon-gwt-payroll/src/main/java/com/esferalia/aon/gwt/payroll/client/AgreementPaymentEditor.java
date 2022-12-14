@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraft.TypeListBox;
+import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementExtra;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcept;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
@@ -22,13 +23,17 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -130,8 +135,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	private AgreementExtra extra;
 	private AgreementExtra associatedExtra;
 	private Payment associatedPayment;
-	
-	private boolean expresssionVisibility = false;
 
 	private TypeListBox<Payment.Type> paymentTypeLB;
 	
@@ -139,12 +142,14 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	private Set<AgreementExtra> allExtras;
 	
 	private Button acceptDialog;
+	
+	private IContextProvider context;
 
 	// ----------------------------------------- Constructor
 
 	protected AgreementPaymentEditor(Payment payment, AgreementExtra extra, Set<Payment> allPayments, Set<AgreementExtra> allExtras) {
 		setCaption("Devengo");
-		expresssionVisibilityBtn = new AonToolbarSmallButton("Mostrar toda la expresi\u00f3n", AON.CSS.aonIconVisibility());
+		expresssionVisibilityBtn = new AonToolbarSmallButton("Editar expresi\u00f3n", AON.CSS.aonIconEdit());
 		setWidget(binder.createAndBindUi(this));
 		showCloseButton(true);
 		getFooterButtons();
@@ -638,6 +643,10 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	}
 
 	// ----------------------------------------- Fill Payment
+	
+	public void setContextProvider(IContextProvider context) {
+		this.context = context;
+	}
 
 	private void fillPayment() {
 		paymentTypeLB.setSelected(this.payment.getType());
@@ -645,18 +654,17 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		paymentDescriptionTB.setValue(this.payment.getDescription());
 		paymentExpressionTB.setValue(getParsedExpression(this.payment.getExpression()));
 		expresssionVisibilityBtn.addClickHandler(e -> {
-			expresssionVisibility = !expresssionVisibility;
-			if(expresssionVisibility) {
-				paymentExpressionTB.setValue(getExpression(this.payment.getExpression()));
-				expresssionVisibilityBtn.setTitle("Ocultar parte expresi\u00f3n");
-				expresssionVisibilityBtn.removeStyleName(AON.CSS.aonIconVisibility());
-				expresssionVisibilityBtn.addStyleName(AON.CSS.aonIconVisibilityOff());
-			} else {
-				paymentExpressionTB.setValue(getParsedExpression(this.payment.getExpression()));
-				expresssionVisibilityBtn.setTitle("Mostrar toda expresi\u00f3n");
-				expresssionVisibilityBtn.removeStyleName(AON.CSS.aonIconVisibilityOff());
-				expresssionVisibilityBtn.addStyleName(AON.CSS.aonIconVisibility());
-			}
+			final FxDialog fxDialog = new FxDialog(context);
+			fxDialog.setExpression(getExpression(this.payment.getExpression()));
+			fxDialog.center();
+			fxDialog.show();
+		
+			fxDialog.addCloseHandler(ev -> {
+				if (fxDialog.isAccepted()) {
+					payment.setExpression(fxDialog.getExpression());
+					paymentExpressionTB.setValue(getParsedExpression(payment.getExpression()));
+				}
+			});
 		});
 		setSelectedValueLB(paymentTaxedTypeLB, getTaxedQuoteType(this.payment.getIrpfExpression()));
 		paymentTaxedExpression.setValue(this.payment.getIrpfExpression());
