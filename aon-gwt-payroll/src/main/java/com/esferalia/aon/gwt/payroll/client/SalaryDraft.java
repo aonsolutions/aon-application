@@ -625,32 +625,7 @@ public class SalaryDraft extends ResizeComposite
 
 	}
 	
-	static class AllFocusSuggestBox extends SuggestBox implements HasAllFocusHandlers{
-		
-		public AllFocusSuggestBox() {
-			super();
-		}
-
-		public AllFocusSuggestBox(SuggestOracle oracle) {
-			super(oracle);
-		}
-
-		public AllFocusSuggestBox(SuggestOracle oracle, ValueBoxBase<String> box) {
-			super(oracle, box);
-		}
-
-		@Override
-		public HandlerRegistration addBlurHandler(BlurHandler handler) {
-			return getValueBox().addBlurHandler(handler);
-		}
-
-		@Override
-		public HandlerRegistration addFocusHandler(FocusHandler handler) {
-			return getValueBox().addFocusHandler(handler);
-		}
-
-		
-	}
+	
 	
 	static class ConstantEditorFactory implements VariableEditorFactory<ConstantLabel> {
 		

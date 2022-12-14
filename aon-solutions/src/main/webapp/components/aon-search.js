@@ -77,6 +77,7 @@ export class AonSearch extends AonElement {
 		let span = this.createElement(TAG.SPAN);
 		span.id = this.SPAN;
 		span.style.display = 'inline-flex';
+		span.style.position = 'relative';
 
 		this.appendChild(span);
 		
@@ -102,7 +103,7 @@ export class AonSearch extends AonElement {
 		})
 		
 		input.addEventListener(EVENT.KEYUP, () => {
-			this.dispatchEventSearch(input.value);
+			this.dispatchEventSearch(input.value, EVENT.KEYUP);
 		});
 
 		searchButton.addEventListener(EVENT.CLICK, () => {
@@ -135,19 +136,57 @@ export class AonSearch extends AonElement {
 
 	}
 
-	dispatchEventSearch(value){
+	dispatchEventSearch(value, event=undefined){
 		this.dispatchEvent(new CustomEvent(EVENT.SEARCH,{detail: value}));
 
 		this.dispatchEvent(new CustomEvent(EVENT.SEARCH_NEW,{
 			detail:{
+				event,
 				search: value,
 				...this.getValues()
 			}
 		}));
+
+
+		this.buildBadge();
+	}
+
+	buildBadge(){
+		let count = Object.values(this.getValues()).length;
+
+		const id = this.id+"CountFilter";
+
+		let div = this.getElement(id);
+
+		if(div){
+			div.remove();
+		}
+
+		if(count){
+			div = this.createElement(TAG.DIV);
+			div.id = id;
+			div.style = `
+				position: relative; 
+				background: #002469;
+				top: 14px;
+				right: 5px;
+				border-radius: 50%;
+				color: white;
+				font-size: 10px;
+				font-weight: 800;
+				text-align: center;
+				height: 14px;
+				width: 14px;
+				line-height: 14px;
+			`;
+			div.textContent = count;
+			div.title = `${count} ${MSG.FILTERS}`;
+			this.getElement(this.SPAN).appendChild(div);
+		}
 	}
 
 	openOrClose(){
-	  	let divOpts = this.getElement(this.OPTIONS);
+		let divOpts = this.getElement(this.OPTIONS);
 		if(divOpts.innerHTML.length){
 			divOpts.style.width = this.clientWidth;
 			if(divOpts.classList.contains('is-visible')){
@@ -194,7 +233,7 @@ export class AonSearch extends AonElement {
 				this.clearValues();
 			}
 			input.value = '';
-			this.dispatchEventSearch(input.value);
+			this.dispatchEventSearch(input.value, EVENT.CLOSE);
 			input.style.display = 'none';
 			advancedButton.style.display = 'none';
 			span.style.borderBottom = '0px';
@@ -258,7 +297,7 @@ export class AonSearch extends AonElement {
 		button.style.padding = "0.5rem 1rem"; 
 		button.style.margin = "9px auto 0 auto";
 		button.addEventListener(EVENT.CLICK, ()=>{
-			this.dispatchEventSearch(input.value)
+			this.dispatchEventSearch(input.value, EVENT.CLICK)
 			this.openOrClose();
 		});
 		divOpts.appendChild(button);
@@ -295,14 +334,11 @@ export class AonSearch extends AonElement {
 	}
 
 	clearValues() {
-		let divOpts = this.getElement(this.OPTIONS);
-		if(divOpts){
-			const names = serializeForm(divOpts);
-			for(let name in names){
-				let elem = this.querySelector(`[name=${name}]`);
-				if(elem && elem.clear){
-					elem.clear();
-				}
+		const names = this.getValues();
+		for(let name in names){
+			let elem = this.querySelector(`[name=${name}]`);
+			if(elem && elem.clear){
+				elem.clear();
 			}
 		}
 	}

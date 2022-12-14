@@ -209,25 +209,7 @@ public interface CretaService {
 		}-*/;
 	}
 
-	public static class JsCCC extends JavaScriptObject {
-		protected JsCCC() {
-		}
-
-		// ----------------------------------- JSNI (Native JavaScript Methods)
-
-		public final native String getNumber() /*-{
-			return this.number;
-		}-*/;
-
-		public final native String getRegime() /*-{
-			return this.regime;
-		}-*/;
-
-		public final native String getProvince() /*-{
-			return this.province;
-		}-*/;
-
-	}
+	
 
 	public static class JsUnknownDato extends JsEvent {
 		protected JsUnknownDato() {

@@ -77,6 +77,7 @@ import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
+import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.sepe.Sepe;
 
@@ -338,9 +339,24 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String nss = params.optString("nss");
 		Date date = AonDateUtils.parse(params.optString("fra"), FORMAT_DATE);
 		String frb = params.optString("frb");
+		boolean checkIDC  = params.optBoolean("checkIDC");
+		
 		if(!frb.isEmpty()) {
 			date = AonDateUtils.parse(frb, FORMAT_DATE);
 			situationType = SituationType.BAJA;
+		}
+		
+		if(checkIDC) {
+			Optional<Idc> idcLast = SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, nss)
+			.stream()
+			.filter(d-> d.getDescripcion().equals("ALTA"))
+			.sorted((o1, o2) -> o2.getFecha().compareTo(o1.getFecha()))
+			.findFirst();
+				
+			if(idcLast.isPresent()) {
+				date = idcLast.get().getFecha();
+			}
+			LOGGER.info("IDC-DATES END "+date);
 		}
 
 	    return ServicioRED.getTADuplicatePOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), ccc, regime, situationType, nss, date);		
@@ -354,8 +370,22 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String ccc        = params.optString("ctaCti");
 		String nss        = params.optString("nss");
 		Date date         = AonDateUtils.parse(params.optString("fra"), FORMAT_DATE);
+		boolean checkIDC  = params.optBoolean("checkIDC");
 		
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
+
+		if(checkIDC) {
+			Optional<Idc> idcLast = SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, nss)
+			.stream()
+			.filter(d-> d.getDescripcion().equals("ALTA"))
+			.sorted((o1, o2) -> o2.getFecha().compareTo(o1.getFecha()))
+			.findFirst();
+				
+			if(idcLast.isPresent()) {
+				date = idcLast.get().getFecha();
+			}
+			LOGGER.info("IDC-DATES END "+date);
+		}
 		
 		return ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), nss, regime, ccc, date);
 	}

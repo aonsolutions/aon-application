@@ -36,7 +36,6 @@ export class AonCtaList extends AonElement {
   constructor() {
     super();
     this.id = this.id || PAYROLL_VIEWS.AON_CTA_LIST;
-    this.applicationEl = this.getApplication();
     this.TABLE_ID = this.id + "Table";
   }
 
@@ -46,14 +45,14 @@ export class AonCtaList extends AonElement {
 
   async build() {
     this.paintView();
-    this.applicationEl.startLoader();
+    this.getApplication().startLoader();
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();
-    this.applicationEl.stopLoader();
+    this.getApplication().stopLoader();
   }
   
   paintView() {
-    this.applicationEl.removeToolbarOptions();        
+    this.getApplication().removeToolbarOptions();        
     let aonTable = this.isMobile() ? new AonMobileList() : new AonTable();
     aonTable.id = this.TABLE_ID;
     this.appendChild(aonTable);
@@ -154,40 +153,40 @@ export class AonCtaList extends AonElement {
   }
 
   async getCertCorriente(data) {
-    this.applicationEl.startLoading();
+    this.getApplication().startLoading();
     try {
       const { ccc, cccRegimeCode: regime } = data;
       await getCertCorriente({ ccc, regime }); // open pdf
     } catch (error) {
       this.showToast(error);
 		}
-    this.applicationEl.stopLoading();
+    this.getApplication().stopLoading();
   }
 
   async getReportAffiliateInAlta(data) {
-    this.applicationEl.startLoading();
+    this.getApplication().startLoading();
     try {
       const { ccc, cccRegimeCode: regime } = data;
       await getReportAffiliateInAlta({ ccc, regime }); // open pdf
     } catch (error) {
       this.showToast(error);
 		}
-    this.applicationEl.stopLoading();
+    this.getApplication().stopLoading();
   }
 
   async getReportAffiliateInMovPrev(data) {
-    this.applicationEl.startLoading();
+    this.getApplication().startLoading();
     try {
       const { ccc, cccRegimeCode: regime } = data;
       await getReportAffiliateInMovPrev({ ccc, regime }); // open pdf
     } catch (error) {
       this.showToast(error);
 		}
-    this.applicationEl.stopLoading();
+    this.getApplication().stopLoading();
   }
   
   async getIdcCcc(data) {
-    this.applicationEl.startLoading();
+    this.getApplication().startLoading();
     try {
       const { ccc, cccRegimeCode: regime } = data;
       const fecha = AonDateUtils.formatDateOrigin( new Date());
@@ -195,7 +194,7 @@ export class AonCtaList extends AonElement {
     } catch (error) {
       this.showToast(error);
 		}
-    this.applicationEl.stopLoading();
+    this.getApplication().stopLoading();
   }
 }
 window.customElements.define("aon-cta-list", AonCtaList);

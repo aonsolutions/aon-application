@@ -119,36 +119,7 @@ public class PayrollServletUtils extends AonServletUtils {
 		}
 	}
 
-	protected static class CompositeProvider implements ICollectionProvider {
-
-		private final static Logger LOGGER = LoggerFactory
-				.getLogger(CompositeProvider.class);
-
-		private ICollectionProvider providers[];
-
-		public CompositeProvider(ICollectionProvider... providers) {
-			this.providers = providers;
-		}
-
-		@Override
-		public Collection getCollection() {
-			try {
-				return getCollection(false);
-			} catch (ManagerBeanException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-			return null;
-		}
-
-		@Override
-		public Collection getCollection(boolean forceRefresh)
-				throws ManagerBeanException {
-			List<?> collection = new LinkedList();
-			for (ICollectionProvider provider : providers)
-				collection.addAll(provider.getCollection(forceRefresh));
-			return collection;
-		}
-	}
+	
 
 	protected static class SalaryProvider implements ICollectionProvider {
 

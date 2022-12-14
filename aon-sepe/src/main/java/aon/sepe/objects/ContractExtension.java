@@ -39,7 +39,7 @@ public class ContractExtension {
 		return endDate;
 	}
 
-	public boolean getDiscontinuo() {
+	public boolean isDiscontinuo() {
 		return discontinuo;
 	}
 	

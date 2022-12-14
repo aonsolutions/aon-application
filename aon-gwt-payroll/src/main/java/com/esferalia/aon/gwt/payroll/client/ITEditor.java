@@ -847,18 +847,7 @@ public class ITEditor extends AbstractPager implements RequiresResize,
 
 	
 
-	class AddContractCommand implements ScheduledCommand {
-
-		public AddContractCommand() {
-		}
-
-		@Override
-		public void execute() {
-
-			popupPanel.hide();
-			Window.alert("Nuevo contracto");
-		}
-	}
+	
 
 	class ExpressionCallback extends Timer {
 

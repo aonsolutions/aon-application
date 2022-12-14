@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.UnknownError;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.Visitor;
 
 
@@ -35,18 +34,8 @@ public abstract class EmployeeStatus implements Serializable {
 
 
 
-	public static class InvalidData extends EmployeeStatus{
-		@Override
-		public void visit(Visitor visitor) {
-			visitor.invalidData();
-		}
-	}
-	public static class EmployeeNotFound extends EmployeeStatus{
-		@Override
-		public void visit(Visitor visitor) {
-			visitor.employeeNotFound();
-		}
-	}
+	
+	
 	
 	public static class Forbidden extends EmployeeStatus{
 		@Override
@@ -151,13 +140,7 @@ public abstract class EmployeeStatus implements Serializable {
 		}
 	}
 	
-	public static class OccupationNotFound extends AndEmployeeStatus{
-		@Override
-		public void visit(Visitor visitor) {
-			visitor.occupationNotFound();
-			super.visit(visitor);
-		}
-	}	
+		
 
 	public static class MismatchedStartDate extends AndEmployeeStatus {
 		

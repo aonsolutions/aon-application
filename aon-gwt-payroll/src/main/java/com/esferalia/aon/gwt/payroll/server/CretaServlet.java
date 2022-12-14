@@ -1794,25 +1794,7 @@ public class CretaServlet extends HttpServlet
 		
 	}
 
-	public static class NoSkippedCallback implements BasesCallback {
-		
-		private boolean skipped = false;
-		
-		@Override
-		public void bases(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases) {
-			if ( skipped )
-				return;
-			throw new NoneSkippedException();
-		}
-		
-		@Override
-		public void trabajadorSkipped(net.aonsolutions.core.tgss.creta.jaxb.bases.Trabajador trabajadorAon,
-				Trabajador trabajadorCreta, Salary salary) {
-			skipped = true;
-		}
-		
-		
-	}
+	
 
 	public abstract static class ProgressCallback implements BasesCallback {
 		
@@ -1845,19 +1827,19 @@ public class CretaServlet extends HttpServlet
 
 	
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.bases.Bases> findBases(HttpServletRequest req) throws SQLException{
-		return Stream.empty();
-//		String login = ":-)" ; 
-//		Date from = getFromDate();
-//		String domainName = req.getServerName();
-//		Integer domainId = AonServletUtils.getDomainID(domainName);
-//		Collection<String> cccs = getParameterValues(req, Parameter.CCC);
-//		
-//		return
-//		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_BASES, from, cccs)
-//		.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases.class, attach.getData()))
-//		.filter(optional -> optional.isPresent())
-//		.map(optional -> optional.get())
-//		;
+//		return Stream.empty();
+		String login = ":-)" ; 
+		Date from = getFromDate();
+		String domainName = req.getServerName();
+		Integer domainId = AonServletUtils.getDomainID(domainName);
+		Collection<String> cccs = getParameterValues(req, Parameter.CCC);
+		
+		return
+		findAttachs(domainName, domainId, login, RegistryAttachmentType.CRETA_BASES, from, cccs)
+		.map(attach-> unmarshall(net.aonsolutions.core.tgss.creta.jaxb.bases.Bases.class, attach.getData()))
+		.filter(optional -> optional.isPresent())
+		.map(optional -> optional.get())
+		;
 	}
 
 	private static Stream<net.aonsolutions.core.tgss.creta.jaxb.respuesta.Respuesta> findRespuestas(HttpServletRequest req) throws SQLException{
