@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1539,7 +1540,6 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		for ( Date date = AonDateUtils.getFirstDayOfMonth(getContractStartate(ctx)); expected < 11 && date.compareTo(AonDateUtils.getFirstDayOfMonth(endDate))< 0; date = AonDateUtils.add(date, Calendar.MONTH,1) )
 			expected++;
 		
-				
 		if ( payments.size() == expected )
 			return Optional.ofNullable(payments.stream().collect(Collectors.summingDouble(p -> p.getQuote() - p.getAmount() )) * (( amount == total ) ? 1.00 : amount/total ) + amount / 12.00);
 		return Optional.empty();
@@ -1561,23 +1561,36 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			.and(p.getStartDateProperty().le(endExtraDate))
 			.and(p.getEndDateProperty().ge(startExtraDate)))
 		.forEach(salary -> {
+		    	
 			salary.getPayments().stream()
 			.filter(p -> AonStringUtils.equals(contractPayment.getDescription(), p.getDescription()))
 			.findFirst().ifPresentOrElse(
 			(p) -> monthlyQuotedPayments.add(p), 
-			( ) -> salary.getPayments().stream()
+			() -> salary.getPayments().stream()
+			.filter(p -> AonStringUtils.equals(contractPayment.getName(), p.getName()) && AonStringUtils.containsIgnoreCase(p.getDescription(), contractPayment.getMonth().getName(new Locale("es"))))
+			.findFirst().ifPresentOrElse(
+			(p) -> monthlyQuotedPayments.add(p), 
+			() -> salary.getPayments().stream()
 			.filter(p -> AonStringUtils.equals(contractPayment.getName(), p.getName()))
+			.sorted(SmartContractSalaryCalculator.sorting(contractPayment.getDescription()))
 			.findFirst().ifPresentOrElse(
 			p -> monthlyQuotedPayments.add(p), 
-			() -> monthlyQuotedPayments.add( new Payment(0.00, 0.00, contractPayment.getExpression(), contractPayment.getDescription(), contractPayment.getName(), null)) ) ) ;
+			() -> monthlyQuotedPayments.add( new Payment(0.00, 0.00, contractPayment.getExpression(), contractPayment.getDescription(), contractPayment.getName(), null)) ) ) ) ;
 
 		})
 		;
-		
-		
+				
 		return monthlyQuotedPayments;
 	}
-
+	
+	private static Comparator<Payment> sorting(String s) {
+	    return ( Payment p1, Payment p2) -> {
+		int l1 = AonStringUtils.getLevenshteinDistance(s, p1.getDescription());
+		int l2 = AonStringUtils.getLevenshteinDistance(s, p2.getDescription());
+		return l1 - l2;
+	    };
+	}
+	
 	private static Optional<IContractPayment> getSalaryPaymentOf(com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, IContractPayment contractPayment ) {
 		if ( AonStringUtils.equals(contractPayment.getDescription(), salaryPayment.getDescription()) ) {
 			return Optional.of(contractPayment);
