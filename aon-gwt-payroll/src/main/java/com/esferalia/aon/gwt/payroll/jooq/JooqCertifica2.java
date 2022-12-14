@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.xml.bind.JAXBException;
 
@@ -539,28 +540,6 @@ public class JooqCertifica2 {
 			
 			Double baseCGC = salary.get(SALARY.CGC_BASE);
 			Double baseCGP = salary.get(SALARY.CGP_BASE);
-			
-//			List<String> baseCGCRecords = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
-//					.where(SALARY_DATA.SALARY.eq(salaryId)).and(SALARY_DATA.NAME.eq("BASE_CGC"))
-//					.fetch(SALARY_DATA.EXPRESSION);
-//
-//			Double baseCGC = 0.00;
-//
-//			// Using for, cause can be periods in the same Salary
-//			for (String baseCGCStr : baseCGCRecords) {
-//				baseCGC += Double.parseDouble(baseCGCStr);
-//			}
-//
-//			List<String> baseCGPRecords = dslContext.select(SALARY_DATA.EXPRESSION).from(SALARY_DATA)
-//					.where(SALARY_DATA.SALARY.eq(salaryId)).and(SALARY_DATA.NAME.eq("BASE_CGP"))
-//					.fetch(SALARY_DATA.EXPRESSION);
-//
-//			Double baseCGP = 0.00;
-//
-//			// Using for, cause can be periods in the same Salary
-//			for (String baseCGPStr : baseCGPRecords) {
-//				baseCGP += Double.parseDouble(baseCGPStr);
-//			}
 
 			// Initialize Certifica2Info
 			Certifica2Period certifica2Period = null;
@@ -599,8 +578,9 @@ public class JooqCertifica2 {
 			quoteData.put("daysCtz", certifica2.getQuotedDays() + "");
 			quoteData.put("bccc", round(certifica2.getBase_cgc(), 2) + "");
 			quoteData.put("bcd", round(certifica2.getBase_unemployment(), 2) + "");
-
-			quoteDataList.add(quoteData);
+			
+			if(!checkQuoteData(quoteDataList, quoteData)) quoteDataList.add(quoteData);
+			
 		}
 
 		// Contract duration for agrarian only
@@ -608,6 +588,27 @@ public class JooqCertifica2 {
 			certifica2Info.setContractDuration(contractDuration);
 
 		certifica2Info.setQuoteDataList(quoteDataList);
+	}
+
+	private static boolean checkQuoteData(List<Map<String, String>> quoteDataList, Map<String, String> quoteData) {
+		Optional<Map<String, String>> quoteDataOpt = quoteDataList.stream().filter(map -> AonStringUtils.equalsIgnoreCase(map.get("anioCtz"), quoteData.get("anioCtz")) && AonStringUtils.equalsIgnoreCase(map.get("monthCtz"), quoteData.get("monthCtz"))).findFirst();
+		
+		if(!quoteDataOpt.isPresent()) return false;
+		
+		Integer daysCtz = Integer.parseInt(quoteDataOpt.get().get("daysCtz"));
+		daysCtz += Integer.parseInt(quoteData.get("daysCtz"));
+		
+		Double bccc = Double.parseDouble(quoteDataOpt.get().get("bccc"));
+		bccc +=  Double.parseDouble(quoteData.get("bccc"));
+		
+		Double bcd = Double.parseDouble(quoteDataOpt.get().get("bcd"));
+		bcd +=  Double.parseDouble(quoteData.get("bcd"));
+		
+		quoteDataOpt.get().put("daysCtz", daysCtz + "");
+		quoteDataOpt.get().put("bccc", round(bccc, 2) + "");
+		quoteDataOpt.get().put("bcd", round(bcd, 2) + "");
+		
+		return true;
 	}
 
 	private static void getCertifica2Holidays(DSLContext dslContext,
