@@ -33,7 +33,22 @@ public class TestSistemaREDITPart {
 
 	private final String CERTIFICATE_PASSWORD = "1234";
 	private final String CERTIFICATE_TYPE = "pkcs12"; 
-	private final String CERTIFICATE_PATH =  System.getProperty("user.home")+"/CERT.pfx"; 
+	private final String CERTIFICATE_PATH = System.getProperty("user.home")+"/CERT.p12"; 
+	
+	@Test
+	@Ignore
+	public void registerItBaja() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {
+			SistemaREDITPart.registerItBaja(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, 
+					"0111", "01105360062", "291136796369", 
+					SistemaRED.Contingencies.ACCIDENT_LABORAL, SistemaRED.SituationEmployee.ACTIVO,
+					new Date(), SistemaRED.ContractType.RESTO_Y_AUTONOMOS, (float) 844.38, 30, Optional.of(new Date()), Optional.empty(),
+					Optional.empty(), Optional.empty(), Optional.empty());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	@Test
 	@Ignore
@@ -41,7 +56,7 @@ public class TestSistemaREDITPart {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
 			Collection<It> its = SistemaREDITPart.getIts(certificateInputStream, 
 					CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, "0111","01105360062", 
-					Toolkit.parseDate("01-01-2015", "dd-MM-yyyy"), Toolkit.parseDate("01-06-2022", "dd-MM-yyyy"),
+					Toolkit.parseDate("23/12/2021", "dd/MM/yyyy"), Toolkit.parseDate("27/01/2022", "dd/MM/yyyy"),
 					Optional.empty()
 			);
 			for (It it : its) {
@@ -98,21 +113,6 @@ public class TestSistemaREDITPart {
 		}
 		catch (Exception e) {e.printStackTrace();}
 	}
-	
-	@Test
-	@Ignore
-	public void registerItBaja() {
-		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			SistemaREDITParts.registerItBaja(certificateInputStream,"jg@FNMT","pkcs12", 
-					"0111", "01105360062", "011017250195", 
-					SistemaRED.Contingencies.ACCIDENT_LABORAL, SistemaRED.SituationEmployee.ACTIVO,
-					new Date(), SistemaRED.ContractType.RESTO_Y_AUTONOMOS, (float) 844.38, 30, Optional.of(new Date()), Optional.empty(),
-					Optional.empty(), Optional.empty(), Optional.empty());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
 	
 	@Test
 	@Ignore

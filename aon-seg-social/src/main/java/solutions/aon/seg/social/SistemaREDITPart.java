@@ -1,7 +1,11 @@
 package solutions.aon.seg.social;
 
+import static solutions.aon.seg.social.SistemaRED.PartType.BAJA;
+import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.wait4;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -24,12 +28,27 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
 import org.xml.sax.SAXException;
 
+import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.HtmlButton;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlOption;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
+
+import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.StatusCodeException;
+import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.object.ITPart;
 import solutions.aon.seg.social.object.It;
 import solutions.aon.seg.social.object.It.ItBuilder;
 import solutions.aon.seg.social.object.ItPartId;
+import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDITPart extends ServicioREDPartRegeXML {
@@ -37,6 +56,7 @@ class SistemaREDITPart extends ServicioREDPartRegeXML {
 	//Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
 	
 	private static final String FORMAT_DATE = "dd/MM/yyyy";
+	private static final String BASE_URI = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=IWXP0001";
 
 	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String ccc, Date from, Date to, Optional<String> nss)
@@ -53,7 +73,7 @@ class SistemaREDITPart extends ServicioREDPartRegeXML {
 		}
 		
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
-			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=IWXP0001");
+			String body = Toolkit.getBodyGET(httpClient, BASE_URI);
 			Toolkit.checkProsaError(body);
 			checkAuthorization(body);
 			
@@ -99,15 +119,218 @@ class SistemaREDITPart extends ServicioREDPartRegeXML {
 		}
 	}
 	
+	// REGISTER IT START HANDLE EXCEPTIONS
+	public static void registerItBaja(InputStream certificateInputStream, String certificatePassword,
+			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
+			SistemaRED.SituationEmployee situationEmployee, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
+			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType, Optional<String> licenseNumber, Optional<String> cias,
+			Optional<String> occupation) throws SegSocialException {
+
+		Toolkit.verifyData(new Object[] { regime, ccc, naf, contingency, situationEmployee, licenseNumber, cias,
+				startdate, contractType, baseCot, cotDays });
+
+		try {
+			registerItBajaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf,
+					contingency, situationEmployee,startdate, contractType, baseCot,
+					cotDays, fATEP, accidentType, licenseNumber, cias, occupation);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (InterruptedException e) {
+			throw new SegSocialException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SegSocialException(e.getMessage());
+		}
+	}
+	
+	// REGISTER IT START
+	private static void registerItBajaImpl(InputStream certificateInputStream, String certificatePassword,
+			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
+			SistemaRED.SituationEmployee situationEmployee, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
+			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType,
+			Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation) throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
+			
+			HtmlPage htmlPage = webClient.getPage(BASE_URI);
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+
+			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situationEmployee, BAJA);
+
+			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow();
+			
+			wait4(htmlPage, p -> p.querySelector("[name=\"fechaBaja\"]")).orElseThrow();
+			
+			form.getInputByName("ARQ.SPM.OUT").remove(); 
+			
+			Toolkit.formatDate(startdate, FORMAT_DATE).ifPresent(d-> form.getInputByName("fechaBaja").setValueAttribute(d));
+
+			// Data Contract
+			HtmlOption contractTypeOption = null;
+			HtmlInput cotBaseInput = null;
+			HtmlInput cotDaysInput = null;
+	
+			switch (contractType) {
+				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
+					contractTypeOption = form.querySelector("#tipoContrato option[value=\"1\"]");
+					cotBaseInput = form.getInputByName("sumaBaseCot");
+					cotDaysInput = form.getInputByName("sumaDiasCot");
+				break;
+				case RESTO_Y_AUTONOMOS:
+					contractTypeOption = form.querySelector("#tipoContrato option[value=\"2\"]");
+					cotBaseInput = form.getInputByName("BaseCot");
+					cotDaysInput = form.getInputByName("DiasCot");	
+				break;
+			}
+			
+			if(null!=contractTypeOption) contractTypeOption.click();
+
+			String baseCotStr = Toolkit.parseDecimalToString(baseCot);
+			if(cotBaseInput!=null && !baseCotStr.isEmpty()) {
+				cotBaseInput.setValueAttribute(baseCotStr);
+			}
+
+			if(cotDaysInput!=null && cotDays>0) {
+				cotDaysInput.setValueAttribute(cotDays+"");
+			}
+			
+			if (occupation.isPresent()) {				
+				((HtmlSelect) form.querySelector("#ocupacion")).setSelectedAttribute(occupation.get(), true);
+			}
+			
+			licenseNumber.ifPresent(d-> form.getInputByName("numcolegiado").setValueAttribute(d));
+			cias.ifPresent(c-> form.getInputByName("cias").setValueAttribute(c));
+
+			if (fATEP.isPresent()) {
+				Toolkit.formatDate(fATEP.get(), FORMAT_DATE).ifPresent(d-> form.getInputByName("fechaATEP").setValueAttribute(d));
+			}
+
+			if (accidentType.isPresent()) {
+				HtmlOption typeAccidentOption = null;
+				switch (accidentType.get()) {
+				case LEVE:
+					typeAccidentOption = form.querySelector("#tipoAccidente option[value=\"1\"]");
+					break;
+				case GRAVE:
+					typeAccidentOption = form.querySelector("#tipoAccidente option[value=\"2\"]");
+					break;
+				case MUY_GRAVE:
+					typeAccidentOption = form.querySelector("#tipoAccidente option[value=\"3\"]");
+					break;
+				}
+				if(null!=typeAccidentOption) typeAccidentOption.click();
+			}
+			
+			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow();
+			htmlPage = validate.click();
+			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
+			
+			HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow();
+			
+			formTwo.getInputByName("ARQ.SPM.OUT").remove(); //PREVENT XML
+			
+			HtmlButton confim = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Confirmar\"]")).orElseThrow();
+			htmlPage = confim.click();
+			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
+			
+			//TODO
+			
+//			DomNode elem = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo");
+//			if(null!=elem) {
+//				System.out.println(elem.asText());
+//				if (elem.asText().contains("no se ha dado")) {					
+//					throw new InvalidDataException(elem.asText());
+//				}
+//			}
+			
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
+		}
+	}
+	
+
+	private static HtmlPage fillGeneralData(HtmlPage htmlPage, String regime, String ccc, String naf,
+			SistemaRED.Contingencies contingency, SistemaRED.SituationEmployee situationEmployee, SistemaRED.PartType type)
+			throws IOException, InvalidDataException, InterruptedException {
+		HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow();
+		wait4(htmlPage, p ->p.querySelector("[name=\"regimen\"]")).orElseThrow();
+
+		form.getInputByName("regimen").setValueAttribute(regime); 
+		form.getInputByName("ccc").setValueAttribute(ccc); 
+		form.getInputByName("naf").setValueAttribute(naf); 
+		
+		form.getInputByName("ARQ.SPM.OUT").remove(); 
+		
+		HtmlOption typeOption = null;
+		HtmlOption contingencyOption = null;
+		HtmlOption situationOption = null;
+
+		switch (type) {
+			case ALTA:
+				typeOption = form.querySelector("#partes option[value=\"1\"]");
+				break;
+			case BAJA:
+				typeOption = form.querySelector("#partes option[value=\"2\"]");
+				break;
+			case CONFIRMACION:
+				typeOption = form.querySelector("#partes option[value=\"3\"]");
+				break;
+		
+		}
+		if(null!=typeOption) typeOption.click();
+
+		switch (situationEmployee) {
+			case ACTIVO:
+				situationOption = form.querySelector("#situacionTrab option[value=\"1\"]");
+				break;
+			case PERCEPTOR_DE_DESEMPLEO:
+				situationOption = form.querySelector("#situacionTrab option[value=\"2\"]");
+				break;
+		}
+		if(null!=situationOption) situationOption.click();
+
+		switch (contingency) {
+			case ENFERMEDAD_COMUN:
+				contingencyOption = form.querySelector("#contingencias option[value=\"1\"]");
+				break;
+			case ACCIDENTE_NO_LABORAL:
+				contingencyOption = form.querySelector("#contingencias option[value=\"2\"]");
+				break;
+			case ACCIDENT_LABORAL:
+				contingencyOption = form.querySelector("#contingencias option[value=\"3\"]");
+				break;
+			case ENFERMEDAD_PROFESIONAL:
+				contingencyOption = form.querySelector("#contingencias option[value=\"4\"]");
+				break;
+			case PERIODOS_OBSERVACION:
+				contingencyOption = form.querySelector("#contingencias option[value=\"5\"]");
+				break;
+		}
+		if(null!=contingencyOption) contingencyOption.click();
+
+		HtmlButton accept = (HtmlButton) wait4(htmlPage, p ->p.getElementById("ENVIO_9")).orElseThrow();
+		htmlPage = accept.click();
+		
+		HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
+
+		return htmlPage;
+	}
+
+	
 	private static Collection<It> getParts(CloseableHttpClient httpClient, String xml, String link, String ticket) throws ParserConfigurationException, IOException, SegSocialException {
 		List<ITPart> parts = new ArrayList<>();
-		List<ITPart> aux = new ArrayList<>();
+		List<ITPart> last = new ArrayList<>();
 		String error = "";
 		boolean next;
+	
 		do {
 			next = false;
 			try {
-				List<ITPart> auxTwo = new ArrayList<>();
+				List<ITPart> aux = new ArrayList<>();
 				Map<Integer, ITPart> map = getInfoPartsByXml(xml);
 				for (Map.Entry<Integer, ITPart> entry : map.entrySet()) {
 					Integer position = entry.getKey();
@@ -115,18 +338,19 @@ class SistemaREDITPart extends ServicioREDPartRegeXML {
 					
 					String newLink = link+"?SPM.CONTEXT=internet&ARQ.SPM.OUT=XML_STYLESHEET&ES_FW4=1&SPM.HAYJS=1&ARQ.SPM.TICKET="+ticket+"&SPM.ISPOPUP=0&SPM.ACC.DETALLES_PARTE_CONSULTA=DETALLES_PARTE_CONSULTA&position="+position;
 					
-					setInfoPart(Toolkit.getBodyGET(httpClient, newLink), part);
-					
+					String newXml = Toolkit.getBodyGET(httpClient, newLink);
+					setInfoPart(newXml, part);
+				
 					if (!parts.contains(part)) {										
-						auxTwo.add(part);
+						aux.add(part);
 					}
 					
 					next = position >=10;
 				}
 		
-				if(!aux.containsAll(auxTwo)) {
-					parts.addAll(auxTwo);
-					aux = auxTwo;
+				if(!last.containsAll(aux)) {
+					parts.addAll(aux);
+					last = aux;
 					if(next) {
 						xml = Toolkit.getBodyGET(httpClient, link+"?SPM.CONTEXT=internet&ARQ.SPM.OUT=XML_STYLESHEET&ES_FW4=1&SPM.HAYJS=1&ARQ.SPM.TICKET="+ticket+"&SPM.ISPOPUP=0&SPM.ACC.PAG_SIG_CONSULTA=PAG_SIG_CONSULTA");
 					}
