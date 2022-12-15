@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.fiscal.server.JsonParser;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.AONContext.UnpooledCloseableAONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -40,12 +41,13 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 		ConsoleParams params = new ConsoleParams( )
 			.setPrinter(new PrintStream(resp.getOutputStream()));
 		DomainParams domainParams = null;
-		CloseableAONContext fromCtx = null;
-		CloseableAONContext toCtx = null;
+		UnpooledCloseableAONContext fromCtx = null;
+		UnpooledCloseableAONContext toCtx = null;
 		try {
 			domainParams = JsonParser.parseDomainParams(domainParamsParam);
 			
-			fromCtx = AONContext.getAONContext(domainParams.getSchema());
+			// fromCtx = AONContext.getAONContext(domainParams.getSchema());
+			fromCtx = AONContext.getUnpooledAONContext(domainParams.getSchema());
 			Schema fromSchema = fromCtx.getDslContext().meta()
 				.getSchemas(domainParams.getSchema())
 				.stream()
@@ -61,7 +63,8 @@ public class ConsoleDomainIsolateServlet extends ConsoleAbstractServlet {
 					.setDescription(domainParams.getDescription())
 				);
 			
-			toCtx = AONContext.getAONContext(newSchemaName);
+			// toCtx = AONContext.getAONContext(newSchemaName);
+			toCtx = AONContext.getUnpooledAONContext(newSchemaName);
 			Schema toSchema = toCtx.getDslContext().meta()
 				.getSchemas(newSchemaName)
 				.stream()
