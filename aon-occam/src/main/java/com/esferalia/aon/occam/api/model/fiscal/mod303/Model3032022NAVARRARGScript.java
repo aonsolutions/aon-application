@@ -4,6 +4,7 @@ import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_INVOICE_VAT_BREAKDOWN;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_OUT_VAT_ACCRUAL_INVOICE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
@@ -46,33 +47,33 @@ public enum Model3032022NAVARRARGScript implements IModelScript<Mod303Key> {
 	,DED02 ("Por cuotas soportadas en operaciones interiores corrientes"
 									,new Mod303Key[]{Mod303Key.NF_031	,null			  	,Mod303Key.NF_041}
 									,new KeyTypes[]{KeyTypes.BASE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA}
-									,MODEL_INVOICE_VAT_BREAKDOWN)
+									,PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED03 ("Por cuotas soportadas en operaciones de bienes de inversi\u00F3n"
 									,new Mod303Key[]{Mod303Key.NF_131	,null			  	,Mod303Key.NF_141}
 									,new KeyTypes[]{KeyTypes.BASE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA}
-									,MODEL_INVOICE_VAT_BREAKDOWN)
+									,PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED04 ("Por cuotas soportadas en importaciones"
 									,new Mod303Key[]{Mod303Key.NF_032	,null			  	,Mod303Key.NF_042}
 									,new KeyTypes[]{KeyTypes.BASE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA}
-									,MODEL_INVOICE_VAT_BREAKDOWN)
+									,PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED05 ("Adquisiciones intracomunitarias de bienes y servicios"
 									,new Mod303Key[]{Mod303Key.NF_039	,null			  	,Mod303Key.NF_049}
 									,new KeyTypes[]{KeyTypes.BASE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA}
-									,MODEL_INVOICE_VAT_BREAKDOWN)
+									,PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED06 ("Compensaciones R\u00E9gimen Especial Agricultura, Ganader\u00EDa y  Pesca"
 									,new Mod303Key[]{Mod303Key.NF_170	,null			  	,Mod303Key.NF_043}
 									,new KeyTypes[]{KeyTypes.BASE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA}
-									,MODEL_INVOICE_VAT_BREAKDOWN)
+									,PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED07 ("Inversi\u00F3n del sujeto pasivo"
 									,new Mod303Key[]{Mod303Key.NF_174	,null			  	,Mod303Key.NF_175}
 									,new KeyTypes[]{KeyTypes.BASE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA}
-									,MODEL_INVOICE_VAT_BREAKDOWN)
+									,PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED08 ("Modificaci\u00F3n de bases y cuotas"
 									,new Mod303Key[]{Mod303Key.NF_178	,null			  	,Mod303Key.NF_179}
 									,new KeyTypes[]{KeyTypes.BASE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA}
-									,MODEL_INVOICE_VAT_BREAKDOWN)
+									,PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN)
 	,DED09 (Mod303Key.NF_045.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.NF_045},null,NONE)
-	,DED10 (Mod303Key.NF_450.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.NF_450},null,NONE)
+	,DED10 (Mod303Key.NF_450.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.NF_450},null,COMPUTE_KEY)
 	,DED11 (Mod303Key.NF_050.getDescription() ,new Mod303Key[]{null			  	,null			  	,Mod303Key.NF_050},null,COMPUTE)
 	
 	,TOT  ("Resultado",null,null,TITLE)

@@ -9,9 +9,8 @@ import java.util.Set;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.occam.test.AbstractOccamTest;
 
-public class Mod303KeyTest extends AbstractOccamTest {
+public class Mod303KeyTest extends Mod303AbstractTest {
 	
 	@Test
 	public void testValues() {

@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleLabel;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -175,7 +176,11 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 		
 		if (showProrrate) {
 			prorratePercentLabel.setValue(vc.getProrratePercent());
-			prorrateQuotaLabel.setValue(vc.getProrrateQuota());
+			if (vc.isProrrated()) {
+				prorrateQuotaLabel.setValue(vc.getProrrateQuota());
+			} else {
+				prorrateQuotaLabel.setValue(vc.getDeductibleQuota());
+			}
 		}
 		row
 			.addCell(new Label(ensure(invoiceType,invoiceType::getAbbrDescription)))
@@ -201,8 +206,8 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 			.addCell(surchargeQuotaLabel   ,AON.CSS.aonTextRight())
 			.addCell(deductiblePercentLabel,AON.CSS.aonTextRight())
 			.addCell(deductibleQuotaLabel,AON.CSS.aonTextRight())
-			.addCellIf(showProrrate, prorratePercentLabel,AON.CSS.aonTextRight(),AON.CSS.aonColorBlue())
-			.addCellIf(showProrrate, prorrateQuotaLabel,AON.CSS.aonTextRight(),AON.CSS.aonColorBlue())
+			.addCellIf(showProrrate, prorratePercentLabel,AON.CSS.aonTextRight(),AonMathUtils.isZero(vc.getProrratePercent())?AON.CSS.aonColorBlack():AON.CSS.aonColorBlue())
+			.addCellIf(showProrrate, prorrateQuotaLabel,AON.CSS.aonTextRight(),AonMathUtils.isZero(vc.getProrratePercent())?AON.CSS.aonColorBlack():AON.CSS.aonColorBlue())
 			.addCell(new Label(ensure(vc.getReferenceCode(), vc::getReferenceCode, AonStringUtils.EMPTY)))
 		;
 
@@ -210,7 +215,7 @@ public class JsVatContextBreakdownGridPanel extends FlowPanel implements HasSele
 		sumQuota += vc.getQuota();
 		sumSurchargeQuota += vc.getSurchargeQuota();
 		sumDeductibleQuota += vc.getDeductibleQuota();
-		sumProrratedQuota += vc.getProrrateQuota();
+		sumProrratedQuota += vc.isProrrated()?vc.getProrrateQuota():vc.getDeductibleQuota();
 	}
 
 	public void addFooterRow() {

@@ -4,10 +4,9 @@ import org.junit.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 
-public class Mod303DeleteTest extends AbstractOccamTest {
+public class Mod303DeleteTest extends Mod303AbstractTest {
 	
 	@Test
 	public void testDelete() {

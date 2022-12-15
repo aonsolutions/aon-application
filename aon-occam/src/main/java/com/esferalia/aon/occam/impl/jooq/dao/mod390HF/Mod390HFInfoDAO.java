@@ -72,7 +72,7 @@ public class Mod390HFInfoDAO extends FiscalModelDAO {
 					
 					@Override 
 					public String visitComputeKey() {
-						return new JSONObject( getComputeKey(ctx, mod, script, keyDAO) ).toString();
+						return getComputeKey(ctx, mod, script, keyDAO);
 					}
 					
 					@Override 
@@ -219,7 +219,7 @@ public class Mod390HFInfoDAO extends FiscalModelDAO {
 		JSONArray array = new JSONArray();
 		for (Mod390Key key : script.getKeys() ) {
 			IMod390KeyDAO keyDAO = dec.getKey(key);
-			if (keyDAO != null) {
+			if (keyDAO != null && AonStringUtils.isNotBlank( keyDAO.getExpression())) {
 				Mod390HFMVELExpressionContext mvelCtx = new Mod390HFMVELExpressionContext(keyDAO.getExpression(),mod);
 				Object ret = MVEL.eval(keyDAO.getExpression(), mvelCtx, mvelCtx);
 				JSONObject info = new JSONObject()
@@ -246,37 +246,44 @@ public class Mod390HFInfoDAO extends FiscalModelDAO {
 	}
 	
 	private static String getComputeKey(AONContext ctx, Mod390HF mod, IModelScript<Mod390Key> script,IMod390KeyDAO keyDAO) {
-		Mod390HFMVELContext mvelCtx = new Mod390HFMVELContext(mod); 
-		mvelCtx.put("mod", mod);
-		
-		LinkedList<FiscalModel> periodModels = new LinkedList<>();
-		periodModels.addAll(Mod390HFDAO.getSamePeriodModels(ctx, mod)
-				.collect(Collectors.toCollection(LinkedList::new)));
-		
-		LinkedList<FiscalModel> m303Models = new LinkedList<>();
-		m303Models.addAll(Mod390HFDAO.getM303YearModels(ctx, mod).collect(Collectors.toCollection(LinkedList::new)));
-		m303Models.addAll(periodModels);
-		
-		LinkedList<FiscalModel> depositModels = m303Models
-			.stream()
-			.filter( m -> m.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT
-				|| m.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT_CCT
-				|| m.getDeclarationResultType() == FiscalModelDeclarationType.BANK)
-			.collect(Collectors.toCollection(LinkedList::new))
-		;
-		LinkedList<FiscalModel> paybackModels = m303Models
-			.stream()
-			.filter( m -> 
-			m.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK
-				|| m.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK_CCT)
-			.collect(Collectors.toCollection(LinkedList::new))
-		;
-		mvelCtx.put("periodModels",periodModels);
-		mvelCtx.put("paybackModels",paybackModels);
-		mvelCtx.put("depositModels",depositModels);
+		Mod390HFDeclaration dec = Mod390HFDeclaration.getInstance(mod);
 		StringBuilder buf = new StringBuilder();
 		for (Mod390Key key : script.getKeys() ) {
-			if (key != null) {
+			if (key != null && dec.getRegularizationKey() != null && dec.getRegularizationKey() == key) {
+				buf.append(  dec.getRegularizationExplain( ctx, mod, key));
+				return buf.toString();
+			} else  if (key != null && Arrays.stream(dec.getCompensationExplainKeys()).anyMatch(k -> k == key)) {
+				buf.append(  dec.getCompensationExplain( ctx, mod, key));
+				return buf.toString();
+			} else if (key != null && Arrays.stream(dec.getSamePeriodExplainKeys()).anyMatch(k -> k == key)) {
+				buf.append(  dec.getSamePeriodExplain( ctx, mod, key));
+				return buf.toString();
+			} else {
+				Mod390HFMVELContext mvelCtx = new Mod390HFMVELContext(mod); 
+				mvelCtx.put("mod", mod);
+				LinkedList<FiscalModel> periodModels = new LinkedList<>();
+				periodModels.addAll(Mod390HFDAO.getSamePeriodModels(ctx, mod)
+						.collect(Collectors.toCollection(LinkedList::new)));
+				LinkedList<FiscalModel> m303Models = new LinkedList<>();
+				m303Models.addAll(Mod390HFDAO.getM303EffectiveYearModels(ctx, mod).collect(Collectors.toCollection(LinkedList::new)));
+				m303Models.addAll(periodModels);
+				LinkedList<FiscalModel> depositModels = m303Models
+					.stream()
+					.filter( m -> m.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT
+						|| m.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT_CCT
+						|| m.getDeclarationResultType() == FiscalModelDeclarationType.BANK)
+					.collect(Collectors.toCollection(LinkedList::new))
+				;
+				LinkedList<FiscalModel> paybackModels = m303Models
+					.stream()
+					.filter( m -> 
+					m.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK
+						|| m.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK_CCT)
+					.collect(Collectors.toCollection(LinkedList::new))
+				;
+				mvelCtx.put("periodModels",periodModels);
+				mvelCtx.put("paybackModels",paybackModels);
+				mvelCtx.put("depositModels",depositModels);
 				String template = keyDAO.getTemplate();
 				if (AonStringUtils.isNotBlank( template )) {
 					Object result = TemplateRuntime.eval(template, mvelCtx);
@@ -284,6 +291,10 @@ public class Mod390HFInfoDAO extends FiscalModelDAO {
 				}
 			}
 		}
+		
+		
+		// ******************
+		
 		return buf.toString();
 	}
 

@@ -56,5 +56,5 @@ export const writeXml = (cadena) => {
 
 export const printDeliveryTag = (printer, tag, data) => {
     let xml = generateXml(printer, tag, data);
-    postXml('http://192.168.1.252/Integration/BartenderTecnipesa/execute', xml);
+    postXml('https://192.168.1.252/Integration/BartenderTecnipesa/execute', xml);
 };

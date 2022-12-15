@@ -32,7 +32,6 @@ import com.esferalia.aon.jooq.tables.records.FsModel390Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.fiscal.Address;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
@@ -608,28 +607,18 @@ public class Mod3902021DAO {
 		map.get(Mod3902021DetailKey.C0656).setQuota( getVatAccrualPaymentInputQuota(ctx, mod390) );
 		
 		// Cálculo de la Regularizacion por aplicacion del porcentaje definitivo de prorrata
-		Mod303 mod303 = new Mod303();
-		mod303.setDomain(mod390.getDomain());
-		mod303.setYear(mod390.getYear());
-		mod303.setAdministration(Administration.COMMON_TERRITORY);
-		mod303.setModel( FiscalModelType.M303 );
-		mod303.setPeriod(Period.YEAR);
-		FiscalModel fm  = Mod303DAO.getPreviousModels(ctx,mod303, true, Mod303::new)
-			.findFirst()
-			.orElse(null);
-		if (fm != null) {
-			mod303 = Mod303DAO.get(ctx, fm.getId());
-			if (mod303 != null) {
-				double reg = mod303.getAmount(Mod303Key.CT_C44);
-				Mod390Detail detail = map.get(Mod3902021DetailKey.C0522);
-				if (detail == null) {
-					detail = new Mod390Detail();
-					map.put(Mod3902021DetailKey.C0522, detail );
-				}
-				detail.setKey(Mod3902021DetailKey.C0522);
-				detail.setQuota(reg);
-			}
-		}
+		Mod303DAO.getMod303s(ctx, mod390.getDomain())
+			.filter( m -> m.getYear( )  == mod390.getYear())
+			.filter( Mod303::isAEAT)
+			.filter( Mod303::isLastPeriod)
+			.map(m -> Mod303DAO.get(ctx, m.getId()))
+			.map(m -> m.getAmount(Mod303Key.CT_C44))
+			.forEach( r -> 
+				map.computeIfAbsent(Mod3902021DetailKey.C0522, k -> new Mod390Detail()
+					.setKey(Mod3902021DetailKey.C0522)
+					.setQuota(r)))
+			;
+		
 		return new LinkedList<>(map.values());
 	}
 	

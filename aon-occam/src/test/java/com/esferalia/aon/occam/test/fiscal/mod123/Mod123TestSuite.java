@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.esferalia.aon.occam.test.fiscal.mod115.Mod115ScriptTest;
+import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -15,30 +15,30 @@ import com.esferalia.aon.occam.test.fiscal.mod115.Mod115ScriptTest;
 	// Modelos mensuale
 	Mod123ReopenTest.class,
 	Mod123DeleteTest.class,
-	Mod123InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod123InsertMonthlyTest.class,
 	Mod123FinishTest.class,
 	
-	Mod123InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod123InsertMonthlyComplementaryTest.class,
 	Mod123FinishTest.class,
 	
-	Mod123InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod123InsertMonthlyReplacementTest.class,
 	Mod123RoundedAmountsTest.class,
 	
 	// Modelos trimestrales
 	Mod123ReopenTest.class,
 	Mod123DeleteTest.class,
-	Mod123InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod123InsertQuarterlyTest.class,
 	Mod123FinishTest.class,
 	
-	Mod123InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod123InsertQuarterlyComplementaryTest.class,
 	Mod123FinishTest.class,
 	
-	Mod123InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod123InsertQuarterlyReplacementTest.class,
 	Mod123RoundedAmountsTest.class,
 	
