@@ -36,7 +36,7 @@ public class TestSistemaREDITPart {
 	private final String CERTIFICATE_PATH = System.getProperty("user.home")+"/CERT.p12"; 
 	
 	@Test
-	@Ignore
+	@Ignore	
 	public void registerItBaja() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {
 			SistemaREDITPart.registerItBaja(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, 
