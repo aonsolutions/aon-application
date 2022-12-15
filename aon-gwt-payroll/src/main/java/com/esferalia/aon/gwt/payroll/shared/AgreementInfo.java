@@ -853,6 +853,46 @@ public class AgreementInfo implements IContextProvider, Serializable, HasId<Inte
 		}
 	}
 
+	public void addSeniority(String seniorityExpression) {
+		Optional<Date> initialDateOpt = getDates().stream().findFirst();
+		if(!initialDateOpt.isPresent()) return;
+		
+		Optional<LevelData> levelDataOpt = levelDatas.get(0).stream().filter(levelData -> AonStringUtils.equalsIgnoreCase(levelData.getName(), "INICIO_ANTIGUEDAD")).findFirst();
+		if(!levelDataOpt.isPresent() && AonStringUtils.isBlank(seniorityExpression)) return;
+		
+		Date initialDate = initialDateOpt.get();
+		
+		if(!levelDataOpt.isPresent()) {
+			Random rand = new Random();
+			int newId = rand.nextInt(1000) * -1;
+			if(newId > 0) newId = newId * -1;
+			
+			LevelData levelData = new LevelData();
+			levelData.setId(newId);
+			levelData.setDomain(this.domain);
+			levelData.setDeleted(false);
+			levelData.setModify(false);
+			levelData.setStartDate(initialDate);
+			levelData.setName("INICIO_ANTIGUEDAD");
+			levelData.setExpression(seniorityExpression);
+			
+			levelDatas.get(0).add(levelData);
+			variables.get(initialDate).add("INICIO_ANTIGUEDAD");
+		} else {
+			LevelData levelData = levelDataOpt.get();
+			levelData.setDeleted(AonStringUtils.isBlank(seniorityExpression));
+			levelData.setModify(!AonStringUtils.isBlank(seniorityExpression));
+			levelData.setExpression(seniorityExpression);
+			variables.get(initialDate).remove("INICIO_ANTIGUEDAD");
+		}
+		
+	}
+	
+	public String getSeniority() {
+		Optional<LevelData> levelDataOpt = levelDatas.get(0).stream().filter(levelData -> AonStringUtils.equalsIgnoreCase(levelData.getName(), "INICIO_ANTIGUEDAD")).findFirst();
+		return levelDataOpt.isPresent() ? levelDataOpt.get().getExpression() : null;
+	}
+
 	@Override
 	public boolean isEditable(String name) {
 		for (Payment payment : getPayments())

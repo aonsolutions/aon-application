@@ -23,17 +23,13 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -80,6 +76,12 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	@UiField
 	TextBox paymentQuoteExpression;
+	
+	@UiField
+	HTMLPanel seniorityPanel;
+	
+	@UiField
+	ListBox seniorityType;
 	
 	@UiField
 	HTMLPanel extraPanel;
@@ -159,6 +161,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		this.allPayments = allPayments;
 		this.allExtras = allExtras;
 		
+		initializeSeniorityPanel();
+		
 		initializeExtraPanel();
 		if(payment.getType().equals(Payment.Type.CRA_0004) || payment.getType().equals(Payment.Type.CRA_0005))
 			initializeExtraAssociatedPanel();
@@ -187,6 +191,15 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			}
 
 		});
+	}
+
+	private void initializeSeniorityPanel() {
+		seniorityPanel.setVisible(false);
+		
+		seniorityType.clear();
+		seniorityType.addItem("Autom\u00e1tico", "");
+		seniorityType.addItem("Inicio mes", "INICIO_MES(INICIO_ANTIGUEDAD)");
+		seniorityType.addItem("Inicio a\u00f1o", "INICIO_A\u00d1O(INICIO_ANTIGUEDAD)");
 	}
 
 	private void initializeExtraAssociatedPanel() {
@@ -653,6 +666,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		paymentConceptSB.setValue(this.payment.getName());
 		paymentDescriptionTB.setValue(this.payment.getDescription());
 		paymentExpressionTB.setValue(getParsedExpression(this.payment.getExpression()));
+		checkSeniorityExpresion();
 		expresssionVisibilityBtn.addClickHandler(e -> {
 			final FxDialog fxDialog = new FxDialog(context);
 			fxDialog.setExpression(getExpression(this.payment.getExpression()));
@@ -671,7 +685,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		setSelectedValueLB(paymentQuoteTypeLB, getTaxedQuoteType(this.payment.getQuoteExpression()));
 		paymentQuoteExpression.setValue(this.payment.getQuoteExpression());
 	}
-	
+
 	private String getParsedExpression(String expression) {
 		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
 		return SpecialExpresion.parse(expression).getInput();
@@ -680,6 +694,13 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	private String getExpression(String expression) {
 		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
 		return SpecialExpresion.parse(expression).getExpression();
+	}
+	
+	private void checkSeniorityExpresion() {
+		String expression = this.payment.getExpression();
+		seniorityPanel.setVisible(AonStringUtils.isNotBlank(expression) && expression.contains("ANTIG") && expression.contains("EDAD"));
+		
+		setSelectedValueLB(seniorityType, getSeniority());
 	}
 	
 	private void fillExtra() {
@@ -776,6 +797,11 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		acceptDialog.setText(AON.MSG.accept());
 		acceptDialog.addClickHandler(e -> {
 			hide();
+			
+			// Seniority
+			if(seniorityPanel.isVisible()) onSeniority(seniorityType.getSelectedValue());
+			
+			// Payment & extra
 			createPayment();
 			if(payment.getType().equals(Type.CRA_0004) || payment.getType().equals(Type.CRA_0005)) {
 				createExtra();
@@ -958,5 +984,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	// ----------------------------------------- AbstractMehtods
 
 	protected abstract void onAccept(Payment payment, AgreementExtra extra, Payment associatedPayment, AgreementExtra associatedExtra);
+	protected abstract void onSeniority(String seniorityExpression);
+	protected abstract String getSeniority();
 
 }

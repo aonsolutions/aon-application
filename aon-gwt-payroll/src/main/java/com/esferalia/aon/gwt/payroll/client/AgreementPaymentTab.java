@@ -675,6 +675,16 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				selectedPayment.setSalaryType(Type.SALARY);
 			}
 
+			@Override
+			protected void onSeniority(String seniorityExpression) {
+				agreement.addSeniority(seniorityExpression);
+			}
+
+			@Override
+			protected String getSeniority() {
+				return agreement.getSeniority();
+			}
+
 		};
 		
 		editor.setContextProvider(agreement);
