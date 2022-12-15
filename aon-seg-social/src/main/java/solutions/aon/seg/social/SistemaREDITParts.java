@@ -62,7 +62,6 @@ class SistemaREDITParts {
 	
 	private static String FORMAT_DATE = "dd/MM/yyyy";
 
-	// GET ITs
 	@Deprecated /** use SistemaREDITPart.getIts*/
 	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String ccc, Date from, Date to, Optional<String> nss) throws SegSocialException {
@@ -141,6 +140,7 @@ class SistemaREDITParts {
 	}
 	
 	// REGISTER IT START HANDLE EXCEPTIONS
+	@Deprecated /** use SistemaREDITPart.registerItBaja*/
 	public static void registerItBaja(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,

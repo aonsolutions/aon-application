@@ -1,5 +1,7 @@
 package solutions.aon.seg.social;
 
+import static java.lang.Integer.parseInt;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
@@ -77,9 +79,9 @@ public abstract class ServicioREDPartRegeXML extends ServicioREDRegeXML {
 			public void endElement(String uri, String localName, String qName) throws SAXException {
 				if (bajaLogicaDesc) {
 					boolean isAnulado = data.indexOf("S")>-1;
-					if(!isAnulado) {
+					if(!isAnulado) 
 						map.put(position, part);
-					}
+
 					bajaLogicaDesc = false;
 					position++;
 				} else if (bNss) {
@@ -136,6 +138,16 @@ public abstract class ServicioREDPartRegeXML extends ServicioREDRegeXML {
 			boolean bWorkRestartDate;
 			boolean bCauseRestart;
 			boolean bCcc;
+			boolean bRelapse;
+			boolean bBaseCtz;
+			boolean bSumBCtz;
+			boolean bHoursCtzExtr;
+			boolean bHoursCrzOther;
+			boolean bCollegiateNumber;
+			boolean bTypeCto;
+			boolean bGpCtz;
+			boolean bDaysCtz;
+			boolean bLack;
 			
 			@Override
 			public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -168,7 +180,28 @@ public abstract class ServicioREDPartRegeXML extends ServicioREDRegeXML {
 					bWorkRestartDate = true;
 				} else if (qName.equalsIgnoreCase("causaAlta")) { // descripcionCausaAlta
 					bCauseRestart = true;
-				} 
+				} else if (qName.equalsIgnoreCase("recaidaDesc")) { 
+					bRelapse = true;
+				}  else if (qName.equalsIgnoreCase("baseCotizacion")) { 
+					bBaseCtz = true;
+				} else if (qName.equalsIgnoreCase("sumaBaseCotizacion")) { 
+					bSumBCtz = true;
+				} else if (qName.equalsIgnoreCase("cotizacionHorasExtra")) { 
+					bHoursCtzExtr = true;
+				} else if (qName.equalsIgnoreCase("cotizacionOtrosConceptos")) { 
+					bHoursCrzOther = true;
+				} else if (qName.equalsIgnoreCase("numColegiado")) { 
+					bCollegiateNumber = true;
+				} else if (qName.equalsIgnoreCase("tipoContrato")) { 
+					bTypeCto = true;
+				} else if(qName.equalsIgnoreCase("grupoCotizacion")) { 
+					bGpCtz = true;
+				} else if(qName.equalsIgnoreCase("diasCotizados")) { 
+					bDaysCtz = true;
+				} else if(qName.equalsIgnoreCase("carencia")) { 
+					bLack = true;
+				}
+				
 				data = new StringBuilder();
 			}
 
@@ -207,7 +240,39 @@ public abstract class ServicioREDPartRegeXML extends ServicioREDRegeXML {
 				} else if (bCauseRestart) {
 					part.setCauseRestart(data.toString());
 					bCauseRestart = false;
+				} else if (bRelapse) {
+					part.setRelapse(!data.toString().contains("N"));
+					bRelapse = false;
+				} else if (bBaseCtz) {
+					part.setBaseCtz(Toolkit.parseStringToFloat(data.toString()));
+					bBaseCtz = false;
+				} else if (bSumBCtz) {
+					part.setSumBCtz(Toolkit.parseStringToFloat(data.toString()));
+					bSumBCtz = false;
+				} else if (bHoursCtzExtr) {
+					part.setHoursCtzExtr(Toolkit.parseStringToFloat(data.toString()));
+					bHoursCtzExtr = false;
+				} else if (bHoursCrzOther) {
+					part.setHoursCrzOther(Toolkit.parseStringToFloat(data.toString()));
+					bHoursCrzOther = false;
+				} else if (bCollegiateNumber) {
+					part.setCollegiateNumber(Toolkit.noSpaces(data.toString()));
+					bCollegiateNumber = false;
+				} else if (bTypeCto) {
+					part.setTypeCto(data.toString());
+					bTypeCto = false;
+				} else if (bGpCtz) {
+					part.setGpCtz(data.toString());
+					bGpCtz = false;
+				} else if (bDaysCtz) {
+					part.setDaysCtz(parseInt(data.toString()));
+					bDaysCtz = false;
+				} else if (bLack) {
+					part.setLack(parseInt(data.toString()));
+					bLack = false;
 				}
+				
+				part.setGpCtz(xml);
 			}
 
 			@Override

@@ -250,6 +250,15 @@ public class Toolkit {
 		return new String[] { decimalString.substring(0, decimalString.indexOf(".")),
 				decimalString.substring(decimalString.indexOf(".") + 1, decimalString.indexOf(".") + decimals) };
 	}
+	
+	// decimal to string
+	public static String parseDecimalToString(double dc) {
+		if(dc>0) {
+			return String.format("%.2f", dc);
+		}
+		return "";
+	}
+
 
 	// HANDLES EMPTY DATA
 	public static void verifyData(Object[] data) throws InvalidDataException {
