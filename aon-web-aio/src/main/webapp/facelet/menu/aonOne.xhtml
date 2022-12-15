@@ -363,7 +363,7 @@
 												<aon:commandLink id="bankStatement-aonOne"
 													action="bankStatement_search-aonOne"
 													actionListener="#{bankStatement.onEditSearch}"
-													value="#{bundle.finance_bank_statement_module}"/>
+													value="Conciliador Bancario"/>
 											</aon:div>
 										</aon:div>
 									</aon:if>																
@@ -525,11 +525,21 @@
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_checkIt-smb"
 											action="gwt_checkIt-smb"
-											title="Agregador bancario">
+											title="Agregador bancario (expira Enero/2023)">
 											<aon:outputText
 												styleClass="aon-fiscal-link-label aon-icon-new-text"
 												style="margin-left: 5px; padding-left: 20px;"
-												value="Agregador bancario" />
+												value="Agregador Bancario (expira Enero/2023)" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_nordigen-smb"
+											action="gwt_nordigen-smb"
+											title="Agregador Bancario">
+											<aon:outputText
+												styleClass="aon-fiscal-link-label aon-icon-new-text"
+												style="margin-left: 5px; padding-left: 20px;"
+												value="Agregador Bancario" />
 										</aon:commandLink>
 									</aon:div>												
 								</aon:if>
