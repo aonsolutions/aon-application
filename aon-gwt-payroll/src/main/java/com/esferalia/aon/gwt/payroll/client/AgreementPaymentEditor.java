@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraft.TypeListBox;
+import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementExtra;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcept;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
@@ -77,6 +78,12 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	TextBox paymentQuoteExpression;
 	
 	@UiField
+	HTMLPanel seniorityPanel;
+	
+	@UiField
+	ListBox seniorityType;
+	
+	@UiField
 	HTMLPanel extraPanel;
 	
 	@UiField
@@ -130,8 +137,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	private AgreementExtra extra;
 	private AgreementExtra associatedExtra;
 	private Payment associatedPayment;
-	
-	private boolean expresssionVisibility = false;
 
 	private TypeListBox<Payment.Type> paymentTypeLB;
 	
@@ -139,12 +144,18 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	private Set<AgreementExtra> allExtras;
 	
 	private Button acceptDialog;
+	
+	private IContextProvider context;
 
 	// ----------------------------------------- Constructor
 
 	protected AgreementPaymentEditor(Payment payment, AgreementExtra extra, Set<Payment> allPayments, Set<AgreementExtra> allExtras) {
 		setCaption("Devengo");
-		expresssionVisibilityBtn = new AonToolbarSmallButton("Mostrar toda la expresi\u00f3n", AON.CSS.aonIconVisibility());
+		expresssionVisibilityBtn = new AonToolbarSmallButton("Editar expresi\u00f3n", AON.CSS.aonIconEdit());
+		
+		// Remove this line when FxDialog is fixed
+		expresssionVisibilityBtn.setVisible(false);
+		
 		setWidget(binder.createAndBindUi(this));
 		showCloseButton(true);
 		getFooterButtons();
@@ -153,6 +164,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		
 		this.allPayments = allPayments;
 		this.allExtras = allExtras;
+		
+		initializeSeniorityPanel();
 		
 		initializeExtraPanel();
 		if(payment.getType().equals(Payment.Type.CRA_0004) || payment.getType().equals(Payment.Type.CRA_0005))
@@ -182,6 +195,15 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			}
 
 		});
+	}
+
+	private void initializeSeniorityPanel() {
+		seniorityPanel.setVisible(false);
+		
+		seniorityType.clear();
+		seniorityType.addItem("Autom\u00e1tico", "");
+		seniorityType.addItem("Inicio mes", "INICIO_MES(INICIO_ANTIGUEDAD)");
+		seniorityType.addItem("Inicio a\u00f1o", "INICIO_A\u00d1O(INICIO_ANTIGUEDAD)");
 	}
 
 	private void initializeExtraAssociatedPanel() {
@@ -638,32 +660,36 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	}
 
 	// ----------------------------------------- Fill Payment
+	
+	public void setContextProvider(IContextProvider context) {
+		this.context = context;
+	}
 
 	private void fillPayment() {
 		paymentTypeLB.setSelected(this.payment.getType());
 		paymentConceptSB.setValue(this.payment.getName());
 		paymentDescriptionTB.setValue(this.payment.getDescription());
 		paymentExpressionTB.setValue(getParsedExpression(this.payment.getExpression()));
+		checkSeniorityExpresion();
 		expresssionVisibilityBtn.addClickHandler(e -> {
-			expresssionVisibility = !expresssionVisibility;
-			if(expresssionVisibility) {
-				paymentExpressionTB.setValue(getExpression(this.payment.getExpression()));
-				expresssionVisibilityBtn.setTitle("Ocultar parte expresi\u00f3n");
-				expresssionVisibilityBtn.removeStyleName(AON.CSS.aonIconVisibility());
-				expresssionVisibilityBtn.addStyleName(AON.CSS.aonIconVisibilityOff());
-			} else {
-				paymentExpressionTB.setValue(getParsedExpression(this.payment.getExpression()));
-				expresssionVisibilityBtn.setTitle("Mostrar toda expresi\u00f3n");
-				expresssionVisibilityBtn.removeStyleName(AON.CSS.aonIconVisibilityOff());
-				expresssionVisibilityBtn.addStyleName(AON.CSS.aonIconVisibility());
-			}
+			final FxDialog fxDialog = new FxDialog(context);
+			fxDialog.setExpression(getExpression(this.payment.getExpression()));
+			fxDialog.center();
+			fxDialog.show();
+		
+			fxDialog.addCloseHandler(ev -> {
+				if (fxDialog.isAccepted()) {
+					payment.setExpression(fxDialog.getExpression());
+					paymentExpressionTB.setValue(getParsedExpression(payment.getExpression()));
+				}
+			});
 		});
 		setSelectedValueLB(paymentTaxedTypeLB, getTaxedQuoteType(this.payment.getIrpfExpression()));
 		paymentTaxedExpression.setValue(this.payment.getIrpfExpression());
 		setSelectedValueLB(paymentQuoteTypeLB, getTaxedQuoteType(this.payment.getQuoteExpression()));
 		paymentQuoteExpression.setValue(this.payment.getQuoteExpression());
 	}
-	
+
 	private String getParsedExpression(String expression) {
 		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
 		return SpecialExpresion.parse(expression).getInput();
@@ -672,6 +698,13 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	private String getExpression(String expression) {
 		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
 		return SpecialExpresion.parse(expression).getExpression();
+	}
+	
+	private void checkSeniorityExpresion() {
+		String expression = this.payment.getExpression();
+		seniorityPanel.setVisible(AonStringUtils.isNotBlank(expression) && expression.contains("ANTIG") && expression.contains("EDAD"));
+		
+		setSelectedValueLB(seniorityType, getSeniority());
 	}
 	
 	private void fillExtra() {
@@ -768,6 +801,11 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		acceptDialog.setText(AON.MSG.accept());
 		acceptDialog.addClickHandler(e -> {
 			hide();
+			
+			// Seniority
+			if(seniorityPanel.isVisible()) onSeniority(seniorityType.getSelectedValue());
+			
+			// Payment & extra
 			createPayment();
 			if(payment.getType().equals(Type.CRA_0004) || payment.getType().equals(Type.CRA_0005)) {
 				createExtra();
@@ -950,5 +988,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	// ----------------------------------------- AbstractMehtods
 
 	protected abstract void onAccept(Payment payment, AgreementExtra extra, Payment associatedPayment, AgreementExtra associatedExtra);
+	protected abstract void onSeniority(String seniorityExpression);
+	protected abstract String getSeniority();
 
 }

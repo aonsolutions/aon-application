@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -30,7 +31,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -40,6 +43,9 @@ import javax.servlet.annotation.WebServlet;
 
 import org.jooq.DSLContext;
 import org.jooq.tools.json.JSONObject;
+import org.mvel2.CompileException;
+import org.mvel2.ast.Function;
+import org.mvel2.util.MethodStub;
 
 import com.code.aon.company.WorkPlace;
 import com.code.aon.person.Person;
@@ -47,7 +53,11 @@ import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserScopeColumns;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.EvalException;
+import com.esferalia.aon.gwt.common.shared.EvalSyntaxErrorException;
+import com.esferalia.aon.gwt.common.shared.EvalWarning;
 import com.esferalia.aon.gwt.common.shared.StringUtils;
+import com.esferalia.aon.gwt.common.shared.UnknownVariablesWarning;
 import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqActivity;
@@ -80,6 +90,7 @@ import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
@@ -113,16 +124,21 @@ import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
+import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
+import com.esferalia.aon.gwt.payroll.shared.VariableDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
@@ -168,11 +184,13 @@ import com.esferalia.aon.payroll.SalaryPaymentsFactory;
 import com.esferalia.aon.payroll.agreement.AgreementParser;
 import com.esferalia.aon.payroll.agreement.AgreementUpdate;
 import com.esferalia.aon.payroll.agreement.ServiAgreementsFilter;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLPayrollConstants;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.mod145.Mod145PDF;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementPaymentColumns;
@@ -191,6 +209,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RbankColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.payroll.tgss.cra.Cra;
@@ -198,11 +217,21 @@ import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.bonus.Bonuses;
+import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.cost.Costs;
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.CheckException;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.IExpressionVariable;
+import com.esferalia.aon.salary.expression.ITimedResult;
+import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.TimedObject;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.payment.Payments;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
@@ -3702,6 +3731,268 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			JooqAgreementTab.deletePayments(connection, domainId, paymentIds);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public ContextDescriptor getContext(String domain, AgreementInfo agreement) throws IllegalArgumentException {
+		return getDraftContext(domain, agreement);
+	}
+	
+	@Override
+	public List<Result> eval(String domain, String expression, AgreementInfo agreement) throws IllegalArgumentException, EvalException {
+		List<ITimedResult<Double>> results = eval(domain, expression, agreement, Double.class);
+
+		List<Result> returnList = new ArrayList<Result>(results.size());
+		for (ITimedResult<Double> result : results) {
+			returnList.add(new Result(cast(result), cast(result.getContext())));
+		}
+
+		return returnList;
+	}
+	
+	private static NumberVariable cast(ITimedResult<Double> src) {
+		NumberVariable target = new NumberVariable();
+		target.setValue(src.getValue());
+		target.setStartDate(src.getPeriod().getStart());
+		target.setEndDate(src.getPeriod().getEnd());
+		return target;
+	}
+	
+	private static List<Variable> cast(Map<String, ITimedVariable<?>> ctx) {
+		List<Variable> target = new ArrayList<Variable>(ctx.size());
+		for (Map.Entry<String, ITimedVariable<?>> entry : ctx.entrySet()) {
+
+			ContextVariable contextVariable = ContextVariable.getVariableByName(entry.getKey());
+			if (contextVariable != null && contextVariable.isInternal()) {
+				continue;
+			}
+
+			try {
+				Variable variable = cast(entry.getValue());
+				variable.setName(entry.getKey());
+				target.add(variable);
+			} catch (ClassCastException e) {
+
+			}
+		}
+		return target;
+	}
+	
+	private static Variable cast(ITimedVariable<?> src) {
+		Variable target = null;
+		Object value = src.getValue(src.getPeriod());
+		if (value instanceof MethodStub) {
+			throw new ClassCastException();
+		} else if (value instanceof Number) {
+			target = new NumberVariable();
+		} else {
+			target = new StringVariable();
+		}
+		target.setValue(value);
+		target.setStartDate(src.getPeriod().getStart());
+		target.setEndDate(src.getPeriod().getEnd());
+		return target;
+	}
+
+	private static <T> List<ITimedResult<T>> eval(String domain, String expression, AgreementInfo agreement, Class<T> toType) throws EvalException {
+		Connection conn = null;
+
+		try {
+			conn = getConnection(domain);
+			ISalaryCalculatorContext ctx = getSalaryCalculatorContext(conn, agreement);
+			return ctx.getExpressionContext().eval(expression, ctx.getStartDate(), ctx.getEndDate(), toType);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (InvalidVariables e) {
+			throw new EvalWarning(e.getMessage());
+		} catch (CheckException e) {
+			throw new EvalWarning(e.getMessage());
+		} catch (RemoveVariableError e) {
+			return Collections.emptyList();
+		} catch (UndefinedVariablesException e) {
+			e.printStackTrace();
+			throw new UnknownVariablesWarning(e.getVariableNames());
+		} catch (CompileException e) {
+			throw new EvalSyntaxErrorException(e.getMessage());
+		} catch (ExpressionException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnore) {
+
+				}
+			}
+		}
+
+	}
+	
+	protected static ContextDescriptor getDraftContext(String domain, AgreementInfo agreement) {
+		Connection conn = null;
+		try {
+			conn = AonServletUtils.getConnection(domain);
+
+			IContractSalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(conn, agreement);
+			
+			TreeSet<java.util.Date> sortedDates = new TreeSet<java.util.Date>(agreement.getDates());
+			java.util.Date startDate = sortedDates.last();
+			java.util.Date endDate = DateUtils.getLastDayOfMonth(startDate);
+
+			return getContext(conn, calculatorCtx, startDate, endDate);
+
+		} catch (ExpressionException e) {
+			throw new IllegalArgumentException(e);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+	
+	private static ISQLContractSalaryCalculatorContext getSalaryCalculatorContext(final Connection conn,
+			AgreementInfo agreement) throws ExpressionException, SQLException {
+
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put(ContextVariable.QUOTE_GROUP.getName(), "01");
+		data.put(ContextVariable.TC2.getName(), ContractCode.C100.getValue());
+
+		return getSalaryCalculatorContextImpl(conn, agreement, -666, data);
+	}
+	
+	protected static ContextDescriptor getContext(Connection conn, IContractSalaryCalculatorContext calculatorCtx,
+			java.util.Date startDate, java.util.Date endDate) {
+		try {
+
+			ExpressionContext expressionContext = notNull(calculatorCtx.getExpressionContext(),
+					calculatorCtx.getSystemExpressionContext());
+
+			java.util.Date start = notNull(calculatorCtx.getStartDate(), startDate);
+
+			java.util.Date end = notNull(calculatorCtx.getEndDate(), endDate);
+
+			ContextDescriptor contextDescriptor = new ContextDescriptor();
+
+			Map<String, String> descriptions = getSystemDescriptions(conn, start, end);
+
+			Set<String> varNames = expressionContext.variablesSet();
+
+			for (String varName : varNames) {
+				Object value = null;
+				List<ITimedVariable<Object>> vars = expressionContext.getVariables(varName, start, end);
+
+				for (ITimedVariable<Object> var : vars) {
+					try {
+						value = var.getValue(var.getPeriod());
+					} catch (Throwable e) {
+
+					}
+
+					if (value == null)
+						continue;
+
+					String description = null;
+
+					ContextVariable ctxVar = ContextVariable.getVariableByName(varName);
+
+					if (ctxVar != null) {
+						try {
+							description = ctxVar.getDescription(new Locale("es", "ES"));
+						} catch (MissingResourceException e) {
+						}
+						if (description != null)
+							description = String.format(description, start, end);
+					}
+					if (description == null)
+						description = descriptions.get(varName);
+
+					if (Function.class == value.getClass()) {
+						Class<?> type = ctxVar != null ? ctxVar.getType().getJavaType() : Object.class;
+						contextDescriptor.add(varName, description, type, ((Function) value).getParameters());
+					} else if (MethodStub.class == value.getClass()) {
+						Method method = ((MethodStub) value).getMethod();
+						contextDescriptor.add(varName, description, method.getReturnType(), method.getParameterTypes());
+					} else {
+						Class<?> type = value.getClass();
+						if (ContextDescriptor.isKnownType(type)) {
+							VariableDescriptor variableDescriptor = new VariableDescriptor();
+							variableDescriptor.setType(type);
+							variableDescriptor.setValue(value.toString());
+							variableDescriptor.setDescription(description);
+							variableDescriptor.setStartDate(var.getPeriod().getStart());
+							variableDescriptor.setEndDate(var.getPeriod().getEnd());
+
+							if (var instanceof IExpressionVariable<?>) {
+								try {
+									IExpression expression = ((IExpressionVariable<?>) var).getExpression();
+									variableDescriptor.setExpression(expression.getExpression());
+
+									variableDescriptor.setScope((expression.getScope() != null)
+											? Scope.values()[expression.getScope().ordinal()]
+											: null);
+								} catch (Exception e) {
+									System.out.println("Var name failed : " + varName);
+								}
+
+							}
+							contextDescriptor.add(varName, variableDescriptor);
+						}
+					}
+				}
+
+			}
+
+//			for(String key : contextDescriptor.getVariables())
+//				for(VariableDescriptor var : contextDescriptor.getList(key))
+//					System.out.println("CONTEXT :"+key+", descripcion :"+var.getDescription()+", expresion :"+var.getExpression()
+//					+", value :"+var.getValue()+", startDate :"+var.getStartDate()+", endDate :"+var.getEndDate());
+
+			return contextDescriptor;
+
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@SafeVarargs
+	private static <T> T notNull(T... ts) {
+		for (T t : ts) {
+			if (t != null)
+				return t;
+		}
+		return null;
+	}
+	
+	private static Map<String, String> getSystemDescriptions(Connection conn, java.util.Date start, java.util.Date end)
+			throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+
+			stmt = conn.prepareStatement("SELECT " + SystemDataColumns.NAME + ", " + SystemDataColumns.COMMENTS
+					+ " FROM " + SQLConstants.SYSTEM_DATA + " WHERE " + SystemDataColumns.START_DATE + " <= ? "
+					+ " AND ( " + SystemDataColumns.END_DATE + " IS NULL " + " OR " + SystemDataColumns.END_DATE
+					+ " >= ? " + ") ");
+			stmt.setDate(1, new java.sql.Date(end.getTime()));
+			stmt.setDate(2, new java.sql.Date(start.getTime()));
+
+			Map<String, String> descriptions = new HashMap<String, String>();
+
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				descriptions.put(rs.getString(SystemDataColumns.NAME), rs.getString(SystemDataColumns.COMMENTS));
+			}
+			return descriptions;
+		} finally {
+
 		}
 	}
 	

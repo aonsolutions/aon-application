@@ -129,6 +129,10 @@
 					<g:TextBox ui:field="paymentQuoteExpression" styleName="{style.widthAll} {style.inputHeight}"/>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
+			<g:HTMLPanel styleName="{style.element}" ui:field="seniorityPanel">
+				<g:Label styleName="{style.title}">Antigüedad (El valor seleccionado afectará a todos los cálculos de antigüedad del presente convenio)</g:Label>
+				<g:ListBox ui:field="seniorityType" styleName="{style.widthAll} {style.inputHeight}"/>
+			</g:HTMLPanel>
 			
 			<g:HTMLPanel styleName="{style.flexColumn}" ui:field="extraPanel">
 				<g:HTMLPanel styleName="{style.flex} {style.flexBetween}">

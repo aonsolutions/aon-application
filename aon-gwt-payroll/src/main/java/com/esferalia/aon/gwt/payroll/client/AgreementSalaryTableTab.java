@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -23,6 +24,8 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -52,6 +55,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
+		String categoryWidth();
 		String cellWidth();
 		String columnBorder();
 		String datePickerPanel();
@@ -64,11 +68,15 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		String headerFixed();
 		String headerFSize();
 		String headerLevelFixed();
+		String levelCell();
 		String levelDefaultValue();
 		String levelFixed();
 		String modify();
 		String oddRow();
+		String overflowEllipsis();
+		String textBox();
 		String textCenter();
+		String valueCell();
 		String widthAll();
 	}
 	
@@ -92,7 +100,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private AgreementInfo agreement;
 	
-	private ListBox levelLB;
+	private ListBox categoryLB;
 	
 	private boolean hasChange = false;
 	
@@ -147,12 +155,12 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		salaryGrid.resize(0, agreement.getVariablesByDate(selectedDate).size()+3);
 		int row = salaryGrid.insertRow(salaryGrid.getRowCount());
 		
-		Label level = new Label("Nivel");
-		level.addStyleName(style.gridTitle());
-		level.addStyleName(style.textCenter());
-		level.addStyleName(style.cellWidth());
-		level.addStyleName(style.headerFSize());
-		salaryGrid.setWidget(row, 0, level);
+		Label category = new Label("Categoria");
+		category.addStyleName(style.gridTitle());
+		category.addStyleName(style.textCenter());
+		category.addStyleName(style.categoryWidth());
+		category.addStyleName(style.headerFSize());
+		salaryGrid.setWidget(row, 0, category);
 		salaryGrid.getCellFormatter().addStyleName(row, 0, style.headerLevelFixed());
 		salaryGrid.getColumnFormatter().addStyleName(0, style.columnBorder());
 		
@@ -167,7 +175,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 			salaryGrid.setWidget(row, col, label);
 			
 			salaryGrid.getColumnFormatter().removeStyleName(col, style.widthAll());
-
+			
 			salaryGrid.getColumnFormatter().addStyleName(col, style.columnBorder());
 			salaryGrid.getCellFormatter().addStyleName(row, col, style.headerFixed());
 			
@@ -191,35 +199,35 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
 		
 		for(Level level : agreement.getLevels()) {
-			if(level.getId() != 0 && (level.isDeleted() || (null != agreement.getSelectedLevel() && !level.getId().equals(agreement.getSelectedLevel().getId())))) continue;
+			if(level.getId() != 0 && ((level.isDeleted() || (null != agreement.getSelectedLevel() && !level.getId().equals(agreement.getSelectedLevel().getId()))))) continue;
 			
 			int row = salaryGrid.insertRow(salaryGrid.getRowCount());
 			
-			Widget levelCell;
+			Widget categoryCell;
 			
 			if(level.getId() == 0) {
-				levelLB = new ListBox();
-				levelLB.getElement().getStyle().setHeight(1.7, Unit.EM);
-				levelLB.getElement().getStyle().setWidth(100, Unit.PX);
-				levelLB.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
-				levelLB.addItem("Todos", "");
-				agreement.getLevels().forEach(levelIn -> {
-					if(levelIn.getId() == 0) levelLB.addItem("Por defecto", levelIn.getId().toString());
-					else levelLB.addItem(levelIn.getDescription(), levelIn.getId().toString());
-				});
-				setSelectedValueLB(levelLB, null == agreement.getSelectedLevel() ? "" : String.valueOf(agreement.getSelectedLevel().getId()));
-				levelLB.setVisible(!agreement.getLevels().isEmpty());
+				categoryLB = createCategoryLB();
+				categoryLB.getElement().getStyle().setHeight(1.7, Unit.EM);
+				categoryLB.getElement().getStyle().setWidth(290, Unit.PX);
+				categoryLB.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
 				
-				levelLB.addChangeHandler(e -> filterSelectedLevel());
+				setSelectedValueLB(categoryLB, null == agreement.getSelectedLevel() ? "" : String.valueOf(agreement.getSelectedLevel().getId()));
+				categoryLB.setVisible(!agreement.getLevels().isEmpty());
 				
-				levelCell = levelLB;
+				categoryLB.addChangeHandler(e -> filterSelectedCategory());
+				
+				categoryCell = categoryLB;
 			} else {
-				levelCell = new Label(level.getDescription());
-				levelCell.addStyleName(style.gridTitle());
-				levelCell.addStyleName(style.gridCell());
+				String levelCategories = getLevelCategories(level);
+				categoryCell = new Label(levelCategories);
+				categoryCell.setTitle(getLevelCategoriesTitle(level));
+				categoryCell.addStyleName(style.overflowEllipsis());
+				categoryCell.addStyleName(style.gridTitle());
+				categoryCell.addStyleName(style.gridCell());
+				categoryCell.addStyleName(style.levelCell());
 			}
 			
-			salaryGrid.setWidget(row, 0, levelCell);
+			salaryGrid.setWidget(row, 0, categoryCell);
 			salaryGrid.getCellFormatter().addStyleName(row, 0, style.levelFixed());
 			if(row % 2 == 0 ) salaryGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
 			
@@ -229,13 +237,17 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 				LevelData levelData = agreement.getLevelData(level.getId(), variable, selectedDate);
 				TextBox cell = new ExpressionBox();
 				cell.addStyleName(style.gridCell());
+				cell.addStyleName(style.valueCell());
+				cell.addStyleName(style.textBox());
 				cell.setValue(null == levelData ? null : levelData.getExpression());
+				cell.setTitle("Valor nivel retributivo");
+				
 				if(row % 2 == 0 ) cell.addStyleName(style.oddRow());
 				cell.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
 				if(null != levelData && AonStringUtils.isNotBlank(levelData.getExpression()) && SpecialExpresion.parse(levelData.getExpression()).getInput().length() > 16)
 					cell.setWidth((7.5 * levelData.getExpression().length()) + "px");
 				else
-					cell.setWidth("100%");
+					cell.setWidth("95%");
 				
 				if(levelData != null && levelData.isModify())
 					cell.addStyleName(style.modify());
@@ -262,7 +274,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					if(null != levelDataDefault && AonStringUtils.isNotBlank(levelDataDefault.getExpression()) && cell.getText().length() > 20)
 						cell.setWidth((7.5 * levelDataDefault.getExpression().length()) + "px");
 					else
-						cell.setWidth("100%");
+						cell.setWidth("95%");
 				}
 						
 				salaryGrid.setWidget(row, col, cell);
@@ -303,15 +315,110 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		}
 		
 	}
+	
+	private ListBox createCategoryLB() {
+		Map<String, Integer> allCategories = new TreeMap<>();
+		
+		for(Level levelIT : agreement.getLevels()) {
+			if(levelIT.getId() == 0) continue;
+			Set<String> levelCategories = agreement.getCategoriesMap().get(levelIT.getId());
+			Set<String> levelContracts = agreement.getContractsMap().get(levelIT.getId());
+			if(null !=levelContracts && !levelContracts.isEmpty()) levelContracts.forEach(levelContract -> allCategories.put(levelIT.getDescription() + " - " + levelContract, levelIT.getId()));
+			else if(levelCategories.size() > 1) levelCategories.forEach(category -> allCategories.put(category, levelIT.getId()));
+			else if(levelCategories.size() == 1) {
+				String category = (String)levelCategories.toArray()[0];
+				RegExp regExp = RegExp.compile("Categoria|Nivel|categoria|nivel|CATEGORIA|NIVEL?");
+				MatchResult matcher = regExp.exec(category);
+				boolean matchFound = matcher != null;
+				if(matchFound) allCategories.put(levelIT.getDescription(), levelIT.getId());
+			    else  allCategories.put(category, levelIT.getId());
+			}
+		}
+		
+		ListBox listBox = new ListBox();
+		listBox.addItem("Todos", "");
+		listBox.addItem("Por defecto", "0");
+		allCategories.entrySet().forEach(e -> listBox.addItem(e.getKey(), e.getValue().toString()));
+		return listBox;
+	}
+	
+	private String getLevelCategories(Level level) {
+		StringBuilder categoriesBuilder = new StringBuilder();
+		Set<String> levelContracts = agreement.getContractsMap().get(level.getId());
+		if(null !=levelContracts && !levelContracts.isEmpty()) {
+			for(String levelContract : levelContracts){
+				if(AonStringUtils.isBlank(categoriesBuilder.toString()))
+					categoriesBuilder.append(levelContract);
+				else
+					categoriesBuilder.append(", " + levelContract);
+			}
+			return level.getDescription() + " - " + categoriesBuilder.toString();
+		} else if(agreement.getCategoriesMap().get(level.getId()).size() > 1) {
+			for(String category : agreement.getCategoriesMap().get(level.getId())){
+				if(AonStringUtils.isBlank(categoriesBuilder.toString()))
+					categoriesBuilder.append(category);
+				else
+					categoriesBuilder.append(", " + category);
+			}
+			return categoriesBuilder.toString();
+		} else if(agreement.getCategoriesMap().get(level.getId()).size() == 1) {
+			String category = (String)agreement.getCategoriesMap().get(level.getId()).toArray()[0];
+			RegExp regExp = RegExp.compile("Categoria|Nivel|categoria|nivel|CATEGORIA|NIVEL?");
+			MatchResult matcher = regExp.exec(category);
+			boolean matchFound = matcher != null;
+			if(matchFound) return level.getDescription();
+		    else return category;
+		} else return null;
+	}
+	
+	private String getLevelCategoriesTitle(Level level) {
+		StringBuilder categoriesBuilder = new StringBuilder();
+		Set<String> levelContracts = agreement.getContractsMap().get(level.getId());
+		if(null !=levelContracts && !levelContracts.isEmpty()) {
+			
+			StringBuilder contractsBuilder = new StringBuilder();
+			for(String levelContract : levelContracts){
+				if(AonStringUtils.isBlank(contractsBuilder.toString()))
+					contractsBuilder.append(levelContract);
+				else
+					contractsBuilder.append(", " + levelContract);
+			}
+			
+			for(String category : agreement.getCategoriesMap().get(level.getId())){
+				if(AonStringUtils.isBlank(categoriesBuilder.toString()))
+					categoriesBuilder.append(category);
+				else
+					categoriesBuilder.append(", " + category);
+			}
+			
+			return  "Nivel : " + level.getDescription() + "\nContratos : " + contractsBuilder.toString() + "\nCategorias : " + categoriesBuilder.toString();
+			
+		} if(agreement.getCategoriesMap().get(level.getId()).size() > 1) {
+			for(String category : agreement.getCategoriesMap().get(level.getId())){
+				if(AonStringUtils.isBlank(categoriesBuilder.toString()))
+					categoriesBuilder.append(category);
+				else
+					categoriesBuilder.append(", " + category);
+			}
+			return "Nivel : " + level.getDescription() + "\nCategorias : " + categoriesBuilder.toString();
+		} else if(agreement.getCategoriesMap().get(level.getId()).size() == 1) {
+			String category = (String)agreement.getCategoriesMap().get(level.getId()).toArray()[0];
+			RegExp regExp = RegExp.compile("Categoria|Nivel|categoria|nivel|CATEGORIA|NIVEL?");
+			MatchResult matcher = regExp.exec(category);
+			boolean matchFound = matcher != null;
+			if(matchFound) return "Nivel : " + level.getDescription();
+		    else return "Nivel : " + level.getDescription() + "\nCategoria : " + category;
+		} else return null;
+	}
+	
+	private void filterSelectedCategory() {
+		String levelId = categoryLB.getSelectedValue();
+		agreement.setSelectedLevel(AonStringUtils.isBlank(levelId) ? null : agreement.getLevelById(Integer.parseInt(categoryLB.getSelectedValue())));
+		setAgreementSalaryTable(agreement);
+	}
 
 	private void salaryTableWidth() {
 		salaryGrid.getColumnFormatter().setWidth(0, "120px");
-	}
-	
-	private void filterSelectedLevel() {
-		String levelId = levelLB.getSelectedValue();
-		agreement.setSelectedLevel(AonStringUtils.isBlank(levelId) ? null : agreement.getLevelById(Integer.parseInt(levelLB.getSelectedValue())));
-		setAgreementSalaryTable(agreement);
 	}
 	
 	private void setSelectedValueLB(ListBox lBox, String str) {

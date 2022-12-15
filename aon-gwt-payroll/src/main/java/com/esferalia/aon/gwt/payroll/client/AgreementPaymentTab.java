@@ -639,7 +639,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	
 	private void openDialog(Payment payment) {
 		boolean isHide = AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "HIDE");
-    	new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), agreement.getExtras()) {
+    	AgreementPaymentEditor editor = new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), agreement.getExtras()) {
 			@Override
 			protected void onAccept(Payment updatedPayment, AgreementExtra extra, Payment associatedPayment, AgreementExtra associatedExtra) {
 //				Window.alert(null == extra ? "---- Extra NULL ----" : "---- Extra ----\nId : " + extra.getId() + "\nisDeleted : " + extra.isDeleted()
@@ -675,7 +675,19 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 				selectedPayment.setSalaryType(Type.SALARY);
 			}
 
+			@Override
+			protected void onSeniority(String seniorityExpression) {
+				agreement.addSeniority(seniorityExpression);
+			}
+
+			@Override
+			protected String getSeniority() {
+				return agreement.getSeniority();
+			}
+
 		};
+		
+		editor.setContextProvider(agreement);
 		
 	}
 
