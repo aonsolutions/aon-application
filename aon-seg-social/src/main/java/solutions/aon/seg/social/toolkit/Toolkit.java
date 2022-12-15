@@ -695,7 +695,7 @@ public class Toolkit {
 	public static String goBack(CloseableHttpClient httpClient, String link, String ticket) throws ClientProtocolException, IOException, SegSocialException {
 		HttpPost httpPost = new HttpPost(link);
 		
-		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+		ArrayList<NameValuePair> params = new ArrayList<>();
 		params.add(new BasicNameValuePair("ARQ.SPM.TICKET", ticket));
 		params.add(new BasicNameValuePair("SPM.CONTEXT", "internet"));
 		params.add(new BasicNameValuePair("SPM.PORTALTYPE", "HTML"));

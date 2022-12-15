@@ -2,6 +2,7 @@ package solutions.aon.seg.social;
 
 import static org.junit.Assert.fail;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,18 +27,21 @@ import solutions.aon.seg.social.object.It;
 import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
-public class TestItParts {
+public class TestSistemaREDITPart {
 	
 	Date unreachableDate = Toolkit.getUnreachableDate();
 
+	private final String CERTIFICATE_PASSWORD = "1234";
+	private final String CERTIFICATE_TYPE = "pkcs12"; 
+	private final String CERTIFICATE_PATH =  System.getProperty("user.home")+"/CERT.pfx"; 
+	
 	@Test
 	@Ignore
 	public void testGetItsCertificateTest() {
-		
-		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
 			Collection<It> its = SistemaREDITPart.getIts(certificateInputStream, 
-					"jg@FNMT", "pkcs12", "0111","01105360062", 
-					Toolkit.parseDate("01-01-2015", "dd-MM-yyyy"), Toolkit.parseDate("01-01-2020", "dd-MM-yyyy"),
+					CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, "0111","01105360062", 
+					Toolkit.parseDate("01-01-2015", "dd-MM-yyyy"), Toolkit.parseDate("01-06-2022", "dd-MM-yyyy"),
 					Optional.empty()
 			);
 			for (It it : its) {
@@ -45,8 +49,7 @@ public class TestItParts {
 				System.out.println("ALTA >> "+it.getEnd());
 				System.out.println("CONFIRMACION >> "+it.getConfirmations().toString());
 			}
-		}
-		catch (Exception e) {e.printStackTrace();}
+		} catch (Exception e) {e.printStackTrace();}
 	}
 	
 	@Test

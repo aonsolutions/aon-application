@@ -345,8 +345,8 @@ public abstract class ServicioREDRegeXML {
 			public void endElement(String uri, String localName, String qName) throws SAXException {
 				if (data.toString().equalsIgnoreCase("ERROR")) {
 					error = true;
-				} else if (error && qName.contentEquals("MESSAGE")) {
-					throw new SAXException(errorText != null ? errorText : "");
+				} else if (errorText!=null) {
+					throw new SAXException(errorText);
 				}		
 			}
 
@@ -450,7 +450,6 @@ public abstract class ServicioREDRegeXML {
 	}
 	
 	protected static Employee extractNafXIpfInfo (String xml) throws SegSocialException, ParserConfigurationException, SAXException, IOException {
-		//builder.setNss(nss).setName(name).setIpf(ipf1).setIdent(Integer.parseInt(ident1));
 		EmployeeBuilder employeeBuilder = new EmployeeBuilder();
 		DefaultHandler handler = new DefaultHandler() {
 			StringBuilder data;
@@ -478,7 +477,7 @@ public abstract class ServicioREDRegeXML {
 				} else if (error && qName.contentEquals("TEXTO")) {
 					bTextoError = true;
 				}
-					data = new StringBuilder();
+				data = new StringBuilder();
 			}
 
 			@Override
@@ -1068,7 +1067,10 @@ public abstract class ServicioREDRegeXML {
 		return identity;
 	}
 	
-	
-	
+	protected static void checkAuthorization(String body) throws SegSocialException {
+		String error = Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "class", "cabMensaje"), "innerText");
+		if(error!=null)
+			throw new SegSocialException(error);
+	}
 	
 }

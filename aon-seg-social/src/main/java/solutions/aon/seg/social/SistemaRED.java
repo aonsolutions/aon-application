@@ -667,7 +667,7 @@ public class SistemaRED {
 	public static Collection<It> getIts(final byte[] certificateData, final String certificatePassword, final String certificateType,
 			final String regime, final String ccc, final Date startDate, final Date endDate, final Optional<String> naf) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaREDITParts.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc, startDate, endDate, naf);
+			return SistemaREDITPart.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc, startDate, endDate, naf);
 		} catch (IOException | SegSocialException e) {
 			throw new SegSocialException(e);
 		}
@@ -676,7 +676,7 @@ public class SistemaRED {
 	public static Collection<It> getIts(final InputStream cert, final String certificatePassword, final String certificateType,
 			final String regime, final String ccc, final Date startDate, final Date endDate, final Optional<String> naf) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(cert.readAllBytes())) {
-			return SistemaREDITParts.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc, startDate, endDate, naf);
+			return SistemaREDITPart.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc, startDate, endDate, naf);
 		} catch (IOException | SegSocialException e) {
 			throw new SegSocialException(e);
 		}

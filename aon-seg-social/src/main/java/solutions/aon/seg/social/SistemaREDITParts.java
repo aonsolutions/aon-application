@@ -63,6 +63,7 @@ class SistemaREDITParts {
 	private static String FORMAT_DATE = "dd/MM/yyyy";
 
 	// GET ITs
+	@Deprecated /** use SistemaREDITPart.getIts*/
 	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String ccc, Date from, Date to, Optional<String> nss) throws SegSocialException {
 
@@ -937,6 +938,9 @@ class SistemaREDITParts {
 				if (dtStr.indexOf("N.A.F.:") >= 0) {
 					itPart.setNaf(ddStr);
 				} else if (dtStr.indexOf("C.C.C.:") >= 0) {
+					if(ddStr!=null)  {
+						ddStr = ddStr.substring(4, ddStr.length());
+					}
 					itPart.setCcc(ddStr);
 				} else if (dtStr.indexOf("Fecha de baja:") >= 0) {
 					itPart.setWorkLeaveDate(Toolkit.parseDate(ddStr, FORMAT_DATE));
