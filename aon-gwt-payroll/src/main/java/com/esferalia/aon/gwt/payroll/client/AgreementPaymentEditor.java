@@ -152,6 +152,10 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	protected AgreementPaymentEditor(Payment payment, AgreementExtra extra, Set<Payment> allPayments, Set<AgreementExtra> allExtras) {
 		setCaption("Devengo");
 		expresssionVisibilityBtn = new AonToolbarSmallButton("Editar expresi\u00f3n", AON.CSS.aonIconEdit());
+		
+		// Remove this line when FxDialog is fixed
+		expresssionVisibilityBtn.setVisible(false);
+		
 		setWidget(binder.createAndBindUi(this));
 		showCloseButton(true);
 		getFooterButtons();
