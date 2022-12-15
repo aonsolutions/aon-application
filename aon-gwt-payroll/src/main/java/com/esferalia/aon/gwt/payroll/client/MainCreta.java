@@ -65,6 +65,7 @@ import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.SaveService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.gargoylesoftware.htmlunit.javascript.host.Console;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -1113,6 +1114,23 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			super.submitBases();
 		}
 		
+		@Override
+		protected void submitSalaryBases() {
+			
+			AbstractBaseCretaDetail.this.task = new TimeTask();
+			AbstractBaseCretaDetail.this.task.startTime();
+			AbstractBaseCretaDetail.this.task.setDescription("Generando Fichero de Bases...");
+
+			HandlerRegistration handlerRegistration [] = new HandlerRegistration[1];
+			handlerRegistration[0] = progressPanel.addAttachHandler(e -> {
+				progressPanel.showTask(AbstractBaseCretaDetail.this.task);
+				handlerRegistration[0].removeHandler();
+			});
+			showProgress.accept(null);
+
+			super.submitSalaryBases();
+		}
+
 		@Override
 		protected void onProgress(JsProgress progress) {
 			task.messageChanged(progress.getMsg());

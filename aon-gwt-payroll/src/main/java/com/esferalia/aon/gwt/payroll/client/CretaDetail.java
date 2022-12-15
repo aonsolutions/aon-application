@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -475,6 +474,14 @@ public abstract class CretaDetail extends Composite {
 		}
 	}
 	
+	class SalaryBasesButtonCommand implements ScheduledCommand {
+		
+		@Override
+		public void execute() {
+			submitSalaryBases();
+		}
+	}
+
 	class DbaButtonCommand implements ScheduledCommand {
 		
 		@Override
@@ -521,6 +528,7 @@ public abstract class CretaDetail extends Composite {
 		private MenuItem basesButtonMenuItem = null;
 		private MenuItem dbaButtonMenuItem = null;
 		private MenuItem agrarianButtonMenuItem = null;
+		private MenuItem salaryBasesButtonMenuItem = null;
 		
 		// Solicitudes
 		private MenuItem trabajadoresYTramosButtonMenuItem = null;
@@ -538,9 +546,10 @@ public abstract class CretaDetail extends Composite {
 			basesButtonMenuItem.ensureDebugId("basesButtonMenuItem");
 			basesButtonMenuItem.setEnabled(false);
 			
-			dbaButtonMenuItem = addItem(CretaService.File.COMUNICACION_DATOS_BANCARIOS.getFilename(), new DbaButtonCommand(), 
-					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
-			dbaButtonMenuItem.ensureDebugId("dbaButtonMenuItem");
+			salaryBasesButtonMenuItem = addItem("SLD-Fichero de Bases (Desde las n\u00F3minas en AON Solutions)", new SalaryBasesButtonCommand(), 
+				AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			salaryBasesButtonMenuItem.ensureDebugId("salaryBasesButtonMenuItem");
+			salaryBasesButtonMenuItem.setEnabled(false);
 			
 			agrarianButtonMenuItem = addItem(CretaService.File.COMUNICACION_DATOS_BANCARIOS.getFilename(), new AgrarianButtonCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
@@ -571,10 +580,21 @@ public abstract class CretaDetail extends Composite {
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
 			dclButtonMenuItem.ensureDebugId("dclButtonMenuItem");
 			
+			addSeparator();
+			
+			dbaButtonMenuItem = addItem(CretaService.File.COMUNICACION_DATOS_BANCARIOS.getFilename(), new DbaButtonCommand(), 
+				AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmd_btn());
+			dbaButtonMenuItem.ensureDebugId("dbaButtonMenuItem");
+			
+			
 		}
 		
 		public MenuItem getBasesButtonMenuItem() {
 			return basesButtonMenuItem;
+		}
+		
+		public MenuItem getSalaryBasesButtonMenuItem() {
+		    return salaryBasesButtonMenuItem;
 		}
 	}
 	
@@ -958,6 +978,7 @@ public abstract class CretaDetail extends Composite {
 				boolean selected = CretaDetail.this.jsFileSelectionModel
 						.getSelectedSet().size() > 0;
 				CretaDetail.this.sldMenu.getBasesButtonMenuItem().setEnabled(selected);
+				CretaDetail.this.sldMenu.getSalaryBasesButtonMenuItem().setEnabled(selected);
 
 			}
 		});
@@ -1180,6 +1201,57 @@ public abstract class CretaDetail extends Composite {
 				(progress) -> onProgress(progress));
 	}
 	
+	protected void submitSalaryBases() {
+		Map<String, Collection<String>> datas = new HashMap<String, Collection<String>>();
+		try {
+			datas.put(CretaService.Parameter.NAFS.name(), getNafs());
+		}catch ( Exception e ) {
+		}
+		
+		datas.put(CretaService.Parameter.USER.name(), Collections.singleton(Wnd.getCurrentUser()));
+		datas.put(CretaService.Parameter.DOMAIN.name(), Collections.singleton(Wnd.getCurrentDomainNameURL()));
+		
+		jsFileSelectionModel.getSelectedSet().stream().findFirst().ifPresent( jsFile -> {
+			datas.put(CretaService.Parameter.TIPO.name(), Collections.singleton(jsFile.getType()));
+			datas.put(CretaService.Parameter.AUTORIZADO.name(), Collections.singleton(jsFile.getAuthorized()));
+			//"yyyy-mm" ;
+			String from [] = jsFile.getFrom().split("-");
+			datas.put(CretaService.Parameter.DESDE_MES.name(), Collections.singleton(from[1]));
+			datas.put(CretaService.Parameter.DESDE_ANHO.name(), Collections.singleton(from[0]));
+			//"yyyy-mm" ;
+			String to [] = jsFile.getFrom().split("-");
+			datas.put(CretaService.Parameter.HASTA_MES.name(), Collections.singleton(to[1]));
+			datas.put(CretaService.Parameter.HASTA_ANHO.name(), Collections.singleton(to[0]));
+			//"yyyy-mm-dd" ;
+			String date [] = jsFile.getDate().split("-");
+			datas.put(CretaService.Parameter.CTRL_MES.name(), Collections.singleton(date[1]));
+			datas.put(CretaService.Parameter.CTRL_ANHO.name(), Collections.singleton(date[0]));
+		});
+		
+		List<String> cccs = jsFileSelectionModel.getSelectedSet().stream().map(JsFile::getCCC).collect(Collectors.toList());
+		datas.put(CretaService.Parameter.CCC.name(), cccs );
+		
+		datas.forEach((name, params) -> params.forEach( param -> log (name + ": "+ param ))) ;
+		
+		MainCreta.submit(CretaService.CRETA_URL + "/" + CretaService.File.BASES,
+				datas,
+				Collections.emptySet(),
+				new AsyncCallback<CretaService.JsBasesResult>() {
+
+					@Override
+					public void onSuccess(JsBasesResult result) {
+						onBases(result);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+					    error("onFailure: "+ caught.getMessage());
+					}
+
+				},
+				(progress) -> onProgress(progress));
+	}
+
 	protected boolean isSelectable(JsFile jsFile) {
 		JsRespuesta jsRespuesta = respuestasMap.getOrDefault(jsFile.getId(), JsRespuesta.createEmptyRespuesta());
 		for ( JsError jsError : jsRespuesta.getErrors() ) { 
@@ -1440,6 +1512,10 @@ public abstract class CretaDetail extends Composite {
 	}-*/
 	;
 	
+	public static native void error (String message ) /*-{
+		console.error(message);
+	}-*/
+	;
 	// ----------------------------------------------- Checked
 
 	protected static boolean isChecked(MenuItem menuItem) {
