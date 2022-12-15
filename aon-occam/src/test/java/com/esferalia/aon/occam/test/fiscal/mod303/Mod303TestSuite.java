@@ -3,6 +3,8 @@ package com.esferalia.aon.occam.test.fiscal.mod303;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+
+import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
  
 @RunWith(Suite.class)
 @SuiteClasses({
@@ -20,25 +22,25 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod303ReopenTest.class,					// Pendiente
 	Mod303DeleteTest.class,
 
-	Mod303InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod303InsertMonthlyTest.class,
 
-	Mod303InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod303InsertMonthlyComplementaryTest.class,
 	
-	Mod303InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod303InsertMonthlyReplacementTest.class,
 
 	Mod303ReopenTest.class,					// Pendiente
 	Mod303DeleteTest.class,
 	
-	Mod303InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod303InsertQuarterlyTest.class,
 
-	Mod303InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod303InsertQuarterlyComplementaryTest.class,
 	
-	Mod303InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod303InsertQuarterlyReplacementTest.class,
 
 	// Flujo de estados
