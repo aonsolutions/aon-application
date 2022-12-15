@@ -312,6 +312,15 @@ public class CretaServlet extends HttpServlet
 				
 			}
 			
+			if ( trabajadoresYTramosIss.isEmpty() ) {
+				try {
+					// Try with IDC first
+					trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req));
+				} catch ( Throwable t ) {
+					trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
+				}
+			}
+			
 			NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {
 				@Override
 				public void noDiffs(net.aonsolutions.core.tgss.creta.jaxb.bases.Liquidacion liquidacion) {
