@@ -55,7 +55,7 @@ import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Contrata {
 
-	// Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
+	// Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
 
 	private static final String MESSAGE_ERROR  = "Error no aceptada la comunicaci\u00f3n";
 	private static final String FORMAT_DATE_ES = "dd/MM/yyyy";

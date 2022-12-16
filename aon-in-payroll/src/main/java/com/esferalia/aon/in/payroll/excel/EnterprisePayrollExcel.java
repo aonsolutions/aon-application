@@ -2235,7 +2235,7 @@ public class EnterprisePayrollExcel {
 				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()])));
 		
 		List<Salary> sl = AON.getSalaries(aonContext,
-				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()]))).toList();
+				s -> s.getIdProperty().in(ids.toArray(new Integer[ids.size()]))).collect(Collectors.toList());
 		
 		for (Salary sal : sl) {
 			System.out.println(sal.getEmployeeName() + " - " + sal.getTotalIrpf());

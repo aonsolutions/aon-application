@@ -211,10 +211,4 @@ public class ServicioREDSecondaryUser extends ServicioREDRegeXML {
 			throw new SegSocialException(e.getMessage());
 		} 
 	}
-	
-	private static void checkAuthorization(String body) throws SegSocialException {
-		String error = Toolkit.getAttribute(Toolkit.getElementByAttribute(body, "class", "cabMensaje"), "innerText");
-		if(error!=null)
-			throw new SegSocialException(error);
-	}
 }

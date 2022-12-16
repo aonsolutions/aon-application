@@ -201,8 +201,26 @@ public class HtmlUnitToolkit {
 		Integer code = getSSCode(htmlPage);
 		String msg = getSSmessage(htmlPage);
 		InvalidDataException.checkCode(code, msg);
+		Toolkit.checkCertificateRevoked(htmlPage.asXml());
 	}
-
+	
+	public static void handleNewSegSocialExceptions(HtmlPage htmlPage) throws InvalidDataException {
+		try {
+			DomNode error = htmlPage.querySelector(".ERROR.mensaje");
+			if (error != null && !error.getVisibleText().isEmpty()) {				
+				throw new InvalidDataException(error.getVisibleText());
+			}
+		} catch (NullPointerException e) {}
+	}
+	
+	public static String getMessageSuccess(HtmlPage htmlPage) {
+		DomNode message = htmlPage.querySelector(".INFO.mensaje");
+		if (message != null && !message.getVisibleText().isEmpty()) {				
+			return message.getVisibleText();
+		}
+		return "";
+	}
+	
 	// MANAGES THE EXCEPTIONS OF NEW UI
 	public static void manageStatusMessage(HtmlPage document) throws SegSocialException {
 		DomNodeList<DomNode> errors = document.querySelectorAll(".mensajeError");

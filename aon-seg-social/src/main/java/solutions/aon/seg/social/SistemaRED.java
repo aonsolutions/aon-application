@@ -178,7 +178,20 @@ public class SistemaRED {
 
 	// PART TYPE
 	public enum PartType {
-		ALTA, CONFIRMACION, BAJA;
+		ALTA("Alta"), 
+		CONFIRMACION("Confirmaci\u00F3n"), 
+		BAJA("Baja");
+		
+		private String description;
+		
+		private PartType(String description) {
+			this.description = description;
+		}
+		
+		public String getDescription() {
+			return description;
+		}
+		
 		public static PartType safeValueOf( Byte i ) {
 			if (i == null) return null;
 			return safeValueOf( i.intValue() ); 
@@ -667,7 +680,7 @@ public class SistemaRED {
 	public static Collection<It> getIts(final byte[] certificateData, final String certificatePassword, final String certificateType,
 			final String regime, final String ccc, final Date startDate, final Date endDate, final Optional<String> naf) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaREDITParts.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc, startDate, endDate, naf);
+			return SistemaREDITPart.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc, startDate, endDate, naf);
 		} catch (IOException | SegSocialException e) {
 			throw new SegSocialException(e);
 		}
@@ -676,19 +689,18 @@ public class SistemaRED {
 	public static Collection<It> getIts(final InputStream cert, final String certificatePassword, final String certificateType,
 			final String regime, final String ccc, final Date startDate, final Date endDate, final Optional<String> naf) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(cert.readAllBytes())) {
-			return SistemaREDITParts.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc, startDate, endDate, naf);
+			return SistemaREDITPart.getIts(certificateInputStream, certificatePassword, certificateType, regime, ccc, startDate, endDate, naf);
 		} catch (IOException | SegSocialException e) {
 			throw new SegSocialException(e);
 		}
 	}
-	
 	
 	public static void registerITBaja(final byte[] certificateData, final String certificatePassword, final String certificateType,
 			final String regime, final String ccc, final String naf, final SistemaRED.Contingencies contingency, final SistemaRED.SituationEmployee situation_employee, 
 			final Date startdate, final SistemaRED.ContractType contractType, final float baseCot , final int cotDays, final Optional<Date> fATEP, final Optional<SistemaRED.AccidentType> accidentType,
 			final Optional<String> licenseNumber, final Optional<String> cias, final Optional<String> occupation) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaREDITParts.registerItBaja(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, startdate, contractType, baseCot, cotDays, fATEP, accidentType, licenseNumber, cias, occupation);
+			SistemaREDITPart.registerItBaja(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, startdate, contractType, baseCot, cotDays, fATEP, accidentType, licenseNumber, cias, occupation);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
@@ -718,10 +730,10 @@ public class SistemaRED {
 	}
 	
 	public static void removeIT(final byte[] certificateData, final String certificatePassword, final String certificateType,
-			final String regime, final String ccc, final String naf, final SistemaRED.PartType partType, final Date dateBj, final Date dateProcess) throws SegSocialException {
+			final String regime, final String ccc, final String naf, final SistemaRED.PartType partType, final Date dateBj, Date dateProcess) throws SegSocialException {
 		
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaREDITParts.removeIt(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);
+			SistemaREDITPart.removeIt(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);
 		} catch (IOException | SegSocialException | InterruptedException e) {
 			throw new SegSocialException(e);
 		}

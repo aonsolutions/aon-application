@@ -2,6 +2,7 @@ package solutions.aon.seg.social;
 
 import static org.junit.Assert.fail;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,18 +27,51 @@ import solutions.aon.seg.social.object.It;
 import solutions.aon.seg.social.object.Period;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
-public class TestItParts {
+public class TestSistemaREDITPart {
 	
 	Date unreachableDate = Toolkit.getUnreachableDate();
 
+	private final String CERTIFICATE_PASSWORD = "1234";
+	private final String CERTIFICATE_TYPE = "pkcs12"; 
+	private final String CERTIFICATE_PATH = System.getProperty("user.home")+"/CERT.p12"; 
+	
+	@Test
+	@Ignore	
+	public void registerItBaja() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {
+			Date startDate = new Date();
+			byte[] pdf = SistemaREDITPart.registerItBaja(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, 
+					"0111", "01105360062", "291136796369", 
+					SistemaRED.Contingencies.ACCIDENT_LABORAL, SistemaRED.SituationEmployee.ACTIVO,
+					startDate, SistemaRED.ContractType.RESTO_Y_AUTONOMOS, (float) 844.38, 30, Optional.ofNullable(startDate), Optional.empty(),
+					Optional.empty(), Optional.empty(), Optional.empty());
+			
+			System.out.println(new String(Base64.getEncoder().encode(pdf)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	@Ignore
+	public void removeIt() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {
+			SistemaREDITPart.removeIt(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, 
+					"0111", "01105360062", "291136796369", SistemaRED.PartType.BAJA, new Date(),new Date());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	
+	
 	@Test
 	@Ignore
 	public void testGetItsCertificateTest() {
-		
-		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("FNMT.p12")) {			
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
 			Collection<It> its = SistemaREDITPart.getIts(certificateInputStream, 
-					"jg@FNMT", "pkcs12", "0111","01105360062", 
-					Toolkit.parseDate("01-01-2015", "dd-MM-yyyy"), Toolkit.parseDate("01-01-2020", "dd-MM-yyyy"),
+					CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, "0111","01105360062", 
+					Toolkit.parseDate("23/12/2021", "dd/MM/yyyy"), Toolkit.parseDate("27/01/2022", "dd/MM/yyyy"),
 					Optional.empty()
 			);
 			for (It it : its) {
@@ -45,8 +79,7 @@ public class TestItParts {
 				System.out.println("ALTA >> "+it.getEnd());
 				System.out.println("CONFIRMACION >> "+it.getConfirmations().toString());
 			}
-		}
-		catch (Exception e) {e.printStackTrace();}
+		} catch (Exception e) {e.printStackTrace();}
 	}
 	
 	@Test
@@ -98,21 +131,6 @@ public class TestItParts {
 	
 	@Test
 	@Ignore
-	public void registerItBaja() {
-		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			SistemaREDITPart.registerItBaja(certificateInputStream,"jg@FNMT","pkcs12", 
-					"0111", "01105360062", "011017250195", 
-					SistemaRED.Contingencies.ACCIDENT_LABORAL, SistemaRED.SituationEmployee.ACTIVO,
-					new Date(), SistemaRED.ContractType.RESTO_Y_AUTONOMOS, (float) 844.38, 30, Optional.of(new Date()), Optional.empty(),
-					Optional.empty(), Optional.empty(), Optional.empty());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
-	@Test
-	@Ignore
 	public void registerItConfirmation() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
 			SistemaREDITParts.registerItConfirmation(certificateInputStream,"jg@FNMT","pkcs12", 
@@ -139,17 +157,7 @@ public class TestItParts {
 	}
 	
 	
-	@Test
-	@Ignore
-	public void removeIt() {
-		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			SistemaREDITPart.removeIt(certificateInputStream,"jg@FNMT","pkcs12", 
-					"0111", "01105360062", "011011187190", SistemaRED.PartType.ALTA, new Date(), new Date());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
+	
 	@Test
 	@Ignore
 	public void pdfIt() {

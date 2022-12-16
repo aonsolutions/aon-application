@@ -861,18 +861,18 @@ class SistemaREDMov {
 			((HtmlInput) htmlPage.querySelector("#PR_CAMPO_ORIGEN")).setValueAttribute("FORM");
 
 			htmlPage = ((HtmlButton) htmlPage.querySelector("#ENVIO_10")).click();
-			handleNewSegSocialExceptions(htmlPage);
-
+			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
+	
 			formDatos = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getElementById("FORMULARIO_1")).orElseThrow();
 			formDatos.getInputByName(fieldValue).setValueAttribute(newValue);
 			formDatos.getInputByName(fieldDate).setValueAttribute(fr[0] + "/" + fr[1] + "/" + fr[2]);
 
 			htmlPage = ((HtmlButton) htmlPage.querySelector("#ENVIO_7")).click();
-			handleNewSegSocialExceptions(htmlPage);
+			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 
-			DomNode message = htmlPage.querySelector(".INFO.mensaje");
-			if (message != null && !message.getVisibleText().isEmpty()) {				
-				System.out.println(message.getVisibleText());
+			String message = HtmlUnitToolkit.getMessageSuccess(htmlPage);
+			if (!message.isEmpty()) {				
+				System.out.println(message);
 			}
 		}
 	}
@@ -890,15 +890,6 @@ class SistemaREDMov {
 		try {
 			DomNode error = xmlPage.querySelector("#MESSAGES");
 			if (error != null && !error.getVisibleText().isEmpty() && error.getVisibleText().indexOf("realizada correctamente") < 0) {				
-				throw new InvalidDataException(error.getVisibleText());
-			}
-		} catch (NullPointerException e) {}
-	}
-
-	private static void handleNewSegSocialExceptions(HtmlPage htmlPage) throws InvalidDataException {
-		try {
-			DomNode error = htmlPage.querySelector(".ERROR.mensaje");
-			if (error != null && !error.getVisibleText().isEmpty()) {				
 				throw new InvalidDataException(error.getVisibleText());
 			}
 		} catch (NullPointerException e) {}
