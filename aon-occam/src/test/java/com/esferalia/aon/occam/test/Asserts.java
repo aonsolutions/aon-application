@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -851,6 +852,29 @@ public class Asserts {
 	}
 	public static void assertMod390HF(Mod390HF expected, Mod390HF actual) {
 		assertFiscalModel(expected, actual);
+	}
+	public static void assertMod190(Mod190 expected, Mod190 actual) {
+		assertEquals("Id", expected.getId(), actual.getId());
+		assertEquals("Domain", expected.getDomain(), actual.getDomain());
+		assertEquals("DomainName", expected.getDomainName(), actual.getDomainName());
+		assertEquals("Enterprise", expected.getEnterprise(), actual.getEnterprise());
+		assertEquals("Year", expected.getYear(), actual.getYear());
+		assertEquals("Administration", expected.getAdministration(), actual.getAdministration());
+		assertEquals("Status", expected.getStatus(), actual.getStatus());
+		assertEquals("Confidential", expected.isConfidential(), actual.isConfidential());
+		assertEquals("Complementary", expected.isComplementary(), actual.isComplementary());
+		assertEquals("Replacement", expected.isReplacement(), actual.isReplacement());
+		assertEquals("Receipt", expected.getReceipt(), actual.getReceipt());
+		assertEquals("ReplacedReceipt", expected.getReplacedReceipt(), actual.getReplacedReceipt());
+		assertEquals("Comments", expected.getComments(), actual.getComments());
+		assertEquals("Document", expected.getDocument(), actual.getDocument());
+		assertEquals("Name", expected.getName(), actual.getName());
+		assertEquals("ContactPerson", expected.getContactPerson(), actual.getContactPerson());
+		assertEquals("ContactPhone", expected.getContactPhone(), actual.getContactPhone());
+		assertEquals("ContactMail", expected.getContactMail(), actual.getContactMail());
+		assertEquals("ReceiverCountTotal", expected.getReceiverCountTotal(), actual.getReceiverCountTotal());
+		assertEquals("receiptTotal", expected.getReceiptTotal(), actual.getReceiptTotal(), DELTA);
+		assertEquals("retentionTotal", expected.getRetentionTotal(), actual.getRetentionTotal(), DELTA);
 	}
 	
 	public static void assertEqualsOffer(Offer expected, Offer actual) {

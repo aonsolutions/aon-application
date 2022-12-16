@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.fiscal.MODEL111;
 import com.esferalia.aon.occam.api.fiscal.MODEL115;
 import com.esferalia.aon.occam.api.fiscal.MODEL123;
+import com.esferalia.aon.occam.api.fiscal.MODEL190;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.fiscal.MODEL390HF;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -17,6 +18,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -226,6 +228,14 @@ public class FiscalFaker {
 		Mod390HF mod = getMod390HF( params );
 		MODEL390HF.create(params.getOccam(), mod);
 		return mod;
+	}
+
+	public static Mod190 createMod190(FiscalFakerParams params) {
+		Mod190 mod190 = MODEL190.initialize(params.getOccam(), AonDateUtils.getYear(params.getIssueDate()));
+		mod190.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
+		mod190.setComplementary(params.isComplementary());
+		mod190.setReplacement(params.isReplacement());
+		return MODEL190.save(params.getOccam(), mod190);
 	}
 
 	

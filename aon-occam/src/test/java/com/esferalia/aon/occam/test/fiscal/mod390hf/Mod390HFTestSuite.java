@@ -4,6 +4,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
+
 @RunWith(Suite.class)
 @SuiteClasses({
 	Mod390HFKeyTest.class,
@@ -19,12 +21,12 @@ import org.junit.runners.Suite.SuiteClasses;
 	Mod390HFRoundedAmountsTest.class,
 	Mod390HFFinishTest.class,
 	
-	Mod390HFInsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod390HFInsertComplementaryTest.class,
 	Mod390HFRoundedAmountsTest.class,
 	Mod390HFFinishTest.class,
 	
-	Mod390HFInsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod390HFInsertReplacementTest.class,
 	Mod390HFRoundedAmountsTest.class,
 	Mod390HFFinishTest.class,

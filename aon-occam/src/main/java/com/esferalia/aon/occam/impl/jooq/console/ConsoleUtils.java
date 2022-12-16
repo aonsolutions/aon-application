@@ -192,7 +192,7 @@ class ConsoleUtils {
 				throw new AonCoreException("No es posible encontrar el esquema \""+ConsoleIDsTableInfo.SCHEMA+"\"");
 			}
 			info.initialize(params);
-			info.setCtx(AONContext.getAONContext(ConsoleIDsTableInfo.SCHEMA));
+			info.setCtx(AONContext.getUnpooledAONContext(ConsoleIDsTableInfo.SCHEMA));
 			return info;
 		}
 	}

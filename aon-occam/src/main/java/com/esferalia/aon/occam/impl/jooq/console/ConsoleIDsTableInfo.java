@@ -6,22 +6,19 @@ import org.jooq.Table;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.AONContext.UnpooledCloseableAONContext;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ConsoleIDsTableInfo {
 
 	public static final String SCHEMA = "domainextract-aonsolutions-net";
 	
-	private CloseableAONContext ctx;
+	private UnpooledCloseableAONContext ctx;
 	private String tableName;
 	private Table<Record> table;
 	private Field<String> tableColumn;
 	private Field<Integer> oldIdColumn;
 	private Field<Integer> newIdColumn;
-	
-	public ConsoleIDsTableInfo() {
-		
-	}
 	
 	public void initialize(ConsoleParams params) {
 		tableName = obtainTableName(params);
@@ -64,10 +61,10 @@ public class ConsoleIDsTableInfo {
 	}
 
 
-	public CloseableAONContext getCtx() {
+	public UnpooledCloseableAONContext getCtx() {
 		return ctx;
 	}
-	public ConsoleIDsTableInfo setCtx(CloseableAONContext ctx) {
+	public ConsoleIDsTableInfo setCtx(UnpooledCloseableAONContext ctx) {
 		this.ctx = ctx;
 		return this;
 	}

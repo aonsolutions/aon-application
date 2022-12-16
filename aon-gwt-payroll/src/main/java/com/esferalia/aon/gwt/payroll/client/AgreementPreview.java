@@ -94,6 +94,7 @@ public abstract class AgreementPreview extends Composite {
 		String headerFSize();
 		String headerLevelFixed();
 		String levelCell();
+		String levelColumn();
 		String levelDefaultValue();
 		String levelFixed();
 		String modify();
@@ -200,7 +201,6 @@ public abstract class AgreementPreview extends Composite {
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private AgreementInfo agreement;
 	
-//	private ListBox levelLB;
 	private ListBox categoryLB;
 	
 	private AonToolbarButton printPreviewButton;
@@ -362,17 +362,7 @@ public abstract class AgreementPreview extends Composite {
 	private void getSalaryTableHeader() {
 		salaryGrid.clear();
 		salaryGrid.resize(0, agreement.getVariablesByDate(selectedDate).size()+2);
-//		salaryGrid.resize(0, agreement.getVariablesByDate(selectedDate).size()+3);
 		int row = salaryGrid.insertRow(salaryGrid.getRowCount());
-		
-//		Label level = new Label("Nivel");
-//		level.addStyleName(style.gridTitle());
-//		level.addStyleName(style.textCenter());
-//		level.addStyleName(style.cellWidth());
-//		level.addStyleName(style.headerFSize());
-//		salaryGrid.setWidget(row, 0, level);
-//		salaryGrid.getCellFormatter().addStyleName(row, 0, style.headerLevelFixed());
-//		salaryGrid.getColumnFormatter().addStyleName(0, style.columnBorder());
 		
 		Label category = new Label("Categoria");
 		category.addStyleName(style.gridTitle());
@@ -411,39 +401,9 @@ public abstract class AgreementPreview extends Composite {
 	private void fillSalaryTable() {
 		for(Level level : agreement.getLevels()) {
 			
-			if(level.getId() != 0 && ((level.isDeleted() || (null != agreement.getSelectedLevel() && !level.getId().equals(agreement.getSelectedLevel().getId()))) 
-					/*|| (level.isDeleted() || !AonStringUtils.isBlank(agreement.getSelectedCategory()) && !agreement.getCategoriesMap().get(level.getId()).contains(agreement.getSelectedCategory()))*/)) continue;
+			if(level.getId() != 0 && ((level.isDeleted() || (null != agreement.getSelectedLevel() && !level.getId().equals(agreement.getSelectedLevel().getId()))))) continue;
 			
 			int row = salaryGrid.insertRow(salaryGrid.getRowCount());
-			
-//			Widget levelCell;
-//			
-//			if(level.getId() == 0) {
-//				levelLB = new ListBox();
-//				levelLB.getElement().getStyle().setHeight(1.7, Unit.EM);
-//				levelLB.getElement().getStyle().setWidth(100, Unit.PX);
-//				levelLB.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
-//				levelLB.addItem("Todos", "");
-//				agreement.getLevels().forEach(levelIn -> {
-//					if(levelIn.getId() == 0) levelLB.addItem("Por defecto", levelIn.getId().toString());
-//					else levelLB.addItem(levelIn.getDescription(), levelIn.getId().toString());
-//				});
-//				setSelectedValueLB(levelLB, null == agreement.getSelectedLevel() ? "" : String.valueOf(agreement.getSelectedLevel().getId()));
-//				levelLB.setVisible(!agreement.getLevels().isEmpty());
-//				
-//				levelLB.addChangeHandler(e -> filterSelectedLevel());
-//				
-//				levelCell = levelLB;
-//			} else {
-//				levelCell = new Label(level.getDescription());
-//				levelCell.addStyleName(style.gridTitle());
-//				levelCell.addStyleName(style.gridCell());
-//				levelCell.addStyleName(style.levelCell());
-//			}
-//			
-//			salaryGrid.setWidget(row, 0, levelCell);
-//			salaryGrid.getCellFormatter().addStyleName(row, 0, style.levelFixed());
-//			if(row % 2 == 0 ) salaryGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
 			
 			Widget categoryCell;
 			
@@ -617,12 +577,6 @@ public abstract class AgreementPreview extends Composite {
 		    else return "Nivel : " + level.getDescription() + "\nCategoria : " + category;
 		} else return null;
 	}
-
-//	private void filterSelectedLevel() {
-//		String levelId = levelLB.getSelectedValue();
-//		agreement.setSelectedLevel(AonStringUtils.isBlank(levelId) ? null : agreement.getLevelById(Integer.parseInt(levelLB.getSelectedValue())));
-//		setAgreementPreview(agreement);
-//	}
 	
 	private void filterSelectedCategory() {
 		String levelId = categoryLB.getSelectedValue();
@@ -651,7 +605,6 @@ public abstract class AgreementPreview extends Composite {
 		Label level = new Label("Nivel");
 		level.addStyleName(style.gridTitle());
 		level.addStyleName(style.headerFSize());
-		level.getElement().getStyle().setFontSize(1, Unit.EM);
 		levelGrid.setWidget(row, 0, level);
 		levelGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
 
@@ -659,7 +612,6 @@ public abstract class AgreementPreview extends Composite {
 		Label category = new Label("Categoria");
 		category.addStyleName(style.gridTitle());
 		category.addStyleName(style.headerFSize());
-		category.getElement().getStyle().setFontSize(1, Unit.EM);
 		levelGrid.setWidget(row, 1, category);
 		levelGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
 
@@ -684,14 +636,20 @@ public abstract class AgreementPreview extends Composite {
 			}
 			
 			Label levelCell = new Label(level.getDescription());
+			levelCell.setTitle(level.getDescription());
+			levelCell.addStyleName(style.overflowEllipsis());
 			levelCell.addStyleName(style.gridTitle());
-			levelCell.getElement().getStyle().setPaddingLeft(1, Unit.EM);
+			levelCell.addStyleName(style.gridCell());
+			levelCell.addStyleName(style.levelCell());
 			
 			Label categoryCell = new Label(categoriesBuilder.toString());
 			categoryCell.setTitle("Categorias nivel " + level.getDescription());
+			categoryCell.addStyleName(style.levelCell());
 			
 			levelGrid.setWidget(row, 0, levelCell);
 			levelGrid.setWidget(row, 1, categoryCell);
+			
+			levelGrid.getCellFormatter().addStyleName(row, 0, style.levelColumn());
 			
 			if(row % 2 == 0 ) levelGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
 			if(row % 2 == 0 ) levelGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
@@ -701,8 +659,7 @@ public abstract class AgreementPreview extends Composite {
 
 	private void categoryTableWidth() {
 		levelGrid.setWidth("100%");
-		levelGrid.getColumnFormatter().setWidth(0, "20%");
-		levelGrid.getColumnFormatter().setWidth(1, "80%");
+		levelGrid.getColumnFormatter().setWidth(0, "120px");
 	}
 	
 	// ------------------------------------------ paymentTable
