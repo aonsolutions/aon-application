@@ -38,7 +38,7 @@ public class AlterAlcatrazFinance implements Update {
 		ResultSet rs = null;
 		try {
 			stmt = connection.createStatement();
-			rs = stmt.executeQuery("select * from alcatraz");
+			rs = stmt.executeQuery("select * from alcatraz limit 1");
 			ResultSetMetaData rsmd = rs.getMetaData();
 			for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 				String name = rsmd.getColumnName(i);				
