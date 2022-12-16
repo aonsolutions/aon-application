@@ -351,33 +351,29 @@
 											<aon:commandLink id="bankStatement-myAon"
 												action="bankStatement_search-myAon"
 												actionListener="#{bankStatement.onEditSearch}"
-												value="#{bundle.finance_bank_statement_module}" />
+												value="Conciliador Bancario" />
 										</aon:div>
 									</aon:div>
-									<!-- <aon:if test="#{dur.bank}"> -->
+
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_checkIt-accounting"
+											action="gwt_checkIt-accounting"
+											title="Agregador Bancario (expira Enero/2023)">
+											<aon:outputText	value="Agregador Bancario (expira Enero/2023)" />
+										</aon:commandLink>
+									</aon:div>
+									<aon:if test="#{dur.bank}">
 										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="gwt_checkIt-accounting"
-												action="gwt_checkIt-accounting"
-												title="Agregador bancario">
+											<aon:commandLink id="gwt_nordigen-accounting"
+												action="gwt_nordigen-accounting"
+												title="Agregador Bancario">
 												<aon:outputText
 													styleClass="aon-fiscal-link-label aon-icon-new-text"
 													style="margin-left: 5px; padding-left: 20px;"
-													value="Agregador bancario" />
+													value="Agregador Bancario" />
 											</aon:commandLink>
 										</aon:div>
-										<aon:if test="#{domainSwitcher.snapshot}">
-											<aon:div styleClass="aon-direct-access-list-element">
-												<aon:commandLink id="gwt_nordigen-accounting"
-													action="gwt_nordigen-accounting"
-													title="Agregador nordigen">
-													<aon:outputText
-														styleClass="aon-fiscal-link-label aon-icon-new-text"
-														style="margin-left: 5px; padding-left: 20px;"
-														value="Agregador nordigen" />
-												</aon:commandLink>
-											</aon:div>
-										</aon:if>
-									<!-- </aon:if> -->
+									</aon:if>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_finance-accounting"
 											action="gwt_finance-accounting"
