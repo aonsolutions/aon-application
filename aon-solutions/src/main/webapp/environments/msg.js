@@ -487,6 +487,7 @@ export const REQUEST_CLOSE_CONFIRM =  "Estás seguro de cerrar la solicitud?"; /
 // ----- S
 
 export const SALTRA = 'Saltra';
+export const SALES_PREPARATION = 'Preparación de Pedidos';
 export const SAVE = MSG.SAVE;
 export const SAVED_DATA = MSG.SAVED_DATA;
 export const SCOPE = MSG.SCOPE;

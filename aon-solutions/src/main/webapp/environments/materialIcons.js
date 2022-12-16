@@ -215,6 +215,7 @@ export const SEARCH = 'search';
 export const SECURITY = 'security';
 export const SEND = 'send';
 export const SETTING = 'setting';
+export const SHOPPING_BAG = 'shopping_bag';
 export const STORE_MALL_DIRECTORY = 'store_mall_directory';
 export const SWAP_CALLS = 'swap_calls';
 export const SUPPORT_AGENT = "support_agent";

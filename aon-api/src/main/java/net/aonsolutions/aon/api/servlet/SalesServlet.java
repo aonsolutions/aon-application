@@ -25,8 +25,6 @@ import com.esferalia.aon.occam.api.model.type.SalesStatus;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.aon.api.error.AonApiError;
-import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @WebServlet(name = "AonApiSalesServlet", urlPatterns = {"/ms/api/sales/*"})
@@ -35,6 +33,9 @@ public class SalesServlet extends AonApiHttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private static final Logger LOGGER  = Logger.getLogger(SalesServlet.class.getName());
+	
+	public static final String SALES = "/";
+	public static final String SALE = "/:id";
 	
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -56,17 +57,18 @@ public class SalesServlet extends AonApiHttpServlet {
 		delete(req, resp);
 	}
 	
+	
 	private void get(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, getSales(api));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
+			
+			Object object = new AonRouting(api)
+				.addRoute(SALES, SalesServlet::getSales)
+//				.addRoute(SALE, SalesServlet::getSale)
+				.apply();
+			
+			response(req, resp, object);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
@@ -76,13 +78,13 @@ public class SalesServlet extends AonApiHttpServlet {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, saveSales(api));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
+			
+			Object object = new AonRouting(api)
+				.addRoute(SALES, SalesServlet::saveSales)
+				.addRoute(SALE, SalesServlet::saveSales)
+				.apply();
+			
+			response(req, resp, object);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
@@ -92,19 +94,19 @@ public class SalesServlet extends AonApiHttpServlet {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
-			switch (api.getPath()) {
-			case "/":
-				response(req, resp, deleteSales(api));
-				break;
-			default:
-				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
-			}
+			
+			Object object = new AonRouting(api)
+				.addRoute(SALES, SalesServlet::deleteSales)
+				.addRoute(SALE, SalesServlet::deleteSales)
+				.apply();
+			
+			response(req, resp, object);
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
 	}
 	
-	private JSONArray getSales(AonApiData api) {
+	private static JSONArray getSales(AonApiData api) {
 		if(JsonUtils.getboolean(api.getData(), IJsonNames.SERFRUIT)) {
 			return getSerfruitSales(api);
 		} else if(JsonUtils.getboolean(api.getData(), IJsonNames.INGENET)) {
@@ -112,35 +114,35 @@ public class SalesServlet extends AonApiHttpServlet {
 		} else return getAonSales(api);
 	}
 	
-	private JSONArray getAonSales(AonApiData api) {
+	private static JSONArray getAonSales(AonApiData api) {
 		Stream<Sales> stream = AON.getSalesStream(api.getDomain(), api.getUser(), 
 			f -> salesFilter(api, f), salesOptions(api));
 		return SalesJSON.toJSON(stream);
 	}
 	
-	private JSONArray getSerfruitSales(AonApiData api) {
+	private static JSONArray getSerfruitSales(AonApiData api) {
 		Stream<Sales> stream = SERFRUIT.getSalesStream(api.getDomain(), api.getUser(), f -> salesFilter(api, f), salesOptions(api));
 		return SalesJSON.toJSON(stream);
 	}	
 	
-	private JSONArray getIngenetSales(AonApiData api) {
+	private static JSONArray getIngenetSales(AonApiData api) {
 		Stream<Sales> stream = INGENET.getSalesStream(api.getDomain(), api.getUser(), f -> salesFilter(api, f), salesOptions(api));
 		return SalesJSON.toJSON(stream);
 	}
 	
-	private JSONObject saveSales(AonApiData api) {
+	private static JSONObject saveSales(AonApiData api) {
 		Sales sales = SalesJSON.fromJSON(api.getData());
 		sales = AON.saveSales(api.getDomain(), api.getUser(), sales);
 		return SalesJSON.toJSON(sales);
 	}
 	
-	private JSONObject deleteSales(AonApiData api) {
+	private static JSONObject deleteSales(AonApiData api) {
 		Integer id = JsonUtils.getInteger(api.getData(), IJsonNames.ID);
 		AON.deleteSales(api.getDomain(), api.getUser(), id);
 		return new JSONObject();
 	}
 	
-	private Filter salesFilter(AonApiData api, SalesProperties f) {
+	private static Filter salesFilter(AonApiData api, SalesProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId());
 		
 		String series = JsonUtils.getString(api.getData(), IJsonNames.SERIES);
@@ -171,7 +173,7 @@ public class SalesServlet extends AonApiHttpServlet {
 		return filter;
 	}
 	
-	private Options salesOptions(AonApiData api) {
+	private static Options salesOptions(AonApiData api) {
 		Options options = new Options();
 		options.setPage(JsonUtils.getInteger(api.getData(), IJsonNames.PAGE));
 		options.setPerPage(JsonUtils.getInteger(api.getData(), IJsonNames.PER_PAGE));
