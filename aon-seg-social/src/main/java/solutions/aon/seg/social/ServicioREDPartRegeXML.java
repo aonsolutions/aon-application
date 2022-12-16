@@ -46,11 +46,19 @@ public abstract class ServicioREDPartRegeXML extends ServicioREDRegeXML {
 			boolean bConfirmationDate;
 			boolean bPartNum;
 			boolean bCcc;
-			
+		
 			@Override
 			public void startElement(String uri, String localName, String qName, Attributes attributes)
 					throws SAXException {
-				if (qName.equalsIgnoreCase("DatosParte")) {
+				if (qName.equalsIgnoreCase("ARQ.EstPag")) {
+					String id = attributes.getValue("id");
+					String indbot = attributes.getValue("INDBOT");
+					if(id!=null && indbot!=null) {
+						System.out.println("id>>"+attributes.getValue("id"));
+						System.out.println("id>>"+ attributes.getValue("INDBOT")); //"01" or "11"
+						System.out.println("test>>"+ attributes.getValue("test")); 
+					}
+				} else if (qName.equalsIgnoreCase("DatosParte")) {
 					part = new ITPart();
 				}  else if (qName.equalsIgnoreCase("naf")) {
 					bNss = true;
@@ -77,7 +85,7 @@ public abstract class ServicioREDPartRegeXML extends ServicioREDRegeXML {
 
 			@Override
 			public void endElement(String uri, String localName, String qName) throws SAXException {
-				if (bajaLogicaDesc) {
+				 if (bajaLogicaDesc) {
 					boolean isAnulado = data.indexOf("S")>-1;
 					if(!isAnulado) 
 						map.put(position, part);
