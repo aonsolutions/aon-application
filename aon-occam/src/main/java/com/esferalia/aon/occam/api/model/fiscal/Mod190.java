@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod190 implements IFiscalModel, HasAudit {
 
@@ -289,7 +290,6 @@ public class Mod190 implements IFiscalModel, HasAudit {
 		this.modificationDate = modificationDate;
 		return this;
 	}
-
 
 	@Override
 	public FiscalModelType getModel() {

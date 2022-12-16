@@ -10,14 +10,16 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountEntryDetail;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.test.fiscal.mod111.Mod111TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod115.Mod115TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod123.Mod123TestSuite;
+import com.esferalia.aon.occam.test.fiscal.mod190.Mod190TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod303.Mod303TestSuite;
 import com.esferalia.aon.occam.test.fiscal.mod390hf.Mod390HFTestSuite;
 import com.esferalia.aon.occam.test.fiscal.model.FiscalModelTestSuite;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @RunWith(Suite.class)
@@ -29,6 +31,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 	Mod303TestSuite.class,
 	Mod390HFTestSuite.class,
 	
+	Mod190TestSuite.class,
 	
 //	Mod130TestSuite.class,
 //	Mod131TestSuite.class,
@@ -39,15 +42,15 @@ public class FiscalTestSuite {
 	private static final int lineSize = 126;
 	private static NumberFormat FMT = DecimalFormat.getInstance();
 
-	public static <T extends FiscalModel> String toString( T mod ) {
+	public static <T extends IFiscalModel> String toString( T mod ) {
 		return AonStringUtils.leftPad(mod.getAdministration().getDescription(), 20)
 			+ " Modelo "
 			+ AonStringUtils.rightPad(mod.getModelFullName(), 30)
-			+ AonStringUtils.leftPad(FMT.format(mod.getDeclarationResult()),25)
+			+ AonStringUtils.leftPad(FMT.format(AonNumberUtils.zeroIfNull(mod.getDeclarationResult())),25)
 			+ AonStringUtils.leftPad(mod.getStatus().getName(),35);
 	}
 	
-	public static <T extends FiscalModel> T printModel( T mod ) {
+	public static <T extends IFiscalModel> T printModel( T mod ) {
 		System.out.println( "\t" + toString(mod));
 		return mod; 
 	}
