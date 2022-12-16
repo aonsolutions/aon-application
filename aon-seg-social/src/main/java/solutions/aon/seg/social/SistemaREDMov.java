@@ -870,9 +870,9 @@ class SistemaREDMov {
 			htmlPage = ((HtmlButton) htmlPage.querySelector("#ENVIO_7")).click();
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 
-			DomNode message = htmlPage.querySelector(".INFO.mensaje");
-			if (message != null && !message.getVisibleText().isEmpty()) {				
-				System.out.println(message.getVisibleText());
+			String message = HtmlUnitToolkit.getMessageSuccess(htmlPage);
+			if (!message.isEmpty()) {				
+				System.out.println(message);
 			}
 		}
 	}

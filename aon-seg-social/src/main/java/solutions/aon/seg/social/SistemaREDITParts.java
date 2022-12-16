@@ -56,7 +56,7 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDITParts {
 	
-	//Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
+	//Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
 	
 	private static String URL_BASE = "https://w2.seg-social.es/isincaA/inicio.do";
 	
@@ -214,6 +214,7 @@ class SistemaREDITParts {
 	}
 	
 	// remove IT
+	@Deprecated /** use SistemaREDITPart.removeIt*/
 	public static void removeIt(InputStream certificateInputStream, String certificatePassword, String certificateType,
 			String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj, Date dateProcess)
 			throws IOException, InterruptedException, SegSocialException {

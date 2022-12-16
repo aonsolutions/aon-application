@@ -213,6 +213,14 @@ public class HtmlUnitToolkit {
 		} catch (NullPointerException e) {}
 	}
 	
+	public static String getMessageSuccess(HtmlPage htmlPage) {
+		DomNode message = htmlPage.querySelector(".INFO.mensaje");
+		if (message != null && !message.getVisibleText().isEmpty()) {				
+			return message.getVisibleText();
+		}
+		return "";
+	}
+	
 	// MANAGES THE EXCEPTIONS OF NEW UI
 	public static void manageStatusMessage(HtmlPage document) throws SegSocialException {
 		DomNodeList<DomNode> errors = document.querySelectorAll(".mensajeError");

@@ -100,7 +100,7 @@ public class TestItParts {
 	@Ignore
 	public void registerItBaja() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			SistemaREDITParts.registerItBaja(certificateInputStream,"jg@FNMT","pkcs12", 
+			SistemaREDITPart.registerItBaja(certificateInputStream,"jg@FNMT","pkcs12", 
 					"0111", "01105360062", "011017250195", 
 					SistemaRED.Contingencies.ACCIDENT_LABORAL, SistemaRED.SituationEmployee.ACTIVO,
 					new Date(), SistemaRED.ContractType.RESTO_Y_AUTONOMOS, (float) 844.38, 30, Optional.of(new Date()), Optional.empty(),
@@ -143,7 +143,7 @@ public class TestItParts {
 	@Ignore
 	public void removeIt() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			SistemaREDITParts.removeIt(certificateInputStream,"jg@FNMT","pkcs12", 
+			SistemaREDITPart.removeIt(certificateInputStream,"jg@FNMT","pkcs12", 
 					"0111", "01105360062", "011011187190", SistemaRED.PartType.ALTA, new Date(), new Date());
 		} catch (Exception e) {
 			e.printStackTrace();

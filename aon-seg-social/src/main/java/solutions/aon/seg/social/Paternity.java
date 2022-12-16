@@ -43,7 +43,7 @@ import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class Paternity {
-	// Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testPaternity.html");
+	// Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/testPaternity.html");
 	
 	private Paternity() {
 		 throw new IllegalStateException("Utility class");

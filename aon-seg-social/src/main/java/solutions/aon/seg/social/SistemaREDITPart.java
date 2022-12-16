@@ -1,6 +1,7 @@
 package solutions.aon.seg.social;
 
 import static solutions.aon.seg.social.SistemaRED.PartType.BAJA;
+import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.getElConstains;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.wait4;
 
 import java.io.IOException;
@@ -28,22 +29,26 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
 import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
+import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.InvalidDataException;
+import solutions.aon.seg.social.exception.invalid.NoQueryData;
 import solutions.aon.seg.social.object.ITPart;
 import solutions.aon.seg.social.object.It;
 import solutions.aon.seg.social.object.It.ItBuilder;
@@ -53,8 +58,9 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDITPart extends ServicioREDPartRegeXML {
 	
-	//Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
-	
+	//Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
+	private static final String MESSAGE_ERROR  = "Error no aceptada la comunicaci\u00f3n";
+	private static final String TRY_AGAIN  = "Intente nuevamente!";
 	private static final String FORMAT_DATE = "dd/MM/yyyy";
 	private static final String BASE_URI = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=IWXP0001";
 
@@ -120,7 +126,7 @@ class SistemaREDITPart extends ServicioREDPartRegeXML {
 	}
 	
 	// REGISTER IT START HANDLE EXCEPTIONS
-	public static void registerItBaja(InputStream certificateInputStream, String certificatePassword,
+	public static byte[] registerItBaja(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
 			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType, Optional<String> licenseNumber, Optional<String> cias,
@@ -130,7 +136,7 @@ class SistemaREDITPart extends ServicioREDPartRegeXML {
 				startdate, contractType, baseCot, cotDays });
 
 		try {
-			registerItBajaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf,
+			return registerItBajaImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf,
 					contingency, situationEmployee,startdate, contractType, baseCot,
 					cotDays, fATEP, accidentType, licenseNumber, cias, occupation);
 		} catch (FailingHttpStatusCodeException e) {
@@ -145,10 +151,28 @@ class SistemaREDITPart extends ServicioREDPartRegeXML {
 			e.printStackTrace();
 			throw new SegSocialException(e.getMessage());
 		}
+		return null;
 	}
 	
+	// remove IT
+	public static void removeIt(InputStream certificateInputStream, String certificatePassword, String certificateType,
+			String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj, Date dateProcess)
+			throws IOException, InterruptedException, SegSocialException {
+		Toolkit.verifyData(new Object[] { regime, ccc, naf, dateProcess });
+		try {
+			removeItImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType,
+					dateBj, dateProcess);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (MalformedURLException e) {
+			throw new SegSocialException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} 
+	}
+
 	// REGISTER IT START
-	private static void registerItBajaImpl(InputStream certificateInputStream, String certificatePassword,
+	private static byte[] registerItBajaImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
 			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType,
@@ -162,9 +186,9 @@ class SistemaREDITPart extends ServicioREDPartRegeXML {
 
 			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situationEmployee, BAJA);
 
-			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow();
+			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			
-			wait4(htmlPage, p -> p.querySelector("[name=\"fechaBaja\"]")).orElseThrow();
+			wait4(htmlPage, p -> p.querySelector("[name=\"fechaBaja\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			
 			form.getInputByName("ARQ.SPM.OUT").remove(); 
 			
@@ -226,38 +250,84 @@ class SistemaREDITPart extends ServicioREDPartRegeXML {
 				if(null!=typeAccidentOption) typeAccidentOption.click();
 			}
 			
-			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow();
+			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			htmlPage = validate.click();
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
-			HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow();
+			HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			
 			formTwo.getInputByName("ARQ.SPM.OUT").remove(); //PREVENT XML
 			
-			HtmlButton confim = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Confirmar\"]")).orElseThrow();
+			HtmlButton confim = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Confirmar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			htmlPage = confim.click();
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
 			
-			//TODO
-			
-//			DomNode elem = htmlPage.querySelector("#datos > fieldset > p > span.TextoFijo");
-//			if(null!=elem) {
-//				System.out.println(elem.asText());
-//				if (elem.asText().contains("no se ha dado")) {					
-//					throw new InvalidDataException(elem.asText());
-//				}
-//			}
-			
-//			Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
+			return getPdfProcess(htmlPage);
 		}
 	}
 	
+	// remove ITImpl
+	private static void removeItImpl(InputStream certificateInputStream, String certificatePassword,
+			String certificateType, String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj, Date dateProcess ) throws FailingHttpStatusCodeException, IOException, SegSocialException, InterruptedException {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
+
+			HtmlPage htmlPage = webClient.getPage(BASE_URI);
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+			
+			htmlPage = setUrlParseRemoveXml(htmlPage, (HtmlAnchor)htmlPage.getElementById("PEST_4"));
+		
+			wait4(htmlPage, p -> p.querySelector("[name=\"regimenAnulacion\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+			
+			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+			form.getInputByName("ARQ.SPM.OUT").remove(); 
+
+			form.getInputByName("regimenAnulacion").setValueAttribute(regime);
+			form.getInputByName("cccAnulacion").setValueAttribute(ccc);
+			form.getInputByName("nafAnulacion").setValueAttribute(naf);
+			Toolkit.formatDate(dateBj, FORMAT_DATE).ifPresent(d-> form.getInputByName("fechaBajaMedAnulacion").setValueAttribute(d) );
+			
+			HtmlButton continueIn= (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[value=\"CONTINUAR_ANULACION\"]")).orElseThrow();
+			htmlPage = continueIn.click();
+			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
+
+			HtmlAnchor firstColumn = getOneAnchorPaginate(htmlPage, partType, dateProcess);
+			
+			if (firstColumn == null) {				
+				throw new NoQueryData("Sin datos de consulta");
+			}
+			
+			htmlPage = setUrlParseRemoveXml(htmlPage, firstColumn);
+			
+			HtmlForm formCancel = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+			formCancel.getInputByName("ARQ.SPM.OUT").remove(); 
+
+			HtmlButton anular = (HtmlButton) formCancel.querySelector("button[value=\"ACEPTAR_ANULACION\"]");
+			htmlPage = anular.click();
+			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
+			
+			HtmlForm formConfirm = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+			formConfirm.getInputByName("ARQ.SPM.OUT").remove(); 
+
+			HtmlButton confirm = formConfirm.querySelector("button[value=\"CONFIRMAR_ANULACION\"]");
+			htmlPage = confirm.click();
+			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
+			
+			String message = HtmlUnitToolkit.getMessageSuccess(htmlPage);
+			if (!message.isEmpty()) {				
+				System.out.println(message);
+				if (!message.contains("exito")) {					
+					throw new InvalidDataException(message);
+				}
+			} 
+		}
+	}
 
 	private static HtmlPage fillGeneralData(HtmlPage htmlPage, String regime, String ccc, String naf,
 			SistemaRED.Contingencies contingency, SistemaRED.SituationEmployee situationEmployee, SistemaRED.PartType type)
-			throws IOException, InvalidDataException, InterruptedException {
-		HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow();
-		wait4(htmlPage, p ->p.querySelector("[name=\"regimen\"]")).orElseThrow();
+			throws IOException, InterruptedException, SegSocialException {
+		HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+		wait4(htmlPage, p ->p.querySelector("[name=\"regimen\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 
 		form.getInputByName("regimen").setValueAttribute(regime); 
 		form.getInputByName("ccc").setValueAttribute(ccc); 
@@ -312,7 +382,7 @@ class SistemaREDITPart extends ServicioREDPartRegeXML {
 		}
 		if(null!=contingencyOption) contingencyOption.click();
 
-		HtmlButton accept = (HtmlButton) wait4(htmlPage, p ->p.getElementById("ENVIO_9")).orElseThrow();
+		HtmlButton accept = (HtmlButton) wait4(htmlPage, p ->p.getElementById("ENVIO_9")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 		htmlPage = accept.click();
 		
 		HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
@@ -434,5 +504,86 @@ class SistemaREDITPart extends ServicioREDPartRegeXML {
 			}
 		}
 		return its.stream().sorted((o1, o2)-> o1.getStart().getWorkLeaveDate().get().compareTo(o2.getStart().getWorkLeaveDate().get())).collect(Collectors.toList());
+	}
+	
+	private static byte[] getPdfProcess(HtmlPage htmlPage) throws InterruptedException, IOException, SegSocialException {
+		
+		HtmlForm formTwo = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+		
+		formTwo.getInputByName("ARQ.SPM.OUT").remove(); //PREVENT XML
+
+		HtmlButton continueIn = (HtmlButton) wait4(htmlPage, p ->p.querySelector("#ENVIO_10")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+		htmlPage = continueIn.click();
+		
+		HtmlAnchor doc = (HtmlAnchor) wait4(htmlPage, p ->p.querySelector("a[href*=\"INFORME\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+		Page page = doc.click();
+	
+		if (page.isHtmlPage()) {
+			htmlPage = (HtmlPage) page;
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+		} else {
+			try {
+				return page.getWebResponse().getContentAsStream().readAllBytes();
+			} catch (Exception e) {
+				throw new InvalidDataException();
+			}
+		}
+		throw new SegSocialException(MESSAGE_ERROR);
+	}
+	
+	private static HtmlAnchor getOneAnchorPaginate(HtmlPage htmlPage, SistemaRED.PartType partType, Date date)
+			throws IOException {
+		
+		String dateStr = Toolkit.formatDate(date, FORMAT_DATE).get();
+		
+		HtmlTable table = (HtmlTable) htmlPage.querySelector("#FORMULARIO_6 table");
+		HtmlAnchor next = null;		
+		HtmlAnchor firstColumn = null;
+		boolean last = false;
+		int numberCell = 0;
+		String anulado = "No";
+		
+		switch (partType) {
+			case ALTA:
+				numberCell = 2;
+				break;
+			case BAJA:
+				numberCell = 3;
+				break;
+			case CONFIRMACION:
+				numberCell = 4;
+				break;
+		}
+		
+		if (table != null) {
+			while (!last) {
+				next = (HtmlAnchor) getElConstains(htmlPage, "#FORMULARIO_6 a", "Siguiente");
+				for (final HtmlTableRow row : table.getRows()) {
+					HtmlTableCell fCell = row.getCell(numberCell);
+					HtmlTableCell typeCell = row.getCell(6);
+					HtmlTableCell anulCell = row.getCell(7);
+					if (fCell.getVisibleText().equalsIgnoreCase(dateStr)
+							&& typeCell.getVisibleText().equalsIgnoreCase(partType.getDescription())
+							&& anulCell.getVisibleText().equalsIgnoreCase(anulado)) {
+						firstColumn = row.getCell(0).querySelector("a");
+						break;
+					}
+				}
+				
+				if (firstColumn == null && next != null) {					
+					htmlPage = setUrlParseRemoveXml(htmlPage, next);
+				} else {					
+					last = true;
+				}
+			}
+		}
+		return firstColumn;
+	}
+	
+	private static HtmlPage setUrlParseRemoveXml(HtmlPage htmlPage, HtmlAnchor link) throws IOException {
+		link = HtmlUnitToolkit.setUrlParse(htmlPage, link);
+		link.setAttribute("href", link.getHrefAttribute().replace("&ARQ.SPM.OUT=XML_STYLESHEET", ""));
+		htmlPage = link.click();
+		return htmlPage;
 	}
 }

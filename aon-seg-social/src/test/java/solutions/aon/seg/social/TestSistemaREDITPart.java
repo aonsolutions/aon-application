@@ -39,15 +39,30 @@ public class TestSistemaREDITPart {
 	@Ignore	
 	public void registerItBaja() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {
-			SistemaREDITPart.registerItBaja(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, 
+			Date startDate = new Date();
+			byte[] pdf = SistemaREDITPart.registerItBaja(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, 
 					"0111", "01105360062", "291136796369", 
 					SistemaRED.Contingencies.ACCIDENT_LABORAL, SistemaRED.SituationEmployee.ACTIVO,
-					new Date(), SistemaRED.ContractType.RESTO_Y_AUTONOMOS, (float) 844.38, 30, Optional.of(new Date()), Optional.empty(),
+					startDate, SistemaRED.ContractType.RESTO_Y_AUTONOMOS, (float) 844.38, 30, Optional.ofNullable(startDate), Optional.empty(),
 					Optional.empty(), Optional.empty(), Optional.empty());
+			
+			System.out.println(new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	@Ignore
+	public void removeIt() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {
+			SistemaREDITPart.removeIt(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, 
+					"0111", "01105360062", "291136796369", SistemaRED.PartType.BAJA, new Date(),new Date());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	
 	
 	@Test
@@ -142,17 +157,7 @@ public class TestSistemaREDITPart {
 	}
 	
 	
-	@Test
-	@Ignore
-	public void removeIt() {
-		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			SistemaREDITParts.removeIt(certificateInputStream,"jg@FNMT","pkcs12", 
-					"0111", "01105360062", "011011187190", SistemaRED.PartType.ALTA, new Date(), new Date());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
+	
 	@Test
 	@Ignore
 	public void pdfIt() {
