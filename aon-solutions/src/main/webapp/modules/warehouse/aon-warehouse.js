@@ -121,7 +121,7 @@ export class AonWarehouse extends AonElement {
 		this.getApplication().setContent(new AonMobilePackaging());
 	}
 
-	aonElaboration() {
+	aonSalesPreparation() {
 		this.getApplication().getToolbar().option = MSG.SALES_PREPARATION;
 		this.getApplication().removeFloatOption();
 		this.getApplication().setContent(new AonMobileSalesList());

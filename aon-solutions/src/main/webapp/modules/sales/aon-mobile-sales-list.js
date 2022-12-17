@@ -1,8 +1,10 @@
 import { AonMobileList } from '../../components/aon-mobile-list.js';
 import { MATERIAL_ICONS, TAG } from '../../environments/environments.js';
+import { getSales } from '../../services/salesService.js';
 
 export class AonMobileSalesList extends AonMobileList {
 	more;
+    filter;
 
     constructor () {
         super();
@@ -18,11 +20,18 @@ export class AonMobileSalesList extends AonMobileList {
     }
 
     initialize() {
+        this.filter =  {
+            page: 1,
+            perPage: 30,
+            full: true,
+            to: new Date(),
+            status: 'PENDING'
+        };
         this.more = false;
     }
 
     loadMore() {
-        let filter = this.getFilter();
+        let filter = this.filter;
         if(filter.page) {
             filter.page = filter.page + 1;
             this.setFilter(filter);
@@ -36,7 +45,7 @@ export class AonMobileSalesList extends AonMobileList {
 
     init() {
         this.build();
-        getSales(this.getFilter()).then(sales => {
+        getSales(this.filter).then(sales => {
             if(sales.length == 0){   
                 this.empty();
             }
@@ -52,15 +61,6 @@ export class AonMobileSalesList extends AonMobileList {
         }
         this.addLi(liValue, i, () => {});
     }
-    
-    getFilter() {
-		return this.filter || {};
-	}
-
-    setFilter(filter) {		
-		this.filter = JSON.stringify(filter);
-        this.init();
-	}
 
 }
 
