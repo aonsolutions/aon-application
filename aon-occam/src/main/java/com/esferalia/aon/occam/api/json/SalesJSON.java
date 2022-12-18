@@ -89,6 +89,7 @@ public class SalesJSON {
 			.put(IJsonNames.PROJECT, ProjectJSON.toJSON(object.getProject()))
 			.put(IJsonNames.SERIES, object.getSeries())
 			.put(IJsonNames.NUMBER, object.getNumber())
+			.put(IJsonNames.REFERENCE, object.getReferenceCode())
 			.put(IJsonNames.PURCHASE_REFERENCE, object.getPurchaseReference())
 			.put(IJsonNames.CUSTOMER, CustomerJSON.toJSON(object.getCustomer()))
 			.put(IJsonNames.SELLER, SellerJSON.toJSON(object.getSeller()))

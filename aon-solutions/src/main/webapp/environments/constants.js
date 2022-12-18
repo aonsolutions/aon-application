@@ -26,6 +26,9 @@ export const AON_MOBILE_PROFILE = 'aonMobileProfile';
 export const AON_PRODUCT = 'aonProduct';
 export const AON_SEARCH = 'aonSearch';
 export const AON_USER_LIST = 'aonUserList';
+export const AON_SALES = 'aonSales';
+export const AON_SALES_LIST = 'aonSalesList';
+export const AON_MOBILE_SALES_LIST = 'aonMobileSalesList';
 export const AON_SERVICE_ACCOUNT_LIST = 'aonServiceAccountList';
 export const ARRAY = 'array';
 export const AUTOCOMPLETE = 'autocomplete';
@@ -247,6 +250,7 @@ export const ROW = 'row';
 
 // ----- S
 export const SALTRA = 'saltra';
+export const SALES_PREPARATION = 'salesPreparation';
 export const SAVE = 'save';
 export const SCROLLING = 'scrolling';
 export const SELECT = 'select';
