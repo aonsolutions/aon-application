@@ -138,6 +138,7 @@ export const AON_MOBILE_PACKAGING = 'aon-mobile-packaging';
 export const AON_WAREHOUSE = 'aon-warehouse';
 
 export const AON_MOBILE_SALES_LIST = 'aon-mobile-sales-list';
+export const AON_MOBILE_SALE = 'aon-mobile-sale';
 export const AON_SALES_LIST = 'aon-sales-list';
 export const AON_SALES = 'aon-sales';
 
