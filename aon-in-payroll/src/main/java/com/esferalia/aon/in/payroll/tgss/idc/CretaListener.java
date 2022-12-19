@@ -179,6 +179,10 @@ public class CretaListener implements IdcParserListener {
 			String quota, Date start, Date end) {
 		tramoBuilder.ifPresent( b -> {
 			switch (code) {
+			case "17": //APORT.NO OBL.SUS.EMP
+				b.clear();
+				addExpedienteRegulacionEmpleoTotal(b);
+				return;
 			case "21": //IT.CC.PAGO DELEGADO
 				b.clear();
 				addIncapacidadTemporalPagoDelegadoEstandar(b);
@@ -467,5 +471,9 @@ public class CretaListener implements IdcParserListener {
 		dataSolicitadoBuilder.setCodigo("603");
 		dataSolicitadoBuilder.setObligatorio(true);
 		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
+
+	private static void addExpedienteRegulacionEmpleoTotal(TramoBuilder tramoBuilder) {
+	    addMaternidadPaternidadTiempoCompleto(tramoBuilder);
 	}
 }

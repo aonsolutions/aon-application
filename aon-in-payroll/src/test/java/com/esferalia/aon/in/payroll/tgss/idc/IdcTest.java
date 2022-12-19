@@ -3333,6 +3333,58 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdcplcccTrabajadoresTramosXIX()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplcccXIX.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is,
+					new TrabajadoresTramosCallback() {
+					});
+
+			marshal(trabajadoresTramos, System.out);
+			// PEC 17 Expedientes de Regulación de Empleo Total
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("08", liquidacion.getCcc().getProvincia());
+			assertEquals("209971175", liquidacion.getCcc().getNumero());
+
+			assertEquals("11", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2022", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("11", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2022", liquidacion.getPeriodoHasta().getAnho());
+
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("11", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2022", liquidacionesMes.getMesLiquidativo().getAnho());
+
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size());
+
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+
+				assertEquals("081179728618", trabajador.getNaf());
+
+				assertEquals(1, trabajador.getTramos().getTramo().size());
+
+				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+				assertEquals("07", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("01", tramo.getFechaDesde().getDia());
+				assertEquals("11", tramo.getFechaDesde().getMes());
+				assertEquals("2022", tramo.getFechaDesde().getAnho());
+				assertEquals("30", tramo.getFechaHasta().getDia());
+				assertEquals("11", tramo.getFechaHasta().getMes());
+				assertEquals("2022", tramo.getFechaHasta().getAnho());
+				assertTramoERETotal(tramo);
+				assertNoDatosSolicitado(tramo, "I", "51");
+
+			}
+
+		}
+	}
+
+	@Test
 	public void testIdcSyncI() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcI.pdf")) {
 			byte data[] = is.readAllBytes();
@@ -4258,6 +4310,19 @@ public class IdcTest extends AbstractSQLTestCase {
 		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
 		assertDatosSolicitado(datoSolicitados, "C", "663", "B");
 		return count + 1;
+	}
+
+	private static int assertTramoERETotal(Tramo tramo) {
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+
+		assertDatosSolicitado(datoSolicitados, "C", "509", "B");
+		try {
+			assertDatosSolicitado(datoSolicitados, "C", "603", "B");
+		} catch (AssertException e) {
+			assertDatosSolicitado(datoSolicitados, "C", "613", "B");
+		}
+
+		return 2;
 	}
 
 	private static int assertTramoActivoNormal(Tramo tramo) {
