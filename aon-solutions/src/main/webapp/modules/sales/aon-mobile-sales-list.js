@@ -1,6 +1,7 @@
 import { AonMobileList } from '../../components/aon-mobile-list.js';
 import { MATERIAL_ICONS, TAG } from '../../environments/environments.js';
 import { getSales } from '../../services/salesService.js';
+import { AonMobileSale } from './aon-mobile-sale.js';
 
 export class AonMobileSalesList extends AonMobileList {
 	more;
@@ -59,8 +60,15 @@ export class AonMobileSalesList extends AonMobileList {
             title: sale.reference,
             subtitle: sale.customer.name
         }
-        this.addLi(liValue, i, () => {});
+        this.addLi(liValue, i, () => this.aonSale(sale, i));
     }
+
+    aonSale(sale, i) {
+        let aonSale = new AonMobileSale();
+        aonSale.setSale(sale);
+        this.getApplication().setContent(aonSale);
+    }
+    
 
 }
 
