@@ -3,8 +3,9 @@ import { ToolbarType} from '../../models/enums.js';
 
 import {AonToolbar} from "../../components/aon-toolbar.js";
 import {AonCard} from "../../components/aon-card.js";
+import {AonButton} from "../../components/aon-button.js";
 
-import {CONSTANT, MSG, TAG } from '../../environments/environments.js'; 
+import {CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js'; 
 
 import * as ACTION from '../actions.js';
 import { AonInput } from '../../components/aon-input.js';
@@ -12,6 +13,8 @@ import { AonSelect } from '../../components/aon-select.js';
 
 import { AonNumber } from '../../components/aon-number.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
+import { AonIconButton } from '../../components/aon-icon-button.js';
+import { AonDialog } from '../../components/aon-dialog.js';
 
 export class AonMobileSale extends AonElement {
 
@@ -65,6 +68,8 @@ export class AonMobileSale extends AonElement {
 		let table = new AonBasicTable();
 		table.id = this.DETAIL_TABLE;
 		card.setContent(table);
+		this.getElement(table.TABLE).style.borderSpacing = '0px 10px';
+
 
 		for(let i = 0; i < this.sale.details.length; i++) {
 			table.addRow(); // ----- ROW i
@@ -74,8 +79,21 @@ export class AonMobileSale extends AonElement {
 			table.addCell(span);
 
 			let span2 = this.createElement(TAG.SPAN);
-			span2.innerHTML = this.sale.details[i].delivered;
+			let pending =  this.sale.details[i].quantity - this.sale.details[i].delivered;
+			span2.innerHTML = this.sale.details[i].delivered + '/' + this.sale.details[i].quantity;
 			table.addCell(span2);
+
+			let aonIconButton = this.createAonElement(new AonIconButton(), 'icon' + i, 'icon');
+			if(pending === 0) {
+				aonIconButton.icon = MATERIAL_ICONS.CHECK_CIRCLE_OUTLINE;
+				aonIconButton.color = 'green';
+			} else {
+				aonIconButton.icon = MATERIAL_ICONS.ADD;
+				aonIconButton.addEventListener(EVENT.CLICK, () => {
+					this.addPackaging(this.sale.details[i]);
+				});
+			}
+			table.addCell(aonIconButton);
 		}
 	}
 
@@ -87,6 +105,88 @@ export class AonMobileSale extends AonElement {
 
 	back() {
 		this.getApplication().getParent().aonSalesPreparation();
+	}
+
+	addPackaging(detail) {
+		let dialog = new AonDialog();
+		dialog.id = this.id + 'Dialog';
+		dialog.type = 'fullscreen';
+		this.appendChild(dialog);
+		dialog.setTitle('Seleccionar Envase')
+
+		let div = this.createElement(TAG.DIV);
+		dialog.setContent(div);
+
+		let envase = new AonSelect();
+		envase.id = this.id + 'DialogEnvase';
+		envase.title = 'Nuevo Envase';
+		div.appendChild(envase);
+
+		let span = this.createElement(TAG.SPAN);
+		span.id = this.id + 'DialogSpan';
+		span.innerHTML = 'ó';
+		span.style.display = 'block';
+		span.style.marginBottom = '10px';
+		div.appendChild(span);
+
+		let product = this.createInput(this.PACKAGING_PRODUCT, "Envase");
+		div.appendChild(product);
+		product.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
+
+		let next = new AonButton();
+		next.title = 'Siguiente';
+		div.appendChild(next);
+		next.addEventListener(EVENT.CLICK, () => {
+			this.clearElement(div);
+			dialog.setTitle('Elegir Producto/Lote');
+			let product2 = this.createInput(this.PACKAGING_PRODUCT, "Contenedor Producto / Lote");
+			product2.id = 'product2';
+			div.appendChild(product2);
+			product2.addIconButton(MATERIAL_ICONS.QR_CODE_SCANNER, () => this.openBarcode());
+
+			let quantity = this.createInput(this.PACKAGING_PRODUCT, "Cantidad");
+			quantity.id = 'quantity';
+			div.appendChild(quantity);
+
+			let next2 = new AonButton();
+			next2.title = 'Siguiente';
+			div.appendChild(next2);
+
+			next2.addEventListener(EVENT.CLICK, () => {
+				this.clearElement(div);
+				dialog.setTitle('Resumen Envase');
+
+				let card = this.createCard('Envase', 'Contenido Envase');
+				
+				div.appendChild(card);
+				
+				let table = new AonBasicTable();
+				table.id = 'tablex';
+				card.setContent(table);
+				this.getElement(table.TABLE).style.borderSpacing = '0px 10px';
+		
+				table.addRow(); // ----- ROW i
+				
+				let span3 = this.createElement(TAG.SPAN);
+				span3.innerHTML = 'Producto 1';
+				table.addCell(span3);
+		
+				let span2 = this.createElement(TAG.SPAN);
+				span2.innerHTML = 'X Cajas';
+				table.addCell(span2);
+
+				let next3 = new AonButton();
+				next3.title = 'Añadir al Albarán';
+				div.appendChild(next3);
+				next2.addEventListener(EVENT.CLICK, () => {
+					dialog.close();
+				});
+			});
+			
+		});
+		
+		dialog.addAcceptAction(() => {});
+		dialog.open();
 	}
 
 	// Create Components
