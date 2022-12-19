@@ -2866,7 +2866,7 @@ public class IdcTest extends AbstractSQLTestCase {
 				assertEquals("10", tramo.getFechaHasta().getDia());
 				assertEquals("12", tramo.getFechaHasta().getMes());
 				assertEquals("2020", tramo.getFechaHasta().getAnho());
-				int datosSolictados = assertTramoActivoNormal(tramo);
+				int datosSolictados = assertTramoERETotal(tramo);
 				assertDatosSolicitado(tramo, "I", "51", "P");
 				assertDatosSolicitadosCount(datosSolictados + 1, tramo);
 
