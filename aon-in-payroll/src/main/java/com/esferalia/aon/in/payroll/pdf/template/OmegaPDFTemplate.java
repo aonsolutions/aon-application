@@ -955,10 +955,11 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 			Pattern.compile("^\\s*B((?!\\.{4,}).)*?\\.{2,}\\s*(?<amount>\\d[\\d\\.]*,\\d{2})?\\s*$"
 					, Pattern.CASE_INSENSITIVE);
 	
+	//LIQUIDO TOTAL A PERCIBIR (A-B)    1.140,00
 	//LIQUIDO TOTAL A PERCIBIR (A-B)...    1.700,00Firma y Sello de la Empresa
 	//TOTAL SALARIO LIQUIDO........................    1.275,80Firma y Sello de la Empresa
 	private static final Pattern  LIQUID = 
-			Pattern.compile("^\\s*(?:(?!L.QUIDO).)*L.QUIDO.*?\\.{2,}\\s*(?<amount>(-\\s*)?\\d[\\d\\.]*,\\d{2})?\\s*(?:Firma.*)?$"
+			Pattern.compile("^\\s*(?:(?!L.QUIDO).)*L.QUIDO.*?[^\\d]{2,}\\s*(?<amount>(-\\s*)?\\d[\\d\\.]*,\\d{2})?\\s*(?:Firma.*)?$"
 					, Pattern.CASE_INSENSITIVE);
 	
 	//ZARAGOZA, 31 de marzo de 2021
@@ -1059,8 +1060,10 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 	
 	//4. Base sujeta a retención del I.R.P.F..............................................................................    1.437,68
 	private static final Pattern  IRPF_EE = 
-			Pattern.compile("^\\s*4\\.\\s*Base\\s*sujeta\\s*a\\s*retenci.n\\s*del\\s*I\\.R\\.P\\.F\\.{2,}\\s*(?<amount>\\d[\\d\\.]*,\\d{2})?.*$"
-					, Pattern.CASE_INSENSITIVE);
+			Pattern.compile("^\\s*4\\.[^\\d]*(?<amount>\\d[\\d\\.]*,\\d{2})?.*$"
+			, Pattern.CASE_INSENSITIVE);
+//			Pattern.compile("^\\s*4\\.\\s*Base\\s*sujeta\\s*a\\s*retenci.n\\s*del\\s*I\\.R\\.P\\.F\\.{2,}\\s*(?<amount>\\d[\\d\\.]*,\\d{2})?.*$"
+//					, Pattern.CASE_INSENSITIVE);
 
 	
 	
@@ -1095,6 +1098,7 @@ public class OmegaPDFTemplate implements SalaryPDFTemplate {
 		check(TOTAL_DEDUCTION, "B. TOTAL DEDUCCIONES (S.SOCIAL-IRPF-...)......................    161,88");
 		check(LIQUID, "LIQUIDO TOTAL A PERCIBIR (A-B)...    1.700,00Firma y Sello de la Empresa");
 		check(LIQUID, "TOTAL SALARIO LIQUIDO........................    1.275,80Firma y Sello de la Empresa");
+		check(LIQUID, "LIQUIDO TOTAL A PERCIBIR (A-B)    1.140,00");
 		check(ISSUE_DATE, "ZARAGOZA, 31 de marzo de 2021");
 		check(MONTHLY_PAYMENT, "NORMALIZADA    EMPRESAImporte remuneración mensual...............................................................    1.437,68");
 		check(MONTHLY_PAYMENT, "NORMALIZADA    EMPRESAImporte remuneración mensual................................................    1.450,82");
