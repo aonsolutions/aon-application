@@ -167,6 +167,9 @@ public class IdcplcccParser {
 			
 			find(reader, PEC_TYPE);
 			
+			if ( attempt(reader, HOLIDAYS).isPresent() )
+				return getHolidayspageParser(enterpriseCCC, employeeeNss);
+
 			Optional<Matcher> optional = attempt(reader, EMPLOYEE_NSS_NAME);
 			if ( optional.isPresent() ) {
 				Matcher matcher = optional.get();
