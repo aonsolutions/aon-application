@@ -35,6 +35,20 @@ public class TestSistemaREDITPart {
 	private final String CERTIFICATE_TYPE = "pkcs12"; 
 	private final String CERTIFICATE_PATH = System.getProperty("user.home")+"/CERT.p12"; 
 	
+	
+	@Test
+	@Ignore
+	public void getITReport() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {
+			@SuppressWarnings("deprecation")
+			byte[] pdf = SistemaREDITPart.getITReport(certificateInputStream, CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, 
+					"0111", "01105360062", "291136796369", SistemaRED.PartType.BAJA, new Date("2022/12/19"), new Date("2022/12/19"));
+			System.out.println( new String(Base64.getEncoder().encode(pdf)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Test
 	@Ignore	
 	public void registerItBaja() {
@@ -133,7 +147,7 @@ public class TestSistemaREDITPart {
 	@Ignore
 	public void registerItConfirmation() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			SistemaREDITParts.registerItConfirmation(certificateInputStream,"jg@FNMT","pkcs12", 
+			SistemaREDITPart.registerItConfirmation(certificateInputStream,"jg@FNMT","pkcs12", 
 					"0111", "01105360062", "011011187190", 
 					SistemaRED.Contingencies.ENFERMEDAD_COMUN, SistemaRED.SituationEmployee.ACTIVO, Optional.empty(), Optional.empty(),
 					 Toolkit.addDays(new Date(), -1), new Date(), Optional.empty());
@@ -147,25 +161,10 @@ public class TestSistemaREDITPart {
 	public void registerItAlta() {
 		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
 			System.out.println("baja:"+new Date("2021/12/27")+" alta:"+new Date("2022/01/03"));
-			SistemaREDITParts.registerItAlta(certificateInputStream,"jg@FNMT","pkcs12", 
+			SistemaREDITPart.registerItAlta(certificateInputStream,"jg@FNMT","pkcs12", 
 					"0111", "01105360062", "011011187190", 
 					SistemaRED.Contingencies.ENFERMEDAD_COMUN, SistemaRED.SituationEmployee.ACTIVO,
 					new Date("2021/12/27"), new Date("2022/01/03"), Optional.empty(), Optional.empty(),  SistemaRED.CauseType.CURACION, Optional.empty(), Optional.empty());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
-	
-	@Test
-	@Ignore
-	public void pdfIt() {
-		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			@SuppressWarnings("deprecation")
-			byte[] pdf = SistemaREDITParts.pdfIt(certificateInputStream,"jg@FNMT","pkcs12", 
-					"0111", "01105360062", "011011187190", SistemaRED.PartType.BAJA, new Date("2021/01/12"), new Date("2021/01/12"));
-			System.out.println( new String(Base64.getEncoder().encode(pdf)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
