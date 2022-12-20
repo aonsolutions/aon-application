@@ -129,7 +129,7 @@ public class ColManager {
 	
 	public void manageSubtotalWithFudae() {
 		if (Arrays.stream(subtotalSs).anyMatch(value -> value != 0)) {
-			subtotalSs[10] += subtotalAon[9]; 
+			subtotalSs[11] += subtotalAon[10]; 
 		}
 	}
 	
@@ -151,13 +151,14 @@ public class ColManager {
 		totalSs[3]  +=  subtotalSs[3];
 		totalSs[4]  +=  subtotalSs[4];
 		totalSs[5]  +=  subtotalSs[5];
-		totalSs[6]  +=  subtotalSs[7];
-		totalSs[7]  +=  subtotalSs[8];
-		totalSs[8]  +=  subtotalSs[9];
-		totalSs[9]  +=  subtotalSs[10];
-		totalSs[10] +=  subtotalSs[11];
-		totalSs[11] +=  subtotalSs[12];
-				
+		totalSs[6]  +=  subtotalSs[6];
+		totalSs[7]  +=  subtotalSs[7];
+		totalSs[8]  +=  subtotalSs[8];
+		totalSs[9]  +=  subtotalSs[9];
+		totalSs[10] +=  subtotalSs[10];
+		totalSs[11] +=  subtotalSs[11];
+		totalSs[12] +=  subtotalSs[12];
+		
 		subtotalAon = new double[MAX_LENGTH];
 		subtotalSs = new double[MAX_LENGTH];
 	}
