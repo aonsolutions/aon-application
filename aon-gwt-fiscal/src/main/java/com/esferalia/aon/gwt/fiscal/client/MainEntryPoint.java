@@ -24,7 +24,7 @@ import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilities;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.invoice.OperationReport;
-import com.esferalia.aon.gwt.fiscal.client.invoice.VatReport;
+import com.esferalia.aon.gwt.fiscal.client.invoice.vat.VatReport;
 import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;

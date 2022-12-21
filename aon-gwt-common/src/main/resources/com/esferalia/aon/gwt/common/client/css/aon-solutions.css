@@ -514,7 +514,9 @@
 	width: 98%;
 }
 .aon_width_20 { width: 20px; }
+.aon_width_30 { width: 30px; }
 .aon_width_40 { width: 40px; }
+.aon_width_60 { width: 60px; }
 .aon_width_80 { width: 80px; }
 .aon_width_100 { width: 100px; }
 .aon_width_120 { width: 120px; }
@@ -729,6 +731,9 @@
 }
 .aon_border {
 	border: #c4c4c4 1px solid;
+}
+.aon_border_collapse {
+	border-collapse: collapse;
 }
 .aon_border_right {
 	border-right: #c4c4c4 1px solid;
