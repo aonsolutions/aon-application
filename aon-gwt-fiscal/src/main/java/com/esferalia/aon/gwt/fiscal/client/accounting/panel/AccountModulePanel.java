@@ -9,12 +9,6 @@ import com.esferalia.aon.gwt.fiscal.client.HasAccountEntrySelectionHandlers;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountModuleOptions;
 import com.esferalia.aon.occam.api.model.AccountParams;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -53,47 +47,23 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 		
 		id = new IntegerBox();
 		id.setVisibleLength(8);
-		id.addValueChangeHandler(new ValueChangeHandler<Integer>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Integer> event) {
-				onSearch( options );
-			}
-		});
+		id.addValueChangeHandler(event -> onSearch( options ));
 		
 		code= new TextBox();
 		code.setVisibleLength(9);
 		code.setMaxLength(9);
 		code.setStyleName(AON.CSS.aonInputText());
-		code.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				onSearch( options );
-			}
-		});
+		code.addValueChangeHandler(event -> onSearch( options ));
 		
 		description= new TextBox();
 		description.setVisibleLength(20);
 		description.setStyleName(AON.CSS.aonInputText());
-		description.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				onSearch( options );
-			}
-		});
+		description.addValueChangeHandler(event -> onSearch( options ));
 		
 		alias = new TextBox();
 		alias.setVisibleLength(10);
 		alias.setStyleName(AON.CSS.aonInputText());
-		alias.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				onSearch( options );
-			}
-		});
+		alias.addValueChangeHandler(event -> onSearch( options ));
 		
 		level = new ListBox();
 		level.setWidth("50px");
@@ -104,13 +74,7 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 		level.addItem( "4 d\u00EDgitos" );
 		level.addItem( "9 d\u00EDgitos" );
 		level.setSelectedIndex(0);
-		level.addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				onSearch( options );
-			}
-		});
+		level.addChangeHandler(event -> onSearch( options ));
 
 		active = new ListBox();
 		active.setWidth("100px");
@@ -118,23 +82,12 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 		active.addItem( "Inactivas" );
 		active.addItem(" Todas ");
 		active.setSelectedIndex(2);
-		active.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				onSearch( options );
-			}
-		});
+		active.addChangeHandler(event -> onSearch( options ));
 
 		costCenter = new TextBox();
 		costCenter.setVisibleLength(15);
 		costCenter.setStyleName(AON.CSS.aonInputText());
-		costCenter.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				onSearch( options );
-			}
-		});
+		costCenter.addValueChangeHandler(event -> onSearch( options ));
 
 		tab = new FlexTable();
 		tab.setStyleName(AON.CSS.aonSearchPanel());
@@ -180,29 +133,21 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 		col++;
 
 		cleanButton = new AonSearchPanelButton( AON.MSG.clean(), AON.CSS.aonIconClear() );
-		cleanButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				id.setValue(null,false);
-				code.setValue(null,false);
-				description.setValue(null,false);
-				alias.setValue(null,false);
-				active.setSelectedIndex(2);
-				level.setSelectedIndex(0);
-				costCenter.setValue(null,false);
-				code.setFocus(true);
-				onSearch( options );
-			}
+		cleanButton.addClickHandler(event -> {
+			id.setValue(null,false);
+			code.setValue(null,false);
+			description.setValue(null,false);
+			alias.setValue(null,false);
+			active.setSelectedIndex(2);
+			level.setSelectedIndex(0);
+			costCenter.setValue(null,false);
+			code.setFocus(true);
+			onSearch( options );
 		});
 
 		refreshButton = new AonSearchPanelButton( AON.MSG.refresh(), AON.CSS.aonIconRefresh() );
-		refreshButton.addStyleName(AON.AON_CSS.aonMarginLeft5());
-		refreshButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onSearch( options );
-			}
-		});
+		refreshButton.addStyleName(AON.CSS.aonMarginLeft());
+		refreshButton.addClickHandler(event -> onSearch( options ));
 
 		FlowPanel buttonsPanel = new FlowPanel();
 		buttonsPanel.add( cleanButton );
@@ -216,7 +161,7 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 		tab.getColumnFormatter().setWidth(col-1, "auto");
 		
 		ScrollPanel scrollPanel = new ScrollPanel();
-		scrollPanel.addStyleName(AON.AON_CSS.aonWidthAll());
+		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(tab);
 		northPanel.setWidget(scrollPanel);
 
@@ -238,7 +183,7 @@ public class AccountModulePanel extends DockLayoutPanel implements Focusable, Ha
 
 	@Override
 	public void setAccessKey(char key) {
-		code.setAccessKey(key);;
+		code.setAccessKey(key);
 	}
 
 	@Override

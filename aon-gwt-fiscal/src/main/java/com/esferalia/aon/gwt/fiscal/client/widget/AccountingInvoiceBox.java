@@ -138,7 +138,7 @@ public class AccountingInvoiceBox extends ResizeComposite implements HasValue<St
 		
 								public void onFailure(Throwable caught) {
 									descriptionLabel.setText(AON.MSG.noData());
-									descriptionLabel.addStyleName(AON.AON_CSS.aonColorRed());
+									descriptionLabel.addStyleName(AON.CSS.aonColorRed());
 									callback.onSuggestionsReady(request, new Response());
 								}
 		
@@ -164,12 +164,12 @@ public class AccountingInvoiceBox extends ResizeComposite implements HasValue<St
 		accountingInvoiceTextBox = new TextBox();
 		suggestionDisplay =  new AccountingInvoiceSuggestionDisplay();
 		accountingInvoice = new SuggestBox(oracle,accountingInvoiceTextBox,suggestionDisplay);
-		accountingInvoiceTextBox.setStyleName(AON.AON_CSS.aonInputText());
+		accountingInvoiceTextBox.setStyleName(AON.CSS.aonInputText());
 		accountingInvoiceTextBox.setVisibleLength(15);
 		accountingInvoiceTextBox.setMaxLength(15);
 		descriptionLabel = new InlineLabel();
-		descriptionLabel.addStyleName(AON.AON_CSS.aonMarginLeft() );
-		descriptionLabel.addStyleName(AON.AON_CSS.aonBold());
+		descriptionLabel.addStyleName(AON.CSS.aonMarginLeft() );
+		descriptionLabel.addStyleName(AON.CSS.aonBold());
 		descriptionLabel.setVisible(showDescription);
 		
 		accountingInvoice.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
@@ -189,8 +189,8 @@ public class AccountingInvoiceBox extends ResizeComposite implements HasValue<St
 			}
 		});
 		rooPanel = new FlowPanel();
-		rooPanel.setStyleName(AON.AON_CSS.aonNowrap() );
-		rooPanel.addStyleName(AON.AON_CSS.aonInline() );
+		rooPanel.setStyleName(AON.CSS.aonNowrap() );
+		rooPanel.addStyleName(AON.CSS.aonInline() );
 		rooPanel.add(accountingInvoice);
 		rooPanel.add(descriptionLabel);
 		initWidget(rooPanel);
@@ -205,42 +205,23 @@ public class AccountingInvoiceBox extends ResizeComposite implements HasValue<St
 		setValue(accountingInvoice,true);
 	}
 	
-//	private void select(AccountingInvoice accountingInvoice) {
-//		if (accountingInvoice != null) {
-//			id = accountingInvoice.getInvoice().getId();
-//			accountingInvoiceTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-//			descriptionLabel.setText(getDescription(accountingInvoice));
-//			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
-//		} else {
-//			id = null;
-//			if (isRequired()) {
-//				accountingInvoiceTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
-//			} else {
-//				accountingInvoiceTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
-//			}
-//			descriptionLabel.setText(null);
-//			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
-//		}
-//		SelectionEvent.fire(AccountingInvoiceBox.this, accountingInvoice );
-//	}
-	
 	public void setValue(AccountingInvoice accountingInvoice, boolean fireEvents) {
 		if (accountingInvoice != null && accountingInvoice.getInvoice() != null && accountingInvoice.getInvoice().getId() != null) {
 			id = accountingInvoice.getInvoice().getId();
-			accountingInvoiceTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+			accountingInvoiceTextBox.removeStyleName(AON.CSS.aonInputError() );
 			accountingInvoiceTextBox.setValue(accountingInvoice.getInvoice().getReferenceCode(),fireEvents);
 			descriptionLabel.setText(getDescription(accountingInvoice));
-			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+			descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
 		} else {
 			id = null;
 			if (isRequired()) {
-				accountingInvoiceTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );
+				accountingInvoiceTextBox.addStyleName(AON.CSS.aonInputError() );
 			} else {
-				accountingInvoiceTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+				accountingInvoiceTextBox.removeStyleName(AON.CSS.aonInputError() );
 			}
 			accountingInvoiceTextBox.setValue(null,fireEvents);
 			descriptionLabel.setText(null);
-			descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+			descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
 		}
 		if (fireEvents) {
 			SelectionEvent.fire(AccountingInvoiceBox.this, accountingInvoice );
@@ -252,11 +233,11 @@ public class AccountingInvoiceBox extends ResizeComposite implements HasValue<St
 	}
 
 	private void reset() {
-		accountingInvoiceTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );
+		accountingInvoiceTextBox.removeStyleName(AON.CSS.aonInputError() );
 		id = null;
 		description = null;
 		descriptionLabel.setText(null);
-		descriptionLabel.removeStyleName(AON.AON_CSS.aonColorRed());
+		descriptionLabel.removeStyleName(AON.CSS.aonColorRed());
 	}
 
 	public boolean isRequired() {
@@ -289,9 +270,9 @@ public class AccountingInvoiceBox extends ResizeComposite implements HasValue<St
 			reset();
 		}
 		if (AonStringUtils.isEmpty(value) || AonValidationUtil.isValidRequired(value, required)) {
-			accountingInvoiceTextBox.removeStyleName(AON.AON_CSS.aonTextBoxError() );	
+			accountingInvoiceTextBox.removeStyleName(AON.CSS.aonInputError() );	
 		} else {
-			accountingInvoiceTextBox.addStyleName(AON.AON_CSS.aonTextBoxError() );	
+			accountingInvoiceTextBox.addStyleName(AON.CSS.aonInputError() );	
 		}
 	}
 
@@ -387,17 +368,13 @@ public class AccountingInvoiceBox extends ResizeComposite implements HasValue<St
 	private static String decorate(AccountingInvoice accountingInvoice, String query) {
 		String text = getDescription(accountingInvoice);
 
-		String icon = AON.AON_CSS.aonIconPointGreen();
+		String icon = AON.CSS.aonIconLevelTop();
 		if (accountingInvoice.isCanCeuMel()) {
-			icon = AON.AON_CSS.aonIconPointOrange();
+			icon = AON.CSS.aonIconLevelThis();
 		}
 		int i = AonStringUtils.indexOfIgnoreCase(text, query);
 		SafeHtmlBuilder bld = new SafeHtmlBuilder();
-		bld.appendHtmlConstant("<span class=\"" 
-				+ icon 
-				+ AonStringUtils.SPACE
-				+ AON.AON_CSS.aonPaddingLeft20()
-				+ "\" >");
+		bld.appendHtmlConstant("<span style=\"padding-left: 20px;\" class=\"" + icon + "\" >");
 		if (i != -1) {
 			bld.appendEscaped(AonStringUtils.substring(text, 0, i));
 			bld.appendHtmlConstant(BEGIN_STRONG);
