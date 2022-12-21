@@ -5058,6 +5058,120 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testExtrasAtSalaryXVII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptSalarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord conceptPagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+
+		Date contractDate = getFirstDayOfYear(getToday());
+
+		ContractRecord contract = newContract(
+				aonContext
+				,contractDate
+				,new String[] {} 
+				,new String[] {} 
+				,null);
+		//@formatter:off
+		
+		addPayment(aonContext, contract, contractDate, null, conceptSalarioBase, "SALARIO BASE", "1200.00 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0001);
+		
+		ContractPaymentRecord pagaNavidad = addPayment(aonContext, contract, contractDate, null, conceptPagaExtra, "PAGA EXTRA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte)Month.DECEMBER.ordinal());
+		ContractPaymentRecord pagaVerano = addPayment(aonContext, contract, contractDate, null, conceptPagaExtra, "PAGA EXTRA", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, (byte)Month.JUNE.ordinal());
+		
+		Date startDate , endDate , issueDate ;
+		
+		for ( startDate = getFirstDayOfYear(getToday()); get(startDate, Calendar.MONTH) < 5; startDate = add(startDate, Calendar.MONTH,1)) {
+		    issueDate  = endDate = getLastDayOfMonth(startDate);
+		    JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
+		    ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract);
+		    new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		    jooqSalaryBuilder.execute();
+		}
+		
+		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()))
+		.forEach( s -> {
+		    org.junit.Assert.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
+		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
+		    org.junit.Assert.assertEquals( 1200.00 + 1200.00/6.00, s.getCommonContingenciesBase() , 0.00 );
+		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase()  + "," + s.getTotalPayment());
+		});
+
+		{
+        		issueDate  = endDate = getLastDayOfMonth(startDate);
+        		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
+        		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract);
+        		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+        		jooqSalaryBuilder.execute();
+		}
+		
+		Date juneStartDate = startDate;
+		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(juneStartDate)) ) 
+		.forEach( s -> {
+		    org.junit.Assert.assertEquals( 1800.00 , s.getTotalPayment() , 0.00 );
+		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.00 );
+		    org.junit.Assert.assertEquals( 1200.00 + 1200.00/6.00, s.getCommonContingenciesBase() , 0.00 );
+		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() + ", " + s.getTotalPayment());
+		});
+		
+		
+
+		for ( startDate = add(startDate, Calendar.MONTH,1) ; get(startDate, Calendar.MONTH) < 11; startDate = add(startDate, Calendar.MONTH,1)) {
+		    issueDate  = endDate = getLastDayOfMonth(startDate);
+		    JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
+		    ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract);
+		    new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+		    jooqSalaryBuilder.execute();
+		}
+		
+		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().gt(juneStartDate)))
+		.forEach( s -> {
+		    org.junit.Assert.assertEquals( 1200.00 , s.getTotalPayment() , 0.00 );
+		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.01 );
+		    org.junit.Assert.assertEquals( 1200.00 + 1200.00/6.00, s.getCommonContingenciesBase() , 0.01 );
+		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() );
+		});
+
+		{
+        		issueDate  = endDate = getLastDayOfMonth(startDate);
+        		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
+        		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract);
+        		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+        		jooqSalaryBuilder.execute();
+		}
+
+		Date decemberStartDate = startDate;
+		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(decemberStartDate)) ) 
+		.forEach( s -> {
+		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.01 );
+		    org.junit.Assert.assertEquals( 1200.00 + 1200.00 / 6, s.getCommonContingenciesBase() , 0.01 );
+		    org.junit.Assert.assertEquals( 1200.00 + 1200.00 , s.getTotalPayment() , 0.05 );
+		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() + ", " + s.getTotalPayment());
+		});
+		
+		AON.deleteSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(decemberStartDate)) );
+		pagaNavidad.setDescription("PAGA EXTRA NAVIDAD");
+		pagaNavidad.update();
+		{
+    		issueDate  = endDate = getLastDayOfMonth(startDate);
+    		JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
+    		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, issueDate, contract);
+    		new SmartContractSalaryCalculator<ISalary>(jooqSalaryBuilder).calculate(ctx);
+    		jooqSalaryBuilder.execute();
+		}
+
+		AON.getSalaries(aonContext, p -> p.getContractProperty().eq(contract.getId()).and(p.getStartDateProperty().eq(decemberStartDate)) ) 
+		.forEach( s -> {
+		    org.junit.Assert.assertEquals( 1200.00 / 6, s.getExtraProrationBase() , 0.01 );
+		    org.junit.Assert.assertEquals( 1200.00 + 1200.00 / 6, s.getCommonContingenciesBase() , 0.01 );
+		    org.junit.Assert.assertEquals( 1200.00 + 1200.00 , s.getTotalPayment() , 0.05 );
+		    System.out.println( s.getStartDate() + " -. " + s.getExtraProrationBase() + ", " + s.getTotalPayment());
+		});
+	}
+
+	@Test
 	public void testExtrasAtSalaryIT() throws ExpressionException,
 			SQLException, SalaryException {
 		Connection connection = getConnection();
