@@ -3,36 +3,37 @@ package solutions.aon.seg.social;
 import static java.lang.Integer.parseInt;
 
 import java.io.IOException;
-import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
 import solutions.aon.seg.social.object.ITPart;
+import solutions.aon.seg.social.object.ITPartPage;
+import solutions.aon.seg.social.object.It;
+import solutions.aon.seg.social.object.It.ItBuilder;
+import solutions.aon.seg.social.object.ItPartId;
+import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 
-public abstract class ServicioREDPartRegeXML extends ServicioREDRegeXML {
+public abstract class ServicioREDPartUtils extends ServicioREDRegeXML {
 	
-	private static void newInstanceXml(String xml, DefaultHandler handler) throws ParserConfigurationException, SAXException, IOException {
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser saxParser = factory.newSAXParser();
-		StringReader reader = new StringReader(xml);
-		InputSource is = new InputSource(reader);
-        is.setEncoding("UTF-8");
-        saxParser.parse(is, handler);
-	}
-	
-	public static Map<Integer, ITPart> getInfoPartsByXml(String xml) throws ParserConfigurationException, SAXException, IOException {
+	protected static ITPartPage getInfoPartsByXml(String xml) throws ParserConfigurationException, SAXException, IOException {
 		Map<Integer, ITPart> map = new HashMap<>();
-		
+		ITPartPage itPartPage = new ITPartPage().setData(map);
+	
 		DefaultHandler handler = new DefaultHandler() {
 			private StringBuilder data;
 			ITPart part = new ITPart();
@@ -53,11 +54,12 @@ public abstract class ServicioREDPartRegeXML extends ServicioREDRegeXML {
 				if (qName.equalsIgnoreCase("ARQ.EstPag")) {
 					String id = attributes.getValue("id");
 					String indbot = attributes.getValue("INDBOT");
-					if(id!=null && indbot!=null) {
-						System.out.println("id>>"+attributes.getValue("id"));
-						System.out.println("id>>"+ attributes.getValue("INDBOT")); //"01" or "11"
-						System.out.println("test>>"+ attributes.getValue("test")); 
-					}
+					
+					boolean next = id!=null && indbot!=null 
+							       && id.contains("ARQ.ESTPAG.IDPAGINACION_CONSULTA") 
+							       && (indbot.equals("01") || indbot.equals("11"));
+					
+					itPartPage.setNext(next);
 				} else if (qName.equalsIgnoreCase("DatosParte")) {
 					part = new ITPart();
 				}  else if (qName.equalsIgnoreCase("naf")) {
@@ -125,13 +127,12 @@ public abstract class ServicioREDPartRegeXML extends ServicioREDRegeXML {
 			}
 		};
 		
-		
 		newInstanceXml(xml, handler);
-        	
-        return map;
+		
+		return itPartPage;
 	}
 	
-	public static void setInfoPart(String xml, ITPart part) throws ParserConfigurationException, SAXException, IOException {
+	protected static void setInfoPart(String xml, ITPart part) throws ParserConfigurationException, SAXException, IOException {
 		DefaultHandler handler = new DefaultHandler() {
 			StringBuilder data;
 			boolean dataEmployee;
@@ -290,6 +291,71 @@ public abstract class ServicioREDPartRegeXML extends ServicioREDRegeXML {
 		};
 		
 		newInstanceXml(xml, handler);
+	}
+	
+	protected static List<It> orderByIT(List<ITPart> itParts) {
+		HashMap<ItPartId, List<ITPart>> orderedItParts = new HashMap<>();
+		
+		// Recorremos la lista de ITPart y agrupamos cada una en el mapa seg�n su identificador ItPartId
+	    for (ITPart itp : itParts) {
+	        Optional<Date> workLeaveDate = itp.getWorkLeaveDate();
+	        Optional<String> naf = itp.getNaf();
+
+	        // Si workLeaveDate y naf est�n presentes, a�adimos la ITPart al mapa con su identificador ItPartId
+	        if (workLeaveDate.isPresent() && naf.isPresent()) {
+	            ItPartId idPartId = new ItPartId(workLeaveDate.get(), naf.get());
+	            orderedItParts.computeIfAbsent(idPartId, k -> new ArrayList<>()).add(itp);
+	        }
+	    }
+	    
+	    // Creamos una lista para almacenar las instancias de It que se creen a partir de las ITPart agrupadas
+	    List<It> its = new ArrayList<>();
+	    ItBuilder builder = new ItBuilder();
+
+	    for (List<ITPart> values : orderedItParts.values()) {
+	    	ArrayList<ITPart> confirmations = new ArrayList<>();
+			ITPart end = null;
+			ITPart start = null;
+		
+			// Recorremos la lista de ITPart y buscamos las ITPart de inicio, confirmaci�n y fin
+	        for (ITPart itp : values) {
+	            String partType = itp.getPartType().toLowerCase();
+	            if (partType.contains("baja") || partType.contains("pb")) {
+	                start = itp;
+	            } else if ((partType.contains("confirmaci\u00f3n") || partType.contains("pc")) && !confirmations.contains(itp)) {
+	                confirmations.add(itp);
+	            } else if (partType.contains("alta") || partType.contains("pa")) {
+	                end = itp;
+	            }
+	         }
+			
+	        // Si se ha encontrado una ITPart de inicio, creamos una instancia de It a partir de las ITPart encontradas
+			if(null!=start) {
+				Optional<String> typeProcess = start.getTypeProcess();
+				if (end == null && typeProcess.isPresent() && typeProcess.get().toLowerCase().contains("muy corto")) {
+					ITPart tmp = new ITPart();
+					tmp.setReceptionDate(start.getReceptionDate());
+					tmp.setCauseRestart("6 Mejor\u00EDa permite trabajar");
+					tmp.setPartType("Alta");
+					start.getNaf().ifPresent(tmp::setNaf);
+					start.getWorkLeaveDate().ifPresent(workDate->{
+						tmp.setWorkLeaveDate(workDate);
+						tmp.setWorkRestartDate(Toolkit.addDays(workDate, 1));
+					});
+					end = tmp;
+				}
+				
+				its.add(builder.setStart(start).setConfirmations(confirmations).setEnd(end).build());
+			}
+		}
+		return its.stream().sorted((o1, o2)-> o1.getStart().getWorkLeaveDate().get().compareTo(o2.getStart().getWorkLeaveDate().get())).collect(Collectors.toList());
+	}
+	
+	protected static HtmlPage setUrlParseRemoveXml(HtmlPage htmlPage, HtmlAnchor link) throws IOException {
+		link = HtmlUnitToolkit.setUrlParse(htmlPage, link);
+		link.setAttribute("href", link.getHrefAttribute().replace("&ARQ.SPM.OUT=XML_STYLESHEET", ""));
+		htmlPage = link.click();
+		return htmlPage;
 	}
 	
 }

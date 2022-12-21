@@ -360,6 +360,7 @@ export const MONTH = "Mes"; //TODO
 export const MAILBOX = "Buzón";//TODO
 export const MESSAGE = "Mensaje"; //TODO
 export const MODIFIED_BY = "Modificado por"; //TODO
+export const MINS = "Minutos"; //TODO
 // ----- N
 
 export const NAME = MSG.NAME;

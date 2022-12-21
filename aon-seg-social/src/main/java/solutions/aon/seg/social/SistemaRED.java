@@ -178,9 +178,10 @@ public class SistemaRED {
 
 	// PART TYPE
 	public enum PartType {
-		ALTA("Alta"), 
+		BAJA("Baja"),
 		CONFIRMACION("Confirmaci\u00F3n"), 
-		BAJA("Baja");
+		ALTA("Alta")
+		;
 		
 		private String description;
 		
@@ -198,7 +199,7 @@ public class SistemaRED {
 		}
 		public static PartType safeValueOf( Integer i ) {
 			if (i == null) return null;
-			if (i < 0 || i >= ContractType.values().length) return null;
+			if (i < 0 || i >= PartType.values().length) return null;
 			return PartType.values()[i];
 		}
 		public static PartType safeValueOf( String i ) {
@@ -711,8 +712,8 @@ public class SistemaRED {
 			final Optional<String> licenseNumber, final Optional<String> cias, final Date fbaja, final Date fconfirmation, final Optional<String> npartConfimation) throws SegSocialException {
 		
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaREDITParts.registerItConfirmation(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, fconfirmation, npartConfimation);
-		} catch (IOException | SegSocialException e) {
+			SistemaREDITPart.registerItConfirmation(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, licenseNumber, cias, fbaja, fconfirmation, npartConfimation);
+		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
 	}
@@ -723,8 +724,8 @@ public class SistemaRED {
 			final Optional<SistemaRED.AccidentType> accidentType, final SistemaRED.CauseType causeType, final Optional<String> licenseNumber, final Optional<String> cias) throws SegSocialException {
 		
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			SistemaREDITParts.registerItAlta(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, fbaja, falta, fATEP, accidentType, causeType, licenseNumber, cias);
-		} catch (IOException | SegSocialException e) {
+			SistemaREDITPart.registerItAlta(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, contingency, situation_employee, fbaja, falta, fATEP, accidentType, causeType, licenseNumber, cias);
+		} catch (IOException  e) {
 			throw new SegSocialException(e);
 		}
 	}
@@ -734,17 +735,17 @@ public class SistemaRED {
 		
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
 			SistemaREDITPart.removeIt(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);
-		} catch (IOException | SegSocialException | InterruptedException e) {
+		} catch (IOException | InterruptedException e) {
 			throw new SegSocialException(e);
 		}
 	}
 	
-	public static byte[] pdfIT(final byte[] certificateData, final String certificatePassword, final String certificateType,
+	public static byte[] getITReport(final byte[] certificateData, final String certificatePassword, final String certificateType,
 			final String regime, final String ccc, final String naf, final SistemaRED.PartType partType, final Date dateBj, final Date dateProcess) throws SegSocialException {
 		
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaREDITParts.pdfIt(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);
-		} catch (IOException | SegSocialException | InterruptedException e) {
+			return SistemaREDITPart.getITReport(certificateInputStream, certificatePassword, certificateType, regime, ccc, naf, partType, dateBj, dateProcess);
+		} catch (IOException | InterruptedException e) {
 			throw new SegSocialException(e);
 		}
 	}
