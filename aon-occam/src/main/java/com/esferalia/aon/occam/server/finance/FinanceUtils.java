@@ -29,9 +29,8 @@ public class FinanceUtils {
 				);
 		return prop;
 	}
-	
-	public static Filter getFilter(FinanceProperties p,
-			FinanceParams params) {
+
+	public static Filter getFilter(FinanceProperties p, FinanceParams params) {
 		Filter prop = p.getDomainProperty().eq(params.getDomain());
 		if (params.getPayment() != null) {
 			prop = prop.and(p.getPaymentProperty().eq( AonEnumUtils.getByte( params.getPayment()) ));
@@ -134,14 +133,13 @@ public class FinanceUtils {
 			}
 		}
 		if (params.getPercent() != null) {
-			if (params.getVatSummaryType() == VatSummaryType.SURCHARGE) {
-				prop = prop.and(p.getSurchargePercentProperty().eq( params.getPercent()));
-			} else {
-				prop = prop.and(p.getPercentProperty().eq( params.getPercent()));
-			}
+			prop = prop.and(p.getPercentProperty().eq( params.getPercent()));
+		}
+		if (params.getSurchargePercent() != null) {
+			prop = prop.and(p.getSurchargePercentProperty().eq( params.getSurchargePercent()));
 		}
 		if (params.getOutput() != null) {
-			if (params.getOutput()) {
+			if (params.getOutput().booleanValue()) {
 				prop = prop.and(p.getInvoiceTypeProperty().eq( InvoiceType.SALES.value()));
 			} else {
 				prop = prop.and(p.getInvoiceTypeProperty().in( INPUT_TYPES ));

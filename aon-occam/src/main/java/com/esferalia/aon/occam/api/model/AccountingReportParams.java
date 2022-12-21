@@ -63,6 +63,7 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	private Boolean output;
 	private VatSummaryType vatSummaryType;
 	private Double percent;
+	private Double surchargePercent;
 	private RectificationType rectified;
 	private Boolean surcharge;
 	private Boolean farmerRegime;
@@ -420,6 +421,13 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 	}
 	public AccountingReportParams setPercent(Double percent) {
 		this.percent = percent;
+		return this;
+	}
+	public Double getSurchargePercent() {
+		return surchargePercent;
+	}
+	public AccountingReportParams setSurchargePercent(Double surchargePercent) {
+		this.surchargePercent = surchargePercent;
 		return this;
 	}
 	public RectificationType getRectificationType() {

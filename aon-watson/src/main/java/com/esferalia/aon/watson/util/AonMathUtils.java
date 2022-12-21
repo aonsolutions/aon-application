@@ -233,4 +233,33 @@ public class AonMathUtils {
 		return round( value1 + value2);
 	}
 	
+	/**
+	 * Devuelve el mayor
+	 * 
+	 * @param a primer num. 
+	 * @param b segundo num..
+	 * 
+	 * @return El mayor de los dos.
+	 */
+    public static int max(final int a, final int b) {
+        if (b > a) {
+            return b;
+        }
+        return a;
+    }
+
+	/**
+	 * Devuelve el mayor
+	 * 
+	 * @param a primer num. 
+	 * @param b segundo num..
+	 * 
+	 * @return El mayor de los dos.
+	 */
+    public static int min(final int a, final int b) {
+        if (a > b) {
+            return b;
+        }
+        return a;
+    }
 }
