@@ -271,6 +271,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.bonus.Bonuses;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.cost.Costs;
+import com.esferalia.aon.salary.data.IData;
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -4241,6 +4242,59 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					addPaymentToList(payments, payment);
 				}
 				return payments;
+			}
+			
+			
+
+			@Override
+			public Map<String, List<IData>> getDataS() throws SalaryException {
+				Map<String, List<IData>> map = new HashMap<>();
+				if (draft != null && draft.getDraftContext() != null) {
+					draft.getDraftContext().forEach(cData -> {
+						String name = cData.getName();
+						List<IData> dataList = map.getOrDefault(name, new ArrayList<>());
+						addDataToList(dataList, cData);
+						map.put(name, dataList);
+					});
+				}
+				if (draft != null && draft.getContext() != null) {
+					draft.getContext().forEach(cData -> {
+						String name = cData.getName();
+						List<IData> dataList = map.getOrDefault(name, new ArrayList<>());
+						addDataToList(dataList, cData);
+						map.put(name, dataList);
+					});
+				}
+				return map;
+			}
+			
+			public void addDataToList(List<IData> list, Variable variable) {
+				try {
+					IData data = new IData() {
+						
+						@Override
+						public String getValue() {
+							return variable.getExpression();
+						}
+						
+						@Override
+						public Date getStartDate() {
+							return variable.getStartDate();
+						}
+						
+						@Override
+						public String getName() {
+							return variable.getName();
+						}
+						
+						@Override
+						public Date getEndDate() {
+							return variable.getEndDate();
+						}
+					};
+					list.add(data);
+				} catch (Exception ignored) {
+				}
 			}
 
 			public void addPaymentToList(List<IPayment> list, Payment payment) {
