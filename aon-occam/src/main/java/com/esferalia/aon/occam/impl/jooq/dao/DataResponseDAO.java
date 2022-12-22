@@ -141,6 +141,20 @@ public class DataResponseDAO {
 	}
 	
 	public static Stream<DataResponseDetail> getLastDataResponseDetailStream(AONContext ctx, DataResponseFilter filter){
+		com.esferalia.aon.jooq.tables.DataResponseDetail DATA_RESPONSE_DETAIL_2 = 
+		DATA_RESPONSE_DETAIL.as("data_response_detail_2");
+		
+		return ctx.getDslContext()
+			.select()
+			.from(DATA_RESPONSE)
+			.innerJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
+			.leftOuterJoin(DATA_RESPONSE_DETAIL_2).on(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE_DETAIL_2.DATA_RESPONSE).and(DATA_RESPONSE_DETAIL.ID.lt(DATA_RESPONSE_DETAIL_2.ID )))
+			.where(DATA_RESPONSE_PROPERTIES.getConditions(filter))
+			.and(DATA_RESPONSE_DETAIL_2.ID.isNull())
+			.fetchInto(DATA_RESPONSE_DETAIL).stream().map(new DataResponseDetailFiller());
+	}
+	
+	public static Stream<DataResponseDetail> __getLastDataResponseDetailStream(AONContext ctx, DataResponseFilter filter){
 		Select<Record1<Integer>> subQuery = ctx.getDslContext()
 			.select(DSL.max(DATA_RESPONSE_DETAIL.ID).as(DATA_RESPONSE_DETAIL.ID))
 			.from(DATA_RESPONSE).leftOuterJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
@@ -151,7 +165,7 @@ public class DataResponseDAO {
 			.where(DATA_RESPONSE_DETAIL.ID.in(subQuery))
 			.fetchInto(DATA_RESPONSE_DETAIL).stream().map(new DataResponseDetailFiller());
 	}
-	
+
 	public static DataResponseDetail getLastDataResponseDetail(AONContext ctx, Integer dataResponseId){
 		return ctx.getDslContext()
 			.select().from(DATA_RESPONSE_DETAIL)
