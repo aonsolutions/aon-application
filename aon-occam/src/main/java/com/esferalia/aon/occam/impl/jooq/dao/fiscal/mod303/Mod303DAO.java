@@ -24,12 +24,12 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.entry.Mod303DefaultAccountEntryScript;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
-import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
@@ -117,11 +117,16 @@ public class Mod303DAO extends FiscalModelDAO {
 			mod303 = new Mod303();
 			mod303.setDomain(ctx.getDomainId());
 		}
+		mod303.getMessages().clear();
 		initializeFiscalModel(ctx, mod303);
 		initializeProrrate(ctx, mod303);
-		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		dec.initialize( ctx, mod303 );
-		dec.ensureDetails(mod303);
+		try {
+			Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+			dec.initialize( ctx, mod303 );
+			dec.ensureDetails(mod303);
+		} catch (AonCoreException e) {
+			mod303.addMessage(e.getMessage());
+		} 
 		return mod303;
 	}
 	
@@ -311,9 +316,9 @@ public class Mod303DAO extends FiscalModelDAO {
 			.and(FS_MODEL.PERIOD.lessThan(mod.getPeriod().value()));
 		return getEffectiveModels(ctx, mod, cond);
 	}
-	public static Stream<Mod303> getEffectiveModels(AONContext ctx, FiscalModel mod, Condition cond ) {
+	public static Stream<Mod303> getEffectiveModels(AONContext ctx, IFiscalModel mod, Condition cond ) {
 		LinkedHashMap<Period, LinkedList<Mod303>> map = new LinkedHashMap<>();
-		boolean fromMod390hf = mod.getAdministration() != Administration.COMMON_TERRITORY && mod.getPeriod() == Period.YEAR;
+		boolean fromMod390 = (mod.getModel() == FiscalModelType.M390  || mod.getModel() == FiscalModelType.M390_HF);
 		getSelect(ctx)
 			.where(FS_MODEL.DOMAIN.eq(mod.getDomain()))
 			.and(FS_MODEL.MODEL.eq( FiscalModelType.M303.getValue() ))
@@ -323,8 +328,8 @@ public class Mod303DAO extends FiscalModelDAO {
 			.fetch()
 			.stream()
 			.map(rec -> new FiscalModelFiller<Mod303>().apply(rec, Mod303::new))
-			.filter( mod303 -> fromMod390hf || mod303.getPeriod().isMonthPeriod() == mod.getPeriod().isMonthPeriod())
-			.filter( mod303 -> fromMod390hf || mod303.getPeriod().isQuarterPeriod() == mod.getPeriod().isQuarterPeriod())
+			.filter( mod303 -> fromMod390 || mod303.getPeriod().isMonthPeriod() == mod.getPeriod().isMonthPeriod())
+			.filter( mod303 -> fromMod390 || mod303.getPeriod().isQuarterPeriod() == mod.getPeriod().isQuarterPeriod())
 			.forEach( mod303 -> {
 				Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 				map.computeIfAbsent(mod303.getPeriod(), k -> new LinkedList<>());

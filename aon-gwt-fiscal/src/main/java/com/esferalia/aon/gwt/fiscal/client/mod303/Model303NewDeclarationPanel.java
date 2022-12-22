@@ -71,7 +71,11 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		rootPanel.setStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(rootPanel);
 		
-		paint(model,callback);
+		if (model == null) {
+			initialize(model, callback);
+		} else {
+			paint(model,callback);
+		}
 		
 	}
 	
