@@ -3,6 +3,8 @@ package solutions.aon.seg.social.object;
 import java.util.Date;
 import java.util.Optional;
 
+import solutions.aon.seg.social.SistemaRED.PartType;
+
 public class ITPart {
 
 	private Date receptionDate;
@@ -189,11 +191,6 @@ public class ITPart {
 		return this;
 	}
 	
-	public ITPart setPartDate(Date partDate) {
-		this.partDate = partDate;
-		return this;
-	}
-	
 	public ITPart setPartNum(Integer partNum) {
 		this.partNum = partNum;
 		return this;
@@ -280,6 +277,20 @@ public class ITPart {
 		return partType;
 	}
 	
+	public PartType getType() {
+		if(partType!=null) {
+			String p = partType.toLowerCase();
+			if(p.contains("alta") || p.contains("pa")) {
+				return PartType.ALTA;
+			} else if(p.contains("baja") || p.contains("pb")) {
+				return PartType.BAJA;
+			} else if(p.contains("confirmaci") || p.contains("pc")) {
+				return PartType.CONFIRMACION;
+			}
+		}
+		return null;
+	}
+	
 	public Optional<Integer> getNumberHealth() {
 		return Optional.ofNullable(numberHealth);
 	}
@@ -322,7 +333,18 @@ public class ITPart {
 	}
 	
 	public Optional<Date> getPartDate() {
-		return Optional.ofNullable(partDate);
+		PartType p = getType();
+		Date date = null;
+		if(p!=null) {
+			if(p.equals(PartType.BAJA) && workLeaveDate!=null) {
+				date = workLeaveDate;
+			} else if(p.equals(PartType.ALTA) && workRestartDate!=null) {
+				date = workRestartDate;
+			} else if(p.equals(PartType.CONFIRMACION) && confirmationDate!=null) {
+				date = confirmationDate;
+			}
+		}
+		return Optional.ofNullable(date);
 	}
 	
 	public Optional<Integer> getPartNum() {
@@ -439,6 +461,11 @@ public class ITPart {
 		if(null!=cause)
 			return Integer.parseInt(cause.replaceAll("[^\\d]", ""));
 		return 0;
+	}
+	
+	public boolean checkForType(PartType type, Date date) {
+		 Optional<Date> pDate = getPartDate();
+		 return pDate.isPresent() ? date.compareTo(pDate.get()) == 0 : false;
 	}
 
 	public void accept(Visitor visitor) {
