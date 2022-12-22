@@ -135,6 +135,11 @@ public class ContractModificationFormTemplate implements AutoCloseable {
 	private void drawTitle() throws IOException {
 		if (this.modificationForm.getModificationTitle() != null) {
 			String modificationTitle = upperCase(trimToEmpty(this.modificationForm.getModificationTitle()));
+			
+			if (AonStringUtils.isNotBlank(modificationTitle)) {
+				modificationTitle = modificationTitle.replace("\u0080", "\u20AC");
+			}
+			
 			PDTextField textField = new PDTextField(this.form);
 			textField.setPartialName("TitleField");
 			String defaultAppearance = "/DEFAULT_BOLD_FONT " + TITLE_FONT_SIZE + " Tf 0 g";
@@ -415,6 +420,9 @@ public class ContractModificationFormTemplate implements AutoCloseable {
 		
 		
 		String clauses = this.modificationForm.getClauses() != null ? this.modificationForm.getClauses() : "";
+		if (AonStringUtils.isNotBlank(clauses)) {
+			clauses = clauses.replace("\u0080", "\u20AC");
+		}
 
 		float clausesHeight = y - SIGNATURE_Y - DATA_FONT_SIZE;
 		float clausesMaxWidth = getPageWidth() - MARGIN_LEFT - MARGIN_RIGHT;
@@ -433,6 +441,7 @@ public class ContractModificationFormTemplate implements AutoCloseable {
 		widget.setPage(this.page);
 		widget.setPrinted(true);
 		page.getAnnotations().add(widget);
+		
 		textField.setValue(clauses);
 		
 //		List<String> lines = PDFToolkit.getLinesRespectOriginal(clauses, clausesMaxWidth, DEFAULT_FONT, clausesValueFontSize);

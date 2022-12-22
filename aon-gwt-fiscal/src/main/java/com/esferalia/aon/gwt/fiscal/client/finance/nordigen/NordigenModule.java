@@ -132,7 +132,6 @@ public class NordigenModule extends MainEntryPoint {
 		NORDIGEN_SERVICE = new NordigenServiceAsyncDecorator(serviceRaw);
 		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
 		opt.getParentWidget().add(dockLayoutPanel);
-		
 		if ( opt.getConfiguration() == null) {
 			NORDIGEN_SERVICE.getConfiguration(opt.getDomainName(),opt.getDomain(),opt.getUser(),new AsyncCallback<NordigenConfiguration>() {
 				@Override
@@ -955,8 +954,8 @@ public class NordigenModule extends MainEntryPoint {
 						} else {
 							insertMovementsButton.setVisible(false);
 						}
-						getMenuPanel().add(balanceJsonButton);
-						balanceJsonButton.setVisible(true);
+//						getMenuPanel().add(balanceJsonButton);
+//						balanceJsonButton.setVisible(true);
 					}
 				} else if (NORDIGEN_REQUISITION_STATUS.EX.equals(requisition.getStatus())) {
 					showBottomMessage("red", "Las credenciales expiraron, debe volver a vincular la cuenta");

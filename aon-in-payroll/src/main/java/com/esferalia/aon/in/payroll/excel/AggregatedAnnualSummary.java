@@ -1173,22 +1173,24 @@ public class AggregatedAnnualSummary {
 		}
 		int lastRowNum = sheet.getLastRowNum();
 		Row lastRow = sheet.getRow(lastRowNum);
-		for (int i=0; i<=max;i++) {
-			Cell lastRowCell = lastRow.getCell(i) != null ? lastRow.getCell(i) : lastRow.createCell(i);
-			lastRowCell.setCellStyle(stylesMap.get("bottomBorderCellStyle"));
+		if (lastRow != null) {			
+			for (int i=0; i<=max;i++) {
+				Cell lastRowCell = lastRow.getCell(i) != null ? lastRow.getCell(i) : lastRow.createCell(i);
+				lastRowCell.setCellStyle(stylesMap.get("bottomBorderCellStyle"));
+			}
 		}
 		
-		{
+		if (lastRow != null) {
 			Cell lastRowCell = lastRow.getCell(0) != null ? lastRow.getCell(0) : lastRow.createCell(0);
 			lastRowCell.setCellStyle(stylesMap.get("bottomLeftBorderCellStyle"));
 			lastRowCell = lastRow.getCell(3) != null ? lastRow.getCell(3) : lastRow.createCell(3);
 			lastRowCell.setCellStyle(stylesMap.get("bottomLeftBorderCellStyle"));
 			lastRowCell = lastRow.getCell(max) != null ? lastRow.getCell(max) : lastRow.createCell(max);
 			lastRowCell.setCellStyle(stylesMap.get("bottomRightBorderCellStyle"));
-			if (sheet.getRow(firstDataRow) != null) {
-				Cell firstConceptCell = sheet.getRow(firstDataRow).getCell(0) != null ? sheet.getRow(firstDataRow).getCell(0) : sheet.getRow(firstDataRow).createCell(0);
-				firstConceptCell.setCellStyle(stylesMap.get("topLeftBorderCellStyleNoBottom"));
-			}
+		}
+		if (sheet.getRow(firstDataRow) != null) {
+			Cell firstConceptCell = sheet.getRow(firstDataRow).getCell(0) != null ? sheet.getRow(firstDataRow).getCell(0) : sheet.getRow(firstDataRow).createCell(0);
+			firstConceptCell.setCellStyle(stylesMap.get("topLeftBorderCellStyleNoBottom"));
 		}
 	}
 	
