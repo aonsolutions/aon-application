@@ -145,7 +145,7 @@ public class DataResponseDAO {
 		DATA_RESPONSE_DETAIL.as("data_response_detail_2");
 		
 		return ctx.getDslContext()
-			.select()
+			.select(DATA_RESPONSE_DETAIL.asterisk())
 			.from(DATA_RESPONSE)
 			.innerJoin(DATA_RESPONSE_DETAIL).on(DATA_RESPONSE.ID.eq(DATA_RESPONSE_DETAIL.DATA_RESPONSE))
 			.leftOuterJoin(DATA_RESPONSE_DETAIL_2).on(DATA_RESPONSE_DETAIL.DATA_RESPONSE.eq(DATA_RESPONSE_DETAIL_2.DATA_RESPONSE).and(DATA_RESPONSE_DETAIL.ID.lt(DATA_RESPONSE_DETAIL_2.ID )))
@@ -342,5 +342,6 @@ public class DataResponseDAO {
 		}
 		return null;
 	}
+	
 	
 }
