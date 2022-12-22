@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.model.fiscal;
+package com.esferalia.aon.occam.api.model.fiscal.mod390;
 
 import java.io.Serializable;
 
@@ -234,12 +234,9 @@ public enum Mod3902022DetailKey implements Serializable {
 		return readonly;
 	}
 	public boolean isSurcharge() {
-		return (this == C0036
-			|| this == C0600
-			|| this == C0602
-			|| this == C0042
-			|| this == C0044
-			|| this == C0102);
+		return (this == C0036 || this == C0600
+			|| this == C0602 || this == C0042
+			|| this == C0044 || this == C0102);
 	}
 	public boolean isProrrataEnabled() {
 		return prorrata;

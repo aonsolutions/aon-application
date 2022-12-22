@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.api.fiscal;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902018;
 
 public interface IMODEL3902018 {
 

@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.model.fiscal;
+package com.esferalia.aon.occam.api.model.fiscal.mod390;
 
 import java.io.Serializable;
 

@@ -5,7 +5,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2021.Model3902021.Model3902021Callback;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902021.DeductionRegime;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.DeductionRegime;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;

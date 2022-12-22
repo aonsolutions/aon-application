@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod390;
 
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
@@ -33,20 +33,22 @@ import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902018.FarmerRegimeActivity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902018.Mod390Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902018.SimpliedRegimeActivity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902018DetailKey;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.FarmerRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902018;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902018.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902018DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.SimpliedRegimeActivity;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.AEATIVA2018;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.AEATIVA2018toMod390;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2018.Mod390toAEATIVA2018;
+import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -538,9 +540,7 @@ public class Mod3902018DAO {
 		double prorrata = AonMathUtils.round( mutProrrata.doubleValue() / 100);
 		boolean mustApplyProrrata = (prorrata != AonMathUtils.round(0.00));		
 		
-		Date firstDay = AonDateUtils.getYearFirstDay(mod390.getYear());
-		Date lastDay = AonDateUtils.getYearLastDay(mod390.getYear());
-		VATDAO.getVatBreakdown(ctx, firstDay, lastDay, mod390)
+		VATDAO.getVatBreakdown(ctx, mod390)
 		.forEach(vc -> {
 			Mod3902018DetailKey[] keys = DetailKey.getKeys(vc);			
 			if (keys != null) {

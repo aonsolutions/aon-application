@@ -4,8 +4,8 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.fiscal.IMODEL3902015;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod3902015DAO;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902015;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod390.Mod3902015DAO;
 
 public class MODEL3902015Impl implements IMODEL3902015 {
 

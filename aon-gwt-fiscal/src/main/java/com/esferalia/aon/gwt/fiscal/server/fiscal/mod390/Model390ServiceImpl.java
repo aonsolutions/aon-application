@@ -31,10 +31,10 @@ public class Model390ServiceImpl extends AonStatelessRemoteServiceServlet implem
 		return MODEL390.initialize(occam, year);
 	}
 
-	@Override
-	public Mod390 create(Occam occam, Mod390 mod390) throws AonCoreException {
-		return MODEL390.create(occam, mod390);
-	}
+//	@Override
+//	public Mod390 create(Occam occam, Mod390 mod390) throws AonCoreException {
+//		return MODEL390.create(occam, mod390);
+//	}
 
 	@Override
 	public Mod390 saveComments(Occam occam, Mod390 mod390) {
