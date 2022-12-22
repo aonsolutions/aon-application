@@ -38,6 +38,48 @@ public class TestSistemaREDITPart {
 	
 	@Test
 	@Ignore
+	public void getDataIt() {
+//		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
+//			 @SuppressWarnings("deprecation")
+//			Date fecha_baja = new Date("2016/04/20");
+//			 @SuppressWarnings("deprecation")
+//			Date fecha_proceso = new Date("2016/04/20");
+//			 ITPart itPart = SistemaREDITParts.getDataIt(certificateInputStream,"jg@FNMT","pkcs12", 
+//					"0111", "0110r5360062", "011011187190", SistemaRED.PartType.BAJA, fecha_baja, fecha_proceso);
+//			 System.out.println(itPart);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
+			 Optional<ITPart> part = SistemaREDITPart.getDataIT(certificateInputStream, 
+				CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, "0111","01105360062", "011011187190",
+				SistemaRED.PartType.BAJA, 
+				Toolkit.parseDate("23/12/2021", "dd/MM/yyyy"), Toolkit.parseDate("27/01/2022", "dd/MM/yyyy")
+			);
+			 
+			part.ifPresent(p-> System.out.println(p));
+		} catch (Exception e) {e.printStackTrace();}
+	}
+	
+	@Test
+	@Ignore
+	public void testGetItsCertificateTest() {
+		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
+			Collection<It> its = SistemaREDITPart.getIts(certificateInputStream, 
+					CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, "0111","01105360062", 
+					Toolkit.parseDate("23/12/2021", "dd/MM/yyyy"), Toolkit.parseDate("27/01/2022", "dd/MM/yyyy"),
+					Optional.empty()
+			);
+			for (It it : its) {
+				System.out.println("BAJA >> "+it.getStart());
+				System.out.println("ALTA >> "+it.getEnd());
+				System.out.println("CONFIRMACION >> "+it.getConfirmations().toString());
+			}
+		} catch (Exception e) {e.printStackTrace();}
+	}
+	
+	@Test
+	@Ignore
 	public void getITReport() {
 		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {
 			@SuppressWarnings("deprecation")
@@ -75,25 +117,6 @@ public class TestSistemaREDITPart {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	
-	
-	@Test
-	@Ignore
-	public void testGetItsCertificateTest() {
-		try (final InputStream certificateInputStream = new FileInputStream(CERTIFICATE_PATH) ) {	
-			Collection<It> its = SistemaREDITPart.getIts(certificateInputStream, 
-					CERTIFICATE_PASSWORD, CERTIFICATE_TYPE, "0111","01105360062", 
-					Toolkit.parseDate("23/12/2021", "dd/MM/yyyy"), Toolkit.parseDate("27/01/2022", "dd/MM/yyyy"),
-					Optional.empty()
-			);
-			for (It it : its) {
-				System.out.println("BAJA >> "+it.getStart());
-				System.out.println("ALTA >> "+it.getEnd());
-				System.out.println("CONFIRMACION >> "+it.getConfirmations().toString());
-			}
-		} catch (Exception e) {e.printStackTrace();}
 	}
 	
 	@Test
@@ -169,24 +192,6 @@ public class TestSistemaREDITPart {
 			e.printStackTrace();
 		}
 	}
-	
-	@Test
-	@Ignore
-	public void getDataIt() {
-//		 new Date("2016/04/23")
-		try (final InputStream certificateInputStream = TestItRegister.class.getResourceAsStream("FNMT.p12")){
-			 @SuppressWarnings("deprecation")
-			Date fecha_baja = new Date("2016/04/20");
-			 @SuppressWarnings("deprecation")
-			Date fecha_proceso = new Date("2016/04/20");
-			 ITPart itPart = SistemaREDITParts.getDataIt(certificateInputStream,"jg@FNMT","pkcs12", 
-					"0111", "01105360062", "011011187190", SistemaRED.PartType.BAJA, fecha_baja, fecha_proceso);
-			 System.out.println(itPart);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
 	
 	@Test
 	@Ignore
