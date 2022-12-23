@@ -224,25 +224,25 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			params.add(new BasicNameValuePair("SPM.ACC.CONTINUAR_CONSULTA", "CONTINUAR_CONSULTA"));
 			params.add(new BasicNameValuePair("regimenConsulta", regime));
 			params.add(new BasicNameValuePair("cccConsulta", ccc));
-			params.add(new BasicNameValuePair("nafConsulta", ""));
-			params.add(new BasicNameValuePair("fechaBajaMedConsulta", ""));
-			params.add(new BasicNameValuePair("fechaDesdeConsulta", ""));
-			params.add(new BasicNameValuePair("fechaHastaConsulta", ""));
-
-			nss.ifPresent(n-> params.add(new BasicNameValuePair("nafConsulta", n)));
+			params.add(new BasicNameValuePair("nafConsulta", nss.isPresent() ? nss.get() : ""));
+		
+			if(dateBj.isPresent()) {
+				Toolkit.formatDate(dateBj.get(), DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaBajaMedConsulta", d)));
+			} else {
+				params.add(new BasicNameValuePair("fechaBajaMedConsulta", ""));
+			}
+	
+			if(startDate.isPresent()) {
+				Toolkit.formatDate(startDate.get(), DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaDesdeConsulta", d)));
+			} else {
+				params.add(new BasicNameValuePair("fechaDesdeConsulta", ""));
+			}
 			
-			//DATES
-			dateBj.ifPresent(n-> 
-				Toolkit.formatDate(n, DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaBajaMedConsulta", d)))
-			);
-			
-			startDate.ifPresent(n-> 
-				Toolkit.formatDate(n, DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaDesdeConsulta", d)))
-			);
-			
-			endDate.ifPresent(n-> 
-				Toolkit.formatDate(n, DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaHastaConsulta", d)))
-			);
+			if(endDate.isPresent()) {
+				Toolkit.formatDate(endDate.get(), DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaHastaConsulta", d)));
+			} else {
+				params.add(new BasicNameValuePair("fechaHastaConsulta", ""));
+			}
 			
 		
 			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
