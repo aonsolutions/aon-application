@@ -159,6 +159,18 @@ public class TbaiMain {
 					LROE240_1_1 lroe240 = new LROE240_1_1();
 					info = lroe240.buildInfo(OperacionEnum.A_00);
 					lroeResponse = lroe240.alta(company, tbaiConfiguration, invoice, xml);
+				} else if(AonDocumentUtil.isAssetCommunity(company.getDocument())) {
+				    Person person = new Person().copy(company);
+                    EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
+                        company.getDomain().getId(), "", invoice.getActivity().getId());
+                    if(ea == null || ea.getId() == null) {
+                        ea = AON.getEnterpriseActivities(company.getDomain().getName(),
+                            company.getDomain().getId(), "").filter(f -> f.isPrincipal()).findFirst().orElse(new EnterpriseActivity());
+                    }
+                    invoice.setEpigraph(ea.getIae().getFullEpigraph());
+                    LROE140_1_1 lroe140 = new LROE140_1_1();
+                    info = lroe140.buildInfo(OperacionEnum.A_00);
+                    lroeResponse = lroe140.alta(tbaiConfiguration, person, invoice, xml);
 				} else {
 					Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
 					EnterpriseActivity ea = AON.getEnterpriseActivity(company.getDomain().getName(),
