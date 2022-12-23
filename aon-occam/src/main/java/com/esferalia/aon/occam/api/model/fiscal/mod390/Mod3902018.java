@@ -1,411 +1,42 @@
-package com.esferalia.aon.occam.api.model.fiscal;
+package com.esferalia.aon.occam.api.model.fiscal.mod390;
 
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Map;
 
+import com.esferalia.aon.occam.api.model.fiscal.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Address;
+import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod3902015 extends Mod390  {
+public class Mod3902018 extends Mod390  {
 
 	private static final long serialVersionUID = 6217100697466741197L;
 	
-	public static class DeductionRegime implements Serializable {
-		
-		private static final long serialVersionUID = 4277980489328993084L;
-		
-		private double base1;
-		private double quota1;
-		private double base2;
-		private double quota2;
-		private double base3;
-		private double quota3;
-		private double base4;
-		private double quota4;
-		private double base5;
-		private double quota5;
-		private double base6;
-		private double quota6;
-		private double base7;
-		private double quota7;
-		private double base8;
-		private double quota8;
-		private double quota9;
-		private double quota10;
-		public double getBase1() {
-			return base1;
-		}
-		public void setBase1(double base1) {
-			this.base1 = base1;
-		}
-		public double getQuota1() {
-			return quota1;
-		}
-		public void setQuota1(double quota1) {
-			this.quota1 = quota1;
-		}
-		public double getBase2() {
-			return base2;
-		}
-		public void setBase2(double base2) {
-			this.base2 = base2;
-		}
-		public double getQuota2() {
-			return quota2;
-		}
-		public void setQuota2(double quota2) {
-			this.quota2 = quota2;
-		}
-		public double getBase3() {
-			return base3;
-		}
-		public void setBase3(double base3) {
-			this.base3 = base3;
-		}
-		public double getQuota3() {
-			return quota3;
-		}
-		public void setQuota3(double quota3) {
-			this.quota3 = quota3;
-		}
-		public double getBase4() {
-			return base4;
-		}
-		public void setBase4(double base4) {
-			this.base4 = base4;
-		}
-		public double getQuota4() {
-			return quota4;
-		}
-		public void setQuota4(double quota4) {
-			this.quota4 = quota4;
-		}
-		public double getBase5() {
-			return base5;
-		}
-		public void setBase5(double base5) {
-			this.base5 = base5;
-		}
-		public double getQuota5() {
-			return quota5;
-		}
-		public void setQuota5(double quota5) {
-			this.quota5 = quota5;
-		}
-		public double getBase6() {
-			return base6;
-		}
-		public void setBase6(double base6) {
-			this.base6 = base6;
-		}
-		public double getQuota6() {
-			return quota6;
-		}
-		public void setQuota6(double quota6) {
-			this.quota6 = quota6;
-		}
-		public double getBase7() {
-			return base7;
-		}
-		public void setBase7(double base7) {
-			this.base7 = base7;
-		}
-		public double getQuota7() {
-			return quota7;
-		}
-		public void setQuota7(double quota7) {
-			this.quota7 = quota7;
-		}
-		public double getBase8() {
-			return base8;
-		}
-		public void setBase8(double base8) {
-			this.base8 = base8;
-		}
-		public double getQuota8() {
-			return quota8;
-		}
-		public void setQuota8(double quota8) {
-			this.quota8 = quota8;
-		}
-		public double getQuota9() {
-			return quota9;
-		}
-		public void setQuota9(double quota9) {
-			this.quota9 = quota9;
-		}
-		public double getQuota10() {
-			return quota10;
-		}
-		public void setQuota10(double quota10) {
-			this.quota10 = quota10;
-		}
-	}
-	
-	public static class SimpliedRegimeActivity implements Serializable {
 
-		private static final long serialVersionUID = 6202543820337953651L;
-		
-		private String epigrafe;
-	    private double unit1;
-	    private double amount1;
-	    private double unit2;
-	    private double amount2;
-	    private int    moduleIndex3;
-	    private double unit3;
-	    private double amount3;
-	    private double unit4;
-	    private double amount4;
-	    private double unit5;
-	    private double amount5;
-	    private double unit6;
-	    private double amount6;
-	    private double unit7;
-	    private double amount7;
-	    private double boxC;
-	    private double boxD;
-	    private double boxE;
-	    private double boxF;
-	    private double boxG;
-	    private double boxH;
-	    private double boxI;
-	    private double boxJ;
-	    
-		public String getEpigrafe() {
-			return epigrafe;
-		}
-		public void setEpigrafe(String epigrafe) {
-			this.epigrafe = epigrafe;
-		}
-		public double getUnit1() {
-			return unit1;
-		}
-		public void setUnit1(double unit1) {
-			this.unit1 = unit1;
-		}
-		public double getAmount1() {
-			return amount1;
-		}
-		public void setAmount1(double amount1) {
-			this.amount1 = amount1;
-		}
-		public double getUnit2() {
-			return unit2;
-		}
-		public void setUnit2(double unit2) {
-			this.unit2 = unit2;
-		}
-		public double getAmount2() {
-			return amount2;
-		}
-		public void setAmount2(double amount2) {
-			this.amount2 = amount2;
-		}
-		public int getModuleIndex3() {
-			return moduleIndex3;
-		}
-		public void setModuleIndex3(int moduleIndex3) {
-			this.moduleIndex3 = moduleIndex3;
-		}
-		public double getUnit3() {
-			return unit3;
-		}
-		public void setUnit3(double unit3) {
-			this.unit3 = unit3;
-		}
-		public double getAmount3() {
-			return amount3;
-		}
-		public void setAmount3(double amount3) {
-			this.amount3 = amount3;
-		}
-		public double getUnit4() {
-			return unit4;
-		}
-		public void setUnit4(double unit4) {
-			this.unit4 = unit4;
-		}
-		public double getAmount4() {
-			return amount4;
-		}
-		public void setAmount4(double amount4) {
-			this.amount4 = amount4;
-		}
-		public double getUnit5() {
-			return unit5;
-		}
-		public void setUnit5(double unit5) {
-			this.unit5 = unit5;
-		}
-		public double getAmount5() {
-			return amount5;
-		}
-		public void setAmount5(double amount5) {
-			this.amount5 = amount5;
-		}
-		public double getUnit6() {
-			return unit6;
-		}
-		public void setUnit6(double unit6) {
-			this.unit6 = unit6;
-		}
-		public double getAmount6() {
-			return amount6;
-		}
-		public void setAmount6(double amount6) {
-			this.amount6 = amount6;
-		}
-		public double getUnit7() {
-			return unit7;
-		}
-		public void setUnit7(double unit7) {
-			this.unit7 = unit7;
-		}
-		public double getAmount7() {
-			return amount7;
-		}
-		public void setAmount7(double amount7) {
-			this.amount7 = amount7;
-		}
-		public double getBoxC() {
-			return boxC;
-		}
-		public void setBoxC(double boxC) {
-			this.boxC = boxC;
-		}
-		public double getBoxD() {
-			return boxD;
-		}
-		public void setBoxD(double boxD) {
-			this.boxD = boxD;
-		}
-		public double getBoxE() {
-			return boxE;
-		}
-		public void setBoxE(double boxE) {
-			this.boxE = boxE;
-		}
-		public double getBoxF() {
-			return boxF;
-		}
-		public void setBoxF(double boxF) {
-			this.boxF = boxF;
-		}
-		public double getBoxG() {
-			return boxG;
-		}
-		public void setBoxG(double boxG) {
-			this.boxG = boxG;
-		}
-		public double getBoxH() {
-			return boxH;
-		}
-		public void setBoxH(double boxH) {
-			this.boxH = boxH;
-		}
-		public double getBoxI() {
-			return boxI;
-		}
-		public void setBoxI(double boxI) {
-			this.boxI = boxI;
-		}
-		public double getBoxJ() {
-			return boxJ;
-		}
-		public void setBoxJ(double boxJ) {
-			this.boxJ = boxJ;
-		}
-		public void setUnit(int line, double value) {
-			if (line == 1) setUnit1(value);
-			else if (line == 2) setUnit2(value);
-			else if (line == 3) setUnit3(value);
-			else if (line == 4) setUnit4(value);
-			else if (line == 5) setUnit5(value);
-			else if (line == 6) setUnit6(value);
-			else if (line == 7) setUnit7(value);
-		}
-		public void setAmount(int line, double value) {
-			if (line == 1) setAmount1(value);
-			else if (line == 2) setAmount2(value);
-			else if (line == 3) setAmount3(value);
-			else if (line == 4) setAmount4(value);
-			else if (line == 5) setAmount5(value);
-			else if (line == 6) setAmount6(value);
-			else if (line == 7) setAmount7(value);
-		}
-	}
-
-	public static class FarmerRegimeActivity implements Serializable {
-		
-		private static final long serialVersionUID = 2201792990904258961L;
-		
-		protected String codigo;
-	    protected double incomes;
-	    protected double quotaIndex;
-	    protected double accrualQuota;
-	    protected double inputQuotas;
-	    protected double quota;
-	    
-		public String getCodigo() {
-			return codigo;
-		}
-		public void setCodigo(String codigo) {
-			this.codigo = codigo;
-		}
-		public double getIncomes() {
-			return incomes;
-		}
-		public void setIncomes(double incomes) {
-			this.incomes = incomes;
-		}
-		public double getQuotaIndex() {
-			return quotaIndex;
-		}
-		public void setQuotaIndex(double quotaIndex) {
-			this.quotaIndex = quotaIndex;
-		}
-		public double getAccrualQuota() {
-			return accrualQuota;
-		}
-		public void setAccrualQuota(double accrualQuota) {
-			this.accrualQuota = accrualQuota;
-		}
-		public double getInputQuotas() {
-			return inputQuotas;
-		}
-		public void setInputQuotas(double inputQuotas) {
-			this.inputQuotas = inputQuotas;
-		}
-		public double getQuota() {
-			return quota;
-		}
-		public void setQuota(double quota) {
-			this.quota = quota;
-		}
-	    
-	}
 
 	public static class Mod390Detail implements Serializable {
 
 		private static final long serialVersionUID = 6537639113193543031L;
 		
-		private Mod3902015DetailKey key;
+		private Mod3902018DetailKey key;
 		private double taxableBase;
 		private double percent;
 		private double quota;
 
-		public Mod3902015DetailKey getKey() {
+		public Mod3902018DetailKey getKey() {
 			return key;
 		}
-		public void setKey(Mod3902015DetailKey key) {
+		public void setKey(Mod3902018DetailKey key) {
 			this.key = key;
 		}
 
 		public int getTaxableBaseBox() {
 			
 			// Unica excepcion en todo el modelo.	
-			if (key == Mod3902015DetailKey.K33) return 639;
+			if (key == Mod3902018DetailKey.C0062) return 639;
 			
 			return (key.getBox() - 1);
 		}
@@ -439,57 +70,6 @@ public class Mod3902015 extends Mod390  {
 		}
 
 	}
-
-	
-	public static class Prorrata implements Serializable {
-
-		private static final long serialVersionUID = -2787127406538620223L;
-		
-		private String activity;
-		private String cnae;
-		private double amount;
-		private double amountWithRight;
-		private double percent;
-		private String type;
-		
-		public String getActivity() {
-			return activity;
-		}
-		public void setActivity(String activity) {
-			this.activity = activity;
-		}
-		public String getCnae() {
-			return cnae;
-		}
-		public void setCnae(String cnae) {
-			this.cnae = cnae;
-		}
-		public double getAmount() {
-			return amount;
-		}
-		public void setAmount(double amount) {
-			this.amount = amount;
-		}
-		public double getAmountWithRight() {
-			return amountWithRight;
-		}
-		public void setAmountWithRight(double amountWithRight) {
-			this.amountWithRight = amountWithRight;
-		}
-		public double getPercent() {
-			return percent;
-		}
-		public void setPercent(double percent) {
-			this.percent = percent;
-		}
-		public String getType() {
-			return type;
-		}
-		public void setType(String type) {
-			this.type = type;
-		}
-	}
-
 	
 	private boolean confidential;
 	private boolean replacementDueInsolvencyState;
@@ -523,7 +103,7 @@ public class Mod3902015 extends Mod390  {
 	private LegalRepresentative legalRepr2; 
 	private LegalRepresentative legalRepr3;
 	
-	private Map<Mod3902015DetailKey,Mod390Detail> generalRegime;
+	private Map<Mod3902018DetailKey,Mod390Detail> generalRegime;
 	
 	private SimpliedRegimeActivity simpRegime1;
 	private SimpliedRegimeActivity simpRegime2;
@@ -564,6 +144,7 @@ public class Mod3902015 extends Mod390  {
 	private double box524;
 	private double box97;
 	private double box98;
+	private double box662;
 	private double box525;
 	private double box526;
 	private double box99;
@@ -743,7 +324,7 @@ public class Mod3902015 extends Mod390  {
 		return address;
 	}
 	public Address ensureAddress() {
-		if (address==null) setAddress(new Address());
+		if (address == null) setAddress(new Address());
 		return address;
 	}
 	public void setAddress(Address address) {
@@ -753,7 +334,7 @@ public class Mod3902015 extends Mod390  {
 		return legalRepr1;
 	}
 	public LegalRepresentative ensureLegalRepr1() {
-		if (legalRepr1 ==null) setLegalRepr1(new LegalRepresentative());
+		if (legalRepr1 == null) setLegalRepr1(new LegalRepresentative());
 		return legalRepr1;
 	}
 	public void setLegalRepr1(LegalRepresentative legalRepr1) {
@@ -763,7 +344,7 @@ public class Mod3902015 extends Mod390  {
 		return legalRepr2;
 	}
 	public LegalRepresentative ensureLegalRepr2() {
-		if (legalRepr2 ==null) setLegalRepr2(new LegalRepresentative());
+		if (legalRepr2 == null) setLegalRepr2(new LegalRepresentative());
 		return legalRepr2;
 	}
 	public void setLegalRepr2(LegalRepresentative legalRepr2) {
@@ -773,16 +354,16 @@ public class Mod3902015 extends Mod390  {
 		return legalRepr3;
 	}
 	public LegalRepresentative ensureLegalRepr3() {
-		if (legalRepr3 ==null) setLegalRepr3(new LegalRepresentative());
+		if (legalRepr3 == null) setLegalRepr3(new LegalRepresentative());
 		return legalRepr3;
 	}
 	public void setLegalRepr3(LegalRepresentative legalRepr3) {
 		this.legalRepr3 = legalRepr3;
 	}
-	public Map<Mod3902015DetailKey, Mod390Detail> getGeneralRegime() {
+	public Map<Mod3902018DetailKey, Mod390Detail> getGeneralRegime() {
 		return generalRegime;
 	}
-	public void setGeneralRegime(Map<Mod3902015DetailKey, Mod390Detail> generalRegime) {
+	public void setGeneralRegime(Map<Mod3902018DetailKey, Mod390Detail> generalRegime) {
 		this.generalRegime = generalRegime;
 	}
 	public SimpliedRegimeActivity getSimpRegime1() {
@@ -812,7 +393,7 @@ public class Mod3902015 extends Mod390  {
 		return farmerRegime1;
 	}
 	public FarmerRegimeActivity ensureFarmerRegime1() {
-		if (farmerRegime1 == null) setFarmerRegime1( new FarmerRegimeActivity());
+		if (farmerRegime1 == null) setFarmerRegime1(new FarmerRegimeActivity());
 		return farmerRegime1;
 	}
 	public void setFarmerRegime1(FarmerRegimeActivity farmerRegime1) {
@@ -822,7 +403,7 @@ public class Mod3902015 extends Mod390  {
 		return farmerRegime2;
 	}
 	public FarmerRegimeActivity ensureFarmerRegime2() {
-		if (farmerRegime2 == null) setFarmerRegime2( new FarmerRegimeActivity());
+		if (farmerRegime2 == null) setFarmerRegime2(new FarmerRegimeActivity());
 		return farmerRegime2;
 	}
 	public void setFarmerRegime2(FarmerRegimeActivity farmerRegime2) {
@@ -832,7 +413,7 @@ public class Mod3902015 extends Mod390  {
 		return farmerRegime3;
 	}
 	public FarmerRegimeActivity ensureFarmerRegime3() {
-		if (farmerRegime3 == null) setFarmerRegime3( new FarmerRegimeActivity());
+		if (farmerRegime3 == null) setFarmerRegime3(new FarmerRegimeActivity());
 		return farmerRegime3;
 	}
 	public void setFarmerRegime3(FarmerRegimeActivity farmerRegime3) {
@@ -842,7 +423,7 @@ public class Mod3902015 extends Mod390  {
 		return farmerRegime4;
 	}
 	public FarmerRegimeActivity ensureFarmerRegime4() {
-		if (farmerRegime4 == null) setFarmerRegime4( new FarmerRegimeActivity());
+		if (farmerRegime4 == null) setFarmerRegime4(new FarmerRegimeActivity());
 		return farmerRegime4;
 	}
 	public void setFarmerRegime4(FarmerRegimeActivity farmerRegime4) {
@@ -852,7 +433,7 @@ public class Mod3902015 extends Mod390  {
 		return farmerRegime5;
 	}
 	public FarmerRegimeActivity ensureFarmerRegime5() {
-		if (farmerRegime5 == null) setFarmerRegime5( new FarmerRegimeActivity());
+		if (farmerRegime5 == null) setFarmerRegime5(new FarmerRegimeActivity());
 		return farmerRegime5;
 	}
 	public void setFarmerRegime5(FarmerRegimeActivity farmerRegime5) {
@@ -1025,6 +606,12 @@ public class Mod3902015 extends Mod390  {
 	}
 	public void setBox98(double box98) {
 		this.box98 = box98;
+	}
+	public double getBox662() {
+		return box662;
+	}
+	public void setBox662(double box662) {
+		this.box662 = box662;
 	}
 	public double getBox525() {
 		return box525;
@@ -1236,99 +823,72 @@ public class Mod3902015 extends Mod390  {
 		this.regime3 = regime3;
 	}
 
-	private static final Mod3902015DetailKey[] K09_FORMULA = new Mod3902015DetailKey[]{ Mod3902015DetailKey.K00_04
-				,Mod3902015DetailKey.K00_10
-				,Mod3902015DetailKey.K00_21,Mod3902015DetailKey.K01_04
-				,Mod3902015DetailKey.K01_10,Mod3902015DetailKey.K01_21
-				,Mod3902015DetailKey.K40_04,Mod3902015DetailKey.K40_10,Mod3902015DetailKey.K40_21
-				,Mod3902015DetailKey.K02_04,Mod3902015DetailKey.K02_10
-				,Mod3902015DetailKey.K02_21
-				,Mod3902015DetailKey.K03_21,Mod3902015DetailKey.K04_04
-				,Mod3902015DetailKey.K04_10,Mod3902015DetailKey.K04_21
-				,Mod3902015DetailKey.K05_04,Mod3902015DetailKey.K05_10
-				,Mod3902015DetailKey.K05_21,Mod3902015DetailKey.K06
-				,Mod3902015DetailKey.K07   ,Mod3902015DetailKey.K07_I ,Mod3902015DetailKey.K08};
-	private static final Mod3902015DetailKey[] K13_FORMULA = new Mod3902015DetailKey[]{ Mod3902015DetailKey.K09
-				,Mod3902015DetailKey.K10_05,Mod3902015DetailKey.K10_14 
-				,Mod3902015DetailKey.K10_52,Mod3902015DetailKey.K10_175
-				,Mod3902015DetailKey.K11   ,Mod3902015DetailKey.K12};	 
-	private static final Mod3902015DetailKey[] K15_FORMULA = {
-		Mod3902015DetailKey.K14_04, Mod3902015DetailKey.K14_07,
-		Mod3902015DetailKey.K14_08, Mod3902015DetailKey.K14_10,
-		Mod3902015DetailKey.K14_16, Mod3902015DetailKey.K14_18,
-		Mod3902015DetailKey.K14_21 };
+	private static final Mod3902018DetailKey[] K09_FORMULA = new Mod3902018DetailKey[]{ Mod3902018DetailKey.C0002
+				,Mod3902018DetailKey.C0004
+				,Mod3902018DetailKey.C0006,Mod3902018DetailKey.C0501
+				,Mod3902018DetailKey.C0503,Mod3902018DetailKey.C0505
+				,Mod3902018DetailKey.C0644,Mod3902018DetailKey.C0646,Mod3902018DetailKey.C0648
+				,Mod3902018DetailKey.C0008,Mod3902018DetailKey.C0010
+				,Mod3902018DetailKey.C0012
+				,Mod3902018DetailKey.C0014,Mod3902018DetailKey.C0022
+				,Mod3902018DetailKey.C0024,Mod3902018DetailKey.C0026
+				,Mod3902018DetailKey.C0546,Mod3902018DetailKey.C0548
+				,Mod3902018DetailKey.C0552,Mod3902018DetailKey.C0028
+				,Mod3902018DetailKey.C0030   ,Mod3902018DetailKey.C0650 ,Mod3902018DetailKey.C0032};
+	private static final Mod3902018DetailKey[] K13_FORMULA = new Mod3902018DetailKey[]{ Mod3902018DetailKey.C0034
+				,Mod3902018DetailKey.C0036,Mod3902018DetailKey.C0600 
+				,Mod3902018DetailKey.C0602,Mod3902018DetailKey.C0042
+				,Mod3902018DetailKey.C0044   ,Mod3902018DetailKey.C0046};	 
+	private static final Mod3902018DetailKey[] K15_FORMULA = {
+		Mod3902018DetailKey.C0191, Mod3902018DetailKey.C0604,Mod3902018DetailKey.C0606 };
 
-	private static final Mod3902015DetailKey[] K17_FORMULA = {
-			Mod3902015DetailKey.K16_04, Mod3902015DetailKey.K16_07,
-			Mod3902015DetailKey.K16_08, Mod3902015DetailKey.K16_10,
-			Mod3902015DetailKey.K16_16, Mod3902015DetailKey.K16_18,
-			Mod3902015DetailKey.K16_21 };
+	private static final Mod3902018DetailKey[] K17_FORMULA = {
+			Mod3902018DetailKey.C0507, Mod3902018DetailKey.C0608, Mod3902018DetailKey.C0610 };
 	
-	private static final Mod3902015DetailKey[] K19_FORMULA = {
-			Mod3902015DetailKey.K18_04, Mod3902015DetailKey.K18_07,
-			Mod3902015DetailKey.K18_08, Mod3902015DetailKey.K18_10,
-			Mod3902015DetailKey.K18_16, Mod3902015DetailKey.K18_18,
-			Mod3902015DetailKey.K18_21 };
+	private static final Mod3902018DetailKey[] K19_FORMULA = {
+			Mod3902018DetailKey.C0197, Mod3902018DetailKey.C0612, Mod3902018DetailKey.C0614 };
 	
-	private static final Mod3902015DetailKey[] K21_FORMULA = {
-			Mod3902015DetailKey.K20_04, Mod3902015DetailKey.K20_07,
-			Mod3902015DetailKey.K20_08, Mod3902015DetailKey.K20_10,
-			Mod3902015DetailKey.K20_16, Mod3902015DetailKey.K20_18,
-			Mod3902015DetailKey.K20_21 };
+	private static final Mod3902018DetailKey[] K21_FORMULA = {
+			Mod3902018DetailKey.C0515, Mod3902018DetailKey.C0616, Mod3902018DetailKey.C0618 };
 	
-	private static final Mod3902015DetailKey[] K23_FORMULA = {
-			Mod3902015DetailKey.K22_04, Mod3902015DetailKey.K22_07,
-			Mod3902015DetailKey.K22_08, Mod3902015DetailKey.K22_10,
-			Mod3902015DetailKey.K22_16, Mod3902015DetailKey.K22_18,
-			Mod3902015DetailKey.K22_21 };
+	private static final Mod3902018DetailKey[] K23_FORMULA = {
+			Mod3902018DetailKey.C0203, Mod3902018DetailKey.C0620, Mod3902018DetailKey.C0622 };
 	
-	private static final Mod3902015DetailKey[] K25_FORMULA = {
-			Mod3902015DetailKey.K24_04, Mod3902015DetailKey.K24_07,
-			Mod3902015DetailKey.K24_08, Mod3902015DetailKey.K24_10,
-			Mod3902015DetailKey.K24_16, Mod3902015DetailKey.K24_18,
-			Mod3902015DetailKey.K24_21 };
+	private static final Mod3902018DetailKey[] K25_FORMULA = {
+			Mod3902018DetailKey.C0209, Mod3902018DetailKey.C0624, Mod3902018DetailKey.C0626 };
 	
-	private static final Mod3902015DetailKey[] K27_FORMULA = {
-			Mod3902015DetailKey.K26_04, Mod3902015DetailKey.K26_07,
-			Mod3902015DetailKey.K26_08, Mod3902015DetailKey.K26_10,
-			Mod3902015DetailKey.K26_16, Mod3902015DetailKey.K26_18,
-			Mod3902015DetailKey.K26_21 };
+	private static final Mod3902018DetailKey[] K27_FORMULA = {
+			Mod3902018DetailKey.C0215, Mod3902018DetailKey.C0628, Mod3902018DetailKey.C0630 };
 	
-	private static final Mod3902015DetailKey[] K29_FORMULA = {
-			Mod3902015DetailKey.K28_04, Mod3902015DetailKey.K28_07,
-			Mod3902015DetailKey.K28_08, Mod3902015DetailKey.K28_10,
-			Mod3902015DetailKey.K28_16, Mod3902015DetailKey.K28_18,
-			Mod3902015DetailKey.K28_21 };
+	private static final Mod3902018DetailKey[] K29_FORMULA = {
+			Mod3902018DetailKey.C0221, Mod3902018DetailKey.C0632, Mod3902018DetailKey.C0634 };
 
-	private static final Mod3902015DetailKey[] K31_FORMULA = {
-		Mod3902015DetailKey.K30_04, Mod3902015DetailKey.K30_07,
-		Mod3902015DetailKey.K30_08, Mod3902015DetailKey.K30_10,
-		Mod3902015DetailKey.K30_16, Mod3902015DetailKey.K30_18,
-		Mod3902015DetailKey.K30_21};	
+	private static final Mod3902018DetailKey[] K31_FORMULA = {
+		Mod3902018DetailKey.C0588, Mod3902018DetailKey.C0636, Mod3902018DetailKey.C0638};	
 
-	private static final Mod3902015DetailKey[] K36_FORMULA = { Mod3902015DetailKey.K15,
-		Mod3902015DetailKey.K17, Mod3902015DetailKey.K19, Mod3902015DetailKey.K21,
-		Mod3902015DetailKey.K23, Mod3902015DetailKey.K25, Mod3902015DetailKey.K27,
-		Mod3902015DetailKey.K29, Mod3902015DetailKey.K31, Mod3902015DetailKey.K32,
-		Mod3902015DetailKey.K33, Mod3902015DetailKey.K33_I,
-		Mod3902015DetailKey.K34, Mod3902015DetailKey.K35};
+	private static final Mod3902018DetailKey[] K36_FORMULA = { Mod3902018DetailKey.C0049,
+		Mod3902018DetailKey.C0513, Mod3902018DetailKey.C0051, Mod3902018DetailKey.C0521,
+		Mod3902018DetailKey.C0053, Mod3902018DetailKey.C0055, Mod3902018DetailKey.C0057,
+		Mod3902018DetailKey.C0059, Mod3902018DetailKey.C0598, Mod3902018DetailKey.C0061,
+		Mod3902018DetailKey.C0661,Mod3902018DetailKey.C0062, Mod3902018DetailKey.C0652,
+		Mod3902018DetailKey.C0063, Mod3902018DetailKey.C0522};
 
 	public void calculate() {
 		double k37Quota = 0;
 //		if (!isSimplifiedRegime()) {
-			calculate(Mod3902015DetailKey.K09, K09_FORMULA);
-			Mod390Detail k13 = calculate(Mod3902015DetailKey.K13, K13_FORMULA);
-			calculate(Mod3902015DetailKey.K15, K15_FORMULA);
-			calculate(Mod3902015DetailKey.K17, K17_FORMULA);
-			calculate(Mod3902015DetailKey.K19, K19_FORMULA);
-			calculate(Mod3902015DetailKey.K21, K21_FORMULA);
-			calculate(Mod3902015DetailKey.K23, K23_FORMULA);
-			calculate(Mod3902015DetailKey.K25, K25_FORMULA);
-			calculate(Mod3902015DetailKey.K27, K27_FORMULA);
-			calculate(Mod3902015DetailKey.K29, K29_FORMULA);
-			calculate(Mod3902015DetailKey.K31, K31_FORMULA);
-			Mod390Detail k36 = calculate(Mod3902015DetailKey.K36, K36_FORMULA);
-			Mod390Detail k37 = ensure(Mod3902015DetailKey.K37);
+			calculate(Mod3902018DetailKey.C0034, K09_FORMULA);
+			Mod390Detail k13 = calculate(Mod3902018DetailKey.C0047, K13_FORMULA);
+			calculate(Mod3902018DetailKey.C0049, K15_FORMULA);
+			calculate(Mod3902018DetailKey.C0513, K17_FORMULA);
+			calculate(Mod3902018DetailKey.C0051, K19_FORMULA);
+			calculate(Mod3902018DetailKey.C0521, K21_FORMULA);
+			calculate(Mod3902018DetailKey.C0053, K23_FORMULA);
+			calculate(Mod3902018DetailKey.C0055, K25_FORMULA);
+			calculate(Mod3902018DetailKey.C0057, K27_FORMULA);
+			calculate(Mod3902018DetailKey.C0059, K29_FORMULA);
+			calculate(Mod3902018DetailKey.C0598, K31_FORMULA);
+			Mod390Detail k36 = calculate(Mod3902018DetailKey.C0064, K36_FORMULA);
+			Mod390Detail k37 = ensure(Mod3902018DetailKey.C0065);
 			k37Quota = AonMathUtils.round(k13.getQuota() - k36.getQuota());
 			k37.setQuota( k37Quota );
 //		}
@@ -1360,7 +920,7 @@ public class Mod3902015 extends Mod390  {
 				+box228-box106-box107);
 	}
 	
-	public Mod390Detail ensure(Mod3902015DetailKey key) {
+	public Mod390Detail ensure(Mod3902018DetailKey key) {
 		Mod390Detail detail = getGeneralRegime().get(key);
 		if (detail == null) {
 			detail = new Mod390Detail();
@@ -1371,11 +931,11 @@ public class Mod3902015 extends Mod390  {
 		return detail;
 	}
 	
-	private Mod390Detail calculate(Mod3902015DetailKey key, Mod3902015DetailKey ... keys) {
+	private Mod390Detail calculate(Mod3902018DetailKey key, Mod3902018DetailKey ... keys) {
 		Mod390Detail detail = ensure(key);
 		detail.setTaxableBase(0.0);
 		detail.setQuota(0.0);
-		for (Mod3902015DetailKey k : keys) {
+		for (Mod3902018DetailKey k : keys) {
 			Mod390Detail det = getGeneralRegime().get(k);
 			if (det != null) {
 				detail.setTaxableBase( AonMathUtils.round(detail.getTaxableBase() + det.getTaxableBase()));

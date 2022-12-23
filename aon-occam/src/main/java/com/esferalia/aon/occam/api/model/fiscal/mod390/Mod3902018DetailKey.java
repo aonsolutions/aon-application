@@ -1,8 +1,8 @@
-package com.esferalia.aon.occam.api.model.fiscal;
+package com.esferalia.aon.occam.api.model.fiscal.mod390;
 
 import java.io.Serializable;
 
-public enum Mod3902021DetailKey implements Serializable {
+public enum Mod3902018DetailKey implements Serializable {
 	
 	  C0002	(  2,	 4.00, null,true,false)		
 	 ,C0004	(  4,	10.00, null,true,false)
@@ -87,10 +87,7 @@ public enum Mod3902021DetailKey implements Serializable {
 	 ,C0104	 (104,   0.00, null,true ,false)
 	 ,C0105	 (105,   0.00, null,true ,false)
 	 ,C0110	 (110,   0.00, null,true ,false)
-	 ,C0125	 (125,   0.00, null,true ,false)
-	 ,C0126	 (126,   0.00, null,true ,false)
-	 ,C0127	 (127,   0.00, null,true ,false)
-	 ,C0128	 (128,   0.00, null,true ,false)
+	 ,C0112	 (112,   0.00, null,true ,false)
 	 ,C0100	 (100,   0.00, null,true ,false)
 	 ,C0101	 (101,   0.00, null,true ,false)
 	 ,C0102	 (102,   0.00, null,true ,false)
@@ -111,11 +108,11 @@ public enum Mod3902021DetailKey implements Serializable {
 	private boolean readonly;
 	private boolean prorrata;
 	
-	private Mod3902021DetailKey(int box, Double percent, Integer year, boolean taxableBaseAvailable, boolean readonly) {
+	private Mod3902018DetailKey(int box, Double percent, Integer year, boolean taxableBaseAvailable, boolean readonly) {
 		this(box, percent, year, taxableBaseAvailable, readonly, false);	
 	}
 	
-	private Mod3902021DetailKey(int box, Double percent, Integer year, boolean taxableBaseAvailable, boolean readonly, boolean prorrata) {
+	private Mod3902018DetailKey(int box, Double percent, Integer year, boolean taxableBaseAvailable, boolean readonly, boolean prorrata) {
 		this.percent = percent;
 		this.box = box;
 		this.year = year;

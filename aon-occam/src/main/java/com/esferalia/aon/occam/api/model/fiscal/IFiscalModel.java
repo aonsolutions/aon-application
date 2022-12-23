@@ -102,6 +102,10 @@ public interface IFiscalModel extends Serializable {
 		return getStatus() == FiscalStatus.CUSTOMER_REJECTED;
 	}
 	
+	public default boolean isGenerateFromYearStart() {
+		return false;
+	}
+	
 	@Deprecated
 	public default boolean isNotFinished() {
 		return isEditable();

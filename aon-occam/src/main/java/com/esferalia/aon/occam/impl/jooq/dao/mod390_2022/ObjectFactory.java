@@ -40,7 +40,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .ResLiquidaciones }
      * 
      */
-    public AEATIVA2022 .ResLiquidaciones createAEATIVA2018ResLiquidaciones() {
+    public AEATIVA2022 .ResLiquidaciones createAEATIVA2022ResLiquidaciones() {
         return new AEATIVA2022 .ResLiquidaciones();
     }
 
@@ -56,7 +56,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .IVADeducibleGrupo2 .OpInteriores }
      * 
      */
-    public AEATIVA2022 .IVADeducibleGrupo2 .OpInteriores createAEATIVA2018IVADeducibleGrupo2OpInteriores() {
+    public AEATIVA2022 .IVADeducibleGrupo2 .OpInteriores createAEATIVA20IVADeducibleGrupo2OpInteriores() {
         return new AEATIVA2022 .IVADeducibleGrupo2 .OpInteriores();
     }
 
@@ -64,7 +64,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .VolOperaciones }
      * 
      */
-    public AEATIVA2022 .VolOperaciones createAEATIVA2018VolOperaciones() {
+    public AEATIVA2022 .VolOperaciones createAEATIVA2022VolOperaciones() {
         return new AEATIVA2022 .VolOperaciones();
     }
 
@@ -72,7 +72,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.OpIntragrupo }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.OpIntragrupo createAEATIVA2018RegGeneralBaseImponibleyCuotaOpIntragrupo() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.OpIntragrupo createAEATIVA2022RegGeneralBaseImponibleyCuotaOpIntragrupo() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.OpIntragrupo();
     }
 
@@ -80,7 +80,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .IVADeducibleGrupo1 .Importaciones }
      * 
      */
-    public AEATIVA2022 .IVADeducibleGrupo1 .Importaciones createAEATIVA2018IVADeducibleGrupo1Importaciones() {
+    public AEATIVA2022 .IVADeducibleGrupo1 .Importaciones createAEATIVA2022IVADeducibleGrupo1Importaciones() {
         return new AEATIVA2022 .IVADeducibleGrupo1 .Importaciones();
     }
 
@@ -88,7 +88,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .DatEstadisticos.Otras }
      * 
      */
-    public AEATIVA2022 .DatEstadisticos.Otras createAEATIVA2018DatEstadisticosOtras() {
+    public AEATIVA2022 .DatEstadisticos.Otras createAEATIVA2022DatEstadisticosOtras() {
         return new AEATIVA2022 .DatEstadisticos.Otras();
     }
 
@@ -96,7 +96,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .IVADeducibleGrupo3 }
      * 
      */
-    public AEATIVA2022 .IVADeducibleGrupo3 createAEATIVA2018IVADeducibleGrupo3() {
+    public AEATIVA2022 .IVADeducibleGrupo3 createAEATIVA2022IVADeducibleGrupo3() {
         return new AEATIVA2022 .IVADeducibleGrupo3();
     }
 
@@ -104,7 +104,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .Devengo.DestRegCriterioCajaNO }
      * 
      */
-    public AEATIVA2022 .Devengo.DestRegCriterioCajaNO createAEATIVA2018DevengoDestRegCriterioCajaNO() {
+    public AEATIVA2022 .Devengo.DestRegCriterioCajaNO createAEATIVA2022DevengoDestRegCriterioCajaNO() {
         return new AEATIVA2022 .Devengo.DestRegCriterioCajaNO();
     }
 
@@ -112,7 +112,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones.AdqIntracomunitariasBienesCorrientes }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones.AdqIntracomunitariasBienesCorrientes createAEATIVA2018RegGeneralDeduccionesAdqIntracomunitariasBienesCorrientes() {
+    public AEATIVA2022 .RegGeneral.Deducciones.AdqIntracomunitariasBienesCorrientes createAEATIVA2022RegGeneralDeduccionesAdqIntracomunitariasBienesCorrientes() {
         return new AEATIVA2022 .RegGeneral.Deducciones.AdqIntracomunitariasBienesCorrientes();
     }
 
@@ -120,7 +120,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegSimplificado.Actividad.Modulo }
      * 
      */
-    public AEATIVA2022 .RegSimplificado.Actividad.Modulo createAEATIVA2018RegSimplificadoActividadModulo() {
+    public AEATIVA2022 .RegSimplificado.Actividad.Modulo createAEATIVA2022RegSimplificadoActividadModulo() {
         return new AEATIVA2022 .RegSimplificado.Actividad.Modulo();
     }
 
@@ -128,7 +128,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .LiqAnual }
      * 
      */
-    public AEATIVA2022 .LiqAnual createAEATIVA2018LiqAnual() {
+    public AEATIVA2022 .LiqAnual createAEATIVA2022LiqAnual() {
         return new AEATIVA2022 .LiqAnual();
     }
 
@@ -152,7 +152,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .ResLiquidaciones.PerSiRegGrupos }
      * 
      */
-    public AEATIVA2022 .ResLiquidaciones.PerSiRegGrupos createAEATIVA2018ResLiquidacionesPerSiRegGrupos() {
+    public AEATIVA2022 .ResLiquidaciones.PerSiRegGrupos createAEATIVA2022ResLiquidacionesPerSiRegGrupos() {
         return new AEATIVA2022 .ResLiquidaciones.PerSiRegGrupos();
     }
 
@@ -160,7 +160,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones.CouDedResAdministrativas }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones.CouDedResAdministrativas createAEATIVA2018RegGeneralDeduccionesCouDedResAdministrativas() {
+    public AEATIVA2022 .RegGeneral.Deducciones.CouDedResAdministrativas createAEATIVA2022RegGeneralDeduccionesCouDedResAdministrativas() {
         return new AEATIVA2022 .RegGeneral.Deducciones.CouDedResAdministrativas();
     }
 
@@ -168,7 +168,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.IVAdevengadoInversionSP }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.IVAdevengadoInversionSP createAEATIVA2018RegGeneralBaseImponibleyCuotaIVAdevengadoInversionSP() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.IVAdevengadoInversionSP createAEATIVA2022RegGeneralBaseImponibleyCuotaIVAdevengadoInversionSP() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.IVAdevengadoInversionSP();
     }
 
@@ -176,7 +176,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .Devengo.DecSustitutiva }
      * 
      */
-    public AEATIVA2022 .Devengo.DecSustitutiva createAEATIVA2018DevengoDecSustitutiva() {
+    public AEATIVA2022 .Devengo.DecSustitutiva createAEATIVA2022DevengoDecSustitutiva() {
         return new AEATIVA2022 .Devengo.DecSustitutiva();
     }
 
@@ -192,7 +192,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .IVADeducibleGrupo2 .AdqIntracomunitarias }
      * 
      */
-    public AEATIVA2022 .IVADeducibleGrupo2 .AdqIntracomunitarias createAEATIVA2018IVADeducibleGrupo2AdqIntracomunitarias() {
+    public AEATIVA2022 .IVADeducibleGrupo2 .AdqIntracomunitarias createAEATIVA2022IVADeducibleGrupo2AdqIntracomunitarias() {
         return new AEATIVA2022 .IVADeducibleGrupo2 .AdqIntracomunitarias();
     }
 
@@ -200,7 +200,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .IVADeducibleGrupo3 .AdqIntracomunitarias }
      * 
      */
-    public AEATIVA2022 .IVADeducibleGrupo3 .AdqIntracomunitarias createAEATIVA2018IVADeducibleGrupo3AdqIntracomunitarias() {
+    public AEATIVA2022 .IVADeducibleGrupo3 .AdqIntracomunitarias createAEATIVA2022IVADeducibleGrupo3AdqIntracomunitarias() {
         return new AEATIVA2022 .IVADeducibleGrupo3 .AdqIntracomunitarias();
     }
 
@@ -208,7 +208,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .DatEstadisticos }
      * 
      */
-    public AEATIVA2022 .DatEstadisticos createAEATIVA2018DatEstadisticos() {
+    public AEATIVA2022 .DatEstadisticos createAEATIVA2022DatEstadisticos() {
         return new AEATIVA2022 .DatEstadisticos();
     }
 
@@ -216,7 +216,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 }
      * 
      */
-    public AEATIVA2022 createAEATIVA2018() {
+    public AEATIVA2022 createAEATIVA2022() {
         return new AEATIVA2022();
     }
 
@@ -224,7 +224,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .Devengo.RegDevMensual }
      * 
      */
-    public AEATIVA2022 .Devengo.RegDevMensual createAEATIVA2018DevengoRegDevMensual() {
+    public AEATIVA2022 .Devengo.RegDevMensual createAEATIVA2022DevengoRegDevMensual() {
         return new AEATIVA2022 .Devengo.RegDevMensual();
     }
 
@@ -232,7 +232,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .IVADeducibleGrupo3 .Importaciones }
      * 
      */
-    public AEATIVA2022 .IVADeducibleGrupo3 .Importaciones createAEATIVA2018IVADeducibleGrupo3Importaciones() {
+    public AEATIVA2022 .IVADeducibleGrupo3 .Importaciones createAEATIVA2022IVADeducibleGrupo3Importaciones() {
         return new AEATIVA2022 .IVADeducibleGrupo3 .Importaciones();
     }
 
@@ -240,7 +240,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones.OpInterioresBienesInversion }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones.OpInterioresBienesInversion createAEATIVA2018RegGeneralDeduccionesOpInterioresBienesInversion() {
+    public AEATIVA2022 .RegGeneral.Deducciones.OpInterioresBienesInversion createAEATIVA2022RegGeneralDeduccionesOpInterioresBienesInversion() {
         return new AEATIVA2022 .RegGeneral.Deducciones.OpInterioresBienesInversion();
     }
 
@@ -256,7 +256,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegAgViajes }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegAgViajes createAEATIVA2018RegGeneralBaseImponibleyCuotaRegAgViajes() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegAgViajes createAEATIVA2022RegGeneralBaseImponibleyCuotaRegAgViajes() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegAgViajes();
     }
 
@@ -264,7 +264,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModBasesyCuotasConcursoAcreedores }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModBasesyCuotasConcursoAcreedores createAEATIVA2018RegGeneralBaseImponibleyCuotaModBasesyCuotasConcursoAcreedores() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModBasesyCuotasConcursoAcreedores createAEATIVA2022RegGeneralBaseImponibleyCuotaModBasesyCuotasConcursoAcreedores() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModBasesyCuotasConcursoAcreedores();
     }
 
@@ -272,7 +272,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .DatEstadisticos.Pral }
      * 
      */
-    public AEATIVA2022 .DatEstadisticos.Pral createAEATIVA2018DatEstadisticosPral() {
+    public AEATIVA2022 .DatEstadisticos.Pral createAEATIVA2022DatEstadisticosPral() {
         return new AEATIVA2022 .DatEstadisticos.Pral();
     }
 
@@ -288,7 +288,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones.RectifOpIntragrupo }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones.RectifOpIntragrupo createAEATIVA2018RegGeneralDeduccionesRectifOpIntragrupo() {
+    public AEATIVA2022 .RegGeneral.Deducciones.RectifOpIntragrupo createAEATIVA2022RegGeneralDeduccionesRectifOpIntragrupo() {
         return new AEATIVA2022 .RegGeneral.Deducciones.RectifOpIntragrupo();
     }
 
@@ -296,7 +296,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModRecargoEquivalencia }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModRecargoEquivalencia createAEATIVA2018RegGeneralBaseImponibleyCuotaModRecargoEquivalencia() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModRecargoEquivalencia createAEATIVA2022RegGeneralBaseImponibleyCuotaModRecargoEquivalencia() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModRecargoEquivalencia();
     }
 
@@ -304,7 +304,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegOrdinario }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegOrdinario createAEATIVA2018RegGeneralBaseImponibleyCuotaRegOrdinario() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegOrdinario createAEATIVA2022RegGeneralBaseImponibleyCuotaRegOrdinario() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegOrdinario();
     }
 
@@ -312,7 +312,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .IVADeducibleGrupo1 }
      * 
      */
-    public AEATIVA2022 .IVADeducibleGrupo1 createAEATIVA2018IVADeducibleGrupo1() {
+    public AEATIVA2022 .IVADeducibleGrupo1 createAEATIVA2022IVADeducibleGrupo1() {
         return new AEATIVA2022 .IVADeducibleGrupo1();
     }
 
@@ -320,7 +320,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones.ImportacionesBienesInversion }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones.ImportacionesBienesInversion createAEATIVA2018RegGeneralDeduccionesImportacionesBienesInversion() {
+    public AEATIVA2022 .RegGeneral.Deducciones.ImportacionesBienesInversion createAEATIVA2022RegGeneralDeduccionesImportacionesBienesInversion() {
         return new AEATIVA2022 .RegGeneral.Deducciones.ImportacionesBienesInversion();
     }
 
@@ -336,7 +336,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .IVADeducibleGrupo3 .OpInteriores }
      * 
      */
-    public AEATIVA2022 .IVADeducibleGrupo3 .OpInteriores createAEATIVA2018IVADeducibleGrupo3OpInteriores() {
+    public AEATIVA2022 .IVADeducibleGrupo3 .OpInteriores createAEATIVA2022IVADeducibleGrupo3OpInteriores() {
         return new AEATIVA2022 .IVADeducibleGrupo3 .OpInteriores();
     }
 
@@ -344,7 +344,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .OpEspecificas }
      * 
      */
-    public AEATIVA2022 .OpEspecificas createAEATIVA2018OpEspecificas() {
+    public AEATIVA2022 .OpEspecificas createAEATIVA2022OpEspecificas() {
         return new AEATIVA2022 .OpEspecificas();
     }
 
@@ -352,7 +352,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .DatEstadisticos.Conjunta }
      * 
      */
-    public AEATIVA2022 .DatEstadisticos.Conjunta createAEATIVA2018DatEstadisticosConjunta() {
+    public AEATIVA2022 .DatEstadisticos.Conjunta createAEATIVA2022DatEstadisticosConjunta() {
         return new AEATIVA2022 .DatEstadisticos.Conjunta();
     }
 
@@ -360,7 +360,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .Prorratas }
      * 
      */
-    public AEATIVA2022 .Prorratas createAEATIVA2018Prorratas() {
+    public AEATIVA2022 .Prorratas createAEATIVA2022Prorratas() {
         return new AEATIVA2022 .Prorratas();
     }
 
@@ -368,7 +368,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.AdqIntracomBienes }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.AdqIntracomBienes createAEATIVA2018RegGeneralBaseImponibleyCuotaAdqIntracomBienes() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.AdqIntracomBienes createAEATIVA2022RegGeneralBaseImponibleyCuotaAdqIntracomBienes() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.AdqIntracomBienes();
     }
 
@@ -376,7 +376,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RecargoEquivalencia }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RecargoEquivalencia createAEATIVA2018RegGeneralBaseImponibleyCuotaRecargoEquivalencia() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RecargoEquivalencia createAEATIVA2022RegGeneralBaseImponibleyCuotaRecargoEquivalencia() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RecargoEquivalencia();
     }
 
@@ -384,7 +384,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .IVADeducibleGrupo2 }
      * 
      */
-    public AEATIVA2022 .IVADeducibleGrupo2 createAEATIVA2018IVADeducibleGrupo2() {
+    public AEATIVA2022 .IVADeducibleGrupo2 createAEATIVA2022IVADeducibleGrupo2() {
         return new AEATIVA2022 .IVADeducibleGrupo2();
     }
 
@@ -392,7 +392,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones.AdqIntracomunitariasServicios }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones.AdqIntracomunitariasServicios createAEATIVA2018RegGeneralDeduccionesAdqIntracomunitariasServicios() {
+    public AEATIVA2022 .RegGeneral.Deducciones.AdqIntracomunitariasServicios createAEATIVA2022RegGeneralDeduccionesAdqIntracomunitariasServicios() {
         return new AEATIVA2022 .RegGeneral.Deducciones.AdqIntracomunitariasServicios();
     }
 
@@ -400,7 +400,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones createAEATIVA2018RegGeneralDeducciones() {
+    public AEATIVA2022 .RegGeneral.Deducciones createAEATIVA2022RegGeneralDeducciones() {
         return new AEATIVA2022 .RegGeneral.Deducciones();
     }
 
@@ -408,7 +408,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegSimplificado.IvaDevengado }
      * 
      */
-    public AEATIVA2022 .RegSimplificado.IvaDevengado createAEATIVA2018RegSimplificadoIvaDevengado() {
+    public AEATIVA2022 .RegSimplificado.IvaDevengado createAEATIVA2022RegSimplificadoIvaDevengado() {
         return new AEATIVA2022 .RegSimplificado.IvaDevengado();
     }
 
@@ -424,7 +424,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota createAEATIVA2018RegGeneralBaseImponibleyCuota() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota createAEATIVA2022RegGeneralBaseImponibleyCuota() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota();
     }
 
@@ -432,7 +432,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .ResLiquidaciones.PerNoRegGrupos.ExclusionBaja }
      * 
      */
-    public AEATIVA2022 .ResLiquidaciones.PerNoRegGrupos.ExclusionBaja createAEATIVA2018ResLiquidacionesPerNoRegGruposExclusionBaja() {
+    public AEATIVA2022 .ResLiquidaciones.PerNoRegGrupos.ExclusionBaja createAEATIVA2022ResLiquidacionesPerNoRegGruposExclusionBaja() {
         return new AEATIVA2022 .ResLiquidaciones.PerNoRegGrupos.ExclusionBaja();
     }
 
@@ -440,7 +440,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModRecargoEquivalenciaConcursoAcreedores }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModRecargoEquivalenciaConcursoAcreedores createAEATIVA2018RegGeneralBaseImponibleyCuotaModRecargoEquivalenciaConcursoAcreedores() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModRecargoEquivalenciaConcursoAcreedores createAEATIVA2022RegGeneralBaseImponibleyCuotaModRecargoEquivalenciaConcursoAcreedores() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModRecargoEquivalenciaConcursoAcreedores();
     }
 
@@ -448,7 +448,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegSimplificado.ActAgricGanadForest }
      * 
      */
-    public AEATIVA2022 .RegSimplificado.ActAgricGanadForest createAEATIVA2018RegSimplificadoActAgricGanadForest() {
+    public AEATIVA2022 .RegSimplificado.ActAgricGanadForest createAEATIVA2022RegSimplificadoActAgricGanadForest() {
         return new AEATIVA2022 .RegSimplificado.ActAgricGanadForest();
     }
 
@@ -456,7 +456,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .IVADeducibleGrupo1 .AdqIntracomunitarias }
      * 
      */
-    public AEATIVA2022 .IVADeducibleGrupo1 .AdqIntracomunitarias createAEATIVA2018IVADeducibleGrupo1AdqIntracomunitarias() {
+    public AEATIVA2022 .IVADeducibleGrupo1 .AdqIntracomunitarias createAEATIVA2022IVADeducibleGrupo1AdqIntracomunitarias() {
         return new AEATIVA2022 .IVADeducibleGrupo1 .AdqIntracomunitarias();
     }
 
@@ -464,7 +464,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegBienesUsados }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegBienesUsados createAEATIVA2018RegGeneralBaseImponibleyCuotaRegBienesUsados() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegBienesUsados createAEATIVA2022RegGeneralBaseImponibleyCuotaRegBienesUsados() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegBienesUsados();
     }
 
@@ -472,7 +472,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .Devengo.RegCriterioCajaNO }
      * 
      */
-    public AEATIVA2022 .Devengo.RegCriterioCajaNO createAEATIVA2018DevengoRegCriterioCajaNO() {
+    public AEATIVA2022 .Devengo.RegCriterioCajaNO createAEATIVA2022DevengoRegCriterioCajaNO() {
         return new AEATIVA2022 .Devengo.RegCriterioCajaNO();
     }
 
@@ -480,7 +480,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones.ImportacionesBienesCorrientes }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones.ImportacionesBienesCorrientes createAEATIVA2018RegGeneralDeduccionesImportacionesBienesCorrientes() {
+    public AEATIVA2022 .RegGeneral.Deducciones.ImportacionesBienesCorrientes createAEATIVA2022RegGeneralDeduccionesImportacionesBienesCorrientes() {
         return new AEATIVA2022 .RegGeneral.Deducciones.ImportacionesBienesCorrientes();
     }
 
@@ -488,7 +488,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .ResLiquidaciones.PerNoRegGrupos }
      * 
      */
-    public AEATIVA2022 .ResLiquidaciones.PerNoRegGrupos createAEATIVA2018ResLiquidacionesPerNoRegGrupos() {
+    public AEATIVA2022 .ResLiquidaciones.PerNoRegGrupos createAEATIVA2022ResLiquidacionesPerNoRegGrupos() {
         return new AEATIVA2022 .ResLiquidaciones.PerNoRegGrupos();
     }
 
@@ -504,7 +504,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .Devengo.ConcursoAcreedoresNO }
      * 
      */
-    public AEATIVA2022 .Devengo.ConcursoAcreedoresNO createAEATIVA2018DevengoConcursoAcreedoresNO() {
+    public AEATIVA2022 .Devengo.ConcursoAcreedoresNO createAEATIVA2022DevengoConcursoAcreedoresNO() {
         return new AEATIVA2022 .Devengo.ConcursoAcreedoresNO();
     }
 
@@ -512,7 +512,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .DatIdent }
      * 
      */
-    public AEATIVA2022 .DatIdent createAEATIVA2018DatIdent() {
+    public AEATIVA2022 .DatIdent createAEATIVA2022DatIdent() {
         return new AEATIVA2022 .DatIdent();
     }
 
@@ -536,7 +536,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegCriterioCaja }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegCriterioCaja createAEATIVA2018RegGeneralBaseImponibleyCuotaRegCriterioCaja() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegCriterioCaja createAEATIVA2022RegGeneralBaseImponibleyCuotaRegCriterioCaja() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.RegCriterioCaja();
     }
 
@@ -544,7 +544,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .Devengo.DecSustitutivaRectifica }
      * 
      */
-    public AEATIVA2022 .Devengo.DecSustitutivaRectifica createAEATIVA2018DevengoDecSustitutivaRectifica() {
+    public AEATIVA2022 .Devengo.DecSustitutivaRectifica createAEATIVA2022DevengoDecSustitutivaRectifica() {
         return new AEATIVA2022 .Devengo.DecSustitutivaRectifica();
     }
 
@@ -552,7 +552,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegSimplificado }
      * 
      */
-    public AEATIVA2022 .RegSimplificado createAEATIVA2018RegSimplificado() {
+    public AEATIVA2022 .RegSimplificado createAEATIVA2022RegSimplificado() {
         return new AEATIVA2022 .RegSimplificado();
     }
 
@@ -560,7 +560,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .OpEspecificas.EntregasCriterioCajaBase }
      * 
      */
-    public AEATIVA2022 .OpEspecificas.EntregasCriterioCajaBase createAEATIVA2018OpEspecificasEntregasCriterioCajaBase() {
+    public AEATIVA2022 .OpEspecificas.EntregasCriterioCajaBase createAEATIVA2022OpEspecificasEntregasCriterioCajaBase() {
         return new AEATIVA2022 .OpEspecificas.EntregasCriterioCajaBase();
     }
 
@@ -568,7 +568,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegSimplificado.IvaDeducible }
      * 
      */
-    public AEATIVA2022 .RegSimplificado.IvaDeducible createAEATIVA2018RegSimplificadoIvaDeducible() {
+    public AEATIVA2022 .RegSimplificado.IvaDeducible createAEATIVA2022RegSimplificadoIvaDeducible() {
         return new AEATIVA2022 .RegSimplificado.IvaDeducible();
     }
 
@@ -576,7 +576,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .Prorratas.Pro }
      * 
      */
-    public AEATIVA2022 .Prorratas.Pro createAEATIVA2018ProrratasPro() {
+    public AEATIVA2022 .Prorratas.Pro createAEATIVA2022ProrratasPro() {
         return new AEATIVA2022 .Prorratas.Pro();
     }
 
@@ -584,7 +584,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .IVADeducibleGrupo2 .Importaciones }
      * 
      */
-    public AEATIVA2022 .IVADeducibleGrupo2 .Importaciones createAEATIVA2018IVADeducibleGrupo2Importaciones() {
+    public AEATIVA2022 .IVADeducibleGrupo2 .Importaciones createAEATIVA2022IVADeducibleGrupo2Importaciones() {
         return new AEATIVA2022 .IVADeducibleGrupo2 .Importaciones();
     }
 
@@ -592,7 +592,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones.OpIntragrupoBienesInversion }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones.OpIntragrupoBienesInversion createAEATIVA2018RegGeneralDeduccionesOpIntragrupoBienesInversion() {
+    public AEATIVA2022 .RegGeneral.Deducciones.OpIntragrupoBienesInversion createAEATIVA2022RegGeneralDeduccionesOpIntragrupoBienesInversion() {
         return new AEATIVA2022 .RegGeneral.Deducciones.OpIntragrupoBienesInversion();
     }
 
@@ -608,7 +608,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModBasesyCuotas }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModBasesyCuotas createAEATIVA2018RegGeneralBaseImponibleyCuotaModBasesyCuotas() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModBasesyCuotas createAEATIVA2022RegGeneralBaseImponibleyCuotaModBasesyCuotas() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModBasesyCuotas();
     }
 
@@ -632,7 +632,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones.OpInterioresBienesServiciosCorrientes }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones.OpInterioresBienesServiciosCorrientes createAEATIVA2018RegGeneralDeduccionesOpInterioresBienesServiciosCorrientes() {
+    public AEATIVA2022 .RegGeneral.Deducciones.OpInterioresBienesServiciosCorrientes createAEATIVA2022RegGeneralDeduccionesOpInterioresBienesServiciosCorrientes() {
         return new AEATIVA2022 .RegGeneral.Deducciones.OpInterioresBienesServiciosCorrientes();
     }
 
@@ -640,7 +640,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones.RectifDeducciones }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones.RectifDeducciones createAEATIVA2018RegGeneralDeduccionesRectifDeducciones() {
+    public AEATIVA2022 .RegGeneral.Deducciones.RectifDeducciones createAEATIVA2022RegGeneralDeduccionesRectifDeducciones() {
         return new AEATIVA2022 .RegGeneral.Deducciones.RectifDeducciones();
     }
 
@@ -648,7 +648,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.TotalBasesyCuotasIVA }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.TotalBasesyCuotasIVA createAEATIVA2018RegGeneralBaseImponibleyCuotaTotalBasesyCuotasIVA() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.TotalBasesyCuotasIVA createAEATIVA2022RegGeneralBaseImponibleyCuotaTotalBasesyCuotasIVA() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.TotalBasesyCuotasIVA();
     }
 
@@ -656,7 +656,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones.AdqIntracomunitariasBienesInversion }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones.AdqIntracomunitariasBienesInversion createAEATIVA2018RegGeneralDeduccionesAdqIntracomunitariasBienesInversion() {
+    public AEATIVA2022 .RegGeneral.Deducciones.AdqIntracomunitariasBienesInversion createAEATIVA2022RegGeneralDeduccionesAdqIntracomunitariasBienesInversion() {
         return new AEATIVA2022 .RegGeneral.Deducciones.AdqIntracomunitariasBienesInversion();
     }
 
@@ -664,7 +664,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones.OpIntragrupoCorrientes }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones.OpIntragrupoCorrientes createAEATIVA2018RegGeneralDeduccionesOpIntragrupoCorrientes() {
+    public AEATIVA2022 .RegGeneral.Deducciones.OpIntragrupoCorrientes createAEATIVA2022RegGeneralDeduccionesOpIntragrupoCorrientes() {
         return new AEATIVA2022 .RegGeneral.Deducciones.OpIntragrupoCorrientes();
     }
 
@@ -672,7 +672,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegSimplificado.Actividad }
      * 
      */
-    public AEATIVA2022 .RegSimplificado.Actividad createAEATIVA2018RegSimplificadoActividad() {
+    public AEATIVA2022 .RegSimplificado.Actividad createAEATIVA2022RegSimplificadoActividad() {
         return new AEATIVA2022 .RegSimplificado.Actividad();
     }
 
@@ -688,7 +688,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .Devengo.DestRegCriterioCajaSI }
      * 
      */
-    public AEATIVA2022 .Devengo.DestRegCriterioCajaSI createAEATIVA2018DevengoDestRegCriterioCajaSI() {
+    public AEATIVA2022 .Devengo.DestRegCriterioCajaSI createAEATIVA2022DevengoDestRegCriterioCajaSI() {
         return new AEATIVA2022 .Devengo.DestRegCriterioCajaSI();
     }
 
@@ -696,7 +696,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .DatEstadisticos.OpTercerasPax }
      * 
      */
-    public AEATIVA2022 .DatEstadisticos.OpTercerasPax createAEATIVA2018DatEstadisticosOpTercerasPax() {
+    public AEATIVA2022 .DatEstadisticos.OpTercerasPax createAEATIVA2022DatEstadisticosOpTercerasPax() {
         return new AEATIVA2022 .DatEstadisticos.OpTercerasPax();
     }
 
@@ -704,7 +704,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .OpEspecificas.AdqCriterioCajaBase }
      * 
      */
-    public AEATIVA2022 .OpEspecificas.AdqCriterioCajaBase createAEATIVA2018OpEspecificasAdqCriterioCajaBase() {
+    public AEATIVA2022 .OpEspecificas.AdqCriterioCajaBase createAEATIVA2022OpEspecificasAdqCriterioCajaBase() {
         return new AEATIVA2022 .OpEspecificas.AdqCriterioCajaBase();
     }
 
@@ -720,7 +720,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModBasesyCuotasOpIntragrupo }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModBasesyCuotasOpIntragrupo createAEATIVA2018RegGeneralBaseImponibleyCuotaModBasesyCuotasOpIntragrupo() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModBasesyCuotasOpIntragrupo createAEATIVA2022RegGeneralBaseImponibleyCuotaModBasesyCuotasOpIntragrupo() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.ModBasesyCuotasOpIntragrupo();
     }
 
@@ -736,7 +736,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral }
      * 
      */
-    public AEATIVA2022 .RegGeneral createAEATIVA2018RegGeneral() {
+    public AEATIVA2022 .RegGeneral createAEATIVA2022RegGeneral() {
         return new AEATIVA2022 .RegGeneral();
     }
 
@@ -776,7 +776,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.Deducciones.ComRegAgricGanadPesca }
      * 
      */
-    public AEATIVA2022 .RegGeneral.Deducciones.ComRegAgricGanadPesca createAEATIVA2018RegGeneralDeduccionesComRegAgricGanadPesca() {
+    public AEATIVA2022 .RegGeneral.Deducciones.ComRegAgricGanadPesca createAEATIVA2022RegGeneralDeduccionesComRegAgricGanadPesca() {
         return new AEATIVA2022 .RegGeneral.Deducciones.ComRegAgricGanadPesca();
     }
 
@@ -784,7 +784,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .IVADeducibleGrupo1 .OpInteriores }
      * 
      */
-    public AEATIVA2022 .IVADeducibleGrupo1 .OpInteriores createAEATIVA2018IVADeducibleGrupo1OpInteriores() {
+    public AEATIVA2022 .IVADeducibleGrupo1 .OpInteriores createAEATIVA2022IVADeducibleGrupo1OpInteriores() {
         return new AEATIVA2022 .IVADeducibleGrupo1 .OpInteriores();
     }
 
@@ -792,7 +792,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .RegGeneral.BaseImponibleyCuota.AdqIntracomServicios }
      * 
      */
-    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.AdqIntracomServicios createAEATIVA2018RegGeneralBaseImponibleyCuotaAdqIntracomServicios() {
+    public AEATIVA2022 .RegGeneral.BaseImponibleyCuota.AdqIntracomServicios createAEATIVA2022RegGeneralBaseImponibleyCuotaAdqIntracomServicios() {
         return new AEATIVA2022 .RegGeneral.BaseImponibleyCuota.AdqIntracomServicios();
     }
 
@@ -800,7 +800,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .Administraciones }
      * 
      */
-    public AEATIVA2022 .Administraciones createAEATIVA2018Administraciones() {
+    public AEATIVA2022 .Administraciones createAEATIVA2022Administraciones() {
         return new AEATIVA2022 .Administraciones();
     }
 
@@ -808,7 +808,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .Devengo }
      * 
      */
-    public AEATIVA2022 .Devengo createAEATIVA2018Devengo() {
+    public AEATIVA2022 .Devengo createAEATIVA2022Devengo() {
         return new AEATIVA2022 .Devengo();
     }
 
@@ -816,7 +816,7 @@ public class ObjectFactory {
      * Create an instance of {@link AEATIVA2022 .Devengo.RegCriterioCajaSI }
      * 
      */
-    public AEATIVA2022 .Devengo.RegCriterioCajaSI createAEATIVA2018DevengoRegCriterioCajaSI() {
+    public AEATIVA2022 .Devengo.RegCriterioCajaSI createAEATIVA2022DevengoRegCriterioCajaSI() {
         return new AEATIVA2022 .Devengo.RegCriterioCajaSI();
     }
 

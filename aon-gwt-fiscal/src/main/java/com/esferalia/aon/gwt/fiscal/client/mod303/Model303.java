@@ -101,7 +101,9 @@ public class Model303 extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							aonLayout.showErrorPanel(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+							tabLayout.selectTab(INFORMATION_TAB);
+							closeFootPanel();
+							showNewDeclarationPanel( null );
 						}
 					});
 		}

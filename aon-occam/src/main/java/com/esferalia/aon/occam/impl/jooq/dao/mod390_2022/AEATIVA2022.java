@@ -11,6 +11,7 @@ package com.esferalia.aon.occam.impl.jooq.dao.mod390_2022;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -1042,7 +1043,7 @@ import javax.xml.bind.annotation.XmlType;
     "ivaDeducibleGrupo3",
     "sello"
 })
-@XmlRootElement(name = "AEATIVA2018")
+@XmlRootElement(name = "AEATIVA2022")
 public class AEATIVA2022 {
 
     @XmlElement(name = "IdDoc", required = true)

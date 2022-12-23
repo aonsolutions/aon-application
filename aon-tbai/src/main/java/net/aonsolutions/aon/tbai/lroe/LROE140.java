@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.Cabecera140Type;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.NIFPersonaType;
@@ -42,9 +43,9 @@ public class LROE140 extends LROE {
 		json.put(IJsonNames.APA, info.getSubcapitulo());
 		JSONObject json2 = new JSONObject();
 		json2.put(IJsonNames.NIF, person.getDocument().replace(" ", "")); 
-		json2.put(IJsonNames.NRS, person.getFirstName());
-		json2.put(IJsonNames.AP1, person.getFirstSurname()); 
-		json2.put(IJsonNames.AP2, person.getSecondSurname());
+		json2.put(IJsonNames.NRS, AonStringUtils.isNotBlank(person.getFirstName()) ? person.getFirstName() : person.getName());
+		if(AonStringUtils.isNotBlank(person.getFirstSurname())) json2.put(IJsonNames.AP1, person.getFirstSurname()); 
+		if(AonStringUtils.isNotBlank(person.getSecondSurname())) json2.put(IJsonNames.AP2, person.getSecondSurname());
 		json.put(IJsonNames.INTE, json2);
 
 		JSONObject drs = new JSONObject();

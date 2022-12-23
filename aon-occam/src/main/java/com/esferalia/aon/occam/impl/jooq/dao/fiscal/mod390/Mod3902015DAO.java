@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod390;
 
 import static com.esferalia.aon.jooq.tables.Finance.FINANCE;
 import static com.esferalia.aon.jooq.tables.FinanceTracking.FINANCE_TRACKING;
@@ -33,12 +33,12 @@ import com.esferalia.aon.jooq.tables.records.FsModel390Record;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.FarmerRegimeActivity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Mod390Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.SimpliedRegimeActivity;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015DetailKey;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.FarmerRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902015;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902015.Mod390Detail;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902015.SimpliedRegimeActivity;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902015DetailKey;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
@@ -50,6 +50,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.AEATIVA2015toMod390;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390_2015.Mod390toAEATIVA2015;
+import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableDouble;
@@ -509,9 +510,7 @@ public class Mod3902015DAO {
 		double prorrata = AonMathUtils.round( mutProrrata.doubleValue() / 100);
 		boolean mustApplyProrrata = (prorrata != AonMathUtils.round(0.00));		
 		
-		Date firstDay = AonDateUtils.getYearFirstDay(mod390.getYear());
-		Date lastDay = AonDateUtils.getYearLastDay(mod390.getYear());
-		VATDAO.getVatBreakdown(ctx, firstDay, lastDay, mod390)
+		VATDAO.getVatBreakdown(ctx, mod390)
 		.forEach(vc -> {
 			Mod3902015DetailKey[] keys = DetailKey.getKeys(vc);			
 			if (keys != null) {

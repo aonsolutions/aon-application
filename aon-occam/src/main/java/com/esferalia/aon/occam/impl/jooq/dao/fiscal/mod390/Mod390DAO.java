@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod390;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.FsModel390.FS_MODEL390;
@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -147,16 +148,16 @@ public class Mod390DAO {
 		
 	}
 
-	public static Mod390 create(AONContext ctx, Mod390 mod390) {
-		if (mod390.getYear() < 2015) {
-			throw new AonCoreException("La generaci\u00F3n de modelos anteriores al ejercicio 2014 no est\u00E1 soportada");
-		} else if (mod390.getYear() == 2015 || mod390.getYear() == 2016 || mod390.getYear() == 2017) {
-			return Mod3902015DAO.create(ctx, mod390);
-		} else if (mod390.getYear() == 2018 || mod390.getYear() == 2019 || mod390.getYear() == 2020) {
-			return Mod3902018DAO.create(ctx, mod390);
-		} 
-		return Mod3902018DAO.create(ctx, mod390);
-	}
+//	public static Mod390 create(AONContext ctx, Mod390 mod390) {
+//		if (mod390.getYear() < 2015) {
+//			throw new AonCoreException("La generaci\u00F3n de modelos anteriores al ejercicio 2014 no est\u00E1 soportada");
+//		} else if (mod390.getYear() == 2015 || mod390.getYear() == 2016 || mod390.getYear() == 2017) {
+//			return Mod3902015DAO.create(ctx, mod390);
+//		} else if (mod390.getYear() == 2018 || mod390.getYear() == 2019 || mod390.getYear() == 2020) {
+//			return Mod3902018DAO.create(ctx, mod390);
+//		} 
+//		return Mod3902018DAO.create(ctx, mod390);
+//	}
 
 	public static Mod390 initialize(AONContext ctx, int year) {
 		if (year == 0) {
@@ -165,11 +166,11 @@ public class Mod390DAO {
 			year = AonDateUtils.getYear(today);
 			if (month < 2) {
 				year = year - 1;
-			}
+			} 
 		}
 		
-		if (year < 2014) {
-			throw new AonCoreException("La generaci\u00F3n de modelos anteriores al ejercicio 2014 no est\u00E1 soportada");
+		if (year < 2018) {
+			throw new AonCoreException("La generaci\u00F3n de modelos anteriores al ejercicio 2018 no est\u00E1 soportada");
 		} 
 		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);
 		Mod390 mod390 = new Mod390();
