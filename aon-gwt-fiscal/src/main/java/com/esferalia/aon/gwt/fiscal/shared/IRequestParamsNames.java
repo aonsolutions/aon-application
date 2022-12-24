@@ -142,6 +142,7 @@ public interface IRequestParamsNames {
 	String SHOW_COVER = "showCover";
 	String SUBJECT = "subject";
 	String SURCHARGE = "surcharge";
+	String SURCHARGE_PERCENT = "surchargePercent";
 	String TEST = "test";
 	String TITLE = "title";
 	String TO_DATE = "toDate";

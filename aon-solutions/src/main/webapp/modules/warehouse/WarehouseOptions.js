@@ -6,6 +6,12 @@ export const ELABORATION = {
   icon: MATERIAL_ICONS.PRECISION_MANUFACTURING
 }
 
+export const SALES_PREPARATION = {
+  id: CONSTANT.SALES_PREPARATION.initCap(),
+  name: MSG.SALES_PREPARATION,
+  icon: MATERIAL_ICONS.SHOPPING_BAG
+}
+
 export const PACKAGING = {
   id: CONSTANT.PACKAGING.initCap(),
   name: MSG.PACKAGING,
@@ -26,6 +32,6 @@ export const WarehouseSidenav = {
   ELABORATION: {
     id: CONSTANT.ELABORATION.initCap(),
     name: MSG.ELABORATION.toUpperCase(),
-    options: [ELABORATION, PACKAGING, TAGS]
+    options: [ELABORATION, PACKAGING, SALES_PREPARATION, TAGS]
   }
 }

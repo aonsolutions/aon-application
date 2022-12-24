@@ -499,6 +499,11 @@ public class JsonParser {
 		if (percent != null) {
 			params.setPercent(percent.doubleValue());	
 		}
+		// ******************* PERCENT *******************
+		Number surchargePercent = (Number) jsonParams.get(IRequestParamsNames.SURCHARGE_PERCENT);
+		if (surchargePercent != null) {
+			params.setSurchargePercent(surchargePercent.doubleValue());	
+		}
 		// ******************* VAT_SUMMARY_TYPE ******************* 
 		Long type = (Long) jsonParams.get(IRequestParamsNames.VAT_SUMMARY_TYPE);
 		if (type != null) {

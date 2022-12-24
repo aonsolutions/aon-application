@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390.e2015;
 
-import static com.esferalia.aon.occam.api.model.fiscal.Mod3902015DetailKey.*;
+import static com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902015DetailKey.*;
 
 import java.io.Serializable;
 import java.util.EnumMap;
@@ -9,8 +9,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonBoxLabel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015.Model3902015Callback;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015.Mod390Detail;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902015DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902015DetailKey;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902015.Mod390Detail;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;

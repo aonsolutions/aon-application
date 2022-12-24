@@ -168,6 +168,7 @@ class SistemaREDITParts {
 	}
 	
 	// REGISTER IT CONFIRMATION HANDLE EXCEPTIONS
+	@Deprecated /** use SistemaREDITPart.registerItConfirmation*/
 	public static void registerItConfirmation(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja,
@@ -190,6 +191,7 @@ class SistemaREDITParts {
 	
 
 	// REGISTER IT END HANDLE EXCEPTIONS
+	@Deprecated /** use SistemaREDITPart.registerItAlta*/
 	public static void registerItAlta(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Date fbaja, Date falta, 
@@ -611,6 +613,7 @@ class SistemaREDITParts {
 	}
 
 	// report IT
+	@Deprecated /** use SistemaREDITPart.getITReport*/
 	public static byte[] pdfIt(InputStream certificateInputStream, String certificatePassword, String certificateType,
 			String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj, Date dateProcess)
 			throws IOException, InterruptedException, SegSocialException {

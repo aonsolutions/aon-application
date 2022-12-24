@@ -2,6 +2,7 @@ package nordigen;
 
 import static nordigen.NordigenUtils.isRequisitionLinked;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -260,7 +261,7 @@ public class AonNordigen {
 	
 	public static List<NordigenAccountTransaction> getPendingAccountTransactions(NordigenAccessToken token, String nordigenAccountId, Date dateFrom) throws Exception {
 		try {
-			JSONObject json = NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, dateFrom, new Date());
+			JSONObject json = NordigenAPI.getTransactions(token.getAccess(), nordigenAccountId, dateFrom, null);
 			if (json != null) {
 				
 				JSONObject transactionsJson = json.optJSONObject("transactions");

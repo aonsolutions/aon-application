@@ -6,8 +6,10 @@ import java.time.Month;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -30,7 +32,7 @@ public class CretaListener implements IdcParserListener {
 		public void clear() {
 			datosMap.clear();
 		}
-
+		
 		public boolean isEmpty() {
 			return datosMap.isEmpty();
 		}
@@ -45,6 +47,12 @@ public class CretaListener implements IdcParserListener {
 		public Tramo create() {
 			datosMap.values().forEach(super::addDato);
 			return super.create();
+		}
+
+		protected void clear(Predicate<DatoSolicitado> filter) {
+		    	List<String> clear = datosMap.keySet().stream()
+		    	.filter(key -> filter.test(datosMap.get(key))).toList();
+		    	clear.forEach(datosMap::remove);
 		}
 
 		private String getKey(DatoSolicitado dato) {
@@ -179,6 +187,12 @@ public class CretaListener implements IdcParserListener {
 			String quota, Date start, Date end) {
 		tramoBuilder.ifPresent( b -> {
 			switch (code) {
+			case "17": //APORT.NO OBL.SUS.EMP
+			    	// clean all different from 'Indicador'
+				b.clear( d-> "C".equalsIgnoreCase(d.getTipoDato()));
+				b.clear( d-> "H".equalsIgnoreCase(d.getTipoDato()));
+				addExpedienteRegulacionEmpleoTotal(b);
+				return;
 			case "21": //IT.CC.PAGO DELEGADO
 				b.clear();
 				addIncapacidadTemporalPagoDelegadoEstandar(b);
@@ -467,5 +481,9 @@ public class CretaListener implements IdcParserListener {
 		dataSolicitadoBuilder.setCodigo("603");
 		dataSolicitadoBuilder.setObligatorio(true);
 		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
+
+	private static void addExpedienteRegulacionEmpleoTotal(TramoBuilder tramoBuilder) {
+	    addMaternidadPaternidadTiempoCompleto(tramoBuilder);
 	}
 }

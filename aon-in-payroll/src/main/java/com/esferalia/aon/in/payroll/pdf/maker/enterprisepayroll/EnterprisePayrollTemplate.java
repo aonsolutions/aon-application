@@ -367,12 +367,13 @@ public class EnterprisePayrollTemplate extends PdfFile {
 			table.fillCell(0, "CENTRO DE TRABAJO");
 			if(t.mg.isActive("tipo"))
 				table.fillCell(1, "SUBTOTAL");
-			for (int i = t.mg.isActive("tipo") ? 2 : 1; i < subtotalAon.size(); i++)
+			for (int i = t.mg.isActive("tipo") ? 2 : 1; i < subtotalAon.size(); i++) {				
 				table.fillCell(i, toLatinNumber(subtotalAon.get(i)));
+			}
 			table.newRow();
 			painted = !painted;
 		}
-
+		
 		if (subtotalSs.stream().mapToDouble(p -> p).sum() != 0)
 		{
 			if (!painted) {

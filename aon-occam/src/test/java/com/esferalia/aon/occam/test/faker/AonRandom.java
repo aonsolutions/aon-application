@@ -477,7 +477,7 @@ public class AonRandom {
 			:null;
 	}
 	
-	public static Invoice generateRandomRetentionInvoices(final AONContext ctx, final Occam occam, final AonConfiguration configuration, WithholdingType withholdingType) {
+	public static Invoice generateRandomRetentionInvoice(final AONContext ctx, final Occam occam, final AonConfiguration configuration, WithholdingType withholdingType) {
 		Invoice inv = withholdingType.visit(new IWithholdingTypeVisitor<Invoice>() {
 			@Override
 			public Invoice visitProfessional(Invoice i) {

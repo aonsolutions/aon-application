@@ -3,11 +3,12 @@ import { AonApplication } from '../../components/aon-application.js';
 import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonMobileElaborationList } from './elaboration/aon-mobile-elaboration-list.js';
 import Apps from '../../services/app.js';
-import {WarehouseSidenav, ELABORATION, PACKAGING, TAGS } from './WarehouseOptions.js';
+import {WarehouseSidenav, ELABORATION, PACKAGING, SALES_PREPARATION, TAGS } from './WarehouseOptions.js';
 import { AonMobilePackaging } from './packaging/aon-mobile-packaging.js';
 import * as ACTION from '../actions.js';
 import { getWarehouses } from '../../services/warehouseService.js';
 import { AonDeliveryTag } from './deliveryTag/aon-delivery-tag.js';
+import { AonMobileSalesList } from '../sales/aon-mobile-sales-list.js';
 
 export class AonWarehouse extends AonElement {
 
@@ -82,6 +83,9 @@ export class AonWarehouse extends AonElement {
 		case PACKAGING.id:
 			this.aonPackaging();
 			break;
+		case SALES_PREPARATION.id:
+			this.aonSalesPreparation();
+			break;
 		case TAGS.id:
 			this.aonDeliveryTag();
 			break;
@@ -115,6 +119,12 @@ export class AonWarehouse extends AonElement {
 	aonPackaging() {
 		this.getApplication().removeFloatOption();
 		this.getApplication().setContent(new AonMobilePackaging());
+	}
+
+	aonSalesPreparation() {
+		this.getApplication().getToolbar().option = MSG.SALES_PREPARATION;
+		this.getApplication().removeFloatOption();
+		this.getApplication().setContent(new AonMobileSalesList());
 	}
 
 	aonDeliveryTag() {

@@ -5,7 +5,7 @@ import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902021;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902021;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class Mod3902021ServiceAsyncDecorator implements Mod3902021ServiceAsync {

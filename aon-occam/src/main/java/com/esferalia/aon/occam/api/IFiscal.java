@@ -4,9 +4,6 @@ import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalMatrixParams;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.InvoiceFiscalModels;
 import com.esferalia.aon.occam.api.model.fiscal.InvoiceModelReportParams;
@@ -30,12 +27,12 @@ public interface IFiscal {
 	public Stream<VatContext> getVatContext(AONContext ctx, AccountingReportParams params);
 	
 	// 			        FISCAL PANEL
-	public LinkedList<IFiscalModel> getFiscalPanel(AONContext ctx,int domain,FiscalMatrixParams params,int user);
+//	public LinkedList<IFiscalModel> getFiscalPanel(AONContext ctx,int domain,FiscalMatrixParams params,int user);
 	
 	// 			   FISCAL MODEL
-	public FiscalModel save(AONContext ctx, FiscalModel fm);
-	public void delete(AONContext ctx, FiscalModel fm);
-	public FiscalModel getModel(AONContext ctx, int id);
+//	public FiscalModel save(AONContext ctx, FiscalModel fm);
+//	public void delete(AONContext ctx, FiscalModel fm);
+//	public FiscalModel getModel(AONContext ctx, int id);
 	
 	// 						SII
 	Stream<VatContext> getSiiVatContext(AONContext ctx, AccountingReportParams params, String sii);

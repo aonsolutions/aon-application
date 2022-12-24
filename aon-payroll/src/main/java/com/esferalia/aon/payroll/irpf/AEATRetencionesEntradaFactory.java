@@ -39,18 +39,6 @@ import es.aeat.pret.rw13.jaxb.TipoRetenidoEntrada2013.SituacionLaboral.Pensionis
 import es.aeat.pret.rw13.jaxb.TipoRetenidoEntrada2013.SituacionLaboral.TrabajadorActivo;
 import es.aeat.pret.rw13.jaxb.TipoRetenidoEntrada2013.SituacionLaboral.TrabajadorActivo.MovilidadGeografica;
 import es.aeat.pret.rw13.jaxb.TipoRetenidoEntrada2013.SituacionLaboral.TrabajadorActivo.ProlongacionLaboral;
-import net.aonsolutions.core.aeat.jaxb.AEATRetencionesEntrada2016;
-import net.aonsolutions.core.aeat.jaxb.TipoRetenedorEntrada2016;
-import net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016;
-import net.aonsolutions.core.aeat.v2017.jaxb.AEATRetencionesEntrada2017;
-import net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenedorEntrada2017;
-import net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017;
-import net.aonsolutions.core.aeat.v2018.jaxb.AEATRetencionesEntrada2018;
-import net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenedorEntrada2018;
-import net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018;
-import net.aonsolutions.core.aeat.v2019.jaxb.AEATRetencionesEntrada2019;
-import net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenedorEntrada2019;
-import net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019;
 import net.aonsolutions.core.aeat.v2020.jaxb.AEATRetencionesEntrada2020;
 import net.aonsolutions.core.aeat.v2020.jaxb.TipoRetenedorEntrada2020;
 import net.aonsolutions.core.aeat.v2020.jaxb.TipoRetenidoEntrada2020;
@@ -60,6 +48,9 @@ import net.aonsolutions.core.aeat.v2021.jaxb.TipoRetenidoEntrada2021;
 import net.aonsolutions.core.aeat.v2022.jaxb.AEATRetencionesEntrada2022;
 import net.aonsolutions.core.aeat.v2022.jaxb.TipoRetenedorEntrada2022;
 import net.aonsolutions.core.aeat.v2022.jaxb.TipoRetenidoEntrada2022;
+import net.aonsolutions.core.aeat.v2023.jaxb.AEATRetencionesEntrada2023;
+import net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenedorEntrada2023;
+import net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023;
 
 public class AEATRetencionesEntradaFactory {
 
@@ -90,103 +81,6 @@ public class AEATRetencionesEntradaFactory {
 		return entrada2013;
 	}
 
-	public static AEATRetencionesEntrada2016 create2016(
-			IIrpfCalculatorContext ctx) throws SQLException,
-			ExpressionException {
-
-		AEATRetencionesEntrada2016 entrada2016 = new AEATRetencionesEntrada2016();
-
-		net.aonsolutions.core.aeat.jaxb.TipoRetenciones tipoRetenciones = new net.aonsolutions.core.aeat.jaxb.TipoRetenciones();
-		tipoRetenciones.setEjercicio(2016);
-		tipoRetenciones.setCodModelo("RET");
-		entrada2016.setIdDoc(tipoRetenciones);
-
-		List<TipoRetenedorEntrada2016> retenedores = entrada2016.getRetenedor();
-		TipoRetenedorEntrada2016 retenedor = new TipoRetenedorEntrada2016();
-
-		retenedor.setNif(ctx.getRetenedorNif());
-		retenedor.setApellidosNombre(ctx.getRetenedorApellidosNombre());
-		retenedores.add(retenedor);
-
-		List<TipoRetenidoEntrada2016> retenidos = retenedor.getRetenido();
-		TipoRetenidoEntrada2016 retenido = newTipoRetenidoEntrada2016(ctx);
-		retenidos.add(retenido);
-
-		return entrada2016;
-	}
-
-	public static AEATRetencionesEntrada2017 create2017(
-			IIrpfCalculatorContext ctx) throws SQLException,
-			ExpressionException {
-
-		AEATRetencionesEntrada2017 entrada2017 = new AEATRetencionesEntrada2017();
-
-		net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenciones tipoRetenciones = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenciones();
-		tipoRetenciones.setEjercicio(2017);
-		tipoRetenciones.setCodModelo("RET");
-		entrada2017.setIdDoc(tipoRetenciones);
-
-		List<TipoRetenedorEntrada2017> retenedores = entrada2017.getRetenedor();
-		TipoRetenedorEntrada2017 retenedor = new TipoRetenedorEntrada2017();
-
-		retenedor.setNif(ctx.getRetenedorNif());
-		retenedor.setApellidosNombre(ctx.getRetenedorApellidosNombre());
-		retenedores.add(retenedor);
-
-		List<TipoRetenidoEntrada2017> retenidos = retenedor.getRetenido();
-		TipoRetenidoEntrada2017 retenido = newTipoRetenidoEntrada2017(ctx);
-		retenidos.add(retenido);
-
-		return entrada2017;
-	}
-	public static AEATRetencionesEntrada2018 create2018(
-			IIrpfCalculatorContext ctx) throws SQLException,
-			ExpressionException {
-
-		AEATRetencionesEntrada2018 entrada2018 = new AEATRetencionesEntrada2018();
-
-		net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenciones tipoRetenciones = new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenciones();
-		tipoRetenciones.setEjercicio(2018);
-		tipoRetenciones.setCodModelo("RET");
-		entrada2018.setIdDoc(tipoRetenciones);
-
-		List<TipoRetenedorEntrada2018> retenedores = entrada2018.getRetenedor();
-		TipoRetenedorEntrada2018 retenedor = new TipoRetenedorEntrada2018();
-
-		retenedor.setNif(ctx.getRetenedorNif());
-		retenedor.setApellidosNombre(ctx.getRetenedorApellidosNombre());
-		retenedores.add(retenedor);
-
-		List<TipoRetenidoEntrada2018> retenidos = retenedor.getRetenido();
-		TipoRetenidoEntrada2018 retenido = newTipoRetenidoEntrada2018(ctx);
-		retenidos.add(retenido);
-
-		return entrada2018;
-	}
-	public static AEATRetencionesEntrada2019 create2019(
-			IIrpfCalculatorContext ctx) throws SQLException,
-			ExpressionException {
-
-		AEATRetencionesEntrada2019 entrada2019 = new AEATRetencionesEntrada2019();
-
-		net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenciones tipoRetenciones = new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenciones();
-		tipoRetenciones.setEjercicio(2019);
-		tipoRetenciones.setCodModelo("RET");
-		entrada2019.setIdDoc(tipoRetenciones);
-
-		List<TipoRetenedorEntrada2019> retenedores = entrada2019.getRetenedor();
-		TipoRetenedorEntrada2019 retenedor = new TipoRetenedorEntrada2019();
-
-		retenedor.setNif(ctx.getRetenedorNif());
-		retenedor.setApellidosNombre(ctx.getRetenedorApellidosNombre());
-		retenedores.add(retenedor);
-
-		List<TipoRetenidoEntrada2019> retenidos = retenedor.getRetenido();
-		TipoRetenidoEntrada2019 retenido = newTipoRetenidoEntrada2019(ctx);
-		retenidos.add(retenido);
-
-		return entrada2019;
-	}
 	public static AEATRetencionesEntrada2020 create2020(
 			IIrpfCalculatorContext ctx) throws SQLException,
 			ExpressionException {
@@ -261,6 +155,31 @@ public class AEATRetencionesEntradaFactory {
 
 		return entrada2022;
 	}
+
+	public static AEATRetencionesEntrada2023 create2023(
+		IIrpfCalculatorContext ctx) throws SQLException,
+		ExpressionException {
+
+        	AEATRetencionesEntrada2023 entrada2023 = new AEATRetencionesEntrada2023();
+        
+        	net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenciones tipoRetenciones = new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenciones();
+        	tipoRetenciones.setEjercicio(2023);
+        	tipoRetenciones.setCodModelo("RET");
+        	entrada2023.setIdDoc(tipoRetenciones);
+        
+        	List<TipoRetenedorEntrada2023> retenedores = entrada2023.getRetenedor();
+        	TipoRetenedorEntrada2023 retenedor = new TipoRetenedorEntrada2023();
+        
+        	retenedor.setNif(ctx.getRetenedorNif());
+        	retenedor.setApellidosNombre(ctx.getRetenedorApellidosNombre());
+        	retenedores.add(retenedor);
+        
+        	List<TipoRetenidoEntrada2023> retenidos = retenedor.getRetenido();
+        	TipoRetenidoEntrada2023 retenido = newTipoRetenidoEntrada2023(ctx);
+        	retenidos.add(retenido);
+        
+        	return entrada2023;
+        }
 	// --------------------------------------------------------- Private methods
 
 	private static TipoRetenidoEntrada2013 newTipoRetenidoEntrada2013(
@@ -433,354 +352,6 @@ public class AEATRetencionesEntradaFactory {
 	}
 
 	// ------------------------------------------------------------------- 2016
-
-	private static TipoRetenidoEntrada2016 newTipoRetenidoEntrada2016(
-			IIrpfCalculatorContext ctx) {
-
-		TipoRetenidoEntrada2016 retenido = new TipoRetenidoEntrada2016();
-		// ------------------------------------ Datos personales
-
-		retenido.setNif(ctx.getNif());
-		retenido.setApellidosNombre(ctx.getApellidosNombre());
-		retenido.setAñoNacimiento(ctx.getAñoNacimiento());
-
-		if (ctx.getResidenciaCeutaMelilla()) {
-
-			retenido.setResidenciaCeutaMelilla(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.ResidenciaCeutaMelilla());
-		}
-		retenido.setDiscapacidad(getAeat15Discapacidad2016(ctx.getDiscapacidad(),
-				ctx.getMovilidadReducida()));
-		retenido.setSituacionFamiliar(getAeat15Situacionfamiliar2016(
-				ctx.getSituacionFamiliar(), ctx.getNifConyuge()));
-		retenido.setSituacionLaboral(getAeat15SituacionLaboral2016(
-				ctx.getSituacionLaboral(), ctx.getContrato(),
-				ctx.getMovilidadGeografica(), ctx.getProlongacionLaboral()));
-		// --------------------------------------- Descendientes
-		List<net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente> descendientes = retenido.getDescendiente();
-		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente descendiente : ctx
-				.getDescendientes()) {
-			descendientes.add(getAeat15Descendiente2016(descendiente));
-		}
-		// ---------------------------------------- Ascendientes
-		List<net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente> ascendientes = retenido.getAscendiente();
-		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente ascendiente : ctx
-				.getAscendientes()) {
-			ascendientes.add(getAeat15Ascendiente2016(ascendiente));
-		}
-
-		// ------------------------------------ Datos económicos
-		retenido.setRetribAnuales(ctx.getRetribAnuales());
-
-		BigDecimal irregularidad1 = ctx.getIrregularidad1();
-		BigDecimal irregularidad2 = ctx.getIrregularidad2();
-		if (irregularidad1 != null || irregularidad2 != null) {
-			net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Reducciones reducciones = new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Reducciones();
-			reducciones.setIrregularidad1(irregularidad1);
-			reducciones.setIrregularidad2(irregularidad2);
-			retenido.setReducciones(reducciones);
-		}
-
-		//retenido.setGastosAnuales(ctx.getGastosAnuales());
-		retenido.setCotizaciones(ctx.getGastosAnuales());
-		
-		if (ctx.getRdtosObtenidosCeutaMelilla())
-			retenido.setRdtosObtenidosCeutaMelilla(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.RdtosObtenidosCeutaMelilla());
-		retenido.setPensionCompensatoria(ctx.getPensionCompensatoria());
-		retenido.setAnualidadesHijos(ctx.getAnualidadesHijos());
-		if (ctx.getPagoPrestamosVivienda())
-			retenido.setPagoPrestamosVivienda(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.PagoPrestamosVivienda());
-
-		// -------------------------------------- Regularización
-		CausaRegularizacion causaRegularizacion = ctx.getCausaRegularizacion();
-		if (causaRegularizacion != null) {
-			net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Regularizacion regularizacion = 
-					new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Regularizacion();
-			List<Integer> causas = regularizacion.getCausa();
-			causas.add(causaRegularizacion.getValue());
-
-			regularizacion.setRetribSatisfechas(ctx.getRetribSatisfechas());
-			regularizacion.setRetencionPracticada(ctx.getRetencionPracticada());
-			regularizacion.setRetribAnualesIniciales(ctx
-					.getRetribAnualesIniciales());
-			regularizacion.setRetencionAnualInicial(ctx
-					.getRetencionAnualInicial());
-			if (ctx.getResidenciaInicialCeutaMelilla())
-				regularizacion
-						.setResidenciaInicialCeutaMelilla(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Regularizacion.ResidenciaInicialCeutaMelilla());
-			regularizacion.setBaseRetencion(ctx.getBaseRetencion());
-			regularizacion.setMinimoPersonalFamiliarInicial(ctx
-					.getMinimoPersonalFamiliarInicial());
-			regularizacion.setTipoRetencion(ctx.getTipoRetencion());
-			regularizacion.setMinoracionPrestamosVivienda(ctx
-					.getMinoracionPrestamosVivienda());
-
-			retenido.setRegularizacion(regularizacion);
-		}
-
-		return retenido;
-
-	}
-	
-	private static TipoRetenidoEntrada2017 newTipoRetenidoEntrada2017(
-			IIrpfCalculatorContext ctx) {
-
-		TipoRetenidoEntrada2017 retenido = new TipoRetenidoEntrada2017();
-		// ------------------------------------ Datos personales
-
-		retenido.setNif(ctx.getNif());
-		retenido.setApellidosNombre(ctx.getApellidosNombre());
-		retenido.setAñoNacimiento(ctx.getAñoNacimiento());
-
-		if (ctx.getResidenciaCeutaMelilla()) {
-
-			retenido.setResidenciaCeutaMelilla(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.ResidenciaCeutaMelilla());
-		}
-		retenido.setDiscapacidad(getAeat15Discapacidad2017(ctx.getDiscapacidad(),
-				ctx.getMovilidadReducida()));
-		retenido.setSituacionFamiliar(getAeat15Situacionfamiliar2017(
-				ctx.getSituacionFamiliar(), ctx.getNifConyuge()));
-		retenido.setSituacionLaboral(getAeat15SituacionLaboral2017(
-				ctx.getSituacionLaboral(), ctx.getContrato(),
-				ctx.getMovilidadGeografica(), ctx.getProlongacionLaboral()));
-		// --------------------------------------- Descendientes
-		List<net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente> descendientes = retenido.getDescendiente();
-		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente descendiente : ctx
-				.getDescendientes()) {
-			descendientes.add(getAeat15Descendiente2017(descendiente));
-		}
-		// ---------------------------------------- Ascendientes
-		List<net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Ascendiente> ascendientes = retenido.getAscendiente();
-		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente ascendiente : ctx
-				.getAscendientes()) {
-			ascendientes.add(getAeat15Ascendiente2017(ascendiente));
-		}
-
-		// ------------------------------------ Datos económicos
-		retenido.setRetribAnuales(ctx.getRetribAnuales());
-
-		BigDecimal irregularidad1 = ctx.getIrregularidad1();
-		BigDecimal irregularidad2 = ctx.getIrregularidad2();
-		if (irregularidad1 != null || irregularidad2 != null) {
-			net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Reducciones reducciones = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Reducciones();
-			reducciones.setIrregularidad1(irregularidad1);
-			reducciones.setIrregularidad2(irregularidad2);
-			retenido.setReducciones(reducciones);
-		}
-
-		//retenido.setGastosAnuales(ctx.getGastosAnuales());
-		retenido.setCotizaciones(ctx.getGastosAnuales());
-		
-		if (ctx.getRdtosObtenidosCeutaMelilla())
-			retenido.setRdtosObtenidosCeutaMelilla(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.RdtosObtenidosCeutaMelilla());
-		retenido.setPensionCompensatoria(ctx.getPensionCompensatoria());
-		retenido.setAnualidadesHijos(ctx.getAnualidadesHijos());
-		if (ctx.getPagoPrestamosVivienda())
-			retenido.setPagoPrestamosVivienda(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.PagoPrestamosVivienda());
-
-		// -------------------------------------- Regularización
-		CausaRegularizacion causaRegularizacion = ctx.getCausaRegularizacion();
-		if (causaRegularizacion != null) {
-			net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Regularizacion regularizacion = 
-					new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Regularizacion();
-			List<Integer> causas = regularizacion.getCausa();
-			causas.add(causaRegularizacion.getValue());
-
-			regularizacion.setRetribSatisfechas(ctx.getRetribSatisfechas());
-			regularizacion.setRetencionPracticada(ctx.getRetencionPracticada());
-			regularizacion.setRetribAnualesIniciales(ctx
-					.getRetribAnualesIniciales());
-			regularizacion.setRetencionAnualInicial(ctx
-					.getRetencionAnualInicial());
-			if (ctx.getResidenciaInicialCeutaMelilla())
-				regularizacion
-						.setResidenciaInicialCeutaMelilla(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Regularizacion.ResidenciaInicialCeutaMelilla());
-			regularizacion.setBaseRetencion(ctx.getBaseRetencion());
-			regularizacion.setMinimoPersonalFamiliarInicial(ctx
-					.getMinimoPersonalFamiliarInicial());
-			regularizacion.setTipoRetencion(ctx.getTipoRetencion());
-			regularizacion.setMinoracionPrestamosVivienda(ctx
-					.getMinoracionPrestamosVivienda());
-
-			retenido.setRegularizacion(regularizacion);
-		}
-
-		return retenido;
-
-	}
-
-	private static TipoRetenidoEntrada2018 newTipoRetenidoEntrada2018(
-			IIrpfCalculatorContext ctx) {
-
-		TipoRetenidoEntrada2018 retenido = new TipoRetenidoEntrada2018();
-		// ------------------------------------ Datos personales
-
-		retenido.setNif(ctx.getNif());
-		retenido.setApellidosNombre(ctx.getApellidosNombre());
-		retenido.setAñoNacimiento(ctx.getAñoNacimiento());
-
-		if (ctx.getResidenciaCeutaMelilla()) {
-
-			retenido.setResidenciaCeutaMelilla(new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.ResidenciaCeutaMelilla());
-		}
-		retenido.setDiscapacidad(getAeat15Discapacidad2018(ctx.getDiscapacidad(),
-				ctx.getMovilidadReducida()));
-		retenido.setSituacionFamiliar(getAeat15Situacionfamiliar2018(
-				ctx.getSituacionFamiliar(), ctx.getNifConyuge()));
-		retenido.setSituacionLaboral(getAeat15SituacionLaboral2018(
-				ctx.getSituacionLaboral(), ctx.getContrato(),
-				ctx.getMovilidadGeografica(), ctx.getProlongacionLaboral()));
-		// --------------------------------------- Descendientes
-		List<net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Descendiente> descendientes = retenido.getDescendiente();
-		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente descendiente : ctx
-				.getDescendientes()) {
-			descendientes.add(getAeat15Descendiente2018(descendiente));
-		}
-		// ---------------------------------------- Ascendientes
-		List<net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Ascendiente> ascendientes = retenido.getAscendiente();
-		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente ascendiente : ctx
-				.getAscendientes()) {
-			ascendientes.add(getAeat15Ascendiente2018(ascendiente));
-		}
-
-		// ------------------------------------ Datos económicos
-		retenido.setRetribAnuales(ctx.getRetribAnuales());
-
-		BigDecimal irregularidad1 = ctx.getIrregularidad1();
-		BigDecimal irregularidad2 = ctx.getIrregularidad2();
-		if (irregularidad1 != null || irregularidad2 != null) {
-			net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Reducciones reducciones = new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Reducciones();
-			reducciones.setIrregularidad1(irregularidad1);
-			reducciones.setIrregularidad2(irregularidad2);
-			retenido.setReducciones(reducciones);
-		}
-
-		//retenido.setGastosAnuales(ctx.getGastosAnuales());
-		retenido.setCotizaciones(ctx.getGastosAnuales());
-		
-		if (ctx.getRdtosObtenidosCeutaMelilla())
-			retenido.setRdtosObtenidosCeutaMelilla(new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.RdtosObtenidosCeutaMelilla());
-		retenido.setPensionCompensatoria(ctx.getPensionCompensatoria());
-		retenido.setAnualidadesHijos(ctx.getAnualidadesHijos());
-		if (ctx.getPagoPrestamosVivienda())
-			retenido.setPagoPrestamosVivienda(new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.PagoPrestamosVivienda());
-
-		// -------------------------------------- Regularización
-		CausaRegularizacion causaRegularizacion = ctx.getCausaRegularizacion();
-		if (causaRegularizacion != null) {
-			net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Regularizacion regularizacion = 
-					new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Regularizacion();
-			List<Integer> causas = regularizacion.getCausa();
-			causas.add(causaRegularizacion.getValue());
-
-			regularizacion.setRetribSatisfechas(ctx.getRetribSatisfechas());
-			regularizacion.setRetencionPracticada(ctx.getRetencionPracticada());
-			regularizacion.setRetribAnualesIniciales(ctx
-					.getRetribAnualesIniciales());
-			regularizacion.setRetencionAnualInicial(ctx
-					.getRetencionAnualInicial());
-			if (ctx.getResidenciaInicialCeutaMelilla())
-				regularizacion
-						.setResidenciaInicialCeutaMelilla(new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Regularizacion.ResidenciaInicialCeutaMelilla());
-			regularizacion.setBaseRetencion(ctx.getBaseRetencion());
-			regularizacion.setMinimoPersonalFamiliarInicial(ctx
-					.getMinimoPersonalFamiliarInicial());
-			regularizacion.setTipoRetencion(ctx.getTipoRetencion());
-			regularizacion.setMinoracionPrestamosVivienda(ctx
-					.getMinoracionPrestamosVivienda());
-
-			retenido.setRegularizacion(regularizacion);
-		}
-
-		return retenido;
-
-	}
-
-	private static TipoRetenidoEntrada2019 newTipoRetenidoEntrada2019(
-			IIrpfCalculatorContext ctx) {
-
-		TipoRetenidoEntrada2019 retenido = new TipoRetenidoEntrada2019();
-		// ------------------------------------ Datos personales
-
-		retenido.setNif(ctx.getNif());
-		retenido.setApellidosNombre(ctx.getApellidosNombre());
-		retenido.setAñoNacimiento(ctx.getAñoNacimiento());
-
-		if (ctx.getResidenciaCeutaMelilla()) {
-
-			retenido.setResidenciaCeutaMelilla(new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.ResidenciaCeutaMelilla());
-		}
-		retenido.setDiscapacidad(getAeat15Discapacidad2019(ctx.getDiscapacidad(),
-				ctx.getMovilidadReducida()));
-		retenido.setSituacionFamiliar(getAeat15Situacionfamiliar2019(
-				ctx.getSituacionFamiliar(), ctx.getNifConyuge()));
-		retenido.setSituacionLaboral(getAeat15SituacionLaboral2019(
-				ctx.getSituacionLaboral(), ctx.getContrato(),
-				ctx.getMovilidadGeografica(), ctx.getProlongacionLaboral()));
-		// --------------------------------------- Descendientes
-		List<net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Descendiente> descendientes = retenido.getDescendiente();
-		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente descendiente : ctx
-				.getDescendientes()) {
-			descendientes.add(getAeat15Descendiente2019(descendiente));
-		}
-		// ---------------------------------------- Ascendientes
-		List<net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Ascendiente> ascendientes = retenido.getAscendiente();
-		for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente ascendiente : ctx
-				.getAscendientes()) {
-			ascendientes.add(getAeat15Ascendiente2019(ascendiente));
-		}
-
-		// ------------------------------------ Datos económicos
-		retenido.setRetribAnuales(ctx.getRetribAnuales());
-
-		BigDecimal irregularidad1 = ctx.getIrregularidad1();
-		BigDecimal irregularidad2 = ctx.getIrregularidad2();
-		if (irregularidad1 != null || irregularidad2 != null) {
-			net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Reducciones reducciones = new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Reducciones();
-			reducciones.setIrregularidad1(irregularidad1);
-			reducciones.setIrregularidad2(irregularidad2);
-			retenido.setReducciones(reducciones);
-		}
-
-		//retenido.setGastosAnuales(ctx.getGastosAnuales());
-		retenido.setCotizaciones(ctx.getGastosAnuales());
-		
-		if (ctx.getRdtosObtenidosCeutaMelilla())
-			retenido.setRdtosObtenidosCeutaMelilla(new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.RdtosObtenidosCeutaMelilla());
-		retenido.setPensionCompensatoria(ctx.getPensionCompensatoria());
-		retenido.setAnualidadesHijos(ctx.getAnualidadesHijos());
-		if (ctx.getPagoPrestamosVivienda())
-			retenido.setPagoPrestamosVivienda(new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.PagoPrestamosVivienda());
-
-		// -------------------------------------- Regularización
-		CausaRegularizacion causaRegularizacion = ctx.getCausaRegularizacion();
-		if (causaRegularizacion != null) {
-			net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Regularizacion regularizacion = 
-					new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Regularizacion();
-			List<Integer> causas = regularizacion.getCausa();
-			causas.add(causaRegularizacion.getValue());
-
-			regularizacion.setRetribSatisfechas(ctx.getRetribSatisfechas());
-			regularizacion.setRetencionPracticada(ctx.getRetencionPracticada());
-			regularizacion.setRetribAnualesIniciales(ctx
-					.getRetribAnualesIniciales());
-			regularizacion.setRetencionAnualInicial(ctx
-					.getRetencionAnualInicial());
-			if (ctx.getResidenciaInicialCeutaMelilla())
-				regularizacion
-						.setResidenciaInicialCeutaMelilla(new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Regularizacion.ResidenciaInicialCeutaMelilla());
-			regularizacion.setBaseRetencion(ctx.getBaseRetencion());
-			regularizacion.setMinimoPersonalFamiliarInicial(ctx
-					.getMinimoPersonalFamiliarInicial());
-			regularizacion.setTipoRetencion(ctx.getTipoRetencion());
-			regularizacion.setMinoracionPrestamosVivienda(ctx
-					.getMinoracionPrestamosVivienda());
-
-			retenido.setRegularizacion(regularizacion);
-		}
-
-		return retenido;
-
-	}
 
 	private static TipoRetenidoEntrada2020 newTipoRetenidoEntrada2020(
 			IIrpfCalculatorContext ctx) {
@@ -1043,56 +614,93 @@ public class AEATRetencionesEntradaFactory {
 
 	}
 
-	private static net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad getAeat15Discapacidad2016(
-			Discapacidad discapacidad, boolean movilidadReducida) {
-		if (discapacidad == Discapacidad.GRADO0)
-			return null;
-		net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad tipoDiscapacidad = new net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad();
-		if (discapacidad == Discapacidad.GRADO1) {
-			net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad.Grado1 grado1 = new net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad.Grado1();
-			if (movilidadReducida) {
-				grado1.setMovilidadReducida(new net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad.Grado1.MovilidadReducida());
-			}
-			tipoDiscapacidad.setGrado1(grado1);
-		} else if (discapacidad == Discapacidad.GRADO2) {
-			tipoDiscapacidad.setGrado2(new net.aonsolutions.core.aeat.jaxb.TipoDiscapacidad.Grado2());
-		}
-		return tipoDiscapacidad;
-	}
+	private static TipoRetenidoEntrada2023 newTipoRetenidoEntrada2023(
+		IIrpfCalculatorContext ctx) {
 
-	private static net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad getAeat15Discapacidad2017(
-			Discapacidad discapacidad, boolean movilidadReducida) {
-		if (discapacidad == Discapacidad.GRADO0)
-			return null;
-		net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad tipoDiscapacidad = new net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad();
-		if (discapacidad == Discapacidad.GRADO1) {
-			net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad.Grado1 grado1 = new net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad.Grado1();
-			if (movilidadReducida) {
-				grado1.setMovilidadReducida(new net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad.Grado1.MovilidadReducida());
-			}
-			tipoDiscapacidad.setGrado1(grado1);
-		} else if (discapacidad == Discapacidad.GRADO2) {
-			tipoDiscapacidad.setGrado2(new net.aonsolutions.core.aeat.v2017.jaxb.TipoDiscapacidad.Grado2());
-		}
-		return tipoDiscapacidad;
+        	TipoRetenidoEntrada2023 retenido = new TipoRetenidoEntrada2023();
+        	// ------------------------------------ Datos personales
+        
+        	retenido.setNif(ctx.getNif());
+        	retenido.setApellidosNombre(ctx.getApellidosNombre());
+        	retenido.setAñoNacimiento(ctx.getAñoNacimiento());
+        
+        	if (ctx.getResidenciaCeutaMelilla()) {
+        
+        		retenido.setResidenciaCeutaMelilla(new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.ResidenciaCeutaMelilla());
+        	}
+        	retenido.setDiscapacidad(getAeat15Discapacidad2023(ctx.getDiscapacidad(),
+        			ctx.getMovilidadReducida()));
+        	retenido.setSituacionFamiliar(getAeat15Situacionfamiliar2023(
+        			ctx.getSituacionFamiliar(), ctx.getNifConyuge()));
+        	retenido.setSituacionLaboral(getAeat15SituacionLaboral2023(
+        			ctx.getSituacionLaboral(), ctx.getContrato(),
+        			ctx.getMovilidadGeografica(), ctx.getProlongacionLaboral()));
+        	// --------------------------------------- Descendientes
+        	List<net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Descendiente> descendientes = retenido.getDescendiente();
+        	for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente descendiente : ctx
+        			.getDescendientes()) {
+        		descendientes.add(getAeat15Descendiente2023(descendiente));
+        	}
+        	// ---------------------------------------- Ascendientes
+        	List<net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Ascendiente> ascendientes = retenido.getAscendiente();
+        	for (com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente ascendiente : ctx
+        			.getAscendientes()) {
+        		ascendientes.add(getAeat15Ascendiente2023(ascendiente));
+        	}
+        
+        	// ------------------------------------ Datos económicos
+        	retenido.setRetribAnuales(ctx.getRetribAnuales());
+        
+        	BigDecimal irregularidad1 = ctx.getIrregularidad1();
+        	BigDecimal irregularidad2 = ctx.getIrregularidad2();
+        	if (irregularidad1 != null || irregularidad2 != null) {
+        		net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Reducciones reducciones = new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Reducciones();
+        		reducciones.setIrregularidad1(irregularidad1);
+        		reducciones.setIrregularidad2(irregularidad2);
+        		retenido.setReducciones(reducciones);
+        	}
+        
+        	//retenido.setGastosAnuales(ctx.getGastosAnuales());
+        	retenido.setCotizaciones(ctx.getGastosAnuales());
+        	
+        	if (ctx.getRdtosObtenidosCeutaMelilla())
+        		retenido.setRdtosObtenidosCeutaMelilla(new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.RdtosObtenidosCeutaMelilla());
+        	retenido.setPensionCompensatoria(ctx.getPensionCompensatoria());
+        	retenido.setAnualidadesHijos(ctx.getAnualidadesHijos());
+        	if (ctx.getPagoPrestamosVivienda())
+        		retenido.setPagoPrestamosVivienda(new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.PagoPrestamosVivienda());
+        
+        	// -------------------------------------- Regularización
+        	CausaRegularizacion causaRegularizacion = ctx.getCausaRegularizacion();
+        	if (causaRegularizacion != null) {
+        		net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Regularizacion regularizacion = 
+        				new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Regularizacion();
+        		List<Integer> causas = regularizacion.getCausa();
+        		causas.add(causaRegularizacion.getValue());
+        
+        		regularizacion.setRetribSatisfechas(ctx.getRetribSatisfechas());
+        		regularizacion.setRetencionPracticada(ctx.getRetencionPracticada());
+        		regularizacion.setRetribAnualesIniciales(ctx
+        				.getRetribAnualesIniciales());
+        		regularizacion.setRetencionAnualInicial(ctx
+        				.getRetencionAnualInicial());
+        		if (ctx.getResidenciaInicialCeutaMelilla())
+        			regularizacion
+        					.setResidenciaInicialCeutaMelilla(new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Regularizacion.ResidenciaInicialCeutaMelilla());
+        		regularizacion.setBaseRetencion(ctx.getBaseRetencion());
+        		regularizacion.setMinimoPersonalFamiliarInicial(ctx
+        				.getMinimoPersonalFamiliarInicial());
+        		regularizacion.setTipoRetencion(ctx.getTipoRetencion());
+        		regularizacion.setMinoracionPrestamosVivienda(ctx
+        				.getMinoracionPrestamosVivienda());
+        
+        		retenido.setRegularizacion(regularizacion);
+        	}
+        
+        	return retenido;
+        
 	}
-
-	private static net.aonsolutions.core.aeat.v2018.jaxb.TipoDiscapacidad getAeat15Discapacidad2018(
-			Discapacidad discapacidad, boolean movilidadReducida) {
-		if (discapacidad == Discapacidad.GRADO0)
-			return null;
-		net.aonsolutions.core.aeat.v2018.jaxb.TipoDiscapacidad tipoDiscapacidad = new net.aonsolutions.core.aeat.v2018.jaxb.TipoDiscapacidad();
-		if (discapacidad == Discapacidad.GRADO1) {
-			net.aonsolutions.core.aeat.v2018.jaxb.TipoDiscapacidad.Grado1 grado1 = new net.aonsolutions.core.aeat.v2018.jaxb.TipoDiscapacidad.Grado1();
-			if (movilidadReducida) {
-				grado1.setMovilidadReducida(new net.aonsolutions.core.aeat.v2018.jaxb.TipoDiscapacidad.Grado1.MovilidadReducida());
-			}
-			tipoDiscapacidad.setGrado1(grado1);
-		} else if (discapacidad == Discapacidad.GRADO2) {
-			tipoDiscapacidad.setGrado2(new net.aonsolutions.core.aeat.v2018.jaxb.TipoDiscapacidad.Grado2());
-		}
-		return tipoDiscapacidad;
-	}
+	
 	private static net.aonsolutions.core.aeat.v2020.jaxb.TipoDiscapacidad getAeat15Discapacidad2020(
 			Discapacidad discapacidad, boolean movilidadReducida) {
 		if (discapacidad == Discapacidad.GRADO0)
@@ -1141,68 +749,22 @@ public class AEATRetencionesEntradaFactory {
 		}
 		return tipoDiscapacidad;
 	}
-	private static net.aonsolutions.core.aeat.v2019.jaxb.TipoDiscapacidad getAeat15Discapacidad2019(
-			Discapacidad discapacidad, boolean movilidadReducida) {
-		if (discapacidad == Discapacidad.GRADO0)
-			return null;
-		net.aonsolutions.core.aeat.v2019.jaxb.TipoDiscapacidad tipoDiscapacidad = new net.aonsolutions.core.aeat.v2019.jaxb.TipoDiscapacidad();
-		if (discapacidad == Discapacidad.GRADO1) {
-			net.aonsolutions.core.aeat.v2019.jaxb.TipoDiscapacidad.Grado1 grado1 = new net.aonsolutions.core.aeat.v2019.jaxb.TipoDiscapacidad.Grado1();
-			if (movilidadReducida) {
-				grado1.setMovilidadReducida(new net.aonsolutions.core.aeat.v2019.jaxb.TipoDiscapacidad.Grado1.MovilidadReducida());
-			}
-			tipoDiscapacidad.setGrado1(grado1);
-		} else if (discapacidad == Discapacidad.GRADO2) {
-			tipoDiscapacidad.setGrado2(new net.aonsolutions.core.aeat.v2019.jaxb.TipoDiscapacidad.Grado2());
-		}
-		return tipoDiscapacidad;
-	}
-	private static net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar getAeat15Situacionfamiliar2016(
-			SituacionFamiliar _situacionFamiliar, String nifConyuge) {
-		net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar situacionFamiliar = new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar();
-		if (SituacionFamiliar.UNO == _situacionFamiliar) {
-			situacionFamiliar.setSituacion1(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion1());
-		} else if (SituacionFamiliar.DOS == _situacionFamiliar) {
-			net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion2 situacion2 = 
-					new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion2();
-			situacion2.setNifConyuge(nifConyuge);
-			situacionFamiliar.setSituacion2(situacion2);
-		} else {
-			situacionFamiliar.setSituacion3(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionFamiliar.Situacion3());
-		}
-		return situacionFamiliar;
-	}
 
-	private static net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar getAeat15Situacionfamiliar2017(
-			SituacionFamiliar _situacionFamiliar, String nifConyuge) {
-		net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar situacionFamiliar = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar();
-		if (SituacionFamiliar.UNO == _situacionFamiliar) {
-			situacionFamiliar.setSituacion1(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar.Situacion1());
-		} else if (SituacionFamiliar.DOS == _situacionFamiliar) {
-			net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar.Situacion2 situacion2 = 
-					new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar.Situacion2();
-			situacion2.setNifConyuge(nifConyuge);
-			situacionFamiliar.setSituacion2(situacion2);
-		} else {
-			situacionFamiliar.setSituacion3(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionFamiliar.Situacion3());
-		}
-		return situacionFamiliar;
-	}
-
-	private static net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionFamiliar getAeat15Situacionfamiliar2018(
-			SituacionFamiliar _situacionFamiliar, String nifConyuge) {
-		net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionFamiliar situacionFamiliar = new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionFamiliar();
-		if (SituacionFamiliar.UNO == _situacionFamiliar) {
-			situacionFamiliar.setSituacion1(new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionFamiliar.Situacion1());
-		} else if (SituacionFamiliar.DOS == _situacionFamiliar) {
-			net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionFamiliar.Situacion2 situacion2 = 
-					new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionFamiliar.Situacion2();
-			situacion2.setNifConyuge(nifConyuge);
-			situacionFamiliar.setSituacion2(situacion2);
-		} else {
-			situacionFamiliar.setSituacion3(new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionFamiliar.Situacion3());
-		}
-		return situacionFamiliar;
+	private static net.aonsolutions.core.aeat.v2023.jaxb.TipoDiscapacidad getAeat15Discapacidad2023(
+		Discapacidad discapacidad, boolean movilidadReducida) {
+        	if (discapacidad == Discapacidad.GRADO0)
+        		return null;
+        	net.aonsolutions.core.aeat.v2023.jaxb.TipoDiscapacidad tipoDiscapacidad = new net.aonsolutions.core.aeat.v2023.jaxb.TipoDiscapacidad();
+        	if (discapacidad == Discapacidad.GRADO1) {
+        		net.aonsolutions.core.aeat.v2023.jaxb.TipoDiscapacidad.Grado1 grado1 = new net.aonsolutions.core.aeat.v2023.jaxb.TipoDiscapacidad.Grado1();
+        		if (movilidadReducida) {
+        			grado1.setMovilidadReducida(new net.aonsolutions.core.aeat.v2023.jaxb.TipoDiscapacidad.Grado1.MovilidadReducida());
+        		}
+        		tipoDiscapacidad.setGrado1(grado1);
+        	} else if (discapacidad == Discapacidad.GRADO2) {
+        		tipoDiscapacidad.setGrado2(new net.aonsolutions.core.aeat.v2023.jaxb.TipoDiscapacidad.Grado2());
+        	}
+        	return tipoDiscapacidad;
 	}
 
 	private static net.aonsolutions.core.aeat.v2020.jaxb.TipoRetenidoEntrada2020.SituacionFamiliar getAeat15Situacionfamiliar2020(
@@ -1235,6 +797,7 @@ public class AEATRetencionesEntradaFactory {
 		}
 		return situacionFamiliar;
 	}
+
 	private static net.aonsolutions.core.aeat.v2022.jaxb.TipoRetenidoEntrada2022.SituacionFamiliar getAeat15Situacionfamiliar2022(
 			SituacionFamiliar _situacionFamiliar, String nifConyuge) {
 		net.aonsolutions.core.aeat.v2022.jaxb.TipoRetenidoEntrada2022.SituacionFamiliar situacionFamiliar = new net.aonsolutions.core.aeat.v2022.jaxb.TipoRetenidoEntrada2022.SituacionFamiliar();
@@ -1250,59 +813,21 @@ public class AEATRetencionesEntradaFactory {
 		}
 		return situacionFamiliar;
 	}
-	private static net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionFamiliar getAeat15Situacionfamiliar2019(
-			SituacionFamiliar _situacionFamiliar, String nifConyuge) {
-		net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionFamiliar situacionFamiliar = new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionFamiliar();
-		if (SituacionFamiliar.UNO == _situacionFamiliar) {
-			situacionFamiliar.setSituacion1(new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionFamiliar.Situacion1());
-		} else if (SituacionFamiliar.DOS == _situacionFamiliar) {
-			net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionFamiliar.Situacion2 situacion2 = 
-					new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionFamiliar.Situacion2();
-			situacion2.setNifConyuge(nifConyuge);
-			situacionFamiliar.setSituacion2(situacion2);
-		} else {
-			situacionFamiliar.setSituacion3(new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionFamiliar.Situacion3());
-		}
-		return situacionFamiliar;
-	}
 
-	private static net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente getAeat15Descendiente2016(
-			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente _descendiente) {
-		net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente descendiente = new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente();
-		descendiente.setAñoNacimiento(_descendiente.getAñoNacimiento());
-		descendiente.setAñoAdopcion(_descendiente.getAñoAdopcion());
-		descendiente.setDiscapacidad(getAeat15Discapacidad2016(
-				_descendiente.getDiscapacidad(),
-				_descendiente.getMovilidadReducida()));
-		if (_descendiente.getComputadoEntero())
-			descendiente.setComputadoEntero(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Descendiente.ComputadoEntero());
-		return descendiente;
-	}
-
-	private static net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente getAeat15Descendiente2017(
-			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente _descendiente) {
-		net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente descendiente = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente();
-		descendiente.setAñoNacimiento(_descendiente.getAñoNacimiento());
-		descendiente.setAñoAdopcion(_descendiente.getAñoAdopcion());
-		descendiente.setDiscapacidad(getAeat15Discapacidad2017(
-				_descendiente.getDiscapacidad(),
-				_descendiente.getMovilidadReducida()));
-		if (_descendiente.getComputadoEntero())
-			descendiente.setComputadoEntero(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Descendiente.ComputadoEntero());
-		return descendiente;
-	}
-
-	private static net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Descendiente getAeat15Descendiente2018(
-			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente _descendiente) {
-		net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Descendiente descendiente = new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Descendiente();
-		descendiente.setAñoNacimiento(_descendiente.getAñoNacimiento());
-		descendiente.setAñoAdopcion(_descendiente.getAñoAdopcion());
-		descendiente.setDiscapacidad(getAeat15Discapacidad2018(
-				_descendiente.getDiscapacidad(),
-				_descendiente.getMovilidadReducida()));
-		if (_descendiente.getComputadoEntero())
-			descendiente.setComputadoEntero(new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Descendiente.ComputadoEntero());
-		return descendiente;
+	private static net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionFamiliar getAeat15Situacionfamiliar2023(
+		SituacionFamiliar _situacionFamiliar, String nifConyuge) {
+        	net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionFamiliar situacionFamiliar = new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionFamiliar();
+        	if (SituacionFamiliar.UNO == _situacionFamiliar) {
+        		situacionFamiliar.setSituacion1(new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionFamiliar.Situacion1());
+        	} else if (SituacionFamiliar.DOS == _situacionFamiliar) {
+        		net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionFamiliar.Situacion2 situacion2 = 
+        				new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionFamiliar.Situacion2();
+        		situacion2.setNifConyuge(nifConyuge);
+        		situacionFamiliar.setSituacion2(situacion2);
+        	} else {
+        		situacionFamiliar.setSituacion3(new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionFamiliar.Situacion3());
+        	}
+        	return situacionFamiliar;
 	}
 
 	private static net.aonsolutions.core.aeat.v2020.jaxb.TipoRetenidoEntrada2020.Descendiente getAeat15Descendiente2020(
@@ -1329,6 +854,7 @@ public class AEATRetencionesEntradaFactory {
 			descendiente.setComputadoEntero(new net.aonsolutions.core.aeat.v2021.jaxb.TipoRetenidoEntrada2021.Descendiente.ComputadoEntero());
 		return descendiente;
 	}
+
 	private static net.aonsolutions.core.aeat.v2022.jaxb.TipoRetenidoEntrada2022.Descendiente getAeat15Descendiente2022(
 			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente _descendiente) {
 		net.aonsolutions.core.aeat.v2022.jaxb.TipoRetenidoEntrada2022.Descendiente descendiente = new net.aonsolutions.core.aeat.v2022.jaxb.TipoRetenidoEntrada2022.Descendiente();
@@ -1341,62 +867,18 @@ public class AEATRetencionesEntradaFactory {
 			descendiente.setComputadoEntero(new net.aonsolutions.core.aeat.v2022.jaxb.TipoRetenidoEntrada2022.Descendiente.ComputadoEntero());
 		return descendiente;
 	}
-	private static net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Descendiente getAeat15Descendiente2019(
-			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente _descendiente) {
-		net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Descendiente descendiente = new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Descendiente();
-		descendiente.setAñoNacimiento(_descendiente.getAñoNacimiento());
-		descendiente.setAñoAdopcion(_descendiente.getAñoAdopcion());
-		descendiente.setDiscapacidad(getAeat15Discapacidad2019(
-				_descendiente.getDiscapacidad(),
-				_descendiente.getMovilidadReducida()));
-		if (_descendiente.getComputadoEntero())
-			descendiente.setComputadoEntero(new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Descendiente.ComputadoEntero());
-		return descendiente;
-	}
 
-	private static net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente getAeat15Ascendiente2016(
-			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente _ascendiente) {
-		net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente ascendiente = new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.Ascendiente();
-		ascendiente.setAñoNacimiento(_ascendiente.getAñoNacimiento());
-		ascendiente.setDiscapacidad(getAeat15Discapacidad2016(
-				_ascendiente.getDiscapacidad(),
-				_ascendiente.getMovilidadReducida()));
-		Convivencia convivencia = _ascendiente.getConvivecia();
-		if (convivencia == null) {
-			convivencia = Convivencia.UNO;
-		}
-		ascendiente.setConvivencia(convivencia.getValue());
-		return ascendiente;
-	}
-
-	private static net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Ascendiente getAeat15Ascendiente2017(
-			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente _ascendiente) {
-		net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Ascendiente ascendiente = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.Ascendiente();
-		ascendiente.setAñoNacimiento(_ascendiente.getAñoNacimiento());
-		ascendiente.setDiscapacidad(getAeat15Discapacidad2017(
-				_ascendiente.getDiscapacidad(),
-				_ascendiente.getMovilidadReducida()));
-		Convivencia convivencia = _ascendiente.getConvivecia();
-		if (convivencia == null) {
-			convivencia = Convivencia.UNO;
-		}
-		ascendiente.setConvivencia(convivencia.getValue());
-		return ascendiente;
-	}
-
-	private static net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Ascendiente getAeat15Ascendiente2018(
-			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente _ascendiente) {
-		net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Ascendiente ascendiente = new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.Ascendiente();
-		ascendiente.setAñoNacimiento(_ascendiente.getAñoNacimiento());
-		ascendiente.setDiscapacidad(getAeat15Discapacidad2018(
-				_ascendiente.getDiscapacidad(),
-				_ascendiente.getMovilidadReducida()));
-		Convivencia convivencia = _ascendiente.getConvivecia();
-		if (convivencia == null) {
-			convivencia = Convivencia.UNO;
-		}
-		ascendiente.setConvivencia(convivencia.getValue());
-		return ascendiente;
+	private static net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Descendiente getAeat15Descendiente2023(
+		com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Descendiente _descendiente) {
+        	net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Descendiente descendiente = new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Descendiente();
+        	descendiente.setAñoNacimiento(_descendiente.getAñoNacimiento());
+        	descendiente.setAñoAdopcion(_descendiente.getAñoAdopcion());
+        	descendiente.setDiscapacidad(getAeat15Discapacidad2023(
+        			_descendiente.getDiscapacidad(),
+        			_descendiente.getMovilidadReducida()));
+        	if (_descendiente.getComputadoEntero())
+        		descendiente.setComputadoEntero(new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Descendiente.ComputadoEntero());
+        	return descendiente;
 	}
 
 	private static net.aonsolutions.core.aeat.v2020.jaxb.TipoRetenidoEntrada2020.Ascendiente getAeat15Ascendiente2020(
@@ -1444,110 +926,21 @@ public class AEATRetencionesEntradaFactory {
 		return ascendiente;
 	}
 
-	private static net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Ascendiente getAeat15Ascendiente2019(
-			com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente _ascendiente) {
-		net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Ascendiente ascendiente = new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.Ascendiente();
-		ascendiente.setAñoNacimiento(_ascendiente.getAñoNacimiento());
-		ascendiente.setDiscapacidad(getAeat15Discapacidad2019(
-				_ascendiente.getDiscapacidad(),
-				_ascendiente.getMovilidadReducida()));
-		Convivencia convivencia = _ascendiente.getConvivecia();
-		if (convivencia == null) {
-			convivencia = Convivencia.UNO;
-		}
-		ascendiente.setConvivencia(convivencia.getValue());
-		return ascendiente;
+	private static net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Ascendiente getAeat15Ascendiente2023(
+		com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente _ascendiente) {
+        	net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Ascendiente ascendiente = new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.Ascendiente();
+        	ascendiente.setAñoNacimiento(_ascendiente.getAñoNacimiento());
+        	ascendiente.setDiscapacidad(getAeat15Discapacidad2023(
+        			_ascendiente.getDiscapacidad(),
+        			_ascendiente.getMovilidadReducida()));
+        	Convivencia convivencia = _ascendiente.getConvivecia();
+        	if (convivencia == null) {
+        		convivencia = Convivencia.UNO;
+        	}
+        	ascendiente.setConvivencia(convivencia.getValue());
+        	return ascendiente;
 	}
 
-	private static net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral getAeat15SituacionLaboral2016(
-			SituacionLaboral _situacionLaboral, Contrato contrato,
-			boolean movilidadGeografica, boolean prolongacionLaboral) {
-		net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral situacionLaboral = new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral();
-		if (SituacionLaboral.DESEMPLEADO == _situacionLaboral) {
-			situacionLaboral.setDesempleado(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.Desempleado());
-		} else if (SituacionLaboral.PENSIONISTA == _situacionLaboral) {
-			situacionLaboral.setPensionista(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.Pensionista());
-		} else if (SituacionLaboral.TRABAJADOR_ACTIVO == _situacionLaboral) {
-			net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.TrabajadorActivo trabajadorActivo = new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.TrabajadorActivo();
-			if (contrato == null)
-				contrato = Contrato.UNO;
-			trabajadorActivo.setContrato(contrato.getValue());
-			if (movilidadGeografica)
-				trabajadorActivo
-						.setMovilidadGeografica(new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.TrabajadorActivo.MovilidadGeografica());
-			
-			/* At 2016 NOT Found
-			if (prolongacionLaboral)
-				trabajadorActivo
-						.setProlongacionLaboral(new ProlongacionLaboral());
-			*/
-			
-			situacionLaboral.setTrabajadorActivo(trabajadorActivo);
-		} else {
-			situacionLaboral.setOtraSituacion( new net.aonsolutions.core.aeat.jaxb.TipoRetenidoEntrada2016.SituacionLaboral.OtraSituacion());
-		}
-		return situacionLaboral;
-	}
-
-	private static net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral getAeat15SituacionLaboral2017(
-			SituacionLaboral _situacionLaboral, Contrato contrato,
-			boolean movilidadGeografica, boolean prolongacionLaboral) {
-		net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral situacionLaboral = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral();
-		if (SituacionLaboral.DESEMPLEADO == _situacionLaboral) {
-			situacionLaboral.setDesempleado(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.Desempleado());
-		} else if (SituacionLaboral.PENSIONISTA == _situacionLaboral) {
-			situacionLaboral.setPensionista(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.Pensionista());
-		} else if (SituacionLaboral.TRABAJADOR_ACTIVO == _situacionLaboral) {
-			net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.TrabajadorActivo trabajadorActivo = new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.TrabajadorActivo();
-			if (contrato == null)
-				contrato = Contrato.UNO;
-			trabajadorActivo.setContrato(contrato.getValue());
-			if (movilidadGeografica)
-				trabajadorActivo
-						.setMovilidadGeografica(new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.TrabajadorActivo.MovilidadGeografica());
-			
-			/* At 2016 NOT Found
-			if (prolongacionLaboral)
-				trabajadorActivo
-						.setProlongacionLaboral(new ProlongacionLaboral());
-			*/
-			
-			situacionLaboral.setTrabajadorActivo(trabajadorActivo);
-		} else {
-			situacionLaboral.setOtraSituacion( new net.aonsolutions.core.aeat.v2017.jaxb.TipoRetenidoEntrada2017.SituacionLaboral.OtraSituacion());
-		}
-		return situacionLaboral;
-	}
-
-	private static net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionLaboral getAeat15SituacionLaboral2018(
-			SituacionLaboral _situacionLaboral, Contrato contrato,
-			boolean movilidadGeografica, boolean prolongacionLaboral) {
-		net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionLaboral situacionLaboral = new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionLaboral();
-		if (SituacionLaboral.DESEMPLEADO == _situacionLaboral) {
-			situacionLaboral.setDesempleado(new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionLaboral.Desempleado());
-		} else if (SituacionLaboral.PENSIONISTA == _situacionLaboral) {
-			situacionLaboral.setPensionista(new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionLaboral.Pensionista());
-		} else if (SituacionLaboral.TRABAJADOR_ACTIVO == _situacionLaboral) {
-			net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionLaboral.TrabajadorActivo trabajadorActivo = new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionLaboral.TrabajadorActivo();
-			if (contrato == null)
-				contrato = Contrato.UNO;
-			trabajadorActivo.setContrato(contrato.getValue());
-			if (movilidadGeografica)
-				trabajadorActivo
-						.setMovilidadGeografica(new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionLaboral.TrabajadorActivo.MovilidadGeografica());
-			
-			/* At 2016 NOT Found
-			if (prolongacionLaboral)
-				trabajadorActivo
-						.setProlongacionLaboral(new ProlongacionLaboral());
-			*/
-			
-			situacionLaboral.setTrabajadorActivo(trabajadorActivo);
-		} else {
-			situacionLaboral.setOtraSituacion( new net.aonsolutions.core.aeat.v2018.jaxb.TipoRetenidoEntrada2018.SituacionLaboral.OtraSituacion());
-		}
-		return situacionLaboral;
-	}
 	private static net.aonsolutions.core.aeat.v2020.jaxb.TipoRetenidoEntrada2020.SituacionLaboral getAeat15SituacionLaboral2020(
 			SituacionLaboral _situacionLaboral, Contrato contrato,
 			boolean movilidadGeografica, boolean prolongacionLaboral) {
@@ -1635,33 +1028,34 @@ public class AEATRetencionesEntradaFactory {
 		}
 		return situacionLaboral;
 	}
-	private static net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionLaboral getAeat15SituacionLaboral2019(
-			SituacionLaboral _situacionLaboral, Contrato contrato,
-			boolean movilidadGeografica, boolean prolongacionLaboral) {
-		net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionLaboral situacionLaboral = new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionLaboral();
-		if (SituacionLaboral.DESEMPLEADO == _situacionLaboral) {
-			situacionLaboral.setDesempleado(new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionLaboral.Desempleado());
-		} else if (SituacionLaboral.PENSIONISTA == _situacionLaboral) {
-			situacionLaboral.setPensionista(new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionLaboral.Pensionista());
-		} else if (SituacionLaboral.TRABAJADOR_ACTIVO == _situacionLaboral) {
-			net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionLaboral.TrabajadorActivo trabajadorActivo = new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionLaboral.TrabajadorActivo();
-			if (contrato == null)
-				contrato = Contrato.UNO;
-			trabajadorActivo.setContrato(contrato.getValue());
-			if (movilidadGeografica)
-				trabajadorActivo
-						.setMovilidadGeografica(new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionLaboral.TrabajadorActivo.MovilidadGeografica());
-			
-			/* At 2016 NOT Found
-			if (prolongacionLaboral)
-				trabajadorActivo
-						.setProlongacionLaboral(new ProlongacionLaboral());
-			*/
-			
-			situacionLaboral.setTrabajadorActivo(trabajadorActivo);
-		} else {
-			situacionLaboral.setOtraSituacion( new net.aonsolutions.core.aeat.v2019.jaxb.TipoRetenidoEntrada2019.SituacionLaboral.OtraSituacion());
-		}
-		return situacionLaboral;
-	}
+
+	private static net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionLaboral getAeat15SituacionLaboral2023(
+		SituacionLaboral _situacionLaboral, Contrato contrato,
+		boolean movilidadGeografica, boolean prolongacionLaboral) {
+        	net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionLaboral situacionLaboral = new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionLaboral();
+        	if (SituacionLaboral.DESEMPLEADO == _situacionLaboral) {
+        		situacionLaboral.setDesempleado(new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionLaboral.Desempleado());
+        	} else if (SituacionLaboral.PENSIONISTA == _situacionLaboral) {
+        		situacionLaboral.setPensionista(new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionLaboral.Pensionista());
+        	} else if (SituacionLaboral.TRABAJADOR_ACTIVO == _situacionLaboral) {
+        		net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionLaboral.TrabajadorActivo trabajadorActivo = new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionLaboral.TrabajadorActivo();
+        		if (contrato == null)
+        			contrato = Contrato.UNO;
+        		trabajadorActivo.setContrato(contrato.getValue());
+        		if (movilidadGeografica)
+        			trabajadorActivo
+        					.setMovilidadGeografica(new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionLaboral.TrabajadorActivo.MovilidadGeografica());
+        		
+        		/* At 2016 NOT Found
+        		if (prolongacionLaboral)
+        			trabajadorActivo
+        					.setProlongacionLaboral(new ProlongacionLaboral());
+        		*/
+        		
+        		situacionLaboral.setTrabajadorActivo(trabajadorActivo);
+        	} else {
+        		situacionLaboral.setOtraSituacion( new net.aonsolutions.core.aeat.v2023.jaxb.TipoRetenidoEntrada2023.SituacionLaboral.OtraSituacion());
+        	}
+        	return situacionLaboral;
+        }
 }

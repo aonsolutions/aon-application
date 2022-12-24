@@ -2014,7 +2014,6 @@ public abstract class ITWidget extends ResizeComposite {
 			protected void onRemoveITPartTGSS(ItNotExist ItNotExist) {
 				confirmDeleteITToTGSS(ItNotExist);
 			}
-			
     	};
     	
     	ITDialogObject itDialogObject = new ITDialogObject(itEmployee);
@@ -2236,7 +2235,7 @@ public abstract class ITWidget extends ResizeComposite {
 	protected abstract void removeITParts(List<ItNotExist> list, Consumer<Void> success, Consumer<Throwable> failure);
 	
 	protected abstract void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure);
-
+	
 	public void setFooter(SplitLayoutPanel splitLayoutPanel, TabLayoutPanel tabLayout, AonMinimizePanel footPanel) {
 		this.splitLayoutPanel.remove(this.footPanel);
 		this.footPanel = footPanel;
