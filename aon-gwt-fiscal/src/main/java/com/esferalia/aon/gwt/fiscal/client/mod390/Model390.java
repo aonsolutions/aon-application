@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2015.Model3902015;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2021.Model3902021;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2022.Model3902022;
 import com.esferalia.aon.gwt.fiscal.client.model.IFiscalModelCallback;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
@@ -72,7 +73,7 @@ public class Model390 extends MainEntryPoint {
 		}
 		@Override
 		public void onNew() {
-			onNew( 2021 );
+			onNew( 0 );
 		}
 		@Override
 		public void onRemove(Mod390 model) {
@@ -133,6 +134,7 @@ public class Model390 extends MainEntryPoint {
 				}
 			});
 		}
+		
 		private void showResetDeclarationPopup(Model390ModuleOptions options, Mod390 newMod390, Mod390 oldMod390) {
 			cleanErrorMessage();
 			cleanAndClose();
@@ -299,11 +301,6 @@ public class Model390 extends MainEntryPoint {
 		}
 	}
 
-	// ********************************************************
-	// ********************************************************
-	// ********************************************************
-	// ********************************************************
-	// ********************************************************
 	private void onSelect(Model390ModuleOptions options, Integer id ) {
 		LOGGER.info("OnSelect Model390 with a ID: " + options.getFiscalModelId());
 		MOD390_SERVICE.getMod390(options.getOccam(), id , new AsyncCallback<Mod390>() {
@@ -335,15 +332,14 @@ public class Model390 extends MainEntryPoint {
 	private void select(Model390ModuleOptions options, Mod390 selected) {
 		cleanErrorMessage();
 		if (selected.isAEAT()) {
-			if (selected.getYear() == 2015 || selected.getYear() == 2016 || selected.getYear() == 2017) {
-				Model3902015 model3902015 = new Model3902015(new Model390Callback(),selected);
-				declarationContainer.setWidget(model3902015);
-			}  else if (selected.getYear() == 2018 || selected.getYear() == 2019 || selected.getYear() == 2020) {
-				Model3902018 model3902018 = new Model3902018(new Model390Callback(),selected);
-				declarationContainer.setWidget(model3902018);
+			if (selected.getYear() == 2022) {
+				declarationContainer.setWidget(new Model3902022(new Model390Callback(),selected));
 			}  else if (selected.getYear() == 2021) {
-				Model3902021 model3902021 = new Model3902021(new Model390Callback(),selected);
-				declarationContainer.setWidget(model3902021);
+				declarationContainer.setWidget(new Model3902021(new Model390Callback(),selected));
+			}  else if (selected.getYear() == 2018 || selected.getYear() == 2019 || selected.getYear() == 2020) {
+				declarationContainer.setWidget(new Model3902018(new Model390Callback(),selected));
+			} else if (selected.getYear() == 2015 || selected.getYear() == 2016 || selected.getYear() == 2017) {
+				declarationContainer.setWidget(new Model3902015(new Model390Callback(),selected));
 			} else {
 				showErrorMessage("Administraci\u00F3n y/o ejercicio no soportado.");
 			}

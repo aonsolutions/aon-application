@@ -49,6 +49,16 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 public abstract class ServicioREDRegeXML {
 	protected static final String DATE_FORMAT = "dd/MM/yyyy";
 	protected static final String DATE_FORMAT_DASHES = "dd-MM-yyyy";
+	
+	protected static void newInstanceXml(String xml, DefaultHandler handler) throws ParserConfigurationException, SAXException, IOException {
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		SAXParser saxParser = factory.newSAXParser();
+		StringReader reader = new StringReader(xml);
+		InputSource is = new InputSource(reader);
+        is.setEncoding("UTF-8");
+        saxParser.parse(is, handler);
+	}
+	
 	/**
 	 * Not reliable, it sometimes does not pick up some values properly
 	 * @param xml The xml String
@@ -93,13 +103,7 @@ public abstract class ServicioREDRegeXML {
 			}
 		};
 		
-		 
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser saxParser = factory.newSAXParser();
-		StringReader reader = new StringReader(xml);
-		InputSource is = new InputSource(reader);
-        is.setEncoding("UTF-8");
-        saxParser.parse(is, handler);
+        newInstanceXml(xml, handler);
         	
         return values;
 	}
@@ -183,13 +187,7 @@ public abstract class ServicioREDRegeXML {
 			}
 		};
 		
-		 
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser saxParser = factory.newSAXParser();
-		StringReader reader = new StringReader(xml);
-		InputSource is = new InputSource(reader);
-        is.setEncoding("UTF-8");
-        saxParser.parse(is, handler);
+		newInstanceXml(xml, handler);
         	
         return employees;
 	}
@@ -311,14 +309,8 @@ public abstract class ServicioREDRegeXML {
 			}
 		};
 		
-		 
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser saxParser = factory.newSAXParser();
-		StringReader reader = new StringReader(xml);
-		InputSource is = new InputSource(reader);
-        is.setEncoding("UTF-8");
-        saxParser.parse(is, handler);
-        	
+		newInstanceXml(xml, handler);
+		
         return users;
 	}
 	
@@ -355,14 +347,8 @@ public abstract class ServicioREDRegeXML {
 				data.append(new String(ch, start, length));
 			}
 		};
-		
-		 
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser saxParser = factory.newSAXParser();
-		StringReader reader = new StringReader(xml);
-		InputSource is = new InputSource(reader);
-        is.setEncoding("UTF-8");
-        saxParser.parse(is, handler);
+
+        newInstanceXml(xml, handler);
 	}
 	
 	protected static List<NameValuePair> extractSecondaryFormValues(String xml) throws SegSocialException, ParserConfigurationException, SAXException, IOException {
@@ -439,12 +425,7 @@ public abstract class ServicioREDRegeXML {
 			}
 		};
 
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser saxParser = factory.newSAXParser();
-		StringReader reader = new StringReader(xml);
-		InputSource is = new InputSource(reader);
-        is.setEncoding("UTF-8");
-        saxParser.parse(is, handler);
+		newInstanceXml(xml, handler);
         	
         return params;
 	}
@@ -521,12 +502,7 @@ public abstract class ServicioREDRegeXML {
 		};
 		
 		 
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		SAXParser saxParser = factory.newSAXParser();
-		StringReader reader = new StringReader(xml);
-		InputSource is = new InputSource(reader);
-        is.setEncoding("UTF-8");
-        saxParser.parse(is, handler);
+		newInstanceXml(xml, handler);
         	
         return employeeBuilder.build();
 	}

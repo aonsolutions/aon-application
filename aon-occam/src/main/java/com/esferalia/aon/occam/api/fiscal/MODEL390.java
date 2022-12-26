@@ -30,11 +30,11 @@ public class MODEL390 {
 		}
 	}
 
-	public static Mod390 create(Occam occam, Mod390 mod390) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
-			return getImpl().create(ctx, mod390);
-		}
-	}
+//	public static Mod390 create(Occam occam, Mod390 mod390) {
+//		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+//			return getImpl().create(ctx, mod390);
+//		}
+//	}
 	
 	public static Mod390 saveComments(Occam occam, Mod390 mod390) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {

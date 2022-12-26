@@ -1340,8 +1340,13 @@ public abstract class ITDialog extends AonCustomDialog {
 		confirmationPartDataTable.setWidget(row, 4, deleteBTN);
 		
 		if(this.userComunica) {
+		    
 			buildBtnPart(itPart).ifPresent(btn->
-				confirmationPartDataTable.setWidget(row, 5, btn)
+			     confirmationPartDataTable.setWidget(row, 5, btn)
+			);
+			
+			buildBtnPartPdf(itPart).ifPresent(btn->
+			    confirmationPartDataTable.setWidget(row, 6, btn)
 			);
 		}
 	}
@@ -1623,15 +1628,19 @@ public abstract class ITDialog extends AonCustomDialog {
 			if(completeCcc!=null) {
 				Optional<ITPart> bjOptional = this.itDialogObject.getITBaja(it);
 				
-				bjOptional.ifPresent(part-> 
-					buildBtnPart(part).ifPresent(btn-> itBaja.add(btn) )
-				);
+				bjOptional.ifPresent(part-> {
+				    buildBtnPart(part).ifPresent(btn-> itBaja.add(btn) );
+				    buildBtnPartPdf(part).ifPresent(btn->itBaja.add(btn) );
+				});
+				
+			 
 				
 				if(!isPaternity()) {
 					Optional<ITPart> altaOptional = this.itDialogObject.getITAlta(it);
-					altaOptional.ifPresent(part->
-						buildBtnPart(part).ifPresent(btn-> itAlta.add(btn) )
-					);
+					altaOptional.ifPresent(part->{
+					    buildBtnPart(part).ifPresent(btn-> itAlta.add(btn) );
+					    buildBtnPartPdf(part).ifPresent(btn->itAlta.add(btn) );
+					});
 				}
 			}
 		}
@@ -1639,7 +1648,7 @@ public abstract class ITDialog extends AonCustomDialog {
 	
 	private Optional<AonTableButton> buildBtnPart(ITPart part) {
 		if(it.getId()!=null && part.getId()!=null) {
-			boolean communicated = part.getStatus()!=null && part.getStatus() == (byte)3;
+			boolean communicated = isCommunicatePart(part);
 			String title = communicated ? "Borrar Parte IT comunicada" : "Comunicar parte";
 			String icon  = communicated ? AON.CSS.aonIconSendCancel()  : AON.CSS.aonIconSend();
 		
@@ -1655,6 +1664,17 @@ public abstract class ITDialog extends AonCustomDialog {
 		}
 		return Optional.empty();
 	}
+	
+   private Optional<AonTableButton> buildBtnPartPdf(ITPart part) {
+        if(it.getId()!=null && part.getId()!=null && isCommunicatePart(part)) {
+            AonTableButton btn = new AonTableButton("Reporte PARTE", AON.CSS.aonIconPdf()); 
+            btn.addClickHandler(e-> {
+                getITReport(it, part);
+            });
+            return Optional.of(btn);
+        }
+        return Optional.empty();
+    }
 	
 	private void removeITPartTGSS(ITPart part) {
 		LOGGER.info(part.toString());
@@ -2166,7 +2186,37 @@ public abstract class ITDialog extends AonCustomDialog {
         changeStatusProcessed();
 		onCommunicateITPart(it, itPartTmp);
 	}
+    
+    private boolean isCommunicatePart(ITPart part){
+        return part.getStatus()!=null && part.getStatus() == (byte)3;
+    }
 
+    private void getITReport(IT it, ITPart part) {
+        DateTimeFormat fullDateFormat = DateTimeFormat.getFormat("dd/MM/yyyy");
+        String completeCcc = itDialogObject.getContractInfo().getCompleteCCC();
+        if(completeCcc!=null) {
+            String regime = completeCcc.substring(0, 4);
+            String ccc = completeCcc.substring(4, completeCcc.length());
+            EmployeeInfo employeeInfo = itDialogObject.getEmployeeinfo();
+            
+            String dateFromStr = fullDateFormat.format(it.getStartDate());
+            String dateToStr = fullDateFormat.format(part.getDate());
+            
+            String fileDownloadURL = GWT.getModuleBaseURL()+ "it_export/";
+            String query = "?domainName=" + Wnd.getCurrentDomainNameURL()
+                    + "&userLogin=" + Wnd.getCurrentUser()
+                    + "&affiliationNumber=" + employeeInfo.getSsNumber()
+                    + "&regime=" + regime
+                    + "&contributionAccount=" + ccc
+                    + "&dateFromStr=" + dateFromStr
+                    + "&dateToStr=" + dateToStr
+                    + "&startDateStr=" + dateToStr
+                    + "&itType=" + it.getTypeLowPart()
+                    + "&itPartType=" + part.getType();
+            
+            Window.open(fileDownloadURL+query, "ITExporter", "resizable=yes,scrollbars=yes,status=yes");
+        }
+    }
 	
 	// --------------------------------------------------- Abstract Methods
 	protected abstract void onShowCertitificateIT(IT it);

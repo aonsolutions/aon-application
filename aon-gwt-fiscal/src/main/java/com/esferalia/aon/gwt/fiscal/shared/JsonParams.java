@@ -197,16 +197,17 @@ public class JsonParams extends JSONObject {
 			json.put(IRequestParamsNames.COST_CENTERS,costCenters);
 		}
 		
-		json.put(IRequestParamsNames.REGISTRY 		 ,params.getRegistry() 			== null? JSON_NULL : new JSONNumber( params.getRegistry()));
-		json.put(IRequestParamsNames.PERCENT  		 ,params.getPercent()  			== null? JSON_NULL : new JSONNumber( params.getPercent()));
-		json.put(IRequestParamsNames.VAT_SUMMARY_TYPE,params.getVatSummaryType() 	== null? JSON_NULL : new JSONNumber( params.getVatSummaryType().ordinal()));
-		json.put(IRequestParamsNames.OUTPUT   		 ,params.getOutput() 			== null? JSON_NULL : new JSONNumber( params.getOutput()?1:0));
-		json.put(IRequestParamsNames.SURCHARGE		 ,params.getSurcharge() 			== null? JSON_NULL : new JSONNumber( params.getSurcharge()?1:0));
-		json.put(IRequestParamsNames.FARMER_REGIME	 ,params.getFarmerRegime() 		== null? JSON_NULL : new JSONNumber( params.getFarmerRegime()?1:0));
-		json.put(IRequestParamsNames.ACCRUAL_REGIME	 ,params.getAccrualRegime() 		== null? JSON_NULL : new JSONNumber( params.getAccrualRegime()?1:0));
-		json.put(IRequestParamsNames.INVESTMENT		 ,params.getInvestment() 		== null? JSON_NULL : new JSONNumber( params.getInvestment()?1:0));
-		json.put(IRequestParamsNames.SERVICE		 ,params.getService() 			== null? JSON_NULL : new JSONNumber( params.getService()?1:0));
-		json.put(IRequestParamsNames.RECTIFICATION	 ,params.getRectificationType()	== null? JSON_NULL : new JSONNumber( params.getRectificationType().ordinal()));
+		json.put(IRequestParamsNames.REGISTRY 		 	,params.getRegistry() 			== null? JSON_NULL : new JSONNumber( params.getRegistry()));
+		json.put(IRequestParamsNames.PERCENT  		 	,params.getPercent()  			== null? JSON_NULL : new JSONNumber( params.getPercent()));
+		json.put(IRequestParamsNames.VAT_SUMMARY_TYPE	,params.getVatSummaryType() 	== null? JSON_NULL : new JSONNumber( params.getVatSummaryType().ordinal()));
+		json.put(IRequestParamsNames.OUTPUT   		 	,params.getOutput() 			== null? JSON_NULL : new JSONNumber( params.getOutput()?1:0));
+		json.put(IRequestParamsNames.SURCHARGE		 	,params.getSurcharge() 			== null? JSON_NULL : new JSONNumber( params.getSurcharge()?1:0));
+		json.put(IRequestParamsNames.FARMER_REGIME	 	,params.getFarmerRegime() 		== null? JSON_NULL : new JSONNumber( params.getFarmerRegime()?1:0));
+		json.put(IRequestParamsNames.ACCRUAL_REGIME	 	,params.getAccrualRegime() 		== null? JSON_NULL : new JSONNumber( params.getAccrualRegime()?1:0));
+		json.put(IRequestParamsNames.INVESTMENT		 	,params.getInvestment() 		== null? JSON_NULL : new JSONNumber( params.getInvestment()?1:0));
+		json.put(IRequestParamsNames.SERVICE		 	,params.getService() 			== null? JSON_NULL : new JSONNumber( params.getService()?1:0));
+		json.put(IRequestParamsNames.RECTIFICATION	 	,params.getRectificationType()	== null? JSON_NULL : new JSONNumber( params.getRectificationType().ordinal()));
+		json.put(IRequestParamsNames.SURCHARGE_PERCENT  ,params.getSurchargePercent()  	== null? JSON_NULL : new JSONNumber( params.getSurchargePercent()));
 		
 		return json.toString();
 	}

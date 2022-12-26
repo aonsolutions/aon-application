@@ -8,8 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,8 +17,11 @@ import javax.servlet.http.HttpServletResponse;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 
+import net.aonsolutions.aon.api.servlet.AonApiHttpServlet;
 import solutions.aon.seg.social.SistemaRED;
+import solutions.aon.seg.social.SistemaRED.PartType;
 import solutions.aon.seg.social.exception.SegSocialException; 
 
 @MultipartConfig
@@ -31,7 +32,7 @@ public class ITPDFServlet extends HttpServlet {
 	private SimpleDateFormat formatFullDate = new SimpleDateFormat("dd/MM/yyyy");
 	
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		
 		String domainName = req.getParameter("domainName");
 		String userLogin = req.getParameter("userLogin");
@@ -45,6 +46,8 @@ public class ITPDFServlet extends HttpServlet {
 		String startDateStr = req.getParameter("startDateStr");
 		
 		Byte itType = Byte.parseByte(req.getParameter("itType"));
+		
+		PartType partType = getPartType(Byte.parseByte(req.getParameter("itPartType")));
 		
 		Date dateFrom = null;
 		Date dateTo = null;
@@ -62,32 +65,23 @@ public class ITPDFServlet extends HttpServlet {
 		}
 		
 		try (Connection connection = AonServletUtils.getConnection(domainName)){
-			// Make sure to show the download dialog
-	        res.setHeader("Content-Disposition", "attachment; filename=\"ConfirmationIT.pdf\"");
-	        
-	        String fileType = "application/pdf";
-	        res.setContentType(fileType);
-	        
 	        Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
-			
-//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
+
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-	        
-	        ServletOutputStream output = res.getOutputStream();
-	        
+
 	        byte[] certificatePDF = null;
 	        
-	        if(isPartenityPart(itType))
-	        	certificatePDF = SistemaRED.getCertificatePdf(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, optionalStartDate);
-	        else
-	        	certificatePDF = SistemaRED.pdfIT(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, contributionAccount, affiliationNumber, SistemaRED.PartType.BAJA, dateFrom, dateFrom);
-	        
-	        output.write(certificatePDF);
-			res.flushBuffer();
-		} catch (SQLException | SegSocialException e) {
-			e.printStackTrace();
+	        if(isPartenityPart(itType)) {
+	            certificatePDF = SistemaRED.getCertificatePdf(certificate.getData(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, optionalStartDate);
+	        } else {
+	            certificatePDF = SistemaRED.getITReport(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, contributionAccount, affiliationNumber, partType, dateFrom, dateTo);
+	        }
+
+	        new AonApiHttpServlet().responseFile(res, "PART.pdf", certificatePDF, MimeType.PDF);
+		} catch (SQLException | SegSocialException | IOException e) {
+		    new AonApiHttpServlet().error(req, res, e);
 		}
 	}
 	
@@ -95,4 +89,7 @@ public class ITPDFServlet extends HttpServlet {
 		return itType == (byte)2 || itType == (byte)3;
 	}
 
+	private PartType getPartType(Byte partType) {
+	    return partType!=null ? SistemaRED.PartType.safeValueOf(partType) : SistemaRED.PartType.BAJA;
+    }
 }

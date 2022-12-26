@@ -965,10 +965,7 @@ public abstract class Model390HFBase extends DockLayoutPanel  {
 								, script.getLabel()));
 							JavaScriptObject arrayObject = JsonUtils.safeEval(result);
 							JsArray<JsVatContext> array = arrayObject.cast();
-							for (int i = 0; i < array.length(); i++) {
-								grid.addRow(array.get(i));
-							}
-							grid.addFooterRow();
+							grid.render(array);
 							callback.showInfoPanelWidget(grid);
 							button.setEnabled(true);
 						}

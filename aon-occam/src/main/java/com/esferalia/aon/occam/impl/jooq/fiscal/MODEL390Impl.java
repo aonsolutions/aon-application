@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.fiscal.IMODEL390;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod390DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod390.Mod390DAO;
 
 public class MODEL390Impl implements IMODEL390 {
 
@@ -24,10 +24,10 @@ public class MODEL390Impl implements IMODEL390 {
 		return Mod390DAO.initialize(ctx, year);
 	}
 
-	@Override
-	public Mod390 create(AONContext ctx, Mod390 mod390) {
-		return Mod390DAO.create(ctx, mod390);
-	}
+//	@Override
+//	public Mod390 create(AONContext ctx, Mod390 mod390) {
+//		return Mod390DAO.create(ctx, mod390);
+//	}
 	
 	@Override
 	public Mod390 saveComments(AONContext ctx, Mod390 mod390) {

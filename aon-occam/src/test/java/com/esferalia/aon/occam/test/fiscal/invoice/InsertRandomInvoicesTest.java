@@ -24,7 +24,7 @@ public class InsertRandomInvoicesTest extends AbstractOccamTest {
 			InvoiceFakerParams params = new InvoiceFakerParams(ctx,getConfiguration()).setIssueDate( AonRandom.getRandomYearDay( year ) );
 			AON.insertInvoice(getOccam(),InvoiceFaker.getRandom(params));
 			if (mod != 0 && times % mod == 0) {
-				AonRandom.generateRandomRetentionInvoices(ctx,getOccam(),getConfiguration(),AonRandom.getRandomWithholdingType());
+				AonRandom.generateRandomRetentionInvoice(ctx,getOccam(),getConfiguration(),AonRandom.getRandomWithholdingType());
 				count++;
 			}
 		}

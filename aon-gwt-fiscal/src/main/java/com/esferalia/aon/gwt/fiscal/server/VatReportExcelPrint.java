@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 
 @WebServlet(name = "VatReport Excel Print ", urlPatterns = { "/aon_gwt_fiscal/roms/VatReportExcelPrint" })
@@ -31,9 +32,11 @@ public class VatReportExcelPrint extends HttpServlet {
 			
 			VatContextExcelAction action = new VatContextExcelAction();
 			action.initialize("IVA");
-			FISCAL.getVatContext(params.getDomainName(), params.getDomain(), params.getUser(), params)
-					.forEach(action)						
-			;
+			Occam occam = new  Occam()
+				.setDomain(params.getDomain())
+				.setDomainName(params.getDomainName())
+				.setUser(params.getUser());
+			FISCAL.getVatContext(occam, params).forEach(action);
 			resp.setContentType(MimeType.MS_EXCEL.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\"IVA."+ MimeType.MS_EXCEL.getExtension()+ "\";");
 			action.finalize(resp.getOutputStream());

@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
@@ -82,6 +83,7 @@ import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
@@ -1564,6 +1566,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		    	
 			salary.getPayments().stream()
 			.filter(p -> AonStringUtils.equals(contractPayment.getDescription(), p.getDescription()))
+			.sorted(SmartContractSalaryCalculator.sorting(Payment::getAmount))
 			.findFirst().ifPresentOrElse(
 			(p) -> monthlyQuotedPayments.add(p), 
 			() -> salary.getPayments().stream()
@@ -1573,6 +1576,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			() -> salary.getPayments().stream()
 			.filter(p -> AonStringUtils.equals(contractPayment.getName(), p.getName()))
 			.sorted(SmartContractSalaryCalculator.sorting(contractPayment.getDescription()))
+			.sorted(SmartContractSalaryCalculator.sorting(Payment::getAmount))
 			.findFirst().ifPresentOrElse(
 			p -> monthlyQuotedPayments.add(p), 
 			() -> monthlyQuotedPayments.add( new Payment(0.00, 0.00, contractPayment.getExpression(), contractPayment.getDescription(), contractPayment.getName(), null)) ) ) ) ;
@@ -1583,6 +1587,12 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		return monthlyQuotedPayments;
 	}
 	
+	private static Comparator<Payment> sorting(Function<Payment, Number> f) {
+	    return ( Payment p1, Payment p2) -> {
+		return AonNumberUtils.compare(f.apply(p1), f.apply(p2));
+	    };
+	}
+
 	private static Comparator<Payment> sorting(String s) {
 	    return ( Payment p1, Payment p2) -> {
 		int l1 = AonStringUtils.getLevenshteinDistance(s, p1.getDescription());
