@@ -175,7 +175,7 @@ public interface IRegistry {
 	public void deleteRegistryBank(AONContext ctx, Integer id);
 	
 	// ------------------- RPAYMETHOD
-	public RegistryPayMethod getRegistryPayMethod(AONContext ctx, RegistryPayMethodFilter filter);
+	public RegistryPayMethod getRegistryPayMethod(AONContext ctx, RegistryPayMethodFilter filter, Options...options);
 	public Stream<RegistryPayMethod> getRegistryPayMethodStream(AONContext ctx, RegistryPayMethodFilter filter);
 	public void deleteRegistryPayMethod(AONContext ctx, Integer id);
 	public RegistryPayMethod saveRegistryPayMethod(AONContext ctx, RegistryPayMethod rpaymethod);

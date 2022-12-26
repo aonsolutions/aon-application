@@ -445,10 +445,10 @@ export class AonReg extends AonElement {
 		table.addCell(paymethodSelect, 4);
 		getPaymethods({}).then(paymethods => {
 			paymethodSelect.setOptions(paymethods);
-			paymethodSelect.value = this.registry.getPaymethod().getPaymethod() || paymethods[0].id;
+			paymethodSelect.value = this.registry.getPaymethod().getPaymethod().id || paymethods[0].id;
 		});
 		paymethodSelect.addEventListener(EVENT.CHANGE, (e) => {
-			this.registry.getPaymethod().setPaymethod(paymethodSelect.value);
+			this.registry.getPaymethod().getPaymethod().id = paymethodSelect.value;
 			// TODO SI ES TRANSFERENCIA ACTUALIZAR DATOS BANK
 		});
 
@@ -460,8 +460,8 @@ export class AonReg extends AonElement {
 		bankSelect.title = MSG.BANK_ACCOUNT;
 		bankSelect.setAlias('id', 'fullName');
 		bankSelect.setOptions(this.registry.getBanks());
-		bankSelect.value = this.registry.getPaymethod().getBank();
-		bankSelect.addEventListener(EVENT.CHANGE, (e) => this.registry.getPaymethod().setBank(bankSelect.value));
+		bankSelect.value = this.registry.getPaymethod().getBank().id;
+		bankSelect.addEventListener(EVENT.CHANGE, (e) => this.registry.getPaymethod().getBank().id = bankSelect.value);
 		table.addCell(bankSelect, 4);
 		
 		
