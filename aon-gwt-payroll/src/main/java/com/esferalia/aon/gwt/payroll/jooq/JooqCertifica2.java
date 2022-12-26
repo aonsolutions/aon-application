@@ -225,7 +225,7 @@ public class JooqCertifica2 {
 	// ----------------------------------------------------- getCertific@2Info
 
 	public static com.esferalia.aon.gwt.payroll.shared.Certifica2Info getCertifica2Info(Connection connection,
-			String domainName, String user, Integer contractId, String suspensionReasonCode) {
+			String domainName, String user, Integer contractId, String suspensionReasonCode) throws IllegalArgumentException {
 		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
 		return getCertifica2Info(dslContext, domainName, user, contractId, suspensionReasonCode);
 	}
