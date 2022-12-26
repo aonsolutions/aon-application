@@ -1057,7 +1057,7 @@ public class DeliveryImport {
 	private HashMap<String, Integer> importClientes(Domain domain, User user) {
 		HashMap<String, Integer> map = new HashMap<>();
 		Integer[] scps = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
-		if(scps == null) scps =  AON.getUserScopes(domain.getName(), user.getDomain(), user.getLogin(), user.getId());
+		if(scps == null) scps =  AON.getUserScopes(domain.getName(), user.getDomain().getId(), user.getLogin(), user.getId());
 		Integer scope = scps != null ? scps[0] : null;
 		di.getClientList().stream().forEach(r -> {
 			Customer customer = AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getDocumentProperty().eq(r.getDocumento())));
@@ -1174,7 +1174,7 @@ public class DeliveryImport {
 						RegistryPayMethod rpaymethod = new RegistryPayMethod()
 								.setDomain(domain.getId())
 								.setRegistry(registry.getId())
-								.setPayMethod(pm.getId())
+								.setPayMethod(pm)
 								.setNumberOfPymnts(r.getNumeroVtos() != null ? r.getNumeroVtos().shortValue(): 1)
 								.setDaysToFirstPymnt(r.getDiasAlPrimerVto() != null ? r.getDiasAlPrimerVto().shortValue() : 0)
 								.setDaysBetwenPymnts(r.getDiasEntreVtos() != null ? r.getDiasEntreVtos().shortValue() : 0)
@@ -1192,7 +1192,7 @@ public class DeliveryImport {
 	private HashMap<Integer, Delivery> importAlbv(Domain domain, User user, HashMap<String, Integer> clientes) {
 		HashMap<Integer, Delivery> map = new HashMap<>();
 		Integer[] scps = AON.getUserScopes(domain.getName(), domain.getId(), user.getLogin(), user.getId());
-		if(scps == null) scps =  AON.getUserScopes(domain.getName(), user.getDomain(), user.getLogin(), user.getId());
+		if(scps == null) scps =  AON.getUserScopes(domain.getName(), user.getDomain().getId(), user.getLogin(), user.getId());
 		Integer scope = scps != null ? scps[0] : null;
 		di.getAlbvList().stream().forEach(r -> {
 			Delivery delivery = AON.getDelivery(domain.getName(), domain.getId(), user.getLogin(), f ->

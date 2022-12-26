@@ -505,11 +505,22 @@ public class AON {
 		}
 	}
 	
+	public static User saveUser(Domain domain, String login, User user) {
+        return saveUser(domain.getName(), domain.getId(), login, user);
+    }
+	
+    public static User saveUser(String domainName, int domainId, String login, User user) {
+        try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+            return getSecurity().save(ctx, user);
+        } 
+    }
+    
+    @Deprecated
 	public static User save(String domainName, int domainId, String login, User user) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getSecurity().save(ctx, user);
-		} 
-	}
+        try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+            return getSecurity().save(ctx, user);
+        } 
+    }
 	
 	public static void saveUserWorkgroups(Domain domain, String login, User user) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, login)) {
@@ -5083,17 +5094,17 @@ public class AON {
 		return saveRegistryPayMethod(domainName, domainId, login, rpaymethod);
 	}
 	
-	public static RegistryPayMethod getRegistryPayMethod(Domain domain, User user, RegistryPayMethodFilter filter) {
-		return getRegistryPayMethod(domain.getName(), domain.getId(), user.getLogin(), filter);
+	public static RegistryPayMethod getRegistryPayMethod(Domain domain, User user, RegistryPayMethodFilter filter, Options...options) {
+		return getRegistryPayMethod(domain.getName(), domain.getId(), user.getLogin(), filter, options);
 	}
 	
-	public static RegistryPayMethod getRegistryPayMethod(Domain domain, String login, RegistryPayMethodFilter filter) {
-		return getRegistryPayMethod(domain.getName(), domain.getId(), login, filter);
+	public static RegistryPayMethod getRegistryPayMethod(Domain domain, String login, RegistryPayMethodFilter filter, Options...options) {
+		return getRegistryPayMethod(domain.getName(), domain.getId(), login, filter, options);
 	}
 	
-	public static RegistryPayMethod getRegistryPayMethod(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter) {
+	public static RegistryPayMethod getRegistryPayMethod(String domainName, Integer domainId, String login, RegistryPayMethodFilter filter, Options...options) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			return getRegistry().getRegistryPayMethod(ctx, filter);
+			return getRegistry().getRegistryPayMethod(ctx, filter, options);
 		}
 	}
 	
@@ -6242,6 +6253,10 @@ public class AON {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
 			return getTask().getTaskHolderWorkgroupStream(ctx, filter, workgroupId);
 		}
+	}
+	
+	public static TaskHolder getTaskHolder(Domain domain, User user, TaskHolderFilter filter){
+	    return getTaskHolder(domain.getName(),  domain.getId(), user.getLogin(), filter);
 	}
 	
 	public static TaskHolder getTaskHolder(String domainName, Integer domainId, String login, TaskHolderFilter filter){
