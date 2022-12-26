@@ -9,7 +9,7 @@
     
     	.inputHeight { height: 1.5rem; }
     	
-    	.quoteTaxedWidth { width: 170px; }
+    	.quoteTaxedWidth { min-width: 140px; }
 
 		.form{
 			width: 40rem;
@@ -130,8 +130,11 @@
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.element}" ui:field="seniorityPanel">
-				<g:Label styleName="{style.title}">Antigüedad (El valor seleccionado afectará a todos los cálculos de antigüedad del presente convenio)</g:Label>
-				<g:ListBox ui:field="seniorityType" styleName="{style.widthAll} {style.inputHeight}"/>
+				<g:Label styleName="{style.title}">Cálculo Antigüedad</g:Label>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:ListBox ui:field="seniorityType" styleName="{style.quoteTaxedWidth} {style.inputHeight}"/>
+					<g:Label styleName="{style.widthAll}">El valor seleccionado afectará a todos los cálculos de antigüedad del convenio</g:Label>
+				</g:HTMLPanel>
 			</g:HTMLPanel>
 			
 			<g:HTMLPanel styleName="{style.flexColumn}" ui:field="extraPanel">

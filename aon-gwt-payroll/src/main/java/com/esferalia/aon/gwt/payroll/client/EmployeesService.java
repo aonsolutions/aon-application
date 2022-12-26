@@ -326,7 +326,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	// ------------------------------------------------- SEPE Methods
 	
-	Certifica2Info getCertifica2Info(String currentDomainName, String user, Integer contractId);
+	Certifica2Info getCertifica2Info(String currentDomainName, String user, Integer contractId) throws IllegalArgumentException;
 
 	// ------------------------------------------------- EmployeeContractPayments
 
