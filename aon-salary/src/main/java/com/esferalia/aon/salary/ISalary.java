@@ -1,13 +1,9 @@
 package com.esferalia.aon.salary;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import com.esferalia.aon.salary.cost.Costs;
-import com.esferalia.aon.salary.data.IData;
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -58,7 +54,6 @@ public interface ISalary {
 	<T extends IDeduction>  Collection<T> getDeductionS() throws SalaryException ;
 	<T extends IDeduction>  Collection<T> getCostS() throws SalaryException ;
 	<T extends IDeduction>  Collection<T> getEmbargoS() throws SalaryException ;
-	<T extends IData>  Map<String, List<T>> getDataS() throws SalaryException ;
 	
 	Double getTotalIrpf();
 

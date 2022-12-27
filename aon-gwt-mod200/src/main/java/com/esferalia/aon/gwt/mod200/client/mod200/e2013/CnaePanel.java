@@ -1,10 +1,11 @@
-package com.esferalia.aon.gwt.common.client.widget;
+package com.esferalia.aon.gwt.mod200.client.mod200.e2013;
 
 import java.util.Arrays;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
-import com.esferalia.aon.occam.api.model.type.CNAE;
+import com.esferalia.aon.gwt.common.client.widget.CustomDialog;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2013.CNAE;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiField;

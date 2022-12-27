@@ -2,10 +2,8 @@ package com.esferalia.aon.payroll;
 
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -39,7 +37,6 @@ import com.esferalia.aon.salary.cost.CostsFactoryContext;
 import com.esferalia.aon.salary.cost.CostsFactoryManager;
 import com.esferalia.aon.salary.cost.ICostsFactory;
 import com.esferalia.aon.salary.cost.ICostsFactoryContext;
-import com.esferalia.aon.salary.data.IData;
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryContext;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryManager;
@@ -480,12 +477,6 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 
 	@Transient
 	@Override
-	public <T extends IData> Map<String, List<T>> getDataS() throws SalaryException {
-		return Collections.emptyMap();
-	}
-	
-	@Transient
-	@Override
 	public Payments getPayments() throws SalaryException {
 		if (payments == null) {
 			PaymentsFactoryManager manager = PaymentsFactoryManager
@@ -540,5 +531,4 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 		}
 		return costContext;
 	}
-
 }
