@@ -13,17 +13,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.esferalia.aon.occam.api.fiscal.MODEL3902018;
+import com.esferalia.aon.occam.api.fiscal.MODEL3902022;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902018;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902018Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902022Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @SuppressWarnings("serial")
-@WebServlet(name = "Mod390 2018 File download", urlPatterns = { "/aon_gwt_fiscal/Model3902018File" })
-public class Mod3902018File extends HttpServlet {
+@WebServlet(name = "Mod390 2022 File download", urlPatterns = { "/aon_gwt_fiscal/Model3902022File" })
+public class Mod3902022File extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -38,7 +38,7 @@ public class Mod3902018File extends HttpServlet {
 					.setDomainName(domainName)
 					.setDomain(domainId)
 					.setUser(user);			
-			Mod3902018 mod390 = MODEL3902018.get(occam, id);
+			Mod3902022 mod390 = MODEL3902022.get(occam, id);
 
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			OutputStreamWriter wr = null;
@@ -48,7 +48,7 @@ public class Mod3902018File extends HttpServlet {
 				wr = new OutputStreamWriter(output);
 			}
 			PrintWriter writer = new PrintWriter(wr);
-			Mod3902018Writer.fillWriter(mod390, writer);
+			Mod3902022Writer.fillWriter(mod390, writer);
 			ByteArrayInputStream in = new ByteArrayInputStream(output.toByteArray());
 
 			

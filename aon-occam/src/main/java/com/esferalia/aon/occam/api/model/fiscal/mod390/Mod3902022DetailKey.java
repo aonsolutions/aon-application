@@ -141,7 +141,7 @@ public enum Mod3902022DetailKey implements Serializable {
 	 ,C0598	(598,    0.00,true ,true )
 	 
 	 // Compensación en régimen especial de la agricultura, ganaderia y pesca
-	 ,C0061	( 61,    0.00,true ,false)
+	 ,C0061	( 61,    0.00,false ,false,true)
 	 
 	 // Cuotas deducibles en virtud de resolución administrativa o sentencia firmes con tipos no vigentes
 	 ,C0661	(661,    0.00,true ,false)
