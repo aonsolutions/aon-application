@@ -463,7 +463,8 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			
 			@Override
 			public String getExpression() {
-				return expression;
+				//return expression;
+				return String.format(Locale.ROOT,"/*var:%s*/%s", getOverrideVarName(), expression );
 			}
 			@Override
 			public ExpressionScope getScope() {
