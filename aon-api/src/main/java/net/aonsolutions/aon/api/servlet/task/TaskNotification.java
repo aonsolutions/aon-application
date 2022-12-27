@@ -295,7 +295,7 @@ public class TaskNotification {
 	    	notification.setTitle(title);
 	    	notification.setBody(body);
 	    	notification.setUser(user);
-	    	notification.setSender(user.getAuth().getAuth());
+//	    	notification.setSender(user.getAuth().getAuth());
 	    	notification.setDomain(domain);
 	    	notification.setSource(NotificationSource.MESSENGER);
 	    	notification.setSourceId(task.getId());

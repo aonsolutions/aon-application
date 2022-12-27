@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -24,6 +25,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.NotificationStatus;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
@@ -92,31 +94,32 @@ public class NotificationServlet extends AonApiHttpServlet{
 		String login = api.getUser().getLogin();
 		JSONObject params = api.getData();
 		AonToken authToken = SECURITY.getAonToken(api.getToken());
-		LinkedList<Auth> auths = new LinkedList<>();
+		LinkedList<String> uuids = new LinkedList<>();
 		if(params.optString(IJsonNames.TYPE).equalsIgnoreCase("employee")){
 			int taskHolderId = params.optInt(IJsonNames.TASK_HOLDER);
 			if(taskHolderId!=0) {
 				TaskHolder th = AON.getTaskHolder(domain.getName(), domain.getId(), login, f-> f.getIdProperty().eq(taskHolderId));
 				User user = AON.getUser(domain.getName(), domain.getId(), login, f -> f.getIdProperty().eq(th.getUserId()));
-				Auth auth = user.getAuth();
-				if(auth.getAuth()!=null) {					
-					auths.add(auth);
+				if(AonStringUtils.isBlank(user.getAuth())) {					
+				    uuids.add(user.getAuth());
 				}
 			} else {
 				AON.getDomainUserStream(domain.getName(), domain.getId(), login, f -> f.getAuthProperty().isNotNull())
 				.filter(user-> user.getAuth()!=null)
 				.forEach(user -> 
-					auths.add(user.getAuth())
+				    uuids.add(user.getAuth())
 				);
 			}
 		} else if(!params.optString(IJsonNames.EMAIL).isEmpty()) {
 			Auth auth = AON_SOLUTIONS.getAuth(params.optString(IJsonNames.EMAIL));
 			if(auth.getAuth()!=null) {
-				auths.add(auth);
+			    uuids.add(auth.getUuid());
 			} else {
 				throw new AonApiException("El usuario no existe.");
 			}
 		} 
+		
+		List<Auth> auths = AON_SOLUTIONS.getAuths(uuids);
 		
 		if(!auths.isEmpty()) {
 	    	NotificationRequest notification = new NotificationRequest();

@@ -173,7 +173,15 @@
 			<scope>compile</scope>
 		</dependency>
 	
-		<!-- Used to decode JWT objetc --> 
+		<!-- Used to access in DynamoDB --> 
+		<dependency>
+			<groupId>solutions.aon</groupId>
+			<artifactId>aon.aws</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	
+		<!-- Used to decode JWT object --> 
 		<dependency>
 	    	<groupId>com.auth0</groupId>
 		    <artifactId>java-jwt</artifactId>

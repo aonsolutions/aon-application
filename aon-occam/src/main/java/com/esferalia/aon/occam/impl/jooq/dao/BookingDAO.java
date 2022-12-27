@@ -55,11 +55,10 @@ public class BookingDAO {
 		booking.setApps(SecurityDAO.getDomainAppStream(ctx, f -> 
 			f.getDomainProperty().eq(ctx.getDomainId()).and(f.getActiveProperty().eq((byte) 1))
 		).map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new)));
-
-		return booking;
 		
+		return booking;
 	}
-	
+		
 	public static Booking save(AONContext ctx, Booking booking) {
 		if(booking.getNumberOfUsers() != null) {
 			SecurityDAO.saveDomainMaxDefinedUser(ctx, booking.getNumberOfUsers());

@@ -1713,6 +1713,6 @@ public class DashboardController implements Serializable {
 		return new com.esferalia.aon.occam.api.model.security.User()
 				.setId(user.getId())
 				.setLogin(user.getLogin())
-				.setDomain(user.getDomain());
+				.setDomain(new Domain().setId(user.getDomain()));
 	}
 }

@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 
 import com.code.aon.webservice.common.Utils;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -29,6 +31,7 @@ import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.AuthDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.notification.NotificationRequest;
@@ -101,17 +104,19 @@ public class UploadDocumentalServlet extends HttpServlet{
         	AON.insertRegistryAttachTag(domain.getName(), domain.getId(), login, attachId, json.optInt("tag"));
     	}
     	
-    	LinkedList<Auth> auths = new LinkedList<>();
+    	LinkedList<String> uuids = new LinkedList<>();
     	AON.getDomainUserStream(domain.getName(), domain.getId(), login, f -> f.getAuthProperty().isNotNull()).forEach(user -> {
     		DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, login, user.getId());
     		if(!user.getAuth().isEmpty() &&
     			((dur.isDocumentalManager() && RegistryAttachmentType.DOCUMENTAL_ASESOR.value() == attach.getType().byteValue())
     				|| (dur.isDocumentalPortal() && RegistryAttachmentType.CORPORATE_IDENTITY.value() == attach.getType().byteValue())
     				|| (dur.isDocumental() && RegistryAttachmentType.DOCUMENTAL_EMPLOYEE.value() == attach.getType().byteValue()))) {
-    			auths.add(user.getAuth());
+    		    uuids.add(user.getAuth());
    			}
     	});
-
+    	
+    	List<Auth> auths = AON_SOLUTIONS.getAuths(uuids);
+    	
   
     	NotificationRequest notification= new NotificationRequest();
     	notification.setUser(new User().setLogin(login));
@@ -130,13 +135,5 @@ public class UploadDocumentalServlet extends HttpServlet{
     	JSONObject resp = new JSONObject();
     	resp.put("id", attachId);
     	return resp;
-//    	attach.setId(attachId);
-//		                   	
-//    	DomainGserviceaccount d = AON.getDomainGserviceaccount(domain.getName(), domain.getId(), login);
-//    	Drive drive = AonDrive.getInstace().serviceInitialize(d);
-//    	User user = AON.getUser(domain.getName(), domain.getId(), login);
-//    	AonDrive.getInstace().sync(drive, user, attach, false);
-//    	SendNotification.sendGmail(domain, user, attach, true);
-
 	}
 }

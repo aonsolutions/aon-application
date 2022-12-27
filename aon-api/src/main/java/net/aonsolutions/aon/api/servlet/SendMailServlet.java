@@ -79,7 +79,7 @@ public class SendMailServlet extends AonApiHttpServlet{
 			}
 		}
 		
-		String bcc = api.getUser().getAuth().getEmail();
+		String bcc = null; //api.getUser().getAuth().getEmail();
 		SESMessage msg = new SESMessage()
 				.setTo(to)
 				.setBcc(bcc != null ? bcc : "")
@@ -120,8 +120,8 @@ public class SendMailServlet extends AonApiHttpServlet{
 		
 		String web = company.getMedias().stream().filter(f -> MediaType.WEB.equals(f.getMedia())).map(r -> r.getValue()).findFirst().orElse("");
 		medias.append(AonStringUtils.isBlank(web) ? web : " /" + web);
-		String email = api.getUser().getAuth().getEmail() != null 
-				?api.getUser().getAuth().getEmail() : "";
+		String email = ""; // api.getUser().getAuth().getEmail() != null 
+			//	? api.getUser().getAuth().getEmail() : "";
 		CompanyMail cm = new CompanyMail();
 		cm.setAddress(company.getMainAddress().getFullAddress());
 		cm.setName(company.getRegistry().getName());

@@ -3341,12 +3341,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	
 	@Override
 	public DomainUserRoles getDomainUserRoles(String domainName, String userLogin) {
-		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
-			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
-			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
-			
+			Integer userId = AON.getUser(domainName, domainId, userLogin).getId();
 			DomainUserRoles domainUserRoles = SECURITY.getDomainUserRoles(domainName, domainId, userLogin, userId);
 			return domainUserRoles;
 			

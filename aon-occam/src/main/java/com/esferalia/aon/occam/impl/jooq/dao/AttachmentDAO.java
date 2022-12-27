@@ -123,6 +123,7 @@ public class AttachmentDAO {
 			DATA_ATTACH.DRIVE_ID, DATA_ATTACH.CREATION_DATE, DATA_ATTACH.CREATION_USER,
 			DATA_ATTACH.MODIFICATION_DATE, DATA_ATTACH.MODIFICATION_USER};
 
+	@Deprecated
 	public static AuthAttach getAuthAttach(AONContext ctx, AuthAttachFilter filter, Boolean withData) {
 		SelectJoinStep<Record> select = ctx.getDslContext().selectDistinct(authAttachWD).from(AUTH_ATTACH);
 		if(withData) select = ctx.getDslContext().selectDistinct().from(AUTH_ATTACH);
@@ -217,13 +218,14 @@ public class AttachmentDAO {
 	}	 
 	
 	//-------------------- INSERTS 
-	
+	@Deprecated
 	public static AuthAttach saveAuthAttach(AONContext ctx, AuthAttach attach) {
 		return attach.getId() != null 
 				? updateAuthAttach(ctx, attach)
 				: insertAuthAttach(ctx, attach);
 	}
-	
+
+	@Deprecated
 	public static AuthAttach updateAuthAttach(AONContext ctx, AuthAttach attach) {
 		ctx.checkWrite();
 		ctx.getDslContext().update(AUTH_ATTACH)
@@ -236,6 +238,7 @@ public class AttachmentDAO {
 		return attach;
 	}
 	
+	@Deprecated
 	public static AuthAttach insertAuthAttach(AONContext ctx, AuthAttach attach) {
 		ctx.checkWrite();
 		Integer id = ctx.getDslContext()

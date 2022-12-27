@@ -18,6 +18,7 @@ import { getNotificationByDomain, markReadNotification } from '../../services/no
 import { getCustomers } from '../../services/registryService.js';
 import * as GWT from '../../gwt/gwt.js';
 import { TaskUtils } from './utils/TaskUtils.js';
+import { getAuth } from '../../services/authService.js';
 
 export class AonMessenger extends AonElement {
     AON_MESSENGER;
@@ -108,15 +109,12 @@ export class AonMessenger extends AonElement {
 			if(exist){
 				localStorage.setItem("taskCau", this.cau ? 1 : 0);
 
-				let promises = [getCauInfo()];
+				this.cauInfo = await getCauInfo();
+				this.cauInfo.auth = await getAuth();
 
 				if(!this.cau){
-					promises.push(this.getMyWorkgroups());
+					await this.getMyWorkgroups();
 				}
-
-				const [cauInfo] = await Promise.all(promises);
-
-				this.cauInfo = cauInfo;
 
 				const email = cauInfo.auth.email;
 

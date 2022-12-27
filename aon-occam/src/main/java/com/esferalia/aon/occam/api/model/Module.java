@@ -2,11 +2,9 @@ package com.esferalia.aon.occam.api.model;
 
 public enum Module {
 
-	@Deprecated
 	MARKETING( "marketing" ),
 	CRM( "crm" ),
 	MANAGEMENT( "management" ),
-	@Deprecated
 	TREASURY( "treasury" ),
 	WAREHOUSE( "warehouse" ),
 	GROUPWARE( "groupware" ),

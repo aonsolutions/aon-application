@@ -35,6 +35,13 @@ export const BACK = {
     icon: MATERIAL_ICONS.ARROW_BACK
 };
 
+export const CHANGE_PASSWORD = {
+    id: CONSTANT.CHANGE_PASSWORD.initCap(),
+    name: MSG.CHANGE_PASSWORD,
+    title: MSG.CHANGE_PASSWORD,
+    icon: MATERIAL_ICONS.PASSWORD
+};
+
 export const CHANGE_TYPE = {
     id: CONSTANT.CHANGE_TYPE.initCap(),
     name: MSG.CHANGE_TYPE,

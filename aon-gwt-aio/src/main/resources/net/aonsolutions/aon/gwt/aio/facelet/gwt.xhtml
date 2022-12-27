@@ -15,6 +15,7 @@
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
 	<aon:valueParam name="gwtUser" default="#{domainSwitcher.currentUser}" />
+	<aon:valueParam name="gwtToken" default="#{dur.token}" />
 
 	<style>
 		body {
@@ -36,7 +37,7 @@
 	<![CDATA[
 		
 		google.load("visualization", "1", {'callback' : 'drawChartsCallback' ,'packages':["corechart","table","timeline"], 'language': 'es'});
-	
+
 		function drawChartsCallback(){
 		
 		}
@@ -44,11 +45,17 @@
 	 	function getCurrentDomain() {
 			return #{gwtDomain};
 		}
+	 	
 		function getCurrentDomainName() {
 	       	return "#{gwtDomainName}"
 	  	}
+		
 		function getCurrentUser() {
 	       	return "#{gwtUser}"
+	  	}
+		
+		function getToken() {
+	       	return "#{gwtToken}"
 	  	}
 		
 		function getSubEntryPoint() {
@@ -79,12 +86,11 @@
 				break;
 			}
 		}
-
 	    	 
 		function startModule() {
 			localStorage.removeItem('rootPanel');
 		    localStorage.removeItem('aon_solutions');
-		    localStorage.removeItem('aon_session_id');
+			localStorage.setItem('aon_session_id', "#{dur.token}");
 			if (window.document.createElement && window.document.getElementsByTagName) {
 				var script = window.document.createElement("script");
 				script.type = "text/javascript";

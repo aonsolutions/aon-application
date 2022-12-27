@@ -1,5 +1,10 @@
 package com.esferalia.aon.occam.api.json;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Stream;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
@@ -9,6 +14,18 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 
 public class RegistryJSON {
 
+    private RegistryJSON() {
+        
+    }
+    
+    public static List<Registry> fromJSON(JSONArray json) {
+        LinkedList<Registry> list = new LinkedList<>();
+        for(Integer i = 0; i < json.length(); i++) {
+            list.add(fromJSON(json.getJSONObject(i)));
+        }
+        return list;
+    }
+    
 	public static Registry fromJSON(JSONObject json) {
 		if(json == null) {
 			return new Registry();
@@ -29,6 +46,16 @@ public class RegistryJSON {
 			.setDirty(json.optBoolean(IJsonNames.DIRTY));
 	}
 	
+    public static JSONArray toJSON(List<Registry> registries) {
+        return toJSON(registries.stream());
+    }
+
+    public static JSONArray toJSON(Stream<Registry> registries) {
+        JSONArray array = new JSONArray();
+        registries.forEach(registry -> array.put(toJSON(registry)));
+        return array;
+    }
+
 	public static JSONObject toJSON(Registry registry) {
 		if(registry == null || registry.isEmpty()) return new JSONObject();
 		return new JSONObject()

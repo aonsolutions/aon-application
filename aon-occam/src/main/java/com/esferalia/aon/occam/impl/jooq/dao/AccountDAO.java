@@ -63,7 +63,7 @@ public class AccountDAO {
 
 		public static Account build(Record r, com.esferalia.aon.jooq.tables.Account alias) {
 			return new Account()
-				.setId(r.getValue(alias.ID))
+				.setId(getValue(r, alias.ID))
 				.setDomain(r.getValue(alias.DOMAIN))
 				.setCode(r.getValue(alias.CODE))
 				.setDescription(r.getValue(alias.DESCRIPTION))

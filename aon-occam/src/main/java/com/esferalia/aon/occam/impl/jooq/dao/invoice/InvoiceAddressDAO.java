@@ -122,6 +122,5 @@ public class InvoiceAddressDAO {
 					.setParent(GeoZoneFiller.build(r, parent))
 					.setDirty(false);
 		}
-		
 	}
 }

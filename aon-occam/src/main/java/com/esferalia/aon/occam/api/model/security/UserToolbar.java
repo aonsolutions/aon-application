@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.api.model.security;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public enum UserToolbar {
 
 	/**
@@ -58,4 +60,13 @@ public enum UserToolbar {
 		if (i < 0 || i >= UserToolbar.values().length) return null;
 		return UserToolbar.values()[i];
 	}
+	
+	public static UserToolbar safeValueOf( String i ) {
+        if(AonStringUtils.isBlank(i)) return GOOGLE;
+        for (UserToolbar rs : values()) {
+            if(i.equalsIgnoreCase(rs.name()))
+                return rs;
+        }
+        return UserToolbar.GOOGLE;
+    }
 }

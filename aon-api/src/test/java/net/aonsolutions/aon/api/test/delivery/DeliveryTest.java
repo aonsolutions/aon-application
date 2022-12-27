@@ -58,11 +58,18 @@ public class DeliveryTest extends AbstractOccamTest {
 		when(request.getHeader(IConstants.DOMAIN_LOGIN)).thenReturn("test");
 		when(request.getHeader("session_id")).thenReturn("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ7XCJkb21haW5cIjozMDQ5LFwic2NoZW1hX2ZpcnN0X2RvbWFpblwiOlwidWRhcGEuYWliYW5lei5uZXRcIixcImxvZ2luXCI6XCJ0ZXN0XCIsXCJ1c2VyXCI6MTYyNjN9IiwiaXNzIjoiYXV0aDAiLCJleHAiOjE2ODUxMTg2OTMsImlhdCI6MTY1MzU4MjY5M30.-TB7QekrOrfTW4Tf7e28S7x1Ny8N3w6UiSZfHZ2RhH0");
 		getDeliveries();
+		putEmptyDelivery();
 	}
 	
 	private void getDeliveries() {
 		DeliveryServletTest iv = new DeliveryServletTest();
 		JSONArray respObject = Request.requestJSONArray(Method.GET, request, response, iv, new JSONObject());
+	    System.out.println(respObject);
+	}
+	
+	private void putEmptyDelivery() {
+		DeliveryServletTest iv = new DeliveryServletTest();
+		JSONArray respObject = Request.requestJSONArray(Method.PUT, request, response, iv, new JSONObject());
 	    System.out.println(respObject);
 	}
 

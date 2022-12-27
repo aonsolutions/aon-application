@@ -3,7 +3,6 @@ import { getAuth, getCompany, getDomainUserRoles, getRegistry, saveServiceAccoun
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import "../../components/aon-card.js";
 import "../../components/aon-input.js";
-import "../marketplace/aon-marketplace.js";
 import "../user/aon-user-list.js";
 import "../company/aon-company-list.js";
 
@@ -27,6 +26,7 @@ import { AonComunicaConfig } from "../laboral/aon-comunica-config.js";
 import { AonServiceAccountList } from "../user/aon-service-account-list.js";
 import { AonInput } from "../../components/aon-input.js";
 import { AonNewsList } from "../news/news/aon-news-list.js";
+import { AonAuth } from "../user/aon-auth.js";
 
 export class AonConfiguration extends AonElement {
   AON_CONFIGURATION;
@@ -219,24 +219,9 @@ export class AonConfiguration extends AonElement {
   }
 
   buildPersonal() {
-    getAuth().then((user) => {
-      let aonConfiguration = this.getElement(this.AON_CONFIGURATION);
-
-      let toolbar = this.getElement(aonConfiguration.TOOLBAR);
-		  toolbar.setAttribute('option', MSG.MY_DATA);
-      
-      aonConfiguration.removeToolbarOptions();
-
-      let aonUser = new AonUser();
-      aonUser.id = 'aonUserPersonal';
-      aonUser.setShowPassword(true);
-      aonUser.setShowToolbar(true);
-      aonUser.setOnlyAuth(true);
-      aonUser.setUser(user);
-      aonUser.style.width = "100%";
-  
-      aonConfiguration.setContent(aonUser);	
-    });
+    this.getApplication().removeToolbarOptions();
+    this.getApplication().getToolbar().setAttribute('option', MSG.MY_DATA);
+    this.getApplication().setContent(new AonAuth());    
   }
 
   buildGeneral() {

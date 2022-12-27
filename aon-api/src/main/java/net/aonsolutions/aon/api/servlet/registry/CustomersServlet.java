@@ -33,6 +33,7 @@ public class CustomersServlet extends AonApiHttpServlet {
 	public static final String CUSTOMERS = "/";
 	public static final String CUSTOMER = "/:id";
 	public static final String CUSTOMER_EMAILS = "/:id/emails";
+	public static final String CUSTOMER_PHONES = "/:id/phones";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -57,7 +58,8 @@ public class CustomersServlet extends AonApiHttpServlet {
 			Object object = new AonRouting(api)
 				.addRoute(CUSTOMERS, CustomersServlet::getCustomers)
 				.addRoute(CUSTOMER, CustomersServlet::getCustomer)
-				.addRoute(CUSTOMER_EMAILS, CustomersServlet::getCustomerEmails)
+				.addRoute(CUSTOMER_EMAILS, RegistriesServlet::getRegistryEmails)
+                .addRoute(CUSTOMER_PHONES, RegistriesServlet::getRegistryPhones)
 				.apply();
 			
 			response(req, resp, object);
@@ -87,17 +89,6 @@ public class CustomersServlet extends AonApiHttpServlet {
 		JSONObject object = CustomerJSON.toJSON(customer);
 		
 		return RegistryServlet.getRegistryAdditionalInfo(object, api, api.getData(), customer.getId(), null);
-	}
-	
-	private static JSONArray getCustomerEmails(AonApiData api) {
-		JSONObject vars = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);
-		Integer customerId = JsonUtils.getInteger(vars, IJsonNames.ID);
-		ArrayList<String> list =AON.getRegistryMediaStream(api.getDomain(), api.getUser(), f -> 
-			f.getDomainProperty().eq(api.getDomain().getId())
-			.and(f.getRegistryProperty().eq(customerId))
-			.and(f.getMediaProperty().eq(MediaType.EMAIL.value())))
-		.map(r -> r.getValue()).collect(Collectors.toCollection(ArrayList::new));
-		return new JSONArray(list);
 	}
 	
 	private static JSONArray getCustomers(AonApiData api) {

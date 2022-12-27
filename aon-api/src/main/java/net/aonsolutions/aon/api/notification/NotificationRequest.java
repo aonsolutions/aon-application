@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.api.notification;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.http.HttpEntity;
@@ -34,13 +35,13 @@ public class NotificationRequest extends Notification {
 	private String url;
 	private JSONObject data;
 	private User user;
-	private LinkedList<Auth> auths;
+	private List<Auth> auths;
 
 	public String getUrl() {
 		return url;
 	}
 	
-	public LinkedList<Auth> getAuths() {
+	public List<Auth> getAuths() {
 		return auths;
 	}
 	public JSONObject getData() {
@@ -60,7 +61,7 @@ public class NotificationRequest extends Notification {
 		return this;
 	}
 	
-	public NotificationRequest setAuths(LinkedList<Auth> auths) {
+	public NotificationRequest setAuths(List<Auth> auths) {
 		this.auths = auths;
 		return this;
 	}

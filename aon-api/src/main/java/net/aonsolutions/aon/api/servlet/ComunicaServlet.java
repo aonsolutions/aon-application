@@ -57,6 +57,7 @@ import com.esferalia.aon.occam.api.model.type.Occupation;
 import com.esferalia.aon.occam.api.model.type.QuoteGroup;
 import com.esferalia.aon.occam.api.model.type.RLCE;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParser;
@@ -850,7 +851,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 	 
 	    // ------------------------ MY USER -------------------
 		User newUser = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), user.getLogin(), f -> f.getIdProperty().eq(user.getId()));
-		Auth auth = AON_SOLUTIONS.getAuth(newUser.getAuth().getAuth());
+		Auth auth = new Auth();// AON_SOLUTIONS.getAuth(newUser.getAuth().getAuth());
 		
 		if(auth.getEmail()!=null) {
 			toList.add(auth.getEmail());
@@ -870,25 +871,25 @@ public class ComunicaServlet extends AonApiHttpServlet{
 			try {
 				Domain domain = api.getDomain();
 				User user = api.getUser();
-				LinkedList<Auth> auths = new LinkedList<>();
+				LinkedList<String> uuids = new LinkedList<>();
 				
 				AON.getDomainUserStream(domain.getName(), domain.getId(), api.getUser().getLogin(), f -> f.getIdProperty().ne(user.getId()))
 				.forEach(usr -> {
 					DomainUserRoles dur = SECURITY.getDomainUserRoles(domain, user.getLogin(), usr.getId());
 					if(Boolean.TRUE.equals(dur.isComunicaManager())) {
-						Auth auth = new Auth().setAuth(usr.getAuth().getAuth());
-						if(auth.getAuth()!=null) {
-							auths.add(auth);
+						if(AonStringUtils.isBlank(usr.getAuth())) {
+							uuids.add(usr.getAuth());
 						}
 		    		}
 				});
 			
+				List<Auth> auths = AON_SOLUTIONS.getAuths(uuids);
 				if(!auths.isEmpty()) {
 					String title = "AON | COMUNIC@";
 			    	NotificationRequest notification = new NotificationRequest();
 			    	notification.setTitle(title);
 			    	notification.setBody(body);
-			    	notification.setSender(user.getAuth().getAuth());
+//			    	notification.setSender(user.getAuth().getAuth());
 			    	notification.setDomain(api.getDomain());
 			    	notification.setUser(api.getUser());
 			    	notification.setAuths(auths);

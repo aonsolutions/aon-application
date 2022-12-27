@@ -7,8 +7,10 @@ import java.util.Map;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
+import com.amazonaws.services.dynamodbv2.model.AttributeAction;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.AttributeValueUpdate;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
@@ -16,6 +18,7 @@ import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ListTablesResult;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.UpdateItemRequest;
 
 import solutions.aon.aws.AWS;
 
@@ -32,7 +35,7 @@ public class DYNAMODB {
 				.build();
 	}
 
-	public static Map<String, AttributeValue> get2(String table, String key, String value) {
+	public static Map<String, AttributeValue> scan(String table, String key, String value) {
 		AmazonDynamoDB client = connect();
 		String name = "#"+key;
 		String val = ":"+ key;
@@ -49,6 +52,23 @@ public class DYNAMODB {
 		return list.isEmpty() ? new HashMap<>() : list.get(0);
 	}
 	
+	   public static List<Map<String, AttributeValue>> scan(String table, String key, List<String> values) {
+	        AmazonDynamoDB client = connect();
+	        String name = "#"+key;
+	        String val = ":"+ key;
+	        Map<String,String> expressionAttributesNames = new HashMap<>();
+	            expressionAttributesNames.put(name, key);
+	        
+	        Map<String,AttributeValue> expressionAttributeValues = new HashMap<>();
+	        values.stream().forEach(value -> expressionAttributeValues.put(val, new AttributeValue().withS(value)));
+	            
+	        ScanRequest req = new ScanRequest(table)
+	            .withFilterExpression(name + "=" + val)
+	            .withExpressionAttributeNames(expressionAttributesNames)
+	            .withExpressionAttributeValues(expressionAttributeValues);
+	        return client.scan(req).getItems();
+	    }
+	
 	public static Map<String, AttributeValue> get(String table, String key, String value) {
 		AmazonDynamoDB client = connect();
 		HashMap<String,AttributeValue> map = new HashMap<>();
@@ -62,6 +82,22 @@ public class DYNAMODB {
 	public static void put(String table, Map<String, AttributeValue> item) {
 		AmazonDynamoDB client = connect();
 		client.putItem(table, item);
+	}
+	
+	public static void update(String table, String key, String keyValue, String param, String value) {
+        AmazonDynamoDB client = connect();
+        
+        HashMap<String,AttributeValue> map = new HashMap<>();
+        map.put(key, new AttributeValue(keyValue));
+
+        AttributeValueUpdate att = new AttributeValueUpdate();
+        att.setAction(AttributeAction.PUT);
+        att.setValue(new AttributeValue(value));
+        HashMap<String,AttributeValueUpdate> mapUpdate = new HashMap<>();
+        mapUpdate.put(param, att);
+        
+        UpdateItemRequest req = new UpdateItemRequest(table, map, mapUpdate);
+        client.updateItem(req);
 	}
 
 	public static boolean exist(String table) {

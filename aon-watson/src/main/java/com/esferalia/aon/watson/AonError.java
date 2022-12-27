@@ -156,6 +156,14 @@ public enum AonError implements Serializable{
 	, BRAND_EMPTY("El valor de la marca esta vacío.")
 	, BRAND_REPEAT("Ya existe una marca con el mismo nombre.")
 	
+	// --------------------------------------------- AUTH
+    , AUTH_NULL("El valor del usuario es nulo.")
+    , AUTH_EMPTY("El valor del usuario esta vacío.")
+    , AUTH_EMPTY_EMAIL("El valor del email esta vacío.")
+    , AUTH_EXIST_EMAIL("Ya existe un usuario con el mismo correo electrónico.")
+    , AUTH_EXIST_PHONE("Ya existe un usuario con el mismo teléfono.")
+    , AUTH_EXIST_DOCUMENT("Ya existe un usuario con el mismo número de documento.") 
+	
 	// --------------------------------------------- INVOICE
 	,INVOICE_EMPTY_DATE("La fecha de la factura es un dato obligatorio, no puede estar vac\u00EDa")
 	,INVOICE_EMPTY_TAX_DATE("La fecha I.V.A. de la factura es un dato obligatorio, no puede estar vac\u00EDa")

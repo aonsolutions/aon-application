@@ -65,11 +65,11 @@ public class MagicLinkServlet extends AonApiHttpServlet {
 			Date expireDate = AonDateUtils.addDays(new Date(), 1);
 			String token = AonToken.build(auth, expireDate);
 			String magicLink = "https://" + url + "?token=" + token; 
-			sendGmail(auth, magicLink, expireDate);
+			sendEmail(auth, magicLink, expireDate);
 		} else throw new AonApiException(AonApiError.NOT_VALID_EMAIL.getMessage());
 	}
 	
-	public void sendGmail(Auth auth, String magicLink, Date expireDate) {
+	public void sendEmail(Auth auth, String magicLink, Date expireDate) {
 		SESMessage msg = new SESMessage()
 			.setTo(auth.getEmail())
 			.setSubject("MAGIC LINK - AON SOLUTIONS")

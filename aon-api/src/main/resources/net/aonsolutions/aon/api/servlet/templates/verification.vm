@@ -1,0 +1,116 @@
+<html>
+<head>
+	<style>
+	
+		.diva {
+			background-color: #f1f1f1;
+			padding-top: 20px;
+			padding-bottom: 20px;
+		}
+	
+		
+		.divb {
+			margin: 0px auto;
+			max-width: 600px;
+			background-color: white;
+			border-radius: 5px;
+		}
+		
+		.tableA {
+			width: 100%;
+			padding-top: 10px;
+		}
+		
+		.table {
+			border: 1px solid #bbb;
+			border-radius: 5px;
+			width: 565px;
+		    margin: 15px;
+		}
+		
+		
+		.text {
+			font-size: 14px;
+		    margin: 20px;
+		}
+		
+		.label {
+			font-size: 12px;
+			margin-bottom: 0px;
+			color: rgba(0,0,0,.54);
+		}
+		
+		.aon-button {
+			display: inline-block;
+    		border: none;
+    		padding: 1rem 2rem;
+    		margin: 0;
+    		text-decoration: none;
+   		 	background: #002469;
+   		 	color: #ffffff;
+    		font-size: 1rem;
+    		cursor: pointer;
+    		text-align: center;
+    		transition: background 250ms ease-in-out, transform 150ms ease;
+    		-webkit-appearance: none;
+    		-moz-appearance: none;
+    		outline: none !important;
+    		box-shadow: 0px 2px 4px rgb(0 0 0 / 15%);
+		    border-radius: 6px;
+		    font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="diva">
+		<div class="divb">
+			<table class="tableA">
+				<tr>
+					<td><a href="https://aon.solutions/" target="_blank" alt="AON SOLUTIONS" style="margin-left: 150px;" ><img src="https://aon.solutions/assets/aon-logo.png" style="cursor: pointer;" width="300px"></a></td>
+					<td></td>
+				</tr>
+				
+	
+				<tr>
+    				<td>
+        				<hr>
+    				</td>
+				</tr>
+				
+				<tr>
+    				<td>
+    					<p> Hola $name, </p>
+    					<p>
+    					Ha solicitado un código de verificación. El código caduca en 15 minutos.
+						</p>
+						<p>	
+						$code 
+	    				</p>
+	    				<p>
+	    				Si no fue usted, puede ignorar esta alerta. Si sospecha de alguna actividad inusual en su cuenta, comuníquese con soporte.
+	    				</p>
+						<p>
+						El equipo de Aon Solutions.
+   						</p>
+    				</td>
+				</tr>
+				
+				<tr>
+    				<td>
+        				<hr>
+    				</td>
+				</tr>
+				
+				<tr class="label">
+					<td>
+						<div style="text-align:center; margin: 0 0 1em 0;" >Copyright 2022 AON SOLUTIONS, S.L.</div>
+						<div style="text-align:center" >Este es un mensaje generado autom&aacute;ticamente. Por favor, no conteste a este correo.</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+</body>
+</html>

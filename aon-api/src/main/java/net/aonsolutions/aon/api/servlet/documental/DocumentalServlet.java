@@ -122,7 +122,7 @@ public class DocumentalServlet extends AonApiHttpServlet{
 		Integer[] scopes = null;
 		try {
 			scopes = AON.getUserScopes(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId());
-			if(api.getUser().getDomain().equals(api.getDomain().getParentId())) {
+			if(api.getUser().getDomain().getId().equals(api.getDomain().getParentId())) {
 				Integer[] scopes2 = AON.getScopeStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 						r -> r.getDomainProperty().eq(api.getDomain().getId())).map(r -> r.getId()).toArray(Integer[]::new);
 				

@@ -11,7 +11,7 @@ import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 import { AonGraphicsTrial } from './aon-graphics-trial.js';
-import Apps from '../../services/app.js';
+import {ACCOUNTING } from '../../services/app.js';
 
 import * as GWT from '../../gwt/gwt.js';
 import { waitEl } from '../../services/utils.js';
@@ -45,7 +45,7 @@ export class AonAccounting extends AonElement {
 		this.aonGraphicsTrialView();
 
 		if(this.isMobile()){
-			application.addMobileSidenavHeader(Apps.ACCOUNTING);
+			application.addMobileSidenavHeader(ACCOUNTING);
 		}
 		
 		let options2 = [

@@ -12,7 +12,7 @@ import '../../components/aon-select.js';
 import '../../components/aon-switch.js';
 import '../../components/aon-toolbar.js';
 
-import { MSG, MATERIAL_ICONS, CONSTANT, TAG } from '../../environments/environments.js';
+import { MSG, MATERIAL_ICONS, CONSTANT, TAG, CSS } from '../../environments/environments.js';
 
 import * as ACTION from '../actions.js';
 import { AonMobileUserList } from './aon-mobile-user-list.js';
@@ -20,6 +20,8 @@ import { AonUserList } from './aon-user-list.js';
 import { getNextUser, getPreviousUser, getUsers, updateUser } from './UserCache.js';
 import { AonSwitch } from '../../components/aon-switch.js';
 import { AonInput } from '../../components/aon-input.js';
+import { AonToolbar } from '../../components/aon-toolbar.js';
+import { AonCard } from '../../components/aon-card.js';
 
 export class AonUser extends AonElement {
 
@@ -27,6 +29,7 @@ export class AonUser extends AonElement {
 	SELECT;
 	TOOLBAR;
 
+	auth;
 	user;
 	dur;
 	apps;
@@ -89,33 +92,94 @@ export class AonUser extends AonElement {
 
 	init() {
 		this.initialize();
-		this.user = this.user || {};
-		let login = this.user.login ? ' (' + this.user.login + ')' : '';
-		this.innerHTML = this.isMobile() 
-			? `
-				<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.USER}"> </aon-toolbar>
-				<div class="aonMobileSubContent">
-					<aon-card id="aonConfigurationUserCard"  title="${MSG.USER + login}"></aon-card>
-					<aon-card id="aonConfigurationUserSecurityCard" title="${MSG.PERMISSIONS}"></aon-card>
-				</div>
-			` 
-			: `
-				<aon-toolbar id="${this.TOOLBAR}" type="${ToolbarType.SECONDARY}" title="${MSG.USER}"> </aon-toolbar>
-				<div style="display:flex;width:100%;" class="aonSubContent">
-					<div id="aonConfigurationUserDiv" style="width:50%;">
-						<aon-card id="aonConfigurationUserCard"  title="${MSG.USER + login}"></aon-card>
-					</div>
-					<aon-card id="aonConfigurationUserSecurityCard" style="width:50%;" title="${MSG.PERMISSIONS}"></aon-card>
-				</div>
-			`;
-
-		getDomainUserRoles({}).then(r => {
-			this.dur = new DomainUserRoles(r);
-			this.buildUserToolbar();
+		if(this.isOnlyAuth()) {
 			this.build();
-			this.initUser();
-			this.initApps();
-		});
+		} else {
+			getDomainUserRoles({}).then(r => {
+				this.dur = new DomainUserRoles(r);
+				this.build();
+			});
+		}
+
+		this.buildUserToolbar();
+		this.buildUser();
+		this.initUser();
+		this.initApps();
+
+	}
+
+	build() {
+		this.buildToolbar();
+		if(this.isMobile()) {
+			this.buildMobileContent();
+		} else this.buildContent();
+
+	}
+
+	buildToolbar(){
+		let toolbar = new AonToolbar();
+		toolbar.id = this.TOOLBAR;
+		toolbar.type = ToolbarType.SECONDARY;
+		toolbar.title = MSG.USER;
+		this.appendChild(toolbar);
+
+		if(!this.hasAttribute('showToolbar'))
+		toolbar.style.display = 'none';
+		toolbar.removeButtons();
+		if(!this.isOnlyAuth() && getUsers().length > 1) {
+			toolbar.addButton2(ACTION.NEXT, () => this.next());
+			toolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
+			toolbar.addSeparator();
+		}
+		if(!this.isOnlyAuth() && this.user && this.user.uuid)
+			toolbar.addButton2(ACTION.SEND_EMAIL, () => this.sendEmail());
+		if(!this.isAutosave())
+			toolbar.addButton2(ACTION.SAVE, () => this.save());
+		if(!this.isOnlyAuth() && this.user.id)
+			toolbar.addButton2(ACTION.DELETE, () => this.delete());
+		if(!this.isOnlyAuth()) 
+			toolbar.addButton2(ACTION.BACK, () => this.back());
+	}
+
+	buildContent() {
+		let login = this.user && this.user.login ? ' (' + this.user.login + ')' : '';
+
+		let div = this.createElement(TAG.DIV);
+		div.className = CSS.AON_SUB_CONTENT;
+		div.style.display = 'flex';
+		div.style.width = '100%';
+		this.appendChild(div);
+
+		let authCard = new AonCard();
+		authCard.id = "aonConfigurationUserCard";
+		authCard.title = MSG.USER + login;
+		authCard.style.width = '50%';
+		div.appendChild(authCard);
+
+		let securityCard = new AonCard();
+		securityCard.id = "aonConfigurationUserSecurityCard";
+		securityCard.title = MSG.PERMISSIONS;
+		securityCard.style.width = '50%';
+		div.appendChild(securityCard);
+	}
+
+	buildMobileContent() {
+		let login = this.user && this.user.login ? ' (' + this.user.login + ')' : '';
+
+		let div = this.createElement(TAG.DIV);
+		div.className = CSS.AON_MOBILE_SUB_CONTENT;
+		this.appendChild(div);
+
+		let authCard = new AonCard();
+		authCard.id = "aonConfigurationUserCard";
+		authCard.title = MSG.USER + login;
+		div.appendChild(authCard);
+		this.buildAuthContent(authCard);
+
+		let securityCard = new AonCard();
+		securityCard.id = "aonConfigurationUserSecurityCard";
+		securityCard.title = MSG.PERMISSIONS;
+		div.appendChild(securityCard);
 	}
 
 	initialize() {
@@ -124,6 +188,8 @@ export class AonUser extends AonElement {
 		this.SELECT = this.SELECT || this.id + 'Select';
 		this.TOOLBAR = this.TOOLBAR || this.id + 'Toolbar';
 		this.apps = [];
+		this.user = this.user || {};
+		this.auth = this.auth || {};
 	}
 
 	getDur() {
@@ -215,28 +281,115 @@ export class AonUser extends AonElement {
 		this.buildPermissionButtons();
 	}
 
-	buildUserToolbar() {
-		let toolbar = this.getElement(this.TOOLBAR);
-		if(!this.hasAttribute('showToolbar'))
-		toolbar.style.display = 'none';
-		toolbar.removeButtons();
-		if(!this.isOnlyAuth() && getUsers().length > 1) {
-			toolbar.addButton2(ACTION.NEXT, () => this.next());
-			toolbar.addButton2(ACTION.PREVIOUS, () => this.previous());
-			toolbar.addSeparator();
+	buildAuthContent(card) {
+		let email = new AonInput();
+		email.id = 'aonConfigurationUserCardEmail';
+		email.description = MSG.EMAIL;
+		email.value = this.auth.email;
+		email.disabled = !this.isOnlyAuth() && this.auth.uuid ? true : false;
+		email.onChange(() => {
+			this.auth.email = email.value;
+			if(this.isAutosave()){
+				this.save();
+			}
+		});
+		card.appendChild(email);
+
+		let name = new AonInput();
+		name.id = 'aonConfigurationUserCardName';
+		name.className = CSS.AON_WIDTH_25;
+		name.description = MSG.NAME;
+		name.value = this.auth.email;
+		name.disabled = !this.isOnlyAuth() && this.auth.uuid ? true : false;
+		name.onChange(() => {
+			this.auth.name = name.value;
+			if(this.isAutosave()){
+				this.save();
+			}
+		});
+		card.appendChild(name);
+
+		let surname = new AonInput();
+		surname.id = 'aonConfigurationUserCardName';
+		surname.className = CSS.AON_WIDTH_75;
+		surname.description = MSG.SURNAME;
+		surname.value = this.auth.surname;
+		surname.disabled = !this.isOnlyAuth() && this.auth.uuid ? true : false;
+		surname.onChange(() => {
+			this.auth.surname = surname.value;
+			if(this.isAutosave()){
+				this.save();
+			}
+		});
+		card.appendChild(surname);
+
+		let document = new AonInput();
+		document.id = 'aonConfigurationUserCardDocument';
+		document.className = CSS.AON_WIDTH_50;
+		document.description = MSG.DOCUMENT;
+		document.value = this.auth.document;
+		document.disabled = !this.isOnlyAuth() && this.auth.uuid ? true : false;
+		document.onChange(() => {
+			this.auth.document = document.value;
+			if(this.isAutosave()){
+				this.save();
+			}
+		});
+		card.appendChild(document);
+
+		let phone = new AonInput();
+		phone.id = 'aonConfigurationUserCardPhone';
+		phone.className = CSS.AON_WIDTH_50;
+		phone.description = MSG.PHONE;
+		phone.value = this.auth.phone;
+		phone.disabled = !this.isOnlyAuth() && this.auth.uuid ? true : false;
+		phone.onChange(() => {
+			this.user.phone= phone.getAttribute('value');
+			if(this.isAutosave()){
+				this.save();
+			}
+		});
+		card.appendChild(phone);
+
+		if(this.hasAttribute('showPassword')) {
+			let password = new AonInput();
+			password.id = 'aonConfigurationUserCardPassword';
+			password.description = MSG.PASSWORD;
+			password.type = 'password';
+			password.value = '12345678';
+			password.disabled = true;
+			card.appendChild(password);
 		}
-		if(!this.isOnlyAuth() && this.user && this.user.uuid)
-			toolbar.addButton2(ACTION.SEND_EMAIL, () => this.sendEmail());
-		if(!this.isAutosave())
-			toolbar.addButton2(ACTION.SAVE, () => this.save());
-		if(!this.isOnlyAuth() && this.user.id)
-			toolbar.addButton2(ACTION.DELETE, () => this.delete());
-		if(!this.isOnlyAuth()) 
-			toolbar.addButton2(ACTION.BACK, () => this.back());
-		
 	}
 
-	build() {
+	updateEmail(value) {
+		getAuth({email: value}).then((auth) => {
+			if(auth.uuid){
+				this.auth = auth;
+				this.initUser();
+			} else {
+				this.auth.email = value;
+			}
+		});
+	}
+
+	updateName(value) {
+		this.auth.name = value;
+	}
+
+	updateSurname(value) {
+		this.auth.surname = value;
+	}
+
+	updateDocument(value) {
+		this.auth.document = value;
+	}
+
+	updatePhone(value) {
+		this.auth.phone = value;
+	}
+
+	buildUser() {
 		let card = document.getElementById('aonConfigurationUserCard');
 		let html = `<form action="#" class="aon-margin-0">
 				<aon-input class="aonWidth100" id="aonConfigurationUserCardEmail" description="Email" value=""></aon-input>
@@ -349,12 +502,6 @@ export class AonUser extends AonElement {
 				e.preventDefault();
 				this.editPassword();
 			});
-		}
-
-		if(this.isMobile()) {
-			let div = this.getElement("aonConfigurationUserDiv");
-			if(div) div.style.width = '100%'
-			card2.style.width = '100%';
 		}
 	}
 

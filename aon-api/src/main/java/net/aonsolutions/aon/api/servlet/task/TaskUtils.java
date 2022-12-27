@@ -307,10 +307,10 @@ public class TaskUtils {
 			
 			Auth authSender = AON_SOLUTIONS.getAuth(gtaskId.get());
 			
-			if( authSender!=null && authSender.getEmail()!=null &&  !Arrays.equals(user.getAuth().getAuth(), authSender.getAuth())) {
-				list.add(authSender);
-				LOGGER.info("SENDER EMAIL:"+ authSender.getEmail());
-			}
+//			if( authSender!=null && authSender.getEmail()!=null &&  !Arrays.equals(user.getAuth().getAuth(), authSender.getAuth())) {
+//				list.add(authSender);
+//				LOGGER.info("SENDER EMAIL:"+ authSender.getEmail());
+//			}
 		}
 		
 		//SEND TASKHOLDER ASSIGNED
@@ -318,7 +318,7 @@ public class TaskUtils {
 			if(!task.getTaskHolder().getId().equals(workflow.getTaskHolder().getId())) {
 				User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(task.getTaskHolder().getUserId()));
 				
-				if(usr!=null) list.add(usr.getAuth());
+//				if(usr!=null) list.add(usr.getAuth());
 				
 				LOGGER.info("TASKHOLDER ID:"+ task.getTaskHolder().getId());
 			}		
@@ -335,7 +335,7 @@ public class TaskUtils {
 			)
 			.forEach(th ->{
 				User usr = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
-				if(usr!=null) list.add(usr.getAuth());
+//				if(usr!=null) list.add(usr.getAuth());
 			});
 			LOGGER.info("WORKGROUP ID:"+ task.getWorkgroup().getId());
 		}
@@ -346,7 +346,7 @@ public class TaskUtils {
 	public static Optional<Auth> getAuthForTaskHolder(AonApiData api, TaskHolder th) {
 		Domain domain = api.getDomain();
 		User user = AON.getUser(domain, api.getUser().getLogin(), f -> f.getIdProperty().eq(th.getUserId()));
-		Auth auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
+		Auth auth = new Auth(); // AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
 		return auth.getEmail()!=null && !auth.getEmail().isEmpty() ? Optional.of(auth) : Optional.empty();
 	}
 	

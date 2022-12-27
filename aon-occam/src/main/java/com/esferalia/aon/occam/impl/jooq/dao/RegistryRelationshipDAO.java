@@ -110,6 +110,11 @@ public class RegistryRelationshipDAO {
 		return rrelationship;
 	}
 	
+	public static void delete(AONContext ctx, Integer id){
+		delete(ctx, f-> f.getIdProperty().eq(id));
+		ctx.log().debug("DELETE REGISTRY RRELATIONSHIP id: {0}", id);
+	}	   
+	
 	public static void delete(AONContext ctx, RRelationshipFilter filter){
 		ctx.checkWrite();
 		int count = ctx.getDslContext().delete(RRELATIONSHIP)

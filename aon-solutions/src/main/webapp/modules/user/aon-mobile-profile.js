@@ -7,13 +7,15 @@ import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { changePassword, getAuth, insertAvatar } from '../../services/authService.js';
 import { downscaleImage } from '../../services/compressImg.js';
 import { getReader } from '../../services/utils.js';
-// import { AonDialog } from '../../components/aon-dialog.js';
 
 export class AonMobileProfile extends AonElement {
 
     INPUT_FILE;
     AVATAR;
     DIALOG;
+
+    auth;
+
     get id() {
 		return this.getAttribute(CONSTANT.ID);
 	}
@@ -28,8 +30,9 @@ export class AonMobileProfile extends AonElement {
 
 	connectedCallback () {
         this.initialize();
-        getAuth({avatar: true}).then((user) => {
-            this.build(user);
+        getAuth().then(r => {
+            this.auth = r;
+            this.build();
         });
     }
 
@@ -40,7 +43,7 @@ export class AonMobileProfile extends AonElement {
         this.DIALOG = this.id+"Dialog"; 
     }
 
-    build(user) {
+    build() {
         let input = document.createElement(TAG.INPUT);
         input.id = this.INPUT_FILE;
         input.multiple = true;
@@ -60,14 +63,14 @@ export class AonMobileProfile extends AonElement {
 
         let avatar = new AonAvatar();
         avatar.id = this.AVATAR;
-        avatar.src = user.avatar;
+        avatar.src = auth.avatar;
         avatar.addEventListener(EVENT.CLICK, () => this.uploadAvatar());
         div.appendChild(avatar);
 
         let name = this.createElement(TAG.SPAN);
         name.style.fontWeight = 'bold';
         name.style.marginLeft = '20px';
-        name.innerHTML = user.name + ' ' + user.surname;
+        name.innerHTML = auth.name + ' ' + auth.surname;
         div.appendChild(name);
 
         let configuration = new AonIconButton();
@@ -80,9 +83,9 @@ export class AonMobileProfile extends AonElement {
             this.rootPanelHtml('<aon-configuration id="aon-configuration"></aon-configuration>'));
         div.appendChild(configuration);
 
-        this.buildOption('mail', user.email);
-        this.buildOption('fingerprint', user.document);
-        this.buildOption('smartphone', user.phone);
+        this.buildOption('mail', auth.email);
+        this.buildOption('fingerprint', auth.document);
+        this.buildOption('smartphone', auth.phone);
         this.buildOption('password', 'Cambiar Contraseña', () => this.editPassword());
         // this.addCloseSessionButton();
     }
@@ -158,42 +161,8 @@ export class AonMobileProfile extends AonElement {
 		d.open();
 	}
 
-    // addCloseSessionButton() {
-    //     let span = this.getElement(this.id + "FloatSpan") || this.createElement(TAG.SPAN);
-    //     span.id = this.id + "FloatSpan";
-    //     span.style.position = "fixed";
-    //     let n = (window.innerWidth / 5 - 40) / 2;
-    //     span.style.right = n + 'px';
-    //     span.style.bottom = this.isSab() ? "80px" : "70px";
-    //     let aonIconButton = new AonIconButton();
-
-    //     aonIconButton.icon = 'input';
-    //     aonIconButton.id = this.id + "CloseSessionButton";
-    //     aonIconButton.title = 'Cerrar Sesión';
-    //     aonIconButton.color = 'white'
-    //     aonIconButton.background = 'red';
-    //     aonIconButton.style.opacity = '0.5';
-    //     aonIconButton.noHover = true;
-    //     span.appendChild(aonIconButton);
-    //     this.appendChild(span);
-    //     aonIconButton.addEventListener(EVENT.CLICK, () => this.closeSession());
-    // }
-
-    // closeSession() {
-    //     let d = new AonDialog();
-    //     this.appendChild(d);
-    //     d.clear();
-    // 	if(!this.isMobile()) d.width = '400px';
-    // 	d.setTitle('Cerrar Sesión');
-   	//  	d.setContentHTML(`Estás seguro de cerrar sesión`);
-    // 	d.addAcceptAction(() => {
-    //         closeSession();
-    // 	});
-    // 	d.open();
-    // }
-
     uploadAvatar() {
-        this.getElement(this.INPUT_FILE).click();
+        // this.getElement(this.INPUT_FILE).click();
     }
 
     async uploadAvatarFile(file) {

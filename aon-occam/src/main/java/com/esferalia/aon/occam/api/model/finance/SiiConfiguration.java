@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.finance;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.Administration;
 
@@ -10,6 +11,7 @@ public class SiiConfiguration implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
+	private Company company;
 	private boolean active;
 	private Administration administration;
 	private boolean test;
@@ -24,6 +26,15 @@ public class SiiConfiguration implements Serializable{
 	
 	public SiiConfiguration setActive(boolean active) {
 		this.active = active;
+		return this;
+	}
+	
+	public Company getCompany() {
+		return company;
+	}
+	
+	public SiiConfiguration setCompany(Company company) {
+		this.company = company;
 		return this;
 	}
 	

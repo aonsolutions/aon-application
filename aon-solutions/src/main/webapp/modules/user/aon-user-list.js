@@ -1,9 +1,9 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getUserListSpeed, getUserRoles} from  '../../services/service.js';
+import {getUserList, getUserRoles} from  '../../services/service.js';
 import {setUsers, setIndex, addUsers, getFilter, setFilter, getUsers} from './UserCache.js';
 
 import { AonUser } from './aon-user.js';
-import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
+import { CONSTANT, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environments/environments.js';
 import { AonTable } from '../../components/aon-table.js';
 
 export class AonUserList extends AonElement {
@@ -53,10 +53,11 @@ export class AonUserList extends AonElement {
 		let searchFn = (event) => this.search(event.detail);
 		btnSearch.addEventListener(EVENT.SEARCH, searchFn);
 		
-		table.addColumn(MSG.NAME, CONSTANT.STRING, CONSTANT.NAME, '25%');
-		table.addColumn(MSG.SURNAME, CONSTANT.STRING, CONSTANT.SURNAME, '25%');
-		table.addColumn(MSG.EMAIL, CONSTANT.STRING, CONSTANT.EMAIL, '25%');
-		table.addColumn(MSG.NIF, CONSTANT.NUMBER, CONSTANT.DOCUMENT, '25%');
+		table.addColumn(MSG.NAME, CONSTANT.STRING, CONSTANT.NAME, '50%');
+		table.addColumn(MSG.LAST_ACCESS, CONSTANT.STRING, CONSTANT.LAST_ACCESS, '20%');
+		table.addColumn(MSG.STATUS, CONSTANT.ICON, "status_icon", '15%');
+		table.addColumn(MSG.VERIFIED, CONSTANT.ICON, "verified_icon", '15%');
+		
 		table.addEventListener('more', () => {
 			if(this.more) this.loadMore()
 		});
@@ -74,14 +75,22 @@ export class AonUserList extends AonElement {
 			if(this.back) {
 				this.back = false;
 				getUsers().forEach((user, i) => {
+					user.status_icon = user.active ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
+					user.status_icon_color = user.active ?  'green' : undefined;
+					user.verified_icon = user.auth ? MATERIAL_ICONS.VERIFIED : '';
+					user.verified_icon_color = user.auth ?  '#1D9FEF' : undefined;
 					table.addRow(user, () => this.aonUser(user, i));
 				});
 			} else {
 				this.filter.page = 1;
-				getUserListSpeed(this.filter).then(users => {
+				getUserList(this.filter).then(users => {
 					setUsers(users);
 					table.removeRows();
 					users.forEach((user, i) => {
+						user.status_icon = user.active ? MATERIAL_ICONS.CHECK_CIRCLE : MATERIAL_ICONS.ERROR;
+						user.status_icon_color = user.active ?  'green' : undefined;
+						user.verified_icon = user.auth ? MATERIAL_ICONS.VERIFIED : '';
+						user.verified_icon_color = user.auth ?  '#1D9FEF' : undefined;
 						table.addRow(user, () => this.aonUser(user, i));
 					});
 				});
@@ -94,7 +103,7 @@ export class AonUserList extends AonElement {
 		let table = this.getElement(this.TABLE);
 		if(table && this.filter.page) {
 			this.filter.page = this.filter.page + 1;
-			getUserListSpeed(this.filter).then(users => {
+			getUserList(this.filter).then(users => {
 				addUsers(users);
 				if(users.length > 0)
 					this.more = true;

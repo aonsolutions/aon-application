@@ -3,9 +3,7 @@ package com.esferalia.aon.occam.impl.jooq.validation;
 import java.util.function.BiConsumer;
 
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.registry.Registry;
-import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.task.TaskHolderType;
@@ -50,14 +48,14 @@ public class TaskHolderAutoComplete {
 				if(!r.isEmpty()) taskHolder.copy(r);
 			} 
 			
-			if(taskHolder.getId() == null && AonStringUtils.isBlank(taskHolder.getDocument()) && user.getAuth() != null) {
-				Auth a = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
-				if(!a.isEmpty()) {
-					taskHolder.setDocument(a.getDocument())
-					.setName(a.getName()+ " "+ a.getSurname())
-					.setAlias(a.getName());
-				}
-			}
+//			if(taskHolder.getId() == null && AonStringUtils.isBlank(taskHolder.getDocument()) && user.getAuth() != null) {
+//				Auth a = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
+//				if(!a.isEmpty()) {
+//					taskHolder.setDocument(a.getDocument())
+//					.setName(a.getName()+ " "+ a.getSurname())
+//					.setAlias(a.getName());
+//				}
+//			}
 		}
 	};
 	

@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.polymer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -20,6 +21,24 @@ public class AonTemplate2 implements EntryPoint {
 	@UiField SimpleLayoutPanel toolbar;
 	@UiField SimpleLayoutPanel westContent;
 	@UiField SimpleLayoutPanel content;
+	
+	public static native Boolean isAonSolutions()
+	/*-{
+		var newAon = $wnd.localStorage.getItem("aon_solutions"); 
+		return newAon ? true : false;
+	}-*/;
+	
+	public static native String getToken()
+	/*-{
+		return $wnd.localStorage.getItem("aon_session_id");
+	}-*/;
+	
+	public static native String getCurrentUser()
+	/*-{
+		return $wnd.getCurrentUser();
+	}-*/;
+	
+	
 		
 	public static native String getCurrentDomainName()
 	/*-{
@@ -35,6 +54,13 @@ public class AonTemplate2 implements EntryPoint {
 	/*-{
 		return $wnd.localStorage.getItem("rootPanel");
 	}-*/;
+	
+	public Occam getOccam() {
+		return new Occam()
+			.setDomain(getCurrentDomain())
+			.setDomainName(getCurrentDomainName())
+			.setUser(getCurrentUser());
+	}
 	
 	public AonTemplate2() {
 

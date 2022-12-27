@@ -149,6 +149,7 @@ public class AON_SOLUTIONS {
 		return new RelationshipImpl();
 	}
 
+	@Deprecated
 	public static AuthAttach getAuthAttach(Auth auth, AuthAttachFilter filter) { 
 		String domainName = AONContext.getSchemaFirstDomain(auth.getSchema());
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, 0, "")){
@@ -156,6 +157,7 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	@Deprecated
 	public static AuthAttach saveAuthAttach(Auth auth, AuthAttach attach) { 
 		String domainName = AONContext.getSchemaFirstDomain(auth.getSchema());
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, 0, "")){
@@ -163,12 +165,14 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	@Deprecated
 	public static Auth getAuth(String domainName, Integer domainId, String email) { 
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
 			return getSecurity().getAuth(ctx, email);
 		}
 	}
 	
+	@Deprecated
 	public static Auth getAuth(String domainName, Integer domainId, byte[] auth) { 
 		CloseableAONContext ctx = null;
 		try {
@@ -181,6 +185,7 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	@Deprecated
 	public static Auth getAuth(String schema, String email) { 
 		CloseableAONContext ctx = null;
 		try {
@@ -193,6 +198,7 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	@Deprecated
 	public static Auth getAuth(String email) {
 		Auth auth = new Auth();
 		List<String> schemas = AONContext.getSchemas();
@@ -206,6 +212,7 @@ public class AON_SOLUTIONS {
 		return auth;
 	}
 	
+	@Deprecated
 	public static Auth getAuthByDocument(String domainName, Integer domainId, String document) { 
 		CloseableAONContext ctx = null;
 		try {
@@ -217,7 +224,13 @@ public class AON_SOLUTIONS {
 			}
 		}
 	}
+
 	
+	public static List<Auth> getAuths(List<String> uuids) {
+       return getSecurity().getAuthList(uuids);
+    }
+	
+	@Deprecated
 	public static List<Auth> getAuths(AuthFilter filter) {
 		LinkedList<Auth> auth = new LinkedList<>();
 		List<String> schemas = AONContext.getSchemas();
@@ -230,12 +243,14 @@ public class AON_SOLUTIONS {
 		return auth;
 	}
 	
+	@Deprecated
 	public static Stream<Auth> getAuthStream(String domainName, Integer domainId, AuthFilter filter) { 
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
 			return getSecurity().getAuthStream(ctx, filter);
 		}
 	}
 	
+	@Deprecated
 	public static List<Auth> getAuthsWithDevices(AuthFilter filter) {
 		LinkedList<Auth> auth = new LinkedList<>();
 		List<String> schemas = AONContext.getSchemas();
@@ -247,7 +262,30 @@ public class AON_SOLUTIONS {
 		}
 		return auth;
 	}
+
+	@Deprecated
+    public static List<User> getUsersByAuth(Auth auth) {
+        LinkedList<User> users = new LinkedList<>();
+        List<String> schemas = AONContext.getSchemas();
+        for(String schema: schemas) {
+            String domain = AONContext.getSchemaFirstDomain(schema);
+            if(!AonStringUtils.isBlank(domain)) {
+                users.addAll(getUsersByAuth(domain, 0, "", auth)); 
+            }               
+        }
+        return users;
+    }
 	
+	public static List<User> getUsersByAuth(String domainName, Integer domainId, String login, Auth auth) {
+	    try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+            return getSecurity().getUserStream(ctx, f -> f.getAuthProperty().eq(auth.getAuth()), null)
+                    .collect(Collectors.toCollection(LinkedList::new));
+        } 
+	}
+
+	
+	
+	@Deprecated
 	public static Stream<Auth> getAuthStreamWithDevices(String domainName, Integer domainId, AuthFilter filter) { 
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){
 			return getSecurity().getAuthStream(ctx, filter).map(auth -> {
@@ -260,6 +298,7 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	@Deprecated
 	public static Auth getAuthByDocument(String document) {
 		Auth auth = new Auth();
 		List<String> schemas = AONContext.getSchemas();
@@ -273,6 +312,7 @@ public class AON_SOLUTIONS {
 		return auth;
 	}
 	
+	@Deprecated
 	public static Auth getAuth(byte[] auth) {
 		Auth auth0 = new Auth();
 		List<String> schemas = AONContext.getSchemas();
@@ -286,17 +326,24 @@ public class AON_SOLUTIONS {
 		return auth0;
 	}
 	
+	public static Auth saveAuth(Auth auth) {
+	    return getSecurity().saveAuth(auth);
+	}
+	
+	@Deprecated
 	public static Auth updateAuth(Auth auth) { 
 		String domain = AONContext.getSchemaFirstDomain(auth.getSchema());
 		return updateAuth(domain, 0, auth);
 	}
 	
+	@Deprecated
 	public static Auth updateAuth(String domainName, Integer domainId, Auth auth) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
 			return getSecurity().updateAuth(ctx, auth);
 		}
 	}
 	
+	@Deprecated
 	public static Auth updateAuthPassword(Auth auth) {
 		String domain = AONContext.getSchemaFirstDomain(auth.getSchema());
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, 0, "")){		
@@ -304,12 +351,14 @@ public class AON_SOLUTIONS {
 		}
 	}
 	
+	@Deprecated
 	public static Auth insertAuth(String domainName, Integer domainId, Auth auth) { 
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, "")){		
 			return getSecurity().insertAuth(ctx, auth);
 		}
 	}
 	
+	@Deprecated
 	public static Auth insertAuth(Auth auth) { 
 		List<String> schemas = AONContext.getSchemas();
 		Boolean inserted = false;
@@ -449,7 +498,6 @@ public class AON_SOLUTIONS {
 	public static List<AonCompany> getCompanyBySchemaStream(String token, CompanyFilter filter, Integer page, Integer perPage) {	
 		AonToken aonToken = SECURITY.getAonToken(token);
 		List<AonCompany> list = new ArrayList<>();
-
 		for(String schema: AONContext.getSchemas()) {
 			String domain = AONContext.getSchemaFirstDomain(schema);
 			if(!AonStringUtils.isBlank(domain)) {

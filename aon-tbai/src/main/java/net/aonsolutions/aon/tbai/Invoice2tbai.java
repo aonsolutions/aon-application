@@ -313,7 +313,7 @@ public class Invoice2tbai {
 				detalles.getIDDetalleFactura().add(detalle);
 		});
 		
-		Double totalAmount = detalles.getIDDetalleFactura().stream().mapToDouble(r -> Double.parseDouble(r.getImporteTotal())).sum();
+		Double totalAmount = AonMathUtils.round(detalles.getIDDetalleFactura().stream().mapToDouble(r -> Double.parseDouble(r.getImporteTotal())).sum());
 		
 		datos.setDetallesFactura(detalles);
 		if(invoice.isWithholding()) {
@@ -321,7 +321,7 @@ public class Invoice2tbai {
 				.mapToDouble(r -> r.getQuota()).sum();
 			datos.setRetencionSoportada(Double.toString(AonMathUtils.round(ret)));
 		} 
-		datos.setImporteTotalFactura(Double.toString(AonMathUtils.round(totalAmount)));
+		datos.setImporteTotalFactura(Double.toString(totalAmount));
 
 //		datos.setRetencionSoportada("");
 //		datos.setBaseImponibleACoste("");

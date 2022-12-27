@@ -88,8 +88,9 @@ public class InvoicesServlet extends AonApiHttpServlet {
 
             response(req, resp, object);
         } catch (Exception e) {
+            e.printStackTrace();
             error(req, resp, e);
-        }
+        } 
     }
 
     private void delete(HttpServletRequest req, HttpServletResponse resp) {

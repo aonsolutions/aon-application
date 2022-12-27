@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.stream.Stream;
@@ -16,9 +17,13 @@ import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.registry.RegistryRelationship;
 import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.RegistryRelationshipDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonRandomStringUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -141,6 +146,10 @@ public class ConsoleDeleteDomain {
 				.forEach( t -> params.setTotalCount( params.getTotalCount() + 1) );
 			ConsoleMessageUtils.print(params.getPrinter(), ConsoleMessageUtils.progress(processId, params.getTotalCount(),params.getTotalProgress() ));
 			
+			// DELETE OFFICE CUSTOMER RELATIONSHIP
+			Company company = CompanyDAO.getCompany(params.getFromConnection().getAONContext(), domain.getId());
+		    RegistryRelationshipDAO.delete(params.getFromConnection().getAONContext(), f -> f.getRelatedRegistryProperty().eq(company.getId()));
+		    
 			params.getToDslContext().transaction(conf -> {
 				
 				getStream( params )

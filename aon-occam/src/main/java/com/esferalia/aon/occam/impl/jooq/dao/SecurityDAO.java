@@ -165,7 +165,10 @@ public class SecurityDAO {
 
 	}
 	
+	@Deprecated
 	private static final AuthPropertiesDAO AUTH_PROPERTIES = new AuthPropertiesDAO();
+	
+	@Deprecated
 	protected static class AuthPropertiesDAO implements AuthProperties {
 		protected Condition[] getConditions(AuthFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -181,6 +184,7 @@ public class SecurityDAO {
 		@Override public Property<String> getPhoneProperty() {return new FilterDAO.PropertyDAO<>(AUTH.PHONE);}
 	}
 
+	@Deprecated
 	public static Auth getAuth(AONContext ctx, byte[] auth) {
 		return ctx.getDslContext()
 			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
@@ -189,6 +193,7 @@ public class SecurityDAO {
 			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
 	}
 
+	@Deprecated
 	public static Stream<Auth> getAuthStream(AONContext ctx, AuthFilter filter) {
 		return ctx.getDslContext()
 			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
@@ -197,6 +202,7 @@ public class SecurityDAO {
 			.fetch().stream().map(new AuthFiller());
 	}
 	
+	@Deprecated
 	public static Auth getAuth(AONContext ctx, String email) {
 		return ctx.getDslContext()
 			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
@@ -205,6 +211,7 @@ public class SecurityDAO {
 			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
 	}
 	
+	@Deprecated
 	public static Auth getAuthByDocument(AONContext ctx, String document) {
 		return ctx.getDslContext()
 			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
@@ -213,6 +220,7 @@ public class SecurityDAO {
 			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
 	}
 	
+	@Deprecated
 	public static Integer[] getAuthDomains (AONContext ctx, byte[] auth) {
 		return ctx.getDslContext()
 			.select(USER.DOMAIN)
@@ -221,6 +229,7 @@ public class SecurityDAO {
 			.fetch().stream().map(r -> r.getValue(USER.DOMAIN)).toArray(Integer[]::new);
 	}
 
+	@Deprecated
 	public static Integer[] getAuthScopes (AONContext ctx, byte[] auth) {
 		return ctx.getDslContext()
 			.select(USER_SCOPE.SCOPE)
@@ -237,6 +246,12 @@ public class SecurityDAO {
 		return ctx.getDslContext().select(DSLExtensions.unhex(uuid)).stream().map(r -> r.value1()).findFirst().orElse(new byte[]{});
 	}
 	
+	   public static String hexUuid(AONContext ctx, byte[] uuid) {
+	        return ctx.getDslContext().select(DSLExtensions.hex(uuid))
+	             .stream().map(r -> r.value1()).findFirst().orElse(null);
+	    }
+	
+	@Deprecated
 	public static Auth insertAuth(AONContext ctx, Auth auth) {
 		String uuid = ctx.getDslContext().fetch("select uuid();").stream().map(r -> r.getValue(0).toString()).findFirst().get().replace("-", "");
 		ctx.getDslContext().insertInto(AUTH)
@@ -252,6 +267,7 @@ public class SecurityDAO {
 		return getAuth(ctx, auth.getEmail());
 	}
 	
+	@Deprecated
 	public static Auth updateAuth(AONContext ctx, Auth auth) {
 		ctx.getDslContext().update(AUTH)
 			.set(AUTH.NAME, auth.getName())
@@ -263,6 +279,7 @@ public class SecurityDAO {
 		return auth;
 	}
 	
+	@Deprecated
 	public static Auth updateAuthPassword(AONContext ctx, Auth auth) {
 		ctx.getDslContext().update(AUTH)
 			.set(AUTH.PASSWORD, auth.getPassword())
@@ -362,7 +379,7 @@ public class SecurityDAO {
 		if (record != null) {
 			user = new User();
 			user.setId(record.getValue(USER.ID));
-			user.setDomain(record.getValue(USER.DOMAIN));
+			user.setDomain(new Domain().setId(record.getValue(USER.DOMAIN)));
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN)); 
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
@@ -396,8 +413,8 @@ public class SecurityDAO {
 			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain())
-			.set(USER.AUTH, user.getAuth().getAuth())
+			.set(USER.DOMAIN, user.getDomain().getId())
+			.set(USER.AUTH, unHexUuid(ctx, user.getAuth()))
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
 			.set(USER.TOOLBAR, user.getToolbar().value())
@@ -408,13 +425,13 @@ public class SecurityDAO {
 	}
 	
 	public static User updateUser(AONContext ctx, User user) {
-		ctx.getDslContext().update(USER)
+	    ctx.getDslContext().update(USER)
 			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain())
-			.set(USER.AUTH, user.getAuth().getAuth())
+			.set(USER.DOMAIN, user.getDomain().getId())
+			.set(USER.AUTH, unHexUuid(ctx, user.getAuth()))
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
 			.set(USER.TOOLBAR, user.getToolbar().value())
@@ -514,6 +531,7 @@ public class SecurityDAO {
 		.fetch().stream().map(new DomainFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	@Deprecated
 	public static class AuthFiller extends Filler implements Function<Record8<byte[], String, String, String, String, String, String, String>,Auth> {
 
 		@Override
@@ -651,7 +669,7 @@ public class SecurityDAO {
 		User user = new User();
 		if (record != null) {
 			user.setId(record.getValue(USER.ID));
-			user.setDomain(record.getValue(USER.DOMAIN));
+			user.setDomain(new Domain().setId(record.getValue(USER.DOMAIN)));
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN)); 
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
@@ -773,8 +791,8 @@ public class SecurityDAO {
 			throw new IllegalAccessError("Usuario no encontrado.");
 		}
 		// Es un usuario del dominio, por lo que hay que consultar los scopes del dominio
-		int dom = user.getDomain();
-		if ( user.getDomain() == ctx.getDomainId()) {
+		int dom = user.getDomain().getId();
+		if ( user.getDomain().getId() == ctx.getDomainId()) {
 			final List<Integer> list = new ArrayList<Integer>();
 			ctx.getDslContext()
 				.select(USER_SCOPE.SCOPE)
@@ -1578,7 +1596,7 @@ public class SecurityDAO {
 		User user = getUser(ctx);
 		if (user != null) {
 			return getDomainAppStream(ctx, p -> 
-				p.getDomainProperty().eq(user.getDomain())
+				p.getDomainProperty().eq(user.getDomain().getId())
 					.and(p.getAppProperty().eq( AonApp.OCR.value()))
 					.and(p.getActiveProperty().eq( (byte) 1 )))
 				.findFirst()

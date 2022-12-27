@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Workgroup;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
@@ -16,18 +17,24 @@ public class User implements Serializable {
 	private static final long serialVersionUID = -5850188463638573104L;
 	
 	private Integer id;
-	private Integer domain;
+	private Domain domain;
 	private UserType type;
 	private String name;
 	private String login;
 	private boolean active;
     private Registry registry;
-    private AonRole[] userRoles;
+    private boolean allowConcurrent;
+    private String locale;
+    private Integer pageLimit;
+    private Integer linesPageLimit;
+    private String initAction;
     private Date expirationDate;
+    private Date lastAccess;
     private UserToolbar toolbar;
     private List<Workgroup> workgroups;
-    private Auth auth;
-    private List<TaskHolder> taskHolders;
+    private String auth;
+    
+    private AonRole[] userRoles;
     
     @Deprecated
 	private boolean shared;
@@ -41,10 +48,13 @@ public class User implements Serializable {
 		this.id = id;
 		return this;
 	}
-	public Integer getDomain() {
+	public Domain getDomain() {
+	    if(domain == null) {
+	        domain = new Domain();
+	    }
 		return domain;
 	}
-	public User setDomain(Integer domain) {
+	public User setDomain(Domain domain) {
 		this.domain = domain;
 		return this;
 	}
@@ -129,14 +139,11 @@ public class User implements Serializable {
 		return this;
 	}
 	
-	public Auth getAuth() {
-		if(auth == null) {
-			auth = new Auth();
-		}
+	public String getAuth() {
 		return auth;
 	}
 
-	public User setAuth(Auth auth) {
+	public User setAuth(String auth) {
 		this.auth = auth;
 		return this;
 	}
@@ -167,16 +174,50 @@ public class User implements Serializable {
 		return this;
 	}
 
-	public List<TaskHolder> getTaskHolders() {
-		if(taskHolders == null) 
-			taskHolders = new LinkedList<>();
-		return taskHolders;
+	public boolean isAllowConcurrent() {
+        return allowConcurrent;
+    }
+	
+	public User setAllowConcurrent(boolean allowConcurrent) {
+        this.allowConcurrent = allowConcurrent;
+        return this;
+    }
+	
+	public String getLocale() {
+        return locale;
+    }
+	
+	public User setLocale(String locale) {
+        this.locale = locale;
+        return this;
+    }
+
+	public Integer getPageLimit() {
+        return pageLimit;
+    }
+
+	public User setPageLimit(Integer pageLimit) {
+        this.pageLimit = pageLimit;
+        return this;
+    }
+
+	public Integer getLinesPageLimit() {
+	    return linesPageLimit;
 	}
 	
-	public User setTaskHolders(List<TaskHolder> taskHolders) {
-		this.taskHolders = taskHolders;
-		return this;
-	}
+	public User setLinesPageLimit(Integer linesPageLimit) {
+        this.linesPageLimit = linesPageLimit;
+        return this;
+    }
+
+	public String getInitAction() {
+        return initAction;
+    }
+	
+	public User setInitAction(String initAction) {
+        this.initAction = initAction;
+        return this;
+    }
 	
 	public Date getExpirationDate() {
 		return expirationDate;
@@ -186,6 +227,15 @@ public class User implements Serializable {
 		this.expirationDate = expirationDate;
 		return this;
 	}
+	
+	public Date getLastAccess() {
+        return lastAccess;
+    }
+    
+    public User setLastAccess(Date lastAccess) {
+        this.lastAccess = lastAccess;
+        return this;
+    }
 	
 	public boolean hasAuth() {
 		return getAuth() != null;  

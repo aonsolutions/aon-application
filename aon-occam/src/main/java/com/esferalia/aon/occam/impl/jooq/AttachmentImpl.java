@@ -18,11 +18,13 @@ import com.esferalia.aon.occam.impl.jooq.dao.RawdocDAO;
 public class AttachmentImpl implements IAttachment{
 
 	@Override
+	@Deprecated
 	public AuthAttach getAuthAttach(AONContext ctx, AuthAttachFilter filter, Boolean withData) {
 		return 	ctx.getDslContext().transactionResult(
 			configuration -> AttachmentDAO.getAuthAttach(ctx, filter, withData));
 	}
 	@Override
+	@Deprecated
 	public AuthAttach saveAuthAttach(AONContext ctx, AuthAttach authAttach) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> AttachmentDAO.saveAuthAttach(ctx, authAttach));

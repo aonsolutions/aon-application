@@ -15,6 +15,7 @@ import org.jooq.SelectConditionStep;
 
 import com.esferalia.aon.jooq.tables.records.AppParamRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.NotificationInfo;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AppParam;
@@ -29,7 +30,7 @@ public class AonHubDAO {
 		public User apply(Record record) {
 			User user = new User();
 			user.setId(record.getValue(USER.ID));
-			user.setDomain(record.getValue(USER.DOMAIN));
+			user.setDomain(new Domain().setId(record.getValue(USER.DOMAIN)));
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN));
 			user.setActive(

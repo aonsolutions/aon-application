@@ -1,7 +1,7 @@
 import { AonElement } from "../../components/AonElement.js";
 
 import {AonPresenceList} from "./time-control/aon-presence-list.js";
-import { domainId, getAuthNoCache, getDomainUserRoles, getPeriod, getTaskHoldersUser, getTastHolders } from "../../services/service.js";
+import { domainId, getDomainUserRoles, getPeriod, getTaskHoldersUser, getTastHolders } from "../../services/service.js";
 import {  isEmptyObject, setValueName } from "../../services/utils.js";
 import { AonLocationAdd } from "./time-control/location/aon-location-add.js";
 import { AonLocationList } from "./time-control/location/aon-location-list.js";
@@ -212,16 +212,6 @@ export class AonTimecontrol extends AonElement {
       
       resolve(true);
     });
-  }
-
-  async getAuth({task_holder}){
-    let auth = this.AUTHS.find(d => d.task_holder === task_holder);
-    if(!auth){
-      const resp = await getAuthNoCache({task_holder, reload:true}).catch(()=>null);
-      auth = {...resp, task_holder}
-      this.AUTHS.push(auth);
-    } 
-    return auth;
   }
   
   async getTaskHolder(){

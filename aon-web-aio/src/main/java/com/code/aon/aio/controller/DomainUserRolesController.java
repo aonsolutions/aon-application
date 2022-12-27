@@ -88,9 +88,7 @@ public class DomainUserRolesController implements Serializable {
 		if(token == null && getDur().getUser().getAuth().isEmpty()) {
 			token = AonToken.build(getDur().getUser(), AonDateUtils.addDays(new Date(), 1), AonUtil.getDomainName());
 		} else if(token == null) {
-			token = AonToken.build(
-				AON_SOLUTIONS.getAuth(getDur().getUser().getAuth().getAuth()),
-				AonDateUtils.addDays(new Date(), 1), AonUtil.getDomainName());
+			token = AonToken.build(getDur().getUser().getAuth(), AonDateUtils.addDays(new Date(), 1));
 		}
 		return token;
 	}
@@ -100,9 +98,8 @@ public class DomainUserRolesController implements Serializable {
 		Integer domainId = DomainManager.getCurrentDomain();
 		User user = UserUtils.getInstance().getLoggedUser();
 		this.dur = SECURITY.getDomainUserRoles(domainName, domainId, user.getLogin(), user.getId());			
-		this.token = AonToken.build(
-			AON_SOLUTIONS.getAuth(getDur().getUser().getAuth().getAuth()),
-			AonDateUtils.addDays(new Date(), 1), AonUtil.getDomainName());
+		this.token = AonToken.build(getDur().getUser().getAuth(),
+			AonDateUtils.addDays(new Date(), 1));
 	}
 	
 	

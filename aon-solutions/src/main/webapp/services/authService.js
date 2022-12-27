@@ -1,7 +1,6 @@
-import { request, post, get } from "./request.js";
+import { request, post, get, put } from "./request.js";
 import { clear } from "./service.js"
 import { API_URL, TAG } from "../environments/environments.js";
-
 
 let auth;
 
@@ -31,6 +30,10 @@ export const rememberPassword = (email) => post(`${API_URL}/remember`, {email});
 
 export const magicLink = (email) => post(`${API_URL}/magicLink`, {email});
 
+export const sendVerification = (data) => post(`${API_URL}/verification/send`, data);
+export const checkVerification = (data) => post(`${API_URL}/verification/check`, data);
+
+
 export const getManifest = (data) => get(`${API_URL}/manifest`, data);
 
 export const getAuth = (data={}) => {
@@ -45,8 +48,7 @@ export const getAuth = (data={}) => {
   });
 }
 
-
-export const getAuthNoCache = (data) => get(`${API_URL}/auth`, data);
+export const saveAuth = (data) => put(`${API_URL}/auth`, data);
 
 export const changePassword = (data) => post(`${API_URL}/auth/password`, data);
 

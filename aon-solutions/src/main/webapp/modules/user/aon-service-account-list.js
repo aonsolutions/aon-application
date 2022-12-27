@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {getUserListSpeed, generateToken, deleteUser} from  '../../services/service.js';
+import {getUserList, generateToken, deleteUser} from  '../../services/service.js';
 import { CONSTANT, MSG, TAG } from '../../environments/environments.js';
 import { AonTable } from '../../components/aon-table.js';
 import * as LS from '../../services/localStorageService.js';
@@ -45,7 +45,7 @@ export class AonServiceAccountList extends AonElement {
 	}
 
 	init() {
-		getUserListSpeed({type:'SERVICE', page: 1, perPage: 30})
+		getUserList({type:'SERVICE', page: 1, perPage: 30})
 		.then(users => {
 			users.map((user, i) => {
 				user.option =  this.getOptions(user);

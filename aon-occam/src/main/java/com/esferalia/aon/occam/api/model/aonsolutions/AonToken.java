@@ -121,6 +121,10 @@ public class AonToken implements Serializable{
 			.put(IJsonNames.DOMAIN, user.getDomain());
 		return build(tokenObject, expireDate);
 	}
+
+	public static String build(String uuid) {
+	       return build(uuid, null);
+	}
 	
 	public static String build(String uuid, Date expireDate) {
         JSONObject tokenObject = new JSONObject();

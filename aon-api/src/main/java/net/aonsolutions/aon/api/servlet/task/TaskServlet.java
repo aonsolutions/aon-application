@@ -495,10 +495,6 @@ public class TaskServlet extends AonApiHttpServlet{
 			f.getDomainProperty().eq(api.getDomain().getId()));
 		json.put(IJsonNames.COMPANY, CompanyJSON.toJSON(company));
 		
-		AonToken aonToken = SECURITY.getAonToken(api.getToken());
-		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getSchemaFirstDomain(), 0, aonToken.getAuth());
-		json.put(IJsonNames.AUTH, AuthJSON.toJSON(auth));
-		
 		return json;
 	}
 	

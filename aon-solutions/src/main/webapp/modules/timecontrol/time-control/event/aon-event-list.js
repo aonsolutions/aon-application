@@ -1,7 +1,7 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { setValueName, sortBy, isEmptyObject } from "../../../../services/utils.js";
 import { setAttributes } from "../../../../services/utilsComponents.js";
-import { getPeriod, getStatus, getTaskHolderTimeControl } from "../../../../services/service.js";
+import { getPeriod, getStatus, getTaskHolderTimeControl, getTaskHolderPhones } from "../../../../services/service.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { EVENT_LIST_FILTER, SigninSidenav, SIGNIN_VIEWS } from "../../signinEnums.js";
 import { firstLetters, timeHour} from "../utils.js";
@@ -328,8 +328,8 @@ export class AonEventList extends AonElement {
     div.appendChild(divName);
 
     if(!this.applicationParentEl.isEmployee()) {
-      const auth = await this.applicationParentEl.getAuth({task_holder: taskHolder.id});
-      if(auth && auth.phone){
+      const phones = await getTaskHolderPhones(taskHolder);
+      if(phones.length > 0) {
         let color = "black";
         if(taskHolder.status && "in"===taskHolder.status) color = "green";
         let aEl = this.createElement(TAG.A);

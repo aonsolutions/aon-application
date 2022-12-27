@@ -19,17 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.finance.UpdateInvoiceRegistryDocument;
 import net.aonsolutions.db.up2date.fiscal.AlterAlcatrazFinance;
-import net.aonsolutions.db.up2date.payroll.AgreementPaymentsConceptFix;
-import net.aonsolutions.db.up2date.payroll.AlterAgreementPaymentDescription;
-import net.aonsolutions.db.up2date.payroll.AlterContractBonusDescription;
-import net.aonsolutions.db.up2date.payroll.AlterContractBonusExpression;
-import net.aonsolutions.db.up2date.payroll.AlterContractPaymentDescription;
-import net.aonsolutions.db.up2date.payroll.AlterSalaryBonusConcept;
-
-import net.aonsolutions.db.up2date.payroll.DeathOfEmployeeInsert;
-import net.aonsolutions.db.up2date.payroll.Holidays2023Insert;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 public class Up2Date {
 

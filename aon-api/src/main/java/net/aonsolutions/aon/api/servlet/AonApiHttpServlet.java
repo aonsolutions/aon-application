@@ -155,9 +155,9 @@ public class AonApiHttpServlet extends HttpServlet{
 		} else if(api.getDomain().getId() != null && api.getDomain().getId() != 0){
 			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), domainLogin);
 		}
-		if(user.getAuth().isEmpty() && !AonStringUtils.isBlank(api.getToken()) && !api.isPredefinedToken()) {
+		if(AonStringUtils.isBlank(user.getAuth()) && !AonStringUtils.isBlank(api.getToken()) && !api.isPredefinedToken()) {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
-			user.setAuth(AON_SOLUTIONS.getAuth(aonToken.getAuth()));
+			user.setAuth(aonToken.getUuid());
 		}
 		if(user.getLogin() == null) user.setLogin("");
 		return user;

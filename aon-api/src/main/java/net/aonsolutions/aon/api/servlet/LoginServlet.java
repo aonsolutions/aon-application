@@ -1,5 +1,5 @@
 package net.aonsolutions.aon.api.servlet;
-import java.util.LinkedList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -12,8 +12,10 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.AUTH;
 import com.esferalia.aon.occam.api.SECURITY;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -37,7 +39,7 @@ public class LoginServlet extends AonApiHttpServlet{
 			login = strs[0];
 			username = strs[1];
 		}
-		Boolean ok = false;
+		boolean ok = false;
 		Auth auth = new Auth();
 		String token = null;
 	    if(Utils.isEmail(username)) {
@@ -56,45 +58,29 @@ public class LoginServlet extends AonApiHttpServlet{
 	    		}
 	    	}
 	    	
-// TODO AUTH with dynamodb
-//	    	if(auth.isEmpty()) {
-//		    	auth = AuthDyn.getAuth(username);
-//	    		String pass = Utils.createPasswordHash(auth.getEmail(), password);
-//				ok = pass.equals(auth.getPassword());
-//	    	}
-	    	
-	    	for(String schema: schemas) {
-	    		String domain = AONContext.getSchemaFirstDomain(schema);
+
+		    auth = AUTH.getAuthByEmail(username);
+		    if(!ok) {
+		        String pass = Utils.createPasswordHash(auth.getEmail(), password);
+		        ok = pass.equals(auth.getPassword());
+		    }
+		    if(!auth.isEmpty()) token = AonToken.build(auth.getUuid(), null);
+	    	if(auth.isEmpty()) {
+	    	    for(String schema: schemas) {
+	    	        String domain = AONContext.getSchemaFirstDomain(schema);
 	    		
-	    		if(auth.getUuid() == null && !AonStringUtils.isBlank(domain)) {
-    				auth = AON_SOLUTIONS.getAuth(domain, 0, username);
-    				auth.setSchema(schema);
-	    	    	if(!ok && auth.getUuid() != null) {
-	    	    		String pass = Utils.createPasswordHash(auth.getEmail(), password);
-						ok = pass.equals(auth.getPassword());
-	    	    	} 
-	    	    }	    		
+	    	        if(!ok && auth.getUuid() == null && !AonStringUtils.isBlank(domain)) {
+	    	            auth = AON_SOLUTIONS.getAuth(domain, 0, username);
+	    	            auth.setSchema(schema);
+	    	            if(!ok && auth.getUuid() != null) {
+	    	                String pass = Utils.createPasswordHash(auth.getEmail(), password);
+	    	                ok = pass.equals(auth.getPassword());
+	    	                AUTH.backup(auth.getEmail());
+	    	            } 
+	    	        }	    		
+	    	    }
+	    	    if(!auth.isEmpty()) token = AonToken.build(auth, null);
 	    	}
-	    	if(auth.getUuid() == null) {
-	    		for(String schema : schemas) {
-	    			String domain = AONContext.getSchemaFirstDomain(schema);
-	    			if(!AonStringUtils.isBlank(domain)){
-	    				LinkedList<User> users = AON_SOLUTIONS.getUsersByEmail(domain, 0, username);
-	    				for (User user : users) {
-    						String pass = Utils.createPasswordHash(user.getLogin(), password);
-    						String expectedPass = AON_SOLUTIONS.getUserPassword(domain, 0, user.getId());
-    						ok = ok || pass.equals(expectedPass);
-    						if(auth.getUuid() == null && pass.equals(expectedPass)) {
-    							String authPass = Utils.createPasswordHash(username, password);
-    							auth = AON_SOLUTIONS.insertAuth(domain, 0, new Auth().setEmail(username).setPassword(authPass));
-    						}
-    						AON_SOLUTIONS.assignAuthToUser(domain, 0, user, auth.getUuid());
-	    				}
-	    			}
-	    		}
-	    	}
-	    	
-	    	if(!auth.isEmpty()) token = AonToken.build(auth, null);
 		} else {
 			String domainName = req.getServerName();
 			if(AonStringUtils.isNotBlank(domainName) && !"aonsolutions.org".equals(domainName) 
@@ -109,8 +95,7 @@ public class LoginServlet extends AonApiHttpServlet{
 				}
 				
 				if(!user.getAuth().isEmpty()) {
-					auth = AON_SOLUTIONS.getAuth(user.getAuth().getAuth());
-					token = AonToken.build(auth, null);
+					token = AonToken.build(user.getAuth());
 				} else token = AonToken.build(user, null, domain.getName());
 			}
 		}
@@ -125,25 +110,10 @@ public class LoginServlet extends AonApiHttpServlet{
 	    	object.put("type", "error");
     	} else {
     		object.put("session_id", token);
+    		object.put(IJsonNames.EXPIRE, auth.getExpiredDate().before(new Date()));
 	    }
     	resp.setContentType("application/json;charset=UTF-8");
 
     	response(req, resp, object);
 	}
-	
-	public static Auth getAuth(String email) {
-		Auth auth = new Auth();
-		if(Utils.isEmail(email)) {
-		 	List<String> schemas = AONContext.getSchemas();
-		   	for(String schema: schemas) {
-		   		String domain = AONContext.getSchemaFirstDomain(schema);
-		   		if(auth.getUuid() == null && !AonStringUtils.isBlank(domain)) {
-	   				auth = AON_SOLUTIONS.getAuth(domain, 0, email);
-		   		}	    		
-		   	}
-		}
-		return auth;
-	}
-		
-
 }

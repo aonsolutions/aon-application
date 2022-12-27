@@ -29,6 +29,7 @@ public class CheckItConfiguration implements Serializable {
 	public Integer getEnterpriseId() {
 		return enterpriseId;
 	}
+	
 	public CheckItConfiguration setEnterpriseId(Integer enterpriseId) {
 		this.enterpriseId = enterpriseId;
 		return this;
@@ -37,6 +38,7 @@ public class CheckItConfiguration implements Serializable {
 	public LinkedList<CheckItBankAccount> getCheItBanks() {
 		return cheItBanks;
 	}
+	
 	public CheckItConfiguration setCheItBanks(LinkedList<CheckItBankAccount> cheItBanks) {
 		this.cheItBanks = cheItBanks;
 		return this;
@@ -45,6 +47,7 @@ public class CheckItConfiguration implements Serializable {
 	public List<CheckitUnlinkedBankAccount> getCheckItUnlinkedBanks() {
 		return checkItUnlinkedBanks;
 	}
+	
 	public CheckItConfiguration setCheckItUnlinkedBanks(List<CheckitUnlinkedBankAccount> checkItUnlinkedBanks) {
 		this.checkItUnlinkedBanks = checkItUnlinkedBanks;
 		return this;

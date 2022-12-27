@@ -1333,9 +1333,6 @@ public class PropertiesDAO {
 		@Override public Property<byte[]> getAuthProperty() { return new FilterDAO.PropertyDAO<>(USER.AUTH);}
 		@Override public Property<Byte> getSharedProperty() {return new FilterDAO.PropertyDAO<>(USER.SHARED);}
 		@Override public Property<Integer> getWorkgroupProperty() { return new FilterDAO.PropertyDAO<>(USER_WORKGROUP.WORKGROUP);}
-		@Override public Property<String> getAuthNameProperty() {return new FilterDAO.PropertyDAO<>(AUTH.NAME);}
-		@Override public Property<String> getAuthEmailProperty() {return new FilterDAO.PropertyDAO<>(AUTH.EMAIL);}
-		@Override public Property<String> getAuthDocumentProperty() {return new FilterDAO.PropertyDAO<>(AUTH.DOCUMENT);}
  		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(USER_SCOPE.SCOPE);}
 
 		@Override public Property<Integer> getTaskHolderProperty() {return new FilterDAO.PropertyDAO<>(TASK_HOLDER.REGISTRY);}

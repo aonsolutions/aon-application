@@ -1,7 +1,7 @@
 import { AonElement } from "../../../../components/AonElement.js";
 import { isEmptyObject, removeEmpty, setValueName, sortBy} from "../../../../services/utils.js";
 import { setAttributes} from "../../../../services/utilsComponents.js";
-import { getStatus, getPeriod, getTimeControlDetail } from "../../../../services/service.js";
+import { getStatus, getPeriod, getTimeControlDetail, getTaskHolderPhones } from "../../../../services/service.js";
 import { SigninSidenav, PRESENCE_FILTER, SIGNIN_VIEWS, iconAddLocation } from "../../signinEnums.js";
 import { ToolbarType } from "../../../../models/enums.js";
 import { dateCustomDayHour } from "../utils.js";
@@ -254,12 +254,12 @@ export class AonEventDetailList extends AonElement {
     divName.innerText = taskHolder.name;
     div.appendChild(divName);
     if(!this.applicationParentEl.isEmployee()) {
-      const auth = await this.applicationParentEl.getAuth({task_holder: taskHolder.id});
-      if(auth && auth.phone){
+      const phones = await getTaskHolderPhones(taskHolder);
+      if(phones.length > 0) {
         let color = "black";
         if(taskHolder.status && "in"===taskHolder.status) color = "green";
         let aEl = this.createElement(TAG.A);
-        aEl.href = `tel:+34${auth.phone}`;
+        aEl.href = `tel:+34${phones[0]}`;
         aEl.style.position = "absolute";
         aEl.style.top = "-1px";
         aEl.style.right = "4px";

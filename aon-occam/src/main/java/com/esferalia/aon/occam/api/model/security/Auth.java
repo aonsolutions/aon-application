@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.security;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,7 +18,9 @@ public class Auth implements Serializable {
 	String phone;
 	String schema;
 	String avatar;
-
+	
+	Date expiredDate;
+	
 	@Deprecated
 	AuthAttach attach;
 	List<AuthDevice> devices;
@@ -36,6 +39,9 @@ public class Auth implements Serializable {
 	}
 	
 	public String getUuid() {
+	    if(uuid == null) {
+//	        uuid = UUID.randomUUID().toString();
+	    }
 		return uuid;
 	}
 
@@ -136,6 +142,18 @@ public class Auth implements Serializable {
 		this.devices = devices;
 		return this;
 	}
+	
+	public Date getExpiredDate() {
+	    if(expiredDate == null) {
+	        expiredDate = new Date();
+	    }
+        return expiredDate;
+    }
+	
+	public Auth setExpiredDate(Date expiredDate) {
+        this.expiredDate = expiredDate;
+        return this;
+    }
 	
 	public AuthAttach getAttach() {
 		if(attach == null) {

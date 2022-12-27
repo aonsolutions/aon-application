@@ -13,8 +13,10 @@ import com.esferalia.aon.occam.api.model.security.AuthAttach;
 
 public interface IAttachment {
 
+    @Deprecated
 	public AuthAttach getAuthAttach(AONContext ctx, AuthAttachFilter filter, Boolean withData);
-	public AuthAttach saveAuthAttach(AONContext ctx, AuthAttach authAttach);
+    @Deprecated
+    public AuthAttach saveAuthAttach(AONContext ctx, AuthAttach authAttach);
 
 	public Stream<Attach> getDocumentalRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);
 	public Stream<Attach> getRegistryAttachStream(AONContext ctx, AttachFilter filter, Boolean withData);

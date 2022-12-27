@@ -30,6 +30,15 @@
 				value="#{bundle.aon_module_hotel}"
 				action="menu_hotel" immediate="true"
 				styleClass="aon-top-menu-item" />
+				
+			<aon:commandLink id="menu_pos"
+				value="#{bundle.aon_module_pos}"
+				action="menu_pos" immediate="true"
+				styleClass="aon-top-menu-item" 
+				onclick="javascript:disableMenuPopup('posMenuPopup', this)"
+				onmouseout="javascript:hideMenuPopup('posMenuPopup')"
+				onmouseover="javascript:showMenuPopup('posMenuPopup', this)"
+			/>
 		</aon:if>
 
 		<aon:if test="#{domainSwitcher.domainManagementAvailable and (aonRole.sysAdmin or !domainSwitcher.disableDomainManagement)}">
@@ -55,6 +64,15 @@
 					onmouseout="javascript:hideMenuPopup('crm')"
 					onmouseover="javascript:showMenuPopup('crm', this);"
 					/>
+					
+				<aon:commandLink id="menu_marketing"
+					value="#{bundle.aon_module_marketing}"
+					action="menu_marketing" immediate="true"
+					styleClass="aon-top-menu-item" 
+					onclick="javascript:disableMenuPopup('marketing', this)"
+					onmouseout="javascript:hideMenuPopup('marketing')"
+					onmouseover="javascript:showMenuPopup('marketing', this);"
+					/>
 			</aon:if>
 
 			<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator or aonRole.financeOperator}">
@@ -65,6 +83,15 @@
 					onclick="javascript:disableMenuPopup('myAon', this)"
 					onmouseout="javascript:hideMenuPopup('myAon')"
 					onmouseover="javascript:showMenuPopup('myAon', this)"
+					/>
+					
+					<aon:commandLink id="menu_treasury"
+					value="#{bundle.aon_treasury}" 
+					styleClass="aon-top-menu-item"
+					action="menu_treasury" immediate="true"
+					onclick="javascript:disableMenuPopup('treasury', this)"
+					onmouseout="javascript:hideMenuPopup('treasury')"
+					onmouseover="javascript:showMenuPopup('treasury', this)"
 					/>
 			</aon:if>
 			
@@ -78,15 +105,6 @@
 					onmouseover="javascript:showMenuPopup('warehouse', this)"
 					/>
 			</aon:if>
-
-			<aon:commandLink id="menu_pos"
-				value="#{bundle.aon_module_pos}"
-				action="menu_pos" immediate="true"
-				styleClass="aon-top-menu-item" 
-				onclick="javascript:disableMenuPopup('posMenuPopup', this)"
-				onmouseout="javascript:hideMenuPopup('posMenuPopup')"
-				onmouseover="javascript:showMenuPopup('posMenuPopup', this)"
-			/>
 
 			<aon:commandLink id="menu_groupware"
 				styleClass="aon-top-menu-item" 

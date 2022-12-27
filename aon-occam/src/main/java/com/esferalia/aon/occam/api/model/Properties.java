@@ -1546,9 +1546,6 @@ public interface Properties {
 		Property<byte[]> getAuthProperty();
 		Property<Byte> getSharedProperty();
 		Property<Integer> getWorkgroupProperty();
-		Property<String> getAuthNameProperty();
-		Property<String> getAuthEmailProperty();
-		Property<String> getAuthDocumentProperty();
 		Property<Integer> getScopeProperty();
 		
 		Property<Integer> getTaskHolderProperty();

@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -36,6 +37,8 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
+import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.occam.impl.jooq.dao.AuthDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AuthDeviceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.BookingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO;
@@ -43,25 +46,77 @@ import com.esferalia.aon.occam.impl.jooq.dao.UserDAO;
 
 public class SecurityImpl implements ISecurity {
 
+    
+    @Override
+    public Auth getAuthByUuid(String uuid) {
+        return AuthDAO.getAuthByUuid(uuid);
+    }
+    
+    @Override
+    public Auth getAuthByEmail(String email) {
+        return AuthDAO.getAuthByEmail(email);
+    }
+    
+    @Override
+    public Auth getAuthByPhone(String phone) {
+        return AuthDAO.getAuthByPhone(phone);
+    }
+    
+    @Override
+    public Auth getAuthByDocument(String document) {
+        return AuthDAO.getAuthByDocument(document);
+    }
+  
+    @Override
+    public List<Auth> getAuthList(List<String> uuids) {
+        return AuthDAO.getList(uuids);
+    }
+    
+    @Override
+    public Stream<Auth> getAuthStream(List<String> uuids) {
+        return AuthDAO.getStream(uuids);
+    }
+    
+    public Auth saveAuth(Auth auth) {
+        return AuthDAO.save(auth);
+    }
+    
+    public void saveAuthPassword(String uuid, String password) {
+        AuthDAO.savePassword(uuid, password);
+    }
+    
+    public void saveAuthAvatar(String uuid, byte[] avatar, MimeType mimetype) {
+        AuthDAO.saveAvatar(uuid, avatar, mimetype);
+    }
+    
+    public void backup(String email) {
+        AuthDAO.backup(email);
+    }
+    
+    
 	@Override
+	@Deprecated
 	public Stream<Auth> getAuthStream(AONContext ctx, AuthFilter filter) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.getAuthStream(ctx, filter));
 	}
 	
 	@Override
+	@Deprecated
 	public Auth getAuth(AONContext ctx, String email) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.getAuth(ctx, email));
 	}
 	
 	@Override
+	@Deprecated
 	public Auth getAuthByDocument(AONContext ctx, String document) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.getAuthByDocument(ctx, document));
 	}
 	
 	@Override
+	@Deprecated
 	public Auth getAuth(AONContext ctx, byte[] auth) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.getAuth(ctx, auth));
@@ -74,18 +129,21 @@ public class SecurityImpl implements ISecurity {
 	}
 	
 	@Override
+	@Deprecated
 	public Auth insertAuth(AONContext ctx, Auth auth) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.insertAuth(ctx, auth));
 	}
 	
-	@Override
+	@Override  
+	@Deprecated
 	public Auth updateAuth(AONContext ctx, Auth auth) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.updateAuth(ctx, auth));
 	}
 	
 	@Override
+	@Deprecated
 	public Auth updateAuthPassword(AONContext ctx, Auth auth) {
 		return ctx.getDslContext().transactionResult( 
 				configuration -> SecurityDAO.updateAuthPassword(ctx, auth));

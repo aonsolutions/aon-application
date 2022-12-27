@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.model.Contact;
@@ -31,15 +32,36 @@ import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 
 public interface ISecurity {
-	public Stream<Auth> getAuthStream(AONContext ctx, AuthFilter filter);
-	public Auth getAuth(AONContext ctx, String email);
-	public Auth getAuthByDocument(AONContext ctx, String document);
+   
+    public Auth getAuthByUuid(String uuid);
+    public Auth getAuthByEmail(String email);
+    public Auth getAuthByPhone(String phone);
+    public Auth getAuthByDocument(String document);
+    
+    public List<Auth> getAuthList(List<String> uuids);
+    public Stream<Auth> getAuthStream(List<String> uuids);
+    public Auth saveAuth(Auth auth);
+    public void saveAuthPassword(String uuid, String password);
+    public void saveAuthAvatar(String uuid, byte[] data, MimeType mimetype);
+    public void backup(String email);
+    
+    @Deprecated
+    public Stream<Auth> getAuthStream(AONContext ctx, AuthFilter filter);
+    @Deprecated
+    public Auth getAuth(AONContext ctx, String email);
+    @Deprecated
+    public Auth getAuthByDocument(AONContext ctx, String document);
+    @Deprecated
 	public Auth getAuth(AONContext ctx, byte[] auth);
 	public byte[] unHexUuid(AONContext ctx, String uuid);
+	@Deprecated
 	public Auth insertAuth(AONContext ctx, Auth auth);
+	@Deprecated
 	public Auth updateAuth(AONContext ctx, Auth auth);
+	@Deprecated
 	public Auth updateAuthPassword(AONContext ctx, Auth auth);
 	
 	public DomainUserRoles getDomainUserRoles(AONContext ctx, Integer userId);
