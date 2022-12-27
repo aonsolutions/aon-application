@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.DeductionRegime;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022;

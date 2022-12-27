@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Map;
 
-import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
