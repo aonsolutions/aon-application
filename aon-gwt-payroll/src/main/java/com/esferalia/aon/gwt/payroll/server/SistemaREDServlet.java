@@ -353,7 +353,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		ssEmployee.getGc().ifPresent( gc -> aonEmployee.setQuoteGroup(gc));
 		ssEmployee.getName().ifPresent( name -> aonEmployee.setName(name));
 		aonEmployee.setContractType(ssEmployee.getContract().orElse("000"));
-		ssEmployee.getFrb().ifPresent( endDate -> aonEmployee.setEndDate(endDate));
+		ssEmployee.getFrb().ifPresent( endDate -> {if(startDate.before(endDate)) aonEmployee.setEndDate(endDate);});
 		ssEmployee.getCoef().filter(coef -> coef > 0.00 ).ifPresent( coef -> aonEmployee.setFactor(coef));
 		ssEmployee.getBirthDate().ifPresent( birthDate -> aonEmployee.setBirthDate(birthDate));
 		ssEmployee.getSex().ifPresent( sex -> aonEmployee.setSex(sex));

@@ -394,17 +394,17 @@ public class FinanceDAO {
 				.orElse(null);
 		;
 		RegistryBank rBank = null;
-		if (rPayMethod != null && rPayMethod.getRbank() != null) {
+		if (rPayMethod != null && !rPayMethod.getRbank().isEmpty()) {
 			rBank = RegistryOldDAO.getRBankStream(ctx, prop -> prop.getDomainProperty().eq(ctx.getDomainId())
-					.and(prop.getIdProperty().eq(rPayMethod.getRbank()))).findFirst().orElse(null);
+					.and(prop.getIdProperty().eq(rPayMethod.getRbank().getId()))).findFirst().orElse(null);
 		}
 		Date date = invoice.getIssueDate();
 		int numberOfPymnts =  ((rPayMethod == null) || (rPayMethod.getNumberOfPymnts() == 0)) ? 1 : rPayMethod.getNumberOfPymnts();
 		int daysToFirstPymnt = ((rPayMethod == null) || (rPayMethod.getDaysToFirstPymnt() == 0)) ? 0 : rPayMethod.getDaysToFirstPymnt();
 		int daysBetwenPymnts = ((rPayMethod == null) || (rPayMethod.getDaysBetwenPymnts() == 0)) ? 0 : rPayMethod.getDaysBetwenPymnts();
 		PayMethod payMethod = null;
-		if (rPayMethod != null && rPayMethod.getPayMethod() != null) {
-			payMethod = PayMethodDAO.get(ctx, rPayMethod.getPayMethod());
+		if (rPayMethod != null && !rPayMethod.getPayMethod().isEmpty()) {
+			payMethod = PayMethodDAO.get(ctx, rPayMethod.getPayMethod().getId());
 		}
 		double paymentPrice = AonMathUtils.round(invoice.getTotal() / numberOfPymnts);
 		for (int i = 0; i < numberOfPymnts; i++) {

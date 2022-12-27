@@ -15,11 +15,13 @@ import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryBankFilter;
 import com.esferalia.aon.occam.api.model.Properties.RegistryBankProperties;
 import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountDAO.FullAccountFiller;
 
 public class RegistryBankDAO {
 
@@ -67,9 +69,9 @@ public class RegistryBankDAO {
 					.setId(r.getValue(RBANK.ID))
 					.setRegistry(r.getValue(RBANK.REGISTRY))
 					.setDomain(r.getValue(RBANK.DOMAIN))
-					.setAccountId(r.getValue(RBANK.ACCOUNT))
-					.setAccountCode(r.getValue(ACCOUNT.CODE))
-					.setAccountDescription(r.getValue(ACCOUNT.DESCRIPTION))
+					.setAccount(checkField(r, ACCOUNT.ID)
+					        ? FullAccountFiller.build(r)
+					        : new Account().setId(getValue(r, RBANK.ID)))
 					.setActive(getBoolean(r, RBANK.ACTIVE))
 					.setAlias(r.getValue(RBANK.ALIAS))
 					.setBankAccount(new BankAccount(r.getValue(RBANK.BANK_ACCOUNT)))

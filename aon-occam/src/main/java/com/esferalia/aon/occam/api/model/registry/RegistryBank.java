@@ -205,4 +205,8 @@ public class RegistryBank implements Serializable {
 		setRemoved(true);
 	}
 	
+	public boolean isEmpty() {
+	    return getId() == null && getDomain() == null 
+	            && getRegistry() == null;
+	}
 }
