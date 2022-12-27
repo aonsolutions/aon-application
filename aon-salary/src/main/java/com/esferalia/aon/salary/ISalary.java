@@ -58,7 +58,7 @@ public interface ISalary {
 	<T extends IDeduction>  Collection<T> getDeductionS() throws SalaryException ;
 	<T extends IDeduction>  Collection<T> getCostS() throws SalaryException ;
 	<T extends IDeduction>  Collection<T> getEmbargoS() throws SalaryException ;
-	default <T extends IData>  Map<String, List<T>> getDataS() throws SalaryException {return Collections.emptyMap();};
+	<T extends IData>  Map<String, List<T>> getDataS() throws SalaryException ;
 	
 	Double getTotalIrpf();
 
