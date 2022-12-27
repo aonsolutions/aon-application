@@ -302,14 +302,14 @@ public class DraftPayrollBuilder {
 				
 				double atEp[] = new double[] {-1,-1};
 				
-				for (Entry<String, List<IData>> ent : salary.getDataS().entrySet()) {
-					if (AonStringUtils.containsIgnoreCase(ent.getKey(), "porcentaje")) {
-						System.out.println("|||||" + ent.getKey());
-						try {
-							System.out.println("\t" + ent.getValue().get(0).getValue());
-						} catch (NullPointerException e) {}
-					}
-				}
+//				for (Entry<String, List<IData>> ent : salary.getDataS().entrySet()) {
+//					if (AonStringUtils.containsIgnoreCase(ent.getKey(), "porcentaje")) {
+//						System.out.println("|||||" + ent.getKey());
+//						try {
+//							System.out.println("\t" + ent.getValue().get(0).getValue());
+//						} catch (NullPointerException e) {}
+//					}
+//				}
 				
 				for (IDeduction c : costs) {
 					

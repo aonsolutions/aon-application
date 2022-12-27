@@ -4273,8 +4273,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					IData data = new IData() {
 						
 						@Override
-						public String getValue() {
-							return variable.getExpression();
+						public String getValue() {								
+							return variable.getValue() != null ? variable.getValue().toString() : null;
 						}
 						
 						@Override
