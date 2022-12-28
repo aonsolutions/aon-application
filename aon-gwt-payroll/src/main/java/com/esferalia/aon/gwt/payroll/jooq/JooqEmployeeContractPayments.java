@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.ContractBonus.CONTRACT_BONUS;
 import static com.esferalia.aon.jooq.tables.ContractCost.CONTRACT_COST;
 import static com.esferalia.aon.jooq.tables.ContractDeduction.CONTRACT_DEDUCTION;
 import static com.esferalia.aon.jooq.tables.ContractPayment.CONTRACT_PAYMENT;
+import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.PaymentConcept.PAYMENT_CONCEPT;
 import static com.esferalia.aon.jooq.tables.BonusConcept.BONUS_CONCEPT;
@@ -92,12 +93,14 @@ public class JooqEmployeeContractPayments {
 		List<ContractConceptCalc> contractDeductions = getContractDeductions(dslContext, domainId, contractId);
 		List<ContractConceptCalc> contractBonuses = getContractBonuses(dslContext, domainId, contractId);
 		List<ContractConceptCalc> contractCosts = getContractCosts(dslContext, domainId, contractId);
+		List<ContractConceptCalc> contractEmbargos = getContractEmbargos(dslContext, domainId, contractId);
 		
 		List<ContractConceptCalc> contractConceptCalcs = new ArrayList<>();
 		contractConceptCalcs.addAll(contractPayments);
 		contractConceptCalcs.addAll(contractDeductions);
 		contractConceptCalcs.addAll(contractBonuses);
 		contractConceptCalcs.addAll(contractCosts);
+		contractConceptCalcs.addAll(contractEmbargos);
 		
 		contractPaymentData.setContractConceptCalcs(contractConceptCalcs);
 		
@@ -260,6 +263,38 @@ public class JooqEmployeeContractPayments {
 			return contractCosts;
 		}
 	}
+	
+	private static List<ContractConceptCalc> getContractEmbargos(DSLContext dslContext, Integer domainId, Integer contractId) {
+		Result<Record> contractEmbargoRecords = dslContext.select().from(CONTRACT_EMBARGO)
+				.where(CONTRACT_EMBARGO.CONTRACT.eq(contractId))
+				.and(CONTRACT_EMBARGO.DOMAIN.eq(domainId))
+				.fetch();
+			
+		if(contractEmbargoRecords.isEmpty())
+			return new ArrayList<>();
+		else {
+			List<ContractConceptCalc> contractEmbargos = new ArrayList<>();
+			
+			for(Record contractEmbargoRecord : contractEmbargoRecords) {
+				ContractConceptCalc contractEmbargo = new ContractConceptCalc();
+				
+				contractEmbargo.setId(contractEmbargoRecord.get(CONTRACT_EMBARGO.ID));
+				contractEmbargo.setDomain(contractEmbargoRecord.get(CONTRACT_EMBARGO.DOMAIN));
+				contractEmbargo.setDescription(contractEmbargoRecord.get(CONTRACT_EMBARGO.DESCRIPTION));
+				contractEmbargo.setExpression(contractEmbargoRecord.get(CONTRACT_EMBARGO.EXPRESSION));
+				contractEmbargo.setAmount(contractEmbargoRecord.get(CONTRACT_EMBARGO.AMOUNT));
+				contractEmbargo.setStartDate(contractEmbargoRecord.get(CONTRACT_EMBARGO.START_DATE));
+				contractEmbargo.setEndDate(contractEmbargoRecord.get(CONTRACT_EMBARGO.END_DATE));
+				
+				contractEmbargo.setContractConceptCalcType(ContractConceptCalcType.EMBARGO);
+				contractEmbargo.setSalaryType(Salary.Type.SALARY);
+				contractEmbargo.setHasChange(false);
+				contractEmbargos.add(contractEmbargo);
+			}
+			
+			return contractEmbargos;
+		}
+	}
 
 	private static void updateContractPayments(DSLContext dslContext, ContractPaymentData contractPaymentData) {
 		List<ContractConceptCalc> contractConceptCalcs = contractPaymentData.getCcontractConceptCalcs();
@@ -278,6 +313,9 @@ public class JooqEmployeeContractPayments {
 					break;
 				case BONUS:
 					updateDeleteContractBonus(dslContext, contractConceptCalc);
+					break;
+				case EMBARGO:
+					updateDeleteContractEmbargos(dslContext, contractConceptCalc);
 					break;
 				default:
 					break;
@@ -373,6 +411,24 @@ public class JooqEmployeeContractPayments {
 		}
 	}
 	
+	private static void updateDeleteContractEmbargos(DSLContext dslContext, ContractConceptCalc contractConceptCalc) {
+		if(contractConceptCalc.getId() < 0) {
+			Integer id = -1 * contractConceptCalc.getId();
+			dslContext.delete(CONTRACT_EMBARGO)
+				.where(CONTRACT_EMBARGO.ID.eq(id))
+				.execute();
+		} else if(contractConceptCalc.getHasChange()) {
+			dslContext.update(CONTRACT_EMBARGO)
+				.set(CONTRACT_EMBARGO.DESCRIPTION, contractConceptCalc.getDescription())
+				.set(CONTRACT_EMBARGO.EXPRESSION, contractConceptCalc.getExpression())
+				.set(CONTRACT_EMBARGO.AMOUNT, contractConceptCalc.getAmount())
+				.set(CONTRACT_EMBARGO.START_DATE, parseToSQLDate(contractConceptCalc.getStartDate()))
+				.set(CONTRACT_EMBARGO.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
+				.where(CONTRACT_EMBARGO.ID.eq(contractConceptCalc.getId()))
+				.execute();
+		}
+	}
+	
 	private static void createNewContractPayment(DSLContext dslContext, Integer domainId, Integer contractId, ContractConceptCalc contractConceptCalc) {
 		Integer conceptId = contractConceptCalc.getConceptId();
 		if(null == conceptId) {
@@ -392,6 +448,9 @@ public class JooqEmployeeContractPayments {
 				break;
 			case BONUS:
 				createContractBonus(dslContext, domainId, contractId, contractConceptCalc);
+				break;
+			case EMBARGO:
+				createContractEmbargo(dslContext, domainId, contractId, contractConceptCalc);
 				break;
 			default:
 				break;
@@ -430,6 +489,8 @@ public class JooqEmployeeContractPayments {
 						.returning(BONUS_CONCEPT.ID)
 						.fetchOne().getId();
 			case COST:
+				return null;
+			case EMBARGO:
 				return null;
 			default:
 				return null;
@@ -493,6 +554,18 @@ public class JooqEmployeeContractPayments {
 			.set(CONTRACT_BONUS.EXPRESSION, contractConceptCalc.getExpression())
 			.set(CONTRACT_BONUS.START_DATE, null == contractConceptCalc.getStartDate() ? getContractStartDate(dslContext, contractId) : parseToSQLDate(contractConceptCalc.getStartDate()))
 			.set(CONTRACT_BONUS.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
+			.execute();	
+	}
+	
+	private static void createContractEmbargo(DSLContext dslContext, Integer domainId, Integer contractId, ContractConceptCalc contractConceptCalc) {
+		dslContext.insertInto(CONTRACT_EMBARGO)
+			.set(CONTRACT_EMBARGO.DOMAIN, domainId)
+			.set(CONTRACT_EMBARGO.CONTRACT, contractId)
+			.set(CONTRACT_EMBARGO.DESCRIPTION, contractConceptCalc.getDescription())
+			.set(CONTRACT_EMBARGO.EXPRESSION, contractConceptCalc.getExpression())
+			.set(CONTRACT_EMBARGO.AMOUNT, contractConceptCalc.getAmount())
+			.set(CONTRACT_EMBARGO.START_DATE, null == contractConceptCalc.getStartDate() ? getContractStartDate(dslContext, contractId) : parseToSQLDate(contractConceptCalc.getStartDate()))
+			.set(CONTRACT_EMBARGO.END_DATE, parseToSQLDate(contractConceptCalc.getEndDate()))
 			.execute();	
 	}
 
