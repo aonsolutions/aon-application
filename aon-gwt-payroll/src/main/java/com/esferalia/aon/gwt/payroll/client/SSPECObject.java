@@ -92,9 +92,9 @@ public class SSPECObject {
 			}
 			
 			for(SSPECData ssPECData : this.ssPECDataList) {
-				if(	(isInPeriod(startDate, endDate, ssPECData.getStartDate()) ||
-					(null != ssPECData.getEndDate() && isInPeriod(startDate, endDate, ssPECData.getEndDate())) ||
-					(null == ssPECData.getEndDate() && (isInPeriod(startDate, endDate, ssPECData.getStartDate()) || DateUtils.isBeforeOrEquals(ssPECData.getStartDate(), startDate)))))
+				if(	(isInPeriod(startDate, endDate, ssPECData.getStartDate(), ssPECData.getEndDate()) ||
+					(null != ssPECData.getEndDate() && isInPeriod(startDate, endDate, ssPECData.getEndDate(), ssPECData.getEndDate())) ||
+					(null == ssPECData.getEndDate() && (isInPeriod(startDate, endDate, ssPECData.getStartDate(), ssPECData.getEndDate()) || DateUtils.isBeforeOrEquals(ssPECData.getStartDate(), startDate)))))
 					
 					this.ssPECDataListFiltered.add(ssPECData);
 			}
@@ -106,8 +106,11 @@ public class SSPECObject {
 		return this.ssPECDataListFiltered;
 	}
 	
-	private boolean isInPeriod(Date start, Date end, Date date) {
-		return null == date || (DateUtils.isAfterOrEquals(date, start) && DateUtils.isBeforeOrEquals(date, end));
+	private boolean isInPeriod(Date start, Date end, Date varStart, Date varEnd) {
+		return null == varStart || 
+				(DateUtils.isAfterOrEquals(varStart, start) && DateUtils.isBeforeOrEquals(varStart, end)) || 
+				(null == varEnd && DateUtils.isBeforeOrEquals(varStart, end)) ||
+				(DateUtils.isBeforeOrEquals(varStart, start) && DateUtils.isAfterOrEquals(varEnd, end));
 	}
 	
 	// ----------------------------------------------- Getter
