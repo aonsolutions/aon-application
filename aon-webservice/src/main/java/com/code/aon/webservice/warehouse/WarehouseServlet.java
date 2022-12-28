@@ -30,6 +30,7 @@ import com.code.aon.webservice.warehouse.jooq.DBPurchase;
 import com.code.aon.webservice.warehouse.jooq.DBSales;
 import com.code.aon.webservice.warehouse.jooq.DBWarehouse;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.ElaborationDetailType;
 import com.esferalia.aon.occam.api.model.ElaborationProperties;
@@ -753,8 +754,11 @@ public class WarehouseServlet extends HttpServlet{
     
     public static JSONArray getElaborationDetailList(Domain domain,String login,  Map<String, String[]> map){
 		JSONArray array = new JSONArray();
-		Integer[] ids = AON.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.PATURPAT_QUALITY, f -> f.getDomainProperty().eq(domain.getId()).and(f.getSourceIdProperty().isNotNull()))
-				.map(g -> g.getSourceId()).toArray(Integer[]::new);
+		Integer[] ids = AON.getDataResponseStream(domain.getName(), domain.getId(), login, DataResponseSource.PATURPAT_QUALITY, f -> 
+			f.getDomainProperty().eq(domain.getId())
+			.and(f.getSourceProperty().eq(DataResponseSource.PATURPAT_QUALITY.value()))
+			.and(f.getSourceIdProperty().isNotNull()))
+				.map(DataResponse::getSourceId).toArray(Integer[]::new);
 		
 		if(map.containsKey("id")) {
 			Integer id = Integer.parseInt(map.get("id")[0]);
