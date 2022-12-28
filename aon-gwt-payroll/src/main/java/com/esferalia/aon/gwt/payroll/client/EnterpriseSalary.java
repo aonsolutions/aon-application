@@ -10,13 +10,12 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
-import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -25,6 +24,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -33,21 +33,23 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public abstract class EnterpriseSalary extends Composite {
 	
@@ -56,7 +58,7 @@ public abstract class EnterpriseSalary extends Composite {
 	private class SalaryTableImpl extends SalaryTable {
 
 		@Override
-		protected void onSelectionSalaryChange(boolean isSomethingSelected) {
+		protected void onSelectionSalaryChange(boolean isSomethingSelected, boolean hasSettleSelected) {
 			enableDisableButtons(isSomethingSelected);
 		}
 		
@@ -165,6 +167,18 @@ public abstract class EnterpriseSalary extends Composite {
 	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
+	DeckPanel toolbarDeckPanel;
+	
+	@UiField(provided = true)
+	AonToolbar toolbar;
+	
+	@UiField(provided = true)
+	AonToolbar toolbarPDFViewer;
+	
+	@UiField
+	DeckPanel mainDeckPanel;
+	
+	@UiField
 	VerticalPanel mainContainer;
 	
 	@UiField
@@ -200,6 +214,12 @@ public abstract class EnterpriseSalary extends Composite {
 	@UiField
 	Label datesMessage;
 	
+	@UiField
+	SimpleLayoutPanel scrolledPDFPanel;
+	
+	@UiField
+	FullViewer pdfViewer;
+	
 	// --------------------------------------------- Variables
 	
 	private EnterpriseSalaryObject enterpriseSalaryObject;
@@ -210,7 +230,6 @@ public abstract class EnterpriseSalary extends Composite {
 	
 	private EmailContextMenu contextMenu;
 	
-	private AonToolbar toolbar;
 	private AonToolbarButton backButton;
 	private AonToolbarButton deleteButton;
 	private AonToolbarButton pdfButton;
@@ -221,13 +240,18 @@ public abstract class EnterpriseSalary extends Composite {
 	// --------------------------------------------- Constructor
 
 	protected EnterpriseSalary() {
-		getToolbarPanel();
+		this.toolbar = new AonToolbar("N\u00f3minas");
+		this.toolbarPDFViewer = new AonToolbar("N\u00f3minas");
 		salaryTable = new SalaryTableImpl();
 		initWidget(uiBinder.createAndBindUi(this)); 
 		
-		contextMenu = new EmailContextMenu();
+		// Init toolbar
+		getToolbarPanel();
+		getToolbarPDFViewerPanel();
 		
-		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		scrolledPDFPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 200.00, Unit.PX);
+		
+		contextMenu = new EmailContextMenu();
 		
 		mainContainer.add(salaryTable);
 		
@@ -236,6 +260,8 @@ public abstract class EnterpriseSalary extends Composite {
 		listeners = new LinkedList<>();
 		
 		initFilterPanel();
+
+		showSalary();
 	}
 	
 	// --------------------------------------------- Filter Panel
@@ -294,6 +320,7 @@ public abstract class EnterpriseSalary extends Composite {
 		setNewToolbarTitle();
 		this.enterpriseSalaryObject.getSalariesDates(
 				s -> {
+					showSalary();
 					initDatesListBox();
 					initSuggestBox();
 					filterCurrentYearSalaries();
@@ -373,7 +400,10 @@ public abstract class EnterpriseSalary extends Composite {
 	
 	private void setNewToolbarTitle() {
 		String entepriseName = this.enterpriseSalaryObject.getEnterpriseName();
-		if(AonStringUtils.isNotBlank(entepriseName)) toolbar.setTitle("N\u00F3minas : " + entepriseName);
+		if(AonStringUtils.isNotBlank(entepriseName)) {
+			toolbar.setTitle("N\u00F3minas : " + entepriseName);
+			toolbarPDFViewer.setTitle("N\u00F3minas : " + entepriseName);
+		}
 	}
 	
 	// --------------------------------------------- Init SalaryTable
@@ -588,8 +618,6 @@ public abstract class EnterpriseSalary extends Composite {
 	
 	private void getToolbarPanel() {
 
-		this.toolbar = new AonToolbar("N\u00F3minas");
-		
 		backButton = new AonToolbarButton( "Atras", AON.CSS.aonIconBack() );
 		backButton.addClickHandler(e -> onBackClick());	
 		backButton.setVisible(false);
@@ -615,6 +643,33 @@ public abstract class EnterpriseSalary extends Composite {
 		email = new AonToolbarButton(AON.MSG.email(), AON.CSS.aonIconEmail());
 		email.addClickHandler(this::onEmail);	
 		toolbar.add(email);
+	}
+	
+	// ------------------------------------------------- Toolbar PDFViewer panel
+	
+	private AonToolbar getToolbarPDFViewerPanel() {
+
+		AonToolbarButton closePDF = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconBack());
+		closePDF.addClickHandler(e -> onClosePDF());
+		toolbarPDFViewer.add(closePDF);
+
+		return toolbarPDFViewer;
+	}
+	
+	// ------------------------------------------------- Show/Hide Employee/PDF
+
+	private void showSalary() {
+		toolbarDeckPanel.showWidget(0);
+		mainDeckPanel.showWidget(0);
+	}
+
+	private void showPdf() {
+		toolbarDeckPanel.showWidget(1);
+		mainDeckPanel.showWidget(1);
+	}
+	
+	private void onClosePDF() {
+		showSalary();
 	}
 	
 	// --------------------------------------------- Toolbar Methods
@@ -657,30 +712,19 @@ public abstract class EnterpriseSalary extends Composite {
 	}
 
 	private void onPDF() {
-		String fileDownloadURL = GWT.getModuleBaseURL()+ "salary_exporter/";
-
-		FormPanel formPanel = new FormPanel("_blank");
-		formPanel.setAction(fileDownloadURL);
-		formPanel.setMethod(FormPanel.METHOD_POST);
+		AonMessagePanel.showLoading(messagePanel, "Cargando n\u00f3mina(s)...");
 		
-		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.add(new Hidden(PayrollPrintService.Parameter.TYPE.getName(), "salary"));
-		flowPanel.add(new Hidden(PayrollPrintService.Parameter.ENTERPRISE.getName(), String.valueOf(((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId())));
-		flowPanel.add(new Hidden(PayrollPrintService.Parameter.DOMAIN.getName(), Wnd.getCurrentDomainNameURL()));
-		flowPanel.add(new Hidden(PayrollPrintService.Parameter.USER.getName(), Wnd.getCurrentUser()));
-		
+		List<Integer> salaryIds = new ArrayList<>();
 		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++)
-			flowPanel.add(new Hidden(PayrollPrintService.Parameter.ID.getName(), ""+((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId()));
-
-		flowPanel.add(new Hidden(PayrollPrintService.Parameter.NAME.getName(), "salaries.pdf"));
+			salaryIds.add(((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId());
 		
-		formPanel.add(flowPanel);
-		
-		formPanel.addSubmitCompleteHandler(e1 -> mainContainer.remove(formPanel));
-		
-		mainContainer.add(formPanel);
-		
-		formPanel.submit();
+		enterpriseSalaryObject.getPDFSalaries(((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId(), salaryIds,
+				dataURI -> {
+					AonMessagePanel.hideMessage(messagePanel);
+					showPdf();
+					pdfViewer.open(dataURI);
+				},
+				f -> AonMessagePanel.hideMessage(messagePanel));
 	}
 
 	private void onPublish() {

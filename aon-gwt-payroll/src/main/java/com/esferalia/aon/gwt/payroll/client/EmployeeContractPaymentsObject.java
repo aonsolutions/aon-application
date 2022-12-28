@@ -144,9 +144,9 @@ public class EmployeeContractPaymentsObject {
 				if(contractConceptCalc.getId() < 0)
 					continue;
 				
-				if(	(isInPeriod(startDate, endDate, contractConceptCalc.getStartDate()) ||
-					(null != contractConceptCalc.getEndDate() && isInPeriod(startDate, endDate, contractConceptCalc.getEndDate())) ||
-					(null == contractConceptCalc.getEndDate() && (isInPeriod(startDate, endDate, contractConceptCalc.getStartDate()) || DateUtils.isBeforeOrEquals(contractConceptCalc.getStartDate(), startDate))))
+				if(	(isInPeriod(startDate, endDate, contractConceptCalc.getStartDate(), contractConceptCalc.getEndDate()) ||
+					(null != contractConceptCalc.getEndDate() && isInPeriod(startDate, endDate, contractConceptCalc.getEndDate(), contractConceptCalc.getEndDate())) ||
+					(null == contractConceptCalc.getEndDate() && (isInPeriod(startDate, endDate, contractConceptCalc.getStartDate(), contractConceptCalc.getEndDate()) || DateUtils.isBeforeOrEquals(contractConceptCalc.getStartDate(), startDate))))
 					&& (null == paymentType || paymentType.equals(contractConceptCalc.getContractConceptCalcType())))
 					
 					this.contractConceptCalcs.add(contractConceptCalc);
@@ -161,8 +161,11 @@ public class EmployeeContractPaymentsObject {
 		return this.contractConceptCalcs;
 	}
 
-	private boolean isInPeriod(Date start, Date end, Date date) {
-		return null == date || (DateUtils.isAfterOrEquals(date, start) && DateUtils.isBeforeOrEquals(date, end));
+	private boolean isInPeriod(Date start, Date end, Date varStart, Date varEnd) {
+		return null == varStart || 
+				(DateUtils.isAfterOrEquals(varStart, start) && DateUtils.isBeforeOrEquals(varStart, end)) || 
+				(null == varEnd && DateUtils.isBeforeOrEquals(varStart, end)) ||
+				(DateUtils.isBeforeOrEquals(varStart, start) && DateUtils.isAfterOrEquals(varEnd, end));
 	}
 
 	public void deleteContractConceptCalc(ContractConceptCalc contractConceptCalcIN) {
@@ -201,6 +204,8 @@ public class EmployeeContractPaymentsObject {
 			return ContractConceptCalcType.COST;
 		case "3":
 			return ContractConceptCalcType.BONUS;
+		case "4":
+			return ContractConceptCalcType.EMBARGO;
 		default:
 			return null;
 		}

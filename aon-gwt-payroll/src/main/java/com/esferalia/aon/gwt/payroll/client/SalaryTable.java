@@ -3,9 +3,11 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.cell.client.ActionCell;
@@ -96,7 +98,7 @@ public abstract class SalaryTable extends ResizeComposite {
 	
 	private void addColumns(MultiSelectionModel<SalaryInfo> selectionModel) {
 		
-		selectionModel.addSelectionChangeHandler(e -> onSelectionSalaryChange(!selectionModel.getSelectedSet().isEmpty()));
+		selectionModel.addSelectionChangeHandler(e -> onSelectionSalary(!selectionModel.getSelectedSet().isEmpty()));
 	    
 		Column<SalaryInfo, Boolean> checkColumn = new Column<SalaryInfo, Boolean>(new CheckboxCell(true, false)) {
 			@Override
@@ -217,13 +219,14 @@ public abstract class SalaryTable extends ResizeComposite {
 	    totalLiquidColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 	    salaryDG.setColumnWidth(totalLiquidColumn, 10, Unit.PCT);
 	    
-	    ActionCell<SalaryInfo> draftActionCell = new ActionCell<>("", salaryInfo ->
-	    	EmployeeTree.showSalaryDraft(
-					salaryInfo.getContract(),
-					salaryInfo.getWorkplaceId(), 
-					salaryInfo.getStartDate(),
-					salaryInfo.getEndDate())
-	    );
+	    ActionCell<SalaryInfo> draftActionCell = new ActionCell<>("", salaryInfo -> {
+	    	if(!salaryInfo.getType().equals(Type.SETTLE))
+		    	EmployeeTree.showSalaryDraft(
+						salaryInfo.getContract(),
+						salaryInfo.getWorkplaceId(), 
+						salaryInfo.getStartDate(),
+						salaryInfo.getEndDate());
+	    });
 	    
 	    Column<SalaryInfo, SalaryInfo> draftColumn = new Column<SalaryInfo, SalaryInfo>(draftActionCell) {
 
@@ -233,9 +236,12 @@ public abstract class SalaryTable extends ResizeComposite {
 			}
 			
 			@Override
-			public void render(Context context, SalaryInfo object, SafeHtmlBuilder sb) {
-				if(null != object) {
-					sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_edit\" style=\"border: none !important; height: 20px;\" title=\"Ir al borrador\"></button>");
+			public void render(Context context, SalaryInfo salaryInfo, SafeHtmlBuilder sb) {
+				if(null != salaryInfo) {
+					if(!salaryInfo.getType().equals(Type.SETTLE))
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_edit\" style=\"border: none !important; height: 20px;\" title=\"Ir al borrador\"></button>");
+					else 
+						sb.appendHtmlConstant("");
 				}
 			}
 		};
@@ -363,6 +369,11 @@ public abstract class SalaryTable extends ResizeComposite {
 	}
 	
 	// ------------------------------------------ Abstract Methods
+	
+	private void onSelectionSalary(boolean isSomethingSelected) {
+		Optional<SalaryInfo> settle = this.selectionModel.getSelectedSet().stream().filter(salary -> salary.getType().equals(Type.SETTLE)).findAny();
+		onSelectionSalaryChange(isSomethingSelected, settle.isPresent());
+	}
 
-	protected abstract void onSelectionSalaryChange(boolean isSomethingSelected);
+	protected abstract void onSelectionSalaryChange(boolean isSomethingSelected, boolean hasSettleSelected);
 }

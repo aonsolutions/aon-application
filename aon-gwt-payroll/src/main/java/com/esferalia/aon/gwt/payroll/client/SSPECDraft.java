@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
-import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
@@ -258,6 +257,7 @@ public class SSPECDraft extends Composite {
 		Integer endYear = null == ssPECObject.getContractEndDate() ? DateUtils.getYear() : DateUtils.getYear(ssPECObject.getContractEndDate());
 		
 		Integer auxYear = endYear;
+		if(null == ssPECObject.getContractEndDate()) auxYear++;
 		
 		this.yearLB.clear();
 		this.yearLB.addItem("-", "");

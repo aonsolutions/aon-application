@@ -125,8 +125,9 @@ public interface EnterprisesServiceAsync {
 	void getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params, AsyncCallback<String> asyncCallback);
 	void sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML,
 			AsyncCallback<String> asyncCallback);
-	void checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds,
-			AsyncCallback<String> asyncCallback);
+	void checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds, AsyncCallback<String> asyncCallback);
+	void getSettlePDF(String currentDomainName, String user, Integer settleId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	void getSalariesPDF(String currentDomainName, String currentUser, Integer enterpriseId, List<Integer> salaryIds, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList,
 			AsyncCallback<String> asyncCallback);
 	void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback);

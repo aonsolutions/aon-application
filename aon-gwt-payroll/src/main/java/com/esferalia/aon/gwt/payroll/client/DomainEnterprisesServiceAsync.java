@@ -317,6 +317,14 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.checkEmployeesEmails(getCurrentDomainName(), salaryIds, asyncCallback);
 	}
 	
+	public void getSettlePDF(Integer settleId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getSettlePDF(getCurrentDomainName(), getCurrentUser(), settleId, asyncCallback);
+	}
+
+	public void getSalariesPDF(Integer enterpriseId, List<Integer> salaryIds, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getSalariesPDF(getCurrentDomainName(), getCurrentUser(), enterpriseId, salaryIds, asyncCallback);
+	}
+	
 	public void getEnterprisesCCCInfo(long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback) {
 		enterprisesServiceAsync.getEnterprisesCCCInfo(getCurrentDomainName(), getCurrentUser(), findPeriodTime, asyncCallback);
 	}

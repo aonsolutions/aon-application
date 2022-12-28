@@ -10,7 +10,8 @@ public class ContractConceptCalc extends Payment implements Serializable {
 		PAYMENT,
 		DEDUCTION,
 		COST,
-		BONUS
+		BONUS,
+		EMBARGO
 	}
 
 	private static final long serialVersionUID = 1L;

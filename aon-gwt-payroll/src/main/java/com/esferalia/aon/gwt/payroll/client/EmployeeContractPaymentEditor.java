@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.DoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraft.TypeListBox;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
@@ -154,6 +155,26 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 
 	@UiField
 	DateBoxEx bonusEndDateBx;
+	
+	// EMBARGO
+
+	@UiField
+	HTMLPanel embargoTable;
+
+	@UiField
+	TextBox embargoDescriptionTB;
+
+	@UiField
+	TextArea embargoExpressionTB;
+	
+	@UiField
+	DoubleBox embargoAmountDB;
+
+	@UiField
+	DateBoxEx embargoStartDateBx;
+
+	@UiField
+	DateBoxEx embargoEndDateBx;
 
 	@UiField
 	HTMLPanel buttonsPanel;
@@ -237,6 +258,8 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 			return "Asistente Costes";
 		case BONUS:
 			return "Asistente Bonus";
+		case EMBARGO:
+			return "Asistente Embargo";
 		default:
 			return null;
 		}
@@ -261,6 +284,9 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		case BONUS:
 			providedBonus();
 			deckPanel.showWidget(deckPanel.getWidgetIndex(bonusTable));
+			break;
+		case EMBARGO:
+			deckPanel.showWidget(deckPanel.getWidgetIndex(embargoTable));
 			break;
 		default:
 			break;
@@ -548,6 +574,9 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		case BONUS:
 			fillBonus();
 			break;
+		case EMBARGO:
+			fillEmbargo();
+			break;
 		default:
 			break;
 		}
@@ -598,6 +627,14 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		bonusStartDateBx.setValue(this.payment.getStartDate());
 		bonusEndDateBx.setValue(this.payment.getEndDate());
 	}
+	
+	private void fillEmbargo() {
+		embargoDescriptionTB.setValue(this.payment.getDescription());
+		embargoExpressionTB.setValue(this.payment.getExpression());
+		embargoAmountDB.setValue(this.payment.getAmount());
+		embargoStartDateBx.setValue(this.payment.getStartDate());
+		embargoEndDateBx.setValue(this.payment.getEndDate());
+	}
 
 	// ----------------------------------------- ShowDialog
 
@@ -638,6 +675,8 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 			return createCost();
 		case BONUS:
 			return createBonus();
+		case EMBARGO:
+			return createEmbargo();
 		default:
 			return null;
 		}
@@ -720,6 +759,20 @@ public abstract class EmployeeContractPaymentEditor extends AonCustomDialog {
 		payment.setStartDate(bonusStartDateBx.getValue());
 		payment.setEndDate(bonusEndDateBx.getValue());
 		payment.setContractConceptCalcType(ContractConceptCalcType.BONUS);
+
+		return payment;
+	}
+	
+	private ContractConceptCalc createEmbargo() {
+		if(null == this.payment)
+			this.payment = new ContractConceptCalc();
+
+		payment.setDescription(embargoDescriptionTB.getValue());
+		payment.setExpression(embargoExpressionTB.getValue());
+		payment.setAmount(embargoAmountDB.getValue());
+		payment.setStartDate(embargoStartDateBx.getValue());
+		payment.setEndDate(embargoEndDateBx.getValue());
+		payment.setContractConceptCalcType(ContractConceptCalcType.EMBARGO);
 
 		return payment;
 	}

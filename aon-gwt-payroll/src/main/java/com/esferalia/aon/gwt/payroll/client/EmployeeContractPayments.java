@@ -33,9 +33,6 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safecss.shared.SafeStyles;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -89,6 +86,8 @@ public class EmployeeContractPayments extends Composite {
 					return "Bonificaciones";
 				case "C":
 					return "Costes";
+				case "E":
+					return "Embargo";
 				default:
 					return "N/D";
 			}
@@ -113,11 +112,11 @@ public class EmployeeContractPayments extends Composite {
 		}
 	}
 	
-	class AddCostCommand implements ScheduledCommand {
+	class AddEmbargoCommand implements ScheduledCommand {
 
 		@Override
 		public void execute() {
-			onCost();
+			onEmbargo();
 		}
 	}
 	
@@ -129,12 +128,21 @@ public class EmployeeContractPayments extends Composite {
 		}
 	}
 	
+	class AddCostCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onCost();
+		}
+	}
+	
 	class AddContextMenu extends ContextMenu {
 		
 		private MenuItem payment;
 		private MenuItem dedcution;
-		private MenuItem cost;
+		private MenuItem embargo;
 		private MenuItem bonus;
+		private MenuItem cost;
 		
 		public AddContextMenu() {
 			
@@ -146,13 +154,17 @@ public class EmployeeContractPayments extends Composite {
 					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			dedcution.ensureDebugId("dedcution");
 			
-			cost = addItem("A\u00f1adir coste", new AddCostCommand(), 
+			embargo = addItem("A\u00f1adir embargo", new AddEmbargoCommand(), 
 					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
-			cost.ensureDebugId("cost");
+			embargo.ensureDebugId("embargo");
 			
 			bonus = addItem("A\u00f1adir bonificaci\u00f3n", new AddBonusCommand(), 
 					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			bonus.ensureDebugId("bonus");
+			
+			cost = addItem("A\u00f1adir coste", new AddCostCommand(), 
+					AON.CSS.aonIconAddBlock(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			cost.ensureDebugId("cost");
 			
 		}
 
@@ -227,6 +239,8 @@ public class EmployeeContractPayments extends Composite {
 				return "B";
 			case COST:
 				return "C";
+			case EMBARGO:
+				return "E";
 			default:
 				return "N/D";
 		}
@@ -466,6 +480,9 @@ public class EmployeeContractPayments extends Composite {
 					case BONUS:
 						updateBonus(isHide, selectedPayment, updatedPayment);
 						break;
+					case EMBARGO:
+						updateEmbargo(isHide, selectedPayment, updatedPayment);
+						break;
 					default:
 						break;
 				}
@@ -530,6 +547,20 @@ public class EmployeeContractPayments extends Composite {
 				selectedPayment.setStartDate(updatedPayment.getStartDate());
 				selectedPayment.setEndDate(updatedPayment.getEndDate());
 				selectedPayment.setContractConceptCalcType(ContractConceptCalcType.BONUS);
+				selectedPayment.setScope(Scope.SALARY);
+				selectedPayment.setSalaryType(Type.SALARY);
+				selectedPayment.setHasChange(true);
+				contractConceptCalcDG.redraw();
+				onSave();
+			}
+			
+			private void updateEmbargo(boolean isHide, ContractConceptCalc selectedPayment, ContractConceptCalc updatedPayment) {
+				selectedPayment.setDescription(updatedPayment.getDescription());
+				selectedPayment.setExpression(Boolean.TRUE.equals(isHide) ? showHideContractConceptCalc(updatedPayment.getDescription(), updatedPayment.getExpression(), updatedPayment.getContractConceptCalcType()) : updatedPayment.getExpression());
+				selectedPayment.setAmount(updatedPayment.getAmount());
+				selectedPayment.setStartDate(updatedPayment.getStartDate());
+				selectedPayment.setEndDate(updatedPayment.getEndDate());
+				selectedPayment.setContractConceptCalcType(ContractConceptCalcType.EMBARGO);
 				selectedPayment.setScope(Scope.SALARY);
 				selectedPayment.setSalaryType(Type.SALARY);
 				selectedPayment.setHasChange(true);
@@ -652,6 +683,7 @@ public class EmployeeContractPayments extends Composite {
 		this.paymentTypeLB.addItem("Deducciones", "1");
 		this.paymentTypeLB.addItem("Costes", "2");
 		this.paymentTypeLB.addItem("Bonificaciones", "3");
+		this.paymentTypeLB.addItem("Embargo", "4");
 		
 		this.paymentTypeLB.addChangeHandler(e -> changeYear());
 		
@@ -663,6 +695,7 @@ public class EmployeeContractPayments extends Composite {
 		Integer endYear = null == employeeContractPaymentsObject.getContractEndDate() ? DateUtils.getYear() : DateUtils.getYear(employeeContractPaymentsObject.getContractEndDate());
 		
 		Integer auxYear = endYear;
+		if(null == employeeContractPaymentsObject.getContractEndDate()) auxYear++;
 		
 		yearLB.clear();
 		yearLB.addItem("-", "");
@@ -834,6 +867,10 @@ public class EmployeeContractPayments extends Composite {
 
 	private void onBonus() {
 		openEditor(ContractConceptCalcType.BONUS);
+	}
+	
+	private void onEmbargo() {
+		openEditor(ContractConceptCalcType.EMBARGO);
 	}
 	
 	public void openEditor(ContractConceptCalcType type) {

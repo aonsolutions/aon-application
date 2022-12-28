@@ -766,6 +766,15 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			initializeYearLB(this.yearLB);
 			hideYearLBOptions();
 			setSelectedValueLB(yearLB, (year+1900)+"");
+			
+			if(this.employeeCalendarDraftObject.isFullTime()) {
+				this.showHours = false;
+				this.showHoursExtraCompl = false;
+			} else {
+				this.showHours = true;
+				this.showHoursExtraCompl = false;
+			}
+			
 			changeYear();
 		}, f -> {});
 		
@@ -922,14 +931,12 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 	private void initCalendar() {
 		// Set fulltime journey
 		if(this.employeeCalendarDraftObject.isFullTime()) {
-			this.showHours = false;
-			this.showHoursExtraCompl = false;
-			
-			hideHoursRows();
-			hideHoursExtraComplRows();
+			if(showHours) showHoursRows(); else hideHoursRows();
+			if(showHoursExtraCompl) showHoursExtraComplRows(); else hideHoursExtraComplRows();
 			
 			hideElement(definitionMenu.getShowHourMenuItem().getElement());
 			hideElement(definitionMenu.getShowHourComplMenuItem().getElement());
+			showElement(definitionMenu.getShowHourExtraMenuItem().getElement());
 			hideElement(definitionMenu.getHourMenuItem().getElement());
 			hideElement(hourButton.getElement());
 			definitionMenu.showSeparator();
@@ -939,11 +946,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 			definitionMenu.getHourMenuItem().getElement().getStyle().setDisplay(Display.NONE);
 			
 		} else {
-			this.showHours = true;
-			this.showHoursExtraCompl = false;
-			
-			showHoursRows();
-			hideHoursExtraComplRows();
+			if(showHours) showHoursRows(); else hideHoursRows();
+			if(showHoursExtraCompl) showHoursExtraComplRows(); else hideHoursExtraComplRows();
 			
 			showElement(definitionMenu.getShowHourMenuItem().getElement());
 			showElement(definitionMenu.getShowHourComplMenuItem().getElement());
@@ -1040,11 +1044,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					// Add day type
 					DayType dayType = this.employeeCalendarDraftObject.getDayTypeByDate(currentDay);
 					
-					// Si es un dia sin tipo y segun el calendario es no laborable
-					if(dayType == DayType.NOTYPEDAY && this.employeeCalendarDraftObject.isDefaultNonWorkongDay(currentDay)) {
-						dayType = DayType.NOWORKINGDAY;
-					}
-					
 					// Si es un dia sin tipo y es un dia con parcialidad
 					if(dayType == DayType.NOTYPEDAY && this.employeeCalendarDraftObject.isPartialityDayTypeByDate(currentDay)) {
 						dayType = DayType.PARTIALITY;
@@ -1058,6 +1057,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 					// Si es un dia fin ERTE se le ponete notypeday
 					if(dayType == DayType.EREFZAEXONENDDAY) {
 						dayType = DayType.NOTYPEDAY;
+					}
+					
+					// Si es un dia sin tipo y segun el calendario es no laborable
+					if(dayType == DayType.NOTYPEDAY && this.employeeCalendarDraftObject.isDefaultNonWorkongDay(currentDay)) {
+						dayType = DayType.NOWORKINGDAY;
 					}
 					
 					// Poner el titulo al label en funcion del tipo de dia
@@ -1145,11 +1149,6 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				// Add day type
 				DayType dayType = this.employeeCalendarDraftObject.getDayTypeByDate(currentDay);
 				
-				// Si es un dia sin tipo y segun el calendario es no laborable
-				if(dayType == DayType.NOTYPEDAY && this.employeeCalendarDraftObject.isDefaultNonWorkongDay(currentDay)) {
-					dayType = DayType.NOWORKINGDAY;
-				}
-				
 				// Si es un dia sin tipo y es un dia con parcialidad
 				if(dayType == DayType.NOTYPEDAY && this.employeeCalendarDraftObject.isPartialityDayTypeByDate(currentDay)) {
 					dayType = DayType.PARTIALITY;
@@ -1163,6 +1162,11 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 				// Si es un dia fin ERTE se le ponete notypeday
 				if(dayType == DayType.EREFZAEXONENDDAY) {
 					dayType = DayType.NOTYPEDAY;
+				}
+				
+				// Si es un dia sin tipo y segun el calendario es no laborable
+				if(dayType == DayType.NOTYPEDAY && this.employeeCalendarDraftObject.isDefaultNonWorkongDay(currentDay)) {
+					dayType = DayType.NOWORKINGDAY;
 				}
 				
 				// Poner el titulo al label en funcion del tipo de dia

@@ -1523,6 +1523,10 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 		if ( LogConfiguration.loggingIsEnabled())
 			LOGGER.log(Level.WARNING, message);
 	}
+	
+	public SalaryDraft getSalaryDraft() {
+		return this.salaryDraft;
+	}
 
 
 }
