@@ -56,6 +56,14 @@ public class AonDialog extends AonCustomDialog {
 		getAcceptCancelBtnPanel(callback);
 		showDialog();
 	}
+
+	public void setAcceptText(String btnText) {
+		this.okButton.setText(btnText);
+	}
+
+ 	public void setCancelText(String btnText) {
+                this.cancelButton.setText(btnText);
+        }
 	
 	private void showDialog() {
 		// Show center
