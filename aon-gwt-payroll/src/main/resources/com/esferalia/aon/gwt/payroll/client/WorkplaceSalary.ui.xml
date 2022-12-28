@@ -1,13 +1,21 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client">
+
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.WorkplaceSalary.MyStyle">
+		
+		.center{
+			display: flex;
+			justify-content: center;
+		}
 		
 		.container{
 			width: 100%;
 			min-width: 600px;
-			margin-top: 50px;
 		}
 		
 		.flexColumn{
@@ -28,6 +36,10 @@
 			font-weight: bold;
 		}
 		
+		.mt10{
+			margin-top: 10px;
+		}
+		
 		.warning {
 			color: red;
 		}
@@ -46,28 +58,45 @@
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
+		<g:north size="50">
+			<g:DeckPanel ui:field="toolbarDeckPanel">
+				<aon:AonToolbar ui:field="toolbar" />
+				<aon:AonToolbar ui:field="toolbarPDFViewer" />
+			</g:DeckPanel>
+		</g:north>
 		<g:center>
-			<g:VerticalPanel ui:field="mainContainer" styleName="{style.container}">
-				<g:HTMLPanel ui:field="messagePanel" />
-				<g:HTMLPanel ui:field="filterSalaryPanel" styleName="{style.flexColumn}">
-					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label styleName="{style.label}">Empleado</g:Label>
-						<g:SuggestBox styleName="aon-inputText {style.sb}" ui:field="employeeSB"/>
-						<g:Label styleName="{style.label}">Tipo nómina</g:Label>
-						<g:ListBox ui:field="typeList" styleName="aon-selectOneMenu"/>
+			<g:DeckPanel ui:field="mainDeckPanel">
+				<g:VerticalPanel ui:field="mainContainer" styleName="{style.container}">
+					<g:HTMLPanel ui:field="messagePanel" />
+					<g:HTMLPanel ui:field="filterSalaryPanel" styleName="{style.flexColumn}">
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:Label styleName="{style.label}">Empleado</g:Label>
+							<g:SuggestBox styleName="aon-inputText {style.sb}" ui:field="employeeSB"/>
+							<g:Label styleName="{style.label}">Tipo nómina</g:Label>
+							<g:ListBox ui:field="typeList" styleName="aon-selectOneMenu"/>
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:Label styleName="{style.label}">Periodo</g:Label>
+							<g:ListBox ui:field="dateFilterList" styleName="aon-selectOneMenu"/>
+							<g:Label styleName="{style.label}">Desde/Hasta</g:Label>
+							<g:ListBox ui:field="monthTillT" styleName="aon-selectOneMenu"/>
+							<g:ListBox ui:field="yearTillT" styleName="aon-selectOneMenu"/>
+							<g:ListBox ui:field="monthTTo" styleName="aon-selectOneMenu"/>
+							<g:ListBox ui:field="yearTTo" styleName="aon-selectOneMenu"/>
+							<g:Label ui:field="datesMessage" styleName="{style.label} {style.warning}">Periodo incorrecto</g:Label>
+						</g:HTMLPanel>
 					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label styleName="{style.label}">Periodo</g:Label>
-						<g:ListBox ui:field="dateFilterList" styleName="aon-selectOneMenu"/>
-						<g:Label styleName="{style.label}">Desde/Hasta</g:Label>
-						<g:ListBox ui:field="monthTillT" styleName="aon-selectOneMenu"/>
-						<g:ListBox ui:field="yearTillT" styleName="aon-selectOneMenu"/>
-						<g:ListBox ui:field="monthTTo" styleName="aon-selectOneMenu"/>
-						<g:ListBox ui:field="yearTTo" styleName="aon-selectOneMenu"/>
-						<g:Label ui:field="datesMessage" styleName="{style.label} {style.warning}">Periodo incorrecto</g:Label>
-					</g:HTMLPanel>
-				</g:HTMLPanel>
-			</g:VerticalPanel>
+				</g:VerticalPanel>
+					
+				<g:HTMLPanel styleName="{aonResources.css.aonSelector}">
+					<g:HTMLPanel ui:field="messagePDFContainer" />
+					<g:SimpleLayoutPanel ui:field="scrolledPDFPanel" styleName="{style.center}">
+						<g:HTMLPanel styleName="{style.mt10} {style.center}">
+					 		<p:FullViewer styleName="reset" ui:field='pdfViewer' />
+				 		</g:HTMLPanel>
+					</g:SimpleLayoutPanel> 
+				 </g:HTMLPanel>
+			 </g:DeckPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 	

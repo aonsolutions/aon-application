@@ -48,6 +48,7 @@ import org.mvel2.ast.Function;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.company.WorkPlace;
+import com.code.aon.company.enumeration.SalaryTemplate;
 import com.code.aon.person.Person;
 import com.esferalia.aon.google.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.google.sql.SQLConstants.UserScopeColumns;
@@ -90,7 +91,6 @@ import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.ActivityInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementsClean;
@@ -127,14 +127,15 @@ import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.OutOfDateException;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.PayrollPrintService;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
-import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -144,6 +145,8 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.gwt.payroll.sql.SQLUtils;
 import com.esferalia.aon.gwt.payroll.util.DraftPayrollBuilder;
 import com.esferalia.aon.in.payroll.SistemaRED2AON;
+import com.esferalia.aon.in.payroll.pdf.jooq.JooqPDFSettlementBuilder;
+import com.esferalia.aon.in.payroll.pdf.jooq.JooqPayrollBuilder;
 import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException;
 import com.esferalia.aon.in.payroll.tgss.its.ITComunica;
 import com.esferalia.aon.occam.api.AON;
@@ -223,6 +226,7 @@ import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
@@ -231,11 +235,11 @@ import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
-import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.payment.Payments;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
+import com.sun.xml.messaging.saaj.util.ByteOutputStream;
 
 import aon.sepe.objects.Contract;
 import solutions.aon.seg.social.SistemaRED;
@@ -2108,6 +2112,77 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 	}
 
+	@Override
+	public String getSettlePDF(String domain, String login, Integer settleId) throws IllegalArgumentException {
+		try (ByteOutputStream os = new ByteOutputStream()) {			
+			JooqPDFSettlementBuilder settleBuilder = new JooqPDFSettlementBuilder(domain, login, settleId, os);
+			settleBuilder.write();
+			os.flush();
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(os.getBytes());
+			
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
+		}
+		
+	}
+	
+	@Override
+	public String getSalariesPDF(String domain, String currentUser, Integer enterpriseID, List<Integer> salaryIds) throws IllegalArgumentException {
+		try (ByteOutputStream os = new ByteOutputStream()) {
+			String salaryReport = getReportKey(domain, enterpriseID, SalaryType.SALARY);
+			String payrollType = AonStringUtils.equalsIgnoreCase(salaryReport, SalaryTemplate.AON_SOLUTIONS_DEFAULT.getValue()) ? "classic" : "aon";
+			
+			Integer[] ids = new Integer[salaryIds.size()];
+			for (int i = 0; i < salaryIds.size(); i++)
+				ids[i] = salaryIds.get(i);
+			
+			if (AonStringUtils.equalsIgnoreCase(payrollType, PayrollPrintService.PayrollType.CLASSIC.getName())) {
+				JooqPayrollBuilder.generateClassicPayroll(enterpriseID
+						, domain
+						, os
+						, Optional.ofNullable(null)
+						, ids);
+			} else {
+				JooqPayrollBuilder.generatePayroll(enterpriseID
+						, domain
+						, os
+						, Optional.ofNullable(null)
+						, ids);
+			}
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(os.getBytes());
+			
+			Writer stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	protected String getReportKey(String domain, final Integer enterpriseID,
+			SalaryType salaryType) throws SQLException {
+		return PayrollServletUtils.getSalaryReport(domain, enterpriseID, salaryType);
+	}
+	
 	@Override
 	public String sendPayrollEmail(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {

@@ -155,6 +155,21 @@ public class EnterpriseSalaryObject {
 		});
 	}
 	
+	public void getPDFSalaries(Integer enterpriseId, List<Integer> salaryIds, Consumer<String> success, Consumer<Throwable> failure) {
+		enterpriseService.getSalariesPDF(enterpriseId, salaryIds, new AsyncCallback<String>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(String dataURI) {
+				success.accept(dataURI);
+			}
+		});
+	}
+	
 	// --------------------------------------------- Get Info Methods
 	
 	public List<SalaryInfo> getEnterpriseSalaries() {
