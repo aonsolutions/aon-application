@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.finance.PayMethod;
+
 public class RegistryPayMethod implements Serializable {
 
 	/**
@@ -12,8 +14,8 @@ public class RegistryPayMethod implements Serializable {
 	private Integer id;
 	private Integer domain;
 	private Integer registry;
-	private Integer payMethod;
-	private Integer rbank;
+	private PayMethod payMethod;
+	private RegistryBank rbank;
 	private Short numberOfPymnts;
 	private Short daysToFirstPymnt;
 	private Short daysBetweenPymnts;
@@ -58,21 +60,27 @@ public class RegistryPayMethod implements Serializable {
 		return this;
 	}
 	
-	public Integer getPayMethod() {
+	public PayMethod getPayMethod() {
+	    if(payMethod == null) {
+	        payMethod = new PayMethod();
+	    }
 		return payMethod;
 	}
 	
-	public RegistryPayMethod setPayMethod(Integer payMethod) {
+	public RegistryPayMethod setPayMethod(PayMethod payMethod) {
 		setDirty(true);
 		this.payMethod = payMethod;
 		return this;
 	}
 	
-	public Integer getRbank() {
+	public RegistryBank getRbank() {
+	    if(rbank == null) {
+	        rbank = new RegistryBank();
+	    }
 		return rbank;
 	}
 	
-	public RegistryPayMethod setRbank(Integer rbank) {
+	public RegistryPayMethod setRbank(RegistryBank rbank) {
 		setDirty(true);
 		this.rbank = rbank;
 		return this;

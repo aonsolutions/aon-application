@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.occam.api.model.fiscal.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Activity;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
@@ -31,14 +31,14 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
-public class AonActivityPanel extends AonCustomDialog implements HasSelectionHandlers<Activity> {
+public class OLD_AonActivityPanel extends AonCustomDialog implements HasSelectionHandlers<Activity> {
 
 	private DeckLayoutPanel deckPanel; 
 	private ListBox activityGroup;
 	private SimpleLayoutPanel tablePanel;
 	private SimpleLayoutPanel descriptionPanel;
 	
-	public AonActivityPanel() {
+	public OLD_AonActivityPanel() {
 		setVisible(false);
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
@@ -95,7 +95,7 @@ public class AonActivityPanel extends AonCustomDialog implements HasSelectionHan
 			okButton.setEnabled(false);
 			hide();
 			ActivityGroup ag = ActivityGroup.values()[activityGroup .getSelectedIndex() - 1];
-			SelectionEvent.fire(AonActivityPanel.this, 
+			SelectionEvent.fire(OLD_AonActivityPanel.this, 
 				new Activity()
 		      		.setDescription(description.getValue())
 		      		.setEpigraph(null)
@@ -134,7 +134,7 @@ public class AonActivityPanel extends AonCustomDialog implements HasSelectionHan
 				   .addCell( new Label(act.getDescription()), AON.CSS.aonFlexGrow1(), AON.CSS.aonWrap());
 				row.addClickHandler(event -> {
 					hide();
-					SelectionEvent.fire(AonActivityPanel.this, act.setKey(ag.getKey()) );
+					SelectionEvent.fire(OLD_AonActivityPanel.this, act.setKey(ag.getKey()) );
 				});	
 			}
 		} else {

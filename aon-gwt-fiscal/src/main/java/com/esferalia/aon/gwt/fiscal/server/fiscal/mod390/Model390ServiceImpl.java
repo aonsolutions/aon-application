@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.fiscal.client.mod390.Model390Service;
 import com.esferalia.aon.occam.api.fiscal.MODEL390;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Mod390 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod390" })
 public class Model390ServiceImpl extends AonStatelessRemoteServiceServlet implements Model390Service {

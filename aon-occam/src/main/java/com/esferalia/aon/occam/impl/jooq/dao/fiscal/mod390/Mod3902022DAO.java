@@ -134,7 +134,7 @@ public class Mod3902022DAO {
 		 ,C0548	(Mod3902022DetailKey.C0548, (mod, vc) -> isIntracommunityExpenses(vc, mod) && hasPercent10(vc))
 		 ,C0552	(Mod3902022DetailKey.C0552, (mod, vc) -> isIntracommunityExpenses(vc, mod) && hasPercent21(vc))
 	 	// IVA devengado en otros supuestos de inversión del sujeto pasivo
-		 ,C0028	(Mod3902022DetailKey.C0028, (mod, vc) -> isOperacionesISPFilter(vc, mod))
+		 ,C0028	(Mod3902022DetailKey.C0028, (mod, vc) -> isOperacionesISPFilter(vc))
 	 	// Modificación de bases y cuotas
 		 ,C0030	(Mod3902022DetailKey.C0030, (mod, vc) -> isCommonNationalSalesRECT(vc, mod))
 	 	// Modificación de bases y cuotas de operaciones intragrupo
@@ -230,7 +230,7 @@ public class Mod3902022DAO {
 		 ,C0598	(Mod3902022DetailKey.C0598, null)
 
 		 // Compensación en régimen especial de la agricultura, ganaderia y pesca
-		 ,C0061	(Mod3902022DetailKey.C0061, ((mod, vc) -> ((vc.isPurchase() || vc.isExpenses()) && vc.isFarmerRegime())))
+		 ,C0061	(Mod3902022DetailKey.C0061, ((mod, vc) -> compensacionesRegAgrarioFilter(vc)))
 		 // Cuotas deducibles en virtud de resolución administrativa o sentencia firmes con tipos no vigentes
 		 ,C0661	(Mod3902022DetailKey.C0661, null)
 		 // Rectificación de deducciones
@@ -1037,129 +1037,7 @@ public class Mod3902022DAO {
 		return VATDAO.getVatAccrualPaymentInputQuota(ctx,fromDate,toDate);
 	}
 
-	// -----------------------------------------------------------------------
-	// --------------------------------------------------------------- FILTROS
-	// -----------------------------------------------------------------------
-	private static boolean isCommonNationalSales(VatContext vat, Mod3902022 mod) {
-		return !vat.isVatSurchargeRegime() && vat.isNational()
-				&& vat.isSales() && !vat.isRectification();
-	}
-	private static boolean isCommonNationalSalesRECT(VatContext vat, Mod3902022 mod) {
-		return !vat.isVatSurchargeRegime() && vat.isNational()
-				&& vat.isSales() && vat.isRectification();
-	}
-	private static boolean hasPercent0(VatContext vat) {
-		return vat.getPercentage() == PERCENT0;
-	}
-	private static boolean hasPercent4(VatContext vat) {
-		return vat.getPercentage() == PERCENT4;
-	}
-	private static boolean hasPercent5(VatContext vat) {
-		return vat.getPercentage() == PERCENT5;
-	}
-	private static boolean hasPercent10(VatContext vat) {
-		return vat.getPercentage() == PERCENT10;
-	}
-
-	private static boolean hasPercent21(VatContext vat) {
-		return vat.getPercentage() == PERCENT21;
-	}
-	private static boolean hasSurchargePercent05(VatContext vat) {
-		return vat.getSurchargePercent() == SURCHARGE_PERCENT05;
-	}
-
-	private static boolean hasSurchargePercent14(VatContext vat) {
-		return vat.getSurchargePercent() == SURCHARGE_PERCENT14;
-	}
-
-	private static boolean hasSurchargePercent52(VatContext vat) {
-		return vat.getSurchargePercent() == SURCHARGE_PERCENT52;
-	}
-	private static boolean hasSurchargePercent175(VatContext vat) {
-		return vat.getSurchargePercent() == SURCHARGE_PERCENT175;
-	}
-	
-	private static boolean isIntracommunityPurchase(VatContext vat, Mod3902022 mod) {
-		return !vat.isVatSurchargeRegime() && !vat.isRectification() && vat.isIntracommunityPurchase();
-	}
-	private static boolean isIntracommunityExpenses(VatContext vat, Mod3902022 mod) {
-		return !vat.isVatSurchargeRegime() && !vat.isRectification() && vat.isIntracommunityExpenses();
-	}
-	private static boolean isOperacionesISPFilter(VatContext vat, Mod3902022 mod) {
-		return !vat.isVatSurchargeRegime()
-				&& (vat.isOtherISPPurchase() || vat.isOtherISPExpenses() || vat.isExtracommunityExpenses()
-						|| vat.isCanCeuMelExpenses() || (vat.isExtracommunityPurchase() && vat.isService())
-						|| (vat.isCanCeuMelPurchase() && vat.isService()));
-	}
-
-	
-	// **************************
-	// **************************
-	// **************************
-
-	private static boolean importacionesCorrientesFilter(VatContext vat) {
-		return commonImportacionesFilter(vat) && !vat.isInvestment();
-	}
-
-	private static boolean importacionesInversionFilter(VatContext vat) {
-		return commonImportacionesFilter(vat) && vat.isInvestment();
-	}
-
-	private static boolean commonImportacionesFilter(VatContext vat) {
-		boolean basicFilter =  !vat.isVatSurchargeRegime() 
-				&& !vat.isRectification() 
-				&& !vat.isService();
-		if (basicFilter && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase())) {
-			if (vat.getTaxDate().before( Mod303Declaration.IVA_2021_CHANGE_DATE )) {
-				basicFilter = true;
-			} else {
-				basicFilter = vat.hasDuaLinked() || vat.isVatImportation();
-			}
-			return basicFilter; 
-		}
-		return false;
-	}
-	
-	private static boolean operacionesISPFilter(VatContext vat) {
-		return !vat.isVatSurchargeRegime()
-			&& (vat.isOtherISPPurchase() 
-			 || vat.isOtherISPExpenses() 
-			 || vat.isExtracommunityExpenses()
- 			 || vat.isCanCeuMelExpenses() 
- 			 || (vat.isExtracommunityPurchase() && vat.isService())
-			 || (vat.isCanCeuMelPurchase() && vat.isService()));
-	}
-
-	private static boolean operacionesInterioresCorrientesFilter(VatContext vat) {
-		return !vat.isVatSurchargeRegime() && !vat.isInvestment()
-			&& !vat.isRectification() && !vat.isFarmerRegime() && AonMathUtils.isNotZero(vat.getPercentage())
-			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
-	}
-	
-	private static boolean operacionesInterioresInversionFilter(VatContext vat) {
-		return !vat.isVatSurchargeRegime() && vat.isInvestment()
-				&& !vat.isRectification() && !vat.isFarmerRegime() && AonMathUtils.isNotZero(vat.getPercentage())
-				&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
-	}
-	
-	private static boolean adqIntracomunitariasCorrientesFilter(VatContext vat) {
-		return !vat.isInvestment() && adqIntracomunitariasFilter(vat);
-	}
-	private static boolean adqIntracomunitariasInversionFilter(VatContext vat) {
-		return vat.isInvestment() && adqIntracomunitariasFilter(vat);
-	}
-	private static boolean adqIntracomunitariasFilter(VatContext vat) {
-		return !vat.isVatSurchargeRegime() 
-			&& !vat.isService()
-			&& !vat.isRectification()
-			&& vat.isIntracommunityPurchase();
-	}
-	private static boolean adqIntracomunitariasServicios(VatContext vat) {
-		return !vat.isVatSurchargeRegime() 
-				&& !vat.isRectification()
-				&& (vat.isIntracommunityExpenses() || (vat.isIntracommunityPurchase() && vat.isService()));
-	}
-
+	// *******************
 	public static Mod3902022 aeatPresentation(AONContext ctx, Mod3902022 mod, String aeatResponse) {
 		if (AonStringUtils.isNotBlank(aeatResponse)) {
 			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
@@ -1175,9 +1053,154 @@ public class Mod3902022DAO {
 		}
 		return mod;
 	}
-
 	
-	// vatSurchargeRegime
+	// *******************
+
+
+	// -----------------------------------------------------------------------
+	// --------------------------------------------------------------- FILTROS
+	// -----------------------------------------------------------------------
+
+	private static boolean hasPercent0(VatContext vat) {
+		return vat.getPercentage() == PERCENT0;
+	}
+	private static boolean hasPercent4(VatContext vat) {
+		return vat.getPercentage() == PERCENT4;
+	}
+	private static boolean hasPercent5(VatContext vat) {
+		return vat.getPercentage() == PERCENT5;
+	}
+	private static boolean hasPercent10(VatContext vat) {
+		return vat.getPercentage() == PERCENT10;
+	}
+	private static boolean hasPercent21(VatContext vat) {
+		return vat.getPercentage() == PERCENT21;
+	}
+
+	private static boolean hasSurchargePercent05(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT05;
+	}
+	private static boolean hasSurchargePercent14(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT14;
+	}
+
+	private static boolean hasSurchargePercent52(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT52;
+	}
+	private static boolean hasSurchargePercent175(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT175;
+	}
+	
+	private static boolean isCommonNationalSales(VatContext vat, Mod3902022 mod) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime() 
+			&& vat.isNational()
+			&& vat.isSales() 
+			&& !vat.isRectification();
+	}
+	private static boolean isCommonNationalSalesRECT(VatContext vat, Mod3902022 mod) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime() 
+			&& vat.isNational()
+			&& vat.isSales() 
+			&& vat.isRectification();
+	}
+	private static boolean isIntracommunityPurchase(VatContext vat, Mod3902022 mod) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime() 
+			&& !vat.isRectification() 
+			&& vat.isIntracommunityPurchase();
+	}
+	private static boolean isIntracommunityExpenses(VatContext vat, Mod3902022 mod) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime() 
+			&& !vat.isRectification() 
+			&& vat.isIntracommunityExpenses();
+	}
+	
+	private static boolean isOperacionesISPFilter(VatContext vat) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime()
+			&& (vat.isOtherISPPurchase() 
+			 || vat.isOtherISPExpenses() 
+			 || vat.isExtracommunityExpenses()
+			 || vat.isCanCeuMelExpenses() 
+			 || (vat.isExtracommunityPurchase() && vat.isService())
+			 || (vat.isCanCeuMelPurchase() && vat.isService()));
+	}
+	
+	private static boolean operacionesInterioresCorrientesFilter(VatContext vat) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime() 
+			&& !vat.isInvestment()
+			&& !vat.isRectification() 
+			&& !vat.isFarmerRegime() 
+			&& AonMathUtils.isNotZero(vat.getPercentage())
+			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || isOperacionesISPFilter(vat));
+	}
+	
+	private static boolean operacionesInterioresInversionFilter(VatContext vat) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime() 
+			&& vat.isInvestment()
+			&& !vat.isRectification() 
+			&& !vat.isFarmerRegime() 
+			&& AonMathUtils.isNotZero(vat.getPercentage())
+			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || isOperacionesISPFilter(vat));
+	}
+	
+	private static boolean importacionesCorrientesFilter(VatContext vat) {
+		return commonImportacionesFilter(vat) && !vat.isInvestment();
+	}
+	private static boolean importacionesInversionFilter(VatContext vat) {
+		return commonImportacionesFilter(vat) && vat.isInvestment();
+	}
+	
+	private static boolean commonImportacionesFilter(VatContext vat) {
+		boolean basicFilter =  vat.isVatGeneralRegime(VATRegime.GENERAL) 
+				&& !vat.isVatSurchargeRegime() 
+				&& !vat.isRectification() 
+				&& !vat.isService();
+		if (basicFilter && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase())) {
+			if (vat.getTaxDate().before( Mod303Declaration.IVA_2021_CHANGE_DATE )) {
+				basicFilter = true;
+			} else {
+				basicFilter = vat.hasDuaLinked() || vat.isVatImportation();
+			}
+			return basicFilter; 
+		}
+		return false;
+	}
+	
+	private static boolean adqIntracomunitariasCorrientesFilter(VatContext vat) {
+		return !vat.isInvestment() && adqIntracomunitariasFilter(vat);
+	}
+	private static boolean adqIntracomunitariasInversionFilter(VatContext vat) {
+		return vat.isInvestment() && adqIntracomunitariasFilter(vat);
+	}
+
+	private static boolean adqIntracomunitariasFilter(VatContext vat) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime() 
+			&& !vat.isService()
+			&& !vat.isRectification()
+			&& vat.isIntracommunityPurchase();
+	}
+	private static boolean adqIntracomunitariasServicios(VatContext vat) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime() 
+			&& !vat.isRectification()
+			&& (vat.isIntracommunityExpenses() || (vat.isIntracommunityPurchase() && vat.isService()));
+	}
+
+	private static boolean compensacionesRegAgrarioFilter(VatContext vat) {
+		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& !vat.isVatSurchargeRegime() 
+			&& vat.isFarmerRegime()
+			&& !vat.isRectification() 
+			&& (vat.isNationalPurchase() || vat.isNationalExpenses());
+	}
+	
 }
 
 

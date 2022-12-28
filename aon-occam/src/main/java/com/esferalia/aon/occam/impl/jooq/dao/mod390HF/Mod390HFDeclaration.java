@@ -50,7 +50,8 @@ public abstract class Mod390HFDeclaration {
 	static final double PERCENT_21 = 21.0;
 	static final double PERCENT_10 = 10.0;
 	static final double PERCENT_4 = 4.0;
-	static final double PERCENT_0 = 4.0;
+	static final double PERCENT_5 = 5.0;
+	// static final double PERCENT_0 = 4.0;
 	static final double PERCENT_105 = 10.5;	
 	static final double PERCENT_12 = 12;
 	static final double SURCHARGE_PERCENT_52 = 5.2;
@@ -275,6 +276,9 @@ public abstract class Mod390HFDeclaration {
 	
 	static boolean hasPercent4(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_4;	
+	}
+	static boolean hasPercent5(VatContext vat) {
+		return vat.getPercentage() ==  PERCENT_5;	
 	}
 	static boolean hasPercent10(VatContext vat) {
 		return vat.getPercentage() ==  PERCENT_10; 	

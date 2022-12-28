@@ -6,20 +6,25 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum VATRegime implements Serializable {
 
-	 GENERAL	("R\u00E9gimen General"		,"R\u00E9g. Genr.")
-	,SIMPLIFIED ("R\u00E9gimen Simplificado","R\u00E9g. Simpl.")
-	,EXEMPT 	("Exento"					,"Exento")
+	 GENERAL	("R\u00E9gimen General"		, "GENE", "R\u00E9g. Genr.")
+	,SIMPLIFIED ("R\u00E9gimen Simplificado", "SIMP", "R\u00E9g. Simpl.")
+	,EXEMPT 	("Exento"					, "EXEN", "Exento")
 	;
 	
 	private String name;
+	private String abbr;
 	private String description;
 	
-	private VATRegime(String name,String description){
+	private VATRegime(String name,String abbr, String description){
 		this.name = name;
+		this.abbr = abbr;
 		this.description = description;
 	}
 	public String getName() {
 		return name;
+	}
+	public String getAbbr() {
+		return abbr;
 	}
 	public String getDescription() {
 		return description;

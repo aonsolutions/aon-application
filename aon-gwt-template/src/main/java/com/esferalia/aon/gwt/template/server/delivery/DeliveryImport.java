@@ -1174,7 +1174,7 @@ public class DeliveryImport {
 						RegistryPayMethod rpaymethod = new RegistryPayMethod()
 								.setDomain(domain.getId())
 								.setRegistry(registry.getId())
-								.setPayMethod(pm.getId())
+								.setPayMethod(pm)
 								.setNumberOfPymnts(r.getNumeroVtos() != null ? r.getNumeroVtos().shortValue(): 1)
 								.setDaysToFirstPymnt(r.getDiasAlPrimerVto() != null ? r.getDiasAlPrimerVto().shortValue() : 0)
 								.setDaysBetwenPymnts(r.getDiasEntreVtos() != null ? r.getDiasEntreVtos().shortValue() : 0)

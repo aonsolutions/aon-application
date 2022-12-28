@@ -391,8 +391,8 @@ public class RegistryImport extends Import {
 					rpaymethod = new RegistryPayMethod()
 						.setDomain(domain.getId())
 						.setRegistry(reg.getId())
-						.setPayMethod(p.getId())
-						.setRbank(rbank.getId());
+						.setPayMethod(p)
+						.setRbank(rbank);
 					AON.saveRegistryPayMethod(domain, user, rpaymethod);
 				}
 			}
