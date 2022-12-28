@@ -833,7 +833,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return treeItem == null ? null : (SalaryDraftObject) treeItem.getUserObject();
 	}
 
-	public void selectSalaryDraft(final int employeeId, int workplaceId, boolean fireEvents) {
+	public void selectSalaryDraft(final int employeeId, int workplaceId, Date startDate, Date endDate, boolean fireEvents) {
 
 		class SalaryDraftPredicate implements Predicate<TreeItem> {
 			public boolean test(TreeItem t) {
@@ -849,11 +849,18 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		TreeItem draftItem = getTreeItem(workplaceItem, predicate, 0);
 
 		if (draftItem != null) {
+			Object object = draftItem.getUserObject();
+			
+			SalaryDraft salaryDraft = ((SalaryDraftObject) object).getSalaryDraft();
+			salaryDraft.setStartDate(startDate);
+			salaryDraft.setEndDate(endDate);
+			salaryDraft.setIssueDate(endDate);
+			
 			tree.setSelectedItem(draftItem, fireEvents);
 			tree.ensureSelectedItemVisible();
 			draftItem.getElement().scrollIntoView();
 		} else {
-			selectEmployeeItem(workplaceItem, workplaceItem.getChildCount(), predicate, fireEvents);
+			selectEmployeeItem(workplaceItem, workplaceItem.getChildCount(), predicate, startDate, endDate, fireEvents);
 		}
 	}
 	
@@ -2212,7 +2219,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	}
 
 	private void selectEmployeeItem(final TreeItem workplaceItem, final int start, final Predicate<TreeItem> predicate,
-			final boolean fireEvents) {
+			Date startDate, Date endDate, final boolean fireEvents) {
 		loadEmployees(workplaceItem, getEmployeeLimit(), new AsyncCallback<List<Employee>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -2225,8 +2232,15 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 				TreeItem draftItem = getTreeItem(workplaceItem, predicate, start);
 				if (draftItem == null) {
-					selectEmployeeItem(workplaceItem, start, predicate, fireEvents);
+					selectEmployeeItem(workplaceItem, start, predicate, startDate, endDate, fireEvents);
 				} else {
+					Object object = draftItem.getUserObject();
+					
+					SalaryDraft salaryDraft = ((SalaryDraftObject) object).getSalaryDraft();
+					salaryDraft.setStartDate(startDate);
+					salaryDraft.setEndDate(endDate);
+					salaryDraft.setIssueDate(endDate);
+					
 					tree.setSelectedItem(draftItem, fireEvents);
 					tree.ensureSelectedItemVisible();
 					draftItem.getElement().scrollIntoView();
