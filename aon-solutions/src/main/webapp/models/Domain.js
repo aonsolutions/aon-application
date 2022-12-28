@@ -98,7 +98,7 @@ export class Domain {
         return this;
     }
 
-    getDomainManagement() {
+    isDomainManagement() {
         return this.domainManagement; 
     }
 
