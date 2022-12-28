@@ -188,3 +188,10 @@ export const CHECKIT = {
   module: GWT_FISCAL,
   entryPoint: 'CheckItModule'
 }
+
+export const NORDIGEN = {
+  title: MSG.BANKS,
+  name: MSG.BANKS,
+  module: GWT_FISCAL,
+  entryPoint: 'NordigenModule'
+}

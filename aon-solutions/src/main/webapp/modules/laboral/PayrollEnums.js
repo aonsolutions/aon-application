@@ -1,6 +1,6 @@
 import { MATERIAL_ICONS } from "../../environments/environments.js";
 import * as MSG from "../../environments/msg.js";
-import Apps from "../../services/app.js";
+import { PAYROLL } from "../../services/app.js";
 
 export const PAYSHEET = {
   id: 'Paysheet',
@@ -88,7 +88,7 @@ export const CONTRACT_OPTIONS = {
     aonIcon: "aon_cto",
     id:"aon_cto",
     permission:true,
-    backgroundColor: Apps.PAYROLL.color
+    backgroundColor: PAYROLL.color
   },
   TA:{
     name: "Obtener TA",
@@ -96,7 +96,7 @@ export const CONTRACT_OPTIONS = {
     aonIcon: "aon_ta",
     id: 'Ta',
     permission:true,
-    backgroundColor: Apps.PAYROLL.color
+    backgroundColor: PAYROLL.color
   },
   IDC:{
     name: "Obtener IDC",
@@ -104,7 +104,7 @@ export const CONTRACT_OPTIONS = {
     aonIcon: 'aon_idc',
     id: 'Idc',
     permission:true,
-    backgroundColor: Apps.PAYROLL.color
+    backgroundColor: PAYROLL.color
   },
   DELETE:{
     name: "Anuales",
@@ -112,7 +112,7 @@ export const CONTRACT_OPTIONS = {
     id: 'Delete',
     icon: 'delete_forever',
     permission:true,
-    backgroundColor: Apps.PAYROLL.color
+    backgroundColor: PAYROLL.color
   }
 };
 
