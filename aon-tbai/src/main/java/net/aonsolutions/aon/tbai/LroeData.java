@@ -45,8 +45,10 @@ public class LroeData {
 	public static LROEInformation get(Domain domain, User user, Integer invoice) {
 		LROEInformation lroe = new LROEInformation();
 		AON.getDataResponseStream(domain.getName(), domain.getId(), user.getLogin(),
-			DataResponseSource.LROE, f -> f.getSourceProperty().eq(DataResponseSource.LROE.value())
-			.and(f.getSourceIdProperty().eq(invoice))).forEach(r -> {
+			DataResponseSource.LROE, f -> 
+					f.getDomainProperty().eq(domain.getId())
+					.and(f.getSourceProperty().eq(DataResponseSource.LROE.value()))
+					.and(f.getSourceIdProperty().eq(invoice))).forEach(r -> {
 				LROERequest request = new LROERequest();
 				request.setDataResponse(r);
 				if(r.getDataRequest() != null) {

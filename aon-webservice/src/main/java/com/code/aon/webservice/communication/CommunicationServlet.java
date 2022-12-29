@@ -481,8 +481,10 @@ public class CommunicationServlet extends HttpServlet {
 		for(Integer id: _idList) {
 			// restore sales status to PENDING
 			DataResponse response = AON.getDataResponse(domain.getName(),
-					domain.getId(), userName, DataResponseSource.INGENET_SALES,
-					f -> f.getIdProperty().eq(id));
+					domain.getId(), userName, f ->
+						f.getDomainProperty().eq(domain.getId())
+						.and(f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value()))
+						.and(f.getIdProperty().eq(id)));
 			Options options = new Options().setFull(true);
 			Sales sales = AON.getSales(domain.getName(), domain.getId(), userName,
 					f -> f.getIdProperty().eq(response.getSourceId()), options);

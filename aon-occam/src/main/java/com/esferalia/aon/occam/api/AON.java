@@ -6520,7 +6520,14 @@ public class AON {
 			if (ctx != null) ctx.close();
 		}
 	}
+
+	public static DataResponse getDataResponse(String domainName, Integer domainId, String login, DataResponseFilter filter){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getDataResponse(ctx, filter);
+		}
+	}
 	
+	@Deprecated
 	public static DataResponse getDataResponse(String domainName, Integer domainId, String login, DataResponseSource source, DataResponseFilter filter){
 		CloseableAONContext ctx = null;
 		try {
