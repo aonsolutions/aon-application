@@ -59,7 +59,10 @@ public class UdapaQualityDownload extends HttpServlet{
 		
 			UdapaImpl udp = new UdapaImpl();
 			HashMap<String, String> map = udp.getValues(domain.getName(), domain.getId(), dataResponseId);
-			DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.QUALITY, f -> f.getIdProperty().eq(dataResponseId));
+			DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, f ->
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getSourceProperty().eq(DataResponseSource.QUALITY.value()))
+				.and(f.getIdProperty().eq(dataResponseId)));
 			map.put("number", dr.getCode());
 		
 		

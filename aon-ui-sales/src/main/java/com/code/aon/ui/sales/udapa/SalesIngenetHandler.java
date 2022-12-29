@@ -142,8 +142,9 @@ public class SalesIngenetHandler implements Serializable {
 		if(sales!=null && sales.getId()!=null) {
 			DataResponse dr = AON.getDataResponse(AonUtil.getDomainName(),
 					sales.getDomain(), AonUtil.getRemoteUser(),
-					com.esferalia.aon.occam.api.model.type.DataResponseSource.INGENET_SALES,
-					f -> f.getSourceIdProperty().eq(sales.getId()));
+					f -> f.getDomainProperty().eq(sales.getDomain())
+					.and(f.getSourceProperty().eq(com.esferalia.aon.occam.api.model.type.DataResponseSource.INGENET_SALES.value()))
+					.and(f.getSourceIdProperty().eq(sales.getId())));
 			return dr!=null?dr.getId():null;
 		}
 		return null;

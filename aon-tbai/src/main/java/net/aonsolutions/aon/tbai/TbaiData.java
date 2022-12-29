@@ -58,8 +58,10 @@ public class TbaiData {
 		TBAIInformation info = new TBAIInformation();
 		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 		AON.getDataResponseStream(domain.getName(), domain.getId(), user.getLogin(),
-			source, f -> f.getSourceProperty().eq(source.value())
-			.and(f.getSourceIdProperty().eq(invoice))).forEach(r -> {
+			source, f -> 
+				f.getDomainProperty().eq(domain.getId())
+				.and(f.getSourceProperty().eq(source.value()))
+				.and(f.getSourceIdProperty().eq(invoice))).forEach(r -> {
 					TBAIRequest request = new TBAIRequest();
 					request.setDataResponse(r);
 					if(r.getDataRequest() != null) {
@@ -177,8 +179,8 @@ public class TbaiData {
 
 	public String getTbaiId(String domainName, Integer domainId, String login, Integer invoiceId) {
 		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
-		DataResponse dr = AON.getDataResponse(domainName, domainId, login, source, f -> 
-		f.getDomainProperty().eq(domainId)
+		DataResponse dr = AON.getDataResponse(domainName, domainId, login, f -> 
+			f.getDomainProperty().eq(domainId)
 			.and(f.getSourceProperty().eq(source.value()))
 			.and(f.getSourceIdProperty().eq(invoiceId)));
 
@@ -192,7 +194,7 @@ public class TbaiData {
 	
 	public byte[] getTbaiRequestFile(Domain domain, String login, Integer invoiceId) {
 		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
-		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, source, f -> 
+		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, f -> 
 			f.getDomainProperty().eq(domain.getId())
 			.and(f.getSourceProperty().eq(source.value()))
 			.and(f.getSourceIdProperty().eq(invoiceId)));
@@ -228,7 +230,7 @@ public class TbaiData {
 	
 	public String getTbaiUrl(String domainName, Integer domainId, String login, Integer invoiceId) {
 		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
-		DataResponse dr = AON.getDataResponse(domainName, domainId, login, source, f -> 
+		DataResponse dr = AON.getDataResponse(domainName, domainId, login, f -> 
 			f.getDomainProperty().eq(domainId)
 			.and(f.getSourceProperty().eq(source.value()))
 			.and(f.getSourceIdProperty().eq(invoiceId)));

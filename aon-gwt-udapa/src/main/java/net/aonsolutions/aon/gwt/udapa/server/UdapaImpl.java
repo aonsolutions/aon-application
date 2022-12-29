@@ -50,7 +50,10 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 	
 	public HashMap<String, String> getValues(String domainName, Integer domainId, Integer drId){
 		String login = "";
-		DataResponse dr = AON.getDataResponse(domainName, domainId, login, DataResponseSource.QUALITY, f -> f.getIdProperty().eq(drId));
+		DataResponse dr = AON.getDataResponse(domainName, domainId, login, f ->
+			f.getDomainProperty().eq(domainId)
+			.and(f.getSourceProperty().eq(DataResponseSource.QUALITY.value()))
+			.and(f.getIdProperty().eq(drId)));
 		
 		HashMap<String, String> map = new HashMap<>();
 		QualitySheetCode.valueLinkedList().stream()
@@ -164,7 +167,10 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 	
 	public HashMap<String, String> getPaturpatValues(String domainName, Integer domainId, Integer drId){
 		String login = "";
-		DataResponse dr = AON.getDataResponse(domainName, domainId, login, DataResponseSource.PATURPAT_QUALITY, f -> f.getIdProperty().eq(drId));
+		DataResponse dr = AON.getDataResponse(domainName, domainId, login, f -> 
+			f.getDomainProperty().eq(domainId)
+			.and(f.getSourceProperty().eq(DataResponseSource.PATURPAT_QUALITY.value()))
+			.and(f.getIdProperty().eq(drId)));
 		
 		HashMap<String, String> map = new HashMap<>();
 		net.aonsolutions.aon.gwt.udapa.shared.quality.paturpat.QualitySheetCode.valueLinkedList().stream()
@@ -210,7 +216,9 @@ public class UdapaImpl extends RemoteServiceServlet implements IUdapa{
 			if(transportDate != null && !"".equals(transportDate) && !"-".equals(transportDate)){
 				Date issueDate = AonDateUtils.dateTimeParse(transportDate);
 				AON.getDataResponseStream(domainName, domainId, "", DataResponseSource.QUALITY, f -> 
-					f.getIssueDateProperty().ge(new java.sql.Date(issueDate != null ? issueDate.getTime() : new Date().getTime()))
+					f.getDomainProperty().eq(domainId)
+					.and(f.getSourceProperty().eq(DataResponseSource.QUALITY.value()))
+					.and(f.getIssueDateProperty().ge(new java.sql.Date(issueDate != null ? issueDate.getTime() : new Date().getTime())))
 				).forEach(dr -> {
 					drd.setDataResponse(dr.getId());
 					
