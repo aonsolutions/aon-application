@@ -1,6 +1,5 @@
 package com.code.aon.finance.event;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -9,7 +8,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.common.util.CommonUtil;
@@ -25,8 +23,6 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.finance.invoicing.remover.IInvoiceDetailRemover;
 import com.code.aon.finance.invoicing.remover.InvoiceRemoverFactory;
 import com.code.aon.product.enumeration.ProductType;
-import com.code.aon.product.strategy.TaxBreakDown;
-import com.code.aon.product.strategy.TaxKey;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -37,18 +33,11 @@ import com.code.aon.registry.RegistryTax;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.enumeration.ProjectStatus;
 import com.esferalia.aon.entity.IEntityAlias;
-import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
-	
-	private static final Date ROUND_DATE = AonDateUtils.getYearFirstDay(2023);
-	
+		
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
@@ -185,8 +174,6 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	}
 
 	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax, InvoiceTax detailVat) throws ManagerBeanException {
-	    Domain domain = AON.getDomain(HibernateUtil.getSessionFactoryName(), invoiceDetail.getDomain());
-	    TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, "");
 	    InvoiceTax invoiceTax = new InvoiceTax();
 		invoiceTax.setInvoiceDetail(invoiceDetail);
 		invoiceTax.setTaxType(tax.getType());
@@ -239,11 +226,9 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 					}
 				}
 
-				if (isQuotaSavedInTax(invoiceDetail) || tbaiConfiguration.isActive()) {
-					quota = CommonUtil.round(base * percentage / 100);
-					if (invoice.isSurcharge()) {
-						surchargeQuota = CommonUtil.round(base * surcharge / 100);	
-					}
+				quota = CommonUtil.round(base * percentage / 100);
+				if (invoice.isSurcharge()) {
+					surchargeQuota = CommonUtil.round(base * surcharge / 100);	
 				}
 			}
 		}
@@ -275,14 +260,6 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		return null;
 	}
 
-	private boolean isQuotaSavedInTax(InvoiceDetail invoiceDetail) throws ManagerBeanException {
-		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_INVOICE_ID), invoiceDetail.getInvoice().getId());
-		criteria.addNotEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_QUOTA), Double.valueOf(0));
-		return invoiceTaxBean.getCount(criteria) != 0;
-	}
-
 	private void updateProjectStatus(Project project, ProjectStatus status) throws ManagerBeanException {
 		if (project != null && project.isTas()) {
 			IManagerBean projectTasBean = BeanManager.getManagerBean(ProjectTas.class);
@@ -312,11 +289,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	private void updateInvoiceTotals(Invoice invoice, boolean skipServiceProcess) throws ManagerBeanException {
 		if (invoice.isUpdateEnabled()) {
 			InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
-			
-			if (invoice.getIssueDate() != null && !invoice.getIssueDate().before(ROUND_DATE)) {
-				round( invoice );
-			}
-			
+
 			double taxableBase = priceStrategy.getCalculatedTaxableBase(invoice);
 			double vatQuota = priceStrategy.getCalculatedTotalVatQuota(invoice, invoice);
 			double retentionQuota = priceStrategy.getCalculatedTotalRetentionQuota(invoice, invoice);
@@ -336,65 +309,6 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		}
 	}
 
-	private void round(Invoice invoice) throws ManagerBeanException {
-		InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
-		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		criteria.addOrder(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_TAX_TYPE));
-		round(priceStrategy.getTaxBreakDowns(invoice, invoice, true)
-			 ,invoiceTaxBean.getList(criteria));
-	}
-	
-	private void round(Collection<TaxBreakDown> taxs, Collection<ITransferObject> list) throws ManagerBeanException {
-		if (taxs == null) return;
-		if (list == null) return;
-		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
-		for ( TaxBreakDown tax : taxs) {
-			TaxKey key = getKey(tax);
-			long count = list.stream()
-				.map(InvoiceTax.class::cast)
-				.map(InvoiceDetailBeanListener::getKey)
-				.filter( k -> k.equals(key))
-				.count();
-			if ( count > 0) {
-				long i = 0;
-				double quota = tax.getTaxQuota();
-				double surchargeQuota = tax.getSurchargeQuota();
-				double deductibleQuota = tax.getDeductibleQuota();
-				for ( ITransferObject to : list ) {
-					InvoiceTax it = (InvoiceTax) to;
-					if (getKey(it).equals(key)) {
-						i++;
-						if ( i == count ) {
-							it.setQuota(quota);
-							it.setSurchargeQuota(surchargeQuota);
-							it.setDeductibleQuota(deductibleQuota);
-							invoiceTaxBean.update(it);						
-						} else {
-							quota = AonMathUtils.round( quota - it.getQuota(), 2);
-							surchargeQuota = AonMathUtils.round( surchargeQuota - it.getSurchargeQuota(), 2);
-							deductibleQuota = AonMathUtils.round( deductibleQuota - it.getDeductibleQuota(), 2);
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	private static TaxKey getKey(TaxBreakDown tb) {
-		TaxKey key = new TaxKey();
-		key.setType(tb.getTaxType());
-		key.setPercent(tb.getTaxPercent());
-		return key;
-	}
-	private static TaxKey getKey(InvoiceTax tb) {
-		TaxKey key = new TaxKey();
-		key.setType(tb.getTaxType());
-		key.setPercent(tb.getPercentage());
-		return key;
-	}
-
 	private boolean isServiceInvoice(Invoice invoice, double invoiceTaxableBase) throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Projection projection = Projection.sum(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_TAXABLE_BASE));
@@ -402,7 +316,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IEntityAlias.INVOICE_DETAIL_ITEM_PRODUCT_TYPE), ProductType.SERVICE);
 		Double amount = (Double)invoiceDetailBean.getUniqueResult(projection, criteria);
-		return (amount!=null) ? amount.doubleValue() > CommonUtil.round(invoiceTaxableBase / 2) : false;
+		return amount != null && amount.doubleValue() > CommonUtil.round(invoiceTaxableBase / 2);
 	}
 
 }
