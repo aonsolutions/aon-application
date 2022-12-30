@@ -34,7 +34,7 @@ public class SIIDB {
     			f.getDomainProperty().eq(domain.getId())
     			.and(f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value()))
 				.and(f.getSourceIdProperty().eq(invoiceId)));
-		if(di == null){
+		if(di.isEmpty()){
 			di =  AON.insertDataResponse(domain.getName(), domain.getId(), login, 
 					new DataResponse()
 					.setDomain(domain.getId())
@@ -170,7 +170,7 @@ public class SIIDB {
     				f -> f.getDomainProperty().eq(domain.getId())
     				.and(f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value()))
     				.and(f.getSourceIdProperty().eq(invoice)));
-    		if(di == null){
+    		if(di.isEmpty()){
     			di =  AON.insertDataResponse(domain.getName(), domain.getId(), login, 
     					new DataResponse()
     					.setDomain(domain.getId())
@@ -316,7 +316,7 @@ public class SIIDB {
     			f.getDomainProperty().eq(domain.getId())
     			.and(f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value()))
     			.and(f.getSourceIdProperty().eq(invoiceId)));
-    	if(di != null && (status.equals("Correcto") || status.equals("Correcto"))){
+    	if(!di.isEmpty() && (status.equals("Correcto") || status.equals("Correcto"))){
     		String estado = "status";
     		if(sendType.isIntracomunitaria()) estado = "status_intra";
     		if(sendType.isInversion()) estado = "status_bienes";
@@ -378,7 +378,7 @@ public class SIIDB {
     				f.getDomainProperty().eq(domain.getId())
     				.and(f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value()))
     				.and(f.getSourceIdProperty().eq(invoice)));
-    		if(di != null && (status.get(invoice).equals("Correcto") || status.get(invoice).equals("Correcto"))){
+    		if(!di.isEmpty() && (status.get(invoice).equals("Correcto") || status.get(invoice).equals("Correcto"))){
     			String estado = "status";
     			if(sendType.isIntracomunitaria()) estado = "status_intra";
     			if(sendType.isInversion()) estado = "status_bienes";

@@ -177,7 +177,7 @@ public class InvoiceRemoverController extends BasicController implements IProgre
 					.and(f.getSourceProperty().eq(source.value()))
 					.and(f.getSourceIdProperty().eq(inv.getId())));
 
-			if(dr != null && dr.getId() != null) {
+			if(!dr.isEmpty()) {
 				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_TBAI.getMessage());
 			}
 		}

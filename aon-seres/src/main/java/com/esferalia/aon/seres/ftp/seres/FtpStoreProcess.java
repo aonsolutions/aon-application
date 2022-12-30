@@ -153,7 +153,7 @@ public class FtpStoreProcess implements ILongProcess, Serializable {
 			f.getDomainProperty().eq(domainId)
 			.and(f.getSourceProperty().eq(source.value()))
 			.and(f.getCodeProperty().eq(referenceCode)));
-		if(dr==null || dr.getId()==null) {
+		if(dr.isEmpty()) {
 			dr = new DataResponse();
 			dr.setDomain(domainId);
 			dr.setResponseDate(new Date());

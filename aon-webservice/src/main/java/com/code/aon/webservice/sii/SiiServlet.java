@@ -108,8 +108,7 @@ public class SiiServlet extends HttpServlet{
     		.and(f.getSourceIdProperty().eq(id)));
     
     	JSONArray array = new JSONArray();
-    	if(dr != null && dr.getId() != null) {
-    		
+    	if(!dr.isEmpty()) {	
     		AON.getAttachStream(domain.getName(), domain.getId(), login, f -> 
     			f.getDomainProperty().eq(domain.getId())
     			.and(f.getSourceTypeProperty().eq(DataAttachSource.SII.value()))

@@ -184,7 +184,7 @@ public class TbaiData {
 			.and(f.getSourceProperty().eq(source.value()))
 			.and(f.getSourceIdProperty().eq(invoiceId)));
 
-		DataResponseDetail drd = dr != null && dr.getId() != null ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
+		DataResponseDetail drd = !dr.isEmpty() ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
 			f.getDomainProperty().eq(domainId)
 			.and(f.getDataResponseProperty().eq(dr.getId()))
 			.and(f.getDataVariableProperty().eq("tbaiId"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
@@ -198,7 +198,7 @@ public class TbaiData {
 			f.getDomainProperty().eq(domain.getId())
 			.and(f.getSourceProperty().eq(source.value()))
 			.and(f.getSourceIdProperty().eq(invoiceId)));
-		if(dr == null || dr.getId() == null) return null;
+		if(dr.isEmpty()) return null;
 		Integer aux = dr.getDataRequest();
 		if(aux == null) {
 			DataRequest drq = AON.getDataRequestStream(domain.getName(), domain.getId(), login, f -> 
@@ -235,7 +235,7 @@ public class TbaiData {
 			.and(f.getSourceProperty().eq(source.value()))
 			.and(f.getSourceIdProperty().eq(invoiceId)));
 
-		DataResponseDetail drd = dr != null && dr.getId() != null ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
+		DataResponseDetail drd = !dr.isEmpty() ? AON.getDataResponseDetail(domainName, domainId, login, f -> 
 			f.getDomainProperty().eq(domainId)
 			.and(f.getDataResponseProperty().eq(dr.getId()))
 			.and(f.getDataVariableProperty().eq("tbaiUrl"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
