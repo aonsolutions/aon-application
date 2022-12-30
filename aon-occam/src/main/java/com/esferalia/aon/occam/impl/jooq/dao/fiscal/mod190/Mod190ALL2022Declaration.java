@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod190;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.IrpfData.IRPF_DATA;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 import org.jooq.Field;
+import org.jooq.Record1;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.records.IrpfDataAscendantsRecord;
@@ -38,7 +40,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod190ALL2017Declaration extends Mod190Declaration {
+public class Mod190ALL2022Declaration extends Mod190Declaration {
 	
 	private static final String PREST_IT = "PREST_IT";
 
@@ -47,8 +49,8 @@ public class Mod190ALL2017Declaration extends Mod190Declaration {
 		Date firstDay = AonDateUtils.getYearFirstDay(mod190.getYear());
 		Date lastDay = AonDateUtils.getYearLastDay(mod190.getYear());
 		Field<Integer> birthYear = DSL.year(PERSON.BIRTH_DATE);
-		final TreeMap<String, Mod190Detail> map = new TreeMap<String, Mod190Detail>();
-		final HashSet<Integer> salaries = new HashSet<Integer>();
+		final TreeMap<String, Mod190Detail> map = new TreeMap<>();
+		final HashSet<Integer> salaries = new HashSet<>();
 		ctx.getDslContext().select(
 				 SALARY.ID
 				,SALARY.EMPLOYEE_DOCUMENT
@@ -84,7 +86,7 @@ public class Mod190ALL2017Declaration extends Mod190Declaration {
 				Integer person = rec.getValue(PERSON.REGISTRY);
 				
 				Byte p = rec.getValue(SALARY_PAYMENT.TYPE);
-				PaymentType paymentType = (p == null)?PaymentType.CRA_0001 : PaymentType.values()[ (int) p];
+				PaymentType paymentType = (p == null)?PaymentType.CRA_0001 : PaymentType.values()[p.intValue()];
 				paymentType.accept(new PaymentTypeVisitor() {
 
 					@Override
@@ -119,27 +121,37 @@ public class Mod190ALL2017Declaration extends Mod190Declaration {
 					
 					@Override
 					public void visitInsurance(PaymentType paymentType) {
-						visitOther(paymentType);
+						if (!isBoss()) visitInsurance();
 					}
 					
 					@Override
 					public void visitSupport(PaymentType paymentType) {
-						visitOther(paymentType);
+						if (!isBoss()) visitSupport();
 					}
 
 					// -------------------------------------------------------------------------------------
 					// -------------------------------------------------------------------------------------
 					
 					private boolean isBoss() {
-						Byte boss = rec.getValue(ENTERPRISE_CCC.TYPE);
-						if ( boss != null && boss.byteValue() == 4) {
-							double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
-							double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
-							double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
-							double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase) )
-									?0.0
-									:(irpfBase * totalIrpf / totalIrpfBase);
-							Mod190Detail detail = getDetail(document,person,Mod1902016Key.E,"01");
+						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
+						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
+						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+						double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase) )
+								?0.0
+								:(irpfBase * totalIrpf / totalIrpfBase);
+						
+						Mod190Detail detail = null;
+						
+						if(isE01())
+							detail = getDetail(document,person,Mod1902016Key.E,"01");
+						else if(isE02())
+							detail = getDetail(document,person,Mod1902016Key.E,"02");
+						else if(isE03()) 
+							detail = getDetail(document,person,Mod1902016Key.E,"03");
+						else if(isE04())
+							detail = getDetail(document,person,Mod1902016Key.E,"04");
+						
+						if(null != detail) {
 							detail.setPerception(AonMathUtils.round(detail.getPerception() + irpfBase ));
 							detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
 							Integer salary = rec.getValue(SALARY.ID);
@@ -148,9 +160,9 @@ public class Mod190ALL2017Declaration extends Mod190Declaration {
 								double ss = rec.getValue(SALARY.SOCIAL_SECURITY_CONTRIBUTIONS);
 								detail.setDeducibleExpense(AonMathUtils.round(detail.getDeducibleExpense() + ss ));
 							}
-							return true;
 						}
-						return false;
+						
+						return isE01() || isE02() || isE03() || isE04();
 					}
 
 					private void visitExpenses() {
@@ -165,7 +177,7 @@ public class Mod190ALL2017Declaration extends Mod190Declaration {
 						// Parte no exenta va a la A
 						visitAKey();	
 					}
-						
+					
 					private void visitCompensation() {
 						double amount = rec.getValue(SALARY_PAYMENT.AMOUNT);
 						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
@@ -181,6 +193,32 @@ public class Mod190ALL2017Declaration extends Mod190Declaration {
 							detail.setPerception(AonMathUtils.round(detail.getPerception() + amount ));
 							detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
 						}
+					}
+					
+					private void visitInsurance() {
+						double amount = rec.getValue(SALARY_PAYMENT.AMOUNT);
+						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+						
+						// Parte exenta va a la L
+						double expense = AonMathUtils.round(amount - irpfBase);  
+						Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"24");
+						detail.setPerception(AonMathUtils.round(detail.getPerception() + expense ));
+						
+						// Parte no exenta va a la A
+						visitAKey();	
+					}
+					
+					private void visitSupport() {
+						double amount = rec.getValue(SALARY_PAYMENT.AMOUNT);
+						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+						
+						// Parte exenta va a la L
+						double expense = AonMathUtils.round(amount - irpfBase);  
+						Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"25");
+						detail.setPerception(AonMathUtils.round(detail.getPerception() + expense ));
+						
+						// Parte no exenta va a la A
+						visitAKey();	
 					}
 					
 					private void visitAKey() {
@@ -247,7 +285,9 @@ public class Mod190ALL2017Declaration extends Mod190Declaration {
 								.forEach(
 									province -> {
 										try {detail.setProvince(Integer.parseInt(province.getValue(GEOZONE.CODE)));
-										} catch (NumberFormatException e) {} // nothing. If not a number,  not a valid province.
+										} catch (NumberFormatException e) {
+											// nothing. If not a number,  not a valid province.
+										}
 									}
 								);
 							if (key == Mod1902016Key.A) {
@@ -257,6 +297,64 @@ public class Mod190ALL2017Declaration extends Mod190Declaration {
 							}
 						}
 						return map.get(mapKey);
+					}
+					
+					// Regimen general asimilado && Adm./Consejero Negocio > 100.000
+					private boolean isE01() {
+						Byte irpfType = getIrpfType();
+						Byte rgAsimilados = rec.getValue(ENTERPRISE_CCC.TYPE);
+						return rgAsimilados != null && rgAsimilados.byteValue() == 4 && irpfType != null && irpfType.byteValue() == 2;
+					}
+					
+					// Regimen general asimilado && Adm./Consejero Negocio < 100.000
+					private boolean isE02() {
+						Byte irpfType = getIrpfType();
+						Byte rgAsimilados = rec.getValue(ENTERPRISE_CCC.TYPE);
+						return rgAsimilados != null && rgAsimilados.byteValue() == 4 && irpfType != null && irpfType.byteValue() == 1;
+					}
+					
+					// RETA  && Adm./Consejero Negocio < 100.000
+					private boolean isE03() {
+						Byte irpfType = getIrpfType();
+						Byte ssRegime = rec.getValue(CONTRACT.SS_REGIME);
+						return ssRegime != null && ssRegime.byteValue() == 3 && irpfType != null && irpfType.byteValue() == 1;
+					}
+					
+					// RETA  && Adm./Consejero Negocio > 100.000
+					private boolean isE04() {
+						Byte irpfType = getIrpfType();
+						Byte ssRegime = rec.getValue(CONTRACT.SS_REGIME);
+						return ssRegime != null && ssRegime.byteValue() == 3 && irpfType != null && irpfType.byteValue() == 2;
+					}
+					
+					private Byte getIrpfType() {
+						// 0 == COMUN
+						// 1 == Adm./Consejero Negocio < 100.000
+						// 2 == Adm./Consejero Negocio > 100.000
+						
+						Record1<String> irpfTypeRecord = ctx.getDslContext().select(CONTRACT_DATA.EXPRESSION)
+								.from(CONTRACT_DATA)
+								.where(CONTRACT_DATA.NAME.eq("IRPF_TYPE"))
+								.and(CONTRACT_DATA.CONTRACT.eq(rec.getValue(CONTRACT.ID)))
+								.limit(1)
+								.fetchOne();
+						
+						if(null == irpfTypeRecord) return null;
+						
+						String irpfTypeExpression = parseContractData(irpfTypeRecord.get(CONTRACT_DATA.EXPRESSION));
+						
+						return AonStringUtils.isBlank(irpfTypeExpression) ? null : Byte.parseByte(irpfTypeExpression);
+					}
+					
+					private String parseContractData(String exp) {
+						if(null == exp)
+							return null;
+						try {
+							exp = exp.split("\"")[1];
+							return exp;
+						} catch (Exception e) {
+							return exp;
+						}
 					}
 					
 				}); 
@@ -284,7 +382,7 @@ public class Mod190ALL2017Declaration extends Mod190Declaration {
 		
 		detail.setContract((byte) 1);
 		
-		if (list != null && list.size() > 0) { 
+		if (list != null && !list.isEmpty()) { 
 			IrpfDataRecord record = list.get(0);
 			detail.setCeutaMelilla(AonEnumUtils.getBoolean(record.getCeutaMelilla()));
 			Byte familySituation = record.getFamilySituation();
@@ -316,7 +414,7 @@ public class Mod190ALL2017Declaration extends Mod190Declaration {
 			byte ZERO = 0;
 			byte ONE = 1;
 			byte TWO = 2;
-			if (descs != null && descs.size() > 0) {
+			if (descs != null && !descs.isEmpty()) {
 				int i = 1;
 				for (IrpfDataDescendientsRecord desc : descs) {
 					int descYear = desc.getAdoptionYear() == null?desc.getBirthYear():desc.getAdoptionYear();
@@ -364,7 +462,7 @@ public class Mod190ALL2017Declaration extends Mod190Declaration {
 					.where(IRPF_DATA_ASCENDANTS.IRPF_DATA.eq(record.getId()))
 					.orderBy(IRPF_DATA_ASCENDANTS.BIRTH_YEAR)
 					.fetchInto(IrpfDataAscendantsRecord.class);
-			if (ascs != null && ascs.size() > 0) {
+			if (ascs != null && !ascs.isEmpty()) {
 				for (IrpfDataAscendantsRecord asc : ascs) {
 					boolean lessThan75 = ( curYear - 75 ) <  asc.getBirthYear();
 					boolean byInteger = asc.getAnotherDescendient() != null && asc.getAnotherDescendient() == 0;
