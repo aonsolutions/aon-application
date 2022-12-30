@@ -116,4 +116,10 @@ public class DataResponse implements Serializable {
 		return this;
 	}
 	
+	public boolean isEmpty() {
+		return getId() == null && getDomain() == null
+				&& getCode() == null && getResponseDate() == null
+				&& getSource() == null && getSourceId() == null
+				&& getDataRequest() == null;
+	}
 }
