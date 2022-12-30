@@ -29,6 +29,19 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public abstract class Mod190Declaration {
 	private enum Declarations {
+//		MOD190_GENERIC_2022 {
+//			
+//			@Override
+//			boolean accept(Mod190 mod) {
+//				return mod.getYear() >= 2022;
+//			}
+//
+//			@Override
+//			Mod190Declaration get() {
+//				return new Mod190ALL2022Declaration();
+//			}
+//		}
+//		,
 		MOD190_GENERIC_2017 {
 			
 			@Override
