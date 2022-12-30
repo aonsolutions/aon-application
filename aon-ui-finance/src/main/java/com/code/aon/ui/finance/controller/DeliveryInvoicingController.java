@@ -14,6 +14,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.ProgressionState;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Series;
 import com.code.aon.config.util.SeriesUtil;
@@ -23,11 +24,14 @@ import com.code.aon.finance.invoicing.InvoicingParameters;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.common.LongProcessThread;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.util.DeliveryInvoicingProcess;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 
 public class DeliveryInvoicingController implements IFinanceConstants, Serializable {
 	
@@ -79,7 +83,13 @@ public class DeliveryInvoicingController implements IFinanceConstants, Serializa
 	}				
 
 	private void updateInvoiceNumber(Series series) throws ManagerBeanException {
-		getParams().setInvoiceNumber(obtainMaxNumber(series));
+		boolean tbai = isTbai();
+	    if(tbai) {
+	        	String domainName = AonUtil.getDomainName();
+				Integer domainId = DomainManager.getCurrentDomain();
+				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, series.getCode());
+				getParams().setInvoiceNumber(number);
+	    } else getParams().setInvoiceNumber(obtainMaxNumber(series));
 	}
 	
 	private int obtainMaxNumber(Series series) throws ManagerBeanException {
@@ -106,7 +116,13 @@ public class DeliveryInvoicingController implements IFinanceConstants, Serializa
         	getParams().setInvoiceSeries(null);
         }
         if ( getParams().getInvoiceNumber() == 0 ) {
-        	getParams().setInvoiceNumber(obtainMaxNumber(series));
+        	boolean tbai = isTbai();
+    	    if(tbai) {
+    	        	String domainName = AonUtil.getDomainName();
+    				Integer domainId = DomainManager.getCurrentDomain();
+    				Integer number = AON.getInvoiceMinNumber(domainName, domainId, "", com.esferalia.aon.occam.api.model.type.InvoiceType.SALES, series.getCode());
+    				getParams().setInvoiceNumber(number);
+    	    } else getParams().setInvoiceNumber(obtainMaxNumber(series));
         }
 	}	
 	
@@ -171,5 +187,17 @@ public class DeliveryInvoicingController implements IFinanceConstants, Serializa
 	public void setInvoiceIds(Integer[] invoiceIds) {
 		this.invoiceIds = invoiceIds;
 	}	
+	
+	public boolean isTbai() {
+		return getTbaiConfiguration().isActive();
+	}
+	
+	public TbaiConfiguration getTbaiConfiguration() {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		return AON.getTbaiConfiguration(domainName, domainId, login);
+	}
+
 	
 }
