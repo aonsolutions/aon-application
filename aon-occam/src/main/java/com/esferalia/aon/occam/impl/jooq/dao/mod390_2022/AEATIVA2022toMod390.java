@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.ActivityType;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.DeductionRegime;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022;
@@ -98,7 +99,7 @@ public class AEATIVA2022toMod390 {
 		DatEstadisticos dat = iva.getDatEstadisticos();
 		if (dat.getPral() != null) {
 			Activity activity = new Activity();
-			activity.setKey(dat.getPral().getClave());
+			activity.setType( ActivityType.ensure( dat.getPral().getClave() ));
 			activity.setDescription(dat.getPral().getDescripcion());
 			activity.setEpigraph(dat.getPral().getEpigrafe());
 			mod390.setMainActivity(activity);
@@ -107,7 +108,7 @@ public class AEATIVA2022toMod390 {
 		for (Otras otras : dat.getOtras()) {
 			if (otras != null) {
 				Activity activity = new Activity();
-				activity.setKey(otras.getClave());
+				activity.setType(ActivityType.ensure( otras.getClave()));
 				activity.setDescription(otras.getDescripcion());
 				activity.setEpigraph(otras.getEpigrafe());
 				if (i == 1) {

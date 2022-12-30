@@ -7,7 +7,8 @@ public class Activity implements Serializable {
 	private static final long serialVersionUID = -1202033752419394011L;
 	
 	private String description;
-	private String key;
+	private String key;	
+	private ActivityType type;
 	private String epigraph;
 	
 	public String getDescription() {
@@ -22,6 +23,13 @@ public class Activity implements Serializable {
 	}
 	public Activity setKey(String key) {
 		this.key = key;
+		return this;
+	}
+	public ActivityType getType() {
+		return type;
+	}
+	public Activity setType(ActivityType type) {
+		this.type = type;
 		return this;
 	}
 	public String getEpigraph() {
