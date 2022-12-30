@@ -31,6 +31,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRES
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -181,16 +182,31 @@ public class DraftPayrollBuilder {
 				deductions.stream().filter(p -> p != null).filter(p -> p.getType() != null).sorted(Comparator.comparing(d -> d.getType().getName(new Locale("es")))).forEach(d -> {
 					Double percent = null;
 					
-		
-				
-					try {
-						if(d.getDescription() != null) {
-							String desc = d.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1");
-							System.out.println( d.getName() + " : " + d.getDescription());
-							percent = Double.parseDouble(desc);
-						}
-					} catch (NumberFormatException ignored) {
+					String dataName = "PORCENTAJE_" + d.getName();
 					
+					if (AonStringUtils.containsIgnoreCase(d.getName(), "fogasa")) {
+						dataName = "PORCENTAJE_FOGASA";
+					}
+					
+					try {
+						List<IData> percentList = salary.getDataS().getOrDefault(dataName, Collections.emptyList());
+						
+						if (percentList.size() > 0 && percentList.get(0) != null) {
+							IData percentData = percentList.get(0);
+							if (percentData.getValue() != null) {
+								percent = AonNumberUtils.toDouble(percentData.getValue());
+							}
+						} else {
+							try {
+								if(d.getDescription() != null) {
+									String desc = d.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1");
+									percent = Double.parseDouble(desc);
+								}
+							} catch (NumberFormatException ignored) {
+							}
+						}
+						
+					} catch (Exception e) {
 					}
 					
 					int type = getDeductionPDFType(d.getType().ordinal());

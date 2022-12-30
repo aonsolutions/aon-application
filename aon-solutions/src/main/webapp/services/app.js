@@ -115,6 +115,47 @@ export const PAYROLL = {
   },
 };
 
+export const TREASURY = {
+  app: CONSTANT.TREASURY,
+  title: MSG.TREASURY,
+  description: MSG.TREASURY,
+  tag: MSG.TREASURY,
+  icon: AON_ICONS.AON_TREASURY,
+  color: "#002469",
+  price: " ", // '90€/mes',
+};
+
+
+export const MARKETING = {
+  app: CONSTANT.MARKETING,
+  title: MSG.MARKETING,
+  description: MSG.MARKETING,
+  tag: MSG.MARKETING,
+  icon: AON_ICONS.AON_MARKETING,
+  color: "#002469",
+  price: " ", // '90€/mes',
+};
+
+export const COMMERCIAL = {
+  app: CONSTANT.COMMERCIAL,
+  title: MSG.COMMERCIAL,
+  description: MSG.COMMERCIAL,
+  tag: MSG.COMMERCIAL,
+  icon: AON_ICONS.AON_COMMERCIAL,
+  color: "#002469",
+  price: " ", // '90€/mes',
+};
+
+export const GROUPWARE = {
+  app: 'groupware',
+  title: 'Expedientes',
+  description: 'Expedientes',
+  tag: 'Expedientes',
+  icon: AON_ICONS.AON_APP,
+  color: "#002469",
+  price: " ", // '90€/mes',
+};
+
 export const COMUNICA = {
   app: CONSTANT.COMUNICA,
   title: MSG.COMUNICA,
@@ -162,7 +203,13 @@ export const DOCUMENTAL = {
     },
   ],
   price: " ", // '-',
-  disabled: false
+  disabled: false,
+  options: {
+    menu: false,
+    add: true,
+    upload: true,
+    stat: false
+  }
 };
 
 export const WAREHOUSE = {
@@ -211,7 +258,7 @@ export const INVOICE = {
     add: true,
     upload: true,
     stat: true,
-  },
+  }
 };
 
 export const CONFIGURATION = {
@@ -391,17 +438,25 @@ export const CUSTOM_VIEW = {
 
 export const MenuApps = {
   OFFICE,
+  // GARAGE,
+  // ACADEMY,
+  // COMMERCE,
+  // HOTEL,
   ACCOUNTING,
   FISCAL,
   PAYROLL,
   COMUNICA,
-  DOCUMENTAL,
+  AON_SALTRA,
   INVOICE,
+  // MARKETING,
+  // TREASURY,
+  DOCUMENTAL,
   TIMECONTROL,
   MESSENGER,
-  TOOLS,
+  WAREHOUSE,
+  // GROUPWARE,
   NOTES,
-  AON_SALTRA,
+  TOOLS
 };
 
 export const MobileMenuApps = [
@@ -444,6 +499,27 @@ export const EnterpriseApps = [
 
 export const Apps = {
   OFFICE,
+  // GARAGE,
+  // ACADEMY,
+  // COMMERCE,
+  // HOTEL,
+  ACCOUNTING,
+  FISCAL,
+  PAYROLL,
+  COMUNICA,
+  AON_SALTRA,
+  INVOICE,
+  // MARKETING,
+  // TREASURY,
+  DOCUMENTAL,
+  TIMECONTROL,
+  MESSENGER,
+  NOTES,
+  WAREHOUSE,
+  // GROUPWARE
+};
+
+export const BookingApps = {
   ACCOUNTING,
   FISCAL,
   PAYROLL,
@@ -453,9 +529,9 @@ export const Apps = {
   INVOICE,
   MESSENGER,
   NOTES,
-  AON_SALTRA,
   WAREHOUSE
 };
+
 export const AuxApps = { TOOLS };
 export const ClassicApps = { AON_SOLUTIONS, BIDOQ, SELFCONTA, AON_SALTRA };
 export const Services = { OCR, CONVENIOS, BANK, AULA, API_SERVICE, CUSTOM_VIEW };
@@ -1184,7 +1260,7 @@ export const PROFESSIONAL_MANAGEMENT = {
   app: "professional_management",
   icon: AON_ICONS.AON_MANAGEMENT,
   title: "Profesional",
-  subtitle: " Gestión Estándar | Expedientes | Almacén ",
+  subtitle: " Gestión Estándar | Marketing | Expedientes | Almacén ",
   color: "#002469",
   apps: [Apps.INVOICE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, Apps.WAREHOUSE],
   price: " ",
@@ -1217,9 +1293,17 @@ export const GARAGE = {
 };
 
 export const COMMERCE = {
-  app: "commerce",
+  app: CONSTANT.COMMERCE,
   icon: AON_ICONS.AON_COMMERCE,
   title: "Comercio",
+  color: "black",
+  domainType: true,
+};
+
+export const HOTEL = {
+  app: "hotel",
+  icon: AON_ICONS.AON_HOTEL,
+  title: "Hotel",
   color: "black",
   domainType: true,
 };

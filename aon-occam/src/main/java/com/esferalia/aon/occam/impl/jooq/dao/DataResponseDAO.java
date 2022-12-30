@@ -20,6 +20,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -63,10 +64,11 @@ public class DataResponseDAO {
 				.where(DATA_RESPONSE_PROPERTIES.getConditions(filter));
 	}
 	
-	public static DataResponse get(AONContext ctx, DataResponseFilter filter) {
+	public static DataResponse get(AONContext ctx, DataResponseFilter filter, Options...options) {
 		DataResponse dr = select(ctx, filter).orderBy(DATA_RESPONSE.ID.desc()).limit(1)
 			.fetch().stream().map(new DataResponseFiller()).findFirst().orElse(new DataResponse());
-		dr.setDetails(getDataResponseDetailStream(ctx, f -> f.getDataResponseProperty().eq(dr.getId())).collect(Collectors.toCollection(LinkedList::new)));
+		if(options.length > 0 && options[0].isFull())
+			dr.setDetails(getDataResponseDetailStream(ctx, f -> f.getDataResponseProperty().eq(dr.getId())).collect(Collectors.toCollection(LinkedList::new)));
 		return dr;
 	}
 	

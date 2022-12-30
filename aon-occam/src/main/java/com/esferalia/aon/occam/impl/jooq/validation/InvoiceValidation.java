@@ -11,6 +11,7 @@ import java.util.function.BiConsumer;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
@@ -289,7 +290,7 @@ public class InvoiceValidation {
 			}
 			
 			DataResponse dr = DataResponseDAO.get(ctx.getContext(), f -> f.getSourceProperty().eq(DataResponseSource.TBAI.value())
-					.and(f.getSourceIdProperty().eq(inv.getId())));
+					.and(f.getSourceIdProperty().eq(inv.getId())), new Options().setFull(true));
 			String type = dr.getDetails().stream().filter(f -> f.getDataVariable().equals("type")).map(DataResponseDetail::getDataValue).findFirst().orElse("alta");
 			if(dr.getId() != null && "alta".equalsIgnoreCase(type) && accepted) {
 				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_TBAI.getMessage());

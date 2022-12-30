@@ -11,7 +11,7 @@ import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 
 import { CONSTANT, MATERIAL_ICONS, MSG } from "../../environments/environments.js";
 import { AonGraphicsTrial } from './aon-graphics-trial.js';
-import Apps from '../../services/app.js';
+import {ACCOUNTING } from '../../services/app.js';
 
 import * as GWT from '../../gwt/gwt.js';
 import { waitEl } from '../../services/utils.js';
@@ -45,7 +45,7 @@ export class AonAccounting extends AonElement {
 		this.aonGraphicsTrialView();
 
 		if(this.isMobile()){
-			application.addMobileSidenavHeader(Apps.ACCOUNTING);
+			application.addMobileSidenavHeader(ACCOUNTING);
 		}
 		
 		let options2 = [
@@ -81,10 +81,10 @@ export class AonAccounting extends AonElement {
 			}
 		}];
 		
-		if(this.dur.isBank())
+		if(this.dur.isBank()) {
 			options.push({
 				id: 'banks',
-				name: MSG.BANKS,
+				name: MSG.BANKS + '[Hasta el 31/12/2022]',
 				icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
 				fn: () => {
 					this.getApplication().removeSidenavById("Opciones");
@@ -93,6 +93,19 @@ export class AonAccounting extends AonElement {
 					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
 				}
 			});
+
+			options.push({
+				id: 'banksnordigen',
+				name: MSG.BANKS,
+				icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
+				fn: () => {
+					this.getApplication().removeSidenavById("Opciones");
+					this.clearElementById(this.getApplication().getContent().id);
+					GWT.load(GWT.NORDIGEN, this.getApplication().CONTENT);
+					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
+				}
+			});
+		}
 
 		application.addSidenavOptions(MSG.ACCOUNTING, options);
 		application.addSidenavOptions(MSG.OPTIONS , options2);

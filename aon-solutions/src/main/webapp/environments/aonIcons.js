@@ -39,6 +39,8 @@ export const AON_ENTERPRISE = 'aon_enterprise';
 export const AON_KIT_DIGITAL = 'aon_kitdigital';
 export const AON_BRANCH = 'aon_branch';
 export const AON_WAREHOUSE = 'aon_warehouse';
-
 export const AON_PDF = 'aon_pdf';
-
+export const AON_TREASURY = 'aon_app';
+export const AON_MARKETING = 'aon_app';
+export const AON_COMMERCIAL = 'aon_app';
+export const AON_HOTEL = 'aon_app';

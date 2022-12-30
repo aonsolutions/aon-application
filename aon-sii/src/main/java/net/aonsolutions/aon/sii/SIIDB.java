@@ -30,8 +30,9 @@ public class SIIDB {
 	}
 	
 	public void insertSuministro(Domain domain, String login, Integer invoiceId, byte[] requestXml, byte[] responseXml, String status, LinkedList<VatContext> vatList, SendType sendType){
-    	DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.SII_INVOICE,
-				f -> f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value())
+    	DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, f -> 
+    			f.getDomainProperty().eq(domain.getId())
+    			.and(f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value()))
 				.and(f.getSourceIdProperty().eq(invoiceId)));
 		if(di == null){
 			di =  AON.insertDataResponse(domain.getName(), domain.getId(), login, 
@@ -165,8 +166,9 @@ public class SIIDB {
     	
     	for(Integer i = 0 ; i < invoiceList.size() ; i++){
     		Integer invoice = invoiceList.get(i);
-    		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.SII_INVOICE,
-    				f -> f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value())
+    		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login,
+    				f -> f.getDomainProperty().eq(domain.getId())
+    				.and(f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value()))
     				.and(f.getSourceIdProperty().eq(invoice)));
     		if(di == null){
     			di =  AON.insertDataResponse(domain.getName(), domain.getId(), login, 
@@ -310,8 +312,9 @@ public class SIIDB {
     }
     
     public void insertSuministroBajas(Domain domain, String login, Integer invoiceId, byte[] requestXml, byte[] responseXml, String status, SendType sendType){
-    	DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.SII_INVOICE,
-    			f -> f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value())
+    	DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, f ->
+    			f.getDomainProperty().eq(domain.getId())
+    			.and(f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value()))
     			.and(f.getSourceIdProperty().eq(invoiceId)));
     	if(di != null && (status.equals("Correcto") || status.equals("Correcto"))){
     		String estado = "status";
@@ -371,8 +374,9 @@ public class SIIDB {
 		
     	for(Integer i = 0 ; i < invoiceList.size() ; i++){
     		Integer invoice = invoiceList.get(i);
-    		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.SII_INVOICE,
-    				f -> f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value())
+    		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, f ->
+    				f.getDomainProperty().eq(domain.getId())
+    				.and(f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value()))
     				.and(f.getSourceIdProperty().eq(invoice)));
     		if(di != null && (status.get(invoice).equals("Correcto") || status.get(invoice).equals("Correcto"))){
     			String estado = "status";
@@ -424,8 +428,9 @@ public class SIIDB {
     		}
     	}
     	
-    	DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.SII_INVOICE,
-    			f -> f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value())
+    	DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, f -> 	
+    			f.getDomainProperty().eq(domain.getId())
+    			.and(f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value()))
     			.and(f.getSourceIdProperty().eq(invoiceId)));
     	
     	Boolean incorrect = status.equals("Incorrecto");
@@ -502,8 +507,9 @@ public class SIIDB {
     	}
     	
     	for(Integer i : invoiceList){
-    		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.SII_INVOICE,
-    				f -> f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value())
+    		DataResponse di = AON.getDataResponse(domain.getName(), domain.getId(), login, f ->
+    				f.getDomainProperty().eq(domain.getId())
+    				.and(f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value()))
     				.and(f.getSourceIdProperty().eq(i)));
     		
     		Boolean incorrect = status.get(i).equals("Incorrecto");
