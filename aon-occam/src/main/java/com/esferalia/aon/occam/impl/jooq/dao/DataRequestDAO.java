@@ -66,6 +66,10 @@ public class DataRequestDAO {
 	}
 	
 	public static DataRequest save(AONContext ctx, DataRequest dataRequest) {
+		if(dataRequest.getBlackBox().length() > 2000) {
+			dataRequest.setBlackBox(dataRequest.getBlackBox().substring(0, 2000));
+		}
+		
 		Integer id = ctx.getDslContext().insertInto(DATA_REQUEST)
 				.set(DATA_REQUEST.DOMAIN, dataRequest.getDomain())
 				.set(DATA_REQUEST.DATE, AonDateUtils.toTimestamp(dataRequest.getDate()))	
