@@ -19,6 +19,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -42,6 +44,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.cost.Costs;
+import com.esferalia.aon.salary.data.IData;
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -207,6 +210,11 @@ public class SQLDraftERETestCase extends SQLERETestCase {
 		
 		@Override
 		public <T extends IDeduction> Collection<T> getEmbargoS() throws SalaryException {
+			throw new NoSuchMethodError();
+		}
+		
+		@Override
+		public <T extends IData> Map<String, List<T>> getDataS() throws SalaryException {
 			throw new NoSuchMethodError();
 		}
 		

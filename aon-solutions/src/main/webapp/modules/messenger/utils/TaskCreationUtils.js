@@ -1066,7 +1066,7 @@ const openDialogDailyTracking = (task)=> {
       name:durationId,
       id: durationId,
       max:"300:59",
-      title: `${MSG.ESTIMATED_TIME} (${MSG.HOURS})`
+      title: `${MSG.ESTIMATED_TIME} (${MSG.HOURS} : ${MSG.MINS})`
     });
     form.appendChild(trackingDuration);
 

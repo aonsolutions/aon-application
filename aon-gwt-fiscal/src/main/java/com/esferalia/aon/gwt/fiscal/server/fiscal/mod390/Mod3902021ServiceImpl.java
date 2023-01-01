@@ -8,7 +8,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL3902021;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902021;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902021;
 
 @WebServlet(name = "Mod3902021 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod3902021" })
 public class Mod3902021ServiceImpl extends AonStatelessRemoteServiceServlet implements Mod3902021Service {

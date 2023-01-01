@@ -17,13 +17,12 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
-import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
 
-public class Mod303FinishTest extends AbstractOccamTest {
+public class Mod303FinishTest extends Mod303AbstractTest {
 	
 	@Test
 	public void testFinalize() {

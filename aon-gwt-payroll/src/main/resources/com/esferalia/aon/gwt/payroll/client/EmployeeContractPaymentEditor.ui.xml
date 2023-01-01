@@ -206,6 +206,33 @@
 					</g:HTMLPanel>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
+			
+			<!-- EMBARGO -->
+			
+			<g:HTMLPanel ui:field="embargoTable" styleName="{style.flexColumn}">
+				<g:HTMLPanel styleName="{style.element}">
+					<g:Label styleName="{style.title}">Descripción</g:Label>
+					<g:TextBox ui:field="embargoDescriptionTB"/>
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.element}">
+					<g:Label styleName="{style.title}">Expresión</g:Label>
+					<g:TextArea ui:field="embargoExpressionTB"/>
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.element}">
+					<g:Label styleName="{style.title}">Importe</g:Label>
+					<c:DoubleBox ui:field="embargoAmountDB" styleName="{style.widthAll}" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.flex}">
+					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+						<g:Label styleName="{style.title}">Fecha Inicio</g:Label>
+						<c:DateBoxEx ui:field="embargoStartDateBx" styleName="{style.date}"/>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+						<g:Label styleName="{style.title}">Fecha Fin</g:Label>
+						<c:DateBoxEx ui:field="embargoEndDateBx" styleName="{style.date}"/>
+					</g:HTMLPanel>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
 		
 		</g:DeckPanel>
 			

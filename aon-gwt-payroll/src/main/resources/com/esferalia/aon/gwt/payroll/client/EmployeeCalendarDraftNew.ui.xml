@@ -154,9 +154,8 @@
 		}
 		
 		.labelStyle{
-			padding: .3rem .2rem;
-			width: 16px;
-			height: 16px;
+			width: 20px;
+			height: 20px;
 		}
 		
 		/* ------------------- Selected Days ------------------- */
@@ -174,12 +173,11 @@
 		
 		.dayTypeButton{
 			border-radius: 20%;
-			padding: 3px;
 			color: #ffffff;
 		}
 
 		.nonWorkingStyle{
-			background-color: salmon;
+			background-color: salmon !important;
 		}
 		
 		.inactivityStyle {
@@ -187,7 +185,7 @@
 		}
 		
 		.holidayStyle {
-			background-color: #52ab3c;
+			background-color: #52ab3c !important;
 		}
 		
 		.partialityStyle {
@@ -237,8 +235,9 @@
 			border: none;
 			text-align: center;
 			background-color: transparent;
-			width: 16px;
-			height: 16px;
+			width: 20px;
+			height: 20px;
+			margin: 0 auto;
 		}
 		
 		/* ------------------- Utilities ------------------- */
@@ -256,6 +255,10 @@
 		
 		.cursorPointer{
 			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto;
 		}
 		
 		.outOfContractStyle {

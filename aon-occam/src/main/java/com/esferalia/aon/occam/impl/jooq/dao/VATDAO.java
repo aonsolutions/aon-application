@@ -11,8 +11,8 @@ import static com.esferalia.aon.jooq.tables.Iae.IAE;
 import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
 import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 import static com.esferalia.aon.jooq.tables.InvoiceDua.INVOICE_DUA;
-import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
+import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.util.Date;
 import java.util.LinkedList;
@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.SelectSelectStep;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -91,7 +92,7 @@ public class VATDAO  {
 	public static LinkedList<VatSummaryContext> getVatSummary(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
 		LinkedList<VatSummaryContext> list = new LinkedList<>();
 		getVatBreakdown(ctx, fromDate, toDate, filter)
-				.peek( vat -> { 
+				.map( vat -> { 
 					if (vat.isSurcharge()) {
 						VatSummaryType type = VatSummaryType.SURCHARGE;
 						double percent = vat.getSurchargePercent();
@@ -114,6 +115,7 @@ public class VATDAO  {
 						sum.setBase( sum.getBase() + vat.getBase()); 
 						sum.setQuota( sum.getQuota() + vat.getSurchargeQuota());
 					}
+					return vat;
 				})
 				.forEach( vat -> {
 					VatSummaryType type = VatSummaryType.accept(vat);
@@ -156,18 +158,15 @@ public class VATDAO  {
 			return Stream.concat(Stream.concat(getNoAccrualVatBreakdown(ctx,fromDate,toDate,filter)
 											  ,getAccrualVatBreakdown	 (ctx,fromDate,toDate,filter))
 								,getLastPeriodAccrualVatBreakdown(ctx,fromDate,toDate,filter))
-					.peek( vat -> vat.setInsidePeriod(mod==null ? false :FiscalUtils.isInPeriodRange(mod, vat.getTaxDate() ) ));
+					.map( vat -> vat.setInsidePeriod(mod!=null && FiscalUtils.isInPeriodRange(mod, vat.getTaxDate() ) ));
 		} else {
 			return Stream.concat(getNoAccrualVatBreakdown(ctx,fromDate,toDate,filter)
 								,getAccrualVatBreakdown	 (ctx,fromDate,toDate,filter))
-					.peek( vat -> vat.setInsidePeriod(mod==null ? false :FiscalUtils.isInPeriodRange(mod, vat.getTaxDate() ) ));
+					.map( vat -> vat.setInsidePeriod(mod!=null && FiscalUtils.isInPeriodRange(mod, vat.getTaxDate() ) ));
 		}
 	}
-
-	private static Stream<VatContext> getNoAccrualVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
-		
-		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
-		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
+	
+	private static SelectSelectStep<Record> getCommonSelect( AONContext ctx ) {
 		return ctx.getDslContext().select(
 				 INVOICE.ID
 				,INVOICE.SERIES
@@ -186,14 +185,11 @@ public class VATDAO  {
 				,INVOICE.INVESTMENT
 				,INVOICE.WITHHOLDING_FARMER
 				,INVOICE.VAT_ACCRUAL_PAYMENT
-				
 				,ENTERPRISE_ACTIVITY.ID
 				,ENTERPRISE_ACTIVITY.DESCRIPTION
 				,ENTERPRISE_ACTIVITY.VAT_REGIME
 				,ENTERPRISE_ACTIVITY.SURCHARGE
-				
 				,IAE.EPIGRAPH
-
 				,INVOICE_DETAIL.TAXABLE_BASE
 				,INVOICE_DETAIL.INVEST_ASSET
 				,INVOICE_DETAIL.SOURCE
@@ -205,14 +201,19 @@ public class VATDAO  {
 				,INVOICE_TAX.DEDUCTIBLE_PERCENT
 				,INVOICE_TAX.DEDUCTIBLE_QUOTA
 				,INVOICE_TAX.VAT_DEDUCTION_TYPE
-				
 				,INVOICE_FISCAL.VAT_IMPORTATION
 				,INVOICE_DUA.ID
-				
 				,INVOICE.WITHHOLDING
 				,INVOICE.RETENTION_QUOTA
 				,INVOICE.REGISTRY
-				)
+			);		
+	}
+
+	private static Stream<VatContext> getNoAccrualVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
+		
+		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
+		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
+		return getCommonSelect( ctx )
 				.from(INVOICE_TAX)
 				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -240,51 +241,7 @@ public class VATDAO  {
 	private static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter , IFiscalModel mod) {
 		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
 		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
-		return ctx.getDslContext().select(
-				 INVOICE.ID
-				,INVOICE.SERIES
-				,INVOICE.NUMBER
-				,INVOICE.REFERENCE_CODE
-				,INVOICE.RDOCUMENT
-				,INVOICE.RDOCUMENT_TYPE
-				,INVOICE.RDOCUMENT_COUNTRY
-				,INVOICE.RNAME
-				,INVOICE.ISSUE_DATE
-				,INVOICE.TAX_DATE
-				,INVOICE.TYPE
-				,INVOICE.RECTIFICATION_TYPE
-				,INVOICE.SERVICE
-				,INVOICE.TRANSACTION
-				,INVOICE.INVESTMENT
-				,INVOICE.WITHHOLDING_FARMER
-				,INVOICE.VAT_ACCRUAL_PAYMENT
-				
-				,ENTERPRISE_ACTIVITY.ID
-				,ENTERPRISE_ACTIVITY.DESCRIPTION
-				,ENTERPRISE_ACTIVITY.VAT_REGIME
-				,ENTERPRISE_ACTIVITY.SURCHARGE
-				
-				,IAE.EPIGRAPH
-
-				,INVOICE_DETAIL.TAXABLE_BASE
-				,INVOICE_DETAIL.INVEST_ASSET
-				,INVOICE_DETAIL.SOURCE
-				,INVOICE_TAX.BASE
-				,INVOICE_TAX.PERCENTAGE
-				,INVOICE_TAX.QUOTA
-				,INVOICE_TAX.SURCHARGE
-				,INVOICE_TAX.SURCHARGE_QUOTA
-				,INVOICE_TAX.DEDUCTIBLE_PERCENT
-				,INVOICE_TAX.DEDUCTIBLE_QUOTA
-				,INVOICE_TAX.VAT_DEDUCTION_TYPE
-				
-				,INVOICE_FISCAL.VAT_IMPORTATION
-				,INVOICE_DUA.ID
-
-				,INVOICE.WITHHOLDING
-				,INVOICE.RETENTION_QUOTA
-				,INVOICE.REGISTRY
-				)
+		return getCommonSelect(ctx) 
 				.from(INVOICE_TAX)
 				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
 				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
@@ -301,7 +258,7 @@ public class VATDAO  {
 				.fetch()
 				.stream()
 				.map(new VatContextFiller())
-				.peek( vat -> vat.setInsidePeriod(mod==null ? false :FiscalUtils.isInPeriodRange(mod, vat.getTaxDate() ) ))
+				.map( vat -> vat.setInsidePeriod(mod!=null && FiscalUtils.isInPeriodRange(mod, vat.getTaxDate() ) ))
 				;
 	}
 	
@@ -310,55 +267,11 @@ public class VATDAO  {
 		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
 		int prevYear = AonDateUtils.getYear(fromDate) - 1;
 		java.sql.Date prevYearFirstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(prevYear) );
-		return ctx.getDslContext().select(
-			 INVOICE.ID
-			,INVOICE.SERIES
-			,INVOICE.NUMBER
-			,INVOICE.REFERENCE_CODE
-			,INVOICE.RDOCUMENT
-			,INVOICE.RDOCUMENT_TYPE
-			,INVOICE.RDOCUMENT_COUNTRY
-			,INVOICE.RNAME
-			,INVOICE.ISSUE_DATE
-			,INVOICE.TAX_DATE
-			,INVOICE.TYPE
-			,INVOICE.RECTIFICATION_TYPE
-			,INVOICE.SERVICE
-			,INVOICE.TRANSACTION
-			,INVOICE.INVESTMENT
-			,INVOICE.WITHHOLDING_FARMER
-			,INVOICE.VAT_ACCRUAL_PAYMENT
-			
-			,ENTERPRISE_ACTIVITY.ID
-			,ENTERPRISE_ACTIVITY.DESCRIPTION
-			,ENTERPRISE_ACTIVITY.VAT_REGIME
-			,ENTERPRISE_ACTIVITY.SURCHARGE
-			
-			,IAE.EPIGRAPH
-			
-			,INVOICE_DETAIL.TAXABLE_BASE
-			,INVOICE_DETAIL.INVEST_ASSET
-			,INVOICE_DETAIL.SOURCE
-			,INVOICE_TAX.BASE
-			,INVOICE_TAX.PERCENTAGE
-			,INVOICE_TAX.QUOTA
-			,INVOICE_TAX.SURCHARGE
-			,INVOICE_TAX.SURCHARGE_QUOTA
-			,INVOICE_TAX.DEDUCTIBLE_PERCENT
-			,INVOICE_TAX.DEDUCTIBLE_QUOTA
-			,INVOICE_TAX.VAT_DEDUCTION_TYPE
-			
-			,INVOICE_FISCAL.VAT_IMPORTATION
-			,INVOICE_DUA.ID
-
-			,INVOICE.TOTAL
-			,FINANCE_TRACKING.TYPE
-			,FINANCE_TRACKING.AMOUNT
-			
-			,INVOICE.WITHHOLDING
-			,INVOICE.RETENTION_QUOTA
-			,INVOICE.REGISTRY
-			)
+		return getCommonSelect(ctx)
+			.select(INVOICE.TOTAL
+				,FINANCE.ID
+				,FINANCE_TRACKING.TYPE
+				,FINANCE_TRACKING.AMOUNT)
 			.from(FINANCE_TRACKING)
 			.join(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
 			.join(INVOICE).on(INVOICE.ID.equal(FINANCE.INVOICE))
@@ -386,53 +299,11 @@ public class VATDAO  {
 		int prevYear = AonDateUtils.getYear(fromDate) - 1;
 		java.sql.Date firstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(prevYear) );
 		java.sql.Date lastDay = AonDateUtils.toSql( AonDateUtils.getYearLastDay(prevYear) );
-		return ctx.getDslContext().select(
-			 INVOICE.ID
-			,INVOICE.SERIES
-			,INVOICE.NUMBER
-			,INVOICE.REFERENCE_CODE
-			,INVOICE.RDOCUMENT
-			,INVOICE.RDOCUMENT_TYPE
-			,INVOICE.RDOCUMENT_COUNTRY
-			,INVOICE.RNAME
-			,INVOICE.ISSUE_DATE
-			,INVOICE.TAX_DATE
-			,INVOICE.TYPE
-			,INVOICE.RECTIFICATION_TYPE
-			,INVOICE.SERVICE
-			,INVOICE.TRANSACTION
-			,INVOICE.INVESTMENT
-			,INVOICE.WITHHOLDING_FARMER
-			,INVOICE.VAT_ACCRUAL_PAYMENT
-			
-			,ENTERPRISE_ACTIVITY.ID
-			,ENTERPRISE_ACTIVITY.DESCRIPTION
-			,ENTERPRISE_ACTIVITY.VAT_REGIME
-			,ENTERPRISE_ACTIVITY.SURCHARGE
-			
-			,IAE.EPIGRAPH
-			
-			,INVOICE_DETAIL.TAXABLE_BASE
-			,INVOICE_DETAIL.INVEST_ASSET
-			,INVOICE_DETAIL.SOURCE
-			,INVOICE_TAX.BASE
-			,INVOICE_TAX.PERCENTAGE
-			,INVOICE_TAX.QUOTA
-			,INVOICE_TAX.SURCHARGE
-			,INVOICE_TAX.SURCHARGE_QUOTA
-			,INVOICE_TAX.DEDUCTIBLE_PERCENT
-			,INVOICE_TAX.DEDUCTIBLE_QUOTA
-			,INVOICE_TAX.VAT_DEDUCTION_TYPE
-			
-			,INVOICE_FISCAL.VAT_IMPORTATION
-			,INVOICE_DUA.ID
-			
-			,INVOICE.TOTAL
-			,FINANCE.AMOUNT
-			
-			,INVOICE.WITHHOLDING
-			,INVOICE.RETENTION_QUOTA
-			,INVOICE.REGISTRY
+		return getCommonSelect(ctx)
+			.select(
+				INVOICE.TOTAL
+				,FINANCE.ID
+				,FINANCE.AMOUNT
 			)
 			.from(FINANCE)
 			.join(INVOICE).on(INVOICE.ID.equal(FINANCE.INVOICE))
@@ -459,53 +330,11 @@ public class VATDAO  {
 	public static Stream<VatContext> getPeriodPendingAccrualVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
 		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
 		java.sql.Date lastDay = AonDateUtils.toSql( toDate );
-		return ctx.getDslContext().select(
-			 INVOICE.ID
-			,INVOICE.SERIES
-			,INVOICE.NUMBER
-			,INVOICE.REFERENCE_CODE
-			,INVOICE.RDOCUMENT
-			,INVOICE.RDOCUMENT_TYPE
-			,INVOICE.RDOCUMENT_COUNTRY
-			,INVOICE.RNAME
-			,INVOICE.ISSUE_DATE
-			,INVOICE.TAX_DATE
-			,INVOICE.TYPE
-			,INVOICE.RECTIFICATION_TYPE
-			,INVOICE.SERVICE
-			,INVOICE.TRANSACTION
-			,INVOICE.INVESTMENT
-			,INVOICE.WITHHOLDING_FARMER
-			,INVOICE.VAT_ACCRUAL_PAYMENT
-			
-			,ENTERPRISE_ACTIVITY.ID
-			,ENTERPRISE_ACTIVITY.DESCRIPTION
-			,ENTERPRISE_ACTIVITY.VAT_REGIME
-			,ENTERPRISE_ACTIVITY.SURCHARGE
-			
-			,IAE.EPIGRAPH
-			
-			,INVOICE_DETAIL.TAXABLE_BASE
-			,INVOICE_DETAIL.INVEST_ASSET
-			,INVOICE_DETAIL.SOURCE
-			,INVOICE_TAX.BASE
-			,INVOICE_TAX.PERCENTAGE
-			,INVOICE_TAX.QUOTA
-			,INVOICE_TAX.SURCHARGE
-			,INVOICE_TAX.SURCHARGE_QUOTA
-			,INVOICE_TAX.DEDUCTIBLE_PERCENT
-			,INVOICE_TAX.DEDUCTIBLE_QUOTA
-			,INVOICE_TAX.VAT_DEDUCTION_TYPE
-			
-			,INVOICE_FISCAL.VAT_IMPORTATION
-			,INVOICE_DUA.ID
-			
-			,INVOICE.TOTAL
-			,FINANCE.AMOUNT
-			
-			,INVOICE.WITHHOLDING
-			,INVOICE.RETENTION_QUOTA
-			,INVOICE.REGISTRY
+		return getCommonSelect(ctx)
+			.select(
+				INVOICE.TOTAL
+				,FINANCE.ID
+				,FINANCE.AMOUNT
 			)
 			.from(FINANCE)
 			.join(INVOICE).on(INVOICE.ID.equal(FINANCE.INVOICE))
@@ -525,7 +354,7 @@ public class VATDAO  {
 			.fetch()
 			.stream()
 			.map(new VatContextLastPeriodAccrualRegimeFiller())
-			.peek(vat -> vat.setFinancePending(true))
+			.map(vat -> vat.setFinancePending(true))
 		;
 	}
 
@@ -703,20 +532,8 @@ public class VATDAO  {
 			if (type == FinanceTrackingType.RETURNED) {
 				financeAmount = -financeAmount;
 			}
-			double base = AonMathUtils.round(financeAmount * vat.getBase() / invoiceTotal,4);
-			double quota = AonMathUtils.round(base * vat.getPercentage() / 100);
-			double surchargeQuota = AonMathUtils.round(base * vat.getSurchargePercent() / 100);
-			double deductibleQuota = AonMathUtils.round( (quota + surchargeQuota)  * vat.getDeductiblePercent() / 100);
-			return vat
-				.setBase(base)
-				.setQuota(quota)
-				.setSurchargeQuota(surchargeQuota)
-				.setDeductibleQuota(deductibleQuota)
-				.setAmount347(!vat.isOtherISP()
-					?(base + quota + surchargeQuota)
-					:base);
+			return getVat( rec, vat, invoiceTotal, financeAmount);
 		}
-		
 	}
 	
 	public static class VatContextLastPeriodAccrualRegimeFiller  extends VatContextFiller {
@@ -725,20 +542,25 @@ public class VATDAO  {
 			VatContext vat = super.apply(rec);
 			double invoiceTotal = rec.getValue(INVOICE.TOTAL);			
 			double financeAmount = rec.getValue(FINANCE.AMOUNT);
-			double base = AonMathUtils.round(financeAmount * vat.getBase() / invoiceTotal,4);
-			double quota = AonMathUtils.round(base * vat.getPercentage() / 100);
-			double surchargeQuota = AonMathUtils.round(base * vat.getSurchargePercent() / 100);
-			double deductibleQuota = AonMathUtils.round( (quota + surchargeQuota)  * vat.getDeductiblePercent() / 100);
-			return vat
-				.setBase(base)
-				.setQuota(quota)
-				.setSurchargeQuota(surchargeQuota)
-				.setDeductibleQuota(deductibleQuota)
-				.setAmount347(!vat.isOtherISP()
-					?(base + quota + surchargeQuota)
-					:base);
+			return getVat( rec, vat, invoiceTotal, financeAmount);
 		}
 		
+	}
+	
+	private static VatContext getVat(Record rec, VatContext vat, double invoiceTotal, double financeAmount) {
+		double base = AonMathUtils.round(financeAmount * vat.getBase() / invoiceTotal,4);
+		double quota = AonMathUtils.round(base * vat.getPercentage() / 100);
+		double surchargeQuota = AonMathUtils.round(base * vat.getSurchargePercent() / 100);
+		double deductibleQuota = AonMathUtils.round( (quota + surchargeQuota)  * vat.getDeductiblePercent() / 100);
+		return vat
+			.setFinance(rec.getValue(FINANCE.ID))
+			.setBase(base)
+			.setQuota(quota)
+			.setSurchargeQuota(surchargeQuota)
+			.setDeductibleQuota(deductibleQuota)
+			.setAmount347(!vat.isOtherISP()
+				?(base + quota + surchargeQuota)
+				:base);
 	}
 	
 	public static class VatContextFiller  implements Function<Record,VatContext> {
@@ -785,7 +607,6 @@ public class VATDAO  {
 				.setDeductibleQuota(getDeductibleQuota(rec))
 				
 				.setAmount347(InvoiceTransactionType.safeValueOf(rec.getValue(INVOICE.TRANSACTION)) != InvoiceTransactionType.OTHER_ISP ? ( rec.getValue(INVOICE_TAX.BASE) + getQuota(rec) + getSurchargeQuota(rec)) : rec.getValue(INVOICE_TAX.BASE))
-//				.setHasRetention(AonEnumUtils.getBoolean(rec.getValue(INVOICE.WITHHOLDING)))
 				.setHasRetention( hasRetention(
 						rec.getValue(INVOICE.WITHHOLDING),
 						rec.getValue(INVOICE_DETAIL.SOURCE),
@@ -806,7 +627,6 @@ public class VATDAO  {
 		}
 		
 	}
-	
 	
 	
 	public static class SiiVatContextFiller  implements Function<Record,VatContext> {
@@ -843,7 +663,7 @@ public class VATDAO  {
 				.setBase(rec.getValue(INVOICE_TAX.BASE) != null ? rec.getValue(INVOICE_TAX.BASE) : rec.getValue(INVOICE_DETAIL.TAXABLE_BASE))
 				.setPercentage(rec.getValue(INVOICE_TAX.PERCENTAGE) != null ? rec.getValue(INVOICE_TAX.PERCENTAGE) : 0.0)
 				.setQuota(rec.getValue(INVOICE_TAX.QUOTA) != null ? getQuota(rec): rec.getValue(INVOICE.VAT_QUOTA))
-				.setSurcharge(rec.getValue(INVOICE_TAX.SURCHARGE) != null ? AonMathUtils.round(rec.getValue(INVOICE_TAX.SURCHARGE)) > 0 : false)
+				.setSurcharge(rec.getValue(INVOICE_TAX.SURCHARGE) != null && AonMathUtils.round(rec.getValue(INVOICE_TAX.SURCHARGE)) > 0)
 				.setSurchargePercent(rec.getValue(INVOICE_TAX.SURCHARGE) != null ? rec.getValue(INVOICE_TAX.SURCHARGE) : 0.0)
 				.setSurchargeQuota( rec.getValue(INVOICE_TAX.SURCHARGE_QUOTA) != null ? getSurchargeQuota(rec): 0.0)
 	

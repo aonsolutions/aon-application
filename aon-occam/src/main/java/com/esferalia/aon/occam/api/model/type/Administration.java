@@ -34,6 +34,22 @@ public enum Administration implements Serializable {
 		return (byte) ordinal();
 	}
 	
+	public boolean isAraba() {
+		return (this == Administration.ALAVA);
+	}
+	public boolean isBizkaia() {
+		return (this == Administration.BIZKAIA);
+	}
+	public boolean isGipuzkoa() {
+		return (this == Administration.GIPUZKOA);
+	}
+	public boolean isNavarra() {
+		return (this == Administration.NAVARRA);
+	}
+	public boolean isAEAT() {
+		return (this == Administration.COMMON_TERRITORY);
+	}
+	
 	public abstract <T> T visit(IAdministrationVisitor<T> visitor);
 	
 

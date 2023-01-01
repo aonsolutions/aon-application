@@ -25,6 +25,23 @@
 			border-collapse: collapse;
 		}
 		
+		.hideScroll{}
+		
+		.hideScroll::-webkit-scrollbar {
+			width: 1px;
+			height: 4px;
+			background-color: gray;
+		}
+		
+		/* To hide the vertical scroll. */
+		.hideScroll::-webkit-scrollbar:vertical {
+			display: none;
+		}
+		
+		.hideScroll::-webkit-scrollbar-thumb:horizontal {
+			background: black;
+		}
+		
 		.message {
 			font-weight: bold;
 			margin-top: 2rem;
@@ -51,10 +68,15 @@
 			z-index: 8;
 		}
 		
+		.gridCell{
+			text-transform: uppercase;
+			text-align: center;
+			min-width: 120px;
+		}
+		
 		.gridTitle{
 			text-transform: uppercase;
 			font-weight: bold;
-			width: 120px;
 		}
 		
 		.headerColor {
@@ -62,14 +84,24 @@
 		}
 		
 		.headerFSize{
-			font-size: 1em;
+			font-size: .8em;
+			text-align: left;
+			padding-left: 0.5rem;
 		}
 		
-		.headerSticky {
+		.headerFixed {
 			position: sticky;
-			top: 0;
-			height: 1.5rem;
+  			top: 0;
+  			height: 1.5rem;
+			font-size: .7rem;
+			background-color: #eee;
+			
 			z-index: 5;
+		}
+		
+		.levelCell {
+			text-align: left;
+			padding-left: 0.5rem !important;
 		}
 		
 		.modify {
@@ -77,12 +109,22 @@
     		border: 0.5px solid yellow !important;
 		}
 		
-		.textCenter {
-			text-align: center;
+		.textBox {
+			border-style: none;
+			width: 95%;
+			font-size: 0.8em !important;
+			cursor: pointer;
 		}
 		
 		.oddRow {
 			background-color: #f8f7f7;
+		}
+		
+		.overflowEllipsis {
+			white-space: nowrap;
+  			overflow: hidden;
+  			text-overflow: ellipsis;
+  			width: 300px;
 		}
 		
 	</ui:style>
@@ -90,7 +132,7 @@
 	<g:HTMLPanel styleName="{style.flexColumn} {style.heigthAll}">
 		<g:HTMLPanel ui:field="messagePanel" />
 		<aon:AonToolbar ui:field="toolbar" />
-		<g:ScrollPanel ui:field="levelScrollPanel" styleName="{style.scrollPanel}">
+		<g:ScrollPanel ui:field="levelScrollPanel" styleName="{style.scrollPanel} {style.hideScroll}">
 			<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse}" />
 		</g:ScrollPanel>
 		<g:HTMLPanel ui:field="agreementLevelMessage" styleName="{style.flexCenter}">

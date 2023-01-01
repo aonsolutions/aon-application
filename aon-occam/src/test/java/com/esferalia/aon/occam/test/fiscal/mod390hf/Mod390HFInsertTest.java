@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
 import com.esferalia.aon.occam.test.fiscal.FiscalTestSuite;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod390HFInsertTest extends AbstractOccamTest {
 
@@ -31,12 +32,14 @@ public class Mod390HFInsertTest extends AbstractOccamTest {
 	
 	public void modInsert(Date date) {
 		System.out.println( "\t ---------------------");
+		double prorratePercent = AonRandom.gt(10)? 0 : AonRandom.getPercent();
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 				.setIssueDate(date)
-				.setProrratePercent( AonRandom.gt(10)? 0 : AonRandom.getPercent() );
+				.setProrratePercent( prorratePercent )
+				.setSpecialProrrate( AonMathUtils.isNotZero(prorratePercent) && AonRandom.gt(60) )
+				;
 
 		Mod390HF araba = insertModel( params.setAdministration(Administration.ALAVA));
-
 		Mod390HF bizkaia = insertModel( params.setAdministration(Administration.BIZKAIA));
 		if (bizkaia.getYear() > 2021) {
 			double bzc066 =  bizkaia.getAmount(Mod390Key.BZ_C066);	// Total a deducir

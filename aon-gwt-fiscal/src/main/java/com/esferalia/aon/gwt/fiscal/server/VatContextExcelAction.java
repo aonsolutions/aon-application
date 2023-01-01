@@ -10,6 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -28,6 +29,9 @@ public class VatContextExcelAction extends AbsExcelAction implements Consumer<Va
 
 		XSSFCellStyle rightHeaderCellStyle = (XSSFCellStyle) headerCellStyle.clone();
 		rightHeaderCellStyle.setAlignment(HorizontalAlignment.RIGHT);
+
+		CellUtil.createCell(row, cellCount, "REG.", headerCellStyle);
+		sheet.setColumnWidth(cellCount++, 8 * 256);
 
 		CellUtil.createCell(row, cellCount, "TIPO", headerCellStyle);
 		sheet.setColumnWidth(cellCount++, 8 * 256);
@@ -104,6 +108,7 @@ public class VatContextExcelAction extends AbsExcelAction implements Consumer<Va
 	public void accept(VatContext vat) {
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
+		addCell( AonObjectUtils.defaultIfNull( vat.getVatRegime(), r -> r.getAbbr() ) );
 		addCell(vat.getInvoiceType().getDescription());
 		addCell(vat.getTransaction().getDescription());
 		alignCenter(addCell(vat.isService()?YES:AonStringUtils.EMPTY)); 
@@ -142,6 +147,7 @@ public class VatContextExcelAction extends AbsExcelAction implements Consumer<Va
 	public void finalize(OutputStream out) throws IOException {
 		row = sheet.createRow(rowCount++);
 		cellCount = 0;
+		addCell(AonStringUtils.EMPTY);
 		addCell(AonStringUtils.EMPTY);
 		addCell(AonStringUtils.EMPTY);
 		addCell(AonStringUtils.EMPTY); 

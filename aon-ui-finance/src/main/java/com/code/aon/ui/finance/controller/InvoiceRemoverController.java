@@ -172,10 +172,12 @@ public class InvoiceRemoverController extends BasicController implements IProgre
 		TbaiConfiguration tbai =  AON.getTbaiConfiguration(domain, "");
 		if(tbai.isActive()) {
 			DataResponseSource source = tbai.isTest() ? DataResponseSource.TBAI_TEST: DataResponseSource.TBAI;
-			DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), "", source, f -> f.getSourceProperty().eq(source.value())
+			DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), "", f ->
+					f.getDomainProperty().eq(domain.getId())
+					.and(f.getSourceProperty().eq(source.value()))
 					.and(f.getSourceIdProperty().eq(inv.getId())));
 
-			if(dr != null && dr.getId() != null) {
+			if(!dr.isEmpty()) {
 				throw new AonCoreException(AonError.INVOICE_CANT_DELETE_TBAI.getMessage());
 			}
 		}

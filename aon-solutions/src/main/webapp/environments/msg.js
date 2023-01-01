@@ -360,6 +360,7 @@ export const MONTH = "Mes"; //TODO
 export const MAILBOX = "Buzón";//TODO
 export const MESSAGE = "Mensaje"; //TODO
 export const MODIFIED_BY = "Modificado por"; //TODO
+export const MINS = "Minutos"; //TODO
 // ----- N
 
 export const NAME = MSG.NAME;
@@ -372,6 +373,7 @@ export const NEW_INVEST_ASSET = 'Nuevo Bien Afecto'; //TODO
 export const NEW_PASSWORD = 'Nueva Contraseña';
 export const NEW_PRODUCT = MSG.NEW_PRODUCT;
 export const NEW_REQUEST = MSG.NEW_REQUEST;
+export const NEW_SALE = 'Nuevo Pedido de Venta';
 export const NEW_WAREHOUSE= MSG.NEW_WAREHOUSE;
 export const NEXT = MSG.NEXT;
 export const NIF = MSG.NIF;
@@ -487,6 +489,7 @@ export const REQUEST_CLOSE_CONFIRM =  "Estás seguro de cerrar la solicitud?"; /
 // ----- S
 
 export const SALTRA = 'Saltra';
+export const SALES_PREPARATION = 'Preparación de Pedidos';
 export const SAVE = MSG.SAVE;
 export const SAVED_DATA = MSG.SAVED_DATA;
 export const SCOPE = MSG.SCOPE;

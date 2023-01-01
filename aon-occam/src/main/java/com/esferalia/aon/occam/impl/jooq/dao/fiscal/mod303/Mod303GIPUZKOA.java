@@ -6,9 +6,13 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Mod390Key;
+import com.esferalia.aon.occam.impl.jooq.dao.mod390HF.Mod390HFDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
+import com.esferalia.aon.watson.util.AonMathUtils;
 
 abstract class Mod303GIPUZKOA extends Mod303Declaration {
 
@@ -57,4 +61,30 @@ abstract class Mod303GIPUZKOA extends Mod303Declaration {
 		});
 		return invoices;
 	}
+
+	protected static double getPendingCompesateAmounts(AONContext ctx, Mod303 mod) {
+		if (mod.isComplementary()) {
+			return Mod303DAO.getSamePeriodEffectiveModels(ctx, mod)
+				.filter(Mod303::isToCompensate)
+				.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.GP_C035) * (-1)))
+				.findFirst()
+				.orElse(0.0);
+		} else {
+			if ( mod.isFirstPeriod() ) {
+				return Mod390HFDAO.getMod390HFs( ctx, mod.getDomain() )
+					.filter(m390 -> m390.getYear() ==  (mod.getYear() - 1) )
+					.filter(m390 -> m390.getAdministration() ==  mod.getAdministration() )
+					.filter(Mod390HF::isToCompensate)
+					.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod390Key.GP_C042) * (-1)))
+					.findFirst()
+					.orElse(0.0);						
+			}
+			
+			return Mod303DAO.getLastPeriodEffectiveModels(ctx, mod)
+				.filter(Mod303::isToCompensate)
+				.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.GP_C035) * (-1)))
+				.findFirst()
+				.orElse(0.0);
+		}	
+	}	
 }

@@ -33,11 +33,9 @@ public class VatContext implements Serializable {
 	private Date taxDate;
 	private Date creationDate;
 	private Date regContableDate;
-	
+	private Integer finance;	// En el caso de criterio de caja. ID del vto.
 	private String detailDescription;
-	
 	private boolean insidePeriod;
-	
 	private InvoiceType invoiceType;
 	private RectificationType rectificationType;
 	private Integer rectificationInvoice;
@@ -48,40 +46,394 @@ public class VatContext implements Serializable {
 	private VatDeductionType vatDeductionType;
 	private boolean farmerRegime;
 	private boolean prepayment;
-	
 	private boolean vatImportation;
 	private boolean duaLinked;
-	
 	private double base;
 	private double percentage;
 	private double quota;
-	
 	private Integer investAsset;
 	private double deductiblePercent;
 	private double deductibleQuota;
-	
 	private boolean surcharge;
 	private double surchargePercent;
 	private double surchargeQuota;
-
 	private boolean prorrated;
 	private boolean specialProrrate;
 	private double prorratePercent;
 	private double prorrateQuota;
-	
 	private String siiStatus;
-	
 	private String amortizationDescription;
 	private Double amortizationPercentage;
 	private Date amortizationInitialDate;
+	private boolean financePending;  		// En criterio de caja, el vencimiento no está pagado/cobrado (se utiliza al generar el 347) 
+	private double amount347;        		// Importe que se declara en el modelo 347
+	private boolean hasRetention;    		// Indicará si la factura lleva retención (se utiliza al generar el 347)
+	private Date rectificateInvoiceTaxDate; // Fecha IVA de la factura rectificada (se utiliza al generar el Modelo 349)
+	private int rectificateYear;            // Año del periodo de la factura rectificada (se utiliza al generar el Modelo 349)
+	private Period rectificatePeriod;       // Periodo de la factura rectificada (se utiliza al generar el Modelo 349)
 	
-	private boolean financePending;  // En criterio de caja, el vencimiento no está pagado/cobrado (se utiliza al generar el 347) 
-	private double amount347;        // Importe que se declara en el modelo 347
-	private boolean hasRetention;    // Indicará si la factura lleva retención (se utiliza al generar el 347)
 	
-	private Date rectificateInvoiceTaxDate;  // Fecha IVA de la factura rectificada (se utiliza al generar el Modelo 349)
-	private int rectificateYear;             // Año del periodo de la factura rectificada (se utiliza al generar el Modelo 349)
-	private Period rectificatePeriod;        // Periodo de la factura rectificada (se utiliza al generar el Modelo 349)
+	// GETTERS Y SETTERS
+	
+	public Integer getInvoice() {
+		return invoice;
+	}
+	public VatContext setInvoice(Integer invoice) {
+		this.invoice = invoice;
+		return this;
+	}
+	
+	public Integer getActivity() {
+		return activity;
+	}
+	public VatContext setActivity(Integer activity) {
+		this.activity = activity;
+		return this;
+	}
+	
+	public String getActivityDescription() {
+		return activityDescription;
+	}
+	public VatContext setActivityDescription(String activityDescription) {
+		this.activityDescription = activityDescription;
+		return this;
+	}
+
+	public VATRegime getVatRegime() {
+		return vatRegime;
+	}
+	public VatContext setVatRegime(VATRegime vatRegime) {
+		this.vatRegime = vatRegime;
+		return this;
+	}
+	
+	public boolean isVatSurchargeRegime() {
+		return vatSurchargeRegime;
+	}
+	public VatContext setVatSurchargeRegime(boolean vatSurchargeRegime) {
+		this.vatSurchargeRegime = vatSurchargeRegime;
+		return this;
+	}
+	
+	public String getEpigraph() {
+		return epigraph;
+	}
+	public VatContext setEpigraph(String epigraph) {
+		this.epigraph = epigraph;
+		return this;
+	}
+
+	public String getDocumentNumber() {
+		return documentNumber;
+	}
+	public VatContext setDocumentNumber(String documentNumber) {
+		this.documentNumber = documentNumber;
+		return this;
+	}
+	
+	public String getReferenceCode() {
+		return referenceCode;
+	}
+	public VatContext setReferenceCode(String referenceCode) {
+		this.referenceCode = referenceCode;
+		return this;
+	}
+
+	public String getRegistryDocument() {
+		return registryDocument;
+	}
+	public VatContext setRegistryDocument(String registryDocument) {
+		this.registryDocument = registryDocument;
+		return this;
+	}
+	
+	public DocumentType getRegistryDocumentType() {
+		return registryDocumentType;
+	}
+	public VatContext setRegistryDocumentType(DocumentType registryDocumentType) {
+		this.registryDocumentType = registryDocumentType;
+		return this;
+	}
+	
+	public Country getRegistryDocumentCountry() {
+		return registryDocumentCountry;
+	}
+	public VatContext setRegistryDocumentCountry(Country registryDocumentCountry) {
+		this.registryDocumentCountry = registryDocumentCountry;
+		return this;
+	}
+
+	public Integer getRegistry() {
+		return registry;
+	}
+	public VatContext setRegistry(Integer registry) {
+		this.registry = registry;
+		return this;
+	}
+
+	public String getRegistryName() {
+		return registryName;
+	}
+	public VatContext setRegistryName(String registryName) {
+		this.registryName = registryName;
+		return this;
+	}
+	
+	public Date getIssueDate() {
+		return issueDate;
+	}
+	public VatContext setIssueDate(Date issueDate) {
+		this.issueDate = issueDate;
+		return this;
+	}
+	
+	public Date getTaxDate() {
+		return taxDate;
+	}
+	public VatContext setTaxDate(Date taxDate) {
+		this.taxDate = taxDate;
+		return this;
+	}
+	
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	public VatContext setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+		return this;
+	}
+	
+	public Date getRegContableDate() {
+		return regContableDate;
+	}
+	public VatContext setRegContableDate(Date regContableDate) {
+		this.regContableDate = regContableDate;
+		return this;
+	}
+
+	public Integer getFinance() {
+		return finance;
+	}
+	public VatContext setFinance(Integer finance) {
+		this.finance = finance;
+		return this;
+	}
+	
+	public String getDetailDescription() {
+		return detailDescription;
+	}
+	public VatContext setDetailDescription(String detailDescription) {
+		this.detailDescription = detailDescription;
+		return this;
+	}
+
+	public boolean isInsidePeriod() {
+		return insidePeriod;
+	}
+	public VatContext setInsidePeriod(boolean insidePeriod) {
+		this.insidePeriod = insidePeriod;
+		return this;
+	}
+
+	public InvoiceType getInvoiceType() {
+		return invoiceType;
+	}
+	public VatContext setInvoiceType(InvoiceType invoiceType) {
+		this.invoiceType = invoiceType;
+		return this;
+	}
+
+	public RectificationType getRectificationType() {
+		return rectificationType;
+	}
+	public VatContext setRectificationType(RectificationType rectificationType) {
+		this.rectificationType = rectificationType;
+		return this;
+	}
+
+	public Integer getRectificationInvoice() {
+		return rectificationInvoice;
+	}
+	public VatContext setRectificationInvoice(Integer rectificationInvoice) {
+		this.rectificationInvoice = rectificationInvoice;
+		return this;
+	}
+
+	public boolean isService() {
+		return service;
+	}
+	public VatContext setService(boolean service) {
+		this.service = service;
+		return this;
+	}
+
+	public InvoiceTransactionType getTransaction() {
+		return transaction;
+	}
+	public VatContext setTransaction(InvoiceTransactionType transaction) {
+		this.transaction = transaction;
+		return this;
+	}
+
+	public boolean isInvestment() {
+		return investment;
+	}
+	public VatContext setInvestment(boolean investment) {
+		this.investment = investment;
+		return this;
+	}
+
+	public boolean isVatAccrualRegime() {
+		return vatAccrualRegime;
+	}
+	public VatContext setVatAccrualRegime(boolean vatAccrualRegime) {
+		this.vatAccrualRegime = vatAccrualRegime;
+		return this;
+	}
+
+	public VatDeductionType getVatDeductionType() {
+		return vatDeductionType;
+	}
+	public VatContext setVatDeductionType(VatDeductionType vatDeductionType) {
+		this.vatDeductionType = vatDeductionType;
+		return this;
+	}
+
+	public boolean isFarmerRegime() {
+		return farmerRegime;
+	}
+	public VatContext setFarmerRegime(boolean farmerRegime) {
+		this.farmerRegime = farmerRegime;
+		return this;
+	}
+
+	public boolean isPrepayment() {
+		return prepayment;
+	}
+	
+	public VatContext setPrepayment(boolean prepayment) {
+		this.prepayment = prepayment;
+		return this;
+	}
+
+	public boolean isVatImportation() {
+		return vatImportation;
+	}
+	public VatContext setVatImportation(boolean vatImportation) {
+		this.vatImportation = vatImportation;
+		return this;
+	}
+
+	public boolean hasDuaLinked() {
+		return duaLinked;
+	}
+	public VatContext setDuaLinked(boolean duaLinked) {
+		this.duaLinked = duaLinked;
+		return this;
+	}
+
+	public double getBase() {
+		return base;
+	}
+	public VatContext setBase(double base) {
+		this.base = base;
+		return this;
+	}
+	
+	public double getPercentage() {
+		return percentage;
+	}
+	public VatContext setPercentage(double percentage) {
+		this.percentage = percentage;
+		return this;
+	}
+	
+	public double getQuota() {
+		return quota;
+	}
+	public VatContext setQuota(double quota) {
+		this.quota = quota;
+		return this;
+	}
+
+	public Integer getInvestAsset() {
+		return investAsset;
+	}
+	public VatContext setInvestAsset(Integer investAsset) {
+		this.investAsset = investAsset;
+		return this;
+	}
+
+	public double getDeductiblePercent() {
+		return deductiblePercent;
+	}
+	public VatContext setDeductiblePercent(double deductiblePercent) {
+		this.deductiblePercent = deductiblePercent;
+		return this;
+	}
+	
+	public double getDeductibleQuota() {
+		return deductibleQuota;
+	}
+	public VatContext setDeductibleQuota(double deductibleQuota) {
+		this.deductibleQuota = deductibleQuota;
+		return this;
+	}
+	public boolean isSurcharge() {
+		return surcharge;
+	}
+	public VatContext setSurcharge(boolean surcharge) {
+		this.surcharge = surcharge;
+		return this;
+	}
+
+	public double getSurchargePercent() {
+		return surchargePercent;
+	}
+	public VatContext setSurchargePercent(double surchargePercent) {
+		this.surchargePercent = surchargePercent;
+		return this;
+	}
+	
+	public double getSurchargeQuota() {
+		return surchargeQuota;
+	}
+	public VatContext setSurchargeQuota(double surchargeQuota) {
+		this.surchargeQuota = surchargeQuota;
+		return this;
+	}
+	
+	public boolean isProrrated() {
+		return prorrated;
+	}
+	public VatContext setProrrated(boolean prorrated) {
+		this.prorrated = prorrated;
+		return this;
+	}
+
+	public boolean isSpecialProrrate() {
+		return specialProrrate;
+	}
+	public VatContext setSpecialProrrate(boolean specialProrrate) {
+		this.specialProrrate = specialProrrate;
+		return this;
+	}
+	
+	public double getProrratePercent() {
+		return prorratePercent;
+	}
+	public VatContext setProrratePercent(double prorratePercent) {
+		this.prorratePercent = prorratePercent;
+		return this;
+	}
+	
+	public double getProrrateQuota() {
+		return prorrateQuota;
+	}
+	public VatContext setProrrateQuota(double prorrateQuota) {
+		this.prorrateQuota = prorrateQuota;
+		return this;
+	}
 	
 	public String getSiiStatus() {
 		return siiStatus;
@@ -90,34 +442,80 @@ public class VatContext implements Serializable {
 		this.siiStatus = siiStatus;
 		return this;
 	}
-	public Integer getInvoice() {
-		return invoice;
+	
+	public String getAmortizationDescription() {
+		return amortizationDescription;
 	}
-	public VatContext setInvoice(Integer invoice) {
-		this.invoice = invoice;
+	public VatContext setAmortizationDescription(String amortizationDescription) {
+		this.amortizationDescription = amortizationDescription;
 		return this;
 	}
-	public Integer getActivity() {
-		return activity;
+	
+	public Double getAmortizationPercentage() {
+		return amortizationPercentage;
 	}
-	public VatContext setActivity(Integer activity) {
-		this.activity = activity;
+	public VatContext setAmortizationPercentage(Double amortizationPercentage) {
+		this.amortizationPercentage = amortizationPercentage;
 		return this;
 	}
-	public String getActivityDescription() {
-		return activityDescription;
+	
+	public Date getAmortizationInitialDate() {
+		return amortizationInitialDate;
 	}
-	public VatContext setActivityDescription(String activityDescription) {
-		this.activityDescription = activityDescription;
+	public VatContext setAmortizationInitialDate(Date amortizationInitialDate) {
+		this.amortizationInitialDate = amortizationInitialDate;
 		return this;
 	}
-	public VATRegime getVatRegime() {
-		return vatRegime;
+
+	public boolean isFinancePending() {
+		return financePending;
 	}
-	public VatContext setVatRegime(VATRegime vatRegime) {
-		this.vatRegime = vatRegime;
+	public VatContext setFinancePending(boolean financePending) {
+		this.financePending = financePending;
 		return this;
 	}
+	
+	public double getAmount347() {
+		return amount347;
+	}
+	public VatContext setAmount347(double amount347) {
+		this.amount347 = amount347;
+		return this;
+	}
+	
+	public boolean hasRetention() {
+		return hasRetention;
+	}
+	public VatContext setHasRetention(boolean hasRetention) {
+		this.hasRetention = hasRetention;
+		return this;		
+	}
+	
+	public Date getRectificateInvoiceTaxDate() {
+		return rectificateInvoiceTaxDate;
+	}
+	public VatContext setRectificateInvoiceTaxDate(Date rectificateInvoiceTaxDate) {
+		this.rectificateInvoiceTaxDate = rectificateInvoiceTaxDate;
+		return this;
+	}
+	
+	public int getRectificateYear() {
+		return rectificateYear;
+	}
+	public VatContext setRectificateYear(int rectificateYear) {
+		this.rectificateYear = rectificateYear;
+		return this;
+	}
+	
+	public Period getRectificatePeriod() {
+		return rectificatePeriod;
+	}
+	public VatContext setRectificatePeriod(Period rectificatePeriod) {
+		this.rectificatePeriod = rectificatePeriod;
+		return this;
+	}
+	
+	// Filter methods
 	public boolean isVatGeneralRegime(VATRegime defaultRegime) {
 		return (defaultRegime == VATRegime.GENERAL && getVatRegime() == null) || getVatRegime() == VATRegime.GENERAL;
 	}
@@ -129,284 +527,6 @@ public class VatContext implements Serializable {
 	}
 	public boolean isActivityVatExempt() {
 		return getVatRegime() == null || getVatRegime() == VATRegime.EXEMPT;
-	}
-	public boolean isVatSurchargeRegime() {
-		return vatSurchargeRegime;
-	}
-	public VatContext setVatSurchargeRegime(boolean vatSurchargeRegime) {
-		this.vatSurchargeRegime = vatSurchargeRegime;
-		return this;
-	}
-	public String getEpigraph() {
-		return epigraph;
-	}
-	public VatContext setEpigraph(String epigraph) {
-		this.epigraph = epigraph;
-		return this;
-	}
-	public String getDocumentNumber() {
-		return documentNumber;
-	}
-	public VatContext setDocumentNumber(String documentNumber) {
-		this.documentNumber = documentNumber;
-		return this;
-	}
-	public Integer getRegistry() {
-		return registry;
-	}
-	public VatContext setRegistry(Integer registry) {
-		this.registry = registry;
-		return this;
-	}
-	public String getReferenceCode() {
-		return referenceCode;
-	}
-	public VatContext setReferenceCode(String referenceCode) {
-		this.referenceCode = referenceCode;
-		return this;
-	}
-	public String getDetailDescription() {
-		return detailDescription;
-	}
-	public VatContext setDetailDescription(String detailDescription) {
-		this.detailDescription = detailDescription;
-		return this;
-	}
-	public String getRegistryDocument() {
-		return registryDocument;
-	}
-	public VatContext setRegistryDocument(String registryDocument) {
-		this.registryDocument = registryDocument;
-		return this;
-	}
-	public DocumentType getRegistryDocumentType() {
-		return registryDocumentType;
-	}
-	public VatContext setRegistryDocumentType(DocumentType registryDocumentType) {
-		this.registryDocumentType = registryDocumentType;
-		return this;
-	}
-	public Country getRegistryDocumentCountry() {
-		return registryDocumentCountry;
-	}
-	public VatContext setRegistryDocumentCountry(Country registryDocumentCountry) {
-		this.registryDocumentCountry = registryDocumentCountry;
-		return this;
-	}
-	public String getRegistryName() {
-		return registryName;
-	}
-	public VatContext setRegistryName(String registryName) {
-		this.registryName = registryName;
-		return this;
-	}
-	public Date getIssueDate() {
-		return issueDate;
-	}
-	public VatContext setIssueDate(Date issueDate) {
-		this.issueDate = issueDate;
-		return this;
-	}
-	public Date getTaxDate() {
-		return taxDate;
-	}
-	public VatContext setTaxDate(Date taxDate) {
-		this.taxDate = taxDate;
-		return this;
-	}
-	public Date getCreationDate() {
-		return creationDate;
-	}
-	public VatContext setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-		return this;
-	}
-	public boolean isInsidePeriod() {
-		return insidePeriod;
-	}
-	public VatContext setInsidePeriod(boolean insidePeriod) {
-		this.insidePeriod = insidePeriod;
-		return this;
-	}
-	public InvoiceType getInvoiceType() {
-		return invoiceType;
-	}
-	public VatContext setInvoiceType(InvoiceType invoiceType) {
-		this.invoiceType = invoiceType;
-		return this;
-	}
-	public RectificationType getRectificationType() {
-		return rectificationType;
-	}
-	public VatContext setRectificationType(RectificationType rectificationType) {
-		this.rectificationType = rectificationType;
-		return this;
-	}
-	public boolean isService() {
-		return service;
-	}
-	public VatContext setService(boolean service) {
-		this.service = service;
-		return this;
-	}
-	public InvoiceTransactionType getTransaction() {
-		return transaction;
-	}
-	public VatContext setTransaction(InvoiceTransactionType transaction) {
-		this.transaction = transaction;
-		return this;
-	}
-	public boolean isInvestment() {
-		return investment;
-	}
-	public VatContext setInvestment(boolean investment) {
-		this.investment = investment;
-		return this;
-	}
-	public boolean isSurcharge() {
-		return surcharge;
-	}
-	public VatContext setSurcharge(boolean surcharge) {
-		this.surcharge = surcharge;
-		return this;
-	}
-	public boolean isVatAccrualRegime() {
-		return vatAccrualRegime;
-	}
-	public VatContext setVatAccrualRegime(boolean vatAccrualRegime) {
-		this.vatAccrualRegime = vatAccrualRegime;
-		return this;
-	}
-	public VatDeductionType getVatDeductionType() {
-		return vatDeductionType;
-	}
-	public VatContext setVatDeductionType(VatDeductionType vatDeductionType) {
-		this.vatDeductionType = vatDeductionType;
-		return this;
-	}
-	public boolean isFarmerRegime() {
-		return farmerRegime;
-	}
-	public VatContext setFarmerRegime(boolean farmerRegime) {
-		this.farmerRegime = farmerRegime;
-		return this;
-	}
-	
-	public boolean isPrepayment() {
-		return prepayment;
-	}
-	
-	public VatContext setPrepayment(boolean prepayment) {
-		this.prepayment = prepayment;
-		return this;
-	}
-	
-	public boolean isVatImportation() {
-		return vatImportation;
-	}
-	public VatContext setVatImportation(boolean vatImportation) {
-		this.vatImportation = vatImportation;
-		return this;
-	}
-	
-	public boolean hasDuaLinked() {
-		return duaLinked;
-	}
-	public VatContext setDuaLinked(boolean duaLinked) {
-		this.duaLinked = duaLinked;
-		return this;
-	}
-	
-	public double getBase() {
-		return base;
-	}
-	public VatContext setBase(double base) {
-		this.base = base;
-		return this;
-	}
-	public double getPercentage() {
-		return percentage;
-	}
-	public VatContext setPercentage(double percentage) {
-		this.percentage = percentage;
-		return this;
-	}
-	public double getQuota() {
-		return quota;
-	}
-	public VatContext setQuota(double quota) {
-		this.quota = quota;
-		return this;
-	}
-	public Integer getInvestAsset() {
-		return investAsset;
-	}
-	public VatContext setInvestAsset(Integer investAsset) {
-		this.investAsset = investAsset;
-		return this;
-	}
-	public double getDeductiblePercent() {
-		return deductiblePercent;
-	}
-	public VatContext setDeductiblePercent(double deductiblePercent) {
-		this.deductiblePercent = deductiblePercent;
-		return this;
-	}
-	public double getDeductibleQuota() {
-		return deductibleQuota;
-	}
-	public VatContext setDeductibleQuota(double deductibleQuota) {
-		this.deductibleQuota = deductibleQuota;
-		return this;
-	}
-	public double getSurchargePercent() {
-		return surchargePercent;
-	}
-	public VatContext setSurchargePercent(double surchargePercent) {
-		this.surchargePercent = surchargePercent;
-		return this;
-	}
-	public double getSurchargeQuota() {
-		return surchargeQuota;
-	}
-	public VatContext setSurchargeQuota(double surchargeQuota) {
-		this.surchargeQuota = surchargeQuota;
-		return this;
-	}
-	public boolean isProrrated() {
-		return prorrated;
-	}
-	public VatContext setProrrated(boolean prorrated) {
-		this.prorrated = prorrated;
-		return this;
-	}
-	public boolean isSpecialProrrate() {
-		return specialProrrate;
-	}
-	public VatContext setSpecialProrrate(boolean specialProrrate) {
-		this.specialProrrate = specialProrrate;
-		return this;
-	}
-	public double getProrratePercent() {
-		return prorratePercent;
-	}
-	public VatContext setProrratePercent(double prorratePercent) {
-		this.prorratePercent = prorratePercent;
-		return this;
-	}
-	public double getProrrateQuota() {
-		return prorrateQuota;
-	}
-	public VatContext setProrrateQuota(double prorrateQuota) {
-		this.prorrateQuota = prorrateQuota;
-		return this;
-	}
-	public Integer getRectificationInvoice() {
-		return rectificationInvoice;
-	}
-	public VatContext setRectificationInvoice(Integer rectificationInvoice) {
-		this.rectificationInvoice = rectificationInvoice;
-		return this;
 	}
 	public boolean isRectification() {
 		return (rectificationType == RectificationType.NORMAL_RECTIFIER);
@@ -488,76 +608,6 @@ public class VatContext implements Serializable {
 	} 
 	public boolean isWithoutRightDeductionType() {
 		return  vatDeductionType == VatDeductionType.WITHOUT_RIGHT;
-	}
-	public String getAmortizationDescription() {
-		return amortizationDescription;
-	}
-	public VatContext setAmortizationDescription(String amortizationDescription) {
-		this.amortizationDescription = amortizationDescription;
-		return this;
-	}
-	public Double getAmortizationPercentage() {
-		return amortizationPercentage;
-	}
-	public VatContext setAmortizationPercentage(Double amortizationPercentage) {
-		this.amortizationPercentage = amortizationPercentage;
-		return this;
-	}
-	public Date getAmortizationInitialDate() {
-		return amortizationInitialDate;
-	}
-	public VatContext setAmortizationInitialDate(Date amortizationInitialDate) {
-		this.amortizationInitialDate = amortizationInitialDate;
-		return this;
-	}
-	public Date getRegContableDate() {
-		return regContableDate;
-	}
-	public VatContext setRegContableDate(Date regContableDate) {
-		this.regContableDate = regContableDate;
-		return this;
-	}
-	public boolean isFinancePending() {
-		return financePending;
-	}
-	public VatContext setFinancePending(boolean financePending) {
-		this.financePending = financePending;
-		return this;
-	}
-	public double getAmount347() {
-		return amount347;
-	}
-	public VatContext setAmount347(double amount347) {
-		this.amount347 = amount347;
-		return this;
-	}
-	public boolean hasRetention() {
-		return hasRetention;
-	}
-	public VatContext setHasRetention(boolean hasRetention) {
-		this.hasRetention = hasRetention;
-		return this;		
-	}
-	public Date getRectificateInvoiceTaxDate() {
-		return rectificateInvoiceTaxDate;
-	}
-	public VatContext setRectificateInvoiceTaxDate(Date rectificateInvoiceTaxDate) {
-		this.rectificateInvoiceTaxDate = rectificateInvoiceTaxDate;
-		return this;
-	}
-	public int getRectificateYear() {
-		return rectificateYear;
-	}
-	public VatContext setRectificateYear(int rectificateYear) {
-		this.rectificateYear = rectificateYear;
-		return this;
-	}
-	public Period getRectificatePeriod() {
-		return rectificatePeriod;
-	}
-	public VatContext setRectificatePeriod(Period rectificatePeriod) {
-		this.rectificatePeriod = rectificatePeriod;
-		return this;
 	}
 	
 }

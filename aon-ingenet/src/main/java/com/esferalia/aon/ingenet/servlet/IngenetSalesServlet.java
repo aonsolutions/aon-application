@@ -298,10 +298,10 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 		Integer[] salesIds = pendingList.stream().mapToInt(Sales::getId).boxed().toArray(Integer[]::new);
 		Map<Integer, Object> salesStatus = new HashMap<>();
 		AON.getDataResponseStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), DataResponseSource.INGENET_SALES, 
-				f -> f.getSourceIdProperty().in(salesIds))
-			.forEach(response -> {
-					salesStatus.put(response.getSourceId(), response.getId());
-				});
+				f -> f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value()))
+				.and(f.getSourceIdProperty().in(salesIds)))
+			.forEach(response -> salesStatus.put(response.getSourceId(), response.getId()));
 		AON.getLastDataResponseDetailStream(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser(), 
 				f -> f.getDomainProperty().eq(ctx.getDomainId())
 					.and(f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value())
@@ -628,7 +628,10 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 				.mapToInt(DataResponseDetail::getDataResponse).boxed().toArray(Integer[]::new);
 		
 		return AON.getDataResponseStream(ctx.getDomainName(), ctx.getDomainId(),
-				ctx.getUser(), DataResponseSource.INGENET_SALES, f -> f.getIdProperty().in(responseIds))
+				ctx.getUser(), DataResponseSource.INGENET_SALES, f -> 
+				f.getDomainProperty().eq(ctx.getDomainId())
+				.and(f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value()))
+				.and(f.getIdProperty().in(responseIds)))
 				.collect(Collectors.toList());
 		
 	}
@@ -642,7 +645,10 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 				})
 				.mapToInt(DataResponseDetail::getDataResponse).boxed().toArray(Integer[]::new);
 		return AON.getDataResponseStream(ctx.getDomainName(), ctx.getDomainId(),
-				ctx.getUser(), DataResponseSource.INGENET_SALES, f -> f.getIdProperty().in(responseIds))
+				ctx.getUser(), DataResponseSource.INGENET_SALES, f -> 
+					f.getDomainProperty().eq(ctx.getDomainId())
+					.and(f.getSourceProperty().eq(DataResponseSource.INGENET_SALES.value()))
+					.and(f.getIdProperty().in(responseIds)))
 				.collect(Collectors.toList());
 	}
 	

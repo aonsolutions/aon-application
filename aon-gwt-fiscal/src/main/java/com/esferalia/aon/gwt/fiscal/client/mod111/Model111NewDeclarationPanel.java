@@ -23,12 +23,12 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 public class Model111NewDeclarationPanel extends DockLayoutPanel {
 	
-	private final AdministrationListBox admonList = new AdministrationListBox();
-	private final AonIntegerBox yearBox = new AonIntegerBox();	
+	private AdministrationListBox admonList;
+	private AonIntegerBox yearBox;	
 	private PeriodListBox periodList = new PeriodListBox(true);
-	private final CheckBox replacement = new CheckBox();
-	private final CheckBox complementary = new CheckBox();
-	private final CheckBox generateFromYearStart = new CheckBox();
+	private CheckBox replacement = new CheckBox();
+	private CheckBox complementary = new CheckBox();
+	private CheckBox generateFromYearStart = new CheckBox();
 		
 	private FlowPanel rootPanel;
 	private SimpleLayoutPanel headerPanel = new SimpleLayoutPanel();
@@ -52,11 +52,17 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 		rootPanel.setStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(rootPanel);
 		
-		registerHandlers(model,callback);
 		paint(model,callback);
 	}
 	
 	private void registerHandlers(Mod111 model, Model111Callback callback) {
+		admonList = new AdministrationListBox();
+		yearBox = new AonIntegerBox();	
+		periodList = new PeriodListBox(true);
+		replacement = new CheckBox();
+		complementary = new CheckBox();
+		generateFromYearStart = new CheckBox();
+		
 		admonList.addChangeHandler( event -> {
 			model.setAdministration( admonList.getValue() );
 			initialize(model, callback );
@@ -95,6 +101,10 @@ public class Model111NewDeclarationPanel extends DockLayoutPanel {
 	}
 		
 	private void paint(Mod111 model, Model111Callback callback) {
+		callback.hideError();
+
+		registerHandlers(model,callback);
+		
 		headerPanel.setWidget(new AonFiscalModelHeader(model));
 
 		rootPanel.clear();

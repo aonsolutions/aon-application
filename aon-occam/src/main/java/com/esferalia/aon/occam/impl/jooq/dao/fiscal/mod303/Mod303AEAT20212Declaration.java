@@ -58,7 +58,7 @@ class Mod303AEAT20212Declaration extends Mod303AEAT {
 
 		 CM_003(Mod303Key.CM_003)
 		,CM_007(Mod303Key.CM_007)
-		,CM_072(Mod303Key.CM_072)
+		//,CM_072(Mod303Key.CM_072)
 
 		,CT_A12(Mod303Key.CT_A12, null, null, (ctx, mod) -> set(Mod303Key.CT_A12, mod, 2), null, null, null, null, true)
 		,CM_002(Mod303Key.CM_002, null, null,
@@ -1635,7 +1635,7 @@ class Mod303AEAT20212Declaration extends Mod303AEAT {
 		// A deducir (exclusivamente en caso de autoliquidación complementaria)
 		, CT_C70(Mod303Key.CT_C70, null, null, (ctx, mod) -> {
 			if (mod.isComplementary()) {
-				add(Mod303Key.CT_C70, mod, Mod303DAO.getSamePeriodModels(ctx, mod)
+				add(Mod303Key.CT_C70, mod, Mod303DAO.getSamePeriodEffectiveModels(ctx, mod)
 						.mapToDouble(fm -> fm.getAmount(Mod303Key.CT_C71)).sum());
 			}
 		  }, 

@@ -1,11 +1,17 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
+import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
+
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.jooq.Condition;
 import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -14,15 +20,18 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccSctiptMVELContext;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpressionScript;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.entry.Mod303DefaultAccountEntryScript;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
@@ -59,14 +68,6 @@ public class Mod303DAO extends FiscalModelDAO {
 			dec.fillSimplifiedRegime(mod303);
 		}
 		return mod303;
-	}
-
-	public static Stream<Mod303> getSamePeriodFiscalModels(AONContext ctx,Mod303 fm) {
-		return FiscalModelDAO.getSamePeriodFiscalModels(ctx, fm, Mod303::new);
-	}
-
-	public static Stream<Mod303> getSamePeriodModels(AONContext ctx,Mod303 fm) {
-		return FiscalModelDAO.getSamePeriodModels(ctx, fm, Mod303::new);
 	}
 
 	public static Mod303 saveComments(AONContext ctx, Mod303 mod303) {
@@ -116,11 +117,16 @@ public class Mod303DAO extends FiscalModelDAO {
 			mod303 = new Mod303();
 			mod303.setDomain(ctx.getDomainId());
 		}
+		mod303.getMessages().clear();
 		initializeFiscalModel(ctx, mod303);
 		initializeProrrate(ctx, mod303);
-		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		dec.initialize( ctx, mod303 );
-		dec.ensureDetails(mod303);
+		try {
+			Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+			dec.initialize( ctx, mod303 );
+			dec.ensureDetails(mod303);
+		} catch (AonCoreException e) {
+			mod303.addMessage(e.getMessage());
+		} 
 		return mod303;
 	}
 	
@@ -136,7 +142,7 @@ public class Mod303DAO extends FiscalModelDAO {
 			}
 			mod303.ensureDetail(mod303.getProrateKey()).setAmount(prorrateInfo.getLeft());
 			mod303.ensureDetail(mod303.getProrateTypeKey()).setDescription(prorrateInfo.getRight());
-			if (mod303.getPeriod().isLastPeriod()) {
+			if (mod303.getPeriod().isLastPeriod() && (mod303.hasProrate() || mod303.hasPreviousProrate())) {
 				mod303.ensureDetail(mod303.getPreviousProrateKey()).setAmount(prorrateInfo.getLeft());
 				Date fromDate = AonDateUtils.getYearFirstDay(mod303.getYear());
 				Date toDate = AonDateUtils.getYearLastDay(mod303.getYear());
@@ -178,19 +184,22 @@ public class Mod303DAO extends FiscalModelDAO {
 		mod303 = save(ctx, mod303);
 		AlcatrazDAO.deleteFiscalModel(ctx, mod303);
 		AlcatrazDAO.saveModelInvoices(ctx, mod303, invoices);
+		mod303.setInvoicesBound( AlcatrazDAO.hasInvoicesBound(ctx, mod303.getId()));
 		return mod303;
 	}
 
 	public static Mod303 calculateProrrate(Mod303 mod303) {
 		if (mod303.hasProrate() || mod303.hasPreviousProrate()) {
-			double c70 = mod303.ensureDetail(Mod303Key.CM_070).getAmount();
-			double c71 = mod303.ensureDetail(Mod303Key.CM_071).getAmount();
+			double c70 = AonMathUtils.round( mod303.ensureDetail(Mod303Key.CM_070).getAmount());
+			double c71 = AonMathUtils.round( mod303.ensureDetail(Mod303Key.CM_071).getAmount());
 			if (AonMathUtils.isNotZero(c71)) {
 				double prorrate = (c70 * 100 / c71);
 				prorrate = AonMathUtils.ceil(prorrate,0);
 				if (AonMathUtils.isGreatherThan(prorrate,100.0)) prorrate = 100.0;
 				mod303.ensureDetail(mod303.getProrateKey()).setAmount( prorrate );
 			}
+			mod303.ensureDetail(Mod303Key.CM_070).setAmount( c70 );
+			mod303.ensureDetail(Mod303Key.CM_071).setAmount( c71 );
 		}
 		return mod303;
 	}
@@ -279,9 +288,72 @@ public class Mod303DAO extends FiscalModelDAO {
 		return mod303;
 	}
 	
-	public static Stream<Mod303> getEffectivePreviousModels(AONContext ctx, Mod303 mod) {
-		return FiscalModelDAO.getEffectivePreviousModels(ctx, mod, Mod303::new);
+	public static Stream<Mod303> getSamePeriodEffectiveModels(AONContext ctx, FiscalModel mod) {
+		Condition cond = FS_MODEL.YEAR.eq(mod.getYear())
+			.and(FS_MODEL.PERIOD.eq(mod.getPeriod().value()));
+		if (mod.getId() != null) {
+			cond = cond.and(FS_MODEL.ID.ne(mod.getId())); 
+		}
+		return getEffectiveModels(ctx, mod, cond ); 
 	}
+	
+	public static Stream<Mod303> getLastPeriodEffectiveModels(AONContext ctx, Mod303 mod) {
+		Condition cond = null;
+		if (mod.isFirstPeriod()) {
+			cond = FS_MODEL.YEAR.eq(mod.getYear() - 1)
+				.and(FS_MODEL.PERIOD.eq( mod.getPeriod().isQuarterPeriod()?Period.T4.value():Period.M12.value()));	
+		} else {
+			cond = FS_MODEL.YEAR.eq(mod.getYear()) 
+				.and(FS_MODEL.PERIOD.eq( (byte) (mod.getPeriod().value() - 1) ));
+		}
+		if (mod.getId() != null) {
+			cond = cond.and(FS_MODEL.ID.ne(mod.getId())); 
+		}
+		return getEffectiveModels(ctx, mod, cond ); 
+	}
+	public static Stream<Mod303> getPreviousEffectiveModels(AONContext ctx, Mod303 mod) {
+		Condition cond = FS_MODEL.YEAR.eq(mod.getYear())
+			.and(FS_MODEL.PERIOD.lessThan(mod.getPeriod().value()));
+		return getEffectiveModels(ctx, mod, cond);
+	}
+	public static Stream<Mod303> getEffectiveModels(AONContext ctx, IFiscalModel mod, Condition cond ) {
+		LinkedHashMap<Period, LinkedList<Mod303>> map = new LinkedHashMap<>();
+		boolean fromMod390 = (mod.getModel() == FiscalModelType.M390  || mod.getModel() == FiscalModelType.M390_HF);
+		getSelect(ctx)
+			.where(FS_MODEL.DOMAIN.eq(mod.getDomain()))
+			.and(FS_MODEL.MODEL.eq( FiscalModelType.M303.getValue() ))
+			.and(FS_MODEL.ADMINISTRATION.eq(mod.getAdministration().value()))
+			.and( cond )
+			.orderBy(FS_MODEL.PERIOD.desc(),FS_MODEL.ID.asc())
+			.fetch()
+			.stream()
+			.map(rec -> new FiscalModelFiller<Mod303>().apply(rec, Mod303::new))
+			.filter( mod303 -> fromMod390 || mod303.getPeriod().isMonthPeriod() == mod.getPeriod().isMonthPeriod())
+			.filter( mod303 -> fromMod390 || mod303.getPeriod().isQuarterPeriod() == mod.getPeriod().isQuarterPeriod())
+			.forEach( mod303 -> {
+				Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
+				map.computeIfAbsent(mod303.getPeriod(), k -> new LinkedList<>());
+				if ( isEffectiveReplacement(dec, mod303) ) {
+					map.get(mod303.getPeriod()).clear();
+					map.get(mod303.getPeriod()).add( mod303 );					
+				} else {
+					if (map.get(mod303.getPeriod())
+						.stream()
+						.noneMatch( m -> isEffectiveReplacement(dec, mod303)) ) {
+						map.get(mod303.getPeriod()).add( mod303 );
+					}
+				}
+			});
+		return map.values()
+			.stream()
+			.flatMap(Collection<Mod303>::stream)
+			.map(mod303 -> fillModelDetails(ctx,mod303))
+		;
+	}
+	private static boolean isEffectiveReplacement( Mod303Declaration dec, Mod303 mod) {
+		return mod.isReplacement() || (mod.isComplementary() && dec.getComplementaryBehaviour(mod) == ComplementaryBeahaviour.REPLACEMENT); 
+	}
+	
 	
 	public static Mod303 unrecord(AONContext ctx, Mod303 mod) {
 		if (mod.isRecorded()) {

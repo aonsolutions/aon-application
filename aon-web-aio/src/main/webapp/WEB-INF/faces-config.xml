@@ -261,6 +261,10 @@
 			<from-outcome>portal_cau_messenger</from-outcome>
 			<to-view-id>/facelet/homepage/cau.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>portal_warehouse</from-outcome>
+			<to-view-id>/facelet/portal/warehouse.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 
 	<navigation-rule>

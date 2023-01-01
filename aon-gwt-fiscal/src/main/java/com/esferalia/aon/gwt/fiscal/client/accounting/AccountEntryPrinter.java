@@ -19,10 +19,9 @@ public class AccountEntryPrinter {
 		final FocusPanel entryPanel = new FocusPanel();
 		entryPanel.setTabIndex(Integer.MAX_VALUE);
 		FlowPanel panel = new FlowPanel("pre");
-		panel.setStyleName(AON.AON_CSS.aonClickableBlock());		
-		panel.addStyleName(AON.AON_CSS.aonFixedFont());
-		panel.addStyleName(AON.AON_CSS.aonFontMedium());
-		panel.addStyleName(AON.AON_CSS.aonMarginBottom());
+		panel.setStyleName(AON.CSS.aonClickableBlock());		
+		panel.addStyleName(AON.CSS.aonFixedFont());
+		panel.addStyleName(AON.CSS.aonMarginBottom());
 		
 		// ------------------------------------- CABECERA DEL ASIENTO
 		panel.add( getHeader(entry, abbrv));
@@ -45,9 +44,9 @@ public class AccountEntryPrinter {
 	
 	public static Label getHeader(AccountEntry entry, boolean abbrv) {
 		Label header = new Label();
-		header.setStyleName(AON.AON_CSS.aonBold());
-		header.addStyleName(AON.AON_CSS.aonTextUnderline());
-		header.addStyleName(AON.AON_CSS.aonPre());
+		header.setStyleName(AON.CSS.aonBold());
+		header.addStyleName(AON.CSS.aonTextUnderline());
+		header.addStyleName(AON.CSS.aonPre());
 		header.setText(toString(entry, abbrv));
 		if (AonStringUtils.isNotBlank(entry.getComments())) {
 			header.setTitle(entry.getComments());
@@ -106,7 +105,7 @@ public class AccountEntryPrinter {
 	
 	public static Label getTotals(double deb, double cre, boolean abbrv) {
 		Label totals = new Label(toString(deb,cre,abbrv));
-		totals.setStyleName(AON.AON_CSS.aonBold());
+		totals.setStyleName(AON.CSS.aonBold());
 		return totals;
 	}
 

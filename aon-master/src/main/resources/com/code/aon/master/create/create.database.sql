@@ -496,15 +496,18 @@ CREATE TABLE `alcatraz` (
   `fs_model` int DEFAULT NULL COMMENT 'Id Modelo fiscal',
   `invoice` int DEFAULT NULL COMMENT 'Id Factura',
   `salary` int DEFAULT NULL COMMENT 'Id Nomina',
+  `finance` int DEFAULT NULL COMMENT 'Id Vto',
   PRIMARY KEY (`id`),
   KEY `IDX_ALCATRAZ_DOMAIN` (`domain`),
   KEY `IDX_ALCATRAZ_FS_MODEL` (`fs_model`),
   KEY `IDX_ALCATRAZ_INVOICE` (`invoice`),
   KEY `IDX_ALCATRAZ_SALARY` (`salary`),
+  KEY `IDX_ALCATRAZ_FINANCE` (`finance`),
   CONSTRAINT `FK_ALCATRAZ_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
   CONSTRAINT `FK_ALCATRAZ_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`),
   CONSTRAINT `FK_ALCATRAZ_INVOICE` FOREIGN KEY (`invoice`) REFERENCES `invoice` (`id`),
-  CONSTRAINT `FK_ALCATRAZ_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`)
+  CONSTRAINT `FK_ALCATRAZ_SALARY` FOREIGN KEY (`salary`) REFERENCES `salary` (`id`),
+  CONSTRAINT `FK_ALCATRAZ_FINANCE` FOREIGN KEY (`finance`) REFERENCES `finance` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Bloqueo de entidades';
 
 #

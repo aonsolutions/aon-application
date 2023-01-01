@@ -4,6 +4,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
+
 @RunWith(Suite.class)
 @SuiteClasses({
 	// MVEL expresions syntax check en las declaraciones
@@ -13,30 +15,30 @@ import org.junit.runners.Suite.SuiteClasses;
 	// Modelos mensuale
 	Mod111ReopenTest.class,					// Pendiente
 	Mod111DeleteTest.class,
-	Mod111InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod111InsertMonthlyTest.class,
 	Mod111FinishTest.class,
 	
-	Mod111InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod111InsertMonthlyComplementaryTest.class,
 	Mod111FinishTest.class,
 	
-	Mod111InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod111InsertMonthlyReplacementTest.class,
 	Mod111RoundedAmountsTest.class,
 	
 	// Modelos trimestrales
 	Mod111ReopenTest.class,					// Pendiente
 	Mod111DeleteTest.class,
-	Mod111InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod111InsertQuarterlyTest.class,
 	Mod111FinishTest.class,
 	
-	Mod111InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod111InsertQuarterlyComplementaryTest.class,
 	Mod111FinishTest.class,
 	
-	Mod111InsertInvoicesTest.class,
+	InsertRandomInvoicesTest.class,
 	Mod111InsertQuarterlyReplacementTest.class,
 	Mod111RoundedAmountsTest.class,
 	

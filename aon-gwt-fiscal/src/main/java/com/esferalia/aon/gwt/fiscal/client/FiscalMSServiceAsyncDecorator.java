@@ -4,10 +4,8 @@ import java.util.LinkedList;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
-import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -35,34 +33,4 @@ public class FiscalMSServiceAsyncDecorator implements FiscalMSServiceAsync {
 		AON.start();
 		serviceAsync.getBasicCreditors(occam, query, new AsyncCallbackWrapper<LinkedList<Creditor>>(callback));
 	}
-	// -------------------------------------------------------------- ACTIVITIES
-	@Override
-	public void getActivities(int activityGroup, AsyncCallback<LinkedList<Activity>> callback) {
-		AON.start();
-		serviceAsync.getActivities(activityGroup, new AsyncCallbackWrapper<LinkedList<Activity>>(callback));
-	}
-	// --------------------------------------------------------------- GWT API INFO
-//	@Override
-//	public void getAonData(String domainName, Integer domainId, String user, AsyncCallback<AonData> callback) {
-//		AON.start();
-//		serviceAsync.getAonData(domainName,domainId, user, new AsyncCallbackWrapper<AonData>(callback));
-//	}
-//
-//	@Override
-//	public void getAonDataToken(String domainName, Integer domainId, String token, AsyncCallback<AonData> callback) {
-//		AON.start();
-//		serviceAsync.getAonDataToken(domainName,domainId, token, new AsyncCallbackWrapper<AonData>(callback));
-//	}
-//
-//	@Override
-//	public void presentationFile(String domainName, Integer domainId, String user, FiscalModelType type, Integer id, AsyncCallback<Integer> callback) {
-//		AON.start();
-//		serviceAsync.presentationFile(domainName,domainId, user, type, id, new AsyncCallbackWrapper<Integer>(callback));
-//	}
-
-//	@Override
-//	public void markAsFinished(String domainName, Integer domainId, String user, IFiscalModel model, AsyncCallback<Void> callback) throws AonCoreException {
-//		AON.start();
-//		serviceAsync.markAsFinished(domainName,domainId, user, model, new AsyncCallbackWrapper<Void>(callback));
-//	}
 }

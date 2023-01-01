@@ -9,7 +9,6 @@ import com.esferalia.aon.gwt.fiscal.client.mod390.Model390Service;
 import com.esferalia.aon.occam.api.fiscal.MODEL390;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
-import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Mod390 Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Mod390" })
 public class Model390ServiceImpl extends AonStatelessRemoteServiceServlet implements Model390Service {
@@ -31,10 +30,10 @@ public class Model390ServiceImpl extends AonStatelessRemoteServiceServlet implem
 		return MODEL390.initialize(occam, year);
 	}
 
-	@Override
-	public Mod390 create(Occam occam, Mod390 mod390) throws AonCoreException {
-		return MODEL390.create(occam, mod390);
-	}
+//	@Override
+//	public Mod390 create(Occam occam, Mod390 mod390) throws AonCoreException {
+//		return MODEL390.create(occam, mod390);
+//	}
 
 	@Override
 	public Mod390 saveComments(Occam occam, Mod390 mod390) {

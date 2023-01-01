@@ -39,12 +39,10 @@ import com.esferalia.aon.gwt.payroll.client.MainCreta.SyncCallback;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptEvent;
 import com.esferalia.aon.gwt.payroll.client.SelectDialog.AcceptHandler;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
-import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.Bonus;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.CalculateService;
-import com.esferalia.aon.gwt.payroll.shared.Category;
 import com.esferalia.aon.gwt.payroll.shared.CretaService;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.File;
 import com.esferalia.aon.gwt.payroll.shared.CretaService.JsBases;
@@ -4280,7 +4278,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	protected static void showSalaryDraft(int employeeId, int workplaceId, Date startDate, Date endDate) {
 		EmployeeTree employeeTree = getEmployeeTree();
-		employeeTree.employees.selectSalaryDraft(employeeId, workplaceId, true);
+		employeeTree.employees.selectSalaryDraft(employeeId, workplaceId, startDate, endDate, true);
 	}
 
 	private static EmployeeTree getEmployeeTree() {

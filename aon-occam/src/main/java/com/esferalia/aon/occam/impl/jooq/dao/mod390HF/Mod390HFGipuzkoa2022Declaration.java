@@ -75,12 +75,12 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 		
 		// Base imponible, porcentaje y cuota al tercer tipo.
 		,GP_C006(Mod390Key.GP_C006
-			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent4(vat)
+			 ,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent4(vat) || hasPercent5(vat))
 			 ,(ctx,mod,vat) -> add(Mod390Key.GP_C006,mod,vat.getBase())
 			,null,null,null)
 		,GP_X006(Mod390Key.GP_X006,null,null,(ctx,mod) -> add(Mod390Key.GP_X006,mod,PERCENT_4),null,null)
 		,GP_C007(Mod390Key.GP_C007
-			 ,(mod,vat) -> isCommonNationalSales(vat) && hasPercent4(vat)
+			 ,(mod,vat) -> isCommonNationalSales(vat) && (hasPercent4(vat) || hasPercent5(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C007,mod,vat.getQuota())
 			,null,null,null)
 		
@@ -171,7 +171,7 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 			,null,null,null)
 		,GP_C022(Mod390Key.GP_C022
 			,(mod,vat) -> operacionesInterioresFilter(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.GP_C022,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.GP_C022,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en importaciones
@@ -181,7 +181,7 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 			,null,null,null)
 		,GP_C024(Mod390Key.GP_C024
 			,(mod,vat) -> importacionesFilter(vat,mod)
-			,(ctx,mod,vat) -> add(Mod390Key.GP_C024,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.GP_C024,mod,vat)
 			,null,null,null)
 		
 		// IVA deducible en adquisiciones intracomunitarias de bienes y servicios corrientes
@@ -191,13 +191,13 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 			,null,null,null)
 		,GP_C026(Mod390Key.GP_C026
 			,(mod,vat) -> adqIntracomunitariasFilter(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.GP_C026,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.GP_C026,mod,vat)
 			,null,null,null)
 		
 		// Compensaciones Régimen Especial A.G. y P .
 		,GP_C027(Mod390Key.GP_C027
 			,(mod,vat) -> compensacionesRegAgrarioFilter(vat)
-			,(ctx,mod,vat) -> add(Mod390Key.GP_C027,mod,vat.getDeductibleQuota())
+			,(ctx,mod,vat) -> addProrrated(Mod390Key.GP_C027,mod,vat)
 			,null,null,null)
 		// Rectificación de deducciones
 		,GP_C271(Mod390Key.GP_C271
@@ -224,7 +224,9 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 		,GP_C036(Mod390Key.GP_C036,null,null,null,"GP_C030*GP_C031/100",null)
 
 		// Cuotas a compensar de períodos anteriores en el Territorio Histórico de Álava	
-		,GP_C037(Mod390Key.GP_C037)
+		,GP_C037(Mod390Key.GP_C037,null,null
+			,(ctx,mod) -> add(Mod390Key.GP_C037,mod, getPendingCompesateAmounts( ctx, mod ))
+			,null,null)
 		// Total INGRESOS efectuados durante el presente ejercicion
 		,GP_C038(Mod390Key.GP_C038,null,null,
 				(ctx,mod) -> {
@@ -233,13 +235,7 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 						.sum());
 				} 
 				,null
-				,"{messages : ["
-					+ "\"Declaraciones a ingresar en ejercicio:\"," 
-					+"@foreach{fm : depositModels}" 
-						+ "\"Resultado @{fm.getModelFullName()}: --> @{fm.getDeclarationResult()}\","
-					+"@end{}"
-					+ "\"Resultado: @{GP_C038}\","
-				+"]}"
+				,null
 		)
 		// Total DEVOLUCIONES practicadas durante el presente ejercicion
 		,GP_C039(Mod390Key.GP_C039,null,null,
@@ -250,13 +246,7 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 						.sum());
 				} 
 				,null
-				,"{messages : ["
-					+ "\"Declaraciones a devolver en ejercicio:\"," 
-					+"@foreach{fm : paybackModels}" 
-						+ "\"Resultado @{fm.getModelFullName()}: --> @{fm.getDeclarationResult()}\","
-					+"@end{}"
-					+ "\"Resultado: @{GP_C039}\","
-				+"]}"
+				,null
 				)
 		// RESULTADO DE LA AUTOLIQUIDACIÓN	
 		,GP_C040(Mod390Key.GP_C040,null,null,null,"GP_C036-GP_C037-GP_C038+GP_C039",null)
@@ -292,12 +282,12 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C049,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		,GP_C050	(Mod390Key.GP_C050
-			,(mod,vat) -> isCommonPurchase(vat, mod) && hasPercent4(vat)
+			,(mod,vat) -> isCommonPurchase(vat, mod) && (hasPercent4(vat) || hasPercent5(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C050,mod,vat.getBase())
 			,null,null,null)
 		,GP_X050	(Mod390Key.GP_X050,null,null,(ctx,mod) -> add(Mod390Key.GP_X050,mod,PERCENT_4),null,null)
 		,GP_C051	(Mod390Key.GP_C051
-			,(mod,vat) -> isCommonPurchase(vat, mod) && hasPercent4(vat)
+			,(mod,vat) -> isCommonPurchase(vat, mod) && (hasPercent4(vat) || hasPercent5(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C051,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		,GP_C052	(Mod390Key.GP_C052
@@ -340,12 +330,12 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 			,null,null,null)
 
 		,GP_C061	(Mod390Key.GP_C061
-			,(mod,vat) -> isCommonExpense(vat) && hasPercent4(vat)
+			,(mod,vat) -> isCommonExpense(vat) && (hasPercent4(vat) || hasPercent5(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C061,mod,vat.getBase())
 			,null,null,null)
 		,GP_X061	(Mod390Key.GP_X061,null,null,(ctx,mod) -> add(Mod390Key.GP_X061,mod,PERCENT_4),null,null)
 		,GP_C062	(Mod390Key.GP_C062
-			,(mod,vat) -> isCommonExpense(vat) && hasPercent4(vat)
+			,(mod,vat) -> isCommonExpense(vat) && (hasPercent4(vat) || hasPercent5(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C062,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -382,12 +372,12 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 			,null,null,null)
 		
 		,GP_C070	(Mod390Key.GP_C070
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput()  && (hasPercent4(vat) || hasPercent5(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C070,mod,vat.getBase())
 			,null,null,null)
 		,GP_X070	(Mod390Key.GP_X070,null,null,(ctx,mod) -> add(Mod390Key.GP_X070,mod,PERCENT_4),null,null)
 		,GP_C071	(Mod390Key.GP_C071
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput()  && (hasPercent4(vat) || hasPercent5(vat))
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C071,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -667,7 +657,8 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 	}
 	
 	private static boolean importacionesFilter(VatContext vat, Mod390HF mod, boolean rectification) {
-		boolean basicFilter = !vat.isVatSurchargeRegime() 
+		boolean basicFilter = vat.isVatGeneralRegime(VATRegime.GENERAL)
+				&& !vat.isVatSurchargeRegime() 
 				&& rectification 
 				&& !vat.isService();
 		if (basicFilter && (vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase())) {
@@ -728,4 +719,24 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 		return invoices;
 	}
 
+	@Override
+	protected String getCompensationExplain( AONContext ctx, Mod390HF mod, Mod390Key key) {
+		return getExplain(ctx, mod, key
+			, Mod390HFDAO.getLastPeriodEffectiveModels(ctx, mod)
+				.filter(Mod390HF::isToCompensate)
+			, new ExplainRowManager());
+	}
+	
+	@Override
+	protected String getSamePeriodExplain(AONContext ctx, Mod390HF mod, Mod390Key key) {
+		if ( key == Mod390Key.GP_C038) {
+			return getExplain(ctx, mod, key
+				, Mod390HFDAO.getM303YearDepositModels(ctx, mod)
+				, new ExplainRowManager());
+		} else {
+			return getExplain(ctx, mod, key
+				, Mod390HFDAO.getM303YearPaybackModels(ctx, mod)
+				, new ExplainRowManager());
+		}
+	}
 }

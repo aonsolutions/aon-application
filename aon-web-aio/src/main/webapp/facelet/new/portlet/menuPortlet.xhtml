@@ -162,6 +162,17 @@
 			</aon:div>
 		</aon:if>
 		
+		<aon:if test="#{domainSwitcher.paturpat}">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-document-parent">
+				<aon:commandLink 
+				id="new_menu_warehouse" 
+				immediate="true"
+				action="portal_warehouse"
+				value="#{bundle.aon_warehouse}"
+				styleClass="aon-button-warehouse" />
+			</aon:div>
+		</aon:if>
+		
 <!-- 		<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
 			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-tools-parent">
 				<aon:commandLink 

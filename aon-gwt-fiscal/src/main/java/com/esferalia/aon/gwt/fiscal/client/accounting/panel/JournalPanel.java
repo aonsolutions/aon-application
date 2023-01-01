@@ -24,8 +24,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -50,7 +48,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 
 	private static final String ACCOUNT_ENTRY_STREAM_SERVLET = URL.encode(GWT.getModuleBaseURL() + "roms/AccountEntryFlatStreamServlet");
 	
-	private final int limit = 101;
+	private static final int LIMIT = 101;
 	private Integer oldId = -1;
 	private final MutableInt offset = new MutableInt(0);
 	private final MutableInt moreData = new MutableInt(0);
@@ -153,7 +151,7 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 						JavaScriptObject unk = JsonUtils.safeEval(text);
 						JsArray<JsFlatAccountEntry> array = unk.cast();
 						for (; count < array.length(); count++ ) {
-							boolean last = (count == limit - 1);
+							boolean last = (count == LIMIT - 1);
 							JsFlatAccountEntry flatEntry = array.get(count);
 							if (!AonNumberUtils.equals( flatEntry.getEntryId(), oldId)) {
 								if (entry != null) {
@@ -176,16 +174,12 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 							}
 						}
 						
-						if (array.length() < limit) {
+						if (array.length() < LIMIT) {
 							if (entry != null) {
 								final FlowPanel entrycontainer = new FlowPanel();
 								container.add(entrycontainer);
 								paintEntry(entrycontainer, entry);
 							}
-//							FlowPanel line = new FlowPanel();
-//							InlineLabel label = new InlineLabel(AON.MSG.noData());
-//							line.add(label);
-//							container.add(line);
 							disableMoreData();
 						} else {
 							offset.setValue(ofs + count - 1);
@@ -263,49 +257,49 @@ public class JournalPanel extends ScrollPanel implements HasAccountEntrySelectio
 			private FocusPanel paintEntry(final FlowPanel entrycontainer, AccountEntry entry) {
 				final FocusPanel entryPanel = AccountEntryPrinter.print(entry);
 				entrycontainer.add(entryPanel);
-				entryPanel.addClickHandler(new ClickHandler() {
+				entryPanel.addClickHandler(event -> AccountEntrySelectionEvent.fire( JournalPanel.this, entry, new ModuleCallback() {
+					
+					private static final long serialVersionUID = -1716981945272019639L;
+
 					@Override
-					public void onClick(ClickEvent event) {
-						AccountEntrySelectionEvent.fire( JournalPanel.this, entry, new ModuleCallback() {
-							
-							@Override
-							public void onRemove(IAccountEntryWrapper removed) {
-								entrycontainer.remove(entryPanel);
-							}
-							
-							@Override
-							public void onFailure(Throwable caught) {}
-							
-							@Override
-							public void onExit() {}
-							
-							@Override
-							public void onChange(IAccountEntryWrapper changed) {
-								entrycontainer.remove(entryPanel);
-								AccountEntry entry = changed.getAccountEntry();
-								FocusPanel newEntryPanel = paintEntry(entrycontainer, entry);
-								newEntryPanel.addStyleName(AON.AON_CSS.aonValueChanged());
-								new Timer() {
-									@Override
-									public void run() {
-										newEntryPanel.removeStyleName(AON.AON_CSS.aonValueChanged());
-									}
-								}.schedule(3000);
-							}
-						});
+					public void onRemove(IAccountEntryWrapper removed) {
+						entrycontainer.remove(entryPanel);
 					}
-				});
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						// Nothing
+					}
+					
+					@Override
+					public void onExit() {
+						// Nothing
+					}
+					
+					@Override
+					public void onChange(IAccountEntryWrapper changed) {
+						entrycontainer.remove(entryPanel);
+						FocusPanel newEntryPanel = paintEntry(entrycontainer, changed.getAccountEntry());
+						newEntryPanel.addStyleName(AON.CSS.aonValueChanged());
+						new Timer() {
+							@Override
+							public void run() {
+								newEntryPanel.removeStyleName(AON.CSS.aonValueChanged());
+							}
+						}.schedule(3000);
+					}
+				}));
 				return entryPanel;
 			}
 			
 		});
-		StringBuffer requestData = new StringBuffer();
+		StringBuilder requestData = new StringBuilder();
 		requestData.append("&"+IRequestParamsNames.DOMAIN_NAME			+"=" + options.getDomainName()  );
 		requestData.append("&"+IRequestParamsNames.DOMAIN_ID  			+"=" + options.getDomain() );
 		requestData.append("&"+IRequestParamsNames.USER					+"=" + options.getUser() );
 		requestData.append("&"+IRequestParamsNames.ACCOUNT_ENTRY_PARAMS +"=" + JsonParams.convert( params ));
 		requestData.append("&"+IRequestParamsNames.OFFSET 				+"=" + ofs );
-		requestData.append("&"+IRequestParamsNames.LIMIT				+"=" + limit );
+		requestData.append("&"+IRequestParamsNames.LIMIT				+"=" + LIMIT );
 		xhr.send(requestData.toString());
 	}
 }

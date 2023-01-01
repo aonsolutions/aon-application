@@ -381,8 +381,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 
-	
-
 	class AltaConsolidadaDeleteCommand implements ScheduledCommand {
 
 		@Override
@@ -1096,6 +1094,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 		employeeSalary = new EmployeeSalary();
 		employeeSalary.hideToolbar();
+		employeeSalary.setContrataView();
 
 		employeeCalendar = new EmployeeCalendarDraftNew();
 		employeeCalendar.hideToolbar();

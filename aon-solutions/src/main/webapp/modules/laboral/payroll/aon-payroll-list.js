@@ -50,9 +50,7 @@ export class AonPayrollList extends AonElement {
   initialize(){
     this.id = this.id || PAYROLL_VIEWS.AON_PAYROLL_LIST;
     this.TABLE_ID = this.id + "Table";
-    this.applicationEl = this.getApplication();
-    this.applicationParentEl = this.getApplicationParent();
-    this.applicationEl.addToolbarTitle(MSG.PAYSHEETS);
+    this.getApplication().addToolbarTitle(MSG.PAYSHEETS);
     this._list=[];
   }
 
@@ -60,7 +58,7 @@ export class AonPayrollList extends AonElement {
     this.paintView();
     if(!this.isEmployee()){
       this.buildToolbar();
-      this.applicationParentEl.changeFilter();
+      this.getApplicationParent().changeFilter();
     }
     await this.getTable();
   }
@@ -72,13 +70,13 @@ export class AonPayrollList extends AonElement {
   }
 
   buildToolbar() {
-    this.applicationEl.removeToolbarOptions();
+    this.getApplication().removeToolbarOptions();
     this.buildToolbarSearch();
   }
 
 
   buildToolbarSearch(){
-    let btnSearch = this.applicationEl.addSearchOption();
+    let btnSearch = this.getApplication().addSearchOption();
     
     const searchFn = ({detail}) => {
       this.searchFilter = detail;
@@ -86,7 +84,7 @@ export class AonPayrollList extends AonElement {
     }
     const searchValueFn = ({detail})=>{
       this._list = [];
-      if(detail) this.applicationParentEl.setDataFilter(detail);
+      if(detail) this.getApplicationParent().setDataFilter(detail);
     }
 
     btnSearch.addEventListener(EVENT.SEARCH, searchFn);
@@ -129,10 +127,10 @@ export class AonPayrollList extends AonElement {
   }
 
   async getTable() {
-    this.applicationEl = await waitEl("#aonLaboral");
-    this.applicationEl.startLoader();
+    await waitEl("#aonLaboral");
+    this.getApplication().startLoader();
     this.isMobile() ? await this.getTableMobile() :  this.getTableDesk();
-    this.applicationEl.stopLoader();
+    this.getApplication().stopLoader();
   }
 
   async getTableDesk() {
@@ -197,7 +195,7 @@ export class AonPayrollList extends AonElement {
       if(this._list.length)
         data = this._list;
       else {
-        let filter = this.applicationParentEl._filter;
+        let filter = this.getApplicationParent()._filter;
         let datos = []; 
         if(this.isEmployee())  {
           datos = await getEmployeeSalaries(filter);
@@ -240,7 +238,7 @@ export class AonPayrollList extends AonElement {
   }
 
   aonEvent({ }, data) {
-    const parent = this.applicationParentEl;
+    const parent = this.getApplicationParent();
     if(parent) {
       parent.getSalary({
         salaryId: data.id,
@@ -251,11 +249,11 @@ export class AonPayrollList extends AonElement {
   }
 
   isEmployee(){
-    return this.applicationParentEl.isEmployee();
+    return this.getApplicationParent().isEmployee();
   }
 
   getDivIconStyle(type){
-    const {color, typeReduce} = this.applicationParentEl.getTypeSalaryText(type);
+    const {color, typeReduce} = this.getApplicationParent().getTypeSalaryText(type);
     let div = this.createElement("div");
     div.innerText = typeReduce;
     div.classList.add("profile-letters");

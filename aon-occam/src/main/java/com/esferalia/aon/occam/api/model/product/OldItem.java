@@ -9,7 +9,6 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.sun.istack.NotNull;
 
 @Deprecated
 public class OldItem implements Serializable {
@@ -315,7 +314,7 @@ public class OldItem implements Serializable {
 		return this;
 	}
 		
-	public @NotNull Tag getPackFormatTag() {
+	public Tag getPackFormatTag() {
 		return packFormatTag != null ? packFormatTag : new Tag();
 	}
 	public OldItem setPackFormatTag(Tag packFormatTag) {
@@ -329,7 +328,7 @@ public class OldItem implements Serializable {
 		this.packUnits = packUnits;
 		return this;
 	}
-	public @NotNull Tag getPackUnitsTag() {
+	public Tag getPackUnitsTag() {
 		return packUnitsTag != null ? packUnitsTag : new Tag();
 	}
 	public OldItem setPackUnitsTag(Tag packUnitsTag) {
@@ -343,7 +342,7 @@ public class OldItem implements Serializable {
 		this.packMeasurement = packMeasurement;
 		return this;
 	}
-	public @NotNull Tag getPackMeasurementTag() {
+	public Tag getPackMeasurementTag() {
 		return packMeasurementTag != null ? packMeasurementTag : new Tag();
 	}
 	public OldItem setPackMeasurementTag(Tag packMeasurementTag) {
@@ -351,7 +350,7 @@ public class OldItem implements Serializable {
 		return this;
 	}
 	
-	public @NotNull Tag getStockUnitTag() {
+	public Tag getStockUnitTag() {
 		return stockUnitTag != null ? stockUnitTag : new Tag();
 	}
 	public OldItem setStockUnitTag(Tag stockUnitTag) {

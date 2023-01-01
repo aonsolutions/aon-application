@@ -206,7 +206,6 @@ public class ITPart {
 	}
 
 	public ITPart setCcc(String d) {
-		if(d!=null)  d = d.substring(4, d.length());
 		this.ccc = d;
 		return this;
 	}
@@ -518,17 +517,19 @@ public class ITPart {
 			}
 		});
 		
-		getIpf().ifPresent(c-> stringBuffer.append(String.format(" dni : \"%s\" ", c)) );
+		getIpf().ifPresent(d-> stringBuffer.append(String.format(" dni : \"%s\" ", d)) );
 		
-		getContingency().ifPresent(c-> stringBuffer.append(String.format(" contingency : \"%s\" ", c)) );
+		getContingency().ifPresent(d-> stringBuffer.append(String.format(" contingency : \"%s\" ", d)) );
 		
-		getCauseRestart().ifPresent(c-> stringBuffer.append(String.format(" causeRestart : \"%s\" ",c)) );
+		getCauseRestart().ifPresent(d-> stringBuffer.append(String.format(" causeRestart : \"%s\" ",d)) );
 		
-		getBaseCtz().ifPresent(base->  stringBuffer.append(String.format(" baseCtz : \"%s\" ",base)) );
+		getBaseCtz().ifPresent(d->  stringBuffer.append(String.format(" baseCtz : \"%s\" ",d)) );
 		
-		getSumBCtz().ifPresent(base->  stringBuffer.append(String.format(" sumaBCtz : \"%s\" ",base)) );
+		getSumBCtz().ifPresent(d->  stringBuffer.append(String.format(" sumaBCtz : \"%s\" ",d)) );
 		
-		getDaysCtz().ifPresent(day->  stringBuffer.append(String.format(" daysCtz : \"%s\" ",day)) );
+		getDaysCtz().ifPresent(d->  stringBuffer.append(String.format(" daysCtz : \"%s\" ",d)) );
+		
+		getNameEmployee().ifPresent(d->  stringBuffer.append(String.format(" nameEmployee : \"%s\" ", d)) );
 
 		stringBuffer.append('}');
 		return stringBuffer.toString();

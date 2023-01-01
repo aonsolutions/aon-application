@@ -6,7 +6,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -29,7 +28,7 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 	public static final double SURCHARGE_PERCENT3 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isAraba() && mod.getYear() > 2021;
+		return  mod.isAraba() && mod.getYear() > 2021 && !mod.isLastPeriod();
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		 Mod303Key.AR_C030,Mod303Key.AR_C031,Mod303Key.AR_C032
@@ -274,52 +273,7 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 		,AR_C044	(Mod303Key.AR_C044,null,null,null,"AR_C039*AR_C040/100",null)
 
 		// Cuotas a compensar de períodos anteriores en el Territorio Histórico de Álava	
-		,AR_C045	(Mod303Key.AR_C045,null,null,
-			(ctx,mod) -> {
-				if (mod.isFirstPeriod()) {
-					// Primer periodo. Se busca la cuota a compensar del último periodo del ejercicio anterior.
-					add( Mod303Key.AR_C045, mod, 
-							Mod390HFDAO.getMod390HFs( ctx,ctx.getDomainId() )
-							.filter(m390 -> m390.getYear() ==  (mod.getYear() - 1) )
-							.filter(m390 -> m390.getAdministration() ==  mod.getAdministration() )
-							.filter(Mod390HF::isToCompensate)
-							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod390Key.AR_C140)))
-							.findFirst()
-							.orElse(0.0));						
-				} else {
-					// Resto de periodos. Se busca la cuota a compensar del anterior periodo..
-					add( Mod303Key.AR_C045, mod, 
-							Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
-							.filter(m303 -> m303.getYear() == mod.getYear() )
-							.filter(m303 -> m303.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) )  
-							.filter(Mod303::isToCompensate)
-							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.AR_C082)))
-							.findFirst()
-							.orElse(0.0));						
-				}
-			}
-			,null
-			,"{messages : ["
-			+"@if{ mod.isFirstPeriod() }"
-				+"@code{c140Key='"+ Mod390Key.AR_C140.getValue() +"';}"
-				+ "\"Declaraciones del modelo 390 del ejercicio anterior:\"," 
-				+"@foreach{fm : hf390models}"
-					+"@if{ fm.getYear() == (mod.getYear() - 1) && fm.getAdministration() == mod.getAdministration() }"
-						+ "\"Resultado A compensar @{fm.isComplementary()?' (C) ':'     '}:	Casilla [140] --> @{fm.getAmount(c140Key)}\","
-					+"@end{}"
-				+"@end{}"
-			+"@else{}"
-				+"@code{c082Key='"+ Mod303Key.AR_C082.getValue() +"';}"
-				+ "\"Declaraciones del periodo anterior:\"," 
-				+"@foreach{fm : lastPeriodModels}" 
-					+"@if{ fm.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) }"
-						+ "\"Resultado a compensar @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [082] --> @{fm.getAmount(c082Key)}\","
-					+"@end{}"
-				+"@end{}"
-			+"@end{}"
-			+ "\"Resultado (Cuotas a compensar de periodos anteriores): @{AR_C045}\","
-			+"]}"
-		)
+		,AR_C045	(Mod303Key.AR_C045,null,null, (ctx,mod) -> add( Mod303Key.AR_C045, mod, getPendingCompesateAmounts( ctx, mod )),null,null)
 
 		// RESULTADO DE LA AUTOLIQUIDACIÓN	
 		,AR_C060	(Mod303Key.AR_C060,null,null,null,"AR_C044-AR_C045",null)
@@ -335,19 +289,14 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 				(ctx,mod) -> {
 					if (mod.isReplacement()) {
 						add( Mod303Key.AR_C063, mod, 
-							Mod303DAO.getSamePeriodModels(ctx, mod)
+							Mod303DAO.getSamePeriodEffectiveModels(ctx, mod)
+								.filter( fm -> fm.isToDeposit() || mod.isToPayback())
 								.mapToDouble(Mod303::getDeclarationResult)
 								.sum());						
 					}
 				}
 				,null
-				,"{messages : ["
-					+ "\"Declaraciones en el mismo periodo/ejercicio:\"," 
-					+"@foreach{fm : periodModels}" 
-						+ "\"Resultado @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [080] --> @{fm.getDeclarationResult()}\","
-					+"@end{}"
-					+ "\"Resultado: @{AR_C080}\","
-				+"]}"
+				,null
 		)
 		
 		// TOTAL DEUDA TRIBUTARIA	
@@ -612,6 +561,35 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 	}
 	public static boolean  ventasISP(VatContext vat, Mod303 mod) {
 		return !vat.isVatSurchargeRegime() && vat.isOtherISPSales();
+	}
+	
+
+	@Override
+	public Mod303Key[] getCompensationExplainKeys() {
+		return new Mod303Key[] {Mod303Key.AR_C045};
+	}
+	@Override
+	public Mod303Key[] getSamePeriodExplainKeys() {
+		return new Mod303Key[] {Mod303Key.AR_C063};
+	}
+	@Override
+	protected String getSamePeriodExplain(AONContext ctx, Mod303 mod303, Mod303Key key) {
+		return getExplain(ctx, mod303, key
+			, Mod303DAO.getSamePeriodEffectiveModels(ctx, mod303)
+			, new ExplainRowManager());
+	}
+	@Override
+	protected String getCompensationExplain( AONContext ctx, Mod303 mod303, Mod303Key key) {
+		if (mod303 .isFirstPeriod()) {
+			return getExplain(ctx, mod303, key
+				, Mod390HFDAO.getLastPeriodEffectiveModels(ctx, mod303)
+					.filter(Mod390HF::isToCompensate)
+				, new ExplainRowManager());
+		} 
+		return getExplain(ctx, mod303, key
+				, Mod303DAO.getLastPeriodEffectiveModels(ctx, mod303)
+				.filter(Mod303::isToCompensate)
+				, new ExplainRowManager());
 	}
 	
 }

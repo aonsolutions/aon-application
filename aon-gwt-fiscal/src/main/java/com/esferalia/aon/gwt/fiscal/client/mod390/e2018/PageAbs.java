@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.mod390.e2018;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2018.Model3902018.Model3902018Callback;
-import com.esferalia.aon.occam.api.model.fiscal.Mod3902018;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902018;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 

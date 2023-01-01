@@ -1,3 +1,5 @@
+import { postXml } from "./request";
+
 //Genera un objeto Blob con los datos en un archivo XML
 export const generateXml = (printer, tag, datos)  => {
     var texto = [];
@@ -50,4 +52,9 @@ export const writeXml = (cadena) => {
         .replace('>', '&gt;')
         .replace('"', '&quot;');
     return cadena;
+};
+
+export const printDeliveryTag = (printer, tag, data) => {
+    let xml = generateXml(printer, tag, data);
+    postXml('https://192.168.1.252/Integration/BartenderTecnipesa/execute', xml);
 };

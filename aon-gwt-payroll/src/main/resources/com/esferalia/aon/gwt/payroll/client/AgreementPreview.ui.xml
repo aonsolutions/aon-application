@@ -65,12 +65,21 @@
 			border-left: none !important;
 		}
 		
-		.hideScroll {
-		    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-		    scrollbar-width: none;  /* Firefox */
+		.hideScroll{}
+		
+		.hideScroll::-webkit-scrollbar {
+			width: 1px;
+			height: 6px;
+			background-color: gray;
 		}
-		.hideScroll::-webkit-scrollbar { 
-		    display: none;  /* Safari and Chrome */
+		
+		/* To hide the vertical scroll. */
+		.hideScroll::-webkit-scrollbar:vertical {
+			display: none;
+		}
+		
+		.hideScroll::-webkit-scrollbar-thumb:horizontal {
+			background: black;
 		}
 		
 		.heigthAll {
@@ -170,6 +179,8 @@
 		
 		.headerFSize{
 			font-size: .8em;
+			text-align: left;
+			padding-left: 0.5rem;
 		}
 		
 		.headerLevelFixed {
@@ -185,6 +196,10 @@
 		.levelCell {
 			text-align: left;
 			padding-left: 0.5rem;
+		}
+		
+		.levelColumn {
+			font-size: .7rem;
 		}
 		
 		.levelDefaultValue {

@@ -484,11 +484,7 @@ public class Model2002020 extends DockLayoutPanel {
 			mod200Callback.cleanErrorPanel();
 			
 			AonConfirmDialog cd = new AonConfirmDialog();
-			cd.confirm("Se va a proceder a la generaci\u00F3n de un fichero\n"
-					+ "con los datos contables, para su importaci\u00F3n en\n"
-					+ "el programa de ayuda de la Agencia Tributaria.\n\n"
-					+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
-					+ "El fichero se genera a partir de los datos guardados.",
+			cd.confirm(AON.MSG.confirmAccountingFileMod200(),
 				new AonConfirmDialogCallback() {
 					
 					@Override
@@ -510,11 +506,7 @@ public class Model2002020 extends DockLayoutPanel {
 			mod200Callback.cleanErrorPanel();
 			
 			AonConfirmDialog cd = new AonConfirmDialog();
-			cd.confirm("Se va a proceder a la generaci\u00F3n de un fichero\n"
-					+ "con los datos de la declaraci\u00F3n, para su \n"
-					+ "presentaci\u00F3n en la web de la Agencia Tributaria.\n\n"
-					+ "Aseg\u00FArese de haber guardado la declaraci\u00F3n.\n\n"
-					+ "El fichero se genera a partir de los datos guardados.",
+			cd.confirm(AON.MSG.confirmAeatFileMod200(),
 				new AonConfirmDialogCallback() {
 					
 					@Override
@@ -536,11 +528,8 @@ public class Model2002020 extends DockLayoutPanel {
 				mod200Callback.cleanErrorPanel();
 			
 			AonConfirmDialog cd = new AonConfirmDialog();
-			cd.confirm("La impresi\u00F3n se genera en los servidores de la Agencia Tributaria "
-					+ "y se realiza a partir de los datos guardados. En el caso de validaci\u00F3n "
-					+ "correcta se devolver\u00E1 el documento PDF de la declarai\u00F3n. Aseg\u00FArese "
-					+ "de haber guardado la declaraci\u00F3n."
-				,new AonConfirmDialogCallback() {
+			cd.confirm(AON.MSG.confirmAeatPrintMod200(),
+				new AonConfirmDialogCallback() {
 					
 					@Override
 					public void onCancel() {}

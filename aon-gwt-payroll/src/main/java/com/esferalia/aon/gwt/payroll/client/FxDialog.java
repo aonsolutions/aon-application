@@ -275,7 +275,7 @@ public class FxDialog extends CustomDialog {
 	Button editButton;
 	@UiField
 	Button cancelButton;
-	@UiField
+	@UiField (provided = true)
 	Button acceptButton;
 	
 
@@ -295,6 +295,8 @@ public class FxDialog extends CustomDialog {
 		setCaption("Asistente");
 
 		ensureDebugId("fxDialog");
+		
+		initAcceptButton();
 
 		setWidget(binder.createAndBindUi(this));
 		
@@ -308,6 +310,12 @@ public class FxDialog extends CustomDialog {
 		this.expressionCallback = new ExpressionCallback();
 
 
+	}
+
+	private void initAcceptButton() {
+		acceptButton = new Button();
+		acceptButton.setStyleName(AON.CSS.aonOkButtonSmall());
+		acceptButton.setText( AON.MSG.accept());
 	}
 
 	@Override

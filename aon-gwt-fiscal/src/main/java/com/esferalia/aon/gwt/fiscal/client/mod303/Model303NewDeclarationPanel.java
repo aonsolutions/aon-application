@@ -71,7 +71,11 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 		rootPanel.setStyleName(AON.CSS.aonWidthAll());
 		scrollPanel.setWidget(rootPanel);
 		
-		paint(model,callback);
+		if (model == null) {
+			initialize(model, callback);
+		} else {
+			paint(model,callback);
+		}
 		
 	}
 	
@@ -117,6 +121,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 			replacement.setEnabled(!complementary.getValue());
 			if (AonEnumUtils.getBoolean(complementary.getValue())) {
 				replacement.setValue(false);
+				model.setReplacement(false);
 			}
 			initialize(model, callback );
 		});
@@ -127,6 +132,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 			complementary.setEnabled(!replacement.getValue());
 			if (AonEnumUtils.getBoolean(replacement.getValue())) {
 				complementary.setValue(false);
+				model.setComplementary(false);
 			}
 			initialize(model, callback );
 		});
@@ -181,6 +187,7 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 	}
 
 	private void paint(Mod303 model, Model303Callback callback) {
+		callback.hideError();
 		
 		registerHandlers(model,callback);
 		

@@ -83,14 +83,6 @@ public class EnumVisitors {
 	
 	public static interface IFiscalModelKeyInfoVisitor<T> {
 		T visitNone();
-		T visitInvoice();
-		T visitInAccrualInvoice();
-		T visitOutAccrualInvoice();
-		T visitDiffInvoice();
-		T visitDiffInAccrualInvoice();
-		T visitDiffOutAccrualInvoice();
-		T visitSalary();
-		T visitDiffSalary();
 		T visitCompute();
 		T visitComputeKey();
 		T visitActAccount();
@@ -103,6 +95,22 @@ public class EnumVisitors {
 		T visitProrratedModelInvoiceVatBreakdown();
 		T visitModelOutVatAccrualInvoice();
 		T visitModelInVatAccrualInvoice();
+		T visitDiffInvoice();
+		
+		@Deprecated
+		T visitInvoice();
+		@Deprecated
+		T visitInAccrualInvoice();
+		@Deprecated
+		T visitOutAccrualInvoice();
+		@Deprecated
+		T visitDiffInAccrualInvoice();
+		@Deprecated
+		T visitDiffOutAccrualInvoice();
+		@Deprecated
+		T visitSalary();
+		@Deprecated
+		T visitDiffSalary();
 	}
 	
 	public static interface IFiscalStatusVisitor<T> {

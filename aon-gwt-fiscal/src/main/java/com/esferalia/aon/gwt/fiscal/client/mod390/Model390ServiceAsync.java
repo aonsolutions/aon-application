@@ -10,7 +10,7 @@ public interface Model390ServiceAsync {
 
 	void getMod390(Occam occam, Integer id, AsyncCallback<Mod390> callback);
 	void getMod390s(Occam occam, AsyncCallback<LinkedList<Mod390>> callback);
-	void create(Occam occam, Mod390 mod390, AsyncCallback<Mod390> callback);
+//	void create(Occam occam, Mod390 mod390, AsyncCallback<Mod390> callback);
 	void initialize(Occam occam, int year, AsyncCallback<Mod390> callback);
 	void saveComments(Occam occam, Mod390 mod390, AsyncCallback<Mod390> callback);
 	void delete(Occam occam, Mod390 mod390, AsyncCallback<Void> callback);

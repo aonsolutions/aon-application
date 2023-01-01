@@ -1235,36 +1235,39 @@ const documentExec = (exec) => document.execCommand(exec) ? document.execCommand
 
 
 const getPeriodMessenger = (value=undefined) => {
+
+    const formatDateOrigin = date => AonDateUtils.formatDateOrigin(date);
+
     let jsonArray = [
         {
             name: "Últimos 10 días",
             value: "last_10_days",
-            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-10)),
-            endDate: AonDateUtils.formatDateOrigin( new Date())
+            startDate: formatDateOrigin(new Date().addDay(-10)),
+            endDate: formatDateOrigin(new Date())
         },
         {
             name: "Últimos 30 días",
             value: "last_30_days",
-            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-30)),
-            endDate: AonDateUtils.formatDateOrigin( new Date())
+            startDate: formatDateOrigin(new Date().addDay(-30)),
+            endDate: formatDateOrigin(new Date())
         },
         {
             name: "Últimos 60 días",
             value: "last_60_days",
-            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-60)),
-            endDate: AonDateUtils.formatDateOrigin( new Date())
+            startDate: formatDateOrigin(new Date().addDay(-60)),
+            endDate: formatDateOrigin(new Date())
         },
         {
             name: "Últimos 90 días",
             value: "last_90_days",
-            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-90)),
-            endDate: AonDateUtils.formatDateOrigin( new Date())
+            startDate: formatDateOrigin(new Date().addDay(-90)),
+            endDate: formatDateOrigin(new Date())
         },
         {
             name: "Últimos 180 días",
             value: "last_180_days",
-            startDate: AonDateUtils.formatDateOrigin(new Date().addDay(-180)),
-            endDate: AonDateUtils.formatDateOrigin( new Date())
+            startDate: formatDateOrigin(new Date().addDay(-180)),
+            endDate: formatDateOrigin(new Date())
         },
         {
             name: "Todos",

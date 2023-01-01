@@ -46,7 +46,7 @@ public class PayMethod implements Serializable {
 		return this;
 	}
 	
-	public Boolean isEmpty() {
+	public boolean isEmpty() {
 		return id == null && domain == null && AonStringUtils.isBlank(name) && type == null;
 	}
 }

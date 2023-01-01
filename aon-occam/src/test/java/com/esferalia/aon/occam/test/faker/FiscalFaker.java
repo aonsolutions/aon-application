@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.fiscal.MODEL111;
 import com.esferalia.aon.occam.api.fiscal.MODEL115;
 import com.esferalia.aon.occam.api.fiscal.MODEL123;
+import com.esferalia.aon.occam.api.fiscal.MODEL190;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.fiscal.MODEL390HF;
 import com.esferalia.aon.occam.api.model.Occam;
@@ -17,11 +18,13 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.github.javafaker.Faker;
 
 public class FiscalFaker {
@@ -37,6 +40,7 @@ public class FiscalFaker {
 		private boolean replacement;
 		private boolean generateFromYearStart;
 		private double prorratePercent;
+		private boolean specialProrrate;
 		
 		public FiscalFakerParams(AONContext ctx, Occam occam) {
 			this.ctx = ctx;
@@ -101,13 +105,23 @@ public class FiscalFaker {
 			this.prorratePercent = prorratePercent;
 			return this;
 		}
+		public boolean isSpecialProrrate() {
+			return specialProrrate;
+		}
+		public FiscalFakerParams setSpecialProrrate(boolean specialProrrate) {
+			this.specialProrrate = specialProrrate;
+			return this;
+		}
 	}
 	
 	public static FiscalFakerParams getRandomParams(AONContext ctx, Occam occam) {
+		double prorratePercent = AonRandom.gt(10)? 0 : AonRandom.getPercent();
 		return new FiscalFakerParams(ctx,occam)
 			.setIssueDate(AonRandom.getYearDay(new Date()))
 			.setMonthly(AonRandom.gt(80))
-			.setProrratePercent( AonRandom.gt(10)? 0 : AonRandom.getPercent() );
+			.setProrratePercent( prorratePercent )
+			.setSpecialProrrate( AonMathUtils.isNotZero(prorratePercent) && AonRandom.gt(60) )
+			;
 	}
 	
 	public static Period getRandomPeriod() {
@@ -136,8 +150,8 @@ public class FiscalFaker {
 			t.setPeriod( Period.YEAR );
 		} else {
 			t.setPeriod( params.isMonthly()
-					? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
-							: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
+				? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
+				: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
 		}
 		t.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
 		if (initializer != null)  {
@@ -186,6 +200,9 @@ public class FiscalFaker {
 		return  getFiscalModel(params,Mod303::new,
 			(m) -> {
 				m.setProratePercent( params.getProrratePercent() );
+				if (m.hasProrate()) {
+					m.setSpecialProrateValue(params.isSpecialProrrate());	
+				}
 				MODEL303.initialize( params.getOccam(), m);
 			}
 		);
@@ -197,14 +214,28 @@ public class FiscalFaker {
 	}
 
 	public static Mod390HF getMod390HF( FiscalFakerParams params) {
-		return  getFiscalModel(params
-			,Mod390HF::new
-			,m -> MODEL390HF.initialize( params.getOccam(), m.setProratePercent( params.getProrratePercent() )));
+		return  getFiscalModel(params,Mod390HF::new,
+			(m) -> {
+				m.setProratePercent( params.getProrratePercent() );
+				if (m.hasProrate()) {
+					m.setSpecialProrateValue(params.isSpecialProrrate());	
+				}
+				MODEL390HF.initialize( params.getOccam(), m);
+			}
+		);
 	}
 	public static Mod390HF createMod390HF( FiscalFakerParams params) {
 		Mod390HF mod = getMod390HF( params );
 		MODEL390HF.create(params.getOccam(), mod);
 		return mod;
+	}
+
+	public static Mod190 createMod190(FiscalFakerParams params) {
+		Mod190 mod190 = MODEL190.initialize(params.getOccam(), AonDateUtils.getYear(params.getIssueDate()));
+		mod190.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
+		mod190.setComplementary(params.isComplementary());
+		mod190.setReplacement(params.isReplacement());
+		return MODEL190.save(params.getOccam(), mod190);
 	}
 
 	

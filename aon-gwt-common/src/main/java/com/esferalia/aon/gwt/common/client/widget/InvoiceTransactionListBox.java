@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.common.client.widget;
 
 
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class InvoiceTransactionListBox extends ListBox {
@@ -12,7 +13,7 @@ public class InvoiceTransactionListBox extends ListBox {
 	
 	public InvoiceTransactionListBox(String firstItemLabel) {
 		setWidth("120px");
-		addItem("------","");
+		addItem(AonStringUtils.defaultIfBlank(firstItemLabel),"");
 		for (InvoiceTransactionType d : InvoiceTransactionType.values()) {
 			addItem(d.getDescription());	
 		}

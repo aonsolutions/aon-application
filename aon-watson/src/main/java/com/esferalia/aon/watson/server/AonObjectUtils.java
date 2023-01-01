@@ -23,11 +23,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.util.AonArrayUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
  * <p>Operations on {@code Object}.</p>
@@ -92,6 +94,13 @@ public class AonObjectUtils {
      */
     public static <T> T defaultIfNull(final T object, final T defaultValue) {
         return object != null ? object : defaultValue;
+    }
+
+    public static <T> String defaultIfNull(final T object, Function<T,String> valuesupplier) {
+    	return defaultIfNull(object, valuesupplier, AonStringUtils.EMPTY);
+    }
+    public static <T> String defaultIfNull(final T object, Function<T,String> valuesupplier, String defaultValue) {
+        return object != null ? valuesupplier.apply(object) : defaultValue;
     }
 
     public static <T> T computeIfTrue(boolean condition, T object, UnaryOperator<T> operator) {

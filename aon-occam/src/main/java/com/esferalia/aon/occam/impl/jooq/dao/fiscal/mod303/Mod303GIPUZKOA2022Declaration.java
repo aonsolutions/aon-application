@@ -1,17 +1,22 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
+import java.text.MessageFormat;
+
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390HF.Mod390HFDAO;
+import com.esferalia.aon.watson.mutable.MutableBoolean;
+import com.esferalia.aon.watson.mutable.MutableDouble;
+import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -29,7 +34,7 @@ class Mod303GIPUZKOA2022Declaration extends Mod303GIPUZKOA {
 	public static final double SURCHARGE_PERCENT3 = 0.5;
 	
 	public static boolean accept(Mod303 mod) {
-		return mod.isGipuzkoa() && mod.getYear() > 2021;
+		return mod.isGipuzkoa() && mod.getYear() > 2021 && !mod.isLastPeriod();
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		  Mod303Key.GP_C018
@@ -228,53 +233,7 @@ class Mod303GIPUZKOA2022Declaration extends Mod303GIPUZKOA {
 		,GP_C028(Mod303Key.GP_C028,null,null,null,"GP_C026*GP_C027/100",null)
 
 		// Cuotas a compensar de períodos anteriores en el Territorio Histórico de gipuzkoa	
-		,GP_C029(Mod303Key.GP_C029,null,null,
-			(ctx,mod) -> {
-				if (mod.isFirstPeriod()) {
-					// Primer periodo. Se busca la cuota a compensar del último periodo del ejercicio anterior.
-					add( Mod303Key.GP_C029, mod, 
-							Mod390HFDAO.getMod390HFs( ctx,ctx.getDomainId() )
-							.filter(m390 -> m390.getYear() ==  (mod.getYear() - 1) )
-							.filter(m390 -> m390.getAdministration() ==  mod.getAdministration() )
-							.filter(Mod390HF::isToCompensate)
-							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod390Key.GP_C042)))
-							.findFirst()
-							.orElse(0.0));						
-				} else {
-					// Resto de periodos. Se busca la cuota a compensar del anterior periodo..
-					add( Mod303Key.GP_C029, mod, 
-							Mod303DAO.getMod303s( ctx,ctx.getDomainId() )
-							.filter(m303 -> m303.getYear() == mod.getYear() )
-							.filter(m303 -> m303.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) )  
-							.filter(Mod303::isToCompensate)
-							.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod303Key.GP_C035) * (-1)))
-							.findFirst()
-							.orElse(0.0));						
-				}
-			}
-			,null
-			,"{messages : ["
-		        + "@if{ mod.isFirstPeriod() }"
-		        	+"@code{c042Key='"+ Mod390Key.GP_C042.getValue() +"';}"
-		        	
-					+ "\"\u2022 Declaraciones del modelo 390 del ejercicio anterior:\","
-					+ "@foreach{fm : hf390models}"
-						+"@if{ fm.getYear() == (mod.getYear() - 1) && fm.getAdministration() == mod.getAdministration() }"
-							+ "\"- Resultado A compensar @{fm.isComplementary()?' (C) ':'     '}:	Casilla [042] --> @{fm.getAmount(c042Key)}\","
-						+ "@end{}" 
-					+ "@end{}" 
-				+ "@else{}"
-					+ "@code{c035Key='"+ Mod303Key.GP_C035.getValue() +"';}"
-					+ "\"\u2022 Declaraciones del periodo anterior:\","
-					+ "@foreach{fm : lastPeriodModels}"
-						+"@if{ fm.getPeriod().ordinal() == (mod.getPeriod().ordinal() - 1) }"
-							+ "\"- Resultado a compensar @{fm.getPeriod().getName()}@{fm.isComplementary()?' (C) ':'     '}:	Casilla [035] --> @{fm.getAmount(c035Key)}\","
-						+ "@end{}" 
-					+ "@end{}" 
-				+ "@end{}"
-				+ "\"Resultado (Cuotas a compensar de periodos anteriores): @{GP_C029}\","
-				+"]}"
-			)
+		,GP_C029(Mod303Key.GP_C029,null,null, (ctx,mod) -> add( Mod303Key.GP_C029, mod, getPendingCompesateAmounts( ctx, mod )),null,null)
 
 		// RESULTADO DE LA AUTOLIQUIDACIÓN	
 		,GP_C035(Mod303Key.GP_C035,null,null,null,"GP_C028-GP_C029",null)
@@ -490,6 +449,87 @@ class Mod303GIPUZKOA2022Declaration extends Mod303GIPUZKOA {
 	private static boolean rectificationDeduccionesFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
 				&& vat.isRectification() && (vat.isPurchase() || vat.isExpenses()); 
+	}
+
+	@Override
+	public Mod303Key[] getCompensationExplainKeys() {
+		return new Mod303Key[] {Mod303Key.GP_C029};
+	}
+	
+	@Override
+	protected String getCompensationExplain( AONContext ctx, Mod303 mod303, Mod303Key key) {
+		StringBuilder buf = new StringBuilder();
+		buf.append("<div style=\"" +
+				  "padding-right: 15px; padding-left: 15px; margin-right: auto; "
+				+ "margin-left: auto; width:100%; display: flex;flex-wrap: wrap; "
+				+ "justify-content: center; box-sizing: border-box"
+				+ "\">")
+			.append("<div style=\"" 
+				+ "border-radius: 4px; background: #fff; box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);"
+				+ "transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);"
+				+ "padding: 4px 5px 5px 10px; margin: 20px 10px 10px 10px; cursor: pointer;"
+				+ "flex: 0 1 40%; min-height: 120px; min-width: 350px;"
+				+ "\">");
+		MutableDouble sum = new MutableDouble();
+		MutableBoolean something = new MutableBoolean(false);
+		buf.append( MessageFormat.format(styledTag, "table cellspacing=\"0\"",  blockCenter+marginTop+border ) )
+			.append("<tr>")
+				.append( MessageFormat.format(styledTag, "td colspan=\"2\"",  textCenter+bold+fontLarger+border) )
+					.append("Casilla " + key.getBoxFormatted())
+				.append("</td>")
+			.append("</tr>");
+		if (mod303 .isFirstPeriod()) {
+			Mod390HFDAO.getLastPeriodEffectiveModels(ctx, mod303)
+				.filter(Mod390HF::isToCompensate)
+				.map(fm -> { 
+					something.setValue(true); 
+					sum.add(fm.getDeclarationResult());
+					return fm;
+				})
+				.forEach( fm -> painTableRow(buf,fm) )
+				;
+		} else {
+			Mod303DAO.getLastPeriodEffectiveModels(ctx, mod303)
+				.filter(Mod303::isToCompensate)
+				.map(fm -> { 
+					something.setValue(true); 
+					sum.add(fm.getDeclarationResult());
+					return fm;
+				})
+				.forEach( fm -> painTableRow(buf,fm) )
+			;
+		}
+		if (something.getValue().booleanValue()) {
+			buf.append("<tr>")
+				.append( MessageFormat.format(styledTag, "td",  bold+fontLarger+border) )
+					.append("Total")
+				.append("</td>")
+				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+fontLarger+border) )
+					.append(DEC2.format(AonMathUtils.round(sum.doubleValue())))
+				.append("</td>")
+			.append("</tr>");
+		} else {
+			buf.append("<tr>")
+				.append( MessageFormat.format(styledTag, "td colspan=\"2\"",  textCenter+fontLarger+border) )
+					.append("No se ha encontrado cantidad a compensar en el modelo anterior.")
+				.append("</td>")
+			.append("</tr>");
+		}
+		buf.append("</div>");
+		buf.append("</div>");
+		return buf.toString();
+	}
+	private <T extends FiscalModel> void painTableRow(StringBuilder buf, T fm) {
+		buf.append("<tr>")
+			.append( MessageFormat.format(styledTag, "td", paddingLeft+border+noWrap) )
+				.append("Resultado de la liquidaci\u00F3n " 
+					+ fm.getModelFullName()
+					+ AonObjectUtils.defaultIfNull(fm.getDeclarationResultType(), t -> " (" + t.getDescription() + ")"))
+			.append("</td>")
+			.append( MessageFormat.format(styledTag, "td", textRight+width150+border) )				
+				.append(DEC2.format(fm.getDeclarationResult()))
+			.append("</td>")
+		.append("</tr>");
 	}
 	
 }

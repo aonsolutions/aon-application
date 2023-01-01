@@ -42,14 +42,12 @@ export class AonMovementsList extends AonElement {
     this._list = [];
     this.id = this.id || PAYROLL_VIEWS.AON_MOVEMENTS_LIST;
     this.TABLE_ID = this.id + "Table";
-    this.applicationEl = this.getApplication();
-    this.applicationParentEl = this.getApplicationParent();
   }
 
   disconnectedCallback() {
-    if (this.applicationEl){
-      this.applicationEl.stopLoader();
-      this.applicationEl.removeFloatOption();
+    if (this.getApplication()){
+      this.getApplication().stopLoader();
+      this.getApplication().removeFloatOption();
     } 
   }
 
@@ -66,21 +64,28 @@ export class AonMovementsList extends AonElement {
   }
 
   buildToobar() {
-    this.applicationEl.removeToolbarOptions();
+    this.getApplication().removeToolbarOptions();
     if (this.isMobile()) {
-      this.applicationEl.addFloatOption(SigninSidenav.ADD, () => this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA) );
+      this.getApplication().addFloatOption(SigninSidenav.ADD, () => this.getApplicationParent().showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA) );
     } else {
-      this.applicationEl.addToolbarOption2(SigninSidenav.ADD, () =>  this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA));
+      this.getApplication().addToolbarOption2(SigninSidenav.ADD, () =>  this.getApplicationParent().showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA));
     }
-    const btnSearch = this.applicationEl.addSearchOption();
 
-    btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => {
-      this.searchFilter = detail;
-      this.search();
-    });
+    let timeOut = null;
 
+    const btnSearch = this.getApplication().addSearchOption();
     btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
-      if(detail) this.getEmployeeForCcc(detail);
+      clearTimeout(timeOut);
+      if(detail){
+        if(detail.event === EVENT.KEYUP){
+          this.searchFilter = detail.search;
+          this.search();
+        } else if(detail.startDate){
+          timeOut = setTimeout(() => {
+            this.getEmployeeForCcc(detail);
+          }, 300);
+        } 
+      }
     });
 
     btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
@@ -96,10 +101,10 @@ export class AonMovementsList extends AonElement {
 
       let name = this.lastSincronizedText( value ? Number(value) : null );
 
-      let aib = this.applicationEl.addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name}, async () =>  {
+      let aib = this.getApplication().addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name}, async () =>  {
         let btn = aib.getButton();
         btn.classList.add(CSS.AON_FA_SPIN);
-        await this.applicationParentEl.updateContracts();
+        await this.getApplicationParent().updateContracts();
         if(aib && btn) {
           aib.getButton().title = aib.title = this.lastSincronizedText(new Date());
           btn.classList.remove(CSS.AON_FA_SPIN);
@@ -141,10 +146,10 @@ export class AonMovementsList extends AonElement {
 
 
   async getTable(){
-    this.applicationEl.startLoader();
+    this.getApplication().startLoader();
     if (this.isMobile()) await this.getTableMobile();
     else await this.getTableDesk();
-    this.applicationEl.stopLoader();
+    this.getApplication().stopLoader();
   }
 
   async getTableDesk() {
@@ -164,7 +169,7 @@ export class AonMovementsList extends AonElement {
           aonTable.removeRows();
           resp.map((res, idx) => {
             res.count = `<b>${idx+1}</b>`;
-            res.option = this.applicationParentEl.getOptions(res);
+            res.option = this.getApplicationParent().getOptions({...res, checkIDC:true});
             aonTable.addRow(res, () => this.aonMovement(res));
           });
         }
@@ -187,7 +192,7 @@ export class AonMovementsList extends AonElement {
                 aonIcon: "aon_seg_social",
                 title: `${res.name}`,
                 subtitle: `${res.status} ${res.fechaParse}`,
-                option: this.applicationParentEl.getOptions(res),
+                option: this.getApplicationParent().getOptions(res),
               },
               idx,() => this.aonMovement(res)
             );
@@ -200,7 +205,7 @@ export class AonMovementsList extends AonElement {
   }
 
   async aonMovement(data) {
-    this.applicationEl.startLoading();
+    this.getApplication().startLoading();
     let newData = undefined;
     if(data.tc || data.contractType){
       newData = this.movParseData(data);
@@ -212,14 +217,14 @@ export class AonMovementsList extends AonElement {
     }
 
     if(newData){
-      const aonAltaDirecta = await this.applicationParentEl.showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, newData);
+      const aonAltaDirecta = await this.getApplicationParent().showView(PAYROLL_VIEWS.AON_ALTA_DIRECTA, newData);
       if (aonAltaDirecta) {
         disabledForm(`${aonAltaDirecta.id}EmpresaCard`);
         disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, AON_SWITCH);
       }
     }
  
-    this.applicationEl.stopLoading();
+    this.getApplication().stopLoading();
   }
 
   movParseData(data){
@@ -233,7 +238,7 @@ export class AonMovementsList extends AonElement {
   setFilter = (filter) => this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
 
   search(){
-    this._list = this.filterSearch(["name", "ipf","ctaCtiCompleta", "fechaParse", "status"], this.applicationParentEl._movements);
+    this._list = this.filterSearch(["name", "ipf","ctaCtiCompleta", "fechaParse", "status"], this.getApplicationParent()._movements);
     this.getTable();
   }
 
@@ -275,7 +280,7 @@ export class AonMovementsList extends AonElement {
     if (prev) {
       color = "#488601";
       tipo_mov = `${tipo_mov} Previa`;
-    } else if (this.applicationParentEl.anularCondition(situation, fra)) {
+    } else if (this.getApplicationParent().anularCondition(situation, fra)) {
       color = "#CB8D00";
       tipo_mov = `${tipo_mov} Consolidada`;
     } else {
@@ -304,11 +309,11 @@ export class AonMovementsList extends AonElement {
       if(this._list.length){
         data = this._list;
       } else {
-        const movements = this.applicationParentEl._movements;
+        const movements = this.getApplicationParent()._movements;
         const resp = movements.length ? movements : await getMovements(this.getFilter());
         data = resp
         .map((res) => this.formatData(res)).sort((a, b) => new Date(b.fra) - new Date(a.fra))
-        this.applicationParentEl._movements = data;
+        this.getApplicationParent()._movements = data;
         if(this.searchFilter) data = this.filterSearch(["name", "ipf","ctaCtiCompleta", "fechaParse", "status"], data);
       }
     } catch (error) {
@@ -321,7 +326,7 @@ export class AonMovementsList extends AonElement {
       }
  
       if(!this.isMobile()){
-        this.applicationParentEl.showView(PAYROLL_VIEWS.AON_CERT);
+        this.getApplicationParent().showView(PAYROLL_VIEWS.AON_CERT);
       }
  
       this.showToast(error);
@@ -330,8 +335,8 @@ export class AonMovementsList extends AonElement {
   }
   
   async getEmployeeForCcc(detail){
-    const parent =  this.applicationParentEl;
-    this.applicationEl.startLoader();
+    const parent =  this.getApplicationParent();
+    this.getApplication().startLoader();
     this.setFilter(detail);
     try {
       let count = 0;
@@ -358,7 +363,7 @@ export class AonMovementsList extends AonElement {
       }
       this.search();
     } catch (error) {console.log(error);}
-    this.applicationEl.stopLoader();
+    this.getApplication().stopLoader();
   }
 
   getPeriodComunica(){

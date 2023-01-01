@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public interface IFiscalModel extends Serializable {
 
@@ -101,8 +102,26 @@ public interface IFiscalModel extends Serializable {
 		return getStatus() == FiscalStatus.CUSTOMER_REJECTED;
 	}
 	
+	public default boolean isGenerateFromYearStart() {
+		return false;
+	}
+	
 	@Deprecated
 	public default boolean isNotFinished() {
 		return isEditable();
 	}
+	
+	public default String getModelFullName() {
+		return AonStringUtils.defaultIfBlank(FiscalModelUtils.getModelName(this),
+				(getModel() != null?getModel().getName():"???") ) 
+			+ " "
+			+ getYear()
+			+ " "
+			+ (getPeriod() != null?getPeriod().getDescription() :"???")
+			+ (isComplementary()?" (C)":"")
+			+ (isReplacement()?" (S)":"")
+			;
+	}
+	
+	
 }

@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.finance.UpdateInvoiceRegistryDocument;
+import net.aonsolutions.db.up2date.fiscal.AlterAlcatrazFinance;
 import net.aonsolutions.db.up2date.payroll.AgreementPaymentsConceptFix;
 import net.aonsolutions.db.up2date.payroll.AlterAgreementPaymentDescription;
 import net.aonsolutions.db.up2date.payroll.AlterContractBonusDescription;
@@ -299,8 +300,11 @@ public class Up2Date {
     		//AlterAgreementPaymentDescription.ALTERAGREEMENTPAYMENTDESCRIPTION,
     		//UpdateInvoiceRegistryDocument.UPDATE_INVOICE_REGISTRY_DOCUMENT,
 
-	    	// Important, not remove
+    		AlterAlcatrazFinance.ALTER_ALCATRAZ_FINANCE,
+	    	
+    		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
+    		
     };
 
     

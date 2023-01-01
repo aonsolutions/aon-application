@@ -56,13 +56,13 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDITParts {
 	
-	//Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
+	//Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
 	
 	private static String URL_BASE = "https://w2.seg-social.es/isincaA/inicio.do";
 	
 	private static String FORMAT_DATE = "dd/MM/yyyy";
 
-	// GET ITs
+	@Deprecated /** use SistemaREDITPart.getIts*/
 	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regime, String ccc, Date from, Date to, Optional<String> nss) throws SegSocialException {
 
@@ -140,6 +140,7 @@ class SistemaREDITParts {
 	}
 	
 	// REGISTER IT START HANDLE EXCEPTIONS
+	@Deprecated /** use SistemaREDITPart.registerItBaja*/
 	public static void registerItBaja(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
@@ -167,6 +168,7 @@ class SistemaREDITParts {
 	}
 	
 	// REGISTER IT CONFIRMATION HANDLE EXCEPTIONS
+	@Deprecated /** use SistemaREDITPart.registerItConfirmation*/
 	public static void registerItConfirmation(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Optional<String> licenseNumber, Optional<String> cias, Date fbaja,
@@ -189,6 +191,7 @@ class SistemaREDITParts {
 	
 
 	// REGISTER IT END HANDLE EXCEPTIONS
+	@Deprecated /** use SistemaREDITPart.registerItAlta*/
 	public static void registerItAlta(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, String naf, SistemaRED.Contingencies contingency,
 			SistemaRED.SituationEmployee situationEmployee, Date fbaja, Date falta, 
@@ -213,6 +216,7 @@ class SistemaREDITParts {
 	}
 	
 	// remove IT
+	@Deprecated /** use SistemaREDITPart.removeIt*/
 	public static void removeIt(InputStream certificateInputStream, String certificatePassword, String certificateType,
 			String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj, Date dateProcess)
 			throws IOException, InterruptedException, SegSocialException {
@@ -609,6 +613,7 @@ class SistemaREDITParts {
 	}
 
 	// report IT
+	@Deprecated /** use SistemaREDITPart.getITReport*/
 	public static byte[] pdfIt(InputStream certificateInputStream, String certificatePassword, String certificateType,
 			String regime, String ccc, String naf, SistemaRED.PartType partType, Date dateBj, Date dateProcess)
 			throws IOException, InterruptedException, SegSocialException {
@@ -705,7 +710,7 @@ class SistemaREDITParts {
 			if(element.isPresent()) {
 				htmlPage = ((HtmlAnchor)element.get()).click();
 			} else {				
-				throw new SegSocialException("Sin permisos para ver esta opci\\u00f3n en TGSS");
+				throw new SegSocialException("Sin permisos para ver esta opci\u00f3n en TGSS");
 			}
 
 			htmlPage = htmlPage.getAnchorByHref("/isincaA/menu.do?opcion=C").click();
@@ -937,6 +942,9 @@ class SistemaREDITParts {
 				if (dtStr.indexOf("N.A.F.:") >= 0) {
 					itPart.setNaf(ddStr);
 				} else if (dtStr.indexOf("C.C.C.:") >= 0) {
+					if(ddStr!=null)  {
+						ddStr = ddStr.substring(4, ddStr.length());
+					}
 					itPart.setCcc(ddStr);
 				} else if (dtStr.indexOf("Fecha de baja:") >= 0) {
 					itPart.setWorkLeaveDate(Toolkit.parseDate(ddStr, FORMAT_DATE));

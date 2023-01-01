@@ -13,7 +13,7 @@ public interface Model390Service extends RemoteService {
 
 	Mod390 getMod390(Occam occam, Integer id) throws AonCoreException;
 	LinkedList<Mod390> getMod390s(Occam occam) throws AonCoreException;
-	Mod390 create(Occam occam, Mod390 mod390) throws AonCoreException;
+//	Mod390 create(Occam occam, Mod390 mod390) throws AonCoreException;
 	Mod390 initialize(Occam occam, int year);
 	Mod390 saveComments(Occam occam, Mod390 mod390);
 	void delete(Occam occam, Mod390 mod390) throws AonCoreException;

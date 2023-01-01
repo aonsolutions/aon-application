@@ -117,5 +117,9 @@ public class ConfirmDialog extends CustomDialog {
 	        }
 	    });
     }
+	                                 
+	public void setRootHeight(String height) {
+		root.setHeight(height);		
+	}
 	
 }

@@ -110,9 +110,10 @@ public class DeliveryCreatorSales extends AbstractDeliveryCreator {
 	private void closeCommunication(AONContext ctx, Integer salesId) {
 		if(salesId!=null) {
 			DataResponse dr = AON.getDataResponse(ctx.getDomainName(),
-					ctx.getDomainId(), ctx.getUser(),
-					com.esferalia.aon.occam.api.model.type.DataResponseSource.INGENET_SALES,
-					f -> f.getSourceIdProperty().eq(salesId));
+					ctx.getDomainId(), ctx.getUser(), f -> 
+						f.getDomainProperty().eq(ctx.getDomainId())
+						.and(f.getSourceProperty().eq(com.esferalia.aon.occam.api.model.type.DataResponseSource.INGENET_SALES.value()))
+						.and(f.getSourceIdProperty().eq(salesId)));
 			
 			DataResponseDetail detail = new DataResponseDetail();
 			detail.setDomain(dr.getDomain());

@@ -28,6 +28,7 @@ class Model303NAVARRA2022 extends Model303Base {
 		paintIdentificationTab(tabPanel);
 		paintDeclarationTab(tabPanel);
 		paintGeneralRegimenTab(tabPanel);
+		showPaymentInfo(getModel());
 		paintAdministrationTab(tabPanel);
 	}
 

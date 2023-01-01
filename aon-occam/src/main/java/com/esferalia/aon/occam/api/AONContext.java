@@ -8,8 +8,11 @@ import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.sql.DataSource;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -28,6 +31,7 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDatabaseUtil;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.mchange.v2.c3p0.DataSources;
 
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
@@ -57,6 +61,19 @@ public class AONContext {
 		
 	}
 	
+	public static class UnpooledCloseableAONContext extends AONContext implements AutoCloseable{
+		
+		public UnpooledCloseableAONContext(Connection connection, Settings settings) {
+			super(DSL.using( connection, settings));
+			super.connection = connection;
+		}
+
+		@Override
+		public void close() {
+			AonDatabaseUtil.closeQuietly(super.connection);
+		}
+		
+	}
 	
 	private static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS=0;";
 	private static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS=1;";
@@ -107,6 +124,26 @@ public class AONContext {
 			return new CloseableAONContext(AonDataSource.getInstance().getConnection(
 					domainName), domainName, domainId, null);
 		} catch (AonConnectionException e) {
+			throw new AonCoreException(e.getMessage(),e);
+		}
+	}
+	
+	public static UnpooledCloseableAONContext getUnpooledAONContext(String schema) {
+		try {
+			ConnectionInfo ci = ConnectionInfo.getDefaultConnectionInfo();
+			Class.forName(ci.getDriverClass(schema));
+			Properties properties = new Properties();
+			properties.setProperty("url", ci.getSchemaUrl(schema));
+			properties.setProperty("user", ci.getUser(schema));
+			properties.setProperty("password", ci.getPassword(schema));
+			properties.setProperty("useSSL", ci.getUseSSL(schema));
+			properties.setProperty("serverTimezone", ci.getTimeZone(schema));
+			DataSource dsUnpooled = DataSources.unpooledDataSource(ci.getSchemaUrl(schema),properties);
+			Settings settings = new Settings();
+			settings.setRenderSchema(false);
+			settings.setParamType( ParamType.INLINED );
+			return new UnpooledCloseableAONContext( dsUnpooled.getConnection(), settings );
+		} catch (AonConnectionException | ClassNotFoundException | SQLException e) {
 			throw new AonCoreException(e.getMessage(),e);
 		}
 	}

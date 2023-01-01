@@ -124,7 +124,7 @@ public class TaskUtils {
 	public static void onNotification(AonApiData api, TaskWorkflow workflow) {
 		Thread newThread = new Thread(() -> {
 			try {
-				Task task = AON_SOLUTIONS.getTaskAndChilds(api.getDomain(), api.getUser(), f-> f.getIdProperty().eq(workflow.getTask()));
+				Task task = AON_SOLUTIONS.getTaskAndChilds(api.getDomain(), new User(), f-> f.getDomainProperty().eq(api.getDomain().getId()).and(f.getIdProperty().eq(workflow.getTask())));
 				switch (workflow.getType()) {
 					case OPEN:
 						TaskNotification.onOpenNotification(api, task, workflow);
@@ -390,7 +390,7 @@ public class TaskUtils {
 	
 	private static void changeStatusTask(AonApiData api, Task task, TaskWorkflow workflow) {
 		Domain domain = task.getDomain();
-		List<Byte> pending = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value());
+		List<Byte> pending = Arrays.asList(TaskStatus.PENDING.value(), TaskStatus.IN_PROGRESS.value() );
 		
 		TaskWorkflowType type = workflow.getType();
 		
@@ -398,7 +398,7 @@ public class TaskUtils {
 		boolean isClose  = type.equals(TaskWorkflowType.CLOSE);//&& task.getStatus().equals(TaskStatus.FINISHED);
 		
 		if(task.isChild() && !isClose){
-			Task parent = AON_SOLUTIONS.getTaskAndChilds(domain, api.getUser(), f-> f.getIdProperty().eq(task.getParent()));
+			Task parent = AON_SOLUTIONS.getTaskAndChilds(domain, new User(),  f-> f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq(task.getParent())) );
 			
 			if(parent!=null && parent.getId()!=null) {
 				

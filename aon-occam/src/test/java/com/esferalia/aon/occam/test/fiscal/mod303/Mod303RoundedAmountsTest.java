@@ -5,11 +5,10 @@ import java.text.MessageFormat;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
-import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
-public class Mod303RoundedAmountsTest extends AbstractOccamTest {
+public class Mod303RoundedAmountsTest extends Mod303AbstractTest {
 	
 	@Test
 	public void testFinalize() {

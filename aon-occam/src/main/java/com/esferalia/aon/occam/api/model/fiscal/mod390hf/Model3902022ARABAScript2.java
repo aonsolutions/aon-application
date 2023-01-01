@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod390hf;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.PRORRATED_MODEL_INVOICE_VAT_BREAKDOWN;
@@ -84,7 +85,7 @@ public enum Model3902022ARABAScript2 implements IModelScript<Mod390Key> {
 		,new KeyTypes[]{KeyTypes.BASE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA},NONE)
 	,DED25 ("Regularizaci\u00F3n aplicaci\u00F3n definitiva de prorrata"
 		,new Mod390Key[]{null			  ,null				,Mod390Key.AR_C115}
-		,new KeyTypes[]{KeyTypes.NONE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA},NONE)
+		,new KeyTypes[]{KeyTypes.NONE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA},COMPUTE_KEY)
 	,DED26 ("Suma de deducciones"
 		,new Mod390Key[]{null			  ,null				,Mod390Key.AR_C113}
 		,new KeyTypes[]{KeyTypes.NONE,KeyTypes.NONE,KeyTypes.DEDUCTIBLE_QUOTA},COMPUTE)

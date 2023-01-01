@@ -43,6 +43,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
@@ -314,6 +315,14 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void checkEmployeesEmails(ArrayList<Integer> salaryIds, AsyncCallback<String> asyncCallback) {
 		enterprisesServiceAsync.checkEmployeesEmails(getCurrentDomainName(), salaryIds, asyncCallback);
+	}
+	
+	public void getSettlePDF(Integer settleId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getSettlePDF(getCurrentDomainName(), getCurrentUser(), settleId, asyncCallback);
+	}
+
+	public void getSalariesPDF(Integer enterpriseId, List<Integer> salaryIds, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getSalariesPDF(getCurrentDomainName(), getCurrentUser(), enterpriseId, salaryIds, asyncCallback);
 	}
 	
 	public void getEnterprisesCCCInfo(long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback) {
@@ -650,6 +659,14 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void deletePayments(List<Integer> paymentIds, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.deletePayments(getCurrentDomainName(), paymentIds, asyncCallback);
+	}
+	
+	public void getContext(AgreementInfo agreementInfo, AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getContext(getCurrentDomainName(), agreementInfo, callback);
+	}
+	
+	public void eval(String expression, AgreementInfo agreementInfo, AsyncCallback<List<Result>> callback) throws IllegalArgumentException {
+		enterprisesServiceAsync.eval(getCurrentDomainName(), expression, agreementInfo, callback);
 	}
 	
 	// ------------------------------------------------ Enterprise (API)

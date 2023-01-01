@@ -8,11 +8,10 @@ import com.esferalia.aon.occam.api.json.VatContextJSON;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
-import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.watson.util.Pair;
 
-public class VatContextJSONTest extends AbstractOccamTest {
+public class VatContextJSONTest extends Mod303AbstractTest {
 	
 	@Test
 	public void vatContextJSONTest( ) {

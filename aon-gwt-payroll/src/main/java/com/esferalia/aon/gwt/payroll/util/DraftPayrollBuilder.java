@@ -11,10 +11,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,13 +31,16 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRES
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.data.IData;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 /**
  * Class containing method/s to print payrolls from a Salary and a SalaryDraft object
@@ -50,7 +56,6 @@ public class DraftPayrollBuilder {
 	@SuppressWarnings("static-access")
 	public static void generatePayroll (OutputStream outputStream, String domainName, ISalary salary) throws CanNotCreatePdfException, SalaryException {
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
-		
 			//ENTERPRISE RELATED DATA
 			{
 				dpb.setCcc(salary.getCcc());
@@ -177,16 +182,31 @@ public class DraftPayrollBuilder {
 				deductions.stream().filter(p -> p != null).filter(p -> p.getType() != null).sorted(Comparator.comparing(d -> d.getType().getName(new Locale("es")))).forEach(d -> {
 					Double percent = null;
 					
-		
-				
-					try {
-						if(d.getDescription() != null) {
-							String desc = d.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1");
-							System.out.println( d.getName() + " : " + d.getDescription());
-							percent = Double.parseDouble(desc);
-						}
-					} catch (NumberFormatException ignored) {
+					String dataName = "PORCENTAJE_" + d.getName();
 					
+					if (AonStringUtils.containsIgnoreCase(d.getName(), "fogasa")) {
+						dataName = "PORCENTAJE_FOGASA";
+					}
+					
+					try {
+						List<IData> percentList = salary.getDataS().getOrDefault(dataName, Collections.emptyList());
+						
+						if (percentList.size() > 0 && percentList.get(0) != null) {
+							IData percentData = percentList.get(0);
+							if (percentData.getValue() != null) {
+								percent = AonNumberUtils.toDouble(percentData.getValue());
+							}
+						} else {
+							try {
+								if(d.getDescription() != null) {
+									String desc = d.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1");
+									percent = Double.parseDouble(desc);
+								}
+							} catch (NumberFormatException ignored) {
+							}
+						}
+						
+					} catch (Exception e) {
 					}
 					
 					int type = getDeductionPDFType(d.getType().ordinal());
@@ -287,6 +307,7 @@ public class DraftPayrollBuilder {
 				cbb.setIrpfEsp(Optional.ofNullable(salary.getInKindIrpfBase()));
 				cbb.setTotal(Optional.ofNullable(salary.getTotalEnterprise()));
 				
+				Double common_cont_ap_enterprise_percent = 0d;
 				Double common_cont_ap_enterprise = 0d;
 				Double at_ep_ap_enterprise = 0d;
 				Double unemployment_ap_enterprise = 0d;
@@ -297,11 +318,36 @@ public class DraftPayrollBuilder {
 				
 				double atEp[] = new double[] {-1,-1};
 				
+//				for (Entry<String, List<IData>> ent : salary.getDataS().entrySet()) {
+//					if (AonStringUtils.containsIgnoreCase(ent.getKey(), "porcentaje")) {
+//						System.out.println("|||||" + ent.getKey());
+//						try {
+//							System.out.println("\t" + ent.getValue().get(0).getValue());
+//						} catch (NullPointerException e) {}
+//					}
+//				}
+				
 				for (IDeduction c : costs) {
 					
 					Double percentD = null;
 					try {
-						percentD = Double.parseDouble(c.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1"));
+						
+						String dataName = "PORCENTAJE_" + c.getName();
+						
+						if (AonStringUtils.containsIgnoreCase(c.getName(), "fogasa")) {
+							dataName = "PORCENTAJE_FOGASA";
+						}
+						
+						List<IData> percentList = salary.getDataS().getOrDefault(dataName, Collections.emptyList());
+						if (percentList.size() > 0 && percentList.get(0) != null) {
+							IData percentData = percentList.get(0);
+							if (percentData.getValue() != null) {
+								percentD = AonNumberUtils.toDouble(percentData.getValue());
+							}
+						} else {							
+							percentD = Double.parseDouble(c.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1"));
+						}
+						
 					} catch (Exception e) {
 
 					}
@@ -310,7 +356,7 @@ public class DraftPayrollBuilder {
 					 
 					if (c.getName().equals("CGC_E")) {
 						common_cont_ap_enterprise += c.getAmount();
-						cbb.setCommonContType(percent);
+						setPercent(percent, common_cont_ap_enterprise, salary.getCommonBase(), (p) -> cbb.setCommonContType(p));
 					}
 					else if (c.getName().equals("IMS_E")) {
 						at_ep_ap_enterprise += c.getAmount();   
@@ -318,20 +364,48 @@ public class DraftPayrollBuilder {
 						if(percentD != null)
 							atEp[0] = percentD; 
 						
+						String dataName = "TARIFA_IMS";
+						
+						List<IData> percentList = salary.getDataS().getOrDefault(dataName, Collections.emptyList());
+						if (percentList.size() > 0 && percentList.get(0) != null) {
+							IData percentData = percentList.get(0);
+							if (percentData.getValue() != null) {
+								percentD = AonNumberUtils.toDouble(percentData.getValue());
+								common_cont_ap_enterprise_percent += percentD;
+								percent = Optional.ofNullable(common_cont_ap_enterprise_percent);
+							}
+						}
+						
+						
+						setPercent(percent, at_ep_ap_enterprise, salary.getProfessionalBase(), (p) -> cbb.setAtEpType(p));
 					}
 					else if(c.getName().equals("IT_E")) {
 						at_ep_ap_enterprise += c.getAmount();
 						
 						if(percentD != null)
-							atEp[1] = percentD;					
+							atEp[1] = percentD;
+						
+						String dataName = "TARIFA_IT";
+						
+						List<IData> percentList = salary.getDataS().getOrDefault(dataName, Collections.emptyList());
+						if (percentList.size() > 0 && percentList.get(0) != null) {
+							IData percentData = percentList.get(0);
+							if (percentData.getValue() != null) {
+								percentD = AonNumberUtils.toDouble(percentData.getValue());
+								common_cont_ap_enterprise_percent += percentD;
+								percent = Optional.ofNullable(common_cont_ap_enterprise_percent);
+							}
+						}
+						
+						setPercent(percent, at_ep_ap_enterprise, salary.getProfessionalBase(), (p) -> cbb.setAtEpType(p));
 					}
 					else if (c.getName().equals("DESMPL_E")) {
 						unemployment_ap_enterprise += c.getAmount();
-						cbb.setUnemploymentType(percent);
+						setPercent(percent, unemployment_ap_enterprise, salary.getProfessionalBase(), (p) -> cbb.setUnemploymentType(p));
 					}
 					else if (c.getName().equals("FP_E")) {
 						profes_form_ap_enterprise += c.getAmount();
-						cbb.setProfesFormType(percent);
+						setPercent(percent, profes_form_ap_enterprise, salary.getProfessionalBase(), (p) -> cbb.setProfesFormType(p));
 					}
 					else if (c.getName().equals("FOGASA_E")) { 
 						fogasa_ap_enterprise += c.getAmount();
@@ -344,20 +418,20 @@ public class DraftPayrollBuilder {
 								professionalBase = 1;
 								
 							double value = fogasa_ap_enterprise / professionalBase * 100;
-							percent = Optional.of(value);		
-							
+							percent = Optional.of(value);
+							cbb.setFogasaType(percent);
+						} else {
+							setPercent(percent, fogasa_ap_enterprise, salary.getProfessionalBase(), (p) -> cbb.setFogasaType(p));
 						}
 						
-						cbb.setFogasaType(percent);
 					}
 					else if (c.getName().equals("EXTR_E")) {
 						force_majeure_ap_enterprise += c.getAmount();
-						cbb.setForceMajeureType(percent);
-					
+						setPercent(percent, force_majeure_ap_enterprise, salary.getOvertimeBase(), (p) -> cbb.setForceMajeureType(p));						
 					}
 					else if (c.getName().equals("NEXTR_E")) {
 						no_struct_ap_enterprise += c.getAmount();
-						cbb.setNoStructType(percent);
+						setPercent(percent, no_struct_ap_enterprise, salary.getNonEstructuralOvertimeBase(), (p) -> cbb.setNoStructType(p));
 					}					
 				}
 				
@@ -384,8 +458,22 @@ public class DraftPayrollBuilder {
 			dpt.print(outputStream);
 	}
 	
+	@FunctionalInterface
+	private interface SetPercentCallback {
+		void setPercent(Optional<Double> percent);
+	}
 	
-	
+	private static void setPercent(Optional<Double> percent, Double amount, Double base, SetPercentCallback callback) {
+		if (percent.isPresent() && AonNumberUtils.zeroIfNull(percent.get()) != 0) {
+			callback.setPercent(percent);
+		} /*else {
+			double cost = AonNumberUtils.zeroIfNull(amount);
+			double safeBase = AonNumberUtils.zeroIfNull(base);
+			if (safeBase != 0) {
+				callback.setPercent(Optional.ofNullable(cost / safeBase * 100));
+			}
+		}*/
+	}
 
 	private static boolean filter (IPayment payment) {
 		return !(payment.getAmount() == 0 && !AonStringUtils.equalsIgnoreCase(payment.getName(), ContextVariable.PREST_IT));

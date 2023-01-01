@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AonDisplayGrid extends FlowPanel {
@@ -154,4 +155,15 @@ public class AonDisplayGrid extends FlowPanel {
 		return row;
 	}
 	
+	public AonDisplayGrid addLabelWidgetRow(String label, Widget widget) {
+		return addLabelWidgetRow(new Label(label), widget);	
+	}
+
+	public AonDisplayGrid addLabelWidgetRow(Widget label, Widget widget) {
+		AonDisplayGridRow row = new AonDisplayGridRow();
+		add(row);
+		row.addCell(label, AON.CSS.aonWidth200());
+		row.addCell(widget);
+		return this;
+	}
 }

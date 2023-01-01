@@ -57,7 +57,6 @@ public class ITStatusUtils {
 			  
 			for ( CCCInfo ccc: cccs ) {
 				try {
-					
 					Thread threadOne = new Thread(() -> {
 						employeeITStatus.and( compareComun(domain, certificate, startDate, endDate, ccc) );
 					});
@@ -107,6 +106,7 @@ public class ITStatusUtils {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+			return new EnterpriseITStatus.unknownErrorAnd().setMessage(e.getMessage());
 		}
 		return employeeITStatus;
 	}

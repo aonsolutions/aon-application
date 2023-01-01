@@ -43,6 +43,7 @@ import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.MainCCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Peculiarities;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SSBonusData;
 import com.esferalia.aon.gwt.payroll.shared.SSPECData;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
@@ -189,6 +190,10 @@ public interface EnterprisesService extends RemoteService {
 			String cc, String cco, String bodyHTML);
 
 	String checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds);
+	
+	String getSettlePDF(String currentDomainName, String user, Integer settleId) throws IllegalArgumentException;
+	
+	String getSalariesPDF(String currentDomainName, String currentUser, Integer enterpriseId, List<Integer> salaryIds) throws IllegalArgumentException;
 
 	String checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList);
 
@@ -374,6 +379,10 @@ public interface EnterprisesService extends RemoteService {
 
 	void deletePayments(String currentDomainName, List<Integer> paymentIds) throws IllegalArgumentException;
 	
+	ContextDescriptor getContext(String currentDomainName, AgreementInfo agreementInfo) throws IllegalArgumentException;
+	
+	List<Result> eval(String currentDomainName, String expression, AgreementInfo agreementInfo) throws IllegalArgumentException;
+
 	// --------------------------- Enterprise (API)
 	
 	com.esferalia.aon.occam.api.model.payroll.Enterprise getEnterprise(String currentDomainName, String user, Integer id) throws IllegalArgumentException;
@@ -399,5 +408,5 @@ public interface EnterprisesService extends RemoteService {
 	void saveMod145(String currentDomainName, String currentUser, Mod145 mod145) throws IllegalArgumentException;
 
 	String printMod145(String currentDomainName, String currentUser, Mod145 mod145) throws IllegalArgumentException;
-	
+
 }

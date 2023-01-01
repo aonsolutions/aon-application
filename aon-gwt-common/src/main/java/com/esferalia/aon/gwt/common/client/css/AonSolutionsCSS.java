@@ -613,9 +613,15 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_width_20")
 	String aonWidth20();
 
+	@ClassName("aon_width_30")
+	String aonWidth30();
+
 	@ClassName("aon_width_40")
 	String aonWidth40();
 	
+	@ClassName("aon_width_60")
+	String aonWidth60();
+
 	@ClassName("aon_width_80")
 	String aonWidth80();
 
@@ -784,6 +790,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_border")
 	String aonBorder();
 
+	@ClassName("aon_border_collapse")
+	String aonBorderCollapse();
+
 	@ClassName("aon_border_right")
 	String aonBorderRight();
 
@@ -814,6 +823,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_color_royalblue")
 	String aonColorBlue();
 	
+	@ClassName("aon_color_black")
+	String aonColorBlack();
+
 	@ClassName("aon_color_orange")
 	String aonColorOrange();
 

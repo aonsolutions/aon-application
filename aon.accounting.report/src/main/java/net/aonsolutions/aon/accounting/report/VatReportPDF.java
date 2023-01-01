@@ -1,6 +1,7 @@
 package net.aonsolutions.aon.accounting.report;
 
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.function.Consumer;
@@ -11,6 +12,7 @@ import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.ReportMetadata;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -29,16 +31,20 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class VatReportPDF {
 
 	private static final DecimalFormat FMT = new DecimalFormat("#,##0.00;(#,##0.00)");
-	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
-	private static Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 7);
-	private static Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 7, Font.BOLD);
+	private static final Font BODY_FONT = new Font(Font.FontFamily.HELVETICA, 7);
+	private static final Font BODY_FONT_BOLD = new Font(Font.FontFamily.HELVETICA, 7, Font.BOLD);
+	
+	private final DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
 	public void printReport(OutputStream outputStream, AccountingReportParams params) throws DocumentException {
 		
 		String domainName = params.getDomainName();
 		String user = params.getUser();
 		int domainId = params.getDomain();
-		
+		Occam occam = new Occam()
+			.setDomain(domainId)
+			.setDomainName(domainName)
+			.setUser(user);
 		AonConfiguration config = AON.getConfiguration(domainName, domainId, user);
 		Company company = config.getCompany();
 		String companyName = company == null ? "" : company.getName();
@@ -88,10 +94,11 @@ public class VatReportPDF {
 
 		table.setHeaderRows(1);
 	    
-		Stream<VatContext> stream = FISCAL.getVatContext(domainName, domainId, user, params);
+		Stream<VatContext> stream = FISCAL.getVatContext(occam, params);
 		stream.forEach(action);
+		action.paintTotals();
 		stream.close();
-	    
+		
 		document.add(table);
 		document.close();
 	}
@@ -111,15 +118,15 @@ public class VatReportPDF {
 	}
 
 	private String toString(AccountingReportParams params) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (params.getFromDate() != null) {
 			buf.append(" (Desde:");
-			buf.append(DATE_FORMATTER.format(params.getFromDate()));
+			buf.append(dateFormatter.format(params.getFromDate()));
 			buf.append(")");
 		}
 		if (params.getToDate() != null) {
 			buf.append(" (Hasta:");
-			buf.append(DATE_FORMATTER.format(params.getToDate()));
+			buf.append(dateFormatter.format(params.getToDate()));
 			buf.append(")");
 		}
 		if (params.getRegistry() != null) {
@@ -133,7 +140,7 @@ public class VatReportPDF {
 			buf.append(")");
 		}
 		if (params.getOutput() != null) {
-			buf.append(params.getOutput() ? " (Emitidas)" : " (Recibidas)");
+			buf.append(params.getOutput().booleanValue() ? " (Emitidas)" : " (Recibidas)");
 		}
 		if (params.getVatSummaryType() != null) {
 			buf.append(" (");
@@ -146,20 +153,20 @@ public class VatReportPDF {
 			buf.append(")");
 		}
 		if (params.getSurcharge() != null) {
-			buf.append(params.getSurcharge() ? " (Rec.Equiv. SI)" : " (Rec.Equiv. NO)");
+			buf.append(params.getSurcharge().booleanValue() ? " (Rec.Equiv. SI)" : " (Rec.Equiv. NO)");
 		}
 
 		if (params.getFarmerRegime() != null) {
-			buf.append(params.getFarmerRegime() ? " (Reg.Agric. SI)" : " (Reg.Agric. NO)");
+			buf.append(params.getFarmerRegime().booleanValue() ? " (Reg.Agric. SI)" : " (Reg.Agric. NO)");
 		}
 		if (params.getAccrualRegime() != null) {
-			buf.append(params.getAccrualRegime() ? " (Crit.Caja. SI)" : " (Crit.Caja. NO)");
+			buf.append(params.getAccrualRegime().booleanValue() ? " (Crit.Caja. SI)" : " (Crit.Caja. NO)");
 		}
 		if (params.getInvestment() != null) {
-			buf.append(params.getInvestment() ? " (Bien Inv.)" : " (Bien Corr.)");
+			buf.append(params.getInvestment().booleanValue() ? " (Bien Inv.)" : " (Bien Corr.)");
 		}
 		if (params.getService() != null) {
-			buf.append(params.getService() ? " (Serv. SI)" : " (Serv. NO)");
+			buf.append(params.getService().booleanValue() ? " (Serv. SI)" : " (Serv. NO)");
 		}
 		return buf.length() > 0 ? buf.insert(0, "Filtro:").toString() : "";
 	}
@@ -168,6 +175,10 @@ public class VatReportPDF {
 
 		private PdfPTable table;
 		private Integer oldId;
+		
+		private double sumBase;
+		private double sumQuota;
+		private double sumSurcharge;
 		
 		public PDFAction(PdfPTable table) {
 			this.table = table;
@@ -184,10 +195,10 @@ public class VatReportPDF {
 				table.addCell(getBodyCell( vat.isInput()?"S":"R"));
 				table.addCell(getBodyCell( vat.isService()?"X":""));
 				table.addCell(getBodyCell( vat.isInvestment()?"X":""));
-				table.addCell(getBodyCell(DATE_FORMATTER.format(vat.getTaxDate())) );
+				table.addCell(getBodyCell(dateFormatter.format(vat.getTaxDate())) );
 				table.addCell(getBodyCell(vat.getDocumentNumber()));
 				table.addCell(getBodyCell(vat.getReferenceCode()));
-				table.addCell(getBodyCell(DATE_FORMATTER.format(vat.getIssueDate())) );
+				table.addCell(getBodyCell(dateFormatter.format(vat.getIssueDate())) );
 				table.addCell(getBodyCell(vat.getRegistryDocument()));
 				table.addCell(getBodyCell(vat.getRegistryName()));			
 			} else {
@@ -205,7 +216,40 @@ public class VatReportPDF {
 			table.addCell(getBodyCell(FMT.format(vat.getPercentage()) + "%",Element.ALIGN_RIGHT));			
 			table.addCell(getBodyCell(FMT.format(vat.getQuota()),Element.ALIGN_RIGHT));
 			table.addCell(getBodyCell(AonMathUtils.isZero(vat.getSurchargePercent())?"":FMT.format(vat.getSurchargePercent()) + "%",Element.ALIGN_RIGHT));			
-			table.addCell(getBodyCell(AonMathUtils.isZero(vat.getSurchargeQuota())?"":FMT.format(vat.getSurchargeQuota()),Element.ALIGN_RIGHT));			
+			table.addCell(getBodyCell(AonMathUtils.isZero(vat.getSurchargeQuota())?"":FMT.format(vat.getSurchargeQuota()),Element.ALIGN_RIGHT));
+			
+			
+			sumBase += vat.getBase(); 
+			sumQuota += vat.getQuota();
+			sumSurcharge += vat.getSurchargeQuota();
+
+		}
+		
+		private void paintTotals() {
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getTotalCell(FMT.format(sumBase),Element.ALIGN_RIGHT));			
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getTotalCell(FMT.format(sumQuota),Element.ALIGN_RIGHT));
+			table.addCell(getBodyCell(AonStringUtils.SPACE));
+			table.addCell(getTotalCell(FMT.format(sumSurcharge),Element.ALIGN_RIGHT));
+		}
+
+		private PdfPCell getTotalCell(String text, int align) {
+			Paragraph headerParagrph = new Paragraph(8,text,BODY_FONT_BOLD);
+			headerParagrph.setAlignment( align );
+			PdfPCell headerCell = new PdfPCell();
+			headerCell.setBorder(0);
+			headerCell.setBorderWidthTop(1);
+			headerCell.addElement(headerParagrph);
+			return headerCell;
 		}
 		
 		private PdfPCell getBodyCell(String t) {

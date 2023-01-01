@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod390hf;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
@@ -16,7 +15,7 @@ public enum Model3902017GIPUZKOAResultScript implements IModelScript<Mod390Key> 
 	,R003 (Mod390Key.GP_C032.getDescription(),new Mod390Key[]{Mod390Key.GP_C032},NONE)
 	,R004 (Mod390Key.GP_C033.getDescription(),new Mod390Key[]{Mod390Key.GP_C033},NONE)
 	,R005 (Mod390Key.GP_C034.getDescription(),new Mod390Key[]{Mod390Key.GP_C034},NONE)
-	,R006 (Mod390Key.GP_C035.getDescription(),new Mod390Key[]{Mod390Key.GP_C035},COMPUTE_KEY)
+	,R006 (Mod390Key.GP_C035.getDescription(),new Mod390Key[]{Mod390Key.GP_C035},NONE)
 	
 	,R007 (Mod390Key.GP_C036.getDescription(),new Mod390Key[]{Mod390Key.GP_C036},COMPUTE)
 	,R008 (Mod390Key.GP_C037.getDescription(),new Mod390Key[]{Mod390Key.GP_C037},NONE)

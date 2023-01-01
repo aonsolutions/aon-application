@@ -3,7 +3,6 @@ package solutions.aon.sepe;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -56,7 +55,7 @@ import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Contrata {
 
-	// Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
+	// Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
 
 	private static final String MESSAGE_ERROR  = "Error no aceptada la comunicaci\u00f3n";
 	private static final String FORMAT_DATE_ES = "dd/MM/yyyy";
@@ -148,7 +147,7 @@ public class Contrata {
 					endDate, sepeId);
 		} catch (FailingHttpStatusCodeException e) {
 			throw new SepeException(e);
-		} catch (MalformedURLException | InterruptedException e) {
+		} catch (InterruptedException e) {
 			throw new SepeException(e);
 		} catch (IOException e) {
 			throw new CertificateNotFoundException();
@@ -330,7 +329,7 @@ public class Contrata {
 
 	private static String sendContrataImpl(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, Contract cto) throws SepeException, FailingHttpStatusCodeException,
-			InterruptedException, MalformedURLException, IOException {
+			InterruptedException, IOException {
 
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -1022,8 +1021,7 @@ public class Contrata {
 
 	private static Contract getTransformationDataImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, String cif,
-			Date oldDateIniContract, Optional<String> sepeId) throws FailingHttpStatusCodeException,
-			MalformedURLException, IOException, InterruptedException, SepeException {
+			Date oldDateIniContract, Optional<String> sepeId) throws FailingHttpStatusCodeException, IOException, InterruptedException, SepeException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
@@ -1243,46 +1241,36 @@ public class Contrata {
 			form.getInputByName("annofinpro").setValueAttribute(endDate[2]);
 
 			DomNode discontinuidad = form.querySelector("[name=\"discontinuidad\"]");
-			if (discontinuidad != null && contractExtension.getDiscontinuo()) {
+			if (discontinuidad != null && contractExtension.isDiscontinuo()) {
 				((HtmlSelect) discontinuidad).setSelectedAttribute("S", true);
 			}
 
 			form.getInputByName("idprorroga").setValueAttribute(ide1 + "-" + ide2 + "-" + ide3);
+			
+			checkContractExist(htmlPage);
 
-			Optional<String> exist = htmlPage.querySelectorAll("form[name=\"datos\"] fieldset div[class*=titulo]")
-					.stream()
-					.filter(e -> !e.getTextContent().isEmpty()
-							&& e.getTextContent().trim().toLowerCase().contains("ya se ha comunicado"))
-					.map(e -> e.getTextContent().trim()).findFirst();
+			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("[name=\"enviar\"]")).click();
+			handleSepeAlert(alertHandler.getCollectedAlerts());
+			
+			String message = null;
 
-			String messageError = MESSAGE_ERROR;
-
-			if (exist.isEmpty()) {
-				
-				htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("[name=\"enviar\"]")).click();
-				handleSepeAlert(alertHandler.getCollectedAlerts());
-				
-				String message = null;
-
-				for (int i = 0; i < 2; i++) {
-					message = getSuccessMessage(htmlPage);
-					if (message == null || (message != null && message.indexOf("E") >= 0)) {
-						break;
-					} else if (message.contains(RETURN_INIT)) {
-						htmlPage = sepeReturnInitContractExtension(htmlPage, contractExtension);
-					}
+			for (int i = 0; i < 2; i++) {
+				message = getSuccessMessage(htmlPage);
+				if (message == null || (message != null && message.indexOf("E") >= 0)) {
+					break;
+				} else if (message.contains(RETURN_INIT)) {
+					htmlPage = sepeReturnInitContractExtension(htmlPage, contractExtension);
 				}
-
-				if (message != null && message.indexOf("E") >= 0) {
-					return message.substring(1);
-				} else {
-					handleSepeExceptions(htmlPage);
-				}
-			} else {
-				messageError = exist.get();
 			}
 
-			throw new SepeException(messageError);
+			if (message != null && message.indexOf("E") >= 0) {
+				return message.substring(1);
+			} else {
+				handleSepeExceptions(htmlPage);
+			}
+		
+
+			throw new SepeException(MESSAGE_ERROR);
 		}
 	}
 
@@ -1350,28 +1338,18 @@ public class Contrata {
 			if (areadeTexto != null && copyBasic.getRestContract() != null) {
 				((HtmlTextArea) areadeTexto).setText(copyBasic.getRestContract());
 			}
+			
+			checkContractExist(htmlPage);
 
-			Optional<String> exist = htmlPage.querySelectorAll("form[name=\"datos\"] fieldset div[class*=titulo]")
-					.stream()
-					.filter(e -> !e.getTextContent().isEmpty()
-							&& e.getTextContent().trim().toLowerCase().contains("ya se ha comunicado"))
-					.map(e -> e.getTextContent().trim()).findFirst();
+			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=enviar]")).click();
+			handleSepeExceptions(htmlPage);
 
-			String messageError = MESSAGE_ERROR;
-
-			if (exist.isEmpty()) {
-				htmlPage = ((HtmlSubmitInput) form.querySelector("[name=enviar]")).click();
-				handleSepeExceptions(htmlPage);
-
-				String message = getSuccessMessage(htmlPage);
-				if (message != null && message.contains("se ha realizado correctamente")) {
-					return message;
-				}
-			} else {
-				messageError = exist.get();
+			String message = getSuccessMessage(htmlPage);
+			if (message != null && message.contains("se ha realizado correctamente")) {
+				return message;
 			}
 
-			throw new SepeException(messageError);
+			throw new SepeException(MESSAGE_ERROR);
 		}
 	}
 
@@ -1450,34 +1428,24 @@ public class Contrata {
 			if (areadeTexto != null && copyBasic.getRestContract() != null) {
 				((HtmlTextArea) areadeTexto).setText(copyBasic.getRestContract());
 			}
+			
+			checkContractExist(htmlPage);
 
-			Optional<String> exist = htmlPage.querySelectorAll("form[name=\"datos\"] fieldset div[class*=titulo]")
-					.stream()
-					.filter(e -> !e.getTextContent().isEmpty()
-							&& e.getTextContent().trim().toLowerCase().contains("ya se ha comunicado"))
-					.map(e -> e.getTextContent().trim()).findFirst();
+			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=enviar]")).click();
+			handleSepeExceptions(htmlPage);
 
-			String messageError = MESSAGE_ERROR;
-
-			if (exist.isEmpty()) {
-				htmlPage = ((HtmlSubmitInput) form.querySelector("[name=enviar]")).click();
-				handleSepeExceptions(htmlPage);
-
-				String message = getSuccessMessage(htmlPage);
-				if (message != null && message.contains("se ha realizado correctamente")) {
-					return message;
-				}
-			} else {
-				messageError = exist.get();
+			String message = getSuccessMessage(htmlPage);
+			if (message != null && message.contains("se ha realizado correctamente")) {
+				return message;
 			}
-
-			throw new SepeException(messageError);
+		
+			throw new SepeException(MESSAGE_ERROR);
 		}
 	}
 
 	private static byte[] getContratoPdfImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, Date startDate, Date endDate, Optional<String> sepeId)
-			throws FailingHttpStatusCodeException, MalformedURLException, IOException, InterruptedException,
+			throws FailingHttpStatusCodeException, IOException, InterruptedException,
 			SepeException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -1538,7 +1506,7 @@ public class Contrata {
 
 	private static byte[] getCopyBasicPdfImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, Date startDate, Date endDate,
-			Optional<String> sepeId) throws FailingHttpStatusCodeException, MalformedURLException, IOException,
+			Optional<String> sepeId) throws FailingHttpStatusCodeException, IOException,
 			InterruptedException, SepeException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -1612,7 +1580,7 @@ public class Contrata {
 
 	private static byte[] getTransformationCopyBasicPdfImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, String cif, Date startDate,
-			Optional<String> sepeId) throws FailingHttpStatusCodeException, MalformedURLException, IOException,
+			Optional<String> sepeId) throws FailingHttpStatusCodeException, IOException,
 			InterruptedException, SepeException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -1662,10 +1630,11 @@ public class Contrata {
 				if (cifValue != null && cifValue.isEmpty()) {
 					String cifTypeStr = Toolkit.getIdentityType(cif);
 					Integer cifType = 0;
-					if (cifTypeStr.equals("1"))
+					if (cifTypeStr.equals("1")) {						
 						cifType = 1;
-					else if (cifTypeStr.equals("6"))
+					} else if (cifTypeStr.equals("6")) {						
 						cifType = 2;
+					}
 
 					HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipodocumentoaux]>option")
 							.get(cifType);// " " cif, "D" NIF, "E" NIE
@@ -1709,8 +1678,7 @@ public class Contrata {
 	}
 
 	private static void removeContrataImpl(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String ide) throws SepeException, FailingHttpStatusCodeException,
-			MalformedURLException, IOException, ElementNotFoundException, InterruptedException {
+			final String certificateType, String ide) throws SepeException, FailingHttpStatusCodeException, IOException, ElementNotFoundException, InterruptedException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
@@ -1727,13 +1695,13 @@ public class Contrata {
 			if (message != null && message.contains("se ha realizado correctamente")) {
 				System.out.println(message);
 			} else
-				throw new SepeException("no se ha realizado");
+				throw new SepeException(MESSAGE_ERROR);
 		}
 	}
 
 	private static void removeTransformationImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ide)
-			throws SepeException, FailingHttpStatusCodeException, MalformedURLException, IOException,
+			throws SepeException, FailingHttpStatusCodeException, IOException,
 			ElementNotFoundException, InterruptedException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -1749,14 +1717,14 @@ public class Contrata {
 			if (message != null && message.contains("se ha realizado correctamente")) {
 				System.out.println(message);
 			} else {
-				throw new SepeException("no se ha realizado");
+				throw new SepeException(MESSAGE_ERROR);
 			}
 		}
 	}
 
 	private static void removeContractExtensionImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ide)
-			throws SepeException, FailingHttpStatusCodeException, MalformedURLException, IOException,
+			throws SepeException, FailingHttpStatusCodeException, IOException,
 			ElementNotFoundException, InterruptedException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -1772,7 +1740,7 @@ public class Contrata {
 			if (message != null && message.contains("se ha realizado correctamente")) {
 				System.out.println(message);
 			} else {
-				throw new SepeException("no se ha realizado");
+				throw new SepeException(MESSAGE_ERROR);
 			}
 		}
 	}
@@ -1982,7 +1950,7 @@ public class Contrata {
 
 	private static byte[] getTransformationPdfImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, String cif, Date startDate,
-			Optional<String> sepeId) throws FailingHttpStatusCodeException, MalformedURLException, IOException,
+			Optional<String> sepeId) throws FailingHttpStatusCodeException, IOException,
 			SepeException, InterruptedException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
@@ -2022,8 +1990,7 @@ public class Contrata {
 
 	private static byte[] getContractExtensionPdfImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, String cif,
-			Date oldDateIniContract, Integer nprorroga, Optional<String> sepeId) throws FailingHttpStatusCodeException,
-			MalformedURLException, IOException, SepeException, InterruptedException {
+			Date oldDateIniContract, Integer nprorroga, Optional<String> sepeId) throws FailingHttpStatusCodeException, IOException, SepeException, InterruptedException {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
@@ -2081,7 +2048,7 @@ public class Contrata {
 	}
 
 	private static HtmlPage getFirstPageSepeContrata(WebClient webClient)
-			throws FailingHttpStatusCodeException, MalformedURLException, IOException, SepeException {
+			throws FailingHttpStatusCodeException, IOException, SepeException {
 		webClient.getOptions().setJavaScriptEnabled(true);
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
 		webClient.setJavaScriptErrorListener(HtmlUnitToolkit.jascriptFunctionExceptionError());
@@ -2152,8 +2119,8 @@ public class Contrata {
 				String pLowerCase = pStr.toLowerCase();
 				if (pLowerCase.contains("identificador de la")) {
 					String[] parts = pStr.split(":");
-					if (parts.length > 0) {
-						msg = Toolkit.noSpaces(parts[1].trim().replace("-", ""));
+					if (parts.length>0) {
+						msg = Toolkit.noSpaces( (parts.length > 1 ? parts[1] : parts[0]).trim().replace("-", "") );
 					}
 					b = true;
 				} else if (pLowerCase.contains("se ha realizado correctamente")) {
@@ -2224,7 +2191,7 @@ public class Contrata {
 		}
 		
 		DomNode discontinuidad = form.querySelector("[name=\"discontinuidad\"]");
-		if (discontinuidad != null && contractExtension.getDiscontinuo()) {
+		if (discontinuidad != null && contractExtension.isDiscontinuo()) {
 			((HtmlSelect) discontinuidad).setSelectedAttribute("S", true);
 		}
 		
@@ -2285,8 +2252,7 @@ public class Contrata {
 		}
 	}
 
-	private static void validateCertExpired(InputStream certificateInputStream, String certificatePassword)
-			throws Exception {
+	private static void validateCertExpired(InputStream certificateInputStream, String certificatePassword) throws Exception {
 		KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
 		keystore.load(certificateInputStream, certificatePassword.toCharArray());
 		Enumeration<?> aliases = keystore.aliases();
@@ -2301,6 +2267,18 @@ public class Contrata {
 			expiryDate = ((X509Certificate) keystore.getCertificate(alias)).getNotAfter();
 			if (expiryDate.compareTo(cal.getTime()) < 0)
 				throw new Exception("El certificado ha expirado");
+		}
+	}
+	
+	private static void checkContractExist(HtmlPage htmlPage) throws SepeException {
+		Optional<String> exist = htmlPage.querySelectorAll("form[name=\"datos\"] fieldset div[class*=titulo]")
+		.stream()
+		.filter(e -> !e.getTextContent().isEmpty() && e.getTextContent().trim().toLowerCase().contains("ya se ha comunicado"))
+		.map(e -> e.getTextContent().trim())
+		.findFirst();
+	
+		if(exist.isPresent()) {
+			throw new SepeException(exist.get());
 		}
 	}
 	
