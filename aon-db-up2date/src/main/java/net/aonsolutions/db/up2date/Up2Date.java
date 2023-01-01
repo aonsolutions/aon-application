@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.finance.UpdateInvoiceRegistryDocument;
 import net.aonsolutions.db.up2date.fiscal.AlterAlcatrazFinance;
+import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2023Insert;
 import net.aonsolutions.db.up2date.payroll.AgreementPaymentsConceptFix;
 import net.aonsolutions.db.up2date.payroll.AlterAgreementPaymentDescription;
 import net.aonsolutions.db.up2date.payroll.AlterContractBonusDescription;
@@ -301,6 +302,7 @@ public class Up2Date {
     		//UpdateInvoiceRegistryDocument.UPDATE_INVOICE_REGISTRY_DOCUMENT,
 
     		AlterAlcatrazFinance.ALTER_ALCATRAZ_FINANCE,
+    		IrpfEuskadi2023Insert.IRPFEUSKADI2023INSERT,
 	    	
     		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
