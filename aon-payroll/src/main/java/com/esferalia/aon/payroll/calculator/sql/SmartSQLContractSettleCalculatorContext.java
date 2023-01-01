@@ -14,6 +14,7 @@ import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -367,13 +368,10 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 			ContractPaymentRecord extra = extras.get(i);
 			
 			Date extraStartDate  = getStartDate(extra, year);
-			
-			if (Period.compare(extra.getEndDate(), extraStartDate) < 0 )
+			if (compare(extra.getEndDate(), extraStartDate) < 0 )
 				continue;
 			
-//			if ( extraStartDate.after(settleEndDate))  
-//				continue;  // Nothing to calculate
-			while ( !extraStartDate.after(settleEndDate )) {
+			while ( compare(extraStartDate, settleEndDate ) <= 0) {
 			
 				Date extraIssueDate  = getEndDate(extra, year);
 				Date extraEndDate  = getEndDate(extra, year);
@@ -391,8 +389,8 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 						break;  // Nothing to calculate
 				}
 				
-	
-				if (Period.compare(extra.getEndDate(), extraStartDate) < 0 )
+				
+				if (compare(extra.getEndDate(), extraStartDate) < 0 )
 					break;
 				
 				
@@ -569,9 +567,10 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 
 	private static Date getStartDate(ContractPaymentRecord extra, int year) {
 		Calendar calendar = Calendar.getInstance();
-//		calendar.set(Calendar.HOUR, 0);
-//		calendar.set(Calendar.MINUTE, 0);
-//		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, extra.getMonth());
 		calendar.set(Calendar.DAY_OF_MONTH,calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
@@ -582,13 +581,26 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 	
 	private static Date getEndDate(ContractPaymentRecord extra, int year) {
 		Calendar calendar = Calendar.getInstance();
-//		calendar.set(Calendar.HOUR, 0);
-//		calendar.set(Calendar.MINUTE, 0);
-//		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.HOUR, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, extra.getMonth());
 		calendar.set(Calendar.DAY_OF_MONTH,calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 		return calendar.getTime();
 	}
+
+	public static int compare(java.util.Date a, java.util.Date b) {
+		if (a == null) {
+			return b == null ? 0 : 1;
+		} else if ( b == null ) {
+		    return -1;
+		}
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		return formatter.format(a).compareTo(formatter.format(b));
+	}
+
+	
 
 }

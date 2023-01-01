@@ -218,7 +218,9 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 		
 		long days = 
 		new Period(startDate, endDate).daysStream()
-		.filter(day -> Arrays.binarySearch(actualDays,day.get(Calendar.DAY_OF_WEEK)) < 0 ).count();
+		.filter(day -> Arrays.binarySearch(actualDays,day.get(Calendar.DAY_OF_WEEK)) < 0 )
+		.peek( day -> System.out.println( "**********>" + day.getTime() ))
+		.count();
 
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);
@@ -227,9 +229,10 @@ public class SQLWorkedHoursTestCase extends AbstractSQLTestCase {
 				.getVariables(WORKED_HOURS);
 
 		double hours = 0.00;
-		for (ITimedVariable<Object> workedHour : workedHours)
+		for (ITimedVariable<Object> workedHour : workedHours) {
 			hours += ((Number) workedHour.getValue(workedHour.getPeriod()))
 					.doubleValue();
+		}
 
 		Assert.assertEquals(WORKED_HOURS.getName(), days * 8.00,  hours, 0.00);
 	}
