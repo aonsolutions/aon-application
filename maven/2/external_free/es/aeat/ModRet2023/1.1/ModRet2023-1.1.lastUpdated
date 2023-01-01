@@ -1,0 +1,14 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed Dec 28 16:48:07 CET 2022
+https\://repo1.maven.org/maven2/.error=
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
+https\://repo1.maven.org/maven2/.lastUpdated=1672242483052
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.error=
+https\://repo.maven.apache.org/maven2/.lastUpdated=1672242480845
+https\://mvnrepository.com/repos/central/.error=Could not transfer artifact es.aeat\:ModRet2023\:\:1.1 from/to central-repository (https\://mvnrepository.com/repos/central)\: Access denied to https\://mvnrepository.com/repos/central/es/aeat/ModRet2023/1.1/ModRet2023-1.1. Error code 403, 
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.lastUpdated=1672242487837
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1672242481638
+@default-central-repository-https\://mvnrepository.com/repos/central/.lastUpdated=1672242482034
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.error=
+https\://repo.maven.apache.org/maven2/.error=
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.lastUpdated=1672242485008
