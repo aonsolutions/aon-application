@@ -17,6 +17,9 @@ import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.OptionElement;
+import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
@@ -204,6 +207,9 @@ public abstract class Enterprise extends ResizeComposite {
 		this.enterprisePaysheetModel.addItem("Factura (Agrupada CRA)", "salary_invoiceCraGroup");
 		this.enterprisePaysheetModel.addItem("Detallada (new)", "salary_connorMacleod");
 		this.enterprisePaysheetModel.addItem("Est\u00E1ndar (new)", "salary_connorMacleod_classic");
+		
+		disableDeprecatedPaysheetModels();
+
 		
 		//COST MODEL
 		this.enterpriseCostModel.addItem("Por defecto", "salaryExpense");
@@ -520,4 +526,14 @@ public abstract class Enterprise extends ResizeComposite {
 		widget.removeStyleName(style.warningTB());
 	}
 
+
+	private void disableDeprecatedPaysheetModels() {
+	    NodeList<OptionElement> enterprisePaysheetOptions = ((SelectElement)this.enterprisePaysheetModel.getElement().cast()).getOptions();
+	    for (int i = 0; i < enterprisePaysheetOptions.getLength(); i++ ) {
+	        OptionElement enterprisePaysheetOption =  enterprisePaysheetOptions.getItem(i);
+	        if ( !AonStringUtils.startsWith(enterprisePaysheetOption.getValue(), "salary_connorMacleod") ) {
+		        enterprisePaysheetOption.setDisabled(true);
+	        }
+	    }
+	}
 }
