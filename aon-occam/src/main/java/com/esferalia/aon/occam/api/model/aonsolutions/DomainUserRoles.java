@@ -136,7 +136,6 @@ public class DomainUserRoles implements Serializable {
 		return getParentDomainApps().contains(aonApp);
 	}
 	
-	
 	private boolean hasRole(AonRole aonRole) {
 		return getDomainUserRoles().contains(aonRole) 
 			|| (isParentUser() && getParentDomainUserRoles().contains(aonRole));
@@ -237,6 +236,28 @@ public class DomainUserRoles implements Serializable {
 			&& ( isAdmin() || hasRole(AonRole.DOCUMENTAL_MANAGER)))
 				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN) 
 				||hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER);
+	}
+	
+	// COMMERCIAL
+	
+	public boolean hasCommercial() {
+		return hasStandarManagement() || hasApp(AonApp.COMMERCIAL) || hasOldModule(Module.CRM);
+	}
+	
+	public boolean isCommercial() {
+		return hasCommercial() && (hasRole(AonRole.COMMERCIAL) 
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.COMMERCIAL));
+	}
+	
+	// COMMERCIAL
+	
+	public boolean hasWarehouse() {
+		return hasProfessionalManagement() || hasApp(AonApp.WAREHOUSE) || hasOldModule(Module.WAREHOUSE);
+	}
+	
+	public boolean isWarehouse() {
+		return hasCommercial() && (hasRole(AonRole.WAREHOUSE) 
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.WAREHOUSE));
 	}
 	
 	// COMUNIC@ - COMUNIC@

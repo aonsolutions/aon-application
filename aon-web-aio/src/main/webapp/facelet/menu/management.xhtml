@@ -51,21 +51,24 @@
 											value="#{bundle.finance_invoice_print_module}"/>
 									</aon:div>
 							
-									<!-- Pedidos de Venta -->
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="sales-management" 
-											action="sales_search-management"
-											actionListener="#{sales.onEditSearch}"
-											value="#{bundle.sales_module}" />
-									</aon:div>
-									
-									<!-- Facturación masiva de Albaranes -->
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="delivery_invoicing"
-											action="deliveryInvoicing"
-											actionListener="#{deliveryInvoicing.onInitialize}"
-											value="#{bundle.finance_delivery_invoicing_module}"/>
-									</aon:div>	
+									<aon:if test="#{dur.commercial}">
+										<!-- Pedidos de Venta -->
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="sales-management" 
+												action="sales_search-management"
+												actionListener="#{sales.onEditSearch}"
+												value="#{bundle.sales_module}" />
+										</aon:div>
+									</aon:if>
+									<aon:if test="#{dur.warehouse}">
+										<!-- Facturación masiva de Albaranes -->			
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="delivery_invoicing"
+												action="deliveryInvoicing"
+												actionListener="#{deliveryInvoicing.onInitialize}"
+												value="#{bundle.finance_delivery_invoicing_module}"/>
+										</aon:div>	
+									</aon:if>
 								</aon:div>
 							</aon:panelGrid>
 							
@@ -75,23 +78,35 @@
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_module_finance}" />
 								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<!-- Gestion de Cobros -->									
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="financeCharge-management"
-											action="finance_search-charge-management"
-											actionListener="#{finance.onEditSearchCharge}"
-											value="#{bundle.finance_charge_module}" />
-									</aon:div>
 
-									<!-- Gestión de Pagos -->									
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="financePayment-management"
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:if test="#{dur.accounting}">
+										<!-- Cartera cobros y pagos GWT -->
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_finance-accounting"
+												action="gwt_finance-accounting"
+												title="Cartera de cobros y pagos"
+												value="Cartera de cobros y pagos" >
+											</aon:commandLink>
+										</aon:div>
+									</aon:if>
+									<aon:if test="#{!dur.accounting}">
+										<!-- Gestion de Cobros -->									
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="financeCharge-management"
+												action="finance_search-charge-management"
+												actionListener="#{finance.onEditSearchCharge}"
+												value="#{bundle.finance_charge_module}" />
+										</aon:div>
+
+										<!-- Gestión de Pagos -->									
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="financePayment-management"
 											action="finance_search-payment-management"
 											actionListener="#{finance.onEditSearchPayment}"
 											value="#{bundle.finance_payment_module}" />
-									</aon:div>
-									
+										</aon:div>
+									</aon:if>
 									<!-- Formas de Pago -->
 									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
@@ -147,14 +162,16 @@
 											value="#{bundle.finance_purchase_invoice_management_module}" />
 									</aon:div>
 									
-									<!-- Pedidos de Compra -->								
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="purchase" 
-											action="purchase_search"
-											actionListener="#{purchase.onEditSearch}"
-											value="#{bundle.purchase_module2}" />
-									</aon:div>				
-		
+									<aon:if test="#{dur.commercial}">
+										<!-- Pedidos de Compra -->								
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="purchase" 
+												action="purchase_search"
+												actionListener="#{purchase.onEditSearch}"
+												value="#{bundle.purchase_module2}" />
+										</aon:div>				
+									</aon:if>
+									
 									<!-- Solicitudes de Compra -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="proposal"
@@ -297,7 +314,6 @@
 									
 								</aon:div>
 							</aon:panelGrid>
-						</aon:if>
 					</aon:panelGroup>
 
 				</h:panelGrid>
