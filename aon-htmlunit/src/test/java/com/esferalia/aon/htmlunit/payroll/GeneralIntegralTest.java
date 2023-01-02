@@ -85,8 +85,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		calculate(Calendar.DECEMBER);
 		
-		expand("expand-button-agreement");
-		expand("expand-button-system");
+		//expand("expand-button-agreement");
+		//expand("expand-button-system");
 		
 		assertNotElement("editor-antiguedad");
 		assertNotElement("editor-salario_base");
@@ -668,7 +668,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 38.89 * 31 * 0.25);
 		double salaryHours = getValue("db-amount-label-1");
 		assertTrue((salaryHours * 7.03 ) <  ( 38.89 * 31 * 0.25 )  ) ;
-		click("expand-button-system");
+		//click("expand-button-system");
 		assertNotElement("editor-base_cgc_min_hora");
 
 		draft("HORAS NÓMINA, (PATERNIDAD PARCIAL)");

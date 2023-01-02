@@ -151,6 +151,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException
 import com.esferalia.aon.in.payroll.tgss.its.ITComunica;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.DOC;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
@@ -236,6 +237,7 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.Payments;
+import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -2139,15 +2141,27 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	
 	@Override
 	public String getSalariesPDF(String domain, String currentUser, Integer enterpriseID, List<Integer> salaryIds) throws IllegalArgumentException {
-		try (ByteOutputStream os = new ByteOutputStream()) {
+		try (ByteOutputStream os = new ByteOutputStream(); 
+		CloseableAONContext aonContext = AONContext.getAONContext(domain, currentUser)) {
 			String salaryReport = getReportKey(domain, enterpriseID, SalaryType.SALARY);
-			String payrollType = AonStringUtils.equalsIgnoreCase(salaryReport, SalaryTemplate.AON_SOLUTIONS_DEFAULT.getValue()) ? "classic" : "aon";
+			
+			
+			PayrollPrintService.PayrollType payrollType ;
+			
+			if ( AonStringUtils.equalsIgnoreCase(salaryReport, SalaryTemplate.INVOICE_SIMPLE.getValue())) {
+			    payrollType = PayrollPrintService.PayrollType.AON;
+			}  else if ( AonStringUtils.equalsIgnoreCase(salaryReport, SalaryTemplate.INVOICE_CRA_GROUP.getValue())) {
+				payrollType = PayrollPrintService.PayrollType.AON;
+			} else {
+				payrollType = PayrollPrintService.PayrollType.CLASSIC;
+			}
+			
 			
 			Integer[] ids = new Integer[salaryIds.size()];
 			for (int i = 0; i < salaryIds.size(); i++)
 				ids[i] = salaryIds.get(i);
 			
-			if (AonStringUtils.equalsIgnoreCase(payrollType, PayrollPrintService.PayrollType.CLASSIC.getName())) {
+			if (payrollType == PayrollPrintService.PayrollType.CLASSIC ) {
 				JooqPayrollBuilder.generateClassicPayroll(enterpriseID
 						, domain
 						, os
