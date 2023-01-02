@@ -957,15 +957,25 @@ public class Mod3902022 extends Mod390  {
 	}
 	
 	public Mod390Detail ensure(Mod3902022DetailKey key) {
-		return getGeneralRegime().computeIfAbsent(key
-			,k -> new Mod390Detail()
-				.setKey(k)
-				.setPercent(key.getPercent())
-			);
+//		return getGeneralRegime().computeIfAbsent(key
+//			,k -> new Mod390Detail()
+//				.setKey(k)
+//				.setPercent(key.getPercent())
+//			);
+		Mod390Detail detail = getGeneralRegime().get(key);
+		if (detail == null) {
+			detail = new Mod390Detail();
+			detail.setKey(key);
+			detail.setPercent(key.getPercent());
+			getGeneralRegime().put(key, detail);
+		}
+		return detail;
 	}
 	
 	private Mod390Detail calculate(Mod3902022DetailKey key, Mod3902022DetailKey ... keys) {
 		Mod390Detail detail = ensure(key);
+		detail.setTaxableBase(0.0);
+		detail.setQuota(0.0);
 		for (Mod3902022DetailKey k : keys) {
 			Mod390Detail det = ensure(k);
 			detail.setTaxableBase( AonMathUtils.round(detail.getTaxableBase() + det.getTaxableBase()));
