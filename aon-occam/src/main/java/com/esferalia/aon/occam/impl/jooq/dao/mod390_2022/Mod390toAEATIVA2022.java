@@ -7,10 +7,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.esferalia.aon.occam.api.model.fiscal.ActivityType;
 import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Activity;
-import com.esferalia.aon.occam.api.model.fiscal.mod390.ActivityType;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.DeductionRegime;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022;
