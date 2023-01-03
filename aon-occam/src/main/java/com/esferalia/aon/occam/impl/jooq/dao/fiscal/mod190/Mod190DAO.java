@@ -219,7 +219,9 @@ public class Mod190DAO {
 								FS_MODEL190_DETAIL.OUTPUT_RETENTION_IL,
 								FS_MODEL190_DETAIL.IN_KIND_PERCEPTION_IL,
 								FS_MODEL190_DETAIL.IN_KIND_DEPOSIT_IL,
-								FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL
+								FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL,
+								FS_MODEL190_DETAIL.TIT_CONVIVENCIA,
+								FS_MODEL190_DETAIL.COMP_INFANCIA
 								)
 						.values(null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
@@ -227,7 +229,8 @@ public class Mod190DAO {
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
 								null, null, null, null, null, null, null, null,
-								null, null, null, null, null, null, null, null));
+								null, null, null, null, null, null, null, null,
+								null, null));
 		for (Mod190Detail detail : mod190.getDetails()) {
 			batch.bind(detail.getDomain()
 					, detail.getMod190()
@@ -285,6 +288,8 @@ public class Mod190DAO {
 					, detail.getInKindPerceptionIL()
 					, detail.getInKindDepositIL()
 					, detail.getInKindOutputDepositIL()
+					, detail.getTitConvivencia()
+					, detail.getCompInfancia()
 					);
 		}
 		batch.execute();
@@ -367,6 +372,8 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.IN_KIND_PERCEPTION_IL, detail.getInKindPerceptionIL())
 				.set(FS_MODEL190_DETAIL.IN_KIND_DEPOSIT_IL, detail.getInKindDepositIL())
 				.set(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL, detail.getInKindOutputDepositIL())
+				.set(FS_MODEL190_DETAIL.TIT_CONVIVENCIA, detail.getTitConvivencia())
+				.set(FS_MODEL190_DETAIL.COMP_INFANCIA, detail.getCompInfancia())
 				;
 	}
 
@@ -431,6 +438,8 @@ public class Mod190DAO {
 				.set(FS_MODEL190_DETAIL.IN_KIND_PERCEPTION_IL, detail.getInKindPerceptionIL())
 				.set(FS_MODEL190_DETAIL.IN_KIND_DEPOSIT_IL, detail.getInKindDepositIL())
 				.set(FS_MODEL190_DETAIL.IN_KIND_OUTPUT_DEPOSIT_IL, detail.getInKindOutputDepositIL())
+				.set(FS_MODEL190_DETAIL.TIT_CONVIVENCIA, detail.getTitConvivencia())
+				.set(FS_MODEL190_DETAIL.COMP_INFANCIA, detail.getCompInfancia())
 				.where(FS_MODEL190_DETAIL.ID.equal(detail.getId())).execute();
 	}
 
@@ -672,6 +681,8 @@ public class Mod190DAO {
 				.setFirstChildCalculation(rec.getValue(FS_MODEL190_DETAIL.FIRST_CHILD_CALCULATION))
 				.setSecondChildCalculation(rec.getValue(FS_MODEL190_DETAIL.SECOND_CHILD_CALCULATION))
 				.setThirdChildCalculation(rec.getValue(FS_MODEL190_DETAIL.THIRD_CHILD_CALCULATION))
+				.setTitConvivencia(rec.getValue(FS_MODEL190_DETAIL.TIT_CONVIVENCIA))
+				.setCompInfancia(rec.getValue(FS_MODEL190_DETAIL.COMP_INFANCIA))
 				;
 		}
 	}
