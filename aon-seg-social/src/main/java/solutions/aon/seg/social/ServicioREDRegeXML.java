@@ -49,6 +49,7 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 public abstract class ServicioREDRegeXML {
 	protected static final String DATE_FORMAT = "dd/MM/yyyy";
 	protected static final String DATE_FORMAT_DASHES = "dd-MM-yyyy";
+	protected static final String DATA_EMPTY = "no se han encontrado registros";
 	
 	protected static void newInstanceXml(String xml, DefaultHandler handler) throws ParserConfigurationException, SAXException, IOException {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -337,7 +338,7 @@ public abstract class ServicioREDRegeXML {
 			public void endElement(String uri, String localName, String qName) throws SAXException {
 				if (data.toString().equalsIgnoreCase("ERROR")) {
 					error = true;
-				} else if (errorText!=null) {
+				} else if (errorText!=null && !errorText.toLowerCase().contains(DATA_EMPTY)) {
 					throw new SAXException(errorText);
 				}		
 			}

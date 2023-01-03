@@ -234,6 +234,16 @@ public class SistemaRED {
 		return SistemaREDEmployee.getTotalEmployees(certificateInputStream, certificatePassword, certificateType,
 				regimen, ccc);
 	}
+	
+	
+	public static Collection<Employee> getTotalEmployees(final byte[] certificateData, final String certificatePassword,
+			final String certificateType, String regimen, String ccc) throws SegSocialException {
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			return getTotalEmployees(certificateInputStream, certificatePassword, certificateType, regimen, ccc);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
 
 	public static Collection<Employee> getEmployees(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException {
