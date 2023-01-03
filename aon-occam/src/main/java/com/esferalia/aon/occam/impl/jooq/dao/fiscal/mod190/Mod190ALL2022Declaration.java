@@ -68,6 +68,8 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 				,SALARY_PAYMENT.AMOUNT
 				,SALARY_PAYMENT.IRPF
 				
+				,CONTRACT.SS_REGIME
+				
 				,PERSON.REGISTRY
 				,birthYear)
 		.from(SALARY_PAYMENT)
