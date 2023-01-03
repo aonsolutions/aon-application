@@ -230,6 +230,9 @@ public abstract class AgreementPreview extends Composite {
 		createToolbarSimulator();
 		createDiscPanelButtons();
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		description.ensureDebugId("descriptionTextBox");
+		
 		initDiscPanels();
 		dateLabels = new ArrayList<>();
 	}

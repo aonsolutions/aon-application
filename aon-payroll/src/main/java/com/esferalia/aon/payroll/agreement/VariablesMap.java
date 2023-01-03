@@ -830,6 +830,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("HORA_EXTRA_LUNES_A_VIERNES_HORAS", "H_E_LUNES_VIERNES");
 		variablesMap.put("HORA_EXTRA_NOCTURA_FESTIVOS_HORAS", "H_E_NOCTURNA_FEST");
 		variablesMap.put("HORA_EXTRA_NOCTURNA_HORAS", "H_E_NOCTURNA");
+		variablesMap.put("HORA_EXTRA_SABADO_TARDE_DOMINGOS_Y_FESTIVOS_HORAS", "HE_FINDES_FESTIVOS_H");
 		variablesMap.put("HORA_EXTRA_SERVICIOS_AUXILIARES_HORAS", "H_E_SERVICIOS_AUX");
 		variablesMap.put("HORA_EXTRA_SIN_ANTIGUEDAD_HORAS", "H_E_SIN_ANTIGUEDAD_D");
 		variablesMap.put("HORA_EXTRA_SIN_ANTIGUEDAD_MENSUAL", "H_E_SIN_ANTIGUEDAD_M");
@@ -929,6 +930,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PAGA_EXTRA_JUNIO_MENSUAL", "EXTRA_JUNIO_M");
 		variablesMap.put("PAGA_EXTRA_NAVIDAD_MENSUAL", "EXTRA_NAVIDAD_M");
 		variablesMap.put("PAGA_EXTRA_VERANO_MENSUAL", "EXTRA_VERANO_M");
+		variablesMap.put("PAGA_FIDELIDAD_ANUAL", "PAGA_FIDELIDAD_A");
 		variablesMap.put("PAGA_FIDELIDAD_MENSUAL", "PAGA_FIDELIDAD_M");
 		variablesMap.put("PANTALLA_MENSUAL", "PANTALLA_MENSUAL");
 		variablesMap.put("PARTES_PROPORCIONALES_HORAS", "PARTES_PROPORCIONALES");
