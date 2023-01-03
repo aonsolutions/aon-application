@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -332,43 +331,43 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 		} 
 	}
 
-	private Employee addEmployee(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
-			String ccc, String naf) throws SegSocialException {
-//		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-		solutions.aon.seg.social.object.Employee ssEmployee = SistemaRED.getEmployee(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
-		
-//		String nss = ssEmployee.getNss();			
-		Date startDate = ssEmployee.getFra();
-		ccc = ssEmployee.getCtaCti().orElse(ccc);								
+    private Employee addEmployee(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
+            String ccc, String naf) throws SegSocialException {
+        
+        Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+        
+        solutions.aon.seg.social.object.Employee ssEmployee = SistemaRED.getEmployee(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+     
+        Date startDate = ssEmployee.getFra();
+        ccc = ssEmployee.getCtaCti().orElse(ccc);                               
 
-		Employee aonEmployee = new Employee()
-		.setNaf(naf)
-		.setCcc(ccc)
-		.setRegime(regime)
-		.setStartDate(startDate)
-		.setDni(ssEmployee.getIpf())
-		;
+        Employee aonEmployee = new Employee()
+        .setNaf(naf)
+        .setCcc(ccc)
+        .setRegime(regime)
+        .setStartDate(startDate)
+        .setDni(ssEmployee.getIpf())
+        ;
 
-		ssEmployee.getGc().ifPresent( gc -> aonEmployee.setQuoteGroup(gc));
-		ssEmployee.getName().ifPresent( name -> aonEmployee.setName(name));
-		aonEmployee.setContractType(ssEmployee.getContract().orElse("000"));
-		ssEmployee.getFrb().ifPresent( endDate -> {if(startDate.before(endDate)) aonEmployee.setEndDate(endDate);});
-		ssEmployee.getCoef().filter(coef -> coef > 0.00 ).ifPresent( coef -> aonEmployee.setFactor(coef));
-		ssEmployee.getBirthDate().ifPresent( birthDate -> aonEmployee.setBirthDate(birthDate));
-		ssEmployee.getSex().ifPresent( sex -> aonEmployee.setSex(sex));
-		
-		Integer registration = ssEmployee.hashCode();
-		System.out.println("REGISTRATION-> "+ registration);
+        ssEmployee.getGc().ifPresent(aonEmployee::setQuoteGroup);
+        ssEmployee.getName().ifPresent(aonEmployee::setName);
+        aonEmployee.setContractType(ssEmployee.getContract().orElse("000"));
+        ssEmployee.getCoef().filter(coef -> coef > 0.00 ).ifPresent(aonEmployee::setFactor);
+        ssEmployee.getBirthDate().ifPresent(aonEmployee::setBirthDate);
+        ssEmployee.getSex().ifPresent(aonEmployee::setSex);
+        ssEmployee.getFrb().ifPresent(aonEmployee::setEndDate);
+        
+        Integer registration = ssEmployee.hashCode();
+        System.out.println("REGISTRATION-> "+ registration);
 
-		aonEmployee.setRegistration(registration);
-		
-		Optional<Employee> employee = PAYROLL.getEmployee(domainName, domainId, userLogin, f->f.getDomainProperty().eq(domainId).and(f.getRegistrationProperty().eq(registration)) );
-		
-		return employee.isPresent() ? employee.get() : PAYROLL.addEmployee(domainName, domainId, userLogin, aonEmployee);
-	}	
-
-	
+        aonEmployee.setRegistration(registration);
+        
+        return PAYROLL.getEmployee(domainName, domainId, userLogin, 
+               f->f.getDomainProperty().eq(domainId).and(f.getRegistrationProperty().eq(registration)) 
+        ).orElse(
+               PAYROLL.addEmployee(domainName, domainId, userLogin, aonEmployee)
+        );
+    }   
 
 	private void doRestoreEmployeePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException {
 		Connection connection = null;
