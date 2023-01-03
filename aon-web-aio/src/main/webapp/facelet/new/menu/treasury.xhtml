@@ -8,7 +8,10 @@
 	xmlns:a4j="http://richfaces.org/a4j"	
 	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
 
-	<ui:define name="content">
+	<aon:div id="treasuryMenuPopup" style="display:none" 
+	onmouseout="javascript:hideMenuPopup(this.id)" 
+	onmouseover="javascript:showMenuPopup(this.id)" >
+
 
 		<aon:form id="treasuryMenu">
 
@@ -326,6 +329,6 @@
 
 		</aon:form>
 
-	</ui:define>
+	</aon:div>
 
 </ui:composition>
