@@ -66,30 +66,30 @@ public class AlterFsMod190Detail2022 implements Update {
 		}
 		if (!titConvivencia) {
 			try { 
-				System.out.println("\tAlterFsMod184Detail2019. TITULAR UNIDAD DE CONVIVENCIA NOT EXISTS!");
+				System.out.println("\tAlterFsMod190Detail2022. TITULAR UNIDAD DE CONVIVENCIA NOT EXISTS!");
 				String sql1 = "ALTER TABLE `fs_model190_detail` ADD COLUMN `tit_convivencia` tinyint(1) DEFAULT '0' Comment 'Tit. unidad convivencia'";
 				dslContext.execute(sql1);
-				System.out.println("\tAlterFsMod184Detail2019. TITULAR UNIDAD DE CONVIVENCIA CREATED!");
+				System.out.println("\tAlterFsMod190Detail2022. TITULAR UNIDAD DE CONVIVENCIA CREATED!");
 			} catch (Throwable e) {
-				System.out.println("\tAlterFsMod184Detail2019. TITULAR UNIDAD DE CONVIVENCIA NOT CREATED!");
+				System.out.println("\tAlterFsMod190Detail2022. TITULAR UNIDAD DE CONVIVENCIA NOT CREATED!");
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("\tAlterFsMod184Detail2019. TITULAR UNIDAD DE CONVIVENCIA EXISTS!");
+			System.out.println("\tAlterFsMod190Detail2022. TITULAR UNIDAD DE CONVIVENCIA EXISTS!");
 		}
 		
 		if (!compInfancia) {
 			try { 
-				System.out.println("\tAlterFsMod184Detail2019. COMPLEMENTO AYUDA PARA LA INFANCIA NOT EXISTS!");
+				System.out.println("\tAlterFsMod190Detail2022. COMPLEMENTO AYUDA PARA LA INFANCIA NOT EXISTS!");
 				String sql1 = "ALTER TABLE `fs_model190_detail` ADD COLUMN `comp_infancia` tinyint(1) DEFAULT '0' Comment 'Compl. ayuda infancia'";
 				dslContext.execute(sql1);
-				System.out.println("\tAlterFsMod184Detail2019. COMPLEMENTO AYUDA PARA LA INFANCIA CREATED!");
+				System.out.println("\tAlterFsMod190Detail2022. COMPLEMENTO AYUDA PARA LA INFANCIA CREATED!");
 			} catch (Throwable e) {
-				System.out.println("\tAlterFsMod184Detail2019. COMPLEMENTO AYUDA PARA LA INFANCIA NOT CREATED!");
+				System.out.println("\tAlterFsMod190Detail2022. COMPLEMENTO AYUDA PARA LA INFANCIA NOT CREATED!");
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("\tAlterFsMod184Detail2019. COMPLEMENTO AYUDA PARA LA INFANCIA EXISTS!");
+			System.out.println("\tAlterFsMod190Detail2022. COMPLEMENTO AYUDA PARA LA INFANCIA EXISTS!");
 		}
 	}
 
