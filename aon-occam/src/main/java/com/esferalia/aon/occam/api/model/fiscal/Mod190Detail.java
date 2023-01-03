@@ -77,6 +77,9 @@ public class Mod190Detail implements Serializable {
 	private byte firstChildCalculation;
 	private byte secondChildCalculation;
 	private byte thirdChildCalculation;
+	
+	private byte titConvivencia;
+	private byte compInfancia;
 
 	private boolean dirty;
 	private boolean deleted;
@@ -564,7 +567,20 @@ public class Mod190Detail implements Serializable {
 		this.thirdChildCalculation = thirdChildCalculation;
 		return this;
 	}
-
+	public byte getTitConvivencia() {
+		return titConvivencia;
+	}
+	public Mod190Detail setTitConvivencia(byte titConvivencia) {
+		this.titConvivencia = titConvivencia;
+		return this;
+	}
+	public byte getCompInfancia() {
+		return compInfancia;
+	}
+	public Mod190Detail setCompInfancia(byte compInfancia) {
+		this.compInfancia = compInfancia;
+		return this;
+	}
 	public double getSalaryPerception() {
 		return salaryPerception;
 	}

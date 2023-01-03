@@ -354,17 +354,17 @@ class Mod303WriterAEAT2022 implements IMod303Writer{
 			(wr, mod) -> wr.append("<T30304000>")
 		   ,(wr, mod) -> wr.append(" ")
 		   
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getDescription(Mod303Key.CT_U1C), 1,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod303Key.CT_U1C), 3))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod303Key.CT_U1E),4))
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getDescription(Mod303Key.CT_U2C), 1,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod303Key.CT_U2C), 3))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod303Key.CT_U2E),4))
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getDescription(Mod303Key.CT_U3C), 1,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod303Key.CT_U3C), 3))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod303Key.CT_U3E),4))
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getDescription(Mod303Key.CT_U4C), 1,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod303Key.CT_U4C), 3))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod303Key.CT_U4E),4))
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getDescription(Mod303Key.CT_U5C), 1,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod303Key.CT_U5C), 3))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getDescription(Mod303Key.CT_U5E),4))
-		   ,(wr, mod) -> wr.append(AonStringUtils.repeat('0', 1	))
+		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 3	))
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 4	))
 		   
 		   ,(wr, mod) -> wr.append(mod.getAmount(Mod303Key.CT_U13)==1?'X':' ')
@@ -381,12 +381,10 @@ class Mod303WriterAEAT2022 implements IMod303Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C94),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C83),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C84),17,2))
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C85),17,2))
-		   
-		   ,(wr, mod) -> wr.append(AonStringUtils.repeat('0', 17))  // Reservado para la AEAT
-		   ,(wr, mod) -> wr.append(AonStringUtils.repeat('0', 17))  // Reservado para la AEAT
-		   ,(wr, mod) -> wr.append(AonStringUtils.repeat('0', 17))  // Reservado para la AEAT
-		   
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C125),17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C126),17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C127),17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C128),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C86),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C95),17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_C96),17,2))

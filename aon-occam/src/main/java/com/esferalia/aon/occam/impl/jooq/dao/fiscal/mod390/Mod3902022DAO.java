@@ -251,7 +251,7 @@ public class Mod3902022DAO {
 		 // Operaciones en régimen general
 		 ,C0099	 (Mod3902022DetailKey.C0099, ((mod, vc) -> (vc.isNationalSales() && vc.isVatGeneralRegime(mod.isSimplifiedRegime()?VATRegime.SIMPLIFIED:VATRegime.GENERAL))))
 		 // Operaciones a las que habiéndoles sido aplicado el régimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo contenida en el art. 75 LIVA
-		 ,C0653	 (Mod3902022DetailKey.C0653, ((mod, vc) -> (vc.isSales() && vc.isVatAccrualRegime() )))
+		 ,C0653	 (Mod3902022DetailKey.C0653, null) // MIRAR CASILLA 654
 		 // Entregas intracomunitarias de bienes y servicios
 		 ,C0103	 (Mod3902022DetailKey.C0103, ((mod, vc) -> (vc.isIntracommunitySales() && !vc.isWithoutRightDeductionType())))
 		 // Exportaciones y otras operaciones exentas con derecho a deducción
@@ -326,7 +326,9 @@ public class Mod3902022DAO {
 			.forEach(Mod3902022DAO::add );
 		
 		// Regimen especial de criterio de caja.
-		map.get(Mod3902022DetailKey.C0654).setTaxableBase( getVatAccrualPaymentOutputBase(ctx, mod390) );
+		double vatAccBase = getVatAccrualPaymentOutputBase(ctx, mod390); 
+		map.get(Mod3902022DetailKey.C0653).setTaxableBase( vatAccBase );
+		map.get(Mod3902022DetailKey.C0654).setTaxableBase( vatAccBase );
 		map.get(Mod3902022DetailKey.C0654).setQuota( getVatAccrualPaymentOutputQuota(ctx, mod390) );
 		map.get(Mod3902022DetailKey.C0656).setTaxableBase( getVatAccrualPaymentInputBase(ctx, mod390) );
 		map.get(Mod3902022DetailKey.C0656).setQuota( getVatAccrualPaymentInputQuota(ctx, mod390) );
@@ -633,6 +635,7 @@ public class Mod3902022DAO {
 	
 	private static Mod3902022 update(AONContext ctx, Mod3902022 mod390) {
 		validate(ctx, mod390);
+		mod390.calculate();
 		ctx.getDslContext()
 			.update(FS_MODEL390)
 			.set(FS_MODEL390.YEAR, mod390.getYear())
@@ -737,6 +740,7 @@ public class Mod3902022DAO {
 			
 			mod390.setBox227(map.get(Mod3902022DetailKey.C0227).getTaxableBase());
 			mod390.setBox228(map.get(Mod3902022DetailKey.C0228).getTaxableBase());
+			mod390.setBox653(map.get(Mod3902022DetailKey.C0653).getTaxableBase());
 			mod390.setBox654(map.get(Mod3902022DetailKey.C0654).getTaxableBase());
 			mod390.setBox655(map.get(Mod3902022DetailKey.C0654).getQuota());
 			mod390.setAccrualRegime( ( map.get(Mod3902022DetailKey.C0654).getTaxableBase()  != 0 || map.get(Mod3902022DetailKey.C0654).getQuota() != 0 ) );

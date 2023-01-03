@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.api.model.fiscal.mod390;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.fiscal.ActivityType;
+
 public class Activity implements Serializable {
 
 	private static final long serialVersionUID = -1202033752419394011L;

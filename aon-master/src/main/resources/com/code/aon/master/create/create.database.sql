@@ -3807,6 +3807,8 @@ CREATE TABLE `fs_model190_detail` (
   `in_kind_perception_il` decimal(15,3) NOT NULL DEFAULT '0.000',
   `in_kind_deposit_il` decimal(15,3) NOT NULL DEFAULT '0.000',
   `in_kind_output_deposit_il` decimal(15,3) NOT NULL DEFAULT '0.000',
+  `tit_convivencia` tinyint(1) DEFAULT '0' Comment 'Tit. unidad convivencia',
+  `comp_infancia` tinyint(1) DEFAULT '0' Comment 'Compl. ayuda infancia',  
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL190_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL190_DETAIL_FS_MODEL190` (`fs_model190`),

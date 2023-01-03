@@ -2339,7 +2339,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				Collection<solutions.aon.seg.social.object.Employee> ssEmployees = new ArrayList<>();
 				
 				try {
-					ssEmployees = SistemaRED.getEmployees(certificate.getData(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
+					ssEmployees = SistemaRED.getTotalEmployees(certificate.getData(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
 				} catch ( ForbiddenException e) {
 					return new EnterpriseStatus.Forbidden();
 				} catch ( NotAllowedContributionAccount e) {
@@ -2358,7 +2358,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					String naf = ssEmployee.getNss();
 					java.util.Date date = ssEmployee.getFra();
 					String name = ssEmployee.getName().orElse(null); // TODO
-					
 					
 					List<Employee> found  = aonEmployees.stream()
 					.filter(e -> equalsIgnoreCase(e.getDocument(), dni) || equalsIgnoreCase(e.getSocialSecurity(), naf))

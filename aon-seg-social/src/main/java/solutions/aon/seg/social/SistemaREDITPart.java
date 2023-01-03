@@ -64,61 +64,23 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	private static final String ARQ_SPM_OUT = "ARQ.SPM.OUT";
 
 	public static Collection<It> getIts(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String regime, String ccc, Date from, Date to, Optional<String> nss)
+			final String certificateType, String regime, String ccc, Date startDate, Date endDate, Optional<String> nss)
 			throws SegSocialException {
-		SSLContext sslContext = null;
-		
-		try {
-			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
-		} catch (Exception e1) {
-			throw new InvalidCertificateException();
-		}
-		
-		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
-			String body = Toolkit.getBodyGET(httpClient, BASE_URI);
-			Toolkit.checkProsaError(body);
-			checkAuthorization(body);
-			
-			String link ="https://w2.seg-social.es" + Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "FORMULARIO_6"), "action");
-			String ticket = Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "ARQ_SPM_TICKET"), "value");
-
-			HttpPost httpPost = new HttpPost(link);
-			
-			List<NameValuePair> params = new ArrayList<>();
-			params.add(new BasicNameValuePair(IServicioRedConstants.TICKET, ticket));
-			params.add(new BasicNameValuePair("SPM.CONTEXT", IServicioRedConstants.INTERNET));
-			params.add(new BasicNameValuePair(ARQ_SPM_OUT, "XML_STYLESHEET"));
-			params.add(new BasicNameValuePair("SPM.ACC.CONTINUAR_CONSULTA", "CONTINUAR_CONSULTA"));
-			params.add(new BasicNameValuePair("nafConsulta", ""));
-			params.add(new BasicNameValuePair("fechaBajaMedConsulta", ""));
-			params.add(new BasicNameValuePair("regimenConsulta", regime));
-			params.add(new BasicNameValuePair("cccConsulta", ccc));
-			
-			nss.ifPresent(n-> params.add(new BasicNameValuePair("nafConsulta", n)));
+		return orderByIT(
+			getItsImpl(certificateInputStream, certificatePassword, certificateType, regime, ccc, nss, Optional.ofNullable(startDate), Optional.ofNullable(endDate), Optional.empty())
+		); 
+	}
 	
-			//DATES
-			Toolkit.formatDate(from, DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaDesdeConsulta", d)));
-			Toolkit.formatDate(to, DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaHastaConsulta", d)));
-		
-			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
-		
-			try {			
-			
-				link = "https://w2.seg-social.es" + Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "FORMULARIO_6"), "action");
-				ticket = Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "ARQ_SPM_TICKET"), "value");
-				
-				String xml = Toolkit.getBodyPOST(httpClient, httpPost);
-				checkErrors(xml);
-				
-				return getParts(httpClient, xml, link, ticket);
-			} catch (SAXException e) {
-				e.printStackTrace();
-				throw new SegSocialException(e.getMessage());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new SegSocialException(e.getMessage());
-		}
+	public static Optional<ITPart> getDataIT(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regime, String ccc, String nss, SistemaRED.PartType partType, Date dateBj,
+			Date dateProcess)
+			throws SegSocialException {
+		return getItsImpl(
+			certificateInputStream, certificatePassword, certificateType, regime, ccc, Optional.of(nss), 
+			Optional.empty(), Optional.empty(), Optional.ofNullable(dateBj)
+		)
+		.stream().filter(p-> p.checkForType(partType, dateProcess))
+		.findFirst();
 	}
 	
 	// REGISTER IT START HANDLE EXCEPTIONS
@@ -231,6 +193,77 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			throw new SegSocialException(e.getMessage());
 		}
 		return null; 
+	}
+	
+
+	public static List<ITPart> getItsImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String regime, String ccc, Optional<String> nss, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> dateBj)
+			throws SegSocialException {
+		SSLContext sslContext = null;
+		
+		try {
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
+		} catch (Exception e1) {
+			throw new InvalidCertificateException();
+		}
+		
+		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
+			String body = Toolkit.getBodyGET(httpClient, BASE_URI);
+			Toolkit.checkProsaError(body);
+			checkAuthorization(body);
+			
+			String link ="https://w2.seg-social.es" + Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "FORMULARIO_6"), "action");
+			String ticket = Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "ARQ_SPM_TICKET"), "value");
+
+			HttpPost httpPost = new HttpPost(link);
+			
+			List<NameValuePair> params = new ArrayList<>();
+			params.add(new BasicNameValuePair(IServicioRedConstants.TICKET, ticket));
+			params.add(new BasicNameValuePair("SPM.CONTEXT", IServicioRedConstants.INTERNET));
+			params.add(new BasicNameValuePair(ARQ_SPM_OUT, "XML_STYLESHEET"));
+			params.add(new BasicNameValuePair("SPM.ACC.CONTINUAR_CONSULTA", "CONTINUAR_CONSULTA"));
+			params.add(new BasicNameValuePair("regimenConsulta", regime));
+			params.add(new BasicNameValuePair("cccConsulta", ccc));
+			params.add(new BasicNameValuePair("nafConsulta", nss.isPresent() ? nss.get() : ""));
+		
+			if(dateBj.isPresent()) {
+				Toolkit.formatDate(dateBj.get(), DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaBajaMedConsulta", d)));
+			} else {
+				params.add(new BasicNameValuePair("fechaBajaMedConsulta", ""));
+			}
+	
+			if(startDate.isPresent()) {
+				Toolkit.formatDate(startDate.get(), DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaDesdeConsulta", d)));
+			} else {
+				params.add(new BasicNameValuePair("fechaDesdeConsulta", ""));
+			}
+			
+			if(endDate.isPresent()) {
+				Toolkit.formatDate(endDate.get(), DATE_FORMAT).ifPresent(d-> params.add(new BasicNameValuePair("fechaHastaConsulta", d)));
+			} else {
+				params.add(new BasicNameValuePair("fechaHastaConsulta", ""));
+			}
+			
+		
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
+		
+			try {			
+			
+				link = "https://w2.seg-social.es" + Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "FORMULARIO_6"), "action");
+				ticket = Toolkit.getAttribute(Toolkit.getElementByAttributeFirstTag(body, "id", "ARQ_SPM_TICKET"), "value");
+				
+				String xml = Toolkit.getBodyPOST(httpClient, httpPost);
+				checkErrors(xml);
+				
+				return getParts(httpClient, xml, link, ticket, dateBj.isPresent());
+			} catch (SAXException e) {
+				e.printStackTrace();
+				throw new SegSocialException(e.getMessage());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SegSocialException(e.getMessage());
+		}
 	}
 	
 	// REGISTER IT START
@@ -603,7 +636,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		return htmlPage;
 	}
 
-	private static Collection<It> getParts(CloseableHttpClient httpClient, String xml, String link, String ticket) throws ParserConfigurationException, IOException, SegSocialException {
+	private static List<ITPart> getParts(CloseableHttpClient httpClient, String xml, String link, String ticket, boolean detail) throws ParserConfigurationException, IOException, SegSocialException {
 		List<ITPart> parts = new ArrayList<>();
 		String error = "";
 		boolean next = false;
@@ -647,9 +680,9 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		
 		if(parts.isEmpty() && !error.isEmpty()) {
 			throw new SegSocialException(error);
-		} else {
-			return orderByIT(parts);
-		}
+		} 
+			
+		return parts;
 	}
 	
 	private static byte[] getPdfProcess(HtmlPage htmlPage, String continueSelector) throws InterruptedException, IOException, SegSocialException {

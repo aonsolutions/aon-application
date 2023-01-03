@@ -372,7 +372,8 @@ public class Model180 extends MainEntryPoint {
 
 	private void select(Model180ModuleOptions options, Mod180 selected, Integer selectedIndex) {
 		cleanErrorMessage();
-		if ( selected.isAEAT() && selected.getYear() >= 2020 ) {
+//		if ( selected.isAEAT() && selected.getYear() >= 2020 ) {
+		if ( selected.isAEAT() ) {
 			declarationContainer.setWidget( new Model180AEAT(new Model180Callback(),selected,selectedIndex));
 		} else if ( selected.isAraba() ) {
 			declarationContainer.setWidget( new Model180ARABA(new Model180Callback(),selected,selectedIndex));			

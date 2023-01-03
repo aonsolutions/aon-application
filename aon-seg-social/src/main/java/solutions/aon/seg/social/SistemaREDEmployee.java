@@ -52,7 +52,7 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDEmployee {
 	
-	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
+	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
 	
 	private static final String FORMAT_DATE_ES = "dd/MM/yyyy";
 	
@@ -129,6 +129,7 @@ class SistemaREDEmployee {
 		List<Employee> list = new ArrayList<>();
 	   
 	    while (page.getElementById("SDFNUMIPF")!=null) {
+	    	
 			String ipf = page.getElementById("SDFNUMIPF").getTextContent().trim().replaceAll("^0+", "");
 			String birthDateStr = page.getElementById("SDFDIANAC").getTextContent() + "/"
 					+ page.getElementById("SDFMESNAC").getTextContent() + "/"
@@ -182,9 +183,12 @@ class SistemaREDEmployee {
 					 frbStr = domElementExists(page.getElementById("SDFFRBSAN1"));
 					 febStr = domElementExists(page.getElementById("SDFFEBSAN1"));
 					 if(!frbStr.isEmpty() && !febStr.isEmpty()) {
-						situation = page.getElementById("SDFTSITUACAFI").getTextContent();
-						frb = parseDate(frbStr, FORMAT_DATE_ES);
-						feb = parseDate(febStr, FORMAT_DATE_ES);
+						Date endDate = parseDate(frbStr, FORMAT_DATE_ES);
+						if(fra.before(endDate)) {
+							situation = page.getElementById("SDFTSITUACAFI").getTextContent();
+							frb = endDate;
+							feb = parseDate(febStr, FORMAT_DATE_ES);
+						} 
 					 }
 				}
 			}

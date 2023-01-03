@@ -10,6 +10,7 @@ import static com.esferalia.aon.jooq.tables.IrpfDataDescendients.IRPF_DATA_DESCE
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 import org.jooq.Field;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.impl.DSL;
 
@@ -65,6 +67,8 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 				,SALARY_PAYMENT.PAYMENT_CONCEPT
 				,SALARY_PAYMENT.AMOUNT
 				,SALARY_PAYMENT.IRPF
+				
+				,CONTRACT.SS_REGIME
 				
 				,PERSON.REGISTRY
 				,birthYear)
@@ -254,15 +258,48 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 								:(irpfBase * totalIrpf / totalIrpfBase);
 						Mod190Detail detail = getDetail(document,person,Mod1902016Key.A,null);
 						String prest = rec.getValue( SALARY_PAYMENT.PAYMENT_CONCEPT);
-						if (PREST_IT.equals(prest)) {
-							detail.setInKindPerceptionIL(AonMathUtils.round(detail.getInKindPerceptionIL() + irpfBase ));
-							detail.setInKindDepositIL(AonMathUtils.round(detail.getInKindDepositIL() + irpfQuota ));
+						Double enterpriseIrpfQuota = getEnterpriseIrpfQuota();
+						// Si esta exento deberia ir al L.24
+						if(irpfQuota == 0.00) {
+							visitInsurance();
 						} else {
-							detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + irpfBase ));
-							detail.setInKindDeposit(AonMathUtils.round(detail.getInKindDeposit() + irpfQuota ));
+							if (PREST_IT.equals(prest)) {
+								detail.setInKindPerceptionIL(AonMathUtils.round(detail.getInKindPerceptionIL() + irpfBase ));
+								detail.setInKindDepositIL(AonMathUtils.round(detail.getInKindDepositIL() + irpfQuota ));
+								if(detail.getInKindDepositIL() - enterpriseIrpfQuota > 1)
+									detail.setInKindOutputDepositIL(enterpriseIrpfQuota);
+							} else {
+								detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + irpfBase ));
+								detail.setInKindDeposit(AonMathUtils.round(detail.getInKindDeposit() + irpfQuota ));
+								if(detail.getInKindDepositIL() - enterpriseIrpfQuota > 1)
+									detail.setInKindOutputDeposit(enterpriseIrpfQuota);
+							}
 						}
 					}
 					
+					private Double getEnterpriseIrpfQuota() {
+						// INGRESO A CUENTA ESPECIE A CARGO DE LA EMPRESA
+						// Sale de resta el IRPF del devengo menos el IRPF cubierto por la empresa para este devengo
+						double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
+						double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
+						double irpfBase = rec.getValue(SALARY_PAYMENT.IRPF);
+						double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase ) )
+								?0.0
+								:(irpfBase * totalIrpf / totalIrpfBase);
+						
+						// Esto es el total de aportacion? Si es así estaría bien saber cuanto aporta por devengo de tipo En Especie
+						Record ifpfCTA = ctx.getDslContext().select().from(SALARY_DATA)
+							.where(SALARY_DATA.NAME.eq("IRPF_CTA_ESP"))
+							.and(SALARY_DATA.SALARY.eq(rec.getValue(SALARY.ID)))
+							.fetchOne();
+						
+						double ifpfCTAESP = ifpfCTA == null ? 0.00 : Double.parseDouble(ifpfCTA.get(SALARY_DATA.EXPRESSION));
+						double irpfQuotaEnterprise = 0.00;
+						irpfQuotaEnterprise = irpfQuota - ifpfCTAESP;
+						
+						return irpfQuota == 0.00 || irpfQuotaEnterprise <= 0.00 ? 0.00 : irpfQuotaEnterprise;
+					}
+
 					private Mod190Detail getDetail(String document,int person, Mod1902016Key key, String subKey) {
 						String mapKey =  document + "_" + person + "_" + key.getValue() + (subKey != null?("_" + subKey):"");
 						if ( !map.containsKey(mapKey) ) {

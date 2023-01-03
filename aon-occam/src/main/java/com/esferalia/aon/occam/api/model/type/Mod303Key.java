@@ -434,16 +434,22 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C90("303-CTA90",false,"90","Guipuzcoa/Gipuzkoa")
 	,CT_C91("303-CTA91",false,"91","Vizcaya/Bizkaia")
 	,CT_C92("303-CTA92",false,"92","Navarra/Nafarroa")
+	
 	,CT_C80("303-CTA80",false,"80","Operaciones en r\u00E9gimen general")
 	,CT_C81("303-CTA81",false,"81","Operaciones en r\u00E9gimen especial del criterio de caja conforme art. 75 LIVA")
-	
 	,CT_C82("303-CTA82",false,"82","Exportaciones, entregas intracomunitarias  y otras operaciones con derecho a deducci\u00F3n")
 	
 	,CT_C93("303-CTA93",false,"93","Entregas intracomunitarias exentas")
 	,CT_C94("303-CTA94",false,"94","Exportaciones y otras operaciones exentas con derecho a deducci\u00F3n")
 	,CT_C83("303-CTA83",false,"83","Operaciones exentas sin derecho a deducci\u00F3n")
 	,CT_C84("303-CTA84",false,"84","Operaciones no sujetas por reglas de localizaci\u00F3n o con inversi\u00F3n del sujeto pasivo") 
-	,CT_C85("303-CTA85",false,"85","Entregas de bienes objeto de instalaci\u00F3n o montaje en otros Estados miembros") 
+	,CT_C85("303-CTA85",false,"85","Entregas de bienes objeto de instalaci\u00F3n o montaje en otros Estados miembros")
+	
+	,CT_C125("303-CTA125",false,"125","Operaciones sujetas con inversi\u00F3n del sujeto pasivo")
+	,CT_C126("303-CTA126",false,"126","Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a los reg\u00EDmenes especiales de ventanilla \u00FAnica")
+	,CT_C127("303-CTA127",false,"127","Operaciones sujetas y acogidas a los reg\u00EDmenes especiales de ventanilla \u00FAnica")
+	,CT_C128("303-CTA128",false,"128","Operaciones intragrupo valoradas conforme a dispuesto en los art\u00EDculos 78 y 79 de la LIVA")
+	
 	,CT_C86("303-CTA86",false,"86","Operaciones en r\u00E9gimen simplificado")
 	,CT_C95("303-CTA95",false,"95","Operaciones en r\u00E9gimen especial de la agricultura, ganader\u00EDa y pesca") 
 	,CT_C96("303-CTA96",false,"96","Operaciones realizadas por sujetos pasivos acogidos al r\u00E9gimen especial del recargo de equivalencia")
@@ -790,7 +796,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CM_021("303-CM021",false,null,"\u00BFRealiza actividades acogidas al r\u00E9gimen simplificado?")
 	
 	,NF_I00("303-NFI00",false,null,"NIF del presentador telem\u00E1tico (en caso de ser diferente del declarante)")
-	,NF_I01("303-NFI01",false,null,"Razón social del presentador telem\u00E1tico (en caso de ser diferente del declarante)")
+	,NF_I01("303-NFI01",false,null,"Raz\u00F3n social del presentador telem\u00E1tico (en caso de ser diferente del declarante)")
 	,NF_010("303-NF010",true,"010","Entregas intracomunitarias de bienes y servicios")
 	,NF_001("303-NF001",true,"001","Exportaciones")
 	,NF_002("303-NF002",true,"002","Operaciones exentas sin derecho a deducci\u00F3n")

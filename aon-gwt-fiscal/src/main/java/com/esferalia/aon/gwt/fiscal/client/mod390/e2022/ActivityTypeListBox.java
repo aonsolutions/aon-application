@@ -1,7 +1,7 @@
 package com.esferalia.aon.gwt.fiscal.client.mod390.e2022;
 
 
-import com.esferalia.aon.occam.api.model.fiscal.mod390.ActivityType;
+import com.esferalia.aon.occam.api.model.fiscal.ActivityType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.ui.ListBox;
 

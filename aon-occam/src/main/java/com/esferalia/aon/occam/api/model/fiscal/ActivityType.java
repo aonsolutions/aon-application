@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.api.model.fiscal.mod390;
+package com.esferalia.aon.occam.api.model.fiscal;
 
 public enum ActivityType {
 	 A01 ("Arrendadores de bienes inmuebles")
