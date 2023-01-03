@@ -39,13 +39,13 @@ public class AlterFsMod190Detail2022 implements Update {
 		ResultSet rs = null;
 		try {
 			stmt = connection.createStatement();
-			rs = stmt.executeQuery("select * from fs_model184_detail");
+			rs = stmt.executeQuery("select * from fs_model190_detail");
 			ResultSetMetaData rsmd = rs.getMetaData();
 			for (int i = 1; i <= rsmd.getColumnCount(); i++) {
 				String name = rsmd.getColumnName(i);
 
-				if ("titConvivencia".equals(name)) 	{titConvivencia = true;}
-				if ("compInfancia".equals(name)) 	{compInfancia = true;}
+				if ("tit_convivencia".equals(name)) 	{titConvivencia = true;}
+				if ("comp_infancia".equals(name)) 	{compInfancia = true;}
 				
 			}
 		} catch (Throwable t) {
@@ -67,7 +67,7 @@ public class AlterFsMod190Detail2022 implements Update {
 		if (!titConvivencia) {
 			try { 
 				System.out.println("\tAlterFsMod184Detail2019. TITULAR UNIDAD DE CONVIVENCIA NOT EXISTS!");
-				String sql1 = "ALTER TABLE `fs_modelo190_detail` ADD COLUMN `tit_convivencia` tinyint(1) DEFAULT '0' Comment 'Tit. unidad convivencia'";
+				String sql1 = "ALTER TABLE `fs_model190_detail` ADD COLUMN `tit_convivencia` tinyint(1) DEFAULT '0' Comment 'Tit. unidad convivencia'";
 				dslContext.execute(sql1);
 				System.out.println("\tAlterFsMod184Detail2019. TITULAR UNIDAD DE CONVIVENCIA CREATED!");
 			} catch (Throwable e) {
@@ -81,7 +81,7 @@ public class AlterFsMod190Detail2022 implements Update {
 		if (!compInfancia) {
 			try { 
 				System.out.println("\tAlterFsMod184Detail2019. COMPLEMENTO AYUDA PARA LA INFANCIA NOT EXISTS!");
-				String sql1 = "ALTER TABLE `fs_modelo190_detail` ADD COLUMN `comp_infancia` tinyint(1) DEFAULT '0' Comment 'Compl. ayuda infancia'";
+				String sql1 = "ALTER TABLE `fs_model190_detail` ADD COLUMN `comp_infancia` tinyint(1) DEFAULT '0' Comment 'Compl. ayuda infancia'";
 				dslContext.execute(sql1);
 				System.out.println("\tAlterFsMod184Detail2019. COMPLEMENTO AYUDA PARA LA INFANCIA CREATED!");
 			} catch (Throwable e) {
