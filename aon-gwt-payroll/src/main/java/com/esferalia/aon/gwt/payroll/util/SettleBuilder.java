@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.util;
 
+import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionNameDescription;
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionPDFType;
 import static com.esferalia.aon.gwt.payroll.util.PayrollUtils.getDeductionTypeDescription;
 import static com.esferalia.aon.in.payroll.pdf.api.toolkit.PDFToolkit.croppedString;
@@ -10,10 +11,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -141,7 +144,7 @@ public class SettleBuilder {
 			
 			int	type = 5;
 			String desc	= e.getDescription() != null ? e.getDescription() : "Embargo";
-			PDFDeduction deduction = new PDFDeduction(e.getAmount(), desc, null);
+			PDFDeduction deduction = new PDFDeduction(e.getAmount(), null, desc, null);
 			
 			
 			if (!deductionsMap.containsKey(type))
@@ -177,10 +180,11 @@ public class SettleBuilder {
 
 			int	   type	= getDeductionPDFType(d.getDeductionType().ordinal());
 			if (type <= 2) {				
-				desc	= getDeductionTypeDescription(d.getDeductionType().ordinal());
+				desc	= AonStringUtils.defaultIfBlank(getDeductionNameDescription(d.getName()), 
+					getDeductionTypeDescription(d.getDeductionType().ordinal()));
 			}
 
-			PDFDeduction deduction = new PDFDeduction(d.getAmount(), desc, percent);
+			PDFDeduction deduction = new PDFDeduction(d.getAmount(), d.getName(), desc, percent);
 
 			if (!deductionsMap.containsKey(type))
 				deductionsMap.put(type, new ArrayList<>());
@@ -207,13 +211,15 @@ public class SettleBuilder {
 			deductionsMap.put(2, new ArrayList<>());
 
 		if (!inserted.contains("CGC"))
-			deductionsMap.get(1).add(new PDFDeduction(0d, "Contingencias comunes", 0d));
+			deductionsMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias comunes", 0d));
 		if (!inserted.contains("DESMPL"))
-			deductionsMap.get(1).add(new PDFDeduction(0d, "Desempleo", 0d));
+			deductionsMap.get(1).add(new PDFDeduction(0d, "DESMPL", "Desempleo", 0d));
 		if (!inserted.contains("FP"))
-			deductionsMap.get(1).add(new PDFDeduction(0d, "Formación profesional", 0d));
+			deductionsMap.get(1).add(new PDFDeduction(0d, "FP",  "Formación profesional", 0d));
 		if (!inserted.contains("IRPF"))
-			deductionsMap.get(2).add(new PDFDeduction(0d, "Retribuciones dinerarias", 0d));
+			deductionsMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones dinerarias", 0d));
+		if (!inserted.contains("MEI"))
+			deductionsMap.get(2).add(new PDFDeduction(0d, "MEI", "Mecanismo de equidad intergeneracional", 0d));
 
 		builder.setDeductions(deductionsMap);
 		return builder.build();
@@ -283,7 +289,7 @@ public class SettleBuilder {
 			String desc = d.getDescription();
 			
 			int	   type	= getDeductionPDFType(d.getDeductionType().ordinal());
-			PDFDeduction deduction = new PDFDeduction(d.getAmount(), desc, percent);
+			PDFDeduction deduction = new PDFDeduction(d.getAmount(), d.getName(), desc, percent);
 
 			if (!deductionsMap.containsKey(type))
 				deductionsMap.put(type, new ArrayList<PDFDeduction>());
@@ -310,13 +316,15 @@ public class SettleBuilder {
 			deductionsMap.put(2, new ArrayList<PDFDeduction>());
 
 		if (!inserted.contains("CGC"))
-			deductionsMap.get(1).add(new PDFDeduction(0d, "Contingencias comunes", 0d));
+			deductionsMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias comunes", 0d));
 		if (!inserted.contains("DESMPL"))
-			deductionsMap.get(1).add(new PDFDeduction(0d, "Desempleo", 0d));
+			deductionsMap.get(1).add(new PDFDeduction(0d, "DESMPL", "Desempleo", 0d));
 		if (!inserted.contains("FP"))
-			deductionsMap.get(1).add(new PDFDeduction(0d, "Formación profesional", 0d));
+			deductionsMap.get(1).add(new PDFDeduction(0d, "FP", "Formación profesional", 0d));
 		if (!inserted.contains("IRPF"))
-			deductionsMap.get(2).add(new PDFDeduction(0d, "Retribuciones dinerarias", 0d));
+			deductionsMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones dinerarias", 0d));
+		if (!inserted.contains("MEI"))
+			deductionsMap.get(2).add(new PDFDeduction(0d, "MEI", "Mecanismo de equidad intergeneracional", 0d));
 
 		builder.setDeductions(deductionsMap);
 		return builder.build();

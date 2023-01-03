@@ -35,6 +35,7 @@ public class PayrollBundle  extends ListResourceBundle{
 	        { "TIPO", "Tipo" },
 	        { "AP EMPRESA", "AP.Empresa" },
 	        { "CONTINGENCIAS COMUNES", "Contingencias comunes" },
+	        { "MECANISMO DE EQUIDAD INTERGENERACIONAL", "Mecanismo de equidad intergeneracional" },
 	        { "IMPORTE DE REMUNERACION MENSUAL", "Importe de remuneración mensual" },
 	        { "IMPORTE PRORRATA DE PAGA EXTRAORDINARIA", "Importe prorrata de paga extraordinaria" },
 	        { "CONTINGENCIAS PROFESIONALES Y CONCEPTOS DE RECAUDACION CONJUNTA", "Contingencias profesionales y conceptos recaudación conjunta" },
