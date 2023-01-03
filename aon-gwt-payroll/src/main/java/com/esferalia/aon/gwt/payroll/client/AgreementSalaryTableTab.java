@@ -207,6 +207,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 			
 			if(level.getId() == 0) {
 				categoryLB = createCategoryLB();
+				categoryLB.ensureDebugId("category_filter");
 				categoryLB.getElement().getStyle().setHeight(1.7, Unit.EM);
 				categoryLB.getElement().getStyle().setWidth(290, Unit.PX);
 				categoryLB.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
@@ -236,6 +237,9 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 			for(String variable : agreement.getVariablesByDate(selectedDate)) {
 				LevelData levelData = agreement.getLevelData(level.getId(), variable, selectedDate);
 				TextBox cell = new ExpressionBox();
+				
+				cell.ensureDebugId("textBox_" + variable + "_" + level.getDescription() );
+
 				cell.addStyleName(style.gridCell());
 				cell.addStyleName(style.valueCell());
 				cell.addStyleName(style.textBox());

@@ -8,35 +8,26 @@ import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.login;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.wait4;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.logging.Level;
-import java.util.regex.Pattern;
 
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.AlertHandler;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.javascript.host.event.MouseEvent;
 
 @Ignore
 public class GeneralAgreementTest {
@@ -61,32 +52,44 @@ public class GeneralAgreementTest {
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
 		webClient.getOptions().setCssEnabled(false);
 
-		webClient.setAlertHandler(new AlertHandler() {
-			@Override
-			public void handleAlert(Page page, String message) {
-				LOGGER.warning("ALERT '" + message + "'" );
-				
-			}
-		});
+		webClient.setAlertHandler((page, message) -> LOGGER.warning("ALERT '" + message + "'" ));
+		
 		url = System.getProperty(INTEGRATION_PAYROLL_URL);
 		user = System.getProperty(INTEGRATION_BASE_USER);
 		password = System.getProperty(INTEGRATION_BASE_PASSWORD);
 		htmlPage = login(webClient, url, user, password);
 
 		// Payroll Menu
-		HtmlAnchor menuPayrollAnchor = htmlPage
-				.getAnchorByName(AON_MAIN_MENU_FORM + ":menu_payroll");
+		HtmlAnchor menuPayrollAnchor = htmlPage.getAnchorByName(AON_MAIN_MENU_FORM + ":menu_payroll");
 		LOGGER.warning("Cick on: " + menuPayrollAnchor.asNormalizedText());
 		htmlPage = menuPayrollAnchor.click();
+		
+//		buildFile(htmlPage.asXml().getBytes(), "/Users/sergio/Desktop/menuPayroll.html");
 
 		// MainAgreement
-		HtmlAnchor gwtAgreementAnchor = htmlPage
-				.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement");
+		HtmlAnchor gwtAgreementAnchor = htmlPage.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement");
 		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asNormalizedText());
 		htmlPage = gwtAgreementAnchor.click();
 		
+//		buildFile(htmlPage.asXml().getBytes(), "/Users/sergio/Desktop/convenios.html");
+		
 		wait4Id("agreements");
 		
+	}
+	
+	// BUILD A FILE FROM ARRAY OF BYTES
+	public static void buildFile(byte[] arr_bytes, String docName) {
+		File f = new File(docName);
+		try {
+			FileOutputStream fos = new FileOutputStream(f);
+			fos.write(arr_bytes);
+			fos.close();
+		} catch (FileNotFoundException e) {
+			System.err.println("Archivo no encontrado");
+		} catch (IOException e) {
+			System.err.println("Error al escribir");
+		}
+
 	}
 
 
@@ -100,17 +103,21 @@ public class GeneralAgreementTest {
 
 		wait4Id("pagas_anuales_verano_&_navidad");
 
-		HtmlDivision agreementTreeItem = 
-				(HtmlDivision)getElementById("pagas_anuales_verano_&_navidad");
+		HtmlDivision agreementTreeItem = (HtmlDivision)getElementById("pagas_anuales_verano_&_navidad");
 		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
 		agreementTreeItem.click();
 		
-		wait4(htmlPage,
-				htmlPage -> "PAGAS ANUALES VERANO & NAVIDAD".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
+		wait4(htmlPage, htmlPage -> "PAGAS ANUALES VERANO & NAVIDAD".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
+		
+		HtmlDivision salaryTableTab = (HtmlDivision)getElementById("salary_table_tab");
+		LOGGER.warning("Cick on: " + salaryTableTab.asNormalizedText());
+		salaryTableTab.click();
+		
+		wait4Id("category_filter");
 		
 		setValue("textBox_SALARIO_MENSUAL_I", "666.66");
 		
-		wait4Class("textBox_SALARIO_MENSUAL_I", "aon-icon-changed");
+		wait4Class("textBox_SALARIO_MENSUAL_I", "GCJOI5OCJPD");
 		
 	}
 
