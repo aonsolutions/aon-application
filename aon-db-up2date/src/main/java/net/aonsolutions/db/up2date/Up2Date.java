@@ -31,6 +31,7 @@ import net.aonsolutions.db.up2date.payroll.AlterSalaryBonusConcept;
 
 import net.aonsolutions.db.up2date.payroll.DeathOfEmployeeInsert;
 import net.aonsolutions.db.up2date.payroll.Holidays2023Insert;
+import net.aonsolutions.db.up2date.tgss.BasesMax2023Update;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 public class Up2Date {
 
@@ -300,9 +301,9 @@ public class Up2Date {
     		//DeathOfEmployeeInsert.DEATHOFEMPLOYEEINSERT,
     		//AlterAgreementPaymentDescription.ALTERAGREEMENTPAYMENTDESCRIPTION,
     		//UpdateInvoiceRegistryDocument.UPDATE_INVOICE_REGISTRY_DOCUMENT,
-
-    		AlterAlcatrazFinance.ALTER_ALCATRAZ_FINANCE,
-    		IrpfEuskadi2023Insert.IRPFEUSKADI2023INSERT,
+    		//AlterAlcatrazFinance.ALTER_ALCATRAZ_FINANCE,
+    		//IrpfEuskadi2023Insert.IRPFEUSKADI2023INSERT,
+	    	BasesMax2023Update.BASESMAX2023UPDATE,
 	    	
     		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
