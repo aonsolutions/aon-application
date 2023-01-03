@@ -25,15 +25,15 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902021;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.server.fiscal.format.Mod3902021Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902021Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 @WebServlet(name = "Mod390 2021 Validate Print AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Mod3902021ValidatePrintAEAT" })
-public class Mod9902021ValidatePrintAEAT extends HttpServlet {
+public class Mod3902021ValidatePrintAEAT extends HttpServlet {
 
-	private static final Logger LOGGER = Logger.getLogger(Mod9902021ValidatePrintAEAT.class.getName()); 
+	private static final Logger LOGGER = Logger.getLogger(Mod3902021ValidatePrintAEAT.class.getName()); 
 	private static final long serialVersionUID = -898176379168968783L;
 
 	private enum AeatUrl {

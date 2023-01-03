@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonCellTable;
-import com.esferalia.aon.occam.api.model.type.CNAE;
+import com.esferalia.aon.occam.api.model.type.OLD_CNAE;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiField;
@@ -18,10 +18,10 @@ import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
-public class CnaePanel extends CustomDialog {
+public class OLD_CnaePanel extends CustomDialog {
 
 	public interface SelectionCallBack {
-		void onSelect(CNAE cnae);
+		void onSelect(OLD_CNAE cnae);
 		void onClose();
 	}
 
@@ -31,26 +31,26 @@ public class CnaePanel extends CustomDialog {
 //			.create(CnaePanelBinder.class);
 
 
-	private static final ProvidesKey<CNAE> CNAE_PROVIDES_KEY = new ProvidesKey<CNAE>() {
+	private static final ProvidesKey<OLD_CNAE> CNAE_PROVIDES_KEY = new ProvidesKey<OLD_CNAE>() {
 		@Override
-		public Object getKey(CNAE item) {
+		public Object getKey(OLD_CNAE item) {
 			return item.getCode();
 		}
 	};
 	
 	private SelectionCallBack callback;
 
-	private NoSelectionModel<CNAE> model;
+	private NoSelectionModel<OLD_CNAE> model;
 
 	@UiField(provided = true)
-	CellTable<CNAE> table;
+	CellTable<OLD_CNAE> table;
 
-	public CnaePanel(SelectionCallBack callback) {
+	public OLD_CnaePanel(SelectionCallBack callback) {
 		this();
 		this.callback = callback;
 	}
 
-	public CnaePanel() {
+	public OLD_CnaePanel() {
 		setVisible(false);
 		setAnimationEnabled(true);
 		setGlassEnabled(true);
@@ -65,14 +65,14 @@ public class CnaePanel extends CustomDialog {
 		AON.AON_RESOURCES.css().ensureInjected();
 		CellTable.Resources tableStyle = GWT.create(AonCellTable.class);
 
-		table = new CellTable<CNAE>(1, tableStyle, CNAE_PROVIDES_KEY);
+		table = new CellTable<OLD_CNAE>(1, tableStyle, CNAE_PROVIDES_KEY);
 		table.setKeyboardPagingPolicy(KeyboardPagingPolicy.CHANGE_PAGE);
 		table.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
 
 		addCodeColumn();
 		addDescriptionColumn();
 
-		model = new NoSelectionModel<CNAE>(CNAE_PROVIDES_KEY);
+		model = new NoSelectionModel<OLD_CNAE>(CNAE_PROVIDES_KEY);
 		model.addSelectionChangeHandler(new SelectionChangeEvent.Handler(){
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
@@ -101,8 +101,8 @@ public class CnaePanel extends CustomDialog {
 
 	public void onShow() {
 		if (table.getRowCount() == 0) {
-			table.setRowData( Arrays.asList(CNAE.values()) );
-			table.setRowCount(CNAE.values().length, true);
+			table.setRowData( Arrays.asList(OLD_CNAE.values()) );
+			table.setRowCount(OLD_CNAE.values().length, true);
 			center();
 			show();
 		} else {
@@ -112,9 +112,9 @@ public class CnaePanel extends CustomDialog {
 	}
 
 	private void addCodeColumn() {
-		final TextColumn<CNAE> codeColumn = new TextColumn<CNAE>() {
+		final TextColumn<OLD_CNAE> codeColumn = new TextColumn<OLD_CNAE>() {
 			@Override
-			public String getValue(CNAE cnae) {
+			public String getValue(OLD_CNAE cnae) {
 				return cnae.getCode();
 			}
 		};
@@ -124,9 +124,9 @@ public class CnaePanel extends CustomDialog {
 	}
 
 	private void addDescriptionColumn() {
-		final TextColumn<CNAE> titleColumn = new TextColumn<CNAE>() {
+		final TextColumn<OLD_CNAE> titleColumn = new TextColumn<OLD_CNAE>() {
 			@Override
-			public String getValue(CNAE cnae) {
+			public String getValue(OLD_CNAE cnae) {
 				return cnae.getDescription();
 			}
 		};

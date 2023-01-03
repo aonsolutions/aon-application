@@ -116,6 +116,16 @@ public class Mod190ALL2017Declaration extends Mod190Declaration {
 					public void visitExpenses(PaymentType paymentType) {
 						if (!isBoss()) visitExpenses();
 					}
+					
+					@Override
+					public void visitInsurance(PaymentType paymentType) {
+						visitOther(paymentType);
+					}
+					
+					@Override
+					public void visitSupport(PaymentType paymentType) {
+						visitOther(paymentType);
+					}
 
 					// -------------------------------------------------------------------------------------
 					// -------------------------------------------------------------------------------------

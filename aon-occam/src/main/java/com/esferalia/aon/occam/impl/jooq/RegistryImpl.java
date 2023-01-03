@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IRegistry;
+import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.model.AonCompany;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -518,9 +519,9 @@ public class RegistryImpl implements IRegistry{
 	// -------------------- RPAYMETHOD
 	
 	@Override
-	public RegistryPayMethod getRegistryPayMethod(AONContext ctx, RegistryPayMethodFilter filter) {
+	public RegistryPayMethod getRegistryPayMethod(AONContext ctx, RegistryPayMethodFilter filter, Options...options) {
 		return 	ctx.getDslContext().transactionResult(
-				configuration -> RegistryPayMethodDAO.get(ctx, filter));
+				configuration -> RegistryPayMethodDAO.get(ctx, filter, options));
 	}
 	
 	@Override

@@ -35,12 +35,7 @@ import com.code.aon.ui.fiscal.aeat.AeatUtils;
 import com.code.aon.ui.fiscal.controller.model.FiscalModelController;
 import com.code.aon.ui.fiscal.file.MOD303Writer;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
-import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
-import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
-import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
-import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
 
 public class Mod303Controller extends FiscalModelController {
@@ -605,32 +600,8 @@ public class Mod303Controller extends FiscalModelController {
 		return super.isAeatDraftReportEnabled();
 	}
 	
-	public ArrayList<Activity> getActivities(int activityGroup) {
-		try {
-			ArrayList<Activity> list = new ArrayList<Activity>();
-			TypeActivity[] types = null;
-			if (activityGroup == 0) {
-				types = Type1Activities.values();
-			} if (activityGroup == 1) {
-				types = Type2Activities.values();
-			} if (activityGroup == 2) {
-				types = Type3Activities.values();
-			} if (activityGroup == 3) {
-				types = Type4Activities.values();
-			} if (activityGroup == 6) {
-				types = Type7Activities.values();
-			}
-			Activity a;
-			for (TypeActivity type : types) {
-				a = new Activity();
-				a.setEpigraph(type.getEpigraph());
-				a.setDescription(type.getLiteral());
-				list.add(a);
-			}
-			return list;
-		} catch (Throwable e) {
-			AonUtil.addErrorMessage(e.getMessage()); 
-			throw new AbortProcessingException(e.getMessage(),e);
-		}
+	public ArrayList<?> getActivities(int activityGroup) {
+		AonUtil.addErrorMessage("Illegal operation"); 
+		throw new AbortProcessingException("Illegal operation");
 	}
 }

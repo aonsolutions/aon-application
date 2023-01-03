@@ -12,10 +12,12 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303.Model303Callback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivity2020.IMod303ActivityCallback;
 import com.esferalia.aon.gwt.fiscal.client.mod303.Model303AEATActivityFarmer.IMod303ActivityFarmerCallback;
+import com.esferalia.aon.gwt.fiscal.client.mod390.e2022.ActivityTypeListBox;
+import com.esferalia.aon.occam.api.model.fiscal.ActivityType;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
-import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032017AEAT390nfoScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEAT390nfoScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEATAdditionalDataScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEATGeneralRegimeScript1;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032022AEATGeneralRegimeScript2;
@@ -700,7 +702,7 @@ class Model303AEAT2022 extends Model303AEAT {
 		
 		paintCheck(Mod303Key.CT_U13, table);
 		
-		paintScript(table,Model3032017AEAT390nfoScript.values(),3);
+		paintScript(table,Model3032022AEAT390nfoScript.values(),3);
 		
 		paintLabel(table, table.getRowCount() , AON.MSG.prorrata(),true);
 		
@@ -838,12 +840,10 @@ class Model303AEAT2022 extends Model303AEAT {
 		});
 		tab.setWidget(row, 1, epi);
 
-		AonTextBox key = new AonTextBox();
-		key.setVisibleLength(2);
-		key.setMaxLength(1);
-		key.setValue(getModel().getDescription(keyKey));
-		key.addValueChangeHandler(event ->  {
-			getModel().putDescription(keyKey,key.getValue());
+		ActivityTypeListBox key = new ActivityTypeListBox();
+		key.setValue( ActivityType.ensure(getModel().getDescription(keyKey)) );
+		key.addChangeHandler(event ->  {
+			getModel().putDescription(keyKey,ActivityType.toString(key.getValue()));
 			markAsDirty();
 		});
 		tab.setWidget(row, 2, key);

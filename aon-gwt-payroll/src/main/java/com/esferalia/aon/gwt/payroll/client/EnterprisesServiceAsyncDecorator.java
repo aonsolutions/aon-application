@@ -509,6 +509,18 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.checkEmployeesEmails(currentDomainName, salaryIds, new AsyncCallbackWrapper<String>(callback));
 	}
+	
+	@Override
+	public void getSettlePDF(String currentDomainName, String user, Integer settleId, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getSettlePDF(currentDomainName, user, settleId, new AsyncCallbackWrapper<String>(callback));
+	}
+
+	@Override
+	public void getSalariesPDF(String currentDomainName, String user, Integer enterpriseId, List<Integer> salaryIds, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getSalariesPDF(currentDomainName, user, enterpriseId, salaryIds, new AsyncCallbackWrapper<String>(callback));
+	}
 
 	@Override
 	public void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> callback) {

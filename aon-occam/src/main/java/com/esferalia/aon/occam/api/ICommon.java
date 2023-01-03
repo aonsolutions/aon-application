@@ -154,6 +154,7 @@ public interface ICommon {
 	public DataRequest saveDataRequest(AONContext ctx, DataRequest dataRequest);
 	
 	// DATA RESPONSE
+	public DataResponse getDataResponse(AONContext ctx, DataResponseFilter filter);
 	public DataResponse getLastDataResponse(AONContext ctx, DataResponseFilter filter);
 	public Stream<DataResponse> getDataResponseStream(AONContext ctx, DataResponseSource source, DataResponseFilter filter);
 	public DataResponse insertDataResponse(AONContext ctx, DataResponse dataResponse);

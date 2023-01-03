@@ -809,6 +809,7 @@ public class SalaryDraftBuilder
 
 		if (siblingPayment != null) {
 			if (isDelay(payment)
+				|| isExtra(payment)
 				|| isNotZero(amount) 
 				|| isNotZero(quote)
 				|| isNotZero(tax) ) {
@@ -820,6 +821,7 @@ public class SalaryDraftBuilder
 		}else {
 			salaryDraft.addPayment(draftPayment);
 			if ( isDelay(payment)
+				|| isExtra(payment)
 				|| isNotZero(amount) 
 				|| isNotZero(quote)
 				|| isNotZero(tax)) {
@@ -1801,6 +1803,10 @@ public class SalaryDraftBuilder
 		;
 	}
 	
+	private boolean isExtra(IPayment payment) {
+		return (( payment instanceof IContractPayment) && (((IContractPayment)payment).getSalaryType() == SalaryType.EXTRA ));
+	}
+
 	private boolean isDelay(IPayment payment) {
 		return (( payment instanceof IContractPayment) && (((IContractPayment)payment).getSalaryType() == SalaryType.DELAY ));
 	}

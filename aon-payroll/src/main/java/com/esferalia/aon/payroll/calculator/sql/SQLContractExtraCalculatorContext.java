@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
+import org.mvel2.ConversionException;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
@@ -62,6 +63,7 @@ import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
@@ -461,7 +463,8 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			
 			@Override
 			public String getExpression() {
-				return expression;
+				//return expression;
+				return String.format(Locale.ROOT,"/*var:%s*/%s", getOverrideVarName(), expression );
 			}
 			@Override
 			public ExpressionScope getScope() {
@@ -516,7 +519,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 				}catch (UndefinedVariablesException e) {
 					undefPayments.add(new SimpleContractPayment(p));
 				}catch (ExpressionException e) {
-				}catch (CompileException e) {
+				}catch (CompileException | ConversionException e) {
 					expressionContext.setVariable(p.getName(), 0.00, paymentStart, paymentEnd);
 				}
 			}
@@ -541,7 +544,7 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 					}catch (com.esferalia.aon.salary.expression.InterruptedException e) {
 						throw e;
 					}catch (ExpressionException e) {
-					}catch (CompileException e) {
+					}catch (CompileException | ConversionException e) {
 					}
 				}
 			}
@@ -556,27 +559,6 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			addResult(expressionContext, p, paymentStart, paymentEnd, 0.00);
 		}		
 		
-	}
-
-	private void addSalaryPaymentByMonth(ExpressionContext expressionContext, IContractPayment payment, Date paymentStart,
-			Date paymentEnd) throws ExpressionException, UndefinedVariablesException {
-
-		List<ITimedVariable<?>> monthDaysList = new ArrayList<ITimedVariable<?>>(
-				expressionContext.getTimedVariables(NATURAL_MONTH_DAYS.getName()));
-		
-		Period paymentPeriod = new Period(paymentStart, paymentEnd);
-		
-		for (ITimedVariable<?> monthDays : monthDaysList) {
-			Period intersect = monthDays.getPeriod().intersect(paymentPeriod);
-			if ( intersect == null )
-				continue;
-			try {
-				addSalaryPayment(expressionContext, payment, intersect.getStart(), intersect.getEnd());
-			} catch ( CompileException e ){
-				expressionContext.setVariable(payment.getName(), 0.00, intersect.getStart(), intersect.getEnd());
-			}
-		}
-	
 	}
 
 	private void addSalaryPayment(ExpressionContext expressionContext, IContractPayment payment, Date paymentStart,

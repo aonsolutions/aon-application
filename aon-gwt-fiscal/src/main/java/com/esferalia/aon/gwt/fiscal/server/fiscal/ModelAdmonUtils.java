@@ -77,6 +77,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902021;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -84,12 +85,13 @@ import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer;
-import com.esferalia.aon.occam.server.fiscal.format.Mod3902021Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod111.Mod111Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod115.Mod115Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod123.Mod123Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod190.Mod190Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod303.Mod303Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902021Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902022Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
@@ -487,7 +489,10 @@ public class ModelAdmonUtils {
 			@Override 
 			public void visitM390() { 
 				try {
-					if (fm instanceof Mod3902021) {
+					if (fm instanceof Mod3902022) {
+						Mod3902022 mod = (Mod3902022) fm;
+						Mod3902022Writer.fillWriter( mod , writer);
+					} else  if (fm instanceof Mod3902021) {
 						Mod3902021 mod = (Mod3902021) fm;
 						Mod3902021Writer.fillWriter( mod , writer);
 					}

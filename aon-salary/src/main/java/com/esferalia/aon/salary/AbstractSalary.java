@@ -2,8 +2,11 @@ package com.esferalia.aon.salary;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import com.esferalia.aon.salary.cost.Costs;
+import com.esferalia.aon.salary.data.IData;
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -11,9 +14,7 @@ import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.Payments;
 
 public abstract class AbstractSalary implements ISalary {
-	
-	
-	
+
 	public AbstractSalary() {
 		// TODO Auto-generated constructor stub
 	}
@@ -185,6 +186,12 @@ public abstract class AbstractSalary implements ISalary {
 
 	@Override
 	public <T extends IDeduction> Collection<T> getEmbargoS() throws SalaryException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public <T extends IData> Map<String, List<T>> getDataS() throws SalaryException {
 		// TODO Auto-generated method stub
 		return null;
 	}

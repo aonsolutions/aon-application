@@ -190,6 +190,10 @@ public interface EnterprisesService extends RemoteService {
 			String cc, String cco, String bodyHTML);
 
 	String checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds);
+	
+	String getSettlePDF(String currentDomainName, String user, Integer settleId) throws IllegalArgumentException;
+	
+	String getSalariesPDF(String currentDomainName, String currentUser, Integer enterpriseId, List<Integer> salaryIds) throws IllegalArgumentException;
 
 	String checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList);
 

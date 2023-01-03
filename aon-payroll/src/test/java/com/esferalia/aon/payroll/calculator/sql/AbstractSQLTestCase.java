@@ -928,7 +928,7 @@ public abstract class AbstractSQLTestCase {
 
 		.set(CALENDAR.MONDAY_HOURS, mondayHours)
 		.set(CALENDAR.TUESDAY_HOURS, tuesdayHours)
-		.set(CALENDAR.TUESDAY_HOURS, wednesdayHours)
+		.set(CALENDAR.WEDNESDAY_HOURS, wednesdayHours)
 		.set(CALENDAR.THURSDAY_HOURS, thursdayHours)
 		.set(CALENDAR.FRIDAY_HOURS, fridayHours)
 		.set(CALENDAR.SATURDAY_HOURS, saturdayHours)
@@ -936,7 +936,7 @@ public abstract class AbstractSQLTestCase {
 
 		.set(CALENDAR.MONDAY, mondayHours != null ? (byte)0 : (byte)1 )
 		.set(CALENDAR.TUESDAY, tuesdayHours != null ? (byte)0 : (byte)1 )
-		.set(CALENDAR.TUESDAY, wednesdayHours != null ? (byte)0 : (byte)1 )
+		.set(CALENDAR.WEDNESDAY, wednesdayHours != null ? (byte)0 : (byte)1 )
 		.set(CALENDAR.THURSDAY, thursdayHours != null ? (byte)0 : (byte)1 )
 		.set(CALENDAR.FRIDAY, fridayHours != null ? (byte)0 : (byte)1 )
 		.set(CALENDAR.SATURDAY, saturdayHours != null ? (byte)0 : (byte)1 )

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Map;
 
-import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390;
@@ -908,23 +907,24 @@ public class Mod3902022 extends Mod390  {
 
 	public void calculate() {
 		double k37Quota = 0;
-			calculate(Mod3902022DetailKey.C0034, C0034_FORMULA);
-			Mod390Detail k13 = calculate(Mod3902022DetailKey.C0047, C0047_FORMULA);
-			calculate(Mod3902022DetailKey.C0049, C0049_FORMULA);
-			calculate(Mod3902022DetailKey.C0513, C0513_FORMULA);
+		calculate(Mod3902022DetailKey.C0034, C0034_FORMULA);
+		Mod390Detail k13 = calculate(Mod3902022DetailKey.C0047, C0047_FORMULA);
+		calculate(Mod3902022DetailKey.C0049, C0049_FORMULA);
+		calculate(Mod3902022DetailKey.C0513, C0513_FORMULA);
 			
-			calculate(Mod3902022DetailKey.C0051, C0051_FORMULA);
-			calculate(Mod3902022DetailKey.C0521, C0521_FORMULA);
-			calculate(Mod3902022DetailKey.C0053, C0053_FORMULA);
-			calculate(Mod3902022DetailKey.C0055, C0055_FORMULA);
-			calculate(Mod3902022DetailKey.C0057, C0057_FORMULA);
-			calculate(Mod3902022DetailKey.C0059, C0059_FORMULA);
-			calculate(Mod3902022DetailKey.C0598, C0598_FORMULA);
+		calculate(Mod3902022DetailKey.C0051, C0051_FORMULA);
+		calculate(Mod3902022DetailKey.C0521, C0521_FORMULA);
+		calculate(Mod3902022DetailKey.C0053, C0053_FORMULA);
+		calculate(Mod3902022DetailKey.C0055, C0055_FORMULA);
+		calculate(Mod3902022DetailKey.C0057, C0057_FORMULA);
+		calculate(Mod3902022DetailKey.C0059, C0059_FORMULA);
+		calculate(Mod3902022DetailKey.C0598, C0598_FORMULA);
 			
-			Mod390Detail k36 = calculate(Mod3902022DetailKey.C0064, C0064_FORMULA);
-			Mod390Detail k37 = ensure(Mod3902022DetailKey.C0065);
-			k37Quota = AonMathUtils.round(k13.getQuota() - k36.getQuota());
-			k37.setQuota( k37Quota );
+		Mod390Detail k36 = calculate(Mod3902022DetailKey.C0064, C0064_FORMULA);
+		Mod390Detail k37 = ensure(Mod3902022DetailKey.C0065);
+		k37Quota = AonMathUtils.round(k13.getQuota() - k36.getQuota());
+		k37.setQuota( k37Quota );
+		
 		if (isSimplifiedRegime()) {
 			box74 = AonMathUtils.round(
 					(getSimpRegime1()==null?0:getSimpRegime1().getBoxJ()) 
@@ -957,15 +957,25 @@ public class Mod3902022 extends Mod390  {
 	}
 	
 	public Mod390Detail ensure(Mod3902022DetailKey key) {
-		return getGeneralRegime().computeIfAbsent(key
-			,k -> new Mod390Detail()
-				.setKey(k)
-				.setPercent(key.getPercent())
-			);
+//		return getGeneralRegime().computeIfAbsent(key
+//			,k -> new Mod390Detail()
+//				.setKey(k)
+//				.setPercent(key.getPercent())
+//			);
+		Mod390Detail detail = getGeneralRegime().get(key);
+		if (detail == null) {
+			detail = new Mod390Detail();
+			detail.setKey(key);
+			detail.setPercent(key.getPercent());
+			getGeneralRegime().put(key, detail);
+		}
+		return detail;
 	}
 	
 	private Mod390Detail calculate(Mod3902022DetailKey key, Mod3902022DetailKey ... keys) {
 		Mod390Detail detail = ensure(key);
+		detail.setTaxableBase(0.0);
+		detail.setQuota(0.0);
 		for (Mod3902022DetailKey k : keys) {
 			Mod390Detail det = ensure(k);
 			detail.setTaxableBase( AonMathUtils.round(detail.getTaxableBase() + det.getTaxableBase()));

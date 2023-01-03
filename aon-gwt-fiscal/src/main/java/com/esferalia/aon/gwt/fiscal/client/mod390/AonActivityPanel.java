@@ -1,4 +1,4 @@
-package com.esferalia.aon.gwt.fiscal.client.widget;
+package com.esferalia.aon.gwt.fiscal.client.mod390;
 
 import java.util.LinkedList;
 
@@ -8,7 +8,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.occam.api.model.fiscal.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Activity;
 import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
 import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;

@@ -83,7 +83,7 @@ public enum PaymentType {
 	CRA_0022{
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
-			visitor.visitSalaryInKind(this); 
+			visitor.visitInsurance(this); 
 		}
 	},
 	CRA_0023{
@@ -101,7 +101,7 @@ public enum PaymentType {
 	CRA_0025{
 		@Override
 		public void accept(PaymentTypeVisitor visitor) { 
-			visitor.visitSalaryInKind(this); 
+			visitor.visitSupport(this); 
 		}
 	},
 	CRA_0026{
@@ -121,9 +121,24 @@ public enum PaymentType {
 	CRA_0035,
 	CRA_0036,
 	CRA_0037,
-	CRA_0038,
-	CRA_0039,
-	CRA_0040,
+	CRA_0038{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitInsurance(this); 
+		}
+	},
+	CRA_0039{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitInsurance(this); 
+		}
+	},
+	CRA_0040{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) { 
+			visitor.visitInsurance(this); 
+		}
+	},
 	CRA_0041,
 	
 	CRA_0042{
@@ -228,14 +243,22 @@ public enum PaymentType {
     	void visitNonStructuralHours(PaymentType paymentType);
 
     	void visitStructuralHours(PaymentType paymentType);
-
-    	default void visitCompensation(PaymentType paymentType){
-    		visitOther(paymentType);	
-    	}
     	
-    	default void visitExpenses(PaymentType paymentType){
-    		visitOther(paymentType);
-    	}
+    	void visitCompensation(PaymentType paymentType);
+    	
+    	void visitExpenses(PaymentType paymentType);
+    	
+    	void visitInsurance(PaymentType paymentType);
+    	
+    	void visitSupport(PaymentType paymentType);
+
+//    	default void visitCompensation(PaymentType paymentType){
+//    		visitOther(paymentType);	
+//    	}
+    	
+//    	default void visitExpenses(PaymentType paymentType){
+//    		visitOther(paymentType);
+//    	}
     	
     }
     
@@ -270,6 +293,16 @@ public enum PaymentType {
 
 			@Override
 			public void visitExpenses(PaymentType paymentType) {
+			}
+			
+			@Override
+			public void visitInsurance(PaymentType paymentType) {
+				if(paymentType == CRA_0022) isSalaryInKind = true;
+			}
+			
+			@Override
+			public void visitSupport(PaymentType paymentType) {
+				isSalaryInKind = true;
 			}
     		
     	}

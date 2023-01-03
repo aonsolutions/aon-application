@@ -10,14 +10,7 @@ import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Occam;
-import com.esferalia.aon.occam.api.model.fiscal.Activity;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
-import com.esferalia.aon.occam.api.model.type.Activities.Type1Activities;
-import com.esferalia.aon.occam.api.model.type.Activities.Type2Activities;
-import com.esferalia.aon.occam.api.model.type.Activities.Type3Activities;
-import com.esferalia.aon.occam.api.model.type.Activities.Type4Activities;
-import com.esferalia.aon.occam.api.model.type.Activities.Type7Activities;
-import com.esferalia.aon.occam.api.model.type.Activities.TypeActivity;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -47,34 +40,34 @@ public class FiscalMSServiceImpl extends AonStatelessRemoteServiceServlet implem
 				).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	// -------------------------------------------------------------- ACTIVITIES
-	@Override
-	public LinkedList<Activity> getActivities(int activityGroup) throws AonCoreException {
-		LinkedList<Activity> list = new LinkedList<Activity>();
-		TypeActivity[] types = null;
-		if (activityGroup == 0) {
-			types = Type1Activities.values();
-		} if (activityGroup == 1) {
-			types = Type2Activities.values();
-		} if (activityGroup == 2) {
-			types = Type3Activities.values();
-		} if (activityGroup == 3) {
-			types = Type4Activities.values();
-		} if (activityGroup == 6) {
-			types = Type7Activities.values();
-		}
-		if (types == null) {
-			throw new AonCoreException("Grupo de actividad no soportado " + activityGroup );
-		}
-		Activity a;
-		for (TypeActivity type : types) {
-			a = new Activity();
-			a.setEpigraph(type.getEpigraph());
-			a.setDescription(type.getLiteral());
-			list.add(a);
-		}
-		return list;
-	}
+//	// -------------------------------------------------------------- ACTIVITIES
+//	@Override
+//	public LinkedList<Activity> getActivities(int activityGroup) throws AonCoreException {
+//		LinkedList<Activity> list = new LinkedList<Activity>();
+//		TypeActivity[] types = null;
+//		if (activityGroup == 0) {
+//			types = Type1Activities.values();
+//		} if (activityGroup == 1) {
+//			types = Type2Activities.values();
+//		} if (activityGroup == 2) {
+//			types = Type3Activities.values();
+//		} if (activityGroup == 3) {
+//			types = Type4Activities.values();
+//		} if (activityGroup == 6) {
+//			types = Type7Activities.values();
+//		}
+//		if (types == null) {
+//			throw new AonCoreException("Grupo de actividad no soportado " + activityGroup );
+//		}
+//		Activity a;
+//		for (TypeActivity type : types) {
+//			a = new Activity();
+//			a.setEpigraph(type.getEpigraph());
+//			a.setDescription(type.getLiteral());
+//			list.add(a);
+//		}
+//		return list;
+//	}
 
 	// --------------------------------------------------------------- GWT API INFO
 	

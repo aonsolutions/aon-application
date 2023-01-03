@@ -823,12 +823,16 @@ export class AonInvoice extends AonElement {
 					this.invoice.setPaymethod(rpm.paymethod.id);
 					getPaymethod(rpm.paymethod.id).then(pm => {
 						if(pm.type === 'NEGOTIABLE_DOCUMENT') {
-							getRegistryBanks(this.company.id).then(r => {
-								this.invoice.setBankAccount(r[0] ? r[0].bank_account : "");
+							getRegistryPaymethod({registry: this.company.id}).then(crpm => {
+								this.invoice.setBankAccount(crpm.bank.bank_account);
 								this.reload();
-							});	
+							});
+							// getRegistryBanks(this.company.id).then(r => {
+							// 	this.invoice.setBankAccount(r[0] ? r[0].bank_account : "");
+							// 	this.reload();
+							// });	
 						} else if(pm.type === 'BANK_TRANSFER'){
-							this.invoice.setBankAccount(rpm.rbank.bank_account);
+							this.invoice.setBankAccount(rpm.bank.bank_account);
 							this.reload();
 						} else {
 							this.invoice.setBankAccount("");
@@ -1184,12 +1188,19 @@ export class AonInvoice extends AonElement {
 				getPaymethod(finance.paymethod).then(pm => {
 					if((!this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
 						|| (this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
-				   		getRegistryBanks(this.company.id).then(r => {
-					   		let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-					   		ba.value = r[0] ? r[0].bank_account : "";
-					   		finance.bank_account = ba.value;
-					   		this.invoice.setFinance(finance, i);
-				   		});	
+
+						getRegistryPaymethod({registry: this.company.id}).then(crpm => {
+							let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
+							ba.value = crpm.bank.bank_account;
+							finance.bank_account = ba.value;
+							this.invoice.setFinance(finance, i);
+						});
+						// getRegistryBanks(this.company.id).then(r => {
+					   	// 	let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
+					   	// 	ba.value = r[0] ? r[0].bank_account : "";
+					   	// 	finance.bank_account = ba.value;
+					   	// 	this.invoice.setFinance(finance, i);
+				   		// });	
 			   		} else if((this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
 				 		|| (!this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')){
 				   		getRegistryBanks(this.invoice.getRegistry().id).then(r => {
@@ -2011,12 +2022,19 @@ export class AonInvoice extends AonElement {
 			const pm = paymethod.getOptions().filter(f => f.id == paymethod.value)[0];
 			if((!this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
 				 	|| (this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) {
-				getRegistryBanks(this.company.id).then(r => {
+
+				getRegistryPaymethod({registry: this.company.id}).then(crpm => {
 					let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
-					ba.value = r[0] ? r[0].bank_account : "";
+					ba.value = crpm.bank.bank_account;
 					finance.bank_account = ba.value;
 					this.invoice.setFinance(finance, i);
-				});	
+				});
+				// getRegistryBanks(this.company.id).then(r => {
+				// 	let ba = this.getElement(this.FINANCE_BANK_ACCOUNT + i);
+				// 	ba.value = r[0] ? r[0].bank_account : "";
+				// 	finance.bank_account = ba.value;
+				// 	this.invoice.setFinance(finance, i);
+				// });	
 			} else if((this.invoice.isEmitida() && pm.type === 'NEGOTIABLE_DOCUMENT')
 				|| (!this.invoice.isEmitida() && pm.type === 'BANK_TRANSFER')) { 
 				getRegistryBanks(this.invoice.getRegistry().id).then(r => {

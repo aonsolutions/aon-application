@@ -11,6 +11,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -159,6 +160,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
 import com.google.gwt.user.client.ui.SuggestBox.SuggestionCallback;
@@ -166,7 +168,6 @@ import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
@@ -2603,8 +2604,6 @@ public class SalaryDraft extends ResizeComposite
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
 	@UiField
-	ScrollPanel scrollPanel;
-	@UiField
 	VerticalPanel scrolledPanel;
 	@UiField
 	DeckLayoutPanel deckPanel;
@@ -2614,9 +2613,25 @@ public class SalaryDraft extends ResizeComposite
 	FullViewer pdfViewer;
 
 	@UiField
+	DockLayoutPanel drafDockLayoutPanel;
+	@UiField
 	SalarySelect salarySelect;
 	@UiField
 	FlexTable contextTable;
+	@UiField
+	FlexTable systemContextTable;
+	@UiField
+	ScrollPanel systemContextScrollPanel;
+	@UiField
+	FlexTable employeeContextTable;
+	@UiField
+	ScrollPanel employeeContextScrollPanel;
+	@UiField
+	FlexTable agreementContextTable;
+	@UiField
+	ScrollPanel agreementContextScrollPanel;
+	@UiField
+	StackLayoutPanel contextStackLayoutPanel;
 	@UiField
 	FlexTable eventsTable;
 	@UiField
@@ -3621,10 +3636,6 @@ public class SalaryDraft extends ResizeComposite
 		insertBlankPaymentRow();
 		//insertBlankPaymentRow();
 		
-		Scope nextScope = null;
-		boolean show = false; //scope.compareTo(Scope.CONTRACT) >= 0;
-
-
 		List<Variable> context = getContext(salaryDraftObject);
 		List<Variable> variables = context.stream()
 				.filter(v->!skipVariable(v))
@@ -3647,11 +3658,14 @@ public class SalaryDraft extends ResizeComposite
 		
 		
 		//dumpContext(constants, Scope.CONTRACT, true, null);
-
-		for (Scope step : SCOPE_STEPS) {
-			nextScope = dumpContext(visibleContext, step, show, nextScope);
-			if (step.compareTo(scope) <= 0)
-				break;
+		
+		if ( Wnd.isNewAONTheme() ) {
+		    showContextAtLeft();
+		    dumpContextAtLeft(visibleContext);
+		    notDefinedVarsCheck.removeFromParent();
+		} else {
+		    hideContextAtLeft();
+		    dumpContextAtTop(visibleContext);
 		}
 		
 		initTgssCheck();
@@ -3769,9 +3783,6 @@ public class SalaryDraft extends ResizeComposite
 		contextTable.clear();
 		contextTable.removeAllRows();
 		
-		Scope nextScope = null;
-		boolean show = false; 
-		
 		List<Variable> context = getContext(salaryDraftObject);
 		List<Variable> variables = context.stream()
 				.filter(v->!skipVariable(v))
@@ -3783,11 +3794,7 @@ public class SalaryDraft extends ResizeComposite
 		visibleContext.addAll(constants);
 		visibleContext.addAll(variables);
 		
-		for (Scope step : SCOPE_STEPS) {
-			nextScope = dumpContext(visibleContext, step, show, nextScope);
-			if (step.compareTo(scope) <= 0)
-				break;
-		}
+		dumpContextAtTop(visibleContext);
 	}
 
 	private void onHideShowDisabledPayments() {
@@ -4167,6 +4174,10 @@ public class SalaryDraft extends ResizeComposite
 
 	private void clearContextTable() {
 		contextTable.removeAllRows();
+		
+		systemContextTable.removeAllRows();
+		agreementContextTable.removeAllRows();
+		employeeContextTable.removeAllRows();
 	}
 
 	private void clearPaymentsTable() {
@@ -5159,7 +5170,89 @@ public class SalaryDraft extends ResizeComposite
 		dumpSystemItem(bonus, description, row, percentWidget, expandButton, iconStyles);
 	}
 	
+	private void hideContextAtLeft() {
+	    drafDockLayoutPanel.setWidgetSize(contextStackLayoutPanel, 0);
+	}
+	
+	private void showContextAtLeft() {
+	    drafDockLayoutPanel.setWidgetSize(contextStackLayoutPanel, 275);
+	}
 
+	private void dumpContextAtTop(List<Variable> visibleContext) {
+	    Scope nextScope = null;
+	    for (Scope step : SCOPE_STEPS) {
+	    	nextScope = dumpContext(visibleContext, step, false, nextScope);
+	    	if (step.compareTo(scope) <= 0)
+	    		break;
+	    }
+	    
+	    
+	}
+
+	private void dumpContextAtLeft(List<Variable> context) {
+	    
+	    Comparator<Variable> variableComparator = (v1, v2 ) -> {
+		if ( (v1 instanceof UndefinedVariable) && !(v2 instanceof UndefinedVariable) )
+			return 1; // v1 > v2 
+		if ( (v2 instanceof UndefinedVariable) && !(v1 instanceof UndefinedVariable) ) 
+			return -1; // v1 < v2 
+		return AonStringUtils.compare(v1.getName(), v2.getName());
+	    };
+	    
+	    List<Variable> contractContext = context.stream().filter( v -> v.getScope() == Scope.CONTRACT).sorted(variableComparator).collect(Collectors.toList());	
+	    List<Variable> agreementContext = context.stream().filter( v -> v.getScope() == Scope.AGREEMENT).sorted(variableComparator).collect(Collectors.toList());
+	    List<Variable> systemContext = context.stream().filter( v -> v.getScope() == Scope.SYSTEM).sorted(variableComparator).collect(Collectors.toList());
+	    List<Variable> applicationContext = context.stream().filter( v -> v.getScope() == Scope.APPLICATION).sorted(variableComparator).collect(Collectors.toList());
+	    
+	    List<Variable> salaryContext = context.stream().filter( v -> v.getScope() == Scope.SALARY).sorted(variableComparator).collect(Collectors.toList());
+	    
+	    dumpContext(systemContextTable,  systemContext);
+	    dumpContext(systemContextTable,  applicationContext);
+	    dumpContext(agreementContextTable,  agreementContext);
+	    dumpContext(employeeContextTable,  salaryContext);
+	    dumpContext(employeeContextTable,  contractContext);
+	    
+	    if ( employeeContextTable.getRowCount() > 0 ) {
+		contextStackLayoutPanel.showWidget(employeeContextScrollPanel, true);
+	    } else if ( agreementContextTable.getRowCount() > 0 ) {
+		contextStackLayoutPanel.showWidget(agreementContextScrollPanel, true);
+	    } else {
+		contextStackLayoutPanel.showWidget(systemContextScrollPanel, true);
+	    }
+
+	}
+
+	private void dumpContext(FlexTable flexTable, Collection<Variable> context ) {
+	    	
+		final int cols = 1;
+
+		int count = flexTable.getRowCount() * cols;
+
+		for (Variable variable: context) {
+
+			Widget variableWidget ; 
+			try {
+				variableWidget  = getVariableWidget(variable, variable.getScope(), false);
+			} catch ( SkipVariableException e ){
+				continue;
+			}
+			
+			int row = count / cols;
+			int col = count % cols;
+			flexTable.setWidget(row, col, variableWidget);
+
+			flexTable.getRowFormatter().addStyleName(row,
+					row % 2 == 0 ? AON.AON_DATA_TABLE_ROW_ODD : AON.AON_DATA_TABLE_ROW_EVEN);
+
+			flexTable.getColumnFormatter().setWidth(col, (100 / cols) + "%");
+
+			if (variable.getScope() == Scope.SALARY) {
+				flexTable.getCellFormatter().addStyleName(row, col, AON.AON_DATA_TABLE_CELL_HIGHLIGHT);
+			} // highlight dirty, not saved variables.
+
+			count++;
+		}
+	}
 	/*
 	 * 
 	 * @param context
@@ -5246,7 +5339,7 @@ public class SalaryDraft extends ResizeComposite
 	}
 
 	private <T extends IsWidget & HasValue<String> & HasAllFocusHandlers & Focusable & HasEnabled> Widget getVariableWidget(
-			final Variable variable, Scope scope, boolean show) {
+			final Variable variable, Scope scope, boolean showUndefPayment) {
 
 		HTMLPanel htmlPanel = new HTMLPanel("");
 
@@ -5320,9 +5413,7 @@ public class SalaryDraft extends ResizeComposite
 				itemButton.setTabIndex(Short.MAX_VALUE);
 				valuePanel.add(itemButton);
 				// not show payments of variables at 'to' ...
-				itemButton.setValue(
-				(variable.getScope().compareTo(Scope.CONTRACT) >= 0) 
-				|| (show && variable.getScope().compareTo(Scope.AGREEMENT) >= 0), true);
+				itemButton.setValue((variable.getScope().compareTo(Scope.CONTRACT) >= 0) || (showUndefPayment && variable.getScope().compareTo(Scope.AGREEMENT) >= 0), true);
 				itemButton.ensureDebugId("item-button-" + debugName );
 			}
 		} else if (variable instanceof UndefinedDeductionVariable) {
@@ -5333,7 +5424,7 @@ public class SalaryDraft extends ResizeComposite
 			itemButton.setTabIndex(Short.MAX_VALUE);
 
 			valuePanel.add(itemButton);
-			itemButton.setValue(show && variable.getScope() == Scope.SALARY, true);
+			itemButton.setValue(showUndefPayment && variable.getScope() == Scope.SALARY, true);
 			itemButton.ensureDebugId("item-button-" + debugName );
 		}
 
@@ -6633,6 +6724,10 @@ public class SalaryDraft extends ResizeComposite
 
 		contextTable.setStyleName("aon-ReadOnly", readOnly);
 		paymentsTable.setStyleName("aon-ReadOnly", readOnly);
+
+		systemContextTable.setStyleName("aon-ReadOnly", readOnly);
+		agreementContextTable.setStyleName("aon-ReadOnly", readOnly);
+		employeeContextTable.setStyleName("aon-ReadOnly", readOnly);
 	}
 	
 	private void showTimeRulePanel() {
@@ -7750,7 +7845,7 @@ public class SalaryDraft extends ResizeComposite
 	
 	public void hideToolbar(){
 		dockLayoutPanel.remove(toolbar);
-		scrollPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
+		//scrollPanel.getElement().getStyle().setMarginTop(0, Unit.PX);
 	}
 	
 	private static Deduction.Type getType(Item<Deduction.Type> item, Deduction.Type def) {

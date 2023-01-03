@@ -102,11 +102,13 @@ public class SiiServlet extends HttpServlet{
     }
     
     private JSONArray getSiiInvoiceHistory(Domain domain, String login, Integer id){
-    	DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, DataResponseSource.SII_INVOICE, f -> f.getSourceIdProperty().eq(id));
+    	DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), login, f ->
+    		f.getDomainProperty().eq(domain.getId())
+    		.and(f.getSourceProperty().eq(DataResponseSource.SII_INVOICE.value()))
+    		.and(f.getSourceIdProperty().eq(id)));
     
     	JSONArray array = new JSONArray();
-    	if(dr != null && dr.getId() != null) {
-    		
+    	if(!dr.isEmpty()) {	
     		AON.getAttachStream(domain.getName(), domain.getId(), login, f -> 
     			f.getDomainProperty().eq(domain.getId())
     			.and(f.getSourceTypeProperty().eq(DataAttachSource.SII.value()))

@@ -7,9 +7,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.esferalia.aon.occam.api.model.fiscal.Activity;
+import com.esferalia.aon.occam.api.model.fiscal.ActivityType;
 import com.esferalia.aon.occam.api.model.fiscal.Address;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.occam.api.model.fiscal.mod390.Activity;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.DeductionRegime;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.FarmerRegimeActivity;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022;
@@ -477,7 +478,7 @@ public class Mod390toAEATIVA2022 {
 		
 		if (mod390.getMainActivity() != null) {
 			Pral pral = new Pral();
-			pral.setClave(mod390.getMainActivity().getKey());
+			pral.setClave(ActivityType.toString(mod390.getMainActivity().getType()));
 			pral.setDescripcion(mod390.getMainActivity().getDescription());
 			pral.setEpigrafe(mod390.getMainActivity().getEpigraph());
 			datEstadisticos.setPral(pral);
@@ -492,7 +493,7 @@ public class Mod390toAEATIVA2022 {
 		for (Activity activity : activities) {
 			if (activity != null) {
 				Otras otras = new Otras();
-				otras.setClave(activity.getKey());
+				otras.setClave(ActivityType.toString(activity.getType()));
 				otras.setDescripcion(activity.getDescription());
 				otras.setEpigrafe(activity.getEpigraph());
 				datEstadisticos.getOtras().add(otras);

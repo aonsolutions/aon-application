@@ -322,6 +322,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("BENEFICIOS_DIARIO", "BENEFICIOS");
 		variablesMap.put("BOLSA_DE_ESTUDIOS_ANUAL", "B_ESTUDIOS_ANUAL");
 		variablesMap.put("BOLSA_DE_ESTUDIOS_MENSUAL", "B_ESTUDIOS_MENSUAL");
+		variablesMap.put("BOLSA_ESTUDIOS_CON_1_HIJO_ANUAL", "B_ESTUDIOS_1_HIJO_A");
+		variablesMap.put("BOLSA_ESTUDIOS_CON_2_HIJOS_ANUAL", "B_ESTUDIOS_2_HIJOS_A");
 		variablesMap.put("BOLSA_DE_VACACIONES_ANUAL", "B_VACACIONES_A");
 		variablesMap.put("BOLSA_DE_VACACIONES_DIARIO", "B_VACACIONES_D");
 		variablesMap.put("BOLSA_DE_VACACIONES_30_DIAS_ANUAL", "BOLSA_VACACIONES_30_DIAS");
@@ -583,6 +585,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("DIETA_MATERIALES_PELIGROSOS_MENSUAL", "D_MAT_PELIGROSOS");
 		variablesMap.put("DIETA_MATERIALES_PELIGROSOS_DIARIO", "D_MAT_PELIGROSOS");
 		variablesMap.put("DIETA_MEDIA_JORNADA_DIARIO", "DIETA_MEDIA_JORN");
+		variablesMap.put("DIETA_PERNOCTA_MENSUAL", "D_PERNOCTA_M");
 		variablesMap.put("DIETA_PERNOCTA_DIARIO", "D_PERNOCTA_D");
 		variablesMap.put("DIETA_PERNOCTA_EN_PROPIO_DOMICILIO_DIARIO", "D_PERNOCTA_DOM_D");
 		variablesMap.put("DIETA_PERNOCTA_EXTRANJERO_DIARIO", "D_PERNOCTA_EXT_D");
@@ -770,6 +773,17 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_33_AÑOS_HORAS", "H_E_ANTIGUEDAD_33");
 		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_34_AÑOS_HORAS", "H_E_ANTIGUEDAD_34");
 		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_35_AÑOS_HORAS", "H_E_ANTIGUEDAD_35");
+		
+		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_5_HORAS", "H_E_ANTIGUEDAD_5_H");
+		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_10_HORAS", "H_E_ANTIGUEDAD_10_H");
+		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_17_HORAS", "H_E_ANTIGUEDAD_17_H");
+		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_24_HORAS", "H_E_ANTIGUEDAD_24_H");
+		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_31_HORAS", "H_E_ANTIGUEDAD_31_H");
+		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_38_HORAS", "H_E_ANTIGUEDAD_38_H");
+		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_45_HORAS", "H_E_ANTIGUEDAD_45_H");
+		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_52_HORAS", "H_E_ANTIGUEDAD_52_H");
+		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_59_HORAS", "H_E_ANTIGUEDAD_59_H");
+		
 		variablesMap.put("HORA_EXTRA_DIARIO", "H_E_DIARIO");
 		variablesMap.put("HORA_EXTRA_DOMINGOS_Y_FESTIVOS_HORAS", "H_E_FESTIVOS");
 		
@@ -919,6 +933,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PANTALLA_MENSUAL", "PANTALLA_MENSUAL");
 		variablesMap.put("PARTES_PROPORCIONALES_HORAS", "PARTES_PROPORCIONALES");
 		variablesMap.put("PASO_DE_INVALIDEZ_PERMANENTE_A_ABSOLUTA_ANUAL", "PASO_INVALIDEZ_PA_A");
+		variablesMap.put("PATRONA_MENSUAL", "PATRONA_M");
 		variablesMap.put("PENSIONES_MENSUAL", "PENSIONES_M");
 		variablesMap.put("PERNOCTA_Y_DESAYUNO_DIARIO", "PERNOCTA_DES_D");
 		variablesMap.put("PLUS_31_DE_DICIEMBRE_HORAS", "PLUS_31_DIC");
@@ -1019,6 +1034,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_DOBLE_TURNO_MENSUAL", "PLUS_DOBLE_TURNO");
 		variablesMap.put("PLUS_DOMINGOS_DIARIO", "DOMINGOS_D");
 		variablesMap.put("PLUS_DOMINGOS_HORAS", "DOMINGOS_H");
+		variablesMap.put("PLUS_DOMINGOS_MENSUAL", "DOMINGOS_M");
 		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_CON_PRORRATEO_VACACIONES_ANUAL", "P_DOMIN_FEST_CP");
 		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_CON_PRORRATEO_VACACIONES_DIARIO", "P_DOMIN_FEST_CP");
 		variablesMap.put("PLUS_DOMINGOS_Y_FESTIVOS_NO_COMPENSADO_DIARIO", "P_DOMING_FEST_NO_COMPENSADO");
@@ -1069,7 +1085,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_FARMACEUTICO_REGENTE_MENSUAL", "P_FARMACEUTICO_REGENTE");
 		variablesMap.put("PLUS_FARMACEUTICO_SUSTITUTO_MENSUAL", "P_FARMACEUTICO_SUSTITUTO");
 		variablesMap.put("PLUS_FERIAS_DIARIO", "PLUS_FERIAS");
-		variablesMap.put("PLUS_FIESTAS_NAVIDEÑAS_MENSUAL", "PLUS_FIESTAS_NAVIDEÑAS");
+		variablesMap.put("PLUS_FIESTAS_NAVIDEÑAS_MENSUAL", "FIESTAS_NAVIDEÑAS_M");
+		variablesMap.put("PLUS_FIESTAS_NAVIDEÑAS_DIARIO", "FIESTAS_NAVIDEÑAS_D");
 		variablesMap.put("PLUS_FIESTAS_PATRONALES_DIARIO", "PLUS_FIESTAS_PATRONALES");
 		variablesMap.put("PLUS_FESTIVOS_DIARIO", "FESTIVO_D");
 		variablesMap.put("PLUS_FESTIVOS_MENSUAL", "FESTIVO_M");
@@ -1114,7 +1131,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_IDIOMAS_ANUAL", "PLUS_IDIOMAS");
 		variablesMap.put("PLUS_IDIOMAS_MENSUAL", "PLUS_IDIOMAS");
 		variablesMap.put("PLUS_IDIOMAS_HORAS", "PLUS_IDIOMAS");
-		variablesMap.put("PLUS_INTENSIDAD_MENSUAL", "PLUS_INTENSIDAD");
+		variablesMap.put("PLUS_INTENSIDAD_ANUAL", "INTENSIDAD_A");
+		variablesMap.put("PLUS_INTENSIDAD_MENSUAL", "INTENSIDAD_M");
 		variablesMap.put("PLUS_INVERNAL_DIARIO", "PLUS_INVERNAL");
 		variablesMap.put("PLUS_INVERNAL_MENSUAL", "PLUS_INVERNAL");
 		variablesMap.put("PLUS_JEFE_DE_EQUIPO_MENSUAL", "PLUS_JEFE_EQUIPO");

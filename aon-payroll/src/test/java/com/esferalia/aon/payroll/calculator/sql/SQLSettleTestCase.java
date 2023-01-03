@@ -3436,7 +3436,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 			public void addPayment(Double amount, Double quote, Double tax, String description,
 					java.util.Date startDate, java.util.Date endDate, IPayment payment,
 					Map<String, ITimedVariable<?>> context) {
-				System.out.println( description + ":" + amount);
+				System.out.println( description + ":" + amount + "," + startDate + ".." + endDate );
 				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
 			}
 		}).calculate(settleCtx);
@@ -3445,7 +3445,7 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		int months = get(getToday(), Calendar.MONTH );
 		int days = Math.min(30, get(getToday(), Calendar.DAY_OF_MONTH ));
 		double decemberExtra = ( 1750.00 * 1.10 ) * ((months * 30) + days ) / 360;
-		int julyExtraMonths = (months >= 6 ? months -6 : months );
+		int julyExtraMonths = (months >= 6 ? months -6 : months + 6 );
 		// Settle at 01/07, so we have two extras for July .
 		//if ( get(getToday(), Calendar.MONTH ) == 6 && get(getToday(), Calendar.DAY_OF_MONTH ) == 1)
 		//julyExtraMonths += 6;

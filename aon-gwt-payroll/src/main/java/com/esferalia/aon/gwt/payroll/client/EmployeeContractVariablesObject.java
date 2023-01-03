@@ -113,9 +113,9 @@ public class EmployeeContractVariablesObject {
 				if(contractVariable.getId() < 0)
 					continue;
 				
-				if(	(isInPeriod(startDate, endDate, contractVariable.getStartDate()) ||
-					(null != contractVariable.getEndDate() && isInPeriod(startDate, endDate, contractVariable.getEndDate())) ||
-					(null == contractVariable.getEndDate() && (isInPeriod(startDate, endDate, contractVariable.getStartDate()) || DateUtils.isBeforeOrEquals(contractVariable.getStartDate(), startDate))))
+				if(	(isInPeriod(startDate, endDate, contractVariable.getStartDate(), contractVariable.getEndDate()) ||
+					(null != contractVariable.getEndDate() && isInPeriod(startDate, endDate, contractVariable.getEndDate(), contractVariable.getEndDate())) ||
+					(null == contractVariable.getEndDate() && (isInPeriod(startDate, endDate, contractVariable.getStartDate(), contractVariable.getEndDate()) || DateUtils.isBeforeOrEquals(contractVariable.getStartDate(), startDate))))
 					&& (null == variableType || variableType.equals(contractVariable.getVariableType())))
 					
 					this.contractVariablesFiltered.add(contractVariable);
@@ -139,8 +139,11 @@ public class EmployeeContractVariablesObject {
 		}
 	}
 
-	private boolean isInPeriod(Date start, Date end, Date date) {
-		return null == date || (DateUtils.isAfterOrEquals(date, start) && DateUtils.isBeforeOrEquals(date, end));
+	private boolean isInPeriod(Date start, Date end, Date varStart, Date varEnd) {
+		return null == varStart || 
+				(DateUtils.isAfterOrEquals(varStart, start) && DateUtils.isBeforeOrEquals(varStart, end)) || 
+				(null == varEnd && DateUtils.isBeforeOrEquals(varStart, end)) ||
+				(DateUtils.isBeforeOrEquals(varStart, start) && DateUtils.isAfterOrEquals(varEnd, end));
 	}
 
 	public void deleteContractVariable(ContractVariable contractVariableDelete) {

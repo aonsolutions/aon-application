@@ -149,8 +149,11 @@ public class FtpStoreProcess implements ILongProcess, Serializable {
 	}
 	
 	public void track(Level level, ResponseMessageType label, int sourceId, String referenceCode) {
-		DataResponse dr = AON.getDataResponse(domainName, domainId, loggedUser, source, f->f.getCodeProperty().eq(referenceCode));
-		if(dr==null || dr.getId()==null) {
+		DataResponse dr = AON.getDataResponse(domainName, domainId, loggedUser, f->
+			f.getDomainProperty().eq(domainId)
+			.and(f.getSourceProperty().eq(source.value()))
+			.and(f.getCodeProperty().eq(referenceCode)));
+		if(dr.isEmpty()) {
 			dr = new DataResponse();
 			dr.setDomain(domainId);
 			dr.setResponseDate(new Date());

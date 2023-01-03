@@ -183,8 +183,8 @@ public class CustomerIbanImport {
 					RegistryPayMethod rpaymethod = new RegistryPayMethod()
 							.setDomain(domain.getId())
 							.setRegistry(c.getId())
-							.setRbank(rbank.getId())
-							.setPayMethod(paymethod.getId());				
+							.setRbank(rbank)
+							.setPayMethod(paymethod);				
 					AON.saveRegistryPayMethod(domain.getName(), domain.getId(), user.getLogin(), rpaymethod);
 				}
 				RDirStaff rdirstaff = new RDirStaff()

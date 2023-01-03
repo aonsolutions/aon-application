@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
@@ -331,12 +333,29 @@ public abstract class EmployeeContractIrpf extends Composite {
 		
 		moneyQuoteBox.addValueChangeHandler(e -> {
 			Double irpfPercent = parseDouble(irpfPercentBox.getValue());
+			Double moneyBase = parseDouble(moneyBaseBox.getValue());
 			Double moneyQuote = parseDouble(moneyQuoteBox.getValue());
 			
-			moneyBaseBox.setValue(format((moneyQuote * 100.00 / irpfPercent)));
+			if(moneyBase * irpfPercent / 100.00 != moneyQuote) {
+				AonDialog dialog = new AonDialog("C\u00e1lculo IRPF Dineraria", new HTMLPanel("El valor introducido como <b>IRPF Dineraria</b> (" + format(moneyQuote) + ") no corresponde con el calculado en funci\u00f3n al <b>\u0025 IRPF</b> (" + irpfPercent + ") y a la <b>Base Dineraria</b> (" + moneyBase + ") --> <b>IRPF Dineraria</b> (" + format(moneyBase * irpfPercent / 100.00) + ").<br>\u00bfDesea mantener el valor introducido manualmente o corregirlo\u003f"));
+				dialog.confirm(new AonAcceptDialogCallback() {
+					
+					@Override
+					public void onCancel() {
+						checkTotalIrpfAmount(moneyQuoteBox, inkindQuoteBox, totalIrpfBaseBox);
+						createUpdateEmployeeIrpf(date, irpfPercentBox, moneyBaseBox, moneyQuoteBox, inkindBaseBox, inkindQuoteBox, employeeSSQuoteBaseBox, totalIrpfBaseBox, null == employeeIrpf ? null : employeeIrpf.getSalaryId());
+					}
+					
+					@Override
+					public void onAccept() {
+						checkTotalIrpfAmount(moneyBase * irpfPercent / 100.00, inkindQuoteBox, totalIrpfBaseBox);
+						createUpdateEmployeeIrpf(date, irpfPercentBox, moneyBaseBox, moneyBase * irpfPercent / 100.00, inkindBaseBox, inkindQuoteBox, employeeSSQuoteBaseBox, totalIrpfBaseBox, null == employeeIrpf ? null : employeeIrpf.getSalaryId());
+					}
+				});
+				dialog.setAcceptText("Corregir");
+				dialog.setCancelText("Mantener");
+			}
 			
-			checkTotalIrpfAmount(moneyQuoteBox, inkindQuoteBox, totalIrpfBaseBox);
-			createUpdateEmployeeIrpf(date, irpfPercentBox, moneyBaseBox, moneyQuoteBox, inkindBaseBox, inkindQuoteBox, employeeSSQuoteBaseBox, totalIrpfBaseBox, null == employeeIrpf ? null : employeeIrpf.getSalaryId());
 		});
 		
 		inkindBaseBox.addValueChangeHandler(e -> {
@@ -351,12 +370,28 @@ public abstract class EmployeeContractIrpf extends Composite {
 		
 		inkindQuoteBox.addValueChangeHandler(e -> {
 			Double irpfPercent = parseDouble(irpfPercentBox.getValue());
+			Double inkindBase = parseDouble(inkindBaseBox.getValue());
 			Double inkindQuote = parseDouble(inkindQuoteBox.getValue());
-			 
-			inkindBaseBox.setValue(format((inkindQuote * 100.00 / irpfPercent)));
 			
-			checkTotalIrpfAmount(moneyQuoteBox, inkindQuoteBox, totalIrpfBaseBox);
-			createUpdateEmployeeIrpf(date, irpfPercentBox, moneyBaseBox, moneyQuoteBox, inkindBaseBox, inkindQuoteBox, employeeSSQuoteBaseBox, totalIrpfBaseBox, null == employeeIrpf ? null : employeeIrpf.getSalaryId());
+			if(inkindBase * irpfPercent / 100.00 != inkindQuote) {
+				AonDialog dialog = new AonDialog("C\u00e1lculo IRPF Especie", new HTMLPanel("El valor introducido como <b>IRPF Especie</b> (" + format(inkindQuote) + ") no corresponde con el calculado en funci\u00f3n al <b>\u0025 IRPF</b> (" + irpfPercent + ") y a la <b>Base Especie</b> (" + inkindBase + ") --> <b>IRPF Especie</b> (" + format(inkindBase * irpfPercent / 100.00) + ").<br>\u00bfDesea mantener el valor introducido manualmente o corregirlo\u003f"));
+				dialog.confirm(new AonAcceptDialogCallback() {
+					
+					@Override
+					public void onCancel() {
+						checkTotalIrpfAmount(moneyQuoteBox, inkindQuoteBox, totalIrpfBaseBox);
+						createUpdateEmployeeIrpf(date, irpfPercentBox, moneyBaseBox, moneyQuoteBox, inkindBaseBox, inkindQuoteBox, employeeSSQuoteBaseBox, totalIrpfBaseBox, null == employeeIrpf ? null : employeeIrpf.getSalaryId());
+					}
+					
+					@Override
+					public void onAccept() {
+						checkTotalIrpfAmount(moneyQuoteBox, inkindBase * irpfPercent / 100.00, totalIrpfBaseBox);
+						createUpdateEmployeeIrpf(date, irpfPercentBox, moneyBaseBox, moneyQuoteBox, inkindBaseBox, inkindBase * irpfPercent / 100.00, employeeSSQuoteBaseBox, totalIrpfBaseBox, null == employeeIrpf ? null : employeeIrpf.getSalaryId());
+					}
+				});
+				dialog.setAcceptText("Corregir");
+				dialog.setCancelText("Mantener");
+			}
 		});
 		
 		totalIrpfBaseBox.addValueChangeHandler(e -> createUpdateEmployeeIrpf(date, irpfPercentBox, moneyBaseBox, moneyQuoteBox, inkindBaseBox, inkindQuoteBox, employeeSSQuoteBaseBox, totalIrpfBaseBox, null == employeeIrpf ? null : employeeIrpf.getSalaryId()));
@@ -462,6 +497,24 @@ public abstract class EmployeeContractIrpf extends Composite {
 			// Skip exception
 		}
 	}
+	
+	private void checkTotalIrpfAmount(Double moneyQuote, TextBox inkindQuoteBox, TextBox totalIrpfBaseBox) {
+		try{
+			Double inkindQuote = parseDouble(inkindQuoteBox.getValue());
+			totalIrpfBaseBox.setValue(format(moneyQuote + inkindQuote)); 
+		} catch (Exception e) {
+			// Skip exception
+		}
+	}
+	
+	private void checkTotalIrpfAmount(TextBox moneyQuoteBox, Double inkindQuote, TextBox totalIrpfBaseBox) {
+		try{
+			Double moneyQuote = parseDouble(moneyQuoteBox.getValue());
+			totalIrpfBaseBox.setValue(format(moneyQuote + inkindQuote)); 
+		} catch (Exception e) {
+			// Skip exception
+		}
+	}
 
 	private void createUpdateEmployeeIrpf(Date date, TextBox irpfPercentBox, TextBox moneyBaseBox, TextBox moneyQuoteBox, TextBox inkindBaseBox, TextBox inkindQuoteBox, TextBox employeeSSQuoteBaseBox, TextBox totalIrpfBaseBox, Integer salaryId) {
 		try{
@@ -471,6 +524,42 @@ public abstract class EmployeeContractIrpf extends Composite {
 					parseDouble(moneyQuoteBox.getValue()),
 					parseDouble(inkindBaseBox.getValue()),
 					parseDouble(inkindQuoteBox.getValue()),
+					parseDouble(irpfPercentBox.getValue()),
+					parseDouble(employeeSSQuoteBaseBox.getValue()),
+					parseDouble(totalIrpfBaseBox.getValue()),
+					salaryId);	
+			initEmployeeIrpfTable();
+		} catch (Exception e) {
+			// Skip exception
+		}
+	}
+	
+	private void createUpdateEmployeeIrpf(Date date, TextBox irpfPercentBox, TextBox moneyBaseBox, Double moneyQuote, TextBox inkindBaseBox, TextBox inkindQuoteBox, TextBox employeeSSQuoteBaseBox, TextBox totalIrpfBaseBox, Integer salaryId) {
+		try{
+			this.employeeContractIrpfObject.createUpdateEmployeeIrpf(
+					date, 
+					parseDouble(moneyBaseBox.getValue()),
+					moneyQuote,
+					parseDouble(inkindBaseBox.getValue()),
+					parseDouble(inkindQuoteBox.getValue()),
+					parseDouble(irpfPercentBox.getValue()),
+					parseDouble(employeeSSQuoteBaseBox.getValue()),
+					parseDouble(totalIrpfBaseBox.getValue()),
+					salaryId);	
+			initEmployeeIrpfTable();
+		} catch (Exception e) {
+			// Skip exception
+		}
+	}
+	
+	private void createUpdateEmployeeIrpf(Date date, TextBox irpfPercentBox, TextBox moneyBaseBox, TextBox moneyQuoteBox, TextBox inkindBaseBox, Double inkindQuote, TextBox employeeSSQuoteBaseBox, TextBox totalIrpfBaseBox, Integer salaryId) {
+		try{
+			this.employeeContractIrpfObject.createUpdateEmployeeIrpf(
+					date, 
+					parseDouble(moneyBaseBox.getValue()),
+					parseDouble(moneyQuoteBox.getValue()),
+					parseDouble(inkindBaseBox.getValue()),
+					inkindQuote,
 					parseDouble(irpfPercentBox.getValue()),
 					parseDouble(employeeSSQuoteBaseBox.getValue()),
 					parseDouble(totalIrpfBaseBox.getValue()),
@@ -518,9 +607,12 @@ public abstract class EmployeeContractIrpf extends Composite {
 		Integer year = DateUtils.getYear();
 		Integer contractStartYear = employeeContractIrpfObject.getContractStartYear();
 		
+		Integer yearAux = year;
+		yearAux++;
+		
 		yearLB.clear();
 		
-		while(contractStartYear <= year) {
+		while(contractStartYear <= yearAux) {
 			yearLB.addItem(contractStartYear.toString(), contractStartYear.toString());
 			contractStartYear++;
 		}
