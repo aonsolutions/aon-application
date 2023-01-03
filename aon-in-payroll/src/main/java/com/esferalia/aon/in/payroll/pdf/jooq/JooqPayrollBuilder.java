@@ -367,11 +367,12 @@ public class JooqPayrollBuilder {
 					return !(d.getDescription() == null || d.getDescription().isEmpty()) ? d.getDescription()
 							: chooseDescription(d.getDeductionType());
 				})).forEach(d -> {
+					String deductionName = d.getName();
 					DeductionType deductionType = d.getDeductionType();
 					
 					if(deductionType == null) return;
 					
-					List<ContextData> percList = data.get("PORCENTAJE_" + getDeductionType(deductionType.ordinal()));
+					List<ContextData> percList = data.get("PORCENTAJE_" + getDeductionType(deductionName, deductionType.ordinal()));
 					ContextData cd = percList != null ? percList.get(0) : null;
 					Double percent = null;
 					if (cd != null) {
@@ -385,10 +386,13 @@ public class JooqPayrollBuilder {
 					String description = d.getDescription();
 					
 					if (description == null || description.isEmpty()) {
+						description = chooseDescription(deductionName);
+					}
+					if (description == null || description.isEmpty()) {
 						description = chooseDescription(deductionType);
 					}
 
-					PDFDeduction pdfDeductionEntry = new PDFDeduction(d.getAmount(), description, percent, deductionType);
+					PDFDeduction pdfDeductionEntry = new PDFDeduction(d.getAmount(), d.getName(), description, percent, deductionType);
 					if (!deductionMap.containsKey(type))
 						deductionMap.put(type, new ArrayList<>());
 
@@ -402,7 +406,7 @@ public class JooqPayrollBuilder {
 						ded.setAmount(ded.getAmount().get() + pdfDeductionEntry.getAmount().get());
 					} else
 						deductionMap.get(type).add(pdfDeductionEntry);
-					inserted.add(getDeductionType(deductionType.ordinal()));
+					inserted.add(getDeductionType(deductionName, deductionType.ordinal()));
 				});
 
 				if (deductionMap.get(1) == null)
@@ -411,19 +415,21 @@ public class JooqPayrollBuilder {
 					deductionMap.put(2, new ArrayList<PDFDeduction>());
 
 				if (!inserted.contains("CGC"))
-					deductionMap.get(1).add(new PDFDeduction(0d, "Contingencias comunes", 0d));
+					deductionMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias comunes", 0d));
+				if (!inserted.contains("MEI"))
+					deductionMap.get(1).add(new PDFDeduction(0d, "MEI", "Mecanismo de equidad intergeneracional", 0d, DeductionType.COMMON_CONTINGENCY));
 				if (!inserted.contains("DESMPL"))
-					deductionMap.get(1).add(new PDFDeduction(0d, "Desempleo", 0d));
+					deductionMap.get(1).add(new PDFDeduction(0d, "DESMPL", "Desempleo", 0d));
 				if (!inserted.contains("FP"))
-					deductionMap.get(1).add(new PDFDeduction(0d, "Formación profesional", 0d));
+					deductionMap.get(1).add(new PDFDeduction(0d, "FP", "Formación profesional", 0d));
 				if (!inserted.contains("IRPF"))
-					deductionMap.get(2).add(new PDFDeduction(0d, "Retribuciones dinerarias", 0d));
+					deductionMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones dinerarias", 0d));
 
 				// EMBARGOS (placed at 'Other deductions' -type 5- field on 'Deductions')
 				{
 					List<Embargo> embargos = salary.getEmbargos();
 					embargos.forEach(e -> {
-						PDFDeduction emb = new PDFDeduction(e.getAmount(), e.getDescription(), null);
+						PDFDeduction emb = new PDFDeduction(e.getAmount(), null,  e.getDescription(), null);
 						if (deductionMap.containsKey(5))
 							deductionMap.get(5).add(emb);
 						else {
@@ -445,6 +451,7 @@ public class JooqPayrollBuilder {
 				// SETTING AMOUNTS
 				{
 					Double commonContApEnterprise = 0d;
+					Double meiApEnterprise = 0d;
 					Double atEpApEnterprise = 0d;
 					Double unemploymentApEnterprise = 0d;
 					Double profesFormApEnterprise = 0d;
@@ -456,7 +463,10 @@ public class JooqPayrollBuilder {
 						totalEnterprise += (cost.getAmount() != null ? cost.getAmount() : 0d);
 						switch (cost.getCostType()) {
 							case COMMON_CONTINGENCY:
-								commonContApEnterprise += safeValue(cost.getAmount());
+							    	if (AonStringUtils.equals("MEI_E", cost.getName()))
+							    	    meiApEnterprise += safeValue(cost.getAmount());
+							    	else
+							    	    commonContApEnterprise += safeValue(cost.getAmount());
 								break;
 							case IT:
 							case IMS:
@@ -490,6 +500,7 @@ public class JooqPayrollBuilder {
 					
 					// SET COST VALUES
 					costBuilder.setCommonContApEnterprise(Optional.ofNullable(commonContApEnterprise));
+					costBuilder.setMeiApEnterprise(Optional.ofNullable(meiApEnterprise));
 					costBuilder.setAtEpApEnterprise(Optional.ofNullable(atEpApEnterprise));
 					costBuilder.setUnemploymentApEnterprise(Optional.ofNullable(unemploymentApEnterprise));
 					costBuilder.setProfesFormApEnterprise(Optional.ofNullable(profesFormApEnterprise));
@@ -517,6 +528,12 @@ public class JooqPayrollBuilder {
 													Optional.ofNullable(Double.parseDouble(cd.getExpression())));
 										} else
 											costBuilder.setCommonContType(Optional.of(-1.00));
+									} else if (containsIgnoreCase(costName, "PORCENTAJE_MEI_E")) {
+										if (cd.getExpression() != null) {
+											costBuilder.setMeiType(
+													Optional.ofNullable(Double.parseDouble(cd.getExpression())));
+										} else
+											costBuilder.setMeiType(Optional.of(-1.00));
 									} else if (containsIgnoreCase(costName, "TARIFA_IMS")
 											|| containsIgnoreCase(costName, "TARIFA_IT")) {
 
@@ -1041,6 +1058,17 @@ public class JooqPayrollBuilder {
 		}
 	}
 	
+	private static String chooseDescription(String deductionName) {
+	    if (AonStringUtils.isBlank(deductionName))
+		return null;
+	    switch (deductionName) {
+	    	case "MEI" :
+		case "MEI_E" :
+			return "Mecanismo de equidad intergeneracional";
+		default:
+			return null;
+	    }
+	}
 	/**
 	 * Method to get a suitable description for the given DeductionType
 	 * @param dt The DeductionType enum object
@@ -1105,10 +1133,10 @@ public class JooqPayrollBuilder {
 		}
 	}
 	
-	private static String getDeductionType (Integer type) {
+	private static String getDeductionType (String deductionName, Integer type) {
 		switch (type) {
 			case 0:
-				return "CGC";
+				return deductionName;
 			case 2:
 				return "DESMPL";
 			case 3:

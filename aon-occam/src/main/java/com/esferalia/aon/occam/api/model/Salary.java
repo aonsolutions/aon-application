@@ -177,6 +177,10 @@ public class Salary implements Serializable {
 
 	public static class CommonContingecyDeduction extends Deduction {
 
+		public CommonContingecyDeduction(Double amount, String code, String description) {
+			super(amount, description, AonStringUtils.defaultIfBlank(code, "CGC"), DeductionType.COMMON_CONTINGENCY);
+		}
+
 		public CommonContingecyDeduction(Double amount, String description) {
 			super(amount, description, "CGC", DeductionType.COMMON_CONTINGENCY);
 		}
@@ -187,6 +191,7 @@ public class Salary implements Serializable {
 		}
 	}
 	
+
 	public static class ProfessionalContingecyDeduction extends Deduction {
 
 		public ProfessionalContingecyDeduction(Double amount, String description) {
@@ -289,8 +294,8 @@ public class Salary implements Serializable {
 
 	public static class CommonContingecyCost extends Cost {
 
-		public CommonContingecyCost(Double amount, String description) {
-			super(amount, description, "CGC_E", DeductionType.COMMON_CONTINGENCY);
+		public CommonContingecyCost(Double amount, String name, String description) {
+			super(amount, description, AonStringUtils.defaultIfBlank(name,"CGC_E"), DeductionType.COMMON_CONTINGENCY);
 		}
 
 		@Override
@@ -812,7 +817,7 @@ public class Salary implements Serializable {
 				.accept(new DeductionType.Visitor<Cost>() {
 				@Override
 				public Cost visitCommonContigency(DeductionType deductionType) {
-					return new CommonContingecyCost(amount, description);
+					return new CommonContingecyCost(amount, code, description);
 				}
 				
 				@Override
@@ -879,7 +884,7 @@ public class Salary implements Serializable {
 				.accept(new DeductionType.Visitor<Deduction>() {
 				@Override
 				public Deduction visitCommonContigency(DeductionType deductionType) {
-					return new CommonContingecyDeduction(amount, description);
+					return new CommonContingecyDeduction(amount, code, description);
 				}
 				
 				@Override

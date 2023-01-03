@@ -210,12 +210,12 @@ public class DraftPayrollBuilder {
 					}
 					
 					int type = getDeductionPDFType(d.getType().ordinal());
-					String desc = d.getType().getName(new Locale("es"));
+					String desc = d.getDescription(); //d.getType().getName(new Locale("es"));
 					
 					if(desc == null || desc.isEmpty()) 
 						desc = getDeductionTypeDescription(d.getType().ordinal());
 					
-					PDFDeduction deduction = new PDFDeduction(d.getAmount(), desc, percent );
+					PDFDeduction deduction = new PDFDeduction(d.getAmount(), d.getName(), desc, percent );
 					if (!deductionsMap.containsKey(type)) 
 						deductionsMap.put(type, new ArrayList<PDFDeduction>());
 					
@@ -241,19 +241,21 @@ public class DraftPayrollBuilder {
 					deductionsMap.put(2, new ArrayList<PDFDeduction>());
 				
 				if (!inserted.contains("CGC"))
-					deductionsMap.get(1).add(new PDFDeduction(0d, "Contingencias comunes", 0d));
+					deductionsMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias comunes", 0d));
 				if (!inserted.contains("DESMPL"))
-					deductionsMap.get(1).add(new PDFDeduction(0d, "Desempleo", 0d));
+					deductionsMap.get(1).add(new PDFDeduction(0d, "DESMPL", "Desempleo", 0d));
 				if (!inserted.contains("FP"))
-					deductionsMap.get(1).add(new PDFDeduction(0d, "Formación profesional", 0d));
+					deductionsMap.get(1).add(new PDFDeduction(0d, "FP", "Formación profesional", 0d));
 				if (!inserted.contains("IRPF"))
-					deductionsMap.get(2).add(new PDFDeduction(0d, "Retribuciones dinerarias", 0d));
+					deductionsMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones dinerarias", 0d));
+				if (!inserted.contains("MEI"))
+					deductionsMap.get(1).add(new PDFDeduction(0d, "MEI", "Mecanismo de equidad intergeneracional", 0d, DeductionType.COMMON_CONTINGENCY));
 				
 				
 				//EMBARGOS (placed at 'Other deductions' -type 5- field on 'Deductions')
 				{
 					salary.getEmbargoS().forEach(e -> {
-						PDFDeduction emb = new PDFDeduction(e.getAmount(), e.getDescription(), null);
+						PDFDeduction emb = new PDFDeduction(e.getAmount(), e.getName(), e.getDescription(), null);
 						if (deductionsMap.containsKey(5))
 							deductionsMap.get(5).add(emb);
 						else {
@@ -309,6 +311,7 @@ public class DraftPayrollBuilder {
 				
 				Double common_cont_ap_enterprise_percent = 0d;
 				Double common_cont_ap_enterprise = 0d;
+				Double mei_ap_enterprise = 0d;
 				Double at_ep_ap_enterprise = 0d;
 				Double unemployment_ap_enterprise = 0d;
 				Double profes_form_ap_enterprise = 0d;
@@ -357,6 +360,10 @@ public class DraftPayrollBuilder {
 					if (c.getName().equals("CGC_E")) {
 						common_cont_ap_enterprise += c.getAmount();
 						setPercent(percent, common_cont_ap_enterprise, salary.getCommonBase(), (p) -> cbb.setCommonContType(p));
+					}
+					else if (c.getName().equals("MEI_E")) {
+						mei_ap_enterprise += c.getAmount();
+						setPercent(percent, mei_ap_enterprise, salary.getCommonBase(), (p) -> cbb.setMeiType(p));
 					}
 					else if (c.getName().equals("IMS_E")) {
 						at_ep_ap_enterprise += c.getAmount();   
@@ -439,6 +446,7 @@ public class DraftPayrollBuilder {
 					cbb.setAtEpType(Optional.ofNullable(atEp[0] + atEp[1] == -2 ? -1 : atEp[0] + atEp[1]));
 				
 				cbb.setCommonContApEnterprise(Optional.ofNullable(common_cont_ap_enterprise));
+				cbb.setMeiApEnterprise(Optional.ofNullable(mei_ap_enterprise));
 				cbb.setAtEpApEnterprise(Optional.ofNullable(at_ep_ap_enterprise));
 				cbb.setUnemploymentApEnterprise(Optional.ofNullable(unemployment_ap_enterprise));
 				cbb.setProfesFormApEnterprise(Optional.ofNullable(profes_form_ap_enterprise));

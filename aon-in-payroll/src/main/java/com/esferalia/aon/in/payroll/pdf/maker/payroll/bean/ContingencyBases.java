@@ -10,6 +10,8 @@ public class ContingencyBases {
 	private Optional<Double> commonContBase;
 	private Optional<Double> commonContType;
 	private Optional<Double> commonContApEnterprise;
+	private Optional<Double> meiType ;
+	private Optional<Double> meiApEnterprise;
 
 	private Optional<Double> professionalContBase;
 
@@ -58,6 +60,14 @@ public class ContingencyBases {
 
 	public Optional<Double> getCommonContApEnterprise() {
 		return commonContApEnterprise;
+	}
+	
+	public Optional<Double> getMeiType() {
+	    return meiType;
+	}
+	
+	public Optional<Double> getMeiApEnterprise() {
+	    return meiApEnterprise;
 	}
 
 	public Optional<Double> getProfessionalContBase() {
@@ -141,6 +151,9 @@ public class ContingencyBases {
 		private Optional<Double> commonContType;
 		private Optional<Double> commonContApEnterprise;
 
+		private Optional<Double> meiType = Optional.empty();
+		private Optional<Double> meiApEnterprise = Optional.empty();
+
 		private Optional<Double> professionalContBase;
 
 		private Optional<Double> atEpType;
@@ -222,8 +235,18 @@ public class ContingencyBases {
 			return this;
 		}
 
+		public ContingencyBasesBuilder setMeiType(Optional<Double> meiType) {
+			this.meiType = meiType;
+			return this;
+		}
+
 		public ContingencyBasesBuilder setCommonContApEnterprise(Optional<Double> commonContApEnterprise) {
 			this.commonContApEnterprise = commonContApEnterprise;
+			return this;
+		}
+
+		public ContingencyBasesBuilder setMeiApEnterprise(Optional<Double> meiApEnterprise) {
+			this.meiApEnterprise = meiApEnterprise;
 			return this;
 		}
 
@@ -326,6 +349,8 @@ public class ContingencyBases {
 			c.commonContBase		   = this.commonContBase;
 			c.commonContType		   = this.commonContType;
 			c.commonContApEnterprise   = this.commonContApEnterprise;
+			c.meiType		   = this.meiType;
+			c.meiApEnterprise   = this.meiApEnterprise;
 			c.professionalContBase	   = this.professionalContBase;
 			c.atEpType				   = this.atEpType;
 			c.atEpApEnterprise		   = this.atEpApEnterprise;

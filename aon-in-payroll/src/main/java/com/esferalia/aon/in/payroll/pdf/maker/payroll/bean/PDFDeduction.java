@@ -7,21 +7,24 @@ import com.esferalia.aon.occam.api.model.type.DeductionType;
 public class PDFDeduction {
 	
 	private Optional<Double> amount;
+	private Optional<String> name;
 	private Optional<String> description;
 	private Optional<Double> percent;	
-	private Optional<DeductionType> deductionType;
+	private Optional<DeductionType> deductionType = Optional.empty();
 	
-	public PDFDeduction(Double amount, String description, Double percent) {
+	public PDFDeduction(Double amount, String name,  String description, Double percent) {
 		super();
 		this.amount = Optional.ofNullable(amount);
+		this.name = Optional.ofNullable(name);
 		this.description = Optional.ofNullable(description);
 		this.percent = Optional.ofNullable(percent);
 		this.deductionType = Optional.empty();
 	}
 	
-	public PDFDeduction(Double amount, String description, Double percent, DeductionType deductionType) {
+	public PDFDeduction(Double amount, String name, String description, Double percent, DeductionType deductionType) {
 		super();
 		this.amount = Optional.ofNullable(amount);
+		this.name = Optional.ofNullable(name);
 		this.description = Optional.ofNullable(description);
 		this.percent = Optional.ofNullable(percent);
 		this.deductionType= Optional.ofNullable(deductionType);
@@ -30,6 +33,11 @@ public class PDFDeduction {
 	public Optional<Double> getAmount() {
 		return amount;
 	}
+	
+	public Optional<String> getName() {
+	    return name;
+	}
+	
 	public Optional<String> getDescription() {
 		return description;
 	}

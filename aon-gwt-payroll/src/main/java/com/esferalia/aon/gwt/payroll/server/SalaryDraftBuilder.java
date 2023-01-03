@@ -493,6 +493,8 @@ public class SalaryDraftBuilder
 				new ItemComparator<Payment.Type>());
 		Collections.sort(salaryDraft.getDeductions(),
 				new ItemComparator<Deduction.Type>());
+		Collections.sort(salaryDraft.getCosts(),
+			new ItemComparator<Deduction.Type>());
 		Collections.sort(salaryDraft.getContext(), new VariableComparator());
 		return null;
 	}
@@ -1827,6 +1829,9 @@ public class SalaryDraftBuilder
 		if ( deduction.getName() != null ) {
 		
 			switch (deduction.getName()) {
+			case "MEI" :
+			case "MEI_E" :
+				return "Mecanismo de Equidad Intergeneracional";
 			case "ECSS_E" :
 				return "Prestaci\u00f3n por Incapacidad Temporal a cargo del INSS";
 //			case "ATEP_E" :

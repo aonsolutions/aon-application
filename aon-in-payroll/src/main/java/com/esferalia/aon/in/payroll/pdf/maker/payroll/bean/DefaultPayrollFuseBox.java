@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -177,26 +178,42 @@ public class DefaultPayrollFuseBox {
 		return Collections.unmodifiableList(deds);
 	}
 	
-	public static PDFDeduction getSingleDeductionByType(final Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions, DeductionType deductionType, String deductionName) {
+	public static PDFDeduction getSingleDeductionByType(final Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions, DeductionType deductionType, String deductionDescription) {
+		String name = null;
 		double percent = 0;
 		double amount = 0;		
 		for (PDFDeduction d : getDeductionsByType(allDeductions, deductionType)) {
 			percent += zeroIfNull(d.getPercent().orElse(0d));
 			amount += zeroIfNull(d.getAmount().orElse(0d));
+			name = d.getName().orElse(name);
 		}
-		return new PDFDeduction(amount, deductionName, percent, deductionType);
+		return new PDFDeduction(amount, name, deductionDescription, percent, deductionType);
 	}
 	
+	public static PDFDeduction getSingleDeductionByType(final Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions, DeductionType deductionType, String deductionDescription, Predicate<PDFDeduction> filter) {
+		String name = null;
+		double percent = 0;
+		double amount = 0;
+		for (PDFDeduction d : getDeductionsByType(allDeductions, deductionType)) {
+		    	if ( filter.test(d)) {
+        		    	percent += zeroIfNull(d.getPercent().orElse(0d));
+        			amount += zeroIfNull(d.getAmount().orElse(0d));
+        			name = d.getName().orElse(name);
+		    	}
+		}
+		return new PDFDeduction(amount, name , deductionDescription, percent, deductionType);
+	}
+
 	public static List<PDFDeduction> getOtherDeductions(final Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions) {
 		
 		DeductionType[] filteredTypes = {	DeductionType.COMMON_CONTINGENCY,
-											DeductionType.UNEMPLOYMENT,
-											DeductionType.JOB_TRAINING,
-											DeductionType.NON_STRUCTURAL_OVERTIME,
-											DeductionType.STRUCTURAL_OVERTIME,
-											DeductionType.IRPF,
-											DeductionType.ADVANCE_PAYMENT,
-											DeductionType.IN_KIND};
+							DeductionType.UNEMPLOYMENT,
+							DeductionType.JOB_TRAINING,
+							DeductionType.NON_STRUCTURAL_OVERTIME,
+							DeductionType.STRUCTURAL_OVERTIME,
+							DeductionType.IRPF,
+							DeductionType.ADVANCE_PAYMENT,
+							DeductionType.IN_KIND};
 		ArrayList<PDFDeduction> deds = new ArrayList<>();
 		allDeductions
 		.orElse(Collections.emptyMap())
@@ -215,13 +232,15 @@ public class DefaultPayrollFuseBox {
 	}
 	
 	public static PDFDeduction getOtherDeduction(final Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions, String deductionName) {
+	    	String name = null;
 		double percent = 0;
 		double amount = 0;		
 		for (PDFDeduction d : getOtherDeductions(allDeductions)) {
 			percent += zeroIfNull(d.getPercent().orElse(0d));
 			amount += zeroIfNull(d.getAmount().orElse(0d));
+			name = d.getName().orElse(name);
 		}
-		return new PDFDeduction(amount, deductionName, percent, DeductionType.OTHER);
+		return new PDFDeduction(amount, name, deductionName, percent, DeductionType.OTHER);
 	}
 	
 	

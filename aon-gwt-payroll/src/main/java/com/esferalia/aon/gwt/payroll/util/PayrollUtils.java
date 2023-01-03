@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.util;
 
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.DeductionTypeVisitor;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class PayrollUtils {
 
@@ -25,6 +26,11 @@ public class PayrollUtils {
 		}
 	}
 	
+	public static String getDeductionNameDescription(String name) {
+	    if ( AonStringUtils.equals("MEI", name))
+		return "Mecanismo de equidad intergeneracional";
+	    return null;
+	}
 	
 	public static String getDeductionTypeDescription(int type) {
 

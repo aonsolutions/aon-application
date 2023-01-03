@@ -367,7 +367,7 @@ public class SettlementTest {
 			{
 				for (int i = 0; i < random(3); i++)
 				{
-					PDFDeduction deduction = new PDFDeduction(random(100000), "Descripcion por defecto", random(100));
+					PDFDeduction deduction = new PDFDeduction(random(100000), null,  "Descripcion por defecto", random(100));
 					deductions.get(key).add(deduction);
 				}
 			}
@@ -446,7 +446,7 @@ public class SettlementTest {
 			{
 				for (int i = 0; i < random(3); i++)
 				{
-					PDFDeduction deduction = new PDFDeduction(random(100000), "Descripcion por defecto", random(100));
+					PDFDeduction deduction = new PDFDeduction(random(100000), null, "Descripcion por defecto", random(100));
 					deductions.get(key).add(deduction);
 				}
 			}
@@ -527,7 +527,7 @@ public class SettlementTest {
 			{
 				for (int i = 0; i < random(3); i++)
 				{
-					PDFDeduction deduction = new PDFDeduction(random(100000), strangeCharacters, random(100));
+					PDFDeduction deduction = new PDFDeduction(random(100000), null, strangeCharacters, random(100));
 					deductions.get(key).add(deduction);
 				}
 			}
@@ -657,7 +657,7 @@ public class SettlementTest {
 			{
 				for (int i = 0; i < random(3); i++)
 				{
-					PDFDeduction deduction = new PDFDeduction(null, null, null);
+					PDFDeduction deduction = new PDFDeduction(null, null, null, null);
 					deductions.get(key).add(deduction);
 
 				}
@@ -738,7 +738,7 @@ public class SettlementTest {
 			{
 				for (int i = 0; i < random(3); i++)
 				{
-					PDFDeduction deduction = new PDFDeduction(random(100000), "Descripcion por defecto", random(100));
+					PDFDeduction deduction = new PDFDeduction(random(100000), null,  "Descripcion por defecto", random(100));
 					deductions.get(key).add(deduction);
 				}
 			}
