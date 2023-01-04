@@ -208,8 +208,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	class NewEmployeeCommand implements ScheduledCommand {
-		private DomainEmployeesServiceAsync employeesService;
-		private DomainEnterprisesServiceAsync enterprisesService;
 
 		@Override
 		public void execute() {
@@ -2238,14 +2236,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			getEmployeeCalendarDraftNew().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			employees.getEmployeeCalendar(salaryDraft, o -> getEmployeeCalendarDraftNew().setEmployeeCalendarDraftObject(o));
 		}
-		
-		void onSSBonusSelected() {
-			getEmployeeSSBonus().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
-			ContractBonusObject contractBonusObject = 
-					contractBonusMap.computeIfAbsent(salaryDraft.getEmployeeId(), ContractBonusObject::new );
-			getEmployeeSSBonus().setContractBonusObject(contractBonusObject);
-		}
-		
+	
 		void onSSPECSelected() {
 			getEmployeeSSPEC().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			SSPECObject ssPECObject = ssPECMap.get(salaryDraft.getEmployeeId());
@@ -2906,8 +2897,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		enterpriseDraftObject.setScopes(employees.getEnterpriseContext().getScopes());
 		getEnterpriseDraft().setEnterpriseDraftObject(enterpriseDraftObject);
 
-//		checkStatus(enterpriseDraftObject);
-
 		this.enterprise = enterprise;
 	}
 
@@ -3159,18 +3148,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	@Override
 	public void onEmployeeDraftSelected(EmployeeDraftObject employeeDraftObject) {
 		getEmployeeDraft().setOnSaved(e -> {
-//			checkStatus(e);
 			refreshWorkplace();
 		});
 		employeeDetail.setWidget(getEmployeePanel());
 
 		getEmployeePanel().selectWidget(getEmployeeDraft());
-//		if ( Wnd.isSysAdmin() ) {
-//			getEmployeePanel().selectWidget(getSalaryDraft());
-//			employees.getEmployeeSalaryDraft(employeeDraftObject, o -> {
-//				getSalaryDraft().setSalaryDraftObject(o);
-//			});
-//		}
 		
 		employeeDraftObject.setEnterpriseContext(employees.getEnterpriseContext());
 		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
@@ -3539,7 +3521,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	private EmployeeDraft getEmployeeDraft() {
-		if (employeeDraft == null)
+		if (employeeDraft == null) {
 			employeeDraft = new EmployeeDraft() {
 			
 				@Override
@@ -3552,10 +3534,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					checkStatus(employeeDraftObject);
 				}
 				
+			};
 		}
-			
-		
-		;// .setOnSaved(w -> refreshWorkplace() );
 		return employeeDraft;
 	}
 
@@ -3738,133 +3718,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	private void checkStatus(EmployeeDraftObject employeeDraftObject) {
-		employeeDraftObject.checkStatus(employeeStatus -> {
-			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
-				
-				@Override
-				public void run() {
-					employeeDraftObject.checkStatus(employeeStatus -> {
-						removeAll();
-						employeeStatus.visit(this);
-						EmployeeStatus.ifSistemaREDError(
-								employeeStatus,
-								EmployeeTree.this::showFootPanel,
-								EmployeeTree.this::closeFootPanel					
-								);
-						
-					}, throwable -> {
-						closeFootPanel();
-						getEmployeeDraft().disableSistemaRED();
-					});
-				}
-				
-				private void updateContractData (List<Variable> variables) {
-					DomainEmployeesServiceAsync.newInstance().setData(employeeDraftObject.getContractId(), new ArrayList<Variable>(variables), new AsyncCallback<Void>() {
-
-						@Override
-						public void onSuccess(Void result) {
-							getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
-							run();
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-						}
-
-					});
-				}
-				
-				@Override
-				protected void cleanEndDate() {
-					getEmployeeDraft().setEndDate(null);
-				}
-				
-				@Override
-				protected void cleanOcupation() {
-					getEmployeeDraft().setOcupation(null);
-				}
-				
-				@Override
-				protected void updateStartDate(MismatchedStartDate mismatchedStartDate) {
-					getEmployeeDraft().setStartDate(mismatchedStartDate.getSsStartDate());
-				}
-
-				@Override
-				protected void updateOccupation(MismatchedOccupation mismatchedOccupation) {
-					updateContractData(mismatchedOccupation.getVariables());
-				}
-
-				@Override
-				protected void updateQuoteGroup(MismatchedQuoteGroup mismatchedQuoteGroup) {
-					updateContractData(mismatchedQuoteGroup.getVariables());
-				}
-
-				@Override
-				protected void updateContractType(MismatchedContractType mismatchedContractType) {		
-					updateContractData(mismatchedContractType.getVariables());
-				}
-
-				@Override
-				protected void updatePartialFactor(MismatchedPartialFactor mismatchedPartialFactor) {
-					updateContractData(mismatchedPartialFactor.getVariables());
-				}
-
-				@Override
-				protected void saltraCredentialsFound() {
-					employeeDraftObject.checkStatus(employeeStatus -> {
-						removeAll();
-						employeeStatus.visit(this);
-						selectResultsPanel();
-						EmployeeStatus.ifSistemaREDEnabled(employeeStatus, () -> {
-							getEmployeeDraft().enableSistemaRED();
-							getEmployeeDraft().setOnSaved(e -> run());
-						}, () -> {
-							getEmployeeDraft().disableSistemaRED();
-						});
-						EmployeeStatus.ifSistemaREDError(
-								employeeStatus,
-								EmployeeTree.this::showFootPanel,
-								EmployeeTree.this::closeFootPanel					
-								);
-					}, throwable -> {
-						closeFootPanel();
-						getEmployeeDraft().disableSistemaRED();
-					});
-				}
-				
-				// --------------------------------------------------------- EmployeeStatus
-				
-				@Override
-				public void up2Date() {
-					AonMessagePanel.showSuccess(
-					EmployeeTree.this.getMessagePanel(), 
-					"Trabajador actualizado, no existen movimientos y/o cambios nuevos.");
-				}
-				
-				
-			};
-
-			employeeStatus.visit(sistemaREDResults);
-			resultsPanel.setWidget(sistemaREDResults);
-			selectResultsPanel();
-
-			EmployeeStatus.ifSistemaREDEnabled(employeeStatus, () -> {
+	    employeeDraftObject.getIdcDates(
+	    		dates -> {
 				getEmployeeDraft().enableSistemaRED();
-				getEmployeeDraft().setOnSaved(e -> sistemaREDResults.run());
-			}, () -> {
+				getEmployeeDraft().initializeIdcDateListBox(dates);
+	    		}, 
+	    		throwable -> {
+				closeFootPanel();
 				getEmployeeDraft().disableSistemaRED();
-			});
-			
-			EmployeeStatus.ifSistemaREDError(
-					employeeStatus,
-					EmployeeTree.this::showFootPanel,
-					EmployeeTree.this::closeFootPanel					
-					);
-
-		}, throwable -> {
-			closeFootPanel();
-			getEmployeeDraft().disableSistemaRED();
-		});
+			}
+		    );
 	}
 
 	private void checkStatus(EnterpriseDraftObject enterpriseDraftObject) {
@@ -3874,9 +3737,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				getCCCCretaDetail().setSLDButtonsVisible(true);
 				showFootPanel();
 			}, () -> {
-//				cost = new Cost() {
-//					protected void getSLDAsHTML() {}
-//				};
 				getCCCCretaDetail().setSLDButtonsVisible(false);
 			});
 			
@@ -3920,9 +3780,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						EnterpriseStatus.ifSistemaREDEnabled(enterpiseStatus, () -> {
 							getCCCCretaDetail().setSLDButtonsVisible(true);
 						}, () -> {
-//							cost = new Cost() {
-//								protected void getSLDAsHTML() {}
-//							};
 							getCCCCretaDetail().setSLDButtonsVisible(false);
 						});
 						EnterpriseStatus.ifSistemaREDError(enterpiseStatus, 
@@ -3951,7 +3808,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	// ------------------------------------------------------ Protected methods
 
 	protected static String getDescription(CCC ccc, Enterprise enterprise) {
-		String province = ccc.getGeozone();
 
 		for (Activity activity : enterprise.getActivities())
 			for (CCC cc : activity.getCccs())
@@ -4639,7 +4495,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	private static String getDescription(CCC ccc, Workplace workplace) {
-		String province = ccc.getGeozone();
 		Activity activity = workplace.getActivity();
 		return activity.getDescription() + "," + ccc.getCode();
 	}
