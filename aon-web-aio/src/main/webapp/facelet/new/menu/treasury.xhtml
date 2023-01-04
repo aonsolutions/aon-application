@@ -5,19 +5,18 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"	
-	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+	xmlns:a4j="http://richfaces.org/a4j">
 
 	<aon:div id="treasuryMenuPopup" style="display:none" 
 	onmouseout="javascript:hideMenuPopup(this.id)" 
 	onmouseover="javascript:showMenuPopup(this.id)" >
 
 
-		<aon:form id="treasuryMenu">
+		<aon:form id="treasuryMenuForm">
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:if test="#{aonRole.financeOperator}">
-					<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					<h:panelGrid styleClass="aon-width-all" columns="3" cellspacing="15"
 						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 	
 						<aon:panelGroup>
