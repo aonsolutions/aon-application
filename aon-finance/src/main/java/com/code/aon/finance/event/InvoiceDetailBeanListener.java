@@ -8,6 +8,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.common.util.CommonUtil;
@@ -33,6 +34,9 @@ import com.code.aon.registry.RegistryTax;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.enumeration.ProjectStatus;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 
 public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	
@@ -174,7 +178,9 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	}
 
 	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax, InvoiceTax detailVat) throws ManagerBeanException {
-	    InvoiceTax invoiceTax = new InvoiceTax();
+		Domain domain = AON.getDomain(HibernateUtil.getSessionFactoryName(), invoiceDetail.getDomain());
+	    TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, "");
+		InvoiceTax invoiceTax = new InvoiceTax();
 		invoiceTax.setInvoiceDetail(invoiceDetail);
 		invoiceTax.setTaxType(tax.getType());
 		invoiceTax.setVatDeductionType(tax.getVatDeductionType());
@@ -225,10 +231,11 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 						}
 					}
 				}
-
-				quota = CommonUtil.round(base * percentage / 100);
-				if (invoice.isSurcharge()) {
-					surchargeQuota = CommonUtil.round(base * surcharge / 100);	
+				if (isQuotaSavedInTax(invoiceDetail) || tbaiConfiguration.isActive()) {
+					quota = CommonUtil.round(base * percentage / 100);
+					if (invoice.isSurcharge()) {
+						surchargeQuota = CommonUtil.round(base * surcharge / 100);	
+					}
 				}
 			}
 		}
@@ -260,6 +267,14 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		return null;
 	}
 
+	private boolean isQuotaSavedInTax(InvoiceDetail invoiceDetail) throws ManagerBeanException {
+		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_INVOICE_DETAIL_INVOICE_ID), invoiceDetail.getInvoice().getId());
+		criteria.addNotEqualExpression(invoiceTaxBean.getFieldName(IEntityAlias.INVOICE_TAX_QUOTA), Double.valueOf(0));
+		return invoiceTaxBean.getCount(criteria) != 0;
+	}
+	
 	private void updateProjectStatus(Project project, ProjectStatus status) throws ManagerBeanException {
 		if (project != null && project.isTas()) {
 			IManagerBean projectTasBean = BeanManager.getManagerBean(ProjectTas.class);
