@@ -51,6 +51,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.UnknownCraException;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement;
 import com.esferalia.aon.in.payroll.pdf.maker.settlement.beans.Settlement.SettlementBuilder;
+import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SettlementTemplate extends PdfFile {
@@ -340,7 +341,9 @@ public class SettlementTemplate extends PdfFile {
 					down(20);
 
 					if (localTotal != 0)
-						m.getValue().stream().forEach(n ->
+						m.getValue().stream()
+						.sorted((d1,d2) -> d1.getDeductionType().orElse(DeductionType.OTHER).compareTo(d2.getDeductionType().orElse(DeductionType.OTHER) ))
+						.forEach(n ->
 						{
 							if (n != null)
 							{

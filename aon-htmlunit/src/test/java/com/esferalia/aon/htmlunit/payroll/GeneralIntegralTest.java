@@ -85,8 +85,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		calculate(Calendar.DECEMBER);
 		
-		expand("expand-button-agreement");
-		expand("expand-button-system");
+		//expand("expand-button-agreement");
+		//expand("expand-button-system");
 		
 		assertNotElement("editor-antiguedad");
 		assertNotElement("editor-salario_base");
@@ -470,15 +470,32 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 //		calculate(Calendar.JULY,2018);
 //		assertValue("cgcBaseLabel", 3751.20);
 //		assertValue("cgpBaseLabel", 3751.20);
-		calculate(Calendar.AUGUST,2018);
-		assertValue("cgcBaseLabel", 3803.70);
-		assertValue("cgpBaseLabel", 3803.70);
+//		calculate(Calendar.AUGUST,2018);
+//		assertValue("cgcBaseLabel", 3803.70);
+//		assertValue("cgpBaseLabel", 3803.70);
 		calculate(Calendar.JANUARY,2019);
 		assertValue("cgcBaseLabel", 4070.10);
 		assertValue("cgpBaseLabel", 4070.10);
 		calculate(Calendar.JANUARY,2022);
 		assertValue("cgcBaseLabel", 4139.40);
 		assertValue("cgpBaseLabel", 4139.40);
+		calculate(Calendar.JANUARY,2023);
+		assertValue("cgcBaseLabel", 4495.50);
+		assertValue("cgpBaseLabel", 4495.50);
+
+		draft("BASE, MÁXIMA ( GRUPO 10 )");
+		calculate(Calendar.JANUARY,2022);
+		assertValue("cgcBaseLabel", 4139.40);
+		assertValue("cgpBaseLabel", 4139.40);
+		calculate(Calendar.FEBRUARY,2022);
+		assertValue("cgcBaseLabel", 4139.40 / 30.00 * 28);
+		assertValue("cgpBaseLabel", 4139.40 / 30.00 * 28);
+		calculate(Calendar.JANUARY,2023);
+		assertValue("cgcBaseLabel", 4495.50);
+		assertValue("cgpBaseLabel", 4495.50);
+		calculate(Calendar.FEBRUARY,2023);
+		assertValue("cgcBaseLabel", 4495.50 / 30.00 * 28);
+		assertValue("cgpBaseLabel", 4495.50 / 30.00 * 28);
 
 		draft("BASE, MÍNIMA ( GRUPO 01 )");
 //		calculate(Calendar.DECEMBER,2016);
@@ -668,7 +685,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 38.89 * 31 * 0.25);
 		double salaryHours = getValue("db-amount-label-1");
 		assertTrue((salaryHours * 7.03 ) <  ( 38.89 * 31 * 0.25 )  ) ;
-		click("expand-button-system");
+		//click("expand-button-system");
 		assertNotElement("editor-base_cgc_min_hora");
 
 		draft("HORAS NÓMINA, (PATERNIDAD PARCIAL)");

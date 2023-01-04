@@ -87,6 +87,7 @@ public class DetailedPayrollTest {
 				deductions.get(key)
 				.add(
 					new PDFDeduction(randomBetweenZeroAnd(100000),
+					f.color().name(),
 					f.pokemon().location() + " " + f.zelda().character(),
 					randomBetweenZeroAnd(100))
 				);
@@ -260,6 +261,7 @@ public class DetailedPayrollTest {
 		for (int i = 0; i < randomBetweenZeroAnd(10) - 1; i++) {
 			PDFDeduction deduction = new PDFDeduction(
 					randomBetweenZeroAnd(999),	
+					f.color().name(),
 					f.zelda().game() + " " + f.pokemon().location() +
 					"  " + f.book().title() +  
 					"  " + f.book().title() +  

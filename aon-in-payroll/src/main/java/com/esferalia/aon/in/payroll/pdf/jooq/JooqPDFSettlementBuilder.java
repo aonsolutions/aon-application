@@ -160,12 +160,12 @@ public class JooqPDFSettlementBuilder {
 					ArrayList<PDFDeduction> dedList = deductions.getOrDefault(getDeductionKey(deduction.getDeductionType()), new ArrayList<>());
 					Double percent = findDeductionPercent(salary, deduction.getName());
 					percent = AonNumberUtils.zeroIfNull(percent) > 0 ? percent : getCalculatedPercent(salary, deduction);
-					dedList.add(new PDFDeduction(deduction.getAmount(), deduction.getDescription() != null ? deduction.getDescription() : getDeductionName(deduction.getDeductionType()), percent));
+					dedList.add(new PDFDeduction(deduction.getAmount(), deduction.getName() , deduction.getDescription() != null ? deduction.getDescription() : getDeductionDescription(deduction.getName(), deduction.getDeductionType()), percent, deduction.getDeductionType()));
 					deductions.put(getDeductionKey(deduction.getDeductionType()), dedList);			
 				});
 				salary.getEmbargos().stream().filter(Objects::nonNull).forEach(embargo -> {
 					ArrayList<PDFDeduction> dedList = deductions.getOrDefault(getDeductionKey(DeductionType.EMBARGO), new ArrayList<>());
-					dedList.add(new PDFDeduction(embargo.getAmount(), embargo.getDescription() != null ? embargo.getDescription() : "EMBARGO", null));
+					dedList.add(new PDFDeduction(embargo.getAmount(), null, embargo.getDescription() != null ? embargo.getDescription() : "EMBARGO", null, DeductionType.EMBARGO));
 					deductions.put(getDeductionKey(DeductionType.EMBARGO), dedList);
 				});
 			}
@@ -313,9 +313,11 @@ public class JooqPDFSettlementBuilder {
 		return null;
 	}
 	
-	private static String getDeductionName(DeductionType type) {
+	private static String getDeductionDescription(String name, DeductionType type) {
 		if (type == null)
 			return "Otros";
+		if ( AonStringUtils.equals("MEI", name))
+			return "Mecanismo de equidad intergeneracional";
 		return type.accept(new DeductionType.Visitor<String> () {
 						
 			@Override

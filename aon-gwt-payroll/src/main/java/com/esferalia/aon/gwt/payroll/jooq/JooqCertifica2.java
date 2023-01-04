@@ -739,7 +739,7 @@ public class JooqCertifica2 {
 
 		REPRESENTANTETYPE representanteType = new REPRESENTANTETYPE();
 		representanteType.setCIFNIF(certifica2Info.getRepresentativeDocument());
-		representanteType.setNombre(removeAccents(certifica2Info.getRepresentativeName()));
+		representanteType.setNombre(formatNameLenght(removeAccents(certifica2Info.getRepresentativeName())));
 		representanteType.setApellido1(removeAccents(certifica2Info.getRepresentativeSurname()));
 		if(AonStringUtils.isNotBlank(certifica2Info.getRepresentativeWork()))
 			representanteType.setCargo(certifica2Info.getRepresentativeWork());
@@ -750,7 +750,7 @@ public class JooqCertifica2 {
 
 		TRABAJADORTYPE trabajadorType = new TRABAJADORTYPE();
 		trabajadorType.setDNINIE(certifica2Info.getDocument());
-		trabajadorType.setNombre(removeAccents(certifica2Info.getName()));
+		trabajadorType.setNombre(formatNameLenght(removeAccents(certifica2Info.getName())));
 		trabajadorType.setApellido1(removeAccents(certifica2Info.getSurname()));
 		trabajadorType.setNumSS(certifica2Info.getSSNumber());
 		if(AonStringUtils.isNotBlank(certifica2Info.getRegime()) && !AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163"))
@@ -1083,6 +1083,19 @@ public class JooqCertifica2 {
 	            .replace("í", "i")
 	            .replace("ó", "o")
 	            .replace("ú", "u");
+	}
+	
+	private static String formatNameLenght(String input) {
+		if(AonStringUtils.isBlank(input) || input.length() < 15) return input;
+		else {
+			input = input.replace(" DE LAS ", " ");
+			input = input.replace(" DE LOS ", " ");
+			input = input.replace(" DE ", " ");
+			input = input.replace(" DEL ", " ");
+			input = input.trim();
+			
+			return input.length() < 15 ? input : input.substring(0, 14);
+		}
 	}
 
 }

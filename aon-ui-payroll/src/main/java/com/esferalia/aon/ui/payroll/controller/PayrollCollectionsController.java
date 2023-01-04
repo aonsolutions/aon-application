@@ -834,13 +834,17 @@ public class PayrollCollectionsController implements Serializable {
 	public List<SelectItem> getSalaryTemplates() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		salaryTemplates = new LinkedList<SelectItem>();
-		SelectItem item = new SelectItem(SalaryTemplate.DEFAULT.getValue(), SalaryTemplate.DEFAULT.getName(locale));
+		SelectItem item = new SelectItem(SalaryTemplate.DEFAULT.getValue(), SalaryTemplate.DEFAULT.getName(locale), null, true);
 		salaryTemplates.add(item);
-		item = new SelectItem(SalaryTemplate.STANDARD_DUAL_COLUMN.getValue(), SalaryTemplate.STANDARD_DUAL_COLUMN.getName(locale));
+		item = new SelectItem(SalaryTemplate.STANDARD_DUAL_COLUMN.getValue(), SalaryTemplate.STANDARD_DUAL_COLUMN.getName(locale), null, true);
 		salaryTemplates.add(item);
-		item = new SelectItem(SalaryTemplate.INVOICE_SIMPLE.getValue(), SalaryTemplate.INVOICE_SIMPLE.getName(locale));
+		item = new SelectItem(SalaryTemplate.INVOICE_SIMPLE.getValue(), SalaryTemplate.INVOICE_SIMPLE.getName(locale), null, true);
 		salaryTemplates.add(item);
-		item = new SelectItem(SalaryTemplate.INVOICE_CRA_GROUP.getValue(), SalaryTemplate.INVOICE_CRA_GROUP.getName(locale));
+		item = new SelectItem(SalaryTemplate.INVOICE_CRA_GROUP.getValue(), SalaryTemplate.INVOICE_CRA_GROUP.getName(locale), null, true);
+		salaryTemplates.add(item);
+		item = new SelectItem(SalaryTemplate.AON_SOLUTIONS_MACLEOD.getValue(), SalaryTemplate.AON_SOLUTIONS_MACLEOD.getName(locale));
+		salaryTemplates.add(item);
+		item = new SelectItem(SalaryTemplate.AON_SOLUTIONS_DEFAULT.getValue(), SalaryTemplate.AON_SOLUTIONS_DEFAULT.getName(locale));
 		salaryTemplates.add(item);
 			
 		EnterpriseParamsController paramsController = (EnterpriseParamsController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_PARAMS_CONTROLLER_NAME);

@@ -65,6 +65,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.UnknownCraException;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
  * Class to print Payroll PDF file with PDFbox
@@ -157,13 +158,13 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 					this.contents = new PDPageContentStream(doc, page);
 
 					this.drawHeader();
-					drawBorderedBox(this.contents, 10, 185, 575, 520, LIGHT_GRAY);
+					drawBorderedBox(this.contents, 10, 197, 575, 508, LIGHT_GRAY);
 					this.y -= 15;
 
 					this.drawDeductions();
 					this.drawFooter();
 				} else {
-					drawBorderedBox(this.contents, 10, 185, 575, 520, LIGHT_GRAY);
+					drawBorderedBox(this.contents, 10, 197, 575, 508, LIGHT_GRAY);
 					this.drawPayments();
 					this.drawDeductions();
 					this.drawFooter();
@@ -440,10 +441,14 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		
 		Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions = p.getDeductions();
 		
-		PDFDeduction ccDeduction = getSingleDeductionByType(allDeductions, DeductionType.COMMON_CONTINGENCY, "Contingencias comunes");
+		PDFDeduction ccDeduction = DefaultPayrollFuseBox.getSingleDeductionByType(allDeductions, DeductionType.COMMON_CONTINGENCY, "Contingencias comunes", d -> AonStringUtils.notEquals("MEI", d.getName().orElse(null)));
 		y -= NORMAL_LINE_JUMP + 2;
 		drawDeduction(ccDeduction.getDescription().orElse(""), ccDeduction.getPercent().orElse(0d), ccDeduction.getAmount().orElse(0d));
 		
+		PDFDeduction meiDeduction = getSingleDeductionByType(allDeductions, DeductionType.COMMON_CONTINGENCY, "Mecanismo de equidad intergeneracional", d -> AonStringUtils.equals("MEI", d.getName().orElse(null)));
+		y -= LITTLE_LINE_JUMP;
+		drawDeduction(meiDeduction.getDescription().orElse(""), meiDeduction.getPercent().orElse(0d), meiDeduction.getAmount().orElse(0d));
+
 		PDFDeduction unemDeduction = getSingleDeductionByType(allDeductions, DeductionType.UNEMPLOYMENT, "Desempleo");
 		y -= LITTLE_LINE_JUMP;
 		drawDeduction(unemDeduction.getDescription().orElse(""), unemDeduction.getPercent().orElse(0d), unemDeduction.getAmount().orElse(0d));
@@ -615,7 +620,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		Optional<ContingencyBases> contigencies = p.getContingencies();
 		if (contigencies.isPresent())
 		{
-			y = 165;
+			y = 177;
 			x = 25;
 
 			final String title	= text("TITULO PIE");
@@ -628,17 +633,19 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			final String monthlyAmmountTitle	  = text("IMPORTE DE REMUNERACION MENSUAL");
 			final String extraHourProrrationTitle = text("IMPORTE PRORRATA DE PAGA EXTRAORDINARIA");
 
-			final String profContingenciesTitle	= "2. "
+			final String meiTitle			= "2. " + text("MECANISMO DE EQUIDAD INTERGENERACIONAL");
+
+			final String profContingenciesTitle	= "3. "
 					+ text("CONTINGENCIAS PROFESIONALES Y CONCEPTOS DE RECAUDACION CONJUNTA");
 			final String atEpTitle				= text("AT Y EP");
 			final String unemploymentTitle		= text("DESEMPLEO");
 			final String profesFormTitle		= text("FORMACION PROFESIONAL");
 			final String fogasaTitle			= text("FONDO DE GARANTIA SALARIAL");
 
-			final String		   extraHoursTitle		   = "3. " + text("COTIZACION ADICIONAL POR HORAS EXTRAS");
+			final String		   extraHoursTitle		   = "4. " + text("COTIZACION ADICIONAL POR HORAS EXTRAS");
 			final String		   forceMajeureTitle	   = text("FUERZA MAYOR O");
 			final String		   noStructTitle		   = text("NO ESTRUCTURALES");
-			String				   irpfTitle			   = "4. " + text("BASE SUJETA A RETENCION IRPF") + " ";
+			String				   irpfTitle			   = "5. " + text("BASE SUJETA A RETENCION IRPF") + " ";
 			final String		   totalContingenciesTitle = text("TOTAL APORTACIONES");
 			final ContingencyBases conts				   = contigencies.get();
 
@@ -660,6 +667,15 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 					+ text("MONEDA");
 			final String profContingenciesBase = toLatinNumber(safeDouble(conts.getProfessionalContBase())) + " "
 					+ text("MONEDA");
+			
+			String		 meiType	= drawCostPercentage(conts.getMeiType());
+
+			if (meiType.contains("-1"))
+				meiType = "";
+
+			final String meiApEnt		   = toLatinNumber(safeDouble(conts.getMeiApEnterprise())) + " "
+					+ text("MONEDA");
+
 			String		 atEpType			   = drawCostPercentage(conts.getAtEpType());
 
 			if (atEpType.contains("-1"))
@@ -712,7 +728,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 				irpfTitle += toLatinNumber(irpfRetDin) + " " + text("MONEDA") + " "
 						+ text("EN RETRIBUCIONES DINERARIAS");
 
-			drawBorderedBox(contents, 10, 10, 575, 170, LIGHT_GRAY);
+			drawBorderedBox(contents, 10, 10, 575, 182, LIGHT_GRAY);
 			drawText(contents, title, x, y, BLACK, HELVETICA_BOLD, FONT_SIZE - 1);
 
 			y -= 10;
@@ -747,6 +763,15 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			drawText(contents, extraHourProrrationTitle, x, y, BLACK, HELVETICA, FONT_SIZE - 3);
 			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), extraProrrationAmount, BLACK, HELVETICA,
 					FONT_SIZE - 3, 5, 1);
+
+			y -= 12;
+			drawText(contents, meiTitle, x - 15, y, BLACK, HELVETICA_BOLD, 7);
+			drawTextRight(contents, new PDRectangle(x + 322, y, 70, 70), commContBase, BLACK, HELVETICA,
+				FONT_SIZE - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 396, y, 70, 70), meiType, BLACK, HELVETICA,
+    				FONT_SIZE - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 465, y, 70, 70), meiApEnt, BLACK, HELVETICA,
+    				FONT_SIZE - 3, 5, 1);
 
 			y -= 12;
 			drawText(contents, profContingenciesTitle, x - 15, y, BLACK, HELVETICA_BOLD, 7);

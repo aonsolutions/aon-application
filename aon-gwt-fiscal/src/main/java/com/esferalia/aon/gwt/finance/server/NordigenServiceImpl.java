@@ -75,7 +75,13 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 		}
 		final String bic = bicBuilder.toString();
 		
-		Optional<NordigenInstitution> optInstitution = AonNordigen.getInstitutions(token, null, null).stream().filter(inst -> AonStringUtils.equalsIgnoreCase(inst.getBic(), bic)).findFirst();
+		List<NordigenInstitution> instList = AonNordigen.getInstitutions(token, null, null).stream().filter(inst -> AonStringUtils.equalsIgnoreCase(inst.getBic(), bic)).toList();
+		
+		if (instList.size() > 1) {
+			throw new Exception("Too much institutions");
+		}
+		
+		Optional<NordigenInstitution> optInstitution = Optional.ofNullable(instList.get(0));
 		StringBuilder instIdBuilder = new StringBuilder();
 		if (optInstitution.isPresent()) {
 			instIdBuilder.append(AonStringUtils.trimToEmpty(optInstitution.get().getId()));

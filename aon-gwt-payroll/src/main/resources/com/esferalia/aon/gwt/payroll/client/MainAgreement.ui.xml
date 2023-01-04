@@ -117,7 +117,7 @@
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:Label text="Convenio" ui:field="agreementTab" />
 							<g:Label text="Nivel / Categoría" ui:field="levelTab" />
-							<g:Label text="Tabla Salarial" ui:field="salaryTableTab" />
+							<g:Label text="Tabla Salarial" debugId="salary_table_tab" ui:field="salaryTableTab" />
 							<g:Label text="Devengos" ui:field="paymentTab" />
 						</g:HTMLPanel>
 						<g:DeckPanel ui:field="mainDeckPanel">

@@ -144,13 +144,13 @@ public class PayrollTemplate implements IPayrollTemplate{
 					this.contents = new PDPageContentStream(doc, page);
 	
 					this.drawHeader();
-					drawBorderedBox(this.contents, 10, 185, 575, 520, LIGHT_GRAY);
+					drawBorderedBox(this.contents, 10, 197, 575, 508, LIGHT_GRAY);
 					this.y -= 15;
 	
 					this.drawDeductions();
 					this.drawFooter();
 				} else {
-					drawBorderedBox(this.contents, 10, 185, 575, 520, LIGHT_GRAY);
+					drawBorderedBox(this.contents, 10, 197, 575, 508, LIGHT_GRAY);
 					this.drawPayments();
 					this.drawDeductions();
 					this.drawFooter();
@@ -425,7 +425,7 @@ public class PayrollTemplate implements IPayrollTemplate{
 		Optional<ContingencyBases> contigencies = p.getContingencies();
 		if (contigencies.isPresent())
 		{
-			y = 165;
+			y = 177;
 			x = 25;
 
 			final String title	= text("TITULO PIE");
@@ -438,17 +438,19 @@ public class PayrollTemplate implements IPayrollTemplate{
 			final String monthlyAmmountTitle	  = text("IMPORTE DE REMUNERACION MENSUAL");
 			final String extraHourProrrationTitle = text("IMPORTE PRORRATA DE PAGA EXTRAORDINARIA");
 
-			final String profContingenciesTitle	= "2. "
+			final String meiTitle			= "2. " + text("MECANISMO DE EQUIDAD INTERGENERACIONAL");
+
+			final String profContingenciesTitle	= "3. "
 					+ text("CONTINGENCIAS PROFESIONALES Y CONCEPTOS DE RECAUDACION CONJUNTA");
 			final String atEpTitle				= text("AT Y EP");
 			final String unemploymentTitle		= text("DESEMPLEO");
 			final String profesFormTitle		= text("FORMACION PROFESIONAL");
 			final String fogasaTitle			= text("FONDO DE GARANTIA SALARIAL");
 
-			final String		   extraHoursTitle		   = "3. " + text("COTIZACION ADICIONAL POR HORAS EXTRAS");
+			final String		   extraHoursTitle		   = "4. " + text("COTIZACION ADICIONAL POR HORAS EXTRAS");
 			final String		   forceMajeureTitle	   = text("FUERZA MAYOR O");
 			final String		   noStructTitle		   = text("NO ESTRUCTURALES");
-			String				   irpfTitle			   = "4. " + text("BASE SUJETA A RETENCION IRPF") + " ";
+			String				   irpfTitle			   = "5. " + text("BASE SUJETA A RETENCION IRPF") + " ";
 			final String		   totalContingenciesTitle = text("TOTAL APORTACIONES");
 			final ContingencyBases conts				   = contigencies.get();
 
@@ -468,6 +470,14 @@ public class PayrollTemplate implements IPayrollTemplate{
 					+ text("MONEDA");
 			final String extraProrrationAmount = toLatinNumber(safeDouble(conts.getExtraProrationAmount())) + " "
 					+ text("MONEDA");
+			String		 meiType	= drawCostPercentage(conts.getMeiType());
+
+			if (meiType.contains("-1"))
+				meiType = "";
+
+			final String meiApEnt		   = toLatinNumber(safeDouble(conts.getMeiApEnterprise())) + " "
+					+ text("MONEDA");
+			
 			final String profContingenciesBase = toLatinNumber(safeDouble(conts.getProfessionalContBase())) + " "
 					+ text("MONEDA");
 			String		 atEpType			   = drawCostPercentage(conts.getAtEpType());
@@ -522,7 +532,7 @@ public class PayrollTemplate implements IPayrollTemplate{
 				irpfTitle += toLatinNumber(irpfRetDin) + " " + text("MONEDA") + " "
 						+ text("EN RETRIBUCIONES DINERARIAS");
 
-			drawBorderedBox(contents, 10, 10, 575, 170, LIGHT_GRAY);
+			drawBorderedBox(contents, 10, 10, 575, 182, LIGHT_GRAY);
 			drawText(contents, title, x, y, BLACK, HELVETICA_BOLD, fontSize - 1);
 
 			y -= 10;
@@ -557,6 +567,15 @@ public class PayrollTemplate implements IPayrollTemplate{
 			drawText(contents, extraHourProrrationTitle, x, y, BLACK, HELVETICA, fontSize - 3);
 			drawTextRight(contents, new PDRectangle(x + 215, y, 70, 70), extraProrrationAmount, BLACK, HELVETICA,
 					fontSize - 3, 5, 1);
+
+			y -= 12;
+			drawText(contents, meiTitle, x - 15, y, BLACK, HELVETICA_BOLD, 7);
+			drawTextRight(contents, new PDRectangle(x + 322, y, 70, 70), commContBase, BLACK, HELVETICA,
+				fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 396, y, 70, 70), meiType, BLACK, HELVETICA,
+				fontSize - 3, 5, 1);
+			drawTextRight(contents, new PDRectangle(x + 465, y, 70, 70), meiApEnt, BLACK, HELVETICA,
+				fontSize - 3, 5, 1);
 
 			y -= 12;
 			drawText(contents, profContingenciesTitle, x - 15, y, BLACK, HELVETICA_BOLD, 7);

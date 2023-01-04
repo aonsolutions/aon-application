@@ -3,7 +3,7 @@ package com.esferalia.aon.occam.server.fiscal.format.mod390;
 import java.io.IOException;
 import java.io.Writer;
 
-import com.esferalia.aon.occam.api.model.fiscal.mod390.ActivityType;
+import com.esferalia.aon.occam.api.model.fiscal.ActivityType;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902022DetailKey;
 import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
@@ -61,34 +61,34 @@ public class Mod3902022Writer {
 		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getMainActivity()!=null?m390.getMainActivity().getDescription():" ",40))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getMainActivity()!=null
-		   						?AonStringUtils.defaultIfBlank(ActivityType.toString(m390.getMainActivity().getType()))
-   								:"", 3))
+		   						?AonStringUtils.defaultIfBlank(ActivityType.toString(m390.getMainActivity().getType())):"", 3))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getMainActivity()!=null?m390.getMainActivity().getEpigraph():" ",4))
+		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity1()!=null?m390.getActivity1().getDescription():" ",40))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity1()!=null
-		   						?AonStringUtils.defaultIfBlank(ActivityType.toString(m390.getActivity1().getType()))
-				   				:"", 3))
+		   						?AonStringUtils.defaultIfBlank(ActivityType.toString(m390.getActivity1().getType())):"", 3))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity1()!=null?m390.getActivity1().getEpigraph():" ",4))
+		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity2()!=null?m390.getActivity2().getDescription():" ",40))
-		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getMainActivity()!=null
-								?AonStringUtils.defaultIfBlank(ActivityType.toString(m390.getActivity2().getType()))
-								:"", 3))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity2()!=null
+								?AonStringUtils.defaultIfBlank(ActivityType.toString(m390.getActivity2().getType())):"", 3))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity2()!=null?m390.getActivity2().getEpigraph():" ",4))
+		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity3()!=null?m390.getActivity3().getDescription():" ",40))
-		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getMainActivity()!=null
-								?AonStringUtils.defaultIfBlank(ActivityType.toString(m390.getActivity3().getType()))
-								:"", 3))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity3()!=null
+								?AonStringUtils.defaultIfBlank(ActivityType.toString(m390.getActivity3().getType())):"", 3))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity3()!=null?m390.getActivity3().getEpigraph():" ",4))
+		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity4()!=null?m390.getActivity4().getDescription():" ",40))
-		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getMainActivity()!=null
-								?AonStringUtils.defaultIfBlank(ActivityType.toString(m390.getActivity4().getType()))
-								:"", 3))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity4()!=null
+								?AonStringUtils.defaultIfBlank(ActivityType.toString(m390.getActivity4().getType())):"", 3))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity4()!=null?m390.getActivity4().getEpigraph():" ",4))
+		   
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity5()!=null?m390.getActivity5().getDescription():" ",40))
-		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getMainActivity()!=null
-								?AonStringUtils.defaultIfBlank(ActivityType.toString(m390.getActivity5().getType()))
-								:"", 3))
+		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity5()!=null
+								?AonStringUtils.defaultIfBlank(ActivityType.toString(m390.getActivity5().getType())):"", 3))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getActivity5()!=null?m390.getActivity5().getEpigraph():" ",4))
+		   
 		   ,(wr,m390) -> wr.append(m390.isMod347()?"1":"0")
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getMergedDeclarationDocument(),9))
 		   ,(wr,m390) -> wr.append(AonFiscalFileUtils.text(m390.getMergedDeclarationName(),37))

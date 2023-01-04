@@ -432,19 +432,19 @@ class Page01 extends PageAbs {
 		});
 
 		mainActivityType.addChangeHandler(e -> {
-			getModel().getMainActivity().setType(activity4Type.getValue());
+			getModel().getMainActivity().setType(mainActivityType.getValue());
 			markAsDirty();
 		});
 		activity1Type.addChangeHandler(e -> {
-			getModel().getActivity1().setType(activity4Type.getValue());
+			getModel().getActivity1().setType(activity1Type.getValue());
 			markAsDirty();
 		});
 		activity2Type.addChangeHandler(e -> {
-			getModel().getActivity2().setType(activity4Type.getValue());
+			getModel().getActivity2().setType(activity2Type.getValue());
 			markAsDirty();
 		});
 		activity3Type.addChangeHandler(e -> {
-			getModel().getActivity3().setType(activity4Type.getValue());
+			getModel().getActivity3().setType(activity3Type.getValue());
 			markAsDirty();
 		});
 		activity4Type.addChangeHandler(e -> {
@@ -452,7 +452,7 @@ class Page01 extends PageAbs {
 			markAsDirty();
 		});
 		activity5Type.addChangeHandler(e -> {
-			getModel().getActivity5().setType(activity4Type.getValue());
+			getModel().getActivity5().setType(activity5Type.getValue());
 			markAsDirty();
 		});
 		

@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.finance.UpdateInvoiceRegistryDocument;
 import net.aonsolutions.db.up2date.fiscal.AlterAlcatrazFinance;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2022;
 import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2023Insert;
 import net.aonsolutions.db.up2date.payroll.AgreementPaymentsConceptFix;
 import net.aonsolutions.db.up2date.payroll.AlterAgreementPaymentDescription;
@@ -31,6 +32,8 @@ import net.aonsolutions.db.up2date.payroll.AlterSalaryBonusConcept;
 
 import net.aonsolutions.db.up2date.payroll.DeathOfEmployeeInsert;
 import net.aonsolutions.db.up2date.payroll.Holidays2023Insert;
+import net.aonsolutions.db.up2date.tgss.BasesMax2023Update;
+import net.aonsolutions.db.up2date.tgss.MEIInsert;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 public class Up2Date {
 
@@ -300,9 +303,11 @@ public class Up2Date {
     		//DeathOfEmployeeInsert.DEATHOFEMPLOYEEINSERT,
     		//AlterAgreementPaymentDescription.ALTERAGREEMENTPAYMENTDESCRIPTION,
     		//UpdateInvoiceRegistryDocument.UPDATE_INVOICE_REGISTRY_DOCUMENT,
-
-    		AlterAlcatrazFinance.ALTER_ALCATRAZ_FINANCE,
-    		IrpfEuskadi2023Insert.IRPFEUSKADI2023INSERT,
+    		//AlterAlcatrazFinance.ALTER_ALCATRAZ_FINANCE,
+    		//IrpfEuskadi2023Insert.IRPFEUSKADI2023INSERT,
+	    	BasesMax2023Update.BASESMAX2023UPDATE,
+	    	MEIInsert.MEIINSERT,
+    		AlterFsMod190Detail2022.ALTER_FS_MODEL_190_DETAIL_2022,
 	    	
     		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
