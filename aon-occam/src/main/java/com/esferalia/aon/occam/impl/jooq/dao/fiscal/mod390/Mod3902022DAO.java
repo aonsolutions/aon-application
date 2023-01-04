@@ -269,7 +269,7 @@ public class Mod3902022DAO {
 		 // Operaciones intragrupo valoradas conforme a lo dispuesto en los arts. 78 y 79 LIVA
 		 ,C0128	 (Mod3902022DetailKey.C0128, null)
 		 // Operaciones en régimen simplificado
-		 ,C0100	 (Mod3902022DetailKey.C0100, ((mod, vc) -> (vc.isNationalSales() && vc.isVatSimplifiedRegime(mod.isSimplifiedRegime()?VATRegime.SIMPLIFIED:VATRegime.GENERAL))))
+		 ,C0100	 (Mod3902022DetailKey.C0100, ((mod, vc) -> (vc.isNationalSales() && vc.isVatSimplifiedRegime(VATRegime.GENERAL))))
 		 // Operaciones en régimen especial de la agricultura, ganadería y pesca
 		 ,C0101	 (Mod3902022DetailKey.C0101, null)
 		 // Operaciones realizadas por sujetos pasivos acogidos al régimen especial del recargo de equivalencia
