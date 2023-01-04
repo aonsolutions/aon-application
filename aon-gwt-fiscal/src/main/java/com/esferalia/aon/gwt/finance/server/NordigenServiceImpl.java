@@ -77,11 +77,7 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 		
 		List<NordigenInstitution> instList = AonNordigen.getInstitutions(token, null, null).stream().filter(inst -> AonStringUtils.equalsIgnoreCase(inst.getBic(), bic)).toList();
 		
-		if (instList.size() > 1) {
-			throw new Exception("Too much institutions");
-		}
-		
-		Optional<NordigenInstitution> optInstitution = Optional.ofNullable(instList.get(0));
+		Optional<NordigenInstitution> optInstitution = Optional.ofNullable(instList.size() == 1 ? instList.get(0) : null);
 		StringBuilder instIdBuilder = new StringBuilder();
 		if (optInstitution.isPresent()) {
 			instIdBuilder.append(AonStringUtils.trimToEmpty(optInstitution.get().getId()));
@@ -90,6 +86,10 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 		
 		//EN CASO DE QUE HAYA PROBLEMAS CON EL BIC:
 		NordigenInstitution inst = nordigenBankAccount.getInstitution();
+		
+		if (inst == null && instList.size() > 1) {
+			throw new Exception("Too much institutions");
+		}
 		
 		NordigenAgreement agreement = AonNordigen.createAgreement(token, inst != null ? inst.getId() : institutionId);
 		NordigenRequisition requisition = AonNordigen.createRequisition(token, agreement, "https://" + currentDomainName + "/ms/api/task-evaluation/rbank?rbank=" + (rbank != null ? ""+rbank.getId() : ""));

@@ -1475,6 +1475,9 @@ public class NordigenModule extends MainEntryPoint {
 									nordigenBankAccount.setInstitution(selectedInst);
 								});
 								
+								String instId = availableBanksList.getSelectedValue();
+								NordigenInstitution selectedInst = result.stream().filter(inst -> AonStringUtils.equals(instId, inst.getId())).findFirst().orElse(null);
+								nordigenBankAccount.setInstitution(selectedInst);
 								registrationTable.setWidget(5, 0, availableBanksList);
 							}
 							
