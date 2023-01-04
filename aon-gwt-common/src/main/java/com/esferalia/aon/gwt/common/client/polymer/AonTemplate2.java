@@ -21,6 +21,17 @@ public class AonTemplate2 implements EntryPoint {
 	@UiField SimpleLayoutPanel toolbar;
 	@UiField SimpleLayoutPanel westContent;
 	@UiField SimpleLayoutPanel content;
+	
+	public static native Boolean isAonSolutions()
+	/*-{
+		var newAon = $wnd.localStorage.getItem("aon_solutions"); 
+		return newAon ? true : false;
+	}-*/;
+	
+	public static native String getToken()
+	/*-{
+		return $wnd.localStorage.getItem("aon_session_id");
+	}-*/;	
 		
 	public static native String getCurrentDomainName()
 	/*-{
@@ -41,6 +52,13 @@ public class AonTemplate2 implements EntryPoint {
 	/*-{
 		return $wnd.localStorage.getItem("rootPanel");
 	}-*/;
+	
+	public Occam getOccam() {
+		return new Occam()
+			.setDomain(getCurrentDomain())
+			.setDomainName(getCurrentDomainName())
+			.setUser(getCurrentUser());
+	}
 	
 	public AonTemplate2() {
 
@@ -84,13 +102,5 @@ public class AonTemplate2 implements EntryPoint {
 	
 	protected SimpleLayoutPanel getContent() {
 		return content;
-	}
-
-	
-	public static Occam getOccam() {
-		return new Occam()
-				.setDomain(getCurrentDomain())
-				.setDomainName(getCurrentDomainName())
-				.setUser(getCurrentUser());
 	}
 }
