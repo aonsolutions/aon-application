@@ -112,8 +112,9 @@ public class DomainUserRoles implements Serializable {
 		return oldParentDomainModules;
 	}
 
-	public void setOldParentDomainModules(List<Module> oldParentDomainModules) {
+	public DomainUserRoles setOldParentDomainModules(List<Module> oldParentDomainModules) {
 		this.oldParentDomainModules = oldParentDomainModules;
+		return this;
 	}
 
 	public boolean isParentUser(){
@@ -339,7 +340,9 @@ public class DomainUserRoles implements Serializable {
 	// INVOICE - FACTURAS
 	
 	public boolean hasInvoice() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasBasicManagement() || hasApp(AonApp.INVOICE);
+		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) 
+				|| hasBasicManagement() || hasApp(AonApp.INVOICE)
+				|| hasOldModule(Module.AON_FINANCE);
 	}
 	
 	public boolean isInvoice() {
@@ -352,6 +355,11 @@ public class DomainUserRoles implements Serializable {
 	
 	public boolean isInvoiceManager() {
 		return hasInvoice() && (isAdmin() || hasRole(AonRole.INVOICE_MANAGER));
+	}
+	
+	public boolean hasManagement() {
+		return hasOldModule(Module.AON_FINANCE) || hasOldModule(Module.AON_ONE)
+				|| hasOldModule(Module.MANAGEMENT) || hasApp(AonApp.MANAGEMENT);
 	}
 	
 	public boolean isManagement() {

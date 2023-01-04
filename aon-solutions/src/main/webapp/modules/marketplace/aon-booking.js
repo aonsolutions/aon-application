@@ -400,6 +400,16 @@ export class AonBooking extends AonElement {
 			return dur.hasStandarManagement();
 		else if(App.PROFESSIONAL_MANAGEMENT === app)
 			return dur.hasProfessionalManagement();
+		else if(App.WAREHOUSE === app)
+			return dur.hasWarehouse();
+		else if(App.MARKETING === app)
+			return dur.hasMarketing();
+		else if(App.TREASURY === app)
+			return dur.hasTreasury();
+		else if(App.GROUPWARE === app)
+			return dur.hasGroupware();
+		else if(App.COMMERCIAL === app)
+			return dur.hasCommercial();
 		else return dur.hasApp(app);
 	}
 
@@ -447,7 +457,7 @@ export class AonBooking extends AonElement {
 		else if(App.TIMECONTROL === app)
 			return dur.hasPackSuite() || dur.hasPackPortal() || dur.hasComunica();
 		else if(App.INVOICE === app)
-			return dur.hasPackSuite() || dur.hasPackPortal();
+			return dur.hasPackSuite() || dur.hasPackPortal() || dur.hasBasicManagement();
 		else if(App.MESSENGER === app)
 			return dur.hasPackSuite() || dur.hasPackPortal();
 		else if(App.PACK_PORTAL === app)
@@ -460,8 +470,17 @@ export class AonBooking extends AonElement {
 			return false;
 		else if(App.BANK === app) {
 			return false;
-		}
-		else return false;
+		} else if(App.TREASURY === app) {
+			return dur.hasStandarManagement();
+		}  else if(App.COMMERCIAL === app) {
+			return dur.hasStandarManagement();
+		} else if(App.WAREHOUSE === app) {
+			return dur.hasProfessionalManagement();
+		} else if(App.GROUPWARE === app) {
+			return dur.hasProfessionalManagement();
+		} else if(App.MARKETING === app) {
+			return dur.hasProfessionalManagement();
+		} else return false;
 	}
 
 	getPack(dur, app){
@@ -479,6 +498,12 @@ export class AonBooking extends AonElement {
 		} else if(  dur.hasPackPayroll() && (App.PAYROLL === app || App.COMUNICA === app
 				|| App.TIMECONTROL === app)) {
 			return Packs.PORTAL;
+		} else if(dur.hasBasicManagement() && App.INVOICE === app) {
+			return BASIC_MANAGEMENT;
+		} else if(dur.hasStandarManagement() && (App.COMMERCIAL === app || App.TREASURY === app)) {
+			return STANDAR_MANAGEMENT;
+		} else if(dur.hasProfessionalManagement() && (App.WAREHOUSE === app || App.MARKETING === app || App.GROUPWARE === app)) {
+			return PROFESSIONAL_MANAGEMENT;
 		}
 		return undefined;
 	}

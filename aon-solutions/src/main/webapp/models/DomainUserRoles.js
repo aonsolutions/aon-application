@@ -124,7 +124,8 @@ export class DomainUserRoles {
 	}
 
   hasOldModule(mod) {
-  	return (this.getOldDomainModules() && this.getOldDomainModules().includes(mod)) || (this.getOldParentDomainModules() && this.getOldParentDomainModules().includes(mod));
+  	return (this.getOldDomainModules() && this.getOldDomainModules().includes(mod)) 
+        || (this.getOldParentDomainModules() && this.getOldParentDomainModules().includes(mod));
   }
 
   hasOldRole(oldRole) {
@@ -181,15 +182,28 @@ export class DomainUserRoles {
   }
 
   hasBasicManagement() {
-    return this.hasStandarManagement() || this.hasApp(App.BASIC_MANAGEMENT);
+    return this.hasStandarManagement() || this.hasApp(App.BASIC_MANAGEMENT)
+        || this.hasManagement();
+  }
+
+  hasParentBasicManagement() {
+    return this.hasParentStandarManagement() || this.hasParentApp(App.BASIC_MANAGEMENT);
   }
 
   hasStandarManagement() {
     return this.hasProfessionalManagement() || this.hasApp(App.STANDAR_MANAGEMENT);
   }
 
+  hasParentStandarManagement() {
+    return this.hasParentProfessionalManagement() || this.hasParentApp(App.STANDAR_MANAGEMENT);
+  }
+
   hasProfessionalManagement() {
     return this.hasApp(App.PROFESSIONAL_MANAGEMENT);
+  }
+
+  hasParentProfessionalManagement() {
+    return this.hasParentApp(App.PROFESSIONAL_MANAGEMENT);
   }
 
   hasParentPackFiscalAccounting() {
@@ -198,7 +212,7 @@ export class DomainUserRoles {
 
   hasAccounting() {
     return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_FISCAL_ACCOUNTING)
-      || this.hasApp(App.ACCOUNTING);
+      || this.hasApp(App.ACCOUNTING) || this.hasOldModule(OldModule.ACCOUNTING);
   }
 
   hasParentAccounting() {
@@ -216,7 +230,7 @@ export class DomainUserRoles {
 
   hasFiscal() {
     return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_FISCAL_ACCOUNTING)
-      || this.hasApp(App.FISCAL);
+      || this.hasApp(App.FISCAL) || this.hasOldModule(OldModule.FISCAL);
   }
 
   hasParentFiscal() {
@@ -234,7 +248,8 @@ export class DomainUserRoles {
 
   hasPayroll() {
     return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_PAYROLL)
-      || this.hasApp(App.PAYROLL);
+      || this.hasApp(App.PAYROLL) || this.hasOldModule(OldModule.PAYROLL)
+      || this.hasOldModule(OldModule.PAYROLL_PORTAL);
   }
 
   hasParentPayroll() {
@@ -256,7 +271,8 @@ export class DomainUserRoles {
 
   hasDocumental() {
     return this.hasPackSuite() || this.hasPackPortal()
-      || this.hasApp(App.DOCUMENTAL);
+      || this.hasApp(App.DOCUMENTAL) || this.hasOldModule(OldModule.DOCUMENT)
+      || this.hasOldModule(OldModule.DOCUMENT_PORTAL);
   }
 
   hasParentDocumental() {
@@ -281,7 +297,7 @@ export class DomainUserRoles {
 
   hasComunica() {
     return this.hasApp(App.PACK_SUITE) || this.hasApp(App.PACK_PAYROLL)
-      || this.hasApp(App.COMUNICA);
+      || this.hasApp(App.COMUNICA) || this.hasOldModule(OldModule.COMUNICA);
   }
 
   hasParentComunica() {
@@ -371,7 +387,7 @@ export class DomainUserRoles {
 
   hasParentInvoice() {
     return this.hasParentPackSuite() || this.hasParentPackPortal()
-      || this.hasParentApp(App.INVOICE);
+        || this.hasParentBasicManagement() || this.hasParentApp(App.INVOICE);
   }
 
 	isInvoice() {
@@ -386,13 +402,66 @@ export class DomainUserRoles {
 		return this.hasInvoice() && (this.isAdmin() || this.hasRole(Role.INVOICE_MANAGER));
 	}
 
+  hasManagement() {
+		return this.hasOldModule(OldModule.AON_FINANCE) || this.hasOldModule(OldModule.AON_ONE)
+				|| this.hasOldModule(OldModule.MANAGEMENT) || this.hasApp(App.MANAGEMENT);
+	}
+
 	isManagement() {
-		return this.hasApp(App.MANAGEMENT) && (this.isAdmin() || this.hasRole(Role.MANAGEMENT));
+		return this.hasManagement() && (this.isAdmin() || this.hasRole(Role.MANAGEMENT));
 	}
 
 	isManagementManager() {
-		return this.hasApp(App.MANAGEMENT) && (this.isAdmin() || this.hasRole(Role.MANAGEMENT_MANAGER));
+		return this.hasManagement() && (this.isAdmin() || this.hasRole(Role.MANAGEMENT_MANAGER));
 	}
+
+  hasCommercial() {
+    return this.hasOldModule(OldModule.CRM) || this.hasApp(App.COMMERCIAL)
+        || this.hasApp(App.STANDAR_MANAGEMENT);
+  }
+
+  isCommercial() {
+    return this.hasCommercial() && (this.isAdmin() || this.hasRole(Role.COMMERCIAL));
+  }
+
+  hasTreasury() {
+    return this.hasOldModule(OldModule.TREASURY) || this.hasApp(App.TREASURY)
+        || this.hasApp(App.STANDAR_MANAGEMENT);
+  }
+
+  isTreasury() {
+    return this.hasTreasury() && (this.isAdmin() || this.hasRole(Role.TREASURY));
+  }
+
+  hasMarketing() {
+    return this.hasOldModule(OldModule.MARKETING) || this.hasApp(App.MARKETING)
+        || this.hasApp(App.PROFESSIONAL_MANAGEMENT);
+  }
+
+  isMarketing() {
+    return this.hasMarketing() && (this.isAdmin() || this.hasRole(Role.MARKETING));
+  }
+
+  hasGroupware() {
+    return this.hasOldModule(OldModule.GROUPWARE) || this.hasApp(App.GROUPWARE)
+        || this.hasApp(App.PROFESSIONAL_MANAGEMENT);
+  }
+
+  isGroupware() {
+    return this.hasGroupware() && (this.isAdmin() || this.hasRole(Role.GROUPWARE));
+  }
+
+  // WAREHOUSE - ALMACEN
+
+  hasWarehouse() {
+    return this.hasApp(App.PROFESSIONAL_MANAGEMENT) || this.hasApp(App.WAREHOUSE)
+      || this.hasOldModule(OldModule.WAREHOUSE);
+  }
+  
+  isWarehouse() {
+    return this.hasWarehouse() && (this.isAdmin() || this.hasRole(Role.WAREHOUSE));
+  }
+
 
 	isAlma() {
 		return this.hasApp(App.ALMA) && (this.isAdmin() || this.hasRole(Role.ALMA));
