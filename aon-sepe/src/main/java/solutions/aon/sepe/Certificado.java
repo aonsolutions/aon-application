@@ -33,7 +33,7 @@ import solutions.aon.sepe.toolkit.Toolkit;
 
 public class Certificado {
 
-//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/testCertificates.html");
+	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
 
 	private Certificado() {
 		throw new IllegalStateException("Utility class");
@@ -88,7 +88,7 @@ public class Certificado {
 			webClient.getOptions().setUseInsecureSSL(true);
 
 			HtmlPage htmlPage = firstPageSepeCert(webClient);
-
+			
 			HtmlAnchor hrefButton = HtmlUnitToolkit
 					.wait4(htmlPage,
 							p -> p.getAnchorByHref(
@@ -96,12 +96,13 @@ public class Certificado {
 					.orElseThrow();
 			htmlPage = (HtmlPage) hrefButton.click();
 
-			HtmlForm formDatos1 = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#contenido > form"))
-					.orElseThrow();
+			HtmlForm formDatos1 = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.querySelector("#contenido > form")).orElseThrow();
+			
 			formDatos1.getInputByName("nif").setValueAttribute(nif);
+			
 			htmlPage = formDatos1.getInputByName("btBuscar").click();
 			handleSepeExceptions(htmlPage);
-
+			
 			Page page = null;
 
 			String columnCheck = "0"; // FIRST RESULT DEFAULT

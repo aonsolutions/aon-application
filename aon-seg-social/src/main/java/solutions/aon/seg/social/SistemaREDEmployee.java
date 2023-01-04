@@ -12,6 +12,7 @@ import static solutions.aon.seg.social.toolkit.Toolkit.parseDate;
 import static solutions.aon.seg.social.toolkit.Toolkit.removeExtraZeros;
 import static solutions.aon.seg.social.toolkit.Toolkit.splitStringMultiple;
 import static solutions.aon.seg.social.toolkit.Toolkit.verifyData;
+import static solutions.aon.seg.social.toolkit.Toolkit.noSpaces;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -55,6 +58,21 @@ class SistemaREDEmployee {
 	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
 	
 	private static final String FORMAT_DATE_ES = "dd/MM/yyyy";
+	
+	// DATOS PERSONALES 
+	// NUSS: 13 1011852553 IPF: 6 0X7028854P F.Nacimiento: 23 10 1987 Sexo: V DELGADO MARULANDA ANDRES FELIPE Movil para SMS: 674498291 
+	private static final Pattern EMPlOYEE_DATA = Pattern.compile("nuss:\\s+(?<nss>\\d+\\s*\\d+)?.*ipf:\\s+(?<identity>\\d+)\\s+(?<ipf>\\w+).*f.nacimiento:\\s+(?<birthDate>\\d{2}\\s\\d{2}\\s\\d{4})?.*sexo:\\s+(?<sex>\\w+)?\\s+(?<name>.+)\\s+movil.+sms:\\s+(?<tlf>\\d{9})?.*$"
+	, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+	
+	
+	//  DATOS EMPRESA
+	// Cta. Cotiz.: 28 249788734 Régimen: 0111 Ident.Empr.: 9 0B01991256 Nombre ...: RIKAMBA SL
+	private static final Pattern ENTERPRISE_DATA = Pattern.compile("cta.*cotiz.*:\\s+(?<ccc>\\d{2}\\s\\d{9}).*r.gimen:\\s+(?<regime>\\d{4}).*ident.*:\\s+(?<identityCif>\\d{1})?\\s+(?<cif>\\w+)\\s+nombre\\s+...:\\s+(?<enterpriseName>\\w+)\\s+"
+	, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+	
+	private static final Pattern CONTRACT_DATA = Pattern.compile("situaci.n:\\s+(?<situation>.+)\\s+g\\.c\\.:\\s+(?<gc>\\d{1,2})?.*f\\.r\\.a\\.:\\s+(?<fra>\\d{2}\\/\\d{2}\\/\\d{4}).*f\\.e\\.a\\.:\\s+(?<fea>\\d{2}\\/\\d{2}\\/\\d{4}).*f\\.r\\.b\\.:\\s+(?<frb>\\d{2}\\/\\d{2}\\/\\d{4})?.*f\\.e\\.b\\.:\\s+(?<feb>\\d{2}\\/\\d{2}\\/\\d{4})?.*contrato:\\s+(?<contract>\\d{3}).*coef\\.:\\s+(?<coef>\\d{1,3}\\,\\d{1,3})?.*colec\\.:\\s+(?<colec>\\d)?.*ocup:\\s+(?<ocup>\\w{1}\\s+)?.*"
+			, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+	
 	
 	// GETS BOTH REAL AND PREVIUS EMPLOYEES
 	public static Collection<Employee> getTotalEmployees(final InputStream certificateInputStream,
@@ -113,7 +131,7 @@ class SistemaREDEmployee {
 		
 		manageStatusCode(page);
 
-		List<Employee>employees = getEmployeeFullList(page, nss);
+		List<Employee>employees = getEmployeeFullListRegex(page, nss);
 		if(!employees.isEmpty()) {
 			return employees.get(0);
 		}
@@ -121,19 +139,234 @@ class SistemaREDEmployee {
 		throw new DataDoesNotExist();	
 	}
 	
+	// CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIEeS
+	private static List<Employee> getEmployeeFullListRegex(HtmlPage page, String nss)
+				throws IOException {
+			
+			List<Employee> list = new ArrayList<>();
+			
+		    while (page.getElementById("Sub0400101079_77")!=null) {
+		    	
+		    	String text = page.asText();
+		    	
+//		    	String[] lines = text.split("\\r?\\n");
+//		    	for (String line : lines) {
+//		    	    System.out.println("line>>>"+line);
+//		    	}
+		    	String ipf = "";
+				String birthDateStr = "";
+				String sex = "";
+				String name = "";
+				String tlf = "";
+				String ctaCot = "";
+				String regime ="";
+				String companyId = "";
+				String companyName = "";
+				String situation = "";
+				String gc = "";
+				String contract = "";
+				String coef = "";
+				String colec = "";
+				String ocup = "";
+				String fraStr = "";
+				String feaStr = "";
+				String frbStr = "";
+				String febStr = "";
+				
+//				String vinFam = "";
+//				String profesCat = "";
+//				String reducingCoef = "";
+//				String gcDesc = "";
+//				Boolean agricultPromo = "";
+//				Boolean workTimeReduct = "";
+//				String epig = "";
+		
+
+				Matcher employeeMatcher = EMPlOYEE_DATA.matcher(text);
+					
+				if (employeeMatcher.find()) {
+					  System.out.println("---------------EMPLOYEE DATA-----------------");
+				      System.out.println("nss->"+employeeMatcher.group("nss"));
+			          System.out.println("identity->"+employeeMatcher.group("identity"));
+			          System.out.println("ipf->"+employeeMatcher.group("ipf"));
+			          System.out.println("birthDate->"+employeeMatcher.group("birthDate"));
+			          System.out.println("sex->"+employeeMatcher.group("sex"));
+			          System.out.println("name->"+employeeMatcher.group("name"));
+			          System.out.println("tlf->"+employeeMatcher.group("tlf"));
+			          System.out.println("--------------------------------");
+			      
+			          ipf = employeeMatcher.group("ipf")!=null ? removeExtraZeros(employeeMatcher.group("ipf").replaceAll("^0+", "")) : "";
+			          
+			      	  birthDateStr = employeeMatcher.group("birthDate")!=null ? employeeMatcher.group("birthDate") : "";
+			      	  
+			      	  sex = employeeMatcher.group("sex")!=null ? employeeMatcher.group("sex") : "";
+
+			      	  name = employeeMatcher.group("name")!=null ? employeeMatcher.group("name") : "";
+			      	
+			      	  tlf = employeeMatcher.group("tlf")!=null ? employeeMatcher.group("tlf") : "";
+				  }
+				 
+				 Matcher enterpriseMatcher = ENTERPRISE_DATA.matcher(text);
+					
+				 if (enterpriseMatcher.find()) {
+					  System.out.println("---------------ENTERPRISE DATA-----------------");
+				      System.out.println("ccc->"+enterpriseMatcher.group("ccc"));
+			          System.out.println("regime->"+enterpriseMatcher.group("regime"));
+			          System.out.println("identityCif->"+enterpriseMatcher.group("identityCif"));
+			          System.out.println("cif->"+enterpriseMatcher.group("cif"));
+			          System.out.println("enterpriseName->"+enterpriseMatcher.group("enterpriseName"));
+			          System.out.println("--------------------------------");
+			          
+			          regime = enterpriseMatcher.group("regime")!=null ? enterpriseMatcher.group("regime") : "";
+			          
+			          ctaCot = enterpriseMatcher.group("ccc")!=null ? noSpaces(enterpriseMatcher.group("ccc")) : "";
+			          
+			          companyId = enterpriseMatcher.group("cif")!=null ? removeExtraZeros(enterpriseMatcher.group("cif")) : "";
+			          
+			          companyName = enterpriseMatcher.group("enterpriseName")!=null ? enterpriseMatcher.group("enterpriseName") : "";
+				  }
+				 
+				 Matcher contractMatcher = CONTRACT_DATA.matcher(text);
+					
+				 if (contractMatcher.find()) {
+					  System.out.println("---------------CONTRACT DATA-----------------");
+				      System.out.println("situation->"+contractMatcher.group("situation"));
+			          System.out.println("gc->"+contractMatcher.group("gc"));
+			          System.out.println("fra->"+contractMatcher.group("fra"));
+			          System.out.println("fea->"+contractMatcher.group("fea"));
+			          System.out.println("frb->"+contractMatcher.group("frb"));
+			          System.out.println("feb->"+contractMatcher.group("feb"));
+			          System.out.println("contract->"+contractMatcher.group("contract"));
+			          System.out.println("coef->"+contractMatcher.group("coef"));
+			          System.out.println("colec->"+contractMatcher.group("colec"));
+			          System.out.println("ocup->"+contractMatcher.group("ocup"));
+			          System.out.println("--------------------------------");
+			          
+			          situation = contractMatcher.group("situation")!=null ? contractMatcher.group("situation") : "";
+			          
+			          gc = contractMatcher.group("gc")!=null ? contractMatcher.group("gc") : "";
+			          
+			          fraStr = contractMatcher.group("fra")!=null ? contractMatcher.group("fra") : "";
+			          
+			          feaStr = contractMatcher.group("fea")!=null ? contractMatcher.group("fea") : "";
+			          
+			          frbStr = contractMatcher.group("frb")!=null ? contractMatcher.group("frb") : "";
+			          
+			          febStr = contractMatcher.group("feb")!=null ? contractMatcher.group("feb") : "";
+			          
+			          contract = contractMatcher.group("contract")!=null ? contractMatcher.group("contract") : "";
+			          
+			          coef = contractMatcher.group("coef")!=null ? contractMatcher.group("coef") : "";
+			          
+			          colec = contractMatcher.group("colec")!=null ? contractMatcher.group("colec") : "";
+			          
+			          ocup = contractMatcher.group("ocup")!=null ? contractMatcher.group("ocup") : "";
+				  }
+			    	
+				
+				Date birthDate = parseDate(birthDateStr, "dd mm yyyy");
+				Date fra = parseDate(fraStr, FORMAT_DATE_ES);
+				Date fea = parseDate(feaStr, FORMAT_DATE_ES);
+				Date frb = parseDate(frbStr, FORMAT_DATE_ES);
+				Date feb = parseDate(febStr, FORMAT_DATE_ES);
+
+			
+//				if(frb==null && fra!=null) {
+//					DomNode next = page.querySelector("[value=\"Continuar\"]");
+//					if(next!=null) {
+//						 page = ((HtmlSubmitInput) next).click();
+//						 
+//						 Matcher contractTwoMatcher = CONTRACT_DATA.matcher(page.asText());
+//							
+//						 if (contractTwoMatcher.find()) {
+//							  System.out.println("---------------CONTRACT DATA-----------------");
+//						      System.out.println("situation->"+contractTwoMatcher.group("situation"));
+//					          System.out.println("gc->"+contractTwoMatcher.group("gc"));
+//					          System.out.println("fra->"+contractTwoMatcher.group("fra"));
+//					          System.out.println("fea->"+contractTwoMatcher.group("fea"));
+//					          System.out.println("frb->"+contractTwoMatcher.group("frb"));
+//					          System.out.println("feb->"+contractTwoMatcher.group("feb"));
+//					          System.out.println("contract->"+contractTwoMatcher.group("contract"));
+//					          System.out.println("coef->"+contractTwoMatcher.group("coef"));
+//					          System.out.println("colec->"+contractTwoMatcher.group("colec"));
+//					          System.out.println("ocup->"+contractTwoMatcher.group("ocup"));
+//					          System.out.println("--------------------------------");
+//					          
+//							 frbStr = contractTwoMatcher.group("frb")!=null ? contractTwoMatcher.group("frb") : "";
+//						     febStr = contractTwoMatcher.group("feb")!=null ? contractTwoMatcher.group("feb") : "";
+//							 if(!frbStr.isEmpty() && !febStr.isEmpty()) {
+//								Date endDate = parseDate(frbStr, FORMAT_DATE_ES);
+//								if(fra.before(endDate)) {
+//									situation = contractTwoMatcher.group("situation")!=null ? contractMatcher.group("situation") : "";
+//									frb = endDate;
+//									feb = parseDate(febStr, FORMAT_DATE_ES);
+//								} 
+//							 }
+//						 }
+//					}
+//				}
+
+				// BUILD
+				Employee employeeData = new EmployeeBuilder()
+				.setIpf(ipf)
+				.setNss(nss)
+				.setName(name)
+				.setSituation(situation)
+				.setBirthDate(birthDate)
+				.setSex(sex)
+				.setTlf(tlf)
+				.setCtaCti(ctaCot)
+				.setRegime(regime)
+				.setCompanyId(companyId)
+				.setCompanyName(companyName)
+				.setSituation(situation)
+				.setGc(gc)
+				.setFra(fra)
+				.setFea(fea)
+				.setFrb(frb)
+				.setFeb(feb)
+				.setContract(contract)
+				.setCoef(coef)
+				.setColec(colec)
+				.setOcup(ocup)
+//				.setEpig(epig)
+//				.setVinFam(vinFam)
+//				.setProfesCat(profesCat)
+//				.setReducingCoefic(reducingCoef)
+//				.setGcDesc(gcDesc)
+//				.setAgricultPromo(agricultPromo)
+//				.setWorkTimeReduct(workTimeReduct)
+				.build();
+				
+				list.add(employeeData);
+				
+//				DomNode next = page.querySelector("[value=\"Continuar\"]");
+//				if(next!=null) {
+//					 page = ((HtmlSubmitInput) next).click();
+//				} else {
+					break;
+//				}
+		    }
+
+			return list;
+	}
+	
 	
 	// CREATES AN EMPLOYEE WITH A LIST OF INFORMATION & WEB QUERIEeS
-	private static List<Employee> getEmployeeFullList(HtmlPage page, String nss)
+	private static List<Employee> getEmployeeFullListOld(HtmlPage page, String nss)
 			throws IOException {
 		
 		List<Employee> list = new ArrayList<>();
-	   
 	    while (page.getElementById("SDFNUMIPF")!=null) {
 	    	
 			String ipf = page.getElementById("SDFNUMIPF").getTextContent().trim().replaceAll("^0+", "");
 			String birthDateStr = page.getElementById("SDFDIANAC").getTextContent() + "/"
 					+ page.getElementById("SDFMESNAC").getTextContent() + "/"
 					+ page.getElementById("SDFAONAC").getTextContent();
+			
+			if (birthDateStr.equals(" / / ")) {			
+				birthDateStr = "";
+			}
 
 			String sex = page.getElementById("SDFSEXO").getTextContent();
 			String name = page.getElementById("SDFAPELNOM").getTextContent();
@@ -149,8 +382,6 @@ class SistemaREDEmployee {
 			Boolean agricultPromo = Toolkit.toBoolean(page.getElementById("SDFPFEA").getTextContent());
 
 			Boolean workTimeReduct = Toolkit.toBoolean(domElementExists(page.getElementById("SDFLITRJ")));
-			String fraStr = domElementExists(page.getElementById("SDFFRAAFI"));
-			String feaStr = domElementExists(page.getElementById("SDFFEAAFI"));
 			String contract = domElementExists(page.getElementById("SDFTIPOAFI"));
 			String coef = domElementExists(page.getElementById("SDFCOEFAFI"));
 			String colec = domElementExists(page.getElementById("SDFCOLECTIVO"));
@@ -159,16 +390,16 @@ class SistemaREDEmployee {
 			String vinFam = domElementExists(page.getElementById("SDFVINCULO"));
 			String profesCat = domElementExists(page.getElementById("SDFCATEGORIA"));
 			String reducingCoef = domElementExists(page.getElementById("SDFCOEFRED"));
+			
 			String frbStr = domElementExists(page.getElementById("SDFFRBAFI"));
 			String febStr = domElementExists(page.getElementById("SDFFEBAFI"));
+			String fraStr = domElementExists(page.getElementById("SDFFRAAFI"));
+			String feaStr = domElementExists(page.getElementById("SDFFEAAFI"));
 			
-		
-			ipf = removeExtraZeros(ipf);
-			companyId = removeExtraZeros(companyId);
-
-			if (birthDateStr.equals(" / / ")) {			
-				birthDateStr = "";
-			}
+			if(fraStr.isEmpty()) {
+				fraStr = domElementExists(page.getElementById("SDFFRASAN1"));
+				feaStr = domElementExists(page.getElementById("SDFFEASAN1"));
+			} 
 
 			Date birthDate = parseDate(birthDateStr, FORMAT_DATE_ES);
 			Date fra = parseDate(fraStr, FORMAT_DATE_ES);
@@ -176,7 +407,10 @@ class SistemaREDEmployee {
 			Date frb = parseDate(frbStr, FORMAT_DATE_ES);
 			Date feb = parseDate(febStr, FORMAT_DATE_ES);
 			
-			if(frb==null) {
+			ipf = removeExtraZeros(ipf).replace(" ", "");
+			companyId = removeExtraZeros(companyId);
+		
+			if(frb==null && fra!=null) {
 				DomNode next = page.querySelector("[value=\"Continuar\"]");
 				if(next!=null) {
 					 page = ((HtmlSubmitInput) next).click();
@@ -195,13 +429,13 @@ class SistemaREDEmployee {
 
 			// BUILD
 			Employee employeeData = new EmployeeBuilder()
-			.setNss(nss.replace(" ", ""))
+			.setIpf(ipf)
+			.setNss(nss)
 			.setName(name)
 			.setSituation(situation)
-			.setIpf(ipf.replace(" ", ""))
-			.setNss(nss).setIpf(ipf)
 			.setBirthDate(birthDate)
-			.setSex(sex).setTlf(tlf)
+			.setSex(sex)
+			.setTlf(tlf)
 			.setCtaCti(ctaCot)
 			.setRegime(regime)
 			.setCompanyId(companyId)
@@ -536,4 +770,6 @@ class SistemaREDEmployee {
 	private static String domElementExists(DomElement domEl) {
 		return domEl!=null ? domEl.getTextContent() : "";
 	}
+	
+	
 }
