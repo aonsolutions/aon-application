@@ -64,22 +64,6 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 	
 	// ------------------------------------------------- Database Methods
 	
-	public void checkStatus(Consumer<EmployeeStatus> success, Consumer<Throwable> failure) {
-		employeesService.getEmployeeStatus(employee.getId(), new AsyncCallback<EmployeeStatus>() {
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept( caught );
-			}
-			
-			 @Override
-			public void onSuccess(EmployeeStatus result) {
-				 success.accept(result);
-			}
-			 
-		});
-	}
-		
 	public void initializeEmployee(Consumer<EmployeeContractInfo> success, Consumer<Throwable> failure) {
 		employeesService.getEmployeeInfoDataBase(this.employee.getId(), workplace, new AsyncCallback<EmployeeContractInfo>() {
 			

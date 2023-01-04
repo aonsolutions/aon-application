@@ -154,6 +154,15 @@ select {
 
 }
 
+.gwt-Selector .gwt-MenuBar .gwt-MenuItem-disabled {
+	opacity: 0.5;
+}
+
+.gwt-Selector .gwt-MenuBar .gwt-MenuItem-disabled:hover{
+	background-color: transparent !important; 
+}
+
+
 .gwt-Selector .gwt-MenuBar-horizontal .gwt-MenuItem:hover,
 .gwt-Selector .gwt-MenuBar-horizontal .gwt-MenuItem-selected {
 	background-color: #FFFFFF;

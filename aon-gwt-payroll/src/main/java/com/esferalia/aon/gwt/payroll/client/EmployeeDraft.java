@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -661,30 +662,6 @@ public abstract class EmployeeDraft extends Composite {
 		idcMonthListBox.ensureDebugId("idcMonthListBox");
 	}
 	
-	private void initializeIdcDateListBox() {
-		idcDateListBox.setRowCount(1, true);
-		Date startDate = employeeDraftObject.getEmployee().getStartDate();
-		idcDateListBox.setRowData(0, Collections.singletonList(startDate));
-		idcDateListBox.setSelected(startDate, true);
-
-		employeeDraftObject.getIdcDates(
-		dates -> {
-			// filter out 'Baja' dates
-			//dates = filterEven(dates);
-			Collections.sort(dates);
-			int count = dates.size();
-			idcDateListBox.setRowCount(count, true);
-			idcDateListBox.setRowData(0, dates);
-
-			Date selectedDate =
-			dates.stream()
-			.filter(d -> Objects.equals(d,startDate))
-			.findAny().orElse(dates.get(count-1));
-			
-			idcDateListBox.setSelected(selectedDate, true);
-		}, 
-		error -> {} );
-	}
 
 	private void initializeUndoRedo() {
 		employeeDraftObject.clearUndoMaganager();
@@ -1495,7 +1472,6 @@ public abstract class EmployeeDraft extends Composite {
 	}
 
 	public void enableSistemaRED() {
-		initializeIdcDateListBox();
 		contextMenu.getTa().setEnabled(true);
 		contextMenu.getTaEnd().setEnabled(true);
 		contextMenu.getIdc().setEnabled(true);
@@ -1503,6 +1479,27 @@ public abstract class EmployeeDraft extends Composite {
 		contextMenu.getSSPeculiarities().setEnabled(true);
 		contextMenu.getAltaConsolidadaDelete().setEnabled(true);
 		contextMenu.getComunicateAFI().setEnabled(true);
+	}
+
+	public void initializeIdcDateListBox(List<Date> dates) {
+		idcDateListBox.setRowCount(1, true);
+		Date startDate = employeeDraftObject.getEmployee().getStartDate();
+		idcDateListBox.setRowData(0, Collections.singletonList(startDate));
+		idcDateListBox.setSelected(startDate, true);
+
+		// filter out 'Baja' dates
+		//dates = filterEven(dates);
+		Collections.sort(dates);
+		int count = dates.size();
+		idcDateListBox.setRowCount(count, true);
+		idcDateListBox.setRowData(0, dates);
+
+		Date selectedDate =
+		dates.stream()
+		.filter(d -> Objects.equals(d,startDate))
+		.findAny().orElse(dates.get(count-1));
+		
+		idcDateListBox.setSelected(selectedDate, true);
 	}
 
 	private static <T> List<T> filterEven( List<T> list ){
