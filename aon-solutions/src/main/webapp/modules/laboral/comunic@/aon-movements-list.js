@@ -213,7 +213,9 @@ export class AonMovementsList extends AonElement {
       try {
         let resp = await getEmployee({ regime:data.regime, ctaCti:data.ctaCti, nss: data.nss });
         if (resp) newData = { ...resp, ...data };
-      } catch (error) {}
+      } catch (error) {
+        this.showError(error);
+      }
     }
 
     if(newData){
