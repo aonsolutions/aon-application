@@ -199,7 +199,7 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		String cif		   = text("CIF") + ": " + safeString(p.getCif());
 		String cotizGroup  = text("G.COTIZ") + ": " + safeString(p.getQuotationGroup());
 		String antiquDate  = text("FECHA ANTIGUEDAD") + ": "
-				+ safeString(formatDate(p.getAntiquity().get(), dateFormat));
+				+ (p.getAntiquity().isPresent() ? safeString(formatDate(p.getAntiquity().get(), dateFormat)) : "");
 		String dayTotal	   = text("TOTAL DIAS") + ": " + safeInteger(p.getTotalDays());
 
 		String liquidPeriod = text("PERIODO LIQUIDACION") + ": del "
