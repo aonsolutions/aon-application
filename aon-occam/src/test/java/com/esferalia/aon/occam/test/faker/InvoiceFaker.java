@@ -39,7 +39,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
 
 public class InvoiceFaker {
-	private static Faker faker = new Faker(Locale.of("es"));
+	private static Faker faker = new Faker( new Locale("es") );
 	
 	public static class InvoiceFakerParams {
 		private AONContext ctx;

@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod123Navarra2021Declaration extends Mod123Declaration {
 	
@@ -16,7 +17,7 @@ public class Mod123Navarra2021Declaration extends Mod123Declaration {
 
 	private enum Mod123KeyDAO  implements IMod123KeyDAO{
 		 NF_C01(Mod123Key.NF_C01
-			, (mod,br) -> (br.isMovableCapital()) 
+			, (mod,br) -> (isMovableCapital(br)) 
 			, (ctx,mod,docs,br) -> addQuota(Mod123Key.NF_C01,mod,br)
 			,null,null,null)
 		,NF_TIP (Mod123Key.NF_TIP, null,null,null,null,null)
@@ -101,4 +102,9 @@ public class Mod123Navarra2021Declaration extends Mod123Declaration {
 		mod123.setReplacementDeclarationAvailable(true);
 		return super.initializeModel(ctx, mod123);
 	}
+	
+	private static boolean isMovableCapital(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL;
+	}
+	
 }

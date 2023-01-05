@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod111Navarra2021Declaration extends Mod111Declaration {
 	
@@ -16,7 +17,7 @@ public class Mod111Navarra2021Declaration extends Mod111Declaration {
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
 		 NF_A1(Mod111Key.NF_A1,true
-			, (mod,br) -> (br.isProfessional() || br.isTransportOperator() || br.isFarmer() || br.isSalaryRetention() || br.isSalaryInKindRetention()) 
+			, (mod,br) -> (isProfessional(br) || isTransportOperator(br) || isFarmer(br) || br.isSalaryRetention() || br.isSalaryInKindRetention()) 
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.NF_A1,mod,br)
 			,null,null,null)
 		,NF_TIP (Mod111Key.NF_TIP,false,null,null,null,null,null)
@@ -109,4 +110,15 @@ public class Mod111Navarra2021Declaration extends Mod111Declaration {
 		mod111.setReplacementDeclarationAvailable(true);
 		return super.initializeModel(ctx, mod111);
 	}
+	
+	private static boolean isProfessional(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.PROFESSIONAL;
+	}
+	private static boolean isFarmer(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.FARMER;
+	}
+	private static boolean isTransportOperator(IrpfBreakdown br) {
+		return br.isFromInvoice() &&  br.getWithholdingType() == WithholdingType.TRANSPORT_OPERATOR;
+	}
+	
 }

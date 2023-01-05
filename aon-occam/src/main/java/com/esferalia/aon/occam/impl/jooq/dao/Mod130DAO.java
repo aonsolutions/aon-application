@@ -19,12 +19,14 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelUtils;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -150,7 +152,7 @@ public class Mod130DAO extends FiscalModelDAO {
 				double percent = mod.getAmount(Mod130Key.P1);
 				if (percent == 0) percent = 100;
 				double c06 = IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod)
-					    .filter(  i -> ( !i.isFarmer() && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )					
+					    .filter(  i -> ( !isFarmer(i) && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )					
 						.mapToDouble(br -> br.getQuota())
 						.sum();
 				c06 = AonMathUtils.round(c06 * percent / 100 );
@@ -175,7 +177,7 @@ public class Mod130DAO extends FiscalModelDAO {
 		,C10 (Mod130Key.C10 , (mod -> mod.isAEAT())
 			,(ctx,mod) -> mod.putAmount(Mod130Key.C10, 
 					IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod)
-						.filter( i -> i.isFarmer())
+						.filter( i -> isFarmer(i))
 						.mapToDouble(br -> br.getQuota())
 						.sum())
 			,null
@@ -550,7 +552,7 @@ public class Mod130DAO extends FiscalModelDAO {
 			// Llamada desde la casilla 10
 			return IRPFFormatter.formatInvoices(title,script.getLabel()
 			            ,IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod130)
-						 .filter(i -> i.isFarmer() == farmer)
+						 .filter(i -> isFarmer(i) == farmer)
 						 .collect(Collectors.toCollection(LinkedList::new))
 			);
 		}
@@ -560,7 +562,7 @@ public class Mod130DAO extends FiscalModelDAO {
 			// Llamada desde la casilla 06
 			return IRPFFormatter.formatInvoices(title,script.getLabel(),percent
 					   ,IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod130)
-					    .filter(  i -> ( !i.isFarmer() && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )
+					    .filter(  i -> ( !isFarmer(i) && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )
 						.collect(Collectors.toCollection(LinkedList::new))
 			);
 		}
@@ -583,7 +585,7 @@ public class Mod130DAO extends FiscalModelDAO {
 				, getPreviousModels(ctx,mod130)
 				 	.collect(Collectors.toCollection(LinkedList::new))	
 				,IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod130)
-					.filter(i -> i.isFarmer() == farmer)
+					.filter(i -> isFarmer(i) == farmer)
 					.collect(Collectors.toCollection(LinkedList::new))
 			);
 		}
@@ -596,7 +598,7 @@ public class Mod130DAO extends FiscalModelDAO {
 					, getPreviousModels(ctx,mod130)
 					 	.collect(Collectors.toCollection(LinkedList::new))	
 					,IRPFDAO.getOutputInvoicesDiffIrpfBreakdown(ctx, mod130)
-						.filter(  i -> ( !i.isFarmer() && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )
+						.filter(  i -> ( !isFarmer(i) && (i.getIRPFRegime() == null || i.getIRPFRegime() == IRPFRegime.NORMAL || i.getIRPFRegime() == IRPFRegime.SIMPLIFIED) ) )
 						.collect(Collectors.toCollection(LinkedList::new))
 			);			
 		}
@@ -815,4 +817,8 @@ public class Mod130DAO extends FiscalModelDAO {
 		return mod130;
 	}
 	
+	private static boolean isFarmer(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.FARMER;
+	}
+
 }

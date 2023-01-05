@@ -69,7 +69,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
 
 public class AonRandom {
-	private static Faker faker = new Faker(Locale.of("es"));
+	private static Faker faker = new Faker( new Locale("es"));
 	
 //    public static boolean b( int nullThreshold ) {
 //    	return faker.random().nextInt(0, 100) <= nullThreshold;

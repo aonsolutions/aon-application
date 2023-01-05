@@ -28,7 +28,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.github.javafaker.Faker;
 
 public class FiscalFaker {
-	private static Faker faker = new Faker(Locale.of("es"));
+	private static Faker faker = new Faker( new Locale("es") );
 
 	public static class FiscalFakerParams {
 		private AONContext ctx;

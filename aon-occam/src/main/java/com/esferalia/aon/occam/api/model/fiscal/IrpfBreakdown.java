@@ -255,21 +255,21 @@ public class IrpfBreakdown implements Serializable {
 	public boolean isSalaryInKindRetention() {
 		return isFromSalary() && isInKind();
 	}
-	public boolean isProfessional() {
-		return isFromInvoice() && withholdingType == WithholdingType.PROFESSIONAL;
-	}
-	public boolean isRenting() {
-		return isFromInvoice() && withholdingType == WithholdingType.RENTING;
-	}
-	public boolean isMovableCapital() {
-		return isFromInvoice() && withholdingType == WithholdingType.MOVABLE_CAPITAL;
-	}
-	public boolean isFarmer() {
-		return isFromInvoice() && withholdingType == WithholdingType.FARMER;
-	}
-	public boolean isTransportOperator() {
-		return isFromInvoice() &&  withholdingType == WithholdingType.TRANSPORT_OPERATOR;
-	}
+//	public boolean isProfessional() {
+//		return isFromInvoice() && withholdingType == WithholdingType.PROFESSIONAL;
+//	}
+//	public boolean isRenting() {
+//		return isFromInvoice() && withholdingType == WithholdingType.RENTING;
+//	}
+//	public boolean isMovableCapital() {
+//		return isFromInvoice() && withholdingType == WithholdingType.MOVABLE_CAPITAL;
+//	}
+//	public boolean isFarmer() {
+//		return isFromInvoice() && withholdingType == WithholdingType.FARMER;
+//	}
+//	public boolean isTransportOperator() {
+//		return isFromInvoice() &&  withholdingType == WithholdingType.TRANSPORT_OPERATOR;
+//	}
 	public boolean isObjectiveRegime() {
 		return isFromInvoice() &&  (regime == IRPFRegime.OBJECTIVE);
 	}

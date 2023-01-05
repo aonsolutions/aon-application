@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod111Gipuzkoa2021Declaration extends Mod111Declaration {
 	
@@ -33,27 +34,27 @@ public class Mod111Gipuzkoa2021Declaration extends Mod111Declaration {
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C03,mod,br)
 			,null,null,null)
 		,GP_C04(Mod111Key.GP_C04,false
-			, (mod,br) -> br.isProfessional() || br.isTransportOperator()
+			, (mod,br) -> isProfessional(br) || isTransportOperator(br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C04,mod,docs,pdocs,br)
 			,null,null,null)
 		,GP_C05(Mod111Key.GP_C05,true
-			, (mod,br) -> br.isProfessional() || br.isTransportOperator()
+			, (mod,br) -> isProfessional(br) || isTransportOperator(br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C05,mod,br)
 			,null,null,null)
 		,GP_C06(Mod111Key.GP_C06,true
-			, (mod,br) -> br.isProfessional() || br.isTransportOperator()
+			, (mod,br) -> isProfessional(br) || isTransportOperator(br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C06,mod,br)
 			,null,null,null)
 		,GP_C07(Mod111Key.GP_C07,false
-			, (mod,br) -> br.isFarmer()
+			, (mod,br) -> isFarmer(br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C07,mod,docs,pdocs,br)
 			,null,null,null)
 		,GP_C08(Mod111Key.GP_C08,true
-			, (mod,br) -> br.isFarmer()
+			, (mod,br) -> isFarmer(br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C08,mod,br)
 			,null,null,null)
 		,GP_C09(Mod111Key.GP_C09,true
-			, (mod,br) -> br.isFarmer()
+			, (mod,br) -> isFarmer(br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C09,mod,br)
 			,null,null,null)
 		,GP_C10(Mod111Key.GP_C10,false,null,null,null,null,null)
@@ -172,6 +173,16 @@ public class Mod111Gipuzkoa2021Declaration extends Mod111Declaration {
 		mod111.setComplementaryDeclarationAvailable(true);
 		mod111.setReplacementDeclarationAvailable(false);
 		return super.initializeModel(ctx, mod111);
+	}
+	
+	private static boolean isProfessional(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.PROFESSIONAL;
+	}
+	private static boolean isFarmer(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.FARMER;
+	}
+	private static boolean isTransportOperator(IrpfBreakdown br) {
+		return br.isFromInvoice() &&  br.getWithholdingType() == WithholdingType.TRANSPORT_OPERATOR;
 	}
 	
 }

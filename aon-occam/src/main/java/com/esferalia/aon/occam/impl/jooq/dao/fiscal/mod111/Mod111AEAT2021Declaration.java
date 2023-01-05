@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod111AEAT2021Declaration extends Mod111Declaration {
 	
@@ -40,15 +41,15 @@ public class Mod111AEAT2021Declaration extends Mod111Declaration {
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.CT_C06,mod,br)
 			,null,null,null)
 		,CT_C07(Mod111Key.CT_C07,false
-			, (mod,br) -> br.isProfessional() || br.isFarmer() || br.isTransportOperator()
+			, (mod,br) -> isProfessional(br) || isFarmer(br) || isTransportOperator(br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.CT_C07,mod,docs,pdocs,br)
 			,null,null,null)
 		,CT_C08(Mod111Key.CT_C08,true
-			, (mod,br) -> br.isProfessional() || br.isFarmer() || br.isTransportOperator()
+			, (mod,br) -> isProfessional(br) || isFarmer(br) || isTransportOperator(br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.CT_C08,mod,br)
 			,null,null,null)
 		,CT_C09(Mod111Key.CT_C09,true
-			, (mod,br) -> br.isProfessional() || br.isFarmer() || br.isTransportOperator()
+			, (mod,br) -> isProfessional(br) || isFarmer(br) || isTransportOperator(br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.CT_C09,mod,br)
 			,null,null,null)
 		,CT_C10(Mod111Key.CT_C10,false,null,null,null,null,null)
@@ -175,6 +176,16 @@ public class Mod111AEAT2021Declaration extends Mod111Declaration {
 		mod111.setComplementaryDeclarationAvailable(true);
 		mod111.setReplacementDeclarationAvailable(false);
 		return super.initializeModel(ctx, mod111);
+	}
+
+	private static boolean isProfessional(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.PROFESSIONAL;
+	}
+	private static boolean isFarmer(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.FARMER;
+	}
+	private static boolean isTransportOperator(IrpfBreakdown br) {
+		return br.isFromInvoice() &&  br.getWithholdingType() == WithholdingType.TRANSPORT_OPERATOR;
 	}
 
 }

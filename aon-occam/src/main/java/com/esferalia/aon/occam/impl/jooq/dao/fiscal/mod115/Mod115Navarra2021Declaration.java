@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod115Navarra2021Declaration extends Mod115Declaration {
 	
@@ -16,7 +17,7 @@ public class Mod115Navarra2021Declaration extends Mod115Declaration {
 
 	private enum Mod115KeyDAO  implements IMod115KeyDAO{
 		NF_C01(Mod115Key.NF_C01
-			, (mod,br) -> (br.isRenting()) 
+			, (mod,br) -> isRenting(br) 
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod115Key.NF_C01, mod, br)
 			,null,null,null)
 		,NF_TIP(Mod115Key.NF_TIP,null,null,null,null,null)
@@ -102,4 +103,9 @@ public class Mod115Navarra2021Declaration extends Mod115Declaration {
 		mod115.setReplacementDeclarationAvailable(true);
 		return super.initializeModel(ctx, mod115);
 	}
+	
+	private static boolean isRenting(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.RENTING;
+	}
+	
 }
