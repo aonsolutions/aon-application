@@ -29,7 +29,23 @@ public class EnumVisitors {
 		T visitRenting(T t);
 		T visitMovableCapital(T t);
 		T visitFarmer(T t);
-		T visitTransportOperator(T t);	
+		T visitTransportOperator(T t);
+		T visitM190G02(T t);
+		T visitM190G03(T t);
+		T visitM190H02(T t);
+		T visitM190H03(T t);
+		T visitM190I01(T t);
+		T visitM190I02(T t);
+		T visitM190J(T t);
+		T visitM190K01(T t);
+		T visitM190K03(T t);
+		T visitM190K02(T t);
+		T visitM193C1(T t);
+		T visitM193C2(T t);
+		T visitM193C3(T t);
+		T visitM190F01(T t);
+		T visitM190F021(T t);
+		T visitM190F022(T t);
 	}
 
 	public static interface IFinanceStatusVisitor {
