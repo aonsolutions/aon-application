@@ -84,7 +84,7 @@
 								</aon:div>
 							</aon:panelGrid>
 							
-							<aon:if test="#{aonRole.financeOperator and bankStatement.availableRegistryBanks > 0}">
+							<aon:if test="#{aonRole.financeOperator}">
 								<aon:panelGrid id="group_treasury_bank_statement_treasury"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-icon-statement aon-direct-access-panel">
@@ -229,24 +229,22 @@
 									<aon:outputText value="#{bundle.finance_forecast_menu}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<aon:if test="#{cashFlowForecast.availableRegistryBanks > 0}">
-										
-										<!-- Gestión de Previsiones -->
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="cashFlowForecast-treasury"
-												action="cashFlowForecast_search-treasury"
-												actionListener="#{cashFlowForecast.onEditSearch}"
-												value="#{bundle.finance_cashflow_forecast_module}"/>
-										</aon:div>
-										
-										<!-- Listado de Previsión -->
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="cashFlowForecastReport-treasury"
-												action="cashFlowForecastReport_search-treasury"
-												actionListener="#{cashFlowForecastReport.onEditSearch}"
-												value="#{bundle.finance_cashflow_forecast_report_module}"/>
-										</aon:div>
-									</aon:if>
+									<!-- Gestión de Previsiones -->
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="cashFlowForecast-treasury"
+											action="cashFlowForecast_search-treasury"
+											actionListener="#{cashFlowForecast.onEditSearch}"
+											value="#{bundle.finance_cashflow_forecast_module}"/>
+									</aon:div>
+									
+									<!-- Listado de Previsión -->
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="cashFlowForecastReport-treasury"
+											action="cashFlowForecastReport_search-treasury"
+											actionListener="#{cashFlowForecastReport.onEditSearch}"
+											value="#{bundle.finance_cashflow_forecast_report_module}"/>
+									</aon:div>
+								
 									<!-- Proyección de Cuotas -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_fee_print_anual-treasury"
