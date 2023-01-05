@@ -123,9 +123,6 @@ public abstract class Enterprise extends ResizeComposite {
 	ListBox enterprisePaysheetModel;
 	
 	@UiField
-	ListBox enterpriseCostModel;
-	
-	@UiField
 	ListBox enterprisePaysheetSendType;
 	
 	@UiField
@@ -183,7 +180,6 @@ public abstract class Enterprise extends ResizeComposite {
 		this.enterpriseScopePanel.clear();
 		
 		this.enterprisePaysheetModel.clear();
-		this.enterpriseCostModel.clear();
 		this.enterprisePaysheetSendType.clear();
 		this.enterprisePaysheetSendEmail.setValue(null);
 		this.enterpriseAgreement.setValue(null);
@@ -209,11 +205,6 @@ public abstract class Enterprise extends ResizeComposite {
 		this.enterprisePaysheetModel.addItem("Est\u00E1ndar (new)", "salary_connorMacleod_classic");
 		
 		disableDeprecatedPaysheetModels();
-
-		
-		//COST MODEL
-		this.enterpriseCostModel.addItem("Por defecto", "salaryExpense");
-		this.enterpriseCostModel.addItem("Extendida", "salaryExpenseExtended");
 		
 		//SEND PAYSHEET
 		this.enterprisePaysheetSendType.addItem("Email", "EMAIL");
@@ -306,11 +297,6 @@ public abstract class Enterprise extends ResizeComposite {
 		onEnterprisePaysheetModelChange();
 	}
 	
-	@UiHandler("enterpriseCostModel")
-	void onEnterpriseCostModelChangeValue(ChangeEvent event) {
-		onEnterpriseCostModelChange();
-	}
-	
 	@UiHandler("enterprisePaysheetSendType")
 	void onEnterprisePaysheetSendTypeChangeValue(ChangeEvent event) {
 		onEnterprisePaysheetSendTypeChange();
@@ -358,7 +344,6 @@ public abstract class Enterprise extends ResizeComposite {
 	// TABLA OTROS DATOS EMPRESA
 	
 	public abstract void onEnterprisePaysheetModelChange();
-	public abstract void onEnterpriseCostModelChange();
 	public abstract void onEnterprisePaysheetSendTypeChange();
 	public abstract void onEnterprisePaysheetSendEmailChange();
 	public abstract void onEnterpriseAgreementChange(Integer agreementId);

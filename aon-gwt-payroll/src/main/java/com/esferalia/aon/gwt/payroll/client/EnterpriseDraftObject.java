@@ -194,11 +194,6 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		return paySheetModel.isPresent() ? paySheetModel.get().getExpression() : null;
 	}
 	
-	public String getCostsModel() {
-		Optional<EnterpriseData> costModel = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_REPORT_enterpriseSalary_PAY")).findFirst();
-		return costModel.isPresent() ? costModel.get().getExpression() : null;
-	}
-	
 	public String getPaysheetSend() {
 		Optional<EnterpriseData> paysheetSend = this.enterprise.getDatas().stream().filter(f -> f.getName().equals("PAY_salarySendingMethod_PAY")).findFirst();
 		return paysheetSend.isPresent() ? paysheetSend.get().getExpression() : null;
