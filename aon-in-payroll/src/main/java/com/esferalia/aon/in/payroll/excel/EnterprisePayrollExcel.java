@@ -2983,6 +2983,8 @@ public class EnterprisePayrollExcel {
 		FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 		Row row;
 		Row diffRow = null;
+		String safeWorkplace = WorkbookUtil.createSafeSheetName(workplace);
+		
 		if (totals != null) {
 			row = totals.createRow(totals.getLastRowNum() + 1);
 			if (diffs) {
@@ -3002,9 +3004,9 @@ public class EnterprisePayrollExcel {
 			
 			
 			//------EMPRESA------
-			column = addTotalsFormulaCell(checks.isRaw(), workplace, stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), row, cell++, totalsRow, column);
-			column = addTotalsFormulaCell(checks.isEnterpriseSS(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-			column = addTotalsFormulaCell(checks.isTotalCost(), workplace, stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isRaw(), safeWorkplace, stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isEnterpriseSS(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+			column = addTotalsFormulaCell(checks.isTotalCost(), safeWorkplace, stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), row, cell++, totalsRow, column);
 			//-------------------			
 			
 			//JOINT
@@ -3013,11 +3015,11 @@ public class EnterprisePayrollExcel {
 			column++;
 			
 			//------EMPLEADO------
-			column = addTotalsFormulaCell(checks.isEmployeeSS(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-			column = addTotalsFormulaCell(checks.isIrpf(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-			column = addTotalsFormulaCell(checks.isOther(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-			column = addTotalsFormulaCell(checks.isInKind(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-			column = addTotalsFormulaCell(checks.isLiquid(), workplace, stylesMap.get(PayrollCellStyle.BOUND_CELL_STYLE_PREV), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isEmployeeSS(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+			column = addTotalsFormulaCell(checks.isIrpf(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isOther(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isInKind(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isLiquid(), safeWorkplace, stylesMap.get(PayrollCellStyle.BOUND_CELL_STYLE_PREV), row, cell++, totalsRow, column);
 			//--------------------
 			
 			//JOINT
@@ -3026,7 +3028,7 @@ public class EnterprisePayrollExcel {
 			column++;
 			
 			//------TGSS------
-			column = addTotalsFormulaCell(checks.isTotalSS(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), PayrollCellStyle.IMPORTANT_CELL_STYLE, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+			column = addTotalsFormulaCell(checks.isTotalSS(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), PayrollCellStyle.IMPORTANT_CELL_STYLE, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
 			//----------------
 			
 			if (excelType.isComplete()) {
@@ -3036,15 +3038,15 @@ public class EnterprisePayrollExcel {
 				column++;
 				
 				//------COTIZACIÓN EMPRESA------
-				column = addTotalsFormulaCell(checks.isCgcEnterprise(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isCgpEnterprise(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isUnemploymentEnterprise(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isJobTrainingEnterprise(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isFogasaEnterprise(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isExtraHEnterprise(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isItCompensation(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isBonuses(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isFundae(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, false);
+				column = addTotalsFormulaCell(checks.isCgcEnterprise(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isCgpEnterprise(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isUnemploymentEnterprise(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isJobTrainingEnterprise(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isFogasaEnterprise(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isExtraHEnterprise(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isItCompensation(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isBonuses(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isFundae(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, false);
 				//------------------------------
 				
 				//JOINT
@@ -3053,22 +3055,22 @@ public class EnterprisePayrollExcel {
 				column++;
 
 				//------COTIZACIÓN EMPLEADO------
-				column = addTotalsFormulaCell(checks.isCgc(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isCgp(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isUnemployment(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isJobTraining(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isExtraH(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isAdvancedPayment(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isEmbargos(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isOtherDeductions(), workplace, stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isCgc(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isCgp(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isUnemployment(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isJobTraining(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isExtraH(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isAdvancedPayment(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isEmbargos(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isOtherDeductions(), safeWorkplace, stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), row, cell++, totalsRow, column);
 				
 				//JOINT
 				drawTotalsJoint(stylesMap, row, diffRow, cell);
 				cell++;
 				column++;
 				
-				column = addTotalsFormulaCell(checks.isCgcBase(), workplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
-				column = addTotalsFormulaCell(checks.isIrpfBase(), workplace, stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isCgcBase(), safeWorkplace, stylesMap,  stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), null, evaluator,row, diffRow, cell++, totalsRow, column, diffs);
+				column = addTotalsFormulaCell(checks.isIrpfBase(), safeWorkplace, stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE), row, cell++, totalsRow, column);
 				
 				//JOINT
 				drawTotalsJoint(stylesMap, row, diffRow, cell);
@@ -3076,8 +3078,8 @@ public class EnterprisePayrollExcel {
 				column++;
 				
 				
-				column = addTotalsFormulaCell(checks.isMoneyIrpfBase(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				addTotalsFormulaCell(checks.isInKindIrpfBase(), workplace, stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE), row, cell++, totalsRow, column);			
+				column = addTotalsFormulaCell(checks.isMoneyIrpfBase(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				addTotalsFormulaCell(checks.isInKindIrpfBase(), safeWorkplace, stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE), row, cell++, totalsRow, column);			
 				//-------------------------------
 			}					
 
@@ -3094,6 +3096,9 @@ public class EnterprisePayrollExcel {
 			String workplace, EnterprisePayrollExcelChecks checks, int totalsRow, String month) {
 		Row row;
 		Row diffRow = null;
+		
+		String safeWorkplace = WorkbookUtil.createSafeSheetName(workplace);
+		
 		if (totals != null) {
 			row = totals.createRow(totals.getLastRowNum() + 1);
 
@@ -3116,9 +3121,9 @@ public class EnterprisePayrollExcel {
 			column++;
 			
 			//------EMPRESA------
-			column = addTotalsFormulaCell(checks.isRaw(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-			column = addTotalsFormulaCell(checks.isEnterpriseSS(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-			column = addTotalsFormulaCell(checks.isTotalCost(), workplace, stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isRaw(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isEnterpriseSS(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isTotalCost(), safeWorkplace, stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), row, cell++, totalsRow, column);
 			//-------------------
 			
 			//JOINT
@@ -3128,11 +3133,11 @@ public class EnterprisePayrollExcel {
 			
 			
 			//------EMPLEADO------
-			column = addTotalsFormulaCell(checks.isEmployeeSS(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-			column = addTotalsFormulaCell(checks.isIrpf(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-			column = addTotalsFormulaCell(checks.isOther(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-			column = addTotalsFormulaCell(checks.isInKind(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-			column = addTotalsFormulaCell(checks.isLiquid(), workplace, stylesMap.get(PayrollCellStyle.BOUND_CELL_STYLE_PREV), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isEmployeeSS(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isIrpf(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isOther(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isInKind(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isLiquid(), safeWorkplace, stylesMap.get(PayrollCellStyle.BOUND_CELL_STYLE_PREV), row, cell++, totalsRow, column);
 			//--------------------
 			
 			//JOINT
@@ -3141,7 +3146,7 @@ public class EnterprisePayrollExcel {
 			column++;
 			
 			//------TGSS------			
-			column = addTotalsFormulaCell(checks.isTotalSS(), workplace, stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), row, cell++, totalsRow, column);
+			column = addTotalsFormulaCell(checks.isTotalSS(), safeWorkplace, stylesMap.get(PayrollCellStyle.IMPORTANT_CELL_STYLE), row, cell++, totalsRow, column);
 			//----------------
 			
 			if (excelType.isComplete()) {
@@ -3151,14 +3156,14 @@ public class EnterprisePayrollExcel {
 				column++;
 				
 				//------COTIZACIÓN EMPRESA------
-				column = addTotalsFormulaCell(checks.isCgcEnterprise(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isCgpEnterprise(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isUnemploymentEnterprise(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isJobTrainingEnterprise(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isFogasaEnterprise(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isExtraHEnterprise(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isItCompensation(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isBonuses(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isCgcEnterprise(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isCgpEnterprise(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isUnemploymentEnterprise(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isJobTrainingEnterprise(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isFogasaEnterprise(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isExtraHEnterprise(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isItCompensation(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isBonuses(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
 				//------------------------------
 				
 				//------FUNDAE------
@@ -3166,7 +3171,7 @@ public class EnterprisePayrollExcel {
 				tCell.setCellStyle(stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE));
 				if (checks.isFundae()) {	
 					tCell.setCellType(CellType.FORMULA);
-					tCell.setCellFormula("'" + workplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
+					tCell.setCellFormula("'" + safeWorkplace + "'!" + CellReference.convertNumToColString(column) + (totalsRow+1));
 				} else {
 					tCell.setCellType(CellType.BLANK);
 				}
@@ -3178,30 +3183,30 @@ public class EnterprisePayrollExcel {
 				column++;
 
 				//------COTIZACIÓN EMPLEADO------
-				column = addTotalsFormulaCell(checks.isCgc(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isCgp(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isUnemployment(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isJobTraining(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isExtraH(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isAdvancedPayment(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isEmbargos(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isOtherDeductions(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isCgc(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isCgp(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isUnemployment(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isJobTraining(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isExtraH(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isAdvancedPayment(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isEmbargos(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isOtherDeductions(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
 				
 				//JOINT
 				drawTotalsJoint(stylesMap, row, diffRow, cell);
 				cell++;
 				column++;
 				
-				column = addTotalsFormulaCell(checks.isCgcBase(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				column = addTotalsFormulaCell(checks.isIrpfBase(), workplace, stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isCgcBase(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isIrpfBase(), safeWorkplace, stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE), row, cell++, totalsRow, column);
 								
 				//JOINT
 				drawTotalsJoint(stylesMap, row, diffRow, cell);
 				cell++;
 				column++;
 				
-				column = addTotalsFormulaCell(checks.isMoneyIrpfBase(), workplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
-				addTotalsFormulaCell(checks.isInKindIrpfBase(), workplace, stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE), row, cell, totalsRow, column);
+				column = addTotalsFormulaCell(checks.isMoneyIrpfBase(), safeWorkplace, stylesMap.get(PayrollCellStyle.DOUBLE_CELL_STYLE), row, cell++, totalsRow, column);
+				addTotalsFormulaCell(checks.isInKindIrpfBase(), safeWorkplace, stylesMap.get(PayrollCellStyle.FINAL_CELL_STYLE), row, cell, totalsRow, column);
 				//-------------------------------
 				
 			}					
