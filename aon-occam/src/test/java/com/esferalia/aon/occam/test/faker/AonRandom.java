@@ -69,7 +69,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
 
 public class AonRandom {
-	private static Faker faker = new Faker(new Locale("es"));
+	private static Faker faker = new Faker(Locale.of("es"));
 	
 //    public static boolean b( int nullThreshold ) {
 //    	return faker.random().nextInt(0, 100) <= nullThreshold;
@@ -479,33 +479,28 @@ public class AonRandom {
 	
 	public static Invoice generateRandomRetentionInvoice(final AONContext ctx, final Occam occam, final AonConfiguration configuration, WithholdingType withholdingType) {
 		Invoice inv = withholdingType.visit(new IWithholdingTypeVisitor<Invoice>() {
-			@Override
-			public Invoice visitProfessional(Invoice i) {
-				return Stream.of( AonRandom.getYearDay(new Date()) )
-					.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
-					.map(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesProfRetention(params)))
-					.findFirst()
-					.orElse(null);
-			}
 
-			@Override
-			public Invoice visitRenting(Invoice t) {
-				return Stream.of( AonRandom.getYearDay(new Date()) )
-					.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
-					.map(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesRentingRetention(params)))
-					.findFirst()
-					.orElse(null);
-			}
-
-			@Override
-			public Invoice visitMovableCapital(Invoice t) {
-				return Stream.of( AonRandom.getYearDay(new Date()) )
-					.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
-					.map(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesCapitalRetention(params)))
-					.findFirst()
-					.orElse(null);
-			}
-
+			@Override public Invoice visitProfessional(Invoice i) { return getRetentionInvoice( WithholdingType.PROFESSIONAL);   }
+			@Override public Invoice visitRenting(Invoice t) { return getRetentionInvoice( WithholdingType.RENTING);   }
+			@Override public Invoice visitMovableCapital(Invoice t) { return getRetentionInvoice( WithholdingType.MOVABLE_CAPITAL);   }
+			@Override public Invoice visitTransportOperator(Invoice t) { return getRetentionInvoice( WithholdingType.TRANSPORT_OPERATOR);   }
+			@Override public Invoice visitM190G02(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_G_02);   }
+			@Override public Invoice visitM190G03(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_G_03);   }
+			@Override public Invoice visitM190H02(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_H_02);   }
+			@Override public Invoice visitM190H03(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_H_03);   }
+			@Override public Invoice visitM190I01(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_I_01);   }
+			@Override public Invoice visitM190I02(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_I_02);   }
+			@Override public Invoice visitM190J(Invoice t)    { return getRetentionInvoice( WithholdingType.M190_J   );   }
+			@Override public Invoice visitM190K01(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_K_01);   }
+			@Override public Invoice visitM190K03(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_K_03);   }
+			@Override public Invoice visitM190K02(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_K_02);   }
+			@Override public Invoice visitM193C1(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C1);     }
+			@Override public Invoice visitM193C2(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C2);     }
+			@Override public Invoice visitM193C3(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C3);     }
+			@Override public Invoice visitM190F01(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_F_01);   }
+			@Override public Invoice visitM190F021(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_1); }
+			@Override public Invoice visitM190F022(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_2); }
+			
 			@Override
 			public Invoice visitFarmer(Invoice t) {
 				return Stream.of( AonRandom.getYearDay(new Date()) )
@@ -515,14 +510,10 @@ public class AonRandom {
 					.orElse(null);
 			}
 
-			@Override
-			public Invoice visitTransportOperator(Invoice t) {
-				return Stream.of( AonRandom.getYearDay(new Date()) )
-					.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
-					.map(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesTransportRetention(params)))
-					.findFirst()
-					.orElse(null);
+			private Invoice getRetentionInvoice( final WithholdingType wt) {
+				return InvoiceFaker.getRetentionInvoice( ctx, occam, configuration, wt);
 			}
+			
 		},null);
 		return inv;
 	}
