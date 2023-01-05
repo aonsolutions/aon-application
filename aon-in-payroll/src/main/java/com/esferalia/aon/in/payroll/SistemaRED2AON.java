@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -624,52 +623,55 @@ public class SistemaRED2AON {
 
 	}
 
-
-
 	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
 			String ccc, String naf, Date endDate) {
-	
-//		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 		try {
 			Collection<solutions.aon.seg.social.object.Idc> idcs = 
-			SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+			SistemaRED.getIDCDates(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
 			
-			Date idcDates [] = 
-			idcs.stream()
-			.filter(idc -> AonStringUtils.equals("ALTA", idc.getDescripcion()))
-			.filter(idc -> endDate == null || idc.getFecha().compareTo(endDate) <= 0 )
-			.map(idc ->idc.getFecha()).sorted()
-			.toArray(Date[]::new);
-			
-			if ( idcDates.length == 0 )
-				return;
-			
-			Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(endDate == null ? new Date() : endDate);
-			Date ssStartDate = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
-
-			for ( int i = 1; i < idcDates.length ; i++ ) {
-				Date start = idcDates[i-1];
-				Date end = AonDateUtils.add(idcDates[i], Calendar.DAY_OF_MONTH,-1);
-				if ( end.before(ssStartDate)) 
-					continue;
-				addPECs(userLogin, domainName, domainId, userId, start, regime, ccc, naf);
-			}
-			
-			Date last = idcDates[idcDates.length-1];
-			System.out.println("IDC : " + last );
-			addPECs(userLogin, domainName, domainId, userId, last, regime, ccc, naf);
-			
-			//.peek( d -> System.out.println("IDC : " + d ))
-			//.reduce( (d1,d2) -> d2 )
-			//.filter( d -> true )
-			//.ifPresent( date -> addPECs(userLogin, domainName, domainId, userId, date, regime, ccc, naf));			
-
-			System.out.println("\tSUCCESS: " + naf );
-		
+			addBonus(userLogin, domainName, domainId, userId, regime, ccc, naf, endDate, idcs);
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
+			String ccc, String naf, Date endDate, Collection<solutions.aon.seg.social.object.Idc> idcs) {
+		
+		System.out.println("-------ADD_BONUS "+naf+" -------");
+		
+		Date idcDates [] = 
+		idcs.stream()
+		.filter(idc -> AonStringUtils.equals("ALTA", idc.getDescripcion()))
+		.filter(idc -> endDate == null || idc.getFecha().compareTo(endDate) <= 0 )
+		.map(idc ->idc.getFecha()).sorted()
+		.toArray(Date[]::new);
+		
+		if ( idcDates.length == 0 )
+			return;
+		
+		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(endDate == null ? new Date() : endDate);
+		Date ssStartDate = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
+
+		for ( int i = 1; i < idcDates.length ; i++ ) {
+			Date start = idcDates[i-1];
+			Date end = AonDateUtils.add(idcDates[i], Calendar.DAY_OF_MONTH,-1);
+			if ( end.before(ssStartDate)) 
+				continue;
+			addPECs(userLogin, domainName, domainId, userId, start, regime, ccc, naf);
+		}
+		
+		Date last = idcDates[idcDates.length-1];
+		System.out.println("\tIDC : " + last );
+		addPECs(userLogin, domainName, domainId, userId, last, regime, ccc, naf);
+		
+		//.peek( d -> System.out.println("IDC : " + d ))
+		//.reduce( (d1,d2) -> d2 )
+		//.filter( d -> true )
+		//.ifPresent( date -> addPECs(userLogin, domainName, domainId, userId, date, regime, ccc, naf));			
+
+		System.out.println("\tSUCCESS: " + naf );
 	}
 	
 	public static void syncWithIdcs(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
