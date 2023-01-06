@@ -20,6 +20,8 @@ import com.code.aon.config.User;
 import com.code.aon.config.enumeration.DomainType;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 
 public class VisibilityManager extends BasicVisibilityManager {
 	
@@ -40,8 +42,8 @@ public class VisibilityManager extends BasicVisibilityManager {
 		return defined;
 	}
 	
-	@Override
-	public Set<Module> getEnabledModules( User user, boolean addExtraModules ) {
+	@Deprecated
+	public Set<Module> getOldEnabledModules( User user, boolean addExtraModules ) {
 		Set<Module> enabledModules = new HashSet<>();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		Integer domainId = ds.getDomainId();
@@ -134,6 +136,103 @@ public class VisibilityManager extends BasicVisibilityManager {
 			if (!enabledModules.contains(Module.AON_FINANCE)) {
 				enabledModules.add(Module.AON_FINANCE);
 			}
+		}
+		return enabledModules;
+	}
+	
+	@Override
+	public Set<Module> getEnabledModules( User user, boolean addExtraModules ) {
+		Set<Module> enabledModules = new HashSet<>();
+		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
+		Integer domainId = ds.getDomainId();
+		Integer parentDomainId = AdminUtil.getParentDomain(domainId);
+		DomainType parentDomainType = (parentDomainId != null) ? DomainType.values()[AdminUtil.getDomainType(parentDomainId)] : null;
+//		DomainUserRoles dur = SECURITY.getDomainUserRoles(ds.getCurrentDomainNameURL(), domainId, user.getLogin(), user.getId());
+			
+		Set<Module> parentDomainModules = Collections.emptySet();
+		if ( parentDomainId != null ) {
+			parentDomainModules = getEnabledModuleList(parentDomainId);
+		}
+
+		boolean userOfParentDomain = false;
+		if ( user != null ) {
+			userOfParentDomain = parentDomainId == null || ObjectUtils.equals(user.getDomain(), parentDomainId);
+			if ( userOfParentDomain || parentDomainType != DomainType.CONSULTANCY) {
+				enabledModules.addAll( parentDomainModules );
+			}
+		}
+
+		Set<Module> domainModules = Collections.emptySet();
+		if (parentDomainId == null || parentDomainType == DomainType.CONSULTANCY) {
+			domainModules = getEnabledModuleList(domainId);
+		}
+
+		boolean addConfiguration = true;
+		if ( domainModules.contains(Module.AON_ONE) ) {
+			for (Iterator<Module> iterator = domainModules.iterator(); iterator.hasNext();) {
+			    if (! ArrayUtils.contains(AON_ONE_MODULES, iterator.next()) ) {
+			        iterator.remove();
+			    }
+			}						
+			addConfiguration = userOfParentDomain;
+		} else if ( domainModules.contains(Module.AON_FINANCE) ) {
+			addConfiguration = userOfParentDomain;
+		}
+
+		enabledModules.addAll( domainModules );
+		enabledModules.remove(Module.PAYROLL_PORTAL);
+		enabledModules.remove(Module.CONTRATA);
+		enabledModules.remove(Module.DOCUMENT_PORTAL);		
+		if ( ds.getType() == DomainType.ACADEMY ) {
+			enabledModules.add(Module.ACADEMY);
+		}
+		if ( ds.getType() == DomainType.GARAGE ) {
+			enabledModules.add(Module.GARAGE);
+		}
+		if ( ds.getType() == DomainType.HOTEL ) {
+			enabledModules.add(Module.HOTEL);
+		}
+		if ( ds.getType() == DomainType.COMMERCE ) {
+			enabledModules.add(Module.POS);
+		}
+		if ( addExtraModules) {
+			enabledModules.add(Module.CRM);
+			enabledModules.add(Module.MANAGEMENT);
+			enabledModules.add(Module.WAREHOUSE);
+			enabledModules.add(Module.GROUPWARE);
+			enabledModules.add(Module.POS);
+			if ( parentDomainModules.contains(Module.PAYROLL_PORTAL) ) {
+				enabledModules.add(Module.PAYROLL_PORTAL);
+				enabledModules.add(Module.DOCUMENT);
+			}
+		}
+		if ( addConfiguration ) {
+			enabledModules.add(Module.CONFIGURATION);
+		}
+		if ( (user != null) && (DomainType.ENTERPRISE == ds.getType()) && (parentDomainId != null) && (ObjectUtils.equals(user.getDomain(), domainId)) ) {
+			if (! hasModule(parentDomainId, Module.FISCAL) ) {
+				enabledModules.remove(Module.FISCAL);
+			}
+			if (! hasModule(parentDomainId, Module.PAYROLL) ) {
+				enabledModules.remove(Module.PAYROLL);
+			}
+		}
+		if (parentDomainId == null || enabledModules.contains(Module.MANAGEMENT) || enabledModules.contains(Module.AON_ONE) || enabledModules.contains(Module.AON_FINANCE)) {
+			enabledModules.remove(Module.FINANCE_PORTAL);
+		}
+		if (ds.isEnabledGoToParent() && ds.isConsultancyDomain() && DomainType.OFFICE != ds.getType()) {
+			enabledModules.remove(Module.CRM);
+			enabledModules.remove(Module.WAREHOUSE);
+			enabledModules.remove(Module.GROUPWARE);
+			enabledModules.remove(Module.TREASURY);
+			enabledModules.remove(Module.MARKETING);
+			enabledModules.remove(Module.POS);
+			enabledModules.remove(Module.AON_ONE);
+			enabledModules.remove(Module.CALL_CENTER);
+			enabledModules.remove(Module.ACADEMY);
+			enabledModules.remove(Module.GARAGE);
+			enabledModules.remove(Module.HOTEL);
+			enabledModules.remove(Module.PAYROLL_PORTAL);
 		}
 		return enabledModules;
 	}

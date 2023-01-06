@@ -23,10 +23,11 @@
 		display: none;
 	}
 	
+	/*
 	.aon-top-menu-item:hover,
 	.aon-top-menu-item-select:hover {
 		background-color: #f6f6f6 !important;
-	}
+	}*/
 	
 	.aon-top-menu-item-select {
     	background-color: #fff !important;
@@ -73,9 +74,15 @@
 	
 	.aon-direct-access-list-element {
     	background: none;
-    	padding: 5px 0 8px 12px;
     	border-bottom: none;
-	}	
+    	padding: 5px 0 8px 12px;
+	}
+	.aon-direct-access-list-element a{
+    	width: 95%;
+    	height: 100%;
+    	display: inline-block;
+	}
+		
 	.aon-direct-access-list-element:hover {
     	background-color: #f6f6f6 !important;
 		border-top-right-radius: 50px 50px;
@@ -127,6 +134,7 @@
     	border-bottom: 1px solid #ddd;
 	}	
 	.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
+		cursor: pointer;
 		color : #4b4b4b;
 		background: none;
 		padding: 4px 8px;
@@ -137,6 +145,7 @@
 	}
 	.gwt-Selector .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
 		color : #000;
+		cursor: default;	
 		background: none;
 		padding: 4px 8px;
 		border-top: none;
@@ -427,6 +436,7 @@
 		width: 75%;
 		padding: 4px; 
 		border: 1px solid #ddd;
+		border-radius: .3rem;
 	}
 	
 	.aon-input-search:focus {
@@ -435,7 +445,20 @@
 	}
 
 	.search-results-popup {
-		
+		display: none !important;
+	}
+	
+	.search-results-popup > div{
+		display: none !important;
+	}
+	
+	
+	.search-results-popup.show , .search-results-popup:hover {
+		display: block !important;
+	}
+	
+	.search-results-popup.show > div , .search-results-popup:hover  > div {
+		display: block !important;
 	}
 	
 	.search-results-popup td,
@@ -536,7 +559,34 @@
 		background: url(#{aonResource.resolve['/images/apps/aon-documental.svg']}) scroll right center no-repeat;
 		background-size:32px;
 	}
+
+	.aon-button-tools {
+		padding-top:4px;
+		padding-bottom: 4px;
+		padding-right:36px;
+		display:inline-block;
+		background: url(#{aonResource.resolve['/images/apps/aon-tools.svg']}) scroll right center no-repeat;
+		background-size:32px;
+	}
+
+	.aon-button-notes {
+		padding-top:4px;
+		padding-bottom: 4px;
+		padding-right:36px;
+		display:inline-block;
+		background: url(#{aonResource.resolve['/images/apps/aon-notes.svg']}) scroll right center no-repeat;
+		background-size:32px;
+	}
 	
+	.aon-button-office {
+		padding-top:4px;
+		padding-bottom: 4px;
+		padding-right:36px;
+		display:inline-block;
+		background: url(#{aonResource.resolve['/images/apps/aon-office.svg']}) scroll right center no-repeat;
+		background-size:32px;
+	}
+
 	.aon-button-invoice {
 		padding-top:4px;
 		padding-bottom: 4px;
@@ -573,33 +623,6 @@
 		background-size:32px;
 	}
 
-	.aon-button-tools {
-		padding-top:4px;
-		padding-bottom: 4px;
-		padding-right:36px;
-		display:inline-block;
-		background: url(#{aonResource.resolve['/images/apps/aon-tools.svg']}) scroll right center no-repeat;
-		background-size:32px;
-	}
-
-	.aon-button-notes {
-		padding-top:4px;
-		padding-bottom: 4px;
-		padding-right:36px;
-		display:inline-block;
-		background: url(#{aonResource.resolve['/images/apps/aon-notes.svg']}) scroll right center no-repeat;
-		background-size:32px;
-	}
-	
-	.aon-button-office {
-		padding-top:4px;
-		padding-bottom: 4px;
-		padding-right:36px;
-		display:inline-block;
-		background: url(#{aonResource.resolve['/images/apps/aon-office.svg']}) scroll right center no-repeat;
-		background-size:32px;
-	}
-	
 	.aon-button {
 		padding-top:4px;
 		padding-bottom: 4px;
@@ -613,6 +636,7 @@
 	.aon-button-tools:hover,
 	.aon-button-fiscal:hover,
 	.aon-button-payroll:hover,
+	.aon-button-office:hover,
 	.aon-button-account:hover,
 	.aon-button-document:hover,
 	.aon-button-invoice:hover,
@@ -1463,6 +1487,54 @@
 	  }
 	}
 	
+	
+	#copyTooltip {
+		display: none;
+		background: #fafafa;
+		font-weight: normal;
+		position: fixed;
+		top: 0;
+		left: 0;
+		justify-content: center;
+		align-items: center;
+		padding: .75rem;
+		box-shadow: 0 .1rem .5rem rgba(0,0,0,.13);
+		border-radius: .35rem;
+		z-index: 999999;
+		transform: translateY(-90%) translateX(-50%);
+		transition: transform .15s, opacity .15s;
+		opacity: 0;
+	}
+	
+	#copyTooltip .material-icons {
+		font-size: 1rem;
+		color: forestgreen;
+		margin-right: .5rem;
+	}
+	
+	#copyTooltip.show {
+		display: flex;
+	}	
+	
+	#copyTooltip.up {
+		transform: translateY(-110%) translateX(-50%);
+		opacity: 1;
+	}	
+	
+	.search-results-popup tr .clipboard-icon {
+		font-size: 1.2rem; 
+		color: transparent;
+		transition: color .15s;
+	}
+	
+	.search-results-popup tr:hover .clipboard-icon {
+		color: #ccc;
+	}
+	
+	.search-results-popup tr .clipboard-icon:hover {
+		color: #404040;
+	}
+		
 
 	</style>
 
@@ -1470,24 +1542,24 @@
 	
 			selected = -1;
 		    helpTooltipTimeout = null;
-		    
+			
 			function showSearchResults(){
 				if ( #{rich:element('smartFilter')}.value ) {
-					#{rich:element('smartFilterTablePanel')}.style.display='block';
+					#{rich:element('smartFilterTableContainer')}.classList.add("show");
 				}
 			}
 			
 			function hideSearchResults(){
 				setTimeout(function() {
 					if ( document.activeElement != #{rich:element('smartFilterTablePanel')} )
-						#{rich:element('smartFilterTablePanel')}.style.display='none';
+						#{rich:element('smartFilterTableContainer')}.classList.remove("show");
 				}, 200);
 			}
 			
-
+			
 			function escSearchResults(e){
 				if ( e.which === 27 ) {
-					#{rich:element('smartFilterTablePanel')}.style.display='none';
+					#{rich:element('smartFilterTableContainer')}.classList.remove("show");
 					e.stopPropagation();
       				e.preventDefault();  
       				e.returnValue = false;
@@ -1554,15 +1626,10 @@
 			
 			function resetResultStates (searchResults, selected) {
 				searchResults.forEach(p => {
-					p.style.background = "#fff";
-					
-					const mouseout = searchResults[selected].onmouseout;
-					if(mouseout){
-						mouseout({
-							target : searchResults[selected],
-						});
-					} 
-					})
+					p.style.background = "transparent";
+				})
+				
+				hideHelpTooltip();
 				
 				const mouseover =  searchResults[selected].onmouseover;
 				if(mouseover){
@@ -1578,11 +1645,12 @@
 			function focusSearchResults(){
 				setTimeout(function() {
 					if ( #{rich:element('smartFilterTablePanel')} ) {
-						#{rich:element('smartFilterTablePanel')}.style.display='block';
+						#{rich:element('smartFilterTablePanel')}.classList.add("show");
 					}
 					#{rich:element('smartFilter')}.focus();
 				}, 300);
 			}
+
 			
 			/**
 			* 	Show help tooltip
@@ -1665,8 +1733,6 @@
 					return;
 				}
 				
-				console.log("Hiding tooltip. FORCE = " + force);
-				
 				if(!force &amp;&amp; tooltip.classList.contains("focus")){
 					return;
 				}
@@ -1691,10 +1757,8 @@
 						return;
 					}
 					
-					const isSearch = #{rich:element('smartFilterTablePanel')}.style.display != "none";
-					
-					
-					
+					const isSearch = #{rich:element('smartFilterTableContainer')}.classList.contains("show");
+	
 					if(isSearch &amp;&amp; tooltip.className.indexOf("focus") == -1){
 						tooltip.classList.add("focus");
 						
@@ -1742,6 +1806,56 @@
 						message.innerHTML = "Pulse " + f2Icon.outerHTML + " para fijar la ventana";
 					}
 				}
+			}
+			
+			function copyToClipboard(event,text) {
+				
+				 if (navigator &amp;&amp; navigator.clipboard &amp;&amp; navigator.clipboard.writeText) {
+					navigator.clipboard.writeText(text)
+				 } else {
+					 console.log("Clipboard API not available, make sure that app is running via HTTPS protocol.");
+					 console.log("Trying legacy method...");
+					 legacyCopyToCliboard(text);
+				 }
+				 
+				 showCopyTooltip(event);
+			}
+			
+			function legacyCopyToCliboard(text) {
+				  const el = document.createElement('textarea');
+				  el.value = text;
+				  el.setAttribute('readonly', '');
+				  el.style.position = 'absolute';
+				  el.style.left = '-9999px';
+				  document.body.appendChild(el);
+				  el.select();
+				  document.execCommand('copy');
+				  document.body.removeChild(el);
+			}
+			
+			
+			function showCopyTooltip(e){
+				
+				const tooltip = document.getElementById("copyTooltip");
+				tooltip.style.top = e.target.getBoundingClientRect().top + "px"
+				tooltip.style.left = e.target.getBoundingClientRect().left + "px"
+				tooltip.classList.add("show");
+				
+				
+				setTimeout(() => {
+					tooltip.classList.add("up");
+
+					setTimeout(() => {
+						tooltip.classList.remove("up");
+						
+						setTimeout(() => {
+							tooltip.classList.remove("show");
+						}, 100);
+						
+					}, 1200);
+				}, 100);
+				
+				
 			}
 			
 			
@@ -1838,7 +1952,10 @@
 						
 					</aon:inputText>
 					
-					<aon:div id="smartFilterTableContainer" styleClass="search-results-popup" style="z-index:6; position:absolute; width:50%; margin-top:1.7rem;" >
+					<aon:div id="smartFilterTableContainer" 
+							styleClass="search-results-popup" 
+							style="z-index:6; position:absolute; width:50%; margin-top:1.7rem;" 
+							>
 						
 						<aon:div id="smartFilterTablePanel" rendered="#{aonConfiguration.properties.showSearchResults}" style="display:none;" >
 
@@ -1934,13 +2051,11 @@
 									</aon:column>
 									<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto" style="text-align: right;">
 										<aon:div onmouseover="disableRowSelector();" onmouseup="disableRowSelector();"
-											onmouseout="enableRowSelector();" layout="inline" >										
-										<h:outputLink 
-										value="https://#{domainSwitcher.currentDomainURL}" target="_blank"
-										title="https://#{to.name}"
-										styleClass="aon-icon material-icons"
-										style="background: url(#{aonResource.resolve['/images/aon-right-arrow.png']}) no-repeat scroll left center transparent; display: inline-block; height: 21px;vertical-align: middle;}" >
-										</h:outputLink>
+											onmouseout="enableRowSelector();" layout="inline" >				
+																	
+											<aon:div styleClass="material-icons clipboard-icon" onclick="copyToClipboard(event,'#{domainSwitcher.currentDomainURL}')">
+												content_copy
+											</aon:div>
 										</aon:div>
 									</aon:column>
 									</ui:define>
@@ -2090,12 +2205,37 @@
 		                		<aon:menuItem id="spanishLanguage" reRender="aonHeader,aonContent"
 		                			value="#{aonConfiguration.locales[0].displayName}"
 									iconClass="#{aonConfiguration.locales[0].iconClass}" 
+									onclick="localStorage.setItem('aon_language','es')"
 									actionListener="#{aonConfiguration.locales[0].onChangeLanguage}" />
 		                		<aon:menuItem id="englishLanguage" reRender="aonHeader,aonContent"
 		                			value="#{aonConfiguration.locales[1].displayName}"
 									iconClass="#{aonConfiguration.locales[1].iconClass}" 
+									onclick="localStorage.setItem('aon_language','en')"
 									actionListener="#{aonConfiguration.locales[1].onChangeLanguage}" />
-			                </aon:menuGroup>	
+								<aon:if test="#{dur.alpha}">
+	 	 		                	<aon:menuItem id="deutschLanguage" reRender="aonHeader,aonContent"
+		                				value="#{aonConfiguration.locales[2].displayName}"
+										iconClass="#{aonConfiguration.locales[2].iconClass}" 
+										onclick="localStorage.setItem('aon_language','de')"
+										actionListener="#{aonConfiguration.locales[2].onChangeLanguage}" />
+	 		                		<aon:menuItem id="basqueLanguage" reRender="aonHeader,aonContent"
+										value="#{aonConfiguration.locales[3].displayName}"
+										iconClass="#{aonConfiguration.locales[3].iconClass}" 
+										onclick="localStorage.setItem('aon_language','eu')"
+										actionListener="#{aonConfiguration.locales[3].onChangeLanguage}" /> 
+ 	 		                		<aon:menuItem id="catalanLanguage" reRender="aonHeader,aonContent"
+		                				value="#{aonConfiguration.locales[4].displayName}"
+										iconClass="#{aonConfiguration.locales[4].iconClass}" 
+										onclick="localStorage.setItem('aon_language','ca')"
+										actionListener="#{aonConfiguration.locales[4].onChangeLanguage}" /> 
+ 	 		                		<aon:menuItem id="galicianLanguage" reRender="aonHeader,aonContent"
+		                				value="#{aonConfiguration.locales[5].displayName}"
+										iconClass="#{aonConfiguration.locales[5].iconClass}" 
+										onclick="localStorage.setItem('aon_language','gl')"
+										actionListener="#{aonConfiguration.locales[5].onChangeLanguage}" /> 
+								</aon:if>
+							</aon:menuGroup>	
+													
 							<aon:if test="#{dur.aula or domainSwitcher.snapshot}">
 								<aon:menuItem submitMode="none" reRender="aonStatus"
 									rendered="#{!aonConfiguration.properties.hideMenuHelp}"
@@ -2111,7 +2251,7 @@
 									</aon:htmlCommandLink>
 								</aon:menuItem>
 							</aon:if>
-														
+							
 							<aon:menuItem id="about" reRender="aboutWindowPanel"
 								rendered="#{!aonConfiguration.properties.hideMenuAbout}"
 								iconClass="aon-icon-about"
@@ -2143,4 +2283,9 @@
 			<span class="material-icons" id="pin">push_pin</span>
 		</div>
 	</aon:div>
+	<aon:div id="copyTooltip"> 
+		<span class="material-icons" id="pin">task_alt</span>
+		<span> Copiado al portapapeles</span>
+	</aon:div>
 </ui:composition>
+
