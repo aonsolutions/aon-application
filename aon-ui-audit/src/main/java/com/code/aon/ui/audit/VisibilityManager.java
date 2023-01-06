@@ -234,6 +234,10 @@ public class VisibilityManager extends BasicVisibilityManager {
 			enabledModules.remove(Module.HOTEL);
 			enabledModules.remove(Module.PAYROLL_PORTAL);
 		}
+		
+		if( enabledModules.contains(Module.AON_ONE) || enabledModules.contains(Module.AON_FINANCE)) {
+			enabledModules.add(Module.MANAGEMENT);
+		}
 		return enabledModules;
 	}
 

@@ -246,8 +246,10 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public boolean isCommercial() {
-		return hasCommercial() && (hasRole(AonRole.COMMERCIAL) 
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.COMMERCIAL));
+		return hasCommercial() 
+//			&& (hasRole(AonRole.COMMERCIAL) 
+//					|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.COMMERCIAL))
+			;
 	}
 	
 	// COMMERCIAL
