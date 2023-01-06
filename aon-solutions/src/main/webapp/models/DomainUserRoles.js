@@ -448,7 +448,7 @@ export class DomainUserRoles {
 
   hasTreasury() {
     return this.hasOldModule(OldModule.TREASURY) || this.hasApp(App.TREASURY)
-        || this.hasStandarManagement();
+        || this.hasApp(App.STANDAR_MANAGEMENT);
   }
 
   hasParentTreasury() {

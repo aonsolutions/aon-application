@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {ConsultancyBookingApps, BookingApps, ClassicApps, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
+import {BookingApps, ClassicApps, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
 	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
 import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
@@ -85,14 +85,9 @@ export class AonBooking extends AonElement {
 		}
 
 		if(!this.dur.getDomain().isKitDigital()) {
-			
-			if(dur.getDomain().isConsultancy()) {
-				this.buildTitle(content, MSG.APPLICATIONS);
-				this.buildApps(content, ConsultancyBookingApps, dur);
-			} else {
-				this.buildTitle(content, MSG.APPLICATIONS);
-				this.buildApps(content, BookingApps, dur);
-			}
+			this.buildTitle(content, MSG.APPLICATIONS);
+			this.buildApps(content, BookingApps, dur);
+	
 			this.buildTitle(content, MSG.SERVICES);
 			this.buildApps(content, Services, dur);
 	
@@ -522,12 +517,9 @@ export class AonBooking extends AonElement {
 			return Packs.PORTAL;
 		} else if(dur.hasBasicManagement() && App.INVOICE === app) {
 			return BASIC_MANAGEMENT;
-		} else if(dur.hasStandarManagement() && (App.COMMERCIAL === app 
-				|| App.TREASURY === app) || App.BASIC_MANAGEMENT === app) {
+		} else if(dur.hasStandarManagement() && (App.COMMERCIAL === app || App.TREASURY === app)) {
 			return STANDAR_MANAGEMENT;
-		} else if(dur.hasProfessionalManagement() && (App.WAREHOUSE === app 
-				|| App.MARKETING === app || App.GROUPWARE === app 
-				|| App.BASIC_MANAGEMENT || App.STANDAR_MANAGEMENT)) {
+		} else if(dur.hasProfessionalManagement() && (App.WAREHOUSE === app || App.MARKETING === app || App.GROUPWARE === app)) {
 			return PROFESSIONAL_MANAGEMENT;
 		}
 		return undefined;

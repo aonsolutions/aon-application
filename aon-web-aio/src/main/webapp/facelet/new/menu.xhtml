@@ -52,54 +52,38 @@
 			</aon:if>
 		</aon:if>
 
-		<aon:if test="#{aonRole.commercialOperator}">
-			<aon:commandLink id="menu_crm"
-				value="#{bundle.aon_module_commercial}"
-				action="menu_crm" immediate="true"
+		<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+			<aon:if test="#{aonRole.commercialOperator}">
+				<aon:commandLink id="menu_crm"
+					value="#{bundle.aon_module_commercial}"
+					action="menu_crm" immediate="true"
+					styleClass="aon-top-menu-item" 
+					onclick="javascript:disableMenuPopup('commercial', this)"
+					onmouseout="javascript:hideMenuPopup('commercial')"
+					onmouseover="javascript:showMenuPopup('commercial', this);"
+					/>
+			</aon:if>
+			
+			<aon:if test="#{aonRole.warehouseOperator}">
+				<aon:commandLink id="menu_warehouse"
+					styleClass="aon-top-menu-item" 
+					value="#{bundle.aon_module_warehouse}"
+					action="menu_warehouse" immediate="true"
+					onclick="javascript:disableMenuPopup('warehouse', this)"
+					onmouseout="javascript:hideMenuPopup('warehouse')"
+					onmouseover="javascript:showMenuPopup('warehouse', this)"
+					/>
+			</aon:if>
+
+			<aon:commandLink id="menu_groupware"
 				styleClass="aon-top-menu-item" 
-				onclick="javascript:disableMenuPopup('commercial', this)"
-				onmouseout="javascript:hideMenuPopup('commercial')"
-				onmouseover="javascript:showMenuPopup('commercial', this);"
+				value="#{bundle.aon_module_groupware}"
+				action="menu_groupware" immediate="true"
+				onclick="javascript:disableMenuPopup('groupware', this)"
+				onmouseout="javascript:hideMenuPopup('groupware')"
+				onmouseover="javascript:showMenuPopup('groupware', this)"
 				/>
 		</aon:if>
-		
-		<aon:commandLink id="menu_management"
-			value="#{bundle.aon_module_management}" 
-			styleClass="aon-top-menu-item"
-			action="menu_management" immediate="true"
-			onclick="javascript:disableMenuPopup('management', this)"
-			onmouseout="javascript:hideMenuPopup('management')"
-			onmouseover="javascript:showMenuPopup('management', this)"
-		/>
-			
-		<aon:commandLink id="menu_treasury"
-			value="#{bundle.aon_module_finance}" 
-			styleClass="aon-top-menu-item"
-			action="menu_treasury" immediate="true"
-			onclick="javascript:disableMenuPopup('treasury', this)"
-			onmouseout="javascript:hideMenuPopup('treasury')"
-			onmouseover="javascript:showMenuPopup('treasury', this)"
-		/>
-			
-		<aon:if test="#{aonRole.warehouseOperator}">
-			<aon:commandLink id="menu_warehouse"
-				styleClass="aon-top-menu-item" 
-				value="#{bundle.aon_module_warehouse}"
-				action="menu_warehouse" immediate="true"
-				onclick="javascript:disableMenuPopup('warehouse', this)"
-				onmouseout="javascript:hideMenuPopup('warehouse')"
-				onmouseover="javascript:showMenuPopup('warehouse', this)"
-			/>
-		</aon:if>
-
-		<aon:commandLink id="menu_groupware"
-			styleClass="aon-top-menu-item" 
-			value="#{bundle.aon_module_groupware}"
-			action="menu_groupware" immediate="true"
-			onclick="javascript:disableMenuPopup('groupware', this)"
-			onmouseout="javascript:hideMenuPopup('groupware')"
-			onmouseover="javascript:showMenuPopup('groupware', this)"
-			/>
 			
 		<aon:if test="#{aonRole.accountingOperator}">
 			<aon:commandLink id="menu_accounting"
@@ -174,9 +158,23 @@
 			action="menu_finance_portal" immediate="true"
 			styleClass="aon-top-menu-item" />
  -->
- 		
+ 		<aon:commandLink id="menu_management"
+			value="#{bundle.aon_module_management}" 
+			styleClass="aon-top-menu-item"
+			action="menu_management" immediate="true"
+			onclick="javascript:disableMenuPopup('management', this)"
+			onmouseout="javascript:hideMenuPopup('management')"
+			onmouseover="javascript:showMenuPopup('management', this)"
+		/>
 					
-
+		<aon:commandLink id="menu_treasury"
+			value="#{bundle.aon_module_finance}" 
+			styleClass="aon-top-menu-item"
+			action="menu_treasury" immediate="true"
+			onclick="javascript:disableMenuPopup('treasury', this)"
+			onmouseout="javascript:hideMenuPopup('treasury')"
+			onmouseover="javascript:showMenuPopup('treasury', this)"
+		/>
 		
 		<aon:commandLink id="menu_marketing"
 			value="#{bundle.aon_module_marketing}"
