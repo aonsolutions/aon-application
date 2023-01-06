@@ -43,18 +43,13 @@ public enum AonApp implements Serializable{
 	KIT_DIGITAL_CRM(getKitDigitalCrmModules(), "Kit Digital CRM"),
 	KIT_DIGITAL_ERP(getKitDigitalErpModules(), "Kit Digital ERP"),
 	API_SERVICE(getEmptyModules(), "Servicio API"),
-	WAREHOUSE(getWarehouseModules(), "Almacén"),
-	COMMERCIAL(getCommercialModules(), "Comercial"),
-	MARKETING(getMarketingModules(), "Marketing"),
-	TREASURY(getTreasuryModules(), "Tesorería"),
-	GROUPWARE(getGroupwareModules(), "Expedientes")
+	WAREHOUSE(getWarehouseModules(), "Almacén")
 	;
 	
 	LinkedList<Module> modules;
 	String description;
 	
 	private AonApp(LinkedList<Module> modules, String description) {
-	    
 		this.modules = modules;
 		this.description = description;
 	}
@@ -118,7 +113,8 @@ public enum AonApp implements Serializable{
 	
 	private static LinkedList<Module> getStandarManagementModules() {
 		LinkedList<Module> list = new LinkedList<>();
-		list.add(Module.TREASURY);
+//		list.add(Module.TREASURY);
+//		list.add(Module.MARKETING);
 		list.add(Module.CRM);
 		list.add(Module.MANAGEMENT);
 		return list;
@@ -127,14 +123,12 @@ public enum AonApp implements Serializable{
 	private static LinkedList<Module> getKitDigitalCrmModules() {
 		LinkedList<Module> list = new LinkedList<>();
 		list.add(Module.CRM);
-		list.add(Module.MARKETING);
 		return list;
 	}
 	
 	private static LinkedList<Module> getKitDigitalErpModules() {
 		LinkedList<Module> list = new LinkedList<>();
 		list.add(Module.MANAGEMENT);
-		list.add(Module.TREASURY);
 		return list;
 	}
 	
@@ -215,29 +209,4 @@ public enum AonApp implements Serializable{
 		list.add(Module.ACCOUNTING);
 		return list;
 	}
-	
-	private static LinkedList<Module> getCommercialModules() {
-		LinkedList<Module> list = new LinkedList<>();
-		list.add(Module.CRM);
-		return list;
-	}
-	
-	private static LinkedList<Module> getMarketingModules() {
-		LinkedList<Module> list = new LinkedList<>();
-		list.add(Module.MARKETING);
-		return list;
-	}
-	
-	private static LinkedList<Module> getTreasuryModules() {
-		LinkedList<Module> list = new LinkedList<>();
-		list.add(Module.TREASURY);
-		return list;
-	}
-	
-	private static LinkedList<Module> getGroupwareModules() {
-		LinkedList<Module> list = new LinkedList<>();
-		list.add(Module.GROUPWARE);
-		return list;
-	}
-
 }

@@ -76,14 +76,6 @@ public class DomainUserRolesController implements Serializable {
 			|| getDur().isOldDocumental();
 	}
 	
-	public boolean isCommercial() {
-		return getDur().isCommercial();
-	}
-	
-	public boolean isWarehouse() {
-		return getDur().isWarehouse();
-	}
-	
 	public boolean isBank() {
 		return getDur().hasApp(AonApp.BANK);
 	}
