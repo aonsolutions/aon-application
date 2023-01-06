@@ -114,7 +114,6 @@ public class AonServletUtils {
 			.from(User.USER)
 			.where(User.USER.DOMAIN.in(domains))
 			.and(User.USER.LOGIN.eq(user))
-			.limit(1)
 			.fetchOne(User.USER.ID);
 		} catch (Exception e) {
 			throw new SQLException(e.getMessage(), e);

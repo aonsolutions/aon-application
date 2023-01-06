@@ -1566,9 +1566,6 @@ public class SecurityDAO {
 
 		return new DomainUserRoles()
 				.setOldDomainModules(getDomainModules(ctx).collect(Collectors.toCollection(LinkedList::new)))
-				.setOldParentDomainModules(domain.getParentId() != null
-					? getDomainModules(ctx, domain.getParentId()).collect(Collectors.toCollection(LinkedList::new))
-					: new LinkedList<>())
 				.setDomain(domain)
 				.setUser(user)
 				.setDomainApps(domainApps)

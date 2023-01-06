@@ -123,7 +123,6 @@ export const TREASURY = {
   icon: AON_ICONS.AON_TREASURY,
   color: "#002469",
   price: " ", // '90€/mes',
-  disabled: false
 };
 
 
@@ -135,7 +134,6 @@ export const MARKETING = {
   icon: AON_ICONS.AON_MARKETING,
   color: "#002469",
   price: " ", // '90€/mes',
-  disabled: false
 };
 
 export const COMMERCIAL = {
@@ -146,7 +144,6 @@ export const COMMERCIAL = {
   icon: AON_ICONS.AON_COMMERCIAL,
   color: "#002469",
   price: " ", // '90€/mes',
-  disabled: false
 };
 
 export const GROUPWARE = {
@@ -223,7 +220,7 @@ export const WAREHOUSE = {
   icon: AON_ICONS.AON_WAREHOUSE,
   color: "#002469",
   price: " ", // '-',
-  disabled: false,
+  disabled: true,
   options: {
     menu: false,
     add: false,
@@ -531,11 +528,8 @@ export const BookingApps = {
   TIMECONTROL,
   INVOICE,
   MESSENGER,
-  WAREHOUSE,
-  TREASURY,
-  MARKETING,
-  COMMERCIAL,
-  GROUPWARE
+  NOTES,
+  WAREHOUSE
 };
 
 export const AuxApps = { TOOLS };
@@ -1258,7 +1252,7 @@ export const STANDAR_MANAGEMENT = {
   title: "Estándar",
   subtitle: " Gestión Básica | Comercial | Tesoreria ",
   color: "#002469",
-  apps: [BASIC_MANAGEMENT, TREASURY, COMMERCIAL],
+  apps: [Apps.INVOICE, BASIC_MANAGEMENT],
   price: " ",
 };
 
@@ -1268,7 +1262,7 @@ export const PROFESSIONAL_MANAGEMENT = {
   title: "Profesional",
   subtitle: " Gestión Estándar | Marketing | Expedientes | Almacén ",
   color: "#002469",
-  apps: [BASIC_MANAGEMENT, STANDAR_MANAGEMENT, Apps.WAREHOUSE, GROUPWARE, MARKETING],
+  apps: [Apps.INVOICE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, Apps.WAREHOUSE],
   price: " ",
 };
 
