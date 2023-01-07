@@ -432,12 +432,12 @@ export class DomainUserRoles {
 
   hasCommercial() {
     return this.hasOldModule(OldModule.CRM) || this.hasApp(App.COMMERCIAL)
-        || this.hasStandarManagement();
+        || this.hasBasicManagement();
   }
 
   hasParentCommercial() {
     return this.hasParentOldModule(OldModule.CRM) || this.hasParentApp(App.COMMERCIAL)
-        || this.hasParentStandarManagement();
+        || this.hasParentBasicManagement();
   }
 
   isCommercial() {
@@ -464,12 +464,12 @@ export class DomainUserRoles {
 
   hasMarketing() {
     return this.hasOldModule(OldModule.MARKETING) || this.hasApp(App.MARKETING)
-        || this.hasProfessionalManagement();
+        || this.hasStandarManagement();
   }
   
   hasParentMarketing() {
     return this.hasParentOldModule(OldModule.MARKETING) || this.hasParentApp(App.MARKETING)
-        || this.hasParentProfessionalManagement();
+        || this.hasParentStandarManagement();
   }
 
   isMarketing() {

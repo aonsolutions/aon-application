@@ -1257,9 +1257,9 @@ export const BASIC_MANAGEMENT = {
   app: "basic_management",
   icon: AON_ICONS.AON_MANAGEMENT,
   title: "Básico",
-  subtitle: " Facturas",
+  subtitle: " Facturas | Comercial",
   color: "#002469",
-  apps: [Apps.INVOICE],
+  apps: [Apps.INVOICE, COMMERCIAL],
   price: " ",
 };
 
@@ -1267,9 +1267,9 @@ export const STANDAR_MANAGEMENT = {
   app: "standar_management",
   icon: AON_ICONS.AON_MANAGEMENT,
   title: "Estándar",
-  subtitle: " Gestión Básica | Comercial | Tesoreria ",
+  subtitle: " Gestión Básica | Marketing | Tesoreria ",
   color: "#002469",
-  apps: [BASIC_MANAGEMENT, TREASURY, COMMERCIAL],
+  apps: [BASIC_MANAGEMENT, TREASURY, MARKETING],
   price: " ",
 };
 
@@ -1277,9 +1277,9 @@ export const PROFESSIONAL_MANAGEMENT = {
   app: "professional_management",
   icon: AON_ICONS.AON_MANAGEMENT,
   title: "Profesional",
-  subtitle: " Gestión Estándar | Marketing | Expedientes | Almacén ",
+  subtitle: " Gestión Estándar | Expedientes | Almacén ",
   color: "#002469",
-  apps: [BASIC_MANAGEMENT, STANDAR_MANAGEMENT, Apps.WAREHOUSE, GROUPWARE, MARKETING],
+  apps: [BASIC_MANAGEMENT, STANDAR_MANAGEMENT, Apps.WAREHOUSE, GROUPWARE],
   price: " ",
 };
 
