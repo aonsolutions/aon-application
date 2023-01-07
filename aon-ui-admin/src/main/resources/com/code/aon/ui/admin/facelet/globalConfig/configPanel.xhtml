@@ -295,6 +295,12 @@
 									actionListener="#{adminDomain.onInit}"
 									value="#{bundle.admin_domain_management}" />
 							</aon:div>
+							
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="new_suite_marketplace_2"
+									action="new_suite_marketplace"
+									value="#{bundle.admin_booking}" />
+							</aon:div>		
 						</aon:if>
 						<aon:if test="#{(aonRole.sysAdmin or domainSwitcher.parentDomainUserInChildDomain) and globalConfig.portalRegistered}">
 							<aon:div styleClass="aon-direct-access-list-element">
