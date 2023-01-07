@@ -522,6 +522,17 @@ export const Apps = {
   // GROUPWARE
 };
 
+export const ConsultancyBookingApps = {
+  ACCOUNTING,
+  FISCAL,
+  PAYROLL,
+  COMUNICA,
+  DOCUMENTAL,
+  TIMECONTROL,
+  INVOICE,
+  MESSENGER
+};
+
 export const BookingApps = {
   ACCOUNTING,
   FISCAL,

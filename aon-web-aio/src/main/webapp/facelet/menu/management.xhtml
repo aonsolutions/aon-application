@@ -173,12 +173,14 @@
 									</aon:if>
 									
 									<!-- Solicitudes de Compra -->
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="proposal"
-											action="proposal_search"
-											actionListener="#{proposal.onEditSearch}"
-											value="#{bundle.purchase_proposal_module}" />
-									</aon:div>
+									<aon:if test="#{domainSwitcher.betaEnabled}"> 
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="proposal"
+												action="proposal_search"
+												actionListener="#{proposal.onEditSearch}"
+												value="#{bundle.purchase_proposal_module}" />
+										</aon:div>
+									</aon:if>
 								</aon:div>
 							</aon:panelGrid>
 						</aon:if>
