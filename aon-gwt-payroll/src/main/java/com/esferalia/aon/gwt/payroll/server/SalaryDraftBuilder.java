@@ -1557,10 +1557,20 @@ public class SalaryDraftBuilder
 		
 		findYesterdayVariable(name, value, todayStartDate)
 		.ifPresentOrElse(
-		v -> v.setStartDate(todayStartDate),
+		v -> {
+		    v.setStartDate(todayStartDate);
+		    if ( ContextVariable.HOLIDAYS.getName().equals(name)) {
+			v.setValue(((Number)v.getValue()).doubleValue() + ((Number) value).doubleValue());
+		    }
+		},
 		() -> findTomorrowVariable(name, value, todayEndDate)
 			.ifPresentOrElse(
-			v -> v.setEndDate(todayEndDate),
+			v -> {
+			    v.setEndDate(todayEndDate);
+			    if ( ContextVariable.HOLIDAYS.getName().equals(name)) {
+				v.setValue(((Number)v.getValue()).doubleValue() + ((Number) value).doubleValue());
+			    }
+			},
 			() -> salaryDraft.addVariable(
 				name, 
 				value, 
