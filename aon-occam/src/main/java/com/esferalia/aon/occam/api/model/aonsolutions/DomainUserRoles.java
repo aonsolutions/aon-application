@@ -112,9 +112,8 @@ public class DomainUserRoles implements Serializable {
 		return oldParentDomainModules;
 	}
 
-	public DomainUserRoles setOldParentDomainModules(List<Module> oldParentDomainModules) {
+	public void setOldParentDomainModules(List<Module> oldParentDomainModules) {
 		this.oldParentDomainModules = oldParentDomainModules;
-		return this;
 	}
 
 	public boolean isParentUser(){
@@ -136,6 +135,7 @@ public class DomainUserRoles implements Serializable {
 	public boolean hasParentApp(AonApp aonApp) {
 		return getParentDomainApps().contains(aonApp);
 	}
+	
 	
 	private boolean hasRole(AonRole aonRole) {
 		return getDomainUserRoles().contains(aonRole) 
@@ -239,30 +239,6 @@ public class DomainUserRoles implements Serializable {
 				||hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER);
 	}
 	
-	// COMMERCIAL
-	
-	public boolean hasCommercial() {
-		return hasStandarManagement() || hasApp(AonApp.COMMERCIAL) || hasOldModule(Module.CRM);
-	}
-	
-	public boolean isCommercial() {
-		return hasCommercial() 
-//			&& (hasRole(AonRole.COMMERCIAL) 
-//					|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.COMMERCIAL))
-			;
-	}
-	
-	// COMMERCIAL
-	
-	public boolean hasWarehouse() {
-		return hasProfessionalManagement() || hasApp(AonApp.WAREHOUSE) || hasOldModule(Module.WAREHOUSE);
-	}
-	
-	public boolean isWarehouse() {
-		return hasCommercial() && (hasRole(AonRole.WAREHOUSE) 
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.WAREHOUSE));
-	}
-	
 	// COMUNIC@ - COMUNIC@
 	
 	public boolean hasComunica() {
@@ -342,9 +318,7 @@ public class DomainUserRoles implements Serializable {
 	// INVOICE - FACTURAS
 	
 	public boolean hasInvoice() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) 
-				|| hasBasicManagement() || hasApp(AonApp.INVOICE)
-				|| hasOldModule(Module.AON_FINANCE);
+		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasBasicManagement() || hasApp(AonApp.INVOICE);
 	}
 	
 	public boolean isInvoice() {
@@ -357,11 +331,6 @@ public class DomainUserRoles implements Serializable {
 	
 	public boolean isInvoiceManager() {
 		return hasInvoice() && (isAdmin() || hasRole(AonRole.INVOICE_MANAGER));
-	}
-	
-	public boolean hasManagement() {
-		return hasOldModule(Module.AON_FINANCE) || hasOldModule(Module.AON_ONE)
-				|| hasOldModule(Module.MANAGEMENT) || hasApp(AonApp.MANAGEMENT);
 	}
 	
 	public boolean isManagement() {

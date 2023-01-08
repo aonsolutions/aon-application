@@ -15,7 +15,6 @@
 	<aon:valueParam name="gwtDomain" default="#{domainSwitcher.domainId}" />
 	<aon:valueParam name="gwtDomainName" default="#{domainSwitcher.domainNameURL}" />
 	<aon:valueParam name="gwtUser" default="#{domainSwitcher.currentUser}" />
-	<aon:valueParam name="gwtToken" default="#{dur.token}" />
 
 	<style>
 		body {
@@ -48,13 +47,8 @@
 		function getCurrentDomainName() {
 	       	return "#{gwtDomainName}"
 	  	}
-		
 		function getCurrentUser() {
 	       	return "#{gwtUser}"
-	  	}
-		
-		function getToken() {
-	       	return "#{gwtToken}"
 	  	}
 		
 		function getSubEntryPoint() {
@@ -85,11 +79,12 @@
 				break;
 			}
 		}
+
 	    	 
 		function startModule() {
 			localStorage.removeItem('rootPanel');
 		    localStorage.removeItem('aon_solutions');
-			localStorage.setItem('aon_session_id', "#{dur.token}");
+		    localStorage.removeItem('aon_session_id');
 			if (window.document.createElement && window.document.getElementsByTagName) {
 				var script = window.document.createElement("script");
 				script.type = "text/javascript";
