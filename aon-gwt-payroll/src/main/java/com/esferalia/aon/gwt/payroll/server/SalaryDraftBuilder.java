@@ -23,7 +23,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -1549,11 +1552,33 @@ public class SalaryDraftBuilder
 			startDate = Period.min(startDate,var.getStartDate());
 		}
 		
-		salaryDraft.addVariable(
+		Date todayStartDate = startDate;
+		Date todayEndDate = endDate;
+		
+		findYesterdayVariable(name, value, todayStartDate)
+		.ifPresentOrElse(
+		v -> {
+		    v.setStartDate(todayStartDate);
+		    if ( ContextVariable.HOLIDAYS.getName().equals(name)) {
+			v.setValue(((Number)v.getValue()).doubleValue() + ((Number) value).doubleValue());
+		    }
+		},
+		() -> findTomorrowVariable(name, value, todayEndDate)
+			.ifPresentOrElse(
+			v -> {
+			    v.setEndDate(todayEndDate);
+			    if ( ContextVariable.HOLIDAYS.getName().equals(name)) {
+				v.setValue(((Number)v.getValue()).doubleValue() + ((Number) value).doubleValue());
+			    }
+			},
+			() -> salaryDraft.addVariable(
 				name, 
 				value, 
-				startDate, 
-				endDate);
+				todayStartDate, 
+				todayStartDate)
+			)
+		);
+		
 	}
 	
 	private void addVariable(String name, Object value, Date startDate, Date endDate,Scope scope, String expression, boolean defined[] ) {
@@ -1574,16 +1599,59 @@ public class SalaryDraftBuilder
 			endDate = Period.max(endDate,var.getEndDate());
 			startDate = Period.min(startDate,var.getStartDate());
 		}
-		salaryDraft.addVariable(
+		
+		Date todayStartDate = startDate;
+		Date todayEndDate = endDate;
+		
+		findYesterdayVariable(name, value, todayStartDate, v -> Objects.equals(v.getScope(), scope))
+		.ifPresentOrElse(
+		v -> v.setEndDate(todayEndDate),
+		() -> findTomorrowVariable(name, value, todayEndDate, v -> Objects.equals(v.getScope(), scope))
+			.ifPresentOrElse(
+			v -> v.setStartDate(todayStartDate),
+			() -> salaryDraft.addVariable(
 				name, 
 				value, 
 				dates.start, 
 				dates.end,
 				scope, 
 				expression,
-				defined);
+				defined)
+			)
+		);
 	}
 	
+	private Optional<Variable> findTomorrowVariable(String name, Object value, Date startDate){
+	    return findTomorrowVariable(name, value, startDate, v -> true);
+	}
+
+	private Optional<Variable> findTomorrowVariable(String name, Object value, Date endDate , Predicate<Variable> filter){
+	    Date tomorrow = AonDateUtils.addDays(endDate, 1);
+	    return
+	    salaryDraft.getContext().stream()
+	    .filter( v -> AonStringUtils.equals(v.getName(), name))
+	    .filter( v -> Objects.equals(v.getValue(), value))
+	    .filter( filter )
+	    .filter( v -> AonDateUtils.isSameDay(v.getStartDate(), tomorrow) )
+	    .findFirst()
+	    ;
+	}
+	
+	private Optional<Variable> findYesterdayVariable(String name, Object value, Date startDate){
+	    return findYesterdayVariable(name, value, startDate, v -> true);
+	}
+
+	private Optional<Variable> findYesterdayVariable(String name, Object value, Date startDate, Predicate<Variable> filter){
+	    Date yesterday = AonDateUtils.addDays(startDate, -1);
+	    return
+	    salaryDraft.getContext().stream()
+	    .filter( v -> AonStringUtils.equals(v.getName(), name))
+	    .filter( v -> Objects.equals(v.getValue(), value))
+	    .filter( filter )
+	    .filter( v -> AonDateUtils.isSameDay(v.getEndDate(), yesterday) )
+	    .findFirst()
+	    ;
+	}
 
 	private void replaceNETO(Double totalPayment) {
 		salaryDraft.getPayments().stream()
