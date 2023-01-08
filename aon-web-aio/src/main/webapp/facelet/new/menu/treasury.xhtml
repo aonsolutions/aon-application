@@ -5,19 +5,19 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"	
-	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+	xmlns:a4j="http://richfaces.org/a4j">
 
-	<ui:define name="content">
+	<aon:div id="treasuryMenuPopup" style="display:none" 
+	onmouseout="javascript:hideMenuPopup(this.id)" 
+	onmouseover="javascript:showMenuPopup(this.id)" >
 
-		<aon:form id="treasuryMenu">
+
+		<aon:form id="treasuryMenuForm">
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:if test="#{aonRole.financeOperator}">
 					<h:panelGrid styleClass="aon-width-all" columns="3" cellspacing="15"
-						columnClasses="aon-vertical-align-top aon-width-200
-					             , aon-vertical-align-top aon-width-200
-					             , aon-vertical-align-top aon-width-200">
+						columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 	
 						<aon:panelGroup>
 	
@@ -84,7 +84,7 @@
 								</aon:div>
 							</aon:panelGrid>
 							
-							<aon:if test="#{aonRole.financeOperator and bankStatement.availableRegistryBanks > 0}">
+							<aon:if test="#{aonRole.financeOperator}">
 								<aon:panelGrid id="group_treasury_bank_statement_treasury"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-icon-statement aon-direct-access-panel">
@@ -229,24 +229,22 @@
 									<aon:outputText value="#{bundle.finance_forecast_menu}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
-									<aon:if test="#{cashFlowForecast.availableRegistryBanks > 0}">
-										
-										<!-- Gestión de Previsiones -->
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="cashFlowForecast-treasury"
-												action="cashFlowForecast_search-treasury"
-												actionListener="#{cashFlowForecast.onEditSearch}"
-												value="#{bundle.finance_cashflow_forecast_module}"/>
-										</aon:div>
-										
-										<!-- Listado de Previsión -->
-										<aon:div styleClass="aon-direct-access-list-element">
-											<aon:commandLink id="cashFlowForecastReport-treasury"
-												action="cashFlowForecastReport_search-treasury"
-												actionListener="#{cashFlowForecastReport.onEditSearch}"
-												value="#{bundle.finance_cashflow_forecast_report_module}"/>
-										</aon:div>
-									</aon:if>
+									<!-- Gestión de Previsiones -->
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="cashFlowForecast-treasury"
+											action="cashFlowForecast_search-treasury"
+											actionListener="#{cashFlowForecast.onEditSearch}"
+											value="#{bundle.finance_cashflow_forecast_module}"/>
+									</aon:div>
+									
+									<!-- Listado de Previsión -->
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="cashFlowForecastReport-treasury"
+											action="cashFlowForecastReport_search-treasury"
+											actionListener="#{cashFlowForecastReport.onEditSearch}"
+											value="#{bundle.finance_cashflow_forecast_report_module}"/>
+									</aon:div>
+								
 									<!-- Proyección de Cuotas -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_fee_print_anual-treasury"
@@ -328,6 +326,6 @@
 
 		</aon:form>
 
-	</ui:define>
+	</aon:div>
 
 </ui:composition>
