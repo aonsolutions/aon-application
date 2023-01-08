@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<aon:div styleClass="">	
+		
+		<aon:if test="#{domainSwitcher.domainManagementAvailable and (aonRole.sysAdmin or !domainSwitcher.disableDomainManagement)}">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+				<aon:if test="#{aonRole.admin}">
+					<aon:commandLink id="new_menu_enterprise"
+						value="#{bundle.aon_module_enterprise}"
+						action="menu_enterprise" immediate="true"
+						styleClass="aon-button" />
+				</aon:if>
+			</aon:div>
+		</aon:if>
+
+		<aon:if test="#{aonRole.accountingOperator}">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+				<aon:commandLink id="new_menu_accounting"
+					value="#{bundle.aon_module_accounting}"
+					action="menu_accounting" immediate="true"
+					styleClass="aon-button-account" />
+			</aon:div>
+		</aon:if>
+
+		<aon:if test="#{aonRole.fiscal}">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+				<aon:commandLink id="new_menu_fiscal"
+				value="#{bundle.aon_module_fiscal}"
+				action="menu_fiscal" immediate="true"
+				styleClass="aon-button-fiscal" />
+			</aon:div>
+		</aon:if>
+
+		<aon:if test="#{aonRole.payroll}">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+				<aon:commandLink id="new_menu_payroll"
+				value="#{bundle.aon_module_payroll}"
+				action="menu_payroll" immediate="true"
+				styleClass="aon-button-payroll"
+				/>
+			</aon:div>
+		</aon:if>
+
+		<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+			<aon:commandLink id="new_menu_document" 
+			value="#{bundle.aon_module_document}"
+			action="portal_documental"
+			immediate="true"
+			styleClass="aon-button-document" />
+		</aon:div>
+
+		<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+				<aon:commandLink id="new_menu_configuration"
+					value="#{bundle.aon_module_configuration}"
+					action="menu_configuration" immediate="true"
+					styleClass="aon-button-tools" />
+			</aon:div>
+		</aon:if>
+
+		<aon:if test="#{desktop.showGraphicsPortlet}">
+			<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu">
+				<aon:commandLink 
+					id="new_note-search" 
+					action="note_list"
+					value="#{bundle.aon_notes}"
+					styleClass="aon-button-notes"
+					actionListener="#{note.onSearch}" 
+					>
+				</aon:commandLink>
+			</aon:div>
+		</aon:if>
+
+	</aon:div>		
+					
+</ui:composition>

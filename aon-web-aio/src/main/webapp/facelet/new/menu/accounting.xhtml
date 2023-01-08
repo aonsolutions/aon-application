@@ -329,7 +329,7 @@
 						</aon:panelGrid>
 
 						<aon:if
-							test="#{aonRole.financeOperator}">
+							test="#{aonRole.financeOperator and bankStatement.availableRegistryBanks > 0}">
 							<aon:panelGrid id="group_treasury_bank_statement_acc"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-statement aon-direct-access-panel">

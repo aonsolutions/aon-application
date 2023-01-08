@@ -123,7 +123,6 @@ export const TREASURY = {
   icon: AON_ICONS.AON_TREASURY,
   color: "#002469",
   price: " ", // '90€/mes',
-  disabled: false
 };
 
 
@@ -135,7 +134,6 @@ export const MARKETING = {
   icon: AON_ICONS.AON_MARKETING,
   color: "#002469",
   price: " ", // '90€/mes',
-  disabled: false
 };
 
 export const COMMERCIAL = {
@@ -146,7 +144,6 @@ export const COMMERCIAL = {
   icon: AON_ICONS.AON_COMMERCIAL,
   color: "#002469",
   price: " ", // '90€/mes',
-  disabled: false
 };
 
 export const GROUPWARE = {
@@ -223,7 +220,7 @@ export const WAREHOUSE = {
   icon: AON_ICONS.AON_WAREHOUSE,
   color: "#002469",
   price: " ", // '-',
-  disabled: false,
+  disabled: true,
   options: {
     menu: false,
     add: false,
@@ -522,17 +519,6 @@ export const Apps = {
   // GROUPWARE
 };
 
-export const ConsultancyBookingApps = {
-  ACCOUNTING,
-  FISCAL,
-  PAYROLL,
-  COMUNICA,
-  DOCUMENTAL,
-  TIMECONTROL,
-  INVOICE,
-  MESSENGER
-};
-
 export const BookingApps = {
   ACCOUNTING,
   FISCAL,
@@ -542,11 +528,8 @@ export const BookingApps = {
   TIMECONTROL,
   INVOICE,
   MESSENGER,
-  WAREHOUSE,
-  TREASURY,
-  MARKETING,
-  COMMERCIAL,
-  GROUPWARE
+  NOTES,
+  WAREHOUSE
 };
 
 export const AuxApps = { TOOLS };
@@ -1257,9 +1240,9 @@ export const BASIC_MANAGEMENT = {
   app: "basic_management",
   icon: AON_ICONS.AON_MANAGEMENT,
   title: "Básico",
-  subtitle: " Facturas | Comercial",
+  subtitle: " Facturas",
   color: "#002469",
-  apps: [Apps.INVOICE, COMMERCIAL],
+  apps: [Apps.INVOICE],
   price: " ",
 };
 
@@ -1267,9 +1250,9 @@ export const STANDAR_MANAGEMENT = {
   app: "standar_management",
   icon: AON_ICONS.AON_MANAGEMENT,
   title: "Estándar",
-  subtitle: " Gestión Básica | Marketing | Tesoreria ",
+  subtitle: " Gestión Básica | Comercial | Tesoreria ",
   color: "#002469",
-  apps: [BASIC_MANAGEMENT, TREASURY, MARKETING],
+  apps: [Apps.INVOICE, BASIC_MANAGEMENT],
   price: " ",
 };
 
@@ -1277,9 +1260,9 @@ export const PROFESSIONAL_MANAGEMENT = {
   app: "professional_management",
   icon: AON_ICONS.AON_MANAGEMENT,
   title: "Profesional",
-  subtitle: " Gestión Estándar | Expedientes | Almacén ",
+  subtitle: " Gestión Estándar | Marketing | Expedientes | Almacén ",
   color: "#002469",
-  apps: [BASIC_MANAGEMENT, STANDAR_MANAGEMENT, Apps.WAREHOUSE, GROUPWARE],
+  apps: [Apps.INVOICE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, Apps.WAREHOUSE],
   price: " ",
 };
 
