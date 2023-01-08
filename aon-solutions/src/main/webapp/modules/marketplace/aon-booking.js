@@ -1,5 +1,5 @@
 import {AonElement} from '../../components/AonElement.js';
-import {BookingApps, ClassicApps, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
+import {ConsultancyBookingApps, BookingApps, ClassicApps, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
 	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
 import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
@@ -85,9 +85,14 @@ export class AonBooking extends AonElement {
 		}
 
 		if(!this.dur.getDomain().isKitDigital()) {
-			this.buildTitle(content, MSG.APPLICATIONS);
-			this.buildApps(content, BookingApps, dur);
-	
+			
+			if(dur.getDomain().isConsultancy()) {
+				this.buildTitle(content, MSG.APPLICATIONS);
+				this.buildApps(content, ConsultancyBookingApps, dur);
+			} else {
+				this.buildTitle(content, MSG.APPLICATIONS);
+				this.buildApps(content, BookingApps, dur);
+			}
 			this.buildTitle(content, MSG.SERVICES);
 			this.buildApps(content, Services, dur);
 	
@@ -301,7 +306,8 @@ export class AonBooking extends AonElement {
 
 		if(app.apps && !disabled) {
 			for (let i = 0; i < app.apps.length ; i++) {
-				this.activate(app.apps[i], contract, contract, 'Incluido en ' + app.title);
+				if(!this.hasParentApp(this.dur, app.apps[i].app.toUpperCase()))
+					this.activate(app.apps[i], contract, contract, 'Incluido en ' + app.title);
 			}
 		}
 	}
@@ -400,13 +406,23 @@ export class AonBooking extends AonElement {
 			return dur.hasStandarManagement();
 		else if(App.PROFESSIONAL_MANAGEMENT === app)
 			return dur.hasProfessionalManagement();
+		else if(App.WAREHOUSE === app)
+			return dur.hasWarehouse();
+		else if(App.MARKETING === app)
+			return dur.hasMarketing();
+		else if(App.TREASURY === app)
+			return dur.hasTreasury();
+		else if(App.GROUPWARE === app)
+			return dur.hasGroupware();
+		else if(App.COMMERCIAL === app)
+			return dur.hasCommercial();
 		else return dur.hasApp(app);
 	}
 
 	hasParentApp(dur, app) {
-		if(App.ACCOUNTING === app)
+		if(App.ACCOUNTING === app){
 			return dur.hasParentAccounting();
-		else if(App.FISCAL === app)
+		} else if(App.FISCAL === app)
 			return dur.hasParentFiscal();
 		else if(App.PAYROLL === app)
 			return dur.hasParentPayroll();
@@ -430,7 +446,23 @@ export class AonBooking extends AonElement {
 			return dur.hasParentPackFiscalAccounting();
 		else if(App.AIO === app)
 			return dur.hasParentAon();
-		else return dur.hasParentApp(app);
+		else if(App.BASIC_MANAGEMENT === app) {
+			return dur.hasParentBasicManagement();
+		} else if(App.STANDAR_MANAGEMENT === app) {
+			return dur.hasParentStandarManagement();
+		} else if(App.PROFESSIONAL_MANAGEMENT === app) {
+			return dur.hasParentProfessionalManagement();
+		} else if(App.WAREHOUSE === app) {
+			return dur.hasParentWarehouse();
+		} else if(App.TREASURY === app) {
+			return dur.hasParentTreasury();
+		} else if(App.GROUPWARE === app) {
+			return dur.hasParentGroupware();
+		} else if(App.MARKETING === app) {
+			return dur.hasParentMarketing();
+		} else if(App.COMMERCIAL === app) {
+			return dur.hasParentCommercial();
+		} else return dur.hasParentApp(app);
 	}
 
 	isDisabled(dur, app){
@@ -447,7 +479,7 @@ export class AonBooking extends AonElement {
 		else if(App.TIMECONTROL === app)
 			return dur.hasPackSuite() || dur.hasPackPortal() || dur.hasComunica();
 		else if(App.INVOICE === app)
-			return dur.hasPackSuite() || dur.hasPackPortal();
+			return dur.hasPackSuite() || dur.hasPackPortal() || dur.hasBasicManagement();
 		else if(App.MESSENGER === app)
 			return dur.hasPackSuite() || dur.hasPackPortal();
 		else if(App.PACK_PORTAL === app)
@@ -460,8 +492,17 @@ export class AonBooking extends AonElement {
 			return false;
 		else if(App.BANK === app) {
 			return false;
-		}
-		else return false;
+		} else if(App.TREASURY === app) {
+			return dur.hasStandarManagement();
+		}  else if(App.COMMERCIAL === app) {
+			return dur.hasStandarManagement();
+		} else if(App.WAREHOUSE === app) {
+			return dur.hasProfessionalManagement();
+		} else if(App.GROUPWARE === app) {
+			return dur.hasProfessionalManagement();
+		} else if(App.MARKETING === app) {
+			return dur.hasProfessionalManagement();
+		} else return false;
 	}
 
 	getPack(dur, app){
@@ -479,6 +520,15 @@ export class AonBooking extends AonElement {
 		} else if(  dur.hasPackPayroll() && (App.PAYROLL === app || App.COMUNICA === app
 				|| App.TIMECONTROL === app)) {
 			return Packs.PORTAL;
+		} else if(dur.hasBasicManagement() && App.INVOICE === app) {
+			return BASIC_MANAGEMENT;
+		} else if(dur.hasStandarManagement() && (App.COMMERCIAL === app 
+				|| App.TREASURY === app) || App.BASIC_MANAGEMENT === app) {
+			return STANDAR_MANAGEMENT;
+		} else if(dur.hasProfessionalManagement() && (App.WAREHOUSE === app 
+				|| App.MARKETING === app || App.GROUPWARE === app 
+				|| App.BASIC_MANAGEMENT || App.STANDAR_MANAGEMENT)) {
+			return PROFESSIONAL_MANAGEMENT;
 		}
 		return undefined;
 	}
