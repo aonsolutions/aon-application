@@ -147,7 +147,7 @@ public class VisibilityManager extends BasicVisibilityManager {
 		Integer domainId = ds.getDomainId();
 		Integer parentDomainId = AdminUtil.getParentDomain(domainId);
 		DomainType parentDomainType = (parentDomainId != null) ? DomainType.values()[AdminUtil.getDomainType(parentDomainId)] : null;
-		DomainUserRoles dur = SECURITY.getDomainUserRoles(ds.getCurrentDomainNameURL(), domainId, user.getLogin(), user.getId());
+//		DomainUserRoles dur = SECURITY.getDomainUserRoles(ds.getCurrentDomainNameURL(), domainId, user.getLogin(), user.getId());
 			
 		Set<Module> parentDomainModules = Collections.emptySet();
 		if ( parentDomainId != null ) {
@@ -220,15 +220,6 @@ public class VisibilityManager extends BasicVisibilityManager {
 		if (parentDomainId == null || enabledModules.contains(Module.MANAGEMENT) || enabledModules.contains(Module.AON_ONE) || enabledModules.contains(Module.AON_FINANCE)) {
 			enabledModules.remove(Module.FINANCE_PORTAL);
 		}
-		
-		if(dur.isMarketing()) {
-			enabledModules.add(Module.MARKETING);
-		}
-		
-		if(dur.isTreasury()) {
-			enabledModules.add(Module.TREASURY);
-		}
-		
 		if (ds.isEnabledGoToParent() && ds.isConsultancyDomain() && DomainType.OFFICE != ds.getType()) {
 			enabledModules.remove(Module.CRM);
 			enabledModules.remove(Module.WAREHOUSE);
@@ -247,7 +238,6 @@ public class VisibilityManager extends BasicVisibilityManager {
 		if( enabledModules.contains(Module.AON_ONE) || enabledModules.contains(Module.AON_FINANCE)) {
 			enabledModules.add(Module.MANAGEMENT);
 		}
-		
 		return enabledModules;
 	}
 

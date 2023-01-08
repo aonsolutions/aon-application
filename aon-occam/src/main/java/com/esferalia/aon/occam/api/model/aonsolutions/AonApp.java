@@ -99,6 +99,7 @@ public enum AonApp implements Serializable{
 	
 	private static LinkedList<Module> getBasicManagementModules() {
 		LinkedList<Module> list = new LinkedList<>();
+		list.add(Module.AON_FINANCE);
 		list.add(Module.MANAGEMENT);
 		list.add(Module.CRM);
 		return list;

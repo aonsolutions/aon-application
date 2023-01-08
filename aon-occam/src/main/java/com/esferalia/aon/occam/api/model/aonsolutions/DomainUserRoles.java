@@ -449,22 +449,4 @@ public class DomainUserRoles implements Serializable {
 	public boolean hasCustomView() {
 		return hasApp(AonApp.CUSTOM_VIEW);
 	}
-	
-	public boolean hasTreasury() {
-	    return hasOldModule(Module.TREASURY) || this.hasApp(AonApp.TREASURY)
-	        || hasStandarManagement();
-	}
-
-	public boolean isTreasury() {
-		return hasTreasury(); // && (this.isAdmin() || this.hasRole(Role.TREASURY));
-	}
-	
-	public boolean hasMarketing() {
-	    return hasOldModule(Module.MARKETING) || this.hasApp(AonApp.MARKETING)
-	        || hasStandarManagement();
-	}
-
-	public boolean isMarketing() {
-		return hasMarketing(); // && (this.isAdmin() || this.hasRole(Role.TREASURY));
-	}
 }
