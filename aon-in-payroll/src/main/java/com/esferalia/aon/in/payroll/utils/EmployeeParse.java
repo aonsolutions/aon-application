@@ -144,6 +144,8 @@ public class EmployeeParse {
 	
 	public static Employee IdcToEmployeeOccam(byte [] file) throws IOException, UnknownPDFException {
 		Employee employee = new Employee();
+		
+		System.out.println("-------------------IdcToEmployeeOccam-------------------");
 
 		IdcParser.parse(file, new IdcParserListener() {
 	

@@ -524,6 +524,8 @@ public class SistemaRED2AON {
 	public static void addPECs(Collection<com.esferalia.aon.in.payroll.tgss.idc.PEC> pecs, String userLogin, String domainName, Integer domainId, Date start, Date end, 
 			String ccc, String  naf) {
 		
+		if(pecs.isEmpty()) return;
+		
 		Bonus bonuses [] =
 		pecs.stream()
 		.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))

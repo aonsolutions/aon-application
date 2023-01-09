@@ -16,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -343,27 +342,24 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
             Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
             Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
             
-            Collection<Idc> idcCollect = Collections.emptyList();
-            
             if(startDate==null) {
                 startDate = new Date();
                 
-               idcCollect = SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+                Optional<Idc> idcLast = SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, naf)
+                .stream()
+                .filter(d-> d.getDescripcion().equals("ALTA"))
+                .sorted((o1, o2) -> o2.getFecha().compareTo(o1.getFecha()))
+                .findFirst();
 
-                Optional<Idc> idcLast = idcCollect.stream()
-                    .filter(d-> d.getDescripcion().equals("ALTA"))
-                    .sorted((o1, o2) -> o2.getFecha().compareTo(o1.getFecha()))
-                    .findFirst();
-             
                 if(idcLast.isPresent()) {
                     startDate = idcLast.get().getFecha();
                 }
             }
 
-            byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+            byte[] idc = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
                     naf, regime, ccc, startDate);
-          
-            Employee aonEmployee = EmployeeParse.IdcToEmployeeOccam(fileByte);
+            
+            Employee aonEmployee = EmployeeParse.IdcToEmployeeOccam(idc);
 
             Integer registration = aonEmployee.hashCode();
             aonEmployee.setRegistration(registration);
@@ -376,15 +372,12 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
             
             Employee emp = PAYROLL.addEmployee(domainName, domainId, userLogin, aonEmployee);
             
-            // ADD BONUS
-            Collection<Idc> collect = idcCollect;
+            // ADD PECS AND DATA
             execute(()->{
-                Date endDate = aonEmployee.getEndDate().orElse(null);
-      
-                if(collect.isEmpty()) {
-                    SistemaRED2AON.addBonus(userLogin, domainName, parentDomainId, userId, regime, ccc, naf, endDate, collect);
-                } else {
-                    SistemaRED2AON.addBonus(userLogin, domainName, parentDomainId, userId, regime, ccc, naf, endDate);
+                try {
+                    SistemaRED2AON.syncWithIdc(idc, userLogin, domainName, parentDomainId, emp.getStartDate(), emp.getCcc(), emp.getNaf());
+                } catch (IOException | UnknownPDFException e) {
+                    e.printStackTrace();
                 }
             });
             
