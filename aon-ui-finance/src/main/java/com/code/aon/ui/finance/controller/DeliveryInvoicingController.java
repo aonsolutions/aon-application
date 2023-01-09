@@ -195,7 +195,7 @@ public class DeliveryInvoicingController implements IFinanceConstants, Serializa
 	public TbaiConfiguration getTbaiConfiguration() {
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
-		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		String login = ""; // UserUtils.getInstance().getLoggedUser().getLogin();
 		return AON.getTbaiConfiguration(domainName, domainId, login);
 	}
 
