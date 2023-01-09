@@ -519,9 +519,13 @@ public class JooqAgreementTab {
 					.where(AGREEMENT_PAYMENT.ID.eq(payment.getId()))
 					.execute();
 			else if(null == payment.getId() || payment.getId() < 0) {
+				if(null == payment.getConceptId() && !AonStringUtils.isBlank(payment.getName()))
+					payment.setConceptId(createPaymentConcept(dslContext, payment));
+				
 				Integer newPaymentId = dslContext.insertInto(AGREEMENT_PAYMENT)
 					.set(AGREEMENT_PAYMENT.DOMAIN, agreementInfo.getDomain())
 					.set(AGREEMENT_PAYMENT.AGREEMENT, agreementInfo.getId())
+					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, payment.getConceptId())
 					.set(AGREEMENT_PAYMENT.TYPE, (byte) payment.getType().ordinal())
 					.set(AGREEMENT_PAYMENT.DESCRIPTION, payment.getDescription())
 					.set(AGREEMENT_PAYMENT.EXPRESSION, payment.getExpression())
@@ -537,12 +541,16 @@ public class JooqAgreementTab {
 				if(payment.hasExtra())
 					agreementInfo.updateExtraPaymentId(payment.getId(), newPaymentId);
 			} else {
-				dslContext.update(PAYMENT_CONCEPT)
-					.set(PAYMENT_CONCEPT.CODE, payment.getName())
-					.where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId()))
-					.execute();
+				if(null == payment.getConceptId() && !AonStringUtils.isBlank(payment.getName()))
+					payment.setConceptId(createPaymentConcept(dslContext, payment));
+				else
+					dslContext.update(PAYMENT_CONCEPT)
+						.set(PAYMENT_CONCEPT.CODE, payment.getName())
+						.where(PAYMENT_CONCEPT.ID.eq(payment.getConceptId()))
+						.execute();
 			
 				dslContext.update(AGREEMENT_PAYMENT)
+					.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, payment.getConceptId())
 					.set(AGREEMENT_PAYMENT.TYPE, (byte) payment.getType().ordinal())
 					.set(AGREEMENT_PAYMENT.DESCRIPTION, payment.getDescription())
 					.set(AGREEMENT_PAYMENT.EXPRESSION, payment.getExpression())
@@ -558,6 +566,22 @@ public class JooqAgreementTab {
 		});
 	}
 	
+	private static Integer createPaymentConcept(DSLContext dslContext, Payment payment) {
+		PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
+				.set(PAYMENT_CONCEPT.DOMAIN, payment.getDomain())
+				.set(PAYMENT_CONCEPT.CODE, payment.getName())
+				.set(PAYMENT_CONCEPT.DESCRIPTION, payment.getDescription())
+				.set(PAYMENT_CONCEPT.TYPE, (byte) payment.getType().ordinal())
+				.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
+				.set(PAYMENT_CONCEPT.EXPRESSION, payment.getExpression())
+				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, payment.getIrpfExpression())
+				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, payment.getQuoteExpression())
+				.returning(PAYMENT_CONCEPT.ID)
+				.fetchOne();
+		
+		 return paymentConceptRecord.getId();
+	}
+
 	private static void setAgreementExtras(DSLContext dslContext, AgreementInfo agreementInfo) {
 		agreementInfo.getExtras().forEach(extra -> {
 			if(extra.isDeleted())

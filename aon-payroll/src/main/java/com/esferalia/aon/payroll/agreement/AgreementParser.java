@@ -808,19 +808,30 @@ public class AgreementParser {
 						quoteExpression = "EXCESO(0.19 * KMS)";
 					}
 					
-					PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
-							.set(PAYMENT_CONCEPT.DOMAIN, domainId)
-							.set(PAYMENT_CONCEPT.CODE, agreementPayment.getConceptCode())
-							.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.getNormalizeName())
-							.set(PAYMENT_CONCEPT.TYPE, agreementPayment.getType())
-							.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
-							.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.getExpression())
-							.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, irpfExpression)
-							.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, quoteExpression)
-							.returning(PAYMENT_CONCEPT.ID)
-							.fetchOne();
+					Result<PaymentConceptRecord> paymentConcepts = dslContext.selectFrom(PAYMENT_CONCEPT)
+						.where(PAYMENT_CONCEPT.DOMAIN.eq(0))
+						.and(PAYMENT_CONCEPT.CODE.eq(agreementPayment.getConceptCode()))
+						.and(PAYMENT_CONCEPT.DESCRIPTION.contains(agreementPayment.getPeriodicityType()))
+						.fetch();
 					
-					Integer paymentConceptId = paymentConceptRecord.getId();
+					Integer paymentConceptId = null;
+					
+					if(paymentConcepts.isEmpty()) {
+						PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
+								.set(PAYMENT_CONCEPT.DOMAIN, domainId)
+								.set(PAYMENT_CONCEPT.CODE, agreementPayment.getConceptCode())
+								.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.getNormalizeName())
+								.set(PAYMENT_CONCEPT.TYPE, agreementPayment.getType())
+								.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
+								.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.getExpression())
+								.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, irpfExpression)
+								.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, quoteExpression)
+								.returning(PAYMENT_CONCEPT.ID)
+								.fetchOne();
+						
+						paymentConceptId = paymentConceptRecord.getId();
+					} else
+						paymentConceptId = paymentConcepts.get(0).getId();
 					
 					AgreementPaymentRecord agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
 							.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
@@ -1006,11 +1017,9 @@ public class AgreementParser {
 	private static Integer insertOrGetPaymentConceptExtraPay(DSLContext dslContext) {
 		
 		Result<Record> paymentConceptRecords = dslContext.select().from(PAYMENT_CONCEPT)
-			.where(PAYMENT_CONCEPT.DOMAIN.eq(domainId))
+			.where(PAYMENT_CONCEPT.DOMAIN.eq(domainId).or(PAYMENT_CONCEPT.DOMAIN.eq(0)))
 			.and(PAYMENT_CONCEPT.CODE.eq("PAGA_EXTRA"))
 			.and(PAYMENT_CONCEPT.DESCRIPTION.eq("PAGA EXTRAORDINARIA"))
-			.and(PAYMENT_CONCEPT.EXPRESSION.eq("SALARIO_BASE"))
-			.and(PAYMENT_CONCEPT.TYPE.eq((byte)4))
 			.fetch();
 		
 		if(paymentConceptRecords.isNotEmpty())
@@ -1022,7 +1031,7 @@ public class AgreementParser {
 				.set(PAYMENT_CONCEPT.DESCRIPTION, "PAGA EXTRAORDINARIA")
 				.set(PAYMENT_CONCEPT.TYPE, (byte)4)
 				.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
-				.set(PAYMENT_CONCEPT.EXPRESSION, "SALARIO_BASE")
+				.set(PAYMENT_CONCEPT.EXPRESSION, "INPUT(\"/*user*/MENSUALIDAD/**/\",PAGA_EXTRA_HELP)")
 				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
 				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P")
 				.returning(PAYMENT_CONCEPT.ID)

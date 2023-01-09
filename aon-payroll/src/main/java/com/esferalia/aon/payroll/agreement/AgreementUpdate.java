@@ -341,7 +341,37 @@ public class AgreementUpdate {
 	    	            endDate.set(Calendar.MONTH, 11);
 	    	            endDate.set(Calendar.DAY_OF_MONTH, 31);
 	    	            
-	    	            agreement.setEndDateToExistingLevelData(endDate.getTime());
+	    	            // Check if has explicit period
+	    	            if(null != elementTSI.getElementsByTagName("PERIODO")) {
+	    	            	NodeList listPeriod =  elementTSI.getElementsByTagName("PERIODO");
+	    	            	
+	    	            	for(int n=0; n<listPeriod.getLength(); n++) {
+	    	            		Node nodePeriod = listPeriod.item(n);
+	    	            		
+	    	            		 if (nodePeriod.getNodeType() == Node.ELEMENT_NODE) {
+	    	            			 Element elementPeriod = (Element) nodePeriod;
+	    	            			 
+	    	            			 String tillPeriod = elementPeriod.getElementsByTagName("DESDE_DD_MM").item(0).getTextContent();
+    		    	            	 String toPeriod = elementPeriod.getElementsByTagName("HASTA_DD_MM").item(0).getTextContent();
+    		    	            	
+    		    	            	 try {
+    		    	            		 
+    		    	            		endDate.set(Calendar.YEAR, year);
+    		    	            	
+    			    	             	startDate.set(Calendar.MONTH, Integer.parseInt(tillPeriod.split("-")[1]) - 1);
+    			 	    	            startDate.set(Calendar.DAY_OF_MONTH, Integer.parseInt(tillPeriod.split("-")[0]));
+    			 	    	             
+    			 	    	            endDate.set(Calendar.MONTH,  Integer.parseInt(toPeriod.split("-")[1]) - 1);
+    			 	    	            endDate.set(Calendar.DAY_OF_MONTH, Integer.parseInt(toPeriod.split("-")[0]));
+    		 	    	            
+    		    	            	 } catch (Exception e) {
+    									System.err.println("Algo ha ido mal con los periodos");
+    								 }
+	    	            		 }
+	    	            	}
+	    	            	 
+	    	            } else
+	    	            	agreement.setEndDateToExistingLevelData(endDate.getTime());
 	    	            
 	    	            NodeList listCP = elementTSI.getElementsByTagName("CATEGORIAS_PROFESIONALES");
 	    	            
@@ -619,19 +649,30 @@ public class AgreementUpdate {
 						quoteExpression = "EXCESO(0.19 * KMS)";
 					}
 					
-					PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
-							.set(PAYMENT_CONCEPT.DOMAIN, domainId)
-							.set(PAYMENT_CONCEPT.CODE, agreementPayment.getConceptCode())
-							.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.getNormalizeName())
-							.set(PAYMENT_CONCEPT.TYPE, agreementPayment.getType())
-							.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
-							.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.getExpression())
-							.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, irpfExpression)
-							.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, quoteExpression)
-							.returning(PAYMENT_CONCEPT.ID)
-							.fetchOne();
+					Result<PaymentConceptRecord> paymentConcepts = dslContext.selectFrom(PAYMENT_CONCEPT)
+							.where(PAYMENT_CONCEPT.DOMAIN.eq(0))
+							.and(PAYMENT_CONCEPT.CODE.eq(agreementPayment.getConceptCode()))
+							.and(PAYMENT_CONCEPT.DESCRIPTION.contains(agreementPayment.getPeriodicityType()))
+							.fetch();
+						
+					Integer paymentConceptId = null;
 					
-					Integer paymentConceptId = paymentConceptRecord.getId();
+					if(paymentConcepts.isEmpty()) {
+						PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
+								.set(PAYMENT_CONCEPT.DOMAIN, domainId)
+								.set(PAYMENT_CONCEPT.CODE, agreementPayment.getConceptCode())
+								.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.getNormalizeName())
+								.set(PAYMENT_CONCEPT.TYPE, agreementPayment.getType())
+								.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
+								.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.getExpression())
+								.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, irpfExpression)
+								.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, quoteExpression)
+								.returning(PAYMENT_CONCEPT.ID)
+								.fetchOne();
+						
+						paymentConceptId = paymentConceptRecord.getId();
+					} else
+						paymentConceptId = paymentConcepts.get(0).getId();
 					
 					AgreementPaymentRecord agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
 							.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
@@ -830,13 +871,11 @@ public class AgreementUpdate {
 	private static Integer insertOrGetPaymentConceptExtraPay(DSLContext dslContext) {
 		
 		Result<Record> paymentConceptRecords = dslContext.select().from(PAYMENT_CONCEPT)
-			.where(PAYMENT_CONCEPT.DOMAIN.eq(domainId))
-			.and(PAYMENT_CONCEPT.CODE.eq("PAGA_EXTRA"))
-			.and(PAYMENT_CONCEPT.DESCRIPTION.eq("PAGA EXTRAORDINARIA"))
-			.and(PAYMENT_CONCEPT.EXPRESSION.eq("SALARIO_BASE"))
-			.and(PAYMENT_CONCEPT.TYPE.eq((byte)4))
-			.fetch();
-		
+				.where(PAYMENT_CONCEPT.DOMAIN.eq(domainId).or(PAYMENT_CONCEPT.DOMAIN.eq(0)))
+				.and(PAYMENT_CONCEPT.CODE.eq("PAGA_EXTRA"))
+				.and(PAYMENT_CONCEPT.DESCRIPTION.eq("PAGA EXTRAORDINARIA"))
+				.fetch();
+			
 		if(paymentConceptRecords.isNotEmpty())
 			return paymentConceptRecords.get(0).get(PAYMENT_CONCEPT.ID);
 			

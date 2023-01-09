@@ -504,7 +504,9 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
 					agreement.deletePeriod(selectedDate);
 					setAgreementSalaryTable(agreement);
-					setHasChange(true);
+					showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
+					setHasChange(false);
+					onSaved();
 				}
 			});
 		});
