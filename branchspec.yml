@@ -46,8 +46,8 @@ phases:
       #  {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
       #  ]' $REPOSITORY_URI $TAG > snapshotsolutionsimgdef.json
       #- cat snapshotsolutionsimgdef.json
- artifacts:
-   files:
-     - testimgdef.json
+  artifacts:
+    files:
+      - testimgdef.json
     # - snapshotsolutionsimgdef.json
     # - location
