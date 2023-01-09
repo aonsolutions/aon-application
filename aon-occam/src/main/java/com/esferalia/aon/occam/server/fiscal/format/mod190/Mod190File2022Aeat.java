@@ -61,7 +61,7 @@ enum Mod190File2022Aeat {
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.text(detail.getSpouseDocument(), 9))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getDisability(), 1,0))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(detail.getContract(), 1,0))
-	   ,(wr, mod190,detail) -> wr.append("0")
+	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned( detail.getTitConvivencia() ,1,0))
 	   ,(wr, mod190,detail) -> wr.append(detail.isGeographicMobility()?"1":"0")
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getApplicableReduction()),13,2))
 	   ,(wr, mod190,detail) -> wr.append(AonFiscalFileUtils.unsigned(AonMathUtils.round(detail.getDeducibleExpense()),13,2))
@@ -111,7 +111,7 @@ enum Mod190File2022Aeat {
 		if (detail != null 
 			&& AonStringUtils.equals("L", detail.getKey()) 
 			&& AonStringUtils.equals("29", detail.getSubKey())) 
-			return 2;
+			return detail.getCompInfancia();
 		return 0;
 	}
 
