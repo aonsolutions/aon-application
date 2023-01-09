@@ -45,7 +45,7 @@ import solutions.aon.seg.social.toolkit.Toolkit;
 
 class SistemaREDMov {
 	
-	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/Documentos/test.html");
+	//	Toolkit.buildFile(htmlPage.asXml().getBytes(), System.getProperty("user.home")+"/test.html");
 	private static final String MESSAGE_ERROR = "Error: No se acepta la comunicaci\u00f3n";
 	
 	private SistemaREDMov() {

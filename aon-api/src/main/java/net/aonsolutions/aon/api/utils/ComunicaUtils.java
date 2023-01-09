@@ -139,19 +139,21 @@ public class ComunicaUtils {
 	public static void validateAlta(JSONObject params) throws Exception {
 		String error = null;
 		if(params.isNull("ctaCti")) {
-			error = "Cuenta de cotización requerida";
+			error = "Cuenta de cotizaci\u00f3n requerida";
+		} else if(params.isNull("regime")) {
+			error = "Regimen requerido";
 		} else if(params.isNull("nss")) {
-			error = "Número de afiliación requerido";
+			error = "N\u00famero de afiliaci\u00f3n requerido";
 		} else if(params.isNull("ipf")) {
 	    	error = "DNI/NIE requerido";	
 	    } else if(params.isNull("fecha")) {
 			error = "Fecha requerida";
 		} else if(params.isNull("gc")) {			
-			error = "Grupo de cotización requerido";
+			error = "Grupo de cotizaci\u00f3n requerido";
 		} else if(params.isNull("contract")) {
 			error = "Tipo de contrato requerido";
 		} 
-		
+
 		if(error!=null) {
 			throw new Exception(error);
 		}

@@ -149,7 +149,7 @@ export class AonAltaDirecta extends AonElement {
         workplace.addEventListener(EVENT.CHANGE, (ev) => this.listCtaCti(ev));
 
         let ctaCti = this.getElement('ctaCti');
-        ctaCti.addEventListener(EVENT.CHANGE, (ev) => this.onChangeCtaCti(ev) );
+        ctaCti.addEventListener(EVENT.CHANGE, () => this.onChangeCtaCti(ctaCti) );
 
         let nss = this.getElement(`${this.id}Nss`);
         nss.addEventListener(EVENT.CHANGE, ({ target }) =>  this.comprobarNss(target.value));
@@ -312,19 +312,21 @@ export class AonAltaDirecta extends AonElement {
         }
     }
 
-    onChangeCtaCti({detail}){
-        let regime = detail.cccRegimeCode;
-        this.getElement('regime').setAttribute('value', regime);
-        if(!this.isEdit()){
-            let md_ctz = this.getElement("md_ctz");
-            if(md_ctz && md_ctz.parentNode){
-                md_ctz.parentNode.remove();
+    onChangeCtaCti(ctaCti) {
+        const {cccRegimeCode} = ctaCti.getDetail();
+        if(cccRegimeCode){
+            this.getElement('regime').setAttribute('value', cccRegimeCode);
+            if(!this.isEdit()){
+                let md_ctz = this.getElement("md_ctz");
+                if(md_ctz && md_ctz.parentNode){
+                    md_ctz.parentNode.remove();
+                }
+                
+                if(cccRegimeCode === "0163"){
+                    let aonCard = this.getElement(this.id+"ContratoCard");
+                    createContractDataMdCtz(aonCard.getContent());
+                } 
             }
-            
-            if(regime === "0163"){
-                let aonCard = this.getElement(this.id+"ContratoCard");
-                createContractDataMdCtz(aonCard.getContent());
-            } 
         }
     }
 
