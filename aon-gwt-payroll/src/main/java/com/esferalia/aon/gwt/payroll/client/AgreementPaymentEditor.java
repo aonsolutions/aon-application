@@ -712,17 +712,21 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), extraType);
 		
 		String startMonth = extra.getStartDate();
-		if(AonStringUtils.isNotBlank(startMonth) && AonStringUtils.containsIgnoreCase(startMonth, "-1")) startMonth = startMonth.split(" ")[0];
-		if(AonStringUtils.containsIgnoreCase(startMonth, "/")) startMonth = startMonth.split("/")[1];
-		if(startMonth.length() < 2) startMonth = AonStringUtils.leftPad(startMonth, 2, '0');
+		if(AonStringUtils.isNotBlank(startMonth)) {
+			if(AonStringUtils.containsIgnoreCase(startMonth, "-1")) startMonth = startMonth.split(" ")[0];
+			if(AonStringUtils.containsIgnoreCase(startMonth, "/")) startMonth = startMonth.split("/")[1];
+			if(startMonth.length() < 2) startMonth = AonStringUtils.leftPad(startMonth, 2, '0');
+		}
 		
 		setSelectedValueLB(extraStartDateMonth, startMonth);
 		extraStartDateYear.setSelectedIndex((AonStringUtils.isNotBlank(extra.getStartDate()) && AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) ? 1 : 0);
 		
 		String endMonth = extra.getEndDate();
-		if(AonStringUtils.isNotBlank(endMonth) && AonStringUtils.containsIgnoreCase(endMonth, "-1")) endMonth = endMonth.split(" ")[0];
-		if(AonStringUtils.containsIgnoreCase(endMonth, "/")) endMonth = endMonth.split("/")[1];
-		if(endMonth.length() < 2) endMonth = AonStringUtils.leftPad(endMonth, 2, '0');
+		if(AonStringUtils.isNotBlank(startMonth)) {
+			if(AonStringUtils.containsIgnoreCase(endMonth, "-1")) endMonth = endMonth.split(" ")[0];
+			if(AonStringUtils.containsIgnoreCase(endMonth, "/")) endMonth = endMonth.split("/")[1];
+			if(endMonth.length() < 2) endMonth = AonStringUtils.leftPad(endMonth, 2, '0');
+		}
 		
 		setSelectedValueLB(extraEndDateMonth, endMonth);
 		extraEndDateYear.setSelectedIndex((AonStringUtils.isNotBlank(extra.getEndDate()) && AonStringUtils.containsIgnoreCase(extra.getEndDate(), "-1")) ? 1 : 0);
@@ -830,8 +834,10 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		if (null != selectedConcept) {
 			payment.setConceptId(selectedConcept.getId());
 			payment.setName(selectedConcept.getCode());
-		} else
+		} else {
+			payment.setConceptId(null);
 			payment.setName(paymentConceptSB.getValue());
+		}
 		
 		payment.setDescription(paymentDescriptionTB.getValue());
 		payment.setExpression(paymentExpressionTB.getValue());
