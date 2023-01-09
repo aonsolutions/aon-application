@@ -116,7 +116,7 @@ export class AonAltaDirecta extends AonElement {
             toolbar.addButton2(ACTION_COMUNICA.BAJA, () => this.openDialogBaja());
         }
     
-        if( this.isAlta() || !this.data ){ // ALTA
+        if( !this.data || (this.data && !this.data.fra) ){ // ALTA
             toolbar.addButton2(ACTION_COMUNICA.COMUNICAR, () =>  this.formSubmit());
         }
 
@@ -597,6 +597,8 @@ export class AonAltaDirecta extends AonElement {
                 openFileBase64(resp.file, "application/pdf").catch(console.error);
             }
 
+            this.getApplication().stopLoading();
+
             this.back();
         } catch (error) {
             this.showToast(error);
@@ -629,6 +631,8 @@ export class AonAltaDirecta extends AonElement {
             if(resp && resp.file){
                 openFileBase64(resp.file, "application/pdf").catch(console.error);
             }
+
+            this.getApplication().stopLoading();
 
             this.back();
 
@@ -817,7 +821,7 @@ export class AonAltaDirecta extends AonElement {
     }
 
     isAlta(){
-        return this.data && this.data.situation && this.data.situation.indexOf("AL")>=0;
+        return this.data && this.data.situation && this.data.situation.indexOf("AL")>=0 && !this.data.endDate;
     }
 
     async getAppParams(){

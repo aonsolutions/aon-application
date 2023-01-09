@@ -174,6 +174,7 @@ public class Employee implements Serializable{
 	}
 	
 	public Employee setRegistration(Integer registration) {
+        System.out.println("REGISTRATION-> "+ registration);
 		this.registration = registration;
 		return this;
 	}
