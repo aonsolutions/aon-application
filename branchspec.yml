@@ -11,9 +11,9 @@ phases:
   pre_build:
     commands:
       - echo Entered the pre_build phase...
-      #- echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID
-      #- $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
-      #- REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/aonsolutions
+      - echo Logging in to Amazon ECR... $AWS_ACCOUNT_ID
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/aonsolutions
   build:
     commands:
       - echo Entered the build phase...
