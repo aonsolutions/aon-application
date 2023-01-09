@@ -921,7 +921,8 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 
 			@Override
 			protected Integer getTotalYearDays(DayType realDays) {
-				return employeeCalendarDraftObject.getTotalYearDays(realDays);
+				Integer year = Integer.parseInt(yearLB.getSelectedValue());
+				return employeeCalendarDraftObject.getTotalYearDays(year, realDays);
 			}
 		};
 	}
