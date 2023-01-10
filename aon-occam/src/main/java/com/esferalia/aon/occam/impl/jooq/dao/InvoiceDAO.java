@@ -868,6 +868,19 @@ public class InvoiceDAO {
 		return --min;
 	}
 	
+	public static Invoice getLastSaleInvoice(AONContext ctx, String series ) {
+		return ctx.getDslContext().select()
+				.from(INVOICE)
+				.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+				.and(INVOICE.TYPE.eq(InvoiceType.SALES.value()))
+				.and(AonStringUtils.isBlank(series)
+					? INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
+					: INVOICE.SERIES.eq(series))
+				.orderBy(INVOICE.NUMBER.desc())
+				.limit(1)
+				.fetch().stream().map(new InvoiceFiller()).findFirst().orElse(new Invoice());
+	}
+	
 	public static int getNextNumber(AONContext ctx, InvoiceType type, String series ) {
 		return getNextNumber(ctx, new Byte[]{type.value()} , series);
 	}

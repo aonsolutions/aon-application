@@ -56,6 +56,7 @@ public interface IFinance {
 	// 	****************************************
 	// 	**************************** INVOICE ***
 	// 	****************************************
+	Invoice getLastSaleInvoice(AONContext ctx, String serie);
 	Invoice getInvoice(AONContext ctx, Integer id);
 	void deleteInvoice(AONContext ctx, Integer invoiceId);
 	

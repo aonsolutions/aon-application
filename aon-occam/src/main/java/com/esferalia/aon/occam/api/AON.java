@@ -1886,16 +1886,29 @@ public class AON {
 	}
 	
 	public static Invoice getInvoice(String domainName, Integer domainId, String login, Integer id){
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getFinance().getInvoice(ctx, id);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		}
+	}
+	
+	public static Invoice getLastSaleInvoice(Occam occam, String serie){
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getLastSaleInvoice(ctx, serie);
+		}
+	}
+	
+	public static Invoice getLastSaleInvoice(Domain domain, User user, String serie){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getFinance().getLastSaleInvoice(ctx, serie);
 		}
 	}
 
+	public static Invoice getLastSaleInvoice(String domainName, Integer domainId, String login, String serie){
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getFinance().getLastSaleInvoice(ctx, serie);
+		}
+	}
+	
 	public static Stream<InvoiceDetail> getInvoiceDetails(String domainName,
 			Integer domainId, String login, InvoiceFilter filter) {
 		CloseableAONContext ctx = null;
