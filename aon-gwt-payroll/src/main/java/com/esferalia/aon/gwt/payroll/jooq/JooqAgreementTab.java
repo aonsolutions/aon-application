@@ -520,7 +520,7 @@ public class JooqAgreementTab {
 					.execute();
 			else if(null == payment.getId() || payment.getId() < 0) {
 				if(null == payment.getConceptId() && !AonStringUtils.isBlank(payment.getName()))
-					payment.setConceptId(createPaymentConcept(dslContext, payment));
+					payment.setConceptId(createPaymentConcept(dslContext, agreementInfo.getDomain(), payment));
 				
 				Integer newPaymentId = dslContext.insertInto(AGREEMENT_PAYMENT)
 					.set(AGREEMENT_PAYMENT.DOMAIN, agreementInfo.getDomain())
@@ -542,7 +542,7 @@ public class JooqAgreementTab {
 					agreementInfo.updateExtraPaymentId(payment.getId(), newPaymentId);
 			} else {
 				if(null == payment.getConceptId() && !AonStringUtils.isBlank(payment.getName()))
-					payment.setConceptId(createPaymentConcept(dslContext, payment));
+					payment.setConceptId(createPaymentConcept(dslContext, agreementInfo.getDomain(), payment));
 				else
 					dslContext.update(PAYMENT_CONCEPT)
 						.set(PAYMENT_CONCEPT.CODE, payment.getName())
@@ -566,9 +566,9 @@ public class JooqAgreementTab {
 		});
 	}
 	
-	private static Integer createPaymentConcept(DSLContext dslContext, Payment payment) {
+	private static Integer createPaymentConcept(DSLContext dslContext, Integer domain, Payment payment) {
 		PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
-				.set(PAYMENT_CONCEPT.DOMAIN, payment.getDomain())
+				.set(PAYMENT_CONCEPT.DOMAIN, domain)
 				.set(PAYMENT_CONCEPT.CODE, payment.getName())
 				.set(PAYMENT_CONCEPT.DESCRIPTION, payment.getDescription())
 				.set(PAYMENT_CONCEPT.TYPE, (byte) payment.getType().ordinal())
