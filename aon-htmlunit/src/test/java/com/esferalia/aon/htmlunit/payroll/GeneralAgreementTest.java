@@ -12,24 +12,30 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.logging.Level;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
+import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
+import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
 
-@Ignore
 public class GeneralAgreementTest {
 	
 
@@ -46,13 +52,57 @@ public class GeneralAgreementTest {
 	@BeforeClass
 	public static void setUp() throws Exception {
 		LOGGER.setLevel(Level.WARNING);
-		webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
-		
+		webClient = new WebClient(BrowserVersion.CHROME);
 		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 		webClient.getOptions().setThrowExceptionOnScriptError(false);
+		
 		webClient.getOptions().setCssEnabled(false);
-
+		
 		webClient.setAlertHandler((page, message) -> LOGGER.warning("ALERT '" + message + "'" ));
+		
+		webClient.setJavaScriptErrorListener( new  JavaScriptErrorListener() {
+			
+			@Override
+			public void warn(String message, String sourceName, int line, String lineSource, int lineOffset) {
+				LOGGER.severe("Warn " + message + "" );
+			}
+
+			@Override
+			public void timeoutError(HtmlPage page, long allowedTime, long executionTime) {
+				LOGGER.severe("Timeout " + executionTime + "ms" );
+			}
+			
+			@Override
+			public void scriptException(HtmlPage page, ScriptException scriptException) {
+				LOGGER.severe("Script Exception [" + scriptException.getFailingLine() + ","+ scriptException.getFailingLineNumber() +"] '" + scriptException.getMessage() + "'" );
+				
+			}
+			
+			@Override
+			public void malformedScriptURL(HtmlPage page, String url, MalformedURLException malformedURLException) {
+				LOGGER.severe("Malformed Script URL '" + url + "' " + malformedURLException.getMessage() + "'" );
+				
+			}
+			
+			@Override
+			public void loadScriptError(HtmlPage page, URL scriptUrl, Exception exception) {
+				LOGGER.severe("Script Error '" + scriptUrl + "' " + exception.getMessage() + "'" );
+			}
+
+		});
+				
+		webClient.setWebConnection(new WebConnectionWrapper(webClient) {
+			@Override
+			public WebResponse getResponse(WebRequest request) throws IOException {
+				String file = request.getUrl().getFile();
+				if (file.toLowerCase().contains("viewer.html")) {
+		            /* Give the program a response, protect against pdfjs. */
+		            throw new IllegalArgumentException(file);
+		        } else {
+		            return super.getResponse(request); // Pass the responsibility up.
+		        }
+			}
+		});
 		
 		url = System.getProperty(INTEGRATION_PAYROLL_URL);
 		user = System.getProperty(INTEGRATION_BASE_USER);
@@ -64,34 +114,13 @@ public class GeneralAgreementTest {
 		LOGGER.warning("Cick on: " + menuPayrollAnchor.asNormalizedText());
 		htmlPage = menuPayrollAnchor.click();
 		
-//		buildFile(htmlPage.asXml().getBytes(), "/Users/sergio/Desktop/menuPayroll.html");
-
 		// MainAgreement
 		HtmlAnchor gwtAgreementAnchor = htmlPage.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement");
 		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asNormalizedText());
 		htmlPage = gwtAgreementAnchor.click();
 		
-//		buildFile(htmlPage.asXml().getBytes(), "/Users/sergio/Desktop/convenios.html");
-		
 		wait4Id("agreements");
-		
 	}
-	
-	// BUILD A FILE FROM ARRAY OF BYTES
-	public static void buildFile(byte[] arr_bytes, String docName) {
-		File f = new File(docName);
-		try {
-			FileOutputStream fos = new FileOutputStream(f);
-			fos.write(arr_bytes);
-			fos.close();
-		} catch (FileNotFoundException e) {
-			System.err.println("Archivo no encontrado");
-		} catch (IOException e) {
-			System.err.println("Error al escribir");
-		}
-
-	}
-
 
 	@AfterClass
 	public static void tearDown() {
@@ -111,13 +140,17 @@ public class GeneralAgreementTest {
 		
 		HtmlDivision salaryTableTab = (HtmlDivision)getElementById("salary_table_tab");
 		LOGGER.warning("Cick on: " + salaryTableTab.asNormalizedText());
-		salaryTableTab.click();
+		htmlPage = salaryTableTab.click();
 		
 		wait4Id("category_filter");
 		
 		setValue("textBox_SALARIO_MENSUAL_I", "666.66");
 		
-		wait4Class("textBox_SALARIO_MENSUAL_I", "GCJOI5OCJPD");
+		wait4Class("textBox_SALARIO_MENSUAL_I", "modify");
+		
+		HtmlInput input = getElementById("textBox_SALARIO_MENSUAL_I");
+		
+		Assert.assertEquals(input.getValue(), "666.66");
 		
 	}
 
@@ -127,7 +160,6 @@ public class GeneralAgreementTest {
 		return (T)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id );
 	}
 	
-
 	protected  static void wait4Id(String id) throws InterruptedException {
 		wait4(htmlPage,
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
@@ -161,6 +193,26 @@ public class GeneralAgreementTest {
 	protected void wait4NoClass(String id, String clazz ) throws InterruptedException{
 		wait4(htmlPage,
 				htmlPage -> !htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id).getAttribute("class").contains(clazz));
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	// BUILD A FILE FROM ARRAY OF BYTES
+	public static void buildFile(byte[] arr_bytes, String docName) {
+		File f = new File(docName);
+		try {
+			FileOutputStream fos = new FileOutputStream(f);
+			fos.write(arr_bytes);
+			fos.close();
+		} catch (FileNotFoundException e) {
+			System.err.println("Archivo no encontrado");
+		} catch (IOException e) {
+			System.err.println("Error al escribir");
+		}
+		
+		// For use this method need this where we want it
+		// buildFile(htmlPage.asXml().getBytes(), "/Users/svaldepenas/Desktop/convenios.html");
+
 	}
 	
 }
