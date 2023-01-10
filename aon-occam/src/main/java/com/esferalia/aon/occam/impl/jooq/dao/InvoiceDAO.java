@@ -483,7 +483,7 @@ public class InvoiceDAO {
 			if(invoice.isRectifier()) {
 				Invoice rectify = getInvoice(ctx, invoice.getRectificationInvoice());
 				invoice.setRectificationInvoiceSeries(rectify.getSeries());
-				invoice.setRectificationInvoiceDate(rectify.getIssueDate());
+				invoice.setRectificationInvoiceDate(rectify.getFiscal().getExpDate());
 				invoice.setRectificationInvoiceNumber(rectify.getNumber());
 			}
 		}

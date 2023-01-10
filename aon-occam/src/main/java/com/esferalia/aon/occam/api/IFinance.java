@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.Filter.PayMethodFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RawdocFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
@@ -22,6 +23,7 @@ import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
+import com.esferalia.aon.occam.api.model.finance.InvoiceFiscal;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
@@ -182,7 +184,7 @@ public interface IFinance {
 	// 	***********************************************
 	// 	***************** INVOICE FISCAL **************
 	// 	***********************************************
-
+	public void saveInvoiceFiscal(AONContext ctx, AonConfiguration config, Invoice invoice);
 	public void deleteInvoiceFiscal(AONContext ctx, Integer id);
 	
 	public void saveFacturaeCodeAsignacion(AONContext ctx, Integer invoice, Integer registry, String code);

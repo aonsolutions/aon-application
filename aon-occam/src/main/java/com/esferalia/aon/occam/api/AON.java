@@ -7464,6 +7464,13 @@ public class AON {
 	}
 	
 	//---------- INVOICE FISCAL
+
+	public static void saveInvoiceFiscal(String domainName, Integer domainId, String login, AonConfiguration config, Invoice invoice) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			getFinance().saveInvoiceFiscal(ctx, config, invoice);
+		}
+	}	
+	
 	public static void deleteInvoiceFiscal(String schema, Integer invoiceId) {
 		try(CloseableAONContext ctx = AONContext.getAONContext(schema)){
 			getFinance().deleteInvoiceFiscal(ctx, invoiceId);

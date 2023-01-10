@@ -142,7 +142,7 @@ public class Invoice2tbai {
 		if(!AonStringUtils.isBlank(invoice.getSeries()))
 			cabecera.setSerieFactura(invoice.getSeries());
 		cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
-		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), "dd-MM-yyyy"));
+		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getFiscal().getExpDate(), "dd-MM-yyyy"));
 		return cabecera;
 	}
 	
@@ -250,16 +250,14 @@ public class Invoice2tbai {
 	}
 	
 	private static Factura getFactura(Invoice invoice) {
-		if(invoice.getModificationDate() == null) {
-			invoice.setModificationDate(new Date());
-		}
+		Date expeditionDate = new Date();
 		Factura factura = new Factura();
 		CabeceraFacturaType cabecera = new CabeceraFacturaType();
 		if(!AonStringUtils.isBlank(invoice.getSeries()))
 			cabecera.setSerieFactura(invoice.getSeries());
 		cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
-		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getModificationDate(), "dd-MM-yyyy"));
-		cabecera.setHoraExpedicionFactura(AonDateUtils.format(invoice.getModificationDate(), "HH:mm:ss"));
+		cabecera.setFechaExpedicionFactura(AonDateUtils.format(expeditionDate, "dd-MM-yyyy"));
+		cabecera.setHoraExpedicionFactura(AonDateUtils.format(expeditionDate, "HH:mm:ss"));
 			
 		cabecera.setFacturaSimplificada(invoice.isSimplified() ? SiNoType.S : SiNoType.N);
 		cabecera.setFacturaEmitidaSustitucionSimplificada(SiNoType.N);
