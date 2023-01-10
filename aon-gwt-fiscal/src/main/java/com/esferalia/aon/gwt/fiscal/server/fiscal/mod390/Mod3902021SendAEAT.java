@@ -16,7 +16,7 @@ import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902021;
 import com.esferalia.aon.watson.error.AonCoreException;
 
 @WebServlet(name = "Mod3902021 Send AEAT", urlPatterns = { "/aon_gwt_fiscal/ms/Mod3902021SendAEAT" })
-public class Mod390020213SendAEAT extends HttpServlet {
+public class Mod3902021SendAEAT extends HttpServlet {
 
 	private static final long serialVersionUID = -1886808421915141367L;
 	
