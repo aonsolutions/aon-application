@@ -6175,6 +6175,90 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaITNotAdjust300Partial()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+		
+		
+		String ccc = UUID.randomUUID().toString().substring(0, 11);
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C300, "05");
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.SATURDAY_HOURS, 2.0);
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.FRIDAY_HOURS, 2.0);
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.WEDNESDAY_HOURS, 4.0);
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.MONDAY_HOURS, 4.0);
+		
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startIt = add(startDate, Calendar.DAY_OF_MONTH, 9);
+		Date endIt = add(startIt, Calendar.DAY_OF_MONTH, 1);
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, endIt, null);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		int salaries = calculateAndSave(connection, ctx);
+
+		// Only one salary saved to DB.
+		//Assert.assertEquals(1, salaries);
+
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()).and(props.getCCCProperty().eq(ccc)))
+				.forEach(salary -> {
+					
+					for ( Entry<String, List<ContextData>> entry : salary.getContextData().entrySet() ) {
+						System.out.print(entry.getKey() + ": " );
+						for ( ContextData data: entry.getValue())
+							System.out.print(data.getExpression() + "(" + data.getStartDate() + ".." + data.getEndDate()  + "),") ;
+						System.out.println();
+					}
+					
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					
+					Assert.assertEquals(3, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(add(startIt, DATE, -1), datas.get(0).getEndDate());
+
+					Assert.assertEquals(startIt, datas.get(1).getStartDate());
+					Assert.assertEquals(endIt, datas.get(1).getEndDate());
+
+					Assert.assertEquals(add(endIt, Calendar.DAY_OF_MONTH,1) , datas.get(2).getStartDate());
+					Assert.assertEquals(endDate, datas.get(2).getEndDate());
+				});
+		;
+		
+		cleanSalaries(aonContext);
+		
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		Assert.assertEquals(3, tramos.size());
+		
+		Assert.assertEquals("01", tramos.get(0).getFechaDesde().getDia());
+		Assert.assertEquals("09", tramos.get(0).getFechaHasta().getDia());
+		Assert.assertEquals("9", tramos.get(0).getDiasCotizados());
+		assertTramoActivoNormalTiempoCompleto( tramos.get(0) );
+		
+		Assert.assertEquals("10", tramos.get(1).getFechaDesde().getDia());
+		Assert.assertEquals("11", tramos.get(1).getFechaHasta().getDia());
+		Assert.assertEquals("2", tramos.get(1).getDiasCotizados());
+		assertTramoIT15PrimerosDias( tramos.get(1) );
+
+		
+		Assert.assertEquals("12", tramos.get(2).getFechaDesde().getDia());
+		Assert.assertEquals("31", tramos.get(2).getFechaHasta().getDia());
+		Assert.assertEquals("20", tramos.get(2).getDiasCotizados());
+		assertTramoActivoNormalTiempoCompleto( tramos.get(2) );
+
+	}
+
+	@Test
 	public void testCretaITPagoDelegadoMonthly()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		Connection connection = getConnection();
