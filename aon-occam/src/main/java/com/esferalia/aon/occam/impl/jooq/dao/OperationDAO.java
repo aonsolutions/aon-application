@@ -231,6 +231,19 @@ public class OperationDAO {
 							Integer invoice = rec.getValue(INVOICE.ID);
 							String cuenta = rec.getValue(ACCOUNT.CODE);
 							
+							// Tipo de Factura (Libros Registro AEAT)
+							String invoiceType = "SF";  // Apuntes sin factura
+							if (rec.getValue(INVOICE.ID) != null) {
+								byte rectificationType = rec.getValue(INVOICE.RECTIFICATION_TYPE);
+								if (rectificationType == RectificationType.NORMAL_RECTIFIER.value() || rectificationType == RectificationType.SPECIAL_RECTIFIER.value())
+									invoiceType = "R0";  // Rectificativa
+								else if (rec.getValue(INVOICE_DUA.ID) != null)
+									invoiceType = "F5"; // DUA
+								else if (rec.getValue(INVOICE.TYPE) == InvoiceType.UNDEDUCTIBLE.value())
+									invoiceType = "F2"; // Factura sin identificación del destinatario (tickets, estan como no deducibles)
+								else invoiceType = "F1";  // Resto
+							}							
+							
 							double base = rec.getValue(sumBase)==null?0.0:rec.getValue(sumBase).doubleValue();
 							double quota = rec.getValue(sumQuota)==null?0.0:rec.getValue(sumQuota).doubleValue();					
 							double deductibleQuota = rec.getValue(sumDeductibleQuota)==null?0.0:rec.getValue(sumDeductibleQuota).doubleValue();					
@@ -242,7 +255,7 @@ public class OperationDAO {
 							// Apuntes que no son facturas (base y total coinciden)
 							double debit = rec.getValue(sumDebit) == null ? 0.0 : rec.getValue(sumDebit).doubleValue();
 							double credit = rec.getValue(sumCredit) == null ? 0.0 : rec.getValue(sumCredit).doubleValue();
-							if (invoice == null) {
+							if (invoice == null || AonStringUtils.equals("F2",invoiceType)) {
 								if (cuenta.startsWith("6"))
 									base = debit - credit;  // Compras y Gastos
 								else base =  credit - debit; // Ventas e Ingresos
@@ -285,18 +298,6 @@ public class OperationDAO {
 							if (taxDate == null)
 								taxDate = rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE);
 							
-							// Tipo de Factura (Libros Registro AEAT)
-							String invoiceType = "SF";  // Apuntes sin factura
-							if (rec.getValue(INVOICE.ID) != null) {
-								byte rectificationType = rec.getValue(INVOICE.RECTIFICATION_TYPE);
-								if (rectificationType == RectificationType.NORMAL_RECTIFIER.value() || rectificationType == RectificationType.SPECIAL_RECTIFIER.value())
-									invoiceType = "R0";  // Rectificativa
-								else if (rec.getValue(INVOICE_DUA.ID) != null)
-									invoiceType = "F5"; // DUA
-								else if (rec.getValue(INVOICE.TYPE) == InvoiceType.UNDEDUCTIBLE.value())
-									invoiceType = "F2"; // Factura sin identificación del destinatario (tickets, estan como no deducibles)
-								else invoiceType = "F1";  // Resto
-							}							
 							
 							// Tipo de Operación (Libros Registro AEAT)
 							String operationType = "";

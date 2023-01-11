@@ -344,7 +344,7 @@ public class AgreementParser {
 	
 	private static void getAgreementConcepts(Document document, Agreement agreement) {
 		NodeList listCPR = document.getElementsByTagName("CATALOGO_CPTOS_RETRIB");
-		System.out.println("----- CONCEPTS -----");
+//		System.out.println("----- CONCEPTS -----");
 		for(int i=0; i<listCPR.getLength(); i++) {
 			Node nodeCPR = listCPR.item(i);
 
@@ -367,7 +367,7 @@ public class AgreementParser {
  	            
 	    	            String realName = getParseName(name, type);
 	    	            
-	    	            System.out.println(realName);
+//	    	            System.out.println(realName);
 	    	            
 	    	            agreement.addAgreementConcept(realName);
 	    	        }
@@ -413,7 +413,7 @@ public class AgreementParser {
 	    	            
 	    	            agreement.addAgreementLevel(code, description, category);
 	    	            
-//	    	            System.out.println("code : " + code + ", description : " + description + ", category : " + category);
+//	    	            System.out.println("AL -> code : " + code + ", description : " + description + ", category : " + category);
 	    	            
 	    	        }
 	    		}
@@ -594,12 +594,13 @@ public class AgreementParser {
 		});
 		
 		for(AgreementLevel agreementLevel : agreement.getAgreementLevels()) {
-		
+			
 			List<AgreementLevel> duplicateAgreementLevels = getDuplicateAgreementLevels(agreement, agreementLevel, analizedAgreementLevels);
 			analizedAgreementLevels.addAll(duplicateAgreementLevels);
 			
 			AgreementLevel newAgreementLevel = parsedAgreement.createAgreementLevel(agreementLevel.getCode(), agreementLevel.getDescription());
 			newAgreementLevel.setLevelDatas(agreementLevel.getLevelDatas());
+			
 			List<String> categories = new ArrayList<>();
 			
 			for(AgreementLevel duplicateAgreementLevel : duplicateAgreementLevels)
@@ -630,23 +631,37 @@ public class AgreementParser {
 	}
 
 	private static boolean haveSameValues(AgreementLevel agreementLevel, AgreementLevel checkedAgreementLevel) {
-		for(AgreementLevelData levelData : checkedAgreementLevel.getLevelDatas()) {
-			if(!containsLevelData(levelData, agreementLevel))
-				return false;
-		}
+		// Sort levels
+		Collections.sort(agreementLevel.getLevelDatas(), new Comparator<AgreementLevelData>() {
+			@Override
+			public int compare(AgreementLevelData ald1, AgreementLevelData ald2) {
+				return ald1.getName().compareTo(ald2.getName());
+			}
+		});
+		
+		Collections.sort(checkedAgreementLevel.getLevelDatas(), new Comparator<AgreementLevelData>() {
+			@Override
+			public int compare(AgreementLevelData ald1, AgreementLevelData ald2) {
+				return ald1.getName().compareTo(ald2.getName());
+			}
+		});
+		
+		if (agreementLevel.getLevelDatas().size() == checkedAgreementLevel.getLevelDatas().size()) {
+			
+			for(int i=0; i<agreementLevel.getLevelDatas().size(); i++) {
+				
+				AgreementLevelData levelData = agreementLevel.getLevelDatas().get(i);
+				AgreementLevelData checkedLevelData = checkedAgreementLevel.getLevelDatas().get(i);
+				
+				if(	!AonStringUtils.equalsIgnoreCase(checkedLevelData.getName(), levelData.getName()) || 
+					!AonStringUtils.equalsIgnoreCase(checkedLevelData.getValue(), levelData.getValue()) || 
+					!checkedLevelData.getStartDate().equals(levelData.getStartDate()))
+					return false;
+			}
+			
+		} else return false;
 		
 		return true;
-	}
-
-	private static boolean containsLevelData(AgreementLevelData cehckedlevelData, AgreementLevel agreementLevel) {
-		for(AgreementLevelData levelData : agreementLevel.getLevelDatas()) {
-			if(AonStringUtils.equalsIgnoreCase(cehckedlevelData.getName(), levelData.getName()) && 
-				AonStringUtils.equalsIgnoreCase(cehckedlevelData.getValue(), levelData.getValue()) && 
-				cehckedlevelData.getStartDate().equals(levelData.getStartDate()) &&
-				((null == cehckedlevelData.getEndDate() && null == levelData.getEndDate()) || cehckedlevelData.getEndDate().equals(levelData.getEndDate())))
-				return true;
-		}
-		return false;
 	}
 	
 	// ------------------------------------------------------------ INSERT AGREEMENT 
@@ -790,7 +805,7 @@ public class AgreementParser {
 				
 				if(null != agreementPayment) {
 					
-					System.out.println(agreementPayment.getConceptCode());
+//					System.out.println(agreementPayment.getConceptCode());
 					
 					String irpfExpression = "_P";
 					String quoteExpression = "_P";
