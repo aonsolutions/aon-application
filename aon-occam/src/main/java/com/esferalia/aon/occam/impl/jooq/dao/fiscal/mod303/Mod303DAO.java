@@ -132,7 +132,8 @@ public class Mod303DAO extends FiscalModelDAO {
 	
 	private static void initializeProrrate(AONContext ctx, Mod303 mod303) {
 		if (mod303.getProrateKey() != null) {
-			Pair<Double,String> prorrateInfo =  getMod303s( ctx , mod303.getDomain())
+			Pair<Double,String> prorrateInfo = getLastPeriodEffectiveModels(ctx, mod303)
+//			Pair<Double,String> prorrateInfo = getMod303s( ctx , mod303.getDomain())
 				.filter(mod -> mod.getAdministration() == mod303.getAdministration() )
 				.map(mod ->  new Pair<Double,String>(mod.getProratePercent(), mod.getSpecialProrateValue() ))
 				.findFirst()

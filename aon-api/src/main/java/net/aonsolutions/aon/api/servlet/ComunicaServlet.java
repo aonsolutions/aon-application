@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -43,11 +42,9 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
-import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.aonsolutions.NotificationSource;
 import com.esferalia.aon.occam.api.model.payroll.CCCInfo;
-import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -124,10 +121,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 				case "/nafxipf":
 					LOGGER.info("NAFXIPF SERVLET - GET METHOD");
 					response(req, resp, getNafxIpf(initialize(req)));
-				break;
-				case "/update-contracts":
-					LOGGER.info("UPDATE-CONTRACTS SERVLET - GET METHOD");
-					response(req, resp, updateContracts(initialize(req)));
 				break;
 				case "/get-ta":
 					LOGGER.info("GET-TA");
@@ -938,110 +931,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		newThread.start();
 	}
 	
-	private static JSONObject updateContracts(AonApiData api){
-		Domain domain = api.getDomain();
-		User user     = api.getUser();
-    	try {
-    		JSONObject params = api.getData();
-    	    Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
-			HashSet<Employee> employees = new HashSet<>();
-			List<CCCInfo> cccs = getCcs(api);
-			
-			ApplicationParameter appParams = appParamsExists(api);
-			
-			if(params.optBoolean("employeesOld")) {//------------MOVEMENTS OLD
-				
-				Date startIni = AonDateUtils.getYearFirstDay( AonDateUtils.addMonths(new Date(), -6) ); 
-				
-				if(!params.optString("startDate").isEmpty()) {
-					startIni = AonDateUtils.parse(params.optString("startDate"), FORMAT_DATE);
-				} else if(appParams.getId()!=null && appParams.getValue()!=null) {
-					startIni = AonDateUtils.addDays(new Date( Long.parseLong( appParams.getValue() ) ), -15) ;
-				}
-
-				employees.addAll(ComunicaUtils.getEmployeesOld(startIni, certificate, cccs));
-			}
-			
-			if(params.optBoolean("employeesPrev")) {		//------------MOVEMENTS PREV
-				employees.addAll(ComunicaUtils.getEmployeesPrev(certificate, cccs));
-			}
-			
-			//------------CONTRACT
-			employees.forEach(data ->{
-				try {
-					java.sql.Date fraSql = new java.sql.Date(data.getFra().getTime());      
-				    String nss = data.getNss();
-					Optional<Date> frb = data.getFrb();
-					Optional<Contract> contract = Optional.empty();
-					//----GET PERSON
-					Person person = AON.getPerson(domain, user.getLogin(), f->f.getDomainProperty().eq(domain.getId()).and(f.getSocialSecurityNumProperty().eq(nss)));
-					
-					////--GET CONTRACT ACTIVE
-					if(null!= person.getDocument()) {
-						contract = PAYROLL.getContract(domain.getName(), domain.getId(), user.getLogin(),
-							f->f.getDomainProperty().eq(domain.getId())
-							.and(f.getPersonProperty().eq(person.getId()))
-							.and( 
-								frb.isPresent() ?
-								f.getStartDateProperty().eq(fraSql).and(f.getEndDateProperty().eq( new java.sql.Date(frb.get().getTime()) ) )  :
-								f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(fraSql)) 
-							)
-						);
-					}
-					// CONTRACT NO EXIST
-					if(contract.isEmpty()) { 
-						if(data.getGc().isEmpty()) {
-							data = SistemaRED.getEmployee(
-								new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
-								data.getRegime(), data.getCtaCti().get(), nss
-							);
-						}
-						
-						if( nss!=null) {
-							LOGGER.info("-------------CREANDO CONTRATO-------------");
-							LOGGER.info(data.toString());			
-							EmployeeParse.toEmployeeOccam(data);
-							PAYROLL.addEmployee(domain.getName(), domain.getId(), user.getLogin(), EmployeeParse.toEmployeeOccam(data));
-							LOGGER.info("------------------------------------");
-						}
-					} else {
-						LOGGER.info("--------YA EXISTE EL CONTRATO-------------");
-						LOGGER.info(data.toString());
-						LOGGER.info("------------------------------------");
-					}
-		
-				} catch (SegSocialException e) {e.printStackTrace();}	
-			});
-			
-			if(!employees.isEmpty()) {
-				saveAppParams(domain, api.getUser(), appParams); //SAVE APP PARAMS
-			} 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return new JSONObject();
-	}
-	
-	/*
-	 * SAVE OR UPDATE APP PARAMS
-	 */
-	private static void saveAppParams(Domain domain, User user, ApplicationParameter exists) {
-		ApplicationParameter appParams = new ApplicationParameter()
-				.setDomain(domain.getId())
-				.setValue(new Date().getTime()+"")
-				.setName(APP_PARAMS_NAME)
-				;
-		if(exists.getId()!=null) {
-			LOGGER.info("--------UPDATE APP PARAMS-------------");
-			AON.updateApplicationParameter(domain.getName(), domain.getId(), user.getLogin(), appParams, 
-					f->f.getDomainProperty().eq(appParams.getDomain()).and(f.getNameProperty().eq(appParams.getName()))
-				);
-		} else {
-			LOGGER.info("--------SAVE APP PARAMS-------------");
-			AON.insertApplicationParameter(domain.getName(), domain.getId(), user.getLogin(), appParams);
-		}
-	}
-	
 	private static JSONObject getAppParam(AonApiData api) {
 		JSONObject json = new JSONObject();
 		ApplicationParameter appParams = appParamsExists(api);
@@ -1078,11 +967,6 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		}
 		
 		return list;
-	}
-	
-	private static List<CCCInfo> getCcs(AonApiData api) {
-		return PAYROLL.getCCCStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin())
-		.filter(ComunicaUtils.distinctByKey(CCCInfo::getCccAccount)).collect(Collectors.toList());
 	}
 	
 	private void setDomain(AonApiData api) {

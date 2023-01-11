@@ -90,32 +90,6 @@ export class AonMovementsList extends AonElement {
 
     btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
     this.searchValueDefault();
-
-    const href = window.location.href;
-		if(href.includes('localhost') || href.includes('8080'))
-      this.sincronizedIcon();
-  }
-
-  sincronizedIcon(){
-    getAppParamComunica().then(({value})=>{
-
-      let name = this.lastSincronizedText( value ? Number(value) : null );
-
-      let aib = this.getApplication().addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name}, async () =>  {
-        let btn = aib.getButton();
-        btn.classList.add(CSS.AON_FA_SPIN);
-        await this.getApplicationParent().updateContracts();
-        if(aib && btn) {
-          aib.getButton().title = aib.title = this.lastSincronizedText(new Date());
-          btn.classList.remove(CSS.AON_FA_SPIN);
-        }
-      });     
-    });
-
-  }
-
-  lastSincronizedText(date){
-    return date ? `Última sincronización ${AonDateUtils.setDateTimestampDay(date) }` : 'No sincronizado';
   }
 
   searchValueDefault(){

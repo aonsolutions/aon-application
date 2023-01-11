@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.salary.expression.Period.max;
 import static com.esferalia.aon.salary.expression.Period.min;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -38,6 +39,7 @@ import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.tgss.idc.Idc.IdcListener;
 import com.esferalia.aon.in.payroll.tgss.idc.PEC;
 import com.esferalia.aon.in.payroll.tgss.sld.SLDSalaries;
+import com.esferalia.aon.in.payroll.utils.EmployeeParse;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -61,6 +63,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
+import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaRED.LiquidationOrigin;
 import solutions.aon.seg.social.SistemaRED.LiquidationType;
@@ -767,6 +770,49 @@ public class SistemaRED2AON {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
+	}
+	
+	/**
+	 * 
+	 * @param userLogin
+	 * @param userId
+	 * @param domainName
+	 * @param domainId
+	 * @param regime
+	 * @param ccc
+	 * @param naf
+	 * @param date if the date is empty, look for the most recent.
+	 * @return
+	 * @throws SegSocialException
+	 * @throws UnknownPDFException
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
+	public static Employee getEmployeeToIDC(String userLogin, Integer userId, String domainName, Integer domainId, String regime,
+			String ccc, String naf, Optional<Date> date) throws SegSocialException, UnknownPDFException, IllegalArgumentException, IOException {
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+		
+		Date startDate = date.orElseGet(()->{
+			try {
+				return SistemaRED.getIDCDates(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf)
+				.stream()
+				.filter(d-> d.getDescripcion().equals("ALTA"))
+				.sorted((o1, o2) -> o2.getFecha().compareTo(o1.getFecha()))
+				.findFirst()
+				.get()
+				.getFecha();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		});
+
+        return EmployeeParse.IdcToEmployeeOccam(
+    		ServicioRED.getIDCPOST(
+				new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+                naf, regime, ccc, startDate
+            )
+        );
 	}
 
 	private static String toString(Object obj) {

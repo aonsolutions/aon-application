@@ -38,6 +38,7 @@ public class InvoiceFiscalDAO {
 				.setDomain(r.getValue(INVOICE_FISCAL.DOMAIN))
 				.setIssueDate(r.getValue(INVOICE_FISCAL.ISSUE_DATE))
 				.setTaxDate(r.getValue(INVOICE_FISCAL.TAX_DATE))
+				.setExpDate(getValue(r, INVOICE_FISCAL.EXP_DATE))
 				.setVatRegime(VATTaxRegime.VAT_GENERAL, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_GENERAL)))
 				.setVatRegime(VATTaxRegime.VAT_SURCHARGE, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_SURCHARGE)))
 				.setVatRegime(VATTaxRegime.VAT_SIMPLIFIED, AonEnumUtils.getBoolean(r.getValue(INVOICE_FISCAL.VAT_SIMPLIFIED)))
@@ -207,7 +208,8 @@ public class InvoiceFiscalDAO {
 		}
 
 	}
-	protected static InvoiceFiscal save(AONContext ctx, AonConfiguration config, Invoice invoice) {
+	
+	public static InvoiceFiscal save(AONContext ctx, AonConfiguration config, Invoice invoice) {
 		AutoComplete.autoComplete(new AonConfigurationContext(ctx,config), invoice);
 		Validation.validate(new AonConfigurationContext(ctx,config), invoice.getFiscal());
 		InvoiceFiscal invFiscal = invoice.ensureFiscal();
@@ -217,6 +219,7 @@ public class InvoiceFiscalDAO {
 			.set(INVOICE_FISCAL.INVOICE, invFiscal.getInvoice() )
 			.set(INVOICE_FISCAL.ISSUE_DATE, AonDateUtils.toSql(invFiscal.getIssueDate()))
 			.set(INVOICE_FISCAL.TAX_DATE, AonDateUtils.toSql(invFiscal.getTaxDate()))
+			.set(INVOICE_FISCAL.EXP_DATE, AonDateUtils.toSql(invFiscal.getExpDate()))
 			.set(INVOICE_FISCAL.VAT_GENERAL, AonEnumUtils.getByte( invFiscal.isVatRegimeEnabled(VATTaxRegime.VAT_GENERAL)))
 			.set(INVOICE_FISCAL.VAT_SURCHARGE, AonEnumUtils.getByte( invFiscal.isVatRegimeEnabled(VATTaxRegime.VAT_SURCHARGE)))
 			.set(INVOICE_FISCAL.VAT_SIMPLIFIED, AonEnumUtils.getByte( invFiscal.isVatRegimeEnabled(VATTaxRegime.VAT_SIMPLIFIED)))
