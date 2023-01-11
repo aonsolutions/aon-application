@@ -4764,6 +4764,7 @@ CREATE TABLE `invoice_fiscal` (
   `domain` int NOT NULL COMMENT 'Identificador del Dominio',
   `issue_date` date DEFAULT NULL COMMENT 'Fecha de emision de la Factura',
   `tax_date` date DEFAULT NULL COMMENT 'Fecha de Impuestos de la Factura',
+  `exp_date` date DEFAULT NULL COMMENT 'Fecha de expedicion de la Factura para Ticket Bai',
   `vat_general` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Regimen General',
   `vat_simplified` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Regimen especial simplificado',
   `vat_surcharge` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Regimen especial recargo de equivalencia',

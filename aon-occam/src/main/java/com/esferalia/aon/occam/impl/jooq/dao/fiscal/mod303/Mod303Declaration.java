@@ -284,7 +284,7 @@ public abstract class Mod303Declaration {
 						total.add(AonMathUtils.round(deducedAmount * 100 / percent));
 				});
 				double mustDeclared = AonMathUtils.round(total.getValue() * mod303.getProratePercent() / 100);  
-				mod303.putAmount(getRegularizationKey(), AonMathUtils.round(declared.getValue() - mustDeclared));
+				mod303.putAmount(getRegularizationKey(), AonMathUtils.round(mustDeclared - declared.getValue()));
 			}
 		}
 	}
@@ -604,7 +604,7 @@ public abstract class Mod303Declaration {
 				}
 				double total = AonMathUtils.round(declared * 100 / percent);   
 				double mustDeclared = AonMathUtils.round(total * mod303.getProratePercent() / 100); 
-				double diference = AonMathUtils.round(declared - mustDeclared);
+				double diference = AonMathUtils.round(mustDeclared - declared);
 		
 				sumVat.add(total);
 				sumDeclared.add(declared); 

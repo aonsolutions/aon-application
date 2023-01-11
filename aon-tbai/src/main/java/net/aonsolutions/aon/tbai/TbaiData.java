@@ -5,16 +5,19 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
+import java.util.LinkedList;
 
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.DataRequest;
 import com.esferalia.aon.occam.api.model.DataResponse;
 import com.esferalia.aon.occam.api.model.DataResponseDetail;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
@@ -312,6 +315,12 @@ public class TbaiData {
 				.setDataValue(tbaiUrl);
 		
 		AON.insertDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), drd3);
+
+		invoice.ensureFiscal().setExpDate(new Date());
+		LinkedList<EnterpriseActivity> list = new LinkedList<>();
+		list.add(invoice.getActivity());
+		AonConfiguration config = new AonConfiguration().setEnterpriseActivities(list);
+		AON.saveInvoiceFiscal(domain.getName(), domain.getId(), user.getLogin(), config, invoice);
 		
 		return dr;
 	}
