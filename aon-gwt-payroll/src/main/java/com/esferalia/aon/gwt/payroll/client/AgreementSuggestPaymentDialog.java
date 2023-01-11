@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
@@ -102,6 +103,10 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		paymentSuggestionDisplay = new PaymentSuggestionDisplay();
 		
 		payment = new Payment();
+		Random rand = new Random();
+		int newPaymentId = rand.nextInt(1000) * -1;
+		if(newPaymentId > 0) newPaymentId = newPaymentId * -1;
+		this.payment.setId(newPaymentId);
 		
 		impl.getAvailablePayments(Integer.MAX_VALUE, new AsyncCallback<List<Payment>>() {
 			
