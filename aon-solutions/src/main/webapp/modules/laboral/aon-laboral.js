@@ -1,8 +1,7 @@
 import { AonApplication } from "../../components/aon-application.js";
 import { MSG } from "../../environments/environments.js";
 import Apps from "../../services/app.js";
-import { getSalaryPdf, updateContracts } from "../../services/service.js";
-import { AonDateUtils } from '../utils/AonDateUtils.js';
+import { getSalaryPdf } from "../../services/service.js";
 import { AonComunicaUtils } from "./comunic@/aon-comunica-utils.js";
 import { PayrollOptions, PAYROLL_VIEWS } from "./PayrollEnums.js";
 
@@ -100,14 +99,6 @@ export class AonLaboral extends AonComunicaUtils {
       this.showToast(error);
     }
 		this.getApplication().stopLoading();
-  }
-
-  async updateContracts(){
-    this.getApplication().startLoader();
-    //SINCRONIZED INIT YEAR
-    await updateContracts({employeesOld:true, employeesPrev:true, startDate: AonDateUtils.formatDateOrigin( new Date().addMonth(-3)) }).catch(e=>console.log("erros",e));
-    console.log("----------UPDATE CONTRACTS------");
-    this.getApplication().stopLoader();
   }
 }
 window.customElements.define('aon-laboral', AonLaboral);

@@ -5,13 +5,11 @@ import { DomainUserRoles } from "../../../models/DomainUserRoles.js";
 import {
   getDomainUserRoles,
   getIDC, getTA,
-  movDelete,
-  updateContracts
+  movDelete
 } from "../../../services/service.js";
 import { setValueName, waitEl } from "../../../services/utils.js";
 import { AonDocumentalList } from "../../documental/aon-documental-list.js";
 import { AonMobileDocumentalList } from "../../documental/aon-mobile-documental-list.js";
-import { AonDateUtils } from "../../utils/AonDateUtils.js";
 import { AonCompanyCostsList } from "../company/aon-company-costs-list.js";
 import { AonAltaDirecta } from "../comunic@/aon-alta-directa.js";
 import { AonMovementsList } from "../comunic@/aon-movements-list.js";
@@ -203,18 +201,6 @@ export class AonComunicaUtils extends AonElement {
     }
     if (obj.type) obj.typeReduce = obj.type.toString().substr(0, 1);
     return obj;
-  }
-
-  async updateContracts() {
-    this.getApplication().startLoader();
-    //SINCRONIZED INIT YEAR
-    await updateContracts({
-      employeesOld: true,
-      employeesPrev: true,
-      startDate: AonDateUtils.formatDateOrigin(new Date().addMonth(-3)),
-    }).catch((e) => console.log("erros", e));
-    console.log("----------UPDATE CONTRACTS------");
-    this.getApplication().stopLoader();
   }
 
   showView(view, data = undefined, filter = undefined) {

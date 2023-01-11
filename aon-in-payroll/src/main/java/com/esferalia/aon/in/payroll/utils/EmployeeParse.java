@@ -182,42 +182,47 @@ public class EmployeeParse {
 			@Override
 			public void onContractStart(Date date) {
 				employee.setStartDate(date);
+				
 				System.out.println("startDate: "+date);
 			}
 
 			@Override
 			public void onContractEnd(Date date) {
 				employee.setEndDate(date);
+				
 				System.out.println("endDate: "+date);
 			}
 			
 			
 			@Override
 			public void  onContractType(String contractType) {
-				System.out.println(employee.getStartDate());
 				employee.setContractType(contractType);
+				
 				System.out.println("contractType: "+contractType);
 			}
 
 			@Override
 			public void onContractQuoteGroup(String quoteGroup) {
 				employee.setQuoteGroup(quoteGroup);
+				
 				System.out.println("quoteGroup: "+quoteGroup);
 			}
 			
 			@Override
 			public void onContractOcupation(String ocupation){
 				employee.setOccupation(ocupation);
+				
 				System.out.println("ocupation: "+ocupation);
 			}
 			
 			@Override
 			public void onContractPartialCoeficient(String coeficiente){
-				System.out.println("coeficiente: "+coeficiente);
 				if(coeficiente.contains(",")) {
 					Double factor = Double.parseDouble( coeficiente.replace(",", ".") );
 					employee.setFactor(factor);
 				}	
+				
+				System.out.println("coeficiente: "+coeficiente);
 			}
 		});
 		
