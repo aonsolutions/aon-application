@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFinance;
+import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
@@ -63,6 +64,13 @@ import com.esferalia.aon.occam.impl.jooq.dao.invoice.InvoiceTrackingDAO;
 public class FinanceImpl implements IFinance {
 
 	// ------------------------------------- INVOICE
+	
+	@Override
+	public Invoice getLastSaleInvoice(AONContext ctx, String serie) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> InvoiceDAO.getLastSaleInvoice(ctx, serie));
+	}
+	
 	@Override
 	public Invoice getInvoice(AONContext ctx, Integer id) {
 		return ctx.getDslContext().transactionResult(
@@ -524,6 +532,12 @@ public class FinanceImpl implements IFinance {
 	public SiiConfiguration saveSiiConfiguration(AONContext ctx, SiiConfiguration pic) {
 		return ctx.getDslContext().transactionResult(
 				configuration -> SiiConfigurationDAO.save(ctx, pic));
+	}
+
+	@Override
+	public void saveInvoiceFiscal(AONContext ctx, AonConfiguration config, Invoice invoice) {
+		ctx.getDslContext().transaction(
+				configuration -> InvoiceFiscalDAO.save(ctx, config, invoice));
 	}
 	
 	@Override
