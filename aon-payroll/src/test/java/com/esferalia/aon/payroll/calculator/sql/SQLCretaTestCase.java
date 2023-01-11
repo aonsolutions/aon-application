@@ -6259,6 +6259,92 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaITNotAdjust502Partial()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		cleanSystemPayments(aonContext);
+		
+		
+		String ccc = UUID.randomUUID().toString().substring(0, 11);
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C502, "06");
+		
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.MONDAY_HOURS, 6.0);
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.TUESDAY_HOURS, 6.0);
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.WEDNESDAY_HOURS, 6.0);
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.THURSDAY_HOURS, 6.0);
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.FRIDAY_HOURS, 6.0);
+		
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		Date startIt = add(startDate, Calendar.DAY_OF_MONTH, 6);
+		Date endIt = startIt;
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startIt, endIt, null);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+
+		int salaries = calculateAndSave(connection, ctx);
+
+		// Only one salary saved to DB.
+		//Assert.assertEquals(1, salaries);
+
+		AON.getSalaryData(aonContext,
+				props -> props.getContractProperty().eq(contract.getId()).and(props.getCCCProperty().eq(ccc)))
+				.forEach(salary -> {
+					
+					for ( Entry<String, List<ContextData>> entry : salary.getContextData().entrySet() ) {
+						System.out.print(entry.getKey() + ": " );
+						for ( ContextData data: entry.getValue())
+							System.out.print(data.getExpression() + "(" + data.getStartDate() + ".." + data.getEndDate()  + "),") ;
+						System.out.println();
+					}
+					
+					// 500 Base de contingencias comunes.
+					List<ContextData> datas = salary.getContextData()
+							.get(CGC_BASE.getName());
+					
+					Assert.assertEquals(3, datas.size());
+					Assert.assertEquals(startDate, datas.get(0).getStartDate());
+					Assert.assertEquals(add(startIt, DATE, -1), datas.get(0).getEndDate());
+
+					Assert.assertEquals(startIt, datas.get(1).getStartDate());
+					Assert.assertEquals(endIt, datas.get(1).getEndDate());
+					org.junit.Assert.assertTrue(Double.parseDouble(datas.get(1).getExpression()) > 0.00);
+
+					Assert.assertEquals(add(endIt, Calendar.DAY_OF_MONTH,1) , datas.get(2).getStartDate());
+					Assert.assertEquals(endDate, datas.get(2).getEndDate());
+				});
+		;
+		
+		cleanSalaries(aonContext);
+		
+		List<Tramo> tramos = getTramos(connection, contract, startDate, endDate, ccc);
+		Assert.assertEquals(3, tramos.size());
+		
+		Assert.assertEquals("01", tramos.get(0).getFechaDesde().getDia());
+		Assert.assertEquals("06", tramos.get(0).getFechaHasta().getDia());
+		Assert.assertEquals("6", tramos.get(0).getDiasCotizados());
+		assertTramoActivoNormalTiempoCompleto( tramos.get(0) );
+		
+		Assert.assertEquals("07", tramos.get(1).getFechaDesde().getDia());
+		Assert.assertEquals("07", tramos.get(1).getFechaHasta().getDia());
+		Assert.assertEquals("1", tramos.get(1).getDiasCotizados());
+		assertTramoIT15PrimerosDias( tramos.get(1) );
+
+		
+		Assert.assertEquals("08", tramos.get(2).getFechaDesde().getDia());
+		Assert.assertEquals("31", tramos.get(2).getFechaHasta().getDia());
+		Assert.assertEquals("24", tramos.get(2).getDiasCotizados());
+		assertTramoActivoNormalTiempoCompleto( tramos.get(2) );
+
+	}
+
+	@Test
 	public void testCretaITPagoDelegadoMonthly()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		Connection connection = getConnection();
