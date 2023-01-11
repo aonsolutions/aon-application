@@ -175,8 +175,6 @@
 		    		<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label  styleName='{style.firstColumn}'>Modelo Recibo Salarial</g:Label>
 		    			<g:ListBox ui:field="enterprisePaysheetModel" styleName='aon-selectOneMenu {style.inputHeight}'></g:ListBox>
-		    			<g:Label styleName='{style.firstColumn} {style.w390}'>Modelo Recibo Costes Empresa</g:Label>
-		    			<g:ListBox ui:field="enterpriseCostModel" styleName='aon-selectOneMenu {style.inputHeight} {style.widthAll}'></g:ListBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label  styleName='{style.firstColumn}'>Envío Nóminas</g:Label>

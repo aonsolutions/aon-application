@@ -216,7 +216,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 				extraAssociated.addItem(paymentIt.getDescription(), extraIt.getId().toString());
 			});
 		else
-			allPayments.stream().filter(paymentIt -> !paymentIt.getId().equals(payment.getId()) && !paymentIt.isDeleted() && (paymentIt.getType().equals(Type.CRA_0004) || paymentIt.getType().equals(Type.CRA_0005))).forEach(paymentIt -> {
+			allPayments.stream().filter(paymentIt -> (payment.getId() != null && paymentIt.getId() != null  && !paymentIt.getId().equals(payment.getId())) && !paymentIt.isDeleted() && (paymentIt.getType().equals(Type.CRA_0004) || paymentIt.getType().equals(Type.CRA_0005))).forEach(paymentIt -> {
 				extraAssociated.addItem(paymentIt.getDescription(), paymentIt.getId().toString());
 			});
 		
@@ -712,17 +712,21 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), extraType);
 		
 		String startMonth = extra.getStartDate();
-		if(AonStringUtils.isNotBlank(startMonth) && AonStringUtils.containsIgnoreCase(startMonth, "-1")) startMonth = startMonth.split(" ")[0];
-		if(AonStringUtils.containsIgnoreCase(startMonth, "/")) startMonth = startMonth.split("/")[1];
-		if(startMonth.length() < 2) startMonth = AonStringUtils.leftPad(startMonth, 2, '0');
+		if(AonStringUtils.isNotBlank(startMonth)) {
+			if(AonStringUtils.containsIgnoreCase(startMonth, "-1")) startMonth = startMonth.split(" ")[0];
+			if(AonStringUtils.containsIgnoreCase(startMonth, "/")) startMonth = startMonth.split("/")[1];
+			if(startMonth.length() < 2) startMonth = AonStringUtils.leftPad(startMonth, 2, '0');
+		}
 		
 		setSelectedValueLB(extraStartDateMonth, startMonth);
 		extraStartDateYear.setSelectedIndex((AonStringUtils.isNotBlank(extra.getStartDate()) && AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) ? 1 : 0);
 		
 		String endMonth = extra.getEndDate();
-		if(AonStringUtils.isNotBlank(endMonth) && AonStringUtils.containsIgnoreCase(endMonth, "-1")) endMonth = endMonth.split(" ")[0];
-		if(AonStringUtils.containsIgnoreCase(endMonth, "/")) endMonth = endMonth.split("/")[1];
-		if(endMonth.length() < 2) endMonth = AonStringUtils.leftPad(endMonth, 2, '0');
+		if(AonStringUtils.isNotBlank(startMonth)) {
+			if(AonStringUtils.containsIgnoreCase(endMonth, "-1")) endMonth = endMonth.split(" ")[0];
+			if(AonStringUtils.containsIgnoreCase(endMonth, "/")) endMonth = endMonth.split("/")[1];
+			if(endMonth.length() < 2) endMonth = AonStringUtils.leftPad(endMonth, 2, '0');
+		}
 		
 		setSelectedValueLB(extraEndDateMonth, endMonth);
 		extraEndDateYear.setSelectedIndex((AonStringUtils.isNotBlank(extra.getEndDate()) && AonStringUtils.containsIgnoreCase(extra.getEndDate(), "-1")) ? 1 : 0);
@@ -801,12 +805,12 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		acceptDialog.setText(AON.MSG.accept());
 		acceptDialog.addClickHandler(e -> {
 			hide();
-			
 			// Seniority
 			if(seniorityPanel.isVisible()) onSeniority(seniorityType.getSelectedValue());
 			
 			// Payment & extra
 			createPayment();
+			
 			if(payment.getType().equals(Type.CRA_0004) || payment.getType().equals(Type.CRA_0005)) {
 				createExtra();
 				createAssociatedExtra();
@@ -818,7 +822,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	}
 	
 	private void createPayment() {
-		if(null == this.payment) {
+		if(null == this.payment || null == this.payment.getId()) {
 			this.payment = new Payment();
 			Random rand = new Random();
 			int newPaymentId = rand.nextInt(1000) * -1;
@@ -830,8 +834,10 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		if (null != selectedConcept) {
 			payment.setConceptId(selectedConcept.getId());
 			payment.setName(selectedConcept.getCode());
-		} else
+		} else {
+			payment.setConceptId(null);
 			payment.setName(paymentConceptSB.getValue());
+		}
 		
 		payment.setDescription(paymentDescriptionTB.getValue());
 		payment.setExpression(paymentExpressionTB.getValue());
@@ -841,7 +847,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	}
 	
 	private void createExtra() {
-		if(null == this.extra) {
+		if(null == this.extra || null == this.extra.getId()) {
 			this.extra = new AgreementExtra();
 			Random rand = new Random();
 			int newExtraId = rand.nextInt(1000) * -1;
@@ -930,9 +936,10 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 				associatedExtra.setIssueDate(extraIssueDateAssociated.getValue());
 			}
 			
-			if(null == associatedExtra.getAgreementPayment()) {
+			if(null == associatedExtra.getAgreementPayment() && !AonStringUtils.isBlank(extraAssociated.getSelectedValue())) {
 				int extraAssociatedId = Integer.parseInt(extraAssociated.getSelectedValue());
-				Optional<Payment> paymentAux = allPayments.stream().filter(paymentIt -> paymentIt.getId().equals(extraAssociatedId)).findFirst();
+				
+				Optional<Payment> paymentAux = allPayments.stream().filter(paymentIt -> null !=  paymentIt.getId() && paymentIt.getId().equals(extraAssociatedId)).findFirst();
 				
 				if(paymentAux.isPresent()) {
 					associatedExtra.setAgreementPayment(paymentAux.isPresent() ? paymentAux.get().getId() : null);

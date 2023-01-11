@@ -773,7 +773,7 @@ public class AgreementInfo implements IContextProvider, Serializable, HasId<Inte
 	}
 
 	public void replacePayment(Payment payment) {
-		getPayments().removeIf(paymentIt -> paymentIt.getId().equals(payment.getId()));
+		getPayments().removeIf(paymentIt -> null != paymentIt.getId() && paymentIt.getId().equals(payment.getId()));
 		payment.setModify(true);
 		getPayments().add(payment);
 	}

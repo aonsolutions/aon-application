@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.IT;
@@ -67,24 +66,6 @@ public class ITDialogObject {
 		}
 		
 		return null;
-	}
-	
-	// --------------------------------------------------- ConfirmationParts.Methods
-
-	public void deleteConfirmationPart(Integer itId, ITPart itPart) {
-		int deleteIdx = -1;
-		for(IT it : itEmployee.getIts()) {
-			if(it.getId() == itId || it.getId().equals(itId)) {
-				for(int i=0; i<it.getITParts().size(); i++) {
-					if(DateUtils.equals(itPart.getDate(), it.getITParts().get(i).getDate())) {
-						deleteIdx = i;
-						break;
-					}		
-				}
-				it.getITParts().remove(deleteIdx);
-				break;
-			}
-		}
 	}
 
 	// --------------------------------------------------- EmployeeStatus

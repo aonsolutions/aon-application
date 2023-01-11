@@ -269,7 +269,7 @@ public class Mod3902022DAO {
 		 // Operaciones intragrupo valoradas conforme a lo dispuesto en los arts. 78 y 79 LIVA
 		 ,C0128	 (Mod3902022DetailKey.C0128, null)
 		 // Operaciones en régimen simplificado
-		 ,C0100	 (Mod3902022DetailKey.C0100, ((mod, vc) -> (vc.isNationalSales() && vc.isVatSimplifiedRegime(VATRegime.GENERAL))))
+		 ,C0100	 (Mod3902022DetailKey.C0100, ((mod, vc) -> (vc.isNationalSales() && vc.isVatSimplifiedRegime())))
 		 // Operaciones en régimen especial de la agricultura, ganadería y pesca
 		 ,C0101	 (Mod3902022DetailKey.C0101, null)
 		 // Operaciones realizadas por sujetos pasivos acogidos al régimen especial del recargo de equivalencia
@@ -719,7 +719,7 @@ public class Mod3902022DAO {
 			Mod390Detail det = null;
 			EnumMap<Mod3902022DetailKey, Mod390Detail> map = getDetails(ctx, mod390);
 			mod390.setBox99 (map.get(Mod3902022DetailKey.C0099).getTaxableBase());
-			mod390.setBox100(map.get(Mod3902022DetailKey.C0099).getTaxableBase());
+			mod390.setBox100(map.get(Mod3902022DetailKey.C0100).getTaxableBase());
 			mod390.setBox101(map.get(Mod3902022DetailKey.C0101).getTaxableBase());
 			mod390.setBox102(map.get(Mod3902022DetailKey.C0102).getTaxableBase());
 			mod390.setBox103(map.get(Mod3902022DetailKey.C0103).getTaxableBase());

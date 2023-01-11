@@ -90,10 +90,12 @@ public class Model190ARABA extends Model190Base {
 	}
 	
 	protected void paintPerceptorsTab(TabLayoutPanel tabPanel, Integer selectedIndex) {
-		if ( getModel().getYear() < 2017) {
-			setDetailManager( new Model190ARABADetail2016( getCallback() , getModel(), selectedIndex ));	
-		} else {
+		if ( getModel().getYear() >= 2022) {
+			setDetailManager( new Model190ARABADetail2022( getCallback() , getModel(), selectedIndex ));	
+		} else if ( getModel().getYear() >= 2017) {
 			setDetailManager( new Model190ARABADetail2017( getCallback() , getModel(), selectedIndex ));
+		} else {
+			setDetailManager( new Model190ARABADetail2016( getCallback() , getModel(), selectedIndex ));	
 		}
 		tabPanel.add( (Widget) getDetailManager(),  AON.MSG.receiverList());
 	}

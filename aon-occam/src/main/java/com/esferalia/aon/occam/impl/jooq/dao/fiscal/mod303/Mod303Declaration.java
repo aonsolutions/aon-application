@@ -284,7 +284,7 @@ public abstract class Mod303Declaration {
 						total.add(AonMathUtils.round(deducedAmount * 100 / percent));
 				});
 				double mustDeclared = AonMathUtils.round(total.getValue() * mod303.getProratePercent() / 100);  
-				mod303.putAmount(getRegularizationKey(), AonMathUtils.round(mustDeclared - declared.getValue()));
+				mod303.putAmount(getRegularizationKey(), AonMathUtils.round(declared.getValue() - mustDeclared));
 			}
 		}
 	}
@@ -604,7 +604,7 @@ public abstract class Mod303Declaration {
 				}
 				double total = AonMathUtils.round(declared * 100 / percent);   
 				double mustDeclared = AonMathUtils.round(total * mod303.getProratePercent() / 100); 
-				double diference = AonMathUtils.round(mustDeclared - declared);
+				double diference = AonMathUtils.round(declared - mustDeclared);
 		
 				sumVat.add(total);
 				sumDeclared.add(declared); 
@@ -622,14 +622,14 @@ public abstract class Mod303Declaration {
 							.append(DEC2.format(total))
 						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightYellow) )				
-							.append(DEC2.format(percent))
+							.append(DEC2.format(AonMathUtils.equals(percent, 100)?0.0:percent))
 							.append(" %")
 						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightYellow) )				
 							.append(DEC2.format(declared))
 						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightGreen) )				
-							.append(DEC2.format(mod303.getProratePercent()))
+							.append(DEC2.format(AonMathUtils.equals(mod303.getProratePercent(), 100)?0.0:mod303.getProratePercent()))
 							.append(" %")
 						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightGreen) )				

@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,8 +41,10 @@ import com.esferalia.aon.gwt.payroll.jooq.JooqEnterprise;
 import com.esferalia.aon.gwt.payroll.shared.CCC;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.in.payroll.SistemaRED2AON;
+import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.tgss.idc.Idcplnss;
 import com.esferalia.aon.in.payroll.tgss.idc.PEC;
+import com.esferalia.aon.in.payroll.utils.EmployeeParse;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -55,8 +59,10 @@ import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
+import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.object.Idc;
 
 
 @MultipartConfig
@@ -319,11 +325,10 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 			String naf = req.getParameter(Parameter.NAF.name());
 			String date = req.getParameter(Parameter.DATE.name());
 
-			Employee employee = addEmployee(userLogin, domainName, domainId, userId, regime, ccc, naf);
-			execute(() -> SistemaRED2AON.addBonus(userLogin, domainName, parentDomainId, userId, regime, ccc, naf, null) );
-
+			Employee employee = addEmployee(userLogin, domainName, domainId, userId, regime, ccc, naf, null);
+			
 			resp.setStatus(HttpServletResponse.SC_OK);
-			byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d }", employee.getEmployeeId(),employee.getWorkplaceId()).getBytes();
+			byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d }", employee.getEmployeeId(), employee.getWorkplaceId()).getBytes();
 //			resp.setContentType("application/json");
 			resp.setContentType("text/html");
 			resp.setContentLength(content.length);
@@ -332,48 +337,59 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 	}
 
     private Employee addEmployee(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
-            String ccc, String naf) throws SegSocialException {
-        
-        Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-        
-        solutions.aon.seg.social.object.Employee ssEmployee = SistemaRED.getEmployee(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
-     
-        Date startDate = ssEmployee.getFra();
-        ccc = ssEmployee.getCtaCti().orElse(ccc);                               
+            String ccc, String naf, Date startDate) throws SegSocialException, SQLException, IOException {
+        try {
+            Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+            Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+            
+            if(startDate==null) {
+                startDate = new Date();
+                
+                Optional<Idc> idcLast = SistemaRED.getIDC(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, naf)
+                .stream()
+                .filter(d-> d.getDescripcion().equals("ALTA"))
+                .sorted((o1, o2) -> o2.getFecha().compareTo(o1.getFecha()))
+                .findFirst();
 
-        Employee aonEmployee = new Employee()
-        .setNaf(naf)
-        .setCcc(ccc)
-        .setRegime(regime)
-        .setStartDate(startDate)
-        .setDni(ssEmployee.getIpf())
-        ;
+                if(idcLast.isPresent()) {
+                    startDate = idcLast.get().getFecha();
+                }
+            }
 
-        ssEmployee.getGc().ifPresent(aonEmployee::setQuoteGroup);
-        ssEmployee.getName().ifPresent(aonEmployee::setName);
-        aonEmployee.setContractType(ssEmployee.getContract().orElse("000"));
-        ssEmployee.getCoef().filter(coef -> coef > 0.00 ).ifPresent(aonEmployee::setFactor);
-        ssEmployee.getBirthDate().ifPresent(aonEmployee::setBirthDate);
-        ssEmployee.getSex().ifPresent(aonEmployee::setSex);
-        ssEmployee.getFrb().ifPresent(aonEmployee::setEndDate);
-        
-        Integer registration = ssEmployee.hashCode();
-        System.out.println("REGISTRATION-> "+ registration);
+            byte[] idc = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+                    naf, regime, ccc, startDate);
+            
+            Employee aonEmployee = EmployeeParse.IdcToEmployeeOccam(idc);
 
-        aonEmployee.setRegistration(registration);
-        
-        return PAYROLL.getEmployee(domainName, domainId, userLogin, 
-               f->f.getDomainProperty().eq(domainId).and(f.getRegistrationProperty().eq(registration)) 
-        ).orElse(
-               PAYROLL.addEmployee(domainName, domainId, userLogin, aonEmployee)
-        );
+            Integer registration = aonEmployee.hashCode();
+            aonEmployee.setRegistration(registration);
+            
+            Optional<Employee> employee = PAYROLL.getEmployee(domainName, domainId, userLogin, f->f.getDomainProperty().eq(domainId).and(f.getRegistrationProperty().eq(registration)));
+            
+            if(employee.isPresent()) {
+                return employee.get();
+            } 
+            
+            Employee emp = PAYROLL.addEmployee(domainName, domainId, userLogin, aonEmployee);
+            
+            // ADD PECS AND DATA
+            execute(()->{
+                try {
+                    SistemaRED2AON.syncWithIdc(idc, userLogin, domainName, parentDomainId, emp.getStartDate(), emp.getCcc(), emp.getNaf());
+                } catch (IOException | UnknownPDFException e) {
+                    e.printStackTrace();
+                }
+            });
+            
+            return emp;
+        } catch (UnknownPDFException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }   
 
 	private void doRestoreEmployeePost(HttpServletRequest req, HttpServletResponse resp)throws ServletException, IOException, SQLException {
 		Connection connection = null;
-		
-		
-		
+	
 		try (OutputStream os = resp.getOutputStream();){	
 			connection = getConnection(req);
 			connection.setAutoCommit(false);
@@ -428,7 +444,7 @@ public class SistemaREDServlet extends HttpServlet implements SistemaREDService 
 				String date = req.getParameter(Parameter.DATE.name()+i);
 				try {
 
-					Employee employee = addEmployee(userLogin, domainName, domainId, userId, regime, ccc, naf);
+					Employee employee = addEmployee(userLogin, domainName, domainId, userId, regime, ccc, naf, null);
 					cccNafs.computeIfAbsent(new Pair(regime,ccc), k -> new ArrayList()).add(naf);
 					
 					byte content [] = String.format("{ \"employeeId\": %d, \"workplaceId\": %d, \"employeeName\":\"%s\" },", employee.getEmployeeId(), employee.getWorkplaceId(), employee.getName().orElse(naf)).getBytes();

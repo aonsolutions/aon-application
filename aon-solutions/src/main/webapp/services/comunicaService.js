@@ -23,7 +23,7 @@ export const getEmployee = (data) => get(`${API_URL}/comunica/get-employee`, dat
 export const getRlce = (data) => get(`${API_URL}/comunica/rlce`, data);
 
 export const getOccupation = (data) => get(`${API_URL}/comunica/occupation`, data);
- 
+
 export const getQuoteGroup = (data) => get(`${API_URL}/comunica/quote-group`, data);
 
 export const sendAlta = (data) => post(`${API_URL}/comunica/alta-directa`, data);

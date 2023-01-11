@@ -344,7 +344,7 @@ public class AgreementParser {
 	
 	private static void getAgreementConcepts(Document document, Agreement agreement) {
 		NodeList listCPR = document.getElementsByTagName("CATALOGO_CPTOS_RETRIB");
-		System.out.println("----- CONCEPTS -----");
+//		System.out.println("----- CONCEPTS -----");
 		for(int i=0; i<listCPR.getLength(); i++) {
 			Node nodeCPR = listCPR.item(i);
 
@@ -367,7 +367,7 @@ public class AgreementParser {
  	            
 	    	            String realName = getParseName(name, type);
 	    	            
-	    	            System.out.println(realName);
+//	    	            System.out.println(realName);
 	    	            
 	    	            agreement.addAgreementConcept(realName);
 	    	        }
@@ -413,7 +413,7 @@ public class AgreementParser {
 	    	            
 	    	            agreement.addAgreementLevel(code, description, category);
 	    	            
-//	    	            System.out.println("code : " + code + ", description : " + description + ", category : " + category);
+//	    	            System.out.println("AL -> code : " + code + ", description : " + description + ", category : " + category);
 	    	            
 	    	        }
 	    		}
@@ -594,12 +594,13 @@ public class AgreementParser {
 		});
 		
 		for(AgreementLevel agreementLevel : agreement.getAgreementLevels()) {
-		
+			
 			List<AgreementLevel> duplicateAgreementLevels = getDuplicateAgreementLevels(agreement, agreementLevel, analizedAgreementLevels);
 			analizedAgreementLevels.addAll(duplicateAgreementLevels);
 			
 			AgreementLevel newAgreementLevel = parsedAgreement.createAgreementLevel(agreementLevel.getCode(), agreementLevel.getDescription());
 			newAgreementLevel.setLevelDatas(agreementLevel.getLevelDatas());
+			
 			List<String> categories = new ArrayList<>();
 			
 			for(AgreementLevel duplicateAgreementLevel : duplicateAgreementLevels)
@@ -630,23 +631,37 @@ public class AgreementParser {
 	}
 
 	private static boolean haveSameValues(AgreementLevel agreementLevel, AgreementLevel checkedAgreementLevel) {
-		for(AgreementLevelData levelData : checkedAgreementLevel.getLevelDatas()) {
-			if(!containsLevelData(levelData, agreementLevel))
-				return false;
-		}
+		// Sort levels
+		Collections.sort(agreementLevel.getLevelDatas(), new Comparator<AgreementLevelData>() {
+			@Override
+			public int compare(AgreementLevelData ald1, AgreementLevelData ald2) {
+				return ald1.getName().compareTo(ald2.getName());
+			}
+		});
+		
+		Collections.sort(checkedAgreementLevel.getLevelDatas(), new Comparator<AgreementLevelData>() {
+			@Override
+			public int compare(AgreementLevelData ald1, AgreementLevelData ald2) {
+				return ald1.getName().compareTo(ald2.getName());
+			}
+		});
+		
+		if (agreementLevel.getLevelDatas().size() == checkedAgreementLevel.getLevelDatas().size()) {
+			
+			for(int i=0; i<agreementLevel.getLevelDatas().size(); i++) {
+				
+				AgreementLevelData levelData = agreementLevel.getLevelDatas().get(i);
+				AgreementLevelData checkedLevelData = checkedAgreementLevel.getLevelDatas().get(i);
+				
+				if(	!AonStringUtils.equalsIgnoreCase(checkedLevelData.getName(), levelData.getName()) || 
+					!AonStringUtils.equalsIgnoreCase(checkedLevelData.getValue(), levelData.getValue()) || 
+					!checkedLevelData.getStartDate().equals(levelData.getStartDate()))
+					return false;
+			}
+			
+		} else return false;
 		
 		return true;
-	}
-
-	private static boolean containsLevelData(AgreementLevelData cehckedlevelData, AgreementLevel agreementLevel) {
-		for(AgreementLevelData levelData : agreementLevel.getLevelDatas()) {
-			if(AonStringUtils.equalsIgnoreCase(cehckedlevelData.getName(), levelData.getName()) && 
-				AonStringUtils.equalsIgnoreCase(cehckedlevelData.getValue(), levelData.getValue()) && 
-				cehckedlevelData.getStartDate().equals(levelData.getStartDate()) &&
-				((null == cehckedlevelData.getEndDate() && null == levelData.getEndDate()) || cehckedlevelData.getEndDate().equals(levelData.getEndDate())))
-				return true;
-		}
-		return false;
 	}
 	
 	// ------------------------------------------------------------ INSERT AGREEMENT 
@@ -790,7 +805,7 @@ public class AgreementParser {
 				
 				if(null != agreementPayment) {
 					
-					System.out.println(agreementPayment.getConceptCode());
+//					System.out.println(agreementPayment.getConceptCode());
 					
 					String irpfExpression = "_P";
 					String quoteExpression = "_P";
@@ -808,19 +823,30 @@ public class AgreementParser {
 						quoteExpression = "EXCESO(0.19 * KMS)";
 					}
 					
-					PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
-							.set(PAYMENT_CONCEPT.DOMAIN, domainId)
-							.set(PAYMENT_CONCEPT.CODE, agreementPayment.getConceptCode())
-							.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.getNormalizeName())
-							.set(PAYMENT_CONCEPT.TYPE, agreementPayment.getType())
-							.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
-							.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.getExpression())
-							.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, irpfExpression)
-							.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, quoteExpression)
-							.returning(PAYMENT_CONCEPT.ID)
-							.fetchOne();
+					Result<PaymentConceptRecord> paymentConcepts = dslContext.selectFrom(PAYMENT_CONCEPT)
+						.where(PAYMENT_CONCEPT.DOMAIN.eq(0))
+						.and(PAYMENT_CONCEPT.CODE.eq(agreementPayment.getConceptCode()))
+						.and(PAYMENT_CONCEPT.DESCRIPTION.contains(agreementPayment.getPeriodicityType()))
+						.fetch();
 					
-					Integer paymentConceptId = paymentConceptRecord.getId();
+					Integer paymentConceptId = null;
+					
+					if(paymentConcepts.isEmpty()) {
+						PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
+								.set(PAYMENT_CONCEPT.DOMAIN, domainId)
+								.set(PAYMENT_CONCEPT.CODE, agreementPayment.getConceptCode())
+								.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.getNormalizeName())
+								.set(PAYMENT_CONCEPT.TYPE, agreementPayment.getType())
+								.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
+								.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.getExpression())
+								.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, irpfExpression)
+								.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, quoteExpression)
+								.returning(PAYMENT_CONCEPT.ID)
+								.fetchOne();
+						
+						paymentConceptId = paymentConceptRecord.getId();
+					} else
+						paymentConceptId = paymentConcepts.get(0).getId();
 					
 					AgreementPaymentRecord agreementPaymentRecord = dslContext.insertInto(AGREEMENT_PAYMENT)
 							.set(AGREEMENT_PAYMENT.DOMAIN, domainId)
@@ -1006,11 +1032,9 @@ public class AgreementParser {
 	private static Integer insertOrGetPaymentConceptExtraPay(DSLContext dslContext) {
 		
 		Result<Record> paymentConceptRecords = dslContext.select().from(PAYMENT_CONCEPT)
-			.where(PAYMENT_CONCEPT.DOMAIN.eq(domainId))
+			.where(PAYMENT_CONCEPT.DOMAIN.eq(domainId).or(PAYMENT_CONCEPT.DOMAIN.eq(0)))
 			.and(PAYMENT_CONCEPT.CODE.eq("PAGA_EXTRA"))
 			.and(PAYMENT_CONCEPT.DESCRIPTION.eq("PAGA EXTRAORDINARIA"))
-			.and(PAYMENT_CONCEPT.EXPRESSION.eq("SALARIO_BASE"))
-			.and(PAYMENT_CONCEPT.TYPE.eq((byte)4))
 			.fetch();
 		
 		if(paymentConceptRecords.isNotEmpty())
@@ -1022,7 +1046,7 @@ public class AgreementParser {
 				.set(PAYMENT_CONCEPT.DESCRIPTION, "PAGA EXTRAORDINARIA")
 				.set(PAYMENT_CONCEPT.TYPE, (byte)4)
 				.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
-				.set(PAYMENT_CONCEPT.EXPRESSION, "SALARIO_BASE")
+				.set(PAYMENT_CONCEPT.EXPRESSION, "INPUT(\"/*user*/MENSUALIDAD/**/\",PAGA_EXTRA_HELP)")
 				.set(PAYMENT_CONCEPT.IRPF_EXPRESSION, "_P")
 				.set(PAYMENT_CONCEPT.QUOTE_EXPRESSION, "_P")
 				.returning(PAYMENT_CONCEPT.ID)

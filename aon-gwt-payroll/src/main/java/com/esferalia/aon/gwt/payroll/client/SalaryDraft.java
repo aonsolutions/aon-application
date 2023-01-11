@@ -79,9 +79,12 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.dom.client.Style.WhiteSpace;
@@ -2613,7 +2616,7 @@ public class SalaryDraft extends ResizeComposite
 	FullViewer pdfViewer;
 
 	@UiField
-	DockLayoutPanel drafDockLayoutPanel;
+	DockLayoutPanel drafSplitLayoutPanel;
 	@UiField
 	SalarySelect salarySelect;
 	@UiField
@@ -2876,6 +2879,7 @@ public class SalaryDraft extends ResizeComposite
 		initWidget(binder.createAndBindUi(this));
 		initPaymentsTable();
 		initPrintPreview();
+		initOpenCloseContext();
 		scope = Scope.CONTRACT;
 		salarySelect.addListener(this);
 		showDraft();
@@ -4049,6 +4053,69 @@ public class SalaryDraft extends ResizeComposite
 		ssUIObjects = new LinkedList<HasStyleName>();
 	}
 
+	private void initOpenCloseContext() {
+		
+		SpanElement closeEmployeesButton = 
+		Document.get().createSpanElement();
+		closeEmployeesButton.setInnerText("chevron_right");
+		closeEmployeesButton.setClassName("material-icons");
+		
+		closeEmployeesButton.getStyle().setOpacity(0.5);
+		closeEmployeesButton.getStyle().setPadding(5, Unit.PX);
+		closeEmployeesButton.getStyle().setBackgroundColor("#ddd");
+		closeEmployeesButton.getStyle().setProperty("borderTopRightRadius", "50%");
+		closeEmployeesButton.getStyle().setProperty("borderBottomRightRadius", "50%");
+		
+		closeEmployeesButton.getStyle().setPosition(Position.ABSOLUTE);
+		closeEmployeesButton.getStyle().setRight(5, Unit.PX);
+		closeEmployeesButton.getStyle().setBottom(0, Unit.PX);
+
+		scrolledPanel.getElement().getParentElement().appendChild(closeEmployeesButton);
+		
+		SpanElement openEmployeesButton = 
+		Document.get().createSpanElement();
+		openEmployeesButton.setInnerText("chevron_left");
+		openEmployeesButton.setClassName("material-icons");
+		
+		openEmployeesButton.getStyle().setOpacity(0.5);
+		openEmployeesButton.getStyle().setPadding(5, Unit.PX);
+		openEmployeesButton.getStyle().setBackgroundColor("#ddd");
+		openEmployeesButton.getStyle().setProperty("borderTopLeftRadius", "50%");
+		openEmployeesButton.getStyle().setProperty("borderBottomLeftRadius", "50%");
+
+		openEmployeesButton.getStyle().setPosition(Position.ABSOLUTE);
+		openEmployeesButton.getStyle().setRight(5, Unit.PX);
+		openEmployeesButton.getStyle().setBottom(0, Unit.PX);
+		openEmployeesButton.getStyle().setDisplay(Display.NONE);
+
+		scrolledPanel.getElement().getParentElement().appendChild(openEmployeesButton);
+
+		InlineLabel.wrap(openEmployeesButton).addClickHandler(e -> {
+		    drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 275);
+			openEmployeesButton.getStyle().setDisplay(Display.NONE);
+			closeEmployeesButton.getStyle().setDisplay(Display.INITIAL);
+		});
+
+		InlineLabel.wrap(closeEmployeesButton).addClickHandler(e -> {
+		    	drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 0);
+			closeEmployeesButton.getStyle().setDisplay(Display.NONE);
+			new Timer(){
+				@Override
+				public void run() {
+					openEmployeesButton.getStyle().setDisplay(Display.INITIAL);
+				}
+			}.schedule(500);
+			
+		});
+
+		contextStackLayoutPanel.getElement().getParentElement().getStyle().setProperty("transition-property", "width");
+		contextStackLayoutPanel.getElement().getParentElement().getStyle().setProperty("transition-duration", "500ms");
+		
+		scrolledPanel.getElement().getParentElement().getStyle().setProperty("transition-property", "inset");
+		scrolledPanel.getElement().getParentElement().getStyle().setProperty("transition-duration", "500ms");
+		
+	}
+
 	private void initEvents() {
 		eventsCheck.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			@Override
@@ -5171,11 +5238,11 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private void hideContextAtLeft() {
-	    drafDockLayoutPanel.setWidgetSize(contextStackLayoutPanel, 0);
+	    drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 0);
 	}
 	
 	private void showContextAtLeft() {
-	    drafDockLayoutPanel.setWidgetSize(contextStackLayoutPanel, 275);
+	    drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 250);
 	}
 
 	private void dumpContextAtTop(List<Variable> visibleContext) {

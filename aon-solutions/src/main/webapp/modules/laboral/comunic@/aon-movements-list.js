@@ -211,8 +211,22 @@ export class AonMovementsList extends AonElement {
       newData = this.movParseData(data);
     } else {
       try {
-        let resp = await getEmployee({ regime:data.regime, ctaCti:data.ctaCti, nss: data.nss });
-        if (resp) newData = { ...resp, ...data };
+        let resp = await getEmployee({ regime:data.regime, ctaCti:data.ctaCti, nss: data.nss, date:(data.fra || data.frb) });
+        if (resp) {
+          newData = { ...resp, ...data};
+          if(resp.occupation){
+            newData.ocup = resp.occupation;
+          }
+          if(resp.contractType){
+            newData.contract = resp.contractType;
+          }
+          if(resp.factor){
+            newData.coef = resp.factor;
+          }
+          if(resp.quoteGroup){
+            newData.gc = resp.quoteGroup;
+          }
+        }
       } catch (error) {
         this.showError(error);
       }
@@ -225,7 +239,7 @@ export class AonMovementsList extends AonElement {
         disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, AON_SWITCH);
       }
     }
- 
+
     this.getApplication().stopLoading();
   }
 

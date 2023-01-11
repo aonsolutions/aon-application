@@ -594,10 +594,10 @@ public class EmployeeCalendarDraftObject {
 
 	// -------------------------------------------- Leyend
 	
-	public Integer getTotalYearDays(DayType dayType) {
+	public Integer getTotalYearDays(Integer year, DayType dayType) {
 		Integer countDays = 0;
 		
-		Date startDateTotal = DateUtils.getFirstDayOfYear();
+		Date startDateTotal = DateUtils.getFirstDayOfYear(year - 1900);
 		Date endDateTotal = DateUtils.getLastDayOfYear(startDateTotal);
 		Date iteratorDate = DateUtils.copyDateOnly(startDateTotal);
 		

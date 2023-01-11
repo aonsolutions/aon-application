@@ -12,6 +12,7 @@ public class InvoiceFiscal implements Serializable {
 	private Integer domain;
 	private Date issueDate;
 	private Date taxDate;
+	private Date expDate;
 	private HashMap<VATTaxRegime,Boolean> vatRegimes;
 	
 	
@@ -44,6 +45,14 @@ public class InvoiceFiscal implements Serializable {
 	}
 	public InvoiceFiscal setTaxDate(Date taxDate) {
 		this.taxDate = taxDate;
+		return this;
+	}
+	
+	public Date getExpDate() {
+		return expDate;
+	}
+	public InvoiceFiscal setExpDate(Date expDate) {
+		this.expDate = expDate;
 		return this;
 	}
 	

@@ -5,15 +5,14 @@ import static com.esferalia.aon.watson.util.AonStringUtils.removeStart;
 import static com.esferalia.aon.watson.util.AonStringUtils.trim;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +26,6 @@ import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.payroll.tgss.cra.StringUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.AonUtils;
 
 public class IdcParser {
 	
@@ -36,13 +34,19 @@ public class IdcParser {
 			parse(doc, listener);
 		}
 	}
+	
+	public static void parse(byte [] data, IdcParserListener idcListener ) throws IOException, UnknownPDFException {
+		try ( InputStream is = new ByteArrayInputStream(data)) {
+			parse(is, idcListener);
+		}
+	}
 
  	public static void parse( InputStream is ,IdcParserListener listener) throws IOException , UnknownPDFException {
 		try (PDDocument doc = Loader.loadPDF(is)){
 			parse(doc, listener);
 		}
 	}
-	
+
 	public static void parse(PDDocument doc, IdcParserListener listener) throws IOException, UnknownPDFException {
        AccessPermission ap = doc.getCurrentAccessPermission();
 		if (!ap.canExtractContent()){
@@ -102,12 +106,8 @@ public class IdcParser {
 
 			
 			matcher = find(reader, CONTRACT_TYPE_START_END);
-			if ( hasData(matcher.group("contractType"))) {
-				listener.onContractType(matcher.group("contractType"));
-			}
 			
 			listener.onContractStart(simpleDateFormat.parse(matcher.group("start")));
-			
 			
 			if(hasData(matcher.group("end"))) {
 				try {
@@ -117,6 +117,10 @@ public class IdcParser {
 				}	
 			}
 			
+			if ( hasData(matcher.group("contractType"))) {
+				listener.onContractType(matcher.group("contractType"));
+			}
+
 			matcher = find(reader, CONTRACT_PARTIALCOEF_DATE_AGE);
 			if(hasData(matcher.group("partialCoef"))) {
 				listener.onContractPartialCoeficient(matcher.group("partialCoef"));

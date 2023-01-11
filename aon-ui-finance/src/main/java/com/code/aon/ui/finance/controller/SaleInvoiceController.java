@@ -615,14 +615,15 @@ public class SaleInvoiceController extends InvoiceController {
 				
 				Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};				
 				if(invoice.getNumber() < 1) {
-					Integer number = AON.getInvoiceNextNumber(domainName, invoice.getDomain(), login, types, inv.getSeries());
+					com.esferalia.aon.occam.api.model.finance.Invoice lastInvoice = AON.getLastSaleInvoice(domainName, invoice.getDomain(), login, inv.getSeries());
+					if(invoice.getIssueDate().compareTo(lastInvoice.getIssueDate()) < 0) {
+						throw new Exception("Existe una factura con la misma serie y fecha anterior.");
+					}
+					Integer number = lastInvoice.getNumber() > 0
+							? lastInvoice.getNumber() + 1 : 1;
 					invoice.setNumber(number);
 					invoice.setReferenceCode(null);
-					invoice.setIssueDate(new Date());
-					invoice.setTaxDate(invoice.getTaxDate() != null && invoice.getTaxDate().after(new Date()) ? invoice.getTaxDate() : new Date());
 					inv.setNumber(number);
-					inv.setIssueDate(new Date());
-					inv.setTaxDate(invoice.getTaxDate() != null && invoice.getTaxDate().after(new Date()) ? invoice.getTaxDate() : new Date());
 				}
 			
 				invoice = AON.updateInvoice(domainName, invoice.getDomain(), login, invoice, true);

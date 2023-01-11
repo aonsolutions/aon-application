@@ -285,7 +285,7 @@ public class SistemaRED {
 	public static Employee getEmployee(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return SistemaREDEmployee.getEmployee(certificateInputStream, certificatePassword, certificateType,
+			return getEmployee(certificateInputStream, certificatePassword, certificateType,
 					regimen, ccc, nss);
 		} catch (IOException e) {
 			throw new SegSocialException(e);

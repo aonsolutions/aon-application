@@ -6,6 +6,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
@@ -28,7 +29,7 @@ class Mod303ARABA2022Declaration extends Mod303ARABA {
 	public static final double SURCHARGE_PERCENT3 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isAraba() && mod.getYear() > 2021 && !mod.isLastPeriod();
+		return  mod.isAraba() && mod.getYear() > 2021 && mod.getPeriod() != Period.T4;
 	}
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
 		 Mod303Key.AR_C030,Mod303Key.AR_C031,Mod303Key.AR_C032

@@ -2,7 +2,6 @@ package nordigen;
 
 import static nordigen.NordigenUtils.isRequisitionLinked;
 
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -398,11 +397,15 @@ public class AonNordigen {
 	}
 	
 	//DELETES FROM DATABASE AND NORDIGEN
-	public static void deleteRequisitionByRbank(NordigenAccessToken token, Domain domain, String login, Integer rbank) {
+	public static void deleteRequisitionByRbank(NordigenAccessToken token, Domain domain, String login, Integer rbank) throws Exception {
 		if (rbank != null) {
 			RegistryBank rbankObj = AON.getRegistryBank(domain, login, f -> f.getIdProperty().eq(rbank));
+			String requisition = rbankObj != null ? rbankObj.getRequisition() : null;
 			rbankObj.setRequisition(null);
 			AON.saveRegistryBank(domain, login, rbankObj);
+			if (rbankObj != null && requisition != null) {
+				deleteRequisition(token, requisition);				
+			}
 		}
 	}
 	
@@ -601,7 +604,7 @@ public class AonNordigen {
 	
 	public static void main(String[] args) throws Exception {
 		Integer rbank = 6740;
-		String access = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY4NTI3ODIwLCJqdGkiOiI5NjBiZDY3ZWYyMGE0MzhmOTZkMTNlODI3YWY5ZDYyMyIsImlkIjoxNjM5Miwic2VjcmV0X2lkIjoiZjM1NTk2ODUtYmJlYy00NWM0LTlkZmEtZjAxNzIxZTcxOTBlIiwiYWxsb3dlZF9jaWRycyI6WyIwLjAuMC4wLzAiLCI6Oi8wIl19.Ctdo0hiMv4auBvbegqy6avUhm-4X9P91CvavMJ_EkgQ";
+		String access = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjcyOTA1OTAxLCJqdGkiOiIzYzExZmU2Mzg0NDg0YTE5YTRhODliODQwZjliNTRjYiIsImlkIjoxNjM5Miwic2VjcmV0X2lkIjoiZjM1NTk2ODUtYmJlYy00NWM0LTlkZmEtZjAxNzIxZTcxOTBlIiwiYWxsb3dlZF9jaWRycyI6WyIwLjAuMC4wLzAiLCI6Oi8wIl19.W1cn_s-URJFju8S95l73RsolGxlsbnqf_0mS8RyeBdU";
 		NordigenAccessToken token = new NordigenAccessToken().setAccess(access);
 		Domain domain = new Domain().setId(7138).setName("b72384936-ayudat.aonsolutions.net");
 		String reqId = "4a7c2d29-6ab0-4afe-99bd-84c7ad7f76d7";

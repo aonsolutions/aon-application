@@ -37,6 +37,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
+import com.esferalia.aon.occam.api.json.EmployeeJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
@@ -160,6 +161,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					LOGGER.info("GET-COPY-BASIC");
 					responseFile(resp, "COPY_BASIC", getCopyBasicSepe(initialize(req)), MimeType.PDF);
 					break;
+				case "/get-employee":
+					LOGGER.info("GET-EMPLOYEE SERVLET - GET METHOD");
+					response(req, resp,	getEmployee(initialize(req)));
+					break;
 				default:
 					doGetGson(req, resp);
 			}
@@ -206,10 +211,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		    Gson gjson = new GsonBuilder().setDateFormat(FORMAT_DATE).create();
 		    String jsonInString = null;
 			switch (api.getPath()) {
-				case "/get-employee":
-					LOGGER.info("GET-EMPLOYEE SERVLET - GET METHOD");
-					jsonInString = gjson.toJson(this.getEmployee(api));
-					break;
+//				case "/get-employee":
+//					LOGGER.info("GET-EMPLOYEE SERVLET - GET METHOD");
+//					jsonInString = gjson.toJson(this.getEmployee(api));
+//					break;
 				case "/movements":
 					LOGGER.info("MOVEMENTS SERVLET - GET METHOD");
 					jsonInString = gjson.toJson(this.getMovements(api));
@@ -664,17 +669,23 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		return new JSONObject();
 	}
 	
-	private Employee getEmployee(AonApiData api) throws Exception{
+	private JSONObject getEmployee(AonApiData api) throws Exception{
         JSONObject params = api.getData(); 
 		Domain domain     = api.getDomain();
 
 		String regime     = params.optString(IJsonNames.REGIME);
 		String ccc        = params.optString("ctaCti");
 		String nss        = params.optString("nss");
+	
+		Date date = AonDateUtils.parse(params.optString(IJsonNames.DATE), FORMAT_DATE);
 		
 		Certificate certificate = AON.getCertificate(domain.getName(), domain.getId(), api.getUser().getLogin(), api.getUser().getId(), "TGSS");
 		
-		return SistemaRED.getEmployee(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, nss);	
+		byte[] fileByte = ServicioRED.getIDCPOST(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+				nss, regime, ccc, date);
+				
+		return EmployeeJSON.toJSON(EmployeeParse.IdcToEmployeeOccam(fileByte));
+//		return SistemaRED.getEmployee(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), regime, ccc, nss);	
 	}
 	
 	private JSONObject updateContract(AonApiData api) throws Exception {

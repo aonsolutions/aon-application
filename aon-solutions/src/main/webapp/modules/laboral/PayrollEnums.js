@@ -107,8 +107,8 @@ export const CONTRACT_OPTIONS = {
     backgroundColor: PAYROLL.color
   },
   DELETE:{
-    name: "Anuales",
-    title: "Anuales",
+    name: "Anular",
+    title: "Anular",
     id: 'Delete',
     icon: 'delete_forever',
     permission:true,
