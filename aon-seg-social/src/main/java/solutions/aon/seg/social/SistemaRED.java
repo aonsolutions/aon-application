@@ -364,12 +364,6 @@ public class SistemaRED {
 			return SistemaREDI.getIDCDates(certificateData, certificatePassword, certificateType,
 					nss, regimen, ccc);
 	}
-	
-	public static Collection<Idc> getIDCDatesPOST(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
-		return ServicioRED.getIDCDatesPOST(certificateInputStream, certificatePassword, certificateType,
-					nss, regimen, ccc);
-	}
 
 	public static byte[] getIDCCCC(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String regimen, String ccc, Date date) throws SegSocialException {

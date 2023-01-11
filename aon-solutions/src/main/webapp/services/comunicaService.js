@@ -10,8 +10,6 @@ export const getMovements = (data) =>  get(`${API_URL}/comunica/movements`, data
 
 export const getMovementsCccs = (data) => get(`${API_URL}/comunica/movements-cccs`, data);
 
-export const updateContracts = (data) =>  get(`${API_URL}/comunica/update-contracts`, data);
-
 export const getIpfxnaf = (data) => get(`${API_URL}/comunica/ipfxnaf`, data);
 
 export const getNafxipf = (data) => get(`${API_URL}/comunica/nafxipf`, data);
