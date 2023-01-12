@@ -2348,6 +2348,70 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testSettleWithExtrasWhitoutConceptXXI() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date contractStart = getFirstDayOfYear(getToday());
+		
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				new HashMap<String, String>() {
+				{
+					put(TC2.getName(), "\"100\"");
+					put(MONTH_DAYS.getName(), "30");
+					put(QUOTE_GROUP.getName(), "\"01\"");
+				}
+				}, 
+				new String[] { 
+				}, 
+				new String[] {
+					"BASE_CGC * 0.10", 
+					"BASE_CGP * 0.05",
+					"BASE_IRPF * 0.00/100" 
+				}, 
+				null);
+		//@formatter:off		
+		
+		addSSRegimeStuff(aonContext);
+
+		//PaymentConceptRecord pagaExtra = addConcept(aonContext, "PAGA_EXTRA", PaymentType.CRA_0004);
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE", PaymentType.CRA_0001);
+		
+		addPayment(aonContext, contract, salarioBase, "950.00 * DIAS_TRABAJADOS / DIAS_MES");
+		addPayment(aonContext, contract, contractStart, null, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P/12", PaymentType.CRA_0004, Month.JUNE);
+		addPayment(aonContext, contract, contractStart, null, "PAGA EXTRAORDINARIA", "SALARIO_BASE", "_P", "_P/12", PaymentType.CRA_0004, Month.DECEMBER);
+		
+		for ( int i = 0 ; i <= 2 ; i++ ) {
+			Date startDate = add(contractStart, Calendar.MONTH, i);
+			Date endDate = getLastDayOfMonth(startDate);
+			JooqSalaryBuilder jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+			new SmartContractSalaryCalculator<Salary>(jooqSalaryBuilder)
+			.calculate(getContractSalaryCalculatorContext(connection, startDate, endDate , endDate , contract));
+			jooqSalaryBuilder.execute();
+		}
+		
+		AON.getSalaries(aonContext, p-> p.getContractProperty().eq(contract.getId()))
+		.forEach( salary -> {
+			org.junit.Assert.assertEquals(950.00/6.00, salary.getExtraProrationBase(), DELTA);
+		});
+		;
+		
+		Date endDate = getLastDayOfMonth((add(contractStart, Calendar.MONTH, 2))); // 31/03
+		
+		ISQLContractSalaryCalculatorContext settleCtx = 
+				getSmartSQLContractSettleContext(connection, contractStart, endDate, contract);
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(settleCtx);
+		
+		for ( SalaryPayment p : settle.getSalaryPayments() ) 
+			System.out.println(p.getDescription() + "= " + p.getAmount() );
+		
+		Assert.assertEquals( 950.00/6.00 * 3, settle.getTotalPayment(), 0.005);
+	}
+
+	@Test
 	public void testSettleWithExtrasMismatchOverriden() throws ExpressionException, SQLException, SalaryException {
 
 		Connection connection = getConnection();
