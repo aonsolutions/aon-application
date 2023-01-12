@@ -3897,6 +3897,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Porc. Titularidad del inmueble")
 	String assetPercent();
 
+	@DefaultMessage("Porc. Titularidad del inmueble")
+	String assetDays();
+
 	@DefaultMessage("Existen vencimientos pagados/remesados/saldados.")
 	String hasPaidFinances();
 	
