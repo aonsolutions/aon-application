@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.Cabecera240Type;
@@ -19,14 +20,14 @@ public class LROE240 extends LROE{
 	private final static String TEST_NIF_240 = "A99802019";
 	private final static String TEST_NAME_240 = "4wbLGzaHUvHzMkJm9Z5knRPBKpLKr7"; 
 	
-	protected static Cabecera240Type buildCabecera(Company company, LROEInfo info) {
+	protected static Cabecera240Type buildCabecera(Company company, LROEInfo info, Invoice invoice) {
 		Cabecera240Type cabecera = new Cabecera240Type();
 		cabecera.setModelo(MODEL_240);
 		NIFPersonaType nif = new NIFPersonaType();
 		nif.setNIF(company.getDocument().replace(" ", ""));
 		nif.setApellidosNombreRazonSocial(company.getName());
 		cabecera.setObligadoTributario(nif);
-		cabecera.setEjercicio(AonDateUtils.getYear(new Date()));
+		cabecera.setEjercicio(AonDateUtils.getYear(invoice.getIssueDate()));
 		cabecera.setCapitulo(info.getCapitulo());
 		if(info.getSubcapitulo() != null)
 			cabecera.setSubcapitulo(info.getSubcapitulo());

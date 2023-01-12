@@ -55,7 +55,7 @@ public class LROE140_1_1 extends LROE140 {
 	
 	private LROEPF140IngresosConFacturaConSGAltaPeticion build(Person person, Invoice invoice,LROEInfo info, byte[] data) {
 		LROEPF140IngresosConFacturaConSGAltaPeticion proba = new LROEPF140IngresosConFacturaConSGAltaPeticion();
-		proba.setCabecera(buildCabecera(person, info));
+		proba.setCabecera(buildCabecera(person, info, invoice));
 
 		IngresosConSGCodificadoType ingresos = new IngresosConSGCodificadoType();
 		IngresoConSGCodificadoType ingreso = new IngresoConSGCodificadoType();
@@ -101,7 +101,7 @@ public class LROE140_1_1 extends LROE140 {
 	
 	private LROEPF140IngresosConFacturaConSGAnulacionPeticion buildBaja(Person person, Invoice invoice, LROEInfo info, byte[] data) {	
 		LROEPF140IngresosConFacturaConSGAnulacionPeticion lroe = new LROEPF140IngresosConFacturaConSGAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(person, info));
+		lroe.setCabecera(buildCabecera(person, info, invoice));
 		AnulacionesIngresosConSGType anulaciones = new AnulacionesIngresosConSGType();
 		
 		AnulacionFacturaConSGType anulacion = new AnulacionFacturaConSGType();
@@ -203,7 +203,7 @@ public class LROE140_1_1 extends LROE140 {
 
 	private LROEPF140IngresosConFacturaConSGConsultaPeticion buildConsulta(Person person, Invoice invoice, LROEInfo info) {
 		LROEPF140IngresosConFacturaConSGConsultaPeticion lroe = new LROEPF140IngresosConFacturaConSGConsultaPeticion();
-		lroe.setCabecera(buildCabecera(person, info));
+		lroe.setCabecera(buildCabecera(person, info, invoice));
 		
 		FiltroConsultaIngresosConFacturaType filtro = new FiltroConsultaIngresosConFacturaType(); 
 		filtro.setCabeceraFactura(buildCabeceraFactura(invoice));

@@ -64,7 +64,7 @@ public class LROE140_1_2 extends LROE140 {
 	
 	private LROEPF140IngresosConFacturaSinSGAltaModifPeticion build(Person person, Invoice invoice,LROEInfo info) {
 		LROEPF140IngresosConFacturaSinSGAltaModifPeticion lroe = new LROEPF140IngresosConFacturaSinSGAltaModifPeticion();
-		lroe.setCabecera(buildCabecera(person, info));
+		lroe.setCabecera(buildCabecera(person, info, invoice));
 		
 		IngresosSinSGType ingresos = new IngresosSinSGType();
 		IngresoSinSGType ingreso = new IngresoSinSGType();
@@ -260,7 +260,7 @@ public class LROE140_1_2 extends LROE140 {
 	
 	private LROEPF140IngresosConFacturaSinSGAnulacionPeticion buildBaja(Person person, Invoice invoice, LROEInfo info) {	
 		LROEPF140IngresosConFacturaSinSGAnulacionPeticion lroe = new LROEPF140IngresosConFacturaSinSGAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(person, info));
+		lroe.setCabecera(buildCabecera(person, info, invoice));
 		AnulacionesIngresosSinSGType anulaciones = new AnulacionesIngresosSinSGType();
 		
 		AnulacionIngresoSinSGType anulacion = new AnulacionIngresoSinSGType();
