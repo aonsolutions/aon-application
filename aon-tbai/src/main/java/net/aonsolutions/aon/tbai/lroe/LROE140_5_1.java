@@ -49,7 +49,7 @@ public class LROE140_5_1 extends LROE140 {
 	
 	private LROEPF140CriterioCajaCriterioCobrosYPagosCobrosAltaModifPeticion build(Person person, List<Invoice> invoices, LROEInfo info) {
 		LROEPF140CriterioCajaCriterioCobrosYPagosCobrosAltaModifPeticion lroe =  new LROEPF140CriterioCajaCriterioCobrosYPagosCobrosAltaModifPeticion();
-		lroe.setCabecera(buildCabecera(person, info));
+		lroe.setCabecera(buildCabecera(person, info, invoices.get(0)));
 		CriterioCajaCobrosPFType cobros = new CriterioCajaCobrosPFType();
 		invoices.stream().forEach(invoice -> cobros.getCobro().addAll(buildCobros(invoice)));
 		lroe.setCobros(cobros);

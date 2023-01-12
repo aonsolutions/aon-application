@@ -34,7 +34,7 @@ public class LROE140_3_1 extends LROE140 {
 	
 	private LROEPF140BienesAltaAltaModifPeticion build(Person person, Invoice invoice, LROEInfo info) {
 		LROEPF140BienesAltaAltaModifPeticion lroe =  new LROEPF140BienesAltaAltaModifPeticion();
-		lroe.setCabecera(buildCabecera(person, info));
+		lroe.setCabecera(buildCabecera(person, info, invoice));
 		lroe.setBienesAlta(buildBienes(invoice));
 		return lroe;
 	}
