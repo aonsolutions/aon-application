@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -237,7 +238,6 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.Payments;
-import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -272,6 +272,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			return AonServletUtils.getDomainID(domain);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public Domain getDomain(String domain, String user) {
+		try {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			return AON.getDomain(domain, domainId, user);
+		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -2113,6 +2123,15 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
+	public String checkEnterprisesEmails(String domainName, HashSet<Integer> enterpriseIds) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqMail.checkEnterprisesEmails(connection, enterpriseIds);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public String getSettlePDF(String domain, String login, Integer settleId) throws IllegalArgumentException {
@@ -2144,7 +2163,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try (ByteOutputStream os = new ByteOutputStream(); 
 		CloseableAONContext aonContext = AONContext.getAONContext(domain, currentUser)) {
 			String salaryReport = getReportKey(domain, enterpriseID, SalaryType.SALARY);
-			
 			
 			PayrollPrintService.PayrollType payrollType ;
 			
@@ -2198,12 +2216,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public String sendPayrollEmail(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
+	public String sendPayrollEmail(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			return JooqMail.sendPayrollEmail(connection, domainId, type, params, from, to, cc, cco, bodyHTML);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 	

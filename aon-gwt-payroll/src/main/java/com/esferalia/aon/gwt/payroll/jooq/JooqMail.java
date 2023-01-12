@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -136,6 +137,8 @@ public class JooqMail {
 			return getEnterpriseBody(dslContext, params);
 		case EMPLOYEE:
 			return getEmployeeBody();
+		case ENTERPRISE_MANAGEMENT:
+			return getEnterpriseManagementBody();
 		default:
 			return "";
 		}	
@@ -193,6 +196,33 @@ public class JooqMail {
 		return html;
 	}
 	
+	private static String getEnterpriseManagementBody() {
+		String html = "";
+		
+		html += "<div style=\"font-family: \"Lucida Sans Unicode\", \"Lucida Grande\", sans-serif;font-size: 12px;letter-spacing: 2px;word-spacing: 0px;color: #000000;font-weight: normal;text-decoration: none;font-style: normal;font-variant: normal;text-transform: none;\">";
+		html += "<p>Estimado cliente:</p>";
+		html += "<p>Le adjuntamos las n&oacute;minas de la empresa <a style=\"font-weight: bold;\">NOMBRE_EMPRESA</a> que corresponden a los siguientes trabajadores:</p>";
+		html += 	"<ul>";
+		
+		html += 		"<li style=\"font-weight: bold;\">NOMINA_TRABAJDORES</li>";
+
+		html += 	"</ul>";
+		html += 	"<p>Para descargar y visualizar el documento adjunto, por favor haga click en el siguiente enlace:</p>";
+		
+		html += 	"<div id=\"form\">";
+		html +=			"<a type=\"button\" href=\"URL_DOWNLOAD\" style=\"text-decoration:none;padding:5px;text-align:center;color: #153643;\">";
+		html +=				"<img src=\"http://simpleicon.com/wp-content/uploads/cloud-download-2.png\" style=\"width:20px;vertical-align: middle;\" />";
+		html +=				"<b style=\"color: black;padding-left: 4px;font-size: x-small;\">DESCARGAR NOMINAS</b>";
+		html +=			"</a>";
+		html += 	"</div>";
+
+		html += 	"<p>Este archivo est&aacute; en formato PDF Adobe y se puede leer usando Acrobat Reader. Si no tiene instalado el Acrobat Reader pulse aqu&iacute; para conseguir su copia gratuita: http://get.adobe.com/es/reader. Para cualquier aclaraci&oacute;n sobre el documento adjunto p&oacute;ngase en contacto con nosotros.</p>";
+		html += 	"<a style=\"font-weight: bold;\">INFORMACION_EMPRESA</a>";
+		html += "</div>";
+		
+		return html;
+	}
+	
 	
 	// ---------------------------------------------- Check employees emails
 	
@@ -231,13 +261,39 @@ public class JooqMail {
 		return message;
 	}
 	
+	// ---------------------------------------------- Check enterprises emails
+	
+	public static String checkEnterprisesEmails(Connection connection, HashSet<Integer> enterpriseIds) {
+		return checkEnterprisesEmailsDB(DSL.using(connection, getDefaultSettings()), enterpriseIds);
+	}
+	
+	private static String checkEnterprisesEmailsDB(DSLContext dslContext, HashSet<Integer> enterpriseIds) {
+		String message = "";
+		
+		for(Integer enterpriseId : enterpriseIds) {
+			Record enterpriseEmailRecord = dslContext.select().from(ENTERPRISE_DATA)
+					.where(ENTERPRISE_DATA.ENTERPRISE.eq(enterpriseId)
+					.and(ENTERPRISE_DATA.NAME.eq("PAY_salarySending_email_PAY")))
+					.fetchOne();
+			
+			Record enterpriseRecord = dslContext.select().from(REGISTRY)
+					.where(REGISTRY.ID.eq(enterpriseId))
+					.fetchOne();
+			
+			if(null == enterpriseEmailRecord || AonStringUtils.isBlank(enterpriseEmailRecord.get(ENTERPRISE_DATA.EXPRESSION)))
+				message += "<p>" + enterpriseRecord.get(REGISTRY.NAME) + " no tiene email definido, reviselo en su perfil. </p>";
+		}
+		
+		return message;
+	}
+	
 	// ---------------------------------------------- Send Email
 	
-	public static String sendPayrollEmail(Connection connection, Integer domainId, Type type,  HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
+	public static String sendPayrollEmail(Connection connection, Integer domainId, Type type,  HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
 		return sendPayrollEmailDB(DSL.using(connection, getDefaultSettings()), domainId, type, params, from, to, cc, cco, bodyHTML);
 	}
 	
-	private static String sendPayrollEmailDB(DSLContext dslContext, Integer domainId, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
+	private static String sendPayrollEmailDB(DSLContext dslContext, Integer domainId, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
 		String message = "";
 		String enterpriseName = dslContext.select(REGISTRY.NAME).from(REGISTRY)
 				.where(REGISTRY.ID.eq(
@@ -246,10 +302,13 @@ public class JooqMail {
 		
 		switch (type) {
 		case EMPLOYEE:
-			message = sendEmployeesEmail(dslContext, type, params, from, enterpriseName, to, cc, cco, bodyHTML);
+			message = sendEmployeesEmail(dslContext, params, from, enterpriseName, to, cc, cco, bodyHTML);
 			break;
 		case ENTERPRISE:
 			message = sendEmail(dslContext, from, enterpriseName, to, cc, cco, bodyHTML);
+			break;
+		case ENTERPRISE_MANAGEMENT:
+			message = sendEnterpriseManagementEmail(dslContext, params, from, to, cc, cco, bodyHTML);
 			break;
 		default:
 			break;
@@ -257,8 +316,43 @@ public class JooqMail {
 		
 		return message;
 	}
+	
+	private static String sendEnterpriseManagementEmail(DSLContext dslContext, HashMap<String, String> params, String mailAccountId, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
+		ArrayList<Integer> salaryIds = getSalaryIds(params);
+		HashSet<Integer> enterpriseIds = getEnterpriseIds(params);
+		
+		for(Integer enterpriseId : enterpriseIds) {
+			Integer domainId = dslContext.select(ENTERPRISE.DOMAIN).from(ENTERPRISE).where(ENTERPRISE.REGISTRY.eq(enterpriseId)).fetchOne(ENTERPRISE.DOMAIN);
+			
+			Record enterpriseEmailRecord = dslContext.select().from(ENTERPRISE_DATA)
+					.where(ENTERPRISE_DATA.ENTERPRISE.eq(enterpriseId)
+					.and(ENTERPRISE_DATA.NAME.eq("PAY_salarySending_email_PAY")))
+					.fetchOne();
+			
+			Record enterpriseRecord = dslContext.select().from(REGISTRY)
+					.where(REGISTRY.ID.eq(enterpriseId))
+					.fetchOne();
+			
+			String emailTo = enterpriseEmailRecord.get(ENTERPRISE_DATA.EXPRESSION);
+			String enterpriseName = enterpriseRecord.get(REGISTRY.NAME);
+			
+			Result<Record> salariesRecords = dslContext.select().from(SALARY)
+					.where(SALARY.DOMAIN.eq(domainId))
+					.and(SALARY.ID.in(salaryIds))
+					.fetch();
+			
+			String parseHTMLBody = parseEnterpriseManagementHTMLBody(bodyHTML, salariesRecords, params, enterpriseId, enterpriseName, dslContext);
+			
+			if(parseHTMLBody.length() == 0)
+				throw new IllegalArgumentException("No se ha encontrado la variable NOMBRE_EMPRESA, NOMINA_TRABAJDORES y/o INFORMACION_EMPRESA");
+			
+			sendEmail(dslContext, mailAccountId, enterpriseName, emailTo, cc, cco, parseHTMLBody);
+		}
+		
+		return "Email(s) enviado(s) correctamente.";
+	}
 
-	private static String sendEmployeesEmail(DSLContext dslContext, Type type, HashMap<String, String> params, String mailAccountId, String enterpriseName, String to, String cc, String cco, String bodyHTML) {
+	private static String sendEmployeesEmail(DSLContext dslContext, HashMap<String, String> params, String mailAccountId, String enterpriseName, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
 		ArrayList<Integer> salaryIds = getSalaryIds(params);
 		ArrayList<Integer> visitedContracts = new ArrayList<Integer>();
 		
@@ -285,7 +379,7 @@ public class JooqMail {
 				String parseHTMLBody = parseHTMLBody(bodyHTML, salariesRecords, params, dslContext);
 				
 				if(parseHTMLBody.length() == 0)
-					return "No se ha encontrado la variable NOMBRE_EMPLEADO, PERIODOS_NOMINA y/o INFORMACION_EMPRESA";
+					throw new IllegalArgumentException("No se ha encontrado la variable NOMBRE_EMPLEADO, PERIODOS_NOMINA y/o INFORMACION_EMPRESA");
 				
 				sendEmail(dslContext, mailAccountId, enterpriseName, emailTo, cc, cco, parseHTMLBody);
 				
@@ -297,7 +391,7 @@ public class JooqMail {
 		return "Email(s) enviado(s) correctamente.";
 	}
 
-	private static String sendEmail(DSLContext dslContext, String mailAccountId, String enterpriseName, String to, String cc, String cco, String bodyHTML) {
+	private static String sendEmail(DSLContext dslContext, String mailAccountId, String enterpriseName, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
 		Record mailAccountRecord = dslContext.select().from(MAIL_ACCOUNT)
 				.where(MAIL_ACCOUNT.ID.eq(Integer.parseInt(mailAccountId))).fetchOne();
 		
@@ -314,13 +408,43 @@ public class JooqMail {
 			SES.sendEmail(msg);
 			
 		} else {
-			return "No existe cuenta de correo desde la que enviar este mensaje.";
+			throw new IllegalArgumentException("No existe cuenta de correo desde la que enviar este mensaje.");
 		}
 	    
 	    return "Email enviado correctamente.";
 	}
 	
 	// ---------------------------------------------- Send Email (Auxiliar methods)
+	
+	private static String parseEnterpriseManagementHTMLBody(String bodyHTML, Result<Record> salariesRecords, HashMap<String, String> params, Integer enterpriseId, String enterpriseName, DSLContext dslContext) {
+		
+		// GENERATE URL
+		params.put("enterprise", enterpriseId.toString());
+		String formHTML = generateFormEmployee(params, salariesRecords);
+		
+		String enterpriseNames = "<a style=\"font-weight: bold;\">NOMBRE_EMPRESA</a>";
+		String payrollPeriods = "<li style=\"font-weight: bold;\">NOMINA_TRABAJDORES</li>";
+		String enterpriseInfo = "<a style=\"font-weight: bold;\">INFORMACION_EMPRESA</a>";
+		
+		//GENERATE BODY HTML
+		String[] aux = bodyHTML.split(enterpriseNames);
+		
+		if(aux.length != 2) 
+			return "";
+		
+		String html = bodyHTML.split(enterpriseNames)[0] +  "<a style=\"font-weight: bold;\">" + enterpriseName + "</a>" + bodyHTML.split(enterpriseNames)[1];
+		
+		if(html.split(payrollPeriods).length != 2) 
+			return "";
+		
+		html = html.split(payrollPeriods)[0] + createPeriodsEnterprise(dslContext, salariesRecords) + html.split(payrollPeriods)[1];
+		
+		html = html.split("<div id=\"form\">")[0] + formHTML + html.split("<div id=\"form\">")[1].split("</div>")[1];
+		
+		html = html.split(enterpriseInfo)[0] +  "<a style=\"font-weight: bold;\">" + getEnterpriseInfo(dslContext, enterpriseId) + "</a>";
+		
+		return html;
+	}
 	
 	private static String parseHTMLBody(String bodyHTML, Result<Record> salariesRecords, HashMap<String, String> params, DSLContext dslContext) {
 		
@@ -358,7 +482,7 @@ public class JooqMail {
 		html += "<form method\"post\" action=\"" + params.get("url") + "\" target=\"_blank\">";
 		
 		for(Entry<String, String> entry : params.entrySet()) {
-			if(AonStringUtils.equalsIgnoreCase(entry.getKey(), "url") || AonStringUtils.equalsIgnoreCase(entry.getKey(), "id"))
+			if(AonStringUtils.equalsIgnoreCase(entry.getKey(), "url") || AonStringUtils.contains(entry.getKey(), "id"))
 				continue;
 			
 			html += "<input type=\"hidden\" name=\"" + entry.getKey() + "\" value=\"" + entry.getValue() + "\">";
@@ -407,6 +531,15 @@ public class JooqMail {
 		String html = "";
 		for(Record salaryRecord : salariesRecords) {
 			html += "<li style=\"font-weight:bold;\"> N&oacute;mina del " + dateFormatter.format(salaryRecord.get(SALARY.END_DATE));
+		}
+		
+		return html;
+	}
+	
+	private static String createPeriodsEnterprise(DSLContext dslContext, Result<Record> salariesRecords) {
+		String html = "";
+		for(Record salaryRecord : salariesRecords) {
+			html += getSalaryItem(dslContext, salaryRecord.get(SALARY.ID));
 		}
 		
 		return html;
@@ -471,11 +604,22 @@ public class JooqMail {
 		ArrayList<Integer> salaryIds = new ArrayList<Integer>();
 		
 		for( Entry<String, String> entry : params.entrySet()) {
-			if(AonStringUtils.containsIgnoreCase(entry.getKey(), "id"))
+			if(AonStringUtils.contains(entry.getKey(), "id"))
 				salaryIds.add(Integer.valueOf(entry.getValue()));
 		}
 		
 		return salaryIds;
+	}
+	
+	private static HashSet<Integer> getEnterpriseIds(HashMap<String, String> params) {
+		HashSet<Integer> enterpriseIds = new HashSet<Integer>();
+		
+		for( Entry<String, String> entry : params.entrySet()) {
+			if(AonStringUtils.containsIgnoreCase(entry.getKey(), "enterpriseId"))
+				enterpriseIds.add(Integer.valueOf(entry.getValue()));
+		}
+		
+		return enterpriseIds;
 	}
 	
 	// ---------------------------------------------- ServiAgreements mailing

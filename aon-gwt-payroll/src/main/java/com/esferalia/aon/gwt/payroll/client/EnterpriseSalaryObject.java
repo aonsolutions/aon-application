@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EnterpriseSalaryObject {
@@ -24,6 +25,7 @@ public class EnterpriseSalaryObject {
 	final DomainEnterprisesServiceAsync enterpriseService = DomainEnterprisesServiceAsync.newInstance();
 	final DomainEmployeesServiceAsync employeesService = DomainEmployeesServiceAsync.newInstance();
 	
+	private List<Enterprise> enterprises;
 	private Enterprise enterprise;
 	
 	private List<EmployeeInfo> enterpriseEmployees;
@@ -49,14 +51,17 @@ public class EnterpriseSalaryObject {
 		this.filter = new SalaryInfoFilter();
 	}
 	
+	public EnterpriseSalaryObject(List<Enterprise> enterprises) {
+		this.enterprises = enterprises;
+		this.filter = new SalaryInfoFilter();
+	}
+	
 	// --------------------------------------------- Database Methods
 	
 	public void getSalariesDates(Consumer<Period> success, Consumer<Throwable> failure){
 		
-		if(filter.getEmployeeId() == null && filter.getWorkplaceId() == null)
+		if((enterprises == null || enterprises.isEmpty()) && filter.getEmployeeId() == null && filter.getWorkplaceId() == null)
 			filter.setEnterpriseId(enterprise.getId());
-		else
-			filter.setEnterpriseId(null);
 		
 		employeesService.getSalariesDates(filter, new AsyncCallback<Period>(){
 
@@ -80,10 +85,8 @@ public class EnterpriseSalaryObject {
 
 	public void getSalaries(Consumer<List<SalaryInfo>> success, Consumer<Throwable> failure){
 		
-		if(filter.getEmployeeId() == null && filter.getWorkplaceId() == null)
+		if((enterprises == null || enterprises.isEmpty()) && filter.getEmployeeId() == null && filter.getWorkplaceId() == null)
 			filter.setEnterpriseId(enterprise.getId());
-		else
-			filter.setEnterpriseId(null);
 		
 		employeesService.getSalaries(filter, new AsyncCallback<List<SalaryInfo>>(){
 
@@ -94,27 +97,33 @@ public class EnterpriseSalaryObject {
 
 			@Override
 			public void onSuccess(List<SalaryInfo> result) {
-				enterpriseSalaries = result;
-				success.accept(result);
+				enterpriseSalaries = new ArrayList<>();
+				enterpriseSalaries.addAll(result);
+				success.accept(enterpriseSalaries);
 			}
 			
 		});
 	}
 	
 	public void getEnterpriseEmployeesDB(Consumer<List<EmployeeInfo>> success, Consumer<Throwable> failure){
-		employeesService.getEnterpriseActiveEmployees(enterprise.getId(), new AsyncCallback<List<EmployeeInfo>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-
-			@Override
-			public void onSuccess(List<EmployeeInfo> result) {
-				enterpriseEmployees = result;
-				success.accept(result);
-			}
-		});
+		if(null != enterprise && null != enterprise.getId())
+			employeesService.getEnterpriseActiveEmployees(enterprise.getId(), new AsyncCallback<List<EmployeeInfo>>() {
+	
+				@Override
+				public void onFailure(Throwable caught) {
+					failure.accept(caught);
+				}
+	
+				@Override
+				public void onSuccess(List<EmployeeInfo> result) {
+					enterpriseEmployees = result;
+					success.accept(result);
+				}
+			});
+		else {
+			enterpriseEmployees = new ArrayList<>();
+			success.accept(null);
+		}
 	}
 	
 	public void deleteSalaries(Set<SalaryInfo> salaries, Consumer<Void> success, Consumer<Throwable> failure) {
@@ -173,12 +182,36 @@ public class EnterpriseSalaryObject {
 	// --------------------------------------------- Get Info Methods
 	
 	public List<SalaryInfo> getEnterpriseSalaries() {
-		this.enterpriseSalaries.sort((o1, o2) -> compareString(o1, o2, o1.getEmployeeName(), o2.getEmployeeName()));
+		if(null == enterprise || null == enterprise.getId()) {
+			Window.alert("Sort by enterpriseName");
+			this.enterpriseSalaries.sort((o1, o2) -> compareString(o1, o2, o1.getEnterpriseName(), o2.getEnterpriseName()));
+			Window.alert("Sort by enterpriseName, first salary : " + enterpriseSalaries.get(0).getEmployeeName() + " (" + enterpriseSalaries.get(0).getId() + ")");
+		} else {
+			Window.alert("Sort by employeeName");
+			this.enterpriseSalaries.sort((o1, o2) -> compareString(o1, o2, o1.getEmployeeName(), o2.getEmployeeName()));
+			Window.alert("Sort by employeeName, first salary : " + enterpriseSalaries.get(0).getEmployeeName() + " (" + enterpriseSalaries.get(0).getId() + ")");
+		}
 		return this.enterpriseSalaries;
 	}
 	
 	public SalaryInfoFilter getFilter() {
 		return this.filter;
+	}
+	
+	public List<Enterprise> getEnterprises() {
+		return this.enterprises;
+	}
+	
+	public void setEnterprise(Enterprise enterprise, Consumer<Void> success, Consumer<Throwable> failure) {
+		this.enterprise = enterprise;
+		getEnterpriseEmployeesDB(
+				s -> success.accept(null), 
+				f -> {}
+		);
+	}
+	
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
 	}
 	
 	public String getEnterpriseName() {
@@ -195,6 +228,15 @@ public class EnterpriseSalaryObject {
 
 	public Date getMaxDate() {
 		return maxDate;
+	}
+	
+	public ArrayList<String> getEnterprisesName(){
+		ArrayList<String> names = new ArrayList<>();
+		enterprises.forEach(enterprise -> {
+			if(AonStringUtils.isNotBlank(enterprise.getName())) names.add(enterprise.getName());
+		});
+		
+		return names;
 	}
 
 	public List<String> getWorkplacesNames(){
@@ -213,6 +255,16 @@ public class EnterpriseSalaryObject {
 		});
 		
 		return names;
+	}
+	
+	public Enterprise getEnterpriseByName(String enterpriseName){
+		if(AonStringUtils.isBlank(enterpriseName)) return null;
+		
+		for(Enterprise enterprise : enterprises)
+			if(AonStringUtils.equalsIgnoreCase(enterpriseName, enterprise.getName())) 
+				return enterprise;
+		
+		return null;
 	}
 	
 	public EmployeeInfo getEmployeeDataByNameSurname(String nameSurname){

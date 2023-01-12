@@ -234,12 +234,24 @@
 										</aon:commandLink>
 									</aon:div>
 								</aon:if>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_salary_print"
+										action="gwt_main_salary_print"
+										title="#{bundle.payroll_salaryPrint_module}"
+										value="#{bundle.payroll_salaryPrint_module}" target="gwt">
+									</aon:commandLink>
+								</aon:div>	
+								
+								<!-- 
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="salaryPrint-payroll"
 										action="salaryPrint_search-payroll"
 										actionListener="#{salaryPrint.onInit}"
 										value="#{bundle.payroll_salaryPrint_module}" />
 								</aon:div>
+								 -->
+								 
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="reportPrint-payroll"
 										action="reportPrint_search-payroll"

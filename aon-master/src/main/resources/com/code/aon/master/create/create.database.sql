@@ -3702,6 +3702,7 @@ CREATE TABLE `fs_model184_detail` (
   `inm_amort_mueb` decimal(15,4) DEFAULT '0',
   `inm_otr_gas_ded` decimal(15,4) DEFAULT '0',
   `inm_num_dias_arr` int DEFAULT '0',
+  `asset_days` int DEFAULT '0' COMMENT 'Numero dias inmueble',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL184_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL184_DETAIL_FS_MODEL184` (`fs_model184`),

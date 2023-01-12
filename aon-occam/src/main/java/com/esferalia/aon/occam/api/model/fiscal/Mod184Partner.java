@@ -32,6 +32,7 @@ public class Mod184Partner implements Serializable {
 	private String cadasdralReference;
 	private String declaredKey;
 	private double assetPercent;
+	private int assetDays;
 	
 
 	private boolean dirty;
@@ -240,6 +241,14 @@ public class Mod184Partner implements Serializable {
 	}
 	public Mod184Partner setAssetPercent(double assetPercent) {
 		this.assetPercent = assetPercent;
+		return this;
+	}
+	
+	public int getAssetDays() {
+		return assetDays;
+	}
+	public Mod184Partner setAssetDays(int assetDays) {
+		this.assetDays = assetDays;
 		return this;
 	}
 	

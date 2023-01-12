@@ -55,7 +55,7 @@ public abstract class SalaryTable extends ResizeComposite {
 	
 	private static final String EMPTYDOUBLEVALUE = "00,00";
 	
-	private List<SalaryInfo> salaryInfoList;
+//	private List<SalaryInfo> salaryInfoList;
 	private List<SalaryInfo> salariesList;
 
 	// ------------------------------------------ Constructor
@@ -63,7 +63,6 @@ public abstract class SalaryTable extends ResizeComposite {
 	protected SalaryTable() {
 		provideSalaryDataGrid();
 		initWidget(uiBinder.createAndBindUi(this));
-		salariesList = Collections.emptyList();
 	    setGridHeight();
 	}
 	
@@ -74,7 +73,7 @@ public abstract class SalaryTable extends ResizeComposite {
 	// ------------------------------------------ Provied DataGrid
 
 	private void provideSalaryDataGrid() {
-		salaryInfoList = Collections.emptyList();
+		salariesList = Collections.emptyList();
 		
 		// Resource Style CellTable
 		salaryDG = new CustomDataGrid<>(Integer.MAX_VALUE, SalaryInfo.KEY_PROVIDER);
@@ -122,17 +121,17 @@ public abstract class SalaryTable extends ResizeComposite {
 	    salaryDG.addColumn(checkColumn,selectAllHeader);
 	    salaryDG.setColumnWidth(checkColumn, 5, Unit.PCT);
 	    checkColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		
-		// Employee name column.
-	    TextColumn<SalaryInfo> employeeNameColumn = new TextColumn<SalaryInfo>() {
+	    
+	    // Enterprise name column.
+	    TextColumn<SalaryInfo> enterpriseNameColumn = new TextColumn<SalaryInfo>() {
 	    	@Override
 	    	public String getValue(SalaryInfo salaryInfo) {
-	    		return salaryInfo.getEmployeeName();
+	    		return salaryInfo.getEnterpriseName();
 	    	}
 	    };
 
-	    employeeNameColumn.setSortable(true);
-	    salaryDG.setColumnWidth(employeeNameColumn, 25, Unit.PCT);
+	    enterpriseNameColumn.setSortable(true);
+	    salaryDG.setColumnWidth(enterpriseNameColumn, 25, Unit.PCT);
 	    
 	    // Workplace name column.
 	    TextColumn<SalaryInfo> workplaceNameColumn = new TextColumn<SalaryInfo>() {
@@ -144,6 +143,17 @@ public abstract class SalaryTable extends ResizeComposite {
 
 	    workplaceNameColumn.setSortable(true);
 	    salaryDG.setColumnWidth(workplaceNameColumn, 15, Unit.PCT);
+	    
+	    // Employee name column.
+	    TextColumn<SalaryInfo> employeeNameColumn = new TextColumn<SalaryInfo>() {
+	    	@Override
+	    	public String getValue(SalaryInfo salaryInfo) {
+	    		return salaryInfo.getEmployeeName();
+	    	}
+	    };
+
+	    employeeNameColumn.setSortable(true);
+	    salaryDG.setColumnWidth(employeeNameColumn, 25, Unit.PCT);
 	    
 	    // Start date column.
 	    TextColumn<SalaryInfo> startDateColumn = new TextColumn<SalaryInfo>() {
@@ -250,9 +260,10 @@ public abstract class SalaryTable extends ResizeComposite {
 		salaryDG.setColumnWidth(draftColumn, 5, Unit.PCT);
 		
 	    // Add the columns.
-		salaryDG.addColumn(employeeNameColumn, "Empleado");
+		salaryDG.addColumn(enterpriseNameColumn, "Empresa");
 		salaryDG.addColumn(workplaceNameColumn, "C. Trabajo");
-	    
+		salaryDG.addColumn(employeeNameColumn, "Empleado");
+		
 		salaryDG.addColumn(typeColumn, "Tipo");
 		salaryDG.addColumn(startDateColumn, "F. Inicio");
 		salaryDG.addColumn(endDateColumn, "F. Fin");
@@ -281,44 +292,47 @@ public abstract class SalaryTable extends ResizeComposite {
 	    dataProvider.addDataDisplay(salaryDG);
 	    
 	    // Add the data to the data provider, which automatically pushes it to the widget.
-	    List<SalaryInfo> salaryList = dataProvider.getList();
-	    salaryList.clear();
+	    List<SalaryInfo> salaryListProvider = dataProvider.getList();
+	    salaryListProvider.clear();
+	      
+//	    this.salaryInfoList = salariesList;
 	    
-	    this.salaryInfoList = salariesList;
-	    
-	    for (SalaryInfo salary : this.salaryInfoList) {
-	    	salaryList.add(salary);
+	    for (SalaryInfo salary : this.salariesList) {
+	    	salaryListProvider.add(salary);
 	    }   
-		
-		addSortColums(salaryList);
+	    
+		addSortColums(salaryListProvider);
 	    
 		// Set page size
-	    salaryDG.setPageSize(salaryInfoList.size());
+	    salaryDG.setPageSize(salariesList.size());
 	}
 
 	private void addSortColums(List<SalaryInfo> salaryInfoList) {
 		ListHandler<SalaryInfo> columnSortHandler = new ListHandler<>(salaryInfoList);
 		
-	    columnSortHandler.setComparator(salaryDG.getColumn(1),
+		columnSortHandler.setComparator(salaryDG.getColumn(1),
+		    		(o1, o2) -> compareString(o1, o2, o1.getEnterpriseName(), o2.getEnterpriseName()));
+		
+	    columnSortHandler.setComparator(salaryDG.getColumn(2),
 	    		(o1, o2) -> compareString(o1, o2, o1.getEmployeeName(), o2.getEmployeeName()));
 	    
-	    columnSortHandler.setComparator(salaryDG.getColumn(2),
+	    columnSortHandler.setComparator(salaryDG.getColumn(3),
 	    		(o1, o2) -> compareString(o1, o2, o1.getWorkplaceName(), o2.getWorkplaceName()));
 	    
-	    columnSortHandler.setComparator(salaryDG.getColumn(3),
+	    columnSortHandler.setComparator(salaryDG.getColumn(4),
 	    		(o1, o2) -> compareDates(o1, o2, o1.getStartDate(), o2.getStartDate()));
 	    
-	    columnSortHandler.setComparator(salaryDG.getColumn(4),
+	    columnSortHandler.setComparator(salaryDG.getColumn(5),
 	    		(o1, o2) -> compareDates(o1, o2, o1.getEndDate(), o2.getEndDate()));
 	    
-	    columnSortHandler.setComparator(salaryDG.getColumn(5),
+	    columnSortHandler.setComparator(salaryDG.getColumn(6),
 	    		(o1, o2) -> compareString(o1, o2, o1.getType().getDescription(), o2.getType().getDescription()));
 	    
 	    salaryDG.addColumnSortHandler(columnSortHandler);
 
 	    // We know that the data is sorted alphabetically by default.
 	    salaryDG.getColumn(4).setDefaultSortAscending(false);
-	    salaryDG.getColumnSortList().push(salaryDG.getColumn(4));   
+	    salaryDG.getColumnSortList().push(salaryDG.getColumn(5));   
 	}
 	
 	private int compareString(Object o1, Object o2, String s1, String s2) {
@@ -340,28 +354,38 @@ public abstract class SalaryTable extends ResizeComposite {
 	// ------------------------------------------ Auxiliar Methods
 
 	public void sortTableByName() {
-		salaryDG.getColumnSortList().push(salaryDG.getColumn(1));
+		salaryDG.getColumnSortList().push(salaryDG.getColumn(3));
 		ColumnSortEvent.fire(salaryDG, salaryDG.getColumnSortList());
 	}
 	
 	public void sortTableByStartDate() {
-		salaryDG.getColumnSortList().push(salaryDG.getColumn(5));  
+		salaryDG.getColumnSortList().push(salaryDG.getColumn(4));  
 		ColumnSortEvent.fire(salaryDG, salaryDG.getColumnSortList());
 	}
 	
+	public void setEnteprisesView() {
+		salaryDG.removeColumn(10);
+	}
+	
+	public void setEntepriseView() {
+		salaryDG.removeColumn(1);
+	}
+	
 	public void setWorkplaceView() {
-		salaryDG.removeColumn(2);
+		salaryDG.removeColumn(1);
+		salaryDG.removeColumn(1);
 	}
 	
 	public void setEmployeeView() {
+		salaryDG.removeColumn(1);
 		salaryDG.removeColumn(1);
 		salaryDG.removeColumn(1);
 	}
 	
 	// ------------------------------------------ Setter Methods
 	
-	public void setSalariesList(List<SalaryInfo> salariesList) {
-		this.salariesList = salariesList;
+	public void setSalariesList(List<SalaryInfo> salariesListIn) {
+		this.salariesList = salariesListIn;
 	}
 	
 	public Set<SalaryInfo> getSelectedSalaries() {

@@ -639,9 +639,11 @@ public class ContractLeaveLoader {
 		
 		// Not adjust for : 
 		// * '300 IND.FIJO.DISCONTINUO' with  'COEF.TIEMPO PARCIAL' 
-		// * '502 - DURACION DETERMINADA, TIEMPO PARCIAL, EVENTUAL POR CIRCUNSTANCIAS' 
+		// * '502 - DURACION DETERMINADA, TIEMPO PARCIAL, EVENTUAL POR CIRCUNSTANCIAS'
+		// * '501 - DURACION DETERMINADA, TIEMPO PARCIAL, OBRA O SERVICIO DETERMINADO'
+		
 		String tc2 = ctx.getVariable(TC2, p.getStart(), p.getEnd(), String.class );
-		if ( AonStringUtils.contains("300,502", tc2)) {
+		if ( AonStringUtils.contains("300,502,501", tc2)) {
 		    
         		try {
         			if (!ctx.getVariable(FULL_TIME, p.getStart(), p.getEnd(), Boolean.class))
