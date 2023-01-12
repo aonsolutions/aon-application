@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +54,7 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
@@ -78,6 +80,10 @@ public class DomainEnterprisesServiceAsync {
 
 	public void getDomain(AsyncCallback<Integer> callback) {
 		enterprisesServiceAsync.getDomain(getCurrentDomainName(), callback);
+	}
+	
+	public void getDomainDetails(AsyncCallback<Domain> callback) {
+		enterprisesServiceAsync.getDomain(getCurrentDomainName(), getCurrentUser(), callback);
 	}
 
 	public void getContext(AsyncCallback<ContextDescriptor> callback) {
@@ -309,12 +315,16 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getPayrollEmailBody(getCurrentDomainName(), type, params, asyncCallback);
 	}
 	
-	public void sendPayrollEmail(Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML, AsyncCallback<String> asyncCallback) {
+	public void sendPayrollEmail(Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.sendPayrollEmail(getCurrentDomainName(), type, params, from, to, cc, cco, bodyHTML, asyncCallback);
 	}
 	
 	public void checkEmployeesEmails(ArrayList<Integer> salaryIds, AsyncCallback<String> asyncCallback) {
 		enterprisesServiceAsync.checkEmployeesEmails(getCurrentDomainName(), salaryIds, asyncCallback);
+	}
+	
+	public void checkEnterprisesEmails(HashSet<Integer> enterpriseIds, AsyncCallback<String> asyncCallback) {
+		enterprisesServiceAsync.checkEnterprisesEmails(getCurrentDomainName(), enterpriseIds, asyncCallback);
 	}
 	
 	public void getSettlePDF(Integer settleId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {

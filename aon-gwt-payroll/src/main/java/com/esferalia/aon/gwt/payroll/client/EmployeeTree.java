@@ -70,7 +70,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
-import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
@@ -2466,7 +2465,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 
 		void onSalariesSelected() {
-			employees.getEnterpriseSalary(enterprise, o -> getEnterpriseSalary().setEnterpriseSalaryObject(o));
+			employees.getEnterpriseSalary(enterprise, o -> {
+				getEnterpriseSalary().setEnterpriseSalaryObject(o);
+				getEnterpriseSalary().setEnterpriseView();
+			});
 		}
 
 		void onEnterpriseSelected() {
@@ -3602,7 +3604,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private EmployeeSalary getEmployeeSalary() {
 		if (employeeSalary == null)
-			(employeeSalary = new EmployeeSalary()).addListener(this);
+			(employeeSalary = new EmployeeSalary() {
+
+				@Override
+				protected void fireEnableDisableButtons(boolean isSomethingSelected, boolean hasSettleSelected) {
+					// Nothing to do here
+				}
+
+				@Override
+				protected void onSalaryShow() {
+					// Nothing to do here
+				}
+
+				@Override
+				protected void onPDFShow() {
+					// Nothing to do here
+				}})
+			.addListener(this);
+		
 		return employeeSalary;
 	}
 

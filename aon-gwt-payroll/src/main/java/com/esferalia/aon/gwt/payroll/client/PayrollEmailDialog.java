@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -18,6 +19,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
@@ -42,6 +44,7 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 	
 	public enum Type implements Serializable {
 		ENTERPRISE,
+		ENTERPRISE_MANAGEMENT,
 		EMPLOYEE
 		;
 	}
@@ -56,6 +59,9 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 	
 	@UiField
 	Label sendToMessage;
+	
+	@UiField
+	Label sendToEnterpriseManagmentMessage;
 	
 	@UiField
 	TextBox cc;
@@ -91,6 +97,8 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 			case EMPLOYEE:
 				sendTo.setVisible(false);
 				sendToMessage.setVisible(true);
+				sendToEnterpriseManagmentMessage.setVisible(false);
+				
 				ArrayList<Integer> salaryIds = new ArrayList<Integer>();
 				for(Entry<String, String> entry : params.entrySet())
 					if(AonStringUtils.containsIgnoreCase(entry.getKey(), "id"))
@@ -115,7 +123,35 @@ public abstract class PayrollEmailDialog extends AonCustomDialog {
 			case ENTERPRISE:
 				sendTo.setVisible(true);
 				sendToMessage.setVisible(false);
+				sendToEnterpriseManagmentMessage.setVisible(false);
 				loadInfo(type, params);
+				break;
+			case ENTERPRISE_MANAGEMENT:
+				sendTo.setVisible(false);
+				sendToMessage.setVisible(false);
+				sendToEnterpriseManagmentMessage.setVisible(true);
+				
+				HashSet<Integer> enterpriseIds = new HashSet<Integer>();
+				for(Entry<String, String> entry : params.entrySet())
+					if(AonStringUtils.containsIgnoreCase(entry.getKey(), "enterpriseId"))
+						enterpriseIds.add(Integer.valueOf(entry.getValue()));
+				
+				impl.checkEnterprisesEmails(enterpriseIds, new AsyncCallback<String>() {
+					
+					@Override
+					public void onSuccess(String message) {
+						if(AonStringUtils.isNotBlank(message)) {
+							AonDialog dialog = new AonDialog("REVISAR EMAILS", new HTML(message));
+							dialog.warning();
+							return;
+						}
+						loadInfo(type, params);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {}
+				});
+				
 				break;
 			default:
 				break;

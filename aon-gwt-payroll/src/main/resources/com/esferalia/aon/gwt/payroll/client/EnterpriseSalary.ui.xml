@@ -77,13 +77,22 @@
 					<g:HTMLPanel ui:field="messagePanel" />
 					<g:HTMLPanel ui:field="filterSalaryPanel" styleName="{style.flexColumn}">
 						<g:HTMLPanel styleName="{style.flex} {style.flexWrap} {style.flexMargin}">
-							<g:Label styleName="{style.label}">C. Trabajo</g:Label>
-							<g:SuggestBox styleName="aon-inputText {style.sb}" ui:field="workplaceSB"/>
+							<g:HTMLPanel styleName="{style.flex}" ui:field="enterprisesPanel">
+								<g:Label styleName="{style.label}">Empresa</g:Label>
+								<g:SuggestBox styleName="aon-inputText {style.sb}" ui:field="enterpriseSB"/>
+							</g:HTMLPanel>
+							<g:HTMLPanel styleName="{style.flex}" ui:field="workplacesPanel">
+								<g:Label styleName="{style.label}">C. Trabajo</g:Label>
+								<g:SuggestBox styleName="aon-inputText {style.sb}" ui:field="workplaceSB"/>
+							</g:HTMLPanel>
 							<g:Label styleName="{style.label}">Empleado</g:Label>
 							<g:SuggestBox styleName="aon-inputText {style.sb}" ui:field="employeeSB"/>
 							<g:HTMLPanel styleName="{style.flex}">
 								<g:Label styleName="{style.label}">Tipo nómina</g:Label>
-							<g:ListBox ui:field="typeList" styleName="aon-selectOneMenu"/>
+								<g:CheckBox ui:field="salaryCB" text="Nómina" />
+								<g:CheckBox ui:field="extraCB" text="Extra" />
+								<g:CheckBox ui:field="delayCB" text="Atraso" />
+								<g:CheckBox ui:field="settleCB" text="Finiquito" />
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{style.flex} {style.flexMargin}">

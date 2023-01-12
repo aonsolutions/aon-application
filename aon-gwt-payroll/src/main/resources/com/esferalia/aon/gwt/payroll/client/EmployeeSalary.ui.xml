@@ -71,7 +71,10 @@
 					<g:HTMLPanel ui:field="filterSalaryPanel" styleName="{style.flexColumn}">
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:Label styleName="{style.label}">Tipo nómina</g:Label>
-							<g:ListBox ui:field="typeList" styleName="aon-selectOneMenu"/>
+							<g:CheckBox ui:field="salaryCB" text="Nómina" />
+							<g:CheckBox ui:field="extraCB" text="Extra" />
+							<g:CheckBox ui:field="delayCB" text="Atraso" />
+							<g:CheckBox ui:field="settleCB" text="Finiquito" />
 						</g:HTMLPanel>
 						<g:HTMLPanel styleName="{style.flex}">
 							<g:Label styleName="{style.label}">Periodo</g:Label>
