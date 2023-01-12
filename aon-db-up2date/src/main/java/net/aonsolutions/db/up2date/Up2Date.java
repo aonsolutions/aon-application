@@ -299,7 +299,7 @@ public class Up2Date {
 	    	MEIInsert.MEIINSERT,
     		AlterFsMod190Detail2022.ALTER_FS_MODEL_190_DETAIL_2022,
     		HomeBases2023Update.HOMEBASES2023UPDATE,
-    		InvoiceFiscalAddExpDate.INVOICE_FISCAL_ADD_EXP_DATE,
+    		// InvoiceFiscalAddExpDate.INVOICE_FISCAL_ADD_EXP_DATE,
 	    	
     		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
