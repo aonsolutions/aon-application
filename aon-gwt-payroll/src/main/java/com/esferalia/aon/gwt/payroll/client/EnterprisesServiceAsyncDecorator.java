@@ -6,6 +6,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -57,6 +58,7 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
@@ -83,6 +85,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync
 				.getDomain(domain, new AsyncCallbackWrapper<Integer>(
 						callback));
+	}
+	
+	@Override
+	public void getDomain(String domain, String user, AsyncCallback<Domain> callback) {
+		AON.start();
+		enterprisesServiceAsync.getDomain(domain, user, new AsyncCallbackWrapper<Domain>(callback));
 	}
 
 	@Override
@@ -499,7 +507,7 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML, AsyncCallback<String> callback) {
+	public void sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.sendPayrollEmail(currentDomainName, type, params, from, to, cc, cco, bodyHTML, new AsyncCallbackWrapper<String>(callback));
 	}
@@ -508,6 +516,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds, AsyncCallback<String> callback) {
 		AON.start();
 		enterprisesServiceAsync.checkEmployeesEmails(currentDomainName, salaryIds, new AsyncCallbackWrapper<String>(callback));
+	}
+	
+	@Override
+	public void checkEnterprisesEmails(String currentDomainName, HashSet<Integer> enterpriseIds, AsyncCallback<String> callback) {
+		AON.start();
+		enterprisesServiceAsync.checkEnterprisesEmails(currentDomainName, enterpriseIds, new AsyncCallbackWrapper<String>(callback));
 	}
 	
 	@Override
