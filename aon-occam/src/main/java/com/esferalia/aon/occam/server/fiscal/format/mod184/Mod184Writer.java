@@ -16,6 +16,18 @@ public class Mod184Writer {
 	}
 	
 	private enum Writers {
+		Mod184_File_2022 {
+
+			@Override
+			void fill(Mod184 mod184, Writer wr) throws IOException {
+				Mod184File2022.fill(mod184, wr);
+			}
+			
+			@Override
+			boolean accept(Mod184 mod184) {
+				return (mod184.getYear() >= 2022 );
+			}
+		},
 		Mod184_File_2019 {
 
 			@Override
@@ -25,7 +37,7 @@ public class Mod184Writer {
 			
 			@Override
 			boolean accept(Mod184 mod184) {
-				return (mod184.getYear() >= 2019);				
+				return (mod184.getYear() >= 2019 && mod184.getYear() <= 2021);
 			}
 		},
 		Mod184_File_2016 {

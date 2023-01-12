@@ -29,6 +29,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -60,6 +62,8 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.company.enumeration.SalaryTemplate;
+
 import net.aonsolutions.core.dbutils.DatabaseUtil;
 import com.code.aon.faces.component.util.DownloadUtil;
 import net.aonsolutions.core.pool.AonConnectionException;
@@ -82,6 +86,7 @@ import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MailConfigController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.in.payroll.pdf.jooq.JooqPayrollBuilder;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseCCC;
@@ -93,6 +98,7 @@ import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.EnterpriseCostProvider;
 import com.esferalia.aon.ui.payroll.utils.PayrollUtils;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class SalaryPrintController extends BasicController implements ICollectionProvider, IPayrollConstants {
 	
@@ -653,11 +659,21 @@ public class SalaryPrintController extends BasicController implements ICollectio
 	}
 
 	public String onPrint() throws ManagerBeanException {
-		ReportManager reportManager = new ReportManager();
-		reportManager.setReportKey(obtainSalaryTemplate());
-		reportManager.setOutputFormat(OutputFormat.PDF);
-		reportManager.setCollectionProvider( this );
-		return reportManager.onExecute();	
+		String reportTemplate = obtainSalaryTemplate();
+		Integer[] ids = checks != null ? checks.toArray(Integer[]::new) : new Integer[0];
+		String domainName = AonUtil.getDomainName();
+		HttpServletResponse response = DownloadUtil.getResponse();
+		try (OutputStream os = response.getOutputStream()) {
+			if (AonStringUtils.equalsIgnoreCase(reportTemplate, SalaryTemplate.AON_SOLUTIONS_DEFAULT.getValue())) {
+				JooqPayrollBuilder.generateClassicPayroll(domainName, os, Optional.empty(), ids);
+			} else {
+				JooqPayrollBuilder.generatePayroll(domainName, os, Optional.empty(), ids);			
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 	
 	
