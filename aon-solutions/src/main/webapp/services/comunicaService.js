@@ -10,8 +10,6 @@ export const getMovements = (data) =>  get(`${API_URL}/comunica/movements`, data
 
 export const getMovementsCccs = (data) => get(`${API_URL}/comunica/movements-cccs`, data);
 
-export const updateContracts = (data) =>  get(`${API_URL}/comunica/update-contracts`, data);
-
 export const getIpfxnaf = (data) => get(`${API_URL}/comunica/ipfxnaf`, data);
 
 export const getNafxipf = (data) => get(`${API_URL}/comunica/nafxipf`, data);
@@ -23,7 +21,7 @@ export const getEmployee = (data) => get(`${API_URL}/comunica/get-employee`, dat
 export const getRlce = (data) => get(`${API_URL}/comunica/rlce`, data);
 
 export const getOccupation = (data) => get(`${API_URL}/comunica/occupation`, data);
- 
+
 export const getQuoteGroup = (data) => get(`${API_URL}/comunica/quote-group`, data);
 
 export const sendAlta = (data) => post(`${API_URL}/comunica/alta-directa`, data);

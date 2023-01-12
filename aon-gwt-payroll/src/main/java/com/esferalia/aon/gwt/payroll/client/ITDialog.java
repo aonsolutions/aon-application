@@ -1184,10 +1184,10 @@ public abstract class ITDialog extends AonCustomDialog {
 	public void initConfirmationsTable() {
 		confirmationPartDataTableHeader.clear();
 		confirmationPartDataTableHeader.resize(0, 0);
-		confirmationPartDataTableHeader.resizeColumns(6);
+		confirmationPartDataTableHeader.resizeColumns(7);
 		confirmationPartDataTable.clear();
 		confirmationPartDataTable.resize(0, 0);
-		confirmationPartDataTable.resizeColumns(6);
+		confirmationPartDataTable.resizeColumns(7);
 		paintHeader();
 		initFooterConfirmationParts();
 		calculateScrollPanelHeight();
@@ -1216,6 +1216,7 @@ public abstract class ITDialog extends AonCustomDialog {
 		confirmationPartDataTableHeader.setWidget(row, 3, cias);
 		confirmationPartDataTableHeader.setWidget(row, 4, blank);
 		confirmationPartDataTableHeader.setWidget(row, 5, blank);
+		confirmationPartDataTableHeader.setWidget(row, 6, blank);
 	}
 	
 	private void initFooterConfirmationParts() {
@@ -1305,11 +1306,21 @@ public abstract class ITDialog extends AonCustomDialog {
 		collegeNumberTB.getElement().getStyle().setWidth(80, Unit.PX);
 		collegeNumberTB.setText(itPart.getCollegeNumber());
 		
+		collegeNumberTB.addKeyPressHandler(event -> {
+			char key = event.getCharCode();
+			// Ignorar el evento si no es un número
+			if (!Character.isDigit(key))
+			event.preventDefault();
+		});
+		
 		collegeNumberTB.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				itPart.setCollegeNumber(event.getValue());
+				String collegeNumber = event.getValue();
+				collegeNumber = collegeNumber.replaceAll("[^0-9]", "");
+				itPart.setCollegeNumber(collegeNumber);
+				collegeNumberTB.setValue(collegeNumber, false);
 			}
 		});
 		
@@ -1328,7 +1339,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		AonTableButton deleteBTN = new AonTableButton("Eliminar", AON.CSS.aonIconDelete());
 		deleteBTN.addClickHandler((e) -> {
 			if(itPart.getIt() != null) {
-				itDialogObject.deleteConfirmationPart(itPart.getIt(), itPart);
+				itPart.setDelete(true);
+//				itDialogObject.deleteConfirmationPart(itPart.getIt(), itPart);
 				confirmationPartDataTable.getRowFormatter().setVisible(row, false);
 			}
 		});

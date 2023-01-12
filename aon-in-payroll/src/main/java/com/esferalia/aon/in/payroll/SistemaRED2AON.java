@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.salary.expression.Period.max;
 import static com.esferalia.aon.salary.expression.Period.min;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -17,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,6 +39,7 @@ import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.tgss.idc.Idc.IdcListener;
 import com.esferalia.aon.in.payroll.tgss.idc.PEC;
 import com.esferalia.aon.in.payroll.tgss.sld.SLDSalaries;
+import com.esferalia.aon.in.payroll.utils.EmployeeParse;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -62,6 +63,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
+import solutions.aon.seg.social.ServicioRED;
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.SistemaRED.LiquidationOrigin;
 import solutions.aon.seg.social.SistemaRED.LiquidationType;
@@ -525,6 +527,8 @@ public class SistemaRED2AON {
 	public static void addPECs(Collection<com.esferalia.aon.in.payroll.tgss.idc.PEC> pecs, String userLogin, String domainName, Integer domainId, Date start, Date end, 
 			String ccc, String  naf) {
 		
+		if(pecs.isEmpty()) return;
+		
 		Bonus bonuses [] =
 		pecs.stream()
 		.filter(b -> AonStringUtils.equals(b.getSsNum(), naf))
@@ -624,52 +628,55 @@ public class SistemaRED2AON {
 
 	}
 
-
-
 	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
 			String ccc, String naf, Date endDate) {
-	
-//		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 		try {
 			Collection<solutions.aon.seg.social.object.Idc> idcs = 
-			SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+			SistemaRED.getIDCDates(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
 			
-			Date idcDates [] = 
-			idcs.stream()
-			.filter(idc -> AonStringUtils.equals("ALTA", idc.getDescripcion()))
-			.filter(idc -> endDate == null || idc.getFecha().compareTo(endDate) <= 0 )
-			.map(idc ->idc.getFecha()).sorted()
-			.toArray(Date[]::new);
-			
-			if ( idcDates.length == 0 )
-				return;
-			
-			Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(endDate == null ? new Date() : endDate);
-			Date ssStartDate = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
-
-			for ( int i = 1; i < idcDates.length ; i++ ) {
-				Date start = idcDates[i-1];
-				Date end = AonDateUtils.add(idcDates[i], Calendar.DAY_OF_MONTH,-1);
-				if ( end.before(ssStartDate)) 
-					continue;
-				addPECs(userLogin, domainName, domainId, userId, start, regime, ccc, naf);
-			}
-			
-			Date last = idcDates[idcDates.length-1];
-			System.out.println("IDC : " + last );
-			addPECs(userLogin, domainName, domainId, userId, last, regime, ccc, naf);
-			
-			//.peek( d -> System.out.println("IDC : " + d ))
-			//.reduce( (d1,d2) -> d2 )
-			//.filter( d -> true )
-			//.ifPresent( date -> addPECs(userLogin, domainName, domainId, userId, date, regime, ccc, naf));			
-
-			System.out.println("\tSUCCESS: " + naf );
-		
+			addBonus(userLogin, domainName, domainId, userId, regime, ccc, naf, endDate, idcs);
 		} catch (SegSocialException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void addBonus(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
+			String ccc, String naf, Date endDate, Collection<solutions.aon.seg.social.object.Idc> idcs) {
+		
+		System.out.println("-------ADD_BONUS "+naf+" -------");
+		
+		Date idcDates [] = 
+		idcs.stream()
+		.filter(idc -> AonStringUtils.equals("ALTA", idc.getDescripcion()))
+		.filter(idc -> endDate == null || idc.getFecha().compareTo(endDate) <= 0 )
+		.map(idc ->idc.getFecha()).sorted()
+		.toArray(Date[]::new);
+		
+		if ( idcDates.length == 0 )
+			return;
+		
+		Date firstDayOfMonth = AonDateUtils.getFirstDayOfMonth(endDate == null ? new Date() : endDate);
+		Date ssStartDate = AonDateUtils.add(firstDayOfMonth, Calendar.MONTH, -1);
+
+		for ( int i = 1; i < idcDates.length ; i++ ) {
+			Date start = idcDates[i-1];
+			Date end = AonDateUtils.add(idcDates[i], Calendar.DAY_OF_MONTH,-1);
+			if ( end.before(ssStartDate)) 
+				continue;
+			addPECs(userLogin, domainName, domainId, userId, start, regime, ccc, naf);
+		}
+		
+		Date last = idcDates[idcDates.length-1];
+		System.out.println("\tIDC : " + last );
+		addPECs(userLogin, domainName, domainId, userId, last, regime, ccc, naf);
+		
+		//.peek( d -> System.out.println("IDC : " + d ))
+		//.reduce( (d1,d2) -> d2 )
+		//.filter( d -> true )
+		//.ifPresent( date -> addPECs(userLogin, domainName, domainId, userId, date, regime, ccc, naf));			
+
+		System.out.println("\tSUCCESS: " + naf );
 	}
 	
 	public static void syncWithIdcs(String userLogin, String domainName, Integer domainId, Integer userId, String regime,
@@ -763,6 +770,49 @@ public class SistemaRED2AON {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
 		}
+	}
+	
+	/**
+	 * 
+	 * @param userLogin
+	 * @param userId
+	 * @param domainName
+	 * @param domainId
+	 * @param regime
+	 * @param ccc
+	 * @param naf
+	 * @param date if the date is empty, look for the most recent.
+	 * @return
+	 * @throws SegSocialException
+	 * @throws UnknownPDFException
+	 * @throws IllegalArgumentException
+	 * @throws IOException
+	 */
+	public static Employee getEmployeeToIDC(String userLogin, Integer userId, String domainName, Integer domainId, String regime,
+			String ccc, String naf, Optional<Date> date) throws SegSocialException, UnknownPDFException, IllegalArgumentException, IOException {
+		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+		
+		Date startDate = date.orElseGet(()->{
+			try {
+				return SistemaRED.getIDCDates(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf)
+				.stream()
+				.filter(d-> d.getDescripcion().equals("ALTA"))
+				.sorted((o1, o2) -> o2.getFecha().compareTo(o1.getFecha()))
+				.findFirst()
+				.get()
+				.getFecha();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		});
+
+        return EmployeeParse.IdcToEmployeeOccam(
+    		ServicioRED.getIDCPOST(
+				new ByteArrayInputStream(certificate.getData()), certificate.getPassword(), certificate.getType(), 
+                naf, regime, ccc, startDate
+            )
+        );
 	}
 
 	private static String toString(Object obj) {

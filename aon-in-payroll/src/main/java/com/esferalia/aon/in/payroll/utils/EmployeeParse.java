@@ -1,9 +1,13 @@
 package com.esferalia.aon.in.payroll.utils;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Date;
 
+import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
+import com.esferalia.aon.in.payroll.tgss.idc.IdcParser;
+import com.esferalia.aon.in.payroll.tgss.idc.IdcParserListener;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
 
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
@@ -132,6 +136,93 @@ public class EmployeeParse {
 			public void visitAsociativeSA(String asociativeSA) {
 				// TODO Auto-generated method stub
 				
+			}
+		});
+		
+		return employee;
+	}
+	
+	public static Employee IdcToEmployeeOccam(byte [] file) throws IOException, UnknownPDFException {
+		Employee employee = new Employee();
+		
+		System.out.println("-------------------IdcToEmployeeOccam-------------------");
+
+		IdcParser.parse(file, new IdcParserListener() {
+	
+			@Override
+			public void onEnterprise(String socialReason, String ccc, String cif, String economicActivityCode,
+					String economicActivityDescription, String regime, String fullCCC) {
+				employee
+				.setRegime(fullCCC.substring(0, 4))
+				.setCcc(ccc);
+				
+				System.out.println("regime: "+fullCCC.substring(0, 4)+" ccc:"+ccc);
+			}
+
+			@Override
+			public void onEmployee(String nss, String name) {
+				employee
+				.setNaf(nss)
+				.setName(name);
+				
+				System.out.println("nss: "+nss+" name:"+name);
+			}
+			
+			
+			@Override
+			public void onEmployeeOtherInfo(String documentType, String document, String gender, Date birthDate) {
+				employee
+				.setDni(document)
+				.setSex(gender)
+				.setBirthDate(birthDate);
+				
+				System.out.println("document: "+document+" gender:"+gender+ " birthDate:"+birthDate);
+			}
+			
+			@Override
+			public void onContractStart(Date date) {
+				employee.setStartDate(date);
+				
+				System.out.println("startDate: "+date);
+			}
+
+			@Override
+			public void onContractEnd(Date date) {
+				employee.setEndDate(date);
+				
+				System.out.println("endDate: "+date);
+			}
+			
+			
+			@Override
+			public void  onContractType(String contractType) {
+				employee.setContractType(contractType);
+				
+				System.out.println("contractType: "+contractType);
+			}
+
+			@Override
+			public void onContractQuoteGroup(String quoteGroup) {
+				employee.setQuoteGroup(quoteGroup);
+				
+				System.out.println("quoteGroup: "+quoteGroup);
+			}
+			
+			@Override
+			public void onContractOcupation(String ocupation){
+				employee.setOccupation(ocupation);
+				
+				System.out.println("ocupation: "+ocupation);
+			}
+			
+			@Override
+			public void onContractPartialCoeficient(String coeficiente){
+				if(coeficiente.contains(",")) {
+					Double factor = Double.parseDouble( coeficiente.replace(",", ".") );
+					employee.setFactor(factor);
+				}	
+				
+				System.out.println("coeficiente: "+coeficiente);
 			}
 		});
 		

@@ -10,15 +10,15 @@ import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
 
 public interface CommonMessages extends Messages {
-	// Á --> \u00C1 á --> \u00E1
-	// É --> \u00C9 é --> \u00E9
-	// Í --> \u00CD í --> \u00ED
-	// Ó --> \u00D3 ó --> \u00F3
-	// Ú --> \u00DA ú --> \u00FA
-	// Ñ --> \u00D1 ñ --> \u00F1
-	// ª --> \u00AA º --> \u00BA
-	// ¿ --> \u00BF 
-	// ¡ --> \u00A1
+	// Ã --> \u00C1 Ã¡ --> \u00E1
+	// Ã‰ --> \u00C9 Ã© --> \u00E9
+	// Ã --> \u00CD Ã­ --> \u00ED
+	// Ã“ --> \u00D3 Ã³ --> \u00F3
+	// Ãš --> \u00DA Ãº --> \u00FA
+	// Ã‘ --> \u00D1 Ã± --> \u00F1
+	// Âª --> \u00AA Âº --> \u00BA
+	// Â¿ --> \u00BF 
+	// Â¡ --> \u00A1
 	
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")
@@ -1532,7 +1532,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Operaciones realizadas por sujetos pasivos acogidos al r\u00E9gimen especial del recargo de equivalencia")
 	String box102Msg();
 
-	@DefaultMessage("Operaciones en R\u00E9gimen especial de bienes usados, objetos de arte, antigÃƒÂ¼edades y objetos de colecci\u00F3n")
+	@DefaultMessage("Operaciones en R\u00E9gimen especial de bienes usados, objetos de arte, antigÃƒÂƒÃ‚Â¼edades y objetos de colecci\u00F3n")
 	String box227Msg();
 
 	@DefaultMessage("Operaciones en r\u00E9gimen especial de Agencias de Viajes")
@@ -3897,7 +3897,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Porc. Titularidad del inmueble")
 	String assetPercent();
 
-	@DefaultMessage("Porc. Titularidad del inmueble")
+	@DefaultMessage("N\u00BA d\u00EDas arrend. o cesi\u00F3n inmueble")
 	String assetDays();
 
 	@DefaultMessage("Existen vencimientos pagados/remesados/saldados.")

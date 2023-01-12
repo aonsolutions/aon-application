@@ -90,32 +90,6 @@ export class AonMovementsList extends AonElement {
 
     btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
     this.searchValueDefault();
-
-    const href = window.location.href;
-		if(href.includes('localhost') || href.includes('8080'))
-      this.sincronizedIcon();
-  }
-
-  sincronizedIcon(){
-    getAppParamComunica().then(({value})=>{
-
-      let name = this.lastSincronizedText( value ? Number(value) : null );
-
-      let aib = this.getApplication().addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name}, async () =>  {
-        let btn = aib.getButton();
-        btn.classList.add(CSS.AON_FA_SPIN);
-        await this.getApplicationParent().updateContracts();
-        if(aib && btn) {
-          aib.getButton().title = aib.title = this.lastSincronizedText(new Date());
-          btn.classList.remove(CSS.AON_FA_SPIN);
-        }
-      });     
-    });
-
-  }
-
-  lastSincronizedText(date){
-    return date ? `Última sincronización ${AonDateUtils.setDateTimestampDay(date) }` : 'No sincronizado';
   }
 
   searchValueDefault(){
@@ -211,8 +185,22 @@ export class AonMovementsList extends AonElement {
       newData = this.movParseData(data);
     } else {
       try {
-        let resp = await getEmployee({ regime:data.regime, ctaCti:data.ctaCti, nss: data.nss });
-        if (resp) newData = { ...resp, ...data };
+        let resp = await getEmployee({ regime:data.regime, ctaCti:data.ctaCti, nss: data.nss, date:(data.fra || data.frb) });
+        if (resp) {
+          newData = { ...resp, ...data};
+          if(resp.occupation){
+            newData.ocup = resp.occupation;
+          }
+          if(resp.contractType){
+            newData.contract = resp.contractType;
+          }
+          if(resp.factor){
+            newData.coef = resp.factor;
+          }
+          if(resp.quoteGroup){
+            newData.gc = resp.quoteGroup;
+          }
+        }
       } catch (error) {
         this.showError(error);
       }
@@ -225,7 +213,7 @@ export class AonMovementsList extends AonElement {
         disabledForm(`${aonAltaDirecta.id}TrabajadorCard`, AON_SWITCH);
       }
     }
- 
+
     this.getApplication().stopLoading();
   }
 

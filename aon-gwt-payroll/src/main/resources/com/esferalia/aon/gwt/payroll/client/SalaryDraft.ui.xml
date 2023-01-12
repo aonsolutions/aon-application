@@ -408,7 +408,7 @@
 		</g:north>
 		<g:center>
 			<g:DeckLayoutPanel ui:field="deckPanel" debugId="deckPanel" >
-				<g:DockLayoutPanel unit="PX" styleName="{style.editor} {style.container}" ui:field="drafDockLayoutPanel" debugId="drafDockLayoutPanel" >
+				<g:SplitLayoutPanel styleName="{style.editor} {style.container}" ui:field="drafSplitLayoutPanel" debugId="drafSplitLayoutPanel" >
 					<g:center>
 						<g:VerticalPanel styleName="{style.document}" ui:field="scrolledPanel" >
 	    					
@@ -793,7 +793,7 @@
 						</g:StackLayoutPanel>
 						
 					</g:east>
-				</g:DockLayoutPanel>
+				</g:SplitLayoutPanel>
 						
 				<!--  g:HTML styleName="reset" ui:field='printPreviewHTML'
 				wordWrap='true' /-->

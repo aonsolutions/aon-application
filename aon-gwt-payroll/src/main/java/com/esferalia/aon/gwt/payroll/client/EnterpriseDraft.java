@@ -128,12 +128,6 @@ public abstract class EnterpriseDraft extends Composite {
 		}
 
 		@Override
-		public void onEnterpriseCostModelChange() {
-			String costModel = String.valueOf(this.enterpriseCostModel.getSelectedValue());
-			enterpriseDraftObject.setCostModel(costModel);
-		}
-
-		@Override
 		public void onEnterprisePaysheetSendTypeChange() {
 			String paysheetSendType = String.valueOf(this.enterprisePaysheetSendType.getSelectedValue());
 			enterpriseDraftObject.setPaySheetSendType(paysheetSendType);
@@ -327,7 +321,6 @@ public abstract class EnterpriseDraft extends Composite {
 		}
 		
 		setSelectedValueLB(enterprise.enterprisePaysheetModel, enterpriseDraftObject.getPaySheetModel());
-		setSelectedValueLB(enterprise.enterpriseCostModel, enterpriseDraftObject.getCostsModel());
 		setSelectedValueLB(enterprise.enterprisePaysheetSendType, enterpriseDraftObject.getPaysheetSend());
 		enterprise.checkPaysheetSendType(enterpriseDraftObject.getPaysheetSendEmail());
 		

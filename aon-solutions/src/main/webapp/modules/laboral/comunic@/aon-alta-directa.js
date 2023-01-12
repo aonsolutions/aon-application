@@ -116,7 +116,7 @@ export class AonAltaDirecta extends AonElement {
             toolbar.addButton2(ACTION_COMUNICA.BAJA, () => this.openDialogBaja());
         }
     
-        if( this.isAlta() || !this.data ){ // ALTA
+        if( !this.data || (this.data && !this.data.fra) ){ // ALTA
             toolbar.addButton2(ACTION_COMUNICA.COMUNICAR, () =>  this.formSubmit());
         }
 
@@ -149,7 +149,7 @@ export class AonAltaDirecta extends AonElement {
         workplace.addEventListener(EVENT.CHANGE, (ev) => this.listCtaCti(ev));
 
         let ctaCti = this.getElement('ctaCti');
-        ctaCti.addEventListener(EVENT.CHANGE, (ev) => this.onChangeCtaCti(ev) );
+        ctaCti.addEventListener(EVENT.CHANGE, () => this.onChangeCtaCti(ctaCti) );
 
         let nss = this.getElement(`${this.id}Nss`);
         nss.addEventListener(EVENT.CHANGE, ({ target }) =>  this.comprobarNss(target.value));
@@ -312,19 +312,21 @@ export class AonAltaDirecta extends AonElement {
         }
     }
 
-    onChangeCtaCti({detail}){
-        let regime = detail.cccRegimeCode;
-        this.getElement('regime').setAttribute('value', regime);
-        if(!this.isEdit()){
-            let md_ctz = this.getElement("md_ctz");
-            if(md_ctz && md_ctz.parentNode){
-                md_ctz.parentNode.remove();
+    onChangeCtaCti(ctaCti) {
+        const {cccRegimeCode} = ctaCti.getDetail();
+        if(cccRegimeCode){
+            this.getElement('regime').setAttribute('value', cccRegimeCode);
+            if(!this.isEdit()){
+                let md_ctz = this.getElement("md_ctz");
+                if(md_ctz && md_ctz.parentNode){
+                    md_ctz.parentNode.remove();
+                }
+                
+                if(cccRegimeCode === "0163"){
+                    let aonCard = this.getElement(this.id+"ContratoCard");
+                    createContractDataMdCtz(aonCard.getContent());
+                } 
             }
-            
-            if(regime === "0163"){
-                let aonCard = this.getElement(this.id+"ContratoCard");
-                createContractDataMdCtz(aonCard.getContent());
-            } 
         }
     }
 
@@ -597,6 +599,8 @@ export class AonAltaDirecta extends AonElement {
                 openFileBase64(resp.file, "application/pdf").catch(console.error);
             }
 
+            this.getApplication().stopLoading();
+
             this.back();
         } catch (error) {
             this.showToast(error);
@@ -629,6 +633,8 @@ export class AonAltaDirecta extends AonElement {
             if(resp && resp.file){
                 openFileBase64(resp.file, "application/pdf").catch(console.error);
             }
+
+            this.getApplication().stopLoading();
 
             this.back();
 
@@ -817,7 +823,7 @@ export class AonAltaDirecta extends AonElement {
     }
 
     isAlta(){
-        return this.data && this.data.situation && this.data.situation.indexOf("AL")>=0;
+        return this.data && this.data.situation && this.data.situation.indexOf("AL")>=0 && !this.data.endDate;
     }
 
     async getAppParams(){

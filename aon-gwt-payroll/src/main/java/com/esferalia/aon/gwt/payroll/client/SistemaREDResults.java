@@ -247,6 +247,10 @@ public class SistemaREDResults extends Composite implements RequiresResize, Empl
 	public  void run() {
 	}
 	
+	public boolean hasMessages() {
+		return errorsItem.getChildCount() > 0 || warningsItem.getChildCount() > 0 || notFoundItem.getChildCount() > 0;
+	}
+	
 
 	// ------------------------------------------------------------ @UiHandlers
 

@@ -10,6 +10,8 @@ import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.wait4;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -23,6 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -202,7 +205,16 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		SSLContext sslContext = null;
 		
 		try {
-			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
+			
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray())
+				.loadTrustMaterial(new TrustStrategy() {
+	                @Override
+	                 public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+	                         return true;
+	                 }
+				})
+				.build();
+			
 		} catch (Exception e1) {
 			throw new InvalidCertificateException();
 		}
@@ -555,7 +567,6 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			HtmlButton continueIn = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[value=\"CONTINUAR_EMISION\"]")).orElseThrow();
 			htmlPage = continueIn.click();
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
-			
 
 			HtmlAnchor firstColumn = getOneAnchorPaginate(htmlPage, partType, dateProcess);
 			
@@ -713,7 +724,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	private static HtmlAnchor getOneAnchorPaginate(HtmlPage htmlPage, SistemaRED.PartType partType, Date date)
 			throws IOException {
 		
-		String dateStr = Toolkit.formatDate(date, DATE_FORMAT).get();
+		String dateStr = Toolkit.formatDate(date, DATE_FORMAT).orElse(null);
 		
 		HtmlTable table = (HtmlTable) htmlPage.querySelector("#FORMULARIO_6 table");
 		HtmlAnchor next = null;		
@@ -743,7 +754,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 					HtmlTableCell anulCell = row.getCell(7);
 					if (
 							fCell.getVisibleText().contains(dateStr)
-							&& typeCell.getVisibleText().contains(partType.getDescription())
+							&& typeCell.getVisibleText().toLowerCase().contains(partType.getDescription().substring(0, 4).toLowerCase())
 							&& anulCell.getVisibleText().contains("N")
 					) {
 						firstColumn = row.getCell(0).querySelector("a");

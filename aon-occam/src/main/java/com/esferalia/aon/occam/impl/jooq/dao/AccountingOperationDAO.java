@@ -170,6 +170,7 @@ public class AccountingOperationDAO {
     		.select(accountingSelect.fields())
 			.select(
 				  INVOICE.ID
+                , INVOICE.TYPE
                 , INVOICE.TAX_DATE
 				, INVOICE.REFERENCE_CODE 
 				, INVOICE.RDOCUMENT
@@ -274,58 +275,58 @@ public class AccountingOperationDAO {
 					double surchargeQuota = AonNumberUtils.todouble(rec.getValue(sumSurchargeQuota));
 					double retentionQuota = AonNumberUtils.todouble(rec.getValue(sumRetentionQuota));
 					double total = 0; // El total es la suma de base + impuestos en facturas y el importe debe o haber en el resto de apuntes
-					// Apuntes que no son facturas (base y total coinciden)
+
+					// Apuntes que no son facturas (base y total coinciden) o facturas UNDEDUCTIBLE
+					if (pair.getRight().getInvoice() == null || AonStringUtils.equals("F2",pair.getRight().getInvoiceType())) {
+						base = getAccountEntryBalance( pair );
+						total = base;
+					} else {
+						// Apuntes que son facturas (total es base + iva + recargo_equivalencia (no se tiene en cuenta la retencion)
+						total = AonMathUtils.round(base + deductibleQuota + surchargeQuota);
+						
+						// En facturas no nos podemos fiar de lo que viene en deductibleQuota, porque parece ser que ese dato no es 
+						// posible grabarlo en la factura en estos momentos en determinados asientos de facturas, cuando es un gasto 
+						// por ejemplo con IVA no deducible, incluso en las facturas de gestión, no está grabada ni siquiera la cuota 
+						// de IVA, asi que se hace por ahora que si no hay cuenta de IVA o si la cuenta de IVA es la misma que la de gasto
+						// se asume que el IVA no es deducible
+						if (rec.getValue(INVOICE.TYPE) == InvoiceType.PURCHASE.value() 
+							|| rec.getValue(INVOICE.TYPE) == InvoiceType.EXPENSES.value()) {
+							Integer idTaxAccount = rec.getValue(INVOICE_TAX_ACCOUNT.ACCOUNT);
+							if (idTaxAccount == null || idTaxAccount.intValue() == rec.getValue(OP_DETAIL_ACC_ID).intValue()) {
+								deductibleQuota = 0;
+							}									
+						}								
+					}
 					
-						if (pair.getRight().getInvoice() == null) {
-							base = getAccountEntryBalance( pair );
-							total = base;
-						} else {
-							// Apuntes que son facturas (total es base + iva + recargo_equivalencia (no se tiene en cuenta la retencion)
-							total = AonMathUtils.round(base + deductibleQuota + surchargeQuota);
-							
-							// En facturas no nos podemos fiar de lo que viene en deductibleQuota, porque parece ser que ese dato no es 
-							// posible grabarlo en la factura en estos momentos en determinados asientos de facturas, cuando es un gasto 
-							// por ejemplo con IVA no deducible, incluso en las facturas de gestión, no está grabada ni siquiera la cuota 
-							// de IVA, asi que se hace por ahora que si no hay cuenta de IVA o si la cuenta de IVA es la misma que la de gasto
-							// se asume que el IVA no es deducible
-							if (rec.getValue(INVOICE.TYPE) == InvoiceType.PURCHASE.value() 
-								|| rec.getValue(INVOICE.TYPE) == InvoiceType.EXPENSES.value()) {
-								Integer idTaxAccount = rec.getValue(INVOICE_TAX_ACCOUNT.ACCOUNT);
-								if (idTaxAccount == null || idTaxAccount.intValue() == rec.getValue(OP_DETAIL_ACC_ID).intValue()) {
-									deductibleQuota = 0;
-								}									
-							}								
-						}
-						
-						Integer act = rec.getValue(OP_ACTIVITY);
-						int count = rec.getValue(activityCount);
-						
-						// Facturas o apuntes que van a todas las actividades (activity=null),  
-						// al sacarlas en cada actividad, debe salir la parte proporcional, de 
-						// forma equitativa, segun las actividades que haya (1/2, 1/3, 1/4, ...)
-						if (act == null && count > 1) {
-							base = AonMathUtils.round(base/count);
-							quota = AonMathUtils.round(quota/count);
-							deductibleQuota = AonMathUtils.round(deductibleQuota/count);
-							surchargeQuota = AonMathUtils.round(surchargeQuota/count);
-							total = AonMathUtils.round(total/count);
-							retentionQuota = AonMathUtils.round(retentionQuota/count);
-						}
-						// Ingreso computable/Gasto deducible (Libros Registro AEAT)
-						// base + iva no deducible
-						double amount = base + (quota-deductibleQuota);
-						
-						// Completar todos los datos
-						return pair.getRight()
-							.setTotal(total)
-							.setBase(base)
-							.setQuota(quota)					
-							.setDeductibleQuota(deductibleQuota)					
-							.setSurchargeQuota(surchargeQuota)
-							.setAmount(amount)
-							.setRetentionQuota(retentionQuota) 
-								;
-					});
+					Integer act = rec.getValue(OP_ACTIVITY);
+					int count = rec.getValue(activityCount);
+					
+					// Facturas o apuntes que van a todas las actividades (activity=null),  
+					// al sacarlas en cada actividad, debe salir la parte proporcional, de 
+					// forma equitativa, segun las actividades que haya (1/2, 1/3, 1/4, ...)
+					if (act == null && count > 1) {
+						base = AonMathUtils.round(base/count);
+						quota = AonMathUtils.round(quota/count);
+						deductibleQuota = AonMathUtils.round(deductibleQuota/count);
+						surchargeQuota = AonMathUtils.round(surchargeQuota/count);
+						total = AonMathUtils.round(total/count);
+						retentionQuota = AonMathUtils.round(retentionQuota/count);
+					}
+					// Ingreso computable/Gasto deducible (Libros Registro AEAT)
+					// base + iva no deducible
+					double amount = base + (quota-deductibleQuota);
+					
+					// Completar todos los datos
+					return pair.getRight()
+						.setTotal(total)
+						.setBase(base)
+						.setQuota(quota)					
+						.setDeductibleQuota(deductibleQuota)					
+						.setSurchargeQuota(surchargeQuota)
+						.setAmount(amount)
+						.setRetentionQuota(retentionQuota) 
+							;
+				});
 	}
 	
 	private static double getAccountEntryBalance(Pair<Record, OperationBreakdown> pair) {

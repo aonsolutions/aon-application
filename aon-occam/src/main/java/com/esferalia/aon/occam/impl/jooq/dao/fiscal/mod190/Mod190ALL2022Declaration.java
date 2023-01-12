@@ -192,7 +192,8 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 								:(irpfBase * totalIrpf / totalIrpfBase);
 						if ( AonMathUtils.isGreatherThanZero(irpfBase )) {
 							visitAKey();		
-						} else {
+						} else if(AonMathUtils.isGreatherThanZero(amount )) {
+							//Esta comprobacion es por que puede haber payments CRA 0054 que tengan amount 0 (pe.: DIAS_PREAVISO)
 							Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"05");
 							detail.setPerception(AonMathUtils.round(detail.getPerception() + amount ));
 							detail.setRetention(AonMathUtils.round(detail.getRetention() + irpfQuota ));
@@ -206,7 +207,7 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 						// Parte exenta va a la L
 						double expense = AonMathUtils.round(amount - irpfBase);  
 						Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"24");
-						detail.setPerception(AonMathUtils.round(detail.getPerception() + expense ));
+						detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + expense ));
 						
 						// Parte no exenta va a la A
 						visitAKey();	

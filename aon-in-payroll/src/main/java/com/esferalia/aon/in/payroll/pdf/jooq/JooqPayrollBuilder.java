@@ -345,7 +345,7 @@ public class JooqPayrollBuilder {
 						paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<PDFPayment>());
 
 					if (paymentMap.get(p.getPaymentType().ordinal()).stream().anyMatch(
-							acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().get()))) {
+							acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().orElse(null)))) {
 						PDFPayment repAcc = paymentMap.get(p.getPaymentType().ordinal()).stream().findFirst().get();
 						repAcc.setAmount(repAcc.getAmount().orElse(0d) + p.getAmount());
 					} else

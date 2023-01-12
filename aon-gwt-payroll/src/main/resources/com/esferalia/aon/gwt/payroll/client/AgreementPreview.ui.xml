@@ -243,6 +243,8 @@
 			width: 100%;
 		}
 		
+		@external modify;
+		
 	</ui:style>
 	
 	<g:HTMLPanel styleName="{style.flexColumn} {style.heigthAll}">

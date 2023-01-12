@@ -519,6 +519,9 @@ public class VatContext implements Serializable {
 	public boolean isVatGeneralRegime(VATRegime defaultRegime) {
 		return (defaultRegime == VATRegime.GENERAL && getVatRegime() == null) || getVatRegime() == VATRegime.GENERAL;
 	}
+	public boolean isVatSimplifiedRegime() {
+		return getVatRegime() == VATRegime.SIMPLIFIED;
+	}
 	public boolean isVatSimplifiedRegime(VATRegime defaultRegime) {
 		return (defaultRegime == VATRegime.SIMPLIFIED && getVatRegime() == null) || getVatRegime() == VATRegime.SIMPLIFIED;
 	}

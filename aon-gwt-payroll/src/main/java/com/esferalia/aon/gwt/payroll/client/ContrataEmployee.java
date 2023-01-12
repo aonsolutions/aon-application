@@ -10,13 +10,13 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateListBox;
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
@@ -39,6 +39,8 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
@@ -47,7 +49,6 @@ import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -67,6 +68,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private static ContrataEmployeeDraftUiBinder uiBinder = GWT.create(ContrataEmployeeDraftUiBinder.class);
 
 	interface ContrataEmployeeDraftUiBinder extends UiBinder<Widget, ContrataEmployee> {}
+	
+	interface TabLayoutFolderSafeTemplate extends SafeHtmlTemplates {
+		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
+		SafeHtml tab(String title, String icon);
+	}
+	
+	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 
 	// ------------------------------------------------- ContractEmployeeUIImpl
 
@@ -98,7 +106,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 
 		@Override
-		protected MinimizePanel getFootPanel() {
+		protected AonMinimizePanel getFootPanel() {
 			return footPanel;
 		}
 
@@ -1009,7 +1017,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	FullViewer pdfViewer;
 
 	@UiField
-	MinimizePanel footPanel;
+	AonMinimizePanel footPanel;
 
 	@UiField
 	TabLayoutPanel footTabPanel;
@@ -1076,6 +1084,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private boolean isComunica = false;
 	private boolean hasPayroll = false;
+	
+	private SistemaREDResults sistemaREDResults;
 	
 	// PDF Save
 	Integer attachId;
@@ -1173,6 +1183,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void initFootPanel() {
 		footPanel.addMaximizeHandler(e -> showFootPanel());
 		footPanel.addMinimizeHandler(e -> hideFootPanel());
+		footPanel.clearButtons();
+		footPanel.addButtonLess();
 	}
 
 	private void initResultsPanel() {
@@ -2470,8 +2482,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- CheckStatus (contrataEmployeeObject)
 
 	private void checkStatus(ContrataEmployeeObject contrataEmployeeObject) {
+		if(isContractFinished()) {
+			splitLayoutPanel.setWidgetSize(footPanel, 0);
+			return;
+		}
+		
 		contrataEmployeeObject.checkStatus(employeeStatus -> {
-			SistemaREDResults sistemaREDResults = new SistemaREDResults() {
+			sistemaREDResults = new SistemaREDResults() {
 
 				@Override
 				public void run() {
@@ -2488,7 +2505,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 						removeAll();
 						employeeStatus.visit(this);
 						selectResultsPanel();
-						showFootPanel();
+
+						if(sistemaREDResults.hasMessages()) {
+							closeFootPanel();
+							showWarnFootPanel();
+						} else showFootPanel();
 //						ifSistemaREDEnabled(employeeStatus, () -> {
 //							ContrataEmployee.this.setTaVisible(true);
 //							ContrataEmployee.this.setIdcVisible(true);
@@ -2569,7 +2590,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 //				ContrataEmployee.this.setIdcVisible(false);
 //			});
 
-			ifSistemaREDError(employeeStatus, this::showFootPanel, this::closeFootPanel);
+			ifSistemaREDError(
+					employeeStatus, 
+					() -> {
+						if(sistemaREDResults.hasMessages()) {
+							closeFootPanel();
+							showWarnFootPanel();
+						} else showFootPanel();
+					}, 
+					this::closeFootPanel);
 
 		}, throwable -> {
 			closeFootPanel();
@@ -2579,18 +2608,33 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		});
 	}
 
+	private boolean isContractFinished() {
+		Date contractEndDate = this.contrataEmployeeObject.getContractEndDate();
+		Date checkDate = new Date();
+		checkDate = DateUtils.addDays2Date(checkDate, -5);
+		
+		return null != contractEndDate && contractEndDate.before(checkDate);
+	}
+	
+	private void showWarnFootPanel() {
+		showWarning("Sincronizaci\u00f3n TGSS", "Existen mensajes en el panel Resultados (parte inferior de la pantalla)");
+	}
+
 	// ------------------------------------------------- CheckStatus (Auxiliar methods)
 
 	private void selectResultsPanel() {
-		InlineLabel tab = new InlineLabel("Resultados");
-		tab.addStyleName(AON.AON_ICON_TIME);
-		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
+		SafeHtml tab = TABLAYOUT_FOLDER_TEMPLATE.tab("Resultados", AON.CSS.aonIconHistory());
 		footTabPanel.add(resultsPanel, tab);
+		if(sistemaREDResults.hasMessages()) footTabPanel.getTabWidget(resultsPanel).getElement().getStyle().setColor("red");
 		footTabPanel.selectTab(resultsPanel);
+		
+		footPanel.clearButtons();
+		footPanel.addButtonLess();
 	}
 
 	private void closeFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 20);
+		splitLayoutPanel.animate(500);
 	}
 
 	private void optionNotAllowed() {
@@ -2600,10 +2644,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void hideFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 20);
+		splitLayoutPanel.animate(500);
 	}
 
 	private void showFootPanel() {
 		splitLayoutPanel.setWidgetSize(footPanel, 200);
+		splitLayoutPanel.animate(500);
 	}
 
 	public void setTaVisible(boolean visible) {

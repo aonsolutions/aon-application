@@ -237,6 +237,8 @@ public class JooqIT {
 						itPart.setCias(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CIAS));
 						itPart.setDate(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.DATE));
 						itPart.setStatus(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.STATUS));
+						itPart.setModify(false);
+						itPart.setDelete(false);
 						
 						it.addITPart(itPart);
 						
@@ -425,6 +427,8 @@ public class JooqIT {
 						itPart.setCias(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CIAS));
 						itPart.setDate(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.DATE));
 						itPart.setStatus(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.STATUS));
+						itPart.setModify(false);
+						itPart.setDelete(false);
 						
 						it.addITPart(itPart);
 						
@@ -586,6 +590,8 @@ public class JooqIT {
 					itPart.setCias(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CIAS));
 					itPart.setDate(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.DATE));
 					itPart.setStatus(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.STATUS));
+					itPart.setModify(false);
+					itPart.setDelete(false);
 					
 					it.addITPart(itPart);
 					
@@ -762,6 +768,8 @@ public class JooqIT {
 						itPart.setCias(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.CIAS));
 						itPart.setDate(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.DATE));
 						itPart.setStatus(contractLeaveDetailRecord.get(CONTRACT_LEAVE_DETAIL.STATUS));
+						itPart.setModify(false);
+						itPart.setDelete(false);
 						
 						it.addITPart(itPart);
 						
@@ -1150,25 +1158,41 @@ public class JooqIT {
 					.where(CONTRACT_LEAVE.ID.eq(it.getId()))
 					.execute();
 				
-				dslContext.delete(CONTRACT_LEAVE_DETAIL)
-					.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(it.getId()))
-					.execute();
+//				dslContext.delete(CONTRACT_LEAVE_DETAIL)
+//					.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(it.getId()))
+//					.execute();
 				
 				for(ITPart itPart : it.getITParts()) {
 					
 					Date date = null == itPart.getDate() ? null : new Date(itPart.getDate().getTime());
 					
-					if(null != date)
+					if(null != itPart.getId() && itPart.isDelete()) {
+						dslContext.delete(CONTRACT_LEAVE_DETAIL)
+						.where(CONTRACT_LEAVE_DETAIL.ID.eq(itPart.getId()))
+						.execute();
+					} else if(null != itPart.getId() && itPart.isModify()) {
+						dslContext.update(CONTRACT_LEAVE_DETAIL)
+						.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, it.getId())
+						.set(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER, itPart.getCollegeNumber())
+						.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, itPart.getConfirmOrderNumber())
+						.set(CONTRACT_LEAVE_DETAIL.CIAS, itPart.getCias())
+						.set(CONTRACT_LEAVE_DETAIL.DATE, date)
+						.set(CONTRACT_LEAVE_DETAIL.STATUS, itPart.getStatus())
+						.where(CONTRACT_LEAVE_DETAIL.ID.eq(itPart.getId()))
+						.execute();	
+					} else if(null == itPart.getId() && null!= date) {
 						dslContext.insertInto(CONTRACT_LEAVE_DETAIL)
-							.set(CONTRACT_LEAVE_DETAIL.DOMAIN, domainId)
-							.set(CONTRACT_LEAVE_DETAIL.TYPE, itPart.getType())
-							.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, it.getId())
-							.set(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER, itPart.getCollegeNumber())
-							.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, itPart.getConfirmOrderNumber())
-							.set(CONTRACT_LEAVE_DETAIL.CIAS, itPart.getCias())
-							.set(CONTRACT_LEAVE_DETAIL.DATE, date)
-							.set(CONTRACT_LEAVE_DETAIL.STATUS, itPart.getStatus())
-							.execute();
+						.set(CONTRACT_LEAVE_DETAIL.DOMAIN, domainId)
+						.set(CONTRACT_LEAVE_DETAIL.TYPE, itPart.getType())
+						.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, it.getId())
+						.set(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER, itPart.getCollegeNumber())
+						.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, itPart.getConfirmOrderNumber())
+						.set(CONTRACT_LEAVE_DETAIL.CIAS, itPart.getCias())
+						.set(CONTRACT_LEAVE_DETAIL.DATE, date)
+						.set(CONTRACT_LEAVE_DETAIL.STATUS, itPart.getStatus())
+						.execute();
+					}
+						
 				}
 				
 				Integer contractId = itEmployee.getContractInfo().getContractId();

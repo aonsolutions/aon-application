@@ -19,20 +19,10 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.finance.UpdateInvoiceRegistryDocument;
-import net.aonsolutions.db.up2date.fiscal.AlterAlcatrazFinance;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod190Detail2022;
-import net.aonsolutions.db.up2date.irpf.IrpfEuskadi2023Insert;
-import net.aonsolutions.db.up2date.payroll.AgreementPaymentsConceptFix;
-import net.aonsolutions.db.up2date.payroll.AlterAgreementPaymentDescription;
-import net.aonsolutions.db.up2date.payroll.AlterContractBonusDescription;
-import net.aonsolutions.db.up2date.payroll.AlterContractBonusExpression;
-import net.aonsolutions.db.up2date.payroll.AlterContractPaymentDescription;
-import net.aonsolutions.db.up2date.payroll.AlterSalaryBonusConcept;
-
-import net.aonsolutions.db.up2date.payroll.DeathOfEmployeeInsert;
-import net.aonsolutions.db.up2date.payroll.Holidays2023Insert;
+import net.aonsolutions.db.up2date.finance.InvoiceFiscalAddExpDate;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod184Detail2022;
 import net.aonsolutions.db.up2date.tgss.BasesMax2023Update;
+import net.aonsolutions.db.up2date.tgss.HomeBases2023Update;
 import net.aonsolutions.db.up2date.tgss.MEIInsert;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 public class Up2Date {
@@ -305,10 +295,14 @@ public class Up2Date {
     		//UpdateInvoiceRegistryDocument.UPDATE_INVOICE_REGISTRY_DOCUMENT,
     		//AlterAlcatrazFinance.ALTER_ALCATRAZ_FINANCE,
     		//IrpfEuskadi2023Insert.IRPFEUSKADI2023INSERT,
+    		//AlterFsMod190Detail2022.ALTER_FS_MODEL_190_DETAIL_2022,
 	    	BasesMax2023Update.BASESMAX2023UPDATE,
 	    	MEIInsert.MEIINSERT,
-    		AlterFsMod190Detail2022.ALTER_FS_MODEL_190_DETAIL_2022,
-	    	
+    		HomeBases2023Update.HOMEBASES2023UPDATE,
+    		InvoiceFiscalAddExpDate.INVOICE_FISCAL_ADD_EXP_DATE,
+    		
+    		AlterFsMod184Detail2022.ALTER_FS_MODEL_184_DETAIL_2022,
+    		
     		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
     		
