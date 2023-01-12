@@ -90,6 +90,19 @@ public class RegistryPayMethodDAO {
 		
 	}
 	
+	
+	public static class RegistryAutoComplete {
+	
+		public static final BiConsumer<AONContext,RegistryPayMethod> COMPLETE_PAY_METHOD = (ctx, rpaymethod) -> {
+
+		};
+
+		public static void autoComplete(AONContext ctx, RegistryPayMethod rpm) {
+			COMPLETE_PAY_METHOD
+				.accept(ctx, rpm);
+		}
+
+	}
 
 	
 	private static class RegistryPayMethodValidation {
