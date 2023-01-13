@@ -31,6 +31,7 @@ import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.payroll.client.MainCreta.AbstractBaseCretaDetail;
@@ -1739,6 +1740,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			}
 		}
 		
+		class laboralLifeCommand implements ScheduledCommand {
+			@Override
+			public void execute() {
+				showLaboralLifeCommand(DateUtils.getFirstDayOfMonth());
+			}
+		}
+		
 		class Up2DateCommand implements ScheduledCommand {
 			@Override
 			public void execute() {
@@ -1755,6 +1763,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			idcButton = new Button("INFORME DATOS DE COTIZACI\u00D3N-CCC (IDC)", (ClickHandler) e -> onClickIdcButton(e));
 			up2DateButton = new Button("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", (ClickHandler) e -> onClickUp2DateSSButton(e));
 			addSLDMenuItem("INFORME DATOS DE COTIZACI\u00D3N-CCC (IDC)", new IdcCommand());
+			addSLDMenuItem("VIDA LABORAL", new laboralLifeCommand());
 			// TODO: esta en la actividad
 //			addSLDMenuItem("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", new Up2DateCommand());
 		}
@@ -1821,6 +1830,53 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		@Override
 		protected void onClickEmployee(int x, int y, String naf) {
 			EmployeeTree.this.employees.selectEmployee(naf, true);
+		}
+		
+		void showLaboralLifeCommand(Date date) {
+			FullViewer viewer = getLaboralLifePDF(employeeDetail, date);
+			DomainEnterprisesServiceAsync enterpriseService = DomainEnterprisesServiceAsync.newInstance();
+			AonMessagePanel.showLoading(getMessagePanel(), "Cargando vida laboral del ccc " + ccc.getRegime() + " " + ccc.getCode());
+			enterpriseService.getCCCLaboralLife(ccc.getRegime(), ccc.getCode(), date, new Date(), new AsyncCallback<String>() {
+				
+				@Override
+				public void onSuccess(String dataURI) {
+					hideMessagePanel();
+					viewer.open(dataURI);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(getMessagePanel(), "Error Vida Laboral : " + caught.getMessage());
+				}
+			});
+		}
+		
+		FullViewer getLaboralLifePDF(DetailPanel detailPanel, Date date) {
+			DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
+			detailPanel.setWidget(dock);
+			AonToolbar tb = new AonToolbar("VIDA LABORAL (" + ccc.getRegime() + " " + ccc.getCode() + ")");
+			AonToolbarButton closePDF = new AonToolbarButton("Volver", AON.CSS.aonIconBack());
+			closePDF.addClickHandler(e -> {
+				onCCCSelected(ccc);
+			});
+			tb.add(closePDF);
+			dock.addNorth(tb, AonToolbar.HEIGTH);
+			
+			MonthListBox monthListBox = new MonthListBox();
+			Date lastMonth = DateUtils.getFirstDayOfMonth(); 
+			Date firstMonth = DateUtils.addYears2Date(DateUtils.getFirstDayOfMonth(), -4);
+			monthListBox.setFirstMonth(firstMonth);
+			monthListBox.setLastMonth(lastMonth);
+			monthListBox.setPageSize(52);
+			monthListBox.setVisibleRange(0, 52);
+			monthListBox.addChangeHandler(e -> showLaboralLifeCommand(monthListBox.getSelectedMonth()));
+			monthListBox.setSelected(date, true);
+			monthListBox.setWidth("200px");
+			tb.add(monthListBox);
+			
+			FullViewer viewer = new FullViewer();
+			dock.add(viewer);
+			return viewer;
 		}
 
 		void showIdc(Date date) {
@@ -2197,6 +2253,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		
         private Map<Integer, ContractBonusObject> contractBonusMap ;  
         private Map<Integer, SSPECObject> ssPECMap ;  
+        private Map<Integer, Mod145Object> mod145Map ;  
 		private Map<Integer, CategoryDraftObject> contractCategoriesMap ;  
 		private Map<Integer, EmployeeContractPaymentsObject> contractPaymentsMap ;  
 		private Map<Integer, EmployeeContractVariablesObject> contractVariablesMap ;  
@@ -2204,6 +2261,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		public EmployeeTabLayoutPanel() {
 			contractBonusMap = new HashMap<>();
 			ssPECMap = new HashMap<>();
+			mod145Map = new HashMap<>();
 			contractPaymentsMap = new HashMap<>();
 			contractVariablesMap = new HashMap<>();
 			contractCategoriesMap = new HashMap<>();
@@ -2212,6 +2270,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			add("Calendario", getEmployeeCalendarDraftNew(), this::onCalendarSelected);
 //			add("Bonificaciones", getEmployeeSSBonus(), this::onSSBonusSelected);
 			add("Peculiaridades", getEmployeeSSPEC(), this::onSSPECSelected);
+			add("Mod145", getMod145(), this::onMod145Selected);
 			add("Borrador", getSalaryDraft(), this::onDraftSelected);
 			add("Variables", getEmployeeEventsDraft(), this::onEventsSelected);
 //			add("Convenio", getCategoryDraft(), this::onAgreementSelected);
@@ -2244,6 +2303,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				ssPECMap.put(salaryDraft.getEmployeeId(), ssPECObject);
 			}
 			getEmployeeSSPEC().setContractSSPECObject(ssPECObject);
+		}
+		
+		void onMod145Selected() {
+			getMod145().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
+			Mod145Object mod145Object = mod145Map.get(salaryDraft.getEmployeeId());
+			if(null == mod145Object) {
+				mod145Object = new Mod145Object( salaryDraft.getEmployeeId());
+				mod145Map.put(salaryDraft.getEmployeeId(), mod145Object);
+			}
+			getMod145().setMod145Object(mod145Object);
 		}
 
 		void onSalariesSelected() {
@@ -2531,6 +2600,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private EmployeeCalendarDraftNew employeeCalendarDraftNew;
 	private ContractBonusUI employeeSSBonus;
 	private SSPECDraft ssPECDraft;
+	private Mod145 mod145;
 	private EmployeeContractPayments employeeContractPayments; 
 	private EmployeeContractVariables employeeContractVariables; 
 	private EmployeeSalary employeeSalary;
@@ -3600,6 +3670,67 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			
 		};
 		return ssPECDraft;
+	}
+	
+	private Mod145 getMod145() {
+		FullViewer viewer = new FullViewer();
+		
+		if (mod145 == null)
+			mod145 = new Mod145() {
+				
+				@Override
+				protected void showWarningMessage(String title, String message) {
+					AonMessagePanel.showWarning(getMessagePanel(), title + " : " + message);
+					showMessagePanel();
+				}
+				
+				@Override
+				protected void showSuccessMessage(String title, String message) {
+					AonMessagePanel.showSuccess(getMessagePanel(), title + " : " + message);
+					showMessagePanel();
+				}
+				
+				@Override
+				protected void showLoadingMessage(String message) {
+					AonMessagePanel.showLoading(getMessagePanel(), message);
+					showMessagePanel();
+				}
+				
+				@Override
+				protected void showErrorMessage(String title, String message) {
+					AonMessagePanel.showError(getMessagePanel(), title + " : " + message);
+					showMessagePanel();
+				}
+				
+				@Override
+				protected void createViewer() {
+					DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
+					
+					AonToolbar tb = new AonToolbar("Mod145");
+					AonToolbarButton closePDF = new AonToolbarButton("Cerrar PDF Mod145", AON.CSS.aonIconBack());
+					closePDF.addClickHandler(e -> {
+						employeeDetail.setWidget(getEmployeePanel());
+						getEmployeePanel().selectWidget(getMod145());
+						Mod145Object mod145Object = new Mod145Object(getMod145().getContractId());
+						getMod145().setMod145Object(mod145Object);
+					});
+					tb.add(closePDF);
+					
+					dock.addNorth(tb, AonToolbar.HEIGTH);
+					dock.add(viewer);
+					employeeDetail.setWidget(dock);
+				}
+				
+				@Override
+				protected void printPDF(String dataURI) {
+					viewer.open(dataURI);
+					hideMessagePanel();
+				}
+			};
+			
+		mod145.addMainMT();
+			
+		return mod145;
 	}
 
 	private EmployeeSalary getEmployeeSalary() {

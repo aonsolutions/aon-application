@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
-import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.Rbank;
@@ -243,6 +242,22 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		employeesService.getEmployeeIdcDates(employee.getId(), null, new AsyncCallback<List<Date>>() {
 			@Override
 			public void onSuccess(List<Date> result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void downloadLaboralLife(Consumer<String> success, Consumer<Throwable> failure) {
+		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+		String ccc = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+		
+		enterprisesService.getLaboralLife(regimen, ccc, employee.getSocialSecurity(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
 				success.accept(result);
 			}
 			@Override

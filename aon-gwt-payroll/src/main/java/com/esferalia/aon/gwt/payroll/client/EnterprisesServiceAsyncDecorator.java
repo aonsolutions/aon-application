@@ -1132,4 +1132,18 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.printMod145(domainName, user, mod145, callback);
 	}
 
+	// --------------------------- Laborallife (SistemaRED)
+	
+	@Override
+	public void getCCCLaboralLife(String domainName, String user, String regime, String ccc, Date from, Date to, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getCCCLaboralLife(domainName, user, regime, ccc, from, to, callback);
+	}
+
+	@Override
+	public void getLaboralLife(String domainName, String user, String regime, String ccc, String nss, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getLaboralLife(domainName, user, regime, ccc, nss, callback);
+	}
+
 }

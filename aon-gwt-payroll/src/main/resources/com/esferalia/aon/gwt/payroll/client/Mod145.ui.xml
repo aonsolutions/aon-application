@@ -14,6 +14,10 @@
 		.content {
 			padding: 0 .5rem;
 		}
+		
+		.fsMaxWidth {
+			max-width: 780px;
+		}
 
 		.flex {
 			display: flex;
@@ -76,8 +80,8 @@
 
 	<g:DockLayoutPanel unit="PX" ui:field="dockLayoutPanel">
 		<g:center>
-			<g:ScrollPanel ui:field="scrollPanel" styleName="{style.widthAll} {style.scrollBarHide}">
-				<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.heightAll} {style.widthAll} {style.content}">
+			<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollBarHide}">
+				<g:HTMLPanel ui:field="mainPanel" styleName="{style.flexColumn} {style.heightAll} {style.content}">
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label styleName='{style.title}' text="Vigencia" />
 						<g:HTMLPanel styleName="{style.flex}">

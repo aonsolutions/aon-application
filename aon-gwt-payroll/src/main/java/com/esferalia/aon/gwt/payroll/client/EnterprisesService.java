@@ -415,4 +415,10 @@ public interface EnterprisesService extends RemoteService {
 
 	String printMod145(String currentDomainName, String currentUser, Mod145 mod145) throws IllegalArgumentException;
 
+	// ------------------------------------------------ Laborallife (SistemaRED)
+	
+	String getCCCLaboralLife(String currentDomainName, String currentUser, String regime, String ccc, Date from, Date to) throws IllegalArgumentException;
+
+	String getLaboralLife(String currentDomainName, String currentUser, String regime, String ccc, String nss) throws IllegalArgumentException;
+
 }

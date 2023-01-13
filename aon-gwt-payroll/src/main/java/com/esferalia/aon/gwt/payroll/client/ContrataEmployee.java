@@ -286,6 +286,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
+	// ------------------------------------------------- EmployeeSalaryImpl
+	
 	public class EmployeeSalaryImpl extends EmployeeSalary {
 
 		@Override
@@ -360,6 +362,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 		
 		@Override
+		protected void createViewer() {
+			// Nothing to do here
+		}
+		
+		@Override
 		protected void printPDF(String dataURIIn) {
 			showPdf();
 			hideMessage();
@@ -412,6 +419,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		public void execute() {
 			showTaEnd();
 		}
+	}
+	
+	class LaboralLifeCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showLaboralLife();
+		}
+				
 	}
 
 	class PeculiaritiesCommand implements ScheduledCommand {
@@ -466,6 +482,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		private MenuItem idc;
 		private MenuItem idcPlNss;
+		
+		private MenuItem laboralLife;	
 
 		MenuItemSeparator separatorComunicate;
 		
@@ -485,6 +503,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			idc = addMenuItem("IDC-Trab Cuenta Ajena", new IDCCommand(), AON.CSS.aonIconPdf(), "idc");;
 			idcPlNss = addMenuItem("IDC/Periodo Liquidaci\u00F3n-NSS", new IDCPlNssCommand(), AON.CSS.aonIconPdf(), "idcPlNss");
 
+			laboralLife = addItem("Vida Laboral", new LaboralLifeCommand(), 
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			laboralLife.ensureDebugId("laboralLife");
+			
 			separatorComunicate = addSeparator();
 
 			altaConsolidadaDelete = addMenuItem("Eliminar alta consolidada", new AltaConsolidadaDeleteCommand(), AON.CSS.aonIconSend(), "altaConsolidadaDelete");
@@ -1952,6 +1974,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void showIdcPlNss() {
 		showIdcPlNss(DateUtils.getFirstDayOfMonth());
+	}
+	
+	private void showLaboralLife() {
+		showLoading("Obteniendo vida laboral...");
+		contrataEmployeeObject.downloadLaboralLife(dataURI -> {
+				hideMessage();
+				showPdf();
+				pdfViewer.open(dataURI);
+		}, f -> showError("Error Vida Laboral", f.getMessage()));
 	}
 
 	private void showIdcPlNss(Date month) {
