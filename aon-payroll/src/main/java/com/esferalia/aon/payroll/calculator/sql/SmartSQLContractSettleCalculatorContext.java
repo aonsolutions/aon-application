@@ -342,7 +342,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 		Result<ContractPaymentRecord> extras = dslCtx
 		.select()
 		.from(CONTRACT_PAYMENT)
-		.innerJoin(PAYMENT_CONCEPT).onKey()
+		.leftJoin(PAYMENT_CONCEPT).onKey()
 		.where(CONTRACT_PAYMENT.CONTRACT.eq(getId()))
 		.and(CONTRACT_PAYMENT.MONTH.isNotNull())
 		.and(CONTRACT_PAYMENT.TYPE.eq((byte)4)

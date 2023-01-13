@@ -36,7 +36,7 @@ public class LROE240_3 extends LROE240 {
 	
 	private LROEPJ240BienesAltaModifPeticion build(Company company, List<Invoice> invoices, LROEInfo info) {
 		LROEPJ240BienesAltaModifPeticion lroe =  new LROEPJ240BienesAltaModifPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(company, info, invoices.get(0)));
 
 		BienesInversionType bienes = new BienesInversionType();		
 		invoices.stream().forEach(invoice -> {
@@ -110,7 +110,7 @@ public class LROE240_3 extends LROE240 {
 	
 	private LROEPJ240BienesAnulacionPeticion buildBaja(Company company, List<Invoice> invoices, LROEInfo info) {	
 		LROEPJ240BienesAnulacionPeticion lroe = new LROEPJ240BienesAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(company, info, invoices.get(0)));
 		
 		AnulacionesBienesInversionType bienes = new AnulacionesBienesInversionType();		
 		invoices.stream().forEach(invoice -> {

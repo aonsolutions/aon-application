@@ -56,6 +56,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL131;
 import com.esferalia.aon.occam.api.fiscal.MODEL202;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902021;
+import com.esferalia.aon.occam.api.fiscal.MODEL3902022;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
@@ -559,6 +560,10 @@ public class ModelAdmonUtils {
 				if (fm instanceof Mod3902021) {
 					Mod3902021 mod = (Mod3902021) fm;
 					MODEL3902021.aeatPresentation(occam, mod , aeatResponse);
+				}
+				if (fm instanceof Mod3902022) {
+					Mod3902022 mod = (Mod3902022) fm;
+					MODEL3902022.aeatPresentation(occam, mod , aeatResponse);
 				}
 			}
 			@Override public void visitM390HF() { /* Auto-generated method stub */}

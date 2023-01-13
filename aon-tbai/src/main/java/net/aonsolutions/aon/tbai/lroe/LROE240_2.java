@@ -66,7 +66,7 @@ public class LROE240_2 extends LROE240 {
 	
 	private LROEPJ240FacturasRecibidasAltaModifPeticion build(TbaiConfiguration tbaiConfiguration, Company company, List<Invoice> invoices, LROEInfo info) {
 		LROEPJ240FacturasRecibidasAltaModifPeticion lroe =  new LROEPJ240FacturasRecibidasAltaModifPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(company, info, invoices.get(0)));
 
 		FacturasRecibidasType facturas = new FacturasRecibidasType();
 		invoices.stream().forEach(invoice -> {
@@ -263,7 +263,7 @@ public class LROE240_2 extends LROE240 {
 	
 	private LROEPJ240FacturasRecibidasAnulacionPeticion buildBaja(Company company, Invoice invoice, LROEInfo info) {	
 		LROEPJ240FacturasRecibidasAnulacionPeticion lroe = new LROEPJ240FacturasRecibidasAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(company, info, invoice));
 		AnulacionesFacturasRecibidasType anulaciones = new AnulacionesFacturasRecibidasType();
 		AnulacionFacturaRecibidaType anulacion = new AnulacionFacturaRecibidaType();
 
@@ -302,7 +302,7 @@ public class LROE240_2 extends LROE240 {
 	
 	private LROEPJ240FacturasRecibidasConsultaPeticion buildConsulta(Company company, Invoice invoice, LROEInfo info) {
 		LROEPJ240FacturasRecibidasConsultaPeticion lroe = new LROEPJ240FacturasRecibidasConsultaPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(company, info, invoice));
 		FiltroConsultaFacturasRecibidasType filtro = new FiltroConsultaFacturasRecibidasType(); 
 		filtro.setCabeceraFactura(buildCabeceraFactura(invoice));
 		filtro.setEmisorFacturaRecibida(buildEmisorAnulacion(invoice));

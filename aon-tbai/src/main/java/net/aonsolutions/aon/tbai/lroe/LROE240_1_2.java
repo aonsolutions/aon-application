@@ -61,7 +61,7 @@ public class LROE240_1_2 extends LROE240 {
 	
 	private LROEPJ240FacturasEmitidasSinSGAltaModifPeticion build(Company person, Invoice invoice, LROEInfo info) {
 		LROEPJ240FacturasEmitidasSinSGAltaModifPeticion lroe = new LROEPJ240FacturasEmitidasSinSGAltaModifPeticion();
-		lroe.setCabecera(buildCabecera(person, info));
+		lroe.setCabecera(buildCabecera(person, info, invoice));
 		FacturasEmitidasSinSGType facturas = new FacturasEmitidasSinSGType();
 		facturas.getFacturaEmitida().add(buildFactura(invoice));
 		lroe.setFacturasEmitidas(facturas);
@@ -247,7 +247,7 @@ public class LROE240_1_2 extends LROE240 {
 	private LROEPJ240FacturasEmitidasSinSGAnulacionPeticion buildBaja(Company company, Invoice invoice, LROEInfo info) {	
 		
 		LROEPJ240FacturasEmitidasSinSGAnulacionPeticion lroe = new LROEPJ240FacturasEmitidasSinSGAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(company, info, invoice));
 		AnulacionesFacturasEmitidasSinSGType anulaciones = new AnulacionesFacturasEmitidasSinSGType();
 		
 		AnulacionFacturaEmitidaSinSGType anulacion = new AnulacionFacturaEmitidaSinSGType();
