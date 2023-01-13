@@ -289,4 +289,10 @@ public interface EnterprisesServiceAsync {
 	
 	void printMod145(String currentDomainName, String currentUser, Mod145 mod145, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	
+	// ------------------------------------------------ Laborallife (SistemaRED)
+	
+	void getCCCLaboralLife(String currentDomainName, String currentUser, String regime, String ccc, Date from, Date to, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	
+	void getLaboralLife(String currentDomainName, String currentUser, String regime, String ccc, String nss, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	
 }

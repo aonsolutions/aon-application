@@ -725,6 +725,16 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.printMod145(getCurrentDomainName(), getCurrentUser(), mod145, asyncCallback);
 	}
 	
+	// ------------------------------------------------ Laborallife (SistemaRED)
+	
+	public void getCCCLaboralLife(String regime, String ccc, Date from, Date to, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getCCCLaboralLife(getCurrentDomainName(), getCurrentUser(), regime, ccc, from, to, asyncCallback);
+	}
+	
+	public void getLaboralLife(String regime, String ccc, String nss, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getLaboralLife(getCurrentDomainName(), getCurrentUser(), regime, ccc, nss, asyncCallback);
+	}
+	
 	// ----------------------------------------------------------------- static
 	
 	private static String getToken() {

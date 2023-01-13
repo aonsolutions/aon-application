@@ -4472,6 +4472,69 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e);
 		}
 	}
+	
+	// ------------------------------------------------ Laborallife (SistemaRED)
+	
+	@Override
+	public String getCCCLaboralLife(String domainName, String userLogin, String regime, String ccc, java.util.Date from, java.util.Date to) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			
+			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
+			
+			byte[] cccLaboralLifeBytes = SistemaRED.getCccLaboralLife(certificateIS, certificate.getPassword(), certificate.getType(), regime, ccc, from, to);
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(cccLaboralLifeBytes);
+
+			StringWriter stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	@Override
+	public String getLaboralLife(String domainName, String userLogin, String regime, String ccc, String nss) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			
+			byte[] cccLaboralLifeBytes = SistemaRED.getLaboralLife(
+					new ByteArrayInputStream(certificate.getData()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					regime,
+					ccc,
+					nss);
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(cccLaboralLifeBytes);
+
+			StringWriter stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
 
 	// ------------------------------------------------ Partes IT

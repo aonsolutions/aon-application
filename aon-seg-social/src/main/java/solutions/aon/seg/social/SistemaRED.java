@@ -264,6 +264,15 @@ public class SistemaRED {
 			throw new InvalidCertificateException();
 		}
 	}
+	
+	public static byte[] getLaboralLife(InputStream certificateInputStream, String certificatePassword,
+			String certificateType, String regime, String ccc, String nss) throws SegSocialException {
+		try {
+			return SistemaREDEmployee.getLaboralLife(certificateInputStream, certificatePassword, certificateType, regime, ccc, nss);
+		} catch (IOException e) {
+			throw new InvalidCertificateException();
+		}
+	}
 
 	public static Collection<Employee> getPrevEmployees(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc) throws SegSocialException {
