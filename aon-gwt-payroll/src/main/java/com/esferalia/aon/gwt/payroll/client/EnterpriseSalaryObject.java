@@ -15,7 +15,6 @@ import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class EnterpriseSalaryObject {
@@ -182,15 +181,11 @@ public class EnterpriseSalaryObject {
 	// --------------------------------------------- Get Info Methods
 	
 	public List<SalaryInfo> getEnterpriseSalaries() {
-		if(null == enterprise || null == enterprise.getId()) {
-			Window.alert("Sort by enterpriseName");
+		if(null == enterprise || null == enterprise.getId()) 
 			this.enterpriseSalaries.sort((o1, o2) -> compareString(o1, o2, o1.getEnterpriseName(), o2.getEnterpriseName()));
-			Window.alert("Sort by enterpriseName, first salary : " + enterpriseSalaries.get(0).getEmployeeName() + " (" + enterpriseSalaries.get(0).getId() + ")");
-		} else {
-			Window.alert("Sort by employeeName");
+		else 
 			this.enterpriseSalaries.sort((o1, o2) -> compareString(o1, o2, o1.getEmployeeName(), o2.getEmployeeName()));
-			Window.alert("Sort by employeeName, first salary : " + enterpriseSalaries.get(0).getEmployeeName() + " (" + enterpriseSalaries.get(0).getId() + ")");
-		}
+		
 		return this.enterpriseSalaries;
 	}
 	
