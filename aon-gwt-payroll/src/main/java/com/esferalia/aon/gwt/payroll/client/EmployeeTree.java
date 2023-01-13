@@ -1740,6 +1740,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			}
 		}
 		
+		class laboralLifeCommand implements ScheduledCommand {
+			@Override
+			public void execute() {
+				showLaboralLifeCommand(DateUtils.getFirstDayOfMonth());
+			}
+		}
+		
 		class Up2DateCommand implements ScheduledCommand {
 			@Override
 			public void execute() {
@@ -1756,6 +1763,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			idcButton = new Button("INFORME DATOS DE COTIZACI\u00D3N-CCC (IDC)", (ClickHandler) e -> onClickIdcButton(e));
 			up2DateButton = new Button("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", (ClickHandler) e -> onClickUp2DateSSButton(e));
 			addSLDMenuItem("INFORME DATOS DE COTIZACI\u00D3N-CCC (IDC)", new IdcCommand());
+			addSLDMenuItem("VIDA LABORAL", new laboralLifeCommand());
 			// TODO: esta en la actividad
 //			addSLDMenuItem("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", new Up2DateCommand());
 		}
@@ -1822,6 +1830,53 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		@Override
 		protected void onClickEmployee(int x, int y, String naf) {
 			EmployeeTree.this.employees.selectEmployee(naf, true);
+		}
+		
+		void showLaboralLifeCommand(Date date) {
+			FullViewer viewer = getLaboralLifePDF(employeeDetail, date);
+			DomainEnterprisesServiceAsync enterpriseService = DomainEnterprisesServiceAsync.newInstance();
+			AonMessagePanel.showLoading(getMessagePanel(), "Cargando vida laboral del ccc " + ccc.getRegime() + " " + ccc.getCode());
+			enterpriseService.getCCCLaboralLife(ccc.getRegime(), ccc.getCode(), date, new Date(), new AsyncCallback<String>() {
+				
+				@Override
+				public void onSuccess(String dataURI) {
+					hideMessagePanel();
+					viewer.open(dataURI);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(getMessagePanel(), "Error Vida Laboral : " + caught.getMessage());
+				}
+			});
+		}
+		
+		FullViewer getLaboralLifePDF(DetailPanel detailPanel, Date date) {
+			DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
+			detailPanel.setWidget(dock);
+			AonToolbar tb = new AonToolbar("VIDA LABORAL (" + ccc.getRegime() + " " + ccc.getCode() + ")");
+			AonToolbarButton closePDF = new AonToolbarButton("Volver", AON.CSS.aonIconBack());
+			closePDF.addClickHandler(e -> {
+				onCCCSelected(ccc);
+			});
+			tb.add(closePDF);
+			dock.addNorth(tb, AonToolbar.HEIGTH);
+			
+			MonthListBox monthListBox = new MonthListBox();
+			Date lastMonth = DateUtils.getFirstDayOfMonth(); 
+			Date firstMonth = DateUtils.addYears2Date(DateUtils.getFirstDayOfMonth(), -4);
+			monthListBox.setFirstMonth(firstMonth);
+			monthListBox.setLastMonth(lastMonth);
+			monthListBox.setPageSize(52);
+			monthListBox.setVisibleRange(0, 52);
+			monthListBox.addChangeHandler(e -> showLaboralLifeCommand(monthListBox.getSelectedMonth()));
+			monthListBox.setSelected(date, true);
+			monthListBox.setWidth("200px");
+			tb.add(monthListBox);
+			
+			FullViewer viewer = new FullViewer();
+			dock.add(viewer);
+			return viewer;
 		}
 
 		void showIdc(Date date) {

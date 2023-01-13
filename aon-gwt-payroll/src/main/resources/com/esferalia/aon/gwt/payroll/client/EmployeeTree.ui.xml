@@ -17,6 +17,10 @@
 	.gwt-SplitLayoutPanel .gwt-SplitLayoutPanel-HDragger {
 		display: none;
 	}
+	
+	.messageMT {
+		margin-top: 5px;
+	}
 
 	</ui:style>
 
@@ -26,7 +30,7 @@
 
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel" debugId="messagePanel" >
 		<g:north size="42" >
-			<g:SimpleLayoutPanel ui:field="messagePanel" />
+			<g:SimpleLayoutPanel ui:field="messagePanel" styleName="{style.messageMT}" />
 		</g:north>
 
 		<g:west size='275'>
