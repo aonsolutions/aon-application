@@ -286,6 +286,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		}
 	}
 	
+	// ------------------------------------------------- EmployeeSalaryImpl
+	
 	public class EmployeeSalaryImpl extends EmployeeSalary {
 
 		@Override
@@ -357,6 +359,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		@Override
 		protected void showLoadingMessage(String message) {
 			showLoading(message);
+		}
+		
+		@Override
+		protected void createViewer() {
+			// Nothing to do here
 		}
 		
 		@Override

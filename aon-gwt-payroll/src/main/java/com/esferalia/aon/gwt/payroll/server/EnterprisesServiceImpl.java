@@ -4459,7 +4459,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			byte[] pdfBytes = Mod145PDF.fillMod145(mod145);
 			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 
-			Writer stringWriter = new StringWriter();
+			StringWriter stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
 
 			stringWriter.flush();
