@@ -757,6 +757,22 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void downloadLaboralLife(Consumer<String> success, Consumer<Throwable> failure) {
+		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+		String ccc = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+		
+		enterprisesService.getLaboralLife(regimen, ccc, employeeData.getSsNumber(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	private boolean checkPrevAlta() {
 		Date currentDate = new Date();
 		Date startDate = contractData.getStartDate();

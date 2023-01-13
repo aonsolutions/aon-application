@@ -798,7 +798,7 @@ class SistemaREDEmployee {
 					domNode.map(node -> {return getPDFDocument((HtmlLabel)node);});
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 			}
 			
 			return getPDFDocument(continueButton);
