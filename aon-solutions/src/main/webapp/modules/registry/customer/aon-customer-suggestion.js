@@ -188,7 +188,6 @@ export class AonCustomerSuggestion extends AonElement {
 
     let name = this.createAonElement(new AonSuggestion(), this.NAME, MSG.BUSINESS_NAME);
     name.name = CONSTANT.NAME;
-    console.log("NAME" + this.customer.document);
     name.value = this.customer.name;
     name.readonly = this.isReadonly();
     name.addEventListener(EVENT.KEYUP, (e) => this.onKeyupName(e, name.value));
@@ -257,8 +256,10 @@ export class AonCustomerSuggestion extends AonElement {
         addressList.setAlias('id', 'fullAddress');
         addressList.setOptions(this.customer.addresses);
         addressList.value = this.customer.address.id;
-        addressList.addEventListener(EVENT.CHANGE, () => 
-          this.customer.address = this.customer.addresses.filter(f => f.id === addressList.value)[0]);
+        addressList.addEventListener(EVENT.CHANGE, () => {
+          this.customer.address = this.customer.addresses.filter(f => f.id == addressList.value)[0];
+          this.dispatchEvent(new Event(EVENT.CUSTOMER_CHANGE));
+        });
 
         let addAddress = new AonIconButton();
         addAddress.id = this.ADDRESS_ADD;
@@ -286,7 +287,7 @@ export class AonCustomerSuggestion extends AonElement {
         address.setAddress(this.customer.address);
         address.addEventListener(EVENT.CHANGE, () => {
           this.customer.address = address.getAddress();
-          this.dispatchEvent(new Event(EVENT.CHANGE));
+          this.dispatchEvent(new Event(EVENT.CUSTOMER_CHANGE));
         });
 
         let td = table.addCell(address);
@@ -386,6 +387,7 @@ export class AonCustomerSuggestion extends AonElement {
           id: registry.id,
           additional_info: ['ADDRESSES', 'MEDIA', 'BANKS', 'PAYMETHOD']
         };
+
         getCustomer(data).then(r => {
           this.customer = r;
           if(this.customer && this.customer.addresses) {
@@ -418,8 +420,9 @@ export class AonCustomerSuggestion extends AonElement {
           let address = this.customer.address;
           this.customer = r;
           this.customer.address = address;
+
           if(this.customer && this.customer.addresses && this.customer.addresses.length > 0) {
-            this.customer.address = this.customer.addresses.filter(f => f.main)[0]; 
+            this.customer.address = this.customer.address || this.customer.addresses.filter(f => f.main)[0]; 
           }
           this.build();
         });
