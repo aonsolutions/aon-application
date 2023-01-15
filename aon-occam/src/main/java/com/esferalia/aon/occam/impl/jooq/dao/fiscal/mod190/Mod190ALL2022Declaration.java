@@ -206,11 +206,25 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 						
 						// Parte exenta va a la L
 						double expense = AonMathUtils.round(amount - irpfBase);  
-						Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"24");
-						detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + expense ));
-						
-						// Parte no exenta va a la A
-						visitAKey();	
+						if ( AonMathUtils.isGreatherThanZero(expense )) {
+							Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"24");
+							detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + expense ));
+						} else {
+							// Parte no exenta va a la A a la parte en especie
+							double totalIrpf = rec.getValue(SALARY.TOTAL_IRPF);
+							double totalIrpfBase = rec.getValue(SALARY.IRPF_BASE);
+							double irpfQuota = ( AonMathUtils.isZero( irpfBase) || AonMathUtils.isZero( totalIrpfBase ) )
+									?0.0
+									:(irpfBase * totalIrpf / totalIrpfBase);
+							
+							Double enterpriseIrpfQuota = getEnterpriseIrpfQuota();
+							
+							Mod190Detail detail = getDetail(document,person,Mod1902016Key.A,null);
+							detail.setInKindPerception(AonMathUtils.round(detail.getInKindPerception() + irpfBase ));
+							detail.setInKindDeposit(AonMathUtils.round(detail.getInKindDeposit() + irpfQuota ));
+							if(detail.getInKindDepositIL() - enterpriseIrpfQuota > 1)
+								detail.setInKindOutputDeposit(enterpriseIrpfQuota);
+						}
 					}
 					
 					private void visitSupport() {
@@ -219,11 +233,12 @@ public class Mod190ALL2022Declaration extends Mod190Declaration {
 						
 						// Parte exenta va a la L
 						double expense = AonMathUtils.round(amount - irpfBase);  
-						Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"25");
-						detail.setPerception(AonMathUtils.round(detail.getPerception() + expense ));
-						
-						// Parte no exenta va a la A
-						visitAKey();	
+						if ( AonMathUtils.isGreatherThanZero(expense )) {
+							Mod190Detail detail = getDetail(document,person,Mod1902016Key.L,"25");
+							detail.setPerception(AonMathUtils.round(detail.getPerception() + expense ));
+						} else
+							// Parte no exenta va a la A
+							visitAKey();	
 					}
 					
 					private void visitAKey() {
