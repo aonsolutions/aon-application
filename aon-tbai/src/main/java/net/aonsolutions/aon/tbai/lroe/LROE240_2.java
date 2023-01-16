@@ -145,7 +145,7 @@ public class LROE240_2 extends LROE240 {
 		cabecera.setFechaRecepcion(tbaiConfiguration.isRegistryTaxDate()
 				? AonDateUtils.format(invoice.getTaxDate(), DATE_FORMAT)
 				: AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
-		if(invoice.isRectified()) {
+		if(invoice.isRectifier()) {
 			FacturaRectificativaImporteType rectificativa = new FacturaRectificativaImporteType(); 
 			rectificativa.setCodigo(ClaveCodigoFacturaRectificativaEnum.R_1); 
 			rectificativa.setTipo(ClaveTipoRectificativaEnum.I); // por diferencia o por sustitucion
@@ -153,8 +153,8 @@ public class LROE240_2 extends LROE240 {
 				
 			FacturasRectificadasSustituidasType rectificadas = new FacturasRectificadasSustituidasType();
 			IDFacturaType rectificada = new IDFacturaType();
-			rectificada.setSerieFactura(invoice.getRectificationInvoiceSeries());
-			rectificada.setNumFactura(invoice.getRectificationInvoiceNumber().toString());
+			// rectificada.setSerieFactura(invoice.getRectificationInvoiceSeries());
+			rectificada.setNumFactura(invoice.getRectificationInvoiceReference());
 			rectificada.setFechaExpedicionFactura(AonDateUtils.format(invoice.getRectificationInvoiceDate(), DATE_FORMAT));
 			rectificadas.getIDFacturaRectificadaSustituida().add(rectificada);
 			cabecera.setFacturasRectificadasSustituidas(rectificadas);

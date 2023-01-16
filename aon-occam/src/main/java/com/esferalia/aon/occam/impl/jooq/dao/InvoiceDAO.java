@@ -488,6 +488,7 @@ public class InvoiceDAO {
 							? rectify.getFiscal().getExpDate() 
 							: rectify.getIssueDate());
 					invoice.setRectificationInvoiceNumber(rectify.getNumber());
+					invoice.setRectificationInvoiceReference(rectify.getReferenceCode());
 				}
 			}
 		}
