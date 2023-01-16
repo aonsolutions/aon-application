@@ -254,7 +254,7 @@ public class ContrataEmployeeObject {
 	// ------------------------------------------------- Database Methods (Mod145)
 	
 	public void getMod145Object(Consumer<Mod145Object> success) {
-		Mod145Object mod145Object = new Mod145Object(employeeData.getDomain(), contractData.getContractId());
+		Mod145Object mod145Object = new Mod145Object(contractData.getContractId());
 		success.accept(mod145Object);
 	}
 	
@@ -748,6 +748,22 @@ public class ContrataEmployeeObject {
 		employeesService.getEmployeeIdcDates(contractId, null, new AsyncCallback<List<Date>>() {
 			@Override
 			public void onSuccess(List<Date> result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void downloadLaboralLife(Consumer<String> success, Consumer<Throwable> failure) {
+		String regimen = employeeContractData.getContractInfo().getCompleteCCC().substring(0, 4);
+		String ccc = employeeContractData.getContractInfo().getCompleteCCC().substring(4, employeeContractData.getContractInfo().getCompleteCCC().length());
+		
+		enterprisesService.getLaboralLife(regimen, ccc, employeeData.getSsNumber(), new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
 				success.accept(result);
 			}
 			@Override

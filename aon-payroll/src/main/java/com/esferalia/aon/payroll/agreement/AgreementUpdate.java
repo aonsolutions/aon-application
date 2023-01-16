@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -493,23 +494,37 @@ public class AgreementUpdate {
 	}
 
 	private static boolean haveSameValues(AgreementLevel agreementLevel, AgreementLevel checkedAgreementLevel) {
-		for(AgreementLevelData levelData : checkedAgreementLevel.getLevelDatas()) {
-			if(!containsLevelData(levelData, agreementLevel))
-				return false;
-		}
+		// Sort levels
+		Collections.sort(agreementLevel.getLevelDatas(), new Comparator<AgreementLevelData>() {
+			@Override
+			public int compare(AgreementLevelData ald1, AgreementLevelData ald2) {
+				return ald1.getName().compareTo(ald2.getName());
+			}
+		});
+		
+		Collections.sort(checkedAgreementLevel.getLevelDatas(), new Comparator<AgreementLevelData>() {
+			@Override
+			public int compare(AgreementLevelData ald1, AgreementLevelData ald2) {
+				return ald1.getName().compareTo(ald2.getName());
+			}
+		});
+		
+		if (agreementLevel.getLevelDatas().size() == checkedAgreementLevel.getLevelDatas().size()) {
+			
+			for(int i=0; i<agreementLevel.getLevelDatas().size(); i++) {
+				
+				AgreementLevelData levelData = agreementLevel.getLevelDatas().get(i);
+				AgreementLevelData checkedLevelData = checkedAgreementLevel.getLevelDatas().get(i);
+				
+				if(	!AonStringUtils.equalsIgnoreCase(checkedLevelData.getName(), levelData.getName()) || 
+					!AonStringUtils.equalsIgnoreCase(checkedLevelData.getValue(), levelData.getValue()) || 
+					!checkedLevelData.getStartDate().equals(levelData.getStartDate()))
+					return false;
+			}
+			
+		} else return false;
 		
 		return true;
-	}
-
-	private static boolean containsLevelData(AgreementLevelData cehckedlevelData, AgreementLevel agreementLevel) {
-		for(AgreementLevelData levelData : agreementLevel.getLevelDatas()) {
-			if(AonStringUtils.equalsIgnoreCase(cehckedlevelData.getName(), levelData.getName()) && 
-				AonStringUtils.equalsIgnoreCase(cehckedlevelData.getValue(), levelData.getValue()) && 
-				cehckedlevelData.getStartDate().equals(levelData.getStartDate()) &&
-				((null == cehckedlevelData.getEndDate() && null == levelData.getEndDate()) || cehckedlevelData.getEndDate().equals(levelData.getEndDate())))
-				return true;
-		}
-		return false;
 	}
 	
 	// ------------------------------------------------------------ INSERT AGREEMENT 

@@ -567,7 +567,6 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			HtmlButton continueIn = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[value=\"CONTINUAR_EMISION\"]")).orElseThrow();
 			htmlPage = continueIn.click();
 			HtmlUnitToolkit.handleNewSegSocialExceptions(htmlPage);
-			
 
 			HtmlAnchor firstColumn = getOneAnchorPaginate(htmlPage, partType, dateProcess);
 			
@@ -725,7 +724,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 	private static HtmlAnchor getOneAnchorPaginate(HtmlPage htmlPage, SistemaRED.PartType partType, Date date)
 			throws IOException {
 		
-		String dateStr = Toolkit.formatDate(date, DATE_FORMAT).get();
+		String dateStr = Toolkit.formatDate(date, DATE_FORMAT).orElse(null);
 		
 		HtmlTable table = (HtmlTable) htmlPage.querySelector("#FORMULARIO_6 table");
 		HtmlAnchor next = null;		
@@ -755,7 +754,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 					HtmlTableCell anulCell = row.getCell(7);
 					if (
 							fCell.getVisibleText().contains(dateStr)
-							&& typeCell.getVisibleText().contains(partType.getDescription())
+							&& typeCell.getVisibleText().toLowerCase().contains(partType.getDescription().substring(0, 4).toLowerCase())
 							&& anulCell.getVisibleText().contains("N")
 					) {
 						firstColumn = row.getCell(0).querySelector("a");

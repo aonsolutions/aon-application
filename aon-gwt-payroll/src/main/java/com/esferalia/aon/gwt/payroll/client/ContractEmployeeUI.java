@@ -4,8 +4,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
@@ -760,7 +760,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected abstract TabLayoutPanel getFootTabPanel();
 	protected abstract SplitLayoutPanel getSplitLayoutPanel();
 	protected abstract AonToolbar getToolbar();
-	protected abstract MinimizePanel getFootPanel();
+	protected abstract AonMinimizePanel getFootPanel();
 	protected abstract MonthListBox getIDCMonthListBox();
 	protected abstract void showErrorMessage(String title, String message);
 	

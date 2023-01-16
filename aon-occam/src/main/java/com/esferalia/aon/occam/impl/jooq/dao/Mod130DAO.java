@@ -799,7 +799,7 @@ public class Mod130DAO extends FiscalModelDAO {
 			;
 			c15 = c15>c14?c14:c15;
 		}
-		return c15;
+		return AonMathUtils.absRounded(c15);
 	}
 
 	public static Mod130 aeatPresentation(AONContext ctx, Mod130 mod130, String aeatResponse) {

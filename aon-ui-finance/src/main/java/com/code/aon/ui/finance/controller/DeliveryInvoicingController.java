@@ -133,13 +133,28 @@ public class DeliveryInvoicingController implements IFinanceConstants, Serializa
 		return false;
 	}
 
-	public void onInvoice(ActionEvent event) {
+	public void onInvoice(ActionEvent event) throws Exception {	
+		Series series = getParams().getInvoiceSeries();
+		checkSerie(getParams().getInvoiceDate(), series.getCode());
 		getProgressionState().start();
 		DeliveryInvoicingProcess dip = new DeliveryInvoicingProcess(this);
 		LongProcessThread thread = new LongProcessThread(dip); 
 		thread.start();		
 	}
 
+	private static void checkSerie(Date date, String serie) throws Exception {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		
+		com.esferalia.aon.occam.api.model.finance.Invoice lastInvoice = AON.getLastSaleInvoice(domainName, domainId, login, serie);
+		if(date.compareTo(lastInvoice.getIssueDate()) < 0) {
+			AonUtil.addErrorMessage("Existe una factura con la misma serie y fecha anterior.");
+			throw new Exception("Existe una factura con la misma serie y fecha anterior.");
+		}
+	}
+	
+	
 	public String invoiceAction() {
 		return (getInvoiceIds() != null) ? IFinanceConstants.SALE_INVOICE_LIST_NAME : null;
 	}
@@ -195,7 +210,7 @@ public class DeliveryInvoicingController implements IFinanceConstants, Serializa
 	public TbaiConfiguration getTbaiConfiguration() {
 		String domainName = AonUtil.getDomainName();
 		Integer domainId = DomainManager.getCurrentDomain();
-		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		String login = ""; // UserUtils.getInstance().getLoggedUser().getLogin();
 		return AON.getTbaiConfiguration(domainName, domainId, login);
 	}
 

@@ -51,7 +51,7 @@ public class LROE240_1_1 extends LROE240 {
 	
 	private static LROEPJ240FacturasEmitidasConSGAltaPeticion build(Company company, Invoice invoice, LROEInfo info, byte[] data) {
 		LROEPJ240FacturasEmitidasConSGAltaPeticion proba = new LROEPJ240FacturasEmitidasConSGAltaPeticion();
-		proba.setCabecera(buildCabecera(company, info));
+		proba.setCabecera(buildCabecera(company, info, invoice));
 
 		FacturasEmitidasConSGCodificadoType facturas = new FacturasEmitidasConSGCodificadoType();
 		DetalleEmitidaConSGCodificadoType factura = new DetalleEmitidaConSGCodificadoType();
@@ -88,7 +88,7 @@ public class LROE240_1_1 extends LROE240 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(company, info, invoice), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -100,7 +100,7 @@ public class LROE240_1_1 extends LROE240 {
 	
 	private LROEPJ240FacturasEmitidasConSGAnulacionPeticion buildBaja(Company company, Invoice invoice, LROEInfo info, byte[] data) {	
 		LROEPJ240FacturasEmitidasConSGAnulacionPeticion lroe = new LROEPJ240FacturasEmitidasConSGAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(company, info, invoice));
 		AnulacionesFacturasEmitidasConSGType anulaciones = new AnulacionesFacturasEmitidasConSGType();
 		AnulacionFacturaConSGType anulacion = new AnulacionFacturaConSGType();
 		anulacion.setAnulacionTicketBai(data);
@@ -123,7 +123,7 @@ public class LROE240_1_1 extends LROE240 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(company, info, invoice), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -142,7 +142,7 @@ public class LROE240_1_1 extends LROE240 {
 			jaxbMarshaller.marshal( lroe, bos );
 			byte[] xml = bos.toByteArray();
 			byte[] data = toGzip(xml);
-			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(company, info), data);
+			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(company, info, invoice), data);
 		
 			LROEPJ240FacturasEmitidasConSGConsultaRespuesta resp = (LROEPJ240FacturasEmitidasConSGConsultaRespuesta) 
 					unmarshall(LROEPJ240FacturasEmitidasConSGConsultaRespuesta.class, response.getResponseDataStr());
@@ -200,7 +200,7 @@ public class LROE240_1_1 extends LROE240 {
 	
 	private LROEPJ240FacturasEmitidasConSGConsultaPeticion buildConsulta(Company company, Invoice invoice, LROEInfo info) {
 		LROEPJ240FacturasEmitidasConSGConsultaPeticion lroe = new LROEPJ240FacturasEmitidasConSGConsultaPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(company, info, invoice));
 		
 		FiltroConsultaFacturasEmitidasType filtro = new FiltroConsultaFacturasEmitidasType(); 
 		filtro.setCabeceraFactura(buildCabeceraFactura(invoice));

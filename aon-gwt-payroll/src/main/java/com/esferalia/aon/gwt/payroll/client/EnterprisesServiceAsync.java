@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +54,7 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
@@ -63,6 +65,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface EnterprisesServiceAsync {
 	void getDomain(String domain, AsyncCallback<Integer> callback);
+	void getDomain(String domain, String user, AsyncCallback<Domain> callback);
 	void getContext(String domain, AsyncCallback<ContextDescriptor> callback);
 	void saveBonusConcept(String domain, Bonus bonus, AsyncCallback<Bonus> callback);
 	void savePaymentConcept(String domain, Payment payment, AsyncCallback<Payment> callback);
@@ -124,8 +127,9 @@ public interface EnterprisesServiceAsync {
 	void getPayrollEmailSendTo(String currentDomainName, AsyncCallback<String> asyncCallback);
 	void getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params, AsyncCallback<String> asyncCallback);
 	void sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML,
-			AsyncCallback<String> asyncCallback);
+			AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	void checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds, AsyncCallback<String> asyncCallback);
+	void checkEnterprisesEmails(String currentDomainName, HashSet<Integer> enterpriseIds, AsyncCallback<String> asyncCallback);
 	void getSettlePDF(String currentDomainName, String user, Integer settleId, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	void getSalariesPDF(String currentDomainName, String currentUser, Integer enterpriseId, List<Integer> salaryIds, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	void checkCreateNewCRA(String currentDomainName, long findingDate, ArrayList<Integer> cccList,
@@ -284,5 +288,11 @@ public interface EnterprisesServiceAsync {
 	void saveMod145(String currentDomainName, String currentUser, Mod145 mod145, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
 	void printMod145(String currentDomainName, String currentUser, Mod145 mod145, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	
+	// ------------------------------------------------ Laborallife (SistemaRED)
+	
+	void getCCCLaboralLife(String currentDomainName, String currentUser, String regime, String ccc, Date from, Date to, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	
+	void getLaboralLife(String currentDomainName, String currentUser, String regime, String ccc, String nss, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	
 }

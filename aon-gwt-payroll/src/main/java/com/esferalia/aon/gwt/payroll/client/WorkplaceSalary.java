@@ -33,6 +33,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -105,7 +106,7 @@ public class WorkplaceSalary extends Composite {
 		Integer enterpriseID = ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
 		
 		HashMap<String, String> params = new HashMap<>();
-		params.put("url", GWT.getModuleBaseURL()+ "salary_exporter/");
+		params.put("url", GWT.getModuleBaseURL()+ "salary_connor_macleod/");
 		params.put("type", "salary");
 		params.put("name", "salaries.pdf");
 		params.put("enterprise", String.valueOf(enterpriseID));
@@ -189,7 +190,16 @@ public class WorkplaceSalary extends Composite {
 	SuggestBox employeeSB;
 	
 	@UiField
-	ListBox typeList;
+	CheckBox salaryCB;
+	
+	@UiField
+	CheckBox extraCB;
+	
+	@UiField
+	CheckBox delayCB;
+	
+	@UiField
+	CheckBox settleCB;
 	
 	@UiField
 	ListBox dateFilterList;
@@ -227,7 +237,7 @@ public class WorkplaceSalary extends Composite {
 	
 	private AonToolbarButton deleteButton;
 	private AonToolbarButton pdfButton;
-	private AonToolbarButton publishButton;
+//	private AonToolbarButton publishButton;
 	private AonToolbarButton bidoqPublishButton;
 	private AonToolbarButton email;
 
@@ -276,19 +286,11 @@ public class WorkplaceSalary extends Composite {
 	
 	private void initListBox() {
 		// Clear listboxies
-		typeList.clear();
 		dateFilterList.clear();
 		monthTillT.clear();
 		yearTillT.clear();
 		monthTTo.clear();
 		yearTTo.clear();
-		
-		// Add types to typeList
-		typeList.addItem("Todas", "-1");
-		typeList.addItem("Nomina", "0");
-		typeList.addItem("Extra", "1");
-		typeList.addItem("Atraso", "3");
-		typeList.addItem("Finiquito", "2");
 		
 		// Add months to listboxes
 		String[] monthList = new String[] {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
@@ -368,9 +370,15 @@ public class WorkplaceSalary extends Composite {
 		filter.setDateTillT(startDate);
 		filter.setDateTTo(endDate);
 		
-		// Salary Type
-		Integer salaryType = Integer.parseInt(typeList.getSelectedValue());
-		filter.setSalaryType(salaryType);
+		// Salary Types
+		List<Integer> salaryTypes = new ArrayList<>();
+		
+		if(salaryCB.getValue()) salaryTypes.add(0);
+		if(extraCB.getValue()) salaryTypes.add(1);
+		if(settleCB.getValue()) salaryTypes.add(2);
+		if(delayCB.getValue()) salaryTypes.add(3);
+		
+		filter.setSalaryTypes(salaryTypes);
 		
 		filter.setEmployeeId(null);
 		
@@ -394,7 +402,7 @@ public class WorkplaceSalary extends Composite {
 
 	private void initSalariesTable() {
 		//Show buttons
-		this.publishButton.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
+//		this.publishButton.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
 		this.bidoqPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
 		
 		//Disable buttons till any salary selected
@@ -416,8 +424,8 @@ public class WorkplaceSalary extends Composite {
 		filterSalaries();
 	}
 	
-	@UiHandler("typeList")
-	public void onFilterTypeChange(ChangeEvent event) {
+	@UiHandler({"salaryCB", "extraCB", "delayCB", "settleCB"})
+	public void onFilterSalaryCB(ValueChangeEvent<Boolean> event) {
 		filterSalaries();
 	}
 	
@@ -454,8 +462,14 @@ public class WorkplaceSalary extends Composite {
 		setSelectedValueLB(yearTTo, DateUtils.getYear(filter.getDateTTo()) + "");
 		
 		// Salary Type
-		Integer salaryType = Integer.parseInt(typeList.getSelectedValue());
-		filter.setSalaryType(salaryType);
+		List<Integer> salaryTypes = new ArrayList<>();
+		
+		if(salaryCB.getValue()) salaryTypes.add(0);
+		if(extraCB.getValue()) salaryTypes.add(1);
+		if(settleCB.getValue()) salaryTypes.add(2);
+		if(delayCB.getValue()) salaryTypes.add(3);
+		
+		filter.setSalaryTypes(salaryTypes);
 		
 		//Check if exist employee filter
 		String nameSurname = employeeSB.getValue();
@@ -532,7 +546,7 @@ public class WorkplaceSalary extends Composite {
 	private void enableDisableButtons(boolean isSomethingSelected, boolean hasSettleSelected) {
 		deleteButton.setEnabled(isSomethingSelected);
     	pdfButton.setEnabled(isSomethingSelected);
-    	publishButton.setEnabled(isSomethingSelected);
+//    	publishButton.setEnabled(isSomethingSelected);
     	bidoqPublishButton.setEnabled(isSomethingSelected);
     	email.setEnabled(isSomethingSelected);
 	}
@@ -583,13 +597,13 @@ public class WorkplaceSalary extends Composite {
 		pdfButton.addClickHandler(e -> onPDF());	
 		toolbar.add(pdfButton);
 		
-		publishButton = new AonToolbarButton( "Drive", AON.CSS.aonIconDrive());
-		publishButton.addClickHandler(e -> onPublish());	
-		toolbar.add(publishButton);
+//		publishButton = new AonToolbarButton( "Drive", AON.CSS.aonIconDrive());
+//		publishButton.addClickHandler(e -> onPublish());	
+//		toolbar.add(publishButton);
 		
 		bidoqPublishButton = new AonToolbarButton( "Bidoq", "aon-icon-bidoq");
 		bidoqPublishButton.addClickHandler(e -> onBidoqPublish());	
-		bidoqPublishButton.setVisible(false);
+		bidoqPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
 		toolbar.add(bidoqPublishButton);
 		
 		email = new AonToolbarButton(AON.MSG.email(), AON.CSS.aonIconEmail());
@@ -680,9 +694,9 @@ public class WorkplaceSalary extends Composite {
 	}
 	
 
-	private void onPublish() {
-		onPublish("drive");
-	}
+//	private void onPublish() {
+//		onPublish("drive");
+//	}
 
 	private void onBidoqPublish() {
 		onPublish("bidoq");

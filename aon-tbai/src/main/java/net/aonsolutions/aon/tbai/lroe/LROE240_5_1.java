@@ -16,7 +16,6 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryMiembroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.TipoDeclaradoEnum;
@@ -24,18 +23,14 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.Tipo
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionBienInversionType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesBienesInversionType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.BienInversionType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.BienesInversionType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DetalleOpIntracomunitariaTransfPericialesOtrosPJType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.EntregaBienesInversionPeriodoRegularizacionType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDBienInversionModelo240Type;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDFacturaType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDOtroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.NIFIVAType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.NIFNIFIVAPersonaType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.OtraInformacionTrascendenciaTributariaOpIntraType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.TransferenciaPericialOtroPJType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.TransferenciasPericialesOtrosPJType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_3_bienes_altamodifpeticion_v1_0_1.LROEPJ240BienesAltaModifPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_3_bienes_anulacionpeticion_v1_0_0.LROEPJ240BienesAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_4_1_determinadasopintracomunitarias_transfpericialesotros_altamodifpeticion_v1_0_2.LROEPJ240TransferenciasPericialesOtrosAltaModifPeticion;
 import net.aonsolutions.aon.tbai.LroeData;
@@ -49,7 +44,7 @@ public class LROE240_5_1 extends LROE240 {
 	
 	private LROEPJ240TransferenciasPericialesOtrosAltaModifPeticion build(Company company, List<Invoice> invoices, LROEInfo info) {
 		LROEPJ240TransferenciasPericialesOtrosAltaModifPeticion lroe =  new LROEPJ240TransferenciasPericialesOtrosAltaModifPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(company, info, invoices.get(0)));
 		
 		TransferenciasPericialesOtrosPJType transferencias = new TransferenciasPericialesOtrosPJType();
 		invoices.stream().forEach(invoice -> {
@@ -154,7 +149,7 @@ public class LROE240_5_1 extends LROE240 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoices, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(company, info, invoices.get(0)), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -166,7 +161,7 @@ public class LROE240_5_1 extends LROE240 {
 	
 	private LROEPJ240BienesAnulacionPeticion buildBaja(Company company, List<Invoice> invoices, LROEInfo info) {	
 		LROEPJ240BienesAnulacionPeticion lroe = new LROEPJ240BienesAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(company, info, invoices.get(0)));
 		
 		AnulacionesBienesInversionType bienes = new AnulacionesBienesInversionType();		
 		invoices.stream().forEach(invoice -> {
@@ -215,7 +210,7 @@ public class LROE240_5_1 extends LROE240 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoices, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(company, info, invoices.get(0)), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}

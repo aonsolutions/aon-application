@@ -8,11 +8,11 @@ import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.manageStatusCode;
 import static solutions.aon.seg.social.toolkit.HtmlUnitToolkit.wait4;
 import static solutions.aon.seg.social.toolkit.Toolkit.SplitString;
 import static solutions.aon.seg.social.toolkit.Toolkit.getDateArray;
+import static solutions.aon.seg.social.toolkit.Toolkit.noSpaces;
 import static solutions.aon.seg.social.toolkit.Toolkit.parseDate;
 import static solutions.aon.seg.social.toolkit.Toolkit.removeExtraZeros;
 import static solutions.aon.seg.social.toolkit.Toolkit.splitStringMultiple;
 import static solutions.aon.seg.social.toolkit.Toolkit.verifyData;
-import static solutions.aon.seg.social.toolkit.Toolkit.noSpaces;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +32,7 @@ import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlLabel;
@@ -46,7 +48,6 @@ import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.StatusCodeException;
 import solutions.aon.seg.social.exception.invalid.DataDoesNotExist;
-import solutions.aon.seg.social.exception.invalid.InvalidDataException;
 import solutions.aon.seg.social.exception.invalid.NoQueryData;
 import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
@@ -721,7 +722,8 @@ class SistemaREDEmployee {
 
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
-
+			
+			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage document = webClient.getPage(
 					"https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ACR71&E=I&AP=AFIR");
 			HtmlInput regimeInput = document.querySelector("#SDFREGCCO");
@@ -753,18 +755,70 @@ class SistemaREDEmployee {
 			toYearIn.setAttribute("value", String.valueOf(toArray[2]));
 
 			onlineOption.click();
-			try {
-				UnexpectedPage doc = continueButton.click();
-				byte[] pdf = doc.getWebResponse().getContentAsStream().readAllBytes();
-				return pdf;
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new InvalidDataException();
-			}
+			
+			return getPDFDocument(continueButton);
+	
 		} catch (FailingHttpStatusCodeException e) {
 			HandleStatusCodeException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	// GET PDF INFO
+	public static byte[] getLaboralLife(InputStream certificateInputStream, String certificatePassword,
+			String certificateType, String regime, String ccc, String nss)
+			throws FailingHttpStatusCodeException, IOException, SegSocialException {
+
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
+			HtmlPage document = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR63&E=I&AP=AFIR");
+			
+			HtmlInput nssInput = document.querySelector("#SDFTESORNAF");
+			HtmlInput nssInput1 = document.querySelector("#SDFNUMNAF");
+			
+			nssInput.setValueAttribute(nss.substring(0, 2));
+			nssInput1.setValueAttribute(nss.substring(2));
+			
+			HtmlOption onlineOption = document.querySelector("#ListaTipoImpresion option:nth-child(3)");
+			onlineOption.click();
+			
+			HtmlSubmitInput continueButton = document.querySelector("#Sub2207001009");
+			
+			// Check if we have more than one CCC for this person
+			try {
+				document = continueButton.click();
+				Integer ssCode = HtmlUnitToolkit.getSSCode(document);
+				// Select the current CCC
+				if(ssCode == 3710) {
+					ArrayList<String> cccArray = splitStringMultiple(ccc, 2);
+					String cccStr = regime + " " + cccArray.get(0) + " " + cccArray.get(1) ;
+					Optional<DomNode> domNode = document.querySelectorAll("label").stream().filter(label -> label.getTextContent().equals(cccStr)).findFirst();
+					domNode.map(node -> {return getPDFDocument((HtmlLabel)node);});
+				}
+			} catch (Exception e) {
+//				e.printStackTrace();
+			}
+			
+			return getPDFDocument(continueButton);
+			
+		} catch (FailingHttpStatusCodeException e) {
+			HandleStatusCodeException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private static byte[] getPDFDocument(HtmlElement linkElement) throws IllegalArgumentException {
+		try {
+			UnexpectedPage docPage = linkElement.dblClick();
+			return docPage.getWebResponse().getContentAsStream().readAllBytes();
+		} catch (IOException e) {
+			// Exception
+			throw new IllegalArgumentException(e.getMessage());
+		}
 	}
 	
 	private static String domElementExists(DomElement domEl) {

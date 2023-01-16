@@ -147,12 +147,33 @@ public class RegistryAddressDAO {
 					geozone = GeoZoneDAO.get(ctx, f -> f.getCodeProperty().eq(address.getZip().substring(0, 2)));
 				}
 				
-				if(geozone.isEmpty() && address.getProvince() != null) {
+				if((geozone == null || geozone.isEmpty()) && address.getProvince() != null) {
 					geozone = GeoZoneDAO.get(ctx, f -> f.getNameProperty().eq(address.getProvince()));
 				}
 				
 				if((geozone == null || geozone.isEmpty()) && address.getCountry() != null) {
-					geozone = GeoZoneDAO.get(ctx, f -> f.getCodeProperty().eq(address.getCountry().getIso2()));
+					if(address.getProvince() == null) address.setProvince(address.getCity());
+					geozone = GeoZoneDAO.get(ctx, f -> f.getNameProperty().eq(address.getProvince()));
+					if(geozone == null ||  geozone.isEmpty()) {
+						geozone = new GeoZone()
+	 							.setDomain(address.getDomain())
+								.setName(address.getProvince() )
+								.setCode("00")
+								.setSystem(true);		
+						geozone = GeoZoneDAO.insert(ctx, geozone);
+					}
+					
+					GeoZone geozoneCountry  = GeoZoneDAO.get(ctx, f -> f.getCodeProperty().eq(address.getCountry().getIso2()));					
+					if(geozoneCountry == null || geozoneCountry.isEmpty()) {
+						geozoneCountry = new GeoZone()
+								.setDomain(address.getDomain())
+								.setName(address.getCountry().getName())
+								.setCode(address.getCountry().getIso2())
+								.setSystem(true);
+						geozoneCountry = GeoZoneDAO.insert(ctx, geozoneCountry);
+					}
+					
+					GeoZoneDAO.bind(ctx, address.getDomain(), geozoneCountry.getId(), geozone.getId());
 				}
 				
 				if(geozone != null && !geozone.isEmpty()) {

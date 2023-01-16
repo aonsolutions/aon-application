@@ -44,6 +44,7 @@ public class Invoice implements Serializable, HasAudit {
 	
 	private Integer rectificationInvoice;
 	private String rectificationInvoiceSeries;
+	private String rectificationInvoiceReference;
 	private Integer rectificationInvoiceNumber;
 	private Date rectificationInvoiceDate;
 
@@ -212,6 +213,15 @@ public class Invoice implements Serializable, HasAudit {
 	}
 	public Invoice setRectificationInvoiceSeries(String rectificationInvoiceSeries) {
 		this.rectificationInvoiceSeries = rectificationInvoiceSeries;
+		return this;
+	}
+	
+	public String getRectificationInvoiceReference() {
+		return rectificationInvoiceReference;
+	}
+	
+	public Invoice setRectificationInvoiceReference(String rectificationInvoiceReference) {
+		this.rectificationInvoiceReference = rectificationInvoiceReference;
 		return this;
 	}
 	

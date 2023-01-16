@@ -417,7 +417,8 @@ class Model303NewDeclarationPanel extends DockLayoutPanel {
 			
 			@Override
 			public void onSuccess(Mod303 result) {
-				populate(result);
+				prorate.setValue(result.ensureDetail(model.getProrateKey()).getAmount(),false,true);
+				model.ensureDetail(model.getProrateKey()).setAmount(prorate.getValue());
 				paintCalculateProratePanel(result,callback); 
 			}
 			

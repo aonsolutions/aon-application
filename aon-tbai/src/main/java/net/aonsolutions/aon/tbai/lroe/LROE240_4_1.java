@@ -49,7 +49,7 @@ public class LROE240_4_1 extends LROE240 {
 	
 	private LROEPJ240TransferenciasPericialesOtrosAltaModifPeticion build(Company company, List<Invoice> invoices, LROEInfo info) {
 		LROEPJ240TransferenciasPericialesOtrosAltaModifPeticion lroe =  new LROEPJ240TransferenciasPericialesOtrosAltaModifPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(company, info, invoices.get(0)));
 		
 		TransferenciasPericialesOtrosPJType transferencias = new TransferenciasPericialesOtrosPJType();
 		invoices.stream().forEach(invoice -> {
@@ -154,7 +154,7 @@ public class LROE240_4_1 extends LROE240 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoices, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(company, info, invoices.get(0)), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -166,7 +166,7 @@ public class LROE240_4_1 extends LROE240 {
 	
 	private LROEPJ240BienesAnulacionPeticion buildBaja(Company company, List<Invoice> invoices, LROEInfo info) {	
 		LROEPJ240BienesAnulacionPeticion lroe = new LROEPJ240BienesAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(company, info));
+		lroe.setCabecera(buildCabecera(company, info, invoices.get(0)));
 		
 		AnulacionesBienesInversionType bienes = new AnulacionesBienesInversionType();		
 		invoices.stream().forEach(invoice -> {
@@ -215,7 +215,7 @@ public class LROE240_4_1 extends LROE240 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoices, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(company, info, invoices.get(0)), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}

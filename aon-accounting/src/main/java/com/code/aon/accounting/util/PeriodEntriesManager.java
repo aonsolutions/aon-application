@@ -90,10 +90,14 @@ public class PeriodEntriesManager {
 	
 	private AccountEntry saveOperatingEntry(SecurityLevel securityLevel) throws ManagerBeanException {
 		if (params.isClosingEntry()) {
-			deleteIfExists(params.getPeriod(),AccountEntryType.CLOSING,securityLevel);	
+			deleteIfExists(params.getPeriod(),AccountEntryType.CLOSING,SecurityLevel.OFFICIAL);	
+			deleteIfExists(params.getPeriod(),AccountEntryType.CLOSING,SecurityLevel.CONFIDENTIAL);
 		}
 		deleteIfExists(params.getPeriod(),AccountEntryType.OPERATING,securityLevel);
 		List<?> list = getUnbalancedAccounts(params.getPeriod(), AccountEntryType.OPERATING,securityLevel);
+		if (list == null || list.isEmpty()) {
+			return null;
+		}
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		AccountEntry entry = new AccountEntry();
@@ -322,6 +326,9 @@ public class PeriodEntriesManager {
 	private AccountEntry saveClosingEntry(SecurityLevel securityLevel) throws ManagerBeanException {
 		deleteIfExists(params.getPeriod(),AccountEntryType.CLOSING,securityLevel);
 		List<?> list = getUnbalancedAccounts(params.getPeriod(), AccountEntryType.CLOSING, securityLevel);
+		if (list == null || list.isEmpty()) {
+			return null;
+		}
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		AccountEntry entry = new AccountEntry();
@@ -427,38 +434,37 @@ public class PeriodEntriesManager {
 		criteria.addEqualExpression(entryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING);
 		criteria.addEqualExpression(entryBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
 		List<ITransferObject> list = entryBean.getList(criteria);
-		if (list.size() <= 0) {
-			String msg = "No existe asiento de cierre en el ejercicio " + params.getPeriod().getId() + " (" + securityLevel + ").";
-			throw new ManagerBeanException(msg);
-		}
-		previous = (AccountEntry) list.get(0);
-		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-		Criteria detailCriteria = new Criteria();
-		detailCriteria.addEqualExpression(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), previous
-				.getId());
-		detailCriteria.addOrder(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_LINE));
-		List<ITransferObject> details = entryDetailBean.getList(detailCriteria);
-		if (details.size() <= 0) {
-			String msg = "El asiento de cierre en el ejercicio " + params.getPeriod().getId() + " no tiene apuntes.";
-			throw new ManagerBeanException(msg);
-		}
-		for (ITransferObject to : details) {
-			AccountEntryDetail det = (AccountEntryDetail) to;
-			AccountEntryDetail detail = new AccountEntryDetail();
-			detail.setAccount(det.getAccount());
-			detail.setAccountEntry(entry);
-			detail.setBalancingAccount(det.getBalancingAccount());
-			detail.setConcept(params.getOpeningConcept());
-			detail.setCredit(det.getDebit());
-			detail.setDebit(det.getCredit());
-			detail.setLine(det.getLine());
-			if (CommonUtil.round(det.getDebit())==0 && CommonUtil.round(det.getCredit())==0) {
-				// Nada
-			} else {
-				entryDetailBean.insert(detail);
+		if (list.size() > 0) {
+			previous = (AccountEntry) list.get(0);
+			IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+			Criteria detailCriteria = new Criteria();
+			detailCriteria.addEqualExpression(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), previous
+					.getId());
+			detailCriteria.addOrder(entryDetailBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_DETAIL_LINE));
+			List<ITransferObject> details = entryDetailBean.getList(detailCriteria);
+			if (details.size() <= 0) {
+				String msg = "El asiento de cierre en el ejercicio " + params.getPeriod().getId() + " no tiene apuntes.";
+				throw new ManagerBeanException(msg);
 			}
+			for (ITransferObject to : details) {
+				AccountEntryDetail det = (AccountEntryDetail) to;
+				AccountEntryDetail detail = new AccountEntryDetail();
+				detail.setAccount(det.getAccount());
+				detail.setAccountEntry(entry);
+				detail.setBalancingAccount(det.getBalancingAccount());
+				detail.setConcept(params.getOpeningConcept());
+				detail.setCredit(det.getDebit());
+				detail.setDebit(det.getCredit());
+				detail.setLine(det.getLine());
+				if (CommonUtil.round(det.getDebit())==0 && CommonUtil.round(det.getCredit())==0) {
+					// Nada
+				} else {
+					entryDetailBean.insert(detail);
+				}
+			}
+			return entry;
 		}
-		return entry;
+		return null;
 	}
 
 	private void validateOpeningEntryParameters() throws ManagerBeanException {

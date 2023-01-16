@@ -257,7 +257,7 @@ public class JooqEmployeeAFI {
 				.and(APP_PARAM.DOMAIN.eq(domainId))
 				.fetchOne();
 		
-		if(null == appParamRecord || null == appParamRecord.get(APP_PARAM.VALUE)) {
+		if(null == appParamRecord || null == appParamRecord.get(APP_PARAM.VALUE) || AonStringUtils.isBlank(appParamRecord.get(APP_PARAM.VALUE))) {
 			appParamRecord = dslContext.select().from(APP_PARAM)
 					.where(APP_PARAM.NAME.eq("PAY_authorization_key_PAY"))
 					.and(APP_PARAM.DOMAIN.eq(parentDomainId))

@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.Properties.RegistryPayMethodProperties;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.RegistryPayMethod;
+import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.impl.jooq.dao.PayMethodDAO.PayMethodFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryBankDAO.RegistryBankFiller;
 import com.esferalia.aon.watson.AonError;
@@ -90,6 +91,27 @@ public class RegistryPayMethodDAO {
 		
 	}
 	
+	
+	public static class RegistryPayMethodAutoComplete {
+	
+		public static final BiConsumer<AONContext,RegistryPayMethod> COMPLETE_PAY_METHOD = (ctx, rpm) -> {
+			if(rpm.getPayMethod().getId() == null) {
+				PayMethodType pmt = rpm.getPayMethod().getType() != null
+						? rpm.getPayMethod().getType() : PayMethodType.OTHER;
+				PayMethod pm = PayMethodDAO.save(ctx, rpm.getPayMethod()
+						.setDomain(rpm.getDomain())
+						.setName(pmt.getDescription())
+						.setType(pmt));
+				rpm.setPayMethod(pm);
+			}
+		};
+
+		public static void autoComplete(AONContext ctx, RegistryPayMethod rpm) {
+			COMPLETE_PAY_METHOD
+				.accept(ctx, rpm);
+		}
+
+	}
 
 	
 	private static class RegistryPayMethodValidation {
@@ -166,10 +188,11 @@ public class RegistryPayMethodDAO {
 			return rpaymethod;
 		}
 		if(!rpaymethod.isDirty()) return rpaymethod;
+		RegistryPayMethodAutoComplete.autoComplete(ctx, rpaymethod);
 		RegistryPayMethodValidation.validate(ctx, rpaymethod);
 		return (rpaymethod.getId() == null)
-				?insert(ctx, rpaymethod)
-				:update(ctx, rpaymethod);
+				? insert(ctx, rpaymethod)
+				: update(ctx, rpaymethod);
 	}
 	
 	private static RegistryPayMethod insert(AONContext ctx, RegistryPayMethod rpaymethod){

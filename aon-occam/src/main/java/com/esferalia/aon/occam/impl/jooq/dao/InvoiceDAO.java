@@ -482,9 +482,14 @@ public class InvoiceDAO {
 		
 			if(invoice.isRectifier()) {
 				Invoice rectify = getInvoice(ctx, invoice.getRectificationInvoice());
-				invoice.setRectificationInvoiceSeries(rectify.getSeries());
-				invoice.setRectificationInvoiceDate(rectify.getIssueDate());
-				invoice.setRectificationInvoiceNumber(rectify.getNumber());
+				if(rectify != null) {
+					invoice.setRectificationInvoiceSeries(rectify.getSeries());
+					invoice.setRectificationInvoiceDate(rectify.getFiscal().getExpDate() != null 
+							? rectify.getFiscal().getExpDate() 
+							: rectify.getIssueDate());
+					invoice.setRectificationInvoiceNumber(rectify.getNumber());
+					invoice.setRectificationInvoiceReference(rectify.getReferenceCode());
+				}
 			}
 		}
 		return invoice;
@@ -866,6 +871,19 @@ public class InvoiceDAO {
 			.findFirst()
 			.orElse(0);
 		return --min;
+	}
+	
+	public static Invoice getLastSaleInvoice(AONContext ctx, String series ) {
+		return ctx.getDslContext().select()
+				.from(INVOICE)
+				.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
+				.and(INVOICE.TYPE.eq(InvoiceType.SALES.value()))
+				.and(AonStringUtils.isBlank(series)
+					? INVOICE.SERIES.isNull().or(DSL.trim(INVOICE.SERIES).eq(""))
+					: INVOICE.SERIES.eq(series))
+				.orderBy(INVOICE.NUMBER.desc())
+				.limit(1)
+				.fetch().stream().map(new InvoiceFiller()).findFirst().orElse(new Invoice());
 	}
 	
 	public static int getNextNumber(AONContext ctx, InvoiceType type, String series ) {
