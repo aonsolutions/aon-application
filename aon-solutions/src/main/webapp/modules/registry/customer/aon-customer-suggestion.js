@@ -243,7 +243,7 @@ export class AonCustomerSuggestion extends AonElement {
       }
       this.clearElement(div);
 
-      if(this.customer.addresses && this.customer.addresses.length > 0 && this.showAddressList) { 
+      if(this.customer.address.id && this.customer.addresses && this.customer.addresses.length > 0 && this.showAddressList) { 
         let table = new AonBasicTable();
 		    table.id = this.ADDRESS_TABLE;
 		    div.appendChild(table);
@@ -292,7 +292,7 @@ export class AonCustomerSuggestion extends AonElement {
 
         let td = table.addCell(address);
 	  		td.style.width = '100%';
-        if(!this.showAddressList) {
+        if(!this.showAddressList || (this.customer.addresses && this.customer.addresses.length > 0)) {
           let listAddress = new AonIconButton();
           listAddress.id = this.ADDRESS_LIST_BUTTON;
           listAddress.title = MSG.ADDRESS;
