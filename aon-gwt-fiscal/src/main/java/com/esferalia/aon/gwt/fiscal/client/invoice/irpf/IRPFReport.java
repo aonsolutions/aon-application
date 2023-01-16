@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -186,7 +187,7 @@ public class IRPFReport extends MainEntryPoint {
 	
 	protected void onSearch() {
 		if (tabLayout.getSelectedIndex() == 0) {
-			refreshSummary(filterPanel.getParams(getOptions()));
+			_refreshSummary(filterPanel.getParams(getOptions()));
 		} else {
 			refreshResults(filterPanel.getParams(getOptions()));
 		}
@@ -205,48 +206,74 @@ public class IRPFReport extends MainEntryPoint {
 		resultsContent.setWidget(new IRPFReportPanel(getOptions(), params, null, null));		
 	}
 	
-	private void refreshSummary(IRPFParams params) {
+	private void _refreshSummary(IRPFParams params) {
 		summaryContent.clear();
-		ScrollPanel scroll = new ScrollPanel();			
-		summaryContent.setWidget(scroll);
-		SERVICE.getIrpfBreakdownSummary(getOptions().getOccam(), params 
-				, new AsyncCallback<LinkedList<IrpfBreakdown>>() {
+		SERVICE.getIrpfBreakdownSummary(getOptions().getOccam(), params
+				, new AsyncCallback<IrpfSummary>() {
 			
 			@Override
-			public void onSuccess(LinkedList<IrpfBreakdown> result) {
-				TreeMap<WithholdingType,TreeMap<Double,Pair<IrpfBreakdown, IrpfBreakdown>>> map = new TreeMap<>();
-				for (IrpfBreakdown irpf : result){
-					TreeMap<Double,Pair<IrpfBreakdown,IrpfBreakdown>> block = map.computeIfAbsent(irpf.getWithholdingType(), k -> new TreeMap<>());
-					Pair<IrpfBreakdown,IrpfBreakdown> line = block.get(irpf.getPercent());
-					if (line == null) {
-						line = Pair.of(irpf.isSales()?irpf:null, irpf.isSales()?null:irpf);
-					} else {
-						line = Pair.of(irpf.isSales()?irpf:line.getLeft(), irpf.isSales()?line.getRight():irpf);
-					}
-					block.put(irpf.getPercent(), line);					
-				}
-				
+			public void onSuccess(IrpfSummary summary) {
+//				IrpfSummary summary = new IrpfSummary();
+//				for (IrpfBreakdown irpf : result){
+//					summary.add(irpf);
+//				}
+				summaryContent.setWidget(new IRPFReportSummaryPanel(params, summary));
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Label error = new Label(AON.MSG.unexpectedError(caught.getMessage()));
+				error.setStyleName(AON.CSS.aonMargin());
+				error.addStyleName(AON.CSS.aonColorRed());
+				error.addStyleName(AON.CSS.aonBold());
+				summaryContent.setWidget(error);
+			}
+		});
+	}
+
+	
+	private void refreshSummary(IRPFParams params) {
+//		summaryContent.clear();
+//		ScrollPanel scroll = new ScrollPanel();			
+//		summaryContent.setWidget(scroll);
+//		SERVICE.getIrpfBreakdownSummary(getOptions().getOccam(), params 
+//				, new AsyncCallback<LinkedList<IrpfBreakdown>>() {
+//			
+//			@Override
+//			public void onSuccess(LinkedList<IrpfBreakdown> result) {
+//				TreeMap<WithholdingType,TreeMap<Double,Pair<IrpfBreakdown, IrpfBreakdown>>> map = new TreeMap<>();
+//				for (IrpfBreakdown irpf : result){
+//					TreeMap<Double,Pair<IrpfBreakdown,IrpfBreakdown>> block = map.computeIfAbsent(irpf.getWithholdingType(), k -> new TreeMap<>());
+//					Pair<IrpfBreakdown,IrpfBreakdown> line = block.get(irpf.getPercent());
+//					if (line == null) {
+//						line = Pair.of(irpf.isSales()?irpf:null, irpf.isSales()?null:irpf);
+//					} else {
+//						line = Pair.of(irpf.isSales()?irpf:line.getLeft(), irpf.isSales()?line.getRight():irpf);
+//					}
+//					block.put(irpf.getPercent(), line);					
+//				}
+//				
 				FlexTable tab = new FlexTable();
-				tab.setCellPadding(0);
-				tab.setCellSpacing(0);
-				tab.setStyleName(AON.CSS.aonBlockCenter());
-				tab.addStyleName(AON.CSS.aonMarginTop());
-				tab.getElement().getStyle().setProperty("border-collapse", "collapse");
-				
-				tab.getColumnFormatter().setStyleName(0, AON.CSS.aonWidth150());
-				
-				tab.getColumnFormatter().setStyleName(1, AON.CSS.aonWidth120());
-				tab.getColumnFormatter().setStyleName(2, AON.CSS.aonWidth80());
-				tab.getColumnFormatter().setStyleName(3, AON.CSS.aonWidth120());
-				
-				tab.getColumnFormatter().setStyleName(4, AON.CSS.aonWidth20());
-				
-				tab.getColumnFormatter().setStyleName(5, AON.CSS.aonWidth120());
-				tab.getColumnFormatter().setStyleName(6, AON.CSS.aonWidth80());
-				tab.getColumnFormatter().setStyleName(7, AON.CSS.aonWidth120());
-				tab.getColumnFormatter().setStyleName(8, AON.CSS.aonWidth120());
-				
-				paintTableHeader(tab);
+//				tab.setCellPadding(0);
+//				tab.setCellSpacing(0);
+//				tab.setStyleName(AON.CSS.aonBlockCenter());
+//				tab.addStyleName(AON.CSS.aonMarginTop());
+//				tab.getElement().getStyle().setProperty("border-collapse", "collapse");
+//				
+//				tab.getColumnFormatter().setStyleName(0, AON.CSS.aonWidth150());
+//				
+//				tab.getColumnFormatter().setStyleName(1, AON.CSS.aonWidth120());
+//				tab.getColumnFormatter().setStyleName(2, AON.CSS.aonWidth80());
+//				tab.getColumnFormatter().setStyleName(3, AON.CSS.aonWidth120());
+//				
+//				tab.getColumnFormatter().setStyleName(4, AON.CSS.aonWidth20());
+//				
+//				tab.getColumnFormatter().setStyleName(5, AON.CSS.aonWidth120());
+//				tab.getColumnFormatter().setStyleName(6, AON.CSS.aonWidth80());
+//				tab.getColumnFormatter().setStyleName(7, AON.CSS.aonWidth120());
+//				tab.getColumnFormatter().setStyleName(8, AON.CSS.aonWidth120());
+//				
+//				paintTableHeader(tab);
 
 				double outputBase = 0;
 				double outputQuota = 0;
@@ -255,8 +282,9 @@ public class IRPFReport extends MainEntryPoint {
 				double inputDeductibleQuota = 0;
 
 				int row = 2;
-				for (WithholdingType type :  map.keySet() ) {
-					row = paintEmptyRow(tab,row);
+				WithholdingType type = null;
+	//			for (WithholdingType type :  map.keySet() ) {
+//					row = paintEmptyRow(tab,row);
 					
 					Label typeLabel = new Label(type.getDescription());
 					typeLabel.addClickHandler(event -> refreshAndSeeResults(filterPanel.getParams(getOptions())
@@ -265,8 +293,8 @@ public class IRPFReport extends MainEntryPoint {
 							.setOutput(null)
 							));
 					tab.setWidget(row,0, typeLabel);
-					int rowspan = map.get(type).values().size();
-					tab.getFlexCellFormatter().setRowSpan(row, 0, rowspan+1);
+//					int rowspan = map.get(type).values().size();
+	//				tab.getFlexCellFormatter().setRowSpan(row, 0, rowspan+1);
 					
 					tab.getCellFormatter().setStyleName(row, 0, AON.CSS.aonBold());
 					tab.getCellFormatter().addStyleName(row, 0, AON.CSS.aonTextCenter());
@@ -282,8 +310,8 @@ public class IRPFReport extends MainEntryPoint {
 					double typeInputBase = 0;
 					double typeInputQuota = 0;
 					double typeInputDeductibleQuota = 0;
-
-					for (Pair<IrpfBreakdown,IrpfBreakdown> pair : map.get(type).values() ) {
+					Pair<IrpfBreakdown,IrpfBreakdown> pair = null;
+//					for (Pair<IrpfBreakdown,IrpfBreakdown> pair : map.get(type).values() ) {
 						int col = first? 0 : -1;
 						first = false;
 						if (pair.getLeft() != null) {
@@ -356,144 +384,144 @@ public class IRPFReport extends MainEntryPoint {
 							addCell(tab, row, (col+8) , "");
 						}
 						++row;
-					}
+//					}
 						
-					row = paintTotal( tab, row,type,typeOutputBase,typeOutputQuota,typeInputBase,typeInputQuota,typeInputDeductibleQuota);					
+//					row = paintTotal( tab, row,type,typeOutputBase,typeOutputQuota,typeInputBase,typeInputQuota,typeInputDeductibleQuota);					
 					
 					outputBase = outputBase + typeOutputBase;
 					outputQuota = outputQuota  + typeOutputQuota; 
 					inputBase = inputBase + typeInputBase;
 					inputQuota = inputQuota + typeInputQuota;
 					inputDeductibleQuota = inputDeductibleQuota + typeInputDeductibleQuota;
-				}
-				row = paintEmptyRow(tab, row);
-				row = paintTotal( tab, row,null,outputBase,outputQuota,inputBase,inputQuota,inputDeductibleQuota);
-				paintEmptyRow(tab, row);
-				scroll.setWidget( tab );		
-			}
-			@Override
-			public void onFailure(Throwable caught) {
-				Label error = new Label(AON.MSG.unexpectedError(caught.getMessage()));
-				error.setStyleName(AON.CSS.aonMargin());
-				error.addStyleName(AON.CSS.aonColorRed());
-				error.addStyleName(AON.CSS.aonBold());
-				scroll.setWidget(error);
-			}
+//				}
+//				row = paintEmptyRow(tab, row);
+//				row = paintTotal( tab, row,null,outputBase,outputQuota,inputBase,inputQuota,inputDeductibleQuota);
+//				paintEmptyRow(tab, row);
+//				scroll.setWidget( tab );		
+//			}
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				Label error = new Label(AON.MSG.unexpectedError(caught.getMessage()));
+//				error.setStyleName(AON.CSS.aonMargin());
+//				error.addStyleName(AON.CSS.aonColorRed());
+//				error.addStyleName(AON.CSS.aonBold());
+//				scroll.setWidget(error);
+//			}
 			
-			private void paintTableHeader(FlexTable tab) {
-				Label outputLabel = new Label( AON.MSG.outputInvoices() );
-				tab.setWidget(0,1, outputLabel);
-				tab.getFlexCellFormatter().setColSpan(0, 1, 3);
-				tab.getCellFormatter().setStyleName(0, 1, AON.CSS.aonBold());
-				tab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonTextCenter());
-				tab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonFontLarger());
-				tab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonBackgroundLigthGray());
-				tab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonBorder());
-				tab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonClickableBlock());
-				outputLabel.addClickHandler(event -> refreshAndSeeResults(filterPanel.getParams(getOptions())
-					.setWithholdingType(null)
-					.setPercent(null)
-					.setOutput(true)));
-				
-				Label inputLabel = new Label( AON.MSG.inputInvoices() );
-				tab.setWidget(0,3, inputLabel);
-				tab.getFlexCellFormatter().setColSpan(0, 3, 4);
-				tab.getCellFormatter().setStyleName(0, 3, AON.CSS.aonBold());
-				tab.getCellFormatter().addStyleName(0, 3, AON.CSS.aonTextCenter());
-				tab.getCellFormatter().addStyleName(0, 3, AON.CSS.aonFontLarger());
-				tab.getCellFormatter().addStyleName(0, 3, AON.CSS.aonBorder());
-				tab.getCellFormatter().addStyleName(0, 3, AON.CSS.aonClickableBlock());
-				tab.getCellFormatter().addStyleName(0, 3, AON.CSS.aonBackgroundLigthGray());
-				inputLabel.addClickHandler(event -> 
-					refreshAndSeeResults(filterPanel.getParams(getOptions())
-						.setWithholdingType(null)
-						.setPercent(null)
-						.setOutput(false)));
+//			private void paintTableHeader(FlexTable tab) {
+//				Label outputLabel = new Label( AON.MSG.outputInvoices() );
+//				tab.setWidget(0,1, outputLabel);
+//				tab.getFlexCellFormatter().setColSpan(0, 1, 3);
+//				tab.getCellFormatter().setStyleName(0, 1, AON.CSS.aonBold());
+//				tab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonTextCenter());
+//				tab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonFontLarger());
+//				tab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonBackgroundLigthGray());
+//				tab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonBorder());
+//				tab.getCellFormatter().addStyleName(0, 1, AON.CSS.aonClickableBlock());
+//				outputLabel.addClickHandler(event -> refreshAndSeeResults(filterPanel.getParams(getOptions())
+//					.setWithholdingType(null)
+//					.setPercent(null)
+//					.setOutput(true)));
+//				
+//				Label inputLabel = new Label( AON.MSG.inputInvoices() );
+//				tab.setWidget(0,3, inputLabel);
+//				tab.getFlexCellFormatter().setColSpan(0, 3, 4);
+//				tab.getCellFormatter().setStyleName(0, 3, AON.CSS.aonBold());
+//				tab.getCellFormatter().addStyleName(0, 3, AON.CSS.aonTextCenter());
+//				tab.getCellFormatter().addStyleName(0, 3, AON.CSS.aonFontLarger());
+//				tab.getCellFormatter().addStyleName(0, 3, AON.CSS.aonBorder());
+//				tab.getCellFormatter().addStyleName(0, 3, AON.CSS.aonClickableBlock());
+//				tab.getCellFormatter().addStyleName(0, 3, AON.CSS.aonBackgroundLigthGray());
+//				inputLabel.addClickHandler(event -> 
+//					refreshAndSeeResults(filterPanel.getParams(getOptions())
+//						.setWithholdingType(null)
+//						.setPercent(null)
+//						.setOutput(false)));
+//	
+//				Label outputBaseLabel = new Label( AON.MSG.taxableBase() );
+//				tab.setWidget(1,1, outputBaseLabel);
+//				decorateCell( tab, 1, 1 );
+//				
+//				Label outputPercentLabel = new Label( "%" );
+//				tab.setWidget(1,2, outputPercentLabel);
+//				decorateCell( tab, 1, 2 );
+//	
+//				Label outputQuotaLabel = new Label( AON.MSG.quota() );
+//				tab.setWidget(1,3, outputQuotaLabel);
+//				decorateCell( tab, 1, 3 );
+//				
+//				Label inputBaseLabel = new Label( AON.MSG.taxableBase() );
+//				tab.setWidget(1,5, inputBaseLabel);
+//				decorateCell( tab, 1, 5 );				
+//	
+//				Label inputPercentLabel = new Label( "%" );
+//				tab.setWidget(1,6, inputPercentLabel);
+//				decorateCell( tab, 1, 6 );
+//				
+//				Label inputQuotaLabel = new Label( AON.MSG.quota() );
+//				tab.setWidget(1,7, inputQuotaLabel);
+//				decorateCell( tab, 1, 7 );
+//
+//				Label inputDeductibleQuotaLabel = new Label( AON.MSG.dedQuota() );
+//				tab.setWidget(1,8, inputDeductibleQuotaLabel);
+//				decorateCell( tab, 1, 8 );
+//			}
+//			
+//			private void decorateCell(FlexTable tab, int row, int col) {
+//				tab.getCellFormatter().setStyleName( row, col, AON.CSS.aonBold());
+//				tab.getCellFormatter().addStyleName( row, col, AON.CSS.aonTextRight());
+//				tab.getCellFormatter().addStyleName( row, col, AON.CSS.aonPaddingRight());
+//				tab.getCellFormatter().addStyleName( row, col, AON.CSS.aonBackgroundLigthGray());
+//				tab.getCellFormatter().addStyleName( row, col, AON.CSS.aonBorder());
+//			}
+//			
+//			private int paintEmptyRow(FlexTable tab, int row) {
+//				tab.setWidget(row, 0, new Label());
+//				tab.getFlexCellFormatter().setColSpan(row, 0, 9);
+//				tab.getRowFormatter().getElement(row).getStyle().setHeight(5, Unit.PX);
+//				return ++row;
+//			}
+//			
+//		});		
+	}
 	
-				Label outputBaseLabel = new Label( AON.MSG.taxableBase() );
-				tab.setWidget(1,1, outputBaseLabel);
-				decorateCell( tab, 1, 1 );
-				
-				Label outputPercentLabel = new Label( "%" );
-				tab.setWidget(1,2, outputPercentLabel);
-				decorateCell( tab, 1, 2 );
-	
-				Label outputQuotaLabel = new Label( AON.MSG.quota() );
-				tab.setWidget(1,3, outputQuotaLabel);
-				decorateCell( tab, 1, 3 );
-				
-				Label inputBaseLabel = new Label( AON.MSG.taxableBase() );
-				tab.setWidget(1,5, inputBaseLabel);
-				decorateCell( tab, 1, 5 );				
-	
-				Label inputPercentLabel = new Label( "%" );
-				tab.setWidget(1,6, inputPercentLabel);
-				decorateCell( tab, 1, 6 );
-				
-				Label inputQuotaLabel = new Label( AON.MSG.quota() );
-				tab.setWidget(1,7, inputQuotaLabel);
-				decorateCell( tab, 1, 7 );
+	private Label addCell(FlexTable tab, int row, int col, String text) {
+		Label label = new Label(text);
+		tab.setWidget(row, col, label);
+		tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonTextRight());
+		tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonPaddingRight());
+		tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBorder());
+		return label;
+	}
 
-				Label inputDeductibleQuotaLabel = new Label( AON.MSG.dedQuota() );
-				tab.setWidget(1,8, inputDeductibleQuotaLabel);
-				decorateCell( tab, 1, 8 );
-			}
-			
-			private void decorateCell(FlexTable tab, int row, int col) {
-				tab.getCellFormatter().setStyleName( row, col, AON.CSS.aonBold());
-				tab.getCellFormatter().addStyleName( row, col, AON.CSS.aonTextRight());
-				tab.getCellFormatter().addStyleName( row, col, AON.CSS.aonPaddingRight());
-				tab.getCellFormatter().addStyleName( row, col, AON.CSS.aonBackgroundLigthGray());
-				tab.getCellFormatter().addStyleName( row, col, AON.CSS.aonBorder());
-			}
-			
-			private int paintEmptyRow(FlexTable tab, int row) {
-				tab.setWidget(row, 0, new Label());
-				tab.getFlexCellFormatter().setColSpan(row, 0, 9);
-				tab.getRowFormatter().getElement(row).getStyle().setHeight(5, Unit.PX);
-				return ++row;
-			}
-			
-			private Label addCell(FlexTable tab, int row, int col, String text) {
-				Label label = new Label(text);
-				tab.setWidget(row, col, label);
-				tab.getCellFormatter().setStyleName(row, col, AON.CSS.aonTextRight());
-				tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonPaddingRight());
-				tab.getCellFormatter().addStyleName(row, col, AON.CSS.aonBorder());
-				return label;
-			}
-			
-			private int paintTotal(FlexTable tab, int row, WithholdingType type,double typeOutputBase, double typeOutputQuota,
-					double typeInputBase, double typeInputQuota, double typeInputDeductibleQuota) {
-				int col = type==null?1:0;
-				ClickHandler leftClickHandler = event -> refreshAndSeeResults(filterPanel.getParams(getOptions()).setWithholdingType(type).setOutput(true)); 
-				Label obl = addCell(tab, row, col+0 , formatter.format( typeOutputBase));
-				obl.addClickHandler(leftClickHandler);
-				Label oql = addCell(tab, row, col+2 , formatter.format( typeOutputQuota));
-				oql.addClickHandler(leftClickHandler);
-				
-				ClickHandler rightClickHandler = event -> refreshAndSeeResults(filterPanel.getParams(getOptions()).setWithholdingType(type).setOutput(false)); 
-				Label ibl = addCell(tab, row, col+4 , formatter.format( typeInputBase));
-				ibl.addClickHandler(rightClickHandler);
-				Label iql = addCell(tab, row, col+6 , formatter.format( typeInputQuota));
-				iql.addClickHandler(rightClickHandler);
-				Label idql = addCell(tab, row, col+7 , formatter.format( typeInputDeductibleQuota));
-				idql.addClickHandler(rightClickHandler);
-				
-				tab.getCellFormatter().addStyleName(row, col+0, AON.CSS.aonClickableBlock());
-				tab.getCellFormatter().addStyleName(row,col+0, AON.CSS.aonBold());
-				tab.getCellFormatter().addStyleName(row, col+2, AON.CSS.aonClickableBlock());
-				tab.getCellFormatter().addStyleName(row,col+2, AON.CSS.aonBold());
-				tab.getCellFormatter().addStyleName(row, col+4, AON.CSS.aonClickableBlock());
-				tab.getCellFormatter().addStyleName(row,col+4, AON.CSS.aonBold());
-				tab.getCellFormatter().addStyleName(row, col+6, AON.CSS.aonClickableBlock());
-				tab.getCellFormatter().addStyleName(row,col+6, AON.CSS.aonBold());
-				tab.getCellFormatter().addStyleName(row, col+7, AON.CSS.aonClickableBlock());
-				tab.getCellFormatter().addStyleName(row,col+7, AON.CSS.aonBold());
-				return ++row;
-			}
-			
-		});		
+	private int paintTotal(FlexTable tab, int row, WithholdingType type,double typeOutputBase, double typeOutputQuota,
+			double typeInputBase, double typeInputQuota, double typeInputDeductibleQuota) {
+		int col = type==null?1:0;
+		ClickHandler leftClickHandler = event -> refreshAndSeeResults(filterPanel.getParams(getOptions()).setWithholdingType(type).setOutput(true)); 
+		Label obl = addCell(tab, row, col+0 , formatter.format( typeOutputBase));
+		obl.addClickHandler(leftClickHandler);
+		Label oql = addCell(tab, row, col+2 , formatter.format( typeOutputQuota));
+		oql.addClickHandler(leftClickHandler);
+		
+		ClickHandler rightClickHandler = event -> refreshAndSeeResults(filterPanel.getParams(getOptions()).setWithholdingType(type).setOutput(false)); 
+		Label ibl = addCell(tab, row, col+4 , formatter.format( typeInputBase));
+		ibl.addClickHandler(rightClickHandler);
+		Label iql = addCell(tab, row, col+6 , formatter.format( typeInputQuota));
+		iql.addClickHandler(rightClickHandler);
+		Label idql = addCell(tab, row, col+7 , formatter.format( typeInputDeductibleQuota));
+		idql.addClickHandler(rightClickHandler);
+		
+		tab.getCellFormatter().addStyleName(row, col+0, AON.CSS.aonClickableBlock());
+		tab.getCellFormatter().addStyleName(row,col+0, AON.CSS.aonBold());
+		tab.getCellFormatter().addStyleName(row, col+2, AON.CSS.aonClickableBlock());
+		tab.getCellFormatter().addStyleName(row,col+2, AON.CSS.aonBold());
+		tab.getCellFormatter().addStyleName(row, col+4, AON.CSS.aonClickableBlock());
+		tab.getCellFormatter().addStyleName(row,col+4, AON.CSS.aonBold());
+		tab.getCellFormatter().addStyleName(row, col+6, AON.CSS.aonClickableBlock());
+		tab.getCellFormatter().addStyleName(row,col+6, AON.CSS.aonBold());
+		tab.getCellFormatter().addStyleName(row, col+7, AON.CSS.aonClickableBlock());
+		tab.getCellFormatter().addStyleName(row,col+7, AON.CSS.aonBold());
+		return ++row;
 	}
 	
 	private void submitForm(String action) {

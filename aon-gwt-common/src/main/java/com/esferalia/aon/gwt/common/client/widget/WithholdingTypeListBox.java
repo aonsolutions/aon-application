@@ -13,7 +13,7 @@ public class WithholdingTypeListBox extends AonListBox {
 	}
 	public WithholdingTypeListBox(String firstItemLabel) {
 		setWidth("100px");
-		addItem(firstItemLabel," --- ");
+		addItem(firstItemLabel,"");
 		WithholdingTypeGroup wtg = null;
 		for (WithholdingType d : WithholdingType.ORDERED_VALUES) {
 			if (wtg != d.getGroup()) {

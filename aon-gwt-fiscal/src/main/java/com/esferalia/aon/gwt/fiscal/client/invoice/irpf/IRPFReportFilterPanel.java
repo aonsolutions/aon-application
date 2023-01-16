@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.invoice.irpf;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.PeriodListBox;
+import com.esferalia.aon.gwt.common.client.widget.WithholdingTypeGroupListBox;
 import com.esferalia.aon.gwt.common.client.widget.WithholdingTypeListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAccountingRegistryBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
@@ -40,6 +41,7 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 	private AonDateBox toDate;
 	private ListBox output;
 	private AonAccountingRegistryBox registry;
+	private WithholdingTypeGroupListBox withholdingTypeGroup;
 	private WithholdingTypeListBox withholdingType;
 	private ListBox activity;
 	private ListBox rectificationType;
@@ -125,20 +127,6 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 		output.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
 		firstRowPanel.add(output);
 		
-		Label groupByNifLabel = new InlineLabel("Agrupar por ");
-		groupByNifLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
-		groupByNifLabel.addStyleName(AON.CSS.aonMarginLeft());
-		firstRowPanel.add(groupByNifLabel);
-		groupedBy = new ListBox();
-		groupedBy.addStyleName(AON.CSS.aonMarginLeft());
-		groupedBy.addItem("Factura");
-		groupedBy.addItem("NIF/Raz\u00F3n social");
-		groupedBy.addItem("L\u00EDneas de factura", "");
-		groupedBy.setSelectedIndex(0);
-		groupedBy.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
-		firstRowPanel.add(groupedBy);
-		
-
 		// ---------------------------------------------------------------- SECOND ROW
 		FlowPanel secondRowPanel = new FlowPanel();
 		filterPanel.add(secondRowPanel);
@@ -160,6 +148,14 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 		Label withholdingTypeLabel = new InlineLabel(AON.MSG.withholdingType());
 		withholdingTypeLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 		thirdRowPanel.add(withholdingTypeLabel);
+		
+		withholdingTypeGroup = new WithholdingTypeGroupListBox("-- Todos --");
+		withholdingTypeGroup.addStyleName(AON.CSS.aonMarginLeft());
+		withholdingTypeGroup.setWidth("100px");
+		withholdingTypeGroup.setSelectedIndex(0);
+		withholdingTypeGroup.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+		thirdRowPanel.add(withholdingTypeGroup);
+
 		withholdingType = new WithholdingTypeListBox("-- Todos --");
 		withholdingType.addStyleName(AON.CSS.aonMarginLeft());
 		withholdingType.setWidth("100px");
@@ -218,10 +214,13 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 		percent.addValueChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
 		thirdRowPanel.add(percent);
 		
+		// ---------------------------------------------------------------- FOURTH ROW
+		FlowPanel fourthRowPanel = new FlowPanel();
+		filterPanel.add(fourthRowPanel);
+
 		Label orderbyLabel = new InlineLabel("Ordenar por...");
 		orderbyLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
-		orderbyLabel.addStyleName(AON.CSS.aonMarginLeft());
-		thirdRowPanel.add(orderbyLabel);
+		fourthRowPanel.add(orderbyLabel);
 		orderBy = new ListBox();
 		orderBy.addStyleName(AON.CSS.aonMarginLeft());
 		orderBy.setWidth("200px");
@@ -232,8 +231,22 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 		orderBy.addItem("Fecha IVA");
 		orderBy.setSelectedIndex(0);
 		orderBy.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+		fourthRowPanel.add(orderBy);
+		
+		
+		Label groupByNifLabel = new InlineLabel("Agrupar por ");
+		groupByNifLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
+		groupByNifLabel.addStyleName(AON.CSS.aonMarginLeft());
+		fourthRowPanel.add(groupByNifLabel);
+		groupedBy = new ListBox();
+		groupedBy.addStyleName(AON.CSS.aonMarginLeft());
+		groupedBy.addItem("Factura");
+		groupedBy.addItem("NIF/Raz\u00F3n social");
+		groupedBy.addItem("L\u00EDneas de factura", "");
+		groupedBy.setSelectedIndex(0);
+		groupedBy.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+		fourthRowPanel.add(groupedBy);
 
-		thirdRowPanel.add(orderBy);
 		
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
@@ -271,6 +284,7 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 			if (options.getConfiguration() != null && options.getConfiguration().hasActivities() && activity.getSelectedIndex() > 0) {
 				params.setActivity( AonNumberUtils.toInteger( activity.getSelectedValue()));
 			}
+			params.setWithholdingTypeGroup(withholdingTypeGroup.getValue());
 			params.setWithholdingType(withholdingType.getValue());
 			params.setOrderBy(orderBy.getSelectedIndex());	
 			params.setGroupedBy(groupedBy.getSelectedIndex());

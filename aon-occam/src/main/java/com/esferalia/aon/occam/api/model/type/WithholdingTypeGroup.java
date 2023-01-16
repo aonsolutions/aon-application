@@ -37,6 +37,13 @@ public enum WithholdingTypeGroup implements Serializable {
 		if (i < 0 || i >= WithholdingTypeGroup.values().length) return null;
 		return WithholdingTypeGroup.values()[i];
 	}
+
+	public WithholdingType[] getTypes() {
+		return WithholdingType.getTypes(this);
+	}
 	
+	public Byte[] getValueTypes() {
+		return WithholdingType.getValueTypes(this);
+	}
 }
 

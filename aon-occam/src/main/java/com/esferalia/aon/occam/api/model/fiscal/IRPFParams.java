@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.api.model.type.WithholdingTypeGroup;
 
 public class IRPFParams implements Serializable {
 	
@@ -19,6 +20,7 @@ public class IRPFParams implements Serializable {
 	private Date toDate;
 	
 	private Boolean output;
+	private WithholdingTypeGroup typeGroup;
 	private WithholdingType type;
 	private Double percent;
 	private RectificationType rectified;
@@ -96,6 +98,14 @@ public class IRPFParams implements Serializable {
 	public boolean isOutput() {
 		return output != null && output.booleanValue();
 	}
+	
+	public WithholdingTypeGroup getWithholdingTypeGroup() {
+		return typeGroup;
+	} 
+	public IRPFParams setWithholdingTypeGroup(WithholdingTypeGroup typeGroup) {
+		this.typeGroup = typeGroup;
+		return this;
+	} 
 	public WithholdingType getWithholdingType() {
 		return type;
 	}

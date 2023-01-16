@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.api.model.finance.Properties.IRPFProperties;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
@@ -176,14 +177,14 @@ public class IRPFDAO {
 				.fetch()
 				.stream()
 				.map( new IrpfInvoiceBreakdownFiller() ); 
+		
 		if (params.getGroupedBy() == 0) {
 			return stream
 				.collect( new InvoiceCollector() )
 				.values()
 				.stream()
 				;
-		}
-		if (params.getGroupedBy() == 1) {
+		} else  if (params.getGroupedBy() == 1) {
 			return stream
 				.collect( new NifCollector() )
 				.values()
@@ -244,7 +245,6 @@ public class IRPFDAO {
 				.setZip( js.getZip() )
 				.setCity( js.getCity() )
 			;
-			
 		}
 
 		protected void merge(IrpfBreakdown mapped, IrpfBreakdown js) {
@@ -291,7 +291,12 @@ public class IRPFDAO {
 
 		@Override
 		public BiConsumer<TreeMap<String, IrpfBreakdown>, IrpfBreakdown> accumulator() {
-			return ((map, js) -> merge( map.computeIfAbsent( js.getNifGroupedKey(), k -> initialize(js)), js ) );
+			return ((map, js) -> merge( map.computeIfAbsent( getNifGroupedKey( js ), k -> initialize(js)), js ) );
+		}
+		private String getNifGroupedKey(IrpfBreakdown br) {
+			return (br.getWithholdingType()==null?"NULL": br.getWithholdingType().toString()) 
+				+ "-"
+				+ br.getRegistryDocument();
 		}
 		
 	}
@@ -300,9 +305,13 @@ public class IRPFDAO {
 
 		@Override
 		public BiConsumer<TreeMap<String, IrpfBreakdown>, IrpfBreakdown> accumulator() {
-			return ((map, js) -> merge( map.computeIfAbsent( js.getInvoiceGroupedKey(), k -> initialize(js)), js ) );
+			return ((map, js) -> merge( map.computeIfAbsent( getInvoiceGroupedKey( js ), k -> initialize(js)), js ) );
 		}
-		
+		private String getInvoiceGroupedKey(IrpfBreakdown br) {
+			return (br.getWithholdingType()==null?"NULL": br.getWithholdingType().toString()) 
+				+ "-"
+				+ AonNumberUtils.toString( br.getInvoice());
+		}
 	}
 
 	public static Stream<IrpfBreakdown> getInputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
@@ -375,43 +384,40 @@ public class IRPFDAO {
 			double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
 			double quota = rec.getValue(INVOICE_TAX.QUOTA);
 			double dedPercent = rec.getValue(INVOICE_TAX.DEDUCTIBLE_PERCENT);
+			double dedQuota = rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA);
 			if (AonMathUtils.isZero(quota)) {
 				quota =  AonMathUtils.round(base * percent / 100);
 			}
 			if (AonMathUtils.isZero(dedPercent)) dedPercent = 100;
-			double dedQuota = rec.getValue(INVOICE_TAX.DEDUCTIBLE_QUOTA);
 			if (AonMathUtils.isZero(dedQuota)) {
-				if (AonMathUtils.isZero(dedPercent) || dedPercent == 100) {
-					dedQuota = quota;
-				} else {
-					dedQuota = AonMathUtils.round(quota * dedPercent / 100);
-				}
+				dedQuota = (AonMathUtils.isZero(dedPercent) || dedPercent == 100)
+					?quota
+					:AonMathUtils.round(quota * dedPercent / 100);
 			}
-			Byte regime = rec.getValue(ENTERPRISE_ACTIVITY.RETENTION_REGIME);
 			return new IrpfBreakdown()
-					.setFromSalary(false)
-					.setActivity(rec.getValue(ENTERPRISE_ACTIVITY.ID))
-					.setActivityDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
-					.setEpigraph(rec.getValue(IAE.EPIGRAPH))
-					.setInvoice(rec.getValue(INVOICE.ID))
-					.setInvoiceType(AonEnumUtils.enumValue(InvoiceType.class,rec.getValue(INVOICE.TYPE)))
-					.setSeries(rec.getValue(INVOICE.SERIES))
-					.setNumber(rec.getValue(INVOICE.NUMBER))
-					.setReferenceCode(rec.getValue(INVOICE.REFERENCE_CODE))
-					.setRegistryDocument(rec.getValue(INVOICE.RDOCUMENT))
-					.setRegistryDocumentType(DocumentType.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_TYPE)))
-					.setRegistryDocumentCountry(Country.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_COUNTRY)))
-					.setName(rec.getValue(INVOICE.RNAME))
-					.setIssueDate(rec.getValue(INVOICE.ISSUE_DATE))
-					.setTaxDate(rec.getValue(INVOICE.TAX_DATE))
-					.setWithholdingType(AonEnumUtils.enumValue(WithholdingType.class,rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE)))
-					.setIRPFRegime(regime == null? null : IRPFRegime.values()[regime])
-					.setBase(base)
-					.setPercent(percent)
-					.setQuota(quota)
-					.setDeductiblePercent(dedPercent)
-					.setDeductibleQuota(dedQuota)
-					;
+				.setFromSalary(false)
+				.setActivity(rec.getValue(ENTERPRISE_ACTIVITY.ID))
+				.setActivityDescription(rec.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
+				.setEpigraph(rec.getValue(IAE.EPIGRAPH))
+				.setInvoice(rec.getValue(INVOICE.ID))
+				.setInvoiceType(InvoiceType.safeValueOf(rec.getValue(INVOICE.TYPE)))
+				.setSeries(rec.getValue(INVOICE.SERIES))
+				.setNumber(rec.getValue(INVOICE.NUMBER))
+				.setReferenceCode(rec.getValue(INVOICE.REFERENCE_CODE))
+				.setRegistryDocument(rec.getValue(INVOICE.RDOCUMENT))
+				.setRegistryDocumentType(DocumentType.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_TYPE)))
+				.setRegistryDocumentCountry(Country.safeValueOf(rec.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+				.setName(rec.getValue(INVOICE.RNAME))
+				.setIssueDate(rec.getValue(INVOICE.ISSUE_DATE))
+				.setTaxDate(rec.getValue(INVOICE.TAX_DATE))
+				.setWithholdingType(WithholdingType.safeValueOf( rec.getValue(INVOICE_TAX.WITHHOLDING_TYPE)))
+				.setIRPFRegime( IRPFRegime.safeValueOf(rec.getValue(ENTERPRISE_ACTIVITY.RETENTION_REGIME)) )
+				.setBase(base)
+				.setPercent(percent)
+				.setQuota(quota)
+				.setDeductiblePercent(dedPercent)
+				.setDeductibleQuota(dedQuota)
+				;
 		}
 	}
 	 
@@ -518,75 +524,51 @@ public class IRPFDAO {
 		public List<IrpfBreakdown> apply(Record rec) {
 			final LinkedList<IrpfBreakdown> list = new LinkedList<>();
 			IrpfBreakdown br = new IrpfBreakdown()
-					.setSalary(rec.getValue(SALARY.ID))
-					.setFromSalary(true)
-					.setRegistryDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
-					.setName(rec.getValue(SALARY.EMPLOYEE_NAME))
-					.setIssueDate(rec.getValue(SALARY.ISSUE_DATE))
-					.setTaxDate(rec.getValue(SALARY.ISSUE_DATE));
-				double base = rec.getValue(SALARY.IRPF_BASE);
-				double quota = rec.getValue(SALARY.TOTAL_IRPF);
-				double inKindBase = rec.getValue(SALARY.INKIND_IRPF_BASE);
-				if (AonMathUtils.isZero(inKindBase)) {
-					br.setInKind(false)
-						.setBase(AonMathUtils.round( base))
-						.setQuota(AonMathUtils.round( quota));
+				.setSalary(rec.getValue(SALARY.ID))
+				.setFromSalary(true)
+				.setRegistryDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
+				.setName(rec.getValue(SALARY.EMPLOYEE_NAME))
+				.setIssueDate(rec.getValue(SALARY.ISSUE_DATE))
+				.setTaxDate(rec.getValue(SALARY.ISSUE_DATE));
+			double base = rec.getValue(SALARY.IRPF_BASE);
+			double quota = rec.getValue(SALARY.TOTAL_IRPF);
+			double inKindBase = rec.getValue(SALARY.INKIND_IRPF_BASE);
+			if (AonMathUtils.isZero(inKindBase)) {
+				br.setInKind(false)
+					.setBase(AonMathUtils.round( base))
+					.setQuota(AonMathUtils.round( quota));
+				list.add(br);
+			} else {	
+				double inKindQuota = 0;
+				double moneyBase = rec.getValue(SALARY.MONEY_IRPF_BASE);
+				double moneyQuota = AonMathUtils.round( moneyBase * quota  / base ); 	
+				inKindQuota = AonMathUtils.round( quota - moneyQuota);
+				br.setInKind(true)
+				  .setBase(AonMathUtils.round( inKindBase))
+				  .setQuota(inKindQuota);
+				list.add(br);
+				if (AonMathUtils.isNotZero(moneyBase) || AonMathUtils.isNotZero(moneyQuota)) {
+					br = new IrpfBreakdown()
+						.setSalary(rec.getValue(SALARY.ID))
+						.setFromSalary(true)
+						.setRegistryDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
+						.setName(rec.field(SALARY.EMPLOYEE_NAME) != null ? rec.getValue(SALARY.EMPLOYEE_NAME) : null)
+						.setIssueDate(rec.getValue(SALARY.ISSUE_DATE))
+						.setTaxDate(rec.getValue(SALARY.ISSUE_DATE))
+						.setInKind(false)
+						.setBase(AonMathUtils.round( moneyBase))
+						.setQuota(moneyQuota);
 					list.add(br);
-				} else {	
-					double inKindQuota = 0;
-					double moneyBase = rec.getValue(SALARY.MONEY_IRPF_BASE);
-					double moneyQuota = AonMathUtils.round( moneyBase * quota  / base ); 	
-					inKindQuota = AonMathUtils.round( quota - moneyQuota);
-					br.setInKind(true)
-					  .setBase(AonMathUtils.round( inKindBase))
-					  .setQuota(inKindQuota);
-					list.add(br);
-					if (AonMathUtils.isNotZero(moneyBase) || AonMathUtils.isNotZero(moneyQuota)) {
-						br = new IrpfBreakdown()
-								.setSalary(rec.getValue(SALARY.ID))
-								.setFromSalary(true)
-								.setRegistryDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
-								.setName(rec.field(SALARY.EMPLOYEE_NAME) != null ? rec.getValue(SALARY.EMPLOYEE_NAME) : null)
-								.setIssueDate(rec.getValue(SALARY.ISSUE_DATE))
-								.setTaxDate(rec.getValue(SALARY.ISSUE_DATE))
-								.setInKind(false)
-								.setBase(AonMathUtils.round( moneyBase))
-								.setQuota(moneyQuota);
-						list.add(br);
-					}
 				}
-				return list;
+			}
+			return list;
 		}
-		
 	}
 
-	public static Stream<IrpfBreakdown> getIRPFSummary(AONContext ctx, IRPFParams params) {
-		LinkedList<IrpfBreakdown> list = new LinkedList<>();
-		getInvoicesIrpfBreakdown(ctx, params)
-			.forEach( irpf -> {
-				double percent = irpf.getPercent();
-				IrpfBreakdown sum = null;
-				for (IrpfBreakdown ite : list) {
-					if ( ite.getWithholdingType() == irpf.getWithholdingType()
-						&& ite.isSales() == irpf.isSales()
-						&& AonNumberUtils.equals(ite.getPercent(), percent)) {
-						sum = ite;
-						break;
-					}
-				}
-				if ( sum == null) {
-					sum = new IrpfBreakdown()
-						.setInvoiceType(irpf.getInvoiceType())
-						.setWithholdingType(irpf.getWithholdingType())
-						.setPercent(percent);
-					list.add(sum);
-				}
-				sum.setBase( sum.getBase() + irpf.getBase()); 
-				sum.setQuota( sum.getQuota() + irpf.getQuota());
-				sum.setDeductibleQuota( sum.getDeductibleQuota() + irpf.getDeductibleQuota());				
-			})
-			;
-		return list.stream();
+	public static IrpfSummary getIRPFSummary(AONContext ctx, IRPFParams params) {
+		IrpfSummary summary = new IrpfSummary();
+		getInvoicesIrpfBreakdown(ctx, params).forEach(summary::add);
+		return summary;
 	}
 	
 	private static Filter getIRPFFilter(final IRPFProperties p, final IRPFParams params) {
@@ -599,6 +581,7 @@ public class IRPFDAO {
 			, filter , prop -> prop = prop.and(p.getInvoiceIdProperty().in(params.getInvoices())));
 		filter = AonObjectUtils.computeIfTrue((Objects.isNull( params.getRegistry()) || params.getRegistry().intValue() == 0 )
 			, filter , prop ->  prop.and(p.getRegistryProperty().eq(params.getRegistry())));
+		
 		if (params.getActivity()  != null && params.getActivity().intValue() != 0 ) {
 			if (params.getActivity() < 0 ) {
 				filter = filter.and(p.getActivityProperty().isNull());
@@ -610,8 +593,17 @@ public class IRPFDAO {
 			, filter, prop ->  prop.and(p.getAccrualRegimeProperty().eq( AonEnumUtils.getByte(params.getAccrualRegime()))));
 		filter = AonObjectUtils.computeIfTrue(Objects.isNull( params.getInvestment() )
 			, filter, prop ->  prop.and(p.getInvestmentProperty().eq( AonEnumUtils.getByte(params.getInvestment()))));
+		
+		
+		if (params.getWithholdingTypeGroup() != null 
+			&& params.getWithholdingTypeGroup().getValueTypes() != null
+			&& params.getWithholdingTypeGroup().getValueTypes().length > 0) {
+			filter = filter.and(p.getWithholdingTypeProperty().in( params.getWithholdingTypeGroup().getValueTypes() ));
+		}
 		filter = AonObjectUtils.computeIfTrue(Objects.isNull( params.getWithholdingType() )
 			, filter, prop ->  prop.and(p.getWithholdingTypeProperty().eq( AonEnumUtils.getByte(params.getWithholdingType()))));
+
+		
 		filter = AonObjectUtils.computeIfTrue(Objects.isNull( params.getRectificationType() )
 			, filter, prop ->  prop.and(p.getRectifiedProperty().eq( AonEnumUtils.getByte(params.getRectificationType()))));
 		if (params.getService() != null) {
@@ -623,12 +615,12 @@ public class IRPFDAO {
 		}
 		filter = AonObjectUtils.computeIfTrue(Objects.isNull( params.getPercent() )
 			, filter, prop ->  prop.and(p.getPercentProperty().eq( params.getPercent())));
-		if (params.getOutput() != null) {
-			if (params.isOutput()) {
+		
+		if (params.getOutput() != null && params.isOutput()) {
 				filter = filter.and(p.getInvoiceTypeProperty().eq( InvoiceType.SALES.value()));
-			} else {
+		}
+		if (params.getOutput() != null && !params.isOutput()) {
 				filter = filter.and(p.getInvoiceTypeProperty().in( INPUT_TYPES ));
-			}
 		}
 		return filter;
 	}

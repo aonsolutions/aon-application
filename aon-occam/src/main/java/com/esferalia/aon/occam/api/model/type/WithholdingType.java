@@ -9,6 +9,7 @@ import static com.esferalia.aon.occam.api.model.type.WithholdingTypeGroup.PROFES
 import static com.esferalia.aon.occam.api.model.type.WithholdingTypeGroup.TRABAJO;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVisitor;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -245,5 +246,17 @@ public enum WithholdingType implements Serializable {
 
 
 	
+	public static WithholdingType[] getTypes(WithholdingTypeGroup group) {
+		return Arrays.stream(WithholdingType.values())
+			.filter(t -> t.getGroup() == group)
+			.toArray( size -> new WithholdingType[size]);
+	}
+	
+	public static Byte[] getValueTypes(WithholdingTypeGroup group) {
+		return Arrays.stream(WithholdingType.values())
+			.filter(t -> t.getGroup() == group)
+			.map( t -> t.value())
+			.toArray( size -> new Byte[size]);
+	}
 	
 }

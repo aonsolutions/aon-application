@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.api.model.type.WithholdingTypeGroup;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -750,6 +751,11 @@ public class JsonParser {
 		Long outputEnabled  = (Long) jsonParams.get(IRequestParamsNames.OUTPUT);
 		if (outputEnabled != null) {
 			params.setOutput(outputEnabled==1);
+		}
+		// ******************* WithholdingType ******************* 
+		Long withholdingTypeGroup = (Long) jsonParams.get(IRequestParamsNames.WITHHOLDING_TYPE_GROUP);
+		if (withholdingTypeGroup != null) {
+			params.setWithholdingTypeGroup(WithholdingTypeGroup.safeValueOf( withholdingTypeGroup.intValue() ));
 		}
 		// ******************* WithholdingType ******************* 
 		Long withholdingType = (Long) jsonParams.get(IRequestParamsNames.WITHHOLDING_TYPE);
