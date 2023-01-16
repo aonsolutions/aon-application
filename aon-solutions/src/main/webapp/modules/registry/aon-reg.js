@@ -658,7 +658,7 @@ export class AonReg extends AonElement {
 			aonAddress.addEventListener(EVENT.DELETE, () => {
 				if(table.getRowsCount() === 1) {
 					let aux = new Address().setRegistry(this.registry.getId())
-					aonAddress.setAddress(aux);
+					aonAddress.setAddress(aux, true);
 					this.registry.getAddresses()[i] = aux;
 				} else {
 					let last = this.getElement(this.ADDRESS_ADD + i).isVisible();
