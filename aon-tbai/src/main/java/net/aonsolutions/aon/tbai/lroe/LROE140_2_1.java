@@ -121,7 +121,7 @@ public class LROE140_2_1 extends LROE140 {
 		cabecera.setFechaRecepcion(tbaiConfiguration.isRegistryTaxDate() 
 				? AonDateUtils.format(invoice.getTaxDate(), DATE_FORMAT)
 				: AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
-		if(invoice.isRectified()) {
+		if(invoice.isRectifier()) {
 			FacturaRectificativaImporteType rectificativa = new FacturaRectificativaImporteType(); 
 			rectificativa.setCodigo(ClaveCodigoFacturaRectificativaEnum.R_1); 
 			rectificativa.setTipo(ClaveTipoRectificativaEnum.I); // por diferencia o por sustitucion
@@ -129,8 +129,8 @@ public class LROE140_2_1 extends LROE140 {
 				
 			FacturasRectificadasSustituidasType rectificadas = new FacturasRectificadasSustituidasType();
 			IDFacturaType rectificada = new IDFacturaType();
-			rectificada.setSerieFactura(invoice.getRectificationInvoiceSeries());
-			rectificada.setNumFactura(invoice.getRectificationInvoiceNumber().toString());
+			// rectificada.setSerieFactura(invoice.getRectificationInvoiceSeries());
+			rectificada.setNumFactura(invoice.getRectificationInvoiceReference());
 			rectificada.setFechaExpedicionFactura(AonDateUtils.format(invoice.getRectificationInvoiceDate(), DATE_FORMAT));
 			rectificadas.getIDFacturaRectificadaSustituida().add(rectificada);
 			cabecera.setFacturasRectificadasSustituidas(rectificadas);
@@ -223,7 +223,7 @@ public class LROE140_2_1 extends LROE140 {
 			jaxbMarshaller.marshal( p140, bos );
 			// TODO SAVE DATA_REQUEST!!!!!
 			byte[] data = toGzip(bos.toByteArray());
-			return send(tbaiConfiguration, buildJSON(person, info), data);
+			return send(tbaiConfiguration, buildJSON(person, info, invoices.get(0)), data);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -292,7 +292,7 @@ public class LROE140_2_1 extends LROE140 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(person, info, invoice), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -342,7 +342,7 @@ public class LROE140_2_1 extends LROE140 {
 			jaxbMarshaller.marshal( lroe, bos );
 			byte[] xml = bos.toByteArray();
 			byte[] data = toGzip(xml);
-			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(person, info), data);
+			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(person, info, invoice), data);
 			
 			LROEPF140GastosConFacturaConsultaRespuesta resp = (LROEPF140GastosConFacturaConsultaRespuesta) 
                     unmarshall(LROEPF140IngresosConFacturaConSGConsultaRespuesta.class, response.getResponseDataStr());

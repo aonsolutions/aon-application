@@ -3,6 +3,7 @@ export const INPUT = 'input';
 export const CHANGE = 'change';
 export const CLICK = 'click';
 export const CLOSE = 'close';
+export const CUSTOMER_CHANGE = 'customerChange';
 export const LOAD = 'load';
 export const DRAGOVER = 'dragover';
 export const DRAGENTER = 'dragenter';

@@ -802,10 +802,12 @@ export class AonInvoice extends AonElement {
 			customer.id = this.REGISTRY;
 			customer.showAddress = true;
 			customer.readonly = this.invoice.isReadonly();
-			customer.setCustomer(this.invoice.getRegistry())
+			customer.setCustomer(this.invoice.getRegistry());
 			customer.addEventListener(EVENT.SELECT_REGISTRY, () => this.onChangeRegistry(customer.getCustomer()));
+			customer.addEventListener(EVENT.CUSTOMER_CHANGE, () => {
+				this.invoice.receiver.address = customer.getCustomer().address;
+			});
 			table.addCell(customer, '4');	
-
 		} else {
 			let registry = new AonRegistry();
 			registry.id = this.REGISTRY;

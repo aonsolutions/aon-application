@@ -38,7 +38,7 @@ public class LROE140 extends LROE {
 		return cabecera;
 	}
 	
-	protected JSONObject buildJSON(Person person, LROEInfo info) {
+	protected JSONObject buildJSON(Person person, LROEInfo info, Invoice invoice) {
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.CON, "LROE");
 		json.put(IJsonNames.APA, info.getSubcapitulo());
@@ -51,7 +51,7 @@ public class LROE140 extends LROE {
 
 		JSONObject drs = new JSONObject();
 		drs.put(IJsonNames.MODE, info.getModelo());
-		drs.put(IJsonNames.EJER, AonDateUtils.getYear(new Date()));
+		drs.put(IJsonNames.EJER, AonDateUtils.getYear(invoice.getIssueDate()));
 		json.put(IJsonNames.DRS, drs);
 		return json;
 	}
