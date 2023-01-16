@@ -53,10 +53,10 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, String> BONUS_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
 			put("01", "CUOTA_EMPRESARIAL"); 	// 
-			put("03", "CGC_E"); 				// Cuota empresarial por Contingencias Comunes
+			put("03", "CGC_E + MEI_E"); 		// Cuota empresarial por Contingencias Comunes ¿ MEI ?
 			put("51", "CUOTA_EMPRESARIAL"); 	// Cuota Empresarial - Horas extras			
 			put("57", "CUOTA_EMPRESARIAL"); 	// Cuota Total
-			put("68", "CGC_E + IT_E + IMS_E"); 	// Contingencias Comunes y Profesionales - Cuota Total
+			put("68", "CGC_E + MEI_E + IT_E + IMS_E"); 	// Contingencias Comunes y Profesionales - Cuota Total
 			//put("81", "");
 		}
 	};
@@ -70,6 +70,7 @@ class PECListener  implements IdcParserListener {
 
 	static final Collection<DeductionProvider> REMOVE_ALL_DEDUCTIONS =  collection(
 			newRemoveDeduction(ContextVariable.CGC_EMPLOYEE),
+			newRemoveDeduction(ContextVariable.MEI_EMPLOYEE),
 			newRemoveDeduction(ContextVariable.FP_EMPLOYEE),
 			newRemoveDeduction(ContextVariable.UNEMPLOY_EMPLOYEE)
 	);
@@ -90,6 +91,7 @@ class PECListener  implements IdcParserListener {
 	
 	static final Collection<CostProvider> REMOVE_ALL_COSTS =  collection(
 			newRemoveCost(ContextVariable.CGC_ENTERPRISE),
+			newRemoveCost(ContextVariable.MEI_ENTERPRISE),
 			newRemoveCost(ContextVariable.FP_ENTERPRISE),
 			newRemoveCost(ContextVariable.UNEMPLOY_ENTERPRISE),
 			newRemoveCost(ContextVariable.IT_ENTERPRISE),
