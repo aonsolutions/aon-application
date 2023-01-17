@@ -1,11 +1,14 @@
 package com.esferalia.aon.gwt.payroll.server;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.io.Writer;
 import java.sql.Connection;
-import java.sql.SQLException;
+import java.util.Base64;
 import java.util.Date;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,10 +17,10 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.json.IJsonNames;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.MimeType;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
@@ -33,7 +36,8 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 		UPDATE_CERT("CertificadoCorrienteTGSS"),
 		WORKING_EMPLOYEE("TrabajadoresAlta"),
 		PRE_MOV_EMPLOYEE("MovPrevTrabajadores"),
-		IDC("Idc")
+		IDC("Idc"),
+		LABORAL_LIFE("LaboralLife")
 		;
 		
 		private String fileName;
@@ -65,6 +69,10 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 		// Domian and User
 		String userLogin =  !params.optString("login").isEmpty() ? params.getString("login") : params.getString("userLogin");
 		String domainName = !params.optString("domain").isEmpty() ? params.getString("domain") : params.getString("domainName"); 
+		
+		// Empty option or equal 0 get file response. Equals 1 downloadAttachment
+		String attachmentType = api.getData().getString("attachmentType");
+		Boolean downloadAttachment = AonStringUtils.isBlank(attachmentType) || AonStringUtils.equals(attachmentType, "0") ? false : true;
 
 		try (Connection connection = AonServletUtils.getConnection(domainName)){
 			
@@ -75,31 +83,48 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 			// Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			byte[] dataURI = null;
+			byte[] data = null;
 
 			switch (requestType) {
 				case UPDATE_CERT:
-					dataURI = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
+					data = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
 					break;
 				case WORKING_EMPLOYEE:
-					dataURI = SistemaRED.getReportAffiliateInAlta(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
+					data = SistemaRED.getReportAffiliateInAlta(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
 					break;
 				case PRE_MOV_EMPLOYEE:
-					dataURI = SistemaRED.getReportAffiliateInMovPrev(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
+					data = SistemaRED.getReportAffiliateInMovPrev(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
 					break;
 				case IDC:
-					dataURI = SistemaRED.getIDCCCC(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, new Date());
+					data = SistemaRED.getIDCCCC(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, new Date());
+					break;
+				case LABORAL_LIFE:
+					data = SistemaRED.getCccLaboralLife(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, new Date(), new Date());
 					break;
 				default:
 					throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
 			
-			Attach attach = new Attach()
-					.setData(dataURI)
-					.setMimeType(MimeType.PDF)
-					.setDescription(requestType.getFileName());
+			if(null == data)
+				throw new AonApiException("No existe documento");
 			
-			responseFile(response, attach);
+			if(downloadAttachment) {
+				Attach attach = new Attach()
+						.setData(data)
+						.setMimeType(MimeType.PDF)
+						.setDescription(requestType.getFileName());
+				
+				responseFile(response, attach);
+			} else {
+				try ( OutputStream os = response.getOutputStream();
+					  Writer writer = new OutputStreamWriter(os)) {
+						
+					response.setStatus(HttpServletResponse.SC_OK);
+					String base64 = Base64.getEncoder().encodeToString(data);
+					encodeURIComponent("application/pdf", base64, writer);
+					
+				}
+			}
 			
 		} catch (Exception e) {
 			error(request, response, e);
@@ -109,6 +134,16 @@ public class SistemaREDCCCServlet extends AonApiHttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) {
 		doGet(request, response);
+	}
+	
+	protected static void encodeURIComponent(String mime, String base64, Writer writer ) throws IOException {
+		// data:[<MIME-type>][;charset=<encoding>][;base64],<data>
+		writer.write("data:");
+		writer.write(mime);
+		writer.write(";base64,");
+		base64 = base64.replace('$', '+');
+		base64 = base64.replace('_', '/');
+		writer.write(base64);
 	}
 	
 }
