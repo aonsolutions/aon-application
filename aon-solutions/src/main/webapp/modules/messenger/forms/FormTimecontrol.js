@@ -138,7 +138,7 @@ const processAccept = async (tm,{date, time},aonMessengerChat) => {
             await saveTimeControlDetail(data);
             await aonMessengerChat.updateTaskStatus(TASK_STATUS.FINISHED, `${MSG.REQUEST} tramitada`);
         } else {
-            aonMessengerChat.showError({message:`Seleccione registro a modificar`, type:CONSTANT.ERROR});
+            aonMessengerChat.showMessageError(`Seleccione registro a modificar`);
         }
     } catch (err) {
         console.log(err);

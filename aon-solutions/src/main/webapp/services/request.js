@@ -235,9 +235,10 @@ const blobToBase64 = blob => new Promise((resolve, reject) => {
  *
  * @param {String} base64Data
  * @param {String} fileName
+ * @param {String} type contentType
  * @returns {Object} Object {fileBase64, fileName, contentType, action}
  */
-const getObjFromBase64 = (base64Data, fileName = undefined, type) => {
+const getObjFromBase64 = (base64Data, fileName = undefined, type=null) => {
   const base64Str = base64Data.replace(/^data:.+;base64,/, "");
   const contentType = type || base64Data.match(/[^:]\w+\/[\w-+\d.]+(?=;|,)/)[0];
   if(!fileName){
@@ -350,16 +351,14 @@ const requestFileUrl = (method, url, fn) => {
   xhr.onerror = () => {};
 };
 
-export const openFileMobile = async (url, type) => new Promise((resolve, reject) => {
-  console.log(type);
+export const openFileMobile = async (url, contentType=null) => new Promise((resolve, reject) => {;
     requestFileUrl("GET", url, (result, error) => {
       if (error) reject(error);
       else {
         const reader = new FileReader();
         reader.readAsDataURL(result);
         reader.onload = function () {
-          console.log(type);
-          resolve(getObjFromBase64(reader.result.toString(), undefined, type));
+          resolve(getObjFromBase64(reader.result.toString(), undefined, contentType));
         };
         reader.onerror = function () {
           reject(true);
