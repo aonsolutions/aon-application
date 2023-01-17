@@ -882,7 +882,7 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 
 	@Override
-	public void getComunicaEnterpriseSettings(String domainName, String currentUser, AsyncCallback<ComunicaEnterpriseSettings> callback) {
+	public void getComunicaEnterpriseSettings(String domainName, String currentUser, AsyncCallback<ComunicaEnterpriseSettings> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getComunicaEnterpriseSettings(domainName, currentUser, new AsyncCallbackWrapper<ComunicaEnterpriseSettings>(callback));
 	}
@@ -1132,7 +1132,7 @@ public class EnterprisesServiceAsyncDecorator implements
 		enterprisesServiceAsync.printMod145(domainName, user, mod145, callback);
 	}
 
-	// --------------------------- Laborallife (SistemaRED)
+	// --------------------------- SistemaRED
 	
 	@Override
 	public void getCCCLaboralLife(String domainName, String user, String regime, String ccc, Date from, Date to, AsyncCallback<String> callback) throws IllegalArgumentException {
@@ -1144,6 +1144,30 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getLaboralLife(String domainName, String user, String regime, String ccc, String nss, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getLaboralLife(domainName, user, regime, ccc, nss, callback);
+	}
+	
+	@Override
+	public void getIdcCCC(String domainName, String user, String regime, String ccc, Date date, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getIdcCCC(domainName, user, regime, ccc, date, callback);
+	}
+	
+	@Override
+	public void getEmployeePrevMov(String domainName, String user, String regime, String ccc, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getEmployeePrevMov(domainName, user, regime, ccc, callback);
+	}
+
+	@Override
+	public void getEmployeesWorking(String domainName, String user, String regime, String ccc, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getEmployeesWorking(domainName, user, regime, ccc, callback);
+	}
+	
+	@Override
+	public void getUpdateCert(String domainName, String user, String regime, String ccc, AsyncCallback<String> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getUpdateCert(domainName, user, regime, ccc, callback);
 	}
 
 }
