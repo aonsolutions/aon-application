@@ -13,6 +13,12 @@ public class TbaiUri {
 	private static final String URL_ARABA_EMISION_TEST = "https://pruebas-ticketbai.araba.eus/TicketBAI/v1/facturas/";
 	private static final String URL_ARABA_ANULACION = "https://ticketbai.araba.eus/TicketBAI/v1/anulaciones/";
 	private static final String URL_ARABA_ANULACION_TEST = "https://pruebas-ticketbai.araba.eus/TicketBAI/v1/anulaciones/";
+	private static final String URL_ARABA_ZUZENDU = "https://ticketbai.araba.eus/TicketBAI/v1/facturas/subsanarmodificar";
+	private static final String URL_ARABA_ZUZENDU_TEST = "https://pruebas-ticketbai.araba.eus/TicketBAI/v1/facturas/subsanarmodificar";
+	private static final String URL_ARABA_ZUZENDU_BAJA = "https://ticketbai.araba.eus/TicketBAI/v1/anulaciones/baja";
+	private static final String URL_ARABA_ZUZENDU_BAJA_TEST = "https://pruebas-ticketbai.araba.eus/TicketBAI/v1/anulaciones/baja";
+	private static final String URL_ARABA_OSATU = "https://ticketbai.araba.eus/TicketBAI/v1/osatu/";
+	private static final String URL_ARABA_OSATU_TEST = "https://pruebas-ticketbai.araba.eus/TicketBAI/v1/osatu/";
 	private static final String URL_ARABA_QR = "https://ticketbai.araba.eus/tbai/qrtbai/";
 	private static final String URL_ARABA_QR_TEST = "https://pruebas-ticketbai.araba.eus/tbai/qrtbai/";
 	
@@ -24,9 +30,19 @@ public class TbaiUri {
 	private static final String URL_BIZKAIA_QR_TEST = "https://batuz.eus/QRTBAI/";
 	
 	private static final String URL_GIPUZKOA_EMISION = "https://tbai-z.egoitza.gipuzkoa.eus/sarrerak/alta";
-	private static final String URL_GIPUZKOA_EMISION_TEST = "https://tbai-prep.egoitza.gipuzkoa.eus/WAS/HACI/HTBRecepcionFacturasWEB/rest/recepcionFacturas/alta";
+	private static final String URL_GIPUZKOA_EMISION_TEST = "https://tbai-z.prep.gipuzkoa.eus/sarrerak/alta";
 	private static final String URL_GIPUZKOA_ANULACION = "https://tbai-z.egoitza.gipuzkoa.eus/sarrerak/baja";
-	private static final String URL_GIPUZKOA_ANULACION_TEST = "https://tbai-prep.egoitza.gipuzkoa.eus/WAS/HACI/HTBRecepcionFacturasWEB/rest/recepcionFacturas/anulacion";
+	private static final String URL_GIPUZKOA_ANULACION_TEST = "https://tbai-z.prep.gipuzkoa.eus/sarrerak/baja";
+	private static final String URL_GIPUZKOA_ZUZENDU = "https://tbai-z.egoitza.gipuzkoa.eus/sarrerak/zuzendu-alta";
+	private static final String URL_GIPUZKOA_ZUZENDU_TEST = "https://tbai-z.prep.gipuzkoa.eus/sarrerak/zuzendu-alta";
+	private static final String URL_GIPUZKOA_ZUZENDU_BAJA = "https://tbai-z.egoitza.gipuzkoa.eus/sarrerak/zuzendu-baja";
+	private static final String URL_GIPUZKOA_ZUZENDU_BAJA_TEST = "https://tbai-z.prep.gipuzkoa.eus/sarrerak/zuzendu-baja";
+	private static final String URL_GIPUZKOA_OSATU = "https://tbai-z.egoitza.gipuzkoa.eus/sarrerak/osatu";
+	private static final String URL_GIPUZKOA_OSATU_TEST = "https://tbai-z.prep.gipuzkoa.eus/sarrerak/osatu";
+	private static final String URL_GIPUZKOA_KONTSULTA = "";
+	private static final String URL_GIPUZKOA_KONTSULTA_TEST = "https://tbai-k.prep.gipuzkoa.eus/kontsulta/fakturak";
+	private static final String URL_GIPUZKOA_KONTSULTA_LAST = "";
+	private static final String URL_GIPUZKOA_KONTSULTA_LAST_TEST = "https://tbai-k.prep.gipuzkoa.eus/kontsulta/azkena";
 	private static final String URL_GIPUZKOA_QR = "https://tbai.egoitza.gipuzkoa.eus/qr/";
 	private static final String URL_GIPUZKOA_QR_TEST = "https://tbai.prep.gipuzkoa.eus/qr/";
 	
@@ -48,6 +64,36 @@ public class TbaiUri {
 			return tbai.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
 		else if(Administration.GIPUZKOA.equals(tbai.getAdministration()))
 			return tbai.isTest() ? URL_GIPUZKOA_ANULACION_TEST : URL_GIPUZKOA_ANULACION;
+		return "";
+	}
+	
+	public static String getUrlZuzendu(TbaiConfiguration  tbai) {
+		if(Administration.ALAVA.equals(tbai.getAdministration()))
+			return tbai.isTest() ? URL_ARABA_ZUZENDU_TEST : URL_ARABA_ZUZENDU;
+		else if(Administration.BIZKAIA.equals(tbai.getAdministration()))
+			return tbai.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
+		else if(Administration.GIPUZKOA.equals(tbai.getAdministration()))
+			return tbai.isTest() ? URL_GIPUZKOA_ZUZENDU_TEST : URL_GIPUZKOA_ZUZENDU;
+		return "";
+	}
+	
+	public static String getUrlZuzenduBaja(TbaiConfiguration  tbai) {
+		if(Administration.ALAVA.equals(tbai.getAdministration()))
+			return tbai.isTest() ? URL_ARABA_ZUZENDU_BAJA_TEST : URL_ARABA_ZUZENDU_BAJA;
+		else if(Administration.BIZKAIA.equals(tbai.getAdministration()))
+			return tbai.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
+		else if(Administration.GIPUZKOA.equals(tbai.getAdministration()))
+			return tbai.isTest() ? URL_GIPUZKOA_ZUZENDU_BAJA_TEST : URL_GIPUZKOA_ZUZENDU_BAJA;
+		return "";
+	}
+	
+	public static String getUrlOsatu(TbaiConfiguration  tbai) {
+		if(Administration.ALAVA.equals(tbai.getAdministration()))
+			return tbai.isTest() ? URL_ARABA_OSATU_TEST : URL_ARABA_OSATU;
+		else if(Administration.BIZKAIA.equals(tbai.getAdministration()))
+			return tbai.isTest() ? URL_BIZKAIA_TEST : URL_BIZKAIA;
+		else if(Administration.GIPUZKOA.equals(tbai.getAdministration()))
+			return tbai.isTest() ? URL_GIPUZKOA_OSATU_TEST : URL_GIPUZKOA_OSATU;
 		return "";
 	}
 	
