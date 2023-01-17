@@ -1530,6 +1530,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("SALARIO_14_PAGAS_MENSUAL", "SALARIO_14P_M");
 		variablesMap.put("SALARIO_15_PAGAS_MENSUAL", "SALARIO_15P_M");
 		variablesMap.put("SALARIO_16_PAGAS_MENSUAL", "SALARIO_16P_M");
+		variablesMap.put("SALARIO_16_PAGAS_ANUAL", "SALARIO_16P_A");
 		variablesMap.put("SALARIO_BASE_ANUAL", "SALARIO_ANUAL");
 		variablesMap.put("SALARIO_BASE_ANUAL_ANUAL", "SALARIO_ANUAL");
 		variablesMap.put("SALARIO_BASE_CON_ANTIGUEDAD_MENSUAL", "SALARIO_ANTIG");
