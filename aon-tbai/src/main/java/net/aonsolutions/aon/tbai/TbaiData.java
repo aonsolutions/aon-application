@@ -1,11 +1,19 @@
 package net.aonsolutions.aon.tbai;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.LinkedList;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.json.JSONObject;
 
@@ -32,6 +40,7 @@ import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.tbai.responses.TbaiResponse;
+import ticketbai.emision.TicketBai;
 
 public class TbaiData {
 
@@ -55,6 +64,27 @@ public class TbaiData {
 	
 	public boolean isTest() {
 		return getTbaiConfiguration().isTest();
+	}
+	
+	public TicketBai getTicketBai(Domain domain, User user, Integer invoice, TbaiConfiguration tbaiConfiguration) throws Exception {
+		DataResponseSource source = tbaiConfiguration.isTest()
+				? DataResponseSource.TBAI_TEST
+				: DataResponseSource.TBAI;
+		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), user.getLogin(), f -> 
+			f.getDomainProperty().eq(domain.getId())
+			.and(f.getSourceProperty().eq(source.value()))
+			.and(f.getSourceIdProperty().eq(invoice))
+			.and(f.getCodeProperty().eq("ok")));
+		
+		Attach requestAttach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f -> f.getSourceTypeProperty().eq(DataAttachSource.TBAI.value())
+				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
+				.and(f.getSourceBatchProperty().eq(dr.getDataRequest())), AttachType.DATA, true);
+		
+		final JAXBContext jaxbContext = JAXBContext.newInstance(TicketBai.class);
+		final Unmarshaller jaxbMarshaller = jaxbContext.createUnmarshaller();
+		InputStream is = new ByteArrayInputStream(requestAttach.getData());
+		return (TicketBai) jaxbMarshaller.unmarshal(is);
+
 	}
 	
 	public TBAIInformation get(Domain domain, User user, Integer invoice) {
@@ -170,6 +200,23 @@ public class TbaiData {
 			.and(f.getSourceProperty().eq(source.value()))
 			.and(f.getSourceIdProperty().ne(actualInvoice))
 			.and(f.getCodeProperty().ne("baja"))
+			);
+		
+		DataResponseDetail drd = dr.getId() != null ? AON.getDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), f -> 
+			f.getDomainProperty().eq(domain.getId())
+			.and(f.getDataResponseProperty().eq(dr.getId()))
+			.and(f.getDataVariableProperty().eq("blockchain"))).orElse(new DataResponseDetail()) : new DataResponseDetail();
+		
+		return TbaiBlockchain.fromJSON(drd.getDataValue());
+	}
+	
+	public TbaiBlockchain getInvoiceBlockchain(Domain domain, User user, Integer invoice) {
+		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
+		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), user.getLogin(), f -> 
+			f.getDomainProperty().eq(domain.getId())
+			.and(f.getSourceProperty().eq(source.value()))
+			.and(f.getSourceIdProperty().ne(invoice))
+			.and(f.getCodeProperty().eq("ok"))
 			);
 		
 		DataResponseDetail drd = dr.getId() != null ? AON.getDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), f -> 
