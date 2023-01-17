@@ -76,20 +76,17 @@ export class AonPayrollList extends AonElement {
 
 
   buildToolbarSearch(){
-    let btnSearch = this.getApplication().addSearchOption();
+    const btnSearch = this.getApplication().addSearchOption();
     
-    const searchFn = ({detail}) => {
-      this.searchFilter = detail;
-      this.search();
-    }
-    const searchValueFn = ({detail})=>{
-      this._list = [];
-      if(detail) this.getApplicationParent().setDataFilter(detail);
-    }
-
-    btnSearch.addEventListener(EVENT.SEARCH, searchFn);
-    btnSearch.addEventListener(EVENT.SEARCH_NEW, searchValueFn);
-
+    let timeOut = null;
+    btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail})=>{
+			clearTimeout(timeOut);
+			
+			timeOut = setTimeout(() => {
+        this._list = [];
+        if(detail) this.getApplicationParent().setDataFilter(detail);
+			}, 300);
+    });
     
     btnSearch.buildOptionsFilter([
       ...PAYROLL_FILTER,
@@ -103,7 +100,7 @@ export class AonPayrollList extends AonElement {
     // ----------WORKPLACES ------------
     let workplaces = await getWorkplaceCCCs();
     let workplaceEl = this.getElement("workplace");
-    workplaceEl.options = JSON.stringify( workplaces.map(({workplace})=> ({ name: workplace.description, value: workplace.id})) );
+    workplaceEl.setOptions(workplaces.map(({workplace})=> ({ name: workplace.description, value: workplace.id})));
     workplaceEl.addEventListener(EVENT.CHANGE, ({detail}) => {
       if(detail) this.getEmployees(detail);
     });
@@ -112,7 +109,7 @@ export class AonPayrollList extends AonElement {
 
     //------------------PERIOD---------
     let periodEl = this.getElement("period");
-    periodEl.options = JSON.stringify(getPeriodLaboral());
+    periodEl.setOptions(getPeriodLaboral());
     periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
       if(detail){
         const {startDate, endDate} = detail;
@@ -266,7 +263,7 @@ export class AonPayrollList extends AonElement {
       let employeeEl = this.getElement("employee");
       let employees = await getAllEmployeesWorkplace({workplace: detail.value, allEmployees:true});
       if(employees.length>0) {
-        employeeEl.options = JSON.stringify(
+        employeeEl.setOptions(
           sortBy(employees, 'surName', 'asc').map(({name, surName, contractId})=> ({name:surName+" "+name, value:contractId}))
         );
         employeeEl.hidden =  false;

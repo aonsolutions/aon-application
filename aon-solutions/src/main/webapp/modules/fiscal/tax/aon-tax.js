@@ -338,7 +338,7 @@ export class AonTax extends AonElement {
           name: `${r.bank_account} - ${r.alias}`,
           value: `${this.replaceAllPoint(r.bank_account)}`
         }));
-        iban.options = JSON.stringify(options);
+        iban.setOptions(options);
         if(resp.iban) {
           iban.value = resp.iban;
         }
