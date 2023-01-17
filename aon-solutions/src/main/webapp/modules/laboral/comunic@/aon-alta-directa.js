@@ -116,7 +116,7 @@ export class AonAltaDirecta extends AonElement {
             toolbar.addButton2(ACTION_COMUNICA.BAJA, () => this.openDialogBaja());
         }
     
-        if( !this.data || (this.data && !this.data.fra) ){ // ALTA
+        if( !this.data || this.isEdit() || (this.data && !this.data.fra)  ){ // ALTA
             toolbar.addButton2(ACTION_COMUNICA.COMUNICAR, () =>  this.formSubmit());
         }
 

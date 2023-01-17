@@ -109,7 +109,7 @@ const fillProject = async (task, projects =[], registry = undefined) => {
             if( projects.length === 0 && registry ){
                 projects = await getProjects({ registry: task.getRegistry().id });
             }
-              
+            
             aonSelect.setOptions(projects.map(pj => ({...pj, value:pj.id, name:pj.type.description})));
             
             let display = "block";
@@ -163,7 +163,7 @@ const fillWorkGroup = async (task) => {
             if(detail){
                 task.setWorkgroup(detail);
             }
-           
+        
             fillTaskHolder(task);
         });
 
@@ -310,10 +310,10 @@ const fillProcessType =  (task) => {
     }
 
     aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
-      if(detail && detail.value) {
-        task.setSourceId(detail.value)
-        task.setTitle(task.getTitle() +" "+detail.name);
-      }
+        if(detail && detail.value) {
+            task.setSourceId(detail.value)
+            task.setTitle(task.getTitle() +" "+detail.name);
+        }
     });
 }
 
@@ -323,9 +323,10 @@ const fillProcessType =  (task) => {
  * @param {Array} workflows array de flujo de trabajo
  */
 const fillChat = (task, meId, workflows=[])=>{
-    let aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
+    const aonMessengerChat = document.getElementById(MESSENGER_VIEWS.AON_MESSENGER_CHAT);
     const taskMainId = aonMessengerChat.task.id;
     const aonTab = document.getElementById(MESSENGER_IDS.AON_TAB);
+
     waitEl(`#${MESSENGER_IDS.MESSENGER_CHAT}`).then(chat=>{
         chat.innerHTML = "";
         if(workflows.length == 0){
@@ -345,14 +346,14 @@ const fillChat = (task, meId, workflows=[])=>{
                     id: "noIdDescription",
                     type:WORKFLOW_TYPES.OPEN,
                     comment: observation,
-                    me:true,
                     direction: MESSENGER_DIRECTION.RIGHT,
                     creation_user: task.getCreationUser(),
                     date: date,
                     notification_date: date,
                     creation_date: date,
-                    notification_user: null,
                     task_holder:{},
+                    me:true,
+                    notification_user: null,
                     email:null
                 });
             } else if(firstComment && !firstComment.comment){
@@ -415,7 +416,7 @@ const fillChat = (task, meId, workflows=[])=>{
                 }
             });
         }
-   })
+  })
 }
 
 /**
@@ -437,11 +438,13 @@ const fillTypeRequestCau =  async (task) => {
     
             aonSelect.addEventListener(EVENT.CHANGE, ({detail})=>{
                 if(detail && detail.value) {
-                   task.setTaskType(detail);
+                  task.setTaskType(detail);
                 }
             });
             const value = task.getTaskType();
-            if(value) aonSelect.value = value;
+            
+            if(value) 
+              aonSelect.value = value;
         }catch(e){}
         aonSelect.loading(false);
     }

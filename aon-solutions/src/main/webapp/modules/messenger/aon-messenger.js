@@ -233,11 +233,11 @@ export class AonMessenger extends AonElement {
 		let timeOut = null;
 		
 		btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail}) => {
-		  clearTimeout(timeOut);
-		  
-		  timeOut = setTimeout(() => {
-			this._filter.search = detail.search;
-			this.setListFilter({
+			clearTimeout(timeOut);
+			
+			timeOut = setTimeout(() => {
+				this._filter.search = detail.search;
+				this.setListFilter({
 				...this.getListFilter(), 
 				page:0, 
 				perPage:30, 
@@ -248,9 +248,9 @@ export class AonMessenger extends AonElement {
 				period: detail.period,
 				startDate: detail.startDate,
 				endDate: detail.endDate
-			  });
-			this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
-		  }, 300);
+				});
+				this.showView(MESSENGER_VIEWS.AON_MESSENGER_LIST, undefined, this.getListFilter());
+			}, 300);
 		});
 	
 		if(this.cau){
