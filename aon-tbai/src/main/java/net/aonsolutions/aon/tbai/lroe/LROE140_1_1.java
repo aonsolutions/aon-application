@@ -89,7 +89,7 @@ public class LROE140_1_1 extends LROE140 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(person, info, invoice), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -125,7 +125,7 @@ public class LROE140_1_1 extends LROE140 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(person, info, invoice), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -144,7 +144,7 @@ public class LROE140_1_1 extends LROE140 {
 			jaxbMarshaller.marshal( lroe, bos );
 			byte[] xml = bos.toByteArray();
 			byte[] data = toGzip(xml);
-			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(person, info), data);
+			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(person, info, invoice), data);
 			
 			LROEPF140IngresosConFacturaConSGConsultaRespuesta resp = (LROEPF140IngresosConFacturaConSGConsultaRespuesta) 
 					unmarshall(LROEPF140IngresosConFacturaConSGConsultaRespuesta.class, response.getResponseDataStr());

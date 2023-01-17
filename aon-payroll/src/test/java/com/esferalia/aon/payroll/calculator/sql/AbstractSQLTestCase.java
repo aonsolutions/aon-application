@@ -104,6 +104,7 @@ import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
+import com.esferalia.aon.jooq.tables.records.SystemPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
@@ -306,7 +307,7 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
-	protected final void addSSRegimePayment(AONContext aonContext,
+	protected SystemPaymentRecord addSSRegimePayment(AONContext aonContext,
 			SSRegimeType ssRegimetype,
 			Date startDate,
 			PaymentConceptRecord concept,
@@ -316,7 +317,8 @@ public abstract class AbstractSQLTestCase {
 			String irpfExpression,
 			SalaryType salaryType) {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
-
+		
+		SystemPaymentRecord systemPayment = 
 		aonContext.getDslContext().insertInto(SYSTEM_PAYMENT)
 				.set(SYSTEM_PAYMENT.PAYMENT_CONCEPT, concept != null? concept.getId(): null)
 				.set(SYSTEM_PAYMENT.START_DATE, startDate)
@@ -328,13 +330,15 @@ public abstract class AbstractSQLTestCase {
 						(byte) (paymentType != null ? paymentType.ordinal() : PaymentType.CRA_0001.ordinal()))
 				.set(SYSTEM_PAYMENT.SALARY_TYPE,
 						(byte) (salaryType != null ? salaryType.ordinal() : SalaryType.SALARY.ordinal()))
-
-				.execute();
+				.returning()
+				.fetchOne();
 
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+		
+		return systemPayment;
 	}
 
-	protected final void addSSRegimePayment(AONContext aonContext,
+	protected SystemPaymentRecord addSSRegimePayment(AONContext aonContext,
 			SSRegimeType ssRegimetype,
 			Date startDate,
 			PaymentType paymentType,
@@ -342,6 +346,7 @@ public abstract class AbstractSQLTestCase {
 			String quoteExpression,
 			String irpfExpression,
 			SalaryType salaryType) {
+		return 
 		addSSRegimePayment(aonContext,
 				ssRegimetype,
 				startDate,

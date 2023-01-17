@@ -482,9 +482,14 @@ public class InvoiceDAO {
 		
 			if(invoice.isRectifier()) {
 				Invoice rectify = getInvoice(ctx, invoice.getRectificationInvoice());
-				invoice.setRectificationInvoiceSeries(rectify.getSeries());
-				invoice.setRectificationInvoiceDate(rectify.getFiscal().getExpDate());
-				invoice.setRectificationInvoiceNumber(rectify.getNumber());
+				if(rectify != null) {
+					invoice.setRectificationInvoiceSeries(rectify.getSeries());
+					invoice.setRectificationInvoiceDate(rectify.getFiscal().getExpDate() != null 
+							? rectify.getFiscal().getExpDate() 
+							: rectify.getIssueDate());
+					invoice.setRectificationInvoiceNumber(rectify.getNumber());
+					invoice.setRectificationInvoiceReference(rectify.getReferenceCode());
+				}
 			}
 		}
 		return invoice;
