@@ -4,6 +4,7 @@
 	xmlns:a='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:c='urn:import:com.google.gwt.user.cellview.client'
 	xmlns:d='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions' >
 
 	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
@@ -15,6 +16,13 @@
 			flex-direction: column;
 			gap: 5px;
 			padding: 5px;
+		}
+		
+		.cmdBtn{
+			background-position: center left;
+			background-repeat: no-repeat;
+			padding-left: 25px !important;
+			background-size: contain;
 		}
 		
 		.pointer{
@@ -94,7 +102,20 @@
 		</g:DockLayoutPanel>
 		
 		<d:ContrataEmployee ui:field="contrataEmployee" />
- 		<d:PDFViewer styleName="reset" ui:field='pdfViewer' /> 
+		
+		<g:DockLayoutPanel unit="PX">
+			<g:north size="50">
+				<aon:AonToolbar ui:field="pdfViewerToolbar"/>
+			</g:north>
+			<g:center>
+				<g:HTMLPanel styleName="{style.flexColumn}">
+					<g:HTMLPanel ui:field="messagePDFContainer" />
+					<p:FullViewer styleName="reset" ui:field='pdfViewer' />
+			 	</g:HTMLPanel>				
+			</g:center>
+		</g:DockLayoutPanel>
+		
+
 		<d:EnterpriseSalary ui:field="enterpriseSalary"></d:EnterpriseSalary>
 		
 	</g:DeckPanel>

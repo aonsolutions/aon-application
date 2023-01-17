@@ -18,12 +18,14 @@ public class Mod145Object {
 	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	
 	private Integer contractId;
+	private Integer domainId;
 	private List<Mod145> mod145List;
 	
 	// ----------------------------------------------- Constructor 
 	
-	public Mod145Object(Integer contractId) {
+	public Mod145Object(Integer contractId, Integer domainId) {
 		this.contractId = contractId;
+		this.domainId = domainId;
 		this.mod145List = new ArrayList<>();
 	}
 
@@ -76,6 +78,10 @@ public class Mod145Object {
 	}
 	
 	// ----------------------------------------------- Methods
+	
+	public Integer getDomainId() {
+		return this.domainId;
+	}
 	
 	public Integer getContractId() {
 		return this.contractId;

@@ -128,6 +128,22 @@ public class ActivityDraftObject extends AbstractDraftObject {
 		
 	}
 	
+	public void getUpdateCert(String regime, String ccc, Consumer<String> success, Consumer<Throwable> failure) {
+		enterprisesService.getUpdateCert(regime, ccc, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+		
+	}
+	
 	// ------------------------------------------------- SET METHODS -------------------------------------------------
 	
 	public void setActivityDescription(String description) {

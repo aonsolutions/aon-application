@@ -523,6 +523,7 @@ public abstract class Mod145 extends Composite {
 	private void createMod145() {
 		this.mod145 = new com.esferalia.aon.occam.api.model.mod145.Mod145()
 				.setId(generateId())
+				.setDomain(mod145Object.getDomainId())
 				.setContract(mod145Object.getContractId())
 				.setIssueDate(new Date())
 				.setDeleted(false);
@@ -532,6 +533,7 @@ public abstract class Mod145 extends Composite {
 		if(this.mod145.getDescendients().stream().filter(descendient -> !descendient.isDeleted()).collect(Collectors.toList()).size() < 4) {
 			IrpfDataDescendients descendient = new IrpfDataDescendients()
 					.setId(generateId())
+					.setDomain(mod145Object.getDomainId())
 					.setIrpfData(this.mod145.getId())
 					.setDeleted(false);
 			
@@ -546,6 +548,7 @@ public abstract class Mod145 extends Composite {
 		if(this.mod145.getAscendants().stream().filter(ascendant -> !ascendant.isDeleted()).collect(Collectors.toList()).size() < 2) {
 			IrpfDataAscendants ascendant = new IrpfDataAscendants()
 					.setId(generateId())
+					.setDomain(mod145Object.getDomainId())
 					.setIrpfData(this.mod145.getId())
 					.setDeleted(false);
 			

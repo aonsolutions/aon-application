@@ -255,6 +255,16 @@ public class SistemaRED {
 		}
 	}
 
+	public static byte[] getCccLaboralLife(final byte certificateData[], final String certificatePassword,
+			final String certificateType, String regime, String ccc, Date from, Date to) throws SegSocialException {
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			return SistemaREDEmployee.getCccLaboralLife(certificateInputStream, certificatePassword, certificateType, 
+					regime, ccc, from, to);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
+	
 	public static byte[] getCccLaboralLife(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, Date from, Date to) throws SegSocialException {
 		try {

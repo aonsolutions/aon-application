@@ -254,7 +254,7 @@ public class ContrataEmployeeObject {
 	// ------------------------------------------------- Database Methods (Mod145)
 	
 	public void getMod145Object(Consumer<Mod145Object> success) {
-		Mod145Object mod145Object = new Mod145Object(contractData.getContractId());
+		Mod145Object mod145Object = new Mod145Object(contractData.getContractId(), employeeData.getDomain());
 		success.accept(mod145Object);
 	}
 	
