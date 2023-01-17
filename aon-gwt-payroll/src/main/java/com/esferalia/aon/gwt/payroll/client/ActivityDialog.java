@@ -84,6 +84,22 @@ public class ActivityDialog extends AonCustomDialog {
 		public void fireWarningMessage(Map<String, String> warningMap) {
 			AonMessagePanel.showWarning(messagePanel, warningMap);
 		}
+
+		@Override
+		protected void fireLoadingMessage(String message) {
+			AonMessagePanel.showLoading(messagePanel, message);
+		}
+
+		@Override
+		protected void hideMessage() {
+			AonMessagePanel.hideMessage(messagePanel);
+		}
+
+		@Override
+		public void showPDF(String dataURI, boolean isLaboralLife) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 	

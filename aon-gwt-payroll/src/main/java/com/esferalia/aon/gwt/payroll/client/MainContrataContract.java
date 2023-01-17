@@ -2,16 +2,20 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonExpandButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -20,17 +24,20 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus.AffiliatedNotFound;
-import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -44,7 +51,6 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -56,13 +62,15 @@ import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.NoSelectionModel;
-import com.google.gwt.xhr.client.XMLHttpRequest;
+
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class MainContrataContract extends MainEntryPoint {
 
@@ -76,8 +84,48 @@ public class MainContrataContract extends MainEntryPoint {
 		@Template ("<span class=\"aon_tab_label {1}\">{0}</span>")
 		SafeHtml tab(String title, String icon);
 	}
+	
 	private static final TabLayoutFolderSafeTemplate TABLAYOUT_FOLDER_TEMPLATE = GWT.create(TabLayoutFolderSafeTemplate.class);
 
+	// ------------------------------------------------- ScheduledCommand (TGSS)
+
+	class UpdateCertCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onUpdateCert();
+		}
+	}
+	
+	class LaboralLifeCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onLaboralLife(new Date());
+		}
+	}
+	
+	class TGSSContextMenu extends ContextMenu {
+		
+		private MenuItem updateCert;
+
+		public TGSSContextMenu() {
+			updateCert = addMenuItem("Cert. de estar al corriente con TGSS", new UpdateCertCommand(), AON.CSS.aonIconTgss(), "updateCert");
+			addMenuItem("Vida laboral", new LaboralLifeCommand(), AON.CSS.aonIconTgss(), "laboralLife");
+		}
+		
+		private MenuItem addMenuItem(String title, ScheduledCommand command, String iconStyle, String debugId) {
+			MenuItem item = addItem(title, command, iconStyle, AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			item.ensureDebugId(debugId);
+			return item;
+		}
+		
+		public MenuItem getUpdateCert() {
+			return this.updateCert;
+		}
+
+	}
+	
 	// ------------------------------------------ UiFields
 
 	@UiField
@@ -90,6 +138,7 @@ public class MainContrataContract extends MainEntryPoint {
 		String inactive();
 		String prevAlta();
 		String closeEnd();
+		String cmdBtn();
 	}
 	
 	@UiField
@@ -139,9 +188,15 @@ public class MainContrataContract extends MainEntryPoint {
 	ContrataEmployee contrataEmployee;
 
 	// PDF Viewer
+	
+	@UiField
+	HTMLPanel messagePDFContainer;
+	
+	@UiField(provided = true)
+	AonToolbar pdfViewerToolbar;
 
 	@UiField
-	PDFViewer pdfViewer;
+	FullViewer pdfViewer;
 
 	// Enterprise Salary
 
@@ -162,7 +217,8 @@ public class MainContrataContract extends MainEntryPoint {
 	private List<EmployeeContractInfo> employeesList = Collections.emptyList();
 	private List<EmployeeContractInfo> trashEmployeesList = Collections.emptyList();
 	
-	private AonToolbarButton up2DateSS;
+	private AonExpandButton tgssExpandButton;
+	private TGSSContextMenu tgssContextMenu;
 
 	private TextBox employeeSB;
 	private CheckBox inactiveContractsCB;
@@ -288,7 +344,9 @@ public class MainContrataContract extends MainEntryPoint {
 		provideEmployeesDataGrid();
 		provideTrashEmployeesDataGrid();
 		
-		getToolbarPanel();
+		this.employeeToolbar = new AonToolbar("CONTRATOS");
+		this.pdfViewerToolbar = new AonToolbar("CONTRATOS");
+	
 		getTrashToolbarPanel();
 
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
@@ -296,16 +354,22 @@ public class MainContrataContract extends MainEntryPoint {
 
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
+		
+		showContracts();
+		
+		getToolbarPanel();
+		getToolbarPDFViewerPanel();
 
 		getFilterEmployeePanel();
 
 		// Show table
 		deckPanel.showWidget(0);
 
+		tgssContextMenu = new TGSSContextMenu();
+		
 		initFootPanel();
 		initResultsPanel();
 		initProgressPanel();
-		initPDFViewer();
 	}
 
 	// ------------------------------------------ Provide Employees DataGrid
@@ -921,12 +985,6 @@ public class MainContrataContract extends MainEntryPoint {
 
 	// ------------------------------------------ DeckPanel Methods
 
-	protected void showPFDF(String dataURI) {
-		pdfViewer.setTitle("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.");
-		pdfViewer.setDocument(dataURI, Constants.DEFAULT_ZOOM / 100.00);
-		deckPanel.showWidget(3);
-	}
-
 	protected void showTrashEmployee() {
 		deckPanel.showWidget(1);
 	}
@@ -1107,16 +1165,9 @@ public class MainContrataContract extends MainEntryPoint {
 		if(progressPanel!=null) 
 			visibleTabItem(progressPanel, false);
 	}
-
-	private void initPDFViewer() {
-		Button closeButton = new Button("Cerrar");
-		closeButton.setStylePrimaryName(AON.AON_ICON_CANCEL);
-		closeButton.addClickHandler(e -> deckPanel.showWidget(0));
-		pdfViewer.addCustomToolBarButton(closeButton);
-	}
 	
 	private void setSistemaREDVisible(boolean visible) {
-		up2DateSS.setVisible(visible);
+		tgssExpandButton.setVisible(visible);
 	}
 
 	private void checkStatus(MainContrataContractObject mainContrataContractObject) {
@@ -1242,7 +1293,6 @@ public class MainContrataContract extends MainEntryPoint {
 	// ------------------------------------------ Toolbar
 	
 	private void getToolbarPanel() {
-		employeeToolbar = new AonToolbar("Contratos");
 
 		AonToolbarButton newContract = new AonToolbarButton("Nuevo contrato", AON.CSS.aonIconAdd());
 		newContract.addClickHandler(e -> onNewContract());
@@ -1251,10 +1301,22 @@ public class MainContrataContract extends MainEntryPoint {
 		AonToolbarButton trashListBtn = new AonToolbarButton("Papelera Contratos", AON.CSS.aonIconTrashList());
 		trashListBtn.addClickHandler(e -> onTrashListBtn());
 		employeeToolbar.add(trashListBtn);
+		
+		tgssExpandButton = new AonExpandButton("TGSS", AON.CSS.aonIconTgss()) {
 
-		up2DateSS = new AonToolbarButton("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", AON.CSS.aonIconTgss());
-		up2DateSS.addClickHandler(e -> onUp2DateSS());
-		employeeToolbar.add(up2DateSS);
+			@Override
+			public void onExpandClick(ClickEvent event) {
+				NativeEvent nativeEvent = event.getNativeEvent();
+				tgssContextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+				tgssContextMenu.show();
+			}
+
+			@Override
+			public void onDefaultClick(ClickEvent evet) {
+				onUpdateCert();
+			}
+		};
+		employeeToolbar.add(tgssExpandButton);
 
 		AonToolbarButton salariesBtn = new AonToolbarButton("N\u00F3minas Empresa", AON.CSS.aonIconReceipt());
 		salariesBtn.addClickHandler(e -> showEnterpriseSalary());
@@ -1263,6 +1325,68 @@ public class MainContrataContract extends MainEntryPoint {
 		AonToolbarButton exportExcelBtn = new AonToolbarButton("Exportar Contratos Empresa", AON.CSS.aonIconExcel());
 		exportExcelBtn.addClickHandler(e -> exportEnterpriseContracts());
 		employeeToolbar.add(exportExcelBtn);
+	}
+	
+	private void onUpdateCert() {
+		AonMessagePanel.showLoading(messageContainer, "Obteniendo Cert. de estar al corriente con TGSS ...");
+		Pair<String, String> completeCCC = mainContrataContractObject.getPrincipalAccount();
+		
+		mainContrataContractObject.getUpdateCert(completeCCC.getKey(), completeCCC.getValue(),
+				dataURI -> {
+					showPdf(false);
+					pdfViewer.open(dataURI);
+					AonMessagePanel.hideMessage(messageContainer);
+				}, f -> {
+					Map<String, String> warningMap = new HashMap<>();
+					warningMap.put("Error obtenci\u00f3n TGSS", f.getMessage());
+					AonMessagePanel.showWarning(messageContainer, warningMap);
+				});
+	}
+	
+	public void onLaboralLife(Date date) {
+		AonMessagePanel.showLoading(messageContainer, "Obteniendo vida laboral ...");
+		
+		Pair<String, String> completeCCC = mainContrataContractObject.getPrincipalAccount();
+		
+		mainContrataContractObject.getCCCLaboralLife(completeCCC.getKey(), completeCCC.getValue(), date, new Date(),
+				dataURI -> {
+					showPdf(true);
+					pdfViewer.open(dataURI);
+					AonMessagePanel.hideMessage(messageContainer);
+				}, f -> {
+					Map<String, String> warningMap = new HashMap<>();
+					warningMap.put("Error obtenci\u00f3n TGSS", f.getMessage());
+					AonMessagePanel.showWarning(messageContainer, warningMap);
+				});
+
+	}
+	
+	public void onLaboralLifeCahngeDate(Date date) {
+		AonMessagePanel.showLoading(messagePDFContainer, "Obteniendo vida laboral ...");
+		
+		Pair<String, String> completeCCC = mainContrataContractObject.getPrincipalAccount();
+		
+		mainContrataContractObject.getCCCLaboralLife(completeCCC.getKey(), completeCCC.getValue(), date, new Date(),
+				dataURI -> {
+					pdfViewer.open(dataURI);
+					AonMessagePanel.hideMessage(messagePDFContainer);
+				}, f -> {
+					Map<String, String> warningMap = new HashMap<>();
+					warningMap.put("Error obtenci\u00f3n TGSS", f.getMessage());
+					AonMessagePanel.showWarning(messagePDFContainer, warningMap);
+				});
+
+	}
+	
+	// ------------------------------------------------- Toolbar PDFViewer panel
+	
+	private AonToolbar getToolbarPDFViewerPanel() {
+
+		AonToolbarButton closePDF = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconBack());
+		closePDF.addClickHandler(e -> onClosePDF());
+		pdfViewerToolbar.add(closePDF);
+		
+		return pdfViewerToolbar;
 	}
 	
 	// ------------------------------------------ Toolbar. Methods
@@ -1305,32 +1429,6 @@ public class MainContrataContract extends MainEntryPoint {
 		showTrashEmployee();
 	}
 	
-	private void onUp2DateSS() {
-		XMLHttpRequest xhr = XMLHttpRequest.create();
-		xhr.open("POST", SistemaREDService.SISTEMA_RED_URL + "/" + SistemaREDService.UP2DATE_REPORT);
-		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhr.setOnReadyStateChange(xhrIn -> {
-			int state = xhrIn.getReadyState();
-			if (state != XMLHttpRequest.DONE)
-				return;
-			try {
-				String dataURI = xhrIn.getResponseText();
-				showPFDF(dataURI);
-				AON.stop();
-			} catch (Exception t) {
-				AON.fail();
-			}
-		});
-
-		StringBuilder requestDataBuffer = new StringBuilder();
-
-		requestDataBuffer.append(SistemaREDService.Parameter.DOMAIN.name() + "=" + Wnd.getCurrentDomainNameURL())
-				.append("&" + SistemaREDService.Parameter.USER.name() + "=" + Wnd.getCurrentUser());
-
-		xhr.send(requestDataBuffer.toString());
-		AON.start();
-	}
-	
 	// ------------------------------------------ Toolbar Trash
 
 	private void getTrashToolbarPanel() {
@@ -1362,7 +1460,7 @@ public class MainContrataContract extends MainEntryPoint {
 	// ------------------------------------------------- Aon Messages panel
 	
 	private void hideMessage() {
-		messageContainer.setVisible(false);
+		AonMessagePanel.hideMessage(messageContainer);
 	}
 	
 	public void visibleTabItem ( Widget tabItem, boolean hideFl ) {
@@ -1371,5 +1469,39 @@ public class MainContrataContract extends MainEntryPoint {
 		element.setVisible(hideFl);
 
 		
+	}
+	
+	// ------------------------------------------------- Show/Hide PDF
+
+	private void showContracts() {
+		deckPanel.showWidget(0);
+	}
+
+	private void showPdf(boolean isLaboralLife) {
+		deckPanel.showWidget(3);
+		checkPDFToolbar(isLaboralLife);
+	}
+	
+	private void checkPDFToolbar(boolean isLaboralLife) {
+		if(isLaboralLife && pdfViewerToolbar.getButtonContainer().getWidgetCount() == 1) {
+			MonthListBox monthListBox = new MonthListBox();
+			Date lastMonth = DateUtils.getFirstDayOfMonth(); 
+			Date firstMonth = DateUtils.addYears2Date(DateUtils.getFirstDayOfMonth(), -4);
+			monthListBox.setFirstMonth(firstMonth);
+			monthListBox.setLastMonth(lastMonth);
+			monthListBox.setPageSize(52);
+			monthListBox.setVisibleRange(0, 52);
+			monthListBox.addChangeHandler(e -> onLaboralLifeCahngeDate(monthListBox.getSelected()));
+			monthListBox.setSelected(DateUtils.getFirstDayOfMonth(), true);
+			monthListBox.setWidth("200px");
+			pdfViewerToolbar.add(monthListBox);
+		} else if(!isLaboralLife && pdfViewerToolbar.getButtonContainer().getWidgetCount() > 1)
+			pdfViewerToolbar.getButtonContainer().remove(pdfViewerToolbar.getButtonContainer().getWidgetCount()-1);
+		
+	}
+
+	private void onClosePDF() {
+		AonMessagePanel.hideMessage(messageContainer);
+		showContracts();
 	}
 }

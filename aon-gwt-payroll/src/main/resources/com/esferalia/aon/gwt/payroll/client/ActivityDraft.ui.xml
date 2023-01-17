@@ -1,7 +1,9 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'>
+	xmlns:e='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
 	<ui:with field='res'
 		type='com.esferalia.aon.gwt.common.client.css.AonResources' />
@@ -15,15 +17,27 @@
 			width: 100%;
 		}
 		
-		.messagePanel{
-			margin: 10px 0;
+		.mainPanel{
+			margin-top: 1rem;
 		}
 	</ui:style>
 
 	<g:DockLayoutPanel ui:field="dockLayoutPanel" unit="PX">
+		<g:north size="50">
+			<g:DeckPanel ui:field="toolbarDeckPanel">
+				<aon:AonToolbar ui:field="toolbar" />
+				<aon:AonToolbar ui:field="toolbarPDFViewer" />
+			</g:DeckPanel>
+		</g:north>
 		<g:center>
 			<g:HTMLPanel ui:field="centerContainer" styleName="{style.flexCenter}">
-				<g:HTMLPanel ui:field="messagePanel" styleName="{style.messagePanel}" />
+				<g:HTMLPanel ui:field="messagePanel" />
+				<g:DeckPanel ui:field="mainDeckPanel">
+					<g:HTMLPanel ui:field="mainPanel" styleName="{style.mainPanel}"/>
+					<g:SimpleLayoutPanel ui:field="scrolledPDFPanel">
+						<p:FullViewer styleName="reset" ui:field='pdfViewer' />
+					</g:SimpleLayoutPanel> 
+				</g:DeckPanel>
 			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
