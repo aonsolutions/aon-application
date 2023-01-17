@@ -155,7 +155,7 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 		String login = UserUtils.getInstance().getLoggedUser().getLogin();
 		
 		com.esferalia.aon.occam.api.model.finance.Invoice lastInvoice = AON.getLastSaleInvoice(domainName, domainId, login, serie);
-		if(date.compareTo(lastInvoice.getIssueDate()) < 0) {
+		if(lastInvoice.getIssueDate() != null && date.compareTo(lastInvoice.getIssueDate()) < 0) {
 			getProgressionState().finish();
 			AonUtil.addErrorMessage("Existe una factura con la misma serie y fecha posterior.");
 			throw new Exception("Existe una factura con la misma serie y fecha posterior.");
