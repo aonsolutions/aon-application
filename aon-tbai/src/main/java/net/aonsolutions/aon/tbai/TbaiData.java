@@ -215,7 +215,7 @@ public class TbaiData {
 		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), user.getLogin(), f -> 
 			f.getDomainProperty().eq(domain.getId())
 			.and(f.getSourceProperty().eq(source.value()))
-			.and(f.getSourceIdProperty().ne(invoice))
+			.and(f.getSourceIdProperty().eq(invoice))
 			.and(f.getCodeProperty().eq("ok"))
 			);
 		
