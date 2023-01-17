@@ -132,7 +132,7 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 	
 	public void onInvoice(ActionEvent event) throws Exception {
 		Series series = getParams().getInvoiceSeries();
-		checkSerie(getParams().getInvoiceDate(), series.getCode());
+		checkSerie(getParams().getInvoiceDate(), series != null ? series.getCode() : null);
 		getProgressionState().start();
 		if(getTbaiConfiguration().isActive()) {
 			try {
