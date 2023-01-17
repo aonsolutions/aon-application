@@ -73,7 +73,7 @@ public class TbaiMain {
 	
 	public void createEmisionLROE(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws Exception, TbaiException, JAXBException, ParserConfigurationException, SAXException, IOException {
 		LROEInformation lroe = LroeData.get(company.getDomain(), new User().setLogin(""), invoice.getId());
-		if (!lroe.getChapter1().isAccepted() && tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
+		if (!lroe.getChapter1().isAccepted()) {
 			TbaiData tbaiData = TbaiData.getInstance(tbaiConfiguration); 
 			byte[] xml = tbaiData.getTbaiRequestFile(company.getDomain(), "", invoice.getId());
 			
@@ -173,7 +173,7 @@ public class TbaiMain {
 				response = sendXML(uri, tbaiConfiguration, xml, true);
 				tbaiData.saveResponse(company.getDomain(), new User().setLogin(""), response, dr);
 				HandleTbaiResponse(response);
-			} else if (tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
+			} else if (tbaiConfiguration.isBizkaia()) { 
 				LROEResponse lroeResponse = null;
 				LROEInfo info = null;
 				if(!isPersonaFisica(company.getDocument())) {
@@ -242,7 +242,7 @@ public class TbaiMain {
 			TbaiResponse response = sendXML(uri, tbaiConfiguration, xml, true);
 			tbaiData.saveResponseAnulacion(company.getDomain(), new User().setLogin(""), invoice, response, request);
 			HandleTbaiResponse(response);
-		} else if (tbaiConfiguration.isBizkaia() && (!tbaiConfiguration.isTest() || "A99802019".equalsIgnoreCase(company.getDocument()) || "99980200M".equalsIgnoreCase(company.getDocument()))) {
+		} else if (tbaiConfiguration.isBizkaia()) { 
 			LROEResponse lroeResponse = null;
 			LROEInfo info = null;
 			if (AonDocumentUtil.isValidCIF(company.getDocument())) {
