@@ -632,12 +632,11 @@ public class SaleInvoiceController extends InvoiceController {
 				String login = UserUtils.getInstance().getLoggedUser().getLogin();
 				com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), login, inv.getId());
 				tbaiValidation(invoice);
-				
-				Byte[] types = new Byte[]{com.esferalia.aon.occam.api.model.type.InvoiceType.SALES.value()};				
+								
 				if(invoice.getNumber() < 1) {
 					com.esferalia.aon.occam.api.model.finance.Invoice lastInvoice = AON.getLastSaleInvoice(domainName, invoice.getDomain(), login, inv.getSeries());
-					if(invoice.getIssueDate().compareTo(lastInvoice.getIssueDate()) < 0) {
-						throw new Exception("Existe una factura con la misma serie y fecha anterior.");
+					if(lastInvoice.getIssueDate() != null && invoice.getIssueDate().compareTo(lastInvoice.getIssueDate()) < 0) {
+						throw new Exception("Existe una factura con la misma serie y fecha posterior.");
 					}
 					Integer number = lastInvoice.getNumber() > 0
 							? lastInvoice.getNumber() + 1 : 1;
