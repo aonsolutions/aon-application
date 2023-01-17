@@ -183,17 +183,15 @@
 					/>
 			</aon:div>
 		</aon:if> -->
-		<aon:if test="#{marketplace.suitePortal}">
-	 		<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-tools-parent">
-				<aon:commandLink 
-					id="new_menu_configuration"
-					immediate="true"
-					action="portal_configuration"
-					styleClass="aon-button-tools" 
-					value="#{bundle.aon_module_configuration}"
-				/>
-			</aon:div>
-		</aon:if>
+ 		<aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-tools-parent">
+			<aon:commandLink 
+				id="new_menu_configuration"
+				immediate="true"
+				action="portal_configuration"
+				styleClass="aon-button-tools" 
+				value="#{bundle.aon_module_configuration}"
+			/>
+		</aon:div>
 		<aon:if test="#{desktop.showGraphicsPortlet}">
 			<!--aon:div styleClass="aon-direct-access-list-element aon-rigth-menu aon-button-notes-parent">
 				<aon:commandLink 

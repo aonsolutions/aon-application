@@ -175,7 +175,7 @@ public class LROE140_5_1 extends LROE140 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoices, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(person, info, invoices.get(0)), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}

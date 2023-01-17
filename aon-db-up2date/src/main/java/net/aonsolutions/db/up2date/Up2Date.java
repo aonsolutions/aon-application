@@ -24,6 +24,7 @@ import net.aonsolutions.db.up2date.fiscal.AlterFsMod184Detail2022;
 import net.aonsolutions.db.up2date.tgss.BasesMax2023Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2023Update;
 import net.aonsolutions.db.up2date.tgss.MEIInsert;
+import net.aonsolutions.db.up2date.tgss.MEIPECUpdate;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 public class Up2Date {
 
@@ -295,10 +296,12 @@ public class Up2Date {
     		//UpdateInvoiceRegistryDocument.UPDATE_INVOICE_REGISTRY_DOCUMENT,
     		//AlterAlcatrazFinance.ALTER_ALCATRAZ_FINANCE,
     		//IrpfEuskadi2023Insert.IRPFEUSKADI2023INSERT,
+	    	//BasesMax2023Update.BASESMAX2023UPDATE,
+	    	//MEIInsert.MEIINSERT,
     		//AlterFsMod190Detail2022.ALTER_FS_MODEL_190_DETAIL_2022,
-	    	BasesMax2023Update.BASESMAX2023UPDATE,
-	    	MEIInsert.MEIINSERT,
-    		HomeBases2023Update.HOMEBASES2023UPDATE,
+    		//HomeBases2023Update.HOMEBASES2023UPDATE,
+	    	MEIPECUpdate.MEIPECUPDATE,
+    		//AlterFsMod190Detail2022.ALTER_FS_MODEL_190_DETAIL_2022,
     		// InvoiceFiscalAddExpDate.INVOICE_FISCAL_ADD_EXP_DATE, 		
     		AlterFsMod184Detail2022.ALTER_FS_MODEL_184_DETAIL_2022,
     		// Important, not remove

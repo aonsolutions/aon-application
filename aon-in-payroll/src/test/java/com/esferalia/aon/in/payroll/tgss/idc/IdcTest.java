@@ -1937,7 +1937,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			double totalCost = 0.00;
 			for (SalaryCost cost : salary.getSalaryCosts()) {
 				totalCost += cost.getAmount();
-				System.out.println(cost.getName() + ": " + cost.getAmount());
+				//System.out.println(cost.getName() + ": " + cost.getAmount());
 			}
 
 			assertEquals(1, salary.getSalaryBonus().size());
@@ -2518,6 +2518,13 @@ public class IdcTest extends AbstractSQLTestCase {
 					name = "PORCENTAJE_DESMPL_E";
 				}
 			});
+			datas.add(new Data() {
+				{
+					expression = "0.50";
+					startDate = february21;
+					name = "PORCENTAJE_MEI_E";
+				}
+			});
 
 			Salary salary = calculate(ssPecs, datas, new String[] { "320.43" }, february21, february28);
 
@@ -2527,8 +2534,10 @@ public class IdcTest extends AbstractSQLTestCase {
 			double totalBonus = salary.getSalaryBonus().stream().collect(Collectors.summingDouble(b -> b.getAmount()));
 
 			assertEquals(91.12, totalBonus, DELTA);
+			
+			double totalCost = salary.getSalaryCosts().stream().collect(Collectors.summingDouble(b -> b.getAmount()));
 
-			assertEquals(9.48, salary.getTotalEnterprise(), DELTA);
+			assertEquals(102.2 - 91.12, salary.getTotalEnterprise(), DELTA);
 
 		}
 	}
@@ -2599,13 +2608,20 @@ public class IdcTest extends AbstractSQLTestCase {
 					name = "PORCENTAJE_DESMPL_E";
 				}
 			});
+			datas.add(new Data() {
+				{
+					expression = "0.50";
+					startDate = march1;
+					name = "PORCENTAJE_MEI_E";
+				}
+			});
 
 			Salary salary = calculate(ssPecs, datas, new String[] { "1201.61" }, march1, march31);
 
 			double totalBonus = salary.getSalaryBonus().stream().collect(Collectors.summingDouble(b -> b.getAmount()));
 
 			assertEquals(341.66, totalBonus, DELTA);
-			assertEquals(377.30 - 341.66, salary.getTotalEnterprise(), DELTA);
+			assertEquals(383.31 - 341.66, salary.getTotalEnterprise(), DELTA);
 
 			calendar.set(Calendar.MONTH, Calendar.APRIL);
 			calendar.set(Calendar.DAY_OF_MONTH, 1);
@@ -2619,7 +2635,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			totalBonus = salary.getSalaryBonus().stream().collect(Collectors.summingDouble(b -> b.getAmount()));
 
 			assertEquals(341.66, totalBonus, DELTA);
-			assertEquals(377.30 - 341.66, salary.getTotalEnterprise(), DELTA);
+			assertEquals(383.31 - 341.66, salary.getTotalEnterprise(), DELTA);
 
 		}
 	}
@@ -4591,6 +4607,9 @@ public class IdcTest extends AbstractSQLTestCase {
 				put("PORCENTAJE_CGC", "4.70");
 				put("PORCENTAJE_CGC_E", "23.60");
 
+				put("PORCENTAJE_MEI", "0.10");
+				put("PORCENTAJE_MEI_E", "0.50");
+
 				put("OCUPACION_IT", "[" + "\"h\": 1.40]");
 				put("OCUPACION_IMS", "[" + "\"h\": 2.20]");
 
@@ -4611,6 +4630,8 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(startDate), "CGC_E",
 				DeductionType.COMMON_CONTINGENCY, "BASE_CGC_E * PORCENTAJE_CGC_E/100");
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(startDate), "MEI_E",
+			DeductionType.COMMON_CONTINGENCY, "BASE_CGC_E * PORCENTAJE_MEI_E/100");
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(startDate), "IT_E",
 				DeductionType.PROFESSIONAL_CONTINGENCY,
 				"BASE_CGP_E * (isdef PORCENTAJE_IT ? PORCENTAJE_IT : (PORCENTAJE_IT=( isdef OCUPACION ? OCUPACION_IT[OCUPACION] : TARIFA_IT)))/100");
@@ -4625,15 +4646,18 @@ public class IdcTest extends AbstractSQLTestCase {
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(startDate), "FP_E", DeductionType.FOGASA,
 				"BASE_CGP_E * PORCENTAJE_FP_E/100");
 
-		DeductionConceptRecord fpConcept = addDeductionConcept(aonContext, "FP", DeductionType.COMMON_CONTINGENCY);
+		DeductionConceptRecord fpConcept = addDeductionConcept(aonContext, "FP", DeductionType.JOB_TRAINING);
 		DeductionConceptRecord cgcConcept = addDeductionConcept(aonContext, "CGC", DeductionType.COMMON_CONTINGENCY);
-		DeductionConceptRecord desmplConcept = addDeductionConcept(aonContext, "DESMPL",
-				DeductionType.COMMON_CONTINGENCY);
+		DeductionConceptRecord meiConcept = addDeductionConcept(aonContext, "MEI",DeductionType.COMMON_CONTINGENCY);
+		DeductionConceptRecord desmplConcept = addDeductionConcept(aonContext, "DESMPL",DeductionType.UNEMPLOYMENT);
+		
+		java.sql.Date start2023Date = getFirstDayOf(2023);
 
-		addSSRegimeDeduction(aonContext, fpConcept, SSRegimeType.GENERAL, startDate, "BASE_CGC * PORCENTAJE_FP/100");
+		addSSRegimeDeduction(aonContext, fpConcept, SSRegimeType.GENERAL, startDate, "BASE_CGP * PORCENTAJE_FP/100");
 		addSSRegimeDeduction(aonContext, cgcConcept, SSRegimeType.GENERAL, startDate, "BASE_CGC * PORCENTAJE_CGC/100");
-		addSSRegimeDeduction(aonContext, desmplConcept, SSRegimeType.GENERAL, startDate,
-				"BASE_CGC * PORCENTAJE_DESMPL/100");
+		addSSRegimeDeduction(aonContext, desmplConcept, SSRegimeType.GENERAL, startDate,"BASE_CGP * PORCENTAJE_DESMPL/100");
+
+		addSSRegimeDeduction(aonContext, meiConcept, SSRegimeType.GENERAL, startDate, "BASE_CGC * PORCENTAJE_MEI/100");
 
 		ContractRecord contract = newContract(aonContext, getFirstDayOfYear(startDate), new HashMap<String, String>() {
 			{
@@ -4674,6 +4698,19 @@ public class IdcTest extends AbstractSQLTestCase {
 				toSQL(d.getStartDate()), toSQL(d.getEndDate()), d.getFormula(), d.getDescription(), d.getName()));
 
 		return contract;
+	}
+
+	private static java.sql.Date getFirstDayOf(int year) {
+	    Calendar calendar = Calendar.getInstance();
+	    calendar.set(Calendar.MILLISECOND, 0);
+	    calendar.set(Calendar.SECOND, 0);
+	    calendar.set(Calendar.MINUTE, 0);
+	    calendar.set(Calendar.HOUR_OF_DAY, 0);
+	    calendar.set(Calendar.DAY_OF_MONTH, 1);
+	    calendar.set(Calendar.MONTH, Calendar.JANUARY);
+	    calendar.set(Calendar.YEAR, year);
+	    java.sql.Date start2023Date =  new java.sql.Date( calendar.getTimeInMillis() );
+	    return start2023Date;
 	}
 
 	protected final void cleanDeductionConcepts(AONContext aonContext) {
