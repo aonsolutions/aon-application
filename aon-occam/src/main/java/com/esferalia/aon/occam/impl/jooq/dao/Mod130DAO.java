@@ -27,6 +27,7 @@ import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
+import com.esferalia.aon.watson.mutable.MutableDouble;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -206,7 +207,7 @@ public class Mod130DAO extends FiscalModelDAO {
 			,(ctx,mod) -> mod.putAmount(Mod130Key.C15, getInitialC15(ctx,mod))
 			,null
 			,"<li>Trimestres anteriores:<ul style=\"padding-left: 20px;\">" 
-			+"<li>cantidades negativas [019] y deducidas [015]:<ul style=\"padding-left: 20px;\">"
+			+"<li>Cantidades negativas [019] y deducidas [015]:<ul style=\"padding-left: 20px;\">"
 			+"@code{c19Sum = 0.0;c15Sum = 0.0;}"
 			+"@foreach{fm : previousModels}" 
 				+"@code{X19 =  fm.getAmount('"+Mod130Key.C19.getValue()+"');"
@@ -221,8 +222,13 @@ public class Mod130DAO extends FiscalModelDAO {
 			+"</ul></li>"
 			+"<li>Sumatorio de las casillas [019] --> @{c19Sum}</li>"
 			+"<li>Sumatorio de las casillas [015] --> @{c15Sum}</li>"
-			+"@code{c15Pre = com.esferalia.aon.watson.util.AonMathUtils.absRounded(c19Sum - c15Sum);}"
-			+"<li>Valor calcula de los modelos anteriores. Valor absoluto del sumatoria de las casillas [019] menos las casillas [015]: @{c15Pre}</li>"
+			+"@code{c15Pre = com.esferalia.aon.watson.util.AonMathUtils.absRounded(c19Sum) - c15Sum;}"
+			+"@if{ c15Pre < 0}"
+				+"@code{c15Pre = 0.0;}"
+				+"<li>Importes negativos ya deducidos. [015]: @{c15Pre}</li>"
+			+"@else{}"
+				+"<li>Valor calculado de los modelos anteriores. Valor absoluto del sumatoria de las casillas [019] menos las casillas [015]: @{c15Pre}</li>"
+			+"@end{}"
 			+"@if{ c15Pre > C14}"
 				+"<li>Al ser el c\u00E1lculo mayor que [014] se asigna el valor de [014]</li>"
 			+"@else{}"
@@ -790,13 +796,19 @@ public class Mod130DAO extends FiscalModelDAO {
 		double c14 = mod.getAmount(Mod130Key.C14);
 		double c15 = 0.0; 
 		if (c14 > 0) {
-			c15 = getPreviousModels(ctx, mod)
-				.mapToDouble(fm -> {
-					double x19 = AonMathUtils.absRounded(fm.getAmount(Mod130Key.C19)>0?0:(fm.getAmount(Mod130Key.C19)));  
-					return AonMathUtils.round(x19 - fm.getAmount(Mod130Key.C15));
+			MutableDouble x19 = new MutableDouble();
+			MutableDouble x15 = new MutableDouble();
+			getPreviousModels(ctx, mod)
+				.forEach(fm -> {
+					double c19 = fm.getAmount(Mod130Key.C19);
+					x19.add( AonMathUtils.isLessThanZero(c19)?c19:0 );
+					x15.add( fm.getAmount(Mod130Key.C15) );
 				})
-				.sum()
 			;
+			double t19 = AonMathUtils.absRounded(x19.doubleValue());
+			double t15 = x15.doubleValue(); 
+			c15 = t19 - t15;
+			c15 = AonMathUtils.isLessThanZero(c15)?0:c15;
 			c15 = c15>c14?c14:c15;
 		}
 		return AonMathUtils.absRounded(c15);
