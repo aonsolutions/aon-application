@@ -206,14 +206,14 @@ public class InvoiceTemplate {
 				
 				detailMap = sortInvoiceDetails(invoice.getDetails(), company);
 
-				this.contents = this.drawFirstPage(document, company, invoice, config);
+				this.contents = this.drawFirstPage(document, company, invoice, config, AonStringUtils.isNotBlank(tbaiId));
 				
 				this.y -= 10;
 				
 				if (config.isDetailed())
-					this.drawDetailedEntries(document, company, invoice);
+					this.drawDetailedEntries(document, company, invoice, AonStringUtils.isNotBlank(tbaiId));
 				else
-					this.drawSimplifiedEntries(document, company, invoice, config);
+					this.drawSimplifiedEntries(document, company, invoice, config, AonStringUtils.isNotBlank(tbaiId));
 
 				this.drawBottomInfo(document, invoice, qrUrl, config.getTheme(), tbaiId);
 				this.drawJail(this.limit);
@@ -279,14 +279,14 @@ public class InvoiceTemplate {
 			
 			detailMap = sortInvoiceDetails(invoice.getDetails(), company);
 
-			this.contents = this.drawFirstPage(document, company, invoice, config);
+			this.contents = this.drawFirstPage(document, company, invoice, config, AonStringUtils.isNotBlank(tbaiId));
 			
 			this.y -= 10;
 			
 			if (config.isDetailed())
-				this.drawDetailedEntries(document, company, invoice);
+				this.drawDetailedEntries(document, company, invoice, AonStringUtils.isNotBlank(tbaiId));
 			else
-				this.drawSimplifiedEntries(document, company, invoice, config);
+				this.drawSimplifiedEntries(document, company, invoice, config, AonStringUtils.isNotBlank(tbaiId));
 
 			this.drawBottomInfo(document, invoice, qrUrl, config.getTheme(), tbaiId);
 			this.drawJail(this.limit);
@@ -331,7 +331,7 @@ public class InvoiceTemplate {
 		}
 	}
 	
-	private void drawComment(PDDocument doc, CompanyFull company, Invoice invoice, String comment, PrintInvoiceThemeConfiguration theme) throws IOException {
+	private void drawComment(PDDocument doc, CompanyFull company, Invoice invoice, String comment, PrintInvoiceThemeConfiguration theme, boolean isTbai) throws IOException {
 		float firstY = y;
 		if (invoice.isRectifier() && (invoice.getRectificationInvoiceNumber() != null || !AonStringUtils.isEmpty(invoice.getRectificationInvoiceSeries()))) {
 			String rn = AonStringUtils.trimToEmpty(AonNumberUtils.toString(invoice.getRectificationInvoiceNumber()));
@@ -354,7 +354,7 @@ public class InvoiceTemplate {
 				y-=10;
 				if (y < bottom) {
 					contents.close();
-					contents = drawPage(doc, company, invoice, config, false);
+					contents = drawPage(doc, company, invoice, config, false, isTbai);
 					y = firstY;
 				}
 			}
@@ -490,7 +490,7 @@ public class InvoiceTemplate {
 	}
 
 	// DRAW PAGE
-	private PDPageContentStream drawPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, boolean withHeader) throws IOException {
+	private PDPageContentStream drawPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, boolean withHeader, boolean isTbai) throws IOException {
 		PDPage page = createVerticalPage();
 		
 		doc.addPage(page);
@@ -510,7 +510,7 @@ public class InvoiceTemplate {
 		x = 50f;
 		y = height - top - 20;
 
-		drawTopInfo(doc, config, invoice, company);
+		drawTopInfo(doc, config, invoice, company, isTbai);
 		
 		y -= 60;
 		if (withHeader) {			
@@ -525,7 +525,7 @@ public class InvoiceTemplate {
 	}
 	
 	// DRAW FIRST PAGE
-	private PDPageContentStream drawFirstPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config) throws IOException {
+	private PDPageContentStream drawFirstPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, boolean isTbai) throws IOException {
 		PDPage page = createVerticalPage();
 		doc.addPage(page);
 		this.currentInvoiceFirstPage = this.pageNumber;
@@ -563,11 +563,11 @@ public class InvoiceTemplate {
 		x = 50f;
 		y = height - top - 20;
 		
-		drawTopInfo(doc, config, invoice, company);
+		drawTopInfo(doc, config, invoice, company, isTbai);
 		
 		y -= 60;
 		
-		drawComment(doc, company, invoice, invoice.getComments(), config.getTheme());
+		drawComment(doc, company, invoice, invoice.getComments(), config.getTheme(), isTbai);
 		
 		entriesStart = y;
 		if (config.isDetailed()) {
@@ -825,7 +825,7 @@ public class InvoiceTemplate {
 	}
 
 	// DRAW DETAILED ENTRIES
-	public void drawDetailedEntries(PDDocument doc, CompanyFull company, Invoice invoice) throws IOException {
+	public void drawDetailedEntries(PDDocument doc, CompanyFull company, Invoice invoice, boolean isTbai) throws IOException {
 		PrintInvoiceThemeConfiguration theme = config.getTheme();
 		
 		AtomicInteger atomicI = new AtomicInteger();
@@ -837,7 +837,7 @@ public class InvoiceTemplate {
 			try {
 				DetailCategory category = entry.getKey();
 				if (isUdapa(company) && category != null && InvoiceSource.DELIVERY.equals(category.getInvoiceSource())) {
-					drawCategoryName(category, doc, invoice, theme, false, true);
+					drawCategoryName(category, doc, invoice, theme, false, true, isTbai);
 					Map<DetailCategory, List<InvoiceDetail>> salesMap = groupBySalesReference(entry.getValue(), company);
 					salesMap.entrySet().stream().sorted((a, b) -> {
 						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
@@ -845,13 +845,13 @@ public class InvoiceTemplate {
 						return aKey.compareTo(bKey);
 					}).forEach(detail -> {
 						try {
-							atomicI.set(drawDetailedCategory(doc, detail, company, invoice, theme, atomicI.get(), category != null));
+							atomicI.set(drawDetailedCategory(doc, detail, company, invoice, theme, atomicI.get(), category != null, isTbai));
 						} catch (IOException e) {
 						}
 					});
 					
 				} else if (isGarage(company)) {
-					drawCategoryName(category, doc, invoice, theme, false, true);
+					drawCategoryName(category, doc, invoice, theme, false, true, isTbai);
 	
 					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue(), company);
 					
@@ -861,14 +861,14 @@ public class InvoiceTemplate {
 						return aKey.compareTo(bKey);
 					}).forEach(productEntry -> {
 						try {
-							atomicI.set(drawDetailedCategory(doc, productEntry, company, invoice, theme, atomicI.get(), category != null));
+							atomicI.set(drawDetailedCategory(doc, productEntry, company, invoice, theme, atomicI.get(), category != null, isTbai));
 						} catch (IOException e) {
 						}
 					});
 					
 				} else {				
 					try {
-						atomicI.set(drawDetailedCategory(doc, entry, company, invoice, theme, atomicI.get(), false));
+						atomicI.set(drawDetailedCategory(doc, entry, company, invoice, theme, atomicI.get(), false, isTbai));
 					} catch (IOException e) {
 					}
 				}
@@ -877,13 +877,13 @@ public class InvoiceTemplate {
 		});
 	}
 	
-	private void drawCategoryName(DetailCategory category, PDDocument doc, Invoice invoice, PrintInvoiceThemeConfiguration theme, boolean indent, boolean detailed) throws IOException {
+	private void drawCategoryName(DetailCategory category, PDDocument doc, Invoice invoice, PrintInvoiceThemeConfiguration theme, boolean indent, boolean detailed, boolean isTbai) throws IOException {
 		if (category != null && !AonStringUtils.isBlank(category.getName())) {
 			float lineLength = (detailed ? 240 : 420) - (indent ? 10 : 0);
 			List<String> lines = getLines(category.toString(), lineLength, boldFont, 9);
 			
 			if (y - 5 - 10 * lines.size() < bottom + 5) {
-				jumpToNewPage(doc, company, invoice, config);
+				jumpToNewPage(doc, company, invoice, config, isTbai);
 				y = entriesStart - 10;
 			}
 			x = 50;
@@ -921,11 +921,11 @@ public class InvoiceTemplate {
 	}
 
 	private int drawDetailedCategory(PDDocument doc, Entry<DetailCategory, List<InvoiceDetail>> entry,
-			CompanyFull company, Invoice invoice, PrintInvoiceThemeConfiguration theme, int i, boolean indent) throws IOException {
+			CompanyFull company, Invoice invoice, PrintInvoiceThemeConfiguration theme, int i, boolean indent, boolean isTbai) throws IOException {
 		DetailCategory category = entry.getKey();
 		List<InvoiceDetail> details = entry.getValue();
 		if (details != null && !details.isEmpty()) {
-			drawCategoryName(category, doc, invoice, theme, indent, true);
+			drawCategoryName(category, doc, invoice, theme, indent, true, isTbai);
 			
 			for (InvoiceDetail detail : details) {
 				x = 50;
@@ -943,7 +943,7 @@ public class InvoiceTemplate {
 				ArrayList<String> divided = (ArrayList<String>) PDFToolkit.getLinesRespectOriginal(description, 240 - (indent ? 10 : 0),regularFont, 8);				
 				float lineDiff = 10;
 				
-				drawDetail(i, detail, divided, lineDiff, doc, invoice, company, indent);
+				drawDetail(i, detail, divided, lineDiff, doc, invoice, company, indent, isTbai);
 					
 				i++;
 			}
@@ -988,10 +988,10 @@ public class InvoiceTemplate {
 		return false;
 	}
 	
-	private void jumpToNewPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config) throws IOException {
+	private void jumpToNewPage(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, boolean isTbai) throws IOException {
 		drawJail(bottom);
 		contents.close();
-		contents = drawPage(doc, company, invoice, config, true);
+		contents = drawPage(doc, company, invoice, config, true, isTbai);
 		y		 = height - top - topInfoHeight - 5;
 		x		 = 50;
 	}
@@ -1173,7 +1173,7 @@ public class InvoiceTemplate {
 	}
 	
 	private void drawDetail(int i, InvoiceDetail detail, ArrayList<String> divided, float lineDiff,
-			PDDocument doc, Invoice invoice, CompanyFull company, boolean indent) throws IOException {
+			PDDocument doc, Invoice invoice, CompanyFull company, boolean indent, boolean isTbai) throws IOException {
 		PrintInvoiceThemeConfiguration theme = config.getTheme();
 		float dy = y;
 		int line = 0;
@@ -1226,7 +1226,7 @@ public class InvoiceTemplate {
 			
 			dy -= lineDiff;
 			if (dy < bottom + 5) {
-				jumpToNewPage(doc, company, invoice, config);
+				jumpToNewPage(doc, company, invoice, config, isTbai);
 				dy = entriesStart - 10;
 			}
 			
@@ -1236,7 +1236,7 @@ public class InvoiceTemplate {
 		detailMap.values().forEach(vals -> realDetails.addAll(vals));
 		
 		if (dy < limit + 5 && i == realDetails/*invoice.getDetails()*/.size() - 1) {
-			jumpToNewPage(doc, company, invoice, config);
+			jumpToNewPage(doc, company, invoice, config, isTbai);
 			dy = entriesStart - 10;
 		}
 		
@@ -1319,7 +1319,7 @@ public class InvoiceTemplate {
 	}
 
 	// DRAW SIMPLIFIED ENTRIES
-	public void drawSimplifiedEntries(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config) throws IOException {
+	public void drawSimplifiedEntries(PDDocument doc, CompanyFull company, Invoice invoice, PrintInvoiceConfiguration config, boolean isTbai) throws IOException {
 		PrintInvoiceThemeConfiguration theme = config.getTheme();
 		
 		detailMap.entrySet().stream().sorted((a, b) -> {
@@ -1331,7 +1331,7 @@ public class InvoiceTemplate {
 				
 				DetailCategory category = entry.getKey();
 				if (isUdapa(company) && category != null && InvoiceSource.DELIVERY.equals(category.getInvoiceSource())) {
-					drawCategoryName(category, doc, invoice, theme, false, false);
+					drawCategoryName(category, doc, invoice, theme, false, false, isTbai);
 					Map<DetailCategory, List<InvoiceDetail>> salesMap = groupBySalesReference(entry.getValue(), company);
 					salesMap.entrySet().stream().sorted((a, b) -> {
 						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
@@ -1339,13 +1339,13 @@ public class InvoiceTemplate {
 						return aKey.compareTo(bKey);
 					}).forEach(detail -> {
 						try {
-							drawSimplifiedCategory(detail, invoice, doc, company, config, theme, category != null);
+							drawSimplifiedCategory(detail, invoice, doc, company, config, theme, category != null, isTbai);
 						} catch (IOException e) {
 						}
 					});
 					
 				} else if (isGarage(company)) {
-					drawCategoryName(category, doc, invoice, theme, false, false);
+					drawCategoryName(category, doc, invoice, theme, false, false, isTbai);
 					Map<DetailCategory, List<InvoiceDetail>> productMap = groupByProductType(entry.getValue(), company);
 					productMap.entrySet().stream().sorted((a, b) -> {
 						String aKey = AonStringUtils.trimToEmpty(a.getKey() != null ? a.getKey().getName() : "");
@@ -1353,12 +1353,12 @@ public class InvoiceTemplate {
 						return aKey.compareTo(bKey);
 					}).forEach(productEntry -> {
 						try {
-							drawSimplifiedCategory(productEntry, invoice, doc, company, config, theme, category != null);
+							drawSimplifiedCategory(productEntry, invoice, doc, company, config, theme, category != null, isTbai);
 						} catch (IOException e ) {
 						}
 					});
 				} else {
-					drawSimplifiedCategory(entry, invoice, doc, company, config, theme, false);
+					drawSimplifiedCategory(entry, invoice, doc, company, config, theme, false, isTbai);
 				}
 			} catch (IOException e) {
 			}
@@ -1366,24 +1366,24 @@ public class InvoiceTemplate {
 		});
 		
 		if (y < limit + 5) {
-			jumpToNewPage(doc, company, invoice, config);
+			jumpToNewPage(doc, company, invoice, config, isTbai);
 		}
 	}
 
 	private void drawSimplifiedCategory(Entry<DetailCategory, List<InvoiceDetail>> entry, Invoice invoice,
-			PDDocument doc, CompanyFull company, PrintInvoiceConfiguration config, PrintInvoiceThemeConfiguration theme, boolean indent)
+			PDDocument doc, CompanyFull company, PrintInvoiceConfiguration config, PrintInvoiceThemeConfiguration theme, boolean indent, boolean isTbai)
 			throws IOException {
 		DetailCategory category = entry.getKey();
 		List<InvoiceDetail> details = entry.getValue();
 		
 		if (details != null && !details.isEmpty() && category != null) {
-			drawCategoryName(category, doc, invoice, theme, indent, false);
+			drawCategoryName(category, doc, invoice, theme, indent, false, isTbai);
 		}
 		for (InvoiceDetail detail : details) {
 			x = 50;
 			
 			if (y < bottom + 5) {
-				jumpToNewPage(doc, company, invoice, config);
+				jumpToNewPage(doc, company, invoice, config, isTbai);
 				y = entriesStart - 10;
 			}
 			String description = AonStringUtils.trimToEmpty(detail.getDescription()).replace("\t", " ");
@@ -1411,7 +1411,7 @@ public class InvoiceTemplate {
 				drawText(contents, AonStringUtils.trimToEmpty(line), x + 5 + (indent ? 10 : 0), y, theme.getTextColor(), regularFont, 8, DETAIL_DESCRIPTION);
 				y -= 10;
 				if (y < bottom + 5) {
-					jumpToNewPage(doc, company, invoice, config);
+					jumpToNewPage(doc, company, invoice, config, isTbai);
 					y = entriesStart - 10;
 				}
 			}
@@ -1460,7 +1460,7 @@ public class InvoiceTemplate {
 	
 	
 	// DRAW UPPER INFO
-	private void drawTopInfo(PDDocument doc, PrintInvoiceConfiguration config, Invoice invoice, CompanyFull company) throws IOException {
+	private void drawTopInfo(PDDocument doc, PrintInvoiceConfiguration config, Invoice invoice, CompanyFull company, boolean isTbai) throws IOException {
 		
 		float maxHeight = MAX_LOGO_HEIGHT;
 		float maxWidth = 297 - x - 20;
@@ -1589,12 +1589,32 @@ public class InvoiceTemplate {
 		drawText(contents, getMsg().number() + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11,REFERENCE_NUMBER);
 		String reference = invoice.isProforma() ? "PROFORMA" : invoice.getReferenceCode();
 		drawText(contents, safeString(reference), x + 50, y, config.getTheme().getTextColor(), regularFont, 11,REFERENCE_NUMBER);
-		y -= 4;
 
-		y -= 16;
+		y -= 20;
 
-		drawText(contents, getMsg().date() + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11 , INVOICE_DATE);
-		drawText(contents, formatDate(invoice.getIssueDate(), STANDARD_DATE_FORMAT).orElse(""), x + 50, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);
+		
+		if (isTbai) {
+			
+			Date expDate = invoice != null && invoice.getFiscal() != null && invoice.getFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate();
+			
+			drawText(contents, "Fecha expedición" + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11 , INVOICE_DATE);
+			drawText(contents, formatDate(expDate, STANDARD_DATE_FORMAT).orElse(""), x + 100, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);
+
+			y -= 20;
+
+			drawText(contents, "Fecha operación" + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11 , INVOICE_DATE);
+			drawText(contents, formatDate(invoice.getIssueDate(), STANDARD_DATE_FORMAT).orElse(""), x + 100, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);
+			
+		} else {
+			drawText(contents, getMsg().date() + ":", x, y, config.getTheme().getTitleTextColor(), boldFont, 11 , INVOICE_DATE);
+			drawText(contents, formatDate(invoice.getIssueDate(), STANDARD_DATE_FORMAT).orElse(""), x + 50, y, config.getTheme().getTextColor(), regularFont, 11 , INVOICE_DATE);
+			
+		}
+		
+		
+//fecha expedicion
+		//invoice.getFiscal().getExpDate()
+//fecha operacion
 		
 		y -= 20;
 
@@ -1612,7 +1632,7 @@ public class InvoiceTemplate {
 		y -= 10;
 		x += 250;
 
-		drawBox(contents, x, y, 250, 80, config.getTheme().getCustomerBackgroundColor(), opacity);
+		drawBox(contents, x, y, 250, isTbai ? 100 : 80, config.getTheme().getCustomerBackgroundColor(), opacity);
 		x += 10;
 		y  = height - top - 35;
 		String str = safeString(invoice.getRegistryName())
