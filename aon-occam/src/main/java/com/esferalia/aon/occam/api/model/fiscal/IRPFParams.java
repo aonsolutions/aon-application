@@ -27,8 +27,8 @@ public class IRPFParams implements Serializable {
 	private Boolean accrualRegime;
 	private Boolean investment;
 	private Boolean service;
-	private Integer orderBy;
-	private Integer groupedBy;
+	private IRPFParamsOrderBy orderBy;
+	private IRPFParamsGroupedBy groupedBy;
 	
 	Integer[] invoices;
 	
@@ -113,17 +113,17 @@ public class IRPFParams implements Serializable {
 		this.type = type;
 		return this;
 	}
-	public Integer getOrderBy() {
+	public IRPFParamsOrderBy getOrderBy() {
 		return orderBy;
 	}
-	public IRPFParams setOrderBy(Integer orderBy) {
+	public IRPFParams setOrderBy(IRPFParamsOrderBy orderBy) {
 		this.orderBy = orderBy;
 		return this;
 	}
-	public Integer getGroupedBy() {
+	public IRPFParamsGroupedBy getGroupedBy() {
 		return groupedBy;
 	}
-	public IRPFParams setGroupedBy(Integer groupedBy) {
+	public IRPFParams setGroupedBy(IRPFParamsGroupedBy groupedBy) {
 		this.groupedBy = groupedBy;
 		return this;
 	}

@@ -79,8 +79,8 @@ public class JsonParams extends JSONObject {
 		json.put(IRequestParamsNames.INVESTMENT		 ,params.getInvestment() 		== null? JSON_NULL : new JSONNumber( params.getInvestment()?1:0));
 		json.put(IRequestParamsNames.SERVICE		 ,params.getService() 			== null? JSON_NULL : new JSONNumber( params.getService()?1:0));
 		json.put(IRequestParamsNames.RECTIFICATION	 ,params.getRectificationType()	== null? JSON_NULL : new JSONNumber( params.getRectificationType().ordinal()));
-		json.put(IRequestParamsNames.ORDER_BY		 ,params.getOrderBy()			== null? JSON_NULL : new JSONNumber( params.getOrderBy()));
-		json.put(IRequestParamsNames.GROUPED_BY	 	 ,params.getGroupedBy()			== null? JSON_NULL : new JSONNumber( params.getGroupedBy()));
+		json.put(IRequestParamsNames.ORDER_BY		 ,params.getOrderBy()			== null? JSON_NULL : new JSONNumber( params.getOrderBy().ordinal()));
+		json.put(IRequestParamsNames.GROUPED_BY	 	 ,params.getGroupedBy()			== null? JSON_NULL : new JSONNumber( params.getGroupedBy().ordinal()));
 		return json.toString();
 	}
 	

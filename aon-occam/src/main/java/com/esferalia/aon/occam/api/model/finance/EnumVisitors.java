@@ -47,6 +47,19 @@ public class EnumVisitors {
 		T visitM190F021(T t);
 		T visitM190F022(T t);
 	}
+	
+	public static interface IRPFParamsOrderByVisitor<T,P> {
+		T visitInvoiceIssueDate(P p);
+		T visitInvoiceNumber(P p);
+		T visitInvoiceRegistryName(P p);
+		T visitInvoiceRegistryDocument(P p);
+	}
+	
+	public static interface IRPFParamsGroupedByVisitor<T,P> {
+		T visitInvoice(P p);
+		T visitRegistry(P p);
+		T visitInvoiceDetail(P p);
+	}
 
 	public static interface IFinanceStatusVisitor {
 		void visitPending();

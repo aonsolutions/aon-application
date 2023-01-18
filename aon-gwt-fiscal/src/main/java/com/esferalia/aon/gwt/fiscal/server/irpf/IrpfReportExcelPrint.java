@@ -133,7 +133,7 @@ public class IrpfReportExcelPrint extends HttpServlet {
 			addCell(irpf.getName());
 			addCell(irpf.getIssueDate());
 			addCell(irpf.getTaxDate());
-			addCell(irpf.getWithholdingType()!=null?irpf.getWithholdingType().getDescription():AonStringUtils.SPACE);
+			addCell(irpf.getWithholdingType()!=null?irpf.getWithholdingType().getAbbreviatedDescription():AonStringUtils.SPACE);
 			addCell(irpf.getBase());
 			addCell(irpf.getPercent());
 			addCell(irpf.getQuota());

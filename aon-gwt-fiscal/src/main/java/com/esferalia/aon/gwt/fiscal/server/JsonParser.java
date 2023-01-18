@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsGroupedBy;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsOrderBy;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -791,12 +793,12 @@ public class JsonParser {
 		// ******************* ACTIVITY ******************* 
 		Long orderBy = (Long) jsonParams.get(IRequestParamsNames.ORDER_BY);
 		if (orderBy != null) {
-			params.setOrderBy(orderBy.intValue());	
+			params.setOrderBy( IRPFParamsOrderBy.safeValueOf(orderBy.intValue()));	
 		}
 		// ******************* ACTIVITY ******************* 
 		Long groupedBy = (Long) jsonParams.get(IRequestParamsNames.GROUPED_BY);
 		if (groupedBy != null) {
-			params.setGroupedBy(groupedBy.intValue());	
+			params.setGroupedBy( IRPFParamsGroupedBy.safeValueOf(groupedBy.intValue()) );	
 		}
 		return params;
 	}
