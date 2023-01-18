@@ -66,7 +66,7 @@ public class TbaiData {
 		return getTbaiConfiguration().isTest();
 	}
 	
-	public TicketBai getTicketBai(Domain domain, User user, Integer invoice, TbaiConfiguration tbaiConfiguration) throws Exception {
+	public TicketBai getTicketBai(Domain domain, User user, Integer invoice, TbaiConfiguration tbaiConfiguration, boolean subsanar) throws Exception {
 		DataResponseSource source = tbaiConfiguration.isTest()
 				? DataResponseSource.TBAI_TEST
 				: DataResponseSource.TBAI;
@@ -74,7 +74,7 @@ public class TbaiData {
 			f.getDomainProperty().eq(domain.getId())
 			.and(f.getSourceProperty().eq(source.value()))
 			.and(f.getSourceIdProperty().eq(invoice))
-			.and(f.getCodeProperty().eq("ok")));
+			.and(f.getCodeProperty().eq(subsanar ? "error" : "ok")));
 		
 		Attach requestAttach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f -> f.getSourceTypeProperty().eq(DataAttachSource.TBAI.value())
 				.and(f.getTypeProperty().eq(DataAttachType.REQUEST.value()))
@@ -210,13 +210,13 @@ public class TbaiData {
 		return TbaiBlockchain.fromJSON(drd.getDataValue());
 	}
 	
-	public TbaiBlockchain getInvoiceBlockchain(Domain domain, User user, Integer invoice) {
+	public TbaiBlockchain getInvoiceBlockchain(Domain domain, User user, Integer invoice, boolean subsanar) {
 		DataResponseSource source = isTest() ? DataResponseSource.TBAI_TEST : DataResponseSource.TBAI;
 		DataResponse dr = AON.getDataResponse(domain.getName(), domain.getId(), user.getLogin(), f -> 
 			f.getDomainProperty().eq(domain.getId())
 			.and(f.getSourceProperty().eq(source.value()))
 			.and(f.getSourceIdProperty().eq(invoice))
-			.and(f.getCodeProperty().eq("ok"))
+			.and(f.getCodeProperty().eq(subsanar ? "error" : "ok"))
 			);
 		
 		DataResponseDetail drd = dr.getId() != null ? AON.getDataResponseDetail(domain.getName(), domain.getId(), user.getLogin(), f -> 
