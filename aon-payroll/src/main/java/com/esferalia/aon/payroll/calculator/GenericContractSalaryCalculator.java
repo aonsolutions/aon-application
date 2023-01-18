@@ -74,6 +74,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.mvel2.CompileException;
 import org.mvel2.ConversionException;
+import org.mvel2.ScriptRuntimeException;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
@@ -1712,6 +1713,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			// e.getVariableNames());
 		} catch (CompileException e) {
 			onCompileError(contractPayment, getSyntaxExpressionErrorMessage(contractPayment));
+			addResult(expressionContext, name, start, end, 0.00);
+		} catch (ScriptRuntimeException e) {
+			onCompileError(contractPayment, e.getMessage());
 			addResult(expressionContext, name, start, end, 0.00);
 		} catch ( ConversionException e ) {
 			throw new UndefinedVariablesException();
