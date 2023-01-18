@@ -27,6 +27,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CM_070("303-CM070",false,null,"Importe anual de entregas de bienes y prestaciones de servicios que dan derecho a deducci\u00F3n, sin incluir el IVA (incluye operaciones con inversi\u00F3n del sujeto pasivo, exportaciones, y entregas intracomunitarias)")
 	,CM_071("303-CM071",false,null,"Importe anual total de las entregas de bienes y prestaciones de servicios (incluidas las que no dan derecho a deducir)")
 	//,CM_072("303-CM072",false,null,"Importe acumulado de las casillas prorrateables. Para calculo de regulariacon.")
+	,CM_073("303-CM073",false,null,"Marca para indicar que es un borrador.")
+	,CM_074("303-CM074",false,null,"Importe acumulado de las casillas no prorrateables. Para calculo de regulariacion.")
 	
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  AEAT -------
