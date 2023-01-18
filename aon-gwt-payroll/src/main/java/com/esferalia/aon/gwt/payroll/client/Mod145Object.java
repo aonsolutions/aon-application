@@ -23,9 +23,9 @@ public class Mod145Object {
 	
 	// ----------------------------------------------- Constructor 
 	
-	public Mod145Object(Integer domainId, Integer contractId) {
-		this.domainId = domainId;
+	public Mod145Object(Integer contractId, Integer domainId) {
 		this.contractId = contractId;
+		this.domainId = domainId;
 		this.mod145List = new ArrayList<>();
 	}
 

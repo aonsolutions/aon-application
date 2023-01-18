@@ -5651,7 +5651,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public Period getSalariesDates(String domainName, SalaryInfoFilter filter) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqPayrollSalaries.getSalariesDates(connection, filter);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqPayrollSalaries.getSalariesDates(connection, domainId, filter);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -5660,7 +5661,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public List<SalaryInfo> getSalaries(String domainName, SalaryInfoFilter filter) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqPayrollSalaries.getSalaries(connection, filter);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqPayrollSalaries.getSalaries(connection, domainId, filter);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

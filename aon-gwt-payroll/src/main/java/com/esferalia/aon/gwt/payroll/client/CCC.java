@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,11 +24,9 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -50,7 +49,7 @@ public abstract class CCC extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			submitForm(1);
+			onEmployeesWorking();
 		}
 	}
 	
@@ -58,7 +57,7 @@ public abstract class CCC extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			submitForm(2);
+			onEmployeePrevMov();
 		}
 	}
 	
@@ -66,7 +65,15 @@ public abstract class CCC extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			submitForm(3);
+			onIdcCC(new Date());
+		}
+	}
+	
+	class LaboralLifeCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onLaboralLife(new Date());
 		}
 	}
 	
@@ -75,6 +82,7 @@ public abstract class CCC extends ResizeComposite {
 		private MenuItem employeesWorking = null;
 		private MenuItem employeePrevMov = null;
 		private MenuItem idc = null;
+		private MenuItem laboralLife = null;
 		
 		public TgssContextMenu() {
 			
@@ -89,6 +97,10 @@ public abstract class CCC extends ResizeComposite {
 			idc = addItem("IDC", new IDCCommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idc.ensureDebugId("idc");
+			
+			laboralLife = addItem("Vida Laboral", new LaboralLifeCommand(), 
+					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			laboralLife.ensureDebugId("laboralLife");
 			
 		}
 	}
@@ -122,6 +134,8 @@ public abstract class CCC extends ResizeComposite {
 	HTMLPanel footerOptionsToolbar;
 	
 	// -------------------------------------------- Variables
+	
+	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	
 	private static final String UNKNOWN = "DESCONOCIDA";
 	private TgssContextMenu contextMenu;
@@ -614,6 +628,10 @@ public abstract class CCC extends ResizeComposite {
 	protected abstract Set<Entry<Integer, String>> getActivities();
 	
 	protected abstract void fireWarningMessage(Map<String, String> warningMap);
+	protected abstract void fireLoadingMessage(String message);
+	protected abstract void hideMessage();
+	
+	protected abstract void showPDF(String dataURI, boolean isLaboralLife);
 
 	// -------------------------------------------- Footer Panel
 	
@@ -636,27 +654,80 @@ public abstract class CCC extends ResizeComposite {
 	
 	// -------------------------------------------- Footer Panel TGSS
 
-	private void submitForm(int type) {
-		String fileDownloadURL = GWT.getModuleBaseURL() + "sistema_red_ccc";
-		
-		FormPanel formPanel = new FormPanel("_blank");
-		formPanel.setAction(fileDownloadURL);
-		formPanel.setMethod(FormPanel.METHOD_GET);
-		
-		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.add(new Hidden("ccc", this.ccc));
-		flowPanel.add(new Hidden("regime", this.regime));
-		flowPanel.add(new Hidden("type", Integer.toString(type)));
-		flowPanel.add(new Hidden("login", Wnd.getCurrentUser()));
-		flowPanel.add(new Hidden("domain", Wnd.getCurrentDomainNameURL()));
-		
-		formPanel.add(flowPanel);
-		
-		formPanel.addSubmitCompleteHandler(e1 -> centerContainer.remove(formPanel));
-
-		centerContainer.add(formPanel);
-
-		formPanel.submit();	
+	private void onEmployeesWorking() {
+		fireLoadingMessage("Obteniendo trabajadores en situacion de alta ...");
+		impl.getEmployeesWorking(regime, ccc, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String dataURI) {
+				showPDF(dataURI, false);
+				hideMessage();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Map<String, String> warningMap = new HashMap<>();
+				warningMap.put("Error obtenci\u00f3n TGSS", caught.getMessage());
+				fireWarningMessage(warningMap);
+			}
+		});
 	}
-
+	
+	private void onEmployeePrevMov() {
+		fireLoadingMessage("Obteniendo movimientos previos de trabajadores ...");
+		impl.getEmployeePrevMov(regime, ccc, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String dataURI) {
+				showPDF(dataURI, false);
+				hideMessage();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Map<String, String> warningMap = new HashMap<>();
+				warningMap.put("Error obtenci\u00f3n TGSS", caught.getMessage());
+				fireWarningMessage(warningMap);
+			}
+		});
+	}
+	
+	public void onIdcCC(Date date) {
+		fireLoadingMessage("Obteniendo IDC ...");
+		impl.getIdcCCC(regime, ccc, date, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String dataURI) {
+				showPDF(dataURI, false);
+				hideMessage();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Map<String, String> warningMap = new HashMap<>();
+				warningMap.put("Error obtenci\u00f3n TGSS", caught.getMessage());
+				fireWarningMessage(warningMap);
+			}
+		});
+	}
+	
+	public void onLaboralLife(Date date) {
+		fireLoadingMessage("Obteniendo vida laboral ...");
+		impl.getCCCLaboralLife(regime, ccc, date, new Date(), new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String dataURI) {
+				showPDF(dataURI, true);
+				hideMessage();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				Map<String, String> warningMap = new HashMap<>();
+				warningMap.put("Error obtenci\u00f3n TGSS", caught.getMessage());
+				fireWarningMessage(warningMap);
+			}
+		});
+	}
+	
 }

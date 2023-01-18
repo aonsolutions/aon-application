@@ -16,6 +16,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
+import com.esferalia.aon.gwt.payroll.shared.Enterprise;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
@@ -34,6 +35,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -101,12 +103,26 @@ public abstract class EnterpriseSalary extends Composite {
 			sendEmail(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type.ENTERPRISE);
 		}
 	}
+	
+	class NewEmailEnterpriseManagementCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			onEmailEnterpriseManagement();
+		}
+		
+		private void onEmailEnterpriseManagement() {
+			sendEmail(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type.ENTERPRISE_MANAGEMENT);
+		}
+	}
 
 	private void sendEmail(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type) {
-		Integer enterpriseID = ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
+		Integer enterpriseID = null;
+		if(!type.equals(com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type.ENTERPRISE_MANAGEMENT))
+			enterpriseID = ((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[0]).getEnterpriseId();
 		
 		HashMap<String, String> params = new HashMap<>();
-		params.put("url", GWT.getModuleBaseURL()+ "salary_exporter/");
+		params.put("url", GWT.getModuleBaseURL()+ "salary_connor_macleod/");
 		params.put("type", "salary");
 		params.put("name", "salaries.pdf");
 		params.put("enterprise", String.valueOf(enterpriseID));
@@ -115,6 +131,7 @@ public abstract class EnterpriseSalary extends Composite {
 		
 		for(int i=0; i<salaryTable.getSelectedSalaries().size(); i++) {
 			params.put("id" + i, ""+((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getId());
+			params.put("enterpriseId" + i, ""+((SalaryInfo)salaryTable.getSelectedSalaries().toArray()[i]).getEnterpriseId());
 		}
 		
 		new PayrollEmailDialog(type, params) {
@@ -129,9 +146,12 @@ public abstract class EnterpriseSalary extends Composite {
 				
 				enterpriseSalaryObject.sendPayrollEmail(type, params, from, to, cc, cco, bodyHTML,
 					s -> {
-						AonMessagePanel.showInfo(messagePanel, enterpriseSalaryObject.getEmailStatus());
+						AonMessagePanel.showSuccess(messagePanel, enterpriseSalaryObject.getEmailStatus());
 						hide();
-					},f -> {}
+					},f -> {
+						AonMessagePanel.showError(messagePanel, f.getMessage());
+						hide();
+					}
 				);
 			}
 		};
@@ -141,6 +161,7 @@ public abstract class EnterpriseSalary extends Composite {
 				
 		private MenuItem newEmailEmployees = null;
 		private MenuItem newEmailEnterprise = null;
+		private MenuItem newEmailEnterpriseManagement = null;
 		
 		public EmailContextMenu() {
 			
@@ -151,6 +172,21 @@ public abstract class EnterpriseSalary extends Composite {
 			newEmailEnterprise = addItem("Email empresa", new NewEmailEnterpriseCommand(), 
 					AON.CSS.aonIconEmail(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			newEmailEnterprise.ensureDebugId("newEmailEnterprise");
+			
+			newEmailEnterpriseManagement = addItem("Email empresa", new NewEmailEnterpriseManagementCommand(), 
+					AON.CSS.aonIconEmail(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			newEmailEnterpriseManagement.ensureDebugId("newEmailEnterprise");
+			newEmailEnterpriseManagement.setVisible(false);
+		}
+		
+		private void setEnterpriseManagement() {
+			newEmailEnterprise.setVisible(false);
+			newEmailEnterpriseManagement.setVisible(true);
+		}
+		
+		private void setEnterprise() {
+			newEmailEnterprise.setVisible(true);
+			newEmailEnterpriseManagement.setVisible(false);
 		}
 	}	
 
@@ -186,7 +222,16 @@ public abstract class EnterpriseSalary extends Composite {
 	
 	@UiField
 	HTMLPanel filterSalaryPanel;
-		
+	
+	@UiField
+	HTMLPanel enterprisesPanel;
+	
+	@UiField
+	SuggestBox enterpriseSB;
+	
+	@UiField
+	HTMLPanel workplacesPanel;
+	
 	@UiField
 	SuggestBox workplaceSB;
 	
@@ -194,7 +239,16 @@ public abstract class EnterpriseSalary extends Composite {
 	SuggestBox employeeSB;
 	
 	@UiField
-	ListBox typeList;
+	CheckBox salaryCB;
+	
+	@UiField
+	CheckBox extraCB;
+	
+	@UiField
+	CheckBox delayCB;
+	
+	@UiField
+	CheckBox settleCB;
 	
 	@UiField
 	ListBox dateFilterList;
@@ -233,7 +287,7 @@ public abstract class EnterpriseSalary extends Composite {
 	private AonToolbarButton backButton;
 	private AonToolbarButton deleteButton;
 	private AonToolbarButton pdfButton;
-	private AonToolbarButton publishButton;
+//	private AonToolbarButton publishButton;
 	private AonToolbarButton bidoqPublishButton;
 	private AonToolbarButton email;
 
@@ -281,19 +335,11 @@ public abstract class EnterpriseSalary extends Composite {
 	
 	private void initListBox() {
 		// Clear listboxies
-		typeList.clear();
 		dateFilterList.clear();
 		monthTillT.clear();
 		yearTillT.clear();
 		monthTTo.clear();
 		yearTTo.clear();
-		
-		// Add types to typeList
-		typeList.addItem("Todas", "-1");
-		typeList.addItem("Nomina", "0");
-		typeList.addItem("Extra", "1");
-		typeList.addItem("Atraso", "3");
-		typeList.addItem("Finiquito", "2");
 		
 		// Add months to listboxes
 		String[] monthList = new String[] {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"};
@@ -317,10 +363,10 @@ public abstract class EnterpriseSalary extends Composite {
 
 	public void setEnterpriseSalaryObject(EnterpriseSalaryObject enterpriseSalaryObject) {
 		this.enterpriseSalaryObject = enterpriseSalaryObject;
-		setNewToolbarTitle();
 		this.enterpriseSalaryObject.getSalariesDates(
 				s -> {
 					showSalary();
+					initIsParentDomainView();
 					initDatesListBox();
 					initSuggestBox();
 					filterCurrentYearSalaries();
@@ -329,6 +375,32 @@ public abstract class EnterpriseSalary extends Composite {
 		);
 	}
 	
+	public void setEnterprisesView() {
+		employeeSB.setEnabled(false);
+	}
+	
+	public void hideEditSalaryButton() {
+		salaryTable.setEnteprisesView();
+	}
+
+	public void setEnterpriseView() {
+		employeeSB.setEnabled(true);
+		salaryTable.setEntepriseView();
+	}
+	
+	private void initIsParentDomainView() {
+		List<Enterprise> enterprises = this.enterpriseSalaryObject.getEnterprises();
+		if(null == enterprises || enterprises.isEmpty()) {
+			this.enterprisesPanel.setVisible(false);
+			this.workplacesPanel.setVisible(true);
+			this.contextMenu.setEnterprise();
+		} else {
+			this.enterprisesPanel.setVisible(true);
+			this.workplacesPanel.setVisible(false);
+			this.contextMenu.setEnterpriseManagement();
+		}
+	}
+
 	private void initDatesListBox() {
 		// Add year to listboxes
 		yearTillT.clear();
@@ -347,25 +419,40 @@ public abstract class EnterpriseSalary extends Composite {
 	}
 
 	private void initSuggestBox() {
-		//NAMES
-		List<String> employeesNames = this.enterpriseSalaryObject.getEnterpriseEmployeesName();
-		List<String> employeesNamesSuggest = new ArrayList<>();
-		employeesNames.forEach(name -> employeesNamesSuggest.add(name+""));
-		
-		MultiWordSuggestOracle orclNames = (MultiWordSuggestOracle) this.employeeSB.getSuggestOracle();
-		orclNames.addAll(employeesNamesSuggest);
-		this.employeeSB.setAutoSelectEnabled(true);
-		this.employeeSB.setValue("");
-		
-		//WORKPLACES
-		List<String> workplaceNames = this.enterpriseSalaryObject.getWorkplacesNames();
-		List<String> workplaceNamesSuggest = new ArrayList<>();
-		workplaceNames.forEach(workplace -> workplaceNamesSuggest.add(workplace+""));
-		
-		MultiWordSuggestOracle orclWorkplaceNames = (MultiWordSuggestOracle) this.workplaceSB.getSuggestOracle();
-		orclWorkplaceNames.addAll(workplaceNamesSuggest);
-		this.workplaceSB.setAutoSelectEnabled(true);
-		this.workplaceSB.setValue("");
+		List<Enterprise> enterprises = this.enterpriseSalaryObject.getEnterprises();
+		if(null == enterprises || enterprises.isEmpty()) {
+			
+			//NAMES
+			List<String> employeesNames = this.enterpriseSalaryObject.getEnterpriseEmployeesName();
+			List<String> employeesNamesSuggest = new ArrayList<>();
+			employeesNames.forEach(name -> employeesNamesSuggest.add(name+""));
+			
+			MultiWordSuggestOracle orclNames = (MultiWordSuggestOracle) this.employeeSB.getSuggestOracle();
+			orclNames.addAll(employeesNamesSuggest);
+			this.employeeSB.setAutoSelectEnabled(true);
+			this.employeeSB.setValue("");
+			
+			//WORKPLACES
+			List<String> workplaceNames = this.enterpriseSalaryObject.getWorkplacesNames();
+			List<String> workplaceNamesSuggest = new ArrayList<>();
+			workplaceNames.forEach(workplace -> workplaceNamesSuggest.add(workplace+""));
+			
+			MultiWordSuggestOracle orclWorkplaceNames = (MultiWordSuggestOracle) this.workplaceSB.getSuggestOracle();
+			orclWorkplaceNames.addAll(workplaceNamesSuggest);
+			this.workplaceSB.setAutoSelectEnabled(true);
+			this.workplaceSB.setValue("");
+			
+		} else {
+			//ENTERPRISES
+			List<String> enterprisesNames = this.enterpriseSalaryObject.getEnterprisesName();
+			List<String> enterprisesNamesSuggest = new ArrayList<>();
+			enterprisesNames.forEach(name -> enterprisesNamesSuggest.add(name+""));
+			
+			MultiWordSuggestOracle orclNames = (MultiWordSuggestOracle) this.enterpriseSB.getSuggestOracle();
+			orclNames.addAll(enterprisesNamesSuggest);
+			this.enterpriseSB.setAutoSelectEnabled(true);
+			this.enterpriseSB.setValue("");
+		}
 	}
 	
 	private void filterCurrentYearSalaries() {
@@ -383,12 +470,19 @@ public abstract class EnterpriseSalary extends Composite {
 		filter.setDateTillT(startDate);
 		filter.setDateTTo(endDate);
 		
-		// Salary Type
-		Integer salaryType = Integer.parseInt(typeList.getSelectedValue());
-		filter.setSalaryType(salaryType);
+		// Salary Types
+		List<Integer> salaryTypes = new ArrayList<>();
+		
+		if(salaryCB.getValue()) salaryTypes.add(0);
+		if(extraCB.getValue()) salaryTypes.add(1);
+		if(settleCB.getValue()) salaryTypes.add(2);
+		if(delayCB.getValue()) salaryTypes.add(3);
+		
+		filter.setSalaryTypes(salaryTypes);
 		
 		filter.setEmployeeId(null);
 		filter.setWorkplaceId(null);
+		filter.setEnterpriseId(null);
 		
 		this.enterpriseSalaryObject.getSalaries(
 				s -> {
@@ -398,7 +492,7 @@ public abstract class EnterpriseSalary extends Composite {
 		);
 	}
 	
-	private void setNewToolbarTitle() {
+	public void setNewToolbarTitle() {
 		String entepriseName = this.enterpriseSalaryObject.getEnterpriseName();
 		if(AonStringUtils.isNotBlank(entepriseName)) {
 			toolbar.setTitle("N\u00F3minas : " + entepriseName);
@@ -410,7 +504,7 @@ public abstract class EnterpriseSalary extends Composite {
 
 	private void initSalariesTable() {
 		//Show buttons
-		this.publishButton.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
+//		this.publishButton.setVisible(!Wnd.getCurrentDomainNameURL().contains("ayudat"));
 		this.bidoqPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
 		
 		//Disable buttons till any salary selected
@@ -420,11 +514,45 @@ public abstract class EnterpriseSalary extends Composite {
 	}
 
 	// --------------------------------------------- UI Handlers
+	
+	@UiHandler("enterpriseSB")
+	public void onFilterEnteprise(ValueChangeEvent<String> event) {
+		if(AonStringUtils.isNotBlank(event.getValue())) {
+			workplaceSB.setValue("");
+			employeeSB.setValue("");
+			employeeSB.setEnabled(true);
+		} else {
+			employeeSB.setValue("");
+			employeeSB.setEnabled(false);
+			enterpriseSalaryObject.setEnterprise(null);
+			filterSalaries();
+		}
+	}
+	
+	@UiHandler("enterpriseSB")
+	public void onFilterEntepriseSelection(SelectionEvent<Suggestion> event) {
+		Enterprise enterprise = enterpriseSalaryObject.getEnterpriseByName(enterpriseSB.getValue());
+		enterpriseSalaryObject.setEnterprise(enterprise, s -> {
+			//NAMES
+			List<String> employeesNames = this.enterpriseSalaryObject.getEnterpriseEmployeesName();
+			List<String> employeesNamesSuggest = new ArrayList<>();
+			employeesNames.forEach(name -> employeesNamesSuggest.add(name+""));
+			
+			MultiWordSuggestOracle orclNames = (MultiWordSuggestOracle) this.employeeSB.getSuggestOracle();
+			orclNames.addAll(employeesNamesSuggest);
+			this.employeeSB.setAutoSelectEnabled(true);
+			this.employeeSB.setValue("");
+		}, f ->{});
+		filterSalaries();
+	}
 
 	@UiHandler("workplaceSB")
 	public void onFilterWorkplace(ValueChangeEvent<String> event) {
-		if(AonStringUtils.isNotBlank(event.getValue()))
-				employeeSB.setValue("");
+		if(AonStringUtils.isNotBlank(event.getValue())) {
+			enterpriseSB.setValue("");
+			employeeSB.setValue("");
+		} else
+			filterSalaries();
 	}
 	
 	@UiHandler("workplaceSB")
@@ -436,6 +564,8 @@ public abstract class EnterpriseSalary extends Composite {
 	public void onFilterEmployee(ValueChangeEvent<String> event) {
 		if(AonStringUtils.isNotBlank(event.getValue()))
 			workplaceSB.setValue("");
+		else
+			filterSalaries();
 	}
 	
 	@UiHandler("employeeSB")
@@ -443,8 +573,8 @@ public abstract class EnterpriseSalary extends Composite {
 		filterSalaries();
 	}
 	
-	@UiHandler("typeList")
-	public void onFilterTypeChange(ChangeEvent event) {
+	@UiHandler({"salaryCB", "extraCB", "delayCB", "settleCB"})
+	public void onFilterSalaryCB(ValueChangeEvent<Boolean> event) {
 		filterSalaries();
 	}
 	
@@ -482,8 +612,24 @@ public abstract class EnterpriseSalary extends Composite {
 		setSelectedValueLB(yearTTo, DateUtils.getYear(filter.getDateTTo()) + "");
 		
 		// Salary Type
-		Integer salaryType = Integer.parseInt(typeList.getSelectedValue());
-		filter.setSalaryType(salaryType);
+		List<Integer> salaryTypes = new ArrayList<>();
+		
+		if(salaryCB.getValue()) salaryTypes.add(0);
+		if(extraCB.getValue()) salaryTypes.add(1);
+		if(settleCB.getValue()) salaryTypes.add(2);
+		if(delayCB.getValue()) salaryTypes.add(3);
+		
+		filter.setSalaryTypes(salaryTypes);
+		
+		//Check if exist enterprise filter
+		String enterpsieName = enterpriseSB.getValue();
+		if(AonStringUtils.isNotBlank(enterpsieName)) {
+			Enterprise enterprise = enterpriseSalaryObject.getEnterpriseByName(enterpsieName);
+			filter.setEmployeeId(null);
+			filter.setWorkplaceId(null);
+			filter.setEnterpriseId(enterprise.getId());
+		}else
+			filter.setEnterpriseId(null);
 		
 		//Check if exist workplace filter
 		String workplaceName = workplaceSB.getValue();
@@ -570,7 +716,7 @@ public abstract class EnterpriseSalary extends Composite {
 	private void enableDisableButtons(boolean isSomethingSelected) {
 		deleteButton.setEnabled(isSomethingSelected);
     	pdfButton.setEnabled(isSomethingSelected);
-    	publishButton.setEnabled(isSomethingSelected);
+//    	publishButton.setEnabled(isSomethingSelected);
     	bidoqPublishButton.setEnabled(isSomethingSelected);
     	email.setEnabled(isSomethingSelected);
 	}
@@ -588,6 +734,11 @@ public abstract class EnterpriseSalary extends Composite {
 	
 	public void setBackButtonVisible() {
 		this.backButton.setVisible(true);
+	}
+	
+	public void setSalaryPrintView() {
+		this.backButton.setVisible(false);
+		this.deleteButton.setVisible(false);
 	}
 	
 	private boolean checkFilterDates() {
@@ -631,13 +782,13 @@ public abstract class EnterpriseSalary extends Composite {
 		pdfButton.addClickHandler(e -> onPDF());	
 		toolbar.add(pdfButton);
 		
-		publishButton = new AonToolbarButton( "Drive", AON.CSS.aonIconDrive());
-		publishButton.addClickHandler(e -> onPublish());	
-		toolbar.add(publishButton);
+//		publishButton = new AonToolbarButton( "Drive", AON.CSS.aonIconDrive());
+//		publishButton.addClickHandler(e -> onPublish());	
+//		toolbar.add(publishButton);
 		
 		bidoqPublishButton = new AonToolbarButton( "Bidoq", "aon-icon-bidoq");
 		bidoqPublishButton.addClickHandler(e -> onBidoqPublish());	
-		bidoqPublishButton.setVisible(false);
+		bidoqPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
 		toolbar.add(bidoqPublishButton);
 		
 		email = new AonToolbarButton(AON.MSG.email(), AON.CSS.aonIconEmail());
@@ -727,9 +878,9 @@ public abstract class EnterpriseSalary extends Composite {
 				f -> AonMessagePanel.hideMessage(messagePanel));
 	}
 
-	private void onPublish() {
-		onPublish("drive");
-	}
+//	private void onPublish() {
+//		onPublish("drive");
+//	}
 
 	private void onBidoqPublish() {
 		onPublish("bidoq");

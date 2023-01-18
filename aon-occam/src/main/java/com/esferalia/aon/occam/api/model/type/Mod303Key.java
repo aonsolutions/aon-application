@@ -5,15 +5,15 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Mod303Key implements IFiscalModelKey  {
-	// Á --> \u00C1 á --> \u00E1 
-	// É --> \u00C9 é --> \u00E9 
-	// Í --> \u00CD í --> \u00ED 
-	// Ó --> \u00D3 ó --> \u00F3 
-	// Ú --> \u00DA ú --> \u00FA ... acento
-	// Ü --> \u00DC ü --> \u00fc ... diéresis
-	// Ñ --> \u00D1 ñ --> \u00F1
-	// º --> \u00BA ª --> \u00AA 
-	// ¿ --> \u00BF
+	// Ã --> \u00C1 Ã¡ --> \u00E1 
+	// Ã‰ --> \u00C9 Ã© --> \u00E9 
+	// Ã --> \u00CD Ã­ --> \u00ED 
+	// Ã“ --> \u00D3 Ã³ --> \u00F3 
+	// Ãš --> \u00DA Ãº --> \u00FA ... acento
+	// Ãœ --> \u00DC Ã¼ --> \u00fc ... diÃ©resis
+	// Ã‘ --> \u00D1 Ã± --> \u00F1
+	// Âº --> \u00BA Âª --> \u00AA 
+	// Â¿ --> \u00BF
 	 CM_000("303-CM000",false,null,"Confecci\u00F3n manual")
 	,CM_001("303-CM001",false,null,"C\u00E1lculo por diferencia.")
 	,CM_002("303-CM002",false,null,"Sujeto pasivo inscrito en el Registro de devoluci\u00F3n mensual")
@@ -26,7 +26,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	// Casillas necesarias para el calculo de la prorrata definitiva.
 	,CM_070("303-CM070",false,null,"Importe anual de entregas de bienes y prestaciones de servicios que dan derecho a deducci\u00F3n, sin incluir el IVA (incluye operaciones con inversi\u00F3n del sujeto pasivo, exportaciones, y entregas intracomunitarias)")
 	,CM_071("303-CM071",false,null,"Importe anual total de las entregas de bienes y prestaciones de servicios (incluidas las que no dan derecho a deducir)")
-	//,CM_072("303-CM072",false,null,"Importe acumulado de las casillas prorrateables. Para calculo de regulariacon.")
+	,CM_072("303-CM072",false,null,"Importe acumulado de las casillas prorrateables. Para calculo de regulariacion.")
 	,CM_073("303-CM073",false,null,"Marca para indicar que es un borrador.")
 	,CM_074("303-CM074",false,null,"Importe acumulado de las casillas no prorrateables. Para calculo de regulariacion.")
 	

@@ -74,6 +74,22 @@ public class MainConfigComunica extends MainEntryPoint{
 		protected void fireWarningMessage(Map<String, String> warningMap) {
 			// Nothing to do here
 		}
+
+		@Override
+		protected void fireLoadingMessage(String message) {
+			// Nothing to do here
+		}
+
+		@Override
+		protected void hideMessage() {
+			// Nothing to do here
+		}
+
+		@Override
+		protected void showPDF(String dataURI, boolean isLaboralLife) {
+			// TODO Auto-generated method stub
+			
+		}
 		
 	}
 	
@@ -145,7 +161,7 @@ public class MainConfigComunica extends MainEntryPoint{
 		workplaceComunicaWidget = new WorkplaceComunicaWidgetImpl();
 		cccWidget = new CCCWidgetImpl();
 		agreementComunicaWidget = new AgreementComunicaWidgetImpl();
-	
+		
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 		

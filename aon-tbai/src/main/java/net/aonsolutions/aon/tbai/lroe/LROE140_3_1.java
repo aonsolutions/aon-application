@@ -34,7 +34,7 @@ public class LROE140_3_1 extends LROE140 {
 	
 	private LROEPF140BienesAltaAltaModifPeticion build(Person person, Invoice invoice, LROEInfo info) {
 		LROEPF140BienesAltaAltaModifPeticion lroe =  new LROEPF140BienesAltaAltaModifPeticion();
-		lroe.setCabecera(buildCabecera(person, info));
+		lroe.setCabecera(buildCabecera(person, info, invoice));
 		lroe.setBienesAlta(buildBienes(invoice));
 		return lroe;
 	}
@@ -132,7 +132,7 @@ public class LROE140_3_1 extends LROE140 {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( p140, bos );
 			byte[] data = toGzip(bos.toByteArray());
-			return send(tbaiConfiguration, buildJSON(person, info), data);
+			return send(tbaiConfiguration, buildJSON(person, info, invoice), data);
 		} catch (Exception e) {
 			return error(e);
 		}

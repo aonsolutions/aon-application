@@ -285,6 +285,46 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			sendAttachEmail.setEnabled(isSomethingSelected);
 		}
 	}
+	
+	// ------------------------------------------------- EmployeeSalaryImpl
+	
+	public class EmployeeSalaryImpl extends EmployeeSalary {
+
+		@Override
+		protected void fireEnableDisableButtons(boolean isSomethingSelected, boolean hasSettleSelected) {
+			enableDisableButtons(isSomethingSelected, hasSettleSelected);
+		}
+		
+		@Override
+		protected void onSalaryShow() {
+			closeSalaryPDF.setVisible(false);
+			deleteSalaryButton.setVisible(true);
+			pdfSalaryButton.setVisible(true);
+			pdfSalarySettleButton.setVisible(true);
+			bidoqSalaryPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
+			emailSalary.setVisible(true);
+		}
+
+		@Override
+		protected void onPDFShow() {
+			closeSalaryPDF.setVisible(true);
+			deleteSalaryButton.setVisible(false);
+			pdfSalaryButton.setVisible(false);
+			pdfSalarySettleButton.setVisible(false);
+			bidoqSalaryPublishButton.setVisible(false);
+			emailSalary.setVisible(false);
+		}
+		
+		private void enableDisableButtons(boolean isSomethingSelected, boolean hasSettleSelected) {
+			deleteSalaryButton.setEnabled(isSomethingSelected);
+	    	pdfSalaryButton.setEnabled(isSomethingSelected);
+	    	pdfSalarySettleButton.setEnabled(hasSettleSelected);
+//	    	publishButton.setEnabled(isSomethingSelected);
+	    	bidoqSalaryPublishButton.setEnabled(isSomethingSelected);
+	    	emailSalary.setEnabled(isSomethingSelected);
+		}
+		
+	}
 
 	// ------------------------------------------------- EmployeeIrpfImpl
 
@@ -319,6 +359,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		@Override
 		protected void showLoadingMessage(String message) {
 			showLoading(message);
+		}
+		
+		@Override
+		protected void createViewer() {
+			// Nothing to do here
 		}
 		
 		@Override
@@ -375,6 +420,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			showTaEnd();
 		}
 	}
+	
+	class LaboralLifeCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showLaboralLife();
+		}
+				
+	}
 
 	class PeculiaritiesCommand implements ScheduledCommand {
 
@@ -428,6 +482,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		
 		private MenuItem idc;
 		private MenuItem idcPlNss;
+		
+		private MenuItem laboralLife;	
 
 		MenuItemSeparator separatorComunicate;
 		
@@ -447,6 +503,10 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			idc = addMenuItem("IDC-Trab Cuenta Ajena", new IDCCommand(), AON.CSS.aonIconPdf(), "idc");;
 			idcPlNss = addMenuItem("IDC/Periodo Liquidaci\u00F3n-NSS", new IDCPlNssCommand(), AON.CSS.aonIconPdf(), "idcPlNss");
 
+			laboralLife = addItem("Vida Laboral", new LaboralLifeCommand(), 
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			laboralLife.ensureDebugId("laboralLife");
+			
 			separatorComunicate = addSeparator();
 
 			altaConsolidadaDelete = addMenuItem("Eliminar alta consolidada", new AltaConsolidadaDeleteCommand(), AON.CSS.aonIconSend(), "altaConsolidadaDelete");
@@ -1064,6 +1124,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	// EmployeeSalary
 	private HTMLPanel employeeSalaryButtons;
+	private AonToolbarButton closeSalaryPDF = new AonToolbarButton("");
+	private AonToolbarButton deleteSalaryButton = new AonToolbarButton("");
+	private AonToolbarButton pdfSalaryButton = new AonToolbarButton("");
+	private AonToolbarButton pdfSalarySettleButton = new AonToolbarButton("");
+	private AonToolbarButton bidoqSalaryPublishButton = new AonToolbarButton("");
+	private AonToolbarButton emailSalary = new AonToolbarButton("");
 
 	// EmployeeCalendar
 	private HTMLPanel employeeCalendarButtons;
@@ -1102,7 +1168,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		contractClauseUI = new ContractClauseUIImpl();
 		contractAttachUI = new ContractAttachUIImpl();
 
-		employeeSalary = new EmployeeSalary();
+		employeeSalary = new EmployeeSalaryImpl();
 		employeeSalary.hideToolbar();
 		employeeSalary.setContrataView();
 
@@ -1270,6 +1336,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		case 5:
 			contrataEmployeeObject.getEmployeeSalaryObject(salaryObject -> {
 				employeeSalary.setEmployeeSalaryObject(salaryObject);
+				employeeSalary.hideToolbar();
 				employeeSalary.removeMainMT();
 				finish.accept(null);
 			});
@@ -1908,6 +1975,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private void showIdcPlNss() {
 		showIdcPlNss(DateUtils.getFirstDayOfMonth());
 	}
+	
+	private void showLaboralLife() {
+		showLoading("Obteniendo vida laboral...");
+		contrataEmployeeObject.downloadLaboralLife(dataURI -> {
+				hideMessage();
+				showPdf();
+				pdfViewer.open(dataURI);
+		}, f -> showError("Error Vida Laboral", f.getMessage()));
+	}
 
 	private void showIdcPlNss(Date month) {
 		showPdf();
@@ -2363,32 +2439,47 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	private HTMLPanel initEmployeeSalaryButtons() {
 		HTMLPanel hPanel = new HTMLPanel("");
 		hPanel.addStyleName(style.flex());
+		
+		closeSalaryPDF = new AonToolbarButton("Cerrar visor PDF", AON.CSS.aonIconClose());
+		closeSalaryPDF.addClickHandler(e -> employeeSalary.onClosePDF());
+		hPanel.add(closeSalaryPDF);
 
-		AonToolbarButton deleteButton = new AonToolbarButton("Borrar N\u00F3mina", AON.CSS.aonIconDeleteList());
-		deleteButton.addClickHandler(e -> employeeSalary.onDelete());
-		hPanel.add(deleteButton);
+		deleteSalaryButton = new AonToolbarButton("Borrar N\u00F3mina", AON.CSS.aonIconDeleteList());
+		deleteSalaryButton.addClickHandler(e -> employeeSalary.onDelete());
+		hPanel.add(deleteSalaryButton);
 
-		AonToolbarButton pdfButton = new AonToolbarButton(AON.MSG.printPDF() + " N\u00F3mina", AON.CSS.aonIconPdf());
-		pdfButton.addClickHandler(e -> employeeSalary.onPDF());
-		hPanel.add(pdfButton);
+		pdfSalaryButton = new AonToolbarButton(AON.MSG.printPDF() + " N\u00F3mina", AON.CSS.aonIconPdf());
+		pdfSalaryButton.addClickHandler(e -> employeeSalary.onPDF());
+		hPanel.add(pdfSalaryButton);
 
-		AonToolbarButton pdfSettleButton = new AonToolbarButton("Carta Finiquito", AON.CSS.aonIconPdf());
-		pdfSettleButton.addClickHandler(e -> employeeSalary.onPDFSettle());
-		pdfSettleButton.setVisible(false);
-		hPanel.add(pdfSettleButton);
+		pdfSalarySettleButton = new AonToolbarButton("Carta Finiquito", AON.CSS.aonIconPdf());
+		pdfSalarySettleButton.addClickHandler(e -> employeeSalary.onPDFSettle());
+		hPanel.add(pdfSalarySettleButton);
 
-		AonToolbarButton publishButton = new AonToolbarButton("Drive", AON.CSS.aonIconDrive());
-		publishButton.addClickHandler(e -> employeeSalary.onPublish());
-		hPanel.add(publishButton);
+//		AonToolbarButton publishButton = new AonToolbarButton("Drive", AON.CSS.aonIconDrive());
+//		publishButton.addClickHandler(e -> employeeSalary.onPublish());
+//		hPanel.add(publishButton);
 
-		AonToolbarButton bidoqPublishButton = new AonToolbarButton("Bidow", "aon-icon-bidoq");
-		bidoqPublishButton.addClickHandler(e -> employeeSalary.onBidoqPublish());
-		bidoqPublishButton.setVisible(false);
-		hPanel.add(bidoqPublishButton);
+		bidoqSalaryPublishButton = new AonToolbarButton("Bidow", "aon-icon-bidoq");
+		bidoqSalaryPublishButton.addClickHandler(e -> employeeSalary.onBidoqPublish());
+		bidoqSalaryPublishButton.setVisible(Wnd.getCurrentDomainNameURL().contains("ayudat"));
+		hPanel.add(bidoqSalaryPublishButton);
 
-		AonToolbarButton email = new AonToolbarButton(AON.MSG.email() + " N\u00F3mina", AON.CSS.aonIconEmail());
-		email.addClickHandler(e -> employeeSalary.onEmail(e));
-		hPanel.add(email);
+		emailSalary = new AonToolbarButton(AON.MSG.email() + " N\u00F3mina", AON.CSS.aonIconEmail());
+		emailSalary.addClickHandler(e -> employeeSalary.onEmail(e));
+		hPanel.add(emailSalary);
+		
+		closeSalaryPDF.setVisible(false);
+		deleteSalaryButton.setVisible(true);
+		pdfSalaryButton.setVisible(true);
+		pdfSalarySettleButton.setVisible(true);
+		emailSalary.setVisible(true);
+		
+		deleteSalaryButton.setEnabled(false);
+		pdfSalaryButton.setEnabled(false);
+		pdfSalarySettleButton.setEnabled(false);
+		bidoqSalaryPublishButton.setEnabled(false);
+		emailSalary.setEnabled(false);
 
 		return hPanel;
 	}

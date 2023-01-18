@@ -64,6 +64,7 @@
 				<g:Label styleName="{style.label}">Para:</g:Label>
 				<g:TextBox ui:field="sendTo" styleName='aon-inputText {style.widthAll}'></g:TextBox>
 				<g:Label ui:field="sendToMessage" styleName="{style.bold}">Cuenta definida en el perfil del empleado</g:Label>
+				<g:Label ui:field="sendToEnterpriseManagmentMessage" styleName="{style.bold}">Cuenta definida en el perfil de cada empresa</g:Label>
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.flex}">
 				<g:Label styleName="{style.label}">CC:</g:Label>

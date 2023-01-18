@@ -302,17 +302,19 @@ public class DiaryImport extends ImportUtils {
 		
 		if(isDebe(title)) {
 			Double debit = Utils.parseDouble(o);
+			Double actDebit = diary.get(asiento).getEntry().getDetails().get(apunte-1).getDebit();
 			if(debit != null && debit < 0) {
 				diary.get(asiento).getEntry().getDetails().get(apunte-1).setCredit(-debit);
-			} else if(debit != null) diary.get(asiento).getEntry().getDetails().get(apunte-1).setDebit(debit);
+			} else if(debit != null && actDebit == 0.0) diary.get(asiento).getEntry().getDetails().get(apunte-1).setDebit(debit);
 			return;
 		}
 		
 		if(isHaber(title)) {
 			Double credit = Utils.parseDouble(o);
+			Double actCredit = diary.get(asiento).getEntry().getDetails().get(apunte-1).getCredit();
 			if(credit != null && credit < 0) {
 				diary.get(asiento).getEntry().getDetails().get(apunte-1).setDebit(-credit);
-			} else if(credit != null) diary.get(asiento).getEntry().getDetails().get(apunte-1).setCredit(credit);
+			} else if(credit != null && actCredit == 0.0) diary.get(asiento).getEntry().getDetails().get(apunte-1).setCredit(credit);
 			return;
 		}
 		

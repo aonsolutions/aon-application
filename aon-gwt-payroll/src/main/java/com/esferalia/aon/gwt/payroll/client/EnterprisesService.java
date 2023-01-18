@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +54,7 @@ import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
@@ -67,6 +69,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface EnterprisesService extends RemoteService {
 	
 	Integer getDomain(String domain);
+	
+	Domain getDomain(String domain, String user);
 
 	ContextDescriptor getContext(String domain);
 
@@ -187,9 +191,11 @@ public interface EnterprisesService extends RemoteService {
 	String getPayrollEmailBody(String currentDomainName, Type type, HashMap<String, String> params);
 
 	String sendPayrollEmail(String currentDomainName, Type type, HashMap<String, String> params, String from, String to,
-			String cc, String cco, String bodyHTML);
+			String cc, String cco, String bodyHTML) throws IllegalArgumentException;
 
 	String checkEmployeesEmails(String currentDomainName, ArrayList<Integer> salaryIds);
+	
+	String checkEnterprisesEmails(String currentDomainName, HashSet<Integer> enterpriseIds);
 	
 	String getSettlePDF(String currentDomainName, String user, Integer settleId) throws IllegalArgumentException;
 	
@@ -324,7 +330,7 @@ public interface EnterprisesService extends RemoteService {
 
 	List<ITEmployee> getWorkplaceEmployeeITInfo(String currentDomainName, Boolean allEmployees, Integer workplaceId);
 
-	ComunicaEnterpriseSettings getComunicaEnterpriseSettings(String currentDomainName, String currentUser);
+	ComunicaEnterpriseSettings getComunicaEnterpriseSettings(String currentDomainName, String currentUser) throws IllegalArgumentException;
 
 	void setComunicaEnterpriseSettings(String currentDomainName, String currentUser,
 			ComunicaEnterpriseSettings comunicaEnterpriseSettings);
@@ -408,5 +414,19 @@ public interface EnterprisesService extends RemoteService {
 	void saveMod145(String currentDomainName, String currentUser, Mod145 mod145) throws IllegalArgumentException;
 
 	String printMod145(String currentDomainName, String currentUser, Mod145 mod145) throws IllegalArgumentException;
+
+	// ------------------------------------------------  SistemaRED
+	
+	String getCCCLaboralLife(String currentDomainName, String currentUser, String regime, String ccc, Date from, Date to) throws IllegalArgumentException;
+
+	String getLaboralLife(String currentDomainName, String currentUser, String regime, String ccc, String nss) throws IllegalArgumentException;
+	
+	String getIdcCCC(String currentDomainName, String currentUser, String regime, String ccc, Date date) throws IllegalArgumentException;
+	
+	String getEmployeePrevMov(String currentDomainName, String currentUser, String regime, String ccc) throws IllegalArgumentException;
+
+	String getEmployeesWorking(String currentDomainName, String currentUser, String regime, String ccc) throws IllegalArgumentException;
+
+	String getUpdateCert(String currentDomainName, String currentUser, String regime, String ccc) throws IllegalArgumentException;
 
 }

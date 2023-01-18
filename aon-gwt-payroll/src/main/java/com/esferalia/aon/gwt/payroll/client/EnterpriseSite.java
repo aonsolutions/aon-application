@@ -199,7 +199,23 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 	
 	@Override
 	public void onEmployeeSalarySelected(EmployeeSalaryObject employeeSalaryObject) {
-		EmployeeSalary employeeSalary = new EmployeeSalary();
+		EmployeeSalary employeeSalary = new EmployeeSalary() {
+
+			@Override
+			protected void fireEnableDisableButtons(boolean isSomethingSelected, boolean hasSettleSelected) {
+				// Nothing to do here
+			}
+
+			@Override
+			protected void onSalaryShow() {
+				// Nothing to do here
+			}
+
+			@Override
+			protected void onPDFShow() {
+				// Nothing to do here
+			}};
+			
 		detailPanel.setWidget(employeeSalary);
 		employeeSalary.setEmployeeSalaryObject(employeeSalaryObject);
 		employeeSalary.hideEnterpriseSiteButtons();

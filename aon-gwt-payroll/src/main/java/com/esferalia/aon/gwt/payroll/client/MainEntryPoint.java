@@ -62,9 +62,10 @@ public class MainEntryPoint implements EntryPoint {
 			runAsync(MainCCC.class, new MainCCC());
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_CONFIG_COMUNICA_ENTRY_POINT)) {
 			runAsync( MainConfigComunica.class, new MainConfigComunica());
-		} else if (entryPoint
-				.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
+		} else if (entryPoint.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
 			runAsync(ActivitySummary.class, new ActivitySummary() );
+		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_SALARY_PRINT_ENTRY_POINT)) {
+			runAsync(MainSalaryPrint.class, new MainSalaryPrint() );
 		}
 	}
 	
@@ -241,6 +242,19 @@ public class MainEntryPoint implements EntryPoint {
 			});
 		} else if (name == ActivitySummary.class ) {
 			GWT.runAsync(ActivitySummary.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == MainSalaryPrint.class ) {
+			GWT.runAsync(MainSalaryPrint.class, new RunAsyncCallback() {
 				
 				@Override
 				public void onSuccess() {

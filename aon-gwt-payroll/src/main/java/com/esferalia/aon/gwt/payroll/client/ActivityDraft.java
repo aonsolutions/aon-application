@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +10,11 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
@@ -20,14 +23,16 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Hidden;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class ActivityDraft extends Composite{
 	
@@ -92,6 +97,22 @@ public class ActivityDraft extends Composite{
 		public void fireWarningMessage(Map<String, String> warningMap) {
 			AonMessagePanel.showWarning(messagePanel, warningMap);
 		}
+
+		@Override
+		protected void fireLoadingMessage(String message) {
+			AonMessagePanel.showLoading(messagePanel, message);
+		}
+
+		@Override
+		protected void hideMessage() {
+			AonMessagePanel.hideMessage(messagePanel);
+		}
+
+		@Override
+		public void showPDF(String dataURI, boolean isLaboralLife) {
+			showPdf(isLaboralLife);
+			pdfViewer.open(dataURI);
+		}
 		
 	}
 	
@@ -112,10 +133,29 @@ public class ActivityDraft extends Composite{
 	DockLayoutPanel dockLayoutPanel;
 	
 	@UiField
-	HTMLPanel centerContainer;
+	DeckPanel toolbarDeckPanel;
+	
+	@UiField(provided = true)
+	AonToolbar toolbar;
+	
+	@UiField(provided = true)
+	AonToolbar toolbarPDFViewer;
 	
 	@UiField
 	HTMLPanel messagePanel;
+	
+	@UiField
+	DeckPanel mainDeckPanel;
+	
+	@UiField
+	HTMLPanel mainPanel;
+	
+	@UiField
+	SimpleLayoutPanel scrolledPDFPanel;
+
+	@UiField
+	FullViewer pdfViewer;
+	
 	
 	// ---------------------------------------------- Variables
 	
@@ -123,24 +163,29 @@ public class ActivityDraft extends Composite{
 	
 	private Activity activity;
 	
-	private AonToolbar toolbar;
-	
 	// ---------------------------------------------- Constructor
 
 	public ActivityDraft() {	
 		activity = new ActivityImplementation();
-		getToolbarPanel();
+		
+		this.toolbar = new AonToolbar("Actividad");
+		this.toolbarPDFViewer = new AonToolbar("Actividad");
 		
 		// Inicializamos la vista de la actividad
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		dockLayoutPanel.addNorth( toolbar , AonToolbar.HEIGTH );
+		showActivity();
+		
+		getToolbarPanel();
+		getToolbarPDFViewerPanel();
+		
 		dockLayoutPanel.addStyleName(style.container());
+
+		scrolledPDFPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 170.00, Unit.PX);
 		
 		activity.setActivityDraftCCCHeight();
 		
-		centerContainer.add(activity);
-		centerContainer.getElement().getStyle().setMarginTop(40, Unit.PX);
+		mainPanel.add(activity);
 	}
 	
 	// ---------------------------------------------- setActivityDraftObject
@@ -184,8 +229,6 @@ public class ActivityDraft extends Composite{
 	
 	private void getToolbarPanel() {
 		
-		toolbar = new AonToolbar("Actividad");
-
 		AonToolbarButton accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		accept.addClickHandler(e -> onAccept());
 		toolbar.add(accept);
@@ -193,6 +236,17 @@ public class ActivityDraft extends Composite{
 		AonToolbarButton checkUpdateCert = new AonToolbarButton("Cert. de estar al corriente con TGSS", AON.CSS.aonIconTgss() );
 		checkUpdateCert.addClickHandler(e -> onCheckUpdateCert());
 		toolbar.add(checkUpdateCert);
+	}
+	
+	// ------------------------------------------------- Toolbar PDFViewer panel
+	
+	private AonToolbar getToolbarPDFViewerPanel() {
+
+		AonToolbarButton closePDF = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconBack());
+		closePDF.addClickHandler(e -> onClosePDF());
+		toolbarPDFViewer.add(closePDF);
+		
+		return toolbarPDFViewer;
 	}
 	
 	// ---------------------------------------------- Toolbar.Methods
@@ -223,33 +277,56 @@ public class ActivityDraft extends Composite{
 	
 	// ---------------------------------------------- Toolbar.Methods TGSS
 	
-	private void onCheckUpdateCert() {
-		submitForm(0);
-	}
-	
-	private void submitForm(int type) {
+	public void onCheckUpdateCert() {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo Cert. de estar al corriente con TGSS ...");
 		Pair<String, String> completeCCC = activityDraftObject.getPrincipalAccount();
 		
-		String fileDownloadURL = GWT.getModuleBaseURL() + "sistema_red_ccc";
+		activityDraftObject.getUpdateCert(completeCCC.getKey(), completeCCC.getValue(),
+				dataURI -> {
+					showPdf(false);
+					pdfViewer.open(dataURI);
+					AonMessagePanel.hideMessage(messagePanel);
+				}, f -> {
+					Map<String, String> warningMap = new HashMap<>();
+					warningMap.put("Error obtenci\u00f3n TGSS", f.getMessage());
+					AonMessagePanel.showWarning(messagePanel, warningMap);
+				});
+	}
+	
+	// ------------------------------------------------- Show/Hide Employee/PDF
 
-		FormPanel formPanel = new FormPanel("_blank");
-		formPanel.setAction(fileDownloadURL);
-		formPanel.setMethod(FormPanel.METHOD_GET);
-		
-		FlowPanel flowPanel = new FlowPanel();
-		flowPanel.add(new Hidden("ccc", completeCCC.getValue()));
-		flowPanel.add(new Hidden("regime", completeCCC.getKey()));
-		flowPanel.add(new Hidden("type", Integer.toString(type)));
-		flowPanel.add(new Hidden("login", Wnd.getCurrentUser()));
-		flowPanel.add(new Hidden("domain", Wnd.getCurrentDomainNameURL()));
-		
-		formPanel.add(flowPanel);
-		
-		formPanel.addSubmitCompleteHandler(e1 -> centerContainer.remove(formPanel));
+	private void showActivity() {
+		toolbarDeckPanel.showWidget(0);
+		mainDeckPanel.showWidget(0);
+	}
 
-		centerContainer.add(formPanel);
+	private void showPdf(boolean isLaboralLife) {
+		toolbarDeckPanel.showWidget(1);
+		mainDeckPanel.showWidget(1);
+		
+		checkPDFToolbar(isLaboralLife);
+	}
+	
+	private void checkPDFToolbar(boolean isLaboralLife) {
+		if(isLaboralLife && toolbarPDFViewer.getButtonContainer().getWidgetCount() == 1) {
+			MonthListBox monthListBox = new MonthListBox();
+			Date lastMonth = DateUtils.getFirstDayOfMonth(); 
+			Date firstMonth = DateUtils.addYears2Date(DateUtils.getFirstDayOfMonth(), -4);
+			monthListBox.setFirstMonth(firstMonth);
+			monthListBox.setLastMonth(lastMonth);
+			monthListBox.setPageSize(52);
+			monthListBox.setVisibleRange(0, 52);
+			monthListBox.addChangeHandler(e -> this.activity.cccWidget.onLaboralLife(monthListBox.getSelected()));
+			monthListBox.setSelected(DateUtils.getFirstDayOfMonth(), true);
+			monthListBox.setWidth("200px");
+			toolbarPDFViewer.add(monthListBox);
+		} else if(!isLaboralLife && toolbarPDFViewer.getButtonContainer().getWidgetCount() > 1)
+			toolbarPDFViewer.getButtonContainer().remove(toolbarPDFViewer.getButtonContainer().getWidgetCount()-1);
+		
+	}
 
-		formPanel.submit();
+	private void onClosePDF() {
+		showActivity();
 	}
 	
 }

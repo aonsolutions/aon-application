@@ -38,7 +38,7 @@ public class LROE140_6 extends LROE140 {
 	
 	private LROEPF140IngresosConFacturaConSGAltaPeticion build(Person person, Invoice invoice,LROEInfo info, byte[] data) {
 		LROEPF140ProvisionesFondosSuplidosAltaModifPeticion p = new LROEPF140ProvisionesFondosSuplidosAltaModifPeticion();
-		p.setCabecera(buildCabecera(person, info));
+		p.setCabecera(buildCabecera(person, info, invoice));
 		
 		ProvisionesFondosSuplidosType suplidos = new ProvisionesFondosSuplidosType();
 		ProvisionFondoSuplidoType suplido = new ProvisionFondoSuplidoType();
@@ -52,7 +52,7 @@ public class LROE140_6 extends LROE140 {
 		p.setFondosSuplidos(suplidos);
 		
 		LROEPF140IngresosConFacturaConSGAltaPeticion proba = new LROEPF140IngresosConFacturaConSGAltaPeticion();
-		proba.setCabecera(buildCabecera(person, info));
+		proba.setCabecera(buildCabecera(person, info, invoice));
 
 		IngresosConSGCodificadoType ingresos = new IngresosConSGCodificadoType();
 		IngresoConSGCodificadoType ingreso = new IngresoConSGCodificadoType();
@@ -86,7 +86,7 @@ public class LROE140_6 extends LROE140 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(person, info, invoice), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -98,7 +98,7 @@ public class LROE140_6 extends LROE140 {
 	
 	private LROEPF140IngresosConFacturaConSGAnulacionPeticion buildBaja(Person person, Invoice invoice, LROEInfo info, byte[] data) {	
 		LROEPF140IngresosConFacturaConSGAnulacionPeticion lroe = new LROEPF140IngresosConFacturaConSGAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(person, info));
+		lroe.setCabecera(buildCabecera(person, info, invoice));
 		AnulacionesIngresosConSGType anulaciones = new AnulacionesIngresosConSGType();
 		
 		AnulacionFacturaConSGType anulacion = new AnulacionFacturaConSGType();
@@ -122,7 +122,7 @@ public class LROE140_6 extends LROE140 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(person, info, invoice), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}

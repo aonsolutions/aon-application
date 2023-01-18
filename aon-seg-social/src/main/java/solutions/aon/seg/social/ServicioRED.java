@@ -80,14 +80,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 		Date today = new Date(); 
 		date = date.after(today) ? today : date;
 		
-		SSLContext sslContext = null;
-			try {				
-				sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
-			} catch (Exception e1) {
-				throw new InvalidCertificateException();
-			}
-			String link = "";
-			String sessionId = "";
+		SSLContext sslContext = Toolkit.getTrustedSSLContext(certificateInputStream, certificatePassword, certificateType);
+		
+		String link = "";
+		String sessionId = "";
 			
 			
 			try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {				
@@ -437,16 +433,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 	public static byte[] getTADuplicatePOST(InputStream certificateInputStream, String certificatePassword, String certificateType,
 			String ccc, String regime, SituationType situationType, String affiliationNumber, Date date) throws SegSocialException{
 
-		SSLContext sslContext = null;
+		SSLContext sslContext = Toolkit.getTrustedSSLContext(certificateInputStream, certificatePassword, certificateType);
 
-		try {
-			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
-		} catch (Exception e1) {
-			throw new InvalidCertificateException();
-		}
 		String link = "";
-		String sessionId = "";
-		
+		String sessionId = "";		
 		
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
 			

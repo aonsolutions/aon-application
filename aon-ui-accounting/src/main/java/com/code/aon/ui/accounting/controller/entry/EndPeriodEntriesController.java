@@ -365,10 +365,12 @@ public class EndPeriodEntriesController implements Serializable {
 				PeriodEntriesManager manager = new PeriodEntriesManager( getParams() );
 				AccountEntry[] entries = manager.createOperatingEntry();
 				for (AccountEntry entry: entries) {
-					getOutputMessages().add("Se ha creado el asiento de explotación nº " + entry.getId() + 
-							(entry.isConfidential()?" confidencial ":"") + 
-							 " en el ejercicio " + entry.getAccountPeriod().getName() + ".");
-					getGeneratedEntries().add(entry.getId());
+					if (entry != null) {
+						getOutputMessages().add("Se ha creado el asiento de explotación nº " + entry.getId() + 
+								(entry.isConfidential()?" confidencial ":"") + 
+								" en el ejercicio " + entry.getAccountPeriod().getName() + ".");
+						getGeneratedEntries().add(entry.getId());
+					}
 				}
 			} catch (ManagerBeanException e) {
 				String msg = "Error al generar el asiento de explotación del ejercicio. (" + e.getMessage() + ")";
@@ -382,10 +384,12 @@ public class EndPeriodEntriesController implements Serializable {
 				PeriodEntriesManager manager = new PeriodEntriesManager( getParams() );
 				AccountEntry[] entries = manager.createClosingEntry();
 				for (AccountEntry entry: entries) {
-					getOutputMessages().add("Se ha creado el asiento de cierre nº " + entry.getId() + 
-							(entry.isConfidential()?" confidencial ":"") + 
-							" en el ejercicio " + entry.getAccountPeriod().getName() + ".");
-					getGeneratedEntries().add(entry.getId());
+					if (entry!= null) {
+						getOutputMessages().add("Se ha creado el asiento de cierre nº " + entry.getId() + 
+								(entry.isConfidential()?" confidencial ":"") + 
+								" en el ejercicio " + entry.getAccountPeriod().getName() + ".");
+						getGeneratedEntries().add(entry.getId());
+					}
 				}
 			} catch (ManagerBeanException e) {
 				String msg = "Error al generar el asiento de cierre del ejercicio. (" + e.getMessage() + ")";
@@ -399,10 +403,12 @@ public class EndPeriodEntriesController implements Serializable {
 				PeriodEntriesManager manager = new PeriodEntriesManager( getParams() );
 				AccountEntry[] entries = manager.createOpeningEntry();
 				for (AccountEntry entry: entries) {
-					getOutputMessages().add("Se ha creado el asiento de apertura nº " + entry.getId() + 
-							(entry.isConfidential()?" confidencial ":"") + 
-							" en el ejercicio " + entry.getAccountPeriod().getName() + ".");
-					getGeneratedEntries().add(entry.getId());
+					if (entry!= null) {
+						getOutputMessages().add("Se ha creado el asiento de apertura nº " + entry.getId() + 
+								(entry.isConfidential()?" confidencial ":"") + 
+								" en el ejercicio " + entry.getAccountPeriod().getName() + ".");
+						getGeneratedEntries().add(entry.getId());
+					}
 				}
 			} catch (ManagerBeanException e) {
 				String msg = "Error al generar el asiento de apertura del ejercicio.";

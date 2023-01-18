@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.server;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -301,7 +302,7 @@ public class ContractServlet extends AonApiHttpServlet {
 			filter.setEnterpriseId(companyId.get().intValue());
 		}
 
-		return JooqPayrollSalaries.getSalaries(conn, filter);
+		return JooqPayrollSalaries.getSalaries(conn, api.getDomain().getId(), filter);
 	}
 	
 	private File getSalaryPdf(AonApiData api) throws Exception {
@@ -365,7 +366,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		try(Connection conn = AonServletUtils.getConnection(api.getDomain().getName())){
 			SalaryInfoFilter filter = getFilter(api.getData());
 			if(companyId.isPresent()) filter.setEnterpriseId(companyId.get().intValue());
-			SalaryInfo salaryInfo = JooqPayrollSalaries.getSalariesDateEnd(conn, filter);
+			SalaryInfo salaryInfo = JooqPayrollSalaries.getSalariesDateEnd(conn,  api.getDomain().getId(), filter);
 			date = salaryInfo.getEndDate();
 			if(date == null) date = new Date();
 		}
@@ -418,7 +419,7 @@ public class ContractServlet extends AonApiHttpServlet {
 		} 
 		
 		if(!params.optString("salaryType").isEmpty()) {
-			filter.setSalaryType(params.optInt("salaryType"));
+			filter.setSalaryTypes(new ArrayList<>(params.optInt("salaryType")));
 		}
 	
 		return filter;
