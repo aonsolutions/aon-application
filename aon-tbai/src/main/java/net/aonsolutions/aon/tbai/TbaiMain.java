@@ -105,11 +105,11 @@ public class TbaiMain {
 		}
 	}
 
-	public void zuzenduTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration) throws Exception {
+	public void zuzenduTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration, boolean subsanar) throws Exception {
 		TbaiData tbaiData = TbaiData.getInstance(tbaiConfiguration); 
-		TicketBai ticketBai = tbaiData.getTicketBai(company.getDomain(), new User().setLogin(""), invoice.getId(), tbaiConfiguration);
-		TbaiBlockchain blockchain = tbaiData.getInvoiceBlockchain(company.getDomain(), new User().setLogin(""), invoice.getId());
-		final SubsanacionModificacionTicketBAI tbai = Invoice2tbai.buildZuzendu(company, invoice, tbaiConfiguration, ticketBai, blockchain);
+		TicketBai ticketBai = tbaiData.getTicketBai(company.getDomain(), new User().setLogin(""), invoice.getId(), tbaiConfiguration, subsanar);
+		TbaiBlockchain blockchain = tbaiData.getInvoiceBlockchain(company.getDomain(), new User().setLogin(""), invoice.getId(), subsanar);
+		final SubsanacionModificacionTicketBAI tbai = Invoice2tbai.buildZuzendu(company, invoice, tbaiConfiguration, ticketBai, blockchain, subsanar);
 		
 		final JAXBContext jaxbContext = JAXBContext.newInstance(SubsanacionModificacionTicketBAI.class);
 		final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -120,9 +120,7 @@ public class TbaiMain {
 		byte[] xml = bos.toByteArray();
 		
 		String uri = TbaiUri.getUrlZuzendu(tbaiConfiguration);
-		TbaiResponse response = sendXML(uri, tbaiConfiguration, xml, false);
-		
-
+		TbaiResponse response = sendXML(uri, tbaiConfiguration, xml, false);	
 	}
 	
 	public void createEmisionTBAI(Company company, Invoice invoice, TbaiConfiguration tbaiConfiguration)
