@@ -20,7 +20,7 @@ import com.esferalia.aon.gwt.fiscal.client.finance.FinanceModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.checkit.CheckItModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.nordigen.NordigenModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.paymethod.PayMethodModule;
-import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilities;
+import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesModule;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
 import com.esferalia.aon.gwt.fiscal.client.invoice.OperationReport;
@@ -458,7 +458,7 @@ public class MainEntryPoint implements EntryPoint {
 				
 			});
 		} else if ( entryPoint.equalsIgnoreCase(FS_FINANCE_UTILITIES_ENTRY_POINT)) {
-			GWT.runAsync(FinanceUtilities.class, new RunAsyncCallback() {
+			GWT.runAsync(FinanceUtilitiesModule.class, new RunAsyncCallback() {
 
 				@Override
 				public void onFailure(Throwable reason) {
@@ -467,7 +467,7 @@ public class MainEntryPoint implements EntryPoint {
 
 				@Override
 				public void onSuccess() {
-					FinanceUtilities financeUtilities = new FinanceUtilities();
+					FinanceUtilitiesModule financeUtilities = new FinanceUtilitiesModule();
 					financeUtilities.onModuleLoad();
 				}
 				

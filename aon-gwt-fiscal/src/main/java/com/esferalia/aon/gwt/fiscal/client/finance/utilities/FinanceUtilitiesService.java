@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.fiscal.client.finance.utilities;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
@@ -14,18 +15,15 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("ms/FinanceUtilities")
 public interface FinanceUtilitiesService extends RemoteService {
 	
-	Domain getDomain(String domainName,String user, int domain) throws AonCoreException;
-	LinkedList<Domain> getChildDomains(String domainName,String user, int domain) throws AonCoreException;
+	Domain getDomain(Occam occam) throws AonCoreException;
+	LinkedList<Domain> getChildDomains(Occam occam) throws AonCoreException;
 
 	// Chequeo de facturas sin vencimientos
-	FinanceUtilitiesResult missingFinanceInvoices(String domainName, String user, Domain domain, FinanceUtilitiesParams params) throws AonCoreException;
-	Invoice missingFinanceInvoicesFix(String domainName, String user, Integer domain, Integer invoice) throws AonCoreException;
+	FinanceUtilitiesResult missingFinanceInvoices(Occam occam, Domain domain, FinanceUtilitiesParams params) throws AonCoreException;
+	Invoice missingFinanceInvoicesFix(Occam occam, Integer invoice) throws AonCoreException;
 
 	// Chequeo de integridad de vencimientos en facturas 
-	FinanceUtilitiesResult financeInvoiceIntegrity(String domainName, String user, Domain domain) throws AonCoreException;
-	Finance financeInvoiceIntegrityFix(String domainName, String user, Integer domain, Finance finance) throws AonCoreException;
-	
-	// Fix de ayudat (Borrar) 
-	FinanceUtilitiesResult ayudatFix(String domainName, String user, Domain domain) throws AonCoreException;
+	FinanceUtilitiesResult financeInvoiceIntegrity(Occam occam, Domain domain) throws AonCoreException;
+	Finance financeInvoiceIntegrityFix(Occam occam, Finance finance) throws AonCoreException;
 	
 }

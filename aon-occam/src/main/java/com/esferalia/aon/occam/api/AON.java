@@ -722,6 +722,11 @@ public class AON {
 
 	// --------------------- DOMAIN
 
+	public static Domain getDomain(Occam occam, Integer domainId) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)){
+			return getCommon().getDomain(ctx, domainId);
+		} 
+	}
 	public static Domain getDomain(String schema, Integer domainId) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(schema)){
 			return getCommon().getDomain(ctx, domainId);
@@ -752,8 +757,7 @@ public class AON {
 		}
 	}
 	
-	public static void updateDomainScope(String domainName, Integer domainId,
-			String user, Domain domain) {
+	public static void updateDomainScope(String domainName, Integer domainId, String user, Domain domain) {
 		CloseableAONContext ctx = null;
 		try {
 			ctx = AONContext.getAONContext(domainName, domainId, user);
@@ -787,16 +791,15 @@ public class AON {
 				ctx.close();
 		}
 	}
-	
-	public static LinkedList<Domain> getDomainList(String domainName,
-			Integer domainId, String login, DomainFilter filter) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
+	public static LinkedList<Domain> getDomainList(Occam occam, DomainFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getCommon().getDomainList(ctx, filter);
-		} finally {
-			if (ctx != null)
-				ctx.close();
+		}
+	}
+	
+	public static LinkedList<Domain> getDomainList(String domainName,Integer domainId, String login, DomainFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getCommon().getDomainList(ctx, filter);
 		}
 	}
 
@@ -6920,50 +6923,6 @@ public class AON {
 				ctx.close();
 		}
 	}
-
-	public static FinanceUtilitiesResult missingFinanceInvoices(String domainName, String user, Integer domain,FinanceUtilitiesParams params) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getFinance().missingFinanceInvoices(ctx,params);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static Invoice missingFinanceInvoicesFix(String domainName, String user, Integer domain, Integer invoice) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getFinance().missingFinanceInvoicesFix(ctx,invoice);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-	public static FinanceUtilitiesResult financeInvoiceIntegrity(String domainName, String user, Domain domain) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain.getId(), user);
-			return getFinance().financeInvoiceIntegrity(ctx);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	public static Finance financeInvoiceIntegrityFix(String domainName, String user, Integer domain, Finance finance) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getFinance().financeInvoiceIntegrityFix(ctx,finance);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
 
 	public static LinkedList<FinanceTracking> getFinanceTracking(String domainName, int domainId, String user,
 			Integer finance) {

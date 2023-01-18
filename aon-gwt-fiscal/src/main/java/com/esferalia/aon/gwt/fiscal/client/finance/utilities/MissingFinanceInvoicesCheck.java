@@ -1,7 +1,12 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
-import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoiceViewer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
@@ -14,14 +19,9 @@ import com.esferalia.aon.occam.api.model.finance.utilities.MissingFinanceInvoice
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
@@ -33,93 +33,71 @@ import com.google.gwt.user.client.ui.Widget;
 
 class MissingFinanceInvoicesCheck extends OptionBase {
 
-	private static FinanceUtilitiesServiceAsync SERVICE;
-	private String domainName;
-	private String user;
-	private Domain domain;
-	
-	private DockLayoutPanel dockPanel = new  DockLayoutPanel(Unit.PX);
+	private DockLayoutPanel dockPanel;
 	private SimpleLayoutPanel content;
 	private ScrollPanel container;
 	private ListBox typeBox = new ListBox();
-	private DateBoxEx fromBox = new DateBoxEx();
-	private DateBoxEx toBox = new DateBoxEx();
+	private AonDateBox fromBox = new AonDateBox();
+	private AonDateBox toBox = new AonDateBox();
 	
-	protected MissingFinanceInvoicesCheck(String domainName, String user, Domain domain) {
-		super(domainName, user, domain);
-		this.domainName = domainName;
-		this.user = user;
-		this.domain = domain;
+	protected MissingFinanceInvoicesCheck(FinanceUtilitiesModuleOptions options, Domain domain) {
+		super(options, domain);
+		dockPanel = new  DockLayoutPanel(Unit.PX);
+		setContent(dockPanel);
 		
-		FinanceUtilitiesServiceAsync serviceRaw = GWT.create(FinanceUtilitiesService.class);
-		SERVICE = new FinanceUtilitiesServiceAsyncDecorator(serviceRaw);
-
-		FlexTable tab = new FlexTable();
-		tab.setStyleName(AON.AON_CSS.aonPanelGridSearch());
-		tab.addStyleName(AON.AON_CSS.aonBlockCenter());
+		FlowPanel northPanel = new FlowPanel();
+		northPanel.setStyleName(AON.CSS.aonSearchPanel());
+		northPanel.addStyleName(AON.CSS.aonMarginLeft());
+		northPanel.addStyleName(AON.CSS.aonMarginRight());
+		northPanel.addStyleName(AON.CSS.aonBlockCenter());
+		northPanel.addStyleName(AON.CSS.aonWidthAlmostAll());
 		
 		Label title = new Label("Introduzca los datos para filtrar facturas");
-		title.setStyleName(AON.AON_CSS.aonMarginBottom());
-		tab.setWidget(0, 0, title);
-		tab.getCellFormatter().setStyleName(0, 0, AON.AON_CSS.aonBold());
-		tab.getCellFormatter().addStyleName(0, 0, AON.AON_CSS.aonTextCenter());
-		tab.getFlexCellFormatter().setColSpan(0, 0, 2);
+		northPanel.add(title);
 		
-		tab.setWidget(1, 0, new Label(AON.MSG.invoiceType()));
-		tab.getCellFormatter().setStyleName(1, 0, AON.AON_CSS.aonPanelGridOdd());
+		AonDisplayTable tab = new AonDisplayTable();
+		tab.addStyleName(AON.CSS.aonBlockCenter());
+		tab.addStyleName(AON.CSS.aonMarginTop());
 		
 		typeBox.addItem(" --- ", "");
 		for ( InvoiceType t : InvoiceType.values()) {
 			typeBox.addItem( t.getDescription(), AonNumberUtils.toString( t.ordinal() ));	
 		}
-		tab.setWidget(1, 1, typeBox);
-		tab.getCellFormatter().setStyleName(1, 1, AON.AON_CSS.aonPanelGridEven());
+		tab.addLabelWidgetRow(new Label(AON.MSG.invoiceType()), typeBox);
 		
-		tab.setWidget(2, 0, new Label(AON.MSG.issueDate()));
-		tab.getCellFormatter().setStyleName(2, 0, AON.AON_CSS.aonPanelGridOdd());
 		FlowPanel datePanel = new FlowPanel();
 		InlineLabel fromLabel = new InlineLabel(AON.MSG.from());
-		fromLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-		fromLabel.addStyleName(AON.AON_CSS.aonMarginRight());
+		fromLabel.setStyleName(AON.CSS.aonInnerLabel());
+		fromLabel.addStyleName(AON.CSS.aonMarginRight());
 		datePanel.add(fromLabel);
 		datePanel.add(fromBox);
 		
 		InlineLabel toLabel = new InlineLabel(AON.MSG.from());
-		toLabel.setStyleName(AON.AON_CSS.aonInnerLabel());
-		toLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
-		toLabel.addStyleName(AON.AON_CSS.aonMarginRight());
+		toLabel.setStyleName(AON.CSS.aonInnerLabel());
+		toLabel.addStyleName(AON.CSS.aonMarginLeft());
+		toLabel.addStyleName(AON.CSS.aonMarginRight());
 		datePanel.add(toLabel);
 		datePanel.add(toBox);
-		tab.setWidget(2, 1, datePanel);
-		tab.getCellFormatter().setStyleName(2, 1, AON.AON_CSS.aonPanelGridEven());
+		tab.addLabelWidgetRow(new Label(AON.MSG.issueDate()), datePanel);
 		
-		Button run = new Button();
-		run.setText("Buscar");
-		run.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-		run.addStyleName(AON.AON_CSS.aonSimpleBorder());
-		run.addStyleName(AON.AON_CSS.aonIconLoupe());
-		run.addStyleName(AON.AON_CSS.aonMarginTop());
-		tab.getCellFormatter().setStyleName(3, 0, AON.AON_CSS.aonTextCenter());
-		tab.getFlexCellFormatter().setColSpan(3, 0, 2);
-		run.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				run();
-			}
-		});
-		tab.setWidget(3, 0, run);
-		
-		setContent(dockPanel);
-		
-		dockPanel.addNorth(tab, 150);
+		northPanel.add(tab);
+		dockPanel.addNorth(northPanel, 150);
 		content = new SimpleLayoutPanel();
-		content.setStyleName(AON.AON_CSS.aonBorderTop());
+		content.setStyleName(AON.CSS.aonBorderTop());
 		
 		container = new ScrollPanel();
-		container.setStyleName(AON.AON_CSS.aonScrollArea());
+		container.setStyleName(AON.CSS.aonScrollArea());
 		content.add(container);
 		dockPanel.add(content);
+
+		FlowPanel buttonPanel = new FlowPanel();
+		buttonPanel.setStyleName(AON.CSS.aonTextCenter());
+		buttonPanel.addStyleName(AON.CSS.aonMarginTop());
+		AonSearchPanelButton run = new AonSearchPanelButton(AON.MSG.searchAction(), AON.CSS.aonIconSearch());
+		run.setText(AON.MSG.searchAction());
+		run.addClickHandler(event -> run());
+		buttonPanel.add(run);
+		northPanel.add(buttonPanel);
 		
 	}
 	
@@ -128,41 +106,12 @@ class MissingFinanceInvoicesCheck extends OptionBase {
 		return AonStringUtils.BULLET + " Buscador de facturas sin vencimientos.";
 	}
 
-	protected Widget getToolbarPanel() {
-		FlowPanel toolbarPanel = new FlowPanel();
-		toolbarPanel.setStyleName(AON.AON_CSS.aonFindingTitleToolbar());
-		toolbarPanel.addStyleName(AON.AON_CSS.aonWidthAll());
-		FlexTable toolbar = new FlexTable();
-		toolbar.setCellPadding(0);
-		toolbar.setCellSpacing(0);
-		toolbar.setStyleName(AON.AON_CSS.aonWidthAll());
-		FlowPanel titlePanel = new FlowPanel();
-		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
-		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label(getOptionDescription()));
-		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
-		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());
-		toolbar.setWidget(0, 1, new Label());
-		toolbar.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonFindingSubtitleIternal());
-		FlowPanel buttonContainer = new FlowPanel();
-		buttonContainer.setStyleName(AON.AON_CSS.aonFindingToolbarItemGroup());
-		toolbar.setWidget(0, 2, buttonContainer);
-		toolbar.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonFindingToolbar());
-		toolbarPanel.add(toolbar);
-		return toolbarPanel;
-	}
-	
-	
 	public void run() {
 		final PopupPanel popup = new PopupPanel(false, true);
-		Label label = new Label(AON.MSG.processing());
-		label.addStyleName(AON.AON_CSS.aonTimer());
-		popup.add(label);
+		popup.add(new AonSplash());
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
 		popup.center();
-		
 		InvoiceType invoiceType = null;
 		int i = typeBox.getSelectedIndex();
 		if (i > 0) {
@@ -173,7 +122,7 @@ class MissingFinanceInvoicesCheck extends OptionBase {
 				.setFromDate(fromBox.getValue())
 				.setToDate(toBox.getValue());
 		
-		SERVICE.missingFinanceInvoices(domainName, user, domain, params, new AsyncCallback<FinanceUtilitiesResult>(){
+		FinanceUtilitiesModule.SERVICE.missingFinanceInvoices( getOptions().getOccam(), getDomain(), params, new AsyncCallback<FinanceUtilitiesResult>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -194,57 +143,38 @@ class MissingFinanceInvoicesCheck extends OptionBase {
 	@Override
 	protected Widget paintResults(FinanceUtilitiesResult result) {
 		FlowPanel tabContainer = new FlowPanel();
-		if (result.getItems() != null && result.getItems().size() > 0) {
-			FlexTable tab = new FlexTable();
-			tab.setStyleName(AON.AON_CSS.aonDataTable());
-			tab.addStyleName(AON.AON_CSS.aonBlockCenter());
+		if (result.getItems() != null && !result.getItems().isEmpty()) {
+			AonDisplayGrid grid = new AonDisplayGrid(); 
+			grid.addStyleName(AON.CSS.aonBlockCenter());
 			
-			tab.getColumnFormatter().setWidth(0, "100px");
-			tab.getColumnFormatter().setWidth(1, "100px");
-			tab.getColumnFormatter().setWidth(2, "180px");
-			tab.getColumnFormatter().setWidth(3, "auto");
-			tab.getColumnFormatter().setWidth(4, "100px");
-			tab.getColumnFormatter().setWidth(5, "70px");
-			
-	
-			tab.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonDataTableHeader());
-			tab.getCellFormatter().setStyleName(0,1, AON.AON_CSS.aonDataTableHeader());
-			tab.getCellFormatter().setStyleName(0,2, AON.AON_CSS.aonDataTableHeader());
-			tab.getCellFormatter().setStyleName(0,3, AON.AON_CSS.aonDataTableHeader());
-			tab.getCellFormatter().setStyleName(0,4, AON.AON_CSS.aonDataTableHeader());
-			tab.getCellFormatter().addStyleName(0,4, AON.AON_CSS.aonTextRight());
-			tab.getCellFormatter().setStyleName(0,5, AON.AON_CSS.aonDataTableHeader());
-			
-			tab.setWidget(0, 0, new Label("Tipo"));
-			tab.setWidget(0, 1, new Label("Fecha"));
-			tab.setWidget(0, 2, new Label("N. Factura"));
-			tab.setWidget(0, 3, new Label("Titular"));
-			tab.setWidget(0, 4, new Label("Importe"));
-			tab.setWidget(0, 5, new Label(""));
-			
-			int row = 1;
+			grid.addHeaderRow()
+			 .addCell(new Label("Tipo"), AON.CSS.aonWidth100())
+			 .addCell(new Label("Fecha"), AON.CSS.aonWidth100())
+			 .addCell(new Label("N. Factura"), AON.CSS.aonWidth200())
+			 .addCell(new Label("Titular"), AON.CSS.aonWidthAuto())
+			 .addCell(new Label("Importe"), AON.CSS.aonWidth100(), AON.CSS.aonTextRight())
+			 .addCell(new Label(""), AON.CSS.aonWidth80())
+			 ;
 			for ( IFinanceUtilitiesItem it : result.getItems() ) {
 				MissingFinanceInvoiceItem item = (MissingFinanceInvoiceItem) it;
 				Invoice invoice = item.getInvoice();
-				tab.setWidget(row, 0, new Label(invoice.getType().getDescription()));
-				tab.setWidget(row, 1, new Label( AON.DATE_FORMAT.format( invoice.getIssueDate())));
-				tab.setWidget(row, 2, new Label(invoice.isSales()?invoice.getDocumentNumber():invoice.getReferenceCode()));
-				tab.setWidget(row, 3, new Label(invoice.getRegistryName()));
-				tab.getCellFormatter().setStyleName(row,4, AON.AON_CSS.aonTextRight());
-				tab.setWidget(row, 4, new Label(AON.FMT.format( invoice.getTotal())));
-				
 				FlowPanel fixPanel = new FlowPanel();
-				item.getType().visit( new MissingFinanceInvoicesVisitor(fixPanel,(MissingFinanceInvoiceItem) item) );
-				tab.setWidget(row, 5, fixPanel);
-				row++;
+				item.getType().visit( new MissingFinanceInvoicesVisitor(fixPanel, item) );
+				grid.addRow()
+				 .addCell(new Label(invoice.getType().getDescription()))
+				 .addCell(new Label( AON.DATE_FORMAT.format( invoice.getIssueDate())))
+				 .addCell(new Label(invoice.isSales()?invoice.getDocumentNumber():invoice.getReferenceCode()))
+				 .addCell(new Label(invoice.getRegistryName()))
+				 .addCell(new Label(AON.FMT.format( invoice.getTotal())))
+				 .addCell(fixPanel)
+				 ;
 			}
-			
-			tabContainer.add(tab);
+			tabContainer.add(grid);
 		} else {
 			Label noData = new Label( AON.MSG.noData());
-			noData.setStyleName(AON.AON_CSS.aonTextCenter());
-			noData.addStyleName(AON.AON_CSS.aonBold());
-			noData.addStyleName(AON.AON_CSS.aonMarginTop());
+			noData.setStyleName(AON.CSS.aonTextCenter());
+			noData.addStyleName(AON.CSS.aonBold());
+			noData.addStyleName(AON.CSS.aonMarginTop());
 			tabContainer.add(noData);	
 		}
 		
@@ -260,56 +190,46 @@ class MissingFinanceInvoicesCheck extends OptionBase {
 			this.item = item;
 		}
 		
-		@Override public void visitErrorMessage(FinanceUtilitiesItemType type) {}
-		@Override public void visitInfoMessage(FinanceUtilitiesItemType type) {}
-		@Override public void visitOther(FinanceUtilitiesItemType type) {}
-		@Override public void visitFinanceInvoiceIntegrityCheck(FinanceUtilitiesItemType type) {}
+		@Override 
+		public void visitErrorMessage(FinanceUtilitiesItemType type) { 
+			// nothing
+		}
+		@Override 
+		public void visitInfoMessage(FinanceUtilitiesItemType type) {
+			// nothing
+		}
+		@Override 
+		public void visitOther(FinanceUtilitiesItemType type) {
+			// nothing
+		}
+		@Override 
+		public void visitFinanceInvoiceIntegrityCheck(FinanceUtilitiesItemType type) {
+			// nothing
+		}
 		
 		@Override
 		public void visitMissingFinanceInvoice(FinanceUtilitiesItemType type) {
-			InlineLabel viewLabel = new InlineLabel("Ver");
-			viewLabel.setVisible(false);
-			viewLabel.setTitle("Ver");
-			viewLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			viewLabel.addStyleName(AON.AON_CSS.aonIconDelete());
-			viewLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
-			viewLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
-			
-			InlineLabel removeLabel = new InlineLabel("Crear");
-			removeLabel.setTitle("Arreglar");
-			removeLabel.setStyleName(AON.AON_CSS.aonIconPaddingLeft());
-			removeLabel.addStyleName(AON.AON_CSS.aonIconReset());
-			removeLabel.addStyleName(AON.AON_CSS.aonClickableBlock());
-			removeLabel.addStyleName(AON.AON_CSS.aonMarginLeft());
-			removeLabel.addClickHandler( new ClickHandler() {
+			AonTableButton viewButton = new AonTableButton(AON.MSG.show(), AON.CSS.aonIconSearch());
+			viewButton .setVisible(false);
+
+			AonTableButton addButton = new AonTableButton(AON.MSG.resetAction(), AON.CSS.aonIconAdd()); 
+			addButton.addClickHandler( event -> FinanceUtilitiesModule.SERVICE.missingFinanceInvoicesFix(getOptions().getOccam(), item.getInvoice().getId(), new AsyncCallback<Invoice>() {
+
 				@Override
-				public void onClick(ClickEvent event) {
-					SERVICE.missingFinanceInvoicesFix(domainName, user, item.getDomain(), item.getInvoice().getId(), new AsyncCallback<Invoice>() {
-
-						@Override
-						public void onFailure(Throwable caught) {
-							openFootPanelIfNeeded();
-							showErrorPanel(caught.getMessage());
-						}
-
-						@Override
-						public void onSuccess(Invoice result) {
-							viewLabel.addClickHandler(new ClickHandler() {
-								
-								@Override
-								public void onClick(ClickEvent event) {
-									InvoiceViewer viewer = new InvoiceViewer(result);
-									showResults(viewer);
-								}
-							});
-							removeLabel.setVisible(false);
-							viewLabel.setVisible(true);
-						}
-					});
+				public void onFailure(Throwable caught) {
+					openFootPanelIfNeeded();
+					showErrorPanel(caught.getMessage());
 				}
-			});
-			domainPanel.add(viewLabel);
-			domainPanel.add(removeLabel);
+
+				@Override
+				public void onSuccess(Invoice result) {
+					viewButton.addClickHandler(event1 -> showResults(new InvoiceViewer(result)));
+					addButton.setVisible(false);
+					viewButton.setVisible(true);
+				}
+			}));
+			domainPanel.add(viewButton);
+			domainPanel.add(addButton);
 		}
 	}
 }
