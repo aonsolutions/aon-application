@@ -631,7 +631,7 @@ public class InvoiceTest {
 		detailX.setAccountCode("0192831010");
 		
 		String xdesc = "";
-		for (int i=1; i<=38; i++) {
+		for (int i=1; i<=30; i++) {
 			xdesc += "línea" + i + "\n";
 		}
 		
