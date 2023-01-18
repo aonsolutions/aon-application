@@ -200,7 +200,7 @@ export class AonReg extends AonElement {
 		parent.appendChild(card);
 
 		if(this.registry.id){
-			if(this.isCustomer() && (this.isBeta() || this.isSig())){
+			if(this.isCustomer()){
 				this.buildEnterpriseLinked();
 			}
 

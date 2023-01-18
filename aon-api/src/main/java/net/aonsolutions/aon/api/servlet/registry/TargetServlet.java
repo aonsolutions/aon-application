@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet.registry;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -12,10 +13,12 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.json.TargetJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
+import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
 
@@ -33,6 +36,7 @@ public class TargetServlet extends AonApiHttpServlet {
 	
 	public static final String TARGETS = "/";
 	public static final String TARGET = "/:id";
+	public static final String RITEM = "/ritem";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -47,6 +51,7 @@ public class TargetServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(TARGETS, TargetServlet::saveTarget)
+				.addRoute(RITEM, TargetServlet::saveRegistryItem)
 				.apply();
 			
 			response(req, resp, object);
@@ -154,6 +159,25 @@ public class TargetServlet extends AonApiHttpServlet {
 		}
 		return filter;
 	}
+	
+	private static Object saveRegistryItem(AonApiData api) {
+		if(api.getData().opt(IJsonNames.PRODUCTS)!=null) {
+    		return saveRegistryItems(api);
+    	} else {
+    		Product product = ProductJSON.fromJSON(api.getData());
+    		product = AON.saveProduct(api.getDomain(), api.getUser().getLogin(), product);
+    		return ProductJSON.toJSON(product);
+    	}
+	}
+	
+   private static JSONArray saveRegistryItems(AonApiData api) {
+    	JSONArray products = api.getData().optJSONArray(IJsonNames.PRODUCTS);
+		 List<Product> list = ProductJSON.fromJSON(products);
+		 list.forEach(p->{
+			 AON.saveProduct(api.getDomain(), api.getUser().getLogin(), p);
+		 });
+		 return ProductJSON.toJSON(list);
+    }
 	
 	public static JSONObject saveTarget(AonApiData api) {
 		Target target = TargetJSON.fromJSON(api.getData());

@@ -27,9 +27,8 @@ const buildDialogProject = (parent, project) => {
 
     dialog.autoclose = false;
 
-    const title = (project && project.id ? MSG.EDIT : MSG.ADD)+" expediente";
+    const title = (project && project.id ? MSG.EDIT : MSG.ASSIGN)+" expediente";
     dialog.setTitle(title);
-
 
     let div = document.createElement('div');
     div.style.display = "flex";

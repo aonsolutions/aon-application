@@ -14,7 +14,7 @@ import { getDomainCompanies, saveCompany } from '../../../services/companyServic
 export class AonCustomer extends AonReg {
 
 	saveBool;
-	entepriseLinked;
+	ENTERPRISE_LINKED;
 	connectedCallback () {
 		this.customerInitialize();
 		this.initialize();
@@ -22,18 +22,15 @@ export class AonCustomer extends AonReg {
 	}
 	
 	customerInitialize() {
-		this.type = "customer";
-		this.entepriseLinked= "enterpriseLinked";
 		this.saveBool = true;
+		this.type = "customer";
+		this.ENTERPRISE_LINKED = "enterpriseLinked";
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
 			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
 			{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional()},
+			{ title: "Expedientes", fn: () => this.buildExpedienteData()},
 		];
-
-		if(this.isBeta()){
-			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData()});
-		}
 	}
 
 	buildDataAdditional(){
@@ -141,27 +138,29 @@ export class AonCustomer extends AonReg {
 	}	
 
 	buildEnterpriseLinked(){
-		const card = this.getElement(this.GENERAL_CARD);
+		if( (this.isBeta() || this.isSig()) ){
+			const card = this.getElement(this.GENERAL_CARD);
 		
-		let divOne = this.getElement(this.entepriseLinked);
-
-		if(!divOne){
-			divOne =  this.createElement(TAG.DIV);
-			divOne.id = this.entepriseLinked;
-			card.addSection2(divOne);
+			let divOne = this.getElement(this.ENTERPRISE_LINKED);
+	
+			if(!divOne){
+				divOne =  this.createElement(TAG.DIV);
+				divOne.id = this.ENTERPRISE_LINKED;
+				card.addSection2(divOne);
+			}
+	
+			getRelationShip({registry:this.registry.getId(), parentId:this.registry.getDomain().getParentId(), document: this.registry.getDocument()})
+			.then(resp=>{
+				this.buildEnterpriseLinkedView(resp);
+			})
+			.catch((err)=>{
+				this.showError(err);
+			});
 		}
-
-		getRelationShip({registry:this.registry.getId(), parentId:this.registry.getDomain().getParentId(), document: this.registry.getDocument()})
-		.then(resp=>{
-			this.buildEnterpriseLinkedView(resp);
-		})
-		.catch((err)=>{
-			this.showError(err);
-		});
 	}
 
 	buildEnterpriseLinkedView(resp){
-		const entepriseLinked = this.getElement(this.entepriseLinked);
+		const entepriseLinked = this.getElement(this.ENTERPRISE_LINKED);
 		entepriseLinked.innerHTML = "";
 
 		const {rrelationship, companies} = resp;
