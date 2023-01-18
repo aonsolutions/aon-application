@@ -95,9 +95,9 @@ public class Invoice2tbai {
 		return tbai;
 	}
 	
-	public static SubsanacionModificacionTicketBAI buildZuzendu(Company company, Invoice invoice, TbaiConfiguration config, TicketBai ticketBai, TbaiBlockchain blockchain) {
+	public static SubsanacionModificacionTicketBAI buildZuzendu(Company company, Invoice invoice, TbaiConfiguration config, TicketBai ticketBai, TbaiBlockchain blockchain, boolean subsanar) {
 		SubsanacionModificacionTicketBAI tbai = new SubsanacionModificacionTicketBAI();
-		tbai.setCabecera(buildCabeceraZuzendu(AccionType.MODIFICAR));
+		tbai.setCabecera(buildCabeceraZuzendu(subsanar ? AccionType.SUBSANAR : AccionType.MODIFICAR));
 		tbai.setSujetos(getSujetos(company, invoice, config));
 		tbai.setFactura(getFactura(invoice, true));
 		tbai.setHuellaTBAI(ticketBai.getHuellaTBAI());
