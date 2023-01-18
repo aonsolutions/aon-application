@@ -144,6 +144,13 @@ public class Mod303 extends FiscalModel implements Serializable {
 		return this;
 	}
 	
+	public boolean isDraft() {
+		return AonNumberUtils.equals(getAmount(Mod303Key.CM_073), 1.0);
+	}
+	public void setDraft(boolean draft) {
+		ensureDetail(Mod303Key.CM_073).setAmount(draft?1:0);
+	}
+	
 	@Override
 	public boolean isDiffCalculationDisabled() {
 		return AonNumberUtils.equals(getAmount(Mod303Key.CM_001), 1.0);

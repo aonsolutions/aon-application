@@ -61,6 +61,22 @@ public class MainCCCObject {
 		});
 	}
 	
+	public void getUpdateCert(String regime, String ccc, Consumer<String> success, Consumer<Throwable> failure) {
+		impl.getUpdateCert(regime, ccc, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+		
+	}
+	
 	// -------------------------------------------- Getters Methods
 	
 	public List<EnterpriseCCC> getCCCs() {

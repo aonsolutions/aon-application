@@ -1,15 +1,19 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MainContrataContractObject {
@@ -115,6 +119,38 @@ public class MainContrataContractObject {
 				 success.accept(result);
 			}
 		});
+	}
+	
+	public void getUpdateCert(String regime, String ccc, Consumer<String> success, Consumer<Throwable> failure) {
+		impl.getUpdateCert(regime, ccc, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String result) {
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+		
+	}
+	
+	public void getCCCLaboralLife(String regime, String ccc, Date from, Date to, Consumer<String> success, Consumer<Throwable> failure) {
+		impl.getCCCLaboralLife(regime, ccc, from, to, new AsyncCallback<String>() {
+			
+			@Override
+			public void onSuccess(String dataURI) {
+				success.accept(dataURI);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+		
 	}
 
 	// ------------------------------------------ Initialize Methods
@@ -275,6 +311,41 @@ public class MainContrataContractObject {
 
 	public boolean hasPayroll() {
 		return this.domainUserRoles.hasPayroll();
+	}
+
+	public Pair<String, String> getPrincipalAccount() {
+		Optional<CCCInfo> principalAccount = enterpriseContext.getActivitiesCCC().getCccs().values().stream().filter(ccc -> ccc.getType() == (byte)0).findFirst();
+		if(principalAccount.isPresent())
+			return new Pair<>(getCCCRegimeCode(principalAccount.get().getType()), principalAccount.get().getCcc());
+		else if(!enterpriseContext.getActivitiesCCC().getCccs().isEmpty()){
+			CCCInfo ccc = enterpriseContext.getActivitiesCCC().getCccs().get(0);
+			return new Pair<>(getCCCRegimeCode(ccc.getType()), ccc.getCcc());
+		} else return null;
+	}
+	
+	private static String getCCCRegimeCode(Byte cccRegime) {
+		switch (cccRegime) {
+		case 0:
+			return "0111";
+		case 1:
+			return "0111";
+		case 2:
+			return "0111";
+		case 3:
+			return "0111";
+		case 4:
+			return "0111";
+		case 5:
+			return "0111";
+		case 6:
+			return "0138";
+		case 7:
+			return "0163";
+		case 8:
+			return "0112";
+		default:
+			return "0111";
+		}
 	}
 }
 		

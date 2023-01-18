@@ -61,6 +61,21 @@ public abstract class Activity extends ResizeComposite {
 		protected void fireWarningMessage(Map<String, String> warningMap) {
 			Activity.this.fireWarningMessage(warningMap);
 		}
+
+		@Override
+		protected void fireLoadingMessage(String message) {
+			Activity.this.fireLoadingMessage(message);
+		}
+
+		@Override
+		protected void hideMessage() {
+			Activity.this.hideMessage();
+		}
+
+		@Override
+		protected void showPDF(String dataURI, boolean isLaboralLife) {
+			Activity.this.showPDF(dataURI, isLaboralLife);
+		}
 		
 	}
 	
@@ -184,6 +199,10 @@ public abstract class Activity extends ResizeComposite {
 	public abstract Set<Entry<Integer, String>> getActivities();
 
 	public abstract void fireWarningMessage(Map<String, String> warningMap);
+	protected abstract void fireLoadingMessage(String message);
+	protected abstract void hideMessage();
+	
+	public abstract void showPDF(String dataURI, boolean isLaboralLife);
 
 	// ------------------------------------------- Auxiliar Methods
 

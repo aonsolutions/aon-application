@@ -211,7 +211,7 @@ public interface EnterprisesServiceAsync {
 	void getDomainUserRoles(String currentDomainName, String currentUser, AsyncCallback<DomainUserRoles> asyncCallback);
 	void hasCertificateSEPE(String currentDomainName, String currentUser, AsyncCallback<Boolean> asyncCallback);
 	void getWorkplaceEmployeeITInfo(String currentDomainName, Boolean allEmployees, Integer workplaceId, AsyncCallback<List<ITEmployee>> asyncCallback);
-	void getComunicaEnterpriseSettings(String currentDomainName, String currentUser, AsyncCallback<ComunicaEnterpriseSettings> asyncCallback);
+	void getComunicaEnterpriseSettings(String currentDomainName, String currentUser, AsyncCallback<ComunicaEnterpriseSettings> asyncCallback) throws IllegalArgumentException;
 	void setComunicaEnterpriseSettings(String currentDomainName, String currentUser, ComunicaEnterpriseSettings comunicaEnterpriseSettings, AsyncCallback<Void> asyncCallback);
 	void getEnterpriseId(String currentDomainName, AsyncCallback<Integer> asyncCallback);
 	void verifyCertificate(String currentDomainName, String currentUser, com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType certificateType,AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
@@ -289,10 +289,18 @@ public interface EnterprisesServiceAsync {
 	
 	void printMod145(String currentDomainName, String currentUser, Mod145 mod145, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	
-	// ------------------------------------------------ Laborallife (SistemaRED)
+	// ------------------------------------------------ SistemaRED
 	
 	void getCCCLaboralLife(String currentDomainName, String currentUser, String regime, String ccc, Date from, Date to, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	
 	void getLaboralLife(String currentDomainName, String currentUser, String regime, String ccc, String nss, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	
+	void getIdcCCC(String currentDomainName, String currentUser, String regime, String ccc, Date date, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	
+	void getEmployeePrevMov(String currentDomainName, String currentUser, String regime, String ccc, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	
+	void getEmployeesWorking(String currentDomainName, String currentUser, String regime, String ccc, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	
+	void getUpdateCert(String currentDomainName, String currentUser, String regime, String ccc, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	
 }
