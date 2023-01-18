@@ -1,5 +1,6 @@
 package net.aonsolutions.aon.api.servlet.documental;
 
+import java.util.Base64;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -51,13 +52,21 @@ public class AttachServlet extends AonApiHttpServlet{
 	
 	private JSONObject getFile(AonApiData api) {
 		AttachType attachType = AttachType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.ATTACH_TYPE));	
+		
 		Attach attach = AON.getAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> attachFilter(api.getDomain().getId(), api.getData(), f), attachType);
-		return AttachJSON.toJSON(attach);
+		
+		JSONObject attachJSON = AttachJSON.toJSON(attach);
+		
+		setContent(api, attach, attachJSON);
+		
+		return attachJSON;
 	}
 	
 	private Filter attachFilter(Integer domainId, JSONObject json, AttachProperties f) {
 		domainId = json.opt(IJsonNames.DOMAIN_ID) != null ? json.optInt(IJsonNames.DOMAIN_ID) : domainId;
+		
 		Filter filter = f.getDomainProperty().eq(domainId);
+		
 		if(json.opt(IJsonNames.ATTACH_MODULE) != null) 
 			filter = filter.and(f.getAttachModuleProperty().eq(JsonUtils.getInteger(json, IJsonNames.ATTACH_MODULE)));
 
@@ -66,6 +75,9 @@ public class AttachServlet extends AonApiHttpServlet{
 		
 		if(json.opt(IJsonNames.SOURCE) != null) 
 			filter = filter.and(f.getSourceTypeProperty().eq(JsonUtils.getByte(json, IJsonNames.SOURCE)));
+		
+		if(json.opt(IJsonNames.SOURCE_ID) != null) 
+			filter = filter.and(f.getSourceBatchProperty().eq(JsonUtils.getInt(json, IJsonNames.SOURCE_ID)));
 		
 		if(json.opt(IJsonNames.ID) != null) 
 			filter = filter.and(f.getIdProperty().eq(JsonUtils.optInteger(json, IJsonNames.ID)));
@@ -82,6 +94,14 @@ public class AttachServlet extends AonApiHttpServlet{
 		Attach attach = AttachJSON.fromJSON(api.getData());
 		if(attach.getId() != null)
 			AON.updateAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
-		else AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
+		else 
+			AON.insertAttach(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), attach);
+	}
+	
+	
+	private void setContent(AonApiData api, Attach attach, JSONObject attachJSON) {
+		if(api.getData().optBoolean(IJsonNames.FILE) && attach.getId()!=null && attach.getData() != null) {
+			attachJSON.put(IJsonNames.CONTENT, Base64.getEncoder().encodeToString(attach.getData()));
+		}
 	}
 }

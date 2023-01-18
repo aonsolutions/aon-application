@@ -220,6 +220,9 @@ export class AonTable extends AonElement {
         icon.style.color = value[id + '_color'] || "#5f6368";
         icon.title = value.icon_title;
         td.appendChild(icon);
+        if(value.fn){
+          td.addEventListener(EVENT.CLICK, value.fn);
+        }
       } else if(item.type && item.type === "list" ) {
         let list = value[id];
         let ulList = this.createElement(TAG.UL);
