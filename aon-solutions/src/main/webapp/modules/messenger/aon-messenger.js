@@ -121,7 +121,7 @@ export class AonMessenger extends AonElement {
 				const email = cauInfo.auth.email;
 
 				if(!email && this.cau){
-					this.showError({message:"Auth inexistente", type:CONSTANT.ERROR});
+					this.showMessageError("Auth inexistente");
 				} else {
 					this.buildToolbar();
 
@@ -178,7 +178,7 @@ export class AonMessenger extends AonElement {
 	async isTaskHolder(){
 		this.TASK_HOLDER = await getTaskHolder({reload:false}).catch(e=>null);
 		if(!this.cau && !(this.TASK_HOLDER && this.TASK_HOLDER.id)){
-			this.showError({message:"Operario inexistente", type:CONSTANT.ERROR});
+			this.showMessageError("Operario inexistente");
 			return false;
 		}
 		return true;

@@ -1,16 +1,18 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { isEmptyObject, serializeForm, waitEl, disabledForm, formatNumber } from "../../../services/utils.js";
-import { setModelStatus } from "../../../services/service.js";
+import { getAttach, openFileBase64, setModelStatus } from "../../../services/service.js";
 import { CONST_FISCAL } from "../FiscalEnums.js";
 import { AonCheckbox } from "../../../components/aon-checkbox.js";
 import { AonSelect } from "../../../components/aon-select.js";
 import { AonInput } from "../../../components/aon-input.js";
 import { AonSwitch } from "../../../components/aon-switch.js";
-import { EVENT, TAG,  MSG, CONSTANT } from "../../../environments/environments.js";
+import { EVENT, TAG,  MSG, CONSTANT, MATERIAL_ICONS } from "../../../environments/environments.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
 import { FiscalUtils } from "../FiscalUtils.js";
 import { AonAutosizeTextarea } from "../../../components/aon-autosize-textarea.js";
+import { DataAttachSource } from "../../../models/DataAttachSource.js";
+// import { Attach } from "../../../models/Attach.js";
 
 export class AonTax extends AonElement {
   TABLE_ID;
@@ -84,15 +86,18 @@ export class AonTax extends AonElement {
       aonTable.addColumn("Ejercicio", "", "year", "10%");
       aonTable.addColumn("Periodo", "", "periodText", "10%");
       aonTable.addColumn("Estado", "", "statusText", "10%");
-      aonTable.addColumn("Importe", "number", "resultFormat", "10%");
+      aonTable.addColumn("Importe", "number", "resultFormat", "8%");
+      aonTable.addColumn("", 'icon', 'icon', '5%');
+
       try {
         const resp = await this.getData();
         aonTable.removeRows();
 
         if(resp.length){
-          resp.forEach((res) => 
-            aonTable.addRow(res, () => this.openDialog(res))
-          );
+          resp.forEach((res) => {
+            this.buildPrint(res);
+            aonTable.addRow(res, () => this.openDialog(res));
+          });
 
           let row = aonTable.addRow({
             statusText:"Total",
@@ -166,7 +171,7 @@ export class AonTax extends AonElement {
       dialog.width = "500px";
     }
 
-    let div = this.getDialogHtml(resp);
+    let div = this.builDialog(resp);
     dialog.setContent(div);
 
     if("CUSTOMER_CHECK"===resp.status){
@@ -182,7 +187,7 @@ export class AonTax extends AonElement {
     this.eventData(resp);
   }
 
-  getDialogHtml(resp){
+  builDialog(resp){
     const div = this.createElement(TAG.DIV);
     const divImg = this.createElement(TAG.DIV);
     divImg.style.fontSize = 18;
@@ -383,6 +388,16 @@ export class AonTax extends AonElement {
     }
   }
 
+  buildPrint(res){
+    
+    if(!["FINISHED", "SENT"].includes(res.status))
+      return ;
+
+    res.icon = MATERIAL_ICONS.PRINT;
+    res.icon_color = "grey";
+    res.fn = () => this.getPdf(res);
+  }
+
   async save(resp){
     this.applicationEl.startLoading();
     try {
@@ -390,12 +405,45 @@ export class AonTax extends AonElement {
       this.clearModels();
       await setModelStatus(form);
       await this.getTable();
-      this.showToast({message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS});
+      this.showMessage();
     } catch (error) {
       console.error(error);
       this.showToast(error);
     }
     this.applicationEl.stopLoading();
+  }
+
+  getPdf({id:source_id, newModel}){
+    const source = DataAttachSource.getValueByName(newModel);
+    if(!source) {
+      this.showMessageError("DataAttachSource not found."+ newModel);
+      return;
+    }
+
+    getAttach({
+      attachType: 'data',
+      file:true,
+      source_id,
+      source,
+    })
+    .then(r=>{      
+      if(r && r.id && r.contentType && r.content){
+        openFileBase64(r.content, r.contentType);
+      } else {
+        this.showMessageError("Declaración no encontrada!");
+      }
+      // const attach = new Attach(r);
+      // const data = {
+      //   domain_id: attach.getDomain().getId(),
+      //   attach_type: attach.getAttachType(),
+      //   domain_name: attach.getDomain().getName(),
+      //   id: attach.getId()
+      // };
+      // openFileUrl(location.href + 'ms/api/file/' + btoa(JSON.stringify(data)), attach.getContentType());
+    })
+    .catch(error=>{ 
+      this.showError(error);
+    });
   }
 
   clearModels(){

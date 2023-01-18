@@ -261,7 +261,7 @@ export class AonDocumentAyudat extends AonElement {
             message = MSG.DELETED_DATA;
             this.back();
           } 
-          this.showToast({message, type: CONSTANT.ERROR})
+          this.showToast({message})
         } catch (error) {
           this.showError(error);
         }
@@ -274,7 +274,7 @@ export class AonDocumentAyudat extends AonElement {
     try {
       await openFileUrl(this.data.image);
     } catch (error) {}
-   
+
     this.applicationEl.stopLoading();
   }
 
@@ -299,7 +299,7 @@ export class AonDocumentAyudat extends AonElement {
       if(CONSTANT.SUCCESS  === message){
         this.showToast({message: MSG.SAVED_DATA, type: CONSTANT.SUCCESS});
       } else {
-        this.showToast({message, type: CONSTANT.ERROR});
+        this.showToast({message});
       }
     } catch (error) {
       this.showError(error);
