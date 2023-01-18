@@ -132,10 +132,7 @@ public class FeeInvoicingProcess implements ILongProcess {
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domainName, inv.getDomain(), user.getLogin());
 		if(tbaiConfiguration.isActive()) {
 			com.esferalia.aon.occam.api.model.finance.Invoice invoice = AON_SOLUTIONS.getInvoice(domainName, inv.getDomain(), user.getLogin(), inv.getId());
-			invoice.setIssueDate(new Date());
-			inv.setIssueDate(new Date());
 
-			AON.updateInvoice(domainName, invoice.getDomain(), user.getLogin(), invoice, true);
 			Company company = AON.getCompanyForDomain(domainName, invoice.getDomain(), user.getLogin());
 			tbaiConfiguration.setCertificate(AON.getCertificate(domainName, invoice.getDomain(), user.getLogin(), user.getId(), CertificateType.AEAT.name()));
 			try {
@@ -145,7 +142,6 @@ public class FeeInvoicingProcess implements ILongProcess {
 				e.printStackTrace();
 			}
 		}
-
 		
 		// SII
 		return inv;
