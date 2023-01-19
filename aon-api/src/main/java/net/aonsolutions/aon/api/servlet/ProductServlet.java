@@ -122,6 +122,15 @@ public class ProductServlet extends AonApiHttpServlet {
 	}
 	
 	private JSONArray getProducts(AonApiData api) {
+		if(api.getData().opt(IJsonNames.PAGE) !=null) {
+			int page = api.getData().optInt(IJsonNames.PAGE);
+			int perPage = api.getData().optInt(IJsonNames.PER_PAGE);
+			return ProductJSON.toJSON(
+				AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> 
+				productFilter(api, f), page, perPage)
+			);
+		} 
+		
 		return AON_SOLUTIONS.getProducts(api.getDomain(), api.getUser(), f -> 
 				productFilter(api, f));
 	}

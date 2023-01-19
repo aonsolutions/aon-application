@@ -31,6 +31,13 @@ public class Product2Impl implements IProduct2{
 	}
 	
 	@Override
+	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter, Integer page, Integer perPage) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ProductDAO.getStream(ctx, filter, page, perPage));
+	}
+	
+	
+	@Override
 	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter) {
 		return ctx.getDslContext().transactionResult( configuration -> 
 			ProductDAO.getList(ctx, filter));

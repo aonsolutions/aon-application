@@ -16,6 +16,7 @@ public interface IProduct2 {
 	
 	public Product getProduct(AONContext ctx, ProductFilter filter);
 	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter);
+	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter, Integer page, Integer perPage);
 	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter);
 	public Product saveProduct(AONContext ctx, Product product);
 	public void deleteProduct(AONContext ctx, Integer id);

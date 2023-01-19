@@ -862,6 +862,12 @@ public class AON_SOLUTIONS {
 		return getProducts(domain.getName(), domain.getId(), login, filter);
 	}
 	
+	public static Stream<Product> getProducts(Domain domain, User user, ProductFilter filter, Integer page, Integer perPage) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain.getName(), domain.getId(), user.getLogin())){
+			return getProduct().getProductStream(ctx, filter, page, perPage);
+		}
+	}
+	
 	public static JSONArray getProducts(String domainName, Integer domainId, String login, ProductFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			Stream<Product> products = getProduct().getProductStream(ctx, filter);
