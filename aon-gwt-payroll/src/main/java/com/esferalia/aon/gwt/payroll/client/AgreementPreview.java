@@ -215,6 +215,7 @@ public abstract class AgreementPreview extends Composite {
 	private ListBox levelListBox;
 	private TextBox partialTextBox;
 	private ListBox groupListBox;
+	private Label pdfLoaded;
 	
 	private ArrayList<Label> dateLabels;
 	
@@ -232,6 +233,7 @@ public abstract class AgreementPreview extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		description.ensureDebugId("descriptionTextBox");
+		ssNumber.ensureDebugId("ssNumberTextBox");
 		
 		initDiscPanels();
 		dateLabels = new ArrayList<>();
@@ -257,6 +259,7 @@ public abstract class AgreementPreview extends Composite {
 			printPreviewButton.setVisible(false);
 		
 		description.setText(agreement.getDescription());
+		description.setReadOnly(0 == agreement.getDomain().intValue());
 		description.removeStyleName(style.modify());
 		description.addValueChangeHandler(e -> {
 			agreement.setDescription(e.getValue());
@@ -264,6 +267,7 @@ public abstract class AgreementPreview extends Composite {
 			setHasChange(true);
 		});
 		ssNumber.setText(agreement.getSSNumber());
+		ssNumber.setReadOnly(0 == agreement.getDomain().intValue());
 		ssNumber.removeStyleName(style.modify());
 		ssNumber.addValueChangeHandler(e -> {
 			agreement.setSSNumber(e.getValue());
@@ -276,7 +280,8 @@ public abstract class AgreementPreview extends Composite {
 		else
 			serviAgreementPanel.clear();
 		
-		createSalaryTableButtons();
+		if(!agreement.getSortedDates().isEmpty())
+			createSalaryTableButtons();
 		
 		createSalaryTable();
 		createCategoryTable();
@@ -941,6 +946,7 @@ public abstract class AgreementPreview extends Composite {
 		toolbar = new AonToolbar("Convenio");
 		
 		saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
+		saveBtn.ensureDebugId("acceptButton");
 		saveBtn.addClickHandler(e -> {
 			showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
 			setHasChange(false);
@@ -950,6 +956,7 @@ public abstract class AgreementPreview extends Composite {
 		toolbar.add(saveBtn);
 		
 		agreementInfoButton = new AonToolbarButton("Informaci\u00f3n Convenio", AON.CSS.aonIconInfo());
+		agreementInfoButton.ensureDebugId("infoButton");
 		agreementInfoButton.addClickHandler(e -> 
 			impl.getAgreementUsedInfo(agreement.getId(), agreement.getDescription(), new AsyncCallback<String>() {
 				
@@ -1015,6 +1022,7 @@ public abstract class AgreementPreview extends Composite {
 		
 		
 		printPreviewButton = new AonToolbarButton(AON.MSG.draftPrint(), AON.CSS.aonIconPdf() );
+		printPreviewButton.ensureDebugId("printPreviewButton");
 		printPreviewButton.addClickHandler(e -> {
 			showAgreementSimulator();
 			initTc2ListBox();
@@ -1034,7 +1042,11 @@ public abstract class AgreementPreview extends Composite {
 		toolbarSimulator = new AonToolbar("Simulador");
 		
 		AonToolbarButton closeSimulatorBtn = new AonToolbarButton(AON.MSG.close(), AON.CSS.aonIconClose());
-		closeSimulatorBtn.addClickHandler(e -> showAgreementPreview());
+		closeSimulatorBtn.ensureDebugId("closeSimulatorBtn");
+		closeSimulatorBtn.addClickHandler(e -> {
+			setPDFLoadedEnsureDebugId("pdfNotLoaded");
+			showAgreementPreview();
+		});
 		toolbarSimulator.add(closeSimulatorBtn);
 		
 		tc2ListBox = new ListBox();
@@ -1065,6 +1077,14 @@ public abstract class AgreementPreview extends Composite {
 		groupListBox.addChangeHandler(e -> printPreview());
 		toolbarSimulator.add(quoteGroupL);
 		toolbarSimulator.add(groupListBox);
+		
+		pdfLoaded = new Label();
+		setPDFLoadedEnsureDebugId("pdfNotLoaded");
+		toolbarSimulator.add(pdfLoaded);
+	}
+	
+	public void setPDFLoadedEnsureDebugId(String debugId) {
+		this.pdfLoaded.ensureDebugId(debugId);
 	}
 
 	private void initTc2ListBox() {
@@ -1138,11 +1158,14 @@ public abstract class AgreementPreview extends Composite {
 			public void onSuccess(String html) {
 				hideMessage();
 				setPartial(partial);
+				if(null != html) 
+					setPDFLoadedEnsureDebugId("pdfLoaded");
 				printPreviewViewer.open(html);
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
+				setPDFLoadedEnsureDebugId("pdfNotLoaded");
 				showError("Error simulador", caught.getMessage());
 			}
 		});

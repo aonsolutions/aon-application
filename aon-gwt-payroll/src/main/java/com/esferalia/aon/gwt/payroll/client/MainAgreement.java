@@ -26,7 +26,6 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -40,7 +39,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
 //------------------------------------------- EditionListener
@@ -581,6 +579,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		if(null != agreement.getDomain()) {
 			this.contextMenu.setVisibleMoveItem( (parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue() && agreement.getDomain().intValue() != 0);
 			this.contextMenu.setVisibleMoveDownItem(agreement.getDomain().intValue() != 0 && domain != agreement.getDomain().intValue());
+			this.contextMenu.setVisibleDeleteItem(0 != agreement.getDomain().intValue());
+			this.agreements.setVisibleDraftButton(0 != agreement.getDomain().intValue());
+			
+			this.levelTab.setVisible(0 != agreement.getDomain().intValue());
+			this.salaryTableTab.setVisible(0 != agreement.getDomain().intValue());
+			this.paymentTab.setVisible(0 != agreement.getDomain().intValue());
 		}
 		
 		agreementPreview.showLoading("Cargando convenio...");
