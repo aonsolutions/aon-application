@@ -41,7 +41,7 @@ public class Mod390HFWriterARABA2019 implements IMod390HFWriter {
 				,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getPeriod().getDueMonth()+1,2,0))   // Período final (AAAAMM) 9(6)
 				
 				,(wr, mod) -> wr.append("390")                                         		// Modelo de la declaración (390)
-				,(wr, mod) -> wr.append(AonFiscalFileUtils.signedSpace(mod.getResult(),18)) // Resultado de la declaración: Signo (blanco ó N) + Resultado 9(12) V99
+				,(wr, mod) -> wr.append(AonFiscalFileUtils.signedSpace(mod.getDeclarationResult(),18)) // Resultado de la declaración: Signo (blanco ó N) + Resultado 9(12) V99
 				,(wr, mod) -> wr.append("E")                                           // Moneda (blanco ó E)
 				,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFullName(),50)) // Apellidos y nombre o razón social X(50)
 					
@@ -235,7 +235,7 @@ public class Mod390HFWriterARABA2019 implements IMod390HFWriter {
 					
 				// Datos bancarios (CCC), Solo si es devolucion o es domiciliacion y está cumplimentada la cuenta bancaria			
 				,(wr, mod) -> {
-					if ((mod.getDeclarationType() == FiscalModelDeclarationType.BANK || mod.getDeclarationType() == FiscalModelDeclarationType.PAYBACK) &&
+					if ((mod.getDeclarationResultType() == FiscalModelDeclarationType.BANK || mod.getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK) &&
 						(mod.getFinanceCCC() != null) && (mod.getFinanceCCC().length() == 20)) {
 							wr.append("301" + AonStringUtils.SPACE + AonFiscalFileUtils.unsigned(mod.getFinanceCCC().substring( 0, 4),17,2));
 							wr.append("302" + AonStringUtils.SPACE + AonFiscalFileUtils.unsigned(mod.getFinanceCCC().substring( 4, 8),17,2));
