@@ -38,17 +38,3 @@ public enum ActivityType {
 		}
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
