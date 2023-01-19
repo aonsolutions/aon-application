@@ -415,7 +415,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		initializeView();
 	}
 	
-	public void setEmployeeContractInfo(EmployeeContractInfo contractEmployeeInfo, boolean isComunica) {
+	public void setEmployeeContractInfo(EmployeeContractInfo contractEmployeeInfo, boolean isComunica, Consumer<Void> finish) {
 		this.contractEmployeeInfo = contractEmployeeInfo;
 		this.isComunica = isComunica;
 		
@@ -431,10 +431,10 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		this.isExtension = contractEmployeeInfo.getContractInfo().isHasExtension();
 		
 		setDefaultView(contractEmployeeInfo.getContractInfo().getContractType());
-		reloadSepeData();
+		reloadSepeData(finish);
 	}
 	
-	private void reloadSepeData() {
+	private void reloadSepeData(Consumer<Void> finis) {
 		showLoadingMessage("Cargando datos Sepe del contrato...");
 		getContractSpecificData(contractSpecificDataIn -> {
 			contractSpecificData = contractSpecificDataIn;
@@ -461,6 +461,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 					contractEmployeeInfo.getContractInfo().getContractId());
 			fillSpecificData();
 			hideMessagePanel();
+			finis.accept(null);
 		}, f -> showErrorMessage("Datos Sepe", f.getMessage()));
 	}
 
@@ -2672,7 +2673,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 				Timer timer = new Timer() {
 					@Override
 					public void run() {
-						reloadSepeData();
+						reloadSepeData(s -> {});
 					}
 				};
 				timer.schedule(2500);
@@ -2694,7 +2695,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 						Timer timer = new Timer() {
 							@Override
 							public void run() {
-								reloadSepeData();
+								reloadSepeData(s -> {});
 							}
 						};
 						timer.schedule(2500);

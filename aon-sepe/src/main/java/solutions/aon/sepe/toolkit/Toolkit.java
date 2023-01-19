@@ -225,7 +225,6 @@ public class Toolkit {
 	}
 
 	public static String getIdentityType(String ipf) {
-		ipf = removeExtraZeros(ipf);
 		Pattern nif = Pattern.compile("^\\d{8}[a-zA-Z]{1}$", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
 
 		Pattern nie = Pattern.compile("^[XxTtYyZz]{1}\\d{7}[a-zA-Z]{1}$", Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);

@@ -156,6 +156,24 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 			
 		});
 		
+		descriptionSuggest.getValueBox().addBlurHandler(event -> {
+			Payment concept = getPayment(descriptionSuggest.getValue());
+			
+			if (concept == null)
+				showError("Error devengo", "No se ha podido obtener el devengo");
+
+			payment.setType(concept.getType());
+			payment.setName(concept.getName());
+			payment.setConceptId(concept.getId());
+			payment.setDescription(concept.getDescription());
+			payment.setIrpfExpression(concept.getIrpfExpression());
+			payment.setQuoteExpression(concept.getQuoteExpression());
+			payment.setSalaryType(Salary.Type.SALARY);
+			if (concept.getExpression() != null) payment.setExpression(getExpression4Payment(concept));
+			setEnabled(acceptBtn, true);
+			setEnabled(manualAgreement, false);
+		});
+		
 		descriptionSuggest.addKeyDownHandler(event -> {
 			if (KeyCodes.KEY_ESCAPE == event.getNativeEvent().getKeyCode())
 				paymentSuggestionDisplay.hideSuggestions();
@@ -164,6 +182,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		});
 		
 		descriptionSuggest.getElement().setPropertyString("placeholder", "Ctrl + espacio para ver sugerencias");
+		descriptionSuggest.ensureDebugId("descriptionSuggest");
 		
 		suggestPanel.add(descriptionSuggest);
 	}
@@ -229,6 +248,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		acceptBtn = new Button();
 		acceptBtn.setText("Aceptar");
 		acceptBtn.setStyleName(AON.CSS.aonOkButtonSmall());
+		acceptBtn.ensureDebugId("acceptNewPaymentButton");
 		acceptBtn.addClickHandler(e -> {
 			hide();
 			onAccept(payment);
