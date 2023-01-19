@@ -25,8 +25,10 @@ public interface NordigenService extends RemoteService {
 	List<NordigenInstitution> getNordigenInstitutions(NordigenAccessToken token, Country country) throws Exception;
 	List<NordigenInstitution> getNordigenInstitutionsByBic(NordigenAccessToken token, String bic) throws Exception;
 	Boolean cancelRequisition (NordigenAccessToken token, String currentDomainName, int currentDomain, String user, Integer rbankId) throws Exception;
+	Boolean deleteRequisitionById (NordigenAccessToken token, String currentDomainName, int currentDomain, String user, String requisitionId) throws Exception;
 	NordigenRequisition getRequisition(NordigenAccessToken token, String requisitionId) throws Exception;
 	Integer insertTransactions(String currentDomainName, int currentDomain, String user, NordigenBankAccount nordigenBankAccount) throws AonCoreException;
+	List<NordigenRequisition> findAllDomainRequisitions(NordigenAccessToken token, String currentDomainName) throws Exception;
 	
 	NordigenBankAccount setNordigenAccountValues(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount account) throws Exception;
 	List<NordigenBankStatement> getNotInsertedMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount) throws Exception;
