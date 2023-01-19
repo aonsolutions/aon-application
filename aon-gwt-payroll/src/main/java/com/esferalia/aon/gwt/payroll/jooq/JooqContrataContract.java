@@ -52,7 +52,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
-import com.ibm.icu.util.Calendar;
+import java.util.Calendar;
 import com.itextpdf.text.log.SysoLogger;
 
 public class JooqContrataContract {
