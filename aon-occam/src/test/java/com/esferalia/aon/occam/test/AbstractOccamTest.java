@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.Properties;
 import java.util.TimeZone;
 
@@ -21,6 +22,8 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.mysql.jdbc.Driver;
 
 import net.aonsolutions.core.pool.AonConnectionException;
@@ -40,6 +43,8 @@ public abstract class AbstractOccamTest {
 	private static String getDbPasswd() {	return System.getProperty("dbPasswd", "serubd2000");	}
 	private static String getDbUseSSL() {	return System.getProperty("dbUseSSL", "false");	}
 	private static String getDbTimeZone() {	return System.getProperty("dbTimeZone", TimeZone.getDefault().getID());	}
+	
+	private Date testDate; // AonDateUtils.getDate(2022, 11, 15);
 	
 	@Rule
 	public RepeatRule repeatRule = new RepeatRule();
@@ -131,6 +136,10 @@ public abstract class AbstractOccamTest {
 			}
 		}
 		return connection;
+	}
+	
+	protected Date getTestDate() {
+		return AonObjectUtils.defaultIfNull(testDate, new Date());
 	}
 	
 }
