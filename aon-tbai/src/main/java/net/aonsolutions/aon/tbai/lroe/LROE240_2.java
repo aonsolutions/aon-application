@@ -142,9 +142,11 @@ public class LROE240_2 extends LROE240 {
 		cabecera.setTipoFactura(ClaveTipoFacturaGastosEnum.F_1);
 		cabecera.setNumFactura(invoice.getReferenceCode());
 		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-		cabecera.setFechaRecepcion(tbaiConfiguration.isRegistryTaxDate()
-				? AonDateUtils.format(invoice.getTaxDate(), DATE_FORMAT)
-				: AonDateUtils.format(invoice.getCreationDate(), DATE_FORMAT));
+		Date receptionDate = tbaiConfiguration.isRegistryTaxDate()
+				? invoice.getTaxDate() : invoice.getCreationDate();
+		if(receptionDate.before(invoice.getIssueDate()))
+			receptionDate = invoice.getIssueDate();
+		cabecera.setFechaRecepcion(AonDateUtils.format(receptionDate, DATE_FORMAT));
 		if(invoice.isRectifier()) {
 			FacturaRectificativaImporteType rectificativa = new FacturaRectificativaImporteType(); 
 			rectificativa.setCodigo(ClaveCodigoFacturaRectificativaEnum.R_1); 
