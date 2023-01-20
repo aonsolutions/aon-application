@@ -247,6 +247,7 @@ public abstract class Mod303Declaration {
 				dupl.setPeriod(mod303.getPeriod().isMonthPeriod()?Period.M11:Period.T3);
 				dupl.setAdministration(mod303.getAdministration());
 				dupl.setProratePercent( mod303.getProratePercent() );
+				dupl.setPreviousProratePercent( mod303.getPreviousProratePercent() );
 				dupl.setSpecialProrateValue( mod303.isSpecialProrate() );
 				dupl.setDraft(true);
 				dupl.setGenerateFromYearStart(true);
@@ -265,50 +266,6 @@ public abstract class Mod303Declaration {
 			}
 		}
 	}
-
-//	public void _prorrateRegularization(AONContext ctx, Mod303 mod303){
-//		if (mod303.isLastPeriod() && getRegularizationKey() != null) {
-//			double lastPercent = mod303.getProratePercent();
-//			double prevPercent = mod303.getPreviousProratePercent();
-//			if ((mod303.hasProrate() || mod303.hasPreviousProrate()) && AonNumberUtils.notEquals(lastPercent, prevPercent)) {
-//				MutableDouble declared = new MutableDouble();
-//				MutableDouble total = new MutableDouble();
-//				Mod303DAO.getPreviousEffectiveModels(ctx, mod303)
-//					.forEach(m303 ->{
-//						double percent = m303.getProratePercent();
-//						double deducedAmount = 0.0;
-//						
-//						if ( m303.getMap() != null && !m303.getMap().isEmpty()) {
-//							for(String key : m303.getMap().keySet() ) {
-//								Mod303Declaration dec = Mod303Declaration.getInstance(m303);
-//								if (dec.isProrrated( Mod303Key.getKey(key))) {
-//									if (AonMathUtils.isGreatherThanZero(m303.getAmount(key))) {
-//										System.out.println( 
-//												m303.getModelFullName()
-//												+ " -- " + percent + "%"
-//												+ " -- " + key
-//												+ " -- " + m303.getAmount(key) 
-//												);
-//									}
-//									deducedAmount = deducedAmount + m303.getAmount(key); 
-//								}
-//							}
-//						}
-//						declared.add(deducedAmount);
-//						double t = AonMathUtils.round(deducedAmount * 100 / percent);
-//						total.add(t);
-//						System.out.println( 
-//								"\t" + m303.getModelFullName()
-//								+ " -- " + percent + "%"
-//								+ " -- " + t
-//								+ " -- " + deducedAmount 
-//								);
-//				});
-//				double mustDeclared = AonMathUtils.round(total.getValue() * mod303.getProratePercent() / 100);  
-//				mod303.putAmount(getRegularizationKey(), AonMathUtils.round(mustDeclared - declared.getValue()));
-//			}
-//		}
-//	}
 
 	public void fillSimplifiedRegime(Mod303 mod303){
 		
@@ -527,7 +484,7 @@ public abstract class Mod303Declaration {
 		}
 	}
 
-	protected Set<Integer> createOnTheFly(AONContext ctx, Mod303 mod303) {
+	public Set<Integer> createOnTheFly(AONContext ctx, Mod303 mod303) {
 		if (hasSimplifiedRegime()) {
 			initializeSimplifiedRegime(ctx, mod303);
 		}
@@ -569,13 +526,6 @@ public abstract class Mod303Declaration {
 				+ "padding-right: 15px; padding-left: 15px; margin-right: auto; "
 				+ "margin-left: auto; width:100%; display: flex;flex-wrap: wrap; "
 				+ "justify-content: center; box-sizing: border-box"
-//				+ "\">")
-//			.append("<div "
-//				+ "style=\"" 
-//				+ "border-radius: 4px; background: #fff; box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);"
-//				+ "transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);"
-//				+ "padding: 4px 5px 5px 10px; margin: 20px 10px 10px 10px; cursor: pointer;"
-//				+ "flex: 0 1 40%; min-height: 120px; min-width: 350px;"
 				+ "\">");
 		buf.append( MessageFormat.format(styledTag, "table cellspacing=\"0\"",  blockCenter+marginTop ) )
 			.append("<tr>")
@@ -630,7 +580,6 @@ public abstract class Mod303Declaration {
 			
 			;
 		
-//		MutableDouble sumVat = new MutableDouble();
 		MutableDouble sumDeclared = new MutableDouble();
 		MutableDouble sumMustDeclared = new MutableDouble();
 		MutableDouble sumDiference = new MutableDouble();
@@ -667,26 +616,22 @@ public abstract class Mod303Declaration {
 						}
 					}
 				}
-				// double total = AonMathUtils.round(sumProrratedMustDeclared.doubleValue() + sumUnprorratedMustDeclared.doubleValue());
 				double prorratedQuota = sumProrratedMustDeclared.doubleValue(); 
 				double unprorratedQuota = sumUnprorratedMustDeclared.doubleValue();
 				
 				double mustProrrated = AonMathUtils.round(prorratedQuota * mod303.getProratePercent() / 100);
 				double mustDeclared = AonMathUtils.round(mustProrrated +  unprorratedQuota);
 				
-				//double total = AonMathUtils.round(declared);
 				double diference = AonMathUtils.round(mustDeclared - declared);
 		
 				sumDeclared.add(declared); 
-				//sumVat.add(total);
 				sumMustDeclared.add(mustDeclared);
 				sumDiference.add(diference);
 				
 				return new StringBuilder()
 					.append("<tr>")
 						.append( MessageFormat.format(styledTag, "td", border+noWrap) )
-							.append("IVA deducible: "
-								+ fm.getModelFullName()
+							.append(fm.getModelFullName()
 								+ AonObjectUtils.defaultIfNull(fm.getDeclarationResultType(), t -> " (" + t.getDescription() + ")"))
 						.append("</td>")
 						
@@ -694,7 +639,7 @@ public abstract class Mod303Declaration {
 							.append(DEC2.format(prorratedQuota))
 						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightYellow) )				
-							.append(DEC2.format(AonMathUtils.equals(percent, 100)?0.0:percent))
+							.append(DEC2.format(percent))
 							.append(" %")
 						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightYellow) )				
@@ -711,7 +656,7 @@ public abstract class Mod303Declaration {
 							.append(DEC2.format(prorratedQuota))
 						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightGreen) )				
-						.append(DEC2.format(AonMathUtils.equals(mod303.getProratePercent(), 100)?0.0:mod303.getProratePercent()))
+						.append(DEC2.format(mod303.getProratePercent()))
 							.append(" %")
 						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightGreen) )				
@@ -834,7 +779,7 @@ public abstract class Mod303Declaration {
 	public abstract IMod303KeyDAO safeValueOf(Mod303 mod, String key);
 	public abstract IMod303KeyDAO valueOf(String string);
 	public abstract IMod303KeyDAO[] getKeys();
-	protected abstract Mod303Key[] getProrateKeys();
+	public abstract Mod303Key[] getProrateKeys();
 	
 	public abstract boolean hasSimplifiedRegime();
 	abstract void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303);
