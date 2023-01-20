@@ -86,5 +86,6 @@ public interface ISalary {
 	Double getIrpfBase();
 	
 	Double getInKindIrpfBase();
+	Double getInMoneyIrpfBase();
 	
 }

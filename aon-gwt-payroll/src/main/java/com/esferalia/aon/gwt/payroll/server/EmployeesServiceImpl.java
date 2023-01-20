@@ -4362,6 +4362,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			}
 
 			@Override
+			public Double getInMoneyIrpfBase() {
+			    return draft.getMoneyIrpfBase();
+			}
+			
+			@Override
 			public Double getInKindIrpfBase() {
 				return draft.getInkindIrpfBase();
 			}
