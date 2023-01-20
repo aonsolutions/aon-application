@@ -303,7 +303,7 @@ public class Up2Date {
 	    	MEIPECUpdate.MEIPECUPDATE,
     		//AlterFsMod190Detail2022.ALTER_FS_MODEL_190_DETAIL_2022,
     		// InvoiceFiscalAddExpDate.INVOICE_FISCAL_ADD_EXP_DATE, 		
-    		AlterFsMod184Detail2022.ALTER_FS_MODEL_184_DETAIL_2022,
+    		//AlterFsMod184Detail2022.ALTER_FS_MODEL_184_DETAIL_2022,
     		// Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
     		
