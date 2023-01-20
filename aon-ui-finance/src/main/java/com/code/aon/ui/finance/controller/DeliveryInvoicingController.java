@@ -135,7 +135,7 @@ public class DeliveryInvoicingController implements IFinanceConstants, Serializa
 
 	public void onInvoice(ActionEvent event) throws Exception {	
 		Series series = getParams().getInvoiceSeries();
-		checkSerie(getParams().getInvoiceDate(), series.getCode());
+		checkSerie(getParams().getInvoiceDate(), series != null ? series.getCode() : null);
 		getProgressionState().start();
 		DeliveryInvoicingProcess dip = new DeliveryInvoicingProcess(this);
 		LongProcessThread thread = new LongProcessThread(dip); 
