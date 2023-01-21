@@ -48,6 +48,7 @@
 
 		<g:HTMLPanel ui:field="messagePanel" />
 
+		<g:Label text="Seleccione un devengo sugerido para importarlo. O use el modo manual." />
 		<g:HTMLPanel ui:field="suggestPanel" styleName="{style.center}" />
 	    
 	   	<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}" />

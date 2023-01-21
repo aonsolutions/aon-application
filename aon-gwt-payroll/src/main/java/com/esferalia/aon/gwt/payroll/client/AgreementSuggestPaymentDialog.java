@@ -16,9 +16,7 @@ import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -153,25 +151,27 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 			if (concept.getExpression() != null) payment.setExpression(getExpression4Payment(concept));
 			setEnabled(acceptBtn, true);
 			setEnabled(manualAgreement, false);
-			
 		});
 		
 		descriptionSuggest.getValueBox().addBlurHandler(event -> {
-			Payment concept = getPayment(descriptionSuggest.getValue());
-			
-			if (concept == null)
-				showError("Error devengo", "No se ha podido obtener el devengo");
-
-			payment.setType(concept.getType());
-			payment.setName(concept.getName());
-			payment.setConceptId(concept.getId());
-			payment.setDescription(concept.getDescription());
-			payment.setIrpfExpression(concept.getIrpfExpression());
-			payment.setQuoteExpression(concept.getQuoteExpression());
-			payment.setSalaryType(Salary.Type.SALARY);
-			if (concept.getExpression() != null) payment.setExpression(getExpression4Payment(concept));
-			setEnabled(acceptBtn, true);
-			setEnabled(manualAgreement, false);
+			if(AonStringUtils.isNotBlank(descriptionSuggest.getValue()) && AonStringUtils.startsWith(descriptionSuggest.getValue(), "00")
+					 && AonStringUtils.endsWith(descriptionSuggest.getValue(), ")")) {
+				Payment concept = getPayment(descriptionSuggest.getValue());
+				
+				if (concept == null)
+					showError("Error devengo", "No se ha podido obtener el devengo");
+	
+				payment.setType(concept.getType());
+				payment.setName(concept.getName());
+				payment.setConceptId(concept.getId());
+				payment.setDescription(concept.getDescription());
+				payment.setIrpfExpression(concept.getIrpfExpression());
+				payment.setQuoteExpression(concept.getQuoteExpression());
+				payment.setSalaryType(Salary.Type.SALARY);
+				if (concept.getExpression() != null) payment.setExpression(getExpression4Payment(concept));
+				setEnabled(acceptBtn, true);
+				setEnabled(manualAgreement, false);
+			} else hideMessage();
 		});
 		
 		descriptionSuggest.addKeyDownHandler(event -> {
@@ -229,10 +229,10 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	
 	private void setEnabled(Button button, boolean enabled) {
 		button.setEnabled(enabled);
-		if(!enabled) {
-			button.getElement().getStyle().setVisibility(Visibility.VISIBLE);
-			button.getElement().getStyle().setDisplay(Display.BLOCK);
-		}
+//		if(!enabled) {
+//			button.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+//			button.getElement().getStyle().setDisplay(Display.BLOCK);
+//		}
 	}
 	
 	// --------------------- Accept dialog method
@@ -273,6 +273,10 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		Map<String, String> errorMap = new HashMap<>();
 		errorMap.put(title, message);
 		AonMessagePanel.showError(messagePanel, errorMap);
+	}
+	
+	private void hideMessage() {
+		AonMessagePanel.hideMessage(messagePanel);
 	}
 	
 	// --------------------- Abstract method
