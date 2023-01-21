@@ -334,6 +334,10 @@ public class Mod3902022DAO {
 		map.get(Mod3902022DetailKey.C0656).setQuota( getVatAccrualPaymentInputQuota(ctx, mod390) );
 		
 		// Cálculo de la Regularizacion por aplicacion del porcentaje definitivo de prorrata
+		
+		// Si se asigna el valorhabría que sumar los declarado en las declaraciones y no sacer los datos de las facturas.
+		
+		
 		Condition cond = FS_MODEL.YEAR.eq(mod390.getYear())
 				.and(FS_MODEL.PERIOD.eq(Period.T4.value()).or(FS_MODEL.PERIOD.eq(Period.M12.value())) );
 		Mod303DAO.getEffectiveModels(ctx, mod390, cond)
@@ -341,7 +345,7 @@ public class Mod3902022DAO {
 			.filter( Mod303::isAEAT)
 			.filter( Mod303::isLastPeriod)
 			.map(m -> m.getAmount(Mod303Key.CT_C44))
-			.forEach( r -> map.computeIfAbsent(Mod3902022DetailKey.C0522, k -> new Mod390Detail().setKey(Mod3902022DetailKey.C0522).setQuota(r)))
+			.forEach( r -> map.computeIfAbsent(Mod3902022DetailKey.C0522, k -> new Mod390Detail().setKey(k)).setQuota(r))
 		;
 		return map;
 	}

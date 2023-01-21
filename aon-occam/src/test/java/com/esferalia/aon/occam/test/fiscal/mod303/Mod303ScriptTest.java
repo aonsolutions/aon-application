@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.test.fiscal.mod303;
 import static org.junit.Assert.assertThrows;
 
 import java.util.Arrays;
-import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -75,7 +74,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 	@Test
 	public void testCommonTerritoryExpressions() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
-				.setIssueDate(new Date())
+				.setIssueDate(getTestDate())
 				.setMonthly(true)
 				.setAdministration(Administration.COMMON_TERRITORY);
 		Mod303 mod303 = FiscalFaker.getMod303(params);
@@ -104,7 +103,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 	@Test
 	public void testGipuzkoaExpressions() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
-				.setIssueDate(new Date())
+				.setIssueDate(getTestDate())
 				.setMonthly(true)
 				.setAdministration(Administration.GIPUZKOA);
 		
@@ -131,7 +130,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 	@Test
 	public void testBizkaiaExpressions() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
-				.setIssueDate(AonDateUtils.getYearFirstDay( new Date()))
+				.setIssueDate(AonDateUtils.getYearFirstDay( getTestDate()))
 				.setMonthly(true)
 				.setAdministration(Administration.BIZKAIA);
 
@@ -159,7 +158,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 	@Test
 	public void testArabaExpressions() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
-				.setIssueDate(new Date())
+				.setIssueDate(getTestDate())
 				.setMonthly(true)
 				.setAdministration(Administration.ALAVA);
 		Period p = Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()));
@@ -191,7 +190,7 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 	@Test
 	public void testNavarraExpressions() {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
-				.setIssueDate(new Date())
+				.setIssueDate(getTestDate())
 				.setMonthly(true)
 				.setAdministration(Administration.NAVARRA);
 		Mod303 mod303 = FiscalFaker.getMod303(params);

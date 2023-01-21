@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.test.fiscal.mod303;
 
-import java.util.Date;
-
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
@@ -38,7 +36,7 @@ public class Mod303ExpressionsTest extends Mod303AbstractTest {
 	
 	private void test( Administration admon) {
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
-			.setIssueDate(AonDateUtils.getFirstDayOfYear( new Date()))
+			.setIssueDate(AonDateUtils.getFirstDayOfYear( getTestDate()))
 			.setMonthly(true)
 			.setAdministration(admon);
 		Mod303 mod303 = FiscalFaker.getMod303(params);
