@@ -49,6 +49,34 @@
 													target="#{saleInvoice.showCertTbaiWindow}"
 													value="#{false}" />
 										</aon:commandButton>
+										
+										<aon:commandButton id="certTbaiModify"	
+											rendered="#{!saleInvoice.invoiceTbaiAccepted}"
+											value="Modificar"
+											action="#{saleInvoice.modifyInvoice}"
+											styleClass="aon-finding-toolbar-item aon-icon-check-black"
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+											oncomplete="Richfaces.hideModalPanel('waitProccess')">
+												<rich:componentControl for="fiscalCertTbaiModalPanel"
+													event="onclick" operation="hide"/>		
+												<f:setPropertyActionListener
+													target="#{saleInvoice.showCertTbaiWindow}"
+													value="#{false}" />
+										</aon:commandButton>
+										
+										<aon:commandButton id="certTbaiSubsanar"	
+											rendered="#{!saleInvoice.invoiceTbaiAccepted}"
+											value="Subsanar"
+											action="#{saleInvoice.subsanarInvoice}"
+											styleClass="aon-finding-toolbar-item aon-icon-check-black"
+											onclick="Richfaces.showModalPanel('waitProccess')" 
+											oncomplete="Richfaces.hideModalPanel('waitProccess')">
+												<rich:componentControl for="fiscalCertTbaiModalPanel"
+													event="onclick" operation="hide"/>		
+												<f:setPropertyActionListener
+													target="#{saleInvoice.showCertTbaiWindow}"
+													value="#{false}" />
+										</aon:commandButton>
 									</aon:div>
 									
 									<aon:panelGrid id="menuGrid" columns="2" dir="true">

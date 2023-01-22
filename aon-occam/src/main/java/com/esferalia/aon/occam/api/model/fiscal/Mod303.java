@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
-import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -93,8 +92,11 @@ public class Mod303 extends FiscalModel implements Serializable {
 			&& (getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK
 			|| getDeclarationResultType() == FiscalModelDeclarationType.PAYBACK_CCT);
 	}
+	
 	public boolean hasProrate() {
-		return getProratePercent() != 0 && getProratePercent() != 100;
+		return (getProratePercent() != 0 && getProratePercent() != 100)
+			|| (isLastPeriod() && hasPreviousProrate())
+			|| (!isLastPeriod() && hasPreviousProrate() && isDraft());
 	}
 	
 	public boolean isSpecialProrate() {
@@ -111,7 +113,7 @@ public class Mod303 extends FiscalModel implements Serializable {
 	public double getProratePercent() {
 		Mod303Key key = getProrateKey();
 		double proratePercent = getAmount(key); 
-		if (AonMathUtils.isZero(proratePercent)) proratePercent = 100.0;  
+//		if (AonMathUtils.isZero(proratePercent)) proratePercent = 100.0;  
 		return proratePercent;
 	}
 	public Mod303 setProratePercent(double prorratePercent) {
@@ -122,10 +124,13 @@ public class Mod303 extends FiscalModel implements Serializable {
 	public double getPreviousProratePercent() {
 		Mod303Key key = getPreviousProrateKey();
 		double previousProratePercent = getAmount(key); 
-		if (AonMathUtils.isZero(previousProratePercent)) previousProratePercent = 100.0;  
+//		if (AonMathUtils.isZero(previousProratePercent)) previousProratePercent = 100.0;  
 		return previousProratePercent;
 	}
-
+	public Mod303 setPreviousProratePercent(double previousProrratePercent) {
+		ensureDetail(getPreviousProrateKey()).setAmount( previousProrratePercent );
+		return this;
+	}
 	public boolean hasPreviousProrate() {
 		return getPreviousProratePercent() != 0 && getPreviousProratePercent() != 100;
 	}
@@ -142,6 +147,13 @@ public class Mod303 extends FiscalModel implements Serializable {
 	public Mod303 setDiffCalculationMandatory(boolean diffCalculationMandatory) {
 		this.diffCalculationMandatory = diffCalculationMandatory;
 		return this;
+	}
+	
+	public boolean isDraft() {
+		return AonNumberUtils.equals(getAmount(Mod303Key.CM_073), 1.0);
+	}
+	public void setDraft(boolean draft) {
+		ensureDetail(Mod303Key.CM_073).setAmount(draft?1:0);
 	}
 	
 	@Override

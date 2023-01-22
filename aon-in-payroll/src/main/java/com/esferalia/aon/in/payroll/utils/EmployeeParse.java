@@ -112,6 +112,11 @@ public class EmployeeParse {
 			}
 			
 			@Override
+			public void visitCno(String cno) {
+				employee.setCno(cno);
+			}
+
+			@Override
 			public void visitMdCtz(String mdCtz) {
 				employee.setMdCtz(mdCtz);
 			}
@@ -248,6 +253,7 @@ public class EmployeeParse {
 		employee.getRlce(start).ifPresent(builder::setRlce);
 		employee.getFactor(start).ifPresent(builder::setFactor);
 		employee.getCollective(start).ifPresent(builder::setCollective);
+		employee.getCno(start).ifPresent(builder::setCno);
 		employee.getMdCtz(start).ifPresent(builder::setMdctz);
 
 		return builder.build();

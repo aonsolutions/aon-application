@@ -2309,7 +2309,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			getMod145().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			Mod145Object mod145Object = mod145Map.get(salaryDraft.getEmployeeId());
 			if(null == mod145Object) {
-				mod145Object = new Mod145Object( salaryDraft.getEmployeeId());
+				mod145Object = new Mod145Object(salaryDraft.getEmployeeId(), enterprise.getDomain());
 				mod145Map.put(salaryDraft.getEmployeeId(), mod145Object);
 			}
 			getMod145().setMod145Object(mod145Object);
@@ -3711,7 +3711,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					closePDF.addClickHandler(e -> {
 						employeeDetail.setWidget(getEmployeePanel());
 						getEmployeePanel().selectWidget(getMod145());
-						Mod145Object mod145Object = new Mod145Object(getMod145().getContractId());
+						Mod145Object mod145Object = new Mod145Object(getMod145().getContractId(), enterprise.getDomain());
 						getMod145().setMod145Object(mod145Object);
 					});
 					tb.add(closePDF);

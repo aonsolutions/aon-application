@@ -17,6 +17,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
+/**
+ * @deprecated use AonInvoiceViewer
+ *
+ */
+@Deprecated
 public class InvoiceViewer extends SimpleLayoutPanel {
 
 	private static final String DATE_PATTERN = "dd/MM/yyyy";

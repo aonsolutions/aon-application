@@ -81,6 +81,7 @@ public class AonDialog extends AonCustomDialog {
 		okButton = new Button();
     	okButton.setStyleName(AON.CSS.aonOkButton());
     	okButton.setText( AON.MSG.cancelAction() );
+    	okButton.ensureDebugId("acceptDialogButton");
     	
     	okButton.addKeyUpHandler(e -> {
     		if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
@@ -100,6 +101,7 @@ public class AonDialog extends AonCustomDialog {
 		okButton = new Button();
     	okButton.setStyleName(AON.CSS.aonOkButton());
     	okButton.setText( AON.MSG.accept());
+    	okButton.ensureDebugId("acceptDialogButton");
     	
     	okButton.addKeyUpHandler(e -> {
     		if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
@@ -119,6 +121,7 @@ public class AonDialog extends AonCustomDialog {
     	cancelButton = new Button();
     	cancelButton.setStyleName(AON.CSS.aonCancelButton());
     	cancelButton.setText( AON.MSG.cancelAction());
+    	cancelButton.ensureDebugId("cancelDialogButton");
     	
     	cancelButton.addClickHandler(e -> {
     		cancelButton.setEnabled(false);

@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.finance.server;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +31,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
+import com.gargoylesoftware.htmlunit.javascript.host.Console;
 
 import nordigen.AonNordigen;
 
@@ -214,6 +216,56 @@ public class NordigenServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public List<NordigenBankStatement> getNotInsertedMovements(NordigenAccessToken token, String domainName, int domain,
 			String user, NordigenBankAccount nordigenBankAccount) throws Exception {
 		return AonNordigen.getNotInsertedTransactions(token, new Domain().setName(domainName).setId(domain), user, nordigenBankAccount);
+	}
+
+	@Override
+	public List<NordigenRequisition> findAllDomainRequisitions(NordigenAccessToken token, String currentDomainName)
+			throws Exception {
+		LinkedList<NordigenRequisition> list = new LinkedList<>();
+		List<NordigenRequisition> allRequisitions = AonNordigen.getAllRequisitions(token);
+		if (allRequisitions != null) {
+			String regex = "^https\\:\\/\\/(?<link>.*?)\\/ms\\/.*$";
+			Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+//			"https://b72384936-ayudat.aonsolutions.net/ms/api/task-evaluation/rbank?rbank=139"
+			allRequisitions.stream()
+			.filter(req -> {
+				System.err.println(req.getRedirect());
+				Matcher matcher = pattern.matcher(req.getRedirect());
+				if (matcher.matches()) {
+					String link = matcher.group("link");
+					return link != null && AonStringUtils.equalsIgnoreCase(currentDomainName, link);
+				}
+				return false;
+			}).forEach(req -> {
+				list.add(req);
+			});
+		}
+		return list;
+	}
+
+	@Override
+	public Boolean deleteRequisitionById(NordigenAccessToken token, String currentDomainName, int currentDomain,
+			String user, String requisitionId) throws Exception {
+		Domain domain = new Domain().setName(currentDomainName).setId(currentDomain);
+		NordigenRequisition requisition = AonNordigen.getRequisition(token, requisitionId);
+		List<RegistryBank> rbanks = AonNordigen.getRbanksByRequisition(domain, user, requisitionId);
+		
+		boolean requisitionDeleted = true;
+		
+		if (requisition != null) {
+			try {				
+				AonNordigen.deleteRequisition(token, requisition);
+			} catch (Exception e) {
+				requisitionDeleted = false;
+			}
+		}
+		if (rbanks != null) {
+			for (RegistryBank rbank : rbanks) {
+				rbank.setRequisition(null);
+				AonNordigen.updateRbank(domain, requisitionId, rbank);
+			}
+		}
+		return requisitionDeleted;
 	}
 
 }

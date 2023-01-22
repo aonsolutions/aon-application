@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
@@ -196,7 +197,10 @@ public abstract class Mod303Declaration {
 	protected static void addProrrated(Mod303Key key,Mod303 mod,VatContext vat) {
 		double amount = vat.getDeductibleQuota();
 		if (mustApplyProrrate(mod,vat)) {
-			amount = AonMathUtils.round(amount * mod.getProratePercent() / 100);	
+			mod.ensureDetail(Mod303Key.CM_072).addAmount(vat.getDeductibleQuota());
+			amount = AonMathUtils.round(amount * mod.getProratePercent() / 100);
+		} else {
+			mod.ensureDetail(Mod303Key.CM_074).addAmount(vat.getDeductibleQuota());
 		}
 		add( key, mod, amount);
 	}
@@ -228,63 +232,37 @@ public abstract class Mod303Declaration {
 		}
 	}
 
-//	public void prorrateRegularization(AONContext ctx, Mod303 mod303){
-//		if (mod303.isLastPeriod() && getRegularizationKey() != null) {
-//			double lastPercent = mod303.getProratePercent();
-//			double prevPercent = mod303.getPreviousProratePercent();
-//			if ((mod303.hasProrate() || mod303.hasPreviousProrate()) 
-//				&& AonNumberUtils.notEquals(lastPercent, prevPercent)) {
-//				if (mod303.isDiffCalculationDisabled()) {
-//					final Mod303 dupl = new Mod303();
-//					dupl.setDomain(mod303.getDomain());
-//					dupl.setDomainName(mod303.getDomainName());
-//					dupl.setYear(mod303.getYear());
-//					dupl.setModel(mod303.getModel());
-//					dupl.setPeriod(mod303.getPeriod());
-//					dupl.setAdministration(mod303.getAdministration());
-//					dupl.setDiffCalculationDisabled(false);
-//					dupl.ensureDetail( dupl.getProrateKey() ).setAmount( mod303.getProratePercent() );
-//					dupl.ensureDetail( dupl.getPreviousProrateKey() ).setAmount( mod303.getPreviousProratePercent() );
-//					Mod303Declaration draftDec = Mod303Declaration.getInstance(dupl); 
-//					draftDec.createOnTheFly(ctx, dupl);
-//					double amount = dupl.ensureDetail(Mod303Key.CM_072).getAmount();
-//					mod303.ensureDetail(Mod303Key.CM_072).setAmount( amount );
-//				}
-//			
-//			
-//				double amount = mod303.ensureDetail(Mod303Key.CM_072).getAmount();
-//				double declared = AonMathUtils.round(amount * prevPercent / 100);
-//				double mustDeclared = AonMathUtils.round(amount * lastPercent / 100);
-//				mod303.putAmount(getRegularizationKey(), AonMathUtils.round(mustDeclared - declared));
-//			}
-//		}
-//	}
-
 	public void prorrateRegularization(AONContext ctx, Mod303 mod303){
 		if (mod303.isLastPeriod() && getRegularizationKey() != null) {
 			double lastPercent = mod303.getProratePercent();
 			double prevPercent = mod303.getPreviousProratePercent();
-			if ((mod303.hasProrate() || mod303.hasPreviousProrate()) && AonNumberUtils.notEquals(lastPercent, prevPercent)) {
-				MutableDouble declared = new MutableDouble();
-				MutableDouble total = new MutableDouble();
-				Mod303DAO.getPreviousEffectiveModels(ctx, mod303)
-					.forEach(m303 ->{
-						double percent = m303.getProratePercent();
-						double deducedAmount = 0.0;
-						
-						if ( m303.getMap() != null && !m303.getMap().isEmpty()) {
-							for(String key : m303.getMap().keySet() ) {
-								Mod303Declaration dec = Mod303Declaration.getInstance(m303);
-								if (dec.isProrrated( Mod303Key.getKey(key))) {
-									deducedAmount = deducedAmount + m303.getAmount(key); 
-								}
-							}
-						}
-						declared.add(deducedAmount);
-						total.add(AonMathUtils.round(deducedAmount * 100 / percent));
-				});
-				double mustDeclared = AonMathUtils.round(total.getValue() * mod303.getProratePercent() / 100);  
-				mod303.putAmount(getRegularizationKey(), AonMathUtils.round(mustDeclared - declared.getValue()));
+			if ((mod303.hasProrate() || mod303.hasPreviousProrate()) 
+				&& AonNumberUtils.notEquals(lastPercent, prevPercent)) {
+				
+				final Mod303 dupl = new Mod303();
+				dupl.setDomain(mod303.getDomain());
+				dupl.setDomainName(mod303.getDomainName());
+				dupl.setYear(mod303.getYear());
+				dupl.setModel(mod303.getModel());
+				dupl.setPeriod(mod303.getPeriod().isMonthPeriod()?Period.M11:Period.T3);
+				dupl.setAdministration(mod303.getAdministration());
+				dupl.setProratePercent( mod303.getProratePercent() );
+				dupl.setPreviousProratePercent( mod303.getPreviousProratePercent() );
+				dupl.setSpecialProrateValue( mod303.isSpecialProrate() );
+				dupl.setDraft(true);
+				dupl.setGenerateFromYearStart(true);
+				Mod303Declaration draftDec = Mod303Declaration.getInstance(dupl); 
+				draftDec.createOnTheFly(ctx, dupl);
+				
+				double prorratedAmount = dupl.ensureDetail(Mod303Key.CM_072).getAmount();
+				double unProrratedAmount = dupl.ensureDetail(Mod303Key.CM_074).getAmount();
+				mod303.ensureDetail(Mod303Key.CM_072).setAmount( prorratedAmount );
+				mod303.ensureDetail(Mod303Key.CM_074).setAmount( unProrratedAmount );
+				
+				double declared = AonMathUtils.round((prorratedAmount * prevPercent / 100) + unProrratedAmount) ;
+				double mustDeclared = AonMathUtils.round((prorratedAmount * lastPercent / 100) + unProrratedAmount);
+				double difference  = AonMathUtils.round(mustDeclared - declared);
+				mod303.putAmount(getRegularizationKey(), difference);
 			}
 		}
 	}
@@ -445,11 +423,14 @@ public abstract class Mod303Declaration {
 	}
 	
 	private Stream<VatContext> getVatContextStream(AONContext ctx, Mod303 mod303) {
+		if (mod303.isDraft()) {
+			return VATDAO.getVatBreakdown(ctx,mod303);
+		}
 		if (mustApplyReplacementSearch(mod303)) {
 			mod303.setDiffCalculationMandatory(true);
 			mod303.setDiffCalculationDisabled(false);
 		}
-		if (mod303.isDiffCalculationMandatory() ) {
+		if (mod303.isDiffCalculationMandatory()) {
 			mod303.setGenerateFromYearStart(true);
 			return VATDAO.getVatBreakdown(ctx,mod303);
 		} 
@@ -503,7 +484,7 @@ public abstract class Mod303Declaration {
 		}
 	}
 
-	protected Set<Integer> createOnTheFly(AONContext ctx, Mod303 mod303) {
+	public Set<Integer> createOnTheFly(AONContext ctx, Mod303 mod303) {
 		if (hasSimplifiedRegime()) {
 			initializeSimplifiedRegime(ctx, mod303);
 		}
@@ -545,33 +526,53 @@ public abstract class Mod303Declaration {
 				+ "padding-right: 15px; padding-left: 15px; margin-right: auto; "
 				+ "margin-left: auto; width:100%; display: flex;flex-wrap: wrap; "
 				+ "justify-content: center; box-sizing: border-box"
-				+ "\">")
-			.append("<div "
-				+ "style=\"" 
-				+ "border-radius: 4px; background: #fff; box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);"
-				+ "transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);"
-				+ "padding: 4px 5px 5px 10px; margin: 20px 10px 10px 10px; cursor: pointer;"
-				+ "flex: 0 1 40%; min-height: 120px; min-width: 350px;"
 				+ "\">");
 		buf.append( MessageFormat.format(styledTag, "table cellspacing=\"0\"",  blockCenter+marginTop ) )
 			.append("<tr>")
-				.append( MessageFormat.format(styledTag, "td colspan=\"7\"",  textCenter+bold+fontLarger+border) )
+				.append( MessageFormat.format(styledTag, "td colspan=\"12\"",  textCenter+bold+fontLarger+border) )
 					.append("Casilla " + key.getBoxFormatted())
 				.append("</td>")
 			.append("</tr>")
 			.append("<tr>")
+				.append( MessageFormat.format(styledTag, "td",  textCenter+bold+fontLarger+border) )
+					.append("")
+				.append("</td>")
+				.append( MessageFormat.format(styledTag, "td colspan=\"5\"", textRight+bold+border+noWrap+textCenter+colorLightYellow))
+					.append("DECLARADO")
+				.append("</td>")
+				.append( MessageFormat.format(styledTag, "td colspan=\"5\"", textRight+bold+border+noWrap+textCenter+colorLightGreen))
+					.append("NUEVO %")
+				.append("</td>")
+				.append( MessageFormat.format(styledTag, "td colspan=\"5\"", textRight+bold+border+noWrap+textCenter+colorLightOrange))
+					.append("A DECLARAR")
+				.append("</td>")
+			.append("</tr>")
+			
+			.append("<tr>")
 				.append( MessageFormat.format(styledTag, "td", border+noWrap) )
 					.append("Declaraci\u00F3n")
 				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td", textRight+border+noWrap+textCenter))
-					.append("Total IVA deducible")
+				.append( MessageFormat.format(styledTag, "td colspan=\"3\"", textRight+border+noWrap+textCenter+colorLightYellow))
+					.append("IVA con prorrata")
 				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td colspan=\"2\"", textRight+border+noWrap+textCenter+colorLightYellow))
-					.append("IVA deducido")
+				.append( MessageFormat.format(styledTag, "td", textRight+border+noWrap+textCenter+colorLightYellow))
+					.append("IVA sin prorrata")
 				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td colspan=\"2\"", textRight+border+noWrap+textCenter+colorLightGreen))
-					.append("IVA al nuevo %")
+				.append( MessageFormat.format(styledTag, "td", textRight+border+noWrap+textCenter+colorLightYellow))
+					.append("Total IVA deducido")
 				.append("</td>")
+				
+
+				.append( MessageFormat.format(styledTag, "td colspan=\"3\"", textRight+border+noWrap+textCenter+colorLightGreen))
+					.append("IVA con prorrata")
+				.append("</td>")
+				.append( MessageFormat.format(styledTag, "td", textRight+border+noWrap+textCenter+colorLightGreen))
+					.append("IVA sin prorrata")
+				.append("</td>")
+				.append( MessageFormat.format(styledTag, "td", textRight+border+noWrap+textCenter+colorLightGreen))
+					.append("Total IVA deducido")
+				.append("</td>")
+				
 				.append( MessageFormat.format(styledTag, "td colspan=\"2\"", textRight+border+noWrap+textCenter+colorLightOrange))
 					.append("Diferencia")
 				.append("</td>")
@@ -579,7 +580,6 @@ public abstract class Mod303Declaration {
 			
 			;
 		
-		MutableDouble sumVat = new MutableDouble();
 		MutableDouble sumDeclared = new MutableDouble();
 		MutableDouble sumMustDeclared = new MutableDouble();
 		MutableDouble sumDiference = new MutableDouble();
@@ -588,12 +588,26 @@ public abstract class Mod303Declaration {
 			
 			@Override
 			public String apply(FiscalModel fm) {
+				Mod303 m303 = (Mod303) fm;
 				setSomething(true);
 				sum(fm.getDeclarationResult());
-				double percent = 100;
-				if (fm instanceof Mod303) {
-					percent = ((Mod303)fm).getProratePercent();	
-				}
+				double percent = m303.getProratePercent();	
+
+				Mod303Declaration dec =  Mod303Declaration.getInstance(m303);
+				MutableDouble sumProrratedMustDeclared = new MutableDouble();
+				MutableDouble sumUnprorratedMustDeclared = new MutableDouble();
+				VATDAO.getModelVatBreakdown(ctx, m303)
+					.filter( br -> Arrays.stream(dec.getProrateKeys())
+							.map(dec::getKey )
+							.anyMatch(kd -> kd.acceptValue(m303, br)))
+					.forEach(br -> {
+						if (mustApplyProrrate(m303,br)) {
+							sumProrratedMustDeclared.add(br.getDeductibleQuota());
+						} else {
+							sumUnprorratedMustDeclared.add(br.getDeductibleQuota());
+						}
+					});
+				
 				double declared = 0.0;
 				if ( fm.getMap() != null && !fm.getMap().isEmpty()) {
 					for(String key : fm.getMap().keySet() ) {
@@ -602,11 +616,14 @@ public abstract class Mod303Declaration {
 						}
 					}
 				}
-				double total = AonMathUtils.round(declared * 100 / percent);   
-				double mustDeclared = AonMathUtils.round(total * mod303.getProratePercent() / 100); 
+				double prorratedQuota = sumProrratedMustDeclared.doubleValue(); 
+				double unprorratedQuota = sumUnprorratedMustDeclared.doubleValue();
+				
+				double mustProrrated = AonMathUtils.round(prorratedQuota * mod303.getProratePercent() / 100);
+				double mustDeclared = AonMathUtils.round(mustProrrated +  unprorratedQuota);
+				
 				double diference = AonMathUtils.round(mustDeclared - declared);
 		
-				sumVat.add(total);
 				sumDeclared.add(declared); 
 				sumMustDeclared.add(mustDeclared);
 				sumDiference.add(diference);
@@ -614,23 +631,39 @@ public abstract class Mod303Declaration {
 				return new StringBuilder()
 					.append("<tr>")
 						.append( MessageFormat.format(styledTag, "td", border+noWrap) )
-							.append("IVA deducible: "
-								+ fm.getModelFullName()
+							.append(fm.getModelFullName()
 								+ AonObjectUtils.defaultIfNull(fm.getDeclarationResultType(), t -> " (" + t.getDescription() + ")"))
 						.append("</td>")
-						.append( MessageFormat.format(styledTag, "td", textRight+width200+border) )				
-							.append(DEC2.format(total))
+						
+						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightYellow) )				
+							.append(DEC2.format(prorratedQuota))
 						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightYellow) )				
-							.append(DEC2.format(AonMathUtils.equals(percent, 100)?0.0:percent))
+							.append(DEC2.format(percent))
 							.append(" %")
+						.append("</td>")
+						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightYellow) )				
+							.append(DEC2.format(AonMathUtils.round(declared - unprorratedQuota)))
+						.append("</td>")
+						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightYellow) )				
+							.append(DEC2.format(unprorratedQuota))
 						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightYellow) )				
 							.append(DEC2.format(declared))
 						.append("</td>")
+						
+						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightGreen) )				
+							.append(DEC2.format(prorratedQuota))
+						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightGreen) )				
-							.append(DEC2.format(AonMathUtils.equals(mod303.getProratePercent(), 100)?0.0:mod303.getProratePercent()))
+						.append(DEC2.format(mod303.getProratePercent()))
 							.append(" %")
+						.append("</td>")
+						.append( MessageFormat.format(styledTag, "td", textRight+width150+border+noWrap+colorLightGreen) )				
+							.append(DEC2.format(mustProrrated))
+						.append("</td>")
+						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightGreen) )				
+							.append(DEC2.format(unprorratedQuota))
 						.append("</td>")
 						.append( MessageFormat.format(styledTag, "td", textRight+width200+border+colorLightGreen) )				
 							.append(DEC2.format(mustDeclared))
@@ -639,7 +672,8 @@ public abstract class Mod303Declaration {
 							.append(DEC2.format(diference))
 						.append("</td>")
 					.append("</tr>")
-					.toString();		
+					.toString()
+					;		
 			}
 		};		
 		
@@ -652,14 +686,31 @@ public abstract class Mod303Declaration {
 				.append( MessageFormat.format(styledTag, "td",  bold+fontLarger+border) )
 					.append("Total")
 				.append("</td>")
-				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width200+border) )
-					.append(DEC2.format(AonMathUtils.round(sumVat.getValue())))
+				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width200+border+colorLightYellow) )
+					.append("")
 				.append("</td>")
+				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightYellow) )
+					.append("")
+				.append("</td>")
+				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightYellow) )
+					.append("")
+				.append("</td>")
+				
+				
 				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightYellow) )
 					.append("")
 				.append("</td>")
 				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width200+border+colorLightYellow) )
 					.append(DEC2.format(AonMathUtils.round(sumDeclared.getValue())))
+				.append("</td>")
+				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightGreen) )
+					.append("")
+				.append("</td>")
+				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightGreen) )
+					.append("")
+				.append("</td>")
+				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightGreen) )
+					.append("")
 				.append("</td>")
 				.append( MessageFormat.format(styledTag, "td",  bold+textRight+width150+border+colorLightGreen) )
 					.append("")
@@ -720,7 +771,7 @@ public abstract class Mod303Declaration {
 				.append("</td>")
 			.append("</tr>");
 		}
-		buf.append("</div>");
+//		buf.append("</div>");
 		buf.append("</div>");
 		return buf.toString();
 	}
@@ -728,7 +779,7 @@ public abstract class Mod303Declaration {
 	public abstract IMod303KeyDAO safeValueOf(Mod303 mod, String key);
 	public abstract IMod303KeyDAO valueOf(String string);
 	public abstract IMod303KeyDAO[] getKeys();
-	protected abstract Mod303Key[] getProrateKeys();
+	public abstract Mod303Key[] getProrateKeys();
 	
 	public abstract boolean hasSimplifiedRegime();
 	abstract void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303);

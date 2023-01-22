@@ -457,8 +457,8 @@ public abstract class Mod145 extends Composite {
 		spouseDocumentTB.setValue(null);
 		
 		disabilityLevelLB.clear();
-		disabilityLevelLB.addItem("-", "0");
-		disabilityLevelLB.addItem("Igual o superior al 33% e inferior al 65%", "1");
+		disabilityLevelLB.addItem("-", "");
+		disabilityLevelLB.addItem("Igual o superior al 33% e inferior al 65%", "0");
 		disabilityLevelLB.addItem("Igual o superior al 65%", "2");
 		
 		getEnableDisableButton(dependenceB, false);
@@ -523,6 +523,7 @@ public abstract class Mod145 extends Composite {
 	private void createMod145() {
 		this.mod145 = new com.esferalia.aon.occam.api.model.mod145.Mod145()
 				.setId(generateId())
+				.setDomain(mod145Object.getDomainId())
 				.setContract(mod145Object.getContractId())
 				.setIssueDate(new Date())
 				.setDeleted(false);
@@ -532,6 +533,7 @@ public abstract class Mod145 extends Composite {
 		if(this.mod145.getDescendients().stream().filter(descendient -> !descendient.isDeleted()).collect(Collectors.toList()).size() < 4) {
 			IrpfDataDescendients descendient = new IrpfDataDescendients()
 					.setId(generateId())
+					.setDomain(mod145Object.getDomainId())
 					.setIrpfData(this.mod145.getId())
 					.setDeleted(false);
 			
@@ -546,6 +548,7 @@ public abstract class Mod145 extends Composite {
 		if(this.mod145.getAscendants().stream().filter(ascendant -> !ascendant.isDeleted()).collect(Collectors.toList()).size() < 2) {
 			IrpfDataAscendants ascendant = new IrpfDataAscendants()
 					.setId(generateId())
+					.setDomain(mod145Object.getDomainId())
 					.setIrpfData(this.mod145.getId())
 					.setDeleted(false);
 			
@@ -634,14 +637,14 @@ public abstract class Mod145 extends Composite {
 	@UiHandler("disabilityLevelLB")
 	void onDisabilityLevelLBChange(ChangeEvent event) {
 		String selectedValue = disabilityLevelLB.getSelectedValue();
-		if(AonStringUtils.equalsIgnoreCase(selectedValue, "1"))
+		if(AonStringUtils.isNotBlank(selectedValue) && AonStringUtils.equalsIgnoreCase(selectedValue, "0"))
 			dependencePanel.setVisible(true);
 		else {
 			dependencePanel.setVisible(false);
 			this.mod145.setDependence(false);
 		}
 		
-		this.mod145.setDisabilityLevel(Byte.parseByte(selectedValue));
+		this.mod145.setDisabilityLevel(AonStringUtils.isBlank(selectedValue) ? null : Byte.parseByte(selectedValue));
 	}
 	
 	@UiHandler("dependenceB")

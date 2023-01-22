@@ -18,7 +18,7 @@ public class Mod303InsertMonthlyReplacementTest extends Mod303AbstractTest {
 	
 	@Test
 	public void mod303InsertMonthlyReplacementTest() {
-		Date today = new Date();
+		Date today = getTestDate();
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 			.setMonthly(true)
 			.setProrratePercent( getProratePercent(today) )

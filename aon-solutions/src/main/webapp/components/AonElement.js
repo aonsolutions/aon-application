@@ -185,6 +185,13 @@ export class AonElement extends HTMLElement{
     });
   }
 
+  showMessageError(msg) {
+    this.showToast({
+      type: CONSTANT.ERROR,
+      message: msg
+    });
+  }
+
   showError(e) {
     this.showToast(e);
   }

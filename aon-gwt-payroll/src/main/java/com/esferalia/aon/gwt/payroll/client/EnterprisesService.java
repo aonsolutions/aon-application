@@ -330,7 +330,7 @@ public interface EnterprisesService extends RemoteService {
 
 	List<ITEmployee> getWorkplaceEmployeeITInfo(String currentDomainName, Boolean allEmployees, Integer workplaceId);
 
-	ComunicaEnterpriseSettings getComunicaEnterpriseSettings(String currentDomainName, String currentUser);
+	ComunicaEnterpriseSettings getComunicaEnterpriseSettings(String currentDomainName, String currentUser) throws IllegalArgumentException;
 
 	void setComunicaEnterpriseSettings(String currentDomainName, String currentUser,
 			ComunicaEnterpriseSettings comunicaEnterpriseSettings);
@@ -415,10 +415,18 @@ public interface EnterprisesService extends RemoteService {
 
 	String printMod145(String currentDomainName, String currentUser, Mod145 mod145) throws IllegalArgumentException;
 
-	// ------------------------------------------------ Laborallife (SistemaRED)
+	// ------------------------------------------------  SistemaRED
 	
 	String getCCCLaboralLife(String currentDomainName, String currentUser, String regime, String ccc, Date from, Date to) throws IllegalArgumentException;
 
 	String getLaboralLife(String currentDomainName, String currentUser, String regime, String ccc, String nss) throws IllegalArgumentException;
+	
+	String getIdcCCC(String currentDomainName, String currentUser, String regime, String ccc, Date date) throws IllegalArgumentException;
+	
+	String getEmployeePrevMov(String currentDomainName, String currentUser, String regime, String ccc) throws IllegalArgumentException;
+
+	String getEmployeesWorking(String currentDomainName, String currentUser, String regime, String ccc) throws IllegalArgumentException;
+
+	String getUpdateCert(String currentDomainName, String currentUser, String regime, String ccc) throws IllegalArgumentException;
 
 }

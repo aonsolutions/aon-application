@@ -560,7 +560,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.hasCertificateSEPE(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 	
-	public void getComunicaEnterpriseSettings(AsyncCallback<ComunicaEnterpriseSettings> asyncCallback) {
+	public void getComunicaEnterpriseSettings(AsyncCallback<ComunicaEnterpriseSettings> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getComunicaEnterpriseSettings(getCurrentDomainName(), getCurrentUser(), asyncCallback);
 	}
 
@@ -725,7 +725,7 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.printMod145(getCurrentDomainName(), getCurrentUser(), mod145, asyncCallback);
 	}
 	
-	// ------------------------------------------------ Laborallife (SistemaRED)
+	// ------------------------------------------------ SistemaRED
 	
 	public void getCCCLaboralLife(String regime, String ccc, Date from, Date to, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getCCCLaboralLife(getCurrentDomainName(), getCurrentUser(), regime, ccc, from, to, asyncCallback);
@@ -733,6 +733,22 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void getLaboralLife(String regime, String ccc, String nss, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getLaboralLife(getCurrentDomainName(), getCurrentUser(), regime, ccc, nss, asyncCallback);
+	}
+	
+	public void getIdcCCC(String regime, String ccc, Date date, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getIdcCCC(getCurrentDomainName(), getCurrentUser(), regime, ccc, date, asyncCallback);
+	}
+	
+	public void getEmployeePrevMov(String regime, String ccc, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getEmployeePrevMov(getCurrentDomainName(), getCurrentUser(), regime, ccc, asyncCallback);
+	}
+	
+	public void getEmployeesWorking(String regime, String ccc, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getEmployeesWorking(getCurrentDomainName(), getCurrentUser(), regime, ccc, asyncCallback);
+	}
+	
+	public void getUpdateCert(String regime, String ccc, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getUpdateCert(getCurrentDomainName(), getCurrentUser(), regime, ccc, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static
