@@ -1,6 +1,5 @@
 package net.aonsolutions.aon.tbai;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Company;
@@ -144,7 +143,7 @@ public class Invoice2tbai {
 		if(!AonStringUtils.isBlank(invoice.getSeries()))
 			cabecera.setSerieFactura(invoice.getSeries());
 		cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
-		Date expDate = invoice.getFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate();
+		Date expDate = invoice.ensureFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate();
 		cabecera.setFechaExpedicionFactura(AonDateUtils.format(expDate, "dd-MM-yyyy"));
 		return cabecera;
 	}
@@ -253,7 +252,7 @@ public class Invoice2tbai {
 	}
 	
 	private static Factura getFactura(Invoice invoice, boolean zuzendu) {
-		Date expDate = invoice.getFiscal().getExpDate() != null
+		Date expDate = invoice.ensureFiscal().getExpDate() != null
 				? invoice.getFiscal().getExpDate()
 				: invoice.getIssueDate();
 		Date expeditionDate = zuzendu ? expDate : new Date();

@@ -116,7 +116,8 @@ public class LROE140_2_1 extends LROE140 {
 	private CabeceraFacturaGastosRecibidasType buildInvoiceCabecera(TbaiConfiguration tbaiConfiguration, Invoice invoice) {
 		CabeceraFacturaGastosRecibidasType cabecera = new CabeceraFacturaGastosRecibidasType();
 		cabecera.setTipoFactura(ClaveTipoFacturaGastosEnum.F_1);
-		cabecera.setNumFactura(invoice.getReferenceCode());
+		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
+		cabecera.setNumFactura(reference);
 		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
 
 		Date receptionDate = tbaiConfiguration.isRegistryTaxDate()
@@ -146,6 +147,7 @@ public class LROE140_2_1 extends LROE140 {
 		DatosFacturaGastoType factura = new DatosFacturaGastoType();
 		Double total = invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()))
 		.mapToDouble(r -> {
+			r.setBase(AonMathUtils.round(r.getBase()));
 			if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
 				r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
 			}
@@ -167,12 +169,13 @@ public class LROE140_2_1 extends LROE140 {
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
 			InvoiceTax irpf = detail.getInvoiceTaxes().stream().filter(e -> TaxType.RETENTION.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
+			tax.setBase(AonMathUtils.round(tax.getBase()));			
 			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
 			}
 			DetalleRentaIVAGastoType r = new DetalleRentaIVAGastoType();
 			r.setEpigrafe(invoice.getEpigraph());
-			
+
 			r.setBaseImponible(Double.toString(tax.getBase()));	
 			r.setTipoImpositivo(Double.toString(tax.getPercentage()));
 			if(tax.getDeductiblePercent() > 0 && tax.getDeductibleQuota() == 0.0) {
@@ -244,8 +247,9 @@ public class LROE140_2_1 extends LROE140 {
 
 		factura.setEmisorFacturaRecibida(buildEmisorAnulacion(invoice));
 		factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-		factura.setSerieFactura(invoice.getSeries());
-		factura.setNumFactura(invoice.getReferenceCode());
+//		factura.setSerieFactura(invoice.getSeries());
+		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
+		factura.setNumFactura(reference);
 		anulacion.setIDGasto(factura);
 		
 		anulaciones.getGasto().add(anulacion);
@@ -327,8 +331,8 @@ public class LROE140_2_1 extends LROE140 {
 		fechaRec.setDesde(AonDateUtils.format(tax ? invoice.getTaxDate() : invoice.getCreationDate(), DATE_FORMAT));
 		fechaRec.setHasta(AonDateUtils.format(new Date(), DATE_FORMAT));
 		cabecera.setFechaRecepcion(fechaRec);
-	
-		cabecera.setNumFactura(invoice.getReferenceCode());
+		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
+		cabecera.setNumFactura(reference);
 		return cabecera;
 	}
 	
