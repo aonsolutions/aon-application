@@ -140,7 +140,8 @@ public class LROE240_2 extends LROE240 {
 	private CabeceraFacturaGastosRecibidasType buildInvoiceCabecera(TbaiConfiguration tbaiConfiguration, Invoice invoice) {
 		CabeceraFacturaGastosRecibidasType cabecera = new CabeceraFacturaGastosRecibidasType();
 		cabecera.setTipoFactura(ClaveTipoFacturaGastosEnum.F_1);
-		cabecera.setNumFactura(invoice.getReferenceCode());
+		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
+		cabecera.setNumFactura(reference);
 		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
 		Date receptionDate = tbaiConfiguration.isRegistryTaxDate()
 				? invoice.getTaxDate() : invoice.getCreationDate();
@@ -168,6 +169,7 @@ public class LROE240_2 extends LROE240 {
 		DatosFacturaRecibidaType factura = new DatosFacturaRecibidaType();
 		Double total = invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()))
 		.mapToDouble(r -> {
+			r.setBase(AonMathUtils.round(r.getBase()));
 			if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
 				r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
 			}
@@ -191,6 +193,8 @@ public class LROE240_2 extends LROE240 {
 			if(!detail.isPrepayment()) {
 				InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
 //				InvoiceTax irpf = detail.getInvoiceTaxes().stream().filter(e -> TaxType.RETENTION.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
+				
+				tax.setBase(AonMathUtils.round(tax.getBase()));
 				if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 					tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
 				}
@@ -273,8 +277,9 @@ public class LROE240_2 extends LROE240 {
 
 		factura.setEmisorFacturaRecibida(buildEmisorAnulacion(invoice));
 		factura.setFechaExpedicionFactura(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
-		factura.setSerieFactura(invoice.getSeries());
-		factura.setNumFactura(invoice.getReferenceCode());
+//		factura.setSerieFactura(invoice.getSeries());
+		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
+		factura.setNumFactura(reference);
 		anulacion.setIDRecibida(factura);
 		
 		anulaciones.getFacturaRecibida().add(anulacion);
@@ -320,7 +325,8 @@ public class LROE240_2 extends LROE240 {
 		fecha.setDesde(AonDateUtils.format(invoice.getIssueDate(), DATE_FORMAT));
 		fecha.setHasta(AonDateUtils.format(new Date(), DATE_FORMAT));
 		cabecera.setFechaExpedicionFactura(fecha);
-		cabecera.setNumFactura(invoice.getReferenceCode());
+		String reference = invoice.getReferenceCode().length() > 20 ? invoice.getReferenceCode().substring(0, 20) : invoice.getReferenceCode();
+		cabecera.setNumFactura(reference);
 		return cabecera;
 	}
 	
