@@ -209,6 +209,7 @@ public abstract class AgreementPreview extends Composite {
 	
 	private boolean hasChange = false;
 	private boolean workplaceView = false;
+	private boolean employeeView = false;
 	private AonToolbarSmallButton saveBtn;
 	
 	private ListBox tc2ListBox;
@@ -364,6 +365,8 @@ public abstract class AgreementPreview extends Composite {
 			getSalaryTableHeader();
 			fillSalaryTable();
 			salaryTableWidth();
+			if(employeeView) 
+				salaryGrid.removeRow(1);
 		}
 	}
 	
@@ -1206,6 +1209,7 @@ public abstract class AgreementPreview extends Composite {
 		blockElements();
 		hideToolbarButtons();
 		hideLevelDiscPanel();
+		employeeView = true;
 		filterLevel(levelId);
 		toolbar.setTitle(toolbarTitle);
 		calcDiscPanelHeightsEmployee();
@@ -1215,7 +1219,6 @@ public abstract class AgreementPreview extends Composite {
 	private void filterLevel(Integer levelId) {
 		setSelectedValueLB(categoryLB, null == levelId ? "" : String.valueOf(levelId));
 		filterSelectedCategory();
-		salaryGrid.removeRow(1);
 	}
 
 	public void payrollPreview() {
