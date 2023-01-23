@@ -266,6 +266,7 @@ public final class IJsonNames {
 	public static final String IRPF_REGIME = "irpfRegime";
 	public static final String ISSUE_DATE = "issueDate";
 	public static final String ITEM = "item";
+	public static final String ITEMS = "items";
 	public static final String ITEM_COMPOSITION = "itemComposition";
 
 	// ---------------------------------------------------------------------------------------------	[J] 

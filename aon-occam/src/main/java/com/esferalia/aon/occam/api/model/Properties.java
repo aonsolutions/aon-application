@@ -265,6 +265,8 @@ public interface Properties {
 		Property<Integer> getStockUnitTagProperty();
 		Property<String> getProductCodeProperty();
 		Property<String> getProductNameProperty();
+		
+		Property<Integer> getRegistryProperty();
 	}
 	
 	public interface ItemCompositionProperties {

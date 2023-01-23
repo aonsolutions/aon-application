@@ -1,6 +1,5 @@
 package net.aonsolutions.aon.api.servlet.registry;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -13,13 +12,10 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.json.TargetJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
-import com.esferalia.aon.occam.api.model.product.Product;
-import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
 
@@ -37,7 +33,6 @@ public class TargetServlet extends AonApiHttpServlet {
 	
 	public static final String TARGETS = "/";
 	public static final String TARGET = "/:id";
-	public static final String RITEM = "/ritem";
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -52,7 +47,6 @@ public class TargetServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(TARGETS, TargetServlet::saveTarget)
-				.addRoute(RITEM, TargetServlet::saveRegistryItem)
 				.apply();
 			
 			response(req, resp, object);
@@ -110,11 +104,6 @@ public class TargetServlet extends AonApiHttpServlet {
 	}
 
 	private static JSONArray getTargets(AonApiData api) {
-//		Integer page = api.getData().opt(IJsonNames.PAGE) != null 
-//			? api.getData().optInt(IJsonNames.PAGE) : 1;
-//		Integer perPage = api.getData().opt(IJsonNames.PER_PAGE) != null
-//			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
-
 		return TargetJSON.toJSON(AON.getTargetStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 			f -> filter(api, f)));
 	}
@@ -159,17 +148,6 @@ public class TargetServlet extends AonApiHttpServlet {
 			filter = filter.and(valueFilter);
 		}
 		return filter;
-	}
-	
-	private static JSONArray saveRegistryItem(AonApiData api) {
-		 JSONArray products = api.getData().optJSONArray(IJsonNames.PRODUCTS);
-		 JSONArray customers = api.getData().optJSONArray(IJsonNames.CUSTOMERS);
-		 RegistryItemStatus status = RegistryItemStatus.INTERESTED; // RegistryItemStatus.safeValueOf(api.getData().optString(IJsonNames.STATUS));
-		 List<Product> list = ProductJSON.fromJSON(products);
-//		 list.forEach(p->{
-//			 AON.saveProduct(api.getDomain(), api.getUser().getLogin(), p);
-//		 });
-		 return ProductJSON.toJSON(list);
 	}
 
 	public static JSONObject saveTarget(AonApiData api) {

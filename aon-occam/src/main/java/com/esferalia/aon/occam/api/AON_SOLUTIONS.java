@@ -887,8 +887,19 @@ public class AON_SOLUTIONS {
 	
 	public static JSONArray getItems(String domainName, Integer domainId, String login, ItemFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			Stream<Item> items = getProduct().getItemStream(ctx, filter);
-			return ItemJSON.toJSON(items);
+			return ItemJSON.toJSON(getProduct().getItemStream(ctx, filter));
+		}
+	}
+	
+	public static Stream<Item> getItems(Domain domain, User user, ItemFilter filter, Integer page, Integer perPage) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getProduct().getItemStream(ctx, filter, page, perPage);
+		}
+	}
+	
+	public static Stream<Item> getRItemStream(Domain domain, User user, ItemFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getProduct().getRItemStream(ctx, filter);
 		}
 	}
 	
