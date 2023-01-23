@@ -616,7 +616,8 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 			&& vat.getPercentage() !=  PERCENT_10
 			&& vat.getPercentage() !=  PERCENT_105
 			&& vat.getPercentage() !=  PERCENT_12
-			&& vat.getPercentage() !=  PERCENT_4; 	
+			&& vat.getPercentage() !=  PERCENT_5
+			&& vat.getPercentage() !=  PERCENT_4;
 	}
 	static boolean hasSurchargePercent52(VatContext vat) {
 		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_52; 

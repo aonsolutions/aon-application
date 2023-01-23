@@ -457,8 +457,8 @@ public abstract class Mod145 extends Composite {
 		spouseDocumentTB.setValue(null);
 		
 		disabilityLevelLB.clear();
-		disabilityLevelLB.addItem("-", "0");
-		disabilityLevelLB.addItem("Igual o superior al 33% e inferior al 65%", "1");
+		disabilityLevelLB.addItem("-", "");
+		disabilityLevelLB.addItem("Igual o superior al 33% e inferior al 65%", "0");
 		disabilityLevelLB.addItem("Igual o superior al 65%", "2");
 		
 		getEnableDisableButton(dependenceB, false);
@@ -637,14 +637,14 @@ public abstract class Mod145 extends Composite {
 	@UiHandler("disabilityLevelLB")
 	void onDisabilityLevelLBChange(ChangeEvent event) {
 		String selectedValue = disabilityLevelLB.getSelectedValue();
-		if(AonStringUtils.equalsIgnoreCase(selectedValue, "1"))
+		if(AonStringUtils.isNotBlank(selectedValue) && AonStringUtils.equalsIgnoreCase(selectedValue, "0"))
 			dependencePanel.setVisible(true);
 		else {
 			dependencePanel.setVisible(false);
 			this.mod145.setDependence(false);
 		}
 		
-		this.mod145.setDisabilityLevel(Byte.parseByte(selectedValue));
+		this.mod145.setDisabilityLevel(AonStringUtils.isBlank(selectedValue) ? null : Byte.parseByte(selectedValue));
 	}
 	
 	@UiHandler("dependenceB")

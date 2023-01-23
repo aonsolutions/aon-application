@@ -12,14 +12,6 @@
 	</managed-bean>
 			
 
-	<managed-bean>
-		<managed-bean-name>employeeTree</managed-bean-name>
-		<managed-bean-class>
-			com.esferalia.aon.gwt.payroll.bean.EmployeeTree
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-			
 	
 	<!-- =================== Employee Tree  ========================== -->
 	<navigation-rule>

@@ -27,6 +27,7 @@ public class Employee implements Serializable{
 	public static final String GRUPO_COTIZACION = "GRUPO_COTIZACION";
 	public static final String COEFICIENTE_PARCIALIDAD = "COEFICIENTE_PARCIALIDAD";
 	public static final String COLECTIVO_TRABAJADORES = "COLECTIVO_TRABAJADORES";
+	public static final String CNO = "CNO";
 	public static final String MODELO_COTIZACION_AGRARIO = "MODELO_COTIZACION_AGRARIO";
 
 	public static class Data<T> {
@@ -344,8 +345,16 @@ public class Employee implements Serializable{
 		return getData(COLECTIVO_TRABAJADORES, date, String.class);
 	}
 	
+	public Optional<String> getCno(LocalDate date) {
+		return getData(CNO, date, String.class);
+	}
+	
 	public Employee setCollective(String collective) {
 		return setString(COLECTIVO_TRABAJADORES, collective);
+	}
+	
+	public Employee setCno(String cno) {
+		return setString(CNO, cno);
 	}
 	
 	public Collection<Data<String>> getQuoteGroups() {

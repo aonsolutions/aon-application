@@ -353,6 +353,9 @@ class SistemaREDMov {
 			}
 		});
 		
+		//CNO
+		employee.getCno().ifPresent(cno-> 
+			form.getInputByName("SDFCNOCUP_ayuda").setValueAttribute(cno));
 		
 		//------------GET TA
 		DomNode printDoc = form.querySelector("select[name=\"cbo_ListaSiNo\"]");

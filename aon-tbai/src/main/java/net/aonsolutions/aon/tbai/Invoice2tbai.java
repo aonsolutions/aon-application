@@ -95,9 +95,9 @@ public class Invoice2tbai {
 		return tbai;
 	}
 	
-	public static SubsanacionModificacionTicketBAI buildZuzendu(Company company, Invoice invoice, TbaiConfiguration config, TicketBai ticketBai, TbaiBlockchain blockchain) {
+	public static SubsanacionModificacionTicketBAI buildZuzendu(Company company, Invoice invoice, TbaiConfiguration config, TicketBai ticketBai, TbaiBlockchain blockchain, boolean subsanar) {
 		SubsanacionModificacionTicketBAI tbai = new SubsanacionModificacionTicketBAI();
-		tbai.setCabecera(buildCabeceraZuzendu(AccionType.MODIFICAR));
+		tbai.setCabecera(buildCabeceraZuzendu(subsanar ? AccionType.SUBSANAR : AccionType.MODIFICAR));
 		tbai.setSujetos(getSujetos(company, invoice, config));
 		tbai.setFactura(getFactura(invoice, true));
 		tbai.setHuellaTBAI(ticketBai.getHuellaTBAI());
@@ -144,7 +144,8 @@ public class Invoice2tbai {
 		if(!AonStringUtils.isBlank(invoice.getSeries()))
 			cabecera.setSerieFactura(invoice.getSeries());
 		cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
-		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getFiscal().getExpDate(), "dd-MM-yyyy"));
+		Date expDate = invoice.getFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate();
+		cabecera.setFechaExpedicionFactura(AonDateUtils.format(expDate, "dd-MM-yyyy"));
 		return cabecera;
 	}
 	

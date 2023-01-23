@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.template.server.imports;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -51,8 +52,8 @@ public class Utils {
 		return zeros;
 	}
 	
-	public static Boolean isAyudaT(String domainName) {
-		return domainName.contains("ayudat");
+	public static Boolean isAyudaT(Domain domain) {
+		return domain.getName().contains("ayudat") && domain.getParentId().equals(1);
 	}
 	
 	public static Double parseDouble(Object object) {

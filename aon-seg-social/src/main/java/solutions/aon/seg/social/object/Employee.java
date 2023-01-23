@@ -38,6 +38,7 @@ public class Employee {
 	private String mdCtz;
 	private String rlce;
 	private String collective; // COLECTIVO DEL TRABAJADOR
+	private String cno; // CNO
 	
 	public Boolean quoteMonth;
 	
@@ -77,6 +78,7 @@ public class Employee {
 		if(profesCat != null)		visitor.visitProfesCat(profesCat);
 		if(reducingCoefic != null)	visitor.visitReducingcoefic(reducingCoefic);
 		if(collective != null)	visitor.visitCollective(collective);
+		if(cno != null) visitor.visitCno(cno);
 		if(frv != null)	visitor.visitFrv(frv);
 		if(mdCtz != null)	visitor.visitMdCtz(mdCtz);
 		if(quoteMonth != null) visitor.visitQuoteMonth(quoteMonth);
@@ -112,6 +114,7 @@ public class Employee {
 	public Optional<String> getMdctz(){return Optional.ofNullable(mdCtz);}
 	public Optional<String> getRlce() {return Optional.ofNullable(rlce);}
 	public Optional<String> getCollective() {return Optional.ofNullable(collective);}
+	public Optional<String> getCno() {return Optional.ofNullable(cno);}
 	public Optional<Boolean> getQuoteMonth() {return Optional.ofNullable(quoteMonth);}
 	public Optional<String> getAsociativeSA() {return Optional.ofNullable(asociativeSA);}
 	
@@ -183,6 +186,8 @@ public class Employee {
 			@Override
 			public void visitCollective(String collective) {stringBuffer.append(String.format(" collective : \"%s\" ", collective));}
 			@Override
+			public void visitCno(String cno) {stringBuffer.append(String.format(" cno : \"%s\" ", cno));}
+			@Override
 			public void visitMdCtz(String mdCtz) {stringBuffer.append(String.format(" mdCtz : \"%s\" ", mdCtz));}
 			@Override
 			public void visitQuoteMonth(Boolean quoteMonth) {stringBuffer.append(String.format(" quoteMonth : \"%s\" ", quoteMonth));}
@@ -228,6 +233,7 @@ public class Employee {
 		private String mdCtz;
 		private String rlce;
 		private String collective;
+		private String cno;
 		private Boolean quoteMonth;
 		private String asociativeSA;
 
@@ -434,6 +440,11 @@ public class Employee {
 			return this;
 		}
 		
+		public EmployeeBuilder setCno(String cno) {
+			this.cno = cno;
+			return this;
+		}
+		
 		public EmployeeBuilder setAsociativeSA(String asociativeSA) {
 			this.asociativeSA = asociativeSA;
 			return this;
@@ -476,6 +487,7 @@ public class Employee {
 			employee.mdCtz = this.mdCtz;
 			employee.rlce = this.rlce;
 			employee.collective = this.collective;
+			employee.cno = this.cno;
 			employee.quoteMonth = this.quoteMonth;
 			employee.asociativeSA = this.asociativeSA;
 			return employee;
@@ -516,6 +528,7 @@ public class Employee {
 		void visitProfesCat(String profesCat);
 		void visitReducingcoefic(String reducingCoefic);	
 		void visitCollective(String collective);	
+		void visitCno(String cno);
 		void visitMdCtz(String mdCtz);
 		void visitAsociativeSA(String asociativeSA);
 	}
@@ -581,6 +594,8 @@ public class Employee {
 		public void visitReducingcoefic(String reducingCoefic) {}
 		@Override
 		public void visitCollective(String collective) {}
+		@Override
+		public void visitCno(String cno) {}
 		@Override
 		public void visitMdCtz(String mdCtz) {}
 		@Override

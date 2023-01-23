@@ -277,7 +277,11 @@ public class SQLDraftERETestCase extends SQLERETestCase {
 		public Double getInKindIrpfBase() {
 			return salaryDraft.getInkindIrpfBase();
 		}
-		
+
+		@Override
+		public Double getInMoneyIrpfBase() {
+		    return salaryDraft.getMoneyIrpfBase();
+		}
 	}
 	
 

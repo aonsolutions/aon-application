@@ -581,7 +581,7 @@ public class JooqPayrollBuilder {
 				{
 					costBuilder.setCommonContBase(Optional.ofNullable(salary.getCommonContingenciesBase()));
 					costBuilder.setProfessionalContBase(Optional.ofNullable(salary.getProfessionalContingenciesBase()));
-					costBuilder.setIrpfRetribDiner(Optional.ofNullable(salary.getIrpfBase()));
+					costBuilder.setIrpfRetribDiner(Optional.ofNullable(salary.getMoneyIrpfBase()));
 					costBuilder.setIrpfEsp(Optional.ofNullable(salary.getInkindIrpfBase()));
 					costBuilder.setTotal(Optional.ofNullable(salary.getTotalEnterprise()));
 					costBuilder.setNoStructBase(Optional.of(nonStructBase[0]));

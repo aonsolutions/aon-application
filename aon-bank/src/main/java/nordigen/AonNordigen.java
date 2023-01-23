@@ -2,12 +2,16 @@ package nordigen;
 
 import static nordigen.NordigenUtils.isRequisitionLinked;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.json.JSONArray;
@@ -314,6 +318,7 @@ public class AonNordigen {
 					account.setLastMovementDate(lastMovementDate);
 					
 					Thread thread3 = new Thread(() -> {
+						
 						System.out.println("THREAD 3 - " + account.getBankAlias());
 						try {
 							if (account.getRequisition() != null && account.getRequisition().getInstitutionId() != null) {
@@ -602,13 +607,57 @@ public class AonNordigen {
 		return NordigenDAO.insertStatements(domain, login, account);
 	}
 	
+	public static List<NordigenRequisition> getAllRequisitions(NordigenAccessToken token) {
+		List<NordigenRequisition> requisitionsList = new LinkedList<>();
+		JSONObject requisitionsJson = NordigenAPI.getRequisitions(token.getAccess(), 1000000, 0);
+		JSONArray results = requisitionsJson.optJSONArray("results");
+		if (results != null) {
+			requisitionsList.addAll(NordigenRequisitionJSON.fromJSONArray(results));
+		}
+		
+		String nextUrl = requisitionsJson.optString("next", null);
+		while (nextUrl != null) {
+			Pattern offsetPattern = Pattern.compile("offset=(?<offset>\\d+)", Pattern.CASE_INSENSITIVE);
+			Matcher matcher = offsetPattern.matcher(nextUrl);
+			String offsetStr = null;
+			if (matcher.find()) {
+				offsetStr = matcher.group("offset");
+			}
+			int offset = AonNumberUtils.toint(offsetStr);
+			if (offset > 0) {
+				requisitionsJson = NordigenAPI.getRequisitions(token.getAccess(), 1000000, offset);
+				results = requisitionsJson.optJSONArray("results");
+				if (results != null) {
+					requisitionsList.addAll(NordigenRequisitionJSON.fromJSONArray(results));
+				}
+				nextUrl = requisitionsJson.optString("next", null);
+			} else {
+				nextUrl = null;
+			}
+		}
+		return requisitionsList;
+	}
+	
+	public static List<RegistryBank> getRbanksByRequisition(Domain domain, String login, String requisitionId) {
+		List<RegistryBank> list = new ArrayList<>();
+		AON.getRegistryBankStream(domain, login, f -> f.getRequisitionProperty().eq(requisitionId)).filter(Objects::nonNull).forEach(list::add);
+		return list;
+	}
+	
+	public static RegistryBank updateRbank(Domain domain, String login, RegistryBank rbank) {
+		return AON.saveRegistryBank(domain, login, rbank);
+	}
+	
 	public static void main(String[] args) throws Exception {
 		Integer rbank = 6740;
-		String access = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjcyOTA1OTAxLCJqdGkiOiIzYzExZmU2Mzg0NDg0YTE5YTRhODliODQwZjliNTRjYiIsImlkIjoxNjM5Miwic2VjcmV0X2lkIjoiZjM1NTk2ODUtYmJlYy00NWM0LTlkZmEtZjAxNzIxZTcxOTBlIiwiYWxsb3dlZF9jaWRycyI6WyIwLjAuMC4wLzAiLCI6Oi8wIl19.W1cn_s-URJFju8S95l73RsolGxlsbnqf_0mS8RyeBdU";
+		String access = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjczNTk4NTkwLCJqdGkiOiI4NWViYzZjYjQ1NDI0NWRkYmQwNGIzMzMwMzlmN2U1ZSIsImlkIjoxNjM5Miwic2VjcmV0X2lkIjoiZjM1NTk2ODUtYmJlYy00NWM0LTlkZmEtZjAxNzIxZTcxOTBlIiwiYWxsb3dlZF9jaWRycyI6WyIwLjAuMC4wLzAiLCI6Oi8wIl19.ZYtjqT0vJceYcDker2ihaIeDG_-x3uuR8aMmGo_Lxo8";
 		NordigenAccessToken token = new NordigenAccessToken().setAccess(access);
-		Domain domain = new Domain().setId(7138).setName("b72384936-ayudat.aonsolutions.net");
-		String reqId = "4a7c2d29-6ab0-4afe-99bd-84c7ad7f76d7";
-		updateRequisitionId(domain, "", getRequisition(token, reqId), rbank);
+//		Domain domain = new Domain().setId(7138).setName("b72384936-ayudat.aonsolutions.net");
+//		String reqId = "4a7c2d29-6ab0-4afe-99bd-84c7ad7f76d7";
+//		updateRequisitionId(domain, "", getRequisition(token, reqId), rbank);
+		
+		List<NordigenRequisition> reqs = getAllRequisitions(token);
+		
 //		List<NordigenAccountTransaction> newTr = getNewTransactions(token, domain, "", rbank);
 //		List<NordigenBankAccount> allAccounts = getAllAccounts(token, domain, "");
 //		allAccounts.forEach(acc -> {
