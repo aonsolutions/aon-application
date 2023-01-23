@@ -2012,17 +2012,23 @@ public class EmployeeCalendarDraftNew extends Composite implements ContextMenuHa
 		yearLB.clear();
 		
 		Integer yearAux = DateUtils.getYear();
+		Integer previusYearIII = year - 3;
+		Integer previusYearII = year - 2;
 		Integer previusYear = year - 1;
 		Integer nextYear = year + 1;
 		
 		yearLB.addItem(nextYear.toString(), nextYear.toString());
 		yearLB.addItem(yearAux.toString(), yearAux.toString());
 		yearLB.addItem(previusYear.toString(), previusYear.toString());
+		yearLB.addItem(previusYearII.toString(), previusYearII.toString());
+		yearLB.addItem(previusYearIII.toString(), previusYearIII.toString());
 		
 		yearLB.addChangeHandler(e -> changeYear());
 		
 		setSelectedValueLB(yearLB, year+"");
 		year = year - 1900;
+		
+		year = DateUtils.getYear();
 		
 	}
 

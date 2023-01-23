@@ -40,7 +40,7 @@ import com.esferalia.aon.jooq.tables.records.ContractLeaveDetailRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.jooq.tables.records.LeaveBatchRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import com.ibm.icu.util.Calendar;
+import java.util.Calendar;
 
 public class JooqIT {
 

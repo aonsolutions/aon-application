@@ -5837,6 +5837,7 @@ CREATE TABLE `fs_model184_detail` (
   `declared_key` varchar(1) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Clave del declarado',
   `nature` varchar(1) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Naturaleza del inmueble',
   `asset_percent` double(15,3) DEFAULT '0.000' COMMENT 'Porc. titularidad inmueble',
+  `asset_days` int DEFAULT '0' COMMENT 'Numero dias inmueble',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MODEL184_DETAIL_DOMAIN` (`domain`),
   KEY `IDX_FS_MODEL184_DETAIL_FS_MODEL184` (`fs_model184`),
@@ -14338,4 +14339,4 @@ USE `test-aonsolutions-org`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-01-16  9:40:51
+-- Dump completed on 2023-01-19 18:32:27

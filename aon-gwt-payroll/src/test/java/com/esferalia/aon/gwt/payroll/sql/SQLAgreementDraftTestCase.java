@@ -29,7 +29,7 @@ import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase;
 import com.esferalia.aon.watson.util.AonDateUtils;
-import com.ibm.icu.util.Calendar;
+import java.util.Calendar;
 
 import junit.framework.Assert;
 
