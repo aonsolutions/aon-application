@@ -450,7 +450,7 @@ public class RegistryImport extends Import {
 				}
 			}
 
-			if(!Utils.isAyudaT(domain.getName()) && r.isSupplier()) {
+			if(!Utils.isAyudaT(domain) && r.isSupplier()) {
 				Optional<Supplier> supplier = AON.getSupplier(domain.getName(), domain.getId(), user.getLogin(), f->
 					f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq( registryId )));
 				if(!supplier.isPresent()) {
@@ -466,7 +466,7 @@ public class RegistryImport extends Import {
 				}
 			}
 
-			if(!Utils.isAyudaT(domain.getName()) && r.isCreditor()) {
+			if(!Utils.isAyudaT(domain) && r.isCreditor()) {
 				Optional<Creditor> creditor = AON.getCreditor(domain.getName(), domain.getId(), user.getLogin(), f->
 					f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq( registryId )));
 				if(!creditor.isPresent()) {

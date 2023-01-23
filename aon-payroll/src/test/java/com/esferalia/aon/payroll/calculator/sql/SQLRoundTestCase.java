@@ -510,9 +510,9 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryPayments().forEach( p -> System.out.println( "[" + p.getType().name() + "] " + p.getDescription() + "\t\t:" + p.getIrpf() ));
 		
-		System.out.println( salary.getIrpfBase() + " = " + salary.getMoneyIrpfBase() + "+" + salary.getInkindIrpfBase());
+		System.out.println( salary.getIrpfBase() + " = " + salary.getInMoneyIrpfBase() + "+" + salary.getInkindIrpfBase());
 		
-		Assert.assertEquals(salary.getIrpfBase(), salary.getMoneyIrpfBase() + salary.getInkindIrpfBase() ,FLOATING_POINT_ERROR);
+		Assert.assertEquals(salary.getIrpfBase(), salary.getInMoneyIrpfBase() + salary.getInkindIrpfBase() ,FLOATING_POINT_ERROR);
 		
 		Map<String, Double> irpfQuotas =
 		salary.getSalaryDatas()

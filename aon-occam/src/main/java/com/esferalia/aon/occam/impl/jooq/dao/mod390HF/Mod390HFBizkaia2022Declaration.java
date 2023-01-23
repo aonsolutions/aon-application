@@ -790,7 +790,8 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			&& vat.isNational() && vat.isSales() && !vat.isRectification();
 	}
 	private static boolean hasNoPercent(VatContext vat) {
-		return vat.getPercentage() !=  PERCENT_4 
+		return vat.getPercentage() !=  PERCENT_4
+			&& vat.getPercentage() !=  PERCENT_5
 			&& vat.getPercentage() !=  PERCENT_10 
 			&& vat.getPercentage() !=  PERCENT_21; 	
 	}

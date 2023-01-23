@@ -70,6 +70,8 @@ public class ContractInfo implements Serializable{
 	private String colectiveAgreement;
 	private String colectiveEmployees;
 	
+	private String cno;
+	
 	private Integer mdCtzId;
 	private String mdCtz;
 	
@@ -142,6 +144,7 @@ public class ContractInfo implements Serializable{
 		
 		this.colectiveAgreement = null;
 		this.colectiveEmployees = null;
+		this.cno = null;
 		this.mdCtz = null;
 		this.partialityCoef = null;
 		
@@ -514,6 +517,21 @@ public class ContractInfo implements Serializable{
 		else
 			this.colectiveEmployees = colectiveEmployees;
 	}
+	
+	public String getCno() {
+		return cno;
+	}
+
+	public void setCno(String cno) {
+		if(AonStringUtils.isNotBlank(cno) && cno.contains("\""))
+			try {
+				this.cno = cno.split("\"")[1];
+			} catch (IndexOutOfBoundsException e) {
+				this.cno = cno;
+			}	
+		else
+			this.cno = cno;
+	}
 
 	public Integer getMdctzId() {
 		return mdCtzId;
@@ -708,7 +726,7 @@ public class ContractInfo implements Serializable{
 				+ contractModel + ", retaId=" + retaId + ", contractJourneyDuration=" + contractJourneyDuration
 				+ ", hasPayroll=" + hasPayroll
 				+ ", payrollDate=" + payrollDate + ", colectiveAgreement=" + colectiveAgreement
-				+ ", colectiveEmployees=" + colectiveEmployees + ", mdCtzId=" + mdCtzId + ", mdCtz=" + mdCtz
+				+ ", colectiveEmployees=" + colectiveEmployees + ", cno =" + cno + ", mdCtzId=" + mdCtzId + ", mdCtz=" + mdCtz
 				+ ", partialityCoefId=" + partialityCoefId + ", partialityCoef=" + partialityCoef + ", salariesCount="
 				+ salariesCount + ", contractSalariesInfo=" + contractSalariesInfo + ", settleReason=" + settleReason
 				+ ", hasSettle=" + hasSettle + ", holidaysDate=" + holidaysDate + ", hasCertifica2=" + hasCertifica2

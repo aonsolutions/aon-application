@@ -140,11 +140,6 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void showLoadingMessage(String message) {
 			showLoading(message);
 		}
-		
-		@Override
-		protected void hideMessagePanel() {
-			hideMessage();
-		}
 
 		@Override
 		protected void downloadCtoDocument() {
@@ -159,6 +154,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		@Override
 		protected void downloadCtoExtensionDocument() {
 			downloadCtoExtension(s -> {}, f -> {});
+		}
+
+		@Override
+		protected void hideMessagePanel() {
+			hideMessage();
 		}
 	}
 
@@ -1283,8 +1283,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		showLoadingPanel();
 		loadData(s -> {
 			loadToolbar();
-			checkButtonsToolbar();
 			hideMessage();
+			checkButtonsToolbar();
 			finish.accept(null);
 		});
 	}
@@ -1311,8 +1311,8 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			});
 			break;
 		case 1:
-			contractSpecificData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo(), hasCertificateSEPE);
-			finish.accept(null);
+			contractSpecificData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo(), hasCertificateSEPE, finish);
+//			finish.accept(null);
 			break;
 		case 2:
 			contractOtherData.setEmployeeContractInfo(contrataEmployeeObject.getContractEmployeeInfo());
@@ -1397,6 +1397,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		} else if (tabIdx == 1) {
 			checkSepeContextMenu();
 			syncComunicationsData.setVisible(hasCertificateSEPE);
+			if(!hasCertificateSEPE)
+				showWarning("Certifica SEPE", "No se ha podido acceder al certificado del SEPE, por favor rev\u00edselo en el apartado Laboral > Gesti\u00f3n Certificados");
+				
 		}
 	}
 

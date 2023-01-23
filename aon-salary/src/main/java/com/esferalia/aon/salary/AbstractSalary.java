@@ -269,6 +269,12 @@ public abstract class AbstractSalary implements ISalary {
 	}
 	
 	@Override
+	public Double getInMoneyIrpfBase() {
+        	// TODO Auto-generated method stub
+        	return null;
+	}
+	
+	@Override
 	public Costs getEnterpriseCosts() throws SalaryException {
 		// TODO Auto-generated method stub
 		return null;

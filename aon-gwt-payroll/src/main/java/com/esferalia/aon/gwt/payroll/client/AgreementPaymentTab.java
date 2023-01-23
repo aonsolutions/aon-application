@@ -585,7 +585,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	    // Delete column.
 	    ActionCell<Payment> deleteActionCell = new ActionCell<>("", payment -> {
 	    	AonDialog deleteDialog = new AonDialog("Eliminar concepto", new HTML("\u00BFDesea eliminar el concepto seleccionado\u003F"));
-			deleteDialog.confirm(new AonAcceptDialogCallback() {
+	    	deleteDialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
 				public void onCancel() {
@@ -611,7 +611,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			@Override
 			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
 				if(null != payment) {
-					sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_delete\" style=\"border: none !important; height: 20px;\" title=\"Eliminar\"></button>");
+					sb.appendHtmlConstant("<button type=\"button\" id=\"gwt-debug-deletePaymentTabButton-" + context.getIndex() + "\" class=\"aon_button aon_table_button aon_icon_delete\" style=\"border: none !important; height: 20px;\" title=\"Eliminar\"></button>");
 				}
 			}
 		};
@@ -889,6 +889,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		toolbar = new AonToolbar("Devengos");
 		
 		saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
+		saveBtn.ensureDebugId("savePaymentButton");
 		saveBtn.addClickHandler(e -> {
 			showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
 			setHasChange(false);
@@ -896,6 +897,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		});
 		
 		AonToolbarSmallButton addPaymentButton = new AonToolbarSmallButton("A\u00F1adir Devengo", AON.CSS.aonIconAdd());
+		addPaymentButton.ensureDebugId("newPaymentButton");
 		addPaymentButton.addClickHandler(e -> new AddAonPaymentCommand().execute());
 		
 //		AonExpandButton addPaymentButton = new AonExpandButton("A\u00F1adir Pago", AON.CSS.aonIconAddBlock()) {

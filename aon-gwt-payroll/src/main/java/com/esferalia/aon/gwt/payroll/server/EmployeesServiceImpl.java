@@ -4362,6 +4362,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			}
 
 			@Override
+			public Double getInMoneyIrpfBase() {
+			    return draft.getMoneyIrpfBase();
+			}
+			
+			@Override
 			public Double getInKindIrpfBase() {
 				return draft.getInkindIrpfBase();
 			}
@@ -7239,6 +7244,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				employeeContractInfo.getContractInfo().getCompleteCCC().length()));
 		builder.setGc(employeeContractInfo.getContractInfo().getQuoteGroup());
 		builder.setContract(employeeContractInfo.getContractInfo().getContractType());
+		
+		String cno = employeeContractInfo.getContractInfo().getCno();
+		builder.setCno(employeeContractInfo.getContractInfo().getCno());
 
 		String agreementColective = employeeContractInfo.getContractInfo().getAgreementColective();
 		agreementColective = null == agreementColective ? "60888888888888" : agreementColective;

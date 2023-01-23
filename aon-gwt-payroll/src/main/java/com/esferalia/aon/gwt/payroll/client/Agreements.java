@@ -429,5 +429,9 @@ public class Agreements extends ResizeComposite implements AgreementsTree.Listen
 	public void setViewAgreements(boolean viewAgreements) {
 		toolbar.setViewAgreements(viewAgreements);
 	}
+	
+	public void setVisibleDraftButton(boolean visible) {
+		toolbar.setVisibleDraftButton(visible);
+	}
 
 }

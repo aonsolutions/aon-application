@@ -15,7 +15,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
-import com.ibm.icu.util.Calendar;
+import java.util.Calendar;
 
 public class SQLSettleDraftCalculatorContext extends SQLSalaryDraftCalculatorContext {
 

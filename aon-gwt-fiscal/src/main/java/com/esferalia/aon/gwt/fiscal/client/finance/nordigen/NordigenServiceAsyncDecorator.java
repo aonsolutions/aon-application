@@ -91,6 +91,20 @@ public class NordigenServiceAsyncDecorator implements NordigenServiceAsync {
 		fsa.getNotInsertedMovements(token, domainName, domain, user, nordigenBankAccount, callback);
 	}
 
+	@Override
+	public void findAllDomainRequisitions(NordigenAccessToken token, String currentDomainName, AsyncCallback<List<NordigenRequisition>> callback) {
+		AON.start();
+		fsa.findAllDomainRequisitions(token, currentDomainName, callback);
+	}
+
+	@Override
+	public void deleteRequisitionById(NordigenAccessToken token, String currentDomainName, int currentDomain,
+			String user, String requisitionId, AsyncCallback<Boolean> callback) {
+		AON.start();
+		fsa.deleteRequisitionById(token, currentDomainName, currentDomain, user, requisitionId, callback);
+		
+	}
+
 
 
 }

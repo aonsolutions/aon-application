@@ -24,7 +24,7 @@ public enum Mod390Key implements IFiscalModelKey  {
 	,CM_070("390-CM070",null,"Importe anual de entregas de bienes y prestaciones de servicios que dan derecho a deducci\u00F3n, sin incluir el IVA (incluye operaciones con inversi\u00F3n del sujeto pasivo, exportaciones, y entregas intracomunitarias)")
 	,CM_071("390-CM071",null,"Importe anual total de las entregas de bienes y prestaciones de servicios (incluidas las que no dan derecho a deducir)")
 	,CM_072("390-CM072",null,"Importe acumulado de las casillas prorrateables. Para calculo de regulariacon.")
-	
+	,CM_074("390-CM074",null,"Importe acumulado de las casillas no prorrateables. Para calculo de regulariacion.")
 	
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  GIPUZKOA ---
