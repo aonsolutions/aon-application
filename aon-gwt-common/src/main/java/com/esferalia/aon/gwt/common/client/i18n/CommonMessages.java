@@ -3753,6 +3753,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Motivo para el rechazo")
 	String rejectReason();
 
+	@DefaultMessage("Generar vencimiento autom\u00E1ticamente")
+	String financeGenerate();
+
 	@DefaultMessage("Vencimiento agrupado")
 	String financeGrouped();
 

@@ -7,7 +7,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSearchPanelButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
-import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.InvoiceViewer;
+import com.esferalia.aon.gwt.fiscal.client.accounting.wizard.tedi.AonInvoiceViewer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
@@ -52,18 +52,13 @@ class MissingFinanceInvoicesCheck extends OptionBase {
 		northPanel.addStyleName(AON.CSS.aonBlockCenter());
 		northPanel.addStyleName(AON.CSS.aonWidthAlmostAll());
 		
-		Label title = new Label("Introduzca los datos para filtrar facturas");
-		northPanel.add(title);
-		
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.addStyleName(AON.CSS.aonBlockCenter());
-		tab.addStyleName(AON.CSS.aonMarginTop());
 		
 		typeBox.addItem(" --- ", "");
 		for ( InvoiceType t : InvoiceType.values()) {
 			typeBox.addItem( t.getDescription(), AonNumberUtils.toString( t.ordinal() ));	
 		}
-		tab.addLabelWidgetRow(new Label(AON.MSG.invoiceType()), typeBox);
 		
 		FlowPanel datePanel = new FlowPanel();
 		InlineLabel fromLabel = new InlineLabel(AON.MSG.from());
@@ -78,10 +73,22 @@ class MissingFinanceInvoicesCheck extends OptionBase {
 		toLabel.addStyleName(AON.CSS.aonMarginRight());
 		datePanel.add(toLabel);
 		datePanel.add(toBox);
-		tab.addLabelWidgetRow(new Label(AON.MSG.issueDate()), datePanel);
+		
+		AonSearchPanelButton run = new AonSearchPanelButton(AON.MSG.searchAction(), AON.CSS.aonIconSearch());
+		run.setText(AON.MSG.searchAction());
+		run.addClickHandler(event -> run());
+		
+		tab.addRow()
+			.addCell(new Label(AON.MSG.invoiceType()))
+			.addCell(typeBox)
+			.addCell(new Label(AON.MSG.issueDate()))
+			.addCell(datePanel)
+			.addCell(run)
+		;
 		
 		northPanel.add(tab);
-		dockPanel.addNorth(northPanel, 150);
+		
+		dockPanel.addNorth(northPanel, 50);
 		content = new SimpleLayoutPanel();
 		content.setStyleName(AON.CSS.aonBorderTop());
 		
@@ -89,15 +96,6 @@ class MissingFinanceInvoicesCheck extends OptionBase {
 		container.setStyleName(AON.CSS.aonScrollArea());
 		content.add(container);
 		dockPanel.add(content);
-
-		FlowPanel buttonPanel = new FlowPanel();
-		buttonPanel.setStyleName(AON.CSS.aonTextCenter());
-		buttonPanel.addStyleName(AON.CSS.aonMarginTop());
-		AonSearchPanelButton run = new AonSearchPanelButton(AON.MSG.searchAction(), AON.CSS.aonIconSearch());
-		run.setText(AON.MSG.searchAction());
-		run.addClickHandler(event -> run());
-		buttonPanel.add(run);
-		northPanel.add(buttonPanel);
 		
 	}
 	
@@ -212,7 +210,7 @@ class MissingFinanceInvoicesCheck extends OptionBase {
 			AonTableButton viewButton = new AonTableButton(AON.MSG.show(), AON.CSS.aonIconSearch());
 			viewButton .setVisible(false);
 
-			AonTableButton addButton = new AonTableButton(AON.MSG.resetAction(), AON.CSS.aonIconAdd()); 
+			AonTableButton addButton = new AonTableButton(AON.MSG.financeGenerate(), AON.CSS.aonIconAdd()); 
 			addButton.addClickHandler( event -> FinanceUtilitiesModule.SERVICE.missingFinanceInvoicesFix(getOptions().getOccam(), item.getInvoice().getId(), new AsyncCallback<Invoice>() {
 
 				@Override
@@ -223,7 +221,7 @@ class MissingFinanceInvoicesCheck extends OptionBase {
 
 				@Override
 				public void onSuccess(Invoice result) {
-					viewButton.addClickHandler(event1 -> showResults(new InvoiceViewer(result)));
+					viewButton.addClickHandler(event1 -> showResults(new AonInvoiceViewer(result)));
 					addButton.setVisible(false);
 					viewButton.setVisible(true);
 				}

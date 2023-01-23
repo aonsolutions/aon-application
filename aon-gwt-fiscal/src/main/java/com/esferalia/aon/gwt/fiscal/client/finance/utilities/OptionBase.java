@@ -42,6 +42,8 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 		this.domain = domain;
 		
 		mainPanel = new AonLayoutPanel(Unit.PX);
+		mainPanel.setStyleName(AON.AON_CSS.aonSelector());
+		
 		mainPanel.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
 		
 		splitLayoutPanel = new SplitLayoutPanel();
@@ -85,6 +87,7 @@ abstract class OptionBase extends SimpleLayoutPanel implements IOption {
 	protected Domain getDomain() {
 		return domain;
 	}
+	
 	protected void showResults(Widget widget) {
 		openFootPanelIfNeeded();
 		tabLayout.selectTab(RESULTS_TAB);
