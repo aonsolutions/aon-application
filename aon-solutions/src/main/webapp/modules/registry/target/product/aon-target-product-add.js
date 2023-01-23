@@ -4,6 +4,7 @@ import { EVENT, MSG } from '../../../../environments/environments.js';
 import { getProducts } from '../../../../services/productService.js';
 import { Product } from '../../../../models/product/Product.js';
 import { Customer } from '../../../../models/registry/Customer.js';
+import { saveRegistryItem } from '../../../../services/targetService.js';
 
 export class AonTargetProductAdd extends AonElement {
 	DIV;
@@ -105,13 +106,17 @@ export class AonTargetProductAdd extends AonElement {
 		const params = {page:1, perPage:20};
 		let timeOut = null;
 
-		const productsBuild = (params) => 
+		const productsBuild = (params) => {
+			this.PRODUCT_SELECT.loading(true);
 			getProducts(params).then(opts => 
 				this.PRODUCT_SELECT.setOptionsBuild( 
 					opts.map(p=> ({...p, value: p.id})) 
 				)
+			)
+			.finally(()=> 
+				this.PRODUCT_SELECT.loading(false)
 			);
-		
+		}
 
 		productsBuild(params);
 		
@@ -168,9 +173,13 @@ export class AonTargetProductAdd extends AonElement {
 			products: this.getProducts(),
 			customers: this.getCustomers()
 		}
-		
+			
 		console.log(params);
-		// saveRegistryItem
+		
+		await saveRegistryItem(params)
+		.then(console.log)
+		
+		// this.showMessage();
 	}
 
 }

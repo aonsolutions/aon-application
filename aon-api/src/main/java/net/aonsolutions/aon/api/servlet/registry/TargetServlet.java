@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.TargetProperties;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.type.TargetStatus;
 
@@ -160,25 +161,17 @@ public class TargetServlet extends AonApiHttpServlet {
 		return filter;
 	}
 	
-	private static Object saveRegistryItem(AonApiData api) {
-		if(api.getData().opt(IJsonNames.PRODUCTS)!=null) {
-    		return saveRegistryItems(api);
-    	} else {
-    		Product product = ProductJSON.fromJSON(api.getData());
-    		product = AON.saveProduct(api.getDomain(), api.getUser().getLogin(), product);
-    		return ProductJSON.toJSON(product);
-    	}
-	}
-	
-   private static JSONArray saveRegistryItems(AonApiData api) {
-    	JSONArray products = api.getData().optJSONArray(IJsonNames.PRODUCTS);
+	private static JSONArray saveRegistryItem(AonApiData api) {
+		 JSONArray products = api.getData().optJSONArray(IJsonNames.PRODUCTS);
+		 JSONArray customers = api.getData().optJSONArray(IJsonNames.CUSTOMERS);
+		 RegistryItemStatus status = RegistryItemStatus.INTERESTED; // RegistryItemStatus.safeValueOf(api.getData().optString(IJsonNames.STATUS));
 		 List<Product> list = ProductJSON.fromJSON(products);
-		 list.forEach(p->{
-			 AON.saveProduct(api.getDomain(), api.getUser().getLogin(), p);
-		 });
+//		 list.forEach(p->{
+//			 AON.saveProduct(api.getDomain(), api.getUser().getLogin(), p);
+//		 });
 		 return ProductJSON.toJSON(list);
-    }
-	
+	}
+
 	public static JSONObject saveTarget(AonApiData api) {
 		Target target = TargetJSON.fromJSON(api.getData());
 		target = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), target);
