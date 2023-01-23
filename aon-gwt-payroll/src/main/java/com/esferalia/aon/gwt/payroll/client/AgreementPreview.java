@@ -346,7 +346,7 @@ public abstract class AgreementPreview extends Composite {
 	    String text = str;
 	    int indexToFind = 0;
 	    for (int i = 0; i < lBox.getItemCount(); i++) {
-	        if (AonStringUtils.equalsIgnoreCase(lBox.getValue(i), text)) {
+	    	if (AonStringUtils.equalsIgnoreCase(lBox.getValue(i), text)) {
 	            indexToFind = i;
 	            break;
 	        }
@@ -488,28 +488,29 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private ListBox createCategoryLB() {
-		Map<String, Integer> allCategories = new TreeMap<>();
+		Map<Integer, String> allCategories = new TreeMap<>();
 		
 		for(Level levelIT : agreement.getLevels()) {
 			if(levelIT.getId() == 0) continue;
 			Set<String> levelCategories = agreement.getCategoriesMap().get(levelIT.getId());
 			Set<String> levelContracts = agreement.getContractsMap().get(levelIT.getId());
-			if(workplaceView && null !=levelContracts && !levelContracts.isEmpty()) levelContracts.forEach(levelContract -> allCategories.put(levelIT.getDescription() + " - " + levelContract, levelIT.getId()));
-			else if(levelCategories.size() > 1) levelCategories.forEach(category -> allCategories.put(category, levelIT.getId()));
+			if(workplaceView && null !=levelContracts && !levelContracts.isEmpty()) levelContracts.forEach(levelContract -> allCategories.put(levelIT.getId(), levelIT.getDescription() + " - " + levelContract));
+			else if(levelCategories.size() > 1) levelCategories.forEach(category -> allCategories.put(levelIT.getId(), category + "(" + levelIT.getDescription() + ")"));
 			else if(levelCategories.size() == 1) {
 				String category = (String)levelCategories.toArray()[0];
 				RegExp regExp = RegExp.compile("Categoria|Nivel|categoria|nivel|CATEGORIA|NIVEL?");
 				MatchResult matcher = regExp.exec(category);
 				boolean matchFound = matcher != null;
-				if(matchFound) allCategories.put(levelIT.getDescription(), levelIT.getId());
-			    else  allCategories.put(category, levelIT.getId());
+				if(matchFound) allCategories.put(levelIT.getId(), levelIT.getDescription());
+			    else  allCategories.put(levelIT.getId(), category + "(" + levelIT.getDescription() + ")");
 			}
 		}
 		
 		ListBox listBox = new ListBox();
 		listBox.addItem("Todos", "");
 		listBox.addItem("Por defecto", "0");
-		allCategories.entrySet().forEach(e -> listBox.addItem(e.getKey(), e.getValue().toString()));
+		allCategories.entrySet().forEach(e -> listBox.addItem(e.getValue(), e.getKey().toString()));
+		
 		return listBox;
 	}
 
@@ -1255,7 +1256,7 @@ public abstract class AgreementPreview extends Composite {
 		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 340 - salaryHeight) ? paymentHeight : (Window.getClientHeight() - 340 - salaryHeight);
 		
 		paymentDiscPanelContent.setHeight(paymentHeight + "px");
-		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 25) + "px");
+		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 90) + "px");
 		
 		salaryOpenHandler.removeHandler();
 		salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));

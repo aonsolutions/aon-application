@@ -8,6 +8,7 @@ import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceDetail;
 import com.esferalia.aon.occam.api.model.type.Country;
+import com.esferalia.aon.occam.api.model.type.InvoiceSource;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -41,6 +42,13 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 	}
 	
 	private void paintTitle(Invoice invoice) {
+		InvoiceSource source = invoice
+			.getDetails()
+			.stream()
+			.map( id -> id.getSource())
+			.findFirst()
+			.orElse(null);
+		
 		FlowPanel titleContainer = new FlowPanel();
 		titleContainer.setStyleName(AON.CSS.aonMarginTop());
 		AonDisplayTable tab = new AonDisplayTable();
@@ -52,7 +60,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 					,AON.CSS.aonFontXLarger(),AON.CSS.aonWidth300())
 			.addCell( getAttributes( invoice )
 					,AON.CSS.aonWidthAuto(),AON.CSS.aonTextCenter())
-			.addCell( new Label(AON.MSG.managmentInvoice())
+			.addCellIf( source != null , new Label( "M\u00F3dulo origen: " + source.getDescription() )
 					,AON.CSS.aonWidth200(),AON.CSS.aonColorGreen(),AON.CSS.aonTextCenter()
 					,AON.CSS.aonFontLarger(),AON.CSS.aonNowrap())
 		;

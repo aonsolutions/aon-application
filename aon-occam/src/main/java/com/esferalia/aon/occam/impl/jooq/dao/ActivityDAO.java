@@ -17,6 +17,8 @@ import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.Cnae;
+import com.esferalia.aon.occam.api.model.Cnae2009;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.Filter.EnterpriseActivityFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -161,13 +163,17 @@ public class ActivityDAO {
 	private static Activity insert(AONContext ctx, Activity activity) {
 		ctx.checkWrite();
 		printEnterpriseActivity(activity);
+		
+		Cnae2009 cnae2009 = Cnae2009DAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae()));
+		Cnae cnae = CnaeDAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae()));
+		
 		Integer id = ctx.getDslContext().insertInto(ENTERPRISE_ACTIVITY)
 			.set(ENTERPRISE_ACTIVITY.DOMAIN, activity.getDomain())
 			.set(ENTERPRISE_ACTIVITY.ENTERPRISE, activity.getEnterprise())
 			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, activity.getDescription())
 			.set(ENTERPRISE_ACTIVITY.TYPE, (byte)0)
-			.set(ENTERPRISE_ACTIVITY.CNAE, activity.getCnae())
-			.set(ENTERPRISE_ACTIVITY.CNAE2009, activity.getCnae())
+			.set(ENTERPRISE_ACTIVITY.CNAE, cnae.getId())
+			.set(ENTERPRISE_ACTIVITY.CNAE2009, cnae2009.getId())
 			.set(ENTERPRISE_ACTIVITY.START_DATE, parseToSqlDate(activity.getStartDate()))
 			.set(ENTERPRISE_ACTIVITY.END_DATE, parseToSqlDate(activity.getEndDate()))
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, activity.isPrincipal() ? (byte)1 : (byte)0)
@@ -183,11 +189,15 @@ public class ActivityDAO {
 	private static Activity update(AONContext ctx, Activity activity) {
 		ctx.checkWrite();
 		printEnterpriseActivity(activity);
+		
+		Cnae2009 cnae2009 = Cnae2009DAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae()));
+		Cnae cnae = CnaeDAO.get(ctx, f -> f.getIdProperty().eq(activity.getCnae()));
+		
 		ctx.getDslContext()
 			.update(ENTERPRISE_ACTIVITY)
 			.set(ENTERPRISE_ACTIVITY.DESCRIPTION, activity.getDescription())
-			.set(ENTERPRISE_ACTIVITY.CNAE, activity.getCnae())
-			.set(ENTERPRISE_ACTIVITY.CNAE2009, activity.getCnae())
+			.set(ENTERPRISE_ACTIVITY.CNAE, cnae.getId())
+			.set(ENTERPRISE_ACTIVITY.CNAE2009, cnae2009.getId())
 			.set(ENTERPRISE_ACTIVITY.START_DATE, parseToSqlDate(activity.getStartDate()))
 			.set(ENTERPRISE_ACTIVITY.END_DATE, parseToSqlDate(activity.getEndDate()))
 			.set(ENTERPRISE_ACTIVITY.PRINCIPAL, activity.isPrincipal() ? (byte)1 : (byte)0)

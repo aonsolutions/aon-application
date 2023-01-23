@@ -18,7 +18,7 @@ public class Mod303InsertQuarterlyReplacementTest extends Mod303AbstractTest {
 	
 	@Test
 	public void mod303InsertQuarterlyReplacementTest() {
-		Date today = new Date();
+		Date today = getTestDate();
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
 			.setMonthly(false)
 			.setProrratePercent( getProratePercent(today) )

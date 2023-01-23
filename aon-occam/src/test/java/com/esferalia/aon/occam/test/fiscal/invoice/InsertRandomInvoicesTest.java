@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.test.fiscal.invoice;
 
 import java.text.MessageFormat;
-import java.time.LocalDate;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,12 +11,13 @@ import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class InsertRandomInvoicesTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
-		int year = LocalDate.now().getYear();
+		int year = AonDateUtils.getYear( getTestDate() );
 		int times = AonRandom.getInt(1, 50);
 		int mod = AonRandom.getInt(0, times);
 		for (int count = 0; count < times; count++) {

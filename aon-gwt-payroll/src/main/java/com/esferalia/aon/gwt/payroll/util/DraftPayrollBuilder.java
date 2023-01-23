@@ -305,7 +305,7 @@ public class DraftPayrollBuilder {
 				cbb.setExtraProrationAmount(Optional.ofNullable(salary.getExtraPayProration()));
 				cbb.setCommonContBase(Optional.ofNullable(salary.getCommonBase()));
 				cbb.setProfessionalContBase(Optional.ofNullable(salary.getProfessionalBase()));
-				cbb.setIrpfRetribDiner(Optional.ofNullable(salary.getIrpfBase()));
+				cbb.setIrpfRetribDiner(Optional.ofNullable(salary.getInMoneyIrpfBase()));
 				cbb.setIrpfEsp(Optional.ofNullable(salary.getInKindIrpfBase()));
 				cbb.setTotal(Optional.ofNullable(salary.getTotalEnterprise()));
 				
