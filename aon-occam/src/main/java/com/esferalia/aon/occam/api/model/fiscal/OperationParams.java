@@ -45,10 +45,6 @@ public class OperationParams implements Serializable {
 		this.activityDescription = activityDescription;
 		return this;
 	}
-	@Deprecated
-	public boolean getExpenses() {
-		return expenses;
-	}
 	public boolean isExpenses() {
 		return expenses;
 	}
@@ -58,10 +54,6 @@ public class OperationParams implements Serializable {
 	}
 	public String getAccountPrefix() {
 		return isExpenses()?"6":"7";
-	}
-	@Deprecated
-	public boolean getIrpf() {
-		return irpf;
 	}
 	public boolean isIrpf() {
 		return irpf;

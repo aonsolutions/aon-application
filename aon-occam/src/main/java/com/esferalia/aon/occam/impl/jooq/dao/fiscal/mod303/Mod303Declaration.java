@@ -239,7 +239,6 @@ public abstract class Mod303Declaration {
 				&& AonNumberUtils.notEquals(lastPercent, prevPercent)) {
 				
 				Mod303DAO.getPreviousEffectiveModels(ctx, mod303).forEach( fm -> {
-					System.out.println( fm.getModelFullName() );
 					Mod303Declaration dec =  Mod303Declaration.getInstance(fm);
 					MutableDouble sumProrratedMustDeclared = new MutableDouble();
 					MutableDouble sumUnprorratedMustDeclared = new MutableDouble();
