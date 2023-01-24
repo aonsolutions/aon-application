@@ -1,6 +1,9 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
@@ -18,6 +21,12 @@ import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FinanceUtilitiesModule extends MainEntryPoint{
+
+	static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
+	}
 
 	static final FinanceUtilitiesServiceAsync SERVICE;
 	static {
@@ -87,30 +96,45 @@ public class FinanceUtilitiesModule extends MainEntryPoint{
 		
 		FlowPanel sidebarMenu = new FlowPanel();
 		scrollPanel.setWidget(sidebarMenu);
-
 		SimpleLayoutPanel content = new SimpleLayoutPanel();
+		sidebarMenu.add(getInvoicesOptionsPanel(content,domain));
+		sidebarMenu.add(getFinanceOptionsPanel(content,domain));
+		dockLayoutPanel.add( content );
+		return dockLayoutPanel; 
+	}
+	
+	private Widget getInvoicesOptionsPanel(SimpleLayoutPanel content, Domain domain) {
+		DisclosurePanel invoiceDisclosurePanel = new DisclosurePanel("FACTURAS");
+		invoiceDisclosurePanel.setOpen(true);
+		FlowPanel invoicePanel = new FlowPanel();
+		invoiceDisclosurePanel.add(invoicePanel);
 		
-		DisclosurePanel checksDisclosurePanel = new DisclosurePanel("VENCIMIENTOS");
-		checksDisclosurePanel.setOpen(true);
-		FlowPanel checksPanel = new FlowPanel();
-		checksDisclosurePanel.add(checksPanel);
+		WithholdingTypeCheck withholdingTypeCheck = new WithholdingTypeCheck(options,domain);
+		invoicePanel.add(withholdingTypeCheck.getSidebarWidget());
+		withholdingTypeCheck.addSelectionHandler( event -> content.setWidget( withholdingTypeCheck ));
+
+		return invoiceDisclosurePanel;
+		
+	}
+
+	private Widget getFinanceOptionsPanel(SimpleLayoutPanel content, Domain domain) {
+		DisclosurePanel financeDisclosurePanel = new DisclosurePanel("VENCIMIENTOS");
+		financeDisclosurePanel.setOpen(true);
+		FlowPanel financePanel = new FlowPanel();
+		financeDisclosurePanel.add(financePanel);
 		
 		MissingFinanceInvoicesCheck missingFinanceInvoices = new MissingFinanceInvoicesCheck(options,domain);
-		checksPanel.add(missingFinanceInvoices.getSidebarWidget());
+		financePanel.add(missingFinanceInvoices.getSidebarWidget());
 		missingFinanceInvoices.addSelectionHandler( event -> content.setWidget( missingFinanceInvoices ));
 
 		
 		FinanceInvoiceIntegrityCheck financeInvoiceIntegrityCheck = new FinanceInvoiceIntegrityCheck(options,domain);
-		checksPanel.add(financeInvoiceIntegrityCheck.getSidebarWidget());
+		financePanel.add(financeInvoiceIntegrityCheck.getSidebarWidget());
 		financeInvoiceIntegrityCheck.addSelectionHandler( event -> {
 			content.setWidget( financeInvoiceIntegrityCheck );
 			financeInvoiceIntegrityCheck.run();
 		});
-		
-		sidebarMenu.add(checksDisclosurePanel);
-		
-		dockLayoutPanel.add( content );
-		return dockLayoutPanel; 
+		return financeDisclosurePanel;
 	}
 
 	private Widget getToolbarPanel() {

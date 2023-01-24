@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -33,6 +34,11 @@ public class FinanceUtilitiesServiceAsyncDecorator implements FinanceUtilitiesSe
 		fsa.getChildDomains(occam , new AsyncCallbackWrapper<>(callback));
 	}
 
+	@Override
+	public void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> callback) {
+		AON.start();
+		fsa.getInvoice(occam ,invoiceId, new AsyncCallbackWrapper<>(callback));
+	}
 
 	// Chequeo de facturas sin vencimientos
 	@Override
@@ -57,6 +63,13 @@ public class FinanceUtilitiesServiceAsyncDecorator implements FinanceUtilitiesSe
 	public void financeInvoiceIntegrityFix(Occam occam, Finance finance,AsyncCallback<Finance> callback) throws AonCoreException {
 		AON.start();
 		fsa.financeInvoiceIntegrityFix(occam, finance, new AsyncCallbackWrapper<>(callback));
+	}
+
+	// Chequeo de tipos de retenci\u00F3n en facturas.
+	@Override
+	public void updateWithholdingType(Occam occam, Integer invoiceId, WithholdingType newType, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.updateWithholdingType(occam, invoiceId, newType, new AsyncCallbackWrapper<>(callback));
 	}
 	
 

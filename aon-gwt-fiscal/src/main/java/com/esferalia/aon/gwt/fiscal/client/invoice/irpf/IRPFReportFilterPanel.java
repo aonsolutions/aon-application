@@ -37,6 +37,8 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 
 	private static final String ALL_OPTIONS = "-- Todas --";
 
+	private boolean groupedByDisabled = false;
+	
 	private AonIntegerBox year;
 	private PeriodListBox period;
 	private AonDateBox fromDate;
@@ -50,8 +52,14 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 	private ListBox orderBy;
 	private ListBox groupedBy;
 	private AonDoubleBox percent;
-	
+
 	public IRPFReportFilterPanel(IrpfReportModuleOptions options) {
+		this(options, false);
+	}
+	
+	public IRPFReportFilterPanel(IrpfReportModuleOptions options, boolean groupedByDisabled) {
+		this.groupedByDisabled = groupedByDisabled;
+		
 		FlexTable tab = new FlexTable();
 		tab.setStyleName(AON.CSS.aonSearchPanel());
 		tab.addStyleName(AON.CSS.aonMarginLeft());
@@ -233,19 +241,20 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 		orderBy.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
 		fourthRowPanel.add(orderBy);
 		
-		
-		Label groupByNifLabel = new InlineLabel("Agrupar por ");
-		groupByNifLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
-		groupByNifLabel.addStyleName(AON.CSS.aonMarginLeft());
-		fourthRowPanel.add(groupByNifLabel);
 		groupedBy = new ListBox();
-		groupedBy.addStyleName(AON.CSS.aonMarginLeft());
-		for (IRPFParamsGroupedBy g :IRPFParamsGroupedBy.values()) {
-			groupedBy.addItem(g.getDescription());
+		if (!isGroupedByDisabled()) {
+			Label groupByNifLabel = new InlineLabel("Agrupar por ");
+			groupByNifLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
+			groupByNifLabel.addStyleName(AON.CSS.aonMarginLeft());
+			fourthRowPanel.add(groupByNifLabel);
+			groupedBy.addStyleName(AON.CSS.aonMarginLeft());
+			for (IRPFParamsGroupedBy g :IRPFParamsGroupedBy.values()) {
+				groupedBy.addItem(g.getDescription());
+			}
+			groupedBy.setSelectedIndex(0);
+			groupedBy.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+			fourthRowPanel.add(groupedBy);
 		}
-		groupedBy.setSelectedIndex(0);
-		groupedBy.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
-		fourthRowPanel.add(groupedBy);
 
 		
 		ScrollPanel scrollPanel = new ScrollPanel();
@@ -269,6 +278,10 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 				toDate.setValue(DateUtils.getLastDayOfMonth(DateUtils.getDate(p.getDueMonth(), y)),false);
 			}
 		}
+	}
+
+	public boolean isGroupedByDisabled() {
+		return groupedByDisabled;
 	}
 
 	public IRPFParams getParams(IrpfReportModuleOptions options) {

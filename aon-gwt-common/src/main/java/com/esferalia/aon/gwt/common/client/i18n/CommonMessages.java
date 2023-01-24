@@ -10,15 +10,14 @@ import com.esferalia.aon.occam.api.model.type.Province;
 import com.google.gwt.i18n.client.Messages;
 
 public interface CommonMessages extends Messages {
-	// Ã --> \u00C1 Ã¡ --> \u00E1
-	// Ã‰ --> \u00C9 Ã© --> \u00E9
-	// Ã --> \u00CD Ã­ --> \u00ED
-	// Ã“ --> \u00D3 Ã³ --> \u00F3
-	// Ãš --> \u00DA Ãº --> \u00FA
-	// Ã‘ --> \u00D1 Ã± --> \u00F1
-	// Âª --> \u00AA Âº --> \u00BA
-	// Â¿ --> \u00BF 
-	// Â¡ --> \u00A1
+	// Á --> \u00C1 á --> \u00E1
+	// É --> \u00C9 é --> \u00E9
+	// Í --> \u00CD í --> \u00ED
+	// Ó --> \u00D3 ó --> \u00F3
+	// Ú --> \u00DA ú --> \u00FA
+	// Ñ --> \u00D1 ñ --> \u00F1
+	// ª --> \u00AA º --> \u00BA
+	// ¿ --> \u00BF
 	
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")
@@ -3440,6 +3439,9 @@ public interface CommonMessages extends Messages {
 
  	@DefaultMessage("Ver asiento")
 	String viewAccountEntry();
+
+ 	@DefaultMessage("Ver factura")
+	String viewInvoice();
 
  	@DefaultMessage("Cuenta contable")
  	String account();

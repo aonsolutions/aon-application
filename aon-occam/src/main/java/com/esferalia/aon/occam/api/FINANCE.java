@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParams;
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.FinanceImpl;
 
 public class FINANCE {
@@ -43,4 +44,10 @@ public class FINANCE {
 		}
 	}
 
+	public static void updateWithholdingType(Occam occam, Integer invoiceId, WithholdingType newType) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			getFinance().updateWithholdingType(ctx,invoiceId, newType);
+		}
+	}
+	
 }

@@ -30,7 +30,7 @@ public class IRPFParams implements Serializable {
 	private IRPFParamsOrderBy orderBy;
 	private IRPFParamsGroupedBy groupedBy;
 	
-	Integer[] invoices;
+	private Integer[] invoices;
 	
 	public Integer[] getInvoices() {
 		return invoices;
