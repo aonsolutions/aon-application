@@ -332,6 +332,7 @@ public class Mod145DAO {
 		ctx.getDslContext()
 			.delete(CONTRACT_DATA)
 			.where(CONTRACT_DATA.NAME.eq("PORCENTAJE_IRPF"))
+			.and(CONTRACT_DATA.CONTRACT.eq(mod145.getContract()))
 			.and(CONTRACT_DATA.START_DATE.eq(parseToSqlDate(mod145.getStartDate())))
 			.execute();
 			
@@ -341,7 +342,8 @@ public class Mod145DAO {
 	private static void setIrpfPercent(AONContext ctx, Integer contract, Integer domain, java.util.Date startDate, java.util.Date endDate, Double irpfPercent) {
 		ctx.getDslContext()
 			.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.eq("PORCENTAJE_IRPF"))
+			.where(CONTRACT_DATA.CONTRACT.eq(contract))
+			.and(CONTRACT_DATA.NAME.eq("PORCENTAJE_IRPF"))
 			.and(CONTRACT_DATA.START_DATE.eq(parseToSqlDate(startDate)))
 			.execute();
 		
