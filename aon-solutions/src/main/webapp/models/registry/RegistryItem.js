@@ -14,6 +14,7 @@ export class RegistryItem {
 	workplace;
 	status;
 
+    removed;
 
     constructor(ritem) {
         if(ritem) {
@@ -28,8 +29,12 @@ export class RegistryItem {
             this.priority = ritem.priority;
             this.workplace = ritem.workplace;
             this.status = ritem.status;
+            
+            this.removed = ritem.removed || false;
         }else {
             this.domain = new Domain();
+
+            this.removed = false;
         }
     }
 
@@ -131,4 +136,18 @@ export class RegistryItem {
         this.status = status;
         return this;
     }
+
+    isRemoved() {
+        return this.removed;
+    }
+
+    setRemoved(removed) {
+        this.removed = removed;
+        return this;
+    }
+
+    removed(){
+        this.setRemoved(true);
+    }
+    
 }

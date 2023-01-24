@@ -23,13 +23,15 @@ export class Item {
 	packFormatTag;
 	packUnits;
 	packUnitsTag;
- 	packMeasurement;
+    packMeasurement;
 	packMeasurementTag;
 	stockUnitTag;
     creationUser;
 	creationDate;
 	modificationUser;
 	modificationDate;
+
+    removed;
 
     constructor(item) {
         if(item) {
@@ -60,6 +62,8 @@ export class Item {
             this.creationDate = item.creationDate;
             this.modificationUser = item.modificationUser;
             this.modificationDate = item.modificationDate;
+
+            this.removed = item.removed || false;
         } else {
             this.domain = new Domain();
             this.price = 0;
@@ -68,6 +72,8 @@ export class Item {
             this.description = '';
             this.barcode = '';
             this.status = 'active';
+
+            this.removed = false;
         }
     }
 
@@ -331,5 +337,18 @@ export class Item {
     setModificationDate(modificationDate) {
         this.modificationDate = modificationDate;
         return this;
+    }
+
+    isRemoved() {
+        return this.removed;
+    }
+
+    setRemoved(removed) {
+        this.removed = removed;
+        return this;
+    }
+
+    remove(){
+        this.setRemoved(true);
     }
 }
