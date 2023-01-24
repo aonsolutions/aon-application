@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -49,6 +50,7 @@ import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonDocumentUtil;
@@ -84,7 +86,7 @@ public class TbaiMain {
 				LROEInfo info = null;
 				if (AonDocumentUtil.isValidCIF(company.getDocument())) {
 					LROE240_1_1 lroe240 = new LROE240_1_1();
-					info = lroe240.buildInfo(OperacionEnum.A_00);
+					info = lroe240.buildInfo(OperacionEnum.A_00, lroe240.getEjercicio(tbaiConfiguration, invoice));
 					lroeResponse = lroe240.alta(company, tbaiConfiguration, invoice, xml);
 				} else {
 					Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
@@ -96,7 +98,7 @@ public class TbaiMain {
 					}
 					invoice.setEpigraph(ea.getIae().getFullEpigraph());
 					LROE140_1_1 lroe140 = new LROE140_1_1();
-					info = lroe140.buildInfo(OperacionEnum.A_00);
+					info = lroe140.buildInfo(OperacionEnum.A_00, lroe140.getEjercicio(tbaiConfiguration, invoice));
 					lroeResponse = lroe140.alta(tbaiConfiguration, person, invoice, xml);
 				}
 				LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
@@ -176,7 +178,7 @@ public class TbaiMain {
 				LROEInfo info = null;
 				if(!isPersonaFisica(company.getDocument())) {
 					LROE240_1_1 lroe240 = new LROE240_1_1();
-					info = lroe240.buildInfo(OperacionEnum.A_00);
+					info = lroe240.buildInfo(OperacionEnum.A_00, lroe240.getEjercicio(tbaiConfiguration, invoice));
 					lroeResponse = lroe240.alta(company, tbaiConfiguration, invoice, xml);
 				} else if(AonDocumentUtil.isAssetCommunity(company.getDocument())) {
 				    Person person = new Person().copy(company);
@@ -188,7 +190,7 @@ public class TbaiMain {
                     }
                     invoice.setEpigraph(ea.getIae().getFullEpigraph());
                     LROE140_1_1 lroe140 = new LROE140_1_1();
-                    info = lroe140.buildInfo(OperacionEnum.A_00);
+                    info = lroe140.buildInfo(OperacionEnum.A_00, lroe140.getEjercicio(tbaiConfiguration, invoice));
                     lroeResponse = lroe140.alta(tbaiConfiguration, person, invoice, xml);
 				} else {
 					Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
@@ -200,7 +202,7 @@ public class TbaiMain {
 					}
 					invoice.setEpigraph(ea.getIae().getFullEpigraph());
 					LROE140_1_1 lroe140 = new LROE140_1_1();
-					info = lroe140.buildInfo(OperacionEnum.A_00);
+					info = lroe140.buildInfo(OperacionEnum.A_00, lroe140.getEjercicio(tbaiConfiguration, invoice));
 					lroeResponse = lroe140.alta(tbaiConfiguration, person, invoice, xml);
 				}
 				LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
@@ -245,12 +247,12 @@ public class TbaiMain {
 			LROEInfo info = null;
 			if (AonDocumentUtil.isValidCIF(company.getDocument())) {
 				LROE240_1_1 lroe240 = new LROE240_1_1();
-				info = lroe240.buildInfo(OperacionEnum.AN_0);
+				info = lroe240.buildInfo(OperacionEnum.AN_0, lroe240.getEjercicio(tbaiConfiguration, invoice));
 				lroeResponse = lroe240.anulacion(company, tbaiConfiguration, invoice, xml);
 			} else {
 				Person person = AON.getPerson(company.getDomain(), "", f -> f.getIdProperty().eq(company.getId()));
 				LROE140_1_1 lroe140 = new LROE140_1_1();
-				info = lroe140.buildInfo(OperacionEnum.AN_0);
+				info = lroe140.buildInfo(OperacionEnum.AN_0, lroe140.getEjercicio(tbaiConfiguration, invoice));
 				lroeResponse = lroe140.anulacion(tbaiConfiguration, person, invoice, xml);
 			}
 			LroeData.saveResponse(company.getDomain(), new User().setLogin(""), invoice, lroeResponse, info);
@@ -469,5 +471,28 @@ public class TbaiMain {
 		} catch (Exception ex) {
 			throw new RuntimeException("Error converting to String", ex);
 		}
+	}
+	
+	private static String calculateUrl(String tbaiId, String serie, String number, String total) throws UnsupportedEncodingException {
+		TbaiConfiguration tbaiConfiguration = new TbaiConfiguration()
+				.setActive(true)
+				.setAdministration(Administration.ALAVA)
+				.setTest(false);
+		String qrUrl = TbaiUri.getUrlQr(tbaiConfiguration) + "?id=" + tbaiId + "&s="
+				+ serie + "&nf=" + number + "&i="
+				+ total;
+			
+		String crc = CRC8.calculate(qrUrl);
+		qrUrl = qrUrl + "&cr=" + crc;
+		return qrUrl;
+	}
+	
+	public static void main(String[] args) throws UnsupportedEncodingException {
+		String tbaiId = "TBAI-B01426907-221222-XN29zWAJ6qCIV-052";
+		String serie = "E22";
+		String number = "113";
+		String total = "76.5";
+		String url = calculateUrl(tbaiId, serie, number, total);
+		System.out.println(url);
 	}
 }

@@ -14,6 +14,7 @@ public class LROEInfo {
 	private String capitulo;
 	private String subcapitulo;
 	private String version;
+	private Integer ejercicio;
 	private OperacionEnum operacion;
 	
 	public LROEInfo(JSONObject json) {
@@ -30,6 +31,15 @@ public class LROEInfo {
 		this.subcapitulo = subcapitulo;
 		this.operacion = operacion;
 		this.version = "1.0";
+	}
+	
+	public LROEInfo(String modelo, String capitulo, String subcapitulo, OperacionEnum operacion, Integer ejercicio) {
+		this.modelo = modelo;
+		this.capitulo = capitulo;
+		this.subcapitulo = subcapitulo;
+		this.operacion = operacion;
+		this.version = "1.0";
+		this.ejercicio = ejercicio;
 	}
 	
 	public String getModelo() {
@@ -52,6 +62,15 @@ public class LROEInfo {
 	
 	public String getSubcapitulo() {
 		return subcapitulo;
+	}
+	
+	public Integer getEjercicio() {
+		return ejercicio;
+	}
+	
+	public LROEInfo setEjercicio(Integer ejercicio) {
+		this.ejercicio = ejercicio;
+		return this;
 	}
 	
 	public InvoiceCommunicationType getCommunicationType() {
