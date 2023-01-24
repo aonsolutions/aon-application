@@ -1,7 +1,7 @@
 import { AonSelect } from "../../components/aon-select.js";
 import { MSG, EVENT } from "../../environments/environments.js";
 import { Project } from "../../models/project/Project.js";
-import { AonTargetProductAdd } from "../registry/target/product/aon-target-product-add.js";
+import { AonTargetItemAdd } from "../registry/target/item/aon-target-item-add.js";
 import { AonOfficeLinkSimpleList } from "./aon-office-link-simple-list.js";
 
 
@@ -116,20 +116,20 @@ const buildDialogProducts = (aonOfficePanel) => {
     dialog.clear();
     dialog.setTitle(MSG.ASSIGN+" "+MSG.PRODUCTS);
 
-    let aonTargeProductAdd = new AonTargetProductAdd();
+    let aonTargetItemAdd = new AonTargetItemAdd();
 
-    dialog.setContent(aonTargeProductAdd);
+    dialog.setContent(aonTargetItemAdd);
     
     dialog.addSendAction(async()=>{
-        aonTargeProductAdd.setCustomers(aonOfficePanel.getCustomerSelected());
+        aonTargetItemAdd.setCustomers(aonOfficePanel.getCustomerSelected());
 
         application.startLoading();
 
-        await aonTargeProductAdd
+        await aonTargetItemAdd
         .save()
         .catch(err=> aonOfficePanel.showError(err));
     
-        // dialog.close();
+        dialog.close();
         application.stopLoading();
 
     }, MSG.SAVE);

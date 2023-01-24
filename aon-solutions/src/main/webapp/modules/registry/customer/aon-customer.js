@@ -10,6 +10,8 @@ import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer } f
 import { AonCustomerList } from './aon-customer-list.js';
 import { getScopes } from '../../../services/documentalService.js';
 import { getDomainCompanies, saveCompany } from '../../../services/companyService.js';
+import { AonItemList } from '../target/item/aon-item-list.js';
+import { AonProjectList } from '../../project/aon-project-list.js';
 
 export class AonCustomer extends AonReg {
 
@@ -31,6 +33,11 @@ export class AonCustomer extends AonReg {
 			{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional()},
 			{ title: "Expedientes", fn: () => this.buildExpedienteData()},
 		];
+
+
+		if(this.isSig() || this.isLocal()){
+			this.options.push({ title: MSG.PRODUCTS, fn: () => this.buildItemData()});
+		}
 	}
 
 	buildDataAdditional(){
@@ -222,6 +229,39 @@ export class AonCustomer extends AonReg {
 					this.getOptionsLinked(iconArrowDown);
 				}
 			});
+		}
+	}
+
+
+	//EXPEDIENTE
+	buildExpedienteData() {
+		let main = this.getElement(this.DIV);
+		this.clearElement(main);
+
+		let registryId = this.registry.getId();
+		
+		if(registryId){
+			let aonProjectList = new AonProjectList();
+			aonProjectList.style.width = "100%";
+			aonProjectList.registry = this.registry;
+			aonProjectList.filter = { page: 1, perPage: 500, registry:registryId};
+			main.appendChild(aonProjectList);
+		}
+	}
+
+	//ITEMS PRODUCTS
+	buildItemData() {
+		let main = this.getElement(this.DIV);
+		this.clearElement(main);
+
+		let registryId = this.registry.getId();
+		
+		if(registryId){
+			let aonItemList = new AonItemList();
+			aonItemList.style.width = "100%";
+			aonItemList.registry = this.registry;
+			aonItemList.filter = { page: 1, perPage: 200, registry:registryId};
+			main.appendChild(aonItemList);
 		}
 	}
 
