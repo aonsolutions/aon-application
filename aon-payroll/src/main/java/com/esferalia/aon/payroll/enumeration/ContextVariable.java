@@ -355,9 +355,9 @@ public enum ContextVariable implements IResourceable {
 
 	HOURLY_BASE("BASE_HORARIA", VariableType.BOOLEAN, false),
 	
-	PAY_PRORRATED("PAGAS_PRORRATEADAS", VariableType.BOOLEAN)
+	PAY_PRORRATED("PAGAS_PRORRATEADAS", VariableType.BOOLEAN),
 	
-	
+	MONTHLY_ADJUST("AJUSTE_MENSUAL", VariableType.BOOLEAN)
 	
 	;
 
