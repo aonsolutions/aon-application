@@ -1,8 +1,5 @@
 package com.esferalia.aon.occam.api.model.fiscal.mod111;
 
-import java.util.Arrays;
-import java.util.stream.Stream;
-
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
@@ -14,10 +11,21 @@ public class Model111ScriptProvider {
 	}
 	
 	private enum Model111Script {
-		AEAT_2022_SCRIPT {
+		AEAT_2023_SCRIPT {
 			@Override
 			boolean accept(Mod111 mod111) {
-				return mod111.isAEAT() && mod111.getYear() > 2021;
+				return mod111.isAEAT() && mod111.getYear() >= 2023;
+			}
+	
+			@Override
+			IModelScript<Mod111Key>[] getScript() {
+				return Model111AEAT2023Script.values();
+			}
+		}
+		,AEAT_2022_SCRIPT {
+			@Override
+			boolean accept(Mod111 mod111) {
+				return mod111.isAEAT() && mod111.getYear() == 2022;
 			}
 	
 			@Override

@@ -85,7 +85,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 	private final AonToolbarButton saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave());
 	private final AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.cancelAction(),AON.CSS.aonIconBack());
 	private final AonToolbarButton deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
-	private final AonToolbarButton resetButton = new AonToolbarButton(AON.MSG.resetAction(),AON.CSS.aonIconRefresh());
 	private final AonToolbarButton printButton = new AonToolbarButton(AON.MSG.draft(),AON.CSS.aonIconExcel());
 	private final AonToolbarButton markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
 	private final AonToolbarButton markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
@@ -191,9 +190,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 		deleteButton.addClickHandler(event -> delete());
 		toolbarPanel.add(deleteButton);
 		
-		resetButton.addClickHandler( event -> onReset());
-		toolbarPanel.add(resetButton);		
-		
 		printButton.addClickHandler( event ->  print());
 		toolbarPanel.add(printButton);
 		
@@ -289,36 +285,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 		return decToolbar;
 	}
 	
-	private void onReset() {
-		resetButton.setEnabled(false);
-		AonConfirmDialog cd = new AonConfirmDialog();
-		cd.confirm(AON.MSG.confirmDeclarationinitializationAction(), new AonConfirmDialogCallback() {
-
-			@Override
-			public void onAccept() {
-				Model111.SERVICE.reset(getCallback().getOptions().getOccam(),getModel(),
-						new AsyncCallback<Mod111>() {
-							@Override
-							public void onSuccess(Mod111 m111) {
-								setDirty( true );
-								selectAndPopulate(m111);
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								getCallback().showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
-								
-							}
-						});
-			}
-			@Override
-			public void onCancel() {
-				resetButton.setEnabled(true);
-			}
-		});
-	}
-
-	
 	protected void markAsDirty() {
 		setDirty(true);
 	}
@@ -348,7 +314,6 @@ public abstract class Model111Base extends DockLayoutPanel {
 		cancelButton.setVisible(true);
 		saveButton.setVisible(model.isEditable());
 		deleteButton.setVisible(!model.isNew() && model.isEditable());
-		resetButton.setVisible(!model.isNew() && model.isEditable());
 		auditButton.setVisible(!model.isNew());
 		printButton.setVisible(!model.isNew());
 		markAsPendingButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.PENDING));

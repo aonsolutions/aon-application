@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 public class Mod111AEAT2021Declaration extends Mod111Declaration {
 	
 	public static boolean accept(Mod111 mod) {
-		return mod.isAEAT(); 
+		return mod.isAEAT() && mod.getYear() < 2023; 
 	}
 	
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{

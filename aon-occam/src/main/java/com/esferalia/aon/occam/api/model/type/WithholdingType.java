@@ -105,7 +105,7 @@ public enum WithholdingType implements Serializable {
 		}
 	}	
 	// MODELO 190 - CLAVE J
-	,M190_J	(DERECHOS_IMAGEN,"Cesión Der. Imagen(J)","Imputaci\u00F3n rentas por cesi\u00F3n derechos imagen") {
+	,M190_J	(DERECHOS_IMAGEN,"Cesi\u00F3n Der. Imagen(J)","Imputaci\u00F3n rentas por cesi\u00F3n derechos imagen") {
 		
 		@Override 
 		public <T> T visit(IWithholdingTypeVisitor<T> visitor, T t) {

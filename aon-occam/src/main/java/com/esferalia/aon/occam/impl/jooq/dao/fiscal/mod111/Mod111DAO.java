@@ -1,11 +1,16 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111;
 
 
+import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
+
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.jooq.Condition;
 import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -16,11 +21,13 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111Declaration.ComplementaryBeahaviour;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -99,26 +106,14 @@ public class Mod111DAO extends FiscalModelDAO {
 		return mod111;
 	}
 	
-	public static Mod111 reset(AONContext ctx,Mod111 mod111) {
-		mod111.setMap(null);
-		initializeIdentificationData(ctx, mod111);
-		create(ctx,mod111);
-		return mod111;
-	}
-	
 	public static Mod111 create(AONContext ctx,Mod111 mod111) {
 		Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
 		dec.ensureDetails(mod111);
 		Set<Integer> invoices = dec.createFromInvoices(ctx,mod111);
 		Set<Integer> salaries = dec.createFromSalary(ctx,mod111);
-		for (FiscalModelDetail detail : mod111.getMap().values()) {
-			detail.setAccumulatedAmount( AonMathUtils.round(detail.getAccumulatedAmount()));
-			detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	
-			detail.setAmount( AonMathUtils.round(detail.getResultAmount() - detail.getAdjustAmount()));
-		}
+		mod111.getMap().values().stream().forEach(FiscalModelDetail::calculate);
 		dec.uniqueInitialize(ctx,mod111);
 		mod111 = save(ctx, mod111);
-		
 		AlcatrazDAO.deleteFiscalModel(ctx, mod111);
 		AlcatrazDAO.saveModelInvoices(ctx, mod111, invoices);
 		AlcatrazDAO.saveModelSalaries(ctx, mod111, salaries);
@@ -211,5 +206,51 @@ public class Mod111DAO extends FiscalModelDAO {
 		}
 		return mod111;
 	}
+	
+	public static Stream<Mod111> getSamePeriodEffectiveModels(AONContext ctx, Mod111 mod) {
+		Condition cond = FS_MODEL.YEAR.eq(mod.getYear())
+			.and(FS_MODEL.PERIOD.eq(mod.getPeriod().value()));
+		if (mod.getId() != null) {
+			cond = cond.and(FS_MODEL.ID.ne(mod.getId())); 
+		}
+		return getEffectiveModels(ctx, mod, cond ); 
+	}
+	public static Stream<Mod111> getEffectiveModels(AONContext ctx, Mod111 mod111, Condition cond ) {
+		LinkedHashMap<Period, LinkedList<Mod111>> map = new LinkedHashMap<>();
+		getSelect(ctx)
+			.where(FS_MODEL.DOMAIN.eq(mod111.getDomain()))
+			.and(FS_MODEL.MODEL.eq( mod111.getModel().getValue() ))
+			.and(FS_MODEL.ADMINISTRATION.eq(mod111.getAdministration().value()))
+			.and( cond )
+			.orderBy(FS_MODEL.PERIOD.desc(),FS_MODEL.ID.asc())
+			.fetch()
+			.stream()
+			.map(rec -> new FiscalModelFiller<Mod111>().apply(rec, Mod111::new))
+			.filter( mod-> mod.getPeriod().isMonthPeriod() == mod.getPeriod().isMonthPeriod())
+			.filter( mod-> mod.getPeriod().isQuarterPeriod() == mod.getPeriod().isQuarterPeriod())
+			.forEach( mod -> {
+				Mod111Declaration dec = Mod111Declaration.getInstance(mod);
+				map.computeIfAbsent(mod.getPeriod(), k -> new LinkedList<>());
+				if ( isEffectiveReplacement(dec, mod) ) {
+					map.get(mod.getPeriod()).clear();
+					map.get(mod.getPeriod()).add( mod);					
+				} else {
+					if (map.get(mod.getPeriod())
+						.stream()
+						.noneMatch( m -> isEffectiveReplacement(dec, mod)) ) {
+						map.get(mod.getPeriod()).add( mod );
+					}
+				}
+			});
+		return map.values()
+			.stream()
+			.flatMap(Collection<Mod111>::stream)
+			.map(mod -> fillModelDetails(ctx,mod))
+		;
+	}
+	private static boolean isEffectiveReplacement( Mod111Declaration dec, Mod111 mod) {
+		return mod.isReplacement() || (mod.isComplementary() && dec.getComplementaryBehaviour(mod) == ComplementaryBeahaviour.REPLACEMENT); 
+	}
+
 }
 

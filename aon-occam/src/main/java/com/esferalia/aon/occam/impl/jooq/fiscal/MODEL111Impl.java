@@ -96,11 +96,6 @@ public class MODEL111Impl implements IMODEL111 {
 				configuration -> Mod111DAO.create(ctx,mod111));
 	}
 	@Override
-	public Mod111 reset(AONContext ctx, Mod111 mod111) {
-		return ctx.getDslContext().transactionResult(
-			configuration -> Mod111DAO.reset(ctx,mod111));
-	}
-	@Override
 	public String getInfo(AONContext ctx, Mod111 mod111, IModelScript<Mod111Key> script, FiscalModelKeyInfo infoKey) {
 		return Mod111InfoDAO.getInfo(ctx,mod111,script,infoKey);
 	}
