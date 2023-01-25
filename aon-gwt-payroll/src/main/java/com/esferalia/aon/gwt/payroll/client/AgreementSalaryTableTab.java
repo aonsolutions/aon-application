@@ -110,8 +110,6 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 	private AonToolbarSmallButton deleteDateBtn;
 	private AonToolbarSmallButton variablesVisivility;
 	
-	private Label periodDeleted;
-	
 	// ------------------------------------------ Constructor
 
 	protected AgreementSalaryTableTab() {
@@ -532,7 +530,6 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					setAgreementSalaryTable(agreement);
 					showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
 					setHasChange(false);
-					periodDeleted.ensureDebugId("periodDeleted");
 					onSaved();
 				}
 			});
@@ -569,14 +566,11 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		
 		datesLB.addChangeHandler(e -> createSalaryTable());
 		
-		periodDeleted = new Label();
-		
 		toolbar.add(saveBtn);
 		toolbar.add(newDateBtn);
 		toolbar.add(datesLB);
 		toolbar.add(deleteDateBtn);
 		toolbar.add(variablesVisivility);
-		toolbar.add(periodDeleted);
 	}
 	
 	// ------------------------------------------ Dates controler
