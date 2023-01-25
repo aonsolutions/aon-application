@@ -14,9 +14,9 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
-import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.LevelData;
+import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -259,10 +259,21 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 					cell.removeStyleName(style.modify());
 				
 				cell.addValueChangeHandler(event -> {
+					
+					String expression = event.getValue();
+					String value = event.getValue();
+					
+					try {
+						double expressionValue = evalExpression(expression);
+						value = expressionValue + "";
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+					
 					if(null == levelData || null == levelData.getId())
-						agreement.createLevelData(level.getId(), variable, event.getValue(), selectedDate);
+						agreement.createLevelData(level.getId(), variable, value, selectedDate);
 					else
-						agreement.updateLevelData(level.getId(), levelData.getId(), event.getValue());
+						agreement.updateLevelData(level.getId(), levelData.getId(), value);
 					
 					setAgreementSalaryTable(agreement);
 					setHasChange(true);
@@ -319,6 +330,14 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		}
 		
 	}
+	
+	public double evalExpression(String expression) {
+	    return calculate(expression);
+	}
+
+	public final native double calculate(String expression) /*-{
+	    return eval(expression);
+	}-*/;
 	
 	private ListBox createCategoryLB() {
 		Map<String, Integer> allCategories = new TreeMap<>();
@@ -443,6 +462,7 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		toolbar = new AonToolbar("Tabla Salarial");
 		
 		saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
+		saveBtn.ensureDebugId("acceptSalaryTableButton");
 		saveBtn.addClickHandler(e -> {
 			showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
 			setHasChange(false);
@@ -450,9 +470,11 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		});
 		
 		datesLB = new ListBox();
+		datesLB.ensureDebugId("datesLB");
 		datesLB.getElement().getStyle().setHeight(1.7, Unit.EM);
 		
 		newDateBtn = new AonToolbarSmallButton(AON.MSG.newAction() + " tramo", AON.CSS.aonIconAdd());
+		newDateBtn.ensureDebugId("newSalaryTabButton");
 		newDateBtn.addClickHandler(e -> {
 			PopupPanel popup = new PopupPanel(true); // auto-hide
 			DatePicker picker = new DatePicker();
@@ -488,21 +510,23 @@ public abstract class AgreementSalaryTableTab extends ResizeComposite {
 		});
 		
 		deleteDateBtn = new AonToolbarSmallButton(AON.MSG.deleteAction() + " tramo", AON.CSS.aonIconDelete());
+		deleteDateBtn.ensureDebugId("deleteSalaryTabButton");
 		deleteDateBtn.addClickHandler(e -> {
 			AonDialog deleteDialog = new AonDialog("Borrar tramo", new HTMLPanel("\u00bfDesea realmente eliminar el tramo <b>" + datesLB.getSelectedValue() +"</b> de la tabla salarial\u003f"));
+			deleteDialog.ensureDebugId("deleteDateDialog");
 			deleteDialog.setGlassStyleName(style.dialogGlass());
 			deleteDialog.addStyleName(style.dialogZIndex());
 			deleteDialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
 				public void onCancel() {
-					// Not use here
 				}
 				
 				@Override
 				public void onAccept() {
 					Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
 					agreement.deletePeriod(selectedDate);
+					deleteDialog.hide(true);
 					setAgreementSalaryTable(agreement);
 					showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
 					setHasChange(false);
