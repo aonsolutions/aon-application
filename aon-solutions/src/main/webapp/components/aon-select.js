@@ -299,7 +299,14 @@ export class AonSelect extends AonElement {
   }
 
   buildLiMultiple(option, ul){
+
     const valueAlias = option[this.valueAlias];
+
+    const checkBoxId = "checkbox"+valueAlias;
+
+    let checkbox = this.getElement(checkBoxId);
+    if(checkbox) return;
+
     let li = this.createElement(TAG.LI);
     li.className = 'aonInputListOptionsItem';
     li.style.display = "flex";
@@ -307,11 +314,9 @@ export class AonSelect extends AonElement {
     li.setAttribute(CONSTANT.VALUE, valueAlias);
     ul.appendChild(li);
 
-    let checkbox = null;
-    
     if(valueAlias){
       checkbox =  new AonCheckbox();
-      checkbox.id = "checkbox"+valueAlias;
+      checkbox.id = checkBoxId;
       checkbox.name = "checkbox"+valueAlias;
       li.appendChild(checkbox);
       checkbox.value = this.isSelectable(option);
@@ -339,8 +344,6 @@ export class AonSelect extends AonElement {
         checkbox.value = !checkbox.getValue();
       }
     });
-    
-    return li;
   }
 
   onChangeCheckBox(add=false, option=null){
@@ -436,6 +439,11 @@ export class AonSelect extends AonElement {
 
   setOptionsBuild(options) {
     this.disableKeyUp = false;
+
+    if(this.multiple && this.getSelectable().length){
+      options = [ ...new Set(this.getSelectable()), ...new Set(options) ];
+    }
+
     this.setOptions(options);
     this.buildOptions(options);
   }
@@ -478,8 +486,8 @@ export class AonSelect extends AonElement {
     this.onChangeCheckBox(false);
   }
 
-  isSelectable(option){
-    return this.selectable.some(p => p.value == option.value);
+  isSelectable({value}){
+    return this.selectable.some(p => p.value == value);
   }
 
   setEnumOptions(options) {

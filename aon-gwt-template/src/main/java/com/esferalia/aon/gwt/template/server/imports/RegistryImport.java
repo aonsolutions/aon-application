@@ -134,7 +134,9 @@ public class RegistryImport extends Import {
 			return;
 		}
 
-		if(IConstants.NOMBRE.equalsIgnoreCase(title)) {
+		if(IConstants.NOMBRE.equalsIgnoreCase(title)
+			|| IConstants.RAZON_SOCIAL.equalsIgnoreCase(title)
+			|| IConstants.RAZON_SOCIAL2.equalsIgnoreCase(title)) {
 			if(o.toString().length() > 63) {
 				reg.getRegistry().setName(o.toString().substring(0,63));
 				reg.getAccount().setDescription(o.toString().substring(0, 63));
@@ -400,6 +402,9 @@ public class RegistryImport extends Import {
 			if(r.getAccountPrefix() != null && (r.getAccount().getCode() == null || r.getAccount().getCode().isBlank())) {
 				String code = ACCOUNTING.getAccountNextCode(domain.getName(), domain.getId(), user.getLogin(), r.getAccountPrefix());
 				r.getAccount().setCode(code);
+			}
+			if(AonStringUtils.isBlank(r.getAccount().getDescription())) {
+				r.getAccount().setDescription(r.getRegistry().getName());
 			}
 
 			Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), r.getAccount().getCode());

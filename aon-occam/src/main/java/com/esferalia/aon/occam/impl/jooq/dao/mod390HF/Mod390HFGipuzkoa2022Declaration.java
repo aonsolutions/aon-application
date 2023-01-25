@@ -647,6 +647,7 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 	}
 	private static boolean operacionesInterioresFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
+			&& !vat.isRectification()	
 			&& !vat.isFarmerRegime()
 			&& AonMathUtils.isNotZero(vat.getPercentage())
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
@@ -684,6 +685,7 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 			&& AonMathUtils.isNotZero(vat.getPercentage())
 			&& !vat.isService()
+			&& !vat.isInvestment()
 			&& ( vat.isNationalPurchase()
 			 || importacionesFilter(vat, mod, !vat.isRectification())
 			 || vat.isOtherISPPurchase()
@@ -694,6 +696,7 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 				&& AonMathUtils.isNotZero(vat.getPercentage())
 				&& vat.isService()
+				&& !vat.isInvestment()
 				&& (vat.isExpenses() || vat.isPurchase())	
 				;
 	}

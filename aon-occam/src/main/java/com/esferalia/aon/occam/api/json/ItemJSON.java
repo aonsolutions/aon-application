@@ -60,7 +60,11 @@ public class ItemJSON {
 				.setCreationUser(JsonUtils.getString(json, IJsonNames.CREATION_USER))
 				.setCreationDate(JsonUtils.getDate(json, IJsonNames.CREATION_DATE))
 				.setModificationUser(JsonUtils.getString(json, IJsonNames.MODIFICATION_USER))
-				.setModificationDate(JsonUtils.getDate(json, IJsonNames.MODIFICATION_DATE));
+				.setModificationDate(JsonUtils.getDate(json, IJsonNames.MODIFICATION_DATE))
+				
+				.setRemoved(JsonUtils.getboolean(json, IJsonNames.REMOVED))
+				
+				;
 	}
 	
 	public static JSONArray toJSON(List<Item> items) {
@@ -107,6 +111,7 @@ public class ItemJSON {
 				.put(IJsonNames.MODIFICATION_DATE, item.getModificationDate())
 				.put(IJsonNames.MODIFICATION_USER, item.getModificationUser())
 				.put(IJsonNames.ITEM_COMPOSITION, ItemCompositionJSON.toJSON(item.getItemComposition()))
+				.put(IJsonNames.REMOVED, item.isRemoved())
 				;
 	}
 }

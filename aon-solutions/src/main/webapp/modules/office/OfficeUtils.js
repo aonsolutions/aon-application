@@ -1,6 +1,7 @@
 import { AonSelect } from "../../components/aon-select.js";
 import { MSG, EVENT } from "../../environments/environments.js";
 import { Project } from "../../models/project/Project.js";
+import { AonTargetItemAdd } from "../registry/target/item/aon-target-item-add.js";
 import { AonOfficeLinkSimpleList } from "./aon-office-link-simple-list.js";
 
 
@@ -103,6 +104,39 @@ const buildFormExpediente = (aonOfficePanel, project) => {
     return div;
 }
 
+/**
+ * 
+ * @param {AonOfficePanel} aonOfficePanel 
+ */
+const buildDialogProducts = (aonOfficePanel) => {
+    const application = aonOfficePanel.getApplication();
+    const dialog = application.getDialog();
+    dialog.autoclose = false;
+    dialog.width = '40%';
+    dialog.clear();
+    dialog.setTitle(MSG.ASSIGN+" "+MSG.PRODUCTS);
+
+    let aonTargetItemAdd = new AonTargetItemAdd();
+
+    dialog.setContent(aonTargetItemAdd);
+    
+    dialog.addSendAction(async()=>{
+        aonTargetItemAdd.setCustomers(aonOfficePanel.getCustomerSelected());
+
+        application.startLoading();
+
+        await aonTargetItemAdd
+        .save()
+        .catch(err=> aonOfficePanel.showError(err));
+    
+        dialog.close();
+        application.stopLoading();
+
+    }, MSG.SAVE);
+
+    dialog.open();
+}   
+
 
 const getCustomerStatus = (detail) => {
     let status = [];
@@ -150,6 +184,7 @@ const builDialogRelationship = (aonOfficePanel, data) => {
 
 export const OfficeUtils = {
     buildDialogExpediente,
+    buildDialogProducts,
     getCustomerStatus,
     builDialogRelationship
 }
