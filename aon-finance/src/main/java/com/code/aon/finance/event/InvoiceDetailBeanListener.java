@@ -36,7 +36,6 @@ import com.code.aon.tas.enumeration.ProjectStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 
 public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	
@@ -178,8 +177,6 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	}
 
 	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax, InvoiceTax detailVat) throws ManagerBeanException {
-		Domain domain = AON.getDomain(HibernateUtil.getSessionFactoryName(), invoiceDetail.getDomain());
-	    TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, "");
 		InvoiceTax invoiceTax = new InvoiceTax();
 		invoiceTax.setInvoiceDetail(invoiceDetail);
 		invoiceTax.setTaxType(tax.getType());
@@ -231,7 +228,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 						}
 					}
 				}
-				if (isQuotaSavedInTax(invoiceDetail) || tbaiConfiguration.isActive()) {
+				if (isQuotaSavedInTax(invoiceDetail)) {
 					quota = CommonUtil.round(base * percentage / 100);
 					if (invoice.isSurcharge()) {
 						surchargeQuota = CommonUtil.round(base * surcharge / 100);	
