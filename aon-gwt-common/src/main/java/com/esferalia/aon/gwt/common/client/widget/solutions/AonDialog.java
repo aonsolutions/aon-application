@@ -62,8 +62,8 @@ public class AonDialog extends AonCustomDialog {
 	}
 
  	public void setCancelText(String btnText) {
-                this.cancelButton.setText(btnText);
-        }
+ 		this.cancelButton.setText(btnText);
+ 	}
 	
 	private void showDialog() {
 		// Show center
@@ -90,8 +90,7 @@ public class AonDialog extends AonCustomDialog {
     	});
     	
     	okButton.addClickHandler(e -> {
-    		okButton.setEnabled(false);
-			hide();
+    		hide();
     	});
     	
     	buttonsPanel.add(okButton);
@@ -111,8 +110,7 @@ public class AonDialog extends AonCustomDialog {
     	});
     	
     	okButton.addClickHandler(e -> {
-    		okButton.setEnabled(false);
-			hide();
+    		hide();
 			callback.onAccept();
     	});
     	
@@ -124,8 +122,7 @@ public class AonDialog extends AonCustomDialog {
     	cancelButton.ensureDebugId("cancelDialogButton");
     	
     	cancelButton.addClickHandler(e -> {
-    		cancelButton.setEnabled(false);
-			hide();
+    		hide();
 			callback.onCancel();
     	});
     	
