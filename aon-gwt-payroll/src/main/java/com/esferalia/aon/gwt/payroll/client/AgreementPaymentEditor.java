@@ -766,16 +766,20 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		if(null == extra || AonStringUtils.isBlank(extra.getIssueDate()) || extra.isDeleted()) return "Prorrateada";
 		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "Anual";
 		
-		int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
-		int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
-		
-		switch (endMonth - startMonth) {
-			case 11:
-				return "Anual";
-			case 5:
-				return "Semestral";
-			default:
-				return "Prorrateada";
+		try {
+			int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
+			int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+			
+			switch (endMonth - startMonth) {
+				case 11:
+					return "Anual";
+				case 5:
+					return "Semestral";
+				default:
+					return "Prorrateada";
+			}
+		} catch (Exception e) {
+			return "Prorrateada";
 		}
 	}
 
