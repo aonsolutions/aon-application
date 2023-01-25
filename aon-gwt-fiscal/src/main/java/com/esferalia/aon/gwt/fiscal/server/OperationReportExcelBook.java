@@ -6,7 +6,6 @@ import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -24,21 +23,19 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.ss.util.RegionUtil;
 import org.jooq.Condition;
-import org.jooq.tools.json.JSONObject;
-import org.jooq.tools.json.JSONParser;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
-import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
+import com.esferalia.aon.occam.api.ACCOUNTING;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.FISCAL;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -46,17 +43,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class OperationReportExcelBook extends HttpServlet {
 	
 	private static final long serialVersionUID = -8237842836135745934L;
-
-	private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
-	
-	private OperationParams params;
-	
-	private CloseableAONContext ctx = null;
-	ExcelAction action = new ExcelAction( );
 	
 	// Esta variable se utiliza para poder sacar los cobros/pagos en Facturas RECC, 
 	// deben salir primero las lineas de la factura y despues los cobros/pagos 
-	OperationBreakdown opAccrual = null;
+	private OperationBreakdown opAccrual = null;
 		
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -67,58 +57,18 @@ public class OperationReportExcelBook extends HttpServlet {
 			String domainName = req.getParameter("domainName");			
 			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
-			
-			JSONParser parser = new JSONParser();
-			JSONObject jsonParams =  (JSONObject) parser.parse(operationParams);
-			
-			params = new OperationParams();
-			
-			Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
-			params.setDomain(domain.intValue());
-			
-			Long activity = (Long) jsonParams.get(IRequestParamsNames.ACTIVITY);
-			if (activity != null) {
-				params.setActivity(activity.intValue());	
-			}
-			
-			String activityDescription = (String) jsonParams.get(IRequestParamsNames.ACTIVITY_DESCRIPTION);
-			if (activityDescription != null) {
-				params.setActivityDescription(activityDescription);	
-			}			
-			
-			String fromDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
-			if (AonStringUtils.isNotBlank(fromDate)) {
-				params.setFromDate( FORMATTER.parse(fromDate));			
-			}
-			
-			String toDate = (String) jsonParams.get(IRequestParamsNames.TO_DATE);
-			if (AonStringUtils.isNotBlank(toDate)) {
-				params.setToDate( FORMATTER.parse(toDate));			
-			}
-			
-			Long expenses = (Long) jsonParams.get(IRequestParamsNames.EXPENSES);
-			if (expenses != null) {
-				params.setExpenses(expenses==1);
-			}
-			
-			Long irpf = (Long) jsonParams.get(IRequestParamsNames.IRPF);
-			if (irpf != null) {
-				params.setIrpf(irpf==1);
-			}
-			
-			Long unified = (Long) jsonParams.get(IRequestParamsNames.UNIFIED_BOOK);
-			if (unified != null) {
-				params.setUnifiedBook(unified==1);
-			}
-			
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(user);
+
+			OperationParams params = JsonParser.parseOperationParams(operationParams);			
 			params.setAeatBook(true);
-			
+			Company company = AON.getCompanyForDomain(domainName, domainId, user);
 			// Obtener NIF y Nombre de la Empresa
 			String companyDocument = "";
 			String companyName = "";
-			ctx = AONContext.getAONContext(domainName, domainId, user);
 
-			Company company = CompanyDAO.getCompany(ctx, domainId);
 			companyDocument = company.getDocument();				
 			
 			String s = company.getName();
@@ -152,7 +102,7 @@ public class OperationReportExcelBook extends HttpServlet {
 			String filename = AonDateUtils.getYear(params.getFromDate()) + companyDocument;
 			
 			if (params.getUnifiedBook()) {
-				if (params.getExpenses()) {					
+				if (params.isExpenses()) {					
 					filename = filename + "V";   // Libro de Facturas Recibidas (IVA) y Compras y Gastos (IRPF)
 				    sheetName = "RECIBIDAS_GASTOS";
 				}
@@ -161,8 +111,8 @@ public class OperationReportExcelBook extends HttpServlet {
 					sheetName = "EXPEDIDAS_INGRESOS";
 				}
 			}
-			else if (params.getIrpf()) {
-				if (params.getExpenses()) {					
+			else if (params.isIrpf()) {
+				if (params.isExpenses()) {					
 					filename = filename + "G";   // Libro de Compras y Gastos IRPF
 				    sheetName = "GASTOS";
 				}
@@ -172,7 +122,7 @@ public class OperationReportExcelBook extends HttpServlet {
 				}
 			}
 			else {
-				if (params.getExpenses()) {
+				if (params.isExpenses()) {
 					filename = filename + "R";   // Libro de Compras y Gastos IVA
 					sheetName = "RECIBIDAS";
 				}
@@ -186,14 +136,15 @@ public class OperationReportExcelBook extends HttpServlet {
 			filename = filename + companyName;
 			
 			opAccrual = null;
+			ExcelAction action = new ExcelAction(occam, params);
 			action.initialize(sheetName);
 			
 			// Obtener datos	
-			FISCAL.getOperationBreakdown(domainName, user, domainId, params).forEach(action);
+			ACCOUNTING.getOperationBreakdown(occam, params).forEach(action);
 			
 			// Comprobar si quedan por poner cobros/pagos de la última factura
 			if (opAccrual != null) {
-				getInvoicePayments(opAccrual, params).forEach(action);
+				getInvoicePayments(occam, opAccrual, params).forEach(action);
 			}
 			
 			resp.setContentType(MimeType.MS_EXCEL_2007.getName());
@@ -205,16 +156,21 @@ public class OperationReportExcelBook extends HttpServlet {
 			
 		} catch (Throwable e) {
 			throw new ServletException(e);
-		} finally {
-			if (ctx != null)
-				ctx.close();
 		}
 		
 	}
 	
 	private class ExcelAction extends AbsExcelAction implements Consumer<OperationBreakdown>{
-		Row row2;
 		
+		private Row row2;
+		private Occam occam;
+		private OperationParams params;
+		
+		public ExcelAction(Occam occam, OperationParams params) {
+			this.occam = occam;
+			this.params = params;
+		}
+
 		@Override
 		protected void headerRow() {
 
@@ -250,8 +206,8 @@ public class OperationReportExcelBook extends HttpServlet {
 		    
 		    addVerticalMergedRegion("Tipo de Factura");
 		    
-		    if (params.getIrpf() || params.getUnifiedBook()) {
-		    	if (params.getExpenses()) {
+		    if (params.isIrpf() || params.getUnifiedBook()) {
+		    	if (params.isExpenses()) {
 		    		addVerticalMergedRegion("Concepto de Gasto");
 		    		addVerticalMergedRegion("Gasto deducible");
 		    	}
@@ -264,7 +220,7 @@ public class OperationReportExcelBook extends HttpServlet {
 		    addVerticalMergedRegion("Fecha Expedición");
 		    addVerticalMergedRegion("Fecha Operación");
 		    
-		    if (params.getExpenses()) {
+		    if (params.isExpenses()) {
 		    	addHorizontalMergedRegion("Identificación Factura Expedidor", 2);		    	
 		    	addAutoSizeCell(" Serie-Número ");
 		    	addAutoSizeCell("Número-Final");
@@ -287,14 +243,14 @@ public class OperationReportExcelBook extends HttpServlet {
 		    addAutoSizeCell("Código País");
 		    addAutoSizeCell("Identificación");
 		    
-		    if (params.getExpenses()) {
+		    if (params.isExpenses()) {
 		    	addVerticalMergedRegion("Nombre Expedidor");
 		    } 
 		    else {
 		    	addVerticalMergedRegion("Nombre Destinatario");
 		    }		    
 		    
-		    if (!params.getIrpf() || params.getUnifiedBook()) {
+		    if (!params.isIrpf() || params.getUnifiedBook()) {
 		    	addVerticalMergedRegion("Clave de Operación");	
 		    }		    
 		    
@@ -302,7 +258,7 @@ public class OperationReportExcelBook extends HttpServlet {
 		    addVerticalMergedRegion("Base Imponible");
 		    addVerticalMergedRegion("Tipo de IVA");
 		    
-		    if (params.getExpenses()) {
+		    if (params.isExpenses()) {
 		    	addVerticalMergedRegion("Cuota IVA Soportado");
 		    	addVerticalMergedRegion("Cuota Deducible");		    	
 		    }
@@ -313,7 +269,7 @@ public class OperationReportExcelBook extends HttpServlet {
 		    addVerticalMergedRegion("Tipo de Recargo Eq.");		    
 		    addVerticalMergedRegion("Cuota Recargo Equivalencia");		    
 		    
-		    if (params.getExpenses()) {
+		    if (params.isExpenses()) {
 		    	addHorizontalMergedRegion("Pago (Operación Criterio de Caja)", 4);
 		    }
 		    else {
@@ -324,7 +280,7 @@ public class OperationReportExcelBook extends HttpServlet {
 		    addAutoSizeCell("Medio Utilizado");
 		    addAutoSizeCell("Identificación Medio Utilizado");		    
 		    
-		    if (params.getIrpf() || params.getUnifiedBook()) {
+		    if (params.isIrpf() || params.getUnifiedBook()) {
 		    	addVerticalMergedRegion("Tipo Retención IRPF");
 		    	addVerticalMergedRegion("Importe Retenido IRPF");
 		    }
@@ -341,7 +297,7 @@ public class OperationReportExcelBook extends HttpServlet {
 			}
 			
 			if (op.getInvoice() != null && !op.getInvoice().equals(opAccrual.getInvoice())) {
-				getInvoicePayments(opAccrual, params).forEach(action);				
+				getInvoicePayments(occam, opAccrual, params).forEach(this);				
 				opAccrual = op;				
 			}
 			
@@ -361,7 +317,7 @@ public class OperationReportExcelBook extends HttpServlet {
 			addCell(op.getInvoiceType()).setCellStyle(centerCellStyle);   // Tipo de Factura
 			sheet.autoSizeColumn(cellCount-1);
 			
-			if (params.getIrpf() || params.getUnifiedBook()) {
+			if (params.isIrpf() || params.getUnifiedBook()) {
 				addCell(op.getConceptType()).setCellStyle(centerCellStyle); // Concepto de Ingreso/Gasto
 			    addCell(op.getAmount());                                    // Ingreso computable/Gasto deducible
      		}
@@ -369,7 +325,7 @@ public class OperationReportExcelBook extends HttpServlet {
 			addCell(op.getEntryDate());  // Fecha Expedición
 			addCell("");                 // Fecha Operación (no se usa)
 			
-			if (params.getExpenses()) {
+			if (params.isExpenses()) {
 			    addCell(op.getInvoiceNumber()); // Identificación Factura del Expedidor - Serie-Numero
 			    addCell("");                    // Identificación Factura del Expedidor - Número-Final (no se usa)
 				addCell(op.getDocNumber());     // Número Recepción
@@ -405,7 +361,7 @@ public class OperationReportExcelBook extends HttpServlet {
 			addCell(op.getRegistryName()); // Nombre
 			sheet.autoSizeColumn(cellCount-1);
 			
-			if (!params.getIrpf() || params.getUnifiedBook()) {
+			if (!params.isIrpf() || params.getUnifiedBook()) {
 				addCell(op.getOperationType()).setCellStyle(centerCellStyle); // Clave de Operación
 			}
 			
@@ -424,7 +380,7 @@ public class OperationReportExcelBook extends HttpServlet {
 				addCell("");   // IVA Repercutido/Soportado
 			}
 
-			if (params.getExpenses()) {
+			if (params.isExpenses()) {
 				if (isInvoiceLine)
 					addCell(op.getDeductibleQuota()); // Cuota Deducible									
 				else addCell(""); 
@@ -441,7 +397,7 @@ public class OperationReportExcelBook extends HttpServlet {
 			addCell(op.getPayMethodName()); // Cobro/Pago RECC - Identificación Medio Utilizado
 			sheet.autoSizeColumn(cellCount-1);
 			
-			if (params.getIrpf() || params.getUnifiedBook()) {
+			if (params.isIrpf() || params.getUnifiedBook()) {
 				addDoubleCell(op.getRetentionPercent()); // Tipo Retención IRPF
 				addDoubleCell(op.getRetentionQuota());   // Importe Retenido IRPF
 			}
@@ -482,10 +438,10 @@ public class OperationReportExcelBook extends HttpServlet {
 	}
 
 	// Obtiene los cobros/pagos de una factura en Regimen Especial de Criterio de Caja
-	private Stream<OperationBreakdown> getInvoicePayments(final OperationBreakdown op, final OperationParams params) {
+	private Stream<OperationBreakdown> getInvoicePayments(Occam occam, final OperationBreakdown op, final OperationParams params) {
 		
 		// Solo para Libro de IVA (o unificado) y para Facturas RECC
-		if ((params.getIrpf() && !params.getUnifiedBook()) || !("07".equals(op.getOperationType()))) {
+		if ((params.isIrpf() && !params.getUnifiedBook()) || !("07".equals(op.getOperationType()))) {
 			return Stream.empty();	
 		}
 
@@ -493,72 +449,74 @@ public class OperationReportExcelBook extends HttpServlet {
 		// Está cobrado/pagado y la fecha de cobro/pago está entre los filtros
 		Condition condition = (FINANCE_TRACKING.TYPE.equal(FinanceTrackingType.PAID.value()).and(FINANCE_TRACKING.TRACKING_DATE.between(AonDateUtils.toSql(params.getFromDate()),AonDateUtils.toSql(params.getToDate()))));
 		
-		return ctx.getDslContext().select(
-      			 FINANCE_TRACKING.TRACKING_DATE
-				,FINANCE_TRACKING.AMOUNT
-				,FINANCE_TRACKING.TYPE
-				,PAY_METHOD.TYPE
-				,PAY_METHOD.NAME
-				,RBANK.BANK_ACCOUNT
-				)
-				.from(FINANCE)
-				.join(FINANCE_TRACKING).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))				
-				.leftJoin(PAY_METHOD).on(PAY_METHOD.ID.equal(FINANCE.PAY_METHOD))
-				.leftJoin(RBANK).on(RBANK.ID.equal(FINANCE_TRACKING.RBANK))				
-				.where(FINANCE.INVOICE.equal(op.getInvoice()))
-				.and(condition)
-				.orderBy(FINANCE_TRACKING.TRACKING_DATE)
-				.fetch()
-				.stream()
-				.map( rec -> {
-					
-					// Metodo de Cobro/Pago
-					String payMethod = ""; 
-					String payMethodName = ""; 
-					Byte pm = rec.getValue(PAY_METHOD.TYPE);
-					if (pm != null) {
-						switch (pm) {
-							case 1:  // Negociable 
-								payMethod = "05"; // Domiciliacion
-								payMethodName = rec.getValue(RBANK.BANK_ACCOUNT);
-								break;
-							case 4:  // Cheque 
-								payMethod = "02"; // Cheque
-								payMethodName = rec.getValue(RBANK.BANK_ACCOUNT);
-								break;
-							case 5:  // Transferencia 
-								payMethod = "01";  // Transferencia
-								payMethodName = rec.getValue(RBANK.BANK_ACCOUNT);
-								break;
-							default: // Resto
-								payMethod = "04"; // Otros medios de pago		
-								payMethodName = rec.getValue(PAY_METHOD.NAME);
-								break;
+		try ( CloseableAONContext ctx = AONContext.getAONContext(occam)) { 
+			return ctx.getDslContext().select(
+	      			 FINANCE_TRACKING.TRACKING_DATE
+					,FINANCE_TRACKING.AMOUNT
+					,FINANCE_TRACKING.TYPE
+					,PAY_METHOD.TYPE
+					,PAY_METHOD.NAME
+					,RBANK.BANK_ACCOUNT
+					)
+					.from(FINANCE)
+					.join(FINANCE_TRACKING).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))				
+					.leftJoin(PAY_METHOD).on(PAY_METHOD.ID.equal(FINANCE.PAY_METHOD))
+					.leftJoin(RBANK).on(RBANK.ID.equal(FINANCE_TRACKING.RBANK))				
+					.where(FINANCE.INVOICE.equal(op.getInvoice()))
+					.and(condition)
+					.orderBy(FINANCE_TRACKING.TRACKING_DATE)
+					.fetch()
+					.stream()
+					.map( rec -> {
+						
+						// Metodo de Cobro/Pago
+						String payMethod = ""; 
+						String payMethodName = ""; 
+						Byte pm = rec.getValue(PAY_METHOD.TYPE);
+						if (pm != null) {
+							switch (pm) {
+								case 1:  // Negociable 
+									payMethod = "05"; // Domiciliacion
+									payMethodName = rec.getValue(RBANK.BANK_ACCOUNT);
+									break;
+								case 4:  // Cheque 
+									payMethod = "02"; // Cheque
+									payMethodName = rec.getValue(RBANK.BANK_ACCOUNT);
+									break;
+								case 5:  // Transferencia 
+									payMethod = "01";  // Transferencia
+									payMethodName = rec.getValue(RBANK.BANK_ACCOUNT);
+									break;
+								default: // Resto
+									payMethod = "04"; // Otros medios de pago		
+									payMethodName = rec.getValue(PAY_METHOD.NAME);
+									break;
+							}
 						}
-					}
-					
-					return new OperationBreakdown()
-							.setTaxDate(rec.getValue(FINANCE_TRACKING.TRACKING_DATE))
-							.setActivityType(op.getActivityType())
-							.setActivityIAE(op.getActivityIAE())
-							.setInvoice(op.getInvoice())
-							.setInvoiceType(op.getInvoiceType())
-							.setConceptType(op.getConceptType())													
-							.setEntryDate(op.getEntryDate())
-							.setInvoiceSeries(op.getInvoiceSeries())
-							.setInvoiceNumber(op.getInvoiceNumber())
-							.setDocNumber(op.getDocNumber())
-							.setRegistryDocumentType(op.getRegistryDocumentType())
-							.setRegistryDocumentCountry(op.getRegistryDocumentCountry())
-							.setRegistryDocument(op.getRegistryDocument())
-							.setRegistryName(op.getRegistryName())
-							.setOperationType(op.getOperationType())
-							.setPayDate(rec.getValue(FINANCE_TRACKING.TRACKING_DATE))
-							.setPayAmount(rec.getValue(FINANCE_TRACKING.AMOUNT))
-							.setPayMethod(payMethod)
-							.setPayMethodName(payMethodName)							
-							;
-							
-				 });
+						
+						return new OperationBreakdown()
+								.setTaxDate(rec.getValue(FINANCE_TRACKING.TRACKING_DATE))
+								.setActivityType(op.getActivityType())
+								.setActivityIAE(op.getActivityIAE())
+								.setInvoice(op.getInvoice())
+								.setInvoiceType(op.getInvoiceType())
+								.setConceptType(op.getConceptType())													
+								.setEntryDate(op.getEntryDate())
+								.setInvoiceSeries(op.getInvoiceSeries())
+								.setInvoiceNumber(op.getInvoiceNumber())
+								.setDocNumber(op.getDocNumber())
+								.setRegistryDocumentType(op.getRegistryDocumentType())
+								.setRegistryDocumentCountry(op.getRegistryDocumentCountry())
+								.setRegistryDocument(op.getRegistryDocument())
+								.setRegistryName(op.getRegistryName())
+								.setOperationType(op.getOperationType())
+								.setPayDate(rec.getValue(FINANCE_TRACKING.TRACKING_DATE))
+								.setPayAmount(rec.getValue(FINANCE_TRACKING.AMOUNT))
+								.setPayMethod(payMethod)
+								.setPayMethodName(payMethodName)							
+								;
+								
+					 });
+		}
 	}
 }

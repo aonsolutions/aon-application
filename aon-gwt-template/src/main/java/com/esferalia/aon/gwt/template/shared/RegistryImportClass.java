@@ -105,19 +105,19 @@ public class RegistryImportClass implements IsSerializable {
 	}
 
 	public Boolean isCustomer() {
-		return (this.type != null && (this.type.equalsIgnoreCase("C") || this.type.equalsIgnoreCase("CUSTOMER")))
+		return (this.type != null && (this.type.equalsIgnoreCase("C") || this.type.equalsIgnoreCase("CUSTOMER") || this.type.equalsIgnoreCase("CLIENTE")))
 				|| (this.account != null && this.account.getCode() != null
 					&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("430"));
 	}
 
 	public Boolean isSupplier() {
-		return (this.type != null && (this.type.equalsIgnoreCase("P") || this.type.equalsIgnoreCase("PROVEEDOR")))
+		return (this.type != null && (this.type.equalsIgnoreCase("P") || this.type.equalsIgnoreCase("PROVEEDOR") || this.type.equalsIgnoreCase("SUPPLIER")))
 				|| (this.account != null && this.account.getCode() != null
 					&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("400"));
 	}
 
 	public Boolean isCreditor() {
-		return (this.type != null && (this.type.equalsIgnoreCase("A") || this.type.equalsIgnoreCase("ACREEDOR")))
+		return (this.type != null && (this.type.equalsIgnoreCase("A") || this.type.equalsIgnoreCase("ACREEDOR") || this.type.equalsIgnoreCase("CREDITOR")))
 				|| (this.account != null && this.account.getCode() != null
 					&& this.account.getCode().length() > 2 && this.account.getCode().substring(0, 3).equals("410"));
 	}

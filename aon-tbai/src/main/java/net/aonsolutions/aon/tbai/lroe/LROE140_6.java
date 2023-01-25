@@ -38,7 +38,7 @@ public class LROE140_6 extends LROE140 {
 	
 	private LROEPF140IngresosConFacturaConSGAltaPeticion build(Person person, Invoice invoice,LROEInfo info, byte[] data) {
 		LROEPF140ProvisionesFondosSuplidosAltaModifPeticion p = new LROEPF140ProvisionesFondosSuplidosAltaModifPeticion();
-		p.setCabecera(buildCabecera(person, info, invoice));
+		p.setCabecera(buildCabecera(person, info));
 		
 		ProvisionesFondosSuplidosType suplidos = new ProvisionesFondosSuplidosType();
 		ProvisionFondoSuplidoType suplido = new ProvisionFondoSuplidoType();
@@ -52,7 +52,7 @@ public class LROE140_6 extends LROE140 {
 		p.setFondosSuplidos(suplidos);
 		
 		LROEPF140IngresosConFacturaConSGAltaPeticion proba = new LROEPF140IngresosConFacturaConSGAltaPeticion();
-		proba.setCabecera(buildCabecera(person, info, invoice));
+		proba.setCabecera(buildCabecera(person, info));
 
 		IngresosConSGCodificadoType ingresos = new IngresosConSGCodificadoType();
 		IngresoConSGCodificadoType ingreso = new IngresoConSGCodificadoType();
@@ -74,7 +74,7 @@ public class LROE140_6 extends LROE140 {
 	
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] tbai) throws StatusCodeException {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.A_00);
+			LROEInfo info = buildInfo(OperacionEnum.A_00, getEjercicio(tbaiConfiguration, invoice));
 			final LROEPF140IngresosConFacturaConSGAltaPeticion p140 = build(person, invoice, info, tbai); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaConSGAltaPeticion.class );
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();	
@@ -86,19 +86,19 @@ public class LROE140_6 extends LROE140 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info, invoice), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
 	}
 	
-	public LROEInfo buildInfo(OperacionEnum operacion) {
-		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion);
+	public LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
+		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion, ejercicio);
 	}
 	
 	private LROEPF140IngresosConFacturaConSGAnulacionPeticion buildBaja(Person person, Invoice invoice, LROEInfo info, byte[] data) {	
 		LROEPF140IngresosConFacturaConSGAnulacionPeticion lroe = new LROEPF140IngresosConFacturaConSGAnulacionPeticion();
-		lroe.setCabecera(buildCabecera(person, info, invoice));
+		lroe.setCabecera(buildCabecera(person, info));
 		AnulacionesIngresosConSGType anulaciones = new AnulacionesIngresosConSGType();
 		
 		AnulacionFacturaConSGType anulacion = new AnulacionFacturaConSGType();
@@ -110,7 +110,7 @@ public class LROE140_6 extends LROE140 {
 	
 	public LROEResponse anulacion(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] tbai)  {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.AN_0);
+			LROEInfo info = buildInfo(OperacionEnum.AN_0, getEjercicio(tbaiConfiguration, invoice));
 			final LROEPF140IngresosConFacturaConSGAnulacionPeticion p140 = buildBaja(person, invoice, info, tbai); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaConSGAnulacionPeticion.class );
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();	
@@ -122,7 +122,7 @@ public class LROE140_6 extends LROE140 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info, invoice), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}

@@ -23,7 +23,6 @@ import com.esferalia.aon.gwt.fiscal.client.finance.paymethod.PayMethodModule;
 import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilities;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceSeriesBreakdown;
-import com.esferalia.aon.gwt.fiscal.client.invoice.OperationReport;
 import com.esferalia.aon.gwt.fiscal.client.invoice.vat.VatReport;
 import com.esferalia.aon.gwt.fiscal.client.matrix.ModelMatrix;
 import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
@@ -216,7 +215,6 @@ public class MainEntryPoint implements EntryPoint {
 	private static final String ACC_OPERATING_REPORT_ENTRY_POINT = "AccountOperatingReport";
 	private static final String ACC_ANALYTICAL_REPORT_ENTRY_POINT = "AccountAnalyticalReport";
 	private static final String ACC_TRIAL_BALANCE_REPORT_ENTRY_POINT = "AccountTrialBalanceReport";
-	private static final String ACC_OPERATION_ENTRY_POINT = "OperationReport";
 	private static final String ACC_ACCOUNT_ENTRY_ENTRY_POINT = "AccountEntryModule";
 	private static final String ACC_ACCOUNTING_UTILITIES_ENTRY_POINT = "AccountingUtilities";
 	private static final String ACC_ACCOUNTING_BALANCE_REPORT_ENTRY_POINT = "AccountBalanceReport";
@@ -649,21 +647,6 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					AccountConsolidatedBalanceReport report = new AccountConsolidatedBalanceReport();
 					report.onModuleLoad();
-				}
-				
-			});
-		} else if ( entryPoint.equalsIgnoreCase(ACC_OPERATION_ENTRY_POINT)) {
-			GWT.runAsync(OperationReport.class, new RunAsyncCallback() {
-
-				@Override
-				public void onFailure(Throwable reason) {
-					Window.alert(ERROR_MSG);
-				}
-
-				@Override
-				public void onSuccess() {
-					OperationReport accountOperationReport = new OperationReport(getCurrentDomainName(),getCurrentDomain(),getCurrentUser());
-					accountOperationReport.onModuleLoad();
 				}
 				
 			});

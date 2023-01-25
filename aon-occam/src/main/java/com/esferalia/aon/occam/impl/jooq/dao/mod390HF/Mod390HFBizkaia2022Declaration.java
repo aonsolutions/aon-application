@@ -362,16 +362,16 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 
 		// Compras de bienes corrientes
 		,BZ_C142	(Mod390Key.BZ_C142
-			,(mod,vat) -> (hasPercent4(vat) || hasPercent5(vat)) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
+			,(mod,vat) -> hasPercent4(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C142,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X142	(Mod390Key.BZ_X142,null,null,(ctx,mod) -> add(Mod390Key.BZ_X142,mod,PERCENT_4),null,null)
 		,BZ_C143	(Mod390Key.BZ_C143
-			,(mod,vat) -> (hasPercent4(vat) || hasPercent5(vat)) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
+			,(mod,vat) -> hasPercent4(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C143,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C144	(Mod390Key.BZ_C144
-			,(mod,vat) -> (hasPercent4(vat) || hasPercent5(vat)) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
+			,(mod,vat) -> hasPercent4(vat) && !vat.isFarmerRegime() && isCommonPurchase(vat,mod)
 			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C144,mod,vat)
 			,null,null,null)
 		
@@ -435,16 +435,16 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 
 		// Gastos		
 		,BZ_C160	(Mod390Key.BZ_C160
-			,(mod,vat) -> isCommonExpense(vat) && (hasPercent4(vat) || hasPercent5(vat))
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent4(vat) 
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C160,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X160	(Mod390Key.BZ_X160,null,null,(ctx,mod) -> add(Mod390Key.BZ_X160,mod,PERCENT_4),null,null)
 		,BZ_C161	(Mod390Key.BZ_C161
-			,(mod,vat) -> isCommonExpense(vat) && (hasPercent4(vat) || hasPercent5(vat))
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C161,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C162	(Mod390Key.BZ_C162
-			,(mod,vat) -> isCommonExpense(vat) && (hasPercent4(vat) || hasPercent5(vat))
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C162,mod,vat)
 			,null,null,null)
 		
@@ -495,16 +495,16 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 
 		// Bienes de inversión
 		,BZ_C175	(Mod390Key.BZ_C175
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && (hasPercent4(vat) || hasPercent5(vat))
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C175,mod,vat.getBase())
 			,null,null,null)
 		,BZ_X175	(Mod390Key.BZ_X175,null,null,(ctx,mod) -> add(Mod390Key.BZ_X175,mod,PERCENT_4),null,null)
 		,BZ_C176	(Mod390Key.BZ_C176
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && (hasPercent4(vat) || hasPercent5(vat))
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C176,mod,vat.getQuota())
 			,null,null,null)
 		,BZ_C177	(Mod390Key.BZ_C177
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && (hasPercent4(vat) || hasPercent5(vat))
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C177,mod,vat)
 			,null,null,null)
 				
@@ -791,7 +791,6 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 	}
 	private static boolean hasNoPercent(VatContext vat) {
 		return vat.getPercentage() !=  PERCENT_4
-			&& vat.getPercentage() !=  PERCENT_5
 			&& vat.getPercentage() !=  PERCENT_10 
 			&& vat.getPercentage() !=  PERCENT_21; 	
 	}
@@ -853,6 +852,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL)
 			&& AonMathUtils.isNotZero(vat.getPercentage())
 			&& !vat.isService()
+			&& !vat.isInvestment()
 			&& ( vat.isNationalPurchase()
 			 || vat.isOtherISPPurchase()
 			 || vat.isIntracommunityPurchase()
@@ -863,6 +863,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 	private static boolean isCommonExpense(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 				&& AonMathUtils.isNotZero(vat.getPercentage())
+				&& !vat.isInvestment()
 				&& vat.isService()
 				&& (vat.isExpenses() || vat.isPurchase())	
 				;

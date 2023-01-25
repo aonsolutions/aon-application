@@ -686,6 +686,12 @@ public class JsonParser {
 		if (activity != null) {
 			params.setActivity(activity.intValue());	
 		}
+		
+		String activityDescription = (String) jsonParams.get(IRequestParamsNames.ACTIVITY_DESCRIPTION);
+		if (activityDescription != null) {
+			params.setActivityDescription(activityDescription);	
+		}			
+
 		String fromDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
 		if (AonStringUtils.isNotBlank(fromDate)) {
 			params.setFromDate( FORMATTER.parse(fromDate));
@@ -700,6 +706,11 @@ public class JsonParser {
 		Long irpf = (Long) jsonParams.get(IRequestParamsNames.IRPF);
 		if (irpf != null) {
 			params.setIrpf(irpf==1);
+		}
+		
+		Long unified = (Long) jsonParams.get(IRequestParamsNames.UNIFIED_BOOK);
+		if (unified != null) {
+			params.setUnifiedBook(unified==1);
 		}
 		return params;
 	}

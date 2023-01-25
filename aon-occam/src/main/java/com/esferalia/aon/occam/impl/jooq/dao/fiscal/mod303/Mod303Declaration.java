@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
-import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
@@ -239,30 +238,40 @@ public abstract class Mod303Declaration {
 			if ((mod303.hasProrate() || mod303.hasPreviousProrate()) 
 				&& AonNumberUtils.notEquals(lastPercent, prevPercent)) {
 				
-				final Mod303 dupl = new Mod303();
-				dupl.setDomain(mod303.getDomain());
-				dupl.setDomainName(mod303.getDomainName());
-				dupl.setYear(mod303.getYear());
-				dupl.setModel(mod303.getModel());
-				dupl.setPeriod(mod303.getPeriod().isMonthPeriod()?Period.M11:Period.T3);
-				dupl.setAdministration(mod303.getAdministration());
-				dupl.setProratePercent( mod303.getProratePercent() );
-				dupl.setPreviousProratePercent( mod303.getPreviousProratePercent() );
-				dupl.setSpecialProrateValue( mod303.isSpecialProrate() );
-				dupl.setDraft(true);
-				dupl.setGenerateFromYearStart(true);
-				Mod303Declaration draftDec = Mod303Declaration.getInstance(dupl); 
-				draftDec.createOnTheFly(ctx, dupl);
+				Mod303DAO.getPreviousEffectiveModels(ctx, mod303).forEach( fm -> {
+					Mod303Declaration dec =  Mod303Declaration.getInstance(fm);
+					MutableDouble sumProrratedMustDeclared = new MutableDouble();
+					MutableDouble sumUnprorratedMustDeclared = new MutableDouble();
+					VATDAO.getModelVatBreakdown(ctx, fm)
+						.filter( br -> Arrays.stream(dec.getProrateKeys())
+							.map(dec::getKey )
+							.anyMatch(kd -> kd.acceptValue(fm, br)))
+						.forEach(br -> {
+							if (mustApplyProrrate(fm,br)) {
+								sumProrratedMustDeclared.add(br.getDeductibleQuota());
+							} else {
+								sumUnprorratedMustDeclared.add(br.getDeductibleQuota());
+							}
+						});
+					
+					double declared = 0.0;
+					if ( fm.getMap() != null && !fm.getMap().isEmpty()) {
+						for(String key : fm.getMap().keySet() ) {
+							if (isProrrated( Mod303Key.getKey(key))) {
+								declared = declared + fm.getAmount(key); 
+							}
+						}
+					}
+					
+					double prorratedAmount = AonMathUtils.round(sumProrratedMustDeclared.getValue());
+					double unProrratedAmount = AonMathUtils.round(sumUnprorratedMustDeclared.getValue());
+					double mustDeclared = AonMathUtils.round((prorratedAmount * lastPercent / 100) + unProrratedAmount);
+					double difference  = AonMathUtils.round(mustDeclared - declared);
+					mod303.ensureDetail(Mod303Key.CM_072).addAmount( prorratedAmount );
+					mod303.ensureDetail(Mod303Key.CM_074).addAmount( unProrratedAmount );
+					mod303.addAmount(getRegularizationKey(), difference);
+				});
 				
-				double prorratedAmount = dupl.ensureDetail(Mod303Key.CM_072).getAmount();
-				double unProrratedAmount = dupl.ensureDetail(Mod303Key.CM_074).getAmount();
-				mod303.ensureDetail(Mod303Key.CM_072).setAmount( prorratedAmount );
-				mod303.ensureDetail(Mod303Key.CM_074).setAmount( unProrratedAmount );
-				
-				double declared = AonMathUtils.round((prorratedAmount * prevPercent / 100) + unProrratedAmount) ;
-				double mustDeclared = AonMathUtils.round((prorratedAmount * lastPercent / 100) + unProrratedAmount);
-				double difference  = AonMathUtils.round(mustDeclared - declared);
-				mod303.putAmount(getRegularizationKey(), difference);
 			}
 		}
 	}

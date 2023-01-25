@@ -49,7 +49,7 @@ public class LROE140_5_1 extends LROE140 {
 	
 	private LROEPF140CriterioCajaCriterioCobrosYPagosCobrosAltaModifPeticion build(Person person, List<Invoice> invoices, LROEInfo info) {
 		LROEPF140CriterioCajaCriterioCobrosYPagosCobrosAltaModifPeticion lroe =  new LROEPF140CriterioCajaCriterioCobrosYPagosCobrosAltaModifPeticion();
-		lroe.setCabecera(buildCabecera(person, info, invoices.get(0)));
+		lroe.setCabecera(buildCabecera(person, info));
 		CriterioCajaCobrosPFType cobros = new CriterioCajaCobrosPFType();
 		invoices.stream().forEach(invoice -> cobros.getCobro().addAll(buildCobros(invoice)));
 		lroe.setCobros(cobros);
@@ -162,7 +162,7 @@ public class LROE140_5_1 extends LROE140 {
 	
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, List<Invoice> invoices) {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.A_00);
+			LROEInfo info = buildInfo(OperacionEnum.A_00, getEjercicio(tbaiConfiguration, invoices.get(0)));
 			final LROEPF140CriterioCajaCriterioCobrosYPagosCobrosAltaModifPeticion p140 = build(person, invoices, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance(LROEPF140CriterioCajaCriterioCobrosYPagosCobrosAltaModifPeticion.class);
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
@@ -175,14 +175,14 @@ public class LROE140_5_1 extends LROE140 {
 			byte[] xml = bos.toByteArray();
 			DataRequest dataRequest = LroeData.saveRequest(person.getDomain(), new User().setLogin(""), invoices, info, xml);
 			byte[] data = toGzip(xml);
-			return send(tbaiConfiguration, buildJSON(person, info, invoices.get(0)), data).setDataRequest(dataRequest);
+			return send(tbaiConfiguration, buildJSON(person, info), data).setDataRequest(dataRequest);
 		} catch (Exception e) {
 			return error(e);
 		}
 	}
 	
-	public LROEInfo buildInfo(OperacionEnum operacion) {
-		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion);
+	public LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
+		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion, ejercicio);
 	}
 	
 	private LROEPJ240BienesAnulacionPeticion buildBaja(Person person, List<Invoice> invoices, LROEInfo info) {	

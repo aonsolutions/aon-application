@@ -107,7 +107,7 @@ public class OperationReport extends MainEntryPoint {
 		AonLayoutPanel aonLayoutPanel = new AonLayoutPanel(Unit.PX);
 		aonLayoutPanel.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
 		aonLayoutPanel.addNorth(getAeatToolbarPanel(), AonToolbar.HEIGTH);
-		aonLayoutPanel.addNorth(getFilterPanel(), 90);
+		aonLayoutPanel.addNorth(getFilterPanel(), 70);
 		
 		SimpleLayoutPanel content = new SimpleLayoutPanel();
 		content.setStyleName(AON.CSS.aonSelector());
@@ -312,16 +312,11 @@ public class OperationReport extends MainEntryPoint {
 		firstRowPanel.add(to);
 		firstRowPanel.add(toDate);
 
-		// ---------------------------------------------------------------- SECOND ROW
-		FlowPanel thirdRowPanel = new FlowPanel();
-		thirdRowPanel.addStyleName(AON.CSS.aonMarginTop());
-		filterPanel.add(thirdRowPanel);
-		
 		if (options.getConfiguration() != null && options.getConfiguration().hasActivities()) {
 			InlineLabel activityLabel = new InlineLabel(AON.MSG.activity());
 			activityLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
-			thirdRowPanel.add(activityLabel);
-			thirdRowPanel.add(activity);
+			firstRowPanel.add(activityLabel);
+			firstRowPanel.add(activity);
 		}
 
 		
@@ -330,7 +325,7 @@ public class OperationReport extends MainEntryPoint {
 		searchButton.getElement().getStyle().setPaddingLeft(20, Unit.PX);
 		searchButton.setText(AON.MSG.searchAction());
 		searchButton.addClickHandler(event -> onSearch());
-		thirdRowPanel.add(searchButton);
+		firstRowPanel.add(searchButton);
 
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
