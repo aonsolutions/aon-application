@@ -852,6 +852,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL)
 			&& AonMathUtils.isNotZero(vat.getPercentage())
 			&& !vat.isService()
+			&& !vat.isInvestment()
 			&& ( vat.isNationalPurchase()
 			 || vat.isOtherISPPurchase()
 			 || vat.isIntracommunityPurchase()
@@ -862,6 +863,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 	private static boolean isCommonExpense(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 				&& AonMathUtils.isNotZero(vat.getPercentage())
+				&& !vat.isInvestment()
 				&& vat.isService()
 				&& (vat.isExpenses() || vat.isPurchase())	
 				;

@@ -110,6 +110,8 @@ class OperationReportVatPanel extends ScrollPanel{
 			.setExtraInfoTabVisible(false)
 			.setExternalCallback( new ModuleCallback() {
 				
+				private static final long serialVersionUID = -7040645114567563036L;
+
 				@Override
 				public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();

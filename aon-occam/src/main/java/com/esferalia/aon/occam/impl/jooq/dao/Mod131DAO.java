@@ -1938,6 +1938,8 @@ public class Mod131DAO extends FiscalModelDAO {
 			if (activity.getEpigraph() != null)
 				calculateMod131Activity(ctx, mod, activity);
 		}
+		calculateMod131(ctx, mod);
+		mod.ensureDetail( Mod131Key.C11).setAmount(getInitialC11(ctx,mod));
 		return calculateMod131(ctx, mod);
 	}
 
