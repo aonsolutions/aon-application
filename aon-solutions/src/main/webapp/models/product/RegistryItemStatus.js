@@ -2,6 +2,7 @@ export const RegistryItemStatus = {
     ACTIVE: "ACTIVE",
     INTERESTED: "INTERESTED",
     REFUSED: "REFUSED",
+    INACTIVE: "INACTIVE",
 
     getText: function (i) {
         if (i === null) return null;
@@ -11,6 +12,8 @@ export const RegistryItemStatus = {
                 return "INTERESADO";
             case RegistryItemStatus.REFUSED:
                 return "RECHAZADO";
+            case RegistryItemStatus.INACTIVE:
+                return "Inactivo";
             default:
                 return "ACTIVO";
         }

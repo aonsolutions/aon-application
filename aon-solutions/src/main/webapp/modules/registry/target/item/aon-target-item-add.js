@@ -90,7 +90,7 @@ export class AonTargetItemAdd extends AonElement {
 		this.DIV.style.flexDirection = "column";
 		this.appendChild(this.DIV);
 		this.buildSelectItem();
-		this.buildSelectStatus();
+		// this.buildSelectStatus();
 	}
 
 	buildSelectItem(){
@@ -143,28 +143,28 @@ export class AonTargetItemAdd extends AonElement {
 
 	}
 
-	buildSelectStatus(){
-		this.STATUS_SELECT = new AonSelect();
-		this.STATUS_SELECT.title = MSG.STATUS;
-		this.STATUS_SELECT.id = this.id+"status";
-		this.STATUS_SELECT.default = true;
-		this.STATUS_SELECT.autocomplete = true;
+	// buildSelectStatus(){
+	// 	this.STATUS_SELECT = new AonSelect();
+	// 	this.STATUS_SELECT.title = MSG.STATUS;
+	// 	this.STATUS_SELECT.id = this.id+"status";
+	// 	this.STATUS_SELECT.default = true;
+	// 	this.STATUS_SELECT.autocomplete = true;
 
-		let options = [
-			{name:MSG.ACTIVE, value:"ACTIVE"},
-			{name:"Interesado", value:"INTERESTED"},
-			{name:"Rechazado", value:"REFUSED"},
-		];
+	// 	let options = [
+	// 		{name:MSG.ACTIVE, value:"ACTIVE"},
+	// 		{name:"Interesado", value:"INTERESTED"},
+	// 		{name:"Rechazado", value:"REFUSED"},
+	// 	];
 
-		this.STATUS_SELECT.setOptions(options);
+	// 	this.STATUS_SELECT.setOptions(options);
 
-		this.DIV.appendChild(this.STATUS_SELECT);
+	// 	this.DIV.appendChild(this.STATUS_SELECT);
 
-		this.STATUS_SELECT.addEventListener(EVENT.CHANGE, ()=>{
-			this.setStatus(this.STATUS_SELECT.value);
-		})
+	// 	this.STATUS_SELECT.addEventListener(EVENT.CHANGE, ()=>{
+	// 		this.setStatus(this.STATUS_SELECT.value);
+	// 	})
 		
-	}
+	// }
 
 	async save(){
 		let params = {
