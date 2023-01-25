@@ -1,6 +1,7 @@
 package net.aonsolutions.db.up2date.payroll;
 
 import static com.esferalia.aon.jooq.tables.ContractEmbargo.CONTRACT_EMBARGO;
+import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
 import static com.esferalia.aon.jooq.tables.SystemData.SYSTEM_DATA;
 
 import java.sql.Connection;
@@ -14,6 +15,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.ContractEmbargo;
+import com.esferalia.aon.jooq.tables.DeductionConcept;
 
 import net.aonsolutions.db.up2date.Update;
 
@@ -58,6 +60,12 @@ public class BiEmbargarInsert implements Update {
 			DSL.regexpReplaceAll(CONTRACT_EMBARGO.EXPRESSION, "EMBARGAR\\(([^\\)^,]*)\\)", "EMBARGAR($1, MAX_EMBARGABLE(TOTAL_LIQUIDO))"))
 			.execute();
 			
+			dslContext
+			.update(DEDUCTION_CONCEPT)
+			.set(DEDUCTION_CONCEPT.EXPRESSION, 
+			DSL.regexpReplaceAll(DEDUCTION_CONCEPT.EXPRESSION, "EMBARGAR\\(([^\\)^,]*)\\)", "EMBARGAR($1, MAX_EMBARGABLE(TOTAL_LIQUIDO))"))
+			.execute();
+
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=1;");
 		});
 	}
