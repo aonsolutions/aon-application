@@ -10,6 +10,10 @@ export const getProductCategories = (data) =>  get(`${API_URL}/product/category`
 
 export const saveProduct = (data) => post(`${API_URL}/product`, data);
 export const saveItem = (data) => post(`${API_URL}/product/item`, data);
+// REGISTRY ITEM
+export const saveRegistryItem = (data) => post(`${API_URL}/product/ritem`, data);
+
+
 
 export const getInvestAssets = (data)  => get(`${API_URL}/invest`, data);
 export const saveInvestAsset = (data)  => post(`${API_URL}/invest`, data);

@@ -61,13 +61,14 @@ export class AonCheckbox extends AonElement {
 	attributeChangedCallback(name, oldValue, newValue) {
 		if(CONSTANT.VALUE === name){
 			let input = this.getElement(this.getAttribute(CONSTANT.ID) + 'Input');
-			if(this.hasAttribute(CONSTANT.VALUE) && "true" === this.getAttribute(CONSTANT.VALUE)){
+			
+			if(this.hasAttribute(CONSTANT.VALUE) && "true" == this.getAttribute(CONSTANT.VALUE)){
 				input.setAttribute(CONSTANT.CHECKED, CONSTANT.CHECKED);
 			} else {
 				input.removeAttribute(CONSTANT.CHECKED);
 			}
 			
-			this.dispatchEvent(new Event(EVENT.AON_CHANGE));
+			this.dispatchEvent(new Event(EVENT.CHANGE));
 		}
 	}
 

@@ -104,11 +104,6 @@ public class TargetServlet extends AonApiHttpServlet {
 	}
 
 	private static JSONArray getTargets(AonApiData api) {
-//		Integer page = api.getData().opt(IJsonNames.PAGE) != null 
-//			? api.getData().optInt(IJsonNames.PAGE) : 1;
-//		Integer perPage = api.getData().opt(IJsonNames.PER_PAGE) != null
-//			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
-
 		return TargetJSON.toJSON(AON.getTargetStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 			f -> filter(api, f)));
 	}
@@ -154,7 +149,7 @@ public class TargetServlet extends AonApiHttpServlet {
 		}
 		return filter;
 	}
-	
+
 	public static JSONObject saveTarget(AonApiData api) {
 		Target target = TargetJSON.fromJSON(api.getData());
 		target = AON.save(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), target);

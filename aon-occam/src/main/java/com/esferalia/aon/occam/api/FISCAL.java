@@ -78,18 +78,6 @@ public class FISCAL {
 		}
 	}
 		
-	@Deprecated
-	public static Stream<OperationBreakdown> getOperationBreakdown(String domainName, String user, int domain, OperationParams params) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domain, user);
-			return getFiscal().getOperationBreakdown(ctx, domain, params);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
 	public static LinkedList<InvoiceFiscalModels> getInvoicesModels(Occam occam, InvoiceModelReportParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFiscal().getInvoicesModels(ctx, params);

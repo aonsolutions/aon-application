@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -92,10 +93,27 @@ public class ProductDAO {
 				.and(PRODUCT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)));
 	}
 	
-	public static Stream<Product> getStream(AONContext ctx, ProductFilter filter) {
-		return select(ctx, filter)
-		.fetch().stream().map(new ProductFiller());
+	public static Stream<Product> getStream(AONContext ctx, ProductFilter filter, Integer page, Integer perPage){	
+		return getStream(ctx, filter, Optional.of(page), Optional.of(perPage));
 	}
+	
+	public static Stream<Product> getStream(AONContext ctx, ProductFilter filter) {
+		return getStream(ctx, filter, Optional.empty(), Optional.empty());
+	}
+	
+	private static Stream<Product> getStream(AONContext ctx, ProductFilter filter, Optional<Integer> page, Optional<Integer> perPage) {
+		SelectConditionStep<Record> query = select(ctx, filter);
+		
+		if(page.isPresent() && perPage.isPresent()) {
+			Integer per = perPage.get();
+			Integer p = page.get();
+			query.limit(per).offset(per * (p -1));
+		}
+		
+		return query.fetch().stream().map(new ProductFiller());
+	}
+	
+	
 	
 	public static LinkedList<Product> getList(AONContext ctx, ProductFilter filter) {
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));

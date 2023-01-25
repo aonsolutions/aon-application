@@ -20,19 +20,15 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.jooq.tools.json.JSONObject;
-import org.jooq.tools.json.JSONParser;
 
 import com.esferalia.aon.gwt.finance.server.AbsExcelAction;
-import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
-import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.FISCAL;
+import com.esferalia.aon.occam.api.ACCOUNTING;
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 @WebServlet(name = "OperationReport Excel Print ", urlPatterns = { "/aon_gwt_fiscal/roms/OperationReportExcelPrint" })
@@ -42,7 +38,6 @@ public class OperationReportExcelPrint extends HttpServlet {
 	
 	private static SimpleDateFormat FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	
-	private OperationParams params;
 	private String titular = "";
 		
 	@Override
@@ -54,84 +49,33 @@ public class OperationReportExcelPrint extends HttpServlet {
 			String domainName = req.getParameter("domainName");			
 			String user = req.getParameter("user");
 			int domainId = Integer.parseInt(req.getParameter("domainId"));
+			Occam occam = new Occam()
+				.setDomainName(domainName)
+				.setDomain(domainId)
+				.setUser(user);
 			
-			JSONParser parser = new JSONParser();
-			JSONObject jsonParams =  (JSONObject) parser.parse(operationParams);
+			OperationParams params = JsonParser.parseOperationParams(operationParams);
+			Company company = AON.getCompanyForDomain(domainName, domainId, user);
+			titular = company.getDocument()+ " - "+company.getName();
 			
-			params = new OperationParams();
-			
-			Long domain = (Long) jsonParams.get(IRequestParamsNames.DOMAIN);
-			params.setDomain(domain.intValue());
-			
-			Long activity = (Long) jsonParams.get(IRequestParamsNames.ACTIVITY);
-			if (activity != null) {
-				params.setActivity(activity.intValue());	
-			}
-			
-			String activityDescription = (String) jsonParams.get(IRequestParamsNames.ACTIVITY_DESCRIPTION);
-			if (activityDescription != null) {
-				params.setActivityDescription(activityDescription);	
-			}			
-			
-			String fromDate = (String) jsonParams.get(IRequestParamsNames.FROM_DATE);
-			if (AonStringUtils.isNotBlank(fromDate)) {
-				params.setFromDate( FORMATTER.parse(fromDate));			
-			}
-			
-			String toDate = (String) jsonParams.get(IRequestParamsNames.TO_DATE);
-			if (AonStringUtils.isNotBlank(toDate)) {
-				params.setToDate( FORMATTER.parse(toDate));			
-			}
-			
-			Long expenses = (Long) jsonParams.get(IRequestParamsNames.EXPENSES);
-			if (expenses != null) {
-				params.setExpenses(expenses==1);
-			}
-			
-			Long irpf = (Long) jsonParams.get(IRequestParamsNames.IRPF);
-			if (irpf != null) {
-				params.setIrpf(irpf==1);
-			}
-			
-			// Obtener NIF y Nombre de la Empresa			
-			CloseableAONContext ctx = null;
-			try {
-				ctx = AONContext.getAONContext(domainName, domainId, user);
-				Company company = CompanyDAO.getCompany(ctx, domainId);
-				titular = company.getDocument()+ " - "+company.getName();
-			} finally {
-				if (ctx != null)
-					ctx.close();
-			}
-			
-			// "Listado de Compras y Gastos" o "Listado de Ventas e Ingresos"
-			String filename = params.getExpenses() ? "Listado de Compras y Gastos" : "Listado de Ventas e Ingresos";
-			
-			ExcelAction action = new ExcelAction( );
+			String filename = params.isExpenses() ? "Listado de Compras y Gastos" : "Listado de Ventas e Ingresos";
+			ExcelAction action = new ExcelAction( params );
 			
 			// Listado IVA
 			params.setIrpf(false);
 			action.initialize(filename.replace("Listado de ", "")+" IVA");			 
-			FISCAL.getOperationBreakdown(domainName, user, domainId, params).forEach(action);
+			ACCOUNTING.getOperationBreakdown(occam, params).forEach(action);
 			action.summaryRows();
 			
 			// Listado IRPF
 			params.setIrpf(true);  
 			action.createSheet(filename.replace("Listado de ", "")+" IRPF");
-			FISCAL.getOperationBreakdown(domainName, user, domainId, params).forEach(action);
+			ACCOUNTING.getOperationBreakdown(occam, params).forEach(action);
 			action.summaryRows();
-			
-			// Se estaba poniendo con extensión XLS, pero el archivo era Excel 2007
-			//resp.setContentType(MimeType.MS_EXCEL.getName());
-			//resp.setHeader("Content-disposition", "attachment; filename=\"Compras-Ventas."+ MimeType.MS_EXCEL.getExtension()+ "\";");
-			
 			resp.setContentType(MimeType.MS_EXCEL_2007.getName());
 			resp.setHeader("Content-disposition", "attachment; filename=\""+filename+"."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
-			
 			action.finalize(resp.getOutputStream());
-			
 			resp.flushBuffer();
-			
 		} catch (Throwable e) {
 			throw new ServletException(e);
 		}
@@ -140,16 +84,20 @@ public class OperationReportExcelPrint extends HttpServlet {
 	
 	private class ExcelAction extends AbsExcelAction implements Consumer<OperationBreakdown>{
 		
+		private OperationParams params;
 		private int rowsHeader = 0;
-		
 		private double sumBase = 0.0;
 		private double sumQuota = 0.0;
 		private double sumSurchargeQuota = 0.0;
 		private double sumTotal = 0.0;
-		Map<Double,Double[]> mapIvaSummary = new TreeMap<Double, Double[]>();
-		Map<Double,Double[]> mapSurSummary = new TreeMap<Double, Double[]>();
-		Map<String,Object[]> mapConceptSummary = new TreeMap<String, Object[]>();
+		private Map<Double,Double[]> mapIvaSummary = new TreeMap<Double, Double[]>();
+		private Map<Double,Double[]> mapSurSummary = new TreeMap<Double, Double[]>();
+		private Map<String,Object[]> mapConceptSummary = new TreeMap<String, Object[]>();
 		
+		public ExcelAction(OperationParams params) {
+			this.params = params;
+		}
+
 		@Override
 		protected void headerRow() {
 			
@@ -188,14 +136,14 @@ public class OperationReportExcelPrint extends HttpServlet {
 			cellCount = 0;
 
 			CellUtil.createCell(row, cellCount, "ID", headerCellStyle);
-			if (params.getIrpf())
+			if (params.isIrpf())
 				sheet.setColumnWidth(cellCount++, 5 * 256);
 			else sheet.setColumnWidth(cellCount++, 10 * 256); // En el IVA lo ponemos mas ancho, por que al final irá la base del resumen por tipos en esa columna 
 
 			CellUtil.createCell(row, cellCount, "FECHA", headerCellStyle);
 			sheet.setColumnWidth(cellCount++, 15 * 256);
 
-			if (!params.getIrpf()) {
+			if (!params.isIrpf()) {
 				CellUtil.createCell(row, cellCount, "FECHA IVA", headerCellStyle);
 				sheet.setColumnWidth(cellCount++, 15 * 256);
 			}
@@ -212,7 +160,7 @@ public class OperationReportExcelPrint extends HttpServlet {
 			CellUtil.createCell(row, cellCount, "BASE IMP.", headerCellStyle);
 			sheet.setColumnWidth(cellCount++, 15 * 256);
 
-			if (params.getIrpf()) {
+			if (params.isIrpf()) {
 				CellUtil.createCell(row, cellCount, "IMPUESTOS", headerCellStyle);
 				sheet.setColumnWidth(cellCount++, 15 * 256);
 				
@@ -257,7 +205,7 @@ public class OperationReportExcelPrint extends HttpServlet {
 			addCell(rowCount-rowsHeader);       // ID
 			addCell(op.getEntryDate());         // FECHA
 			
-			if (!params.getIrpf())
+			if (!params.isIrpf())
 				addCell(op.getTaxDate());       // FECHA IVA (SOLO IVA)
 			
 			addCell(op.getFullConcept());       // CONCEPTO
@@ -265,7 +213,7 @@ public class OperationReportExcelPrint extends HttpServlet {
 			addCell(op.getFullDocumentName());  // TITULAR			
 			addCell(op.getBase());              // BASE IMP.
 			
-			if (params.getIrpf()) {
+			if (params.isIrpf()) {
 				addCell(op.getQuota() + op.getSurchargeQuota()); // IMPUESTOS (SOLO IRPF)
 			}
 			else {				
@@ -284,7 +232,7 @@ public class OperationReportExcelPrint extends HttpServlet {
 			sumSurchargeQuota = sumSurchargeQuota + op.getSurchargeQuota();
 			sumTotal = sumTotal + op.getTotal();
 			
-			if (params.getIrpf()) { // IRPF
+			if (params.isIrpf()) { // IRPF
 				Object[] indexIrpf = mapConceptSummary.get(op.getAccount());				 
 				if (indexIrpf != null) {
 					Object[] obj = new Object[2];	
@@ -378,12 +326,12 @@ public class OperationReportExcelPrint extends HttpServlet {
 		    
 		    // Linea de Totales
 		    row = sheet.createRow(rowCount++);
-			cellCount = params.getIrpf() ? 4 : 5;
+			cellCount = params.isIrpf() ? 4 : 5;
 		    addCell("TOTAL",textBoldStyle);
 
 		    addCell(sumBase,decimalBoldStyle);
 		    
-		    if (params.getIrpf()) {		    	
+		    if (params.isIrpf()) {		    	
 		    	addCell(sumQuota+sumSurchargeQuota,decimalBoldStyle);
 		    }
 		    else {
@@ -398,7 +346,7 @@ public class OperationReportExcelPrint extends HttpServlet {
 		    // Resumen por Cuenta (IRPF) o por tipos de IVA y tipos de REQ (IVA) 
 		    row = sheet.createRow(rowCount++); // Línea en blanco
 		    row = sheet.createRow(rowCount++);
-		    if (params.getIrpf()) {
+		    if (params.isIrpf()) {
 		    	cellCount = 1;
 		    	addCell("RESUMEN POR CONCEPTO",textBoldStyle);
 		    	row = sheet.createRow(rowCount++);

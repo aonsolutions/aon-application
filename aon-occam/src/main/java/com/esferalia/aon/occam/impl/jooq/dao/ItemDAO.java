@@ -1,32 +1,43 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
+import static com.esferalia.aon.jooq.tables.Pcategory.PCATEGORY;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Ritem.RITEM;
 import static com.esferalia.aon.jooq.tables.Tax.TAX;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.InsertSetMoreStep;
+import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Select;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 
+import com.esferalia.aon.jooq.tables.records.RitemRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
+import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
+import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ItemAutoComplete;
 
 
@@ -37,6 +48,7 @@ public class ItemDAO {
 	}
 	
 	private static final ItemPropertiesDAO ITEM_PROPERTIES = new ItemPropertiesDAO();
+	private static final RItemPropertiesDAO RITEM_PROPERTIES = new RItemPropertiesDAO();
 
 	protected static class ItemPropertiesDAO implements ItemProperties {
 		protected Select<Record> build(SelectJoinStep<Record> select, ItemFilter filter) {
@@ -80,32 +92,67 @@ public class ItemDAO {
 		
 		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.CODE);}
 		@Override public Property<String> getProductNameProperty() {return new FilterDAO.PropertyDAO<>(PRODUCT.NAME);}
+		
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RITEM.REGISTRY);}
 
 	}
 
-	public static Item get(AONContext ctx, ItemFilter filter){
-		return ctx.getDslContext()
-			.select()
-			.from(ITEM)
-			.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
-			.where(ITEM_PROPERTIES.getConditions(filter))
-			.limit(1)
-			.fetch().stream().map(new ItemFiller()).findFirst().orElse(new Item());
-	}
 	
 	public static Item get(AONContext ctx, Integer id){
         return get(ctx, f -> f.getIdProperty().eq(id));
     }
 	
+	public static Item get(AONContext ctx, ItemFilter filter){
+		return getStream(ctx, filter).findFirst().orElse(new Item());
+	}
+	
 	public static Stream<Item> getStream(AONContext ctx, ItemFilter filter){
+		return getStream(ctx, filter, Optional.empty(), Optional.empty());
+	}
+	
+	public static Stream<Item> getStream(AONContext ctx, ItemFilter filter, Integer page, Integer perPage){
+		return getStream(ctx, filter, Optional.ofNullable(page), Optional.ofNullable(perPage));
+	}
+	
+	public static Stream<Item> getRItemStream(AONContext ctx, ItemFilter filter){
+		ctx.checkRead();
 		return ctx.getDslContext()
+		.select()
+		.from(ITEM)
+		.join(RITEM).on(RITEM.ITEM.eq(ITEM.ID))
+		.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+		.leftOuterJoin(PCATEGORY).on(PCATEGORY.ID.eq(PRODUCT.CATEGORY))
+		.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
+		.where(ITEM_PROPERTIES.getConditions(filter))
+	    .fetch().stream().map(new ItemFiller());
+
+	}
+	
+	public static Stream<RitemRecord> getRItemRecordStream(AONContext ctx, RegistryItemFilter filter){
+		ctx.checkRead();
+		return ctx.getDslContext().select().from(RITEM).where(RITEM_PROPERTIES.getConditions(filter))
+				.fetchStreamInto(RITEM);
+	}
+	
+	
+	private static Stream<Item> getStream(AONContext ctx, ItemFilter filter, Optional<Integer> page, Optional<Integer> perPage){
+		ctx.checkRead();
+		SelectConditionStep<Record> query = ctx.getDslContext()
 			.select()
 			.from(ITEM)
 			.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
 			.leftOuterJoin(TAX).on(PRODUCT.VAT.eq(TAX.ID))
-			.where(ITEM_PROPERTIES.getConditions(filter))
-			.fetch().stream().map(new ItemFiller());
+			.where(ITEM_PROPERTIES.getConditions(filter));
+
+		if(page.isPresent() && perPage.isPresent()) {
+			Integer per = perPage.get();
+			Integer p = page.get();
+			query.limit(per).offset(per * (p -1));
+		}
+			
+		return query.fetch().stream().map(new ItemFiller());
 	}
+	
 	
 	public static LinkedList<Item> getList(AONContext ctx, ItemFilter filter) {
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
@@ -131,6 +178,20 @@ public class ItemDAO {
 			? update(ctx, item)
 			: insert(ctx, item);		
 	}
+	
+	public static RegistryItem[] saveRItem(AONContext ctx, RegistryItem ...ritems) {
+		ctx.checkWrite();
+		if ( ritems == null )
+			return new RegistryItem[0];
+		if ( ritems.length == 0 )
+			return new RegistryItem[0];
+		
+		List<RegistryItem> list = Arrays.asList(ritems);
+
+		return setRItem(ctx, list.stream().filter(r-> !r.isRemoved()).toArray(RegistryItem[]::new) );
+	}
+	
+	
 
 	public static Item insert(AONContext ctx, Item item) {
 		Timestamp now = new Timestamp(new java.util.Date().getTime());
@@ -214,6 +275,70 @@ public class ItemDAO {
 			.where(ITEM.ID.equal(id))
 			.execute();	
 	}
+
+	public static void deleteRItem(AONContext ctx, RegistryItemFilter filter) {
+		ctx.checkWrite();
+		ctx.getDslContext()
+			.delete(RITEM)
+			.where(RITEM_PROPERTIES.getConditions(filter))
+			.execute();	
+	}
+
+	private static RegistryItem[] setRItem(AONContext ctx, RegistryItem ...ritems) {
+		ctx.checkWrite();
+
+		InsertSetMoreStep<RitemRecord> insertRItem = null;
+		
+		for (RegistryItem ritem : ritems) {
+
+			Optional<RitemRecord> opt = getRItemRecordStream(ctx, 
+					f-> f.getDomainProperty().eq(ritem.getDomain())
+					.and(f.getRegistryProperty().eq(ritem.getRegistry()))
+					.and(f.getItemProperty().eq(ritem.getItem()))
+			).findFirst();
+			
+			if(opt.isPresent()) { 		//------------------UPDATE ----------
+				RitemRecord ritemRecord = opt.get();
+				ritem.setId(ritemRecord.getId());
+				
+//				if(ritem.getPrice()!=null) {
+//					ritemRecord.set(RITEM.PRICE, ritem.getPrice());
+//				}
+//				
+//				ritemRecord.update();
+			} else {
+				InsertSetStep<RitemRecord> insert = null != insertRItem ? insertRItem.newRecord() : ctx.getDslContext().insertInto(RITEM);
+						
+				InsertSetMoreStep<RitemRecord> recordSets = insert
+				.set(RITEM.DOMAIN, ritem.getDomain())
+				.set(RITEM.REGISTRY, ritem.getRegistry())
+				.set(RITEM.ITEM, ritem.getItem())
+				.set(RITEM.TYPE, ritem.getType().value())
+				.set(RITEM.STATUS, ritem.getStatus().value())
+				.set(RITEM.PRIORITY, ritem.getPriority().value())
+				;
+				
+				if(ritem.getPrice()!=null) {
+					recordSets.set(RITEM.PRICE, ritem.getPrice());
+				}
+				
+				if(ritem.getCode()!=null) {
+					recordSets.set(RITEM.CODE, ritem.getCode());
+				}
+				
+				if(ritem.getWorkplace()!=null) {
+					recordSets.set(RITEM.WORKPLACE, ritem.getWorkplace());
+				}
+				
+				insertRItem = recordSets;
+			}
+		}
+		
+		if(null!=insertRItem) insertRItem.execute();
+		
+		return ritems;
+	}
+	
 
 	public static class ItemFiller extends Filler implements Function<Record, Item> {
 		

@@ -1494,6 +1494,18 @@ public class AON {
 		}
 	}
 	
+	public static RegistryItem[] saveRItem(Domain domain, User user, RegistryItem ...ritems) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, user)){
+			return getNewProduct().saveRItem(ctx, ritems);
+		}
+	}
+	
+	public static void deleteRItem(Domain domain, User user, RegistryItemFilter filter) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, user)){
+			getNewProduct().deleteRItem(ctx, filter);
+		}
+	}
+	
 	public static void deleteItem(Domain domain, String login, Integer itemId) {
 		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, login)){
 			getNewProduct().deleteItem(ctx, itemId);

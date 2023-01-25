@@ -192,12 +192,14 @@ public class NordigenModule extends MainEntryPoint {
 	
 	//TODO : SEGUIR POR AQUÍ
 	private FlowPanel paintEnterpiseData(NordigenModuleOptions opt) {
-		//TODO: PURGADO
-		AonToolbarButton config = new AonToolbarButton("Gestionar vinculaciones", AON.CSS.aonIconSettings());
-		config.addClickHandler((ev) -> {
-			paintManageRequisitionsDialog(opt);
-		});
-		toolbar.add(config);
+		if (!isMobile()) {
+			//PURGADO DE REUISITIONS 'HUÉRFANAS'
+			AonToolbarButton config = new AonToolbarButton("Gestionar vinculaciones", AON.CSS.aonIconSettings());
+			config.addClickHandler((ev) -> {
+				paintManageRequisitionsDialog(opt);
+			});
+			toolbar.add(config);
+		}
 		FlowPanel panel = new FlowPanel();
 		linkedBanks = paintBanks(opt);
 		unlinkedBanks = paintUnlinkedBanks(opt);
@@ -1078,6 +1080,7 @@ public class NordigenModule extends MainEntryPoint {
 				AonTableButton allMovementsButton, AonTableButton insertMovementsButton, AonTableButton balanceJsonButton) {
 			
 			for (String log : result.getLogs()) {
+				clearBottomMessage();
 				if (!isMobile()) {					
 					Label label = new Label(result.getIban() + " : " + log);
 					label.addStyleName(AON.CSS.aonColorRed());
