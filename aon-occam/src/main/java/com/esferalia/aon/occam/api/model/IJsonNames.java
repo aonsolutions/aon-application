@@ -266,6 +266,7 @@ public final class IJsonNames {
 	public static final String IRPF_REGIME = "irpfRegime";
 	public static final String ISSUE_DATE = "issueDate";
 	public static final String ITEM = "item";
+	public static final String ITEMS = "items";
 	public static final String ITEM_COMPOSITION = "itemComposition";
 
 	// ---------------------------------------------------------------------------------------------	[J] 
@@ -387,6 +388,7 @@ public final class IJsonNames {
 	public static final String PRIORITY = "priority";
 	public static final String PROCESS_ID = "processId";
 	public static final String PRODUCT = "product";
+	public static final String PRODUCTS = "products";
 	public static final String PRODUCT_ID = "productId";
 	public static final String PROFIT_PERCENT = "profitPercent";
 	public static final String PROGRESS = "progress";

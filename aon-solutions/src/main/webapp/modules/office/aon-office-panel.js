@@ -19,39 +19,40 @@ export class AonOfficePanel extends AonElement {
     workgroups;
     taskHolders;
     activitiesType;
-    customerSelected;
-    customerSelectedAll;
+    
+    _customerSelected;
+    _customerSelectedAll;
 
-    filterCustomers;
+    _filterCustomers;
     
     setCustomerSelected(customerSelected){
-        this.customerSelected = customerSelected;
+        this._customerSelected = customerSelected;
     }
 
     getCustomerSelected(){
-        return this.customerSelected.filter((value,index) => // remove repeated customersSelected
-            this.customerSelected.findIndex((m) => m.id === value.id) === index 
+        return this._customerSelected.filter((value,index) => // remove repeated customersSelected
+            this._customerSelected.findIndex((m) => m.id === value.id) === index 
         ) 
     }
 
     setCustomerSelectedAll(customerSelectedAll){
-        this.customerSelectedAll = customerSelectedAll;
+        this._customerSelectedAll = customerSelectedAll;
     }
 
     getCustomerSelectedAll(){
-        return this.customerSelectedAll;
+        return this._customerSelectedAll;
     }
 
     addFilterCustomers(filter){
-        this.filterCustomers = { ...this.filterCustomers, ...filter};
+        this._filterCustomers = { ...this._filterCustomers, ...filter};
     }
 
     setFilterCustomers(filter){
-        this.filterCustomers = filter;
+        this._filterCustomers = filter;
     }
 
     getFilterCustomers(){
-        return this.filterCustomers;
+        return this._filterCustomers;
     }
 
 	constructor () {
@@ -264,6 +265,14 @@ export class AonOfficePanel extends AonElement {
                             icon: MATERIAL_ICONS.OPEN_IN_NEW, 
                             fn:()=> {
                                 OfficeUtils.buildDialogExpediente(this);
+                            }
+                        },
+                        { 
+                            name: "Asignar productos", 
+                            value: "assignedProduct",
+                            icon: MATERIAL_ICONS.OPEN_IN_NEW, 
+                            fn:()=> {
+                                OfficeUtils.buildDialogProducts(this);
                             }
                         },
                         { 

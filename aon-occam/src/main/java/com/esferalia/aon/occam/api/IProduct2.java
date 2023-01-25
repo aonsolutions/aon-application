@@ -6,9 +6,11 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 
 public interface IProduct2 {
 
@@ -16,6 +18,7 @@ public interface IProduct2 {
 	
 	public Product getProduct(AONContext ctx, ProductFilter filter);
 	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter);
+	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter, Integer page, Integer perPage);
 	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter);
 	public Product saveProduct(AONContext ctx, Product product);
 	public void deleteProduct(AONContext ctx, Integer id);
@@ -24,9 +27,13 @@ public interface IProduct2 {
 	
 	public Item getItem(AONContext ctx, ItemFilter filter);
 	public Stream<Item> getItemStream(AONContext ctx, ItemFilter filter);
+	public Stream<Item> getItemStream(AONContext ctx, ItemFilter filter, Integer page, Integer perPage);
+	public Stream<Item> getRItemStream(AONContext ctx, ItemFilter filter);
 	public LinkedList<Item> getItemList(AONContext ctx, ItemFilter filter);
 	public Item saveItem(AONContext ctx, Item item);
 	public void deleteItem(AONContext ctx, Integer id);
+	public RegistryItem[] saveRItem(AONContext ctx, RegistryItem ...ritems);
+	public void deleteRItem(AONContext ctx, RegistryItemFilter filter);
 	
 	// INVEST ASSET
 	

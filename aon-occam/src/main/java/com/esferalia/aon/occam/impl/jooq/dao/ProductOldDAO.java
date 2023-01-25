@@ -141,6 +141,8 @@ public class ProductOldDAO {
 		
 		@Override public Property<String> getProductCodeProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.CODE);}
 		@Override public Property<String> getProductNameProperty() {return new FilterDAO.PropertyDAO<String>(PRODUCT.NAME);}
+
+		@Override public Property<Integer> getRegistryProperty() {return null;}
 	}
 	
 	protected static class ProductTagPropertiesDAO implements ProductTagProperties {
