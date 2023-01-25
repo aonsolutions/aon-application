@@ -198,24 +198,26 @@ public class CustomerDAO {
 		
 		ctx.log().debug("INSERT CUSTOMER id: {0}", customer.getId());	
 		
-		saveTarget(ctx, customer); // SAVE POTENTIAL CLIENT
+		saveTargetByCustomer(ctx, customer); // SAVE POTENTIAL CLIENT
 		
 		return customer;
 	}
 	
-	private static void saveTarget(AONContext ctx, Customer customer) {
+	public static Target saveTargetByCustomer(AONContext ctx, Customer customer) {
 		Target target = TargetDAO.get(ctx, f -> f.getIdProperty().eq(customer.getId()));
 	    if(target.isEmpty()) {
-	        target = new Target()
+	        target = TargetDAO.save(ctx, 
+	        		new Target()
 	                .copy(customer)
 	                .setScope(customer.getScope())
 	                .setSurcharge(customer.isSurcharge())
 	                .setTariff(customer.getTariff()!=null ? new Tariff().setId(customer.getTariff()) : null)
 	                .setTransaction(customer.getTransaction())
-	                .setWithholding(customer.isWithholding());
-		
-	        TargetDAO.save(ctx, target);
+	                .setWithholding(customer.isWithholding())
+	         );
 	    }
+	    
+	    return target;
 	}
 
 	private static Customer update(AONContext ctx, Customer customer){

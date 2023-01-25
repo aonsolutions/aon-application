@@ -10,11 +10,13 @@ import { getRelationShip, saveRelationShip, removeRelationShip, saveCustomer } f
 import { AonCustomerList } from './aon-customer-list.js';
 import { getScopes } from '../../../services/documentalService.js';
 import { getDomainCompanies, saveCompany } from '../../../services/companyService.js';
+import { AonItemList } from '../target/item/aon-item-list.js';
+import { AonProjectList } from '../../project/aon-project-list.js';
 
 export class AonCustomer extends AonReg {
 
 	saveBool;
-	entepriseLinked;
+	ENTERPRISE_LINKED;
 	connectedCallback () {
 		this.customerInitialize();
 		this.initialize();
@@ -22,17 +24,19 @@ export class AonCustomer extends AonReg {
 	}
 	
 	customerInitialize() {
-		this.type = "customer";
-		this.entepriseLinked= "enterpriseLinked";
 		this.saveBool = true;
+		this.type = "customer";
+		this.ENTERPRISE_LINKED = "enterpriseLinked";
 		this.options = [
 			{ title: MSG.GENERAL_DATA, fn: () => this.buildGeneralData()},
 			{ title: MSG.BANK_DATA, fn: () => this.buildBankData()},
 			{ title: MSG.ADDITIONAL_DATA, fn: () => this.buildDataAdditional()},
+			{ title: "Expedientes", fn: () => this.buildExpedienteData()},
 		];
 
-		if(this.isBeta()){
-			this.options.push({ title: "Expedientes", fn: () => this.buildExpedienteData()});
+
+		if(this.isSig() || this.isLocal()){
+			this.options.push({ title: MSG.PRODUCTS, fn: () => this.buildItemData()});
 		}
 	}
 
@@ -141,27 +145,29 @@ export class AonCustomer extends AonReg {
 	}	
 
 	buildEnterpriseLinked(){
-		const card = this.getElement(this.GENERAL_CARD);
+		if( (this.isBeta() || this.isSig()) ){
+			const card = this.getElement(this.GENERAL_CARD);
 		
-		let divOne = this.getElement(this.entepriseLinked);
-
-		if(!divOne){
-			divOne =  this.createElement(TAG.DIV);
-			divOne.id = this.entepriseLinked;
-			card.addSection2(divOne);
+			let divOne = this.getElement(this.ENTERPRISE_LINKED);
+	
+			if(!divOne){
+				divOne =  this.createElement(TAG.DIV);
+				divOne.id = this.ENTERPRISE_LINKED;
+				card.addSection2(divOne);
+			}
+	
+			getRelationShip({registry:this.registry.getId(), parentId:this.registry.getDomain().getParentId(), document: this.registry.getDocument()})
+			.then(resp=>{
+				this.buildEnterpriseLinkedView(resp);
+			})
+			.catch((err)=>{
+				this.showError(err);
+			});
 		}
-
-		getRelationShip({registry:this.registry.getId(), parentId:this.registry.getDomain().getParentId(), document: this.registry.getDocument()})
-		.then(resp=>{
-			this.buildEnterpriseLinkedView(resp);
-		})
-		.catch((err)=>{
-			this.showError(err);
-		});
 	}
 
 	buildEnterpriseLinkedView(resp){
-		const entepriseLinked = this.getElement(this.entepriseLinked);
+		const entepriseLinked = this.getElement(this.ENTERPRISE_LINKED);
 		entepriseLinked.innerHTML = "";
 
 		const {rrelationship, companies} = resp;
@@ -223,6 +229,39 @@ export class AonCustomer extends AonReg {
 					this.getOptionsLinked(iconArrowDown);
 				}
 			});
+		}
+	}
+
+
+	//EXPEDIENTE
+	buildExpedienteData() {
+		let main = this.getElement(this.DIV);
+		this.clearElement(main);
+
+		let registryId = this.registry.getId();
+		
+		if(registryId){
+			let aonProjectList = new AonProjectList();
+			aonProjectList.style.width = "100%";
+			aonProjectList.registry = this.registry;
+			aonProjectList.filter = { page: 1, perPage: 500, registry:registryId};
+			main.appendChild(aonProjectList);
+		}
+	}
+
+	//ITEMS PRODUCTS
+	buildItemData() {
+		let main = this.getElement(this.DIV);
+		this.clearElement(main);
+
+		let registryId = this.registry.getId();
+		
+		if(registryId){
+			let aonItemList = new AonItemList();
+			aonItemList.style.width = "100%";
+			aonItemList.registry = this.registry;
+			aonItemList.filter = { page: 1, perPage: 200, registry:registryId};
+			main.appendChild(aonItemList);
 		}
 	}
 
