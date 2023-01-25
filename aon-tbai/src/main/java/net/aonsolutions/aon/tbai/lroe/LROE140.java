@@ -1,13 +1,9 @@
 package net.aonsolutions.aon.tbai.lroe;
 
-import java.util.Date;
-
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Person;
-import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.Cabecera140Type;
@@ -23,15 +19,14 @@ public class LROE140 extends LROE {
 	private final static String TEST_SURNAME1_140 = "Vux9anjAES"; 
 	private final static String TEST_SURNAME2_140 = "EMPTmw3fmi";
 	
-	protected Cabecera140Type buildCabecera(Person person, LROEInfo info, Invoice invoice) {
+	protected Cabecera140Type buildCabecera(Person person, LROEInfo info) {
 		Cabecera140Type cabecera = new Cabecera140Type();
 		cabecera.setModelo(info.getModelo());
 		NIFPersonaType nif = new NIFPersonaType();
 		nif.setNIF(person.getDocument());
 		nif.setApellidosNombreRazonSocial(person.getName());
 		cabecera.setObligadoTributario(nif);
-		Date ejercicioDate = invoice.ensureFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate(); 
-		cabecera.setEjercicio(AonDateUtils.getYear(ejercicioDate));
+		cabecera.setEjercicio(info.getEjercicio());
 		cabecera.setCapitulo(info.getCapitulo());
 		cabecera.setSubcapitulo(info.getSubcapitulo());
 		cabecera.setOperacion(info.getOperacion());
@@ -39,7 +34,7 @@ public class LROE140 extends LROE {
 		return cabecera;
 	}
 	
-	protected JSONObject buildJSON(Person person, LROEInfo info, Invoice invoice) {
+	protected JSONObject buildJSON(Person person, LROEInfo info) {
 		JSONObject json = new JSONObject();
 		json.put(IJsonNames.CON, "LROE");
 		json.put(IJsonNames.APA, info.getSubcapitulo());
@@ -52,8 +47,8 @@ public class LROE140 extends LROE {
 
 		JSONObject drs = new JSONObject();
 		drs.put(IJsonNames.MODE, info.getModelo());
-		Date ejercicioDate = invoice.ensureFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate(); 
-		drs.put(IJsonNames.EJER, AonDateUtils.getYear(ejercicioDate));
+				
+		drs.put(IJsonNames.EJER, info.getEjercicio());
 		json.put(IJsonNames.DRS, drs);
 		return json;
 	}

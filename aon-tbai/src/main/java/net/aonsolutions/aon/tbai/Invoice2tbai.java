@@ -290,30 +290,31 @@ public class Invoice2tbai {
 		
 		DetallesFacturaType detalles = new DetallesFacturaType();
 		invoice.getDetails().stream().filter(f -> !f.isPrepayment()).forEach(detail -> {
-			IDDetalleFacturaType detalle = new IDDetalleFacturaType();
-			detalle.setCantidad(Double.toString(detail.getQuantity()));
-			String description = detail.getDescription().replace("\n", " ");
-			if(description.length() > 249) {
-				description = description.substring(0, 249);
-			}			
-			detalle.setDescripcionDetalle(description);
-			detalle.setImporteUnitario(Double.toString(AonMathUtils.round(detail.getPrice(), 4)));
+			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().orElse(null);
+			if(tax != null) {
+				IDDetalleFacturaType detalle = new IDDetalleFacturaType();
+				detalle.setCantidad(Double.toString(detail.getQuantity()));
+				String description = detail.getDescription().replace("\n", " ");
+				if(description.length() > 249) {
+					description = description.substring(0, 249);
+				}			
+				detalle.setDescripcionDetalle(description);
+				detalle.setImporteUnitario(Double.toString(AonMathUtils.round(detail.getPrice(), 4)));
 
-			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().get();
+				double descuento = 0.0;
+				if(!AonStringUtils.isBlank(detail.getDiscountExpression())) {
+					descuento = AonMathUtils.round((detail.getQuantity() * detail.getPrice()) - tax.getBase());
+				}
+				detalle.setDescuento(Double.toString(descuento));
 			
-			double descuento = 0.0;
-			if(!AonStringUtils.isBlank(detail.getDiscountExpression())) {
-				descuento = AonMathUtils.round((detail.getQuantity() * detail.getPrice()) - tax.getBase());
+				if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
+					tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
+				}
+				double total =  AonMathUtils.round(tax.getBase() + tax.getQuota() + tax.getSurchargeQuota());
+				detalle.setImporteTotal(Double.toString(total));
+				if(total != 0.0)
+					detalles.getIDDetalleFactura().add(detalle);
 			}
-			detalle.setDescuento(Double.toString(descuento));
-			
-			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
-				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
-			}
-			double total =  AonMathUtils.round(tax.getBase() + tax.getQuota() + tax.getSurchargeQuota());
-			detalle.setImporteTotal(Double.toString(total));
-			if(total != 0.0)
-				detalles.getIDDetalleFactura().add(detalle);
 		});
 		
 		Double totalAmount = detalles.getIDDetalleFactura().stream().mapToDouble(r -> Double.parseDouble(r.getImporteTotal())).sum();

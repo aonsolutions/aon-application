@@ -200,7 +200,9 @@ public class FacturasRecibidas extends SIIBuilt {
 			otro.setCodigoPais(CountryType2.valueOf(vat.getRegistryDocumentCountry().getIso2()));
 			String document = vat.getRegistryDocument();
 			if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
-				document = vat.getRegistryDocumentCountry().getIso2() + document;
+				boolean isGrecia = Country.GR.equals(vat.getRegistryDocumentCountry());
+				String countryDocument = isGrecia ? "EL" : vat.getRegistryDocumentCountry().getIso2();
+				document = countryDocument + document;
 			}
 			otro.setID(document);		
 			otro.setIDType(IDType.NIF_IVA.getName());
@@ -645,7 +647,9 @@ public class FacturasRecibidas extends SIIBuilt {
 
 			String document = vat.getRegistryDocument();
 			if(!document.substring(0,2).equalsIgnoreCase(vat.getRegistryDocumentCountry().getIso2())) {
-				document = vat.getRegistryDocumentCountry().getIso2() + document;
+				boolean isGrecia = Country.GR.equals(vat.getRegistryDocumentCountry());
+				String countryDocument = isGrecia ? "EL" : vat.getRegistryDocumentCountry().getIso2();
+				document = countryDocument + document;
 			}
 			otro.setID(document);		
 			

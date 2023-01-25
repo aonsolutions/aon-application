@@ -154,7 +154,9 @@ public class OperacionesIntracomunitarias extends SIIBuilt {
 						
 					String document = vat.getRegistryDocument();
 					if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
-						document = vat.getRegistryDocumentCountry().getIso2() + document;
+						boolean isGrecia = Country.GR.equals(vat.getRegistryDocumentCountry());
+						String countryDocument = isGrecia ? "EL" : vat.getRegistryDocumentCountry().getIso2();
+						document = countryDocument + document;
 					}
 					otro.setID(document);				
 						
@@ -215,7 +217,9 @@ public class OperacionesIntracomunitarias extends SIIBuilt {
 					
 					String document = vat.getRegistryDocument();
 					if(!document.substring(0,2).equals(vat.getRegistryDocumentCountry().getIso2())) {
-						document = vat.getRegistryDocumentCountry().getIso2() + document;
+						boolean isGrecia = Country.GR.equals(vat.getRegistryDocumentCountry());
+						String countryDocument = isGrecia ? "EL" : vat.getRegistryDocumentCountry().getIso2();
+						document = countryDocument + document;
 					}
 					otro.setID(document);
 					otro.setIDType(IDType.NIF_IVA.getName()); //valueOf(vat.getRegistryDocumentType()).getName());
@@ -296,7 +300,9 @@ public class OperacionesIntracomunitarias extends SIIBuilt {
 
 				String document = vat.getRegistryDocument();
 				if(!document.substring(0,2).equalsIgnoreCase(vat.getRegistryDocumentCountry().getIso2())) {
-					document = vat.getRegistryDocumentCountry().getIso2() + document;
+					boolean isGrecia = Country.GR.equals(vat.getRegistryDocumentCountry());
+					String countryDocument = isGrecia ? "EL" : vat.getRegistryDocumentCountry().getIso2();
+					document = countryDocument + document;
 				}
 				otro.setID(document);		
 				

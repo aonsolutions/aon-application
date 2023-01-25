@@ -34,7 +34,7 @@ public class LROE140_3_1 extends LROE140 {
 	
 	private LROEPF140BienesAltaAltaModifPeticion build(Person person, Invoice invoice, LROEInfo info) {
 		LROEPF140BienesAltaAltaModifPeticion lroe =  new LROEPF140BienesAltaAltaModifPeticion();
-		lroe.setCabecera(buildCabecera(person, info, invoice));
+		lroe.setCabecera(buildCabecera(person, info));
 		lroe.setBienesAlta(buildBienes(invoice));
 		return lroe;
 	}
@@ -122,7 +122,7 @@ public class LROE140_3_1 extends LROE140 {
 	
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) throws StatusCodeException {
 		try {
-			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, OperacionEnum.A_00);
+			LROEInfo info = new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, OperacionEnum.A_00, getEjercicio(tbaiConfiguration, invoice));
 			final LROEPF140BienesAltaAltaModifPeticion p140 = build(person, invoice, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140BienesAltaAltaModifPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
@@ -132,7 +132,7 @@ public class LROE140_3_1 extends LROE140 {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( p140, bos );
 			byte[] data = toGzip(bos.toByteArray());
-			return send(tbaiConfiguration, buildJSON(person, info, invoice), data);
+			return send(tbaiConfiguration, buildJSON(person, info), data);
 		} catch (Exception e) {
 			return error(e);
 		}
