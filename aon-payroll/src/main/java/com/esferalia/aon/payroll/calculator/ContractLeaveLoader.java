@@ -9,6 +9,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_ADJUST;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_FACTOR;
@@ -637,13 +638,21 @@ public class ContractLeaveLoader {
 		} catch (Exception e) {
 		}
 		
+		
+		try {
+        		Boolean monthlyAdjust = ctx.getVariable(MONTHLY_ADJUST, p.getStart(), p.getEnd(), Boolean.class );
+        		if (Boolean.FALSE == monthlyAdjust )
+        		    return days;
+        	} catch (Exception e) {
+        	}
+
+		String tc2 = ctx.getVariable(TC2, p.getStart(), p.getEnd(), String.class );
 		// Not adjust for : 
 		// * '300 IND.FIJO.DISCONTINUO' with  'COEF.TIEMPO PARCIAL' 
 		// * '502 - DURACION DETERMINADA, TIEMPO PARCIAL, EVENTUAL POR CIRCUNSTANCIAS'
 		// * '501 - DURACION DETERMINADA, TIEMPO PARCIAL, OBRA O SERVICIO DETERMINADO'
-		
-		String tc2 = ctx.getVariable(TC2, p.getStart(), p.getEnd(), String.class );
-		if ( AonStringUtils.contains("300,502,501", tc2)) {
+		// * '520 - DURACION DETERMINADA, TIEMPO PARCIAL, PRÁCTICAS'
+		if ( AonStringUtils.contains("300,502,501,520", tc2)) {
 		    
         		try {
         			if (!ctx.getVariable(FULL_TIME, p.getStart(), p.getEnd(), Boolean.class))
