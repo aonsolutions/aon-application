@@ -2171,6 +2171,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			    payrollType = PayrollPrintService.PayrollType.AON;
 			}  else if ( AonStringUtils.equalsIgnoreCase(salaryReport, SalaryTemplate.INVOICE_CRA_GROUP.getValue())) {
 				payrollType = PayrollPrintService.PayrollType.AON;
+			} else if (AonStringUtils.equalsIgnoreCase(salaryReport, SalaryTemplate.AON_SOLUTIONS_MACLEOD.getValue())) {
+				payrollType = PayrollPrintService.PayrollType.AON;				
 			} else {
 				payrollType = PayrollPrintService.PayrollType.CLASSIC;
 			}
