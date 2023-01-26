@@ -39,6 +39,20 @@ sudo snap install --classic eclipse
 
 ![m2e Marketplace](https://user-images.githubusercontent.com/9419112/214890102-98f05530-1aa0-4f27-948d-ca1e3ca27c57.png) 
 
-Accept the terms of the license, trust all content and Finish
+Accept the terms of the license, Trust all content, Finish and Restart Eclipse.
 
 ![m2e-egit](https://user-images.githubusercontent.com/9419112/214890147-03874c78-6f72-4ac2-b96b-6abaca7d58f1.png)
+
+- #### Finally Import, Check out [aon-application](https://github.com/aonsolutions/aon-application.git) Projects from SCM 
+
+![aon-application io](https://user-images.githubusercontent.com/9419112/214894816-c954b274-6ff3-4b63-a7b6-692966b16c3f.png)
+
+Wait, wait , wait and finally  Show Solutions 
+
+- #### Install Eclipse Enterprise Java and Web Developer Tools 3.28
+
+![JWT](https://user-images.githubusercontent.com/9419112/214896736-40a174a1-89fc-4b17-b3ad-99a1e6bc81fe.png)
+
+Wait Restart Eclipse IDE to Impoting Maven projects Finish 100%
+
+
