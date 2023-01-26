@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -40,7 +42,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.DataGrid;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -422,6 +423,8 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	
 	// ------------------------------------------ Variables
 	
+	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+	
 	private AgreementServiceAsyncDecorator agreementServiceAsync;
 	private AgreementInfo agreement;
 	private List<Payment> paymentList;
@@ -432,6 +435,9 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	
 	private int collapseWidth = 0;
 	private int disclouroseHeight = 0;
+	
+	private boolean showOldPayments = false;
+	private boolean isOpenCollapse = false;
 	
 	// ------------------------------------------ Constructor
 
@@ -449,23 +455,22 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	}
 	
 	public void setScrollDGHeight() {
-//		Window.alert("disclouroseHeight : " + disclouroseHeight +
-//				"\ncollapseWidth : " + collapseWidth);
-		agreementPaymentDG.setHeight(disclouroseHeight + "px");
-		agreementPaymentDG.setWidth(collapseWidth + "px");
-		agreementExtraPaymentDG.setHeight(disclouroseHeight + "px");
-		agreementExtraPaymentDG.setWidth(collapseWidth + "px");
+		if(!isOpenCollapse) {
+			agreementPaymentDG.setHeight(disclouroseHeight + "px");
+			agreementPaymentDG.setWidth(collapseWidth + "px");
+			agreementExtraPaymentDG.setHeight(disclouroseHeight + "px");
+			agreementExtraPaymentDG.setWidth(collapseWidth + "px");
+		} else {
+			agreementPaymentDG.setHeight((paymentDiscPanelContent.getOffsetHeight() - 15) + "px");
+			agreementPaymentDG.setWidth((paymentDiscPanelContent.getOffsetWidth() - 30) + "px");
+			agreementExtraPaymentDG.setHeight((extraDiscPanelContent.getOffsetHeight() - 10) + "px");
+			agreementExtraPaymentDG.setWidth((extraDiscPanelContent.getOffsetWidth() - 30) + "px");
+		}
 	}
 	
-	public void setOpenCollapseScrollDGHeight() {
-//		Window.alert("paymentDiscPanelContent Height : " + paymentDiscPanelContent.getOffsetHeight() +
-//		"\npaymentDiscPanelContent Width : " + paymentDiscPanelContent.getOffsetWidth() +
-//		"\nextraDiscPanelContent Height : " + extraDiscPanelContent.getOffsetHeight() + 
-//		"\nextraDiscPanelContent Width : " + extraDiscPanelContent.getOffsetWidth());
-		agreementPaymentDG.setHeight((paymentDiscPanelContent.getOffsetHeight() - 15) + "px");
-		agreementPaymentDG.setWidth((paymentDiscPanelContent.getOffsetWidth() - 30) + "px");
-		agreementExtraPaymentDG.setHeight((extraDiscPanelContent.getOffsetHeight() - 10) + "px");
-		agreementExtraPaymentDG.setWidth((extraDiscPanelContent.getOffsetWidth() - 30) + "px");
+	public void setIsOpenCollapse(boolean isCollapse) {
+		this.isOpenCollapse = isCollapse;
+		setScrollDGHeight();
 	}
 	
 	// ------------------------------------------ DisclosurePanel
@@ -480,6 +485,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			
 			initAgreementPaymentDG();
 			setScrollDGHeight();
+			
 		});
 		paymentDiscPanel.addCloseHandler(e -> handleIcon(paymentDiscBtn, false));
 		paymentDiscPanelContent.setHeight((Window.getClientHeight() - 375) + "px");
@@ -566,19 +572,30 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		};
 		
 		editColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementExtraPaymentDG.setColumnWidth(editColumn, 5, Unit.PCT);
+		agreementExtraPaymentDG.setColumnWidth(editColumn, 50, Unit.PX);
 		
-		// Code columns.
-		Column<Payment, String> codeColumn = new Column<Payment, String>(new TextCell()) {
+		// Pay date columns.
+		Column<Payment, String> payDateColumn = new Column<Payment, String>(new TextCell()) {
 			@Override
 	        public String getValue(Payment payment) {
-				return null == payment.getType() ? "" : AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0');
+				AgreementExtra extra = agreement.getExtraPayment(payment.getId());
+				return null == extra ? "" : extra.getIssueDate();
 	        }
 		};
 
-		codeColumn.setSortable(true);
-		codeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementExtraPaymentDG.setColumnWidth(codeColumn, 10, Unit.PCT);
+		payDateColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		agreementExtraPaymentDG.setColumnWidth(payDateColumn, 100, Unit.PX);
+		
+		// Concept column.
+	    Column<Payment, String> conceptColumn = new Column<Payment, String>(new TextCell()) {
+	    	@Override
+	        public String getValue(Payment payment) {
+	    		return payment.getName();
+	        }
+		};
+
+		conceptColumn.setSortable(true);
+	    agreementExtraPaymentDG.setColumnWidth(conceptColumn, 200, Unit.PX);
 
 	    // Description column.
 		Column<Payment, String> descriptionColumn = new Column<Payment, String>(new TextCell()) {
@@ -589,55 +606,6 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		};
 		
 		descriptionColumn.setSortable(true);
-		agreementExtraPaymentDG.setColumnWidth(descriptionColumn, 30, Unit.PCT);
-		
-		// Pay column.
-		TextColumn<Payment> payColumn = new TextColumn<Payment>() {
-			@Override
-			public String getValue(Payment payment) {
-				return getPayType(payment);
-			}
-			
-			@Override
-			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
-				sb.appendHtmlConstant("<div title=\"" + getPayDescription(payment) + "\">" + getPayType(payment) + "</div>");
-			}
-		};
-		
-		payColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementExtraPaymentDG.setColumnWidth(payColumn, 5, Unit.PCT);
-		
-		// Taxed column.
-		TextColumn<Payment> taxedColumn = new TextColumn<Payment>() {
-			@Override
-			public String getValue(Payment payment) {
-				return getTaxedType(payment.getIrpfExpression());
-			}
-			
-			@Override
-			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
-				sb.appendHtmlConstant("<div title=\"" + getTaxedDescription(payment.getIrpfExpression()) + "\">" + getTaxedType(payment.getIrpfExpression()) + "</div>");
-			}
-		};
-		
-		taxedColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementExtraPaymentDG.setColumnWidth(taxedColumn, 5, Unit.PCT);
-		 
-		// Quote column.
-		TextColumn<Payment> quoteColumn = new TextColumn<Payment>() {
-			@Override
-			public String getValue(Payment payment) {
-				return getQuoteType(payment.getQuoteExpression());
-			}
-			
-			@Override
-			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
-				sb.appendHtmlConstant("<div title=\"" + getQuoteDescription(payment.getQuoteExpression()) + "\">" + getQuoteType(payment.getQuoteExpression()) + "</div>");
-			}
-		};
-		
-		quoteColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementExtraPaymentDG.setColumnWidth(quoteColumn, 5, Unit.PCT);
 	    
 	    // Expression column.
 	    Column<Payment, String> expressionColumn = new Column<Payment, String>(new TextCell()) {
@@ -648,9 +616,33 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		};
 
 	    expressionColumn.setSortable(true);
-	    agreementExtraPaymentDG.setColumnWidth(expressionColumn, 30, Unit.PCT);
 	    
-	    // Visibility column.
+	    // Info column.
+	    ActionCell<Payment> infoActionCell = new ActionCell<>("", payment -> {
+	    	// In the future maybe open a dialog widht info
+	    });
+	    
+	    Column<Payment, Payment> infoColumn = new Column<Payment, Payment>(infoActionCell) {
+
+			@Override
+			public Payment getValue(Payment payment) {
+				return payment;
+			}
+			
+			@Override
+			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+				if(null != payment) {
+					String title = getExtraInfoTitle(payment);
+					if(AonStringUtils.isNotBlank(title))
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-no-margin aon-icon-info\" title=\"" + title + "\"></button>");
+				}
+			}
+		};
+		
+		infoColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		agreementExtraPaymentDG.setColumnWidth(infoColumn, 60, Unit.PX);
+	    
+	     // Visibility column.
 	    ActionCell<Payment> visibilityActionCell = new ActionCell<>("", payment -> {
 	    	showHidePayment(payment);
 	    	payment.setModify(true);
@@ -677,7 +669,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		};
 		
 		visibilityColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementExtraPaymentDG.setColumnWidth(visibilityColumn, 5, Unit.PCT);
+		agreementExtraPaymentDG.setColumnWidth(visibilityColumn, 60, Unit.PX);
 	    
 	    // Delete column.
 	    ActionCell<Payment> deleteActionCell = new ActionCell<>("", payment -> {
@@ -714,7 +706,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		};
 		
 		deleteColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementExtraPaymentDG.setColumnWidth(deleteColumn, 5, Unit.PCT);
+		agreementExtraPaymentDG.setColumnWidth(deleteColumn, 50, Unit.PX);
 		
 		agreementExtraPaymentDG.setRowStyles((payment, rowIdx) -> {
 			if(payment.isModify()) return style.modify();
@@ -723,13 +715,12 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		
 	    // Add the columns.
 		agreementExtraPaymentDG.addColumn(editColumn, "");
-		agreementExtraPaymentDG.addColumn(codeColumn, "CRA");
+		agreementExtraPaymentDG.addColumn(payDateColumn, "F. Cobro");
+		agreementExtraPaymentDG.addColumn(conceptColumn, "Concepto");
 		agreementExtraPaymentDG.addColumn(descriptionColumn, "Descripci\u00F3n");
-		agreementExtraPaymentDG.addColumn(payColumn, "Pago");
-		agreementExtraPaymentDG.addColumn(taxedColumn, "Tributa");
-		agreementExtraPaymentDG.addColumn(quoteColumn, "Cotiza");
 		agreementExtraPaymentDG.addColumn(expressionColumn, "Expresi\u00F3n");
 		
+		agreementExtraPaymentDG.addColumn(infoColumn, "");
 		agreementExtraPaymentDG.addColumn(visibilityColumn, "Estado");  
 		agreementExtraPaymentDG.addColumn(deleteColumn, "");  
 	}
@@ -778,7 +769,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		};
 		
 		editColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementPaymentDG.setColumnWidth(editColumn, 5, Unit.PCT);
+		agreementPaymentDG.setColumnWidth(editColumn, 50, Unit.PX);
 		
 		// Code columns.
 		Column<Payment, String> codeColumn = new Column<Payment, String>(new TextCell()) {
@@ -790,7 +781,18 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 
 		codeColumn.setSortable(true);
 		codeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementPaymentDG.setColumnWidth(codeColumn, 10, Unit.PCT);
+		agreementPaymentDG.setColumnWidth(codeColumn, 80, Unit.PX);
+		
+		// Concept column.
+	    Column<Payment, String> conceptColumn = new Column<Payment, String>(new TextCell()) {
+	    	@Override
+	        public String getValue(Payment payment) {
+	    		return payment.getName();
+	        }
+		};
+
+		conceptColumn.setSortable(true);
+		agreementPaymentDG.setColumnWidth(conceptColumn, 200, Unit.PX);
 
 	    // Description column.
 		Column<Payment, String> descriptionColumn = new Column<Payment, String>(new TextCell()) {
@@ -801,55 +803,6 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		};
 		
 		descriptionColumn.setSortable(true);
-		agreementPaymentDG.setColumnWidth(descriptionColumn, 30, Unit.PCT);
-		
-		// Pay column.
-		TextColumn<Payment> payColumn = new TextColumn<Payment>() {
-			@Override
-			public String getValue(Payment payment) {
-				return getPayType(payment);
-			}
-			
-			@Override
-			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
-				sb.appendHtmlConstant("<div title=\"" + getPayDescription(payment) + "\">" + getPayType(payment) + "</div>");
-			}
-		};
-		
-		payColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementPaymentDG.setColumnWidth(payColumn, 5, Unit.PCT);
-		
-		// Taxed column.
-		TextColumn<Payment> taxedColumn = new TextColumn<Payment>() {
-			@Override
-			public String getValue(Payment payment) {
-				return getTaxedType(payment.getIrpfExpression());
-			}
-			
-			@Override
-			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
-				sb.appendHtmlConstant("<div title=\"" + getTaxedDescription(payment.getIrpfExpression()) + "\">" + getTaxedType(payment.getIrpfExpression()) + "</div>");
-			}
-		};
-		
-		taxedColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementPaymentDG.setColumnWidth(taxedColumn, 5, Unit.PCT);
-		 
-		// Quote column.
-		TextColumn<Payment> quoteColumn = new TextColumn<Payment>() {
-			@Override
-			public String getValue(Payment payment) {
-				return getQuoteType(payment.getQuoteExpression());
-			}
-			
-			@Override
-			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
-				sb.appendHtmlConstant("<div title=\"" + getQuoteDescription(payment.getQuoteExpression()) + "\">" + getQuoteType(payment.getQuoteExpression()) + "</div>");
-			}
-		};
-		
-		quoteColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementPaymentDG.setColumnWidth(quoteColumn, 5, Unit.PCT);
 	    
 	    // Expression column.
 	    Column<Payment, String> expressionColumn = new Column<Payment, String>(new TextCell()) {
@@ -860,7 +813,31 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		};
 
 	    expressionColumn.setSortable(true);
-	    agreementPaymentDG.setColumnWidth(expressionColumn, 30, Unit.PCT);
+		
+		 // Info column.
+	    ActionCell<Payment> infoActionCell = new ActionCell<>("", payment -> {
+	    	// In the future maybe open a dialog widht info
+	    });
+	    
+	    Column<Payment, Payment> infoColumn = new Column<Payment, Payment>(infoActionCell) {
+
+			@Override
+			public Payment getValue(Payment payment) {
+				return payment;
+			}
+			
+			@Override
+			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+				if(null != payment) {
+					String title = getInfoTitle(payment);
+					if(AonStringUtils.isNotBlank(title))
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-no-margin aon-icon-info\" title=\"" + title + "\"></button>");
+				}
+			}
+		};
+		
+		infoColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		agreementPaymentDG.setColumnWidth(infoColumn, 60, Unit.PX);
 	    
 	    // Visibility column.
 	    ActionCell<Payment> visibilityActionCell = new ActionCell<>("", payment -> {
@@ -889,7 +866,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		};
 		
 		visibilityColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementPaymentDG.setColumnWidth(visibilityColumn, 5, Unit.PCT);
+		agreementPaymentDG.setColumnWidth(visibilityColumn, 60, Unit.PX);
 	    
 	    // Delete column.
 	    ActionCell<Payment> deleteActionCell = new ActionCell<>("", payment -> {
@@ -926,7 +903,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		};
 		
 		deleteColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		agreementPaymentDG.setColumnWidth(deleteColumn, 5, Unit.PCT);
+		agreementPaymentDG.setColumnWidth(deleteColumn, 50, Unit.PX);
 		
 		agreementPaymentDG.setRowStyles((payment, rowIdx) -> {
 			if(payment.isModify()) return style.modify();
@@ -936,12 +913,11 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	    // Add the columns.
 		agreementPaymentDG.addColumn(editColumn, "");
 		agreementPaymentDG.addColumn(codeColumn, "CRA");
+		agreementPaymentDG.addColumn(conceptColumn, "Concepto");
 		agreementPaymentDG.addColumn(descriptionColumn, "Descripci\u00F3n");
-		agreementPaymentDG.addColumn(payColumn, "Pago");
-		agreementPaymentDG.addColumn(taxedColumn, "Tributa");
-		agreementPaymentDG.addColumn(quoteColumn, "Cotiza");
 		agreementPaymentDG.addColumn(expressionColumn, "Expresi\u00F3n");
 		
+		agreementPaymentDG.addColumn(infoColumn, ""); 
 		agreementPaymentDG.addColumn(visibilityColumn, "Estado");  
 		agreementPaymentDG.addColumn(deleteColumn, "");  
 	}
@@ -998,6 +974,46 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		
 		editor.setContextProvider(agreement);
 		
+	}
+	
+	private String getInfoTitle(Payment payment) {
+		String title = "";
+		
+		String irpfExpression = payment.getIrpfExpression();
+		if(!AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) {
+			title += "Tributa : " + getTaxedDescription(irpfExpression) + "\n";
+		}
+		
+		String quoteExpression = payment.getQuoteExpression();
+		if(!AonStringUtils.equalsIgnoreCase(quoteExpression, "_P")) {
+			title += "Cotiza : " + getQuoteDescription(quoteExpression) + "\n";
+		}
+		
+		if(payment.getType().equals(Payment.Type.CRA_0005)) {
+			title += "Pago : " + getPayDescription(payment) + "\n";
+		}
+		
+		return title;
+	}
+	
+	private String getExtraInfoTitle(Payment payment) {
+		String title = "";
+		
+		String irpfExpression = payment.getIrpfExpression();
+		if(!AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) {
+			title += "Tributa : " + getTaxedDescription(irpfExpression) + "\n";
+		}
+		
+		String quoteExpression = payment.getQuoteExpression();
+		if(!AonStringUtils.equalsIgnoreCase(quoteExpression, "_P")) {
+			title += "Cotiza : " + getQuoteDescription(quoteExpression) + "\n";
+		}
+		
+		if(payment.getType().equals(Payment.Type.CRA_0004)) {
+			title += "Pago : " + getPayDescription(payment) + "\n";
+		}
+		
+		return title;
 	}
 
 	private String getParsedExpression(String expression) {
@@ -1129,6 +1145,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		return "No definido";
 	}
 	
+	private String parseDate(Date date) {
+		return null == date ? "" : formatDate.format(date);
+	}
+	
 	// ------------------------------------------ setAgreementPayment
 	
 	public void setAgreementPayment(AgreementInfo agreementIn) {
@@ -1163,7 +1183,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	    List<Payment> paymentListAux = paymentDataProvider.getList();
 	    paymentListAux.clear();
 	    
-	    this.paymentExtraList = new ArrayList<>(agreement.getPaymentsExtraAndHides());
+	    this.paymentExtraList = new ArrayList<>(showOldPayments ? agreement.getOldPaymentsExtraAndHides() : agreement.getPaymentsExtraAndHides());
 	    
 	    for (Payment payment : this.paymentExtraList) {
 	    	paymentListAux.add(payment);
@@ -1209,7 +1229,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	    List<Payment> paymentListAux = paymentDataProvider.getList();
 	    paymentListAux.clear();
 	    
-	   this.paymentList = new ArrayList<>(agreement.getPaymentsAndHides());
+	   this.paymentList = new ArrayList<>(showOldPayments ? agreement.getOldPaymentsAndHides() : agreement.getPaymentsAndHides());
 	    
 	    for (Payment payment : this.paymentList) {
 	    	paymentListAux.add(payment);
@@ -1267,8 +1287,27 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		addPaymentButton.ensureDebugId("newPaymentButton");
 		addPaymentButton.addClickHandler(e -> new AddAonPaymentCommand().execute());
 		
+		AonToolbarButton showOlPaymentsButton = new AonToolbarButton("Mostrar devengo antiguos", AON.CSS.aonIconVisibility());
+		showOlPaymentsButton.ensureDebugId("showOlPaymentsButton");
+		showOlPaymentsButton.addClickHandler(e -> {
+			showOldPayments = !showOldPayments;
+			
+			if(showOldPayments) {
+				showOlPaymentsButton.setTitle("Ocultar devengo antiguos");
+				showOlPaymentsButton.removeStyleName(AON.CSS.aonIconVisibility());
+				showOlPaymentsButton.addStyleName(AON.CSS.aonIconVisibilityOff());
+			} else {
+				showOlPaymentsButton.setTitle("Mostrar devengo antiguos");
+				showOlPaymentsButton.removeStyleName(AON.CSS.aonIconVisibilityOff());
+				showOlPaymentsButton.addStyleName(AON.CSS.aonIconVisibility());
+			}
+			
+			setAgreementPayment(agreement);
+		});
+		
 		toolbar.add(saveBtn);
 		toolbar.add(addPaymentButton);
+		toolbar.add(showOlPaymentsButton);
 		
 	}
 	

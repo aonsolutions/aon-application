@@ -189,6 +189,27 @@ public abstract class AgreementPreview extends Composite {
 	@UiField
 	HTMLPanel agreementPaymentMessage;
 	
+	@UiField
+	DisclosurePanel paymentExtraDiscPanel;
+	
+	@UiField(provided = true)
+	AonToolbarButton paymentExtraDiscBtn;
+	
+	@UiField
+	HTMLPanel paymentExtraDiscPanelContent;
+	
+	@UiField
+	HTMLPanel paymentExtraTable;
+	
+	@UiField
+	ScrollPanel paymentExtraScrollPanel;
+	
+	@UiField
+	Grid paymentExtraGrid;
+	
+	@UiField
+	HTMLPanel agreementPaymentExtraMessage;
+	
 	@UiField(provided = true)
 	AonToolbar toolbarSimulator;
 	
@@ -224,6 +245,7 @@ public abstract class AgreementPreview extends Composite {
 	
 	private HandlerRegistration salaryOpenHandler;
 	private HandlerRegistration paymentOpenHandler;
+	private HandlerRegistration paymentExtraOpenHandler;
 	
 	// ------------------------------------------ Constructor
 
@@ -289,8 +311,10 @@ public abstract class AgreementPreview extends Composite {
 		if(agreement.getActivePayments().isEmpty()) showPaymentMessage();
 		else createPaymentTable();
 		
-		setTablesWidth();
+		if(agreement.getActivePaymentsExtra().isEmpty()) showPaymentExtraMessage();
+		else createPaymentExtraTable();
 		
+		setTablesWidth();
 	}
 	
 	// ------------------------------------------ serviAgreementPanel
@@ -743,17 +767,95 @@ public abstract class AgreementPreview extends Composite {
 		}
 	}
 	
-	private String getParsedExpression(String expression) {
-		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
-		return SpecialExpresion.parse(expression).getInput();
-	}
-
 	private void paymentTableWidth() {
 		paymentGrid.setWidth("100%");
 		paymentGrid.getColumnFormatter().setWidth(0, "10%");
 		paymentGrid.getColumnFormatter().setWidth(1, "40%");
 		paymentGrid.getColumnFormatter().setWidth(2, "10%");
 		paymentGrid.getColumnFormatter().setWidth(3, "40%");
+	}
+	
+	// ------------------------------------------ paymentTable
+
+	private void createPaymentExtraTable() {
+		hidePaymentExtraMessage();
+		getPaymentExtraTableHeader();
+		fillPaymentExtraTable();
+		paymentExtraTableWidth();
+	}
+	
+	private void getPaymentExtraTableHeader() {
+		paymentExtraGrid.clear();
+		paymentExtraGrid.resize(0, 4);
+		int row = paymentExtraGrid.insertRow(paymentExtraGrid.getRowCount());
+		
+		Label cra = new Label("CRA");
+		cra.addStyleName(style.gridTitle());
+		cra.addStyleName(style.headerFSize());
+		cra.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		paymentExtraGrid.setWidget(row, 0, cra);
+		paymentExtraGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
+		
+		Label concept = new Label("Concepto");
+		concept.addStyleName(style.gridTitle());
+		concept.addStyleName(style.headerFSize());
+		paymentExtraGrid.setWidget(row, 1, concept);
+		paymentExtraGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
+		
+		Label extraInfo = new Label("");
+		extraInfo.addStyleName(style.gridTitle());
+		extraInfo.addStyleName(style.headerFSize());
+		paymentExtraGrid.setWidget(row, 2, extraInfo);
+		paymentExtraGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
+		
+		Label devengo = new Label("Devengo");
+		devengo.addStyleName(style.gridTitle());
+		devengo.addStyleName(style.headerFSize());
+		paymentExtraGrid.setWidget(row, 3, devengo);
+		paymentExtraGrid.getCellFormatter().addStyleName(row, 3, style.headerFixed());
+		
+		paymentExtraGrid.getRowFormatter().addStyleName(row, style.headerColor());
+	}
+
+	private void fillPaymentExtraTable() {
+		for(Payment payment : agreement.getActivePaymentsExtra()) {
+			int row = paymentExtraGrid.insertRow(paymentExtraGrid.getRowCount());
+			
+			Label craCell = new Label(null == payment.getType() ? "" : AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0'));
+			craCell.setTitle(payment.getType().getDescription());
+			craCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+			
+			Label conceptCell = new Label(payment.getDescription());
+			
+			Label extratCell = new Label(getExtraMessage(payment));
+			extratCell.setTitle(getExtraTitle(payment));
+			
+			Label devengoCell = new Label();
+			devengoCell.setText(getParsedExpression(payment.getExpression()));
+			
+			paymentExtraGrid.setWidget(row, 0, craCell);
+			paymentExtraGrid.setWidget(row, 1, conceptCell);
+			paymentExtraGrid.setWidget(row, 2, extratCell);
+			paymentExtraGrid.setWidget(row, 3, devengoCell);
+			
+			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
+			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
+			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 2, style.oddRow());
+			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 3, style.oddRow());
+		}
+	}
+	
+	private void paymentExtraTableWidth() {
+		paymentExtraGrid.setWidth("100%");
+		paymentExtraGrid.getColumnFormatter().setWidth(0, "10%");
+		paymentExtraGrid.getColumnFormatter().setWidth(1, "40%");
+		paymentExtraGrid.getColumnFormatter().setWidth(2, "10%");
+		paymentExtraGrid.getColumnFormatter().setWidth(3, "40%");
+	}
+
+	private String getParsedExpression(String expression) {
+		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
+		return SpecialExpresion.parse(expression).getInput();
 	}
 
 	private String getExtraMessage(Payment payment) {
@@ -813,10 +915,12 @@ public abstract class AgreementPreview extends Composite {
 			salaryTableButtons.setWidth((Window.getClientWidth() - 450) + "px");
 			salaryScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
 			paymentScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
+			paymentExtraScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
 			
-			levelScrollPanel.setHeight((levelDiscPanelContent.getOffsetHeight() - 20) + "px");
-			salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 40) + "px");
-			paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 20) + "px");
+			levelScrollPanel.setHeight((levelDiscPanelContent.getOffsetHeight() - 50) + "px");
+			salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 70) + "px");
+			paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 50) + "px");
+			paymentExtraScrollPanel.setHeight((paymentExtraDiscPanelContent.getOffsetHeight() - 50) + "px");
 		});
 	}
 	
@@ -825,6 +929,7 @@ public abstract class AgreementPreview extends Composite {
 		salaryTableButtons.setWidth((Window.getClientWidth() - 150) + "px");
 		salaryScrollPanel.setWidth((Window.getClientWidth() - 150) + "px");
 		paymentScrollPanel.setWidth((Window.getClientWidth() - 150) + "px");
+		paymentExtraScrollPanel.setWidth((Window.getClientWidth() - 150) + "px");
 	}
 
 	// ------------------------------------------ deckLayoutPanel
@@ -869,6 +974,18 @@ public abstract class AgreementPreview extends Composite {
 		agreementPaymentMessage.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
+	// ------------------------------------------ payments (extra)
+	
+	private void showPaymentExtraMessage() {
+		agreementPaymentExtraMessage.getElement().getStyle().clearDisplay();
+		paymentExtraTable.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void hidePaymentExtraMessage() {
+		paymentExtraTable.getElement().getStyle().clearDisplay();
+		agreementPaymentExtraMessage.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
 	// ------------------------------------------ DisclosurePanel
 
 	private void initDiscPanels() {
@@ -881,9 +998,12 @@ public abstract class AgreementPreview extends Composite {
 			
 			paymentDiscPanel.setOpen(false);
 			handleIcon(paymentDiscBtn, false);
+			
+			paymentExtraDiscPanel.setOpen(false);
+			handleIcon(paymentExtraDiscBtn, false);
 		});
 		levelDiscPanel.addCloseHandler(e -> handleIcon(levelDiscBtn, false));
-		levelDiscPanelContent.setHeight((Window.getClientHeight() - 425) + "px");
+		levelDiscPanelContent.setHeight((Window.getClientHeight() - 450) + "px");
 		
 		salaryDiscPanel.setAnimationEnabled(true);
 		salaryOpenHandler = salaryDiscPanel.addOpenHandler(e -> {
@@ -894,10 +1014,13 @@ public abstract class AgreementPreview extends Composite {
 			
 			paymentDiscPanel.setOpen(false);
 			handleIcon(paymentDiscBtn, false);
+			
+			paymentExtraDiscPanel.setOpen(false);
+			handleIcon(paymentExtraDiscBtn, false);
 		});
 		salaryDiscPanel.addCloseHandler(e -> handleIcon(salaryDiscBtn, false));
 		salaryDiscPanel.setOpen(true);
-		salaryDiscPanelContent.setHeight((Window.getClientHeight() - 425) + "px");
+		salaryDiscPanelContent.setHeight((Window.getClientHeight() - 450) + "px");
 		
 		paymentDiscPanel.setAnimationEnabled(true);
 		paymentOpenHandler = paymentDiscPanel.addOpenHandler(e -> {
@@ -908,19 +1031,40 @@ public abstract class AgreementPreview extends Composite {
 			
 			salaryDiscPanel.setOpen(false);
 			handleIcon(salaryDiscBtn, false);
+			
+			paymentExtraDiscPanel.setOpen(false);
+			handleIcon(paymentExtraDiscBtn, false);
 		});
 		paymentDiscPanel.addCloseHandler(e -> handleIcon(paymentDiscBtn, false));
-		paymentDiscPanelContent.setHeight((Window.getClientHeight() - 425) + "px");
+		paymentDiscPanelContent.setHeight((Window.getClientHeight() - 450) + "px");
+		
+		paymentExtraDiscPanel.setAnimationEnabled(true);
+		paymentExtraOpenHandler = paymentExtraDiscPanel.addOpenHandler(e -> {
+			handleIcon(paymentExtraDiscBtn, true);
+			
+			levelDiscPanel.setOpen(false);
+			handleIcon(levelDiscBtn, false);
+			
+			salaryDiscPanel.setOpen(false);
+			handleIcon(salaryDiscBtn, false);
+			
+			paymentDiscPanel.setOpen(false);
+			handleIcon(paymentDiscBtn, false);
+		});
+		paymentExtraDiscPanel.addCloseHandler(e -> handleIcon(paymentExtraDiscBtn, false));
+		paymentExtraDiscPanelContent.setHeight((Window.getClientHeight() - 450) + "px");
 	}
 
 	private void createDiscPanelButtons() {
 		levelDiscBtn = new AonToolbarButton("Desplegar Nivel / Categoria", AON.CSS.aonIconRight());
 		salaryDiscBtn = new AonToolbarButton("Desplegar Tabla Salarial", AON.CSS.aonIconRight());
 		paymentDiscBtn = new AonToolbarButton("Desplegar Devengos", AON.CSS.aonIconRight());
+		paymentExtraDiscBtn = new AonToolbarButton("Desplegar Devengos", AON.CSS.aonIconRight());
 		
 		levelDiscBtn.addClickHandler(e -> handleIcon(levelDiscBtn, levelDiscPanel.isOpen()));
 		salaryDiscBtn.addClickHandler(e -> handleIcon(salaryDiscBtn, salaryDiscPanel.isOpen()));
 		paymentDiscBtn.addClickHandler(e -> handleIcon(paymentDiscBtn, paymentDiscPanel.isOpen()));
+		paymentExtraDiscBtn.addClickHandler(e -> handleIcon(paymentDiscBtn, paymentDiscPanel.isOpen()));
 	}
 
 	private void handleIcon(AonToolbarButton button, boolean open) {
@@ -1252,19 +1396,32 @@ public abstract class AgreementPreview extends Composite {
 		int salaryHeight = (salaryGrid.getRowCount() * 20) + 50;
 		
 		salaryDiscPanelContent.setHeight(salaryHeight + "px");
-		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 45) + "px");
+		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 75) + "px");
 		
 		int paymentHeight = (paymentGrid.getRowCount() * 20) + 50;
-		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 340 - salaryHeight) ? paymentHeight : (Window.getClientHeight() - 340 - salaryHeight);
+		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 370 - salaryHeight) ? paymentHeight : (Window.getClientHeight() - 370 - salaryHeight);
 		
-		paymentDiscPanelContent.setHeight(paymentHeight + "px");
-		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 90) + "px");
+		paymentDiscPanelContent.setHeight((paymentHeight - 40) + "px");
+		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 120) + "px");
 		
 		salaryOpenHandler.removeHandler();
 		salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
 		
 		paymentOpenHandler.removeHandler();
-		paymentDiscPanel.addOpenHandler(e -> handleIcon(paymentDiscBtn, true));
+		paymentDiscPanel.addOpenHandler(e -> {
+			handleIcon(paymentDiscBtn, true);
+			
+			paymentExtraDiscPanel.setOpen(false);
+			handleIcon(paymentExtraDiscBtn, false);
+		});
+		
+		paymentExtraOpenHandler.removeHandler();
+		paymentExtraDiscPanel.addOpenHandler(e -> {
+			handleIcon(paymentExtraDiscBtn, true);
+			
+			paymentDiscPanel.setOpen(false);
+			handleIcon(paymentDiscBtn, false);
+		});
 		
 		salaryDiscPanel.setOpen(true);
 		paymentDiscPanel.setOpen(true);
@@ -1274,21 +1431,34 @@ public abstract class AgreementPreview extends Composite {
 		int salaryHeight = (salaryGrid.getRowCount() * 20) + 50;
 		salaryHeight = (Window.getClientHeight() - 340) > salaryHeight ? salaryHeight : (Window.getClientHeight() - 340);
 		
-		salaryDiscPanelContent.setHeight(salaryHeight + "px");
-		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 45) + "px");
+		salaryDiscPanelContent.setHeight((salaryHeight - 30) + "px");
+		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 75) + "px");
 		
 		int paymentHeight = (paymentGrid.getRowCount() * 20) + 50;
-		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 340) ? paymentHeight : (Window.getClientHeight() - 340);
+		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 370) ? paymentHeight : (Window.getClientHeight() - 370);
 		
-		paymentDiscPanelContent.setHeight(paymentHeight + "px");
-		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 25) + "px");
+		paymentDiscPanelContent.setHeight((paymentHeight - 30) + "px");
+		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 15) + "px");
 		
-		if(paymentHeight + salaryHeight < (Window.getClientHeight() - 340)) {
+		if(paymentHeight + salaryHeight < (Window.getClientHeight() - 360)) {
 			salaryOpenHandler.removeHandler();
 			salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
 			
 			paymentOpenHandler.removeHandler();
-			paymentDiscPanel.addOpenHandler(e -> handleIcon(paymentDiscBtn, true));
+			paymentDiscPanel.addOpenHandler(e -> {
+				handleIcon(paymentDiscBtn, true);
+				
+				paymentExtraDiscPanel.setOpen(false);
+				handleIcon(paymentExtraDiscBtn, false);
+			});
+			
+			paymentExtraOpenHandler.removeHandler();
+			paymentExtraDiscPanel.addOpenHandler(e -> {
+				handleIcon(paymentExtraDiscBtn, true);
+				
+				paymentDiscPanel.setOpen(false);
+				handleIcon(paymentDiscBtn, false);
+			});
 			
 			salaryDiscPanel.setOpen(true);
 			paymentDiscPanel.setOpen(true);

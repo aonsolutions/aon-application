@@ -595,15 +595,31 @@ public class AgreementInfo implements IContextProvider, Serializable, HasId<Inte
 	}
 	
 	public Set<Payment> getActivePayments() {
-		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && !isHideExpression(payment)).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
+		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && !isHideExpression(payment) && !payment.getType().equals(Type.CRA_0004)).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
+	}
+	
+	public Set<Payment> getActivePaymentsExtra() {
+		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && !isHideExpression(payment) && payment.getType().equals(Type.CRA_0004)).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
 	}
 	
 	public Set<Payment> getPaymentsExtraAndHides() {
-		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && payment.getType() != null && (payment.getType().equals(Type.CRA_0004) || payment.getType().equals(Type.CRA_0005))).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
+		Date date = new Date();
+		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && payment.getType() != null && payment.getType().equals(Type.CRA_0004) && (payment.getEndDate() == null || payment.getEndDate().after(date))).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
+	}
+	
+	public Set<Payment> getOldPaymentsExtraAndHides() {
+		Date date = new Date();
+		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && payment.getType() != null && payment.getType().equals(Type.CRA_0004) && (payment.getEndDate() == null || payment.getEndDate().before(date))).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
 	}
 	
 	public Set<Payment> getPaymentsAndHides() {
-		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && payment.getType() != null && !payment.getType().equals(Type.CRA_0004) && !payment.getType().equals(Type.CRA_0005)).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
+		Date date = new Date();
+		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && payment.getType() != null && !payment.getType().equals(Type.CRA_0004) && (payment.getEndDate() == null || payment.getEndDate().after(date))).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
+	}
+	
+	public Set<Payment> getOldPaymentsAndHides() {
+		Date date = new Date();
+		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && payment.getType() != null && !payment.getType().equals(Type.CRA_0004) && (payment.getEndDate() == null || payment.getEndDate().before(date))).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
 	}
 	
 	public Set<Payment> getDeleteAndHidesPayments() {

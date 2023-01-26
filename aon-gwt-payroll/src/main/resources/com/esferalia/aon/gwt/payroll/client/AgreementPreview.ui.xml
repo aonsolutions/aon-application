@@ -320,6 +320,25 @@
 								</g:HTMLPanel>
 						   </g:HTMLPanel>
 					   </g:DisclosurePanel>
+					   
+					   <g:DisclosurePanel ui:field="paymentExtraDiscPanel">
+						  <g:customHeader>
+						   	 <g:HTMLPanel styleName="{style.flexTitle}">
+						   	  	<aon:AonToolbarButton ui:field="paymentExtraDiscBtn" />
+						   	  	<g:Label styleName="{style.disclouruseTitle}">Extras</g:Label>
+						   	 </g:HTMLPanel>
+						   </g:customHeader>
+						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="paymentExtraDiscPanelContent">
+						   		<g:HTMLPanel ui:field="paymentExtraTable" styleName="{style.flexCenter} {style.heigthAll}">
+									<g:ScrollPanel ui:field="paymentExtraScrollPanel" styleName="{style.hideScroll}">
+										<g:Grid ui:field="paymentExtraGrid" styleName="{style.borderCollapse}" />
+									</g:ScrollPanel>
+								</g:HTMLPanel>
+								<g:HTMLPanel ui:field="agreementPaymentExtraMessage" styleName="{style.flexCenter}">
+									<g:Label text="NO EXISTEN EXTRAS, DIRIGASE A LA PESTAÑA 'DEVENGOS' PARA CREAR UNO NUEVO" styleName="{style.message}" />
+								</g:HTMLPanel>
+						   </g:HTMLPanel>
+					   </g:DisclosurePanel>
 					
 				</g:HTMLPanel>
 			</g:HTMLPanel>
