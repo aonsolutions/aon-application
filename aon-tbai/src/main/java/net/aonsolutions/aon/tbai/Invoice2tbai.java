@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -317,15 +318,28 @@ public class Invoice2tbai {
 			}
 		});
 		
-		Double totalAmount = detalles.getIDDetalleFactura().stream().mapToDouble(r -> Double.parseDouble(r.getImporteTotal())).sum();
-		
+		Double totalAmount = AonMathUtils.round(detalles.getIDDetalleFactura().stream().mapToDouble(r -> Double.parseDouble(r.getImporteTotal())).sum());
+		Double total = invoice.getTotal();
 		datos.setDetallesFactura(detalles);
 		if(invoice.isWithholding()) {
 			double ret = invoice.getBreakdown().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType()))
-				.mapToDouble(r -> r.getQuota()).sum();
+				.mapToDouble(InvoiceBreakdown::getQuota).sum();
 			datos.setRetencionSoportada(Double.toString(AonMathUtils.round(ret)));
+			total = AonMathUtils.round(total + ret);
 		} 
-		datos.setImporteTotalFactura(Double.toString(AonMathUtils.round(totalAmount)));
+		
+		if(!total.equals(totalAmount)) {
+			Double amount = AonMathUtils.round(total - totalAmount);
+			IDDetalleFacturaType detalle = new IDDetalleFacturaType();
+			detalle.setCantidad("1.0");
+			detalle.setDescripcionDetalle("AJUSTE TICKET BAI");
+			detalle.setDescuento("0.0");
+			detalle.setImporteUnitario(amount.toString());
+			detalle.setImporteTotal(amount.toString());
+			detalles.getIDDetalleFactura().add(detalle);
+		}
+		
+		datos.setImporteTotalFactura(Double.toString(total));
 
 //		datos.setRetencionSoportada("");
 //		datos.setBaseImponibleACoste("");

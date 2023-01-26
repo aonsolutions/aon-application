@@ -256,9 +256,8 @@ public abstract class AgreementPreview extends Composite {
 	
 	private void fillAgreementInfo() {
 		
-		if(agreement.getDates().isEmpty())
-			printPreviewButton.setVisible(false);
-		
+		printPreviewButton.setVisible(!agreement.getDates().isEmpty());
+			
 		description.setText(agreement.getDescription());
 		description.setReadOnly(0 == agreement.getDomain().intValue());
 		description.removeStyleName(style.modify());

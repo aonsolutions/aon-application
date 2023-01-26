@@ -753,29 +753,60 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	}
 
 	private AgreementExtra findSummerExtra() {
-		Optional<AgreementExtra> extraOpt = allExtras.stream().filter(extraIt -> AonStringUtils.containsIgnoreCase(extraIt.getIssueDate(), "6") || AonStringUtils.containsIgnoreCase(extraIt.getIssueDate(), "7")).findFirst();
-		return extraOpt.isPresent() ? extraOpt.get() : null;
+		String expression = payment.getExpression();
+		if(expression.contains(" ")) {
+			String[] expressions = expression.split(" ");
+			expression = "";
+			for(int i=0; i<expressions.length; i++)
+				if(i!=0) expression+= expressions[i] + " ";
+		}
+		
+		for(AgreementExtra extraIt : allExtras)
+			if((AonStringUtils.containsIgnoreCase(extraIt.getIssueDate(), "6") || AonStringUtils.containsIgnoreCase(extraIt.getIssueDate(), "7")) && isSameExpression(extraIt, expression))
+				return extraIt;
+		
+		return null;
 	}
 
 	private AgreementExtra findWinterExtra() {
-		Optional<AgreementExtra> extraOpt = allExtras.stream().filter(extraIt -> AonStringUtils.containsIgnoreCase(extraIt.getIssueDate(), "12")).findFirst();
-		return extraOpt.isPresent() ? extraOpt.get() : null;
+		String expression = payment.getExpression();
+		if(expression.contains(" ")) {
+			String[] expressions = expression.split(" ");
+			expression = "";
+			for(int i=0; i<expressions.length; i++)
+				if(i!=0) expression+= expressions[i] + " ";
+		}
+		
+		for(AgreementExtra extraIt : allExtras)
+			if(AonStringUtils.containsIgnoreCase(extraIt.getIssueDate(), "12") && isSameExpression(extraIt, expression))
+				return extraIt;
+		
+		return null;
+	}
+
+	private boolean isSameExpression(AgreementExtra extraIt, String expression) {
+		Optional<Payment> paymentIt = allPayments.stream().filter(payment -> payment.getId().equals(extraIt.getAgreementPayment())).findFirst();
+		return paymentIt.isPresent() && AonStringUtils.containsIgnoreCase(paymentIt.get().getExpression(), expression.trim()) ? true : false;
 	}
 
 	private String getExtraType(AgreementExtra extra) {
 		if(null == extra || AonStringUtils.isBlank(extra.getIssueDate()) || extra.isDeleted()) return "Prorrateada";
 		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "Anual";
 		
-		int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
-		int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
-		
-		switch (endMonth - startMonth) {
-			case 11:
-				return "Anual";
-			case 5:
-				return "Semestral";
-			default:
-				return "Prorrateada";
+		try {
+			int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
+			int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+			
+			switch (endMonth - startMonth) {
+				case 11:
+					return "Anual";
+				case 5:
+					return "Semestral";
+				default:
+					return "Prorrateada";
+			}
+		} catch (Exception e) {
+			return "Prorrateada";
 		}
 	}
 

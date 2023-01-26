@@ -21,6 +21,7 @@ import com.esferalia.aon.gwt.common.shared.HasDomain;
 import com.esferalia.aon.gwt.common.shared.HasId;
 import com.esferalia.aon.gwt.payroll.client.DomainEnterprisesServiceAsync;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
+import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -597,8 +598,12 @@ public class AgreementInfo implements IContextProvider, Serializable, HasId<Inte
 		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && !isHideExpression(payment)).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
 	}
 	
+	public Set<Payment> getPaymentsExtraAndHides() {
+		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && payment.getType() != null && (payment.getType().equals(Type.CRA_0004) || payment.getType().equals(Type.CRA_0005))).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
+	}
+	
 	public Set<Payment> getPaymentsAndHides() {
-		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted()).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
+		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && payment.getType() != null && !payment.getType().equals(Type.CRA_0004) && !payment.getType().equals(Type.CRA_0005)).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
 	}
 	
 	public Set<Payment> getDeleteAndHidesPayments() {
