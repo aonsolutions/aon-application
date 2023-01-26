@@ -16,9 +16,11 @@ import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 
+import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Filter.Mod145Filter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
@@ -340,14 +342,12 @@ public class Mod145DAO {
 	}
 	
 	private static void setIrpfPercent(AONContext ctx, Integer contract, Integer domain, java.util.Date startDate, java.util.Date endDate, Double irpfPercent) {
-		ctx.getDslContext()
-			.delete(CONTRACT_DATA)
+		Result<ContractDataRecord> updateIrpfPercent = ctx.getDslContext().selectFrom(CONTRACT_DATA)
 			.where(CONTRACT_DATA.CONTRACT.eq(contract))
 			.and(CONTRACT_DATA.NAME.eq("PORCENTAJE_IRPF"))
-			.and(CONTRACT_DATA.START_DATE.eq(parseToSqlDate(startDate)))
-			.execute();
+			.and(CONTRACT_DATA.START_DATE.eq(parseToSqlDate(startDate))).fetch();
 		
-		if(null != irpfPercent)
+		if(updateIrpfPercent.isEmpty()) {
 			ctx.getDslContext().insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domain)
 				.set(CONTRACT_DATA.CONTRACT, contract)
@@ -356,9 +356,17 @@ public class Mod145DAO {
 				.set(CONTRACT_DATA.START_DATE, parseToSqlDate(startDate))
 				.set(CONTRACT_DATA.END_DATE, parseToSqlDate(endDate))
 				.execute();
+		} else {
+			ctx.getDslContext().update(CONTRACT_DATA)
+				.set(CONTRACT_DATA.EXPRESSION, irpfPercent.toString())
+				.set(CONTRACT_DATA.START_DATE, parseToSqlDate(startDate))
+				.set(CONTRACT_DATA.END_DATE, parseToSqlDate(endDate))
+				.where(CONTRACT_DATA.ID.eq(updateIrpfPercent.get(0).getId()))
+				.execute();
+		}	
 		
 	}
-	
+
 	private static void saveAscendants(AONContext ctx, Mod145 mod145) {
 		if(mod145.getAscendants().isEmpty()) return;
 		

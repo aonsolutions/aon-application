@@ -79,7 +79,7 @@ public class Mod145PDF {
 		
 		context.put("NIF", mod145.getNif());
 		context.put("NOMBRE", mod145.getFullName());
-		context.put("A\u00d1O NACIMIENTO", yearFormat.format(mod145.getBirthDate()));
+		context.put("A\u00d1O NACIMIENTO", null == mod145.getBirthDate() ? "" : yearFormat.format(mod145.getBirthDate()));
 		context.put("FECHA_TRASLADO", null != mod145.getMovingDate() ? dateFormat.format(mod145.getMovingDate()) : "");
 		
 		Byte familiarSituation = mod145.getFamilySituation();
