@@ -96,6 +96,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	
 	private final AonToolbar decToolbar = new AonToolbar();
 	private final InlineLabel dirtyLabel = new InlineLabel();
+	private final InlineLabel alcatrazUnboundLabel = new InlineLabel();
 	private final InlineLabel adjLabel = new InlineLabel();
 	private final InlineLabel replacedLabel = new InlineLabel();
 	private final Label statusLabel = new Label();
@@ -256,6 +257,12 @@ public abstract class Model111Base extends DockLayoutPanel {
 		dirtyLabel.getElement().getStyle().setHeight(10, Unit.PX);
 		marksPanels.add(dirtyLabel);
 		
+		alcatrazUnboundLabel.setStyleName(AON.CSS.aonMarginLeft());
+		alcatrazUnboundLabel.addStyleName(AON.CSS.aonLabelWithIcon());
+		alcatrazUnboundLabel.addStyleName(AON.CSS.aonIconWarning());
+		alcatrazUnboundLabel.setTitle("Modelo sin facturas/n\u00F3minas vinculadas");
+		marksPanels.add(alcatrazUnboundLabel);
+
 		adjLabel.setStyleName(AON.CSS.aonMarginLeft());
 		adjLabel.addStyleName(AON.CSS.aonIconLabel());
 		adjLabel.addStyleName(AON.CSS.aonIconRedWrench());
@@ -298,6 +305,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 
 	private void styleDirtyLabel() {
 		dirtyLabel.setVisible(isDirty());
+		alcatrazUnboundLabel.setVisible(!getModel().isAlcatrazBound());
 		boolean adjusted = false;
 		for (FiscalModelDetail det : this.getModel().getMap().values()) {
 			if (AonMathUtils.isNotZero( det.getAdjustAmount())) {

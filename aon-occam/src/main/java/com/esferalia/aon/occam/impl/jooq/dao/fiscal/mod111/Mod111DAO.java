@@ -29,6 +29,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111Declaration.ComplementaryBeahaviour;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -46,7 +47,11 @@ public class Mod111DAO extends FiscalModelDAO {
 	
 	public static Mod111 get(AONContext ctx,int id) {
 		ctx.checkRead();
-		return FiscalModelDAO.get(ctx,Mod111::new,id);
+		Mod111 mod111 = FiscalModelDAO.get(ctx,Mod111::new,id);
+		if (mod111 != null) {
+			mod111.setAlcatrazBound( AlcatrazDAO.hasAlcatrazBound(ctx, mod111.getId()));
+		}
+		return mod111;
 	}
 	
 	public static Stream<Mod111> getSamePeriodFiscalModels(AONContext ctx,Mod111 fm) {
@@ -117,6 +122,7 @@ public class Mod111DAO extends FiscalModelDAO {
 		AlcatrazDAO.deleteFiscalModel(ctx, mod111);
 		AlcatrazDAO.saveModelInvoices(ctx, mod111, invoices);
 		AlcatrazDAO.saveModelSalaries(ctx, mod111, salaries);
+		mod111.setAlcatrazBound( AonCollectionUtils.isNotEmpty(invoices) || AonCollectionUtils.isNotEmpty(salaries) );
 		return mod111;
 	}
 	

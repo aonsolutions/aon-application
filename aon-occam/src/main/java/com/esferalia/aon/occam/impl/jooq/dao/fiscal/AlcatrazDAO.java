@@ -129,7 +129,7 @@ public class AlcatrazDAO {
 		;
 	}
 	
-	public static boolean hasInvoicesBound(AONContext ctx, Integer fiscalModelId) {
+	public static boolean hasAlcatrazBound(AONContext ctx, Integer fiscalModelId) {
 		return ctx.getDslContext()
 			.select()
 			.from(ALCATRAZ)
@@ -140,4 +140,5 @@ public class AlcatrazDAO {
 			.findAny()
 			.isPresent();
 	}
+	
 }
