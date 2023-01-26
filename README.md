@@ -12,7 +12,7 @@ sudo apt-get install openjdk-17-jdk
 ``` bash
 sudo apt-get install maven
 ```
-- #### Install [Docker] (https://www.docker.com/)
+- #### Install [Docker](https://www.docker.com/)
 ``` bash
 sudo apt-get install maven
 ```
@@ -27,10 +27,12 @@ su - ${USER}
 ```
 - #### Install/Run MySQL8
 
-- #### Install [Eclipse IDE] (https://www.eclipse.org/downloads/)
+- #### Install [Eclipse IDE](https://www.eclipse.org/downloads/)
 ``` bash
 sudo snap install --classic eclipse
 ```
+- #### Import, Check out [aon-application](https://github.com/aonsolutions/aon-application) Projects from SCM 
+
 
 
 
