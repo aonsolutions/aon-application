@@ -28,7 +28,7 @@ su - ${USER}
 - #### Start and Setup MySQL8
 Run mysql:8  Docker 
 ``` bash
-docker run --name mysql -v /var/lib/mysql:/var/lib/mysql  -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -e MYSQL_USER=dbuser -e MYSQL_PASSWORD=serubd2000 -d mysql:8 --sql-mode="0" --default-authentication-plugin=mysql_native_password
+docker run -p 3306:3306 --name mysql -v /var/lib/mysql:/var/lib/mysql  -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -e MYSQL_USER=dbuser -e MYSQL_PASSWORD=serubd2000 -d mysql:8 --sql-mode="0" --default-authentication-plugin=mysql_native_password
 ```
 Grant all privileges to 'dbuser'
 ``` bash
@@ -90,9 +90,26 @@ Build, by now skip tests :-(
 ``` bash
 mvn -DskipTests=true -Dgwt.working=true clean install
 ```
+And.... wait for a long long time ...  for example 35 min 
+``` bash
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  34:51 min
+[INFO] Finished at: 2023-01-26T18:22:12Z
+[INFO] ------------------------------------------------------------------------
+```
+Build Docker image 
+``` bash
+docker build --network=host --no-cache -t aonsolutions/aon-solutions:test -f ./aon-solutions/Dockerfile .
+```
+Try Docker image 
+``` bash
+docker run --rm --name aonsolutions -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')  aonsolutions/aon-solutions:test
+```
+Open a browser and navigate to http://localhost:8080
 
-
-
+![localhost](https://user-images.githubusercontent.com/9419112/214926662-f0264237-2fbe-4a72-a573-029ee1d1e4b7.png)
 
 
 
