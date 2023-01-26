@@ -25,7 +25,12 @@ To apply the new group membership, log out of the server and back in, or type th
 ``` bash
 su - ${USER}
 ```
+- #### Install/Run MySQL8
 
+- #### Install [Eclipse IDE] (https://www.eclipse.org/downloads/)
+``` bash
+sudo snap install --classic eclipse
+```
 
 
 
