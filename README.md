@@ -33,6 +33,12 @@ sudo snap install --classic eclipse
 ```
 - #### Import, Check out [aon-application](https://github.com/aonsolutions/aon-application) Projects from SCM 
 
+![Screenshot from 2023-01-07 14-26-06](https://user-images.githubusercontent.com/9419112/214888048-19917d70-e684-4570-a3f8-8388a7471832.png)
 
+- #### Install Maven SCM Handler for EGit (m2e-egit) 
 
+![m2e Marketplace](https://user-images.githubusercontent.com/9419112/214890102-98f05530-1aa0-4f27-948d-ca1e3ca27c57.png) 
 
+Accept the terms of the license, trust all content and Finish
+
+![m2e-egit](https://user-images.githubusercontent.com/9419112/214890147-03874c78-6f72-4ac2-b96b-6abaca7d58f1.png)
