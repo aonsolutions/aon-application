@@ -1,7 +1,0 @@
-[aon-libreoffice-4.3.5]
-name=AON LibreOffice - 4.3.5    
-baseurl=http://dev.esferalia.net/libreoffice
-failovermethod=priority
-enabled=1
-gpgcheck=0
-

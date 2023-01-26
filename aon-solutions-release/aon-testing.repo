@@ -1,8 +1,0 @@
-[aon-testing]
-name=aon Solutions - Testing - $basearch
-baseurl=http://dev.esferalia.net/aon-inetserver
-failovermethod=priority
-enabled=0
-gpgcheck=0
-
-

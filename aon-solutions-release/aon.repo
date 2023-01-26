@@ -1,8 +1,0 @@
-[aon]
-name=aon Solutions - $basearch
-baseurl=http://dev.esferalia.net/aon-solutions
-failovermethod=priority
-enabled=1
-gpgcheck=0
-
-

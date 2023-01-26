@@ -1,5 +1,0 @@
-
-# Force sync every day at 04:00 AM
-# Also restarts service  ctsql2mysqld.
-
-0 4 * * *  root /etc/init.d/ctsql2mysqld sync >/var/log/aon-payroll-ctsql2mysql.log 2>&1

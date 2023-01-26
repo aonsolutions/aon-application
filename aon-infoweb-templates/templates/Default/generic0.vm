@@ -1,9 +1,0 @@
-
-<div id="content">
-	<div align="right">
-		<h3>$pagename</h3>
-	</div>
-	<p></p>
-	$!text
-</div>
-

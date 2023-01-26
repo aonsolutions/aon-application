@@ -1,7 +1,0 @@
-driverClass=com.mysql.cj.jdbc.Driver
-jdbcUrl=jdbc:mysql://127.0.0.1:3306
-user=dbuser
-password=serubd2000
-timezone=Europe/Madrid
-useSSL=false
-sessionVariables=SQL_SAFE_UPDATES=1
