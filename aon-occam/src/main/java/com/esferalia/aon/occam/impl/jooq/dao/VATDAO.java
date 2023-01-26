@@ -54,6 +54,11 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
+/**
+ * @deprecated use com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO
+ *
+ */
+@Deprecated
 public class VATDAO  {
 	
 	private VATDAO() {
