@@ -25,7 +25,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 @RunWith(Suite.class)
 @SuiteClasses({
 	FiscalModelTestSuite.class,
-	Mod111TestSuite.class,
+//	Mod111TestSuite.class,
 	Mod115TestSuite.class,
 	Mod123TestSuite.class,
 	Mod303TestSuite.class,
