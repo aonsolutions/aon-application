@@ -65,6 +65,7 @@ public class JooqEmployeeAFI {
 	private static final String PARTIALITY = "COEFICIENTE_PARCIALIDAD";
 	private static final String OCUPATION = "OCUPACION";
 	private static final String EMPLOYEECOLECTIVE = "COLECTIVO_TRABAJADORES";
+	private static final String CNO = "CNO";
 	
 	public static final Pattern DIACRITICS_AND_FRIENDS = Pattern.compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
 
@@ -371,6 +372,7 @@ public class JooqEmployeeAFI {
 	private static JSONObject getSDC(int contractId, DSLContext dslContext) {
 		JSONObject json = new JSONObject();
 		JSONObject fab = new JSONObject();
+		JSONObject odl = new JSONObject();
 		JSONObject otd = new JSONObject();
 		
 		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
@@ -426,6 +428,17 @@ public class JooqEmployeeAFI {
 		fab.put("employeeColective", employeeColective);
 		fab.put("gender", gender);
 		
+		//ODL
+		Result<Record> contractDataCnoRecord = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq(CNO))
+				.orderBy(CONTRACT_DATA.ID.desc())
+				.fetch();
+		
+		String employeeCno = contractDataCnoRecord.isEmpty() ? null : parseContractData(contractDataCnoRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
+		
+		odl.put("cno", employeeCno);
+		
 		//OTD
 		String endDate = null;
 		Date contractEndDate = contractRecord.get(CONTRACT.END_DATE);
@@ -452,8 +465,8 @@ public class JooqEmployeeAFI {
 		otd.put("convCollective",  AonStringUtils.isBlank(agreementColective) ? "00000000000000" : agreementColective);
 		otd.put("endDate", endDate);
 		
-		
 		json.put("FAB", fab);
+		json.put("ODL", odl);
 		json.put("OTD", otd);
 		
 		return json;
