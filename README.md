@@ -111,7 +111,33 @@ Open a browser and navigate to http://localhost:8080
 
 ![localhost](https://user-images.githubusercontent.com/9419112/214926662-f0264237-2fbe-4a72-a573-029ee1d1e4b7.png)
 
+- #### Setup Tomcat on Eclipse IDE .
+Export running container ''aonsolutions'' to a custom direcotry
+``` bash 
+docker export aonsolutions > /tmp/aonsolutions.tar
+```
+``` bash
+mkdir $HOME/aon-solutions
+```
+``` bash 
+cd $HOME/aon-solutions
+```
+``` bash
+tar -xvf /tmp/aonsolutions.tar
+```
+``` bash 
+rm -rf usr/local/tomcat/webapps/ROOT
+```
+Open Eclipse IDE closes all Projects and install Server ''Apache Tomact 9''
 
+![tomcat9](https://user-images.githubusercontent.com/9419112/214929338-3fff6012-480e-413d-b4c4-7b0dc96286f2.png)
 
+Use previous ''$HOME/aon-solutions'' as ''Tomcat installation directory''
+
+![tomcatdir](https://user-images.githubusercontent.com/9419112/214929926-201c46ce-3157-495a-a459-75e248062154.png)
+
+Setup Server Locations 
+
+![conftomcat](https://user-images.githubusercontent.com/9419112/214930595-d6485304-a30e-4c5b-bec9-60e0278e9d72.png)
 
 
