@@ -50,8 +50,8 @@
 		<module>aon-db-manager</module>
 		<module>aon-dbutils</module>
 		<module>aon-ingenet</module>
-		<module>aon-ui-dbutils</module>
-		<module>aon-ui-db-manager</module>
+		<!--module>aon-ui-dbutils</module-->
+		<!--module>aon-ui-db-manager</module-->
 		<module>aon-master-jooq</module>
 
 		<!-- CORE  -->
@@ -75,7 +75,7 @@
 		<module>aon-ui-webmail</module>
 		<module>aon-jsf-bridge</module>
 		<module>aon-admin</module>
-		<module>aon-ui-admin</module>
+		<!--module>aon-ui-admin</module-->
 		<module>aon-google-apis</module>
 		<module>aon-google-apis-v2</module>
 		<!--module>aon-conexflow</module-->
@@ -120,45 +120,20 @@
 		<module>aon-marketing</module>
 		<module>aon-purchase-bridge</module>
 		<module>aon-tas</module>
-		<!--module>aon-pms</module-->
 		<module>aon-academy</module>
 
 		<!-- UI MODULES -->
-		<module>aon-ui-academy</module>
-		<module>aon-ui-carrier</module>
 		<module>aon-ui-company</module>
 		<module>aon-ui-config</module>
-		<module>aon-ui-customer</module>
 		<module>aon-ui-geozone</module>
-		<module>aon-ui-groupware</module>
 		<module>aon-ui-registry</module>
 		<module>aon-ui-calendar</module>
 		<module>aon-ui-payroll</module>
-		<module>aon-ui-account</module>
-		<module>aon-ui-accounting</module>
-		<module>aon-ui-commercial</module>
-		<module>aon-ui-finance</module>
-		<module>aon-ui-fiscal</module>
-		<module>aon-ui-product</module>
-		<module>aon-ui-sales</module>
-		<module>aon-ui-seller</module>
-		<module>aon-ui-sign</module>
-		<module>aon-ui-stat</module>
-		<module>aon-ui-supplier</module>
-		<module>aon-ui-asset</module>
-		<module>aon-ui-mailing</module>
-		<module>aon-ui-marketing</module>
-		<module>aon-ui-project</module>
-		<module>aon-ui-publisher</module>
-		<module>aon-ui-purchase</module>
-		<module>aon-ui-warehouse</module>
-		<module>aon-ui-tas</module>
 		<module>aon-ui-sepe</module>
 		<module>aon-ui-help</module>
 
 		<!-- OTHER -->
 		<module>aon-jasperreports</module>
-		<module>aon-common-resources</module>
 		<module>aon-db-up2date</module>
 		<module>aon-sepe</module>
 		<module>aon-seg-social</module>
@@ -186,7 +161,6 @@
 		<module>aon-gwt-fiscal</module>
 		<module>aon-gwt-mod200</module>
 		<module>aon-gwt-ccaa</module>
-		<!-- <module>aon-gwt-document</module> -->
 		<module>aon-gwt-template</module>
 		<module>aon-gwt-stat</module>
 		<module>aon-gwt-api</module>
@@ -219,26 +193,21 @@
 		
 		
 		<!-- WEB MODULES -->
-		<module>aon-web-aio</module>
-		<!--module>aon-micro-services</module-->
+		<!--module>aon-web-aio</module-->
 		<module>aon-solutions</module>
 
 
 		<module>aon-tedi</module>
 		<module>tedi-api</module>
-		<!-- AWS API Gateway & Lambda 
-		<module>aon-rest-api</module>
-		-->
+
 		<module>aon-aws</module>
 		<module>aon.accounting.report</module>
 
-		<!-- TRASPASO DSI NOMINAS -->
+		<!-- TRASPASO DSI NOMINAS 
 		<module>paradoxdriver</module>
 		<module>aon-dsi-nominas</module>				
-		
-		<!-- TESTS  
-		<module>aon-hibernate-test</module>
 		-->
+		
 	</modules>
 
 	<scm>
