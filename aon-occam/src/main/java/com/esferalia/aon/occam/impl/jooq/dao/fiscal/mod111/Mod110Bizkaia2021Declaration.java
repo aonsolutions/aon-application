@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 public class Mod110Bizkaia2021Declaration extends Mod111Declaration {
 	
 	public static boolean accept(Mod111 mod) {
-		return mod.isBizkaia() && mod.getPeriod().isQuarterPeriod(); 
+		return mod.isBizkaia() && mod.getYear() < 2023 && mod.getPeriod().isQuarterPeriod(); 
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{

@@ -9,10 +9,10 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
-public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
+public class Mod111Bizkaia2023Declaration extends Mod111Declaration {
 	
 	public static boolean accept(Mod111 mod) {
-		return mod.isBizkaia() && mod.getYear() < 2023 && mod.getPeriod().isMonthPeriod(); 
+		return mod.isBizkaia() && mod.getYear() >= 2023 && mod.getPeriod().isMonthPeriod(); 
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{

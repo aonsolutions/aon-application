@@ -9,14 +9,14 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
-public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
+public class Mod110Bizkaia2023Declaration extends Mod111Declaration {
 	
 	public static boolean accept(Mod111 mod) {
-		return mod.isBizkaia() && mod.getYear() < 2023 && mod.getPeriod().isMonthPeriod(); 
+		return mod.isBizkaia() && mod.getYear() >= 2023 && mod.getPeriod().isQuarterPeriod(); 
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
-		 BZ_C01 (Mod111Key.BZ_C01,false 
+		 BZ_C01 (Mod111Key.BZ_C01,false
 			, (mod,br) ->  br.isSalaryRetention()
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C01,mod,docs,pdocs,br)
 			,null,null,null)
@@ -41,8 +41,8 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 		,BZ_C16 (Mod111Key.BZ_C16,true ,null,null,null,null,null)
 		,BZ_C27 (Mod111Key.BZ_C27,true ,null,null,null,null,null)
 		,BZ_C06 (Mod111Key.BZ_C06,false,null,null,null,null,null)
-		,BZ_C17 (Mod111Key.BZ_C17,true ,null,null,null,null,null)
-		,BZ_C28 (Mod111Key.BZ_C28,true ,null,null,null,null,null)
+		,BZ_C17 (Mod111Key.BZ_C17,true,null,null,null,null,null)
+		,BZ_C28 (Mod111Key.BZ_C28,true,null,null,null,null,null)
 		,BZ_C07 (Mod111Key.BZ_C07,false
 			, (mod,br) ->  br.isNotObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C07,mod,docs,pdocs,br)
@@ -54,6 +54,18 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 		,BZ_C29 (Mod111Key.BZ_C29,true
 			, (mod,br) ->  br.isNotObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C29,mod,br)
+			,null,null,null)
+		,BZ_C50 (Mod111Key.BZ_C50,false
+			, (mod,br) ->  br.isObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
+			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C50,mod,docs,pdocs,br)
+			,null,null,null)
+		,BZ_C51 (Mod111Key.BZ_C51,true
+			, (mod,br) ->  br.isObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
+			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C51,mod,br)
+			,null,null,null)
+		,BZ_C52 (Mod111Key.BZ_C52,true
+			, (mod,br) ->  br.isObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
+			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C52,mod,br)
 			,null,null,null)
 		,BZ_C08 (Mod111Key.BZ_C08,false
 			, (mod,br) ->  isFarmer(br)
@@ -85,16 +97,20 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 		,BZ_C11 (Mod111Key.BZ_C11,false,null,null,null,null,null)
 		,BZ_C22 (Mod111Key.BZ_C22,true ,null,null,null,null,null)
 		,BZ_C33 (Mod111Key.BZ_C33,true ,null,null,null,null,null)
-		,BZ_C34M(Mod111Key.BZ_C34T,false
-			, null,null,null, "BZ_C01+BZ_C02+BZ_C03+BZ_C04+BZ_C05+BZ_C06+BZ_C07+BZ_C08+BZ_C09+BZ_C10+BZ_C11",null)
-		,BZ_C35M(Mod111Key.BZ_C35T,false
-			, null,null,null, "BZ_C12+BZ_C13+BZ_C14+BZ_C15+BZ_C16+BZ_C17+BZ_C18+BZ_C19+BZ_C20+BZ_C21+BZ_C22",null)
-		,BZ_C36M(Mod111Key.BZ_C36T,false
-			, null,null,null, "BZ_C23+BZ_C24+BZ_C25+BZ_C26+BZ_C27+BZ_C28+BZ_C29+BZ_C30+BZ_C31+BZ_C32+BZ_C33",null)
-		,BZ_C39T(Mod111Key.BZ_C39,false,null,null,null, "BZ_C36T",null)
-		,BZ_TIP (Mod111Key.BZ_TIP,false,null,null,null,null,null)
-		;
 		
+		,BZ_C34T(Mod111Key.BZ_C34T,false
+			,null,null,null, "BZ_C01+BZ_C02+BZ_C03+BZ_C04+BZ_C05+BZ_C06+BZ_C07+BZ_C50+BZ_C08+BZ_C09+BZ_C10+BZ_C11"
+			,null)
+		,BZ_C35T(Mod111Key.BZ_C35T,false
+			,null,null,null, "BZ_C12+BZ_C13+BZ_C14+BZ_C15+BZ_C16+BZ_C17+BZ_C18+BZ_C51+BZ_C19+BZ_C20+BZ_C21+BZ_C22"
+			,null)
+		,BZ_C36T(Mod111Key.BZ_C36T,false
+			,null,null,null, "BZ_C23+BZ_C24+BZ_C25+BZ_C26+BZ_C27+BZ_C28+BZ_C29+BZ_C52+BZ_C30+BZ_C31+BZ_C32+BZ_C33"
+			,null)
+		
+		,BZ_C39T(Mod111Key.BZ_C39,false, null,null,null, "BZ_C36T",null)
+		,BZ_TIP (Mod111Key.BZ_TIP,false, null,null,null,null,null)
+		;
 		
 		private Mod111Key key;
 		private boolean diffEnabled;
@@ -109,8 +125,7 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 				, IValueAccepter acceptValue
 				, IValueIntializer initializer
 				, IValueUniqueIntializer uniqueInitializer
-				, String expression
-				, String template) {
+				, String expression, String template) {
 			this.key = key;
 			this.diffEnabled = diffEnabled;
 			this.acceptValue =  acceptValue;
@@ -119,6 +134,7 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 			this.expression =  expression;
 			this.template =  template;
 		}
+		
 		
 		@Override
 		public Mod111Key getKey() {
@@ -153,7 +169,6 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 		public String getTemplate() {
 			return template;
 		}
-		
 	}
 
 	@Override
@@ -165,7 +180,7 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 	IMod111KeyDAO[] getKeys() {
 		return Mod111KeyDAO.values();
 	}
-
+	
 	@Override
 	double getResult(Mod111 mod) {
 		return mod.getAmount(Mod111Key.BZ_C39);
@@ -175,7 +190,7 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 	ComplementaryBeahaviour getComplementaryBehaviour(Mod111 mod) {
 		return ComplementaryBeahaviour.COMPLEMENTARY;
 	}
-	
+
 	@Override
 	Mod111 initialize(AONContext ctx, Mod111 mod111) {
 		mod111.setComplementaryDeclarationAvailable(true);
@@ -192,4 +207,6 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 	private static boolean isTransportOperator(IrpfBreakdown br) {
 		return br.isFromInvoice() &&  br.getWithholdingType() == WithholdingType.TRANSPORT_OPERATOR;
 	}
+
+	
 }
