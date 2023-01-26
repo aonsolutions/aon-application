@@ -227,6 +227,7 @@ public class LroeModel240 extends DockLayoutPanel {
 				.setCommunicationType(InvoiceCommunicationType.LROE_2)
 				.setType(InvoiceType.PURCHASE)
 				.addType(InvoiceType.EXPENSES)
+				.addType(InvoiceType.UNDEDUCTIBLE)
 				.setTbaiDeleted(false);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
