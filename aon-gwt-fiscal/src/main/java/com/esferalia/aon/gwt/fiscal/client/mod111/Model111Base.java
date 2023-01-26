@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod111;
 
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.Objects;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -74,6 +76,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	private static final int COL_NUMBER = 8;
 	private static final String MODEL111_PRINT = "/aon_gwt_fiscal/ms/Model111Print";
 	protected static final String MODEL111_FILE = "/aon_gwt_fiscal/ms/Model111File";
+	private static final String MODEL111_BOX_INFO = "/aon_gwt_fiscal/ms/Model111BoxInfoPrint";
 
 	private Model111Callback callback;
 	private Mod111 model;
@@ -107,6 +110,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
+	protected Hidden mod111BoxHidden = new Hidden("mod111Box");
 	
 	protected Model111Base(Mod111 mod111, Model111Callback callback) {
 		super(Unit.PX);
@@ -954,8 +958,11 @@ public abstract class Model111Base extends DockLayoutPanel {
 				
 				@Override
 				public Void visitInvoice() {
-					final AonTableButton button = addButton();
-					button.addClickHandler(event -> showInvoiceIrpfBreakdownInfo(button));
+					if (getModel().isAlcatrazBound()) {
+						final AonTableButton button = addButton();
+						button.addClickHandler(event -> showInvoiceIrpfBreakdownInfo(button));
+						addExcelButton().addClickHandler(event -> showExcelInfo(script, false));
+					}
 					return null;
 				}
 
@@ -985,6 +992,13 @@ public abstract class Model111Base extends DockLayoutPanel {
 					final AonTableButton button = addButton();
 					button.addClickHandler(event -> showComputeKeyInfo(button));
 					return null; 
+				}
+				
+				private AonTableButton addExcelButton() {
+					final AonTableButton button = new AonTableButton(infoKey.getLabel() + " (Excel)" ,AON.CSS.aonIconExcel());
+					button.setTabIndex(-2);
+					buttonContainer.add(button);
+					return button;
 				}
 				
 				@Override public Void visitModelInVatAccrualInvoice() {return null;}
@@ -1126,6 +1140,31 @@ public abstract class Model111Base extends DockLayoutPanel {
 		});
 	}
 
+	private void showExcelInfo(IModelScript<Mod111Key> script, boolean prorrated) {
+		Mod111Key key = Arrays.stream(script.getKeys())
+				.filter( Objects::nonNull )
+				.findAny()
+				.orElse(null);
+		if (key != null) {
+			diskForm.setMethod(FormPanel.METHOD_POST);
+			diskForm.setAction(GWT.getHostPageBaseURL() + MODEL111_BOX_INFO);
+			diskForm.clear();
+			FlowPanel diskPanel = new FlowPanel();
+			diskPanel.add(mod111Hidden);
+			diskPanel.add(domainIdHidden);
+			diskPanel.add(domainNameHidden);
+			diskPanel.add(userHidden);
+			diskPanel.add(mod111BoxHidden);
+			diskForm.add(diskPanel);
+			mod111Hidden.setValue(String.valueOf(getModel().getId()));
+			domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
+			domainNameHidden.setValue(getCallback().getOptions().getDomainName());
+			userHidden.setValue(getCallback().getOptions().getUser());
+			mod111BoxHidden.setValue(key.toString());
+			diskForm.submit();
+		}
+	}
+	
 	protected void paintAdministrationTab(TabLayoutPanel tabPanel) {}
 
 	

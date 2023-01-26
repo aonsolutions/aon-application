@@ -102,6 +102,11 @@ public class Mod111InfoDAO {
 			.orElse(null);
 	}
 	
+	public static Stream<IrpfBreakdown> getModelInvoicesInfo(AONContext ctx, final Mod111 mod111, Mod111Key key) {
+		Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
+		return getModelInvoicesInfo(ctx, mod111, dec.getKey(key)); 
+	}
+	
 	private static Stream<IrpfBreakdown> getModelInvoicesInfo(AONContext ctx, final Mod111 mod111, IMod111KeyDAO keyDAO) {
 		return IRPFDAO.getModelInputInvoicesIrpfBreakdown(ctx, mod111)
 			.filter( br ->  keyDAO.acceptValue(mod111, br));
