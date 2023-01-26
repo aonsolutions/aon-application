@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 
-import java.util.Date;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -153,7 +152,7 @@ public class Mod303ValidationTest extends Mod303AbstractTest {
 		double prorratePercent = AonRandom.gt(10)? 0 : AonRandom.getPercent();
 		return new FiscalFakerParams(ctx,getOccam())
 			.setAdministration(Administration.COMMON_TERRITORY)
-			.setIssueDate(new Date())
+			.setIssueDate(getTestDate())
 			.setMonthly(true)
 			.setProrratePercent( prorratePercent )
 			.setSpecialProrrate( AonMathUtils.isNotZero(prorratePercent) && AonRandom.gt(60) )

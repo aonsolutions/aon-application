@@ -12,6 +12,8 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,8 +44,10 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
@@ -54,6 +58,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.IServicioRedConstants;
 import solutions.aon.seg.social.ServicioREDRegeXML;
+import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.ReportTooLongException;
 import solutions.aon.seg.social.exception.RevokedCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
@@ -364,6 +369,26 @@ public class Toolkit {
 		SSLContext sslContext = SSLContext.getInstance("TLS");
 		sslContext.init(kmf.getKeyManagers(), null, null);
 		return sslContext;
+    }
+    
+    public static SSLContext getTrustedSSLContext (InputStream certificateInputStream, String certificatePassword, String certificateType) throws InvalidCertificateException {
+    	SSLContext sslContext = null;
+		try {				
+			
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray())
+				.loadTrustMaterial(new TrustStrategy() {
+	                @Override
+	                 public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+	                         return true;
+	                }
+				})
+				.build();
+			
+			return sslContext;
+			
+		} catch (Exception e) {
+			throw new InvalidCertificateException();
+		}
     }
     
     public static String getValue(String body, String id) {

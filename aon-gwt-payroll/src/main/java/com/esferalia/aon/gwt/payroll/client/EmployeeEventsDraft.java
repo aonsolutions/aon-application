@@ -527,6 +527,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		yearLB.clear();
 		
 		Integer yearAux = DateUtils.getYear();
+		Integer previusYearIII = year - 3;
 		Integer previusYearII = year - 2;
 		Integer previusYear = year - 1;
 		Integer nextYear = year + 1;
@@ -535,6 +536,7 @@ public abstract class EmployeeEventsDraft extends Composite implements ContextMe
 		yearLB.addItem(yearAux.toString(), yearAux.toString());
 		yearLB.addItem(previusYear.toString(), previusYear.toString());
 		yearLB.addItem(previusYearII.toString(), previusYearII.toString());
+		yearLB.addItem(previusYearIII.toString(), previusYearIII.toString());
 		
 		yearLB.addChangeHandler(e -> changeYear());
 		

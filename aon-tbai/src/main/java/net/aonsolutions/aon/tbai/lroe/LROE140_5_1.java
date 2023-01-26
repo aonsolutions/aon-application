@@ -162,7 +162,7 @@ public class LROE140_5_1 extends LROE140 {
 	
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, List<Invoice> invoices) {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.A_00);
+			LROEInfo info = buildInfo(OperacionEnum.A_00, getEjercicio(tbaiConfiguration, invoices.get(0)));
 			final LROEPF140CriterioCajaCriterioCobrosYPagosCobrosAltaModifPeticion p140 = build(person, invoices, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance(LROEPF140CriterioCajaCriterioCobrosYPagosCobrosAltaModifPeticion.class);
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
@@ -181,8 +181,8 @@ public class LROE140_5_1 extends LROE140 {
 		}
 	}
 	
-	public LROEInfo buildInfo(OperacionEnum operacion) {
-		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion);
+	public LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
+		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion, ejercicio);
 	}
 	
 	private LROEPJ240BienesAnulacionPeticion buildBaja(Person person, List<Invoice> invoices, LROEInfo info) {	

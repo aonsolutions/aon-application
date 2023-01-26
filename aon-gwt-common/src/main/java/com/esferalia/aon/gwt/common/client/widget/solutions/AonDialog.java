@@ -62,8 +62,8 @@ public class AonDialog extends AonCustomDialog {
 	}
 
  	public void setCancelText(String btnText) {
-                this.cancelButton.setText(btnText);
-        }
+ 		this.cancelButton.setText(btnText);
+ 	}
 	
 	private void showDialog() {
 		// Show center
@@ -81,6 +81,7 @@ public class AonDialog extends AonCustomDialog {
 		okButton = new Button();
     	okButton.setStyleName(AON.CSS.aonOkButton());
     	okButton.setText( AON.MSG.cancelAction() );
+    	okButton.ensureDebugId("acceptDialogButton");
     	
     	okButton.addKeyUpHandler(e -> {
     		if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
@@ -89,8 +90,7 @@ public class AonDialog extends AonCustomDialog {
     	});
     	
     	okButton.addClickHandler(e -> {
-    		okButton.setEnabled(false);
-			hide();
+    		hide();
     	});
     	
     	buttonsPanel.add(okButton);
@@ -100,6 +100,7 @@ public class AonDialog extends AonCustomDialog {
 		okButton = new Button();
     	okButton.setStyleName(AON.CSS.aonOkButton());
     	okButton.setText( AON.MSG.accept());
+    	okButton.ensureDebugId("acceptDialogButton");
     	
     	okButton.addKeyUpHandler(e -> {
     		if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
@@ -109,8 +110,7 @@ public class AonDialog extends AonCustomDialog {
     	});
     	
     	okButton.addClickHandler(e -> {
-    		okButton.setEnabled(false);
-			hide();
+    		hide();
 			callback.onAccept();
     	});
     	
@@ -119,10 +119,10 @@ public class AonDialog extends AonCustomDialog {
     	cancelButton = new Button();
     	cancelButton.setStyleName(AON.CSS.aonCancelButton());
     	cancelButton.setText( AON.MSG.cancelAction());
+    	cancelButton.ensureDebugId("cancelDialogButton");
     	
     	cancelButton.addClickHandler(e -> {
-    		cancelButton.setEnabled(false);
-			hide();
+    		hide();
 			callback.onCancel();
     	});
     	

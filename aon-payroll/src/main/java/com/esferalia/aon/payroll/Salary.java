@@ -153,6 +153,11 @@ public class Salary extends SalaryDB implements ISalary, ISalaryProxy {
 		return super.getInkindIrpfBase();
 	}
 	
+	@Override
+	@Transient
+	public Double getInMoneyIrpfBase() {
+		return super.getMoneyIrpfBase();
+	}
 	
 	// *******************************************************
 	// ********************** DATA ***************************

@@ -4362,6 +4362,11 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			}
 
 			@Override
+			public Double getInMoneyIrpfBase() {
+			    return draft.getMoneyIrpfBase();
+			}
+			
+			@Override
 			public Double getInKindIrpfBase() {
 				return draft.getInkindIrpfBase();
 			}
@@ -5651,7 +5656,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public Period getSalariesDates(String domainName, SalaryInfoFilter filter) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqPayrollSalaries.getSalariesDates(connection, filter);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqPayrollSalaries.getSalariesDates(connection, domainId, filter);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -5660,7 +5666,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	@Override
 	public List<SalaryInfo> getSalaries(String domainName, SalaryInfoFilter filter) {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
-			return JooqPayrollSalaries.getSalaries(connection, filter);
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqPayrollSalaries.getSalaries(connection, domainId, filter);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -7223,8 +7230,13 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		builder.setBirthDate(employeeContractInfo.getEmployeeInfo().getBirthdate());
 		builder.setIpf(ipf);
 		builder.setFra(employeeContractInfo.getContractInfo().getStartDate());
+		
+		Date endDate = employeeContractInfo.getContractInfo().getEndDate();
+		Date holidayDate = employeeContractInfo.getContractInfo().getHolidaysDate();
+		
 		builder.setFrb(employeeContractInfo.getContractInfo().getEndDate());
-		builder.setFrv(employeeContractInfo.getContractInfo().getHolidaysDate());
+		if(null != endDate && null != holidayDate && holidayDate.after(endDate))
+			builder.setFrv(employeeContractInfo.getContractInfo().getHolidaysDate());
 		if(null != employeeContractInfo.getContractInfo().getHolidaysDate())
 			builder.setAsociativeSA(employeeContractInfo.getContractInfo().getSAA());
 		builder.setRegime(employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4));
@@ -7232,6 +7244,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				employeeContractInfo.getContractInfo().getCompleteCCC().length()));
 		builder.setGc(employeeContractInfo.getContractInfo().getQuoteGroup());
 		builder.setContract(employeeContractInfo.getContractInfo().getContractType());
+		
+		String cno = employeeContractInfo.getContractInfo().getCno();
+		builder.setCno(employeeContractInfo.getContractInfo().getCno());
 
 		String agreementColective = employeeContractInfo.getContractInfo().getAgreementColective();
 		agreementColective = null == agreementColective ? "60888888888888" : agreementColective;

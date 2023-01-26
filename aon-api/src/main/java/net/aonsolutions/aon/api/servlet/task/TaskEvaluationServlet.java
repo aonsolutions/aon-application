@@ -119,7 +119,7 @@ public class TaskEvaluationServlet extends AonApiHttpServlet{
 		String details  = params.optString("details");
 		String error  = params.optString("error");
 
-		String message =  "Proceso finalizado";
+		String message =  "Proceso de vinculación finalizado";
 		String detailsHtml = "";
 		
 //		

@@ -1,21 +1,21 @@
 package com.esferalia.aon.payroll.calculator;
 
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_16_20;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_1_3;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_21;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_4_15;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CONTRACT_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_PAY_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EFECTIVE_END;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EFECTIVE_START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FULL_TIME;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_ADJUST;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL_DISEASE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SALARY_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
 import static com.esferalia.aon.watson.util.AonDateUtils.getMax;
 import static java.util.Calendar.DAY_OF_MONTH;
@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -41,6 +40,7 @@ import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ContractLeaveLoader {
 
@@ -637,36 +637,55 @@ public class ContractLeaveLoader {
 				return days;
 		} catch (Exception e) {
 		}
+		
+		
+		try {
+        		Boolean monthlyAdjust = ctx.getVariable(MONTHLY_ADJUST, p.getStart(), p.getEnd(), Boolean.class );
+        		if (Boolean.FALSE == monthlyAdjust )
+        		    return days;
+        	} catch (Exception e) {
+        	}
 
-//		try {
-//			if (!ctx.getVariable(FULL_TIME, p.getStart(), p.getEnd(), Boolean.class))
-//				return days;
-//		} catch (Exception e) {
-//		}
+		String tc2 = ctx.getVariable(TC2, p.getStart(), p.getEnd(), String.class );
+		// Not adjust for : 
+		// * '300 IND.FIJO.DISCONTINUO' with  'COEF.TIEMPO PARCIAL' 
+		// * '502 - DURACION DETERMINADA, TIEMPO PARCIAL, EVENTUAL POR CIRCUNSTANCIAS'
+		// * '501 - DURACION DETERMINADA, TIEMPO PARCIAL, OBRA O SERVICIO DETERMINADO'
+		// * '520 - DURACION DETERMINADA, TIEMPO PARCIAL, PRÁCTICAS'
+		if ( AonStringUtils.contains("300,502,501,520", tc2)) {
+		    
+        		try {
+        			if (!ctx.getVariable(FULL_TIME, p.getStart(), p.getEnd(), Boolean.class))
+        				return days;
+        		} catch (Exception e) {
+        		}
 
-//		try {
-//			boolean isPartial = 
-//			ctx.getVariables(ContextVariable.PARTIAL_FACTOR, p.getStart(), p.getEnd())
-//			.stream().map( v -> v.getValue(v.getPeriod()))
-//			.filter( v -> v != null && v instanceof Number )
-//			.anyMatch( v -> ((Number)v).doubleValue() < 1.00) ;
-//			if (isPartial)
-//				return days;
-//		} catch (Exception e) {
-//		}
+        		try {
+        			boolean isPartial = 
+        			ctx.getVariables(PARTIAL_FACTOR, p.getStart(), p.getEnd())
+        			.stream().map( v -> v.getValue(v.getPeriod()))
+        			.filter( v -> v != null && v instanceof Number )
+        			.anyMatch( v -> ((Number)v).doubleValue() < 1.00) ;
+        			if (isPartial)
+        				return days;
+        		} catch (Exception e) {
+        		}
 
-//		try {
-//			Number paternityFactor =  ctx.getVariable(PATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
-//			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )
-//				return days;
-//		} catch (Exception e) {
-//		}
-//		try {
-//			Number paternityFactor =  ctx.getVariable(MATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
-//			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )
-//				return days;
-//		} catch (Exception e) {
-//		}
+        		try {
+        			Number paternityFactor =  ctx.getVariable(PATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
+        			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )
+        				return days;
+        		} catch (Exception e) {
+        		}
+        		try {
+        			Number paternityFactor =  ctx.getVariable(MATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
+        			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )
+        				return days;
+        		} catch (Exception e) {
+        		}
+
+		}
+
 
 		double naturalMonthDays = getMax(p.getStart(), DAY_OF_MONTH);
 

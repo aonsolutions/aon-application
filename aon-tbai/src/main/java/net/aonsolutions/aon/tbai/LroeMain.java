@@ -25,7 +25,7 @@ public class LroeMain {
 //				response = lroe.alta(ic.getTbaiConfiguration(), ic.getPerson(), ic.getInvoices().get(0), null);
 			} else if(InvoiceCommunicationType.LROE_1_2.equals(ic.getType())) {
 				LROE140_1_2 lroe = new LROE140_1_2();
-				info = lroe.buildInfo(OperacionEnum.A_00);
+				info = lroe.buildInfo(OperacionEnum.A_00, lroe.getEjercicio(ic.getTbaiConfiguration(), ic.getInvoice()));
 				response = lroe.alta(ic.getTbaiConfiguration(), ic.getPerson(), ic.getInvoice());
 			} else if(InvoiceCommunicationType.LROE_2_1.equals(ic.getType())) {
 				LROE140_2_1 lroe = new LROE140_2_1();
@@ -39,11 +39,11 @@ public class LroeMain {
 //				response = lroe.alta(ic.getTbaiConfiguration(), ic.getPerson(), ic.getInvoices().get(0), null);
 			} else if(InvoiceCommunicationType.LROE_1_2.equals(ic.getType())) {
 				LROE240_1_2 lroe = new LROE240_1_2();
-				info = lroe.buildInfo(OperacionEnum.A_00);
+				info = lroe.buildInfo(OperacionEnum.A_00, lroe.getEjercicio(ic.getTbaiConfiguration(), ic.getInvoice()));
 				response = lroe.alta(ic.getTbaiConfiguration(), ic.getCompany(), ic.getInvoice());
 			} else if(InvoiceCommunicationType.LROE_2.equals(ic.getType())) {
 				LROE240_2 lroe = new LROE240_2();
-				info = lroe.buildInfo(OperacionEnum.A_00);
+				info = lroe.buildInfo(OperacionEnum.A_00, lroe.getEjercicio(ic.getTbaiConfiguration(), ic.getInvoice()));
 				response = lroe.alta(ic.getTbaiConfiguration(), ic.getCompany(), ic.getInvoice());
 			}	
 		}

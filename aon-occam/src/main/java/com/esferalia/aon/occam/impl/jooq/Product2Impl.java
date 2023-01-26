@@ -8,9 +8,11 @@ import com.esferalia.aon.occam.api.IProduct2;
 import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
+import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.impl.jooq.dao.InvestAssetDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO;
@@ -29,6 +31,13 @@ public class Product2Impl implements IProduct2{
 		return ctx.getDslContext().transactionResult( configuration -> 
 			ProductDAO.getStream(ctx, filter));
 	}
+	
+	@Override
+	public Stream<Product> getProductStream(AONContext ctx, ProductFilter filter, Integer page, Integer perPage) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ProductDAO.getStream(ctx, filter, page, perPage));
+	}
+	
 	
 	@Override
 	public LinkedList<Product> getProductList(AONContext ctx, ProductFilter filter) {
@@ -63,15 +72,39 @@ public class Product2Impl implements IProduct2{
 	}
 	
 	@Override
+	public Stream<Item> getItemStream(AONContext ctx, ItemFilter filter, Integer page, Integer perPage) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ItemDAO.getStream(ctx, filter, page, perPage));
+	}
+	
+	
+	@Override
 	public LinkedList<Item> getItemList(AONContext ctx, ItemFilter filter) {
 		return ctx.getDslContext().transactionResult( configuration -> 
 			ItemDAO.getList(ctx, filter));
 	}
 	
 	@Override
+	public Stream<Item> getRItemStream(AONContext ctx, ItemFilter filter) {
+		return ctx.getDslContext().transactionResult( configuration -> 
+			ItemDAO.getRItemStream(ctx, filter));
+	}
+	
+	@Override
 	public Item saveItem(AONContext ctx, Item item) {
 		return ctx.getDslContext().transactionResult( configuration -> 
 			ItemDAO.save(ctx, item));
+	}
+	
+	@Override
+	public RegistryItem[] saveRItem(AONContext ctx, RegistryItem ...ritems) {
+		return ctx.getDslContext().transactionResult(configuration -> ItemDAO.saveRItem(ctx, ritems));
+	}
+	
+	@Override
+	public void deleteRItem(AONContext ctx, RegistryItemFilter filter) {
+		ctx.getDslContext().transaction( configuration -> 
+		ItemDAO.deleteRItem(ctx, filter));
 	}
 
 	@Override

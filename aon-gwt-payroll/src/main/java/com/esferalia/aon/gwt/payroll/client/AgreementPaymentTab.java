@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementExtra;
@@ -42,6 +43,7 @@ import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -394,35 +396,342 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	@UiField(provided = true)
 	AonToolbar toolbar;
 	
+	@UiField
+	DisclosurePanel paymentDiscPanel;
+	
+	@UiField(provided = true)
+	AonToolbarButton paymentDiscBtn;
+	
+	@UiField
+	HTMLPanel paymentDiscPanelContent;
+	
 	@UiField(provided = true)
 	DataGrid<Payment> agreementPaymentDG;
+	
+	@UiField
+	DisclosurePanel extraDiscPanel;
+	
+	@UiField(provided = true)
+	AonToolbarButton extraDiscBtn;
+	
+	@UiField
+	HTMLPanel extraDiscPanelContent;
+	
+	@UiField(provided = true)
+	DataGrid<Payment> agreementExtraPaymentDG;
 	
 	// ------------------------------------------ Variables
 	
 	private AgreementServiceAsyncDecorator agreementServiceAsync;
 	private AgreementInfo agreement;
-	private AddPaymentContextMenu contextMenu;
 	private List<Payment> paymentList;
+	private List<Payment> paymentExtraList;
 	
 	private boolean hasChange = false;
 	private AonToolbarSmallButton saveBtn;
+	
+	private int collapseWidth = 0;
+	private int disclouroseHeight = 0;
 	
 	// ------------------------------------------ Constructor
 
 	protected AgreementPaymentTab() {
 		createToolbar();
 		provideAgreementPaymentDG();
+		provideAgreementExtraPaymentDG();
+		createDiscPanelButtons();
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		AgreementServiceAsync agreementServiceRaw = GWT.create(AgreementService.class);
 		agreementServiceAsync = new AgreementServiceAsyncDecorator(agreementServiceRaw);
 		
-		contextMenu = new AddPaymentContextMenu();
-		setScrollDGHeight();
+		initDiscPanels();
 	}
 	
-	private void setScrollDGHeight() {
-		agreementPaymentDG.setHeight((Window.getClientHeight() - 280) + "px");
+	public void setScrollDGHeight() {
+//		Window.alert("disclouroseHeight : " + disclouroseHeight +
+//				"\ncollapseWidth : " + collapseWidth);
+		agreementPaymentDG.setHeight(disclouroseHeight + "px");
+		agreementPaymentDG.setWidth(collapseWidth + "px");
+		agreementExtraPaymentDG.setHeight(disclouroseHeight + "px");
+		agreementExtraPaymentDG.setWidth(collapseWidth + "px");
+	}
+	
+	public void setOpenCollapseScrollDGHeight() {
+//		Window.alert("paymentDiscPanelContent Height : " + paymentDiscPanelContent.getOffsetHeight() +
+//		"\npaymentDiscPanelContent Width : " + paymentDiscPanelContent.getOffsetWidth() +
+//		"\nextraDiscPanelContent Height : " + extraDiscPanelContent.getOffsetHeight() + 
+//		"\nextraDiscPanelContent Width : " + extraDiscPanelContent.getOffsetWidth());
+		agreementPaymentDG.setHeight((paymentDiscPanelContent.getOffsetHeight() - 15) + "px");
+		agreementPaymentDG.setWidth((paymentDiscPanelContent.getOffsetWidth() - 30) + "px");
+		agreementExtraPaymentDG.setHeight((extraDiscPanelContent.getOffsetHeight() - 10) + "px");
+		agreementExtraPaymentDG.setWidth((extraDiscPanelContent.getOffsetWidth() - 30) + "px");
+	}
+	
+	// ------------------------------------------ DisclosurePanel
+
+	private void initDiscPanels() {
+		paymentDiscPanel.setAnimationEnabled(true);
+		paymentDiscPanel.addOpenHandler(e -> {
+			handleIcon(paymentDiscBtn, true);
+			
+			extraDiscPanel.setOpen(false);
+			handleIcon(extraDiscBtn, false);
+			
+			initAgreementPaymentDG();
+			setScrollDGHeight();
+		});
+		paymentDiscPanel.addCloseHandler(e -> handleIcon(paymentDiscBtn, false));
+		paymentDiscPanelContent.setHeight((Window.getClientHeight() - 375) + "px");
+	
+		extraDiscPanel.setAnimationEnabled(true);
+		extraDiscPanel.addOpenHandler(e -> {
+			handleIcon(extraDiscBtn, true);
+			
+			paymentDiscPanel.setOpen(false);
+			handleIcon(paymentDiscBtn, false);
+			
+			initAgreementExtraPaymentDG();
+			setScrollDGHeight();
+		});
+		extraDiscPanel.addCloseHandler(e -> handleIcon(extraDiscBtn, false));
+		extraDiscPanelContent.setHeight((Window.getClientHeight() - 375) + "px");
+	}
+
+	private void createDiscPanelButtons() {
+		paymentDiscBtn = new AonToolbarButton("Desplegar Devengos", AON.CSS.aonIconRight());
+		extraDiscBtn = new AonToolbarButton("Desplegar Extras", AON.CSS.aonIconRight());
+		
+		paymentDiscBtn.addClickHandler(e -> handleIcon(paymentDiscBtn, paymentDiscPanel.isOpen()));
+		extraDiscBtn.addClickHandler(e -> handleIcon(extraDiscBtn, extraDiscPanel.isOpen()));
+	}
+
+	private void handleIcon(AonToolbarButton button, boolean open) {
+		if(open) {
+			button.removeStyleName(AON.CSS.aonIconRight());
+			button.addStyleName(AON.CSS.aonIconDown());
+			
+			if(button.equals(paymentDiscBtn)) button.setTitle("Colapsar Devengos");
+			if(button.equals(extraDiscBtn)) button.setTitle("Colapsar Extras");
+		} else {
+			button.removeStyleName(AON.CSS.aonIconDown());
+			button.addStyleName(AON.CSS.aonIconRight());
+			
+			if(button.equals(paymentDiscBtn)) button.setTitle("Desplegar Devengos");
+			if(button.equals(extraDiscBtn)) button.setTitle("Desplegar Extras");
+		}
+	}
+	
+	// ----------------------------------------------- ProvideContractConceptCalcDG
+	
+	private void provideAgreementExtraPaymentDG() {
+		paymentExtraList = Collections.emptyList();
+		
+		// Resource Style CellTable
+		agreementExtraPaymentDG = new CustomDataGrid<>(Integer.MAX_VALUE, Payment.KEY_PROVIDER);
+		
+		//Do not refresh the headers every time the dataGrid is updated.
+		agreementExtraPaymentDG.setAutoHeaderRefreshDisabled(true);
+		
+		// Set the message to display when the table is empty.
+		agreementExtraPaymentDG.setEmptyTableWidget(new Label(("No existen extras").toUpperCase()));
+		
+		// Initialize the columns.
+	    addPaymentsExtraDGColumns();
+	    
+	    new ListDataProvider<Payment>(Collections.emptyList()).addDataDisplay(agreementExtraPaymentDG);
+	    
+	}
+	
+	private void addPaymentsExtraDGColumns() {
+		// Edit column.
+	    ActionCell<Payment> editActionCell = new ActionCell<>("", selectedPayment -> openDialog(selectedPayment));
+	    
+	    Column<Payment, Payment> editColumn = new Column<Payment, Payment>(editActionCell) {
+
+			@Override
+			public Payment getValue(Payment payment) {
+				return payment;
+			}
+			
+			@Override
+			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+				if(null != payment) {
+					if(payment.isModify())
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_arrow_right_modify\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
+					else
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_right\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
+				}
+			}
+		};
+		
+		editColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		agreementExtraPaymentDG.setColumnWidth(editColumn, 5, Unit.PCT);
+		
+		// Code columns.
+		Column<Payment, String> codeColumn = new Column<Payment, String>(new TextCell()) {
+			@Override
+	        public String getValue(Payment payment) {
+				return null == payment.getType() ? "" : AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0');
+	        }
+		};
+
+		codeColumn.setSortable(true);
+		codeColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		agreementExtraPaymentDG.setColumnWidth(codeColumn, 10, Unit.PCT);
+
+	    // Description column.
+		Column<Payment, String> descriptionColumn = new Column<Payment, String>(new TextCell()) {
+			@Override
+			public String getValue(Payment payment) {
+				return payment.getDescription();
+			}
+		};
+		
+		descriptionColumn.setSortable(true);
+		agreementExtraPaymentDG.setColumnWidth(descriptionColumn, 30, Unit.PCT);
+		
+		// Pay column.
+		TextColumn<Payment> payColumn = new TextColumn<Payment>() {
+			@Override
+			public String getValue(Payment payment) {
+				return getPayType(payment);
+			}
+			
+			@Override
+			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+				sb.appendHtmlConstant("<div title=\"" + getPayDescription(payment) + "\">" + getPayType(payment) + "</div>");
+			}
+		};
+		
+		payColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		agreementExtraPaymentDG.setColumnWidth(payColumn, 5, Unit.PCT);
+		
+		// Taxed column.
+		TextColumn<Payment> taxedColumn = new TextColumn<Payment>() {
+			@Override
+			public String getValue(Payment payment) {
+				return getTaxedType(payment.getIrpfExpression());
+			}
+			
+			@Override
+			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+				sb.appendHtmlConstant("<div title=\"" + getTaxedDescription(payment.getIrpfExpression()) + "\">" + getTaxedType(payment.getIrpfExpression()) + "</div>");
+			}
+		};
+		
+		taxedColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		agreementExtraPaymentDG.setColumnWidth(taxedColumn, 5, Unit.PCT);
+		 
+		// Quote column.
+		TextColumn<Payment> quoteColumn = new TextColumn<Payment>() {
+			@Override
+			public String getValue(Payment payment) {
+				return getQuoteType(payment.getQuoteExpression());
+			}
+			
+			@Override
+			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+				sb.appendHtmlConstant("<div title=\"" + getQuoteDescription(payment.getQuoteExpression()) + "\">" + getQuoteType(payment.getQuoteExpression()) + "</div>");
+			}
+		};
+		
+		quoteColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		agreementExtraPaymentDG.setColumnWidth(quoteColumn, 5, Unit.PCT);
+	    
+	    // Expression column.
+	    Column<Payment, String> expressionColumn = new Column<Payment, String>(new TextCell()) {
+	    	@Override
+	        public String getValue(Payment payment) {
+	    		return getParsedExpression(payment.getExpression());
+	        }
+		};
+
+	    expressionColumn.setSortable(true);
+	    agreementExtraPaymentDG.setColumnWidth(expressionColumn, 30, Unit.PCT);
+	    
+	    // Visibility column.
+	    ActionCell<Payment> visibilityActionCell = new ActionCell<>("", payment -> {
+	    	showHidePayment(payment);
+	    	payment.setModify(true);
+	    	agreementExtraPaymentDG.redraw();
+			setHasChange(true);
+	    });
+	    
+	    Column<Payment, Payment> visibilityColumn = new Column<Payment, Payment>(visibilityActionCell) {
+
+			@Override
+			public Payment getValue(Payment payment) {
+				return payment;
+			}
+			
+			@Override
+			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+				if(null != payment) {
+					if(isHideExpression(payment))
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-no-margin aon-icon-disable\" title=\"Inactivo\"></button>");
+					else
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon-editDataTable-button aon-no-margin aon-icon-enable\" title=\"Activo\"></button>");
+				}
+			}
+		};
+		
+		visibilityColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		agreementExtraPaymentDG.setColumnWidth(visibilityColumn, 5, Unit.PCT);
+	    
+	    // Delete column.
+	    ActionCell<Payment> deleteActionCell = new ActionCell<>("", payment -> {
+	    	AonDialog deleteDialog = new AonDialog("Eliminar concepto", new HTML("\u00BFDesea eliminar el concepto seleccionado\u003F"));
+	    	deleteDialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do here
+				}
+				
+				@Override
+				public void onAccept() {
+					agreement.deletePayment(payment);
+					setAgreementPayment(agreement);
+					setHasChange(true);
+				}
+			});
+	    }); 
+	    
+	    Column<Payment, Payment> deleteColumn = new Column<Payment, Payment>(deleteActionCell) {
+
+			@Override
+			public Payment getValue(Payment payment) {
+				return payment;
+			}
+			
+			@Override
+			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+				if(null != payment) {
+					sb.appendHtmlConstant("<button type=\"button\" id=\"gwt-debug-deletePaymentTabButton-" + context.getIndex() + "\" class=\"aon_button aon_table_button aon_icon_delete\" style=\"border: none !important; height: 20px;\" title=\"Eliminar\"></button>");
+				}
+			}
+		};
+		
+		deleteColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		agreementExtraPaymentDG.setColumnWidth(deleteColumn, 5, Unit.PCT);
+		
+		agreementExtraPaymentDG.setRowStyles((payment, rowIdx) -> {
+			if(payment.isModify()) return style.modify();
+			else return null;
+		});
+		
+	    // Add the columns.
+		agreementExtraPaymentDG.addColumn(editColumn, "");
+		agreementExtraPaymentDG.addColumn(codeColumn, "CRA");
+		agreementExtraPaymentDG.addColumn(descriptionColumn, "Descripci\u00F3n");
+		agreementExtraPaymentDG.addColumn(payColumn, "Pago");
+		agreementExtraPaymentDG.addColumn(taxedColumn, "Tributa");
+		agreementExtraPaymentDG.addColumn(quoteColumn, "Cotiza");
+		agreementExtraPaymentDG.addColumn(expressionColumn, "Expresi\u00F3n");
+		
+		agreementExtraPaymentDG.addColumn(visibilityColumn, "Estado");  
+		agreementExtraPaymentDG.addColumn(deleteColumn, "");  
 	}
 	
 	// ----------------------------------------------- ProvideContractConceptCalcDG
@@ -585,7 +894,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	    // Delete column.
 	    ActionCell<Payment> deleteActionCell = new ActionCell<>("", payment -> {
 	    	AonDialog deleteDialog = new AonDialog("Eliminar concepto", new HTML("\u00BFDesea eliminar el concepto seleccionado\u003F"));
-			deleteDialog.confirm(new AonAcceptDialogCallback() {
+	    	deleteDialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
 				public void onCancel() {
@@ -611,7 +920,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			@Override
 			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
 				if(null != payment) {
-					sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_delete\" style=\"border: none !important; height: 20px;\" title=\"Eliminar\"></button>");
+					sb.appendHtmlConstant("<button type=\"button\" id=\"gwt-debug-deletePaymentTabButton-" + context.getIndex() + "\" class=\"aon_button aon_table_button aon_icon_delete\" style=\"border: none !important; height: 20px;\" title=\"Eliminar\"></button>");
 				}
 			}
 		};
@@ -825,7 +1134,66 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	public void setAgreementPayment(AgreementInfo agreementIn) {
 		agreement = agreementIn;
 		toolbar.setTitle(agreement.getDescription());
-		initAgreementPaymentDG();
+		
+		collapseWidth = Window.getClientWidth() - 415;
+		disclouroseHeight = Window.getClientHeight() - 370;
+		
+		if(paymentDiscPanel.isOpen()) { 
+			paymentDiscPanel.setOpen(false);
+			paymentDiscPanel.setOpen(true);
+		} else if(extraDiscPanel.isOpen()) {
+			extraDiscPanel.setOpen(false);
+			extraDiscPanel.setOpen(true);
+		} else {
+			paymentDiscPanel.setOpen(false);
+			paymentDiscPanel.setOpen(true);
+		}
+	}
+	
+	// ----------------------------------------------- InitContractConceptCalcs
+	
+	public void initAgreementExtraPaymentDG() {	
+		// Create a data provider.
+		ListDataProvider<Payment> paymentDataProvider = new ListDataProvider<>();
+	
+	    // Connect the table to the data provider.
+		paymentDataProvider.addDataDisplay(agreementExtraPaymentDG);
+	    
+	    // Add the data to the data provider, which automatically pushes it to the widget.
+	    List<Payment> paymentListAux = paymentDataProvider.getList();
+	    paymentListAux.clear();
+	    
+	    this.paymentExtraList = new ArrayList<>(agreement.getPaymentsExtraAndHides());
+	    
+	    for (Payment payment : this.paymentExtraList) {
+	    	paymentListAux.add(payment);
+	    }   
+		
+		addSortExtraColums(paymentListAux);
+	    
+		// Set page size
+		agreementExtraPaymentDG.setPageSize(paymentListAux.size());
+		
+		agreementExtraPaymentDG.redraw();
+	}
+	
+	private void addSortExtraColums(List<Payment> paymentList) {
+		ListHandler<Payment> columnSortHandler = new ListHandler<>(paymentList);
+		
+		columnSortHandler.setComparator(agreementExtraPaymentDG.getColumn(1), 
+	    	(o1, o2) -> compareString(o1, o2, o1.getType().ordinal()+"", o2.getType().ordinal()+""));
+	    
+	    columnSortHandler.setComparator(agreementExtraPaymentDG.getColumn(2), 
+	    	(o1, o2) -> compareString(o1, o2, o1.getDescription(), o2.getDescription()));
+	    
+	    columnSortHandler.setComparator(agreementExtraPaymentDG.getColumn(3), 
+	    	(o1, o2) -> compareString(o1, o2, o1.getExpression(), o2.getExpression()));
+	    
+	    agreementExtraPaymentDG.addColumnSortHandler(columnSortHandler);
+	
+	    // We know that the data is sorted alphabetically by default.
+	    agreementExtraPaymentDG.getColumn(1).setDefaultSortAscending(false);
+	    agreementExtraPaymentDG.getColumnSortList().push(agreementExtraPaymentDG.getColumn(1));   
 	}
 	
 	// ----------------------------------------------- InitContractConceptCalcs
@@ -841,7 +1209,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	    List<Payment> paymentListAux = paymentDataProvider.getList();
 	    paymentListAux.clear();
 	    
-	    this.paymentList = new ArrayList<>(agreement.getPaymentsAndHides());
+	   this.paymentList = new ArrayList<>(agreement.getPaymentsAndHides());
 	    
 	    for (Payment payment : this.paymentList) {
 	    	paymentListAux.add(payment);
@@ -852,7 +1220,6 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		// Set page size
 		agreementPaymentDG.setPageSize(paymentListAux.size());
 		
-		setScrollDGHeight();
 		agreementPaymentDG.redraw();
 	}
 
@@ -889,6 +1256,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		toolbar = new AonToolbar("Devengos");
 		
 		saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
+		saveBtn.ensureDebugId("savePaymentButton");
 		saveBtn.addClickHandler(e -> {
 			showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
 			setHasChange(false);
@@ -896,22 +1264,8 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		});
 		
 		AonToolbarSmallButton addPaymentButton = new AonToolbarSmallButton("A\u00F1adir Devengo", AON.CSS.aonIconAdd());
+		addPaymentButton.ensureDebugId("newPaymentButton");
 		addPaymentButton.addClickHandler(e -> new AddAonPaymentCommand().execute());
-		
-//		AonExpandButton addPaymentButton = new AonExpandButton("A\u00F1adir Pago", AON.CSS.aonIconAddBlock()) {
-//			
-//			@Override
-//			public void onExpandClick(ClickEvent event) {
-//				NativeEvent nativeEvent = event.getNativeEvent();
-//				contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
-//				contextMenu.show();
-//			}
-//			
-//			@Override
-//			public void onDefaultClick(ClickEvent evet) {
-//				new AddAonPaymentCommand().execute();
-//			}
-//		};
 		
 		toolbar.add(saveBtn);
 		toolbar.add(addPaymentButton);

@@ -45,7 +45,7 @@
         	return '#{domainSwitcher.currentDomainNameURL}';
         }
         
-        function loadDocumentalPanel(el) {
+        function loadPanel(el) {
 			el.innerHTML='<aon-user-panel></aon-user-panel>';
        	} 
        	
@@ -91,7 +91,7 @@
 
 	<script type="text/javascript">
 		//<![CDATA[ 
-		loadDocumentalPanel(document.getElementById('rootPanel'));
+		loadPanel(document.getElementById('rootPanel'));
 		//]]>
 	</script>
 	</ui:define>

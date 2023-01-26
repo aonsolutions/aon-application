@@ -9,7 +9,8 @@ public enum RegistryItemStatus implements IResourceable {
 
 	ACTIVE,
 	INTERESTED,
-	REFUSED;
+	REFUSED,
+	INACTIVE;
     
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_registry_item_status_";

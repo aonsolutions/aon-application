@@ -390,6 +390,7 @@ public class Mod184DAO {
 			.set(FS_MODEL184_DETAIL.CADASDRAL_REFERENCE,partner.getCadasdralReference())
 			.set(FS_MODEL184_DETAIL.DECLARED_KEY,partner.getDeclaredKey())
 			.set(FS_MODEL184_DETAIL.ASSET_PERCENT,partner.getAssetPercent())
+			.set(FS_MODEL184_DETAIL.ASSET_DAYS,partner.getAssetDays())
 			.execute();
 	}
 
@@ -415,6 +416,7 @@ public class Mod184DAO {
 			.set(FS_MODEL184_DETAIL.CADASDRAL_REFERENCE,partner.getCadasdralReference())
 			.set(FS_MODEL184_DETAIL.DECLARED_KEY,partner.getDeclaredKey())
 			.set(FS_MODEL184_DETAIL.ASSET_PERCENT,partner.getAssetPercent())
+			.set(FS_MODEL184_DETAIL.ASSET_DAYS,partner.getAssetDays())
 			.where(FS_MODEL184_DETAIL.ID.equal(partner.getId()))
 			.execute();
 	}
@@ -597,6 +599,7 @@ public class Mod184DAO {
 				.setCadasdralReference(rec.getValue(FS_MODEL184_DETAIL.CADASDRAL_REFERENCE))
 				.setDeclaredKey(rec.getValue(FS_MODEL184_DETAIL.DECLARED_KEY))
 				.setAssetPercent(rec.getValue(FS_MODEL184_DETAIL.ASSET_PERCENT))
+				.setAssetDays(rec.getValue(FS_MODEL184_DETAIL.ASSET_DAYS))
 				;
 			
 		}

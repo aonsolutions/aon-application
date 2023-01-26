@@ -221,7 +221,7 @@ public class LROE240_1_2 extends LROE240 {
 	
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.A_00);
+			LROEInfo info = buildInfo(OperacionEnum.A_00, getEjercicio(tbaiConfiguration, invoice));
 			
 			final LROEPJ240FacturasEmitidasSinSGAltaModifPeticion p140 = build(company, invoice, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240FacturasEmitidasSinSGAltaModifPeticion.class );
@@ -240,8 +240,8 @@ public class LROE240_1_2 extends LROE240 {
 		}
 	}
 	
-	public LROEInfo buildInfo(OperacionEnum operacion) {
-		return new LROEInfo(MODEL_240, CAPITULO, SUBCAPITULO, operacion);
+	public LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
+		return new LROEInfo(MODEL_240, CAPITULO, SUBCAPITULO, operacion, ejercicio);
 	}
 	
 	private LROEPJ240FacturasEmitidasSinSGAnulacionPeticion buildBaja(Company company, Invoice invoice, LROEInfo info) {	
@@ -263,7 +263,7 @@ public class LROE240_1_2 extends LROE240 {
 	
 	public LROEResponse anulacion(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice)  {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.AN_0);
+			LROEInfo info = buildInfo(OperacionEnum.AN_0, getEjercicio(tbaiConfiguration, invoice));
 			final LROEPJ240FacturasEmitidasSinSGAnulacionPeticion p140 = buildBaja(company, invoice, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240FacturasEmitidasSinSGAnulacionPeticion.class );
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();	

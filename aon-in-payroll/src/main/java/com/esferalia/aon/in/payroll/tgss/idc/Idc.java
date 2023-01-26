@@ -124,11 +124,11 @@ public class Idc {
 	}
 
 	public static void parse(InputStream is, IdcListener idcListener ) throws IOException, UnknownPDFException {
-		PECListener  ssBonusListener = new PECListener();
+		PECListener  ssPecListener = new PECListener();
 		ContractDataListener contractDataListener = new ContractDataListener();
-		IdcCompositeParserListener idcCompositeParserListener = new IdcCompositeParserListener().add(ssBonusListener).add(contractDataListener);
+		IdcCompositeParserListener idcCompositeParserListener = new IdcCompositeParserListener().add(ssPecListener).add(contractDataListener);
 		IdcParser.parse(is, idcCompositeParserListener );
-		idcListener.onSSPECs(contractDataListener.getStartDate(), contractDataListener.getEndDate(), ssBonusListener.getSSBonuses());
+		idcListener.onSSPECs(contractDataListener.getStartDate(), contractDataListener.getEndDate(), ssPecListener.getSSBonuses());
 		idcListener.onContractData(contractDataListener.getStartDate(), contractDataListener.getEndDate(), contractDataListener.getContractData());
 	}
 

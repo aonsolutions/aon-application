@@ -4,7 +4,9 @@ import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
 import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 
@@ -17,7 +19,7 @@ public class SalaryInfoFilter implements Serializable {
 	private String dateTTo;
 	
 	// Salary type filter
-	private Integer salaryType; // -1 || null == all // 0 == salary // 2 == delay // 3 == settlement
+	private List<Integer> salaryTypes; // -1 || null == all // 0 == salary //  1 == extra // 2 == settlement // 3 == delay 
 	
 	// Emplyee filter
 	private Integer employeeId; // employeeId == contractId;
@@ -33,7 +35,7 @@ public class SalaryInfoFilter implements Serializable {
 		this.dateTillT = null;
 		this.dateTTo = null;
 		
-		this.salaryType = null;
+		this.salaryTypes = new ArrayList<>();
 		
 		this.employeeId = null;
 		
@@ -56,11 +58,11 @@ public class SalaryInfoFilter implements Serializable {
 		DateUtils.resetTime(dateTTo);
 		this.dateTTo = format(dateTTo);
 	}
-	public Integer getSalaryType() {
-		return salaryType;
+	public List<Integer> getSalaryTypes() {
+		return salaryTypes;
 	}
-	public void setSalaryType(Integer salaryType) {
-		this.salaryType = salaryType;
+	public void setSalaryTypes(List<Integer> salaryTypes) {
+		this.salaryTypes = salaryTypes;
 	}
 	public Integer getEmployeeId() {
 		return employeeId;

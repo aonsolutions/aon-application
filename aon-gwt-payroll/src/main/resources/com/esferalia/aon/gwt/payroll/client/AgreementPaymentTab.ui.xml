@@ -10,10 +10,35 @@
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.AgreementPaymentTab.MyStyle">
 		
+		.disclouruseTitle {
+			color: #4b4b4b;
+			vertical-align: top;
+			min-width: 7rem;
+			font-weight: bold;
+			text-transform: uppercase;
+			font-size: 1.1em;
+		}
+		.discContent {
+			padding: 1rem 0 !important;
+		}
+		
 		.flexColumn{
 			display: flex;
 			flex-direction: column;
+			gap: .5rem;
+			border-left: none !important;
+		}
+		
+		.flexTitle {
+			display: flex;
 			gap: 1rem;
+			align-items: center;
+			border-bottom: 1px solid #c1bebe;
+		}
+		
+		.flexCenter {
+			display: flex;
+			justify-content: center;
 		}
 		
 		.cmdBtn{
@@ -21,6 +46,27 @@
 			background-repeat: no-repeat;
 			padding-left: 25px !important;
 			background-size: contain;
+		}
+	
+		.disclosurePanel {
+			padding: 0 1rem;
+		}
+		
+		.hideScroll{}
+		
+		.hideScroll::-webkit-scrollbar {
+			width: 1px;
+			height: 6px;
+			background-color: gray;
+		}
+		
+		/* To hide the vertical scroll. */
+		.hideScroll::-webkit-scrollbar:vertical {
+			display: none;
+		}
+		
+		.hideScroll::-webkit-scrollbar-thumb:horizontal {
+			background: black;
 		}
 		
 		.heigthAll {
@@ -36,13 +82,41 @@
     		border: 0.5px solid yellow !important;
 		}
 		
+		@external modify;
+		
 	</ui:style>
 	
 	<g:HTMLPanel styleName="{style.flexColumn} {style.heigthAll}">
 		<g:HTMLPanel ui:field="messagePanel" />
 		<g:HTMLPanel styleName="{style.flexColumn}">
 			<aon:AonToolbar ui:field="toolbar" />
-			<c:DataGrid ui:field="agreementPaymentDG" styleName="{style.grid}" />
+			
+			<g:DisclosurePanel ui:field="paymentDiscPanel" styleName="{style.disclosurePanel}">
+			  <g:customHeader>
+			   	 <g:HTMLPanel styleName="{style.flexTitle}">
+			   	  	<aon:AonToolbarButton ui:field="paymentDiscBtn" />
+			   	  	<g:Label styleName="{style.disclouruseTitle}">Devengos</g:Label>
+			   	 </g:HTMLPanel>
+			   </g:customHeader>
+			   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="paymentDiscPanelContent">
+			   		<c:DataGrid ui:field="agreementPaymentDG" debugId="agreementPaymentDG" styleName="{style.grid}" />
+			   </g:HTMLPanel>
+		   </g:DisclosurePanel>
+		   
+		   <g:DisclosurePanel ui:field="extraDiscPanel" styleName="{style.disclosurePanel}">
+			  <g:customHeader>
+			   	 <g:HTMLPanel styleName="{style.flexTitle}">
+			   	  	<aon:AonToolbarButton ui:field="extraDiscBtn" debugId="extraDiscBtn" />
+			   	  	<g:Label styleName="{style.disclouruseTitle}">Extras</g:Label>
+			   	 </g:HTMLPanel>
+			   </g:customHeader>
+			   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="extraDiscPanelContent">
+			   		<c:DataGrid ui:field="agreementExtraPaymentDG" debugId="agreementExtraPaymentDG" styleName="{style.grid}" />
+			   </g:HTMLPanel>
+		   </g:DisclosurePanel>
+			
+			
+			
 		</g:HTMLPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

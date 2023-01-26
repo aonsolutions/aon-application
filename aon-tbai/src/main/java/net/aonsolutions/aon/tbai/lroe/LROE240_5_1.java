@@ -16,7 +16,6 @@ import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.CountryMiembroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.OperacionEnum;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.TipoDeclaradoEnum;
@@ -24,18 +23,14 @@ import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_enumerados.Tipo
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionBienInversionType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposanulacion.AnulacionesBienesInversionType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.BienInversionType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.BienesInversionType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.DetalleOpIntracomunitariaTransfPericialesOtrosPJType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.EntregaBienesInversionPeriodoRegularizacionType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDBienInversionModelo240Type;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDFacturaType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.IDOtroType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.NIFIVAType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.NIFNIFIVAPersonaType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.OtraInformacionTrascendenciaTributariaOpIntraType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.TransferenciaPericialOtroPJType;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.TransferenciasPericialesOtrosPJType;
-import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_3_bienes_altamodifpeticion_v1_0_1.LROEPJ240BienesAltaModifPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_3_bienes_anulacionpeticion_v1_0_0.LROEPJ240BienesAnulacionPeticion;
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.lroe_pj_240_4_1_determinadasopintracomunitarias_transfpericialesotros_altamodifpeticion_v1_0_2.LROEPJ240TransferenciasPericialesOtrosAltaModifPeticion;
 import net.aonsolutions.aon.tbai.LroeData;
@@ -140,7 +135,7 @@ public class LROE240_5_1 extends LROE240 {
 	
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Company company, List<Invoice> invoices) {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.A_00);
+			LROEInfo info = buildInfo(OperacionEnum.A_00, getEjercicio(tbaiConfiguration, invoices.get(0)));
 			 
 			final LROEPJ240TransferenciasPericialesOtrosAltaModifPeticion p240 = build(company, invoices, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance(LROEPJ240TransferenciasPericialesOtrosAltaModifPeticion.class);
@@ -160,8 +155,8 @@ public class LROE240_5_1 extends LROE240 {
 		}
 	}
 	
-	public LROEInfo buildInfo(OperacionEnum operacion) {
-		return new LROEInfo(MODEL_240, CAPITULO, null, operacion);
+	public LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
+		return new LROEInfo(MODEL_240, CAPITULO, null, operacion, ejercicio);
 	}
 	
 	private LROEPJ240BienesAnulacionPeticion buildBaja(Company company, List<Invoice> invoices, LROEInfo info) {	
@@ -203,7 +198,7 @@ public class LROE240_5_1 extends LROE240 {
 	
 	public LROEResponse anulacion(Company company, TbaiConfiguration tbaiConfiguration, List<Invoice> invoices) {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.AN_0);
+			LROEInfo info = buildInfo(OperacionEnum.AN_0, getEjercicio(tbaiConfiguration, invoices.get(0)));
 			final LROEPJ240BienesAnulacionPeticion p240 = buildBaja(company, invoices, info); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240BienesAnulacionPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	

@@ -131,6 +131,8 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 	}
 	
 	public void onInvoice(ActionEvent event) throws Exception {
+		Series series = getParams().getInvoiceSeries();
+		checkSerie(getParams().getInvoiceDate(), series != null ? series.getCode() : null);
 		getProgressionState().start();
 		if(getTbaiConfiguration().isActive()) {
 			try {
@@ -145,6 +147,19 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 		FeeInvoicingProcess fip = new FeeInvoicingProcess(this, UserUtils.getInstance().getLoggedUser());
 		LongProcessThread thread = new LongProcessThread(fip); 
 		thread.start();				
+	}
+
+	private void checkSerie(Date date, String serie) throws Exception {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		
+		com.esferalia.aon.occam.api.model.finance.Invoice lastInvoice = AON.getLastSaleInvoice(domainName, domainId, login, serie);
+		if(lastInvoice.getIssueDate() != null && date.compareTo(lastInvoice.getIssueDate()) < 0) {
+			getProgressionState().finish();
+			AonUtil.addErrorMessage("Existe una factura con la misma serie y fecha posterior.");
+			throw new Exception("Existe una factura con la misma serie y fecha posterior.");
+		}
 	}
 	
 	private static Certificate checkCertificate() throws Exception {

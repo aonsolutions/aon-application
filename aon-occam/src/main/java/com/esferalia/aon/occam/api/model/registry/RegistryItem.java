@@ -22,6 +22,8 @@ public class RegistryItem implements Serializable {
 	private Priority priority;
 	private Integer workplace;
 	private RegistryItemStatus status;
+	
+	private boolean removed;
 
 	public Integer getId() {
 		return id;
@@ -121,6 +123,13 @@ public class RegistryItem implements Serializable {
 		this.status = status;
 		return this;
 	}
-
-
+	
+	public boolean isRemoved() {
+		return removed;
+	}
+	
+	public RegistryItem setRemoved(boolean removed) {
+		this.removed = removed;
+		return this;
+	}
 }

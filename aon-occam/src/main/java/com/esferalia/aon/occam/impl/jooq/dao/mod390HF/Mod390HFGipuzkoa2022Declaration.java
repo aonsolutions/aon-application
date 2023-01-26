@@ -282,12 +282,12 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C049,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		,GP_C050	(Mod390Key.GP_C050
-			,(mod,vat) -> isCommonPurchase(vat, mod) && (hasPercent4(vat) || hasPercent5(vat))
+			,(mod,vat) -> isCommonPurchase(vat, mod) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C050,mod,vat.getBase())
 			,null,null,null)
 		,GP_X050	(Mod390Key.GP_X050,null,null,(ctx,mod) -> add(Mod390Key.GP_X050,mod,PERCENT_4),null,null)
 		,GP_C051	(Mod390Key.GP_C051
-			,(mod,vat) -> isCommonPurchase(vat, mod) && (hasPercent4(vat) || hasPercent5(vat))
+			,(mod,vat) -> isCommonPurchase(vat, mod) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C051,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		,GP_C052	(Mod390Key.GP_C052
@@ -330,12 +330,12 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 			,null,null,null)
 
 		,GP_C061	(Mod390Key.GP_C061
-			,(mod,vat) -> isCommonExpense(vat) && (hasPercent4(vat) || hasPercent5(vat))
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C061,mod,vat.getBase())
 			,null,null,null)
 		,GP_X061	(Mod390Key.GP_X061,null,null,(ctx,mod) -> add(Mod390Key.GP_X061,mod,PERCENT_4),null,null)
 		,GP_C062	(Mod390Key.GP_C062
-			,(mod,vat) -> isCommonExpense(vat) && (hasPercent4(vat) || hasPercent5(vat))
+			,(mod,vat) -> isCommonExpense(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C062,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -372,12 +372,12 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 			,null,null,null)
 		
 		,GP_C070	(Mod390Key.GP_C070
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput()  && (hasPercent4(vat) || hasPercent5(vat))
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C070,mod,vat.getBase())
 			,null,null,null)
 		,GP_X070	(Mod390Key.GP_X070,null,null,(ctx,mod) -> add(Mod390Key.GP_X070,mod,PERCENT_4),null,null)
 		,GP_C071	(Mod390Key.GP_C071
-			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput()  && (hasPercent4(vat) || hasPercent5(vat))
+			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.GP_C071,mod,vat.getDeductibleQuota())
 			,null,null,null)
 		
@@ -616,7 +616,7 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 			&& vat.getPercentage() !=  PERCENT_10
 			&& vat.getPercentage() !=  PERCENT_105
 			&& vat.getPercentage() !=  PERCENT_12
-			&& vat.getPercentage() !=  PERCENT_4; 	
+			&& vat.getPercentage() !=  PERCENT_4;
 	}
 	static boolean hasSurchargePercent52(VatContext vat) {
 		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_52; 
@@ -647,6 +647,7 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 	}
 	private static boolean operacionesInterioresFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime()
+			&& !vat.isRectification()	
 			&& !vat.isFarmerRegime()
 			&& AonMathUtils.isNotZero(vat.getPercentage())
 			&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilter(vat));
@@ -684,6 +685,7 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 			&& AonMathUtils.isNotZero(vat.getPercentage())
 			&& !vat.isService()
+			&& !vat.isInvestment()
 			&& ( vat.isNationalPurchase()
 			 || importacionesFilter(vat, mod, !vat.isRectification())
 			 || vat.isOtherISPPurchase()
@@ -694,6 +696,7 @@ class Mod390HFGipuzkoa2022Declaration extends Mod390HFGIPUZKOADeclaration {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 				&& AonMathUtils.isNotZero(vat.getPercentage())
 				&& vat.isService()
+				&& !vat.isInvestment()
 				&& (vat.isExpenses() || vat.isPurchase())	
 				;
 	}

@@ -28,7 +28,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
-import com.ibm.icu.util.Calendar;
+import java.util.Calendar;
 
 import solutions.aon.seg.social.SistemaRED;
 import solutions.aon.seg.social.exception.SegSocialException;

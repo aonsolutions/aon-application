@@ -255,11 +255,30 @@ public class SistemaRED {
 		}
 	}
 
+	public static byte[] getCccLaboralLife(final byte certificateData[], final String certificatePassword,
+			final String certificateType, String regime, String ccc, Date from, Date to) throws SegSocialException {
+		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
+			return SistemaREDEmployee.getCccLaboralLife(certificateInputStream, certificatePassword, certificateType, 
+					regime, ccc, from, to);
+		} catch (IOException e) {
+			throw new SegSocialException(e);
+		}
+	}
+	
 	public static byte[] getCccLaboralLife(InputStream certificateInputStream, String certificatePassword,
 			String certificateType, String regime, String ccc, Date from, Date to) throws SegSocialException {
 		try {
 			return SistemaREDEmployee.getCccLaboralLife(certificateInputStream, certificatePassword, certificateType,
 					regime, ccc, from, to);
+		} catch (IOException e) {
+			throw new InvalidCertificateException();
+		}
+	}
+	
+	public static byte[] getLaboralLife(InputStream certificateInputStream, String certificatePassword,
+			String certificateType, String regime, String ccc, String nss) throws SegSocialException {
+		try {
+			return SistemaREDEmployee.getLaboralLife(certificateInputStream, certificatePassword, certificateType, regime, ccc, nss);
 		} catch (IOException e) {
 			throw new InvalidCertificateException();
 		}
@@ -282,20 +301,18 @@ public class SistemaRED {
 				ccc);
 	}
 
+	/**
+	 * Use com.esferalia.aon.in.payroll.SistemaRED2AON.getEmployeeToIDC
+	 */
+	@Deprecated 
 	public static Employee getEmployee(final byte certificateData[], final String certificatePassword,
 			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
 		try (InputStream certificateInputStream = new ByteArrayInputStream(certificateData)) {
-			return getEmployee(certificateInputStream, certificatePassword, certificateType,
-					regimen, ccc, nss);
+			return SistemaREDEmployee.getEmployee(certificateInputStream, certificatePassword, certificateType, regimen,
+					ccc, nss);
 		} catch (IOException e) {
 			throw new SegSocialException(e);
 		}
-	}
-
-	public static Employee getEmployee(final InputStream certificateInputStream, final String certificatePassword,
-			final String certificateType, String regimen, String ccc, String nss) throws SegSocialException {
-		return SistemaREDEmployee.getEmployee(certificateInputStream, certificatePassword, certificateType, regimen,
-				ccc, nss);
 	}
 
 	public static Map<String, Map<String, WorkerLiquidation>> getCosts(final byte certificateData[],

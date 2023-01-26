@@ -133,13 +133,29 @@ public class DeliveryInvoicingController implements IFinanceConstants, Serializa
 		return false;
 	}
 
-	public void onInvoice(ActionEvent event) {
+	public void onInvoice(ActionEvent event) throws Exception {	
+		Series series = getParams().getInvoiceSeries();
+		checkSerie(getParams().getInvoiceDate(), series != null ? series.getCode() : null);
 		getProgressionState().start();
 		DeliveryInvoicingProcess dip = new DeliveryInvoicingProcess(this);
 		LongProcessThread thread = new LongProcessThread(dip); 
 		thread.start();		
 	}
 
+	private void checkSerie(Date date, String serie) throws Exception {
+		String domainName = AonUtil.getDomainName();
+		Integer domainId = DomainManager.getCurrentDomain();
+		String login = UserUtils.getInstance().getLoggedUser().getLogin();
+		
+		com.esferalia.aon.occam.api.model.finance.Invoice lastInvoice = AON.getLastSaleInvoice(domainName, domainId, login, serie);
+		if(lastInvoice.getIssueDate() != null && date.compareTo(lastInvoice.getIssueDate()) < 0) {
+			getProgressionState().finish();
+			AonUtil.addErrorMessage("Existe una factura con la misma serie y fecha posterior.");
+			throw new Exception("Existe una factura con la misma serie y fecha posterior.");
+		}
+	}
+	
+	
 	public String invoiceAction() {
 		return (getInvoiceIds() != null) ? IFinanceConstants.SALE_INVOICE_LIST_NAME : null;
 	}

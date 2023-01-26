@@ -3,7 +3,8 @@ package com.esferalia.aon.occam.api.model.registry;
 public enum RegistryItemStatus {
 	ACTIVE,
 	INTERESTED,
-	REFUSED;
+	REFUSED,
+	INACTIVE;
 	
 	private RegistryItemStatus() {
 		

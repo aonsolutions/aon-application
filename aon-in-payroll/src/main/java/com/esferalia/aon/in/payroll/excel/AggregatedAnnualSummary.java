@@ -1284,11 +1284,13 @@ public class AggregatedAnnualSummary {
 	}
 	
 	private static String getIdentifier(AONContext aonContext, Salary s) {
+		String id = null;
 		if (s.getEmployeeDocument() == null || s.getEmployeeDocument().isEmpty()) {
-			return getAlternativeIdentifier(aonContext, s);
+			id = getAlternativeIdentifier(aonContext, s);
 		} else {
-			return s.getEmployeeDocument();
+			id = s.getEmployeeDocument();
 		}
+		return AonStringUtils.upperCase(id);
 	}
 	
 	private static String getAlternativeIdentifier(AONContext aonContext, Salary s) {

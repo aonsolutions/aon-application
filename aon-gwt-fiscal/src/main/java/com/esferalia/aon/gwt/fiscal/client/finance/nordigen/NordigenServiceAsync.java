@@ -21,8 +21,10 @@ public interface NordigenServiceAsync {
 	void getMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, Date endDate, boolean online, AsyncCallback<List<NordigenBankStatement>> callback);
 	void getNordigenInstitutions(NordigenAccessToken token, Country country, AsyncCallback<List<NordigenInstitution>> callback);
 	void getNordigenInstitutionsByBic(NordigenAccessToken token, String bic, AsyncCallback<List<NordigenInstitution>> callback);
+	void deleteRequisitionById (NordigenAccessToken token, String currentDomainName, int currentDomain, String user, String requisitionId, AsyncCallback<Boolean> callback);
 	void cancelRequisition (NordigenAccessToken token, String currentDomainName, int currentDomain, String user, Integer rbankId, AsyncCallback<Boolean> callback);
 	void getRequisition(NordigenAccessToken token, String requisitionId, AsyncCallback<NordigenRequisition> callback);
 	void setNordigenAccountValues(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount account, AsyncCallback<NordigenBankAccount> callback);
 	void getNotInsertedMovements(NordigenAccessToken token, String domainName, int domain, String user, NordigenBankAccount nordigenBankAccount, AsyncCallback<List<NordigenBankStatement>> callback);
+	void findAllDomainRequisitions(NordigenAccessToken token, String currentDomainName, AsyncCallback<List<NordigenRequisition>> callback);
 }

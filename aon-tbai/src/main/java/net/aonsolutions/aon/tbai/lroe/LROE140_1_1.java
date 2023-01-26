@@ -53,7 +53,7 @@ public class LROE140_1_1 extends LROE140 {
 	private static final String CAPITULO = "1";
 	private static final String SUBCAPITULO = "1.1";
 	
-	private LROEPF140IngresosConFacturaConSGAltaPeticion build(Person person, Invoice invoice,LROEInfo info, byte[] data) {
+	private LROEPF140IngresosConFacturaConSGAltaPeticion build(Person person, Invoice invoice, LROEInfo info, byte[] data) {
 		LROEPF140IngresosConFacturaConSGAltaPeticion proba = new LROEPF140IngresosConFacturaConSGAltaPeticion();
 		proba.setCabecera(buildCabecera(person, info));
 
@@ -77,7 +77,7 @@ public class LROE140_1_1 extends LROE140 {
 	
 	public LROEResponse alta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] tbai) throws StatusCodeException {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.A_00);
+			LROEInfo info = buildInfo(OperacionEnum.A_00, getEjercicio(tbaiConfiguration, invoice));
 			final LROEPF140IngresosConFacturaConSGAltaPeticion p140 = build(person, invoice, info, tbai); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaConSGAltaPeticion.class );
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();	
@@ -95,8 +95,8 @@ public class LROE140_1_1 extends LROE140 {
 		}
 	}
 	
-	public LROEInfo buildInfo(OperacionEnum operacion) {
-		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion);
+	public LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
+		return new LROEInfo(MODEL_140, CAPITULO, SUBCAPITULO, operacion, ejercicio);
 	}
 	
 	private LROEPF140IngresosConFacturaConSGAnulacionPeticion buildBaja(Person person, Invoice invoice, LROEInfo info, byte[] data) {	
@@ -113,7 +113,7 @@ public class LROE140_1_1 extends LROE140 {
 	
 	public LROEResponse anulacion(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice, byte[] tbai)  {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.AN_0);
+			LROEInfo info = buildInfo(OperacionEnum.AN_0, getEjercicio(tbaiConfiguration, invoice));
 			final LROEPF140IngresosConFacturaConSGAnulacionPeticion p140 = buildBaja(person, invoice, info, tbai); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaConSGAnulacionPeticion.class );
 			final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();	
@@ -133,7 +133,7 @@ public class LROE140_1_1 extends LROE140 {
 	
 	public boolean consulta(TbaiConfiguration tbaiConfiguration, Person person, Invoice invoice) {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.C_00);
+			LROEInfo info = buildInfo(OperacionEnum.C_00, getEjercicio(tbaiConfiguration, invoice));
 			LROEPF140IngresosConFacturaConSGConsultaPeticion lroe = buildConsulta(person, invoice, info);
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPF140IngresosConFacturaConSGConsultaPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	

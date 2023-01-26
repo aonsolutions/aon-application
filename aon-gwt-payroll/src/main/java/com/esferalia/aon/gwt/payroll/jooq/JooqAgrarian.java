@@ -19,7 +19,7 @@ import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.gwt.payroll.shared.AgrarianJourney;
-import com.ibm.icu.util.Calendar;
+import java.util.Calendar;
 
 public class JooqAgrarian {
 

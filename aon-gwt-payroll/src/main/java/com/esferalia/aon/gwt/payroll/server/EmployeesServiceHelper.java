@@ -17,8 +17,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.sql.SQLConstants.CONTRACT;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
-import static com.esferalia.aon.watson.util.AonDateUtils.get;
-import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.io.File;
@@ -89,6 +87,7 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.sql.SQLAgreementDraft;
 import com.esferalia.aon.gwt.payroll.sql.SQLSalaryDraftCalculatorContext;
 import com.esferalia.aon.gwt.payroll.sql.SQLSettleDraftCalculatorContext;
+import com.esferalia.aon.in.payroll.SistemaRED2AON;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayroll;
 import com.esferalia.aon.in.payroll.pdf.maker.enterprisepayroll.beans.EnterprisePayrollEntry;
@@ -105,7 +104,6 @@ import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.Occupation;
-import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -164,7 +162,6 @@ import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.invalid.NoQueryData;
 import solutions.aon.seg.social.exception.invalid.NotAllowedContributionAccount;
-import solutions.aon.seg.social.object.Employee;
 import solutions.aon.seg.social.object.Idc;
 
 public class EmployeesServiceHelper {
@@ -824,7 +821,7 @@ public class EmployeesServiceHelper {
 		PAYROLL.
 		getContract(domainName, domainId, userLogin, p -> p.getIdProperty().eq(contractId))
 		.orElseThrow(IOException::new);
-		String nif = contract.getPersonDocument();
+//		String nif = contract.getPersonDocument();
 		String nss = contract.getPersonSsNumber();
 		String ccc = contract.getEnterpriseCCC();
 		String regime = contract.getEnterpriseCCCRegime().getCode();
@@ -836,21 +833,16 @@ public class EmployeesServiceHelper {
 			
 			Date date = new Date();
 			java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-			
-//			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
-			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-			Employee employee = SistemaRED.getEmployee(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, nss);
-			
-			
-			// check ccc1 ccc2 == ccc 
-			employee.getCtaCti().ifPresent(ssCcc -> {
-				if ( AonUtils.notEquals(ssCcc, ccc)) {
-					employeeStatus.and(
-							new EmployeeStatus.MismatchedCCC()
-							.setAonCCC(ccc)
-							.setSsCCC(ssCcc));
-				}
-			});
+
+            com.esferalia.aon.occam.api.model.payroll.Employee employee = SistemaRED2AON.getEmployeeToIDC(userLogin, userId, domainName, domainId, regime, ccc, nss, Optional.empty());
+            
+
+			if ( AonUtils.notEquals(employee.getCcc(), ccc)) {
+				employeeStatus.and(
+						new EmployeeStatus.MismatchedCCC()
+						.setAonCCC(ccc)
+						.setSsCCC(employee.getCcc()));
+			}
 			
 			// check fecha_alta == start_date
 //			{
@@ -880,7 +872,7 @@ public class EmployeesServiceHelper {
 			
 			Date currentDate = new Date();
 			
-			employee.getFrb().ifPresent(ssEndDate -> {
+			employee.getEndDate().ifPresent(ssEndDate -> {
 				if ( AonUtils.notEquals(ssEndDate, endDate) && DateUtils.getDaysBetween(currentDate, ssEndDate) < 30) {
 					employeeStatus.and(
 							new EmployeeStatus.MismatchedStartDate()
@@ -888,7 +880,8 @@ public class EmployeesServiceHelper {
 							.setSsStartDate(ssEndDate));
 				}
 			});
-			employee.getFrb().orElseGet(() -> {
+			
+			employee.getEndDate().orElseGet(() -> {
 				if ( endDate != null && DateUtils.getDaysBetween(currentDate, endDate) < 30 ) {
 					employeeStatus.and(new EmployeeStatus.EndDateNotFound());
 				}
@@ -904,8 +897,8 @@ public class EmployeesServiceHelper {
 			
 			
 			// check tipo_contrato == tc2 			
-			if ( employee.getContract().isPresent() ) {
-				String ssContractType = employee.getContract().get();
+			if ( employee.getContractType().isPresent() ) {
+				String ssContractType = employee.getContractType().get();
 				String aonContractType = getString(dataList, ContextVariable.TC2, "");
 				if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 ) {
 					employeeStatus.and(
@@ -915,15 +908,15 @@ public class EmployeesServiceHelper {
 							.setVariables(Collections.singletonList(
 									new StringVariable.Builder()
 									.setName(TC2.getName())
-									.setStartDate(employee.getFra())
+									.setStartDate(employee.getStartDate())
 									.create()))
 							);
 				}
 			}
 			
 			// check grupo_cotizacion == quote_group 
-			if ( employee.getGc().isPresent()) {
-				String ssQuoteGroup = employee.getGc().get();
+			if ( employee.getQuoteGroup().isPresent()) {
+				String ssQuoteGroup = employee.getQuoteGroup().get();
 				String aonQuoteGroup = getString(dataList, ContextVariable.QUOTE_GROUP, "");
 				if ( AonStringUtils.compareIgnoreCase(ssQuoteGroup, aonQuoteGroup ) != 0 ) {
 					employeeStatus.and(
@@ -933,7 +926,7 @@ public class EmployeesServiceHelper {
 							.setVariables(Collections.singletonList(
 									new StringVariable.Builder()
 									.setName(QUOTE_GROUP.getName())
-									.setStartDate(employee.getFra())
+									.setStartDate(employee.getStartDate())
 									.create()))
 							);
 				} 
@@ -975,14 +968,10 @@ public class EmployeesServiceHelper {
 			return new EmployeeStatus.Forbidden();
 		} catch ( NoQueryData e ) {
 			return new EmployeeStatus.NoQueryData().setMessage(e.getMessage());
-		} 
-		//catch ( NoSuchDataException e ) {
-		//	return new EmployeeStatus.EmployeeNotFound();
-		//} 
-		//catch ( InvalidArgumentException e ) {
-		//	return new EmployeeStatus.InvalidData();
-		//} 
-		catch ( NotAllowedContributionAccount e) {
+		} catch (UnknownPDFException e) {
+          e.printStackTrace();
+          return new EmployeeStatus.UnknownError().setMessage(e.getMessage());
+        } catch ( NotAllowedContributionAccount e) {
 			return new EmployeeStatus.NotAuthorizedCCC();
 		} 
 		catch ( SaltraCredentialsNotFoundException | CertificateNotFoundException e ) {
@@ -990,7 +979,6 @@ public class EmployeesServiceHelper {
 		} catch ( SegSocialException e  ) {
 			return new EmployeeStatus.UnknownError().setMessage(e.getMessage());
 		} 
-
 	}
 	
 	public static Map<String,List<Variable>> getSSContractData(Connection connection, String domainName, Integer domainId, String userLogin, Integer userId, Integer contractId, Date date) {

@@ -134,7 +134,9 @@ public class RegistryImport extends Import {
 			return;
 		}
 
-		if(IConstants.NOMBRE.equalsIgnoreCase(title)) {
+		if(IConstants.NOMBRE.equalsIgnoreCase(title)
+			|| IConstants.RAZON_SOCIAL.equalsIgnoreCase(title)
+			|| IConstants.RAZON_SOCIAL2.equalsIgnoreCase(title)) {
 			if(o.toString().length() > 63) {
 				reg.getRegistry().setName(o.toString().substring(0,63));
 				reg.getAccount().setDescription(o.toString().substring(0, 63));
@@ -401,6 +403,9 @@ public class RegistryImport extends Import {
 				String code = ACCOUNTING.getAccountNextCode(domain.getName(), domain.getId(), user.getLogin(), r.getAccountPrefix());
 				r.getAccount().setCode(code);
 			}
+			if(AonStringUtils.isBlank(r.getAccount().getDescription())) {
+				r.getAccount().setDescription(r.getRegistry().getName());
+			}
 
 			Account acc = ACCOUNTING.getAccount(domain.getName(), domain.getId(), user.getLogin(), r.getAccount().getCode());
 			if(acc == null) {
@@ -450,7 +455,7 @@ public class RegistryImport extends Import {
 				}
 			}
 
-			if(!Utils.isAyudaT(domain.getName()) && r.isSupplier()) {
+			if(!Utils.isAyudaT(domain) && r.isSupplier()) {
 				Optional<Supplier> supplier = AON.getSupplier(domain.getName(), domain.getId(), user.getLogin(), f->
 					f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq( registryId )));
 				if(!supplier.isPresent()) {
@@ -466,7 +471,7 @@ public class RegistryImport extends Import {
 				}
 			}
 
-			if(!Utils.isAyudaT(domain.getName()) && r.isCreditor()) {
+			if(!Utils.isAyudaT(domain) && r.isCreditor()) {
 				Optional<Creditor> creditor = AON.getCreditor(domain.getName(), domain.getId(), user.getLogin(), f->
 					f.getDomainProperty().eq(domain.getId()).and(f.getIdProperty().eq( registryId )));
 				if(!creditor.isPresent()) {

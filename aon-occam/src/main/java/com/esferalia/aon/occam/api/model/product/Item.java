@@ -5,11 +5,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.occam.api.json.DomainJSON;
-import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -50,6 +46,8 @@ public class Item implements Serializable {
 	private Date modificationDate;
 	
 	private List<ItemComposition> itemComposition;
+	
+	private boolean removed;
  
 	public Integer getId() { 
 		return id;
@@ -355,6 +353,15 @@ public class Item implements Serializable {
 			sb.append(']');
 		}
 		return sb.toString();
+	}
+	
+	public boolean isRemoved() {
+		return removed;
+	}
+	
+	public Item setRemoved(boolean removed) {
+		this.removed = removed;
+		return this;
 	}
 	
 	public boolean isEmpty() {

@@ -63,11 +63,15 @@ export class AonContractList extends AonElement {
 
   buildToolbarSearch(){
     const btnSearch = this.getApplication().addSearchOption();
-    btnSearch.addEventListener(EVENT.SEARCH, ({detail}) => this.search(detail));
+
+    let timeOut = null;
     btnSearch.addEventListener(EVENT.SEARCH_NEW, ({detail:{contractAll, search}})=>{
-      this._list = [];
-      this._filter.contractAll = contractAll;
-      this.search(search);
+			clearTimeout(timeOut);
+			timeOut = setTimeout(() => {
+        this._list = [];
+        this._filter.contractAll = contractAll;
+        this.search(search);
+			}, 300);
     });
 
     btnSearch.buildOptionsFilter([{

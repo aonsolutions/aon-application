@@ -3,6 +3,7 @@ package solutions.aon.seg.social;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -38,6 +40,7 @@ import org.xml.sax.SAXException;
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.SegSocialException;
+import solutions.aon.seg.social.exception.invalid.NoMoreDataException;
 import solutions.aon.seg.social.object.Calc;
 import solutions.aon.seg.social.object.Idc;
 import solutions.aon.seg.social.object.Liquidation;
@@ -47,6 +50,7 @@ import solutions.aon.seg.social.object.SituacionEmpresa;
 import solutions.aon.seg.social.object.SituationType;
 import solutions.aon.seg.social.object.SituacionEmpresa.SituacionEmpresaBuilder;
 import solutions.aon.seg.social.object.WorkerLiquidation;
+import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 import solutions.aon.seg.social.toolkit.Toolkit;
 /**
  * Class to obtain resources from Social Security just sending POST/GET requests
@@ -76,14 +80,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 		Date today = new Date(); 
 		date = date.after(today) ? today : date;
 		
-		SSLContext sslContext = null;
-			try {				
-				sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
-			} catch (Exception e1) {
-				throw new InvalidCertificateException();
-			}
-			String link = "";
-			String sessionId = "";
+		SSLContext sslContext = Toolkit.getTrustedSSLContext(certificateInputStream, certificatePassword, certificateType);
+		
+		String link = "";
+		String sessionId = "";
 			
 			
 			try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {				
@@ -433,16 +433,10 @@ public class ServicioRED extends ServicioREDRegeXML {
 	public static byte[] getTADuplicatePOST(InputStream certificateInputStream, String certificatePassword, String certificateType,
 			String ccc, String regime, SituationType situationType, String affiliationNumber, Date date) throws SegSocialException{
 
-		SSLContext sslContext = null;
+		SSLContext sslContext = Toolkit.getTrustedSSLContext(certificateInputStream, certificatePassword, certificateType);
 
-		try {
-			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
-		} catch (Exception e1) {
-			throw new InvalidCertificateException();
-		}
 		String link = "";
-		String sessionId = "";
-		
+		String sessionId = "";		
 		
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
 			
@@ -1115,7 +1109,6 @@ public class ServicioRED extends ServicioREDRegeXML {
 			final String certificatePassword, final String certificateType, final String affiliationNumber,
 			final String regime, final String ccc) throws SegSocialException {
 		SSLContext sslContext = null;
-
 		try {
 			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
 		} catch (Exception e1) {
@@ -1123,6 +1116,8 @@ public class ServicioRED extends ServicioREDRegeXML {
 		}
 		String link = "";
 		String sessionId = "";
+		
+		Set<Idc> collects = new HashSet<>();
 		
 		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
 			
@@ -1158,17 +1153,138 @@ public class ServicioRED extends ServicioREDRegeXML {
 			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFAO, ""));
 			params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
 			params.add(new BasicNameValuePair(IServicioRedConstants.BTN_SUB2207601004, IServicioRedConstants.CONTINUE));
-			
+	
 			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
+			
 			
 			body = Toolkit.getBodyPOST(httpClient, httpPost);
 			ServicioREDRegeXML.checkOldSsError(body);
-			return (body != null && !body.isEmpty()) ? Toolkit.getIDCDatesByRegex(body) : Collections.emptyList();
+			
+			boolean end = false;
+			
+			if(body != null && !body.isEmpty()) {
+				Collection<Idc> collect = Toolkit.getIDCDatesByRegex(body);
+				collects.addAll(collect);
+				end = collect.size() < 12;
+			}
+			
+			while(!end) {
+				try {
+					body = nextPage(body, httpClient);
+					if(body != null && !body.isEmpty()) {
+						Collection<Idc> collect = Toolkit.getIDCDatesByRegex(body);
+						collects.addAll(collect);
+						end = collect.size() < 12;
+					}
+					ServicioREDRegeXML.checkOldSsError(body);
+				} catch (NoMoreDataException e) {
+					end = true;
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new InvalidCertificateException();
 		}
+		
+		return collects;
 	}
+	
+	/**
+	 * ULTIMO INFORME DE DATOS DE COTIZACIÓN (IDC)
+	 * @param certificateInputStream
+	 * @param certificatePassword
+	 * @param certificateType
+	 * @param affiliationNumber
+	 * @param regime
+	 * @param ccc
+	 * @return A collection with the IDCs
+	 * @throws SegSocialException
+	 */
+	public static Collection<Idc> getIDCLatest(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, final String affiliationNumber,
+			final String regime, final String ccc) throws SegSocialException {
+		SSLContext sslContext = null;
+		try {
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
+		} catch (Exception e1) {
+			throw new InvalidCertificateException();
+		}
+		String link = "";
+		String sessionId = "";
+		
+		Set<Idc> collects = new HashSet<>();
+		
+		try (CloseableHttpClient httpClient = HttpClients.custom().setSSLContext(sslContext).build()) {
+			
+			String body = Toolkit.getBodyGET(httpClient, "https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR37&E=I&AP=AFIR");
+			link = Toolkit.getLink(body);
+			sessionId = Toolkit.getSessionId(body);
+			
+			HttpPost httpPost = new HttpPost(link);
+			
+			String txtSDFTESNAF = affiliationNumber.length() > 2 ? affiliationNumber.substring(0, 2) : "";
+			String txtSDFNAF = affiliationNumber.length() > 2 ? affiliationNumber.substring(2) : "";
+
+			String txtSDFTESCTA = ccc.length() > 2 ? ccc.substring(0, 2) : "";
+			String txtSDFCUENTA = ccc.length() > 2 ? ccc.substring(2) : "";
+			
+			List<NameValuePair> params = new ArrayList<>();
+			params.add(new BasicNameValuePair(IServicioRedConstants.APP_NAME, IServicioRedConstants.LIBAFCON));
+			params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM3700"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
+			params.add(new BasicNameValuePair(IServicioRedConstants.FOCUSED_CONTROL, IServicioRedConstants.SUB2207601004));
+			params.add(new BasicNameValuePair(IServicioRedConstants.DEFAULT_NULL, "1"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_ENTORNO_PR, "0"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_TRANSAC, "Atr37"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_PRACTICE_MENU, "I"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_COMMAND_EDIT, "Atr37"));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFTESNAF, txtSDFTESNAF));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFNAF, txtSDFNAF));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFREGCTA, regime));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFTESCTA, txtSDFTESCTA));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFCUENTA, txtSDFCUENTA));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFDIA, ""));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFMES, ""));
+			params.add(new BasicNameValuePair(IServicioRedConstants.TXT_SDFAO, ""));
+			params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
+			params.add(new BasicNameValuePair(IServicioRedConstants.BTN_SUB2207601004, IServicioRedConstants.CONTINUE));
+	
+			httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
+			
+			
+			body = Toolkit.getBodyPOST(httpClient, httpPost);
+			ServicioREDRegeXML.checkOldSsError(body);
+			
+			boolean end = false;
+			
+			if(body != null && !body.isEmpty()) {
+				Collection<Idc> collect = Toolkit.getIDCDatesByRegex(body);
+				collects.addAll(collect);
+				end = collect.size() < 12;
+			}
+			
+
+			while(!end) {
+				try {
+					body = nextPage(body, httpClient);
+					if(body != null && !body.isEmpty()) {
+						Collection<Idc> collect = Toolkit.getIDCDatesByRegex(body);
+						collects.addAll(collect);
+						end = collect.size() < 12;
+					}
+					ServicioREDRegeXML.checkOldSsError(body);
+				} catch (NoMoreDataException e) {
+					end = true;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new InvalidCertificateException();
+		}
+
+		return collects;
+	}
+	
 	
 	/**
 	 * INFORME DE DATOS DE COTIZACIÓN (IDC) - Fechas de alta
@@ -1696,5 +1812,32 @@ public class ServicioRED extends ServicioREDRegeXML {
 				return ret;
 	}
 	
-	
+	private static String nextPage(String body, CloseableHttpClient httpClient) throws SegSocialException, IOException {
+
+		String link = Toolkit.getLink(body);
+		String sessionId = Toolkit.getSessionId(body);
+		
+		HttpPost httpPost = new HttpPost(link);
+		
+		String btnValue = "P\u00e1g. Sig.";
+		String btnNext = Toolkit.getElementByAttributeFirstTag(body, "value", btnValue);
+		String btnName = Toolkit.getAttribute(btnNext, "name");
+		String btnId= Toolkit.getAttribute(btnNext, "id");
+
+		List<NameValuePair> params = new ArrayList<>();
+		params.add(new BasicNameValuePair(IServicioRedConstants.APP_NAME, "SGIRED"));
+		params.add(new BasicNameValuePair(IServicioRedConstants.FORM_NAME, "ATRM3701"));
+		params.add(new BasicNameValuePair(IServicioRedConstants.SESSION_ID, sessionId));
+//		params.add(new BasicNameValuePair(IServicioRedConstants.FOCUSED_CONTROL, btnId));
+//		params.add(new BasicNameValuePair(IServicioRedConstants.DEFAULT_NULL, "1"));
+//		params.add(new BasicNameValuePair(IServicioRedConstants.TXT_ENTORNO_PR, ""));
+//		params.add(new BasicNameValuePair(IServicioRedConstants.TXT_TRANSAC, "Atr37"));
+//		params.add(new BasicNameValuePair(IServicioRedConstants.TXT_PRACTICE_MENU, "I"));
+//		params.add(new BasicNameValuePair(IServicioRedConstants.TXT_COMMAND_EDIT, "Atr37"));
+//		params.add(new BasicNameValuePair(IServicioRedConstants.PRINT_TYPE, IServicioRedConstants.ONLINE_PRINT));
+		params.add(new BasicNameValuePair(btnName, btnValue));
+
+		httpPost.setEntity(new UrlEncodedFormEntity(params, ServicioREDRegeXML.DEFAULT_ENCODING));
+		return Toolkit.getBodyPOST(httpClient, httpPost);
+	}
 }

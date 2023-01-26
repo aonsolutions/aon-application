@@ -212,13 +212,13 @@ public class Mod145DAO {
 	}
 
 	private static Double getIrpfPercent(AONContext ctx, Integer contract, java.util.Date startDate) {
-		String irpfPercent = ctx.getDslContext().select(CONTRACT_DATA.EXPRESSION)
+		List<String> irpfPercents = ctx.getDslContext().select(CONTRACT_DATA.EXPRESSION)
 				.from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contract))
 				.and(CONTRACT_DATA.START_DATE.eq(parseToSqlDate(startDate)))
-				.fetchOne(CONTRACT_DATA.EXPRESSION);
+				.fetch(CONTRACT_DATA.EXPRESSION);
 		
-		return AonStringUtils.isBlank(irpfPercent) ? null : Double.parseDouble(irpfPercent);
+		return irpfPercents.isEmpty() ? null : Double.parseDouble(irpfPercents.get(0));
 	}
 	
 	private static List<IrpfDataAscendants> getAscendants(AONContext ctx, Integer irpfData) {
@@ -332,6 +332,7 @@ public class Mod145DAO {
 		ctx.getDslContext()
 			.delete(CONTRACT_DATA)
 			.where(CONTRACT_DATA.NAME.eq("PORCENTAJE_IRPF"))
+			.and(CONTRACT_DATA.CONTRACT.eq(mod145.getContract()))
 			.and(CONTRACT_DATA.START_DATE.eq(parseToSqlDate(mod145.getStartDate())))
 			.execute();
 			
@@ -341,7 +342,8 @@ public class Mod145DAO {
 	private static void setIrpfPercent(AONContext ctx, Integer contract, Integer domain, java.util.Date startDate, java.util.Date endDate, Double irpfPercent) {
 		ctx.getDslContext()
 			.delete(CONTRACT_DATA)
-			.where(CONTRACT_DATA.NAME.eq("PORCENTAJE_IRPF"))
+			.where(CONTRACT_DATA.CONTRACT.eq(contract))
+			.and(CONTRACT_DATA.NAME.eq("PORCENTAJE_IRPF"))
 			.and(CONTRACT_DATA.START_DATE.eq(parseToSqlDate(startDate)))
 			.execute();
 		

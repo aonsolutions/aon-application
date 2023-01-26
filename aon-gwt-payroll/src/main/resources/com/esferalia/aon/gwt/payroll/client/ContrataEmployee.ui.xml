@@ -257,9 +257,9 @@
 						</g:DeckPanel>
 					</g:center>
 					<g:south size="20">
-						<c:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}" >
+						<aon:AonMinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}" >
 							<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
-						</c:MinimizePanel>
+						</aon:AonMinimizePanel>
 					</g:south>
 				</g:SplitLayoutPanel>
 			</g:center>

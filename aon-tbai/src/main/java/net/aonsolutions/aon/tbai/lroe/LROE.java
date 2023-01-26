@@ -10,6 +10,7 @@ import java.net.URL;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -31,7 +32,9 @@ import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
 import net.aonsolutions.aon.tbai.TbaiUri;
@@ -310,5 +313,18 @@ public class LROE implements Serializable {
 	protected Object unmarshall(Class clazz, String response) throws JAXBException {
 		Unmarshaller unmar =  JAXBContext.newInstance(clazz.getPackage().getName()).createUnmarshaller();
 		return unmar.unmarshal(new StringReader(response));
+	}
+	
+	public Integer getEjercicio(TbaiConfiguration tbaiConfiguration, Invoice invoice) {
+		Date ejercicioDate = new Date(); 
+		if(invoice.isSales()) {
+			ejercicioDate = invoice.ensureFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate();
+		} else {
+			ejercicioDate = tbaiConfiguration.isRegistryTaxDate()
+					? invoice.getTaxDate() : invoice.getCreationDate();
+			if(ejercicioDate.before(invoice.getIssueDate()))
+				ejercicioDate = invoice.getIssueDate();
+		}
+		return AonDateUtils.getYear(ejercicioDate);
 	}
 }

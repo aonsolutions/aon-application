@@ -35,7 +35,8 @@ public class Mod390HF extends FiscalModel implements Serializable {
 		return this;
 	}
 	public boolean hasProrate() {
-		return AonMathUtils.isNotZero(getProratePercent());
+		return (getProratePercent() != 0 && getProratePercent() != 100)
+				|| (hasPreviousProrate());
 	}
 	
 	public Mod390Key getProrateTypeKey() {
@@ -58,7 +59,7 @@ public class Mod390HF extends FiscalModel implements Serializable {
 	public double getPreviousProratePercent() {
 		Mod390Key key = getPreviousProrateKey();
 		double previousProratePercent = getAmount(key); 
-		if (AonMathUtils.isZero(previousProratePercent)) previousProratePercent = 100.0;  
+//		if (AonMathUtils.isZero(previousProratePercent)) previousProratePercent = 100.0;  
 		return previousProratePercent;
 	}
 	public boolean hasPreviousProrate() {

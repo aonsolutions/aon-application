@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,11 +24,11 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
-import com.esferalia.aon.occam.api.model.type.ContractType;
-import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -375,6 +374,15 @@ public abstract class EmployeeDraft extends Composite {
 		}
 	}
 	
+	class LaboralLifeCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			showLaboralLife();
+		}
+				
+	}
+	
 	class PeculiaritiesCommand implements ScheduledCommand {
 
 		@Override
@@ -436,6 +444,7 @@ public abstract class EmployeeDraft extends Composite {
 		private MenuItem afi;
 		private MenuItem idc;
 		private MenuItem idcPlNss;		
+		private MenuItem laboralLife;		
 		private MenuItem pecs = null;
 		private MenuItem pecsSS = null;
 
@@ -476,6 +485,10 @@ public abstract class EmployeeDraft extends Composite {
 					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			idcPlNss.ensureDebugId("idcPlNss");
 			
+			laboralLife = addItem("Vida Laboral", new LaboralLifeCommand(), 
+					AON.CSS.aonIconPdf(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
+			laboralLife.ensureDebugId("laboralLife");
+			
 			addSeparator();
 
 //			movPrevDelete = addItem("Eliminar movimiento previo", new MovPrevDeleteCommand(), 
@@ -510,6 +523,10 @@ public abstract class EmployeeDraft extends Composite {
 
 		public MenuItem getIdcPlNss() {
 			return idcPlNss;
+		}
+		
+		public MenuItem getLaboralLife() {
+			return laboralLife;
 		}
 
 		public MenuItem getPeculiarities() {
@@ -1222,6 +1239,15 @@ public abstract class EmployeeDraft extends Composite {
 		});
 	}
 	
+	private void showLaboralLife() {
+		showLoading("Obteniendo vida laboral...");
+		employeeDraftObject.downloadLaboralLife(dataURI -> {
+				hideMessage();
+				showPdf();
+				pdfViewer.open(dataURI);
+		}, f -> showError("Error Vida Laboral", f.getMessage()));
+	}
+	
 	private void movPrevDelete() {
 		showLoading("Borrando movimiento previo...");
 		employeeDraftObject.movPrevDelete(s -> {
@@ -1466,6 +1492,7 @@ public abstract class EmployeeDraft extends Composite {
 		contextMenu.getTaEnd().setEnabled(false);
 		contextMenu.getIdc().setEnabled(false);
 		contextMenu.getIdcPlNss().setEnabled(false);
+		contextMenu.getLaboralLife().setEnabled(false);
 		contextMenu.getSSPeculiarities().setEnabled(false);
 		contextMenu.getAltaConsolidadaDelete().setEnabled(false);
 		contextMenu.getComunicateAFI().setEnabled(false);
@@ -1476,6 +1503,7 @@ public abstract class EmployeeDraft extends Composite {
 		contextMenu.getTaEnd().setEnabled(true);
 		contextMenu.getIdc().setEnabled(true);
 		contextMenu.getIdcPlNss().setEnabled(true);
+		contextMenu.getLaboralLife().setEnabled(true);
 		contextMenu.getSSPeculiarities().setEnabled(true);
 		contextMenu.getAltaConsolidadaDelete().setEnabled(true);
 		contextMenu.getComunicateAFI().setEnabled(true);

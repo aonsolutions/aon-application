@@ -61,6 +61,7 @@ const createMainView = (parent) =>{
   div.className = CSS.AON_SUB_CONTENT;
   div.style.width = "100%";
   parent.appendChild(div);
+
   const mainView = newComponent({
     type: TAG.DIV,
     id:MESSENGER_IDS.MAIN_VIEW,
@@ -76,7 +77,6 @@ const createMainView = (parent) =>{
       overflow: 'hidden'
     },
   }).element;
-
   div.appendChild(mainView);
 
   return mainView;
@@ -181,6 +181,7 @@ const createMessageBox = (properties) =>{
       me: properties.direction == MESSENGER_DIRECTION.RIGHT ? true : false
     }
   }).element;
+
   if(properties.direction == MESSENGER_DIRECTION.RIGHT){
     component.style.marginLeft = "auto";
   } else {
@@ -248,13 +249,13 @@ const createAction = (icon, message, submessage, margin=true) => {
 
   const wrapper = newComponent({
   classes : [CSS.CENTER_FLEX],
-   styles : {
-    width : '20px',
-    height : '20px',
-    borderRadius : "100em",
-    marginRight : margin ? "1em" : "0",
-    background : CSS.variable(COLORS.AON_LIGHT_GRAY),
-   }
+    styles : {
+      width : '20px',
+      height : '20px',
+      borderRadius : "100em",
+      marginRight : margin ? "1em" : "0",
+      background : CSS.variable(COLORS.AON_LIGHT_GRAY),
+    }
   }).element;
   comp.element.appendChild(wrapper);
 
@@ -377,22 +378,22 @@ const createOutlinedMaterialIcon = (properties) =>  newComponent({
  */
 
 const checkProperties = (properties) => {
-    if (!properties.name)
-        properties.name = ""
+  if (!properties.name)
+      properties.name = ""
 
-    if (!properties.direction || (properties.direction != MESSENGER_DIRECTION.RIGHT && properties.direction != MESSENGER_DIRECTION.LEFT))
-        properties.direction = MESSENGER_DIRECTION.LEFT;
+  if (!properties.direction || (properties.direction != MESSENGER_DIRECTION.RIGHT && properties.direction != MESSENGER_DIRECTION.LEFT))
+      properties.direction = MESSENGER_DIRECTION.LEFT;
 
-    if (!properties.comment)
-        properties.comment = ""
+  if (!properties.comment)
+      properties.comment = ""
 
-    if (!properties.attach)
-        properties.attach = [];
+  if (!properties.attach)
+      properties.attach = [];
 
-    if (!properties.date)
-        properties.date = "";
+  if (!properties.date)
+      properties.date = "";
 
-    return properties;
+  return properties;
 }
 
 //----------------TYPE REQUEST CAU 
@@ -425,7 +426,7 @@ const createProcessType = () =>setAttributes( new AonSelect(),{
 });
 
  //-----------------TASK HOLDER
- const createTaskHolder = () => setAttributes( new AonSelect(),{
+const createTaskHolder = () => setAttributes( new AonSelect(),{
     id: MESSENGER_IDS.TASKHOLDER,
     name: MESSENGER_IDS.TASKHOLDER,
     title: "Asignar a", // TODO
@@ -433,14 +434,14 @@ const createProcessType = () =>setAttributes( new AonSelect(),{
 });
 
  //-----------------TAG
- const createTaskTag = () => setAttributes( new AonSelect(),{
+const createTaskTag = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.TASKTAG,
   name: MESSENGER_IDS.TASKTAG,
   title: MSG.TAG
 });
 
  //-----------------CUSTOMER
- const createCustomer = () => setAttributes( new AonSelect(),{
+const createCustomer = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.CUSTOMER_TASK,
   name: MESSENGER_IDS.CUSTOMER_TASK,
   title: MSG.CUSTOMER,
@@ -449,7 +450,7 @@ const createProcessType = () =>setAttributes( new AonSelect(),{
 });
 
  //-----------------PROJECT
- const createProject = () => setAttributes( new AonSelect(),{
+const createProject = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.PROJECT_TASK,
   name: MESSENGER_IDS.PROJECT_TASK,
   title: "Receptor", // TODO
@@ -457,7 +458,7 @@ const createProcessType = () =>setAttributes( new AonSelect(),{
 });
 
  //-----------------ADVISORY
- const createAdvisory = () => setAttributes( new AonSelect(),{
+const createAdvisory = () => setAttributes( new AonSelect(),{
   id: MESSENGER_IDS.ADVISORY_TASK,
   name: MESSENGER_IDS.ADVISORY_TASK,
   title: "Asesoria", // TODO
@@ -528,7 +529,7 @@ const iconComment = (icon_name) => {
         cursor: "pointer"
     });
 
-    let icon = setStyles(document.createElement("i"),{
+    const icon = setStyles(document.createElement("i"),{
         fontSize: "1.8em",
         lineHeight: "44px",
         color: CSS.variable(COLORS.AON_BLUE)
@@ -605,7 +606,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
  * @param {*} properties 
  * @returns 
  */
- const createMessageOpen = (properties, chat) => {
+const createMessageOpen = (properties, chat) => {
   properties = checkProperties(properties);
 
   const message = createMessageBox(properties);
@@ -615,7 +616,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
   chat.appendChild(message); //ADD MESSAGE IN DIV CHA
 
   createIconMessage(message, false, false, properties);
- 
+
   const description = createCommentContent(properties);
   description.appendTo(message);
 
@@ -629,7 +630,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
  * @param {*} properties 
  * @returns 
  */
- const createChatMessageNew = (properties, chat) => {
+const createChatMessageNew = (properties, chat) => {
   properties = checkProperties(properties);
 
   let parentElement = chat;
@@ -651,7 +652,7 @@ const createIconMessage = (message, messageSend, iconSendMail, properties) => {
   parentElement.appendChild(message); //ADD MESSAGE IN DIV CHAT
 
   const messageSend = properties.notification_user; // si el mensaje fue enviado
- 
+
   createIconMessage(message, messageSend, properties.isSend, properties);
 
   if(!properties.me){
@@ -727,7 +728,6 @@ const createSectionComment = (div) => {
       overflow:"hidden",
       flex: 1
     });
-
 
     aonTextArea.id = MESSENGER_IDS.COMMENT_TASK;
     divMain.appendChild(aonTextArea);
@@ -880,10 +880,6 @@ const openDialogBranch = (task)=> {
   dialog.setContent(div);
 
   //---FORM------
-  // const emailId  = "sendHistoricEmail";
-  // const email = setAttributes(new AonInput(),{ name:emailId, id: emailId, description: MSG.EMAIL });
-  // div.appendChild(email);
-
   const workgroup  = createSelectCau(MSG.WORKGROUP, MSG.WORKGROUP+"Random", MSG.WORKGROUP);
   workgroup.autocomplete = true;
   div.appendChild(workgroup);
@@ -896,7 +892,6 @@ const openDialogBranch = (task)=> {
   div.appendChild(taskHolder);
 
   const myTaskHolder =  aonMessengerChat.MY_TASKHOLDER;
-
   aonMessengerChat.getTaskHolderByWorkgroup(myTaskHolder, {})
   .then(options=>{
     taskHolder.setOptions(options);
@@ -911,7 +906,7 @@ const openDialogBranch = (task)=> {
         taskHolder.setOptions(options);
       });
     }
-   });
+  });
 
   const noteId = "sendHistoricId";
   const note = createAonTextArea(`${MSG.WRITE_A_COMMENT} (Opcional)...`);
@@ -958,7 +953,7 @@ const openDialogBranch = (task)=> {
         let element = new AonMessengerChat();
         element.data = data;
 
-    		application.setContent(element);
+        application.setContent(element);
 
         dialog.close();
 
@@ -975,15 +970,15 @@ const openDialogBranch = (task)=> {
 }
 
 const createSimpleList = (title, id, parent) => {
-
-  let div = setStyles(document.createElement(TAG.DIV),{
+  const div = setStyles(document.createElement(TAG.DIV),{
     borderBottom: '1px solid #ddd',
     height: '40px',
     position: 'relative',
     backgroundColor:"##eeeeee "
   });
+  parent.appendChild(div);
 
-  let span = setStyles(document.createElement(TAG.SPAN),{
+  const span = setStyles(document.createElement(TAG.SPAN),{
     position: 'absolute',
     margin: '16px',
     fontWeight: '500',
@@ -991,14 +986,10 @@ const createSimpleList = (title, id, parent) => {
     width: '100%'
   });
   span.innerHTML = title;
-
   div.appendChild(span);
   
-  parent.appendChild(div);
-  
-  let simpleList = setStyles(new AonMessengerSimpleList(),{ width: "100%" });
+  const simpleList = setStyles(new AonMessengerSimpleList(),{ width: "100%" });
   simpleList.id = id;
-
   parent.appendChild(simpleList);
 
   return simpleList;
@@ -1018,6 +1009,7 @@ const openDialogDailyTracking = (task)=> {
   }
 
   dialog.clear();
+
   dialog.setTitle(`${MSG.ESTIMATED_TIME} (${MSG.OPTIONAL})`);
 
   dialog.open();
@@ -1035,36 +1027,28 @@ const openDialogDailyTracking = (task)=> {
         marginLeft: "4px",
         color:CSS.variable(COLORS.GRAYSON)
       });
-   
+
       div.innerHTML = `<p><b>${MSG.HOURS} empleadas</b>: ${TaskUtils.parseDoubleToTime(trackingTotal)}</p>`; // TODO
       form.appendChild(div);
     }
- 
+
     const jobId = MESSENGER_IDS.JOB_TYPE;
     const jobType = createSelectCau(jobId, jobId, MSG.TYPE_JOB);
     form.appendChild(jobType);
 
     getJobType().then(opts=>{
-      let options = sortBy(opts.map(op => ({...op, value:op.id, name:op.description })), 'description');
-      jobType.setOptions(options);
+      jobType.setOptions(
+        sortBy(opts.map(op => ({...op, value:op.id, name:op.description })), 'description')
+      );
+
       if(lastJobType) {
         jobType.value = lastJobType;
       }
     });
 
-    const durationId = MESSENGER_IDS.DAILY_TRACKING;
-
-    // const trackingDuration = setAttributes(new AonInput(),{
-    //   name:durationId,
-    //   id: durationId,
-    //   type:"time",
-    //   description: `${MSG.ESTIMATED_TIME} (${MSG.HOURS})`
-    // });
-    // form.appendChild(trackingDuration);
-
     const trackingDuration = setAttributes(new AonTime(),{
-      name:durationId,
-      id: durationId,
+      name:MESSENGER_IDS.DAILY_TRACKING,
+      id: MESSENGER_IDS.DAILY_TRACKING,
       max:"300:59",
       title: `${MSG.ESTIMATED_TIME} (${MSG.HOURS} : ${MSG.MINS})`
     });
@@ -1085,7 +1069,6 @@ const openDialogDailyTracking = (task)=> {
       let dailyTracking = undefined;
 
       if(jobValue && trackingValue){
-
         dailyTracking = new DailyTracking()
         .setDomain(task.domain)
         .setTask(task.id)
@@ -1137,7 +1120,7 @@ const createSectionRating = (parent, isMobile)=> {
 }
 
 const createIconEvaluation = (img, active = false) => {
-  let label = setStyles(document.createElement(TAG.LABEL),{
+  const label = setStyles(document.createElement(TAG.LABEL),{
     padding: "5px 3px",
     fontSize: "32px",
     opacity: "0.7",
@@ -1146,7 +1129,7 @@ const createIconEvaluation = (img, active = false) => {
   });
   label.classList.add("rating");
 
-  let i = setStyles(document.createElement(TAG.I),{
+  const i = setStyles(document.createElement(TAG.I),{
     backgroundImage: `url(${img})`,
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",

@@ -23,7 +23,6 @@ import { AonIban } from '../../components/aon-iban.js';
 import { AonNumber } from '../../components/aon-number.js';
 import { getPaymethods } from '../../services/invoiceService.js';
 import { AonDate } from '../../components/aon-date.js';
-import { AonProjectList } from '../project/aon-project-list.js';
 import * as GWT from '../../gwt/gwt.js';
 import * as ACTION from '../actions.js';
 import { AonDateUtils } from '../utils/AonDateUtils.js';
@@ -54,7 +53,7 @@ export class AonReg extends AonElement {
 	connectedCallback () {
 		this.initialize();
 		this.build();
-  	}
+	}
 
 	initialize() {
 		this.id = this.id || 'aonCompany';
@@ -200,7 +199,7 @@ export class AonReg extends AonElement {
 		parent.appendChild(card);
 
 		if(this.registry.id){
-			if(this.isCustomer() && (this.isBeta() || this.isSig())){
+			if(this.isCustomer()){
 				this.buildEnterpriseLinked();
 			}
 
@@ -658,7 +657,7 @@ export class AonReg extends AonElement {
 			aonAddress.addEventListener(EVENT.DELETE, () => {
 				if(table.getRowsCount() === 1) {
 					let aux = new Address().setRegistry(this.registry.getId())
-					aonAddress.setAddress(aux);
+					aonAddress.setAddress(aux, true);
 					this.registry.getAddresses()[i] = aux;
 				} else {
 					let last = this.getElement(this.ADDRESS_ADD + i).isVisible();
@@ -1012,23 +1011,6 @@ export class AonReg extends AonElement {
 		return this.segments;
 	}
 
-	//EXPEDIENTE
-
-	buildExpedienteData() {
-		let main = this.getElement(this.DIV);
-		this.clearElement(main);
-
-		let registryId = this.registry.getId();
-		
-		if(registryId){
-			let aonProjectList = new AonProjectList();
-			aonProjectList.style.width = "100%";
-			aonProjectList.registry = this.registry;
-			aonProjectList.filter = { page: 1, perPage: 500, registry:registryId};
-			main.appendChild(aonProjectList);
-		}
-	}
-	
 	buildWeb(table, web, i) {
 		if(!web.isRemoved()){
 			let rowNum = table.addRow();

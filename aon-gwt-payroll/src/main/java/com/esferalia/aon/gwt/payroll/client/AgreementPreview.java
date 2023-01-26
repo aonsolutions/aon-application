@@ -209,12 +209,14 @@ public abstract class AgreementPreview extends Composite {
 	
 	private boolean hasChange = false;
 	private boolean workplaceView = false;
+	private boolean employeeView = false;
 	private AonToolbarSmallButton saveBtn;
 	
 	private ListBox tc2ListBox;
 	private ListBox levelListBox;
 	private TextBox partialTextBox;
 	private ListBox groupListBox;
+	private Label pdfLoaded;
 	
 	private ArrayList<Label> dateLabels;
 	
@@ -232,6 +234,7 @@ public abstract class AgreementPreview extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		description.ensureDebugId("descriptionTextBox");
+		ssNumber.ensureDebugId("ssNumberTextBox");
 		
 		initDiscPanels();
 		dateLabels = new ArrayList<>();
@@ -253,10 +256,10 @@ public abstract class AgreementPreview extends Composite {
 	
 	private void fillAgreementInfo() {
 		
-		if(agreement.getDates().isEmpty())
-			printPreviewButton.setVisible(false);
-		
+		printPreviewButton.setVisible(!agreement.getDates().isEmpty());
+			
 		description.setText(agreement.getDescription());
+		description.setReadOnly(0 == agreement.getDomain().intValue());
 		description.removeStyleName(style.modify());
 		description.addValueChangeHandler(e -> {
 			agreement.setDescription(e.getValue());
@@ -264,6 +267,7 @@ public abstract class AgreementPreview extends Composite {
 			setHasChange(true);
 		});
 		ssNumber.setText(agreement.getSSNumber());
+		ssNumber.setReadOnly(0 == agreement.getDomain().intValue());
 		ssNumber.removeStyleName(style.modify());
 		ssNumber.addValueChangeHandler(e -> {
 			agreement.setSSNumber(e.getValue());
@@ -276,7 +280,8 @@ public abstract class AgreementPreview extends Composite {
 		else
 			serviAgreementPanel.clear();
 		
-		createSalaryTableButtons();
+		if(!agreement.getSortedDates().isEmpty())
+			createSalaryTableButtons();
 		
 		createSalaryTable();
 		createCategoryTable();
@@ -341,7 +346,7 @@ public abstract class AgreementPreview extends Composite {
 	    String text = str;
 	    int indexToFind = 0;
 	    for (int i = 0; i < lBox.getItemCount(); i++) {
-	        if (AonStringUtils.equalsIgnoreCase(lBox.getValue(i), text)) {
+	    	if (AonStringUtils.equalsIgnoreCase(lBox.getValue(i), text)) {
 	            indexToFind = i;
 	            break;
 	        }
@@ -359,6 +364,8 @@ public abstract class AgreementPreview extends Composite {
 			getSalaryTableHeader();
 			fillSalaryTable();
 			salaryTableWidth();
+			if(employeeView) 
+				salaryGrid.removeRow(1);
 		}
 	}
 	
@@ -483,28 +490,29 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private ListBox createCategoryLB() {
-		Map<String, Integer> allCategories = new TreeMap<>();
+		Map<Integer, String> allCategories = new TreeMap<>();
 		
 		for(Level levelIT : agreement.getLevels()) {
 			if(levelIT.getId() == 0) continue;
 			Set<String> levelCategories = agreement.getCategoriesMap().get(levelIT.getId());
 			Set<String> levelContracts = agreement.getContractsMap().get(levelIT.getId());
-			if(workplaceView && null !=levelContracts && !levelContracts.isEmpty()) levelContracts.forEach(levelContract -> allCategories.put(levelIT.getDescription() + " - " + levelContract, levelIT.getId()));
-			else if(levelCategories.size() > 1) levelCategories.forEach(category -> allCategories.put(category, levelIT.getId()));
+			if(workplaceView && null !=levelContracts && !levelContracts.isEmpty()) levelContracts.forEach(levelContract -> allCategories.put(levelIT.getId(), levelIT.getDescription() + " - " + levelContract));
+			else if(levelCategories.size() > 1) levelCategories.forEach(category -> allCategories.put(levelIT.getId(), category + "(" + levelIT.getDescription() + ")"));
 			else if(levelCategories.size() == 1) {
 				String category = (String)levelCategories.toArray()[0];
 				RegExp regExp = RegExp.compile("Categoria|Nivel|categoria|nivel|CATEGORIA|NIVEL?");
 				MatchResult matcher = regExp.exec(category);
 				boolean matchFound = matcher != null;
-				if(matchFound) allCategories.put(levelIT.getDescription(), levelIT.getId());
-			    else  allCategories.put(category, levelIT.getId());
+				if(matchFound) allCategories.put(levelIT.getId(), levelIT.getDescription());
+			    else  allCategories.put(levelIT.getId(), category + "(" + levelIT.getDescription() + ")");
 			}
 		}
 		
 		ListBox listBox = new ListBox();
 		listBox.addItem("Todos", "");
 		listBox.addItem("Por defecto", "0");
-		allCategories.entrySet().forEach(e -> listBox.addItem(e.getKey(), e.getValue().toString()));
+		allCategories.entrySet().forEach(e -> listBox.addItem(e.getValue(), e.getKey().toString()));
+		
 		return listBox;
 	}
 
@@ -941,6 +949,7 @@ public abstract class AgreementPreview extends Composite {
 		toolbar = new AonToolbar("Convenio");
 		
 		saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
+		saveBtn.ensureDebugId("acceptButton");
 		saveBtn.addClickHandler(e -> {
 			showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
 			setHasChange(false);
@@ -950,6 +959,7 @@ public abstract class AgreementPreview extends Composite {
 		toolbar.add(saveBtn);
 		
 		agreementInfoButton = new AonToolbarButton("Informaci\u00f3n Convenio", AON.CSS.aonIconInfo());
+		agreementInfoButton.ensureDebugId("infoButton");
 		agreementInfoButton.addClickHandler(e -> 
 			impl.getAgreementUsedInfo(agreement.getId(), agreement.getDescription(), new AsyncCallback<String>() {
 				
@@ -1015,6 +1025,7 @@ public abstract class AgreementPreview extends Composite {
 		
 		
 		printPreviewButton = new AonToolbarButton(AON.MSG.draftPrint(), AON.CSS.aonIconPdf() );
+		printPreviewButton.ensureDebugId("printPreviewButton");
 		printPreviewButton.addClickHandler(e -> {
 			showAgreementSimulator();
 			initTc2ListBox();
@@ -1034,7 +1045,11 @@ public abstract class AgreementPreview extends Composite {
 		toolbarSimulator = new AonToolbar("Simulador");
 		
 		AonToolbarButton closeSimulatorBtn = new AonToolbarButton(AON.MSG.close(), AON.CSS.aonIconClose());
-		closeSimulatorBtn.addClickHandler(e -> showAgreementPreview());
+		closeSimulatorBtn.ensureDebugId("closeSimulatorBtn");
+		closeSimulatorBtn.addClickHandler(e -> {
+			setPDFLoadedEnsureDebugId("pdfNotLoaded");
+			showAgreementPreview();
+		});
 		toolbarSimulator.add(closeSimulatorBtn);
 		
 		tc2ListBox = new ListBox();
@@ -1065,6 +1080,14 @@ public abstract class AgreementPreview extends Composite {
 		groupListBox.addChangeHandler(e -> printPreview());
 		toolbarSimulator.add(quoteGroupL);
 		toolbarSimulator.add(groupListBox);
+		
+		pdfLoaded = new Label();
+		setPDFLoadedEnsureDebugId("pdfNotLoaded");
+		toolbarSimulator.add(pdfLoaded);
+	}
+	
+	public void setPDFLoadedEnsureDebugId(String debugId) {
+		this.pdfLoaded.ensureDebugId(debugId);
 	}
 
 	private void initTc2ListBox() {
@@ -1138,11 +1161,14 @@ public abstract class AgreementPreview extends Composite {
 			public void onSuccess(String html) {
 				hideMessage();
 				setPartial(partial);
+				if(null != html) 
+					setPDFLoadedEnsureDebugId("pdfLoaded");
 				printPreviewViewer.open(html);
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
+				setPDFLoadedEnsureDebugId("pdfNotLoaded");
 				showError("Error simulador", caught.getMessage());
 			}
 		});
@@ -1182,6 +1208,7 @@ public abstract class AgreementPreview extends Composite {
 		blockElements();
 		hideToolbarButtons();
 		hideLevelDiscPanel();
+		employeeView = true;
 		filterLevel(levelId);
 		toolbar.setTitle(toolbarTitle);
 		calcDiscPanelHeightsEmployee();
@@ -1191,7 +1218,6 @@ public abstract class AgreementPreview extends Composite {
 	private void filterLevel(Integer levelId) {
 		setSelectedValueLB(categoryLB, null == levelId ? "" : String.valueOf(levelId));
 		filterSelectedCategory();
-		salaryGrid.removeRow(1);
 	}
 
 	public void payrollPreview() {
@@ -1232,7 +1258,7 @@ public abstract class AgreementPreview extends Composite {
 		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 340 - salaryHeight) ? paymentHeight : (Window.getClientHeight() - 340 - salaryHeight);
 		
 		paymentDiscPanelContent.setHeight(paymentHeight + "px");
-		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 25) + "px");
+		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 90) + "px");
 		
 		salaryOpenHandler.removeHandler();
 		salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));

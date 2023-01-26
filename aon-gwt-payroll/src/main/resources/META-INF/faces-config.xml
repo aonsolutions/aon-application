@@ -12,22 +12,6 @@
 	</managed-bean>
 			
 
-	<managed-bean>
-		<managed-bean-name>employeeTree</managed-bean-name>
-		<managed-bean-class>
-			com.esferalia.aon.gwt.payroll.bean.EmployeeTree
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-			
-
-	<!-- =================== Enterprise Tree  ========================== -->
-	<!-- navigation-rule>
-		<navigation-case>
-			<from-outcome>gwt_enterprise_formTree</from-outcome>
-			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/employee/tree.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule-->
 	
 	<!-- =================== Employee Tree  ========================== -->
 	<navigation-rule>
@@ -109,7 +93,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!-- =================== Main Agreement  ========================== -->
+	<!-- =================== Main Creta  ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_main_creta</from-outcome>
@@ -117,7 +101,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!-- =================== Main Agreement  ========================== -->
+	<!-- =================== Main Activity Sumary  ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>gwt_activity_summary</from-outcome>
@@ -138,6 +122,14 @@
 		<navigation-case>
 			<from-outcome>gwt_main_cra</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/cra.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- ====================== Main Salary Print  ============================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gwt_main_salary_print</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/payroll/facelet/main/salaryPrint.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

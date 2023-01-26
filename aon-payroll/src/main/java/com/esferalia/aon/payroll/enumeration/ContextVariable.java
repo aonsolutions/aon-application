@@ -134,6 +134,7 @@ public enum ContextVariable implements IResourceable {
 
 	// Cuotas
 	CGC_EMPLOYEE("CGC", VariableType.DOUBLE), CGC_ENTERPRISE("CGC_E", VariableType.DOUBLE),
+	MEI_EMPLOYEE("MEI", VariableType.DOUBLE), MEI_ENTERPRISE("MEI_E", VariableType.DOUBLE),
 	IT_ENTERPRISE("IT_E", VariableType.DOUBLE), IMS_ENTERPRISE("IMS_E", VariableType.DOUBLE),
 	FP_EMPLOYEE("FP", VariableType.DOUBLE), FP_ENTERPRISE("FP_E", VariableType.DOUBLE),
 	UNEMPLOY_EMPLOYEE("DESMPL", VariableType.DOUBLE), UNEMPLOY_ENTERPRISE("DESMPL_E", VariableType.DOUBLE),
@@ -354,9 +355,9 @@ public enum ContextVariable implements IResourceable {
 
 	HOURLY_BASE("BASE_HORARIA", VariableType.BOOLEAN, false),
 	
-	PAY_PRORRATED("PAGAS_PRORRATEADAS", VariableType.BOOLEAN)
+	PAY_PRORRATED("PAGAS_PRORRATEADAS", VariableType.BOOLEAN),
 	
-	
+	MONTHLY_ADJUST("AJUSTE_MENSUAL", VariableType.BOOLEAN)
 	
 	;
 

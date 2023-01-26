@@ -1,9 +1,9 @@
 import { AonElement } from "../../../components/AonElement.js";
 import { disabledForm, setValueName } from "../../../services/utils.js";
-import { getMovements, getEmployee, getMovementsCccs, getAppParamComunica } from "../../../services/service.js";
+import { getMovements, getEmployee, getMovementsCccs } from "../../../services/service.js";
 import { EXCEPTION_MESSAGE, PAYROLL_VIEWS } from "../PayrollEnums.js";
 import { AON_SWITCH } from "../../../environments/aonTag.js";
-import { CONSTANT, CSS, EVENT, MSG, TAG } from "../../../environments/environments.js";
+import { CONSTANT,  EVENT, MSG, TAG } from "../../../environments/environments.js";
 import { PRESENCE_FILTER, SigninSidenav } from "../../timecontrol/signinEnums.js";
 import { AonMobileList } from "../../../components/aon-mobile-list.js";
 import { AonTable } from "../../../components/aon-table.js";
@@ -25,6 +25,10 @@ export class AonMovementsList extends AonElement {
   set filter(filter) {
     this.setAttribute(CONSTANT.FILTER, filter);
   }
+
+  getFilter = () => JSON.parse(this.getAttribute(CONSTANT.FILTER));
+
+  setFilter = (filter) => this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
 
   attributeChangedCallback(name, oldValue, newValue) {
   }
@@ -90,38 +94,12 @@ export class AonMovementsList extends AonElement {
 
     btnSearch.buildOptionsFilter(PRESENCE_FILTER);//INPUTS
     this.searchValueDefault();
-
-    const href = window.location.href;
-		if(href.includes('localhost') || href.includes('8080'))
-      this.sincronizedIcon();
-  }
-
-  sincronizedIcon(){
-    getAppParamComunica().then(({value})=>{
-
-      let name = this.lastSincronizedText( value ? Number(value) : null );
-
-      let aib = this.getApplication().addToolbarOption2({...SigninSidenav.SYNCHRONIZE, name}, async () =>  {
-        let btn = aib.getButton();
-        btn.classList.add(CSS.AON_FA_SPIN);
-        await this.getApplicationParent().updateContracts();
-        if(aib && btn) {
-          aib.getButton().title = aib.title = this.lastSincronizedText(new Date());
-          btn.classList.remove(CSS.AON_FA_SPIN);
-        }
-      });     
-    });
-
-  }
-
-  lastSincronizedText(date){
-    return date ? `Última sincronización ${AonDateUtils.setDateTimestampDay(date) }` : 'No sincronizado';
   }
 
   searchValueDefault(){
     const today =  new Date();
     let periodEl = this.getElement("period");
-    periodEl.options = JSON.stringify(this.getPeriodComunica());
+    periodEl.setOptions(this.getPeriodComunica());
     periodEl.addEventListener(EVENT.CHANGE, ({detail}) => {
       if(detail){
         let {startDate, endDate} = detail;
@@ -249,10 +227,6 @@ export class AonMovementsList extends AonElement {
     return dt;
   }
 
-  getFilter = () => JSON.parse(this.getAttribute(CONSTANT.FILTER));
-
-  setFilter = (filter) => this.setAttribute(CONSTANT.FILTER, JSON.stringify(filter));
-
   search(){
     this._list = this.filterSearch(["name", "ipf","ctaCtiCompleta", "fechaParse", "status"], this.getApplicationParent()._movements);
     this.getTable();
@@ -340,11 +314,11 @@ export class AonMovementsList extends AonElement {
       if(error && EXCEPTION_MESSAGE[error.message]){
         error.message =  EXCEPTION_MESSAGE[error.message];
       }
- 
+
       if(!this.isMobile()){
         this.getApplicationParent().showView(PAYROLL_VIEWS.AON_CERT);
       }
- 
+
       this.showToast(error);
     }
     return data;
@@ -372,12 +346,15 @@ export class AonMovementsList extends AonElement {
           parent._movements.push(newData);
         }
       });
-      if(!count) 
+
+      if(!count) {
         this.showToast({message:MSG.REQUEST_EMPTY_DATA});
-      else {
+      } else {
         parent._movements = parent._movements.sort((a, b) =>  new Date(b.fra) - new Date(a.fra));
       }
+
       this.search();
+      
     } catch (error) {console.log(error);}
     this.getApplication().stopLoader();
   }

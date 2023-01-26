@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -237,7 +238,6 @@ import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.payment.Payments;
-import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -272,6 +272,16 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			return AonServletUtils.getDomainID(domain);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public Domain getDomain(String domain, String user) {
+		try {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			return AON.getDomain(domain, domainId, user);
+		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -1818,7 +1828,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		Connection connection = null;
 		try {
 			connection = AonServletUtils.getConnection(domain);
-			return JooqEnterprise.getEnterpriseAddresses(connection, enterpriseId);
+			Map<Integer, String> addresses = JooqEnterprise.getEnterpriseAddresses(connection, enterpriseId);
+			return addresses;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -2113,6 +2124,15 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
+	public String checkEnterprisesEmails(String domainName, HashSet<Integer> enterpriseIds) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			return JooqMail.checkEnterprisesEmails(connection, enterpriseIds);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	@Override
 	public String getSettlePDF(String domain, String login, Integer settleId) throws IllegalArgumentException {
@@ -2144,7 +2164,6 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try (ByteOutputStream os = new ByteOutputStream(); 
 		CloseableAONContext aonContext = AONContext.getAONContext(domain, currentUser)) {
 			String salaryReport = getReportKey(domain, enterpriseID, SalaryType.SALARY);
-			
 			
 			PayrollPrintService.PayrollType payrollType ;
 			
@@ -2198,12 +2217,12 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
-	public String sendPayrollEmail(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) {
+	public String sendPayrollEmail(String domainName, com.esferalia.aon.gwt.payroll.client.PayrollEmailDialog.Type type, HashMap<String, String> params, String from, String to, String cc, String cco, String bodyHTML) throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			return JooqMail.sendPayrollEmail(connection, domainId, type, params, from, to, cc, cco, bodyHTML);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 	
@@ -3464,7 +3483,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 
 	@Override
-	public ComunicaEnterpriseSettings getComunicaEnterpriseSettings(String domainName, String userLogin) {
+	public ComunicaEnterpriseSettings getComunicaEnterpriseSettings(String domainName, String userLogin) throws IllegalArgumentException{
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
 			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
@@ -3474,8 +3493,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			comunicaEnterpriseSettings.setActivities(PAYROLL.getActivities(domainName, domainId, userLogin, f -> f.getDomainProperty().eq(domainId)));
 			
 			return comunicaEnterpriseSettings;
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 
@@ -4441,7 +4460,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			byte[] pdfBytes = Mod145PDF.fillMod145(mod145);
 			String base64Pdf = Base64.getEncoder().encodeToString(pdfBytes);
 
-			Writer stringWriter = new StringWriter();
+			StringWriter stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
 
 			stringWriter.flush();
@@ -4452,6 +4471,175 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	// ------------------------------------------------ Laborallife (SistemaRED)
+	
+	@Override
+	public String getCCCLaboralLife(String domainName, String userLogin, String regime, String ccc, java.util.Date from, java.util.Date to) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			
+			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
+			
+			byte[] cccLaboralLifeBytes = SistemaRED.getCccLaboralLife(certificateIS, certificate.getPassword(), certificate.getType(), regime, ccc, from, to);
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(cccLaboralLifeBytes);
+
+			StringWriter stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	@Override
+	public String getLaboralLife(String domainName, String userLogin, String regime, String ccc, String nss) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			
+			byte[] cccLaboralLifeBytes = SistemaRED.getLaboralLife(
+					new ByteArrayInputStream(certificate.getData()), 
+					certificate.getPassword(), 
+					certificate.getType(), 
+					regime,
+					ccc,
+					nss);
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(cccLaboralLifeBytes);
+
+			StringWriter stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+
+
+	@Override
+	public String getIdcCCC(String domainName, String userLogin, String regime, String ccc, java.util.Date date) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			
+			byte[] cccLaboralLifeBytes = SistemaRED.getIDCCCC(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, date);
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(cccLaboralLifeBytes);
+
+			StringWriter stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	@Override
+	public String getEmployeePrevMov(String domainName, String userLogin, String regime, String ccc) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			
+			byte[] cccLaboralLifeBytes = SistemaRED.getReportAffiliateInMovPrev(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(cccLaboralLifeBytes);
+
+			StringWriter stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	@Override
+	public String getEmployeesWorking(String domainName, String userLogin, String regime, String ccc) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			
+			byte[] cccLaboralLifeBytes = SistemaRED.getReportAffiliateInAlta(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(cccLaboralLifeBytes);
+
+			StringWriter stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public String getUpdateCert(String domainName, String userLogin, String regime, String ccc) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName); 
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
+			
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+			
+			byte[] cccLaboralLifeBytes = SistemaRED.getUp2DateSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc);
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(cccLaboralLifeBytes);
+
+			StringWriter stringWriter = new StringWriter();
+			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
+
+			stringWriter.flush();
+			String dataUri = stringWriter.toString();
+			stringWriter.close();
+
+			return dataUri;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 

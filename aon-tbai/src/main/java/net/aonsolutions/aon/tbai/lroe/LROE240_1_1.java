@@ -76,7 +76,7 @@ public class LROE240_1_1 extends LROE240 {
 	
 	public LROEResponse alta(Company company, TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] tbai) throws StatusCodeException {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.A_00);
+			LROEInfo info = buildInfo(OperacionEnum.A_00, getEjercicio(tbaiConfiguration, invoice));
 			final LROEPJ240FacturasEmitidasConSGAltaPeticion p240 = build(company, invoice, info, tbai); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240FacturasEmitidasConSGAltaPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
@@ -94,8 +94,8 @@ public class LROE240_1_1 extends LROE240 {
 		}
 	}
 	
-	public LROEInfo buildInfo(OperacionEnum operacion) {
-		return new LROEInfo(MODEL_240, CAPITULO, SUBCAPITULO, operacion);
+	public LROEInfo buildInfo(OperacionEnum operacion, Integer ejercicio) {
+		return new LROEInfo(MODEL_240, CAPITULO, SUBCAPITULO, operacion, ejercicio);
 	}
 	
 	private LROEPJ240FacturasEmitidasConSGAnulacionPeticion buildBaja(Company company, Invoice invoice, LROEInfo info, byte[] data) {	
@@ -111,7 +111,7 @@ public class LROE240_1_1 extends LROE240 {
 	
 	public LROEResponse anulacion(Company company, TbaiConfiguration tbaiConfiguration, Invoice invoice, byte[] tbai) throws StatusCodeException {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.AN_0);
+			LROEInfo info = buildInfo(OperacionEnum.AN_0, getEjercicio(tbaiConfiguration, invoice));
 			final LROEPJ240FacturasEmitidasConSGAnulacionPeticion p240 = buildBaja(company, invoice, info, tbai); 
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240FacturasEmitidasConSGAnulacionPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	
@@ -131,7 +131,7 @@ public class LROE240_1_1 extends LROE240 {
 	
 	public boolean consulta(TbaiConfiguration tbaiConfiguration, Company company, Invoice invoice) {
 		try {
-			LROEInfo info = buildInfo(OperacionEnum.C_00);
+			LROEInfo info = buildInfo(OperacionEnum.C_00, getEjercicio(tbaiConfiguration, invoice));
 			LROEPJ240FacturasEmitidasConSGConsultaPeticion lroe = buildConsulta(company, invoice, info);
 			final JAXBContext jaxbContext = JAXBContext.newInstance( LROEPJ240FacturasEmitidasConSGConsultaPeticion.class );
 			final Marshaller jaxbMarshaller   = jaxbContext.createMarshaller();	

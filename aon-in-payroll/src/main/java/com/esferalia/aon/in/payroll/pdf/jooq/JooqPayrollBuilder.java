@@ -92,7 +92,7 @@ public class JooqPayrollBuilder {
 	public static void generatePayroll(Integer enterpriseId, String domainName, String user, OutputStream outputStream,
 			Optional<Double> complementaryLimit, Integer... salaryIds) {
 		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)) {
-			byte[] logo = getLogo(aonContext);
+			byte[] logo = getLogo(aonContext, enterpriseId);
 			Collection<IDefaultPayroll> payrolls = buildPayrolls(aonContext, salaryIds, complementaryLimit, logo);
 			printAon(outputStream, payrolls, logo);
 		}
@@ -100,7 +100,7 @@ public class JooqPayrollBuilder {
 	public static void generateClassicPayroll(Integer enterpriseId, String domainName, String user, OutputStream outputStream,
 			Optional<Double> complementaryLimit, Integer... salaryIds) {
 		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, user)) {
-			byte[] logo = getLogo(aonContext);
+			byte[] logo = getLogo(aonContext, enterpriseId);
 			Collection<IDefaultPayroll> payrolls = buildPayrolls(aonContext, salaryIds, complementaryLimit, logo);
 			printClassic(outputStream, payrolls, logo);
 		}
@@ -139,7 +139,7 @@ public class JooqPayrollBuilder {
 		generateClassicPayroll(null, domainName, "", outputStream, complementaryLimit, salaryIds);
 	}
 
-	private static byte[] getLogo(AONContext aonContext) {
+	private static byte[] getLogo(AONContext aonContext, Integer enterpriseId) {
 		// LOGO
 		Optional<InputStream> optLogo = Optional.empty();
 		{
@@ -148,17 +148,17 @@ public class JooqPayrollBuilder {
 				aonContext.getDomainName(),
 				aonContext.getDomainId(),
 				aonContext.getUser(),
-				f -> f.getTypeProperty().eq(SIGNATURE.value()
-			)
-			.and(f.getDomainProperty()
-			.eq(aonContext.getDomainId())),REGISTRY);
+				f -> f.getTypeProperty().eq(SIGNATURE.value())
+				.and(f.getAttachModuleProperty().eq(enterpriseId)),
+				REGISTRY);
 			
 			if (attach1 == null || attach1.getData() == null)
 				attach1 = AON.getAttach(
 							aonContext.getDomainName(), 
 							aonContext.getDomainId(), 
 							aonContext.getUser(),
-							f -> f.getTypeProperty().eq(LOGO.value()).and(f.getDomainProperty().eq(aonContext.getDomainId())),
+							f -> f.getTypeProperty().eq(LOGO.value())
+							.and(f.getAttachModuleProperty().eq(enterpriseId)),
 							REGISTRY
 						);
 
@@ -345,7 +345,7 @@ public class JooqPayrollBuilder {
 						paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<PDFPayment>());
 
 					if (paymentMap.get(p.getPaymentType().ordinal()).stream().anyMatch(
-							acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().get()))) {
+							acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().orElse(null)))) {
 						PDFPayment repAcc = paymentMap.get(p.getPaymentType().ordinal()).stream().findFirst().get();
 						repAcc.setAmount(repAcc.getAmount().orElse(0d) + p.getAmount());
 					} else
@@ -581,7 +581,7 @@ public class JooqPayrollBuilder {
 				{
 					costBuilder.setCommonContBase(Optional.ofNullable(salary.getCommonContingenciesBase()));
 					costBuilder.setProfessionalContBase(Optional.ofNullable(salary.getProfessionalContingenciesBase()));
-					costBuilder.setIrpfRetribDiner(Optional.ofNullable(salary.getIrpfBase()));
+					costBuilder.setIrpfRetribDiner(Optional.ofNullable(salary.getMoneyIrpfBase()));
 					costBuilder.setIrpfEsp(Optional.ofNullable(salary.getInkindIrpfBase()));
 					costBuilder.setTotal(Optional.ofNullable(salary.getTotalEnterprise()));
 					costBuilder.setNoStructBase(Optional.of(nonStructBase[0]));

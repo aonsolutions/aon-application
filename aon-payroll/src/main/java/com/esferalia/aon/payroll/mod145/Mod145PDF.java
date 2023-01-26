@@ -90,8 +90,10 @@ public class Mod145PDF {
 		context.put("NIF_CONYUGE", mod145.getSpouseDocument());
 		
 		Byte disabilityLevel = mod145.getDisabilityLevel();
-		context.put("DISCAPACIDAD A", (byte) 1 == disabilityLevel ? "SI" : "NO");
-		context.put("DISCAPACIDAD B", (byte) 2 == disabilityLevel ? "SI" : "NO");
+		if(null != disabilityLevel) {
+			context.put("DISCAPACIDAD A", (byte) 0 == disabilityLevel ? "SI" : "NO");
+			context.put("DISCAPACIDAD B", (byte) 2 == disabilityLevel ? "SI" : "NO");
+		}
 		
 		context.put("AYUDA", mod145.isDependence() ? "SI" : "NO");
 		context.put("PLURIANUAL", mod145.isLabourProlongation() ? "SI" : "NO");

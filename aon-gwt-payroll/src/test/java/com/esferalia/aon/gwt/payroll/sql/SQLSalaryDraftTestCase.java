@@ -46,7 +46,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.ibm.icu.util.Calendar;
+import java.util.Calendar;
 
 import junit.framework.Assert;
 

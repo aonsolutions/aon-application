@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceBreakdown;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -65,6 +66,7 @@ public class Invoice2tbai {
 	}
 	
 	private static final String TBAI_VERSION = "1.2";
+	private static final String TBAI_ZUZENDU_VERSION = "1.0";
 	private static final String DEVICE_NUMBER = "TBAIGI447FC22512252C";
 	private static final String DEVICE_NUMBER_GIPUZKOA_TEST = "TBAIGIPRE00000000131";
 	private static final String DEVICE_NUMBER_ARABA_TEST = "TBAIARbjlCHFMFK00416";
@@ -88,17 +90,18 @@ public class Invoice2tbai {
 		TicketBai tbai = new TicketBai();
 		tbai.setCabecera(getCabecera());
 		tbai.setSujetos(getSujetos(company, invoice, config));
-		tbai.setFactura(getFactura(invoice));
+		tbai.setFactura(getFactura(invoice, false));
 		tbai.setHuellaTBAI(getHuella(config, blockchain));
 		return tbai;
 	}
 	
-	public static SubsanacionModificacionTicketBAI buildZuzendu(Company company, Invoice invoice, TbaiConfiguration config, TbaiBlockchain blockchain) {
+	public static SubsanacionModificacionTicketBAI buildZuzendu(Company company, Invoice invoice, TbaiConfiguration config, TicketBai ticketBai, TbaiBlockchain blockchain, boolean subsanar) {
 		SubsanacionModificacionTicketBAI tbai = new SubsanacionModificacionTicketBAI();
-		tbai.setCabecera(buildCabeceraZuzendu(AccionType.MODIFICAR));
+		tbai.setCabecera(buildCabeceraZuzendu(subsanar ? AccionType.SUBSANAR : AccionType.MODIFICAR));
 		tbai.setSujetos(getSujetos(company, invoice, config));
-		tbai.setFactura(getFactura(invoice));
-		tbai.setHuellaTBAI(getHuella(config, blockchain));
+		tbai.setFactura(getFactura(invoice, true));
+		tbai.setHuellaTBAI(ticketBai.getHuellaTBAI());
+		tbai.setSignatureValueFirmaFactura(blockchain.getSignature());
 		return tbai;
 	}
 	
@@ -113,13 +116,12 @@ public class Invoice2tbai {
 	private static Cabecera getCabecera() { 
 		final Cabecera c = new Cabecera();
 		c.setIDVersionTBAI(TBAI_VERSION);
-		
 		return c; 
 	}
 	
 	private static ticketbai.zuzendu_alta.Cabecera buildCabeceraZuzendu(AccionType actionType) { 
 		final ticketbai.zuzendu_alta.Cabecera c = new ticketbai.zuzendu_alta.Cabecera();
-		c.setIDVersion(TBAI_VERSION);
+		c.setIDVersion(TBAI_ZUZENDU_VERSION);
 		c.setAccion(actionType != null ? actionType : AccionType.MODIFICAR);
 		return c; 
 	}
@@ -142,7 +144,8 @@ public class Invoice2tbai {
 		if(!AonStringUtils.isBlank(invoice.getSeries()))
 			cabecera.setSerieFactura(invoice.getSeries());
 		cabecera.setNumFactura(Integer.toString(invoice.getNumber()));
-		cabecera.setFechaExpedicionFactura(AonDateUtils.format(invoice.getFiscal().getExpDate(), "dd-MM-yyyy"));
+		Date expDate = invoice.ensureFiscal().getExpDate() != null ? invoice.getFiscal().getExpDate() : invoice.getIssueDate();
+		cabecera.setFechaExpedicionFactura(AonDateUtils.format(expDate, "dd-MM-yyyy"));
 		return cabecera;
 	}
 	
@@ -249,8 +252,11 @@ public class Invoice2tbai {
 		return entities;
 	}
 	
-	private static Factura getFactura(Invoice invoice) {
-		Date expeditionDate = new Date();
+	private static Factura getFactura(Invoice invoice, boolean zuzendu) {
+		Date expDate = invoice.ensureFiscal().getExpDate() != null
+				? invoice.getFiscal().getExpDate()
+				: invoice.getIssueDate();
+		Date expeditionDate = zuzendu ? expDate : new Date();
 		Factura factura = new Factura();
 		CabeceraFacturaType cabecera = new CabeceraFacturaType();
 		if(!AonStringUtils.isBlank(invoice.getSeries()))
@@ -285,41 +291,55 @@ public class Invoice2tbai {
 		
 		DetallesFacturaType detalles = new DetallesFacturaType();
 		invoice.getDetails().stream().filter(f -> !f.isPrepayment()).forEach(detail -> {
-			IDDetalleFacturaType detalle = new IDDetalleFacturaType();
-			detalle.setCantidad(Double.toString(detail.getQuantity()));
-			String description = detail.getDescription().replace("\n", " ");
-			if(description.length() > 249) {
-				description = description.substring(0, 249);
-			}			
-			detalle.setDescripcionDetalle(description);
-			detalle.setImporteUnitario(Double.toString(AonMathUtils.round(detail.getPrice(), 4)));
+			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().orElse(null);
+			if(tax != null) {
+				IDDetalleFacturaType detalle = new IDDetalleFacturaType();
+				detalle.setCantidad(Double.toString(detail.getQuantity()));
+				String description = detail.getDescription().replace("\n", " ");
+				if(description.length() > 249) {
+					description = description.substring(0, 249);
+				}			
+				detalle.setDescripcionDetalle(description);
+				detalle.setImporteUnitario(Double.toString(AonMathUtils.round(detail.getPrice(), 4)));
 
-			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().get();
+				double descuento = 0.0;
+				if(!AonStringUtils.isBlank(detail.getDiscountExpression())) {
+					descuento = AonMathUtils.round((detail.getQuantity() * detail.getPrice()) - tax.getBase());
+				}
+				detalle.setDescuento(Double.toString(descuento));
 			
-			double descuento = 0.0;
-			if(!AonStringUtils.isBlank(detail.getDiscountExpression())) {
-				descuento = AonMathUtils.round((detail.getQuantity() * detail.getPrice()) - tax.getBase());
+				if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
+					tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
+				}
+				double total =  AonMathUtils.round(tax.getBase() + tax.getQuota() + tax.getSurchargeQuota());
+				detalle.setImporteTotal(Double.toString(total));
+				if(total != 0.0)
+					detalles.getIDDetalleFactura().add(detalle);
 			}
-			detalle.setDescuento(Double.toString(descuento));
-			
-			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
-				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
-			}
-			double total =  AonMathUtils.round(tax.getBase() + tax.getQuota() + tax.getSurchargeQuota());
-			detalle.setImporteTotal(Double.toString(total));
-			if(total != 0.0)
-				detalles.getIDDetalleFactura().add(detalle);
 		});
 		
-		Double totalAmount = detalles.getIDDetalleFactura().stream().mapToDouble(r -> Double.parseDouble(r.getImporteTotal())).sum();
-		
+		Double totalAmount = AonMathUtils.round(detalles.getIDDetalleFactura().stream().mapToDouble(r -> Double.parseDouble(r.getImporteTotal())).sum());
+		Double total = invoice.getTotal();
 		datos.setDetallesFactura(detalles);
 		if(invoice.isWithholding()) {
 			double ret = invoice.getBreakdown().stream().filter(f -> TaxType.RETENTION.equals(f.getTaxType()))
-				.mapToDouble(r -> r.getQuota()).sum();
+				.mapToDouble(InvoiceBreakdown::getQuota).sum();
 			datos.setRetencionSoportada(Double.toString(AonMathUtils.round(ret)));
+			total = AonMathUtils.round(total + ret);
 		} 
-		datos.setImporteTotalFactura(Double.toString(AonMathUtils.round(totalAmount)));
+		
+		if(!total.equals(totalAmount)) {
+			Double amount = AonMathUtils.round(total - totalAmount);
+			IDDetalleFacturaType detalle = new IDDetalleFacturaType();
+			detalle.setCantidad("1.0");
+			detalle.setDescripcionDetalle("AJUSTE TICKET BAI");
+			detalle.setDescuento("0.0");
+			detalle.setImporteUnitario(amount.toString());
+			detalle.setImporteTotal(amount.toString());
+			detalles.getIDDetalleFactura().add(detalle);
+		}
+		
+		datos.setImporteTotalFactura(Double.toString(total));
 
 //		datos.setRetencionSoportada("");
 //		datos.setBaseImponibleACoste("");

@@ -1,12 +1,9 @@
 package net.aonsolutions.aon.tbai.lroe;
 
-import java.util.Date;
-
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Person;
-import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import https.www_batuz_eus.fitxategiak.batuz.lroe.esquemas.batuz_tiposcomplejos.Cabecera140Type;
@@ -29,7 +26,7 @@ public class LROE140 extends LROE {
 		nif.setNIF(person.getDocument());
 		nif.setApellidosNombreRazonSocial(person.getName());
 		cabecera.setObligadoTributario(nif);
-		cabecera.setEjercicio(AonDateUtils.getYear(new Date()));
+		cabecera.setEjercicio(info.getEjercicio());
 		cabecera.setCapitulo(info.getCapitulo());
 		cabecera.setSubcapitulo(info.getSubcapitulo());
 		cabecera.setOperacion(info.getOperacion());
@@ -50,7 +47,8 @@ public class LROE140 extends LROE {
 
 		JSONObject drs = new JSONObject();
 		drs.put(IJsonNames.MODE, info.getModelo());
-		drs.put(IJsonNames.EJER, AonDateUtils.getYear(new Date()));
+				
+		drs.put(IJsonNames.EJER, info.getEjercicio());
 		json.put(IJsonNames.DRS, drs);
 		return json;
 	}
