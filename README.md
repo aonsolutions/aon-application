@@ -25,7 +25,30 @@ To apply the new group membership, log out of the server and back in, or type th
 ``` bash
 su - ${USER}
 ```
-- #### Install/Run MySQL8
+- #### Start and Setup MySQL8
+Run mysql:8  Docker 
+``` bash
+docker run --name mysql -v /var/lib/mysql:/var/lib/mysql  -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -e MYSQL_USER=dbuser -e MYSQL_PASSWORD=serubd2000 -d mysql:8 --sql-mode="0" --default-authentication-plugin=mysql_native_password
+```
+Grant all privileges to 'dbuser'
+``` bash
+docker exec -it mysql mysql -e "GRANT ALL ON *.* TO 'dbuser'@'%'"
+```
+Try MySQL8 
+``` bash
+docker exec -it mysql mysql -u dbuser --password=serubd2000 -e "SHOW DATABASES"
+```
+```bash
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+```
+
 
 - #### Install [Eclipse IDE](https://www.eclipse.org/downloads/)
 ``` bash
@@ -53,6 +76,25 @@ Wait, wait , wait and finally  Show Solutions
 
 ![JWT](https://user-images.githubusercontent.com/9419112/214896736-40a174a1-89fc-4b17-b3ad-99a1e6bc81fe.png)
 
-Wait Restart Eclipse IDE to Impoting Maven projects Finish 100%
+Better Wait Restart Eclipse IDE to Impoting Maven projects Finish 100%
+
+Close Eclipse IDE 
+
+- #### Build aon-applicaton 
+
+Go to aon-application directory, usually at '$HOME/eclipse-workspace/aon-parent'
+``` bash
+cd $HOME/eclipse-workspace/aon.parent
+```
+Build, by now skip tests :-( 
+``` bash
+mvn -DskipTests=true -Dgwt.working=true clean install
+```
+
+
+
+
+
+
 
 
