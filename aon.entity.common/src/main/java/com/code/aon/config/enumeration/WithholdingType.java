@@ -14,37 +14,43 @@ import java.util.ResourceBundle;
 import com.code.aon.common.enumeration.IResourceable;
 
 public enum WithholdingType implements IResourceable {
-	PROFESSIONAL(PROFESIONAL)
-	,RENTING(CAPITAL_INMOBILIARIO)
-	,MOVABLE_CAPITAL(CAPITAL_MOBILIARIO)
-	,FARMER(OTRAS)
-	,TRANSPORT_OPERATOR(OTRAS)
-	,M190_G_02	(PROFESIONAL)
-	,M190_G_03	(PROFESIONAL)
-	,M190_H_02 	(OTRAS)
-	,M190_H_03	(OTRAS)
-	,M190_I_01	(OTRAS)
-	,M190_I_02	(OTRAS)
-	,M190_J		(DERECHOS_IMAGEN)
-	,M190_K_01	(GANANCIAS_PATRIMONIALES)
-	,M190_K_03	(GANANCIAS_PATRIMONIALES)
-	,M190_K_02	(GANANCIAS_PATRIMONIALES)
-	,M193_C1(CAPITAL_MOBILIARIO)
-	,M193_C2(CAPITAL_MOBILIARIO)
-	,M193_C3(CAPITAL_MOBILIARIO)
-	,M190_F_01(TRABAJO)
-	,M190_F_02_1(TRABAJO)
-	,M190_F_02_2(TRABAJO)
+	PROFESSIONAL(PROFESIONAL,"Profesional (G/01)")
+	,RENTING(CAPITAL_INMOBILIARIO,"Arrendamiento")
+	,MOVABLE_CAPITAL(CAPITAL_MOBILIARIO,"Cap. Mobiliario (A)")
+	,FARMER(OTRAS,"Agr\u00EDcola (H/01)")
+	,TRANSPORT_OPERATOR(OTRAS,"Est. Obj. (H/04)")
+	,M190_G_02	(PROFESIONAL,"Profesional (G/02)")
+	,M190_G_03	(PROFESIONAL,"Profesional (G/03)")
+	,M190_H_02 	(OTRAS,"Agr\u00EDcola (H/02)")
+	,M190_H_03	(OTRAS,"Forestales (H/03)")
+	,M190_I_01	(OTRAS,"Der.Imagen (I/01)")
+	,M190_I_02	(OTRAS,"Otras (I/02)")
+	,M190_J		(DERECHOS_IMAGEN,"Cesi\u00F3n Der. Imagen(J)")
+	,M190_K_01	(GANANCIAS_PATRIMONIALES,"Premios (K/01)")
+	,M190_K_03	(GANANCIAS_PATRIMONIALES,"Premios (K/03)")
+	,M190_K_02	(GANANCIAS_PATRIMONIALES,"Gan. forestal (K/02)")
+	,M193_C1(CAPITAL_MOBILIARIO,"Cap. Mobiliario (C/1)")
+	,M193_C2(CAPITAL_MOBILIARIO,"Cap. Mobiliario (C/2)")
+	,M193_C3(CAPITAL_MOBILIARIO,"Cap. Mobiliario (C/3)")
+	,M190_F_01(TRABAJO,"Trabajo (F/01)")
+	,M190_F_02_1(TRABAJO,"Cursos (F/02)")
+	,M190_F_02_2(TRABAJO,"Elab. obras (F/02)")
 	;
 	private WithholdingTypeGroup group;
+	private String abbrev;
 	
-	private WithholdingType(WithholdingTypeGroup group){
+	private WithholdingType(WithholdingTypeGroup group, String abbrev){
 		this.group = group;
+		this.abbrev = abbrev;
 	}
 	
 	public WithholdingTypeGroup getGroup() {
 		return group;
 	}
+	public String getAbbreviatedDescription() {
+		return abbrev;
+	}
+
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_withholding_type_";
 

@@ -11,8 +11,9 @@ public class WithholdingTypeListBox extends AonListBox {
 	public WithholdingTypeListBox() {
 		this("------");
 	}
+	
 	public WithholdingTypeListBox(String firstItemLabel) {
-		setWidth("100px");
+		setWidth("150px");
 		addItem(firstItemLabel,"");
 		WithholdingTypeGroup wtg = null;
 		for (WithholdingType d : WithholdingType.ORDERED_VALUES) {
@@ -20,7 +21,7 @@ public class WithholdingTypeListBox extends AonListBox {
 				wtg = d.getGroup();
 				addGroup(" " + AonStringUtils.BULLET + " " +  wtg.getDescription());	
 			}
-			addItem("   " + AonStringUtils.HYPHEN + " " + d.getDescription(), d.toString());
+			addItem("   " + AonStringUtils.HYPHEN + " " + d.getAbbreviatedDescription() + ". " + d.getDescription(), d.toString());
 		}
 	}
 

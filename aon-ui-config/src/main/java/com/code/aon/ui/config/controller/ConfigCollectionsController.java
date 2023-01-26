@@ -98,7 +98,7 @@ public class ConfigCollectionsController implements Serializable {
 				List<SelectItem> wtList = new LinkedList<>();
 				for (WithholdingType type : WithholdingType.ORDERED_VALUES) {
 					if ( type.getGroup() == typeGroup) {
-						String name = type.getName(locale);
+						String name = type.getAbbreviatedDescription() + ". " + type.getName(locale);
 						SelectItem item = new SelectItem(type, name);
 						wtList.add(item);
 					}
