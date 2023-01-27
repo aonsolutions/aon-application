@@ -218,6 +218,7 @@ public class Mod145DAO {
 				.from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contract))
 				.and(CONTRACT_DATA.START_DATE.eq(parseToSqlDate(startDate)))
+				.and(CONTRACT_DATA.NAME.eq("PORCENTAJE_IRPF"))
 				.fetch(CONTRACT_DATA.EXPRESSION);
 		
 		return irpfPercents.isEmpty() ? null : Double.parseDouble(irpfPercents.get(0));
