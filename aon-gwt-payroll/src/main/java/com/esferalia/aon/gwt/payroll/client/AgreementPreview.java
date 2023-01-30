@@ -708,7 +708,7 @@ public abstract class AgreementPreview extends Composite {
 	
 	private void getPaymentTableHeader() {
 		paymentGrid.clear();
-		paymentGrid.resize(0, 4);
+		paymentGrid.resize(0, 5);
 		int row = paymentGrid.insertRow(paymentGrid.getRowCount());
 		
 		Label cra = new Label("CRA");
@@ -724,17 +724,23 @@ public abstract class AgreementPreview extends Composite {
 		paymentGrid.setWidget(row, 1, concept);
 		paymentGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
 		
-		Label extraInfo = new Label("");
-		extraInfo.addStyleName(style.gridTitle());
-		extraInfo.addStyleName(style.headerFSize());
-		paymentGrid.setWidget(row, 2, extraInfo);
+		Label description = new Label("Descripci\u00f3n");
+		description.addStyleName(style.gridTitle());
+		description.addStyleName(style.headerFSize());
+		paymentGrid.setWidget(row, 2, description);
 		paymentGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
 		
-		Label devengo = new Label("Devengo");
-		devengo.addStyleName(style.gridTitle());
-		devengo.addStyleName(style.headerFSize());
-		paymentGrid.setWidget(row, 3, devengo);
+		Label expression = new Label("Expresi\u00f3n");
+		expression.addStyleName(style.gridTitle());
+		expression.addStyleName(style.headerFSize());
+		paymentGrid.setWidget(row, 3, expression);
 		paymentGrid.getCellFormatter().addStyleName(row, 3, style.headerFixed());
+		
+		Label info = new Label("");
+		info.addStyleName(style.gridTitle());
+		info.addStyleName(style.headerFSize());
+		paymentGrid.setWidget(row, 4, info);
+		paymentGrid.getCellFormatter().addStyleName(row, 4, style.headerFixed());
 		
 		paymentGrid.getRowFormatter().addStyleName(row, style.headerColor());
 	}
@@ -747,32 +753,112 @@ public abstract class AgreementPreview extends Composite {
 			craCell.setTitle(payment.getType().getDescription());
 			craCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 			
-			Label conceptCell = new Label(payment.getDescription());
+			Label conceptCell = new Label(payment.getName());
 			
-			Label extratCell = new Label(getExtraMessage(payment));
-			extratCell.setTitle(getExtraTitle(payment));
+			Label descriptionCell = new Label(payment.getDescription());
 			
-			Label devengoCell = new Label();
-			devengoCell.setText(getParsedExpression(payment.getExpression()));
+			Label expressionCell = new Label();
+			expressionCell.setText(getParsedExpression(payment.getExpression()));
+			
+			
+			Widget infoCell = null;
+			String title = getInfoTitle(payment);
+			if(AonStringUtils.isBlank(title))
+				infoCell = new Label();
+			else
+				infoCell = new AonToolbarSmallButton(title, AON.CSS.aonIconInfo());
 			
 			paymentGrid.setWidget(row, 0, craCell);
 			paymentGrid.setWidget(row, 1, conceptCell);
-			paymentGrid.setWidget(row, 2, extratCell);
-			paymentGrid.setWidget(row, 3, devengoCell);
+			paymentGrid.setWidget(row, 2, descriptionCell);
+			paymentGrid.setWidget(row, 3, expressionCell);
+			paymentGrid.setWidget(row, 4, infoCell);
 			
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 2, style.oddRow());
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 3, style.oddRow());
+			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 4, style.oddRow());
 		}
 	}
 	
 	private void paymentTableWidth() {
 		paymentGrid.setWidth("100%");
-		paymentGrid.getColumnFormatter().setWidth(0, "10%");
-		paymentGrid.getColumnFormatter().setWidth(1, "40%");
-		paymentGrid.getColumnFormatter().setWidth(2, "10%");
-		paymentGrid.getColumnFormatter().setWidth(3, "40%");
+		paymentGrid.getColumnFormatter().setWidth(0, "80px");
+		paymentGrid.getColumnFormatter().setWidth(1, "200px");
+		paymentGrid.getColumnFormatter().setWidth(2, "30%");
+		paymentGrid.getColumnFormatter().setWidth(3, "45%");
+		paymentGrid.getColumnFormatter().setWidth(4, "50px");
+	}
+	
+	private String getInfoTitle(Payment payment) {
+		String title = "";
+		
+		String irpfExpression = payment.getIrpfExpression();
+		if(!AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) {
+			title += "Tributa : " + getTaxedDescription(irpfExpression) + "\n";
+		}
+		
+		String quoteExpression = payment.getQuoteExpression();
+		if(!AonStringUtils.equalsIgnoreCase(quoteExpression, "_P")) {
+			title += "Cotiza : " + getQuoteDescription(quoteExpression) + "\n";
+		}
+		
+		if(payment.getType().equals(Payment.Type.CRA_0005)) {
+			title += "Pago : " + getPayDescription(payment) + "\n";
+		}
+		
+		return title;
+	}
+	
+	private String getTaxedDescription(String irpfExpression) {
+		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) return "Importe \u00cdntegro";
+		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "0.00")) return "Exento";
+		if(AonStringUtils.containsIgnoreCase(irpfExpression, "BASE_CTA_ESP")) return "Ingreso a Cuenta";
+		if(AonStringUtils.isNotBlank(irpfExpression)) return "Personalizado";
+		return "No definido";
+	}
+	
+	private String getQuoteDescription(String quoteExpression) {
+		if(AonStringUtils.equalsIgnoreCase(quoteExpression, "_P")) return "Importe \u00cdntegro";
+		if(AonStringUtils.equalsIgnoreCase(quoteExpression, "0.00")) return "Exento";
+		if(AonStringUtils.containsIgnoreCase(quoteExpression, "PRORRATEAR")) return "Prorrateado";
+		if(AonStringUtils.isNotBlank(quoteExpression)) return "Personalizado";
+		return "No definido";
+	}
+	
+	private String getPayDescription(Payment payment) {
+		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
+		
+		if(	null == extra && 
+				!payment.getType().equals(Payment.Type.CRA_0004) && 
+				!payment.getType().equals(Payment.Type.CRA_0005)) return "";
+			
+		if(	null == extra && 
+				(payment.getType().equals(Payment.Type.CRA_0004) || 
+				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrat.";
+		
+		return (extra == null || extra.isDeleted()) ? "Prorrat." : getExtraPeriodTitle(extra);
+	}
+	
+	private String getExtraPeriodTitle(AgreementExtra extra) {
+		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "A";
+		
+		try {
+			int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
+			int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+			
+			switch (endMonth - startMonth) {
+			case 11:
+				return "A";
+			case 5:
+				return "S";
+			default:
+				return (endMonth - startMonth) + " m.";
+			}
+		} catch (Exception e) {
+			return "Revisar esta extra!!";
+		}
 	}
 	
 	// ------------------------------------------ paymentTable
@@ -786,14 +872,14 @@ public abstract class AgreementPreview extends Composite {
 	
 	private void getPaymentExtraTableHeader() {
 		paymentExtraGrid.clear();
-		paymentExtraGrid.resize(0, 4);
+		paymentExtraGrid.resize(0, 5);
 		int row = paymentExtraGrid.insertRow(paymentExtraGrid.getRowCount());
 		
-		Label cra = new Label("CRA");
-		cra.addStyleName(style.gridTitle());
-		cra.addStyleName(style.headerFSize());
-		cra.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-		paymentExtraGrid.setWidget(row, 0, cra);
+		Label payDate = new Label("F. Cobro");
+		payDate.addStyleName(style.gridTitle());
+		payDate.addStyleName(style.headerFSize());
+		payDate.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		paymentExtraGrid.setWidget(row, 0, payDate);
 		paymentExtraGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
 		
 		Label concept = new Label("Concepto");
@@ -802,17 +888,23 @@ public abstract class AgreementPreview extends Composite {
 		paymentExtraGrid.setWidget(row, 1, concept);
 		paymentExtraGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
 		
-		Label extraInfo = new Label("");
-		extraInfo.addStyleName(style.gridTitle());
-		extraInfo.addStyleName(style.headerFSize());
-		paymentExtraGrid.setWidget(row, 2, extraInfo);
+		Label description = new Label("Descripci\u00f3n");
+		description.addStyleName(style.gridTitle());
+		description.addStyleName(style.headerFSize());
+		paymentExtraGrid.setWidget(row, 2, description);
 		paymentExtraGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
 		
-		Label devengo = new Label("Devengo");
-		devengo.addStyleName(style.gridTitle());
-		devengo.addStyleName(style.headerFSize());
-		paymentExtraGrid.setWidget(row, 3, devengo);
+		Label expression = new Label("Expresi\u00f3n");
+		expression.addStyleName(style.gridTitle());
+		expression.addStyleName(style.headerFSize());
+		paymentExtraGrid.setWidget(row, 3, expression);
 		paymentExtraGrid.getCellFormatter().addStyleName(row, 3, style.headerFixed());
+		
+		Label info = new Label("");
+		info.addStyleName(style.gridTitle());
+		info.addStyleName(style.headerFSize());
+		paymentExtraGrid.setWidget(row, 4, info);
+		paymentExtraGrid.getCellFormatter().addStyleName(row, 4, style.headerFixed());
 		
 		paymentExtraGrid.getRowFormatter().addStyleName(row, style.headerColor());
 	}
@@ -821,90 +913,66 @@ public abstract class AgreementPreview extends Composite {
 		for(Payment payment : agreement.getActivePaymentsExtra()) {
 			int row = paymentExtraGrid.insertRow(paymentExtraGrid.getRowCount());
 			
-			Label craCell = new Label(null == payment.getType() ? "" : AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0'));
-			craCell.setTitle(payment.getType().getDescription());
-			craCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+			AgreementExtra extra = agreement.getExtraPayment(payment.getId());
 			
-			Label conceptCell = new Label(payment.getDescription());
+			Label payDateCell = new Label(payment.getType().equals(Payment.Type.CRA_0004) && null != extra ? (extra.getIssueDate() + " (" +  getPayDescription(payment) + ")") : "");
+			payDateCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 			
-			Label extratCell = new Label(getExtraMessage(payment));
-			extratCell.setTitle(getExtraTitle(payment));
+			Label conceptCell = new Label(payment.getName());
 			
-			Label devengoCell = new Label();
-			devengoCell.setText(getParsedExpression(payment.getExpression()));
+			Label descriptionCell = new Label(payment.getDescription());
 			
-			paymentExtraGrid.setWidget(row, 0, craCell);
+			Label expressionCell = new Label(getParsedExpression(payment.getExpression()));
+			
+			Widget infoCell = null;
+			String title = getExtraInfoTitle(payment);
+			if(AonStringUtils.isBlank(title))
+				infoCell = new Label();
+			else
+				infoCell = new AonToolbarSmallButton(title, AON.CSS.aonIconInfo());
+			
+			paymentExtraGrid.setWidget(row, 0, payDateCell);
 			paymentExtraGrid.setWidget(row, 1, conceptCell);
-			paymentExtraGrid.setWidget(row, 2, extratCell);
-			paymentExtraGrid.setWidget(row, 3, devengoCell);
+			paymentExtraGrid.setWidget(row, 2, descriptionCell);
+			paymentExtraGrid.setWidget(row, 3, expressionCell);
+			paymentExtraGrid.setWidget(row, 4, infoCell);
 			
 			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
 			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
 			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 2, style.oddRow());
 			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 3, style.oddRow());
+			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 4, style.oddRow());
 		}
 	}
 	
 	private void paymentExtraTableWidth() {
 		paymentExtraGrid.setWidth("100%");
-		paymentExtraGrid.getColumnFormatter().setWidth(0, "10%");
-		paymentExtraGrid.getColumnFormatter().setWidth(1, "40%");
-		paymentExtraGrid.getColumnFormatter().setWidth(2, "10%");
+		paymentExtraGrid.getColumnFormatter().setWidth(0, "150px");
+		paymentExtraGrid.getColumnFormatter().setWidth(1, "200px");
+		paymentExtraGrid.getColumnFormatter().setWidth(2, "30%");
 		paymentExtraGrid.getColumnFormatter().setWidth(3, "40%");
+		paymentExtraGrid.getColumnFormatter().setWidth(4, "50px");
+	}
+	
+	private String getExtraInfoTitle(Payment payment) {
+		String title = "";
+		
+		String irpfExpression = payment.getIrpfExpression();
+		if(!AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) {
+			title += "Tributa : " + getTaxedDescription(irpfExpression) + "\n";
+		}
+		
+		String quoteExpression = payment.getQuoteExpression();
+		if(!AonStringUtils.equalsIgnoreCase(quoteExpression, "_P")) {
+			title += "Cotiza : " + getQuoteDescription(quoteExpression) + "\n";
+		}
+		
+		return title;
 	}
 
 	private String getParsedExpression(String expression) {
 		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
 		return SpecialExpresion.parse(expression).getInput();
-	}
-
-	private String getExtraMessage(Payment payment) {
-		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
-		if(	null == extra && 
-			!payment.getType().equals(Payment.Type.CRA_0004) && 
-			!payment.getType().equals(Payment.Type.CRA_0005)) return "";
-		
-		if(	null == extra && 
-				(payment.getType().equals(Payment.Type.CRA_0004) || 
-				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrateado";
-		
-		String period = null == extra ? "" : getExtraPeriod(extra);
-		
-		return extra.getIssueDate() + period;
-	}
-	
-	private String getExtraPeriod(AgreementExtra extra) {
-		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return " (Anual)";
-		
-		try {
-			int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
-			int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
-			return endMonth - startMonth > 6 ? " (Anual)" : " (Semestral)";
-		} catch (Exception e) {
-			return "Revisar esta extra!!";
-		}
-		
-	}
-
-	private String getExtraTitle(Payment payment) {
-		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
-		if(	null == extra && 
-				!payment.getType().equals(Payment.Type.CRA_0004) && 
-				!payment.getType().equals(Payment.Type.CRA_0005)) return "";
-			
-		if(	null == extra && 
-				(payment.getType().equals(Payment.Type.CRA_0004) || 
-				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrateado";
-		
-		return "Devenga desde: " + parseExtraDate(extra.getStartDate()) + ", hasta: " + parseExtraDate(extra.getEndDate());
-	}
-	
-	private String parseExtraDate(String date) {
-		if(AonStringUtils.isBlank(date)) return "";
-		
-		if(AonStringUtils.contains(date, "-1")) {
-			return AonStringUtils.split(date, '-')[0].trim() + " (A\u00f1o anterior)";
-		} else return date;
 	}
 	
 	// ------------------------------------------ tables widht

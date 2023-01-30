@@ -174,7 +174,7 @@
   			height: 1.5rem;
 			font-size: .7rem;
 			background-color: #eee;
-			min-width: 120px;
+			/*min-width: 120px;*/
 		}
 		
 		.headerFSize{
