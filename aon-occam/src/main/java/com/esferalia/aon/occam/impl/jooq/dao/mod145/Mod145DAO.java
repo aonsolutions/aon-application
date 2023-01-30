@@ -221,7 +221,7 @@ public class Mod145DAO {
 				.and(CONTRACT_DATA.NAME.eq("PORCENTAJE_IRPF"))
 				.fetch(CONTRACT_DATA.EXPRESSION);
 		
-		return irpfPercents.isEmpty() ? null : Double.parseDouble(irpfPercents.get(0));
+		return irpfPercents.isEmpty() || AonStringUtils.isBlank(irpfPercents.get(0)) ? null : Double.parseDouble(irpfPercents.get(0));
 	}
 	
 	private static List<IrpfDataAscendants> getAscendants(AONContext ctx, Integer irpfData) {
@@ -348,7 +348,7 @@ public class Mod145DAO {
 			.and(CONTRACT_DATA.NAME.eq("PORCENTAJE_IRPF"))
 			.and(CONTRACT_DATA.START_DATE.eq(parseToSqlDate(startDate))).fetch();
 		
-		if(updateIrpfPercent.isEmpty()) {
+		if(updateIrpfPercent.isEmpty() && null != irpfPercent) {
 			ctx.getDslContext().insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domain)
 				.set(CONTRACT_DATA.CONTRACT, contract)
@@ -357,13 +357,18 @@ public class Mod145DAO {
 				.set(CONTRACT_DATA.START_DATE, parseToSqlDate(startDate))
 				.set(CONTRACT_DATA.END_DATE, parseToSqlDate(endDate))
 				.execute();
-		} else {
-			ctx.getDslContext().update(CONTRACT_DATA)
-				.set(CONTRACT_DATA.EXPRESSION, irpfPercent.toString())
-				.set(CONTRACT_DATA.START_DATE, parseToSqlDate(startDate))
-				.set(CONTRACT_DATA.END_DATE, parseToSqlDate(endDate))
-				.where(CONTRACT_DATA.ID.eq(updateIrpfPercent.get(0).getId()))
-				.execute();
+		} else if(!updateIrpfPercent.isEmpty()) {
+			if(null != irpfPercent)
+				ctx.getDslContext().update(CONTRACT_DATA)
+					.set(CONTRACT_DATA.EXPRESSION, irpfPercent.toString())
+					.set(CONTRACT_DATA.START_DATE, parseToSqlDate(startDate))
+					.set(CONTRACT_DATA.END_DATE, parseToSqlDate(endDate))
+					.where(CONTRACT_DATA.ID.eq(updateIrpfPercent.get(0).getId()))
+					.execute();
+			else
+				ctx.getDslContext().delete(CONTRACT_DATA)
+					.where(CONTRACT_DATA.ID.eq(updateIrpfPercent.get(0).getId()))
+					.execute();
 		}	
 		
 	}

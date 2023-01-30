@@ -579,7 +579,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			@Override
 	        public String getValue(Payment payment) {
 				AgreementExtra extra = agreement.getExtraPayment(payment.getId());
-				return null == extra ? "" : extra.getIssueDate();
+				if(payment.getType().equals(Payment.Type.CRA_0004) && null != extra)
+					return extra.getIssueDate() + " (" +  getPayDescription(payment) + ")";
+				else return "";
+				
 	        }
 		};
 
@@ -1009,10 +1012,6 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			title += "Cotiza : " + getQuoteDescription(quoteExpression) + "\n";
 		}
 		
-		if(payment.getType().equals(Payment.Type.CRA_0004)) {
-			title += "Pago : " + getPayDescription(payment) + "\n";
-		}
-		
 		return title;
 	}
 
@@ -1088,13 +1087,13 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			
 		if(	null == extra && 
 				(payment.getType().equals(Payment.Type.CRA_0004) || 
-				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrateado";
+				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrat.";
 		
-		return (extra == null || extra.isDeleted()) ? "Prorrateado" : getExtraPeriodTitle(extra);
+		return (extra == null || extra.isDeleted()) ? "Prorrat." : getExtraPeriodTitle(extra);
 	}
 	
 	private String getExtraPeriodTitle(AgreementExtra extra) {
-		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "Anual";
+		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "A";
 		
 		try {
 			int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
@@ -1102,11 +1101,11 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			
 			switch (endMonth - startMonth) {
 			case 11:
-				return "Anual";
+				return "A";
 			case 5:
-				return "Semestral";
+				return "S";
 			default:
-				return (endMonth - startMonth) + " meses";
+				return (endMonth - startMonth) + " m.";
 			}
 		} catch (Exception e) {
 			return "Revisar esta extra!!";

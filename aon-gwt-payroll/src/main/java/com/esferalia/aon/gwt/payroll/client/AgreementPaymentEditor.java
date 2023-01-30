@@ -996,7 +996,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 				Optional<Payment> paymentAux = allPayments.stream().filter(paymentIt -> null !=  paymentIt.getId() && paymentIt.getId().equals(extraAssociatedId)).findFirst();
 				
 				if(paymentAux.isPresent()) {
-					associatedExtra.setAgreementPayment(paymentAux.isPresent() ? paymentAux.get().getId() : null);
+					associatedExtra.setAgreementPayment(paymentAux.get().getId());
+					paymentAux.get().setExpression(paymentExpressionTB.getText());
 					
 					if(!AonStringUtils.equalsIgnoreCase(extraTypeValue, "Prorrateada")) {
 						String issueDate = extraIssueDateAssociated.getValue();
