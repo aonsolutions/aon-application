@@ -46,7 +46,7 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Result;
-import org.jooq.SelectConditionStep;
+import org.jooq.SelectLimitPercentStep;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 
@@ -979,11 +979,13 @@ public class EmployeeDAO {
 		
 		for (Deduction deduction : deductionsList) {
 			
-			SelectConditionStep<Record1<Integer>> deductionConcept = 
+			SelectLimitPercentStep<Record1<Integer>> deductionConcept = 
 			dslContext.select(DEDUCTION_CONCEPT.ID)
 			.from(DEDUCTION_CONCEPT)
 			.where(DEDUCTION_CONCEPT.DOMAIN.eq(0))
-			.and(DEDUCTION_CONCEPT.CODE.eq(deduction.getName()));
+			.and(DEDUCTION_CONCEPT.CODE.eq(deduction.getName()))
+			.limit(1)
+			;
 			
 			dslContext
 			.insertInto(CONTRACT_DEDUCTION)
