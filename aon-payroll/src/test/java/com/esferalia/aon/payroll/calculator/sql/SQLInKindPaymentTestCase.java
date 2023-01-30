@@ -227,6 +227,89 @@ public class SQLInKindPaymentTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testSalaryInKindIrpf() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemDeductions(aonContext);
+		
+		addSSRegimeDeduction(
+		aonContext, 
+		SSRegimeType.GENERAL, 
+		AonDateUtils.getFirstDayOfYear(getToday()),
+		DeductionType.IN_KIND, 
+		"_EN_ESPECIE");
+		
+		addSSRegimeDeduction(
+		aonContext, 
+		SSRegimeType.GENERAL, 
+		AonDateUtils.getFirstDayOfYear(getToday()),
+		DeductionType.IN_KIND, 
+		"IRPF",
+		"Retribución Dineraria",
+		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100");
+
+		addSSRegimeDeduction(
+		aonContext, 
+		SSRegimeType.GENERAL, 
+		AonDateUtils.getFirstDayOfYear(getToday()),
+		DeductionType.IN_KIND, 
+		"IRPF",
+		"Retribución en Especie",
+		"BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100");
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {}, 
+				new String[] {
+				}, 
+				null);
+		//@formatter:on
+
+		PaymentConceptRecord salarioBase = addConcept(aonContext, "SALARIO_BASE");
+		PaymentConceptRecord plusSalarial = addConcept(aonContext, "PLUS_SALARIAL");
+		PaymentConceptRecord antiguedad = addConcept(aonContext, "ANTIGUEDAD");
+		PaymentConceptRecord paga = addConcept(aonContext, "PAGA");
+		
+		addPayment(aonContext, contract, salarioBase, "1000.00 * DIAS_TRABAJADOS / DIAS_MES");
+		addPayment(aonContext, contract, plusSalarial, "PLUS * DIAS_TRABAJADOS / DIAS_MES");
+		addPayment(aonContext, contract, antiguedad, "ANTIGUEDAD * DIAS_TRABAJADOS / DIAS_MES");
+		addPayment(aonContext, contract, paga, "(SALARIO_BASE + PLUS_SALARIAL + ANTIGUEDAD)/12");
+		addPayment(aonContext, contract, "SALARIO EN ESPECIE", "1.62 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0013);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		addData(aonContext, contract, startDate, endDate, "PLUS", "100.00");
+		addData(aonContext, contract, startDate, endDate, "ANTIGUEDAD", "50.00");
+		addData(aonContext, contract, startDate, endDate, "PORCENTAJE_IRPF", "10.00");
+
+		
+		
+		ISQLContractSalaryCalculatorContext  ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = 
+		new SmartContractSalaryCalculator<Salary>( new SalaryBuilder());
+
+		Salary salary = calculator.calculate(ctx);
+		
+		//salary.getSalaryPayments().forEach(p -> System.out.println(p.getName() + " = " + p.getAmount() ));
+		salary.getSalaryDeductions().forEach(d -> System.out.println(d.getExpression() +" = " + d.getAmount() ));
+		
+
+		assertEquals( (double) ( 1150.00 * ( 1.00 + 1.00/12 )) + 1.62 , (double) salary.getTotalPayment(), DELTA);
+		assertEquals( (double) ( 1150.00 * ( 1.00 + 1.00/12 )) , (double) salary.getRemuneration(), DELTA);
+		
+		
+		assertEquals( 1.62 + (double) ((( 1150.00 * ( 1.00 + 1.00/12 )) + 1.62 ) * 0.10) , (double) salary.getTotalDeduction(), DELTA);
+		
+		assertEquals(  (double) ( 1150.00 * ( 1.00 + 1.00/12 )) 
+			- ((( 1150.00 * ( 1.00 + 1.00/12 )) + 1.62 ) * 0.10) , (double) salary.getTotalLiquid(), DELTA);
+
+
+	}
+
 	
 
 }
