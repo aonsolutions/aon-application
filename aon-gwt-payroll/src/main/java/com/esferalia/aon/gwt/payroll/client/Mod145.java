@@ -608,6 +608,9 @@ public abstract class Mod145 extends Composite {
 			irpfPercentPanel.setVisible(true);
 			this.mod145.setFiscalExclusion(false);
 			getEnableDisableButton(fiscalExclusionB, false);
+		} else {
+			irpfPercentPanel.setVisible(false);
+			this.mod145.setIrpfPercent(null);
 		}
 	}
 	
