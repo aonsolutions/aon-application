@@ -396,8 +396,6 @@ public abstract class EmployeeDraft extends Composite {
 		}
 	}
 	
-	
-
 	class AltaConsolidadaDeleteCommand implements ScheduledCommand {
 
 		@Override
@@ -672,10 +670,12 @@ public abstract class EmployeeDraft extends Composite {
 	private void initializeIdcMonthListBox() {
 		Date firstMonth = DateUtils.getFirstDayOfMonth(employeeDraftObject.getContractStartDate());
 		Date lastMonth = DateUtils.getFirstDayOfMonth();
-		idcMonthListBox.setFirstMonth(firstMonth);
-		idcMonthListBox.setLastMonth(lastMonth);
-		int months = DateUtils.getMonths(lastMonth, firstMonth);
-		idcMonthListBox.setVisibleRange(0, months+1);
+		if(lastMonth.after(firstMonth)) {
+			idcMonthListBox.setFirstMonth(firstMonth);
+			idcMonthListBox.setLastMonth(lastMonth);
+			int months = DateUtils.getMonths(lastMonth, firstMonth);
+			idcMonthListBox.setVisibleRange(0, months+1);
+		}
 		idcMonthListBox.ensureDebugId("idcMonthListBox");
 	}
 	

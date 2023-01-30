@@ -145,22 +145,6 @@ public class MainAgreementTest {
 		
 		loadStartWarsAgreementSalaryTableTab();
 		
-//		wait4Id("star_wars_agreement");
-//
-//		// Click en el convenio StarsWarsAgreement
-//		HtmlDivision agreementTreeItem = (HtmlDivision) getElementById("star_wars_agreement");
-//		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
-//		agreementTreeItem.click();
-//
-//		// Comprobamos el campo descripcion
-//		wait4(htmlPage, htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
-//
-//		HtmlDivision salaryTableTab = (HtmlDivision)getElementById("agreementSalaryTableTabButton");
-//		LOGGER.warning("Cick on: " + salaryTableTab.asNormalizedText());
-//		htmlPage = salaryTableTab.click();
-//		
-//		wait4Id("category_filter");
-		
 		// New Tab for 01/01/2018
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, 2018);
