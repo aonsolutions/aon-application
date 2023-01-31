@@ -300,12 +300,11 @@ public class MainAgreementTest {
 		
 		// Obtenemos tabla de Devengos
 		HtmlTableBody paymentsTable = null;
-		Optional<DomNode> nodeOpt = htmlPage.querySelectorAll("#" + GWT_DEBUG_ID_PREFIX + "agreementPaymentDG div").stream().filter(node -> node.getVisibleText().equals("COMPLEMENTO PERSONAL DE ANTIGÜEDAD")).findAny();
-		if(nodeOpt.isPresent()) {
-			DomNode node = nodeOpt.get();
-			paymentsTable = (HtmlTableBody)node.getParentNode().getParentNode().getParentNode();
-		}
-			
+		HtmlButton editButton = (HtmlButton) htmlPage.getElementById("edit_payment_0");
+		paymentsTable = (HtmlTableBody) editButton.getParentNode().getParentNode().getParentNode().getParentNode();
+		
+		buildFile(htmlPage.asXml().getBytes(), "/Users/svaldepenas/Desktop/starWars.html");
+		
 		if(null != paymentsTable) {
 			Assert.assertEquals(paymentsTable.getRows().size(), 3);
 			
@@ -358,8 +357,8 @@ public class MainAgreementTest {
 			throw new IllegalArgumentException("No se ha podido cargar la tabla de devengos (extras)");
 
 	}
+
 	@Test
-	@Ignore("Raul :-(")
 	public void TestPrintPreview() throws Exception {
 		wait4Id("convenio_colectivo_de_oficinas_y_despachos_para_madrid");
 
@@ -462,6 +461,9 @@ public class MainAgreementTest {
 		HtmlAnchor gwtAgreementAnchor = htmlPage.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement2");
 		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asNormalizedText());
 		htmlPage = gwtAgreementAnchor.click();
+		
+		wait4Id("agreements");
+		
 		wait4Id("star_wars_agreement");
 
 		// Click en el convenio StarsWarsAgreement
