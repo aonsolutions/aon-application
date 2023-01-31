@@ -303,7 +303,7 @@ public class MainAgreementTest {
 		HtmlButton editButton = (HtmlButton) htmlPage.getElementById("edit_payment_0");
 		paymentsTable = (HtmlTableBody) editButton.getParentNode().getParentNode().getParentNode().getParentNode();
 		
-		buildFile(htmlPage.asXml().getBytes(), "/Users/svaldepenas/Desktop/starWars.html");
+//		buildFile(htmlPage.asXml().getBytes(), "/Users/svaldepenas/Desktop/starWars.html");
 		
 		if(null != paymentsTable) {
 			Assert.assertEquals(paymentsTable.getRows().size(), 3);

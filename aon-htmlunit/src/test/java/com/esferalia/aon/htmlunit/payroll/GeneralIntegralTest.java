@@ -890,6 +890,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	@Test
 	public void TestBrutoYNeto() throws Exception {
 
+		getElementById("viewButton").click();
+		wait4Id("formerMenuItem");
+		getElementById("formerMenuItem").click();
+		
 		open("bruto_y_neto");
 
 		wait4Id("bruto,_enfermedad_comun_(bases)");

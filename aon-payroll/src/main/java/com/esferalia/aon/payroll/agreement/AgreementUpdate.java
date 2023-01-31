@@ -976,6 +976,9 @@ public class AgreementUpdate {
 		name = name.replaceAll("%", "");
 		name = name.replaceAll("-", "_");
 		name = name.replaceAll("\\+", "");
+		name = name.replaceAll("<", "");
+		name = name.replaceAll(">", "");
+		name = name.replaceAll("=", "");
 		
 		if(null != type)
 			switch (type) {

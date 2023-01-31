@@ -769,14 +769,19 @@ public abstract class Mod145 extends Composite {
 	}
 
 	public void onSave() {
-		showLoadingMessage("Guardando Mod145...");
-		this.mod145Object.saveMod145(
-				this.mod145, 
-				s -> {
-					showSuccessMessage("Mod 145", "Mod 145 guardado correctamente");
-					setMod145Object(this.mod145Object);
-				},
-				f -> showErrorMessage("Mod 145", f.getMessage()));
+		Date startDate = startDateBx.getValue();
+		if(null == startDate)
+			showErrorMessage("Mod145", "Para poder grabar un Mod145 es necesario indicar la fecha de inicio");
+		else {
+			showLoadingMessage("Guardando Mod145...");
+			this.mod145Object.saveMod145(
+					this.mod145, 
+					s -> {
+						showSuccessMessage("Mod 145", "Mod 145 guardado correctamente");
+						setMod145Object(this.mod145Object);
+					},
+					f -> showErrorMessage("Mod 145", f.getMessage()));
+		}
 	}
 	
 	public void onDelete() {

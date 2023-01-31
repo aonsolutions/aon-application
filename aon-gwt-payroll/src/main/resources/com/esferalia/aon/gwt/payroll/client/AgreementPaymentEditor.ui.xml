@@ -99,6 +99,8 @@
 
 	<g:HTMLPanel styleName="{style.form} {style.flexColumn}">
 	
+		<aon:AonToolbarSmall ui:field="toolbar" />
+	
 		<!-- PAYMENT -->
 		
 		<g:HTMLPanel ui:field="paymentTable" styleName="{style.flexColumn}">
@@ -121,14 +123,14 @@
 				</g:HTMLPanel>
 				<g:TextArea ui:field="paymentExpressionTB"/>
 			</g:HTMLPanel>
-			<g:HTMLPanel styleName="{style.element}">
+			<g:HTMLPanel styleName="{style.element}" ui:field="paymentTaxedPanel">
 				<g:Label styleName="{style.title}">Tributa</g:Label>
 				<g:HTMLPanel styleName="{style.flex}">
 					<g:ListBox ui:field="paymentTaxedTypeLB" styleName="{style.inputHeight} {style.quoteTaxedWidth}"/>
 					<g:TextBox ui:field="paymentTaxedExpression" styleName="{style.widthAll} {style.inputHeight}"/>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
-			<g:HTMLPanel styleName="{style.element}">
+			<g:HTMLPanel styleName="{style.element}" ui:field="paymentQuotePanel">
 				<g:Label styleName="{style.title}">Cotiza</g:Label>
 				<g:HTMLPanel styleName="{style.flex}">
 					<g:ListBox ui:field="paymentQuoteTypeLB" styleName="{style.inputHeight} {style.quoteTaxedWidth}"/>
@@ -143,7 +145,7 @@
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			
-			<g:HTMLPanel styleName="{style.between}">
+			<g:HTMLPanel styleName="{style.between}" ui:field="periodPaymentPanel">
 				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
 					<g:Label text="Fecha inicio" styleName="{style.title}" />
 					<c:DateBoxEx ui:field="startDateBx" styleName="{style.dateBox}" />
