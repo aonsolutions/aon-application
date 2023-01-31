@@ -595,11 +595,11 @@ public class AgreementInfo implements IContextProvider, Serializable, HasId<Inte
 	}
 	
 	public Set<Payment> getActivePayments() {
-		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && !isHideExpression(payment) && !payment.getType().equals(Type.CRA_0004)).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
+		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && !isHideExpression(payment) && null != payment.getType() && !payment.getType().equals(Type.CRA_0004)).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
 	}
 	
 	public Set<Payment> getActivePaymentsExtra() {
-		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && !isHideExpression(payment) && payment.getType().equals(Type.CRA_0004)).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
+		return payments != null ? payments.stream().filter(payment -> !payment.isDeleted() && !isHideExpression(payment) && null != payment.getType() && payment.getType().equals(Type.CRA_0004)).collect(Collectors.toSet()) : Collections.<Payment>emptySet();
 	}
 	
 	public Set<Payment> getPaymentsExtraAndHides() {

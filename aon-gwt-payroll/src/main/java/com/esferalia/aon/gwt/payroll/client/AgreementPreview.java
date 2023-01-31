@@ -749,7 +749,7 @@ public abstract class AgreementPreview extends Composite {
 		for(Payment payment : agreement.getActivePayments()) {
 			int row = paymentGrid.insertRow(paymentGrid.getRowCount());
 			
-			Label craCell = new Label(null == payment.getType() ? "" : AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0'));
+			Label craCell = new Label(null == payment.getType() ? "Revisar CRA" : AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0'));
 			craCell.setTitle(payment.getType().getDescription());
 			craCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 			
@@ -1461,54 +1461,18 @@ public abstract class AgreementPreview extends Composite {
 	}
 	
 	private void calcDiscPanelHeightsEmployee() {
-		int salaryHeight = (salaryGrid.getRowCount() * 20) + 50;
-		
-		salaryDiscPanelContent.setHeight(salaryHeight + "px");
-		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 75) + "px");
-		
-		int paymentHeight = (paymentGrid.getRowCount() * 20) + 50;
-		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 370 - salaryHeight) ? paymentHeight : (Window.getClientHeight() - 370 - salaryHeight);
-		
-		paymentDiscPanelContent.setHeight((paymentHeight - 40) + "px");
-		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 120) + "px");
-		
-		salaryOpenHandler.removeHandler();
-		salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
-		
-		paymentOpenHandler.removeHandler();
-		paymentDiscPanel.addOpenHandler(e -> {
-			handleIcon(paymentDiscBtn, true);
+		Scheduler.get().scheduleDeferred(() -> {
+			int salaryHeight = (salaryGrid.getRowCount() * 20) + 50;
 			
-			paymentExtraDiscPanel.setOpen(false);
-			handleIcon(paymentExtraDiscBtn, false);
-		});
-		
-		paymentExtraOpenHandler.removeHandler();
-		paymentExtraDiscPanel.addOpenHandler(e -> {
-			handleIcon(paymentExtraDiscBtn, true);
+			salaryDiscPanelContent.setHeight(salaryHeight + "px");
+			salaryScrollPanel.setHeight("100%");
 			
-			paymentDiscPanel.setOpen(false);
-			handleIcon(paymentDiscBtn, false);
-		});
-		
-		salaryDiscPanel.setOpen(true);
-		paymentDiscPanel.setOpen(true);
-	}
-	
-	private void calcDiscPanelHeightsPayroll() {
-		int salaryHeight = (salaryGrid.getRowCount() * 20) + 50;
-		salaryHeight = (Window.getClientHeight() - 340) > salaryHeight ? salaryHeight : (Window.getClientHeight() - 340);
-		
-		salaryDiscPanelContent.setHeight((salaryHeight - 30) + "px");
-		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 75) + "px");
-		
-		int paymentHeight = (paymentGrid.getRowCount() * 20) + 50;
-		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 370) ? paymentHeight : (Window.getClientHeight() - 370);
-		
-		paymentDiscPanelContent.setHeight((paymentHeight - 30) + "px");
-		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 15) + "px");
-		
-		if(paymentHeight + salaryHeight < (Window.getClientHeight() - 360)) {
+			int paymentHeight = (paymentGrid.getRowCount() * 20) + 50;
+			paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 370 - salaryHeight) ? paymentHeight : (Window.getClientHeight() - 370 - salaryHeight);
+			
+			paymentDiscPanelContent.setHeight((paymentHeight - 40) + "px");
+			paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 120) + "px");
+			
 			salaryOpenHandler.removeHandler();
 			salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
 			
@@ -1530,7 +1494,47 @@ public abstract class AgreementPreview extends Composite {
 			
 			salaryDiscPanel.setOpen(true);
 			paymentDiscPanel.setOpen(true);
-		}
+		});
+	}
+	
+	private void calcDiscPanelHeightsPayroll() {
+		Scheduler.get().scheduleDeferred(() -> {
+			int salaryHeight = (salaryGrid.getRowCount() * 20) + 50;
+			salaryHeight = (Window.getClientHeight() - 340) > salaryHeight ? salaryHeight : (Window.getClientHeight() - 340);
+			
+			salaryDiscPanelContent.setHeight((salaryHeight - 30) + "px");
+			salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 75) + "px");
+			
+			int paymentHeight = (paymentGrid.getRowCount() * 20) + 50;
+			paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 370) ? paymentHeight : (Window.getClientHeight() - 370);
+			
+			paymentDiscPanelContent.setHeight((paymentHeight - 30) + "px");
+			paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 15) + "px");
+			
+			if(paymentHeight + salaryHeight < (Window.getClientHeight() - 360)) {
+				salaryOpenHandler.removeHandler();
+				salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
+				
+				paymentOpenHandler.removeHandler();
+				paymentDiscPanel.addOpenHandler(e -> {
+					handleIcon(paymentDiscBtn, true);
+					
+					paymentExtraDiscPanel.setOpen(false);
+					handleIcon(paymentExtraDiscBtn, false);
+				});
+				
+				paymentExtraOpenHandler.removeHandler();
+				paymentExtraDiscPanel.addOpenHandler(e -> {
+					handleIcon(paymentExtraDiscBtn, true);
+					
+					paymentDiscPanel.setOpen(false);
+					handleIcon(paymentDiscBtn, false);
+				});
+				
+				salaryDiscPanel.setOpen(true);
+				paymentDiscPanel.setOpen(true);
+			}
+		});
 	}
 	
 	private void createAgreementGoToBtn() {
