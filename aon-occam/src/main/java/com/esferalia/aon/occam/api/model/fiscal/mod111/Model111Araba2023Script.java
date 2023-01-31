@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 
 
-enum Model111Araba2022Script implements IModelScript<Mod111Key> {
+enum Model111Araba2023Script implements IModelScript<Mod111Key> {
 	
 	 R01("\u00BFHa sido declarado en concurso de acreedores en el presente per\u00EDodo de liquidaci\u00F3n?"
 			,new Mod111Key[]{Mod111Key.AR_907},NONE)
@@ -21,7 +21,7 @@ enum Model111Araba2022Script implements IModelScript<Mod111Key> {
 	,R03("Fecha en que se dict\u00F3 el auto de declaraci\u00F3n de concurso"
 			,new Mod111Key[]{Mod111Key.AR_909},NONE)
 	,R04("Rendimientos procedentes del trabajo o servicios que se presten en el Territorio Hist\u00F3rico de \u00C1lava"
-			,new Mod111Key[]{Mod111Key.AR_C50,Mod111Key.AR_C60,Mod111Key.AR_C70},MODEL_SALARY_IRPF_BREAKDOWN,MODEL_INVOICE_IRPF_BREAKDOWN)
+			,new Mod111Key[]{Mod111Key.AR_C50,Mod111Key.AR_C60,Mod111Key.AR_C70},MODEL_SALARY_IRPF_BREAKDOWN)
 	,R05("Pensiones"
 			,new Mod111Key[]{Mod111Key.AR_C51,Mod111Key.AR_C61,Mod111Key.AR_C71},NONE)
 	,R06("Retribuciones de los miembros del Consejo de Administraci\u00F3n y Juntas que hagan sus veces de entidades con domicilio fiscal en \u00C1lava"
@@ -35,9 +35,9 @@ enum Model111Araba2022Script implements IModelScript<Mod111Key> {
 	,R10("Rendimientos satisfechos por contraprestaciones de actividades agr\u00EDcolas, ganaderas y forestales"
 			,new Mod111Key[]{Mod111Key.AR_C55,Mod111Key.AR_C65,Mod111Key.AR_C75},MODEL_INVOICE_IRPF_BREAKDOWN)
 	,R11("Premios satisfechos (en met\u00E1lico y en especie)"
-			,new Mod111Key[]{Mod111Key.AR_C56,Mod111Key.AR_C66,Mod111Key.AR_C76},MODEL_INVOICE_IRPF_BREAKDOWN)
+			,new Mod111Key[]{Mod111Key.AR_C56,Mod111Key.AR_C66,Mod111Key.AR_C76},NONE)
 	,R12("Retribuciones en especie y otras, excepto las correspondientes a Premios"
-			,new Mod111Key[]{Mod111Key.AR_C57,Mod111Key.AR_C67,Mod111Key.AR_C77},MODEL_SALARY_IRPF_BREAKDOWN,MODEL_INVOICE_IRPF_BREAKDOWN)
+			,new Mod111Key[]{Mod111Key.AR_C57,Mod111Key.AR_C67,Mod111Key.AR_C77},MODEL_SALARY_IRPF_BREAKDOWN)
 	,R13 ("Total",new Mod111Key[]{Mod111Key.AR_C80,Mod111Key.AR_C81,Mod111Key.AR_C82},COMPUTE)
 	,R14("Ajustes",new Mod111Key[]{Mod111Key.AR_C83},COMPUTE_KEY)
 	,R15("Recargo pr\u00F3rroga",new Mod111Key[]{Mod111Key.AR_C84},NONE)
@@ -49,7 +49,7 @@ enum Model111Araba2022Script implements IModelScript<Mod111Key> {
 	private Mod111Key[] keys;
 	private FiscalModelKeyInfo[] infoKeys;
 	
-	private Model111Araba2022Script(String label, Mod111Key[] keys,FiscalModelKeyInfo ... infoKeys) {
+	private Model111Araba2023Script(String label, Mod111Key[] keys,FiscalModelKeyInfo ... infoKeys) {
 		this.label = label;
 		this.keys = keys;
 		this.infoKeys = infoKeys;

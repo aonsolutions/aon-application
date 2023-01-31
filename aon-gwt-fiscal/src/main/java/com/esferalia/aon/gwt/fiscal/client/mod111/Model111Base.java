@@ -973,7 +973,8 @@ public abstract class Model111Base extends DockLayoutPanel {
 				
 				@Override 
 				public Void visitSalary() { 
-					final AonTableButton button = addButton();
+					final AonTableButton button = new AonTableButton(infoKey.getLabel(),AON.CSS.aonIconInfo());
+					buttonContainer.add(button);
 					button.addClickHandler(event -> showSalaryIrpfBreakdownInfo(button));
 					return null; 
 				}

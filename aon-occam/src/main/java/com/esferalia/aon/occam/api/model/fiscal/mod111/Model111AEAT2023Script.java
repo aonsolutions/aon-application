@@ -16,7 +16,7 @@ enum Model111AEAT2023Script implements IModelScript<Mod111Key> {
 	 R00 ("I. Rendimientos del trabajo")
 	 	,R01 ("Rendimientos dinerarios" 
 	 		,new Mod111Key[]{Mod111Key.CT_C01,Mod111Key.CT_C02,Mod111Key.CT_C03}
-	 		,MODEL_SALARY_IRPF_BREAKDOWN)
+	 		,MODEL_SALARY_IRPF_BREAKDOWN,MODEL_INVOICE_IRPF_BREAKDOWN)
 	 	,R02 ("Rendimientos en especie",new Mod111Key[]{Mod111Key.CT_C04,Mod111Key.CT_C05,Mod111Key.CT_C06}
 	 		,MODEL_SALARY_IRPF_BREAKDOWN)
 	
