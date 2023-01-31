@@ -764,10 +764,11 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
 				if(null != payment) {
 					if(payment.isModify())
-						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_arrow_right_modify\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
+						sb.appendHtmlConstant("<button type=\"button\" id=\"edit_payment_" + context.getIndex() + "\" class=\"aon_button aon_table_button aon_icon_arrow_right_modify\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
 					else
-						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_right\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
+						sb.appendHtmlConstant("<button type=\"button\" id=\"edit_payment_" + context.getIndex() + "\" class=\"aon_button aon_table_button aon_icon_right\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
 				}
+				
 			}
 		};
 		
