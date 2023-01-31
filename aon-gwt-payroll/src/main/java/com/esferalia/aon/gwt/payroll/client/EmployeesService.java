@@ -251,8 +251,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId);
 
-	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl,
-			boolean isTransform);
+	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, boolean isTransform) throws IllegalArgumentException;
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data);
 

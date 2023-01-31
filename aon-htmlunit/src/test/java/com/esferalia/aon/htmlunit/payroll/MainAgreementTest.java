@@ -145,22 +145,6 @@ public class MainAgreementTest {
 		
 		loadStartWarsAgreementSalaryTableTab();
 		
-//		wait4Id("star_wars_agreement");
-//
-//		// Click en el convenio StarsWarsAgreement
-//		HtmlDivision agreementTreeItem = (HtmlDivision) getElementById("star_wars_agreement");
-//		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
-//		agreementTreeItem.click();
-//
-//		// Comprobamos el campo descripcion
-//		wait4(htmlPage, htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
-//
-//		HtmlDivision salaryTableTab = (HtmlDivision)getElementById("agreementSalaryTableTabButton");
-//		LOGGER.warning("Cick on: " + salaryTableTab.asNormalizedText());
-//		htmlPage = salaryTableTab.click();
-//		
-//		wait4Id("category_filter");
-		
 		// New Tab for 01/01/2018
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, 2018);
@@ -316,12 +300,11 @@ public class MainAgreementTest {
 		
 		// Obtenemos tabla de Devengos
 		HtmlTableBody paymentsTable = null;
-		Optional<DomNode> nodeOpt = htmlPage.querySelectorAll("#" + GWT_DEBUG_ID_PREFIX + "agreementPaymentDG div").stream().filter(node -> node.getVisibleText().equals("COMPLEMENTO PERSONAL DE ANTIGÜEDAD")).findAny();
-		if(nodeOpt.isPresent()) {
-			DomNode node = nodeOpt.get();
-			paymentsTable = (HtmlTableBody)node.getParentNode().getParentNode().getParentNode();
-		}
-			
+		HtmlButton editButton = (HtmlButton) htmlPage.getElementById("edit_payment_0");
+		paymentsTable = (HtmlTableBody) editButton.getParentNode().getParentNode().getParentNode().getParentNode();
+		
+		buildFile(htmlPage.asXml().getBytes(), "/Users/svaldepenas/Desktop/starWars.html");
+		
 		if(null != paymentsTable) {
 			Assert.assertEquals(paymentsTable.getRows().size(), 3);
 			
@@ -478,6 +461,9 @@ public class MainAgreementTest {
 		HtmlAnchor gwtAgreementAnchor = htmlPage.getAnchorByName(AON_PAYROLL_MENU_FORM + ":gwt_agreement2");
 		LOGGER.warning("Cick on: " + gwtAgreementAnchor.asNormalizedText());
 		htmlPage = gwtAgreementAnchor.click();
+		
+		wait4Id("agreements");
+		
 		wait4Id("star_wars_agreement");
 
 		// Click en el convenio StarsWarsAgreement

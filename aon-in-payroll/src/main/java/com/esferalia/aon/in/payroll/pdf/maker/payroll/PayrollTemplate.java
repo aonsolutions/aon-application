@@ -360,7 +360,7 @@ public class PayrollTemplate implements IPayrollTemplate{
 							m.getValue().stream().forEach(n ->
 							{
 								String entryValue = toLatinNumber(n.getAmount().orElse(null)) + " " + text("MONEDA");
-								String entryTxt = " por " + n.getDescription().orElse("");
+								String entryTxt = " por " + n.getDescription().orElse("").replaceAll("<.*>", "");
 								String entryPercent = (n.getPercent().isEmpty()) ? ""
 										: toLatinNumber(n.getPercent().get()) + " % ";
 

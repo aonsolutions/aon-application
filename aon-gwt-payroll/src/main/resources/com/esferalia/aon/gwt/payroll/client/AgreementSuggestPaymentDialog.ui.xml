@@ -29,6 +29,7 @@
 			display: flex;
 			flex-direction: column;
 			min-width: 400px;
+			gap: .5rem;
 		}
 		
 		.center {
@@ -42,15 +43,45 @@
 			gap: .5rem;
 		}
 		
+		.element{
+			display: flex;
+			flex-direction: column;
+			gap: .2em;
+		}
+		
+		.title{
+			font-weight: bold;
+		}
+		
+		.inputHeight { height: 1.5rem; }
+		
+		.widthAll { width: 100%; }
+		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">
 
 		<g:HTMLPanel ui:field="messagePanel" />
+		
+		<g:HTMLPanel styleName="{style.element}">
+			<g:Label styleName="{style.title}">Concepto</g:Label>
+			<g:Label text="Seleccione un devengo sugerido para importarlo. O use el modo manual." />
+			<g:HTMLPanel ui:field="suggestPanel" styleName="{style.center}" />
+		</g:HTMLPanel>
+		
+		<g:HTMLPanel styleName="{style.element}">
+			<g:Label styleName="{style.title}">Tipo</g:Label>
+			<g:HTMLPanel ui:field="paymentTypePanel" styleName="{style.widthAll}"/>
+		</g:HTMLPanel>
+		<g:HTMLPanel styleName="{style.element}">
+			<g:Label styleName="{style.title}">Descripción</g:Label>
+			<g:TextBox ui:field="paymentDescriptionTB" styleName="{style.inputHeight}"/>
+		</g:HTMLPanel>
+		<g:HTMLPanel styleName="{style.element}">
+			<g:Label styleName="{style.title}">Expresión</g:Label>
+			<g:TextArea visibleLines="3" ui:field="paymentExpressionTB"/>
+		</g:HTMLPanel>
 
-		<g:Label text="Seleccione un devengo sugerido para importarlo. O use el modo manual." />
-		<g:HTMLPanel ui:field="suggestPanel" styleName="{style.center}" />
-	    
 	   	<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}" />
 
 	</g:HTMLPanel>

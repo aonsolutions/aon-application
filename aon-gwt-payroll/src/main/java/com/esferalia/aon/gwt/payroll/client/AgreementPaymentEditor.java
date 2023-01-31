@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraft.TypeListBox;
@@ -82,6 +83,12 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	
 	@UiField
 	ListBox seniorityType;
+	
+	@UiField
+	DateBoxEx startDateBx;
+	
+	@UiField
+	DateBoxEx endDateBx;
 	
 	@UiField
 	HTMLPanel extraPanel;
@@ -511,6 +518,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		paymentTypeLB.addStyleName("aon-selectOneMenu");
 		paymentTypeLB.getElement().getStyle().setWidth(100, Unit.PCT);
 		paymentTypeLB.setHeight("1.5rem");
+		paymentTypeLB.addChangeHandler(e -> initializeTaxed());
 		paymentTypePanel.clear();
 		paymentTypePanel.add(paymentTypeLB);
 	}
@@ -520,14 +528,16 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		paymentTaxedTypeLB.addItem("Importe integro", "FULL");
 		paymentTaxedTypeLB.addItem("Exento", "NONE");
 		paymentTaxedTypeLB.addItem("Personalizado", "CUSTOM");
-		paymentTaxedTypeLB.addItem("Ingreso a Cuenta", "IRPF_CTA_ESP");
+		
+		if(paymentTypeLB.getSelected().ordinal() >= 13 && paymentTypeLB.getSelected().ordinal() <= 26)
+			paymentTaxedTypeLB.addItem("Ingreso a Cuenta", "IRPF_CTA_ESP");
 
 		paymentTaxedTypeLB.addChangeHandler(e -> {
 			int selected = paymentTaxedTypeLB.getSelectedIndex();
 			switch (selected) {
 			case 0:
 				paymentTaxedExpression.setEnabled(false);
-				paymentTaxedExpression.setValue("_P");
+				paymentTaxedExpression.setValue("Importe integro");
 				break;
 			case 1:
 				paymentTaxedExpression.setEnabled(false);
@@ -559,7 +569,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			switch (selected) {
 			case 0:
 				paymentQuoteExpression.setEnabled(false);
-				paymentQuoteExpression.setValue("_P");
+				paymentQuoteExpression.setValue("Importe integro");
 				break;
 			case 1:
 				paymentQuoteExpression.setEnabled(false);
@@ -685,9 +695,15 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			});
 		});
 		setSelectedValueLB(paymentTaxedTypeLB, getTaxedQuoteType(this.payment.getIrpfExpression()));
-		paymentTaxedExpression.setValue(this.payment.getIrpfExpression());
+		String irpfExpression = this.payment.getIrpfExpression();
+		paymentTaxedExpression.setValue(AonStringUtils.isNotBlank(irpfExpression) && AonStringUtils.equalsIgnoreCase(irpfExpression, "_P") ? "Importe integro" : irpfExpression);
+		
 		setSelectedValueLB(paymentQuoteTypeLB, getTaxedQuoteType(this.payment.getQuoteExpression()));
-		paymentQuoteExpression.setValue(this.payment.getQuoteExpression());
+		String quoteExpression = this.payment.getQuoteExpression();
+		paymentQuoteExpression.setValue(AonStringUtils.isNotBlank(quoteExpression) && AonStringUtils.equalsIgnoreCase(quoteExpression, "_P") ? "Importe integro" : quoteExpression);
+		
+		startDateBx.setValue(this.payment.getStartDate());
+		endDateBx.setValue(this.payment.getEndDate());
 	}
 
 	private String getParsedExpression(String expression) {
@@ -872,9 +888,16 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		
 		payment.setDescription(paymentDescriptionTB.getValue());
 		payment.setExpression(paymentExpressionTB.getValue());
-		payment.setIrpfExpression(paymentTaxedExpression.getValue());
-		payment.setQuoteExpression(paymentQuoteExpression.getValue());
+		
+		String irpfExpression = paymentTaxedExpression.getValue();
+		String quoteExpression = paymentQuoteExpression.getValue();
+		
+		payment.setIrpfExpression(AonStringUtils.isNotBlank(irpfExpression) && AonStringUtils.equalsIgnoreCase(irpfExpression, "Importe integro") ? "_P" : irpfExpression);
+		payment.setQuoteExpression(AonStringUtils.isNotBlank(quoteExpression) && AonStringUtils.equalsIgnoreCase(quoteExpression, "Importe integro") ? "_P" : quoteExpression);
 		payment.setMonth(null);
+		
+		payment.setStartDate(startDateBx.getValue());
+		payment.setEndDate(endDateBx.getValue());
 	}
 	
 	private void createExtra() {
@@ -973,7 +996,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 				Optional<Payment> paymentAux = allPayments.stream().filter(paymentIt -> null !=  paymentIt.getId() && paymentIt.getId().equals(extraAssociatedId)).findFirst();
 				
 				if(paymentAux.isPresent()) {
-					associatedExtra.setAgreementPayment(paymentAux.isPresent() ? paymentAux.get().getId() : null);
+					associatedExtra.setAgreementPayment(paymentAux.get().getId());
+					paymentAux.get().setExpression(paymentExpressionTB.getText());
 					
 					if(!AonStringUtils.equalsIgnoreCase(extraTypeValue, "Prorrateada")) {
 						String issueDate = extraIssueDateAssociated.getValue();
@@ -1004,9 +1028,16 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		
 		associatedPayment.setDescription(AonStringUtils.containsIgnoreCase(payment.getDescription(), "verano") ? "PAGA NAVIDAD" : "PAGA VERNAO");
 		associatedPayment.setExpression(paymentExpressionTB.getValue());
-		associatedPayment.setIrpfExpression(paymentTaxedExpression.getValue());
-		associatedPayment.setQuoteExpression(paymentQuoteExpression.getValue());
+		
+		String irpfExpression = paymentTaxedExpression.getValue();
+		String quoteExpression = paymentQuoteExpression.getValue();
+		
+		payment.setIrpfExpression(AonStringUtils.isNotBlank(irpfExpression) && AonStringUtils.equalsIgnoreCase(irpfExpression, "Importe integro") ? "_P" : irpfExpression);
+		payment.setQuoteExpression(AonStringUtils.isNotBlank(quoteExpression) && AonStringUtils.equalsIgnoreCase(quoteExpression, "Importe integro") ? "_P" : quoteExpression);
 		associatedPayment.setMonth(null);
+		
+		payment.setStartDate(startDateBx.getValue());
+		payment.setEndDate(endDateBx.getValue());
 	}
 
 	// ----------------------------------------- Auxiliar methods

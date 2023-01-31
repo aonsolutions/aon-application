@@ -82,6 +82,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.esferalia.aon.jooq.tables.DeductionConcept;
 import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
 import com.esferalia.aon.jooq.tables.records.AgreementLevelRecord;
@@ -96,6 +97,7 @@ import com.esferalia.aon.jooq.tables.records.ContractEmbargoRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.jooq.tables.records.ContractPaymentRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
+import com.esferalia.aon.jooq.tables.records.DeductionConceptRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
@@ -392,6 +394,29 @@ public abstract class AbstractSQLTestCase {
 		aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
 	}
 
+	protected final void addSSRegimeDeduction(AONContext aonContext, SSRegimeType ssRegimetype, Date startDate,
+		DeductionType deductionType, String name, String description, String expression) {
+        	aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0");
+        
+        	DeductionConceptRecord deductionConcept =
+        	aonContext.getDslContext()
+                	.insertInto(DEDUCTION_CONCEPT)
+        		.set(DEDUCTION_CONCEPT.DOMAIN, (-1) * ssRegimetype.ordinal())
+        		.set(DEDUCTION_CONCEPT.CODE,name)
+        		.set(DEDUCTION_CONCEPT.TYPE,(byte) (deductionType != null ? deductionType.ordinal() : DeductionType.OTHER.ordinal()))
+        		.returning()
+        		.fetchOne();
+
+        	aonContext.getDslContext().insertInto(SYSTEM_DEDUCTION)
+			.set(SYSTEM_DEDUCTION.START_DATE, startDate)
+			.set(SYSTEM_DEDUCTION.EXPRESSION, expression)
+			.set(SYSTEM_DEDUCTION.DESCRIPTION, description)
+			.set(SYSTEM_DEDUCTION.DOMAIN, (-1) * ssRegimetype.ordinal())
+			.set(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT, deductionConcept.getId())
+			.execute();
+        
+        	aonContext.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1");
+	}
 
 	public static String getDbPort() {
 		return System.getProperty("dbPort", "3306");

@@ -797,7 +797,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			@Override
 			public void run() {
 				agreementPreview.setTablesWidthCollapseMenu();
-				agreementPaymentTab.setOpenCollapseScrollDGHeight();
+				agreementPaymentTab.setIsOpenCollapse(true);
 			}
 		};
 		timer.schedule(500);
@@ -811,7 +811,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			@Override
 			public void run() {
 				agreementPreview.setTablesWidth();
-				agreementPaymentTab.setScrollDGHeight();
+				agreementPaymentTab.setIsOpenCollapse(false);
 			}
 		};
 		timer.schedule(500);

@@ -737,10 +737,6 @@ public class Mod3902022DAO {
 			mod390.setBox126(map.get(Mod3902022DetailKey.C0126).getTaxableBase());
 			mod390.setBox127(map.get(Mod3902022DetailKey.C0127).getTaxableBase());
 			mod390.setBox128(map.get(Mod3902022DetailKey.C0128).getTaxableBase());
-			mod390.setBox125(map.get(Mod3902022DetailKey.C0125).getTaxableBase());
-			mod390.setBox126(map.get(Mod3902022DetailKey.C0126).getTaxableBase());
-			mod390.setBox127(map.get(Mod3902022DetailKey.C0127).getTaxableBase());
-			mod390.setBox128(map.get(Mod3902022DetailKey.C0128).getTaxableBase());
 			
 			mod390.setBox227(map.get(Mod3902022DetailKey.C0227).getTaxableBase());
 			mod390.setBox228(map.get(Mod3902022DetailKey.C0228).getTaxableBase());

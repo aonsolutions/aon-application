@@ -189,6 +189,27 @@ public abstract class AgreementPreview extends Composite {
 	@UiField
 	HTMLPanel agreementPaymentMessage;
 	
+	@UiField
+	DisclosurePanel paymentExtraDiscPanel;
+	
+	@UiField(provided = true)
+	AonToolbarButton paymentExtraDiscBtn;
+	
+	@UiField
+	HTMLPanel paymentExtraDiscPanelContent;
+	
+	@UiField
+	HTMLPanel paymentExtraTable;
+	
+	@UiField
+	ScrollPanel paymentExtraScrollPanel;
+	
+	@UiField
+	Grid paymentExtraGrid;
+	
+	@UiField
+	HTMLPanel agreementPaymentExtraMessage;
+	
 	@UiField(provided = true)
 	AonToolbar toolbarSimulator;
 	
@@ -224,6 +245,7 @@ public abstract class AgreementPreview extends Composite {
 	
 	private HandlerRegistration salaryOpenHandler;
 	private HandlerRegistration paymentOpenHandler;
+	private HandlerRegistration paymentExtraOpenHandler;
 	
 	// ------------------------------------------ Constructor
 
@@ -289,8 +311,10 @@ public abstract class AgreementPreview extends Composite {
 		if(agreement.getActivePayments().isEmpty()) showPaymentMessage();
 		else createPaymentTable();
 		
-		setTablesWidth();
+		if(agreement.getActivePaymentsExtra().isEmpty()) showPaymentExtraMessage();
+		else createPaymentExtraTable();
 		
+		setTablesWidth();
 	}
 	
 	// ------------------------------------------ serviAgreementPanel
@@ -684,7 +708,7 @@ public abstract class AgreementPreview extends Composite {
 	
 	private void getPaymentTableHeader() {
 		paymentGrid.clear();
-		paymentGrid.resize(0, 4);
+		paymentGrid.resize(0, 5);
 		int row = paymentGrid.insertRow(paymentGrid.getRowCount());
 		
 		Label cra = new Label("CRA");
@@ -700,17 +724,23 @@ public abstract class AgreementPreview extends Composite {
 		paymentGrid.setWidget(row, 1, concept);
 		paymentGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
 		
-		Label extraInfo = new Label("");
-		extraInfo.addStyleName(style.gridTitle());
-		extraInfo.addStyleName(style.headerFSize());
-		paymentGrid.setWidget(row, 2, extraInfo);
+		Label description = new Label("Descripci\u00f3n");
+		description.addStyleName(style.gridTitle());
+		description.addStyleName(style.headerFSize());
+		paymentGrid.setWidget(row, 2, description);
 		paymentGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
 		
-		Label devengo = new Label("Devengo");
-		devengo.addStyleName(style.gridTitle());
-		devengo.addStyleName(style.headerFSize());
-		paymentGrid.setWidget(row, 3, devengo);
+		Label expression = new Label("Expresi\u00f3n");
+		expression.addStyleName(style.gridTitle());
+		expression.addStyleName(style.headerFSize());
+		paymentGrid.setWidget(row, 3, expression);
 		paymentGrid.getCellFormatter().addStyleName(row, 3, style.headerFixed());
+		
+		Label info = new Label("");
+		info.addStyleName(style.gridTitle());
+		info.addStyleName(style.headerFSize());
+		paymentGrid.setWidget(row, 4, info);
+		paymentGrid.getCellFormatter().addStyleName(row, 4, style.headerFixed());
 		
 		paymentGrid.getRowFormatter().addStyleName(row, style.headerColor());
 	}
@@ -723,86 +753,226 @@ public abstract class AgreementPreview extends Composite {
 			craCell.setTitle(payment.getType().getDescription());
 			craCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 			
-			Label conceptCell = new Label(payment.getDescription());
+			Label conceptCell = new Label(payment.getName());
 			
-			Label extratCell = new Label(getExtraMessage(payment));
-			extratCell.setTitle(getExtraTitle(payment));
+			Label descriptionCell = new Label(payment.getDescription());
 			
-			Label devengoCell = new Label();
-			devengoCell.setText(getParsedExpression(payment.getExpression()));
+			Label expressionCell = new Label();
+			expressionCell.setText(getParsedExpression(payment.getExpression()));
+			
+			
+			Widget infoCell = null;
+			String title = getInfoTitle(payment);
+			if(AonStringUtils.isBlank(title))
+				infoCell = new Label();
+			else
+				infoCell = new AonToolbarSmallButton(title, AON.CSS.aonIconInfo());
 			
 			paymentGrid.setWidget(row, 0, craCell);
 			paymentGrid.setWidget(row, 1, conceptCell);
-			paymentGrid.setWidget(row, 2, extratCell);
-			paymentGrid.setWidget(row, 3, devengoCell);
+			paymentGrid.setWidget(row, 2, descriptionCell);
+			paymentGrid.setWidget(row, 3, expressionCell);
+			paymentGrid.setWidget(row, 4, infoCell);
 			
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 2, style.oddRow());
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 3, style.oddRow());
+			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 4, style.oddRow());
 		}
 	}
 	
-	private String getParsedExpression(String expression) {
-		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
-		return SpecialExpresion.parse(expression).getInput();
-	}
-
 	private void paymentTableWidth() {
 		paymentGrid.setWidth("100%");
-		paymentGrid.getColumnFormatter().setWidth(0, "10%");
-		paymentGrid.getColumnFormatter().setWidth(1, "40%");
-		paymentGrid.getColumnFormatter().setWidth(2, "10%");
-		paymentGrid.getColumnFormatter().setWidth(3, "40%");
-	}
-
-	private String getExtraMessage(Payment payment) {
-		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
-		if(	null == extra && 
-			!payment.getType().equals(Payment.Type.CRA_0004) && 
-			!payment.getType().equals(Payment.Type.CRA_0005)) return "";
-		
-		if(	null == extra && 
-				(payment.getType().equals(Payment.Type.CRA_0004) || 
-				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrateado";
-		
-		String period = null == extra ? "" : getExtraPeriod(extra);
-		
-		return extra.getIssueDate() + period;
+		paymentGrid.getColumnFormatter().setWidth(0, "80px");
+		paymentGrid.getColumnFormatter().setWidth(1, "200px");
+		paymentGrid.getColumnFormatter().setWidth(2, "30%");
+		paymentGrid.getColumnFormatter().setWidth(3, "45%");
+		paymentGrid.getColumnFormatter().setWidth(4, "50px");
 	}
 	
-	private String getExtraPeriod(AgreementExtra extra) {
-		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return " (Anual)";
+	private String getInfoTitle(Payment payment) {
+		String title = "";
 		
-		try {
-			int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
-			int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
-			return endMonth - startMonth > 6 ? " (Anual)" : " (Semestral)";
-		} catch (Exception e) {
-			return "Revisar esta extra!!";
+		String irpfExpression = payment.getIrpfExpression();
+		if(!AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) {
+			title += "Tributa : " + getTaxedDescription(irpfExpression) + "\n";
 		}
 		
+		String quoteExpression = payment.getQuoteExpression();
+		if(!AonStringUtils.equalsIgnoreCase(quoteExpression, "_P")) {
+			title += "Cotiza : " + getQuoteDescription(quoteExpression) + "\n";
+		}
+		
+		if(payment.getType().equals(Payment.Type.CRA_0005)) {
+			title += "Pago : " + getPayDescription(payment) + "\n";
+		}
+		
+		return title;
 	}
-
-	private String getExtraTitle(Payment payment) {
+	
+	private String getTaxedDescription(String irpfExpression) {
+		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) return "Importe \u00cdntegro";
+		if(AonStringUtils.equalsIgnoreCase(irpfExpression, "0.00")) return "Exento";
+		if(AonStringUtils.containsIgnoreCase(irpfExpression, "BASE_CTA_ESP")) return "Ingreso a Cuenta";
+		if(AonStringUtils.isNotBlank(irpfExpression)) return "Personalizado";
+		return "No definido";
+	}
+	
+	private String getQuoteDescription(String quoteExpression) {
+		if(AonStringUtils.equalsIgnoreCase(quoteExpression, "_P")) return "Importe \u00cdntegro";
+		if(AonStringUtils.equalsIgnoreCase(quoteExpression, "0.00")) return "Exento";
+		if(AonStringUtils.containsIgnoreCase(quoteExpression, "PRORRATEAR")) return "Prorrateado";
+		if(AonStringUtils.isNotBlank(quoteExpression)) return "Personalizado";
+		return "No definido";
+	}
+	
+	private String getPayDescription(Payment payment) {
 		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
+		
 		if(	null == extra && 
 				!payment.getType().equals(Payment.Type.CRA_0004) && 
 				!payment.getType().equals(Payment.Type.CRA_0005)) return "";
 			
 		if(	null == extra && 
 				(payment.getType().equals(Payment.Type.CRA_0004) || 
-				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrateado";
+				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrat.";
 		
-		return "Devenga desde: " + parseExtraDate(extra.getStartDate()) + ", hasta: " + parseExtraDate(extra.getEndDate());
+		return (extra == null || extra.isDeleted()) ? "Prorrat." : getExtraPeriodTitle(extra);
 	}
 	
-	private String parseExtraDate(String date) {
-		if(AonStringUtils.isBlank(date)) return "";
+	private String getExtraPeriodTitle(AgreementExtra extra) {
+		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "A";
 		
-		if(AonStringUtils.contains(date, "-1")) {
-			return AonStringUtils.split(date, '-')[0].trim() + " (A\u00f1o anterior)";
-		} else return date;
+		try {
+			int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
+			int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+			
+			switch (endMonth - startMonth) {
+			case 11:
+				return "A";
+			case 5:
+				return "S";
+			default:
+				return (endMonth - startMonth) + " m.";
+			}
+		} catch (Exception e) {
+			return "Revisar esta extra!!";
+		}
+	}
+	
+	// ------------------------------------------ paymentTable
+
+	private void createPaymentExtraTable() {
+		hidePaymentExtraMessage();
+		getPaymentExtraTableHeader();
+		fillPaymentExtraTable();
+		paymentExtraTableWidth();
+	}
+	
+	private void getPaymentExtraTableHeader() {
+		paymentExtraGrid.clear();
+		paymentExtraGrid.resize(0, 5);
+		int row = paymentExtraGrid.insertRow(paymentExtraGrid.getRowCount());
+		
+		Label payDate = new Label("F. Cobro");
+		payDate.addStyleName(style.gridTitle());
+		payDate.addStyleName(style.headerFSize());
+		payDate.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		paymentExtraGrid.setWidget(row, 0, payDate);
+		paymentExtraGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
+		
+		Label concept = new Label("Concepto");
+		concept.addStyleName(style.gridTitle());
+		concept.addStyleName(style.headerFSize());
+		paymentExtraGrid.setWidget(row, 1, concept);
+		paymentExtraGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
+		
+		Label description = new Label("Descripci\u00f3n");
+		description.addStyleName(style.gridTitle());
+		description.addStyleName(style.headerFSize());
+		paymentExtraGrid.setWidget(row, 2, description);
+		paymentExtraGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
+		
+		Label expression = new Label("Expresi\u00f3n");
+		expression.addStyleName(style.gridTitle());
+		expression.addStyleName(style.headerFSize());
+		paymentExtraGrid.setWidget(row, 3, expression);
+		paymentExtraGrid.getCellFormatter().addStyleName(row, 3, style.headerFixed());
+		
+		Label info = new Label("");
+		info.addStyleName(style.gridTitle());
+		info.addStyleName(style.headerFSize());
+		paymentExtraGrid.setWidget(row, 4, info);
+		paymentExtraGrid.getCellFormatter().addStyleName(row, 4, style.headerFixed());
+		
+		paymentExtraGrid.getRowFormatter().addStyleName(row, style.headerColor());
+	}
+
+	private void fillPaymentExtraTable() {
+		for(Payment payment : agreement.getActivePaymentsExtra()) {
+			int row = paymentExtraGrid.insertRow(paymentExtraGrid.getRowCount());
+			
+			AgreementExtra extra = agreement.getExtraPayment(payment.getId());
+			
+			Label payDateCell = new Label(payment.getType().equals(Payment.Type.CRA_0004) && null != extra ? (extra.getIssueDate() + " (" +  getPayDescription(payment) + ")") : "");
+			payDateCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+			
+			Label conceptCell = new Label(payment.getName());
+			
+			Label descriptionCell = new Label(payment.getDescription());
+			
+			Label expressionCell = new Label(getParsedExpression(payment.getExpression()));
+			
+			Widget infoCell = null;
+			String title = getExtraInfoTitle(payment);
+			if(AonStringUtils.isBlank(title))
+				infoCell = new Label();
+			else
+				infoCell = new AonToolbarSmallButton(title, AON.CSS.aonIconInfo());
+			
+			paymentExtraGrid.setWidget(row, 0, payDateCell);
+			paymentExtraGrid.setWidget(row, 1, conceptCell);
+			paymentExtraGrid.setWidget(row, 2, descriptionCell);
+			paymentExtraGrid.setWidget(row, 3, expressionCell);
+			paymentExtraGrid.setWidget(row, 4, infoCell);
+			
+			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
+			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
+			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 2, style.oddRow());
+			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 3, style.oddRow());
+			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 4, style.oddRow());
+		}
+	}
+	
+	private void paymentExtraTableWidth() {
+		paymentExtraGrid.setWidth("100%");
+		paymentExtraGrid.getColumnFormatter().setWidth(0, "150px");
+		paymentExtraGrid.getColumnFormatter().setWidth(1, "200px");
+		paymentExtraGrid.getColumnFormatter().setWidth(2, "30%");
+		paymentExtraGrid.getColumnFormatter().setWidth(3, "40%");
+		paymentExtraGrid.getColumnFormatter().setWidth(4, "50px");
+	}
+	
+	private String getExtraInfoTitle(Payment payment) {
+		String title = "";
+		
+		String irpfExpression = payment.getIrpfExpression();
+		if(!AonStringUtils.equalsIgnoreCase(irpfExpression, "_P")) {
+			title += "Tributa : " + getTaxedDescription(irpfExpression) + "\n";
+		}
+		
+		String quoteExpression = payment.getQuoteExpression();
+		if(!AonStringUtils.equalsIgnoreCase(quoteExpression, "_P")) {
+			title += "Cotiza : " + getQuoteDescription(quoteExpression) + "\n";
+		}
+		
+		return title;
+	}
+
+	private String getParsedExpression(String expression) {
+		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
+		return SpecialExpresion.parse(expression).getInput();
 	}
 	
 	// ------------------------------------------ tables widht
@@ -813,10 +983,12 @@ public abstract class AgreementPreview extends Composite {
 			salaryTableButtons.setWidth((Window.getClientWidth() - 450) + "px");
 			salaryScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
 			paymentScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
+			paymentExtraScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
 			
-			levelScrollPanel.setHeight((levelDiscPanelContent.getOffsetHeight() - 20) + "px");
-			salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 40) + "px");
-			paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 20) + "px");
+			levelScrollPanel.setHeight((levelDiscPanelContent.getOffsetHeight() - 50) + "px");
+			salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 70) + "px");
+			paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 50) + "px");
+			paymentExtraScrollPanel.setHeight((paymentExtraDiscPanelContent.getOffsetHeight() - 50) + "px");
 		});
 	}
 	
@@ -825,6 +997,7 @@ public abstract class AgreementPreview extends Composite {
 		salaryTableButtons.setWidth((Window.getClientWidth() - 150) + "px");
 		salaryScrollPanel.setWidth((Window.getClientWidth() - 150) + "px");
 		paymentScrollPanel.setWidth((Window.getClientWidth() - 150) + "px");
+		paymentExtraScrollPanel.setWidth((Window.getClientWidth() - 150) + "px");
 	}
 
 	// ------------------------------------------ deckLayoutPanel
@@ -869,6 +1042,18 @@ public abstract class AgreementPreview extends Composite {
 		agreementPaymentMessage.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
+	// ------------------------------------------ payments (extra)
+	
+	private void showPaymentExtraMessage() {
+		agreementPaymentExtraMessage.getElement().getStyle().clearDisplay();
+		paymentExtraTable.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
+	private void hidePaymentExtraMessage() {
+		paymentExtraTable.getElement().getStyle().clearDisplay();
+		agreementPaymentExtraMessage.getElement().getStyle().setDisplay(Display.NONE);
+	}
+	
 	// ------------------------------------------ DisclosurePanel
 
 	private void initDiscPanels() {
@@ -881,9 +1066,12 @@ public abstract class AgreementPreview extends Composite {
 			
 			paymentDiscPanel.setOpen(false);
 			handleIcon(paymentDiscBtn, false);
+			
+			paymentExtraDiscPanel.setOpen(false);
+			handleIcon(paymentExtraDiscBtn, false);
 		});
 		levelDiscPanel.addCloseHandler(e -> handleIcon(levelDiscBtn, false));
-		levelDiscPanelContent.setHeight((Window.getClientHeight() - 425) + "px");
+		levelDiscPanelContent.setHeight((Window.getClientHeight() - 450) + "px");
 		
 		salaryDiscPanel.setAnimationEnabled(true);
 		salaryOpenHandler = salaryDiscPanel.addOpenHandler(e -> {
@@ -894,10 +1082,13 @@ public abstract class AgreementPreview extends Composite {
 			
 			paymentDiscPanel.setOpen(false);
 			handleIcon(paymentDiscBtn, false);
+			
+			paymentExtraDiscPanel.setOpen(false);
+			handleIcon(paymentExtraDiscBtn, false);
 		});
 		salaryDiscPanel.addCloseHandler(e -> handleIcon(salaryDiscBtn, false));
 		salaryDiscPanel.setOpen(true);
-		salaryDiscPanelContent.setHeight((Window.getClientHeight() - 425) + "px");
+		salaryDiscPanelContent.setHeight((Window.getClientHeight() - 450) + "px");
 		
 		paymentDiscPanel.setAnimationEnabled(true);
 		paymentOpenHandler = paymentDiscPanel.addOpenHandler(e -> {
@@ -908,19 +1099,40 @@ public abstract class AgreementPreview extends Composite {
 			
 			salaryDiscPanel.setOpen(false);
 			handleIcon(salaryDiscBtn, false);
+			
+			paymentExtraDiscPanel.setOpen(false);
+			handleIcon(paymentExtraDiscBtn, false);
 		});
 		paymentDiscPanel.addCloseHandler(e -> handleIcon(paymentDiscBtn, false));
-		paymentDiscPanelContent.setHeight((Window.getClientHeight() - 425) + "px");
+		paymentDiscPanelContent.setHeight((Window.getClientHeight() - 450) + "px");
+		
+		paymentExtraDiscPanel.setAnimationEnabled(true);
+		paymentExtraOpenHandler = paymentExtraDiscPanel.addOpenHandler(e -> {
+			handleIcon(paymentExtraDiscBtn, true);
+			
+			levelDiscPanel.setOpen(false);
+			handleIcon(levelDiscBtn, false);
+			
+			salaryDiscPanel.setOpen(false);
+			handleIcon(salaryDiscBtn, false);
+			
+			paymentDiscPanel.setOpen(false);
+			handleIcon(paymentDiscBtn, false);
+		});
+		paymentExtraDiscPanel.addCloseHandler(e -> handleIcon(paymentExtraDiscBtn, false));
+		paymentExtraDiscPanelContent.setHeight((Window.getClientHeight() - 450) + "px");
 	}
 
 	private void createDiscPanelButtons() {
 		levelDiscBtn = new AonToolbarButton("Desplegar Nivel / Categoria", AON.CSS.aonIconRight());
 		salaryDiscBtn = new AonToolbarButton("Desplegar Tabla Salarial", AON.CSS.aonIconRight());
 		paymentDiscBtn = new AonToolbarButton("Desplegar Devengos", AON.CSS.aonIconRight());
+		paymentExtraDiscBtn = new AonToolbarButton("Desplegar Devengos", AON.CSS.aonIconRight());
 		
 		levelDiscBtn.addClickHandler(e -> handleIcon(levelDiscBtn, levelDiscPanel.isOpen()));
 		salaryDiscBtn.addClickHandler(e -> handleIcon(salaryDiscBtn, salaryDiscPanel.isOpen()));
 		paymentDiscBtn.addClickHandler(e -> handleIcon(paymentDiscBtn, paymentDiscPanel.isOpen()));
+		paymentExtraDiscBtn.addClickHandler(e -> handleIcon(paymentDiscBtn, paymentDiscPanel.isOpen()));
 	}
 
 	private void handleIcon(AonToolbarButton button, boolean open) {
@@ -1252,19 +1464,32 @@ public abstract class AgreementPreview extends Composite {
 		int salaryHeight = (salaryGrid.getRowCount() * 20) + 50;
 		
 		salaryDiscPanelContent.setHeight(salaryHeight + "px");
-		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 45) + "px");
+		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 75) + "px");
 		
 		int paymentHeight = (paymentGrid.getRowCount() * 20) + 50;
-		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 340 - salaryHeight) ? paymentHeight : (Window.getClientHeight() - 340 - salaryHeight);
+		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 370 - salaryHeight) ? paymentHeight : (Window.getClientHeight() - 370 - salaryHeight);
 		
-		paymentDiscPanelContent.setHeight(paymentHeight + "px");
-		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 90) + "px");
+		paymentDiscPanelContent.setHeight((paymentHeight - 40) + "px");
+		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 120) + "px");
 		
 		salaryOpenHandler.removeHandler();
 		salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
 		
 		paymentOpenHandler.removeHandler();
-		paymentDiscPanel.addOpenHandler(e -> handleIcon(paymentDiscBtn, true));
+		paymentDiscPanel.addOpenHandler(e -> {
+			handleIcon(paymentDiscBtn, true);
+			
+			paymentExtraDiscPanel.setOpen(false);
+			handleIcon(paymentExtraDiscBtn, false);
+		});
+		
+		paymentExtraOpenHandler.removeHandler();
+		paymentExtraDiscPanel.addOpenHandler(e -> {
+			handleIcon(paymentExtraDiscBtn, true);
+			
+			paymentDiscPanel.setOpen(false);
+			handleIcon(paymentDiscBtn, false);
+		});
 		
 		salaryDiscPanel.setOpen(true);
 		paymentDiscPanel.setOpen(true);
@@ -1274,21 +1499,34 @@ public abstract class AgreementPreview extends Composite {
 		int salaryHeight = (salaryGrid.getRowCount() * 20) + 50;
 		salaryHeight = (Window.getClientHeight() - 340) > salaryHeight ? salaryHeight : (Window.getClientHeight() - 340);
 		
-		salaryDiscPanelContent.setHeight(salaryHeight + "px");
-		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 45) + "px");
+		salaryDiscPanelContent.setHeight((salaryHeight - 30) + "px");
+		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 75) + "px");
 		
 		int paymentHeight = (paymentGrid.getRowCount() * 20) + 50;
-		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 340) ? paymentHeight : (Window.getClientHeight() - 340);
+		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 370) ? paymentHeight : (Window.getClientHeight() - 370);
 		
-		paymentDiscPanelContent.setHeight(paymentHeight + "px");
-		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 25) + "px");
+		paymentDiscPanelContent.setHeight((paymentHeight - 30) + "px");
+		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 15) + "px");
 		
-		if(paymentHeight + salaryHeight < (Window.getClientHeight() - 340)) {
+		if(paymentHeight + salaryHeight < (Window.getClientHeight() - 360)) {
 			salaryOpenHandler.removeHandler();
 			salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
 			
 			paymentOpenHandler.removeHandler();
-			paymentDiscPanel.addOpenHandler(e -> handleIcon(paymentDiscBtn, true));
+			paymentDiscPanel.addOpenHandler(e -> {
+				handleIcon(paymentDiscBtn, true);
+				
+				paymentExtraDiscPanel.setOpen(false);
+				handleIcon(paymentExtraDiscBtn, false);
+			});
+			
+			paymentExtraOpenHandler.removeHandler();
+			paymentExtraDiscPanel.addOpenHandler(e -> {
+				handleIcon(paymentExtraDiscBtn, true);
+				
+				paymentDiscPanel.setOpen(false);
+				handleIcon(paymentDiscBtn, false);
+			});
 			
 			salaryDiscPanel.setOpen(true);
 			paymentDiscPanel.setOpen(true);

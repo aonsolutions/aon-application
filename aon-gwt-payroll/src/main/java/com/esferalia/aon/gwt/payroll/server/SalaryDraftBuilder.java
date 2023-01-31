@@ -1,13 +1,16 @@
 package com.esferalia.aon.gwt.payroll.server;
 
 import static com.esferalia.aon.gwt.payroll.util.Utilities.formatDate;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.BASE_CTA_ESP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.INKIND_IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONEY_IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
 
@@ -180,14 +183,16 @@ public class SalaryDraftBuilder
 		return formatted;
 	}
 
-	private static String formatItemDescription(Item<?> item, Map<String, ITimedVariable<?>> context, Date draftStart, Date draftEnd) {
+	private static String formatItemDescription(Item<?> item, String calcDescription, Map<String, ITimedVariable<?>> context, Date draftStart, Date draftEnd, boolean child) {
 		
+		String description ; 
 		if ( item.getType() == Deduction.Type.IRPF )
-			return item.getDescription();
-
-		String description = formatItemDescription(item, draftStart, draftEnd);
+		    description = calcDescription;
+		else 
+		    description = formatItemDescription(item, draftStart, draftEnd);
 	
-		if ( AonUtils.equals(item.getStartDate(),draftStart)
+		if ( !child && 
+			AonUtils.equals(item.getStartDate(),draftStart)
 				&&  AonUtils.equals(item.getEndDate(),draftEnd) ) {
 			return description;
 		}
@@ -200,9 +205,13 @@ public class SalaryDraftBuilder
 				ENTERPRISE_QUOTA,
 				EMPLOYEE_QUOTA,
 				IRPF_BASE, 
+				MONEY_IRPF_BASE, 
+				INKIND_IRPF_BASE, 
+				BASE_CTA_ESP, 
 				STRUCTURAL_OVERTIME_BASE, 
 				NON_STRUCTURAL_OVERTIME_BASE, } ) {
 			ITimedVariable<?> var = context.get(contextVar.getName());
+
 			if ( var == null )
 				continue;
 			Object value = var.getValue(var.getPeriod());
@@ -494,6 +503,9 @@ public class SalaryDraftBuilder
 		sed.run();
 		Collections.sort(salaryDraft.getPayments(),
 				new ItemComparator<Payment.Type>());
+		
+		fixIRPFDescription();
+
 		Collections.sort(salaryDraft.getDeductions(),
 				new ItemComparator<Deduction.Type>());
 		Collections.sort(salaryDraft.getCosts(),
@@ -738,8 +750,8 @@ public class SalaryDraftBuilder
 		else {
 			salaryDraft.addBonus(myBonus);
 		}
-		
-		myBonus.setDescription(formatItemDescription(myBonus, context, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
+		boolean isChild = ( compositeBonus != null );
+		myBonus.setDescription(formatItemDescription(myBonus, description, context, salaryDraft.getStartDate(), salaryDraft.getEndDate(), isChild));
 		
 
 	}
@@ -787,7 +799,8 @@ public class SalaryDraftBuilder
 			salaryDraft.addCost(draftCost);
 		}
 		
-		draftCost.setDescription(formatItemDescription(draftCost, context, salaryDraft.getStartDate(), salaryDraft.getEndDate()));
+		boolean isChild = ( compositeCost != null );
+		draftCost.setDescription(formatItemDescription(draftCost, description, context, salaryDraft.getStartDate(), salaryDraft.getEndDate(), isChild));
 	}
 
 	@Override
@@ -861,7 +874,7 @@ public class SalaryDraftBuilder
 		deduction.setDescription(getDescription(deduction,description));
 		
 
-		CompositeDeduction compositeDeduction = getDeduction(deduction.getId());
+		CompositeDeduction compositeDeduction = getDeduction(deduction);
 
 		if (compositeDeduction != null) {
 			compositeDeduction.addChild(deduction);
@@ -870,7 +883,8 @@ public class SalaryDraftBuilder
 			salaryDraft.addDeduction(deduction);
 		}
 		
-		deduction.setDescription(formatItemDescription(deduction, context,salaryDraft.getStartDate(), salaryDraft.getEndDate()));
+		boolean isChild = ( compositeDeduction != null );
+		deduction.setDescription(formatItemDescription(deduction, description, context,salaryDraft.getStartDate(), salaryDraft.getEndDate(), isChild));
 	}
 
 	@Override
@@ -1447,11 +1461,14 @@ public class SalaryDraftBuilder
 		salaryDraft.getPayments().set(index, compositePayment);
 	}
 
-	private CompositeDeduction getDeduction(Integer id) {
+	private CompositeDeduction getDeduction(Deduction d) {
 		List<Deduction> deductions = salaryDraft.getDeductions();
 		for (int i = 0; i < deductions.size(); i++) {
 			Deduction deduction = deductions.get(i);
-			if (deduction.getId().equals(id)) {
+			if ((deduction.getId().equals(d.getId()))
+			    ||( "IRPF".equals(deduction.getName()) 
+				    && "IRPF".equals(d.getName()))
+			    ) {
 				if (deduction instanceof CompositeDeduction)
 					return (CompositeDeduction) deduction;
 
@@ -1711,6 +1728,15 @@ public class SalaryDraftBuilder
 			return AonStringUtils.defaultIfBlank(payment1.getDescription(), payment2.getDescription() );
 		}
 	}
+
+	private void fixIRPFDescription() {
+	
+	    salaryDraft.getDeductions().stream()
+	    .filter(d -> d.getType() == Deduction.Type.IRPF )
+	    .filter( d -> !( d instanceof CompositeDeduction ) )
+	    .forEach( d -> d.setDescription(getDescription(d, d.getDescription())));
+	}
+
 
 	private static void replaceNETO(Payment p, Double totalPayment) {
 		

@@ -2020,7 +2020,8 @@ public abstract class ITDialog extends AonCustomDialog {
 		baseCC.setStyleName("aon-inputText");
 		panel.add(baseCC);
 		baseCC.addChangeHandler(event->{
-			it.setRegulationBase(baseCC.getValue());
+			it.setDailyCGCBase(baseCC.getValue());
+//			it.setRegulationBase(baseCC.getValue());
 		});
 		
 		//BASE CP

@@ -2235,6 +2235,9 @@ public class Contrata {
 		byte[] certByte = certificateInputStream.readAllBytes();
 		try (WebClient webClient = HtmlUnitToolkit.getWebClientCert(new ByteArrayInputStream(certByte),
 				certificatePassword, certificateType)) {
+			
+			webClient.getOptions().setUseInsecureSSL(true);
+			
 			validateCertExpired(new ByteArrayInputStream(certByte), certificatePassword);
 			HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
 			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=consultas").click();

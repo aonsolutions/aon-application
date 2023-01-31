@@ -74,7 +74,7 @@
 		}
 		
 		.dateBox {
-			width: 50px;
+			width: 98% !important;
 			text-align: center;
 			height: 1.5rem;
 		}
@@ -87,6 +87,12 @@
 		
 		.listBox {
 			width: 105px;
+		}
+		
+		.between {
+			display: flex;
+			justify-content: space-between;
+			gap: 1rem;
 		}
 		
 	</ui:style>
@@ -134,6 +140,17 @@
 				<g:HTMLPanel styleName="{style.flex}">
 					<g:ListBox ui:field="seniorityType" styleName="{style.quoteTaxedWidth} {style.inputHeight}"/>
 					<g:Label styleName="{style.widthAll}">El valor seleccionado afectará a todos los cálculos de antigüedad del convenio</g:Label>
+				</g:HTMLPanel>
+			</g:HTMLPanel>
+			
+			<g:HTMLPanel styleName="{style.between}">
+				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+					<g:Label text="Fecha inicio" styleName="{style.title}" />
+					<c:DateBoxEx ui:field="startDateBx" styleName="{style.dateBox}" />
+				</g:HTMLPanel>
+				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+					<g:Label text="Fecha fin" styleName="{style.title}" />
+					<c:DateBoxEx ui:field="endDateBx" styleName="{style.dateBox}" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>
 			
