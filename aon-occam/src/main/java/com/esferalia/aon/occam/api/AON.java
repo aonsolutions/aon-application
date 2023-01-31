@@ -1650,6 +1650,12 @@ public class AON {
 		getProduct().deleteItem(ctx, is);
 	}
 	
+	public static void updateAllTargetItem(Domain domain, User user, InvoiceFilter filter, boolean disable) {
+		try (CloseableAONContext ctx =  AONContext.getAONContext(domain, user)){
+			getNewProduct().updateAllTargetItem(ctx, filter, disable);
+		}
+	}
+	
 	// ------------------------------------ ITEM ADD INFO
 	
 	public static Optional<ItemAddInfo> getItemAddInfo(String domainName, Integer domainId, String login, ItemAddInfoFilter filter){
