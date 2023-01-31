@@ -972,7 +972,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				if (type.isTaxDeduction()) {
 					deductionStart = ctx.getIrpfDate();
 					deductionEnd = ctx.getIrpfDate();
-
+					
+					if ( deductionEnd.after(end)) {
+					    expressionContext = new ExpressionContext(expressionContext) ;
+					    ContextFunctions.loadFunctions(expressionContext, deductionStart, deductionEnd);
+					}
+					
 				} else {
 					deductionStart = Period.max(contractDeduction.getStartDate(), start);
 					deductionEnd = Period.min(contractDeduction.getEndDate(), end);
