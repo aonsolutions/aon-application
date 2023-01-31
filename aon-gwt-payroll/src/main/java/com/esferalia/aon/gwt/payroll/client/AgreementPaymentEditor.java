@@ -190,8 +190,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		this.allPayments = allPayments;
 		this.allExtras = allExtras;
 		
-		toolbar.setTitle(payment.getDescription());
-		
 		initializeSeniorityPanel();
 		
 		initializeExtraPanel();
