@@ -95,7 +95,7 @@ public class Mod111AEAT2023Declaration extends Mod111Declaration {
 			, Mod111AEAT2023Declaration::isImageRetention
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.CT_C27,mod,br))
 		
-		,CT_C28(Mod111Key.CT_C28,false,null,null,null, "CT_C03+CT_C06+CT_C09+CT_C12+CT_C15+CT_C18+CT_C21+CT_C24",null)
+		,CT_C28(Mod111Key.CT_C28,false,null,null,null, "CT_C03+CT_C06+CT_C09+CT_C12+CT_C15+CT_C18+CT_C21+CT_C24+CT_C27",null)
 		,CT_C29(Mod111Key.CT_C29
 			, false
 			, null

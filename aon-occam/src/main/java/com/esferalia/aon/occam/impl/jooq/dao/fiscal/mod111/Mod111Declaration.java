@@ -51,18 +51,30 @@ public abstract class Mod111Declaration {
 			@Override boolean accept(Mod111 mod) { return Mod110Bizkaia2023Declaration.accept(mod);}
 			@Override Mod111Declaration get() {return new Mod110Bizkaia2023Declaration();}
 		}
+		,BIZKAIA_111_2023 {
+			@Override boolean accept(Mod111 mod) { return Mod111Bizkaia2023Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111Bizkaia2023Declaration();}
+		}
+		,ARABA_2023 {
+			@Override boolean accept(Mod111 mod) { return Mod111Araba2023Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111Araba2023Declaration();}
+		}
+		,GIPUZKOA_2023 {
+			@Override boolean accept(Mod111 mod) { return Mod111Gipuzkoa2023Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111Gipuzkoa2023Declaration();}
+		}
+		,NAVARRA_2023 {
+			@Override boolean accept(Mod111 mod) { return Mod111Navarra2023Declaration.accept(mod);}
+			@Override Mod111Declaration get() {return new Mod111Navarra2023Declaration();}
+		}
 
 		,AEAT_2021 {
 			@Override boolean accept(Mod111 mod) { return Mod111AEAT2021Declaration.accept(mod);}
 			@Override Mod111Declaration get() {return new Mod111AEAT2021Declaration();}
 		}
-		,ARABA_111_2021 {
+		,ARABA_2021 {
 			@Override boolean accept(Mod111 mod) { return Mod111Araba2021Declaration.accept(mod);}
 			@Override Mod111Declaration get() {return new Mod111Araba2021Declaration();}
-		}
-		,BIZKAIA_111_2023 {
-			@Override boolean accept(Mod111 mod) { return Mod111Bizkaia2023Declaration.accept(mod);}
-			@Override Mod111Declaration get() {return new Mod111Bizkaia2023Declaration();}
 		}
 		,BIZKAIA_111_2021 {
 			@Override boolean accept(Mod111 mod) { return Mod111Bizkaia2021Declaration.accept(mod);}
@@ -72,7 +84,7 @@ public abstract class Mod111Declaration {
 			@Override boolean accept(Mod111 mod) { return Mod110Bizkaia2021Declaration.accept(mod);}
 			@Override Mod111Declaration get() {return new Mod110Bizkaia2021Declaration();}
 		}
-		,GIPUZKOA_111_2021 {
+		,GIPUZKOA_2021 {
 			@Override boolean accept(Mod111 mod) { return Mod111Gipuzkoa2021Declaration.accept(mod);}
 			@Override Mod111Declaration get() {return new Mod111Gipuzkoa2021Declaration();}
 		}

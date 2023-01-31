@@ -9,15 +9,15 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
-public class Mod111Navarra2021Declaration extends Mod111Declaration {
+public class Mod111Navarra2023Declaration extends Mod111Declaration {
 	
 	public static boolean accept(Mod111 mod) {
-		return mod.isNavarra() && mod.getYear() < 2023; 
+		return mod.isNavarra() && mod.getYear() >= 2023; 
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
 		 NF_A1(Mod111Key.NF_A1,true
-			, (mod,br) -> (isProfessional(br) || isTransportOperator(br) || isFarmer(br) || br.isSalaryRetention() || br.isSalaryInKindRetention()) 
+			, (mod,br) -> isRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.NF_A1,mod,br)
 			,null,null,null)
 		,NF_TIP (Mod111Key.NF_TIP,false,null,null,null,null,null)
@@ -111,14 +111,31 @@ public class Mod111Navarra2021Declaration extends Mod111Declaration {
 		return super.initializeModel(ctx, mod111);
 	}
 	
-	private static boolean isProfessional(IrpfBreakdown br) {
-		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.PROFESSIONAL;
+	// ----------------------------------------------- -------
+	// ----------------------------------------------- FILTROS
+	// ----------------------------------------------- -------
+	private static boolean isRetention(Mod111 mod111, IrpfBreakdown br) {
+		return br.isFromSalary() || isInvoiceRetention(br);
 	}
-	private static boolean isFarmer(IrpfBreakdown br) {
-		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.FARMER;
-	}
-	private static boolean isTransportOperator(IrpfBreakdown br) {
-		return br.isFromInvoice() &&  br.getWithholdingType() == WithholdingType.TRANSPORT_OPERATOR;
+	
+	private static boolean isInvoiceRetention(IrpfBreakdown br) {
+		return br.isFromInvoice() && 
+			(br.getWithholdingType() == WithholdingType.M190_F_01  
+			 ||	br.getWithholdingType() == WithholdingType.M190_F_02_1
+			 ||	br.getWithholdingType() == WithholdingType.M190_F_02_2
+			 || br.getWithholdingType() == WithholdingType.PROFESSIONAL  
+			 ||	br.getWithholdingType() == WithholdingType.M190_G_02
+			 ||	br.getWithholdingType() == WithholdingType.M190_G_03
+			 ||	br.getWithholdingType() == WithholdingType.TRANSPORT_OPERATOR
+			 || br.getWithholdingType() == WithholdingType.FARMER
+			 ||	br.getWithholdingType() == WithholdingType.M190_H_02
+			 ||	br.getWithholdingType() == WithholdingType.M190_H_03
+			 || br.getWithholdingType() == WithholdingType.M190_I_01
+			 ||	br.getWithholdingType() == WithholdingType.M190_I_02
+			 ||	br.getWithholdingType() == WithholdingType.M190_J
+			 ||	br.getWithholdingType() == WithholdingType.M190_K_02
+			 || br.getWithholdingType() == WithholdingType.M190_K_01  
+			 ||	br.getWithholdingType() == WithholdingType.M190_K_03);
 	}
 	
 }

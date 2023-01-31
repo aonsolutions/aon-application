@@ -33,6 +33,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CreditorDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -531,8 +532,7 @@ public class InvoiceFaker {
 		if (withholding == null && invoice.getDetails() != null) {
 			withholding = invoice.getDetails()
 				.stream()
-				.filter( det -> det.getInvoiceTaxes() != null)
-				.filter( det -> !det.getInvoiceTaxes().isEmpty())
+				.filter( det -> AonCollectionUtils.isNotEmpty( det.getInvoiceTaxes() ))
 				.map( det -> det.getInvoiceTaxes()
 						.stream()
 						.filter( tax -> tax.getTaxType() == TaxType.RETENTION)
@@ -550,6 +550,7 @@ public class InvoiceFaker {
 			withholding = new InvoiceWithholding()
 				.setPercentage( getRetentionPercent( AonRandom.number(0, 100)) )
 				.setWithholdingType(WithholdingType.PROFESSIONAL);
+			params.setWithholding(withholding);
 		}
 		return withholding;
 	}
@@ -568,7 +569,8 @@ public class InvoiceFaker {
 	private static double getVatPercent(int x) {
 		if ( x >= 0 && x <= 50) return 21.0;
 		if ( x > 50 && x <= 75) return 10.0;
-		if ( x > 75 && x <= 95) return 4.0;
+		if ( x > 75 && x <= 90) return 4.0;
+		if ( x > 90 && x <= 95) return 5.0;
 		return 0.0;
 	}
 	
@@ -760,54 +762,11 @@ public class InvoiceFaker {
 			.findFirst()
 			.orElse(null);
 	}
+	
 	public static Invoice getExpensesRetention(InvoiceFakerParams invParams) {
 		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
 	}
 	
-//	public static Invoice getExpensesProfRetention(AONContext ctx, AonConfiguration configuration) {
-//		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
-//		return getExpensesProfRetention(invParams);
-//	}
-//	public static Invoice getExpensesProfRetention(InvoiceFakerParams invParams) {
-//		invParams.setWithholding(new InvoiceWithholding()
-//			.setPercentage(getRetentionPercent())
-//			.setWithholdingType(WithholdingType.PROFESSIONAL))
-//			.setMustForceRegistry(true);
-//		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
-//	}
-//	public static Invoice getExpensesCapitalRetention(AONContext ctx, AonConfiguration configuration) {
-//		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
-//		return getExpensesCapitalRetention(invParams);
-//	}
-//	public static Invoice getExpensesCapitalRetention(InvoiceFakerParams invParams) {
-//		invParams.setWithholding(new InvoiceWithholding()
-//			.setPercentage(getRetentionPercent())
-//			.setWithholdingType(WithholdingType.MOVABLE_CAPITAL))
-//			.setMustForceRegistry(true);
-//		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
-//	}
-//	public static Invoice getExpensesTransportRetention(AONContext ctx, AonConfiguration configuration) {
-//		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
-//		return getExpensesTransportRetention(invParams);
-//	}
-//	public static Invoice getExpensesTransportRetention(InvoiceFakerParams invParams) {
-//		invParams.setWithholding(new InvoiceWithholding()
-//			.setPercentage(getRetentionPercent())
-//			.setWithholdingType(WithholdingType.TRANSPORT_OPERATOR))
-//			.setMustForceRegistry(true);
-//		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
-//	}
-//	public static Invoice getExpensesRentingRetention(AONContext ctx, AonConfiguration configuration) {
-//		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
-//		return getExpensesRentingRetention(invParams);
-//	}
-//	public static Invoice getExpensesRentingRetention(InvoiceFakerParams invParams) {
-//		invParams.setWithholding(new InvoiceWithholding()
-//			.setPercentage(getRetentionPercent())
-//			.setWithholdingType(WithholdingType.RENTING))
-//			.setMustForceRegistry(true);
-//		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
-//	}
 	public static Invoice getPurchaseFarmerRetention(AONContext ctx, AonConfiguration configuration) {
 		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
 		return getPurchaseFarmerRetention(invParams);

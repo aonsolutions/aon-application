@@ -9,10 +9,10 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
-public class Mod111Gipuzkoa2021Declaration extends Mod111Declaration {
+public class Mod111Gipuzkoa2023Declaration extends Mod111Declaration {
 	
 	public static boolean accept(Mod111 mod) {
-		return mod.isGipuzkoa() && mod.getYear() < 2023; 
+		return mod.isGipuzkoa() && mod.getYear() >= 2023; 
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
@@ -22,56 +22,65 @@ public class Mod111Gipuzkoa2021Declaration extends Mod111Declaration {
 			, Mod111Declaration::addDeponentDocument
 			, null,null)
 		,GP_C01(Mod111Key.GP_C01,false
-			, (mod,br) -> br.isSalaryRetention()
+			, (mod,br) -> isSalaryRetention(mod, br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C01,mod,docs,pdocs,br)
 			,null,null,null)
 		,GP_C02(Mod111Key.GP_C02,true
-			, (mod,br) -> br.isSalaryRetention()
+			, (mod,br) -> isSalaryRetention(mod, br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C02,mod,br)
 			,null,null,null)
 		,GP_C03(Mod111Key.GP_C03,true
-			, (mod,br) -> br.isSalaryRetention()
+			, (mod,br) -> isSalaryRetention(mod, br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C03,mod,br)
 			,null,null,null)
 		,GP_C04(Mod111Key.GP_C04,false
-			, (mod,br) -> isProfessional(br) || isTransportOperator(br)
+			, (mod,br) -> isEconomicActivityRetention(mod, br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C04,mod,docs,pdocs,br)
 			,null,null,null)
 		,GP_C05(Mod111Key.GP_C05,true
-			, (mod,br) -> isProfessional(br) || isTransportOperator(br)
+			, (mod,br) -> isEconomicActivityRetention(mod, br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C05,mod,br)
 			,null,null,null)
 		,GP_C06(Mod111Key.GP_C06,true
-			, (mod,br) -> isProfessional(br) || isTransportOperator(br)
+			, (mod,br) -> isEconomicActivityRetention(mod, br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C06,mod,br)
 			,null,null,null)
 		,GP_C07(Mod111Key.GP_C07,false
-			, (mod,br) -> isFarmer(br)
+			, (mod,br) -> isFarmer(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C07,mod,docs,pdocs,br)
 			,null,null,null)
 		,GP_C08(Mod111Key.GP_C08,true
-			, (mod,br) -> isFarmer(br)
+			, (mod,br) -> isFarmer(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C08,mod,br)
 			,null,null,null)
 		,GP_C09(Mod111Key.GP_C09,true
-			, (mod,br) -> isFarmer(br)
+			, (mod,br) -> isFarmer(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C09,mod,br)
 			,null,null,null)
-		,GP_C10(Mod111Key.GP_C10,false,null,null,null,null,null)
-		,GP_C11(Mod111Key.GP_C11,true ,null,null,null,null,null)
-		,GP_C12(Mod111Key.GP_C12,true ,null,null,null,null,null)
+		,GP_C10(Mod111Key.GP_C10,false
+			, (mod,br) -> isGameRetention(mod,br)
+			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C10,mod,docs,pdocs,br)
+			,null,null,null)
+		,GP_C11(Mod111Key.GP_C11,true
+			, (mod,br) -> isGameRetention(mod,br)
+			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C11,mod,br)
+			,null,null,null)
+		,GP_C12(Mod111Key.GP_C12,true 
+			, (mod,br) -> isGameRetention(mod,br)
+			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C12,mod,br)
+			,null,null,null)
 		,GP_C13(Mod111Key.GP_C13,false,null,null,null, "GP_C02+GP_C05+GP_C08+GP_C11",null)
 		,GP_C14(Mod111Key.GP_C14,false,null,null,null, "GP_C03+GP_C06+GP_C09+GP_C12",null)
 		,GP_C15(Mod111Key.GP_C15,false
-			, (mod,br) -> br.isSalaryInKindRetention()
+			, (mod,br) -> isSalaryInKindRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.GP_C15,mod,docs,pdocs,br)
 			,null,null,null)
 		,GP_C16(Mod111Key.GP_C16,true
-			, (mod,br) -> br.isSalaryInKindRetention()
+			, (mod,br) -> isSalaryInKindRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.GP_C16,mod,br)
 			,null,null,null)
 		,GP_C17(Mod111Key.GP_C17,true
-			, (mod,br) -> br.isSalaryInKindRetention()
+			, (mod,br) -> isSalaryInKindRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.GP_C17,mod,br)
 			,null,null,null)
 		,GP_C18(Mod111Key.GP_C18,false,null,null,null,null,null)
@@ -175,14 +184,44 @@ public class Mod111Gipuzkoa2021Declaration extends Mod111Declaration {
 		return super.initializeModel(ctx, mod111);
 	}
 	
-	private static boolean isProfessional(IrpfBreakdown br) {
-		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.PROFESSIONAL;
+	// ----------------------------------------------- -------
+	// ----------------------------------------------- FILTROS
+	// ----------------------------------------------- -------
+	private static boolean isSalaryRetention(Mod111 mod111, IrpfBreakdown br) {
+		return (br.isFromSalary() && !br.isInKind()) || isInvoiceWorkRetention(br);
+		
 	}
-	private static boolean isFarmer(IrpfBreakdown br) {
-		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.FARMER;
+	public static boolean isSalaryInKindRetention(Mod111 mod111, IrpfBreakdown br) {
+		return br.isFromSalary() && br.isInKind();
 	}
-	private static boolean isTransportOperator(IrpfBreakdown br) {
-		return br.isFromInvoice() &&  br.getWithholdingType() == WithholdingType.TRANSPORT_OPERATOR;
+	private static boolean isInvoiceWorkRetention(IrpfBreakdown br) {
+		return br.isFromInvoice() && 
+			(br.getWithholdingType() == WithholdingType.M190_F_01  
+			 ||	br.getWithholdingType() == WithholdingType.M190_F_02_1
+			 ||	br.getWithholdingType() == WithholdingType.M190_F_02_2);
+	}
+	private static boolean isEconomicActivityRetention(Mod111 mod111, IrpfBreakdown br) {
+		return br.isFromInvoice() && 
+			(br.getWithholdingType() == WithholdingType.PROFESSIONAL  
+			 ||	br.getWithholdingType() == WithholdingType.M190_G_02
+			 ||	br.getWithholdingType() == WithholdingType.M190_G_03
+			 ||	br.getWithholdingType() == WithholdingType.TRANSPORT_OPERATOR
+			 ||	br.getWithholdingType() == WithholdingType.M190_I_01
+			 ||	br.getWithholdingType() == WithholdingType.M190_I_02
+			 || br.getWithholdingType() == WithholdingType.M190_K_02
+			 || br.getWithholdingType() == WithholdingType.M190_J);
+	}
+	private static boolean isFarmer(Mod111 mod111, IrpfBreakdown br) {
+		return br.isFromInvoice() 
+			&& (br.getWithholdingType() == WithholdingType.FARMER
+			||	br.getWithholdingType() == WithholdingType.M190_H_02
+			||	br.getWithholdingType() == WithholdingType.M190_H_03
+			);
+	}
+	private static boolean isGameRetention(Mod111 mod111, IrpfBreakdown br) {
+		return br.isFromInvoice() && 
+			(br.getWithholdingType() == WithholdingType.M190_K_01  
+			 ||	br.getWithholdingType() == WithholdingType.M190_K_03);
 	}
 	
 }

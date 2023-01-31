@@ -17,15 +17,15 @@ public class Mod110Bizkaia2023Declaration extends Mod111Declaration {
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
 		 BZ_C01 (Mod111Key.BZ_C01,false
-			, (mod,br) ->  br.isSalaryRetention()
+			, (mod,br) ->  isSalaryRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C01,mod,docs,pdocs,br)
 			,null,null,null)
 		,BZ_C12 (Mod111Key.BZ_C12,true
-			, (mod,br) ->  br.isSalaryRetention()
+			, (mod,br) ->  isSalaryRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C12,mod,br)
 			,null,null,null)
 		,BZ_C23 (Mod111Key.BZ_C23,true
-			, (mod,br) ->  br.isSalaryRetention()
+			, (mod,br) ->  isSalaryRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C23,mod,br)
 			,null,null,null)
 		,BZ_C02 (Mod111Key.BZ_C02,false,null,null,null,null,null)
@@ -44,60 +44,77 @@ public class Mod110Bizkaia2023Declaration extends Mod111Declaration {
 		,BZ_C17 (Mod111Key.BZ_C17,true,null,null,null,null,null)
 		,BZ_C28 (Mod111Key.BZ_C28,true,null,null,null,null,null)
 		,BZ_C07 (Mod111Key.BZ_C07,false
-			, (mod,br) ->  br.isNotObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
+			, (mod,br) ->  isNotObjectiveRegimeEconomicActivityRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C07,mod,docs,pdocs,br)
 			,null,null,null)
 		,BZ_C18 (Mod111Key.BZ_C18,true
-			, (mod,br) ->  br.isNotObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
+			, (mod,br) ->  isNotObjectiveRegimeEconomicActivityRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C18,mod,br)
 			,null,null,null)
 		,BZ_C29 (Mod111Key.BZ_C29,true
-			, (mod,br) ->  br.isNotObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
+			, (mod,br) ->  isNotObjectiveRegimeEconomicActivityRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C29,mod,br)
 			,null,null,null)
 		,BZ_C50 (Mod111Key.BZ_C50,false
-			, (mod,br) ->  br.isObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
+			, (mod,br) ->  isObjectiveRegimeEconomicActivityRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C50,mod,docs,pdocs,br)
 			,null,null,null)
 		,BZ_C51 (Mod111Key.BZ_C51,true
-			, (mod,br) ->  br.isObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
+			, (mod,br) ->  isObjectiveRegimeEconomicActivityRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C51,mod,br)
 			,null,null,null)
 		,BZ_C52 (Mod111Key.BZ_C52,true
-			, (mod,br) ->  br.isObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
+			, (mod,br) ->  isObjectiveRegimeEconomicActivityRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C52,mod,br)
 			,null,null,null)
 		,BZ_C08 (Mod111Key.BZ_C08,false
-			, (mod,br) ->  isFarmer(br)
+			, (mod,br) ->  isFarmer(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C08,mod,docs,pdocs,br)
 			,null,null,null)
 		,BZ_C19 (Mod111Key.BZ_C19,true
-			, (mod,br) ->  isFarmer(br)
+			, (mod,br) ->  isFarmer(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C19,mod,br)
 			,null,null,null)
 		,BZ_C30 (Mod111Key.BZ_C30,true
-			, (mod,br) ->  isFarmer(br)
+			, (mod,br) ->  isFarmer(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C30,mod,br)
 			,null,null,null)
 		,BZ_C09 (Mod111Key.BZ_C09,false
-			, (mod,br) ->  br.isSalaryInKindRetention()
+			, (mod,br) ->  isSalaryInKindRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C09,mod,docs,pdocs,br)
 			,null,null,null)
 		,BZ_C20 (Mod111Key.BZ_C20,true
-			, (mod,br) ->  br.isSalaryInKindRetention()
+			, (mod,br) ->  isSalaryInKindRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C20,mod,br)
 			,null,null,null)
 		,BZ_C31 (Mod111Key.BZ_C31,true
-			, (mod,br) ->  br.isSalaryInKindRetention()
+			, (mod,br) ->  isSalaryInKindRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C31,mod,br)
 			,null,null,null)
-		,BZ_C10 (Mod111Key.BZ_C10,false,null,null,null,null,null)
-		,BZ_C21 (Mod111Key.BZ_C21,true ,null,null,null,null,null)
-		,BZ_C32 (Mod111Key.BZ_C32,true ,null,null,null,null,null)
-		,BZ_C11 (Mod111Key.BZ_C11,false,null,null,null,null,null)
-		,BZ_C22 (Mod111Key.BZ_C22,true ,null,null,null,null,null)
-		,BZ_C33 (Mod111Key.BZ_C33,true ,null,null,null,null,null)
-		
+		,BZ_C10 (Mod111Key.BZ_C10,false
+			, (mod,br) ->  isGameRetention(mod,br)
+			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C10,mod,docs,pdocs,br)
+			,null,null,null)
+		,BZ_C21 (Mod111Key.BZ_C21,true
+			, (mod,br) ->  isGameRetention(mod,br)
+			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C21,mod,br)
+			,null,null,null)
+		,BZ_C32 (Mod111Key.BZ_C32,true 
+			, (mod,br) ->  isGameRetention(mod,br)
+			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C32,mod,br)
+			,null,null,null)
+		,BZ_C11 (Mod111Key.BZ_C11,false
+			, (mod,br) ->  isOther(mod,br)
+			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C11,mod,docs,pdocs,br)
+			,null,null,null)
+		,BZ_C22 (Mod111Key.BZ_C22,true 
+			, (mod,br) ->  isOther(mod,br)
+			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C22,mod,br)
+			,null,null,null)
+		,BZ_C33 (Mod111Key.BZ_C33,true 
+			, (mod,br) ->  isOther(mod,br)
+			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C33,mod,br)
+			,null,null,null)
 		,BZ_C34T(Mod111Key.BZ_C34T,false
 			,null,null,null, "BZ_C01+BZ_C02+BZ_C03+BZ_C04+BZ_C05+BZ_C06+BZ_C07+BZ_C50+BZ_C08+BZ_C09+BZ_C10+BZ_C11"
 			,null)
@@ -198,15 +215,58 @@ public class Mod110Bizkaia2023Declaration extends Mod111Declaration {
 		return super.initializeModel(ctx, mod111);
 	}
 
-	private static boolean isProfessional(IrpfBreakdown br) {
-		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.PROFESSIONAL;
+	// ----------------------------------------------- -------
+	// ----------------------------------------------- FILTROS
+	// ----------------------------------------------- -------
+	private static boolean isSalaryRetention(Mod111 mod111, IrpfBreakdown br) {
+		return (br.isFromSalary() && !br.isInKind()) || isInvoiceWorkRetention(br);
 	}
-	private static boolean isFarmer(IrpfBreakdown br) {
-		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.FARMER;
+	private static boolean isSalaryInKindRetention(Mod111 mod111, IrpfBreakdown br) {
+		return br.isFromSalary() && br.isInKind();
 	}
-	private static boolean isTransportOperator(IrpfBreakdown br) {
-		return br.isFromInvoice() &&  br.getWithholdingType() == WithholdingType.TRANSPORT_OPERATOR;
+	private static boolean isInvoiceWorkRetention(IrpfBreakdown br) {
+		return br.isFromInvoice() && 
+			(br.getWithholdingType() == WithholdingType.M190_F_01  
+			 ||	br.getWithholdingType() == WithholdingType.M190_F_02_1
+			 ||	br.getWithholdingType() == WithholdingType.M190_F_02_2);
+	}
+	private static boolean isNotObjectiveRegimeEconomicActivityRetention(Mod111 mod111, IrpfBreakdown br) {
+		return br.isNotObjectiveRegime() && isEconomicActivityRetention(mod111, br); 
 	}
 
+	private static boolean isObjectiveRegimeEconomicActivityRetention(Mod111 mod111, IrpfBreakdown br) {
+		return br.isObjectiveRegime() && isEconomicActivityRetention(mod111, br);
+	}
+
+	private static boolean isEconomicActivityRetention(Mod111 mod111, IrpfBreakdown br) {
+		return br.isFromInvoice() 
+			&& br.isNotObjectiveRegime()
+			&& (br.getWithholdingType() == WithholdingType.PROFESSIONAL  
+			 ||	br.getWithholdingType() == WithholdingType.M190_G_02
+			 ||	br.getWithholdingType() == WithholdingType.M190_G_03
+			 ||	br.getWithholdingType() == WithholdingType.TRANSPORT_OPERATOR
+			);
+	}
+	private static boolean isFarmer(Mod111 mod111, IrpfBreakdown br) {
+		return br.isFromInvoice() 
+			&& (br.getWithholdingType() == WithholdingType.FARMER
+			||	br.getWithholdingType() == WithholdingType.M190_H_02
+			||	br.getWithholdingType() == WithholdingType.M190_H_03
+			);
+	}
+	private static boolean isOther(Mod111 mod111, IrpfBreakdown br) {
+		return br.isFromInvoice() && 
+			(br.getWithholdingType() == WithholdingType.M190_I_01
+			 ||	br.getWithholdingType() == WithholdingType.M190_I_02
+			 ||	br.getWithholdingType() == WithholdingType.M190_J
+			 ||	br.getWithholdingType() == WithholdingType.M190_K_02
+			 );
+		
+	}
+	private static boolean isGameRetention(Mod111 mod111, IrpfBreakdown br) {
+		return br.isFromInvoice() && 
+			(br.getWithholdingType() == WithholdingType.M190_K_01  
+			 ||	br.getWithholdingType() == WithholdingType.M190_K_03);
+	}
 	
 }
