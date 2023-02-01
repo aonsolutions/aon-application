@@ -523,6 +523,11 @@ export class AonDate extends AonElement {
     
   }
 
+  getValue() {
+    return this.value;
+  }
+  
+
 }
 if(!window.customElements.get('aon-date')){
   window.customElements.define('aon-date',  AonDate);

@@ -276,6 +276,14 @@ export class AonOfficePanel extends AonElement {
                             }
                         },
                         { 
+                            name: "Actualizar productos", 
+                            value: "assignedProduct",
+                            icon: MATERIAL_ICONS.AUTORENEW, 
+                            fn:()=> {
+                                OfficeUtils.buildDialogProductsUpdate(this);
+                            }
+                        },
+                        { 
                             name: "Vincular empresa", 
                             value: "LINK",
                             icon:  MATERIAL_ICONS.LINK, 
