@@ -83,8 +83,8 @@ public class ContractFill {
 		FIELDNAMESTOMAP.put("DEN_NVFOR", "E_FORMATIVE_LVL");
 		FIELDNAMESTOMAP.put("COD_NVFOR", "E_FORMATIVE_LVL_CODE");
 		FIELDNAMESTOMAP.put("HOR_JOR_HH", "I_PARTIALLY_TIME_HOURS");
-		FIELDNAMESTOMAP.put("FX_NAC_TRA", "E_BDAT");
-		FIELDNAMESTOMAP.put("FX_INICIO", "C_START");
+//		FIELDNAMESTOMAP.put("FX_NAC_TRA", "E_BDAT");
+//		FIELDNAMESTOMAP.put("FX_INICIO", "C_START");
 	}
 	
 	private static void checkContractOtherInfo(Map<String, String> contractOtherInfo) {

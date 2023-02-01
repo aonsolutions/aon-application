@@ -37,13 +37,11 @@ public class Mod347ValidatePrintAEAT extends HttpServlet {
 	private static final long serialVersionUID = -8391437522744646639L;
 	
 	private enum AeatUrl {
-		URL_2021_2_SEMESTER {
+		URL_2021 {
 
 			@Override
 			protected boolean accept(Mod347 mod347) {
-				return mod347.getYear() == 2021
-					|| (mod347.getYear() == 2021 && mod347.getPeriod().isLastSemester())
-					;
+				return mod347.getYear() >= 2021;
 			}
 
 			@Override

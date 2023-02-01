@@ -579,7 +579,10 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			@Override
 	        public String getValue(Payment payment) {
 				AgreementExtra extra = agreement.getExtraPayment(payment.getId());
-				return null == extra ? "" : extra.getIssueDate();
+				if(null != extra && !extra.isDeleted() && payment.getType().equals(Payment.Type.CRA_0004))
+					return extra.getIssueDate() + " (" +  getPayDescription(payment) + ")";
+				else return "Prorrat.";
+				
 	        }
 		};
 
@@ -761,10 +764,11 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
 				if(null != payment) {
 					if(payment.isModify())
-						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_arrow_right_modify\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
+						sb.appendHtmlConstant("<button type=\"button\" id=\"edit_payment_" + context.getIndex() + "\" class=\"aon_button aon_table_button aon_icon_arrow_right_modify\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
 					else
-						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon_icon_right\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
+						sb.appendHtmlConstant("<button type=\"button\" id=\"edit_payment_" + context.getIndex() + "\" class=\"aon_button aon_table_button aon_icon_right\" style=\"border: none !important; height: 20px;\" title=\"Editar\"></button>");
 				}
+				
 			}
 		};
 		
@@ -775,7 +779,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		Column<Payment, String> codeColumn = new Column<Payment, String>(new TextCell()) {
 			@Override
 	        public String getValue(Payment payment) {
-				return null == payment.getType() ? "" : AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0');
+				return null == payment.getType() ? "Revisar CRA" : AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0');
 	        }
 		};
 
@@ -1009,10 +1013,6 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			title += "Cotiza : " + getQuoteDescription(quoteExpression) + "\n";
 		}
 		
-		if(payment.getType().equals(Payment.Type.CRA_0004)) {
-			title += "Pago : " + getPayDescription(payment) + "\n";
-		}
-		
 		return title;
 	}
 
@@ -1088,13 +1088,13 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			
 		if(	null == extra && 
 				(payment.getType().equals(Payment.Type.CRA_0004) || 
-				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrateado";
+				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrat.";
 		
-		return (extra == null || extra.isDeleted()) ? "Prorrateado" : getExtraPeriodTitle(extra);
+		return (extra == null || extra.isDeleted()) ? "Prorrat." : getExtraPeriodTitle(extra);
 	}
 	
 	private String getExtraPeriodTitle(AgreementExtra extra) {
-		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "Anual";
+		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "A";
 		
 		try {
 			int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
@@ -1102,11 +1102,11 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			
 			switch (endMonth - startMonth) {
 			case 11:
-				return "Anual";
+				return "A";
 			case 5:
-				return "Semestral";
+				return "S";
 			default:
-				return (endMonth - startMonth) + " meses";
+				return (endMonth - startMonth) + " m.";
 			}
 		} catch (Exception e) {
 			return "Revisar esta extra!!";
