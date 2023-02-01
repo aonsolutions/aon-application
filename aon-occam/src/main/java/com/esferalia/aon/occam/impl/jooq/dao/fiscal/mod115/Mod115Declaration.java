@@ -18,12 +18,15 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.ExplainRowManager;
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public abstract class Mod115Declaration {
+	
 	enum ComplementaryBeahaviour {
 		COMPLEMENTARY,
 		REPLACEMENT;
@@ -43,7 +46,7 @@ public abstract class Mod115Declaration {
 		void initialize(AONContext ctx,Mod115 mod);
 	}
 	
-	static Mod115Declaration getInstance( Mod115 mod) {
+	public static Mod115Declaration getInstance( Mod115 mod) {
 		if (mod.getAdministration() == null) {
 			throw new AonCoreException("No se ha indicado administraci\u00F3n para la declaraci\u00F3n");
 		}
@@ -227,10 +230,15 @@ public abstract class Mod115Declaration {
 			|| (mod115.isComplementary() && getComplementaryBehaviour(mod115) == ComplementaryBeahaviour.REPLACEMENT)); 
 	}
 	
+	protected String getSamePeriodExplain(AONContext ctx, Mod115 mod115, Mod115Key key) {
+		return DeclarationInfoUtil.getExplain( ctx, mod115, key, Mod115DAO.getSamePeriodEffectiveModels(ctx, mod115), new ExplainRowManager());	
+	}
+	
 	abstract Mod115 initialize(AONContext ctx, Mod115 mod115);
 	abstract IMod115KeyDAO valueOf(String string);
 	abstract IMod115KeyDAO[] getKeys();
 	abstract double getResult(final Mod115 mod115);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod115 mod115);
+	public abstract Mod115Key[] getSamePeriodExplainKeys();
 
 }

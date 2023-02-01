@@ -136,8 +136,15 @@ public class Mod115Araba2021Declaration extends Mod115Declaration {
 		return super.initializeModel(ctx, mod115);
 	}
 	
+	@Override
+	public Mod115Key[] getSamePeriodExplainKeys() {
+		return new Mod115Key[] {Mod115Key.AR_C08};
+	}
+	
 	private static boolean isRenting(IrpfBreakdown br) {
 		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.RENTING;
 	}
+	
+	
 
 }

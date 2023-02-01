@@ -121,5 +121,10 @@ public class Mod115Gipuzkoa2021Declaration extends Mod115Declaration {
 	private static boolean isRenting(IrpfBreakdown br) {
 		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.RENTING;
 	}
-	
+
+	@Override
+	public Mod115Key[] getSamePeriodExplainKeys() {
+		return new Mod115Key[] {};
+	}
+
 }

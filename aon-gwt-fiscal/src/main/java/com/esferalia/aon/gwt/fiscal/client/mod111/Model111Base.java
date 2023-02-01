@@ -2,8 +2,8 @@ package com.esferalia.aon.gwt.fiscal.client.mod111;
 
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonAuditDialog;
@@ -847,11 +847,15 @@ public abstract class Model111Base extends DockLayoutPanel {
 						public void onSuccess(String result) {
 							FlowPanel gridContainer = new FlowPanel();
 							Mod111Key key = script.getKeys()[0];
-							JsIRPFComputeKeyInfo info = JsonUtils.safeEval(result);
 							JsIRPFComputeKeyInfoGridPanel grid = new JsIRPFComputeKeyInfoGridPanel();
 							grid.setTitle(AON.MSG.calcDetail());
 							grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
-							grid.addContent(info);
+							try {
+								JsIRPFComputeKeyInfo info = JsonUtils.safeEval(result);
+								grid.addContent(info);
+							} catch (Exception e) {
+								grid.addContent(result);
+							}
 							gridContainer.add(grid);
 							callback.showInfoPanelWidget(gridContainer);
 							button.setEnabled(true);
@@ -961,7 +965,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 					if (getModel().isAlcatrazBound()) {
 						final AonTableButton button = addButton();
 						button.addClickHandler(event -> showInvoiceIrpfBreakdownInfo(button));
-						addExcelButton().addClickHandler(event -> showExcelInfo(script, false));
+						addExcelButton().addClickHandler(event -> showExcelInfo(script));
 					}
 					return null;
 				}
@@ -1141,7 +1145,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 		});
 	}
 
-	private void showExcelInfo(IModelScript<Mod111Key> script, boolean prorrated) {
+	private void showExcelInfo(IModelScript<Mod111Key> script) {
 		Mod111Key key = Arrays.stream(script.getKeys())
 				.filter( Objects::nonNull )
 				.findAny()

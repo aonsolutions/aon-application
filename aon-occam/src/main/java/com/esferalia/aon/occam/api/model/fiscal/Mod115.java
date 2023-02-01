@@ -8,6 +8,8 @@ import com.esferalia.aon.occam.api.model.type.Mod115Key;
 public class Mod115 extends FiscalModel implements Serializable {
 	
 	private static final long serialVersionUID = -6579562925389189514L;
+	
+	private boolean alcatrazBound;
 
 	public Mod115() {
 		super();
@@ -28,6 +30,13 @@ public class Mod115 extends FiscalModel implements Serializable {
 			&& (getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT);
 	}
 
+	public boolean isAlcatrazBound() {
+		return alcatrazBound;
+	}
+	public Mod115 setAlcatrazBound(boolean alcatrazBound) {
+		this.alcatrazBound = alcatrazBound;
+		return this;
+	}
 	
 	@Override
 	@Deprecated

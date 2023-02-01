@@ -184,6 +184,11 @@ public class Mod111Gipuzkoa2023Declaration extends Mod111Declaration {
 		return super.initializeModel(ctx, mod111);
 	}
 	
+	@Override
+	public Mod111Key[] getSamePeriodExplainKeys() {
+		return new Mod111Key[] {};
+	}
+
 	// ----------------------------------------------- -------
 	// ----------------------------------------------- FILTROS
 	// ----------------------------------------------- -------

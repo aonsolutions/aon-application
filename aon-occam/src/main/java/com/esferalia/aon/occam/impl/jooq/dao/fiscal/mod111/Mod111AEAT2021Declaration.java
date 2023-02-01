@@ -71,22 +71,11 @@ public class Mod111AEAT2021Declaration extends Mod111Declaration {
 		,CT_C26(Mod111Key.CT_C26,true ,null,null,null,null,null)
 		,CT_C27(Mod111Key.CT_C27,true ,null,null,null,null,null)
 		,CT_C28(Mod111Key.CT_C28,false,null,null,null, "CT_C03+CT_C06+CT_C09+CT_C12+CT_C15+CT_C18+CT_C21+CT_C24",null)
-		,CT_C29(Mod111Key.CT_C29
-			, false
-			, null
-			, null
+		,CT_C29(Mod111Key.CT_C29,false, null, null
 			, (ctx,mod) -> mod.putAmount(Mod111Key.CT_C29,mod.isComplementary()
 				?Mod111DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod111::getDeclarationResult).sum()
 				:0.0)
-			,null
-			,"{messages : ["
-				+ "\"Declaraciones en el mismo periodo/ejercicio:\","
-				+ "@foreach{fm : periodModels}"
-				+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
-				+ "@end{}"
-				+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(CT_C29)}\""
-			+"]}"
-			)
+			,null,null)
 		,CT_C30(Mod111Key.CT_C30,false,null,null,null,"CT_C28-CT_C29",null)
 		,CT_TIP(Mod111Key.CT_TIP,false,null,null,null,null,null)
 		;
@@ -178,6 +167,11 @@ public class Mod111AEAT2021Declaration extends Mod111Declaration {
 		return super.initializeModel(ctx, mod111);
 	}
 
+	@Override
+	public Mod111Key[] getSamePeriodExplainKeys() {
+		return new Mod111Key[] {Mod111Key.CT_C29};
+	}
+	
 	private static boolean isProfessional(IrpfBreakdown br) {
 		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.PROFESSIONAL;
 	}

@@ -877,9 +877,11 @@ public enum Mod303Key implements IFiscalModelKey  {
 		return this.diffEnabled;
 	}
 
+    @Override
 	public String getValue() {
 		return value;
 	}
+    @Override
 	public int getBox() {
 		if (AonStringUtils.isNumeric(box)) {
 			return AonNumberUtils.toint(box);
@@ -895,6 +897,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	public String getDescription() {
 		return description;
 	}
+    @Override
 	public String getBoxFormatted() {
 		return " [" + getBoxAsString() +"] ";
 	}

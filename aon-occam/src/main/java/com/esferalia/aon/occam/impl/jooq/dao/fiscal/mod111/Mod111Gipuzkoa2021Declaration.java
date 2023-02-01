@@ -175,6 +175,11 @@ public class Mod111Gipuzkoa2021Declaration extends Mod111Declaration {
 		return super.initializeModel(ctx, mod111);
 	}
 	
+	@Override
+	public Mod111Key[] getSamePeriodExplainKeys() {
+		return new Mod111Key[] {};
+	}
+
 	private static boolean isProfessional(IrpfBreakdown br) {
 		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.PROFESSIONAL;
 	}

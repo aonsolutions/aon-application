@@ -210,6 +210,11 @@ public class Mod111AEAT2023Declaration extends Mod111Declaration {
 		return super.initializeModel(ctx, mod111);
 	}
 	
+	@Override
+	public Mod111Key[] getSamePeriodExplainKeys() {
+		return new Mod111Key[] {Mod111Key.CT_C29};
+	}
+	
 	// ----------------------------------------------- -------
 	// ----------------------------------------------- FILTROS
 	// ----------------------------------------------- -------
@@ -249,4 +254,5 @@ public class Mod111AEAT2023Declaration extends Mod111Declaration {
 	private static boolean isImageRetention(Mod111 mod111, IrpfBreakdown br) {
 		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.M190_J;
 	}
+	
 }

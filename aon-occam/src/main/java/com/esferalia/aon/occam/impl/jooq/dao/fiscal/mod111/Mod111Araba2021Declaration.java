@@ -103,13 +103,7 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 				?Mod111DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod111::getDeclarationResult).sum()
 				:0.0)
 			,null
-			,"{messages : ["
-					+ "\"Declaraciones en el mismo periodo/ejercicio:\","
-					+ "@foreach{fm : periodModels}"
-					+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
-					+ "@end{}"
-					+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(AR_C83)}\""
-				+"]}"
+			,null
 			)
 		,AR_C84(Mod111Key.AR_C84,false,null,null,null,null,null)
 		,AR_C85(Mod111Key.AR_C85,false,null,null,null,null,null)
@@ -203,6 +197,11 @@ public class Mod111Araba2021Declaration extends Mod111Declaration {
 		mod111.setComplementaryDeclarationAvailable(true);
 		mod111.setReplacementDeclarationAvailable(true);
 		return super.initializeModel(ctx, mod111);
+	}
+
+	@Override
+	public Mod111Key[] getSamePeriodExplainKeys() {
+		return new Mod111Key[] {Mod111Key.AR_C83};
 	}
 
 	private static boolean isProfessional(IrpfBreakdown br) {

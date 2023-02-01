@@ -1,5 +1,15 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.DEC2;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.border;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.fontLarger;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.paddingLeft;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.styledTag;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.textCenter;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.textRight;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.width150;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.width500;
+
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -19,6 +29,7 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.AppParamDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.ExplainRowManager;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonObjectUtils;
@@ -2156,7 +2167,7 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 	}
 	@Override
 	protected String getCompensationExplain( AONContext ctx, Mod303 mod303, Mod303Key key) {
-		return getExplain( ctx, mod303, key, Mod303DAO.getLastPeriodEffectiveModels(ctx, mod303)
+		return DeclarationInfoUtil.getExplain( ctx, mod303, key, Mod303DAO.getLastPeriodEffectiveModels(ctx, mod303)
 			, new ExplainRowManager() {
 				@Override
 				public String apply(FiscalModel fm) {
@@ -2196,8 +2207,10 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 	}
 	@Override
 	protected String getSamePeriodExplain( AONContext ctx, Mod303 mod303, Mod303Key key) {
-		return getExplain( ctx, mod303, key, Mod303DAO.getSamePeriodEffectiveModels(ctx, mod303), new ExplainRowManager());	
+		return DeclarationInfoUtil.getExplain( ctx, mod303, key, Mod303DAO.getSamePeriodEffectiveModels(ctx, mod303), new ExplainRowManager());	
 	}
-	
-
+	@Override
+	protected String getRegularizationExplain(AONContext ctx, Mod303 mod303, Mod303Key key) {
+		return DeclarationInfoUtil.getRegularizationExplain( ctx, mod303, key );
+	}
 }

@@ -1,11 +1,13 @@
 package com.esferalia.aon.occam.api.fiscal;
 
 import java.util.LinkedList;
+import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
@@ -115,6 +117,10 @@ public class MODEL115 {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getImpl().getInfo(ctx, mod115, script, infoKey);
 		}
+	}
+	public static Stream<IrpfBreakdown> getInfo(Occam occam, Mod115 mod115,Mod115Key key) {
+	 	final CloseableAONContext ctx = AONContext.getAONContext(occam);
+	 	return getImpl().getInfo(ctx, mod115, key, () -> AONContext.closeQuietly(ctx));
 	}
 	
 	public static Mod115 aeatPresentation(Occam occam, Mod115 mod115, String aeatResponse) {

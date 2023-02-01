@@ -2,7 +2,9 @@ package com.esferalia.aon.gwt.fiscal.client.invoice.irpf;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 
 public class JsIRPFComputeKeyInfoGridPanel extends FlowPanel {
@@ -49,6 +51,12 @@ public class JsIRPFComputeKeyInfoGridPanel extends FlowPanel {
 			}
 		}
 		add( table );
+	}
+
+	public void addContent(String html) {
+		SafeHtmlBuilder builder = new SafeHtmlBuilder();
+		builder.appendHtmlConstant(html);
+		add( new HTMLPanel( builder.toSafeHtml() ) );
 	}
 	
 }

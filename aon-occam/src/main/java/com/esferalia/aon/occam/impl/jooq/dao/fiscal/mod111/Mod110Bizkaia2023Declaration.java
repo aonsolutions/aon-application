@@ -214,6 +214,11 @@ public class Mod110Bizkaia2023Declaration extends Mod111Declaration {
 		mod111.setReplacementDeclarationAvailable(false);
 		return super.initializeModel(ctx, mod111);
 	}
+	
+	@Override
+	public Mod111Key[] getSamePeriodExplainKeys() {
+		return new Mod111Key[] {};
+	}
 
 	// ----------------------------------------------- -------
 	// ----------------------------------------------- FILTROS

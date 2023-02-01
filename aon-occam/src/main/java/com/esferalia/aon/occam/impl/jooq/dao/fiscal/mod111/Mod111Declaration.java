@@ -18,6 +18,8 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.ExplainRowManager;
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -98,7 +100,7 @@ public abstract class Mod111Declaration {
 	}
 
 	
-	static Mod111Declaration getInstance( Mod111 mod) {
+	public static Mod111Declaration getInstance( Mod111 mod) {
 		if (mod.getAdministration() == null) {
 			throw new AonCoreException("No se ha indicado administraci\u00F3n para la declaraci\u00F3n");
 		}
@@ -311,10 +313,15 @@ public abstract class Mod111Declaration {
 			|| (mod111.isComplementary() && getComplementaryBehaviour(mod111) == ComplementaryBeahaviour.REPLACEMENT)); 
 	}
   
+	protected String getSamePeriodExplain(AONContext ctx, Mod111 mod111, Mod111Key key) {
+		return DeclarationInfoUtil.getExplain( ctx, mod111, key, Mod111DAO.getSamePeriodEffectiveModels(ctx, mod111), new ExplainRowManager());	
+	}
+
 	abstract Mod111 initialize(AONContext ctx, Mod111 mod111);
 	abstract IMod111KeyDAO valueOf(String string);
 	abstract IMod111KeyDAO[] getKeys();
 	abstract double getResult(final Mod111 mod111);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod111 mod111);
+	public abstract Mod111Key[] getSamePeriodExplainKeys();
 	
 }

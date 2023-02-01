@@ -120,4 +120,9 @@ public class Mod115Bizkaia2021Declaration extends Mod115Declaration {
 		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.RENTING;
 	}
 
+	@Override
+	public Mod115Key[] getSamePeriodExplainKeys() {
+		return new Mod115Key[] {};
+	}
+
 }

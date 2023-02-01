@@ -1,10 +1,15 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod115;
 
+import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
+
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.jooq.Condition;
 import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -15,12 +20,15 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod115.Mod115Declaration.ComplementaryBeahaviour;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -38,11 +46,61 @@ public class Mod115DAO extends FiscalModelDAO {
 	
 	public static Mod115 get(AONContext ctx,int id) {
 		ctx.checkRead();
-		return FiscalModelDAO.get(ctx,Mod115::new,id);
+		Mod115 mod115 = FiscalModelDAO.get(ctx,Mod115::new,id);
+		if (mod115 != null) {
+			mod115.setAlcatrazBound( AlcatrazDAO.hasAlcatrazBound(ctx, mod115.getId()));
+		}
+		return mod115; 
 	}
 	
 	public static Stream<Mod115> getSamePeriodFiscalModels(AONContext ctx,Mod115 fm) {
 		return FiscalModelDAO.getSamePeriodFiscalModels(ctx, fm, Mod115::new);
+	}
+
+	public static Stream<Mod115> getSamePeriodEffectiveModels(AONContext ctx, Mod115 mod) {
+		Condition cond = FS_MODEL.YEAR.eq(mod.getYear())
+			.and(FS_MODEL.PERIOD.eq(mod.getPeriod().value()));
+		if (mod.getId() != null) {
+			cond = cond.and(FS_MODEL.ID.ne(mod.getId())); 
+		}
+		return getEffectiveModels(ctx, mod, cond ); 
+	}
+
+	public static Stream<Mod115> getEffectiveModels(AONContext ctx, Mod115 mod115, Condition cond ) {
+		LinkedHashMap<Period, LinkedList<Mod115>> map = new LinkedHashMap<>();
+		getSelect(ctx)
+			.where(FS_MODEL.DOMAIN.eq(mod115.getDomain()))
+			.and(FS_MODEL.MODEL.eq( mod115.getModel().getValue() ))
+			.and(FS_MODEL.ADMINISTRATION.eq(mod115.getAdministration().value()))
+			.and( cond )
+			.orderBy(FS_MODEL.PERIOD.desc(),FS_MODEL.ID.asc())
+			.fetch()
+			.stream()
+			.map(rec -> new FiscalModelFiller<Mod115>().apply(rec, Mod115::new))
+			.filter( mod-> mod.getPeriod().isMonthPeriod() == mod.getPeriod().isMonthPeriod())
+			.filter( mod-> mod.getPeriod().isQuarterPeriod() == mod.getPeriod().isQuarterPeriod())
+			.forEach( mod -> {
+				Mod115Declaration dec = Mod115Declaration.getInstance(mod);
+				map.computeIfAbsent(mod.getPeriod(), k -> new LinkedList<>());
+				if ( isEffectiveReplacement(dec, mod) ) {
+					map.get(mod.getPeriod()).clear();
+					map.get(mod.getPeriod()).add( mod);					
+				} else {
+					if (map.get(mod.getPeriod())
+						.stream()
+						.noneMatch( m -> isEffectiveReplacement(dec, mod)) ) {
+						map.get(mod.getPeriod()).add( mod );
+					}
+				}
+			});
+		return map.values()
+			.stream()
+			.flatMap(Collection<Mod115>::stream)
+			.map(mod -> fillModelDetails(ctx,mod))
+		;
+	}
+	private static boolean isEffectiveReplacement( Mod115Declaration dec, Mod115 mod) {
+		return mod.isReplacement() || (mod.isComplementary() && dec.getComplementaryBehaviour(mod) == ComplementaryBeahaviour.REPLACEMENT); 
 	}
 
 	public static Stream<Mod115> getSamePeriodModels(AONContext ctx,Mod115 fm) {
@@ -119,6 +177,7 @@ public class Mod115DAO extends FiscalModelDAO {
 		
 		AlcatrazDAO.deleteFiscalModel(ctx, mod115);
 		AlcatrazDAO.saveModelInvoices(ctx, mod115, invoices);
+		mod115.setAlcatrazBound( AonCollectionUtils.isNotEmpty(invoices) );
 		return mod115;
 	}
 	
