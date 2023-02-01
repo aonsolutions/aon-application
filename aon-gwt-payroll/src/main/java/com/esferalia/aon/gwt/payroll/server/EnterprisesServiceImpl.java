@@ -1328,6 +1328,53 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
+	
+	private static List<CCC> getEnterprisesCCCs(Connection connection, int domainId) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			// @formatter:off
+			stmt = connection.prepareStatement(
+					"SELECT * FROM "
+					+ SQLConstants.ENTERPRISE_CCC
+					+ " LEFT JOIN " + SQLConstants.ENTERPRISE_ACTIVITY + " ON (" + SQLConstants.ENTERPRISE_CCC + "."+ EnterpriseCccColumns.ENTERPRISE_ACTIVITY + " = " + SQLConstants.ENTERPRISE_ACTIVITY +"." + EnterpriseActivityColumns.ID + ")"
+					+ " LEFT JOIN " + SQLConstants.GEOZONE + " ON (" + SQLConstants.GEOZONE + "."+ GeozoneColumns.ID + " = " + SQLConstants.ENTERPRISE_CCC +"." + EnterpriseCccColumns.GEOZONE + ")"
+					+ " LEFT JOIN " + SQLConstants.ENTERPRISE + " ON (" + SQLConstants.ENTERPRISE_ACTIVITY + "."+ EnterpriseActivityColumns.ENTERPRISE + " = " + SQLConstants.ENTERPRISE +"." + EnterpriseColumns.REGISTRY + ")"
+					+ " WHERE " + SQLConstants.ENTERPRISE +"."+ EnterpriseColumns.DOMAIN + " = ? " 
+					);
+			// @formatter:on
+			int i = 1;
+			stmt.setInt(i++, domainId);
+			
+			List<CCC> cccs = new ArrayList<>();
+			
+			rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				Integer cccId = (Integer) rs.getObject(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.ID);
+				if ( cccId == null )
+					continue;
+
+				CCC ccc = new CCC();
+				ccc.setId( cccId );
+				ccc.setCode(rs.getString(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.CCC));
+				ccc.setGeozone(rs.getString(SQLConstants.GEOZONE +"."+GeozoneColumns.CODE));
+				ccc.setRegime(JooqEnterprise.getSSRegime(rs.getInt(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.TYPE)).getCode());
+				ccc.setType(rs.getByte(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.TYPE));
+					
+				cccs.add(ccc);
+			}
+
+			return cccs;
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
 
 	private static List<Bonus> getBonusConcepts(Connection connection,
 			int offset, int limit, Integer domainID, Integer parentDomainID)
@@ -2340,11 +2387,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			List<CCC> cccs = getEnterprises(connection, userId, domainId, 0, Short.MAX_VALUE).stream()
-			.filter(e -> enterpriseId == null || e.getId().equals(enterpriseId) )
-			.flatMap(e -> e.getActivities().stream() )
-			.flatMap(a -> a.getCccs().stream())
-			.collect(Collectors.toList());
+			List<CCC> cccs = getEnterprisesCCCs(connection, domainId);
 			
 			List<Integer> cccIds = cccs.stream().map( ccc-> ccc.getId() ).collect(Collectors.toList());
 			
