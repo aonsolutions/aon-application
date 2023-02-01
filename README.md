@@ -140,4 +140,25 @@ Setup Server Locations
 
 ![conftomcat](https://user-images.githubusercontent.com/9419112/214930595-d6485304-a30e-4c5b-bec9-60e0278e9d72.png)
 
+- #### Deploy aon-solutions on Tomcat v9.9 Server.
+
+Opoen '''aon-solutions''' project. Suspend all validators. 
+
+![suspen_validate](https://user-images.githubusercontent.com/9419112/216049741-1c1d8848-9f1d-47f4-992d-e3f0f92a4c22.png)
+
+Add '''aon-solutions''' to Tomcatv9.9 Server al localhost
+
+![add](https://user-images.githubusercontent.com/9419112/216050246-e7e758b4-5b55-4698-a697-1f55fae422b3.png)
+
+Change Path of '''aon-solutions''' to '''/''' ( ROOT ) 
+
+![root](https://user-images.githubusercontent.com/9419112/216052207-dc3ef457-5246-41aa-a188-e91868c0355b.png)
+
+Start the server , wait until started open a browser a navigate to '''http://localhost:8080'''
+
+![localhost](https://user-images.githubusercontent.com/9419112/216053284-998f9456-ceac-46c7-97d7-9cb74a104537.png)
+
+- #### Congratulations... :-) 
+
+
 
