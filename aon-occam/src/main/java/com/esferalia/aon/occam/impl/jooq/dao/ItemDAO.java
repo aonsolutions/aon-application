@@ -36,6 +36,7 @@ import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
+import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ItemAutoComplete;
@@ -282,6 +283,16 @@ public class ItemDAO {
 			.delete(RITEM)
 			.where(RITEM_PROPERTIES.getConditions(filter))
 			.execute();	
+	}
+
+	public static void updateRItemStatus(AONContext ctx, RegistryItemStatus status, RegistryItemFilter filter) {
+		if (status != null) {			
+			ctx.getDslContext()
+			.update(RITEM)
+			.set(RITEM.STATUS, status.value())
+			.where(RITEM_PROPERTIES.getConditions(filter))
+			.execute();
+		}
 	}
 
 	private static RegistryItem[] setRItem(AONContext ctx, RegistryItem ...ritems) {

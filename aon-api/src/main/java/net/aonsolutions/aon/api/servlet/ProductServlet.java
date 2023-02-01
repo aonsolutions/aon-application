@@ -1,8 +1,10 @@
 package net.aonsolutions.aon.api.servlet;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,17 +21,21 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.ProductCategoryJSON;
 import com.esferalia.aon.occam.api.json.ProductJSON;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
 import com.esferalia.aon.occam.api.model.Properties.ProductProperties;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryMode;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.api.model.type.ProductType;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
@@ -108,6 +114,9 @@ public class ProductServlet extends AonApiHttpServlet {
 				break;
 			case "/item":
 				response(req, resp, saveItem(api));
+				break;
+			case "/update-all-target-item":
+				response(req, resp, updateAllTargetItem(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -198,6 +207,22 @@ public class ProductServlet extends AonApiHttpServlet {
 		return ItemJSON.toJSON(item);
 	}
 	
+	private JSONObject updateAllTargetItem(AonApiData api) {
+		JSONObject params = api.getData();
+		Date startDate = AonDateUtils.parse(params.optString(IJsonNames.START_DATE), AonDateUtils.SIMPLE_DATE_FORMAT4);
+		
+		if (startDate == null) {
+			throw new AonApiException(AonApiError.EMPTY_DATA.getMessage());
+		}
+		
+		boolean disable = params.optBoolean("question");
+		
+		AON.updateAllTargetItem(api.getDomain(), api.getUser(), f ->
+		f.getDomainProperty().eq(api.getDomain().getId()).and(f.getStartIssueDateProperty().ge(startDate))
+		, disable);
+		return new JSONObject();
+	}
+	
 	private static JSONArray saveRegistryItem(AonApiData api) {
 		 List<Item> items          = ItemJSON.fromJSON(api.getData().optJSONArray(IJsonNames.ITEMS));
 		 List<Customer> customers  = CustomerJSON.fromJSON(api.getData().optJSONArray(IJsonNames.CUSTOMERS));
@@ -243,6 +268,73 @@ public class ProductServlet extends AonApiHttpServlet {
 		 }
 		 
 		 return ItemJSON.toJSON(items);
+	}
+	
+	private static JSONArray updateRegistryItem(AonApiData api) {
+		
+		Date startDate = AonDateUtils.parse(api.getData().optString(IJsonNames.START_DATE), AonDateUtils.SIMPLE_DATE_FORMAT4);
+		boolean question = api.getData().optBoolean("question");
+		Domain domain = api.getDomain();
+		User user = api.getUser();
+		
+//		AON_SOLUTIONS.getRItemStream(domain, user, null);
+//		List<Customer> customers = AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+//				f -> f.getDomainProperty().eq(api.getDomain().getId())).collect(Collectors.toList());
+//		
+//		Integer[] customersIds = customers.stream().map(Customer::getId).toArray(Integer[]::new);
+//		
+//		List<Invoice> invoices = AON_SOLUTIONS.getInvoices(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()).and(f.getRegistryProperty().in(customersIds))).collect(Collectors.toList());
+//		
+//		for (Invoice invoice : invoices) {
+//			invoice.getDetails();
+//		}
+		
+		return new JSONArray();
+		
+//		List<Item> items          = ItemJSON.fromJSON(api.getData().optJSONArray(IJsonNames.ITEMS));
+//		List<Customer> customers  = CustomerJSON.fromJSON(api.getData().optJSONArray(IJsonNames.CUSTOMERS));
+//		RegistryItemStatus status = RegistryItemStatus.INTERESTED; // RegistryItemStatus.safeValueOf(api.getData().optString(IJsonNames.STATUS));
+//		
+//		List<RegistryItem>registryItems = new ArrayList<>();
+//		
+//		customers.forEach(customer->{
+//			items.forEach(item-> 			 	registryItems.add( 
+//					new RegistryItem()
+//					.setDomain(item.getDomain().getId())
+//					.setRegistry(customer.getId())
+//					.setItem(item.getId())
+//					.setPrice(item.getPrice())
+//					.setStatus(status)
+//					.setType(RegistryMode.TARGET)
+//					.setPriority(Priority.NONE)
+//					.setRemoved(item.isRemoved())
+//					)
+//					);
+//		});
+//		
+//		
+//		if(!registryItems.isEmpty()) {
+//			//SAVE RITEM
+//			RegistryItem[] add = registryItems.stream()
+//					.filter(r-> !r.isRemoved()).toArray(RegistryItem[]::new);
+//			
+//			if(add.length>0) {
+//				AON.saveRItem(api.getDomain(), api.getUser(), add);
+//			}
+//			
+//			//DELETE RITEM
+//			registryItems.stream()
+//			.filter(RegistryItem::isRemoved)
+//			.forEach(r->{
+//				AON.deleteRItem(api.getDomain(), api.getUser(), 
+//						f-> f.getDomainProperty().eq(r.getDomain())
+//						.and(f.getItemProperty().eq(r.getItem()))
+//						.and(f.getRegistryProperty().eq(r.getRegistry()))
+//						);
+//			});
+//		}
+//		
+//		return ItemJSON.toJSON(items);
 	}
 
 	

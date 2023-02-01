@@ -35,6 +35,9 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.OptionElement;
+import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
@@ -910,7 +913,10 @@ public abstract class Employee extends ResizeComposite {
 		this.ssRegimeType.addItem("SOCIOS COOP", "1");
 		this.ssRegimeType.addItem("JUBILACION ACTIVA", "2");
 		this.ssRegimeType.addItem("GARANTIA JUVENIL", "4");
+		
 		this.ssRegimeType.addItem("ASIMILADO AL R\u00C9GIMEN GENERAL", "5");
+		disable(this.ssRegimeType, "5");
+		
 		
 		// MODALIDAD DE COTIZACION
 		this.mdTBTLB.addItem("COM\u00daN", "0");
@@ -1687,6 +1693,17 @@ public abstract class Employee extends ResizeComposite {
 		widget.getElement().getStyle().setWidth(96, Unit.PCT);
 		widget.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		widget.removeStyleName(style.warningTB());
+	}
+	
+	private void disable(ListBox listBox , String value) {
+		NodeList<OptionElement> options = 
+		((SelectElement)listBox.getElement().cast()).getOptions();
+		for (int i = 0; i < options.getLength(); i++ ) {
+		        OptionElement option =  options.getItem(i);
+		        if ( AonStringUtils.equals(option.getValue(), value) ) {
+			        option.setDisabled(true);
+		        }
+		}
 	}
 	
 	// ------------------------------------------------- cleanWarningIcons
