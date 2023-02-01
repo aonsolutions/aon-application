@@ -128,6 +128,11 @@ tar -xvf /tmp/aonsolutions.tar
 ``` bash 
 rm -rf usr/local/tomcat/webapps/ROOT
 ```
+Stop running container '''aonsolutions''' 
+``` bash
+docker stop aonsolutions
+```
+
 Open Eclipse IDE closes all Projects and install Server ''Apache Tomact 9''
 
 ![tomcat9](https://user-images.githubusercontent.com/9419112/214929338-3fff6012-480e-413d-b4c4-7b0dc96286f2.png)
