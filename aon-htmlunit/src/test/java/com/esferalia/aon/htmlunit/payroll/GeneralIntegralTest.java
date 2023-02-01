@@ -43,6 +43,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		setup(url, user, password);
 		
 		wait4Id("regimen_general");
+		
+		click("viewButton");
+		wait4Id("formerMenuItem");
+		click("formerMenuItem");
 	}
 
 	// ------------------------------------------------------------------------
@@ -1382,10 +1386,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Class("payment-row-2", "aon-dataTable-row-highlight");
 		assertValue("db-amount-label-1", quotePaga1);
 		assertValue("db-amount-label-2", quotePaga2);
-		
-		click("viewButton");
-		wait4Id("formerMenuItem");
-		click("formerMenuItem");
 		
 		wait4Id("extra,_fin_de_contrato");
 		draft("EXTRA, FIN DE CONTRATO");
