@@ -10,7 +10,7 @@ public class Model303ScriptProvider {
 		AEAT_2023_SCRIPT {
 			@Override
 			boolean accept(Mod303 mod303) {
-				return mod303.isAEAT() && mod303.getYear() > 2022;
+				return mod303.isAEAT() && mod303.getYear() >= 2023;
 			}
 	
 			@Override
@@ -18,6 +18,18 @@ public class Model303ScriptProvider {
 				return Model3032023AEATPrintScript.values();
 			}
 		}
+		,ARABA_2023 {
+			@Override
+			boolean accept(Mod303 mod303) {
+				return mod303.isAraba() && mod303.getYear() >= 2023;
+			}
+	
+			@Override
+			IModelScript<Mod303Key>[] getScript() {
+				return Model3032023ARABAPrintScript.values();
+			}
+		}
+		// Ejercicios anteriroes
 		,AEAT_2021_2_SCRIPT {
 			@Override
 			boolean accept(Mod303 mod303) {
@@ -55,7 +67,7 @@ public class Model303ScriptProvider {
 		,ARABA_2022 {
 			@Override
 			boolean accept(Mod303 mod303) {
-				return mod303.isAraba() && mod303.getYear() > 2021;
+				return mod303.isAraba() && mod303.getYear() == 2022;
 			}
 	
 			@Override

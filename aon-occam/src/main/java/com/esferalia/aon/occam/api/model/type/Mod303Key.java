@@ -519,9 +519,15 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C908("303-AR908",false,"908","Fecha en que se dict\u00F3 el auto de declaraci\u00F3n de concurso")
 	,AR_C909("303-AR909",false,"909","Si se ha dictado auto de declaraci\u00F3n de concurso en este periodo, indique el tipo de autoliquidaci\u00F3n")
 	 
+	,AR_C210("303-AR210",true ,"210",CT_C01.getDescription())
+	,AR_C211("303-AR211",false,"211",CT_C02.getDescription())
+	,AR_C212("303-AR212",true ,"212",CT_C03.getDescription())
 	,AR_C001("303-AR001",true ,"1",CT_C01.getDescription())
 	,AR_C002("303-AR002",false,"2",CT_C02.getDescription())
 	,AR_C003("303-AR003",true ,"3",CT_C03.getDescription())
+	,AR_C201("303-AR201",true ,"201",CT_C01.getDescription())
+	,AR_C202("303-AR202",false,"202",CT_C02.getDescription())
+	,AR_C203("303-AR203",true ,"203",CT_C03.getDescription())
 	,AR_C204("303-AR204",true ,"204",CT_C01.getDescription())
 	,AR_C205("303-AR205",false,"205",CT_C02.getDescription())
 	,AR_C206("303-AR206",true ,"206",CT_C03.getDescription())
@@ -534,12 +540,15 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C372("303-AR372",true ,"372","Inversi\u00F3n del sujeto pasivo - Base imponible")
 	,AR_C373("303-AR373",true ,"373","Inversi\u00F3n del sujeto pasivo - Cuota")
 	
-	,AR_C010("303-AR010",true ,"10",CT_C16.getDescription())
-	,AR_C011("303-AR011",false,"11",CT_C17.getDescription())
-	,AR_C012("303-AR012",true ,"12",CT_C18.getDescription())
+	,AR_C010("303-AR010",true ,"10" ,CT_C16.getDescription())
+	,AR_C011("303-AR011",false,"11" ,CT_C17.getDescription())
+	,AR_C012("303-AR012",true ,"12" ,CT_C18.getDescription())
 	,AR_C213("303-AR213",true ,"213",CT_C16.getDescription())
 	,AR_C214("303-AR214",false,"214",CT_C23.getDescription())
 	,AR_C215("303-AR215",true ,"215",CT_C18.getDescription())
+	,AR_C219("303-AR219",true ,"219",CT_C16.getDescription())
+	,AR_C220("303-AR220",false,"220",CT_C23.getDescription())
+	,AR_C221("303-AR221",true ,"221",CT_C18.getDescription())
 	,AR_C216("303-AR216",true ,"216",CT_C16.getDescription())
 	,AR_C217("303-AR217",false,"217",CT_C23.getDescription())
 	,AR_C218("303-AR218",true ,"218",CT_C18.getDescription())
@@ -550,6 +559,9 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C019("303-AR019",true ,"19",CT_C10.getDescription())
 	,AR_C020("303-AR020",false,"20","Adquisiciones intracomunitarias de bienes y servicios - Tipo %")
 	,AR_C021("303-AR021",true ,"21",CT_C11.getDescription())
+	,AR_C231("303-AR231",true ,"231",CT_C10.getDescription())
+	,AR_C232("303-AR232",false,"232",AR_C020.getDescription())
+	,AR_C233("303-AR233",true ,"233",CT_C11.getDescription())
 	,AR_C222("303-AR222",true ,"222",CT_C10.getDescription())
 	,AR_C223("303-AR223",false,"223",AR_C020.getDescription())
 	,AR_C224("303-AR224",true ,"224",CT_C11.getDescription())
@@ -579,21 +591,12 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C041("303-AR041",false,"41","Volumen operaciones - % GIPUZKOA")
 	,AR_C042("303-AR042",false,"42","Volumen operaciones - % BIZKAIA")
 	,AR_C043("303-AR043",false,"43","Volumen operaciones - % RESTO")
+	
 	,AR_C044("303-AR044",false,"44","Cuota atribuible al Territorio Hist\u00F3rico de \u00C1lava")
 	,AR_C045("303-AR045",false,"45","Cuotas a compensar de per\u00EDodos anteriores en el Territorio Hist\u00F3rico de \u00C1lava")
 	,AR_C060("303-AR060",false,"60","Resultado de la autoliquidaci\u00F3n")
-	,AR_C061("303-AR061",false,"61","Recargo presentaci\u00F3n extempor\u00E1nea")
-	,AR_C062("303-AR062",false,"62","Intereses demora")
-	,AR_C063("303-AR063",false,"63","A deducir (exclusivamente en el caso de autoliquidaci\u00F3n sustitutiva: resultado de las autoliquidaciones anteriores presentadas por el mismo concepto, ejercicio y per\u00EDodo)")
-	
-	,AR_C080("303-AR080",false,"80","Total deuda tributaria")
-	,AR_C081("303-AR081",false,"81","Total a devolver")
-	,AR_C082("303-AR082",false,"82","Total a compensar")
-	
 	,AR_C050("303-AR050",true ,"50","Total entregas de bienes y prestaciones de servicios intracomunitarias")
 	,AR_C051("303-AR051",true ,"51","Total exportaciones y operaciones asimiladas")
-	,AR_C052("303-AR052",true ,"52","Operaciones no sujetas o con inversi\u00F3n del sujeto pasivo que originan el derecho a deducci\u00F3n")
-	
 	,AR_C054("303-AR054",true ,"54","Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 56)")
 	,AR_C055("303-AR055",true ,"55","Operaciones sujetas con inversi\u00F3n del sujeto pasivo")
 	,AR_C056("303-AR056",true ,"56","Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a la OSS")
@@ -603,6 +606,18 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C181("303-AR181",true ,"181","Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el R\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Cuota")
 	,AR_C182("303-AR182",true ,"182","Criterio de Caja. Importes de adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el R\u00E9gimen especial del criterio de caja - Base Imponible")
 	,AR_C183("303-AR183",true ,"183","Criterio de Caja. Importes de adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el R\u00E9gimen especial del criterio de caja - Cuota")
+
+	,AR_C061("303-AR061",false,"61","Recargo presentaci\u00F3n extempor\u00E1nea")
+	,AR_C062("303-AR062",false,"62","Intereses demora")
+	,AR_C063("303-AR063",false,"63","A deducir (exclusivamente en el caso de autoliquidaci\u00F3n sustitutiva: resultado de las autoliquidaciones anteriores presentadas por el mismo concepto, ejercicio y per\u00EDodo)")
+	
+	,AR_C080("303-AR080",false,"80","Total deuda tributaria")
+	,AR_C081("303-AR081",false,"81","Total a devolver")
+	,AR_C082("303-AR082",false,"82","Total a compensar")
+	
+	,AR_C052("303-AR052",true ,"52","Operaciones no sujetas o con inversi\u00F3n del sujeto pasivo que originan el derecho a deducci\u00F3n")
+	
+	
 	
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  BIZKAIA ----

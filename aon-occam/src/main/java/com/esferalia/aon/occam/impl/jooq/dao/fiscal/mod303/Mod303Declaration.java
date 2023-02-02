@@ -43,6 +43,12 @@ public abstract class Mod303Declaration {
 			@Override boolean accept(Mod303 mod) { return Mod303AEAT2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303AEAT2023Declaration();}
 		}
+		,ARABA_2023{
+			@Override boolean accept(Mod303 mod) { return Mod303ARABA2023Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303ARABA2023Declaration();}
+		}
+		 
+		 // Ejercicios Anteriores
 		,AEAT_2022 {
 			@Override boolean accept(Mod303 mod) { return Mod303AEAT2022Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303AEAT2022Declaration();}
