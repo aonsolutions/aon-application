@@ -330,11 +330,11 @@ public abstract class ITWidget extends ResizeComposite {
 			public void render(Context context, IT it, SafeHtmlBuilder sb) {
 				if (null != it) {
 					// it empiez post contrato ROJO
-					if(checkOutOfContractA(it)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: red;\" title=\"Inactivo\">" + it.getFullName() + "</div>");
+					if(checkOutOfContractA(it)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: red;\" title=\"IT posterior a la fecha fin contrato\">" + it.getFullName() + "</div>");
 					// it fin antes tipo contrato NARANJA
-					else if(checkOutOfContractB(it)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: orange;\" title=\"Alta previa\">" + it.getFullName() + "</div>");
+					else if(checkOutOfContractB(it)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: orange;\" title=\"IT anterior a la fecha inicio contrato\">" + it.getFullName() + "</div>");
 					//  it fin antes tipo contrato y fini post inicio contrato VERDE
-					else if(checkOutOfContractBtw(it)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: green;\" title=\"Contrato cerca de finalizar\">" + it.getFullName() + "</div>");
+					else if(checkOutOfContractBtw(it)) sb.appendHtmlConstant("<div style=\"font-weight: bold !important; color: green;\" title=\"IT abierta sin fecha alta o fecha alta posterior al fin del contrato\">" + it.getFullName() + "</div>");
 					else super.render(context, it, sb);
 				} else
 					super.render(context, it, sb);
@@ -492,7 +492,7 @@ public abstract class ITWidget extends ResizeComposite {
 
 	// it fin antes tipo contrato NARANJA
 	private boolean checkOutOfContractB(IT it) {
-		return it.getEndDate() != it.getEndDate() && it.getEndDate().before(it.getContractStartDate());
+		return null != it.getEndDate() && it.getEndDate() != it.getContractStartDate() && it.getEndDate().before(it.getContractStartDate());
 	}
 
 	//  it fin antes tipo contrato y fini post inicio contrato VERDE
