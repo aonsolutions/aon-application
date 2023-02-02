@@ -25,6 +25,7 @@ import net.aonsolutions.db.up2date.payroll.BiEmbargarInsert;
 import net.aonsolutions.db.up2date.payroll.IrpfDeductionSplit;
 import net.aonsolutions.db.up2date.tgss.BasesMax2023Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2023Update;
+import net.aonsolutions.db.up2date.tgss.HomePercentage2023Update;
 import net.aonsolutions.db.up2date.tgss.MEIInsert;
 import net.aonsolutions.db.up2date.tgss.MEIPECUpdate;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
@@ -63,7 +64,7 @@ public class Up2Date {
     		//CRA0035UPDATE,
     		//ITIMS2019INSERT,
     		//NOTICEDAYSUPDATE,
-    		//HOMEPERCENTAGE2019UPDATE,
+    		//HOMEPERCENTAGE2023UPDATE,
     		//FELLOWSBASES2019UPDATE,
     		//TRAINNINGBASES2019UPDATE,
     		//FELLOWSBASES2019FIX,
@@ -308,7 +309,9 @@ public class Up2Date {
     		//AlterFsMod184Detail2022.ALTER_FS_MODEL_184_DETAIL_2022,
 	    	//BiEmbargarInsert.BIEMBARGARINSERT,
     		//AlterFsMod184Detail2022.ALTER_FS_MODEL_184_DETAIL_2022,
-	    	IrpfDeductionSplit.IRPFDEDUCTIONSPLIT,
+	    	//IrpfDeductionSplit.IRPFDEDUCTIONSPLIT,
+	    	HomePercentage2023Update.HOMEPERCENTAGE2023UPDATE,
+	    
     		//Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
     		
