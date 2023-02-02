@@ -247,13 +247,16 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	
 				initialiazePaymentByConcept(concept);
 				
+				setEnabled(acceptBtn, true);
+				setEnabled(manualAgreement, false);
+				
 			} else {
 				hideMessage();
 				initialiazePaymentByConceptDescription(descriptionSuggest.getValue());
+				
+				setEnabled(acceptBtn, true);
+				setEnabled(manualAgreement, true);
 			};
-			
-			setEnabled(acceptBtn, true);
-			setEnabled(manualAgreement, false);
 		});
 		
 		descriptionSuggest.addKeyDownHandler(event -> {
@@ -324,7 +327,10 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		manualAgreement.setText("Modo avanzado");
 		manualAgreement.setStyleName(AON.CSS.aonIconEditNote());
 		manualAgreement.addStyleName(style.button());
-		manualAgreement.addClickHandler(e -> onManualEdition());
+		manualAgreement.addClickHandler(e -> {
+			hide();
+			onManualEdition();
+		});
 		buttonsPanel.add(manualAgreement);
 		
 		acceptBtn = new Button();
@@ -345,7 +351,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		Scheduler.get().scheduleDeferred(() -> {
 			center();
 			show();
-			descriptionSuggest.setFocus(true);
+			manualAgreement.setFocus(true);
 		});
 	}
 
