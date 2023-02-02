@@ -387,4 +387,10 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate, Date endDate,
 			AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException;
 
+	// ------------------------------------------------- Agreement ContextProvider
+	
+	void getAgreementContext(String currentDomainName, int fxLevel, Date startDate, Date endDate, AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException;
+	
+	void evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel, AsyncCallback<List<Result>> callback) throws IllegalArgumentException, EvalException;
+
 }

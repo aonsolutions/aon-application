@@ -1099,4 +1099,18 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public ContextDescriptor getAgreementContext(String currentDomainName, int fxLevel, Date startDate, Date endDate)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Result> evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel)
+			throws IllegalArgumentException, EvalException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.junit.Before;
 
+import com.esferalia.aon.gwt.common.shared.EvalException;
 import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
@@ -33,6 +34,7 @@ import com.esferalia.aon.gwt.payroll.shared.EventEmployee;
 import com.esferalia.aon.gwt.payroll.shared.EventsWorkplace;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.Period;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
@@ -729,6 +731,24 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 			public void getEmployeeCtoExtension(String currentDomainName, String currentUser, String enterpriseCIF,
 					String document, Integer contractId, Date extensionDate, Integer extensionNum,
 					String sepeExtensionId, AsyncCallback<String> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void getAgreementContext(String currentDomainName, int fxLevel, Date startDate, Date endDate,
+					AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+			@Override
+			public void evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel,
+					AsyncCallback<List<Result>> callback) throws IllegalArgumentException, EvalException {
 				// TODO Auto-generated method stub
 				
 			}

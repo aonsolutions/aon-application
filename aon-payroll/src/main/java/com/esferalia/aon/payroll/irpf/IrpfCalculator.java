@@ -1694,7 +1694,7 @@ public class IrpfCalculator {
         		File error2023File = File.createTempFile(
         				AEATRetencionesError2023.class.getSimpleName(), null);
         
-        		es.aeat.pret.c200.mc.c230.ModuloCalculo.procesarFicheroXml(entrada2023File.getAbsolutePath(),
+        		es.aeat.pret.c200.mc.c231.ModuloCalculo.procesarFicheroXml(entrada2023File.getAbsolutePath(),
         				error2023File.getAbsolutePath(), null,
         				salida2023File.getAbsolutePath());
         		entrada2023File.delete();

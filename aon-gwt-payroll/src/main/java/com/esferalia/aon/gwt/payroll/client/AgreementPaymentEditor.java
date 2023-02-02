@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -9,26 +10,31 @@ import java.util.Set;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmall;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraft.TypeListBox;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementExtra;
+import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcept;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
+import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
+import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -44,13 +50,41 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	interface Binder extends UiBinder<Widget, AgreementPaymentEditor> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
+	
+	// ----------------------------------------- ContextProvider
+	
+	public class ContextProvider implements IContextProvider {
+
+		@Override
+		public boolean isEditable(String name) {
+			for (Payment payment : allPayments)
+				if (AonStringUtils.equals(payment.getName(), name))
+					return false;
+			return true;
+		}
+
+		@Override
+		public void getContext(AsyncCallback<ContextDescriptor> callback) {
+			employeeService.getAgreementContext(fxLevel, startDate, DateUtils.getLastDayOfYear(startDate), callback);
+		}
+
+		@Override
+		public void eval(String expression, List<Variable> vars, AsyncCallback<List<Result>> callback) {
+			employeeService.evalAgreement(expression, startDate, fxLevel, callback);
+		}
+
+	}
 
 	// ----------------------------------------- UiFields
 
-	// PAYMENT
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String iconSmall();
+	}
 	
-	@UiField (provided = true)
-	AonToolbarSmall toolbar;
+	// PAYMENT
 
 	@UiField
 	HTMLPanel paymentTable;
@@ -69,6 +103,9 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	@UiField
 	TextArea paymentExpressionTB;
+	
+	@UiField
+	DisclosurePanel advancePanel;
 	
 	@UiField
 	HTMLPanel paymentTaxedPanel;
@@ -151,6 +188,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	// ----------------------------------------- Variables
 
 	private DomainEnterprisesServiceAsync enterpriseService = DomainEnterprisesServiceAsync.newInstance();
+	private DomainEmployeesServiceAsync employeeService = DomainEmployeesServiceAsync.newInstance();
 	private ContractConcepts contractConcepts;
 	private ContractConcept selectedConcept;
 	private Payment payment;
@@ -165,30 +203,42 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	
 	private Button acceptDialog;
 	
-	private IContextProvider context;
+	private ContextProvider contextProvider;
 	
-	private boolean showAdvance = false;
+	private int fxLevel = 0;
+	private Date startDate;
 
 	// ----------------------------------------- Constructor
 
-	protected AgreementPaymentEditor(Payment payment, AgreementExtra extra, Set<Payment> allPayments, Set<AgreementExtra> allExtras) {
+	protected AgreementPaymentEditor(Payment payment, AgreementExtra extra, Set<Payment> allPayments, Set<AgreementExtra> allExtras, Date startDate) {
 		setCaption("Devengo");
-		createToolbar();
 		
-		expresssionVisibilityBtn = new AonToolbarSmallButton("Editar expresi\u00f3n", AON.CSS.aonIconEdit());
-		
-		// Remove this line when FxDialog is fixed
-		expresssionVisibilityBtn.setVisible(false);
+		expresssionVisibilityBtn = new AonToolbarSmallButton("Editar expresi\u00f3n", AON.CSS.aonIconFx());
 		
 		setWidget(binder.createAndBindUi(this));
 		showCloseButton(true);
 		getFooterButtons();
+		
+		this.startDate = startDate;
 		
 		this.payment = payment;
 		this.extra = extra;
 		
 		this.allPayments = allPayments;
 		this.allExtras = allExtras;
+		
+		advancePanel.setAnimationEnabled(true);
+		advancePanel.setOpen(false);
+		advancePanel.addOpenHandler(e -> {
+			showHideAdvanceOptions();
+			this.setPopupPosition(this.getAbsoluteLeft(), this.getAbsoluteTop() - 50);
+		});
+		advancePanel.addCloseHandler(e -> {
+			showHideAdvanceOptions();
+			center();
+		});
+		
+		expresssionVisibilityBtn.addStyleName(style.iconSmall());
 		
 		initializeSeniorityPanel();
 		
@@ -221,27 +271,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			}
 
 		});
-	}
-
-	private void createToolbar() {
-		toolbar = new AonToolbarSmall("");
-		
-		AonToolbarSmallButton advanceBtn = new AonToolbarSmallButton("Mostras opciones avanzadas", AON.CSS.aonIconSettings());
-		advanceBtn.addClickHandler(e -> {
-			showAdvance = !showAdvance;
-			advanceBtn.setTitle(showAdvance ? "Ocultar opciones avanzadas" : "Mostras opciones avanzadas");
-			showHideAdvanceOptions();
-			showDialog();
-		});
-		
-		toolbar.add(advanceBtn);
-	}
-
-	private void showHideAdvanceOptions() {
-		paymentTaxedPanel.setVisible(showAdvance);
-		paymentQuotePanel.setVisible(showAdvance);
-		seniorityPanel.setVisible(showAdvance);
-		periodPaymentPanel.setVisible(showAdvance);
 	}
 
 	private void initializeSeniorityPanel() {
@@ -711,8 +740,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	// ----------------------------------------- Fill Payment
 	
-	public void setContextProvider(IContextProvider context) {
-		this.context = context;
+	public void setContextProvider(ContextProvider context) {
+//		this.contextProvider = context;
 	}
 
 	private void fillPayment() {
@@ -722,7 +751,10 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		paymentExpressionTB.setValue(getParsedExpression(this.payment.getExpression()));
 		checkSeniorityExpresion();
 		expresssionVisibilityBtn.addClickHandler(e -> {
-			final FxDialog fxDialog = new FxDialog(context);
+			if(null == contextProvider)
+				contextProvider = new ContextProvider();
+			
+			final FxDialog fxDialog = new FxDialog(contextProvider);
 			fxDialog.setExpression(getExpression(this.payment.getExpression()));
 			fxDialog.center();
 			fxDialog.show();
@@ -747,12 +779,12 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	}
 
 	private String getParsedExpression(String expression) {
-		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
+//		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
 		return SpecialExpresion.parse(expression).getInput();
 	}
 	
 	private String getExpression(String expression) {
-		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
+//		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
 		return SpecialExpresion.parse(expression).getExpression();
 	}
 	
@@ -879,7 +911,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	private void getFooterButtons() {
 		buttonsPanel.clear();
-
+		
 		Button closeBtnDialog = new Button();
 		closeBtnDialog.setStyleName(AON.CSS.aonCancelButtonSmall());
 		closeBtnDialog.setText( AON.MSG.cancelAction());
@@ -906,6 +938,11 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		});
 
 		buttonsPanel.add(acceptDialog);
+	}
+
+	private void showHideAdvanceOptions() {
+		expresssionVisibilityBtn.setVisible(advancePanel.isOpen());
+		paymentExpressionTB.setValue(advancePanel.isOpen() ? getExpression(this.payment.getExpression()) : getParsedExpression(this.payment.getExpression()));
 	}
 	
 	private void createPayment() {
