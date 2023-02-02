@@ -718,6 +718,16 @@ public class DomainEmployeesServiceAsync {
 	public void getSalariesOccam(ITEmployee itEmployee, Date startDate, Date endDate, AsyncCallback<List<Certifica2Info>> callback) throws IllegalArgumentException {
 		employeesServiceAsync.getSalariesOccam(getCurrentDomainName(), getCurrentUser(), itEmployee, startDate, endDate, callback);
 	}
+	
+	// ------------------------------------------------- Agreement ContextProvider
+	
+	public void getAgreementContext(int fxLevel, Date startDate, Date endDate, AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException {
+		employeesServiceAsync.getAgreementContext(getCurrentDomainName(), fxLevel, startDate, endDate, callback);
+	}
+
+	public void evalAgreement(String expression, Date startDate, int fxLevel, AsyncCallback<List<Result>> callback) throws IllegalArgumentException, EvalException {
+		employeesServiceAsync.evalAgreement(getCurrentDomainName(), expression, startDate, fxLevel, callback);
+	}
 
 	// ------------------------------------------------------------------------
 	
