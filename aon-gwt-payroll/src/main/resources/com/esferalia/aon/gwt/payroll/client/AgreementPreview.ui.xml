@@ -37,7 +37,7 @@
 		}
 		
 		.discContent {
-			padding: 1rem 0 !important;
+			padding: .6rem 0 !important;
 		}
 		
 		.flex {
@@ -243,6 +243,39 @@
 			width: 100%;
 		}
 		
+		
+		
+		.textBoxSalary {
+			border-style: none;
+			width: 95%;
+			font-size: 0.8em !important;
+			cursor: pointer;
+		}
+		
+		.datePickerPanel{
+			border: none !important;
+    		box-shadow: none !important;
+    		z-index: 6;
+		}
+		
+		.headerDeleteFixed {
+			z-index: 5;
+			position: sticky;
+			top: 0;
+			right: 0;
+			height: 1.5rem;
+			font-size: .7rem;
+			background-color: #eee;
+		}
+		
+		.deleteFixed {
+			position: sticky;
+			right: 0;
+			z-index: 2;
+			font-size: .7rem;
+			background-color: white;
+		}
+		
 		@external modify;
 		
 	</ui:style>
@@ -263,81 +296,73 @@
 						<g:TextBox ui:field="ssNumber" styleName="{style.textBox}" />
 						<g:HTMLPanel ui:field="serviAgreementPanel" styleName="{style.flex}" />
 					</g:HTMLPanel>
-					<g:DisclosurePanel ui:field="levelDiscPanel">
-					   <g:customHeader>
-					   	 <g:HTMLPanel styleName="{style.flexTitle}">
-					   	  	<aon:AonToolbarButton ui:field="levelDiscBtn" />
-					   	  	<g:Label styleName="{style.disclouruseTitle}">Nivel / Categoría</g:Label>
-					   	 </g:HTMLPanel>
-					   </g:customHeader>
-					   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="levelDiscPanelContent">
-					   		<g:HTMLPanel ui:field="levelTable" styleName="{style.flexCenter} {style.heigthAll}">
-								<g:ScrollPanel ui:field="levelScrollPanel" styleName="{style.hideScroll}">
-									<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse}" />
-								</g:ScrollPanel>
-							</g:HTMLPanel>
-							<g:HTMLPanel ui:field="agreementLevelMessage" styleName="{style.flexCenter}">
-								<g:Label text="NO EXISTEN NIVELES QUE VISUALIZAR, DIRIGASE A LA PESTAÑA 'TABLA SALARIAL' PARA CREAR UNO NUEVO" styleName="{style.message}" />
-							</g:HTMLPanel>
-					   </g:HTMLPanel>
-					  </g:DisclosurePanel>
 					
-					<g:DisclosurePanel ui:field="salaryDiscPanel">
-					   <g:customHeader>
-					   	 <g:HTMLPanel styleName="{style.flexTitle}">
-					   	  	<aon:AonToolbarButton ui:field="salaryDiscBtn" />
-					   	  	<g:Label styleName="{style.disclouruseTitle}">Tabla Salarial</g:Label>
-					   	 </g:HTMLPanel>
-					   </g:customHeader>
-					   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent} {style.dateGap}" ui:field="salaryDiscPanelContent">
-					   		<g:HTMLPanel ui:field="salaryTableButtons" styleName="{style.flex} {style.datePanel}" />
-							<g:HTMLPanel ui:field="salaryTable" styleName="{style.flexCenter} {style.heigthAll}">
-								<g:ScrollPanel ui:field="salaryScrollPanel" styleName="{style.hideScroll}">
-									<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse} {style.borderBottom}" />
-								</g:ScrollPanel>
+					<!-- LEVEL / CATEGORY -->
+					
+					<g:DisclosurePanel ui:field="levelDiscPanel">
+						<g:customHeader>
+					   		<g:HTMLPanel styleName="{style.flexTitle}">
+					   	  		<aon:AonToolbarButton ui:field="levelDiscBtn" />
+					   	  		<g:Label styleName="{style.disclouruseTitle}">Nivel / Categoría</g:Label>
+					   	 	</g:HTMLPanel>
+					   	</g:customHeader>
+					   
+					   	<g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="levelDiscPanelContent">
+					   		<g:ScrollPanel ui:field="levelScrollPanel" styleName="{style.hideScroll}">
+								<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse}" />
+							</g:ScrollPanel>
+							<g:HTMLPanel ui:field="agreementLevelMessage" styleName="{style.flexCenter}">
+								<g:Label text="DEBE CREAR UN NIVEL PARA VISUALIZAR LA TABLA (+)" styleName="{style.message}" />
 							</g:HTMLPanel>
+					   	</g:HTMLPanel>
+					</g:DisclosurePanel>
+					
+					<!-- SALARY TABLE -->
+					
+					<g:DisclosurePanel ui:field="salaryDiscPanel" >
+						<g:customHeader>
+					   		<g:HTMLPanel styleName="{style.flexTitle}">
+					   	  		<aon:AonToolbarButton ui:field="salaryDiscBtn" debugId="agreementSalaryTableTabButton" />
+					   	  		<g:Label styleName="{style.disclouruseTitle}">Tabla Salarial</g:Label>
+					   	 	</g:HTMLPanel>
+						</g:customHeader>
+					   
+					   	<g:HTMLPanel styleName="{style.flexColumn} {style.discContent} {style.dateGap}" ui:field="salaryDiscPanelContent">
+					   		<g:ScrollPanel ui:field="salaryScrollPanel" styleName="{style.hideScroll}">
+								<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />
+							</g:ScrollPanel>
 							<g:HTMLPanel ui:field="agreementSalaryTableMessage" styleName="{style.flexCenter}">
-								<g:Label text="NO EXISTEN TRAMOS QUE VISUALIZAR, DIRIGASE A LA PESTAÑA 'TABLA SALARIAL' PARA CREAR UNO NUEVO" styleName="{style.message}" />
+								<g:Label text="DEBE CREAR UN TRAMO PARA VISUALIZAR LA TABLA SALARIAL (+)" styleName="{style.message}" />
 							</g:HTMLPanel>
 					   </g:HTMLPanel>
 					  </g:DisclosurePanel>
 					  
+					  <!-- PAYMENT -->
+					  
 					  <g:DisclosurePanel ui:field="paymentDiscPanel">
 						  <g:customHeader>
 						   	 <g:HTMLPanel styleName="{style.flexTitle}">
-						   	  	<aon:AonToolbarButton ui:field="paymentDiscBtn" />
+						   	  	<aon:AonToolbarButton ui:field="paymentDiscBtn" debugId="agreementPaymentTabButton" />
 						   	  	<g:Label styleName="{style.disclouruseTitle}">Devengos</g:Label>
 						   	 </g:HTMLPanel>
 						   </g:customHeader>
 						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="paymentDiscPanelContent">
-						   		<g:HTMLPanel ui:field="paymentTable" styleName="{style.flexCenter} {style.heigthAll}">
-									<g:ScrollPanel ui:field="paymentScrollPanel" styleName="{style.hideScroll}">
-										<g:Grid ui:field="paymentGrid" styleName="{style.borderCollapse}" />
-									</g:ScrollPanel>
-								</g:HTMLPanel>
-								<g:HTMLPanel ui:field="agreementPaymentMessage" styleName="{style.flexCenter}">
-									<g:Label text="NO EXISTEN DEVENGOS, DIRIGASE A LA PESTAÑA 'DEVENGOS' PARA CREAR UNO NUEVO" styleName="{style.message}" />
-								</g:HTMLPanel>
+						   		<c:DataGrid ui:field="agreementPaymentDG" debugId="agreementPaymentDG" />
 						   </g:HTMLPanel>
 					   </g:DisclosurePanel>
 					   
-					   <g:DisclosurePanel ui:field="paymentExtraDiscPanel">
-						  <g:customHeader>
-						   	 <g:HTMLPanel styleName="{style.flexTitle}">
-						   	  	<aon:AonToolbarButton ui:field="paymentExtraDiscBtn" />
-						   	  	<g:Label styleName="{style.disclouruseTitle}">Extras</g:Label>
-						   	 </g:HTMLPanel>
-						   </g:customHeader>
-						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="paymentExtraDiscPanelContent">
-						   		<g:HTMLPanel ui:field="paymentExtraTable" styleName="{style.flexCenter} {style.heigthAll}">
-									<g:ScrollPanel ui:field="paymentExtraScrollPanel" styleName="{style.hideScroll}">
-										<g:Grid ui:field="paymentExtraGrid" styleName="{style.borderCollapse}" />
-									</g:ScrollPanel>
-								</g:HTMLPanel>
-								<g:HTMLPanel ui:field="agreementPaymentExtraMessage" styleName="{style.flexCenter}">
-									<g:Label text="NO EXISTEN EXTRAS, DIRIGASE A LA PESTAÑA 'DEVENGOS' PARA CREAR UNO NUEVO" styleName="{style.message}" />
-								</g:HTMLPanel>
-						   </g:HTMLPanel>
+					   <!-- EXTRA -->
+					   
+						<g:DisclosurePanel ui:field="paymentExtraDiscPanel">
+							<g:customHeader>
+								<g:HTMLPanel styleName="{style.flexTitle}">
+						   	  		<aon:AonToolbarButton ui:field="paymentExtraDiscBtn" debugId="agreementPaymentExtraTabButton" />
+						   	  		<g:Label styleName="{style.disclouruseTitle}">Extras</g:Label>
+						   	 	</g:HTMLPanel>
+						   	</g:customHeader>
+							<g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="extraDiscPanelContent">
+						   		<c:DataGrid ui:field="agreementExtraPaymentDG" debugId="agreementExtraPaymentDG" />
+							</g:HTMLPanel>
 					   </g:DisclosurePanel>
 					
 				</g:HTMLPanel>

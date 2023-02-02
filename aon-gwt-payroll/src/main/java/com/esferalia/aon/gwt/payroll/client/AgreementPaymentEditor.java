@@ -77,13 +77,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	// ----------------------------------------- UiFields
 
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {
-		String iconSmall();
-	}
-	
 	// PAYMENT
 
 	@UiField
@@ -231,14 +224,12 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		advancePanel.setOpen(false);
 		advancePanel.addOpenHandler(e -> {
 			showHideAdvanceOptions();
-			this.setPopupPosition(this.getAbsoluteLeft(), this.getAbsoluteTop() - 50);
+			this.setPopupPosition(this.getAbsoluteLeft(), this.getAbsoluteTop() - 80);
 		});
 		advancePanel.addCloseHandler(e -> {
 			showHideAdvanceOptions();
-			center();
+			this.setPopupPosition(this.getAbsoluteLeft(), this.getAbsoluteTop() + 80);
 		});
-		
-		expresssionVisibilityBtn.addStyleName(style.iconSmall());
 		
 		initializeSeniorityPanel();
 		

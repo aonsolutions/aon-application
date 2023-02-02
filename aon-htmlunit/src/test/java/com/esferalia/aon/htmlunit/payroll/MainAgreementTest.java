@@ -156,7 +156,7 @@ public class MainAgreementTest {
 		wait4Class("textBox_SALARIO_MENSUAL_I", "modify");
 		wait4Value("textBox_SALARIO_MENSUAL_I", "666.66");
 		
-		getElementById("acceptSalaryTableButton").click();
+		getElementById("acceptButton").click();
 
 		wait4NoClass("textBox_SALARIO_MENSUAL_I", "modify");
 		
@@ -200,7 +200,7 @@ public class MainAgreementTest {
 		setValue("textBox_SALARIO_MENSUAL_I", "999 + 0.99");
 		wait4Value("textBox_SALARIO_MENSUAL_I", "999.99");
 		
-		getElementById("acceptSalaryTableButton").click();
+		getElementById("acceptButton").click();
 		
 		wait4NoClass("textBox_SALARIO_MENSUAL_I", "modify");
 		
@@ -263,15 +263,7 @@ public class MainAgreementTest {
 		Assert.assertEquals(((HtmlInput) getElementById("ssNumberTextBox")).isReadOnly(), true);
 
 		// Comprobamos que el toolBar de AgreementPreview tiene los botones como se esperan (acceptButton, infoButton)
-		Assert.assertEquals("acceptButton", ((HtmlButton) getElementById("acceptButton")).isDisabled(), true);
 		Assert.assertEquals("infoButton", ((HtmlButton) getElementById("infoButton")).isDisabled(), false);
-
-		
-		// Cehck tabs visibility
-		Assert.assertEquals(false, hidden.matcher(getElementById("agreementPreviewButton").getAttribute("style")).find());
-		Assert.assertEquals(true, hidden.matcher(getElementById("agreementLevelTabButton").getAttribute("style")).find());
-		Assert.assertEquals(true, hidden.matcher(getElementById("agreementSalaryTableTabButton").getAttribute("style")).find());
-		Assert.assertEquals(true, hidden.matcher(getElementById("agreementPaymentTabButton").getAttribute("style")).find());
 
 	}
 
@@ -289,14 +281,14 @@ public class MainAgreementTest {
 		wait4(htmlPage, htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
 
 		// Click en el tab de Devengos
-		HtmlDivision salaryTableTab = (HtmlDivision)getElementById("agreementPaymentTabButton");
+		HtmlButton salaryTableTab = (HtmlButton)getElementById("agreementPaymentTabButton");
 		LOGGER.warning("Cick on: " + salaryTableTab.asNormalizedText());
 		htmlPage = salaryTableTab.click();
 		
 		// Esperamos a la tabla de Devengos
 		wait4Id("agreementPaymentDG");
 		
-		Assert.assertEquals("savePaymentButton", ((HtmlButton) getElementById("acceptButton")).isDisabled(), true);
+		Assert.assertEquals("acceptButton", ((HtmlButton) getElementById("acceptButton")).isDisabled(), true);
 		
 		// Obtenemos tabla de Devengos
 		HtmlTableBody paymentsTable = null;
@@ -330,19 +322,21 @@ public class MainAgreementTest {
 			HtmlButton acceptDeleteNewPaymentButton = (HtmlButton) getElementById("acceptDialogButton");
 			htmlPage = acceptDeleteNewPaymentButton.click();
 			
-			wait4Id("savePaymentButton");
-			Assert.assertEquals(((HtmlButton) getElementById("savePaymentButton")).isDisabled(), false);
-			htmlPage = ((HtmlButton) getElementById("savePaymentButton")).click();
+			wait4Id("acceptButton");
+			Assert.assertEquals(((HtmlButton) getElementById("acceptButton")).isDisabled(), false);
+			htmlPage = ((HtmlButton) getElementById("acceptButton")).click();
 			
 			Assert.assertEquals(paymentsTable.getRows().size(), 3);
 			
-			Assert.assertEquals(((HtmlButton) getElementById("savePaymentButton")).isDisabled(), true);
+			Assert.assertEquals(((HtmlButton) getElementById("acceptButton")).isDisabled(), true);
 		} else
 			throw new IllegalArgumentException("No se ha podido cargar la tabla de devengos");
 		
 		
 		// Obtenemos tabla de Devengos (extras)
-		getElementById("extraDiscBtn").click();
+		getElementById("agreementPaymentExtraTabButton").click();
+		
+		wait4Id("agreementExtraPaymentDG");
 		
 		HtmlTableBody paymentsExtraTable = null;
 		Optional<DomNode> nodeExtraOpt = htmlPage.querySelectorAll("#" + GWT_DEBUG_ID_PREFIX + "agreementExtraPaymentDG div").stream().filter(node -> node.getVisibleText().equals("PAGA EXTRAORDINARIA NAVIDAD")).findAny();
@@ -474,7 +468,7 @@ public class MainAgreementTest {
 		// Comprobamos el campo descripcion
 		wait4(htmlPage, htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
 		
-		HtmlDivision salaryTableTab = (HtmlDivision)getElementById("agreementSalaryTableTabButton");
+		HtmlButton salaryTableTab = (HtmlButton)getElementById("agreementSalaryTableTabButton");
 		LOGGER.warning("Cick on: " + salaryTableTab.asNormalizedText());
 		htmlPage = salaryTableTab.click();
 		

@@ -113,19 +113,8 @@
 			<g:center>
 				<g:HTMLPanel styleName="{style.flexColumn}">
 					<g:HTMLPanel ui:field="messagePanel" />
-					<g:HTMLPanel ui:field="agreementContainer" styleName="{style.flexColumn}"> 
-						<g:HTMLPanel styleName="{style.flex}">
-							<g:Label text="Convenio" debugId="agreementPreviewButton" ui:field="agreementTab" />
-							<g:Label text="Nivel / Categoría" debugId="agreementLevelTabButton" ui:field="levelTab" />
-							<g:Label text="Tabla Salarial" debugId="agreementSalaryTableTabButton" ui:field="salaryTableTab" />
-							<g:Label text="Devengos" debugId="agreementPaymentTabButton" ui:field="paymentTab" />
-						</g:HTMLPanel>
-						<g:DeckPanel ui:field="mainDeckPanel">
-							<aon:AgreementPreview debugId="agreementPreview" ui:field="agreementPreview" />
-							<aon:AgreementLevelTab debugId="agreementLevelTab" ui:field="agreementLevelTab" />
-							<aon:AgreementSalaryTableTab debugId="agreementSalaryTableTab" ui:field="agreementSalaryTableTab" />
-							<aon:AgreementPaymentTab debugId="agreementPaymentTab" ui:field="agreementPaymentTab" />
-						</g:DeckPanel>
+					<g:HTMLPanel ui:field="agreementContainer" styleName="{style.flexColumn} {style.heigthAll}"> 
+						<aon:AgreementPreview debugId="agreementPreview" ui:field="agreementPreview" />
 					</g:HTMLPanel>
 					<!-- AGREEMENT SELECT LABEL -->
 					<g:HTMLPanel ui:field="agreementMessage" styleName="{style.flexCenter}">

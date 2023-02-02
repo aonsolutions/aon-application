@@ -314,7 +314,11 @@ public class JooqAgreementTab {
 		Set<Payment> paymentsSet = new LinkedHashSet<>();
 		
 		ArrayList<Payment> paymentArray = new ArrayList<>(paymentsSetIn);
-		paymentArray.sort((o1, o2) -> o1.getDescription().compareTo(o2.getDescription()));
+		paymentArray.sort((o1, o2) -> {
+			if(AonStringUtils.isBlank(o1.getDescription())) return -1;
+			if(AonStringUtils.isBlank(o2.getDescription())) return 1;
+			return o1.getDescription().compareTo(o2.getDescription());
+		});
 		
 		paymentsSet.addAll(paymentArray);
 		

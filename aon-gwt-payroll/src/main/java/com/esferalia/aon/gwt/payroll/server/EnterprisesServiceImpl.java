@@ -3877,6 +3877,19 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
+	public boolean canUpdateServiAgreement(String domainName, String userLogin, AgreementInfo agreement) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer year = 0;
+			Optional<java.util.Date> lastDate = agreement.getSortedDates().stream().findFirst();
+			if(lastDate.isPresent()) year = lastDate.get().getYear() + 1900;
+			return AgreementUpdate.canUpdateServiAgreement(agreement.getSSNumber(), year);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
 	public void deletePayments(String domainName, List<Integer> paymentIds) throws IllegalArgumentException {
 		try (Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);

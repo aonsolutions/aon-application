@@ -5,7 +5,7 @@
 	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
-    <ui:style  type="com.esferalia.aon.gwt.payroll.client.AgreementPaymentEditor.MyStyle">
+    <ui:style>
     
     	.inputHeight { height: 1.5rem; }
     	
