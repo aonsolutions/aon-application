@@ -25,7 +25,6 @@ public interface Mod123ServiceAsync {
 	void markAsPending(Occam occam, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
 	void initialize(Occam occam, Mod123 mod123,AsyncCallback<Mod123> asyncCallback);
 	void create(Occam occam, Mod123 mod123, AsyncCallback<Mod123> callback);
-	void reset(Occam occam, Mod123 model, AsyncCallback<Mod123> asyncCallback);
 	void getInfo(Occam occam, Mod123 mod123, IModelScript<Mod123Key> script, FiscalModelKeyInfo infoKey,AsyncCallback<String> callback);
 	void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> callback);
 }

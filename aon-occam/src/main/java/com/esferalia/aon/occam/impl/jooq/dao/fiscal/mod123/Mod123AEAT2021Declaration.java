@@ -27,24 +27,15 @@ public class Mod123AEAT2021Declaration extends Mod123Declaration {
 		,CT_C03(Mod123Key.CT_C03
 			, (mod,br) -> isMovableCapital(br)
 			, (ctx,mod,docs,br) -> addQuota(Mod123Key.CT_C03,mod,br)
-			,null
-			,null
-			,null)
+			,null,null,null)
 		,CT_C04(Mod123Key.CT_C04, null,null,null,null,null)
 		,CT_C05(Mod123Key.CT_C05, null,null,null,null,null)
 		,CT_C06(Mod123Key.CT_C06, null,null,null, "CT_C03+CT_C05",null)
 		,CT_C07(Mod123Key.CT_C07, null,null
 			, (ctx,mod) -> mod.putAmount(Mod123Key.CT_C07,mod.isComplementary()
-				?Mod123DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod123::getDeclarationResult).sum()
+				?Mod123DAO.getSamePeriodEffectiveModels(ctx, mod).mapToDouble(Mod123::getDeclarationResult).sum()
 				:0.0)
-			,null
-			,"{messages : ["
-				+ "\"Declaraciones en el mismo periodo/ejercicio:\","
-				+ "@foreach{fm : periodModels}"
-				+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
-				+ "@end{}"
-				+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(CT_C07)}\""
-			+"]}")
+			,null,null)
 		,CT_C08(Mod123Key.CT_C08, null,null,null, "CT_C06-CT_C07",null)
 		,CT_TIP (Mod123Key.CT_TIP,null,null,null,null,null)
 
@@ -125,7 +116,17 @@ public class Mod123AEAT2021Declaration extends Mod123Declaration {
 		return super.initializeModel(ctx, mod123);
 	}
 
-	private static boolean isMovableCapital(IrpfBreakdown br) {
-		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL;
+	@Override
+	public Mod123Key[] getSamePeriodExplainKeys() {
+		return new Mod123Key[] {Mod123Key.CT_C07}; 
 	}
+
+	private static boolean isMovableCapital(IrpfBreakdown br) {
+		return br.isFromInvoice() && 
+			(br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
+			|| br.getWithholdingType() == WithholdingType.M193_C1
+			|| br.getWithholdingType() == WithholdingType.M193_C2
+			|| br.getWithholdingType() == WithholdingType.M193_C3);
+	}
+
 }

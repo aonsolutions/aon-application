@@ -156,13 +156,6 @@ public class Mod115DAO extends FiscalModelDAO {
 		return mod115;
 	}
 	
-	public static Mod115 reset(AONContext ctx,Mod115 mod115) {
-		mod115.setMap(null);
-		initializeIdentificationData(ctx, mod115);
-		create(ctx,mod115);
-		return mod115;
-	}
-	
 	public static Mod115 create(AONContext ctx,Mod115 mod115) {
 		Mod115Declaration dec = Mod115Declaration.getInstance(mod115);
 		dec.ensureDetails(mod115);

@@ -37,16 +37,9 @@ public class Mod123Araba2021Declaration extends Mod123Declaration {
 		,AR_C07(Mod123Key.AR_C07,null,null
 			, (ctx,mod) -> mod.putAmount(Mod123Key.AR_C07,
 					mod.isReplacement() 
-					?Mod123DAO.getSamePeriodModels(ctx, mod).mapToDouble(Mod123::getDeclarationResult).sum()
+					?Mod123DAO.getSamePeriodEffectiveModels(ctx, mod).mapToDouble(Mod123::getDeclarationResult).sum()
 					:0.0)
-				,null
-				,"{messages : ["
-						+ "\"Declaraciones en el mismo periodo/ejercicio:\","
-						+ "@foreach{fm : periodModels}"
-						+ "\" \u2022 Resultado del modelo @{fm.getModelFullName()} : @{java.text.DecimalFormat.getInstance().format(fm.getDeclarationResult())}\","
-						+ "@end{}"
-						+ "\" - Resultado de la casilla: @{java.text.DecimalFormat.getInstance().format(AR_C07)}\""
-					+"]}")
+				,null,null)
 		,AR_C08(Mod123Key.AR_C08,null,null,null,null,null)
 		,AR_C09(Mod123Key.AR_C09,null,null,null,null,null)
 		,AR_C10(Mod123Key.AR_C10,null,null,null,"AR_C06-AR_C07+AR_C08+AR_C09",null)
@@ -133,8 +126,17 @@ public class Mod123Araba2021Declaration extends Mod123Declaration {
 		return super.initializeModel(ctx, mod123);
 	}
 	
+	@Override
+	public Mod123Key[] getSamePeriodExplainKeys() {
+		return new Mod123Key[] {Mod123Key.AR_C07}; 
+	}
+
 	private static boolean isMovableCapital(IrpfBreakdown br) {
-		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL;
+		return br.isFromInvoice() && 
+			(br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
+			|| br.getWithholdingType() == WithholdingType.M193_C1
+			|| br.getWithholdingType() == WithholdingType.M193_C2
+			|| br.getWithholdingType() == WithholdingType.M193_C3);
 	}
 
 }

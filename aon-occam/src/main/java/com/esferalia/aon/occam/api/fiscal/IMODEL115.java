@@ -28,7 +28,6 @@ public interface IMODEL115 {
 	public Stream<IrpfBreakdown> getInfo(CloseableAONContext ctx, Mod115 mod115, Mod115Key key,IDAOCallback daoCallback);
 	
 	public Mod115 aeatPresentationMod115(AONContext ctx, Mod115 mod115, String aeatResponse);
-	public Mod115 reset(AONContext ctx, Mod115 mod115);
 	public Mod115 markAsFinished(AONContext ctx, Mod115 mod115);
 	public Mod115 markAsPending(AONContext ctx, Mod115 mod115);
 	public Mod115 markAsSent(AONContext ctx, Mod115 mod115);
