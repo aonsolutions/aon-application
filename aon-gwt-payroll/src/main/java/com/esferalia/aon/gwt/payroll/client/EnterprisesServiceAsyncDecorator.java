@@ -1035,6 +1035,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
+	public void canUpdateServiAgreement(String domainName, String currentUser, AgreementInfo agreement, AsyncCallback<Boolean> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.canUpdateServiAgreement(domainName, currentUser, agreement, callback);
+	}
+	
+	@Override
 	public void deletePayments(String domainName, List<Integer> paymentIds, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.deletePayments(domainName, paymentIds, callback);
