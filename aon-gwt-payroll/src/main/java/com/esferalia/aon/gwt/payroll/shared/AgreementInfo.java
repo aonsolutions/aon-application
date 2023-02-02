@@ -19,13 +19,10 @@ import java.util.stream.Collectors;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDomain;
 import com.esferalia.aon.gwt.common.shared.HasId;
-import com.esferalia.aon.gwt.payroll.client.DomainEnterprisesServiceAsync;
-import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class AgreementInfo implements IContextProvider, Serializable, HasId<Integer>, HasDomain<Integer> {
+public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<Integer> {
 	
 	public static class Level implements Serializable, HasId<Integer>, HasDomain<Integer>, Comparable<Level> {
 
@@ -912,47 +909,6 @@ public class AgreementInfo implements IContextProvider, Serializable, HasId<Inte
 	public String getSeniority() {
 		Optional<LevelData> levelDataOpt = levelDatas.get(0).stream().filter(levelData -> AonStringUtils.equalsIgnoreCase(levelData.getName(), "INICIO_ANTIGUEDAD")).findFirst();
 		return levelDataOpt.isPresent() ? levelDataOpt.get().getExpression() : null;
-	}
-
-	@Override
-	public boolean isEditable(String name) {
-		for (Payment payment : getPayments())
-			if (AonStringUtils.equals(name, payment.getName()))
-				return false;
-		return true;
-	}
-
-	@Override
-	public void getContext(AsyncCallback<ContextDescriptor> callback) {
-		DomainEnterprisesServiceAsync.newInstance().getContext(new AsyncCallback<ContextDescriptor>() {
-			
-			@Override
-			public void onSuccess(ContextDescriptor result) {
-				callback.onSuccess(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				callback.onFailure(caught);
-			}
-		});
-	}
-
-	@Override
-	public void eval(String expression, List<Variable> vars, AsyncCallback<List<Result>> callback) {
-		
-		DomainEnterprisesServiceAsync.newInstance().eval(expression, this, new AsyncCallback<List<Result>>() {
-			
-			@Override
-			public void onSuccess(List<Result> result) {
-				callback.onSuccess(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				callback.onFailure(caught);
-			}
-		});
 	}
 
 }

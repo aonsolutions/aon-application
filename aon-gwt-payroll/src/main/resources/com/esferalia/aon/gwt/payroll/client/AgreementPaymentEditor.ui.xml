@@ -5,7 +5,7 @@
 	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
-    <ui:style>
+    <ui:style  type="com.esferalia.aon.gwt.payroll.client.AgreementPaymentEditor.MyStyle">
     
     	.inputHeight { height: 1.5rem; }
     	
@@ -24,11 +24,9 @@
 		}
 		
 		.buttonsPanel{
-			width: 100%;
 			display: flex;
 			justify-content: flex-end;
 			gap: 1em;
-			margin-top: 1rem;
 		}
 		
 		.element{
@@ -62,6 +60,10 @@
 			height: 1.2rem;
 		}
 		
+		.iconSmall {
+			background-size: 20px;
+		}
+		
 		.aon-toolbar-button {
 		    height: 24px;
 		    padding-left: 25px;
@@ -74,7 +76,7 @@
 		}
 		
 		.dateBox {
-			width: 98% !important;
+			width: 97% !important;
 			text-align: center;
 			height: 1.5rem;
 		}
@@ -93,13 +95,16 @@
 			display: flex;
 			justify-content: space-between;
 			gap: 1rem;
+			align-items: center;
+		}
+		
+		.mt1 {
+			margin-top: 1rem;
 		}
 		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form} {style.flexColumn}">
-	
-		<aon:AonToolbarSmall ui:field="toolbar" />
 	
 		<!-- PAYMENT -->
 		
@@ -123,38 +128,45 @@
 				</g:HTMLPanel>
 				<g:TextArea ui:field="paymentExpressionTB"/>
 			</g:HTMLPanel>
-			<g:HTMLPanel styleName="{style.element}" ui:field="paymentTaxedPanel">
-				<g:Label styleName="{style.title}">Tributa</g:Label>
-				<g:HTMLPanel styleName="{style.flex}">
-					<g:ListBox ui:field="paymentTaxedTypeLB" styleName="{style.inputHeight} {style.quoteTaxedWidth}"/>
-					<g:TextBox ui:field="paymentTaxedExpression" styleName="{style.widthAll} {style.inputHeight}"/>
-				</g:HTMLPanel>
-			</g:HTMLPanel>
-			<g:HTMLPanel styleName="{style.element}" ui:field="paymentQuotePanel">
-				<g:Label styleName="{style.title}">Cotiza</g:Label>
-				<g:HTMLPanel styleName="{style.flex}">
-					<g:ListBox ui:field="paymentQuoteTypeLB" styleName="{style.inputHeight} {style.quoteTaxedWidth}"/>
-					<g:TextBox ui:field="paymentQuoteExpression" styleName="{style.widthAll} {style.inputHeight}"/>
-				</g:HTMLPanel>
-			</g:HTMLPanel>
-			<g:HTMLPanel styleName="{style.element}" ui:field="seniorityPanel">
-				<g:Label styleName="{style.title}">Cálculo Antigüedad</g:Label>
-				<g:HTMLPanel styleName="{style.flex}">
-					<g:ListBox ui:field="seniorityType" styleName="{style.quoteTaxedWidth} {style.inputHeight}"/>
-					<g:Label styleName="{style.widthAll}">El valor seleccionado afectará a todos los cálculos de antigüedad del convenio</g:Label>
-				</g:HTMLPanel>
-			</g:HTMLPanel>
 			
-			<g:HTMLPanel styleName="{style.between}" ui:field="periodPaymentPanel">
-				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-					<g:Label text="Fecha inicio" styleName="{style.title}" />
-					<c:DateBoxEx ui:field="startDateBx" styleName="{style.dateBox}" />
-				</g:HTMLPanel>
-				<g:HTMLPanel styleName="{style.element} {style.widthAll}">
-					<g:Label text="Fecha fin" styleName="{style.title}" />
-					<c:DateBoxEx ui:field="endDateBx" styleName="{style.dateBox}" />
-				</g:HTMLPanel>
-			</g:HTMLPanel>
+			<g:DisclosurePanel ui:field="advancePanel">
+			   <g:header>Avanzado</g:header>
+			   <g:HTMLPanel styleName="{style.flexColumn}">
+			   		<g:HTMLPanel styleName="{style.element}" ui:field="paymentTaxedPanel">
+						<g:Label styleName="{style.title}">Tributa</g:Label>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:ListBox ui:field="paymentTaxedTypeLB" styleName="{style.inputHeight} {style.quoteTaxedWidth}"/>
+							<g:TextBox ui:field="paymentTaxedExpression" styleName="{style.widthAll} {style.inputHeight}"/>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}" ui:field="paymentQuotePanel">
+						<g:Label styleName="{style.title}">Cotiza</g:Label>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:ListBox ui:field="paymentQuoteTypeLB" styleName="{style.inputHeight} {style.quoteTaxedWidth}"/>
+							<g:TextBox ui:field="paymentQuoteExpression" styleName="{style.widthAll} {style.inputHeight}"/>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					<g:HTMLPanel styleName="{style.element}" ui:field="seniorityPanel">
+						<g:Label styleName="{style.title}">Cálculo Antigüedad</g:Label>
+						<g:HTMLPanel styleName="{style.flex}">
+							<g:ListBox ui:field="seniorityType" styleName="{style.quoteTaxedWidth} {style.inputHeight}"/>
+							<g:Label styleName="{style.widthAll}">El valor seleccionado afectará a todos los cálculos de antigüedad del convenio</g:Label>
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+					
+					<g:HTMLPanel styleName="{style.between}" ui:field="periodPaymentPanel">
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+							<g:Label text="Fecha inicio" styleName="{style.title}" />
+							<c:DateBoxEx ui:field="startDateBx" styleName="{style.dateBox}" />
+						</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.element} {style.widthAll}">
+							<g:Label text="Fecha fin" styleName="{style.title}" />
+							<c:DateBoxEx ui:field="endDateBx" styleName="{style.dateBox}" />
+						</g:HTMLPanel>
+					</g:HTMLPanel>
+			   </g:HTMLPanel>
+			 </g:DisclosurePanel>
+			
 			
 			<g:HTMLPanel styleName="{style.flexColumn}" ui:field="extraPanel">
 				<g:HTMLPanel styleName="{style.flex} {style.flexBetween}">
@@ -219,8 +231,8 @@
 			</g:HTMLPanel>
 			
 		</g:HTMLPanel>
-			
-		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"/>
+		
+		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel} {style.mt1}" />
 		
 	</g:HTMLPanel>
 

@@ -368,4 +368,10 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	List<Certifica2Info> getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
 			Date endDate);
 
+	// ------------------------------------------------- Agreement ContextProvider
+	
+	ContextDescriptor getAgreementContext(String currentDomainName, int fxLevel, Date startDate, Date endDate) throws IllegalArgumentException;
+
+	List<Result> evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel) throws IllegalArgumentException, EvalException;
+
 }
