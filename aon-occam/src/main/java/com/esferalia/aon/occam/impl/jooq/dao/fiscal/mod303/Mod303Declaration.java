@@ -39,7 +39,11 @@ public abstract class Mod303Declaration {
 	public static final Date IVA_2021_CHANGE_DATE =  Date.from(LocalDateTime.of(2021, 7, 1, 0, 0).atZone(ZoneId.systemDefault()).toInstant());	
 
 	private enum Declarations {
-		 AEAT_2022 {
+		 AEAT_2023 {
+			@Override boolean accept(Mod303 mod) { return Mod303AEAT2023Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303AEAT2023Declaration();}
+		}
+		,AEAT_2022 {
 			@Override boolean accept(Mod303 mod) { return Mod303AEAT2022Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303AEAT2022Declaration();}
 		}

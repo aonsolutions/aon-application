@@ -37,6 +37,29 @@ public class Mod303ValidatePrintAEAT extends HttpServlet {
 	private static final long serialVersionUID = -8391437522744646639L;
 	
 	private enum AeatUrl {
+		URL_2023 {
+
+			@Override
+			protected boolean accept(Mod303 mod303) {
+				return mod303.getYear() >= 2023;
+			}
+
+			@Override
+			protected String getUrl() {
+				return "https://prewww2.aeat.es/wlpl/PFTW-PICW/ServVali";
+			}
+
+			@Override
+			protected String getUrlParameters(Mod303 mod303) throws IOException {
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
+				PrintWriter writer = new PrintWriter(output, true, StandardCharsets.ISO_8859_1);
+				Mod303Writer.fillWriter(mod303, writer);
+				return MessageFormat.format("MOD=303&EJF={0}&FIC={1}&IDI=ES"
+						,AonNumberUtils.toString( mod303.getYear())
+						,ModelAdmonUtils.getEncodedFile(output.toByteArray(),StandardCharsets.ISO_8859_1));
+			}
+			
+		},
 		URL_2021_2_SEMESTER {
 
 			@Override

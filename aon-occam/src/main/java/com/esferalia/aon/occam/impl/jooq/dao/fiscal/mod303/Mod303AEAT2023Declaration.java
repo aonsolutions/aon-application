@@ -37,7 +37,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303AEAT2022Declaration extends Mod303AEAT {
+class Mod303AEAT2023Declaration extends Mod303AEAT {
 	
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityFiller {
@@ -49,20 +49,28 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 		void populate(Mod303 mod);
 	}
 
-	protected Mod303AEAT2022Declaration() {
+	protected Mod303AEAT2023Declaration() {
 
 	}
 	
-	private static final double PERCENT1 = 4.0;
-	private static final double PERCENT11 = 5.0;
-	private static final double PERCENT2 = 10.0;
-	private static final double PERCENT3 = 21.0;
-	private static final double SURCHARGE_PERCENT1 = 0.5;
-	private static final double SURCHARGE_PERCENT2 = 1.4;
-	private static final double SURCHARGE_PERCENT3 = 5.2;
-
+	private static final double PERCENT0 = 0.0;
+	private static final double PERCENT4 = 4.0;
+	private static final double PERCENT5 = 5.0;
+	private static final double PERCENT10 = 10.0;
+	private static final double PERCENT21 = 21.0;
+	
+	private static final double SURCHARGE_PERCENT_175 = 1.75;
+	
+	private static final double SURCHARGE_PERCENT_0 = 0.0;
+	private static final double SURCHARGE_PERCENT_05 = 0.5;
+	private static final double SURCHARGE_PERCENT_062 = 0.62;
+	
+	private static final double SURCHARGE_PERCENT_14 = 1.4;
+	
+	private static final double SURCHARGE_PERCENT_52 = 5.2;
+	
 	public static boolean accept(Mod303 mod) {
-		return mod.isAEAT() && mod.getYear() == 2022; 
+		return mod.isAEAT() && mod.getYear() >= 2023 && mod.getPeriod().isMonthPeriod();	 
 	}
 	
 	private static final Mod303Key[] COMPENSATION_EXPLAIN_KEYS = new Mod303Key[] { Mod303Key.CT_C110 };
@@ -107,28 +115,44 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 		// ------------------------------------------------- IVA DEVENGADO
 		// ---------------------------------------------------------------
 
-		// Base imponible, porcentaje y cuota al primer tipo.
+		// Base imponible, porcentaje y cuota al tipo.0%
 		,
-		CT_C01(Mod303Key.CT_C01, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent1(mod,vat)),
+		CT_C150(Mod303Key.CT_C150, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent0(mod,vat)),
+				(ctx, mod, vat) -> add(Mod303Key.CT_C150, mod, vat.getBase()), null, null, null),
+		CT_C151(Mod303Key.CT_C151, null, null, (ctx, mod) -> add(Mod303Key.CT_C151, mod, PERCENT0), null, null),
+		CT_C152(Mod303Key.CT_C152, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent0(mod,vat)),
+				(ctx, mod, vat) -> add(Mod303Key.CT_C152, mod, vat.getQuota()), null, null, null)
+		
+		// Base imponible, porcentaje y cuota al tipo.4%
+		,
+		CT_C01(Mod303Key.CT_C01, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent4(mod,vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C01, mod, vat.getBase()), null, null, null),
-		CT_C02(Mod303Key.CT_C02, null, null, (ctx, mod) -> add(Mod303Key.CT_C02, mod, PERCENT1), null, null),
-		CT_C03(Mod303Key.CT_C03, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent1(mod,vat)),
+		CT_C02(Mod303Key.CT_C02, null, null, (ctx, mod) -> add(Mod303Key.CT_C02, mod, PERCENT4), null, null),
+		CT_C03(Mod303Key.CT_C03, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent4(mod,vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C03, mod, vat.getQuota()), null, null, null)
 
-		// Base imponible, porcentaje y cuota al segundo tipo.
+		// Base imponible, porcentaje y cuota al tipo.0%
 		,
-		CT_C04(Mod303Key.CT_C04, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent2(vat)),
+		CT_C153(Mod303Key.CT_C153, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent5(mod,vat)),
+				(ctx, mod, vat) -> add(Mod303Key.CT_C153, mod, vat.getBase()), null, null, null),
+		CT_C154(Mod303Key.CT_C154, null, null, (ctx, mod) -> add(Mod303Key.CT_C154, mod, PERCENT5), null, null),
+		CT_C155(Mod303Key.CT_C155, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent5(mod,vat)),
+				(ctx, mod, vat) -> add(Mod303Key.CT_C155, mod, vat.getQuota()), null, null, null)
+
+		// Base imponible, porcentaje y cuota al tipo 10%.
+		,
+		CT_C04(Mod303Key.CT_C04, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent10(vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C04, mod, vat.getBase()), null, null, null),
-		CT_C05(Mod303Key.CT_C05, null, null, (ctx, mod) -> add(Mod303Key.CT_C05, mod, PERCENT2), null, null),
-		CT_C06(Mod303Key.CT_C06, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent2(vat)),
+		CT_C05(Mod303Key.CT_C05, null, null, (ctx, mod) -> add(Mod303Key.CT_C05, mod, PERCENT10), null, null),
+		CT_C06(Mod303Key.CT_C06, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent10(vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C06, mod, vat.getQuota()), null, null, null)
 
-		// Base imponible, porcentaje y cuota al tercer tipo.
+		// Base imponible, porcentaje y cuota al tipo 21%.
 		,
-		CT_C07(Mod303Key.CT_C07, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent3(vat)),
+		CT_C07(Mod303Key.CT_C07, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent21(vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C07, mod, vat.getBase()), null, null, null),
-		CT_C08(Mod303Key.CT_C08, null, null, (ctx, mod) -> add(Mod303Key.CT_C08, mod, PERCENT3), null, null),
-		CT_C09(Mod303Key.CT_C09, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent3(vat)),
+		CT_C08(Mod303Key.CT_C08, null, null, (ctx, mod) -> add(Mod303Key.CT_C08, mod, PERCENT21), null, null),
+		CT_C09(Mod303Key.CT_C09, (mod, vat) -> (isCommonNationalSales(vat, mod) && hasPercent21(vat)),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C09, mod, vat.getQuota()), null, null, null)
 
 		// Adquisiciones intracomunitarias de bienes y servicios. base y cuota.
@@ -153,34 +177,44 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 		CT_C15(Mod303Key.CT_C15, (mod, vat) -> modificacionBasesYCuotasFilter(vat, mod),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C15, mod, vat.getQuota()), null, null, null)
 
-		// Recargo equivalencia al primer tipo.
+		// Recargo equivalencia al 1.75%
+		,
+		CT_C156(Mod303Key.CT_C156,
+				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent1(vat),
+				(ctx, mod, vat) -> add(Mod303Key.CT_C156, mod, vat.getBase()), null, null, null),
+		CT_C157(Mod303Key.CT_C157, null, null, (ctx, mod) -> add(Mod303Key.CT_C157, mod, SURCHARGE_PERCENT_175), null, null),
+		CT_C158(Mod303Key.CT_C158,
+				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent1(vat),
+				(ctx, mod, vat) -> add(Mod303Key.CT_C158, mod, vat.getSurchargeQuota()), null, null, null)
+
+		// Recargo equivalencia al 1.75%
 		,
 		CT_C16(Mod303Key.CT_C16,
-				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent1(vat),
+				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent2(vat),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C16, mod, vat.getBase()), null, null, null),
-		CT_C17(Mod303Key.CT_C17, null, null, (ctx, mod) -> add(Mod303Key.CT_C17, mod, SURCHARGE_PERCENT1), null, null),
+		CT_C17(Mod303Key.CT_C17, null, null, (ctx, mod) -> add(Mod303Key.CT_C17, mod, SURCHARGE_PERCENT_05), null, null),
 		CT_C18(Mod303Key.CT_C18,
-				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent1(vat),
+				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent2(vat),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C18, mod, vat.getSurchargeQuota()), null, null, null)
 
 		// Recargo equivalencia al segundo tipo.
 		,
 		CT_C19(Mod303Key.CT_C19,
-				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent2(vat),
+				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent3(vat),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C19, mod, vat.getBase()), null, null, null),
-		CT_C20(Mod303Key.CT_C20, null, null, (ctx, mod) -> add(Mod303Key.CT_C20, mod, SURCHARGE_PERCENT2), null, null),
+		CT_C20(Mod303Key.CT_C20, null, null, (ctx, mod) -> add(Mod303Key.CT_C20, mod, SURCHARGE_PERCENT_14), null, null),
 		CT_C21(Mod303Key.CT_C21,
-				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent2(vat),
+				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent3(vat),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C21, mod, vat.getSurchargeQuota()), null, null, null)
 
 		// Recargo equivalencia al tercer tipo.
 		,
 		CT_C22(Mod303Key.CT_C22,
-				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent3(vat),
+				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent4(vat),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C22, mod, vat.getBase()), null, null, null),
-		CT_C23(Mod303Key.CT_C23, null, null, (ctx, mod) -> add(Mod303Key.CT_C23, mod, SURCHARGE_PERCENT3), null, null),
+		CT_C23(Mod303Key.CT_C23, null, null, (ctx, mod) -> add(Mod303Key.CT_C23, mod, SURCHARGE_PERCENT_52), null, null),
 		CT_C24(Mod303Key.CT_C24,
-				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent3(vat),
+				(mod, vat) -> isCommonNationalSales(vat, mod) && vat.isSurcharge() && hasSurchargePercent4(vat),
 				(ctx, mod, vat) -> add(Mod303Key.CT_C24, mod, vat.getSurchargeQuota()), null, null, null)
 
 		// Modificaciones bases y cuotas del recargo de equivalencia
@@ -194,7 +228,7 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 
 		// Total cuota devengada
 		, CT_C27(Mod303Key.CT_C27, null, null, null,
-				"CT_C03+CT_C06+CT_C09+CT_C11+CT_C13+CT_C15+CT_C18+CT_C21+CT_C24+CT_C26", null)
+			"CT_C152+CT_C03+CT_C155+CT_C06+CT_C09+CT_C11+CT_C13+CT_C15+CT_C158+CT_C18+CT_C21+CT_C24+CT_C26", null)
 
 		// ---------------------------------------------------------------
 		// ------------------------------------------------- IVA DEDUCIBLE
@@ -1590,9 +1624,9 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 			  }
 			,null
 			,null
-		),
-		
-		CT_C71(Mod303Key.CT_C71, null, null, null, "CT_C69-CT_C70", null)
+		)
+		,CT_C109(Mod303Key.CT_C109)
+		,CT_C71(Mod303Key.CT_C71, null, null, null, "CT_C69-CT_C70+CT_C109", null)
 
 		, CT_U1D(Mod303Key.CT_U1D), CT_U1C(Mod303Key.CT_U1C), CT_U1E(Mod303Key.CT_U1E)
 		, CT_U2D(Mod303Key.CT_U2D), CT_U2C(Mod303Key.CT_U2C), CT_U2E(Mod303Key.CT_U2E)
@@ -1763,29 +1797,43 @@ class Mod303AEAT2022Declaration extends Mod303AEAT {
 				&& vat.isSales() && !vat.isRectification();
 	}
 
-	private static boolean hasPercent1(Mod303 mod, VatContext vat) {
-		return vat.getPercentage() == PERCENT1
-			|| (vat.getPercentage() == PERCENT11 && mod.getPeriod().isLastSemester());
+	private static boolean hasPercent0(Mod303 mod, VatContext vat) {
+		return vat.getPercentage() == PERCENT0;
 	}
 
-	private static boolean hasPercent2(VatContext vat) {
-		return vat.getPercentage() == PERCENT2;
+	private static boolean hasPercent4(Mod303 mod, VatContext vat) {
+		return vat.getPercentage() == PERCENT4;
 	}
 
-	private static boolean hasPercent3(VatContext vat) {
-		return vat.getPercentage() == PERCENT3;
+	private static boolean hasPercent5(Mod303 mod, VatContext vat) {
+		return vat.getPercentage() == PERCENT5;
+	}
+
+	private static boolean hasPercent10(VatContext vat) {
+		return vat.getPercentage() == PERCENT10;
+	}
+
+	private static boolean hasPercent21(VatContext vat) {
+		return vat.getPercentage() == PERCENT21;
 	}
 
 	private static boolean hasSurchargePercent1(VatContext vat) {
-		return vat.getSurchargePercent() == SURCHARGE_PERCENT1;
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT_175;
 	}
-
+	
 	private static boolean hasSurchargePercent2(VatContext vat) {
-		return vat.getSurchargePercent() == SURCHARGE_PERCENT2;
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT_0
+			|| vat.getSurchargePercent() == SURCHARGE_PERCENT_05
+			|| vat.getSurchargePercent() == SURCHARGE_PERCENT_062
+				;
 	}
 
 	private static boolean hasSurchargePercent3(VatContext vat) {
-		return vat.getSurchargePercent() == SURCHARGE_PERCENT3;
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT_14;
+	}
+
+	private static boolean hasSurchargePercent4(VatContext vat) {
+		return vat.getSurchargePercent() == SURCHARGE_PERCENT_52;
 	}
 
 	private static boolean adqIntracomunitariasFilter(VatContext vat, Mod303 mod) {

@@ -5,15 +5,15 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Mod303Key implements IFiscalModelKey  {
-	// Ã --> \u00C1 Ã¡ --> \u00E1 
-	// Ã‰ --> \u00C9 Ã© --> \u00E9 
-	// Ã --> \u00CD Ã­ --> \u00ED 
-	// Ã“ --> \u00D3 Ã³ --> \u00F3 
-	// Ãš --> \u00DA Ãº --> \u00FA ... acento
-	// Ãœ --> \u00DC Ã¼ --> \u00fc ... diÃ©resis
-	// Ã‘ --> \u00D1 Ã± --> \u00F1
-	// Âº --> \u00BA Âª --> \u00AA 
-	// Â¿ --> \u00BF
+	// Á --> \u00C1 á --> \u00E1
+	// É --> \u00C9 é --> \u00E9
+	// Í --> \u00CD í --> \u00ED
+	// Ó --> \u00D3 ó --> \u00F3
+	// Ú --> \u00DA ú --> \u00FA
+	// Ñ --> \u00D1 ñ --> \u00F1
+	// ª --> \u00AA º --> \u00BA
+	// ¿ --> \u00BF
+	
 	 CM_000("303-CM000",false,null,"Confecci\u00F3n manual")
 	,CM_001("303-CM001",false,null,"C\u00E1lculo por diferencia.")
 	,CM_002("303-CM002",false,null,"Sujeto pasivo inscrito en el Registro de devoluci\u00F3n mensual")
@@ -47,15 +47,21 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_A13("303-CTA13",false,null,"Sujeto pasivo acogido voluntariamente al SII")
 	,CT_A14("303-CTA14",false,null,"Sujeto pasivo exonerado de la Declaraci\u00F3n-resumen anual del IVA, modelo 390")
 	
-	,CT_C01("303-CTC01",true ,"1","R\u00E9gimen general - Base imponible")
-	,CT_C02("303-CTC02",false,"2","R\u00E9gimen general - Tipo %")
-	,CT_C03("303-CTC03",true ,"3","R\u00E9gimen general - Cuota")
-	,CT_C04("303-CTC04",true ,"4",CT_C01.getDescription())
-	,CT_C05("303-CTC05",false,"5",CT_C02.getDescription())
-	,CT_C06("303-CTC06",true ,"6",CT_C03.getDescription())
-	,CT_C07("303-CTC07",true ,"7",CT_C01.getDescription())
-	,CT_C08("303-CTC08",false,"8",CT_C02.getDescription())
-	,CT_C09("303-CTC09",true ,"9",CT_C03.getDescription())
+	,CT_C150("303-CTC150",true ,"150","R\u00E9gimen general - Base imponible")
+	,CT_C151("303-CTC151",false,"151","R\u00E9gimen general - Tipo %")
+	,CT_C152("303-CTC152",true ,"152","R\u00E9gimen general - Cuota")
+	,CT_C01 ("303-CTC01" ,true ,"1"  ,CT_C150.getDescription())
+	,CT_C02 ("303-CTC02" ,false,"2"  ,CT_C151.getDescription())
+	,CT_C03 ("303-CTC03" ,true ,"3"  ,CT_C152.getDescription())
+	,CT_C153("303-CTC153",true ,"153",CT_C150.getDescription())
+	,CT_C154("303-CTC154",false,"154",CT_C151.getDescription())
+	,CT_C155("303-CTC155",true ,"155",CT_C151.getDescription())
+	,CT_C04 ("303-CTC04" ,true ,"4"  ,CT_C150.getDescription())
+	,CT_C05 ("303-CTC05" ,false,"5"  ,CT_C151.getDescription())
+	,CT_C06 ("303-CTC06" ,true ,"6"  ,CT_C151.getDescription())
+	,CT_C07 ("303-CTC07" ,true ,"7"  ,CT_C150.getDescription())
+	,CT_C08 ("303-CTC08" ,false,"8"  ,CT_C151.getDescription())
+	,CT_C09 ("303-CTC09" ,true ,"9"  ,CT_C151.getDescription())
 	
 	,CT_C10("303-CTC10",true ,"10","Adquisiciones intracomunitarias de bienes y servicios - Base imponible")
 	,CT_C11("303-CTC11",true ,"11","Adquisiciones intracomunitarias de bienes y servicios - Cuota")
@@ -63,15 +69,20 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C13("303-CTC13",true ,"13","Otras operaciones con inversi\u00F3n del sujeto pasivo (excepto. adq. intracom) - Cuota")
 	,CT_C14("303-CTC14",true ,"14","Modificaci\u00F3n bases y cuotas - Base imponible")
 	,CT_C15("303-CTC15",true ,"15","Modificaci\u00F3n bases y cuotas - Cuota")
-	,CT_C16("303-CTC16",true ,"16","Recargo equivalencia - Base imponible")
-	,CT_C17("303-CTC17",false,"17","Recargo equivalencia - Tipo %")
-	,CT_C18("303-CTC18",true ,"18","Recargo equivalencia - Cuota")
-	,CT_C19("303-CTC19",true ,"19",CT_C16.getDescription())
-	,CT_C20("303-CTC20",false,"20",CT_C17.getDescription())
-	,CT_C21("303-CTC21",true ,"21",CT_C18.getDescription())
-	,CT_C22("303-CTC22",true ,"22",CT_C16.getDescription())
-	,CT_C23("303-CTC23",false,"23","Recargo equivalencia - Tipo")
-	,CT_C24("303-CTC24",true ,"24",CT_C18.getDescription())
+	
+	,CT_C156("303-CTC166",true ,"156","Recargo equivalencia - Base imponible")
+	,CT_C157("303-CTC167",false,"157","Recargo equivalencia - Tipo %")
+	,CT_C158("303-CTC168",true ,"158","Recargo equivalencia - Cuota")
+	,CT_C16("303-CTC16",true ,"16",CT_C156.getDescription())
+	,CT_C17("303-CTC17",false,"17",CT_C157.getDescription())
+	,CT_C18("303-CTC18",true ,"18",CT_C158.getDescription())
+	,CT_C19("303-CTC19",true ,"19",CT_C156.getDescription())
+	,CT_C20("303-CTC20",false,"20",CT_C157.getDescription())
+	,CT_C21("303-CTC21",true ,"21",CT_C158.getDescription())
+	,CT_C22("303-CTC22",true ,"22",CT_C156.getDescription())
+	,CT_C23("303-CTC23",false,"23",CT_C157.getDescription())
+	,CT_C24("303-CTC24",true ,"24",CT_C158.getDescription())
+	
 	,CT_C25("303-CTC25",true ,"25","Modificaciones bases y cuotas del recargo de equivalencia - Base imponible")
 	,CT_C26("303-CTC26",true ,"26","Modificaciones bases y cuotas del recargo de equivalencia - Cuota")
 	,CT_C27("303-CTC27",false,"27","Total cuota devengada")
@@ -409,7 +420,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	
 	,CT_C68("303-CTA68",false,"68","Exclusivamente para sujetos pasivos que tributan conjuntamente a la Administraci\u00F3n del Estado y a las Diputaciones Forales Resultado de la regularizaci\u00F3n anual") 
 	,CT_C69("303-CTA69",false,"69",CT_S11R.getDescription()) 
-	,CT_C70("303-CTA70",false,"70","A deducir")
+	,CT_C70("303-CTA70",false,"70","Resultados a ingresar de anteriores autoliquidaciones o liquidaciones administrativas correspondientes al ejercicio y per\u00EDodo objeto de la autoliquidaci\u00F3n")
+	,CT_C109("303-CTA109",false,"109","Devoluciones acordadas por la Agencia Tributaria como consecuencia de la tramitaci\u00F3n de anteriores autoliquidaciones correspondientes al ejercicio y per\u00EDodo objeto de la autoliquidaci\u00F3n")
 	,CT_C71("303-CTA71",false,"71","Resultado de la liquidaci\u00F3n")
 	
 	,CT_U1D("303-CTU1D",false,null,"A - Ep\u00EDgrafe IAE - Descripci\u00F3n")

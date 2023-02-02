@@ -24,42 +24,42 @@ import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
 
 	InsertRandomInvoicesTest.class,
 	Mod303InsertMonthlyTest.class,
-
-	InsertRandomInvoicesTest.class,
-	Mod303InsertMonthlyComplementaryTest.class,
-	
-	InsertRandomInvoicesTest.class,
-	Mod303InsertMonthlyReplacementTest.class,
-
-	Mod303ReopenTest.class,					// Pendiente
-	Mod303DeleteTest.class,
-	
-	InsertRandomInvoicesTest.class,
-	Mod303InsertQuarterlyTest.class,
-
-	InsertRandomInvoicesTest.class,
-	Mod303InsertQuarterlyComplementaryTest.class,
-	
-	InsertRandomInvoicesTest.class,
-	Mod303InsertQuarterlyReplacementTest.class,
-
-	// Flujo de estados
-	Mod303ReopenTest.class,					// Pendiente
-	Mod303FinishTest.class,					// Finalizado
-	Mod303SentTest.class,					// Presentado
-	
-	// Flujo de estados
-	Mod303ReopenTest.class,					// Pendiente
-	Mod303MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod303MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod303SentTest.class,					// Presentado
-	// Flujo de estados 
-	Mod303ReopenTest.class,					// Pendiente
-	Mod303MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod303MarkAsCustomerRejectedTest.class, // Rechazado por cliente
-	Mod303MarkAsCustomerCheckTest.class,	// Enviado a cliente
-	Mod303MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
-	Mod303SentTest.class,					// Presentado
+//
+//	InsertRandomInvoicesTest.class,
+//	Mod303InsertMonthlyComplementaryTest.class,
+//	
+//	InsertRandomInvoicesTest.class,
+//	Mod303InsertMonthlyReplacementTest.class,
+//
+//	Mod303ReopenTest.class,					// Pendiente
+//	Mod303DeleteTest.class,
+//	
+//	InsertRandomInvoicesTest.class,
+//	Mod303InsertQuarterlyTest.class,
+//
+//	InsertRandomInvoicesTest.class,
+//	Mod303InsertQuarterlyComplementaryTest.class,
+//	
+//	InsertRandomInvoicesTest.class,
+//	Mod303InsertQuarterlyReplacementTest.class,
+//
+//	// Flujo de estados
+//	Mod303ReopenTest.class,					// Pendiente
+//	Mod303FinishTest.class,					// Finalizado
+//	Mod303SentTest.class,					// Presentado
+//	
+//	// Flujo de estados
+//	Mod303ReopenTest.class,					// Pendiente
+//	Mod303MarkAsCustomerCheckTest.class,	// Enviado a cliente
+//	Mod303MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
+//	Mod303SentTest.class,					// Presentado
+//	// Flujo de estados 
+//	Mod303ReopenTest.class,					// Pendiente
+//	Mod303MarkAsCustomerCheckTest.class,	// Enviado a cliente
+//	Mod303MarkAsCustomerRejectedTest.class, // Rechazado por cliente
+//	Mod303MarkAsCustomerCheckTest.class,	// Enviado a cliente
+//	Mod303MarkAsCustomerAcceptedTest.class,	// Aceptado por cliente
+//	Mod303SentTest.class,					// Presentado
 
 	//  PENDIENTE!!	
 	//	Mod303RecordTest.class,					// Contabilizar

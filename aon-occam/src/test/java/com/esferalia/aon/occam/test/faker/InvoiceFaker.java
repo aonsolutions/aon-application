@@ -556,11 +556,12 @@ public class InvoiceFaker {
 	}
 
 	private static InvoiceTax getVatInvoiceTax(InvoiceFakerParams params, Invoice invoice, InvoiceDetail detail) {
+		double vatPercent = getVatPercent( AonRandom.number(0, 100));
 		InvoiceTax tax =  new InvoiceTax()
 			.setTaxType(TaxType.VAT)
 			.setBase(detail.getTaxableBase())
-			.setPercentage( getVatPercent( AonRandom.number(0, 100)) )
-			.setSurcharge(invoice.isSurcharge()?getSurchargePercent( AonRandom.number(0, 100)):0.0)
+			.setPercentage( vatPercent )
+			.setSurcharge(invoice.isSurcharge()?getSurchargePercent( vatPercent ):0.0)
 			.setDeductiblePercent( getDeductiblePercent( AonRandom.number(0, 100)));
 		;
 		return calculate(tax);
@@ -569,16 +570,21 @@ public class InvoiceFaker {
 	private static double getVatPercent(int x) {
 		if ( x >= 0 && x <= 50) return 21.0;
 		if ( x > 50 && x <= 75) return 10.0;
-		if ( x > 75 && x <= 90) return 4.0;
-		if ( x > 90 && x <= 95) return 5.0;
+		if ( x > 75 && x <= 95) return 4.0;
+		if ( x > 95 && x <= 98) return 5.0;
 		return 0.0;
 	}
 	
-	private static double getSurchargePercent(int x) {
-		if ( x >= 0 && x <= 50) return 5.2;
-		if ( x > 50 && x <= 75) return 1.4;
-		if ( x > 75 && x <= 95) return 0.5;
-		return 0.0;
+	private static double getSurchargePercent(double vatPercent) {
+		if (vatPercent == 21) return 5.2;
+		else if (vatPercent == 10) return 1.4;
+		else if (vatPercent == 4) return 0.5;
+		else {
+			int x = AonRandom.number(0, 100);
+			if ( x <= 70) return 1.75; 
+			if ( x <= 90) return 0.62;
+			return 0.0;
+		}
 	}
 
 	private static double getDeductiblePercent(int x) {
