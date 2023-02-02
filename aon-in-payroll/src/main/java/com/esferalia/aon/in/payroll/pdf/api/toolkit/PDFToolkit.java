@@ -35,6 +35,7 @@ import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfBox;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfImage;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfPage;
 import com.esferalia.aon.in.payroll.pdf.api.component.basic.PdfText;
+import com.esferalia.aon.in.payroll.pdf.api.setting.PdfFonts;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
@@ -118,12 +119,17 @@ public class PDFToolkit {
 	public static void drawText(
 			PDPageContentStream contents, String content, Float x, Float y, Color color, PDFont font, float fontSize
 	) throws IOException {
+		//METER AQUÍ LAS EXCEPCIONES QUE VAYAN SURGIENDO
+		String textToWrite = content;
+		if (PdfFonts.HELVETICA.equals(font)) {
+			textToWrite = AonStringUtils.replace(textToWrite, "\u0009", "  ");
+		}
 		contents.setNonStrokingColor(color);
 		contents.beginText();
 		contents.setFont(font, fontSize);
 		contents.newLineAtOffset(x, y);
 //		try {
-			contents.showText(content);			
+			contents.showText(textToWrite);
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
