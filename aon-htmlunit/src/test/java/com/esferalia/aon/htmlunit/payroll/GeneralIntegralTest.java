@@ -2323,6 +2323,24 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 	}
 
+	@Test
+	public void TestQuote() throws Exception {
+		
+		if (!isDisplayed("temporal_tiempo_parcial,_ordinario"))
+			open("cotizacion");
+
+
+		wait4Id("temporal_tiempo_parcial,_ordinario");
+
+		draft("TEMPORAL TIEMPO PARCIAL, ORDINARIO");
+		click("costsCheck-input");
+		calculate(Calendar.JANUARY,2023);
+		double cgpBase = getValue("cgpBaseLabel");
+		assertText("unemployment", cgpBase*1.60/100.00);
+		assertText("unemployment_cost", cgpBase*6.70/100.00);
+		
+	}
+
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{
