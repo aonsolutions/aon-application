@@ -49,9 +49,9 @@ public class Mod303InsertMonthlyTest extends Mod303AbstractTest {
 //			Asserts.assertEqualsDouble("Bizkaia " + bizkaia.getModelFullName() + ". Resultado no coincide.", 
 //					getMod303SuitableResult(aeat), getMod303SuitableResult(bizkaia));
 			
-//			Mod303 gipuzkoa = insertModel( params.setAdministration(Administration.GIPUZKOA));
-//			Asserts.assertEqualsDouble("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", 
-//					getMod303SuitableResult(aeat), getMod303SuitableResult(gipuzkoa));
+			Mod303 gipuzkoa = insertModel( params.setAdministration(Administration.GIPUZKOA));
+			Asserts.assertEqualsDouble("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", 
+					getMod303SuitableResult(aeat), getMod303SuitableResult(gipuzkoa));
 		}
 		
 //		Mod303 navarra = insertModel( params.setAdministration(Administration.NAVARRA));

@@ -370,6 +370,17 @@ public class Model303 extends MainEntryPoint {
 				return new Model303ARABA2023(mod303,cbk);
 			}
 		},
+		GIPUZKOA_2023 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isGipuzkoa() && mod303.getYear() >= 2023);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303GIPUZKOA2023(mod303,cbk);
+			}
+		},
 		// Ejercicio anteriores
 		AEAT_2022 {
 			@Override
@@ -497,7 +508,7 @@ public class Model303 extends MainEntryPoint {
 		GIPUZKOA_2022 {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isGipuzkoa() && mod303.getYear() > 2021);
+				return (mod303.isGipuzkoa() && mod303.getYear() == 2022);
 			}
 
 			@Override

@@ -764,14 +764,23 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,GP_C004("303-GP004",true ,"4",CT_C01.getDescription())
 	,GP_X004("303-GPX04",false,null,CT_C02.getDescription())
 	,GP_C005("303-GP005",true ,"5",CT_C03.getDescription())
+	,GP_C055("303-GP055",true ,"55",CT_C01.getDescription())
+	,GP_X055("303-GPX55",false,null,CT_C02.getDescription())
+	,GP_C056("303-GP056",true ,"56",CT_C03.getDescription())
 	,GP_C006("303-GP006",true ,"6",CT_C01.getDescription())
 	,GP_X006("303-GPX06",false,null,CT_C02.getDescription())
 	,GP_C007("303-GP007",true ,"7",CT_C03.getDescription())
+	,GP_C057("303-GP057",true ,"57",CT_C01.getDescription())
+	,GP_X057("303-GPX57",false,null,CT_C02.getDescription())
+	,GP_Q057("303-GPQ57",false,null,CT_C03.getDescription())
 	,GP_C039("303-GP039",true ,"39","Modificaci\u00F3n de bases y cuotas, general - Base imponible")
 	,GP_C040("303-GP040",true ,"40","Modificaci\u00F3n de bases y cuotas, general - Cuota")
 	,GP_C008("303-GP008",true ,"8",CT_C16.getDescription())
 	,GP_X008("303-GPX08",false,null,CT_C17.getDescription())
 	,GP_C009("303-GP009",true ,"9",CT_C18.getDescription())
+	,GP_C058("303-GP058",true ,"58",CT_C16.getDescription())
+	,GP_X058("303-GPX58",false,null,CT_C17.getDescription())
+	,GP_C059("303-GP059",true ,"59",CT_C18.getDescription())
 	,GP_C010("303-GP010",true ,"10",CT_C16.getDescription())
 	,GP_X010("303-GPX10",false,null,CT_C17.getDescription())
 	,GP_C011("303-GP011",true ,"11",CT_C18.getDescription())
@@ -817,6 +826,9 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,GP_C050("303-GP050",true ,"50",AR_C183.getDescription())
 	
 	,GP_C035("303-GP035",false,"35",CT_S11R.getDescription())
+	,GP_C036("303-GP036",false,"36","A Ingresar")
+	,GP_C037("303-GP037",false,"37","A Compensar")
+	,GP_C038("303-GP038",false,"38","A Devolver")
 	
 	// 	----------------------------------------------------------------------------------  
 	// 	-------------------------------------------------------------------  NAFARROA ----

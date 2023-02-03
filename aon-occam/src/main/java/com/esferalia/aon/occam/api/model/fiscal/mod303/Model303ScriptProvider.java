@@ -29,6 +29,17 @@ public class Model303ScriptProvider {
 				return Model3032023ARABAPrintScript.values();
 			}
 		}
+		,GIPUZKOA_2023 {
+			@Override
+			boolean accept(Mod303 mod303) {
+				return mod303.isGipuzkoa() && mod303.getYear() >= 2023;
+			}
+	
+			@Override
+			IModelScript<Mod303Key>[] getScript() {
+				return Model3032023GIPUZKOAPrintScript.values();
+			}
+		}
 		// Ejercicios anteriroes
 		,AEAT_2021_2_SCRIPT {
 			@Override
@@ -89,7 +100,7 @@ public class Model303ScriptProvider {
 		,GIPUZKOA {
 			@Override
 			boolean accept(Mod303 mod303) {
-				return mod303.isGipuzkoa();
+				return mod303.isGipuzkoa() && mod303.getYear() < 2023;
 			}
 	
 			@Override
