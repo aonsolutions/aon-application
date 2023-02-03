@@ -8,9 +8,11 @@ import java.util.List;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public enum AonApp implements Serializable{
-	
-	INVOICE(getEmptyModules(), "Facturas"),
+public enum AonApp implements Serializable {
+	/**
+	 * FACTURA Y GESTIÓN - INVOICE & MANAGEMENT
+	 */
+	INVOICE(getEmptyModules(), "Facturas"), 
 	DOCUMENTAL(getDocumentalModules(), "Documental"),
 	MESSENGER(getMessengerModules(), "Mensajería"),
 	ACCOUNTING(getAccountingModules(), "Contabilidad"),
@@ -24,21 +26,25 @@ public enum AonApp implements Serializable{
 	CONVENIOS(getEmptyModules(), "Convenios"),
 	BANK(getEmptyModules(), "Bancos"),
 	TIMECONTROL(getEmptyModules(), "Control Horario"),
+	@Deprecated
 	MANAGEMENT(getManagementModules(), "Gestión"),
-	PACK_SUITE(getPackSuiteModules(), "Suite Completa"),
-	PACK_PORTAL(getPackPortalModules(), "Pack Portal"),
-	PACK_PAYROLL(getPayrollModules(), "Pack Cotización"),
-	PACK_FISCAL_ACCOUNTING(getPackFiscalAccountingModules(), "Pack Tributación"),
+	PACK_SUITE(getEmptyModules(), "Suite Completa"),
+	PACK_PORTAL(getEmptyModules(), "Pack Portal"),
+	PACK_PAYROLL(getEmptyModules(), "Pack Cotización"),
+	PACK_FISCAL_ACCOUNTING(getEmptyModules(), "Pack Tributación"),
 	SELFCONTA(getEmptyModules(), "Selfconta"),
 	CUSTOM_VIEW(getEmptyModules(), "Vista Personalizada"),
 	AULA(getEmptyModules(), "Aula"),
 	NOTES(getEmptyModules(), "Notas"),
 	SALTRA(getEmptyModules(), "Saltra"),
-	BASIC_MANAGEMENT(getBasicManagementModules(), "Gestión Básica"),
+	BASIC_MANAGEMENT(getEmptyModules(), "Gestión Básica"),
 	STANDAR_MANAGEMENT(getStandarManagementModules(), "Gestión Estándar"),
-	PROFESSIONAL_MANAGEMENT(getProfessionalManagementModules(), "Gestión Profesional"),
+	PROFESSIONAL_MANAGEMENT(getEmptyModules(), "Gestión Profesional"),
+	@Deprecated
 	KIT_DIGITAL_FACE(getBasicManagementModules(), "Kit Digital FACe"),
+	@Deprecated
 	KIT_DIGITAL_CRM(getKitDigitalCrmModules(), "Kit Digital CRM"),
+	@Deprecated
 	KIT_DIGITAL_ERP(getKitDigitalErpModules(), "Kit Digital ERP"),
 	API_SERVICE(getEmptyModules(), "Servicio API"),
 	WAREHOUSE(getWarehouseModules(), "Almacén"),
@@ -105,9 +111,8 @@ public enum AonApp implements Serializable{
 	}
 	
 	private static LinkedList<Module> getStandarManagementModules() {
-		LinkedList<Module> list = getBasicManagementModules();
-		list.add(Module.TREASURY);
-		list.add(Module.MARKETING);
+		LinkedList<Module> list = new LinkedList<>();
+		list.add(Module.AON_ONE);
 		return list;
 	}
 	

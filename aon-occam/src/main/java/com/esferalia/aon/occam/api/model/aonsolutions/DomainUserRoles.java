@@ -13,6 +13,7 @@ public class DomainUserRoles implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	Domain domain;
+	Domain parentDomain;
 	User user;
 	
 	private List<AonApp> domainApps;
@@ -33,6 +34,15 @@ public class DomainUserRoles implements Serializable {
 	
 	public DomainUserRoles setDomain(Domain domain) {
 		this.domain = domain;
+		return this;
+	}
+	
+	public Domain getParentDomain() {
+		return parentDomain;
+	}
+	
+	public DomainUserRoles setParentDomain(Domain parentDomain) {
+		this.parentDomain = parentDomain;
 		return this;
 	}
 	
@@ -121,10 +131,6 @@ public class DomainUserRoles implements Serializable {
 		return getDomain().getParentId() != null && getDomain().getParentId().equals(getUser().getDomain());
 	}
 	
-	public boolean hasTaskHolder() {	
-		return getUser().getTaskHolders().stream().filter(th -> th.getDomain().getId().equals(getDomain().getId())).count() > 0;
-	}
-	
 	private boolean hasOldModule(Module module) {
 		return getOldDomainModules().contains(module) || getOldParentDomainModules().contains(module);
 	}
@@ -166,7 +172,8 @@ public class DomainUserRoles implements Serializable {
 	// ACCOUNTING - CONTABILIDAD
 	
 	public boolean hasAccounting() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_FISCAL_ACCOUNTING) || hasApp(AonApp.ACCOUNTING);
+		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_FISCAL_ACCOUNTING) 
+				|| hasApp(AonApp.ACCOUNTING) || hasOldModule(Module.ACCOUNTING);
 	}
 	
 	public boolean isAccounting() {	
@@ -180,7 +187,8 @@ public class DomainUserRoles implements Serializable {
 	// FISCAL - FISCAL
 	
 	public boolean hasFiscal() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_FISCAL_ACCOUNTING) || hasApp(AonApp.FISCAL);
+		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_FISCAL_ACCOUNTING) 
+				|| hasApp(AonApp.FISCAL) || hasOldModule(Module.FISCAL);
 	}
 	
 	public boolean isFiscal() {
@@ -194,7 +202,8 @@ public class DomainUserRoles implements Serializable {
 	// PAYROLL - LABORAL
 	
 	public boolean hasPayroll() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PAYROLL) || hasApp(AonApp.PAYROLL) || hasOldModule(Module.PAYROLL) || hasOldModule(Module.PAYROLL_PORTAL);
+		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PAYROLL) || hasApp(AonApp.PAYROLL) 
+				|| hasOldModule(Module.PAYROLL) || hasOldModule(Module.PAYROLL_PORTAL);
 	}
 	
 	public boolean isPayroll() {
@@ -212,7 +221,8 @@ public class DomainUserRoles implements Serializable {
 	// DOCUMENTAL - DOCUMENTAL
 	
 	public boolean hasDocumental() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasApp(AonApp.DOCUMENTAL);
+		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasApp(AonApp.DOCUMENTAL)
+				|| hasOldModule(Module.DOCUMENT) || hasOldModule(Module.DOCUMENT_PORTAL);
 	}
 	
 	public boolean isDocumental() {
@@ -266,7 +276,8 @@ public class DomainUserRoles implements Serializable {
 	// COMUNIC@ - COMUNIC@
 	
 	public boolean hasComunica() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PAYROLL) || hasApp(AonApp.COMUNICA);
+		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PAYROLL) || hasApp(AonApp.COMUNICA)
+				|| hasOldModule(Module.COMUNICA);
 	}
 	
 	public boolean isComunica() {
@@ -302,15 +313,16 @@ public class DomainUserRoles implements Serializable {
 	// MESSENGER - MENSAJERÍA
 	
 	public boolean hasMessenger() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasApp(AonApp.MESSENGER);
+		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasApp(AonApp.MESSENGER)
+				|| hasOldModule(Module.CALL_CENTER);
 	}
 	
 	public boolean isMessenger() {
-		return hasTaskHolder() && hasMessenger() && (isAdmin() || hasRole(AonRole.MESSENGER));
+		return hasMessenger() && (isAdmin() || hasRole(AonRole.MESSENGER));
 	}
 	
 	public boolean isMessengerManager() {
-		return hasTaskHolder() && hasMessenger() && (isAdmin() || hasRole(AonRole.MESSENGER_MANAGER));
+		return hasMessenger() && (isAdmin() || hasRole(AonRole.MESSENGER_MANAGER));
 	}
 
 	// NOTES - NOTAS
@@ -328,11 +340,13 @@ public class DomainUserRoles implements Serializable {
 	// BASIC MANAGEMENT
 	
 	public boolean hasBasicManagement() {
-		return hasStandarManagement() || hasApp(AonApp.BASIC_MANAGEMENT);
+		return hasStandarManagement() || hasApp(AonApp.BASIC_MANAGEMENT)
+				|| hasOldModule(Module.AON_FINANCE);
 	}
 	
 	public boolean hasStandarManagement() {
-		return hasProfessionalManagement() || hasApp(AonApp.STANDAR_MANAGEMENT);
+		return hasProfessionalManagement() || hasApp(AonApp.STANDAR_MANAGEMENT)
+				|| hasOldModule(Module.AON_ONE);
 	}
 	
 	public boolean hasProfessionalManagement() {
@@ -365,11 +379,11 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public boolean isManagement() {
-		return hasApp(AonApp.MANAGEMENT) && (isAdmin() || hasRole(AonRole.MANAGEMENT));
+		return hasManagement() && (isAdmin() || hasRole(AonRole.MANAGEMENT));
 	}
 	
 	public boolean isManagementManager() {
-		return hasApp(AonApp.MANAGEMENT) && (isAdmin() || hasRole(AonRole.MANAGEMENT_MANAGER));
+		return hasManagement() && (isAdmin() || hasRole(AonRole.MANAGEMENT_MANAGER));
 	}
 	
 	public boolean isAlma() {

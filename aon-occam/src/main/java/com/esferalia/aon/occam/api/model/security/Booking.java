@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.security;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.Company;
@@ -36,11 +37,19 @@ public class Booking implements Serializable {
 	}
 	
 	public List<AonApp> getApps() {
+		if(apps == null) {
+			apps = new LinkedList<>();
+		}
 		return apps;
 	}
 	
 	public Booking setApps(List<AonApp> apps) {
 		this.apps = apps;
+		return this;
+	}
+	
+	public Booking addApp(AonApp app) {
+		getApps().add(app);
 		return this;
 	}
 	

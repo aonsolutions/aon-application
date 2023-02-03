@@ -13,12 +13,14 @@ import org.apache.commons.lang.StringUtils;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.security.Booking;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -55,11 +57,10 @@ public class BookingDAO {
 		booking.setApps(SecurityDAO.getDomainAppStream(ctx, f -> 
 			f.getDomainProperty().eq(ctx.getDomainId()).and(f.getActiveProperty().eq((byte) 1))
 		).map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new)));
-
-		return booking;
 		
+		return booking;
 	}
-	
+		
 	public static Booking save(AONContext ctx, Booking booking) {
 		if(booking.getNumberOfUsers() != null) {
 			SecurityDAO.saveDomainMaxDefinedUser(ctx, booking.getNumberOfUsers());
@@ -70,7 +71,13 @@ public class BookingDAO {
 			.forEach(app -> saveBookingApp(ctx, app, false));
 		
 		booking.getApps().forEach(app -> saveBookingApp(ctx, app, true));
-		
+		if(!DomainType.CONSULTANCY.equals(booking.getDomain().getDomainType())
+				&& !booking.getApps().contains(AonApp.BASIC_MANAGEMENT)
+				&& !booking.getApps().contains(AonApp.STANDAR_MANAGEMENT)
+				&& !booking.getApps().contains(AonApp.PROFESSIONAL_MANAGEMENT)) {
+			SecurityDAO.insertDomainModule(ctx, Module.AON_FINANCE);
+		} else SecurityDAO.deleteDomainModule(ctx, Module.AON_FINANCE);
+	
 		return booking;
 	}
 	
