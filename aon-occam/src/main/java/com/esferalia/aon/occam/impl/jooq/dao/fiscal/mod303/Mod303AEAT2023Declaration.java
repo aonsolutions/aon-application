@@ -87,16 +87,10 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 //		,CM_072(Mod303Key.CM_072)
 
 		,CT_A12(Mod303Key.CT_A12, null, null, (ctx, mod) -> set(Mod303Key.CT_A12, mod, 2), null, null, null, null, true)
-		,CM_002(Mod303Key.CM_002, null, null,
-				(ctx, mod) -> add(Mod303Key.CM_002, mod,
-						(AonStringUtils.equals(AppParamDAO.fetchValue(ctx, AppParam.FS_TAX_REFUND_REGISTRY),
-								AonStringUtils.ONE)) ? 1 : 0),
-				null, null)
-		,CT_A02(Mod303Key.CT_A02), CT_A03(Mod303Key.CT_A03)
-		,CT_A07(Mod303Key.CT_A07, null, null,
-				(ctx, mod) -> add(Mod303Key.CT_A07, mod,
-						ConfigurationDAO.getConfiguration(ctx).getCompany().isVatAccrualPayment() ? 1 : 0),
-				null, null)
+		,CM_002(Mod303Key.CM_002, null, null, (ctx, mod) -> add(Mod303Key.CM_002, mod,(AonStringUtils.equals(AppParamDAO.fetchValue(ctx, AppParam.FS_TAX_REFUND_REGISTRY),AonStringUtils.ONE)) ? 1 : 0),null, null)
+		,CT_A02(Mod303Key.CT_A02)
+		,CT_A03(Mod303Key.CT_A03)
+		,CT_A07(Mod303Key.CT_A07, null, null,(ctx, mod) -> add(Mod303Key.CT_A07, mod,ConfigurationDAO.getConfiguration(ctx).getCompany().isVatAccrualPayment() ? 1 : 0),null, null)
 		,CT_A08(Mod303Key.CT_A08) // Compras Criterio de caja. Se incializa en la casilla 075.
 		,CT_A09(Mod303Key.CT_A09)
 		,CT_A10(Mod303Key.CT_A10)

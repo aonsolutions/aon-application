@@ -18,6 +18,17 @@ public class Model303ScriptProvider {
 				return Model3032023AEATPrintScript.values();
 			}
 		}
+		,BIZKAIA_2023 {
+			@Override
+			boolean accept(Mod303 mod303) {
+				return mod303.isBizkaia() && mod303.getYear() >= 2023;
+			}
+	
+			@Override
+			IModelScript<Mod303Key>[] getScript() {
+				return Model3032023BIZKAIAPrintScript.values();
+			}
+		}
 		,ARABA_2023 {
 			@Override
 			boolean accept(Mod303 mod303) {
@@ -111,7 +122,7 @@ public class Model303ScriptProvider {
 		,BIZKAIA_2022 {
 			@Override
 			boolean accept(Mod303 mod303) {
-				return mod303.isBizkaia() && mod303.getYear() > 2021;
+				return mod303.isBizkaia() && mod303.getYear() == 2022;
 			}
 	
 			@Override

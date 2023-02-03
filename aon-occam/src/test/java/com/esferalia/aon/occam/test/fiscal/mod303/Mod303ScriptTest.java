@@ -63,6 +63,8 @@ import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023AEATPrintScri
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023AEATResultScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023ARABAPrintScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023ARABARScript1;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023BIZKAIAAdditionalDataScript;
+import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023BIZKAIAScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023GIPUZKOAPrintScript;
 import com.esferalia.aon.occam.api.model.fiscal.mod303.Model3032023GIPUZKOARScript1;
 import com.esferalia.aon.occam.api.model.type.Administration;
@@ -164,6 +166,8 @@ public class Mod303ScriptTest extends Mod303AbstractTest {
 			test( mod303,Model3032022BIZKAIAScript1.values() );
 			test( mod303,Model3032022BIZKAIAScript2.values() );
 			test( mod303,Model3032022BIZKAIASpecificOperationsScript.values() );
+			test( mod303,Model3032023BIZKAIAScript.values() );
+			test( mod303,Model3032023BIZKAIAAdditionalDataScript.values() );
 		}			
 	}
 	

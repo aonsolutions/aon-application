@@ -359,6 +359,17 @@ public class Model303 extends MainEntryPoint {
 				return new Model303AEAT2023(mod303,cbk);
 			}
 		},
+		BIZKAIA_2023 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isBizkaia() && mod303.getYear() == 2023);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303BIZKAIA2023(mod303,cbk);
+			}
+		},
 		ARABA_2023 {
 			@Override
 			public boolean accept(Mod303 mod303) {
@@ -486,7 +497,7 @@ public class Model303 extends MainEntryPoint {
 		,BIZKAIA_2022 {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isBizkaia() && mod303.getYear()>2021);
+				return (mod303.isBizkaia() && mod303.getYear() == 2022);
 			}
 
 			@Override

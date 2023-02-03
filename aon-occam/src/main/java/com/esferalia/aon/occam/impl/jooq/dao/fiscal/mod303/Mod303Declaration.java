@@ -47,6 +47,10 @@ public abstract class Mod303Declaration {
 			@Override boolean accept(Mod303 mod) { return Mod303ARABA2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303ARABA2023Declaration();}
 		}
+		,BIZKAIA_2023 {
+			@Override boolean accept(Mod303 mod) { return Mod303BIZKAIA2023Declaration.accept(mod);}
+			@Override Mod303Declaration get() {return new Mod303BIZKAIA2023Declaration();}
+		}
 		,GIPUZKOA_2023 {
 			@Override boolean accept(Mod303 mod) { return Mod303GIPUZKOA2023Declaration.accept(mod);}
 			@Override Mod303Declaration get() {return new Mod303GIPUZKOA2023Declaration();}

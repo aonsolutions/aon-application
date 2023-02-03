@@ -29,7 +29,7 @@ class Mod303BIZKAIA2022Declaration extends Mod303BIZKAIA {
 	public static final double SURCHARGE_PERCENT4 = 1.75;
 	
 	public static boolean accept(Mod303 mod) {
-		return  mod.isBizkaia() && mod.getYear() >= 2022 && mod.getPeriod() != Period.T4;
+		return  mod.isBizkaia() && mod.getYear() == 2022 && mod.getPeriod() != Period.T4;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
