@@ -38,7 +38,9 @@ import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.cell.client.ActionCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.SelectionCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -249,6 +251,7 @@ public abstract class AgreementPreview extends Composite {
 		String datePickerPanel();
 		String headerDeleteFixed();
 		String deleteFixed();
+		String elipsis();
 	}
 	
 	@UiField
@@ -477,6 +480,12 @@ public abstract class AgreementPreview extends Composite {
 	        public String getValue(Payment payment) {
 	    		return payment.getName();
 	        }
+	    	
+	    	@Override
+	    	public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+	    		if(null != payment)
+	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + payment.getName() + "\" >" + payment.getName() + "</div>");
+	    	}
 		};
 
 		conceptColumn.setSortable(true);
@@ -488,6 +497,12 @@ public abstract class AgreementPreview extends Composite {
 			public String getValue(Payment payment) {
 				return payment.getDescription();
 			}
+	    	
+	    	@Override
+	    	public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+	    		if(null != payment)
+	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + payment.getDescription() + "\" >" + payment.getDescription() + "</div>");
+	    	}
 		};
 		
 		descriptionColumn.setSortable(true);
@@ -498,6 +513,12 @@ public abstract class AgreementPreview extends Composite {
 	        public String getValue(Payment payment) {
 	    		return getParsedExpression(payment.getExpression());
 	        }
+	    	
+	    	@Override
+	    	public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+	    		if(null != payment)
+	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + getParsedExpression(payment.getExpression()) + "\" >" + getParsedExpression(payment.getExpression()) + "</div>");
+	    	}
 		};
 
 	    expressionColumn.setSortable(true);
@@ -616,9 +637,9 @@ public abstract class AgreementPreview extends Composite {
 	}
 	
 	private void openDialog(Payment payment) {
-		boolean isHide = AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "HIDE");
+		boolean isHide = AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "HIDE") && AonStringUtils.startsWithIgnoreCase(payment.getExpression(), "HIDE");
 		Optional<Date> startDate = agreement.getSortedDates().stream().findFirst();
-    	new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), agreement.getExtras(), startDate.get()) {
+    	new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), startDate.get()) {
 			@Override
 			protected void onAccept(Payment updatedPayment, AgreementExtra extra, Payment associatedPayment, AgreementExtra associatedExtra) {
 				updatePaymentExpresion(isHide, payment, updatedPayment);
@@ -663,7 +684,7 @@ public abstract class AgreementPreview extends Composite {
 	
 	public String showHidePayment(String description, String expression) {
 		if(!AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE") && AonStringUtils.startsWithIgnoreCase(expression, "HIDE"))
-			expression = expression.replaceAll("HIDE.*; ", "");
+			expression = expression.replaceAll("HIDE\\(.*\\);\\s", "");
 		else
 			expression = "HIDE(\"<div>" + description + " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); " + expression;
 		
@@ -673,8 +694,8 @@ public abstract class AgreementPreview extends Composite {
 	public void showHidePayment(Payment payment) {
 		String expression = payment.getExpression();
 		
-		expression = !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE") ?
-				expression.replaceAll("HIDE.*; ", "") :
+		expression = !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE") && AonStringUtils.startsWithIgnoreCase(expression, "HIDE") ?
+				expression.replaceAll("HIDE\\(.*\\);\\s", "") :
 				"HIDE(\"<div>" + payment.getDescription() + " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); " + expression;
 		
 		payment.setExpression(expression);
@@ -733,7 +754,7 @@ public abstract class AgreementPreview extends Composite {
 	        public String getValue(Payment payment) {
 				AgreementExtra extra = agreement.getExtraPayment(payment.getId());
 				if(null != extra && !extra.isDeleted() && payment.getType().equals(Payment.Type.CRA_0004))
-					return extra.getIssueDate() + " (" +  getPayDescription(payment) + ")";
+					return extra.getIssueDate() + (readOnly ? " (" + getPayDescription(payment) + ")" : "");
 				else return "Prorrat.";
 				
 	        }
@@ -748,6 +769,12 @@ public abstract class AgreementPreview extends Composite {
 	        public String getValue(Payment payment) {
 	    		return payment.getName();
 	        }
+	    	
+	    	@Override
+	    	public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+	    		if(null != payment)
+	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + payment.getName() + "\" >" + payment.getName() + "</div>");
+	    	}
 		};
 
 		conceptColumn.setSortable(true);
@@ -759,6 +786,12 @@ public abstract class AgreementPreview extends Composite {
 			public String getValue(Payment payment) {
 				return payment.getDescription();
 			}
+	    	
+	    	@Override
+	    	public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+	    		if(null != payment)
+	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + payment.getDescription() + "\" >" + payment.getDescription() + "</div>");
+	    	}
 		};
 		
 		descriptionColumn.setSortable(true);
@@ -769,9 +802,49 @@ public abstract class AgreementPreview extends Composite {
 	        public String getValue(Payment payment) {
 	    		return getParsedExpression(payment.getExpression());
 	        }
+	    	
+	    	@Override
+	    	public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+	    		if(null != payment)
+	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + getParsedExpression(payment.getExpression()) + "\" >" + getParsedExpression(payment.getExpression()) + "</div>");
+	    	}
 		};
 
 	    expressionColumn.setSortable(true);
+	    
+	    List<String> periodicities = new ArrayList<>();
+	    periodicities.add("Anual");
+	    periodicities.add("Semestral");
+	    periodicities.add("Prorrat.");
+	    
+	    SelectionCell periodicityCell = new SelectionCell(periodicities);
+	    Column<Payment, String> periodicityColumn = new Column<Payment, String>(periodicityCell) {
+	    	@Override
+	    	public String getValue(Payment payment) {
+	    		return getPayLongDescription(payment);
+	    	}
+	    	
+	    	@Override
+	    	public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
+	    		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
+	    		if(null == extra || extra.isDeleted() || readOnly) sb.appendHtmlConstant("<div></div>");
+	    		else super.render(context, payment, sb);
+	    	}
+		};
+		
+		periodicityColumn.setFieldUpdater(new FieldUpdater<Payment, String>() {
+			
+			@Override
+			public void update(int index, Payment payment, String periodicity) {
+				if(!readOnly) {
+					checkPaymentExtra(payment, periodicity);
+					agreementExtraPaymentDG.redraw();
+					setHasChange(true);
+				}
+			}
+		});
+		
+		agreementExtraPaymentDG.setColumnWidth(periodicityColumn, 120, Unit.PX);
 	    
 	    // Info column.
 	    ActionCell<Payment> infoActionCell = new ActionCell<>("", payment -> {
@@ -880,6 +953,7 @@ public abstract class AgreementPreview extends Composite {
 		agreementExtraPaymentDG.addColumn(conceptColumn, "Concepto");
 		agreementExtraPaymentDG.addColumn(descriptionColumn, "Descripci\u00F3n");
 		agreementExtraPaymentDG.addColumn(expressionColumn, "Expresi\u00F3n");
+		agreementExtraPaymentDG.addColumn(periodicityColumn, "");
 		
 		agreementExtraPaymentDG.addColumn(infoColumn, "");
 		agreementExtraPaymentDG.addColumn(visibilityColumn, "Estado");  
@@ -1618,6 +1692,83 @@ public abstract class AgreementPreview extends Composite {
 			return "Revisar esta extra!!";
 		}
 	}
+
+	private void checkPaymentExtra(Payment payment, String periodicity) {
+		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
+		
+		if(null != extra) {
+			if(AonStringUtils.equals(periodicity, "Prorrat.")) extra.setDeleted(true);
+			else if(AonStringUtils.equals(periodicity, "Anual")) checkAnualExtra(extra);
+			else if(AonStringUtils.equals(periodicity, "Semestral")) checkSemestralExtra(extra);
+			
+			payment.setModify(true);
+		}
+	}
+	
+	private void checkAnualExtra(AgreementExtra extra) {
+		extra.setDeleted(false);
+		String issueDate = extra.getIssueDate();
+		if(AonStringUtils.isNotBlank(issueDate)) {
+			if(AonStringUtils.contains(issueDate, "03")) {
+				extra.setStartDate("01/01 -1");
+				extra.setEndDate("31/12 -1");
+			} else if(AonStringUtils.contains(issueDate, "06") || AonStringUtils.contains(issueDate, "07")) {
+				extra.setStartDate("01/07 -1");
+				extra.setEndDate("30/06");
+			} else if(AonStringUtils.contains(issueDate, "12")) {
+				extra.setStartDate("01/01");
+				extra.setEndDate("31/12");
+			} 
+		}
+	}
+
+	private void checkSemestralExtra(AgreementExtra extra) {
+		extra.setDeleted(false);
+		String issueDate = extra.getIssueDate();
+		if(AonStringUtils.isNotBlank(issueDate)) {
+			if(AonStringUtils.contains(issueDate, "03")) {
+				extra.setStartDate("01/07 -1");
+				extra.setEndDate("31/12 -1");
+			} else if(AonStringUtils.contains(issueDate, "06") || AonStringUtils.contains(issueDate, "07")) {
+				extra.setStartDate("01/01");
+				extra.setEndDate("30/06");
+			} else if(AonStringUtils.contains(issueDate, "12")) {
+				extra.setStartDate("01/07");
+				extra.setEndDate("31/12");
+			} 
+		}
+		
+	}
+
+	private String getPayLongDescription(Payment payment) {
+		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
+		
+		if(	null == extra && 
+				(payment.getType().equals(Payment.Type.CRA_0004) || 
+				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrat.";
+		
+		return (extra == null || extra.isDeleted()) ? "Prorrat." : getExtraPeriodLongTitle(extra);
+	}
+	
+	private String getExtraPeriodLongTitle(AgreementExtra extra) {
+		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) return "Anual";
+		
+		try {
+			int startMonth = Integer.parseInt(extra.getStartDate().split("/")[1]);
+			int endMonth = Integer.parseInt(extra.getEndDate().split("/")[1]);
+			
+			switch (endMonth - startMonth) {
+			case 11:
+				return "Anual";
+			case 5:
+				return "Semestral";
+			default:
+				return "Anual";
+			}
+		} catch (Exception e) {
+			return "Anual";
+		}
+	}
 	
 	private String getExtraInfoTitle(Payment payment) {
 		String title = "";
@@ -1636,7 +1787,7 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private String getParsedExpression(String expression) {
-		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
+//		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
 		return SpecialExpresion.parse(expression).getInput();
 	}
 	
