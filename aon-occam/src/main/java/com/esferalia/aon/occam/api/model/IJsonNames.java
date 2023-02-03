@@ -362,6 +362,7 @@ public final class IJsonNames {
 	public static final String PAID = "paid";
 	public static final String PARAMS = "params";
 	public static final String PARENT = "parent";
+	public static final String PARENT_DOMAIN = "parentDomain";
 	public static final String PARENT_ID = "parentId";
 	public static final String PASSWORD = "password";
 	public static final String PATTERN = "pattern";
