@@ -520,7 +520,8 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 					undefPayments.add(new SimpleContractPayment(p));
 				}catch (ExpressionException e) {
 				}catch (CompileException | ConversionException e) {
-					expressionContext.setVariable(p.getName(), 0.00, paymentStart, paymentEnd);
+				    	if (AonStringUtils.isNotBlank(p.getName()))
+				    	    expressionContext.setVariable(p.getName(), 0.00, paymentStart, paymentEnd);
 				}
 			}
 		}
