@@ -2336,7 +2336,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY,2023);
 		double cgpBase = getValue("cgpBaseLabel");
 		assertText("unemployment", cgpBase*1.60/100.00);
+		click("costsCheck-input");
 		assertText("unemployment_cost", cgpBase*6.70/100.00);
+		click("costsCheck-input");
 		
 	}
 
