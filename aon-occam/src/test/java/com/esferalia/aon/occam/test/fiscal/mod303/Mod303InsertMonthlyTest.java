@@ -54,9 +54,9 @@ public class Mod303InsertMonthlyTest extends Mod303AbstractTest {
 					getMod303SuitableResult(aeat), getMod303SuitableResult(gipuzkoa));
 		}
 		
-//		Mod303 navarra = insertModel( params.setAdministration(Administration.NAVARRA));
-//		Asserts.assertEqualsDouble("Navarra " + navarra.getModelFullName() + ". Resultado no coincide.", 
-//				getMod303SuitableResult(aeat), getMod303SuitableResult(navarra));
+		Mod303 navarra = insertModel( params.setAdministration(Administration.NAVARRA));
+		Asserts.assertEqualsDouble("Navarra " + navarra.getModelFullName() + ". Resultado no coincide.", 
+				getMod303SuitableResult(aeat), getMod303SuitableResult(navarra));
 	}
 
 }

@@ -31,22 +31,26 @@ import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-class Mod303NAVARRA2022Declaration extends Mod303NAVARRA {
+class Mod303NAVARRA2023Declaration extends Mod303NAVARRA {
 	
-	protected Mod303NAVARRA2022Declaration() {
+	protected Mod303NAVARRA2023Declaration() {
 		
 	}
 	
-	public static final double PERCENT1 = 21.0;
-	public static final double PERCENT2 = 10.0;
-	public static final double PERCENT3 = 4.0;
-	public static final double SURCHARGE_PERCENT1 = 5.2;
-	public static final double SURCHARGE_PERCENT2 = 1.75;
-	public static final double SURCHARGE_PERCENT3 = 1.4;
-	public static final double SURCHARGE_PERCENT4 = 0.5;
+	public static final double PERCENT_21 = 21.0;
+	public static final double PERCENT_10 = 10.0;
+	public static final double PERCENT_4 = 4.0;
+	public static final double PERCENT_5 = 5.0;
+	public static final double PERCENT_0 = 0.0;
+	public static final double SURCHARGE_PERCENT_52 = 5.2;
+	public static final double SURCHARGE_PERCENT_175 = 1.75;
+	public static final double SURCHARGE_PERCENT_14 = 1.4;
+	public static final double SURCHARGE_PERCENT_05 = 0.5;
+	public static final double SURCHARGE_PERCENT_062 = 0.62;
+	public static final double SURCHARGE_PERCENT_0 = 0.0;
 	
 	public static boolean accept(Mod303 mod) {
-		return mod.isNavarra() && mod.getYear() == 2022;
+		return mod.isNavarra() && mod.getYear() >= 2023;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{
@@ -64,7 +68,7 @@ class Mod303NAVARRA2022Declaration extends Mod303NAVARRA {
 		 CM_020(Mod303Key.CM_020)
 		,CM_021(Mod303Key.CM_021)
 		,NF_I00(Mod303Key.NF_I00
-			 ,null,null,Mod303NAVARRA2022Declaration::addDeponentDocument,null,null)
+			 ,null,null,Mod303NAVARRA2023Declaration::addDeponentDocument,null,null)
 		,NF_I01(Mod303Key.NF_I01)
 
 		// ---------------------------------------------------------------
@@ -83,68 +87,68 @@ class Mod303NAVARRA2022Declaration extends Mod303NAVARRA {
 		,NF_171(Mod303Key.NF_171)
 		
 		,NF_003(Mod303Key.NF_003
-			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent1(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_003,mod,vat.getBase())
 			,null,null,null)
-		,NF_X03(Mod303Key.NF_X03,null,null,(ctx,mod) -> add(Mod303Key.NF_X03,mod,PERCENT1),null,null)
+		,NF_X03(Mod303Key.NF_X03,null,null,(ctx,mod) -> add(Mod303Key.NF_X03,mod,PERCENT_21),null,null)
 		,NF_013(Mod303Key.NF_013
-			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent1(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_013,mod,vat.getQuota())
 			,null,null,null)
 		,NF_004(Mod303Key.NF_004
-			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent2(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_004,mod,vat.getBase())
 			,null,null,null)
-		,NF_X04(Mod303Key.NF_X04,null,null,(ctx,mod) -> add(Mod303Key.NF_X04,mod,PERCENT2),null,null)
+		,NF_X04(Mod303Key.NF_X04,null,null,(ctx,mod) -> add(Mod303Key.NF_X04,mod,PERCENT_10),null,null)
 		,NF_014(Mod303Key.NF_014
-			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent2(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_014,mod,vat.getQuota())
 			,null,null,null)
 		,NF_005(Mod303Key.NF_005
-			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent3(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_005,mod,vat.getBase())
 			,null,null,null)
-		,NF_X05(Mod303Key.NF_X05,null,null,(ctx,mod) -> add(Mod303Key.NF_X05,mod,PERCENT3),null,null)
+		,NF_X05(Mod303Key.NF_X05,null,null,(ctx,mod) -> add(Mod303Key.NF_X05,mod,PERCENT_4),null,null)
 		,NF_015(Mod303Key.NF_015
-			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent3(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_015,mod,vat.getQuota())
 			,null,null,null)
 				
 		
 		,NF_006(Mod303Key.NF_006
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent1(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent52(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_006,mod,vat.getBase())
 			,null,null,null)
-		,NF_X06(Mod303Key.NF_X06,null,null,(ctx,mod) -> add(Mod303Key.NF_X06,mod,SURCHARGE_PERCENT1),null,null)
+		,NF_X06(Mod303Key.NF_X06,null,null,(ctx,mod) -> add(Mod303Key.NF_X06,mod,SURCHARGE_PERCENT_52),null,null)
 		,NF_016(Mod303Key.NF_016
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent1(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent52(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_016,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		,NF_051(Mod303Key.NF_051
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent2(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent175(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_051,mod,vat.getBase())
 			,null,null,null)
-		,NF_X51(Mod303Key.NF_X51,null,null,(ctx,mod) -> add(Mod303Key.NF_X51,mod,SURCHARGE_PERCENT2),null,null)
+		,NF_X51(Mod303Key.NF_X51,null,null,(ctx,mod) -> add(Mod303Key.NF_X51,mod,SURCHARGE_PERCENT_175),null,null)
 		,NF_052(Mod303Key.NF_052
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent2(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent175(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_052,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		,NF_007(Mod303Key.NF_007
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent3(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent14(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_007,mod,vat.getBase())
 			,null,null,null)
-		,NF_X07(Mod303Key.NF_X07,null,null,(ctx,mod) -> add(Mod303Key.NF_X07,mod,SURCHARGE_PERCENT3),null,null)
+		,NF_X07(Mod303Key.NF_X07,null,null,(ctx,mod) -> add(Mod303Key.NF_X07,mod,SURCHARGE_PERCENT_14),null,null)
 		,NF_017(Mod303Key.NF_017
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent3(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent14(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_017,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		,NF_008(Mod303Key.NF_008
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent4(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent05(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_008,mod,vat.getBase())
 			,null,null,null)
-		,NF_X08(Mod303Key.NF_X08,null,null,(ctx,mod) -> add(Mod303Key.NF_X08,mod,SURCHARGE_PERCENT4),null,null)
+		,NF_X08(Mod303Key.NF_X08,null,null,(ctx,mod) -> add(Mod303Key.NF_X08,mod,SURCHARGE_PERCENT_05),null,null)
 		,NF_018(Mod303Key.NF_018
-			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent4(vat)
+			,(mod,vat) -> isCommonNationalSales(vat) && vat.isSurcharge() && hasSurchargePercent05(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.NF_018,mod,vat.getSurchargeQuota())
 			,null,null,null)
 		
@@ -359,14 +363,15 @@ class Mod303NAVARRA2022Declaration extends Mod303NAVARRA {
 			&& vat.isSales() 
 			&& !vat.isRectification();
 	}
-	private static boolean hasPercent1(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT1;	
+	private static boolean hasPercent21(VatContext vat) {
+		return vat.getPercentage() ==  PERCENT_21;	
 	}
-	private static boolean hasPercent2(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT2; 	
+	private static boolean hasPercent10(VatContext vat) {
+		return vat.getPercentage() ==  PERCENT_10; 	
 	}
-	private static boolean hasPercent3(VatContext vat) {
-		return vat.getPercentage() ==  PERCENT3; 	
+	private static boolean hasPercent4(VatContext vat) {
+		return vat.getPercentage() ==  PERCENT_4
+			|| vat.getPercentage() ==  PERCENT_5; 	
 	}
 	private static boolean isIntracommunitySales(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && vat.isIntracommunitySales();	
@@ -392,17 +397,19 @@ class Mod303NAVARRA2022Declaration extends Mod303NAVARRA {
 			|| (vat.isCanCeuMelPurchase() && vat.isService()));
 	}
 			
-	private static boolean hasSurchargePercent1(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT1; 
+	private static boolean hasSurchargePercent52(VatContext vat) {
+		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_52; 
 	}
-	private static boolean hasSurchargePercent2(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT2; 
+	private static boolean hasSurchargePercent175(VatContext vat) {
+		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_175; 
 	}
-	private static boolean hasSurchargePercent3(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT3;
+	private static boolean hasSurchargePercent14(VatContext vat) {
+		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_14;
 	}
-	private static boolean hasSurchargePercent4(VatContext vat) {
-		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT4;
+	private static boolean hasSurchargePercent05(VatContext vat) {
+		return vat.getSurchargePercent() ==  SURCHARGE_PERCENT_05
+			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_062
+			|| vat.getSurchargePercent() ==  SURCHARGE_PERCENT_0;
 	}
 	private static boolean adqIntracomunitariasFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 

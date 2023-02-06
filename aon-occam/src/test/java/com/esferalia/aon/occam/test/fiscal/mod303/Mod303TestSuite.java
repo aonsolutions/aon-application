@@ -25,12 +25,12 @@ import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
 	InsertRandomInvoicesTest.class,
 	Mod303InsertMonthlyTest.class,
 //
-//	InsertRandomInvoicesTest.class,
-//	Mod303InsertMonthlyComplementaryTest.class,
-//	
-//	InsertRandomInvoicesTest.class,
-//	Mod303InsertMonthlyReplacementTest.class,
-//
+	InsertRandomInvoicesTest.class,
+	Mod303InsertMonthlyComplementaryTest.class,
+	
+	InsertRandomInvoicesTest.class,
+	Mod303InsertMonthlyReplacementTest.class,
+
 //	Mod303ReopenTest.class,					// Pendiente
 //	Mod303DeleteTest.class,
 //	
