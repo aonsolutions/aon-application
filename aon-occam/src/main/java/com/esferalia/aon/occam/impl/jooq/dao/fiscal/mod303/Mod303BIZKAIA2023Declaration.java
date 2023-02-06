@@ -227,36 +227,36 @@ class Mod303BIZKAIA2023Declaration extends Mod303BIZKAIA {
 		// ---------------------------------------------------------------
 
 		// Compras de bienes corrientes al 4%
-		,BZ_C050	(Mod303Key.BZ_C050,(mod,vat) -> isCommonAssetPurchase(vat) && hasPercent4(vat)
+		,BZ_C050	(Mod303Key.BZ_C050,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C050,mod,vat.getBase()))
 		,BZ_X050	(Mod303Key.BZ_X050,null,null,(ctx,mod) -> add(Mod303Key.BZ_X050,mod,PERCENT_4))
-		,BZ_C051	(Mod303Key.BZ_C051,(mod,vat) -> isCommonAssetPurchase(vat) && hasPercent4(vat)
+		,BZ_C051	(Mod303Key.BZ_C051,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C051,mod,vat.getQuota()))
-		,BZ_C052	(Mod303Key.BZ_C052,(mod,vat) -> isCommonAssetPurchase(vat) && hasPercent4(vat)
+		,BZ_C052	(Mod303Key.BZ_C052,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent4(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C052,mod,vat))
 		// Compras de bienes corrientes al 5%
-		,BZ_C112	(Mod303Key.BZ_C112,(mod,vat) -> isCommonAssetPurchase(vat) && hasPercent5(vat)
+		,BZ_C112	(Mod303Key.BZ_C112,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent5(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C112,mod,vat.getBase()))
-		,BZ_X112	(Mod303Key.BZ_X112,null,null,(ctx,mod) -> add(Mod303Key.BZ_X050,mod,PERCENT_5))
-		,BZ_C113	(Mod303Key.BZ_C113,(mod,vat) -> isCommonAssetPurchase(vat) && hasPercent5(vat)
+		,BZ_X112	(Mod303Key.BZ_X112,null,null,(ctx,mod) -> add(Mod303Key.BZ_X112,mod,PERCENT_5))
+		,BZ_C113	(Mod303Key.BZ_C113,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent5(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C113,mod,vat.getQuota()))
-		,BZ_C114	(Mod303Key.BZ_C114,(mod,vat) -> isCommonAssetPurchase(vat) && hasPercent5(vat)
+		,BZ_C114	(Mod303Key.BZ_C114,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent5(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C114,mod,vat))
 		// Compras de bienes corrientes al 10%
-		,BZ_C053	(Mod303Key.BZ_C053,(mod,vat) -> isCommonAssetPurchase(vat) && hasPercent10(vat) 
+		,BZ_C053	(Mod303Key.BZ_C053,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent10(vat) 
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C053,mod,vat.getBase()))
 		,BZ_X053	(Mod303Key.BZ_X053,null,null,(ctx,mod) -> add(Mod303Key.BZ_X053,mod,PERCENT_10))
-		,BZ_C054	(Mod303Key.BZ_C054,(mod,vat) -> isCommonAssetPurchase(vat) && hasPercent10(vat)
+		,BZ_C054	(Mod303Key.BZ_C054,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent10(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C054,mod,vat.getQuota()))
-		,BZ_C055	(Mod303Key.BZ_C055,(mod,vat) -> isCommonAssetPurchase(vat) && hasPercent10(vat)
+		,BZ_C055	(Mod303Key.BZ_C055,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent10(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C055,mod,vat))
 		// Compras de bienes corrientes al 21%
-		,BZ_C056	(Mod303Key.BZ_C056,(mod,vat) -> isCommonAssetPurchase(vat) && hasPercent21(vat)
+		,BZ_C056	(Mod303Key.BZ_C056,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C056,mod,vat.getBase()))
 		,BZ_X056	(Mod303Key.BZ_X056,null,null,(ctx,mod) -> add(Mod303Key.BZ_X056,mod,PERCENT_21))
-		,BZ_C057	(Mod303Key.BZ_C057,(mod,vat) -> isCommonAssetPurchase(vat) && hasPercent21(vat)
+		,BZ_C057	(Mod303Key.BZ_C057,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent21(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C057,mod,vat.getQuota()))
-		,BZ_C058	(Mod303Key.BZ_C058,(mod,vat) -> isCommonAssetPurchase(vat) && hasPercent21(vat)
+		,BZ_C058	(Mod303Key.BZ_C058,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasPercent21(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C058,mod,vat))
 		// Compras de bienes corrientes al Reg. Agricultura
 		,BZ_C059	(Mod303Key.BZ_C059,(mod,vat) -> isCommonAssetPurchaseFarmer(vat)
@@ -266,11 +266,11 @@ class Mod303BIZKAIA2023Declaration extends Mod303BIZKAIA {
 		,BZ_C061	(Mod303Key.BZ_C061,(mod,vat) -> isCommonAssetPurchaseFarmer(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C061,mod,vat))
 		// Compras de bienes corrientes a otro tipo
-		,BZ_C062	(Mod303Key.BZ_C062,(mod,vat) -> isCommonAssetPurchase(vat) && hasOtherPercent(vat)
+		,BZ_C062	(Mod303Key.BZ_C062,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasOtherPercent(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C062,mod,vat.getBase()))
-		,BZ_C063	(Mod303Key.BZ_C063,(mod,vat) -> isCommonAssetPurchase(vat) && hasOtherPercent(vat)
+		,BZ_C063	(Mod303Key.BZ_C063,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasOtherPercent(vat)
 			,(ctx,mod,vat) -> add(Mod303Key.BZ_C063,mod,vat.getQuota()))
-		,BZ_C064	(Mod303Key.BZ_C064,(mod,vat) -> isCommonAssetPurchase(vat) && hasOtherPercent(vat)
+		,BZ_C064	(Mod303Key.BZ_C064,(mod,vat) -> isCommonAssetPurchase(mod,vat) && hasOtherPercent(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod303Key.BZ_C064,mod,vat))
 		// Compras de bienes corrientes TOTAL
 		,BZ_C065	(Mod303Key.BZ_C065,null,null,null,"BZ_C050+BZ_C112+BZ_C053+BZ_C056+BZ_C059+BZ_C062",null)
@@ -485,17 +485,19 @@ class Mod303BIZKAIA2023Declaration extends Mod303BIZKAIA {
 	//	-----------------------------------------------------------------------	
 	//	--------------------------------------------------------------- FILTROS	
 	//	-----------------------------------------------------------------------
-	private static boolean isCommonAssetPurchase(VatContext vat) {
+	private static boolean isCommonAssetPurchase(Mod303 mod, VatContext vat) {
 		return vat.isPurchase() 
 			&& !vat.isService() 
-			&& vat.isVatGeneralRegime(VATRegime.GENERAL) 
+			&& vat.isVatGeneralRegime(VATRegime.GENERAL)
 			&& !vat.isVatSurchargeRegime() 
 			&& !vat.isFarmerRegime() 
-			&& !vat.isInvestment();
+			&& !vat.isInvestment()
+			&& (!(vat.isExtracommunityPurchase() || vat.isCanCeuMelPurchase())
+				|| importacionesFilter(vat, mod))
+			;
 	}
 	private static boolean isCommonAssetPurchaseFarmer(VatContext vat) {
 		return vat.isPurchase() 
-			&& !vat.isService() 
 			&& vat.isVatGeneralRegime(VATRegime.GENERAL) 
 			&& !vat.isVatSurchargeRegime() 
 			&& vat.isFarmerRegime() 
@@ -511,7 +513,6 @@ class Mod303BIZKAIA2023Declaration extends Mod303BIZKAIA {
 	private static boolean isInvestment(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 			&& !vat.isVatSurchargeRegime() 
-			&& !vat.isFarmerRegime() 
 			&& vat.isInvestment() 
 			&& vat.isInput();
 	}
@@ -569,7 +570,6 @@ class Mod303BIZKAIA2023Declaration extends Mod303BIZKAIA {
 	private static boolean adqIntracomunitariasFilter(VatContext vat) {
 		return vat.isVatGeneralRegime(VATRegime.GENERAL) 
 			&& !vat.isVatSurchargeRegime()
-//			&& !vat.isService()
 			&& (vat.isIntracommunityPurchase()
 			 || vat.isIntracommunityExpenses()					
 					);
