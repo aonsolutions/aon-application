@@ -357,6 +357,7 @@ public abstract class AgreementPreview extends Composite {
 	private AonToolbarButton printPreviewButton;
 	private AonToolbarButton serviAgreementUpdateButton;
 	private AonToolbarButton agreementInfoButton;
+	private AonToolbarButton undoAllButton;
 	
 	private boolean hasChange = false;
 	private boolean workplaceView = false;
@@ -1990,7 +1991,6 @@ public abstract class AgreementPreview extends Composite {
 		
 		saveBtn = new AonToolbarSmallButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
 		saveBtn.ensureDebugId("acceptButton");
-		setHasChange(false);
 		saveBtn.addClickHandler(e -> {
 			showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
 			setHasChange(false);
@@ -2166,6 +2166,32 @@ public abstract class AgreementPreview extends Composite {
 		
 		toolbar.add(showOlPaymentsButton);
 		
+		undoAllButton = new AonToolbarButton(AON.MSG.undo(), AON.CSS.aonIconUndoAll());
+		undoAllButton.ensureDebugId("undoAllButton");
+		setHasChange(false);
+		undoAllButton.addClickHandler(e -> {
+			AonDialog deleteDialog = new AonDialog("Restaurar convenio", new HTMLPanel("\u00bfDesea realmente deshacer los cambios sin guardar del convenio <b>" + toolbar.getTitle() + "</b>\u003f"));
+			deleteDialog.setGlassStyleName(style.dialogGlass());
+			deleteDialog.addStyleName(style.dialogZIndex());
+			deleteDialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Not use here
+				}
+				
+				@Override
+				public void onAccept() {
+					showLoading("Deshaciendo cambios " + toolbar.getTitle() + " ...");
+					setHasChange(false);
+					reloadAgreement();
+				}
+			});
+		});
+		
+		toolbar.add(undoAllButton);
+		
+		
 		agreementInfoButton = new AonToolbarButton("Informaci\u00f3n Convenio", AON.CSS.aonIconInfo());
 		agreementInfoButton.ensureDebugId("infoButton");
 		agreementInfoButton.addClickHandler(e -> 
@@ -2256,6 +2282,9 @@ public abstract class AgreementPreview extends Composite {
 			printPreview();
 		});
 		toolbar.add(printPreviewButton);
+		
+		setHasChange(false);
+		
 	}
 	
 	private void showCategoryButtons() {
@@ -2309,6 +2338,7 @@ public abstract class AgreementPreview extends Composite {
 	
 	private void showReadOnlyButtons() {
 		saveBtn.setVisible(false);
+		undoAllButton.setVisible(false);
 		
 		newLevelBtn.setVisible(false);
 		
@@ -2503,6 +2533,7 @@ public abstract class AgreementPreview extends Composite {
 		calcDiscPanelHeightsEmployee();
 		createAgreementGoToBtn();
 		saveBtn.setVisible(false);
+		undoAllButton.setVisible(false);
 	}
 
 	private void filterLevel(Integer levelId) {
@@ -2520,6 +2551,7 @@ public abstract class AgreementPreview extends Composite {
 		calcDiscPanelHeightsPayroll();
 		createAgreementGoToBtn();
 		saveBtn.setVisible(false);
+		undoAllButton.setVisible(false);
 	}
 	
 	private void blockElements() {
@@ -2531,6 +2563,7 @@ public abstract class AgreementPreview extends Composite {
 	
 	private void hideToolbarButtons() {
 		saveBtn.addStyleName(style.displayNone());
+		undoAllButton.addStyleName(style.displayNone());
 		serviAgreementUpdateButton.addStyleName(style.displayNone());
 		printPreviewButton.addStyleName(style.displayNone());
 		agreementInfoButton.addStyleName(style.displayNone());
@@ -2662,9 +2695,12 @@ public abstract class AgreementPreview extends Composite {
 	public void setHasChange(boolean hasChange) {
 		this.hasChange = hasChange;
 		saveBtn.setEnabled(hasChange());
+		undoAllButton.setEnabled(hasChange());
 		if(!hasChange()) {
 			saveBtn.getElement().getStyle().setDisplay(Display.BLOCK);
 			saveBtn.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+			undoAllButton.getElement().getStyle().setDisplay(Display.BLOCK);
+			undoAllButton.getElement().getStyle().setVisibility(Visibility.VISIBLE);
 		}
 	}
 	
@@ -2705,6 +2741,7 @@ public abstract class AgreementPreview extends Composite {
 		if(readOnly) {
 			showReadOnlyButtons();
 			saveBtn.setVisible(false);
+			undoAllButton.setVisible(false);
 			datesLB.setVisible(true);
 		}
 	}

@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.client;
 import static com.esferalia.aon.gwt.payroll.client.Constants.DESCRIPTION_MAX_LENGTH;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +119,6 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		paymentDescriptionOracle = new MultiWordSuggestOracle();
 		paymentSuggestionDisplay = new PaymentSuggestionDisplay();
 		
-		initializePayment();
 		initializePaymentType();
 		
 		impl.getAvailablePayments(Integer.MAX_VALUE, new AsyncCallback<List<Payment>>() {
@@ -155,9 +155,14 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		int newPaymentId = rand.nextInt(1000) * -1;
 		if(newPaymentId > 0) newPaymentId = newPaymentId * -1;
 		this.payment.setId(newPaymentId);
+		
+		Date defaultStartDate = new Date(1970 - 1900, 0, 1);
+		payment.setStartDate(defaultStartDate);
 	}
 	
 	private void initialiazePaymentByConcept(Payment concept) {
+		initializePayment();
+		
 		payment.setType(concept.getType());
 		payment.setName(concept.getName());
 		payment.setConceptId(concept.getId());
@@ -174,6 +179,8 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	}
 	
 	private void initialiazePaymentByConceptDescription(String conceptDescription) {
+		initializePayment();
+		
 		payment.setType(Payment.Type.CRA_0001);
 		payment.setName(conceptDescription);
 		payment.setSalaryType(Salary.Type.SALARY);
@@ -181,6 +188,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		paymentTypeLB.setSelected(payment.getType());
 		paymentDescriptionTB.setValue(payment.getDescription());
 		paymentExpressionTB.setValue(payment.getExpression());
+		
 	}
 
 	private void setPaymentType(Type type) {
@@ -250,7 +258,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 				setEnabled(acceptBtn, true);
 				setEnabled(manualAgreement, false);
 				
-			} else {
+			} else if(payment == null) {
 				hideMessage();
 				initialiazePaymentByConceptDescription(descriptionSuggest.getValue());
 				

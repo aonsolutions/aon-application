@@ -531,6 +531,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	private void fillPayment() {
 		paymentTypeLB.setSelected(this.payment.getType());
+		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTypeLB);
+		
 		paymentConceptSB.setValue(this.payment.getName());
 		paymentDescriptionTB.setValue(this.payment.getDescription());
 		paymentExpressionTB.setValue(getParsedExpression(this.payment.getExpression()));
@@ -568,8 +570,6 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		
 		startDateBx.setValue(this.payment.getStartDate());
 		endDateBx.setValue(this.payment.getEndDate());
-		
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), paymentTypeLB);
 		
 		getEnableDisableButton(enterpriseTaxed, AonStringUtils.isNotBlank(irpfExpression) && AonStringUtils.equalsIgnoreCase(irpfExpression, "BASE_CTA_ESP=_P"));
 		if(isActiveToggleButton(enterpriseTaxed)) paymentTaxedExpression.setValue("BASE_CTA_ESP=_P");
