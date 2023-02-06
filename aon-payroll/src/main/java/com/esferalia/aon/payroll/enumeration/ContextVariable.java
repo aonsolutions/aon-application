@@ -117,6 +117,8 @@ public enum ContextVariable implements IResourceable {
 	CGC_BASE_MIN("BASE_CGC_MIN", VariableType.DOUBLE),
 	CGC_BASE_MAX("BASE_CGC_MAX", VariableType.DOUBLE),
 	CGC_BASE_MIN_HOUR("BASE_CGC_MIN_HORA", VariableType.DOUBLE),
+	MONEY_IRPF_BASE("BASE_IRPF_DINERO", VariableType.DOUBLE), 
+	INKIND_IRPF_BASE("BASE_IRPF_ESPECIE", VariableType.DOUBLE), 
 
 	CGP_BASE_MIN("BASE_CGP_MIN", VariableType.DOUBLE), CGP_BASE_MAX("BASE_CGP_MAX", VariableType.DOUBLE),
 	SENIOR_BASE("BASE_ANTIGUEDAD", VariableType.DOUBLE), STRUCTURAL_OVERTIME_BASE("BASE_ESTR", VariableType.DOUBLE),
@@ -355,9 +357,9 @@ public enum ContextVariable implements IResourceable {
 
 	HOURLY_BASE("BASE_HORARIA", VariableType.BOOLEAN, false),
 	
-	PAY_PRORRATED("PAGAS_PRORRATEADAS", VariableType.BOOLEAN)
+	PAY_PRORRATED("PAGAS_PRORRATEADAS", VariableType.BOOLEAN),
 	
-	
+	MONTHLY_ADJUST("AJUSTE_MENSUAL", VariableType.BOOLEAN)
 	
 	;
 

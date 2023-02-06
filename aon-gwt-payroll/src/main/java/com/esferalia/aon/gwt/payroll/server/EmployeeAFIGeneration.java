@@ -338,12 +338,14 @@ public final class EmployeeAFIGeneration {
 	
 	public static class MA{
 		FAB fab;
+		ODL odl;
 		OTD otd;
 		
-		public MA(FAB fab, OTD otd) {
+		public MA(FAB fab, OTD otd, ODL odl) {
 			super();
 			this.fab = fab;
 			this.otd = otd;
+			this.odl = odl;
 		}
 
 		public FAB getFab() {
@@ -357,6 +359,12 @@ public final class EmployeeAFIGeneration {
 		}
 		public void setOtd(OTD otd) {
 			this.otd = otd;
+		}
+		public ODL getOdl() {
+			return odl;
+		}
+		public void setOdl(ODL odl) {
+			this.odl = odl;
 		}
 		
 	}
@@ -555,6 +563,55 @@ public final class EmployeeAFIGeneration {
 		}
 		public String getWorker() {
 			return worker;
+		}
+		
+	}
+	
+	public static class ODL{
+		String odlHeader;
+		String convCollective;
+		String reserved6;
+		String cno;
+		String reservedN6;
+		String contribution;
+		String reserved31;
+		
+		public ODL( String cno ) {
+			this.odlHeader = "ODL";
+			this.convCollective = AonStringUtils.leftPad("", 14, '0');
+			this.reserved6 = AonStringUtils.rightPad("", 6, ' ');
+			this.cno = AonStringUtils.leftPad(cno, 4, '0');;
+			this.reservedN6 = AonStringUtils.rightPad("", 6, '0');
+			this.contribution = AonStringUtils.rightPad("", 6, '0');
+			this.reserved31 = AonStringUtils.rightPad("", 31, ' ');
+		}
+
+		public String getOdlHeader() {
+			return odlHeader;
+		}
+
+		public String getConvCollective() {
+			return convCollective;
+		}
+
+		public String getReserved6() {
+			return reserved6;
+		}
+
+		public String getCno() {
+			return cno;
+		}
+
+		public String getReservedN6() {
+			return reservedN6;
+		}
+
+		public String getContribution() {
+			return contribution;
+		}
+
+		public String getReserved31() {
+			return reserved31;
 		}
 		
 	}
@@ -853,12 +910,16 @@ public final class EmployeeAFIGeneration {
 					fabJson.get("employeeColective") == null ? "" : fabJson.get("employeeColective").toString(),
 					fabJson.get("gender").toString());
 			
+			JSONObject odlJson = (JSONObject) sdcJson.get("ODL");
+			ODL odl = new ODL(
+					odlJson.get("cno") == null ? "" : odlJson.get("cno").toString());
+			
 			JSONObject otdJson = (JSONObject) sdcJson.get("OTD");
 			OTD otd = new OTD(
 					otdJson.get("convCollective").toString(),
 					otdJson.get("endDate") == null ? "" : otdJson.get("endDate").toString());
 			
-			ma = new MA(fab, otd);
+			ma = new MA(fab, otd, odl);
 		}
 		
 		//EDC
@@ -1037,6 +1098,16 @@ public final class EmployeeAFIGeneration {
 					ma.getFab().getReserved11() +
 					ma.getFab().getRent() +
 					ma.getFab().getWorker() + 
+					"\r\n";
+			
+			employeeAFI +=
+					ma.getOdl().getOdlHeader() +
+					ma.getOdl().getConvCollective() +
+					ma.getOdl().getReserved6() +
+					ma.getOdl().getCno() +
+					ma.getOdl().getReservedN6() +
+					ma.getOdl().getContribution() +
+					ma.getOdl().getReserved31() +
 					"\r\n";
 			
 			employeeAFI +=

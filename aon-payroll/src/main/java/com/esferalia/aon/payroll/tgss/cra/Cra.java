@@ -713,7 +713,7 @@ public class Cra {
 					.where(CONTRACT.ID.eq(salaryRecords.get(i).get(SALARY.CONTRACT)))
 					.fetchOne(CONTRACT.SS_REGIME);
 			
-			if(ssRegime != (byte) 3)
+			if(ssRegime != null && ssRegime != (byte) 3)
 				continue;
 			
 			deletePos.add(i);

@@ -12,6 +12,7 @@ export const saveProduct = (data) => post(`${API_URL}/product`, data);
 export const saveItem = (data) => post(`${API_URL}/product/item`, data);
 // REGISTRY ITEM
 export const saveRegistryItem = (data) => post(`${API_URL}/product/ritem`, data);
+export const updateAllTargetItem = (data) => put(`${API_URL}/product/update-all-target-item`, data);
 
 
 

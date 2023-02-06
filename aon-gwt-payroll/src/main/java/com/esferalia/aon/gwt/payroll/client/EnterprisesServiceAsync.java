@@ -257,6 +257,8 @@ public interface EnterprisesServiceAsync {
 	
 	void checkAndUpdateServiAgreement(String currentDomainName, String currentUser, AgreementInfo agreement, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
+	void canUpdateServiAgreement(String currentDomainName, String currentUser, AgreementInfo agreement, AsyncCallback<Boolean> asyncCallback) throws IllegalArgumentException;
+	
 	void deletePayments(String currentDomainName, List<Integer> paymentIds, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
 	void getContext(String currentDomainName, AgreementInfo agreementInfo, AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException;

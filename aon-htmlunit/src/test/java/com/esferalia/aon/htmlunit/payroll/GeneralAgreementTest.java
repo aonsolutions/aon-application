@@ -138,10 +138,6 @@ public class GeneralAgreementTest {
 		
 		wait4(htmlPage, htmlPage -> "PAGAS ANUALES VERANO & NAVIDAD".equals(((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +"descriptionTextBox")).getValueAttribute()));
 		
-		HtmlDivision salaryTableTab = (HtmlDivision)getElementById("agreementSalaryTableTabButton");
-		LOGGER.warning("Cick on: " + salaryTableTab.asNormalizedText());
-		htmlPage = salaryTableTab.click();
-		
 		wait4Id("category_filter");
 		
 		setValue("textBox_SALARIO_MENSUAL_I", "666.66");

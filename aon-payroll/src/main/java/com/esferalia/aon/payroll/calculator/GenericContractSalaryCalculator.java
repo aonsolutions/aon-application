@@ -22,11 +22,14 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_BASES;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ERE_FACTORS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.INKIND_IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IN_KIND;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_CTA_ESP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONEY_IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTHLY_PAYMENTS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
@@ -779,7 +782,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			Date irpfDate = ctx.getIrpfDate();
 			expressionContext.setVariable(IRPF_BASE, taxCalculator.getIrpfBase(), irpfDate, irpfDate);
-			
+
 			undefTotalPayments.sort((p1,p2)-> AonNumberUtils.compare(p1.getId(),p2.getId() ) );
 			for (UndefPayment undefTotalPayment : undefTotalPayments) {
 				try {
@@ -804,6 +807,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			salaryBuilder.setMoneyIrpfBase(taxCalculator.getMoneyIrpfBase());
 			salaryBuilder.setInkindIrpfBase(taxCalculator.getInKindIrpfBase());
 			expressionContext.setVariable(IRPF_BASE, taxCalculator.getIrpfBase(), irpfDate, irpfDate);
+			expressionContext.setVariable(MONEY_IRPF_BASE, taxCalculator.getMoneyIrpfBase(), irpfDate, irpfDate);
+			expressionContext.setVariable(INKIND_IRPF_BASE, taxCalculator.getInKindIrpfBase(), irpfDate, irpfDate);
+			
+			double irpfCtaEsp = getValue(expressionContext, IRPF_CTA_ESP);
+    			expressionContext.removeVariable(IRPF_CTA_ESP);
+    			if ( irpfCtaEsp > 0.00 )
+    			    expressionContext.setVariable(IRPF_CTA_ESP, irpfCtaEsp, irpfDate, irpfDate);
+			
 
 			Double rawCgcbase = quoteCalculator.getRawCgcBase();
 			salaryBuilder.setRawCgcBase(rawCgcbase);
@@ -961,7 +972,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				if (type.isTaxDeduction()) {
 					deductionStart = ctx.getIrpfDate();
 					deductionEnd = ctx.getIrpfDate();
-
+					
+					if ( deductionEnd.after(end)) {
+					    expressionContext = new ExpressionContext(expressionContext) ;
+					    ContextFunctions.loadFunctions(expressionContext, deductionStart, deductionEnd);
+					}
+					
 				} else {
 					deductionStart = Period.max(contractDeduction.getStartDate(), start);
 					deductionEnd = Period.min(contractDeduction.getEndDate(), end);
@@ -1931,6 +1947,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 		return ret;
 
+	}
+
+	private static Double getValue(ExpressionContext expressionContext, ContextVariable var) {
+	    return expressionContext.getVariables(var).stream().collect(Collectors.summingDouble(v -> ((Number)v.getValue(v.getPeriod())).doubleValue()));
 	}
 
 	private static long getDays(Date valueStart, Date valueEnd) {

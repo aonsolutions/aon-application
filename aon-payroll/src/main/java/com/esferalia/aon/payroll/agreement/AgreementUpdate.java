@@ -121,6 +121,21 @@ public class AgreementUpdate {
 		
 		return agreementDates;
 	}
+	
+	// ---------------------------------------------------------- Can Update
+	
+	public static boolean canUpdateServiAgreement(String ssNumber, Integer lastDateYear) throws IllegalArgumentException {
+		String agreementCode = getServiAgreementCode(ssNumber, ServiAgreementsFilter.getServiAgreementsMap(true));
+		
+		if(AonStringUtils.isBlank(agreementCode))
+			throw new IllegalArgumentException("No se ha podido localizar el convenio que se desea actualizar");
+		
+		List<Integer> agreementYears = getAgreementYears(agreementCode);
+		
+		List<Integer> agreementImportYears = getAgreementImportYears(lastDateYear, agreementYears);
+		
+		return agreementImportYears != null && !agreementImportYears.isEmpty();
+	}
 
 	// ---------------------------------------------------------- Get Agreement
 
@@ -190,7 +205,7 @@ public class AgreementUpdate {
 	}
 	
 	private static List<Integer> getAgreementImportYears(Integer lastDateYear, List<Integer> agreementYears) {
-		return agreementYears.stream().filter(date -> date >= lastDateYear).collect(Collectors.toList());
+		return agreementYears.stream().filter(date -> date > lastDateYear).collect(Collectors.toList());
 //		return agreementYears.stream().filter(date -> date > lastDateYear).collect(Collectors.toList());/
 	}
 	
@@ -976,6 +991,9 @@ public class AgreementUpdate {
 		name = name.replaceAll("%", "");
 		name = name.replaceAll("-", "_");
 		name = name.replaceAll("\\+", "");
+		name = name.replaceAll("<", "");
+		name = name.replaceAll(">", "");
+		name = name.replaceAll("=", "");
 		
 		if(null != type)
 			switch (type) {

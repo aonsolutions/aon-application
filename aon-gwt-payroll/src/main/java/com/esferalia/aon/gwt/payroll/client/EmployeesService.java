@@ -251,8 +251,7 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	EmployeeStatus getEmployeeStatus(String domain, String user, Integer contractId);
 
-	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl,
-			boolean isTransform);
+	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, boolean isTransform) throws IllegalArgumentException;
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data);
 
@@ -368,5 +367,11 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 	
 	List<Certifica2Info> getSalariesOccam(String currentDomainName, String login, ITEmployee itEmployee, Date startDate,
 			Date endDate);
+
+	// ------------------------------------------------- Agreement ContextProvider
+	
+	ContextDescriptor getAgreementContext(String currentDomainName, int fxLevel, Date startDate, Date endDate) throws IllegalArgumentException;
+
+	List<Result> evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel) throws IllegalArgumentException, EvalException;
 
 }

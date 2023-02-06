@@ -1017,6 +1017,19 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		return returnList;
 	}
+	
+	@Override
+	public List<Result> evalAgreement(String domain, String expression, Date startDate, int levelId)
+			throws IllegalArgumentException, EvalException {
+		List<ITimedResult<Double>> results = eval(domain, expression, startDate, levelId, Double.class);
+
+		List<Result> returnList = new ArrayList<Result>(results.size());
+		for (ITimedResult<Double> result : results) {
+			returnList.add(new Result(cast(result), cast(result.getContext())));
+		}
+
+		return returnList;
+	}
 
 	@Override
 	public ContextDescriptor getContext(String domain, SalaryDraft salaryDraft) {
@@ -1028,6 +1041,12 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	public ContextDescriptor getContext(String domain, AgreementDraft agreementDraft, int levelId)
 			throws IllegalArgumentException {
 		return getDraftContext(domain, agreementDraft, levelId);
+	}
+	
+	@Override
+	public ContextDescriptor getAgreementContext(String domain, int levelId, Date startDate, Date endDate)
+			throws IllegalArgumentException {
+		return getAgreementDraftContext(domain, startDate, endDate, levelId);
 	}
 
 	@Override
@@ -3997,6 +4016,40 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		}
 
 	}
+	
+	private static <T> List<ITimedResult<T>> eval(String domain, String expression, Date startDate, int levelId,
+			Class<T> toType) throws EvalException {
+		Connection conn = null;
+
+		try {
+			conn = getConnection(domain);
+			ISalaryCalculatorContext ctx = getSalaryCalculatorContext(conn, startDate, -1);
+			return ctx.getExpressionContext().eval(expression, ctx.getStartDate(), ctx.getEndDate(), toType);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (InvalidVariables e) {
+			throw new EvalWarning(e.getMessage());
+		} catch (CheckException e) {
+			throw new EvalWarning(e.getMessage());
+		} catch (RemoveVariableError e) {
+			return Collections.emptyList();
+		} catch (UndefinedVariablesException e) {
+			throw new UnknownVariablesWarning(e.getVariableNames());
+		} catch (CompileException e) {
+			throw new EvalSyntaxErrorException(e.getMessage());
+		} catch (ExpressionException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnore) {
+
+				}
+			}
+		}
+
+	}
 
 	protected static ContextDescriptor getDraftContext(String domain, SalaryDraft draft) {
 		Connection conn = null;
@@ -4124,6 +4177,31 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			IContractSalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(conn, draft, levelId);
 
 			return getContext(conn, calculatorCtx, draft.getStartDate(), draft.getEndDate());
+
+		} catch (ExpressionException e) {
+			throw new IllegalArgumentException(e);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
+		}
+	}
+	
+	protected static ContextDescriptor getAgreementDraftContext(String domain, Date startDate, Date endDate, int levelId) {
+		Connection conn = null;
+		try {
+			conn = AonServletUtils.getConnection(domain);
+
+			IContractSalaryCalculatorContext calculatorCtx = getSalaryCalculatorContext(conn, startDate, levelId);
+
+			return getContext(conn, calculatorCtx, startDate, endDate);
 
 		} catch (ExpressionException e) {
 			throw new IllegalArgumentException(e);
@@ -5051,6 +5129,16 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		return getSalaryCalculatorContextImpl(conn, draft, levelId, data);
 	}
+	
+	private static ISQLContractSalaryCalculatorContext getSalaryCalculatorContext(final Connection conn,
+			final Date startDate, int levelId) throws ExpressionException, SQLException {
+
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put(ContextVariable.QUOTE_GROUP.getName(), "01");
+		data.put(ContextVariable.TC2.getName(), ContractCode.C100.getValue());
+
+		return getSalaryCalculatorContextImpl(conn, startDate, levelId, data);
+	}
 
 	private static ISQLContractSalaryCalculatorContext getSalaryCalculatorContext(final Connection conn,
 			final AgreementDraft draft, List<Variable> vars, int levelId) throws ExpressionException, SQLException {
@@ -5072,6 +5160,21 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throws ExpressionException, SQLException {
 
 		Date startDate = draft.getStartDate();
+		Date endDate = DateUtils.getLastDayOfMonth(startDate);
+
+		SQLAgreementSalaryCalculatorContext sqlAgreementSalaryCalculatorContext = new SQLAgreementSalaryCalculatorContext(
+				conn, startDate, endDate, levelId);
+
+		sqlAgreementSalaryCalculatorContext.next(ctx -> data.entrySet().stream().forEach(entry -> ctx
+				.putVariable(entry.getKey(), new TimedObject<Object>(entry.getValue(), startDate, endDate))));
+
+		return sqlAgreementSalaryCalculatorContext;
+	}
+	
+	private static ISQLContractSalaryCalculatorContext getSalaryCalculatorContextImpl(Connection conn,
+			final Date startDate, int levelId, Map<String, Object> data)
+			throws ExpressionException, SQLException {
+
 		Date endDate = DateUtils.getLastDayOfMonth(startDate);
 
 		SQLAgreementSalaryCalculatorContext sqlAgreementSalaryCalculatorContext = new SQLAgreementSalaryCalculatorContext(

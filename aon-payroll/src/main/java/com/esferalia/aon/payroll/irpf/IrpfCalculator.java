@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll.irpf;
 
+import static java.util.Calendar.JANUARY;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -104,14 +106,17 @@ public class IrpfCalculator {
 
 	public static IrpfOutcome calculateIrpf(IIrpfCalculatorContext ctx, Date date) {
 		int year = AonDateUtils.get(date, Calendar.YEAR);
+		int month = AonDateUtils.get(date, Calendar.MONTH);
 		if ( year == 2020 )
 			return calculateIrpf2020(ctx);
 		if ( year == 2021 )
 			return calculateIrpf2021(ctx);
 		if ( year == 2022 )
 			return calculateIrpf2022(ctx);
-		else 
-		    return calculateIrpf2023(ctx);
+		if ( year == 2023 && month == JANUARY )  
+		    return calculateIrpfJanuary2023(ctx);
+		
+		return calculateIrpf2023(ctx);
 	}
 	
 	
@@ -166,6 +171,16 @@ public class IrpfCalculator {
 		return transfom(ctx, retenidoSalida2023);
 	}
 
+	public static IrpfOutcome calculateIrpfJanuary2023(IIrpfCalculatorContext ctx) {
+		AEATRetencionesSalida2023 aeatRetencionesSalida2023 = calculateJanuary2023(ctx);
+		List<TipoRetenedorSalida2023> retenedores = aeatRetencionesSalida2023
+				.getRetenedor();
+		TipoRetenedorSalida2023 retenedorSalida2023 = retenedores.get(0);
+		List<TipoRetenidoSalida2023> retenidos = retenedorSalida2023
+				.getRetenido();
+		TipoRetenidoSalida2023 retenidoSalida2023 = retenidos.get(0);
+		return transfom(ctx, retenidoSalida2023);
+	}
 	// -------------------------------------------------------------------------
 
 	protected static IrpfOutcome transfom(IIrpfCalculatorContext ctx,
@@ -1170,6 +1185,17 @@ public class IrpfCalculator {
         	return AEATCalculate.INSTANCE.calculate2023(ctx);
 	}
 
+	protected static AEATRetencionesSalida2023 calculateJanuary2023(
+		IIrpfCalculatorContext ctx) {
+        	ctx.next();
+        
+        	for (Calculate calculate : ForalCalculate.INSTANCES)
+        		if (calculate.accept(ctx))
+        			return calculate.calculate2023(ctx);
+        
+        	return AEATCalculate.INSTANCE.calculateJanuary2023(ctx);
+	}
+
 	private static Integer toInteger(Byte b) {
 		return b == null ? 0 : b.intValue();
 	}
@@ -1248,6 +1274,8 @@ public class IrpfCalculator {
 		AEATRetencionesSalida2022 calculate2022(IIrpfCalculatorContext ctx);
 
 		AEATRetencionesSalida2023 calculate2023(IIrpfCalculatorContext ctx);
+
+		AEATRetencionesSalida2023 calculateJanuary2023(IIrpfCalculatorContext ctx);
 	}
 
 	private static class AEATCalculate implements Calculate {
@@ -1522,6 +1550,84 @@ public class IrpfCalculator {
 				throw new ExpressionExceptionWrapper(expressionException);
 			}
 		}
+
+		@Override
+		public AEATRetencionesSalida2023 calculateJanuary2023(
+				IIrpfCalculatorContext ctx) {
+			try {
+				AEATRetencionesEntrada2023 aeatRetencionesEntrada2023 = AEATRetencionesEntradaFactory
+						.create2023(ctx);
+				
+				return calculateJanuary(aeatRetencionesEntrada2023);
+			} catch (IOException e) {
+				throw new ExpressionExceptionWrapper(new ExpressionException(e));
+			} catch (SQLException e) {
+				throw new ExpressionExceptionWrapper(new ExpressionException(e));
+			} catch (JAXBException e) {
+				throw new ExpressionExceptionWrapper(new ExpressionException(e));
+			} catch (ExpressionException e) {
+				throw new ExpressionExceptionWrapper(e);
+			} catch (IrpfCalculateException e) {
+				AEATRetencionesError2023 error = e
+						.getAEATRetencionesError2023();
+
+				String message = null;
+				
+				List<String> messages = new LinkedList<>();
+				
+				error.getErrorGeneral().stream()
+				.map(net.aonsolutions.core.aeat.v2023.jaxb.TipoErrorGeneral::getDescripcion)
+				.forEach( messages::add );
+
+				List<TipoRetenedorError2023> retenedores = 
+				error.getRetenedor();
+
+				retenedores.stream()
+				.map(TipoRetenedorError2023::getError)
+				.filter(Objects::nonNull)
+				.map( net.aonsolutions.core.aeat.v2023.jaxb.TipoError::getDescripcion)
+				.forEach(messages::add);
+
+				List<TipoRetenidoError2023> retenidos =
+				retenedores.stream()
+				.map(TipoRetenedorError2023::getRetenido)
+				.flatMap(List::stream)
+				.collect(Collectors.toList());
+				
+				// Errores 
+				retenidos.stream()
+				.map(TipoRetenidoError2023::getError)
+				.flatMap(List::stream)
+				.map(net.aonsolutions.core.aeat.v2023.jaxb.TipoError::getDescripcion )
+				.forEach( messages::add );
+
+				// Descendientes
+				retenidos.stream()
+				.map(TipoRetenidoError2023::getDescendiente)
+				.flatMap(List::stream)
+				.map(TipoRetenidoError2023.Descendiente::getError)
+				.flatMap(List::stream)
+				.map(net.aonsolutions.core.aeat.v2023.jaxb.TipoError::getDescripcion )
+				.forEach( messages::add );
+				
+				// Ascendientes
+				retenidos.stream()
+				.map(TipoRetenidoError2023::getAscendiente)
+				.flatMap(List::stream)
+				.map(TipoRetenidoError2023.Ascendiente::getError)
+				.flatMap(List::stream)
+				.map(net.aonsolutions.core.aeat.v2023.jaxb.TipoError::getDescripcion )
+				.forEach( messages::add )
+				;
+
+				message = messages.stream().findFirst().orElse("Error al calcular el IRPF");
+				
+
+				ExpressionException expressionException = new CheckException(
+						message);
+				throw new ExpressionExceptionWrapper(expressionException);
+			}
+		}
 		// --------------------------------------------------------------------
 
 
@@ -1668,6 +1774,57 @@ public class IrpfCalculator {
 		}
 
 		private AEATRetencionesSalida2023 calculate(
+			AEATRetencionesEntrada2023 entrada2023)
+			throws IrpfCalculateException, JAXBException, IOException {
+        		try {
+        			checkNullZeroRetribAnuales(entrada2023);
+        		} catch (NullPointerException e) {
+        			return newZeroAEATRetencionesSalida2023(entrada2023);
+        		} 
+        
+//			try {
+//			    return ServicioCalculo.procesarFicheroXML(entrada2023);
+//			} catch ( IrpfCalculateException e) {
+//			    throw e;
+//			} catch ( Exception e ) {
+//			} 
+			
+        		Marshaller marshaller = JAXBContext.newInstance(
+        				AEATRetencionesEntrada2023.class).createMarshaller();
+        		File entrada2023File = File.createTempFile(
+        				AEATRetencionesEntrada2023.class.getSimpleName(), null);
+        		marshaller.marshal(entrada2023, entrada2023File);
+        
+        		File salida2023File = File.createTempFile(
+        				AEATRetencionesSalida2023.class.getSimpleName(), null);
+        		File error2023File = File.createTempFile(
+        				AEATRetencionesError2023.class.getSimpleName(), null);
+        
+        		es.aeat.pret.c200.mc.c231.ModuloCalculo.procesarFicheroXml(entrada2023File.getAbsolutePath(),
+        				error2023File.getAbsolutePath(), null,
+        				salida2023File.getAbsolutePath());
+        		entrada2023File.delete();
+        		Unmarshaller unMarshaller = JAXBContext.newInstance(
+        				AEATRetencionesError2023.class).createUnmarshaller();
+        		try {
+        			AEATRetencionesError2023 error2023 = (AEATRetencionesError2023) unMarshaller
+        					.unmarshal(error2023File);
+        			error2023File.delete();
+        			throw new IrpfCalculateException(error2023);
+        		} catch (JAXBException e) {
+        		} catch (IllegalArgumentException e) {
+        		}
+        
+        		error2023File.delete();
+        		unMarshaller = JAXBContext.newInstance(
+        				AEATRetencionesSalida2023.class).createUnmarshaller();
+        		AEATRetencionesSalida2023 salida2023 = (AEATRetencionesSalida2023) unMarshaller
+        				.unmarshal(salida2023File);
+        		salida2023File.delete();
+        		return salida2023;
+		}
+
+		private AEATRetencionesSalida2023 calculateJanuary(
 			AEATRetencionesEntrada2023 entrada2023)
 			throws IrpfCalculateException, JAXBException, IOException {
         		try {
@@ -2361,6 +2518,11 @@ public class IrpfCalculator {
 			retenedoresSalida.add(retenedorSalida2023);
 
 			return aeatRetencionesSalida;
+		}
+		
+		@Override
+		public AEATRetencionesSalida2023 calculateJanuary2023(IIrpfCalculatorContext ctx) {
+		    return calculate2023(ctx);
 		}
 	}
 

@@ -555,6 +555,7 @@ class SistemaREDEmployee {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 
+			webClient.getOptions().setUseInsecureSSL(true);
 			webClient.getOptions().setJavaScriptEnabled(false);
 			ArrayList<Employee> employees = new ArrayList<>();
 

@@ -50,8 +50,8 @@
 													value="#{false}" />
 										</aon:commandButton>
 										
-										<aon:commandButton id="certTbaiModify"	
-											rendered="#{!saleInvoice.invoiceTbaiAccepted}"
+										<aon:commandButton id="certTbaiModify"
+											rendered="#{!saleInvoice.invoiceTbaiAccepted and !saleInvoice.bizkaia}"
 											value="Modificar"
 											action="#{saleInvoice.modifyInvoice}"
 											styleClass="aon-finding-toolbar-item aon-icon-check-black"
@@ -65,7 +65,7 @@
 										</aon:commandButton>
 										
 										<aon:commandButton id="certTbaiSubsanar"	
-											rendered="#{!saleInvoice.invoiceTbaiAccepted}"
+											rendered="#{!saleInvoice.invoiceTbaiAccepted  and !saleInvoice.bizkaia}"
 											value="Subsanar"
 											action="#{saleInvoice.subsanarInvoice}"
 											styleClass="aon-finding-toolbar-item aon-icon-check-black"

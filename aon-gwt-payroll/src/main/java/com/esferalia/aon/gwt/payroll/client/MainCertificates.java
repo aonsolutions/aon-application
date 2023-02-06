@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -636,9 +637,11 @@ public class MainCertificates extends MainEntryPoint{
 		verifyButton.addClickHandler(e ->  {
 			showLoading("Validando certificado SEPE...");
 			hideSecondaryUsers();
+			ArrayList<CertificateType> tags = new ArrayList<CertificateType>();
+			tags.add(CertificateType.SEPE);
 			mainDigitalCertificatesObject.verifyCertificate(
 				certificate.getId(), 
-				certificate.getTags(), 
+				tags, 
 				s -> showSuccess("Certificado", "Certificado validado correctamente"), 
 				f -> showWarning("Error verificaci\u00F3n", f.getMessage())
 			);
@@ -646,7 +649,7 @@ public class MainCertificates extends MainEntryPoint{
 		verifyButton.setVisible(false);
 		
 		AonTableButton secondaryUsersButton = new AonTableButton("Usuarios Secundarios", AON.CSS.aonIconList());
-		secondaryUsersButton.addClickHandler(e -> onSecondaryUser(certificate.getId(), certificate.getTags()));
+		secondaryUsersButton.addClickHandler(e -> onSecondaryUser(certificate.getId()));
 		
 		secondaryUsersButton.setVisible(false);
 		
@@ -760,7 +763,7 @@ public class MainCertificates extends MainEntryPoint{
 				f -> showWarning("Error verificaci\u00F3n", f.getMessage()));
 	}
 
-	private void onSecondaryUser(Integer rattachId, List<CertificateType> tags) {
+	private void onSecondaryUser(Integer rattachId) {
 		CertificateOwner owner = tabLayoutPanel.getSelectedIndex() == 0 ? CertificateOwner.USER : CertificateOwner.ENTERPRISE;
 		
 		if(CertificateOwner.USER.equals(owner)) {
@@ -770,6 +773,9 @@ public class MainCertificates extends MainEntryPoint{
 			initEnterpriseSecondaryTable();
 			enterpriseSecondayUsersPanel.setVisible(true);
 		}
+		
+		ArrayList<CertificateType> tags = new ArrayList<CertificateType>();
+		tags.add(CertificateType.TGSS);
 		
 		mainDigitalCertificatesObject.verifyCertificate(
 			rattachId, 

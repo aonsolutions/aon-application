@@ -4736,7 +4736,12 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(
 				0.75 * 1750.00/30.00 * it21Days 
 				+  0.60 * 1750.00/30.00 , salary.getTotalPayment(), DELTA);
-		Assert.assertEquals(1750.00/30.00 * Math.min( it21Days + 1, 30.00 ), salary.getCommonBase(), DELTA);
+		if ( get(contract.getStartDate(),DAY_OF_MONTH) == 1 ) {
+		    Assert.assertEquals(1750.00/30.00 * 30.00, salary.getCommonBase(), DELTA);
+		}
+		else {
+		    Assert.assertEquals(1750.00/30.00 * Math.min( it21Days + 1, 30.00 ), salary.getCommonBase(), DELTA);
+		}
 	}
 
 	@Test
@@ -6501,8 +6506,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		.map(SalaryData::getExpression)
 		.collect(Collectors.summingDouble(Double::parseDouble))
 		;
-
-		assertEquals(1750.00 / 30.00 * Math.min(30.00,get(endDate, Calendar.DAY_OF_MONTH)), baseCgp, 0.05);
+		if ( endDate.equals(getLastDayOfMonth(endDate)))
+			assertEquals(1750.00 / 30.00 * 30, baseCgp, 0.05);
+		else
+		    assertEquals(1750.00 / 30.00 * Math.min(30.00,get(endDate, Calendar.DAY_OF_MONTH)), baseCgp, 0.05);
 	}
 
 	@Test

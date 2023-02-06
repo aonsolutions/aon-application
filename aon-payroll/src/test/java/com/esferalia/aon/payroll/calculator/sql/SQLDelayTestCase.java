@@ -5380,7 +5380,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					+ " (" + deduction.getExpression() + ")");
 		}
 
-		Assert.assertEquals(10.00 * 10.00 / 100.00, delay.getTotalDeduction());
+		Assert.assertEquals(10.00 * 10.00 / 100.00, delay.getTotalDeduction(), DELTA);
 	}
 
 

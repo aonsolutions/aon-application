@@ -101,7 +101,7 @@ public class EnterpriseDAO {
 			.orElse(new Enterprise());
 		
 		RegistryAddress registryAddress = RegistryAddressDAO.get(ctx, f -> f.getRegistryProperty().eq(enterprise.getId()));
-		registryAddress.setStreetType(StreetType.getForAeatCode(registryAddress.getStreetType().getAeatCode(), AonLanguage.SPANISH));
+		if (null != registryAddress && null != registryAddress.getStreetType()) registryAddress.setStreetType(StreetType.getForAeatCode(registryAddress.getStreetType().getAeatCode(), AonLanguage.SPANISH));
 		enterprise.setAddress(registryAddress);
 		
 		List<RegistryMedia> medias = RegistryMediaDAO.getStream(ctx, f -> f.getRegistryProperty().eq(enterprise.getId())).collect(Collectors.toList());
@@ -268,7 +268,7 @@ public class EnterpriseDAO {
 		
 		RegistryAddress address = enterprise.getAddress();
 		if(null != address) {
-			System.out.println("Address --> Id: " + address.getId() + "\nRegistry: " + address.getRegistry() + "\nStreetType: " + address.getStreetType().getDescription() + "\nAddress: " + address.getAddress() + "\nNumber: " + address.getNumber() + "\nZip: " + address.getZip());
+			System.out.println("Address --> Id: " + address.getId() + "\nRegistry: " + address.getRegistry() + "\nStreetType: " + (address.getStreetType() == null ? "" : address.getStreetType().getDescription()) + "\nAddress: " + address.getAddress() + "\nNumber: " + address.getNumber() + "\nZip: " + address.getZip());
 			System.out.println("Province: " + address.getProvince() + "\nCity: " + address.getCity() + "\nMunicipalityCode: " + address.getMunicipalityCode() + "\nGeozone: " + address.getGeozone());
 		}
 		

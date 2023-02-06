@@ -37,13 +37,11 @@ public class Mod347ValidatePrintAEAT extends HttpServlet {
 	private static final long serialVersionUID = -8391437522744646639L;
 	
 	private enum AeatUrl {
-		URL_2021_2_ {
+		URL_2021 {
 
 			@Override
 			protected boolean accept(Mod347 mod347) {
-				return mod347.getYear() == 2021
-					|| (mod347.getYear() == 2021 && mod347.getPeriod().isLastSemester())
-					;
+				return mod347.getYear() >= 2021;
 			}
 
 			@Override
@@ -69,8 +67,8 @@ public class Mod347ValidatePrintAEAT extends HttpServlet {
 					return aeatUrl;
 				}
 			}
-			throw new AonCoreException("No se encontrÛ una configuraciÛn v·lida para la peticiÛn de validaciÛn a la AEAT." +
-				" Descargue el archivo para su presentaciÛn y acceda a los servidores de la Agencia Tributaria manualmente.");
+			throw new AonCoreException("No se encontr√≥ una configuraci√≥n v√°lida para la petici√≥n de validaci√≥n a la AEAT." +
+				" Descargue el archivo para su presentaci√≥n y acceda a los servidores de la Agencia Tributaria manualmente.");
 		}
 
 		protected abstract boolean accept( Mod347 mod347);

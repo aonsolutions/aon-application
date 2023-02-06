@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -29,7 +28,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -37,7 +35,6 @@ import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -324,21 +321,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	HTMLPanel agreementContainer;
 	
 	@UiField
-	Label agreementTab;
-	
-	@UiField
-	Label levelTab;
-	
-	@UiField
-	Label salaryTableTab;
-	
-	@UiField
-	Label paymentTab;
-	
-	@UiField
-	DeckPanel mainDeckPanel;
-	
-	@UiField
 	AonAgreementsToolbar toolbar;
 
 	@UiField
@@ -346,15 +328,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	
 	@UiField (provided = true)
 	AgreementPreview agreementPreview;
-	
-	@UiField (provided = true)
-	AgreementLevelTab agreementLevelTab;
-	
-	@UiField (provided = true)
-	AgreementSalaryTableTab agreementSalaryTableTab;
-	
-	@UiField (provided = true)
-	AgreementPaymentTab agreementPaymentTab;
 	
 	@UiField
 	HTMLPanel agreementMessage;
@@ -426,52 +399,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			}
 		};
 		
-		agreementLevelTab = new AgreementLevelTab() {
-			
-			@Override
-			public void onSaved() {
-				saveAgreement(agreementInfo -> {
-					agreementSelected = agreementInfo;
-					agreementLevelTab.setAgreementLevel(agreementSelected);
-					agreementLevelTab.showSuccess("Convenio", "Convenio guardado correctamente");
-				}, error -> agreementLevelTab.showError("Error guardando", error.getMessage()));
-			}
-			
-		};
-		
-		agreementSalaryTableTab = new AgreementSalaryTableTab() {
-			
-			@Override
-			public void onSaved() {
-				saveAgreement(agreementInfo -> {
-					agreementSelected = agreementInfo;
-					agreementSalaryTableTab.setAgreementSalaryTable(agreementSelected);
-					agreementSalaryTableTab.showSuccess("Convenio", "Convenio guardado correctamente");
-				}, error -> agreementSalaryTableTab.showError("Error guardando", error.getMessage()));
-			}
-			
-			@Override
-			public void getVariables(AgreementInfo agreement, Consumer<AgreementInfo> success) {
-				getVariablesBD(agreement, variables -> {
-					agreement.setAllVariables(variables);
-					success.accept(agreement);
-				});
-			}
-			
-		};
-		
-		agreementPaymentTab = new AgreementPaymentTab() {
-			
-			@Override
-			public void onSaved() {
-				saveAgreement(agreementInfo -> {
-					agreementSelected = agreementInfo;
-					agreementPaymentTab.setAgreementPayment(agreementSelected);
-					agreementPaymentTab.showSuccess("Convenio", "Convenio guardado correctamente");
-				}, error -> agreementPaymentTab.showError("Error guardando", error.getMessage()));
-			}
-		};
-		
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
 		
@@ -484,8 +411,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		root.add(ui);
 		
 		deckPanel.setAnimationEnabled(true);
-		mainDeckPanel.setAnimationEnabled(true);
-		mainDeckPanel.setHeight((Window.getClientHeight() - 185) + "px");
 		showAgreements();
 		
 		agreements.addStyleName(style.borderR());
@@ -582,16 +507,15 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			this.contextMenu.setVisibleDeleteItem(0 != agreement.getDomain().intValue());
 			this.agreements.setVisibleDraftButton(0 != agreement.getDomain().intValue());
 			
-			this.levelTab.setVisible(0 != agreement.getDomain().intValue());
-			this.salaryTableTab.setVisible(0 != agreement.getDomain().intValue());
-			this.paymentTab.setVisible(0 != agreement.getDomain().intValue());
+			// TODO: read only
+			this.agreementPreview.setReadOnly(0 == agreement.getDomain().intValue() || (parentDomain != null && parentDomain.intValue() == agreement.getDomain().intValue()));
 		}
 		
 		agreementPreview.showLoading("Cargando convenio...");
 		getAgreement(agreement.getId(), agreeementInfo -> {
 			agreementSelected = agreeementInfo;
 			showAgreementContainer();
-			selectAgreementTab();
+			agreementPreview.setAgreementPreview(agreeementInfo);
 		});
 		
 	}
@@ -797,6 +721,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			@Override
 			public void run() {
 				agreementPreview.setTablesWidthCollapseMenu();
+				agreementPreview.setIsOpenCollapse(true);
 			}
 		};
 		timer.schedule(500);
@@ -810,6 +735,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			@Override
 			public void run() {
 				agreementPreview.setTablesWidth();
+				agreementPreview.setIsOpenCollapse(false);
 			}
 		};
 		timer.schedule(500);
@@ -913,22 +839,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		});
 	}
 	
-	private void getVariablesBD(AgreementInfo agreement, Consumer<Set<String>> success) {
-		impl.getAgreementVariables(agreement, new AsyncCallback<Set<String>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				// Nothing to do here
-			}
-
-			@Override
-			public void onSuccess(Set<String> variables) {
-				success.accept(variables);
-			}
-			
-		});
-	}
-	
 	// ------------------------------------ Main view
 	
 	private void showAgreementMessage() {
@@ -942,136 +852,5 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	}
 
 	// ------------------------------------ Tab Selection
-	
-	@UiHandler("agreementTab")
-	void onAgreementTabClick(ClickEvent event) {
-		if(!handleSave()) selectAgreementTab();
-		else showWarnSave(accept -> selectAgreementTab());
-	}
-	
-	@UiHandler("paymentTab")
-	void onPaymentTabClick(ClickEvent event) {
-		if(!handleSave()) selectPaymentTab();
-		else showWarnSave(accept -> selectPaymentTab());
-	}
-	
-	@UiHandler("salaryTableTab")
-	void onSalaryTableTabClick(ClickEvent event) {
-		if(!handleSave()) selectSalaryTableTab();
-		else showWarnSave(accept -> selectSalaryTableTab());
-	}
-	
-	@UiHandler("levelTab")
-	void onLevelTabClick(ClickEvent event) {
-		if(!handleSave()) selectLevelTab();
-		else showWarnSave(accept -> selectLevelTab());
-	}
-	
-	private boolean handleSave() {
-		int widgetIdx = mainDeckPanel.getVisibleWidget();
-		switch (widgetIdx) {
-		case 1:
-			return agreementLevelTab.hasChange();
-		case 2:
-			return agreementSalaryTableTab.hasChange();
-		case 3:
-			return agreementPaymentTab.hasChange();
-		default:
-			return false;
-		}
-	}
-	
-	private void showWarnSave(Consumer<Void> accept) {
-		AonDialog warnDialog = new AonDialog("Cambios sin guardar", new HTMLPanel("Esta abandonando una pesta\u00f1a con cambios no guardados. \u00bfEst\u00e1 seguro de que desea continuar sin guardar\u003f"));
-		warnDialog.setGlassStyleName(style.dialogGlass());
-		warnDialog.addStyleName(style.dialogZIndex());
-		warnDialog.confirm(new AonAcceptDialogCallback() {
-			
-			@Override
-			public void onCancel() {
-				// Nothing to do here
-			}
-			
-			@Override
-			public void onAccept() {
-				// Recargando el convenio para omitir cambios
-				getAgreement(agreementSelected.getId(), agreementInfo -> {
-					agreementSelected = agreementInfo;
-					accept.accept(null);
-				});
-				
-				// NO recargando el convenio para omitir cambios
-				// accept.accept(null);
-			}
-		});
-	}
-	
-	private void selectAgreementTab() {
-		agreementTab.removeStyleName(style.tabNotSelected());
-		agreementTab.addStyleName(style.tabSelected());
-		
-		mainDeckPanel.showWidget(0);
-		
-		levelTab.removeStyleName(style.tabSelected());
-		levelTab.addStyleName(style.tabNotSelected());
-		salaryTableTab.removeStyleName(style.tabSelected());
-		salaryTableTab.addStyleName(style.tabNotSelected());
-		paymentTab.removeStyleName(style.tabSelected());
-		paymentTab.addStyleName(style.tabNotSelected());
-		
-		agreementPreview.setAgreementPreview(agreementSelected);
-		agreementPreview.setHasChange(false);
-	}
-	
-	private void selectLevelTab() {
-		levelTab.removeStyleName(style.tabNotSelected());
-		levelTab.addStyleName(style.tabSelected());
-		
-		mainDeckPanel.showWidget(1);
-		
-		agreementTab.removeStyleName(style.tabSelected());
-		agreementTab.addStyleName(style.tabNotSelected());
-		salaryTableTab.removeStyleName(style.tabSelected());
-		salaryTableTab.addStyleName(style.tabNotSelected());
-		paymentTab.removeStyleName(style.tabSelected());
-		paymentTab.addStyleName(style.tabNotSelected());
-		
-		agreementLevelTab.setAgreementLevel(agreementSelected);
-		agreementLevelTab.setHasChange(false);
-	}
-	
-	private void selectSalaryTableTab() {
-		salaryTableTab.removeStyleName(style.tabNotSelected());
-		salaryTableTab.addStyleName(style.tabSelected());
-		
-		mainDeckPanel.showWidget(2);
-		
-		agreementTab.removeStyleName(style.tabSelected());
-		agreementTab.addStyleName(style.tabNotSelected());
-		levelTab.removeStyleName(style.tabSelected());
-		levelTab.addStyleName(style.tabNotSelected());
-		paymentTab.removeStyleName(style.tabSelected());
-		paymentTab.addStyleName(style.tabNotSelected());
-		
-		agreementSalaryTableTab.setAgreementSalaryTable(agreementSelected);
-		agreementSalaryTableTab.setHasChange(false);
-	}
-	
-	private void selectPaymentTab() {
-		paymentTab.removeStyleName(style.tabNotSelected());
-		paymentTab.addStyleName(style.tabSelected());
-		
-		mainDeckPanel.showWidget(3);
-		
-		agreementTab.removeStyleName(style.tabSelected());
-		agreementTab.addStyleName(style.tabNotSelected());
-		levelTab.removeStyleName(style.tabSelected());
-		levelTab.addStyleName(style.tabNotSelected());
-		salaryTableTab.removeStyleName(style.tabSelected());
-		salaryTableTab.addStyleName(style.tabNotSelected());
-		
-		agreementPaymentTab.setAgreementPayment(agreementSelected);
-		agreementPaymentTab.setHasChange(false);
-	}
 	
 }
