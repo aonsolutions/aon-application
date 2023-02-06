@@ -10,6 +10,9 @@ import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -3648,6 +3651,27 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 					certificate.getId(),
 					f -> f.getIdProperty().eq(certificate.getId()), 
 					r -> r.getIdProperty().eq(certificate.getPasswordId()));
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public void downloadCertificate(String domain, String login, Integer certificateId, String filePath) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			com.esferalia.aon.occam.api.model.Certificate certificate = AON.getCertificate(domain, domainId, login, f -> f.getIdProperty().eq(certificateId));
+			
+			File f = new File(filePath);
+			try {
+				FileOutputStream fos = new FileOutputStream(f);
+				fos.write(certificate.getData());
+				fos.close();
+			} catch (FileNotFoundException e) {
+				System.err.println("Archivo no encontrado");
+			} catch (IOException e) {
+				System.err.println("Error al escribir");
+			}
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}

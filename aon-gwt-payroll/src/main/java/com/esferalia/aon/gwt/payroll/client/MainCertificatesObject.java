@@ -122,6 +122,22 @@ public class MainCertificatesObject {
 		
 	}
 	
+	public void downloadCertificate(Integer certificateId, String filePath, Consumer<Void> success, Consumer<Throwable> failure){
+		impl.downloadCertificate(certificateId, filePath, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+		
+	}
+	
 	public void verifyCertificate(Integer certificateId, List<CertificateType> tags, Consumer<Void> success, Consumer<Throwable> failure){
 		
 		impl.verifyCertificate(certificateId, tags, new AsyncCallback<Void>() {

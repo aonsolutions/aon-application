@@ -590,6 +590,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.deleteCertificate(getCurrentDomainName(), getCurrentUser(), certificate, asyncCallback);
 	}
 	
+	public void downloadCertificate(Integer certificateId, String filePath, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.downloadCertificate(getCurrentDomainName(), getCurrentUser(), certificateId, filePath, asyncCallback);
+	}
+	
 	public void getCertificateInfo(Integer certificateId, AsyncCallback<CertificateInfo> asyncCallback)  throws IllegalArgumentException  {
 		enterprisesServiceAsync.getCertificateInfo(getCurrentDomainName(), getCurrentUser(), certificateId, asyncCallback);
 	}
