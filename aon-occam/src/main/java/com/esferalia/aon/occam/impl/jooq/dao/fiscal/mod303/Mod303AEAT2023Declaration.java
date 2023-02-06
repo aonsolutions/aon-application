@@ -70,7 +70,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 	private static final double SURCHARGE_PERCENT_52 = 5.2;
 	
 	public static boolean accept(Mod303 mod) {
-		return mod.isAEAT() && mod.getYear() >= 2023 && mod.getPeriod().isMonthPeriod();	 
+		return mod.isAEAT() && mod.getYear() >= 2023;	 
 	}
 	
 	private static final Mod303Key[] COMPENSATION_EXPLAIN_KEYS = new Mod303Key[] { Mod303Key.CT_C110 };
