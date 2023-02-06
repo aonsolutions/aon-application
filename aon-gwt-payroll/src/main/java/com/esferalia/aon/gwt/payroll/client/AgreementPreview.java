@@ -484,8 +484,11 @@ public abstract class AgreementPreview extends Composite {
 	    	
 	    	@Override
 	    	public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
-	    		if(null != payment)
-	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + payment.getName() + "\" >" + payment.getName() + "</div>");
+	    		if(null != payment) {
+	    			String name = payment.getName();
+	    			if(AonStringUtils.isBlank(name)) name = "";
+	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + name + "\" >" + name + "</div>");
+	    		}
 	    	}
 		};
 
@@ -501,8 +504,11 @@ public abstract class AgreementPreview extends Composite {
 	    	
 	    	@Override
 	    	public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
-	    		if(null != payment)
-	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + payment.getDescription() + "\" >" + payment.getDescription() + "</div>");
+	    		if(null != payment) {
+	    			String description = payment.getDescription();
+	    			if(AonStringUtils.isBlank(description)) description = "";
+	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + description + "\" >" + description + "</div>");
+	    		}
 	    	}
 		};
 		
@@ -517,8 +523,11 @@ public abstract class AgreementPreview extends Composite {
 	    	
 	    	@Override
 	    	public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
-	    		if(null != payment)
-	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + getParsedExpression(payment.getExpression()) + "\" >" + getParsedExpression(payment.getExpression()) + "</div>");
+	    		if(null != payment) {
+	    			String expression = getParsedExpression(payment.getExpression());
+	    			if(AonStringUtils.isBlank(expression)) expression = "";
+	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + expression + "\" >" + expression + "</div>");
+	    		}
 	    	}
 		};
 
@@ -773,8 +782,11 @@ public abstract class AgreementPreview extends Composite {
 	    	
 	    	@Override
 	    	public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
-	    		if(null != payment)
-	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + payment.getName() + "\" >" + payment.getName() + "</div>");
+	    		if(null != payment) {
+	    			String name = payment.getName();
+	    			if(AonStringUtils.isBlank(name)) name = "";
+	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + name + "\" >" + name + "</div>");
+	    		}
 	    	}
 		};
 
@@ -790,8 +802,11 @@ public abstract class AgreementPreview extends Composite {
 	    	
 	    	@Override
 	    	public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
-	    		if(null != payment)
-	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + payment.getDescription() + "\" >" + payment.getDescription() + "</div>");
+	    		if(null != payment) {
+	    			String description = payment.getDescription();
+	    			if(AonStringUtils.isBlank(description)) description = "";
+	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + description + "\" >" + description + "</div>");
+	    		}
 	    	}
 		};
 		
@@ -806,8 +821,11 @@ public abstract class AgreementPreview extends Composite {
 	    	
 	    	@Override
 	    	public void render(Context context, Payment payment, SafeHtmlBuilder sb) {
-	    		if(null != payment)
-	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + getParsedExpression(payment.getExpression()) + "\" >" + getParsedExpression(payment.getExpression()) + "</div>");
+	    		if(null != payment) {
+	    			String expression = getParsedExpression(payment.getExpression());
+	    			if(AonStringUtils.isBlank(expression)) expression = "";
+	    			sb.appendHtmlConstant("<div class=\"elipsis\" title=\"" + expression + "\" >" + expression + "</div>");
+	    		}
 	    	}
 		};
 
