@@ -656,6 +656,10 @@ public class MainCertificates extends MainEntryPoint{
 		AonTableButton deleteButton = new AonTableButton("Borrar", AON.CSS.aonIconDelete());
 		deleteButton.addClickHandler(e -> deleteCertificate(certificate));
 		
+		// Para descargar un certificado descomentar lineas 660, 661, 705. Y cambiar el path del metodo downloadCertificate(...)
+//		AonTableButton downloadButton = new AonTableButton("Borrar", AON.CSS.aonIconDownload());
+//		downloadButton.addClickHandler(e -> downloadCertificate(certificate));
+		
 		AonTableButton checkCertificateButton = new AonTableButton("Informaci\u00F3n", AON.CSS.aonIconInfo());
 		checkCertificateButton.addClickHandler(e -> getCertificateInfo(certificate));
 		
@@ -698,6 +702,7 @@ public class MainCertificates extends MainEntryPoint{
 		buttonsPanel.add(secondaryUsersButton);
 		buttonsPanel.add(checkCertificateButton);
 		buttonsPanel.add(deleteButton);
+//		buttonsPanel.add(downloadButton);
 		
 		table.setWidget(row, 0, certificateForL);
 		table.setWidget(row, 1, representationL);
@@ -904,6 +909,18 @@ public class MainCertificates extends MainEntryPoint{
 						f -> {});
 			}
 		});
+	}
+	
+	// ------------------------------------------------------ Donwload Certificate Method
+	
+	private void downloadCertificate(Certificate certificate) {
+		String filePath = "/Users/svaldepenas/Desktop/certificate.p12";
+		mainDigitalCertificatesObject.downloadCertificate(
+				certificate.getId(), 
+				filePath,
+				s -> showSuccess("Descarga", "Certificado descargado en la ruta " + filePath), 
+				f -> {});
+		
 	}
 
 	// ------------------------------------------------------ Insert Secondary Users

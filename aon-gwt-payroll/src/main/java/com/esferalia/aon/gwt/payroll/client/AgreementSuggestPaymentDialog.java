@@ -263,8 +263,17 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 				initialiazePaymentByConceptDescription(descriptionSuggest.getValue());
 				
 				setEnabled(acceptBtn, true);
+				setEnabled(manualAgreement, false);
+			} else if(payment != null && AonStringUtils.isBlank(payment.getName()) && payment.getConceptId() == null) {
+				hideMessage();
+				payment.setName(descriptionSuggest.getValue());
+				
+				setEnabled(acceptBtn, true);
+				setEnabled(manualAgreement, false);
+			} else if(AonStringUtils.isBlank(descriptionSuggest.getValue()) && payment.getConceptId() != null) {
+				setEnabled(acceptBtn, false);
 				setEnabled(manualAgreement, true);
-			};
+			}
 		});
 		
 		descriptionSuggest.addKeyDownHandler(event -> {
@@ -359,7 +368,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		Scheduler.get().scheduleDeferred(() -> {
 			center();
 			show();
-			manualAgreement.setFocus(true);
+			descriptionSuggest.setFocus(true);
 		});
 	}
 

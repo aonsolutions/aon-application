@@ -924,6 +924,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.deleteCertificate(domain, login, certificate, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void downloadCertificate(String domain, String login, Integer certificateId, String filePath, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.downloadCertificate(domain, login, certificateId, filePath, new AsyncCallbackWrapper<>(callback));
+	}
 
 	@Override
 	public void getCertificateInfo(String domain, String login, Integer certitificateId, AsyncCallback<CertificateInfo> callback) throws IllegalArgumentException {
