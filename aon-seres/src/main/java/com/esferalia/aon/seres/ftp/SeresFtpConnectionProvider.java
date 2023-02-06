@@ -12,6 +12,7 @@ import org.apache.commons.net.ftp.FTPFile;
 
 import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.occam.api.model.seres.SeresPath;
+import com.esferalia.aon.watson.server.AonDateUtils;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
@@ -86,12 +87,12 @@ public class SeresFtpConnectionProvider implements Serializable {
 				.setUser(user)
 				.setPassword(passwd)
 				.setSeresPath(SeresPath.safeValueOf(remotePath));
-		
+		Date start2 = AonDateUtils.getDateWithoutTime(start);
 		List<LsEntry> list = SeresSftpConnectionProvider.retrieveDirectoryList(info);
 
 		return list.stream()
 		.filter(f -> !f.getFilename().equals(".") && !f.getFilename().equals("..") 
-			&& start.before(new Date(f.getAttrs().getMTime() * 1000L))
+			&& start2.before(new Date(f.getAttrs().getMTime() * 1000L))
 			&& end.after(new Date(f.getAttrs().getMTime() * 1000L)))
 		.map(r -> {
 			FTPFile file = new FTPFile();

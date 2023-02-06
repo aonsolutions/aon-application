@@ -28,11 +28,8 @@ public class SeresSftpConnectionProvider implements Serializable {
 	
 	
 	public static boolean checkLogin(SeresInfo info) throws JSchException {
-		JSch jsch = new JSch();
-	    Session jschSession = jsch.getSession(info.getUser(), info.getServer());
-	    jschSession.setPassword(info.getPassword());
-	    jschSession.connect();
-	    jschSession.disconnect();
+		Session session = connect(info);
+		session.disconnect();
 		return true;
 	}
 	
@@ -82,9 +79,7 @@ public class SeresSftpConnectionProvider implements Serializable {
 		ChannelSftp channel = (ChannelSftp) session.openChannel("sftp");
 	
 		channel.connect();
-		channel.cd(info.getSeresPath().getPath());
-		channel.ls(info.getSeresPath().getPath());
-	
+		channel.cd(info.getSeresPath().getPath());	
 		Vector<ChannelSftp.LsEntry> vector =  channel.ls(info.getSeresPath().getPath());
 		channel.exit();
 		channel.disconnect();
