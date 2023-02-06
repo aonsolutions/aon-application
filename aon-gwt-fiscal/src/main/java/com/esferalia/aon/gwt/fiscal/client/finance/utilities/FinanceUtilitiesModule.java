@@ -1,18 +1,18 @@
 package com.esferalia.aon.gwt.fiscal.client.finance.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonLayoutPanel;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.Domain;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -20,47 +20,47 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class FinanceUtilities extends MainEntryPoint{
+public class FinanceUtilitiesModule extends MainEntryPoint{
+
+	static final CommonServiceAsync COMMON_SERVICE;
+	static {
+		CommonServiceAsync commonServiceRaw = GWT.create(CommonService.class);
+		COMMON_SERVICE = new CommonServiceAsyncDecorator(commonServiceRaw);
+	}
+
+	static final FinanceUtilitiesServiceAsync SERVICE;
+	static {
+		FinanceUtilitiesServiceAsync serviceRaw = GWT.create(FinanceUtilitiesService.class);
+		SERVICE = new FinanceUtilitiesServiceAsyncDecorator(serviceRaw);
+	}
 
 	protected static interface IOption extends HasSelectionHandlers<IOption> {
 		Widget getSidebarWidget();
 		String getOptionDescription();
 	}
 
-	private static FinanceUtilitiesServiceAsync SERVICE;
-	private String domainName;
-	private String user;
-	private int domain;
-	
-	public String getDomainName() {
-		return domainName;
-	}
-	public String getUser() {
-		return user;
-	}
-	public int getDomain() {
-		return domain;
-	}
+	private FinanceUtilitiesModuleOptions options;
 	
 	@Override
 	public void onModuleLoad() {
-		onModuleLoad(getCurrentDomainName(), getCurrentUser(), getCurrentDomain());
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+		FinanceUtilitiesModuleOptions opts = new FinanceUtilitiesModuleOptions();
+		opts.setParentWidget(root);
+		opts.setDomainName(getCurrentDomainName());
+		opts.setDomain(getCurrentDomain());
+		opts.setUser(getCurrentUser());
+		this.onModuleLoad( opts );
 	}
 	
-	public void onModuleLoad(String domainName, String user, int domain) {
-		this.domainName = domainName;
-		this.user = user;
-		this.domain = domain;
+	public void onModuleLoad(FinanceUtilitiesModuleOptions options) {
+		this.options = options;
 		
 		AON.ensureInjected();
-
-		FinanceUtilitiesServiceAsync serviceRaw = GWT.create(FinanceUtilitiesService.class);
-		SERVICE = new FinanceUtilitiesServiceAsyncDecorator(serviceRaw);
 		
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		
 
-		SERVICE.getDomain(domainName, user, domain, new AsyncCallback<Domain>() {
+		SERVICE.getDomain(options.getOccam(), new AsyncCallback<Domain>() {
 			
 			@Override
 			public void onSuccess(Domain domain) {
@@ -82,7 +82,8 @@ public class FinanceUtilities extends MainEntryPoint{
 	}
 	
 	protected Widget paint(Domain domain) {
-		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
+		AonLayoutPanel dockLayoutPanel = new AonLayoutPanel(Unit.PX);
+		dockLayoutPanel.setStyleName(AON.CSS.aonSelector());
 		dockLayoutPanel.addNorth(getToolbarPanel(), 25);
 		
 		SimpleLayoutPanel sidebar = new SimpleLayoutPanel();
@@ -95,50 +96,45 @@ public class FinanceUtilities extends MainEntryPoint{
 		
 		FlowPanel sidebarMenu = new FlowPanel();
 		scrollPanel.setWidget(sidebarMenu);
-
 		SimpleLayoutPanel content = new SimpleLayoutPanel();
-		
-		DisclosurePanel checksDisclosurePanel = new DisclosurePanel("CHEQUEOS");
-		checksDisclosurePanel.setOpen(true);
-		FlowPanel checksPanel = new FlowPanel();
-		checksDisclosurePanel.add(checksPanel);
-		
-		MissingFinanceInvoicesCheck missingFinanceInvoices = new MissingFinanceInvoicesCheck(getDomainName(),getUser(),domain);
-		checksPanel.add(missingFinanceInvoices.getSidebarWidget());
-		missingFinanceInvoices.addSelectionHandler( new SelectionHandler<FinanceUtilities.IOption>() {
-			@Override
-			public void onSelection(SelectionEvent<IOption> event) {
-				content.setWidget( missingFinanceInvoices );
-//				missingFinanceInvoices.run();
-			}
-		});
-
-		
-		FinanceInvoiceIntegrityCheck financeInvoiceIntegrityCheck = new FinanceInvoiceIntegrityCheck(getDomainName(),getUser(),domain);
-		checksPanel.add(financeInvoiceIntegrityCheck.getSidebarWidget());
-		financeInvoiceIntegrityCheck.addSelectionHandler( new SelectionHandler<FinanceUtilities.IOption>() {
-			@Override
-			public void onSelection(SelectionEvent<IOption> event) {
-				content.setWidget( financeInvoiceIntegrityCheck );
-				financeInvoiceIntegrityCheck.run();
-			}
-		});
-		
-		if ( domain != null && AonNumberUtils.equals(domain.getId(),7138)) {
-			AyudaTFix ayudaTFix = new AyudaTFix(getDomainName(),getUser(),domain);
-			checksPanel.add(ayudaTFix.getSidebarWidget());
-			ayudaTFix.addSelectionHandler( new SelectionHandler<FinanceUtilities.IOption>() {
-				@Override
-				public void onSelection(SelectionEvent<IOption> event) {
-					content.setWidget( ayudaTFix );
-				}
-			});
-		}
-
-		sidebarMenu.add(checksDisclosurePanel);
-		
+		sidebarMenu.add(getInvoicesOptionsPanel(content,domain));
+		sidebarMenu.add(getFinanceOptionsPanel(content,domain));
 		dockLayoutPanel.add( content );
 		return dockLayoutPanel; 
+	}
+	
+	private Widget getInvoicesOptionsPanel(SimpleLayoutPanel content, Domain domain) {
+		DisclosurePanel invoiceDisclosurePanel = new DisclosurePanel("FACTURAS");
+		invoiceDisclosurePanel.setOpen(true);
+		FlowPanel invoicePanel = new FlowPanel();
+		invoiceDisclosurePanel.add(invoicePanel);
+		
+		WithholdingTypeCheck withholdingTypeCheck = new WithholdingTypeCheck(options,domain);
+		invoicePanel.add(withholdingTypeCheck.getSidebarWidget());
+		withholdingTypeCheck.addSelectionHandler( event -> content.setWidget( withholdingTypeCheck ));
+
+		return invoiceDisclosurePanel;
+		
+	}
+
+	private Widget getFinanceOptionsPanel(SimpleLayoutPanel content, Domain domain) {
+		DisclosurePanel financeDisclosurePanel = new DisclosurePanel("VENCIMIENTOS");
+		financeDisclosurePanel.setOpen(true);
+		FlowPanel financePanel = new FlowPanel();
+		financeDisclosurePanel.add(financePanel);
+		
+		MissingFinanceInvoicesCheck missingFinanceInvoices = new MissingFinanceInvoicesCheck(options,domain);
+		financePanel.add(missingFinanceInvoices.getSidebarWidget());
+		missingFinanceInvoices.addSelectionHandler( event -> content.setWidget( missingFinanceInvoices ));
+
+		
+		FinanceInvoiceIntegrityCheck financeInvoiceIntegrityCheck = new FinanceInvoiceIntegrityCheck(options,domain);
+		financePanel.add(financeInvoiceIntegrityCheck.getSidebarWidget());
+		financeInvoiceIntegrityCheck.addSelectionHandler( event -> {
+			content.setWidget( financeInvoiceIntegrityCheck );
+			financeInvoiceIntegrityCheck.run();
+		});
+		return financeDisclosurePanel;
 	}
 
 	private Widget getToolbarPanel() {

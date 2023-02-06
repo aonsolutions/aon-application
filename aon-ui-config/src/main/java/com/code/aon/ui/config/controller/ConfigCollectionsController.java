@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;
@@ -34,6 +35,7 @@ import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.Toolbar;
 import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.config.enumeration.WithholdingType;
+import com.code.aon.config.enumeration.WithholdingTypeGroup;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -91,11 +93,21 @@ public class ConfigCollectionsController implements Serializable {
 	public List<SelectItem> getWithholdingTypes() {
 		if (withholdingTypes == null) {
 			Locale locale = AonUtil.getCurrentLocale();
-			withholdingTypes = new LinkedList<SelectItem>();
-			for (WithholdingType type : WithholdingType.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				withholdingTypes.add(item);
+			withholdingTypes = new LinkedList<>();
+			for (WithholdingTypeGroup typeGroup : WithholdingTypeGroup.values()) {
+				List<SelectItem> wtList = new LinkedList<>();
+				for (WithholdingType type : WithholdingType.ORDERED_VALUES) {
+					if ( type.getGroup() == typeGroup) {
+						String name = type.getAbbreviatedDescription() + ". " + type.getName(locale);
+						SelectItem item = new SelectItem(type, name);
+						wtList.add(item);
+					}
+				}
+				if (!wtList.isEmpty()) {
+					SelectItemGroup itemGroup = new SelectItemGroup( typeGroup.getDescription() );
+					itemGroup.setSelectItems( wtList.toArray( new SelectItem[wtList.size()] ) );
+					withholdingTypes.add(itemGroup);
+				}
 			}
 		}
 		return withholdingTypes;

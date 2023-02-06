@@ -253,22 +253,6 @@ public class FiscalModelDAO {
 			.map(mod -> fillModelDetails(ctx,mod));
 	}
 	
-//	public static <T extends FiscalModel> Stream<T> getEffectivePreviousModels(AONContext ctx,FiscalModel fiscalModel, Supplier<T> modelSupplier) {
-//		LinkedList<T> effectivePreviousModels = new LinkedList<>();
-//		LinkedList<T> previousModels = getPreviousModels(ctx, fiscalModel, modelSupplier)
-//				.collect(Collectors.toCollection(LinkedList::new));
-//		for ( T fm : previousModels ) {
-//			if (fm.isComplementary() || (!fm.isComplementary() && 
-//				 previousModels.stream().noneMatch(fm2 -> fm2.isComplementary() 
-//					&& 	fm2.getYear() == fm.getYear()
-//					&& 	fm2.getPeriod().ordinal() == fm.getPeriod().ordinal()
-//				))) {
-//				effectivePreviousModels.add(fm);
-//			}
-//		}
-//		return effectivePreviousModels.stream();
-//	}
-	
 	public static <T extends FiscalModel> Stream<T> getLastPeriodModels(AONContext ctx,FiscalModel fiscalModel, Supplier<T> modelSupplier) {
 		ctx.checkRead();
 		if (fiscalModel.getPeriod() == Period.M01 || fiscalModel.getPeriod() == Period.T1) {
@@ -647,15 +631,6 @@ public class FiscalModelDAO {
 				.stream()
 				.map( rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new));
 	}
-/*
-p ->
-				p.getDomainProperty().eq(ctx.getDomainId())
-				 .and(p.getTypeProperty().ne(InvoiceType.UNDEDUCTIBLE.value()))
-				 .and(p.getStartIssueDateProperty().ge(params.getFromDate())) 
-				 .and(p.getEndIssueDateProperty().le(params.getToDate()))
-				);
- 
- */
 	
 	public static LinkedList<InvoiceFiscalModels> getInvoicesModels(AONContext ctx,InvoiceModelReportParams params) {
 		ctx.checkRead();

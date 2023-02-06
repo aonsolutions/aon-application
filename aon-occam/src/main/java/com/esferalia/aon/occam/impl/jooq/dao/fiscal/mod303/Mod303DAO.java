@@ -63,7 +63,7 @@ public class Mod303DAO extends FiscalModelDAO {
 		ctx.checkRead();
 		Mod303 mod303 = FiscalModelDAO.get(ctx,Mod303::new,id);
 		if ( mod303 != null) {
-			mod303.setInvoicesBound( AlcatrazDAO.hasInvoicesBound(ctx, mod303.getId()));
+			mod303.setInvoicesBound( AlcatrazDAO.hasAlcatrazBound(ctx, mod303.getId()));
 			Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 			dec.fillSimplifiedRegime(mod303);
 		}
@@ -185,7 +185,7 @@ public class Mod303DAO extends FiscalModelDAO {
 		mod303 = save(ctx, mod303);
 		AlcatrazDAO.deleteFiscalModel(ctx, mod303);
 		AlcatrazDAO.saveModelInvoices(ctx, mod303, invoices);
-		mod303.setInvoicesBound( AlcatrazDAO.hasInvoicesBound(ctx, mod303.getId()));
+		mod303.setInvoicesBound( AlcatrazDAO.hasAlcatrazBound(ctx, mod303.getId()));
 		return mod303;
 	}
 

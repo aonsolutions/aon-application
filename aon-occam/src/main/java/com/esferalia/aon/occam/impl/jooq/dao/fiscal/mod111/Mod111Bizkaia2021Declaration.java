@@ -7,11 +7,12 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 	
 	public static boolean accept(Mod111 mod) {
-		return mod.isBizkaia() && mod.getPeriod().isMonthPeriod(); 
+		return mod.isBizkaia() && mod.getYear() < 2023 && mod.getPeriod().isMonthPeriod(); 
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
@@ -43,27 +44,27 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 		,BZ_C17 (Mod111Key.BZ_C17,true ,null,null,null,null,null)
 		,BZ_C28 (Mod111Key.BZ_C28,true ,null,null,null,null,null)
 		,BZ_C07 (Mod111Key.BZ_C07,false
-			, (mod,br) ->  br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
+			, (mod,br) ->  br.isNotObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C07,mod,docs,pdocs,br)
 			,null,null,null)
 		,BZ_C18 (Mod111Key.BZ_C18,true
-			, (mod,br) ->  br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
+			, (mod,br) ->  br.isNotObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C18,mod,br)
 			,null,null,null)
 		,BZ_C29 (Mod111Key.BZ_C29,true
-			, (mod,br) ->  br.isNotObjectiveRegime() && (br.isProfessional() || br.isTransportOperator())
+			, (mod,br) ->  br.isNotObjectiveRegime() && (isProfessional(br) || isTransportOperator(br))
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C29,mod,br)
 			,null,null,null)
 		,BZ_C08 (Mod111Key.BZ_C08,false
-			, (mod,br) ->  br.isFarmer()
+			, (mod,br) ->  isFarmer(br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C08,mod,docs,pdocs,br)
 			,null,null,null)
 		,BZ_C19 (Mod111Key.BZ_C19,true
-			, (mod,br) ->  br.isFarmer()
+			, (mod,br) ->  isFarmer(br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod111Key.BZ_C19,mod,br)
 			,null,null,null)
 		,BZ_C30 (Mod111Key.BZ_C30,true
-			, (mod,br) ->  br.isFarmer()
+			, (mod,br) ->  isFarmer(br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod111Key.BZ_C30,mod,br)
 			,null,null,null)
 		,BZ_C09 (Mod111Key.BZ_C09,false
@@ -182,4 +183,18 @@ public class Mod111Bizkaia2021Declaration extends Mod111Declaration {
 		return super.initializeModel(ctx, mod111);
 	}
 
+	@Override
+	public Mod111Key[] getSamePeriodExplainKeys() {
+		return new Mod111Key[] {};
+	}
+
+	private static boolean isProfessional(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.PROFESSIONAL;
+	}
+	private static boolean isFarmer(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.FARMER;
+	}
+	private static boolean isTransportOperator(IrpfBreakdown br) {
+		return br.isFromInvoice() &&  br.getWithholdingType() == WithholdingType.TRANSPORT_OPERATOR;
+	}
 }

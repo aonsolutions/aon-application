@@ -28,7 +28,6 @@ public interface Mod115Service extends RemoteService {
 	void delete(Occam occam, Mod115 mod115) throws AonCoreException;
 	Mod115 initialize(Occam occam, Mod115 mod115);
 	Mod115 create(Occam occam, Mod115 mod115) throws AonCoreException;
-	Mod115 reset(Occam occam, Mod115 model) throws AonCoreException;
 	String getInfo(Occam occam, Mod115 mod115, IModelScript<Mod115Key> script, FiscalModelKeyInfo infoKey) throws AonCoreException;
 	Invoice getInvoice(Occam occam, int invoiceId) throws AonCoreException;
 	

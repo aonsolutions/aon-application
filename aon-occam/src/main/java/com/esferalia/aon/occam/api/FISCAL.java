@@ -10,6 +10,9 @@ import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.InvoiceFiscalModels;
 import com.esferalia.aon.occam.api.model.fiscal.InvoiceModelReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary;
+import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
+import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
@@ -63,7 +66,7 @@ public class FISCAL {
 	}
 	
 		
-	public static Stream<IrpfBreakdown> getIrpfBreakdownSummary(Occam occam, IRPFParams params) {
+	public static IrpfSummary getIrpfBreakdownSummary(Occam occam, IRPFParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFiscal().getIrpfBreakdownSummary(ctx, params);
 		}

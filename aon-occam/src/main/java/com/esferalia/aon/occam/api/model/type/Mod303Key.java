@@ -5,15 +5,15 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum Mod303Key implements IFiscalModelKey  {
-	// Á --> \u00C1 á --> \u00E1 
-	// É --> \u00C9 é --> \u00E9 
-	// Í --> \u00CD í --> \u00ED 
-	// Ó --> \u00D3 ó --> \u00F3 
-	// Ú --> \u00DA ú --> \u00FA ... acento
-	// Ü --> \u00DC ü --> \u00fc ... diéresis
+	// Á --> \u00C1 á --> \u00E1
+	// É --> \u00C9 é --> \u00E9
+	// Í --> \u00CD í --> \u00ED
+	// Ó --> \u00D3 ó --> \u00F3
+	// Ú --> \u00DA ú --> \u00FA
 	// Ñ --> \u00D1 ñ --> \u00F1
-	// º --> \u00BA ª --> \u00AA 
+	// ª --> \u00AA º --> \u00BA
 	// ¿ --> \u00BF
+	
 	 CM_000("303-CM000",false,null,"Confecci\u00F3n manual")
 	,CM_001("303-CM001",false,null,"C\u00E1lculo por diferencia.")
 	,CM_002("303-CM002",false,null,"Sujeto pasivo inscrito en el Registro de devoluci\u00F3n mensual")
@@ -47,15 +47,21 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_A13("303-CTA13",false,null,"Sujeto pasivo acogido voluntariamente al SII")
 	,CT_A14("303-CTA14",false,null,"Sujeto pasivo exonerado de la Declaraci\u00F3n-resumen anual del IVA, modelo 390")
 	
-	,CT_C01("303-CTC01",true ,"1","R\u00E9gimen general - Base imponible")
-	,CT_C02("303-CTC02",false,"2","R\u00E9gimen general - Tipo %")
-	,CT_C03("303-CTC03",true ,"3","R\u00E9gimen general - Cuota")
-	,CT_C04("303-CTC04",true ,"4",CT_C01.getDescription())
-	,CT_C05("303-CTC05",false,"5",CT_C02.getDescription())
-	,CT_C06("303-CTC06",true ,"6",CT_C03.getDescription())
-	,CT_C07("303-CTC07",true ,"7",CT_C01.getDescription())
-	,CT_C08("303-CTC08",false,"8",CT_C02.getDescription())
-	,CT_C09("303-CTC09",true ,"9",CT_C03.getDescription())
+	,CT_C150("303-CTC150",true ,"150","R\u00E9gimen general - Base imponible")
+	,CT_C151("303-CTC151",false,"151","R\u00E9gimen general - Tipo %")
+	,CT_C152("303-CTC152",true ,"152","R\u00E9gimen general - Cuota")
+	,CT_C01 ("303-CTC01" ,true ,"1"  ,CT_C150.getDescription())
+	,CT_C02 ("303-CTC02" ,false,"2"  ,CT_C151.getDescription())
+	,CT_C03 ("303-CTC03" ,true ,"3"  ,CT_C152.getDescription())
+	,CT_C153("303-CTC153",true ,"153",CT_C150.getDescription())
+	,CT_C154("303-CTC154",false,"154",CT_C151.getDescription())
+	,CT_C155("303-CTC155",true ,"155",CT_C151.getDescription())
+	,CT_C04 ("303-CTC04" ,true ,"4"  ,CT_C150.getDescription())
+	,CT_C05 ("303-CTC05" ,false,"5"  ,CT_C151.getDescription())
+	,CT_C06 ("303-CTC06" ,true ,"6"  ,CT_C151.getDescription())
+	,CT_C07 ("303-CTC07" ,true ,"7"  ,CT_C150.getDescription())
+	,CT_C08 ("303-CTC08" ,false,"8"  ,CT_C151.getDescription())
+	,CT_C09 ("303-CTC09" ,true ,"9"  ,CT_C151.getDescription())
 	
 	,CT_C10("303-CTC10",true ,"10","Adquisiciones intracomunitarias de bienes y servicios - Base imponible")
 	,CT_C11("303-CTC11",true ,"11","Adquisiciones intracomunitarias de bienes y servicios - Cuota")
@@ -63,15 +69,20 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,CT_C13("303-CTC13",true ,"13","Otras operaciones con inversi\u00F3n del sujeto pasivo (excepto. adq. intracom) - Cuota")
 	,CT_C14("303-CTC14",true ,"14","Modificaci\u00F3n bases y cuotas - Base imponible")
 	,CT_C15("303-CTC15",true ,"15","Modificaci\u00F3n bases y cuotas - Cuota")
-	,CT_C16("303-CTC16",true ,"16","Recargo equivalencia - Base imponible")
-	,CT_C17("303-CTC17",false,"17","Recargo equivalencia - Tipo %")
-	,CT_C18("303-CTC18",true ,"18","Recargo equivalencia - Cuota")
-	,CT_C19("303-CTC19",true ,"19",CT_C16.getDescription())
-	,CT_C20("303-CTC20",false,"20",CT_C17.getDescription())
-	,CT_C21("303-CTC21",true ,"21",CT_C18.getDescription())
-	,CT_C22("303-CTC22",true ,"22",CT_C16.getDescription())
-	,CT_C23("303-CTC23",false,"23","Recargo equivalencia - Tipo")
-	,CT_C24("303-CTC24",true ,"24",CT_C18.getDescription())
+	
+	,CT_C156("303-CTC166",true ,"156","Recargo equivalencia - Base imponible")
+	,CT_C157("303-CTC167",false,"157","Recargo equivalencia - Tipo %")
+	,CT_C158("303-CTC168",true ,"158","Recargo equivalencia - Cuota")
+	,CT_C16("303-CTC16",true ,"16",CT_C156.getDescription())
+	,CT_C17("303-CTC17",false,"17",CT_C157.getDescription())
+	,CT_C18("303-CTC18",true ,"18",CT_C158.getDescription())
+	,CT_C19("303-CTC19",true ,"19",CT_C156.getDescription())
+	,CT_C20("303-CTC20",false,"20",CT_C157.getDescription())
+	,CT_C21("303-CTC21",true ,"21",CT_C158.getDescription())
+	,CT_C22("303-CTC22",true ,"22",CT_C156.getDescription())
+	,CT_C23("303-CTC23",false,"23",CT_C157.getDescription())
+	,CT_C24("303-CTC24",true ,"24",CT_C158.getDescription())
+	
 	,CT_C25("303-CTC25",true ,"25","Modificaciones bases y cuotas del recargo de equivalencia - Base imponible")
 	,CT_C26("303-CTC26",true ,"26","Modificaciones bases y cuotas del recargo de equivalencia - Cuota")
 	,CT_C27("303-CTC27",false,"27","Total cuota devengada")
@@ -409,7 +420,8 @@ public enum Mod303Key implements IFiscalModelKey  {
 	
 	,CT_C68("303-CTA68",false,"68","Exclusivamente para sujetos pasivos que tributan conjuntamente a la Administraci\u00F3n del Estado y a las Diputaciones Forales Resultado de la regularizaci\u00F3n anual") 
 	,CT_C69("303-CTA69",false,"69",CT_S11R.getDescription()) 
-	,CT_C70("303-CTA70",false,"70","A deducir")
+	,CT_C70("303-CTA70",false,"70","Resultados a ingresar de anteriores autoliquidaciones o liquidaciones administrativas correspondientes al ejercicio y per\u00EDodo objeto de la autoliquidaci\u00F3n")
+	,CT_C109("303-CTA109",false,"109","Devoluciones acordadas por la Agencia Tributaria como consecuencia de la tramitaci\u00F3n de anteriores autoliquidaciones correspondientes al ejercicio y per\u00EDodo objeto de la autoliquidaci\u00F3n")
 	,CT_C71("303-CTA71",false,"71","Resultado de la liquidaci\u00F3n")
 	
 	,CT_U1D("303-CTU1D",false,null,"A - Ep\u00EDgrafe IAE - Descripci\u00F3n")
@@ -507,9 +519,15 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C908("303-AR908",false,"908","Fecha en que se dict\u00F3 el auto de declaraci\u00F3n de concurso")
 	,AR_C909("303-AR909",false,"909","Si se ha dictado auto de declaraci\u00F3n de concurso en este periodo, indique el tipo de autoliquidaci\u00F3n")
 	 
+	,AR_C210("303-AR210",true ,"210",CT_C01.getDescription())
+	,AR_C211("303-AR211",false,"211",CT_C02.getDescription())
+	,AR_C212("303-AR212",true ,"212",CT_C03.getDescription())
 	,AR_C001("303-AR001",true ,"1",CT_C01.getDescription())
 	,AR_C002("303-AR002",false,"2",CT_C02.getDescription())
 	,AR_C003("303-AR003",true ,"3",CT_C03.getDescription())
+	,AR_C201("303-AR201",true ,"201",CT_C01.getDescription())
+	,AR_C202("303-AR202",false,"202",CT_C02.getDescription())
+	,AR_C203("303-AR203",true ,"203",CT_C03.getDescription())
 	,AR_C204("303-AR204",true ,"204",CT_C01.getDescription())
 	,AR_C205("303-AR205",false,"205",CT_C02.getDescription())
 	,AR_C206("303-AR206",true ,"206",CT_C03.getDescription())
@@ -522,12 +540,15 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C372("303-AR372",true ,"372","Inversi\u00F3n del sujeto pasivo - Base imponible")
 	,AR_C373("303-AR373",true ,"373","Inversi\u00F3n del sujeto pasivo - Cuota")
 	
-	,AR_C010("303-AR010",true ,"10",CT_C16.getDescription())
-	,AR_C011("303-AR011",false,"11",CT_C17.getDescription())
-	,AR_C012("303-AR012",true ,"12",CT_C18.getDescription())
+	,AR_C010("303-AR010",true ,"10" ,CT_C16.getDescription())
+	,AR_C011("303-AR011",false,"11" ,CT_C17.getDescription())
+	,AR_C012("303-AR012",true ,"12" ,CT_C18.getDescription())
 	,AR_C213("303-AR213",true ,"213",CT_C16.getDescription())
 	,AR_C214("303-AR214",false,"214",CT_C23.getDescription())
 	,AR_C215("303-AR215",true ,"215",CT_C18.getDescription())
+	,AR_C219("303-AR219",true ,"219",CT_C16.getDescription())
+	,AR_C220("303-AR220",false,"220",CT_C23.getDescription())
+	,AR_C221("303-AR221",true ,"221",CT_C18.getDescription())
 	,AR_C216("303-AR216",true ,"216",CT_C16.getDescription())
 	,AR_C217("303-AR217",false,"217",CT_C23.getDescription())
 	,AR_C218("303-AR218",true ,"218",CT_C18.getDescription())
@@ -538,6 +559,9 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C019("303-AR019",true ,"19",CT_C10.getDescription())
 	,AR_C020("303-AR020",false,"20","Adquisiciones intracomunitarias de bienes y servicios - Tipo %")
 	,AR_C021("303-AR021",true ,"21",CT_C11.getDescription())
+	,AR_C231("303-AR231",true ,"231",CT_C10.getDescription())
+	,AR_C232("303-AR232",false,"232",AR_C020.getDescription())
+	,AR_C233("303-AR233",true ,"233",CT_C11.getDescription())
 	,AR_C222("303-AR222",true ,"222",CT_C10.getDescription())
 	,AR_C223("303-AR223",false,"223",AR_C020.getDescription())
 	,AR_C224("303-AR224",true ,"224",CT_C11.getDescription())
@@ -567,21 +591,12 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C041("303-AR041",false,"41","Volumen operaciones - % GIPUZKOA")
 	,AR_C042("303-AR042",false,"42","Volumen operaciones - % BIZKAIA")
 	,AR_C043("303-AR043",false,"43","Volumen operaciones - % RESTO")
+	
 	,AR_C044("303-AR044",false,"44","Cuota atribuible al Territorio Hist\u00F3rico de \u00C1lava")
 	,AR_C045("303-AR045",false,"45","Cuotas a compensar de per\u00EDodos anteriores en el Territorio Hist\u00F3rico de \u00C1lava")
 	,AR_C060("303-AR060",false,"60","Resultado de la autoliquidaci\u00F3n")
-	,AR_C061("303-AR061",false,"61","Recargo presentaci\u00F3n extempor\u00E1nea")
-	,AR_C062("303-AR062",false,"62","Intereses demora")
-	,AR_C063("303-AR063",false,"63","A deducir (exclusivamente en el caso de autoliquidaci\u00F3n sustitutiva: resultado de las autoliquidaciones anteriores presentadas por el mismo concepto, ejercicio y per\u00EDodo)")
-	
-	,AR_C080("303-AR080",false,"80","Total deuda tributaria")
-	,AR_C081("303-AR081",false,"81","Total a devolver")
-	,AR_C082("303-AR082",false,"82","Total a compensar")
-	
 	,AR_C050("303-AR050",true ,"50","Total entregas de bienes y prestaciones de servicios intracomunitarias")
 	,AR_C051("303-AR051",true ,"51","Total exportaciones y operaciones asimiladas")
-	,AR_C052("303-AR052",true ,"52","Operaciones no sujetas o con inversi\u00F3n del sujeto pasivo que originan el derecho a deducci\u00F3n")
-	
 	,AR_C054("303-AR054",true ,"54","Operaciones no sujetas por reglas de localizaci\u00F3n (excepto las incluidas en la casilla 56)")
 	,AR_C055("303-AR055",true ,"55","Operaciones sujetas con inversi\u00F3n del sujeto pasivo")
 	,AR_C056("303-AR056",true ,"56","Operaciones no sujetas por reglas de localizaci\u00F3n acogidas a la OSS")
@@ -591,6 +606,18 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,AR_C181("303-AR181",true ,"181","Criterio de Caja. Importes de las entregas de bienes y prestaciones de servicios a las que habi\u00E9ndoles sido aplicado el R\u00E9gimen especial del criterio de caja hubieran resultado devengadas conforme a la regla general de devengo - Cuota")
 	,AR_C182("303-AR182",true ,"182","Criterio de Caja. Importes de adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el R\u00E9gimen especial del criterio de caja - Base Imponible")
 	,AR_C183("303-AR183",true ,"183","Criterio de Caja. Importes de adquisiciones de bienes y servicios a las que sea de aplicaci\u00F3n o afecte el R\u00E9gimen especial del criterio de caja - Cuota")
+
+	,AR_C061("303-AR061",false,"61","Recargo presentaci\u00F3n extempor\u00E1nea")
+	,AR_C062("303-AR062",false,"62","Intereses demora")
+	,AR_C063("303-AR063",false,"63","A deducir (exclusivamente en el caso de autoliquidaci\u00F3n sustitutiva: resultado de las autoliquidaciones anteriores presentadas por el mismo concepto, ejercicio y per\u00EDodo)")
+	
+	,AR_C080("303-AR080",false,"80","Total deuda tributaria")
+	,AR_C081("303-AR081",false,"81","Total a devolver")
+	,AR_C082("303-AR082",false,"82","Total a compensar")
+	
+	,AR_C052("303-AR052",true ,"52","Operaciones no sujetas o con inversi\u00F3n del sujeto pasivo que originan el derecho a deducci\u00F3n")
+	
+	
 	
 	// 	----------------------------------------------------------------------------------  
 	// 	--------------------------------------------------------------------  BIZKAIA ----
@@ -599,118 +626,163 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,BZ_C185_2("303-BZ1852",false,"185","Fraccionamiento de per\u00EDodo en concursal. Hasta.")
 	,BZ_C186  ("303-BZ186" ,false,"186","Sujeto pasivo acogido al r\u00E9gimen especial del criterio de caja.")
 	,BZ_C187  ("303-BZ187" ,false,"187","Destinatario/a de operaciones a las que se aplica el r\u00E9gimen especial del criterio de caja")
+	,BZ_C188  ("303-BZ188" ,false,"188","Opci\u00F3n por la aplicaci\u00F3n de la prorrata especial")
+	,BZ_C189  ("303-BZ189" ,false,"189","Revocaci\u00F3n de la opci\u00F3n por la aplicaci\u00F3n de la prorrata especial")
 
-	,BZ_C003("303-BZ003",true ,"3",CT_C01.getDescription())
-	,BZ_X003("303-BZX03",false,null,CT_C02.getDescription())
-	,BZ_C004("303-BZ004",true ,"4",CT_C03.getDescription())
-	,BZ_C005("303-BZ005",true ,"5",CT_C01.getDescription())
-	,BZ_X005("303-BZX05",false,null,CT_C02.getDescription())
-	,BZ_C006("303-BZ006",true ,"6",CT_C03.getDescription())
-	,BZ_C007("303-BZ007",true ,"7",CT_C01.getDescription())
-	,BZ_X007("303-BZX07",false,null,CT_C02.getDescription())
-	,BZ_C008("303-BZ008",true ,"8",CT_C03.getDescription())
-	,BZ_C009("303-BZ009",true ,"9",CT_C16.getDescription())
-	,BZ_X009("303-BZX09",false,null,CT_C17.getDescription())
-	,BZ_C010("303-BZ010",true ,"10",CT_C18.getDescription())
-	,BZ_C011("303-BZ011",true ,"11",CT_C16.getDescription())
-	,BZ_X011("303-BZX11",false,null,CT_C17.getDescription())
-	,BZ_C012("303-BZ012",true ,"12",CT_C18.getDescription())
-	,BZ_C013("303-BZ013",true ,"13",CT_C16.getDescription())
-	,BZ_X013("303-BZX13",false,null,CT_C17.getDescription())
-	,BZ_C014("303-BZ014",true ,"14",CT_C18.getDescription())
-	,BZ_C015("303-BZ015",true ,"15",CT_C16.getDescription())
-	,BZ_X015("303-BZX15",false,null,CT_C17.getDescription())
-	,BZ_C016("303-BZ016",true ,"16",CT_C18.getDescription())
-	,BZ_C017("303-BZ017",true ,"17",CT_C10.getDescription())
-	,BZ_C018("303-BZ018",true ,"18",CT_C11.getDescription())
-	,BZ_C019("303-BZ019",true ,"19","IVA devengado por inversi\u00F3n del sujeto pasivo - Base imponible")
-	,BZ_C020("303-BZ020",true ,"20","IVA devengado por inversi\u00F3n del sujeto pasivo - Cuota")
-	,BZ_C021("303-BZ021",true ,"21","Modificaci\u00F3n de bases y cuotas, general - Base imponible")
-	,BZ_C022("303-BZ022",true ,"22","Modificaci\u00F3n de bases y cuotas, general - Cuota")
-	,BZ_C046("303-BZ046",true ,"46","Modificaci\u00F3n de bases y cuotas, art\u00EDculo 80.3 y 80.4 NFIVA - Base imponible")
-	,BZ_C047("303-BZ047",true ,"47","Modificaci\u00F3n de bases y cuotas, art\u00EDculo 80.3 y 80.4 NFIVA - Cuota")
-	,BZ_C023("303-BZ023",false,"23",CT_C27.getDescription())
-	,BZ_C024("303-BZ024",true ,"24","IVA deducible en operaciones interiores")
-	,BZ_C025("303-BZ025",true ,"25","IVA deducible en importaciones")
-	,BZ_C026("303-BZ026",true ,"26","IVA deducible en adquisiciones intracomunitarias")
-	,BZ_C027("303-BZ027",true ,"27","Compensaciones R\u00E9gimen Especial A.G. y P .")
-	,BZ_C028("303-BZ028",false,"28","Regularizaci\u00F3n Inversiones")
-	,BZ_C030("303-BZ030",false,"30",AR_C038.getDescription())
-	,BZ_C031("303-BZ031",false,"31",AR_C039.getDescription())
-	,BZ_C045("303-BZ045",false,"45","Regularizaci\u00F3n de cuotas (art.80.cinco.5a Norma Foral del IVA)")
-	,BZ_C032("303-BZ032",false,"32","Porcentaje de tributaci\u00F3n en Bizkaia")
-	,BZ_C033("303-BZ033",false,"33","Cuota atribuible a Bizkaia")
-	,BZ_C034("303-BZ034",false,"34","Cuota a compensar de periodos anteriores")
-	,BZ_C035("303-BZ035",false,"35","Resultado de la regularizaci\u00F3n anual")
-	,BZ_C036("303-BZ036",false,"36",CT_S11R.getDescription())
-	,BZ_C038("303-BZ038",false,"38","A compensar")
-	,BZ_C039("303-BZ039",false,"39","A devolver")
-	,BZ_C040("303-BZ040",false,"40","A ingresar")
-	,BZ_C041("303-BZ041",false,"41","Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: ingresado anteriormente")
-	,BZ_C042("303-BZ042",false,"42","Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: devuelto anteriormente")
-	,BZ_C043("303-BZ043",false,"43","Total deuda tributaria")
-	,BZ_C200("303-BZ200",true ,"200",AR_C180.getDescription())
-	,BZ_C201("303-BZ201",true ,"201",AR_C181.getDescription())
-	,BZ_C202("303-BZ202",true ,"202",AR_C182.getDescription())
-	,BZ_C203("303-BZ203",true ,"203",AR_C183.getDescription())
+	,BZ_C048("303-BZ048" ,true ,"48",CT_C01.getDescription())
+	,BZ_X048("303-BZX48" ,false,null,CT_C02.getDescription())
+	,BZ_C049("303-BZ049" ,true ,"49",CT_C03.getDescription())
+	,BZ_C003("303-BZ003" ,true ,"3",CT_C01.getDescription())
+	,BZ_X003("303-BZX03" ,false,null,CT_C02.getDescription())
+	,BZ_C004("303-BZ004" ,true ,"4",CT_C03.getDescription())
+	,BZ_C110("303-BZ110" ,true ,"110",CT_C01.getDescription())
+	,BZ_X110("303-BZX110",false,null,CT_C02.getDescription())
+	,BZ_C111("303-BZ111" ,true ,"111",CT_C03.getDescription())
+	,BZ_C005("303-BZ005" ,true ,"5",CT_C01.getDescription())
+	,BZ_X005("303-BZX05" ,false,null,CT_C02.getDescription())
+	,BZ_C006("303-BZ006" ,true ,"6",CT_C03.getDescription())
+	,BZ_C007("303-BZ007" ,true ,"7",CT_C01.getDescription())
+	,BZ_X007("303-BZX07" ,false,null,CT_C02.getDescription())
+	,BZ_C008("303-BZ008" ,true ,"8",CT_C03.getDescription())
 	
-	,BZ_C050("303-BZ050",true ,"50","Compras de bienes corrientes - Base imponible")
-	,BZ_X050("303-BZX50",false,null,"Compras de bienes corrientes - Tipo %")
-	,BZ_C051("303-BZ051",true ,"51","Compras de bienes corrientes - Cuota")
-	,BZ_C052("303-BZ052",true ,"52","Compras de bienes corrientes - Cuota deducible")
-	,BZ_C053("303-BZ053",true ,"53",BZ_C050.getDescription())
-	,BZ_X053("303-BZX53",false,null,BZ_X050.getDescription())
-	,BZ_C054("303-BZ054",true ,"54",BZ_C051.getDescription())
-	,BZ_C055("303-BZ055",true ,"55",BZ_C052.getDescription())
-	,BZ_C056("303-BZ056",true ,"56",BZ_C050.getDescription())
-	,BZ_X056("303-BZX56",false,null,BZ_X050.getDescription())
-	,BZ_C057("303-BZ057",true ,"57",BZ_C051.getDescription())
-	,BZ_C058("303-BZ058",true ,"58",BZ_C052.getDescription())
-	,BZ_C059("303-BZ059",true ,"59",BZ_C050.getDescription())
-	,BZ_C060("303-BZ060",true ,"60",BZ_C051.getDescription())
-	,BZ_C061("303-BZ061",true ,"61",BZ_C052.getDescription())
-	,BZ_C062("303-BZ062",true ,"62",BZ_C050.getDescription())
-	,BZ_C063("303-BZ063",true ,"63",BZ_C051.getDescription())
-	,BZ_C064("303-BZ064",true ,"64",BZ_C052.getDescription())
-	,BZ_C065("303-BZ065",false,"65",BZ_C050.getDescription())
-	,BZ_C066("303-BZ066",false,"66",BZ_C051.getDescription())
-	,BZ_C067("303-BZ067",false,"67",BZ_C052.getDescription())
-	,BZ_C068("303-BZ068",true ,"68","Gastos - Base imponible")
-	,BZ_X068("303-BZX68",false,null,"Gastos - Tipo %")
-	,BZ_C069("303-BZ069",true ,"69","Gastos - Cuota")
-	,BZ_C070("303-BZ070",true ,"70","Gastos - Cuota deducible")
+	,BZ_C009("303-BZ009" ,true ,"9",CT_C16.getDescription())
+	,BZ_X009("303-BZX09" ,false,null,CT_C17.getDescription())
+	,BZ_C010("303-BZ010" ,true ,"10",CT_C18.getDescription())
+	,BZ_C011("303-BZ011" ,true ,"11",CT_C16.getDescription())
+	,BZ_X011("303-BZX11" ,false,null,CT_C17.getDescription())
+	,BZ_C012("303-BZ012" ,true ,"12",CT_C18.getDescription())
+	,BZ_C013("303-BZ013" ,true ,"13",CT_C16.getDescription())
+	,BZ_X013("303-BZX13" ,false,null,CT_C17.getDescription())
+	,BZ_C014("303-BZ014" ,true ,"14",CT_C18.getDescription())
+	,BZ_C015("303-BZ015" ,true ,"15",CT_C16.getDescription())
+	,BZ_X015("303-BZX15" ,false,null,CT_C17.getDescription())
+	,BZ_C016("303-BZ016" ,true ,"16",CT_C18.getDescription())
+	
+	,BZ_C017("303-BZ017" ,true ,"17",CT_C10.getDescription())
+	,BZ_C018("303-BZ018" ,true ,"18",CT_C11.getDescription())
+	,BZ_C019("303-BZ019" ,true ,"19","IVA devengado por inversi\u00F3n del sujeto pasivo - Base imponible")
+	,BZ_C020("303-BZ020" ,true ,"20","IVA devengado por inversi\u00F3n del sujeto pasivo - Cuota")
+	,BZ_C021("303-BZ021" ,true ,"21","Modificaci\u00F3n de bases y cuotas, general - Base imponible")
+	,BZ_C022("303-BZ022" ,true ,"22","Modificaci\u00F3n de bases y cuotas, general - Cuota")
+	,BZ_C046("303-BZ046" ,true ,"46","Modificaci\u00F3n de bases y cuotas, art\u00EDculo 80.3 y 80.4 NFIVA - Base imponible")
+	,BZ_C047("303-BZ047" ,true ,"47","Modificaci\u00F3n de bases y cuotas, art\u00EDculo 80.3 y 80.4 NFIVA - Cuota")
+	
+	,BZ_C023("303-BZ023" ,false,"23",CT_C27.getDescription())
+	,BZ_C024("303-BZ024" ,true ,"24","IVA deducible en operaciones interiores")
+	,BZ_C025("303-BZ025" ,true ,"25","IVA deducible en importaciones")
+	,BZ_C026("303-BZ026" ,true ,"26","IVA deducible en adquisiciones intracomunitarias")
+	,BZ_C027("303-BZ027" ,true ,"27","Compensaciones R\u00E9gimen Especial A.G. y P .")
+	,BZ_C028("303-BZ028" ,false,"28","Regularizaci\u00F3n Inversiones")
+	,BZ_C029("303-BZ029" ,false,"29","Regularización por aplicación porcentaje definitivo de prorrata (sólo en el mes 12)")
+	
+	,BZ_C030("303-BZ030" ,false,"30",AR_C038.getDescription())
+	,BZ_C031("303-BZ031" ,false,"31",AR_C039.getDescription())
+	
+	,BZ_C045("303-BZ045" ,false,"45","Regularizaci\u00F3n de cuotas (art.80.cinco.5a Norma Foral del IVA)")
+	,BZ_C032("303-BZ032" ,false,"32","Porcentaje de tributaci\u00F3n en Bizkaia")
+	,BZ_C033("303-BZ033" ,false,"33","Cuota atribuible a Bizkaia")
+	,BZ_C034("303-BZ034" ,false,"34","Cuota a compensar de periodos anteriores")
+	,BZ_C035("303-BZ035" ,false,"35","Resultado de la regularizaci\u00F3n anual")
+	
+	,BZ_C036("303-BZ036" ,false,"36",CT_S11R.getDescription())
+	,BZ_C038("303-BZ038" ,false,"38","A compensar")
+	,BZ_C039("303-BZ039" ,false,"39","A devolver")
+	,BZ_C040("303-BZ040" ,false,"40","A ingresar")
+	
+	,BZ_C041("303-BZ041" ,false,"41","Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: ingresado anteriormente")
+	,BZ_C042("303-BZ042" ,false,"42","Cumplimentar s\u00F3lo en caso de que se trate de una autoliquidaci\u00F3n complementaria: devuelto anteriormente")
+	
+	,BZ_C043("303-BZ043" ,false,"43","Total deuda tributaria")
+	,BZ_C200("303-BZ200" ,true ,"200",AR_C180.getDescription())
+	,BZ_C201("303-BZ201" ,true ,"201",AR_C181.getDescription())
+	,BZ_C202("303-BZ202" ,true ,"202",AR_C182.getDescription())
+	,BZ_C203("303-BZ203" ,true ,"203",AR_C183.getDescription())
+	
+	// Compras de bienes corrientes 4%
+	,BZ_C050("303-BZ050" ,true ,"50","Compras de bienes corrientes - Base imponible")
+	,BZ_X050("303-BZX50" ,false,null,"Compras de bienes corrientes - Tipo %")
+	,BZ_C051("303-BZ051" ,true ,"51","Compras de bienes corrientes - Cuota")
+	,BZ_C052("303-BZ052" ,true ,"52","Compras de bienes corrientes - Cuota deducible")
+	// Compras de bienes corrientes 5%
+	,BZ_C112("303-BZ112" ,true ,"112",BZ_C050.getDescription())
+	,BZ_X112("303-BZX112",false,null ,BZ_X050.getDescription())
+	,BZ_C113("303-BZ113" ,true ,"113",BZ_C051.getDescription())
+	,BZ_C114("303-BZ114" ,true ,"114",BZ_C052.getDescription())
+	// Compras de bienes corrientes 10%
+	,BZ_C053("303-BZ053" ,true ,"53",BZ_C050.getDescription())
+	,BZ_X053("303-BZX53" ,false,null,BZ_X050.getDescription())
+	,BZ_C054("303-BZ054" ,true ,"54",BZ_C051.getDescription())
+	,BZ_C055("303-BZ055" ,true ,"55",BZ_C052.getDescription())
+	// Compras de bienes corrientes 21%
+	,BZ_C056("303-BZ056" ,true ,"56",BZ_C050.getDescription())
+	,BZ_X056("303-BZX56" ,false,null,BZ_X050.getDescription())
+	,BZ_C057("303-BZ057" ,true ,"57",BZ_C051.getDescription())
+	,BZ_C058("303-BZ058" ,true ,"58",BZ_C052.getDescription())
+	// Compras de bienes corrientes Reg. Agricultura
+	,BZ_C059("303-BZ059" ,true ,"59",BZ_C050.getDescription())
+	,BZ_C060("303-BZ060" ,true ,"60",BZ_C051.getDescription())
+	,BZ_C061("303-BZ061" ,true ,"61",BZ_C052.getDescription())
+	// Compras de bienes corrientes Otros tipos
+	,BZ_C062("303-BZ062" ,true ,"62",BZ_C050.getDescription())
+	,BZ_C063("303-BZ063" ,true ,"63",BZ_C051.getDescription())
+	,BZ_C064("303-BZ064" ,true ,"64",BZ_C052.getDescription())
+	// Compras de bienes corrientes TOTAL
+	,BZ_C065("303-BZ065" ,false,"65",BZ_C050.getDescription())
+	,BZ_C066("303-BZ066" ,false,"66",BZ_C051.getDescription())
+	,BZ_C067("303-BZ067" ,false,"67",BZ_C052.getDescription())
+	
+	// Gastos 4%
+	,BZ_C068("303-BZ068" ,true ,"68","Gastos - Base imponible")
+	,BZ_X068("303-BZX68" ,false,null,"Gastos - Tipo %")
+	,BZ_C069("303-BZ069" ,true ,"69","Gastos - Cuota")
+	,BZ_C070("303-BZ070" ,true ,"70","Gastos - Cuota deducible")
+	// Gastos 5%
+	,BZ_C115("303-BZ115" ,true ,"115","Gastos - Base imponible")
+	,BZ_X115("303-BZX115",false,null ,"Gastos - Tipo %")
+	,BZ_C116("303-BZ116" ,true ,"116","Gastos - Cuota")
+	,BZ_C117("303-BZ117" ,true ,"117","Gastos - Cuota deducible")
+	// Gastos 10%
 	,BZ_C071("303-BZ071",true ,"71",BZ_C068.getDescription())
 	,BZ_X071("303-BZX71",false,null,BZ_X068.getDescription())
 	,BZ_C072("303-BZ072",true ,"72",BZ_C069.getDescription())
 	,BZ_C073("303-BZ073",true ,"73",BZ_C070.getDescription())
+	// Gastos 21%
 	,BZ_C074("303-BZ074",true ,"74",BZ_C068.getDescription())
 	,BZ_X074("303-BZX74",false,null,BZ_X068.getDescription())
 	,BZ_C075("303-BZ075",true ,"75",BZ_C069.getDescription())
 	,BZ_C076("303-BZ076",true ,"76",BZ_C070.getDescription())
+	// Gastos Otros Tipos
 	,BZ_C077("303-BZ077",true ,"77",BZ_C068.getDescription())
 	,BZ_C078("303-BZ078",true ,"78",BZ_C069.getDescription())
 	,BZ_C079("303-BZ079",true ,"79",BZ_C070.getDescription())
+	// Gastos TOTAL
 	,BZ_C080("303-BZ080",false,"80",BZ_C068.getDescription())
 	,BZ_C081("303-BZ081",false,"81",BZ_C069.getDescription())
 	,BZ_C082("303-BZ082",false,"82",BZ_C070.getDescription())
+	// Bienes inversion 4%
 	,BZ_C083("303-BZ083",true ,"83","Bienes de inversi\u00F3n - Base imponible")
 	,BZ_X083("303-BZX83",false,null,"Bienes de inversi\u00F3n - Tipo %")
 	,BZ_C084("303-BZ084",true ,"84","Bienes de inversi\u00F3n - Cuota")
 	,BZ_C085("303-BZ085",true ,"85","Bienes de inversi\u00F3n - Cuota deducible")
+	// Bienes inversion 10%
 	,BZ_C086("303-BZ086",true ,"86",BZ_C083.getDescription())
 	,BZ_X086("303-BZX86",false,null,BZ_X083.getDescription())
 	,BZ_C087("303-BZ087",true ,"87",BZ_C084.getDescription())
 	,BZ_C088("303-BZ088",true ,"88",BZ_C085.getDescription())
+	// Bienes inversion 21%
 	,BZ_C089("303-BZ089",true ,"89",BZ_C083.getDescription())
 	,BZ_X089("303-BZX89",false,null,BZ_X083.getDescription())
 	,BZ_C090("303-BZ090",true ,"90",BZ_C084.getDescription())
 	,BZ_C091("303-BZ091",true ,"91",BZ_C085.getDescription())
+	// Bienes inversion Otros tipos
 	,BZ_C092("303-BZ092",true ,"92",BZ_C083.getDescription())
 	,BZ_C093("303-BZ093",true ,"93",BZ_C084.getDescription())
 	,BZ_C094("303-BZ094",true ,"94",BZ_C085.getDescription())
+	// Bienes inversion TOTAL
 	,BZ_C095("303-BZ095",false,"95",BZ_C083.getDescription())
 	,BZ_C096("303-BZ096",false,"96",BZ_C084.getDescription())
 	,BZ_C097("303-BZ097",false,"97",BZ_C085.getDescription())
+	// TOTAL
 	,BZ_C098("303-BZ098",false,"98","Total - Base imponible")
 	,BZ_C099("303-BZ099",false,"99","Total - Cuota")
 	,BZ_C100("303-BZ100",false,"100","Total - Cuota deducible")
@@ -737,14 +809,23 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,GP_C004("303-GP004",true ,"4",CT_C01.getDescription())
 	,GP_X004("303-GPX04",false,null,CT_C02.getDescription())
 	,GP_C005("303-GP005",true ,"5",CT_C03.getDescription())
+	,GP_C055("303-GP055",true ,"55",CT_C01.getDescription())
+	,GP_X055("303-GPX55",false,null,CT_C02.getDescription())
+	,GP_C056("303-GP056",true ,"56",CT_C03.getDescription())
 	,GP_C006("303-GP006",true ,"6",CT_C01.getDescription())
 	,GP_X006("303-GPX06",false,null,CT_C02.getDescription())
 	,GP_C007("303-GP007",true ,"7",CT_C03.getDescription())
+	,GP_C057("303-GP057",true ,"57",CT_C01.getDescription())
+	,GP_X057("303-GPX57",false,null,CT_C02.getDescription())
+	,GP_Q057("303-GPQ57",false,null,CT_C03.getDescription())
 	,GP_C039("303-GP039",true ,"39","Modificaci\u00F3n de bases y cuotas, general - Base imponible")
 	,GP_C040("303-GP040",true ,"40","Modificaci\u00F3n de bases y cuotas, general - Cuota")
 	,GP_C008("303-GP008",true ,"8",CT_C16.getDescription())
 	,GP_X008("303-GPX08",false,null,CT_C17.getDescription())
 	,GP_C009("303-GP009",true ,"9",CT_C18.getDescription())
+	,GP_C058("303-GP058",true ,"58",CT_C16.getDescription())
+	,GP_X058("303-GPX58",false,null,CT_C17.getDescription())
+	,GP_C059("303-GP059",true ,"59",CT_C18.getDescription())
 	,GP_C010("303-GP010",true ,"10",CT_C16.getDescription())
 	,GP_X010("303-GPX10",false,null,CT_C17.getDescription())
 	,GP_C011("303-GP011",true ,"11",CT_C18.getDescription())
@@ -790,6 +871,9 @@ public enum Mod303Key implements IFiscalModelKey  {
 	,GP_C050("303-GP050",true ,"50",AR_C183.getDescription())
 	
 	,GP_C035("303-GP035",false,"35",CT_S11R.getDescription())
+	,GP_C036("303-GP036",false,"36","A Ingresar")
+	,GP_C037("303-GP037",false,"37","A Compensar")
+	,GP_C038("303-GP038",false,"38","A Devolver")
 	
 	// 	----------------------------------------------------------------------------------  
 	// 	-------------------------------------------------------------------  NAFARROA ----
@@ -877,9 +961,11 @@ public enum Mod303Key implements IFiscalModelKey  {
 		return this.diffEnabled;
 	}
 
+    @Override
 	public String getValue() {
 		return value;
 	}
+    @Override
 	public int getBox() {
 		if (AonStringUtils.isNumeric(box)) {
 			return AonNumberUtils.toint(box);
@@ -895,6 +981,7 @@ public enum Mod303Key implements IFiscalModelKey  {
 	public String getDescription() {
 		return description;
 	}
+    @Override
 	public String getBoxFormatted() {
 		return " [" + getBoxAsString() +"] ";
 	}

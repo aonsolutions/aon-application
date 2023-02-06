@@ -198,7 +198,7 @@ public class AonInvoiceViewer extends SimpleLayoutPanel {
 			for (InvoiceBreakdown detail : invoice.getBreakdown()) {
 				String typeLabel = detail.getTaxType().getName();
 				if (detail.getTaxType() == TaxType.RETENTION && detail.getWithholdingType() != null) {
-					typeLabel = typeLabel + " (" + detail.getWithholdingType().getDescription() + ")";
+					typeLabel = typeLabel + " (" + detail.getWithholdingType().getAbbreviatedDescription() + ")";
 				} 
 				String percent = AON.FMT.format( detail.getPercentage())+"%";
 				double quota = detail.getQuota(); 
