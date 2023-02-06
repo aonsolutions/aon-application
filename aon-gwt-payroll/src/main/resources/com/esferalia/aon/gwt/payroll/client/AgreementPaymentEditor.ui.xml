@@ -102,6 +102,10 @@
 			margin-top: 1rem;
 		}
 		
+		.enterpriseTaxedPanel{
+			min-width: 150px;
+		}
+		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form} {style.flexColumn}">
@@ -132,13 +136,19 @@
 			<g:DisclosurePanel ui:field="advancePanel">
 			   <g:header>Avanzado</g:header>
 			   <g:HTMLPanel styleName="{style.flexColumn}">
-			   		<g:HTMLPanel styleName="{style.element}" ui:field="paymentTaxedPanel">
-						<g:Label styleName="{style.title}">Tributa</g:Label>
-						<g:HTMLPanel styleName="{style.flex}">
-							<g:ListBox ui:field="paymentTaxedTypeLB" styleName="{style.inputHeight} {style.quoteTaxedWidth}"/>
-							<g:TextBox ui:field="paymentTaxedExpression" styleName="{style.widthAll} {style.inputHeight}"/>
+			   		<g:HTMLPanel styleName="{style.flex}">
+			   			<g:HTMLPanel styleName="{style.element} {style.widthAll}" ui:field="paymentTaxedPanel">
+							<g:Label styleName="{style.title}">Tributa</g:Label>
+							<g:HTMLPanel styleName="{style.flex}">
+								<g:ListBox ui:field="paymentTaxedTypeLB" styleName="{style.inputHeight} {style.quoteTaxedWidth}"/>
+								<g:TextBox ui:field="paymentTaxedExpression" styleName="{style.widthAll} {style.inputHeight}"/>
+							</g:HTMLPanel>
 						</g:HTMLPanel>
-					</g:HTMLPanel>
+						<g:HTMLPanel styleName="{style.element} {style.enterpriseTaxedPanel}" ui:field="enterpriseTaxedPanel">
+							<g:Label styleName="{style.title}">Ingreso a cuenta empresa</g:Label>
+							 <g:Button ui:field="enterpriseTaxed" />
+						</g:HTMLPanel>
+			   		</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.element}" ui:field="paymentQuotePanel">
 						<g:Label styleName="{style.title}">Cotiza</g:Label>
 						<g:HTMLPanel styleName="{style.flex}">
@@ -175,10 +185,6 @@
 							<g:Label styleName="{style.title}">Fecha Cobro</g:Label>
 							<g:TextBox ui:field="extraIssueDate" styleName="{style.issueBox} {style.inputHeight}"/>
 						</g:HTMLPanel>
-						<g:HTMLPanel styleName="{style.element}">
-							<g:Label styleName="{style.title}">Cotización</g:Label>
-							<g:ListBox ui:field="extraType" styleName="{style.inputHeight}"/>
-						</g:HTMLPanel>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:HTMLPanel styleName="{style.element}">
@@ -193,36 +199,6 @@
 							<g:HTMLPanel styleName="{style.flex}">
 								<g:ListBox ui:field="extraEndDateMonth" styleName="{style.inputHeight}"/>
 								<g:ListBox ui:field="extraEndDateYear" styleName="{style.listBox} {style.inputHeight}"/>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-				</g:HTMLPanel>
-				
-				<g:HTMLPanel styleName="{style.element}">
-					<g:Label styleName="{style.title}">Extra asociada</g:Label>
-					<g:ListBox ui:field="extraAssociated" styleName="{style.widthAll} {style.inputHeight}"/>
-				</g:HTMLPanel>
-				
-				<g:HTMLPanel styleName="{style.flex} {style.flexBetween}" ui:field="extraAssociatedPanel">
-					<g:HTMLPanel styleName="{style.flex}">
-						<g:HTMLPanel styleName="{style.element}">
-							<g:Label styleName="{style.title}">Fecha Cobro</g:Label>
-							<g:TextBox ui:field="extraIssueDateAssociated" styleName="{style.issueBox} {style.inputHeight}"/>
-						</g:HTMLPanel>
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
-						<g:HTMLPanel styleName="{style.element}">
-							<g:Label styleName="{style.title}">Fecha Incio Cotización</g:Label>
-							<g:HTMLPanel styleName="{style.flex}">
-								<g:ListBox ui:field="extraStartDateMonthAssociated" styleName="{style.inputHeight}"/>
-								<g:ListBox ui:field="extraStartDateYearAssociated" styleName="{style.listBox} {style.inputHeight}"/>
-							</g:HTMLPanel>
-						</g:HTMLPanel>
-						<g:HTMLPanel styleName="{style.element}">
-							<g:Label styleName="{style.title}">Fecha Fin Cotización</g:Label>
-							<g:HTMLPanel styleName="{style.flex}">
-								<g:ListBox ui:field="extraEndDateMonthAssociated" styleName="{style.inputHeight}"/>
-								<g:ListBox ui:field="extraEndDateYearAssociated" styleName="{style.listBox} {style.inputHeight}"/>
 							</g:HTMLPanel>
 						</g:HTMLPanel>
 					</g:HTMLPanel>

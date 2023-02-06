@@ -2333,11 +2333,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		wait4Id("temporal_tiempo_parcial,_ordinario");
 
 		draft("TEMPORAL TIEMPO PARCIAL, ORDINARIO");
-		click("costsCheck-input");
 		calculate(Calendar.JANUARY,2023);
 		double cgpBase = getValue("cgpBaseLabel");
 		assertText("unemployment", cgpBase*1.60/100.00);
+		click("costsCheck-input");
 		assertText("unemployment_cost", cgpBase*6.70/100.00);
+		click("costsCheck-input");
 		
 	}
 
