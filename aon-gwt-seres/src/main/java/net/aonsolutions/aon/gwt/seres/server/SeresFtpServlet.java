@@ -147,14 +147,6 @@ public class SeresFtpServlet extends HttpServlet {
 				new FtpDeliveryUploadOccamHandler(domain.getName(), domain.getId(), loggedUser)
 						.onEdiFtpTransfer(list.stream().map(o -> (Delivery) o).collect(Collectors.toList()));
 			}
-		} catch (FtpLoginException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new IllegalArgumentException(e);
-		} catch (FtpException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new IllegalArgumentException(e);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
@@ -291,9 +283,7 @@ public class SeresFtpServlet extends HttpServlet {
 		private void checkValidLogin() {
 			try {
 				SeresFtpConnectionProvider.checkLogin(ftpServer, ftpPort, ftpUser, ftpPassword);
-			} catch (FtpLoginException e) {
-				throw new AonCoreException("SERES: Login rechazado, usuario y/o contraseña incorrecta.", e);
-			} catch (FtpException e) {
+			} catch (Exception e) {
 				throw new AonCoreException("SERES: Error de conexion ftp.", e);
 			}
 		}
