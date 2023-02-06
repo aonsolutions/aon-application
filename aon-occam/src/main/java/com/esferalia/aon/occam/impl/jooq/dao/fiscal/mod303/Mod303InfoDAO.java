@@ -253,25 +253,27 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 		StringBuilder buf = new StringBuilder();
 		for (Mod303Key key : script.getKeys() ) {
-			if (key != null && dec.getRegularizationKey() != null && dec.getRegularizationKey() == key) {
-				buf.append(  dec.getRegularizationExplain( ctx, mod303, key));
-				return buf.toString();
-			} else  if (key != null && Arrays.stream(dec.getCompensationExplainKeys()).anyMatch(k -> k == key)) {
-				buf.append(  dec.getCompensationExplain( ctx, mod303, key));
-				return buf.toString();
-			} else if (key != null && Arrays.stream(dec.getSamePeriodExplainKeys()).anyMatch(k -> k == key)) {
-				buf.append(  dec.getSamePeriodExplain( ctx, mod303, key));
-				return buf.toString();
-			} else {
-				Mod303MVELContext mvelCtx = new Mod303MVELContext(mod303); 
-				mvelCtx.put("mod", mod303);
-				mvelCtx.put("periodModels", Mod303DAO.getSamePeriodEffectiveModels(ctx, mod303).collect(Collectors.toCollection(LinkedList::new)));
-				mvelCtx.put("lastPeriodModels", Mod303DAO.getLastPeriodEffectiveModels(ctx, mod303).collect(Collectors.toCollection(LinkedList::new)));
-				mvelCtx.put("models", Mod303DAO.getMod303s(ctx, ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)));
-				String template = keyDAO.getTemplate();
-				if (AonStringUtils.isNotBlank( template )) {
-					Object result = TemplateRuntime.eval(template, mvelCtx);
-					buf.append(result != null ? result.toString() : null);
+			if (key != null) {
+				if (dec.getRegularizationKey() != null && dec.getRegularizationKey() == key) {
+					buf.append(  dec.getRegularizationExplain( ctx, mod303, key));
+					return buf.toString();
+				} else if (Arrays.stream(dec.getCompensationExplainKeys()).anyMatch(k -> k == key)) {
+					buf.append(  dec.getCompensationExplain( ctx, mod303, key));
+					return buf.toString();
+				} else if (Arrays.stream(dec.getSamePeriodExplainKeys()).anyMatch(k -> k == key)) {
+					buf.append(  dec.getSamePeriodExplain( ctx, mod303, key));
+					return buf.toString();
+				} else {
+					Mod303MVELContext mvelCtx = new Mod303MVELContext(mod303); 
+					mvelCtx.put("mod", mod303);
+					mvelCtx.put("periodModels", Mod303DAO.getSamePeriodEffectiveModels(ctx, mod303).collect(Collectors.toCollection(LinkedList::new)));
+					mvelCtx.put("lastPeriodModels", Mod303DAO.getLastPeriodEffectiveModels(ctx, mod303).collect(Collectors.toCollection(LinkedList::new)));
+					mvelCtx.put("models", Mod303DAO.getMod303s(ctx, ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)));
+					String template = keyDAO.getTemplate();
+					if (AonStringUtils.isNotBlank( template )) {
+						Object result = TemplateRuntime.eval(template, mvelCtx);
+						buf.append(result != null ? result.toString() : null);
+					}
 				}
 			}
 		}

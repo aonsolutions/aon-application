@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod115Araba2021Declaration extends Mod115Declaration {
 	
@@ -19,15 +20,15 @@ public class Mod115Araba2021Declaration extends Mod115Declaration {
 		,AR_908(Mod115Key.AR_908,null,null,null,null,null)
 		,AR_909(Mod115Key.AR_909,null,null,null,null,null)
 		,AR_C01(Mod115Key.AR_C01 
-			,(mod,br) -> br.isRenting()
+			,(mod,br) -> isRenting(br)
 			,(ctx,mod,docs,pdocs,br) -> addPerceptor(Mod115Key.AR_C01,mod,docs,pdocs,br)
 			,null,null,null)
 		,AR_C02(Mod115Key.AR_C02
-			, (mod,br) -> br.isRenting()
+			, (mod,br) -> isRenting(br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod115Key.AR_C02,mod,br)
 			,null,null,null)
 		,AR_C03(Mod115Key.AR_C03
-			, (mod,br) -> br.isRenting()
+			, (mod,br) -> isRenting(br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod115Key.AR_C03, mod, br)
 			,null,null,null)
 		,AR_C04(Mod115Key.AR_C04, null,null,null,null,null)
@@ -134,6 +135,16 @@ public class Mod115Araba2021Declaration extends Mod115Declaration {
 		mod115.setReplacementDeclarationAvailable(true);
 		return super.initializeModel(ctx, mod115);
 	}
+	
+	@Override
+	public Mod115Key[] getSamePeriodExplainKeys() {
+		return new Mod115Key[] {Mod115Key.AR_C08};
+	}
+	
+	private static boolean isRenting(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.RENTING;
+	}
+	
 	
 
 }

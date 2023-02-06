@@ -44,6 +44,7 @@ import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FeeDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
@@ -304,6 +305,11 @@ public class FinanceImpl implements IFinance {
 	}
 
 	// UTILITIES
+	@Override
+	public void updateWithholdingType(AONContext ctx, Integer invoiceId, WithholdingType newType) {
+		ctx.getDslContext().transaction(configuration
+				-> InvoiceDAO.updateWithholdingType( ctx , invoiceId, newType));
+	}
 	@Override
 	public FinanceUtilitiesResult missingFinanceInvoices(AONContext ctx,FinanceUtilitiesParams params) {
 		return ctx.getDslContext().transactionResult(configuration

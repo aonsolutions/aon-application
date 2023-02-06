@@ -139,11 +139,18 @@ public enum Mod202Key implements IFiscalModelKey{
 		return description;
 	}
 	
+    @Override
 	public int getBox() {
 		return box;
 	}
+    @Override
+	public String getBoxFormatted() {
+		return " [" + getBoxAsString() +"] ";
+	}
+	public String getBoxAsString() {
+		return AonStringUtils.leftPad(Integer.toString(getBox()), 3, '0');
+	}
 	public boolean isEnabled() {
-		// TODO disable computed keys
 		return true;
 	}
 	

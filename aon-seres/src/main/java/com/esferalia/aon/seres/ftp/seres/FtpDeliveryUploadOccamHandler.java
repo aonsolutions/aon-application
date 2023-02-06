@@ -43,6 +43,7 @@ import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.ResponseMessageType;
 import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.SeresFtpProcessThread;
 import com.esferalia.aon.seres.writer.connect.ConnectDeliveryWriterOccam;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.jcraft.jsch.JSchException;
 
 
 public class FtpDeliveryUploadOccamHandler implements Serializable {
@@ -136,16 +137,16 @@ public class FtpDeliveryUploadOccamHandler implements Serializable {
 			remotePath = pPath.getValue();
 	}
 
-	public void checkValidLogin() throws FtpLoginException, FtpException {
+	public void checkValidLogin() throws JSchException {
 		SeresFtpConnectionProvider.checkLogin(server, port, user, password);
 	}
 	
-	public void onEdiFtpTransfer(Delivery delivery) throws FtpLoginException, FtpException {
+	public void onEdiFtpTransfer(Delivery delivery) throws JSchException {
 		List<Delivery> list = new ArrayList<>();
 		list.add(delivery);
 		onEdiFtpTransfer(list);	
 	}
-	public void onEdiFtpTransfer(List<Delivery> deliveryList) throws FtpLoginException, FtpException {
+	public void onEdiFtpTransfer(List<Delivery> deliveryList) throws JSchException {
 		initContext();
 		checkValidLogin();
 		

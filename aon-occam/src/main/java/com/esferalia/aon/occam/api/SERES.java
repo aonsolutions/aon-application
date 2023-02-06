@@ -5,6 +5,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
+import com.esferalia.aon.occam.api.model.seres.SeresInfo;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.impl.jooq.SeresImpl;
 
@@ -16,6 +17,20 @@ public class SERES {
 	
 	private static ISeres getSeres() {
 		return new SeresImpl();
+	}
+	
+	public static SeresInfo getSeresInfo(Domain domain, User user) {
+		return getSeresInfo(domain.getName(), domain.getId(), user.getLogin());		
+	}
+	
+	public static SeresInfo getSeresInfo(Domain domain, String login) {
+		return getSeresInfo(domain.getName(), domain.getId(), login);
+	}
+	
+	public static SeresInfo getSeresInfo(String domainName, Integer domainId, String login) {
+		try(CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			return getSeres().getSeresInfo(ctx);
+		}
 	}
 
 	public static EdiCodes getEdiCodes(Domain domain, User user, Delivery delivery){

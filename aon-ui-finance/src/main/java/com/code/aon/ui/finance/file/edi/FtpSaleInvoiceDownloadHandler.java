@@ -34,9 +34,7 @@ import com.code.aon.ui.common.serialize.SerializableListDataModel;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.file.seres.connect.invoice.v4.data.RECTL;
-import com.esferalia.aon.seres.ftp.FtpException;
 import com.esferalia.aon.seres.ftp.FtpFile;
-import com.esferalia.aon.seres.ftp.FtpLoginException;
 import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
 import com.esferalia.aon.seres.reader.connect.ConnectInvoiceReader;
 
@@ -192,13 +190,10 @@ public class FtpSaleInvoiceDownloadHandler implements Serializable {
 		try {
 			showFtpServerConnectionData = false;
 			SeresFtpConnectionProvider.checkLogin(server, port, user, password);
-		} catch (FtpLoginException e) {
+		} catch (Exception e) {
 			showFtpServerConnectionData = true;
 			AonUtil.addErrorMessage(e.getMessage());
-		} catch (FtpException e) {
-			showFtpServerConnectionData = true;
-			AonUtil.addErrorMessage(e.getMessage());
-		}
+		} 
 	}
 
 	private void saveLoginInfo() {
@@ -237,13 +232,10 @@ public class FtpSaleInvoiceDownloadHandler implements Serializable {
 		try {
 			remoteDirectoryList = SeresFtpConnectionProvider.retrieveDirectoryList(null,
 					server, port, user, password);
-		} catch (FtpLoginException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 			AonUtil.addErrorMessage(e.getMessage());
-		} catch (FtpException e) {
-			LOGGER.error(e.getMessage());
-			AonUtil.addErrorMessage(e.getMessage());
-		}
+		} 
 		remoteDirectoryModel = null;
 	}
 	
@@ -262,8 +254,9 @@ public class FtpSaleInvoiceDownloadHandler implements Serializable {
 		}
 		try {
 			List<FtpFile> list = SeresFtpConnectionProvider.retrieveFileList(
-					remotePath, date, date, server, port, user,
-					password);
+						remotePath, date, date, server, port, user,
+						password);
+			
 			ConnectInvoiceReader reader = new ConnectInvoiceReader();
 			EdiInvoiceImporterHandler handler = new EdiInvoiceImporterHandler(controller);
 			unreadSalesList = new LinkedList<>();
@@ -272,10 +265,7 @@ public class FtpSaleInvoiceDownloadHandler implements Serializable {
 					unreadSalesList.add(obtainStrippedOrder(reader, handler, ftpFile));
 				});
 			}
-		} catch (FtpLoginException e) {
-			LOGGER.error(e.getMessage());
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (FtpException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 			AonUtil.addErrorMessage(e.getMessage());
 		}
@@ -336,13 +326,10 @@ public class FtpSaleInvoiceDownloadHandler implements Serializable {
 		try {
 			return SeresFtpConnectionProvider.retrieveFile(remotePath,
 					name, server, port, user, password);
-		} catch (FtpLoginException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 			getLogPanel().error(e.getMessage());
-		} catch (FtpException e) {
-			LOGGER.error(e.getMessage());
-			getLogPanel().error(e.getMessage());
-		}
+		} 
 		return null;
 	}
 			

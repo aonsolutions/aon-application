@@ -152,7 +152,7 @@ public class IrpfReportPDF {
 		}
 		if (params.getWithholdingType() != null) {
 			buf.append(" (");
-			buf.append(params.getWithholdingType().getDescription());
+			buf.append(params.getWithholdingType().getAbbreviatedDescription());
 			buf.append(")");
 		}
 		if (params.getPercent() != null) {
@@ -200,7 +200,7 @@ public class IrpfReportPDF {
 				}
 				table.addCell(getBodyCell( irpf.getWithholdingType()==null
 					?AonStringUtils.SPACE
-					:irpf.getWithholdingType().getDescription()));
+					:irpf.getWithholdingType().getAbbreviatedDescription()));
 				table.addCell(getBodyCell(irpf.getTaxDate() == null
 					?AonStringUtils.SPACE
 					:DATE_FORMATTER.format(irpf.getTaxDate())) );
