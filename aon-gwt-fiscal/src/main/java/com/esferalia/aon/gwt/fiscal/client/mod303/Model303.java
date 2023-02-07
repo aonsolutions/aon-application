@@ -348,10 +348,55 @@ public class Model303 extends MainEntryPoint {
 	}
 
 	enum Mod303Declarations {
+		AEAT_2023 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAEAT() && mod303.getYear() >= 2023);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303AEAT2023(mod303,cbk);
+			}
+		},
+		BIZKAIA_2023 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isBizkaia() && mod303.getYear() == 2023);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303BIZKAIA2023(mod303,cbk);
+			}
+		},
+		ARABA_2023 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isAraba() && mod303.getYear() >= 2023);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303ARABA2023(mod303,cbk);
+			}
+		},
+		GIPUZKOA_2023 {
+			@Override
+			public boolean accept(Mod303 mod303) {
+				return (mod303.isGipuzkoa() && mod303.getYear() >= 2023);
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod303 mod303, Model303Callback cbk) {
+				return new Model303GIPUZKOA2023(mod303,cbk);
+			}
+		},
+		// Ejercicio anteriores
 		AEAT_2022 {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isAEAT() && mod303.getYear() > 2021);
+				return (mod303.isAEAT() && mod303.getYear() == 2022);
 			}
 
 			@Override
@@ -419,7 +464,7 @@ public class Model303 extends MainEntryPoint {
 		,ARABA_2022 {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isAraba() && mod303.getYear() > 2021);
+				return (mod303.isAraba() && mod303.getYear() == 2022);
 			}
 
 			@Override
@@ -452,7 +497,7 @@ public class Model303 extends MainEntryPoint {
 		,BIZKAIA_2022 {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isBizkaia() && mod303.getYear()>2021);
+				return (mod303.isBizkaia() && mod303.getYear() == 2022);
 			}
 
 			@Override
@@ -474,7 +519,7 @@ public class Model303 extends MainEntryPoint {
 		GIPUZKOA_2022 {
 			@Override
 			public boolean accept(Mod303 mod303) {
-				return (mod303.isGipuzkoa() && mod303.getYear() > 2021);
+				return (mod303.isGipuzkoa() && mod303.getYear() == 2022);
 			}
 
 			@Override

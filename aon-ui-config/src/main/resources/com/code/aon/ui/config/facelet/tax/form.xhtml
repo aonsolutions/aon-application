@@ -59,6 +59,7 @@
 							<f:selectItems value="#{configCollections.vatDeductionTypes}" />
 						</aon:selectOneMenu>
 						<aon:selectOneMenu id="Tax_withholdingType"
+							style="width: 150px;"
 							value="#{tax.to.withholdingType}" required="true"
 							rendered="#{tax.to.retention}">
 							<f:selectItems value="#{configCollections.withholdingTypes}" />

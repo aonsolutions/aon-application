@@ -860,7 +860,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			case 3:
 				taxedFxButton.setVisible(false);
 				taxedExpression.setEnabled(false);
-				taxedExpression.setValue("BASE_CTA_ESP=_P");
+				taxedExpression.setValue("BASE_CTA_ESP=( isdef BASE_CTA_ESP ? BASE_CTA_ESP : 0.00 ) + _P; _P");
 				break;
 			default:
 				taxedFxButton.setVisible(true);
@@ -1712,7 +1712,7 @@ public abstract class AgreementPaymentWizard extends AonCustomDialog {
 			return "PRORRATEAR()";
 		}
 		if (AonStringUtils.equalsIgnoreCase(lbValue, "IRPF_CTA_ESP")) {
-			return "BASE_CTA_ESP=_P";
+			return "BASE_CTA_ESP=( isdef BASE_CTA_ESP ? BASE_CTA_ESP : 0.00 ) + _P; _P";
 		}
 		// It must be CUSTOM
 		return src;

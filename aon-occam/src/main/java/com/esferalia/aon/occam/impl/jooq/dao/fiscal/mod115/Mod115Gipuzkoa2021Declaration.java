@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod115Gipuzkoa2021Declaration extends Mod115Declaration {
 	
@@ -20,15 +21,15 @@ public class Mod115Gipuzkoa2021Declaration extends Mod115Declaration {
 			, (ctx,mod) -> addDeponentDocument(ctx,mod)
 			, null,null)
 		,GP_C01(Mod115Key.GP_C01
-			, (mod,br) -> br.isRenting()
+			, (mod,br) -> isRenting(br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod115Key.GP_C01,mod,docs,pdocs,br)
 			,null,null,null)
 		,GP_C02(Mod115Key.GP_C02
-			, (mod,br) -> br.isRenting()
+			, (mod,br) -> isRenting(br)
 			, (ctx,mod,docs,pdocs,br) -> addBase(Mod115Key.GP_C02,mod,br)
 			,null,null,null)
 		,GP_C03(Mod115Key.GP_C03
-			, (mod,br) -> br.isRenting()
+			, (mod,br) -> isRenting(br)
 			, (ctx,mod,docs,pdocs,br) -> addQuota(Mod115Key.GP_C03,mod,br)
 			,null,null,null)
 		,GP_C04(Mod115Key.GP_C04,null,null,null,null,null)
@@ -117,4 +118,13 @@ public class Mod115Gipuzkoa2021Declaration extends Mod115Declaration {
 		return super.initializeModel(ctx, mod115);
 	}
 	
+	private static boolean isRenting(IrpfBreakdown br) {
+		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.RENTING;
+	}
+
+	@Override
+	public Mod115Key[] getSamePeriodExplainKeys() {
+		return new Mod115Key[] {};
+	}
+
 }

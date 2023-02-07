@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.api.model.type.WithholdingTypeGroup;
 
 public class IRPFParams implements Serializable {
 	
@@ -19,16 +20,17 @@ public class IRPFParams implements Serializable {
 	private Date toDate;
 	
 	private Boolean output;
+	private WithholdingTypeGroup typeGroup;
 	private WithholdingType type;
 	private Double percent;
 	private RectificationType rectified;
 	private Boolean accrualRegime;
 	private Boolean investment;
 	private Boolean service;
-	private Integer orderBy;
-	private Integer groupedBy;
+	private IRPFParamsOrderBy orderBy;
+	private IRPFParamsGroupedBy groupedBy;
 	
-	Integer[] invoices;
+	private Integer[] invoices;
 	
 	public Integer[] getInvoices() {
 		return invoices;
@@ -96,6 +98,14 @@ public class IRPFParams implements Serializable {
 	public boolean isOutput() {
 		return output != null && output.booleanValue();
 	}
+	
+	public WithholdingTypeGroup getWithholdingTypeGroup() {
+		return typeGroup;
+	} 
+	public IRPFParams setWithholdingTypeGroup(WithholdingTypeGroup typeGroup) {
+		this.typeGroup = typeGroup;
+		return this;
+	} 
 	public WithholdingType getWithholdingType() {
 		return type;
 	}
@@ -103,17 +113,17 @@ public class IRPFParams implements Serializable {
 		this.type = type;
 		return this;
 	}
-	public Integer getOrderBy() {
+	public IRPFParamsOrderBy getOrderBy() {
 		return orderBy;
 	}
-	public IRPFParams setOrderBy(Integer orderBy) {
+	public IRPFParams setOrderBy(IRPFParamsOrderBy orderBy) {
 		this.orderBy = orderBy;
 		return this;
 	}
-	public Integer getGroupedBy() {
+	public IRPFParamsGroupedBy getGroupedBy() {
 		return groupedBy;
 	}
-	public IRPFParams setGroupedBy(Integer groupedBy) {
+	public IRPFParams setGroupedBy(IRPFParamsGroupedBy groupedBy) {
 		this.groupedBy = groupedBy;
 		return this;
 	}

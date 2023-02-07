@@ -169,7 +169,7 @@ public class FiscalUtils {
 		}
 		if (params.getWithholdingType() != null) {
 			buf.append(" (");
-			buf.append(params.getWithholdingType().getDescription());
+			buf.append(params.getWithholdingType().getAbbreviatedDescription());
 			buf.append(")");
 		}
 		if (params.getPercent() != null) {

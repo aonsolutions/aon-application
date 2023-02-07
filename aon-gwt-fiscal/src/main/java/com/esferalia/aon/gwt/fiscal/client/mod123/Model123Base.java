@@ -1,6 +1,8 @@
 package com.esferalia.aon.gwt.fiscal.client.mod123;
 
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.Objects;
 import java.util.Map.Entry;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -73,6 +75,7 @@ public abstract class Model123Base extends DockLayoutPanel {
 	private static final int COL_NUMBER = 8;
 	private static final String MODEL123_PRINT = "/aon_gwt_fiscal/ms/Model123Print";
 	protected static final String MODEL123_FILE = "/aon_gwt_fiscal/ms/Model123File";
+	private static final String MODEL123_BOX_INFO = "/aon_gwt_fiscal/ms/Model123BoxInfoPrint";
 
 	private Model123Callback callback;
 	private Mod123 model;
@@ -84,7 +87,6 @@ public abstract class Model123Base extends DockLayoutPanel {
 	private final AonToolbarButton saveButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave());
 	private final AonToolbarButton cancelButton = new AonToolbarButton(AON.MSG.cancelAction(),AON.CSS.aonIconBack());
 	private final AonToolbarButton deleteButton = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
-	private final AonToolbarButton resetButton = new AonToolbarButton(AON.MSG.resetAction(),AON.CSS.aonIconRefresh());
 	private final AonToolbarButton printButton = new AonToolbarButton(AON.MSG.draft(),AON.CSS.aonIconExcel());
 	private final AonToolbarButton markAsPendingButton = new AonToolbarButton(AON.MSG.reopen(),AON.CSS.aonIconModelReopen());
 	private final AonToolbarButton markAsFinishedButton = new AonToolbarButton(AON.MSG.finish(),AON.CSS.aonIconModelFinish());
@@ -106,6 +108,7 @@ public abstract class Model123Base extends DockLayoutPanel {
 	protected Hidden domainIdHidden = new Hidden("domainId");
 	protected Hidden domainNameHidden = new Hidden("domainName");
 	protected Hidden userHidden = new Hidden("user");
+	protected Hidden mod123BoxHidden = new Hidden("mod123Box");
 	
 	protected Model123Base(Mod123 mod123, Model123Callback callback) {
 		super(Unit.PX);
@@ -189,9 +192,6 @@ public abstract class Model123Base extends DockLayoutPanel {
 		
 		deleteButton.addClickHandler(event -> delete());
 		toolbarPanel.add(deleteButton);
-		
-		resetButton.addClickHandler( event -> onReset());
-		toolbarPanel.add(resetButton);		
 		
 		printButton.addClickHandler( event ->  print());
 		toolbarPanel.add(printButton);
@@ -288,36 +288,6 @@ public abstract class Model123Base extends DockLayoutPanel {
 		return decToolbar;
 	}
 	
-	private void onReset() {
-		resetButton.setEnabled(false);
-		AonConfirmDialog cd = new AonConfirmDialog();
-		cd.confirm(AON.MSG.confirmDeclarationinitializationAction(), new AonConfirmDialogCallback() {
-
-			@Override
-			public void onAccept() {
-				Model123.SERVICE.reset(getCallback().getOptions().getOccam(),getModel(),
-						new AsyncCallback<Mod123>() {
-							@Override
-							public void onSuccess(Mod123 m123) {
-								setDirty( true );
-								selectAndPopulate(m123);
-							}
-
-							@Override
-							public void onFailure(Throwable caught) {
-								getCallback().showError(AON.MSG.unableToInitializeDeclaration(caught.getMessage()));
-								
-							}
-						});
-			}
-			@Override
-			public void onCancel() {
-				resetButton.setEnabled(true);
-			}
-		});
-	}
-	
-
 	protected void markAsDirty() {
 		setDirty(true);
 	}
@@ -347,7 +317,6 @@ public abstract class Model123Base extends DockLayoutPanel {
 		cancelButton.setVisible(true);
 		saveButton.setVisible(model.isEditable());
 		deleteButton.setVisible(!model.isNew() && model.isEditable());
-		resetButton.setVisible(!model.isNew() && model.isEditable());
 		auditButton.setVisible(!model.isNew());
 		printButton.setVisible(!model.isNew());
 		markAsPendingButton.setVisible(!model.isNew() && FiscalModelUtils.canChangeStatus(model, FiscalStatus.PENDING));
@@ -862,11 +831,15 @@ public abstract class Model123Base extends DockLayoutPanel {
 						public void onSuccess(String result) {
 							FlowPanel gridContainer = new FlowPanel();
 							Mod123Key key = script.getKeys()[0];
-							JsIRPFComputeKeyInfo info = JsonUtils.safeEval(result);
 							JsIRPFComputeKeyInfoGridPanel grid = new JsIRPFComputeKeyInfoGridPanel();
 							grid.setTitle(AON.MSG.calcDetail());
 							grid.setSubTitle(key.getBoxFormatted() + " - " + script.getLabel());
-							grid.addContent(info);
+							try {
+								JsIRPFComputeKeyInfo info = JsonUtils.safeEval(result);
+								grid.addContent(info);
+							} catch (Exception e) {
+								grid.addContent(result);
+							}
 							gridContainer.add(grid);
 							callback.showInfoPanelWidget(gridContainer);
 							button.setEnabled(true);
@@ -947,9 +920,19 @@ public abstract class Model123Base extends DockLayoutPanel {
 				
 				@Override
 				public Void visitInvoice() {
-					final AonTableButton button = addButton();
-					button.addClickHandler(event -> showInvoiceIrpfBreakdownInfo(button));
+					if (getModel().isAlcatrazBound()) {
+						final AonTableButton button = addButton();
+						button.addClickHandler(event -> showInvoiceIrpfBreakdownInfo(button));
+						addExcelButton().addClickHandler(event -> showExcelInfo(script));
+					}
 					return null;
+				}
+
+				private AonTableButton addExcelButton() {
+					final AonTableButton button = new AonTableButton(infoKey.getLabel() + " (Excel)" ,AON.CSS.aonIconExcel());
+					button.setTabIndex(-2);
+					buttonContainer.add(button);
+					return button;
 				}
 
 				@Override public Void visitModelInvoiceIrpfBreakdown() {
@@ -1106,6 +1089,31 @@ public abstract class Model123Base extends DockLayoutPanel {
 	protected void decorateAdministrationTab() {
 		if (admonPanel != null) {
 			admonPanel.manageLinks();
+		}
+	}
+
+	private void showExcelInfo(IModelScript<Mod123Key> script) {
+		Mod123Key key = Arrays.stream(script.getKeys())
+				.filter( Objects::nonNull )
+				.findAny()
+				.orElse(null);
+		if (key != null) {
+			diskForm.setMethod(FormPanel.METHOD_POST);
+			diskForm.setAction(GWT.getHostPageBaseURL() + MODEL123_BOX_INFO);
+			diskForm.clear();
+			FlowPanel diskPanel = new FlowPanel();
+			diskPanel.add(mod123Hidden);
+			diskPanel.add(domainIdHidden);
+			diskPanel.add(domainNameHidden);
+			diskPanel.add(userHidden);
+			diskPanel.add(mod123BoxHidden);
+			diskForm.add(diskPanel);
+			mod123Hidden.setValue(String.valueOf(getModel().getId()));
+			domainIdHidden.setValue(String.valueOf(getCallback().getOptions().getDomain()));
+			domainNameHidden.setValue(getCallback().getOptions().getDomainName());
+			userHidden.setValue(getCallback().getOptions().getUser());
+			mod123BoxHidden.setValue(key.toString());
+			diskForm.submit();
 		}
 	}
 

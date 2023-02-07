@@ -18,6 +18,8 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.ExplainRowManager;
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -26,6 +28,32 @@ public abstract class Mod123Declaration {
 	enum ComplementaryBeahaviour {
 		COMPLEMENTARY,
 		REPLACEMENT;
+	}
+	
+	private enum Declarations {
+		 AEAT_2021 {
+			@Override boolean accept(Mod123 mod) { return Mod123AEAT2021Declaration.accept(mod);}
+			@Override Mod123Declaration get() {return new Mod123AEAT2021Declaration();}
+		}
+		,ARABA_2021 {
+			@Override boolean accept(Mod123 mod) { return Mod123Araba2021Declaration.accept(mod);}
+			@Override Mod123Declaration get() {return new Mod123Araba2021Declaration();}
+		}
+		,BIZKAIA_2021 {
+			@Override boolean accept(Mod123 mod) { return Mod123Bizkaia2021Declaration.accept(mod);}
+			@Override Mod123Declaration get() {return new Mod123Bizkaia2021Declaration();}
+		}
+		,GIPUZKOA_2021 {
+			@Override boolean accept(Mod123 mod) { return Mod123Gipuzkoa2021Declaration.accept(mod);}
+			@Override Mod123Declaration get() {return new Mod123Gipuzkoa2021Declaration();}
+		}
+		,NAVARRA_2021 {
+			@Override boolean accept(Mod123 mod) { return Mod123Navarra2021Declaration.accept(mod);}
+			@Override Mod123Declaration get() {return new Mod123Navarra2021Declaration();}
+		}
+		;
+		abstract boolean accept(Mod123 mod);
+		abstract Mod123Declaration get();
 	}
 	
 	@FunctionalInterface
@@ -41,27 +69,25 @@ public abstract class Mod123Declaration {
 		void initialize(AONContext ctx,Mod123 mod);
 	}
 	
-	static Mod123Declaration getInstance( Mod123 mod) {
+	public static Mod123Declaration getInstance( Mod123 mod) {
 		if (mod.getAdministration() == null) {
 			throw new AonCoreException("No se ha indicado administraci\u00F3n para la declaraci\u00F3n");
 		}
 		if (mod.getYear() < 2010 && mod.getYear() > 2025) {
-			throw new AonCoreException("No se ha indicado una ejercicio válido para la declaraci\u00F3n");
+			throw new AonCoreException("No se ha indicado una ejercicio vÃ¡lido para la declaraci\u00F3n");
 		}
 		if (mod.getPeriod() == null) {
 			throw new AonCoreException("No se ha indicado periodo para la declaraci\u00F3n");	
 		}
-		if (Mod123AEAT2021Declaration.accept(mod)) 		return new Mod123AEAT2021Declaration();
-		if (Mod123Araba2021Declaration.accept(mod)) 	return new Mod123Araba2021Declaration();
-		if (Mod123Bizkaia2021Declaration.accept(mod)) 	return new Mod123Bizkaia2021Declaration();
-		if (Mod123Gipuzkoa2021Declaration.accept(mod)) 	return new Mod123Gipuzkoa2021Declaration();
-		if (Mod123Navarra2021Declaration.accept(mod)) 	return new Mod123Navarra2021Declaration();
-		
-		throw new AonCoreException(MessageFormat.format(
-			"No existe una declaraci\u00F3n para el modelo solicitado ({0} - {1} - {2})",
-			mod.getAdministration().getDescription()
-			,mod.getYear()
-			,mod.getPeriod().getDescription()));
+		return Arrays.stream(Declarations.values())
+				.filter(dec -> dec.accept(mod))
+				.map(Declarations::get)
+				.findFirst()
+				.orElseThrow( () -> new AonCoreException(MessageFormat.format(
+					"No existe una declaración para el modelo solicitado ({0} - {1} - {2})",
+					mod.getAdministration().getDescription()
+					,mod.getYear()
+					,mod.getPeriod().getDescription())));
 	}
 
 	IMod123KeyDAO getKey(Mod123Key key) {
@@ -207,10 +233,15 @@ public abstract class Mod123Declaration {
 			|| (mod123.isComplementary() && getComplementaryBehaviour(mod123) == ComplementaryBeahaviour.REPLACEMENT)); 
 	}
 	
+	protected String getSamePeriodExplain(AONContext ctx, Mod123 mod123, Mod123Key key) {
+		return DeclarationInfoUtil.getExplain( ctx, mod123, key, Mod123DAO.getSamePeriodEffectiveModels(ctx, mod123), new ExplainRowManager());	
+	}
+
 	abstract Mod123 initialize(AONContext ctx, Mod123 mod123);
 	abstract IMod123KeyDAO valueOf(String string);
 	abstract IMod123KeyDAO[] getKeys();
 	abstract double getResult(final Mod123 mod123);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod123 mod123);
+	public abstract Mod123Key[] getSamePeriodExplainKeys();
 
 }

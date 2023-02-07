@@ -114,6 +114,7 @@ import com.esferalia.aon.occam.impl.jooq.validation.InvoiceAutoComplete;
 import com.esferalia.aon.occam.impl.jooq.validation.InvoiceValidation;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.mutable.MutableInt;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -1650,5 +1651,27 @@ public class InvoiceDAO {
 		.execute();
 		
 	}
+
+	public static void updateWithholdingType(AONContext ctx, Integer invoiceId, WithholdingType newType ) {
+		if (invoiceId == null)  throw new AonCoreException("El Identificador de factura no puede estar vacio");
+		if (newType == null) throw new AonCoreException("El nuevo tipo de retención no puede estar vacio");
 	
+		MutableInt sum = new MutableInt();
+		ctx.getDslContext().select(INVOICE_TAX.ID)
+			.from(INVOICE)
+			.join(INVOICE_DETAIL).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
+			.join(INVOICE_TAX).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
+			.where(INVOICE.ID.eq(invoiceId))
+			.fetch()
+			.stream()
+			.map(rec -> rec.getValue(INVOICE_TAX.ID))
+			.forEach(taxId -> sum.add(ctx.getDslContext()
+						.update(INVOICE_TAX)
+						.set(INVOICE_TAX.WITHHOLDING_TYPE, newType.value())
+						.where(INVOICE_TAX.ID.eq(taxId))
+						.execute())
+			);
+		ctx.log().info("UPDATE WITHHOLDING TYPE: {0}: {1} filas.",invoiceId, sum.getValue());
+		;
+	}
 }

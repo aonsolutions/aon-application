@@ -9,7 +9,6 @@ import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class IrpfBreakdown implements Serializable {
 	
@@ -18,7 +17,6 @@ public class IrpfBreakdown implements Serializable {
 	private Integer activity;
 	private String activityDescription;
 	private String epigraph;
-	
 	private String registryDocument;
 	private DocumentType registryDocumentType;
 	private Country registryDocumentCountry;
@@ -52,6 +50,7 @@ public class IrpfBreakdown implements Serializable {
 		this.activity = activity;
 		return this;
 	}
+
 	public String getActivityDescription() {
 		return activityDescription;
 	}
@@ -59,6 +58,7 @@ public class IrpfBreakdown implements Serializable {
 		this.activityDescription = activityDescription;
 		return this;
 	}
+	
 	public String getEpigraph() {
 		return epigraph;
 	}
@@ -74,6 +74,7 @@ public class IrpfBreakdown implements Serializable {
 		this.registryDocument = registryDocument;
 		return this;
 	}
+	
 	public DocumentType getRegistryDocumentType() {
 		return registryDocumentType;
 	}
@@ -81,6 +82,7 @@ public class IrpfBreakdown implements Serializable {
 		this.registryDocumentType = registryDocumentType;
 		return this;
 	}
+	
 	public Country getRegistryDocumentCountry() {
 		return registryDocumentCountry;
 	}
@@ -88,6 +90,7 @@ public class IrpfBreakdown implements Serializable {
 		this.registryDocumentCountry = registryDocumentCountry;
 		return this;
 	}
+	
 	public String getName() {
 		return name;
 	}
@@ -95,6 +98,7 @@ public class IrpfBreakdown implements Serializable {
 		this.name = name;
 		return this;
 	}
+	
 	public Date getIssueDate() {
 		return issueDate;
 	}
@@ -102,6 +106,7 @@ public class IrpfBreakdown implements Serializable {
 		this.issueDate = issueDate;
 		return this;
 	}
+	
 	public boolean isFromSalary() {
 		return fromSalary;
 	}
@@ -112,6 +117,7 @@ public class IrpfBreakdown implements Serializable {
 		this.fromSalary = fromSalary;
 		return this;
 	}
+
 	public Integer getSalary() {
 		return salary;
 	}
@@ -119,6 +125,7 @@ public class IrpfBreakdown implements Serializable {
 		this.salary = salary;
 		return this;
 	}
+	
 	public boolean isInsidePeriod() {
 		return insidePeriod;
 	}
@@ -126,6 +133,7 @@ public class IrpfBreakdown implements Serializable {
 		this.insidePeriod = insidePeriod;
 		return this;
 	}
+	
 	public InvoiceType getInvoiceType() {
 		return invoiceType;
 	}
@@ -133,6 +141,7 @@ public class IrpfBreakdown implements Serializable {
 		this.invoiceType = invoiceType;
 		return this;
 	}
+	
 	public Integer getInvoice() {
 		return invoice;
 	}
@@ -140,6 +149,7 @@ public class IrpfBreakdown implements Serializable {
 		this.invoice = invoice;
 		return this;
 	}
+	
 	public String getSeries() {
 		return series;
 	}
@@ -147,6 +157,7 @@ public class IrpfBreakdown implements Serializable {
 		this.series = series;
 		return this;
 	}
+	
 	public Integer getNumber() {
 		return number;
 	}
@@ -154,6 +165,7 @@ public class IrpfBreakdown implements Serializable {
 		this.number = number;
 		return this;
 	}
+	
 	public String getReferenceCode() {
 		return referenceCode;
 	}
@@ -161,6 +173,7 @@ public class IrpfBreakdown implements Serializable {
 		this.referenceCode = referenceCode;
 		return this;
 	}
+	
 	public Date getTaxDate() {
 		return taxDate;
 	}
@@ -168,6 +181,7 @@ public class IrpfBreakdown implements Serializable {
 		this.taxDate = taxDate;
 		return this;
 	}
+	
 	public WithholdingType getWithholdingType() {
 		return withholdingType;
 	}
@@ -175,6 +189,7 @@ public class IrpfBreakdown implements Serializable {
 		this.withholdingType = withholdingType;
 		return this;
 	}
+	
 	public IRPFRegime getIRPFRegime() {
 		return regime;
 	}
@@ -182,6 +197,7 @@ public class IrpfBreakdown implements Serializable {
 		this.regime = regime;
 		return this;
 	}
+	
 	public double getBase() {
 		return base;
 	}
@@ -189,6 +205,7 @@ public class IrpfBreakdown implements Serializable {
 		this.base = base;
 		return this;
 	}
+	
 	public double getPercent() {
 		return percent;
 	}
@@ -196,6 +213,7 @@ public class IrpfBreakdown implements Serializable {
 		this.percent = percent;
 		return this;
 	}
+	
 	public double getQuota() {
 		return quota;
 	}
@@ -203,6 +221,7 @@ public class IrpfBreakdown implements Serializable {
 		this.quota = quota;
 		return this;
 	}
+	
 	public double getDeductiblePercent() {
 		return deductiblePercent;
 	}
@@ -210,6 +229,7 @@ public class IrpfBreakdown implements Serializable {
 		this.deductiblePercent = deductiblePercent;
 		return this;
 	}
+	
 	public double getDeductibleQuota() {
 		return deductibleQuota;
 	}
@@ -217,6 +237,7 @@ public class IrpfBreakdown implements Serializable {
 		this.deductibleQuota = deductibleQuota;
 		return this;
 	}
+	
 	public Integer getGroupedBy() {
 		return groupedBy;
 	}
@@ -224,6 +245,7 @@ public class IrpfBreakdown implements Serializable {
 		this.groupedBy= groupedBy;
 		return this;
 	}
+	
 	public String getZip() {
 		return zip;
 	}
@@ -231,6 +253,7 @@ public class IrpfBreakdown implements Serializable {
 		this.zip = zip;
 		return this;
 	}
+	
 	public String getCity() {
 		return city;
 	}
@@ -238,6 +261,7 @@ public class IrpfBreakdown implements Serializable {
 		this.city = city;
 		return this;
 	}
+	
 	public boolean isInKind() {
 		return inKind;
 	}
@@ -255,26 +279,11 @@ public class IrpfBreakdown implements Serializable {
 	public boolean isSalaryInKindRetention() {
 		return isFromSalary() && isInKind();
 	}
-	public boolean isProfessional() {
-		return isFromInvoice() && withholdingType == WithholdingType.PROFESSIONAL;
-	}
-	public boolean isRenting() {
-		return isFromInvoice() && withholdingType == WithholdingType.RENTING;
-	}
-	public boolean isMovableCapital() {
-		return isFromInvoice() && withholdingType == WithholdingType.MOVABLE_CAPITAL;
-	}
-	public boolean isFarmer() {
-		return isFromInvoice() && withholdingType == WithholdingType.FARMER;
-	}
-	public boolean isTransportOperator() {
-		return isFromInvoice() &&  withholdingType == WithholdingType.TRANSPORT_OPERATOR;
-	}
 	public boolean isObjectiveRegime() {
-		return isFromInvoice() &&  (regime == IRPFRegime.OBJECTIVE);
+		return isFromInvoice() && regime == IRPFRegime.OBJECTIVE;
 	}
 	public boolean isExempt() {
-		return isFromInvoice() &&  (regime != null) && (regime == IRPFRegime.EXEMPT);
+		return isFromInvoice() &&  regime != null && regime == IRPFRegime.EXEMPT;
 	}
 	public boolean isNotObjectiveRegime() {
 		return !isObjectiveRegime();
@@ -291,16 +300,6 @@ public class IrpfBreakdown implements Serializable {
 	public boolean isInput() {
 		return isPurchase() || isExpenses();
 	}
-	public String getNifGroupedKey() {
-		return (getWithholdingType()==null?"NULL": getWithholdingType().toString()) 
-				+ "-"
-				+ getRegistryDocument();
-	}
-	public String getInvoiceGroupedKey() {
-		return AonNumberUtils.toString( getInvoice());
-	}
-	
-	
 
 }
 

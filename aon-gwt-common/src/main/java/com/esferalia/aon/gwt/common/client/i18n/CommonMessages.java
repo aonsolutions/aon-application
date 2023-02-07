@@ -17,8 +17,7 @@ public interface CommonMessages extends Messages {
 	// Ú --> \u00DA ú --> \u00FA
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// ª --> \u00AA º --> \u00BA
-	// ¿ --> \u00BF 
-	// ¡ --> \u00A1
+	// ¿ --> \u00BF
 	
 	// ----------------------------------------------------------------- Format
 	@DefaultMessage("#,##0")
@@ -1532,7 +1531,7 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Operaciones realizadas por sujetos pasivos acogidos al r\u00E9gimen especial del recargo de equivalencia")
 	String box102Msg();
 
-	@DefaultMessage("Operaciones en R\u00E9gimen especial de bienes usados, objetos de arte, antigÃƒÂ¼edades y objetos de colecci\u00F3n")
+	@DefaultMessage("Operaciones en R\u00E9gimen especial de bienes usados, objetos de arte, antigÃƒÂƒÃ‚Â¼edades y objetos de colecci\u00F3n")
 	String box227Msg();
 
 	@DefaultMessage("Operaciones en r\u00E9gimen especial de Agencias de Viajes")
@@ -3441,6 +3440,9 @@ public interface CommonMessages extends Messages {
  	@DefaultMessage("Ver asiento")
 	String viewAccountEntry();
 
+ 	@DefaultMessage("Ver factura")
+	String viewInvoice();
+
  	@DefaultMessage("Cuenta contable")
  	String account();
  	
@@ -3752,6 +3754,9 @@ public interface CommonMessages extends Messages {
 
 	@DefaultMessage("Motivo para el rechazo")
 	String rejectReason();
+
+	@DefaultMessage("Generar vencimiento autom\u00E1ticamente")
+	String financeGenerate();
 
 	@DefaultMessage("Vencimiento agrupado")
 	String financeGrouped();
