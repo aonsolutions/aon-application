@@ -607,7 +607,7 @@ public class AggregatedAnnualSummary {
 				Arrays.stream(periods).forEach(period -> {
 					Cell amountCell = deductionRow.createCell(amountCellNum[0]++);
 					
-					String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(amountCell.getColumnIndex()) + (amountCell.getRowIndex()+1);
+					String formula = "'" + WorkbookUtil.createSafeSheetName(nif) + "'" + "!" + CellReference.convertNumToColString(amountCell.getColumnIndex()) + (amountCell.getRowIndex()+1);
 					
 					putDeductionFormula(entry.getWorkplace(), totalsFormulas, concept, period, formula, complete);
 					
@@ -648,7 +648,7 @@ public class AggregatedAnnualSummary {
 			Row totalDedRow = sheet.getRow(sheet.getLastRowNum());
 			Cell totalDedCell = totalDedRow.createCell(totalDeductionCellNum[0]++);
 			
-			String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(totalDedCell.getColumnIndex()) + (totalDedCell.getRowIndex()+1);
+			String formula = "'" + WorkbookUtil.createSafeSheetName(nif) + "'" + "!" + CellReference.convertNumToColString(totalDedCell.getColumnIndex()) + (totalDedCell.getRowIndex()+1);
 			putDeductionFormula(entry.getWorkplace(), totalsFormulas, "TOTAL DEDUCCIONES", period, formula, complete);
 			
 			totalDedCell.setCellType(CellType.NUMERIC);
@@ -688,7 +688,8 @@ public class AggregatedAnnualSummary {
 			Arrays.stream(periods).forEach(period -> {
 				Cell amountCell = paymentRow.createCell(amountCellNum[0]++);
 				
-				String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(amountCell.getColumnIndex()) + (amountCell.getRowIndex()+1);
+				
+				String formula = "'" + WorkbookUtil.createSafeSheetName(nif) + "'" + "!" + CellReference.convertNumToColString(amountCell.getColumnIndex()) + (amountCell.getRowIndex()+1);
 				
 				putPaymentAndDaHFormula(entry.getWorkplace(),totalsFormulas, concept, period, formula, complete);
 				
@@ -855,7 +856,7 @@ public class AggregatedAnnualSummary {
 			Map<String, Double> dah = entry.getMonthlyEntries().get(period) != null ? entry.getMonthlyEntries().get(period).getDaysAndHours() : null;
 			Cell dCell = dahRow.createCell(cNum[0]);
 			
-			String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(dCell.getColumnIndex()) + (dCell.getRowIndex()+1);
+			String formula = "'" + WorkbookUtil.createSafeSheetName(nif) + "'" + "!" + CellReference.convertNumToColString(dCell.getColumnIndex()) + (dCell.getRowIndex()+1);
 			
 			putPaymentAndDaHFormula(entry.getWorkplace(), totalsFormulas, dahName, period, formula, complete);
 			
@@ -1004,7 +1005,7 @@ public class AggregatedAnnualSummary {
 					hasContent = true;
 					cell.setCellValue(amount);
 					
-					String formula = "'" + nif + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
+					String formula = "'" + WorkbookUtil.createSafeSheetName(nif) + "'" + "!" + CellReference.convertNumToColString(cell.getColumnIndex()) + (cell.getRowIndex()+1);
 					putDataFormula(entry.getWorkplace(), dataName, totalsFormulas, period, formula, complete);
 					
 				}

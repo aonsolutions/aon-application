@@ -683,7 +683,7 @@ public abstract class SalaryPaymentWizard extends AonCustomDialog {
 			case 3:
 				taxedFxButton.setVisible(false);
 				taxedExpression.setEnabled(false);
-				taxedExpression.setValue("BASE_CTA_ESP=_P");
+				taxedExpression.setValue("BASE_CTA_ESP=( isdef BASE_CTA_ESP ? BASE_CTA_ESP : 0.00 ) + _P; _P");
 				break;
 			default:
 				taxedFxButton.setVisible(true);

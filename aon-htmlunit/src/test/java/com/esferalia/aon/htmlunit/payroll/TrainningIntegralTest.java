@@ -89,6 +89,22 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("it_cost", "3,64");
 		assertText("ims_cost", "2,87");
 		
+		calculate(Calendar.JANUARY, 2023);
+		assertText("common_contingency", "9,43");
+		assertText("unemployment", "18,08");
+		assertNotElement("job_training");
+		assertValue("cgcBaseLabel", "1.166,70");
+		assertValue("cgpBaseLabel", "1.166,70");
+		assertText("totalDeductionLabel", "39,51");
+		
+//		getElementById("costsCheck-input").click();
+		wait4Id("common_contingency_cost");
+		assertText("common_contingency_cost", "47,28");
+		assertText("unemployment_cost", "64,17");
+		assertText("fogasa_cost", "3,59");
+		assertText("it_cost", "3,64");
+		assertText("ims_cost", "2,87");
+
 		//costsCheck-input
 
 		draft("BECARIO, EL");
@@ -104,6 +120,9 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("common_contingency", "9,10");
 		calculate(Calendar.JANUARY, 2022);
 		assertText("common_contingency", "9,43");
+		calculate(Calendar.JANUARY, 2023);
+		assertText("common_contingency", "9,43");
+		assertText("totalDeductionLabel", "9,43");
 		
 		if ( !isDisplayed("it_cost") )
 			click("costsCheck-input");

@@ -879,6 +879,210 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCompositeIrpfaCtaII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		cleanSystemDeductions(aonContext);
+		
+		PaymentConceptRecord irpfCtaEsp = 
+		addConcept(aonContext, "IRPF_CTA_ESP");
+		
+		addSSRegimePayment(
+		aonContext, 
+		SSRegimeType.GENERAL, 
+		AonDateUtils.getFirstDayOfYear(getToday()),
+		irpfCtaEsp, 
+		PaymentType.CRA_0000,
+		"isdef BASE_CTA_ESP ? ( BASE_CTA_ESP * PORCENTAJE_IRPF / 100.00 ) : HIDE()",
+		null,
+		null);
+		
+		addSSRegimeDeduction(
+		aonContext, 
+		SSRegimeType.GENERAL, 
+		AonDateUtils.getFirstDayOfYear(getToday()),
+		DeductionType.IN_KIND, 
+		"EN_ESPECIE",
+		"Valor de los Productos Recibidos en Especie",
+		"_EN_ESPECIE");
+		
+
+		addSSRegimeDeduction(
+		aonContext, 
+		SSRegimeType.GENERAL, 
+		AonDateUtils.getFirstDayOfYear(getToday()),
+		DeductionType.IRPF, 
+		"IRPF",
+		"IRPF Retribución Dineraria",
+		"BASE_IRPF_DINERO * PORCENTAJE_IRPF/100.00");
+
+		addSSRegimeDeduction(
+		aonContext, 
+		SSRegimeType.GENERAL, 
+		AonDateUtils.getFirstDayOfYear(getToday()),
+		DeductionType.IRPF, 
+		"IRPF",
+		"IRPF Retribución en Especie",
+		"_P=(BASE_IRPF_ESPECIE * PORCENTAJE_IRPF/100.00 - (isdef IRPF_CTA_ESP ? IRPF_CTA_ESP : 0.00)); (_P > 0.0049 ) ? _P : HIDE()");
+
+		addSSRegimeDeduction(
+		aonContext, 
+		SSRegimeType.GENERAL, 
+		AonDateUtils.getFirstDayOfYear(getToday()),
+		DeductionType.IRPF, 
+		"IRPF",
+		"IRPF Ingreso a Cuenta Especie a cargo de la Empresa",
+		"isdef BASE_CTA_ESP ? BASE_CTA_ESP : HIDE() ; IRPF_CTA_ESP");
+
+		addSSRegimeDeduction(
+		aonContext, 
+		SSRegimeType.GENERAL, 
+		AonDateUtils.getFirstDayOfYear(getToday()),
+		DeductionType.COMMON_CONTINGENCY, 
+		"CGC",
+		"4.70%",
+		"BASE_CGC * PORCENTAJE_CGC/100");
+
+		addSSRegimeDeduction(
+		aonContext, 
+		SSRegimeType.GENERAL, 
+		AonDateUtils.getFirstDayOfYear(getToday()),
+		DeductionType.COMMON_CONTINGENCY, 
+		"MEI",
+		"0.10%",
+		"BASE_CGC * PORCENTAJE_MEI/100");
+
+		addSSRegimeDeduction(
+		aonContext, 
+		SSRegimeType.GENERAL, 
+		AonDateUtils.getFirstDayOfYear(getToday()),
+		DeductionType.UNEMPLOYMENT, 
+		"DESMPL",
+		"@{PORCENTAJE_DESMPL} %",
+		"BASE_CGP * ( isdef PORCENTAJE_DESMPL ? PORCENTAJE_DESMPL : PORCENTAJE_DESMPL=(INDEFINIDO ? 1.55 : 1.60 ))/100");
+
+		addSSRegimeDeduction(
+		aonContext, 
+		SSRegimeType.GENERAL, 
+		AonDateUtils.getFirstDayOfYear(getToday()),
+		DeductionType.JOB_TRAINING, 
+		"FP",
+		"0.10 %",
+		"BASE_CGC * PORCENTAJE_FP/100");
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {}, 
+				new String[] {}, 
+				null);
+		//@formatter:on
+
+		setData(aonContext, contract, "DIAS_MES", "30.00");
+		setData(aonContext, contract, "PORCENTAJE_FP", "0.10");
+		setData(aonContext, contract, "PORCENTAJE_MEI", "0.10");
+		setData(aonContext, contract, "PORCENTAJE_CGC", "4.70");
+		setData(aonContext, contract, "PORCENTAJE_IRPF", "10.00");
+		setData(aonContext, contract, "PORCENTAJE_DESMPL", "1.55");
+
+		addPayment(aonContext, 
+		contract, 
+		"SALARIO BASE",
+		"1000.00 * DIAS_TRABAJADOS / DIAS_MES", 
+		"_P", 
+		"_P", 
+		PaymentType.CRA_0001);
+		
+		// A CTA 
+		addPayment(aonContext, 
+		contract, 
+		"SALARIO EN ESPECIE", 
+		"1.62 / 2.00 * DIAS_TRABAJADOS / DIAS_MES", 
+		"BASE_CTA_ESP=( isdef BASE_CTA_ESP ? BASE_CTA_ESP : 0.00 ) + _P; _P", 
+		"_P", 
+		PaymentType.CRA_0013);
+		
+		addPayment(aonContext, 
+		contract, 
+		"SALARIO EN ESPECIE", 
+		"1.62 / 2.00 * DIAS_TRABAJADOS / DIAS_MES", 
+		"BASE_CTA_ESP=( isdef BASE_CTA_ESP ? BASE_CTA_ESP : 0.00 ) + _P; _P", 
+		"_P", 
+		PaymentType.CRA_0013);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		addData(aonContext, contract, startDate, add(startDate, Calendar.DAY_OF_MONTH, 19), QUOTE_GROUP, "\"05\"");
+		addData(aonContext, contract, add(startDate, Calendar.DAY_OF_MONTH, 20), endDate, QUOTE_GROUP, "\"04\"");
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<>();
+		
+		
+		SalaryDraft salaryDraft = new SalaryDraft();
+		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(salaryDraft) {
+		};
+		calculator.setSalaryBuilder(salaryDraftBuilder);
+		calculator.calculate(ctx);
+		
+		System.out.println("DATA ==================================================================");
+		salaryDraft.getContext().forEach( v -> {
+		    System.out.println("\t" + v.getName() + " = " + v.getValue() +"" + v.getStartDate() );
+		});
+		System.out.println("PAYMENTS ==================================================================");
+		salaryDraft.getPayments().forEach( p -> {
+		    System.out.println("\t" + p.getName() + " = " + p.getAmount() +"" );
+		});
+		System.out.println("DEDUCTIONS ================================================================");
+		
+		//Assert.assertEquals(6, salaryDraft.getDeductions().size());
+		salaryDraft.getDeductions().forEach( d -> {
+		    System.out.println("\t" + d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
+		});
+		System.out.println("IRPF ======================================================================");
+		{
+		Deduction irpfs [] =
+		salaryDraft.getDeductions().stream()
+		.filter( d -> "IRPF".equals(d.getName()))
+		.toArray(Deduction[]::new);
+		
+		Assert.assertEquals(1, irpfs.length);
+		Assert.assertTrue(irpfs[0] instanceof CompositeDeduction);
+		Collection<Deduction> irpfDeductions = 
+		((CompositeDeduction) irpfs[0] ).getChilds();
+		irpfDeductions.forEach( d -> {
+		    System.out.println("\t" + d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
+		    Assert.assertTrue(d.getDescription().contains("IRPF "));
+		});
+		Assert.assertEquals(2, irpfDeductions.size());
+		
+
+		Assert.assertEquals("IRPF", irpfs[0].getDescription());
+		}
+		
+		for ( String name : new String [] {"CGC", "MEI", "FP", "DESMPL"} ) {
+			System.out.println(name +" ======================================================================");
+			Deduction deductions [] =
+				salaryDraft.getDeductions().stream()
+				.filter( d -> name.equals(d.getName()))
+				.toArray(Deduction[]::new);
+			Assert.assertEquals(1, deductions.length);
+			Assert.assertTrue(deductions[0] instanceof CompositeDeduction);
+			Collection<Deduction> childDeductions = 
+			((CompositeDeduction) deductions[0] ).getChilds();
+			Assert.assertEquals(2, childDeductions.size());
+			
+			childDeductions.forEach( d -> {
+			    System.out.println("\t" + d.getName() + " = " + d.getDescription() + "(" + d.getAmount() +")" );
+			});
+		}
+
+	}
+
+	@Test
 	@Ignore
 	public void testJoinContext() throws ExpressionException, SQLException,
 			SalaryException {
