@@ -1460,7 +1460,10 @@ public class EmployeeDAO {
 	
 	private static byte getCCCType(Employee employee) {
 		
-		if ( "000".equals(employee.getContractType()))
+		if(null == employee.getContractType() || employee.getContractType().isEmpty())
+			return 1; // TRAINING
+		
+		if ( "000".equals(employee.getContractType().get()))
 			return 5; // FELLOWS
 		
 		switch (getSSRegimeType(employee)) {

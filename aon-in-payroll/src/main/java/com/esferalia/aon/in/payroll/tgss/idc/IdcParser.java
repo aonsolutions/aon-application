@@ -135,6 +135,9 @@ public class IdcParser {
 				listener.onContractInactivityType(matcher.group("inactivity"));
 			}
 			
+			// If completeCCC is not present this may be formation and learning CCC
+			if(null == enterpriseCompleteCCC) enterpriseCompleteCCC = "0111" + enterpriseCCC;
+			
 			onEnterprise(listener, socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode,
 					enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
 			
