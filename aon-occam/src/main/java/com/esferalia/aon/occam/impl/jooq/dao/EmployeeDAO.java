@@ -1460,7 +1460,7 @@ public class EmployeeDAO {
 	
 	private static byte getCCCType(Employee employee) {
 		
-		if(null == employee.getContractType() || employee.getContractType().isEmpty())
+		if("000".equals(employee.getContractType().get()) && employee.getRlce().isPresent() && AonStringUtils.containsIgnoreCase(employee.getRlce().get(), "PRACT. NO LAB. EMP"))
 			return 1; // TRAINING
 		
 		if ( "000".equals(employee.getContractType().get()))
