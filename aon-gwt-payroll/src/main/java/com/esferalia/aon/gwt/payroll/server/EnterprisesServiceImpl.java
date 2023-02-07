@@ -2211,7 +2211,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	
 	@Override
 	public String getSalariesPDF(String domain, String currentUser, Integer enterpriseID, List<Integer> salaryIds) throws IllegalArgumentException {
-		try (ByteOutputStream os = new ByteOutputStream(30 * 1024); 
+		int salaryCount = salaryIds != null ? salaryIds.size() : 1;
+		try (ByteOutputStream os = new ByteOutputStream(salaryCount * 30 * 1024); 
 		CloseableAONContext aonContext = AONContext.getAONContext(domain, currentUser)) {
 			String salaryReport = getReportKey(domain, enterpriseID, SalaryType.SALARY);
 			
