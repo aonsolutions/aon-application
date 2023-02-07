@@ -88,12 +88,13 @@ public class SeresFtpConnectionProvider implements Serializable {
 				.setPassword(passwd)
 				.setSeresPath(SeresPath.safeValueOf(remotePath));
 		Date start2 = AonDateUtils.getDateWithoutTime(start);
+		Date end2 = AonDateUtils.getDateWithoutTime(AonDateUtils.addDays(end, 1));
 		List<LsEntry> list = SeresSftpConnectionProvider.retrieveDirectoryList(info);
 
 		return list.stream()
 		.filter(f -> !f.getFilename().equals(".") && !f.getFilename().equals("..") 
 			&& start2.before(new Date(f.getAttrs().getMTime() * 1000L))
-			&& end.after(new Date(f.getAttrs().getMTime() * 1000L)))
+			&& end2.after(new Date(f.getAttrs().getMTime() * 1000L)))
 		.map(r -> {
 			FTPFile file = new FTPFile();
 			file.setName(r.getFilename());
