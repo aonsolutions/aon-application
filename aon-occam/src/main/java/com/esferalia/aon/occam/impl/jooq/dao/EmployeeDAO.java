@@ -1460,7 +1460,10 @@ public class EmployeeDAO {
 	
 	private static byte getCCCType(Employee employee) {
 		
-		if ( "000".equals(employee.getContractType()))
+		if("000".equals(employee.getContractType().get()) && employee.getRlce().isPresent() && AonStringUtils.containsIgnoreCase(employee.getRlce().get(), "PRACT. NO LAB. EMP"))
+			return 1; // TRAINING
+		
+		if ( "000".equals(employee.getContractType().get()))
 			return 5; // FELLOWS
 		
 		switch (getSSRegimeType(employee)) {

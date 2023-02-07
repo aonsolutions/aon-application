@@ -120,6 +120,11 @@ public class IdcParser {
 			if ( hasData(matcher.group("contractType"))) {
 				listener.onContractType(matcher.group("contractType"));
 			}
+			
+			matcher = find(reader, RLCE_COTIZACION_ADIC);
+			
+			if( hasData(matcher.group("rlce")))
+				listener.onRlce(matcher.group("rlce"));
 
 			matcher = find(reader, CONTRACT_PARTIALCOEF_DATE_AGE);
 			if(hasData(matcher.group("partialCoef"))) {
@@ -130,10 +135,14 @@ public class IdcParser {
 			if ( hasData(matcher.group("quoteGroup"))) {
 				listener.onContractQuoteGroup(matcher.group("quoteGroup"));
 			}
-			String enterpriseCompleteCCC = (matcher.group("completeCCC"));
+			
+//			String enterpriseCompleteCCC = (matcher.group("completeCCC"));
+			
 			if(hasData(matcher.group("inactivity"))) {
 				listener.onContractInactivityType(matcher.group("inactivity"));
 			}
+			
+			String enterpriseCompleteCCC = createEnterpriseCompleteCCC(enterpriseRegime, enterpriseCCC);
 			
 			onEnterprise(listener, socialReason, enterpriseCCC, enterpriseCIF, enterpriseActivityCode,
 					enterpriseActivityDescription, enterpriseRegime, enterpriseCompleteCCC);
@@ -201,6 +210,15 @@ public class IdcParser {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static String createEnterpriseCompleteCCC(String enterpriseRegime, String enterpriseCCC) {
+		 String regime = "0111";
+		 if(AonStringUtils.containsIgnoreCase(enterpriseRegime, "REGIMEN GENERAL")) regime = "0111";
+		 else if(AonStringUtils.containsIgnoreCase(enterpriseRegime, "HOGAR")) regime = "0138";
+		 else if(AonStringUtils.containsIgnoreCase(enterpriseRegime, "AGRARIO")) regime = "0163";
+		 else if(AonStringUtils.containsIgnoreCase(enterpriseRegime, "ARTISTA")) regime = "0112";
+		 return regime + enterpriseCCC;
 	}
 
 	private static void onEmployeeQuotePEC(IdcParserListener listener, String nss, String enterpriseCCC, String code,
@@ -304,6 +322,12 @@ public class IdcParser {
 	protected static final Pattern CONTRACT_TYPE_START_END = 
 	Pattern.compile(
 	"^T(\\.|IPO)\\s*CONTRATO\\s*:\\s*(?<contractType>[0-9]*)(?<contractDescription>.*)ALTA\\s*:\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)\\s*BAJA\\s*:\\s*(?<end>[0-9]+-[0-9]+-[0-9]+)*$"
+	, Pattern.CASE_INSENSITIVE);
+	
+	//R.L.C.E.: PRACT. NO LAB. EMP COTIZACIÓN ADICIONAL:
+	protected static final Pattern RLCE_COTIZACION_ADIC = 
+	Pattern.compile(
+	"^R\\.L\\.C\\.E\\.\\s*:\\s*(?<rlce>.*)COTIZACIÓN.*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//COEF.TIEMPO PARCIAL: 500 REDUCCIÓN JORNADA/COEFIC:  FECHA: 01-11-2019 EDAD: 55
