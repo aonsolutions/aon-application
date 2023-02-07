@@ -2211,7 +2211,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	
 	@Override
 	public String getSalariesPDF(String domain, String currentUser, Integer enterpriseID, List<Integer> salaryIds) throws IllegalArgumentException {
-		try (ByteOutputStream os = new ByteOutputStream(); 
+		try (ByteOutputStream os = new ByteOutputStream(30 * 1024); 
 		CloseableAONContext aonContext = AONContext.getAONContext(domain, currentUser)) {
 			String salaryReport = getReportKey(domain, enterpriseID, SalaryType.SALARY);
 			
@@ -2246,7 +2246,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 						, ids);
 			}
 			
-			String base64Pdf = Base64.getEncoder().encodeToString(os.getBytes());
+			byte[] bytes = os.toByteArray();
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(bytes);
 			
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
