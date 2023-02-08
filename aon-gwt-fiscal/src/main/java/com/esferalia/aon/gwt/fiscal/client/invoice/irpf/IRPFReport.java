@@ -6,6 +6,7 @@ import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
 import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCloseTab;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
@@ -33,6 +34,8 @@ public class IRPFReport extends MainEntryPoint {
 
 	private static final String IRPF_EXCEL_REPORT_PRINT = "/aon_gwt_fiscal/roms/IrpfReportExcelPrint";
 	private static final String IRPF_PDF_REPORT_PRINT = "/aon_gwt_fiscal/roms/IrpfReportPDFPrint";
+	private static final int SUMMARY_TAB = 0;
+	private static final int RESULTS_TAB = 1;
 
 	private static final CommonServiceAsync COMMON_SERVICE;
 	static {
@@ -46,6 +49,7 @@ public class IRPFReport extends MainEntryPoint {
 		SERVICE = new IrpfReportServiceAsyncDecorator(serviceRaw);
 	}
 	
+	private DockLayoutPanel dockLayoutPanel;
 	private TabLayoutPanel tabLayout;
 	private SimpleLayoutPanel summaryContent;
 	private SimpleLayoutPanel resultsContent;
@@ -58,92 +62,84 @@ public class IRPFReport extends MainEntryPoint {
 	private Hidden domainNameHidden;
 	private Hidden userHidden;
 	
-	private IrpfReportModuleOptions options;
-	
 	@Override
 	public void onModuleLoad() {
+		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
+		onModuleLoad( new IrpfReportModuleOptions()
+			.setParentWidget(root)
+			.setDomainName(getCurrentDomainName())
+			.setDomain(getCurrentDomain())
+			.setUser(getCurrentUser())
+		);
+	}
+
+	public void onModuleLoad(IrpfReportModuleOptions options) {
+		AON.ensureInjected();
+		
+		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
+		dockLayoutPanel = new DockLayoutPanel(Unit.PX);
+		dockLayoutPanel.addNorth(getToolbarPanel( options ), AonToolbar.HEIGTH);
+		options.getParentWidget().add(dockLayoutPanel);
+		
 		COMMON_SERVICE.getAonConfiguration(getCurrentDomainName(), getCurrentDomain(), getCurrentUser(), new AsyncCallback<AonConfiguration>() {
 			@Override
 			public void onSuccess(AonConfiguration config) {
-				RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-				onModuleLoad( new IrpfReportModuleOptions()
-					.setParentWidget(root)
-					.setDomainName(getCurrentDomainName())
-					.setDomain(getCurrentDomain())
-					.setUser(getCurrentUser())
-					.setConfiguration(config)
-				);
+				options.setConfiguration(config);
+				
+				filterPanelContainer = new SimpleLayoutPanel();
+				initializeFilterPanel(options);
+				dockLayoutPanel.addNorth( filterPanelContainer, 115);
+				SimpleLayoutPanel content = new SimpleLayoutPanel();
+				content.setStyleName(AON.CSS.aonSelector());
+				tabLayout = new TabLayoutPanel(26, Unit.PX);
+				tabLayout.setWidth("100%");
+				tabLayout.addSelectionHandler( event -> {
+					if (event.getSelectedItem() == SUMMARY_TAB && resultsContent != null) {
+						resultsContent.clear();	
+					} else if (event.getSelectedItem() == RESULTS_TAB && resultsContent.getWidget() == null) {
+						onSearch( options );	
+					}
+				});
+
+				summaryContent = new SimpleLayoutPanel();
+				tabLayout.add(summaryContent, new AonCloseTab(AON.MSG.summary(), false));
+				
+				resultsContent = new SimpleLayoutPanel();
+				tabLayout.add(resultsContent, new AonCloseTab(AON.MSG.informationBreakdown(), false));
+				
+				content.setWidget(tabLayout);
+				dockLayoutPanel.add(content);
+				
+				onSearch( options );
 			}
 			
 			@Override 
 			public void onFailure(Throwable caught) {
-				Window.alert( AON.MSG.loadError("Modelo 303"));
+				dockLayoutPanel.add(new Label(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage()+ "]"));
 			}
 		});
 	}
-
-	private IrpfReportModuleOptions getOptions() {
-		if (this.options == null) {
-			this.options = new IrpfReportModuleOptions();
-		}
-		return this.options;
-	}
 	
-	public void onModuleLoad(IrpfReportModuleOptions options) {
-		this.options = options;
-		AON.ensureInjected();
-		
-		DockLayoutPanel dockLayoutPanel = new DockLayoutPanel(Unit.PX);
-		dockLayoutPanel.addNorth(getToolbarPanel(), AonToolbar.HEIGTH);
-		options.getParentWidget().add(dockLayoutPanel);
-		
-		filterPanelContainer = new SimpleLayoutPanel();
-		initializeFilterPanel(options);
-		dockLayoutPanel.addNorth( filterPanelContainer, 115);
-		SimpleLayoutPanel content = new SimpleLayoutPanel();
-		content.setStyleName(AON.CSS.aonSelector());
-		tabLayout = new TabLayoutPanel(26, Unit.PX);
-		tabLayout.setWidth("100%");
-		tabLayout.addSelectionHandler( event -> {
-			if (event.getSelectedItem() == 0 && resultsContent != null) {
-				resultsContent.clear();	
-			} else if (event.getSelectedItem() == 1 && resultsContent.getWidget() == null) {
-				onSearch();	
-			}
-		});
-						
-		summaryContent = new SimpleLayoutPanel();
-		tabLayout.add(summaryContent, AON.MSG.summary());
-		
-		resultsContent = new SimpleLayoutPanel();
-		tabLayout.add(resultsContent, AON.MSG.informationBreakdown());
-		
-		content.setWidget(tabLayout);
-		dockLayoutPanel.add(content);
-		
-		onSearch();
-	}
-	
-	private Widget getToolbarPanel() {
+	private Widget getToolbarPanel(IrpfReportModuleOptions options) {
 		AonToolbar toolbarPanel = new AonToolbar("Tabla I.R.P.F.");
 		
 		final AonToolbarButton pdf = new AonToolbarButton(AON.MSG.print(), AON.CSS.aonIconPdf());
-		pdf.addClickHandler(event -> submitForm(IRPF_PDF_REPORT_PRINT));
+		pdf.addClickHandler(event -> submitForm(options, IRPF_PDF_REPORT_PRINT));
 		toolbarPanel.add(pdf);
 
 		final AonToolbarButton excel = new AonToolbarButton(AON.MSG.export(), AON.CSS.aonIconExcel());
-		excel.addClickHandler(event -> submitForm(IRPF_EXCEL_REPORT_PRINT));
+		excel.addClickHandler(event -> submitForm(options, IRPF_EXCEL_REPORT_PRINT));
 		toolbarPanel.add(excel);
 
 		final AonToolbarButton clean = new AonToolbarButton(AON.MSG.clean(), AON.CSS.aonIconClear());
 		clean.addClickHandler(event -> {
 			initializeFilterPanel(options);
-			onSearch();
+			onSearch( options );
 		});
 		toolbarPanel.add(clean);
 	
 		final AonToolbarButton refresh = new AonToolbarButton(AON.MSG.refresh(), AON.CSS.aonIconRefresh());
-		refresh.addClickHandler(event -> onSearch() );
+		refresh.addClickHandler(event -> onSearch( options ) );
 		toolbarPanel.add(refresh);
 
 		diskForm = new FormPanel("_blank");
@@ -165,32 +161,41 @@ public class IRPFReport extends MainEntryPoint {
 	
 	private void initializeFilterPanel(IrpfReportModuleOptions options) {
 		filterPanel = new IRPFReportFilterPanel(options);
-		filterPanel.addValueChangeHandler( event -> onSearch());
+		filterPanel.addValueChangeHandler( event -> onSearch( options ));
 		filterPanelContainer.setWidget(filterPanel);
 	}
 	
-	protected void onSearch() {
-		if (tabLayout.getSelectedIndex() == 0) {
-			refreshSummary(filterPanel.getParams(getOptions()));
+	protected void onSearch(IrpfReportModuleOptions options) {
+		onSearch( options, filterPanel.getParams(options) );
+	}
+	
+	protected void onSearch(IrpfReportModuleOptions options, IRPFParams params) {
+		if (tabLayout.getSelectedIndex() == SUMMARY_TAB) {
+			refreshSummary(options, params);
 		} else {
-			refreshResults(filterPanel.getParams(getOptions()));
+			refreshResults(options, params);
 		}
 	}
-	
-	private void refreshResults(IRPFParams params) {
+
+	private void refreshResults(IrpfReportModuleOptions options, IRPFParams params) {
 		resultsContent.clear();
-		filterPanel.setValue( params );
-		resultsContent.setWidget(new IRPFReportPanel(getOptions(), params, null, null));		
+		resultsContent.setWidget(new IRPFReportPanel(options, params, null, null));		
 	}
 	
-	private void refreshSummary(IRPFParams params) {
+	private void refreshSummary(IrpfReportModuleOptions options, IRPFParams params) {
 		summaryContent.clear();
-		SERVICE.getIrpfBreakdownSummary(getOptions().getOccam(), params
+		SERVICE.getIrpfBreakdownSummary(options.getOccam(), params
 				, new AsyncCallback<IrpfSummary>() {
 			
 			@Override
 			public void onSuccess(IrpfSummary summary) {
-				summaryContent.setWidget(new IRPFReportSummaryPanel(params, summary));
+				IRPFReportSummaryPanel summaryPanel = new IRPFReportSummaryPanel(params, summary);
+				summaryPanel.addSelectionHandler(e -> {
+					filterPanel.setValue(e.getSelectedItem());
+					tabLayout.selectTab(RESULTS_TAB, false);
+					onSearch(options, e.getSelectedItem());
+				});
+				summaryContent.setWidget(summaryPanel);
 			}
 			
 			@Override
@@ -204,9 +209,9 @@ public class IRPFReport extends MainEntryPoint {
 		});
 	}
 	
-	private void submitForm(String action) {
+	private void submitForm(IrpfReportModuleOptions options, String action) {
 		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-		irpfParamsHidden.setValue(JsonParams.convert(filterPanel.getParams(getOptions())));
+		irpfParamsHidden.setValue(JsonParams.convert(filterPanel.getParams(options)));
 		domainIdHidden.setValue(String.valueOf(getCurrentDomain()));
 		domainNameHidden.setValue(getCurrentDomainName());
 		userHidden.setValue(getCurrentUser());

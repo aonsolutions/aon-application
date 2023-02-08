@@ -98,6 +98,9 @@ public class IRPFParams implements Serializable {
 	public boolean isOutput() {
 		return output != null && output.booleanValue();
 	}
+	public boolean isInput() {
+		return output != null && !output.booleanValue();
+	}
 	
 	public WithholdingTypeGroup getWithholdingTypeGroup() {
 		return typeGroup;
