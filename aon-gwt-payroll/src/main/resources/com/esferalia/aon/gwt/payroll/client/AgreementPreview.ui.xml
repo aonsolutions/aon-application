@@ -357,7 +357,7 @@
 						   
 						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent} {style.widthAll}" ui:field="paymentDiscPanelContent">
 						   		<g:ScrollPanel ui:field="paymentScrollPanel" styleName="{style.hideScroll}">
-									<g:Grid ui:field="paymentGrid" styleName="{style.borderCollapse}" />
+									<g:Grid ui:field="paymentGrid" debugId="agreementPaymentDG" styleName="{style.borderCollapse}" />
 								</g:ScrollPanel>
 								<g:HTMLPanel ui:field="agreementPaymentTableMessage" styleName="{style.flexCenter}">
 									<g:Label text="DEBE CREAR UN DEVENGO PARA VISUALIZAR LA TABLA DE DEVENGOS (+)" styleName="{style.message}" />
@@ -377,7 +377,7 @@
 						   	
 						   	<g:HTMLPanel styleName="{style.flexColumn} {style.discContent} {style.widthAll}" ui:field="extraDiscPanelContent">
 						   		<g:ScrollPanel ui:field="extraScrollPanel" styleName="{style.hideScroll}">
-									<g:Grid ui:field="extraGrid" styleName="{style.borderCollapse}" />
+									<g:Grid ui:field="extraGrid" debugId="agreementExtraPaymentDG" styleName="{style.borderCollapse}" />
 								</g:ScrollPanel>
 								<g:HTMLPanel ui:field="agreementExtraTableMessage" styleName="{style.flexCenter}">
 									<g:Label text="DEBE CREAR UN DEVENGO PARA VISUALIZAR LA TABLA DE EXTRAS (+)" styleName="{style.message}" />
