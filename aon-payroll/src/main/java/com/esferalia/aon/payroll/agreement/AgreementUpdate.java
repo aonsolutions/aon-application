@@ -652,6 +652,11 @@ public class AgreementUpdate {
 			
 			Date auxEndDate = null;
 			
+			Calendar defaultPaymentStartDate = Calendar.getInstance();
+			defaultPaymentStartDate.set(Calendar.DAY_OF_MONTH, 1);
+			defaultPaymentStartDate.set(Calendar.MONTH, 0);
+			defaultPaymentStartDate.set(Calendar.YEAR, 2010);
+			
 			removeServiAgreementPayments(dslContext, agreementId);
 			
 			for(String agreementConceptName : agreement.getAgreementConcepts()) {
@@ -711,7 +716,7 @@ public class AgreementUpdate {
 							.set(AGREEMENT_PAYMENT.TYPE, agreementPayment.getType())
 							.set(AGREEMENT_PAYMENT.EXPRESSION,  "/*inherit*/" + agreementPayment.getExpression() + "/**/")
 							.set(AGREEMENT_PAYMENT.DESCRIPTION, agreementPayment.getNormalizeName())
-							.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(defaultStartDate.getTime()))
+							.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(defaultPaymentStartDate.getTime()))
 							.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
 							.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
 							.set(AGREEMENT_PAYMENT.IRPF_EXPRESSION, irpfExpression)
@@ -816,7 +821,7 @@ public class AgreementUpdate {
 						.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
 						.set(AGREEMENT_PAYMENT.EXPRESSION,  "/*inherit*/" + "SALARIO_BASE" + "/**/")
 						.set(AGREEMENT_PAYMENT.DESCRIPTION, "[90] PAGA VERANO")
-						.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(defaultStartDate.getTime()))
+						.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(defaultPaymentStartDate.getTime()))
 						.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
 						.set(AGREEMENT_PAYMENT.MONTH, (byte)6)
 						.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)
@@ -849,7 +854,7 @@ public class AgreementUpdate {
 						.set(AGREEMENT_PAYMENT.TYPE, (byte)4)
 						.set(AGREEMENT_PAYMENT.EXPRESSION, "/*inherit*/" + "SALARIO_BASE" + "/**/")
 						.set(AGREEMENT_PAYMENT.DESCRIPTION, "[91] PAGA NAVIDAD")
-						.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(defaultStartDate.getTime()))
+						.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(defaultPaymentStartDate.getTime()))
 						.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
 						.set(AGREEMENT_PAYMENT.MONTH, (byte)11)
 						.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 1)

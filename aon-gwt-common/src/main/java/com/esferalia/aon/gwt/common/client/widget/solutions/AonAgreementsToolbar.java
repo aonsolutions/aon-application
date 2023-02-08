@@ -42,6 +42,7 @@ public class AonAgreementsToolbar extends Composite {
 	interface MyStyle extends CssResource {
 		String title();
 		String cmdBtn();
+		String redColor();
 	}
 	
 	@UiField
@@ -76,6 +77,11 @@ public class AonAgreementsToolbar extends Composite {
 	
 	public void removeListener(Listener listener) {
 		listeners.remove(listener);
+	}
+	
+	public void setTrashAgreementWarn(Boolean hasTrashAgreements) {
+		if(hasTrashAgreements) trashListButton.addStyleName(style.redColor());
+		else trashListButton.removeStyleName(style.redColor());
 	}
 	
 	private void createToolbar() {
