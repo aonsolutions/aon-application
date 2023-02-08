@@ -38,7 +38,7 @@ public final class EmployeeAFIGeneration {
 		public ETI(String authKey, String payrollProvider, String fileName, String priorityCode) {
 			super();
 			this.etiHeader = "ETI";
-			this.sintaxIndent = AonStringUtils.rightPad("AFI90W0000", 10, '0');
+			this.sintaxIndent = AonStringUtils.rightPad("AFI93W0000", 10, '0');
 			this.authKey = AonStringUtils.leftPad(authKey, 8, '0');
 			this.payrollProvider = AonStringUtils.leftPad(payrollProvider, 3, '0');
 			this.reserved5 = AonStringUtils.leftPad("", 5, '0');
@@ -455,7 +455,9 @@ public final class EmployeeAFIGeneration {
 		String reWomen;
 		String disabilityAdmited;
 		String freelancer;
-		String reserved11;
+		String reserved2;
+		String rlce;
+		String reserved5Str;
 		String rent;
 		String worker;
 		
@@ -486,8 +488,11 @@ public final class EmployeeAFIGeneration {
 			this.reWomen = " ";
 			this.disabilityAdmited = "N";
 			this.freelancer = " ";
+			this.reserved2 = AonStringUtils.leftPad("", 2, ' ');
 			
-			this.reserved11 = AonStringUtils.leftPad("", 11, ' ');
+			this.rlce = AonStringUtils.leftPad("", 4, '0');
+			
+			this.reserved5Str = AonStringUtils.leftPad("", 5, ' ');
 			this.rent = "N";
 			this.worker = "N";
 		}
@@ -555,8 +560,14 @@ public final class EmployeeAFIGeneration {
 		public String getFreelancer() {
 			return freelancer;
 		}
-		public String getReserved11() {
-			return reserved11;
+		public String getReserved2() {
+			return reserved2;
+		}
+		public String getRlce() {
+			return rlce;
+		}
+		public String getReserved5Str() {
+			return reserved5Str;
 		}
 		public String getRent() {
 			return rent;
@@ -666,33 +677,67 @@ public final class EmployeeAFIGeneration {
 	
 	public static class DAM{
 		String damHeader;
-		String reserved8;
+		String contractStartDate;
 		String fic;
-		String reserved48;
+		String reserved19;
+		String relevo;
+		String reserved11;
+		String familyVinc;
+		String reserved16;
 		String ocupation;
+		String reserved8;
 		
-		public DAM ( String ocupation, String startDate ) {
+		public DAM ( String ocupation) {
 			this.damHeader = "DAM";
-			this.reserved8 = AonStringUtils.leftPad(startDate, 8, '0');
-			this.fic = "N";
-			this.reserved48 = AonStringUtils.leftPad("", 48, '0');
+			this.contractStartDate = AonStringUtils.leftPad("", 8, '0');
+			this.fic = " ";
+			this.reserved19 = AonStringUtils.leftPad("", 19, '0');
+			this.relevo = " ";
+			this.reserved11 = AonStringUtils.leftPad("", 11, '0');
+			this.familyVinc = " ";
+			this.reserved16 = AonStringUtils.leftPad("", 16, '0');
 			this.ocupation = AonStringUtils.leftPad(ocupation, 2, ' ');
+			this.reserved8 = AonStringUtils.leftPad("", 8, '0');
 		}
-		
+
 		public String getDamHeader() {
 			return damHeader;
 		}
-		public String getReserved8() {
-			return reserved8;
+
+		public String getContractStartDate() {
+			return contractStartDate;
 		}
+
 		public String getFic() {
 			return fic;
 		}
-		public String getReserved48() {
-			return reserved48;
+
+		public String getReserved19() {
+			return reserved19;
 		}
+
+		public String getRelevo() {
+			return relevo;
+		}
+
+		public String getReserved11() {
+			return reserved11;
+		}
+
+		public String getFamilyVinc() {
+			return familyVinc;
+		}
+
+		public String getReserved16() {
+			return reserved16;
+		}
+
 		public String getOcupation() {
 			return ocupation;
+		}
+
+		public String getReserved8() {
+			return reserved8;
 		}
 		
 	}
@@ -770,7 +815,7 @@ public final class EmployeeAFIGeneration {
 		public ETF(String authKey, String payrollProvider, String fileName, String priorityCode, String countEmployees, String countLines) {
 			super();
 			this.etfHeader = "ETF";
-			this.sintaxIndent = "AFI90W0000";
+			this.sintaxIndent = "AFI93W0000";
 			this.authKey = StringUtils.leftPad(authKey, 8, '0');
 			this.payrollProvider = payrollProvider;
 			this.reserved5 = StringUtils.leftPad("", 5, '0');
@@ -939,7 +984,7 @@ public final class EmployeeAFIGeneration {
 					fabJson.get("employeeColective") == null ? "" : fabJson.get("employeeColective").toString(),
 					fabJson.get("gender").toString());
 			
-			DAM dam = new DAM("", ""); // 	JSONObject damJson = (JSONObject) edcJson.get("DAM");
+			DAM dam = new DAM(""); // 	JSONObject damJson = (JSONObject) edcJson.get("DAM");
 			
 			JSONObject fctJson = (JSONObject) edcJson.get("FCT");
 			if(null != fctJson) {
@@ -971,7 +1016,7 @@ public final class EmployeeAFIGeneration {
 					fabJson.get("gender").toString());
 			
 			JSONObject damJson = (JSONObject) chcJson.get("DAM");
-			DAM dam = new DAM(damJson.get("ocupation") == null ? "" : damJson.get("ocupation").toString(), damJson.get("startDate").toString());
+			DAM dam = new DAM(damJson.get("ocupation") == null ? "" : damJson.get("ocupation").toString());
 			
 			mc = new MC(fab, dam);
 		}
@@ -1095,7 +1140,9 @@ public final class EmployeeAFIGeneration {
 					ma.getFab().getReWomen() +
 					ma.getFab().getDisabilityAdmited() + 
 					ma.getFab().getFreelancer() +
-					ma.getFab().getReserved11() +
+					ma.getFab().getReserved2() +
+					ma.getFab().getRlce() +
+					ma.getFab().getReserved5Str() +
 					ma.getFab().getRent() +
 					ma.getFab().getWorker() + 
 					"\r\n";
@@ -1166,16 +1213,22 @@ public final class EmployeeAFIGeneration {
 					mb.getFab().getReWomen() +
 					mb.getFab().getDisabilityAdmited() + 
 					mb.getFab().getFreelancer() +
-					mb.getFab().getReserved11() +
+					mb.getFab().getReserved2() +
+					mb.getFab().getRlce() +
+					mb.getFab().getReserved5Str() +
 					mb.getFab().getRent() +
 					mb.getFab().getWorker() + 
 					"\r\n";
 			
 			employeeAFI +=
 					mb.getDam().getDamHeader() +
-					mb.getDam().getReserved8() +
+					mb.getDam().getContractStartDate() +
 					mb.getDam().getFic() +
-					mb.getDam().getReserved48() +
+					mb.getDam().getReserved19() +
+					mb.getDam().getRelevo() +
+					mb.getDam().getReserved11() +
+					mb.getDam().getFamilyVinc() +
+					mb.getDam().getReserved16() +
 					mb.getDam().getOcupation() +
 					mb.getDam().getReserved8() +
 					"\r\n";
@@ -1236,16 +1289,22 @@ public final class EmployeeAFIGeneration {
 					mc.getFab().getReWomen() +
 					mc.getFab().getDisabilityAdmited() + 
 					mc.getFab().getFreelancer() +
-					mc.getFab().getReserved11() +
+					mc.getFab().getReserved2() +
+					mc.getFab().getRlce() +
+					mc.getFab().getReserved5Str() +
 					mc.getFab().getRent() +
 					mc.getFab().getWorker() + 
 					"\r\n";
 			
 			employeeAFI +=
 					mc.getDam().getDamHeader() +
-					mc.getDam().getReserved8() +
+					mc.getDam().getContractStartDate() +
 					mc.getDam().getFic() +
-					mc.getDam().getReserved48() +
+					mc.getDam().getReserved19() +
+					mc.getDam().getRelevo() +
+					mc.getDam().getReserved11() +
+					mc.getDam().getFamilyVinc() +
+					mc.getDam().getReserved16() +
 					mc.getDam().getOcupation() +
 					mc.getDam().getReserved8() +
 					"\r\n";
