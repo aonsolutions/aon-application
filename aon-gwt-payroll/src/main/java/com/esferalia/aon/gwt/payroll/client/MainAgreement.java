@@ -484,6 +484,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			}
 		});
 		
+		mainTrashAgreement.hasTrashAgreements(hasTrashAgreements -> toolbar.setTrashAgreementWarn(hasTrashAgreements));
+		
 	}
 
 	private void showAgreements() {
@@ -641,6 +643,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 										public void onSuccess(Void result) {
 											MainAgreement.this.agreements.resetTypeView();
 											MainAgreement.this.agreements.reloadAgreements();
+											mainTrashAgreement.hasTrashAgreements(hasTrashAgreements -> toolbar.setTrashAgreementWarn(hasTrashAgreements));
 //											showSelectAgreementMessage();
 										}
 									});
