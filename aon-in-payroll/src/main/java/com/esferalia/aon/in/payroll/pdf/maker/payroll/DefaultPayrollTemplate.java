@@ -38,6 +38,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -129,8 +131,24 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 			byte[] bLogo = null;
 			if (logo.isPresent())
 				bLogo = logo.get().readAllBytes();
+			
+			List<IDefaultPayroll> orderedPayrolls = new LinkedList<>();
+			if (payrolls != null) {
+				payrolls.stream().sorted((o1, o2) -> {
+					String name1 = o1.getEmployee().orElse(null);
+					String name2 = o2.getEmployee().orElse(null);
+					Date date1 = o1.getLiquidPeriodEnd().orElse(null);
+					Date date2 = o2.getLiquidPeriodEnd().orElse(null);
+					int strCompare = AonStringUtils.compare(name1, name2);
+					if (strCompare != 0) {
+						return strCompare;
+					} else {
+						return com.esferalia.aon.watson.util.AonDateUtils.compare(date1, date2);
+					}
+				}).forEach(orderedPayrolls::add);
+			}
 
-			for (IDefaultPayroll payroll : payrolls) {
+			for (IDefaultPayroll payroll : orderedPayrolls) {
 				if (bLogo != null)
 					logo = Optional.ofNullable(new ByteArrayInputStream(bLogo));
 
