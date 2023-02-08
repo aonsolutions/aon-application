@@ -76,7 +76,7 @@ public class BOEBalanceNormalScript extends BalanceScript {
 				,ACV2	(2, LEAF, "2", "Cr\u00E9ditos a empresas", "sdb({5325,5345,542,543,547})-sab({5955,598})", null)
 				,ACV3	(2, LEAF, "3", "Valores representativos de deuda", "sdb({5315,5335,541,546})-sab({5945,597})", null)
 				,ACV4	(2, LEAF, "4", "Derivados", "sdb({5590,5593})", null)
-				,ACV5	(2, LEAF, "5", "Otros activos financieros", "sdb({5355,545,548,565,566})+sdbPositivo({551})+sdbPositivo({5525})", null)
+				,ACV5	(2, LEAF, "5", "Otros activos financieros", "sdb({5355,545,548,554,565,566})+sdbPositivo({551})+sdbPositivo({5525})", null)
 			,ACVI	(1, LEAF, "VI", "Periodificaciones a corto plazo", "sdb({480,567})", null)
 			,ACVII	(1, HEADER1, "VII", "Efectivo y otros activos l\u00EDquidos equivalentes", null, "ACVII1+ACVII2")
 				,ACVII1	(2, LEAF, "1", "Tesorer\u00EDa", "sdb({570,571,572,573,574,575})", null)

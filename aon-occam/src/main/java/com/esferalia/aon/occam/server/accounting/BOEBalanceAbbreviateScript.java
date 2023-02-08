@@ -34,7 +34,7 @@ public class BOEBalanceAbbreviateScript extends BalanceScript {
 				,ACIII2(2,LEAF,"2","Accionistas (socios) por desembolsos exigidos","sdb({5580})",null)
 				,ACIII3(2,LEAF,"3","Otros deudores","sdb({44,460,470,471,472,473,544})",null)
 			,ACIV(1,LEAF,"IV","Inversiones en empresas del grupo y asociadas a corto plazo","sdb({5303,5304,5313,5314,5323,5324,5333,5334,5343,5344,5353,5354})+sdbPositivo({5523})+sdbPositivo({5524})-sab({5393,5394,593,5943,5944,5953,5954})",null)
-			,ACV(1,LEAF,"V","Inversiones financieras a corto plazo","sdb({5305,5315,5325,5335,5345,5355,540,541,542,543,545,546,547,548,5590,5593,565,566})-sab({5955,598,5945,597,5395,549})+sdbPositivo({551})+sdbPositivo({5525})",null)
+			,ACV(1,LEAF,"V","Inversiones financieras a corto plazo","sdb({5305,5315,5325,5335,5345,5355,540,541,542,543,545,546,547,548,554,5590,5593,565,566})-sab({5955,598,5945,597,5395,549})+sdbPositivo({551})+sdbPositivo({5525})",null)
 			,ACVI(1,LEAF,"VI","Periodificaciones a corto plazo","sdb({480,567})",null)
 			,ACVII(1,LEAF,"VII","Efectivo y otros activos l\u00EDquidos equivalentes","sdb({57})",null)
 		,TC(0,TOTAL0,"(A+B)","TOTAL ACTIVO",null,"ANC + AC")
