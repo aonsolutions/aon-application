@@ -1196,7 +1196,6 @@ public abstract class AgreementPreview extends Composite {
 			checkRowAndModify(paymentGrid, row, payment, visibilityCell);
 			
 			Widget deleteCell = new Label();
-			deleteCell.ensureDebugId("deletePaymentTabButton-" + row);
 			if(!readOnly) {
 				deleteCell = new AonToolbarSmallButton("Eliminar devengo", AON.CSS.aonIconDelete());
 				((AonToolbarSmallButton)deleteCell).addClickHandler(e -> {
@@ -1217,6 +1216,7 @@ public abstract class AgreementPreview extends Composite {
 					});
 				});
 			}
+			deleteCell.ensureDebugId("deletePaymentTabButton-" + row);
 			checkRowAndModify(paymentGrid, row, payment, deleteCell);
 			
 			if(payment.isModify()) paymentGrid.getRowFormatter().addStyleName(row, style.modify());
@@ -1406,7 +1406,6 @@ public abstract class AgreementPreview extends Composite {
 			checkRowAndModify(extraGrid, row, payment, visibilityCell);
 			
 			Widget deleteCell = new Label();
-			deleteCell.ensureDebugId("deletePaymentTabButton-" + row);
 			if(!readOnly) {
 				deleteCell = new AonToolbarSmallButton("Eliminar devengo", AON.CSS.aonIconDelete());
 				((AonToolbarSmallButton)deleteCell).addClickHandler(e -> {
@@ -1427,6 +1426,7 @@ public abstract class AgreementPreview extends Composite {
 					});
 				});
 			}
+			deleteCell.ensureDebugId("deletePaymentTabButton-" + row);
 			checkRowAndModify(extraGrid, row, payment, deleteCell);
 			
 			if(payment.isModify()) extraGrid.getRowFormatter().addStyleName(row, style.modify());
