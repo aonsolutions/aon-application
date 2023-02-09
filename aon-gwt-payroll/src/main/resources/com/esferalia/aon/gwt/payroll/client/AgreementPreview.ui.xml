@@ -283,6 +283,10 @@
 			width: 95%;
 		}
 		
+		.zIndex1 {
+			z-index: 1;
+		}
+		
 		@external modify;
 		@external elipsis;
 		

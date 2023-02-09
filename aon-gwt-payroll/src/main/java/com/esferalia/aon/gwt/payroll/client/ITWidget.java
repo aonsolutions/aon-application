@@ -1512,7 +1512,7 @@ public abstract class ITWidget extends ResizeComposite {
 		employeeInfo.setAddress(jsEmployeeInfo.getAddress());
 		employeeInfo.setAddressCity(jsEmployeeInfo.getAddressCity());
 		employeeInfo.setAddressInfo(jsEmployeeInfo.getAddressInfo());
-		employeeInfo.setAddressProvinces(jsEmployeeInfo.getAddressProvinces());
+//		employeeInfo.setAddressProvinces(jsEmployeeInfo.getAddressProvinces());
 		employeeInfo.setAddressZip(jsEmployeeInfo.getAddressZip());
 		employeeInfo.setBic(jsEmployeeInfo.getBic());
 		employeeInfo.setBirthdate(parseDate(jsEmployeeInfo.getBirthdate()));
@@ -1526,7 +1526,7 @@ public abstract class ITWidget extends ResizeComposite {
 		employeeInfo.setEmailId(jsEmployeeInfo.getEmailId());
 		employeeInfo.setEmployeeId(jsEmployeeInfo.getEmployeeId());
 		employeeInfo.setGender(jsEmployeeInfo.getGender());
-		employeeInfo.setGeozoneId(jsEmployeeInfo.getGeozoneId());
+//		employeeInfo.setGeozoneId(jsEmployeeInfo.getGeozoneId());
 		employeeInfo.setIsFullTime(jsEmployeeInfo.getIsFullTime());
 		employeeInfo.setMobile(jsEmployeeInfo.getMobile());
 		employeeInfo.setMobileId(jsEmployeeInfo.getMobileId());

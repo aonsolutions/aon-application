@@ -1067,8 +1067,8 @@ public class ContrataEmployeeObject {
 		employeeData.setAddressZip(zipCode);
 	}
 	
-	public void setEmployeeAddressProvince(String province) {
-		employeeData.setAddressProvinces(province);
+	public void setEmployeeAddressProvince(Integer geozoneId) {
+		employeeData.setAddressProvinces(geozoneId);
 	}
 
 	public void setEmployeeAddressCity(String city) {

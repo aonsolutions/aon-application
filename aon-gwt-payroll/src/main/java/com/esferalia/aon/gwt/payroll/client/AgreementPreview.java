@@ -240,6 +240,7 @@ public abstract class AgreementPreview extends Composite {
 		String headerDeleteFixed();
 		String deleteFixed();
 		String elipsis();
+		String zIndex1();
 	}
 	
 	@UiField
@@ -493,6 +494,8 @@ public abstract class AgreementPreview extends Composite {
 		if(row % 2 == 0 ) widget.addStyleName(style.oddRow());
 		
 		if(payment.isModify()) {
+			widget.addStyleName(style.modify());
+			
 			grid.getCellFormatter().addStyleName(row, 0, style.modify());
 			grid.getCellFormatter().addStyleName(row, 1, style.modify());
 			grid.getCellFormatter().addStyleName(row, 2, style.modify());
@@ -502,6 +505,8 @@ public abstract class AgreementPreview extends Composite {
 			grid.getCellFormatter().addStyleName(row, 6, style.modify());
 			grid.getCellFormatter().addStyleName(row, 7, style.modify());
 		} else {
+			widget.removeStyleName(style.modify());
+			
 			grid.getCellFormatter().removeStyleName(row, 0, style.modify());
 			grid.getCellFormatter().removeStyleName(row, 1, style.modify());
 			grid.getCellFormatter().removeStyleName(row, 2, style.modify());
@@ -1101,6 +1106,7 @@ public abstract class AgreementPreview extends Composite {
 		Label editColumn = new Label();
 		paymentGrid.setWidget(row, 0, editColumn);
 		paymentGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
+		paymentGrid.getCellFormatter().addStyleName(row, 0, style.zIndex1());
 		
 		Label craColumn = new Label("CRA");
 		craColumn.addStyleName(style.gridTitle());
@@ -1139,6 +1145,7 @@ public abstract class AgreementPreview extends Composite {
 		Label deleteColumn = new Label();
 		paymentGrid.setWidget(row, 7, deleteColumn);
 		paymentGrid.getCellFormatter().addStyleName(row, 7, style.headerFixed());
+		paymentGrid.getCellFormatter().addStyleName(row, 7, style.zIndex1());
 		
 		paymentGrid.getRowFormatter().addStyleName(row, style.headerColor());
 	}
@@ -1277,6 +1284,7 @@ public abstract class AgreementPreview extends Composite {
 		Label editColumn = new Label();
 		extraGrid.setWidget(row, 0, editColumn);
 		extraGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
+		extraGrid.getCellFormatter().addStyleName(row, 0, style.zIndex1());
 		
 		Label payDateColumn = new Label("F.Cobro");
 		payDateColumn.addStyleName(style.gridTitle());
@@ -1319,6 +1327,7 @@ public abstract class AgreementPreview extends Composite {
 		Label deleteColumn = new Label();
 		extraGrid.setWidget(row, 8, deleteColumn);
 		extraGrid.getCellFormatter().addStyleName(row, 8, style.headerFixed());
+		extraGrid.getCellFormatter().addStyleName(row, 8, style.zIndex1());
 		
 		extraGrid.getRowFormatter().addStyleName(row, style.headerColor());
 	}

@@ -18,9 +18,9 @@ import com.esferalia.aon.gwt.common.shared.SocialSecurity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.BankSwift;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.Geozone;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
-import com.esferalia.aon.gwt.payroll.shared.ProvinceContract;
 import com.esferalia.aon.gwt.payroll.shared.StreetType;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
@@ -55,6 +55,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -275,6 +276,9 @@ public abstract class Employee extends ResizeComposite {
 	private AonToolbarSmallButton clearEmployee;
 	
 	private List<Agreement> agreements;
+	
+	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	private List<com.esferalia.aon.gwt.payroll.shared.Country> countries;
 
 	// ------------------------------------------------- Constructor
 
@@ -290,6 +294,20 @@ public abstract class Employee extends ResizeComposite {
 		
 		initializeView();
 		addReformatAccount();
+		
+		impl.getCountries(new AsyncCallback<List<com.esferalia.aon.gwt.payroll.shared.Country>>() {
+			
+			@Override
+			public void onSuccess(List<com.esferalia.aon.gwt.payroll.shared.Country> countriesResult) {
+				countries = countriesResult;
+				initializeProvince();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO: show error
+			}
+		});
 		
 		clearEmployee = new AonToolbarSmallButton("Limpiar empleado", AON.CSS.aonIconRefresh());
 		clearEmployee.addClickHandler(e -> onClearEmployeeClick());
@@ -709,7 +727,7 @@ public abstract class Employee extends ResizeComposite {
 		String addressZipStr = this.addressZip.getValue();
 		onEmployeeAddressZipChange(addressZipStr);
 		
-		if(addressZipStr.length() >= 2) {
+		if(addressZipStr.length() == 5) {
 			String zip = this.addressZip.getValue().substring(0, 2);
 			setSelectedValueLB(addressProvince, zip); 
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), addressProvince);
@@ -718,9 +736,19 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiHandler("addressProvince")
 	void onAddressProvinceChangeValue(ChangeEvent event) {
-		String addressProvinceCode = String.valueOf(this.addressProvince.getSelectedValue());
+		String provinceCode = String.valueOf(this.addressProvince.getSelectedValue());
+		Integer geozoneId = getProvincesGeozone(provinceCode);
 		updateMunicipalities();
-		onEmployeeAddressProvinceChange(addressProvinceCode);
+		onEmployeeAddressProvinceChange(geozoneId);
+	}
+
+	private Integer getProvincesGeozone(String provinceCode) {
+		for(com.esferalia.aon.gwt.payroll.shared.Country country : countries)
+			for(Geozone province : country.getProvinces())
+				if(AonStringUtils.equalsIgnoreCase(province.getCode(), provinceCode))
+					return province.getId();
+		
+		return null;
 	}
 
 	@UiHandler("addressMunicipality")
@@ -830,7 +858,7 @@ public abstract class Employee extends ResizeComposite {
 	public abstract void onEmployeeAddressNumChange(String addressNum);
 	public abstract void onEmployeeAddressInfoChange(String addressInfo);
 	public abstract void onEmployeeAddressZipChange(String addressZip);
-	public abstract void onEmployeeAddressProvinceChange(String addressProvinceCode);
+	public abstract void onEmployeeAddressProvinceChange(Integer geozoneId);
 	public abstract void onEmployeeAddressMunicipalityChange(String addressMunicipality);
 	public abstract void onEmployeeMobileChange(String mobile);
 	public abstract void onEmployeePhoneChange(String phone);
@@ -894,7 +922,7 @@ public abstract class Employee extends ResizeComposite {
 		this.addressNum.setValue("");
 		this.addressInfo.setValue("");
 		this.addressZip.setValue("");
-		this.addressProvince.clear();
+//		this.addressProvince.clear();
 		this.addressMunicipality.clear();
 		this.mobile.setValue("");
 		this.phone.setValue("");
@@ -969,11 +997,24 @@ public abstract class Employee extends ResizeComposite {
 		for(int i=0; i<StreetType.values().length; i++)
 			this.streetType.addItem(StreetType.values()[i].getDescription(), StreetType.values()[i].getShortCode());
 		
-		//PROVINCIA
-		this.addressProvince.addItem("-", "-1");
-		for(Entry<String, String> provinces : ProvinceContract.getProvinces().entrySet())
-			this.addressProvince.addItem(provinces.getValue(), provinces.getKey());
+//		//PROVINCIA
+//		this.addressProvince.addItem("-", "-1");
+//		for(Entry<String, String> provinces : ProvinceContract.getProvinces().entrySet())
+//			this.addressProvince.addItem(provinces.getValue(), provinces.getKey());
 
+	}
+	
+	private void initializeProvince() {
+		//PROVINCIA
+		this.addressProvince.clear();
+		this.addressProvince.addItem("-", "-1");
+		
+		for(com.esferalia.aon.gwt.payroll.shared.Country country : countries) {
+			this.addressProvince.addItem(country.getCountry().getName(), country.getCountry().getCode());
+			this.addressProvince.getElement().getElementsByTagName("option").getItem(addressProvince.getItemCount()-1).setAttribute("disabled", "disabled");
+			for(Geozone province : country.getProvinces())
+				this.addressProvince.addItem(province.getName(), province.getCode());
+		}
 	}
 	
 	private void initDisplayElements() {
@@ -1540,10 +1581,10 @@ public abstract class Employee extends ResizeComposite {
 		
 		String addressZipValue = addressZip.getValue();
 		String addressProvinceValue = addressProvince.getSelectedValue();
-		String addressMunicipalityValue = addressMunicipality.getSelectedValue();
+//		String addressMunicipalityValue = addressMunicipality.getSelectedValue();
 		
-		if((AonStringUtils.isNotBlank(addressZipValue) || !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") || !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")) &&
-			(AonStringUtils.isBlank(addressZipValue) || AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") || AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")))
+		if((AonStringUtils.isNotBlank(addressZipValue) || !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") /*|| !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")*/) &&
+			(AonStringUtils.isBlank(addressZipValue) || AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") /*|| AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")*/))
 				messageMap.put("Direcci\u00F3n", "Si rellena la direccion del trabajador, debera rellenar los campos azules correcta y obligatoriamente");
 	
 		return messageMap;
@@ -1718,6 +1759,18 @@ public abstract class Employee extends ResizeComposite {
 		removeErrorBorder(addressProvince);
 		removeErrorBorder(addressMunicipality);
 		removeErrorBorder(level);
+	}
+
+	public void selectProvince(Integer geozoneId) {
+		setSelectedValueLB(addressProvince, getProvinceCode(geozoneId));
+	}
+
+	private String getProvinceCode(Integer geozoneId) {
+		for(com.esferalia.aon.gwt.payroll.shared.Country country : countries)
+			for(Geozone province : country.getProvinces())
+				if(province.getId().equals(geozoneId))
+					return province.getCode();
+		return null;
 	}
 	
 }

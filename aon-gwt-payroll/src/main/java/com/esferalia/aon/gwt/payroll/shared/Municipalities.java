@@ -8162,9 +8162,11 @@ public class Municipalities {
 	}
 	
 	public HashMap<String, String> getMunicipalitiesByProvinceCode(String provinceCode){
+		if(AonStringUtils.isBlank(provinceCode)) return new HashMap<>();
+		
 		HashMap<String, String> provinceMunicipalities = new HashMap<String, String>();
 		for(Entry<String, String> e: this.municipalities.entrySet()) {
-			if(provinceCode.substring(0, 2).equals(e.getKey().substring(0, 2)))
+			if(provinceCode.equals(e.getKey().substring(0, 2)))
 				provinceMunicipalities.put(e.getKey(), e.getValue());
 		}
 		return provinceMunicipalities;
