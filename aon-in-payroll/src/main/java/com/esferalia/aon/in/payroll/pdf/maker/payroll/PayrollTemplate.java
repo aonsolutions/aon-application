@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -55,6 +57,8 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.UnknownCraException;
+import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 /**
  * Class to print Payroll PDF file with PDFbox
@@ -116,7 +120,23 @@ public class PayrollTemplate implements IPayrollTemplate{
 			if (logo.isPresent())
 				bLogo = logo.get().readAllBytes();
 	
-			for (IDefaultPayroll payroll : payrolls) {
+			List<IDefaultPayroll> orderedPayrolls = new LinkedList<>();
+			if (payrolls != null) {
+				payrolls.stream().sorted((o1, o2) -> {
+					String name1 = o1.getEmployee().orElse(null);
+					String name2 = o2.getEmployee().orElse(null);
+					Date date1 = o1.getLiquidPeriodEnd().orElse(null);
+					Date date2 = o2.getLiquidPeriodEnd().orElse(null);
+					int strCompare = AonStringUtils.compare(name1, name2);
+					if (strCompare != 0) {
+						return strCompare;
+					} else {
+						return AonDateUtils.compare(date1, date2);
+					}
+				}).forEach(orderedPayrolls::add);
+			}
+	
+			for (IDefaultPayroll payroll : orderedPayrolls) {
 				if (bLogo != null)
 					logo = Optional.ofNullable(new ByteArrayInputStream(bLogo));
 	
