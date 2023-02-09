@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.server.accounting;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -101,6 +102,10 @@ public class AccMiningMVELContext implements Map<String, Object> {
 		try {
 			stack.push(key);
 			return MVEL.eval( expression , this , this);
+		} catch (Exception e) {
+			String msg = MessageFormat.format("Error evaluating key [{0}],"
+				+ " expression \"{1}\"", key, expression);
+			throw new AonCoreException( msg, e); 
 		} finally {
 			stack.pop();
 		}

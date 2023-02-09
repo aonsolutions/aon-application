@@ -61,7 +61,9 @@ public class AccountBalanceDAO {
 		@Override public void visitBalanceAbbreviate() 	{ this.script = new BOEBalanceAbbreviateScript();}
 		@Override public void visitBalancePymes() 		{ this.script = new BOEBalancePYMESScript(); }
 		@Override public void visitBalanceCoopNormal() 	{ this.script = new BOEBalanceCoopNormalScript(); }
-		@Override public void visitBalanceCoopAbbreviate() { }
+		@Override public void visitBalanceCoopAbbreviate() { 
+			// Cuando se haga activar el test en BalanceScriptTest
+		}
 		@Override public void visitBalanceAsocAbbreviate(){ this.script = new BOEBalanceAsocAbbreviateScript(); }
 		
 		@Override public void visitPygNormal()			{ this.script = new BOEPyGNormalScript(); }

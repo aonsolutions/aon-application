@@ -12,7 +12,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
-import com.esferalia.aon.occam.test.faker.AonFaker;
+import com.esferalia.aon.occam.test.faker.AccountingFaker;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 
@@ -23,7 +23,7 @@ public class UpdateTest extends AbstractOccamTest {
 		int year = AonDateUtils.getYear( new Date() );
 		AccountPeriod period = AccountPeriodDAO.getPeriodByYear(ctx,year);
 		if (period == null) {
-			period = AonFaker.getTodayActiveAccountPeriod( ctx );
+			period = AccountingFaker.getTodayActiveAccountPeriod( ctx );
 			period = AccountPeriodDAO.save(ctx, period);
 			assertTrue(AonDateUtils.isSameDay(period.getCreationDate(), new Date()));
 			assertEquals(period.getCreationUser(), ctx.getUser());

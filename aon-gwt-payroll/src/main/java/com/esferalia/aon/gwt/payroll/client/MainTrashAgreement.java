@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
@@ -302,6 +303,12 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 
 	public void selectFirstItem() {
 		agreements.getTrashAgreements(s -> getAgreementsTree().getTree().setSelectedItem(getAgreementsTree().getTree().getItem(0), true));
+	}
+	
+	public void hasTrashAgreements(Consumer<Boolean> hasTrashAgreement) {
+		agreements.getTrashAgreements(s -> {
+			hasTrashAgreement.accept(getAgreementsTree().getTree().getItemCount() != 0);
+		});
 	}
 	
 }
