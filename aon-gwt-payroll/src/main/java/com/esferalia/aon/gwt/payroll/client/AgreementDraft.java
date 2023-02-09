@@ -3764,48 +3764,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		return table;
 	}
 
-	private static Element getFreezeTableUpperRightCorner(FlexTable flexTable, ScrollPanel scrollPane) {
-
-		Element th = cloneTR(flexTable.getRowFormatter().getElement(0));
-
-		int cols = th.getChildCount();
-		// remove all columns except last..
-		for (int i = cols - 2; i >= 0; i--) {
-			th.getChild(i).removeFromParent();
-		}
-
-		com.google.gwt.dom.client.Element clone = th.getFirstChildElement();
-
-		Element td = flexTable.getCellFormatter().getElement(0, cols - 1);
-		if (DOM.getChildCount(td) > 0) {
-			Element tdChild = DOM.getChild(td, 0);
-			Element cloneChild = DOM.getChild(clone, 0);
-			DOM.removeChild(td, tdChild);
-			DOM.removeChild(clone, cloneChild);
-			DOM.appendChild(clone, tdChild);
-			DOM.appendChild(td, cloneChild);
-
-		}
-
-		int width = flexTable.getCellFormatter().getElement(0, flexTable.getCellCount(0) - 1).getOffsetWidth();
-
-		int left = scrollPane.getElement().getClientWidth() - width;
-
-		Element table = DOM.createTable();
-		Element tbody = DOM.createTBody();
-
-		DOM.appendChild(table, tbody);
-		DOM.appendChild(tbody, th);
-		table.getStyle().setPosition(Position.ABSOLUTE);
-		table.getStyle().setTop(0, Unit.PX);
-		table.getStyle().setLeft(left, Unit.PX);
-		table.getStyle().setBackgroundColor("white");
-		table.getStyle().setWidth(width + 1, Unit.PX);
-		table.setClassName(flexTable.getElement().getClassName());
-
-		return table;
-	}
-
 	private static Element getFreezeTableHead(FlexTable flexTable) {
 		Element th = cloneTR(flexTable.getRowFormatter().getElement(0));
 
