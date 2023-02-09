@@ -76,7 +76,12 @@ public class BOEBalanceNormalScript extends BalanceScript {
 				,ACV2	(2, LEAF, "2", "Cr\u00E9ditos a empresas", "sdb({5325,5345,542,543,547})-sab({5955,598})", null)
 				,ACV3	(2, LEAF, "3", "Valores representativos de deuda", "sdb({5315,5335,541,546})-sab({5945,597})", null)
 				,ACV4	(2, LEAF, "4", "Derivados", "sdb({5590,5593})", null)
-				,ACV5	(2, LEAF, "5", "Otros activos financieros", "sdb({5355,545,548,554,565,566})+sdbPositivo({551})+sdbPositivo({5525})", null)
+				,ACV5	(2, LEAF, "5", "Otros activos financieros"
+					, "sdb({5355,545,548,565,566})"
+					+ "+sdbPositivo({551})"
+					+ "+sdbPositivo({5525})"
+					+ "+sdbPositivo({554})"
+					, null)
 			,ACVI	(1, LEAF, "VI", "Periodificaciones a corto plazo", "sdb({480,567})", null)
 			,ACVII	(1, HEADER1, "VII", "Efectivo y otros activos l\u00EDquidos equivalentes", null, "ACVII1+ACVII2")
 				,ACVII1	(2, LEAF, "1", "Tesorer\u00EDa", "sdb({570,571,572,573,574,575})", null)
@@ -135,7 +140,13 @@ public class BOEBalanceNormalScript extends BalanceScript {
 				,PCIII2		(2, LEAF, "2", "Deudas con entidades de cr\u00E9dito", "sab({5105,520,527})", null)
 				,PCIII3		(2, LEAF, "3", "Acreedores por arrendamiento financiero", "sab({5125,524})", null)
 				,PCIII4		(2, LEAF, "4", "Derivados", "sab({5595,5598})", null)
-				,PCIII5		(2, LEAF, "5", "Otros pasivos financieros","sab({194,509,5115,5135,5145,521,522,523,525,526,528,555,5565,5566,560,561,569})+sabPositivo({551})+sabPositivo({5525})-sdb({1034,1044,190,192})",null)
+				,PCIII5		(2, LEAF, "5", "Otros pasivos financieros"
+					,"sab({194,509,5115,5135,5145,521,522,523,525,526,528,555,5565,5566,560,561,569})"
+					+ "+sabPositivo({551})"
+					+ "+sabPositivo({5525})"
+					+ "+sabPositivo({554})"
+					+ "-sdb({1034,1044,190,192})"
+					,null)
 			,PCIV		(1, LEAF, "IV", "Deudas con empresas del grupo y asociadas a corto plazo","sab({5103,5104,5113,5114,5123,5124,5133,5134,5143,5144,5563,5564})+sabPositivo({5523})+sabPositivo({5524})", null)
 			,PCV		(1, HEADER1, "V", "Acreedores comerciales y otras cuentas a pagar", null,"PCV1+PCV2+PCV3+PCV4+PCV5+PCV6+PCV7")
 				,PCV1		(2, LEAF, "1", "Proveedores", "sab({400,401,405})-sdb({406})", null)
