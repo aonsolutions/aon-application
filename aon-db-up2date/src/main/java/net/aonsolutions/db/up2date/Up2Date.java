@@ -28,7 +28,9 @@ import net.aonsolutions.db.up2date.tgss.HomeBases2023Update;
 import net.aonsolutions.db.up2date.tgss.HomePercentage2023Update;
 import net.aonsolutions.db.up2date.tgss.MEIInsert;
 import net.aonsolutions.db.up2date.tgss.MEIPECUpdate;
+import net.aonsolutions.db.up2date.tgss.MEIPECUpdateUndo;
 import net.aonsolutions.db.up2date.tgss.MEITrainingRemove;
+import net.aonsolutions.db.up2date.tgss.MEITrainingRemoveUndo;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 import net.aonsolutions.db.up2date.tgss.UnemploymentPercentageFix;
 public class Up2Date {
@@ -314,7 +316,10 @@ public class Up2Date {
 	    	//IrpfDeductionSplit.IRPFDEDUCTIONSPLIT,
 	    	//HomePercentage2023Update.HOMEPERCENTAGE2023UPDATE,
 	    	//UnemploymentPercentageFix.UNEMPLOYMENTPERCENTAGEFIX,
-	    	MEITrainingRemove.MEITRAININGREMOVE,
+	    	//MEITrainingRemove.MEITRAININGREMOVE,
+	    	MEIPECUpdateUndo.MEIPECUPDATEUNDO,
+	    	MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
+	    	
 	    	
     		//Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE

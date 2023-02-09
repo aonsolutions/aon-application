@@ -361,6 +361,7 @@ public class SLDSalaries {
 			return Optional.of(DeductionType.UNEMPLOYMENT);
 		case "CONTINGENCIAS COMUNES":
 		case "CONTING.COM.COTIZ.EMPRESARIAL" :
+		case "MECANISMO EQUIDAD INTERGENERACIONAL":
 		case "INCREMENTO COTI.CONTRATO TEMP.MENOR 6-7D":
 			return Optional.of(DeductionType.COMMON_CONTINGENCY);
 		case "IT DE ACCIDENTES DE TRABAJO":
@@ -452,8 +453,10 @@ public class SLDSalaries {
 	
 	private static Optional<ContextVariable> getEmployeeContextVariable (String description) {
 		switch (description) {
-		case "LIQUIDO CONTINGENCIAS COMUNES":
+		case "CONTINGENCIAS COMUNES":
 			return Optional.of(ContextVariable.CGC_EMPLOYEE);
+		case "MECANISMO EQUIDAD INTERGENERACIONAL":
+			return Optional.of(ContextVariable.MEI_EMPLOYEE);
 		case "FORMACI\u00D3N PROFESIONAL":
 			return Optional.of(ContextVariable.FP_EMPLOYEE);
 		case "DESEMPLEO":
@@ -469,6 +472,8 @@ public class SLDSalaries {
 		switch (description) {
 		case "CONTINGENCIAS COMUNES":
 			return Optional.of(ContextVariable.CGC_EMPLOYEE_PERCENT);
+		case "MECANISMO EQUIDAD INTERGENERACIONAL":
+			return Optional.of(ContextVariable.MEI_EMPLOYEE_PERCENT);
 		case "FORMACI\u00D3N PROFESIONAL":
 			return Optional.of(ContextVariable.FP_EMPLOYEE_PERCENT);
 		case "DESEMPLEO":
@@ -489,8 +494,10 @@ public class SLDSalaries {
 		case "DESEMPLEO":
 		case "DESEMPLEO COTIZACI\u00D3N EMPRESARIAL":
 			return Optional.of(ContextVariable.UNEMPLOY_ENTERPRISE);
-		case "LIQUIDO CONTINGENCIAS COMUNES":
+		case "CONTINGENCIAS COMUNES":
 			return Optional.of(ContextVariable.CGC_ENTERPRISE);
+		case "MECANISMO EQUIDAD INTERGENERACIONAL":
+			return Optional.of(ContextVariable.MEI_ENTERPRISE);
 		case "IT DE ACCIDENTES DE TRABAJO":
 		case "CUOTA IT DE AT Y EP DE SITUACIONES ESPEC":
 			return Optional.of(ContextVariable.IT_ENTERPRISE);
@@ -518,6 +525,8 @@ public class SLDSalaries {
 		case "CONTINGENCIAS COMUNES":
 		case "CONTING.COM.COTIZ.EMPRESARIAL":	
 			return Optional.of(ContextVariable.CGC_ENTERPRISE_PERCENT);
+		case "MECANISMO EQUIDAD INTERGENERACIONAL":
+			return Optional.of(ContextVariable.MEI_ENTERPRISE_PERCENT);
 		case "IT DE ACCIDENTES DE TRABAJO":
 		case "CUOTA IT DE AT Y EP DE SITUACIONES ESPEC":
 			return Optional.of(ContextVariable.IT_ENTERPRISE_PERCENT);
