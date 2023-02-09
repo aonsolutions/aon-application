@@ -537,7 +537,7 @@
 								<g:ListBox ui:field="addressProvince" debugId="addressProvince" styleName='aon-inputText {style.maxWidth}'></g:ListBox>
 							</td>
 							<td style="width: 9%;">
-								<g:Label styleName='{style.requiredColor} {style.alignTextCenter}'>Municipio</g:Label>
+								<g:Label styleName='{style.alignTextCenter}'>Municipio</g:Label>
 							</td>
 							<td colspan="2"> 
 								<g:ListBox ui:field="addressMunicipality" debugId="addressMunicipality" styleName='aon-inputText {style.maxWidthTextBox}'></g:ListBox>

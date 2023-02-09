@@ -303,8 +303,8 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		}
 		
 		@Override
-		public void onEmployeeAddressProvinceChange(String addressProvinceCode) {
-			employeeDialogObject.setEmployeeAddressProvince(addressProvinceCode);
+		public void onEmployeeAddressProvinceChange(Integer geozoneId) {
+			employeeDialogObject.setEmployeeAddressProvince(geozoneId);
 			employeeDialogObject.setEmployeeAddressCity(null);
 		}
 
@@ -505,7 +505,7 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		employee.addressNum.setValue(employeeData.getAddresNum());
 		employee.addressZip.setValue(employeeData.getAddressZip());
 		
-		setSelectedValueLB(employee.addressProvince, employeeData.getAddressProvinces());
+		employee.selectProvince(employeeData.getAddressProvinces());
 		employee.updateMunicipalities();
 		setSelectedValueLB(employee.addressMunicipality, employeeData.getAddressCity());
 

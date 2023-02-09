@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -757,6 +758,12 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void getUpdateCert(String regime, String ccc, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getUpdateCert(getCurrentDomainName(), getCurrentUser(), regime, ccc, asyncCallback);
+	}
+	
+	// ------------------------------------------------ Country/Province
+	
+	public void getCountries(AsyncCallback<List<Country>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getCountries(getCurrentDomainName(), asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

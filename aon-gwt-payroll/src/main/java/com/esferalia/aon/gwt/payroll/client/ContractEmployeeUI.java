@@ -293,9 +293,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		}
 
 		@Override
-		public void onEmployeeAddressProvinceChange(String addressProvinceCode) {
-			contrataEmployeeObject.setEmployeeAddressProvince(addressProvinceCode);
-			contrataEmployeeObject.setEmployeeAddressCity("-1");
+		public void onEmployeeAddressProvinceChange(Integer geozoneId) {
+			contrataEmployeeObject.setEmployeeAddressProvince(geozoneId);
+			contrataEmployeeObject.setEmployeeAddressCity(null);
 		}
 		
 		@Override
@@ -494,7 +494,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		employee.addressInfo.setValue(employeeData.getAddressInfo());
 		employee.addressZip.setValue(employeeData.getAddressZip());
 		
-		setSelectedValueLB(employee.addressProvince, employeeData.getAddressProvinces());
+		employee.selectProvince(employeeData.getAddressProvinces());
 		employee.updateMunicipalities();
 		setSelectedValueLB(employee.addressMunicipality, employeeData.getAddressCity());
 

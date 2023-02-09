@@ -851,12 +851,12 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		employeeData.setAddressZip(zipCode);
 	}
 
-	public void setEmployeeAddressProvince(String province) {
+	public void setEmployeeAddressProvince(Integer geozoneId) {
 		add(employeeData::setAddressProvinces, 
 				employeeData.getAddressProvinces(), 
-				province );
+				geozoneId );
 		
-		employeeData.setAddressProvinces(province);
+		employeeData.setAddressProvinces(geozoneId);
 	}
 
 	public void setEmployeeAddressCity(String city) {
