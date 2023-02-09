@@ -20,10 +20,7 @@ public class  ItemComparator<E extends Enum<?>> implements Comparator<Item<E>> {
 			"^((C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3}))([\\W_]+.*)?$",
 			"i");
 
-
-	@Override
-	public int compare(Item<E> p0, Item<E> p1) {
-		
+	public static <E extends Enum<?>> int comparator(Item<E> p0, Item<E> p1) {
 		String description0 = p0.getDescription();
 		String description1 = p1.getDescription();
 
@@ -110,6 +107,10 @@ public class  ItemComparator<E extends Enum<?>> implements Comparator<Item<E>> {
 		if ( id1 == null )
 			return 1;
 		return Math.abs(id0) - Math.abs(id1);
-			
+	}
+
+	@Override
+	public int compare(Item<E> p0, Item<E> p1) {
+	    return ItemComparator.comparator(p0,p1);
 	}
 }

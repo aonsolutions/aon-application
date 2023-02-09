@@ -113,6 +113,10 @@ public class Payment extends Item<Payment.Type> implements Reports.Payment {
 		public boolean isBBCCExcluded() {
 			return BBCC_EXCLUDED.getOrDefault(this, false);
 		}
+		
+		public String getName() {
+		    return this.name().replace("CRA_", "");
+		}
 
 
 		@Override

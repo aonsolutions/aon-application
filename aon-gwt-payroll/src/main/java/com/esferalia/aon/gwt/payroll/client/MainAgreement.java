@@ -1,8 +1,11 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Map;
+import java.util.SortedSet;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
@@ -12,23 +15,23 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonAgreementsToolbar
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.shared.CollectionUtils;
+import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.client.Agreements.Listener;
 import com.esferalia.aon.gwt.payroll.client.Agreements.Toolbar;
 import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
-import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -36,11 +39,12 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
 //------------------------------------------- EditionListener
 
-interface EditionListener2 {
+interface EditionListener {
 	
 	void onAgreementCopy(Agreement agreement);
 	
@@ -53,11 +57,31 @@ interface EditionListener2 {
 }
 
 public class MainAgreement extends MainEntryPoint implements Listener,
-	EditionListener2, Agreements.Toolbar, AonAgreementsToolbar.Listener {
+		EditionListener, Agreements.Toolbar, AonAgreementsToolbar.Listener {
 	
 	// ------------------------------------------- UndoManager Listener
 	
-	
+	static class DraftObjectListener implements UndoManager.Listener {
+
+		private TreeItem treeItem;
+		private AgreementDraftObject draftObject;
+
+		public DraftObjectListener(TreeItem treeItem,
+				AgreementDraftObject draftObject) {
+			this.treeItem = treeItem;
+			this.draftObject = draftObject;
+		}
+
+		@Override
+		public void onChange(@SuppressWarnings("rawtypes") UndoManager undoManager) {
+			ImageResource resource = AgreementsTree.getImageResource(
+					draftObject.canUndo(), draftObject.hasErrors(),
+					draftObject.hasWarnings());
+			treeItem.setHTML(AgreementsTree.imageItemSafeHtml(resource,
+					draftObject.getDescription()));
+		}
+
+	}
 	
 	// ------------------------------------------- SettingsContextMenu
 	
@@ -65,16 +89,13 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 		@Override
 		public void execute() {
-			AgreementsCleanDialog dialog = new AgreementsCleanDialog(AgreementCleanType.DELETED) {
+			new AgreementsCleanDialog(AgreementCleanType.DELETED) {
 				
 				@Override
 				public void onAccept() {
 					mainTrashAgreement.getAgreements().getAgreements(s -> {});
 				}
 			};
-			
-			dialog.setGlassStyleName(style.dialogGlass());
-			dialog.addStyleName(style.dialogZIndex());
 		}
 	}
 	
@@ -82,16 +103,13 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 		@Override
 		public void execute() {
-			AgreementsCleanDialog dialog = new AgreementsCleanDialog(AgreementCleanType.UNUSED) {
+			new AgreementsCleanDialog(AgreementCleanType.UNUSED) {
 				
 				@Override
 				public void onAccept() {
 					mainTrashAgreement.getAgreements().getAgreements(s -> {});
 				}
 			};
-			
-			dialog.setGlassStyleName(style.dialogGlass());
-			dialog.addStyleName(style.dialogZIndex());
 		}
 	}
 	
@@ -132,7 +150,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	class CopyAgreementCommand implements ScheduledCommand {
 		@Override
 		public void execute() {
-			for(EditionListener2 listener : editionsListener)
+			for(EditionListener listener : editionsListener)
 				listener.onAgreementCopy(agreement);
 		}
 	}
@@ -140,7 +158,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	class PasteAgreementCommand implements ScheduledCommand {
 		@Override
 		public void execute() {
-			for(EditionListener2 listener : editionsListener)
+			for(EditionListener listener : editionsListener)
 				listener.onAgreementPaste(agreement);
 		}
 	}
@@ -148,7 +166,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	class DeleteAgreementCommand implements ScheduledCommand  {
 		@Override
 		public void execute() {
-			for(EditionListener2 listener : editionsListener)
+			for(EditionListener listener : editionsListener)
 				listener.onAgreementDelete(agreement);
 		}
 	}
@@ -182,8 +200,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		@Override
 		public void execute() {
 			AonDialog dialog = new AonDialog("Descargar convenio", new HTML("\u00BFDesea descargar el convenio seleccionado al dominio en el que se encuentra\u003F La descarga incluye la actualizaci\u00f3n de los contratos (de este dominio) que estaban asociados al convenio antiguo."));
-			dialog.setGlassStyleName(style.dialogGlass());
-			dialog.addStyleName(style.dialogZIndex());
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
@@ -199,18 +215,18 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		}
 		
 		private void moveAgreement2Child(Agreement agreement) {
-			AonMessagePanel.showLoading(messagePanel, "Descargando convenio al dominio...");
+			AonMessagePanel.showLoading(messagesPanel, "Descargando convenio al dominio...");
 			MainAgreement.this.agreements.getAgreementsTree().getEnterpriseService()
 				.moveAgreement2Child(agreement.getId(), new AsyncCallback<Void>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					AonMessagePanel.showError(messagePanel, "Opss... " + caught.getMessage());
+					AonMessagePanel.showError(messagesPanel, "Opss... " + caught.getMessage());
 				}
 
 				@Override
 				public void onSuccess(Void result) {
-					AonMessagePanel.showSuccess(messagePanel, "Convenio descargado correctamente");
+					AonMessagePanel.showSuccess(messagesPanel, "Convenio descargado correctamente");
 					MainAgreement.this.agreements.reloadAgreements();
 				}
 			});
@@ -293,6 +309,41 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			this.deleteItem.setVisible(visible);
 		}
 	}
+
+	// ------------------------------------------- AgreementChangesCallback
+
+	class AgreementChangesCallback implements AsyncCallback<SortedSet<Date>> {
+
+		AgreementDraftObject agreementDraftObject;
+
+		public AgreementChangesCallback(AgreementDraftObject agreementDraftObject) {
+			this.agreementDraftObject = agreementDraftObject;
+		}
+
+		@Override
+		public void onFailure(Throwable caught) {
+			if ( !isSelected() ) return;
+			MainAgreement.this.agreementDraft.setAgreementDraftObject(agreementDraftObject);
+		}
+
+		@Override
+		public void onSuccess(SortedSet<Date> result) {
+			if ( !isSelected() ) return;
+			if (!CollectionUtils.isEmpty(result)) {
+				Date lastChange = result.last();
+				agreementDraftObject.setStartDate(lastChange);
+				agreementDraftObject.setEndDate(DateUtils.getLastDayOfMonth(lastChange));
+			}
+			MainAgreement.this.agreementDraft.setAgreementDraftObject(agreementDraftObject);
+		}
+		
+		private boolean isSelected() {
+			TreeItem treeItem = agreements.getAgreementsTree().getSelectedItem();
+			int selectedId = ((Agreement)treeItem.getUserObject()).getId();
+			int callbackId =  agreementDraftObject.getAgreementDraft().getId();
+			return selectedId == callbackId;
+		}
+	}
 	
 	// ------------------------------------------- UiFields
 	
@@ -302,10 +353,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	interface MyStyle extends CssResource {
 		String borderR();
 		String cmdBtn();
-		String dialogGlass();
-		String dialogZIndex();
-		String tabSelected();
-		String tabNotSelected();
 	}
 	
 	@UiField
@@ -315,39 +362,35 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	DockLayoutPanel splitLayoutPanel;
 	
 	@UiField
-	HTMLPanel messagePanel;
-	
-	@UiField
-	HTMLPanel agreementContainer;
+	DockLayoutPanel containerLayoutPanel;
 	
 	@UiField
 	AonAgreementsToolbar toolbar;
 
 	@UiField
 	Agreements agreements;
-	
-	@UiField (provided = true)
-	AgreementPreview agreementPreview;
-	
+
 	@UiField
-	HTMLPanel agreementMessage;
+	AgreementDraft agreementDraft;
 	
 	@UiField(provided = true)
 	MainTrashAgreement mainTrashAgreement;
 	
 	// ------------------------------------------- Variables
 	
-	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
-	
 	private static final String AGREEMENT = "c-agreement";
 	
+	private HTMLPanel messagesPanel = new HTMLPanel("");
 	private Integer parentDomain;
 	private Integer domain;
 	private Storage storage;
+	private Map<Integer, AgreementDraftObject> agreementDrafts;	
 	private Agreement agreement;
 	private AgreementContextMenu contextMenu;
 	
-	private List<EditionListener2> editionsListener;
+	private List<EditionListener> editionsListener;
+	
+	private AgreementServiceAsync agreementServiceAsync;
 	
 	private List<Listener> listeners;
 	private List<Toolbar> toolbars;
@@ -355,8 +398,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	private DomainUserRoles userRoles;
 	
 	private SettingsContextMenu settingsContextMenu;
-	
-	private AgreementInfo agreementSelected;
 	
 	// ------------------------------------------- ModuleLoad
 	
@@ -368,7 +409,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		GWT.<AonResources>create(AonResources.class).css().ensureInjected();
 		GWT.<MainEntryPoint.CodeMirrorResources>create(MainEntryPoint.CodeMirrorResources.class).css().ensureInjected();
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
-		
+
 		mainTrashAgreement = new MainTrashAgreement() {
 			
 			@Override
@@ -379,34 +420,19 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			
 		};
 		
-		agreementPreview = new AgreementPreview() {
-			
-			@Override
-			protected void reloadAgreement() {
-				getAgreement(agreementSelected.getId(), agreementInfo -> {
-					agreementSelected = agreementInfo;
-					agreementPreview.setAgreementPreview(agreementSelected);
-				});
-			}
-			
-			@Override
-			public void onSaved() {
-				saveAgreement(agreementInfo -> {
-					agreementSelected = agreementInfo;
-					agreementPreview.setAgreementPreview(agreementSelected);
-					agreementPreview.showSuccess("Convenio", "Convenio guardado correctamente");
-				}, error -> agreementPreview.showError("Error guardando", error.getMessage()));
-			}
-		};
-		
 		// Create the UI defined in Employee.ui.xml.
 		Widget ui = binder.createAndBindUi(this);
 		
+		AgreementServiceAsync agreementServiceRaw = GWT
+				.create(AgreementService.class);
+		agreementServiceAsync = new AgreementServiceAsyncDecorator(
+				agreementServiceRaw);
+
 		// LocalStorage getItems
 		this.storage = Storage.getLocalStorageIfSupported();
 
-		// Add the outerpanel to the RootLayoutPanel, so that it will be displayed.
-		
+		// Add the outer panel to the RootLayoutPanel, so that it will be
+		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
 		root.add(ui);
 		
@@ -423,6 +449,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		this.contextMenu = new AgreementContextMenu();
 		this.agreements.addToolbar(this);
 		this.agreements.addListener(this);
+		this.agreementDrafts = new HashMap<>();
 		
 		this.toolbars = new LinkedList<>();
 		this.listeners = new LinkedList<>();
@@ -433,8 +460,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		toolbar.addListener(this);
 		
 		addEditionOptions(this);
-		
-		showAgreementMessage();
 		
 		if(storage.getItem(AGREEMENT) != null) {
 			Integer id = Integer.parseInt(storage.getItem(AGREEMENT));
@@ -498,33 +523,66 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	@Override
 	public void onAgreementSelected(Agreement agreement) {
+
 		this.agreement = agreement;		
 		this.contextMenu.setVisibleCopyItem(agreement.getId());		
 		
-		if(null != agreement.getDomain()) {
-			this.contextMenu.setVisibleMoveItem( (parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue() && agreement.getDomain().intValue() != 0);
-			this.contextMenu.setVisibleMoveDownItem(agreement.getDomain().intValue() != 0 && domain != agreement.getDomain().intValue());
-			this.contextMenu.setVisibleDeleteItem(0 != agreement.getDomain().intValue());
-			this.agreements.setVisibleDraftButton(0 != agreement.getDomain().intValue());
+		this.contextMenu.setVisibleMoveItem( (parentDomain != null) && 
+				parentDomain.intValue() != agreement.getDomain().intValue() && agreement.getDomain().intValue() != 0);
+		
+		this.contextMenu.setVisibleMoveDownItem(agreement.getDomain().intValue() != 0 && domain != agreement.getDomain().intValue());
+
+		AgreementDraftObject agreementDraftObject = agreementDrafts.get(agreement.getId());
+		
+		if (agreementDraftObject == null) {
+			com.esferalia.aon.gwt.payroll.shared.AgreementDraft draft = new 
+					com.esferalia.aon.gwt.payroll.shared.AgreementDraft();
+	
+			draft.setId(agreement.getId());
+			draft.setDomain(agreement.getDomain());
+			draft.setDescription(agreement.getDescription());
+			draft.setSSNumber(agreement.getSSNumber());
+			draft.setOwner(agreement.getOwner());
 			
-			// TODO: read only
-			this.agreementPreview.setReadOnly(0 == agreement.getDomain().intValue() || (parentDomain != null && parentDomain.intValue() == agreement.getDomain().intValue()));
+			draft.setStartDate(DateUtils.getFirstDayOfMonth());
+			draft.setEndDate(DateUtils.getLastDayOfMonth());
+			
+			agreementDraftObject = new AgreementDraftObject(
+					agreements.getDomain()
+					, Wnd.getCurrentDomainNameURL()
+					, Wnd.getCurrentUser()
+					, draft 
+					, agreementServiceAsync);
+			
+			agreementDraftObject.setAgreement(agreement);
+			
+			agreementDrafts.put(agreement.getId(), agreementDraftObject);
+			
+			TreeItem treeItem = agreements.getAgreementsTree().getSelectedItem();
+	
+			agreementDraftObject.addListener(new DraftObjectListener(treeItem,
+					agreementDraftObject));
+			
+			agreements.getAgreementsTree().getEmployeesService()
+					.getChanges( 
+							Wnd.getCurrentDomainNameURL(),
+							agreement, 
+							new AgreementChangesCallback(agreementDraftObject));
+
+		} // end-if: Not exists, create it then...
+		else {
+			agreementDraft.setAgreementDraftObject(agreementDraftObject);
 		}
 		
-		agreementPreview.showLoading("Cargando convenio...");
-		getAgreement(agreement.getId(), agreeementInfo -> {
-			agreementSelected = agreeementInfo;
-			showAgreementContainer();
-			agreementPreview.setAgreementPreview(agreeementInfo);
-		});
+		agreements.getToolbar().setVisibleDraftButton(isEditable(agreementDraftObject));
 		
 	}
 	
-	public void addEditionOptions(EditionListener2 listener) {
+	public void addEditionOptions(EditionListener listener) {
 		editionsListener.add(listener);
 	}
 
-	public void removeEditionListener(EditionListener2 listener) {
+	public void removeEditionListener(EditionListener listener) {
 		editionsListener.remove(listener);
 	}
 
@@ -535,19 +593,19 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	@Override
 	public void onMoveToTrash(Agreement agreement) {
-		for(EditionListener2 listener : editionsListener)
+		for(EditionListener listener : editionsListener)
 			listener.onAgreementDelete(agreement);
 	}
 
 	@Override
 	public void onCopyAgreement(Agreement agreement) {
-		for(EditionListener2 listener : editionsListener)
+		for(EditionListener listener : editionsListener)
 			listener.onAgreementPaste(agreement);
 	}
 
 	@Override
 	public void onPasteAgreement(Agreement agreement) {
-		for(EditionListener2 listener : editionsListener)
+		for(EditionListener listener : editionsListener)
 			listener.onAgreementCopy(agreement);
 	}
 
@@ -558,19 +616,19 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 	@Override
 	public void onAgreementCtrlC(Agreement agreement) {
-		for(EditionListener2 listener : editionsListener)
+		for(EditionListener listener : editionsListener)
 			listener.onAgreementCopy(agreement);
 	}
 
 	@Override
 	public void onAgreementCtrlV(Agreement agreement) {
-		for(EditionListener2 listener : editionsListener) 
+		for(EditionListener listener : editionsListener) 
 			listener.onAgreementPaste(agreement);
 	}
 
 	@Override
 	public void onAgreementSupr(Agreement agreement) {
-		for(EditionListener2 listener : editionsListener)
+		for(EditionListener listener : editionsListener)
 			listener.onAgreementDelete(agreement);
 	}
 
@@ -618,8 +676,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 						@Override
 						public void onSuccess(String message) {
 							AonDialog dialog = new AonDialog("BORRADO", new HTML(message));
-							dialog.setGlassStyleName(style.dialogGlass());
-							dialog.addStyleName(style.dialogZIndex());
 							dialog.confirm(new AonAcceptDialogCallback() {
 								
 								@Override
@@ -641,7 +697,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 										public void onSuccess(Void result) {
 											MainAgreement.this.agreements.resetTypeView();
 											MainAgreement.this.agreements.reloadAgreements();
-//											showSelectAgreementMessage();
 										}
 									});
 								}
@@ -650,8 +705,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		} else {
 			String message = "Este convenio ser\u00E1 eliminado de forma permanente.<br>\u00BFDesea eliminar el convenio de <b>" + agreement.getDescription() + "</b>?";
 			AonDialog dialog = new AonDialog("BORRADO", new HTML(message));
-			dialog.setGlassStyleName(style.dialogGlass());
-			dialog.addStyleName(style.dialogZIndex());
 			dialog.confirm(new AonAcceptDialogCallback() {
 				
 				@Override
@@ -671,16 +724,19 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 						@Override
 						public void onSuccess(Void result) {
-							MainAgreement.this.agreements.setViewAgreements(false);
 							MainAgreement.this.agreements.resetTypeView();
 							MainAgreement.this.agreements.reloadAgreements();
-//							showSelectAgreementMessage();
 						}
 					});
 				}
 			});
 		}
 		
+	}	
+	
+
+	private static boolean isEditable(AgreementDraftObject agreementDraftObject) {
+		return agreementDraftObject.isMine() || !agreementDraftObject.isSystem();		
 	}
 	
 	@Override
@@ -717,28 +773,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 	public void onCollapseMenuButtonClick(ClickEvent event) {
 		splitLayoutPanel.setWidgetSize(agreements, 0);
 		splitLayoutPanel.animate(500);
-		Timer timer = new Timer() {
-			@Override
-			public void run() {
-				agreementPreview.setTablesWidthCollapseMenu();
-				agreementPreview.setIsOpenCollapse(true);
-			}
-		};
-		timer.schedule(500);
 	}
 
 	@Override
 	public void onShowMenuButtonClick(ClickEvent event) {
 		splitLayoutPanel.setWidgetSize(agreements, 350);
 		splitLayoutPanel.animate(500);
-		Timer timer = new Timer() {
-			@Override
-			public void run() {
-				agreementPreview.setTablesWidth();
-				agreementPreview.setIsOpenCollapse(false);
-			}
-		};
-		timer.schedule(500);
 	}
 
 	@Override
@@ -753,47 +793,58 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 			@Override
 			protected void onAccept(String serviAgreementCode, List<Integer> selectedDates) {
-				agreementPreview.showLoading("Descargando convenio desde ServiConvenios...");
+				AonMessagePanel.showLoading(messagesPanel, "Descargando convenio desde ServiConvenios...");
+				containerLayoutPanel.addNorth(messagesPanel, 50);
 				
 				getAgreementsTree().getEnterpriseService().getServiAgreement(serviAgreementCode, selectedDates,
 						new AsyncCallback<Integer>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						agreementPreview.showError("Error importaci\u00f3n", caught.getMessage());
+						AonDialog dialog = new AonDialog("Error", new HTML(caught.getMessage()));
+						dialog.warning();
 					}
 
 					@Override
 					public void onSuccess(Integer importedAgreementId) {
-						agreementPreview.showLoading("Cargando visualizaci\u00F3n convenio...");
+						AonMessagePanel.showLoading(messagesPanel, "Cargando visualizaci\u00F3n convenio...");
+						containerLayoutPanel.remove(messagesPanel);
+						containerLayoutPanel.addNorth(messagesPanel, 50);
 						agreements.getAgreementsAndSelectImported(
 								importedAgreementId, 
-								s -> AonMessagePanel.hideMessage(messagePanel));
+								s -> {
+									containerLayoutPanel.remove(messagesPanel);
+									AonMessagePanel.hideMessage(messagesPanel);
+								});
 					}
 				});
 			}
 			
 		};
 		
-		serviAgreementDialog.setGlassStyleName(style.dialogGlass());
-		serviAgreementDialog.addStyleName(style.dialogZIndex());
 		serviAgreementDialog.setMessageVisible(!userRoles.isConvenios());
 	}
 
 	private AgreementsTree getAgreementsTree() {
 		return this.agreements.agreementsTree;
 	}
+	
+	private void getAgreements() {
+		this.agreements.getAgreements();
+	}
 
 	@Override
 	public void onCollapseMenuClick(ClickEvent event) {
 		NativeEvent nativeEvent = event.getNativeEvent();
-		contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
+		contextMenu.setPopupPosition(nativeEvent.getClientX(), 
+				nativeEvent.getClientY());
+		contextMenu.setVisibleDeleteItem(isEditable(agreementDraft.agreementDraftObject));
 		contextMenu.show();
 	}
 
 	@Override
 	public void onViewAgreements(Agreement agreement, Boolean allAgreements) {
-		for(EditionListener2 listener : editionsListener)
+		for(EditionListener listener : editionsListener)
 			listener.onViewAgreements(agreement, allAgreements);
 	}
 
@@ -805,52 +856,5 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		settingsContextMenu.show();
 		
 	}
-	
-	private void getAgreement(Integer agreementId, Consumer<AgreementInfo> success) {
-		impl.getAgreementInfo(agreementId, false, new AsyncCallback<AgreementInfo>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				agreementPreview.showError("Error carga convenio", caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(AgreementInfo agreement) {
-				success.accept(agreement);
-			}
-			
-		});
-	}
-
-	
-	private void saveAgreement(Consumer<AgreementInfo> success,  Consumer<Throwable> failure) {
-		impl.setAgreementInfo(agreementSelected, new AsyncCallback<Void>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				getAgreement(agreementSelected.getId(), agreementInfo -> success.accept(agreementInfo));
-			}
-			
-		});
-	}
-	
-	// ------------------------------------ Main view
-	
-	private void showAgreementMessage() {
-		agreementContainer.getElement().getStyle().setDisplay(Display.NONE);
-		agreementMessage.getElement().getStyle().clearDisplay();
-	}
-	
-	private void showAgreementContainer() {
-		agreementMessage.getElement().getStyle().setDisplay(Display.NONE);
-		agreementContainer.getElement().getStyle().clearDisplay();
-	}
-
-	// ------------------------------------ Tab Selection
 	
 }

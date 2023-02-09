@@ -396,7 +396,7 @@
 				<g:ScrollPanel styleName="{style.editor}" debugId='draftScrollPane' ui:field='draftScrollPane'>
 					<g:VerticalPanel width="100%">
 						<g:HTMLPanel ui:field="messageContainer" />
-						<g:VerticalPanel width="auto" styleName="{style.document}">
+						<g:VerticalPanel ui:field="tablesPanel" width="80%" styleName="{style.document}">
 
 							<g:Grid width="100%">
 								<g:row>
@@ -407,9 +407,7 @@
 									<g:customCell styleName="{style.field}">
 										<g:TextBox width="100%" debugId='descriptionTextBox' ui:field='descriptionTextBox' maxLength="{DESCRIPTION_MAX_LENGTH}"/>
 									</g:customCell>
-								</g:row>
-								<g:row>
-									<g:customCell styleName="{style.label}">
+									<g:customCell styleName="{style.label} aon-nowrap">
 										<g:Label>C&oacute;digo SS
 										</g:Label>
 									</g:customCell>
@@ -445,6 +443,9 @@
 							<g:FlexTable debugId='paymentsTable' ui:field='paymentsTable'
 								styleName="aon-dataTable {style.edit-rows}" />
 							<g:HTML styleName="{style.vertical-space}" />
+							<g:FlexTable debugId='extrasTable' ui:field='extrasTable'
+							styleName="aon-dataTable {style.edit-rows}" />
+							<!-- 
 							<g:DeckPanel ui:field="deckPanelExtras">
 								<g:HTMLPanel ui:field="periodTypePanel" styleName="{style.flex}">
 									<g:Label styleName="{style.payPeriodLabel}">Pagas extras:</g:Label>
@@ -457,6 +458,7 @@
 								styleName="aon-dataTable {style.edit-rows}" />
 								<g:HTML styleName="{style.vertical-space}" />
 							</g:DeckPanel>
+							-->
 						</g:VerticalPanel>
 					</g:VerticalPanel>
 				</g:ScrollPanel>

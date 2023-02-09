@@ -7,7 +7,7 @@ import static com.esferalia.aon.gwt.payroll.shared.Event.Type.WARNING;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,10 +15,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -34,7 +34,6 @@ import com.esferalia.aon.gwt.common.shared.DateTimeFormatException;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.EmptyStringException;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
-import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.client.AgreementDraftObject.CalculateCallback;
 import com.esferalia.aon.gwt.payroll.client.FxDialog.IContextProvider;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
@@ -51,12 +50,11 @@ import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Result;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
-import com.esferalia.aon.occam.api.model.type.ContractType;
-import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
-import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.occam.api.model.type.ContractType;
+import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -81,8 +79,6 @@ import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
@@ -111,7 +107,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
-import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
@@ -131,7 +126,6 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
@@ -151,8 +145,8 @@ import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 public class AgreementDraft extends ResizeComposite implements CalculateCallback {
 
 	private static final Date TODAY = new Date();
-	static int SALARY_TABLE_COLS = 8;
-	static int SALARY_TABLE_LINES = 7;
+	static int SALARY_TABLE_COLS = 10;
+	static int SALARY_TABLE_LINES = 6;
 	static int VARIABLE_TEXTBOX_SIZE = 10;
 
 	public static final String CUSTOM = "CUSTOM";
@@ -678,7 +672,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				if (value == null)
 					return;
 				String text = value.toString();
-				if (StringUtils.isBlank(text))
+				if (AonStringUtils.isBlank(text))
 					return;
 				expressionBox.setText(text);
 			}
@@ -725,7 +719,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 					String value = event.getValue();
 
-					if (!StringUtils.isBlank(value)) {
+					if (AonStringUtils.isNotBlank(value)) {
 						value = "REMOVE()";
 					}
 					
@@ -788,7 +782,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			if (payment.getName() == null)
 				return null;
 			for (Payment concept : AgreementDraft.this.availablePaymens)
-				if (StringUtils.equals(payment.getName(), concept.getName()))
+				if (AonStringUtils.equals(payment.getName(), concept.getName()))
 					return concept;
 			return null;
 		}
@@ -1003,7 +997,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 					if (((DefaultSuggestionDisplay) suggestBox.getSuggestionDisplay()).isSuggestionListShowing())
 						return;
 					String description = PaymentEditor.this.descriptionBox.getValue();
-					if (StringUtils.isBlank(description))
+					if (AonStringUtils.isBlank(description))
 						return;
 
 					payment.setDescription(description);
@@ -1066,7 +1060,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		Payment getItem(String replacementString) {
 			for (Payment payment : availablePaymens) {
 				String suggestion = getSuggestionString(payment);
-				if (StringUtils.equals(replacementString, suggestion))
+				if (AonStringUtils.equals(replacementString, suggestion))
 					return payment;
 			}
 			return null;
@@ -1078,7 +1072,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		@Override
 		public boolean isEditable(String name) {
 			for (Payment payment : AgreementDraft.this.agreementDraftObject.getPayments())
-				if (StringUtils.equals(payment.getName(), name))
+				if (AonStringUtils.equals(payment.getName(), name))
 					return false;
 			return true;
 		}
@@ -1291,23 +1285,26 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	@UiField
 	HTMLPanel moreToggleButtonsPanel;
 	
-	@UiField
-	HTMLPanel periodTypePanel;
-	
-	@UiField
-	DeckPanel deckPanelExtras;
-	
-	@UiField
-	DeckPanel deckPanelPayPeriod;
-	
-	@UiField
-	ListBox payPeriod;
-	
-	@UiField
-	Label payPeriodLabel;
+//	@UiField
+//	HTMLPanel periodTypePanel;
+//	
+//	@UiField
+//	DeckPanel deckPanelExtras;
+//	
+//	@UiField
+//	DeckPanel deckPanelPayPeriod;
+//	
+//	@UiField
+//	ListBox payPeriod;
+//	
+//	@UiField
+//	Label payPeriodLabel;
 	
 //	@UiField
 //	TabLayoutPanel salaryTabLayoutPanel;
+
+	@UiField
+	VerticalPanel tablesPanel;
 
 	@UiField
 	FlexTable salaryTable;
@@ -1439,37 +1436,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		contextMenu = new AddPaymentContextMenu();
 		
 		showDraft();
-		
-		// Add extra hide option
-		KeyDownHandler myHandler = new KeyDownHandler() {
-			
-			@Override
-			public void onKeyDown(KeyDownEvent event) {
-				if(event.isAltKeyDown() && event.isUpArrow()) {
-					deckPanelExtras.showWidget(0);	
-					showExtrasTable = false;
-				}
-			}
-		};
-		
-		RootPanel.get().addDomHandler(myHandler , KeyDownEvent.getType());
-		
-		periodTypePanel.getElement().getStyle().clearWidth();
-		AonToolbarSmallButton showExtras = new AonToolbarSmallButton("Mostrar tabla extras");
-		showExtras.addClickHandler(e -> {
-			showExtrasTable = !showExtrasTable;
-			if(showExtrasTable) deckPanelExtras.showWidget(1);
-			else deckPanelExtras.showWidget(0);
-		});
-		showExtras.addStyleName(style.showExtra());
-		periodTypePanel.add(showExtras);
-		
-		//Add options to payPeriod ListBox
-		this.payPeriod.addItem("ANUALES");
-		this.payPeriod.addItem("SEMESTRALES");
-		
-		//Add style to payPeriodLabel
-		this.payPeriodLabel.getElement().getStyle().setPadding(2.00, Unit.PX);
 		
 		//Initialize filterPatternTimer
 		filterPatternTimer = new FilterPatternTimer();
@@ -2167,16 +2133,30 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		clearPaymentsTable();
 		paymentEditors.clear();
 		
-		paymentEditors.addAll(dumpPayments());
+		
+		Collection<Payment> payments =
+		agreementDraftObject.getPayments().stream()
+		.filter(AgreementDraft::isNotExtra)
+		.sorted(ItemComparator::comparator)
+		.collect(Collectors.toList());
+		
+		paymentEditors.addAll(dumpPayments(payments, paymentsTable));
 		if(object.isMine())
-			paymentEditors.add(insertNewPaymentRow(paymentsTable.getRowCount()));
+			paymentEditors.add(insertNewPaymentRow(paymentsTable.getRowCount(), paymentsTable));
 		
 		clearExtrasTable();
-		SortedSet<Payment> extraPayments = getAvailableExtraPayments();
 		extraEditors.clear();
-		extraEditors.addAll(dumpExtras(extraPayments));
+
+		Collection<Payment> extras =
+		agreementDraftObject.getPayments().stream()
+		.filter(AgreementDraft::isExtra)
+		.sorted(ItemComparator::comparator)
+		.collect(Collectors.toList());
+
+		paymentEditors.addAll(dumpPayments(extras, extrasTable));
+
 		if(object.isMine())
-			extraEditors.add(insertNewExtraRow(extrasTable.getRowCount(), extraPayments));
+		    paymentEditors.add(insertNewPaymentRow(extrasTable.getRowCount(), extrasTable));
 
 		clearEventsTable();
 		dumpEvents();
@@ -2184,22 +2164,11 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		setReadOnly(/*object.isSystem() &&*/ !object.isMine() );
 		
-		if(!checkIfExtrasExist())
-			deckPanelExtras.showWidget(2);
-		else {
-			//Show new payPeriod
-			if(showExtrasTable) deckPanelExtras.showWidget(1);
-			else deckPanelExtras.showWidget(0);
-		}
-		
-		checkTypeOfExistingExtra();
-		
 		// ServiAgreements Buttons
 		boolean isServiAgreement = this.agreementDraftObject.isServiAgreement();
 		setVisible(serviAgreementPanel.getElement(), isServiAgreement);
 		setVisible(serviAgreementUpdateButton.getElement(), isServiAgreement);
 		
-//		Window.alert("CalculateSuccess end");
 		
 	}
 
@@ -2211,39 +2180,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		initSalaryTableFrozenColsAndRows();
 		
 		setReadOnly(!agreementDraftObject.isMine() );
-	}
-
-	private boolean checkIfExtrasExist() {
-		int countExtras = 0;
-		for (Extra extra : agreementDraftObject.getExtras()) {
-			if(extra.getIssueDate() != null)
-				countExtras++;
-		}
-		return countExtras > 1;
-	}
-	
-	private void checkTypeOfExistingExtra() {
-		for (Extra extra : agreementDraftObject.getExtras()) {
-			String issueDate = extra.getIssueDate();
-			if(AonStringUtils.isNotBlank(issueDate)) {
-				String issueMonthDate = issueDate.split("/")[1];
-				Integer monthIssue = Integer.parseInt(issueMonthDate);
-				if(AonNumberUtils.equals(monthIssue, 6) || AonNumberUtils.equals(monthIssue, 7) || AonNumberUtils.equals(monthIssue, 12)) {
-					Date startDate = parseExtraDate(extra.getStartDate());
-					Date endDate = parseExtraDate(extra.getEndDate());
-					int daysBetween = DateUtils.getDaysBetween(startDate, endDate);
-					if(daysBetween > 186) {
-						this.payPeriod.setSelectedIndex(0);
-						this.payPeriodLabel.setText(this.payPeriod.getSelectedItemText());
-						break;
-					}else {
-						this.payPeriod.setSelectedIndex(1);
-						this.payPeriodLabel.setText(this.payPeriod.getSelectedItemText());
-						break;
-					}
-				}
-			}
-		}
 	}
 
 	// ------------------------------------------
@@ -2299,44 +2235,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 		});
 	}
-	
-	@UiHandler("payPeriod")
-	void onPayPeriodChangeValue(ChangeEvent event) {
-		for(Extra extra: agreementDraftObject.getExtras()) {
-			String monthIssueDate = extra.getIssueDate().split("/")[1];
-			Integer monthIssue = Integer.parseInt(monthIssueDate);
-			if(payPeriod.getSelectedIndex() == 0) { // ANUAL
-				if(monthIssue == 12) { //PAGA NAVIDAD
-					extra.setStartDate("01/01");
-					extra.setEndDate("31/12");
-				}
-				if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
-					extra.setStartDate("01/07 -1");
-					extra.setEndDate("30/06");
-				}
-				if(monthIssue == 3) { //PAGA BENEFICIOS
-					extra.setStartDate("01/01 -1");
-					extra.setEndDate("31/12 -1");
-				}
-			} else { // SEMESTRAL
-				if(monthIssue == 12) { //PAGA NAVIDAD
-					extra.setStartDate("01/07");
-					extra.setEndDate("31/12");
-				}
-				if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
-					extra.setStartDate("01/01");
-					extra.setEndDate("30/06");
-				}
-				if(monthIssue == 3) { //PAGA BENEFICIOS
-					extra.setStartDate("01/01 -1");
-					extra.setEndDate("31/12 -1");
-				}
-			}
-			
-			AgreementDraft.this.agreementDraftObject.addDraftExtra(extra);
-		}
-		AgreementDraft.this.calculate();
-	}
 
 	// ------------------------------------------------------------------------
 
@@ -2359,11 +2257,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		addPaymentButton.setVisible(!readOnly);
 		serviAgreementUpdateButton.setEnabled(!readOnly);
 //		deleteButton.setEnabled(!readOnly);
-		
-		if(readOnly)
-			deckPanelPayPeriod.showWidget(1);
-		else
-			deckPanelPayPeriod.showWidget(0);
 			
 		descriptionTextBox.setReadOnly(readOnly);
 		ssNumberTextBox.setReadOnly(readOnly);
@@ -2394,7 +2287,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		searchTextBox.setVisibleLength(5);
 		searchTextBox.getElement().setPropertyString("placeholder", "Filtrar");
 		
-		if(!StringUtils.isBlank(this.filterPattern))
+		if(AonStringUtils.isNotBlank(this.filterPattern))
 			searchTextBox.setValue(this.filterPattern);
 		
 		searchTextBox.addKeyUpHandler(new KeyUpHandler() {
@@ -2404,7 +2297,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				filterPatternTimer.cancel();
 				filterPatternTimer.schedule(1000);
 				
-				if(StringUtils.isBlank(searchTextBox.getValue()))
+				if(AonStringUtils.isBlank(searchTextBox.getValue()))
 					filterPattern = "";
 				else 
 					filterPattern = searchTextBox.getValue();
@@ -2504,30 +2397,15 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		eventsTableSpace.setVisible(eventsTable.getRowCount() > 0);
 	}
 
-	private List<ExtraEditor> dumpExtras(SortedSet<Payment> payments) {
+	private List<PaymentEditor> dumpPayments(Collection<Payment> payments, FlexTable flexTable) {
 
-		List<ExtraEditor> editors = new LinkedList();
+		List<PaymentEditor> editors = new LinkedList<>();
 
-		int row = extrasTable.getRowCount();
+		int row = flexTable.getRowCount();
 
-		for (Extra extra : agreementDraftObject.getExtras()) {
-			editors.add(dumpExtra(extra, row++, payments));
-		}
-		return editors;
-	}
-
-	private List<PaymentEditor> dumpPayments() {
-
-		List<PaymentEditor> editors = new LinkedList();
-
-		int row = paymentsTable.getRowCount();
-
-		SortedSet<Payment> payments = new TreeSet<Payment>(new ItemComparator<Payment.Type>());
-		payments.addAll(agreementDraftObject.getPayments());
 		for (Payment payment : payments) {
-			editors.add(dumpPayment(payment, row++));
+			editors.add(dumpPayment(payment, flexTable, row++));
 		}
-		
 		
 		return editors;
 	}
@@ -2576,7 +2454,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		levels.addAll(agreementDraftObject.getLevels());
 		
 		//Filter levels if filterPattern not blank
-		if(!StringUtils.isBlank(this.filterPattern)) {
+		if(AonStringUtils.isNotBlank(this.filterPattern)) {
 			List<Level> filteredLevels = levels.stream().filter(l -> l.getDescription() == null || l.getDescription().toUpperCase().indexOf(this.filterPattern.trim().toUpperCase()) >= 0).collect(Collectors.toList());
 			levels.clear();
 			levels.addAll(filteredLevels);
@@ -2684,8 +2562,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		if(variables.size() == 0)
 			offsetWidth = 721;
-		
-		salaryTableScrollPane.setWidth(offsetWidth + "px");
+		salaryTableScrollPane.setWidth(Math.max(offsetWidth, tablesPanel.getOffsetWidth()) + "px");
 		
 		return editors;
 	}
@@ -2721,7 +2598,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		levels.addAll(agreementDraftObject.getLevels());
 		
 		//Filter levels if filterPattern not blank
-		if(!StringUtils.isBlank(this.filterPattern)) {
+		if(AonStringUtils.isNotBlank(this.filterPattern)) {
 			List<Level> filteredLevels = levels.stream().filter(l -> l.getDescription() == null || l.getDescription().toUpperCase().indexOf(this.filterPattern.trim().toUpperCase()) >= 0).collect(Collectors.toList());
 			levels.clear();
 			levels.addAll(filteredLevels);
@@ -2818,7 +2695,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		offsetWidth += offsetWidth * 1.5 * (SALARY_TABLE_COLS - 1);
 		offsetWidth += cellFormatter.getElement(0, salaryTable.getCellCount(0) - 1).getOffsetWidth();
 
-		salaryTableScrollPane.setWidth(offsetWidth + "px");
+		salaryTableScrollPane.setWidth(Math.max(offsetWidth, tablesPanel.getOffsetWidth()) + "px");
 		
 		return editors;
 	}
@@ -2879,7 +2756,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				List<String> suggestionList = new ArrayList<String>();
 				for (Payment payment : availablePaymens) {
 					String suggestion = getSuggestionString(payment);
-					if ( StringUtils.isEmpty(suggestion))
+					if ( AonStringUtils.isEmpty(suggestion))
 						continue;
 					suggestionList.add(suggestion);
 					paymentDescriptionOracle.add(suggestion);
@@ -2895,7 +2772,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	private Payment getPayment(String suggestionString) {
 		for (Payment payment : availablePaymens) {
-			if (StringUtils.equals(suggestionString, getSuggestionString(payment)))
+			if (AonStringUtils.equals(suggestionString, getSuggestionString(payment)))
 				return payment;
 		}
 		return null;
@@ -3017,11 +2894,12 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		TextBox categoriesTextBox = new TextBox();
 
 		if (categories != null) {
-			text = StringUtils.reduce(categories, ", ");
+			text = categories.stream()
+				.collect(Collectors.joining(", "));
 			categoriesTextBox.setText(text);
 		}
 
-		if (StringUtils.isBlank(text)) {
+		if (AonStringUtils.isBlank(text)) {
 			categoriesTextBox.addStyleName(AON.AON_ICON_WARN);
 			categoriesTextBox.addStyleName(AON.AON_PADDING_LEFT);
 			categoriesTextBox.setTitle("Defina al menos una categoria."
@@ -3032,7 +2910,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			salaryTable.getCellFormatter().addStyleName(row, col, AON.AON_DATA_TABLE_CELL_HIGHLIGHT);
 			if (row > 0)
 				salaryTable.getCellFormatter().addStyleName(row - 1, col, AON.AON_DATA_TABLE_CELL_HIGHLIGHT_TOP);
-			if (!StringUtils.isBlank(text)) {
+			if (AonStringUtils.isNotBlank(text)) {
 				categoriesTextBox.addStyleName(AON.AON_ICON_CHANGED);
 				categoriesTextBox.addStyleName(AON.AON_PADDING_LEFT);
 			}
@@ -3103,120 +2981,27 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 			eventsTable.getCellFormatter().addStyleName(row, col, "aon-panelGrid-odd");
 	}
 
-	private ExtraEditor dumpExtra(Extra extra, int row, SortedSet<Payment> availablePayments) {
-
-		// first cell for edit other stuff buttons.
-		Button editButton = new Button();
-		editButton.setStyleName(getIconRowStyle(extra));
-		editButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		extrasTable.setWidget(row, 0, editButton);
-
-		ValueBox<Date> startDateBox = newDateBox();
-		try {
-			Date startDate = parseExtraDate(extra.getStartDate());
-			startDateBox.setValue(startDate);
-		} catch (EmptyStringException e) {
-			startDateBox.setTitle("Es necesario introducir una fecha inicial de devengo.");
-		} catch (DateTimeFormatException e) {
-			startDateBox.setTitle("La fecha inicial de devengo '" + extra.getStartDate() + "' no es correcta.");
-			startDateBox.addStyleName(AON.AON_ICON_EXCEPTION);
-			startDateBox.setText(extra.getStartDate());
-		}
-		startDateBox.ensureDebugId("startDateBox" + row);
-		
-		
-		Button startButton = new Button();
-
-		extrasTable.setWidget(row, 1, newExtraDatePanel(startDateBox, startButton));
-
-		ValueBox<Date> endDateBox = newDateBox();
-		try {
-			Date endDate = parseExtraDate(extra.getEndDate());
-			endDateBox.setValue(endDate);
-		} catch (EmptyStringException e) {
-			endDateBox.setTitle("Es necesario introducir una fecha final de devengo.");
-			endDateBox.addStyleName(AON.AON_ICON_EXCEPTION);
-		} catch (DateTimeFormatException e) {
-			endDateBox.setTitle("La fecha final de devengo '" + extra.getEndDate() + "' no es correcta.");
-			endDateBox.addStyleName(AON.AON_ICON_EXCEPTION);
-		}
-		endDateBox.ensureDebugId("endDateBox" + row);
-		
-		Button endButton = new Button();
-
-		extrasTable.setWidget(row, 2, newExtraDatePanel(endDateBox, endButton));
-
-		ValueBox<Date> issueDateBox = newDateBox();
-		try {
-			Date issueDate = parseExtraDate(extra.getIssueDate());
-			issueDateBox.setValue(issueDate);
-		} catch (EmptyStringException e) {
-			issueDateBox.setTitle("Es necesario introducir una fecha de cobro.");
-			issueDateBox.addStyleName(AON.AON_ICON_EXCEPTION);
-		} catch (DateTimeFormatException e) {
-			issueDateBox.setTitle("La fecha de cobro '" + extra.getIssueDate() + "' no es correcta.");
-			issueDateBox.addStyleName(AON.AON_ICON_EXCEPTION);
-		}
-		issueDateBox.ensureDebugId("issueDateBox" + row);
-		
-		Button issueButton = new Button();
-
-		extrasTable.setWidget(row, 3, newExtraDatePanel(issueDateBox, issueButton));
-
-		ListBox paymentListBox = new ListBox();
-		paymentListBox.addItem("-", (String) null);
-
-		Payment extraPayment = getExtraPayment(extra);
-		if (extraPayment != null) {
-			paymentListBox.addItem(extraPayment.getDescription(), String.valueOf(extraPayment.getId()));
-			paymentListBox.setSelectedIndex(1);
-		}
-
-		for (Payment payment : availablePayments) {
-			paymentListBox.addItem(payment.getDescription(), String.valueOf(payment.getId()));
-		}
-
-		paymentListBox.addStyleName(AON.AON_WIDTH_ALL);
-		extrasTable.setWidget(row, 4, paymentListBox);
-
-		Button deleteButton = new Button();
-		deleteButton.setStyleName(AON.AON_ICON_DELETE);
-		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		extrasTable.setWidget(row, 5, deleteButton);
-		extrasTable.getCellFormatter().addStyleName(row, 5, AON.AON_TEXT_RIGHT);
-
-		formatExtraRow(row);
-
-		ExtraEditor editor = new ExtraEditor(extra);
-		editor.setEndDateBox(endDateBox);
-		editor.setButtonFor(endButton, endDateBox);
-		editor.setStartDateBox(startDateBox);
-		editor.setButtonFor(startButton, startDateBox);
-		editor.setIssueDateBox(issueDateBox);
-		editor.setButtonFor(issueButton, issueDateBox);
-		editor.setPaymentListBox(paymentListBox);
-		editor.setDeleteButton(deleteButton);
-
-		if (isDraftExtra(extra)) {
-			extrasTable.getRowFormatter().addStyleName(row, AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
-			extrasTable.getRowFormatter().addStyleName(row - 1, AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
-		}
-
-		return editor;
-
-	}
-
-	private PaymentEditor dumpPayment(Payment payment, int row) {
+	private PaymentEditor dumpPayment(Payment payment, FlexTable flexTable, int row) {
 
 		// first cell for edit other stuff buttons.
 		Button editButton = new Button();
 		editButton.setStyleName(getIconRowStyle(payment));
 		editButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
 
-		paymentsTable.setWidget(row, 0, editButton);
+		flexTable.setWidget(row, 0, editButton);
 
 		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(Payment.Type.class, 10);
 		paymentTypeListBox.setSelected(payment.getType());
+		
+		Label craLabel = new Label();
+		Payment.Type type = payment.getType();
+        	craLabel.setText( type != null ? type.getName(): "");
+        	craLabel.setTitle(type != null ? type.getDescription(): "");
+        	flexTable.setWidget(row, 1, craLabel);
+
+		Label conceptLabel = new Label();
+		conceptLabel.setText(AonStringUtils.startsWith(payment.getName(),"__") ? "": payment.getName());
+		flexTable.setWidget(row, 2, conceptLabel);
 		
 		TextBox descriptionBox = new TextBox();
 		descriptionBox.setMaxLength(DESCRIPTION_MAX_LENGTH);
@@ -3226,9 +3011,9 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		
 		// If CRA_004 or CRA_005 set issue_date and ListBox
 		if(payment.getType() == Payment.Type.CRA_0004 || payment.getType() == Payment.Type.CRA_0005) {
-			paymentsTable.setWidget(row, 1, createSpecialPay(payment, descriptionBox));
+			flexTable.setWidget(row, 3, createSpecialPay(payment, descriptionBox));
 		}else {
-			paymentsTable.setWidget(row, 1, descriptionBox);
+			flexTable.setWidget(row, 3, descriptionBox);
 		}
 		
 		TextBox expressionBox = new ExpressionBox();
@@ -3236,8 +3021,8 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		expressionBox.setText(payment.getExpression());
 		expressionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
-		paymentsTable.setWidget(row, 2, expressionBox);
-		paymentsTable.getCellFormatter().addStyleName(row, 3, AON.AON_TEXT_RIGHT);
+		flexTable.setWidget(row, 4, expressionBox);
+		flexTable.getCellFormatter().addStyleName(row, 5, AON.AON_TEXT_RIGHT);
 		contentAssistManager.addValueBox(expressionBox);
 		
 		boolean notReadOnly = !SpecialExpresion.isReadOnly(payment.getExpression());
@@ -3249,17 +3034,17 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		buttonsPanel.getElement().getStyle().setWidth(100, Unit.PCT);
 		buttonsPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 
+		Button enableDisableButton  = getEnableDisableButton(payment);
+		buttonsPanel.add(enableDisableButton);
+
 		Button deleteButton = new Button();
 		deleteButton.setStyleName(AON.AON_ICON_DELETE);
 		deleteButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		buttonsPanel.add(deleteButton);
-		
-		Button enableDisableButton  = getEnableDisableButton(payment);
-		buttonsPanel.add(enableDisableButton);
+		buttonsPanel.add(deleteButton);		
 	
-		paymentsTable.setWidget(row, 3, buttonsPanel);
-//		paymentsTable.setWidget(row, 3, deleteButton);
-		paymentsTable.getCellFormatter().addStyleName(row, 4, AON.AON_TEXT_RIGHT);
+		flexTable.setWidget(row, 5, buttonsPanel);
+//		paymentsTable.setWidget(row, 5, deleteButton);
+		flexTable.getCellFormatter().addStyleName(row, 4, AON.AON_TEXT_RIGHT);
 		formatPaymentRow(row);
 		
 		PaymentEditor paymentEditor = new PaymentEditor(payment);
@@ -3271,26 +3056,26 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		paymentEditor.setEnableDisableButton(enableDisableButton);
 
 		if (isDraftPayment(payment)) {
-			paymentsTable.getRowFormatter().addStyleName(row, AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
-			paymentsTable.getRowFormatter().addStyleName(row - 1, AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
+			flexTable.getRowFormatter().addStyleName(row, AON.AON_DATA_TABLE_ROW_HIGHLIGHT);
+			flexTable.getRowFormatter().addStyleName(row - 1, AON.AON_DATA_TABLE_ROW_HIGHLIGHT_TOP);
 		}
 		if ( isDisabled( payment )) {
-			paymentsTable.getRowFormatter().addStyleName(row, "aon-Disabled");			
+			flexTable.getRowFormatter().addStyleName(row, "aon-Disabled");			
 		} 
 
 		if (isError(payment))
-			addStyle(paymentsTable, row, style.textError());
+			addStyle(flexTable, row, style.textError());
 		else if (isWarn(payment))
-			addStyle(paymentsTable, row, style.textWarn());
+			addStyle(flexTable, row, style.textWarn());
 		else if (isRemove(payment))
-			addStyle(paymentsTable, row, style.textWarn());
+			addStyle(flexTable, row, style.textWarn());
 		
 		editButton.ensureDebugId("edit-button-" + row );
 		deleteButton.ensureDebugId("delete-button-" + row );
 		expressionBox.ensureDebugId("expression-box" + row );
 		descriptionBox.ensureDebugId("description-box" + row );
 		paymentTypeListBox.ensureDebugId("payment-type-list-box" + row );
-		ensureDebugId(paymentsTable.getRowFormatter().getElement(row), "payment-row-" + row);
+		ensureDebugId(flexTable.getRowFormatter().getElement(row), "payment-row-" + row);
 		
 		return paymentEditor;
 	}
@@ -3331,13 +3116,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				Date startDate = parseExtraDate(extra.getStartDate());
 				Date endDate = parseExtraDate(extra.getEndDate());
 				int daysBetween = DateUtils.getDaysBetween(startDate, endDate);
-				if(daysBetween > 186) {
-					this.payPeriod.setSelectedIndex(0);
-					this.payPeriodLabel.setText(this.payPeriod.getSelectedItemText());
-				}else {
-					this.payPeriod.setSelectedIndex(1);
-					this.payPeriodLabel.setText(this.payPeriod.getSelectedItemText());
-				}
 				
 				if(!agreementDraftObject.isMine()) {
 					issueValue = new Label();
@@ -3371,33 +3149,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 										String monthIssueDate = issueValue.split("/")[1];
 										Integer monthIssue = Integer.parseInt(monthIssueDate);
 										//Check type payPeriod ListBox
-										if(payPeriod.getSelectedIndex() == 0) { // ANUAL
-											if(monthIssue == 12) { //PAGA NAVIDAD
-												extra.setStartDate("01/01");
-												extra.setEndDate("31/12");
-											}
-											if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
-												extra.setStartDate("01/07 -1");
-												extra.setEndDate("30/06");
-											}
-											if(monthIssue == 3) { //PAGA BENEFICIOS
-												extra.setStartDate("01/01 -1");
-												extra.setEndDate("31/12 -1");
-											}
-										} else { // SEMESTRAL
-											if(monthIssue == 12) { //PAGA NAVIDAD
-												extra.setStartDate("01/07");
-												extra.setEndDate("31/12");
-											}
-											if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
-												extra.setStartDate("01/01");
-												extra.setEndDate("30/06");
-											}
-											if(monthIssue == 3) { //PAGA BENEFICIOS
-												extra.setStartDate("01/01 -1");
-												extra.setEndDate("31/12 -1");
-											}
-										}
 										
 										if(monthIssue != 3) {
 											payment.setMonth(Short.parseShort((monthIssue -1) + ""));
@@ -3451,34 +3202,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 								
 								String monthIssueDate = issueValue.split("/")[1];
 								Integer monthIssue = Integer.parseInt(monthIssueDate);
-								//Check type payPeriod ListBox
-								if(payPeriod.getSelectedIndex() == 0) { // ANUAL
-									if(monthIssue == 12) { //PAGA NAVIDAD
-										newExtra.setStartDate("01/01");
-										newExtra.setEndDate("31/12");
-									}
-									if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
-										newExtra.setStartDate("01/07 -1");
-										newExtra.setEndDate("30/06");
-									}
-									if(monthIssue == 3) { //PAGA BENEFICIOS
-										newExtra.setStartDate("01/01 -1");
-										newExtra.setEndDate("31/12 -1");
-									}
-								} else { // SEMESTRAL
-									if(monthIssue == 12) { //PAGA NAVIDAD
-										newExtra.setStartDate("01/07");
-										newExtra.setEndDate("31/12");
-									}
-									if(monthIssue == 7 || monthIssue == 6) { //PAGA VERANO
-										newExtra.setStartDate("01/01");
-										newExtra.setEndDate("30/06");
-									}
-									if(monthIssue == 3) { //PAGA BENEFICIOS
-										newExtra.setStartDate("01/01 -1");
-										newExtra.setEndDate("31/12 -1");
-									}
-								}
 								
 								newExtra.setDomain(payment.getDomain());
 								newExtra.setPaymentId(payment.getId());
@@ -3590,76 +3313,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		}
 	}
 
-	private ExtraEditor insertNewExtraRow(int row, SortedSet<Payment> payments) {
-		// first cell for edit other stuff buttons.
-		Button newButton = new Button();
-		newButton.setStyleName(AON.AON_ICON_RESET);
-		newButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		extrasTable.setWidget(row, 0, newButton);
-
-		DateTimeFormat yearMonthNumDayFormat = DateTimeFormat.getFormat("d/M/y");
-
-		ValueBox<Date> startDateBox = newDateBox();
-		Button startButton = new Button();
-
-		extrasTable.setWidget(row, 1, newExtraDatePanel(startDateBox, startButton));
-
-		ValueBox<Date> endDateBox = newDateBox();
-		Button endButton = new Button();
-
-		extrasTable.setWidget(row, 2, newExtraDatePanel(endDateBox, endButton));
-
-		ValueBox<Date> issueDateBox = newDateBox();
-		Button issueButton = new Button();
-		extrasTable.setWidget(row, 3, newExtraDatePanel(issueDateBox, issueButton));
-
-		ListBox paymentListBox = new ListBox();
-		for (Payment payment : payments) {
-			paymentListBox.addItem(payment.getDescription(), String.valueOf(payment.getId()));
-		}
-		paymentListBox.addStyleName(AON.AON_WIDTH_ALL);
-		extrasTable.setWidget(row, 4, paymentListBox);
-
-		extrasTable.insertCell(row, 5);
-
-		formatExtraRow(row);
-
-		ExtraEditor editor = new ExtraEditor(agreementDraftObject.newDraftExtra()){
-			void setReadOnly(boolean readOnly) {
-				if ( this.deleteButton != null )
-					this.deleteButton.setVisible(!readOnly);
-				if ( this.endDateBox != null )
-					this.endDateBox.setVisible(!readOnly);
-				if ( this.startDateBox != null )
-					this.startDateBox.setVisible(!readOnly);
-				if ( this.issueDateBox != null )
-					this.issueDateBox.setVisible(!readOnly);
-				if ( paymentListBox != null ) 
-					this.paymentListBox.setVisible(!readOnly);
-				for ( Button button: buttons )
-					button.setVisible(!readOnly);
-			}
-		};
-
-		editor.setEndDateBox(endDateBox);
-		editor.setButtonFor(endButton, endDateBox);
-		editor.setStartDateBox(startDateBox);
-		editor.setButtonFor(startButton, startDateBox);
-		editor.setIssueDateBox(issueDateBox);
-		editor.setButtonFor(issueButton, issueDateBox);
-		editor.setPaymentListBox(paymentListBox);
-
-
-		return editor;
-	}
-
-	private PaymentEditor insertNewPaymentRow(int row) {
+	private PaymentEditor insertNewPaymentRow(int row, FlexTable flexTable) {
 		// first cell for edit other stuff buttons.
 
 		Button newButton = new Button();
 		newButton.setStyleName(AON.AON_ICON_RESET);
 		newButton.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
-		paymentsTable.setWidget(row, 0, newButton);
+		flexTable.setWidget(row, 0, newButton);
 		newButton.ensureDebugId("button-new-payment");
 
 		TypeListBox<Payment.Type> paymentTypeListBox = new TypeListBox<Payment.Type>(Payment.Type.class, 10);
@@ -3671,17 +3331,18 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				paymentSuggestionDisplay);
 		descriptionSuggest.setAutoSelectEnabled(false);
 		descriptionSuggest.getElement().getStyle().setWidth(98, Unit.PCT);
-		paymentsTable.setWidget(row, 1, descriptionSuggest);
+		flexTable.setWidget(row, 1, descriptionSuggest);
+		flexTable.getFlexCellFormatter().setColSpan(row, 1, 3);
 		descriptionBox.ensureDebugId("description-box-new-payment");
 
 		TextBox expressionBox = new ExpressionBox();
 		expressionBox.setMaxLength(EXPRESSION_MAX_LENGTH);
 		expressionBox.getElement().getStyle().setWidth(98, Unit.PCT);
 		expressionBox.addStyleName(AON.AON_TEXT_RIGHT);
-		paymentsTable.setWidget(row, 2, expressionBox);
+		flexTable.setWidget(row, 2, expressionBox);
 		expressionBox.ensureDebugId("amount-box-new-payment");
 
-		paymentsTable.insertCell(row, 3);
+		flexTable.insertCell(row, 3);
 
 		formatPaymentRow(row);
 		Payment payment = agreementDraftObject.newDraftPayment();
@@ -3713,17 +3374,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	}
 
-	private void formatExtraRow(int row) {
-		extrasTable.getCellFormatter().getElement(row, 0).getStyle().setPropertyPx("borderRightWidth", 0);
-		extrasTable.getCellFormatter().getElement(row, 1).getStyle().setPropertyPx("borderLeftWidth", 0);
-		extrasTable.getCellFormatter().getElement(row, 4).getStyle().setPropertyPx("borderRightWidth", 0);
-		if (extrasTable.getCellCount(row) > 5)
-			extrasTable.getCellFormatter().getElement(row, 5).getStyle().setPropertyPx("borderLeftWidth", 0);
-
-		extrasTable.getRowFormatter().addStyleName(row,
-				row % 2 == 0 ? AON.AON_DATA_TABLE_ROW_ODD : AON.AON_DATA_TABLE_ROW_EVEN);
-	}
-
 	private void formatPaymentRow(int row) {
 		paymentsTable.getCellFormatter().getElement(row, 0).getStyle().setPropertyPx("borderRightWidth", 0);
 		paymentsTable.getCellFormatter().getElement(row, 1).getStyle().setPropertyPx("borderLeftWidth", 0);
@@ -3737,40 +3387,28 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 
 	private void initExtrasTable() {
 
-		extrasTable.setText(0, 0, "INICIO");
-		extrasTable.getFlexCellFormatter().setColSpan(0, 0, 2);
-		extrasTable.getCellFormatter().addStyleName(0, 0, AON.AON_INPUT_REQUIRED);
-		extrasTable.setText(0, 1, "FIN");
-		extrasTable.getCellFormatter().addStyleName(0, 1, AON.AON_INPUT_REQUIRED);
-		extrasTable.setText(0, 2, "COBRO");
-		extrasTable.getCellFormatter().addStyleName(0, 2, AON.AON_INPUT_REQUIRED);
-		extrasTable.setText(0, 3, "CONCEPTO");
-		extrasTable.getFlexCellFormatter().setColSpan(0, 3, 2);
-		// endDateBox.addStyleName(AON.AON_INPUT_REQUIRED);
+		extrasTable.setText(0, 0, "EXTRAS");
+		extrasTable.getFlexCellFormatter().setColSpan(0, 0, 6);
 
 		extrasTable.getRowFormatter().addStyleName(0, AON.AON_DATA_TABLE_ROW_ODD);
 		for (int i = 0; i < extrasTable.getCellCount(0); i++) {
-			extrasTable.getCellFormatter().addStyleName(0, i, AON.AON_BOLD);
-			extrasTable.getCellFormatter().addStyleName(0, i, AON.AON_TEXT_CENTER);
+		    extrasTable.getCellFormatter().addStyleName(0, i, AON.AON_BOLD);
+		    extrasTable.getCellFormatter().addStyleName(0, i, AON.AON_TEXT_CENTER);
 		}
-
-		extrasTable.getColumnFormatter().setWidth(0, "2%");
-		extrasTable.getColumnFormatter().setWidth(1, "5%"); // INICIO
-		extrasTable.getColumnFormatter().setWidth(2, "5%"); // FIN
-		extrasTable.getColumnFormatter().setWidth(3, "5%"); // COBRO
-		// 4 ...
-		extrasTable.getColumnFormatter().setWidth(5, "2%");
+		
+		extrasTable.getColumnFormatter().setWidth(0, "2%");	// RESET
+		//1.. 													
+		extrasTable.getColumnFormatter().setWidth(3, "45%"); 	// DESCRIPTION
+		extrasTable.getColumnFormatter().setWidth(4, "30%"); 	// EXPRESSION
+		extrasTable.getColumnFormatter().setWidth(5, "2%");	// DELETE
 
 	}
 
 	private void initPaymentsTable() {
 
-		paymentsTable.setText(0, 0, "CONCEPTO");
-		paymentsTable.getFlexCellFormatter().setColSpan(0, 0, 2);
+		paymentsTable.setText(0, 0, "CONCEPTOS");
+		paymentsTable.getFlexCellFormatter().setColSpan(0, 0, 6);
 		
-		paymentsTable.setText(0, 1, "DEVENGO");
-		paymentsTable.getFlexCellFormatter().setColSpan(0, 1, 2);
-
 		paymentsTable.getRowFormatter().addStyleName(0, AON.AON_DATA_TABLE_ROW_ODD);
 		for (int i = 0; i < paymentsTable.getCellCount(0); i++) {
 			paymentsTable.getCellFormatter().addStyleName(0, i, AON.AON_BOLD);
@@ -3778,9 +3416,10 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		}
 		
 		paymentsTable.getColumnFormatter().setWidth(0, "2%");	// RESET
-		//1.. 													// CONCEPTO
-		paymentsTable.getColumnFormatter().setWidth(2, "38%"); 	// DEVENGO
-		paymentsTable.getColumnFormatter().setWidth(3, "2%");	// DELETE
+		//1..
+		paymentsTable.getColumnFormatter().setWidth(3, "45%"); 	// DESCRIPTION
+		paymentsTable.getColumnFormatter().setWidth(4, "30%"); 	// DESCRIPTION
+		paymentsTable.getColumnFormatter().setWidth(5, "2%");	// DELETE
 
 	}
 
@@ -4505,13 +4144,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 				continue;
 			String description = level.getDescription();
 			StringBuffer buffer = new StringBuffer();
-			if (!StringUtils.isBlank(description))
+			if (AonStringUtils.isNotBlank(description))
 				buffer.append(description);
 
 			Set<String> categories = agreementDraftObject.getCategories(level);
 			if (categories != null) {
 				for (String category : categories) {
-					if (!StringUtils.isBlank(category)) {
+					if (AonStringUtils.isNotBlank(category)) {
 						buffer.append(" " + category);
 						break;
 					}
@@ -4824,7 +4463,7 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 	}
 
 	private static <T extends Item<?>> boolean isRemove(T item) {
-		return StringUtils.equalsIgnoreCase("REMOVE()", item.getExpression());
+		return AonStringUtils.equalsIgnoreCase("REMOVE()", item.getExpression());
 	}
 
 	private static void addStyle(FlexTable table, int row, String style) {
@@ -5073,12 +4712,6 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		AonMessagePanel.showSuccess(messageContainer, successMap);
 	}
 	
-	private void showInfo(String title, String message) {
-		Map<String, String> infoMap = new HashMap<>();
-		infoMap.put(title, message);
-		AonMessagePanel.showInfo(messageContainer, infoMap);
-	}
-	
 	private void showError(String title, String message) {
 		Map<String, String> errorMap = new HashMap<>();
 		errorMap.put(title, message);
@@ -5089,8 +4722,13 @@ public class AgreementDraft extends ResizeComposite implements CalculateCallback
 		AonMessagePanel.showLoading(messageContainer, message);
 	}
 	
-	private void hideMessage() {
-		AonMessagePanel.hideMessage(messageContainer);
+	private static boolean isNotExtra(Payment payment) {
+	    return !isExtra(payment);
+	}
+
+	private static boolean isExtra(Payment payment) {
+	    return Payment.Type.CRA_0004 == payment.getType()
+		    || Payment.Type.CRA_0005 == payment.getType();
 	}
 	
 }
