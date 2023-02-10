@@ -197,7 +197,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 			validating = true;
 			if (getCallback().getModel().isSent()) {
 				getCallback().showError("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");	
-			} else if (!getCallback().getModel().canBeSent()) {
+			} else if (!getCallback().getModel().canBeValidated()) {
 				getCallback().showError(AON.MSG.mustFinishModel());	
 			} else {
 				validateAEAT(new AEATParams()
@@ -539,7 +539,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		   ((getCallback().getModel().getYear() > 2021)  
 		   || (getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester())
 		   || (getCallback().getModel().getModel() == FiscalModelType.M202 && getCallback().getModel().getPeriod() == Period.T2))) {
-			validateLink.setVisible( getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
+			validateLink.setVisible( getCallback().getModel().canBeValidated() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
 			sendLink.setVisible( getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getSendAction() ));
 			checkLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckAction() ));
 			viewDocumentLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckDataResponseDataAction() ));
