@@ -319,7 +319,9 @@ public enum ContextVariable implements IResourceable {
 
 	// Percentages
 	CGC_EMPLOYEE_PERCENT("PORCENTAJE_CGC", VariableType.DOUBLE,false), 
+	MEI_EMPLOYEE_PERCENT("PORCENTAJE_MEI", VariableType.DOUBLE,false), 
 	CGC_ENTERPRISE_PERCENT("PORCENTAJE_CGC_E", VariableType.DOUBLE,false),
+	MEI_ENTERPRISE_PERCENT("PORCENTAJE_MEI_E", VariableType.DOUBLE,false),
 	IT_ENTERPRISE_PERCENT("TARIFA_IT", VariableType.DOUBLE,false), 
 	IMS_ENTERPRISE_PERCENT("TARIFA_IMS", VariableType.DOUBLE,false),
 	FP_EMPLOYEE_PERCENT("PORCENTAJE_FP", VariableType.DOUBLE,false), 

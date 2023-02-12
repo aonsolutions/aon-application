@@ -95,7 +95,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertNotElement("job_training");
 		assertValue("cgcBaseLabel", "1.166,70");
 		assertValue("cgpBaseLabel", "1.166,70");
-		assertText("totalDeductionLabel", "39,51");
+		assertText("totalDeductionLabel", "40,68");
 		
 //		getElementById("costsCheck-input").click();
 		wait4Id("common_contingency_cost");

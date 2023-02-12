@@ -28,7 +28,7 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
-import com.esferalia.aon.occam.impl.jooq.dao.VATDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.OLDVATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.ComplementaryBeahaviour;
@@ -135,7 +135,7 @@ public class Mod390HFDAO extends FiscalModelDAO {
 			if (mod.hasProrate() || mod.hasPreviousProrate()) {
 				Date fromDate = AonDateUtils.getYearFirstDay(mod.getYear());
 				Date toDate = AonDateUtils.getYearLastDay(mod.getYear());
-				VATDAO.getVatBreakdown(ctx,fromDate,toDate,mod)
+				OLDVATDAO.getVatBreakdown(ctx,fromDate,toDate,mod)
 				.filter( VatContext::isSales )
 				.forEach( vat -> {
 					if (!vat.isVatSurchargeRegime() && vat.getVatRegime() != VATRegime.EXEMPT) {

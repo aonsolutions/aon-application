@@ -4,17 +4,22 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.NoteJSON;
 import com.esferalia.aon.occam.api.model.aonsolutions.Note;
+
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
+import net.aonsolutions.aon.api.ewok.IConstants;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "AonNoteServlet", urlPatterns = {"/ms/api/note/*"})
@@ -25,7 +30,8 @@ public class NoteServlet extends AonApiHttpServlet{
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
-		LOGGER.info("AON API NOTE SERVLET - GET METHOD");
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI()
+			+ " - " + req.getHeader(IConstants.DOMAIN_NAME));
 		try {
 			AonApiData api = initialize(req);
 			switch (api.getPath()) {
@@ -48,7 +54,8 @@ public class NoteServlet extends AonApiHttpServlet{
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp){
-		LOGGER.info("AON API NOTE SERVLET - POST METHOD");
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI()
+			+ " - " + req.getHeader(IConstants.DOMAIN_NAME));
 		try {
 			AonApiData api = initialize(req);
 			switch (api.getPath()) {
@@ -65,7 +72,8 @@ public class NoteServlet extends AonApiHttpServlet{
 	
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp){
-		LOGGER.info("AON API NOTE SERVLET - DELETE METHOD");
+		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI() 
+			+ " - " + req.getHeader(IConstants.DOMAIN_NAME));
 		try {
 			AonApiData api = initialize(req);
 			switch (api.getPath()) {

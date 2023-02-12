@@ -247,8 +247,8 @@ public class VatReportFilterPanel extends ScrollPanel implements HasValueChangeH
 		serviceBox.setSelectedIndex(0);
 		surchargeBox.setSelectedIndex(0);
 		rectificationTypeBox.setSelectedIndex(0);
-		percentBox.setValue(null);
-		surchargePercentBox.setValue(null);
+		percentBox.setValue(null, false);
+		surchargePercentBox.setValue(null, false);
 	}
 	
 	private void fillDates() {

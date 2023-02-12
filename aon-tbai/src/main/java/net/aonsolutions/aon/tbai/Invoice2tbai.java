@@ -239,8 +239,13 @@ public class Invoice2tbai {
 			} else {
 				IDOtro other = new IDOtro();
 				other.setCodigoPais(CountryType2.valueOf(invoice.getRegistryDocumentCountry().getIso2()));
-				other.setIDType(IDType.OTRO.getName());
-				other.setID(invoice.getRegistryDocument().replace(" ", ""));
+				other.setIDType(invoice.isIntracommunity() 
+						? IDType.NIF_IVA.getName()
+						: IDType.OTRO.getName());
+				String doc = invoice.getRegistryDocument().replace(" ", "");
+				if(invoice.isIntracommunity())
+					doc = invoice.getRegistryDocumentCountry().getIso2() + doc;
+				other.setID(doc);
 				receiver.setIDOtro(other);
 			}
 			
