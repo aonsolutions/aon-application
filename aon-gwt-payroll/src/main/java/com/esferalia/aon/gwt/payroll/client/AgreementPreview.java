@@ -42,7 +42,6 @@ import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.MatchResult;
@@ -240,6 +239,11 @@ public abstract class AgreementPreview extends Composite {
 		String headerDeleteFixed();
 		String deleteFixed();
 		String elipsis();
+		String elipsisConceptWidth();
+		String elipsisOpenCollapseWidth();
+		String elipsisCloseCollapseWidth();
+		String elipsisOpenCollapseExtraWidth();
+		String elipsisCloseCollapseExtraWidth();
 		String zIndex1();
 	}
 	
@@ -364,7 +368,7 @@ public abstract class AgreementPreview extends Composite {
 	private boolean workplaceView = false;
 	private boolean employeeView = false;
 	private boolean showOldPayments = false;
-	private boolean isOpenCollapse = false;
+	private boolean isOpenCollapse = true;
 	private boolean readOnly = false;
 	
 	private int disclouroseHeight = 0;
@@ -750,8 +754,8 @@ public abstract class AgreementPreview extends Composite {
 					String value = event.getValue();
 					
 					try {
-						double expressionValue = evalExpression(expression);
-						value = expressionValue + "";
+						Double expressionValue = evalExpression(expression);
+						value = null == expressionValue ? "" : expressionValue + "";
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
@@ -1171,16 +1175,19 @@ public abstract class AgreementPreview extends Composite {
 			Widget conceptCell = new Label(AonStringUtils.isBlank(payment.getName()) ? "" : payment.getName());
 			conceptCell.setTitle(AonStringUtils.isBlank(payment.getName()) ? "" : payment.getName());
 			conceptCell.addStyleName(style.elipsis());
+			conceptCell.addStyleName(style.elipsisConceptWidth());
 			checkRowAndModify(paymentGrid, row, payment, conceptCell);
 			
 			Widget descriptionCell = new Label(AonStringUtils.isBlank(payment.getDescription()) ? "" : payment.getDescription());
 			descriptionCell.setTitle(AonStringUtils.isBlank(payment.getDescription()) ? "" : payment.getDescription());
 			descriptionCell.addStyleName(style.elipsis());
+			descriptionCell.addStyleName(isOpenCollapse ? style.elipsisOpenCollapseWidth() :  style.elipsisCloseCollapseWidth());
 			checkRowAndModify(paymentGrid, row, payment, descriptionCell);
 			
 			Widget expressionCell = new Label(AonStringUtils.isBlank(payment.getExpression()) ? "" : getParsedExpression(payment.getExpression()));
 			expressionCell.setTitle(AonStringUtils.isBlank(payment.getExpression()) ? "" : getParsedExpression(payment.getExpression()));
 			expressionCell.addStyleName(style.elipsis());
+			expressionCell.addStyleName(isOpenCollapse ? style.elipsisOpenCollapseWidth() :  style.elipsisCloseCollapseWidth());
 			checkRowAndModify(paymentGrid, row, payment, expressionCell);
 			
 			Widget infoCell = new Label();
@@ -1366,16 +1373,19 @@ public abstract class AgreementPreview extends Composite {
 			Widget conceptCell = new Label(AonStringUtils.isBlank(payment.getName()) ? "" : payment.getName());
 			conceptCell.setTitle(AonStringUtils.isBlank(payment.getName()) ? "" : payment.getName());
 			conceptCell.addStyleName(style.elipsis());
+			conceptCell.addStyleName(style.elipsisConceptWidth());
 			checkRowAndModify(extraGrid, row, payment, conceptCell);
 			
 			Widget descriptionCell = new Label(AonStringUtils.isBlank(payment.getDescription()) ? "" : payment.getDescription());
 			descriptionCell.setTitle(AonStringUtils.isBlank(payment.getDescription()) ? "" : payment.getDescription());
 			descriptionCell.addStyleName(style.elipsis());
+			descriptionCell.addStyleName(isOpenCollapse ? style.elipsisOpenCollapseExtraWidth() :  style.elipsisCloseCollapseExtraWidth());
 			checkRowAndModify(extraGrid, row, payment, descriptionCell);
 			
 			Widget expressionCell = new Label(AonStringUtils.isBlank(payment.getExpression()) ? "" : getParsedExpression(payment.getExpression()));
 			expressionCell.setTitle(AonStringUtils.isBlank(payment.getExpression()) ? "" : getParsedExpression(payment.getExpression()));
 			expressionCell.addStyleName(style.elipsis());
+			expressionCell.addStyleName(isOpenCollapse ? style.elipsisOpenCollapseExtraWidth() :  style.elipsisCloseCollapseExtraWidth());
 			checkRowAndModify(extraGrid, row, payment, expressionCell);
 			
 			Widget periodicityCell = new Label();
@@ -1913,6 +1923,9 @@ public abstract class AgreementPreview extends Composite {
 	
 	public void setIsOpenCollapse(boolean isCollapse) {
 		this.isOpenCollapse = isCollapse;
+		// For resize widget paint again
+		createPaymentTable();
+		createExtraTable();
 	}
 
 	private void createDiscPanelButtons() {
@@ -2131,7 +2144,6 @@ public abstract class AgreementPreview extends Composite {
 		
 		undoAllButton = new AonToolbarButton(AON.MSG.undo(), AON.CSS.aonIconUndoAll());
 		undoAllButton.ensureDebugId("undoAllButton");
-		setHasChange(false);
 		undoAllButton.addClickHandler(e -> {
 			AonDialog deleteDialog = new AonDialog("Restaurar convenio", new HTMLPanel("\u00bfDesea realmente deshacer los cambios sin guardar del convenio <b>" + toolbar.getTitle() + "</b>\u003f"));
 			deleteDialog.setGlassStyleName(style.dialogGlass());
@@ -2235,7 +2247,6 @@ public abstract class AgreementPreview extends Composite {
 		);
 		toolbar.add(serviAgreementUpdateButton);
 		
-		
 		printPreviewButton = new AonToolbarButton(AON.MSG.draftPrint(), AON.CSS.aonIconPdf() );
 		printPreviewButton.ensureDebugId("printPreviewButton");
 		printPreviewButton.addClickHandler(e -> {
@@ -2314,6 +2325,7 @@ public abstract class AgreementPreview extends Composite {
 		showOlPaymentsButton.setVisible(false);
 		
 		serviAgreementUpdateButton.setVisible(false);
+		agreementInfoButton.setVisible(false);
 	}
 	
 	// ------------------------------------------ abstractMethod
@@ -2487,7 +2499,7 @@ public abstract class AgreementPreview extends Composite {
 	
 	public void setSelectedLevel(Integer levelId, String toolbarTitle) {
 		blockElements();
-		hideToolbarButtons();
+//		hideToolbarButtons();
 		hideLevelDiscPanel();
 		employeeView = true;
 		setReadOnly(true);
@@ -2495,8 +2507,7 @@ public abstract class AgreementPreview extends Composite {
 		toolbar.setTitle(toolbarTitle);
 		calcDiscPanelHeightsEmployee();
 		createAgreementGoToBtn();
-		saveBtn.setVisible(false);
-		undoAllButton.setVisible(false);
+		checkDeleteAgreement();
 	}
 
 	private void filterLevel(Integer levelId) {
@@ -2506,15 +2517,14 @@ public abstract class AgreementPreview extends Composite {
 
 	public void payrollPreview() {
 		blockElements();
-		hideToolbarButtons();
+//		hideToolbarButtons();
 		hideLevelDiscPanel();
 		workplaceView = true;
 		setReadOnly(true);
 		setAgreementPreview(agreement);
 		calcDiscPanelHeightsPayroll();
 		createAgreementGoToBtn();
-		saveBtn.setVisible(false);
-		undoAllButton.setVisible(false);
+		checkDeleteAgreement();
 	}
 	
 	private void blockElements() {
@@ -2524,13 +2534,13 @@ public abstract class AgreementPreview extends Composite {
 		ssNumber.getElement().getStyle().setBackgroundColor("transparent");
 	}
 	
-	private void hideToolbarButtons() {
-		saveBtn.addStyleName(style.displayNone());
-		undoAllButton.addStyleName(style.displayNone());
-		serviAgreementUpdateButton.addStyleName(style.displayNone());
-		printPreviewButton.addStyleName(style.displayNone());
-		agreementInfoButton.addStyleName(style.displayNone());
-	}
+//	private void hideToolbarButtons() {
+//		saveBtn.addStyleName(style.displayNone());
+//		undoAllButton.addStyleName(style.displayNone());
+//		serviAgreementUpdateButton.addStyleName(style.displayNone());
+//		printPreviewButton.addStyleName(style.displayNone());
+//		agreementInfoButton.addStyleName(style.displayNone());
+//	}
 	
 	private void hideLevelDiscPanel() {
 		levelDiscPanel.getElement().getStyle().setDisplay(Display.NONE);
@@ -2645,14 +2655,12 @@ public abstract class AgreementPreview extends Composite {
 
 	public void setHasChange(boolean hasChange) {
 		this.hasChange = hasChange;
+		if(hasChange()) {
+			saveBtn.getElement().getStyle().clearDisplay();
+			undoAllButton.getElement().getStyle().clearDisplay();
+		}
 		saveBtn.setEnabled(hasChange());
 		undoAllButton.setEnabled(hasChange());
-		if(!hasChange()) {
-			saveBtn.getElement().getStyle().setDisplay(Display.BLOCK);
-			saveBtn.getElement().getStyle().setVisibility(Visibility.VISIBLE);
-			undoAllButton.getElement().getStyle().setDisplay(Display.BLOCK);
-			undoAllButton.getElement().getStyle().setVisibility(Visibility.VISIBLE);
-		}
 	}
 	
 	// ------------------------------------------ Abstract methods
@@ -2686,13 +2694,18 @@ public abstract class AgreementPreview extends Composite {
 	private void hideMessage() {
 		AonMessagePanel.hideMessage(messagePanel);
 	}
+	
+	private void checkDeleteAgreement() {
+		if(agreement.getId() != null && agreement.getId() < 0)
+			showError("Convenio eliminado", "Cuidado, el convenio que est\u00e1 visializando se encuentra en la papelera.");
+		else
+			hideMessage();
+	}
 
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 		if(readOnly) {
 			showReadOnlyButtons();
-			saveBtn.setVisible(false);
-			undoAllButton.setVisible(false);
 			datesLB.setVisible(true);
 		}
 	}
