@@ -173,39 +173,12 @@ public class VisibilityManager extends BasicVisibilityManager {
 			    if (! ArrayUtils.contains(AON_ONE_MODULES, iterator.next()) ) {
 			        iterator.remove();
 			    }
-			}						
+			}
 			addConfiguration = userOfParentDomain;
 		} else if ( domainModules.contains(Module.AON_FINANCE) ) {
 			addConfiguration = userOfParentDomain;
 		}
 
-		enabledModules.addAll( domainModules );
-		enabledModules.remove(Module.PAYROLL_PORTAL);
-		enabledModules.remove(Module.CONTRATA);
-		enabledModules.remove(Module.DOCUMENT_PORTAL);		
-		if ( ds.getType() == DomainType.ACADEMY ) {
-			enabledModules.add(Module.ACADEMY);
-		}
-		if ( ds.getType() == DomainType.GARAGE ) {
-			enabledModules.add(Module.GARAGE);
-		}
-		if ( ds.getType() == DomainType.HOTEL ) {
-			enabledModules.add(Module.HOTEL);
-		}
-		if ( ds.getType() == DomainType.COMMERCE ) {
-			enabledModules.add(Module.POS);
-		}
-		if ( addExtraModules) {
-			enabledModules.add(Module.CRM);
-			enabledModules.add(Module.MANAGEMENT);
-			enabledModules.add(Module.WAREHOUSE);
-			enabledModules.add(Module.GROUPWARE);
-			enabledModules.add(Module.POS);
-			if ( parentDomainModules.contains(Module.PAYROLL_PORTAL) ) {
-				enabledModules.add(Module.PAYROLL_PORTAL);
-				enabledModules.add(Module.DOCUMENT);
-			}
-		}
 		if ( addConfiguration ) {
 			enabledModules.add(Module.CONFIGURATION);
 		}
@@ -221,13 +194,28 @@ public class VisibilityManager extends BasicVisibilityManager {
 			enabledModules.remove(Module.FINANCE_PORTAL);
 		}
 		
-		if(dur.isMarketing()) {
-			enabledModules.add(Module.MARKETING);
+		if ( ds.getType() == DomainType.ACADEMY ) {
+			enabledModules.add(Module.ACADEMY);
+		}
+		if ( ds.getType() == DomainType.GARAGE ) {
+			enabledModules.add(Module.GARAGE);
+		}
+		if ( ds.getType() == DomainType.HOTEL ) {
+			enabledModules.add(Module.HOTEL);
+		}
+		if ( ds.getType() == DomainType.COMMERCE ) {
+			enabledModules.add(Module.POS);
 		}
 		
-		if(dur.isTreasury()) {
-			enabledModules.add(Module.TREASURY);
-		}
+		if(dur.isAccounting()) enabledModules.add(Module.ACCOUNTING);
+		if(dur.isFiscal()) enabledModules.add(Module.FISCAL);
+		if(dur.isPayroll()) enabledModules.add(Module.PAYROLL);
+		if(dur.isGroupware()) enabledModules.add(Module.GROUPWARE);
+		if(dur.isInvoice()) enabledModules.add(Module.MANAGEMENT);
+		if(dur.isWarehouse()) enabledModules.add(Module.WAREHOUSE);
+		if(dur.isMarketing()) enabledModules.add(Module.MARKETING);
+		if(dur.isTreasury()) enabledModules.add(Module.TREASURY);
+		if(dur.isCommercial()) enabledModules.add(Module.CRM);
 		
 		if (ds.isEnabledGoToParent() && ds.isConsultancyDomain() && DomainType.OFFICE != ds.getType()) {
 			enabledModules.remove(Module.CRM);
