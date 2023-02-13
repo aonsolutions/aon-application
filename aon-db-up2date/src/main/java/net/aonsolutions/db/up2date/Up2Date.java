@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.finance.FinanceTrackingAmountFix;
 import net.aonsolutions.db.up2date.finance.InvoiceFiscalAddExpDate;
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod184Detail2022;
 import net.aonsolutions.db.up2date.payroll.BiEmbargarInsert;
@@ -320,6 +321,7 @@ public class Up2Date {
 	    	MEIPECUpdateUndo.MEIPECUPDATEUNDO,
 	    	MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
 	    	
+	    	FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
 	    	
     		//Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
