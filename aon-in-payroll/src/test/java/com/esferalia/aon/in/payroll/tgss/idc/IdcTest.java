@@ -509,6 +509,11 @@ public class IdcTest extends AbstractSQLTestCase {
 					assertEquals(ims, 0.70, 0.00);
 					assertEquals(unemployment, 7.05, 0.00);
 				}
+				
+				@Override
+				public void onContractOcupation(String ocupation) {
+					assertEquals("OCUPACION", "A", ocupation);
+				}
 
 			});
 		}
@@ -1357,8 +1362,8 @@ public class IdcTest extends AbstractSQLTestCase {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "100");
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "08");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_RATE), 1.70);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_RATE), 1.30);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT), 1.70);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 1.30);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
 		}
@@ -1370,10 +1375,12 @@ public class IdcTest extends AbstractSQLTestCase {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "189");
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "10");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_RATE), 1.70);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_RATE), 1.30);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT), 1.70);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 1.30);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
+			org.junit.Assert.assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
+			
 		}
 	}
 
@@ -1394,10 +1401,11 @@ public class IdcTest extends AbstractSQLTestCase {
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "289");
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "07");
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.PARTIAL_FACTOR), 0.750);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_RATE), 1.70);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_RATE), 1.30);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT), 1.70);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 1.30);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
+			org.junit.Assert.assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
 		}
 	}
 
@@ -1407,10 +1415,11 @@ public class IdcTest extends AbstractSQLTestCase {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "100");
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "02");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_RATE), 0.80);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_RATE), 0.70);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT), 0.80);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 0.70);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.OCCUPATION), "a");
 		}
 	}
 
@@ -1420,12 +1429,24 @@ public class IdcTest extends AbstractSQLTestCase {
 			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.TC2), "189");
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.QUOTE_GROUP), "09");
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_RATE), 3.35);
-			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_RATE), 3.35);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IT_PERCENT), 3.35);
+			org.junit.Assert.assertEquals(contractData.get(ContextVariable.IMS_PERCENT), 3.35);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT), 1.55);
 			org.junit.Assert.assertEquals(contractData.get(ContextVariable.UNEMPLOY_ENTERPRISE_PERCENT), 5.50);
+			org.junit.Assert.assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
 		}
 	}
+
+	@Test
+	public void testIdcIXContractData() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SalaryException, SQLException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcIX.pdf")) {
+			Map<ContextVariable, Object> contractData = Idc.getContractData(is);
+			org.junit.Assert.assertFalse(contractData.containsKey(ContextVariable.OCCUPATION));
+		}
+	}
+
 
 	@Test
 	public void testIdcplcccTrabajadoresTramosII()
@@ -3580,12 +3601,12 @@ public class IdcTest extends AbstractSQLTestCase {
 			Assert.assertEquals(idcDate, quoteGroupData.getStartDate());
 			Assert.assertEquals("\"10\"", quoteGroupData.getExpression());
 
-			ContractData itData = contractDatas.get(ContextVariable.IT_RATE.getName());
+			ContractData itData = contractDatas.get(ContextVariable.IT_PERCENT.getName());
 			Assert.assertNull(itData.getEndDate());
 			Assert.assertEquals(idcDate, itData.getStartDate());
 			Assert.assertEquals(1.70, Double.parseDouble(itData.getExpression()), 0.00);
 
-			ContractData imsData = contractDatas.get(ContextVariable.IMS_RATE.getName());
+			ContractData imsData = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
 			Assert.assertNull(imsData.getEndDate());
 			Assert.assertEquals(idcDate, imsData.getStartDate());
 			Assert.assertEquals(1.30, Double.parseDouble(imsData.getExpression()), 0.00);
@@ -3645,12 +3666,12 @@ public class IdcTest extends AbstractSQLTestCase {
 			Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
 			Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
 
-			ContractData itData = contractDatas.get(ContextVariable.IT_RATE.getName());
+			ContractData itData = contractDatas.get(ContextVariable.IT_PERCENT.getName());
 			Assert.assertEquals(idcEndDate, itData.getEndDate());
 			Assert.assertEquals(idcStartDate, itData.getStartDate());
 			Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
 
-			ContractData imsData = contractDatas.get(ContextVariable.IMS_RATE.getName());
+			ContractData imsData = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
 			Assert.assertEquals(idcEndDate, imsData.getEndDate());
 			Assert.assertEquals(idcStartDate, imsData.getStartDate());
 			Assert.assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
@@ -3696,14 +3717,14 @@ public class IdcTest extends AbstractSQLTestCase {
 			Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
 			Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
 
-			List<ContractData> itDatas = contractDatas.get(ContextVariable.IT_RATE.getName());
+			List<ContractData> itDatas = contractDatas.get(ContextVariable.IT_PERCENT.getName());
 			Collections.sort(itDatas, (d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 			ContractData itData = itDatas.get(0);
 			Assert.assertNull(itData.getEndDate());
 			Assert.assertEquals(idcStartDate, itData.getStartDate());
 			Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
 
-			List<ContractData> imsDatas = contractDatas.get(ContextVariable.IMS_RATE.getName());
+			List<ContractData> imsDatas = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
 			Collections.sort(imsDatas, (d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 			ContractData imsData = imsDatas.get(0);
 			Assert.assertNull(imsData.getEndDate());
@@ -3746,8 +3767,8 @@ public class IdcTest extends AbstractSQLTestCase {
 		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.TC2, "\"189\"");
 		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.QUOTE_GROUP,
 				"\"05\"");
-		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.IT_RATE, "5.00");
-		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.IMS_RATE,
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.IT_PERCENT, "5.00");
+		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(), ContextVariable.IMS_PERCENT,
 				"15.00");
 		addData(aonContext, contract, contract.getStartDate(), contract.getEndDate(),
 				ContextVariable.UNEMPLOY_EMPLOYEE_PERCENT, "25.00");
@@ -3780,12 +3801,12 @@ public class IdcTest extends AbstractSQLTestCase {
 				Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
 				Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
 
-				ContractData itData = contractDatas.get(ContextVariable.IT_RATE.getName());
+				ContractData itData = contractDatas.get(ContextVariable.IT_PERCENT.getName());
 				Assert.assertEquals(idcEndDate, itData.getEndDate());
 				Assert.assertEquals(idcStartDate, itData.getStartDate());
 				Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
 
-				ContractData imsData = contractDatas.get(ContextVariable.IMS_RATE.getName());
+				ContractData imsData = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
 				Assert.assertEquals(idcEndDate, imsData.getEndDate());
 				Assert.assertEquals(idcStartDate, imsData.getStartDate());
 				Assert.assertEquals(0.70, Double.parseDouble(imsData.getExpression()), 0.00);
@@ -3832,14 +3853,14 @@ public class IdcTest extends AbstractSQLTestCase {
 					Assert.assertEquals(idcStartDate, quoteGroupData.getStartDate());
 					Assert.assertEquals("\"01\"", quoteGroupData.getExpression());
 
-					List<ContractData> itDatas = contractDatas.get(ContextVariable.IT_RATE.getName());
+					List<ContractData> itDatas = contractDatas.get(ContextVariable.IT_PERCENT.getName());
 					Collections.sort(itDatas, (d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 					ContractData itData = itDatas.get(0);
 					Assert.assertNull(itData.getEndDate());
 					Assert.assertEquals(idcStartDate, itData.getStartDate());
 					Assert.assertEquals(0.80, Double.parseDouble(itData.getExpression()), 0.00);
 
-					List<ContractData> imsDatas = contractDatas.get(ContextVariable.IMS_RATE.getName());
+					List<ContractData> imsDatas = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
 					Collections.sort(imsDatas, (d1, d2) -> d2.getStartDate().compareTo(d1.getStartDate()));
 					ContractData imsData = imsDatas.get(0);
 					Assert.assertNull(imsData.getEndDate());
@@ -3917,10 +3938,10 @@ public class IdcTest extends AbstractSQLTestCase {
 			ContractData partialFactorData = contractDatas.get(ContextVariable.PARTIAL_FACTOR.getName());
 			Assert.assertNull(partialFactorData);
 
-			ContractData itData = contractDatas.get(ContextVariable.IT_RATE.getName());
+			ContractData itData = contractDatas.get(ContextVariable.IT_PERCENT.getName());
 			Assert.assertNull(itData);
 
-			ContractData imsData = contractDatas.get(ContextVariable.IMS_RATE.getName());
+			ContractData imsData = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
 			Assert.assertNull(imsData);
 
 		} finally {
@@ -3969,10 +3990,10 @@ public class IdcTest extends AbstractSQLTestCase {
 			ContractData partialFactorData = contractDatas.get(ContextVariable.PARTIAL_FACTOR.getName());
 			Assert.assertNull(partialFactorData);
 
-			ContractData itData = contractDatas.get(ContextVariable.IT_RATE.getName());
+			ContractData itData = contractDatas.get(ContextVariable.IT_PERCENT.getName());
 			Assert.assertNull(itData);
 
-			ContractData imsData = contractDatas.get(ContextVariable.IMS_RATE.getName());
+			ContractData imsData = contractDatas.get(ContextVariable.IMS_PERCENT.getName());
 			Assert.assertNull(imsData);
 
 			Deduction[] deductions = PAYROLL.getDeductions(domainName, contract.getDomain(), "login", contract.getId());
