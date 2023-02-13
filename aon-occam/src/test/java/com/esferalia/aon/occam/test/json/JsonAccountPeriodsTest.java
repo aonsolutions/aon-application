@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Asserts;
 import com.esferalia.aon.occam.test.Repeat;
+import com.esferalia.aon.occam.test.faker.AccountingFaker;
 import com.esferalia.aon.occam.test.faker.AonFaker;
 
 public class JsonAccountPeriodsTest extends AbstractOccamTest{
@@ -17,7 +18,7 @@ public class JsonAccountPeriodsTest extends AbstractOccamTest{
 	@Test
 	@Repeat ( 100 )
 	public void test() {
-		Collection<AccountPeriod> expected = AonFaker.getAccountPeriods(ctx);
+		Collection<AccountPeriod> expected = AccountingFaker.getAccountPeriods(ctx);
 		JSONArray json = AccountPeriodsJSON.toJSON(expected);
 		Collection<AccountPeriod> actual = AccountPeriodsJSON.fromJSON(json);
 

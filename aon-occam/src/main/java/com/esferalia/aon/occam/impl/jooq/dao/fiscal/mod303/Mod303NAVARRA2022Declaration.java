@@ -1,5 +1,18 @@
 package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303;
 
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.DEC2;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.blockCenter;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.bold;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.border;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.fontLarger;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.marginTop;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.noWrap;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.paddingLeft;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.styledTag;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.textCenter;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.textRight;
+import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.width150;
+
 import java.text.MessageFormat;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -33,7 +46,7 @@ class Mod303NAVARRA2022Declaration extends Mod303NAVARRA {
 	public static final double SURCHARGE_PERCENT4 = 0.5;
 	
 	public static boolean accept(Mod303 mod) {
-		return mod.isNavarra() && mod.getYear() > 2021;
+		return mod.isNavarra() && mod.getYear() == 2022;
 	}
 	
 	private static final Mod303Key[] PRORATE_KEYS = new Mod303Key[]{

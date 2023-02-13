@@ -204,10 +204,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 		try {
 			showFtpServerConnectionData = false;
 			SeresFtpConnectionProvider.checkLogin(server, port, user, password);
-		} catch (FtpLoginException e) {
-			showFtpServerConnectionData = true;
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (FtpException e) {
+		} catch (Exception e) {
 			showFtpServerConnectionData = true;
 			AonUtil.addErrorMessage(e.getMessage());
 		}
@@ -249,10 +246,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 		try {
 			remoteDirectoryList = SeresFtpConnectionProvider.retrieveDirectoryList(null,
 					server, port, user, password);
-		} catch (FtpLoginException e) {
-			LOGGER.error(e.getMessage());
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (FtpException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 			AonUtil.addErrorMessage(e.getMessage());
 		}
@@ -285,13 +279,10 @@ public class FtpSalesDownloadHandler implements Serializable {
 					unreadSalesList.add(obtainStrippedItem(reader, connectHandler, ftpFile));
 				});
 			}
-		} catch (FtpLoginException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 			AonUtil.addErrorMessage(e.getMessage());
-		} catch (FtpException e) {
-			LOGGER.error(e.getMessage());
-			AonUtil.addErrorMessage(e.getMessage());
-		}
+		} 
 		if(unreadSalesList!=null) {
 			unreadSalesList.sort(new Comparator<FtpFileItem>() {
 				@Override
@@ -361,10 +352,7 @@ public class FtpSalesDownloadHandler implements Serializable {
 		try {
 			return SeresFtpConnectionProvider.retrieveFile(remotePath,
 					name, server, port, user, password);
-		} catch (FtpLoginException e) {
-			LOGGER.error(e.getMessage());
-			getLogPanel().error(e.getMessage());
-		} catch (FtpException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 			getLogPanel().error(e.getMessage());
 		}

@@ -39,7 +39,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303MVELContext;
-import com.esferalia.aon.occam.impl.jooq.dao.VATDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.OLDVATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
@@ -63,7 +63,7 @@ public class Mod303DAO extends FiscalModelDAO {
 		ctx.checkRead();
 		Mod303 mod303 = FiscalModelDAO.get(ctx,Mod303::new,id);
 		if ( mod303 != null) {
-			mod303.setInvoicesBound( AlcatrazDAO.hasInvoicesBound(ctx, mod303.getId()));
+			mod303.setInvoicesBound( AlcatrazDAO.hasAlcatrazBound(ctx, mod303.getId()));
 			Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
 			dec.fillSimplifiedRegime(mod303);
 		}
@@ -147,7 +147,7 @@ public class Mod303DAO extends FiscalModelDAO {
 				mod303.ensureDetail(mod303.getPreviousProrateKey()).setAmount(prorrateInfo.getLeft());
 				Date fromDate = AonDateUtils.getYearFirstDay(mod303.getYear());
 				Date toDate = AonDateUtils.getYearLastDay(mod303.getYear());
-				VATDAO.getVatBreakdown(ctx,fromDate,toDate,mod303)
+				OLDVATDAO.getVatBreakdown(ctx,fromDate,toDate,mod303)
 					.filter( VatContext::isSales )
 					.forEach( vat -> {
 						if (!vat.isVatSurchargeRegime() && vat.getVatRegime() != VATRegime.EXEMPT) {
@@ -185,7 +185,7 @@ public class Mod303DAO extends FiscalModelDAO {
 		mod303 = save(ctx, mod303);
 		AlcatrazDAO.deleteFiscalModel(ctx, mod303);
 		AlcatrazDAO.saveModelInvoices(ctx, mod303, invoices);
-		mod303.setInvoicesBound( AlcatrazDAO.hasInvoicesBound(ctx, mod303.getId()));
+		mod303.setInvoicesBound( AlcatrazDAO.hasAlcatrazBound(ctx, mod303.getId()));
 		return mod303;
 	}
 

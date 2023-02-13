@@ -108,6 +108,9 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 			Domain domain = AON.getDomain(domainName, domainId, user);
 			Company company = AON.getCompanyForDomain(domainName, domainId, user);
 			Person person = AON.getPerson(domain, user, f -> f.getIdProperty().eq(company.getId()));
+			if(person == null || person.getId() == null) {
+				person = new Person().copy(company);
+			}
 			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
 			Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
 			tbaiConfiguration.setCertificate(cert);

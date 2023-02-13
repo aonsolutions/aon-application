@@ -150,10 +150,7 @@ public class FtpSaleInvoiceUploaderHandler implements Serializable {
 		try {
 			showFtpServerConnectionData = false;
 			SeresFtpConnectionProvider.checkLogin(server, port, user, password);
-		} catch (FtpLoginException e) {
-			showFtpServerConnectionData = true;
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (FtpException e) {
+		} catch (Exception e) {
 			showFtpServerConnectionData = true;
 			AonUtil.addErrorMessage(e.getMessage());
 		}

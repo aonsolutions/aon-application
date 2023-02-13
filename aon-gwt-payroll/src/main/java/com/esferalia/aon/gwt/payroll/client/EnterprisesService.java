@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -348,6 +349,8 @@ public interface EnterprisesService extends RemoteService {
 	List<Certificate> getCertificates(String domain, String login, boolean withParent);
 
 	void deleteCertificate(String domain, String login, Certificate certificate) throws IllegalArgumentException;
+	
+	void downloadCertificate(String domain, String login, Integer certificateId, String filePath) throws IllegalArgumentException;
 
 	CertificateInfo getCertificateInfo(String domain, String login, Integer certitificateId) throws IllegalArgumentException ;
 
@@ -382,6 +385,8 @@ public interface EnterprisesService extends RemoteService {
 	String getAgreementDraftReceipt(String currentDomainName, AgreementInfo agreement, List<Variable> context, int levelId, String mime) throws IllegalArgumentException;
 
 	void checkAndUpdateServiAgreement(String currentDomainName, String currentUser, AgreementInfo agreement) throws IllegalArgumentException;
+	
+	boolean canUpdateServiAgreement(String currentDomainName, String currentUser, AgreementInfo agreement) throws IllegalArgumentException;
 
 	void deletePayments(String currentDomainName, List<Integer> paymentIds) throws IllegalArgumentException;
 	
@@ -428,5 +433,9 @@ public interface EnterprisesService extends RemoteService {
 	String getEmployeesWorking(String currentDomainName, String currentUser, String regime, String ccc) throws IllegalArgumentException;
 
 	String getUpdateCert(String currentDomainName, String currentUser, String regime, String ccc) throws IllegalArgumentException;
+
+	// ------------------------------------------------ Country/Province
+	
+	List<Country> getCountries(String currentDomainName);
 
 }

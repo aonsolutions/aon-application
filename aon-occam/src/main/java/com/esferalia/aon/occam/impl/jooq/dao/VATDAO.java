@@ -94,7 +94,7 @@ public class VATDAO  {
 		@Override public Property<Double> getSurchargePercentProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.SURCHARGE);}
 	}
 
-	public static LinkedList<VatSummaryContext> getVatSummary(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
+	private static LinkedList<VatSummaryContext> getVatSummary(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
 		LinkedList<VatSummaryContext> list = new LinkedList<>();
 		getVatBreakdown(ctx, fromDate, toDate, filter)
 				.map( vat -> { 
@@ -147,18 +147,18 @@ public class VATDAO  {
 				});
 		return list;
 	}
-	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate) {
+	private static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate) {
 		return getVatBreakdown(ctx, fromDate, toDate,null , null );
 	}
-	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, IFiscalModel mod) {
+	private static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, IFiscalModel mod) {
 		return getVatBreakdown(ctx, fromDate, toDate,null , mod);
 	}
 
-	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
+	private static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
 		return getVatBreakdown(ctx, fromDate, toDate,filter , null);
 	}
 	
-	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter, IFiscalModel mod) {
+	private static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter, IFiscalModel mod) {
 		if (mod != null && (mod.isLastPeriod() || mod.getPeriod() == Period.YEAR) ) {
 			return Stream.concat(Stream.concat(getNoAccrualVatBreakdown(ctx,fromDate,toDate,filter)
 											  ,getAccrualVatBreakdown	 (ctx,fromDate,toDate,filter))
@@ -237,10 +237,10 @@ public class VATDAO  {
 				.map(new VatContextFiller())
 				;
 	}
-	public static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, Mod303 mod303) {
+	private static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, Mod303 mod303) {
 		return getAccrualBreakdown(ctx, fromDate, toDate, null, mod303); 
 	}
-	public static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, Mod390HF mod) {
+	private static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, Mod390HF mod) {
 		return getAccrualBreakdown(ctx, fromDate, toDate, null, mod); 
 	}
 	private static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter , IFiscalModel mod) {
@@ -332,7 +332,7 @@ public class VATDAO  {
 	}
 
 	// ** **
-	public static Stream<VatContext> getPeriodPendingAccrualVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
+	private static Stream<VatContext> getPeriodPendingAccrualVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
 		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
 		java.sql.Date lastDay = AonDateUtils.toSql( toDate );
 		return getCommonSelect(ctx)
@@ -363,7 +363,7 @@ public class VATDAO  {
 		;
 	}
 
-	public static Stream<VatContext> getSiiVatContext(AONContext ctx, VATFilter filter, String sii) {
+	private static Stream<VatContext> getSiiVatContext(AONContext ctx, VATFilter filter, String sii) {
 		String status = "status";
 		if("intracomunitarias".equals(sii)) status = "status_intra";
 		if("bienes".equals(sii)) status = "status_bienes";
@@ -443,7 +443,7 @@ public class VATDAO  {
 		return dedQuota;
 	}
 	
-	public static double getVatAccrualPaymentOutputBase(AONContext ctx, Date fromDate,Date toDate) {
+	private static double getVatAccrualPaymentOutputBase(AONContext ctx, Date fromDate,Date toDate) {
 		return ctx.getDslContext().select( INVOICE_TAX.BASE )
 				.from(INVOICE_TAX)
 				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
@@ -459,7 +459,7 @@ public class VATDAO  {
 				.sum();
 	}
 
-	public static double getVatAccrualPaymentOutputQuota(AONContext ctx, Date fromDate,Date toDate) {
+	private static double getVatAccrualPaymentOutputQuota(AONContext ctx, Date fromDate,Date toDate) {
 		return ctx.getDslContext().select( INVOICE_TAX.BASE,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.QUOTA)
 				.from(INVOICE_TAX)
 				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
@@ -484,7 +484,7 @@ public class VATDAO  {
 				.sum();
 	}
 
-	public static double getVatAccrualPaymentInputBase(AONContext ctx, Date fromDate,Date toDate) {
+	private static double getVatAccrualPaymentInputBase(AONContext ctx, Date fromDate,Date toDate) {
 		return ctx.getDslContext().select( INVOICE_TAX.BASE )
 				.from(INVOICE_TAX)
 				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
@@ -500,7 +500,7 @@ public class VATDAO  {
 				.sum();
 	}
 
-	public static double getVatAccrualPaymentInputQuota(AONContext ctx, Date fromDate,Date toDate) {
+	private static double getVatAccrualPaymentInputQuota(AONContext ctx, Date fromDate,Date toDate) {
 		return ctx.getDslContext().select( INVOICE_TAX.BASE,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.QUOTA)
 				.from(INVOICE_TAX)
 				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
@@ -527,7 +527,7 @@ public class VATDAO  {
 	
 	
 	
-	public static class VatContextAccrualRegimeFiller  extends VatContextFiller {
+	private static class VatContextAccrualRegimeFiller  extends VatContextFiller {
 		@Override
 		public VatContext apply(Record rec) {
 			VatContext vat = super.apply(rec);
@@ -541,7 +541,7 @@ public class VATDAO  {
 		}
 	}
 	
-	public static class VatContextLastPeriodAccrualRegimeFiller  extends VatContextFiller {
+	private static class VatContextLastPeriodAccrualRegimeFiller  extends VatContextFiller {
 		@Override
 		public VatContext apply(Record rec) {
 			VatContext vat = super.apply(rec);
@@ -568,7 +568,7 @@ public class VATDAO  {
 				:base);
 	}
 	
-	public static class VatContextFiller  implements Function<Record,VatContext> {
+	private static class VatContextFiller  implements Function<Record,VatContext> {
 
 		@Override
 		public VatContext apply(Record rec) {
@@ -634,7 +634,7 @@ public class VATDAO  {
 	}
 	
 	
-	public static class SiiVatContextFiller  implements Function<Record,VatContext> {
+	private static class SiiVatContextFiller  implements Function<Record,VatContext> {
 
 		@Override
 		public VatContext apply(Record rec) {

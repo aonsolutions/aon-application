@@ -1,12 +1,22 @@
 package net.aonsolutions.aon.tbai.lroe;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.DataRequest;
@@ -188,7 +198,6 @@ public class LROE240_2 extends LROE240 {
 
 	private IVAFacturaRecibidaType buildIVA(Invoice invoice) {
 		IVAFacturaRecibidaType iva = new IVAFacturaRecibidaType();
-
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			if(!detail.isPrepayment()) {
 				InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
@@ -210,9 +219,8 @@ public class LROE240_2 extends LROE240 {
 				if(tax.getDeductiblePercent() > 0 && tax.getDeductibleQuota() == 0.0) {
 					tax.setDeductibleQuota(AonMathUtils.round(tax.getQuota() * tax.getDeductiblePercent() / 100));
 				}
-				r.setCuotaIVADeducible(Double.toString(tax.getDeductibleQuota()));
-				r.setCuotaIVASoportada(Double.toString(tax.getQuota()));
-				
+				r.setCuotaIVADeducible(Double.toString(AonMathUtils.round(tax.getDeductibleQuota())));
+				r.setCuotaIVASoportada(Double.toString(AonMathUtils.round(tax.getQuota())));
 				// r.setPorcentajeCompensacionREAGYP("");
 				// r.setImporteCompensacionREAGYP("");
 			
@@ -255,6 +263,10 @@ public class LROE240_2 extends LROE240 {
 			jaxbMarshaller.marshal( p240, bos );
 			
 			byte[] xml = bos.toByteArray();
+			
+			Document doc = getDocument(xml);
+			System.out.println(toString(doc));
+			
 			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoices, info, xml);
 			byte[] data = toGzip(xml);
 			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);
@@ -299,6 +311,8 @@ public class LROE240_2 extends LROE240 {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( p240, bos );
 			byte[] xml = bos.toByteArray();
+			Document doc = getDocument(xml);
+			System.out.println(toString(doc));
 			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
 			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);
@@ -342,6 +356,10 @@ public class LROE240_2 extends LROE240 {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( lroe, bos );
 			byte[] xml = bos.toByteArray();
+			
+			Document doc = getDocument(xml);
+			System.out.println(toString(doc));
+			
 			byte[] data = toGzip(xml);
 			LROEResponse response = sendConsulta(tbaiConfiguration, buildJSON(company, info), data);
 
@@ -358,6 +376,32 @@ public class LROE240_2 extends LROE240 {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+	
+	public Document getDocument(byte[] data) throws ParserConfigurationException, SAXException, IOException {
+		InputStream is = new ByteArrayInputStream(data);
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(is);
+		return doc;
+	}
+	
+	public String toString(Document doc) {
+		try {
+			java.io.StringWriter sw = new java.io.StringWriter();
+			javax.xml.transform.TransformerFactory tf = javax.xml.transform.TransformerFactory.newInstance();
+			javax.xml.transform.Transformer transformer = tf.newTransformer();
+			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+			transformer.transform(new javax.xml.transform.dom.DOMSource(doc),
+					new javax.xml.transform.stream.StreamResult(sw));
+			return sw.toString();
+		} catch (Exception ex) {
+			throw new RuntimeException("Error converting to String", ex);
 		}
 	}
 }

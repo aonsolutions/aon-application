@@ -579,9 +579,9 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			@Override
 	        public String getValue(Payment payment) {
 				AgreementExtra extra = agreement.getExtraPayment(payment.getId());
-				if(payment.getType().equals(Payment.Type.CRA_0004) && null != extra)
+				if(null != extra && !extra.isDeleted() && payment.getType().equals(Payment.Type.CRA_0004))
 					return extra.getIssueDate() + " (" +  getPayDescription(payment) + ")";
-				else return "";
+				else return "Prorrat.";
 				
 	        }
 		};
@@ -779,7 +779,7 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 		Column<Payment, String> codeColumn = new Column<Payment, String>(new TextCell()) {
 			@Override
 	        public String getValue(Payment payment) {
-				return null == payment.getType() ? "" : AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0');
+				return null == payment.getType() ? "Revisar CRA" : AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0');
 	        }
 		};
 
@@ -928,7 +928,8 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 	
 	private void openDialog(Payment payment) {
 		boolean isHide = AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "HIDE");
-    	AgreementPaymentEditor editor = new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), agreement.getExtras()) {
+		Optional<Date> startDate = agreement.getSortedDates().stream().findFirst();
+    	AgreementPaymentEditor editor = new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), startDate.get()) {
 			@Override
 			protected void onAccept(Payment updatedPayment, AgreementExtra extra, Payment associatedPayment, AgreementExtra associatedExtra) {
 //				Window.alert(null == extra ? "---- Extra NULL ----" : "---- Extra ----\nId : " + extra.getId() + "\nisDeleted : " + extra.isDeleted()
@@ -975,8 +976,6 @@ public abstract class AgreementPaymentTab extends ResizeComposite {
 			}
 
 		};
-		
-		editor.setContextProvider(agreement);
 		
 	}
 	

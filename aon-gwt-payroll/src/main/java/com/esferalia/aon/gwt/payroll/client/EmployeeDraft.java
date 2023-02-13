@@ -276,9 +276,9 @@ public abstract class EmployeeDraft extends Composite {
 		}
 		
 		@Override
-		public void onEmployeeAddressProvinceChange(String addressProvinceCode) {
-			employeeDraftObject.setEmployeeAddressProvince(addressProvinceCode);
-			employeeDraftObject.setEmployeeAddressCity("-1");
+		public void onEmployeeAddressProvinceChange(Integer geozoneId) {
+			employeeDraftObject.setEmployeeAddressProvince(geozoneId);
+			employeeDraftObject.setEmployeeAddressCity(null);
 		}
 
 		@Override
@@ -771,7 +771,7 @@ public abstract class EmployeeDraft extends Composite {
 		employee.addressInfo.setValue(employeeData.getAddressInfo());
 		employee.addressZip.setValue(employeeData.getAddressZip());
 		
-		setSelectedValueLB(employee.addressProvince, employeeData.getAddressProvinces());
+		employee.selectProvince(employeeData.getAddressProvinces());
 		employee.updateMunicipalities();
 		setSelectedValueLB(employee.addressMunicipality, employeeData.getAddressCity());
 		

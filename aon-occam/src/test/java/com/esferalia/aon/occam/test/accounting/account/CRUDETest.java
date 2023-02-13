@@ -18,7 +18,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.Repeat;
-import com.esferalia.aon.occam.test.faker.AonFaker;
+import com.esferalia.aon.occam.test.faker.AccountingFaker;
 import com.github.javafaker.Faker;
 
 public class CRUDETest extends AbstractOccamTest {
@@ -27,7 +27,7 @@ public class CRUDETest extends AbstractOccamTest {
 	@Test
 	public void test() {
 		String code = getRandomUnusedCode();
-		Account randAccount = AonFaker.getAccount(ctx, code);
+		Account randAccount = AccountingFaker.getAccount(ctx, code);
 		List<Account> insertedLowerLevels = ACCOUNTING.generateLowerLevels(getOccam(), randAccount, 1);
 		Account inserted = ACCOUNTING.save(DOMAIN_NAME, DOMAIN_ID, USER, randAccount);
 		Account obtained = ACCOUNTING.getAccount(ctx, code);

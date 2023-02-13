@@ -54,6 +54,9 @@ public interface IdcParserListener {
 	
 	default void onContractType(String contractType) {
 	};
+	
+	default void onRlce(String rlce) {
+	};
 
 	default void onContractStart(Date start) {
 	};

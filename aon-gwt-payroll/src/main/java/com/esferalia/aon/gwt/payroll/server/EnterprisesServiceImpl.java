@@ -10,6 +10,9 @@ import static com.esferalia.aon.watson.util.AonStringUtils.equalsIgnoreCase;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -63,6 +66,7 @@ import com.esferalia.aon.gwt.common.shared.UnknownVariablesWarning;
 import com.esferalia.aon.gwt.payroll.client.AgreementsCleanDialog.AgreementCleanType;
 import com.esferalia.aon.gwt.payroll.client.EnterprisesService;
 import com.esferalia.aon.gwt.payroll.jooq.JooqActivity;
+import com.esferalia.aon.gwt.payroll.jooq.JooqAddress;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgrarian;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreement;
 import com.esferalia.aon.gwt.payroll.jooq.JooqAgreementTab;
@@ -109,6 +113,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -1328,6 +1333,53 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		}
 
 	}
+	
+	private static List<CCC> getEnterprisesCCCs(Connection connection, int domainId) throws SQLException {
+		ResultSet rs = null;
+		PreparedStatement stmt = null;
+		try {
+			// @formatter:off
+			stmt = connection.prepareStatement(
+					"SELECT * FROM "
+					+ SQLConstants.ENTERPRISE_CCC
+					+ " LEFT JOIN " + SQLConstants.ENTERPRISE_ACTIVITY + " ON (" + SQLConstants.ENTERPRISE_CCC + "."+ EnterpriseCccColumns.ENTERPRISE_ACTIVITY + " = " + SQLConstants.ENTERPRISE_ACTIVITY +"." + EnterpriseActivityColumns.ID + ")"
+					+ " LEFT JOIN " + SQLConstants.GEOZONE + " ON (" + SQLConstants.GEOZONE + "."+ GeozoneColumns.ID + " = " + SQLConstants.ENTERPRISE_CCC +"." + EnterpriseCccColumns.GEOZONE + ")"
+					+ " LEFT JOIN " + SQLConstants.ENTERPRISE + " ON (" + SQLConstants.ENTERPRISE_ACTIVITY + "."+ EnterpriseActivityColumns.ENTERPRISE + " = " + SQLConstants.ENTERPRISE +"." + EnterpriseColumns.REGISTRY + ")"
+					+ " WHERE " + SQLConstants.ENTERPRISE +"."+ EnterpriseColumns.DOMAIN + " = ? " 
+					);
+			// @formatter:on
+			int i = 1;
+			stmt.setInt(i++, domainId);
+			
+			List<CCC> cccs = new ArrayList<>();
+			
+			rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				Integer cccId = (Integer) rs.getObject(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.ID);
+				if ( cccId == null )
+					continue;
+
+				CCC ccc = new CCC();
+				ccc.setId( cccId );
+				ccc.setCode(rs.getString(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.CCC));
+				ccc.setGeozone(rs.getString(SQLConstants.GEOZONE +"."+GeozoneColumns.CODE));
+				ccc.setRegime(JooqEnterprise.getSSRegime(rs.getInt(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.TYPE)).getCode());
+				ccc.setType(rs.getByte(SQLConstants.ENTERPRISE_CCC +"."+EnterpriseCccColumns.TYPE));
+					
+				cccs.add(ccc);
+			}
+
+			return cccs;
+
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (stmt != null)
+				stmt.close();
+		}
+
+	}
 
 	private static List<Bonus> getBonusConcepts(Connection connection,
 			int offset, int limit, Integer domainID, Integer parentDomainID)
@@ -2161,7 +2213,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	
 	@Override
 	public String getSalariesPDF(String domain, String currentUser, Integer enterpriseID, List<Integer> salaryIds) throws IllegalArgumentException {
-		try (ByteOutputStream os = new ByteOutputStream(); 
+		int salaryCount = salaryIds != null ? salaryIds.size() : 1;
+		try (ByteOutputStream os = new ByteOutputStream(salaryCount * 30 * 1024); 
 		CloseableAONContext aonContext = AONContext.getAONContext(domain, currentUser)) {
 			String salaryReport = getReportKey(domain, enterpriseID, SalaryType.SALARY);
 			
@@ -2196,7 +2249,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 						, ids);
 			}
 			
-			String base64Pdf = Base64.getEncoder().encodeToString(os.getBytes());
+			byte[] bytes = os.toByteArray();
+			
+			String base64Pdf = Base64.getEncoder().encodeToString(bytes);
 			
 			Writer stringWriter = new StringWriter();
 			encodeURIComponent("application/pdf", base64Pdf, stringWriter);
@@ -2340,11 +2395,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			List<CCC> cccs = getEnterprises(connection, userId, domainId, 0, Short.MAX_VALUE).stream()
-			.filter(e -> enterpriseId == null || e.getId().equals(enterpriseId) )
-			.flatMap(e -> e.getActivities().stream() )
-			.flatMap(a -> a.getCccs().stream())
-			.collect(Collectors.toList());
+			List<CCC> cccs = getEnterprisesCCCs(connection, domainId);
 			
 			List<Integer> cccIds = cccs.stream().map( ccc-> ccc.getId() ).collect(Collectors.toList());
 			
@@ -3611,6 +3662,27 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	}
 	
 	@Override
+	public void downloadCertificate(String domain, String login, Integer certificateId, String filePath) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domain)) {
+			Integer domainId = AonServletUtils.getDomainID(domain);
+			com.esferalia.aon.occam.api.model.Certificate certificate = AON.getCertificate(domain, domainId, login, f -> f.getIdProperty().eq(certificateId));
+			
+			File f = new File(filePath);
+			try {
+				FileOutputStream fos = new FileOutputStream(f);
+				fos.write(certificate.getData());
+				fos.close();
+			} catch (FileNotFoundException e) {
+				System.err.println("Archivo no encontrado");
+			} catch (IOException e) {
+				System.err.println("Error al escribir");
+			}
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
 	public CertificateInfo getCertificateInfo(String domain, String login, Integer certitificateId)  throws IllegalArgumentException {
 		try(Connection connection = AonServletUtils.getConnection(domain)) {
 			Integer domainId = AonServletUtils.getDomainID(domain);
@@ -3828,6 +3900,19 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Optional<java.util.Date> lastDate = agreement.getSortedDates().stream().findFirst();
 			if(lastDate.isPresent()) year = lastDate.get().getYear() + 1900;
 			AgreementUpdate.checkAndUpdateServiAgreement(connection, domainId, userLogin, agreement.getId(), agreement.getSSNumber(), year);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+	
+	@Override
+	public boolean canUpdateServiAgreement(String domainName, String userLogin, AgreementInfo agreement) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer year = 0;
+			Optional<java.util.Date> lastDate = agreement.getSortedDates().stream().findFirst();
+			if(lastDate.isPresent()) year = lastDate.get().getYear() + 1900;
+			return AgreementUpdate.canUpdateServiAgreement(agreement.getSSNumber(), year);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -4640,6 +4725,18 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			stringWriter.close();
 
 			return dataUri;
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	// ------------------------------------------------ Country/Province
+	
+	@Override
+	public List<Country> getCountries(String domainName) throws IllegalArgumentException {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return JooqAddress.getCountries(connection, domainId);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}

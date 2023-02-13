@@ -20,6 +20,8 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.FinanceParams;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsGroupedBy;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsOrderBy;
 import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -27,6 +29,7 @@ import com.esferalia.aon.occam.api.model.type.AccountEntryType;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
+import com.esferalia.aon.occam.api.model.type.WithholdingTypeGroup;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -763,6 +766,11 @@ public class JsonParser {
 			params.setOutput(outputEnabled==1);
 		}
 		// ******************* WithholdingType ******************* 
+		Long withholdingTypeGroup = (Long) jsonParams.get(IRequestParamsNames.WITHHOLDING_TYPE_GROUP);
+		if (withholdingTypeGroup != null) {
+			params.setWithholdingTypeGroup(WithholdingTypeGroup.safeValueOf( withholdingTypeGroup.intValue() ));
+		}
+		// ******************* WithholdingType ******************* 
 		Long withholdingType = (Long) jsonParams.get(IRequestParamsNames.WITHHOLDING_TYPE);
 		if (withholdingType != null) {
 			params.setWithholdingType(WithholdingType.safeValueOf( withholdingType.intValue() ));
@@ -796,12 +804,12 @@ public class JsonParser {
 		// ******************* ACTIVITY ******************* 
 		Long orderBy = (Long) jsonParams.get(IRequestParamsNames.ORDER_BY);
 		if (orderBy != null) {
-			params.setOrderBy(orderBy.intValue());	
+			params.setOrderBy( IRPFParamsOrderBy.safeValueOf(orderBy.intValue()));	
 		}
 		// ******************* ACTIVITY ******************* 
 		Long groupedBy = (Long) jsonParams.get(IRequestParamsNames.GROUPED_BY);
 		if (groupedBy != null) {
-			params.setGroupedBy(groupedBy.intValue());	
+			params.setGroupedBy( IRPFParamsGroupedBy.safeValueOf(groupedBy.intValue()) );	
 		}
 		return params;
 	}

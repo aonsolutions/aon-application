@@ -1086,4 +1086,20 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 		employeesServiceAsync.getSalariesOccam(currentDomainName, login, itEmployee, startDate, endDate, new AsyncCallbackWrapper<>(callback));
 	}
 
+	// ------------------------------------------------- Agreement ContextProvider
+	
+	@Override
+	public void getAgreementContext(String currentDomainName, int fxLevel, Date startDate, Date endDate,
+			AsyncCallback<ContextDescriptor> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.getAgreementContext(currentDomainName, fxLevel, startDate, endDate, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel,
+			AsyncCallback<List<Result>> callback) throws IllegalArgumentException, EvalException {
+		AON.start();
+		employeesServiceAsync.evalAgreement(currentDomainName, expression, startDate, fxLevel, new AsyncCallbackWrapper<>(callback));
+	}
+
 }

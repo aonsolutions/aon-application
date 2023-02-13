@@ -167,7 +167,7 @@ public class SalesServlet extends AonApiHttpServlet {
 		
 		Date to = JsonUtils.getDate(api.getData(), IJsonNames.TO);
 		if(to != null) {
-			filter = filter.and(f.getIssueDateProperty().ge(AonDateUtils.toSql(to)));
+			filter = filter.and(f.getIssueDateProperty().le(AonDateUtils.toSql(to)));
 		}
 			
 		return filter;

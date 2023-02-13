@@ -271,7 +271,7 @@ public class Mod145DAO {
 			.set(IRPF_DATA.SPOUSAL_SUPPORT, mod145.getSpousalSupport())
 			.set(IRPF_DATA.FOOD_ANNUITY, mod145.getFoodAnnuity())
 			.set(IRPF_DATA.REQUEST_IRPF, mod145.getIrpfPercent())
-			.set(IRPF_DATA.DEDUCT_HOME_LOAN, mod145.isDeductionHomeLoan() ? (byte)1 : (byte)0)
+			.set(IRPF_DATA.DEDUCT_HOME_LOAN, mod145.isDeductionHomeLoan() ? (byte)1 : null)
 			.returning(IRPF_DATA.ID).fetchOne().getId();
 			ctx.log().debug("INSERT IRPF DATA id: " + id);
 			
@@ -303,7 +303,7 @@ public class Mod145DAO {
 			.set(IRPF_DATA.SPOUSAL_SUPPORT, mod145.getSpousalSupport())
 			.set(IRPF_DATA.FOOD_ANNUITY, mod145.getFoodAnnuity())
 			.set(IRPF_DATA.REQUEST_IRPF, mod145.getIrpfPercent())
-			.set(IRPF_DATA.DEDUCT_HOME_LOAN, mod145.isDeductionHomeLoan() ? (byte)1 : (byte)0)
+			.set(IRPF_DATA.DEDUCT_HOME_LOAN, mod145.isDeductionHomeLoan() ? (byte)1 : null)
 			.where(IRPF_DATA.ID.eq(mod145.getId()))
 			.execute();		
 		ctx.log().debug("UPDATE IRPF DATA id: " + mod145.getId());	

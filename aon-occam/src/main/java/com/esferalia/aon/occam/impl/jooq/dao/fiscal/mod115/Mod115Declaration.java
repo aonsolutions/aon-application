@@ -18,16 +18,46 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.ExplainRowManager;
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public abstract class Mod115Declaration {
+	
 	enum ComplementaryBeahaviour {
 		COMPLEMENTARY,
 		REPLACEMENT;
 	}
+	
+	private enum Declarations {
+		 AEAT_2021 {
+			@Override boolean accept(Mod115 mod) { return Mod115AEAT2021Declaration.accept(mod);}
+			@Override Mod115Declaration get() {return new Mod115AEAT2021Declaration();}
+		}
+		,ARABA_2021 {
+			@Override boolean accept(Mod115 mod) { return Mod115Araba2021Declaration.accept(mod);}
+			@Override Mod115Declaration get() {return new Mod115Araba2021Declaration();}
+		}
+		,BIZKAIA_2021 {
+			@Override boolean accept(Mod115 mod) { return Mod115Bizkaia2021Declaration.accept(mod);}
+			@Override Mod115Declaration get() {return new Mod115Bizkaia2021Declaration();}
+		}
+		,GIPUZKOA_2021 {
+			@Override boolean accept(Mod115 mod) { return Mod115Gipuzkoa2021Declaration.accept(mod);}
+			@Override Mod115Declaration get() {return new Mod115Gipuzkoa2021Declaration();}
+		}
+		,NAVARRA_2021 {
+			@Override boolean accept(Mod115 mod) { return Mod115Navarra2021Declaration.accept(mod);}
+			@Override Mod115Declaration get() {return new Mod115Navarra2021Declaration();}
+		}
+		;
+		abstract boolean accept(Mod115 mod);
+		abstract Mod115Declaration get();
+	}
+	
 	
 	@FunctionalInterface
 	static interface IValueAccepter {
@@ -43,27 +73,25 @@ public abstract class Mod115Declaration {
 		void initialize(AONContext ctx,Mod115 mod);
 	}
 	
-	static Mod115Declaration getInstance( Mod115 mod) {
+	public static Mod115Declaration getInstance( Mod115 mod) {
 		if (mod.getAdministration() == null) {
 			throw new AonCoreException("No se ha indicado administraci\u00F3n para la declaraci\u00F3n");
 		}
 		if (mod.getYear() < 2010 && mod.getYear() > 2025) {
-			throw new AonCoreException("No se ha indicado una ejercicio válido para la declaraci\u00F3n");
+			throw new AonCoreException("No se ha indicado una ejercicio vÃ¡lido para la declaraci\u00F3n");
 		}
 		if (mod.getPeriod() == null) {
 			throw new AonCoreException("No se ha indicado periodo para la declaraci\u00F3n");	
 		}
-		if (Mod115AEAT2021Declaration.accept(mod)) 		return new Mod115AEAT2021Declaration();
-		if (Mod115Araba2021Declaration.accept(mod)) 	return new Mod115Araba2021Declaration();
-		if (Mod115Bizkaia2021Declaration.accept(mod)) 	return new Mod115Bizkaia2021Declaration();
-		if (Mod115Gipuzkoa2021Declaration.accept(mod)) 	return new Mod115Gipuzkoa2021Declaration();
-		if (Mod115Navarra2021Declaration.accept(mod)) 	return new Mod115Navarra2021Declaration();
-		
-		throw new AonCoreException(MessageFormat.format(
-			"No existe una declaraci\u00F3n para el modelo solicitado ({0} - {1} - {2})",
-			mod.getAdministration().getDescription()
-			,mod.getYear()
-			,mod.getPeriod().getDescription()));
+		return Arrays.stream(Declarations.values())
+				.filter(dec -> dec.accept(mod))
+				.map(Declarations::get)
+				.findFirst()
+				.orElseThrow( () -> new AonCoreException(MessageFormat.format(
+					"No existe una declaración para el modelo solicitado ({0} - {1} - {2})",
+					mod.getAdministration().getDescription()
+					,mod.getYear()
+					,mod.getPeriod().getDescription())));
 	}
 
 	IMod115KeyDAO getKey(Mod115Key key) {
@@ -227,10 +255,15 @@ public abstract class Mod115Declaration {
 			|| (mod115.isComplementary() && getComplementaryBehaviour(mod115) == ComplementaryBeahaviour.REPLACEMENT)); 
 	}
 	
+	protected String getSamePeriodExplain(AONContext ctx, Mod115 mod115, Mod115Key key) {
+		return DeclarationInfoUtil.getExplain( ctx, mod115, key, Mod115DAO.getSamePeriodEffectiveModels(ctx, mod115), new ExplainRowManager());	
+	}
+	
 	abstract Mod115 initialize(AONContext ctx, Mod115 mod115);
 	abstract IMod115KeyDAO valueOf(String string);
 	abstract IMod115KeyDAO[] getKeys();
 	abstract double getResult(final Mod115 mod115);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod115 mod115);
+	public abstract Mod115Key[] getSamePeriodExplainKeys();
 
 }

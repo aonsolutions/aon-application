@@ -899,8 +899,13 @@ public class JooqPayrollBuilder {
 			return null;
 		String name = "HORAS_" + WEEK_DAYS[AonDateUtils.getDayOfWeek(date) - 1];
 		Optional<SalaryData> optHoursData = salaryData.getOrDefault(name, Collections.emptyList()).stream().filter(sd -> {
+		try {			
 			Period period = new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd);
 			return period.contains(date);
+		} catch (IllegalArgumentException e) {
+			//Si el periodo es erróneo
+			return false;
+		}
 		}).findFirst();
 		if (optHoursData.isPresent()) {
 			return getExpressionValue(optHoursData.get().getExpression());
@@ -917,11 +922,18 @@ public class JooqPayrollBuilder {
 		}
 	}
 
-	private static boolean areThereDaysData(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd) {
+	private static boolean areThereDaysData(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd) {	
 		if (salaryData == null || date == null || salaryEnd == null)
 			return false;
 		List<String> days = Arrays.asList(WEEK_DAYS);
-		return days.stream().anyMatch(day -> salaryData.containsKey("HORAS_" + day) && salaryData.get("HORAS_" + day).stream().anyMatch(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date)));
+		return days.stream().anyMatch(day -> salaryData.containsKey("HORAS_" + day) && salaryData.get("HORAS_" + day).stream().anyMatch(sd -> {
+			try {
+				return new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date);
+			} catch (IllegalArgumentException e) {
+				//Período erróneo
+				return false;
+			}
+		}));
 	}
 
 	private static boolean isWorkedDay(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd,List<Date> holidayList) {

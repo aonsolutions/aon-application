@@ -96,7 +96,7 @@ public class JsIRPFBreakdownInvoiceGridPanel extends FlowPanel implements HasSel
 		}
 		row
 			.addCell(new Label(ensure(invoiceType,invoiceType::getAbbrDescription)))
-			.addCell(new Label(ensure(withholdingType,() -> AonStringUtils.substring(withholdingType.getDescription(),0,8))))
+			.addCell(new Label(ensure(withholdingType,() -> withholdingType.getAbbreviatedDescription())))
 			.addCell(new Label(ensure(br.getEpigraph(), br::getEpigraph, AonStringUtils.EMPTY)))
 			.addCell(new Label(ensure(br.getDocumentNumber(), br::getDocumentNumber, AonStringUtils.EMPTY)))
 			.addCell(new Label(ensure(br.getRegistryDocument(), br::getRegistryDocument, AonStringUtils.EMPTY)))

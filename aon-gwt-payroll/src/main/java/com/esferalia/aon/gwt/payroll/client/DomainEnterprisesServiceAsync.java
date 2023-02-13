@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -590,6 +591,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.deleteCertificate(getCurrentDomainName(), getCurrentUser(), certificate, asyncCallback);
 	}
 	
+	public void downloadCertificate(Integer certificateId, String filePath, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.downloadCertificate(getCurrentDomainName(), getCurrentUser(), certificateId, filePath, asyncCallback);
+	}
+	
 	public void getCertificateInfo(Integer certificateId, AsyncCallback<CertificateInfo> asyncCallback)  throws IllegalArgumentException  {
 		enterprisesServiceAsync.getCertificateInfo(getCurrentDomainName(), getCurrentUser(), certificateId, asyncCallback);
 	}
@@ -665,6 +670,10 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void checkAndUpdateServiAgreement(AgreementInfo agreement, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.checkAndUpdateServiAgreement(getCurrentDomainName(), getCurrentUser(), agreement, asyncCallback);
+	}
+	
+	public void canUpdateServiAgreement(AgreementInfo agreement, AsyncCallback<Boolean> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.canUpdateServiAgreement(getCurrentDomainName(), getCurrentUser(), agreement, asyncCallback);
 	}
 	
 	public void deletePayments(List<Integer> paymentIds, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
@@ -749,6 +758,12 @@ public class DomainEnterprisesServiceAsync {
 	
 	public void getUpdateCert(String regime, String ccc, AsyncCallback<String> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.getUpdateCert(getCurrentDomainName(), getCurrentUser(), regime, ccc, asyncCallback);
+	}
+	
+	// ------------------------------------------------ Country/Province
+	
+	public void getCountries(AsyncCallback<List<Country>> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.getCountries(getCurrentDomainName(), asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

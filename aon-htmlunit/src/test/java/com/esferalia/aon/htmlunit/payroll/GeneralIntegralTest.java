@@ -43,6 +43,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		setup(url, user, password);
 		
 		wait4Id("regimen_general");
+		
+		click("viewButton");
+		wait4Id("formerMenuItem");
+		click("formerMenuItem");
 	}
 
 	// ------------------------------------------------------------------------
@@ -1383,10 +1387,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("db-amount-label-1", quotePaga1);
 		assertValue("db-amount-label-2", quotePaga2);
 		
-		click("viewButton");
-		wait4Id("formerMenuItem");
-		click("formerMenuItem");
-		
 		wait4Id("extra,_fin_de_contrato");
 		draft("EXTRA, FIN DE CONTRATO");
 
@@ -2320,6 +2320,25 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		totalEmbargable = totalPayment - totalDeduction;
 		totalEmbargado = totalEmbargable - totalLiquid;
 		Assert.assertEquals((totalEmbargable - smi) * 0.30 , totalEmbargado, 0.005);
+		
+	}
+
+	@Test
+	public void TestQuote() throws Exception {
+		
+		if (!isDisplayed("temporal_tiempo_parcial,_ordinario"))
+			open("cotizacion");
+
+
+		wait4Id("temporal_tiempo_parcial,_ordinario");
+
+		draft("TEMPORAL TIEMPO PARCIAL, ORDINARIO");
+		calculate(Calendar.JANUARY,2023);
+		double cgpBase = getValue("cgpBaseLabel");
+		assertText("unemployment", cgpBase*1.60/100.00);
+		click("costsCheck-input");
+		assertText("unemployment_cost", cgpBase*6.70/100.00);
+		click("costsCheck-input");
 		
 	}
 

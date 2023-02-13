@@ -32,6 +32,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -924,6 +925,12 @@ public class EnterprisesServiceAsyncDecorator implements
 		AON.start();
 		enterprisesServiceAsync.deleteCertificate(domain, login, certificate, new AsyncCallbackWrapper<>(callback));
 	}
+	
+	@Override
+	public void downloadCertificate(String domain, String login, Integer certificateId, String filePath, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.downloadCertificate(domain, login, certificateId, filePath, new AsyncCallbackWrapper<>(callback));
+	}
 
 	@Override
 	public void getCertificateInfo(String domain, String login, Integer certitificateId, AsyncCallback<CertificateInfo> callback) throws IllegalArgumentException {
@@ -1032,6 +1039,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void checkAndUpdateServiAgreement(String domainName, String currentUser, AgreementInfo agreement, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.checkAndUpdateServiAgreement(domainName, currentUser, agreement, callback);
+	}
+	
+	@Override
+	public void canUpdateServiAgreement(String domainName, String currentUser, AgreementInfo agreement, AsyncCallback<Boolean> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.canUpdateServiAgreement(domainName, currentUser, agreement, callback);
 	}
 	
 	@Override
@@ -1168,6 +1181,14 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getUpdateCert(String domainName, String user, String regime, String ccc, AsyncCallback<String> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getUpdateCert(domainName, user, regime, ccc, callback);
+	}
+	
+	// --------------------------- Country/Province
+
+	@Override
+	public void getCountries(String domainName, AsyncCallback<List<Country>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getCountries(domainName, callback);
 	}
 
 }

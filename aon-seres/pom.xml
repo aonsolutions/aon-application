@@ -43,6 +43,14 @@
 			<scope>provided</scope>
 		</dependency>
 		
+		<!-- PARA REALIZAR LA CONEXIÓN SFTP -->
+		<dependency>
+    		<groupId>com.jcraft</groupId>
+   		 	<artifactId>jsch</artifactId>
+    		<version>0.1.55</version>
+			<scope>compile</scope>
+		</dependency>
+		
 	</dependencies>
 </project>
  

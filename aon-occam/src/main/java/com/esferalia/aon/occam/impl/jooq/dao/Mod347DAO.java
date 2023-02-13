@@ -972,8 +972,8 @@ public class Mod347DAO {
 	
 	private static Stream<VatContext> getInvoiceBreakdown(AONContext ctx, Date fromDate, Date toDate,Mod347 mod347) {
 		return Stream.concat(
-				 VATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
-				,VATDAO.getPeriodPendingAccrualVatBreakdown(ctx, fromDate, toDate, null)
+				 OLDVATDAO.getVatBreakdown(ctx, fromDate, toDate, mod347)
+				,OLDVATDAO.getPeriodPendingAccrualVatBreakdown(ctx, fromDate, toDate, null)
 			)
 			.filter(vat ->  !(mod347.isExcludeOutputNationalZero() && vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )				
 			.filter(vat ->  !(mod347.isExcludeInputNationalZero() && !vat.isSales() && AonMathUtils.isZero( vat.getPercentage()))  )

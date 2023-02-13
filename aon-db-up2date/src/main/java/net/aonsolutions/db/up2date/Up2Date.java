@@ -19,18 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-
-import net.aonsolutions.db.up2date.config.InsertTreasuryAndMarketingModule;
-import net.aonsolutions.db.up2date.finance.UpdateInvoiceRegistryDocument;
-import net.aonsolutions.db.up2date.fiscal.AlterAlcatrazFinance;
-import net.aonsolutions.db.up2date.finance.InvoiceFiscalAddExpDate;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod184Detail2022;
-import net.aonsolutions.db.up2date.payroll.BiEmbargarInsert;
-import net.aonsolutions.db.up2date.payroll.IrpfDeductionSplit;
-import net.aonsolutions.db.up2date.tgss.BasesMax2023Update;
-import net.aonsolutions.db.up2date.tgss.HomeBases2023Update;
-import net.aonsolutions.db.up2date.tgss.MEIInsert;
-import net.aonsolutions.db.up2date.tgss.MEIPECUpdate;
+import net.aonsolutions.db.up2date.tgss.MEIPECUpdateUndo;
+import net.aonsolutions.db.up2date.tgss.MEITrainingRemoveUndo;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 public class Up2Date {
 
@@ -67,7 +57,7 @@ public class Up2Date {
     		//CRA0035UPDATE,
     		//ITIMS2019INSERT,
     		//NOTICEDAYSUPDATE,
-    		//HOMEPERCENTAGE2019UPDATE,
+    		//HOMEPERCENTAGE2023UPDATE,
     		//FELLOWSBASES2019UPDATE,
     		//TRAINNINGBASES2019UPDATE,
     		//FELLOWSBASES2019FIX,
@@ -312,8 +302,13 @@ public class Up2Date {
     		//AlterFsMod184Detail2022.ALTER_FS_MODEL_184_DETAIL_2022,
 	    	//BiEmbargarInsert.BIEMBARGARINSERT,
     		//AlterFsMod184Detail2022.ALTER_FS_MODEL_184_DETAIL_2022,
-	    	IrpfDeductionSplit.IRPFDEDUCTIONSPLIT,
-
+	    	//IrpfDeductionSplit.IRPFDEDUCTIONSPLIT,
+	    	//HomePercentage2023Update.HOMEPERCENTAGE2023UPDATE,
+	    	//UnemploymentPercentageFix.UNEMPLOYMENTPERCENTAGEFIX,
+	    	//MEITrainingRemove.MEITRAININGREMOVE,
+	    	MEIPECUpdateUndo.MEIPECUPDATEUNDO,
+	    	MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
+	    	
     		//Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
     		

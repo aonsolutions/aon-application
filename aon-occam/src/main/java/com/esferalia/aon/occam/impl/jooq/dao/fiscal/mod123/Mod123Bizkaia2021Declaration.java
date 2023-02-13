@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.type.Mod123Key;
+import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
 public class Mod123Bizkaia2021Declaration extends Mod123Declaration {
 	
@@ -16,15 +17,15 @@ public class Mod123Bizkaia2021Declaration extends Mod123Declaration {
 
 	private enum Mod123KeyDAO  implements IMod123KeyDAO{
 		 BZ_C01(Mod123Key.BZ_C01
-			, (mod,br) -> br.isMovableCapital()
+			, (mod,br) -> isMovableCapital(br)
 			, (ctx,mod,docs,br) -> addPerceptor(Mod123Key.BZ_C01,mod,docs,br)
 			,null,null,null)
 		,BZ_C02(Mod123Key.BZ_C02
-			, (mod,br) -> br.isMovableCapital()
+			, (mod,br) -> isMovableCapital(br)
 			, (ctx,mod,docs,br) -> addBase(Mod123Key.BZ_C02,mod,br)
 			,null,null,null)
 		,BZ_C03(Mod123Key.BZ_C03
-			, (mod,br) -> br.isMovableCapital()
+			, (mod,br) -> isMovableCapital(br)
 			, (ctx,mod,docs,br) -> addQuota(Mod123Key.BZ_C03,mod,br)
 			,null,null,null)
 		,BZ_C04(Mod123Key.BZ_C04,null,null,null,null,null)
@@ -111,6 +112,18 @@ public class Mod123Bizkaia2021Declaration extends Mod123Declaration {
 		mod123.setComplementaryDeclarationAvailable(true);
 		mod123.setReplacementDeclarationAvailable(false);
 		return super.initializeModel(ctx, mod123);
+	}
+	@Override
+	public Mod123Key[] getSamePeriodExplainKeys() {
+		return new Mod123Key[] {}; 
+	}
+	
+	private static boolean isMovableCapital(IrpfBreakdown br) {
+		return br.isFromInvoice() && 
+			(br.getWithholdingType() == WithholdingType.MOVABLE_CAPITAL
+			|| br.getWithholdingType() == WithholdingType.M193_C1
+			|| br.getWithholdingType() == WithholdingType.M193_C2
+			|| br.getWithholdingType() == WithholdingType.M193_C3);
 	}
 
 }

@@ -6,11 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
@@ -20,8 +23,11 @@ import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementExtra;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementOwner;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.Level;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.LevelData;
+import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.NumberVariable;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
+import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
+import com.esferalia.aon.gwt.payroll.shared.SalaryDraft.Scope;
 import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.StringVariable;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
@@ -31,12 +37,11 @@ import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.MatchResult;
@@ -46,6 +51,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -53,12 +59,16 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.DatePicker;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
@@ -69,6 +79,126 @@ public abstract class AgreementPreview extends Composite {
 	private static AgreementPreviewUiBinder uiBinder = GWT.create(AgreementPreviewUiBinder.class);
 
 	interface AgreementPreviewUiBinder extends UiBinder<Widget, AgreementPreview> {}
+	
+	// ------------------------------------------ ScheduledCommand
+	
+	class AddAonPaymentCommand implements ScheduledCommand {
+
+		@Override
+		public void execute() {
+			new AgreementSuggestPaymentDialog() {
+				
+				@Override
+				protected void onAccept(Payment payment) {
+					payment.setModify(true);
+					agreement.addPayment(payment);
+					setAgreementPreview(agreement);
+					setHasChange(true);
+				}
+
+				@Override
+				protected void onManualEdition() {
+					new AgreementPaymentWizard(agreement.getPayments(), null) {
+						
+						@Override
+						protected void onAccept(Payment payment) {
+							payment.setModify(true);
+							agreement.addPayment(payment);
+							setAgreementPreview(agreement);
+							setHasChange(true);
+						}
+
+						@Override
+						protected void onExtraAccept(Payment payment, Extra extra) {
+							payment.setModify(true);
+							agreement.addPayment(payment);
+							
+							if(null != extra)
+								agreement.addExtra(extra);
+							
+							checkPairExtras(payment, extra);
+							
+							setAgreementPreview(agreement);
+							setHasChange(true);
+							
+						}
+
+						private void checkPairExtras(Payment payment, Extra extra) {
+							if(payment.getType().equals(Payment.Type.CRA_0004)) {
+								Optional<Payment> searchPayment = agreement.getPayments().stream().filter(paymentIt -> !paymentIt.equals(payment) && paymentIt.getType().equals(Payment.Type.CRA_0004)).findAny();
+								if(!searchPayment.isPresent()) {
+									Payment associatedPayment = new Payment();
+									Random rand = new Random();
+									int newPaymentId = rand.nextInt(1000) * -1;
+									if(newPaymentId > 0) newPaymentId = newPaymentId * -1;
+									associatedPayment.setId(newPaymentId);
+									associatedPayment.setDomain(payment.getDomain());
+									associatedPayment.setModify(true);
+									
+									associatedPayment.setType(Payment.Type.CRA_0004);
+									associatedPayment.setConceptId(payment.getConceptId());
+									associatedPayment.setName(payment.getName());
+									
+									associatedPayment.setDescription(AonStringUtils.containsIgnoreCase(payment.getDescription(), "verano") ? "PAGA NAVIDAD" : "PAGA VERNAO");
+									associatedPayment.setExpression(payment.getExpression());
+									associatedPayment.setIrpfExpression(payment.getIrpfExpression());
+									associatedPayment.setQuoteExpression(payment.getQuoteExpression());
+									associatedPayment.setMonth(null);
+									
+									agreement.addPayment(associatedPayment);
+									
+									if(null != extra) {
+										int newExtraId = rand.nextInt(1000) * -1;
+										AgreementExtra associatedExtra = new AgreementExtra();
+										associatedExtra.setId(newExtraId);
+										
+										associatedExtra.setDomain(payment.getDomain());
+										associatedExtra.setAgreementPayment(associatedPayment.getId());
+									
+										if(AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "06") || AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "07")) {
+											associatedExtra.setIssueDate("31/12");
+											if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1")) {
+												associatedExtra.setStartDate("01/01");
+												associatedExtra.setEndDate("31/12");
+											} else {
+												associatedExtra.setStartDate("01/07");
+												associatedExtra.setEndDate("31/12");
+											}
+										} else if(AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "12")) {
+											associatedExtra.setIssueDate("30/06");
+											if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "01")) {
+												associatedExtra.setStartDate("01/07 -1");
+												associatedExtra.setEndDate("30/06");
+											} else {
+												associatedExtra.setStartDate("01/01");
+												associatedExtra.setEndDate("30/06");
+											}
+										}
+										
+
+										agreement.addExtra(associatedExtra);
+									}
+								}
+							}
+						}
+
+						@Override
+						protected void onGtzdoAccept(List<Payment> payments) {
+							if(!payments.isEmpty()) {
+								for(Payment payment : payments) {
+									payment.setModify(true);
+									agreement.addPayment(payment);
+								}
+							}
+							setAgreementPreview(agreement);
+							setHasChange(true);
+						}
+					};
+				}
+				
+			};
+		}
+	}
 
 	// ------------------------------------------ UiFields
 	
@@ -103,6 +233,18 @@ public abstract class AgreementPreview extends Composite {
 		String textCenter();
 		String valueCell();
 		String widthAll();
+		
+		String textBoxSalary();
+		String datePickerPanel();
+		String headerDeleteFixed();
+		String deleteFixed();
+		String elipsis();
+		String elipsisConceptWidth();
+		String elipsisOpenCollapseWidth();
+		String elipsisCloseCollapseWidth();
+		String elipsisOpenCollapseExtraWidth();
+		String elipsisCloseCollapseExtraWidth();
+		String zIndex1();
 	}
 	
 	@UiField
@@ -123,32 +265,7 @@ public abstract class AgreementPreview extends Composite {
 	@UiField
 	HTMLPanel serviAgreementPanel;
 	
-	@UiField
-	DisclosurePanel salaryDiscPanel;
-	
-	@UiField(provided = true)
-	AonToolbarButton salaryDiscBtn;
-	
-	@UiField
-	HTMLPanel salaryDiscPanelContent;
-	
-	@UiField
-	HTMLPanel salaryTableButtons;
-	
-	@UiField
-	HTMLPanel salaryTable;
-	
-	@UiField
-	ScrollPanel salaryScrollPanel;
-	
-	@UiField
-	Grid salaryGrid;
-	
-	@UiField
-	HTMLPanel agreementSalaryTableMessage;
-	
-	@UiField
-	HTMLPanel agreementLevelMessage;
+	// LEVEL / CATEGORY
 	
 	@UiField
 	DisclosurePanel levelDiscPanel;
@@ -160,13 +277,35 @@ public abstract class AgreementPreview extends Composite {
 	HTMLPanel levelDiscPanelContent;
 	
 	@UiField
-	HTMLPanel levelTable;
-	
-	@UiField
 	ScrollPanel levelScrollPanel;
 	
 	@UiField
 	Grid levelGrid;
+	
+	@UiField
+	HTMLPanel agreementLevelMessage;
+	
+	// SALARY TABLE
+	
+	@UiField
+	DisclosurePanel salaryDiscPanel;
+	
+	@UiField(provided = true)
+	AonToolbarButton salaryDiscBtn;
+	
+	@UiField
+	HTMLPanel salaryDiscPanelContent;
+	
+	@UiField
+	ScrollPanel salaryScrollPanel;
+	
+	@UiField
+	Grid salaryGrid;
+	
+	@UiField
+	HTMLPanel agreementSalaryTableMessage;
+	
+	// PAYMENT
 	
 	@UiField
 	DisclosurePanel paymentDiscPanel;
@@ -178,16 +317,15 @@ public abstract class AgreementPreview extends Composite {
 	HTMLPanel paymentDiscPanelContent;
 	
 	@UiField
-	HTMLPanel paymentTable;
-	
-	@UiField
 	ScrollPanel paymentScrollPanel;
 	
 	@UiField
 	Grid paymentGrid;
 	
 	@UiField
-	HTMLPanel agreementPaymentMessage;
+	HTMLPanel agreementPaymentTableMessage;
+	
+	// EXTRA
 	
 	@UiField
 	DisclosurePanel paymentExtraDiscPanel;
@@ -196,19 +334,16 @@ public abstract class AgreementPreview extends Composite {
 	AonToolbarButton paymentExtraDiscBtn;
 	
 	@UiField
-	HTMLPanel paymentExtraDiscPanelContent;
+	HTMLPanel extraDiscPanelContent;
 	
 	@UiField
-	HTMLPanel paymentExtraTable;
+	ScrollPanel extraScrollPanel;
 	
 	@UiField
-	ScrollPanel paymentExtraScrollPanel;
+	Grid extraGrid;
 	
 	@UiField
-	Grid paymentExtraGrid;
-	
-	@UiField
-	HTMLPanel agreementPaymentExtraMessage;
+	HTMLPanel agreementExtraTableMessage;
 	
 	@UiField(provided = true)
 	AonToolbar toolbarSimulator;
@@ -227,11 +362,30 @@ public abstract class AgreementPreview extends Composite {
 	private AonToolbarButton printPreviewButton;
 	private AonToolbarButton serviAgreementUpdateButton;
 	private AonToolbarButton agreementInfoButton;
+	private AonToolbarButton undoAllButton;
 	
 	private boolean hasChange = false;
 	private boolean workplaceView = false;
 	private boolean employeeView = false;
+	private boolean showOldPayments = false;
+	private boolean isOpenCollapse = true;
+	private boolean readOnly = false;
+	
+	private int disclouroseHeight = 0;
+	
+	private List<Payment> paymentList;
+	private List<Payment> paymentExtraList;
+	
+	// Toolbar
+	
 	private AonToolbarSmallButton saveBtn;
+	private AonToolbarSmallButton newLevelBtn;
+	private AonToolbarSmallButton newDateBtn;
+	private ListBox datesLB;
+	private AonToolbarSmallButton deleteDateBtn;
+	private AonToolbarSmallButton variablesVisivility;
+	private AonToolbarSmallButton addPaymentButton;
+	private AonToolbarSmallButton showOlPaymentsButton;
 	
 	private ListBox tc2ListBox;
 	private ListBox levelListBox;
@@ -253,6 +407,7 @@ public abstract class AgreementPreview extends Composite {
 		createToolbar();
 		createToolbarSimulator();
 		createDiscPanelButtons();
+		
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		description.ensureDebugId("descriptionTextBox");
@@ -262,12 +417,123 @@ public abstract class AgreementPreview extends Composite {
 		dateLabels = new ArrayList<>();
 	}
 	
+	// ----------------------------------------------- PaymenteTable methods
+	
+	private void openDialog(Payment payment) {
+		boolean isHide = AonStringUtils.isNotBlank(payment.getExpression()) && AonStringUtils.containsIgnoreCase(payment.getExpression(), "HIDE") && AonStringUtils.startsWithIgnoreCase(payment.getExpression(), "HIDE");
+		Optional<Date> startDate = agreement.getSortedDates().stream().findFirst();
+    	new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(), startDate.get()) {
+			@Override
+			protected void onAccept(Payment updatedPayment, AgreementExtra extra, Payment associatedPayment, AgreementExtra associatedExtra) {
+				updatePaymentExpresion(isHide, payment, updatedPayment);
+				agreement.replacePayment(payment);
+				
+				if(null != extra && null != extra.getId() && extra.getId() > 0) agreement.replaceExtra(extra); 
+				if(null != extra && null != extra.getId()) agreement.addExtra(extra);
+				
+				if(null != associatedExtra && null != associatedExtra.getId() && associatedExtra.getId() > 0) agreement.replaceExtra(associatedExtra); 
+				
+				if(null != associatedPayment) agreement.addPayment(associatedPayment);
+				if(null != associatedExtra && (null == associatedExtra.getId() || associatedExtra.getId() < 0)) agreement.addExtra(associatedExtra);
+				
+				setAgreementPreview(agreement);
+				setHasChange(true);
+			}
+
+			private void updatePaymentExpresion(boolean isHide, Payment selectedPayment, Payment updatedPayment) {
+				selectedPayment.setExpression(Boolean.TRUE.equals(isHide) ? showHidePayment(updatedPayment.getDescription(), updatedPayment.getExpression()) : updatedPayment.getExpression());
+				selectedPayment.setScope(Scope.SALARY);
+				selectedPayment.setSalaryType(Type.SALARY);
+			}
+
+			@Override
+			protected void onSeniority(String seniorityExpression) {
+				agreement.addSeniority(seniorityExpression);
+			}
+
+			@Override
+			protected String getSeniority() {
+				return agreement.getSeniority();
+			}
+
+		};
+		
+	}
+	
+	private boolean isHideExpression(Payment payment) {
+		String expression = payment.getExpression();
+		return !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE") && AonStringUtils.startsWithIgnoreCase(expression, "HIDE");
+	}
+	
+	public String showHidePayment(String description, String expression) {
+		if(!AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE") && AonStringUtils.startsWithIgnoreCase(expression, "HIDE"))
+			expression = expression.replaceAll("HIDE\\(.*\\);\\s", "");
+		else
+			expression = "HIDE(\"<div>" + description + " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); " + expression;
+		
+		return expression;
+	}
+	
+	public void showHidePayment(Payment payment) {
+		String expression = payment.getExpression();
+		
+		expression = !AonStringUtils.isBlank(expression) && AonStringUtils.containsIgnoreCase(expression, "HIDE") && AonStringUtils.startsWithIgnoreCase(expression, "HIDE") ?
+				expression.replaceAll("HIDE\\(.*\\);\\s", "") :
+				"HIDE(\"<div>" + payment.getDescription() + " oculto desde Convenio</div><div>&nbsp;</div><div class='aon-text-right'><span class='aon-icon aon-icon-logo'/>aon Solutions</div>\"); " + expression;
+		
+		payment.setExpression(expression);
+	}
+	
+	private void getEnableDisableButton(Button button, boolean disabled, boolean readOnly) {
+		button.removeStyleName(disabled ? AON.AON_ICON_DISABLE : (readOnly ? AON.AON_ICON_ENABLE_GRAY : AON.AON_ICON_ENABLE));
+		button.removeStyleName(AON.AON_NO_MARGIN);
+		button.removeStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON);
+		
+		button.setStyleName(!disabled ? AON.AON_ICON_DISABLE : (readOnly ? AON.AON_ICON_ENABLE_GRAY : AON.AON_ICON_ENABLE));
+		button.setStyleName(AON.AON_NO_MARGIN, true);
+		button.setStyleName(AON.AON_EDIT_DATA_TABLE_BUTTON, true);
+	}
+
+	private void checkRowAndModify(Grid grid, int row, Payment payment, Widget widget) {
+		if(row % 2 == 0 ) widget.addStyleName(style.oddRow());
+		
+		if(payment.isModify()) {
+			widget.addStyleName(style.modify());
+			
+			grid.getCellFormatter().addStyleName(row, 0, style.modify());
+			grid.getCellFormatter().addStyleName(row, 1, style.modify());
+			grid.getCellFormatter().addStyleName(row, 2, style.modify());
+			grid.getCellFormatter().addStyleName(row, 3, style.modify());
+			grid.getCellFormatter().addStyleName(row, 4, style.modify());
+			grid.getCellFormatter().addStyleName(row, 5, style.modify());
+			grid.getCellFormatter().addStyleName(row, 6, style.modify());
+			grid.getCellFormatter().addStyleName(row, 7, style.modify());
+		} else {
+			widget.removeStyleName(style.modify());
+			
+			grid.getCellFormatter().removeStyleName(row, 0, style.modify());
+			grid.getCellFormatter().removeStyleName(row, 1, style.modify());
+			grid.getCellFormatter().removeStyleName(row, 2, style.modify());
+			grid.getCellFormatter().removeStyleName(row, 3, style.modify());
+			grid.getCellFormatter().removeStyleName(row, 4, style.modify());
+			grid.getCellFormatter().removeStyleName(row, 5, style.modify());
+			grid.getCellFormatter().removeStyleName(row, 6, style.modify());
+			grid.getCellFormatter().removeStyleName(row, 7, style.modify());
+		}
+		
+	}
+	
 	// ------------------------------------------ setAgreementPreview
 	
 	public void setAgreementPreview(AgreementInfo agreementIn) {
 		agreement = agreementIn;
 		toolbar.setTitle(agreement.getDescription());
-		serviAgreementUpdateButton.setVisible(agreement.getOwner().equals(AgreementOwner.SERVICONVENIOS));
+		serviAgreementUpdateButton.setVisible(!readOnly && agreement.getOwner().equals(AgreementOwner.SERVICONVENIOS));
+		
+		fillDatesLB();
+		
+		disclouroseHeight = Window.getClientHeight() - 370;
+		
 		hideLevelSalaryMessage();
 		showAgreementPreview();
 		fillAgreementInfo();
@@ -281,7 +547,7 @@ public abstract class AgreementPreview extends Composite {
 		printPreviewButton.setVisible(!agreement.getDates().isEmpty());
 			
 		description.setText(agreement.getDescription());
-		description.setReadOnly(0 == agreement.getDomain().intValue());
+		description.setReadOnly(readOnly);
 		description.removeStyleName(style.modify());
 		description.addValueChangeHandler(e -> {
 			agreement.setDescription(e.getValue());
@@ -289,7 +555,7 @@ public abstract class AgreementPreview extends Composite {
 			setHasChange(true);
 		});
 		ssNumber.setText(agreement.getSSNumber());
-		ssNumber.setReadOnly(0 == agreement.getDomain().intValue());
+		ssNumber.setReadOnly(readOnly);
 		ssNumber.removeStyleName(style.modify());
 		ssNumber.addValueChangeHandler(e -> {
 			agreement.setSSNumber(e.getValue());
@@ -302,17 +568,11 @@ public abstract class AgreementPreview extends Composite {
 		else
 			serviAgreementPanel.clear();
 		
-		if(!agreement.getSortedDates().isEmpty())
-			createSalaryTableButtons();
-		
-		createSalaryTable();
 		createCategoryTable();
+		createSalaryTable();
 		
-		if(agreement.getActivePayments().isEmpty()) showPaymentMessage();
-		else createPaymentTable();
-		
-		if(agreement.getActivePaymentsExtra().isEmpty()) showPaymentExtraMessage();
-		else createPaymentExtraTable();
+		createPaymentTable();
+		createExtraTable();
 		
 		setTablesWidth();
 	}
@@ -344,28 +604,6 @@ public abstract class AgreementPreview extends Composite {
 
 	// ------------------------------------------ salaryTableButtons
 
-	private void createSalaryTableButtons() {
-		salaryTableButtons.clear();
-		
-		selectedDate = agreement.getSortedDates().stream().findFirst().get();
-		
-		agreement.getSortedDates().forEach(date -> {
-			Label dateLabel = new Label(formatDate.format(date));
-			dateLabel.addStyleName(style.dateNoSelected());
-			if(date.equals(selectedDate)) dateLabel.addStyleName(style.dateSelected());
-			dateLabel.addClickHandler(e -> {
-				Date dateClicked = formatDate.parse(dateLabel.getText());
-				selectedDate = dateClicked;
-				dateLabels.forEach(dateLabelIn -> dateLabelIn.removeStyleName(style.dateSelected()));
-				dateLabel.addStyleName(style.dateSelected());
-				createSalaryTable();
-			});
-			
-			dateLabels.add(dateLabel);
-			salaryTableButtons.add(dateLabel);
-		});
-	}
-	
 	private void setSelectedValueLB(ListBox lBox, String str) {
 	    String text = str;
 	    int indexToFind = 0;
@@ -393,9 +631,17 @@ public abstract class AgreementPreview extends Composite {
 		}
 	}
 	
+	private void fillDatesLB() {
+		datesLB.clear();
+		agreement.getSortedDates().forEach(date -> datesLB.addItem(formatDate.format(date), formatDate.format(date)));
+		datesLB.setSelectedIndex(0);
+	}
+	
 	private void getSalaryTableHeader() {
+		Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
+		
 		salaryGrid.clear();
-		salaryGrid.resize(0, agreement.getVariablesByDate(selectedDate).size()+2);
+		salaryGrid.resize(0, agreement.getVariablesByDate(selectedDate).size()+3);
 		int row = salaryGrid.insertRow(salaryGrid.getRowCount());
 		
 		Label category = new Label("Categoria");
@@ -430,11 +676,18 @@ public abstract class AgreementPreview extends Composite {
 		salaryGrid.setWidget(row, col, emptyCell);
 		salaryGrid.getCellFormatter().addStyleName(row, col, style.headerFixed());
 		salaryGrid.getColumnFormatter().addStyleName(col, style.widthAll());
+		
+		col++;
+		
+		Label deleteCell = new Label("");
+		salaryGrid.setWidget(row, col, deleteCell);
+		salaryGrid.getCellFormatter().addStyleName(row, col, style.headerDeleteFixed());
 	}
 
 	private void fillSalaryTable() {
+		Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
+		
 		for(Level level : agreement.getLevels()) {
-			
 			if(level.getId() != 0 && ((level.isDeleted() || (null != agreement.getSelectedLevel() && !level.getId().equals(agreement.getSelectedLevel().getId()))))) continue;
 			
 			int row = salaryGrid.insertRow(salaryGrid.getRowCount());
@@ -443,6 +696,7 @@ public abstract class AgreementPreview extends Composite {
 			
 			if(level.getId() == 0) {
 				categoryLB = createCategoryLB();
+				categoryLB.ensureDebugId("category_filter");
 				categoryLB.getElement().getStyle().setHeight(1.7, Unit.EM);
 				categoryLB.getElement().getStyle().setWidth(290, Unit.PX);
 				categoryLB.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
@@ -471,35 +725,62 @@ public abstract class AgreementPreview extends Composite {
 			
 			for(String variable : agreement.getVariablesByDate(selectedDate)) {
 				LevelData levelData = agreement.getLevelData(level.getId(), variable, selectedDate);
-				Label cell = new Label();
+				TextBox cell = new ExpressionBox();
+				
+				cell.ensureDebugId("textBox_" + variable + "_" + level.getDescription() );
+
 				cell.addStyleName(style.gridCell());
 				cell.addStyleName(style.valueCell());
-				cell.setText(null == levelData ? null : SpecialExpresion.parse(levelData.getExpression()).getInput());
+				cell.addStyleName(style.textBoxSalary());
+				cell.setValue(null == levelData ? null : levelData.getExpression());
 				cell.setTitle("Valor nivel retributivo");
+				cell.setReadOnly(readOnly);
 				
 				if(row % 2 == 0 ) cell.addStyleName(style.oddRow());
 				cell.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
-				if(null != levelData && AonStringUtils.isNotBlank(levelData.getExpression()) && cell.getText().length() > 16)
+				if(null != levelData && AonStringUtils.isNotBlank(levelData.getExpression()) && SpecialExpresion.parse(levelData.getExpression()).getInput().length() > 16)
 					cell.setWidth((7.5 * levelData.getExpression().length()) + "px");
 				else
-					cell.setWidth("100%");
+					cell.setWidth("95%");
 				
 				if(levelData != null && levelData.isModify())
 					cell.addStyleName(style.modify());
 				else
 					cell.removeStyleName(style.modify());
 				
+				cell.addValueChangeHandler(event -> {
+					
+					String expression = event.getValue();
+					String value = event.getValue();
+					
+					try {
+						Double expressionValue = evalExpression(expression);
+						value = null == expressionValue ? "" : expressionValue + "";
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+					
+					if(null == levelData || null == levelData.getId())
+						agreement.createLevelData(level.getId(), variable, value, selectedDate);
+					else
+						agreement.updateLevelData(level.getId(), levelData.getId(), value);
+					
+					setAgreementPreview(agreement);
+					setHasChange(true);
+				});
+				
 				// check if level 0 or default value
 				if(level.getId() == 0 || null == levelData || AonStringUtils.isBlank(levelData.getExpression())) {
-					levelData = agreement.getDefaultLevelData(variable, selectedDate);
-					cell.setText(null == levelData ? null : SpecialExpresion.parse(levelData.getExpression()).getInput());
+					LevelData levelDataDefault = agreement.getDefaultLevelData(variable, selectedDate);
+					cell.setText(null == levelDataDefault ? null : SpecialExpresion.parse(levelDataDefault.getExpression()).getInput());
 					cell.setTitle("Valor por defecto");
 					cell.addStyleName(style.levelDefaultValue());
+					cell.setReadOnly(readOnly);
 					
-					if(null != levelData && AonStringUtils.isNotBlank(levelData.getExpression()) && cell.getText().length() > 20)
-						cell.setWidth((7.5 * levelData.getExpression().length()) + "px");
+					if(null != levelDataDefault && AonStringUtils.isNotBlank(levelDataDefault.getExpression()) && cell.getText().length() > 20)
+						cell.setWidth((7.5 * levelDataDefault.getExpression().length()) + "px");
 					else
-						cell.setWidth("100%");
+						cell.setWidth("95%");
 				}
 						
 				salaryGrid.setWidget(row, col, cell);
@@ -510,44 +791,78 @@ public abstract class AgreementPreview extends Composite {
 			Label emptyCell = new Label("");
 			salaryGrid.setWidget(row, col, emptyCell);
 			if(row % 2 == 0 ) salaryGrid.getCellFormatter().addStyleName(row, col, style.oddRow());
+			
+			col++;
+			
+			Widget deleteCell = new Label();
+			if(!readOnly) {
+				deleteCell = new AonToolbarSmallButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+				((AonToolbarSmallButton) deleteCell).addClickHandler(event -> {
+						AonDialog deleteDialog = new AonDialog("Borrar nivel", new HTMLPanel("\u00bfDesea realmente eliminar el nivel <b>" + level.getDescription() +"</b>\u003f"));
+						deleteDialog.setGlassStyleName(style.dialogGlass());
+						deleteDialog.addStyleName(style.dialogZIndex());
+						deleteDialog.confirm(new AonAcceptDialogCallback() {
+							
+							@Override
+							public void onCancel() {
+								// Not use here
+							}
+							
+							@Override
+							public void onAccept() {
+								agreement.deleteLevel(level.getId());
+								createSalaryTable();
+								setHasChange(true);
+							}
+						});
+					});
+			}
+			
+			salaryGrid.setWidget(row, col, level.getId() == 0 ? new Label("") : deleteCell);
+			salaryGrid.getCellFormatter().addStyleName(row, col, style.deleteFixed());
+			if(row % 2 == 0 ) salaryGrid.getCellFormatter().addStyleName(row, col, style.oddRow());
 		}
+		
+	}
+	
+	public double evalExpression(String expression) {
+	    return calculate(expression);
 	}
 
+	public final native double calculate(String expression) /*-{
+	    return eval(expression);
+	}-*/;
+	
 	private ListBox createCategoryLB() {
-		Map<Integer, String> allCategories = new TreeMap<>();
+		Map<String, Integer> allCategories = new TreeMap<>();
 		
 		for(Level levelIT : agreement.getLevels()) {
 			if(levelIT.getId() == 0) continue;
 			Set<String> levelCategories = agreement.getCategoriesMap().get(levelIT.getId());
 			Set<String> levelContracts = agreement.getContractsMap().get(levelIT.getId());
-			if(workplaceView && null !=levelContracts && !levelContracts.isEmpty()) levelContracts.forEach(levelContract -> allCategories.put(levelIT.getId(), levelIT.getDescription() + " - " + levelContract));
-			else if(levelCategories.size() > 1) levelCategories.forEach(category -> allCategories.put(levelIT.getId(), category + "(" + levelIT.getDescription() + ")"));
+			if(null !=levelContracts && !levelContracts.isEmpty()) levelContracts.forEach(levelContract -> allCategories.put(levelIT.getDescription() + " - " + levelContract, levelIT.getId()));
+			else if(levelCategories.size() > 1) levelCategories.forEach(category -> allCategories.put(category, levelIT.getId()));
 			else if(levelCategories.size() == 1) {
 				String category = (String)levelCategories.toArray()[0];
 				RegExp regExp = RegExp.compile("Categoria|Nivel|categoria|nivel|CATEGORIA|NIVEL?");
 				MatchResult matcher = regExp.exec(category);
 				boolean matchFound = matcher != null;
-				if(matchFound) allCategories.put(levelIT.getId(), levelIT.getDescription());
-			    else  allCategories.put(levelIT.getId(), category + "(" + levelIT.getDescription() + ")");
+				if(matchFound) allCategories.put(levelIT.getDescription(), levelIT.getId());
+			    else  allCategories.put(category, levelIT.getId());
 			}
 		}
 		
 		ListBox listBox = new ListBox();
 		listBox.addItem("Todos", "");
 		listBox.addItem("Por defecto", "0");
-		allCategories.entrySet().forEach(e -> listBox.addItem(e.getValue(), e.getKey().toString()));
-		
+		allCategories.entrySet().forEach(e -> listBox.addItem(e.getKey(), e.getValue().toString()));
 		return listBox;
-	}
-
-	private void salaryTableWidth() {
-		salaryGrid.getColumnFormatter().setWidth(0, "120px");
 	}
 	
 	private String getLevelCategories(Level level) {
 		StringBuilder categoriesBuilder = new StringBuilder();
 		Set<String> levelContracts = agreement.getContractsMap().get(level.getId());
-		if(workplaceView && null !=levelContracts && !levelContracts.isEmpty()) {
+		if(null !=levelContracts && !levelContracts.isEmpty()) {
 			for(String levelContract : levelContracts){
 				if(AonStringUtils.isBlank(categoriesBuilder.toString()))
 					categoriesBuilder.append(levelContract);
@@ -576,7 +891,7 @@ public abstract class AgreementPreview extends Composite {
 	private String getLevelCategoriesTitle(Level level) {
 		StringBuilder categoriesBuilder = new StringBuilder();
 		Set<String> levelContracts = agreement.getContractsMap().get(level.getId());
-		if(workplaceView && null !=levelContracts && !levelContracts.isEmpty()) {
+		if(null !=levelContracts && !levelContracts.isEmpty()) {
 			
 			StringBuilder contractsBuilder = new StringBuilder();
 			for(String levelContract : levelContracts){
@@ -618,6 +933,10 @@ public abstract class AgreementPreview extends Composite {
 		agreement.setSelectedLevel(AonStringUtils.isBlank(levelId) ? null : agreement.getLevelById(Integer.parseInt(categoryLB.getSelectedValue())));
 		setAgreementPreview(agreement);
 	}
+
+	private void salaryTableWidth() {
+		salaryGrid.getColumnFormatter().setWidth(0, "120px");
+	}
 	
 	// ------------------------------------------ categoryTable
 
@@ -631,10 +950,10 @@ public abstract class AgreementPreview extends Composite {
 			categoryTableWidth();
 		}
 	}
-
+	
 	private void getCategoryTableHeader() {
 		levelGrid.clear();
-		levelGrid.resize(0, 2);
+		levelGrid.resize(0, 3);
 		int row = levelGrid.insertRow(levelGrid.getRowCount());
 		
 		Label level = new Label("Nivel");
@@ -642,7 +961,6 @@ public abstract class AgreementPreview extends Composite {
 		level.addStyleName(style.headerFSize());
 		levelGrid.setWidget(row, 0, level);
 		levelGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
-
 		
 		Label category = new Label("Categoria");
 		category.addStyleName(style.gridTitle());
@@ -651,13 +969,17 @@ public abstract class AgreementPreview extends Composite {
 		levelGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
 
 		levelGrid.getRowFormatter().addStyleName(row, style.headerColor());
+		
+		Label delete = new Label("");
+		levelGrid.setWidget(row, 2, delete);
+		levelGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
 	}
 
 	private void fillCategoryTable() {
 		for(Entry<Integer, Set<String>> e : agreement.getCategoriesMap().entrySet()) {
-			Level level = agreement.getLevelById(e.getKey());
 			
-			if(level.getId() == 0 || level.isDeleted() || (null != agreement.getSelectedLevel() && !level.getId().equals(agreement.getSelectedLevel().getId()))) continue;
+			Level level = agreement.getLevelById(e.getKey());
+			if(level.isDeleted() || level.getId() == 0) continue;
 			
 			int row = levelGrid.insertRow(levelGrid.getRowCount());
 			
@@ -670,126 +992,522 @@ public abstract class AgreementPreview extends Composite {
 					categoriesBuilder.append(", " + category);
 			}
 			
-			Label levelCell = new Label(level.getDescription());
+			TextBox levelCell = new TextBox();
+			levelCell.setValue(level.getDescription());
 			levelCell.setTitle(level.getDescription());
 			levelCell.addStyleName(style.overflowEllipsis());
 			levelCell.addStyleName(style.gridTitle());
 			levelCell.addStyleName(style.gridCell());
 			levelCell.addStyleName(style.levelCell());
+			levelCell.addStyleName(style.textBoxSalary());
+			levelCell.setReadOnly(readOnly);
+			if(row % 2 == 0 ) levelCell.addStyleName(style.oddRow());
 			
-			Label categoryCell = new Label(categoriesBuilder.toString());
-			categoryCell.setTitle("Categorias nivel " + level.getDescription());
+			if(level != null && level.isModify())
+				levelCell.addStyleName(style.modify());
+			else
+				levelCell.removeStyleName(style.modify());
+			
+			levelCell.addValueChangeHandler(ev -> {
+				if(AonStringUtils.isBlank(ev.getValue()) || agreement.existLevel(ev.getValue())) {
+					showWarning("Nivel existente", "La descripci\u00f3n no puede ser vacia o coincidir con la de otro nivel ya existente");
+					levelCell.setValue(level.getDescription());
+				} else {
+					level.setDescription(ev.getValue());
+					level.setModify(true);
+					setAgreementPreview(agreement);
+					setHasChange(true);
+				}
+			});
+			
+			TextBox categoryCell = new TextBox();
 			categoryCell.addStyleName(style.levelCell());
+			categoryCell.addStyleName(style.textBoxSalary());
+			categoryCell.setValue(categoriesBuilder.toString());
+			categoryCell.setTitle("Categorias nivel " + level.getDescription());
+			categoryCell.setReadOnly(readOnly);
+			if(row % 2 == 0 ) categoryCell.addStyleName(style.oddRow());
+			
+			if(level != null && level.isCatModify())
+				categoryCell.addStyleName(style.modify());
+			else
+				categoryCell.removeStyleName(style.modify());
+			
+			categoryCell.addValueChangeHandler(categoryValue -> {
+				if(AonStringUtils.isNotBlank(categoryValue.getValue())) {
+					agreement.getCategoriesMap().remove(level.getId());
+					String[] categorySplit = AonStringUtils.split(categoryValue.getValue(), ',');
+					for(int i = 0; i < categorySplit.length; i++)
+						agreement.addCategory(level.getId(), categorySplit[i].trim());
+					
+					level.setCatModify(true);
+					setAgreementPreview(agreement);
+					setHasChange(true);
+				}
+				
+			});
+			
+			Widget deleteCell = new Label();
+			
+			if(!readOnly) {
+				deleteCell = new AonToolbarSmallButton(AON.MSG.deleteAction(), AON.CSS.aonIconDelete());
+				((AonToolbarSmallButton) deleteCell).addClickHandler(event -> {
+					AonDialog deleteDialog = new AonDialog("Borrar nivel", new HTMLPanel("\u00bfDesea realmente eliminar el nivel <b>" + level.getDescription() +"</b>\u003f"));
+					deleteDialog.setGlassStyleName(style.dialogGlass());
+					deleteDialog.addStyleName(style.dialogZIndex());
+					deleteDialog.confirm(new AonAcceptDialogCallback() {
+						
+						@Override
+						public void onCancel() {
+							// Not use here
+						}
+						
+						@Override
+						public void onAccept() {
+							agreement.deleteLevel(level.getId());
+							setAgreementPreview(agreement);
+							setHasChange(true);
+						}
+					});
+				});
+			}
 			
 			levelGrid.setWidget(row, 0, levelCell);
 			levelGrid.setWidget(row, 1, categoryCell);
-			
-			levelGrid.getCellFormatter().addStyleName(row, 0, style.levelColumn());
+			levelGrid.setWidget(row, 2, deleteCell);
 			
 			if(row % 2 == 0 ) levelGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
 			if(row % 2 == 0 ) levelGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
-			
+			if(row % 2 == 0 ) levelGrid.getCellFormatter().addStyleName(row, 2, style.oddRow());
 		}
 	}
 
 	private void categoryTableWidth() {
 		levelGrid.setWidth("100%");
 		levelGrid.getColumnFormatter().setWidth(0, "120px");
+		levelGrid.getColumnFormatter().setWidth(2, "15px");
 	}
 	
 	// ------------------------------------------ paymentTable
 
 	private void createPaymentTable() {
-		hidePaymentMessage();
-		getPaymentTableHeader();
-		fillPaymentTable();
-		paymentTableWidth();
+		Set<Payment> payments = showOldPayments ? agreement.getOldPaymentsAndHides() : agreement.getPaymentsAndHides();
+		if(payments.isEmpty())
+			showPaymentMessage();
+		else {
+			hidePaymentMessage();
+			getPaymentTableHeader();
+			fillPaymentTable();
+			paymentTableWidth();
+		}
 	}
 	
 	private void getPaymentTableHeader() {
 		paymentGrid.clear();
-		paymentGrid.resize(0, 5);
+		paymentGrid.resize(0, 8);
 		int row = paymentGrid.insertRow(paymentGrid.getRowCount());
 		
-		Label cra = new Label("CRA");
-		cra.addStyleName(style.gridTitle());
-		cra.addStyleName(style.headerFSize());
-		cra.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-		paymentGrid.setWidget(row, 0, cra);
+		Label editColumn = new Label();
+		paymentGrid.setWidget(row, 0, editColumn);
 		paymentGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
+		paymentGrid.getCellFormatter().addStyleName(row, 0, style.zIndex1());
 		
-		Label concept = new Label("Concepto");
-		concept.addStyleName(style.gridTitle());
-		concept.addStyleName(style.headerFSize());
-		paymentGrid.setWidget(row, 1, concept);
+		Label craColumn = new Label("CRA");
+		craColumn.addStyleName(style.gridTitle());
+		craColumn.addStyleName(style.headerFSize());
+		paymentGrid.setWidget(row, 1, craColumn);
 		paymentGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
 		
-		Label description = new Label("Descripci\u00f3n");
-		description.addStyleName(style.gridTitle());
-		description.addStyleName(style.headerFSize());
-		paymentGrid.setWidget(row, 2, description);
+		Label conceptColumn = new Label("Concept");
+		conceptColumn.addStyleName(style.gridTitle());
+		conceptColumn.addStyleName(style.headerFSize());
+		paymentGrid.setWidget(row, 2, conceptColumn);
 		paymentGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
 		
-		Label expression = new Label("Expresi\u00f3n");
-		expression.addStyleName(style.gridTitle());
-		expression.addStyleName(style.headerFSize());
-		paymentGrid.setWidget(row, 3, expression);
+		Label descriptionColumn = new Label("Descripci\u00f3n");
+		descriptionColumn.addStyleName(style.gridTitle());
+		descriptionColumn.addStyleName(style.headerFSize());
+		paymentGrid.setWidget(row, 3, descriptionColumn);
 		paymentGrid.getCellFormatter().addStyleName(row, 3, style.headerFixed());
 		
-		Label info = new Label("");
-		info.addStyleName(style.gridTitle());
-		info.addStyleName(style.headerFSize());
-		paymentGrid.setWidget(row, 4, info);
+		Label expressionColumn = new Label("Expresi\u00f3n");
+		expressionColumn.addStyleName(style.gridTitle());
+		expressionColumn.addStyleName(style.headerFSize());
+		paymentGrid.setWidget(row, 4, expressionColumn);
 		paymentGrid.getCellFormatter().addStyleName(row, 4, style.headerFixed());
+		
+		Label infoColumn = new Label();
+		paymentGrid.setWidget(row, 5, infoColumn);
+		paymentGrid.getCellFormatter().addStyleName(row, 5, style.headerFixed());
+		
+		Label visibilityColumn = new Label("Estado");
+		visibilityColumn.addStyleName(style.gridTitle());
+		visibilityColumn.addStyleName(style.headerFSize());
+		paymentGrid.setWidget(row, 6, visibilityColumn);
+		paymentGrid.getCellFormatter().addStyleName(row, 6, style.headerFixed());
+		
+		Label deleteColumn = new Label();
+		paymentGrid.setWidget(row, 7, deleteColumn);
+		paymentGrid.getCellFormatter().addStyleName(row, 7, style.headerFixed());
+		paymentGrid.getCellFormatter().addStyleName(row, 7, style.zIndex1());
 		
 		paymentGrid.getRowFormatter().addStyleName(row, style.headerColor());
 	}
 
 	private void fillPaymentTable() {
-		for(Payment payment : agreement.getActivePayments()) {
+		Set<Payment> payments = showOldPayments ? agreement.getOldPaymentsAndHides() : agreement.getPaymentsAndHides();
+		
+		for(Payment payment : payments) {
+			
 			int row = paymentGrid.insertRow(paymentGrid.getRowCount());
 			
-			Label craCell = new Label(null == payment.getType() ? "" : AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0'));
-			craCell.setTitle(payment.getType().getDescription());
-			craCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+			Widget editCell = new Label();
+			editCell.ensureDebugId("edit_payment_" + row);
+			if(!readOnly) {
+				editCell = new AonToolbarSmallButton("Editar devengo", payment.isModify() ? AON.CSS.aonIconArrowRightModify() : AON.CSS.aonIconRight());
+				((AonToolbarSmallButton)editCell).addClickHandler(e -> openDialog(payment));
+			}
+			checkRowAndModify(paymentGrid, row, payment, editCell);
 			
-			Label conceptCell = new Label(payment.getName());
+			Widget craCell = new Label(null == payment.getType() ? "Revisar CRA" : AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0'));
+			checkRowAndModify(paymentGrid, row, payment, craCell);
 			
-			Label descriptionCell = new Label(payment.getDescription());
+			Widget conceptCell = new Label(AonStringUtils.isBlank(payment.getName()) ? "" : payment.getName());
+			conceptCell.setTitle(AonStringUtils.isBlank(payment.getName()) ? "" : payment.getName());
+			conceptCell.addStyleName(style.elipsis());
+			conceptCell.addStyleName(style.elipsisConceptWidth());
+			checkRowAndModify(paymentGrid, row, payment, conceptCell);
 			
-			Label expressionCell = new Label();
-			expressionCell.setText(getParsedExpression(payment.getExpression()));
+			Widget descriptionCell = new Label(AonStringUtils.isBlank(payment.getDescription()) ? "" : payment.getDescription());
+			descriptionCell.setTitle(AonStringUtils.isBlank(payment.getDescription()) ? "" : payment.getDescription());
+			descriptionCell.addStyleName(style.elipsis());
+			descriptionCell.addStyleName(isOpenCollapse ? style.elipsisOpenCollapseWidth() :  style.elipsisCloseCollapseWidth());
+			checkRowAndModify(paymentGrid, row, payment, descriptionCell);
 			
+			Widget expressionCell = new Label(AonStringUtils.isBlank(payment.getExpression()) ? "" : getParsedExpression(payment.getExpression()));
+			expressionCell.setTitle(AonStringUtils.isBlank(payment.getExpression()) ? "" : getParsedExpression(payment.getExpression()));
+			expressionCell.addStyleName(style.elipsis());
+			expressionCell.addStyleName(isOpenCollapse ? style.elipsisOpenCollapseWidth() :  style.elipsisCloseCollapseWidth());
+			checkRowAndModify(paymentGrid, row, payment, expressionCell);
 			
-			Widget infoCell = null;
-			String title = getInfoTitle(payment);
-			if(AonStringUtils.isBlank(title))
-				infoCell = new Label();
-			else
-				infoCell = new AonToolbarSmallButton(title, AON.CSS.aonIconInfo());
+			Widget infoCell = new Label();
+			String infoTitle = getInfoTitle(payment);
+			if(AonStringUtils.isNotBlank(infoTitle))
+				infoCell = new AonToolbarSmallButton(infoTitle, AON.CSS.aonIconInfo());
+			checkRowAndModify(paymentGrid, row, payment, infoCell);
 			
-			paymentGrid.setWidget(row, 0, craCell);
-			paymentGrid.setWidget(row, 1, conceptCell);
-			paymentGrid.setWidget(row, 2, descriptionCell);
-			paymentGrid.setWidget(row, 3, expressionCell);
-			paymentGrid.setWidget(row, 4, infoCell);
+			Widget visibilityCell = new Button();
+			getEnableDisableButton((Button) visibilityCell, !isHideExpression(payment), readOnly);
+			visibilityCell.setTitle(isHideExpression(payment) ? "Inactivo" : "Activo");
+			if(!readOnly) {
+				((Button)visibilityCell).addClickHandler(e -> {
+					showHidePayment(payment);
+			    	payment.setModify(true);
+			    	setAgreementPreview(agreement);
+			    	setHasChange(true);
+				});
+			}
+			checkRowAndModify(paymentGrid, row, payment, visibilityCell);
+			
+			Widget deleteCell = new Label();
+			if(!readOnly) {
+				deleteCell = new AonToolbarSmallButton("Eliminar devengo", AON.CSS.aonIconDelete());
+				((AonToolbarSmallButton)deleteCell).addClickHandler(e -> {
+					AonDialog deleteDialog = new AonDialog("Eliminar concepto", new HTML("\u00BFDesea eliminar el concepto seleccionado\u003F"));
+			    	deleteDialog.confirm(new AonAcceptDialogCallback() {
+						
+						@Override
+						public void onCancel() {
+							// Nothing to do here
+						}
+						
+						@Override
+						public void onAccept() {
+							agreement.deletePayment(payment);
+							setAgreementPreview(agreement);
+							setHasChange(true);
+						}
+					});
+				});
+			}
+			deleteCell.ensureDebugId("deletePaymentTabButton-" + row);
+			checkRowAndModify(paymentGrid, row, payment, deleteCell);
+			
+			if(payment.isModify()) paymentGrid.getRowFormatter().addStyleName(row, style.modify());
+			else paymentGrid.getRowFormatter().removeStyleName(row, style.modify());
+			
+			paymentGrid.setWidget(row, 0, editCell);
+			paymentGrid.setWidget(row, 1, craCell);
+			paymentGrid.setWidget(row, 2, conceptCell);
+			paymentGrid.setWidget(row, 3, descriptionCell);
+			paymentGrid.setWidget(row, 4, expressionCell);
+			paymentGrid.setWidget(row, 5, infoCell);
+			paymentGrid.setWidget(row, 6, visibilityCell);
+			paymentGrid.setWidget(row, 7, deleteCell);
 			
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 2, style.oddRow());
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 3, style.oddRow());
 			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 4, style.oddRow());
+			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 5, style.oddRow());
+			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 6, style.oddRow());
+			if(row % 2 == 0 ) paymentGrid.getCellFormatter().addStyleName(row, 7, style.oddRow());
 		}
+		
 	}
 	
 	private void paymentTableWidth() {
 		paymentGrid.setWidth("100%");
-		paymentGrid.getColumnFormatter().setWidth(0, "80px");
-		paymentGrid.getColumnFormatter().setWidth(1, "200px");
-		paymentGrid.getColumnFormatter().setWidth(2, "30%");
-		paymentGrid.getColumnFormatter().setWidth(3, "45%");
-		paymentGrid.getColumnFormatter().setWidth(4, "50px");
+		paymentGrid.getColumnFormatter().setWidth(0, "50px");
+		paymentGrid.getColumnFormatter().setWidth(1, "80px");
+		paymentGrid.getColumnFormatter().setWidth(2, "200px");
+		paymentGrid.getColumnFormatter().setWidth(3, "auto");
+		paymentGrid.getColumnFormatter().setWidth(4, "auto");
+		paymentGrid.getColumnFormatter().setWidth(5, "60px");
+		paymentGrid.getColumnFormatter().setWidth(6, "60px");
+		paymentGrid.getColumnFormatter().setWidth(7, "50px");
 	}
+	
+	// ------------------------------------------ paymentTable
+
+	private void createExtraTable() {
+		Set<Payment> extras = showOldPayments ? agreement.getOldPaymentsExtraAndHides() : agreement.getPaymentsExtraAndHides();
+		if(extras.isEmpty())
+			showExtraMessage();
+		else {
+			hideExtraMessage();
+			getExtraTableHeader();
+			fillExtraTable();
+			extraTableWidth();
+		}
+	}
+	
+	private void getExtraTableHeader() {
+		extraGrid.clear();
+		extraGrid.resize(0, 9);
+		int row = extraGrid.insertRow(extraGrid.getRowCount());
+		
+		Label editColumn = new Label();
+		extraGrid.setWidget(row, 0, editColumn);
+		extraGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
+		extraGrid.getCellFormatter().addStyleName(row, 0, style.zIndex1());
+		
+		Label payDateColumn = new Label("F.Cobro");
+		payDateColumn.addStyleName(style.gridTitle());
+		payDateColumn.addStyleName(style.headerFSize());
+		extraGrid.setWidget(row, 1, payDateColumn);
+		extraGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
+		
+		Label conceptColumn = new Label("Concept");
+		conceptColumn.addStyleName(style.gridTitle());
+		conceptColumn.addStyleName(style.headerFSize());
+		extraGrid.setWidget(row, 2, conceptColumn);
+		extraGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
+		
+		Label descriptionColumn = new Label("Descripci\u00f3n");
+		descriptionColumn.addStyleName(style.gridTitle());
+		descriptionColumn.addStyleName(style.headerFSize());
+		extraGrid.setWidget(row, 3, descriptionColumn);
+		extraGrid.getCellFormatter().addStyleName(row, 3, style.headerFixed());
+		
+		Label expressionColumn = new Label("Expresi\u00f3n");
+		expressionColumn.addStyleName(style.gridTitle());
+		expressionColumn.addStyleName(style.headerFSize());
+		extraGrid.setWidget(row, 4, expressionColumn);
+		extraGrid.getCellFormatter().addStyleName(row, 4, style.headerFixed());
+		
+		Label periodicityColumn = new Label();
+		extraGrid.setWidget(row, 0, periodicityColumn);
+		extraGrid.getCellFormatter().addStyleName(row, 5, style.headerFixed());
+		
+		Label infoColumn = new Label();
+		extraGrid.setWidget(row, 6, infoColumn);
+		extraGrid.getCellFormatter().addStyleName(row, 6, style.headerFixed());
+		
+		Label visibilityColumn = new Label("Estado");
+		visibilityColumn.addStyleName(style.gridTitle());
+		visibilityColumn.addStyleName(style.headerFSize());
+		extraGrid.setWidget(row, 7, visibilityColumn);
+		extraGrid.getCellFormatter().addStyleName(row, 7, style.headerFixed());
+		
+		Label deleteColumn = new Label();
+		extraGrid.setWidget(row, 8, deleteColumn);
+		extraGrid.getCellFormatter().addStyleName(row, 8, style.headerFixed());
+		extraGrid.getCellFormatter().addStyleName(row, 8, style.zIndex1());
+		
+		extraGrid.getRowFormatter().addStyleName(row, style.headerColor());
+	}
+
+	private void fillExtraTable() {
+		Set<Payment> extras = showOldPayments ? agreement.getOldPaymentsExtraAndHides() : agreement.getPaymentsExtraAndHides();
+		
+		for(Payment payment : extras) {
+			
+			int row = extraGrid.insertRow(extraGrid.getRowCount());
+			
+			AgreementExtra extra = agreement.getExtraPayment(payment.getId());
+			
+			Widget editCell = new Label();
+			editCell.ensureDebugId("edit_payment_" + row);
+			if(!readOnly) {
+				editCell = new AonToolbarSmallButton("Editar devengo", payment.isModify() ? AON.CSS.aonIconArrowRightModify() : AON.CSS.aonIconRight());
+				((AonToolbarSmallButton)editCell).addClickHandler(e -> openDialog(payment));
+			}
+			checkRowAndModify(extraGrid, row, payment, editCell);
+			
+			Widget payDateCell;
+			if(null != extra && !extra.isDeleted())
+				payDateCell = new Label(extra.getIssueDate() + (readOnly ? " (" + getPayDescription(payment) + ")" : ""));
+			else {
+				if(readOnly) payDateCell = new Label("Prorrat.");
+				else {
+					payDateCell = new TextBox();
+					payDateCell.setWidth("50px");
+					payDateCell.getElement().setPropertyString("placeholder", "dd/mm");
+					((TextBox)payDateCell).addValueChangeHandler(e -> checkExtra(payment, e.getValue()));
+				}
+			}
+			checkRowAndModify(extraGrid, row, payment, payDateCell);
+			
+			Widget conceptCell = new Label(AonStringUtils.isBlank(payment.getName()) ? "" : payment.getName());
+			conceptCell.setTitle(AonStringUtils.isBlank(payment.getName()) ? "" : payment.getName());
+			conceptCell.addStyleName(style.elipsis());
+			conceptCell.addStyleName(style.elipsisConceptWidth());
+			checkRowAndModify(extraGrid, row, payment, conceptCell);
+			
+			Widget descriptionCell = new Label(AonStringUtils.isBlank(payment.getDescription()) ? "" : payment.getDescription());
+			descriptionCell.setTitle(AonStringUtils.isBlank(payment.getDescription()) ? "" : payment.getDescription());
+			descriptionCell.addStyleName(style.elipsis());
+			descriptionCell.addStyleName(isOpenCollapse ? style.elipsisOpenCollapseExtraWidth() :  style.elipsisCloseCollapseExtraWidth());
+			checkRowAndModify(extraGrid, row, payment, descriptionCell);
+			
+			Widget expressionCell = new Label(AonStringUtils.isBlank(payment.getExpression()) ? "" : getParsedExpression(payment.getExpression()));
+			expressionCell.setTitle(AonStringUtils.isBlank(payment.getExpression()) ? "" : getParsedExpression(payment.getExpression()));
+			expressionCell.addStyleName(style.elipsis());
+			expressionCell.addStyleName(isOpenCollapse ? style.elipsisOpenCollapseExtraWidth() :  style.elipsisCloseCollapseExtraWidth());
+			checkRowAndModify(extraGrid, row, payment, expressionCell);
+			
+			Widget periodicityCell = new Label();
+			if(null != extra && !extra.isDeleted() && !readOnly) {
+				String issueMonth = extra.getIssueDate().split("/")[1];
+    			String payDescription = getPayLongDescription(payment);
+    			
+				ListBox periodicityLB = createPeriodicityLB(issueMonth);
+				setSelectedValueLB(periodicityLB, payDescription);
+				periodicityLB.addChangeHandler(e -> {
+					checkPaymentExtra(payment, periodicityLB.getSelectedValue());
+					setAgreementPreview(agreement);
+					setHasChange(true);
+				});
+				
+				periodicityCell = periodicityLB;
+			}
+			checkRowAndModify(extraGrid, row, payment, periodicityCell);
+			
+			Widget infoCell = new Label();
+			String infoTitle = getExtraInfoTitle(payment);
+			if(AonStringUtils.isNotBlank(infoTitle))
+				infoCell = new AonToolbarSmallButton(infoTitle, AON.CSS.aonIconInfo());
+			checkRowAndModify(extraGrid, row, payment, infoCell);
+			
+			Widget visibilityCell = new Button();
+			getEnableDisableButton((Button) visibilityCell, !isHideExpression(payment), readOnly);
+			visibilityCell.setTitle(isHideExpression(payment) ? "Inactivo" : "Activo");
+			if(!readOnly) {
+				((Button)visibilityCell).addClickHandler(e -> {
+					showHidePayment(payment);
+					payment.setModify(true);
+			    	setAgreementPreview(agreement);
+			    	setHasChange(true);
+				});
+			}
+			checkRowAndModify(extraGrid, row, payment, visibilityCell);
+			
+			Widget deleteCell = new Label();
+			if(!readOnly) {
+				deleteCell = new AonToolbarSmallButton("Eliminar devengo", AON.CSS.aonIconDelete());
+				((AonToolbarSmallButton)deleteCell).addClickHandler(e -> {
+					AonDialog deleteDialog = new AonDialog("Eliminar concepto", new HTML("\u00BFDesea eliminar el concepto seleccionado\u003F"));
+			    	deleteDialog.confirm(new AonAcceptDialogCallback() {
+						
+						@Override
+						public void onCancel() {
+							// Nothing to do here
+						}
+						
+						@Override
+						public void onAccept() {
+							agreement.deletePayment(payment);
+							setAgreementPreview(agreement);
+							setHasChange(true);
+						}
+					});
+				});
+			}
+			deleteCell.ensureDebugId("deletePaymentTabButton-" + row);
+			checkRowAndModify(extraGrid, row, payment, deleteCell);
+			
+			if(payment.isModify()) extraGrid.getRowFormatter().addStyleName(row, style.modify());
+			else extraGrid.getRowFormatter().removeStyleName(row, style.modify());
+			
+			extraGrid.setWidget(row, 0, editCell);
+			extraGrid.setWidget(row, 1, payDateCell);
+			extraGrid.setWidget(row, 2, conceptCell);
+			extraGrid.setWidget(row, 3, descriptionCell);
+			extraGrid.setWidget(row, 4, expressionCell);
+			extraGrid.setWidget(row, 5, periodicityCell);
+			extraGrid.setWidget(row, 6, infoCell);
+			extraGrid.setWidget(row, 7, visibilityCell);
+			extraGrid.setWidget(row, 8, deleteCell);
+			
+			if(row % 2 == 0 ) extraGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
+			if(row % 2 == 0 ) extraGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
+			if(row % 2 == 0 ) extraGrid.getCellFormatter().addStyleName(row, 2, style.oddRow());
+			if(row % 2 == 0 ) extraGrid.getCellFormatter().addStyleName(row, 3, style.oddRow());
+			if(row % 2 == 0 ) extraGrid.getCellFormatter().addStyleName(row, 4, style.oddRow());
+			if(row % 2 == 0 ) extraGrid.getCellFormatter().addStyleName(row, 5, style.oddRow());
+			if(row % 2 == 0 ) extraGrid.getCellFormatter().addStyleName(row, 6, style.oddRow());
+			if(row % 2 == 0 ) extraGrid.getCellFormatter().addStyleName(row, 7, style.oddRow());
+			if(row % 2 == 0 ) extraGrid.getCellFormatter().addStyleName(row, 8, style.oddRow());
+		}
+		
+	}
+	
+	private ListBox createPeriodicityLB(String issueMonth) {
+		ListBox lb = new ListBox();
+		
+		lb.addItem("Anual", "Anual");
+		lb.addItem("Semestral", "Semestral");
+		lb.addItem("Prorrat.", "Prorrat.");
+		lb.addItem("Manual", "Manual");
+		
+		if(AonStringUtils.containsIgnoreCase(issueMonth, "7") || AonStringUtils.containsIgnoreCase(issueMonth, "6") || AonStringUtils.containsIgnoreCase(issueMonth, "12"))
+			lb.getElement().getElementsByTagName("option").getItem(3).setAttribute("disabled", "disabled");
+		else if(AonStringUtils.containsIgnoreCase(issueMonth, "03")) {
+			lb.getElement().getElementsByTagName("option").getItem(1).setAttribute("disabled", "disabled");
+			lb.getElement().getElementsByTagName("option").getItem(3).setAttribute("disabled", "disabled");
+		} else
+			lb.getElement().getElementsByTagName("option").getItem(1).setAttribute("disabled", "disabled");
+		
+		return lb;
+	}
+
+	private void extraTableWidth() {
+		extraGrid.setWidth("100%");
+		extraGrid.getColumnFormatter().setWidth(0, "50px");
+		extraGrid.getColumnFormatter().setWidth(1, "100px");
+		extraGrid.getColumnFormatter().setWidth(2, "200px");
+		extraGrid.getColumnFormatter().setWidth(3, "auto");
+		extraGrid.getColumnFormatter().setWidth(4, "auto");
+		extraGrid.getColumnFormatter().setWidth(5, "120px");
+		extraGrid.getColumnFormatter().setWidth(6, "60px");
+		extraGrid.getColumnFormatter().setWidth(7, "60px");
+		extraGrid.getColumnFormatter().setWidth(8, "50px");
+	}
+	
+	
+	// ------------------------------------------ paymentTable
 	
 	private String getInfoTitle(Payment payment) {
 		String title = "";
@@ -860,98 +1578,185 @@ public abstract class AgreementPreview extends Composite {
 			return "Revisar esta extra!!";
 		}
 	}
-	
-	// ------------------------------------------ paymentTable
 
-	private void createPaymentExtraTable() {
-		hidePaymentExtraMessage();
-		getPaymentExtraTableHeader();
-		fillPaymentExtraTable();
-		paymentExtraTableWidth();
-	}
-	
-	private void getPaymentExtraTableHeader() {
-		paymentExtraGrid.clear();
-		paymentExtraGrid.resize(0, 5);
-		int row = paymentExtraGrid.insertRow(paymentExtraGrid.getRowCount());
-		
-		Label payDate = new Label("F. Cobro");
-		payDate.addStyleName(style.gridTitle());
-		payDate.addStyleName(style.headerFSize());
-		payDate.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-		paymentExtraGrid.setWidget(row, 0, payDate);
-		paymentExtraGrid.getCellFormatter().addStyleName(row, 0, style.headerFixed());
-		
-		Label concept = new Label("Concepto");
-		concept.addStyleName(style.gridTitle());
-		concept.addStyleName(style.headerFSize());
-		paymentExtraGrid.setWidget(row, 1, concept);
-		paymentExtraGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
-		
-		Label description = new Label("Descripci\u00f3n");
-		description.addStyleName(style.gridTitle());
-		description.addStyleName(style.headerFSize());
-		paymentExtraGrid.setWidget(row, 2, description);
-		paymentExtraGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
-		
-		Label expression = new Label("Expresi\u00f3n");
-		expression.addStyleName(style.gridTitle());
-		expression.addStyleName(style.headerFSize());
-		paymentExtraGrid.setWidget(row, 3, expression);
-		paymentExtraGrid.getCellFormatter().addStyleName(row, 3, style.headerFixed());
-		
-		Label info = new Label("");
-		info.addStyleName(style.gridTitle());
-		info.addStyleName(style.headerFSize());
-		paymentExtraGrid.setWidget(row, 4, info);
-		paymentExtraGrid.getCellFormatter().addStyleName(row, 4, style.headerFixed());
-		
-		paymentExtraGrid.getRowFormatter().addStyleName(row, style.headerColor());
-	}
-
-	private void fillPaymentExtraTable() {
-		for(Payment payment : agreement.getActivePaymentsExtra()) {
-			int row = paymentExtraGrid.insertRow(paymentExtraGrid.getRowCount());
-			
+	private void checkExtra(Payment payment, String issueDate) {
+		if(AonStringUtils.isBlank(issueDate)) showWarning("Fecha cobro", "La fecha de cobro debe rellenarse y tener el formato dd/mm");
+		else {
 			AgreementExtra extra = agreement.getExtraPayment(payment.getId());
+			if(null == extra) {
+				Random rand = new Random();
+				int newExtraId = rand.nextInt(1000) * -1;
+				
+				AgreementExtra newExtra = new AgreementExtra();
+				newExtra.setId(newExtraId);
+				newExtra.setAgreementPayment(payment.getId());
+				
+				newExtra.setIssueDate(issueDate);
+				newExtra.setStartDate(getAnualStartDate(issueDate));
+				newExtra.setEndDate(getAnualEndDate(issueDate));
+				
+				agreement.addExtra(newExtra);
+				payment.setModify(true);
+				
+			} else {
+				extra.setDeleted(false);
+				
+				extra.setIssueDate(issueDate);
+				extra.setStartDate(getAnualStartDate(issueDate));
+				extra.setEndDate(getAnualEndDate(issueDate));
+				
+				payment.setModify(true);
+			}
+
+			setAgreementPreview(agreement);
+			setHasChange(true);
+		}
+	}
+
+	private String getAnualStartDate(String issueDate) {
+		if(AonStringUtils.containsIgnoreCase(issueDate, "03"))
+			return "01/01 -1";
+		else if(AonStringUtils.containsIgnoreCase(issueDate, "6") || AonStringUtils.containsIgnoreCase(issueDate, "7"))
+			return "01/07 -1";
+		else if(AonStringUtils.contains(issueDate, "12"))
+			return "01/01";
+		else {
+			String month = issueDate.split("/")[1];
+			return "01/" + month + " -1";
+		}
+	}
+
+	private String getAnualEndDate(String issueDate) {
+		if(AonStringUtils.containsIgnoreCase(issueDate, "03"))
+			return "31/12 -1";
+		else if(AonStringUtils.containsIgnoreCase(issueDate, "6") || AonStringUtils.containsIgnoreCase(issueDate, "7"))
+			return "30/06";
+		else if(AonStringUtils.contains(issueDate, "12"))
+			return "31/12";
+		else {
+			String month = issueDate.split("/")[1];
+			String newMonth = getNewEndMonth(month);
+			return getEndDayMonth(newMonth) + "/" + newMonth + (AonStringUtils.equals(newMonth, "12") ? " -1" : "");
+		}
+	}
+
+	private String getNewEndMonth(String monthStr) {
+		Integer month = Integer.parseInt(monthStr);
+		if(month == 1) month = 12;
+		else month--;
+		return AonStringUtils.leftPad(month.toString(), 2, "0");
+	}
+
+	private String getEndDayMonth(String newMonth) {
+		switch (newMonth) {
+		case "01":
+			return "31";
+		case "02":
+			return "28";
+		case "03":
+			return "31";
+		case "04":
+			return "30";
+		case "05":
+			return "31";
+		case "06":
+			return "30";
+		case "07":
+			return "31";
+		case "08":
+			return "31";
+		case "09":
+			return "30";
+		case "10":
+			return "31";
+		case "11":
+			return "30";
+		default:
+			return "31";
+		}
+	}
+
+	private void checkPaymentExtra(Payment payment, String periodicity) {
+		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
+		
+		if(null != extra) {
+			if(AonStringUtils.equals(periodicity, "Prorrat.")) extra.setDeleted(true);
+			else if(AonStringUtils.equals(periodicity, "Anual")) checkAnualExtra(extra);
+			else if(AonStringUtils.equals(periodicity, "Semestral")) checkSemestralExtra(extra);
 			
-			Label payDateCell = new Label(payment.getType().equals(Payment.Type.CRA_0004) && null != extra ? (extra.getIssueDate() + " (" +  getPayDescription(payment) + ")") : "");
-			payDateCell.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-			
-			Label conceptCell = new Label(payment.getName());
-			
-			Label descriptionCell = new Label(payment.getDescription());
-			
-			Label expressionCell = new Label(getParsedExpression(payment.getExpression()));
-			
-			Widget infoCell = null;
-			String title = getExtraInfoTitle(payment);
-			if(AonStringUtils.isBlank(title))
-				infoCell = new Label();
-			else
-				infoCell = new AonToolbarSmallButton(title, AON.CSS.aonIconInfo());
-			
-			paymentExtraGrid.setWidget(row, 0, payDateCell);
-			paymentExtraGrid.setWidget(row, 1, conceptCell);
-			paymentExtraGrid.setWidget(row, 2, descriptionCell);
-			paymentExtraGrid.setWidget(row, 3, expressionCell);
-			paymentExtraGrid.setWidget(row, 4, infoCell);
-			
-			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
-			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
-			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 2, style.oddRow());
-			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 3, style.oddRow());
-			if(row % 2 == 0 ) paymentExtraGrid.getCellFormatter().addStyleName(row, 4, style.oddRow());
+			payment.setModify(true);
 		}
 	}
 	
-	private void paymentExtraTableWidth() {
-		paymentExtraGrid.setWidth("100%");
-		paymentExtraGrid.getColumnFormatter().setWidth(0, "150px");
-		paymentExtraGrid.getColumnFormatter().setWidth(1, "200px");
-		paymentExtraGrid.getColumnFormatter().setWidth(2, "30%");
-		paymentExtraGrid.getColumnFormatter().setWidth(3, "40%");
-		paymentExtraGrid.getColumnFormatter().setWidth(4, "50px");
+	private void checkAnualExtra(AgreementExtra extra) {
+		extra.setDeleted(false);
+		String issueDate = extra.getIssueDate();
+		if(AonStringUtils.isNotBlank(issueDate)) {
+			if(AonStringUtils.containsIgnoreCase(issueDate, "03")) {
+				extra.setStartDate("01/01 -1");
+				extra.setEndDate("31/12 -1");
+			} else if(AonStringUtils.containsIgnoreCase(issueDate, "6") || AonStringUtils.containsIgnoreCase(issueDate, "7")) {
+				extra.setStartDate("01/07 -1");
+				extra.setEndDate("30/06");
+			} else if(AonStringUtils.containsIgnoreCase(issueDate, "12")) {
+				extra.setStartDate("01/01");
+				extra.setEndDate("31/12");
+			} 
+		}
+	}
+
+	private void checkSemestralExtra(AgreementExtra extra) {
+		extra.setDeleted(false);
+		String issueDate = extra.getIssueDate();
+		if(AonStringUtils.isNotBlank(issueDate)) {
+			if(AonStringUtils.containsIgnoreCase(issueDate, "03")) {
+				extra.setStartDate("01/07 -1");
+				extra.setEndDate("31/12 -1");
+			} else if(AonStringUtils.containsIgnoreCase(issueDate, "6") || AonStringUtils.containsIgnoreCase(issueDate, "7")) {
+				extra.setStartDate("01/01");
+				extra.setEndDate("30/06");
+			} else if(AonStringUtils.containsIgnoreCase(issueDate, "12")) {
+				extra.setStartDate("01/07");
+				extra.setEndDate("31/12");
+			} 
+		}
+		
+	}
+
+	private String getPayLongDescription(Payment payment) {
+		AgreementExtra extra = agreement.getExtraPayment(payment.getId());
+		
+		if(	null == extra && 
+				(payment.getType().equals(Payment.Type.CRA_0004) || 
+				payment.getType().equals(Payment.Type.CRA_0005))) return "Prorrat.";
+		
+		return (extra == null || extra.isDeleted()) ? "Prorrat." : getExtraPeriodLongTitle(extra);
+	}
+	
+	private String getExtraPeriodLongTitle(AgreementExtra extra) {
+		if(AonStringUtils.containsIgnoreCase(extra.getIssueDate(), "03")) return "Anual";
+		if(AonStringUtils.containsIgnoreCase(extra.getStartDate(), "-1") && !AonStringUtils.containsIgnoreCase(extra.getEndDate(), "-1")) return "Anual";
+		
+		try {
+			String startDate = extra.getStartDate();
+			startDate = AonStringUtils.containsIgnoreCase(startDate, "-1") ? startDate.split(" ")[0] : startDate;
+			String endDate = extra.getEndDate();
+			endDate = AonStringUtils.containsIgnoreCase(endDate, "-1") ? endDate.split(" ")[0] : endDate;
+			
+			int startMonth = Integer.parseInt(startDate.split("/")[1]);
+			int endMonth = Integer.parseInt(endDate.split("/")[1]);
+			
+			switch (endMonth - startMonth) {
+			case 11:
+				return "Anual";
+			case 5:
+				return "Semestral";
+			default:
+				return "Manual";
+			}
+		} catch (Exception e) {
+			return "Manual";
+		}
 	}
 	
 	private String getExtraInfoTitle(Payment payment) {
@@ -971,7 +1776,6 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private String getParsedExpression(String expression) {
-		expression = AonStringUtils.isBlank(expression) ? expression : expression.replaceAll("HIDE\\(.*\\); ", "");
 		return SpecialExpresion.parse(expression).getInput();
 	}
 	
@@ -979,25 +1783,17 @@ public abstract class AgreementPreview extends Composite {
 	
 	public void setTablesWidth() {
 		Scheduler.get().scheduleDeferred(() -> {
-			levelScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
-			salaryTableButtons.setWidth((Window.getClientWidth() - 450) + "px");
-			salaryScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
-			paymentScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
-			paymentExtraScrollPanel.setWidth((Window.getClientWidth() - 450) + "px");
+			salaryScrollPanel.setWidth((Window.getClientWidth() - 420) + "px");
 			
-			levelScrollPanel.setHeight((levelDiscPanelContent.getOffsetHeight() - 50) + "px");
-			salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 70) + "px");
-			paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 50) + "px");
-			paymentExtraScrollPanel.setHeight((paymentExtraDiscPanelContent.getOffsetHeight() - 50) + "px");
+			levelScrollPanel.setHeight((levelDiscPanelContent.getOffsetHeight() - 30) + "px");
+			salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 30) + "px");
+			paymentScrollPanel.setHeight((levelDiscPanelContent.getOffsetHeight() - 30) + "px");
+			extraScrollPanel.setHeight((levelDiscPanelContent.getOffsetHeight() - 30) + "px");
 		});
 	}
 	
 	public void setTablesWidthCollapseMenu() {
-		levelScrollPanel.setWidth((Window.getClientWidth() - 150) + "px");
-		salaryTableButtons.setWidth((Window.getClientWidth() - 150) + "px");
-		salaryScrollPanel.setWidth((Window.getClientWidth() - 150) + "px");
-		paymentScrollPanel.setWidth((Window.getClientWidth() - 150) + "px");
-		paymentExtraScrollPanel.setWidth((Window.getClientWidth() - 150) + "px");
+		salaryScrollPanel.setWidth((Window.getClientWidth() - 70) + "px");
 	}
 
 	// ------------------------------------------ deckLayoutPanel
@@ -1010,48 +1806,41 @@ public abstract class AgreementPreview extends Composite {
 		deckLayoutPanel.showWidget(1);
 	}
 	
-	// ------------------------------------------ salaryTable
+	// ------------------------------------------ show/hide messages
 	
 	private void showSalaryTableMessage() {
 		agreementSalaryTableMessage.getElement().getStyle().clearDisplay();
 		agreementLevelMessage.getElement().getStyle().setDisplay(Display.NONE);
-		salaryTable.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void showLevelMessage() {
 		agreementSalaryTableMessage.getElement().getStyle().setDisplay(Display.NONE);
-		salaryTable.getElement().getStyle().setDisplay(Display.NONE);
 		agreementLevelMessage.getElement().getStyle().clearDisplay();
 	}
 	
 	private void hideLevelSalaryMessage() {
-		salaryTable.getElement().getStyle().clearDisplay();
 		agreementSalaryTableMessage.getElement().getStyle().setDisplay(Display.NONE);
 		agreementLevelMessage.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
-	// ------------------------------------------ payments
-	
 	private void showPaymentMessage() {
-		agreementPaymentMessage.getElement().getStyle().clearDisplay();
-		paymentTable.getElement().getStyle().setDisplay(Display.NONE);
+		paymentScrollPanel.getElement().getStyle().setDisplay(Display.NONE);
+		agreementPaymentTableMessage.getElement().getStyle().clearDisplay();
 	}
 	
 	private void hidePaymentMessage() {
-		paymentTable.getElement().getStyle().clearDisplay();
-		agreementPaymentMessage.getElement().getStyle().setDisplay(Display.NONE);
+		agreementPaymentTableMessage.getElement().getStyle().setDisplay(Display.NONE);
+		paymentScrollPanel.getElement().getStyle().clearDisplay();
 	}
 	
-	// ------------------------------------------ payments (extra)
-	
-	private void showPaymentExtraMessage() {
-		agreementPaymentExtraMessage.getElement().getStyle().clearDisplay();
-		paymentExtraTable.getElement().getStyle().setDisplay(Display.NONE);
+	private void showExtraMessage() {
+		extraScrollPanel.getElement().getStyle().setDisplay(Display.NONE);
+		agreementExtraTableMessage.getElement().getStyle().clearDisplay();
 	}
 	
-	private void hidePaymentExtraMessage() {
-		paymentExtraTable.getElement().getStyle().clearDisplay();
-		agreementPaymentExtraMessage.getElement().getStyle().setDisplay(Display.NONE);
+	private void hideExtraMessage() {
+		agreementExtraTableMessage.getElement().getStyle().setDisplay(Display.NONE);
+		extraScrollPanel.getElement().getStyle().clearDisplay();
 	}
 	
 	// ------------------------------------------ DisclosurePanel
@@ -1069,6 +1858,8 @@ public abstract class AgreementPreview extends Composite {
 			
 			paymentExtraDiscPanel.setOpen(false);
 			handleIcon(paymentExtraDiscBtn, false);
+			
+			showCategoryButtons();
 		});
 		levelDiscPanel.addCloseHandler(e -> handleIcon(levelDiscBtn, false));
 		levelDiscPanelContent.setHeight((Window.getClientHeight() - 450) + "px");
@@ -1085,10 +1876,12 @@ public abstract class AgreementPreview extends Composite {
 			
 			paymentExtraDiscPanel.setOpen(false);
 			handleIcon(paymentExtraDiscBtn, false);
+			
+			showSalaryTableButtons();
 		});
 		salaryDiscPanel.addCloseHandler(e -> handleIcon(salaryDiscBtn, false));
-		salaryDiscPanel.setOpen(true);
 		salaryDiscPanelContent.setHeight((Window.getClientHeight() - 450) + "px");
+		salaryDiscPanel.setOpen(true);
 		
 		paymentDiscPanel.setAnimationEnabled(true);
 		paymentOpenHandler = paymentDiscPanel.addOpenHandler(e -> {
@@ -1102,6 +1895,9 @@ public abstract class AgreementPreview extends Composite {
 			
 			paymentExtraDiscPanel.setOpen(false);
 			handleIcon(paymentExtraDiscBtn, false);
+			
+			showPaymentButtons();
+			
 		});
 		paymentDiscPanel.addCloseHandler(e -> handleIcon(paymentDiscBtn, false));
 		paymentDiscPanelContent.setHeight((Window.getClientHeight() - 450) + "px");
@@ -1118,9 +1914,18 @@ public abstract class AgreementPreview extends Composite {
 			
 			paymentDiscPanel.setOpen(false);
 			handleIcon(paymentDiscBtn, false);
+			
+			showPaymentButtons();
 		});
 		paymentExtraDiscPanel.addCloseHandler(e -> handleIcon(paymentExtraDiscBtn, false));
-		paymentExtraDiscPanelContent.setHeight((Window.getClientHeight() - 450) + "px");
+		extraDiscPanelContent.setHeight((Window.getClientHeight() - 450) + "px");
+	}
+	
+	public void setIsOpenCollapse(boolean isCollapse) {
+		this.isOpenCollapse = isCollapse;
+		// For resize widget paint again
+		createPaymentTable();
+		createExtraTable();
 	}
 
 	private void createDiscPanelButtons() {
@@ -1170,6 +1975,198 @@ public abstract class AgreementPreview extends Composite {
 		
 		toolbar.add(saveBtn);
 		
+		newLevelBtn = new AonToolbarSmallButton(AON.MSG.newAction() + " nivel/categoria", AON.CSS.aonIconAdd());
+		newLevelBtn.addClickHandler(e -> {
+			HorizontalPanel panel = new HorizontalPanel();
+			Label description = new Label("Descripci\u00f3n: ");
+			TextBox levelDescription = new TextBox();
+			levelDescription.setWidth("100%");
+			panel.setWidth("98%");
+			panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+			panel.add(description);
+			panel.add(levelDescription);
+			AonDialog dialog = new AonDialog("Nuevo nivel", panel);
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
+			dialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Not use here
+				}
+				
+				@Override
+				public void onAccept() {
+					if(AonStringUtils.isBlank(levelDescription.getValue()) || agreement.existLevel(levelDescription.getValue())) {
+						showWarning("Nivel existente", "La descripci\u00f3n no puede ser vacia o coincidir con la de otro nivel ya existente");
+					} else {
+						agreement.createLevel(levelDescription.getValue());
+						setAgreementPreview(agreement);
+						setHasChange(true);
+					}
+				}
+			});
+		});
+		
+		toolbar.add(newLevelBtn);
+		
+		newDateBtn = new AonToolbarSmallButton(AON.MSG.newAction() + " tramo", AON.CSS.aonIconAdd());
+		newDateBtn.ensureDebugId("newSalaryTabButton");
+		newDateBtn.addClickHandler(e -> {
+			PopupPanel popup = new PopupPanel(true); // auto-hide
+			DatePicker picker = new DatePicker();
+			picker.setValue(new Date());
+			picker.setYearAndMonthDropdownVisible(true);
+			
+			picker.addValueChangeHandler(event -> {
+				popup.hide();
+				Date newPeriod = event.getValue();
+				if(agreement.getSortedDates().isEmpty()) {
+					agreement.createNewPeriod(newPeriod);
+					agreement.setFilteredAllVariables();
+					setAgreementPreview(agreement);
+					setHasChange(true);
+				} else {
+					Date maxDate = agreement.getSortedDates().stream().findFirst().get();
+					if(maxDate.after(newPeriod) || maxDate.equals(newPeriod))
+						showWarning("Error fechas", "No se puede seleccionar un fecha anterior o igual al ultimo tramo existente");
+					else {
+						agreement.createNewPeriod(newPeriod);
+						setAgreementPreview(agreement);
+						setHasChange(true);
+					}
+				}
+			});
+			
+			popup.setWidget(picker);
+			popup.setStyleName(style.datePickerPanel());
+			popup.showRelativeTo(newDateBtn);
+
+			popup.ensureDebugId("morePopupPanel");
+			picker.ensureDebugId("moreDatePicker");
+		});
+		
+		toolbar.add(newDateBtn);
+		
+		datesLB = new ListBox();
+		datesLB.ensureDebugId("datesLB");
+		datesLB.getElement().getStyle().setHeight(1.7, Unit.EM);
+		datesLB.addChangeHandler(e -> createSalaryTable());
+		
+		toolbar.add(datesLB);
+		
+		deleteDateBtn = new AonToolbarSmallButton(AON.MSG.deleteAction() + " tramo", AON.CSS.aonIconDelete());
+		deleteDateBtn.ensureDebugId("deleteSalaryTabButton");
+		deleteDateBtn.addClickHandler(e -> {
+			AonDialog deleteDialog = new AonDialog("Borrar tramo", new HTMLPanel("\u00bfDesea realmente eliminar el tramo <b>" + datesLB.getSelectedValue() +"</b> de la tabla salarial\u003f"));
+			deleteDialog.ensureDebugId("deleteDateDialog");
+			deleteDialog.setGlassStyleName(style.dialogGlass());
+			deleteDialog.addStyleName(style.dialogZIndex());
+			deleteDialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+				}
+				
+				@Override
+				public void onAccept() {
+					Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
+					agreement.deletePeriod(selectedDate);
+					deleteDialog.hide(true);
+					setAgreementPreview(agreement);
+					showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
+					setHasChange(false);
+					onSaved();
+				}
+			});
+		});
+		
+		toolbar.add(deleteDateBtn);
+		
+		variablesVisivility = new AonToolbarSmallButton("Mostrar/Ocultar variables", AON.CSS.aonIconVisibility());
+		variablesVisivility.addClickHandler(click -> {
+			Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
+			AgreementVariablesDialog dialog = new AgreementVariablesDialog(agreement.getAllVariables(), agreement.getVariablesByDate(selectedDate)) {
+				
+				@Override
+				protected void onAccept(String variablesType, Set<String> variables) {
+					switch (variablesType) {
+						case "VALUES":
+							agreement.setFilteredValuesVariables();
+							break;
+						case "NO_VALUES":
+							agreement.setFilteredNoValuesVariables();
+							break;
+						case "ALL":
+							agreement.setFilteredAllVariables();
+							break;
+						default:
+							agreement.setFilteredVariables(variables);
+							break;
+					}
+					createSalaryTable();	
+				}
+			};
+			dialog.setGlassStyleName(style.dialogGlass());
+			dialog.addStyleName(style.dialogZIndex());
+			dialog.setShowVariables(agreement.getShownVariables());
+		});
+		
+
+		toolbar.add(variablesVisivility);
+		
+		addPaymentButton = new AonToolbarSmallButton("A\u00F1adir Devengo", AON.CSS.aonIconAdd());
+		addPaymentButton.ensureDebugId("newPaymentButton");
+		addPaymentButton.addClickHandler(e -> new AddAonPaymentCommand().execute());
+		
+		toolbar.add(addPaymentButton);
+		
+		
+		showOlPaymentsButton = new AonToolbarSmallButton("Mostrar devengo antiguos", AON.CSS.aonIconVisibility());
+		showOlPaymentsButton.ensureDebugId("showOlPaymentsButton");
+		showOlPaymentsButton.addClickHandler(e -> {
+			showOldPayments = !showOldPayments;
+			
+			if(showOldPayments) {
+				showOlPaymentsButton.setTitle("Ocultar devengo antiguos");
+				showOlPaymentsButton.removeStyleName(AON.CSS.aonIconVisibility());
+				showOlPaymentsButton.addStyleName(AON.CSS.aonIconVisibilityOff());
+			} else {
+				showOlPaymentsButton.setTitle("Mostrar devengo antiguos");
+				showOlPaymentsButton.removeStyleName(AON.CSS.aonIconVisibilityOff());
+				showOlPaymentsButton.addStyleName(AON.CSS.aonIconVisibility());
+			}
+			
+			setAgreementPreview(agreement);
+		});
+		
+		toolbar.add(showOlPaymentsButton);
+		
+		undoAllButton = new AonToolbarButton(AON.MSG.undo(), AON.CSS.aonIconUndoAll());
+		undoAllButton.ensureDebugId("undoAllButton");
+		undoAllButton.addClickHandler(e -> {
+			AonDialog deleteDialog = new AonDialog("Restaurar convenio", new HTMLPanel("\u00bfDesea realmente deshacer los cambios sin guardar del convenio <b>" + toolbar.getTitle() + "</b>\u003f"));
+			deleteDialog.setGlassStyleName(style.dialogGlass());
+			deleteDialog.addStyleName(style.dialogZIndex());
+			deleteDialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Not use here
+				}
+				
+				@Override
+				public void onAccept() {
+					showLoading("Deshaciendo cambios " + toolbar.getTitle() + " ...");
+					setHasChange(false);
+					reloadAgreement();
+				}
+			});
+		});
+		
+		toolbar.add(undoAllButton);
+		
+		
 		agreementInfoButton = new AonToolbarButton("Informaci\u00f3n Convenio", AON.CSS.aonIconInfo());
 		agreementInfoButton.ensureDebugId("infoButton");
 		agreementInfoButton.addClickHandler(e -> 
@@ -1199,29 +2196,44 @@ public abstract class AgreementPreview extends Composite {
 				@Override
 				public void onSuccess(DomainUserRoles userRole) {
 					if(userRole.isConvenios()) {
-						PaymentsCleanDialog dialog = new PaymentsCleanDialog(agreement.getPayments()) {
-							
+						
+						impl.canUpdateServiAgreement(agreement, new AsyncCallback<Boolean>() {
+
 							@Override
-							public void onAccept() {
-								showLoading("Actualizando convenio");
-								impl.checkAndUpdateServiAgreement(agreement, new AsyncCallback<Void>() {
-
-									@Override
-									public void onFailure(Throwable caught) {
-										showError("Error actualizaci\u00F3n", caught.getMessage());
-									}
-
-									@Override
-									public void onSuccess(Void result) {
-										showSuccess("Actualizaci\u00F3n", "El convenio ha sido actualizado correctamente");
-										reloadAgreement();
-									}});
+							public void onFailure(Throwable caught) {
+								showError("Error actualizaci\u00F3n", caught.getMessage());
 							}
-						
-						};
-						
-						dialog.setGlassStyleName(style.dialogGlass());
-						dialog.addStyleName(style.dialogZIndex());
+
+							@Override
+							public void onSuccess(Boolean canUpdate) {
+								if(!canUpdate)
+									showSuccess("Actualizaci\u00F3n", "El convenio se encuentra actualizado, no existen nuevos tramos");
+								else {
+									PaymentsCleanDialog dialog = new PaymentsCleanDialog(agreement.getPayments()) {
+										
+										@Override
+										public void onAccept() {
+											showLoading("Actualizando convenio");
+											impl.checkAndUpdateServiAgreement(agreement, new AsyncCallback<Void>() {
+
+												@Override
+												public void onFailure(Throwable caught) {
+													showError("Error actualizaci\u00F3n", caught.getMessage());
+												}
+
+												@Override
+												public void onSuccess(Void result) {
+													showSuccess("Actualizaci\u00F3n", "El convenio ha sido actualizado correctamente");
+													reloadAgreement();
+												}});
+										}
+									
+									};
+									
+									dialog.setGlassStyleName(style.dialogGlass());
+									dialog.addStyleName(style.dialogZIndex());
+								}
+							}});
 						
 					} else 
 						showError("Actualizaci\u00f3n no disponible", "Para poder actualizar un convenio a traves de ServiConvenios debe tener contrato el m\u00f3dulo.");
@@ -1235,7 +2247,6 @@ public abstract class AgreementPreview extends Composite {
 		);
 		toolbar.add(serviAgreementUpdateButton);
 		
-		
 		printPreviewButton = new AonToolbarButton(AON.MSG.draftPrint(), AON.CSS.aonIconPdf() );
 		printPreviewButton.ensureDebugId("printPreviewButton");
 		printPreviewButton.addClickHandler(e -> {
@@ -1245,6 +2256,76 @@ public abstract class AgreementPreview extends Composite {
 			printPreview();
 		});
 		toolbar.add(printPreviewButton);
+		
+		setHasChange(false);
+		
+	}
+	
+	private void showCategoryButtons() {
+		if(readOnly)
+			showReadOnlyButtons();
+		else {
+			newLevelBtn.setVisible(true);
+			
+			newDateBtn.setVisible(false);
+			datesLB.setVisible(false);
+			deleteDateBtn.setVisible(false);
+			variablesVisivility.setVisible(false);
+			
+			addPaymentButton.setVisible(false);
+			showOlPaymentsButton.setVisible(false);
+		}
+	}
+	
+	private void showSalaryTableButtons() {
+		if(readOnly) {
+			showReadOnlyButtons();
+			datesLB.setVisible(!agreement.getDates().isEmpty());
+		} else {
+			newLevelBtn.setVisible(false);
+			
+			newDateBtn.setVisible(true);
+			datesLB.setVisible(true);
+			deleteDateBtn.setVisible(true);
+			variablesVisivility.setVisible(true);
+			
+			addPaymentButton.setVisible(false);
+			showOlPaymentsButton.setVisible(false);
+		}
+	}
+	
+	private void showPaymentButtons() {
+		if(readOnly)
+			showReadOnlyButtons();
+		else {
+			newLevelBtn.setVisible(false);
+			
+			newDateBtn.setVisible(false);
+			datesLB.setVisible(false);
+			deleteDateBtn.setVisible(false);
+			variablesVisivility.setVisible(false);
+			
+			addPaymentButton.setVisible(true);
+			showOlPaymentsButton.setVisible(true);
+		}
+	}
+	
+	private void showReadOnlyButtons() {
+		saveBtn.setVisible(false);
+		undoAllButton.setVisible(false);
+		
+		newLevelBtn.setVisible(false);
+		
+		newDateBtn.setVisible(false);
+		datesLB.setVisible(false);
+		deleteDateBtn.setVisible(false);
+		variablesVisivility.setVisible(false);
+		
+		addPaymentButton.setVisible(false);
+		showOlPaymentsButton.setVisible(false);
+		
+		serviAgreementUpdateButton.setVisible(false);
+		agreementInfoButton.setVisible(false);
 	}
 	
 	// ------------------------------------------ abstractMethod
@@ -1418,13 +2499,15 @@ public abstract class AgreementPreview extends Composite {
 	
 	public void setSelectedLevel(Integer levelId, String toolbarTitle) {
 		blockElements();
-		hideToolbarButtons();
+//		hideToolbarButtons();
 		hideLevelDiscPanel();
 		employeeView = true;
+		setReadOnly(true);
 		filterLevel(levelId);
 		toolbar.setTitle(toolbarTitle);
 		calcDiscPanelHeightsEmployee();
 		createAgreementGoToBtn();
+		checkDeleteAgreement();
 	}
 
 	private void filterLevel(Integer levelId) {
@@ -1434,12 +2517,14 @@ public abstract class AgreementPreview extends Composite {
 
 	public void payrollPreview() {
 		blockElements();
-		hideToolbarButtons();
+//		hideToolbarButtons();
 		hideLevelDiscPanel();
 		workplaceView = true;
-		createSalaryTable();
+		setReadOnly(true);
+		setAgreementPreview(agreement);
 		calcDiscPanelHeightsPayroll();
 		createAgreementGoToBtn();
+		checkDeleteAgreement();
 	}
 	
 	private void blockElements() {
@@ -1449,66 +2534,32 @@ public abstract class AgreementPreview extends Composite {
 		ssNumber.getElement().getStyle().setBackgroundColor("transparent");
 	}
 	
-	private void hideToolbarButtons() {
-		saveBtn.addStyleName(style.displayNone());
-		serviAgreementUpdateButton.addStyleName(style.displayNone());
-		printPreviewButton.addStyleName(style.displayNone());
-		agreementInfoButton.addStyleName(style.displayNone());
-	}
+//	private void hideToolbarButtons() {
+//		saveBtn.addStyleName(style.displayNone());
+//		undoAllButton.addStyleName(style.displayNone());
+//		serviAgreementUpdateButton.addStyleName(style.displayNone());
+//		printPreviewButton.addStyleName(style.displayNone());
+//		agreementInfoButton.addStyleName(style.displayNone());
+//	}
 	
 	private void hideLevelDiscPanel() {
 		levelDiscPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	private void calcDiscPanelHeightsEmployee() {
-		int salaryHeight = (salaryGrid.getRowCount() * 20) + 50;
-		
-		salaryDiscPanelContent.setHeight(salaryHeight + "px");
-		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 75) + "px");
-		
-		int paymentHeight = (paymentGrid.getRowCount() * 20) + 50;
-		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 370 - salaryHeight) ? paymentHeight : (Window.getClientHeight() - 370 - salaryHeight);
-		
-		paymentDiscPanelContent.setHeight((paymentHeight - 40) + "px");
-		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 120) + "px");
-		
-		salaryOpenHandler.removeHandler();
-		salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
-		
-		paymentOpenHandler.removeHandler();
-		paymentDiscPanel.addOpenHandler(e -> {
-			handleIcon(paymentDiscBtn, true);
+		Scheduler.get().scheduleDeferred(() -> {
+			int salaryHeight = (salaryGrid.getRowCount() * 20) + 20;
 			
-			paymentExtraDiscPanel.setOpen(false);
-			handleIcon(paymentExtraDiscBtn, false);
-		});
-		
-		paymentExtraOpenHandler.removeHandler();
-		paymentExtraDiscPanel.addOpenHandler(e -> {
-			handleIcon(paymentExtraDiscBtn, true);
+			salaryDiscPanelContent.setHeight(salaryHeight + "px");
+			salaryScrollPanel.setHeight("100%");
+			salaryScrollPanel.setWidth((Window.getClientWidth() - 360) + "px");
 			
-			paymentDiscPanel.setOpen(false);
-			handleIcon(paymentDiscBtn, false);
-		});
-		
-		salaryDiscPanel.setOpen(true);
-		paymentDiscPanel.setOpen(true);
-	}
-	
-	private void calcDiscPanelHeightsPayroll() {
-		int salaryHeight = (salaryGrid.getRowCount() * 20) + 50;
-		salaryHeight = (Window.getClientHeight() - 340) > salaryHeight ? salaryHeight : (Window.getClientHeight() - 340);
-		
-		salaryDiscPanelContent.setHeight((salaryHeight - 30) + "px");
-		salaryScrollPanel.setHeight((salaryDiscPanelContent.getOffsetHeight() - 75) + "px");
-		
-		int paymentHeight = (paymentGrid.getRowCount() * 20) + 50;
-		paymentHeight = paymentHeight + salaryHeight < (Window.getClientHeight() - 370) ? paymentHeight : (Window.getClientHeight() - 370);
-		
-		paymentDiscPanelContent.setHeight((paymentHeight - 30) + "px");
-		paymentScrollPanel.setHeight((paymentDiscPanelContent.getOffsetHeight() - 15) + "px");
-		
-		if(paymentHeight + salaryHeight < (Window.getClientHeight() - 360)) {
+			paymentDiscPanelContent.setHeight((Window.getClientHeight() - 480) + "px");
+			paymentScrollPanel.setHeight("100%");
+			
+			extraDiscPanelContent.setHeight((Window.getClientHeight() - 480) + "px");
+			extraScrollPanel.setHeight("100%");
+			
 			salaryOpenHandler.removeHandler();
 			salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
 			
@@ -1528,9 +2579,47 @@ public abstract class AgreementPreview extends Composite {
 				handleIcon(paymentDiscBtn, false);
 			});
 			
-			salaryDiscPanel.setOpen(true);
 			paymentDiscPanel.setOpen(true);
-		}
+			salaryDiscPanel.setOpen(true);
+			
+		});
+	}
+	
+	private void calcDiscPanelHeightsPayroll() {
+		Scheduler.get().scheduleDeferred(() -> {
+			int salaryHeight = salaryGrid.getRowCount() > 8 ? 180 : (salaryGrid.getRowCount() * 20) + 20;
+			salaryDiscPanelContent.setHeight((salaryHeight) + "px");
+			salaryScrollPanel.setHeight("100%");
+			salaryScrollPanel.setWidth((Window.getClientWidth() - 360) + "px");
+			
+			paymentDiscPanelContent.setHeight((Window.getClientHeight() - 405 - salaryHeight) + "px");
+			paymentScrollPanel.setHeight("100%");
+			
+			extraDiscPanelContent.setHeight((Window.getClientHeight() - 405 - salaryHeight) + "px");
+			extraScrollPanel.setHeight("100%");
+			
+			salaryOpenHandler.removeHandler();
+			salaryDiscPanel.addOpenHandler(e -> handleIcon(salaryDiscBtn, true));
+			
+			paymentOpenHandler.removeHandler();
+			paymentDiscPanel.addOpenHandler(e -> {
+				handleIcon(paymentDiscBtn, true);
+				
+				paymentExtraDiscPanel.setOpen(false);
+				handleIcon(paymentExtraDiscBtn, false);
+			});
+			
+			paymentExtraOpenHandler.removeHandler();
+			paymentExtraDiscPanel.addOpenHandler(e -> {
+				handleIcon(paymentExtraDiscBtn, true);
+				
+				paymentDiscPanel.setOpen(false);
+				handleIcon(paymentDiscBtn, false);
+			});
+			
+			paymentDiscPanel.setOpen(true);
+			salaryDiscPanel.setOpen(true);
+		});
 	}
 	
 	private void createAgreementGoToBtn() {
@@ -1566,11 +2655,12 @@ public abstract class AgreementPreview extends Composite {
 
 	public void setHasChange(boolean hasChange) {
 		this.hasChange = hasChange;
-		saveBtn.setEnabled(hasChange());
-		if(!hasChange()) {
-			saveBtn.getElement().getStyle().setDisplay(Display.BLOCK);
-			saveBtn.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+		if(hasChange()) {
+			saveBtn.getElement().getStyle().clearDisplay();
+			undoAllButton.getElement().getStyle().clearDisplay();
 		}
+		saveBtn.setEnabled(hasChange());
+		undoAllButton.setEnabled(hasChange());
 	}
 	
 	// ------------------------------------------ Abstract methods
@@ -1583,6 +2673,12 @@ public abstract class AgreementPreview extends Composite {
 		Map<String, String> successMap = new HashMap<>();
 		successMap.put(title, message);
 		AonMessagePanel.showSuccess(messagePanel, successMap);
+	}
+	
+	public void showWarning(String title, String message) {
+		Map<String, String> warningMap = new HashMap<>();
+		warningMap.put(title, message);
+		AonMessagePanel.showWarning(messagePanel, warningMap);
 	}
 
 	public void showError(String title, String message) {
@@ -1597,6 +2693,21 @@ public abstract class AgreementPreview extends Composite {
 
 	private void hideMessage() {
 		AonMessagePanel.hideMessage(messagePanel);
+	}
+	
+	private void checkDeleteAgreement() {
+		if(agreement.getId() != null && agreement.getId() < 0)
+			showError("Convenio eliminado", "Cuidado, el convenio que est\u00e1 visializando se encuentra en la papelera.");
+		else
+			hideMessage();
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+		if(readOnly) {
+			showReadOnlyButtons();
+			datesLB.setVisible(true);
+		}
 	}
 	
 }

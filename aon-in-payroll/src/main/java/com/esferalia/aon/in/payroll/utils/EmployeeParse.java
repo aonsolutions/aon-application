@@ -9,6 +9,7 @@ import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.tgss.idc.IdcParser;
 import com.esferalia.aon.in.payroll.tgss.idc.IdcParserListener;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import solutions.aon.seg.social.object.Employee.EmployeeBuilder;
 import solutions.aon.seg.social.toolkit.Toolkit;
@@ -198,12 +199,23 @@ public class EmployeeParse {
 				System.out.println("endDate: "+date);
 			}
 			
-			
 			@Override
 			public void  onContractType(String contractType) {
 				employee.setContractType(contractType);
 				
 				System.out.println("contractType: "+contractType);
+			}
+			
+			@Override
+			public void onRlce(String rlce) {
+				employee.setRlce(rlce);
+				
+				System.out.println("rlce: "+rlce);
+				
+				if(employee.getContractType().isEmpty() && AonStringUtils.containsIgnoreCase(rlce, "PRACT. NO LAB. EMP")) {
+					employee.setContractType("000");
+					System.out.println("contractType: 000");
+				}
 			}
 
 			@Override

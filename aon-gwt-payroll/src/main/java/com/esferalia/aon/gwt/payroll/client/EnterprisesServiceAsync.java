@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.payroll.shared.ContractClause;
 import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.Cost;
+import com.esferalia.aon.gwt.payroll.shared.Country;
 import com.esferalia.aon.gwt.payroll.shared.Deduction;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -222,6 +223,7 @@ public interface EnterprisesServiceAsync {
 	
 	void getCertificates(String domain, String login, boolean withParent, AsyncCallback<List<Certificate>> asyncCallback) throws IllegalArgumentException;
 	void deleteCertificate(String domain, String login, Certificate certificate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	void downloadCertificate(String domain, String login, Integer certificateId, String filePath, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	void getCertificateInfo(String domain, String login, Integer certitificateId, AsyncCallback<CertificateInfo> asyncCallback) throws IllegalArgumentException ;
 	void verifyCertificate(String currentDomainName, String currentUser, Integer rattachId, List<CertificateType> tags, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException ;
 	void getSecondaryUsers(String currentDomainName, String currentUser, AsyncCallback<List<SecondaryUserCertificate>> asyncCallback) throws IllegalArgumentException;
@@ -256,6 +258,8 @@ public interface EnterprisesServiceAsync {
 	void getAgreementDraftReceipt(String currentDomainName, AgreementInfo agreement, List<Variable> context, int levelId, String mime, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	
 	void checkAndUpdateServiAgreement(String currentDomainName, String currentUser, AgreementInfo agreement, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	void canUpdateServiAgreement(String currentDomainName, String currentUser, AgreementInfo agreement, AsyncCallback<Boolean> asyncCallback) throws IllegalArgumentException;
 	
 	void deletePayments(String currentDomainName, List<Integer> paymentIds, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
@@ -302,5 +306,9 @@ public interface EnterprisesServiceAsync {
 	void getEmployeesWorking(String currentDomainName, String currentUser, String regime, String ccc, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
 	
 	void getUpdateCert(String currentDomainName, String currentUser, String regime, String ccc, AsyncCallback<String> asyncCallback) throws IllegalArgumentException;
+	
+	// ------------------------------------------------ Country/Province
+	
+	void getCountries(String currentDomainName, AsyncCallback<List<Country>> asyncCallback) throws IllegalArgumentException;
 	
 }

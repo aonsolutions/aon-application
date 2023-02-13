@@ -216,8 +216,8 @@ class ServicioCalculo {
 	    	+ "<AñoNacimiento>1982</AñoNacimiento>\n"
 	    	+ "<SituacionFamiliar><Situacion3/></SituacionFamiliar>\n"
 	    	+ "<SituacionLaboral><TrabajadorActivo><Contrato>1</Contrato></TrabajadorActivo></SituacionLaboral>\n"
-	    	+ "<RetribAnuales>20897.84</RetribAnuales>\n"
-	    	+ "<Cotizaciones>1327.01</Cotizaciones>\n"
+	    	+ "<RetribAnuales>17594.52</RetribAnuales>\n"
+	    	+ "<Cotizaciones>1153.08</Cotizaciones>\n"
 	    	+ "</Retenido>\n"
 	    	+ "</Retenedor>"
 	    	+ "</AEATRetencionesEntrada2023>";

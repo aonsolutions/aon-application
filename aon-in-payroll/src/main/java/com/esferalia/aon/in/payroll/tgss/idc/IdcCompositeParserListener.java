@@ -81,6 +81,11 @@ public class IdcCompositeParserListener implements IdcParserListener {
 	public void onContractType(String contractType) {
 		idcParserListeners.forEach(l -> l.onContractType(contractType));
 	}
+	
+	@Override
+	public void onRlce(String rlce) {
+		idcParserListeners.forEach(l -> l.onRlce(rlce));
+	}
 
 	@Override
 	public void onContractStart(Date start) {

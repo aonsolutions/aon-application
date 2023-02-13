@@ -10,7 +10,6 @@ import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
-import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.PayMethod.PAY_METHOD;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
@@ -28,6 +27,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +52,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
-import java.util.Calendar;
-import com.itextpdf.text.log.SysoLogger;
 
 public class JooqContrataContract {
 	
@@ -163,19 +161,7 @@ public class JooqContrataContract {
 				employeeData.setAddresNum(raddressTable.get(RADDRESS.NUMBER));
 				employeeData.setAddressZip(raddressTable.get(RADDRESS.ZIP));
 				employeeData.setAddressCity(raddressTable.get(RADDRESS.MUNICIPALITY_CODE));
-				
-				Integer raddressGeozone = raddressTable.get(RADDRESS.GEOZONE);
-				if(null == raddressGeozone) {
-					employeeData.setGeozoneId(null);
-					employeeData.setAddressProvinces(null);
-				}else {
-					Record geozoneTable = dslContext.select().from(GEOZONE)
-							.where(GEOZONE.ID.eq(raddressGeozone))
-							.fetchOne();
-					
-					employeeData.setGeozoneId(geozoneTable.get(GEOZONE.ID));
-					employeeData.setAddressProvinces(geozoneTable.get(GEOZONE.CODE));
-				}
+				employeeData.setAddressProvinces(raddressTable.get(RADDRESS.GEOZONE));
 			}
 			
 			// RMEDIA TABLE
@@ -773,19 +759,7 @@ public class JooqContrataContract {
 			employeeData.setAddresNum(raddressTable.get(RADDRESS.NUMBER));
 			employeeData.setAddressZip(raddressTable.get(RADDRESS.ZIP));
 			employeeData.setAddressCity(raddressTable.get(RADDRESS.MUNICIPALITY_CODE));
-			
-			Integer raddressGeozone = raddressTable.get(RADDRESS.GEOZONE);
-			if(null == raddressGeozone) {
-				employeeData.setGeozoneId(null);
-				employeeData.setAddressProvinces(null);
-			}else {
-				Record geozoneTable = dslContext.select().from(GEOZONE)
-						.where(GEOZONE.ID.eq(raddressGeozone))
-						.fetchOne();
-				
-				employeeData.setGeozoneId(geozoneTable.get(GEOZONE.ID));
-				employeeData.setAddressProvinces(geozoneTable.get(GEOZONE.CODE));
-			}
+			employeeData.setAddressProvinces(raddressTable.get(RADDRESS.GEOZONE));
 		}
 		
 		// RMEDIA TABLE

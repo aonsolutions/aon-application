@@ -63,9 +63,9 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 		,BZ_C001H	(Mod390Key.BZ_C001H)
 		,BZ_C003	(Mod390Key.BZ_C003,null,null,(ctx,mod) -> add(Mod390Key.BZ_C003,mod,ConfigurationDAO.getConfiguration(ctx).getCompany().isVatAccrualPayment()?1:0),null,null)
 		,BZ_C004	(Mod390Key.BZ_C004)		// Compras Criterio de caja. Se incializa en la casilla 133. Destinatario/a de operaciones a las que se aplica el r\u00E9gimen especial del criterio de caja
-		,BZ_C005	(Mod390Key.BZ_C005)		// Opci髇 por la aplicaci髇 de la prorrata especial		
-		,BZ_C006	(Mod390Key.BZ_C006)		// Revocaci髇 de la opci髇 por la aplicaci髇 de la prorrata especial		
-		,BZ_C007	(Mod390Key.BZ_C007)		// Aplicar el r間imen especial art. 163 Sexies. Cinco de la NF del IVA		
+		,BZ_C005	(Mod390Key.BZ_C005)		// Opci贸n por la aplicaci贸n de la prorrata especial		
+		,BZ_C006	(Mod390Key.BZ_C006)		// Revocaci贸n de la opci贸n por la aplicaci贸n de la prorrata especial		
+		,BZ_C007	(Mod390Key.BZ_C007)		// Aplicar el r茅gimen especial art. 163 Sexies. Cinco de la NF del IVA		
 		,BZ_C080	(Mod390Key.BZ_C080) 	// RDM o Grupos de entidades		
 		
 		,BZ_A001	(Mod390Key.BZ_A001) 	// Actividad principal. Epigrafe. 
@@ -176,7 +176,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)
 		
 		
-		// IVAS devengado por inversi髇 del sujeto pasivo. Base y cuota
+		// IVAS devengado por inversi贸n del sujeto pasivo. Base y cuota
 		,BZ_C042	(Mod390Key.BZ_C042
 			,(mod,vat) -> operacionesISPDevFilter(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C042,mod,vat.getBase())
@@ -187,7 +187,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,null,null,null)	
 		
 		
-		// Modificaci髇 bases y cuotas
+		// Modificaci贸n bases y cuotas
 		,BZ_C044	(Mod390Key.BZ_C044
 			,(mod,vat) -> modificacionBasesYCuotasFilter(vat) 
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C044,mod,vat.getBase())
@@ -197,7 +197,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C045,mod,(vat.getQuota() + vat.getSurchargeQuota()))
 			,null,null,null)
 
-		// Modificaci髇 de bases y cuotas, art韈ulo 80.3 y 80.4 NFIVA
+		// Modificaci贸n de bases y cuotas, art铆culo 80.3 y 80.4 NFIVA
 		,BZ_C046	(Mod390Key.BZ_C046)
 		,BZ_C047	(Mod390Key.BZ_C047)
 		
@@ -227,13 +227,13 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C063,mod,vat)
 			,null,null,null)
 		
-		// Compensaciones R間imen Especial A.G. y P .
+		// Compensaciones R茅gimen Especial A.G. y P .
 		,BZ_C064	(Mod390Key.BZ_C064
 			,(mod,vat) -> compensacionesRegAgrarioFilter(vat)
 			,(ctx,mod,vat) -> addProrrated(Mod390Key.BZ_C064,mod,vat)
 			,null,null,null)
 				
-		// Regularizaci髇 Inversiones
+		// Regularizaci贸n Inversiones
 		,BZ_C065	(Mod390Key.BZ_C065)
 		
 		// Total a deducir
@@ -242,10 +242,10 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 		// Diferencia
 		,BZ_C095	(Mod390Key.BZ_C095,null,null,null,"BZ_C048-BZ_C066",null)
 		
-		// Regularizaci髇 de cuotas (art.80.cinco.5a Norma Foral del IVA)
+		// Regularizaci贸n de cuotas (art.80.cinco.5a Norma Foral del IVA)
 		,BZ_C120	(Mod390Key.BZ_C120)
 		
-		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Territ. com鷑.
+		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Territ. com煤n.
 		,BZ_C081	(Mod390Key.BZ_C081,null,null,(ctx,mod) -> add(Mod390Key.BZ_C081,mod,0.0),null,null)
 		,BZ_C082	(Mod390Key.BZ_C082,null,null,(ctx,mod) -> add(Mod390Key.BZ_C082,mod,0.0),null,null)
 		// Volumen de operaciones. Porcentaje de tributaci\u00F3n. Alava
@@ -337,17 +337,17 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 		// Total deuda tributaria
 		,BZ_C117 (Mod390Key.BZ_C117,null,null,null,"BZ_C110-BZ_C115+BZ_C116",null)
 		
-		// Exclusivamente para sujetos pasivos acogidos al r間imen especial del criterio de caja y para 
+		// Exclusivamente para sujetos pasivos acogidos al r茅gimen especial del criterio de caja y para 
 		// destinatarios/as de operaciones afectadas por el mismo
 		
-		// Importes de las entregas de bienes y prestaciones de servicios a las que habi閚doles
-		// sido aplicado el r間imen especial del criterio de caja hubieran resultado devengadas
-		// conforme a la regla general de devengo contenida en el art韈ulo 75 NFIVA
+		// Importes de las entregas de bienes y prestaciones de servicios a las que habi茅ndoles
+		// sido aplicado el r茅gimen especial del criterio de caja hubieran resultado devengadas
+		// conforme a la regla general de devengo contenida en el art铆culo 75 NFIVA
 		,BZ_C130	(Mod390Key.BZ_C130)
 		,BZ_C131	(Mod390Key.BZ_C131)
 		
 		// Importes de las adquisiciones de bienes y servicios a las que sea aplicable o afecte el
-		// r間imen especial del criterio de caja
+		// r茅gimen especial del criterio de caja
 		,BZ_C132	(Mod390Key.BZ_C132)
 		,BZ_C133	(Mod390Key.BZ_C133)
 
@@ -493,7 +493,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 		,BZ_C173	(Mod390Key.BZ_C173,null,null,null,"BZ_C161+BZ_C164+BZ_C167+BZ_C170",null)
 		,BZ_C174	(Mod390Key.BZ_C174,null,null,null,"BZ_C162+BZ_C165+BZ_C168+BZ_C171",null)
 
-		// Bienes de inversi髇
+		// Bienes de inversi贸n
 		,BZ_C175	(Mod390Key.BZ_C175
 			,(mod,vat) -> vat.isVatGeneralRegime(VATRegime.GENERAL) && !vat.isVatSurchargeRegime() && !vat.isFarmerRegime() && vat.isInvestment() && vat.isInput()  && hasPercent4(vat)
 			,(ctx,mod,vat) -> add(Mod390Key.BZ_C175,mod,vat.getBase())
@@ -606,7 +606,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 		,BZ_C209	(Mod390Key.BZ_C209)
 		// Operaciones realizadas por sujetos pasivos acogidos al r\u00E9gimen especial del recargo de equivalencia
 		,BZ_C210	(Mod390Key.BZ_C210)
-		// Operaciones en r\u00E9gimen especial de bienes usados, objetos de arte, antig黣dades y objetos de colecci\u00F3n
+		// Operaciones en r\u00E9gimen especial de bienes usados, objetos de arte, antig眉edades y objetos de colecci\u00F3n
 		,BZ_C211	(Mod390Key.BZ_C211)
 		// Operaciones en r\u00E9gimen especial de agencias de viajes
 		,BZ_C212	(Mod390Key.BZ_C212)
