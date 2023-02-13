@@ -20,7 +20,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.OcupationITIMSFix;
+import net.aonsolutions.db.up2date.finance.FinanceTrackingAmountFix;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
+
 public class Up2Date {
 
     private static Update [] UPDATES  = {
@@ -310,6 +312,7 @@ public class Up2Date {
 	    	//Embargar4Many.BIEMBARGAR4MANY,
 	    	OcupationITIMSFix.OCUPATIONITIMSFIX,
 	    	
+	    	FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
 	    	
     		//Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE

@@ -30,28 +30,27 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 
 
-public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValueChangeHandlers<IRPFParams> {
+public class IRPFReportFilterPanel extends ScrollPanel implements HasValueChangeHandlers<IRPFParams> {
 
 	private static final String ALL_OPTIONS = "-- Todas --";
 
 	private boolean groupedByDisabled = false;
 	
-	private AonIntegerBox year;
-	private PeriodListBox period;
-	private AonDateBox fromDate;
-	private AonDateBox toDate;
-	private ListBox output;
-	private AonAccountingRegistryBox registry;
-	private WithholdingTypeGroupListBox withholdingTypeGroup;
-	private WithholdingTypeListBox withholdingType;
-	private ListBox activity;
-	private ListBox rectificationType;
-	private ListBox orderBy;
-	private ListBox groupedBy;
-	private AonDoubleBox percent;
+	private AonIntegerBox yearBox;
+	private PeriodListBox periodBox;
+	private AonDateBox fromDateBox;
+	private AonDateBox toDateBox;
+	private ListBox outputBox;
+	private AonAccountingRegistryBox registryBox;
+	private WithholdingTypeGroupListBox withholdingTypeGroupBox;
+	private WithholdingTypeListBox withholdingTypeBox;
+	private ListBox activityBox;
+	private ListBox rectificationTypeBox;
+	private ListBox orderByBox;
+	private ListBox groupedByBox;
+	private AonDoubleBox percentBox;
 
 	public IRPFReportFilterPanel(IrpfReportModuleOptions options) {
 		this(options, false);
@@ -81,61 +80,57 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 		Label yearLabel = new InlineLabel(AON.MSG.fiscalYear());
 		yearLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 		firstRowPanel.add(yearLabel);
-		year = new AonIntegerBox();
-		year.setValue(DateUtils.getYear(),false);
-		year.addStyleName(AON.CSS.aonMarginLeft());
-		year.setMaxLength(4);
-		year.setVisibleLength(5);
-		year.addValueChangeHandler(event -> {
+		yearBox = new AonIntegerBox();
+		yearBox.addStyleName(AON.CSS.aonMarginLeft());
+		yearBox.setMaxLength(4);
+		yearBox.setVisibleLength(5);
+		yearBox.addValueChangeHandler(event -> {
 			fillDates();
 			ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options));
 		});
-		firstRowPanel.add(year);
+		firstRowPanel.add(yearBox);
 		
 		Label periodLabel = new InlineLabel(AON.MSG.period());
 		periodLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 		periodLabel.addStyleName(AON.CSS.aonMarginLeft());
 		firstRowPanel.add(periodLabel);
-		period = new PeriodListBox();
-		period.setSelectedIndex(0);
-		period.addStyleName(AON.CSS.aonMarginLeft());
-		period.addChangeHandler(event -> {
+		periodBox = new PeriodListBox();
+		periodBox.setSelectedIndex(0);
+		periodBox.addStyleName(AON.CSS.aonMarginLeft());
+		periodBox.addChangeHandler(event -> {
 			fillDates();
 			ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options));
 		});
-		firstRowPanel.add(period);
+		firstRowPanel.add(periodBox);
 		
 		Label dateLabel = new InlineLabel(AON.MSG.date());
 		dateLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 		dateLabel.addStyleName(AON.CSS.aonMarginLeft());
 		firstRowPanel.add(dateLabel);
-		fromDate = new AonDateBox();
-		fromDate.addStyleName(AON.CSS.aonMarginLeft());
-		fromDate.addValueChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
-		firstRowPanel.add(fromDate);
+		fromDateBox = new AonDateBox();
+		fromDateBox.addStyleName(AON.CSS.aonMarginLeft());
+		fromDateBox.addValueChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+		firstRowPanel.add(fromDateBox);
 		InlineLabel to = new InlineLabel(AON.MSG.to());
 		to.setStyleName(AON.CSS.aonItalic());
 		to.addStyleName(AON.CSS.aonMarginRight());
 		to.addStyleName(AON.CSS.aonMarginLeft());
 		firstRowPanel.add(to);
-		toDate = new AonDateBox();
-		toDate.addValueChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
-		firstRowPanel.add(toDate);
-		
-		fillDates();
+		toDateBox = new AonDateBox();
+		toDateBox.addValueChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+		firstRowPanel.add(toDateBox);
 		
 		Label outputLabel = new InlineLabel(AON.MSG.invoices());
 		outputLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 		outputLabel.addStyleName(AON.CSS.aonMarginLeft());
 		firstRowPanel.add(outputLabel);
-		output = new ListBox();
-		output.addStyleName(AON.CSS.aonMarginLeft());
-		output.addItem(ALL_OPTIONS);
-		output.addItem(AON.MSG.inputInvoices());
-		output.addItem(AON.MSG.outputInvoices());
-		output.setSelectedIndex(0);
-		output.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
-		firstRowPanel.add(output);
+		outputBox = new ListBox();
+		outputBox.addStyleName(AON.CSS.aonMarginLeft());
+		outputBox.addItem(ALL_OPTIONS);
+		outputBox.addItem(AON.MSG.inputInvoices());
+		outputBox.addItem(AON.MSG.outputInvoices());
+		outputBox.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+		firstRowPanel.add(outputBox);
 		
 		// ---------------------------------------------------------------- SECOND ROW
 		FlowPanel secondRowPanel = new FlowPanel();
@@ -144,12 +139,11 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 		Label titularLabel = new InlineLabel(AON.MSG.titular());
 		titularLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 		secondRowPanel.add(titularLabel);
-		registry = new AonAccountingRegistryBox( options , true ); 
-		registry.addStyleName(AON.CSS.aonMarginLeft());
-		registry.setRequired(false);
-		registry.setValue((AccountingRegistry) null,false);
-		registry.addSelectionHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
-		secondRowPanel.add(registry);
+		registryBox = new AonAccountingRegistryBox( options , true ); 
+		registryBox.addStyleName(AON.CSS.aonMarginLeft());
+		registryBox.setRequired(false);
+		registryBox.addSelectionHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+		secondRowPanel.add(registryBox);
 
 		// ---------------------------------------------------------------- THIRD ROW
 		FlowPanel thirdRowPanel = new FlowPanel();
@@ -159,70 +153,66 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 		withholdingTypeLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 		thirdRowPanel.add(withholdingTypeLabel);
 		
-		withholdingTypeGroup = new WithholdingTypeGroupListBox("-- Todos --");
-		withholdingTypeGroup.addStyleName(AON.CSS.aonMarginLeft());
-		withholdingTypeGroup.setWidth("100px");
-		withholdingTypeGroup.setSelectedIndex(0);
-		withholdingTypeGroup.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
-		thirdRowPanel.add(withholdingTypeGroup);
+		withholdingTypeGroupBox = new WithholdingTypeGroupListBox("-- Todos --");
+		withholdingTypeGroupBox.addStyleName(AON.CSS.aonMarginLeft());
+		withholdingTypeGroupBox.setWidth("100px");
+		withholdingTypeGroupBox.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+		thirdRowPanel.add(withholdingTypeGroupBox);
 
-		withholdingType = new WithholdingTypeListBox("-- Todos --");
-		withholdingType.addStyleName(AON.CSS.aonMarginLeft());
-		withholdingType.setWidth("100px");
-		withholdingType.setSelectedIndex(0);
-		withholdingType.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
-		thirdRowPanel.add(withholdingType);
+		withholdingTypeBox = new WithholdingTypeListBox("-- Todos --");
+		withholdingTypeBox.addStyleName(AON.CSS.aonMarginLeft());
+		withholdingTypeBox.setWidth("100px");
+		withholdingTypeBox.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+		thirdRowPanel.add(withholdingTypeBox);
 
 		Label rectifiedLabel = new InlineLabel(AON.MSG.rectified());
 		rectifiedLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 		rectifiedLabel.addStyleName(AON.CSS.aonMarginLeft());
 		thirdRowPanel.add(rectifiedLabel);
-		rectificationType = new ListBox();
-		rectificationType.addStyleName(AON.CSS.aonMarginLeft());
-		rectificationType.setWidth("100px");
-		rectificationType.addItem(ALL_OPTIONS);
-		rectificationType.addItem("Ni rectificativa ni rectificada");
-		rectificationType.addItem(RectificationType.NORMAL_RECTIFIER.getDescription());
-		rectificationType.addItem(RectificationType.SPECIAL_RECTIFIER.getDescription());
-		rectificationType.getElement().<SelectElement>cast().getOptions().getItem(3).setDisabled(true);
-		rectificationType.addItem(RectificationType.RECTIFIED.getDescription());
-		rectificationType.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
-		rectificationType.setSelectedIndex(0);
-		thirdRowPanel.add(rectificationType);
+		rectificationTypeBox = new ListBox();
+		rectificationTypeBox.addStyleName(AON.CSS.aonMarginLeft());
+		rectificationTypeBox.setWidth("100px");
+		rectificationTypeBox.addItem(ALL_OPTIONS);
+		rectificationTypeBox.addItem("Ni rectificativa ni rectificada");
+		rectificationTypeBox.addItem(RectificationType.NORMAL_RECTIFIER.getDescription());
+		rectificationTypeBox.addItem(RectificationType.SPECIAL_RECTIFIER.getDescription());
+		rectificationTypeBox.getElement().<SelectElement>cast().getOptions().getItem(3).setDisabled(true);
+		rectificationTypeBox.addItem(RectificationType.RECTIFIED.getDescription());
+		rectificationTypeBox.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+		thirdRowPanel.add(rectificationTypeBox);
 
 		if (options.getConfiguration() != null && options.getConfiguration().hasActivities()) {
 			InlineLabel activityLabel = new InlineLabel(AON.MSG.activity());
 			activityLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 			activityLabel.addStyleName(AON.CSS.aonMarginLeft());
 			thirdRowPanel.add(activityLabel);
-			activity = new ListBox();
-			activity.addStyleName(AON.CSS.aonMarginLeft());
-			activity.setWidth("120px");
-			activity.addItem(ALL_OPTIONS, "");
-			activity.setSelectedIndex(0);
+			activityBox = new ListBox();
+			activityBox.addStyleName(AON.CSS.aonMarginLeft());
+			activityBox.setWidth("120px");
+			activityBox.addItem(ALL_OPTIONS, "");
+			activityBox.setSelectedIndex(0);
 			int i = 1;
 			for (EnterpriseActivity ea : options.getConfiguration().getActivities()) {
-				activity.addItem(ea.getDescription() + (ea.getIae().isEmpty()?"":(" ("+ea.getEpigraph()+")")), AonNumberUtils.toString( ea.getId()));
+				activityBox.addItem(ea.getDescription() + (ea.getIae().isEmpty()?"":(" ("+ea.getEpigraph()+")")), AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
-					activity.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
+					activityBox.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
 				}
 				i++;
 			}
-			activity.addItem("-- Sin actividad --", "-1");
-			activity.setSelectedIndex(0);
-			activity.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
-			thirdRowPanel.add(activity);
+			activityBox.addItem("-- Sin actividad --", "-1");
+			activityBox.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+			thirdRowPanel.add(activityBox);
 		}
 		
 		Label percentLabel = new InlineLabel(AON.MSG.percent());
 		percentLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 		percentLabel.addStyleName(AON.CSS.aonMarginLeft());
 		thirdRowPanel.add(percentLabel);
-		percent = new AonDoubleBox();
-		percent.setVisibleLength(5);
-		percent.addStyleName(AON.CSS.aonMarginLeft());
-		percent.addValueChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
-		thirdRowPanel.add(percent);
+		percentBox = new AonDoubleBox();
+		percentBox.setVisibleLength(5);
+		percentBox.addStyleName(AON.CSS.aonMarginLeft());
+		percentBox.addValueChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+		thirdRowPanel.add(percentBox);
 		
 		// ---------------------------------------------------------------- FOURTH ROW
 		FlowPanel fourthRowPanel = new FlowPanel();
@@ -231,51 +221,47 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 		Label orderbyLabel = new InlineLabel("Ordenar por...");
 		orderbyLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 		fourthRowPanel.add(orderbyLabel);
-		orderBy = new ListBox();
-		orderBy.addStyleName(AON.CSS.aonMarginLeft());
-		orderBy.setWidth("200px");
+		orderByBox = new ListBox();
+		orderByBox.addStyleName(AON.CSS.aonMarginLeft());
+		orderByBox.setWidth("200px");
 		for (IRPFParamsOrderBy o :IRPFParamsOrderBy.values()) {
-			orderBy.addItem(o.getDescription());
+			orderByBox.addItem(o.getDescription());
 		}
-		orderBy.setSelectedIndex(0);
-		orderBy.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
-		fourthRowPanel.add(orderBy);
+		orderByBox.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+		fourthRowPanel.add(orderByBox);
 		
-		groupedBy = new ListBox();
+		groupedByBox = new ListBox();
 		if (!isGroupedByDisabled()) {
 			Label groupByNifLabel = new InlineLabel("Agrupar por ");
 			groupByNifLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 			groupByNifLabel.addStyleName(AON.CSS.aonMarginLeft());
 			fourthRowPanel.add(groupByNifLabel);
-			groupedBy.addStyleName(AON.CSS.aonMarginLeft());
+			groupedByBox.addStyleName(AON.CSS.aonMarginLeft());
 			for (IRPFParamsGroupedBy g :IRPFParamsGroupedBy.values()) {
-				groupedBy.addItem(g.getDescription());
+				groupedByBox.addItem(g.getDescription());
 			}
-			groupedBy.setSelectedIndex(0);
-			groupedBy.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
-			fourthRowPanel.add(groupedBy);
+			groupedByBox.addChangeHandler(event -> ValueChangeEvent.<IRPFParams>fire(IRPFReportFilterPanel.this, getParams(options)));
+			fourthRowPanel.add(groupedByBox);
 		}
 
-		
-		ScrollPanel scrollPanel = new ScrollPanel();
-		scrollPanel.addStyleName(AON.CSS.aonWidthAll());
-		scrollPanel.setWidget(tab);
-		setWidget(scrollPanel);
+		initialize( options );
+		addStyleName(AON.CSS.aonWidthAll());
+		setWidget(tab);
 	}
 
 	protected void fillDates() {
-		Integer y = year.getValue();
-		Period p = period.getValue();
+		Integer y = yearBox.getValue();
+		Period p = periodBox.getValue();
 		if ( y == null) {
-			fromDate.setValue(null,false);
-			toDate.setValue(null,false);
+			fromDateBox.setValue(null,false);
+			toDateBox.setValue(null,false);
 		} else {
 			if (p == null) {
-				fromDate.setValue(DateUtils.getFirstDayOfYear(y - 1900),false);
-				toDate.setValue(DateUtils.getLastDayOfYear(y - 1900),false);
+				fromDateBox.setValue(DateUtils.getFirstDayOfYear(y - 1900),false);
+				toDateBox.setValue(DateUtils.getLastDayOfYear(y - 1900),false);
 			} else {
-				fromDate.setValue(DateUtils.getDate(p.getStartMonth(), y),false);
-				toDate.setValue(DateUtils.getLastDayOfMonth(DateUtils.getDate(p.getDueMonth(), y)),false);
+				fromDateBox.setValue(DateUtils.getDate(p.getStartMonth(), y),false);
+				toDateBox.setValue(DateUtils.getLastDayOfMonth(DateUtils.getDate(p.getDueMonth(), y)),false);
 			}
 		}
 	}
@@ -289,28 +275,47 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 				.setDomain(options.getDomain())
 				.setDomainName(options.getDomainName())
 				.setUser(options.getUser())
-				.setRegistry(registry.getId())
-				.setFromDate(fromDate.getValue())
-				.setToDate(toDate.getValue())
-				.setPercent( AonNumberUtils.nullIfZero(percent.getValue()) )
+				.setRegistry(registryBox.getId())
+				.setFromDate(fromDateBox.getValue())
+				.setToDate(toDateBox.getValue())
+				.setPercent( AonNumberUtils.nullIfZero(percentBox.getValue()) )
 				;
-			if (options.getConfiguration() != null && options.getConfiguration().hasActivities() && activity.getSelectedIndex() > 0) {
-				params.setActivity( AonNumberUtils.toInteger( activity.getSelectedValue()));
+			if (options.getConfiguration() != null && options.getConfiguration().hasActivities() && activityBox.getSelectedIndex() > 0) {
+				params.setActivity( AonNumberUtils.toInteger( activityBox.getSelectedValue()));
 			}
-			params.setWithholdingTypeGroup(withholdingTypeGroup.getValue());
-			params.setWithholdingType(withholdingType.getValue());
-			params.setOrderBy(IRPFParamsOrderBy.safeValueOf(orderBy.getSelectedIndex()));	
-			params.setGroupedBy(IRPFParamsGroupedBy.safeValueOf(groupedBy.getSelectedIndex()));
+			params.setWithholdingTypeGroup(withholdingTypeGroupBox.getValue());
+			params.setWithholdingType(withholdingTypeBox.getValue());
+			params.setOrderBy(IRPFParamsOrderBy.safeValueOf(orderByBox.getSelectedIndex()));	
+			params.setGroupedBy(IRPFParamsGroupedBy.safeValueOf(groupedByBox.getSelectedIndex()));
 
-			if (output.getSelectedIndex() == 0) params.setOutput( null );
-			if (output.getSelectedIndex() == 1) params.setOutput(false);
-			if (output.getSelectedIndex() == 2) params.setOutput(true);
+			if (outputBox.getSelectedIndex() == 0) params.setOutput( null );
+			if (outputBox.getSelectedIndex() == 1) params.setOutput(false);
+			if (outputBox.getSelectedIndex() == 2) params.setOutput(true);
 			
-			if (rectificationType.getSelectedIndex() > 0) {
-				params.setRectificationType(RectificationType.values()[rectificationType.getSelectedIndex() - 1]);	
+			if (rectificationTypeBox.getSelectedIndex() > 0) {
+				params.setRectificationType(RectificationType.values()[rectificationTypeBox.getSelectedIndex() - 1]);	
 			}
 			return params;
 	}
+	
+	protected void initialize(IrpfReportModuleOptions opt) {
+		yearBox.setValue(DateUtils.getYear(),false);
+		periodBox.setSelectedIndex(0);
+		fillDates();
+		outputBox.setSelectedIndex(0);
+		registryBox.setValue((AccountingRegistry) null,false);
+		withholdingTypeGroupBox.setSelectedIndex(0);
+		withholdingTypeBox.setSelectedIndex(0);
+		if (opt.getConfiguration() != null && opt.getConfiguration().hasActivities()) {
+			activityBox.setSelectedIndex(0);
+		}
+		rectificationTypeBox.setSelectedIndex(0);
+		orderByBox.setSelectedIndex(0);
+		groupedByBox.setSelectedIndex(0);
+		percentBox.setValue(null, false);
+	}
+
+		
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<IRPFParams> handler) {
@@ -318,10 +323,14 @@ public class IRPFReportFilterPanel extends SimpleLayoutPanel implements HasValue
 	}
 
 	public void setValue(IRPFParams params) {
-		groupedBy.setSelectedIndex(params.getGroupedBy()==null?0:params.getGroupedBy().ordinal());
-		output.setSelectedIndex(params.isOutput()?0:1);
-		withholdingType.setValue(params.getWithholdingType());
-		percent.setValue(params.getPercent());
+		groupedByBox.setSelectedIndex(params.getGroupedBy()==null?0:params.getGroupedBy().ordinal());
+		percentBox.setValue(params.getPercent(), false);
+		withholdingTypeBox.setValue(params.getWithholdingType());
+		withholdingTypeGroupBox.setValue(params.getWithholdingTypeGroup());
+		
+		if (params.getOutput() == null) outputBox.setSelectedIndex(0);
+		else if (params.isInput() ) outputBox.setSelectedIndex(1);
+		else if (params.isOutput() ) outputBox.setSelectedIndex(2);
 	}
 
 }

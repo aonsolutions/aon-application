@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO.FullFinanceTrack
 import com.esferalia.aon.occam.impl.jooq.validation.FinanceValidation;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -280,6 +281,12 @@ public class FinanceEntryDAO {
 	}
 
 	public static FinanceEntry save(AONContext ctx, FinanceEntry financeEntry) {
+		if (financeEntry.getBankAccount() == null || financeEntry.getBankAccount().getId() == null) {
+			throw new AonCoreException("Debe indicar una cuenta contable como contrapartida");
+		}
+		if (AonCollectionUtils.isEmpty(financeEntry.getTrackings())) {
+			throw new AonCoreException("Debe indicar algún vencmiento para grabar el apunte");
+		}
 		ctx.checkWrite();
 		if (financeEntry.getAccountEntry().getId() == null) {
 			return insert(ctx,financeEntry);
@@ -310,7 +317,7 @@ public class FinanceEntryDAO {
 						FinanceTrackingDAO.delete(ctx, tracking);
 					} else {
 						if (tracking.getAccountEntry() == null) {
-							FinanceTrackingDAO.pay(ctx,tracking,entry);	
+							pay( ctx,financeEntry,entry,tracking);
 						}
 					}
 				}
@@ -324,6 +331,17 @@ public class FinanceEntryDAO {
 		}
 	}
 	
+	private static void pay(AONContext ctx, FinanceEntry financeEntry, AccountEntry entry, FinanceTracking tracking) {
+		tracking.setAmount(tracking.getFinance().getAmount());
+		if (financeEntry.getBankAccount() != null) {
+			tracking
+				.setPayAccount(financeEntry.getBankAccount())
+				.setDescription(AonStringUtils.abbreviate( 
+					tracking.getPayAccount().getFullName(),FINANCE_TRACKING.DESCRIPTION.getDataType().length()));
+		}
+		FinanceTrackingDAO.pay(ctx,tracking,entry);
+	}
+
 	private static FinanceEntry insert(AONContext ctx, FinanceEntry financeEntry) {
 		ctx.log().info(" ----- START FINANCE ENTRY INSERT ----- ");
 		try {
@@ -335,14 +353,7 @@ public class FinanceEntryDAO {
 					entry.setId(entryId);
 					financeEntry.setAccountEntry(entry);
 					for (FinanceTracking tracking : financeEntry.getTrackings().values()) {
-						tracking.setAmount(tracking.getFinance().getAmount());
-						if (financeEntry.getBankAccount() != null) {
-							tracking
-								.setPayAccount(financeEntry.getBankAccount())
-								.setDescription(AonStringUtils.abbreviate( 
-									tracking.getPayAccount().getFullName(),FINANCE_TRACKING.DESCRIPTION.getDataType().length()));
-						}
-						FinanceTrackingDAO.pay(ctx, tracking , entry);
+						pay( ctx,financeEntry,entry,tracking);
 					}
 				}
 			}

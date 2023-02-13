@@ -558,7 +558,7 @@ public class Mod3902022DAO {
 		if (AonStringUtils.contains(model, "<AEATIVA2022>"))  {
 			StringReader reader = new StringReader(rec.getValue(FS_MODEL390.MODEL));
 			try {
-				if (mod390.getYear() == 2022) {
+				if (mod390.getYear() >= 2022) {
 					JAXBContext context = JAXBContext.newInstance(AEATIVA2022.class);
 					Unmarshaller um = context.createUnmarshaller();
 					AEATIVA2022 iva = (AEATIVA2022) um.unmarshal(reader);
@@ -596,7 +596,7 @@ public class Mod3902022DAO {
 	
 	private static String getXMLModel( Mod3902022 mod390 ) {
 		try {
-			if (mod390.getYear() == 2022) {
+			if (mod390.getYear() >= 2022) {
 				AEATIVA2022 iva = Mod390toAEATIVA2022.getAEATIVA2022(mod390);
 				StringWriter writer = new StringWriter();
 				JAXBContext context = JAXBContext.newInstance(AEATIVA2022.class);

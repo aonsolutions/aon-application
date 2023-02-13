@@ -484,6 +484,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			}
 		});
 		
+		mainTrashAgreement.hasTrashAgreements(hasTrashAgreements -> toolbar.setTrashAgreementWarn(hasTrashAgreements));
+		
 	}
 
 	private void showAgreements() {
@@ -641,6 +643,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 										public void onSuccess(Void result) {
 											MainAgreement.this.agreements.resetTypeView();
 											MainAgreement.this.agreements.reloadAgreements();
+											mainTrashAgreement.hasTrashAgreements(hasTrashAgreements -> toolbar.setTrashAgreementWarn(hasTrashAgreements));
 //											showSelectAgreementMessage();
 										}
 									});
@@ -721,7 +724,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			@Override
 			public void run() {
 				agreementPreview.setTablesWidthCollapseMenu();
-				agreementPreview.setIsOpenCollapse(true);
+				agreementPreview.setIsOpenCollapse(false);
 			}
 		};
 		timer.schedule(500);
@@ -735,7 +738,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			@Override
 			public void run() {
 				agreementPreview.setTablesWidth();
-				agreementPreview.setIsOpenCollapse(false);
+				agreementPreview.setIsOpenCollapse(true);
 			}
 		};
 		timer.schedule(500);

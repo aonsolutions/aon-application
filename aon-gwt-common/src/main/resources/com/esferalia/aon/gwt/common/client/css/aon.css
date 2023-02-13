@@ -3161,6 +3161,10 @@ input:disabled+label {
 		right: 3px;
 		top: 3px;
 	}
+	
+	@sprite .aon-icon-enable-gray {
+		gwt-image: "aon_icon_enable_gray";
+	}
 
 	@sprite .aon-icon-enable {
 		gwt-image: "aon_icon_enable";

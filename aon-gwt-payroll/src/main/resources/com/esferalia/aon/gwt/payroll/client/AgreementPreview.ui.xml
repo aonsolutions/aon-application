@@ -216,7 +216,7 @@
 		
 		.modify {
 			background-color: lightyellow !important;
-    		border: 0.5px solid yellow !important;
+    		/*border: 0.5px solid yellow !important;*/
 		}
 		
 		.oddRow {
@@ -280,6 +280,31 @@
 			text-overflow: ellipsis;
 			overflow: hidden;
 			white-space: nowrap;
+			padding: 0 .5rem;
+		}
+		
+		.elipsisConceptWidth{
+			width: 180px;
+		}
+		
+		.elipsisOpenCollapseWidth{
+			width: 320px;
+		}
+		
+		.elipsisCloseCollapseWidth{
+			width: 410px;
+		}
+		
+		.elipsisOpenCollapseExtraWidth{
+			width: 210px;
+		}
+		
+		.elipsisCloseCollapseExtraWidth{
+			width: 300px;
+		}
+		
+		.zIndex1 {
+			z-index: 1;
 		}
 		
 		@external modify;
@@ -335,13 +360,13 @@
 						</g:customHeader>
 					   
 					   	<g:HTMLPanel styleName="{style.flexColumn} {style.discContent} {style.dateGap}" ui:field="salaryDiscPanelContent">
-					   		<g:ScrollPanel ui:field="salaryScrollPanel" styleName="{style.hideScroll}">
+					   		<g:ScrollPanel ui:field="salaryScrollPanel">
 								<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />
 							</g:ScrollPanel>
 							<g:HTMLPanel ui:field="agreementSalaryTableMessage" styleName="{style.flexCenter}">
 								<g:Label text="DEBE CREAR UN TRAMO PARA VISUALIZAR LA TABLA SALARIAL (+)" styleName="{style.message}" />
 							</g:HTMLPanel>
-					   </g:HTMLPanel>
+					   	</g:HTMLPanel>
 					  </g:DisclosurePanel>
 					  
 					  <!-- PAYMENT -->
@@ -353,9 +378,15 @@
 						   	  	<g:Label styleName="{style.disclouruseTitle}">Devengos</g:Label>
 						   	 </g:HTMLPanel>
 						   </g:customHeader>
-						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="paymentDiscPanelContent">
-						   		<c:DataGrid ui:field="agreementPaymentDG" debugId="agreementPaymentDG" />
-						   </g:HTMLPanel>
+						   
+						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent} {style.widthAll}" ui:field="paymentDiscPanelContent">
+						   		<g:ScrollPanel ui:field="paymentScrollPanel" styleName="{style.hideScroll}">
+									<g:Grid ui:field="paymentGrid" debugId="agreementPaymentDG" styleName="{style.borderCollapse}" />
+								</g:ScrollPanel>
+								<g:HTMLPanel ui:field="agreementPaymentTableMessage" styleName="{style.flexCenter}">
+									<g:Label text="DEBE CREAR UN DEVENGO PARA VISUALIZAR LA TABLA DE DEVENGOS (+)" styleName="{style.message}" />
+								</g:HTMLPanel>
+						   	</g:HTMLPanel>
 					   </g:DisclosurePanel>
 					   
 					   <!-- EXTRA -->
@@ -367,9 +398,15 @@
 						   	  		<g:Label styleName="{style.disclouruseTitle}">Extras</g:Label>
 						   	 	</g:HTMLPanel>
 						   	</g:customHeader>
-							<g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="extraDiscPanelContent">
-						   		<c:DataGrid ui:field="agreementExtraPaymentDG" debugId="agreementExtraPaymentDG" />
-							</g:HTMLPanel>
+						   	
+						   	<g:HTMLPanel styleName="{style.flexColumn} {style.discContent} {style.widthAll}" ui:field="extraDiscPanelContent">
+						   		<g:ScrollPanel ui:field="extraScrollPanel" styleName="{style.hideScroll}">
+									<g:Grid ui:field="extraGrid" debugId="agreementExtraPaymentDG" styleName="{style.borderCollapse}" />
+								</g:ScrollPanel>
+								<g:HTMLPanel ui:field="agreementExtraTableMessage" styleName="{style.flexCenter}">
+									<g:Label text="DEBE CREAR UN DEVENGO PARA VISUALIZAR LA TABLA DE EXTRAS (+)" styleName="{style.message}" />
+								</g:HTMLPanel>
+						   	</g:HTMLPanel>
 					   </g:DisclosurePanel>
 					
 				</g:HTMLPanel>

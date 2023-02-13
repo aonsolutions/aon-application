@@ -11,7 +11,7 @@ import com.esferalia.aon.occam.api.model.AccountPeriod;
 import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
-import com.esferalia.aon.occam.test.faker.AonFaker;
+import com.esferalia.aon.occam.test.faker.AccountingFaker;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 
@@ -26,7 +26,7 @@ public class ValidationAutoCompleteStatusTest extends AbstractOccamTest {
 		}
 		
 		Date periodDate = AonDateUtils.getDate(year, 1, 1);
-		ap = AonFaker.getAccountPeriod(ctx , periodDate, null);
+		ap = AccountingFaker.getAccountPeriod(ctx , periodDate, null);
 		ap.setStatus(null);
 		ap = AccountPeriodDAO.save(ctx, ap);
 		assertEquals(ap.getStatus(),AccountPeriodStatus.ACTIVE);

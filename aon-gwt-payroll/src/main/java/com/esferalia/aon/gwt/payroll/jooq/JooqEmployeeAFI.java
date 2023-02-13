@@ -658,15 +658,7 @@ public class JooqEmployeeAFI {
 		
 		String ocupation = parseContractData(contractDataOcupationRecord.isEmpty() ? "" : contractDataOcupationRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		
-		//DAM
-		Calendar startDateCal = Calendar.getInstance();
-		startDateCal.setTimeInMillis(contractRecord.get(CONTRACT.START_DATE).getTime());
-		String startDate = dateCalendar.get(Calendar.DAY_OF_MONTH) + "";
-		startDate += AonStringUtils.leftPad((dateCalendar.get(Calendar.MONTH) + 1) + "", 2, '0');
-		startDate += dateCalendar.get(Calendar.YEAR) + "";
-		
 		dam.put("ocupation", ocupation);
-		dam.put("startDate", AonStringUtils.isBlank(ocupation) ? "" : startDate);
 		
 		json.put("FAB", fab);
 		json.put("DAM", dam);

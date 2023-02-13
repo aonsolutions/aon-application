@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.fiscal.client.invoice.irpf;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayGrid.AonDisplayGridRow;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
@@ -10,19 +11,19 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary.IrpfSummaryGroup;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary.IrpfSummaryPercent;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary.IrpfSummaryType;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.logical.shared.HasSelectionHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class IRPFReportSummaryPanel extends ScrollPanel implements HasValueChangeHandlers<IRPFParams> {
+public class IRPFReportSummaryPanel extends ScrollPanel implements HasSelectionHandlers<IRPFParams> {
 	
 	private FlowPanel container = new FlowPanel();
 	private AonDisplayTable mainTab = new AonDisplayTable();
-
+	
 	public IRPFReportSummaryPanel(IRPFParams params, IrpfSummary summary) {
 		setStyleName(AON.CSS.aonScrollArea());
 		setWidget(container);
@@ -45,7 +46,25 @@ public class IRPFReportSummaryPanel extends ScrollPanel implements HasValueChang
 	
 	private void paintHeader(IRPFParams params) {
 		Label outputLabel = new Label( AON.MSG.outputInvoices() );
+		outputLabel.setStyleName(AON.CSS.aonClickableLabel());
+		outputLabel.addClickHandler(e -> onClick(
+			params
+				.setWithholdingTypeGroup(null)
+				.setWithholdingType(null)
+				.setOutput(true)
+				.setPercent(null)
+		));
+		
 		Label inputLabel = new Label( AON.MSG.inputInvoices() );
+		inputLabel.setStyleName(AON.CSS.aonClickableLabel());
+		inputLabel.addClickHandler(e -> onClick(
+			params
+				.setWithholdingTypeGroup(null)
+				.setWithholdingType(null)
+				.setOutput(false)
+				.setPercent(null)
+		));
+
 		mainTab.addHeaderRow()
 			.addCell(outputLabel	, AON.CSS.aonWidth200())
 			.addCell(outputLabel	, AON.CSS.aonWidth200())	
@@ -68,6 +87,14 @@ public class IRPFReportSummaryPanel extends ScrollPanel implements HasValueChang
 		AonDisplayTableRow row = mainTab.addRow();
 		Label groupLabel = new Label( summaryGroup.getGroup().getDescription() );
 		groupLabel.setStyleName(AON.CSS.aonBold());
+		groupLabel.addStyleName(AON.CSS.aonClickableLabel());
+		groupLabel.addClickHandler(e -> onClick(
+			params
+				.setWithholdingTypeGroup(summaryGroup.getGroup())
+				.setWithholdingType(null)
+				.setOutput(null)
+				.setPercent(null)
+		));
 		row.addCell(groupLabel);
 		boolean first = true;
 		for ( IrpfSummaryType type : summaryGroup.getMap().values()) {
@@ -81,6 +108,13 @@ public class IRPFReportSummaryPanel extends ScrollPanel implements HasValueChang
 	private void paintType(IRPFParams params, IrpfSummaryType summaryType, AonDisplayTableRow row) {
 		Label typeLabel = new Label( summaryType.getType().getAbbreviatedDescription() );
 		typeLabel.setStyleName(AON.CSS.aonBold());
+		typeLabel.addStyleName(AON.CSS.aonClickableLabel());
+		typeLabel.addClickHandler(e ->  onClick( 
+			params.setWithholdingType(summaryType.getType())
+				.setWithholdingTypeGroup(summaryType.getType().getGroup())
+				.setOutput(null)
+				.setPercent(null)
+		));
 		row.addCell( typeLabel )
 			.addCell( getOutputTable( params, summaryType ) )
 			.addCell(new Label())
@@ -113,7 +147,15 @@ public class IRPFReportSummaryPanel extends ScrollPanel implements HasValueChang
 				sumBase = AonMathUtils.round(sumBase + percent.getOutput().getBase());
 				sumQuota = AonMathUtils.round(sumQuota + percent.getOutput().getQuota());
 			}
-			outputTab.addRow()
+			AonDisplayGridRow row = outputTab.addRow();
+			row.addClickHandler(e -> onClick(
+				params
+					.setWithholdingTypeGroup(null)
+					.setWithholdingType(summaryType.getType())
+					.setOutput(true)
+					.setPercent(percent.getPercent())
+			));
+			row
 				.addCell(outputBaseLabel	, AON.CSS.aonTextRight(), AON.CSS.aonBackgroundLigthGray())
 				.addCell(outputPercentLabel	, AON.CSS.aonTextCenter(), AON.CSS.aonBackgroundLigthGray())
 				.addCell(outputQuotaLabel	, AON.CSS.aonTextRight(), AON.CSS.aonBackgroundLigthGray())
@@ -121,7 +163,16 @@ public class IRPFReportSummaryPanel extends ScrollPanel implements HasValueChang
 		}
 		Label sumBaseLabel = new Label( AON.FMT.format( sumBase ) );
 		Label sumQuotaLabel = new Label( AON.FMT.format( sumQuota ) );
-		outputTab.addRow()
+		
+		AonDisplayGridRow row = outputTab.addRow();
+		row.addClickHandler(e -> onClick(
+			params
+				.setWithholdingTypeGroup(null)
+				.setWithholdingType(summaryType.getType())
+				.setOutput(true)
+				.setPercent(null)
+		));
+		row
 			.addCell(sumBaseLabel, AON.CSS.aonTextRight(), AON.CSS.aonBackgroundLigthGray(), AON.CSS.aonBold())
 			.addCell(new Label(""), AON.CSS.aonTextCenter(), AON.CSS.aonBackgroundLigthGray())
 			.addCell(sumQuotaLabel, AON.CSS.aonTextRight(), AON.CSS.aonBackgroundLigthGray(), AON.CSS.aonBold())
@@ -162,7 +213,15 @@ public class IRPFReportSummaryPanel extends ScrollPanel implements HasValueChang
 				sumQuota = AonMathUtils.round(sumQuota + percent.getInput().getQuota());
 				sumDedQuota = AonMathUtils.round(sumDedQuota + percent.getInput().getDeductibleQuota());
 			}
-			inputTab.addRow()
+			AonDisplayGridRow row = inputTab.addRow();
+			row.addClickHandler(e -> onClick(
+				params
+					.setWithholdingTypeGroup(null)
+					.setWithholdingType(summaryType.getType())
+					.setOutput(false)
+					.setPercent(percent.getPercent())
+			));
+			row
 				.addCell(inputBaseLabel		, AON.CSS.aonWidth120()	,AON.CSS.aonTextRight(), AON.CSS.aonMarginLeft())
 				.addCell(inputPercentLabel	, AON.CSS.aonWidth80()	,AON.CSS.aonTextCenter())
 				.addCell(inputQuotaLabel	, AON.CSS.aonWidth120()	,AON.CSS.aonTextRight())
@@ -172,7 +231,15 @@ public class IRPFReportSummaryPanel extends ScrollPanel implements HasValueChang
 		Label sumBaseLabel = new Label( AON.FMT.format( sumBase ) );
 		Label sumQuotaLabel = new Label( AON.FMT.format( sumQuota ) );
 		Label sumDedQuotaLabel = new Label( AON.FMT.format( sumDedQuota ) );
-		inputTab.addRow()
+		AonDisplayGridRow row = inputTab.addRow();
+		row.addClickHandler(e -> onClick(
+			params
+				.setWithholdingTypeGroup(null)
+				.setWithholdingType(summaryType.getType())
+				.setOutput(false)
+				.setPercent(null)
+		));
+		row
 			.addCell(sumBaseLabel, AON.CSS.aonTextRight(),  AON.CSS.aonBold())
 			.addCell(new Label(""), AON.CSS.aonTextCenter())
 			.addCell(sumQuotaLabel, AON.CSS.aonTextRight(), AON.CSS.aonBold())
@@ -182,11 +249,11 @@ public class IRPFReportSummaryPanel extends ScrollPanel implements HasValueChang
 	}
 
 	protected void onClick( IRPFParams params ) {
-		ValueChangeEvent.<IRPFParams>fire( IRPFReportSummaryPanel.this, params );
+		SelectionEvent.fire( IRPFReportSummaryPanel.this, params );
 	}
 
 	@Override
-	public HandlerRegistration addValueChangeHandler(ValueChangeHandler<IRPFParams> handler) {
-		return super.addHandler(handler, ValueChangeEvent.getType());
+	public HandlerRegistration addSelectionHandler(SelectionHandler<IRPFParams> handler) {
+		return super.addHandler(handler, SelectionEvent.getType());
 	}
 }

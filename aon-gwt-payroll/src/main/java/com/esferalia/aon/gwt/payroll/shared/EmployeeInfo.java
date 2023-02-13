@@ -40,8 +40,7 @@ public class EmployeeInfo implements Serializable{
 	private String addressCity;
 	
 	//Geozone
-	private Integer geozoneId;
-	private String addressProvinces;
+	private Integer addressProvinces;
 	
 	//Rmedia
 	private Integer mobileId;
@@ -94,7 +93,6 @@ public class EmployeeInfo implements Serializable{
 		this.addressZip = null;
 		this.addressInfo = null;
 		this.addressCity = null;
-		this.geozoneId = null;
 		this.addressProvinces = null;
 		this.mobileId = null;
 		this.mobile = null;
@@ -276,12 +274,12 @@ public class EmployeeInfo implements Serializable{
 		this.addressCity = addressCity;
 	}
 
-	public String getAddressProvinces() {
+	public Integer getAddressProvinces() {
 		return addressProvinces;
 	}
 
-	public void setAddressProvinces(String addressProvinces) {
-		this.addressProvinces = addressProvinces;
+	public void setAddressProvinces(Integer geozoneId) {
+		this.addressProvinces = geozoneId;
 	}
 
 	public String getMobile() {
@@ -376,14 +374,6 @@ public class EmployeeInfo implements Serializable{
 		this.raddressId = raddressId;
 	}
 
-	public Integer getGeozoneId() {
-		return geozoneId;
-	}
-
-	public void setGeozoneId(Integer geozoneId) {
-		this.geozoneId = geozoneId;
-	}
-
 	public Integer getMobileId() {
 		return mobileId;
 	}
@@ -471,7 +461,7 @@ public class EmployeeInfo implements Serializable{
 				+ document + ", documentType=" + documentType + ", nationality=" + nationality + ", raddressId="
 				+ raddressId + ", streetType=" + streetType + ", address=" + address + ", addresNum=" + addresNum
 				+ ", addressInfo=" + addressInfo + ", addressZip=" + addressZip + ", addressCity=" + addressCity
-				+ ", geozoneId=" + geozoneId + ", addressProvinces=" + addressProvinces + ", mobileId=" + mobileId
+				+ ", addressProvinces=" + addressProvinces + ", mobileId=" + mobileId
 				+ ", mobile=" + mobile + ", phoneId=" + phoneId + ", phone=" + phone + ", emailId=" + emailId
 				+ ", email=" + email + ", rpaymethodId=" + rpaymethodId + ", paymethodId=" + paymethodId
 				+ ", payMethodType=" + payMethodType + ", payMethodTypeB=" + payMethodTypeB + ", rbankId=" + rbankId

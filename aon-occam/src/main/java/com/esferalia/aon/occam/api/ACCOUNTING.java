@@ -654,9 +654,12 @@ public class ACCOUNTING {
 			return  getAccounting().getTrialBalanceReport(ctx, params);
 		}
 	}
+	
+	public static AccountBalanceReport getAccountBalanceReport(Occam occam, AccountingReportParams params) {
+		return getAccountBalanceReport(occam.getDomainName(),occam.getDomain(),occam.getUser(), params); 
+	}
 
-	public static AccountBalanceReport getAccountBalanceReport(String domainName, int domain, String user,
-			AccountingReportParams params) {
+	public static AccountBalanceReport getAccountBalanceReport(String domainName, int domain, String user, AccountingReportParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain, user)) {
 			return  getAccounting().getBalanceReport(ctx, params);
 		}
