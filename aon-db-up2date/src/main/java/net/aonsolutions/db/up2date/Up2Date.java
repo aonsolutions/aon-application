@@ -19,22 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.finance.InvoiceFiscalAddExpDate;
-import net.aonsolutions.db.up2date.fiscal.AlterFsMod184Detail2022;
-import net.aonsolutions.db.up2date.payroll.BiEmbargarInsert;
-import net.aonsolutions.db.up2date.payroll.Embargar4Many;
-import net.aonsolutions.db.up2date.payroll.IrpfDeductionSplit;
 import net.aonsolutions.db.up2date.payroll.OcupationITIMSFix;
-import net.aonsolutions.db.up2date.tgss.BasesMax2023Update;
-import net.aonsolutions.db.up2date.tgss.HomeBases2023Update;
-import net.aonsolutions.db.up2date.tgss.HomePercentage2023Update;
-import net.aonsolutions.db.up2date.tgss.MEIInsert;
-import net.aonsolutions.db.up2date.tgss.MEIPECUpdate;
-import net.aonsolutions.db.up2date.tgss.MEIPECUpdateUndo;
-import net.aonsolutions.db.up2date.tgss.MEITrainingRemove;
-import net.aonsolutions.db.up2date.tgss.MEITrainingRemoveUndo;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
-import net.aonsolutions.db.up2date.tgss.UnemploymentPercentageFix;
 public class Up2Date {
 
     private static Update [] UPDATES  = {
