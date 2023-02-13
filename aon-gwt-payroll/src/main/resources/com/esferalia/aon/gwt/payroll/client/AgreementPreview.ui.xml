@@ -216,7 +216,7 @@
 		
 		.modify {
 			background-color: lightyellow !important;
-    		border: 0.5px solid yellow !important;
+    		/*border: 0.5px solid yellow !important;*/
 		}
 		
 		.oddRow {
@@ -280,7 +280,27 @@
 			text-overflow: ellipsis;
 			overflow: hidden;
 			white-space: nowrap;
-			width: 95%;
+			padding: 0 .5rem;
+		}
+		
+		.elipsisConceptWidth{
+			width: 180px;
+		}
+		
+		.elipsisOpenCollapseWidth{
+			width: 320px;
+		}
+		
+		.elipsisCloseCollapseWidth{
+			width: 410px;
+		}
+		
+		.elipsisOpenCollapseExtraWidth{
+			width: 210px;
+		}
+		
+		.elipsisCloseCollapseExtraWidth{
+			width: 300px;
 		}
 		
 		.zIndex1 {
