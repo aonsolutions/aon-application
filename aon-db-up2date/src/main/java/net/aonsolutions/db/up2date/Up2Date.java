@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.OcupationITIMSFix;
 import net.aonsolutions.db.up2date.finance.FinanceTrackingAmountFix;
+import net.aonsolutions.db.up2date.fiscal.AlterAlcatrazFinanceTracking;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 
 public class Up2Date {
@@ -313,7 +314,7 @@ public class Up2Date {
 			//FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
 	    	OcupationITIMSFix.OCUPATIONITIMSFIX,
 	    	
-	    	
+	    	AlterAlcatrazFinanceTracking.ALTER_ALCATRAZ_FINANCE_TRACKING,	    	
     		//Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
     		
