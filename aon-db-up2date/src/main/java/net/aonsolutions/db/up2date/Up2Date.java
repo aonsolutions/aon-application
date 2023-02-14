@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.payroll.Embargar4Many;
 import net.aonsolutions.db.up2date.payroll.OcupationITIMSFix;
 import net.aonsolutions.db.up2date.finance.FinanceTrackingAmountFix;
+import net.aonsolutions.db.up2date.tgss.BasesMin2023Update;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 
 public class Up2Date {
@@ -312,6 +313,7 @@ public class Up2Date {
 	    	//MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
 	    	OcupationITIMSFix.OCUPATIONITIMSFIX,
 	    	Embargar4Many.BIEMBARGAR4MANY,
+	    	BasesMin2023Update.BASESMIN2023UPDATE,
 	    	
 	    	FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
 	    	
