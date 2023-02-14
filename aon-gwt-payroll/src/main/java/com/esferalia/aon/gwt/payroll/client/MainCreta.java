@@ -77,6 +77,7 @@ import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -984,13 +985,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			mergeEditor.setLineNumbers(true);
 			mergeEditor.setOrig(result.getBasesFile());
 
-			String suffix = 
-					getSelected()
-					.stream()
-					.map( f -> f.getCCC() + " " + f.getFrom() )
-					.findFirst()
-					.orElse("")
-				;
+			String fileName = getFileName();
 
 			CretaResults cretaResults = new CretaResults() {
 				@Override
@@ -998,12 +993,12 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 					AbstractBaseCretaDetail.this.onBases(result);
 				}
 			};
-
+			
 			try {
 				
 				mergeEditor.setText(result.getSalaryBasesFile());
 				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix  + ".xml");
+				mergeEditor.setFilename(fileName  + ".xml");
 				detailPanel.setWidget(mergeEditor);
 				mergeEditor.autoRefresh();
 				
@@ -1013,7 +1008,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				try {
 					mergeEditor.setText(result.getChangedBasesFile());
 					mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-					mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
+					mergeEditor.setFilename(fileName + ".xml");
 					detailPanel.setWidget(mergeEditor);
 					mergeEditor.autoRefresh();
 	
@@ -1024,7 +1019,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						mergeEditor.setShowDifferences(false);
 						mergeEditor.setText(result.getDraftRequestFile());
 						mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-						mergeEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
+						mergeEditor.setFilename(fileName + ".xml");
 						detailPanel.setWidget(mergeEditor);
 						mergeEditor.autoRefresh();
 						cretaResults.setSelectionHandler(e -> mergeEditor.scrollIntoView(posOf(result.getBasesFile(),e.getId())));
@@ -1035,7 +1030,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						basesEditor.setLineNumbers(true);
 						basesEditor.setText(result.getBasesFile());
 						basesEditor.setTitle(CretaService.File.BASES.getFilename());
-						basesEditor.setFilename(CretaService.File.BASES.getFilename() + suffix + ".xml");
+						basesEditor.setFilename(fileName + ".xml");
 						detailPanel.setWidget(basesEditor);
 						basesEditor.autoRefresh();
 						cretaResults.setSelectionHandler(e -> basesEditor.scrollIntoView(posOf(result.getBasesFile(),e.getId())));
@@ -1095,6 +1090,19 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			mergeEditor.add(aceptarBasesAnteriores);
 			
 
+		}
+
+		private String getFileName() {
+		    return getSelected()
+		    		.stream()
+		    		.map( this::getFileName )
+		    		.findFirst()
+		    		.orElse("");
+		}
+
+
+		private String getFileName(JsFile f) {
+		    return "SLD-Bases " + f.getType() + " " + AonStringUtils.substring(f.getCCC(),4) + " " + f.getFrom() + " " + DateTimeFormat.getFormat("MMddHHmm").format(new Date());
 		}
 		
 		@Override
