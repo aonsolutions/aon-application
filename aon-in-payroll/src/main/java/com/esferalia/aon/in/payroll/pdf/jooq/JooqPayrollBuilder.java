@@ -334,7 +334,7 @@ public class JooqPayrollBuilder {
 						forceMajeureBase[0] += p.getAmount();
 					}
 					
-
+					
 					PDFPayment accrual = new PDFPayment(p.getAmount(), description);
 					
 					// Check this!! (set CRA0001 if not exist)
@@ -343,13 +343,16 @@ public class JooqPayrollBuilder {
 					
 					if (!paymentMap.containsKey(p.getPaymentType().ordinal()))
 						paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<PDFPayment>());
-
-					if (paymentMap.get(p.getPaymentType().ordinal()).stream().anyMatch(
-							acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().orElse(null)))) {
-						PDFPayment repAcc = paymentMap.get(p.getPaymentType().ordinal()).stream().findFirst().get();
+					
+					
+					Optional<PDFPayment> repeated = paymentMap.get(p.getPaymentType().ordinal()).stream().filter(acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().orElse(null))).findFirst();
+					
+					if (repeated.isPresent()) {
+						PDFPayment repAcc = repeated.get();
 						repAcc.setAmount(repAcc.getAmount().orElse(0d) + p.getAmount());
-					} else
-						paymentMap.get(p.getPaymentType().ordinal()).add(accrual);
+					} else {
+						paymentMap.get(p.getPaymentType().ordinal()).add(accrual);						
+					}
 				});
 				payrollBuilder.setAccruals(paymentMap);
 			}
@@ -576,7 +579,7 @@ public class JooqPayrollBuilder {
 								}
 							});
 				}
-
+				
 				// SETTING BASES
 				{
 					costBuilder.setCommonContBase(Optional.ofNullable(salary.getCommonContingenciesBase()));
