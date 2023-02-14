@@ -2321,6 +2321,23 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		totalEmbargado = totalEmbargable - totalLiquid;
 		Assert.assertEquals((totalEmbargable - smi) * 0.30 , totalEmbargado, 0.005);
 		
+		draft("DOS, EMBARGOS");
+		calculate(Calendar.FEBRUARY,2023);
+		totalLiquid = getValue("totalLiquidLabel");
+		totalPayment = getValue("totalPaymentLabel");
+		totalDeduction = getText("totalDeductionLabel");
+		totalEmbargable = totalPayment - totalDeduction;
+		totalEmbargado = totalEmbargable - totalLiquid;
+		Assert.assertEquals((totalEmbargable - smi) * 0.30 , totalEmbargado, 0.005);
+		calculate(Calendar.MARCH,2023);
+		totalLiquid = getValue("totalLiquidLabel");
+		totalPayment = getValue("totalPaymentLabel");
+		totalDeduction = getText("totalDeductionLabel");
+		totalEmbargable = totalPayment - totalDeduction;
+		totalEmbargado = totalEmbargable - totalLiquid;
+		Assert.assertEquals((totalEmbargable - smi) * 0.30 , totalEmbargado, 0.05);
+		
+		
 	}
 
 	@Test
