@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.security.UdpatePortalConectaUsers;
 import net.aonsolutions.db.up2date.tgss.MEIPECUpdateUndo;
 import net.aonsolutions.db.up2date.tgss.MEITrainingRemoveUndo;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
@@ -308,6 +309,7 @@ public class Up2Date {
 	    	//MEITrainingRemove.MEITRAININGREMOVE,
 	    	MEIPECUpdateUndo.MEIPECUPDATEUNDO,
 	    	MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
+	    	UdpatePortalConectaUsers.UPDATE_PORTAL_CONECTA_USERS,
 	    	
     		//Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE

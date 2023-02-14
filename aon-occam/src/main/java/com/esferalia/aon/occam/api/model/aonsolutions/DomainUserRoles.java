@@ -38,6 +38,9 @@ public class DomainUserRoles implements Serializable {
 	}
 	
 	public Domain getParentDomain() {
+		if(parentDomain == null) {
+			parentDomain = new Domain();
+		}
 		return parentDomain;
 	}
 	
@@ -398,17 +401,21 @@ public class DomainUserRoles implements Serializable {
 	// BASIC MANAGEMENT
 	
 	public boolean hasBasicManagement() {
-		return hasStandarManagement() || hasApp(AonApp.BASIC_MANAGEMENT)
-				|| hasOldModule(Module.AON_FINANCE);
+		return hasApp(AonApp.BASIC_MANAGEMENT) || hasOldModule(Module.AON_FINANCE);
 	}
 	
 	public boolean hasStandarManagement() {
-		return hasProfessionalManagement() || hasApp(AonApp.STANDAR_MANAGEMENT)
-				|| hasOldModule(Module.AON_ONE);
+		return hasApp(AonApp.STANDAR_MANAGEMENT) || hasOldModule(Module.AON_ONE);
 	}
 	
 	public boolean hasProfessionalManagement() {
-		return hasApp(AonApp.PROFESSIONAL_MANAGEMENT);
+		return hasApp(AonApp.PROFESSIONAL_MANAGEMENT) || hasOldProfessionalManagement();
+	}
+	
+	public boolean hasOldProfessionalManagement() {
+		return !hasOldModule(Module.AON_FINANCE) 
+			&& !hasOldModule(Module.AON_ONE) 
+		    && !hasApp(AonApp.BASIC_MANAGEMENT);
 	}
 	
 	// INVOICE - FACTURAS

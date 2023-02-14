@@ -540,13 +540,13 @@ export const BookingApps = {
   COMUNICA,
   DOCUMENTAL,
   TIMECONTROL,
-  INVOICE,
   MESSENGER,
-  WAREHOUSE,
-  TREASURY,
-  MARKETING,
+  INVOICE,
   COMMERCIAL,
-  GROUPWARE
+  MARKETING,
+  TREASURY,
+  GROUPWARE,
+  WAREHOUSE
 };
 
 export const AuxApps = { TOOLS };
@@ -562,20 +562,24 @@ export const AllApps = {
   TIMECONTROL,
   INVOICE,
   MESSENGER,
+  COMMERCIAL,
+  MARKETING,
+  TREASURY,
+  GROUPWARE,
+  WAREHOUSE,
   OCR,
   CONVENIOS,
   BANK,
   AON_SOLUTIONS,
   BIDOQ,
   SELFCONTA,
-  AON_SALTRA,
-  WAREHOUSE
+  AON_SALTRA
 };
 
 export const getApp = (name) => {
-  for (let key in Apps) {
-    if (name.toLowerCase() === Apps[key].app) {
-      return Apps[key];
+  for (let key in BookingApps) {
+    if (name.toLowerCase() === BookingApps[key].app) {
+      return BookingApps[key];
     }
   }
 
@@ -1183,8 +1187,7 @@ export const Packs = {
       Apps.DOCUMENTAL,
       Apps.TIMECONTROL,
       Apps.INVOICE,
-      Apps.MESSENGER,
-      Apps.NOTES,
+      Apps.MESSENGER
     ],
     price: " ", // '295€/mes'
   },
@@ -1198,8 +1201,7 @@ export const Packs = {
       Apps.DOCUMENTAL,
       Apps.TIMECONTROL,
       Apps.INVOICE,
-      Apps.MESSENGER,
-      Apps.NOTES,
+      Apps.MESSENGER
     ],
     price: " ", // '120€/mes'
   },
@@ -1209,7 +1211,7 @@ export const Packs = {
     title: "Pack Cotización",
     subtitle: " Laboral | Comunic@",
     color: "#002469",
-    apps: [Apps.PAYROLL, Apps.COMUNICA, Apps.TIMECONTROL, Apps.NOTES],
+    apps: [Apps.PAYROLL, Apps.COMUNICA],
     price: " ", // '120€/mes'
   },
   FISCAL_ACCOUNTING: {
@@ -1218,7 +1220,7 @@ export const Packs = {
     title: "Pack Tributación",
     subtitle: " Fiscal | Contabilidad",
     color: "#002469",
-    apps: [Apps.FISCAL, Apps.ACCOUNTING, Apps.NOTES],
+    apps: [Apps.FISCAL, Apps.ACCOUNTING],
     price: " ", // '120€/mes'
   },
 };
@@ -1269,7 +1271,7 @@ export const STANDAR_MANAGEMENT = {
   title: "Estándar",
   subtitle: " Gestión Básica | Marketing | Tesoreria ",
   color: "#002469",
-  apps: [BASIC_MANAGEMENT, TREASURY, MARKETING],
+  apps: [Apps.INVOICE, COMMERCIAL, TREASURY, MARKETING],
   price: " ",
 };
 
@@ -1279,7 +1281,7 @@ export const PROFESSIONAL_MANAGEMENT = {
   title: "Profesional",
   subtitle: " Gestión Estándar | Expedientes | Almacén ",
   color: "#002469",
-  apps: [BASIC_MANAGEMENT, STANDAR_MANAGEMENT, Apps.WAREHOUSE, GROUPWARE],
+  apps: [Apps.INVOICE, COMMERCIAL, TREASURY, MARKETING, Apps.WAREHOUSE, GROUPWARE],
   price: " ",
 };
 

@@ -207,15 +207,15 @@ public class VisibilityManager extends BasicVisibilityManager {
 			enabledModules.add(Module.POS);
 		}
 		
-		if(dur.isAccounting()) enabledModules.add(Module.ACCOUNTING);
-		if(dur.isFiscal()) enabledModules.add(Module.FISCAL);
-		if(dur.isPayroll()) enabledModules.add(Module.PAYROLL);
-		if(dur.isGroupware()) enabledModules.add(Module.GROUPWARE);
-		if(dur.isInvoice()) enabledModules.add(Module.MANAGEMENT);
-		if(dur.isWarehouse()) enabledModules.add(Module.WAREHOUSE);
-		if(dur.isMarketing()) enabledModules.add(Module.MARKETING);
-		if(dur.isTreasury()) enabledModules.add(Module.TREASURY);
-		if(dur.isCommercial()) enabledModules.add(Module.CRM);
+		if(dur.isAccountingManager()) enabledModules.add(Module.ACCOUNTING);
+		if(dur.isFiscalManager()) enabledModules.add(Module.FISCAL);
+		if(dur.isPayrollManager()) enabledModules.add(Module.PAYROLL);
+		if(dur.isGroupware() && dur.getDomain().isChild()) enabledModules.add(Module.GROUPWARE);
+		if((dur.isInvoiceManager() || dur.isInvoicePortal()) && dur.getDomain().isChild()) enabledModules.add(Module.MANAGEMENT);
+		if(dur.isWarehouse() && dur.getDomain().isChild()) enabledModules.add(Module.WAREHOUSE);
+		if(dur.isMarketing() && dur.getDomain().isChild()) enabledModules.add(Module.MARKETING);
+		if(dur.isTreasury() && dur.getDomain().isChild()) enabledModules.add(Module.TREASURY);
+		if(dur.isCommercial() && dur.getDomain().isChild()) enabledModules.add(Module.CRM);
 		
 		if (ds.isEnabledGoToParent() && ds.isConsultancyDomain() && DomainType.OFFICE != ds.getType()) {
 			enabledModules.remove(Module.CRM);
@@ -231,11 +231,8 @@ public class VisibilityManager extends BasicVisibilityManager {
 			enabledModules.remove(Module.HOTEL);
 			enabledModules.remove(Module.PAYROLL_PORTAL);
 		}
-		
-		if( enabledModules.contains(Module.AON_ONE) || enabledModules.contains(Module.AON_FINANCE)) {
-			enabledModules.add(Module.MANAGEMENT);
-		}
-		
+	
+		enabledModules.stream().forEach(r -> System.out.println(r.getName()));
 		return enabledModules;
 	}
 

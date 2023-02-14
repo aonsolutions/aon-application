@@ -151,6 +151,7 @@ public final class IJsonNames {
 	public static final String DETAIL_DESCRIPTION = "detailDescription";
 	public static final String DETAILED = "detailed";
 	public static final String DETAILS = "details";
+	public static final String DEVICES = "devices";
 	public static final String DIRTY = "dirty";
 	public static final String DISABLE_DOMAIN_MANAGEMENT = "disableDomainManagement";
 	public static final String DISCOUNT = "discount";
@@ -192,6 +193,7 @@ public final class IJsonNames {
 	public static final String EXPENSES_RATIO = "expensesRatio";
 	public static final String EXPIRATION_DATE = "expirationDate";
 	public static final String EXPIRE = "expire";
+	public static final String EXPIRED_DATE = "expiredDate";
 	public static final String EXPRESSION = "expression";
 	// ---------------------------------------------------------------------------------------------	[F] 
 	public static final String FARMER_REGIME = "farmerRegime";
@@ -535,6 +537,7 @@ public final class IJsonNames {
 	public static final String TO_DATE = "toDate";
 	public static final String TO_DUE_DATE = "toDueDate";
 	public static final String TO_NUMBER = "toNumber";
+	public static final String TOKEN = "token";
 	public static final String TOOLBAR = "toolbar";
 	public static final String TOTAL = "total";
 	public static final String TOTAL_BALANCE = "totalBalance";
