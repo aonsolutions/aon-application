@@ -47,7 +47,6 @@ public class FiscalMSServiceImpl extends AonStatelessRemoteServiceServlet implem
 	// Para carga del PDF del modelo
 	@Override
 	public void savePDFModel(Occam occam, IFiscalModel model, String data) {
-//		System.out.println("ENTRO EN savePDFModel de FiscalMSServiceImpl " + occam.getDomain() + " " + occam.getDomainName() + " " + occam.getUser() + " " + model.getId() + " " + data.substring(0,50) );
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			DataResponseDAO.insertPDFModel(ctx, model, data);
 		} 

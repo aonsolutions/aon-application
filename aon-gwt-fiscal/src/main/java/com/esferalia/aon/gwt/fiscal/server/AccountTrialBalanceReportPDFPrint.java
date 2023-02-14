@@ -25,7 +25,6 @@ public class AccountTrialBalanceReportPDFPrint extends HttpServlet {
 
 		try {
 			String accountReportParams = req.getParameter( IRequestParamsNames.ACCOUNT_REPORT_PARAMS );
-			System.out.println("JSON PARAMS: " + accountReportParams);
 			AccountingReportParams params = JsonParser.parseAccountingParams(accountReportParams);
 			params.setDomain(Integer.parseInt(req.getParameter(IRequestParamsNames.DOMAIN_ID)));
 			params.setUser(req.getParameter(IRequestParamsNames.USER));

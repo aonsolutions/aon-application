@@ -11,8 +11,6 @@ import com.esferalia.aon.occam.api.model.fiscal.InvoiceFiscalModels;
 import com.esferalia.aon.occam.api.model.fiscal.InvoiceModelReportParams;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary;
-import com.esferalia.aon.occam.api.model.fiscal.OperationBreakdown;
-import com.esferalia.aon.occam.api.model.fiscal.OperationParams;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
 import com.esferalia.aon.occam.impl.jooq.FiscalImpl;
@@ -22,27 +20,6 @@ public class FISCAL {
 	private static IFiscal getFiscal() {
 		return new FiscalImpl();
 	}
-
-	// ********************************************
-	// ********************************** FISCAL **
-	// ********************************************
-
-	// -------------------------- FISCAL PANEL
-//	public static LinkedList<IFiscalModel> getFiscalPanel(String domainName,
-//			int domain, FiscalMatrixParams params, String login) {
-//		CloseableAONContext ctx = null;
-//		try {
-//			ctx = AONContext.getAONContext(domainName, domain, login);
-//			User user = AON.getUser(domainName, domain, login);
-//			return getFiscal().getFiscalPanel(ctx, domain, params, user.getId());
-//		} finally {
-//			if (ctx != null)
-//				ctx.close();
-//		}
-//	}
-	
-	// --------------------------------------------------------------------
-
 	public static Stream<VatSummaryContext> getVatSummaryContext(Occam occam, AccountingReportParams params) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFiscal().getVatSummaryContext(ctx, params);
