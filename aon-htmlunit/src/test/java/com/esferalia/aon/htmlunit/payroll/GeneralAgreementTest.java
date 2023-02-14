@@ -140,13 +140,13 @@ public class GeneralAgreementTest {
 		
 		wait4Id("category_filter");
 		
-		setValue("textBox_SALARIO_MENSUAL_I", "666.66");
+		setValue("textBox_SALARIO_MENSUAL_I", "666.6");
 		
 		wait4Class("textBox_SALARIO_MENSUAL_I", "modify");
 		
 		HtmlInput input = getElementById("textBox_SALARIO_MENSUAL_I");
 		
-		Assert.assertEquals(input.getValue(), "666.66");
+		Assert.assertEquals(input.getValue(), "666,60");
 		
 	}
 

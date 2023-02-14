@@ -152,7 +152,7 @@ public class MainAgreementTest {
 		
 		setValue("textBox_SALARIO_MENSUAL_I", "666 + 0.66");
 		wait4Class("textBox_SALARIO_MENSUAL_I", "modify");
-		wait4Value("textBox_SALARIO_MENSUAL_I", "666.66");
+		wait4Value("textBox_SALARIO_MENSUAL_I", "666,66");
 		
 		getElementById("acceptButton").click();
 
@@ -182,7 +182,7 @@ public class MainAgreementTest {
 		Assert.assertNotEquals(value.trim(), "");
 
 		setValue("textBox_SALARIO_MENSUAL_I", "888 + 0.88");
-		wait4Value("textBox_SALARIO_MENSUAL_I", "888.88");
+		wait4Value("textBox_SALARIO_MENSUAL_I", "888,88");
 
 		// 01-01-2019
 		calendar.add(Calendar.YEAR, 1);
@@ -196,7 +196,7 @@ public class MainAgreementTest {
 		Assert.assertNotEquals(value.trim(), "");
 
 		setValue("textBox_SALARIO_MENSUAL_I", "999 + 0.99");
-		wait4Value("textBox_SALARIO_MENSUAL_I", "999.99");
+		wait4Value("textBox_SALARIO_MENSUAL_I", "999,99");
 		
 		getElementById("acceptButton").click();
 		
@@ -277,11 +277,6 @@ public class MainAgreementTest {
 
 		// Comprobamos el campo descripcion
 		wait4(htmlPage, htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
-
-		// Click en el tab de Devengos
-		HtmlButton salaryTableTab = (HtmlButton)getElementById("agreementPaymentTabButton");
-		LOGGER.warning("Cick on: " + salaryTableTab.asNormalizedText());
-		htmlPage = salaryTableTab.click();
 		
 		// Esperamos a la tabla de Devengos
 		wait4Id("agreementPaymentDG");
@@ -328,8 +323,6 @@ public class MainAgreementTest {
 		
 		
 		// Obtenemos tabla de Devengos (extras)
-		getElementById("agreementPaymentExtraTabButton").click();
-		
 		wait4Id("agreementExtraPaymentDG");
 		
 		HtmlTable paymentsExtraTable = getElementById("agreementExtraPaymentDG");
@@ -456,10 +449,6 @@ public class MainAgreementTest {
 
 		// Comprobamos el campo descripcion
 		wait4(htmlPage, htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
-		
-		HtmlButton salaryTableTab = (HtmlButton)getElementById("agreementSalaryTableTabButton");
-		LOGGER.warning("Cick on: " + salaryTableTab.asNormalizedText());
-		htmlPage = salaryTableTab.click();
 		
 		wait4Id("category_filter");
 	}
