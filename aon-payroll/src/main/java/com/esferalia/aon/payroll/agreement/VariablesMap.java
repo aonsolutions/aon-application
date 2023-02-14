@@ -865,6 +865,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("HORA_EXTRA_ANTIGUEDAD_59_HORAS", "H_E_ANTIGUEDAD_59_H");
 		
 		variablesMap.put("HORA_EXTRA_DIARIO", "H_E_DIARIO");
+		variablesMap.put("HORA_EXTRA_MENSUAL", "H_E_MENSUAL");
 		variablesMap.put("HORA_EXTRA_DOMINGOS_Y_FESTIVOS_HORAS", "H_E_FESTIVOS");
 		
 		variablesMap.put("HORA_EXTRA_FESTIVOS_ANTIGUEDAD_1_AÑO_HORAS", "H_E_FEST_ANTIG_1");
@@ -1570,7 +1571,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("SALARIO_CON_PLUS_DISTANCIA_DIARIO", "SALARIO_PLUS_DISTANCIA");
 		variablesMap.put("SALARIO_CON_PLUS_DISTANCIA_HORAS", "SALARIO_PLUS_DISTANCIA");
 		variablesMap.put("SALARIO_CONVENIO_ANUAL", "SALARIO_ANUAL");
-		variablesMap.put("SALARIO_CONVENIO_ANUAL_ANUAL", "SALARIO_ANUAL");
+		variablesMap.put("SALARIO_CONVENIO_ANUAL_ANUAL", "SALARIO_ANUAL_A");
+		variablesMap.put("SALARIO_CONVENIO_ANUAL_MENSUAL", "SALARIO_ANUAL_M");
 		variablesMap.put("SALARIO_CONVENIO_DIARIO", "SALARIO_DIARIO");
 		variablesMap.put("SALARIO_CONVENIO_HORAS", "SALARIO_HORAS");
 		variablesMap.put("SALARIO_CONVENIO_MENSUAL", "SALARIO_MENSUAL");
