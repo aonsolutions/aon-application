@@ -28,7 +28,7 @@
 		}
 		
 		.container {
-			padding: 0.5rem 2rem 0;
+			padding: 0 1rem;
 		}
 		
 		.dateGap {
@@ -42,7 +42,6 @@
 		
 		.flex {
 			display: flex;
-			gap: 1rem;
 			align-items: center;
 		}
 		
@@ -61,7 +60,7 @@
 		.flexColumn{
 			display: flex;
 			flex-direction: column;
-			gap: .1rem;
+			gap: .5rem;
 			border-left: none !important;
 		}
 		
@@ -307,6 +306,14 @@
 			z-index: 1;
 		}
 		
+		.gap0{
+			gap: 0;
+		}
+		
+		.p1{
+			padding: 0 .5rem 1rem .5rem;
+		}
+		
 		@external modify;
 		@external elipsis;
 		
@@ -318,98 +325,67 @@
 			<!-- AGREEMENT PREVIEW -->
 			<g:HTMLPanel styleName="{style.flexColumn}">
 				<aon:AonToolbar ui:field="toolbar" />
-				<g:HTMLPanel styleName="{style.flexColumn} {style.container}">
-					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label text="Descripción" styleName="{style.inputTitle}" />
-						<g:TextBox ui:field="description" styleName="{style.textBox} {style.widthAll}" />
-					</g:HTMLPanel>
-					<g:HTMLPanel styleName="{style.flex}">
-						<g:Label text="Código SS" styleName="{style.inputTitle}" />
-						<g:TextBox ui:field="ssNumber" styleName="{style.textBox}" />
-						<g:HTMLPanel ui:field="serviAgreementPanel" styleName="{style.flex}" />
-					</g:HTMLPanel>
-					
-					<!-- LEVEL / CATEGORY -->
-					
-					<g:DisclosurePanel ui:field="levelDiscPanel">
-						<g:customHeader>
-					   		<g:HTMLPanel styleName="{style.flexTitle}">
-					   	  		<aon:AonToolbarButton ui:field="levelDiscBtn" />
-					   	  		<g:Label styleName="{style.disclouruseTitle}">Nivel / Categoría</g:Label>
-					   	 	</g:HTMLPanel>
-					   	</g:customHeader>
-					   
-					   	<g:HTMLPanel styleName="{style.flexColumn} {style.discContent}" ui:field="levelDiscPanelContent">
-					   		<g:ScrollPanel ui:field="levelScrollPanel" styleName="{style.hideScroll}">
-								<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse}" />
-							</g:ScrollPanel>
-							<g:HTMLPanel ui:field="agreementLevelMessage" styleName="{style.flexCenter}">
-								<g:Label text="DEBE CREAR UN NIVEL PARA VISUALIZAR LA TABLA (+)" styleName="{style.message}" />
+		
+				<g:ScrollPanel ui:field="scrollPanel" styleName="{style.p1}">
+				
+					<g:HTMLPanel styleName="{style.flexColumn} {style.container}">
+						<g:HTMLPanel styleName="{style.flexColumn} {style.gap0}">
+							<g:HTMLPanel styleName="{style.flex}">
+								<g:Label text="Descripción" styleName="{style.inputTitle}" />
+								<g:TextBox ui:field="description" styleName="{style.textBox} {style.widthAll}" debugId="descriptionTextBox" />
 							</g:HTMLPanel>
-					   	</g:HTMLPanel>
-					</g:DisclosurePanel>
-					
-					<!-- SALARY TABLE -->
-					
-					<g:DisclosurePanel ui:field="salaryDiscPanel" >
-						<g:customHeader>
-					   		<g:HTMLPanel styleName="{style.flexTitle}">
-					   	  		<aon:AonToolbarButton ui:field="salaryDiscBtn" debugId="agreementSalaryTableTabButton" />
-					   	  		<g:Label styleName="{style.disclouruseTitle}">Tabla Salarial</g:Label>
-					   	 	</g:HTMLPanel>
-						</g:customHeader>
-					   
-					   	<g:HTMLPanel styleName="{style.flexColumn} {style.discContent} {style.dateGap}" ui:field="salaryDiscPanelContent">
-					   		<g:ScrollPanel ui:field="salaryScrollPanel">
-								<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />
-							</g:ScrollPanel>
-							<g:HTMLPanel ui:field="agreementSalaryTableMessage" styleName="{style.flexCenter}">
-								<g:Label text="DEBE CREAR UN TRAMO PARA VISUALIZAR LA TABLA SALARIAL (+)" styleName="{style.message}" />
+							<g:HTMLPanel styleName="{style.flex}">
+								<g:Label text="Código SS" styleName="{style.inputTitle}" />
+								<g:TextBox ui:field="ssNumber" styleName="{style.textBox}" debugId="ssNumberTextBox" />
+								<g:HTMLPanel ui:field="serviAgreementPanel" styleName="{style.flex}" />
 							</g:HTMLPanel>
-					   	</g:HTMLPanel>
-					  </g:DisclosurePanel>
-					  
-					  <!-- PAYMENT -->
-					  
-					  <g:DisclosurePanel ui:field="paymentDiscPanel">
-						  <g:customHeader>
-						   	 <g:HTMLPanel styleName="{style.flexTitle}">
-						   	  	<aon:AonToolbarButton ui:field="paymentDiscBtn" debugId="agreementPaymentTabButton" />
-						   	  	<g:Label styleName="{style.disclouruseTitle}">Devengos</g:Label>
-						   	 </g:HTMLPanel>
-						   </g:customHeader>
-						   
-						   <g:HTMLPanel styleName="{style.flexColumn} {style.discContent} {style.widthAll}" ui:field="paymentDiscPanelContent">
-						   		<g:ScrollPanel ui:field="paymentScrollPanel" styleName="{style.hideScroll}">
-									<g:Grid ui:field="paymentGrid" debugId="agreementPaymentDG" styleName="{style.borderCollapse}" />
+						</g:HTMLPanel>
+						
+						<!-- LEVEL / CATEGORY && SALARY TABLE -->
+						<g:HTMLPanel styleName="{style.flexColumn}">
+							<aon:AonToolbarSmall ui:field="levelSalaryToolbar" />
+							<g:DeckPanel ui:field="levelSalaryDeck">
+								<g:ScrollPanel ui:field="levelScrollPanel" styleName="{style.hideScroll} {style.flexCenter}">
+									<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse}" />
 								</g:ScrollPanel>
-								<g:HTMLPanel ui:field="agreementPaymentTableMessage" styleName="{style.flexCenter}">
+								<g:ScrollPanel ui:field="salaryScrollPanel">
+									<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />
+								</g:ScrollPanel>
+								<g:HTMLPanel styleName="{style.flexCenter}">
+									<g:Label text="DEBE CREAR UN NIVEL PARA VISUALIZAR LA TABLA (+)" styleName="{style.message}" />
+								</g:HTMLPanel>
+								<g:HTMLPanel styleName="{style.flexCenter}">
+									<g:Label text="DEBE CREAR UN TRAMO PARA VISUALIZAR LA TABLA SALARIAL (+)" styleName="{style.message}" />
+								</g:HTMLPanel>
+							</g:DeckPanel>
+						</g:HTMLPanel>
+						  
+						  <!-- PAYMENT -->
+						  
+						  <g:HTMLPanel styleName="{style.flexColumn}">
+						  	<aon:AonToolbarSmall ui:field="paymentToolbar" />
+						  	<g:DeckPanel ui:field="paymentDeck">
+						  		<g:Grid ui:field="paymentGrid" debugId="agreementPaymentDG" styleName="{style.borderCollapse} " />
+								<g:HTMLPanel styleName="{style.flexCenter}">
 									<g:Label text="DEBE CREAR UN DEVENGO PARA VISUALIZAR LA TABLA DE DEVENGOS (+)" styleName="{style.message}" />
 								</g:HTMLPanel>
-						   	</g:HTMLPanel>
-					   </g:DisclosurePanel>
-					   
-					   <!-- EXTRA -->
-					   
-						<g:DisclosurePanel ui:field="paymentExtraDiscPanel">
-							<g:customHeader>
-								<g:HTMLPanel styleName="{style.flexTitle}">
-						   	  		<aon:AonToolbarButton ui:field="paymentExtraDiscBtn" debugId="agreementPaymentExtraTabButton" />
-						   	  		<g:Label styleName="{style.disclouruseTitle}">Extras</g:Label>
-						   	 	</g:HTMLPanel>
-						   	</g:customHeader>
-						   	
-						   	<g:HTMLPanel styleName="{style.flexColumn} {style.discContent} {style.widthAll}" ui:field="extraDiscPanelContent">
-						   		<g:ScrollPanel ui:field="extraScrollPanel" styleName="{style.hideScroll}">
-									<g:Grid ui:field="extraGrid" debugId="agreementExtraPaymentDG" styleName="{style.borderCollapse}" />
-								</g:ScrollPanel>
+						  	</g:DeckPanel>
+						  </g:HTMLPanel>
+						   
+						   <!-- EXTRA -->
+						   
+						   <g:HTMLPanel styleName="{style.flexColumn}">
+						  	<aon:AonToolbarSmall ui:field="extraToolbar" />
+						  	<g:DeckPanel ui:field="extraDeck">
+						  		<g:Grid ui:field="extraGrid" debugId="agreementExtraPaymentDG" styleName="{style.borderCollapse}" />
 								<g:HTMLPanel ui:field="agreementExtraTableMessage" styleName="{style.flexCenter}">
 									<g:Label text="DEBE CREAR UN DEVENGO PARA VISUALIZAR LA TABLA DE EXTRAS (+)" styleName="{style.message}" />
 								</g:HTMLPanel>
-						   	</g:HTMLPanel>
-					   </g:DisclosurePanel>
-					
-				</g:HTMLPanel>
+						  	</g:DeckPanel>
+						  </g:HTMLPanel>
+						   
+					</g:HTMLPanel>
+				</g:ScrollPanel>
 			</g:HTMLPanel>
 			
 			<!-- AGREEMENT SIMULATOR -->
