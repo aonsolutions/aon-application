@@ -23,6 +23,7 @@ import net.aonsolutions.db.up2date.payroll.Embargar4Many;
 import net.aonsolutions.db.up2date.payroll.OcupationITIMSFix;
 import net.aonsolutions.db.up2date.finance.FinanceTrackingAmountFix;
 import net.aonsolutions.db.up2date.tgss.BasesMin2023Update;
+import net.aonsolutions.db.up2date.fiscal.AlterAlcatrazFinanceTracking;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 
 public class Up2Date {
@@ -311,12 +312,13 @@ public class Up2Date {
 	    	//MEITrainingRemove.MEITRAININGREMOVE,
 	    	//MEIPECUpdateUndo.MEIPECUPDATEUNDO,
 	    	//MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
+	    	//Embargar4Many.BIEMBARGAR4MANY,
+			  //FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
 	    	OcupationITIMSFix.OCUPATIONITIMSFIX,
 	    	Embargar4Many.BIEMBARGAR4MANY,
 	    	BasesMin2023Update.BASESMIN2023UPDATE,
 	    	
-	    	FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
-	    	
+	    	AlterAlcatrazFinanceTracking.ALTER_ALCATRAZ_FINANCE_TRACKING,	    	
     		//Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
     		
