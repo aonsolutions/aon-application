@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.Embargar4Many;
 import net.aonsolutions.db.up2date.payroll.OcupationITIMSFix;
 import net.aonsolutions.db.up2date.finance.FinanceTrackingAmountFix;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
@@ -309,8 +310,8 @@ public class Up2Date {
 	    	//MEITrainingRemove.MEITRAININGREMOVE,
 	    	//MEIPECUpdateUndo.MEIPECUPDATEUNDO,
 	    	//MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
-	    	//Embargar4Many.BIEMBARGAR4MANY,
 	    	OcupationITIMSFix.OCUPATIONITIMSFIX,
+	    	Embargar4Many.BIEMBARGAR4MANY,
 	    	
 	    	FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
 	    	
