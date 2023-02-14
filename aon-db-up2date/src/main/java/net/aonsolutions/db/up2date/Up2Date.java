@@ -310,9 +310,9 @@ public class Up2Date {
 	    	//MEIPECUpdateUndo.MEIPECUPDATEUNDO,
 	    	//MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
 	    	//Embargar4Many.BIEMBARGAR4MANY,
+			//FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
 	    	OcupationITIMSFix.OCUPATIONITIMSFIX,
 	    	
-	    	FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
 	    	
     		//Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
