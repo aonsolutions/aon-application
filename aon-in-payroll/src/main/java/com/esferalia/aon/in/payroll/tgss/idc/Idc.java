@@ -92,10 +92,10 @@ public class Idc {
 		@Override
 		public void onEmployeeQuoteTypes(Double it, Double ims, Double unemployment) {
 			if (Objects.nonNull(it)) {
-				contractData.put(ContextVariable.IT_RATE, it);
+				contractData.put(ContextVariable.IT_PERCENT, it);
 			}
 			if (Objects.nonNull(ims)) {
-				contractData.put(ContextVariable.IMS_RATE, ims);
+				contractData.put(ContextVariable.IMS_PERCENT, ims);
 			}
 			
 			if (Objects.nonNull(unemployment)) {
