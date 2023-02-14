@@ -602,6 +602,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY,2022);
 		assertValue("cgcBaseLabel", 1166.70);
 		assertValue("cgpBaseLabel", 1166.70);
+		calculate(Calendar.JANUARY,2023);
+		assertValue("cgcBaseLabel", 1166.70);
+		assertValue("cgpBaseLabel", 1166.70);
+		selectOption("editor-bases_provisonales", "true");
+		assertValue("cgcBaseLabel", 1260.00);
+		assertValue("cgpBaseLabel", 1260.00);
 
 		draft("BASE, MÍNIMA ( GRUPO 10 )");
 		calculate(Calendar.AUGUST,2019);
@@ -2320,6 +2326,23 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		totalEmbargable = totalPayment - totalDeduction;
 		totalEmbargado = totalEmbargable - totalLiquid;
 		Assert.assertEquals((totalEmbargable - smi) * 0.30 , totalEmbargado, 0.005);
+		
+		draft("DOS, EMBARGOS");
+		calculate(Calendar.FEBRUARY,2023);
+		totalLiquid = getValue("totalLiquidLabel");
+		totalPayment = getValue("totalPaymentLabel");
+		totalDeduction = getText("totalDeductionLabel");
+		totalEmbargable = totalPayment - totalDeduction;
+		totalEmbargado = totalEmbargable - totalLiquid;
+		Assert.assertEquals((totalEmbargable - smi) * 0.30 , totalEmbargado, 0.005);
+		calculate(Calendar.MARCH,2023);
+		totalLiquid = getValue("totalLiquidLabel");
+		totalPayment = getValue("totalPaymentLabel");
+		totalDeduction = getText("totalDeductionLabel");
+		totalEmbargable = totalPayment - totalDeduction;
+		totalEmbargado = totalEmbargable - totalLiquid;
+		Assert.assertEquals((totalEmbargable - smi) * 0.30 , totalEmbargado, 0.05);
+		
 		
 	}
 
