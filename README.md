@@ -14,7 +14,7 @@ sudo apt-get install maven
 ```
 - #### Install [Docker](https://www.docker.com/)
 ``` bash
-sudo apt-get install maven
+sudo apt-get install docker
 ```
 - #### Executing the Docker Command Without Sudo (Optional)
 If you want to avoid typing sudo whenever you run the docker command, add your username to the docker group :
