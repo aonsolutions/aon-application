@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.fiscal.AlterAlcatrazFinanceTracking;
 import net.aonsolutions.db.up2date.payroll.Embargar4Many;
 import net.aonsolutions.db.up2date.payroll.OcupationITIMSFix;
+import net.aonsolutions.db.up2date.tgss.BasesMin2023Guess;
 import net.aonsolutions.db.up2date.tgss.BasesMin2023Update;
 import net.aonsolutions.db.up2date.tgss.IPREM2023Update;
 import net.aonsolutions.db.up2date.tgss.SMI2023Update;
@@ -322,6 +323,7 @@ public class Up2Date {
 	    	
 	    	SMI2023Update.SMI20223UPDATE,
 	    	IPREM2023Update.IPREM2022UPDATE,
+	    	BasesMin2023Guess.BASESMIN2023GUESS,
 	    	
 	    	
 	    	//AgreementEmptyTrash.AGREEMENTEMPTYTRASH,
