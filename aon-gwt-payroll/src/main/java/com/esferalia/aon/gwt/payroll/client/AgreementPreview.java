@@ -87,7 +87,7 @@ public abstract class AgreementPreview extends Composite {
 
 		@Override
 		public void execute() {
-			new AgreementSuggestPaymentDialog() {
+			AgreementSuggestPaymentDialog paymentDialog = new AgreementSuggestPaymentDialog() {
 
 				@Override
 				protected void onAccept(Payment payment) {
@@ -99,7 +99,7 @@ public abstract class AgreementPreview extends Composite {
 
 				@Override
 				protected void onManualEdition() {
-					new AgreementPaymentWizard(agreement.getPayments(), null) {
+					AgreementPaymentWizard wizardDialog = new AgreementPaymentWizard(agreement.getPayments(), null) {
 
 						@Override
 						protected void onAccept(Payment payment) {
@@ -202,9 +202,16 @@ public abstract class AgreementPreview extends Composite {
 							setHasChange(true);
 						}
 					};
+					
+					wizardDialog.setGlassStyleName(style.dialogGlass());
+					wizardDialog.addStyleName(style.dialogZIndex());
 				}
 
 			};
+			
+			paymentDialog.setGlassStyleName(style.dialogGlass());
+			paymentDialog.addStyleName(style.dialogZIndex());
+			
 		}
 	}
 
@@ -601,7 +608,7 @@ public abstract class AgreementPreview extends Composite {
 		toolbar.setTitle(agreement.getDescription());
 
 		serviAgreementUpdateButton.setVisible(!readOnly && agreement.getOwner().equals(AgreementOwner.SERVICONVENIOS));
-		printPreviewButton.setVisible(!agreement.getDates().isEmpty());
+		printPreviewButton.setVisible(!readOnly && !agreement.getDates().isEmpty());
 
 		description.setText(agreement.getDescription());
 		description.setReadOnly(readOnly);
@@ -1298,6 +1305,8 @@ public abstract class AgreementPreview extends Composite {
 				((AonToolbarSmallButton) deleteCell).addClickHandler(e -> {
 					AonDialog deleteDialog = new AonDialog("Eliminar concepto",
 							new HTML("\u00BFDesea eliminar el concepto seleccionado\u003F"));
+					deleteDialog.setGlassStyleName(style.dialogGlass());
+					deleteDialog.addStyleName(style.dialogZIndex());
 					deleteDialog.confirm(new AonAcceptDialogCallback() {
 
 						@Override
@@ -1527,6 +1536,8 @@ public abstract class AgreementPreview extends Composite {
 				((AonToolbarSmallButton) deleteCell).addClickHandler(e -> {
 					AonDialog deleteDialog = new AonDialog("Eliminar concepto",
 							new HTML("\u00BFDesea eliminar el concepto seleccionado\u003F"));
+					deleteDialog.setGlassStyleName(style.dialogGlass());
+					deleteDialog.addStyleName(style.dialogZIndex());
 					deleteDialog.confirm(new AonAcceptDialogCallback() {
 
 						@Override

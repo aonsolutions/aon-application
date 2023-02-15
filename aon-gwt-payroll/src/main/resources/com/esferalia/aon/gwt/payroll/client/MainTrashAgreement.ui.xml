@@ -28,7 +28,36 @@
 		padding-left: 25px !important;
 		background-size: contain;
 	}
+		
+	.flexCenter {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 2rem;
+	}
+	
+	.heigthAll {height: 100%;}
+			
+	.flexColumn {
+		display: flex;
+		flex-direction: column;
+	}
 	 
+	.message {
+		font-weight: bold;
+		text-transform: uppercase;
+		margin-top: 1rem;
+	}
+		
+	.dialogGlass {
+		z-index: 7;
+		background-color: #000;
+		opacity: 0.2;
+		filter: opacity(45%);
+	}
+	
+	.dialogZIndex {
+		z-index: 8;
+	}
 	</ui:style>
 
 	<ui:image field='agreementgroup' src='agreementgroup.png' />
@@ -41,9 +70,16 @@
 			<aon:TrashAgreements debugId="agreements" ui:field='agreements' />
 		</g:west>
 		<g:center>
-			<g:SimpleLayoutPanel>
-				<common:DetailPanel ui:field="detailPanel" /> 
-			</g:SimpleLayoutPanel>
+			<g:HTMLPanel styleName="{style.flexColumn}">
+				<g:HTMLPanel ui:field="messagePanel" />
+				<g:HTMLPanel ui:field="agreementContainer" styleName="{style.flexColumn} {style.heigthAll}"> 
+					<aon:AgreementPreview debugId="agreementPreview" ui:field="agreementPreview" />
+				</g:HTMLPanel>
+				<!-- AGREEMENT SELECT LABEL -->
+				<g:HTMLPanel ui:field="agreementMessage" styleName="{style.flexCenter}">
+					<g:Label text="SELECCIONE UN CONVENIO PARA SER VISUALIZADO" styleName="{style.message}" />
+				</g:HTMLPanel>
+			</g:HTMLPanel>
 		</g:center>
 	</g:DockLayoutPanel>
 
