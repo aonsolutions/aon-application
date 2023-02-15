@@ -853,7 +853,5 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		agreementMessage.getElement().getStyle().setDisplay(Display.NONE);
 		agreementContainer.getElement().getStyle().clearDisplay();
 	}
-
-	// ------------------------------------ Tab Selection
 	
 }
