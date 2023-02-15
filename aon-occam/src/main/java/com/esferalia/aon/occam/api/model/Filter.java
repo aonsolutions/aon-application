@@ -312,6 +312,11 @@ public interface Filter extends Serializable{
 	}
 	
 	@FunctionalInterface
+	public interface CnoFilter{
+		Filter filter(CnoProperties properties);
+	}
+	
+	@FunctionalInterface
 	public interface IAEFilter{
 		Filter filter(IAEProperties properties);
 	}
