@@ -3645,6 +3645,11 @@ public class SalaryDraft extends ResizeComposite
 				.filter(v->!skipVariable(v))
 				.filter( v-> !alreadyDisplayed(v) )
 				//.filter(v->!isPaymentVariable(v))
+				.map( v -> {
+				    if ( "BASES_PROVISONALES".equals(v.getName()))
+					    v.setScope(Scope.SALARY);
+				    return v;
+				})
 				.collect(Collectors.toList());
 		//List<Variable> constants = getConstants(context);
 		
@@ -3658,6 +3663,7 @@ public class SalaryDraft extends ResizeComposite
 			visibleContext.removeAll(partialVariables);
 			visibleContext.addAll(partialVariables.stream().map( v -> DelegateVariable.getVariable(v, Scope.CONTRACT)).collect(Collectors.toList()));
 		}
+		
 		
 		
 		
