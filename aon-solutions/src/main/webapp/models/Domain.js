@@ -188,6 +188,6 @@ export class Domain {
     }
 
     isChild() {
-        return this.getParentId();
+        return this.getParentId() != undefined;
     }
 } 
