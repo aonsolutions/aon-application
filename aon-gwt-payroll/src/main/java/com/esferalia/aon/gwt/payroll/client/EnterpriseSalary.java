@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
@@ -30,6 +31,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -836,18 +838,37 @@ public abstract class EnterpriseSalary extends Composite {
 			
 			@Override
 			public void onAccept() {
-				enterpriseSalaryObject.deleteSalaries(
-						salaryTable.getSelectedSalaries(), 
-						s -> 
-							reloadTable(success -> {
-								Map<String, String> successMap = new HashMap<>();
-								successMap.put("Borrado", "La(s) n\u00F3minas han sido eliminadas correctamente");
-								AonMessagePanel.showSuccess(messagePanel, successMap);
-							})
-						, f -> {}
-				);
+				List<SalaryInfo> alcatrazSalaries = salaryTable.getSelectedSalaries().stream().filter(salary -> salary.isAlcatraz()).collect(Collectors.toList());
+				if(alcatrazSalaries.isEmpty()) {
+					enterpriseSalaryObject.deleteSalaries(
+							salaryTable.getSelectedSalaries(), 
+							s -> 
+								reloadTable(success -> {
+									Map<String, String> successMap = new HashMap<>();
+									successMap.put("Borrado", "La(s) n\u00F3minas han sido eliminadas correctamente");
+									AonMessagePanel.showSuccess(messagePanel, successMap);
+								})
+							, f -> {}
+					);
+				} else 
+					createAlcatrazWarning(alcatrazSalaries);
+				
 			}
 		});
+	}
+	
+	private void createAlcatrazWarning(List<SalaryInfo> alcatrazSalaries) {
+		DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
+		
+		String message = "No se pueden eliminar la n&oacute;minas que est&aacute;n presentadas en el <b>Modelo 111</b>. Estas n&oacute;minas son:<br><br>";
+		for(SalaryInfo salary : alcatrazSalaries) {
+			message += "&emsp;" + salary.getType().getDescription() + ".  " + salary.getEmployeeName() + " (" + formatDate.format(salary.getStartDate()) + " - " + formatDate.format(salary.getEndDate()) + ")<br>";
+		}
+		
+		message += "<br>Para poder eliminar dichas n&oacute;minas, deber&aacute; eliminar primero el <b>Modelo 111</b> asociado.";
+		
+		AonDialog dialog = new AonDialog("Borraro", new HTML(message));
+		dialog.info();
 	}
 	
 	private void reloadTable(Consumer<List<SalaryInfo>> success) {
