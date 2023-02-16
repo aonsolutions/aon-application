@@ -8,10 +8,14 @@ import javax.servlet.annotation.WebServlet;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -38,6 +42,14 @@ public class FiscalMSServiceImpl extends AonStatelessRemoteServiceServlet implem
 					 .or(p.getNameProperty().like(q))
 					 .or(p.getAliasProperty().like(q)))
 				).collect(Collectors.toCollection(LinkedList::new));
+	}
+
+	// Para carga del PDF del modelo
+	@Override
+	public void savePDFModel(Occam occam, IFiscalModel model, String data) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			DataResponseDAO.insertPDFModel(ctx, model, data);
+		} 
 	}
 	
 //	// -------------------------------------------------------------- ACTIVITIES

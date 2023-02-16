@@ -3,6 +3,7 @@ package nordigen;
 import static nordigen.NordigenUtils.isRequisitionLinked;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,6 +56,20 @@ import nordigen.NordigenAPIAbstract.CreateRequisitionParams;
 
 public class AonNordigen {
 	
+	private static final String[] EXTENDED_HISTORY_INSTITUTION_BLACKLIST = {
+			"BRED_BREDFRPPXXX",
+			"INDUSTRA_MULTLV2X",
+			"LHV_LHVBEE22",
+			"LUMINOR_",
+			"SWEDBANK_",
+			"SEB_",
+			"LABORALKUTXA_CLPEES2M",
+			"BANKINTER_BKBKESMM",
+			"CAIXABANK_CAIXESBB",
+			"BBVA_BBVAESMM",
+			"COOP_EKRDEE22"
+	};
+	
 	private AonNordigen() throws IllegalAccessException {
 		throw new IllegalAccessException("Utility class");
 	}
@@ -100,11 +115,23 @@ public class AonNordigen {
 		}
 	}
 	
+	private static boolean isBlacklistedInstitution(NordigenInstitution institution) {
+		if (institution == null) {
+			return false;
+		}
+		return Arrays.stream(EXTENDED_HISTORY_INSTITUTION_BLACKLIST)
+				.anyMatch(inst -> AonStringUtils.containsIgnoreCase(institution.getId(), inst));
+	}
+	
 	public static NordigenAgreement createAgreement(NordigenAccessToken token, String institutionId) throws Exception {
 		try {
 			NordigenInstitution institution = getInstitution(token, institutionId);
 			Integer maxDays = 90;
-			if (institution != null && institution.getTransactionTotalDays() != null && institution.getTransactionTotalDays() > 0) {
+			// BORRAR ESTA CONDICIÓN SI MUCHAS INSTITUCIONES DAN PROBLEMAS. QUEDARÁN TODOS LOS ACCESOS A 90 DÍAS
+			if (institution != null &&
+					institution.getTransactionTotalDays() != null &&
+					institution.getTransactionTotalDays() > 0 &&
+					!isBlacklistedInstitution(institution)) {
 				maxDays = institution.getTransactionTotalDays();
 			}
 			JSONObject json = NordigenAPI.createEndUserAgreement(token.getAccess(), maxDays, 90, null, institutionId);

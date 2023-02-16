@@ -196,6 +196,7 @@ public enum ContextVariable implements IResourceable {
 	EMBARGO_PAID("EMBARGADO", VariableType.DOUBLE, false),
 	EMBARGO_LIMIT("EMBARGABLE", VariableType.DOUBLE, false), 
 	EMBARGO_MAX("MAX_EMBARGABLE", VariableType.DOUBLE, false),
+	TOTAL_EMBARGO("TOTAL_EMBARGADO", VariableType.DOUBLE, false),
 
 
 	// Salary Type
