@@ -1655,31 +1655,47 @@ public class Bases {
 						UnMatchedVariableException {
 			List<ContextData> datas = salary.getContextData()
 					.getOrDefault(variable, Collections.emptyList());
-						
+
 			double ret = datas.stream()
+	        	.filter(d -> p.intersects(new Period(d.getStartDate(),d.getEndDate())))
 			.collect(Collectors.summingDouble(DistributeCCretaData::eval));
+			
+			
 
 			if (ret == 0.00)
 				throw new NoSuchVariableException(variable);
 			
+			List<Period> varPeriods = 
+			datas.stream()
+			.map(d -> new Period(d.getStartDate(), d.getEndDate()))
+			.filter(p::intersects).collect(Collectors.toList());
+			
+			
 			long workedDays = 
 			salary.getContextData()
 			.getOrDefault(WORKED_DAYS.getName(), Collections.emptyList())
-			.stream().collect(Collectors.summingLong(DistributeCCretaData::days))
+			.stream().map( d -> new Period(d.getStartDate(),d.getEndDate()))
+			.flatMap( period -> intersect(period, varPeriods))
+			.collect(Collectors.summingLong(DistributeCCretaData::days))
 			;
 			if ( workedDays == 0 )
 				workedDays = 
 				salary.getContextData()
 				.getOrDefault(CGC_BASE.getName(), Collections.emptyList())
-				.stream().collect(Collectors.summingLong(DistributeCCretaData::days))
+				.stream().map( d -> new Period(d.getStartDate(),d.getEndDate()))
+				.flatMap( period -> intersect(period, varPeriods))
+				.collect(Collectors.summingLong(DistributeCCretaData::days))
 				;
 			
 			long days = p.daysStream().count();
 			
-
 			return ret / workedDays * days;
 		}
 		
+		private static long days(Period p) {
+			return p.daysStream().count();
+		}
+
 		private static long days(ContextData d) {
 			return new Period(d.getStartDate(),d.getEndDate()).daysStream().count();
 		}
@@ -1688,6 +1704,9 @@ public class Bases {
 			return ExpressionContext.eval(d.getExpression(), Double.class);
 		}
 
+		private static Stream<Period> intersect(Period p, List<Period> periods) {
+			return Period.intersect(Collections.singleton(p), periods).stream();
+		}
 	}
 	
 
