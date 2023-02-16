@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
@@ -28,6 +26,7 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVisitor;
+import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.product.Tariff;
@@ -64,6 +63,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
@@ -169,10 +169,15 @@ public class AonRandom {
     public static Date getYearDay( Date date ) {
     	return faker.date().between(AonDateUtils.getYearFirstDay(date), AonDateUtils.getYearLastDay(date));
     }
-    
+    public static Date getFutureDate( Date date ) {
+    	return getFutureDate(0, new Date());
+    }
     public static Date getFutureDate( int threshold ) {
+    	return getFutureDate(threshold, new Date());
+    }
+    public static Date getFutureDate( int threshold, Date date ) {
     	return ( gt(threshold) )
-        		?truncate( faker.date().future(100, TimeUnit.DAYS, new Date()))
+        		?truncate( faker.date().future(100, TimeUnit.DAYS, date))
         		:null;
     }
 
@@ -499,11 +504,9 @@ public class AonRandom {
 			
 			@Override
 			public Invoice visitFarmer(Invoice t) {
-				return Stream.of( AonRandom.getYearDay(new Date()) )
-					.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
-					.map(params -> AON.insertInvoice(occam, InvoiceFaker.getPurchaseFarmerRetention(params)))
-					.findFirst()
-					.orElse(null);
+				InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration)
+					.setIssueDate(AonRandom.getYearDay(new Date()));
+				return InvoiceFaker.getPurchaseFarmerRetention(params);
 			}
 
 			private Invoice getRetentionInvoice( final WithholdingType wt) {
@@ -512,6 +515,10 @@ public class AonRandom {
 			
 		},null);
 		return inv;
+	}
+	public static <T> T get(List<T> list) {
+		if (AonCollectionUtils.isEmpty(list)) return null;
+		return list.get( getInt(0, (list.size() - 1) ) );
 	}
 	
 }

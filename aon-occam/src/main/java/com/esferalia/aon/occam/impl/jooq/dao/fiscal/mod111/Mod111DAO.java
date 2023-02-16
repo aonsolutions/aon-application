@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111Declaration.ComplementaryBeahaviour;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
@@ -114,7 +115,7 @@ public class Mod111DAO extends FiscalModelDAO {
 	public static Mod111 create(AONContext ctx,Mod111 mod111) {
 		Mod111Declaration dec = Mod111Declaration.getInstance(mod111);
 		dec.ensureDetails(mod111);
-		Set<Integer> invoices = dec.createFromInvoices(ctx,mod111);
+		Set<Alcatraz> invoices = dec.createFromInvoices(ctx,mod111);
 		Set<Integer> salaries = dec.createFromSalary(ctx,mod111);
 		mod111.getMap().values().stream().forEach(FiscalModelDetail::calculate);
 		dec.uniqueInitialize(ctx,mod111);

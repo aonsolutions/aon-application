@@ -6,29 +6,60 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.finance.Finance;
+import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountingInvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceTrackingDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
 import com.esferalia.aon.occam.test.AbstractOccamTest;
 import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class InsertRandomInvoicesTest extends AbstractOccamTest {
 
 	@Test
 	public void test() {
 		int year = AonDateUtils.getYear( getTestDate() );
-		int times = AonRandom.getInt(1, 50);
-		int mod = AonRandom.getInt(0, times);
+		int times = AonRandom.getInt(1, 100);
 		for (int count = 0; count < times; count++) {
-			InvoiceFakerParams params = new InvoiceFakerParams(ctx,getConfiguration()).setIssueDate( AonRandom.getRandomYearDay( year ) );
-			AON.insertInvoice(getOccam(),InvoiceFaker.getRandom(params));
-			if (mod != 0 && times % mod == 0) {
-				AonRandom.generateRandomRetentionInvoice(ctx,getOccam(),getConfiguration(),AonRandom.getRandomWithholdingType());
-				count++;
+			Invoice invoice = null;
+			if (AonRandom.gt(90)) {
+				invoice = AonRandom.generateRandomRetentionInvoice(ctx,getOccam(),getConfiguration(),AonRandom.getRandomWithholdingType());
+			} else {
+				InvoiceFakerParams params = new InvoiceFakerParams(ctx,getConfiguration()).setIssueDate( AonRandom.getRandomYearDay( year ) );
+				invoice = InvoiceFaker.getRandom(params);
 			}
+			invoice = AON.insertInvoice(getOccam(),invoice);
+			AccountingInvoiceDAO.saveFinances(ctx, invoice);
+			if (invoice.isVatAccrualPayment() && AonCollectionUtils.isNotEmpty(invoice.getFinances()) && AonRandom.gt(40)) {
+				AonRandom.get( invoice.getFinances() );
+				Finance finance = AonRandom.get(invoice.getFinances());
+				FinanceTracking tracking = new FinanceTracking()
+						.setDomain(invoice.getDomain())
+						.setFinance(finance)
+						.setTrackingDate( AonRandom.getFutureDate(finance.getDueDate()) )
+						.setAmount(finance.getAmount() );
+				FinanceTrackingDAO.pay(ctx, tracking);
+			}
+			System.out.println(MessageFormat.format("\t\t ["
+					+ AonStringUtils.repeat("-", count)
+					+ AonStringUtils.repeat(" ", times - count)+"] "
+					+ AonMathUtils.round( count * 100 / times)
+					+ " %"
+					,times));
+			count++;
 		}
-		System.out.println(MessageFormat.format("\t\t {0} Invoices inserted ",times));
+		System.out.println(MessageFormat.format("\t\t ["
+				+ AonStringUtils.repeat("-", times)
+				+ "] ("
+				+ times + " facturas creadas.)"
+				,times));
 		Assert.assertTrue( 
 			InvoiceDAO.getInvoiceHeaders(ctx, p -> p.getDomainProperty().eq(DOMAIN_ID), 0, 1)
 				.findFirst()

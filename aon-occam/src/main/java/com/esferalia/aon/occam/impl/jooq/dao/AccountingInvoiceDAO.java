@@ -1030,14 +1030,16 @@ public class AccountingInvoiceDAO {
 		ctx.log().debug("\t--- END INVOICE_DUA UPDATE");
 	}
 
-	private static void saveFinances(AONContext ctx, AccountingInvoice accInvoice) {
-		Invoice invoice = accInvoice.getInvoice();
+	public static void saveFinances(AONContext ctx, AccountingInvoice accInvoice) {
+		saveFinances(ctx, accInvoice.getInvoice());
+	}
+	public static void saveFinances(AONContext ctx, Invoice invoice) {
 		for (Finance finance : invoice.getFinances() ) {
 			saveFinance(ctx, invoice, finance);
 		}
 	}
 	
-	private static void saveFinance(AONContext ctx, Invoice invoice, Finance finance) {
+	public static void saveFinance(AONContext ctx, Invoice invoice, Finance finance) {
 		if ( !finance.isFullPending()) {
 			ctx.log().debug("** FINANCE NOT SAVED [NOT PENDING]");
 			return;
