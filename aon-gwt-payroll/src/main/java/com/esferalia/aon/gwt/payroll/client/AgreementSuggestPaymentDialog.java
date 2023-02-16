@@ -69,6 +69,8 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	interface MyStyle extends CssResource {
 		String button();
 		String inputHeight();
+		String dialogGlass();
+		String dialogZIndex();
 	}
 
 	@UiField
@@ -263,13 +265,13 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 				initialiazePaymentByConceptDescription(descriptionSuggest.getValue());
 				
 				setEnabled(acceptBtn, true);
-				setEnabled(manualAgreement, false);
+				setEnabled(manualAgreement, true);
 			} else if(payment != null && AonStringUtils.isBlank(payment.getName()) && payment.getConceptId() == null) {
 				hideMessage();
 				payment.setName(descriptionSuggest.getValue());
 				
 				setEnabled(acceptBtn, true);
-				setEnabled(manualAgreement, false);
+				setEnabled(manualAgreement, true);
 			} else if(AonStringUtils.isBlank(descriptionSuggest.getValue()) && payment.getConceptId() != null) {
 				setEnabled(acceptBtn, false);
 				setEnabled(manualAgreement, true);
