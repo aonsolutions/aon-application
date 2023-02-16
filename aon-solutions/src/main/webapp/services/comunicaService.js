@@ -24,6 +24,8 @@ export const getOccupation = (data) => get(`${API_URL}/comunica/occupation`, dat
 
 export const getQuoteGroup = (data) => get(`${API_URL}/comunica/quote-group`, data);
 
+export const getCno = (data) => get(`${API_URL}/comunica/cno`, data);
+
 export const sendAlta = (data) => post(`${API_URL}/comunica/alta-directa`, data);
 
 export const sendBaja = (data) => post(`${API_URL}/comunica/baja`, data);
