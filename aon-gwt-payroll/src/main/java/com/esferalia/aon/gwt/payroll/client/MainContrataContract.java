@@ -995,6 +995,7 @@ public class MainContrataContract extends MainEntryPoint {
 					enterprise -> {
 						enterpriseSalaryObject = new EnterpriseSalaryObject(enterprise);
 						enterpriseSalary.setEnterpriseSalaryObject(enterpriseSalaryObject);
+						enterpriseSalary.hideEditSalaryButton();
 					}, 
 					f -> {}
 			);

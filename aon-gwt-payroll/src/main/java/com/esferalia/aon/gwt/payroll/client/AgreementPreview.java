@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptD
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmall;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo.AgreementExtra;
@@ -42,6 +43,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.MatchResult;
@@ -256,8 +258,6 @@ public abstract class AgreementPreview extends Composite {
 
 		String levelCell();
 
-		String levelColumn();
-
 		String levelDefaultValue();
 
 		String levelFixed();
@@ -333,7 +333,7 @@ public abstract class AgreementPreview extends Composite {
 	// LEVEL / CATEGORY && SALARY TABLE
 
 	@UiField(provided = true)
-	AonToolbar levelSalaryToolbar;
+	AonToolbarSmall levelSalaryToolbar;
 	
 	@UiField
 	HTMLPanel levelSalaryTabs;
@@ -356,7 +356,7 @@ public abstract class AgreementPreview extends Composite {
 	// PAYMENT
 
 	@UiField(provided = true)
-	AonToolbar paymentToolbar;
+	AonToolbarSmall paymentToolbar;
 
 	@UiField
 	DeckPanel paymentDeck;
@@ -367,7 +367,7 @@ public abstract class AgreementPreview extends Composite {
 	// EXTRA
 
 	@UiField(provided = true)
-	AonToolbar extraToolbar;
+	AonToolbarSmall extraToolbar;
 
 	@UiField
 	DeckPanel extraDeck;
@@ -987,19 +987,14 @@ public abstract class AgreementPreview extends Composite {
 
 			for (String variable : agreement.getVariablesByDate(selectedDate)) {
 				LevelData levelData = agreement.getLevelData(level.getId(), variable, selectedDate);
-				TextBox cell = new ExpressionBox();
-
-				cell.ensureDebugId("textBox_" + variable + "_" + level.getDescription());
-
-				cell.addStyleName(style.gridCell());
-				cell.addStyleName(style.valueCell());
-				cell.addStyleName(style.textBoxSalary());
+				
+				String value;
 				
 				if(null == levelData)
-					cell.setValue(null);
+					value = null;
 				else {
 					String expression = levelData.getExpression();
-					String value = levelData.getExpression();
+					value = levelData.getExpression();
 
 					try {
 						Double expressionValue = evalExpression(expression);
@@ -1007,13 +1002,44 @@ public abstract class AgreementPreview extends Composite {
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
-					
-					cell.setValue(value);
 				}
 				
-				cell.setTitle("Valor nivel retributivo");
-				cell.setReadOnly(readOnly);
+				Widget cell;
+				if(readOnly) {
+					cell = new Label();
+					((Label)cell).setText(value);
+				} else {
+					cell = new ExpressionBox();
+					((ExpressionBox)cell).setValue(value);
+					((ExpressionBox)cell).addValueChangeHandler(event -> {
 
+						String expression = event.getValue();
+						String result = event.getValue();
+						
+						try {
+							Double expressionValue = evalExpression(expression);
+							result = null == expressionValue ? "" : expressionValue.toString();
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+
+						if (null == levelData || null == levelData.getId())
+							agreement.createLevelData(level.getId(), variable, result, selectedDate);
+						else
+							agreement.updateLevelData(level.getId(), levelData.getId(), result);
+
+						setAgreementPreview(agreement);
+						setHasChange(true);
+					});
+				}
+				
+				cell.ensureDebugId("textBox_" + variable + "_" + level.getDescription());
+				cell.setTitle("Valor nivel retributivo");
+
+				cell.addStyleName(style.gridCell());
+				cell.addStyleName(style.valueCell());
+				cell.addStyleName(style.textBoxSalary());
+				
 				if (row % 2 == 0)
 					cell.addStyleName(style.oddRow());
 				cell.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
@@ -1027,42 +1053,25 @@ public abstract class AgreementPreview extends Composite {
 					cell.addStyleName(style.modify());
 				else
 					cell.removeStyleName(style.modify());
-
-				cell.addValueChangeHandler(event -> {
-
-					String expression = event.getValue();
-					String value = event.getValue();
-					
-					try {
-						Double expressionValue = evalExpression(expression);
-						value = null == expressionValue ? "" : expressionValue.toString();
-					} catch (Exception e) {
-						// TODO: handle exception
-					}
-
-					if (null == levelData || null == levelData.getId())
-						agreement.createLevelData(level.getId(), variable, value, selectedDate);
-					else
-						agreement.updateLevelData(level.getId(), levelData.getId(), value);
-
-					setAgreementPreview(agreement);
-					setHasChange(true);
-				});
+				
 
 				// check if level 0 or default value
 				if (level.getId() == 0 || null == levelData || AonStringUtils.isBlank(levelData.getExpression())) {
 					LevelData levelDataDefault = agreement.getDefaultLevelData(variable, selectedDate);
-					cell.setText(null == levelDataDefault ? null
-							: SpecialExpresion.parse(levelDataDefault.getExpression()).getInput());
-					cell.setTitle("Valor por defecto");
+					String valueData = null == levelDataDefault ? null
+							: SpecialExpresion.parse(levelDataDefault.getExpression()).getInput();
+					
 					cell.addStyleName(style.levelDefaultValue());
-					cell.setReadOnly(readOnly);
+					cell.setTitle("Valor por defecto");
 
 					if (null != levelDataDefault && AonStringUtils.isNotBlank(levelDataDefault.getExpression())
-							&& cell.getText().length() > 20)
+							&& valueData.length() > 20)
 						cell.setWidth((7.5 * levelDataDefault.getExpression().length()) + "px");
 					else
 						cell.setWidth("95%");
+					
+					if(readOnly) ((Label)cell).setText(valueData);
+					else ((ExpressionBox)cell).setValue(valueData);
 				}
 
 				salaryGrid.setWidget(row, col, cell);
@@ -1560,6 +1569,8 @@ public abstract class AgreementPreview extends Composite {
 			paymentGrid.setWidget(row, 5, infoCell);
 			paymentGrid.setWidget(row, 6, visibilityCell);
 			paymentGrid.setWidget(row, 7, deleteCell);
+			
+			paymentGrid.getWidget(row, 6).getElement().getStyle().setTextAlign(TextAlign.CENTER);
 
 			if (row % 2 == 0)
 				paymentGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
@@ -2183,6 +2194,7 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private void showLevelTable() {
+		levelSalaryToolbar.setTitle("Nivel / Categorias");
 		if (!agreement.getLevels().isEmpty()) {
 			createCategoryTable();
 			levelSalaryDeck.showWidget(0);
@@ -2191,6 +2203,7 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private void showSalaryTable() {
+		levelSalaryToolbar.setTitle("Tabla Salarial");
 		if (!agreement.getSortedDates().isEmpty()) {
 			createSalaryTable();
 			levelSalaryDeck.showWidget(1);
@@ -2412,7 +2425,7 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private void createLevelSalaryToolbar() {
-		levelSalaryToolbar = new AonToolbar("Tabla Salarial");
+		levelSalaryToolbar = new AonToolbarSmall("Tabla Salarial");
 
 		levelSalaryDiscBtn = new AonToolbarSmallButton("Desplegar Nivel / Categoria", AON.CSS.aonIconDown());
 		levelSalaryDiscBtn.addClickHandler(e -> {
@@ -2431,7 +2444,7 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private void createPaymentToolbar() {
-		paymentToolbar = new AonToolbar("Devengos");
+		paymentToolbar = new AonToolbarSmall("Devengos");
 		
 		paymentDiscBtn = new AonToolbarSmallButton("Desplegar Devengos", AON.CSS.aonIconDown());
 		paymentDiscBtn.addClickHandler(e -> {
@@ -2445,7 +2458,7 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private void createExtraToolbar() {
-		extraToolbar = new AonToolbar("Extras");
+		extraToolbar = new AonToolbarSmall("Extras");
 
 		extraDiscBtn = new AonToolbarSmallButton("Desplegar Extras", AON.CSS.aonIconDown());
 		extraDiscBtn.addClickHandler(e -> {
@@ -2459,7 +2472,7 @@ public abstract class AgreementPreview extends Composite {
 
 	private void handleIcon(AonToolbarSmallButton button, boolean open) {
 		if (open) {
-			button.removeStyleName(AON.CSS.aonIconRight());
+			button.removeStyleName(AON.CSS.aonIconLeft());
 			button.addStyleName(AON.CSS.aonIconDown());
 
 			if (button.equals(levelSalaryDiscBtn))
@@ -2470,7 +2483,7 @@ public abstract class AgreementPreview extends Composite {
 				button.setTitle("Colapsar Extras");
 		} else {
 			button.removeStyleName(AON.CSS.aonIconDown());
-			button.addStyleName(AON.CSS.aonIconRight());
+			button.addStyleName(AON.CSS.aonIconLeft());
 
 			if (button.equals(levelSalaryDiscBtn))
 				button.setTitle(isSalaryTableSelected ? "Desplegar Tabla Salarial" : "Desplegar Nivel / Categoria");

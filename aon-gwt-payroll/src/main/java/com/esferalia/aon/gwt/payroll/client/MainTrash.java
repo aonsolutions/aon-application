@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
@@ -119,7 +120,7 @@ public class MainTrash extends MainEntryPoint implements
 					@Override
 					public void onSuccess(Integer result) {
 						MainTrash.this.domain = result;
-						MainTrash.this.getAgreements();
+						MainTrash.this.getAgreements(finish -> {});
 					}
 				});
 		
@@ -204,7 +205,7 @@ public class MainTrash extends MainEntryPoint implements
 					@Override
 					public void onSuccess(Void result) {
 						MainTrash.this.detailPanel.setWidget(null);
-						MainTrash.this.getAgreements();
+						MainTrash.this.getAgreements(finish -> {});
 					}
 				});
 	}
@@ -224,7 +225,7 @@ public class MainTrash extends MainEntryPoint implements
 				@Override
 				public void onSuccess(Void result) {
 					MainTrash.this.detailPanel.setWidget(null);
-					MainTrash.this.getAgreements();				
+					MainTrash.this.getAgreements(finish -> {});				
 				}
 			});
 			
@@ -309,7 +310,7 @@ public class MainTrash extends MainEntryPoint implements
 	}
 
 	@Override
-	public void getAgreements() {
+	public void getAgreements(Consumer<Void> finish) {
 		agreementsTree.clearTree();
 		agreementsTree.getEnterpriseService().getAgreements(0, 10000,
 				new AsyncCallback<List<Agreement>>() {
