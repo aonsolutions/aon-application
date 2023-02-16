@@ -385,6 +385,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			protected void reloadAgreement() {
 				getAgreement(agreementSelected.getId(), agreementInfo -> {
 					agreementSelected = agreementInfo;
+					agreementPreview.resetSelectedDate();
 					agreementPreview.setAgreementPreview(agreementSelected);
 				});
 			}
@@ -517,6 +518,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		getAgreement(agreement.getId(), agreeementInfo -> {
 			agreementSelected = agreeementInfo;
 			showAgreementContainer();
+			agreementPreview.resetSelectedDate();
 			agreementPreview.setAgreementPreview(agreeementInfo);
 		});
 		

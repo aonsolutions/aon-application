@@ -2370,6 +2370,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 				@Override
 				public void onSuccess(AgreementInfo agreementInfo) {
+					getAgreementPreview().resetSelectedDate();
 					getAgreementPreview().setAgreementPreview(agreementInfo);
 					getAgreementPreview().setSelectedLevel(levelId, getTitle(salaryDraft.getEmployee()));
 					hideMessagePanel();
@@ -2495,6 +2496,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 				@Override
 				public void onSuccess(AgreementInfo agreementInfo) {
+					getAgreementPreview().resetSelectedDate();
 					getAgreementPreview().setAgreementPreview(agreementInfo);
 					getAgreementPreview().payrollPreview();
 					hideMessagePanel();
