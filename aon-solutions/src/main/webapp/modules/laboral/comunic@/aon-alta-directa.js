@@ -141,7 +141,7 @@ export class AonAltaDirecta extends AonElement {
         await Promise.all([
             this.getContractType(),
             this.getQuoteGroup(),
-            /*this.getCno()*/
+            this.getCno()
         ]).catch(e=> console.log(e));
     }
 
