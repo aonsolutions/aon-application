@@ -900,7 +900,7 @@ public class EmployeesServiceHelper {
 			if ( employee.getContractType().isPresent() ) {
 				String ssContractType = employee.getContractType().get();
 				String aonContractType = getString(dataList, ContextVariable.TC2, "");
-				if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 ) {
+				if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 && !AonStringUtils.endsWith(ssContractType, "9") ) {
 					employeeStatus.and(
 							new EmployeeStatus.MismatchedContractType()
 							.setAonContractType(aonContractType)

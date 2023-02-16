@@ -158,18 +158,18 @@ public class MainAgreementTest {
 
 		wait4NoClass("textBox_SALARIO_MENSUAL_I", "modify");
 		
-		HtmlSelect datesLB = getElementById("datesLB");
-		Assert.assertEquals(2, datesLB.getOptions().size());
+		HtmlDivision datesTabs = getElementById("datesTabs");
+		Assert.assertEquals(2, datesTabs.getChildElementCount());
 		
 		getElementById("deleteSalaryTabButton").click();
 		wait4Id("acceptDialogButton");
 		HtmlButton acceptDialogButton = getElementById("acceptDialogButton");
 		htmlPage = acceptDialogButton.click();
 		
-		wait4(htmlPage, htmlPage -> ((HtmlSelect) getElementById("datesLB")).getOption(0).getText().equals("01/01/2017"));
+		wait4(htmlPage, htmlPage -> ((HtmlDivision) getElementById("datesTabs")).getChildElementCount()==1);
 		
-		datesLB = (HtmlSelect) getElementById("datesLB");
-		Assert.assertTrue(datesLB.getOptions().size() == 1);
+		datesTabs = getElementById("datesTabs");
+		Assert.assertEquals(1, datesTabs.getChildElementCount());
 
 		// 01-01-2018
 		newSalaryDataTab(calendar.getTime());
@@ -202,28 +202,27 @@ public class MainAgreementTest {
 		
 		wait4NoClass("textBox_SALARIO_MENSUAL_I", "modify");
 		
-		datesLB = (HtmlSelect) getElementById("datesLB");
-		Assert.assertTrue(datesLB.getOptions().size() == 3);
+		datesTabs = getElementById("datesTabs");
+		Assert.assertEquals(3, datesTabs.getChildElementCount());
 		
 		// Borramos los tramos
 		getElementById("deleteSalaryTabButton").click();
 		wait4Id("acceptDialogButton");
 		htmlPage = getElementById("acceptDialogButton").click();
 		
-		wait4(htmlPage, htmlPage -> ((HtmlSelect) getElementById("datesLB")).getOption(0).getText().equals("01/01/2018"));
+		wait4(htmlPage, htmlPage -> ((HtmlDivision) getElementById("datesTabs")).getChildElementCount()==2);
 		
-		datesLB = (HtmlSelect) getElementById("datesLB");
-		Assert.assertTrue(datesLB.getOptions().size() == 2);
+		datesTabs = getElementById("datesTabs");
+		Assert.assertEquals(2, datesTabs.getChildElementCount());
 		
 		getElementById("deleteSalaryTabButton").click();
 		wait4Id("acceptDialogButton");
 		htmlPage = getElementById("acceptDialogButton").click();
 		
-		wait4(htmlPage, htmlPage -> ((HtmlSelect) getElementById("datesLB")).getOption(0).getText().equals("01/01/2017"));
+		wait4(htmlPage, htmlPage -> ((HtmlDivision) getElementById("datesTabs")).getChildElementCount()==1);
 		
-		datesLB = (HtmlSelect) getElementById("datesLB");
-		Assert.assertTrue(datesLB.getOptions().size() == 1);
-		Assert.assertTrue(datesLB.getOption(0).getText().equals("01/01/2017"));
+		datesTabs = getElementById("datesTabs");
+		Assert.assertEquals(1, datesTabs.getChildElementCount());
 	}
 	
 	@Test

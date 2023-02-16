@@ -314,6 +314,33 @@
 			padding: 0 .5rem 1rem .5rem;
 		}
 		
+		.p0{
+			padding: 0;
+		}
+		
+		.p5{
+			padding: 5px;
+		}
+		
+		.gap05{
+			gap: 0.5rem;
+		}
+		
+		.unSelectDate {
+			padding: 5px;
+			border: 1px solid #eee;
+			border-bottom: none;
+			cursor: pointer;
+		}
+		
+		.selectDate {
+			padding: 0px 5px;
+			border: 1px solid #eee;
+			border-bottom: none;
+			background-color: #eee;
+			cursor: pointer;
+		}
+		
 		@external modify;
 		@external elipsis;
 		
@@ -328,7 +355,7 @@
 		
 				<g:ScrollPanel ui:field="scrollPanel" styleName="{style.p1}">
 				
-					<g:HTMLPanel styleName="{style.flexColumn} {style.container}">
+					<g:HTMLPanel styleName="{style.flexColumn} {style.container} {style.gap0}">
 						<g:HTMLPanel styleName="{style.flexColumn} {style.gap0}">
 							<g:HTMLPanel styleName="{style.flex}">
 								<g:Label text="Descripción" styleName="{style.inputTitle}" />
@@ -342,8 +369,9 @@
 						</g:HTMLPanel>
 						
 						<!-- LEVEL / CATEGORY && SALARY TABLE -->
-						<g:HTMLPanel styleName="{style.flexColumn}">
-							<aon:AonToolbarSmall ui:field="levelSalaryToolbar" />
+						<g:HTMLPanel styleName="{style.flexColumn} {style.gap0}">
+							<aon:AonToolbar ui:field="levelSalaryToolbar" />
+							<g:HTMLPanel ui:field="levelSalaryTabs" styleName="{style.flex} {style.gap05}" />
 							<g:DeckPanel ui:field="levelSalaryDeck">
 								<g:ScrollPanel ui:field="levelScrollPanel" styleName="{style.hideScroll} {style.flexCenter}">
 									<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse}" />
@@ -363,7 +391,7 @@
 						  <!-- PAYMENT -->
 						  
 						  <g:HTMLPanel styleName="{style.flexColumn}">
-						  	<aon:AonToolbarSmall ui:field="paymentToolbar" />
+						  	<aon:AonToolbar ui:field="paymentToolbar" />
 						  	<g:DeckPanel ui:field="paymentDeck">
 						  		<g:Grid ui:field="paymentGrid" debugId="agreementPaymentDG" styleName="{style.borderCollapse} " />
 								<g:HTMLPanel styleName="{style.flexCenter}">
@@ -375,7 +403,7 @@
 						   <!-- EXTRA -->
 						   
 						   <g:HTMLPanel styleName="{style.flexColumn}">
-						  	<aon:AonToolbarSmall ui:field="extraToolbar" />
+						  	<aon:AonToolbar ui:field="extraToolbar" />
 						  	<g:DeckPanel ui:field="extraDeck">
 						  		<g:Grid ui:field="extraGrid" debugId="agreementExtraPaymentDG" styleName="{style.borderCollapse}" />
 								<g:HTMLPanel ui:field="agreementExtraTableMessage" styleName="{style.flexCenter}">

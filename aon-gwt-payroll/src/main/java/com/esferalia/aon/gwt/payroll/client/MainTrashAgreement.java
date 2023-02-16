@@ -99,6 +99,7 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 			protected void reloadAgreement() {
 				getAgreement(agreementSelected.getId(), agreementInfo -> {
 					agreementSelected = agreementInfo;
+					agreementPreview.resetSelectedDate();
 					agreementPreview.setAgreementPreview(agreementSelected);
 				});
 			}
@@ -156,6 +157,7 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 		getAgreement(agreement.getId(), agreeementInfo -> {
 			agreementSelected = agreeementInfo;
 			showAgreementContainer();
+			agreementPreview.resetSelectedDate();
 			agreementPreview.setAgreementPreview(agreeementInfo);	
 		});
 
