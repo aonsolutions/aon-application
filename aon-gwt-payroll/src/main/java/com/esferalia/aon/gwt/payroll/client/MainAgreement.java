@@ -172,7 +172,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 				@Override
 				public void onSuccess(Void result) {
 					Window.alert("Convenio movido correctamente");
-					MainAgreement.this.agreements.reloadAgreements();
+					MainAgreement.this.agreements.reloadAgreements(finish -> {
+						if(MainAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+							showAgreementMessage();
+						else
+							showAgreementContainer();
+					});
 				}
 			});
 		}
@@ -211,7 +216,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 				@Override
 				public void onSuccess(Void result) {
 					AonMessagePanel.showSuccess(messagePanel, "Convenio descargado correctamente");
-					MainAgreement.this.agreements.reloadAgreements();
+					MainAgreement.this.agreements.reloadAgreements(finish -> {
+						if(MainAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+							showAgreementMessage();
+						else
+							showAgreementContainer();
+					});
 				}
 			});
 		}
@@ -373,8 +383,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			
 			@Override
 			public void onBackButtonClick() {
-				getAgreements();
 				showAgreements();
+				mainTrashAgreement.hasTrashAgreements(hasTrashAgreements -> MainAgreement.this.toolbar.setTrashAgreementWarn(hasTrashAgreements));
+				selectAgreementFirstItem();
 			}
 			
 		};
@@ -497,6 +508,10 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		deckPanel.showWidget(1);
 	}
 	
+	public void selectAgreementFirstItem() {
+		agreements.getAgreements(s -> getAgreementsTree().getTree().setSelectedItem(getAgreementsTree().getTree().getItem(0), true));
+	}
+	
 	// ------------------------------------------- Agreements.Listener
 
 	@Override
@@ -602,7 +617,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 				@Override
 				public void onSuccess(Agreement result) {
-					agreements.reloadAgreements();			
+					agreements.reloadAgreements(finish -> {
+						if(MainAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+							showAgreementMessage();
+						else
+							showAgreementContainer();
+					});			
 				}
 			});
 		}
@@ -644,7 +664,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 										@Override
 										public void onSuccess(Void result) {
 											MainAgreement.this.agreements.resetTypeView();
-											MainAgreement.this.agreements.reloadAgreements();
+											MainAgreement.this.agreements.reloadAgreements(finish -> {
+												if(MainAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+													showAgreementMessage();
+												else
+													showAgreementContainer();
+											});
 											mainTrashAgreement.hasTrashAgreements(hasTrashAgreements -> toolbar.setTrashAgreementWarn(hasTrashAgreements));
 //											showSelectAgreementMessage();
 										}
@@ -678,7 +703,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 						public void onSuccess(Void result) {
 							MainAgreement.this.agreements.setViewAgreements(false);
 							MainAgreement.this.agreements.resetTypeView();
-							MainAgreement.this.agreements.reloadAgreements();
+							MainAgreement.this.agreements.reloadAgreements(finish -> {
+								if(MainAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+									showAgreementMessage();
+								else
+									showAgreementContainer();
+							});
 //							showSelectAgreementMessage();
 						}
 					});

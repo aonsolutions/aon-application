@@ -230,7 +230,12 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 							
 							@Override
 							public void onSuccess(Void result) {
-								MainTrashAgreement.this.agreements.reloadAgreements();
+								MainTrashAgreement.this.agreements.reloadAgreements(finish -> {
+									if(MainTrashAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+										showAgreementMessage();
+									else
+										showAgreementContainer();
+								});
 							}
 							
 							@Override
@@ -266,7 +271,12 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 							
 							@Override
 							public void onSuccess(Void result) {
-								MainTrashAgreement.this.agreements.reloadAgreements();
+								MainTrashAgreement.this.agreements.reloadAgreements(finish -> {
+									if(MainTrashAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+										showAgreementMessage();
+									else
+										showAgreementContainer();
+								});
 							}
 							
 							@Override
