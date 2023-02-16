@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303Declaration;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -766,8 +767,8 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 	}
 	
 	@Override
-	Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
-		final Set<Integer> invoices = new HashSet<>();
+	Set<Alcatraz> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
+		final Set<Alcatraz> invoices = new HashSet<>();
 		VATDAO.getAccrualInvoices(ctx,mod).forEach( vc -> {
 			if (vc.isSales()) {
 				add(Mod390Key.BZ_C130, mod, vc.getBase());
@@ -776,7 +777,10 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 				add(Mod390Key.BZ_C132, mod, vc.getBase());
 				add(Mod390Key.BZ_C133, mod, vc.getDeductibleQuota());
 			}
-			invoices.add(vc.getInvoice());
+			invoices.add( new Alcatraz()
+				.setInvoice(vc.getInvoice())
+				.setFinance(vc.getFinance())
+				.setFinanceTracking(vc.getFinanceTracking()));
 		});
 		add(Mod390Key.BZ_C004, mod, AonMathUtils.isZero(mod.getAmount(Mod390Key.BZ_C133)) ? (0.0) : (1.0));
 		return invoices;

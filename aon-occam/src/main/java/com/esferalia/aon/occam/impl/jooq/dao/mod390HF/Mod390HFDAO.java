@@ -30,6 +30,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
 import com.esferalia.aon.occam.impl.jooq.dao.OLDVATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.ComplementaryBeahaviour;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
@@ -172,7 +173,7 @@ public class Mod390HFDAO extends FiscalModelDAO {
 
 	public static Mod390HF create(AONContext ctx,Mod390HF mod) {
 		final Mod390HFDeclaration dec = Mod390HFDeclaration.getInstance(mod);
-		Set<Integer> invoices = dec.createOnTheFly(ctx,mod);
+		Set<Alcatraz> invoices = dec.createOnTheFly(ctx,mod);
 		dec.prorrateRegularization(ctx,mod);
 		dec.specificInitialization(ctx, mod);
 		round( mod );

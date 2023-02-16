@@ -25,6 +25,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod115.Mod115Declaration.ComplementaryBeahaviour;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
@@ -159,7 +160,7 @@ public class Mod115DAO extends FiscalModelDAO {
 	public static Mod115 create(AONContext ctx,Mod115 mod115) {
 		Mod115Declaration dec = Mod115Declaration.getInstance(mod115);
 		dec.ensureDetails(mod115);
-		Set<Integer> invoices = dec.createFromInvoices(ctx,mod115);
+		Set<Alcatraz> invoices = dec.createFromInvoices(ctx,mod115);
 		for (FiscalModelDetail detail : mod115.getMap().values()) {
 			detail.setAccumulatedAmount( AonMathUtils.round(detail.getAccumulatedAmount()));
 			detail.setResultAmount( AonMathUtils.round(detail.getAccumulatedAmount() - detail.getDeclaredAmount()));	

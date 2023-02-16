@@ -41,6 +41,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303MVELContext;
 import com.esferalia.aon.occam.impl.jooq.dao.OLDVATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -178,7 +179,7 @@ public class Mod303DAO extends FiscalModelDAO {
 
 	public static Mod303 create(AONContext ctx,Mod303 mod303) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		Set<Integer> invoices = dec.createOnTheFly(ctx,mod303);
+		Set<Alcatraz> invoices = dec.createOnTheFly(ctx,mod303);
 		dec.prorrateRegularization(ctx,mod303);
 		calculate(mod303);
 		dec.specificInitialization(mod303);

@@ -21,6 +21,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Record3;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
@@ -55,6 +56,8 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 public class VATDAO  {
 	private static final String MODEL_INVOICE = "modelInvoice";
 	private static final Field<Integer> ALCATRAZ_INVOICE_ID = ALCATRAZ.INVOICE.as("alcatrazInvoice");
+	private static final Field<Integer> ALCATRAZ_FINANCE_ID = ALCATRAZ.FINANCE.as("alcatrazFinance");
+	private static final Field<Integer> ALCATRAZ_FINANCE_TRACKING_ID = ALCATRAZ.FINANCE_TRACKING.as("alcatrazFinanceTracking");
 	
 	private static final Field<?>[] INVOICE_FIELDS = new Field[]{
 	 	 INVOICE.ID					,INVOICE.SERIES				,INVOICE.NUMBER		
@@ -84,9 +87,9 @@ public class VATDAO  {
 		,ENTERPRISE_ACTIVITY.VAT_REGIME	,ENTERPRISE_ACTIVITY.SURCHARGE
 		,IAE.EPIGRAPH};
 	private static final Field<?>[] FINANCE_FIELDS = new Field[]{
-			FINANCE.AMOUNT};
+			FINANCE.ID,	FINANCE.AMOUNT};
 	private static final Field<?>[] FINANCE_TRACKING_FIELDS = new Field[]{
-		FINANCE_TRACKING.TYPE	,FINANCE_TRACKING.AMOUNT};
+			FINANCE_TRACKING.ID	,FINANCE_TRACKING.TYPE	,FINANCE_TRACKING.AMOUNT};
 	
 	private VATDAO() {
 	}
@@ -157,6 +160,7 @@ public class VATDAO  {
 			.select( INVOICE_TAX_FIELDS )
 			.select( ENTERPRISE_ACTIVITY_FIELDS )
 			.select( INVOICE_DUA_FIELDS )
+			.select( FINANCE_FIELDS )
 			.select( FINANCE_TRACKING_FIELDS )
 			.from(FINANCE_TRACKING)
 			.join(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
@@ -244,7 +248,8 @@ public class VATDAO  {
 		int prevYear = mod.getYear() - 1;
 		java.sql.Date prevYearFirstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(prevYear) );
 		java.sql.Date modYearFirstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(mod.getYear()) );
-		Table<Record1<Integer>> modelInvoice = ctx.getDslContext().select( ALCATRAZ_INVOICE_ID )
+		Table<Record3<Integer,Integer,Integer>> modelInvoice = ctx.getDslContext()
+			.select( ALCATRAZ_INVOICE_ID, ALCATRAZ_FINANCE_ID, ALCATRAZ_FINANCE_TRACKING_ID )
 			.from(ALCATRAZ)
 			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
 			.where(FS_MODEL.DOMAIN.eq(mod.getDomain()))
@@ -254,7 +259,9 @@ public class VATDAO  {
 			.asTable(MODEL_INVOICE)
 		;
 		return getAccrualSelect(ctx)
-			.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID))
+			.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID)
+					.and(ALCATRAZ_FINANCE_ID.equal(FINANCE.ID))
+					.and(ALCATRAZ_FINANCE_TRACKING_ID.equal(FINANCE_TRACKING.ID)))
 			.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 			.and(FINANCE_TRACKING.TRACKING_DATE.between( modYearFirstDay, getEndDate(mod) ))
 			.and(FINANCE_TRACKING.TYPE.in(FinanceTrackingType.PAID.value(),FinanceTrackingType.RETURNED.value()))
@@ -478,6 +485,8 @@ public class VATDAO  {
 			double surchargeQuota = AonMathUtils.round(base * vat.getSurchargePercent() / 100);
 			double deductibleQuota = AonMathUtils.round( (quota + surchargeQuota)  * vat.getDeductiblePercent() / 100);
 			return vat
+				.setFinance(rec.getValue(FINANCE.ID))
+				.setFinanceTracking(rec.getValue(FINANCE_TRACKING.ID))
 				.setBase(base)
 				.setQuota(quota)
 				.setSurchargeQuota(surchargeQuota)

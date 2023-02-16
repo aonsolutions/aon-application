@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -761,12 +759,9 @@ public class InvoiceFaker {
 				.setMustForceRegistry(true);
 	}
 	public static Invoice getRetentionInvoice( AONContext ctx, Occam occam, AonConfiguration configuration, final WithholdingType wt) {
-		return Stream.of( AonRandom.getYearDay(new Date()) )
-			.map(date -> new InvoiceFakerParams(ctx,configuration).setIssueDate(date))
-			.map(params -> InvoiceFaker.fillRetentionParams(ctx, params, wt))
-			.map(params -> AON.insertInvoice(occam, InvoiceFaker.getExpensesRetention(params)))
-			.findFirst()
-			.orElse(null);
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration).setIssueDate(AonRandom.getYearDay(new Date()));
+		InvoiceFaker.fillRetentionParams(ctx, params, wt);
+		return InvoiceFaker.getExpensesRetention(params);
 	}
 	
 	public static Invoice getExpensesRetention(InvoiceFakerParams invParams) {
