@@ -668,7 +668,7 @@ public abstract class EmployeeSalary extends Composite {
 		
 		String message = "No se pueden eliminar la n&oacute;minas que est&aacute;n presentadas en el <b>Modelo 111</b>. Estas n&oacute;minas son:<br><br>";
 		for(SalaryInfo salary : alcatrazSalaries) {
-			message += "&emsp;" + salary.getType().getDescription() + ".  " + salary.getEmployeeName() + " (" + formatDate.format(salary.getStartDate()) + " - " + formatDate.format(salary.getEndDate()) + ")<br>";
+			message += "&emsp;" + salary.getAlcatrazTerritory().getDescription() + ", " + salary.getAlcatrazYear() + " " + salary.getAlcatrazPeriod().getDescription()  + ".  " + salary.getEmployeeName() + " (" + formatDate.format(salary.getStartDate()) + " - " + formatDate.format(salary.getEndDate()) + ")<br>";
 		}
 		
 		message += "<br>Para poder eliminar dichas n&oacute;minas, deber&aacute; eliminar primero el <b>Modelo 111</b> asociado.";
