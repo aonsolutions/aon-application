@@ -3,7 +3,6 @@ package com.esferalia.aon.occam.impl.jooq.dao.mod390HF;
 import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Set;
@@ -13,6 +12,7 @@ import org.jooq.Condition;
 import org.mvel2.MVEL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
@@ -28,12 +28,12 @@ import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
-import com.esferalia.aon.occam.impl.jooq.dao.OLDVATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.ComplementaryBeahaviour;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -134,15 +134,16 @@ public class Mod390HFDAO extends FiscalModelDAO {
 			mod.ensureDetail(mod.getProrateTypeKey()).setDescription(prorrateInfo.getRight());
 			mod.ensureDetail(mod.getPreviousProrateKey()).setAmount(prorrateInfo.getLeft());
 			if (mod.hasProrate() || mod.hasPreviousProrate()) {
-				Date fromDate = AonDateUtils.getYearFirstDay(mod.getYear());
-				Date toDate = AonDateUtils.getYearLastDay(mod.getYear());
-				OLDVATDAO.getVatBreakdown(ctx,fromDate,toDate,mod)
-				.filter( VatContext::isSales )
-				.forEach( vat -> {
-					if (!vat.isVatSurchargeRegime() && vat.getVatRegime() != VATRegime.EXEMPT) {
-						mod.ensureDetail(Mod390Key.CM_070).addAmount( vat.getBase());
-					}
-					mod.ensureDetail(Mod390Key.CM_071).addAmount( vat.getBase());		
+				AccountingReportParams params = new AccountingReportParams()
+					.setFromDate(AonDateUtils.getYearFirstDay(mod.getYear()))
+					.setToDate(AonDateUtils.getYearLastDay(mod.getYear()));
+				VATDAO.getVatBreakdown(ctx,params )
+					.filter( VatContext::isSales )
+					.forEach( vat -> {
+						if (!vat.isVatSurchargeRegime() && vat.getVatRegime() != VATRegime.EXEMPT) {
+							mod.ensureDetail(Mod390Key.CM_070).addAmount( vat.getBase());
+						}
+						mod.ensureDetail(Mod390Key.CM_071).addAmount( vat.getBase());		
 				});
 				calculateProrrate(mod);
 			}
