@@ -25,12 +25,15 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
+import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -518,6 +521,31 @@ public class Mod180DAO {
 		}
 		
 		return getById(ctx, mod180.getId());
+	}
+	
+    // Grabar resultado y pdf en response y marcar el modelo como enviado
+	public static Mod180 aeatPresentation(AONContext ctx, Mod180 mod, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {
+			
+			// FALTA - PRUEBA ANTES DE NADA BORRAR LA PRESENTADION QUE HABIA ANTES			
+			DataResponseDAO.deleteAEATResponse(ctx, mod);
+			// -----
+			
+			// Grabar los datos en data_response y sus tablas asociadas
+			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
+			
+			// Marcar el modelo como enviado
+			//AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());		
+			if (mod != null && mod.getId() != null) {
+				ctx.getDslContext().update(FS_MODEL180)
+					//.set(FS_MODEL180.RECEIPT, response.getJustificante()) // FALTA - LA PRESENTACION NO DEVUELVE EL NUMERO JUSTIFICANTE POR ESO LO UNICO QUE SE HACE ES MARCARLO COMO ENVIADO
+					.set(FS_MODEL180.STATUS, FiscalStatus.SENT.value())
+					.where(FS_MODEL180.ID.equal(mod.getId()))
+					.execute();
+				return getById(ctx, mod.getId());
+			}
+		}
+		return mod;
 	}
 	
 }

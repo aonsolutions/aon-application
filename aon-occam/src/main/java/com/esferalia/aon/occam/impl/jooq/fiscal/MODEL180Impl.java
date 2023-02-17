@@ -59,5 +59,11 @@ public class MODEL180Impl implements IMODEL180 {
 				configuration -> Mod180DAO.duplicate(ctx, mod180));		
 	}
 
+	@Override
+	public Mod180 aeatPresentation(AONContext ctx, Mod180 mod, String aeatResponse) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod180DAO.aeatPresentation(ctx, mod, aeatResponse));
+	}
+
 
 }
