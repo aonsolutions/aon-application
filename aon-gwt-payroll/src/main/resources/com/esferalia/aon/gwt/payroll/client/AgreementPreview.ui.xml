@@ -272,7 +272,7 @@
 		}
 		
 		.elipsisCloseCollapseWidth{
-			width: 410px;
+			width: 450px;
 		}
 		
 		.elipsisOpenCollapseExtraWidth{

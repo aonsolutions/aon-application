@@ -15,6 +15,7 @@ import com.esferalia.aon.gwt.payroll.client.TrashAgreements.Listener;
 import com.esferalia.aon.gwt.payroll.client.TrashAgreements.Toolbar;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -78,6 +79,7 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 	
 	private List<TrashEditionListener> editionsListener;
 	
+	private Integer parentDomain;
 	private Integer domain;
 	
 	private AgreementInfo agreementSelected;
@@ -116,6 +118,7 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 		
 		this.editionsListener = new LinkedList<>();
 		
+		this.parentDomain = null;
 		this.domain = null;
 		
 		this.agreements.addToolbar(this);
@@ -131,19 +134,33 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 		
 		showAgreementMessage();
 		
-		agreements.agreementsTree.getEnterpriseService().getDomain(
-				new AsyncCallback<Integer>() {
+		agreements.getAgreementsTree().getEnterpriseService().getParentDomain(new AsyncCallback<Integer>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
-					}
+			@Override
+			public void onFailure(Throwable caught) {
+				// Not use here
+			}
 
-					@Override
-					public void onSuccess(Integer result) {
-						MainTrashAgreement.this.domain = result;
-					}
-				});
+			@Override
+			public void onSuccess(Integer parentDomain) {
+				MainTrashAgreement.this.parentDomain = parentDomain;
+				agreements.agreementsTree.getEnterpriseService().getDomain(
+						new AsyncCallback<Integer>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								Window.alert(caught.getMessage());
+							}
+
+							@Override
+							public void onSuccess(Integer result) {
+								MainTrashAgreement.this.domain = result;
+							}
+						});
+			}
+		});
+		
+		
 		
 	}
 	
@@ -153,6 +170,11 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 	public void onAgreementSelected(Agreement agreement) {
 		agreementPreview.showLoading("Cargando convenio...");
 		agreementPreview.setReadOnly(true);
+		
+		if(null != agreement.getDomain()) {
+			this.agreements.setVisibleDraft4EverButton(0 != agreement.getDomain().intValue() && (parentDomain == null || ((parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue())));
+			this.agreements.setVisibleRestoreButton(0 != agreement.getDomain().intValue() && (parentDomain == null || ((parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue())));
+		}
 		
 		getAgreement(agreement.getId(), agreeementInfo -> {
 			agreementSelected = agreeementInfo;
