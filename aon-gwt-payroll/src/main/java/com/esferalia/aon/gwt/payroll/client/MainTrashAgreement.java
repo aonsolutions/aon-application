@@ -99,6 +99,7 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 			protected void reloadAgreement() {
 				getAgreement(agreementSelected.getId(), agreementInfo -> {
 					agreementSelected = agreementInfo;
+					agreementPreview.resetSelectedDate();
 					agreementPreview.setAgreementPreview(agreementSelected);
 				});
 			}
@@ -156,6 +157,7 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 		getAgreement(agreement.getId(), agreeementInfo -> {
 			agreementSelected = agreeementInfo;
 			showAgreementContainer();
+			agreementPreview.resetSelectedDate();
 			agreementPreview.setAgreementPreview(agreeementInfo);	
 		});
 
@@ -228,7 +230,12 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 							
 							@Override
 							public void onSuccess(Void result) {
-								MainTrashAgreement.this.agreements.reloadAgreements();
+								MainTrashAgreement.this.agreements.reloadAgreements(finish -> {
+									if(MainTrashAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+										showAgreementMessage();
+									else
+										showAgreementContainer();
+								});
 							}
 							
 							@Override
@@ -264,7 +271,12 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 							
 							@Override
 							public void onSuccess(Void result) {
-								MainTrashAgreement.this.agreements.reloadAgreements();
+								MainTrashAgreement.this.agreements.reloadAgreements(finish -> {
+									if(MainTrashAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+										showAgreementMessage();
+									else
+										showAgreementContainer();
+								});
 							}
 							
 							@Override

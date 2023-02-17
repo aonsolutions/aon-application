@@ -238,7 +238,28 @@ public abstract class SalaryTable extends ResizeComposite {
 						salaryInfo.getEndDate());
 	    });
 	    
-	    Column<SalaryInfo, SalaryInfo> draftColumn = new Column<SalaryInfo, SalaryInfo>(draftActionCell) {
+	    Column<SalaryInfo, SalaryInfo> aeatColumn = new Column<SalaryInfo, SalaryInfo>(draftActionCell) {
+
+			@Override
+			public SalaryInfo getValue(SalaryInfo salaryInfo) {
+				return salaryInfo;
+			}
+			
+			@Override
+			public void render(Context context, SalaryInfo salaryInfo, SafeHtmlBuilder sb) {
+				if(null != salaryInfo) {
+					if(salaryInfo.isAlcatraz())
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon-icon-aeat\" style=\"border: none !important; height: 20px;\" title=\"\"></button>");
+					else 
+						sb.appendHtmlConstant("");
+				}
+			}
+		};
+		
+		aeatColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		salaryDG.setColumnWidth(aeatColumn, 5, Unit.PCT);
+
+		Column<SalaryInfo, SalaryInfo> draftColumn = new Column<SalaryInfo, SalaryInfo>(draftActionCell) {
 
 			@Override
 			public SalaryInfo getValue(SalaryInfo salaryInfo) {
@@ -272,6 +293,7 @@ public abstract class SalaryTable extends ResizeComposite {
 		salaryDG.addColumn(totalDeductionColumn, "Deducciones");
 		salaryDG.addColumn(totalLiquidColumn, "L\u00EDquido");
 	    
+		salaryDG.addColumn(aeatColumn, "");  
 		salaryDG.addColumn(draftColumn, "");   
 	}
 	
@@ -364,7 +386,7 @@ public abstract class SalaryTable extends ResizeComposite {
 	}
 	
 	public void setEnteprisesView() {
-		salaryDG.removeColumn(10);
+		salaryDG.removeColumn(11);
 	}
 	
 	public void setEntepriseView() {

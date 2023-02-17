@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -659,7 +660,7 @@ public class Mod390HFGipuzkoa2017Declaration extends Mod390HFGIPUZKOADeclaration
 		return  mod.getAmount(Mod390Key.GP_C040);
 	}
 	@Override
-	Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
+	Set<Alcatraz> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
 		return null;
 	}
 }

@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.ComplementaryBeahaviour;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303Declaration;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
@@ -214,11 +215,11 @@ public abstract class Mod390HFDeclaration {
 		}
 	}
 	
-	protected Set<Integer> createOnTheFly(AONContext ctx, Mod390HF mod) {
+	protected Set<Alcatraz> createOnTheFly(AONContext ctx, Mod390HF mod) {
 		firstInitialization(ctx, mod);
 		if (!mod.isManualDeclaration()) {
-			Set<Integer> invoices = createFromInvoices(ctx,mod);
-			Set<Integer> invoices2 = createVatAccrualKeysFromInvoices(ctx,mod);
+			Set<Alcatraz> invoices = createFromInvoices(ctx,mod);
+			Set<Alcatraz> invoices2 = createVatAccrualKeysFromInvoices(ctx,mod);
 			if (invoices2 != null) {
 				invoices.addAll( invoices2 );
 			}
@@ -264,8 +265,8 @@ public abstract class Mod390HFDeclaration {
 	}
 	
 	
-	protected Set<Integer> createFromInvoices(AONContext ctx, Mod390HF mod) {
-		final Set<Integer> invoices = new HashSet<>();
+	protected Set<Alcatraz> createFromInvoices(AONContext ctx, Mod390HF mod) {
+		final Set<Alcatraz> invoices = new HashSet<>();
 		VATDAO.getVatBreakdown(ctx,mod)
 			.flatMap(vt -> Arrays.stream( getKeys() ).map( key -> new KeyedVatContext(key, vt)))
 			.filter(kbr -> kbr.getKey().acceptValue(mod,kbr.getVatContext()))
@@ -273,8 +274,12 @@ public abstract class Mod390HFDeclaration {
 			.forEach( kbr -> kbr.getKey().initialize(ctx, mod, kbr.getVatContext()) );
 		return invoices;
 	}
-	private KeyedVatContext addInvoice( Set<Integer> invoices, KeyedVatContext vt) {
-		invoices.add(vt.getVatContext().getInvoice());
+	private KeyedVatContext addInvoice( Set<Alcatraz> invoices, KeyedVatContext vt) {
+		invoices.add( new Alcatraz()
+				.setInvoice(vt.getVatContext().getInvoice())
+				.setFinance(vt.getVatContext().getFinance())
+				.setFinanceTracking(vt.getVatContext().getFinanceTracking())
+				);
 		return vt;	
 	}
 	
@@ -811,7 +816,7 @@ public abstract class Mod390HFDeclaration {
 	abstract IMod390KeyDAO[] getKeys();
 	public abstract Mod390Key[] getProratedKeys();
 	public abstract Mod390Key getRegularizationKey();
-	abstract Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod);
+	abstract Set<Alcatraz> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod);
 	abstract double getResult(final Mod390HF mod);
 	abstract Mod390HF initialize(AONContext ctx, Mod390HF mod303);
 

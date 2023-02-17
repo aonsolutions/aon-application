@@ -191,7 +191,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		showCloseButton(true);
 		getFooterButtons();
 		
-		this.startDate = startDate;
+		this.startDate = startDate == null ? new Date() : startDate;
 		
 		this.payment = payment;
 		this.extra = extra;
@@ -229,10 +229,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			@Override
 			public void onSuccess(ContractConcepts contractConceptsIn) {
 				contractConcepts = contractConceptsIn;
-
 				providedPayment();
 				fillPayment();
-				
 				checkDatesPanelShown();
 				
 				if(null != extra && !extra.isDeleted()) fillExtra();

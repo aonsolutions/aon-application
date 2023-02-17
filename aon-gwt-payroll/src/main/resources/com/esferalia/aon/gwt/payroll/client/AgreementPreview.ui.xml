@@ -18,15 +18,6 @@
 			border-bottom: 1px solid #eee;
 		}
 		
-		.disclouruseTitle {
-			color: #4b4b4b;
-			vertical-align: top;
-			min-width: 7rem;
-			font-weight: bold;
-			text-transform: uppercase;
-			font-size: 1.1em;
-		}
-		
 		.container {
 			padding: 0 1rem;
 		}
@@ -171,7 +162,6 @@
 			position: sticky;
   			top: 0;
   			height: 1.5rem;
-			font-size: .7rem;
 			background-color: #eee;
 			/*min-width: 120px;*/
 		}
@@ -188,17 +178,12 @@
 			top: 0;
 			left: 0;
 			height: 1.5rem;
-			font-size: .7rem;
 			background-color: #eee;
 		}
 		
 		.levelCell {
 			text-align: left;
 			padding-left: 0.5rem;
-		}
-		
-		.levelColumn {
-			font-size: .7rem;
 		}
 		
 		.levelDefaultValue {
@@ -209,7 +194,6 @@
 			position: sticky;
 			left: 0;
 			z-index: 2;
-			font-size: .7rem;
 			background-color: white;
 		}
 		
@@ -246,8 +230,7 @@
 		
 		.textBoxSalary {
 			border-style: none;
-			width: 95%;
-			font-size: 0.8em !important;
+			width: 85%;
 			cursor: pointer;
 		}
 		
@@ -263,7 +246,6 @@
 			top: 0;
 			right: 0;
 			height: 1.5rem;
-			font-size: .7rem;
 			background-color: #eee;
 		}
 		
@@ -271,7 +253,6 @@
 			position: sticky;
 			right: 0;
 			z-index: 2;
-			font-size: .7rem;
 			background-color: white;
 		}
 		
@@ -314,6 +295,33 @@
 			padding: 0 .5rem 1rem .5rem;
 		}
 		
+		.p0{
+			padding: 0;
+		}
+		
+		.p5{
+			padding: 5px;
+		}
+		
+		.gap05{
+			gap: 0.5rem;
+		}
+		
+		.unSelectDate {
+			padding: 5px;
+			border: 1px solid #eee;
+			border-bottom: none;
+			cursor: pointer;
+		}
+		
+		.selectDate {
+			padding: 0px 5px;
+			border: 1px solid #eee;
+			border-bottom: none;
+			background-color: #eee;
+			cursor: pointer;
+		}
+		
 		@external modify;
 		@external elipsis;
 		
@@ -344,20 +352,23 @@
 						<!-- LEVEL / CATEGORY && SALARY TABLE -->
 						<g:HTMLPanel styleName="{style.flexColumn}">
 							<aon:AonToolbarSmall ui:field="levelSalaryToolbar" />
-							<g:DeckPanel ui:field="levelSalaryDeck">
-								<g:ScrollPanel ui:field="levelScrollPanel" styleName="{style.hideScroll} {style.flexCenter}">
-									<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse}" />
-								</g:ScrollPanel>
-								<g:ScrollPanel ui:field="salaryScrollPanel">
-									<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />
-								</g:ScrollPanel>
-								<g:HTMLPanel styleName="{style.flexCenter}">
-									<g:Label text="DEBE CREAR UN NIVEL PARA VISUALIZAR LA TABLA (+)" styleName="{style.message}" />
-								</g:HTMLPanel>
-								<g:HTMLPanel styleName="{style.flexCenter}">
-									<g:Label text="DEBE CREAR UN TRAMO PARA VISUALIZAR LA TABLA SALARIAL (+)" styleName="{style.message}" />
-								</g:HTMLPanel>
-							</g:DeckPanel>
+							<g:HTMLPanel styleName="{style.flexColumn} {style.gap0}">
+								<g:HTMLPanel ui:field="levelSalaryTabs" styleName="{style.flex} {style.gap05}" />
+								<g:DeckPanel ui:field="levelSalaryDeck">
+									<g:ScrollPanel ui:field="levelScrollPanel" styleName="{style.hideScroll} {style.flexCenter}">
+										<g:Grid ui:field="levelGrid" styleName="{style.borderCollapse}" />
+									</g:ScrollPanel>
+									<g:ScrollPanel ui:field="salaryScrollPanel">
+										<g:Grid ui:field="salaryGrid" styleName="{style.borderCollapse}" />
+									</g:ScrollPanel>
+									<g:HTMLPanel styleName="{style.flexCenter}">
+										<g:Label text="DEBE CREAR UN NIVEL PARA VISUALIZAR LA TABLA (+)" styleName="{style.message}" />
+									</g:HTMLPanel>
+									<g:HTMLPanel styleName="{style.flexCenter}">
+										<g:Label text="DEBE CREAR UN TRAMO PARA VISUALIZAR LA TABLA SALARIAL (+)" styleName="{style.message}" />
+									</g:HTMLPanel>
+								</g:DeckPanel>
+							</g:HTMLPanel>
 						</g:HTMLPanel>
 						  
 						  <!-- PAYMENT -->

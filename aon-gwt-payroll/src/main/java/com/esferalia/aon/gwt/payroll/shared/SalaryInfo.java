@@ -28,6 +28,8 @@ public class SalaryInfo implements Serializable {
 	private Double totalDeduction;
 	private Double totalLiquid;
 	
+	private boolean isAlcatraz;
+	
 	/**
      * The key provider that provides the unique ID of a contact.
      */
@@ -125,6 +127,12 @@ public class SalaryInfo implements Serializable {
 	}
 	public void setTotalLiquid(Double totalLiquid) {
 		this.totalLiquid = totalLiquid;
+	}
+	public boolean isAlcatraz() {
+		return isAlcatraz;
+	}
+	public void setAlcatraz(boolean isAlcatraz) {
+		this.isAlcatraz = isAlcatraz;
 	}
 	
 }

@@ -43,6 +43,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.MatchResult;
@@ -257,8 +258,6 @@ public abstract class AgreementPreview extends Composite {
 
 		String levelCell();
 
-		String levelColumn();
-
 		String levelDefaultValue();
 
 		String levelFixed();
@@ -298,6 +297,16 @@ public abstract class AgreementPreview extends Composite {
 		String zIndex1();
 		
 		String flexCenter();
+		
+		String unSelectDate ();
+		
+		String selectDate ();
+		
+		String p0();
+		
+		String gap05();
+		
+		String p5();
 	}
 
 	@UiField
@@ -325,6 +334,9 @@ public abstract class AgreementPreview extends Composite {
 
 	@UiField(provided = true)
 	AonToolbarSmall levelSalaryToolbar;
+	
+	@UiField
+	HTMLPanel levelSalaryTabs;
 
 	@UiField
 	DeckPanel levelSalaryDeck;
@@ -400,11 +412,12 @@ public abstract class AgreementPreview extends Composite {
 	
 	private AonToolbarSmallButton newLevelBtn;
 	private AonToolbarSmallButton newDateBtn;
-	private ListBox datesLB;
 	private AonToolbarSmallButton deleteDateBtn;
 	private AonToolbarSmallButton variablesVisivility;
 	private AonToolbarSmallButton addPaymentButton;
 	private AonToolbarSmallButton showOlPaymentsButton;
+	
+	private HTMLPanel datesTabs;
 
 	private ListBox tc2ListBox;
 	private ListBox levelListBox;
@@ -442,6 +455,10 @@ public abstract class AgreementPreview extends Composite {
 
 		scrollPanel.setHeight((Window.getClientHeight() - 200) + "px");
 		
+		levelSalaryToolbar.addStyleName(style.p0());
+		paymentToolbar.addStyleName(style.p0());
+		extraToolbar.addStyleName(style.p0());
+		
 		paymentGrid.getParent().addStyleName(style.flexCenter());
 		extraGrid.getParent().addStyleName(style.flexCenter());
 	}
@@ -452,9 +469,13 @@ public abstract class AgreementPreview extends Composite {
 		boolean isHide = AonStringUtils.isNotBlank(payment.getExpression())
 				&& AonStringUtils.containsIgnoreCase(payment.getExpression(), "HIDE")
 				&& AonStringUtils.startsWithIgnoreCase(payment.getExpression(), "HIDE");
-		Optional<Date> startDate = agreement.getSortedDates().stream().findFirst();
-		new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(),
-				startDate.get()) {
+		
+		Date startDate = null;
+		if(!agreement.getSortedDates().isEmpty())
+			startDate = agreement.getSortedDates().stream().findFirst().get();
+		
+		AgreementPaymentEditor paymentDialog = new AgreementPaymentEditor(payment, agreement.getExtraPayment(payment.getId()), agreement.getPayments(),startDate) {
+			
 			@Override
 			protected void onAccept(Payment updatedPayment, AgreementExtra extra, Payment associatedPayment,
 					AgreementExtra associatedExtra) {
@@ -497,6 +518,9 @@ public abstract class AgreementPreview extends Composite {
 			}
 
 		};
+		
+		paymentDialog.setGlassStyleName(style.dialogGlass());
+		paymentDialog.addStyleName(style.dialogZIndex());
 
 	}
 
@@ -588,7 +612,26 @@ public abstract class AgreementPreview extends Composite {
 	private void fillAgreementInfo() {
 		fillInfo();
 
-		fillDatesLB();
+		this.selectedDate = null == selectedDate && !agreement.getSortedDates().isEmpty() ? agreement.getSortedDates().stream().findFirst().get() : selectedDate;
+		
+		categoriesBtn = new AonToolbarSmallButton("Categorias", AON.CSS.aonIconList());
+		salaryTableBtn = new AonToolbarSmallButton("Tabla salarial", AON.CSS.aonIconStatics());
+
+		categoriesBtn.addClickHandler(e -> {
+			isSalaryTableSelected = false;
+			categoriesBtn.setVisible(false);
+			salaryTableBtn.setVisible(true);
+			handleIcon(levelSalaryDiscBtn, isLevelSalaryOpen);
+			showLevelTable();
+		});
+
+		salaryTableBtn.addClickHandler(e -> {
+			isSalaryTableSelected = true;
+			categoriesBtn.setVisible(true);
+			salaryTableBtn.setVisible(false);
+			handleIcon(levelSalaryDiscBtn, isLevelSalaryOpen);
+			showSalaryTable();
+		});
 
 		categoriesBtn.setVisible(!readOnly && isSalaryTableSelected && !agreement.getSortedDates().isEmpty());
 		salaryTableBtn.setVisible(!readOnly && (!isSalaryTableSelected || agreement.getSortedDates().isEmpty()));
@@ -597,6 +640,10 @@ public abstract class AgreementPreview extends Composite {
 			showSalaryTable();
 		else
 			showLevelTable();
+		
+		Set<Payment> payments = agreement.getPaymentsAndHides();
+		Set<Payment> paymentsOld = agreement.getOldPaymentsAndHides();
+		this.showOlPaymentsButton.setVisible(payments.size() != paymentsOld.size());
 
 		showPaymentTable();
 		showExtraTable();
@@ -659,14 +706,8 @@ public abstract class AgreementPreview extends Composite {
 
 	// ------------------------------------------ salaryTable
 
-	private void fillDatesLB() {
-		datesLB.clear();
-		agreement.getSortedDates().forEach(date -> datesLB.addItem(formatDate.format(date), formatDate.format(date)));
-		datesLB.setSelectedIndex(0);
-		datesLB.addChangeHandler(e -> createSalaryTable());
-	}
-
 	private void createSalaryTable() {
+		createLevelSalaryTabs();
 		getSalaryTableHeader();
 		fillSalaryTable();
 		salaryTableWidth();
@@ -675,9 +716,190 @@ public abstract class AgreementPreview extends Composite {
 		setTableHeight();
 	}
 
-	private void getSalaryTableHeader() {
-		Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
+	private void createLevelSalaryTabs() {
+		levelSalaryTabs.clear();
+		
+		levelSalaryTabs.add(categoriesBtn);
+		levelSalaryTabs.add(salaryTableBtn);
+		
+		datesTabs = new HTMLPanel("");
+		datesTabs.ensureDebugId("datesTabs");
+		datesTabs.addStyleName(style.flex());
+		datesTabs.addStyleName(style.gap05());
+		
+		if(isSalaryTableSelected) {
+			agreement.getSortedDates().forEach(date -> {
+				if(date.equals(selectedDate)) {
+					HTMLPanel selectedDatePanel = new HTMLPanel("");
+					selectedDatePanel.addStyleName(style.flex());
+					selectedDatePanel.addStyleName(style.selectDate());
+					
+					Label dateLabel = new Label(formatDate.format(date));
+					selectedDatePanel.add(dateLabel);
+					
+					if(!readOnly) {
+					
+						deleteDateBtn = new AonToolbarSmallButton(AON.MSG.deleteAction() + " tramo", AON.CSS.aonIconDelete());
+						deleteDateBtn.ensureDebugId("deleteSalaryTabButton");
+						deleteDateBtn.addClickHandler(e -> {
+							AonDialog deleteDialog = new AonDialog("Borrar tramo",
+									new HTMLPanel("\u00bfDesea realmente eliminar el tramo <b>" + formatDate.format(selectedDate)
+											+ "</b> de la tabla salarial\u003f"));
+							deleteDialog.ensureDebugId("deleteDateDialog");
+							deleteDialog.setGlassStyleName(style.dialogGlass());
+							deleteDialog.addStyleName(style.dialogZIndex());
+							deleteDialog.confirm(new AonAcceptDialogCallback() {
+	
+								@Override
+								public void onCancel() {
+								}
+	
+								@Override
+								public void onAccept() {
+									agreement.deletePeriod(selectedDate);
+									deleteDialog.hide(true);
+									resetSelectedDate();
+									showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
+									setHasChange(false);
+									onSaved();
+								}
+							});
+						});
+						
+						selectedDatePanel.add(deleteDateBtn);
+					} else
+						dateLabel.addStyleName(style.p5());
+					
+					datesTabs.add(selectedDatePanel);
+				} else {
+					Label dateLabel = new Label(formatDate.format(date));
+					dateLabel.addStyleName(style.unSelectDate());
+					dateLabel.addClickHandler(e -> {
+						selectedDate = formatDate.parse(dateLabel.getText());
+						createSalaryTable();
+					});
+					datesTabs.add(dateLabel);
+				}
+			});
+			
+			levelSalaryTabs.add(datesTabs);
+			
+			if(!readOnly) {
+					
+				newDateBtn = new AonToolbarSmallButton(AON.MSG.newAction() + " tramo", AON.CSS.aonIconAdd());
+				newDateBtn.ensureDebugId("newSalaryTabButton");
+				newDateBtn.addClickHandler(e -> {
+					PopupPanel popup = new PopupPanel(true); // auto-hide
+					DatePicker picker = new DatePicker();
+					picker.setValue(new Date());
+					picker.setYearAndMonthDropdownVisible(true);
+	
+					picker.addValueChangeHandler(event -> {
+						popup.hide();
+						Date newPeriod = event.getValue();
+						if (agreement.getSortedDates().isEmpty()) {
+							agreement.createNewPeriod(newPeriod);
+							agreement.setFilteredAllVariables();
+							setAgreementPreview(agreement);
+							setHasChange(true);
+						} else {
+							Date maxDate = agreement.getSortedDates().stream().findFirst().get();
+							if (maxDate.after(newPeriod) || maxDate.equals(newPeriod))
+								showWarning("Error fechas",
+										"No se puede seleccionar un fecha anterior o igual al ultimo tramo existente");
+							else {
+								agreement.createNewPeriod(newPeriod);
+								selectedDate = newPeriod;
+								setAgreementPreview(agreement);
+								setHasChange(true);
+							}
+						}
+					});
+	
+					popup.setWidget(picker);
+					popup.setStyleName(style.datePickerPanel());
+					popup.showRelativeTo(newDateBtn);
+	
+					popup.ensureDebugId("morePopupPanel");
+					picker.ensureDebugId("moreDatePicker");
+				});
+				
+				levelSalaryTabs.add(newDateBtn);
+			}
+			
+			variablesVisivility = new AonToolbarSmallButton("Mostrar/Ocultar variables", AON.CSS.aonIconVisibility());
+			variablesVisivility.addClickHandler(click -> {
+				AgreementVariablesDialog dialog = new AgreementVariablesDialog(agreement.getAllVariables(),
+						agreement.getVariablesByDate(selectedDate)) {
 
+					@Override
+					protected void onAccept(String variablesType, Set<String> variables) {
+						switch (variablesType) {
+						case "VALUES":
+							agreement.setFilteredValuesVariables();
+							break;
+						case "NO_VALUES":
+							agreement.setFilteredNoValuesVariables();
+							break;
+						case "ALL":
+							agreement.setFilteredAllVariables();
+							break;
+						default:
+							agreement.setFilteredVariables(variables);
+							break;
+						}
+						createSalaryTable();
+					}
+				};
+				dialog.setGlassStyleName(style.dialogGlass());
+				dialog.addStyleName(style.dialogZIndex());
+				dialog.setShowVariables(agreement.getShownVariables());
+			});
+
+			levelSalaryTabs.add(variablesVisivility);
+		} else {
+			if(!readOnly) {
+				newLevelBtn = new AonToolbarSmallButton(AON.MSG.newAction() + " nivel/categoria", AON.CSS.aonIconAdd());
+				newLevelBtn.addClickHandler(e -> {
+					HorizontalPanel panel = new HorizontalPanel();
+					Label description = new Label("Descripci\u00f3n: ");
+					TextBox levelDescription = new TextBox();
+					levelDescription.setWidth("100%");
+					panel.setWidth("98%");
+					panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+					panel.add(description);
+					panel.add(levelDescription);
+					AonDialog dialog = new AonDialog("Nuevo nivel", panel);
+					dialog.setGlassStyleName(style.dialogGlass());
+					dialog.addStyleName(style.dialogZIndex());
+					dialog.confirm(new AonAcceptDialogCallback() {
+	
+						@Override
+						public void onCancel() {
+							// Not use here
+						}
+	
+						@Override
+						public void onAccept() {
+							if (AonStringUtils.isBlank(levelDescription.getValue())
+									|| agreement.existLevel(levelDescription.getValue())) {
+								showWarning("Nivel existente",
+										"La descripci\u00f3n no puede ser vacia o coincidir con la de otro nivel ya existente");
+							} else {
+								agreement.createLevel(levelDescription.getValue());
+								setAgreementPreview(agreement);
+								setHasChange(true);
+							}
+						}
+					});
+				});
+				levelSalaryTabs.add(newLevelBtn);
+			}
+		}
+		
+	}
+
+	private void getSalaryTableHeader() {
 		salaryGrid.clear();
 		salaryGrid.resize(0, agreement.getVariablesByDate(selectedDate).size() + 3);
 		int row = salaryGrid.insertRow(salaryGrid.getRowCount());
@@ -723,8 +945,6 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private void fillSalaryTable() {
-		Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
-
 		for (Level level : agreement.getLevels()) {
 			if (level.getId() != 0 && ((level.isDeleted() || (null != agreement.getSelectedLevel()
 					&& !level.getId().equals(agreement.getSelectedLevel().getId())))))
@@ -767,19 +987,14 @@ public abstract class AgreementPreview extends Composite {
 
 			for (String variable : agreement.getVariablesByDate(selectedDate)) {
 				LevelData levelData = agreement.getLevelData(level.getId(), variable, selectedDate);
-				TextBox cell = new ExpressionBox();
-
-				cell.ensureDebugId("textBox_" + variable + "_" + level.getDescription());
-
-				cell.addStyleName(style.gridCell());
-				cell.addStyleName(style.valueCell());
-				cell.addStyleName(style.textBoxSalary());
+				
+				String value;
 				
 				if(null == levelData)
-					cell.setValue(null);
+					value = null;
 				else {
 					String expression = levelData.getExpression();
-					String value = levelData.getExpression();
+					value = levelData.getExpression();
 
 					try {
 						Double expressionValue = evalExpression(expression);
@@ -787,13 +1002,44 @@ public abstract class AgreementPreview extends Composite {
 					} catch (Exception e) {
 						// TODO: handle exception
 					}
-					
-					cell.setValue(value);
 				}
 				
-				cell.setTitle("Valor nivel retributivo");
-				cell.setReadOnly(readOnly);
+				Widget cell;
+				if(readOnly) {
+					cell = new Label();
+					((Label)cell).setText(value);
+				} else {
+					cell = new ExpressionBox();
+					((ExpressionBox)cell).setValue(value);
+					((ExpressionBox)cell).addValueChangeHandler(event -> {
 
+						String expression = event.getValue();
+						String result = event.getValue();
+						
+						try {
+							Double expressionValue = evalExpression(expression);
+							result = null == expressionValue ? "" : expressionValue.toString();
+						} catch (Exception e) {
+							// TODO: handle exception
+						}
+
+						if (null == levelData || null == levelData.getId())
+							agreement.createLevelData(level.getId(), variable, result, selectedDate);
+						else
+							agreement.updateLevelData(level.getId(), levelData.getId(), result);
+
+						setAgreementPreview(agreement);
+						setHasChange(true);
+					});
+				}
+				
+				cell.ensureDebugId("textBox_" + variable + "_" + level.getDescription());
+				cell.setTitle("Valor nivel retributivo");
+
+				cell.addStyleName(style.gridCell());
+				cell.addStyleName(style.valueCell());
+				cell.addStyleName(style.textBoxSalary());
+				
 				if (row % 2 == 0)
 					cell.addStyleName(style.oddRow());
 				cell.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
@@ -807,42 +1053,25 @@ public abstract class AgreementPreview extends Composite {
 					cell.addStyleName(style.modify());
 				else
 					cell.removeStyleName(style.modify());
-
-				cell.addValueChangeHandler(event -> {
-
-					String expression = event.getValue();
-					String value = event.getValue();
-					
-					try {
-						Double expressionValue = evalExpression(expression);
-						value = null == expressionValue ? "" : expressionValue.toString();
-					} catch (Exception e) {
-						// TODO: handle exception
-					}
-
-					if (null == levelData || null == levelData.getId())
-						agreement.createLevelData(level.getId(), variable, value, selectedDate);
-					else
-						agreement.updateLevelData(level.getId(), levelData.getId(), value);
-
-					setAgreementPreview(agreement);
-					setHasChange(true);
-				});
+				
 
 				// check if level 0 or default value
 				if (level.getId() == 0 || null == levelData || AonStringUtils.isBlank(levelData.getExpression())) {
 					LevelData levelDataDefault = agreement.getDefaultLevelData(variable, selectedDate);
-					cell.setText(null == levelDataDefault ? null
-							: SpecialExpresion.parse(levelDataDefault.getExpression()).getInput());
-					cell.setTitle("Valor por defecto");
+					String valueData = null == levelDataDefault ? null
+							: SpecialExpresion.parse(levelDataDefault.getExpression()).getInput();
+					
 					cell.addStyleName(style.levelDefaultValue());
-					cell.setReadOnly(readOnly);
+					cell.setTitle("Valor por defecto");
 
 					if (null != levelDataDefault && AonStringUtils.isNotBlank(levelDataDefault.getExpression())
-							&& cell.getText().length() > 20)
+							&& valueData.length() > 20)
 						cell.setWidth((7.5 * levelDataDefault.getExpression().length()) + "px");
 					else
 						cell.setWidth("95%");
+					
+					if(readOnly) ((Label)cell).setText(valueData);
+					else ((ExpressionBox)cell).setValue(valueData);
 				}
 
 				salaryGrid.setWidget(row, col, cell);
@@ -1026,6 +1255,7 @@ public abstract class AgreementPreview extends Composite {
 	// ------------------------------------------ categoryTable
 
 	private void createCategoryTable() {
+		createLevelSalaryTabs();
 		getCategoryTableHeader();
 		fillCategoryTable();
 		categoryTableWidth();
@@ -1339,6 +1569,8 @@ public abstract class AgreementPreview extends Composite {
 			paymentGrid.setWidget(row, 5, infoCell);
 			paymentGrid.setWidget(row, 6, visibilityCell);
 			paymentGrid.setWidget(row, 7, deleteCell);
+			
+			paymentGrid.getWidget(row, 6).getElement().getStyle().setTextAlign(TextAlign.CENTER);
 
 			if (row % 2 == 0)
 				paymentGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
@@ -1962,39 +2194,22 @@ public abstract class AgreementPreview extends Composite {
 	}
 
 	private void showLevelTable() {
+		levelSalaryToolbar.setTitle("Nivel / Categorias");
 		if (!agreement.getLevels().isEmpty()) {
 			createCategoryTable();
-			showLevelButtons();
 			levelSalaryDeck.showWidget(0);
-		} else
+		} else 
 			showEmptyLevelMessage();
-	}
-	
-	private void showLevelButtons() {
-		newLevelBtn.setVisible(!readOnly);
-		
-		newDateBtn.setVisible(false);
-		datesLB.setVisible(false);
-		deleteDateBtn.setVisible(false);
-		variablesVisivility.setVisible(false);
 	}
 
 	private void showSalaryTable() {
+		levelSalaryToolbar.setTitle("Tabla Salarial");
 		if (!agreement.getSortedDates().isEmpty()) {
 			createSalaryTable();
-			showSalaryTableButtons();
 			levelSalaryDeck.showWidget(1);
-		} else
+		} else {
 			showEmptySalaryMessage();
-	}
-
-	private void showSalaryTableButtons() {		
-		newDateBtn.setVisible(!readOnly);
-		datesLB.setVisible(true);
-		deleteDateBtn.setVisible(!readOnly);
-		variablesVisivility.setVisible(!readOnly);
-		
-		newLevelBtn.setVisible(false);
+		}
 	}
 
 	private void showEmptyLevelMessage() {
@@ -2086,6 +2301,32 @@ public abstract class AgreementPreview extends Composite {
 		});
 
 		toolbar.add(undoAllButton);
+		
+		addPaymentButton = new AonToolbarSmallButton("A\u00F1adir Devengo", AON.CSS.aonIconAdd());
+		addPaymentButton.ensureDebugId("newPaymentButton");
+		addPaymentButton.addClickHandler(e -> new AddAonPaymentCommand().execute());
+
+		toolbar.add(addPaymentButton);
+
+		showOlPaymentsButton = new AonToolbarSmallButton("Mostrar devengo antiguos", AON.CSS.aonIconVisibility());
+		showOlPaymentsButton.ensureDebugId("showOlPaymentsButton");
+		showOlPaymentsButton.addClickHandler(e -> {
+			showOldPayments = !showOldPayments;
+
+			if (showOldPayments) {
+				showOlPaymentsButton.setTitle("Ocultar devengo antiguos");
+				showOlPaymentsButton.removeStyleName(AON.CSS.aonIconVisibility());
+				showOlPaymentsButton.addStyleName(AON.CSS.aonIconVisibilityOff());
+			} else {
+				showOlPaymentsButton.setTitle("Mostrar devengo antiguos");
+				showOlPaymentsButton.removeStyleName(AON.CSS.aonIconVisibilityOff());
+				showOlPaymentsButton.addStyleName(AON.CSS.aonIconVisibility());
+			}
+
+			setAgreementPreview(agreement);
+		});
+
+		toolbar.add(showOlPaymentsButton);
 
 		agreementInfoButton = new AonToolbarButton("Informaci\u00f3n Convenio", AON.CSS.aonIconInfo());
 		agreementInfoButton.ensureDebugId("infoButton");
@@ -2186,213 +2427,24 @@ public abstract class AgreementPreview extends Composite {
 	private void createLevelSalaryToolbar() {
 		levelSalaryToolbar = new AonToolbarSmall("Tabla Salarial");
 
-		categoriesBtn = new AonToolbarSmallButton("Categorias", AON.CSS.aonIconList());
-		salaryTableBtn = new AonToolbarSmallButton("Tabla salarial", AON.CSS.aonIconStatics());
-
-		categoriesBtn.addClickHandler(e -> {
-			isSalaryTableSelected = false;
-			categoriesBtn.setVisible(false);
-			salaryTableBtn.setVisible(true);
-			handleIcon(levelSalaryDiscBtn, isLevelSalaryOpen);
-			showLevelTable();
-		});
-
-		salaryTableBtn.addClickHandler(e -> {
-			isSalaryTableSelected = true;
-			categoriesBtn.setVisible(true);
-			salaryTableBtn.setVisible(false);
-			handleIcon(levelSalaryDiscBtn, isLevelSalaryOpen);
-			showSalaryTable();
-		});
-
-		levelSalaryToolbar.add(categoriesBtn);
-		levelSalaryToolbar.add(salaryTableBtn);
-
-		newLevelBtn = new AonToolbarSmallButton(AON.MSG.newAction() + " nivel/categoria", AON.CSS.aonIconAdd());
-		newLevelBtn.addClickHandler(e -> {
-			HorizontalPanel panel = new HorizontalPanel();
-			Label description = new Label("Descripci\u00f3n: ");
-			TextBox levelDescription = new TextBox();
-			levelDescription.setWidth("100%");
-			panel.setWidth("98%");
-			panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-			panel.add(description);
-			panel.add(levelDescription);
-			AonDialog dialog = new AonDialog("Nuevo nivel", panel);
-			dialog.setGlassStyleName(style.dialogGlass());
-			dialog.addStyleName(style.dialogZIndex());
-			dialog.confirm(new AonAcceptDialogCallback() {
-
-				@Override
-				public void onCancel() {
-					// Not use here
-				}
-
-				@Override
-				public void onAccept() {
-					if (AonStringUtils.isBlank(levelDescription.getValue())
-							|| agreement.existLevel(levelDescription.getValue())) {
-						showWarning("Nivel existente",
-								"La descripci\u00f3n no puede ser vacia o coincidir con la de otro nivel ya existente");
-					} else {
-						agreement.createLevel(levelDescription.getValue());
-						setAgreementPreview(agreement);
-						setHasChange(true);
-					}
-				}
-			});
-		});
-
-		levelSalaryToolbar.add(newLevelBtn);
-
-		newDateBtn = new AonToolbarSmallButton(AON.MSG.newAction() + " tramo", AON.CSS.aonIconAdd());
-		newDateBtn.ensureDebugId("newSalaryTabButton");
-		newDateBtn.addClickHandler(e -> {
-			PopupPanel popup = new PopupPanel(true); // auto-hide
-			DatePicker picker = new DatePicker();
-			picker.setValue(new Date());
-			picker.setYearAndMonthDropdownVisible(true);
-
-			picker.addValueChangeHandler(event -> {
-				popup.hide();
-				Date newPeriod = event.getValue();
-				if (agreement.getSortedDates().isEmpty()) {
-					agreement.createNewPeriod(newPeriod);
-					agreement.setFilteredAllVariables();
-					setAgreementPreview(agreement);
-					setHasChange(true);
-				} else {
-					Date maxDate = agreement.getSortedDates().stream().findFirst().get();
-					if (maxDate.after(newPeriod) || maxDate.equals(newPeriod))
-						showWarning("Error fechas",
-								"No se puede seleccionar un fecha anterior o igual al ultimo tramo existente");
-					else {
-						agreement.createNewPeriod(newPeriod);
-						setAgreementPreview(agreement);
-						setHasChange(true);
-					}
-				}
-			});
-
-			popup.setWidget(picker);
-			popup.setStyleName(style.datePickerPanel());
-			popup.showRelativeTo(newDateBtn);
-
-			popup.ensureDebugId("morePopupPanel");
-			picker.ensureDebugId("moreDatePicker");
-		});
-
-		levelSalaryToolbar.add(newDateBtn);
-
-		datesLB = new ListBox();
-		datesLB.ensureDebugId("datesLB");
-		datesLB.getElement().getStyle().setHeight(1.7, Unit.EM);
-		datesLB.addChangeHandler(e -> createSalaryTable());
-
-		levelSalaryToolbar.add(datesLB);
-
-		deleteDateBtn = new AonToolbarSmallButton(AON.MSG.deleteAction() + " tramo", AON.CSS.aonIconDelete());
-		deleteDateBtn.ensureDebugId("deleteSalaryTabButton");
-		deleteDateBtn.addClickHandler(e -> {
-			AonDialog deleteDialog = new AonDialog("Borrar tramo",
-					new HTMLPanel("\u00bfDesea realmente eliminar el tramo <b>" + datesLB.getSelectedValue()
-							+ "</b> de la tabla salarial\u003f"));
-			deleteDialog.ensureDebugId("deleteDateDialog");
-			deleteDialog.setGlassStyleName(style.dialogGlass());
-			deleteDialog.addStyleName(style.dialogZIndex());
-			deleteDialog.confirm(new AonAcceptDialogCallback() {
-
-				@Override
-				public void onCancel() {
-				}
-
-				@Override
-				public void onAccept() {
-					Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
-					agreement.deletePeriod(selectedDate);
-					deleteDialog.hide(true);
-					setAgreementPreview(agreement);
-					showLoading("Guardando convenio " + toolbar.getTitle() + " ...");
-					setHasChange(false);
-					onSaved();
-				}
-			});
-		});
-
-		levelSalaryToolbar.add(deleteDateBtn);
-
-		variablesVisivility = new AonToolbarSmallButton("Mostrar/Ocultar variables", AON.CSS.aonIconVisibility());
-		variablesVisivility.addClickHandler(click -> {
-			Date selectedDate = formatDate.parse(datesLB.getSelectedValue());
-			AgreementVariablesDialog dialog = new AgreementVariablesDialog(agreement.getAllVariables(),
-					agreement.getVariablesByDate(selectedDate)) {
-
-				@Override
-				protected void onAccept(String variablesType, Set<String> variables) {
-					switch (variablesType) {
-					case "VALUES":
-						agreement.setFilteredValuesVariables();
-						break;
-					case "NO_VALUES":
-						agreement.setFilteredNoValuesVariables();
-						break;
-					case "ALL":
-						agreement.setFilteredAllVariables();
-						break;
-					default:
-						agreement.setFilteredVariables(variables);
-						break;
-					}
-					createSalaryTable();
-				}
-			};
-			dialog.setGlassStyleName(style.dialogGlass());
-			dialog.addStyleName(style.dialogZIndex());
-			dialog.setShowVariables(agreement.getShownVariables());
-		});
-
-		levelSalaryToolbar.add(variablesVisivility);
-		
 		levelSalaryDiscBtn = new AonToolbarSmallButton("Desplegar Nivel / Categoria", AON.CSS.aonIconDown());
 		levelSalaryDiscBtn.addClickHandler(e -> {
 			isLevelSalaryOpen = !isLevelSalaryOpen;
 			handleIcon(levelSalaryDiscBtn, isLevelSalaryOpen);
-			if(isLevelSalaryOpen) levelSalaryDeck.getElement().getStyle().clearDisplay();
-			else levelSalaryDeck.getElement().getStyle().setDisplay(Display.NONE);
+			if(isLevelSalaryOpen) { 
+				levelSalaryDeck.getElement().getStyle().clearDisplay();
+				levelSalaryTabs.getElement().getStyle().clearDisplay();
+			} else {
+				levelSalaryDeck.getElement().getStyle().setDisplay(Display.NONE);
+				levelSalaryTabs.getElement().getStyle().setDisplay(Display.NONE);
+			}
 		});
 		levelSalaryToolbar.add(levelSalaryDiscBtn);
-
 		
 	}
 
 	private void createPaymentToolbar() {
 		paymentToolbar = new AonToolbarSmall("Devengos");
-
-		addPaymentButton = new AonToolbarSmallButton("A\u00F1adir Devengo", AON.CSS.aonIconAdd());
-		addPaymentButton.ensureDebugId("newPaymentButton");
-		addPaymentButton.addClickHandler(e -> new AddAonPaymentCommand().execute());
-
-		paymentToolbar.add(addPaymentButton);
-
-		showOlPaymentsButton = new AonToolbarSmallButton("Mostrar devengo antiguos", AON.CSS.aonIconVisibility());
-		showOlPaymentsButton.ensureDebugId("showOlPaymentsButton");
-		showOlPaymentsButton.addClickHandler(e -> {
-			showOldPayments = !showOldPayments;
-
-			if (showOldPayments) {
-				showOlPaymentsButton.setTitle("Ocultar devengo antiguos");
-				showOlPaymentsButton.removeStyleName(AON.CSS.aonIconVisibility());
-				showOlPaymentsButton.addStyleName(AON.CSS.aonIconVisibilityOff());
-			} else {
-				showOlPaymentsButton.setTitle("Mostrar devengo antiguos");
-				showOlPaymentsButton.removeStyleName(AON.CSS.aonIconVisibilityOff());
-				showOlPaymentsButton.addStyleName(AON.CSS.aonIconVisibility());
-			}
-
-			setAgreementPreview(agreement);
-		});
-
-		paymentToolbar.add(showOlPaymentsButton);
 		
 		paymentDiscBtn = new AonToolbarSmallButton("Desplegar Devengos", AON.CSS.aonIconDown());
 		paymentDiscBtn.addClickHandler(e -> {
@@ -2402,6 +2454,7 @@ public abstract class AgreementPreview extends Composite {
 			else paymentDeck.getElement().getStyle().setDisplay(Display.NONE);
 		});
 		paymentToolbar.add(paymentDiscBtn);
+		
 	}
 
 	private void createExtraToolbar() {
@@ -2734,9 +2787,10 @@ public abstract class AgreementPreview extends Composite {
 
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
-		if (readOnly) {
-			datesLB.setVisible(true);
-		}
+	}
+	
+	public void resetSelectedDate() {
+		this.selectedDate = null;
 	}
 
 }

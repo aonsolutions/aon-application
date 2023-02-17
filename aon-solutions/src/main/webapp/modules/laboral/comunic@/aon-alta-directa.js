@@ -140,7 +140,8 @@ export class AonAltaDirecta extends AonElement {
 
         await Promise.all([
             this.getContractType(),
-            this.getQuoteGroup()
+            this.getQuoteGroup(),
+            this.getCno()
         ]).catch(e=> console.log(e));
     }
 
@@ -465,6 +466,14 @@ export class AonAltaDirecta extends AonElement {
             let options = sortBy(resp.map(r => ({ ...r, name: `${r.name}`, value: r.value})), 'name', 'asc');
 
             this.getElement('gc').setOptions(options);
+        } catch (error){}
+    }
+
+    async getCno() {
+        try {
+            let resp = await getCno();
+            resp = sortBy(resp, 'value', 'asc');
+            this.getElement('cno').setOptions(resp.map(r => ({ name: `${r.name}`, value: r.value})));
         } catch (error){}
     }
 

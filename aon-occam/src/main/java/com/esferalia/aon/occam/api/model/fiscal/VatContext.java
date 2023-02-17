@@ -33,7 +33,8 @@ public class VatContext implements Serializable {
 	private Date taxDate;
 	private Date creationDate;
 	private Date regContableDate;
-	private Integer finance;	// En el caso de criterio de caja. ID del vto.
+	private Integer finance;			// En el caso de criterio de caja. ID del vto.
+	private Integer financeTracking;	// En el caso de criterio de caja. ID del tracking.
 	private String detailDescription;
 	private boolean insidePeriod;
 	private InvoiceType invoiceType;
@@ -216,6 +217,14 @@ public class VatContext implements Serializable {
 	}
 	public VatContext setFinance(Integer finance) {
 		this.finance = finance;
+		return this;
+	}
+	
+	public Integer getFinanceTracking() {
+		return financeTracking;
+	}
+	public VatContext setFinanceTracking(Integer financeTracking) {
+		this.financeTracking = financeTracking;
 		return this;
 	}
 	
@@ -524,9 +533,6 @@ public class VatContext implements Serializable {
 	}
 	public boolean isVatSimplifiedRegime(VATRegime defaultRegime) {
 		return (defaultRegime == VATRegime.SIMPLIFIED && getVatRegime() == null) || getVatRegime() == VATRegime.SIMPLIFIED;
-	}
-	public boolean isVatSimplifiedExempt(VATRegime defaultRegime) {
-		return getVatRegime() == null || getVatRegime() == VATRegime.EXEMPT;
 	}
 	public boolean isActivityVatExempt() {
 		return getVatRegime() == null || getVatRegime() == VATRegime.EXEMPT;

@@ -124,7 +124,7 @@ public class Agreements extends ResizeComposite implements AgreementsTree.Listen
 			public void onSuccess(Integer result) {
 				Agreements.this.domain = result;
 				toolbar.setEnabledViewAgreementsButton(false);
-				getAgreements();
+				getAgreements(s -> {});
 			}
 		});
 	}
@@ -132,11 +132,12 @@ public class Agreements extends ResizeComposite implements AgreementsTree.Listen
 	// ------------------------------------------- AgreementsTree
 	
 	@Override
-	public void getAgreements() {
+	public void getAgreements(Consumer<Void> finish) {
 		agreementsTree.clearTree();
 		getAgreements(false, s -> {
 			agreementsTree.scrollToTop();
 			toolbar.setEnabledViewAgreementsButton(true);
+			finish.accept(null);
 		}, f -> {});
 	}
 	
@@ -171,8 +172,8 @@ public class Agreements extends ResizeComposite implements AgreementsTree.Listen
 		return agreementsTree;
 	}
 
-	public void reloadAgreements() {
-		getAgreements();
+	public void reloadAgreements(Consumer<Void> finish) {
+		getAgreements(s -> finish.accept(null));
 	}
 	
 	public Integer getDomain() {

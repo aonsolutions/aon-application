@@ -401,6 +401,126 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCretaFormacionNormalTutoriaTramosI()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		Date startDate = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ContractRecord contract = newContract(aonContext, ccc, ContractCode.C421, "10");
+		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+
+		// Only for second contract
+		addData(aonContext, contract, startDate, endDate, ContextVariable.SLD_C737, Integer.toString(monthDays) + " * 10.00");
+		addData(aonContext, contract, startDate, endDate, ContextVariable.SLD_H06, Integer.toString(monthDays));
+		
+		addPayment(aonContext, contract, 
+		String.format("TRAMO(FECHA(%d,%d,15));0.00", 
+		get(endDate, Calendar.YEAR)
+		,get(endDate, Calendar.MONTH) + 1));
+		
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = 
+		getTramosBases(connection, startDate, endDate, ccc, contract);
+		
+		org.junit.Assert.assertEquals(2, bases.size());
+		
+		List<Dato> datos = bases.get(0).getDatosTramo().getDato();
+		
+		org.junit.Assert.assertEquals(2, datos.size());
+
+		double c737 =
+		datos.stream()
+		.filter(d -> d.getCodigo().equals("737")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		
+		org.junit.Assert.assertEquals(15.00*1000.00, c737, DELTA);
+
+		double h6 =
+		datos.stream()
+		.filter(d -> d.getCodigo().equals("06")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		
+		org.junit.Assert.assertEquals(15.00, h6, DELTA);
+
+		datos = bases.get(1).getDatosTramo().getDato();
+		
+		org.junit.Assert.assertEquals(2, datos.size());
+
+		c737 =
+		datos.stream()
+		.filter(d -> d.getCodigo().equals("737")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		
+		org.junit.Assert.assertEquals((monthDays-15)*1000.00, c737, DELTA);
+
+		h6 =
+		datos.stream()
+		.filter(d -> d.getCodigo().equals("06")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		
+		org.junit.Assert.assertEquals((monthDays-15), h6, DELTA);
+		
+	}
+
+	@Test
+	public void testCretaFormacionNormalTutoriaTramosII()
+			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSalaries(aonContext);
+		
+		String ccc = Long.toString(System.currentTimeMillis()).substring(0, 11);
+		
+		Date startDateFirst = add(getFirstDayOfMonth(getToday()), MONTH, 1);
+		Date endDateFirst = add(startDateFirst, DAY_OF_MONTH, 14);
+		
+		Date endDateSecond = getLastDayOfMonth(startDateFirst);
+		Date startDateSecond = endDateSecond; //(endDateSecond, DAY_OF_MONTH, -0);
+
+		String dni = Long.toString(Math.abs(new Random().nextLong()), 10).substring(0,10); 
+		String nss = Long.toString(Math.abs(new Random().nextLong()), 10).substring(0,12);
+		ContractRecord firstContract = newContract(aonContext, ccc, ContractCode.C421, "10", CCCType.PRINCIPAL, startDateFirst, endDateFirst,  null, dni, nss);
+		ContractRecord secondContract = newContract(aonContext, ccc, ContractCode.C421, "10", CCCType.PRINCIPAL, startDateSecond, endDateSecond, null, dni, nss);
+
+		// Only for second contract
+		addData(aonContext, secondContract, startDateSecond, endDateSecond, ContextVariable.SLD_C737, "10.00");
+		addData(aonContext, secondContract, startDateSecond, endDateSecond, ContextVariable.SLD_H06, "1");
+
+		List<net.aonsolutions.core.tgss.creta.jaxb.bases.Tramo> bases = 
+		getTramosBases(connection, startDateFirst, endDateSecond, ccc, firstContract, secondContract);
+		
+		org.junit.Assert.assertEquals(1, bases.size());
+		
+		List<Dato> datos = bases.get(0).getDatosTramo().getDato();
+		
+		org.junit.Assert.assertEquals(2, datos.size());
+
+		double c737 =
+		datos.stream()
+		.filter(d -> d.getCodigo().equals("737")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		
+		org.junit.Assert.assertEquals(1.00*1000.00, c737, DELTA);
+
+		double h6 =
+		datos.stream()
+		.filter(d -> d.getCodigo().equals("06")).map(d -> d.getValor())
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		
+		org.junit.Assert.assertEquals(1.00, h6, DELTA);
+		
+	}
+
+	@Test
 	public void testCretaFormacionNormalFormacion()
 			throws ExpressionException, SQLException, SalaryException, JAXBException, IOException, EmptyBasesException, XMLStreamException, FactoryConfigurationError {
 		Connection connection = getConnection();
