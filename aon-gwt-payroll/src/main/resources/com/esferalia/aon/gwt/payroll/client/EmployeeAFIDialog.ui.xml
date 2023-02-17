@@ -24,6 +24,12 @@
 		.tabSelected{
 			border: 1px solid #e2e2e2;
 			border-bottom: none;
+			cursor: pointer;
+		}
+		
+		.tabUnSelected{
+			background-color: #eee;
+			cursor: pointer;
 		}
 		
 		.tabIconSelected{
@@ -83,10 +89,6 @@
     		height: 22px !important;
     		background: white !important;
 			padding-top: 2px !important;
-		}
-		
-		.marginTab{
-			margin-right: 5px;
 		}
 		
 
@@ -239,11 +241,11 @@
 			border: 1px solid #e2e2e2 !important;
 			color: black !important;
 			font-weight: bold !important;
-			padding-bottom: 3px !important;
 			background: white !important;
 			border-bottom: none !important;
 			border-radius: 0;
-			width: 25px !important;
+			min-width: 25px;
+			max-width: 25px;
 		}
 		
 		.input {
@@ -272,6 +274,11 @@
 			text-align: left;
 			text-transform: uppercase;
 			width: auto;
+		}
+		
+		.flex {
+			display: flex;
+			gap: 0.1rem;
 		}
 
 	</ui:style>

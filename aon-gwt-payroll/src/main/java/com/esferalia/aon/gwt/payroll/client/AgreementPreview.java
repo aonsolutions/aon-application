@@ -1570,7 +1570,8 @@ public abstract class AgreementPreview extends Composite {
 			paymentGrid.setWidget(row, 6, visibilityCell);
 			paymentGrid.setWidget(row, 7, deleteCell);
 			
-			paymentGrid.getWidget(row, 6).getElement().getStyle().setTextAlign(TextAlign.CENTER);
+			paymentGrid.getCellFormatter().getElement(row, 6).getStyle().setTextAlign(TextAlign.CENTER);
+			paymentGrid.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
 
 			if (row % 2 == 0)
 				paymentGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());
@@ -1803,6 +1804,9 @@ public abstract class AgreementPreview extends Composite {
 			extraGrid.setWidget(row, 6, infoCell);
 			extraGrid.setWidget(row, 7, visibilityCell);
 			extraGrid.setWidget(row, 8, deleteCell);
+			
+			extraGrid.getCellFormatter().getElement(row, 7).getStyle().setTextAlign(TextAlign.CENTER);
+			extraGrid.getCellFormatter().getElement(row, 8).getStyle().setTextAlign(TextAlign.CENTER);
 
 			if (row % 2 == 0)
 				extraGrid.getCellFormatter().addStyleName(row, 0, style.oddRow());

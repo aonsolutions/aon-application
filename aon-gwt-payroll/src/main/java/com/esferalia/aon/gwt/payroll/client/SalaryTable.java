@@ -9,6 +9,7 @@ import java.util.Set;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazTerritory;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
@@ -248,10 +249,27 @@ public abstract class SalaryTable extends ResizeComposite {
 			@Override
 			public void render(Context context, SalaryInfo salaryInfo, SafeHtmlBuilder sb) {
 				if(null != salaryInfo) {
-					if(salaryInfo.isAlcatraz())
-						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button aon-icon-aeat\" style=\"border: none !important; height: 20px;\" title=\"\"></button>");
-					else 
+					if(salaryInfo.isAlcatraz()) {
+						String title = "Mod111 (" + salaryInfo.getAlcatrazYear() + ", " + salaryInfo.getAlcatrazPeriod().getDescription() + ")";
+						String imageCss = getAeatIcon(salaryInfo.getAlcatrazTerritory());
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button " + imageCss + "\" style=\"border: none !important; height: 20px;\" title=\"" + title + "\"></button>");
+					}else 
 						sb.appendHtmlConstant("");
+				}
+			}
+
+			private String getAeatIcon(AlcatrazTerritory alcatrazTerritory) {
+				switch (alcatrazTerritory) {
+				case ARABA:
+					return "aon-icon-araba";
+				case BIZKAIA:
+					return "aon-icon-bizkaia";
+				case GIPUZKOA:
+					return "aon-icon-gipuzkoa";
+				case NAVARRA:
+					return "aon-icon-navarra";
+				default:
+					return "aon-icon-aeat";
 				}
 			}
 		};

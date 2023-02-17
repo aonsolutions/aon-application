@@ -3,6 +3,7 @@ package com.esferalia.aon.gwt.payroll.jooq;
 import static com.esferalia.aon.jooq.tables.Alcatraz.ALCATRAZ;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.FsModel.FS_MODEL;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
@@ -32,9 +33,12 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazPeriod;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazTerritory;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfoFilter;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceEmployees;
 import com.esferalia.aon.jooq.tables.records.AlcatrazRecord;
+import com.esferalia.aon.jooq.tables.records.FsModelRecord;
 
 public class JooqPayrollSalaries {
 
@@ -189,7 +193,15 @@ public class JooqPayrollSalaries {
 			
 			//Is Alcatraz
 			Result<AlcatrazRecord> alcatrazRecords = dslContext.selectFrom(ALCATRAZ).where(ALCATRAZ.SALARY.eq(salaryInfo.getId())).fetch();
-			salaryInfo.setAlcatraz(!alcatrazRecords.isEmpty());
+			if(!alcatrazRecords.isEmpty()) {
+				salaryInfo.setAlcatraz(true);
+				
+				FsModelRecord fsModelRecord = dslContext.selectFrom(FS_MODEL).where(FS_MODEL.ID.eq(alcatrazRecords.get(0).getFsModel())).fetchOne();
+				salaryInfo.setAlcatrazYear(fsModelRecord.getYear());
+				salaryInfo.setAlcatrazPeriod(AlcatrazPeriod.values()[fsModelRecord.getPeriod()]);
+				salaryInfo.setAlcatrazTerritory(AlcatrazTerritory.values()[fsModelRecord.getAdministration()]);
+				
+			} else salaryInfo.setAlcatraz(false);
 			
 			// Add to salaries list
 			salaries.add(salaryInfo);
@@ -233,7 +245,15 @@ public class JooqPayrollSalaries {
 			
 			//Is Alcatraz
 			Result<AlcatrazRecord> alcatrazRecords = dslContext.selectFrom(ALCATRAZ).where(ALCATRAZ.SALARY.eq(salaryInfo.getId())).fetch();
-			salaryInfo.setAlcatraz(!alcatrazRecords.isEmpty());
+			if(!alcatrazRecords.isEmpty()) {
+				salaryInfo.setAlcatraz(true);
+				
+				FsModelRecord fsModelRecord = dslContext.selectFrom(FS_MODEL).where(FS_MODEL.ID.eq(alcatrazRecords.get(0).getFsModel())).fetchOne();
+				salaryInfo.setAlcatrazYear(fsModelRecord.getYear());
+				salaryInfo.setAlcatrazPeriod(AlcatrazPeriod.values()[fsModelRecord.getPeriod()]);
+				salaryInfo.setAlcatrazTerritory(AlcatrazTerritory.values()[fsModelRecord.getAdministration()]);
+				
+			} else salaryInfo.setAlcatraz(false);
 		}
 		return salaryInfo;
 	}
@@ -298,7 +318,16 @@ public class JooqPayrollSalaries {
 			
 			//Is Alcatraz
 			Result<AlcatrazRecord> alcatrazRecords = dslContext.selectFrom(ALCATRAZ).where(ALCATRAZ.SALARY.eq(salaryInfo.getId())).fetch();
-			salaryInfo.setAlcatraz(!alcatrazRecords.isEmpty());
+			if(!alcatrazRecords.isEmpty()) {
+				salaryInfo.setAlcatraz(true);
+				
+				FsModelRecord fsModelRecord = dslContext.selectFrom(FS_MODEL).where(FS_MODEL.ID.eq(alcatrazRecords.get(0).getFsModel())).fetchOne();
+				salaryInfo.setAlcatrazYear(fsModelRecord.getYear());
+				salaryInfo.setAlcatrazPeriod(AlcatrazPeriod.values()[fsModelRecord.getPeriod()]);
+				salaryInfo.setAlcatrazTerritory(AlcatrazTerritory.values()[fsModelRecord.getAdministration()]);
+				
+			} else salaryInfo.setAlcatraz(false);
+			
 			
 			// Add to salaries list
 			salaries.add(salaryInfo);
