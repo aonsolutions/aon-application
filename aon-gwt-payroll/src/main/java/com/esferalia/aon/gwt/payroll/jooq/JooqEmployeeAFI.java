@@ -865,25 +865,27 @@ public class JooqEmployeeAFI {
 	}
 	
 	private static void insertPartiality(DSLContext dslContext, Integer domainId, Integer contractId, AFIChange afiChange, Date startDate, Date endDate) {
-		dslContext.insertInto(CONTRACT_DATA)
-			.set(CONTRACT_DATA.DOMAIN, domainId)
-			.set(CONTRACT_DATA.CONTRACT, contractId)
-			.set(CONTRACT_DATA.NAME, afiChange.getName())
-			.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? AonStringUtils.replace(afiChange.getValue(), "\"", "") : afiChange.getValue())
-			.set(CONTRACT_DATA.START_DATE, startDate)
-			.set(CONTRACT_DATA.END_DATE, endDate)
-			.execute();
+		if(AonStringUtils.isNotBlank(afiChange.getValue()))
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domainId)
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.NAME, afiChange.getName())
+				.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? AonStringUtils.replace(afiChange.getValue(), "\"", "") : afiChange.getValue())
+				.set(CONTRACT_DATA.START_DATE, startDate)
+				.set(CONTRACT_DATA.END_DATE, endDate)
+				.execute();
 	}
 
 	private static void insertContractData(DSLContext dslContext, Integer domainId, Integer contractId, AFIChange afiChange, Date startDate, Date endDate) {
-		dslContext.insertInto(CONTRACT_DATA)
-			.set(CONTRACT_DATA.DOMAIN, domainId)
-			.set(CONTRACT_DATA.CONTRACT, contractId)
-			.set(CONTRACT_DATA.NAME, afiChange.getName())
-			.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? afiChange.getValue() : "\"" + afiChange.getValue() + "\"")
-			.set(CONTRACT_DATA.START_DATE, startDate)
-			.set(CONTRACT_DATA.END_DATE, endDate)
-			.execute();
+		if(AonStringUtils.isNotBlank(afiChange.getValue()))
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domainId)
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.NAME, afiChange.getName())
+				.set(CONTRACT_DATA.EXPRESSION, afiChange.getValue().contains("\"") ? afiChange.getValue() : "\"" + afiChange.getValue() + "\"")
+				.set(CONTRACT_DATA.START_DATE, startDate)
+				.set(CONTRACT_DATA.END_DATE, endDate)
+				.execute();
 	}
 
 	// -------------------------------------------- getEmployeeAFIDB
