@@ -15,7 +15,6 @@ import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -30,11 +29,7 @@ import com.esferalia.aon.occam.api.model.finance.Filters.VATFilter;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.Properties.VATProperties;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.Mod303;
-import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
-import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
@@ -45,14 +40,12 @@ import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
-import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
 import com.esferalia.aon.occam.api.model.type.VatDeductionType;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
 
 /**
  * @deprecated use com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO
@@ -94,71 +87,11 @@ public class OLDVATDAO  {
 		@Override public Property<Double> getSurchargePercentProperty() {return new FilterDAO.PropertyDAO<>(INVOICE_TAX.SURCHARGE);}
 	}
 
-	public static LinkedList<VatSummaryContext> getVatSummary(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
-		LinkedList<VatSummaryContext> list = new LinkedList<>();
-		getVatBreakdown(ctx, fromDate, toDate, filter)
-				.map( vat -> { 
-					if (vat.isSurcharge()) {
-						VatSummaryType type = VatSummaryType.SURCHARGE;
-						double percent = vat.getSurchargePercent();
-						VatSummaryContext sum = null;
-						for (VatSummaryContext ite : list) {
-							if ( (ite.isOutput() == vat.isSales()) 
-								&& ite.getSummaryType() == type 
-								&& AonNumberUtils.equals(ite.getPercentage(), percent)) {
-								sum = ite;
-								break;
-							}
-						}
-						if ( sum == null) {
-							sum = new VatSummaryContext()
-								.setOutput(vat.isSales())
-								.setSummaryType(type)
-								.setPercentage(percent);
-							list.add(sum);
-						}
-						sum.setBase( sum.getBase() + vat.getBase()); 
-						sum.setQuota( sum.getQuota() + vat.getSurchargeQuota());
-					}
-					return vat;
-				})
-				.forEach( vat -> {
-					VatSummaryType type = VatSummaryType.accept(vat);
-					double percent = vat.getPercentage();
-					VatSummaryContext sum = null;
-					for (VatSummaryContext ite : list) {
-						if ( (ite.isOutput() == vat.isSales()) 
-							&& ite.getSummaryType() == type 
-							&& AonNumberUtils.equals(ite.getPercentage(), percent)) {
-							sum = ite;
-							break;
-						}
-					}
-					if ( sum == null) {
-						sum = new VatSummaryContext()
-							.setOutput(vat.isSales())
-							.setSummaryType(type)
-							.setPercentage(percent);
-						list.add(sum);
-					}
-					sum.setBase( sum.getBase() + vat.getBase()); 
-					sum.setQuota( sum.getQuota() + vat.getQuota());
-					sum.setDeductibleQuota( sum.getDeductibleQuota() + vat.getDeductibleQuota());
-				});
-		return list;
-	}
-	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate) {
-		return getVatBreakdown(ctx, fromDate, toDate,null , null );
-	}
 	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, IFiscalModel mod) {
 		return getVatBreakdown(ctx, fromDate, toDate,null , mod);
 	}
 
-	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
-		return getVatBreakdown(ctx, fromDate, toDate,filter , null);
-	}
-	
-	public static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter, IFiscalModel mod) {
+	private static Stream<VatContext> getVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter, IFiscalModel mod) {
 		if (mod != null && (mod.isLastPeriod() || mod.getPeriod() == Period.YEAR) ) {
 			return Stream.concat(Stream.concat(getNoAccrualVatBreakdown(ctx,fromDate,toDate,filter)
 											  ,getAccrualVatBreakdown	 (ctx,fromDate,toDate,filter))
@@ -237,36 +170,7 @@ public class OLDVATDAO  {
 				.map(new VatContextFiller())
 				;
 	}
-	public static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, Mod303 mod303) {
-		return getAccrualBreakdown(ctx, fromDate, toDate, null, mod303); 
-	}
-	public static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, Mod390HF mod) {
-		return getAccrualBreakdown(ctx, fromDate, toDate, null, mod); 
-	}
-	private static Stream<VatContext> getAccrualBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter , IFiscalModel mod) {
-		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
-		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
-		return getCommonSelect(ctx) 
-				.from(INVOICE_TAX)
-				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
-				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-				.leftOuterJoin(INVOICE_FISCAL).on(INVOICE_FISCAL.INVOICE.equal(INVOICE.ID))
-				.leftOuterJoin(INVOICE_DUA).on(INVOICE_DUA.INVOICE_IMPORT.equal(INVOICE.ID))
-				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
-				.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
-				.where(VAT_PROPERTIES.getConditions(filter))
-				.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-				.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
-				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(firstDay),AonDateUtils.toSql(lastDay)))
-				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
-				.fetch()
-				.stream()
-				.map(new VatContextFiller())
-				.map( vat -> vat.setInsidePeriod(mod!=null && FiscalUtils.isInPeriodRange(mod, vat.getTaxDate() ) ))
-				;
-	}
-	
+
 	private static Stream<VatContext> getAccrualVatBreakdown(AONContext ctx, Date fromDate, Date toDate, VATFilter filter) {
 		java.sql.Date firstDay = AonDateUtils.toSql( fromDate );
 		java.sql.Date lastDay = AonDateUtils.toSql( toDate);
@@ -443,91 +347,7 @@ public class OLDVATDAO  {
 		return dedQuota;
 	}
 	
-	public static double getVatAccrualPaymentOutputBase(AONContext ctx, Date fromDate,Date toDate) {
-		return ctx.getDslContext().select( INVOICE_TAX.BASE )
-				.from(INVOICE_TAX)
-				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
-				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
-				.and(INVOICE.TYPE.equal( InvoiceType.SALES.value() )) // VENTAS
-				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
-				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
-				.fetch()
-				.stream()
-				.mapToDouble( rec -> rec.getValue(INVOICE_TAX.BASE ) )
-				.sum();
-	}
-
-	public static double getVatAccrualPaymentOutputQuota(AONContext ctx, Date fromDate,Date toDate) {
-		return ctx.getDslContext().select( INVOICE_TAX.BASE,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.QUOTA)
-				.from(INVOICE_TAX)
-				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
-				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-				.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
-				.and(INVOICE.TYPE.equal( InvoiceType.SALES.value() )) // VENTAS
-				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
-				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( (byte) 1) ) // Criterio de Caja.
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
-				.fetch()
-				.stream()
-				.mapToDouble( rec -> {
-					double quota = rec.getValue(INVOICE_TAX.QUOTA);
-					if (AonMathUtils.isZero(quota)) {
-						double base = rec.getValue(INVOICE_TAX.BASE);
-						double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
-						quota = AonMathUtils.round(base * percent / 100);
-					}
-					return quota;
-				})
-				.sum();
-	}
-
-	public static double getVatAccrualPaymentInputBase(AONContext ctx, Date fromDate,Date toDate) {
-		return ctx.getDslContext().select( INVOICE_TAX.BASE )
-				.from(INVOICE_TAX)
-				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
-				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.VAT.value()))
-				.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // NO VENTAS
-				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
-				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 1))	// Criterio de Caja.
-				.fetch()
-				.stream()
-				.mapToDouble( rec -> rec.getValue(INVOICE_TAX.BASE ) )
-				.sum();
-	}
-
-	public static double getVatAccrualPaymentInputQuota(AONContext ctx, Date fromDate,Date toDate) {
-		return ctx.getDslContext().select( INVOICE_TAX.BASE,INVOICE_TAX.PERCENTAGE,INVOICE_TAX.QUOTA)
-				.from(INVOICE_TAX)
-				.join(INVOICE_DETAIL).on(INVOICE_TAX.INVOICE_DETAIL.equal(INVOICE_DETAIL.ID))
-				.join(INVOICE).on(INVOICE_DETAIL.INVOICE.equal(INVOICE.ID))
-				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-				.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
-				.and(INVOICE.TYPE.notEqual( InvoiceType.SALES.value() )) // NO VENTAS
-				.and(INVOICE.TAX_DATE.between(AonDateUtils.toSql(fromDate),AonDateUtils.toSql(toDate)))
-				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( (byte) 1) ) // Criterio de Caja.
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
-				.fetch()
-				.stream()
-				.mapToDouble( rec -> {
-					double quota = rec.getValue(INVOICE_TAX.QUOTA);
-					if (AonMathUtils.isZero(quota)) {
-						double base = rec.getValue(INVOICE_TAX.BASE);
-						double percent = rec.getValue(INVOICE_TAX.PERCENTAGE);
-						quota = AonMathUtils.round(base * percent / 100);
-					}
-					return quota;
-				})
-				.sum();
-	}
-	
-	
-	
-	public static class VatContextAccrualRegimeFiller  extends VatContextFiller {
+	private static class VatContextAccrualRegimeFiller  extends VatContextFiller {
 		@Override
 		public VatContext apply(Record rec) {
 			VatContext vat = super.apply(rec);
@@ -541,7 +361,7 @@ public class OLDVATDAO  {
 		}
 	}
 	
-	public static class VatContextLastPeriodAccrualRegimeFiller  extends VatContextFiller {
+	private static class VatContextLastPeriodAccrualRegimeFiller  extends VatContextFiller {
 		@Override
 		public VatContext apply(Record rec) {
 			VatContext vat = super.apply(rec);
@@ -568,7 +388,7 @@ public class OLDVATDAO  {
 				:base);
 	}
 	
-	public static class VatContextFiller  implements Function<Record,VatContext> {
+	private static class VatContextFiller  implements Function<Record,VatContext> {
 
 		@Override
 		public VatContext apply(Record rec) {
@@ -634,7 +454,7 @@ public class OLDVATDAO  {
 	}
 	
 	
-	public static class SiiVatContextFiller  implements Function<Record,VatContext> {
+	private static class SiiVatContextFiller  implements Function<Record,VatContext> {
 
 		@Override
 		public VatContext apply(Record rec) {
