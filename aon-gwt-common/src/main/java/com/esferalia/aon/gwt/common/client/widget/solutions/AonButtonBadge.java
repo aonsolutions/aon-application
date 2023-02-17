@@ -54,11 +54,11 @@ public class AonButtonBadge extends FlowPanel {
 	private void createBadge() {
 		badge = new HTMLPanel("");
 		badge.getElement().getStyle().setProperty("position", "absolute");
-		badge.getElement().getStyle().setProperty("top", "2px");
-		badge.getElement().getStyle().setProperty("right", "2px");
+		badge.getElement().getStyle().setProperty("top", "20px");
+		badge.getElement().getStyle().setProperty("right", "5px");
 		badge.getElement().getStyle().setProperty("padding", "4px");
 		badge.getElement().getStyle().setProperty("border-radius", "50%");
-		badge.getElement().getStyle().setProperty("background-color", "red");
+		badge.getElement().getStyle().setProperty("background-color", "#ff5757");
 		badge.getElement().getStyle().setProperty("color", "white");
 	}
 	
