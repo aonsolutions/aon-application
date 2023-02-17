@@ -485,6 +485,56 @@ public class SQLEfectiveDaysTestCase extends AbstractSQLTestCase {
 
 	}
 
+	@Test
+	public void testNonWorking() throws ExpressionException,
+			SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		ContractRecord contract = newContract(aonContext, getFirstDayOfYear(getToday()), Collections.emptyMap());
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		
+		double actualDays = 0.00;
+		Calendar day = Calendar.getInstance();
+		day.setTime(startDate);
+		while ( day.getTime().compareTo(endDate)<= 0 ){
+			int dayOfWeek = day.get(Calendar.DAY_OF_WEEK);
+			if ( dayOfWeek == Calendar.SUNDAY || dayOfWeek == Calendar.SATURDAY )
+				;
+			else if ( dayOfWeek == Calendar.MONDAY || dayOfWeek == Calendar.WEDNESDAY ) {
+			    	Date date = new Date(day.getTimeInMillis());
+			    	System.out.println(ContextVariable.NON_WORKING.getName() + "=" + date);
+			    	addData(aonContext, contract, date, date, ContextVariable.NON_WORKING.getName(), "1");
+			}
+			else {
+				actualDays ++;
+			}
+			
+			day.add(Calendar.DAY_OF_MONTH, 1);
+		}
+
+
+		ISQLContractSalaryCalculatorContext ctx =
+		getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				contract);
+		
+		List<ITimedResult<Double>> results = ctx.getExpressionContext().eval(ContextVariable.ACTUAL_DAYS.getName(), startDate, endDate, Double.class);
+		
+		
+		double ctxActualDays = 0;
+		for ( ITimedResult<Double> result: results )
+			ctxActualDays += result.getValue();
+		
+		Assert.assertEquals(ContextVariable.ACTUAL_DAYS.getName(), actualDays, ctxActualDays);
+
+	}
+
 	// ------------------------------------------------------------------------
 	
 	private HolidayRecord newHoliday(AONContext aonContext, Integer domain) {

@@ -58,6 +58,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_WORKED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_WORKING;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OFF_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
@@ -3476,25 +3477,34 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	private boolean isNotWorkingDay(Calendar day) {
-		Date date = day.getTime();
-		
-		ContextVariable weekHoursVar = WEEK_HOURS_VARIABLES.get(day.get(DAY_OF_WEEK));
-		ITimedVariable<?> hours = this.contractExpressionContext.getVariable(weekHoursVar, date, date);
-		if (hours == null)
-			return false;
-
-		try {
-			Period period = hours.getPeriod();
-			Object value = hours.getValue(period);
-			if ( value == null )
-				return true;
-			
-			return Double.parseDouble(value.toString()) == -1;
-
-		} catch (Error e) {
-			return false;
+	    Date date = day.getTime();
+	    ITimedVariable<?> nonWorking = this.contractExpressionContext.getVariable(NON_WORKING, date, date);
+	    if (nonWorking != null ) {
+		Period period = nonWorking.getPeriod();
+		Object value = nonWorking.getValue(period);
+		int days = (int) Double.parseDouble(value.toString());
+		if ( days > 0 ) {
+		    return true;
 		}
+	    }
+		
+	    ContextVariable weekHoursVar = WEEK_HOURS_VARIABLES.get(day.get(DAY_OF_WEEK));
+	    ITimedVariable<?> hours = this.contractExpressionContext.getVariable(weekHoursVar, date, date);
+	    if (hours == null) {
+		return false;
+	    }
 
+	    try {
+		Period period = hours.getPeriod();
+		Object value = hours.getValue(period);
+		if ( value == null )
+		    return true;
+			
+		return Double.parseDouble(value.toString()) == -1;
+
+	    } catch (Error e) {
+		return false;
+	    }
 	}
 
 	private boolean isWorkingDay(Calendar day) {
