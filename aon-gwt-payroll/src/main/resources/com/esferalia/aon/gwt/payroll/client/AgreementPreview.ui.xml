@@ -312,6 +312,7 @@
 			border: 1px solid #eee;
 			border-bottom: none;
 			cursor: pointer;
+			padding-bottom: 3px;
 		}
 		
 		.selectDate {

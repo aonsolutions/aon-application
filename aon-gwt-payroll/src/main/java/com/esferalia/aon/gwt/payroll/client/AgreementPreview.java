@@ -614,8 +614,8 @@ public abstract class AgreementPreview extends Composite {
 
 		this.selectedDate = null == selectedDate && !agreement.getSortedDates().isEmpty() ? agreement.getSortedDates().stream().findFirst().get() : selectedDate;
 		
-		categoriesBtn = new AonToolbarSmallButton("Categorias", AON.CSS.aonIconList());
-		salaryTableBtn = new AonToolbarSmallButton("Tabla salarial", AON.CSS.aonIconStatics());
+		categoriesBtn = new AonToolbarSmallButton("Categorias", AON.CSS.aonIconAccountTree());
+		salaryTableBtn = new AonToolbarSmallButton("Tabla salarial", AON.CSS.aonIconTableView());
 
 		categoriesBtn.addClickHandler(e -> {
 			isSalaryTableSelected = false;
@@ -1431,7 +1431,7 @@ public abstract class AgreementPreview extends Composite {
 		paymentGrid.setWidget(row, 1, craColumn);
 		paymentGrid.getCellFormatter().addStyleName(row, 1, style.headerFixed());
 
-		Label conceptColumn = new Label("Concept");
+		Label conceptColumn = new Label("Concepto");
 		conceptColumn.addStyleName(style.gridTitle());
 		conceptColumn.addStyleName(style.headerFSize());
 		paymentGrid.setWidget(row, 2, conceptColumn);
@@ -1485,6 +1485,7 @@ public abstract class AgreementPreview extends Composite {
 
 			Widget craCell = new Label(null == payment.getType() ? "Revisar CRA"
 					: AonStringUtils.leftPad(payment.getType().getCode() + "", 4, '0'));
+			craCell.setTitle(null == payment.getType() ? "Revisar CRA" : payment.getType().getDescription());
 			checkRowAndModify(paymentGrid, row, payment, craCell);
 
 			Widget conceptCell = new Label(AonStringUtils.isBlank(payment.getName()) ? "" : payment.getName());
@@ -2353,7 +2354,7 @@ public abstract class AgreementPreview extends Composite {
 
 		toolbar.add(agreementInfoButton);
 
-		serviAgreementUpdateButton = new AonToolbarButton("Actualizar Convenio", AON.CSS.aonIconCloudImport());
+		serviAgreementUpdateButton = new AonToolbarButton("Actualizar Convenio", AON.CSS.aonIconCloudSync());
 		serviAgreementUpdateButton.addClickHandler(e -> impl.getDomainUserRoles(new AsyncCallback<DomainUserRoles>() {
 
 			@Override
