@@ -58,6 +58,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MORE_THAN_65;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_WORKED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_WORKING;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.OFF_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
@@ -1297,7 +1298,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	private PreparedStatement embargoStmt;
 	private PreparedStatement costStmt;
 
-	private SQLContractPayment sqlContractPayment;
+	private Collection<IContractPayment> contractPayments;
 	private SQLContractDeduction sqlContractDeduction;
 	private SQLContractCost sqlContractCost;
 	private SQLContractBonus sqlContractBonus;
@@ -1410,7 +1411,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		initSystemDeductions();
 		initSystemPayments();
 
-		this.sqlContractPayment = new SQLContractPayment();
+		this.contractPayments = Collections.emptyList();
+
 		this.sqlContractDeduction = new SQLContractDeduction();
 		this.sqlContractCost = new SQLContractCost();
 		this.sqlContractBonus = new SQLContractBonus();
@@ -1672,15 +1674,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	@SuppressWarnings("unchecked")
 	public Collection<IContractPayment> getContractPayments() throws AonException {
 		try {
-			this.sqlContractPayment.close();
 			int id = getId();
 			paymentStmt.setInt(1, id);
 			ResultSet rs = paymentStmt.executeQuery();
-			this.sqlContractPayment.setResultSet(rs);
+			this.contractPayments = SQLCollections.contractPaymentsCollection(rs);
 			
 			Collection<IContractPayment> contractAgreementPayments = getAgreementPayments();
 			
-			return new CompositePayments(this.sqlContractPayment, contractAgreementPayments, /*getDefaultAgreementPayments(),*/ getCCCPayments(), getSSRegimePayments()) {
+			return new CompositePayments(this.contractPayments, contractAgreementPayments, /*getDefaultAgreementPayments(),*/ getCCCPayments(), getSSRegimePayments()) {
 				@Override
 				public Iterator<IContractPayment> iterator() {
 					Iterator<IContractPayment> iterator = super.iterator();
@@ -2177,28 +2178,28 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		contextBonus.add(bonus);
 	}
 
-	protected Collection<ISystemPayment> getDefaultAgreementPayments() {
-		
-		
-		if ( getAgreementKey() != null ) 
-			return Collections.emptyList();
-		
-		return new DelegateCollection<ISystemPayment>(agreementPayments.get(getDefaultAgreementKey())) {
-			@Override
-			public Iterator<ISystemPayment> iterator() {
-				return new DelegateIterator<ISystemPayment>(super.iterator()) {
-					@Override
-					public boolean hasNext() {
-						try {
-							return !SQLContractSalaryCalculatorContext.this.sqlContractPayment.getResultSet().isAfterLast() && super.hasNext();
-						} catch (SQLException e) {
-							return false;
-						}
-					}
-				};
-			}
-		};
-	}
+//	protected Collection<ISystemPayment> getDefaultAgreementPayments() {
+//		
+//		
+//		if ( getAgreementKey() != null ) 
+//			return Collections.emptyList();
+//		
+//		return new DelegateCollection<ISystemPayment>(agreementPayments.get(getDefaultAgreementKey())) {
+//			@Override
+//			public Iterator<ISystemPayment> iterator() {
+//				return new DelegateIterator<ISystemPayment>(super.iterator()) {
+//					@Override
+//					public boolean hasNext() {
+//						try {
+//							return !SQLContractSalaryCalculatorContext.this.sqlContractPayment.getResultSet().isAfterLast() && super.hasNext();
+//						} catch (SQLException e) {
+//							return false;
+//						}
+//					}
+//				};
+//			}
+//		};
+//	}
 
 	protected ISalaryCalculatorContext getLiquidCalculatorContext(final double solve, final double liquid) {
 
@@ -3476,25 +3477,34 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	private boolean isNotWorkingDay(Calendar day) {
-		Date date = day.getTime();
-		
-		ContextVariable weekHoursVar = WEEK_HOURS_VARIABLES.get(day.get(DAY_OF_WEEK));
-		ITimedVariable<?> hours = this.contractExpressionContext.getVariable(weekHoursVar, date, date);
-		if (hours == null)
-			return false;
-
-		try {
-			Period period = hours.getPeriod();
-			Object value = hours.getValue(period);
-			if ( value == null )
-				return true;
-			
-			return Double.parseDouble(value.toString()) == -1;
-
-		} catch (Error e) {
-			return false;
+	    Date date = day.getTime();
+	    ITimedVariable<?> nonWorking = this.contractExpressionContext.getVariable(NON_WORKING, date, date);
+	    if (nonWorking != null ) {
+		Period period = nonWorking.getPeriod();
+		Object value = nonWorking.getValue(period);
+		int days = (int) Double.parseDouble(value.toString());
+		if ( days > 0 ) {
+		    return true;
 		}
+	    }
+		
+	    ContextVariable weekHoursVar = WEEK_HOURS_VARIABLES.get(day.get(DAY_OF_WEEK));
+	    ITimedVariable<?> hours = this.contractExpressionContext.getVariable(weekHoursVar, date, date);
+	    if (hours == null) {
+		return false;
+	    }
 
+	    try {
+		Period period = hours.getPeriod();
+		Object value = hours.getValue(period);
+		if ( value == null )
+		    return true;
+			
+		return Double.parseDouble(value.toString()) == -1;
+
+	    } catch (Error e) {
+		return false;
+	    }
 	}
 
 	private boolean isWorkingDay(Calendar day) {
