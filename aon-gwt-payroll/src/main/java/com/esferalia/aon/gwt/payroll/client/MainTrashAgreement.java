@@ -8,14 +8,13 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTrashAgreementsToolbar;
 import com.esferalia.aon.gwt.payroll.client.TrashAgreements.Listener;
 import com.esferalia.aon.gwt.payroll.client.TrashAgreements.Toolbar;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementInfo;
-import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -26,6 +25,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -238,16 +238,14 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 
 	@Override
 	public void onAgreementDelete4Ever(Agreement agreement) {
-		AonConfirmDialog confirmDialog = new AonConfirmDialog();
+		AonDialog confirmDialog = new AonDialog("BORRADO DEFINITIVO", new HTMLPanel(String.valueOf("\u00BF") + "Desea eliminar definitivamente el convenio  " + agreement.getDescription() + "?. Le recordamos que este convenio tiene contratos asociados, si lo elimina definitivamente estos contratos se desvincular\u00E1n de este convenio."));
 		confirmDialog.setGlassStyleName(style.dialogGlass());
 		confirmDialog.addStyleName(style.dialogZIndex());
-		confirmDialog.confirm(
-				"BORRADO", 
-				String.valueOf("\u00BF") + "Desea eliminar definitivamente el convenio  " + agreement.getDescription() + "?. Le recordamos que este convenio tiene contratos asociados, si lo elimina definitivamente estos contratos se desvincular\u00E1n de este convenio.",
-				new AonConfirmDialogCallback() {
+		confirmDialog.confirm(new AonAcceptDialogCallback() {
 
 					@Override
 					public void onAccept() {
+						agreementPreview.showLoading("Borrando convenio definitivamente ...");
 						agreements.agreementsTree.getEnterpriseService().deleteAgreement(agreement, new AsyncCallback<Void>() {
 							
 							@Override
@@ -279,16 +277,14 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 
 	@Override
 	public void onAgreementRestore(Agreement agreement) {
-		AonConfirmDialog confirmDialog = new AonConfirmDialog();
+		AonDialog confirmDialog = new AonDialog("Restaurar Convenio", new HTML(String.valueOf("\u00BF") + "Desea restaurar el convenio " + agreement.getDescription() + "?"));
 		confirmDialog.setGlassStyleName(style.dialogGlass());
 		confirmDialog.addStyleName(style.dialogZIndex());
-		confirmDialog.confirm(
-				"RESTAURAR", 
-				String.valueOf("\u00BF") + "Desea restaurar el convenio " + agreement.getDescription() + "?",
-				new AonConfirmDialogCallback() {
+		confirmDialog.confirm(new AonAcceptDialogCallback() {
 
 					@Override
 					public void onAccept() {
+						agreementPreview.showLoading("Restaurando convenio ...");
 						agreements.agreementsTree.getEnterpriseService().updateAgreementId(agreement, new AsyncCallback<Void>() {
 							
 							@Override

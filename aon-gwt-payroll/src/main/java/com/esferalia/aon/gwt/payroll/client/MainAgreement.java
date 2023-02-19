@@ -653,6 +653,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 								
 								@Override
 								public void onAccept() {
+									agreementPreview.showLoading("Borrando convenio ...");
 									agreements.getAgreementsTree().getEnterpriseService().updateAgreementId(
 											agreement, new AsyncCallback<Void>() {
 
@@ -671,7 +672,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 													showAgreementContainer();
 											});
 											mainTrashAgreement.hasTrashAgreements(hasTrashAgreements -> toolbar.setTrashAgreementWarn(hasTrashAgreements));
-//											showSelectAgreementMessage();
 										}
 									});
 								}
