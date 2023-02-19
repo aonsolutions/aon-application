@@ -72,7 +72,7 @@ public class AonDialog extends AonCustomDialog {
 			public void execute() {
 				center();
 				show();
-				okButton.setFocus(true); 
+				cancelButton.setFocus(true); 
 			}
 		});
 	}
@@ -97,26 +97,7 @@ public class AonDialog extends AonCustomDialog {
 	}
 
 	private void getAcceptCancelBtnPanel(AonAcceptDialogCallback callback) {
-		okButton = new Button();
-    	okButton.setStyleName(AON.CSS.aonOkButton());
-    	okButton.setText( AON.MSG.accept());
-    	okButton.ensureDebugId("acceptDialogButton");
-    	
-    	okButton.addKeyUpHandler(e -> {
-    		if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
-				hide();
-				callback.onCancel();	
-			}
-    	});
-    	
-    	okButton.addClickHandler(e -> {
-    		hide();
-			callback.onAccept();
-    	});
-    	
-    	buttonsPanel.add(okButton);
-    	
-    	cancelButton = new Button();
+		cancelButton = new Button();
     	cancelButton.setStyleName(AON.CSS.aonCancelButton());
     	cancelButton.setText( AON.MSG.cancelAction());
     	cancelButton.ensureDebugId("cancelDialogButton");
@@ -138,6 +119,25 @@ public class AonDialog extends AonCustomDialog {
     	});
     	
     	buttonsPanel.add(cancelButton);
+    	
+    	okButton = new Button();
+    	okButton.setStyleName(AON.CSS.aonOkButton());
+    	okButton.setText( AON.MSG.accept());
+    	okButton.ensureDebugId("acceptDialogButton");
+    	
+    	okButton.addKeyUpHandler(e -> {
+    		if (e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+				hide();
+				callback.onCancel();	
+			}
+    	});
+    	
+    	okButton.addClickHandler(e -> {
+    		hide();
+			callback.onAccept();
+    	});
+    	
+    	buttonsPanel.add(okButton);
 	}
 		
 }
