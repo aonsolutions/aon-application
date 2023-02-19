@@ -316,15 +316,26 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		}
 
 		private void fireAdd(ISalaryBuilder<?> salaryBuilder) {
-		    payments.forEach(p -> salaryBuilder.addPayment(
-			    doubleValue(p.amount), 
-			    doubleValue(p.quote), 
-			    doubleValue(p.tax), 
-			    p.description, 
-			    p.startDate, 
-			    p.endDate, 
-			    p.payment, 
-			    p.context));
+		    payments.forEach(p -> {
+			if ( p.amount == BigDecimal.ZERO )
+        			salaryBuilder.addZeroPayment(
+        			    doubleValue(p.quote), 
+        			    doubleValue(p.tax), 
+        			    p.startDate, 
+        			    p.endDate, 
+        			    p.payment, 
+        			    p.context);
+			else 
+        			salaryBuilder.addPayment(
+        			    doubleValue(p.amount), 
+        			    doubleValue(p.quote), 
+        			    doubleValue(p.tax), 
+        			    p.description, 
+        			    p.startDate, 
+        			    p.endDate, 
+        			    p.payment, 
+        			    p.context);
+		});
 		}
 	}
 
@@ -781,8 +792,9 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
+	    	payments.addPayment(BigDecimal.ZERO, bigDecimalValue(quote), bigDecimalValue(tax), null, null, null, payment, context);
 		payments.tryAddIrpf(payment.getType(), bigDecimalValue(tax));		
-		salaryBuilder.addZeroPayment(quote, tax, startDate, endDate, payment, context);
+		//salaryBuilder.addZeroPayment(quote, tax, startDate, endDate, payment, context);
 	}
 
 	@Override
