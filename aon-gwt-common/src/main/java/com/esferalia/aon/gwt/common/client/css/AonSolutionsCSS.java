@@ -297,6 +297,15 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_paste")
 	String aonIconPaste();
 	
+	@ClassName("aon_icon_table_view")
+	String aonIconTableView();
+	
+	@ClassName("aon_icon_cloud_sync")
+	String aonIconCloudSync();
+	
+	@ClassName("aon_icon_account_tree")
+	String aonIconAccountTree();
+	
 	@ClassName("aon_icon_move_down")
 	String aonIconMoveDown();
 	
