@@ -1298,7 +1298,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	private PreparedStatement embargoStmt;
 	private PreparedStatement costStmt;
 
-	private SQLContractPayment sqlContractPayment;
+	private Collection<IContractPayment> contractPayments;
 	private SQLContractDeduction sqlContractDeduction;
 	private SQLContractCost sqlContractCost;
 	private SQLContractBonus sqlContractBonus;
@@ -1411,7 +1411,8 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		initSystemDeductions();
 		initSystemPayments();
 
-		this.sqlContractPayment = new SQLContractPayment();
+		this.contractPayments = Collections.emptyList();
+
 		this.sqlContractDeduction = new SQLContractDeduction();
 		this.sqlContractCost = new SQLContractCost();
 		this.sqlContractBonus = new SQLContractBonus();
@@ -1673,15 +1674,14 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	@SuppressWarnings("unchecked")
 	public Collection<IContractPayment> getContractPayments() throws AonException {
 		try {
-			this.sqlContractPayment.close();
 			int id = getId();
 			paymentStmt.setInt(1, id);
 			ResultSet rs = paymentStmt.executeQuery();
-			this.sqlContractPayment.setResultSet(rs);
+			this.contractPayments = SQLCollections.contractPaymentsCollection(rs);
 			
 			Collection<IContractPayment> contractAgreementPayments = getAgreementPayments();
 			
-			return new CompositePayments(this.sqlContractPayment, contractAgreementPayments, /*getDefaultAgreementPayments(),*/ getCCCPayments(), getSSRegimePayments()) {
+			return new CompositePayments(this.contractPayments, contractAgreementPayments, /*getDefaultAgreementPayments(),*/ getCCCPayments(), getSSRegimePayments()) {
 				@Override
 				public Iterator<IContractPayment> iterator() {
 					Iterator<IContractPayment> iterator = super.iterator();
@@ -2178,28 +2178,28 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		contextBonus.add(bonus);
 	}
 
-	protected Collection<ISystemPayment> getDefaultAgreementPayments() {
-		
-		
-		if ( getAgreementKey() != null ) 
-			return Collections.emptyList();
-		
-		return new DelegateCollection<ISystemPayment>(agreementPayments.get(getDefaultAgreementKey())) {
-			@Override
-			public Iterator<ISystemPayment> iterator() {
-				return new DelegateIterator<ISystemPayment>(super.iterator()) {
-					@Override
-					public boolean hasNext() {
-						try {
-							return !SQLContractSalaryCalculatorContext.this.sqlContractPayment.getResultSet().isAfterLast() && super.hasNext();
-						} catch (SQLException e) {
-							return false;
-						}
-					}
-				};
-			}
-		};
-	}
+//	protected Collection<ISystemPayment> getDefaultAgreementPayments() {
+//		
+//		
+//		if ( getAgreementKey() != null ) 
+//			return Collections.emptyList();
+//		
+//		return new DelegateCollection<ISystemPayment>(agreementPayments.get(getDefaultAgreementKey())) {
+//			@Override
+//			public Iterator<ISystemPayment> iterator() {
+//				return new DelegateIterator<ISystemPayment>(super.iterator()) {
+//					@Override
+//					public boolean hasNext() {
+//						try {
+//							return !SQLContractSalaryCalculatorContext.this.sqlContractPayment.getResultSet().isAfterLast() && super.hasNext();
+//						} catch (SQLException e) {
+//							return false;
+//						}
+//					}
+//				};
+//			}
+//		};
+//	}
 
 	protected ISalaryCalculatorContext getLiquidCalculatorContext(final double solve, final double liquid) {
 
