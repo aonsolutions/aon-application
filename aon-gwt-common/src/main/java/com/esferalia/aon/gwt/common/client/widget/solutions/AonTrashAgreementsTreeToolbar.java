@@ -107,5 +107,13 @@ public class AonTrashAgreementsTreeToolbar extends Composite {
 		delete4EverButton.ensureDebugId("delete4EverButton");
 		restoreButton.ensureDebugId("restoreButton");
 	}
+
+	public void setVisibleDraft4EverButton(boolean visible) {
+		this.delete4EverButton.setVisible(visible);
+	}
+
+	public void setVisibleRestoreButton(boolean visible) {
+		this.restoreButton.setVisible(visible);
+	}
 	
 }

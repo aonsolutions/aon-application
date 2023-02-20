@@ -522,8 +522,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		if(null != agreement.getDomain()) {
 			this.contextMenu.setVisibleMoveItem( (parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue() && agreement.getDomain().intValue() != 0);
 			this.contextMenu.setVisibleMoveDownItem(agreement.getDomain().intValue() != 0 && domain != agreement.getDomain().intValue());
-			this.contextMenu.setVisibleDeleteItem(0 != agreement.getDomain().intValue());
-			this.agreements.setVisibleDraftButton(0 != agreement.getDomain().intValue());
+			this.contextMenu.setVisibleDeleteItem(0 != agreement.getDomain().intValue() && (parentDomain == null || ((parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue())));
+			this.agreements.setVisibleDraftButton(0 != agreement.getDomain().intValue() && (parentDomain == null || ((parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue())));
 			
 			// TODO: read only
 			this.agreementPreview.setReadOnly(0 == agreement.getDomain().intValue() || (parentDomain != null && parentDomain.intValue() == agreement.getDomain().intValue()));
@@ -653,6 +653,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 								
 								@Override
 								public void onAccept() {
+									agreementPreview.showLoading("Borrando convenio ...");
 									agreements.getAgreementsTree().getEnterpriseService().updateAgreementId(
 											agreement, new AsyncCallback<Void>() {
 
@@ -671,7 +672,6 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 													showAgreementContainer();
 											});
 											mainTrashAgreement.hasTrashAgreements(hasTrashAgreements -> toolbar.setTrashAgreementWarn(hasTrashAgreements));
-//											showSelectAgreementMessage();
 										}
 									});
 								}

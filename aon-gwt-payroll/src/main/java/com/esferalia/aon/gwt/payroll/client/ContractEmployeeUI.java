@@ -515,15 +515,17 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		if (null != contractData.getSsRegimen() && contractData.getSsRegimen() == 3) { 
 			employee.showElementsFreelancerTable();
 			fillContractFreelancerTable(contractData);
+			hideAfiOption();
 			showHideContractOtherData(-1);
 		} else {
 			employee.hideElementsFreelancerTable();
 			fillContractTable(contractData);
+			showAfiOption();
 			if(AonStringUtils.isNotBlank(contractData.getContractType()))
 				showHideContractOtherData(Integer.parseInt(contractData.getContractType()));
 		}
 	}
-	
+
 	private void fillContractFreelancerTable(ContractInfo contractData) {
 		// RETA
 		setSelectedValueLB(employee.ssRegimeType, contractData.getSsRegimen()+"");
@@ -763,5 +765,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected abstract AonMinimizePanel getFootPanel();
 	protected abstract MonthListBox getIDCMonthListBox();
 	protected abstract void showErrorMessage(String title, String message);
+	protected abstract void showAfiOption();
+	protected abstract void hideAfiOption();
 	
 }

@@ -8,8 +8,8 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTrashAgreementsToolbar;
 import com.esferalia.aon.gwt.payroll.client.TrashAgreements.Listener;
 import com.esferalia.aon.gwt.payroll.client.TrashAgreements.Toolbar;
@@ -25,6 +25,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -78,6 +79,7 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 	
 	private List<TrashEditionListener> editionsListener;
 	
+	private Integer parentDomain;
 	private Integer domain;
 	
 	private AgreementInfo agreementSelected;
@@ -116,6 +118,7 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 		
 		this.editionsListener = new LinkedList<>();
 		
+		this.parentDomain = null;
 		this.domain = null;
 		
 		this.agreements.addToolbar(this);
@@ -131,19 +134,33 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 		
 		showAgreementMessage();
 		
-		agreements.agreementsTree.getEnterpriseService().getDomain(
-				new AsyncCallback<Integer>() {
+		agreements.getAgreementsTree().getEnterpriseService().getParentDomain(new AsyncCallback<Integer>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert(caught.getMessage());
-					}
+			@Override
+			public void onFailure(Throwable caught) {
+				// Not use here
+			}
 
-					@Override
-					public void onSuccess(Integer result) {
-						MainTrashAgreement.this.domain = result;
-					}
-				});
+			@Override
+			public void onSuccess(Integer parentDomain) {
+				MainTrashAgreement.this.parentDomain = parentDomain;
+				agreements.agreementsTree.getEnterpriseService().getDomain(
+						new AsyncCallback<Integer>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								Window.alert(caught.getMessage());
+							}
+
+							@Override
+							public void onSuccess(Integer result) {
+								MainTrashAgreement.this.domain = result;
+							}
+						});
+			}
+		});
+		
+		
 		
 	}
 	
@@ -153,6 +170,11 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 	public void onAgreementSelected(Agreement agreement) {
 		agreementPreview.showLoading("Cargando convenio...");
 		agreementPreview.setReadOnly(true);
+		
+		if(null != agreement.getDomain()) {
+			this.agreements.setVisibleDraft4EverButton(0 != agreement.getDomain().intValue() && (parentDomain == null || ((parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue())));
+			this.agreements.setVisibleRestoreButton(0 != agreement.getDomain().intValue() && (parentDomain == null || ((parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue())));
+		}
 		
 		getAgreement(agreement.getId(), agreeementInfo -> {
 			agreementSelected = agreeementInfo;
@@ -216,16 +238,14 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 
 	@Override
 	public void onAgreementDelete4Ever(Agreement agreement) {
-		AonConfirmDialog confirmDialog = new AonConfirmDialog();
+		AonDialog confirmDialog = new AonDialog("BORRADO DEFINITIVO", new HTMLPanel(String.valueOf("\u00BF") + "Desea eliminar definitivamente el convenio  " + agreement.getDescription() + "?. Le recordamos que este convenio tiene contratos asociados, si lo elimina definitivamente estos contratos se desvincular\u00E1n de este convenio."));
 		confirmDialog.setGlassStyleName(style.dialogGlass());
 		confirmDialog.addStyleName(style.dialogZIndex());
-		confirmDialog.confirm(
-				"BORRADO", 
-				String.valueOf("\u00BF") + "Desea eliminar definitivamente el convenio  " + agreement.getDescription() + "?. Le recordamos que este convenio tiene contratos asociados, si lo elimina definitivamente estos contratos se desvincular\u00E1n de este convenio.",
-				new AonConfirmDialogCallback() {
+		confirmDialog.confirm(new AonAcceptDialogCallback() {
 
 					@Override
 					public void onAccept() {
+						agreementPreview.showLoading("Borrando convenio definitivamente ...");
 						agreements.agreementsTree.getEnterpriseService().deleteAgreement(agreement, new AsyncCallback<Void>() {
 							
 							@Override
@@ -257,16 +277,14 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 
 	@Override
 	public void onAgreementRestore(Agreement agreement) {
-		AonConfirmDialog confirmDialog = new AonConfirmDialog();
+		AonDialog confirmDialog = new AonDialog("Restaurar Convenio", new HTML(String.valueOf("\u00BF") + "Desea restaurar el convenio " + agreement.getDescription() + "?"));
 		confirmDialog.setGlassStyleName(style.dialogGlass());
 		confirmDialog.addStyleName(style.dialogZIndex());
-		confirmDialog.confirm(
-				"RESTAURAR", 
-				String.valueOf("\u00BF") + "Desea restaurar el convenio " + agreement.getDescription() + "?",
-				new AonConfirmDialogCallback() {
+		confirmDialog.confirm(new AonAcceptDialogCallback() {
 
 					@Override
 					public void onAccept() {
+						agreementPreview.showLoading("Restaurando convenio ...");
 						agreements.agreementsTree.getEnterpriseService().updateAgreementId(agreement, new AsyncCallback<Void>() {
 							
 							@Override

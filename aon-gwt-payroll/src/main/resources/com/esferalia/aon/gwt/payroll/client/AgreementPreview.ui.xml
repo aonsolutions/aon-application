@@ -272,7 +272,7 @@
 		}
 		
 		.elipsisCloseCollapseWidth{
-			width: 410px;
+			width: 450px;
 		}
 		
 		.elipsisOpenCollapseExtraWidth{
@@ -312,6 +312,7 @@
 			border: 1px solid #eee;
 			border-bottom: none;
 			cursor: pointer;
+			padding-bottom: 3px;
 		}
 		
 		.selectDate {
