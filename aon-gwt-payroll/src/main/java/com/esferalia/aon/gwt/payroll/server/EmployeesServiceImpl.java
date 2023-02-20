@@ -1654,18 +1654,14 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	public String getSalaryDraftReceipt(String domain, final SalaryDraft draft, String mime)
 			throws IllegalArgumentException {
 
+		Connection conn = null;
 		try {
-
+		    	conn = AonServletUtils.getConnection(domain);
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			ISalary salary = getSalary(draft);
+			ISalary salary = EmployeesServiceHelper.calculate(conn, draft, new SmartContractSalaryCalculator<>(new SalaryBuilder()));
 
-			try {
-				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
-			} catch (SalaryException | CanNotCreatePdfException e) {
-				e.printStackTrace();
-			}
-
-			byte reportByteArray[] = reportOut.toByteArray();
+			DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
+			byte [] reportByteArray = reportOut.toByteArray();
 
 			ByteArrayInputStream reportInput = new ByteArrayInputStream(reportByteArray);
 
@@ -1682,6 +1678,17 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 		} catch (IOException e) {
 			throw new IllegalArgumentException(e);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (SalaryException | CanNotCreatePdfException e) {
+			throw new IllegalArgumentException(e);
+		}finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException logOrIgnrore) {
+				}
+			}
 		}
 	}
 
