@@ -286,4 +286,12 @@ public class TrashAgreements extends ResizeComposite implements
 		}
 	}
 
+	public void setVisibleDraft4EverButton(boolean visible) {
+		toolbar.setVisibleDraft4EverButton(visible);
+	}
+
+	public void setVisibleRestoreButton(boolean visible) {
+		toolbar.setVisibleRestoreButton(visible);
+	}
+
 }

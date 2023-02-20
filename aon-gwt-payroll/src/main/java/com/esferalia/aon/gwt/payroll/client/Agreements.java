@@ -143,7 +143,7 @@ public class Agreements extends ResizeComposite implements AgreementsTree.Listen
 	
 	public void getAgreementsAndSelectImported(Integer agreementId, Consumer<Boolean> success) {
 		agreementsTree.clearTree();
-		getAgreements(true, s -> {
+		getAgreements(false, s -> {
 			selectImportAgreement(agreementId, su -> success.accept(true));
 			agreementsTree.scrollToTop();
 			toolbar.setEnabledViewAgreementsButton(true);
@@ -219,7 +219,7 @@ public class Agreements extends ResizeComposite implements AgreementsTree.Listen
 		TreeItem agreementTreeItem = null;
 		
 		if (AonNumberUtils.notEquals(0, agreement.getDomain()) && AonNumberUtils.equals(domain, agreement.getDomain()))
-			agreementTreeItem = new TreeItem(getNewOwnAgreementRow(description));
+			agreementTreeItem = new TreeItem(getNewOwnAgreementRow(description, agreement.getHasContract()));
 		else 
 			agreementTreeItem = new TreeItem(AgreementsTree.imageItemSafeHtml(description,
 				AgreementsTree.getImageResource(agreement, domain)));
@@ -235,12 +235,16 @@ public class Agreements extends ResizeComposite implements AgreementsTree.Listen
 		return agreementTreeItem;
 	}
 
-	private Widget getNewOwnAgreementRow(String description) {
+	private Widget getNewOwnAgreementRow(String description, boolean hasContracts) {
 		HTMLPanel panel = new HTMLPanel("");
 		panel.addStyleName(style.treeItem()); 
 		AonTableButton arrow = new AonTableButton("", AON.CSS.aonIconBack());
 		arrow.addStyleName(style.rotate());
 		Label descriptionL = new Label(description);
+		if(!hasContracts) {
+			descriptionL.setTitle("Convenio sin contratos asociados");
+			descriptionL.getElement().getStyle().setColor("orange");
+		}
 		panel.add(arrow);
 		panel.add(descriptionL);
 		return panel;

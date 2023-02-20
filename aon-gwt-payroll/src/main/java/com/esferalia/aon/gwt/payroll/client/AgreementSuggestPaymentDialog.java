@@ -186,6 +186,8 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 		payment.setType(Payment.Type.CRA_0001);
 		payment.setName(conceptDescription);
 		payment.setSalaryType(Salary.Type.SALARY);
+		payment.setIrpfExpression("_P");
+		payment.setQuoteExpression("_P");
 		
 		paymentTypeLB.setSelected(payment.getType());
 		paymentDescriptionTB.setValue(payment.getDescription());
@@ -196,6 +198,7 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	private void setPaymentType(Type type) {
 		if(null == payment) initializePayment();
 		payment.setType(type);
+		checkQuoteAndTaxedByCra();
 	}
 	
 	private void setPaymentDescription(String description) {
@@ -206,6 +209,30 @@ public abstract class AgreementSuggestPaymentDialog extends AonCustomDialog {
 	private void setPaymentExpression(String expression) {
 		if(null == payment) initializePayment();
 		payment.setExpression(expression);
+	}
+	
+	private void checkQuoteAndTaxedByCra() {
+		Type craType = paymentTypeLB.getSelected();
+		
+		if(craType.isBBCCIncluded() && !craType.isBBCCExcluded()) {
+			
+			// Importe integro
+			payment.setIrpfExpression("_P");
+			payment.setQuoteExpression("_P");
+			
+		} else if(!craType.isBBCCIncluded() && craType.isBBCCExcluded()) {
+			
+			// Exento
+			payment.setIrpfExpression("0.00");
+			payment.setQuoteExpression("0.00");
+			
+		} else if(craType.isBBCCIncluded() && craType.isBBCCExcluded()) {
+			
+			// Personalizado
+			payment.setIrpfExpression("");
+			payment.setQuoteExpression("");
+			
+		}
 	}
 	
 	// --------------------- PaymentType

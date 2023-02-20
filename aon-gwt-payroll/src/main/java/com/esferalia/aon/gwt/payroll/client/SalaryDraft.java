@@ -345,6 +345,10 @@ public class SalaryDraft extends ResizeComposite
 			// PERCENTS
 			"TARIFA_IT",
 			"TARIFA_IMS",
+			"PORCENTAJE_IT",
+			"PORCENTAJE_IMS",
+			"PORCENTAJE_MEI",
+			"PORCENTAJE_MEI_E",
 			"PORCENTAJE_IRPF", 
 			"PORCENTAJE_CGC",
 			"PORCENTAJE_CGC_E",
@@ -4061,54 +4065,54 @@ public class SalaryDraft extends ResizeComposite
 
 	private void initOpenCloseContext() {
 		
-		SpanElement closeEmployeesButton = 
+		SpanElement closeContextButton = 
 		Document.get().createSpanElement();
-		closeEmployeesButton.setInnerText("chevron_right");
-		closeEmployeesButton.setClassName("material-icons");
+		closeContextButton.setInnerText("chevron_right");
+		closeContextButton.setClassName("material-icons");
 		
-		closeEmployeesButton.getStyle().setOpacity(0.5);
-		closeEmployeesButton.getStyle().setPadding(5, Unit.PX);
-		closeEmployeesButton.getStyle().setBackgroundColor("#ddd");
-		closeEmployeesButton.getStyle().setProperty("borderTopRightRadius", "50%");
-		closeEmployeesButton.getStyle().setProperty("borderBottomRightRadius", "50%");
+		closeContextButton.getStyle().setOpacity(0.5);
+		closeContextButton.getStyle().setPadding(5, Unit.PX);
+		closeContextButton.getStyle().setBackgroundColor("#ddd");
+		closeContextButton.getStyle().setProperty("borderTopRightRadius", "50%");
+		closeContextButton.getStyle().setProperty("borderBottomRightRadius", "50%");
 		
-		closeEmployeesButton.getStyle().setPosition(Position.ABSOLUTE);
-		closeEmployeesButton.getStyle().setRight(5, Unit.PX);
-		closeEmployeesButton.getStyle().setBottom(0, Unit.PX);
+		closeContextButton.getStyle().setPosition(Position.ABSOLUTE);
+		closeContextButton.getStyle().setRight(5, Unit.PX);
+		closeContextButton.getStyle().setBottom(0, Unit.PX);
 
-		scrolledPanel.getElement().getParentElement().appendChild(closeEmployeesButton);
+		scrolledPanel.getElement().getParentElement().appendChild(closeContextButton);
 		
-		SpanElement openEmployeesButton = 
+		SpanElement openContextButton = 
 		Document.get().createSpanElement();
-		openEmployeesButton.setInnerText("chevron_left");
-		openEmployeesButton.setClassName("material-icons");
+		openContextButton.setInnerText("chevron_left");
+		openContextButton.setClassName("material-icons");
 		
-		openEmployeesButton.getStyle().setOpacity(0.5);
-		openEmployeesButton.getStyle().setPadding(5, Unit.PX);
-		openEmployeesButton.getStyle().setBackgroundColor("#ddd");
-		openEmployeesButton.getStyle().setProperty("borderTopLeftRadius", "50%");
-		openEmployeesButton.getStyle().setProperty("borderBottomLeftRadius", "50%");
+		openContextButton.getStyle().setOpacity(0.5);
+		openContextButton.getStyle().setPadding(5, Unit.PX);
+		openContextButton.getStyle().setBackgroundColor("#ddd");
+		openContextButton.getStyle().setProperty("borderTopLeftRadius", "50%");
+		openContextButton.getStyle().setProperty("borderBottomLeftRadius", "50%");
 
-		openEmployeesButton.getStyle().setPosition(Position.ABSOLUTE);
-		openEmployeesButton.getStyle().setRight(5, Unit.PX);
-		openEmployeesButton.getStyle().setBottom(0, Unit.PX);
-		openEmployeesButton.getStyle().setDisplay(Display.NONE);
+		openContextButton.getStyle().setPosition(Position.ABSOLUTE);
+		openContextButton.getStyle().setRight(5, Unit.PX);
+		openContextButton.getStyle().setBottom(0, Unit.PX);
+		openContextButton.getStyle().setDisplay(Display.NONE);
 
-		scrolledPanel.getElement().getParentElement().appendChild(openEmployeesButton);
+		scrolledPanel.getElement().getParentElement().appendChild(openContextButton);
 
-		InlineLabel.wrap(openEmployeesButton).addClickHandler(e -> {
+		InlineLabel.wrap(openContextButton).addClickHandler(e -> {
 		    drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 275);
-			openEmployeesButton.getStyle().setDisplay(Display.NONE);
-			closeEmployeesButton.getStyle().setDisplay(Display.INITIAL);
+			openContextButton.getStyle().setDisplay(Display.NONE);
+			closeContextButton.getStyle().setDisplay(Display.INITIAL);
 		});
 
-		InlineLabel.wrap(closeEmployeesButton).addClickHandler(e -> {
+		InlineLabel.wrap(closeContextButton).addClickHandler(e -> {
 		    	drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 0);
-			closeEmployeesButton.getStyle().setDisplay(Display.NONE);
+			closeContextButton.getStyle().setDisplay(Display.NONE);
 			new Timer(){
 				@Override
 				public void run() {
-					openEmployeesButton.getStyle().setDisplay(Display.INITIAL);
+					openContextButton.getStyle().setDisplay(Display.INITIAL);
 				}
 			}.schedule(500);
 			
