@@ -180,10 +180,9 @@ public class TrashAgreements extends ResizeComposite implements
 		TreeItem agreementTreeItem = null;
 		
 		if (AonNumberUtils.notEquals(0, agreement.getDomain()) && AonNumberUtils.equals(domain, agreement.getDomain()))
-			agreementTreeItem = new TreeItem(getNewOwnAgreementRow(description));
+			agreementTreeItem = new TreeItem(getNewOwnAgreementRow(description, agreement.getHasContract()));
 		else 
-			agreementTreeItem = new TreeItem(TrashAgreementsTree.imageItemSafeHtml(description,
-					TrashAgreementsTree.getImageResource(agreement, domain)));
+			agreementTreeItem = new TreeItem(TrashAgreementsTree.imageItemSafeHtml(description, TrashAgreementsTree.getImageResource(agreement, domain)));
 
 		agreementTreeItem.setUserObject(agreement);
 		
@@ -197,12 +196,18 @@ public class TrashAgreements extends ResizeComposite implements
 	}
 
 
-	private Widget getNewOwnAgreementRow(String description) {
+	private Widget getNewOwnAgreementRow(String description, boolean hasContracts) {
 		HTMLPanel panel = new HTMLPanel("");
 		panel.addStyleName(style.treeItem()); 
 		AonTableButton arrow = new AonTableButton("", AON.CSS.aonIconBack());
 		arrow.addStyleName(style.rotate());
 		Label descriptionL = new Label(description);
+		if(!hasContracts) {
+			descriptionL.setTitle("Convenio sin contratos asociados");
+			descriptionL.getElement().getStyle().setColor("green");
+		} else
+			descriptionL.setTitle("Convenio con contratos asociados");
+		
 		panel.add(arrow);
 		panel.add(descriptionL);
 		return panel;

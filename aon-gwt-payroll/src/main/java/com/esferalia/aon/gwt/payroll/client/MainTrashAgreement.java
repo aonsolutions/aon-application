@@ -238,40 +238,78 @@ public abstract class MainTrashAgreement extends Composite implements Listener,
 
 	@Override
 	public void onAgreementDelete4Ever(Agreement agreement) {
-		AonDialog confirmDialog = new AonDialog("BORRADO DEFINITIVO", new HTMLPanel(String.valueOf("\u00BF") + "Desea eliminar definitivamente el convenio  " + agreement.getDescription() + "?. Le recordamos que este convenio tiene contratos asociados, si lo elimina definitivamente estos contratos se desvincular\u00E1n de este convenio."));
-		confirmDialog.setGlassStyleName(style.dialogGlass());
-		confirmDialog.addStyleName(style.dialogZIndex());
-		confirmDialog.confirm(new AonAcceptDialogCallback() {
-
-					@Override
-					public void onAccept() {
-						agreementPreview.showLoading("Borrando convenio definitivamente ...");
-						agreements.agreementsTree.getEnterpriseService().deleteAgreement(agreement, new AsyncCallback<Void>() {
-							
-							@Override
-							public void onSuccess(Void result) {
-								MainTrashAgreement.this.agreements.reloadAgreements(finish -> {
-									if(MainTrashAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
-										showAgreementMessage();
-									else
-										showAgreementContainer();
-								});
-							}
-							
-							@Override
-							public void onFailure(Throwable caught) {
-								// Not use here
-							}
-							
-						});
+		if(agreement.getHasContract()) {
+			AonDialog confirmDialog = new AonDialog("BORRADO DEFINITIVO", new HTMLPanel(String.valueOf("\u00BF") + "Desea eliminar definitivamente el convenio  " + agreement.getDescription() + "?. Le recordamos que este convenio tiene contratos asociados, si lo elimina definitivamente estos contratos se desvincular\u00E1n de este convenio."));
+			confirmDialog.setGlassStyleName(style.dialogGlass());
+			confirmDialog.addStyleName(style.dialogZIndex());
+			confirmDialog.confirm(new AonAcceptDialogCallback() {
+	
+						@Override
+						public void onAccept() {
+							agreementPreview.showLoading("Borrando convenio definitivamente ...");
+							agreements.agreementsTree.getEnterpriseService().deleteAgreement(agreement, new AsyncCallback<Void>() {
+								
+								@Override
+								public void onSuccess(Void result) {
+									MainTrashAgreement.this.agreements.reloadAgreements(finish -> {
+										if(MainTrashAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+											showAgreementMessage();
+										else
+											showAgreementContainer();
+									});
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									// Not use here
+								}
+								
+							});
+						}
+	
+						@Override
+						public void onCancel() {
+							// Not use here
+						}
 					}
-
-					@Override
-					public void onCancel() {
-						// Not use here
+			);
+		
+		} else {
+			AonDialog confirmDialog = new AonDialog("BORRADO DEFINITIVO", new HTMLPanel(String.valueOf("\u00BF") + "Desea eliminar definitivamente el convenio  " + agreement.getDescription() + "?"));
+			confirmDialog.setGlassStyleName(style.dialogGlass());
+			confirmDialog.addStyleName(style.dialogZIndex());
+			confirmDialog.confirm(new AonAcceptDialogCallback() {
+	
+						@Override
+						public void onAccept() {
+							agreementPreview.showLoading("Borrando convenio definitivamente ...");
+							agreements.agreementsTree.getEnterpriseService().deleteAgreement(agreement, new AsyncCallback<Void>() {
+								
+								@Override
+								public void onSuccess(Void result) {
+									MainTrashAgreement.this.agreements.reloadAgreements(finish -> {
+										if(MainTrashAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+											showAgreementMessage();
+										else
+											showAgreementContainer();
+									});
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									// Not use here
+								}
+								
+							});
+						}
+	
+						@Override
+						public void onCancel() {
+							// Not use here
+						}
 					}
-				}
-		);
+			);
+		}
 		
 	}
 
