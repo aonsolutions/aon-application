@@ -125,15 +125,15 @@ public class AonNordigen {
 	
 	public static NordigenAgreement createAgreement(NordigenAccessToken token, String institutionId) throws Exception {
 		try {
-			NordigenInstitution institution = getInstitution(token, institutionId);
+//			NordigenInstitution institution = getInstitution(token, institutionId);
 			Integer maxDays = 90;
 			// BORRAR ESTA CONDICIÓN SI MUCHAS INSTITUCIONES DAN PROBLEMAS. QUEDARÁN TODOS LOS ACCESOS A 90 DÍAS
-			if (institution != null &&
-					institution.getTransactionTotalDays() != null &&
-					institution.getTransactionTotalDays() > 0 &&
-					!isBlacklistedInstitution(institution)) {
-				maxDays = institution.getTransactionTotalDays();
-			}
+//			if (institution != null &&
+//					institution.getTransactionTotalDays() != null &&
+//					institution.getTransactionTotalDays() > 0 &&
+//					!isBlacklistedInstitution(institution)) {
+//				maxDays = institution.getTransactionTotalDays();
+//			}
 			JSONObject json = NordigenAPI.createEndUserAgreement(token.getAccess(), maxDays, 90, null, institutionId);
 			return NordigenAgreementJSON.fromJSON(json);
 		} catch (NordigenException e) {
