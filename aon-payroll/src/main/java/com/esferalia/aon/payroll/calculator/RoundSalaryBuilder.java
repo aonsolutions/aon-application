@@ -51,6 +51,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	
 	private static final BigDecimal THIRTY = BigDecimal.valueOf(30.00);
 	
+	
 	private static class Deductions {
 		
 		private static class Deduction{
@@ -205,7 +206,8 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	}
 
 	private static class Payments {
-		
+	    	private static final String ZERO_PAYMENT = "ZERO_PAYMENT";
+	    
 		private static class Irpf{
 			private BigDecimal base;
 			private PaymentType type; 
@@ -317,7 +319,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 		private void fireAdd(ISalaryBuilder<?> salaryBuilder) {
 		    payments.forEach(p -> {
-			if ( p.amount == BigDecimal.ZERO )
+			if ( ZERO_PAYMENT.equals(p.description) )
         			salaryBuilder.addZeroPayment(
         			    doubleValue(p.quote), 
         			    doubleValue(p.tax), 
@@ -792,7 +794,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
-	    	payments.addPayment(BigDecimal.ZERO, bigDecimalValue(quote), bigDecimalValue(tax), null, null, null, payment, context);
+	    	payments.addPayment(BigDecimal.ZERO, bigDecimalValue(quote), bigDecimalValue(tax), Payments.ZERO_PAYMENT, startDate, endDate, payment, context);
 		payments.tryAddIrpf(payment.getType(), bigDecimalValue(tax));		
 		//salaryBuilder.addZeroPayment(quote, tax, startDate, endDate, payment, context);
 	}
