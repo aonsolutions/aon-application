@@ -544,6 +544,7 @@ public class JooqEmployeeAFI {
 			fct.put("dayHoliday", holidyaEndDateCalendar.get(Calendar.DAY_OF_MONTH));
 			fct.put("monthHoliday", holidyaEndDateCalendar.get(Calendar.MONTH) + 1);
 			fct.put("yearHoliday", holidyaEndDateCalendar.get(Calendar.YEAR));
+			fct.put("saa", "001");
 		}
 		
 		//FAB

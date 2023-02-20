@@ -753,7 +753,7 @@ public final class EmployeeAFIGeneration {
 		String saa;
 		String reserved2;
 		
-		public FCT ( String holidayDay, String holidayMonth, String holidayYear ) {
+		public FCT ( String holidayDay, String holidayMonth, String holidayYear, String saa ) {
 			this.fctHeader = "FCT";
 			this.reserved6 = AonStringUtils.leftPad("", 6, '0');
 			this.holidayDay = AonStringUtils.leftPad(holidayDay, 2, '0');
@@ -761,7 +761,7 @@ public final class EmployeeAFIGeneration {
 			this.holidayYear = AonStringUtils.leftPad(holidayYear, 4, '0');
 			this.reserved32 = AonStringUtils.leftPad("", 32, '0');
 			this.reserved16 = AonStringUtils.leftPad("", 16, ' ');
-			this.saa = AonStringUtils.leftPad("", 3, '0');
+			this.saa = AonStringUtils.leftPad(saa, 3, '0');
 			this.reserved2 = AonStringUtils.leftPad("", 2, ' ');
 		}
 
@@ -1015,7 +1015,8 @@ public final class EmployeeAFIGeneration {
 				FCT fct = new FCT(
 						fctJson.get("dayHoliday").toString(),
 						fctJson.get("monthHoliday").toString(),
-						fctJson.get("yearHoliday").toString());
+						fctJson.get("yearHoliday").toString(),
+						fctJson.get("saa").toString());
 				
 				mb = new MB(fab, dam, fct);
 			} else

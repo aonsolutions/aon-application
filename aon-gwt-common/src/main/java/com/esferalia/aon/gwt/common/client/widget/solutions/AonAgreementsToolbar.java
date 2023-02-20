@@ -111,7 +111,7 @@ public class AonAgreementsToolbar extends Composite {
 		title.addStyleName(style.title());
 		headerSection.add(title);
 		
-		importButton = new AonToolbarButton("Importar Convenio", AON.CSS.aonIconImport() );
+		importButton = new AonToolbarButton("Importar Convenio", AON.CSS.aonIconCloudImport() );
 		importButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
