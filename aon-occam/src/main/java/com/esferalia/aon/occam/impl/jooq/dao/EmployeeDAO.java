@@ -180,6 +180,9 @@ public class EmployeeDAO {
 		RegistryRecord personRecord = 
 		getPerson(dslContext, domainId, employee);
 		
+		// Check person full name
+		checkPersonName(dslContext, personRecord.get(REGISTRY.ID), employee);
+		
 		WorkplaceRecord workplaceRecord = 
 		getWorpPlace(dslContext, domainId, enterpriseCccRecord.getEnterpriseActivity(), employee);
 		
@@ -559,6 +562,25 @@ public class EmployeeDAO {
 			
 			return registryRecord;
 
+		});
+	}
+	
+	private static void checkPersonName(DSLContext dslContext, Integer personRegistry, Employee employee) {
+		PersonRecord personRecord = dslContext.selectFrom(PERSON).where(PERSON.REGISTRY.eq(personRegistry)).fetchOne();
+		
+		employee.getName().ifPresent(fullName -> {
+			getName(fullName).ifPresent(name -> {
+				if (!AonStringUtils.equalsIgnoreCase(personRecord.getName(), name))
+					dslContext.update(PERSON).set(PERSON.NAME, name).where(PERSON.REGISTRY.eq(personRecord.get(PERSON.REGISTRY))).execute();
+			});
+			getFirstSurname(fullName).ifPresent(firstSurname -> {
+				if (!AonStringUtils.equalsIgnoreCase(personRecord.getFirstSurname(), firstSurname))
+					dslContext.update(PERSON).set(PERSON.FIRST_SURNAME, firstSurname).where(PERSON.REGISTRY.eq(personRecord.get(PERSON.REGISTRY))).execute();
+			});
+			getSecondSurname(fullName).ifPresent(secondSurname -> {
+				if (!AonStringUtils.equalsIgnoreCase(personRecord.getSecondSurname(), secondSurname))
+					dslContext.update(PERSON).set(PERSON.SECOND_SURNAME, secondSurname).where(PERSON.REGISTRY.eq(personRecord.get(PERSON.REGISTRY))).execute();
+			});
 		});
 	}
 	
@@ -1404,9 +1426,9 @@ public class EmployeeDAO {
 		String names [] = name.split("\\s+");
 		switch (names.length) {
 		case 3:
-			return Optional.of(names[2]);
+			return Optional.of(names[0]);
 		case 4:
-			return Optional.of(String.format("%s %s", names[2], names[3]) );
+			return Optional.of(String.format("%s %s", names[0], names[1]) );
 		default:
 			return Optional.of(name);
 		}
@@ -1416,8 +1438,9 @@ public class EmployeeDAO {
 		String names [] = name.split("\\s+");
 		switch (names.length) {
 		case 3:
+			return Optional.of(names[1]);
 		case 4:
-			return Optional.of(names[0]);
+			return Optional.of(names[2]);
 		default:
 			return Optional.empty();
 		}
@@ -1427,8 +1450,9 @@ public class EmployeeDAO {
 		String names [] = name.split("\\s+");
 		switch (names.length) {
 		case 3:
+			return Optional.of(names[2]);
 		case 4:
-			return Optional.of(names[1]);
+			return Optional.of(names[3]);
 		default:
 			return Optional.empty();
 		}
