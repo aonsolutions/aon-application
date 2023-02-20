@@ -26,6 +26,11 @@ To apply the new group membership, log out of the server and back in, or type th
 su - ${USER}
 ```
 - #### Start and Setup MySQL8
+If local folder for databases is not created:
+``` bash
+sudo mkdir /var/lib/mysql
+```
+
 Run mysql:8  Docker 
 ``` bash
 docker run -p 3306:3306 --name mysql -v /var/lib/mysql:/var/lib/mysql  -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -e MYSQL_USER=dbuser -e MYSQL_PASSWORD=serubd2000 -d mysql:8 --sql-mode="0" --default-authentication-plugin=mysql_native_password
