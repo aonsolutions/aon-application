@@ -330,7 +330,8 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					connection, startDate, endDate, endDate, contract);
 			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
 			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
-			calculator.setSalaryBuilder(jooqSalaryBuilder);
+			RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder, round(2));
+			calculator.setSalaryBuilder(roundSalaryBuilder);
 			calculator.calculate(ctx);
 			jooqSalaryBuilder.execute();
 			startDate = add(endDate, DAY_OF_MONTH, 1);
@@ -481,6 +482,108 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(12 + 3, delay.getTotalPayment(), DELTA);
 		Assert.assertEquals(12 + 3, delay.getCommonBase(), DELTA );
 		Assert.assertEquals(12 + 3, delay.getIrpfBase(), DELTA);
+		
+
+	}
+
+	@Test
+	public void testDelaysExtrasZero() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		PaymentConceptRecord conceptP = addConcept(aonContext, "P");
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{
+						this.expression = "P";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "P";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, 
+				},
+				new Payment[] {
+					new Payment() {
+						{
+							this.concept = conceptP.getId();
+							this.expression = "SALARIO * DIAS_TRABAJADOS/DIAS_MES";
+						}
+					},
+					new Payment() {
+						{
+							this.concept = conceptP.getId();
+							this.expression = "TRACE('SALARIO:%f\r\n',(SALARIO * DIAS_TRABAJADOS/DIAS_MES)); 0.00";
+						}
+					}
+				},
+				new HashMap<String,String>(){
+					{
+						put("SALARIO", "1000.00");
+					}
+				});
+
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {}, 
+				new String[] {}, 
+				category);
+		//@formatter:on
+		
+		
+
+		Date startDate = getFirstDayOfMonth(contract.getStartDate());
+		Date endDate = getLastDayOfMonth(startDate);
+
+		for ( int i = 0 ; i < 10 ; i++ ) {
+			ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+					connection, startDate, endDate, endDate, contract);
+			SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<ISalary>();
+			JooqSalaryBuilder<ISalary> jooqSalaryBuilder = new JooqSalaryBuilder<ISalary>(connection);
+			RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(jooqSalaryBuilder, round(2));
+			calculator.setSalaryBuilder(roundSalaryBuilder);
+			calculator.calculate(ctx);
+			jooqSalaryBuilder.execute();
+			startDate = add(endDate, DAY_OF_MONTH, 1);
+			endDate = getLastDayOfMonth(startDate);
+		}
+		
+				
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(CONTRACT.getName() + "." + CONTRACT.ID.getName(), contract.getId());
+		SQLContractDelayCalculatorContext delayCtx = new SQLContractDelayCalculatorContext(connection, 
+				contract.getStartDate(), 
+				add(startDate, DAY_OF_MONTH, -1), 
+				endDate, 
+				criteria);
+		delayCtx.next();
+		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
+		delayCalculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>(new SalaryBuilder(), round(2)));
+		Salary delay = delayCalculator.calculate(delayCtx);
+		
+		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
+				.getSalaryPayments()) {
+			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
+					+ " (" + payment.getExpression() + ")");
+		}
+		
+		Assert.assertEquals(0.00, delay.getTotalPayment(), DELTA);
+		Assert.assertEquals(0.00, delay.getCommonBase(), DELTA );
+		Assert.assertEquals(0.00, delay.getIrpfBase(), DELTA);
 		
 
 	}
