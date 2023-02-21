@@ -19,6 +19,8 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.config.InsertTreasuryAndMarketingModule;
+import net.aonsolutions.db.up2date.security.UdpatePacksDomainApp;
 import net.aonsolutions.db.up2date.security.UdpatePortalConectaUsers;
 import net.aonsolutions.db.up2date.tgss.MEITrainingRemoveUndo;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
@@ -322,6 +324,8 @@ public class Up2Date {
 		    //AgreementEmptyTrash.AGREEMENTEMPTYTRASH,
     		
 	    	UdpatePortalConectaUsers.UPDATE_PORTAL_CONECTA_USERS,
+	    	UdpatePacksDomainApp.UPDATE_PACKS_DOMAIN_APP,
+	    	InsertTreasuryAndMarketingModule.INSERT_TREASURY_AND_MARKETING_MODULE,
 	    	
 	    	//Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE

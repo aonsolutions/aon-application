@@ -16,7 +16,7 @@ import net.aonsolutions.db.up2date.Update;
 
 public class InsertTreasuryAndMarketingModule implements Update {
 
-	public static final InsertTreasuryAndMarketingModule INSERT_TREASURY_AND_MARKETING_MOUDLE = new InsertTreasuryAndMarketingModule();
+	public static final InsertTreasuryAndMarketingModule INSERT_TREASURY_AND_MARKETING_MODULE = new InsertTreasuryAndMarketingModule();
 
 	private InsertTreasuryAndMarketingModule() {
 	
@@ -41,13 +41,13 @@ public class InsertTreasuryAndMarketingModule implements Update {
 				.set(DOMAIN_APPLICATION_MODULE.MODULE, (byte) 3)
 				.execute());
 		
-		getCrmDomainApplicationModules(dslContext)
-		.forEach(dam -> 
-			dslContext.insertInto(DOMAIN_APPLICATION_MODULE)
-				.set(DOMAIN_APPLICATION_MODULE.DOMAIN, dam.getDomain())
-				.set(DOMAIN_APPLICATION_MODULE.DOMAIN_APPLICATION, dam.getDomainApplication())
-				.set(DOMAIN_APPLICATION_MODULE.MODULE, (byte) 0)
-				.execute());
+//		getCrmDomainApplicationModules(dslContext)
+//		.forEach(dam -> 
+//			dslContext.insertInto(DOMAIN_APPLICATION_MODULE)
+//				.set(DOMAIN_APPLICATION_MODULE.DOMAIN, dam.getDomain())
+//				.set(DOMAIN_APPLICATION_MODULE.DOMAIN_APPLICATION, dam.getDomainApplication())
+//				.set(DOMAIN_APPLICATION_MODULE.MODULE, (byte) 0)
+//				.execute());
 	}
 	
 	private Stream<DomainApplicationModule> getManagementDomainApplicationModules(DSLContext dslContext) {
@@ -61,16 +61,16 @@ public class InsertTreasuryAndMarketingModule implements Update {
 				.setModule(r.getValue(DOMAIN_APPLICATION_MODULE.MODULE)));
 	}
 	
-	private Stream<DomainApplicationModule> getCrmDomainApplicationModules(DSLContext dslContext) {
-		return dslContext.select()
-			.from(DOMAIN_APPLICATION_MODULE)
-			.where(DOMAIN_APPLICATION_MODULE.MODULE.eq((byte) 1))
-			.stream().map(r -> new DomainApplicationModule()
-				.setId(r.getValue(DOMAIN_APPLICATION_MODULE.ID))
-				.setDomain(r.getValue(DOMAIN_APPLICATION_MODULE.DOMAIN))
-				.setDomainApplication(r.getValue(DOMAIN_APPLICATION_MODULE.DOMAIN_APPLICATION))
-				.setModule(r.getValue(DOMAIN_APPLICATION_MODULE.MODULE)));
-	}
+//	private Stream<DomainApplicationModule> getCrmDomainApplicationModules(DSLContext dslContext) {
+//		return dslContext.select()
+//			.from(DOMAIN_APPLICATION_MODULE)
+//			.where(DOMAIN_APPLICATION_MODULE.MODULE.eq((byte) 1))
+//			.stream().map(r -> new DomainApplicationModule()
+//				.setId(r.getValue(DOMAIN_APPLICATION_MODULE.ID))
+//				.setDomain(r.getValue(DOMAIN_APPLICATION_MODULE.DOMAIN))
+//				.setDomainApplication(r.getValue(DOMAIN_APPLICATION_MODULE.DOMAIN_APPLICATION))
+//				.setModule(r.getValue(DOMAIN_APPLICATION_MODULE.MODULE)));
+//	}
 	
 	public class DomainApplicationModule {
 		Integer id;
