@@ -759,6 +759,12 @@ public interface Properties {
 		Property<Byte> getSystemProperty();
 	}
 	
+	public interface CnoProperties{
+		Property<Integer> getIdProperty();
+		Property<String> getCodeProperty();
+		Property<String> getTitleProperty();
+	}
+	
 	public interface IAEProperties {
 		Property<Integer> getIdProperty();
 		Property<String> getSectionProperty();

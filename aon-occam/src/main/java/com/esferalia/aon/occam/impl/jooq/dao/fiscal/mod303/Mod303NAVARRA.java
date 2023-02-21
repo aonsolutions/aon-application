@@ -9,6 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
@@ -36,8 +37,8 @@ abstract class Mod303NAVARRA extends Mod303Declaration {
 	}
 	
 	@Override
-	protected Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303) {
-		final Set<Integer> invoices = new HashSet<>();
+	protected Set<Alcatraz> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303) {
+		final Set<Alcatraz> invoices = new HashSet<>();
 		Stream<VatContext> stream = null;
 		if (mod303.isDiffCalculationMandatory() ) {
 			mod303.setGenerateFromYearStart(true);
@@ -51,7 +52,12 @@ abstract class Mod303NAVARRA extends Mod303Declaration {
 			.filter(vc -> vc.isSales())
 			.forEach( vc -> {
 				add(Mod303Key.NF_194, mod303, vc.getBase());
-				invoices.add(vc.getInvoice());
+				invoices.add(
+					new Alcatraz()
+						.setInvoice(vc.getInvoice())
+						.setFinance(vc.getFinance())
+						.setFinanceTracking(vc.getFinanceTracking()));
+
 		});
 		return invoices;
 	}

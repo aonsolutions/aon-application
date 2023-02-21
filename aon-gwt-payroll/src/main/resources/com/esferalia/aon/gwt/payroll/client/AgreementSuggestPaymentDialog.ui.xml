@@ -57,6 +57,17 @@
 		
 		.widthAll { width: 100%; }
 		
+		.dialogGlass {
+			z-index: 7;
+			background-color: #000;
+			opacity: 0.2;
+			filter: opacity(45%);
+		}
+		
+		.dialogZIndex {
+			z-index: 8;
+		}
+		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form}">

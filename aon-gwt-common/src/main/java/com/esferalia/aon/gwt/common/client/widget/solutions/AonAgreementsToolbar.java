@@ -57,7 +57,7 @@ public class AonAgreementsToolbar extends Composite {
 	
 	private AonButton importButton;
 	private AonButton settingsButton;
-	private AonButton trashListButton;
+	private AonButtonBadge trashListButton;
 	
 	private boolean agreementTreeShowed = true;
 	
@@ -80,8 +80,8 @@ public class AonAgreementsToolbar extends Composite {
 	}
 	
 	public void setTrashAgreementWarn(Boolean hasTrashAgreements) {
-		if(hasTrashAgreements) trashListButton.addStyleName(style.redColor());
-		else trashListButton.removeStyleName(style.redColor());
+		if(hasTrashAgreements) trashListButton.addBagde();
+		else trashListButton.removeBadge();
 	}
 	
 	private void createToolbar() {
@@ -132,7 +132,7 @@ public class AonAgreementsToolbar extends Composite {
 		});
 		toolsSection.add(settingsButton);
 		
-		trashListButton = new AonToolbarButton("Papelera Convenios", AON.CSS.aonIconTrashList() );
+		trashListButton = new AonButtonBadge("Papelera Convenios", AON.CSS.aonIconTrashList(), false);
 		trashListButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

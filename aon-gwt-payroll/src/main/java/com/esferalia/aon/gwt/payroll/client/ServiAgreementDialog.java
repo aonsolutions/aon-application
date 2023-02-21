@@ -42,6 +42,8 @@ public abstract class ServiAgreementDialog extends AonCustomDialog {
 	interface MyStyle extends CssResource {
 		String flex();
 		String loadingPanel();
+		String dialogGlass();
+		String dialogZIndex();
 	}
 	
 	@UiField
@@ -120,7 +122,10 @@ public abstract class ServiAgreementDialog extends AonCustomDialog {
 				@Override
 				public void onFailure(Throwable caught) {
 					AonDialog errorDialog = new AonDialog("Error obtenci\u00f3n XML", new HTMLPanel(caught.getMessage()));
+					errorDialog.setGlassStyleName(style.dialogGlass());
+					errorDialog.addStyleName(style.dialogZIndex());
 					errorDialog.warning();
+					hide();
 				}
 
 				@Override

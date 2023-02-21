@@ -59,7 +59,6 @@ public class AccountJournalReportExcelPrint extends HttpServlet {
 			AccountEntryParams params = JsonParser.parse(accountEntryParams);
 			
 			Date start = new Date();
-			System.out.println( "Journal Report Start " );
 			
 			AonConfiguration config = AON.getConfiguration(domainName, domainId, user);
 			Company company = config.getCompany();
@@ -75,7 +74,6 @@ public class AccountJournalReportExcelPrint extends HttpServlet {
 			resp.flushBuffer();
 			Date end = new Date();
 			stream.close();
-			System.out.println( "Journal Report END " + (end.getTime() - start.getTime()) + " ms." );;
 		} catch (Throwable e) {
 			throw new ServletException(e);
 		}

@@ -17,6 +17,7 @@ import org.mvel2.MVEL;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.AccountEntry;
 import com.esferalia.aon.occam.api.model.AccountPeriod;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.Filter.FiscalModelFilter;
 import com.esferalia.aon.occam.api.model.accounting.AccSctiptMVELContext;
 import com.esferalia.aon.occam.api.model.accounting.AccountEntryDetailExpressionScript;
@@ -39,9 +40,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelValidation;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod303MVELContext;
-import com.esferalia.aon.occam.impl.jooq.dao.OLDVATDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -145,9 +147,10 @@ public class Mod303DAO extends FiscalModelDAO {
 			mod303.ensureDetail(mod303.getProrateTypeKey()).setDescription(prorrateInfo.getRight());
 			if (mod303.getPeriod().isLastPeriod() && (mod303.hasProrate() || mod303.hasPreviousProrate())) {
 				mod303.ensureDetail(mod303.getPreviousProrateKey()).setAmount(prorrateInfo.getLeft());
-				Date fromDate = AonDateUtils.getYearFirstDay(mod303.getYear());
-				Date toDate = AonDateUtils.getYearLastDay(mod303.getYear());
-				OLDVATDAO.getVatBreakdown(ctx,fromDate,toDate,mod303)
+				AccountingReportParams params = new AccountingReportParams()
+						.setFromDate(AonDateUtils.getYearFirstDay(mod303.getYear()))
+						.setToDate(AonDateUtils.getYearLastDay(mod303.getYear()));
+				VATDAO.getVatBreakdown(ctx,params )
 					.filter( VatContext::isSales )
 					.forEach( vat -> {
 						if (!vat.isVatSurchargeRegime() && vat.getVatRegime() != VATRegime.EXEMPT) {
@@ -178,7 +181,7 @@ public class Mod303DAO extends FiscalModelDAO {
 
 	public static Mod303 create(AONContext ctx,Mod303 mod303) {
 		Mod303Declaration dec = Mod303Declaration.getInstance(mod303);
-		Set<Integer> invoices = dec.createOnTheFly(ctx,mod303);
+		Set<Alcatraz> invoices = dec.createOnTheFly(ctx,mod303);
 		dec.prorrateRegularization(ctx,mod303);
 		calculate(mod303);
 		dec.specificInitialization(mod303);

@@ -20,7 +20,6 @@ import com.esferalia.aon.gwt.payroll.shared.ContractConcepts;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
 import com.esferalia.aon.gwt.payroll.shared.Payment.Type;
 import com.esferalia.aon.gwt.payroll.shared.Result;
-import com.esferalia.aon.gwt.payroll.shared.SpecialExpresion;
 import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.Scheduler;
@@ -93,7 +92,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 	AonToolbarSmallButton expresssionVisibilityBtn;
 
 	@UiField
-	TextArea paymentExpressionTB;
+	ExpressionCodeArea paymentExpressionCA;
 	
 	@UiField
 	DisclosurePanel advancePanel;
@@ -191,7 +190,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		showCloseButton(true);
 		getFooterButtons();
 		
-		this.startDate = startDate;
+		this.startDate = startDate == null ? new Date() : startDate;
 		
 		this.payment = payment;
 		this.extra = extra;
@@ -203,11 +202,15 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		advancePanel.addOpenHandler(e -> {
 			showHideAdvanceOptions();
 			this.setPopupPosition(this.getAbsoluteLeft(), this.getAbsoluteTop() - 80);
+			paymentExpressionCA.setAdvancedMode(!paymentExpressionCA.getAdvancedMode());
 		});
 		advancePanel.addCloseHandler(e -> {
 			showHideAdvanceOptions();
 			this.setPopupPosition(this.getAbsoluteLeft(), this.getAbsoluteTop() + 80);
+			paymentExpressionCA.setAdvancedMode(!paymentExpressionCA.getAdvancedMode());
 		});
+
+//		paymentExpressionCA.setAdvancedMode(false);
 		
 		getEnableDisableButton(enterpriseTaxed, false);
 		enterpriseTaxed.addClickHandler(e -> {
@@ -229,10 +232,8 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 			@Override
 			public void onSuccess(ContractConcepts contractConceptsIn) {
 				contractConcepts = contractConceptsIn;
-
 				providedPayment();
 				fillPayment();
-				
 				checkDatesPanelShown();
 				
 				if(null != extra && !extra.isDeleted()) fillExtra();
@@ -315,7 +316,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	private void providedPayment() {
 		initializePaymentType();
-		initializeSB(paymentConceptSB, paymentDescriptionTB, paymentExpressionTB);
+		initializeSB(paymentConceptSB, paymentDescriptionTB, paymentExpressionCA);
 		initializeTaxed();
 		initializeQuote();
 	}
@@ -535,21 +536,24 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		
 		paymentConceptSB.setValue(this.payment.getName());
 		paymentDescriptionTB.setValue(this.payment.getDescription());
-		paymentExpressionTB.setValue(getParsedExpression(this.payment.getExpression()));
+		paymentExpressionCA.setText(this.payment.getExpression());
+//		paymentExpressionCA.setText(getParsedExpression(this.payment.getExpression()));
 		checkSeniorityExpresion();
 		expresssionVisibilityBtn.addClickHandler(e -> {
 			if(null == contextProvider)
 				contextProvider = new ContextProvider();
 			
 			final FxDialog fxDialog = new FxDialog(contextProvider);
-			fxDialog.setExpression(getExpression(this.payment.getExpression()));
+			fxDialog.setExpression(this.payment.getExpression());
+//			fxDialog.setExpression(getExpression(this.payment.getExpression()));
 			fxDialog.center();
 			fxDialog.show();
 		
 			fxDialog.addCloseHandler(ev -> {
 				if (fxDialog.isAccepted()) {
 					payment.setExpression(fxDialog.getExpression());
-					paymentExpressionTB.setValue(getParsedExpression(payment.getExpression()));
+					paymentExpressionCA.setText(payment.getExpression());
+//					paymentExpressionCA.setText(getParsedExpression(payment.getExpression()));
 				}
 			});
 		});
@@ -575,13 +579,13 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		if(isActiveToggleButton(enterpriseTaxed)) paymentTaxedExpression.setValue("BASE_CTA_ESP=_P");
 	}
 
-	private String getParsedExpression(String expression) {
-		return SpecialExpresion.parse(expression).getInput();
-	}
-	
-	private String getExpression(String expression) {
-		return SpecialExpresion.parse(expression).getExpression();
-	}
+//	private String getParsedExpression(String expression) {
+//		return SpecialExpresion.parse(expression).getInput();
+//	}
+//	
+//	private String getExpression(String expression) {
+//		return SpecialExpresion.parse(expression).getExpression();
+//	}
 	
 	private void checkSeniorityExpresion() {
 		String expression = this.payment.getExpression();
@@ -659,7 +663,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 
 	private void showHideAdvanceOptions() {
 		expresssionVisibilityBtn.setVisible(advancePanel.isOpen());
-		paymentExpressionTB.setValue(advancePanel.isOpen() ? getExpression(this.payment.getExpression()) : getParsedExpression(this.payment.getExpression()));
+//		paymentExpressionCA.setText(advancePanel.isOpen() ? getExpression(this.payment.getExpression()) : getParsedExpression(this.payment.getExpression()));
 	}
 	
 	private void createPayment() {
@@ -681,7 +685,7 @@ public abstract class AgreementPaymentEditor extends AonCustomDialog {
 		}
 		
 		payment.setDescription(paymentDescriptionTB.getValue());
-		payment.setExpression(paymentExpressionTB.getValue());
+		payment.setExpression(paymentExpressionCA.getText());
 		
 		String irpfExpression = paymentTaxedExpression.getValue();
 		if(AonStringUtils.isNotBlank(irpfExpression) && AonStringUtils.equalsIgnoreCase(irpfExpression, "Importe integro")) irpfExpression = "_P";

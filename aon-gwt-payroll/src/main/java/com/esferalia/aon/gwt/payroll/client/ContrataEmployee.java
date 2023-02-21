@@ -120,6 +120,16 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			showError(title, message);
 		}
 
+		@Override
+		protected void showAfiOption() {
+			tgssContextMenu.afi.setVisible(true);
+		}
+
+		@Override
+		protected void hideAfiOption() {
+			tgssContextMenu.afi.setVisible(false);
+		}
+
 	}
 
 	// ------------------------------------------------- ContractSpecificDataImpl

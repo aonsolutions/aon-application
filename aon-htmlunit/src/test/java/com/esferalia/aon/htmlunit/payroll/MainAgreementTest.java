@@ -152,24 +152,24 @@ public class MainAgreementTest {
 		
 		setValue("textBox_SALARIO_MENSUAL_I", "666 + 0.66");
 		wait4Class("textBox_SALARIO_MENSUAL_I", "modify");
-		wait4Value("textBox_SALARIO_MENSUAL_I", "666.66");
+		wait4Value("textBox_SALARIO_MENSUAL_I", "666,66");
 		
 		getElementById("acceptButton").click();
 
 		wait4NoClass("textBox_SALARIO_MENSUAL_I", "modify");
 		
-		HtmlSelect datesLB = getElementById("datesLB");
-		Assert.assertEquals(2, datesLB.getOptions().size());
+		HtmlDivision datesTabs = getElementById("datesTabs");
+		Assert.assertEquals(2, datesTabs.getChildElementCount());
 		
 		getElementById("deleteSalaryTabButton").click();
 		wait4Id("acceptDialogButton");
 		HtmlButton acceptDialogButton = getElementById("acceptDialogButton");
 		htmlPage = acceptDialogButton.click();
 		
-		wait4(htmlPage, htmlPage -> ((HtmlSelect) getElementById("datesLB")).getOption(0).getText().equals("01/01/2017"));
+		wait4(htmlPage, htmlPage -> ((HtmlDivision) getElementById("datesTabs")).getChildElementCount()==1);
 		
-		datesLB = (HtmlSelect) getElementById("datesLB");
-		Assert.assertTrue(datesLB.getOptions().size() == 1);
+		datesTabs = getElementById("datesTabs");
+		Assert.assertEquals(1, datesTabs.getChildElementCount());
 
 		// 01-01-2018
 		newSalaryDataTab(calendar.getTime());
@@ -182,7 +182,7 @@ public class MainAgreementTest {
 		Assert.assertNotEquals(value.trim(), "");
 
 		setValue("textBox_SALARIO_MENSUAL_I", "888 + 0.88");
-		wait4Value("textBox_SALARIO_MENSUAL_I", "888.88");
+		wait4Value("textBox_SALARIO_MENSUAL_I", "888,88");
 
 		// 01-01-2019
 		calendar.add(Calendar.YEAR, 1);
@@ -196,34 +196,33 @@ public class MainAgreementTest {
 		Assert.assertNotEquals(value.trim(), "");
 
 		setValue("textBox_SALARIO_MENSUAL_I", "999 + 0.99");
-		wait4Value("textBox_SALARIO_MENSUAL_I", "999.99");
+		wait4Value("textBox_SALARIO_MENSUAL_I", "999,99");
 		
 		getElementById("acceptButton").click();
 		
 		wait4NoClass("textBox_SALARIO_MENSUAL_I", "modify");
 		
-		datesLB = (HtmlSelect) getElementById("datesLB");
-		Assert.assertTrue(datesLB.getOptions().size() == 3);
+		datesTabs = getElementById("datesTabs");
+		Assert.assertEquals(3, datesTabs.getChildElementCount());
 		
 		// Borramos los tramos
 		getElementById("deleteSalaryTabButton").click();
 		wait4Id("acceptDialogButton");
 		htmlPage = getElementById("acceptDialogButton").click();
 		
-		wait4(htmlPage, htmlPage -> ((HtmlSelect) getElementById("datesLB")).getOption(0).getText().equals("01/01/2018"));
+		wait4(htmlPage, htmlPage -> ((HtmlDivision) getElementById("datesTabs")).getChildElementCount()==2);
 		
-		datesLB = (HtmlSelect) getElementById("datesLB");
-		Assert.assertTrue(datesLB.getOptions().size() == 2);
+		datesTabs = getElementById("datesTabs");
+		Assert.assertEquals(2, datesTabs.getChildElementCount());
 		
 		getElementById("deleteSalaryTabButton").click();
 		wait4Id("acceptDialogButton");
 		htmlPage = getElementById("acceptDialogButton").click();
 		
-		wait4(htmlPage, htmlPage -> ((HtmlSelect) getElementById("datesLB")).getOption(0).getText().equals("01/01/2017"));
+		wait4(htmlPage, htmlPage -> ((HtmlDivision) getElementById("datesTabs")).getChildElementCount()==1);
 		
-		datesLB = (HtmlSelect) getElementById("datesLB");
-		Assert.assertTrue(datesLB.getOptions().size() == 1);
-		Assert.assertTrue(datesLB.getOption(0).getText().equals("01/01/2017"));
+		datesTabs = getElementById("datesTabs");
+		Assert.assertEquals(1, datesTabs.getChildElementCount());
 	}
 	
 	@Test
@@ -277,11 +276,6 @@ public class MainAgreementTest {
 
 		// Comprobamos el campo descripcion
 		wait4(htmlPage, htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
-
-		// Click en el tab de Devengos
-		HtmlButton salaryTableTab = (HtmlButton)getElementById("agreementPaymentTabButton");
-		LOGGER.warning("Cick on: " + salaryTableTab.asNormalizedText());
-		htmlPage = salaryTableTab.click();
 		
 		// Esperamos a la tabla de Devengos
 		wait4Id("agreementPaymentDG");
@@ -328,8 +322,6 @@ public class MainAgreementTest {
 		
 		
 		// Obtenemos tabla de Devengos (extras)
-		getElementById("agreementPaymentExtraTabButton").click();
-		
 		wait4Id("agreementExtraPaymentDG");
 		
 		HtmlTable paymentsExtraTable = getElementById("agreementExtraPaymentDG");
@@ -456,10 +448,6 @@ public class MainAgreementTest {
 
 		// Comprobamos el campo descripcion
 		wait4(htmlPage, htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
-		
-		HtmlButton salaryTableTab = (HtmlButton)getElementById("agreementSalaryTableTabButton");
-		LOGGER.warning("Cick on: " + salaryTableTab.asNormalizedText());
-		htmlPage = salaryTableTab.click();
 		
 		wait4Id("category_filter");
 	}

@@ -129,10 +129,12 @@ public class TrashAgreements extends ResizeComposite implements
 		return agreementsTree;
 	}
 	
-	public void reloadAgreements() {
+	public void reloadAgreements(Consumer<Void> consumer) {
 		getTrashAgreements(s -> {
 			if(agreementsTree.getTree().getItemCount() > 0)
 				agreementsTree.getTree().setSelectedItem(agreementsTree.getTree().getItem(0), true);
+			
+			consumer.accept(null);
 		});
 	}
 	
@@ -282,6 +284,14 @@ public class TrashAgreements extends ResizeComposite implements
 			for(Toolbar toolbarIt : toolbars)
 				toolbarIt.onAgreementRestore((Agreement) object);
 		}
+	}
+
+	public void setVisibleDraft4EverButton(boolean visible) {
+		toolbar.setVisibleDraft4EverButton(visible);
+	}
+
+	public void setVisibleRestoreButton(boolean visible) {
+		toolbar.setVisibleRestoreButton(visible);
 	}
 
 }

@@ -89,9 +89,10 @@ public class VatReportFilterPanel extends ScrollPanel implements HasValueChangeH
 			activityBox.setSelectedIndex(0);
 			int i = 1;
 			for (EnterpriseActivity ea : opt.getConfiguration().getActivities()) {
-				activityBox.addItem(ea.getDescription() + (ea.getIae().isEmpty()?"":(" ("+ea.getEpigraph()+")")), AonNumberUtils.toString( ea.getId()));
+				String desc = ea.getDescription() + (ea.getIae().isEmpty()?"":(" ("+ea.getEpigraph()+")"));
+				activityBox.addItem(desc, AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
-					activityBox.setItemText(i, ea.getDescription() + AonStringUtils.ASTERISK);
+					activityBox.setItemText(i, AonStringUtils.ASTERISK + " " + desc);
 				}
 				i++;
 			}

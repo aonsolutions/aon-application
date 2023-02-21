@@ -13,20 +13,27 @@ import static com.esferalia.aon.jooq.tables.InvoiceFiscal.INVOICE_FISCAL;
 import static com.esferalia.aon.jooq.tables.InvoiceTax.INVOICE_TAX;
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Record3;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
+import com.esferalia.aon.occam.api.model.fiscal.VatSummaryContext;
+import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
@@ -44,10 +51,13 @@ import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public class VATDAO  {
 	private static final String MODEL_INVOICE = "modelInvoice";
 	private static final Field<Integer> ALCATRAZ_INVOICE_ID = ALCATRAZ.INVOICE.as("alcatrazInvoice");
+	private static final Field<Integer> ALCATRAZ_FINANCE_ID = ALCATRAZ.FINANCE.as("alcatrazFinance");
+	private static final Field<Integer> ALCATRAZ_FINANCE_TRACKING_ID = ALCATRAZ.FINANCE_TRACKING.as("alcatrazFinanceTracking");
 	
 	private static final Field<?>[] INVOICE_FIELDS = new Field[]{
 	 	 INVOICE.ID					,INVOICE.SERIES				,INVOICE.NUMBER		
@@ -77,9 +87,9 @@ public class VATDAO  {
 		,ENTERPRISE_ACTIVITY.VAT_REGIME	,ENTERPRISE_ACTIVITY.SURCHARGE
 		,IAE.EPIGRAPH};
 	private static final Field<?>[] FINANCE_FIELDS = new Field[]{
-			FINANCE.AMOUNT};
+			FINANCE.ID,	FINANCE.AMOUNT};
 	private static final Field<?>[] FINANCE_TRACKING_FIELDS = new Field[]{
-		FINANCE_TRACKING.TYPE	,FINANCE_TRACKING.AMOUNT};
+			FINANCE_TRACKING.ID	,FINANCE_TRACKING.TYPE	,FINANCE_TRACKING.AMOUNT};
 	
 	private VATDAO() {
 	}
@@ -98,7 +108,12 @@ public class VATDAO  {
 	private static java.sql.Date getEndDate( final IFiscalModel fm ) {
 		return AonDateUtils.toSql( FiscalUtils.getPeriodEnd(fm));
 	}
+
 	
+	private static SelectConditionStep<Record> getNoAccrualSelect(AONContext ctx, AccountingReportParams params) {
+		return getNoAccrualSelect( ctx )
+				.where( getWhere(params) );
+	}
 	private static SelectOnConditionStep<Record> getNoAccrualSelect(AONContext ctx) {
 		return ctx.getDslContext()
 			.select( INVOICE_FIELDS )
@@ -115,19 +130,29 @@ public class VATDAO  {
 			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
 			;
 	}
-	private static Stream<VatContext> getNoAccrualVatBreakdown(AONContext ctx, IFiscalModel mod) {
-		return getNoAccrualSelect(ctx)
-			.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-			.and(INVOICE_TAX.TAX_TYPE.equal((byte) 1))
-			.and(INVOICE.TAX_DATE.between( getStartDate(mod), getEndDate(mod)))
+	
+	private static Stream<VatContext> getNoAccrualVatBreakdown(AONContext ctx, AccountingReportParams params) {
+		return getNoAccrualSelect(ctx, params)
+			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
+			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
+			.and(INVOICE.TAX_DATE.between( AonDateUtils.toSql(params.getFromDate()), AonDateUtils.toSql(params.getToDate())))
 			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal((byte) 0))	// No Criterio de Caja.
 			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
 			.fetch()
 			.stream()
-			.map(new VatContextFiller())
-			;
+			.map(new VatContextFiller());
+	}
+	private static Stream<VatContext> getNoAccrualVatBreakdown(AONContext ctx, IFiscalModel mod) {
+		return getNoAccrualVatBreakdown(ctx, 
+			new AccountingReportParams()
+				.setFromDate(getStartDate(mod))
+				.setToDate(getEndDate(mod)));
 	}
 	
+	private static SelectConditionStep<Record> getAccrualSelect(AONContext ctx, AccountingReportParams params) {
+		return getAccrualSelect( ctx )
+				.where( getWhere(params) );
+	}
 	private static SelectOnConditionStep<Record> getAccrualSelect(AONContext ctx) {
 		return ctx.getDslContext()
 			.select( INVOICE_FIELDS )
@@ -135,6 +160,7 @@ public class VATDAO  {
 			.select( INVOICE_TAX_FIELDS )
 			.select( ENTERPRISE_ACTIVITY_FIELDS )
 			.select( INVOICE_DUA_FIELDS )
+			.select( FINANCE_FIELDS )
 			.select( FINANCE_TRACKING_FIELDS )
 			.from(FINANCE_TRACKING)
 			.join(FINANCE).on(FINANCE.ID.equal(FINANCE_TRACKING.FINANCE))
@@ -148,24 +174,34 @@ public class VATDAO  {
 			;
 		}
 	
-	
+	private static Stream<VatContext> getAccrualVatBreakdown(AONContext ctx, AccountingReportParams params) {
+		java.sql.Date prevYearFirstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(params.getFromDate()) );
+		return getAccrualSelect(ctx, params)
+			.and(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
+			.and(FINANCE_TRACKING.TRACKING_DATE.between( AonDateUtils.toSql(params.getFromDate()), AonDateUtils.toSql(params.getToDate())))
+			.and(FINANCE_TRACKING.TYPE.in(FinanceTrackingType.PAID.value(),FinanceTrackingType.RETURNED.value()))
+			.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
+			.and(INVOICE.TAX_DATE.ge(prevYearFirstDay))
+			.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
+			.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
+			.fetch()
+			.stream()
+			.map(new VatContextAccrualRegimeFiller())
+			;
+	}
 	private static Stream<VatContext> getAccrualVatBreakdown(AONContext ctx, IFiscalModel mod) {
-		int prevYear = mod.getYear() - 1;
-		java.sql.Date prevYearFirstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(prevYear) );
-		return getAccrualSelect(ctx)
-				.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
-				.and(FINANCE_TRACKING.TRACKING_DATE.between( getStartDate(mod), getEndDate(mod)))
-				.and(FINANCE_TRACKING.TYPE.in(FinanceTrackingType.PAID.value(),FinanceTrackingType.RETURNED.value()))
-				.and(INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() ))
-				.and(INVOICE.TAX_DATE.ge(prevYearFirstDay))
-				.and(INVOICE.VAT_ACCRUAL_PAYMENT.equal( TRUE_BYTE ))
-				.orderBy( InvoiceDAO.getOrderedType(),INVOICE.SERIES,INVOICE.NUMBER )
-				.fetch()
-				.stream()
-				.map(new VatContextAccrualRegimeFiller())
-				;
+		return getAccrualVatBreakdown(ctx, 
+			new AccountingReportParams()
+				.setFromDate(getStartDate(mod))
+				.setToDate(getEndDate(mod)));
 	}
 	
+	public static Stream<VatContext> getVatBreakdown(AONContext ctx, AccountingReportParams params) {
+		return Stream.of(
+				getNoAccrualVatBreakdown(ctx,params)
+				,getAccrualVatBreakdown(ctx,params))
+				.flatMap(vt -> vt);
+	}
 	public static Stream<VatContext> getVatBreakdown(AONContext ctx, IFiscalModel mod) {
 		return Stream.of(
 				 getNoAccrualVatBreakdown(ctx,mod)
@@ -207,11 +243,13 @@ public class VATDAO  {
 				.map(new VatContextFiller())
 				;
 	}
+	
 	public static Stream<VatContext> getNotInModelAccrualVatBreakdown(final AONContext ctx, final FiscalModel mod) {
 		int prevYear = mod.getYear() - 1;
 		java.sql.Date prevYearFirstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(prevYear) );
 		java.sql.Date modYearFirstDay = AonDateUtils.toSql( AonDateUtils.getYearFirstDay(mod.getYear()) );
-		Table<Record1<Integer>> modelInvoice = ctx.getDslContext().select( ALCATRAZ_INVOICE_ID )
+		Table<Record3<Integer,Integer,Integer>> modelInvoice = ctx.getDslContext()
+			.select( ALCATRAZ_INVOICE_ID, ALCATRAZ_FINANCE_ID, ALCATRAZ_FINANCE_TRACKING_ID )
 			.from(ALCATRAZ)
 			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
 			.where(FS_MODEL.DOMAIN.eq(mod.getDomain()))
@@ -221,7 +259,9 @@ public class VATDAO  {
 			.asTable(MODEL_INVOICE)
 		;
 		return getAccrualSelect(ctx)
-			.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID))
+			.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID)
+					.and(ALCATRAZ_FINANCE_ID.equal(FINANCE.ID))
+					.and(ALCATRAZ_FINANCE_TRACKING_ID.equal(FINANCE_TRACKING.ID)))
 			.where(INVOICE_TAX.DOMAIN.equal(ctx.getDomainId()))
 			.and(FINANCE_TRACKING.TRACKING_DATE.between( modYearFirstDay, getEndDate(mod) ))
 			.and(FINANCE_TRACKING.TYPE.in(FinanceTrackingType.PAID.value(),FinanceTrackingType.RETURNED.value()))
@@ -445,6 +485,8 @@ public class VATDAO  {
 			double surchargeQuota = AonMathUtils.round(base * vat.getSurchargePercent() / 100);
 			double deductibleQuota = AonMathUtils.round( (quota + surchargeQuota)  * vat.getDeductiblePercent() / 100);
 			return vat
+				.setFinance(rec.getValue(FINANCE.ID))
+				.setFinanceTracking(rec.getValue(FINANCE_TRACKING.ID))
 				.setBase(base)
 				.setQuota(quota)
 				.setSurchargeQuota(surchargeQuota)
@@ -661,4 +703,138 @@ public class VATDAO  {
 				})
 				.sum();
 	}
+	
+	
+	private static Condition getWhere(AccountingReportParams params) {
+		Condition condition = INVOICE_TAX.TAX_TYPE.equal( TaxType.VAT.value() );
+		
+		if (params.getActivity() != null) {
+			if (AonMathUtils.isNegative(params.getActivity())) {
+				// Sólo las comunes. Los "sin activdad".
+				condition = condition.and( INVOICE.ACTIVITY.isNull());
+			} else {
+				condition = condition.and( INVOICE.ACTIVITY.eq( params.getActivity() ));
+			}
+		}
+		if(params.getInvoices() != null){
+			condition = condition.and( INVOICE.ID.in( params.getInvoices() ));
+		}
+			
+		if (params.getRegistry()  != null && params.getRegistry().intValue() != 0 ) {
+			condition = condition.and( INVOICE.REGISTRY.eq( params.getRegistry() ));
+		}
+		
+		if (params.getAccrualRegime() != null) {
+			condition = condition.and( INVOICE.VAT_ACCRUAL_PAYMENT.eq( AonEnumUtils.getByte(params.getAccrualRegime())));
+		}
+		
+		if (params.getInvestment() != null) {
+			condition = condition.and( INVOICE.INVESTMENT.eq( AonEnumUtils.getByte(params.getInvestment())));
+		}
+		
+		if (params.getRectificationType() != null) {
+			condition = condition.and( INVOICE.RECTIFICATION_TYPE.eq( params.getRectificationType().value()));
+		}
+		
+		if (params.getService() != null) {
+			if ( params.getService().booleanValue() ) {
+				condition = condition.and( INVOICE.SERVICE.eq((byte)1).or( INVOICE.TYPE.eq( InvoiceType.EXPENSES.value())));
+			} else {
+				condition = condition.and( INVOICE.SERVICE.ne((byte)1).and( INVOICE.TYPE.ne( InvoiceType.EXPENSES.value())));
+			}
+		}
+		
+		if (params.getPercent() != null) {
+			condition = condition.and( INVOICE_TAX.PERCENTAGE.eq( params.getPercent()));
+		}
+		
+		if (params.getSurchargePercent() != null) {
+			condition = condition.and( INVOICE_TAX.SURCHARGE.eq( params.getSurchargePercent()));
+		}
+		
+		if (params.getOutput() != null) {
+			if (params.getOutput().booleanValue()) {
+				condition = condition.and( INVOICE.TYPE.eq( InvoiceType.SALES.value() ));
+			} else {
+				condition = condition.and( INVOICE.TYPE.in( InvoiceType.EXPENSES.value(), InvoiceType.PURCHASE.value() ));
+			}
+		}
+			
+		if (params.getVatSummaryType() != null) {
+			if (params.getVatSummaryType() == VatSummaryType.NATIONAL) {
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.NATIONAL.value() ));
+				condition = condition.and( INVOICE.WITHHOLDING_FARMER.eq( AonEnumUtils.getByte(false)));
+			} else if (params.getVatSummaryType() == VatSummaryType.SURCHARGE){	
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.NATIONAL.value() ));
+				condition = condition.and( INVOICE.SURCHARGE.eq( AonEnumUtils.getByte(true)));
+			} else if (params.getVatSummaryType() == VatSummaryType.FARMER) {
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.NATIONAL.value() ));
+				condition = condition.and( INVOICE.WITHHOLDING_FARMER.eq( AonEnumUtils.getByte(true)));
+			} else if (params.getVatSummaryType() == VatSummaryType.INTRACOMMUNITY) {
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.INTRACOMMUNITY.value() ));
+			} else if (params.getVatSummaryType() == VatSummaryType.EXTRACOMMUNITY) {
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.EXTRACOMMUNITY.value() ));
+			} else if (params.getVatSummaryType() == VatSummaryType.CAN_CEU_MEL) {
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.CAN_CEU_MEL.value() ));
+			} else if (params.getVatSummaryType() == VatSummaryType.OTHER_ISP) {
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.OTHER_ISP.value() ));
+			}
+		}
+		return condition;
+	}
+	
+	public static Stream<VatSummaryContext> getVatSummary(AONContext ctx, AccountingReportParams params) {
+		LinkedList<VatSummaryContext> list = new LinkedList<>();
+		getVatBreakdown(ctx, params)
+			.map( vat -> { 
+				if (vat.isSurcharge()) {
+					VatSummaryType type = VatSummaryType.SURCHARGE;
+					double percent = vat.getSurchargePercent();
+					VatSummaryContext sum = null;
+					for (VatSummaryContext ite : list) {
+						if ( (ite.isOutput() == vat.isSales()) 
+							&& ite.getSummaryType() == type 
+							&& AonNumberUtils.equals(ite.getPercentage(), percent)) {
+							sum = ite;
+							break;
+						}
+					}
+					if ( sum == null) {
+						sum = new VatSummaryContext()
+							.setOutput(vat.isSales())
+							.setSummaryType(type)
+							.setPercentage(percent);
+						list.add(sum);
+					}
+					sum.setBase( sum.getBase() + vat.getBase()); 
+					sum.setQuota( sum.getQuota() + vat.getSurchargeQuota());
+				}
+				return vat;
+			})
+			.forEach( vat -> {
+				VatSummaryType type = VatSummaryType.accept(vat);
+				double percent = vat.getPercentage();
+				VatSummaryContext sum = null;
+				for (VatSummaryContext ite : list) {
+					if ( (ite.isOutput() == vat.isSales()) 
+						&& ite.getSummaryType() == type 
+						&& AonNumberUtils.equals(ite.getPercentage(), percent)) {
+						sum = ite;
+						break;
+					}
+				}
+				if ( sum == null) {
+					sum = new VatSummaryContext()
+						.setOutput(vat.isSales())
+						.setSummaryType(type)
+						.setPercentage(percent);
+					list.add(sum);
+				}
+				sum.setBase( sum.getBase() + vat.getBase()); 
+				sum.setQuota( sum.getQuota() + vat.getQuota());
+				sum.setDeductibleQuota( sum.getDeductibleQuota() + vat.getDeductibleQuota());
+			});
+		return list.stream();
+	}
+	
 }

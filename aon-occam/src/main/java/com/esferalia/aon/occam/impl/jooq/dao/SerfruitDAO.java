@@ -19,8 +19,10 @@ public class SerfruitDAO {
 
 	public static Stream<Sales> getSalesStream(AONContext ctx, SalesFilter filter, Options... options){
 		Integer[] salesDetailIds = ElaborationDAO.getElaborationStream(ctx, f -> 
-			f.getSourceProperty().eq(ElaborationSource.SALES_SERFRUIT.value())
-			.and(f.getStatusProperty().eq(ElaborationStatus.PENDING.value()))
+//			f.getSourceProperty().eq(ElaborationSource.SALES_SERFRUIT.value())
+//			.and(
+				f.getStatusProperty().eq(ElaborationStatus.PENDING.value())
+//			)
 			.and(f.getSourceIdProperty().isNotNull()))
 		.map(Elaboration::getSourceId).toArray(Integer[]::new);
 		

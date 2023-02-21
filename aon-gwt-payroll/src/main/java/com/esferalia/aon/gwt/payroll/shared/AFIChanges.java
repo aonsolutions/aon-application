@@ -26,7 +26,7 @@ public class AFIChanges implements Serializable {
 		public AFIChange(String name, String value) {
 			super();
 			this.name = name;
-			this.value = AonStringUtils.replace(value, "\"", "");
+			this.value = AonStringUtils.isBlank(value) ? value : AonStringUtils.replace(value, "\"", "");
 		}
 
 		public String getName() {

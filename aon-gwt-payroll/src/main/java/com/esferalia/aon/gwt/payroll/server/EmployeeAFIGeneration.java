@@ -748,15 +748,21 @@ public final class EmployeeAFIGeneration {
 		String holidayDay;
 		String holidayMonth;
 		String holidayYear;
-		String reserved53;
+		String reserved32;
+		String reserved16;
+		String saa;
+		String reserved2;
 		
 		public FCT ( String holidayDay, String holidayMonth, String holidayYear ) {
 			this.fctHeader = "FCT";
-			this.reserved6 = AonStringUtils.leftPad("", 6, ' ');
+			this.reserved6 = AonStringUtils.leftPad("", 6, '0');
 			this.holidayDay = AonStringUtils.leftPad(holidayDay, 2, '0');
 			this.holidayMonth = AonStringUtils.leftPad(holidayMonth, 2, '0');
 			this.holidayYear = AonStringUtils.leftPad(holidayYear, 4, '0');
-			this.reserved53 = AonStringUtils.leftPad("", 53, ' ');
+			this.reserved32 = AonStringUtils.leftPad("", 32, '0');
+			this.reserved16 = AonStringUtils.leftPad("", 16, ' ');
+			this.saa = AonStringUtils.leftPad("", 3, '0');
+			this.reserved2 = AonStringUtils.leftPad("", 2, ' ');
 		}
 
 		public String getFctHeader() {
@@ -789,11 +795,29 @@ public final class EmployeeAFIGeneration {
 		public void setHolidayYear(String holidayYear) {
 			this.holidayYear = holidayYear;
 		}
-		public String getReserved53() {
-			return reserved53;
+		public String getReserved32() {
+			return reserved32;
 		}
-		public void setReserved53(String reserved53) {
-			this.reserved53 = reserved53;
+		public void setReserved32(String reserved32) {
+			this.reserved32 = reserved32;
+		}
+		public String getReserved16() {
+			return reserved16;
+		}
+		public void setReserved16(String reserved16) {
+			this.reserved16 = reserved16;
+		}
+		public String getSaa() {
+			return saa;
+		}
+		public void setSaa(String saa) {
+			this.saa = saa;
+		}
+		public String getReserved2() {
+			return reserved2;
+		}
+		public void setReserved2(String reserved2) {
+			this.reserved2 = reserved2;
 		}
 		
 	}
@@ -1237,10 +1261,13 @@ public final class EmployeeAFIGeneration {
 				employeeAFI +=
 						mb.getFct().getFctHeader() +
 						mb.getFct().getReserved6() +
-						mb.getFct().getHolidayDay() +
-						mb.getFct().getHolidayMonth() +
 						mb.getFct().getHolidayYear() +
-						mb.getFct().getReserved53() +
+						mb.getFct().getHolidayMonth() +
+						mb.getFct().getHolidayDay() +
+						mb.getFct().getReserved32() +
+						mb.getFct().getReserved16() +
+						mb.getFct().getSaa() +
+						mb.getFct().getReserved2() +
 						"\r\n";
 
 		}

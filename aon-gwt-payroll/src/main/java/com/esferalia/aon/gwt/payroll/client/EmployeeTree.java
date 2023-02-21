@@ -93,6 +93,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -2370,6 +2371,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 				@Override
 				public void onSuccess(AgreementInfo agreementInfo) {
+					getAgreementPreview().resetSelectedDate();
 					getAgreementPreview().setAgreementPreview(agreementInfo);
 					getAgreementPreview().setSelectedLevel(levelId, getTitle(salaryDraft.getEmployee()));
 					hideMessagePanel();
@@ -2495,6 +2497,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 				@Override
 				public void onSuccess(AgreementInfo agreementInfo) {
+					getAgreementPreview().resetSelectedDate();
 					getAgreementPreview().setAgreementPreview(agreementInfo);
 					getAgreementPreview().payrollPreview();
 					hideMessagePanel();
@@ -3982,28 +3985,30 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		mergeEditor.setOrig(result.getBasesFile());
 
 		try {
-
-			mergeEditor.setText(result.getSalaryBasesFile());
+		    	String salaryBasesFile = result.getSalaryBasesFile();
+			mergeEditor.setText(salaryBasesFile);
 			mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-			mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+			mergeEditor.setFilename(getFileName(salaryBasesFile) + ".xml");
 			detailPanel.setWidget(mergeEditor);
 			mergeEditor.autoRefresh();
 
 		} catch (NoSuchElementException e0) {
 			try {
 
-				mergeEditor.setText(result.getChangedBasesFile());
+			    	String changedBasesFile = result.getChangedBasesFile();
+				mergeEditor.setText(changedBasesFile);
 				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+				mergeEditor.setFilename(getFileName(changedBasesFile) + ".xml");
 				detailPanel.setWidget(mergeEditor);
 				mergeEditor.autoRefresh();
 
 			} catch (NoSuchElementException e1) {
 				try {
+				    	String drafRequestFile = result.getDraftRequestFile();
 					mergeEditor.setShowDifferences(false);
-					mergeEditor.setText(result.getDraftRequestFile());
+					mergeEditor.setText(drafRequestFile);
 					mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-					mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+					mergeEditor.setFilename(getFileName(drafRequestFile) + ".xml");
 					detailPanel.setWidget(mergeEditor);
 					mergeEditor.autoRefresh();
 				} catch (NoSuchElementException e2) {
@@ -4011,9 +4016,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					basesEditor.setMode("text/xml");
 					basesEditor.setFoldGutter(true);
 					basesEditor.setLineNumbers(true);
-					basesEditor.setText(result.getBasesFile());
+					String basesFile = result.getBasesFile();
+					basesEditor.setText(basesFile);
 					basesEditor.setTitle(CretaService.File.BASES.getFilename());
-					basesEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+					basesEditor.setFilename(getFileName(basesFile) + ".xml");
 					detailPanel.setWidget(basesEditor);
 					basesEditor.autoRefresh();
 				}
@@ -4070,28 +4076,29 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		mergeEditor.setOrig(result.getBasesFile());
 
 		try {
-
-			mergeEditor.setText(result.getSalaryBasesFile());
+		    	String salaryBasesFile = result.getSalaryBasesFile();
+			mergeEditor.setText(salaryBasesFile);
 			mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-			mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+			mergeEditor.setFilename(getFileName(salaryBasesFile) + ".xml");
 			detailPanel.setWidget(mergeEditor);
 			mergeEditor.autoRefresh();
 
 		} catch (NoSuchElementException e0) {
 			try {
-
-				mergeEditor.setText(result.getChangedBasesFile());
+			    	String changesBasesFile = result.getChangedBasesFile();
+				mergeEditor.setText(changesBasesFile);
 				mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-				mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+				mergeEditor.setFilename(getFileName(changesBasesFile) + ".xml");
 				detailPanel.setWidget(mergeEditor);
 				mergeEditor.autoRefresh();
 
 			} catch (NoSuchElementException e1) {
 				try {
+				    	String draftRequestFile = result.getDraftRequestFile(); 
 					mergeEditor.setShowDifferences(false);
-					mergeEditor.setText(result.getDraftRequestFile());
+					mergeEditor.setText(draftRequestFile);
 					mergeEditor.setTitle(CretaService.File.BASES.getFilename());
-					mergeEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+					mergeEditor.setFilename(getFileName(draftRequestFile) + ".xml");
 					detailPanel.setWidget(mergeEditor);
 					mergeEditor.autoRefresh();
 				} catch (NoSuchElementException e2) {
@@ -4099,9 +4106,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					basesEditor.setMode("text/xml");
 					basesEditor.setFoldGutter(true);
 					basesEditor.setLineNumbers(true);
-					basesEditor.setText(result.getBasesFile());
+					String basesFile = result.getBasesFile();
+					basesEditor.setText(basesFile);
 					basesEditor.setTitle(CretaService.File.BASES.getFilename());
-					basesEditor.setFilename(CretaService.File.BASES.getFilename() + ".xml");
+					basesEditor.setFilename(getFileName(basesFile) + ".xml");
 					detailPanel.setWidget(basesEditor);
 					basesEditor.autoRefresh();
 
@@ -4688,6 +4696,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		console.log(message);
 	}-*/;
 
+	private static String getFileName(String xml) {
+	    String tipo = AonStringUtils.substringBetween(xml, "<Tipo>", "</Tipo>");
+            String provincia = AonStringUtils.substringBetween(xml, "<Provincia>", "</Provincia>");
+            String numero = AonStringUtils.substringBetween(xml, "<Numero>", "</Numero>");
+            String periodoDesde = AonStringUtils.substringBetween(xml, "<PeriodoDesde>","</PeriodoDesde>");
+            String anhoDesde  = AonStringUtils.substringBetween(periodoDesde, "<Anho>","</Anho>"); 
+            String mesDesde  = AonStringUtils.substringBetween(periodoDesde, "<Mes>","</Mes>"); 
+            String now = DateTimeFormat.getFormat("MMddHHmm").format(new Date());
+	    return "SLD-Bases " + tipo + " " + provincia + numero + " " + anhoDesde+"-"+mesDesde + " " + now;
+	}
 	
 
 }

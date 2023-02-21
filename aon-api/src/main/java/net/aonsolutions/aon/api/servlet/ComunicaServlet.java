@@ -110,6 +110,10 @@ public class ComunicaServlet extends AonApiHttpServlet{
 					LOGGER.info("QUOTE-GROUP SERVLET - GET METHOD");
 					response(req, resp,	getQuoteGroup());
 				break;
+				case "/cno":
+					LOGGER.info("CNO SERVLET - GET METHOD");
+					response(req, resp,	getCno(initialize(req)));
+				break;
 				case "/contract-type":
 					LOGGER.info("CONTRACT-TYPE SERVLET - GET METHOD");
 					response(req, resp,	getContractType());
@@ -326,6 +330,22 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		}
 		return arr;
 	}
+	
+	private JSONArray getCno(AonApiData api) {
+		JSONArray arr = new JSONArray();
+		Domain domain = api.getDomain();
+		
+		AON.getCno(domain.getName(), domain.getId(), api.getUser().getLogin()).forEach(cno -> {
+			arr.put(
+					new JSONObject()
+					.put(IJsonNames.VALUE, cno.getCode())
+					.put(IJsonNames.NAME, cno.getTitle())
+
+			);
+		});
+		
+		return arr;
+	}
 
 	private byte[] getTA(AonApiData api) throws Exception {
 		Domain domain = api.getDomain();
@@ -525,6 +545,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		String nss         = params.optString("nss");
 		String ipf         = params.optString("ipf");
 		String gc          = params.optString("gc");
+		String cno          = params.optString("cno");
 		String contract    = params.optString("contract");	
 		String ocup        = params.has("ocup") && !params.isNull("ocup") ? params.optString("ocup") : null;
 		String coef        = params.has("coef") && !params.isNull("coef") ? params.optString("coef") : null;
@@ -545,6 +566,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		.setOcup(ocup)
 		.setColec(convenio)
 		.setGc(gc)
+		.setCno(cno)
 		.setContract(contract)
 		.setCollective(collective)
 		.setRlce(rlce)

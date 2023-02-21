@@ -23,6 +23,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.FiscalModelDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
@@ -33,6 +34,7 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
 public abstract class Mod303Declaration {
+	
 	private static final double ZERO = 0.0;
 	private static final String EMTPY_JSON = "{messages : []}";
 	// 1 de Julio del 2021		
@@ -384,8 +386,8 @@ public abstract class Mod303Declaration {
 			|| (mod303.isComplementary() && getComplementaryBehaviour(mod303) == ComplementaryBeahaviour.REPLACEMENT)); 
 	}
 	
-	protected Set<Integer> createFromInvoices(AONContext ctx, Mod303 mod303) {
-		final Set<Integer> invoices = new HashSet<>();
+	protected Set<Alcatraz> createFromInvoices(AONContext ctx, Mod303 mod303) {
+		final Set<Alcatraz> invoices = new HashSet<>();
 		getVatContextStream(ctx, mod303)
 			.flatMap(vt -> Arrays.stream( getKeys() ).map( key -> new KeyedVatContext(key, vt)))
 			.filter(kbr -> kbr.getKey().acceptValue(mod303,kbr.getVatContext()))
@@ -409,8 +411,12 @@ public abstract class Mod303Declaration {
 		return VATDAO.getNotInModelVatBreakdown(ctx,mod303);
 	}
 
-	private KeyedVatContext addInvoice( Set<Integer> invoices, KeyedVatContext vt) {
-		invoices.add(vt.getVatContext().getInvoice());
+	private KeyedVatContext addInvoice( Set<Alcatraz> invoices, KeyedVatContext vt) {
+		invoices.add( new Alcatraz()
+			.setInvoice(vt.getVatContext().getInvoice())
+			.setFinance(vt.getVatContext().getFinance())
+			.setFinanceTracking(vt.getVatContext().getFinanceTracking()));
+		;
 		return vt;	
 	}
 	protected void initializeDeclarationType(Mod303 mod303) {
@@ -456,13 +462,13 @@ public abstract class Mod303Declaration {
 		}
 	}
 
-	public Set<Integer> createOnTheFly(AONContext ctx, Mod303 mod303) {
+	public Set<Alcatraz> createOnTheFly(AONContext ctx, Mod303 mod303) {
 		if (hasSimplifiedRegime()) {
 			initializeSimplifiedRegime(ctx, mod303);
 		}
 		firstInitialization(ctx, mod303);
 		if (!mod303.isManualDeclaration()) {
-			Set<Integer> invoices = createFromInvoices(ctx,mod303);
+			Set<Alcatraz> invoices = createFromInvoices(ctx,mod303);
 			invoices.addAll( createVatAccrualKeysFromInvoices(ctx,mod303) );
 			resolveDiffCalculation(ctx, mod303);
 			return invoices;
@@ -505,6 +511,6 @@ public abstract class Mod303Declaration {
 	abstract Mod303 initialize(AONContext ctx, Mod303 mod303);
 	abstract double getResult(final Mod303 mod303);
 	abstract ComplementaryBeahaviour getComplementaryBehaviour(final Mod303 mod303);
-	abstract Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303);
+	abstract Set<Alcatraz> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303);
 	
 }

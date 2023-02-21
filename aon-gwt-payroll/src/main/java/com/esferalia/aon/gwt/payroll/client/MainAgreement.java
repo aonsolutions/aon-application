@@ -172,7 +172,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 				@Override
 				public void onSuccess(Void result) {
 					Window.alert("Convenio movido correctamente");
-					MainAgreement.this.agreements.reloadAgreements();
+					MainAgreement.this.agreements.reloadAgreements(finish -> {
+						if(MainAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+							showAgreementMessage();
+						else
+							showAgreementContainer();
+					});
 				}
 			});
 		}
@@ -211,7 +216,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 				@Override
 				public void onSuccess(Void result) {
 					AonMessagePanel.showSuccess(messagePanel, "Convenio descargado correctamente");
-					MainAgreement.this.agreements.reloadAgreements();
+					MainAgreement.this.agreements.reloadAgreements(finish -> {
+						if(MainAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+							showAgreementMessage();
+						else
+							showAgreementContainer();
+					});
 				}
 			});
 		}
@@ -373,8 +383,9 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			
 			@Override
 			public void onBackButtonClick() {
-				getAgreements();
 				showAgreements();
+				mainTrashAgreement.hasTrashAgreements(hasTrashAgreements -> MainAgreement.this.toolbar.setTrashAgreementWarn(hasTrashAgreements));
+				selectAgreementFirstItem();
 			}
 			
 		};
@@ -385,6 +396,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 			protected void reloadAgreement() {
 				getAgreement(agreementSelected.getId(), agreementInfo -> {
 					agreementSelected = agreementInfo;
+					agreementPreview.resetSelectedDate();
 					agreementPreview.setAgreementPreview(agreementSelected);
 				});
 			}
@@ -496,6 +508,10 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		deckPanel.showWidget(1);
 	}
 	
+	public void selectAgreementFirstItem() {
+		agreements.getAgreements(s -> getAgreementsTree().getTree().setSelectedItem(getAgreementsTree().getTree().getItem(0), true));
+	}
+	
 	// ------------------------------------------- Agreements.Listener
 
 	@Override
@@ -506,8 +522,8 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		if(null != agreement.getDomain()) {
 			this.contextMenu.setVisibleMoveItem( (parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue() && agreement.getDomain().intValue() != 0);
 			this.contextMenu.setVisibleMoveDownItem(agreement.getDomain().intValue() != 0 && domain != agreement.getDomain().intValue());
-			this.contextMenu.setVisibleDeleteItem(0 != agreement.getDomain().intValue());
-			this.agreements.setVisibleDraftButton(0 != agreement.getDomain().intValue());
+			this.contextMenu.setVisibleDeleteItem(0 != agreement.getDomain().intValue() && (parentDomain == null || ((parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue())));
+			this.agreements.setVisibleDraftButton(0 != agreement.getDomain().intValue() && (parentDomain == null || ((parentDomain != null) && parentDomain.intValue() != agreement.getDomain().intValue())));
 			
 			// TODO: read only
 			this.agreementPreview.setReadOnly(0 == agreement.getDomain().intValue() || (parentDomain != null && parentDomain.intValue() == agreement.getDomain().intValue()));
@@ -517,6 +533,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		getAgreement(agreement.getId(), agreeementInfo -> {
 			agreementSelected = agreeementInfo;
 			showAgreementContainer();
+			agreementPreview.resetSelectedDate();
 			agreementPreview.setAgreementPreview(agreeementInfo);
 		});
 		
@@ -600,7 +617,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 
 				@Override
 				public void onSuccess(Agreement result) {
-					agreements.reloadAgreements();			
+					agreements.reloadAgreements(finish -> {
+						if(MainAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+							showAgreementMessage();
+						else
+							showAgreementContainer();
+					});			
 				}
 			});
 		}
@@ -631,6 +653,7 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 								
 								@Override
 								public void onAccept() {
+									agreementPreview.showLoading("Borrando convenio ...");
 									agreements.getAgreementsTree().getEnterpriseService().updateAgreementId(
 											agreement, new AsyncCallback<Void>() {
 
@@ -642,9 +665,13 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 										@Override
 										public void onSuccess(Void result) {
 											MainAgreement.this.agreements.resetTypeView();
-											MainAgreement.this.agreements.reloadAgreements();
+											MainAgreement.this.agreements.reloadAgreements(finish -> {
+												if(MainAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+													showAgreementMessage();
+												else
+													showAgreementContainer();
+											});
 											mainTrashAgreement.hasTrashAgreements(hasTrashAgreements -> toolbar.setTrashAgreementWarn(hasTrashAgreements));
-//											showSelectAgreementMessage();
 										}
 									});
 								}
@@ -676,7 +703,12 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 						public void onSuccess(Void result) {
 							MainAgreement.this.agreements.setViewAgreements(false);
 							MainAgreement.this.agreements.resetTypeView();
-							MainAgreement.this.agreements.reloadAgreements();
+							MainAgreement.this.agreements.reloadAgreements(finish -> {
+								if(MainAgreement.this.agreements.getAgreementsTree().getTree().getItemCount() == 0)
+									showAgreementMessage();
+								else
+									showAgreementContainer();
+							});
 //							showSelectAgreementMessage();
 						}
 					});
@@ -853,7 +885,5 @@ public class MainAgreement extends MainEntryPoint implements Listener,
 		agreementMessage.getElement().getStyle().setDisplay(Display.NONE);
 		agreementContainer.getElement().getStyle().clearDisplay();
 	}
-
-	// ------------------------------------ Tab Selection
 	
 }

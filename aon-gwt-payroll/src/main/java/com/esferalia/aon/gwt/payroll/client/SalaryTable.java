@@ -9,6 +9,7 @@ import java.util.Set;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.SalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.SalaryInfo.AlcatrazTerritory;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell.Context;
@@ -238,7 +239,45 @@ public abstract class SalaryTable extends ResizeComposite {
 						salaryInfo.getEndDate());
 	    });
 	    
-	    Column<SalaryInfo, SalaryInfo> draftColumn = new Column<SalaryInfo, SalaryInfo>(draftActionCell) {
+	    Column<SalaryInfo, SalaryInfo> aeatColumn = new Column<SalaryInfo, SalaryInfo>(draftActionCell) {
+
+			@Override
+			public SalaryInfo getValue(SalaryInfo salaryInfo) {
+				return salaryInfo;
+			}
+			
+			@Override
+			public void render(Context context, SalaryInfo salaryInfo, SafeHtmlBuilder sb) {
+				if(null != salaryInfo) {
+					if(salaryInfo.isAlcatraz()) {
+						String title = "Mod111 (" + salaryInfo.getAlcatrazYear() + ", " + salaryInfo.getAlcatrazPeriod().getDescription() + ")";
+						String imageCss = getAeatIcon(salaryInfo.getAlcatrazTerritory());
+						sb.appendHtmlConstant("<button type=\"button\" class=\"aon_button aon_table_button " + imageCss + "\" style=\"border: none !important; height: 20px;\" title=\"" + title + "\"></button>");
+					}else 
+						sb.appendHtmlConstant("");
+				}
+			}
+
+			private String getAeatIcon(AlcatrazTerritory alcatrazTerritory) {
+				switch (alcatrazTerritory) {
+				case ARABA:
+					return "aon-icon-araba";
+				case BIZKAIA:
+					return "aon-icon-bizkaia";
+				case GIPUZKOA:
+					return "aon-icon-gipuzkoa";
+				case NAVARRA:
+					return "aon-icon-navarra";
+				default:
+					return "aon-icon-aeat";
+				}
+			}
+		};
+		
+		aeatColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		salaryDG.setColumnWidth(aeatColumn, 5, Unit.PCT);
+
+		Column<SalaryInfo, SalaryInfo> draftColumn = new Column<SalaryInfo, SalaryInfo>(draftActionCell) {
 
 			@Override
 			public SalaryInfo getValue(SalaryInfo salaryInfo) {
@@ -272,6 +311,7 @@ public abstract class SalaryTable extends ResizeComposite {
 		salaryDG.addColumn(totalDeductionColumn, "Deducciones");
 		salaryDG.addColumn(totalLiquidColumn, "L\u00EDquido");
 	    
+		salaryDG.addColumn(aeatColumn, "");  
 		salaryDG.addColumn(draftColumn, "");   
 	}
 	
@@ -364,7 +404,7 @@ public abstract class SalaryTable extends ResizeComposite {
 	}
 	
 	public void setEnteprisesView() {
-		salaryDG.removeColumn(10);
+		salaryDG.removeColumn(11);
 	}
 	
 	public void setEntepriseView() {

@@ -89,7 +89,6 @@ public class Mod347ValidatePrintAEAT extends HttpServlet {
 				throw new AonCoreException("[INT] Modelo no encontrado");
 			}
 			AeatUrl aeatURL = AeatUrl.getAeatUrl(mod347);
-			System.out.println(aeatURL.getUrl());
 			HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create( aeatURL.getUrl() ))
 				.POST(HttpRequest.BodyPublishers.ofString(aeatURL.getUrlParameters(mod347)))

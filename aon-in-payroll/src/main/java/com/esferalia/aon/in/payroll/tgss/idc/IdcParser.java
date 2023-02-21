@@ -345,7 +345,7 @@ public class IdcParser {
 	//TRABAJADOR SUSTITUTO*:  OCUPACION*:   
 	protected static final Pattern CONTRACT_OCUPATION =
 	Pattern.compile(
-	"^TRABAJADOR\\s*SUSTITUTO\\*:\\s*(?<sustituteEmployee>.*)OCUPACION\\*\\s*:\\s*(?<ocupation>[a-z]?).*$"
+	"^TRABAJADOR\\s*SUSTITUTO\\*:\\s*(?<sustituteEmployee>.*)OCUPACION\\*\\s*:\\s*(?<ocupation>([a-z](?!\\.TRAB))?).*$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//MODALIDAD DE COTIZACIÓN:   DISCAPACIDAD -GRADO Y TIPO-
