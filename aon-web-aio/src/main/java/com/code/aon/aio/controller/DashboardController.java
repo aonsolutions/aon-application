@@ -81,8 +81,6 @@ import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.config.controller.DomainSwitcher;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.fiscal.controller.FiscalParametersController;
-import com.code.aon.ui.fiscal.controller.IFiscalModelController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
@@ -105,8 +103,7 @@ public class DashboardController implements Serializable {
 	private static final long serialVersionUID = AonVersion.SERIAL_VERSION_UID;
 	
 
-	private final static Logger LOGGER = LoggerFactory
-			.getLogger(DashboardController.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(DashboardController.class);
 
 	private static final String WHERE = " WHERE ";
 
@@ -138,26 +135,6 @@ public class DashboardController implements Serializable {
 	
 	
 	private Integer graficSelection;
-	
-	
-	
-	/*
-	 * Inicializo metodos en el constructor ya que estan implementados en el onChange.
-	 * Aparecera la primera vez que se carga la pagina.
-	 */
-
-//	public DashboardController() {
-//		try {
-//			this.getSalaryYears();
-//			this.onSalaryYearChanged(null);
-//			this.getContractYears();
-//			this.onContractYearChanged(null);
-//		} catch (ManagerBeanException ex) {
-//			// No funciona el grafico
-//		}
-//
-//	}
-	
 	
 	public List<SelectItem> getFiscalYears() {
 		List<SelectItem> fiscalYears = new LinkedList<>();
@@ -362,16 +339,12 @@ public class DashboardController implements Serializable {
 			return "gwt_mod131";
 		} else if ( mod == Model.MIVA) {
 			return "gwt_mod303";
-		} else if ( mod == Model.M303_RG) {
-			beanName = "vatTax";
-		} else if ( mod == Model.M303_RS) {
-			beanName = "mod303";
 		} else if ( mod == Model.M347) {
-			beanName = "mod347";
+			return  "gwt_mod347";
 		} else if ( mod == Model.M349) {
-			beanName = "mod349";
+			return  "gwt_mod349";
 		} else if ( mod == Model.M390_HF) {
-			beanName = "vatTax";
+			return  "gwt_mod390HF";
 		} else if ( mod == Model.M390) {
 			return "gwt_mod390";
 		} else if ( mod == Model.M180) {
@@ -390,25 +363,6 @@ public class DashboardController implements Serializable {
 			String message = "Imposible realizar la navegación al modelo solicitado.";
 			AonUtil.addErrorMessage(message);
 			throw new AbortProcessingException(message);
-		}
-		
-		if ( fiscalYear == null )
-			return "";
-		
-		IFiscalModelController controller = (IFiscalModelController) FormUtil.getController(beanName);
-		try {
-			String navKey = "";
-			if (missing) {
-				navKey = controller.newModel(administration, fiscalYear, period);	
-			} else {
-				navKey = controller.editModel(administration, fiscalYear, period);
-			}
-			this.fiscalConfig = null;
-			return navKey;
-		} catch (ManagerBeanException e) {
-			String message = "Imposible realizar la navegación al modelo solicitado.";
-			AonUtil.addErrorMessage(message);
-			throw new AbortProcessingException(message,e);
 		}
 	}
 
@@ -1019,7 +973,7 @@ public class DashboardController implements Serializable {
 			
 			DashboardDocs a = categories.get(-1);
 			if (a != null && a.getsize()>=0){
-				types.add(a);	
+				types.add(a);
 				free= free - a.getsize();
 			}
 

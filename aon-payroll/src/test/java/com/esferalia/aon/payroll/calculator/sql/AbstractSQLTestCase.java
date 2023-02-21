@@ -52,6 +52,7 @@ import static java.util.Calendar.YEAR;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
@@ -64,6 +65,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.jooq.Configuration;
@@ -1573,6 +1575,10 @@ public abstract class AbstractSQLTestCase {
 
 		new SmartContractSalaryCalculator<ISalary>(roundSalaryBuilder).calculate(ctx);
 		return jooqSalaryBuilder.execute();
+	}
+	
+	public static UnaryOperator<BigDecimal> round(int scale) {
+		return d -> d.setScale(scale, RoundingMode.HALF_UP);
 	}
 	
 	

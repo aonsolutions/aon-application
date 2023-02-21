@@ -20,9 +20,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.security.UdpatePortalConectaUsers;
-import net.aonsolutions.db.up2date.tgss.MEIPECUpdateUndo;
 import net.aonsolutions.db.up2date.tgss.MEITrainingRemoveUndo;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
+
 public class Up2Date {
 
     private static Update [] UPDATES  = {
@@ -307,11 +307,23 @@ public class Up2Date {
 	    	//HomePercentage2023Update.HOMEPERCENTAGE2023UPDATE,
 	    	//UnemploymentPercentageFix.UNEMPLOYMENTPERCENTAGEFIX,
 	    	//MEITrainingRemove.MEITRAININGREMOVE,
-	    	MEIPECUpdateUndo.MEIPECUPDATEUNDO,
+	    	//MEIPECUpdateUndo.MEIPECUPDATEUNDO,
 	    	MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
+	   
+	    	//Embargar4Many.BIEMBARGAR4MANY,
+	    	//FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
+	    	//OcupationITIMSFix.OCUPATIONITIMSFIX,
+	    	//Embargar4Many.BIEMBARGAR4MANY,
+	    	//BasesMin2023Update.BASESMIN2023UPDATE,
+	    	//AlterAlcatrazFinanceTracking.ALTER_ALCATRAZ_FINANCE_TRACKING,
+	    	//SMI2023Update.SMI20223UPDATE,
+	    	//IPREM2023Update.IPREM2022UPDATE,
+	    	//BasesMin2023Guess.BASESMIN2023GUESS,
+		    //AgreementEmptyTrash.AGREEMENTEMPTYTRASH,
+    		
 	    	UdpatePortalConectaUsers.UPDATE_PORTAL_CONECTA_USERS,
 	    	
-    		//Important, not remove
+	    	//Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
     		
     };

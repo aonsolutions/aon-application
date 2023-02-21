@@ -47,6 +47,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_O
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SUNDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TC2;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.THURSDAY_HOURS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_EMBARGO;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOURS;
@@ -1076,8 +1077,10 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			Date start = ctx.getStartDate();
 			Date end = ctx.getEndDate();
-
+			
 			ExpressionContext expressionContext = ctx.getExpressionContext();
+
+			expressionContext.setVariable(TOTAL_EMBARGO, 0.00, start, end);
 
 			for (IContractEmbargo contractEmbargo : contractEmbargos) {
 
@@ -1089,6 +1092,9 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				try {
 					double embargo = resolveEmbargo(expressionContext, contractEmbargo, embargoStart, embargoEnd);
 					total += embargo;
+					
+					expressionContext.setVariable(TOTAL_EMBARGO, total, start, end);
+					
 				} catch (RemoveException e) {
 					// TODO: Something ??? It's really necessary...
 				} catch (InvalidVariables e) {
@@ -2017,11 +2023,6 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		for (ITimedResult<Double> result : results) {
 			Double value = result.getValue();
 
-			if (value == null || value == 0) {
-				salaryBuilder.addZeroEmbargo(embargo.getId(), embargo, result.getContext());
-				continue;
-			}
-
 			String description = null;
 			try {
 				Period period = result.getPeriod();
@@ -2033,8 +2034,15 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			} catch (Exception e) {
 				onCheckError(embargo, DESCRIPTION_UNKNOWN_ERROR);
 			}
+
+                        //if (value == null || value == 0) {
+                        //	salaryBuilder.addZeroEmbargo(embargo.getId(), embargo, result.getContext());
+                        //	continue;
+                        //}
+
 			salaryBuilder.addEmbargo(embargo.getId(), value, description, embargo, result.getContext());
 			total += value;
+			
 		}
 
 		results = null;

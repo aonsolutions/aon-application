@@ -16,7 +16,9 @@ import static com.esferalia.aon.salary.enumeration.DeductionType.STRUCTURAL_OVER
 import static com.esferalia.aon.salary.enumeration.DeductionType.UNEMPLOYMENT;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
+import static java.util.Calendar.DAY_OF_MONTH;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
@@ -29,17 +31,16 @@ import java.util.stream.Collectors;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.esferalia.aon.jooq.tables.DeductionConcept;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DeductionConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -47,7 +48,6 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.watson.util.AonDateUtils;
-import com.sun.xml.ws.api.addressing.WSEndpointReference.EPRExtension;
 
 /**
  * @author rtrepiana
@@ -73,6 +73,9 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryDeductions().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
 		salary.getSalaryCosts().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
+		
+		assertTotalPayment(salary);
+		assertCommanBase(salary);
 		
 		Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
 		Assert.assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
@@ -142,6 +145,8 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		salary.getSalaryDeductions().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
 		salary.getSalaryCosts().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
 		
+		assertTotalPayment(salary);
+		assertCommanBase(salary);
 		//Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
 		//Assert.assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
 		
@@ -214,6 +219,9 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		
 		salary.getSalaryDeductions().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
 		salary.getSalaryCosts().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
+		
+		assertTotalPayment(salary);
+		assertCommanBase(salary);
 		
 		Assert.assertEquals(2455.35 , salary.getCommonBase(),0.00);
 		//Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
@@ -288,6 +296,9 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		salary.getSalaryDeductions().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
 		salary.getSalaryCosts().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
 		
+		assertTotalPayment(salary);
+		assertCommanBase(salary);
+		
 		Assert.assertEquals(2455.35 , salary.getCommonBase(),0.00);
 		//Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
 		//Assert.assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
@@ -297,7 +308,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 
 		
 		
-		Assert.assertEquals(salary.getTotalPayment() - deductions, salary.getTotalLiquid(),0.00);
+		Assert.assertEquals(salary.getTotalPayment() - deductions, salary.getTotalLiquid(),FLOATING_POINT_ERROR);
 
 		} finally {
 			cleanSystemData(aonContext);
@@ -331,10 +342,14 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		connection, 
 		aonContext);
 		
+
 		salary.getSalaryEmbargos().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
 		salary.getSalaryDeductions().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
 		salary.getSalaryCosts().forEach(d -> System.out.println(d.getType() + " : " + d.getAmount() ));
 		
+		assertTotalPayment(salary);
+		assertCommanBase(salary);
+
 		Assert.assertEquals(2455.35 , salary.getCommonBase(),0.00);
 		//Assert.assertEquals(99.19 , salary.getSocialSecurityContributions(),0.00);
 		//Assert.assertEquals(490.54 , salary.getTotalEnterprise(),0.00);
@@ -349,13 +364,25 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		System.out.println("Deductions : " + deductions);
 		System.out.println("Payment : " + salary.getTotalPayment());
 		
-		Assert.assertEquals(salary.getTotalPayment() - deductions - 40.12 , salary.getTotalLiquid(),0.00);
+		Assert.assertEquals(salary.getTotalPayment() - deductions - 40.12 , salary.getTotalLiquid(),FLOATING_POINT_ERROR);
 
 		} finally {
 			cleanSystemData(aonContext);
 			cleanSystemCosts(aonContext);
 			cleanSystemDeductions(aonContext);
 		}
+	}
+
+	void assertTotalPayment(Salary salary) {
+	    double totalPayment = 
+	    salary.getSalaryPayments().stream().map( p -> Math.round(p.getAmount()*100)/100.00 ).map( d -> BigDecimal.valueOf(d)).reduce(BigDecimal.ZERO, (d1,d2) -> d1.add(d2)).doubleValue();
+	    Assert.assertEquals(totalPayment, salary.getTotalPayment(),0.00);
+	}
+
+	void assertCommanBase(Salary salary) {
+	    double commonBase = 
+	    salary.getSalaryPayments().stream().map( p -> Math.round(p.getQuote()*100)/100.00 ).map( d -> BigDecimal.valueOf(d)).reduce(BigDecimal.ZERO, (d1,d2) -> d1.add(d2)).doubleValue();
+	    Assert.assertEquals(commonBase, salary.getCommonBase(),0.00);
 	}
 
 	@Test
@@ -549,6 +576,80 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 
 		double irpfBase = irpfBases.values().stream().collect( Collectors.summingDouble( d -> d ));
 		Assert.assertEquals(salary.getIrpfBase(), irpfBase ,FLOATING_POINT_ERROR);
+
+		assertTotalPayment(salary);
+
+		} finally {
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		}
+	}
+
+	@Test
+	public void testRoundPaymentsI()
+			throws ExpressionException, SQLException, SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		try {
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		
+		Salary salary = calculate(new String[] { "974.72", "974.72/12.00", "974.72/12", "974.72/12", "199.65 / 12" }, connection, aonContext);
+		
+		assertTotalPayment(salary);
+		assertCommanBase(salary);
+
+		} finally {
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		}
+	}
+
+	@Test
+	public void testRoundPaymentsII()
+			throws ExpressionException, SQLException, SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		try {
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		
+		//Salary salary = calculate(new String[] { "974.72", "974.72/12.00", "974.72/12", "974.72/12", "199.65 / 12"}, connection, aonContext);
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {
+				"947.72 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"P_0 / 12.00",
+				"P_0 / 12.00",
+				"P_0 / 12.00",
+				"196.65 / 12.00  * DIAS_TRABAJADOS / DIAS_MES",
+				}, 
+				new String[] {}, null);
+		//@formatter:on
+		
+		addPayment(aonContext, contract, "DIAS_ENFERMEDAD_COMUN_1_3 * 0.00", "DIAS_ENFERMEDAD_COMUN_1_3 * BASE_REGULADORA");
+		addPayment(aonContext, contract, "DIAS_ENFERMEDAD_COMUN_4_15 * BASE_REGULADORA * 0.60", "DIAS_ENFERMEDAD_COMUN_4_15 * BASE_REGULADORA");
+
+		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
+		Date endITDate = add(startITDate, DAY_OF_MONTH, 10);
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
+				endITDate, null);
+
+		Salary salary = calculate(connection, aonContext, contract);
+		
+		assertTotalPayment(salary);
+		assertCommanBase(salary);
+		
+		salary.getSalaryPayments().forEach( p -> Assert.assertFalse(p.getAmount() == 0.01 ));
+		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
 
 		} finally {
 		cleanSystemData(aonContext);

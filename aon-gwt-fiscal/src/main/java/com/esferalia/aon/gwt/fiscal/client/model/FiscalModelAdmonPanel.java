@@ -2,11 +2,15 @@ package com.esferalia.aon.gwt.fiscal.client.model;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificationPopupParams;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSService;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.FiscalMSServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
 import com.esferalia.aon.gwt.fiscal.shared.IRequestParamsNames;
 import com.esferalia.aon.gwt.fiscal.shared.JsonParams;
@@ -23,6 +27,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.typedarrays.shared.ArrayBuffer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -81,11 +86,13 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 	private AonLink sendLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconSend(), "Envio de la presentaci\u00F3n a la AEAT.");
 	private AonLink checkLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconAeatBw(), "Consultar Presentaci\u00F3n en AEAT.");
 	private AonLink viewDocumentLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconPdf(), "Consultar Presentaci\u00F3n guardada.");
+	private AonLink uploadPDFLink = new AonLink(AON.AON_SOLUTIONS_RESOURCES.aonIconPdf(), "Cargar PDF declaraci\u00F3n presentada.");
 	
 	private boolean validating;
 	private boolean sending;
 	private boolean checkingDataResponse;
 	private boolean checkingAEAT;
+	private boolean uploadingPDFData;
 	
 	public FiscalModelAdmonPanel(IFiscalModelAdmonPanelCallback<T,O> callback) {
 		super(Unit.PX);
@@ -136,7 +143,9 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		
 		viewDocumentLink.addClickHandler(event -> checkDataResponseData()); 
 		cards.add( viewDocumentLink );
-		
+				
+		uploadPDFLink.addClickHandler(event -> uploadPDFData()); 
+		cards.add( uploadPDFLink );		
 		
 		scrollPanel.setWidget(cards);
 		addWest(scrollPanel, 250);
@@ -188,7 +197,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 			validating = true;
 			if (getCallback().getModel().isSent()) {
 				getCallback().showError("La presentaci\u00F3n del modelo ya se ha realizado con anterioridad.");	
-			} else if (!getCallback().getModel().canBeSent()) {
+			} else if (!getCallback().getModel().canBeValidated()) {
 				getCallback().showError(AON.MSG.mustFinishModel());	
 			} else {
 				validateAEAT(new AEATParams()
@@ -366,6 +375,7 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 			}
 		}
 	}
+	
 	private void checkAEAT(AEATParams params) {
 		final PopupPanel popup = new PopupPanel(false, true);
 		popup.add( new AonSplash());
@@ -439,6 +449,46 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		xhr.send(requestData.toString());
 	}
 	
+	protected void uploadPDFData() {
+		if (!uploadingPDFData) {
+			if (!getCallback().getModel().isSent()) {
+				getCallback().showError("El modelo no est\u00E1 presentado.");	
+			} else {
+				cleanViewers();
+				
+				Upload upload = new Upload() {
+					
+					@Override
+					protected void onUpload(String data) {
+						uploadingPDFData = true;
+						
+						// Grabar el fichero en data_response - data_attach
+						FiscalMSServiceAsync serviceRaw = GWT.create(FiscalMSService.class);
+						FiscalMSServiceAsync service = new FiscalMSServiceAsyncDecorator(serviceRaw);
+						
+						service.savePDFModel(getCallback().getOptions().getOccam(), getCallback().getModel(),  data,
+								new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {										
+										uploadingPDFData = false;
+										// Si se ha cargado de forma correcta, se muestra en pantalla
+										checkDataResponseData();
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {										
+										uploadingPDFData = false;
+										getCallback().showError("Error al cargar el archivo.");
+									}
+								});
+					}							
+				};
+				upload.upload();				
+			}
+		}
+	}
+	
 	protected void showPDF(String dataURI) {
 		deckLayoutPanel.setWidget(pdfViewerPanel);
 		pdfViewer.open("data:application/pdf;base64," + dataURI);
@@ -489,15 +539,18 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 		   ((getCallback().getModel().getYear() > 2021)  
 		   || (getCallback().getModel().getYear() == 2021 && getCallback().getModel().getPeriod().isLastSemester())
 		   || (getCallback().getModel().getModel() == FiscalModelType.M202 && getCallback().getModel().getPeriod() == Period.T2))) {
-			validateLink.setVisible( getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
+			validateLink.setVisible( getCallback().getModel().canBeValidated() && AonStringUtils.isNotBlank(getCallback().getValidatePrintAction()));
 			sendLink.setVisible( getCallback().getModel().canBeSent() && AonStringUtils.isNotBlank(getCallback().getSendAction() ));
 			checkLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckAction() ));
-			viewDocumentLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckDataResponseDataAction() )); 
+			viewDocumentLink.setVisible( getCallback().getModel().isSent() && AonStringUtils.isNotBlank(getCallback().getCheckDataResponseDataAction() ));
+			// La opción para cargar el PDF presentado del modelo, se pone visible igual que la de consulta del documento presentado
+			uploadPDFLink.setVisible( viewDocumentLink.isVisible() );
 		} else {
 			validateLink.setVisible( false );
 			sendLink.setVisible( false );
 			checkLink.setVisible( false  ); 
-			viewDocumentLink.setVisible( false  ); 
+			viewDocumentLink.setVisible( false  );
+			uploadPDFLink.setVisible( false );
 		}
 	}
 }

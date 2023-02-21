@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod115Key;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.ExplainRowManager;
 import com.esferalia.aon.occam.impl.jooq.dao.irpf.IRPFDAO;
@@ -210,8 +211,8 @@ public abstract class Mod115Declaration {
 		}
 	}
 
-	KeyedIrpfBreakdown addInvoice( Set<Integer> invoices, KeyedIrpfBreakdown br) {
-		invoices.add(br.getIrpfBreakdown().getInvoice());
+	KeyedIrpfBreakdown addInvoice( Set<Alcatraz> invoices, KeyedIrpfBreakdown br) {
+		invoices.add(new Alcatraz().setInvoice(br.getIrpfBreakdown().getInvoice()));
 		return br;	
 	}
 	
@@ -223,10 +224,10 @@ public abstract class Mod115Declaration {
 					, Collectors.counting()));
 	}
 
-	Set<Integer> createFromInvoices(final AONContext ctx, final Mod115 mod115) {
+	Set<Alcatraz> createFromInvoices(final AONContext ctx, final Mod115 mod115) {
 		final Map<Mod115Key,Set<String>> docs = new EnumMap<>(Mod115Key.class); 
 		final Map<Mod115Key,Set<String>> pdocs = new EnumMap<>(Mod115Key.class);
-		final Set<Integer> invoices = new HashSet<>();
+		final Set<Alcatraz> invoices = new HashSet<>();
 		Stream<IrpfBreakdown> stream = null;
 		if (mustApplyReplacementSearch(mod115)) {
 			stream =  IRPFDAO.getInputInvoicesIrpfBreakdown(ctx, mod115);

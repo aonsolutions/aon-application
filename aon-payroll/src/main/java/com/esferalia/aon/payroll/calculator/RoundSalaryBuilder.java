@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 
 import org.apache.velocity.runtime.parser.node.GetExecutor;
 
+import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountAmount;
+import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.AbstractSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
@@ -48,6 +50,7 @@ import com.esferalia.aon.watson.util.AonUtils;
 public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder<T> {
 	
 	private static final BigDecimal THIRTY = BigDecimal.valueOf(30.00);
+	
 	
 	private static class Deductions {
 		
@@ -203,27 +206,56 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	}
 
 	private static class Payments {
-		
+	    	private static final String ZERO_PAYMENT = "ZERO_PAYMENT";
+	    
 		private static class Irpf{
 			private BigDecimal base;
 			private PaymentType type; 
 		}
 		
+		private static class Payment{
+			private BigDecimal tax;
+			private BigDecimal quote;
+			private BigDecimal amount;
+			
+			private Date endDate;
+			private Date startDate;
+			private IPayment payment;
+			private String description;
+			private Map<String, ITimedVariable<?>> context;
+		}
+
 		private ArrayList<Irpf> irpfs = new ArrayList<>();
+		private ArrayList<Payment> payments = new ArrayList<>();
 		
 		public List<Irpf> getIrpfs() {
 			return irpfs;
 		}
 		
-		private void tryAddPayment(PaymentType type, BigDecimal irpf) {
+		private void addPayment(BigDecimal amount, BigDecimal quote, BigDecimal tax, String description, Date start, Date end,
+			IPayment payment, Map<String, ITimedVariable<?>> context ) {
+		    Payment p = new Payment();
+		    p.amount = amount;
+		    p.quote = quote;
+		    p.tax = tax;
+		    p.description = description;
+		    p.startDate = start;
+		    p.endDate = end;
+		    p.payment = payment;
+		    p.context = context;
+			    
+		    payments.add(p);
+		}
+		
+		private void tryAddIrpf(PaymentType type, BigDecimal irpf) {
 			try {
-				addPayment(type, irpf);
+				addIrpf(type, irpf);
 			} catch ( Throwable t ) {
 				
 			}
 		}
 
-		private void addPayment(PaymentType type, BigDecimal irpf) {
+		private void addIrpf(PaymentType type, BigDecimal irpf) {
 			if ( isZero(irpf)) 
 				return;
 			
@@ -253,6 +285,102 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 			return Optional.empty();
 		}
 		
+		
+		private void roundAmount(UnaryOperator<BigDecimal> f, BigDecimal totalPayment) {
+		    if ( payments.isEmpty()) {
+			return;
+		    }
+		    // Already rounded, don't touch   
+		    BigDecimal round = 
+		    payments.stream()
+		    .filter(p -> p.amount.compareTo(f.apply(p.amount)) == 0)
+		    .map( p -> p.amount )
+		    .reduce(ZERO, RoundSalaryBuilder::add);
+		    
+		    BigDecimal remain = totalPayment.subtract(round);
+		    
+		    // Need to round, go for it   
+		    Payment [] unround =
+		    payments.stream()
+		    .filter(p -> p.amount.compareTo(f.apply(p.amount)) != 0)
+		    .toArray(Payment[]::new);
+
+		    if ( unround.length == 0) {
+			return;
+		    }
+
+		    for (int i = 0; i < ( unround.length - 1 ); i++) {
+			if ( unround[i].amount.compareTo(unround[i].quote) == 0)
+			    unround[i].quote = f.apply(unround[i].quote);
+			unround[i].amount = f.apply(unround[i].amount);
+
+			remain = remain.subtract(unround[i].amount);
+		    }
+		    
+		    // And de last one, all remain
+		    for (int i = unround.length - 1; i < unround.length; i++) {
+			if ( unround[i].amount.compareTo(unround[i].quote) == 0)
+			    unround[i].quote = remain;
+			unround[i].amount = remain;
+		    }
+		}
+
+		private void roundQuote(UnaryOperator<BigDecimal> f, BigDecimal commonBase) {
+		    if ( payments.isEmpty()) {
+			return;
+		    }
+		    // Already rounded, don't touch   
+		    BigDecimal round = 
+		    payments.stream()
+		    .filter(p -> p.quote.compareTo(f.apply(p.quote)) == 0)
+		    .map( p -> p.quote )
+		    .reduce(ZERO, RoundSalaryBuilder::add);
+		    
+		    BigDecimal remain = commonBase.subtract(round);
+		    
+		    // Need to round, go for it   
+		    Payment [] unround =
+		    payments.stream()
+		    .filter(p -> p.quote.compareTo(f.apply(p.quote)) != 0)
+		    .toArray(Payment[]::new);
+
+		    if ( unround.length == 0) {
+			return;
+		    }
+
+		    for (int i = 0; i < ( unround.length - 1 ); i++) {
+			unround[i].quote = f.apply(unround[i].quote);
+			remain = remain.subtract(unround[i].quote);
+		    }
+		    
+		    // And de last one, all remain
+		    for (int i = unround.length - 1; i < unround.length; i++) {
+			unround[i].quote = remain;
+		    }
+		}
+
+		private void fireAdd(ISalaryBuilder<?> salaryBuilder) {
+		    payments.forEach(p -> {
+			if ( ZERO_PAYMENT.equals(p.description) )
+        			salaryBuilder.addZeroPayment(
+        			    doubleValue(p.quote), 
+        			    doubleValue(p.tax), 
+        			    p.startDate, 
+        			    p.endDate, 
+        			    p.payment, 
+        			    p.context);
+			else 
+        			salaryBuilder.addPayment(
+        			    doubleValue(p.amount), 
+        			    doubleValue(p.quote), 
+        			    doubleValue(p.tax), 
+        			    p.description, 
+        			    p.startDate, 
+        			    p.endDate, 
+        			    p.payment, 
+        			    p.context);
+		});
+		}
 	}
 
 	protected UnaryOperator<BigDecimal> f;
@@ -700,15 +828,17 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void addPayment(Double amount, Double quote, Double tax, String description, Date start, Date end,
 			IPayment payment, Map<String, ITimedVariable<?>> context) {
-		payments.tryAddPayment(payment.getType(), bigDecimalValue(tax));
-		salaryBuilder.addPayment(amount, quote, tax, description, start, end, payment, context);
+		payments.addPayment(bigDecimalValue(amount), bigDecimalValue(quote), bigDecimalValue(tax), description, start, end, payment, context);
+		payments.tryAddIrpf(payment.getType(), bigDecimalValue(tax));
+		//salaryBuilder.addPayment(amount, quote, tax, description, start, end, payment, context);
 	}
 
 	@Override
 	public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
-		payments.tryAddPayment(payment.getType(), bigDecimalValue(tax));		
-		salaryBuilder.addZeroPayment(quote, tax, startDate, endDate, payment, context);
+	    	payments.addPayment(BigDecimal.ZERO, bigDecimalValue(quote), bigDecimalValue(tax), Payments.ZERO_PAYMENT, startDate, endDate, payment, context);
+		payments.tryAddIrpf(payment.getType(), bigDecimalValue(tax));		
+		//salaryBuilder.addZeroPayment(quote, tax, startDate, endDate, payment, context);
 	}
 
 	@Override
@@ -757,6 +887,24 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		return embargos.getTotal(f);
 	}
 	
+	private void roundPaymentsAmount(BigDecimal totalPayment) {
+	    try {
+		payments.roundAmount(f, totalPayment);
+	    } catch ( Exception e ) {
+	    }
+	}
+
+	private void roundPaymentsQuote(BigDecimal commonBase) {
+	    try {
+		payments.roundQuote(f, commonBase);
+	    } catch ( Exception e ) {
+	    }
+	}
+
+	private void fireAddPayments(ISalaryBuilder<?> salaryBuilder) {
+	    payments.fireAdd(salaryBuilder);
+	}
+
 	private BigDecimal getDeductionAmount(String code, DeductionType type, Date startDate, Date endDate) {
 		if ( AonStringUtils.endsWith(code, "_E"))
 			code = AonStringUtils.removeEnd(code, "_E");
@@ -782,9 +930,15 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		salaryBuilder.setTotalIrpf(doubleValue(totalIrpf));
 		salaryBuilder.setTotalDeduction(doubleValue(totalDeduction));
 
-		BigDecimal totalEmbargo = getTotalEmbargo();
-		//totalEmbargo = f.apply(totalEmbargo);
+		cgcBase = f.apply(cgcBase);
+
 		totalPayment = f.apply(totalPayment);
+		roundPaymentsAmount(totalPayment);
+		roundPaymentsQuote(cgcBase);
+		fireAddPayments(salaryBuilder);
+
+		BigDecimal totalEmbargo = getTotalEmbargo();
+
 		totalLiquid = add(totalPayment, totalDeduction.negate(),totalEmbargo.negate());
 		salaryBuilder.setTotalPayment(doubleValue(totalPayment));
 		salaryBuilder.setTotalLiquid(doubleValue(totalLiquid));
@@ -804,7 +958,6 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		salaryBuilder.setItBase(doubleValue(itBase));
 		salaryBuilder.setProExtBase(doubleValue(proExtBase));
 
-		cgcBase = f.apply(cgcBase);
 		hExtraBase = f.apply(hExtraBase);
 		nonHExtraBase = f.apply(nonHExtraBase);
 		salaryBuilder.setHExtraBase(doubleValue(hExtraBase));
@@ -913,6 +1066,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 	private static BigDecimal bigDecimalValue(Object val) {
 		return BigDecimal.valueOf(((Number)val).doubleValue()).setScale(10, RoundingMode.HALF_UP);
+	}
+
+	private static BigDecimal bigDecimalValue(Double val) {
+		return BigDecimal.valueOf(val);
 	}
 
 	private static BigDecimal add(BigDecimal ...vals) {

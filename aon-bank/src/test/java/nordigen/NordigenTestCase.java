@@ -146,7 +146,8 @@ public class NordigenTestCase {
 			NordigenInstitution caixaBank = AonNordigen.getInstitution(nordigenToken, "CAIXABANK_CAIXESBB");
 			NordigenAgreement agreement = AonNordigen.createAgreement(nordigenToken, "CAIXABANK_CAIXESBB");
 			assertAgreement(agreement);
-			assertEquals(caixaBank.getTransactionTotalDays(), agreement.getMaxHistoricalDays());
+			Integer expectedHistoricalDays = 90;
+			assertEquals(expectedHistoricalDays, agreement.getMaxHistoricalDays());
 			AonNordigen.getAgreement(nordigenToken, agreement.getId());
 			assertAgreement(agreement);
 			AonNordigen.deleteAgreement(nordigenToken, agreement);

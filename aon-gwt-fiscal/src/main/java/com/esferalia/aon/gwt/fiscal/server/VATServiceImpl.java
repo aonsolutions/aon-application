@@ -33,13 +33,6 @@ public class VATServiceImpl extends AonStatelessRemoteServiceServlet implements 
 			.collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-//	@Override
-//	public String getVatContextReport(Occam occam, AccountingReportParams params) throws AonCoreException {
-//		return VATFormatter.formatInvoices("LISTADO IVA", FiscalUtils.toString(params), 
-//			FISCAL.getVatContext(occam, params)
-//				.collect(Collectors.toCollection(LinkedList::new)));
-//	}
-
 	@Override
 	public LinkedList<VatSummaryContext> getVatSummaryContext(Occam occam, AccountingReportParams params) throws AonCoreException {
 		return FISCAL.getVatSummaryContext(occam, params)

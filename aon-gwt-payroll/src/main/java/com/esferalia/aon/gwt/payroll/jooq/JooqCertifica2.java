@@ -643,8 +643,15 @@ public class JooqCertifica2 {
 			if (null != holidaysRecord) {
 				baseCGC = settlementRecords.get(0).get(SALARY.CGC_BASE);
 				baseCGP = settlementRecords.get(0).get(SALARY.CGP_BASE);
-//				baseCGC = holidaysRecord.get(SALARY_PAYMENT.AMOUNT);
-//				baseCGP = holidaysRecord.get(SALARY_PAYMENT.QUOTE);
+			}
+			
+			if(holidayDays == 0) {
+				Date settleEndDate = settlementRecords.get(0).get(SALARY.END_DATE);
+				Date contractEndDate = dslContext.select(CONTRACT.END_DATE).from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne(CONTRACT.END_DATE);
+				
+				if(null != contractEndDate)
+					holidayDays = DateUtils.getDaysBetween(contractEndDate, settleEndDate);
+				
 			}
 
 			settlementCertifica2Info = new Certifica2Period(null, null, holidayDays, baseCGC, baseCGP);

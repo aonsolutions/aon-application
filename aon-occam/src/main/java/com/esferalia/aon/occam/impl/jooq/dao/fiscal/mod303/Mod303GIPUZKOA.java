@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.Mod390Key;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO.Alcatraz;
 import com.esferalia.aon.occam.impl.jooq.dao.mod390HF.Mod390HFDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.vat.VATDAO;
 import com.esferalia.aon.watson.util.AonMathUtils;
@@ -38,16 +39,16 @@ abstract class Mod303GIPUZKOA extends Mod303Declaration {
 	}
 	
 	@Override
-	protected Set<Integer> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303) {
-		final Set<Integer> invoices = new HashSet<>();
+	protected Set<Alcatraz> createVatAccrualKeysFromInvoices(AONContext ctx, Mod303 mod303) {
+		final Set<Alcatraz> invoices = new HashSet<>();
 		Stream<VatContext> stream = null;
 		if (mod303.isDiffCalculationMandatory() ) {
 			mod303.setGenerateFromYearStart(true);
-			stream =  VATDAO.getAccrualInvoices(ctx,mod303);
+			stream =  VATDAO.getCritCajaInvoices(ctx,mod303);
 		} else if (mustApplyReplacementSearch(mod303)) {
-			stream =  VATDAO.getAccrualInvoices(ctx,mod303);
+			stream =  VATDAO.getCritCajaInvoices(ctx,mod303);
 		} else {
-			stream = VATDAO.getNotInModelAccrualInvoices(ctx,mod303);
+			stream = VATDAO.getNotInModelCritCajaInvoices(ctx,mod303);
 		}
 		stream.forEach( vc -> {
 			if (vc.isSales()) {
@@ -57,7 +58,10 @@ abstract class Mod303GIPUZKOA extends Mod303Declaration {
 				add(Mod303Key.GP_C049, mod303, vc.getBase());
 				add(Mod303Key.GP_C050, mod303, vc.getDeductibleQuota());
 			}
-			invoices.add(vc.getInvoice());
+			invoices.add( new Alcatraz()
+				.setInvoice(vc.getInvoice())
+				.setFinance(vc.getFinance())
+				.setFinanceTracking(vc.getFinanceTracking()));
 		});
 		return invoices;
 	}

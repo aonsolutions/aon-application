@@ -210,6 +210,12 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconTableView aonIconTableView;
+.aon_icon_table_view { background-image: iconTableView;}
+@url iconCloudSync aonIconCloudSync;
+.aon_icon_cloud_sync { background-image: iconCloudSync;}
+@url iconAccountTree aonIconAccountTree;
+.aon_icon_account_tree { background-image: iconAccountTree;}
 @url iconMoveDown aonIconMoveDown;
 .aon_icon_move_down { background-image: iconMoveDown;}
 @url iconStatics aonIconStatics;

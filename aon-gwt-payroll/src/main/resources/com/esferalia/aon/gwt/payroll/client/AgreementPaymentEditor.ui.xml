@@ -106,6 +106,10 @@
 			min-width: 150px;
 		}
 		
+		.expression-TextArea {
+			height: 75px !important;
+		}
+		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.form} {style.flexColumn}">
@@ -130,7 +134,8 @@
 					<g:Label styleName="{style.title}">Expresión</g:Label>
 					<aon:AonToolbarSmallButton ui:field="expresssionVisibilityBtn" />
 				</g:HTMLPanel>
-				<g:TextArea ui:field="paymentExpressionTB"/>
+				<a:ExpressionCodeArea ui:field="paymentExpressionCA" debugId="fxExpressionCodeArea"
+									styleName="aon-width-a11 gwt-TextArea {style.expression-TextArea}" />
 			</g:HTMLPanel>
 			
 			<g:DisclosurePanel ui:field="advancePanel">

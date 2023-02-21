@@ -2410,6 +2410,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			for ( CCC ccc: cccsMap.values() ) {
 				Collection<solutions.aon.seg.social.object.Employee> ssEmployees = new ArrayList<>();
 				
+				if(AonStringUtils.equals(ccc.getRegime(), "0138")) {
+					enterpriseStatus.and(new EnterpriseStatus.UnknownErrorAnd().setMessage("Importaci\u00f3n contratos asociados al r\u00e9gimen 'Emplead\u0040s de hogar' en desarrollo"));
+					continue;
+				};
+				
 				try {
 					ssEmployees = SistemaRED.getTotalEmployees(certificate.getData(), certificate.getPassword(), certificate.getType(), ccc.getRegime(), ccc.getCode());
 				} catch ( ForbiddenException e) {

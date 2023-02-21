@@ -104,6 +104,7 @@ import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.Occupation;
+import com.esferalia.aon.payroll.IrpfOutcome;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -900,7 +901,7 @@ public class EmployeesServiceHelper {
 			if ( employee.getContractType().isPresent() ) {
 				String ssContractType = employee.getContractType().get();
 				String aonContractType = getString(dataList, ContextVariable.TC2, "");
-				if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 ) {
+				if ( AonStringUtils.compareIgnoreCase(aonContractType, ssContractType ) != 0 && !AonStringUtils.endsWith(ssContractType, "9") ) {
 					employeeStatus.and(
 							new EmployeeStatus.MismatchedContractType()
 							.setAonContractType(aonContractType)
@@ -2277,6 +2278,17 @@ public class EmployeesServiceHelper {
 		return enterprisePayroll;
 	}
 	
+
+	public static <S extends ISalary >  S calculate(Connection conn, SalaryDraft draft, GenericContractSalaryCalculator<S, ISQLContractSalaryCalculatorContext> calculator) {
+
+        	try {
+        	    ISQLContractSalaryCalculatorContext ctx = 
+        		    getSalaryCalculatorContext(conn, draft, irpfOut -> {});
+        		return calculator.calculate(ctx);
+        	} catch (ExpressionException | SQLException | SalaryException e) {
+        		throw new IllegalArgumentException(e);
+        	}  
+	}
 
 	public static <T extends ISalaryBuilder<ISalary>, L extends SalaryDraftBuilder> void calculate(
 			Connection conn, SalaryDraft draft, T salaryBuilder, L draftBuilder, GenericContractSalaryCalculator<ISalary,ISQLContractSalaryCalculatorContext> calculator) {
