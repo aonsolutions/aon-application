@@ -57,6 +57,8 @@ public abstract class Enterprise extends ResizeComposite {
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
+		String inputPadding();
+		String inputLBHeight();
 		String warningColor();
 		String warningTB();
 	}
@@ -194,7 +196,7 @@ public abstract class Enterprise extends ResizeComposite {
 		//PROVINCE
 		this.addressProvince.addItem("-");
 		for(int i=0; i<Province.values().length; i++)
-			this.addressProvince.addItem(Province.values()[i].getName(), Province.values()[i] + "");
+			this.addressProvince.addItem(Province.values()[i].getName(), AonStringUtils.leftPad(i + "", 2, '0'));
 		
 		//PAYSHEET MODEL
 		this.enterprisePaysheetModel.addItem("Est\u00E1ndar", "salary");
@@ -438,6 +440,8 @@ public abstract class Enterprise extends ResizeComposite {
 		else {
 			ListBox scopeListBox = new ListBox();
 			scopeListBox.setStyleName("aon-selectOneMenu");
+			scopeListBox.addStyleName(style.inputLBHeight());
+			scopeListBox.addStyleName(style.inputPadding());
 			scopeListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 			
 			for(Entry<Integer, String> entry : enterprisecopes.entrySet())
