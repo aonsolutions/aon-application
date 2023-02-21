@@ -809,7 +809,7 @@ public class Mod390HFAraba2022Declaration extends Mod390HFArabaDeclaration {
 	@Override
 	Set<Alcatraz> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
 		final Set<Alcatraz> invoices = new HashSet<>();
-		VATDAO.getAccrualInvoices(ctx,mod).forEach( vc -> {
+		VATDAO.getCritCajaInvoices(ctx,mod).forEach( vc -> {
 			if (vc.isSales()) {
 				add(Mod390Key.AR_C262, mod, vc.getBase());
 				add(Mod390Key.AR_C263, mod, vc.getDeductibleQuota());

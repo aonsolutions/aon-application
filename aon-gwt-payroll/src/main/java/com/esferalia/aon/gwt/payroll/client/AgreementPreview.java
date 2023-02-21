@@ -1017,6 +1017,10 @@ public abstract class AgreementPreview extends Composite {
 						String result = event.getValue();
 						
 						try {
+							if(AonStringUtils.contains(expression, ",") && AonStringUtils.contains(expression, "."))
+								expression= expression.replaceAll("\\.", "");
+							expression= expression.replaceAll(",", ".");
+							
 							Double expressionValue = evalExpression(expression);
 							result = null == expressionValue ? "" : expressionValue.toString();
 						} catch (Exception e) {
@@ -1517,16 +1521,21 @@ public abstract class AgreementPreview extends Composite {
 				infoCell = new AonToolbarSmallButton(infoTitle, AON.CSS.aonIconInfo());
 			checkRowAndModify(paymentGrid, row, payment, infoCell);
 
-			Widget visibilityCell = new Button();
-			getEnableDisableButton((Button) visibilityCell, !isHideExpression(payment), readOnly);
-			visibilityCell.setTitle(isHideExpression(payment) ? "Inactivo" : "Activo");
-			if (!readOnly) {
-				((Button) visibilityCell).addClickHandler(e -> {
-					showHidePayment(payment);
-					payment.setModify(true);
-					setAgreementPreview(agreement);
-					setHasChange(true);
-				});
+			Widget visibilityCell;
+			if(readOnly && !isHideExpression(payment))
+				visibilityCell = new Label();
+			else {
+				visibilityCell = new Button();
+				getEnableDisableButton((Button) visibilityCell, !isHideExpression(payment), readOnly);
+				visibilityCell.setTitle(isHideExpression(payment) ? "Inactivo" : "Activo");
+				if (!readOnly) {
+					((Button) visibilityCell).addClickHandler(e -> {
+						showHidePayment(payment);
+						payment.setModify(true);
+						setAgreementPreview(agreement);
+						setHasChange(true);
+					});
+				}
 			}
 			checkRowAndModify(paymentGrid, row, payment, visibilityCell);
 
@@ -1751,16 +1760,21 @@ public abstract class AgreementPreview extends Composite {
 				infoCell = new AonToolbarSmallButton(infoTitle, AON.CSS.aonIconInfo());
 			checkRowAndModify(extraGrid, row, payment, infoCell);
 
-			Widget visibilityCell = new Button();
-			getEnableDisableButton((Button) visibilityCell, !isHideExpression(payment), readOnly);
-			visibilityCell.setTitle(isHideExpression(payment) ? "Inactivo" : "Activo");
-			if (!readOnly) {
-				((Button) visibilityCell).addClickHandler(e -> {
-					showHidePayment(payment);
-					payment.setModify(true);
-					setAgreementPreview(agreement);
-					setHasChange(true);
-				});
+			Widget visibilityCell;
+			if(readOnly && !isHideExpression(payment))
+				visibilityCell = new Label();
+			else {
+				visibilityCell = new Button();
+				getEnableDisableButton((Button) visibilityCell, !isHideExpression(payment), readOnly);
+				visibilityCell.setTitle(isHideExpression(payment) ? "Inactivo" : "Activo");
+				if (!readOnly) {
+					((Button) visibilityCell).addClickHandler(e -> {
+						showHidePayment(payment);
+						payment.setModify(true);
+						setAgreementPreview(agreement);
+						setHasChange(true);
+					});
+				}
 			}
 			checkRowAndModify(extraGrid, row, payment, visibilityCell);
 

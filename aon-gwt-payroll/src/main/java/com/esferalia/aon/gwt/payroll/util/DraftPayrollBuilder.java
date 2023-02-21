@@ -205,8 +205,9 @@ public class DraftPayrollBuilder {
 				int type = getDeductionPDFType(d.getType().ordinal());
 				String desc = d.getDescription(); //d.getType().getName(new Locale("es"));
 				
-				if(desc == null || desc.isEmpty()) 
-					desc = getDeductionTypeDescription(d.getType().ordinal());
+				if(desc == null || desc.isEmpty() || desc.matches("\\s*\\d+(\\.\\d+)?\\s*%\\s*")) 
+					desc = Optional.ofNullable(PayrollUtils.getDeductionNameDescription(d.getName()))
+					.orElseGet( () -> getDeductionTypeDescription(d.getType().ordinal()));
 				
 				PDFDeduction deduction = new PDFDeduction(d.getAmount(), d.getName(), desc, percent );
 				if (!deductionsMap.containsKey(type)) 

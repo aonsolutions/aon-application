@@ -152,13 +152,13 @@ public class Mod303InfoDAO extends FiscalModelDAO {
 	}
 	
 	private static Stream<VatContext> getModelOutVatAccrualInvoicesInfo(AONContext ctx, final Mod303 mod303, IMod303KeyDAO keyDAO) {
-		return VATDAO.getModelAccrualInvoices(ctx, mod303)
+		return VATDAO.getModelCritCajaInvoices(ctx, mod303)
 			.filter( VatContext::isSales )	
 			.filter( br ->  keyDAO.acceptValue(mod303, br));
 	}
 		
 	private static Stream<VatContext> getModelInVatAccrualInvoicesInfo(AONContext ctx, final Mod303 mod303, IMod303KeyDAO keyDAO) {
-		return VATDAO.getModelAccrualInvoices(ctx, mod303)
+		return VATDAO.getModelCritCajaInvoices(ctx, mod303)
 				.filter( VatContext::isNotSales )	
 				.filter( br ->  keyDAO.acceptValue(mod303, br));
 	}
