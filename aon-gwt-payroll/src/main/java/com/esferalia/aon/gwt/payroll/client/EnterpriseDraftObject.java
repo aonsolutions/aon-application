@@ -165,6 +165,10 @@ public class EnterpriseDraftObject extends AbstractDraftObject {
 		return this.enterprise.getAddress().getProvince();
 	}
 	
+	public String getGeozoneCode() {
+		return this.enterprise.getAddress().getGeozoneCode();
+	}
+	
 	public String getMobile() {
 		Optional<RegistryMedia> mobile = this.enterprise.getMedias().stream().filter(f -> f.getMedia() == MediaType.CELLULAR).findFirst();
 		return mobile.isPresent() ? mobile.get().getValue() : null;
