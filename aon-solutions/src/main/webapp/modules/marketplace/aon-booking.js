@@ -572,7 +572,7 @@ export class AonBooking extends AonElement {
 		else if(App.DOCUMENTAL === app)
 			return dur.hasPackSuite() || dur.hasPackPortal();
 		else if(App.TIMECONTROL === app)
-			return dur.hasPackSuite() || dur.hasPackPortal() || dur.hasComunica();
+			return dur.hasPackSuite() || dur.hasPackPortal();
 		else if(App.INVOICE === app)
 			return dur.hasPackSuite() || dur.hasPackPortal() || 
 				(!dur.hasBasicManagement() && !dur.hasParentBasicManagement()
