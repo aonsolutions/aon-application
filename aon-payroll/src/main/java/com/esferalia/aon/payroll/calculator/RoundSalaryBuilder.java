@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -24,10 +25,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.velocity.runtime.parser.node.GetExecutor;
-
-import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountAmount;
-import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.AbstractSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
@@ -304,10 +301,13 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		    payments.stream()
 		    .filter(p -> p.amount.compareTo(f.apply(p.amount)) != 0)
 		    .toArray(Payment[]::new);
-
+		    
 		    if ( unround.length == 0) {
 			return;
 		    }
+
+		    Arrays.sort(unround, RoundSalaryBuilder::compare);
+		    
 
 		    for (int i = 0; i < ( unround.length - 1 ); i++) {
 			if ( unround[i].amount.compareTo(unround[i].quote) == 0)
@@ -347,6 +347,8 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		    if ( unround.length == 0) {
 			return;
 		    }
+
+		    Arrays.sort(unround, RoundSalaryBuilder::compare);
 
 		    for (int i = 0; i < ( unround.length - 1 ); i++) {
 			unround[i].quote = f.apply(unround[i].quote);
@@ -1211,6 +1213,32 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		int dayOfMonth = AonDateUtils.get(date, Calendar.DAY_OF_MONTH);
 		int lastDayOfMonth = AonDateUtils.getMax(date, Calendar.DAY_OF_MONTH);
 		return dayOfMonth == lastDayOfMonth;
+	}
+	
+	private static Pattern ORDER = Pattern.compile("^\\[(\\d+)\\].*$");
+
+	private static int compare(Payments.Payment p0, Payments.Payment p1) {
+
+	    	String description0 = p0.description;
+		String description1 = p1.description;
+		try { 
+        		// By order
+        		Matcher matcher0 = ORDER.matcher(description0);
+        		Matcher matcher1 = ORDER.matcher(description1);
+        		boolean order0 = matcher0.matches();
+        		boolean order1 = matcher1.matches();
+        		if ( order0 && !order1)
+        		    return -1; 			//p0 < p1
+        		else if ( order1 && !order0 )
+        		    return 1;			//p0 > p1
+        		else if ( order1 /*&& order0 != null*/ )
+        		    return Integer.parseInt(matcher0.group(1)) - Integer.parseInt(matcher1.group(1));
+        		else
+        		    return 0;
+		} catch( Exception e ){
+		    return 0;
+		}
+		
 	}
 	
 

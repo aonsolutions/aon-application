@@ -33,6 +33,7 @@ import org.junit.Test;
 
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DeductionConceptRecord;
+import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -622,34 +623,27 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		cleanSystemCosts(aonContext);
 		cleanSystemDeductions(aonContext);
 		
-		//Salary salary = calculate(new String[] { "974.72", "974.72/12.00", "974.72/12", "974.72/12", "199.65 / 12"}, connection, aonContext);
 		//@formatter:off
 		ContractRecord contract = newContract(aonContext, 
-				new String[] {
-				"947.72 * DIAS_TRABAJADOS / DIAS_MES" ,
-				"P_0 / 12.00",
-				"P_0 / 12.00",
-				"P_0 / 12.00",
-				"196.65 / 12.00  * DIAS_TRABAJADOS / DIAS_MES",
-				}, 
+				new String[] {}, 
 				new String[] {}, null);
 		//@formatter:on
 		
-		addPayment(aonContext, contract, "DIAS_ENFERMEDAD_COMUN_1_3 * 0.00", "DIAS_ENFERMEDAD_COMUN_1_3 * BASE_REGULADORA");
-		addPayment(aonContext, contract, "DIAS_ENFERMEDAD_COMUN_4_15 * BASE_REGULADORA * 0.60", "DIAS_ENFERMEDAD_COMUN_4_15 * BASE_REGULADORA");
-
-		Date startITDate = add(getFirstDayOfMonth(getToday()), DAY_OF_MONTH,10);
-		Date endITDate = add(startITDate, DAY_OF_MONTH, 10);
-		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,
-				endITDate, null);
+		PaymentConceptRecord pagaExtraConcept = addConcept(aonContext, "PAGA_EXTRA");
+		PaymentConceptRecord salarioBaseConcept = addConcept(aonContext, "SALARIO_BASE");
+		
+		addPayment(aonContext, contract, pagaExtraConcept, "[92] PAGA EXTRA", "SALARIO_BASE/12.00", "_P", "_P", PaymentType.CRA_0001);
+		addPayment(aonContext, contract, pagaExtraConcept, "[91] PAGA EXTRA NAVIDAD", "SALARIO_BASE/12.00", "_P", "_P", PaymentType.CRA_0001);
+		addPayment(aonContext, contract, pagaExtraConcept, "[90] PAGA EXTRA VERANO", "SALARIO_BASE/12.00", "_P", "_P", PaymentType.CRA_0001);
+		addPayment(aonContext, contract, salarioBaseConcept, "[01] SALARIO BASE", "974.72 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0001);
 
 		Salary salary = calculate(connection, aonContext, contract);
 		
 		assertTotalPayment(salary);
 		assertCommanBase(salary);
 		
-		salary.getSalaryPayments().forEach( p -> Assert.assertFalse(p.getAmount() == 0.01 ));
 		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
+		salary.getSalaryPayments().stream().filter(p -> p.getDescription().startsWith("[92]")).forEach( p -> Assert.assertEquals(81.22, p.getAmount(), 0.00));
 
 		} finally {
 		cleanSystemData(aonContext);
