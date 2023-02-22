@@ -617,6 +617,16 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 				.limit(limit)
 				.fetchInto(AGREEMENT);
 		// @formatter:on
+		
+		Result<Record> resultContracts = dslContext.select().from(AGREEMENT)
+				.join(AGREEMENT_LEVEL)
+				.on(AGREEMENT_LEVEL.AGREEMENT.eq(AGREEMENT.ID))
+				.join(CONTRACT)
+				.on(CONTRACT.AGREEMENT_LEVEL.eq(AGREEMENT_LEVEL.ID))
+				.where(AGREEMENT.ID.lt(0))	
+				.and(CONTRACT.DOMAIN.in(domains))
+				.orderBy(AGREEMENT.DOMAIN.desc(), AGREEMENT.DESCRIPTION)
+				.fetch();
 
 		List<Agreement> agreements = new LinkedList<Agreement>();
 		for (AgreementRecord record : result) {
@@ -635,7 +645,31 @@ public class JooqAgreement extends org.jooq.impl.AbstractKeys {
 			agreements.add(agreement);
 
 		}
+		
+		for (Record record : resultContracts) {
+			if(!containAgreement(record.get(AGREEMENT.ID), agreements)) {
+				Agreement agreement = new Agreement();
+
+				agreement.setId(record.get(AGREEMENT.ID)); // Not NULL
+				agreement.setDomain(record.get(AGREEMENT.DOMAIN));
+				agreement.setDescription(record.get(AGREEMENT.DESCRIPTION));
+				agreement.setSSNumber(record.get(AGREEMENT.SS_NUMBER));
+				agreement.setOwner(null == record.get(AGREEMENT.OWNER) || (byte)0 == record.get(AGREEMENT.OWNER) ? AgreementOwner.AONSOLUTIONS : AgreementOwner.SERVICONVENIOS);
+				
+				agreement.setLevels(Collections.emptySet());
+
+				boolean hasContracts = hasContract(dslContext, record.get(AGREEMENT.ID), domains[0]);
+				agreement.setHasContract(hasContracts);
+				agreements.add(agreement);
+			}
+		}
+		
 		return agreements;
+	}
+
+	private static boolean containAgreement(Integer agreementId, List<Agreement> agreements) {
+		Optional<Agreement> agreementOpt = agreements.stream().filter(agreement -> agreement.getId() == agreementId).findAny();
+		return agreementOpt.isPresent();
 	}
 
 	public static Agreement getAgreement(DSLContext dslContext,
