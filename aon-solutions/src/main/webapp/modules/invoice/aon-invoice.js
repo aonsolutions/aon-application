@@ -15,7 +15,7 @@ import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environmen
 
 import * as ACTION from '../actions.js';
 import { Transactions } from '../../services/transaction.js';
-import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType } from './invoiceEnums.js';
+import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType, WithholdingType } from './invoiceEnums.js';
 import { getInvestAssets, getItems} from '../../services/productService.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
@@ -1127,13 +1127,20 @@ export class AonInvoice extends AonElement {
 		}
 
 
-		let div = this.getElement(this.TAX_DIV);
-		if(!div) {
-			div = this.createElement(TAG.DIV);
-			div.id = this.TAX_DIV;
-			card.addContent(div);
-		}
-		this.clearElement(div);
+		// let div = this.getElement(this.TAX_DIV);
+		// if(!div) {
+		// 	div = this.createElement(TAG.DIV);
+		// 	div.id = this.TAX_DIV;
+		// 	card.addContent(div);
+		// }
+		// this.clearElement(div);
+
+		// ----- WITHHOLDING
+
+		let irpfTable = new AonBasicTable();
+		irpfTable.id = 'irpfTable';
+		card.addContent(irpfTable);
+		irpfTable.addRow();
 
 		if(!this.invoice.isReadonly() && this.invoice.details.length === 0) {
 			// ----- ADD TAX
@@ -1153,33 +1160,42 @@ export class AonInvoice extends AonElement {
 					if(this.autosave) this.save();
 				}
 			});
-			div.appendChild(addButton);
+			irpfTable.addCell(addButton);
 			if(!this.invoice.isNacional()) {
 				addButton.setDisabled(true);
 			}
 		}
 
-		// ----- WITHHOLDING
-
 		let irpf = new AonSwitch();
 		irpf.id = this.WITHHOLDING;
 		irpf.title = MSG.IRPF; // MSG.WITHHOLDING;
-		if(!this.invoice.isReadonly() && this.invoice.details.length === 0)
-			irpf.style.position = 'absolute';
-		irpf.style.marginTop = '10px';
-		irpf.style.marginLeft = '10px';
+
 		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		irpf.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setWithholding(irpf.checked);
 			this.reload();
 			if(this.autosave) this.save();
 		});
-		div.appendChild(irpf);
+		irpfTable.addCell(irpf, '1');
 		if(!this.invoice.isNacional() && !this.invoice.isCcm()) {
 			irpf.setDisabled(true);
 		}
 		if(this.invoice.isReadonly()) irpf.setDisabled(true);
 		irpf.checked = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;
+
+		let irpfType = new AonSelect();
+		irpfType.id = 'irpfwithholdingTYpe';
+		irpfType.title = 'Tipo IRPF';
+		irpfType.setAlias('id', 'name');
+		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length === 0) 
+			irpfType.disabled = 'true';
+		irpfType.setOptions(WithholdingType);
+		irpfType.addEventListener(EVENT.SELECT, () => {
+
+		});
+		irpfTable.addCell(irpfType, '3');
+		irpfType.readonly = this.invoice.isReadonly();
+
 	}
 
 	onChangeRegistry(registry) { 
