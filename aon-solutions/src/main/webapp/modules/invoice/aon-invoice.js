@@ -1528,7 +1528,12 @@ export class AonInvoice extends AonElement {
 			vat.title = '%IVA';
 			vat.options = JSON.stringify(TaxIVAPercentage);
 			if(detail.prepayment === undefined) detail.prepayment = false;
-			vat.readonly = this.invoice.isReadonly() || detail.prepayment;
+			vat.readonly = this.invoice.isReadonly() || (detail.prepayment && detail.prepayment == 'true');
+			
+			if(detail.prepayment && detail.prepayment == 'true') {
+				vat.disabled = detail.prepayment && detail.prepayment == 'true';
+			} 
+
 			vat.addEventListener(EVENT.SELECT, () => this.onChangeDetailVat(detail, vat.value, i));
 			let td6 = table.addCell(vat);
 			td6.style.verticalAlign = "bottom";
@@ -1538,6 +1543,8 @@ export class AonInvoice extends AonElement {
 				vat.setDisabled(true);
 			}
 			detail.percentage = detail.percentage || detail.vat;
+			if(!detail.percentage && (!detail.prepayment || detail.prepayment == 'false')) 
+				detail.percentage = 21.0;
 			if(detail.percentage) vat.value = detail.percentage;
 		} else {
 			detail.percentage = 0.0;
@@ -1549,11 +1556,12 @@ export class AonInvoice extends AonElement {
 		let detailOptions = new AonIconButton();
 		detailOptions.id = this.DETAIL_OPTIONS + i;
 		detailOptions.title = MSG.OPTIONS;
-		detailOptions.icon = MATERIAL_ICONS.MORE_VERT;
+		detailOptions.icon = MATERIAL_ICONS.EDIT;
 		detailOptions.addEventListener(EVENT.CLICK, () => {
-			this.printDetailOptionsDialog(detailOptions, detail, i);
+			this.printDetailDialog(detail, i);
 		});
 		table.addCell(detailOptions);
+		
 
 		// ----- DETAIL DELETE
 
@@ -1619,62 +1627,12 @@ export class AonInvoice extends AonElement {
 			this.printDetailDialog(this.invoice.details[i], i);
 		});
 
-		table.addCell(description, '2');
+		table.addCell(description, this.invoice.isNacional() && !this.invoice.isExempt() && (!detail.prepayment || detail.prepayment == 'false') ? '3' : '4');
 		description.readonly = this.invoice.isReadonly();
 		description.value = detail.description;
 
-
-		table.addRow(); // ----- ROW 2
-
-		// ----- DETAIL QUANTITY
-
-		let quantity = this.createAonNumber(this.DETAIL_QUANTITY + 'Dialog' + i, MSG.QUANTITY, detail.quantity);
-		quantity.onChange(() => this.onChangeDetailQuantity(detail, quantity.value, i, true));
-		table.addCell(quantity);
-		quantity.readonly = this.invoice.isReadonly()
-	
-		// ----- DETAIL PRICE
-
-		let price = this.createAonNumber(this.DETAIL_PRICE + 'Dialog' + i, MSG.PRICE, detail.price);
-		price.onChange(() => this.onChangeDetailPrice(detail, price.value, i, true));
-		table.addCell(price);
-		price.readonly = this.invoice.isReadonly()
-	
-		table.addRow(); // ----- ROW 3
-
-		// ----- DETAIL DISCOUNT
-
-		let discount = this.createAonNumber(this.DETAIL_DISCOUNT + 'Dialog' + i, '%Dto', detail.discount);
-		discount.onChange(() => this.onChangeDetailDiscount(detail, discount.value, i, true));
-		table.addCell(discount);
-		discount.readonly = this.invoice.isReadonly()
-
-		// ----- DETAIL AMOUNT
-
-		let amount = this.createAonNumber(this.DETAIL_AMOUNT + 'Dialog' + i, MSG.AMOUNT, detail.amount);
-		table.addCell(amount);
-		amount.readonly = CONSTANT.TRUE;
-
-		table.addRow(); // ----- ROW 4
-
-		// ----- PREPAYMENT | SUPLIDO
-		
-		let prepayment = new AonSwitch();
-		prepayment.id = this.DETAIL_PREPAYMENT + 'Dialog' + i;
-		prepayment.title = 'Suplido';//MSG.DETAIL_PREPAYMENT;
-		prepayment.addEventListener(EVENT.CHANGE, () => {
-			detail.prepayment = prepayment.checked;
-			this.invoice.setDetail(detail, i);
-			this.reload();
-			this.printDetailDialog(this.invoice.details[i], i);
-			if(this.autosave) this.save();
-		});
-		table.addCell(prepayment);
-		prepayment.readonly = this.invoice.isReadonly();
-		prepayment.checked = detail.prepayment;
-
 		// ----- DETAIL VAT
-		if(this.invoice.isNacional() && !this.invoice.isExempt()) {
+		if(this.invoice.isNacional() && !this.invoice.isExempt() &&  (!detail.prepayment || detail.prepayment == 'false')) {
 			let vat = new AonSelect();
 			vat.id = this.DETAIL_VAT + 'Dialog' + i;
 			vat.title = '%IVA';
@@ -1695,48 +1653,47 @@ export class AonInvoice extends AonElement {
 				vat.setDisabled(true);
 			}
 			detail.percentage = detail.percentage || detail.vat;
+			if(!detail.percentage) {
+				detail.percentage = 21.0;
+			}
 			if(detail.percentage) vat.value = detail.percentage;
 		} else {
 			detail.percentage = 0.0;
 			this.invoice.setDetail(detail, i);
 		}
-		dialog.open();
-	}
 
-	printDetailOptionsDialog(button, detail, i) {
-		let dialog = this.getElement(this.DIALOG_BLANK);
+		table.addRow(); // ----- ROW 2
 
-		let div = this.createElement(TAG.DIV);
-		div.style.margin = '15px';
+		// ----- DETAIL QUANTITY
 
-		// ----- WITHHOLDING
+		let quantity = this.createAonNumber(this.DETAIL_QUANTITY + 'Dialog' + i, MSG.QUANTITY, detail.quantity);
+		quantity.onChange(() => this.onChangeDetailQuantity(detail, quantity.value, i, true));
+		table.addCell(quantity);
+		quantity.readonly = this.invoice.isReadonly()
+	
+		// ----- DETAIL PRICE
 
-		// let withholding = new AonSwitch();
-		// withholding.id = this.DETAIL_WITHHOLDING + i;
-		// withholding.title = MSG.WITHHOLDING;
-		// withholding.readonly = this.invoice.isReadonly();
-		// withholding.checked = detail.withholding;
-		// div.appendChild(withholding);
-		// withholding.addEventListener(EVENT.CHANGE, () => {
-		// 	detail.withholding = withholding.checked;
-		// 	this.invoice.setDetail(detail, i);
-		// 	if(this.autosave) this.save();
-		// });
+		let price = this.createAonNumber(this.DETAIL_PRICE + 'Dialog' + i, MSG.PRICE, detail.price);
+		price.onChange(() => this.onChangeDetailPrice(detail, price.value, i, true));
+		table.addCell(price);
+		price.readonly = this.invoice.isReadonly()
+	
+		// table.addRow(); // ----- ROW 3
 
-		// ----- PREPAYMENT | SUPLIDO
+		// ----- DETAIL DISCOUNT
 
-		let prepayment = new AonSwitch();
-		prepayment.id = this.DETAIL_PREPAYMENT + i;
-		prepayment.title = 'Suplido';//MSG.DETAIL_PREPAYMENT;
-		prepayment.readonly = this.invoice.isReadonly();
-		prepayment.checked = detail.prepayment;
-		div.appendChild(prepayment);
-		prepayment.addEventListener(EVENT.CHANGE, () => {
-			detail.prepayment = prepayment.checked;
-			this.invoice.setDetail(detail, i);
-			this.reload();
-			if(this.autosave) this.save();
-		});
+		let discount = this.createAonNumber(this.DETAIL_DISCOUNT + 'Dialog' + i, '%Dto', detail.discount);
+		discount.onChange(() => this.onChangeDetailDiscount(detail, discount.value, i, true));
+		table.addCell(discount);
+		discount.readonly = this.invoice.isReadonly()
+
+		// ----- DETAIL AMOUNT
+
+		let amount = this.createAonNumber(this.DETAIL_AMOUNT + 'Dialog' + i, MSG.AMOUNT, detail.amount);
+		table.addCell(amount);
+		amount.readonly = CONSTANT.TRUE;
+
+		table.addRow(); // ----- ROW 4
 
 		// ----- CATEGORY
 
@@ -1750,7 +1707,7 @@ export class AonInvoice extends AonElement {
 			this.invoice.setDetail(detail, i);
 			if(this.autosave) this.save();
 		});
-		div.appendChild(category);
+		table.addCell(category, '2');
 		getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
 			let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
 			category.options = JSON.stringify(accs);
@@ -1771,16 +1728,37 @@ export class AonInvoice extends AonElement {
 			this.invoice.setDetail(detail, i);
 			if(this.autosave) this.save();
 		});
-		div.appendChild(bienAfecto);
+
+		table.addCell(bienAfecto, '2');
 		getInvestAssets({}).then(investAssets => {
 			bienAfecto.options = JSON.stringify(investAssets);
 			if(detail.investAsset)
 				bienAfecto.value = detail.investAsset;		
 		});
+		
+		table.addRow();
 
-		const top  = button.getBoundingClientRect().top;
-		const left = button.getBoundingClientRect().left;
-		dialog.setContent(div, top, left);
+		// ----- PREPAYMENT | SUPLIDO
+		
+		let prepayment = new AonSwitch();
+		prepayment.id = this.DETAIL_PREPAYMENT + 'Dialog' + i;
+		prepayment.title = 'Suplido';//MSG.DETAIL_PREPAYMENT;
+		prepayment.addEventListener(EVENT.CHANGE, () => {
+			detail.prepayment = prepayment.checked;
+			alert(prepayment.checked);
+			if((!detail.prepayment || detail.prepayment == 'false'))
+				detail.percentage = 21.0;
+			else detail.percentage = 0.0;
+			alert(detail.percentage);
+			this.invoice.setDetail(detail, i);
+			this.reload();
+			this.printDetailDialog(this.invoice.details[i], i);
+			if(this.autosave) this.save();
+		});
+		table.addCell(prepayment);
+		prepayment.readonly = this.invoice.isReadonly();
+		prepayment.checked = detail.prepayment;
+
 		dialog.open();
 	}
 
@@ -2228,7 +2206,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	acceptInvoice() {
-		if(this.configuration.tbai.active) {
+		if(this.invoice.isEmitida() && this.configuration.tbai.active) {
 			let d = this.getApplication().getDialog();
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
