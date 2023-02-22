@@ -56,6 +56,7 @@ import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
@@ -306,6 +307,7 @@ public class ContractServlet extends AonApiHttpServlet {
 	}
 	
 	private File getSalaryPdf(AonApiData api) throws Exception {
+		int entepriseId = api.getData().optInt("enterpriseId");
 		LOGGER.info("[GET] SALARY PDF");
 		JSONObject params = api.getData();
 		Integer salaryId = params.optInt("salaryId");
@@ -319,9 +321,9 @@ public class ContractServlet extends AonApiHttpServlet {
 		
 		File file = File.createTempFile("nomina", "");
 		if (AonStringUtils.equalsIgnoreCase(salaryReport, SalaryTemplate.AON_SOLUTIONS_DEFAULT.getValue())) {
-			JooqPayrollBuilder.generateClassicPayroll(api.getDomain().getName(), new FileOutputStream(file), Optional.empty(), salaryId);
+			JooqPayrollBuilder.generateClassicPayroll(entepriseId > 0 ? entepriseId : null, api.getDomain().getName(), new FileOutputStream(file), Optional.empty(), salaryId);
 		} else {
-			JooqPayrollBuilder.generatePayroll(api.getDomain().getName(), new FileOutputStream(file), Optional.empty(), salaryId);			
+			JooqPayrollBuilder.generatePayroll(entepriseId > 0 ? entepriseId : null, api.getDomain().getName(), new FileOutputStream(file), Optional.empty(), salaryId);			
 		}
 		
 		return file;

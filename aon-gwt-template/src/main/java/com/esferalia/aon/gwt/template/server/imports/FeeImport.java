@@ -293,11 +293,16 @@ public class FeeImport extends Import {
 		if(product.getId() == null) {
 			Tax tax = AON.getTax(domain.getName(), domain.getId(), user.getLogin(), f -> vatFilter(domain, user, f));
 			
+			String name = AonStringUtils.isEmpty(fee.getDescription()) 
+					? fee.getItem().getProduct().getCode()
+					: fee.getDescription();
+			
+			if(name.length() > 63) {
+				name = name.substring(0, 63);
+			}
 			product = AON.insertProduct(domain.getName(), domain.getId(), user.getLogin(), new OldProduct()
 					.setDomain(domain.getId())
-					.setName(AonStringUtils.isEmpty(fee.getDescription()) 
-							? fee.getItem().getProduct().getCode()
-							: fee.getDescription())
+					.setName(name)
 					.setCode(fee.getItem().getProduct().getCode())
 					.setVat(tax.getId())
 					.setKind(ProductKind.SALE.value())

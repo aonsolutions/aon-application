@@ -42,11 +42,11 @@ abstract class Mod303NAVARRA extends Mod303Declaration {
 		Stream<VatContext> stream = null;
 		if (mod303.isDiffCalculationMandatory() ) {
 			mod303.setGenerateFromYearStart(true);
-			stream =  VATDAO.getAccrualInvoices(ctx,mod303);
+			stream =  VATDAO.getCritCajaInvoices(ctx,mod303);
 		} else if (mustApplyReplacementSearch(mod303)) {
-			stream =  VATDAO.getAccrualInvoices(ctx,mod303);
+			stream =  VATDAO.getCritCajaInvoices(ctx,mod303);
 		} else {
-			stream = VATDAO.getNotInModelAccrualInvoices(ctx,mod303);
+			stream = VATDAO.getNotInModelCritCajaInvoices(ctx,mod303);
 		}
 		stream
 			.filter(vc -> vc.isSales())
