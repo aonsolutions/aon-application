@@ -7633,9 +7633,9 @@ public class AON {
 		}
 	}
 
-	public static List<Cno> getCno(String domainName, Integer domainId, String login, Optional<String> cnoSearch) {
+	public static List<Cno> getCno(String domainName, Integer domainId, String login) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
-			return getCommon().getCno(ctx, cnoSearch);
+			return getCommon().getCno(ctx);
 		}
 	}
 }

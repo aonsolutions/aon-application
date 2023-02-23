@@ -472,8 +472,8 @@ export class AonAltaDirecta extends AonElement {
     async getCno() {
         try {
             let resp = await getCno();
-            resp = sortBy(resp, 'value', 'asc');
-            this.getElement('cno').setOptions(resp.map(r => ({ name: `${r.value} - ${r.name}`, value: r.value})));
+            //resp = sortBy(resp, 'value', 'desc');
+            this.getElement('cno').setOptions(resp.map(r => ({ name: `${r.cnoCode} - ${r.cno}`, value: r.cnoCode})));
         } catch (error){}
     }
 

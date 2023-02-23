@@ -3,13 +3,11 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 import static com.esferalia.aon.jooq.tables.Cno.CNO;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Cno;
@@ -52,16 +50,9 @@ public class CnoDAO {
 		}
 	}
 	
-	public static List<Cno> getList(AONContext ctx, Optional<String> cnoSearch) {
-		Condition condition = DSL.noCondition();
-		
-		if(cnoSearch.isPresent()) {
-			String pattern = "(?i)\\b" + cnoSearch.get() + "\\b|" + cnoSearch.get();
-			condition = CNO.CODE.likeRegex(pattern).or(CNO.TITLE.likeRegex(pattern));
-		}
-		
+	public static List<Cno> getList(AONContext ctx) {
 		return ctx.getDslContext().selectFrom(CNO)
-			.where(condition)
+			.orderBy(CNO.CODE)
 			.fetch()
 			.stream()
 			.map(new CnoFiller())
