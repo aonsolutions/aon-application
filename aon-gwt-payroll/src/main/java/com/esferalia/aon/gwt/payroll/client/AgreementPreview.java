@@ -942,6 +942,8 @@ public abstract class AgreementPreview extends Composite {
 		Label deleteCell = new Label("");
 		salaryGrid.setWidget(row, col, deleteCell);
 		salaryGrid.getCellFormatter().addStyleName(row, col, style.headerDeleteFixed());
+		
+		salaryGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 	}
 
 	private void fillSalaryTable() {
@@ -1017,6 +1019,10 @@ public abstract class AgreementPreview extends Composite {
 						String result = event.getValue();
 						
 						try {
+							if(AonStringUtils.contains(expression, ",") && AonStringUtils.contains(expression, "."))
+								expression= expression.replaceAll("\\.", "");
+							expression= expression.replaceAll(",", ".");
+							
 							Double expressionValue = evalExpression(expression);
 							result = null == expressionValue ? "" : expressionValue.toString();
 						} catch (Exception e) {
@@ -1116,6 +1122,8 @@ public abstract class AgreementPreview extends Composite {
 			salaryGrid.getCellFormatter().addStyleName(row, col, style.deleteFixed());
 			if (row % 2 == 0)
 				salaryGrid.getCellFormatter().addStyleName(row, col, style.oddRow());
+			
+			salaryGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 		}
 
 	}
@@ -1284,6 +1292,8 @@ public abstract class AgreementPreview extends Composite {
 		Label delete = new Label("");
 		levelGrid.setWidget(row, 2, delete);
 		levelGrid.getCellFormatter().addStyleName(row, 2, style.headerFixed());
+		
+		levelGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 	}
 
 	private void fillCategoryTable() {
@@ -1398,6 +1408,8 @@ public abstract class AgreementPreview extends Composite {
 				levelGrid.getCellFormatter().addStyleName(row, 1, style.oddRow());
 			if (row % 2 == 0)
 				levelGrid.getCellFormatter().addStyleName(row, 2, style.oddRow());
+			
+			levelGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 		}
 	}
 
@@ -1465,6 +1477,7 @@ public abstract class AgreementPreview extends Composite {
 		paymentGrid.getCellFormatter().addStyleName(row, 7, style.zIndex1());
 
 		paymentGrid.getRowFormatter().addStyleName(row, style.headerColor());
+		paymentGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 	}
 
 	private void fillPaymentTable() {
@@ -1517,16 +1530,21 @@ public abstract class AgreementPreview extends Composite {
 				infoCell = new AonToolbarSmallButton(infoTitle, AON.CSS.aonIconInfo());
 			checkRowAndModify(paymentGrid, row, payment, infoCell);
 
-			Widget visibilityCell = new Button();
-			getEnableDisableButton((Button) visibilityCell, !isHideExpression(payment), readOnly);
-			visibilityCell.setTitle(isHideExpression(payment) ? "Inactivo" : "Activo");
-			if (!readOnly) {
-				((Button) visibilityCell).addClickHandler(e -> {
-					showHidePayment(payment);
-					payment.setModify(true);
-					setAgreementPreview(agreement);
-					setHasChange(true);
-				});
+			Widget visibilityCell;
+			if(readOnly && !isHideExpression(payment))
+				visibilityCell = new Label();
+			else {
+				visibilityCell = new Button();
+				getEnableDisableButton((Button) visibilityCell, !isHideExpression(payment), readOnly);
+				visibilityCell.setTitle(isHideExpression(payment) ? "Inactivo" : "Activo");
+				if (!readOnly) {
+					((Button) visibilityCell).addClickHandler(e -> {
+						showHidePayment(payment);
+						payment.setModify(true);
+						setAgreementPreview(agreement);
+						setHasChange(true);
+					});
+				}
 			}
 			checkRowAndModify(paymentGrid, row, payment, visibilityCell);
 
@@ -1590,6 +1608,8 @@ public abstract class AgreementPreview extends Composite {
 				paymentGrid.getCellFormatter().addStyleName(row, 6, style.oddRow());
 			if (row % 2 == 0)
 				paymentGrid.getCellFormatter().addStyleName(row, 7, style.oddRow());
+			
+			paymentGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 		}
 
 	}
@@ -1668,6 +1688,7 @@ public abstract class AgreementPreview extends Composite {
 		extraGrid.getCellFormatter().addStyleName(row, 8, style.zIndex1());
 
 		extraGrid.getRowFormatter().addStyleName(row, style.headerColor());
+		extraGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 	}
 
 	private void fillExtraTable() {
@@ -1691,8 +1712,7 @@ public abstract class AgreementPreview extends Composite {
 
 			Widget payDateCell;
 			if (null != extra && !extra.isDeleted())
-				payDateCell = new Label(
-						extra.getIssueDate() + (readOnly ? " (" + getPayDescription(payment) + ")" : ""));
+				payDateCell = new Label(extra.getIssueDate());
 			else {
 				if (readOnly)
 					payDateCell = new Label("Prorrat.");
@@ -1729,19 +1749,23 @@ public abstract class AgreementPreview extends Composite {
 			checkRowAndModify(extraGrid, row, payment, expressionCell);
 
 			Widget periodicityCell = new Label();
-			if (null != extra && !extra.isDeleted() && !readOnly) {
+			if (null != extra && !extra.isDeleted()) {
 				String issueMonth = extra.getIssueDate().split("/")[1];
 				String payDescription = getPayLongDescription(payment);
+				
+				if(readOnly)
+					periodicityCell = new Label(payDescription);
+				else {
+					ListBox periodicityLB = createPeriodicityLB(issueMonth);
+					setSelectedValueLB(periodicityLB, payDescription);
+					periodicityLB.addChangeHandler(e -> {
+						checkPaymentExtra(payment, periodicityLB.getSelectedValue());
+						setAgreementPreview(agreement);
+						setHasChange(true);
+					});
 
-				ListBox periodicityLB = createPeriodicityLB(issueMonth);
-				setSelectedValueLB(periodicityLB, payDescription);
-				periodicityLB.addChangeHandler(e -> {
-					checkPaymentExtra(payment, periodicityLB.getSelectedValue());
-					setAgreementPreview(agreement);
-					setHasChange(true);
-				});
-
-				periodicityCell = periodicityLB;
+					periodicityCell = periodicityLB;
+				}
 			}
 			checkRowAndModify(extraGrid, row, payment, periodicityCell);
 
@@ -1751,16 +1775,21 @@ public abstract class AgreementPreview extends Composite {
 				infoCell = new AonToolbarSmallButton(infoTitle, AON.CSS.aonIconInfo());
 			checkRowAndModify(extraGrid, row, payment, infoCell);
 
-			Widget visibilityCell = new Button();
-			getEnableDisableButton((Button) visibilityCell, !isHideExpression(payment), readOnly);
-			visibilityCell.setTitle(isHideExpression(payment) ? "Inactivo" : "Activo");
-			if (!readOnly) {
-				((Button) visibilityCell).addClickHandler(e -> {
-					showHidePayment(payment);
-					payment.setModify(true);
-					setAgreementPreview(agreement);
-					setHasChange(true);
-				});
+			Widget visibilityCell;
+			if(readOnly && !isHideExpression(payment))
+				visibilityCell = new Label();
+			else {
+				visibilityCell = new Button();
+				getEnableDisableButton((Button) visibilityCell, !isHideExpression(payment), readOnly);
+				visibilityCell.setTitle(isHideExpression(payment) ? "Inactivo" : "Activo");
+				if (!readOnly) {
+					((Button) visibilityCell).addClickHandler(e -> {
+						showHidePayment(payment);
+						payment.setModify(true);
+						setAgreementPreview(agreement);
+						setHasChange(true);
+					});
+				}
 			}
 			checkRowAndModify(extraGrid, row, payment, visibilityCell);
 
@@ -1827,6 +1856,8 @@ public abstract class AgreementPreview extends Composite {
 				extraGrid.getCellFormatter().addStyleName(row, 7, style.oddRow());
 			if (row % 2 == 0)
 				extraGrid.getCellFormatter().addStyleName(row, 8, style.oddRow());
+			
+			extraGrid.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 		}
 
 	}

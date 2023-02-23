@@ -319,7 +319,7 @@ public abstract class Mod303Declaration {
 		mod303.setDiffCalculationMandatory(false);
 		mod303.setDiffCalculationDisabled(true);
 		boolean resolved = false;
-		if (!mod303.isFirstPeriod() && mod303.getYear() >= 2021 ) { 
+		if (!mod303.isFirstPeriod() && mod303.getYear() == 2022 ) { 
 			List<Integer> ids = FiscalModelDAO.getPreviousModels(ctx, mod303, Mod303::new)
 				.map(FiscalModel::getId)
 				.collect(Collectors.toCollection(LinkedList::new));

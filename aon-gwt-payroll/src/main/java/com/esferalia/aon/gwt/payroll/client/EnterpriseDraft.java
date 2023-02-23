@@ -10,7 +10,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.occam.api.model.type.Country;
-import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.StreetType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -80,8 +79,8 @@ public abstract class EnterpriseDraft extends Composite {
 		public void onEnterpriseAddressZipChange() {
 			String value = this.addressZip.getValue();
 			enterpriseDraftObject.setAddressZip(value);
-			updateMunicipalities();
 			updateProvince();
+			updateMunicipalities();
 		}
 
 		@Override
@@ -303,9 +302,9 @@ public abstract class EnterpriseDraft extends Composite {
 		enterprise.addressZip.setValue(enterpriseDraftObject.getAddressZip());
 		
 		updateProvince();
-		setSelectedValueLB(enterprise.addressProvince, enterpriseDraftObject.getAddressProvince());
+		setSelectedValueLB(enterprise.addressProvince, enterpriseDraftObject.getGeozoneCode());
 		
-		if(null != enterpriseDraftObject.getAddressProvince()) {
+		if(null != enterpriseDraftObject.getGeozoneCode()) {
 			updateMunicipalities();
 			setSelectedValueLB(enterprise.addressCity, enterpriseDraftObject.getMunicipalityCode());
 		}
@@ -346,18 +345,18 @@ public abstract class EnterpriseDraft extends Composite {
 	}
 	
 	public void updateMunicipalities() {
-		String zip = enterprise.addressZip.getValue();
+		String provinceCode = enterprise.addressProvince.getSelectedValue();
 		enterprise.addressCity.clear();
 		enterprise.addressCity.addItem("-", "-1");
-		HashMap<String, String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(zip);
+		HashMap<String, String> municipalitiesOfProvince = municipalities.getMunicipalitiesByProvinceCode(provinceCode);
 		municipalitiesOfProvince.entrySet().forEach(e -> enterprise.addressCity.addItem(e.getValue(), e.getKey()));
 	}
 	
 	public void updateProvince() {
 		String zip = enterprise.addressZip.getValue();
 		if(AonStringUtils.isNotBlank(zip)) {
-			Integer zipCode = Integer.parseInt(zip.substring(0, 2));
-			setSelectedValueLB(enterprise.addressProvince, Province.values()[zipCode] + "");
+			String zipCode = zip.substring(0, 2);
+			setSelectedValueLB(enterprise.addressProvince, AonStringUtils.leftPad(zipCode, 2, '0'));
 			DomEvent.fireNativeEvent(Document.get().createChangeEvent(), enterprise.addressProvince);
 		}
 		

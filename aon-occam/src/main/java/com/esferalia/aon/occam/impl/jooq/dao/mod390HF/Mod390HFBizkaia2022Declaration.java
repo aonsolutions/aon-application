@@ -769,7 +769,7 @@ class Mod390HFBizkaia2022Declaration extends Mod390HFBizkaiaDeclaration {
 	@Override
 	Set<Alcatraz> createVatAccrualKeysFromInvoices(AONContext ctx, Mod390HF mod) {
 		final Set<Alcatraz> invoices = new HashSet<>();
-		VATDAO.getAccrualInvoices(ctx,mod).forEach( vc -> {
+		VATDAO.getCritCajaInvoices(ctx,mod).forEach( vc -> {
 			if (vc.isSales()) {
 				add(Mod390Key.BZ_C130, mod, vc.getBase());
 				add(Mod390Key.BZ_C131, mod, vc.getDeductibleQuota());

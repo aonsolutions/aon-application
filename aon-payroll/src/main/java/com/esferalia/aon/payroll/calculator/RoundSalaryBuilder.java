@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -24,10 +25,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.velocity.runtime.parser.node.GetExecutor;
-
-import com.esferalia.aon.occam.api.model.finance.nordigen.NordigenAccountAmount;
-import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.AbstractSalaryBuilder;
 import com.esferalia.aon.salary.ISalary;
@@ -50,6 +47,7 @@ import com.esferalia.aon.watson.util.AonUtils;
 public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder<T> {
 	
 	private static final BigDecimal THIRTY = BigDecimal.valueOf(30.00);
+	
 	
 	private static class Deductions {
 		
@@ -205,7 +203,8 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	}
 
 	private static class Payments {
-		
+	    	private static final String ZERO_PAYMENT = "ZERO_PAYMENT";
+	    
 		private static class Irpf{
 			private BigDecimal base;
 			private PaymentType type; 
@@ -284,14 +283,14 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		}
 		
 		
-		private void round(UnaryOperator<BigDecimal> f, BigDecimal totalPayment) {
+		private void roundAmount(UnaryOperator<BigDecimal> f, BigDecimal totalPayment) {
 		    if ( payments.isEmpty()) {
 			return;
 		    }
 		    // Already rounded, don't touch   
 		    BigDecimal round = 
 		    payments.stream()
-		    .filter(p -> p.amount.equals(f.apply(p.amount)))
+		    .filter(p -> p.amount.compareTo(f.apply(p.amount)) == 0)
 		    .map( p -> p.amount )
 		    .reduce(ZERO, RoundSalaryBuilder::add);
 		    
@@ -300,24 +299,71 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		    // Need to round, go for it   
 		    Payment [] unround =
 		    payments.stream()
-		    .filter(p -> !p.amount.equals(f.apply(p.amount)))
+		    .filter(p -> p.amount.compareTo(f.apply(p.amount)) != 0)
 		    .toArray(Payment[]::new);
+		    
+		    if ( unround.length == 0) {
+			return;
+		    }
+
+		    Arrays.sort(unround, RoundSalaryBuilder::compare);
+		    
 
 		    for (int i = 0; i < ( unround.length - 1 ); i++) {
+			if ( unround[i].amount.compareTo(unround[i].quote) == 0)
+			    unround[i].quote = f.apply(unround[i].quote);
 			unround[i].amount = f.apply(unround[i].amount);
+
 			remain = remain.subtract(unround[i].amount);
 		    }
 		    
 		    // And de last one, all remain
 		    for (int i = unround.length - 1; i < unround.length; i++) {
+			if ( unround[i].amount.compareTo(unround[i].quote) == 0)
+			    unround[i].quote = remain;
 			unround[i].amount = remain;
 		    }
+		}
+
+		private void roundQuote(UnaryOperator<BigDecimal> f, BigDecimal commonBase) {
+		    if ( payments.isEmpty()) {
+			return;
+		    }
+		    // Already rounded, don't touch   
+		    BigDecimal round = 
+		    payments.stream()
+		    .filter(p -> p.quote.compareTo(f.apply(p.quote)) == 0)
+		    .map( p -> p.quote )
+		    .reduce(ZERO, RoundSalaryBuilder::add);
 		    
+		    BigDecimal remain = commonBase.subtract(round);
+		    
+		    // Need to round, go for it   
+		    Payment [] unround =
+		    payments.stream()
+		    .filter(p -> p.quote.compareTo(f.apply(p.quote)) != 0)
+		    .toArray(Payment[]::new);
+
+		    if ( unround.length == 0) {
+			return;
+		    }
+
+		    Arrays.sort(unround, RoundSalaryBuilder::compare);
+
+		    for (int i = 0; i < ( unround.length - 1 ); i++) {
+			unround[i].quote = f.apply(unround[i].quote);
+			remain = remain.subtract(unround[i].quote);
+		    }
+		    
+		    // And de last one, all remain
+		    for (int i = unround.length - 1; i < unround.length; i++) {
+			unround[i].quote = remain;
+		    }
 		}
 
 		private void fireAdd(ISalaryBuilder<?> salaryBuilder) {
 		    payments.forEach(p -> {
-			if ( p.amount == BigDecimal.ZERO )
+			if ( ZERO_PAYMENT.equals(p.description) )
         			salaryBuilder.addZeroPayment(
         			    doubleValue(p.quote), 
         			    doubleValue(p.tax), 
@@ -792,7 +838,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	@Override
 	public void addZeroPayment(Double quote, Double tax, Date startDate, Date endDate, IPayment payment,
 			Map<String, ITimedVariable<?>> context) {
-	    	payments.addPayment(BigDecimal.ZERO, bigDecimalValue(quote), bigDecimalValue(tax), null, null, null, payment, context);
+	    	payments.addPayment(BigDecimal.ZERO, bigDecimalValue(quote), bigDecimalValue(tax), Payments.ZERO_PAYMENT, startDate, endDate, payment, context);
 		payments.tryAddIrpf(payment.getType(), bigDecimalValue(tax));		
 		//salaryBuilder.addZeroPayment(quote, tax, startDate, endDate, payment, context);
 	}
@@ -843,8 +889,18 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		return embargos.getTotal(f);
 	}
 	
-	private void roundPayments(BigDecimal totalPayment) {
-	    payments.round(f, totalPayment);
+	private void roundPaymentsAmount(BigDecimal totalPayment) {
+	    try {
+		payments.roundAmount(f, totalPayment);
+	    } catch ( Exception e ) {
+	    }
+	}
+
+	private void roundPaymentsQuote(BigDecimal commonBase) {
+	    try {
+		payments.roundQuote(f, commonBase);
+	    } catch ( Exception e ) {
+	    }
 	}
 
 	private void fireAddPayments(ISalaryBuilder<?> salaryBuilder) {
@@ -876,11 +932,14 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		salaryBuilder.setTotalIrpf(doubleValue(totalIrpf));
 		salaryBuilder.setTotalDeduction(doubleValue(totalDeduction));
 
-		BigDecimal totalEmbargo = getTotalEmbargo();
-		//totalEmbargo = f.apply(totalEmbargo);
+		cgcBase = f.apply(cgcBase);
+
 		totalPayment = f.apply(totalPayment);
-		roundPayments(totalPayment);
+		roundPaymentsAmount(totalPayment);
+		//roundPaymentsQuote(cgcBase);
 		fireAddPayments(salaryBuilder);
+
+		BigDecimal totalEmbargo = getTotalEmbargo();
 
 		totalLiquid = add(totalPayment, totalDeduction.negate(),totalEmbargo.negate());
 		salaryBuilder.setTotalPayment(doubleValue(totalPayment));
@@ -901,7 +960,6 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		salaryBuilder.setItBase(doubleValue(itBase));
 		salaryBuilder.setProExtBase(doubleValue(proExtBase));
 
-		cgcBase = f.apply(cgcBase);
 		hExtraBase = f.apply(hExtraBase);
 		nonHExtraBase = f.apply(nonHExtraBase);
 		salaryBuilder.setHExtraBase(doubleValue(hExtraBase));
@@ -1010,6 +1068,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 	private static BigDecimal bigDecimalValue(Object val) {
 		return BigDecimal.valueOf(((Number)val).doubleValue()).setScale(10, RoundingMode.HALF_UP);
+	}
+
+	private static BigDecimal bigDecimalValue(Double val) {
+		return BigDecimal.valueOf(val);
 	}
 
 	private static BigDecimal add(BigDecimal ...vals) {
@@ -1151,6 +1213,32 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		int dayOfMonth = AonDateUtils.get(date, Calendar.DAY_OF_MONTH);
 		int lastDayOfMonth = AonDateUtils.getMax(date, Calendar.DAY_OF_MONTH);
 		return dayOfMonth == lastDayOfMonth;
+	}
+	
+	private static Pattern ORDER = Pattern.compile("^\\[(\\d+)\\].*$");
+
+	private static int compare(Payments.Payment p0, Payments.Payment p1) {
+
+	    	String description0 = p0.description;
+		String description1 = p1.description;
+		try { 
+        		// By order
+        		Matcher matcher0 = ORDER.matcher(description0);
+        		Matcher matcher1 = ORDER.matcher(description1);
+        		boolean order0 = matcher0.matches();
+        		boolean order1 = matcher1.matches();
+        		if ( order0 && !order1)
+        		    return -1; 			//p0 < p1
+        		else if ( order1 && !order0 )
+        		    return 1;			//p0 > p1
+        		else if ( order1 /*&& order0 != null*/ )
+        		    return Integer.parseInt(matcher0.group(1)) - Integer.parseInt(matcher1.group(1));
+        		else
+        		    return 0;
+		} catch( Exception e ){
+		    return 0;
+		}
+		
 	}
 	
 

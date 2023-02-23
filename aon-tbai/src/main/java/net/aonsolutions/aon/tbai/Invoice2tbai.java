@@ -316,6 +316,11 @@ public class Invoice2tbai {
 				if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 					tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
 				}
+				
+				if(tax.getSurcharge() > 0 && tax.getSurchargeQuota() == 0.0) {
+					tax.setSurchargeQuota(AonMathUtils.round(tax.getBase() * tax.getSurcharge() / 100));
+				}
+				
 				double total =  AonMathUtils.round(tax.getBase() + tax.getQuota() + tax.getSurchargeQuota());
 				detalle.setImporteTotal(Double.toString(total));
 				if(total != 0.0)
@@ -368,6 +373,11 @@ public class Invoice2tbai {
 			if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
 				r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
 			}
+			
+			if(r.getSurcharge() > 0 && r.getSurchargeQuota() == 0.0) {
+				r.setSurchargeQuota(AonMathUtils.round(r.getBase() * r.getSurcharge() / 100));
+			}
+			
 			DetalleIVAType  detalleIVA = new DetalleIVAType();
 			detalleIVA.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
 			detalleIVA.setCuotaImpuesto(invoice.isIsp() ? "0.0" : Double.toString(AonMathUtils.round(r.getQuota())));

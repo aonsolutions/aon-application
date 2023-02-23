@@ -18,8 +18,8 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.Normalizer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,6 +35,7 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
+import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -68,6 +69,8 @@ public class JooqEmployeeAFI {
 	private static final String CNO = "CNO";
 	
 	public static final Pattern DIACRITICS_AND_FRIENDS = Pattern.compile("[\\p{InCombiningDiacriticalMarks}\\p{IsLm}\\p{IsSk}]+");
+	
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	private static String stripDiacritics(String str) {
 	    str = Normalizer.normalize(str, Normalizer.Form.NFD);
@@ -169,16 +172,15 @@ public class JooqEmployeeAFI {
 			String cccProvincePrincipal = geozoneCCCPrincipal == null ? "00" : geozoneCCCPrincipal.get(GEOZONE.CODE);
 			String cccPrincipal = parseCCC(enterpriseCCCPrincipalRecords.isEmpty() ? "000000000" : enterpriseCCCPrincipalRecords.get(0).get(ENTERPRISE_CCC.CCC));
 			
+			String fullCcc = cccRegimeCode + AonStringUtils.leftPad(geozoneCCCCode, 2, '0') + AonStringUtils.leftPad(ccc, 9, '0');
+			String fullPrincipalCcc = "0111" + AonStringUtils.leftPad(cccProvincePrincipal, 2, '0') + AonStringUtils.leftPad(cccPrincipal, 9, '0');
+			
 			JSONObject emp = new JSONObject();
-			emp.put("cccRegime", cccRegimeCode);
-			emp.put("cccProvince", geozoneCCCCode);
-			emp.put("ccc", ccc);
+			emp.put("fullCcc", fullCcc);
 			emp.put("identType", identType);
 			emp.put("country", "011");
 			emp.put("ident", ident);
-			emp.put("cccRegimePrincipal", "0111");
-			emp.put("cccProvincePrincipal", cccProvincePrincipal);
-			emp.put("cccPrincipal", cccPrincipal);
+			emp.put("fullPrincipalCcc", fullPrincipalCcc);
 			employeeAFIJSON.put("EMP", emp);
 			
 			//RZS
@@ -187,7 +189,6 @@ public class JooqEmployeeAFI {
 				rzsName = stripDiacritics(rzsName);
 			
 			JSONObject rzsData = new JSONObject();
-			rzsData.put("businessmanType", "2");
 			rzsData.put("rzsName", rzsName);
 			employeeAFIJSON.put("RZS", rzsData);
 			
@@ -200,38 +201,45 @@ public class JooqEmployeeAFI {
 			// SEGMENTS
 			Integer contSeg = 0;
 			
+			//CONFIG
+			JSONObject conf = new JSONObject();
+			conf.put("staticLines", "4");
+			conf.put("employeeLines", "4");
+			conf.put("settleHolidaysLine", "0");
+			
 			// Alta Contrato
 			if(Boolean.TRUE.equals(isStartContract)) {
 				contSeg++;
-				employeeAFIJSON.put("MA", getSDC(contractId, dslContext));
+				JSONObject ma = getSDC(contractId, dslContext);
+				employeeAFIJSON.put("MA", ma);
+				conf.put("employeeLines", ma.size() + 2); // TRA y AYN
 			}
 			
 			// Baja Contrato
 			if(Boolean.TRUE.equals(isEndContract)) {
 				contSeg++;
-				employeeAFIJSON.put("MB", getEDC(contractId, dslContext, settleReason));
+				JSONObject mb = getEDC(contractId, dslContext, settleReason);
+				employeeAFIJSON.put("MB", mb);
+				conf.put("employeeLines", mb.size() + 2); // TRA y AYN
 			}
 			
 			// Movimientos Contrato
 			if(Boolean.TRUE.equals(isChangeContract || isQuoteContract || isOcupationContract || isPartialityCoefContract)) {
 				contSeg++;
-				employeeAFIJSON.put("MC", getMC(contractId, dslContext));
+				JSONObject mc = getMC(contractId, dslContext);
+				employeeAFIJSON.put("MC", mc);
+				conf.put("employeeLines", mc.size() + 2); // TRA y AYN
 			}
+			
+			conf.put("numEmployees", contSeg+"");
 			
 			//ETF
 			JSONObject etf = new JSONObject();
 			etf.put("authkey", authKey);
 			etf.put("payrollProvider", "498");
 			etf.put("fileName", fileName);
-			etf.put("priorityCode", "N");
 			employeeAFIJSON.put("ETF", etf);
 			
-			//CONFIG
-			JSONObject conf = new JSONObject();
-			conf.put("staticLines", "4");
-			conf.put("employeeLines", "4");
-			conf.put("numEmployees", contSeg+"");
-			conf.put("settleHolidaysLine", "0");
 			// Check if exist FCT line
 			JSONObject mbObj = (JSONObject) employeeAFIJSON.get("MB");
 			if(mbObj != null) {
@@ -401,15 +409,12 @@ public class JooqEmployeeAFI {
 				.orderBy(CONTRACT_DATA.START_DATE.desc())
 				.fetch();
 		
-		Byte gender = dslContext.select(PERSON.GENDER).from(PERSON)
-				.where(PERSON.REGISTRY.in(
-						dslContext.select(CONTRACT.PERSON).from(CONTRACT)
-							.where(CONTRACT.ID.eq(contractId))
-							.fetchOne(CONTRACT.PERSON)
-				)).fetchOne(PERSON.GENDER);
-		
-		Calendar startDateCalendar = Calendar.getInstance();
-		startDateCalendar.setTime(contractRecord.get(CONTRACT.START_DATE));
+		PersonRecord personRecord = dslContext.selectFrom(PERSON)
+			.where(PERSON.REGISTRY.in(
+				dslContext.select(CONTRACT.PERSON).from(CONTRACT)
+				.where(CONTRACT.ID.eq(contractId))
+				.fetchOne(CONTRACT.PERSON)
+			)).fetchOne();
 		
 		String quoteGruop = parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String tc2 = parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION));
@@ -419,14 +424,13 @@ public class JooqEmployeeAFI {
 		//FAB
 		fab.put("action", "MA");
 		fab.put("situation", "1");
-		fab.put("day", startDateCalendar.get(Calendar.DAY_OF_MONTH));
-		fab.put("month", startDateCalendar.get(Calendar.MONTH) + 1);
-		fab.put("year", startDateCalendar.get(Calendar.YEAR));
+		fab.put("realDate", dateFormat.format(contractRecord.get(CONTRACT.START_DATE)));
 		fab.put("quoteGroup", quoteGruop);
 		fab.put("tc2", tc2);
 		fab.put("partialityCoef", partiality);
 		fab.put("employeeColective", employeeColective);
-		fab.put("gender", gender);
+		fab.put("birthDate", personRecord.getBirthDate() == null ? "" : dateFormat.format(personRecord.getBirthDate()));
+		fab.put("gender", personRecord.getGender());
 		
 		//ODL
 		Result<Record> contractDataCnoRecord = dslContext.select().from(CONTRACT_DATA)
@@ -437,22 +441,11 @@ public class JooqEmployeeAFI {
 		
 		String employeeCno = contractDataCnoRecord.isEmpty() ? null : parseContractData(contractDataCnoRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		
-		odl.put("cno", employeeCno);
-		
-		//OTD
-		String endDate = null;
-		Date contractEndDate = contractRecord.get(CONTRACT.END_DATE);
-		if(null != contractEndDate) {
-			Calendar endDateCalendar = Calendar.getInstance();
-			endDateCalendar.setTime(contractRecord.get(CONTRACT.END_DATE));
-			endDate = endDateCalendar.get(Calendar.YEAR) + (endDateCalendar.get(Calendar.MONTH) + 1) + endDateCalendar.get(Calendar.DAY_OF_MONTH) + "";
-		}
-		
 		Integer agreementLevelId = dslContext.select(CONTRACT.AGREEMENT_LEVEL).from(CONTRACT)
 				.where(CONTRACT.ID.eq(contractId))
 				.fetchOne(CONTRACT.AGREEMENT_LEVEL);
 		
-		String agreementColective = null;
+		String agreementColective = "";
 		
 		if (null != agreementLevelId)
 			agreementColective = dslContext.select(AGREEMENT.SS_NUMBER).from(AGREEMENT)
@@ -462,12 +455,19 @@ public class JooqEmployeeAFI {
 							.fetchOne(AGREEMENT_LEVEL.AGREEMENT)
 				)).fetchOne(AGREEMENT.SS_NUMBER);
 
-		otd.put("convCollective",  AonStringUtils.isBlank(agreementColective) ? "00000000000000" : agreementColective);
-		otd.put("endDate", endDate);
+		odl.put("convCollective",  AonStringUtils.leftPad(agreementColective, 14, '0'));
+		odl.put("cno", employeeCno);
+		
+		//OTD
+		Date contractEndDate = contractRecord.get(CONTRACT.END_DATE);
+		if(null != contractEndDate) {
+			otd.put("endDate", contractEndDate != null ? dateFormat.format(contractEndDate) : "");
+			json.put("OTD", otd);
+		}
+		
 		
 		json.put("FAB", fab);
 		json.put("ODL", odl);
-		json.put("OTD", otd);
 		
 		return json;
 	}
@@ -530,20 +530,14 @@ public class JooqEmployeeAFI {
 				).orderBy(SALARY_DATA.START_DATE.desc())
 				.fetch();
 		
-		Calendar endDateCalendar = Calendar.getInstance();
-		endDateCalendar.setTime(contractRecord.get(CONTRACT.END_DATE));
-		
 		String quoteGroup = parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String tc2 = parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String partialityCoef = contractDataPCRecord.isEmpty() ? null : parseContractData(contractDataPCRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String employeeColective = contractDataEmployeeColectiveRecord.isEmpty() ? null : parseContractData(contractDataEmployeeColectiveRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		
 		if(holidaysDataRecords.isNotEmpty()) {
-			Calendar holidyaEndDateCalendar = Calendar.getInstance();
-			holidyaEndDateCalendar.setTime(holidaysDataRecords.get(0).get(SALARY_DATA.END_DATE));
-			fct.put("dayHoliday", holidyaEndDateCalendar.get(Calendar.DAY_OF_MONTH));
-			fct.put("monthHoliday", holidyaEndDateCalendar.get(Calendar.MONTH) + 1);
-			fct.put("yearHoliday", holidyaEndDateCalendar.get(Calendar.YEAR));
+			fct.put("holidayDate", dateFormat.format(holidaysDataRecords.get(0).get(SALARY_DATA.END_DATE)));
+			fct.put("saa", "001");
 		}
 		
 		//FAB
@@ -551,9 +545,7 @@ public class JooqEmployeeAFI {
 		
 		//AVERIGUAR A TRAVES DEL FINIQUITO
 		fab.put("situation", getCausaDespido(salaryDataRecords, settleReason));
-		fab.put("day", endDateCalendar.get(Calendar.DAY_OF_MONTH));
-		fab.put("month", endDateCalendar.get(Calendar.MONTH) + 1);
-		fab.put("year", endDateCalendar.get(Calendar.YEAR));
+		fab.put("realDate", dateFormat.format(contractRecord.get(CONTRACT.END_DATE)));
 		fab.put("quoteGroup", quoteGroup);
 		fab.put("tc2", tc2);
 		fab.put("partialityCoef", partialityCoef == null ? "" : parseCoefLengnt(partialityCoef));
@@ -636,9 +628,6 @@ public class JooqEmployeeAFI {
 		
 		dates.sort((o1, o2) -> o1.compareTo(o2));
 		
-		Calendar dateCalendar = Calendar.getInstance();
-		dateCalendar.setTime(dates.get(dates.size()-1));
-		
 		String quoteGroup =  contractDataQuoteRecord.isEmpty() ? null : parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String tc2 = parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String partialityCoef = contractDataPCRecord.isEmpty() ? null : parseContractData(contractDataPCRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
@@ -647,9 +636,7 @@ public class JooqEmployeeAFI {
 		//FAB
 		fab.put("action", "MC");
 		fab.put("situation", "");
-		fab.put("day", dateCalendar.get(Calendar.DAY_OF_MONTH));
-		fab.put("month", dateCalendar.get(Calendar.MONTH) + 1);
-		fab.put("year", dateCalendar.get(Calendar.YEAR));
+		fab.put("realDate", dateFormat.format(dates.get(dates.size()-1)));
 		fab.put("quoteGroup", quoteGroup);
 		fab.put("tc2", tc2);
 		fab.put("partialityCoef", null == partialityCoef ? "" : parseCoefLengnt(partialityCoef));

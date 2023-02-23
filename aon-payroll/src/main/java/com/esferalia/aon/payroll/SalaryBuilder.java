@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
@@ -7,13 +8,16 @@ import java.util.Objects;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
+import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.bonus.IBonus;
+import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.salary.payment.Payments;
 
 public class SalaryBuilder implements ISalaryBuilder<Salary> {
 
@@ -27,7 +31,37 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 
 	@Override
 	public void createNewSalary() {
-		this.salary = new Salary();
+		this.salary = new Salary() {
+		    @Override
+		    public Collection<SalaryCost> getCosts() throws SalaryException {
+		        return super.getSalaryCosts();
+		    }
+
+		    @Override
+		    public Collection<SalaryCost> getCostS() throws SalaryException {
+		        return super.getSalaryCosts();
+		    }
+		    
+		    @Override
+		    public Collection<SalaryBonus> getBonus() throws SalaryException {
+		        return super.getSalaryBonus();
+		    }
+		    
+		    @Override
+		    public Collection<SalaryPayment> getPaymentS() throws SalaryException {
+		        return super.getSalaryPayments();
+		    }
+		    
+		    @Override
+		    public Collection<SalaryDeduction> getDeductionS() throws SalaryException {
+		        return super.getSalaryDeductions();
+		    }
+		    
+		    @Override
+		    public Collection<SalaryEmbargo> getEmbargoS() throws SalaryException {
+		        return super.getSalaryEmbargos();
+		    }
+		};
 
 		// default ones
 		salary.setTotalIrpf(0.00);

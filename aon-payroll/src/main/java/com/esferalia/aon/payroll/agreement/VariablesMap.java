@@ -469,7 +469,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("COMPLEMENTO_CALZADO_ANUAL", "COMPL_CALZADO");
 		variablesMap.put("COMPLEMENTO_CALZADO_DIARIO", "COMPL_CALZADO");
 		variablesMap.put("COMPLEMENTO_CALZADO_MENSUAL", "COMPL_CALZADO");
-		variablesMap.put("COMPLEMENTO_CALZADO_CATEGORIA_B_MENSUAL", "COMPL_CALZADO_CAT_B");
+		variablesMap.put("COMPLEMENTO_CALZADO_CATEGORIA_B_ANUAL", "C_CALZADO_CATB_A");
+		variablesMap.put("COMPLEMENTO_CALZADO_CATEGORIA_B_MENSUAL", "C_CALZADO_CATB_M");
 		variablesMap.put("COMPLEMENTO_CLINICA_DENTAL_MENSUAL", "COMPL_CLINICA_DENTA");
 		variablesMap.put("COMPLEMENTO_CONDUCTOR_Y_REPARTIDOR_HORAS", "C_CONDUCTOR_Y_REPARTIDOR");
 		variablesMap.put("COMPLEMENTO_CONTRATO_FORMACION_AÑO_1_ANUAL", "C_FORMACION_AÑO_1_A");
@@ -962,6 +963,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("JUBILACION_62_AÑOS_ANUAL", "JUBILACION_62");
 		variablesMap.put("JUBILACION_63_AÑOS_ANUAL", "JUBILACION_63");
 		variablesMap.put("JUBILACION_64_AÑOS_ANUAL", "JUBILACION_64");
+		variablesMap.put("JUBILACION_65_AÑOS_ANUAL", "JUBILACION_64");
 		variablesMap.put("JUBILACION_60_AÑOS_MENSUAL", "JUBILACION_60");
 		variablesMap.put("JUBILACION_61_AÑOS_MENSUAL", "JUBILACION_61");
 		variablesMap.put("JUBILACION_62_AÑOS_MENSUAL", "JUBILACION_62");
@@ -986,7 +988,8 @@ public class VariablesMap implements Serializable {
 		
 		variablesMap.put("MANUTENCION_COCINERO_DIARIO", "M_COCINERO");
 		variablesMap.put("MANUTENCION_COCINERO_FUERA_LOCALIDAD_DIARIO", "M_COCINERO_F_LOCAL");
-		variablesMap.put("MANUTENCION_EN_ESPECIE_DIARIO", "M_ESPECIE");
+		variablesMap.put("MANUTENCION_EN_ESPECIE_ANUAL", "M_ESPECIE_A");
+		variablesMap.put("MANUTENCION_EN_ESPECIE_DIARIO", "M_ESPECIE_D");
 		
 		variablesMap.put("MEDIA_DIETA_ANUAL", "MEDIA_DIETA");
 		variablesMap.put("MEDIA_DIETA_DESPL_MAS_100KMS_DIARIO", "MEDIA_DIETA_G_100");

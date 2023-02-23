@@ -27,8 +27,9 @@ public class PayrollUtils {
 	}
 	
 	public static String getDeductionNameDescription(String name) {
-	    if ( AonStringUtils.equals("MEI", name))
+	    if ( AonStringUtils.equals("MEI", name)) {
 		return "Mecanismo de equidad intergeneracional";
+	    }
 	    return null;
 	}
 	
