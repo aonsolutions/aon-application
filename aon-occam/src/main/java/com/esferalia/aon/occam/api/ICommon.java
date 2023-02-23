@@ -200,6 +200,6 @@ public interface ICommon {
 	public void saveCertificate(AONContext ctx, Integer domainId, Integer userId, Certificate certificate);
 	
 	//WORKGROUP
-	public List<Cno> getCno(CloseableAONContext ctx, Optional<String> cnoSearch);
+	public List<Cno> getCno(CloseableAONContext ctx);
 
 }

@@ -335,9 +335,7 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		JSONArray arr = new JSONArray();
 		Domain domain = api.getDomain();
 		
-		String cnoSearch = api.getData().optString("cnoSearch");
-		
-		AON.getCno(domain.getName(), domain.getId(), api.getUser().getLogin(), Optional.of(cnoSearch)).forEach(cno -> {
+		AON.getCno(domain.getName(), domain.getId(), api.getUser().getLogin()).forEach(cno -> {
 			arr.put(
 					new JSONObject()
 					.put("cnoCode", cno.getCode())
