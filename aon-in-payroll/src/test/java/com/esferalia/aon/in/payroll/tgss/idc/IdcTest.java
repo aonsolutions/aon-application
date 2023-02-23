@@ -3571,6 +3571,117 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdcplcccTrabajadoresTramosXXI()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplcccXXI.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is,
+					new TrabajadoresTramosCallback() {
+					});
+
+			marshal(trabajadoresTramos, System.out);
+			// PEC 17 Expedientes de Regulación de Empleo Total
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("07", liquidacion.getCcc().getProvincia());
+			assertEquals("129512528", liquidacion.getCcc().getNumero());
+
+			assertEquals("01", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2023", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("01", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2023", liquidacion.getPeriodoHasta().getAnho());
+
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("01", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2023", liquidacionesMes.getMesLiquidativo().getAnho());
+
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(6, trabajadores.getTrabajador().size());
+
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+			    	
+			    	if ("071020348439".equals(trabajador.getNaf()) ) {
+        				assertEquals(1, trabajador.getTramos().getTramo().size());
+        				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+        				assertEquals("08", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+        				assertEquals("01", tramo.getFechaDesde().getDia());
+        				assertEquals("01", tramo.getFechaDesde().getMes());
+        				assertEquals("2023", tramo.getFechaDesde().getAnho());
+        				assertEquals("31", tramo.getFechaHasta().getDia());
+        				assertEquals("01", tramo.getFechaHasta().getMes());
+        				assertEquals("2023", tramo.getFechaHasta().getAnho());
+        				assertTramoActivoNormal(tramo);
+        				assertDatosSolicitado(tramo, "I", "51", "P");
+			    	} else if ("071024494177".equals(trabajador.getNaf()) ) {
+        				assertEquals(1, trabajador.getTramos().getTramo().size());
+        				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+        				assertEquals("08", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+        				assertEquals("01", tramo.getFechaDesde().getDia());
+        				assertEquals("01", tramo.getFechaDesde().getMes());
+        				assertEquals("2023", tramo.getFechaDesde().getAnho());
+        				assertEquals("31", tramo.getFechaHasta().getDia());
+        				assertEquals("01", tramo.getFechaHasta().getMes());
+        				assertEquals("2023", tramo.getFechaHasta().getAnho());
+        				assertTramoActivoNormal(tramo);
+        				assertDatosSolicitado(tramo, "I", "51", "P");
+			    	} else if ("071044120412".equals(trabajador.getNaf()) ) {
+        				assertEquals(1, trabajador.getTramos().getTramo().size());
+        				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+        				assertEquals("08", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+        				assertEquals("01", tramo.getFechaDesde().getDia());
+        				assertEquals("01", tramo.getFechaDesde().getMes());
+        				assertEquals("2023", tramo.getFechaDesde().getAnho());
+        				assertEquals("31", tramo.getFechaHasta().getDia());
+        				assertEquals("01", tramo.getFechaHasta().getMes());
+        				assertEquals("2023", tramo.getFechaHasta().getAnho());
+        				assertTramoActivoNormal(tramo);
+        				assertDatosSolicitado(tramo, "I", "51", "P");
+			    	} else if ( "071053502332".equals(trabajador.getNaf()) ) {
+        				assertEquals(1, trabajador.getTramos().getTramo().size());
+        				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+        				assertEquals("09", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+        				assertEquals("01", tramo.getFechaDesde().getDia());
+        				assertEquals("01", tramo.getFechaDesde().getMes());
+        				assertEquals("2023", tramo.getFechaDesde().getAnho());
+        				assertEquals("04", tramo.getFechaHasta().getDia());
+        				assertEquals("01", tramo.getFechaHasta().getMes());
+        				assertEquals("2023", tramo.getFechaHasta().getAnho());
+        				assertTramoActivoNormal(tramo);
+        				assertDatosSolicitado(tramo, "I", "51", "P");
+			    	} else if ("071108307332".equals(trabajador.getNaf()) ) {
+        				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+        				assertEquals("08", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+        				assertEquals("01", tramo.getFechaDesde().getDia());
+        				assertEquals("01", tramo.getFechaDesde().getMes());
+        				assertEquals("2023", tramo.getFechaDesde().getAnho());
+        				assertEquals("31", tramo.getFechaHasta().getDia());
+        				assertEquals("01", tramo.getFechaHasta().getMes());
+        				assertEquals("2023", tramo.getFechaHasta().getAnho());
+        				assertTramoActivoNormal(tramo);
+        				assertDatosSolicitado(tramo, "I", "51", "P");
+			    	} else if ("081103036980".equals(trabajador.getNaf()) ) {
+        				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+        				assertEquals("08", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+        				assertEquals("01", tramo.getFechaDesde().getDia());
+        				assertEquals("01", tramo.getFechaDesde().getMes());
+        				assertEquals("2023", tramo.getFechaDesde().getAnho());
+        				assertEquals("28", tramo.getFechaHasta().getDia());
+        				assertEquals("01", tramo.getFechaHasta().getMes());
+        				assertEquals("2023", tramo.getFechaHasta().getAnho());
+        				assertTramoActivoNormal(tramo);
+        				assertDatosSolicitado(tramo, "I", "51", "P");
+			    	} else {
+			    	    fail("Unknown Trabajador");
+			    	}
+
+			}
+
+		}
+	}
+
+	@Test
 	public void testIdcSyncI() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcI.pdf")) {
 			byte data[] = is.readAllBytes();
