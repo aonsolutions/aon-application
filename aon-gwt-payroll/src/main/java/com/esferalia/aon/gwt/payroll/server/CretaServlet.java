@@ -317,8 +317,11 @@ public class CretaServlet extends HttpServlet
 					// Try with IDC first
 					trabajadoresYTramosIss.addAll(generateIDCTrabajadoresYTramos(req));
 				} catch ( Throwable t ) {
-					trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
 				}
+			}
+
+			if ( trabajadoresYTramosIss.isEmpty() ) {
+				trabajadoresYTramosIss.add(generateTrabajadoresYTramos(connection, req));
 			}
 			
 			NoDiffsBasesCallback noDiffsBasesCb = new NoDiffsBasesCallback() {

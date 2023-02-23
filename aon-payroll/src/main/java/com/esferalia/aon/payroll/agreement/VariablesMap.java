@@ -963,6 +963,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("JUBILACION_62_AÑOS_ANUAL", "JUBILACION_62");
 		variablesMap.put("JUBILACION_63_AÑOS_ANUAL", "JUBILACION_63");
 		variablesMap.put("JUBILACION_64_AÑOS_ANUAL", "JUBILACION_64");
+		variablesMap.put("JUBILACION_65_AÑOS_ANUAL", "JUBILACION_64");
 		variablesMap.put("JUBILACION_60_AÑOS_MENSUAL", "JUBILACION_60");
 		variablesMap.put("JUBILACION_61_AÑOS_MENSUAL", "JUBILACION_61");
 		variablesMap.put("JUBILACION_62_AÑOS_MENSUAL", "JUBILACION_62");
