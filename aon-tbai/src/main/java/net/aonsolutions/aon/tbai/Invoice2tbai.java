@@ -356,7 +356,12 @@ public class Invoice2tbai {
 	
 		ClavesType claves = new ClavesType();
 		IDClaveType clave = new IDClaveType();
-		clave.setClaveRegimenIvaOpTrascendencia("01");
+		
+		String key = "01";
+		if(invoice.isExtracommunity()) key = "02";
+//		if(invoice.isSurcharge()) key = "51";
+		
+		clave.setClaveRegimenIvaOpTrascendencia(key);
 		claves.getIDClave().add(clave);
 		datos.setClaves(claves);
 		factura.setDatosFactura(datos);
@@ -384,7 +389,8 @@ public class Invoice2tbai {
 			detalleIVA.setCuotaRecargoEquivalencia(invoice.isIsp() ? "0.0" : Double.toString(AonMathUtils.round(r.getSurchargeQuota())));
 			detalleIVA.setTipoImpositivo(invoice.isIsp() ? "0.0" : Double.toString(r.getPercentage()));
 			detalleIVA.setTipoRecargoEquivalencia(invoice.isIsp() ? "0.0" : Double.toString(AonMathUtils.round(r.getSurcharge())));
-			detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(invoice.isSurcharge() ? SiNoType.S : SiNoType.N);
+			
+			detalleIVA.setOperacionEnRecargoDeEquivalenciaORegimenSimplificado(SiNoType.N);//invoice.isSurcharge() ? SiNoType.S : SiNoType.N);
 			desgloseIVA.getDetalleIVA().add(detalleIVA);
 		});
 		
