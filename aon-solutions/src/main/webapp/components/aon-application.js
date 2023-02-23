@@ -131,7 +131,7 @@ export class AonApplication extends AonElement {
 
       <div class="${this.isMobile() ? 'aonMobileApplicationContent' :'aonFlex'}">
         <!-- AON APPLICATION MENU (SIDENAV) -->
-         <div id="${this.SIDENAV}" class="${this.isMobile() ? 'aonMobileSidenav' :'aonSidenav'}"></div>
+         <div id="${this.SIDENAV}" class="${this.isMobile() ? 'aonMobileSidenav' : (this.isBeta() ? 'aonSidenavBeta' : 'aonSidenav')}"></div>
 
 			   <!-- AON APPLICATION CONTENT -->
 			   <div id="${this.CONTENT}"></div>
@@ -160,7 +160,7 @@ export class AonApplication extends AonElement {
     content.className =
       this.isMobile() || this.isSidenavBlock()
         ? "aonMobileContent"
-        : "aonContent";
+        : (this.isBeta() ? CSS.AON_CONTENT_BETA : CSS.AON_CONTENT);
     if(this.isMobile() && this.isSab()){
       content.style.bottom = '69px';
     }
@@ -281,7 +281,7 @@ export class AonApplication extends AonElement {
     div.style.height = '59px';
     div.style.padding = '10px';
     div.style.paddingLeft = '20px';
-    div.style.borderBottom = '1px solid #ebebeb';
+    if(!this.isBeta()) div.style.borderBottom = '1px solid #ebebeb';
 
     let sidenav = this.isMobile()
       ? this.getElement(this.MOBILE_SIDENAV_CONTENT)
@@ -302,7 +302,7 @@ export class AonApplication extends AonElement {
 
     let div = this.createElement(TAG.DIV);
     div.style.paddingBottom = "25px";
-    div.style.borderBottom = "1px solid #ebebeb";
+    if(!this.isBeta()) div.style.borderBottom = '1px solid #ebebeb';
     sidenav.appendChild(div);
 
     let sidenavTitle = this.createElement(TAG.DIV);
@@ -322,7 +322,7 @@ export class AonApplication extends AonElement {
     if(sidenav){
       let div = this.createElement(TAG.DIV);
       div.style.paddingBottom = "25px";
-      div.style.borderBottom = "1px solid #ebebeb";
+      if(!this.isBeta()) div.style.borderBottom = '1px solid #ebebeb';
       sidenav.appendChild(div);
 
       let sidenavTitle = this.createElement(TAG.DIV);
@@ -345,7 +345,7 @@ export class AonApplication extends AonElement {
     let div = this.createElement(TAG.DIV);
     div.id = sidenav.id + data.id;
     div.style.paddingBottom = "10px";
-    div.style.borderBottom = "1px solid #ebebeb";
+    if(!this.isBeta()) div.style.borderBottom = '1px solid #ebebeb';
     div.style.backgroundColor = "#fff";
     sidenav.appendChild(div);
 
