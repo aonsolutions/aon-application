@@ -1187,15 +1187,22 @@ export class AonInvoice extends AonElement {
 		irpfType.id = 'irpfwithholdingTYpe';
 		irpfType.title = 'Tipo IRPF';
 		irpfType.setAlias('id', 'name');
-		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length === 0) 
+		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length === 0) {
 			irpfType.disabled = 'true';
+		}
 		irpfType.setOptions(WithholdingType);
 		irpfType.addEventListener(EVENT.SELECT, () => {
-
+			let detail = WithholdingType.find(v => v.id == irpfType.value);
+			this.invoice.setWithholdingType(detail);
+			this.reload();
+			if(this.autosave) this.save();
 		});
 		irpfTable.addCell(irpfType, '3');
 		irpfType.readonly = this.invoice.isReadonly();
-
+		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0) {
+			let val = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)[0].withholding_type;
+			irpfType.value = val;
+		}
 	}
 
 	onChangeRegistry(registry) { 
@@ -1270,7 +1277,8 @@ export class AonInvoice extends AonElement {
 		});
 		taxesTable.addCell(percentage);
 		percentage.readonly = this.invoice.isReadonly() 
-			|| (this.invoice.details.length > 0  && !tax.type.includes('IRPF'));
+			|| this.invoice.details.length > 0
+			|| tax.type.includes('IRPF');
 		percentage.value = tax.percentage;
 
 		// ----- TAX BASE
@@ -1278,7 +1286,9 @@ export class AonInvoice extends AonElement {
 		let base = this.createAonNumber(this.TAX_BASE + i, MSG.BASE, tax.base);
 		base.onChange(() => this.onChangeTaxBase(tax, base.value, i))
 		taxesTable.addCell(base);
-		base.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
+		base.readonly = this.invoice.isReadonly() 
+			|| this.invoice.details.length > 0
+			|| tax.type.includes('IRPF');
 
 		// ----- TAX QUOTA
 
