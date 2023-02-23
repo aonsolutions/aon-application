@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -542,8 +543,8 @@ public class CommonImpl implements ICommon {
 	// -------------------- Cno
 	
 	@Override
-	public List<Cno> getCno(CloseableAONContext ctx) {
-		return ctx.getDslContext().transactionResult(configuration -> CnoDAO.getList(ctx));
+	public List<Cno> getCno(CloseableAONContext ctx, Optional<String> cnoSearch) {
+		return ctx.getDslContext().transactionResult(configuration -> CnoDAO.getList(ctx, cnoSearch));
 	}
 	
 }

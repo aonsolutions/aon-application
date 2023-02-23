@@ -5,10 +5,23 @@
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.Enterprise.MyStyle">
-
+	
+		.mw30 { min-width: 30px; }
+		.mw85 { min-width: 85px; }
+		.mw100 { min-width: 100px !important; }
+		.mw150 { 
+			min-width: 150px;
+			width: 100%;	
+		}
+		.mw180 { width: 180px; }
+		.mw250 { min-width: 250px; }
+		
 		.inputPadding { padding: 0 0 0 .5rem; }
 
-		.inputTextHeight { height: 1.2rem !important; }
+		.inputTextHeight { 
+			height: 1.2rem !important; 
+			text-transform: uppercase;	
+		}
 		
 		.inputLBHeight { 
 			height: 1.4rem !important; 
@@ -17,6 +30,11 @@
 			-webkit-appearance: none;
 			appearance: none;
 			border-radius: 0;
+			text-transform: uppercase;
+		}
+		
+		.documentError {
+			border: 1.5px solid #ad0000;
 		}
 
 		.container{
@@ -74,7 +92,7 @@
 		}
 		
 		.firstColumn{
-			min-width: 175px;
+			min-width: 150px;
 			padding: 5px;
 			background-color: #f6f6f6; 
 		}
@@ -123,6 +141,8 @@
 			min-width: 155px;
 		}
 		
+		@external .inputTextHeight;
+		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.container}">
@@ -148,19 +168,19 @@
 		    		</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.requiredColor} {style.firstColumn}'>Dirección</g:Label>
-		    			<g:ListBox ui:field="streetType" styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding}'></g:ListBox>
+		    			<g:ListBox ui:field="streetType" styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.mw180}'></g:ListBox>
 		    			<g:TextBox ui:field="address" styleName='aon-inputText {style.inputTextHeight} {style.widthAll}'></g:TextBox>
-		    			<g:Label>Número</g:Label>
-		    			<g:TextBox ui:field="addressNum" styleName='aon-inputText {style.w-50} {style.inputTextHeight} {style.widthAll}'></g:TextBox>
+		    			<g:Label>Nº</g:Label>
+		    			<g:TextBox ui:field="addressNum" styleName='aon-inputText {style.w-50} {style.inputTextHeight} {style.widthAll} {style.mw30}'></g:TextBox>
 		    			<g:Label>C.P.</g:Label>
 		    			<g:TextBox ui:field="addressZip" styleName='aon-inputText {style.w-50} {style.inputTextHeight} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label styleName='{style.firstColumn} {style.emptyLabel} {style.inputTextHeight}'></g:Label>
 		    			<g:Label>Provincia</g:Label>
-		    			<g:ListBox ui:field="addressProvince" styleName='aon-inputText {style.inputLBHeight} {style.inputPadding} {style.mw155}'></g:ListBox>
+		    			<g:ListBox ui:field="addressProvince" styleName='aon-inputText {style.inputLBHeight} {style.inputPadding} {style.mw150}'></g:ListBox>
 		    			<g:Label>Municipio</g:Label>
-		    			<g:ListBox ui:field="addressCity" styleName='aon-inputText {style.inputLBHeight} {style.inputPadding} {style.mw155}'></g:ListBox>
+		    			<g:ListBox ui:field="addressCity" styleName='aon-inputText {style.inputLBHeight} {style.inputPadding} {style.mw150}'></g:ListBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.firstColumn}'>Contacto</g:Label>
@@ -189,13 +209,13 @@
 		    	<g:HTMLPanel ui:field="otherDataDataTable" styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
 		    		<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label  styleName='{style.firstColumn}'>Modelo Recibo Salarial</g:Label>
-		    			<g:ListBox ui:field="enterprisePaysheetModel" styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.mw155}'></g:ListBox>
+		    			<g:ListBox ui:field="enterprisePaysheetModel" styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.widthAll} '></g:ListBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label  styleName='{style.firstColumn}'>Envío Nóminas</g:Label>
-		    			<g:ListBox ui:field="enterprisePaysheetSendType" styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.mw155}'></g:ListBox>
+		    			<g:ListBox ui:field="enterprisePaysheetSendType" styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.widthAll} '></g:ListBox>
 		    			<g:HTMLPanel ui:field="enterprisePaysheetSendPanel" styleName='{style.flex} {style.widthAll}'>
-		    				<g:Label styleName='{style.firstColumn}'>A la dirección : </g:Label>
+		    				<g:Label styleName='{style.mw100} {style.firstColumn}'>A la dirección : </g:Label>
 							<g:TextBox ui:field="enterprisePaysheetSendEmail" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
 		    			</g:HTMLPanel>
 					</g:HTMLPanel>
