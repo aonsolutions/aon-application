@@ -1771,11 +1771,9 @@ export class AonInvoice extends AonElement {
 		prepayment.title = 'Suplido';//MSG.DETAIL_PREPAYMENT;
 		prepayment.addEventListener(EVENT.CHANGE, () => {
 			detail.prepayment = prepayment.checked;
-			alert(prepayment.checked);
 			if((!detail.prepayment || detail.prepayment == 'false'))
 				detail.percentage = 21.0;
 			else detail.percentage = 0.0;
-			alert(detail.percentage);
 			this.invoice.setDetail(detail, i);
 			this.reload();
 			this.printDetailDialog(this.invoice.details[i], i);
