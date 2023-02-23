@@ -46,6 +46,7 @@ export const AON_LI = 'aonLi';
 export const AON_LI_SPAN = 'aonLiSpan';
 export const AON_LI_SPAN_SUBTITLE = 'aonLiSpanSubtitle';
 export const AON_TOOLBAR = 'aonToolbar';
+export const AON_TOOLBAR_BETA = 'aonToolbarBeta';
 export const AON_TOOLBAR_TITLE = 'aonToolbarTitle';
 export const AON_TOOLBAR_SECTION = 'aonToolbarSection';
 export const AON_TOOLBAR_SECTION_END = 'aonToolbarSectionEnd';
