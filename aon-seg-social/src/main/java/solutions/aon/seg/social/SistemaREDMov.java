@@ -331,7 +331,7 @@ class SistemaREDMov {
 		}
 		//OCUPACION
 		if (employee.getOcup() != null)
-			form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase());
+			form.getInputByName("txt_SDFOCUPACION_ayuda").setValueAttribute(employee.getOcup().toUpperCase());
 		
 		if (employee.getRegime().equals("0163") && !mdCtz.isEmpty()) {
 			form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(mdCtz.get());
