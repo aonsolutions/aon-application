@@ -936,7 +936,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 
 		totalPayment = f.apply(totalPayment);
 		roundPaymentsAmount(totalPayment);
-		roundPaymentsQuote(cgcBase);
+		//roundPaymentsQuote(cgcBase);
 		fireAddPayments(salaryBuilder);
 
 		BigDecimal totalEmbargo = getTotalEmbargo();

@@ -15,7 +15,7 @@ import { CONSTANT, CSS, EVENT, MATERIAL_ICONS, MSG, TAG } from '../../environmen
 
 import * as ACTION from '../actions.js';
 import { Transactions } from '../../services/transaction.js';
-import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType } from './invoiceEnums.js';
+import { getTaxPercentageOption, getTaxType, getTaxTypeName, TaxIVAPercentage, TaxType, WithholdingType } from './invoiceEnums.js';
 import { getInvestAssets, getItems} from '../../services/productService.js';
 import * as LS from '../../services/localStorageService.js';
 import { AonBasicTable } from '../../components/aon-basic-table.js';
@@ -1127,13 +1127,20 @@ export class AonInvoice extends AonElement {
 		}
 
 
-		let div = this.getElement(this.TAX_DIV);
-		if(!div) {
-			div = this.createElement(TAG.DIV);
-			div.id = this.TAX_DIV;
-			card.addContent(div);
-		}
-		this.clearElement(div);
+		// let div = this.getElement(this.TAX_DIV);
+		// if(!div) {
+		// 	div = this.createElement(TAG.DIV);
+		// 	div.id = this.TAX_DIV;
+		// 	card.addContent(div);
+		// }
+		// this.clearElement(div);
+
+		// ----- WITHHOLDING
+
+		let irpfTable = new AonBasicTable();
+		irpfTable.id = 'irpfTable';
+		card.addContent(irpfTable);
+		irpfTable.addRow();
 
 		if(!this.invoice.isReadonly() && this.invoice.details.length === 0) {
 			// ----- ADD TAX
@@ -1153,33 +1160,49 @@ export class AonInvoice extends AonElement {
 					if(this.autosave) this.save();
 				}
 			});
-			div.appendChild(addButton);
+			irpfTable.addCell(addButton);
 			if(!this.invoice.isNacional()) {
 				addButton.setDisabled(true);
 			}
 		}
 
-		// ----- WITHHOLDING
-
 		let irpf = new AonSwitch();
 		irpf.id = this.WITHHOLDING;
 		irpf.title = MSG.IRPF; // MSG.WITHHOLDING;
-		if(!this.invoice.isReadonly() && this.invoice.details.length === 0)
-			irpf.style.position = 'absolute';
-		irpf.style.marginTop = '10px';
-		irpf.style.marginLeft = '10px';
+
 		irpf.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
 		irpf.addEventListener(EVENT.CHANGE, () => {
 			this.invoice.setWithholding(irpf.checked);
 			this.reload();
 			if(this.autosave) this.save();
 		});
-		div.appendChild(irpf);
+		irpfTable.addCell(irpf, '1');
 		if(!this.invoice.isNacional() && !this.invoice.isCcm()) {
 			irpf.setDisabled(true);
 		}
 		if(this.invoice.isReadonly()) irpf.setDisabled(true);
 		irpf.checked = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0;
+
+		let irpfType = new AonSelect();
+		irpfType.id = 'irpfwithholdingTYpe';
+		irpfType.title = 'Tipo IRPF';
+		irpfType.setAlias('id', 'name');
+		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length === 0) {
+			irpfType.disabled = 'true';
+		}
+		irpfType.setOptions(WithholdingType);
+		irpfType.addEventListener(EVENT.SELECT, () => {
+			let detail = WithholdingType.find(v => v.id == irpfType.value);
+			this.invoice.setWithholdingType(detail);
+			this.reload();
+			if(this.autosave) this.save();
+		});
+		irpfTable.addCell(irpfType, '3');
+		irpfType.readonly = this.invoice.isReadonly();
+		if(this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax).length > 0) {
+			let val = this.invoice.taxes.filter(r => TaxType.IRPF === r.type || TaxType.IRPF === r.tax)[0].withholding_type;
+			irpfType.value = val;
+		}
 	}
 
 	onChangeRegistry(registry) { 
@@ -1254,7 +1277,8 @@ export class AonInvoice extends AonElement {
 		});
 		taxesTable.addCell(percentage);
 		percentage.readonly = this.invoice.isReadonly() 
-			|| (this.invoice.details.length > 0  && !tax.type.includes('IRPF'));
+			|| this.invoice.details.length > 0
+			|| tax.type.includes('IRPF');
 		percentage.value = tax.percentage;
 
 		// ----- TAX BASE
@@ -1262,7 +1286,9 @@ export class AonInvoice extends AonElement {
 		let base = this.createAonNumber(this.TAX_BASE + i, MSG.BASE, tax.base);
 		base.onChange(() => this.onChangeTaxBase(tax, base.value, i))
 		taxesTable.addCell(base);
-		base.readonly = this.invoice.isReadonly() || this.invoice.details.length > 0;
+		base.readonly = this.invoice.isReadonly() 
+			|| this.invoice.details.length > 0
+			|| tax.type.includes('IRPF');
 
 		// ----- TAX QUOTA
 
@@ -1528,7 +1554,12 @@ export class AonInvoice extends AonElement {
 			vat.title = '%IVA';
 			vat.options = JSON.stringify(TaxIVAPercentage);
 			if(detail.prepayment === undefined) detail.prepayment = false;
-			vat.readonly = this.invoice.isReadonly() || detail.prepayment;
+			vat.readonly = this.invoice.isReadonly() || (detail.prepayment && detail.prepayment == 'true');
+			
+			if(detail.prepayment && detail.prepayment == 'true') {
+				vat.disabled = detail.prepayment && detail.prepayment == 'true';
+			} 
+
 			vat.addEventListener(EVENT.SELECT, () => this.onChangeDetailVat(detail, vat.value, i));
 			let td6 = table.addCell(vat);
 			td6.style.verticalAlign = "bottom";
@@ -1538,6 +1569,8 @@ export class AonInvoice extends AonElement {
 				vat.setDisabled(true);
 			}
 			detail.percentage = detail.percentage || detail.vat;
+			if(!detail.percentage && (!detail.prepayment || detail.prepayment == 'false')) 
+				detail.percentage = 21.0;
 			if(detail.percentage) vat.value = detail.percentage;
 		} else {
 			detail.percentage = 0.0;
@@ -1549,11 +1582,12 @@ export class AonInvoice extends AonElement {
 		let detailOptions = new AonIconButton();
 		detailOptions.id = this.DETAIL_OPTIONS + i;
 		detailOptions.title = MSG.OPTIONS;
-		detailOptions.icon = MATERIAL_ICONS.MORE_VERT;
+		detailOptions.icon = MATERIAL_ICONS.EDIT;
 		detailOptions.addEventListener(EVENT.CLICK, () => {
-			this.printDetailOptionsDialog(detailOptions, detail, i);
+			this.printDetailDialog(detail, i);
 		});
 		table.addCell(detailOptions);
+		
 
 		// ----- DETAIL DELETE
 
@@ -1619,62 +1653,12 @@ export class AonInvoice extends AonElement {
 			this.printDetailDialog(this.invoice.details[i], i);
 		});
 
-		table.addCell(description, '2');
+		table.addCell(description, this.invoice.isNacional() && !this.invoice.isExempt() && (!detail.prepayment || detail.prepayment == 'false') ? '3' : '4');
 		description.readonly = this.invoice.isReadonly();
 		description.value = detail.description;
 
-
-		table.addRow(); // ----- ROW 2
-
-		// ----- DETAIL QUANTITY
-
-		let quantity = this.createAonNumber(this.DETAIL_QUANTITY + 'Dialog' + i, MSG.QUANTITY, detail.quantity);
-		quantity.onChange(() => this.onChangeDetailQuantity(detail, quantity.value, i, true));
-		table.addCell(quantity);
-		quantity.readonly = this.invoice.isReadonly()
-	
-		// ----- DETAIL PRICE
-
-		let price = this.createAonNumber(this.DETAIL_PRICE + 'Dialog' + i, MSG.PRICE, detail.price);
-		price.onChange(() => this.onChangeDetailPrice(detail, price.value, i, true));
-		table.addCell(price);
-		price.readonly = this.invoice.isReadonly()
-	
-		table.addRow(); // ----- ROW 3
-
-		// ----- DETAIL DISCOUNT
-
-		let discount = this.createAonNumber(this.DETAIL_DISCOUNT + 'Dialog' + i, '%Dto', detail.discount);
-		discount.onChange(() => this.onChangeDetailDiscount(detail, discount.value, i, true));
-		table.addCell(discount);
-		discount.readonly = this.invoice.isReadonly()
-
-		// ----- DETAIL AMOUNT
-
-		let amount = this.createAonNumber(this.DETAIL_AMOUNT + 'Dialog' + i, MSG.AMOUNT, detail.amount);
-		table.addCell(amount);
-		amount.readonly = CONSTANT.TRUE;
-
-		table.addRow(); // ----- ROW 4
-
-		// ----- PREPAYMENT | SUPLIDO
-		
-		let prepayment = new AonSwitch();
-		prepayment.id = this.DETAIL_PREPAYMENT + 'Dialog' + i;
-		prepayment.title = 'Suplido';//MSG.DETAIL_PREPAYMENT;
-		prepayment.addEventListener(EVENT.CHANGE, () => {
-			detail.prepayment = prepayment.checked;
-			this.invoice.setDetail(detail, i);
-			this.reload();
-			this.printDetailDialog(this.invoice.details[i], i);
-			if(this.autosave) this.save();
-		});
-		table.addCell(prepayment);
-		prepayment.readonly = this.invoice.isReadonly();
-		prepayment.checked = detail.prepayment;
-
 		// ----- DETAIL VAT
-		if(this.invoice.isNacional() && !this.invoice.isExempt()) {
+		if(this.invoice.isNacional() && !this.invoice.isExempt() &&  (!detail.prepayment || detail.prepayment == 'false')) {
 			let vat = new AonSelect();
 			vat.id = this.DETAIL_VAT + 'Dialog' + i;
 			vat.title = '%IVA';
@@ -1695,48 +1679,47 @@ export class AonInvoice extends AonElement {
 				vat.setDisabled(true);
 			}
 			detail.percentage = detail.percentage || detail.vat;
+			if(!detail.percentage) {
+				detail.percentage = 21.0;
+			}
 			if(detail.percentage) vat.value = detail.percentage;
 		} else {
 			detail.percentage = 0.0;
 			this.invoice.setDetail(detail, i);
 		}
-		dialog.open();
-	}
 
-	printDetailOptionsDialog(button, detail, i) {
-		let dialog = this.getElement(this.DIALOG_BLANK);
+		table.addRow(); // ----- ROW 2
 
-		let div = this.createElement(TAG.DIV);
-		div.style.margin = '15px';
+		// ----- DETAIL QUANTITY
 
-		// ----- WITHHOLDING
+		let quantity = this.createAonNumber(this.DETAIL_QUANTITY + 'Dialog' + i, MSG.QUANTITY, detail.quantity);
+		quantity.onChange(() => this.onChangeDetailQuantity(detail, quantity.value, i, true));
+		table.addCell(quantity);
+		quantity.readonly = this.invoice.isReadonly()
+	
+		// ----- DETAIL PRICE
 
-		// let withholding = new AonSwitch();
-		// withholding.id = this.DETAIL_WITHHOLDING + i;
-		// withholding.title = MSG.WITHHOLDING;
-		// withholding.readonly = this.invoice.isReadonly();
-		// withholding.checked = detail.withholding;
-		// div.appendChild(withholding);
-		// withholding.addEventListener(EVENT.CHANGE, () => {
-		// 	detail.withholding = withholding.checked;
-		// 	this.invoice.setDetail(detail, i);
-		// 	if(this.autosave) this.save();
-		// });
+		let price = this.createAonNumber(this.DETAIL_PRICE + 'Dialog' + i, MSG.PRICE, detail.price);
+		price.onChange(() => this.onChangeDetailPrice(detail, price.value, i, true));
+		table.addCell(price);
+		price.readonly = this.invoice.isReadonly()
+	
+		// table.addRow(); // ----- ROW 3
 
-		// ----- PREPAYMENT | SUPLIDO
+		// ----- DETAIL DISCOUNT
 
-		let prepayment = new AonSwitch();
-		prepayment.id = this.DETAIL_PREPAYMENT + i;
-		prepayment.title = 'Suplido';//MSG.DETAIL_PREPAYMENT;
-		prepayment.readonly = this.invoice.isReadonly();
-		prepayment.checked = detail.prepayment;
-		div.appendChild(prepayment);
-		prepayment.addEventListener(EVENT.CHANGE, () => {
-			detail.prepayment = prepayment.checked;
-			this.invoice.setDetail(detail, i);
-			this.reload();
-			if(this.autosave) this.save();
-		});
+		let discount = this.createAonNumber(this.DETAIL_DISCOUNT + 'Dialog' + i, '%Dto', detail.discount);
+		discount.onChange(() => this.onChangeDetailDiscount(detail, discount.value, i, true));
+		table.addCell(discount);
+		discount.readonly = this.invoice.isReadonly()
+
+		// ----- DETAIL AMOUNT
+
+		let amount = this.createAonNumber(this.DETAIL_AMOUNT + 'Dialog' + i, MSG.AMOUNT, detail.amount);
+		table.addCell(amount);
+		amount.readonly = CONSTANT.TRUE;
+
+		table.addRow(); // ----- ROW 4
 
 		// ----- CATEGORY
 
@@ -1750,7 +1733,7 @@ export class AonInvoice extends AonElement {
 			this.invoice.setDetail(detail, i);
 			if(this.autosave) this.save();
 		});
-		div.appendChild(category);
+		table.addCell(category, '2');
 		getInvoiceAccounts({type: this.invoice.getInvoiceType()}).then(accounts => {
 			let accs = accounts.map(acc => {return {name: acc.name, value: acc.code};});
 			category.options = JSON.stringify(accs);
@@ -1771,16 +1754,35 @@ export class AonInvoice extends AonElement {
 			this.invoice.setDetail(detail, i);
 			if(this.autosave) this.save();
 		});
-		div.appendChild(bienAfecto);
+
+		table.addCell(bienAfecto, '2');
 		getInvestAssets({}).then(investAssets => {
 			bienAfecto.options = JSON.stringify(investAssets);
 			if(detail.investAsset)
 				bienAfecto.value = detail.investAsset;		
 		});
+		
+		table.addRow();
 
-		const top  = button.getBoundingClientRect().top;
-		const left = button.getBoundingClientRect().left;
-		dialog.setContent(div, top, left);
+		// ----- PREPAYMENT | SUPLIDO
+		
+		let prepayment = new AonSwitch();
+		prepayment.id = this.DETAIL_PREPAYMENT + 'Dialog' + i;
+		prepayment.title = 'Suplido';//MSG.DETAIL_PREPAYMENT;
+		prepayment.addEventListener(EVENT.CHANGE, () => {
+			detail.prepayment = prepayment.checked;
+			if((!detail.prepayment || detail.prepayment == 'false'))
+				detail.percentage = 21.0;
+			else detail.percentage = 0.0;
+			this.invoice.setDetail(detail, i);
+			this.reload();
+			this.printDetailDialog(this.invoice.details[i], i);
+			if(this.autosave) this.save();
+		});
+		table.addCell(prepayment);
+		prepayment.readonly = this.invoice.isReadonly();
+		prepayment.checked = detail.prepayment;
+
 		dialog.open();
 	}
 
@@ -2228,7 +2230,7 @@ export class AonInvoice extends AonElement {
 	}
 
 	acceptInvoice() {
-		if(this.configuration.tbai.active) {
+		if(this.invoice.isEmitida() && this.configuration.tbai.active) {
 			let d = this.getApplication().getDialog();
 			d.clear();
 			if(!this.isMobile()) d.width = '400px';
