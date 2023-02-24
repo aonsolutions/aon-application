@@ -946,12 +946,17 @@ public class JooqPayrollBuilder {
 			return false;
 		}
 		List<SalaryData> workedDays = salaryData.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());
+		List<SalaryData> realSessions = salaryData.getOrDefault("JORNADAS_REALES", Collections.emptyList());
 		boolean isInWorkPeriod = workedDays.stream().anyMatch(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date));
 		if (isInWorkPeriod) {
 			if (areThereDaysData(date, salaryData, salaryEnd)) {
 				return true;
+			} else if (!realSessions.isEmpty()) {
+				//TODO
+				return realSessions.stream().anyMatch(sd -> new Period(sd.getStartDate(), sd.getEndDate() != null ? sd.getEndDate() : salaryEnd).contains(date));
+			} else {				
+				return AonDateUtils.getDayOfWeek(date) > 1 && AonDateUtils.getDayOfWeek(date) < 7;
 			}
-			return AonDateUtils.getDayOfWeek(date) > 1 && AonDateUtils.getDayOfWeek(date) < 7;
 		}
 		return false;
 	}
