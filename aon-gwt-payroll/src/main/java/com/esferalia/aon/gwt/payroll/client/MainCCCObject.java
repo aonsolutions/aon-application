@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -20,6 +21,7 @@ public class MainCCCObject {
 	
 	final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	private List<Activity> activities; 
+	private Integer domainId;
 	
 	// -------------------------------------------- Constructor
 	
@@ -36,7 +38,19 @@ public class MainCCCObject {
 			@Override
 			public void onSuccess(List<Activity> result) {
 				activities = result;
-				success.accept(result);
+				impl.getDomain(new AsyncCallback<Integer>() {
+					
+					@Override
+					public void onSuccess(Integer domainIdIn) {
+						domainId = domainIdIn;
+						success.accept(result);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						// Nothing to do
+					}
+				});
 			}
 			
 			@Override
@@ -85,6 +99,12 @@ public class MainCCCObject {
 		return ccccs;
 	}
 	
+	public List<EnterpriseCCC> getActiveCCCs() {
+		List<EnterpriseCCC> ccccs = new ArrayList<>();
+		this.activities.forEach(activity -> ccccs.addAll(activity.getCccs()));
+		return ccccs.isEmpty() ? ccccs : ccccs.stream().filter(ccc -> !ccc.isDeleted()).collect(Collectors.toList());
+	}
+	
 	public Set<Entry<Integer, String>> getActivities() {
 		Map<Integer, String> activitiesMap = new HashMap<>();
 		this.activities.forEach(activity -> activitiesMap.put(activity.getId(), activity.getDescription()));
@@ -94,12 +114,13 @@ public class MainCCCObject {
 	public void insertCCC(EnterpriseCCC ccc) {
 		Optional<Activity> activityCCC = this.activities.stream().filter(activity -> activity.getId().equals(ccc.getEnterpriseActivity())).findFirst();
 		if(activityCCC.isPresent()) {
-			if(ccc.getId() == null)activityCCC.get().getCccs().add(ccc);
-			else {
-				activityCCC.get().getCccs().removeIf(cccIt -> cccIt.getId().equals(ccc.getId()));
-				activityCCC.get().getCccs().add(ccc);
-			}
+			activityCCC.get().getCccs().removeIf(cccIt -> cccIt.getId().equals(ccc.getId()));
+			activityCCC.get().getCccs().add(ccc);
 		}
+	}
+	
+	public void insertActivity(Activity activity) {
+		this.activities.add(activity);
 	}
 
 	public void deleteCCC(Integer cccId) {
@@ -143,7 +164,7 @@ public class MainCCCObject {
 	}
 
 	public Integer getDomain() {
-		return activities.isEmpty() ? null : activities.get(0).getDomain();
+		return domainId;
 	}
 		
 }

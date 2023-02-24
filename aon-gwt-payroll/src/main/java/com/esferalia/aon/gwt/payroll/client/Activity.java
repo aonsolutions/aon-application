@@ -53,6 +53,11 @@ public abstract class Activity extends ResizeComposite {
 		}
 
 		@Override
+		protected void onInsertActivity(com.esferalia.aon.occam.api.model.payroll.Activity activity) {
+			// Nothing to do
+		}
+
+		@Override
 		protected Set<Entry<Integer, String>> getActivities() {
 			return Activity.this.getActivities();
 		}
@@ -92,7 +97,6 @@ public abstract class Activity extends ResizeComposite {
 
 	interface MyStyle extends CssResource {
 		String warningTB();
-		String flexGrow();
 	}
 
 	// TABLA DATOS ACTIVIDAD
@@ -142,11 +146,15 @@ public abstract class Activity extends ResizeComposite {
 	void onDescriptionChangeValue(ChangeEvent event) {
 		if(AonStringUtils.isBlank(activityDescription.getValue())) {
 			addWarningIcon(activityDescription);
+			activityDescription.setTitle("La descripci\u00f3n debe rellenarse");
+			
 			Map<String, String> warningMap = new HashMap<>();
 			warningMap.put("Descripco\u00F3n obligatoria", "El campo descripci\u00F3n es obligatorio");
 			fireWarningMessage(warningMap);
 		} else {
 			removeWarningIcon(activityDescription);
+			activityDescription.setTitle("");
+			
 			onActivityDescriptionChange();
 		}
 	}
@@ -154,17 +162,6 @@ public abstract class Activity extends ResizeComposite {
 	@UiHandler("activityCNAE2009")
 	void onCNAE2009SelectionValue(SelectionEvent<Suggestion> event) {
 		onActivityCNAE2009Change(); 
-	}
-	
-	@UiHandler("activityCNAE2009")
-	void onCNAE2009ChangeValue(ValueChangeEvent<String> event) {
-		if(AonStringUtils.isBlank(activityCNAE2009.getValue()) || AonStringUtils.equalsIgnoreCase(activityCNAE2009.getValue(), "-")) {
-			addWarningIcon(activityCNAE2009);
-			Map<String, String> warningMap = new HashMap<>();
-			warningMap.put("CNAE obligatorio", "El campo CNAE es obligatorio");
-			fireWarningMessage(warningMap);
-		} else
-			removeWarningIcon(activityCNAE2009);
 	}
 	
 	@UiHandler("startDate")
@@ -228,6 +225,18 @@ public abstract class Activity extends ResizeComposite {
 	
 	public void removeWarningIcon(Widget widget) {
 		widget.removeStyleName(style.warningTB());
+	}
+
+	public void showCCCMessage() {
+		cccWidget.showCCCMessage();
+	}
+
+	public void showCCCTable() {
+		cccWidget.showCCCTable();
+	}
+
+	public void onAddNewCCC() {
+		cccWidget.onAddNewCCC();
 	}
 
 }
