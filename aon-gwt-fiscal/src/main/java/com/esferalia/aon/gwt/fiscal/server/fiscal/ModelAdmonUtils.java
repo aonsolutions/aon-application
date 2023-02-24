@@ -57,6 +57,7 @@ import com.esferalia.aon.occam.api.fiscal.MODEL123;
 import com.esferalia.aon.occam.api.fiscal.MODEL130;
 import com.esferalia.aon.occam.api.fiscal.MODEL131;
 import com.esferalia.aon.occam.api.fiscal.MODEL180;
+import com.esferalia.aon.occam.api.fiscal.MODEL190;
 import com.esferalia.aon.occam.api.fiscal.MODEL202;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902021;
@@ -591,12 +592,19 @@ public class ModelAdmonUtils {
 			@Override public void visitM347() { /* Auto-generated method stub */}
 			@Override public void visitM200() { /* Auto-generated method stub */}
 			@Override public void visitM193() { /* Auto-generated method stub */}
-			@Override public void visitM190() { /* Auto-generated method stub */}
+			
+			@Override 
+			public void visitM190() { 
+				MODEL190.aeatPresentation(occam, getMod190(fm) , aeatResponse);
+			}
+			
 			@Override public void visitM184() { /* Auto-generated method stub */}
+			
 			@Override 
 			public void visitM180() {
 				MODEL180.aeatPresentation(occam, getMod180(fm) , aeatResponse);
 			}
+			
 		});
 		giveDataResponseDataBack(resp, aeatParams, fm);
 	}
@@ -752,13 +760,9 @@ public class ModelAdmonUtils {
 	// Envío a la AEAT utilizando el mecanismo TGVI Online (se utiliza para el envío de las informativas)
 	// Las instrucciones se encuentran en el documento "Especificaciones_TGVI_Online", publicado por la Agencia Tributaria
 	public static void sendOnlineTGVI(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model) {
-		try {					
-			// FALTA - PRUEBA 
-			// ENTORNO DE PRUEBAS SE INTENTA DAR DE BAJA UN MODELO ANTERIOR
-//			if (!sendOnlineTGVI_Delete(resp, aeatParams, model, "2022180003500000100014"))
-//				return;
-			// ------
-
+		
+		try {
+			
 			// Obtenemos el contenido del fichero para la presentación del modelo
 			String fileContent = new String(getModelFile(model), StandardCharsets.UTF_8);			
 			
@@ -832,10 +836,13 @@ public class ModelAdmonUtils {
 				String codigo = response.headers().firstValue("codigo").isEmpty() ? "" : response.headers().firstValue("codigo").get();
 				String idenvio = response.headers().firstValue("idenvio").isEmpty() ? "" : response.headers().firstValue("idenvio").get();
 				String mensaje = response.headers().firstValue("mensaje").isEmpty() ? "" : response.headers().firstValue("mensaje").get();
-				// codigo = 0 indica que la operacion se ha llevado a cabo con exito, en tal caso devuelve un idEnvio que se deberá pasar al resto de procesos de envío (registros tipo 2 y presentación)
-				// FALTA - PRUEBA VOY A DEJAR SEGUIR TAMBIEN CON EL ERROR '8888' AUNQUE NO ME DEJARA PRESENTARLO PERO ES PARA QUE SE VALIDEN EL RESTO DE DATOS
-				//if ("0".equals(codigo)) {
-				if ("0".equals(codigo) || "8888".equals(codigo)) {
+				// codigo = 0 indica que la operación se ha llevado a cabo con exito, 
+				// en tal caso devuelve un idEnvio que se deberá pasar al resto de procesos de envío (registros tipo 2 y presentación)
+				// codigo = 8888 indica que no hay ningun error en el registro tipo 1, pero que la declaracion no podrá ser presentada, 
+				// probablemente porque ya exista una declaración anterior del mismo declarante, ejercicio y periodo que no está dada de 
+				// baja, en este caso en entorno de pruebas voy a dejar continuar porque a la hora de presentar puedo indicar manualmente 
+				// que realice la baja del expediente de la declaración anterior
+				if ("0".equals(codigo) || ("8888".equals(codigo) && aeatParams.isTest())) {
 					return idenvio;
 				} else {
 					// codigo <> 0 indica que la operación ha generado algun error					
@@ -1005,9 +1012,7 @@ public class ModelAdmonUtils {
 				if ("0".equals(codigo)) {					
 					
 					// En los mensajes de error viene una linea por cada registro erroneo, con el registro completo, punto y coma, linea del 
-					// fichero donde esta el error (entre parentesis), codigo del error y mensajes de error
-					
-					// FALTA - VER SI HAY QUE DIVIDIRLO DE OTRA FORMA					
+					// fichero donde esta el error (entre parentesis), codigo del error y mensajes de error															
 					String[] lines = errors.split("\r\n");
 					
 					// Vamos a crear un JSON con el mismo formato que el JSON que devuelve la presentación de los modelos de liquidaciones (IVA, IRPF), 
@@ -1018,7 +1023,7 @@ public class ModelAdmonUtils {
 					
 					for (String line : lines) {
 						// La idea es mostrar cada mensaje de error como: NIF_DECLARADO - NOMBRE_DECLARADO Y LO_QUE_VENGA_DESPUES_DEL_PUNTO_Y_COMA
-						// FALTA - ESTO ES PARA EL MODELO 180, HABRIA QUE VER SI TODOS LOS MODELOS LLEVAN EL NIF Y NOMBRE EN EL MISMO SITIO
+						// FALTA - ESTO ES PARA EL MODELO 180, 190, HABRIA QUE VER SI TODOS LOS MODELOS LLEVAN EL NIF Y NOMBRE EN EL MISMO SITIO
 						String document = line.substring(17, 26);
 						String name = line.substring(35, 75);
 						String error = line.split(";")[1];						
@@ -1045,6 +1050,19 @@ public class ModelAdmonUtils {
 	private static void sendOnlineTGVI_3(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model, String idShipment) {
 		
 		try {
+			
+			// BAJA DECLARACION ANTERIOR
+			// POR AHORA ESTO SOLO SE UTILIZA EN ENTORNO DE PRUEBAS EN FASE DE DESARROLLO, PARA PROBAR 
+			// LAS SUSTITUTIVAS, EN ENTORNO DE PRODUCCION SE OBLIGARÁ A QUE EL USUARIO REALICE LA BAJA 
+			// DE LA LIQUIDACION DESDE LA OFICINA VIRTUAL DE LA AGENCIA TRIBUTARIA
+			// Si la validación ha sido correcta y solo queda la presentación, y es una sustitutiva,
+			// antes de nada se intenta dar de baja la anterior liquidación, porque si la liquidación
+			// ya existe, nos dará un error de duplicidad
+			if (aeatParams.isTest() && model.isReplacement()) {
+				if (!sendOnlineTGVI_Delete(resp, aeatParams, model))
+					return;
+			}
+			
 			String url = aeatParams.isTest() 
 				? "https://prewww1.aeat.es/wlpl/OVPT-NTGV/PresentarEnvio"
 				: "https://www1.agenciatributaria.gob.es/wlpl/OVPT-NTGV/PresentarEnvio";			
@@ -1104,13 +1122,12 @@ public class ModelAdmonUtils {
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("Expediente", expediente);
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("NIFPresentador", aeatParams.getDocument());
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("ApellidosNombrePresentador", aeatParams.getName());
-//					result.getJSONObject("respuesta").getJSONObject("correcta").put("TipoRepresentacion", "Colaborador");
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("NIFDeclarante", model.getDocument());
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("ApellidosNombreDeclarante", model.getName());
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("Modelo", FiscalModelUtils.getModelName(model));
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("Ejercicio", AonNumberUtils.toString( model.getYear()));
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("Periodo", model.getPeriod() == Period.YEAR ? "0A" : model.getPeriod().getName());
-//					result.getJSONObject("respuesta").getJSONObject("correcta").put("Justificante", ""); // FALTA - NO DEVUELVE JUSTIFICANTE QUIERE DECIR QUE LO TENEMOS QUE PASAR NOSOTROS ?? 
+					result.getJSONObject("respuesta").getJSONObject("correcta").put("Justificante", ""); // FALTA - NO DEVUELVE JUSTIFICANTE QUIERE DECIR QUE EL JUSTIFICANTE QUE LE PASAMOS ES EL QUE REALMENTE SE QUEDA EN EL MODELO PRESENTADO ?? 
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("Idioma","ES");
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("urlPdf", urlPdf);
 					
@@ -1130,15 +1147,27 @@ public class ModelAdmonUtils {
 		}
 	}	
 	
-	// TGVI Online - Baja de una presentación anterior (para entorno de pruebas)
-	private static boolean sendOnlineTGVI_Delete(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model, String expediente) {
+	// TGVI Online - Baja de una presentación anterior (SOLO SE UTILIZA EN ENTORNO DE PRUEBAS EN FASE DE DESARROLLO PARA PROBAR LAS SUSTITUTIVAS)
+	private static boolean sendOnlineTGVI_Delete(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model) {
 		
 		try {
 			
-			// Solo se usa en entorno de pruebas
-			if (!aeatParams.isTest())
-				return true;		
+			// ESTE NUMERO DE EXPEDIENTE SE INDICA DE FORMA MANUAL AQUI Y SOLO SE UTILIZA EN FASE 
+			// DE DESARROLLO PARA PROBAR LAS SUSTITUTIVAS DE LAS INFORMATIVAS EN EL ENTORNO DE PRUEBAS
+			String expediente = "";
+			//String expediente = "2021190009620900000041"; // FALTA QUITAR
+								
+			// Se comprueba si el numero de expediente está vacio
+			if (AonStringUtils.isEmpty(expediente))
+				return true;  // Devolvemos true para que continue con la presentación del modelo
+ 
+			// Se comprueba si el numero de expediente comienza por el ejercicio y el modelo que estamos presentando
+			// si no es así, no se hace nada y se devuelve true para que continue con la presentación
+			if (!AonStringUtils.substring(expediente,0, 4).equals(AonNumberUtils.toString(model.getYear())) || 
+				!AonStringUtils.substring(expediente, 4, 7).equals(model.getModel().getValue()))
+				return true;  // Devolvemos true para que continue con la presentación del modelo
 			
+			// Intentar dar de baja el expediente que se le indica (ENTORNO DE PRUEBAS)
 			String url = "https://prewww1.aeat.es/wlpl/OVPT-NTGV/BajaDeclaracion";						
 
 			SSLContext sslContext = SSLContext.getInstance("TLS");

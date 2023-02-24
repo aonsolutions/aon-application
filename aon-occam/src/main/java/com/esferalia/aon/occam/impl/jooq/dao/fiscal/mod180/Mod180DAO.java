@@ -25,7 +25,6 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180Detail;
-import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
@@ -33,7 +32,6 @@ import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryAddressDAO;
-import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -525,11 +523,10 @@ public class Mod180DAO {
 	
     // Grabar resultado y pdf en response y marcar el modelo como enviado
 	public static Mod180 aeatPresentation(AONContext ctx, Mod180 mod, String aeatResponse) {
-		if (AonStringUtils.isNotBlank(aeatResponse)) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {			
 			
-			// FALTA - PRUEBA ANTES DE NADA BORRAR LA PRESENTADION QUE HABIA ANTES			
-			DataResponseDAO.deleteAEATResponse(ctx, mod);
-			// -----
+			// Antes de nada se borra la presentación anterior
+			DataResponseDAO.deleteAEATResponse(ctx, mod);			
 			
 			// Grabar los datos en data_response y sus tablas asociadas
 			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);

@@ -26,6 +26,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190Detail;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonEnumUtils;
@@ -710,5 +711,29 @@ public class Mod190DAO {
 		Mod190Declaration dec = Mod190Declaration.getInstance(mod190);
 		return dec.validateSalaries(ctx, mod190);
 	}
+	
+    // Grabar resultado y pdf en response y marcar el modelo como enviado
+	public static Mod190 aeatPresentation(AONContext ctx, Mod190 mod, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {			
+			
+			// Antes de nada se borra la presentación anterior
+			DataResponseDAO.deleteAEATResponse(ctx, mod);			
+			
+			// Grabar los datos en data_response y sus tablas asociadas
+			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
+			
+			// Marcar el modelo como enviado
+			//AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());		
+			if (mod != null && mod.getId() != null) {
+				ctx.getDslContext().update(FS_MODEL190)
+					//.set(FS_MODEL190.RECEIPT, response.getJustificante()) // FALTA - LA PRESENTACION NO DEVUELVE EL NUMERO JUSTIFICANTE POR ESO LO UNICO QUE SE HACE ES MARCARLO COMO ENVIADO
+					.set(FS_MODEL190.STATUS, FiscalStatus.SENT.value())
+					.where(FS_MODEL190.ID.equal(mod.getId()))
+					.execute();
+				return getById(ctx, mod.getId());
+			}
+		}
+		return mod;
+	}	
 	
 }

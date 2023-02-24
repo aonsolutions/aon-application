@@ -65,5 +65,4 @@ public class MODEL180Impl implements IMODEL180 {
 				configuration -> Mod180DAO.aeatPresentation(ctx, mod, aeatResponse));
 	}
 
-
 }
