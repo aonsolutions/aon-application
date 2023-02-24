@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Record;
@@ -36,7 +37,7 @@ public class EnterpriseCCCDAO {
 		Supplier<Stream<EnterpriseCCC>> streamCCC = () -> ctx.getDslContext()
 			.select()
 			.from(ENTERPRISE_CCC)
-			.innerJoin(GEOZONE)
+			.leftJoin(GEOZONE)
 			.on(GEOZONE.ID.eq(ENTERPRISE_CCC.GEOZONE))
 			.where(ENTERPRISE_CCC_PROPERTIES.getConditions(filter))
 			.orderBy(ENTERPRISE_CCC.ID.desc())
@@ -51,6 +52,30 @@ public class EnterpriseCCCDAO {
 		});
 		
 		return streamCCC.get();
+	}
+	
+	public static List<EnterpriseCCC> getList(AONContext ctx, EnterpriseCCCFilter filter) {
+		ctx.checkRead();
+		Stream<EnterpriseCCC> streamCCC = ctx.getDslContext()
+			.select()
+			.from(ENTERPRISE_CCC)
+			.leftJoin(GEOZONE)
+			.on(GEOZONE.ID.eq(ENTERPRISE_CCC.GEOZONE))
+			.where(ENTERPRISE_CCC_PROPERTIES.getConditions(filter))
+			.orderBy(ENTERPRISE_CCC.ID.desc())
+			.fetch().stream().map(new EnterpriseCCCFiller());
+		
+		List<EnterpriseCCC> cccs = streamCCC.collect(Collectors.toList());
+		
+		cccs.forEach(enterpriseCCC -> {
+			Result<ContractRecord> contractRecord = ctx.getDslContext().selectFrom(CONTRACT).where(CONTRACT.ENTERPRISE_CCC.eq(enterpriseCCC.getId())).limit(1).fetch();
+			enterpriseCCC.setUseByContracts(contractRecord.isNotEmpty());
+			
+			Result<CraBatchDetailRecord> craBatchDetailRecord = ctx.getDslContext().selectFrom(CRA_BATCH_DETAIL).where(CRA_BATCH_DETAIL.ENTERPRISE_CCC.eq(enterpriseCCC.getId())).limit(1).fetch();
+			enterpriseCCC.setUseByCra(craBatchDetailRecord.isNotEmpty());
+		});
+		
+		return cccs;
 	}
 	
 	public static void save(AONContext ctx, List<EnterpriseCCC> enterpriseCccs) {

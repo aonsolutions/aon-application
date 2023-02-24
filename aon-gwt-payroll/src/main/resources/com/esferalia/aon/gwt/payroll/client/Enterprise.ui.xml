@@ -6,23 +6,43 @@
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.Enterprise.MyStyle">
 	
-		.mw30 { min-width: 30px; }
-		.mw85 { min-width: 85px; }
-		.mw100 { min-width: 100px !important; }
-		.mw150 { 
-			min-width: 150px;
-			width: 100%;	
+		.container {
+			min-width: 600px;
+			padding: 0 1rem;
+			margin-top: 15px;
+			display: flex;
+			flex-direction: column;
 		}
-		.mw180 { width: 180px; }
-		.mw250 { min-width: 250px; }
+		
+		.documentError { border: 1.5px solid #ad0000; }
+		
+		.emptyLabel { height: 12px; }
+		
+		.firstColumn {
+			min-width: 150px;
+			padding: 5px;
+			background-color: #f6f6f6; 
+		}
+		
+		.flex {
+			display: flex;
+			align-items: center;
+			width: 100%;
+			margin: 2px 0;
+			gap: 5px;
+		}
+		
+		.flexColumn {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+		}
+		
+		.heightAll { height: 100%; }
 		
 		.inputPadding { padding: 0 0 0 .5rem; }
 
-		.inputTextHeight { 
-			height: 1.2rem !important; 
-			text-transform: uppercase;	
-		}
-		
 		.inputLBHeight { 
 			height: 1.4rem !important; 
 			background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0Ij48cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTE2LjU5IDguNTlMMTIgMTMuMTcgNy40MSA4LjU5IDYgMTBsNiA2IDYtNnoiLz48L3N2Zz4=) no-repeat 99% 50%;
@@ -33,53 +53,47 @@
 			text-transform: uppercase;
 		}
 		
-		.documentError {
-			border: 1.5px solid #ad0000;
+		.inputTextHeight { 
+			height: 1.2rem !important; 
+			text-transform: uppercase;	
 		}
+		
+		.mt20 { margin-top: 20px; }
+		
+		.mw30 { min-width: 30px; }
 
-		.container{
-			min-width: 600px;
-			padding: 0 1rem;
-			margin-top: 15px;
-			display: flex;
-			flex-direction: column;
+		.mw50{
+			max-width: 50px;
+			text-align: center;
 		}
 		
-		.flexColumn {
-			display: flex;
-			flex-direction: column;
+		.mw75{
+			min-width: 75px;
+			text-align: center;
 		}
 		
-		.widthAll{
-			width: 100%;
+		
+		.mw100 { min-width: 100px !important; }
+		
+		.mw150 { 
+			min-width: 150px;
+			width: 100%;	
 		}
 		
-		.heightAll{
-			height: 100%;
+		.mw180 { width: 180px; }
+		
+		.requiredColor {
+			color: #2152A5;
+			font-weight: bold !important;
 		}
 		
-		.flex{
-			display: flex;
-			align-items: center;
-			width: 100%;
-			margin: 2px 0;
-			gap: 5px;
-		}
-		
-		.flexColumn{
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			flex-direction: column;
-		}
-		
-		.styleBorder{
+		.styleBorder {
 			border: 1px solid black;
 			border-radius: 5px;
 			padding: 0 1rem .5rem;
 		}
 		
-		.tittle{
+		.tittle {
 			position: relative;
 			top: -10px;
 			left: 20px;
@@ -91,57 +105,14 @@
 			text-align: center;
 		}
 		
-		.firstColumn{
-			min-width: 150px;
-			padding: 5px;
-			background-color: #f6f6f6; 
-		}
-		
-		.requiredColor{
-			color: #2152A5;
-			font-weight: bold !important;
-		}
-		
-		.warningColor{
+		.warningColor {
 			font-weight: bold;
 			color: #be0000;
 		}
 		
-		.emptyLabel{
-			height: 12px;
-		}
+		.warningTB { border: 1.5px solid #ad0000; }
 		
-		.mw-75{
-			min-width: 75px;
-			text-align: center;
-		}
-		
-		.mt20{
-			margin-top: 20px;
-		}
-		
-		.warningTB{
-			border: 1px solid red;
-		}
-		
-		.heightTB{
-			height: 1.1rem;
-		}
-		
-		.w-50{
-			width: 50px;
-			text-align: center;
-		}
-		
-		.w390 {
-			width: 390px;
-		}
-		
-		.mw155 {
-			min-width: 155px;
-		}
-		
-		@external .inputTextHeight;
+		.widthAll { width: 100%; }
 		
 	</ui:style>
 
@@ -163,7 +134,7 @@
 		    			<g:Label ui:field="documentType"></g:Label>
 		    			<g:TextBox ui:field="document" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
 						<aon:AonToolbarSmallButton ui:field="documentStatus"/>	
-		    			<g:Label ui:field="nationalityLabel" styleName="{style.mw-75}">País Emisión</g:Label>
+		    			<g:Label ui:field="nationalityLabel" styleName="{style.mw75}">País Emisión</g:Label>
 		    			<g:SuggestBox ui:field="nationality" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:SuggestBox>
 		    		</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
@@ -171,9 +142,9 @@
 		    			<g:ListBox ui:field="streetType" styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.mw180}'></g:ListBox>
 		    			<g:TextBox ui:field="address" styleName='aon-inputText {style.inputTextHeight} {style.widthAll}'></g:TextBox>
 		    			<g:Label>Nº</g:Label>
-		    			<g:TextBox ui:field="addressNum" styleName='aon-inputText {style.w-50} {style.inputTextHeight} {style.widthAll} {style.mw30}'></g:TextBox>
+		    			<g:TextBox ui:field="addressNum" styleName='aon-inputText {style.mw50} {style.inputTextHeight} {style.widthAll} {style.mw30}'></g:TextBox>
 		    			<g:Label>C.P.</g:Label>
-		    			<g:TextBox ui:field="addressZip" styleName='aon-inputText {style.w-50} {style.inputTextHeight} {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="addressZip" styleName='aon-inputText {style.mw50} {style.inputTextHeight} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label styleName='{style.firstColumn} {style.emptyLabel} {style.inputTextHeight}'></g:Label>
