@@ -65,5 +65,11 @@ public class MODEL193 {
 			return getImpl().duplicate(ctx, mod193);
 		}
 	}
+	
+	public static Mod193 aeatPresentation(Occam occam, Mod193 mod, String aeatResponse) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().aeatPresentation(ctx, mod, aeatResponse);
+		}
+	}
 
 }

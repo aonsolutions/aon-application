@@ -1122,4 +1122,28 @@ public class Mod347DAO {
 		}
 	}
 	
+    // Grabar resultado y pdf en response y marcar el modelo como enviado
+	public static Mod347 aeatPresentation(AONContext ctx, Mod347 mod, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {			
+			
+			// Antes de nada se borra la presentación anterior
+			DataResponseDAO.deleteAEATResponse(ctx, mod);			
+			
+			// Grabar los datos en data_response y sus tablas asociadas
+			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
+			
+			// Marcar el modelo como enviado
+			//AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());		
+			if (mod != null && mod.getId() != null) {
+				ctx.getDslContext().update(FS_MOD347)
+					//.set(FS_MOD347.RECEIPT, response.getJustificante()) // FALTA - LA PRESENTACION NO DEVUELVE EL NUMERO JUSTIFICANTE POR ESO LO UNICO QUE SE HACE ES MARCARLO COMO ENVIADO
+					.set(FS_MOD347.STATUS, FiscalStatus.SENT.value())
+					.where(FS_MOD347.ID.equal(mod.getId()))
+					.execute();
+				return getById(ctx, mod.getId());
+			}
+		}
+		return mod;
+	}	
+	
 }

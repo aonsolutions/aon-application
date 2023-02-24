@@ -57,9 +57,13 @@ import com.esferalia.aon.occam.api.fiscal.MODEL123;
 import com.esferalia.aon.occam.api.fiscal.MODEL130;
 import com.esferalia.aon.occam.api.fiscal.MODEL131;
 import com.esferalia.aon.occam.api.fiscal.MODEL180;
+import com.esferalia.aon.occam.api.fiscal.MODEL184;
 import com.esferalia.aon.occam.api.fiscal.MODEL190;
+import com.esferalia.aon.occam.api.fiscal.MODEL193;
 import com.esferalia.aon.occam.api.fiscal.MODEL202;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
+import com.esferalia.aon.occam.api.fiscal.MODEL347;
+import com.esferalia.aon.occam.api.fiscal.MODEL349;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902021;
 import com.esferalia.aon.occam.api.fiscal.MODEL3902022;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -78,9 +82,13 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod123;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod131;
 import com.esferalia.aon.occam.api.model.fiscal.Mod180;
+import com.esferalia.aon.occam.api.model.fiscal.Mod184;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
+import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod347;
+import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.fiscal.mod390.Mod3902021;
@@ -92,11 +100,15 @@ import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod347Writer;
+import com.esferalia.aon.occam.server.fiscal.format.Mod349Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod111.Mod111Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod115.Mod115Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod123.Mod123Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod180.Mod180Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod184.Mod184Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod190.Mod190Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod193.Mod193Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod303.Mod303Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902021Writer;
 import com.esferalia.aon.occam.server.fiscal.format.mod390.Mod3902022Writer;
@@ -429,7 +441,19 @@ public class ModelAdmonUtils {
 	}
 	private static Mod180 getMod180(IFiscalModel fm) {
 		return (fm instanceof Mod180)?(Mod180)fm:null;
-	}	
+	}
+	private static Mod193 getMod193(IFiscalModel fm) {
+		return (fm instanceof Mod193)?(Mod193)fm:null;
+	}
+	private static Mod184 getMod184(IFiscalModel fm) {
+		return (fm instanceof Mod184)?(Mod184)fm:null;
+	}
+	private static Mod347 getMod347(IFiscalModel fm) {
+		return (fm instanceof Mod347)?(Mod347)fm:null;
+	}
+	private static Mod349 getMod349(IFiscalModel fm) {
+		return (fm instanceof Mod349)?(Mod349)fm:null;
+	}
 	
 	private static byte[] getModelFile(IFiscalModel fm) throws AonCoreException {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -516,11 +540,43 @@ public class ModelAdmonUtils {
 				}
 			}
 			@Override public void visitM390HF() { /* Auto-generated method stub */}
-			@Override public void visitM349() { /* Auto-generated method stub */}
-			@Override public void visitM347() { /* Auto-generated method stub */}
+			@Override 
+			public void visitM349() { 
+				try {
+					Mod349Writer.fillWriter( getMod349(fm), writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			
+			@Override 
+			public void visitM347() { 
+				try {
+					Mod347Writer.fillWriter( getMod347(fm), writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			
 			@Override public void visitM200() { /* Auto-generated method stub */}
-			@Override public void visitM193() { /* Auto-generated method stub */}
-			@Override public void visitM184() { /* Auto-generated method stub */}
+			@Override 
+			public void visitM193() { 
+				try {
+					Mod193Writer.fillWriter( getMod193(fm), writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			
+			@Override 
+			public void visitM184() { 
+				try {
+					Mod184Writer.fillWriter( getMod184(fm), writer);
+				} catch (IOException e) {
+					throw new AonCoreException(e);
+				}
+			}
+			
 			@Override 
 			public void visitM180() {				
 				try {
@@ -588,17 +644,33 @@ public class ModelAdmonUtils {
 				}
 			}
 			@Override public void visitM390HF() { /* Auto-generated method stub */}
-			@Override public void visitM349() { /* Auto-generated method stub */}
-			@Override public void visitM347() { /* Auto-generated method stub */}
+			
+			@Override 
+			public void visitM349() {
+				MODEL349.aeatPresentation(occam, getMod349(fm) , aeatResponse);
+			}
+			
+			@Override 
+			public void visitM347() { 
+				MODEL347.aeatPresentation(occam, getMod347(fm) , aeatResponse);
+			}
+			
 			@Override public void visitM200() { /* Auto-generated method stub */}
-			@Override public void visitM193() { /* Auto-generated method stub */}
+			
+			@Override 
+			public void visitM193() { 
+				MODEL193.aeatPresentation(occam, getMod193(fm) , aeatResponse);				
+			}
 			
 			@Override 
 			public void visitM190() { 
 				MODEL190.aeatPresentation(occam, getMod190(fm) , aeatResponse);
 			}
 			
-			@Override public void visitM184() { /* Auto-generated method stub */}
+			@Override 
+			public void visitM184() { 
+				MODEL184.aeatPresentation(occam, getMod184(fm) , aeatResponse);
+			}
 			
 			@Override 
 			public void visitM180() {
@@ -1024,8 +1096,13 @@ public class ModelAdmonUtils {
 					for (String line : lines) {
 						// La idea es mostrar cada mensaje de error como: NIF_DECLARADO - NOMBRE_DECLARADO Y LO_QUE_VENGA_DESPUES_DEL_PUNTO_Y_COMA
 						// FALTA - ESTO ES PARA EL MODELO 180, 190, HABRIA QUE VER SI TODOS LOS MODELOS LLEVAN EL NIF Y NOMBRE EN EL MISMO SITIO
+						// Excepto para le Modelo 349, para el resto de informativas el nif y el nombre están en las mismas posiciones
 						String document = line.substring(17, 26);
 						String name = line.substring(35, 75);
+						if (model.getModel() == FiscalModelType.M349) {
+							document = line.substring(75, 92);
+							name = line.substring(92, 132);							
+						}
 						String error = line.split(";")[1];						
 						String errorDescription = document + " " + name + " - " + error;
 						jsonErrors.getJSONObject("respuesta").append( "errores", errorDescription);
@@ -1127,7 +1204,7 @@ public class ModelAdmonUtils {
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("Modelo", FiscalModelUtils.getModelName(model));
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("Ejercicio", AonNumberUtils.toString( model.getYear()));
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("Periodo", model.getPeriod() == Period.YEAR ? "0A" : model.getPeriod().getName());
-					result.getJSONObject("respuesta").getJSONObject("correcta").put("Justificante", ""); // FALTA - NO DEVUELVE JUSTIFICANTE QUIERE DECIR QUE EL JUSTIFICANTE QUE LE PASAMOS ES EL QUE REALMENTE SE QUEDA EN EL MODELO PRESENTADO ?? 
+//					result.getJSONObject("respuesta").getJSONObject("correcta").put("Justificante", ""); // FALTA - NO DEVUELVE JUSTIFICANTE QUIERE DECIR QUE EL JUSTIFICANTE QUE LE PASAMOS ES EL QUE REALMENTE SE QUEDA EN EL MODELO PRESENTADO ?? 
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("Idioma","ES");
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("urlPdf", urlPdf);
 					
@@ -1154,8 +1231,7 @@ public class ModelAdmonUtils {
 			
 			// ESTE NUMERO DE EXPEDIENTE SE INDICA DE FORMA MANUAL AQUI Y SOLO SE UTILIZA EN FASE 
 			// DE DESARROLLO PARA PROBAR LAS SUSTITUTIVAS DE LAS INFORMATIVAS EN EL ENTORNO DE PRUEBAS
-			String expediente = "";
-			//String expediente = "2021190009620900000041"; // FALTA QUITAR
+			String expediente = ""; // FALTA QUITAR NUMERO SI LO HAY			 
 								
 			// Se comprueba si el numero de expediente está vacio
 			if (AonStringUtils.isEmpty(expediente))

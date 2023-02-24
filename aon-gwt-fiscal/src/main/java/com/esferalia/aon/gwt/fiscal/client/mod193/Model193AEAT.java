@@ -7,6 +7,7 @@ import com.esferalia.aon.gwt.fiscal.client.model.FiscalModelAdmonPanel.IFiscalMo
 import com.esferalia.aon.occam.api.model.fiscal.Mod193;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -51,8 +52,7 @@ public class Model193AEAT extends Model193Base {
 
 					@Override
 					public String getValidatePrintAction() {
-						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod193ValidatePrintAEAT";
-						
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod193ValidatePrintAEAT";						
 					}
 
 					@Override
@@ -62,22 +62,37 @@ public class Model193AEAT extends Model193Base {
 
 					@Override
 					public String getSendAction() {
-						return null;
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod193SendAEAT";
 					}
 
 					@Override
 					public void sendSuccessfully() {
-						// Nothing
+						Model193.SERVICE.get( getOptions().getOccam(), getModel().getId() , new AsyncCallback<Mod193>() {
+							@Override
+							public void onSuccess(Mod193 selected) {
+								if (selected == null) {
+									getCallback().showError(AON.MSG.unableToFindDeclaration());
+								} else {
+									select(selected);									
+									admonPanel.manageLinks();
+								}
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+								getCallback().showError(AON.MSG.unableToReadDeclaration(caught.getMessage()));
+							}
+						});						
 					}
 
 					@Override
 					public String getCheckAction() {
-						return null;
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod193CheckAEAT";
 					}
 
 					@Override
 					public String getCheckDataResponseDataAction() {
-						return null;
+						return GWT.getHostPageBaseURL() +"aon_gwt_fiscal/ms/Mod193CheckDataResponseData";
 					}
 
 					@Override
