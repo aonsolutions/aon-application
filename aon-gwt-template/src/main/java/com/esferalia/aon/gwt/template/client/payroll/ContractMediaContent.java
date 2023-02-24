@@ -73,6 +73,7 @@ public class ContractMediaContent extends Composite {
 	private void init(API API) {
 		centerFlow.getElement().getStyle().setDisplay(Display.NONE);
 		downloadButton = new Button();
+		
 		detailCheckBox.setValue(true);
 		Integer inityear = 2010;
 		Date date = new Date();

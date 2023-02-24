@@ -78,14 +78,14 @@
 						<td></td>
 						<td></td>
 						<td>
-							<div class="aon-search-lookup-button" style="width: 70px; display: inline-block;">
+							<div class="aon-search-lookup-button" style="width: 95px; display: inline-block;">
 								<g:Button ui:field="downloadButton" text="Informe"
 									styleName="aon-icon-commandButton aon-icon-pdf">
 								</g:Button>
 							</div>
 						</td>
 						<td>
-							<div class="aon-search-lookup-button" style="width: 130px; display: inline-block;">
+							<div class="aon-search-lookup-button" style="width: 160px; display: inline-block;">
 								<g:Button ui:field="downloadButtonExcel" text="Registro retributivo"
 									styleName="aon-icon-commandButton aon-icon-excel">
 								</g:Button>

@@ -449,6 +449,14 @@
   font-size: 16px;
 }
 
+.aonToolbarBeta {
+  display: flex;
+  height: 40px;
+  padding-left: 16px;
+  border-top: 0px none;
+  font-size: 16px;
+}
+
 .aonToolbarTitle {
   text-transform: uppercase;
 }
@@ -567,6 +575,21 @@
   display: none;
 }
 
+.aonMenuSidenavBeta {
+  height: calc(100vh - 61px);
+  width: 60px;
+  position: fixed;
+  top: 60px;
+  right: 0;
+  background-color: var(--aonWhite);
+  overflow-x: hidden;
+  z-index: 2;
+}
+
+.aonMenuSidenavBeta::-webkit-scrollbar {
+  display: none;
+}
+
 .aonMenuSidenavAppToolbar {
   height: 64px;
   color: white;
@@ -619,6 +642,18 @@
   height: calc(100vh - 102px);
 }
 
+.aonSidenavBeta {
+  position: relative;
+  flex-basis: 0px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  left: 0;
+  background-color: var(--aonWhite);
+  transition-duration: 500ms;
+  overflow-x: hidden;
+  height: calc(100vh - 102px);
+}
+
 .sidenav {
   height: 100%;
   width: 0px;
@@ -647,6 +682,17 @@
   transition: 0.5s;
   height: calc(100vh - 102px);
   overflow-y: auto;
+}
+
+.aonContentBeta {
+  position: relative;
+  width: 100%;
+  display: block;
+  transition: 0.5s;
+  height: calc(100vh - 102px);
+  overflow-y: auto;
+  border-radius: 10px;
+  background-color: #f1f1f1;
 }
 
 .aonSubContent {

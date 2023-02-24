@@ -37,6 +37,8 @@ import com.esferalia.aon.occam.api.model.product.Product;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.registry.RegistryItem;
 import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
+import com.esferalia.aon.occam.api.model.registry.RegistryMode;
+import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductDAO.ProductFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RItemPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.ItemAutoComplete;
@@ -345,7 +347,22 @@ public class ItemDAO {
 			}
 		}
 		
-		if(null!=insertRItem) insertRItem.execute();
+		if(null!=insertRItem) {
+			return insertRItem.returning().fetchStreamInto(RITEM).map(r -> new RegistryItem()
+					.setId(r.getId())
+					.setDomain(r.getDomain())
+					.setItem(r.getItem())
+					.setType(r.getType() != null ? RegistryMode.values()[r.getType()] : null)
+					.setStatus(r.getStatus() != null ? RegistryItemStatus.values()[r.getStatus()] : null)
+					.setPriority(r.getPriority() != null ? Priority.values()[r.getPriority()] : null)
+					.setPrice(r.getPrice())
+					.setCode(r.getCode())
+					.setWorkplace(r.getWorkplace())
+					.setRegistry(r.getRegistry())
+					.setDiscountExpr(r.getDiscountExpr())
+			).toArray(RegistryItem[]::new);
+			
+		}
 		
 		return ritems;
 	}
