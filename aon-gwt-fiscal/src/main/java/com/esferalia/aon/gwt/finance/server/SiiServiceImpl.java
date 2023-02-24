@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
@@ -285,5 +286,16 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
         return false;
 	}
 	
-
+	public List<InvestAsset> getInvestAssets(String domainName, int domainId, String login) {
+		return AON.getInvestAssetStream(domainName, domainId, login, f -> f.getDomainProperty().eq(domainId))
+				.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	@Override
+	public void assignInvestAsset2Invoice(String domainName, int domainId, String user, String investAsset,
+			Invoice invoice) {
+		Integer investAssetId = Integer.parseInt(investAsset);
+		
+		AON.assignInvestAsset2Invoice(domainName, domainId, user, investAssetId, invoice);
+	}
 }
