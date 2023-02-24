@@ -193,13 +193,13 @@ export const createContractData = (parent, isManager) => {
 
    divC = createDiv({classes:[CSS.AON_COL_SM_12, CSS.AON_COL_MD_12]})
     divC.appendTo(parent);
-    CreateComponent.createAonSelect({
+    CreateComponent.createAonSelectAutocomplete({
         attributes:{
             name:"cno",
             id:"cno",
             title:"C.N.O."
         }
-    }, divC.element);
+    }, divC.element, "true");
 
     let divQuoteMonth = createDiv({
         attributes:{

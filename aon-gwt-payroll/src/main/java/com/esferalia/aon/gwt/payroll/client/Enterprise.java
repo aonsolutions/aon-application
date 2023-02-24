@@ -57,6 +57,7 @@ public abstract class Enterprise extends ResizeComposite {
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
+		String documentError();
 		String inputPadding();
 		String inputLBHeight();
 		String warningColor();
@@ -367,20 +368,33 @@ public abstract class Enterprise extends ResizeComposite {
 			showNationality();
 		
 			if(checkDocumentValidation()) {
-				documentStatus.removeStyleName(AON.CSS.aonIconValid());
-				documentStatus.addStyleName(AON.CSS.aonIconInvalid());
+				showDocumentError();
 				if(Boolean.TRUE.equals(fireMessage))
 					fireInfoMessage(infoMap);
 			}else {
-				documentStatus.removeStyleName(AON.CSS.aonIconInvalid());
-				documentStatus.addStyleName(AON.CSS.aonIconValid());
+				hideDocumentError();
 			}
 		}else {
-			documentStatus.removeStyleName(AON.CSS.aonIconValid());
-			documentStatus.addStyleName(AON.CSS.aonIconInvalid());
+			showDocumentError();
 			if(Boolean.TRUE.equals(fireMessage))
 				fireInfoMessage(infoMap);
 		}
+	}
+	
+	private void showDocumentError() {
+		documentStatus.removeStyleName(AON.CSS.aonIconValid());
+		documentStatus.addStyleName(AON.CSS.aonIconInvalid());
+		document.addStyleName(style.documentError());
+		document.setTitle("Documento no definido o formato err\u00F3neo");
+		documentStatus.setTitle("Documento no definido o formato err\u00F3neo");
+	}
+	
+	private void hideDocumentError() {
+		documentStatus.removeStyleName(AON.CSS.aonIconInvalid());
+		document.removeStyleName(style.documentError());
+		documentStatus.addStyleName(AON.CSS.aonIconValid());
+		document.setTitle("");
+		documentStatus.setTitle("");
 	}
 	
 	private String checkDocumentType() {
@@ -500,8 +514,10 @@ public abstract class Enterprise extends ResizeComposite {
 		if(AonStringUtils.isNotBlank(paysheetSendType) && AonStringUtils.equals(paysheetSendType, "EMAIL")) {
 			enterprisePaysheetSendPanel.getElement().getStyle().clearDisplay();
 			enterprisePaysheetSendEmail.setValue(email);
+			enterprisePaysheetSendType.setWidth("115px");
 		}else {
 			enterprisePaysheetSendPanel.getElement().getStyle().setDisplay(Display.NONE);
+			enterprisePaysheetSendType.setWidth("100%");
 		}	
 	}
 	

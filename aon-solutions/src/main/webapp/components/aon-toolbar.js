@@ -1,7 +1,7 @@
 import {AonElement} from './AonElement.js';
 import {ToolbarType} from '../models/enums.js';
 import { AonSearch } from './aon-search.js';
-import { CONSTANT, EVENT, TAG } from '../environments/environments.js';
+import { CONSTANT, CSS, EVENT, TAG } from '../environments/environments.js';
 import { AonIconButton } from './aon-icon-button.js';
 
 export class AonToolbar extends AonElement {
@@ -106,7 +106,7 @@ export class AonToolbar extends AonElement {
 			titleSection.appendChild(title);
 			header.appendChild(titleSection);
 		} else {
-			header.className = "aonToolbar";
+			header.className = this.isBeta() ? CSS.AON_TOOLBAR_BETA : CSS.AON_TOOLBAR;
 
 			let titleSection = this.createElement(TAG.SECTION);
 			titleSection.id = this.TITLE_SECTION;

@@ -338,8 +338,8 @@ public class ComunicaServlet extends AonApiHttpServlet{
 		AON.getCno(domain.getName(), domain.getId(), api.getUser().getLogin()).forEach(cno -> {
 			arr.put(
 					new JSONObject()
-					.put(IJsonNames.VALUE, cno.getCode())
-					.put(IJsonNames.NAME, cno.getTitle())
+					.put("cnoCode", cno.getCode())
+					.put("cno", cno.getTitle())
 
 			);
 		});

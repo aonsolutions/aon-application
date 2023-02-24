@@ -38,6 +38,31 @@ import { AonNumber } from "./aon-number.js";
  * @param {HTMLElement} parent 
  * @returns 
  */
+const createAonSelectAutocomplete = ({attributes, events}, parent, autocomplete) => {
+  if(attributes && attributes.options && typeof attributes.options !== "string") {
+    attributes.options = JSON.stringify(attributes.options);
+  }
+
+  let aonSelect = new AonSelect();
+  aonSelect.autocomplete = autocomplete;
+
+  let element = setAttributes(aonSelect, attributes);
+
+  setClasses(element,[CSS.TRANSITION_CASCADE]);
+
+  if(events) setEvents(element, events);
+  
+  if(parent) parent.appendChild(element);
+
+  return element;
+}
+
+/**
+ * 
+ * @param {obj, parent} attributes, events. parent for appendChild  
+ * @param {HTMLElement} parent 
+ * @returns 
+ */
 const createAonInput = ({attributes, events}, parent) => {
   let input = setAttributes(new AonInput(), attributes);
   if(events) setEvents(input, events);
@@ -143,6 +168,7 @@ const createForm = (id = "form", parent) => {
  
 export const CreateComponent = {
   createAonSelect,
+  createAonSelectAutocomplete,
   createAonInput,
   createAonSwitch,
   createAonNumber,
