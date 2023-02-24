@@ -35,7 +35,8 @@ import { AonNumber } from "./aon-number.js";
 /**
  * 
  * @param {obj, parent} attributes, events. parent for appendChild  
- * @param {HTMLElement} parent 
+ * @param {HTMLElement} parent
+ * @param {String} autocomplete  
  * @returns 
  */
 const createAonSelectAutocomplete = ({attributes, events}, parent, autocomplete) => {
