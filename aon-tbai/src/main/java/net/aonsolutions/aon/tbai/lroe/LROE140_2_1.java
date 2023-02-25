@@ -165,7 +165,7 @@ public class LROE140_2_1 extends LROE140 {
 		}).sum();
 		
 		factura.setDescripcionOperacion("Factura " + invoice.getReferenceCode());
-		factura.setImporteTotalFactura(total.toString());
+		factura.setImporteTotalFactura(Double.toString(AonMathUtils.round(total)));
 		ClavesGastoType claves = new ClavesGastoType();
 		IDClaveGastoType clave = new IDClaveGastoType();
 		clave.setClaveRegimenIvaOpTrascendencia("01");
