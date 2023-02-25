@@ -114,6 +114,8 @@
 		
 		.widthAll { width: 100%; }
 		
+		@external documentError;
+		
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.container}">
@@ -123,7 +125,7 @@
 		    	<g:HTMLPanel ui:field="activityDataTable" styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
 		    		<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Nombre</g:Label>
-		    			<g:TextBox ui:field="enterpriseName" styleName='aon-inputText {style.inputTextHeight}  {style.inputPadding} {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="enterpriseName" debugId="enterpriseNameTB"  styleName='aon-inputText {style.inputTextHeight}  {style.inputPadding} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label  styleName='{style.firstColumn}'>Nombre Comercial / Alias</g:Label>
@@ -131,8 +133,8 @@
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.firstColumn}'>Documento</g:Label>
-		    			<g:Label ui:field="documentType"></g:Label>
-		    			<g:TextBox ui:field="document" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
+		    			<g:Label ui:field="documentType" debugId="enterpriseDocumentType"></g:Label>
+		    			<g:TextBox ui:field="document" debugId="enterpriseDocumentTB" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:TextBox>
 						<aon:AonToolbarSmallButton ui:field="documentStatus"/>	
 		    			<g:Label ui:field="nationalityLabel" styleName="{style.mw75}">País Emisión</g:Label>
 		    			<g:SuggestBox ui:field="nationality" styleName='aon-inputText {style.inputTextHeight} {style.inputPadding} {style.widthAll}'></g:SuggestBox>
@@ -144,12 +146,12 @@
 		    			<g:Label>Nº</g:Label>
 		    			<g:TextBox ui:field="addressNum" styleName='aon-inputText {style.mw50} {style.inputTextHeight} {style.widthAll} {style.mw30}'></g:TextBox>
 		    			<g:Label>C.P.</g:Label>
-		    			<g:TextBox ui:field="addressZip" styleName='aon-inputText {style.mw50} {style.inputTextHeight} {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="addressZip" debugId="enterpriseZipAddressTB" styleName='aon-inputText {style.mw50} {style.inputTextHeight} {style.widthAll}'></g:TextBox>
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 						<g:Label styleName='{style.firstColumn} {style.emptyLabel} {style.inputTextHeight}'></g:Label>
 		    			<g:Label>Provincia</g:Label>
-		    			<g:ListBox ui:field="addressProvince" styleName='aon-inputText {style.inputLBHeight} {style.inputPadding} {style.mw150}'></g:ListBox>
+		    			<g:ListBox ui:field="addressProvince" debugId="enterpriseProvinceAddressTB" styleName='aon-inputText {style.inputLBHeight} {style.inputPadding} {style.mw150}'></g:ListBox>
 		    			<g:Label>Municipio</g:Label>
 		    			<g:ListBox ui:field="addressCity" styleName='aon-inputText {style.inputLBHeight} {style.inputPadding} {style.mw150}'></g:ListBox>
 					</g:HTMLPanel>

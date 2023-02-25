@@ -385,6 +385,7 @@ public abstract class EnterpriseDraft extends Composite {
 		toolbar.add(acceptButton);
 		
 		undoAllButton = new AonToolbarButton( AON.MSG.undo() + " todo", AON.CSS.aonIconUndoAll() );
+		undoAllButton.ensureDebugId("undoAllButton");
 		undoAllButton.addClickHandler(e -> {
 			AonDialog confirmDialog =  new AonDialog("Restaurar empresa", new HTMLPanel("\u00bfDesea realmente deshacer los cambios realizados en la empresa <b>" + enterpriseDraftObject.getName() + "</b> \u003f <br>Este proceso es irreversible."));
 			confirmDialog.confirm(new AonAcceptDialogCallback() {
