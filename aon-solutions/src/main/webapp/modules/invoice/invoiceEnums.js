@@ -58,9 +58,9 @@ export const WithholdingType = [
   },
    {
     id: CONSTANT.TRANSPORT_OPERATOR,
-    name: "Est. Obj. (H/04) - 2%",
+    name: "Est. Obj. (H/04) - 1%",
     description: "Determinadas actividades empresariales en Estimación Objetiva.",
-    percentage: 2.0
+    percentage: 1.0
   },
   {
     id: 'M190_G_02',

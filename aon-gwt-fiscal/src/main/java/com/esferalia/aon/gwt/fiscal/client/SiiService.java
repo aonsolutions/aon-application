@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
+import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
@@ -15,7 +16,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface SiiService extends RemoteService {
 	
 	SiiConfiguration getSiiConfiguration(String domainName, int domainId, String user);
-	
+	List<InvestAsset> getInvestAssets(String domainName, int domainId, String user);
+	void assignInvestAsset2Invoice(String domainName, int domainId, String user, String investAsset, Invoice invoice);
 	List<Invoice> getInvoices(String domainName, int domainId, String user, InvoiceParams params);
 	
 	ICResponse altaLroe140(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams);
