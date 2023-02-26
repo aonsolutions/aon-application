@@ -4602,9 +4602,6 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		Period contractPeriod = new Period(contractStartDate, contractEndDate );
 		List<Period> workedPeriods = context.getPeriods(ContextVariable.WORKED_DAYS);
 		
-		//if ( workedPeriods.size() == 1 && workedPeriods.get(0).equals(contractPeriod))
-		//	return;
-			
 		for (ContextVariable contextVar : contextVars) {
 			
 			List<ITimedVariable<Object>> varVariables = context.getVariables(contextVar.getName());
@@ -4623,12 +4620,24 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 					
 					@Override
 					public Double getValue(Period period) {
-						double amount = 
+					    	
+						double amount =  
 						varVariables.stream()
-						.map( v -> v.getValue(v.getPeriod()))
-						.filter( v -> v != null && v instanceof Number)
-						.collect(Collectors.summingDouble( n -> AonNumberUtils.toDouble((Number)n)));
+						.filter( v -> period.contains(v.getPeriod()))
+						.filter( v -> v.getValue(period) instanceof Number )
+						.map( v -> (( Number) v.getValue(v.getPeriod())).doubleValue() )						
+						.collect(Collectors.summingDouble( AonNumberUtils::toDouble ));
 						
+						if ( amount > 0.00 )
+						    return amount;
+						
+						amount = 
+						varVariables.stream()
+						.filter( v -> period.intersects(v.getPeriod()))
+						.map( v -> v.getValue(v.getPeriod()))
+						.filter( Number.class::isInstance )
+						.collect(Collectors.summingDouble( n -> AonNumberUtils.toDouble((Number)n)));
+
 						return ContextFunctions.fractionate(context, amount);
 					}
 				});
@@ -4705,7 +4714,12 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 		List<Period> contract = getMonths(contractStartDate, contractEndDate);
 		
 		List<Period> weekHours = ctx.getPeriods(WEEK_HOURS);
-		List<Period> contractHours = new ArrayList<Period>();
+		List<Period> partialFactor = ctx.getPeriods(PARTIAL_FACTOR);
+		
+		weekHours = Period.sub(weekHours, partialFactor);
+
+		List<Period> contractHours = new ArrayList<>();
+	
 		contractHours.addAll(Period.sub(contract, weekHours));
 		contractHours.addAll(weekHours);
 		
