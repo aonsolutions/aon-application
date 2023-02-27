@@ -1352,10 +1352,11 @@ public abstract class ITDialog extends AonCustomDialog {
 		confirmationPartDataTable.setWidget(row, 4, deleteBTN);
 		
 		if(this.userComunica) {
-		    
-			buildBtnPart(itPart).ifPresent(btn->
-			     confirmationPartDataTable.setWidget(row, 5, btn)
-			);
+			Date checkDate = new Date(2023 - 1900, 3, 1);
+			if(new Date().before(checkDate))
+				buildBtnPart(itPart).ifPresent(btn->
+				     confirmationPartDataTable.setWidget(row, 5, btn)
+				);
 			
 			buildBtnPartPdf(itPart).ifPresent(btn->
 			    confirmationPartDataTable.setWidget(row, 6, btn)
@@ -1649,8 +1650,10 @@ public abstract class ITDialog extends AonCustomDialog {
 				
 				if(!isPaternity()) {
 					Optional<ITPart> altaOptional = this.itDialogObject.getITAlta(it);
-					altaOptional.ifPresent(part->{
-					    buildBtnPart(part).ifPresent(btn-> itAlta.add(btn) );
+					altaOptional.ifPresent(part-> {
+						Date checkDate = new Date(2023 - 1900, 3, 1);
+						if(new Date().before(checkDate))
+							buildBtnPart(part).ifPresent(btn-> itAlta.add(btn) );
 					    buildBtnPartPdf(part).ifPresent(btn->itAlta.add(btn) );
 					});
 				}
@@ -1935,10 +1938,12 @@ public abstract class ITDialog extends AonCustomDialog {
 				toolbarDetail.setTitle("Baja");
 			break;
 			case (byte)1:
+				checkComunicationNeeded();
 				cause = "Confirmaci\u00F3n";
 				toolbarDetail.setTitle(cause);
 			break;
 			case (byte)2:
+				checkComunicationNeeded();
 				cause = getSelectedTextByValue(causeHighPart, it.getTypeHighPart());
 				toolbarDetail.setTitle("Alta");
 			break;
@@ -2006,6 +2011,16 @@ public abstract class ITDialog extends AonCustomDialog {
 
 	}
 	
+	private void checkComunicationNeeded() {
+		Date checkDate = new Date(2023 - 1900, 3, 1);
+		Date currentDate = new Date();
+		
+		if(currentDate.before(checkDate)) {
+			AonDialog warning = new AonDialog("Comunicaciones IT", new HTML("Seg\u00fan el Real Decreto 1060/2022, con vigencia desde el pr\u00f3ximo 1 de abril de 2023, ya no ser\u00e1 necesario comunicar los partes de <b>confirmaci\u00f3n</b> ni lo partes de <b>Alta</b>."));
+			warning.warning();
+		}
+	}
+
 	private void addInfoAditionalBaja(HTMLPanel flexColumn) {
 		HTMLPanel panel = new HTMLPanel("");
 		panel.setStyleName(style.flex());
