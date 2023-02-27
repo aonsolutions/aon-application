@@ -1,5 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.watson.util.AonDateUtils.get;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
@@ -9,7 +10,9 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.Assert;
@@ -27,6 +30,7 @@ import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 
@@ -408,6 +412,86 @@ public class SQLPeriodsTestCase extends AbstractSQLTestCase {
 		
 		
 		Assert.assertEquals(1250.00 * 0.5  , salary.getTotalPayment(), 0.001);
+		
+	}
+
+	@Test
+	public void testPartialPeriodsI() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+
+		ContractRecord contract = newContract(aonContext,  
+				getFirstDayOfYear(getToday()),
+				new HashMap<String,String>(){
+                		    {
+                			put("TC2", "\"100\"");
+                		    }
+				}, new String[] { 
+					"1250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+				}
+				, new String[] {
+				}, null);
+		//@formatter:on
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDateWeekHours20 =  add(startDate, Calendar.DAY_OF_MONTH, 5);
+		
+		Date startDateWeekHours25 =  add(endDateWeekHours20, Calendar.DAY_OF_MONTH, 1);
+		Date endDateWeekHours25 =  add(startDateWeekHours25, Calendar.DAY_OF_MONTH, 5);
+		
+		Date startDateWeekHours35 =  add(endDateWeekHours25, Calendar.DAY_OF_MONTH, 1);
+		Date endDateWeekHours35 =  add(startDateWeekHours35, Calendar.DAY_OF_MONTH, 5);
+		
+		Date startDateWeekHours15 =  add(endDateWeekHours35, Calendar.DAY_OF_MONTH, 1);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		addData(aonContext, contract, startDate, endDate, ContextVariable.AGREEMENT_HOURS, "40.00");
+		addData(aonContext, contract, startDate, endDateWeekHours20, ContextVariable.WEEK_HOURS, "20.00");
+		addData(aonContext, contract, startDateWeekHours25, endDateWeekHours25, ContextVariable.WEEK_HOURS, "25.00");
+		addData(aonContext, contract, startDateWeekHours35, endDateWeekHours35, ContextVariable.WEEK_HOURS, "35.00");
+		addData(aonContext, contract, startDateWeekHours15, endDate, ContextVariable.WEEK_HOURS, "15.00");
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		Salary salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		for ( SalaryPayment s : salary.getSalaryPayments() ) 
+			System.out.println(s.getDescription() + " = " + s.getAmount() + "," + s.getType());
+
+		List<SalaryData> salaryData = 
+		salary.getSalaryDatas().stream()
+		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
+		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).collect(Collectors.toList());
+		
+		Assert.assertEquals(4, salaryData.size());
+		
+		Date endDate50 =  add(startDate, Calendar.DAY_OF_MONTH, 10);
+		Date startDate75 =  add(endDate50, Calendar.DAY_OF_MONTH, 1);
+		addData(aonContext, contract, startDate, endDate50, ContextVariable.PARTIAL_FACTOR, "0.50");
+		addData(aonContext, contract, startDate75, endDate, ContextVariable.PARTIAL_FACTOR, "0.75");
+		
+		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		
+		salary = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		for ( SalaryPayment s : salary.getSalaryPayments() ) 
+			System.out.println(s.getDescription() + " = " + s.getAmount() + "," + s.getType());
+		
+		salaryData = 
+		salary.getSalaryDatas().stream()
+		.sorted((d1,d2) -> d1.getStartDate().compareTo(d2.getStartDate()) )
+		.filter( d -> d.getName().equals(ContextVariable.CGC_BASE.getName())).collect(Collectors.toList());
+		
+		Assert.assertEquals(2, salaryData.size());
+		
+		Assert.assertEquals(salaryData.get(0).getStartDate(), startDate);
+		Assert.assertEquals(salaryData.get(0).getEndDate(), endDate50);
+
+		Assert.assertEquals(salaryData.get(1).getStartDate(), startDate75);
+		Assert.assertEquals(salaryData.get(1).getEndDate(), endDate);
 		
 	}
 }

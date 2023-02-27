@@ -210,6 +210,11 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("ANTIGUEDAD_8_AÑOS_MENSUAL","ANTIGUEDAD_8");
 		variablesMap.put("ANTIGUEDAD_9_AÑOS_MENSUAL","ANTIGUEDAD_9");
 		
+		variablesMap.put("ANTIGUEDAD_2_AÑOS_HORAS","ANTIGUEDAD_2");
+		variablesMap.put("ANTIGUEDAD_4_AÑOS_HORAS","ANTIGUEDAD_4");
+		variablesMap.put("ANTIGUEDAD_5_AÑOS_HORAS","ANTIGUEDAD_5");
+		variablesMap.put("ANTIGUEDAD_6_AÑOS_HORAS","ANTIGUEDAD_6");
+		
 		variablesMap.put("ANTIGUEDAD_1_AÑO_PARA_PAGAS_Y_VACACIONES_DIARIO","ANTIGUEDAD_1_PV");
 		variablesMap.put("ANTIGUEDAD_2_AÑOS_PARA_PAGAS_Y_VACACIONES_DIARIO","ANTIGUEDAD_2_PV");
 		variablesMap.put("ANTIGUEDAD_3_AÑOS_PARA_PAGAS_Y_VACACIONES_DIARIO","ANTIGUEDAD_3_PV");

@@ -7,6 +7,7 @@ import com.esferalia.aon.occam.api.model.Filter.InvestAssetFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
 import com.esferalia.aon.occam.api.model.Filter.ProductFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryItemFilter;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceFilter;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.product.Item;
@@ -43,6 +44,7 @@ public interface IProduct2 {
 	public Stream<InvestAsset> getInvestAssetStream(AONContext ctx, InvestAssetFilter filter);
 	public InvestAsset saveInvestAsset(AONContext ctx, InvestAsset investAsset);
 	public void deleteInvestAsset(AONContext ctx, Integer id);
-	
+	public void assignInvestAsset2Invoice(AONContext ctx, Integer investAssetId, Invoice invoice);
+
 	
 }

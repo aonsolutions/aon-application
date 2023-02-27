@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
@@ -61,6 +62,10 @@ public class Activity extends EnterpriseActivity implements Serializable {
 
 	public List<EnterpriseCCC> getCccs() {
 		return cccs;
+	}
+	
+	public List<EnterpriseCCC> getActiveCCCs() {
+		return cccs.isEmpty() ? cccs : cccs.stream().filter(ccc -> !ccc.isDeleted()).collect(Collectors.toList());
 	}
 
 	public Activity setCccs(List<EnterpriseCCC> cccs) {
