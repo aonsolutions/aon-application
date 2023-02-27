@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.AgreementPaymentStartDateUpdate;
 import net.aonsolutions.db.up2date.payroll.Embargar4Many;
 import net.aonsolutions.db.up2date.payroll.EmbargoDescriptionUpdate;
 import net.aonsolutions.db.up2date.tgss.MEITrainingRemoveUndo;
@@ -324,7 +325,9 @@ public class Up2Date {
 	    	
 	    	//AgreementEmptyTrash.AGREEMENTEMPTYTRASH,
     		//Important, not remove
-    		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
+    		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
+    		
+//    		AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE
     		
     };
 
