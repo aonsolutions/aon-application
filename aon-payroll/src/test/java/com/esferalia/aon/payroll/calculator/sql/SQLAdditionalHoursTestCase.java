@@ -9,6 +9,7 @@ import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import org.junit.Assert;
@@ -186,6 +187,72 @@ public class SQLAdditionalHoursTestCase extends AbstractSQLTestCase {
 
 	}
 	
+	@Test
+	public void testNoFraccionateOK()
+			throws ExpressionException, SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		@SuppressWarnings("serial")
+		ContractRecord contract = newContract(aonContext,
+				getFirstDayOfMonth(getToday()), 
+				new HashMap<String, String>() {
+					{
+						//put(ContextVariable.TC2.getName(), "\"100\"");
+					    	//put(ContextVariable.CGP_BASE_MIN.getName(), ContextVariable.CGC_BASE_MIN.getName());
+					    	//put(ContextVariable.CGC_BASE_MIN.getName(),"1166.70" );
+					    	//put("BASE_CGC_MIN_HORA","7.03" );
+						
+					}
+				});
+		
+		
+		
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				"SALARIO_BASE", 
+				"1066.70 * DIAS_TRABAJADOS / DIAS_MES", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0001, 
+				SalaryType.SALARY);
+
+		addPayment(aonContext, 
+				contract, 
+				contract.getStartDate(), 
+				contract.getEndDate(), 
+				"HORAS_COMPL", 
+				"10.00 * HORAS_COMPLEMENTARIAS", 
+				"_P", 
+				"_P", 
+				PaymentType.CRA_0057, 
+				SalaryType.SALARY);
+		
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		Date issueDate = endDate;
+		
+		addData(aonContext, contract, startDate ,add(startDate, Calendar.DAY_OF_MONTH, 5),  ContextVariable.QUOTE_GROUP.getName(), "\"05\"");
+		addData(aonContext, contract, add(startDate, Calendar.DAY_OF_MONTH, 6),endDate,  ContextVariable.QUOTE_GROUP.getName(), "\"04\"");
+
+		addData(aonContext, contract, startDate, startDate, ContextVariable.ADDITIONAL_HOURS, 5.00);
+		addData(aonContext, contract, endDate, endDate, ContextVariable.ADDITIONAL_HOURS, 5.00);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, issueDate, contract);
+
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>() ;
+		calculator.setSalaryBuilder(getSalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+		for ( com.esferalia.aon.payroll.SalaryPayment payment: salary.getSalaryPayments())
+			System.out.println(payment.getDescription() + "= " + payment.getAmount() + "," + payment.getQuote());
+		
+
+	}
+
 	protected ISalaryBuilder<Salary> getSalaryBuilder() {
 		return new SalaryBuilder();
 	}

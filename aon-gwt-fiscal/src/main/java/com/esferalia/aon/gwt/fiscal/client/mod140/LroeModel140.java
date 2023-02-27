@@ -25,6 +25,7 @@ import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceGrid;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
+import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
@@ -35,7 +36,9 @@ import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -568,7 +571,11 @@ public class LroeModel140 extends DockLayoutPanel {
 										if(!result.isError()) { 	
 											String message = "La factura " + invoice.getReferenceCode() + " se ha enviado correctamente.";
 											vp.add(getOkMessage(message));
-										} else vp.add(getErrorMessage(result.getErrorMessage()));
+										} else {
+											if(result.getErrorMessage().contains("B4_2000116")) {
+												vp.add(getActionErrorMessage(result.getErrorMessage(), invoice));
+											} else vp.add(getErrorMessage(result.getErrorMessage()));
+										}
 										
 										if(selectedInvoices.size() >= vp.getWidgetCount()) {
 											invoiceGrid.setFilterParams(getFilterParams());
@@ -606,6 +613,71 @@ public class LroeModel140 extends DockLayoutPanel {
 	
 	public Label getErrorMessage(String message ){
 		return getMessage(message, "red");
+	}
+	
+	public HorizontalPanel getActionErrorMessage(String message, Invoice invoice){
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.add(getMessage(message, "red"));
+		Label l = new Label("Pulse aqui para a\u00f1adir Bien");
+		l.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+		l.getElement().getStyle().setColor("#0069c2");
+		l.getElement().getStyle().setCursor(Cursor.POINTER);
+		l.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+
+				SII_SERVICE.getInvestAssets(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<List<InvestAsset>>() {
+					
+					@Override
+					public void onSuccess(List<InvestAsset> result) {
+						ListBox lb = new ListBox();
+						for (InvestAsset ia : result) {
+							lb.addItem(ia.getDescription(), ia.getId().toString());
+						}
+
+						AonDialog dialog = new AonDialog("A\u00f1adir Bien", lb);
+
+						dialog.confirm(new AonAcceptDialogCallback() {
+							
+							@Override
+							public void onCancel() {
+								dialog.hide();
+							}
+							
+							@Override
+							public void onAccept() {
+								dialog.hide();
+								SII_SERVICE.assignInvestAsset2Invoice(options.getDomainName(), options.getDomain(), options.getUser(), 
+										lb.getValue(lb.getSelectedIndex()), invoice, new AsyncCallback<Void>() {
+											
+											@Override
+											public void onSuccess(Void result) {
+												
+											}
+											
+											@Override
+											public void onFailure(Throwable caught) {
+												
+											}
+										});
+
+							}
+						});	
+						
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+
+			}
+		});
+		hp.add(l);
+		return hp;
 	}
 	
 	public Label getWarningMessage(String message ){

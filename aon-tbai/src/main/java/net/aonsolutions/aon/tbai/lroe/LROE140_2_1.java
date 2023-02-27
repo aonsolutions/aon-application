@@ -165,7 +165,7 @@ public class LROE140_2_1 extends LROE140 {
 		}).sum();
 		
 		factura.setDescripcionOperacion("Factura " + invoice.getReferenceCode());
-		factura.setImporteTotalFactura(total.toString());
+		factura.setImporteTotalFactura(Double.toString(AonMathUtils.round(total)));
 		ClavesGastoType claves = new ClavesGastoType();
 		IDClaveGastoType clave = new IDClaveGastoType();
 		clave.setClaveRegimenIvaOpTrascendencia("01");
@@ -197,7 +197,12 @@ public class LROE140_2_1 extends LROE140 {
 			r.setCriterioCobrosYPagos(invoice.isVatAccrualPayment() ? SiNoEnum.S : SiNoEnum.N);
 			if(!AonStringUtils.isBlank(detail.getAccountCode())) {
 				r.setConcepto(detail.getAccountCode().substring(0, 3));
-				if(irpf != null) r.setImporteGastoIRPF(Double.toString(irpf.getQuota()));
+				if(irpf != null) {
+					if(irpf.getPercentage() > 0 && irpf.getQuota() == 0.0) {
+						irpf.setQuota(AonMathUtils.round(irpf.getBase() * irpf.getPercentage() / 100));
+					}
+					r.setImporteGastoIRPF(Double.toString(irpf.getQuota()));
+				}
 			}			
 			r.setInversionSujetoPasivo(invoice.isIsp() ? SiNoEnum.S : SiNoEnum.N);
 			if(invoice.isSurcharge()) {
