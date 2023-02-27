@@ -29,7 +29,7 @@
 				<g:DeckPanel ui:field="mainDeckPanel">
 					<g:HTMLPanel ui:field="mainPanel" styleName="{style.mainPanel}"/>
 					<g:SimpleLayoutPanel ui:field="scrolledPDFPanel">
-						<p:FullViewer styleName="reset" ui:field='pdfViewer' />
+						<p:FullViewer styleName="reset" ui:field='pdfViewer' debugId="printPreviewViewer" />
 					</g:SimpleLayoutPanel> 
 				</g:DeckPanel>
 			</g:HTMLPanel>
