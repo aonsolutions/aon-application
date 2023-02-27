@@ -64,6 +64,7 @@ phases:
         -Dintegration.test.agrarian.payroll.url=http://agrarian-payroll-test.aonsolutions.org:8080/ \
         -Dintegration.test.trainning.payroll.url=http://trainning-payroll-test.aonsolutions.org:8080/ \
         -Dintegration.test.home.payroll.url=http://home-payroll-test.aonsolutions.org:8080/  \
+	-Dintegration.test.tgss.payroll.url=http://tgss-payroll-test.aonsolutions.org:8080/ \
         -f aon-htmlunit/pom.xml integration-test
       - echo Building PRODUCTION version...
       - mvn -B --resume-from aon-js-payroll -DbuildNumber=666 -Drpm.release=false -DskipTests=true clean install
