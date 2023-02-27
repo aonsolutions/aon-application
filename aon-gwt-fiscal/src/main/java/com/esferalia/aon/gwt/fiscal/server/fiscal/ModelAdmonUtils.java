@@ -865,7 +865,7 @@ public class ModelAdmonUtils {
 	}
 	
 	// TGVI Online - Inicialización (Devuelve idEnvio todo ha ido bien, en caso contrario devuelve null)
-	private static String sendOnlineTGVI_1(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model, String body, int totalBlocks ) {
+	private static String sendOnlineTGVI_1(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model, String body, int totalBlocks) {
 		
 		try {
 			String url = aeatParams.isTest() 
@@ -1076,15 +1076,14 @@ public class ModelAdmonUtils {
 				ModelAdmonUtils.giveRedirectBack(resp, response, httpClient);				
 			} else {			
 				String codigo = response.headers().firstValue("codigo").isEmpty() ? "" : response.headers().firstValue("codigo").get();				
-				String mensaje = response.headers().firstValue("mensaje").isEmpty() ? "" : response.headers().firstValue("mensaje").get();
-				//String errors = new String(response.body(), StandardCharsets.UTF_8); // Listado de errores, se incluye una línea por cada registro erróneo
+				String mensaje = response.headers().firstValue("mensaje").isEmpty() ? "" : response.headers().firstValue("mensaje").get();				
 				String errors = new String(response.body()); // Listado de errores, se incluye una línea por cada registro erróneo
 				
 				// codigo = 0 indica que la operacion se ha llevado a cabo con exito, en tal caso mostramos los errores que ha generado la validacion
 				if ("0".equals(codigo)) {					
 					
 					// En los mensajes de error viene una linea por cada registro erroneo, con el registro completo, punto y coma, linea del 
-					// fichero donde esta el error (entre parentesis), codigo del error y mensajes de error															
+					// fichero donde esta el error (entre parentesis), codigo del error y mensaje de error															
 					String[] lines = errors.split("\r\n");
 					
 					// Vamos a crear un JSON con el mismo formato que el JSON que devuelve la presentación de los modelos de liquidaciones (IVA, IRPF), 
@@ -1094,9 +1093,8 @@ public class ModelAdmonUtils {
 					jsonErrors.getJSONObject("respuesta");
 					
 					for (String line : lines) {
-						// La idea es mostrar cada mensaje de error como: NIF_DECLARADO - NOMBRE_DECLARADO Y LO_QUE_VENGA_DESPUES_DEL_PUNTO_Y_COMA
-						// FALTA - ESTO ES PARA EL MODELO 180, 190, HABRIA QUE VER SI TODOS LOS MODELOS LLEVAN EL NIF Y NOMBRE EN EL MISMO SITIO
-						// Excepto para le Modelo 349, para el resto de informativas el nif y el nombre están en las mismas posiciones
+						// La idea es mostrar cada mensaje de error como: NIF_DECLARADO - NOMBRE_DECLARADO Y LO_QUE_VENGA_DESPUES_DEL_PUNTO_Y_COMA						
+						// Excepto para el Modelo 349, para el resto de informativas el nif y el nombre están en las mismas posiciones
 						String document = line.substring(17, 26);
 						String name = line.substring(35, 75);
 						if (model.getModel() == FiscalModelType.M349) {
@@ -1130,15 +1128,16 @@ public class ModelAdmonUtils {
 			
 			// BAJA DECLARACION ANTERIOR
 			// POR AHORA ESTO SOLO SE UTILIZA EN ENTORNO DE PRUEBAS EN FASE DE DESARROLLO, PARA PROBAR 
-			// LAS SUSTITUTIVAS, EN ENTORNO DE PRODUCCION SE OBLIGARÁ A QUE EL USUARIO REALICE LA BAJA 
+			// LAS SUSTITUTIVAS. EN ENTORNO DE PRODUCCION SE OBLIGARÁ A QUE EL USUARIO REALICE LA BAJA 
 			// DE LA LIQUIDACION DESDE LA OFICINA VIRTUAL DE LA AGENCIA TRIBUTARIA
 			// Si la validación ha sido correcta y solo queda la presentación, y es una sustitutiva,
 			// antes de nada se intenta dar de baja la anterior liquidación, porque si la liquidación
-			// ya existe, nos dará un error de duplicidad
+			// ya existe, nos dará un error de duplicidad			
 			if (aeatParams.isTest() && model.isReplacement()) {
 				if (!sendOnlineTGVI_Delete(resp, aeatParams, model))
 					return;
 			}
+			// -------------------------
 			
 			String url = aeatParams.isTest() 
 				? "https://prewww1.aeat.es/wlpl/OVPT-NTGV/PresentarEnvio"
@@ -1283,7 +1282,9 @@ public class ModelAdmonUtils {
 				String codigo = response.headers().firstValue("codigo").isEmpty() ? "" : response.headers().firstValue("codigo").get();
 				String mensaje = response.headers().firstValue("mensaje").isEmpty() ? "" : response.headers().firstValue("mensaje").get();
 				
-				// Simplemente mostramos en la consola el codigo y el mensaje. Si genera codigo <> 0 probablemente sea porque el modelo no existe en la Agencia Tributaria
+				// Simplemente mostramos en la consola el codigo y el mensaje. 
+				// Si genera codigo <> 0 probablemente sea porque el modelo no existe en la Agencia Tributaria
+				// Si codigo y mensaje están en blanco, probablemente sea un error interno en el sistema
 				System.out.println("TGVI Online BAJA >> Expediente: " + expediente + " Código: " + codigo + " Mensaje: " + mensaje);
 				
 				return true;											
