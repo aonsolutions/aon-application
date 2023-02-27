@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -112,6 +113,9 @@ public class ActivityDraft extends Composite{
 		@Override
 		public void fireWarningMessage(Map<String, String> warningMap) {
 			AonMessagePanel.showWarning(messagePanel, warningMap);
+			
+			// Need to create specific method, but this fire when file fail loading
+			setPDFLoadedEnsureDebugId("pdfNotLoaded");
 		}
 
 		@Override
@@ -126,6 +130,7 @@ public class ActivityDraft extends Composite{
 
 		@Override
 		public void showPDF(String dataURI, boolean isLaboralLife) {
+			setPDFLoadedEnsureDebugId("pdfLoaded");
 			showPdf(isLaboralLife);
 			pdfViewer.open(dataURI);
 		}
@@ -183,6 +188,8 @@ public class ActivityDraft extends Composite{
 	private AonToolbarButton undoAllButton;
 	
 	private boolean hasChange;
+	
+	private Label pdfLoaded;
 	
 	// ---------------------------------------------- Constructor
 
@@ -255,6 +262,7 @@ public class ActivityDraft extends Composite{
 		
 		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
 		acceptButton.addClickHandler(e -> onAccept());
+		acceptButton.ensureDebugId("activityAcceptBtn");
 		toolbar.add(acceptButton);
 		
 		undoAllButton = new AonToolbarButton( AON.MSG.undo() + " todo", AON.CSS.aonIconUndoAll() );
@@ -274,14 +282,17 @@ public class ActivityDraft extends Composite{
 				}
 			});
 		});
+		undoAllButton.ensureDebugId("undoAllBtn");
 		toolbar.add(undoAllButton);
 		
 		AonToolbarButton checkUpdateCert = new AonToolbarButton("Cert. de estar al corriente con TGSS", AON.CSS.aonIconTgss() );
+		checkUpdateCert.ensureDebugId("checkUpdateCert");
 		checkUpdateCert.addClickHandler(e -> onCheckUpdateCert());
 		toolbar.add(checkUpdateCert);
 		
 		AonToolbarButton createCCCBtn = new AonToolbarButton(AON.MSG.newAction() + " CCC", AON.CSS.aonIconAdd() );
 		createCCCBtn.addClickHandler(e -> activity.onAddNewCCC());
+		createCCCBtn.ensureDebugId("createCCCBtn");
 		toolbar.add(createCCCBtn);
 	}
 	
@@ -290,10 +301,22 @@ public class ActivityDraft extends Composite{
 	private AonToolbar getToolbarPDFViewerPanel() {
 
 		AonToolbarButton closePDF = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconBack());
-		closePDF.addClickHandler(e -> onClosePDF());
+		closePDF.ensureDebugId("closePDFViewerBtn");
+		closePDF.addClickHandler(e -> {
+			setPDFLoadedEnsureDebugId("pdfNotLoaded");
+			onClosePDF();
+		});
 		toolbarPDFViewer.add(closePDF);
 		
+		pdfLoaded = new Label("");
+		setPDFLoadedEnsureDebugId("pdfNotLoaded");
+		toolbarPDFViewer.add(pdfLoaded);
+		
 		return toolbarPDFViewer;
+	}
+	
+	public void setPDFLoadedEnsureDebugId(String debugId) {
+		this.pdfLoaded.ensureDebugId(debugId);
 	}
 	
 	// ---------------------------------------------- Toolbar.Methods
@@ -339,6 +362,7 @@ public class ActivityDraft extends Composite{
 		activityDraftObject.getUpdateCert(completeCCC.getKey(), completeCCC.getValue(),
 				dataURI -> {
 					showPdf(false);
+					setPDFLoadedEnsureDebugId("pdfLoaded");
 					pdfViewer.open(dataURI);
 					AonMessagePanel.hideMessage(messagePanel);
 				}, f -> {
@@ -375,7 +399,7 @@ public class ActivityDraft extends Composite{
 			monthListBox.setSelected(DateUtils.getFirstDayOfMonth(), true);
 			monthListBox.setWidth("200px");
 			toolbarPDFViewer.add(monthListBox);
-		} else if(!isLaboralLife && toolbarPDFViewer.getButtonContainer().getWidgetCount() > 1)
+		} else if(!isLaboralLife && toolbarPDFViewer.getButtonContainer().getWidgetCount() > 2)
 			toolbarPDFViewer.getButtonContainer().remove(toolbarPDFViewer.getButtonContainer().getWidgetCount()-1);
 		
 	}

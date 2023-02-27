@@ -5,17 +5,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
@@ -97,8 +98,7 @@ public class ActivityDialog extends AonCustomDialog {
 
 		@Override
 		public void showPDF(String dataURI, boolean isLaboralLife) {
-			// TODO Auto-generated method stub
-			
+			// Nothing to do here
 		}
 		
 	}
@@ -109,10 +109,8 @@ public class ActivityDialog extends AonCustomDialog {
 	
 	private static ActivityDraftUiBinder binder = GWT.create(ActivityDraftUiBinder.class);
 	
-	@UiField
-	MyStyle style;
-
-	interface MyStyle extends CssResource {}
+	@UiField (provided = true)
+	AonToolbar toolbar;
 	
 	@UiField
 	HTMLPanel messagePanel;
@@ -133,12 +131,14 @@ public class ActivityDialog extends AonCustomDialog {
 		activity = new ActivityImplementation();
 		activity.cccWidget.setDialogHeight();
 		
+		createToolbar();
+		
 		setCaption("Nueva Actividad");
 		setWidget(binder.createAndBindUi(this));
 		
 		getButtonsPanel();
 	}
-	
+
 	// ----------------------------------------------- METODOS DE LA CLASE ------------------------------------------------
 
 	public void setActivityDialogObject(ActivityDialogObject activityDialogObject) {
@@ -198,7 +198,16 @@ public class ActivityDialog extends AonCustomDialog {
 	}
 	
 	private boolean checkIfSaveIsPossible() {
-		return !AonStringUtils.isBlank(activity.activityDescription.getValue()) && !AonStringUtils.isBlank(activity.activityCNAE2009.getValue());
+		return !AonStringUtils.isBlank(activity.activityDescription.getValue());
+	}
+	
+	private void createToolbar() {
+		toolbar = new AonToolbar();
+		
+		AonToolbarButton addCCCBtn = new AonToolbarButton(AON.MSG.newAction() + " CCC", AON.CSS.aonIconAdd());
+		addCCCBtn.ensureDebugId("addCCCBtn");
+		addCCCBtn.addClickHandler(e -> activity.onAddNewCCC());
+		toolbar.add(addCCCBtn);
 	}
 
 }

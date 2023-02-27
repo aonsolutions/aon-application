@@ -159,6 +159,8 @@ public abstract class CCC extends ResizeComposite {
 		calculateScrollPanelHeight();
 		contextMenu = new TgssContextMenu();
 		showCCCTable();
+		
+		cccDataTable.ensureDebugId("cccTable");
 	}
 	
 	// -------------------------------------------- DeckPanel
@@ -221,7 +223,7 @@ public abstract class CCC extends ResizeComposite {
 	
 	public void setDialogHeight() {
 		Integer clientHeight = Window.getClientHeight();
-		scrollPanel.setHeight((clientHeight - 650) + "px");
+		scrollPanel.setHeight((clientHeight - 750) + "px");
 	}
 	
 	public void calculateScrollPanelHeightMainCCC() {
@@ -264,9 +266,11 @@ public abstract class CCC extends ResizeComposite {
 		
 		ListBox cccRegimeLB = createCCCRegimeListBox();
 		cccRegimeLB.addStyleName(style.inputLBHeight());
+		cccRegimeLB.ensureDebugId("cccRegime_" + row);
 		setSelectedValueLB(cccRegimeLB, cccInfo.getType().toString());
 		
 		Label geozone = new Label();
+		geozone.ensureDebugId("geozone_" + row);
 		String geozoneValue = UNKNOWN;
 		if(null != cccInfo.getGeozone()) {
 			geozoneValue = cccInfo.getGeozoneDescription();
@@ -281,9 +285,13 @@ public abstract class CCC extends ResizeComposite {
 		hPanel.addStyleName(style.widthAll());
 		
 		Label typeCode = new Label(getCCCRegimeCode(cccInfo.getType()));
+		typeCode.ensureDebugId("regimeCode_" + row);
 
 		AonTableButton accountStatus = new AonTableButton("", AON.CSS.aonIconValid());
+		accountStatus.ensureDebugId("accountStatus_" + row);
+		
 		TextBox account = new TextBox();
+		account.ensureDebugId("account_" + row);
 		account.setMaxLength(11);
 		account.setValue(cccInfo.getCcc());
 		account.addStyleName("aon-inputText");
@@ -332,11 +340,19 @@ public abstract class CCC extends ResizeComposite {
 		});
 		
 		if(checkCCC(cccInfo.getCcc())) {
+			accountStatus.setTitle("");
 			accountStatus.removeStyleName(AON.CSS.aonIconInvalid());
 			accountStatus.addStyleName(AON.CSS.aonIconValid());
+			
+			account.setTitle("");
+			account.removeStyleName(style.warningTB());
 		}else {
+			accountStatus.setTitle("CCC incorrecto");
 			accountStatus.removeStyleName(AON.CSS.aonIconValid());
 			accountStatus.addStyleName(AON.CSS.aonIconInvalid());
+			
+			account.setTitle("CCC incorrecto");
+			account.addStyleName(style.warningTB());
 		}
 		
 		hPanel.add(typeCode);
@@ -375,6 +391,7 @@ public abstract class CCC extends ResizeComposite {
 		buttonsPanel.addStyleName(style.flexEvenly());
 		
 		AonTableButton delete = new AonTableButton("Eliminar CCC", AON.CSS.aonIconDelete());
+		delete.ensureDebugId("delete_" + row);
 		delete.addClickHandler(e -> {
 			if(Boolean.TRUE.equals(cccInfo.isUseByContracts())) {
 				Map<String, String> warningMap = new HashMap<>();
@@ -409,6 +426,7 @@ public abstract class CCC extends ResizeComposite {
 		buttonsPanel.add(delete);
 	
 		AonTableButton tgssMenu = new AonTableButton("TGSS", AON.CSS.aonIconMoreVertical());
+		tgssMenu.ensureDebugId("tgssMenu_" + row);
 		tgssMenu.addClickHandler(e -> {
 			this.regime = getCCCRegimeCode(cccInfo.getType());
 			this.ccc = cccInfo.getCcc();
@@ -480,20 +498,27 @@ public abstract class CCC extends ResizeComposite {
 		activitiesLB.addStyleName(style.inputLBHeight());
 		
 		ListBox cccRegimeLB = createCCCRegimeListBox();
+		cccRegimeLB.ensureDebugId("cccRegime_" + row);
 		cccRegimeLB.addStyleName(style.inputLBHeight());
 		
 		Label geozone = new Label("");
+
+		geozone.ensureDebugId("geozone_" + row);
 		
 		HTMLPanel hPanel = new HTMLPanel("");
 		hPanel.setStyleName(style.flexEvenly());
 		hPanel.addStyleName(style.widthAll());
 		
 		Label typeCode = new Label("");
+		typeCode.ensureDebugId("regimeCode_" + row);
 		String newCCCRegimeCode = getCCCRegimeCode(Byte.parseByte(cccRegimeLB.getSelectedValue()));
 		typeCode.setText(newCCCRegimeCode);
 		
 		AonTableButton accountStatus = new AonTableButton("", AON.CSS.aonIconValid());
+		accountStatus.ensureDebugId("accountStatus_" + row);
+		
 		TextBox account = new TextBox();
+		account.ensureDebugId("account_" + row);
 		account.setMaxLength(11);
 		account.addStyleName("aon-inputText");
 		account.addStyleName(style.inputTextHeight());
@@ -589,6 +614,7 @@ public abstract class CCC extends ResizeComposite {
 		});
 		
 		AonTableButton delete = new AonTableButton("Eliminar CCC", AON.CSS.aonIconDelete());
+		delete.ensureDebugId("delete_" + row);
 		delete.addClickHandler(e -> {
 			onDeleteCCC(newId);
 			initPreview();
@@ -764,7 +790,7 @@ public abstract class CCC extends ResizeComposite {
 	}
 	
 	// -------------------------------------------- Footer Panel TGSS
-
+	
 	private void onEmployeesWorking() {
 		fireLoadingMessage("Obteniendo trabajadores en situacion de alta ...");
 		impl.getEmployeesWorking(regime, ccc, new AsyncCallback<String>() {

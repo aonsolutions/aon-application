@@ -1,38 +1,38 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui'
-	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client' >
+	xmlns:a='urn:import:com.esferalia.aon.gwt.payroll.client' 
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
-	<ui:Style type="com.esferalia.aon.gwt.payroll.client.ActivityDialog.MyStyle">
-		
-		.widthAll{
-			width: 100%;
-		}
-		
-		.heightAll{
-			height: 100%;
-		}
-		
+	<ui:Style>
+	
 		.container{
 			min-width: 600px;
+			margin: 0 1rem;
+		}
+	
+		.flexColumn {
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
 		}
 		
-		.buttonsPanel{
+		.flexEnd{
 			display: flex;
 			justify-content: flex-end;
-			gap: 10px;
-			margin: 5px 10px;
+			gap: .5rem;
+			margin: .5rem 0;
 		}
 		
-		.messagePanel{
-			margin: 10px 0;
-		}
 	</ui:Style>
-
-	<g:VerticalPanel styleName="{style.widthAll} {style.heightAll} {style.container}"> 
-		<g:HTMLPanel ui:field="messagePanel" styleName="{style.messagePanel}"/>
-		<a:Activity ui:field="activity"/>
-		<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.buttonsPanel}"></g:HTMLPanel>
-	</g:VerticalPanel>
+	
+	<g:HTMLPanel styleName="{style.flexColumn}">
+		<aon:AonToolbar ui:field="toolbar" />
+		<g:HTMLPanel ui:field="messagePanel"/>
+		<g:HTMLPanel styleName="{style.container} {style.flexColumn}">
+			<a:Activity ui:field="activity"/>
+			<g:HTMLPanel ui:field="buttonsPanel" styleName="{style.flexEnd}" />
+		</g:HTMLPanel>
+	</g:HTMLPanel>
 
 </ui:UiBinder>
