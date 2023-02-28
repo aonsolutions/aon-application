@@ -79,7 +79,7 @@ abstract class Mod303GIPUZKOA extends Mod303Declaration {
 					.filter(m390 -> m390.getYear() ==  (mod.getYear() - 1) )
 					.filter(m390 -> m390.getAdministration() ==  mod.getAdministration() )
 					.filter(Mod390HF::isToCompensate)
-					.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod390Key.GP_C042) * (-1)))
+					.mapToDouble(fm -> AonMathUtils.round(fm.getAmount(Mod390Key.GP_C042)))
 					.findFirst()
 					.orElse(0.0);						
 			}

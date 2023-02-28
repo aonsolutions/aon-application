@@ -356,30 +356,6 @@ public class MainAgreementTest {
 		wait4Id("pdfNotLoaded");
 	}
 
-	@Ignore("Sergio :-)")
-	@Test
-	public void TestExtras() throws Exception {
-
-		wait4Id("pagas_extras_anulaes,_semestrales_y_trimestreales");
-
-		HtmlDivision agreementTreeItem = (HtmlDivision) getElementById(
-				"pagas_extras_anulaes,_semestrales_y_trimestreales");
-		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
-		agreementTreeItem.click();
-
-		wait4(htmlPage, htmlPage -> "PAGAS EXTRAS ANULAES, SEMESTRALES Y TRIMESTREALES".equals(
-				((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
-
-		int year = Calendar.getInstance().get(Calendar.YEAR);
-
-		for (int i = 1; i < 8; i++) {
-			Assert.assertTrue(((HtmlInput) getElementById("endDateBox" + i)).getValueAttribute()
-					.endsWith(Integer.toString(year)));
-			Assert.assertTrue(((HtmlInput) getElementById("startDateBox" + i)).getValueAttribute()
-					.endsWith(Integer.toString(year)));
-		}
-	}
-
 	// ------------------------------------------------------------------------
 
 	protected <T extends DomElement> T getElementById(String id) {
