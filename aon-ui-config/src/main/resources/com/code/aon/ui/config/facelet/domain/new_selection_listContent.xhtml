@@ -11,9 +11,10 @@
 		
 	<h:panelGrid columns="2" styleClass="aon-width-all aon-padding-bottom"
 		columnClasses="aon-float-left,aon-float-right">		
-		<aon:panelGroup>
-			<aon:outputText styleClass="aon-margin-right aon-bold" value="#{bundle.aon_filter}:"/>
-			<aon:inputText id="domainFilter" size="90" styleClass="aon-input-search" value="#{domainSwitcher.filter}">
+		<aon:panelGroup  >
+			<c:if test="#{domainSwitcher.adminDomain or !userUtils.newAONTheme }" >
+			<aon:outputText styleClass="aon-margin-right aon-bold" value="#{bundle.aon_filter}:" />
+			<aon:inputText id="domainFilter" size="90" styleClass="aon-input-search" value="#{domainSwitcher.filter}" >
 				<a4j:support 
 					event="onkeyup"
 					reRender="domainSwitcherTableContainer"
@@ -23,6 +24,7 @@
 					ignoreDupResponses="true"
 					limitToList="true"/>
 			</aon:inputText>
+			</c:if>
 		</aon:panelGroup>
 		<aon:panelGroup>
 				<aon:commandLink id="domainBooking"
