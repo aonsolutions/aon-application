@@ -678,7 +678,7 @@ public class AgreementInfo implements Serializable, HasId<Integer>, HasDomain<In
 	}
 	
 	public AgreementExtra getExtraPayment(Integer paymentId) {
-		Optional<AgreementExtra> extraFind = getExtras().stream().filter(extra -> extra.getAgreementPayment().equals(paymentId)).findFirst();
+		Optional<AgreementExtra> extraFind = getExtras().stream().filter(extra -> null != extra.getAgreementPayment() && extra.getAgreementPayment().equals(paymentId)).findFirst();
 		return extraFind.isPresent() ? extraFind.get() : null;
 	}
 	
