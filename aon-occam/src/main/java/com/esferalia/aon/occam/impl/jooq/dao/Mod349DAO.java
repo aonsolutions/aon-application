@@ -1014,10 +1014,8 @@ public class Mod349DAO {
 			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
 			
 			// Marcar el modelo como enviado
-			//AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());		
 			if (mod != null && mod.getId() != null) {
-				ctx.getDslContext().update(FS_MOD349)
-					//.set(FS_MODEL349.RECEIPT, response.getJustificante()) // FALTA - LA PRESENTACION NO DEVUELVE EL NUMERO JUSTIFICANTE POR ESO LO UNICO QUE SE HACE ES MARCARLO COMO ENVIADO
+				ctx.getDslContext().update(FS_MOD349)					
 					.set(FS_MOD349.STATUS, FiscalStatus.SENT.value())
 					.where(FS_MOD349.ID.equal(mod.getId()))
 					.execute();

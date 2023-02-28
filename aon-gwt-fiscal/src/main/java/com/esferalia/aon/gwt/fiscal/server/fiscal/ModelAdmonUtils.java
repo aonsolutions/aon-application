@@ -1121,7 +1121,7 @@ public class ModelAdmonUtils {
 		}
 	}
 	
-	// TGVI Online - Presentación (los procesos 1 y 2 simplemente validan en contenido del fichero y, si todo ha ido bien, este proceso es el que realiza la presentación)
+	// TGVI Online - Presentación (los procesos 1 y 2 simplemente validan el contenido del fichero y, si todo ha ido bien, este proceso es el que realiza la presentación)
 	private static void sendOnlineTGVI_3(HttpServletResponse resp, AEATParams aeatParams, IFiscalModel model, String idShipment) {
 		
 		try {
@@ -1203,7 +1203,7 @@ public class ModelAdmonUtils {
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("Modelo", FiscalModelUtils.getModelName(model));
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("Ejercicio", AonNumberUtils.toString( model.getYear()));
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("Periodo", model.getPeriod() == Period.YEAR ? "0A" : model.getPeriod().getName());
-//					result.getJSONObject("respuesta").getJSONObject("correcta").put("Justificante", ""); // FALTA - NO DEVUELVE JUSTIFICANTE QUIERE DECIR QUE EL JUSTIFICANTE QUE LE PASAMOS ES EL QUE REALMENTE SE QUEDA EN EL MODELO PRESENTADO ?? 
+//					result.getJSONObject("respuesta").getJSONObject("correcta").put("Justificante", ""); // No devuelve numero de justificante 
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("Idioma","ES");
 					result.getJSONObject("respuesta").getJSONObject("correcta").put("urlPdf", urlPdf);
 					
@@ -1230,7 +1230,7 @@ public class ModelAdmonUtils {
 			
 			// ESTE NUMERO DE EXPEDIENTE SE INDICA DE FORMA MANUAL AQUI Y SOLO SE UTILIZA EN FASE 
 			// DE DESARROLLO PARA PROBAR LAS SUSTITUTIVAS DE LAS INFORMATIVAS EN EL ENTORNO DE PRUEBAS
-			String expediente = ""; // FALTA QUITAR NUMERO SI LO HAY			 
+			String expediente = ""; 			 
 								
 			// Se comprueba si el numero de expediente está vacio
 			if (AonStringUtils.isEmpty(expediente))

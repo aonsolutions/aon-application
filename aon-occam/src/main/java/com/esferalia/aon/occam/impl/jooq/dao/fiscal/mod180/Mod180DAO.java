@@ -531,11 +531,9 @@ public class Mod180DAO {
 			// Grabar los datos en data_response y sus tablas asociadas
 			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
 			
-			// Marcar el modelo como enviado
-			//AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());		
+			// Marcar el modelo como enviado					
 			if (mod != null && mod.getId() != null) {
-				ctx.getDslContext().update(FS_MODEL180)
-					//.set(FS_MODEL180.RECEIPT, response.getJustificante()) // FALTA - LA PRESENTACION NO DEVUELVE EL NUMERO JUSTIFICANTE POR ESO LO UNICO QUE SE HACE ES MARCARLO COMO ENVIADO
+				ctx.getDslContext().update(FS_MODEL180)					
 					.set(FS_MODEL180.STATUS, FiscalStatus.SENT.value())
 					.where(FS_MODEL180.ID.equal(mod.getId()))
 					.execute();
