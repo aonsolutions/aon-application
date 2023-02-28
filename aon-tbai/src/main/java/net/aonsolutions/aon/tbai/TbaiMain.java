@@ -269,7 +269,7 @@ public class TbaiMain {
 				sign = doc.getElementsByTagName("ds:SignatureValue").item(0).getTextContent();
 			}
 
-			ByteArrayInputStream key = new ByteArrayInputStream(tbaiConfiguration.getCertificate().getCertificate());
+			ByteArrayInputStream key = new ByteArrayInputStream(tbaiConfiguration.getCertificate().getData());
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
 			keyStore.load(key, tbaiConfiguration.getCertificate().getPassword().toCharArray());
 
