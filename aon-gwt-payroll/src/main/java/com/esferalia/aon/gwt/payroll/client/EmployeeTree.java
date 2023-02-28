@@ -232,9 +232,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			ActivityDialog activityDialog = new ActivityDialog();
 			ActivityDialogObject activityDialogObject = new ActivityDialogObject(enterprise);
 			activityDialog.setActivityDialogObject(activityDialogObject);
-			enterpriseContextMenu.hide();
-			activityDialog.center();
-			activityDialog.show();
 		}
 	}
 
@@ -4263,8 +4260,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		ActivityDialog activityDialog = new ActivityDialog();
 		ActivityDialogObject activityDialogObject = new ActivityDialogObject(getEmployeeTree().enterprise);
 		activityDialog.setActivityDialogObject(activityDialogObject);
-		activityDialog.center();
-		activityDialog.show();
 	}
 
 	protected static void showNewContract() {

@@ -32,10 +32,10 @@
 	<ui:image field='agreementgroup' src='agreementgroup.png' />
 	<ui:image field='employeesgroup' src='employeesgroup.png' />
 
-	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel" styleName="aon-MainTrash" >
 		<g:west size='275'>
 
-			<g:StackLayoutPanel unit='EM'>
+			<g:StackLayoutPanel unit='EM' styleName="aon-MainTrash-Stack">
 
 				<g:stack ui:field="agreementStack">
 					<g:header size='3'>
@@ -101,7 +101,7 @@
 			</g:StackLayoutPanel>
 		</g:west>
 		<g:center>
-			<g:SimpleLayoutPanel>
+			<g:SimpleLayoutPanel styleName="aon-MainTrash-Detail" >
 				<common:DetailPanel ui:field="detailPanel" /> 
 			</g:SimpleLayoutPanel>
 		</g:center>

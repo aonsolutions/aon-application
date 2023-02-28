@@ -240,14 +240,8 @@ public class JooqEmployeeAFI {
 			etf.put("fileName", fileName);
 			employeeAFIJSON.put("ETF", etf);
 			
-			// Check if exist FCT line
-			JSONObject mbObj = (JSONObject) employeeAFIJSON.get("MB");
-			if(mbObj != null) {
-				JSONObject fctObj = (JSONObject) ((JSONObject) employeeAFIJSON.get("MB")).get("FCT");
-				if (null != fctObj) conf.put("settleHolidaysLine", "1");
-			}
-			employeeAFIJSON.put("CONF", conf);
 			
+			employeeAFIJSON.put("CONF", conf);
 		
 		} catch (SQLException e) {
 			e.printStackTrace();

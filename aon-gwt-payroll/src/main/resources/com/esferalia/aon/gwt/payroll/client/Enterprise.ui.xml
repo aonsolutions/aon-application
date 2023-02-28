@@ -45,10 +45,6 @@
 
 		.inputLBHeight { 
 			height: 1.4rem !important; 
-			background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0Ij48cGF0aCBkPSJNMCAwaDI0djI0SDB6IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTE2LjU5IDguNTlMMTIgMTMuMTcgNy40MSA4LjU5IDYgMTBsNiA2IDYtNnoiLz48L3N2Zz4=) no-repeat 99% 50%;
-			-moz-appearance: none;
-			-webkit-appearance: none;
-			appearance: none;
 			border-radius: 0;
 			text-transform: uppercase;
 		}

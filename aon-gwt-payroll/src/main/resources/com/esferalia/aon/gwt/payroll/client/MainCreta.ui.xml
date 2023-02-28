@@ -24,10 +24,10 @@
 	<ui:image field='enterprisesgroup' src='enterprisesgroup.png' />
 
 
-	<g:SplitLayoutPanel ui:field="splitLayoutPanel">
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel" styleName="aon-MainCreta"  >
 		<g:west size='275'>
 
-			<g:StackLayoutPanel unit='EM'>
+			<g:StackLayoutPanel unit='EM' styleName="aon-MainCreta-Enterprises"  >
 
 				<g:stack ui:field="enterprisesStack">
 					<g:header size='3'>
@@ -43,13 +43,13 @@
 
 		</g:west>
 		<g:center>
-			<g:SimpleLayoutPanel>
+			<g:SimpleLayoutPanel styleName="aon-MainCreta-Details">
 				<common:DetailPanel ui:field='detailPanel'/>
 			</g:SimpleLayoutPanel>
 		</g:center>
 
 		<g:south size="0">
-			<common:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}" >
+			<common:MinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector} aon-MainCreta-Events" >
 				<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" />
 			</common:MinimizePanel>
 		</g:south>
