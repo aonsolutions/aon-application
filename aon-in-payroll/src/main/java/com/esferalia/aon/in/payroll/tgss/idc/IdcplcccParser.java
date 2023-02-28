@@ -182,15 +182,15 @@ public class IdcplcccParser {
 			
 			while ( true ) {
 				try {
+					if ( attempt(reader, HOLIDAYS).isPresent() )
+						return getHolidayspageParser(enterpriseCCC, employeeeNss);
+					
 					Matcher matcher = find(reader, EMPLOYEE_NSS_NAME, tryAuthorized(listener));
 					employeeeNss = matcher.group("province") + matcher.group("nss");
 					String employeeName  = matcher.group("name");
 					onEmployee(listener, employeeeNss, employeeName);
 					
 					parseEmployeePeriods(listener, reader, enterpriseCCC, employeeeNss);
-					
-					if ( attempt(reader, HOLIDAYS).isPresent() )
-						return getHolidayspageParser(enterpriseCCC, employeeeNss);
 					
 					
 				} catch ( UnknownPDFException e ) {

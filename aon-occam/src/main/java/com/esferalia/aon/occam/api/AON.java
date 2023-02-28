@@ -7486,8 +7486,20 @@ public class AON {
 		}
 	}
 	
+	public static void assignInvestAsset2Invoice(String domainName, Integer domainId, String login, Integer investAssetId, Invoice invoice) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
+			getNewProduct().assignInvestAsset2Invoice(ctx, investAssetId, invoice);
+		}
+	}
+	
 	public static Stream<InvestAsset> getInvestAssetStream(Domain domain, User user, InvestAssetFilter filter) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+			return getNewProduct().getInvestAssetStream(ctx, filter);
+		}
+	}
+	
+	public static Stream<InvestAsset> getInvestAssetStream(String domainName, Integer domainId, String login, InvestAssetFilter filter) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
 			return getNewProduct().getInvestAssetStream(ctx, filter);
 		}
 	}

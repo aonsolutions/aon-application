@@ -210,6 +210,11 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("ANTIGUEDAD_8_AÑOS_MENSUAL","ANTIGUEDAD_8");
 		variablesMap.put("ANTIGUEDAD_9_AÑOS_MENSUAL","ANTIGUEDAD_9");
 		
+		variablesMap.put("ANTIGUEDAD_2_AÑOS_HORAS","ANTIGUEDAD_2");
+		variablesMap.put("ANTIGUEDAD_4_AÑOS_HORAS","ANTIGUEDAD_4");
+		variablesMap.put("ANTIGUEDAD_5_AÑOS_HORAS","ANTIGUEDAD_5");
+		variablesMap.put("ANTIGUEDAD_6_AÑOS_HORAS","ANTIGUEDAD_6");
+		
 		variablesMap.put("ANTIGUEDAD_1_AÑO_PARA_PAGAS_Y_VACACIONES_DIARIO","ANTIGUEDAD_1_PV");
 		variablesMap.put("ANTIGUEDAD_2_AÑOS_PARA_PAGAS_Y_VACACIONES_DIARIO","ANTIGUEDAD_2_PV");
 		variablesMap.put("ANTIGUEDAD_3_AÑOS_PARA_PAGAS_Y_VACACIONES_DIARIO","ANTIGUEDAD_3_PV");
@@ -963,6 +968,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("JUBILACION_62_AÑOS_ANUAL", "JUBILACION_62");
 		variablesMap.put("JUBILACION_63_AÑOS_ANUAL", "JUBILACION_63");
 		variablesMap.put("JUBILACION_64_AÑOS_ANUAL", "JUBILACION_64");
+		variablesMap.put("JUBILACION_65_AÑOS_ANUAL", "JUBILACION_64");
 		variablesMap.put("JUBILACION_60_AÑOS_MENSUAL", "JUBILACION_60");
 		variablesMap.put("JUBILACION_61_AÑOS_MENSUAL", "JUBILACION_61");
 		variablesMap.put("JUBILACION_62_AÑOS_MENSUAL", "JUBILACION_62");

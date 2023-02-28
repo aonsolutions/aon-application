@@ -566,10 +566,9 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 			connection = AonServletUtils.getConnection(domain);
 			Integer domainID = AonServletUtils.getDomainID(domain);
-			Integer parentDomainID = AonServletUtils.getParentDomainID(domain);
 
 			return JooqAgreement.getTrashAgreements(connection, offset, limit,
-					domainID, parentDomainID);
+					domainID);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

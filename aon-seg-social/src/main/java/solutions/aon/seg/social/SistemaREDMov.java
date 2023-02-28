@@ -331,7 +331,7 @@ class SistemaREDMov {
 		}
 		//OCUPACION
 		if (employee.getOcup() != null)
-			form.getInputByName("txt_SDFOCUPACION").setValueAttribute(employee.getOcup().toUpperCase());
+			form.getInputByName("txt_SDFOCUPACION_ayuda").setValueAttribute(employee.getOcup().toUpperCase());
 		
 		if (employee.getRegime().equals("0163") && !mdCtz.isEmpty()) {
 			form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(mdCtz.get());
@@ -354,8 +354,7 @@ class SistemaREDMov {
 		});
 		
 		//CNO
-		employee.getCno().ifPresent(cno-> 
-			form.getInputByName("SDFCNOCUP_ayuda").setValueAttribute(cno));
+		employee.getCno().ifPresent(cno-> form.getInputByName("txt_SDFCNOCUP_ayuda").setValueAttribute(cno));
 		
 		//------------GET TA
 		DomNode printDoc = form.querySelector("select[name=\"cbo_ListaSiNo\"]");

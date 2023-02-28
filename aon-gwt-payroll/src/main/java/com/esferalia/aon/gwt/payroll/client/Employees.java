@@ -953,6 +953,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		String description = activity.getDescription();
 		TreeItem activityItem = addImageItem(enterpriseItem, description, images.ine());
 		activityItem.setUserObject(activity);
+		activityItem.ensureDebugId(getId(activity));
 		
 		activity.getCccs().forEach( (ccc ) ->{
 			addActivityCCCItem(activityItem, ccc);
@@ -2344,6 +2345,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return normalize(workplace.getDescription());
 	}
 	
+	private static String getId(Activity activity) {
+		return normalize(activity.getDescription());
+	}
 	
 	private static String getId(Employee employee) {
 		return normalize(employee.getFullname());

@@ -1,6 +1,6 @@
 import { AonElement } from '../../../components/AonElement.js';
 import { setValueName, serializeForm, disabledForm, sortBy } from '../../../services/utils.js';
-import { getRlce, getContractType, getOccupation, getQuoteGroup, sendAlta, sendBaja, getJourneyType, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja, getWorkersCollective, getApplicationParameters, openFileBase64 } from '../../../services/service.js'
+import { getRlce, getContractType, getOccupation, getQuoteGroup, getCno, sendAlta, sendBaja, getJourneyType, getIpfxnaf, getNafxipf, getQuoteType, updateContract, getCccForActivity, getCodBaja, getWorkersCollective, getApplicationParameters, openFileBase64 } from '../../../services/service.js'
 import { ToolbarType } from '../../../models/enums.js';
 import { ACTION_COMUNICA, APP_PARAMS_PAYROLL, CONTRACT_OPTIONS, PAYROLL_VIEWS } from '../PayrollEnums.js';
 import { CONSTANT, CSS, EVENT, MSG } from '../../../environments/environments.js';
@@ -472,8 +472,8 @@ export class AonAltaDirecta extends AonElement {
     async getCno() {
         try {
             let resp = await getCno();
-            resp = sortBy(resp, 'value', 'asc');
-            this.getElement('cno').setOptions(resp.map(r => ({ name: `${r.name}`, value: r.value})));
+            //resp = sortBy(resp, 'value', 'desc');
+            this.getElement('cno').setOptions(resp.map(r => ({ name: `${r.cnoCode} - ${r.cno}`, value: r.cnoCode})));
         } catch (error){}
     }
 

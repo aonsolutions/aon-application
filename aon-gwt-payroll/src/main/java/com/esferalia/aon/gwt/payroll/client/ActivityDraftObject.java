@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -43,6 +44,7 @@ public class ActivityDraftObject extends AbstractDraftObject {
 	}
 	
 	public String getActivityCNAE2009() {
+		if(AonStringUtils.isBlank(this.activity.getCnaeCode())) return "";
 		return this.activity.getCnaeCode() + " - " + this.activity.getCnaeDescription();
 	}
 	
@@ -60,6 +62,10 @@ public class ActivityDraftObject extends AbstractDraftObject {
 	
 	public List<EnterpriseCCC> getCCCs() {
 		return this.activity.getCccs();
+	}
+	
+	public List<EnterpriseCCC> getActiveCCCs() {
+		return this.activity.getActiveCCCs();
 	}
 	
 	// ------------------------------------------- DataBase Methods

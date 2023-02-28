@@ -52,6 +52,7 @@ public class CnoDAO {
 	
 	public static List<Cno> getList(AONContext ctx) {
 		return ctx.getDslContext().selectFrom(CNO)
+			.orderBy(CNO.CODE)
 			.fetch()
 			.stream()
 			.map(new CnoFiller())

@@ -11,9 +11,11 @@ import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -28,6 +30,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -43,6 +46,8 @@ public class ActivityDraft extends Composite{
 		@Override
 		public void onActivityDescriptionChange() {
 			activityDraftObject.setActivityDescription(activityDescription.getValue());
+			toolbar.setTitle(activityDescription.getValue());
+			setHasChange(true);
 		}
 
 		@Override
@@ -50,21 +55,25 @@ public class ActivityDraft extends Composite{
 			String cnae2009Value = activityCNAE2009.getValue();
 			Optional<Entry<Integer, String>> cnae2009Opt = activityDraftObject.getAllCNAE2009().entrySet().stream().filter(entry -> AonStringUtils.equalsIgnoreCase(entry.getValue(), cnae2009Value)).findAny();
 			if(cnae2009Opt.isPresent()) activityDraftObject.setActivityCNAE2009(cnae2009Opt.get());
+			setHasChange(true);
 		}
 
 		@Override
 		public void onActivityStartDateChange() {
 			activityDraftObject.setActivityStartDate(startDate.getValue());
+			setHasChange(true);
 		}
 
 		@Override
 		public void onActivityEndDateChange() {
 			activityDraftObject.setActivityEndDate(endDate.getValue());
+			setHasChange(true);
 		}
 
 		@Override
 		public void onActivityActiveChange() {
 			activityDraftObject.setActivityIsPrincipal(activityActive.getValue());
+			setHasChange(true);
 		}
 		
 		@Override
@@ -74,18 +83,26 @@ public class ActivityDraft extends Composite{
 		
 		@Override
 		public void onInsertRows() {
-			activityDraftObject.getCCCs().forEach(ccc -> this.cccWidget.insertRow(ccc));
+			if(activityDraftObject.getActiveCCCs().isEmpty())
+				activity.showCCCMessage();
+			else {
+				activity.showCCCTable();
+				activityDraftObject.getActiveCCCs().forEach(ccc -> this.cccWidget.insertRow(ccc));
+			}
+			
 			activity.hideActivityColumn();
 		}
 
 		@Override
 		public void onDeleteCCC(Integer cccId) {
 			activityDraftObject.deleteCCC(cccId);
+			setHasChange(true);
 		}
 
 		@Override
 		public void onInsertCCC(EnterpriseCCC ccc) {
 			activityDraftObject.insertCCC(ccc);
+			setHasChange(true);
 		}
 
 		@Override
@@ -96,6 +113,9 @@ public class ActivityDraft extends Composite{
 		@Override
 		public void fireWarningMessage(Map<String, String> warningMap) {
 			AonMessagePanel.showWarning(messagePanel, warningMap);
+			
+			// Need to create specific method, but this fire when file fail loading
+			setPDFLoadedEnsureDebugId("pdfNotLoaded");
 		}
 
 		@Override
@@ -110,6 +130,7 @@ public class ActivityDraft extends Composite{
 
 		@Override
 		public void showPDF(String dataURI, boolean isLaboralLife) {
+			setPDFLoadedEnsureDebugId("pdfLoaded");
 			showPdf(isLaboralLife);
 			pdfViewer.open(dataURI);
 		}
@@ -163,6 +184,13 @@ public class ActivityDraft extends Composite{
 	
 	private Activity activity;
 	
+	private AonToolbarButton acceptButton;
+	private AonToolbarButton undoAllButton;
+	
+	private boolean hasChange;
+	
+	private Label pdfLoaded;
+	
 	// ---------------------------------------------- Constructor
 
 	public ActivityDraft() {	
@@ -203,6 +231,9 @@ public class ActivityDraft extends Composite{
 					activity.cccWidget.setDomain(activityDraftObject.getDomain());
 					activity.cccWidget.resetPreview();
 					activity.onInsertRows();
+					setHasChange(false);
+					toolbar.setTitle(activityDraftObject.getActivityDescription());
+					AonMessagePanel.hideMessage(messagePanel);
 				}, t -> {}
 			);
 	}
@@ -229,13 +260,40 @@ public class ActivityDraft extends Composite{
 	
 	private void getToolbarPanel() {
 		
-		AonToolbarButton accept = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
-		accept.addClickHandler(e -> onAccept());
-		toolbar.add(accept);
+		acceptButton = new AonToolbarButton( AON.MSG.saveAction(), AON.CSS.aonIconSave() );
+		acceptButton.addClickHandler(e -> onAccept());
+		acceptButton.ensureDebugId("activityAcceptBtn");
+		toolbar.add(acceptButton);
+		
+		undoAllButton = new AonToolbarButton( AON.MSG.undo() + " todo", AON.CSS.aonIconUndoAll() );
+		undoAllButton.addClickHandler(e -> {
+			AonDialog confirmDialog =  new AonDialog("Restaurar CCCs", new HTMLPanel("\u00bfDesea realmente deshacer los cambios realizados sobre la actividad <b>" + activityDraftObject.getActivityDescription() + "</b>\u003f <br>Este proceso es irreversible."));
+			confirmDialog.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do
+				}
+				
+				@Override
+				public void onAccept() {
+					AonMessagePanel.showLoading(messagePanel, "Deshaciendo los cambios realizados ...");
+					initializeActivity();
+				}
+			});
+		});
+		undoAllButton.ensureDebugId("undoAllBtn");
+		toolbar.add(undoAllButton);
 		
 		AonToolbarButton checkUpdateCert = new AonToolbarButton("Cert. de estar al corriente con TGSS", AON.CSS.aonIconTgss() );
+		checkUpdateCert.ensureDebugId("checkUpdateCert");
 		checkUpdateCert.addClickHandler(e -> onCheckUpdateCert());
 		toolbar.add(checkUpdateCert);
+		
+		AonToolbarButton createCCCBtn = new AonToolbarButton(AON.MSG.newAction() + " CCC", AON.CSS.aonIconAdd() );
+		createCCCBtn.addClickHandler(e -> activity.onAddNewCCC());
+		createCCCBtn.ensureDebugId("createCCCBtn");
+		toolbar.add(createCCCBtn);
 	}
 	
 	// ------------------------------------------------- Toolbar PDFViewer panel
@@ -243,36 +301,56 @@ public class ActivityDraft extends Composite{
 	private AonToolbar getToolbarPDFViewerPanel() {
 
 		AonToolbarButton closePDF = new AonToolbarButton(AON.MSG.closed(), AON.CSS.aonIconBack());
-		closePDF.addClickHandler(e -> onClosePDF());
+		closePDF.ensureDebugId("closePDFViewerBtn");
+		closePDF.addClickHandler(e -> {
+			setPDFLoadedEnsureDebugId("pdfNotLoaded");
+			onClosePDF();
+		});
 		toolbarPDFViewer.add(closePDF);
 		
+		pdfLoaded = new Label("");
+		setPDFLoadedEnsureDebugId("pdfNotLoaded");
+		toolbarPDFViewer.add(pdfLoaded);
+		
 		return toolbarPDFViewer;
+	}
+	
+	public void setPDFLoadedEnsureDebugId(String debugId) {
+		this.pdfLoaded.ensureDebugId(debugId);
 	}
 	
 	// ---------------------------------------------- Toolbar.Methods
 
 	private void onAccept() {
+		AonMessagePanel.showLoading(messagePanel, "Guardando los cambios realizados en la actividad " + activityDraftObject.getActivityDescription() + " ...");
 		if(checkIfSaveIsPossible()) updateActivity();
 	}
 
 	private void updateActivity() {
 		activityDraftObject.updateActivity(
-			s -> reloadActivity(),
+			s -> {
+				activityDraftObject.initializeActivity(
+						r -> {
+							initSuggestBox();
+							fillActivityInfo();
+							activity.cccWidget.setDomain(activityDraftObject.getDomain());
+							activity.cccWidget.resetPreview();
+							activity.onInsertRows();
+							setHasChange(false);
+							toolbar.setTitle(activityDraftObject.getActivityDescription());
+							
+							Map<String, String> successMap = new HashMap<>();
+							successMap.put("Actividad actualizada", "Los cambios realizados se han guardado correctamente");
+							AonMessagePanel.showSuccess(messagePanel, successMap);
+						}, t -> {}
+					);
+			},
 			f -> {}
 		);
 	}
-	
-	private void reloadActivity() {
-		initializeActivity();
-		Map<String, String> successMap = new HashMap<>();
-		successMap.put("Actividad actualizada", "Los cambios realizados se han guardado correctamente");
-		AonMessagePanel.showSuccess(messagePanel, successMap);
-	}
 
 	private boolean checkIfSaveIsPossible() {
-		return !AonStringUtils.isBlank(activity.activityDescription.getValue()) && 
-			!AonStringUtils.isBlank(activity.activityCNAE2009.getValue()) && 
-			!AonStringUtils.equalsIgnoreCase(activity.activityCNAE2009.getValue(), "-");
+		return !AonStringUtils.isBlank(activity.activityDescription.getValue());
 	}
 	
 	// ---------------------------------------------- Toolbar.Methods TGSS
@@ -284,6 +362,7 @@ public class ActivityDraft extends Composite{
 		activityDraftObject.getUpdateCert(completeCCC.getKey(), completeCCC.getValue(),
 				dataURI -> {
 					showPdf(false);
+					setPDFLoadedEnsureDebugId("pdfLoaded");
 					pdfViewer.open(dataURI);
 					AonMessagePanel.hideMessage(messagePanel);
 				}, f -> {
@@ -320,13 +399,19 @@ public class ActivityDraft extends Composite{
 			monthListBox.setSelected(DateUtils.getFirstDayOfMonth(), true);
 			monthListBox.setWidth("200px");
 			toolbarPDFViewer.add(monthListBox);
-		} else if(!isLaboralLife && toolbarPDFViewer.getButtonContainer().getWidgetCount() > 1)
+		} else if(!isLaboralLife && toolbarPDFViewer.getButtonContainer().getWidgetCount() > 2)
 			toolbarPDFViewer.getButtonContainer().remove(toolbarPDFViewer.getButtonContainer().getWidgetCount()-1);
 		
 	}
 
 	private void onClosePDF() {
 		showActivity();
+	}
+	
+	private void setHasChange(boolean hasChange) {
+		this.hasChange = hasChange;
+		acceptButton.setEnabled(this.hasChange);
+		undoAllButton.setEnabled(this.hasChange);
 	}
 	
 }

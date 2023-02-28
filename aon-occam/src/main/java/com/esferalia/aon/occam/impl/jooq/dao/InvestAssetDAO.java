@@ -2,6 +2,8 @@ package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.InvestAsset.INVEST_ASSET;
+import static com.esferalia.aon.jooq.tables.Invoice.INVOICE;
+import static com.esferalia.aon.jooq.tables.InvoiceDetail.INVOICE_DETAIL;
 
 import java.sql.Date;
 import java.util.LinkedList;
@@ -22,6 +24,7 @@ import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.InvestAssetRegime;
 import com.esferalia.aon.occam.api.model.InvestAssetType;
 import com.esferalia.aon.occam.api.model.Properties.InvestAssetProperties;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO.EnterpriseActivityFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
@@ -111,6 +114,21 @@ public class InvestAssetDAO {
 	public static void delete(AONContext ctx, Integer id) {
 		ctx.getDslContext().delete(INVEST_ASSET).where(INVEST_ASSET.ID.eq(id)).execute();
 		ctx.log().debug("DELETE INVEST_ASSET id:" + id);
+	}
+	
+	
+	public static void assignInvestAsset2Invoice(AONContext ctx, Integer investAssetId, Invoice invoice) {
+		ctx.getDslContext()
+		.update(INVOICE)
+		.set(INVOICE.INVEST_ASSET, investAssetId)
+		.where(INVOICE.ID.eq(invoice.getId()))
+		.execute();
+		
+		ctx.getDslContext()
+		.update(INVOICE_DETAIL)
+		.set(INVOICE_DETAIL.INVEST_ASSET, investAssetId)
+		.where(INVOICE_DETAIL.INVOICE.eq(invoice.getId()))
+		.execute();
 	}
 
 	public static class InvestAssetFiller extends Filler implements Function<Record, InvestAsset> {

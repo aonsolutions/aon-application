@@ -382,7 +382,7 @@ public class Municipalities {
 		municipalities.put("31117","GOIZUETA"); 
 		municipalities.put("31118","GO" + String.valueOf("\u00D1") + "I"); 
 		municipalities.put("09265","PIERNIGAS"); 
-		municipalities.put("31119","GÜESA/GORZA"); 
+		municipalities.put("31119","G\u00dcESA/GORZA"); 
 		municipalities.put("09266","PINEDA DE LA SIERRA"); 
 		municipalities.put("09267","PINEDA TRASMONTE"); 
 		municipalities.put("09268","PINILLA DE LOS BARRUECOS"); 
@@ -470,7 +470,7 @@ public class Municipalities {
 		municipalities.put("19074","CASPUE" + String.valueOf("\u00D1") + "AS"); 
 		municipalities.put("43101","PASSANANT"); 
 		municipalities.put("19075","CASTEJON DE HENARES"); 
-		municipalities.put("43102","PAÜLS"); 
+		municipalities.put("43102","PA\u00dcLS"); 
 		municipalities.put("19076","CASTELLAR DE LA MUELA"); 
 		municipalities.put("43103","PERAFORT"); 
 		municipalities.put("43104","PERELLO, EL"); 
@@ -827,7 +827,7 @@ public class Municipalities {
 		municipalities.put("24080","GRAJAL DE CAMPOS"); 
 		municipalities.put("24081","GUSENDOS DE LOS OTEROS"); 
 		municipalities.put("24082","HOSPITAL DE ORBIGO"); 
-		municipalities.put("24083","IGÜE" + String.valueOf("\u00D1") + "A"); 
+		municipalities.put("24083","IG\u00dcE" + String.valueOf("\u00D1") + "A"); 
 		municipalities.put("24084","IZAGRE"); 
 		municipalities.put("24086","JOARILLA DE LAS MATAS"); 
 		municipalities.put("24087","LAGUNA DALGA"); 
@@ -917,7 +917,7 @@ public class Municipalities {
 		municipalities.put("48042","GORDEXOLA"); 
 		municipalities.put("48043","GORLIZ"); 
 		municipalities.put("48044","GETXO"); 
-		municipalities.put("48045","GÜE" + String.valueOf("\u00D1") + "ES"); 
+		municipalities.put("48045","G\u00dcE" + String.valueOf("\u00D1") + "ES"); 
 		municipalities.put("48046","GERNIKA-LUMO"); 
 		municipalities.put("48047","GIZABURUAGA"); 
 		municipalities.put("48048","IBARRANGELU"); 
@@ -1060,7 +1060,7 @@ public class Municipalities {
 		municipalities.put("09361","SARGENTES DE LA LORA"); 
 		municipalities.put("31215","SAN ADRIAN"); 
 		municipalities.put("09362","SARRACIN"); 
-		municipalities.put("31216","SANGÜESA/ZANGOZA"); 
+		municipalities.put("31216","SANG\u00dcESA/ZANGOZA"); 
 		municipalities.put("09363","SASAMON"); 
 		municipalities.put("31217","SAN MARTIN DE UNX"); 
 		municipalities.put("09365","SEQUERA DE HAZA, LA"); 
@@ -1574,7 +1574,7 @@ public class Municipalities {
 		municipalities.put("17035","CAMOS"); 
 		municipalities.put("17036","CAMPDEVANOL"); 
 		municipalities.put("17037","CAMPELLES"); 
-		municipalities.put("19210","PAREDES DE SIGÜENZA"); 
+		municipalities.put("19210","PAREDES DE SIG\u00dcENZA"); 
 		municipalities.put("17038","CAMPLLONG"); 
 		municipalities.put("19211","PAREJA"); 
 		municipalities.put("17039","CAMPRODON"); 
@@ -1742,7 +1742,7 @@ public class Municipalities {
 		municipalities.put("19254","SELAS"); 
 		municipalities.put("19255","SETILES"); 
 		municipalities.put("19256","SIENES"); 
-		municipalities.put("19257","SIGÜENZA"); 
+		municipalities.put("19257","SIG\u00dcENZA"); 
 		municipalities.put("19258","SOLANILLOS DEL EXTREMO"); 
 		municipalities.put("19259","SOMOLINOS"); 
 		municipalities.put("29030","BORGE, EL"); 
@@ -1933,7 +1933,7 @@ public class Municipalities {
 		municipalities.put("22001","ABIEGO"); 
 		municipalities.put("22002","ABIZANDA"); 
 		municipalities.put("22003","ADAHUESCA"); 
-		municipalities.put("22004","AGÜERO"); 
+		municipalities.put("22004","AG\u00dcERO"); 
 		municipalities.put("22006","AISA"); 
 		municipalities.put("22007","ALBALATE DE CINCA"); 
 		municipalities.put("22008","ALBALATILLO"); 
@@ -1973,7 +1973,7 @@ public class Municipalities {
 		municipalities.put("22023","ALMUNIENTE"); 
 		municipalities.put("22024","ALQUEZAR"); 
 		municipalities.put("22025","ALTORRICON"); 
-		municipalities.put("22027","ANGÜES"); 
+		municipalities.put("22027","ANG\u00dcES"); 
 		municipalities.put("22028","ANSO"); 
 		municipalities.put("24201","VEGAS DEL CONDADO"); 
 		municipalities.put("22029","ANTILLON"); 
@@ -1992,7 +1992,7 @@ public class Municipalities {
 		municipalities.put("10077","GARCIAZ"); 
 		municipalities.put("10078","GARGANTA, LA"); 
 		municipalities.put("10079","GARGANTA LA OLLA"); 
-		municipalities.put("22032","ARAGÜES DEL PUERTO"); 
+		municipalities.put("22032","ARAG\u00dcES DEL PUERTO"); 
 		municipalities.put("22035","AREN"); 
 		municipalities.put("22036","ARGAVIESO"); 
 		municipalities.put("22037","ARGUIS"); 
@@ -2004,7 +2004,7 @@ public class Municipalities {
 		municipalities.put("24214","VILLAMEJIL"); 
 		municipalities.put("10080","GARGANTILLA"); 
 		municipalities.put("24215","VILLAMOL"); 
-		municipalities.put("10081","GARGÜERA"); 
+		municipalities.put("10081","GARG\u00dcERA"); 
 		municipalities.put("24216","VILLAMONTAN DE LA VALDUERNA"); 
 		municipalities.put("10082","GARROVILLAS"); 
 		municipalities.put("24217","VILLAMORATIEL DE LAS MATAS"); 
@@ -2064,7 +2064,7 @@ public class Municipalities {
 		municipalities.put("22059","BIESCAS"); 
 		municipalities.put("34010","AMPUDIA"); 
 		municipalities.put("34011","AMUSCO"); 
-		municipalities.put("34012","ANTIGÜEDAD"); 
+		municipalities.put("34012","ANTIG\u00dcEDAD"); 
 		municipalities.put("34015","ARCONADA"); 
 		municipalities.put("34017","ASTUDILLO"); 
 		municipalities.put("34018","AUTILLA DEL PINO"); 
@@ -2700,7 +2700,7 @@ public class Municipalities {
 		municipalities.put("34140","PUEBLA DE VALDAVIA, LA"); 
 		municipalities.put("03003","AGRES"); 
 		municipalities.put("34141","QUINTANA DEL PUENTE"); 
-		municipalities.put("03004","AIGÜES"); 
+		municipalities.put("03004","AIG\u00dcES"); 
 		municipalities.put("03005","ALBATERA"); 
 		municipalities.put("34143","QUINTANILLA DE ONSO" + String.valueOf("\u00D1") + "A"); 
 		municipalities.put("03006","ALCALALI"); 
@@ -3049,7 +3049,7 @@ public class Municipalities {
 		municipalities.put("17221","VILAFANT"); 
 		municipalities.put("46186","PAIPORTA"); 
 		municipalities.put("15049","MOECHE"); 
-		municipalities.put("17222","VILAÜR"); 
+		municipalities.put("17222","VILA\u00dcR"); 
 		municipalities.put("46187","PALMA DE GANDIA"); 
 		municipalities.put("17223","VILAJUIGA"); 
 		municipalities.put("46188","PALMERA"); 
@@ -4817,7 +4817,7 @@ public class Municipalities {
 		municipalities.put("37148","GARCIHERNANDEZ"); 
 		municipalities.put("37149","GARCIRREY"); 
 		municipalities.put("25190","SALAS DE PALLARS"); 
-		municipalities.put("25191","SANAÜJA"); 
+		municipalities.put("25191","SANA\u00dcJA"); 
 		municipalities.put("25192","SANT GUIM DE FREIXENET"); 
 		municipalities.put("25193","SANT LLORENÇ DE MORUNYS"); 
 		municipalities.put("25194","SANT RAMON"); 
@@ -5248,9 +5248,9 @@ public class Municipalities {
 		municipalities.put("42119","MONTEAGUDO DE LAS VICARIAS"); 
 		municipalities.put("18093","GUALCHOS"); 
 		municipalities.put("42120","MONTEJO DE TIERMES"); 
-		municipalities.put("18094","GÜEJAR SIERRA"); 
+		municipalities.put("18094","G\u00dcEJAR SIERRA"); 
 		municipalities.put("42121","MONTENEGRO DE CAMEROS"); 
-		municipalities.put("18095","GÜEVEJAR"); 
+		municipalities.put("18095","G\u00dcEVEJAR"); 
 		municipalities.put("18096","HUELAGO"); 
 		municipalities.put("42123","MORON DE ALMAZAN"); 
 		municipalities.put("18097","HUENEJA"); 
@@ -5313,7 +5313,7 @@ public class Municipalities {
 		municipalities.put("11025","PATERNA DE RIVERA"); 
 		municipalities.put("42163","SAN FELICES"); 
 		municipalities.put("11026","PRADO DEL REY"); 
-		municipalities.put("42164","SAN LEONARDO DE YAGÜE"); 
+		municipalities.put("42164","SAN LEONARDO DE YAG\u00dcE"); 
 		municipalities.put("11027","PUERTO DE SANTA MARIA, EL"); 
 		municipalities.put("42165","SAN PEDRO MANRIQUE"); 
 		municipalities.put("11028","PUERTO REAL"); 
@@ -5432,7 +5432,7 @@ public class Municipalities {
 		municipalities.put("25227","TORRE DE CABDELLA, LA"); 
 		municipalities.put("25228","TORREFARRERA"); 
 		municipalities.put("35001","AGAETE"); 
-		municipalities.put("35002","AGÜIMES"); 
+		municipalities.put("35002","AG\u00dcIMES"); 
 		municipalities.put("35003","ANTIGUA"); 
 		municipalities.put("35004","ARRECIFE"); 
 		municipalities.put("35005","ARTENARA"); 
@@ -5911,7 +5911,7 @@ public class Municipalities {
 		municipalities.put("18138","MORALEDA DE ZAFAYONA"); 
 		municipalities.put("18140","MOTRIL"); 
 		municipalities.put("18141","MURTAS"); 
-		municipalities.put("18143","NIGÜELAS"); 
+		municipalities.put("18143","NIG\u00dcELAS"); 
 		municipalities.put("18144","NIVAR"); 
 		municipalities.put("18145","OGIJARES"); 
 		municipalities.put("18146","ORCE"); 
@@ -6988,7 +6988,7 @@ public class Municipalities {
 		municipalities.put("28117","PRADENA DEL RINCON"); 
 		municipalities.put("28118","PUEBLA DE LA SIERRA"); 
 		municipalities.put("28119","QUIJORNA"); 
-		municipalities.put("16160","PINEDA DE GIGÜELA"); 
+		municipalities.put("16160","PINEDA DE GIG\u00dcELA"); 
 		municipalities.put("16161","PIQUERAS DEL CASTILLO"); 
 		municipalities.put("16162","PORTALRUBIO DE GUADAMEJUD"); 
 		municipalities.put("16163","PORTILLA"); 
@@ -7157,7 +7157,7 @@ public class Municipalities {
 		municipalities.put("09007","AGUILAR DE BUREBA"); 
 		municipalities.put("09009","ALBILLOS"); 
 		municipalities.put("50040","BADULES"); 
-		municipalities.put("50041","BAGÜES"); 
+		municipalities.put("50041","BAG\u00dcES"); 
 		municipalities.put("50042","BALCONCHAN"); 
 		municipalities.put("50043","BARBOLES"); 
 		municipalities.put("50044","BARDALLUR"); 
@@ -7711,7 +7711,7 @@ public class Municipalities {
 		municipalities.put("26067","GALLINERO DE CAMEROS"); 
 		municipalities.put("26068","GIMILEO"); 
 		municipalities.put("26069","GRA" + String.valueOf("\u00D1") + "ON"); 
-		municipalities.put("38020","GÜIMAR"); 
+		municipalities.put("38020","G\u00dcIMAR"); 
 		municipalities.put("38021","HERMIGUA"); 
 		municipalities.put("38022","ICOD DE LOS VINOS"); 
 		municipalities.put("38023","SAN CRISTOBAL DE LA LAGUNA"); 
@@ -7899,7 +7899,7 @@ public class Municipalities {
 		municipalities.put("50184","MURERO"); 
 		municipalities.put("50185","MURILLO DE GALLEGO"); 
 		municipalities.put("50186","NAVARDUN"); 
-		municipalities.put("50187","NIGÜELLA"); 
+		municipalities.put("50187","NIG\u00dcELLA"); 
 		municipalities.put("50188","NOMBREVILLA"); 
 		municipalities.put("50189","NONASPE"); 
 		municipalities.put("31001","ABAIGAR"); 
@@ -7943,7 +7943,7 @@ public class Municipalities {
 		municipalities.put("09166","HORMAZAS, LAS"); 
 		municipalities.put("09167","HORNILLOS DEL CAMINO"); 
 		municipalities.put("09168","HORRA, LA"); 
-		municipalities.put("09169","HORTIGÜELA"); 
+		municipalities.put("09169","HORTIG\u00dcELA"); 
 		municipalities.put("31020","ARAITZ"); 
 		municipalities.put("31021","ARANARACHE"); 
 		municipalities.put("31022","ARANTZA"); 
@@ -8079,7 +8079,7 @@ public class Municipalities {
 		municipalities.put("31083","ECHARRI"); 
 		municipalities.put("31084","ETXARRI-ARANATZ"); 
 		municipalities.put("31085","ETXAURI"); 
-		municipalities.put("31086","EGÜES"); 
+		municipalities.put("31086","EG\u00dcES"); 
 		municipalities.put("31087","ELGORRIAGA"); 
 		municipalities.put("31088","NOAIN, VALLE DE ELORZ"); 
 		municipalities.put("31089","ENERIZ"); 
@@ -8106,7 +8106,7 @@ public class Municipalities {
 		municipalities.put("43050","CREIXELL"); 
 		municipalities.put("43051","CUNIT"); 
 		municipalities.put("43052","XERTA"); 
-		municipalities.put("43053","DUESAIGÜES"); 
+		municipalities.put("43053","DUESAIG\u00dcES"); 
 		municipalities.put("43054","ESPLUGA DE FRANCOLI, L''"); 
 		municipalities.put("43055","FALSET"); 
 		municipalities.put("43056","FATARELLA, LA"); 

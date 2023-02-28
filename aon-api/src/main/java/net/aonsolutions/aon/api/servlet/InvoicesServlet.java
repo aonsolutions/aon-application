@@ -15,8 +15,10 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.json.JsonUtils;
+import com.esferalia.aon.occam.api.json.invoice.InvoiceJSON;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
@@ -38,6 +40,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
 
     public static final String INVOICES = "/";
     public static final String INVOICE = "/:id";
+    public static final String RAWDOC = "/rawdoc/:id";
     public static final String ACCEPT = "/accept";
 
     @Override
@@ -68,6 +71,7 @@ public class InvoicesServlet extends AonApiHttpServlet {
             Object object = new AonRouting(api)
                     .addRoute(INVOICES, InvoicesServlet::getInvoices)
                     .addRoute(INVOICE, InvoicesServlet::getInvoice)
+                    .addRoute(RAWDOC, InvoicesServlet::getRawdoc)
                     .apply();
 
             response(req, resp, object);
@@ -162,8 +166,18 @@ public class InvoicesServlet extends AonApiHttpServlet {
     }
 
     private static JSONObject getInvoice(AonApiData api) {
-        return new JSONObject();
+		JSONObject vars = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);
+		Integer invoiceId = vars.getInt(IJsonNames.ID);
+		Invoice invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
+		return InvoiceJSON.toJSON(invoice);
     }
+    
+    private static JSONObject getRawdoc(AonApiData api) {
+  		JSONObject vars = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);
+  		Integer invoiceId = vars.getInt(IJsonNames.ID);
+   		Rawdoc rawdoc = AON.getRawdocFull(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
+  		return new JSONObject(rawdoc.getJson());
+      }
 
     private static JSONObject saveInvoice(AonApiData api) {
         return InvoiceServlet.setInvoice(api);

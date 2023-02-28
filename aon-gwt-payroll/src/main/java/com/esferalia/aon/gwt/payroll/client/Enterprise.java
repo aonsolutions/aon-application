@@ -57,6 +57,9 @@ public abstract class Enterprise extends ResizeComposite {
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
+		String documentError();
+		String inputPadding();
+		String inputLBHeight();
 		String warningColor();
 		String warningTB();
 	}
@@ -194,7 +197,7 @@ public abstract class Enterprise extends ResizeComposite {
 		//PROVINCE
 		this.addressProvince.addItem("-");
 		for(int i=0; i<Province.values().length; i++)
-			this.addressProvince.addItem(Province.values()[i].getName(), Province.values()[i] + "");
+			this.addressProvince.addItem(Province.values()[i].getName(), AonStringUtils.leftPad(i + "", 2, '0'));
 		
 		//PAYSHEET MODEL
 		this.enterprisePaysheetModel.addItem("Est\u00E1ndar", "salary");
@@ -365,20 +368,33 @@ public abstract class Enterprise extends ResizeComposite {
 			showNationality();
 		
 			if(checkDocumentValidation()) {
-				documentStatus.removeStyleName(AON.CSS.aonIconValid());
-				documentStatus.addStyleName(AON.CSS.aonIconInvalid());
+				showDocumentError();
 				if(Boolean.TRUE.equals(fireMessage))
 					fireInfoMessage(infoMap);
 			}else {
-				documentStatus.removeStyleName(AON.CSS.aonIconInvalid());
-				documentStatus.addStyleName(AON.CSS.aonIconValid());
+				hideDocumentError();
 			}
 		}else {
-			documentStatus.removeStyleName(AON.CSS.aonIconValid());
-			documentStatus.addStyleName(AON.CSS.aonIconInvalid());
+			showDocumentError();
 			if(Boolean.TRUE.equals(fireMessage))
 				fireInfoMessage(infoMap);
 		}
+	}
+	
+	private void showDocumentError() {
+		documentStatus.removeStyleName(AON.CSS.aonIconValid());
+		documentStatus.addStyleName(AON.CSS.aonIconInvalid());
+		document.addStyleName(style.documentError());
+		document.setTitle("Documento no definido o formato err\u00F3neo");
+		documentStatus.setTitle("Documento no definido o formato err\u00F3neo");
+	}
+	
+	private void hideDocumentError() {
+		documentStatus.removeStyleName(AON.CSS.aonIconInvalid());
+		document.removeStyleName(style.documentError());
+		documentStatus.addStyleName(AON.CSS.aonIconValid());
+		document.setTitle("");
+		documentStatus.setTitle("");
 	}
 	
 	private String checkDocumentType() {
@@ -438,6 +454,8 @@ public abstract class Enterprise extends ResizeComposite {
 		else {
 			ListBox scopeListBox = new ListBox();
 			scopeListBox.setStyleName("aon-selectOneMenu");
+			scopeListBox.addStyleName(style.inputLBHeight());
+			scopeListBox.addStyleName(style.inputPadding());
 			scopeListBox.getElement().getStyle().setWidth(100, Unit.PCT);
 			
 			for(Entry<Integer, String> entry : enterprisecopes.entrySet())
@@ -496,8 +514,10 @@ public abstract class Enterprise extends ResizeComposite {
 		if(AonStringUtils.isNotBlank(paysheetSendType) && AonStringUtils.equals(paysheetSendType, "EMAIL")) {
 			enterprisePaysheetSendPanel.getElement().getStyle().clearDisplay();
 			enterprisePaysheetSendEmail.setValue(email);
+			enterprisePaysheetSendType.setWidth("115px");
 		}else {
 			enterprisePaysheetSendPanel.getElement().getStyle().setDisplay(Display.NONE);
+			enterprisePaysheetSendType.setWidth("100%");
 		}	
 	}
 	

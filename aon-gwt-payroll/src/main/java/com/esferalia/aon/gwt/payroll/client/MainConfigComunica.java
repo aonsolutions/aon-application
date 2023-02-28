@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.AgreementComunicaInfo;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceComunicaInfo;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
+import com.esferalia.aon.occam.api.model.payroll.Activity;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.CssResource;
@@ -87,8 +88,12 @@ public class MainConfigComunica extends MainEntryPoint{
 
 		@Override
 		protected void showPDF(String dataURI, boolean isLaboralLife) {
-			// TODO Auto-generated method stub
-			
+			// Nothing to do here
+		}
+
+		@Override
+		protected void onInsertActivity(Activity activity) {
+			// Nothing to do here
 		}
 		
 	}
