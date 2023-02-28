@@ -7562,6 +7562,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					lastDateYear);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
+		} catch (IOException e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 
