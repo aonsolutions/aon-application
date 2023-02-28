@@ -14,6 +14,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -108,6 +109,15 @@ public abstract class ServiAgreementDialog extends AonCustomDialog {
 		MultiWordSuggestOracle orclServiAgreement = (MultiWordSuggestOracle) serviAgreementsSB.getSuggestOracle();
 		orclServiAgreement.addAll(serviAgreementsDescriptionSuggest);
 		serviAgreementsSB.setAutoSelectEnabled(true);
+		serviAgreementsSB.getElement().setPropertyString("placeholder", "Escriba el nombre del convenio...");
+		
+		serviAgreementsSB.getValueBox().addKeyUpHandler(e -> {
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				serviAgreementsSB.setText("");
+				serviAgreementsSB.showSuggestionList();
+			} else if(e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
+				serviAgreementsSB.hideSuggestionList();
+		});
 		
 		serviAgreementsSB.addSelectionHandler(e -> {
 			String agreementSelected = serviAgreementsSB.getValue();
