@@ -244,6 +244,8 @@
 .aon_icon_lock { background-image: iconLock;}
 @url iconUnLock aonIconUnLock;
 .aon_icon_unlock { background-image: iconUnLock;}
+@url iconLockReset aonIconLockReset;
+.aon_icon_lock_reset { background-image: iconLockReset;}
 @url iconRenew aonIconRenew;
 .aon_icon_renew { background-image: iconRenew;}
 @url iconRenewWhite aonIconRenewWhite;
