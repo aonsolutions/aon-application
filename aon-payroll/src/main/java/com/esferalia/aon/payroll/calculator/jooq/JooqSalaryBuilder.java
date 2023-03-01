@@ -54,6 +54,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.IWrapTimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.Variables;
@@ -557,30 +558,8 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 			}
 	}
 
-	private void _addVariable(String name, ITimedVariable<?> variable) {
-
-		for (Period period : Period.sub(variable.getPeriod(), variables.getPeriods(name))) {
-
-			Object value = variable.getValue(period);
-			String expression = String.valueOf(value);
-
-			InsertSetStep<SalaryDataRecord> insertData = insertMoreData == null ? dslContext.insertInto(SALARY_DATA)
-					: insertMoreData.newRecord();
-
-			insertMoreData = insertData.set(SALARY_DATA.DOMAIN, this.domainId)
-					.set(SALARY_DATA.SALARY, this.salaryId)
-					.set(SALARY_DATA.NAME, name)
-					.set(SALARY_DATA.EXPRESSION, expression)
-					.set(SALARY_DATA.START_DATE, toSqlDate(period.getStart()))
-					.set(SALARY_DATA.END_DATE, toSqlDate(period.getEnd()));
-
-			variables.put(name, new TimedObject<Object>(value, period));
-		}
-
-	}
-
-	private void addVariable(String name, ITimedVariable<?> variable) {
-		variables.put(name, variable);
+	private void addVariable(String name, ITimedVariable<?> var) {
+	    variables.put(name, var instanceof IWrapTimedVariable ? ((IWrapTimedVariable<?>) var).getVariable() : var);
 	}
 	
 	private void insertVariables() {
