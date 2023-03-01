@@ -79,5 +79,11 @@ public class MODEL190 {
 			return getImpl().validateSalaries(ctx, mod190);
 		}
 	}
+	
+	public static Mod190 aeatPresentation(Occam occam, Mod190 mod, String aeatResponse) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getImpl().aeatPresentation(ctx, mod, aeatResponse);
+		}
+	}
 
 }

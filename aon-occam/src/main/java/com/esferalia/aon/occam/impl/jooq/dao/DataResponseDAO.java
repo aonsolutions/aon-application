@@ -322,13 +322,33 @@ public class DataResponseDAO {
 				pair.setLeft( DataResponseSource.MOD390 ).setRight(DataAttachSource.MOD390);
 			}
 			@Override public void visitM390HF() { /* nothing */ }
-			@Override public void visitM349() { /* nothing */ }
-			@Override public void visitM347() { /* nothing */ }
+			
+			@Override 
+			public void visitM349() { 
+				pair.setLeft( DataResponseSource.MOD349 ).setRight(DataAttachSource.MOD349); 
+			}
+			
+			@Override 
+			public void visitM347() { 
+				pair.setLeft( DataResponseSource.MOD347 ).setRight(DataAttachSource.MOD347); 
+			}
 			
 			@Override public void visitM200() { /* nothing */ }
-			@Override public void visitM193() { /* nothing */ }
-			@Override public void visitM184() { /* nothing */ }
-			@Override public void visitM180() { /* nothing */ }
+			
+			@Override 
+			public void visitM193() { 
+				pair.setLeft( DataResponseSource.MOD193 ).setRight(DataAttachSource.MOD193); 
+			}
+			
+			@Override 
+			public void visitM184() { 
+				pair.setLeft( DataResponseSource.MOD184 ).setRight(DataAttachSource.MOD184); 
+			}
+			
+			@Override 
+			public void visitM180() { 
+				pair.setLeft( DataResponseSource.MOD180 ).setRight(DataAttachSource.MOD180);
+			}
 			
 		});
 		return pair;

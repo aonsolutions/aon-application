@@ -69,5 +69,11 @@ public class MODEL349Impl implements IMODEL349 {
 		return ctx.getDslContext().transactionResult(
 				configuration -> Mod349DAO.duplicate(ctx, mod349));
 	}
+	
+	@Override
+	public Mod349 aeatPresentation(AONContext ctx, Mod349 mod, String aeatResponse) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod349DAO.aeatPresentation(ctx, mod, aeatResponse));
+	}
 
 }
