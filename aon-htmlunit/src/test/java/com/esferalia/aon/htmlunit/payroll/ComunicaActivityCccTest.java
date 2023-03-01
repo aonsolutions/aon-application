@@ -156,7 +156,7 @@ public class ComunicaActivityCccTest {
 		HtmlTable cccTable = (HtmlTable)getElementById("cccTable");
 		Assert.assertEquals(cccTable.getRowCount(), 2);
 		
-		getElementById("tgssMenu_1").click();
+		getElementById("tgssMenu_0").click();
 		wait4Id("employeesWorking");
 		
 		wait4Id("pdfNotLoaded");
@@ -178,7 +178,7 @@ public class ComunicaActivityCccTest {
 		HtmlTable cccTable = (HtmlTable)getElementById("cccTable");
 		Assert.assertEquals(cccTable.getRowCount(), 2);
 		
-		getElementById("tgssMenu_1").click();
+		getElementById("tgssMenu_0").click();
 		wait4Id("employeePrevMov");
 		
 		wait4Id("pdfNotLoaded");
@@ -200,7 +200,7 @@ public class ComunicaActivityCccTest {
 		HtmlTable cccTable = (HtmlTable)getElementById("cccTable");
 		Assert.assertEquals(cccTable.getRowCount(), 2);
 		
-		getElementById("tgssMenu_1").click();
+		getElementById("tgssMenu_0").click();
 		wait4Id("idc");
 		
 		wait4Id("pdfNotLoaded");
@@ -222,7 +222,7 @@ public class ComunicaActivityCccTest {
 		HtmlTable cccTable = (HtmlTable)getElementById("cccTable");
 		Assert.assertEquals(cccTable.getRowCount(), 2);
 		
-		getElementById("tgssMenu_1").click();
+		getElementById("tgssMenu_0").click();
 		wait4Id("laboralLife");
 		
 		wait4Id("pdfNotLoaded");
