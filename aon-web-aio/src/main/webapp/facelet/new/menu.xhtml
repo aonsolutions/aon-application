@@ -15,22 +15,29 @@
 			onmouseover="javascript:showAonPopup();"
 			/>			
 					
-		<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-			<aon:commandLink id="menu_garage"
-				value="#{bundle.aon_module_garage}"
-				action="menu_garage" immediate="true"
-				styleClass="aon-top-menu-item" />
-	
-			<aon:commandLink id="menu_academy"
-				value="#{bundle.aon_module_academy}"
-				action="menu_academy" immediate="true"
-				styleClass="aon-top-menu-item" />
+		<aon:commandLink id="menu_garage"
+			value="#{bundle.aon_module_garage}"
+			action="menu_garage" immediate="true"
+			styleClass="aon-top-menu-item" />
 
-			<aon:commandLink id="menu_hotel"
-				value="#{bundle.aon_module_hotel}"
-				action="menu_hotel" immediate="true"
-				styleClass="aon-top-menu-item" />
-		</aon:if>
+		<aon:commandLink id="menu_academy"
+			value="#{bundle.aon_module_academy}"
+			action="menu_academy" immediate="true"
+			styleClass="aon-top-menu-item" />
+
+		<aon:commandLink id="menu_hotel"
+			value="#{bundle.aon_module_hotel}"
+			action="menu_hotel" immediate="true"
+			styleClass="aon-top-menu-item" />
+			
+		<aon:commandLink id="menu_pos"
+			value="#{bundle.aon_module_pos}"
+			action="menu_pos" immediate="true"
+			styleClass="aon-top-menu-item" 
+			onclick="javascript:disableMenuPopup('posMenuPopup', this)"
+			onmouseout="javascript:hideMenuPopup('posMenuPopup')"
+			onmouseover="javascript:showMenuPopup('posMenuPopup', this)"
+		/>
 
 		<aon:if test="#{domainSwitcher.domainManagementAvailable and (aonRole.sysAdmin or !domainSwitcher.disableDomainManagement)}">
 			<aon:if test="#{aonRole.admin}">
@@ -45,58 +52,54 @@
 			</aon:if>
 		</aon:if>
 
-		<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
-			<aon:if test="#{aonRole.commercialOperator}">
-				<aon:commandLink id="menu_crm"
-					value="#{bundle.aon_module_crm}"
-					action="menu_crm" immediate="true"
-					styleClass="aon-top-menu-item" 
-					onclick="javascript:disableMenuPopup('crm', this)"
-					onmouseout="javascript:hideMenuPopup('crm')"
-					onmouseover="javascript:showMenuPopup('crm', this);"
-					/>
-			</aon:if>
-
-			<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator or aonRole.financeOperator}">
-				<aon:commandLink id="menu_management"
-					value="#{bundle.aon_erp}" 
-					styleClass="aon-top-menu-item"
-					action="menu_management" immediate="true"
-					onclick="javascript:disableMenuPopup('myAon', this)"
-					onmouseout="javascript:hideMenuPopup('myAon')"
-					onmouseover="javascript:showMenuPopup('myAon', this)"
-					/>
-			</aon:if>
-			
-			<aon:if test="#{aonRole.warehouseOperator}">
-				<aon:commandLink id="menu_warehouse"
-					styleClass="aon-top-menu-item" 
-					value="#{bundle.aon_module_warehouse}"
-					action="menu_warehouse" immediate="true"
-					onclick="javascript:disableMenuPopup('warehouse', this)"
-					onmouseout="javascript:hideMenuPopup('warehouse')"
-					onmouseover="javascript:showMenuPopup('warehouse', this)"
-					/>
-			</aon:if>
-
-			<aon:commandLink id="menu_pos"
-				value="#{bundle.aon_module_pos}"
-				action="menu_pos" immediate="true"
+		<aon:if test="#{aonRole.commercialOperator}">
+			<aon:commandLink id="menu_crm"
+				value="#{bundle.aon_module_commercial}"
+				action="menu_crm" immediate="true"
 				styleClass="aon-top-menu-item" 
-				onclick="javascript:disableMenuPopup('posMenuPopup', this)"
-				onmouseout="javascript:hideMenuPopup('posMenuPopup')"
-				onmouseover="javascript:showMenuPopup('posMenuPopup', this)"
-			/>
-
-			<aon:commandLink id="menu_groupware"
-				styleClass="aon-top-menu-item" 
-				value="#{bundle.aon_module_groupware}"
-				action="menu_groupware" immediate="true"
-				onclick="javascript:disableMenuPopup('groupware', this)"
-				onmouseout="javascript:hideMenuPopup('groupware')"
-				onmouseover="javascript:showMenuPopup('groupware', this)"
+				onclick="javascript:disableMenuPopup('commercial', this)"
+				onmouseout="javascript:hideMenuPopup('commercial')"
+				onmouseover="javascript:showMenuPopup('commercial', this);"
 				/>
 		</aon:if>
+		
+		<aon:commandLink id="menu_management"
+			value="#{bundle.aon_module_management}" 
+			styleClass="aon-top-menu-item"
+			action="menu_management" immediate="true"
+			onclick="javascript:disableMenuPopup('management', this)"
+			onmouseout="javascript:hideMenuPopup('management')"
+			onmouseover="javascript:showMenuPopup('management', this)"
+		/>
+			
+		<aon:commandLink id="menu_treasury"
+			value="#{bundle.aon_module_finance}" 
+			styleClass="aon-top-menu-item"
+			action="menu_treasury" immediate="true"
+			onclick="javascript:disableMenuPopup('treasury', this)"
+			onmouseout="javascript:hideMenuPopup('treasury')"
+			onmouseover="javascript:showMenuPopup('treasury', this)"
+		/>
+			
+		<aon:if test="#{aonRole.warehouseOperator}">
+			<aon:commandLink id="menu_warehouse"
+				styleClass="aon-top-menu-item" 
+				value="#{bundle.aon_module_warehouse}"
+				action="menu_warehouse" immediate="true"
+				onclick="javascript:disableMenuPopup('warehouse', this)"
+				onmouseout="javascript:hideMenuPopup('warehouse')"
+				onmouseover="javascript:showMenuPopup('warehouse', this)"
+			/>
+		</aon:if>
+
+		<aon:commandLink id="menu_groupware"
+			styleClass="aon-top-menu-item" 
+			value="#{bundle.aon_module_groupware}"
+			action="menu_groupware" immediate="true"
+			onclick="javascript:disableMenuPopup('groupware', this)"
+			onmouseout="javascript:hideMenuPopup('groupware')"
+			onmouseover="javascript:showMenuPopup('groupware', this)"
+			/>
 			
 		<aon:if test="#{aonRole.accountingOperator}">
 			<aon:commandLink id="menu_accounting"
@@ -120,10 +123,10 @@
 			/>
 		</aon:if>
 		
-		<aon:commandLink id="menu_contrata"
+		<!-- <aon:commandLink id="menu_contrata"
 			value="#{bundle.aon_module_contrata}"
 			action="menu_contrata" immediate="true"
-			styleClass="aon-top-menu-item" />
+			styleClass="aon-top-menu-item" /> -->
 		
 		<aon:if test="#{aonRole.payroll}">
 			<aon:commandLink 
@@ -136,12 +139,12 @@
 				onmouseover="javascript:showMenuPopup('payroll', this)"
 			/>
 			
-			<aon:if test="#{!domainSwitcher.domainManagementAvailable}">				
+<!-- 			<aon:if test="#{!domainSwitcher.domainManagementAvailable}">				
 				<aon:commandLink id="menu_payroll_portal"
 					value="#{bundle.aon_payroll_portal}"
 					action="gwt_enterprise_site" immediate="true"
 					styleClass="aon-top-menu-item" />
-			</aon:if>
+			</aon:if> -->
 		</aon:if>
 		
 		<!--
@@ -152,7 +155,7 @@
 			styleClass="aon-top-menu-item" />
 		-->
 		
-		<aon:commandLink id="menu_aonOne"
+		<!-- <aon:commandLink id="menu_aonOne"
 			value="#{bundle.admin_domain_aonSMB}"
 			action="menu_aonOne" immediate="true"
 			styleClass="aon-top-menu-item" />
@@ -170,11 +173,24 @@
 			value="#{bundle.aon_module_management}"
 			action="menu_finance_portal" immediate="true"
 			styleClass="aon-top-menu-item" />
+ -->
+ 		
+					
 
-		<aon:commandLink id="menu_eCommerce"
+		
+		<aon:commandLink id="menu_marketing"
+			value="#{bundle.aon_module_marketing}"
+			action="menu_marketing" immediate="true"
+			styleClass="aon-top-menu-item" 
+			onclick="javascript:disableMenuPopup('marketing', this)"
+			onmouseout="javascript:hideMenuPopup('marketing')"
+			onmouseover="javascript:showMenuPopup('marketing', this);"
+		/>
+		
+		<!-- <aon:commandLink id="menu_eCommerce"
 			value="#{bundle.aon_module_eCommerce}"
 			action="menu_eCommerce" immediate="true"
-			styleClass="aon-top-menu-item" />
+			styleClass="aon-top-menu-item" /> -->
 		
 		<aon:if test="#{!((domainSwitcher.type == 'ADMIN') and !aonRole.admin)}">		
 			<aon:commandLink id="menu_configuration"
@@ -379,19 +395,21 @@
 			<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 				<aon:if test="#{aonRole.commercialOperator}">
 					<ui:include src="/facelet/new/menu/crm.xhtml" />
+					<ui:include src="/facelet/new/menu/marketing.xhtml" />
 				</aon:if>
 				<aon:if test="#{aonRole.warehouseOperator}">
 					<ui:include src="/facelet/new/menu/warehouse.xhtml" />
 				</aon:if>
 				<aon:if test="#{aonRole.saleOperator or aonRole.purchaseOperator or aonRole.financeOperator}">
-					<ui:include src="/facelet/new/menu/myAon.xhtml" />
+<!-- 					<ui:include src="/facelet/new/menu/myAon.xhtml" /> -->
 					<ui:include src="/facelet/new/menu/management.xhtml" />
+					<ui:include src="/facelet/new/menu/treasury.xhtml" />
 				</aon:if>
 				<ui:include src="/facelet/new/menu/pos.xhtml" />
 				<ui:include src="/facelet/new/menu/groupware.xhtml" />
 			</aon:if>
 
-			<ui:include src="/facelet/new/menu/aonFinance.xhtml" />
+<!-- 			<ui:include src="/facelet/new/menu/aonFinance.xhtml" /> -->
 
 		</aon:div>
 		

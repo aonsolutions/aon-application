@@ -27,25 +27,25 @@
 								<aon:outputText value="#{bundle.commercial_agenda_module}" />
 							</f:facet>							
 							<aon:div styleClass="aon-direct-access-list">
+							
+								<!-- Operación Comercial -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="commercialOperation"
 										action="projectCommercial_search"
 										actionListener="#{projectCommercial.onEditSearch}"
 										value="#{bundle.commercial_operation_module}" />
-								</aon:div>															
+								</aon:div>				
+														
+								<!-- Agenda Comercial -->					
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="commercialTracking"
 										action="commercialTracking_search"
 										actionListener="#{commercialTracking.onEditSearch}"
 										value="#{bundle.commercial_tracking_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="seller-commercial" 
-										action="seller_search-commercial" 
-										actionListener="#{seller.onEditSearch}"
-										value="#{bundle.seller_module}" />
-								</aon:div>
+								
 								<aon:if test="#{aonRole.config}">
+									<!-- Tipos de Actividades Comerciales -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commercialActivity"
 											action="commercialActivity"
@@ -53,43 +53,11 @@
 											value="#{bundle.commercial_activity_module}" />
 									</aon:div>
 								</aon:if>
-								<aon:div style="height: 26px;">
+								<aon:if test="#{!aonRole.config}">
+									<aon:div style="height: 26px;">
 						
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-						
-						<aon:panelGrid id="group_marketing_news"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-report aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.marketing_news_module}" />
-							</f:facet>							
-							<aon:div styleClass="aon-direct-access-list">	
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="news_messages"
-										action="news_list-messages"
-										actionListener="#{news.onSetTypeMessage}"
-										value="#{bundle.aon_messages}">
-										<aon:actionListener method="#{news.onEditSearch}" />
-										<aon:actionListener method="#{news.onSearch}" />
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="news_news"
-										action="news_list-news"
-										actionListener="#{news.onSetTypeNews}"
-										value="#{bundle.marketing_newss}">
-										<aon:actionListener method="#{news.onEditSearch}" />
-										<aon:actionListener method="#{news.onSearch}" />
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="newsletter"
-										action="newsletter_list"
-										actionListener="#{newsletter.onSearch}"
-										value="#{bundle.marketing_newsletter_module}" />
-								</aon:div>
+									</aon:div>
+								</aon:if>
 							</aon:div>
 						</aon:panelGrid>
 
@@ -101,6 +69,8 @@
 									<aon:outputText value="#{bundle.seller_stat_control}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
+
+									<!-- CM de Agentes Comerciales -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sellerControl2"
 											action="commercial_search_view-seller"
@@ -109,6 +79,8 @@
 											<aon:actionListener method="#{commercialStat.onSellerType}" />
 										</aon:commandLink>
 									</aon:div>
+
+									<!-- CM de Clientes Potenciales -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sellerControl3"
 											action="commercial_search_view-target"
@@ -117,6 +89,8 @@
 											<aon:actionListener method="#{commercialStat.onTargetType}" />
 										</aon:commandLink>
 									</aon:div>
+
+									<!-- CM de Productos -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sellerControl4"
 											action="commercial_search_view-product"
@@ -125,6 +99,8 @@
 											<aon:actionListener method="#{commercialStat.onProductType}" />
 										</aon:commandLink>
 									</aon:div>
+									
+									<!-- CM de Categorias -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sellerControl5"
 											action="commercial_search_view-category"
@@ -146,67 +122,31 @@
 								<aon:outputText value="#{bundle.aon_invoice_offers}"/>
 							</f:facet>						
 							<aon:div styleClass="aon-direct-access-list">
+							
+								<!-- Presupuestos de Ventas -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="offer" 
 										action="offer_search"
 										actionListener="#{offer.onEditSearch}"
 										value="#{bundle.commercial_offer_module}" />
 								</aon:div>
+								
+								<!-- Pedidos de Venta -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="sales-commercial" 
 										action="sales_search-commercial"
 										actionListener="#{sales.onEditSearch}"
 										value="#{bundle.sales_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list">							
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="target-commercial" 
-											action="target_search-commercial" 
-											actionListener="#{target.onEditSearch}"
-											value="#{bundle.commercial_target_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="targetDeduplication-commercial" 
-											action="targetDeduplication_search-commercial" 
-											actionListener="#{targetDeduplication.onEditSearch}"
-											value="#{bundle.commercial_target_deduplication_module}">
-										</aon:commandLink>
-									</aon:div>									
-								</aon:div>	
-								<aon:div style="height: 26px;">
-						
-								</aon:div>							
+
+								<!-- Condiciones Comerciales -->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="commercialTerm"
+										action="commercialTerm"
+										actionListener="#{commercialTerm.onSearch}" 
+										value="#{bundle.commercial_term_module}" />
+								</aon:div>						
 							</aon:div>
-						</aon:panelGrid>
-						
-						<aon:panelGrid id="group_marketing_communications"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-marketing">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.marketing_communications}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">	
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="marketingCampaign"
-										action="marketingCampaign_list"
-										actionListener="#{marketingCampaign.onSearch}"
-										value="#{bundle.marketing_campaign_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="communicationCenter"
-										action="communicationCenter"
-										actionListener="#{communicationCenter.onInit}"
-										value="#{bundle.commercial_communication_center_module}" />										
-								</aon:div>
-								<aon:if test="#{aonRole.config}">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="surveyResponse"
-											action="surveyResponse_search"
-											actionListener="#{surveyResponse.onEditSearch}"
-											value="#{bundle.marketing_survey_response_module}" />
-									</aon:div>
-								</aon:if>
-							</aon:div>								
 						</aon:panelGrid>
 
 						<aon:if test="#{aonRole.statisticsOperator}">
@@ -217,6 +157,8 @@
 									<aon:outputText value="#{bundle.aon_reports}" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">
+								
+									<!-- Presupuestos por categoría y Productos -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statCategory"
 											action="commercial_category_stat_search"
@@ -225,6 +167,8 @@
 											<aon:actionListener method="#{commercialStat.onCategoryType}" />
 										</aon:commandLink>
 									</aon:div>
+								
+									<!-- Presupuestos por Zona -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statZone"
 											action="commercial_geozone_stat_search"
@@ -233,6 +177,8 @@
 											<aon:actionListener method="#{commercialStat.onGeozoneType}" />
 										</aon:commandLink>
 									</aon:div>
+									
+									<!-- Presupuestos por Agente Comercial -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statSeller"
 											action="commercial_seller_stat_search"
@@ -241,6 +187,8 @@
 											<aon:actionListener method="#{commercialStat.onSellerType}" />
 										</aon:commandLink>
 									</aon:div>
+									
+									<!-- Presupuestos por Cliente Potencial -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statTarget"
 											action="commercial_target_stat_search"
@@ -249,6 +197,8 @@
 											<aon:actionListener method="#{commercialStat.onTargetType}" />
 										</aon:commandLink>
 									</aon:div>
+									
+									<!-- Presupuestos por Producto -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="statProduct"
 											action="commercial_product_stat_search"
@@ -264,79 +214,41 @@
 					</aon:panelGroup>
 
 					<aon:panelGroup>
-						<aon:if test="#{aonRole.config}">
-							<aon:panelGrid id="group_commercial_templates"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-direct-access-panel aon-icon-general">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_templates}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="commercialTerm"
-											action="commercialTerm"
-											actionListener="#{commercialTerm.onSearch}" 
-											value="#{bundle.commercial_term_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="htmlTemplate" 
-											action="htmlTemplate_list"
-											actionListener="#{htmlTemplate.onEditSearch}"
-											value="#{bundle.marketing_html_template_module}" />
-									</aon:div>															
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="marketingTemplate-commercial"
-											action="marketingTemplate_list-commercial"
-											actionListener="#{marketingTemplate.onSearch}" 
-											value="#{bundle.marketing_template_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">																										
-										<aon:commandLink id="images-commercial" 
-											action="#{companyImages.initialAction}" 
-											actionListener="#{companyImages.onEditSearch}"
-											value="#{bundle.company_images_module}">
-											<aon:actionListener method="#{companyImages.onSearch}" />
-										</aon:commandLink>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="mailProcess" action="mailProcess_form"
-											actionListener="#{mailProcess.onInit}"
-											value="#{bundle.webmail_mailAccount_process}" />
-									</aon:div>
-								</aon:div>							
-							</aon:panelGrid>
-						</aon:if>
+						<aon:panelGrid id="group_commercial_registry"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-general">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_masters}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
 
-						<aon:if test="#{aonRole.config}">
-							<aon:panelGrid id="group_commercial_survey"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-direct-access-panel aon-icon-task">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.marketing_survey_module}" />
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="question-commercial"
-											action="question_list-commercial"
-											actionListener="#{question.onSearch}"
-											value="#{bundle.registry_question_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="surveyResponse-commercial"
-											action="surveyResponse_list-commercial"
-											actionListener="#{surveyResponse.onSearch}"
-											value="#{bundle.marketing_survey_response_module}" />
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="survey-commercial"
-											action="survey_list-commercial"
-											actionListener="#{survey.onSearch}" 
-											value="#{bundle.marketing_survey_module}" />
-									</aon:div>								
+								<!-- Agentes Comerciales -->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="seller-commercial" 
+										action="seller_search-commercial" 
+										actionListener="#{seller.onEditSearch}"
+										value="#{bundle.seller_module}" />
 								</aon:div>
-							</aon:panelGrid>
-						</aon:if>
+								
+								<!-- Clientes Potenciales -->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="target-commercial" 
+										action="target_search-commercial" 
+										actionListener="#{target.onEditSearch}"
+										value="#{bundle.commercial_target_module}" />
+								</aon:div>
 
+								<!-- Deduplicación de Clientes Potenciales -->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="targetDeduplication-commercial" 
+										action="targetDeduplication_search-commercial" 
+										actionListener="#{targetDeduplication.onEditSearch}"
+										value="#{bundle.commercial_target_deduplication_module}">
+									</aon:commandLink>
+								</aon:div>		
+							</aon:div>							
+						</aon:panelGrid>
+						
 						<aon:if test="#{aonRole.admin}">
 							<aon:panelGrid id="group_agent_comisiones"
 								styleClass="aon-width-all" columnClasses="aon-padding"
@@ -345,34 +257,41 @@
 									<aon:outputText value="comisiones" />
 								</f:facet>
 								<aon:div styleClass="aon-direct-access-list">		
+									
+									<!-- Comisiones GWT -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_commercial-commission-calculate"
 											action="gwt_commercial_commission_calculate"
-											title="Comisiones">
-											<aon:outputText
-												styleClass="aon-fiscal-link-label aon-icon-new-text"
-												style="margin-left: 5px; padding-left: 20px;" 
-												value="Comisiones" />
+											title="Comisiones"
+											value="Comisiones">
 										</aon:commandLink>
 									</aon:div>			
+
+									<!-- Cálculo de Comisiones -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commercial-commision-calculation"
 											action="commissionCalculation"
 											actionListener="#{commissionCalculation.onInitialize}" 
 											value="#{bundle.commercial_commission_calculation_module}" />
 									</aon:div>
+									
+									<!-- Control de Comisiones Calculadas -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="offer-detail-commision" 
 											action="offerDetailCommission_search"
 											actionListener="#{offerDetailCommission.onEditSearch}"
 											value="#{bundle.commercial_commission_control_module}" />
 									</aon:div>
+									
+									<!-- Tipos de Comisión -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commission-type" 
 											action="commissionType_list"
 											actionListener="#{commissionType.onSearch}"
 											value="#{bundle.commercial_commission_type_module}" />
-									</aon:div>									
+									</aon:div>				
+									
+									<!-- Definición de tramos de comisiones -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="commission" 
 											action="commission_search"
@@ -381,7 +300,7 @@
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
-						</aon:if>								
+						</aon:if>							
 					</aon:panelGroup>					
 
 				</h:panelGrid>
