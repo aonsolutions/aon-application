@@ -61,6 +61,7 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.util.AonDateUtils;
 
 /**
  * @author rtrepiana
@@ -320,7 +321,11 @@ public class SQLPartialTimeTestCase extends AbstractSQLTestCase {
 		Date endDate = contract.getEndDate();
 		Date issueDate = endDate;
 		
-		int workedDays = Math.min(30,get(endDate, Calendar.DAY_OF_MONTH));
+		int endDateOfMonth = get(endDate, Calendar.DAY_OF_MONTH );
+		int lastdayOfMonth = AonDateUtils.getMax(getToday(), Calendar.DAY_OF_MONTH);
+		int workedDays = endDateOfMonth == lastdayOfMonth ? 30 : Math.min(30, endDateOfMonth );
+
+		//int workedDays = Math.min(30,get(endDate, Calendar.DAY_OF_MONTH));
 		
 		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
 				connection, startDate, endDate, issueDate, contract);

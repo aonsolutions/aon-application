@@ -216,17 +216,25 @@ public class InvoiceAutoComplete {
 		if(inv.getRegistry() == null && inv.getRegistryData() != null) {
 			if(inv.getRegistryData().getId() == null && !AonStringUtils.isBlank(inv.getRegistryData().getDocument())) {
 				inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()));
+				
 				if(InvoiceType.SALES.equals(inv.getType())) {
 					Customer c = CustomerDAO.getStream(ctx.getContext(), f -> 
 							f.getDomainProperty().eq(inv.getDomain())
 							.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument()))).findFirst().orElse(new Customer());
 					if(c.getId() != null) {
 						inv.setRegistry(c.getId());
+						inv.setRegistryData(c);
 					} else {
+						Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain())
+								.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument())));
+						
 						c = CustomerDAO.save(ctx.getContext(), new Customer()
-							.copy(inv.getRegistryData()).setScope(inv.getScope()));
+							.copy(inv.getRegistryData()
+								.setId(registry.getId()))
+								.setScope(inv.getScope()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
+							inv.setRegistryData(c);
 							if(!inv.getAddress().isEmpty())
 								RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
 									.setId(null)
@@ -240,11 +248,18 @@ public class InvoiceAutoComplete {
 					.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument()))).findFirst().orElse(new Supplier());
 					if(s.getId() != null) {
 						inv.setRegistry(s.getId());
+						inv.setRegistryData(s);
 					} else {
+						Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain())
+								.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument())));
+						
 						s = SupplierDAO.save(ctx.getContext(), new Supplier()
-							.copy(inv.getRegistryData()).setScope(inv.getScope()));
+							.copy(inv.getRegistryData())
+								.setId(registry.getId())
+								.setScope(inv.getScope()));
 						if(s.getId() != null) {
 							inv.setRegistry(s.getId());
+							inv.setRegistryData(s);
 							if ( !inv.getAddress().isEmpty() ) {
 								RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
 										.setId(null)
@@ -260,11 +275,18 @@ public class InvoiceAutoComplete {
 						.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument()))).findFirst().orElse(new Creditor());
 					if(c.getId() != null) {
 						inv.setRegistry(c.getId());
+						inv.setRegistryData(c);
 					} else {
+						Registry registry = RegistryDAO.get(ctx.getContext(), f -> f.getDomainProperty().eq(inv.getDomain())
+								.and(f.getDocumentProperty().eq(inv.getRegistryData().getDocument())));
+						
 						c = CreditorDAO.save(ctx.getContext(), new Creditor()
-							.copy(inv.getRegistryData()).setScope(inv.getScope()));
+							.copy(inv.getRegistryData())
+								.setId(registry.getId())
+								.setScope(inv.getScope()));
 						if(c.getId() != null) {
 							inv.setRegistry(c.getId());
+							inv.setRegistryData(c);
 							if(!inv.getAddress().isEmpty())
 								RegistryAddressDAO.save(ctx.getContext(), inv.getAddress()
 									.setId(null)
@@ -293,21 +315,23 @@ public class InvoiceAutoComplete {
 			}	
 		}
 	
+		Integer registryId = inv.getRegistryData().getId() != null
+				? inv.getRegistryData().getId() : inv.getRegistry();
 		if(InvoiceType.SALES.equals(inv.getType())) {
-			Customer customer = CustomerDAO.get(ctx.getContext(), inv.getRegistryData().getId());
+			Customer customer = CustomerDAO.get(ctx.getContext(), registryId);
 			if(customer.isEmpty()) {
 				CustomerDAO.save(ctx.getContext(), new Customer()
 					.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
 			}
 		} else if(InvoiceType.PURCHASE.equals(inv.getType())) {
-			Supplier supplier = SupplierDAO.get(ctx.getContext(), inv.getRegistryData().getId());
+			Supplier supplier = SupplierDAO.get(ctx.getContext(), registryId);
 			if(supplier.isEmpty()) {
 				SupplierDAO.save(ctx.getContext(), new Supplier()
 					.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));
 			}
 		} else if(InvoiceType.EXPENSES.equals(inv.getType()) 
 				|| InvoiceType.UNDEDUCTIBLE.equals(inv.getType())) {
-			Creditor creditor = CreditorDAO.get(ctx.getContext(), inv.getRegistryData().getId());
+			Creditor creditor = CreditorDAO.get(ctx.getContext(), registryId);
 			if(creditor.isEmpty()) {
 				CreditorDAO.save(ctx.getContext(), new Creditor()
 					.copy(inv.getRegistryData().setDomain(new Domain().setId(inv.getDomain()))).setScope(inv.getScope()));

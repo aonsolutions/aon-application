@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
@@ -148,6 +149,7 @@ public class ActivityDialog extends AonCustomDialog {
 					initSuggestBox();
 					activity.cccWidget.setDomain(activityDialogObject.getDomain());
 					activity.hideActivityColumn();
+					showDialog();
 				},
 				f -> {}
 		);	
@@ -208,6 +210,14 @@ public class ActivityDialog extends AonCustomDialog {
 		addCCCBtn.ensureDebugId("addCCCBtn");
 		addCCCBtn.addClickHandler(e -> activity.onAddNewCCC());
 		toolbar.add(addCCCBtn);
+	}
+	
+	public void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
 	}
 
 }
