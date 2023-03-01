@@ -20,11 +20,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.config.InsertTreasuryAndMarketingModule;
-import net.aonsolutions.db.up2date.payroll.Embargar4Many;
-import net.aonsolutions.db.up2date.payroll.EmbargoDescriptionUpdate;
 import net.aonsolutions.db.up2date.security.UdpatePacksDomainApp;
 import net.aonsolutions.db.up2date.security.UdpatePortalConectaUsers;
-import net.aonsolutions.db.up2date.tgss.MEITrainingRemoveUndo;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 
 public class Up2Date {
@@ -312,12 +309,11 @@ public class Up2Date {
 	    	//UnemploymentPercentageFix.UNEMPLOYMENTPERCENTAGEFIX,
 	    	//MEITrainingRemove.MEITRAININGREMOVE,
 	    	//MEIPECUpdateUndo.MEIPECUPDATEUNDO,
-	    	MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
-	   
+	    	//MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
 	    	//Embargar4Many.BIEMBARGAR4MANY,
 	    	//FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
 	    	//OcupationITIMSFix.OCUPATIONITIMSFIX,
-	    	Embargar4Many.BIEMBARGAR4MANY,
+	    	//Embargar4Many.BIEMBARGAR4MANY,
 	    	//BasesMin2023Update.BASESMIN2023UPDATE,
 	    	//AlterAlcatrazFinanceTracking.ALTER_ALCATRAZ_FINANCE_TRACKING,
 	    	//SMI2023Update.SMI20223UPDATE,
@@ -329,8 +325,11 @@ public class Up2Date {
 	    	UdpatePortalConectaUsers.UPDATE_PORTAL_CONECTA_USERS,
 	    	UdpatePacksDomainApp.UPDATE_PACKS_DOMAIN_APP,
 	    	InsertTreasuryAndMarketingModule.INSERT_TREASURY_AND_MARKETING_MODULE,
-	    	EmbargoDescriptionUpdate.EMBARGODESCRIPTIONUPDATE,	    	
+	    	//EmbargoDescriptionUpdate.EMBARGODESCRIPTIONUPDATE,	    	
+	    	//AgreementEmptyTrash.AGREEMENTEMPTYTRASH,
+
 	    	//Important, not remove
+
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
     		
     };
