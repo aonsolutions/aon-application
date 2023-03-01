@@ -15,11 +15,9 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum Module implements IResourceable {
 
-	@Deprecated
 	MARKETING( "marketing" ),
 	CRM( "crm" ),
 	MANAGEMENT( "management" ),
-	@Deprecated
 	TREASURY( "treasury" ),
 	WAREHOUSE( "warehouse" ),
 	GROUPWARE( "groupware" ),

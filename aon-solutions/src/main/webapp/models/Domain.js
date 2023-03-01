@@ -186,4 +186,8 @@ export class Domain {
     isParent() {
         return this.parentId === undefined && this.isConsultancy();
     }
+
+    isChild() {
+        return this.getParentId() != undefined;
+    }
 } 

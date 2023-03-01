@@ -1539,6 +1539,7 @@ public class SecurityDAO {
 	
 	public static DomainUserRoles getDomainUserRoles(AONContext ctx, Integer userId) {
 		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
+		Domain parentDomain = DomainDAO.getDomain(ctx, domain.getParentId());
 		
 		User user = userId != null ? UserDAO.get(ctx, f -> f.getIdProperty().eq(userId)) : new User();
 		user.setRoles(getUserRoles(ctx, userId));
@@ -1566,7 +1567,11 @@ public class SecurityDAO {
 
 		return new DomainUserRoles()
 				.setOldDomainModules(getDomainModules(ctx).collect(Collectors.toCollection(LinkedList::new)))
+				.setOldParentDomainModules(domain.getParentId() != null
+					? getDomainModules(ctx, domain.getParentId()).collect(Collectors.toCollection(LinkedList::new))
+					: new LinkedList<>())
 				.setDomain(domain)
+				.setParentDomain(parentDomain)
 				.setUser(user)
 				.setDomainApps(domainApps)
 				.setParentDomainApps(parentDomainApps)
