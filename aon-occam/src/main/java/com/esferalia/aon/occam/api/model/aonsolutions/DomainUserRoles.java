@@ -13,6 +13,7 @@ public class DomainUserRoles implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	Domain domain;
+	Domain parentDomain;
 	User user;
 	
 	private List<AonApp> domainApps;
@@ -33,6 +34,18 @@ public class DomainUserRoles implements Serializable {
 	
 	public DomainUserRoles setDomain(Domain domain) {
 		this.domain = domain;
+		return this;
+	}
+	
+	public Domain getParentDomain() {
+		if(parentDomain == null) {
+			parentDomain = new Domain();
+		}
+		return parentDomain;
+	}
+	
+	public DomainUserRoles setParentDomain(Domain parentDomain) {
+		this.parentDomain = parentDomain;
 		return this;
 	}
 	
@@ -112,30 +125,34 @@ public class DomainUserRoles implements Serializable {
 		return oldParentDomainModules;
 	}
 
-	public void setOldParentDomainModules(List<Module> oldParentDomainModules) {
+	public DomainUserRoles setOldParentDomainModules(List<Module> oldParentDomainModules) {
 		this.oldParentDomainModules = oldParentDomainModules;
+		return this;
 	}
 
 	public boolean isParentUser(){
 		return getDomain().getParentId() != null && getDomain().getParentId().equals(getUser().getDomain());
 	}
 	
-	public boolean hasTaskHolder() {	
-		return getUser().getTaskHolders().stream().filter(th -> th.getDomain().getId().equals(getDomain().getId())).count() > 0;
+	public boolean isEnterpriseChild() {
+		return getDomain().isChild() && !getParentDomain().isConsultancy();
 	}
 	
 	private boolean hasOldModule(Module module) {
-		return getOldDomainModules().contains(module) || getOldParentDomainModules().contains(module);
+		return getOldDomainModules().contains(module);
+	}
+	
+	private boolean hasParentOldModule(Module module) {
+		return getOldParentDomainModules().contains(module);
 	}
 	
 	public boolean hasApp(AonApp aonApp) {
-		return getDomainApps().contains(aonApp) || getParentDomainApps().contains(aonApp);
+		return getDomainApps().contains(aonApp);
 	}
 	
 	public boolean hasParentApp(AonApp aonApp) {
 		return getParentDomainApps().contains(aonApp);
 	}
-	
 	
 	private boolean hasRole(AonRole aonRole) {
 		return getDomainUserRoles().contains(aonRole) 
@@ -166,179 +183,279 @@ public class DomainUserRoles implements Serializable {
 	// ACCOUNTING - CONTABILIDAD
 	
 	public boolean hasAccounting() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_FISCAL_ACCOUNTING) || hasApp(AonApp.ACCOUNTING);
+		return hasApp(AonApp.ACCOUNTING) || hasOldModule(Module.ACCOUNTING);
+	}
+	
+	public boolean hasParentAccounting() {
+		return hasParentApp(AonApp.ACCOUNTING) || hasParentOldModule(Module.ACCOUNTING);
 	}
 	
 	public boolean isAccounting() {	
-		return hasAccounting() && (isAdmin() || hasRole(AonRole.ACCOUNTING));
+		return (hasAccounting() || ((isParentUser() || isEnterpriseChild()) && hasParentAccounting()))
+			&& (isAdmin() || hasRole(AonRole.ACCOUNTING) 
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING)
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING_MANAGER));
 	}
 	
 	public boolean isAccountingManager() {
-		return hasAccounting() && (isAdmin() || hasRole(AonRole.ACCOUNTING_MANAGER));
+		return (hasAccounting() || ((isParentUser() || isEnterpriseChild()) && hasParentAccounting()))
+			&& (isAdmin() || hasRole(AonRole.ACCOUNTING_MANAGER)
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ACCOUNTING_MANAGER));
 	}
 	
 	// FISCAL - FISCAL
 	
 	public boolean hasFiscal() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_FISCAL_ACCOUNTING) || hasApp(AonApp.FISCAL);
+		return hasApp(AonApp.FISCAL) || hasOldModule(Module.FISCAL);
+	}
+	
+	public boolean hasParentFiscal() {
+		return hasParentApp(AonApp.FISCAL) || hasParentOldModule(Module.FISCAL);
 	}
 	
 	public boolean isFiscal() {
-		return hasFiscal() && (isAdmin() || hasRole(AonRole.FISCAL));
+		return (hasFiscal() || ((isParentUser() || isEnterpriseChild()) && hasParentFiscal()))
+			&& (isAdmin() || hasRole(AonRole.FISCAL)
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.FISCAL));
 	}
 	
 	public boolean isFiscalManager() {
-		return hasFiscal() && (isAdmin() || hasRole(AonRole.FISCAL_MANAGER));
+		return (hasFiscal() || ((isParentUser() || isEnterpriseChild()) && hasParentFiscal()) )
+			&& (isAdmin() || hasRole(AonRole.FISCAL_MANAGER)
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.FISCAL));
 	}
 	
 	// PAYROLL - LABORAL
 	
 	public boolean hasPayroll() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PAYROLL) || hasApp(AonApp.PAYROLL) || hasOldModule(Module.PAYROLL) || hasOldModule(Module.PAYROLL_PORTAL);
+		return hasApp(AonApp.PAYROLL) 
+			|| hasOldModule(Module.PAYROLL) || hasOldModule(Module.PAYROLL_PORTAL);
+	}
+	
+	public boolean hasParentPayroll() {
+		return hasParentApp(AonApp.PAYROLL) || hasParentOldModule(Module.PAYROLL);
 	}
 	
 	public boolean isPayroll() {
-		return hasPayroll() && (isAdmin() || hasRole(AonRole.PAYROLL));
+		return (hasPayroll() || ((isParentUser() || isEnterpriseChild()) && hasParentPayroll()))
+			&& (isAdmin() || hasRole(AonRole.PAYROLL)
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.PAYROLL));
 	}
 	
 	public boolean isPayrollPortal() {
-		return hasPayroll() && (isAdmin() || hasRole(AonRole.PAYROLL_PORTAL));
+		return (hasPayroll() || ((isParentUser() || isEnterpriseChild()) && hasParentPayroll()))
+			&& (isAdmin() || hasRole(AonRole.PAYROLL_PORTAL)
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.PAYROLL));
 	}
 	
 	public boolean isPayrollManager() {
-		return hasPayroll() && (isAdmin() || hasRole(AonRole.PAYROLL_MANAGER));
+		return (hasPayroll() || ((isParentUser() || isEnterpriseChild()) && hasParentPayroll()))
+			&& (isAdmin() || hasRole(AonRole.PAYROLL_MANAGER)
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.PAYROLL));
 	}
 	
 	// DOCUMENTAL - DOCUMENTAL
 	
 	public boolean hasDocumental() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasApp(AonApp.DOCUMENTAL);
+		return hasApp(AonApp.DOCUMENTAL)
+				|| hasOldModule(Module.DOCUMENT) || hasOldModule(Module.DOCUMENT_PORTAL);
+	}
+	
+	public boolean hasParentDocumental() {
+		return hasParentApp(AonApp.DOCUMENTAL)
+				|| hasParentOldModule(Module.DOCUMENT) 
+				|| hasParentOldModule(Module.DOCUMENT_PORTAL);
 	}
 	
 	public boolean isDocumental() {
-		return hasDocumental() && (isAdmin() || hasRole(AonRole.DOCUMENTAL));
+		return (hasDocumental() || ((isParentUser() || isEnterpriseChild()) && hasParentDocumental()))
+			&& (isAdmin() || hasRole(AonRole.DOCUMENTAL)
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT)
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER));
 	}
 	
-	public boolean isOldDocumental() {
-		return (hasOldModule(Module.DOCUMENT) || hasOldModule(Module.DOCUMENT_PORTAL)) && 
-				(isAdmin() 
-					|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT)
-					|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER));
-	}
-
 	public boolean isDocumentalPortal() {
-		return (hasDocumental() && (isAdmin() || hasRole(AonRole.DOCUMENTAL_PORTAL))) 
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN)
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT);
+		return (hasDocumental() || ((isParentUser() || isEnterpriseChild()) && hasParentDocumental()))
+			&& (isAdmin() || hasRole(AonRole.DOCUMENTAL_PORTAL)
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT));
 	}
 	
 	public boolean isDocumentalManager() {
-		return ((hasOldModule(Module.DOCUMENT) || hasDocumental())
-			&& ( isAdmin() || hasRole(AonRole.DOCUMENTAL_MANAGER)))
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.ADMIN) 
-				||hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER);
+		return (hasDocumental() || ((isParentUser() || isEnterpriseChild()) && hasParentDocumental()))
+			&& ( isAdmin() || hasRole(AonRole.DOCUMENTAL_MANAGER) 
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.DOCUMENT_MANAGER));
+	}
+	
+	// COMMERCIAL
+	
+	public boolean hasCommercial() {
+		return hasApp(AonApp.COMMERCIAL) || hasOldModule(Module.CRM);
+	}
+	
+	public boolean hasParentCommercial() {
+		return hasParentApp(AonApp.COMMERCIAL) || hasParentOldModule(Module.CRM);
+	}
+	
+	public boolean isCommercial() {
+		return (hasCommercial() || ((isParentUser() || isEnterpriseChild()) && hasParentCommercial()))
+			&& (isAdmin() || hasRole(AonRole.COMMERCIAL) 
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.COMMERCIAL));
+	}
+	
+	// WAREHOUSE
+	
+	public boolean hasWarehouse() {
+		return hasApp(AonApp.WAREHOUSE) || hasOldModule(Module.WAREHOUSE);
+	}
+	
+	public boolean hasParentWarehouse() {
+		return hasParentApp(AonApp.WAREHOUSE) || hasParentOldModule(Module.WAREHOUSE);
+	}
+	
+	public boolean isWarehouse() {
+		return (hasWarehouse() || ((isParentUser() || isEnterpriseChild()) && hasParentWarehouse()))
+			&& (isAdmin() || hasRole(AonRole.WAREHOUSE) 
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.WAREHOUSE));
 	}
 	
 	// COMUNIC@ - COMUNIC@
 	
 	public boolean hasComunica() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PAYROLL) || hasApp(AonApp.COMUNICA);
+		return hasApp(AonApp.COMUNICA) || hasOldModule(Module.COMUNICA);
+	}
+	
+	public boolean hasParentComunica() {
+		return hasParentApp(AonApp.COMUNICA) || hasParentOldModule(Module.COMUNICA);
 	}
 	
 	public boolean isComunica() {
-		return hasComunica() && (isAdmin() || hasRole(AonRole.COMUNICA));
+		return (hasComunica() || ((isParentUser() || isEnterpriseChild()) && hasParentComunica()))
+			&& (isAdmin() || hasRole(AonRole.COMUNICA));
 	}
 	
 	public boolean isComunicaPortal() {
-		return hasComunica() && (isAdmin() || hasRole(AonRole.COMUNICA_PORTAL));
+		return (hasComunica() || ((isParentUser() || isEnterpriseChild()) && hasParentComunica()))
+			&& (isAdmin() || hasRole(AonRole.COMUNICA_PORTAL));
 	}
 	
 	public boolean isComunicaManager() {
-		return hasComunica() && (isAdmin() || hasRole(AonRole.COMUNICA_MANAGER));
+		return (hasComunica() || ((isParentUser() || isEnterpriseChild()) && hasParentComunica()))
+			&& (isAdmin() || hasRole(AonRole.COMUNICA_MANAGER));
 	}
 	
 	// TIMECONTROL - CONTROL DE HORARIO
 	
 	public boolean hasTimecontrol() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasApp(AonApp.TIMECONTROL) || hasComunica();
+		return hasApp(AonApp.TIMECONTROL);
+	}
+	
+	public boolean hasParentTimecontrol() {
+		return hasParentApp(AonApp.TIMECONTROL);
 	}
 	
 	public boolean isTimecontrol() {
-		return hasTimecontrol() && (isAdmin() || hasRole(AonRole.TIMECONTROL));
+		return (hasTimecontrol() || ((isParentUser() || isEnterpriseChild()) && hasParentTimecontrol()))
+			&& (isAdmin() || hasRole(AonRole.TIMECONTROL));
 	}
 	
 	public boolean isTimecontrolPortal() {
-		return hasTimecontrol() && (isAdmin() || hasRole(AonRole.TIMECONTROL_PORTAL));
+		return (hasTimecontrol() || ((isParentUser() || isEnterpriseChild()) && hasParentTimecontrol()))
+			&& (isAdmin() || hasRole(AonRole.TIMECONTROL_PORTAL));
 	}
 	
 	public boolean isTimecontrolManager() {
-		return hasTimecontrol() && (isAdmin() || hasRole(AonRole.TIMECONTROL_MANAGER));
+		return (hasTimecontrol() || ((isParentUser() || isEnterpriseChild()) && hasParentTimecontrol()))
+			&& (isAdmin() || hasRole(AonRole.TIMECONTROL_MANAGER));
 	}
 	
 	// MESSENGER - MENSAJERÍA
 	
 	public boolean hasMessenger() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasApp(AonApp.MESSENGER);
+		return hasApp(AonApp.MESSENGER) || hasOldModule(Module.CALL_CENTER);
+	}
+	
+	public boolean hasParentMessenger() {
+		return hasParentApp(AonApp.MESSENGER) || hasParentOldModule(Module.CALL_CENTER);
 	}
 	
 	public boolean isMessenger() {
-		return hasTaskHolder() && hasMessenger() && (isAdmin() || hasRole(AonRole.MESSENGER));
+		return (hasMessenger() || ((isParentUser() || isEnterpriseChild()) && hasParentMessenger()))
+			&& (isAdmin() || hasRole(AonRole.MESSENGER));
 	}
 	
 	public boolean isMessengerManager() {
-		return hasTaskHolder() && hasMessenger() && (isAdmin() || hasRole(AonRole.MESSENGER_MANAGER));
+		return (hasMessenger() || ((isParentUser() || isEnterpriseChild()) && hasParentMessenger()))
+			&& (isAdmin() || hasRole(AonRole.MESSENGER_MANAGER));
 	}
 
 	// NOTES - NOTAS
 	
 	public boolean hasNotes() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) 
-				|| hasApp(AonApp.PACK_PAYROLL) || hasApp(AonApp.PACK_FISCAL_ACCOUNTING)
-				|| hasApp(AonApp.NOTES);
+		return true;
 	}
 
 	public boolean isNotes() {
-		return hasNotes() && (isAdmin() || hasRole(AonRole.NOTES));
+		return true;
 	}
 	
 	// BASIC MANAGEMENT
 	
 	public boolean hasBasicManagement() {
-		return hasStandarManagement() || hasApp(AonApp.BASIC_MANAGEMENT);
+		return hasApp(AonApp.BASIC_MANAGEMENT) || hasOldModule(Module.AON_FINANCE);
 	}
 	
 	public boolean hasStandarManagement() {
-		return hasProfessionalManagement() || hasApp(AonApp.STANDAR_MANAGEMENT);
+		return hasApp(AonApp.STANDAR_MANAGEMENT) || hasOldModule(Module.AON_ONE);
 	}
 	
 	public boolean hasProfessionalManagement() {
-		return hasApp(AonApp.PROFESSIONAL_MANAGEMENT);
+		return hasApp(AonApp.PROFESSIONAL_MANAGEMENT) || hasOldProfessionalManagement();
+	}
+	
+	public boolean hasOldProfessionalManagement() {
+		return !hasOldModule(Module.AON_FINANCE) 
+			&& !hasOldModule(Module.AON_ONE) 
+		    && !hasApp(AonApp.BASIC_MANAGEMENT);
 	}
 	
 	// INVOICE - FACTURAS
 	
 	public boolean hasInvoice() {
-		return hasApp(AonApp.PACK_SUITE) || hasApp(AonApp.PACK_PORTAL) || hasBasicManagement() || hasApp(AonApp.INVOICE);
+		return hasApp(AonApp.INVOICE) || hasOldModule(Module.AON_FINANCE)
+			|| hasOldModule(Module.FINANCE_PORTAL) || hasOldModule(Module.MANAGEMENT);
+	}
+	
+	public boolean hasParentInvoice() {
+		return hasParentApp(AonApp.INVOICE) || hasParentOldModule(Module.AON_FINANCE)
+			|| hasParentOldModule(Module.FINANCE_PORTAL) || hasParentOldModule(Module.MANAGEMENT);
 	}
 	
 	public boolean isInvoice() {
-		return hasInvoice() && (isAdmin() || hasRole(AonRole.INVOICE));
+		return (hasInvoice() || ((isParentUser() || isEnterpriseChild()) && hasParentInvoice()))
+			&& (isAdmin() || hasRole(AonRole.INVOICE));
 	}
 	
 	public boolean isInvoicePortal() {
-		return hasInvoice() && (isAdmin() || hasRole(AonRole.INVOICE_PORTAL));
+		return (hasInvoice() || ((isParentUser() || isEnterpriseChild()) && hasParentInvoice()))
+			&& (isAdmin() || hasRole(AonRole.INVOICE_PORTAL));
 	}
 	
 	public boolean isInvoiceManager() {
-		return hasInvoice() && (isAdmin() || hasRole(AonRole.INVOICE_MANAGER));
+		return (hasInvoice() || ((isParentUser() || isEnterpriseChild()) && hasParentInvoice()))
+			&& (isAdmin() || hasRole(AonRole.INVOICE_MANAGER));
+	}
+	
+	public boolean hasManagement() {
+		return hasOldModule(Module.AON_FINANCE) || hasOldModule(Module.AON_ONE)
+				|| hasOldModule(Module.MANAGEMENT) || hasApp(AonApp.MANAGEMENT);
 	}
 	
 	public boolean isManagement() {
-		return hasApp(AonApp.MANAGEMENT) && (isAdmin() || hasRole(AonRole.MANAGEMENT));
+		return hasManagement() && (isAdmin() || hasRole(AonRole.MANAGEMENT));
 	}
 	
 	public boolean isManagementManager() {
-		return hasApp(AonApp.MANAGEMENT) && (isAdmin() || hasRole(AonRole.MANAGEMENT_MANAGER));
+		return hasManagement() && (isAdmin() || hasRole(AonRole.MANAGEMENT_MANAGER));
 	}
 	
 	public boolean isAlma() {
@@ -417,5 +534,50 @@ public class DomainUserRoles implements Serializable {
 	
 	public boolean hasCustomView() {
 		return hasApp(AonApp.CUSTOM_VIEW);
+	}
+	
+	// TREASURY
+	
+	public boolean hasTreasury() {
+	    return hasOldModule(Module.TREASURY) || this.hasApp(AonApp.TREASURY);
+	}
+	
+	public boolean hasParentTreasury() {
+	    return hasParentOldModule(Module.TREASURY) || this.hasParentApp(AonApp.TREASURY);
+	}
+
+	public boolean isTreasury() {
+		return (hasTreasury() || ((isParentUser() || isEnterpriseChild()) && hasParentTreasury()))
+			&& (isAdmin() || hasRole(AonRole.TREASURY));
+	}
+	
+	// MARKETING
+	
+	public boolean hasMarketing() {
+	    return hasOldModule(Module.MARKETING) || this.hasApp(AonApp.MARKETING);
+	}
+	
+	public boolean hasParentMarketing() {
+	    return hasParentOldModule(Module.MARKETING) || this.hasParentApp(AonApp.MARKETING);
+	}
+
+	public boolean isMarketing() {
+		return (hasMarketing() || ((isParentUser() || isEnterpriseChild()) && hasParentMarketing()))
+			 && (this.isAdmin() || this.hasRole(AonRole.MARKETING));
+	}
+	
+	// GROUPWARE
+	
+	public boolean hasGroupware() {
+	    return hasOldModule(Module.GROUPWARE) || this.hasApp(AonApp.GROUPWARE);
+	}
+	
+	public boolean hasParentGroupware() {
+	    return hasParentOldModule(Module.GROUPWARE) || this.hasParentApp(AonApp.GROUPWARE);
+	}
+
+	public boolean isGroupware() {
+		return (hasGroupware() || ((isParentUser() || isEnterpriseChild()) && hasParentGroupware()))
+			 && (this.isAdmin() || this.hasRole(AonRole.GROUPWARE));
 	}
 }
