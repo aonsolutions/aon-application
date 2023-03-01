@@ -35,10 +35,10 @@
 		border-radius: 50%;
 		background: transparent url(css/images/aon-icon/aon-icon-search.svg) no-repeat scroll center center;
 	}
-	.aon-header-logout {
+	.aon-header-close {
 		padding: 14px 20px;
 		border-radius: 50%;
-		background: transparent url(css/images/aon-icon/aon-icon-logout.png) no-repeat scroll center center;
+		background: transparent url(images/aon-cancel.svg) no-repeat scroll center center;
 	}
 	.aon-header-domain {
 		padding: 14px 20px;
@@ -1249,11 +1249,10 @@
 							reRender="aonContent" />
 
 					
-						<aon:commandLink id="logout"
-							style="#{customize.fontStyle}" styleClass="aon-header-logout"
-							title="#{bundle.aon_login_user_logout}"
-							action="logout"
-							actionListener="#{aonConfiguration.logout}" >
+						<aon:commandLink id="close"
+							style="#{customize.fontStyle}" styleClass="aon-header-close"
+							title="Cerrar ayuda"
+							onclick="javascript:if(confirm('¿Desea cerrar la ayuda?')){window.close()}" >
 						</aon:commandLink>
 					</aon:panelGroup> 
 					
