@@ -82,12 +82,17 @@
 			color: #000000 !important;			
 		}
 		
-		.edit-rows tr:hover,
-		.edit-cells td:hover{
+		.edit-rows tr:hover{
 			cursor: pointer;
 			background-color: #F6F6F6 !important;
 	
 		}
+
+		/*.edit-cells td:hover{
+			cursor: pointer;
+			background-color: #F6F6F6 !important;
+	
+		}*/
 
 		.span-cell {
 			padding: 0px !important;

@@ -134,6 +134,7 @@ public class AonAgreementsTreeToolbar extends Composite {
 		
 		searchTextBox = new TextBox();
 		searchTextBox.addStyleName(style.textBox());
+		searchTextBox.addStyleName("aon-SearchTextBox");
 		searchTextBox.getElement().setPropertyString("placeholder", "Filtrar convenios");
 		searchTextBox.addKeyUpHandler(event -> {
 			for(Listener listener : listeners)

@@ -55,7 +55,7 @@ public class LROE implements Serializable {
 		JSONObject responseJSON = new JSONObject();
 		URL url;
 		try {
-			ByteArrayInputStream key = new ByteArrayInputStream(tbaiConfiguration.getCertificate().getCertificate());	
+			ByteArrayInputStream key = new ByteArrayInputStream(tbaiConfiguration.getCertificate().getData());	
 			KeyStore keyStore = KeyStore.getInstance("PKCS12");
 			keyStore.load(key, tbaiConfiguration.getCertificate().getPassword().toCharArray());
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());

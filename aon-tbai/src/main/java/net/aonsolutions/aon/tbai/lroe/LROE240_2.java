@@ -190,7 +190,14 @@ public class LROE240_2 extends LROE240 {
 		factura.setImporteTotalFactura(Double.toString(AonMathUtils.round(total)));
 		ClavesFacturaRecibidaType claves = new ClavesFacturaRecibidaType();
 		IDClaveFacturaRecibidaType clave = new IDClaveFacturaRecibidaType();
-		clave.setClaveRegimenIvaOpTrascendencia("01");
+		
+		String key = "01";
+		if(invoice.isWithholdingFarmer()) key = "02";
+		if(invoice.isVatAccrualPayment()) key = "07";
+		if(invoice.isIntracommunity()) key = "09";
+		if(invoice.isExtracommunity()) key = "13";
+		
+		clave.setClaveRegimenIvaOpTrascendencia(key);
 		claves.getIDClave().add(clave);
 		factura.setClaves(claves);
 		return factura;
@@ -198,6 +205,7 @@ public class LROE240_2 extends LROE240 {
 
 	private IVAFacturaRecibidaType buildIVA(Invoice invoice) {
 		IVAFacturaRecibidaType iva = new IVAFacturaRecibidaType();
+
 		for (InvoiceDetail detail : invoice.getDetails()) {
 			if(!detail.isPrepayment()) {
 				InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
@@ -263,10 +271,10 @@ public class LROE240_2 extends LROE240 {
 			jaxbMarshaller.marshal( p240, bos );
 			
 			byte[] xml = bos.toByteArray();
-			
+
 			Document doc = getDocument(xml);
 			System.out.println(toString(doc));
-			
+
 			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoices, info, xml);
 			byte[] data = toGzip(xml);
 			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);
@@ -311,8 +319,10 @@ public class LROE240_2 extends LROE240 {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			jaxbMarshaller.marshal( p240, bos );
 			byte[] xml = bos.toByteArray();
+			
 			Document doc = getDocument(xml);
 			System.out.println(toString(doc));
+			
 			DataRequest dataRequest = LroeData.saveRequest(company.getDomain(), new User().setLogin(""), invoice, info, xml);
 			byte[] data = toGzip(xml);
 			return send(tbaiConfiguration, buildJSON(company, info), data).setDataRequest(dataRequest);

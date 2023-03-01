@@ -23,7 +23,7 @@ public class Mod303WriterARABA2023 implements IMod303Writer {
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFullName(),50)) 	// Apellidos y nombre o razón social del profesional X(50)
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(40))                 	// Libre a blancos X(40)
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(1,6,0))            	// Número de declaraciones presentadas 9(6) (siempre se presenta 1 declaración) 
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(6394))               	// Libre a blancos X(1994)
+			,(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(4894))               // Libre a blancos X(1994)
 			,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 		})
 		
@@ -40,7 +40,11 @@ public class Mod303WriterARABA2023 implements IMod303Writer {
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFullName(),50)) // Apellidos y nombre o razón social X(50)
 			
 		    ,(wr, mod) -> {
-		    	String streetName = (mod.getStreetInitial()+" "+mod.getStreetName()).trim();
+		    	String streetName = 
+	    			(AonStringUtils.isNotBlank(mod.getStreetInitial())?
+		    			AonStringUtils.trim(mod.getStreetInitial()) + " "
+		    			:"")
+	    			+ AonStringUtils.trim(mod.getStreetName());
 				String streetNumber = mod.getStreetNumber();
 				
 				// Como el formato del numero debe ser 3 dígitos, si lleva letras o es mayor de 3 entonces se pone junto con la direccion
@@ -77,7 +81,7 @@ public class Mod303WriterARABA2023 implements IMod303Writer {
 			
 			,(wr, mod) -> wr.append(mod.isReplacement() ? 
 					 "902"+AonStringUtils.SPACE+AonFiscalFileUtils.unsigned(mod.getReplacedNumber(),15,2) 
-					:"000"+AonStringUtils.SPACE+AonFiscalFileUtils.zeros(17)) // [902] Sustitutiva Numero declaracion anterior (año y numero) - solo si se ha presentado por internet
+					:"902"+AonStringUtils.SPACE+AonFiscalFileUtils.zeros(17)) // [902] Sustitutiva Numero declaracion anterior (año y numero) - solo si se ha presentado por internet
 			
 			,(wr, mod) -> wr.append("907" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C907),18))  // [907] Ha sido declarado en concurso de acreedores en el presente período de liquidación
 			,(wr, mod) -> wr.append("930" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C930),18))  // [9307]
@@ -88,98 +92,99 @@ public class Mod303WriterARABA2023 implements IMod303Writer {
 			,(wr, mod) -> wr.append("909" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C909),18))  // [909] Si se ha dictado auto de declaración de concurso en este periodo indique el tipo de autoliquidación indicar si es Preconcursal o Postconcursal
 			
 			// IVA Devengado
-			,(wr, mod) -> wr.append("001" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C210),18))
-			,(wr, mod) -> wr.append("001" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C211),18))
-			,(wr, mod) -> wr.append("001" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C212),18))
-			,(wr, mod) -> wr.append("001" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C001),18))  
-			,(wr, mod) -> wr.append("002" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C002),18))
-			,(wr, mod) -> wr.append("003" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C003),18))
-			,(wr, mod) -> wr.append("003" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C201),18))
-			,(wr, mod) -> wr.append("003" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C202),18))
-			,(wr, mod) -> wr.append("003" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C203),18))
-			,(wr, mod) -> wr.append("204" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C204),18))
-			,(wr, mod) -> wr.append("205" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C205),18))
-			,(wr, mod) -> wr.append("206" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C206),18))
-			,(wr, mod) -> wr.append("207" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C207),18))
-			,(wr, mod) -> wr.append("208" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C208),18))
-			,(wr, mod) -> wr.append("209" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C209),18))
-			,(wr, mod) -> wr.append("370" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C370),18))
-			,(wr, mod) -> wr.append("371" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C371),18))
-			,(wr, mod) -> wr.append("372" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C372),18))
-			,(wr, mod) -> wr.append("373" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C373),18))
-			,(wr, mod) -> wr.append("010" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C010),18))
-			,(wr, mod) -> wr.append("011" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C011),18))
-			,(wr, mod) -> wr.append("012" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C012),18))
-			,(wr, mod) -> wr.append("213" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C213),18))
-			,(wr, mod) -> wr.append("214" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C214),18))
-			,(wr, mod) -> wr.append("215" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C215),18))
-			,(wr, mod) -> wr.append("215" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C219),18))
-			,(wr, mod) -> wr.append("215" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C220),18))
-			,(wr, mod) -> wr.append("215" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C221),18))
-			,(wr, mod) -> wr.append("216" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C216),18))
-			,(wr, mod) -> wr.append("217" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C217),18))
-			,(wr, mod) -> wr.append("218" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C218),18))
-			,(wr, mod) -> wr.append("374" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C374),18))
-			,(wr, mod) -> wr.append("375" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C375),18))
-			,(wr, mod) -> wr.append("019" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C019),18))
-			,(wr, mod) -> wr.append("020" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C020),18))
-			,(wr, mod) -> wr.append("021" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C021),18))
-			,(wr, mod) -> wr.append("021" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C231),18))
-			,(wr, mod) -> wr.append("021" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C232),18))
-			,(wr, mod) -> wr.append("021" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C233),18))
-			,(wr, mod) -> wr.append("222" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C222),18))
-			,(wr, mod) -> wr.append("223" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C223),18))
-			,(wr, mod) -> wr.append("224" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C224),18))
-			,(wr, mod) -> wr.append("225" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C225),18))
-			,(wr, mod) -> wr.append("226" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C226),18))
-			,(wr, mod) -> wr.append("227" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C227),18))
-			,(wr, mod) -> wr.append("376" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C376),18))
-			,(wr, mod) -> wr.append("377" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C377),18))
-			,(wr, mod) -> wr.append("028" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C028),18))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C210))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C211))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C212))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C001))  
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C002))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C003))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C201))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C202))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C203))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C204))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C205))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C206))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C207))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C208))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C209))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C370))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C371))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C372))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C373))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C010))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C011))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C012))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C213))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C214))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C215))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C219))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C220))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C221))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C216))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C217))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C218))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C374))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C375))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C019))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C020))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C021))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C231))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C232))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C233))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C222))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C223))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C224))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C225))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C226))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C227))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C376))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C377))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C028))
 			
 			// Deducciones
-			,(wr, mod) -> wr.append("030" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C030),18))
-			,(wr, mod) -> wr.append("031" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C031),18))
-			,(wr, mod) -> wr.append("032" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C032),18))
-			,(wr, mod) -> wr.append("033" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C033),18))
-			,(wr, mod) -> wr.append("034" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C034),18))
-			,(wr, mod) -> wr.append("035" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C035),18))
-			,(wr, mod) -> wr.append("036" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C036),18))
-			,(wr, mod) -> wr.append("037" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C037),18))
-			,(wr, mod) -> wr.append("046" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C046),18))
-			,(wr, mod) -> wr.append("038" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C038),18))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C030))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C031))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C032))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C033))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C034))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C035))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C036))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C037))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C046))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C038))
 			
 			// Diferencia
-			,(wr, mod) -> wr.append("039" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C039),18))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C039))
 			
 			// Volumen de Operaciones, va con 5 decimales. Se pone el numero completo (incluido los decimales) en la parte entera
-			,(wr, mod) -> wr.append("040" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C040),16,5)+"00" )
-			,(wr, mod) -> wr.append("041" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C041),16,5)+"00" )
-			,(wr, mod) -> wr.append("042" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C042),16,5)+"00" )
-			,(wr, mod) -> wr.append("043" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C043),16,5)+"00" )
+			,(wr, mod) -> wr.append(Mod303Key.AR_C040.getBoxCode() + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C040),16,5)+"00" )
+			,(wr, mod) -> wr.append(Mod303Key.AR_C041.getBoxCode() + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C041),16,5)+"00" )
+			,(wr, mod) -> wr.append(Mod303Key.AR_C042.getBoxCode() + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C042),16,5)+"00" )
+			,(wr, mod) -> wr.append(Mod303Key.AR_C043.getBoxCode() + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C043),16,5)+"00" )
 			
 			// Cuotas atribuible / cuotas a compensar / Resultado autoliquidacion / recargos / total
-			,(wr, mod) -> wr.append("044" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C044),18))
-			,(wr, mod) -> wr.append("045" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C045),18))
-			,(wr, mod) -> wr.append("060" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C060),18))
-			,(wr, mod) -> wr.append("061" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C061),18))
-			,(wr, mod) -> wr.append("062" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C062),18))
-			,(wr, mod) -> wr.append("063" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C063),18))
-			,(wr, mod) -> wr.append("080" + AonFiscalFileUtils.signedSpace((mod.getAmount(Mod303Key.AR_C080)>=0?mod.getAmount(Mod303Key.AR_C080):0.0),18))
-			,(wr, mod) -> wr.append("081" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C081),18))
-			,(wr, mod) -> wr.append("082" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C082),18))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C044))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C045))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C060))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C061))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C062))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C063))
+			,(wr, mod) -> wr.append(Mod303Key.AR_C080.getBoxCode() +	 
+				AonFiscalFileUtils.signedSpace((mod.getAmount(Mod303Key.AR_C080)>=0?mod.getAmount(Mod303Key.AR_C080):0.0),18))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C081))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C082))
 			
 			// Informacion adicional
-			,(wr, mod) -> wr.append("050" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C050),18))
-			,(wr, mod) -> wr.append("051" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C051),18))
-			,(wr, mod) -> wr.append("054" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C054),18))
-			,(wr, mod) -> wr.append("055" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C055),18))
-			,(wr, mod) -> wr.append("056" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C056),18))
-			,(wr, mod) -> wr.append("058" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C058),18))
-			,(wr, mod) -> wr.append("180" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C180),18))
-			,(wr, mod) -> wr.append("181" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C181),18))
-			,(wr, mod) -> wr.append("182" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C182),18))
-			,(wr, mod) -> wr.append("183" + AonFiscalFileUtils.signedSpace(mod.getAmount(Mod303Key.AR_C183),18))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C050))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C051))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C054))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C055))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C056))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C058))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C180))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C181))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C182))
+			,(wr, mod) -> wr.append(print(mod, Mod303Key.AR_C183))
 			
 			// Datos bancarios (CCC), Solo si es devolucion o es domiciliacion y está cumplimentada la cuenta bancaria			
 			,(wr, mod) -> {
@@ -193,34 +198,24 @@ public class Mod303WriterARABA2023 implements IMod303Writer {
 					}
 				else					
 				{
-					for (int i=1;i<=4;i++)
+					for (int i=1;i<=4;i++) {
 						wr.append("000" + AonFiscalFileUtils.signedSpace(0.0,18));
+					}
 				}
 			}
 			
-			// Resto de casillas hasta completar las 259 (total 117, ya que hasta ahora van 95)			
+			// Resto de casillas hasta completar las 200 (hasta ahora van 95)			
 			,(wr, mod) -> {
-				for (int i=1;i<=(259-94);i++)
+				for (int i=0; i<(200-95); i++) {
 					wr.append("000" + AonFiscalFileUtils.signedSpace(0.0,18));
+				}
 			}
 			
 			// Fecha en la que se dicto el concurso de acreedores
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.convertDateZero(mod.getDescription(Mod303Key.AR_C908)))			
 			
 			
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(50)) 	// Actividad principal 1
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(6))	// Epigrafe actividad principal 1
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(50)) 	// Otra actividad 1
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(6))	// Otro epigrafe actividad 1
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(50))	// Otra actividad 2
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(6))	// Otro epigrafe actividad 2
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(50))	// Otra actividad 3
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(6))	// Otro epigrafe actividad 3
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(50))	// Otra actividad 4
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(6))	// Otro epigrafe actividad 4
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(50))	// Otra actividad 5
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.zeros(6))	// Otro epigrafe actividad 5
-			,(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(393))	// Libre a blancos
+			,(wr, mod) -> wr.append(AonFiscalFileUtils.spaces(489))
 			,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 			
 	    })
@@ -254,6 +249,10 @@ public class Mod303WriterARABA2023 implements IMod303Writer {
 		if (!filled) {
 			throw new AonCoreException("La generaci\u00F3n de el modelo no est\u00E1 soportada.");
 		}
+	}
+
+	private static String print(Mod303 mod, Mod303Key key) {
+		return key.getBoxCode() + AonFiscalFileUtils.signedSpace(mod.getAmount(key),18);
 	}
 	
 }

@@ -3315,8 +3315,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			return agreementId;
 		
 		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
 			throw new IllegalArgumentException("El convenio con c\u00F3digo " + serviAgreementCode + " (ServiConvenios) no es accesible en este momento. Por favor p\u00F3ngase en contacto con el departamento de soporte para poder ayudarle.");
 		} catch (SQLException e) {
+			throw new IllegalArgumentException(e);
+		} catch (IOException e) {
 			throw new IllegalArgumentException(e);
 		}
 	}
@@ -3906,6 +3909,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			AgreementUpdate.checkAndUpdateServiAgreement(connection, domainId, userLogin, agreement.getId(), agreement.getSSNumber(), year);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	

@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Scanner;
 import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -72,6 +74,7 @@ public class AgreementParser {
 	
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 	private static Integer domainId = 0;
+	private static List<AgreementPayment> agreementPayments;
 	
 	// ---------------------------------------------------------- Get Agreement Years
 	
@@ -139,12 +142,46 @@ public class AgreementParser {
 		
 		return agreementDates;
 	}
+	
+	// ---------------------------------------------------------- AgreementPayment
+	
+	private static void getAgreementPayments() throws IOException {
+		agreementPayments = new ArrayList<>();
+		
+		InputStream is = AgreementParser.class.getResourceAsStream("AgreementPayment.txt");
+		Scanner scaner = new Scanner(is);
+		
+		while(scaner.hasNextLine()) {
+			String line = scaner.nextLine();
+			String[] lineSplit = line.split(" :: ");
+			
+			AgreementPayment agreementPayment = new AgreementPayment()
+					.setName(lineSplit[0])
+					.setDescription(lineSplit[1])
+					.setConceptCode(lineSplit[2])
+					.setExpression(lineSplit[3])
+					.setType(Byte.parseByte(lineSplit[4]))
+					.setPeriodicity(lineSplit[5]);
+			
+			agreementPayments.add(agreementPayment);
+		}
+		
+		scaner.close();
+		is.close();
+	}
+	
+	private static AgreementPayment getAgreementPayment(String name) {
+		Optional<AgreementPayment> agreementPayment = agreementPayments.stream().filter(agreementPaymentIt -> agreementPaymentIt.getName().equals(name)).findFirst();
+		return agreementPayment.isPresent() ? agreementPayment.get() : null;
+	}
 
 	// ---------------------------------------------------------- Get Agreement
 
-	public static Pair<Integer,String> getAgreement(DSLContext dslContext, String agreementCode, List<Integer> selectedDates, Integer domainIdIn) throws IllegalArgumentException {
+	public static Pair<Integer,String> getAgreement(DSLContext dslContext, String agreementCode, List<Integer> selectedDates, Integer domainIdIn) throws IllegalArgumentException, IOException {
 		domainId = domainIdIn;
 		String log = "";
+		
+		getAgreementPayments();
 		
 		Pair<Integer,String> agreementLog = new Pair<>(-1, "");
 		Pair<Integer,Map<String, String>> insertResult = new Pair<>(-1, new HashMap<>());
@@ -806,7 +843,7 @@ public class AgreementParser {
 			// Agreement Payment
 			
 			for(String agreementConceptName : agreement.getAgreementConcepts()) {
-				AgreementPayment agreementPayment = AgreementPayment.safeValueOf(agreementConceptName);
+				AgreementPayment agreementPayment = getAgreementPayment(agreementConceptName);
 				
 				if(null != agreementPayment) {
 					
@@ -831,7 +868,7 @@ public class AgreementParser {
 					Result<PaymentConceptRecord> paymentConcepts = dslContext.selectFrom(PAYMENT_CONCEPT)
 						.where(PAYMENT_CONCEPT.DOMAIN.eq(0))
 						.and(PAYMENT_CONCEPT.CODE.eq(agreementPayment.getConceptCode()))
-						.and(PAYMENT_CONCEPT.DESCRIPTION.contains(agreementPayment.getPeriodicityType()))
+						.and(PAYMENT_CONCEPT.DESCRIPTION.contains(agreementPayment.getPeriodicity()))
 						.fetch();
 					
 					Integer paymentConceptId = null;
@@ -840,7 +877,7 @@ public class AgreementParser {
 						PaymentConceptRecord paymentConceptRecord = dslContext.insertInto(PAYMENT_CONCEPT)
 								.set(PAYMENT_CONCEPT.DOMAIN, domainId)
 								.set(PAYMENT_CONCEPT.CODE, agreementPayment.getConceptCode())
-								.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.getNormalizeName())
+								.set(PAYMENT_CONCEPT.DESCRIPTION, agreementPayment.getDescription())
 								.set(PAYMENT_CONCEPT.TYPE, agreementPayment.getType())
 								.set(PAYMENT_CONCEPT.DESCRIPTION_DECORABLE, (byte)0)
 								.set(PAYMENT_CONCEPT.EXPRESSION, agreementPayment.getExpression())
@@ -859,7 +896,7 @@ public class AgreementParser {
 							.set(AGREEMENT_PAYMENT.PAYMENT_CONCEPT, paymentConceptId)
 							.set(AGREEMENT_PAYMENT.TYPE, agreementPayment.getType())
 							.set(AGREEMENT_PAYMENT.EXPRESSION, "/*inherit*/" + agreementPayment.getExpression() + "/**/")
-							.set(AGREEMENT_PAYMENT.DESCRIPTION, agreementPayment.getNormalizeName())
+							.set(AGREEMENT_PAYMENT.DESCRIPTION, agreementPayment.getDescription())
 							.set(AGREEMENT_PAYMENT.START_DATE, parseDateToSql(defaultPaymentStartDate.getTime()))
 							.set(AGREEMENT_PAYMENT.END_DATE, parseDateToSql(auxEndDate))
 							.set(AGREEMENT_PAYMENT.SALARY_TYPE, (byte) 0)
@@ -873,9 +910,9 @@ public class AgreementParser {
 					Integer agreementPaymentId = agreementPaymentRecord.getId();
 					
 					// Summer agreement extra
-					if(!(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "VERANO") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "NAVIDAD"))) {
+					if(!(AonStringUtils.containsIgnoreCase(agreementPayment.getDescription(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getDescription(), "VERANO") && AonStringUtils.containsIgnoreCase(agreementPayment.getDescription(), "NAVIDAD"))) {
 						
-						if(!hasSummerPay && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && (AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "VERANO") || AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "JUNIO"))) {
+						if(!hasSummerPay && AonStringUtils.containsIgnoreCase(agreementPayment.getDescription(), "PAGA") && (AonStringUtils.containsIgnoreCase(agreementPayment.getDescription(), "VERANO") || AonStringUtils.containsIgnoreCase(agreementPayment.getDescription(), "JUNIO"))) {
 							dslContext.insertInto(AGREEMENT_EXTRA)
 								.set(AGREEMENT_EXTRA.DOMAIN, domainId)
 								.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
@@ -893,7 +930,7 @@ public class AgreementParser {
 						}
 						
 						// Winter agreement extra
-						if(!hasWinterPay && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "NAVIDAD")) {
+						if(!hasWinterPay && AonStringUtils.containsIgnoreCase(agreementPayment.getDescription(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getDescription(), "NAVIDAD")) {
 							dslContext.insertInto(AGREEMENT_EXTRA)
 								.set(AGREEMENT_EXTRA.DOMAIN, domainId)
 								.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
@@ -912,7 +949,7 @@ public class AgreementParser {
 					}
 					
 					// Benefits PLUS_FIESTAS_PATRONALES_ANUAL agreement extra
-					if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "BENEFICIOS")) {
+					if(AonStringUtils.containsIgnoreCase(agreementPayment.getDescription(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getDescription(), "BENEFICIOS")) {
 						dslContext.insertInto(AGREEMENT_EXTRA)
 							.set(AGREEMENT_EXTRA.DOMAIN, domainId)
 							.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
@@ -929,7 +966,7 @@ public class AgreementParser {
 					}
 					
 					// Benefits PLUS_PAGA_OCTUBRE_ANUAL agreement extra
-					if(AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getNormalizeName(), "OCTUBRE")) {
+					if(AonStringUtils.containsIgnoreCase(agreementPayment.getDescription(), "PAGA") && AonStringUtils.containsIgnoreCase(agreementPayment.getDescription(), "OCTUBRE")) {
 						dslContext.insertInto(AGREEMENT_EXTRA)
 							.set(AGREEMENT_EXTRA.DOMAIN, domainId)
 							.set(AGREEMENT_EXTRA.AGREEMENT, agreementId)
@@ -1121,7 +1158,7 @@ public class AgreementParser {
 		return realName;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws NumberFormatException, IllegalArgumentException, IOException {
 		//@formatter:off
 		Option hostName = getHostNameOption();
 		Option user = getDbUserOption();

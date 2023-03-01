@@ -168,7 +168,14 @@ public class LROE140_2_1 extends LROE140 {
 		factura.setImporteTotalFactura(Double.toString(AonMathUtils.round(total)));
 		ClavesGastoType claves = new ClavesGastoType();
 		IDClaveGastoType clave = new IDClaveGastoType();
-		clave.setClaveRegimenIvaOpTrascendencia("01");
+		
+		String key = "01";
+		if(invoice.isWithholdingFarmer()) key = "02";
+		if(invoice.isVatAccrualPayment()) key = "07";
+		if(invoice.isIntracommunity()) key = "09";
+		if(invoice.isExtracommunity()) key = "13";
+		clave.setClaveRegimenIvaOpTrascendencia(key);
+		
 		claves.getIDClave().add(clave);
 		factura.setClaves(claves);
 		return factura;

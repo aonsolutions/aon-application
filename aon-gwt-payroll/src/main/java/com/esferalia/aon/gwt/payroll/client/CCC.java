@@ -272,8 +272,8 @@ public abstract class CCC extends ResizeComposite {
 		Label geozone = new Label();
 		geozone.ensureDebugId("geozone_" + row);
 		String geozoneValue = UNKNOWN;
-		if(null != cccInfo.getGeozone()) {
-			geozoneValue = cccInfo.getGeozoneDescription();
+		if(null != cccInfo.getGeozone() || AonStringUtils.isNotBlank(cccInfo.getGeozoneCode())) {
+			geozoneValue = ProvinceContract.getName(cccInfo.getGeozoneCode());
 			geozone.removeStyleName(style.warningColor());
 		}else 
 			geozone.addStyleName(style.warningColor());
@@ -296,6 +296,15 @@ public abstract class CCC extends ResizeComposite {
 		account.setValue(cccInfo.getCcc());
 		account.addStyleName("aon-inputText");
 		account.addStyleName(style.inputTextHeight());
+		account.addKeyPressHandler(e -> {
+			char keyCode = e.getCharCode();
+	        if (!Character.isDigit(keyCode)) {
+	        	Map<String, String> warnMap = new HashMap<>();
+	        	warnMap.put("Error formato", "La cuenta de cotizac\u00f3n solo puede contener n\u00fameros");
+	        	fireWarningMessage(warnMap);
+	        	account.cancelKey();
+	        }
+		});
 		account.addValueChangeHandler(e -> {
 			String accountValue = e.getValue();
 			if(!AonStringUtils.isBlank(accountValue) && accountValue.length() >= 2) {
@@ -522,6 +531,15 @@ public abstract class CCC extends ResizeComposite {
 		account.setMaxLength(11);
 		account.addStyleName("aon-inputText");
 		account.addStyleName(style.inputTextHeight());
+		account.addKeyPressHandler(e -> {
+			char keyCode = e.getCharCode();
+	        if (!Character.isDigit(keyCode)) {
+	        	Map<String, String> warnMap = new HashMap<>();
+	        	warnMap.put("Error formato", "La cuenta de cotizac\u00f3n solo puede contener n\u00fameros");
+	        	fireWarningMessage(warnMap);
+	        	account.cancelKey();
+	        }
+		});
 		account.addValueChangeHandler(e -> {
 			String accountValue = e.getValue();
 			if(!AonStringUtils.isBlank(accountValue) && accountValue.length() >= 2) {

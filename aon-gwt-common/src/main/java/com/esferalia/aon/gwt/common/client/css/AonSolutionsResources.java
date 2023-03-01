@@ -227,6 +227,10 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconUnLock();
 	
+	@Source("icons/aon-icon-lock-reset.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconLockReset();
+	
 	@Source("icons/aon-icon-renew.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconRenew();
