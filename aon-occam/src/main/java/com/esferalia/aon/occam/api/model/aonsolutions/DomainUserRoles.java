@@ -422,12 +422,14 @@ public class DomainUserRoles implements Serializable {
 	
 	public boolean hasInvoice() {
 		return hasApp(AonApp.INVOICE) || hasOldModule(Module.AON_FINANCE)
-			|| hasOldModule(Module.FINANCE_PORTAL) || hasOldModule(Module.MANAGEMENT);
+			|| hasOldModule(Module.FINANCE_PORTAL) || hasOldModule(Module.MANAGEMENT)
+			|| hasOldModule(Module.AON_ONE);
 	}
 	
 	public boolean hasParentInvoice() {
 		return hasParentApp(AonApp.INVOICE) || hasParentOldModule(Module.AON_FINANCE)
-			|| hasParentOldModule(Module.FINANCE_PORTAL) || hasParentOldModule(Module.MANAGEMENT);
+			|| hasParentOldModule(Module.FINANCE_PORTAL) || hasParentOldModule(Module.MANAGEMENT)
+			|| hasOldModule(Module.AON_ONE);
 	}
 	
 	public boolean isInvoice() {
