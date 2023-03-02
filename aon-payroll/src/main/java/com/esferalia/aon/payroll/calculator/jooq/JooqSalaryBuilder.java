@@ -559,7 +559,14 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	}
 
 	private void addVariable(String name, ITimedVariable<?> var) {
-	    variables.put(name, var instanceof IWrapTimedVariable ? ((IWrapTimedVariable<?>) var).getVariable() : var);
+	    if ( var instanceof IWrapTimedVariable ) {
+		ITimedVariable<?> wrapVar =((IWrapTimedVariable<?>) var).getVariable();
+		if ( Objects.equals(var.getValue(var.getPeriod()),  wrapVar.getValue(wrapVar.getPeriod()))) {
+		    var = wrapVar;
+		}
+	    } 
+	    variables.put(name, var );
+		
 	}
 	
 	private void insertVariables() {
