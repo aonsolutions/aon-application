@@ -18,6 +18,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -181,7 +182,7 @@ public class EnterpriseIT extends Composite {
 	}
 	
 	// ------ setFooter
-	public void setFooter(SplitLayoutPanel splitLayoutPanel, TabLayoutPanel tab, AonMinimizePanel footPanel) {		
-		itWidget.setFooter(splitLayoutPanel, tab, footPanel);
+	public void setFooter(DockLayoutPanel dockLayoutPanel, TabLayoutPanel tab, AonMinimizePanel footPanel) {		
+		itWidget.setFooter(dockLayoutPanel, tab, footPanel);
 	}
 }

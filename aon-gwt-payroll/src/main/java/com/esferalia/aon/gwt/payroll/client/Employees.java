@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.FilterDialog;
-import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonEmployeesTreeToolbar;
 import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
@@ -41,6 +41,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -88,7 +89,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Employees extends ResizeComposite implements OpenHandler<TreeItem>, SelectionHandler<TreeItem>,
-		ScrollHandler, ContextMenuHandler, KeyDownHandler, LoadHandler, OptionsToolbar.Listener {
+		ScrollHandler, ContextMenuHandler, KeyDownHandler, LoadHandler, AonEmployeesTreeToolbar.Listener {
 
 	private static final int MIN_EMPLOYEE_LIMIT = 35;
 
@@ -293,7 +294,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	ScrollPanel scrollPanel;
 
 	@UiField
-	OptionsToolbar toolbar;
+	AonEmployeesTreeToolbar toolbar;
 
 
 	private Images images;
@@ -371,13 +372,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		tree.addKeyDownHandler(this);
 		
 		toolbar.addListener(this);
-		toolbar.setVisibleNewButton(false);
-		toolbar.setVisibleCopyButton(false);
-		toolbar.setVisiblePasteButton(false);
-		toolbar.setVisibleDraftButton(false);
-		toolbar.setSearchHint("Empleados (Nombre, NIF, NAF)");
 
-
+		toolbar.setVisibleLoadingButton(true);
 		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
 
 			@Override
@@ -399,6 +395,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 						enterpriseContext = enterpriseContextDB;
 						for (Enterprise enterprise : enterprises)
 							Employees.this.onEnterprise(enterprise);
+						toolbar.setVisibleLoadingButton(false);
 					}
 				});
 			}
@@ -504,8 +501,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		scrollPanel.scrollToLeft();
 
-		initViewButton(toolbar.getViewButton());
-		toolbar.setVisibleSearchTextBox(true);
+		initViewButton(toolbar.getCollapseAllButton());
 
 	}
 
@@ -884,7 +880,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return enterpriseContext;
 	}
 
-	OptionsToolbar getOptionsToolbar() {
+	AonEmployeesTreeToolbar getOptionsToolbar() {
 		return toolbar;
 	}
 
@@ -954,6 +950,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		TreeItem activityItem = addImageItem(enterpriseItem, description, images.ine());
 		activityItem.setUserObject(activity);
 		activityItem.ensureDebugId(getId(activity));
+		activityItem.getElement().getStyle().setWidth(100, Unit.PCT);
 		
 		activity.getCccs().forEach( (ccc ) ->{
 			addActivityCCCItem(activityItem, ccc);
@@ -972,9 +969,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		workplaceItem.setHTML(materialIconItemHTML("place", description));
 		workplaceItem.setUserObject(workplace);
 		workplaceItem.setVisible(isWorkPlaceVisible(workplace));
-		workplaceItem.ensureDebugId(getId(workplace));
+		workplaceItem.ensureDebugId(getId(workplace));	
 		enterpriseItem.addItem(workplaceItem);
 		loadWorkplace(enterprise, workplaceItem, workplace);
+		workplaceItem.getElement().getParentElement().getStyle().setWidth(100, Unit.PCT);
 		return workplaceItem;
 	}
 
@@ -1926,24 +1924,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			private MenuItem inactiveMenuItem;
 			private MenuItem endDateMenuItem;
 			private MenuItem filterMenuItem;
-//			private MenuItem shortenMenuItem;
 			private FilterDialog filterDialog;
 
 			{
 				MenuBar menuBar = new MenuBar(true);
-
-//				shortenMenuItem = new MenuItem("Reducido", new Command() {
-//					@Override
-//					public void execute() {
-//						shorten = !shorten;
-//						shortenTree(shorten);
-//						shortenMenuItem.setStyleName("aon-MenuItemCheckYes", shorten);
-//						popup.hide();
-//					}
-//				});
-//				shortenMenuItem.setStyleName("aon-MenuItemCheckYes", formers);
-//				shortenMenuItem.ensureDebugId("shortenMenuItem");
-//				menuBar.addItem(shortenMenuItem);
 
 				endDateMenuItem = new MenuItem("Fecha Fin", new Command() {
 					@Override
@@ -2373,38 +2357,38 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	}
 
-	@Override
-	public void onNewButtonClick(ClickEvent event) {
-
-	}
-
-	@Override
-	public void onPasteButtonClick(ClickEvent event) {
-		Object object = tree.getSelectedItem().getUserObject();
-
-		if (object instanceof Workplace)
-			onEmployeePaste((Workplace) object);
-	}
-
-	@Override
-	public void onCopyButtonClick(ClickEvent event) {
-
-		Object object = tree.getSelectedItem().getUserObject();
-
-		if (object instanceof EmployeeDraftObject)
-			onEmployeeCopy(((EmployeeDraftObject) object).getEmployee());
-	}
-
-	@Override
-	public void onDraftButtonClick(ClickEvent event) {
-		Object object = tree.getSelectedItem().getUserObject();
-		if (object instanceof EmployeeDraftObject)
-			onSuprPressed(((EmployeeDraftObject) object).getEmployee());
-	}
+//	@Override
+//	public void onNewButtonClick(ClickEvent event) {
+//
+//	}
+//
+//	@Override
+//	public void onPasteButtonClick(ClickEvent event) {
+//		Object object = tree.getSelectedItem().getUserObject();
+//
+//		if (object instanceof Workplace)
+//			onEmployeePaste((Workplace) object);
+//	}
+//
+//	@Override
+//	public void onCopyButtonClick(ClickEvent event) {
+//
+//		Object object = tree.getSelectedItem().getUserObject();
+//
+//		if (object instanceof EmployeeDraftObject)
+//			onEmployeeCopy(((EmployeeDraftObject) object).getEmployee());
+//	}
+//
+//	@Override
+//	public void onDraftButtonClick(ClickEvent event) {
+//		Object object = tree.getSelectedItem().getUserObject();
+//		if (object instanceof EmployeeDraftObject)
+//			onSuprPressed(((EmployeeDraftObject) object).getEmployee());
+//	}
 
 	@Override
 	public void onCollapseAllButtonClick(ClickEvent event) {
-		collapse();
+//		collapse();
 	}
 	
 	@Override
@@ -2739,7 +2723,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	
 	private static native void log (String message ) /*-{
 		console.log(message);
-	}-*/
-;
+	}-*/;
+
 	
 }
