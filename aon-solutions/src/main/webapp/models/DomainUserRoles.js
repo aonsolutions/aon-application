@@ -438,12 +438,14 @@ export class DomainUserRoles {
 
   hasInvoice() {
     return this.hasApp(App.INVOICE) || this.hasOldModule(OldModule.FINANCE_PORTAL)
-      || this.hasOldModule(OldModule.AON_FINANCE) || this.hasOldModule(OldModule.MANAGEMENT);
+      || this.hasOldModule(OldModule.AON_FINANCE) || this.hasOldModule(OldModule.MANAGEMENT)
+      || this.hasOldModule(OldModule.AON_ONE);
   }
 
   hasParentInvoice() {
     return this.hasParentApp(App.INVOICE) || this.hasParentOldModule(OldModule.FINANCE_PORTAL)
-      || this.hasParentOldModule(OldModule.AON_FINANCE) || this.hasParentOldModule(OldModule.MANAGEMENT);
+      || this.hasParentOldModule(OldModule.AON_FINANCE) || this.hasParentOldModule(OldModule.MANAGEMENT)
+      || this.hasOldModule(OldModule.AON_ONE);
   }
 
 	isInvoice() {
