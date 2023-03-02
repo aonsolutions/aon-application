@@ -125,6 +125,159 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testCompositeDescriptionII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {}, 
+				new String[] {}, 
+				null);
+		//@formatter:on
+
+		
+		
+		setData(aonContext, contract, "DIAS_MES", "30.00");
+
+		addPayment(aonContext, 
+		contract, 
+		contract.getStartDate(), 
+		null,
+		"SALARIO BASE (@{SALARIO_DIARIO} x @{JORNADAS_REALES} )",
+		"SALARIO_DIARIO * JORNADAS_REALES ",
+		"_P", 
+		"_P", 
+		PaymentType.CRA_0001);
+		
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		addData(aonContext, contract, startDate, endDate, "SALARIO_DIARIO", "66.66");
+		
+
+		int i = 0;
+		for( Date date = startDate;  date.compareTo(endDate) <= 0; date = add(date, Calendar.DAY_OF_MONTH, 5)) {
+		    addData(aonContext, contract, date, date, "JORNADAS_REALES", "1.0");
+		    i++;
+		}
+		
+		int jornadasReales = i;
+		
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<>();
+		
+		
+		SalaryDraft salaryDraft = new SalaryDraft();
+		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(salaryDraft) {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date start, java.util.Date end, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println(description + ": " + amount + "[" + start + "..." + end + "]");
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		};
+		calculator.setSalaryBuilder(salaryDraftBuilder);
+		calculator.calculate(ctx);
+		
+		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
+		salaryDraft.getPayments().forEach( p -> org.junit.Assert.assertEquals("SALARIO BASE (66.66 x "+jornadasReales+" )", p.getDescription()) );
+		
+
+	}
+
+	@Test
+	public void testCompositeDescriptionIII() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {}, 
+				new String[] {}, 
+				null);
+		//@formatter:on
+
+		
+		
+		setData(aonContext, contract, "DIAS_MES", "30.00");
+
+		addPayment(aonContext, 
+		contract, 
+		contract.getStartDate(), 
+		null,
+		"DESCUENTO_DIAS_VACACIONES",
+		"DIAS_NO_TRABAJADOS",
+		"_P", 
+		"_P", 
+		PaymentType.CRA_0001);
+
+		addPayment(aonContext, 
+		contract, 
+		contract.getStartDate(), 
+		null,
+		"SALARIO BASE ",
+		"1000.00 * DIAS_TRABAJADOS ",
+		"_P", 
+		"_P", 
+		PaymentType.CRA_0001);
+		
+		addPayment(aonContext, 
+		contract, 
+		contract.getStartDate(), 
+		null,
+		"VACACIONES (@{DIAS_VACACIONES} x @{SALARIO_DIA_VACACIONES} )",
+		"DIAS_VACACIONES * SALARIO_DIA_VACACIONES",
+		"_P", 
+		"_P", 
+		PaymentType.CRA_0001);
+
+		Date startDate = getFirstDayOfYear(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		addData(aonContext, contract, startDate, endDate, "SALARIO_DIA_VACACIONES", "66.66");
+		addData(aonContext, contract, startDate, endDate, "DIAS_NO_TRABAJADOS", "DIAS_VACACIONES");
+		
+
+		int i = 0;
+		for( Date date = startDate;  date.compareTo(endDate) <= 0; date = add(date, Calendar.DAY_OF_MONTH, 5)) {
+		    addData(aonContext, contract, date, date, "DIAS_VACACIONES", "1.0");
+		    i++;
+		}
+		
+		int jornadasReales = i;
+		
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractSalaryCalculator<>();
+		
+		
+		SalaryDraft salaryDraft = new SalaryDraft();
+		SalaryDraftBuilder salaryDraftBuilder = new SalaryDraftBuilder(salaryDraft) {
+			@Override
+			public void addPayment(Double amount, Double quote, Double tax, String description,
+					java.util.Date start, java.util.Date end, IPayment payment,
+					Map<String, ITimedVariable<?>> context) {
+				System.out.println(description + ": " + amount + "[" + start + "..." + end + "]");
+				super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
+			}
+		};
+		calculator.setSalaryBuilder(salaryDraftBuilder);
+		calculator.calculate(ctx);
+		
+		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
+		salaryDraft.getPayments().stream().filter( p -> p.getDescription().startsWith("VACACIONES")).forEach( p -> org.junit.Assert.assertEquals("VACACIONES ("+jornadasReales + " x 66.66 )", p.getDescription()) );
+		
+
+	}
+
+	@Test
 	public void testStandardIrpf() throws ExpressionException, SQLException,
 			SalaryException {
 		Connection connection = getConnection();
@@ -1153,9 +1306,10 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(salaryDraftBuilder);
 		calculator.calculate(ctx);
 		
-		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
+//		salaryDraft.getPayments().forEach( p -> System.out.println(p.getDescription() +":" + p.getAmount()));
 
 //		salaryDraft.getContext().stream()
+//		.filter(v -> v.getName().equals("CAUSA_INDEMNIZACION"))
 //		.forEach( v -> System.out.println(v.getName() + " = '" + v.getValue() +"' " + v.getStartDate() + ".." + v.getEndDate()));
 
 		long count =
@@ -1166,7 +1320,14 @@ public class SQLSalaryDraftBuilderTestCase extends AbstractSQLTestCase {
 		
 		Assert.assertEquals(1, count);
 
-	}
+		salaryDraft.getContext().stream()
+		.filter(v -> v.getName().equals("CAUSA_INDEMNIZACION"))
+		.forEach(v -> Assert.assertEquals(contractStartDate, v.getStartDate()) );
+
+		salaryDraft.getContext().stream()
+		.filter(v -> v.getName().equals("CAUSA_INDEMNIZACION"))
+		.forEach(v -> Assert.assertEquals(getToday(), v.getEndDate()) );
+}
 	
 
 }
