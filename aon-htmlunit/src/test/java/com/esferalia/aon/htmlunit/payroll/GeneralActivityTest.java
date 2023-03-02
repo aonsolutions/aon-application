@@ -148,7 +148,7 @@ public class GeneralActivityTest {
 	
 	@Test
 	public void TestCCC() throws Exception {
-		loadActivity("oficinas_y_despachos-content");
+		loadActivity("oficinas_y_despachos");
 		
 		wait4InputText("activityNameTB", "OFICINAS Y DESPACHOS");
 		

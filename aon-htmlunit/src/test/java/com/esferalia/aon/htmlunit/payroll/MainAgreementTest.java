@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -43,7 +42,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
 
@@ -141,7 +139,7 @@ public class MainAgreementTest {
 	@Test
 	public void TestSalaryTable() throws Exception {
 		
-		loadStartWarsAgreementSalaryTableTab();
+		loadAgreementSalaryTableTab();
 		
 		// New Tab for 01/01/2018
 		Calendar calendar = Calendar.getInstance();
@@ -398,7 +396,7 @@ public class MainAgreementTest {
 	
 	// ------------------------------------------------------------------------
 	
-	private void loadStartWarsAgreementSalaryTableTab() throws Exception {
+	private void loadAgreementSalaryTableTab() throws Exception {
 		// Load agian
 		htmlPage = webClient.getPage(url);
 		
@@ -415,15 +413,15 @@ public class MainAgreementTest {
 		
 		wait4Id("agreements");
 		
-		wait4Id("star_wars_agreement");
+		wait4Id("pagas_extras,_bonos_y_beneficios");
 
 		// Click en el convenio StarsWarsAgreement
-		HtmlDivision agreementTreeItem = (HtmlDivision) getElementById("star_wars_agreement");
+		HtmlDivision agreementTreeItem = (HtmlDivision) getElementById("pagas_extras,_bonos_y_beneficios");
 		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
 		agreementTreeItem.click();
 
 		// Comprobamos el campo descripcion
-		wait4(htmlPage, htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
+		wait4(htmlPage, htmlPage -> "PAGAS EXTRAS, BONOS Y BENEFICIOS".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
 		
 		wait4Id("category_filter");
 	}
