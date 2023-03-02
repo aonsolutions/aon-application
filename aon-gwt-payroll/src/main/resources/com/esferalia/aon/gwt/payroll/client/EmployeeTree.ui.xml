@@ -3,6 +3,7 @@
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:payroll='urn:import:com.esferalia.aon.gwt.payroll.client'
+	xmlns:commonsolutions='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'
 	>
 	
 	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
@@ -21,6 +22,25 @@
 	.messageMT {
 		margin-top: 5px;
 	}
+	
+	.felxColumn {
+		display: flex;
+		flex-direction: column;
+		gap: .5rem;
+	}
+	
+	.toolbar{
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 40px;
+		border-top: 0px none;
+		border-bottom: 1px solid rgb(221, 221, 221);
+		font-size: 16px;
+	}
+	
+	.heightAll { height: 100%; }
 
 	</ui:style>
 
@@ -28,9 +48,9 @@
 	<ui:image field='employeesgroup' src='employeesgroup.png' />
 
 
-	<g:SplitLayoutPanel ui:field="splitLayoutPanel" debugId="messagePanel"  styleName="aon-EmployeeTree" >
-		<g:north size="42" >
-			<g:SimpleLayoutPanel ui:field="messagePanel" styleName="{style.messageMT} aon-EmployeeTree-Messages" />
+	<g:DockLayoutPanel ui:field="dockLayoutPanel" debugId="messagePanel"  styleName="aon-EmployeeTree" >
+		<g:north size="35" >
+			<commonsolutions:AonEmployeesToolbar ui:field="toolbar" styleName="{style.toolbar} aon-MainAgreement-ToolBar"/>
 		</g:north>
 
 		<g:west size='275' >
@@ -38,7 +58,10 @@
 		</g:west>
 		
 		<g:center>
-			<aon:DetailPanel ui:field='employeeDetail' styleName="aon-EmployeeTree-EmployeeDetail" />
+			<g:HTMLPanel styleName="{style.felxColumn}">
+				<g:SimpleLayoutPanel ui:field="messagePanel" styleName="{style.messageMT} aon-EmployeeTree-Messages" />
+				<aon:DetailPanel ui:field='employeeDetail' styleName="aon-EmployeeTree-EmployeeDetail" />
+			</g:HTMLPanel>
 		</g:center>
 
 		<g:south size="0">
@@ -47,6 +70,6 @@
 			</aon:solutions.AonMinimizePanel>
 		</g:south>
 
-	</g:SplitLayoutPanel>
+	</g:DockLayoutPanel>
 
 </ui:UiBinder>

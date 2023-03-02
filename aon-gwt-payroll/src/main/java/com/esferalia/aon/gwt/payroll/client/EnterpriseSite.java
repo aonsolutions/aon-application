@@ -121,10 +121,6 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		};
 		salary.hideDeleteButton();
 		documents = new Documents();
-		employees.getOptionsToolbar().setVisibleCopyButton(false);
-		employees.getOptionsToolbar().setVisibleDraftButton(false);
-		employees.getOptionsToolbar().setVisibleNewButton(false);
-		employees.getOptionsToolbar().setVisiblePasteButton(false);		
 		employees.addListener(this);
 		
 	}

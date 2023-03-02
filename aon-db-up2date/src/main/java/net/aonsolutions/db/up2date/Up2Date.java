@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.config.InsertTreasuryAndMarketingModule;
+import net.aonsolutions.db.up2date.finance.UpdateBankAccountUpperCase;
 import net.aonsolutions.db.up2date.security.UdpateAonSmb;
 import net.aonsolutions.db.up2date.security.UdpatePacksDomainApp;
 import net.aonsolutions.db.up2date.security.UdpatePortalConectaUsers;
@@ -329,6 +330,8 @@ public class Up2Date {
 	    	UdpateAonSmb.UPDATE_AON_SMB,
 	    	//EmbargoDescriptionUpdate.EMBARGODESCRIPTIONUPDATE,	    	
 	    	//AgreementEmptyTrash.AGREEMENTEMPTYTRASH,
+	    	
+	    	UpdateBankAccountUpperCase.UPDATE_BANK_ACCOUNT_UPPERCASE,
         
     		//Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
