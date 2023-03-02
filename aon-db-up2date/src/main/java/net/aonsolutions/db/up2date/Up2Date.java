@@ -326,6 +326,7 @@ public class Up2Date {
 	    	UdpatePortalConectaUsers.UPDATE_PORTAL_CONECTA_USERS,
 	    	UdpatePacksDomainApp.UPDATE_PACKS_DOMAIN_APP,
 	    	InsertTreasuryAndMarketingModule.INSERT_TREASURY_AND_MARKETING_MODULE,
+	    	//UdpateAonSmb.UPDATE_AON_SMB,
 	    	//EmbargoDescriptionUpdate.EMBARGODESCRIPTIONUPDATE,	    	
 	    	//AgreementEmptyTrash.AGREEMENTEMPTYTRASH,
 	    	
