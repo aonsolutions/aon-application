@@ -576,8 +576,8 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		}
 		
 		try {
-			//this.cgcBase = round(ContextVariable.CGC_BASE);			
-			round(ContextVariable.CGC_BASE);			
+			this.cgcBase = round(ContextVariable.CGC_BASE);			
+			//round(ContextVariable.CGC_BASE);			
 		} catch ( Exception e ) {
 			// wrong CGC_BASE
 		}
