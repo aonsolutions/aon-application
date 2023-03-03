@@ -289,7 +289,7 @@
 					<rich:panelBarItem id="booking"
 						label="#{bundle.admin_global_panel_booking}">
 						<aon:if test="#{aonRole.sysAdmin or (!domainSwitcher.disableDomainManagement)}">
-							<aon:if test="#{serviceAccount.console}">
+							<aon:if test="#{aonRole.sysAdmin and (domainSwitcher.type != 'ADMIN')}">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="adminDomain"
 										action="adminDomain_form"
