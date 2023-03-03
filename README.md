@@ -105,9 +105,26 @@ And.... wait for a long long time ...  for example 35 min
 [INFO] ------------------------------------------------------------------------
 ```
 Build Docker image 
+
 ``` bash
 docker build --network=host --no-cache -t aonsolutions/aon-solutions:test -f ./aon-solutions/Dockerfile .
+
 ```
+Build Docker image unzip error
+
+If you get an unzip error in the previous step, go to the Dockerfile file in aon-solutions .
+
+![photo_2023-03-03_08-22-03](https://user-images.githubusercontent.com/126753797/222659271-541cf714-d74a-4255-a06d-fbf0148daee7.jpg)
+
+Change the line 68 of the file for:
+
+``` bash
+RUN apt update
+RUN apt install unzip
+```
+This will make it unzip correctly.
+
+
 Try Docker image 
 ``` bash
 docker run --rm --name aonsolutions -d -p 8080:8080 -e DB_USER=dbuser -e DB_PASSWD=serubd2000 -e DB_HOST=$(ip addr show docker0 | grep -oP 'inet \K[0-9\.]+')  aonsolutions/aon-solutions:test
