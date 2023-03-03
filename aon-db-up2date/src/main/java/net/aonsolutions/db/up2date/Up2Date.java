@@ -331,7 +331,7 @@ public class Up2Date {
 	    	//EmbargoDescriptionUpdate.EMBARGODESCRIPTIONUPDATE,	    	
 	    	//AgreementEmptyTrash.AGREEMENTEMPTYTRASH,
 	    	
-	    	UpdateBankAccountUpperCase.UPDATE_BANK_ACCOUNT_UPPERCASE,
+	    	//UpdateBankAccountUpperCase.UPDATE_BANK_ACCOUNT_UPPERCASE,
         
     		//Important, not remove
     		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
