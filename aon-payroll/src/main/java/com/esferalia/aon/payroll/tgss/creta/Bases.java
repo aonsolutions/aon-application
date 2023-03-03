@@ -2180,7 +2180,7 @@ public class Bases {
 				.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L91", tipo)))
 		)
 		.forEach( salary -> {
-			Double c763 = salary.getContextData(ContextVariable.SLD_C763.getName(), Collectors.summingDouble(s -> Double.parseDouble(s)));
+			Double c763 = salary.getContextData(ContextVariable.SLD_C763.getName(), Collectors.summingDouble(Double::parseDouble));
 			if ( c763 != null && c763 > 0.00 )
 				codigoValorMap.put("763", codigoValorMap.getOrDefault("763", 0.00) + c763);
 		} );
@@ -3124,15 +3124,6 @@ public class Bases {
 				);
 		callbacksList.add(fixConceptsUnMatched);
 
-		DefaultsCallback defaultsCb = new DefaultsCallback();
-
-		if (defaultsValues != null) {
-			for (String defaultValue : defaultsValues) {
-				String codeValue[] = defaultValue.split("=");
-				defaultsCb.add(codeValue[0], codeValue[1]);
-			}
-		}
-		callbacksList.add(defaultsCb);
 
 		if (nafs != null) {
 			NAFFilterCallback nafFilterCb = new NAFFilterCallback(nafs);
@@ -3145,6 +3136,15 @@ public class Bases {
 
 		BasesCallback callbacks[] = callbacksList
 				.toArray(new BasesCallback[callbacksList.size()]);
+
+		DefaultsCallback defaultsCb = new DefaultsCallback();
+		if (defaultsValues != null) {
+			for (String defaultValue : defaultsValues) {
+				String codeValue[] = defaultValue.split("=");
+				defaultsCb.add(codeValue[0], codeValue[1]);
+			}
+		}
+		callbacksList.add(defaultsCb);
 
 		Set<String> autorizados = new HashSet<String>();
 
