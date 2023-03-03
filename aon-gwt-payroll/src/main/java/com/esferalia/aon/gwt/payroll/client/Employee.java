@@ -794,6 +794,7 @@ public abstract class Employee extends ResizeComposite {
 	void onAccountChangeValue(ValueChangeEvent<String> event) {
 		String accountStr = this.account.getValue();
 		accountStr = accountStr.replaceAll("\\W+", "");
+		accountStr = accountStr.toUpperCase();
 		
 		if(accountStr.length() > 0) {
 			if(Iban.validateIBAN(accountStr)) {
@@ -1334,6 +1335,10 @@ public abstract class Employee extends ResizeComposite {
 	// ------------------------------------------------- Account methods
 
 	private void addReformatAccount() {
+		TextBox textBox = new TextBox();
+		account.getElement().setAttribute("style", "text-transform:uppercase");
+		account.getElement().setPropertyString("pattern", "[A-Z0-9]*");
+
 		account.addValueChangeHandler(e -> reformatAccount(account));
 	}
 	

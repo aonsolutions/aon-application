@@ -237,6 +237,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		
 	}
 	
+	
 	public static ITimedVariable<?>  getNarrowVariable(ITimedVariable<?> var, Period period){
 		if ( var instanceof LazyExpressionVariable )
 			return new LazyExpressionVariable( ((LazyExpressionVariable)var).getExpressionContext(), ((LazyExpressionVariable)var).getExpression(), period);
@@ -660,20 +661,25 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 	private static <T> ITimedVariable<T> wrapVariable(Period period,
 			ITimedVariable<T> timedVariable) {
 		return timedVariable instanceof IExpressionVariable<?> ?
-				new WrapExpressionVariable<T>(period, (IExpressionVariable<T>)timedVariable):
-				new WrapTimedVariable<T>(period, timedVariable);
+				new WrapExpressionVariable<>(period, (IExpressionVariable<T>)timedVariable):
+				new WrapTimedVariable<>(period, timedVariable);
 	}
 	
 	private static <T> ITimedVariable<T> wrapVariable(Period period,
 			ITimedVariable<?> timedVariable, T value) {
 		return timedVariable instanceof IExpressionVariable<?> ?
-				new ExpressionVariable<T>(
-						value, 
-						period, 
-						((IExpressionVariable<?>) timedVariable).getExpression(),
-						((IExpressionVariable<?>) timedVariable).getContext()
-						): 
-				new TimedObject<T>(value, period);
+				new WrapExpressionVariable<T>(period, (IExpressionVariable<T>)timedVariable) {
+		    			@Override
+		    			public T getValue(Period period) {
+		    			    return value;
+		    			}
+				}: 
+				new WrapTimedVariable<T>(period, (ITimedVariable<T> ) timedVariable) {
+				    @Override
+				    public T getValue(Period period) {
+					return value;
+				    }
+				};
 	}
 
 	private static <T> ITimedVariable<T> newWrapTimedVariable(Date start, Date end, ITimedVariable<T> var){
@@ -725,19 +731,19 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		
 	}
 	
-	private static class WrapExpressionVariable<T> implements IExpressionVariable<T> {
+	private static class WrapExpressionVariable<T> implements IExpressionVariable<T> , IWrapTimedVariable<T> {
 
 		private Period period;
-		private IExpressionVariable<? extends T> expressionVariable;
+		private IExpressionVariable<T> expressionVariable;
 
 		public WrapExpressionVariable(Period period,
-				IExpressionVariable<? extends T> timedVariable) {
+				IExpressionVariable<T> timedVariable) {
 			this.period = period;
 			this.expressionVariable = timedVariable;
 		}
 
 		public WrapExpressionVariable(Date start, Date end,
-				IExpressionVariable<? extends T> timedVariable) {
+				IExpressionVariable<T> timedVariable) {
 			this(new Period(start, end), timedVariable);
 		}
 
@@ -760,6 +766,11 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		@Override
 		public IExpression getExpression() {
 			return expressionVariable.getExpression();
+		}
+		
+		@Override
+		public ITimedVariable<T> getVariable() {
+		    return expressionVariable;
 		}
 	}
 }

@@ -1502,6 +1502,14 @@ public class TrabajadoresTramos {
 		getContextData(ContextVariable.PATERNITY_FACTOR.getName(), salary, startDate, endDate, 1.00)
 		 < 1.00;
 		
+		boolean iTMaternity = 	
+			getSumContextData(ContextVariable.MATERNITY_DAYS.getName(), salary, startDate, endDate) 
+		> 0.00;
+
+		boolean iTPaternity = 	
+			getSumContextData(ContextVariable.PATERNITY_DAYS.getName(), salary, startDate, endDate) 
+		> 0.00;
+
 		boolean iTPagoDirecto = (
 		getSumContextData(ContextVariable.COMMON_DISEASE_LACK_DAYS.getName(), salary, startDate, endDate)
 		+ getSumContextData(ContextVariable.COMMON_DISEASE_DAYS_366.getName(), salary, startDate, endDate)
@@ -1540,13 +1548,13 @@ public class TrabajadoresTramos {
 				;
 			else if ( iTPagoDelegado )
 				visitor.visitIncapacidadTemporalPagoDelegadoFormacion();
-			else if ( fullMaternity  )
+			else if ( iTMaternity && fullMaternity  )
 				;
-			else if ( fullPaternity  )
+			else if ( iTPaternity && fullPaternity  )
 				;
-			else if ( partialMaternity )
+			else if ( iTMaternity && partialMaternity )
 				visitor.visitMaternidadPaternidadTiempoParcialFormacion();
-			else if ( partialPaternity )
+			else if ( iTPaternity && partialPaternity )
 				visitor.visitMaternidadPaternidadTiempoParcialFormacion();
 			else if ( atEPPagoDelegado )
 				visitor.visitIncapacidadTemporalATEPPagoDelegadoFormacion();
@@ -1562,13 +1570,13 @@ public class TrabajadoresTramos {
 			visitor.visitIncapacidadTemporal15PrimerosDias();
 		else if ( iTPagoDelegado )
 			visitor.visitIncapacidadTemporalPagoDelegado();
-		else if ( fullMaternity  )
+		else if ( iTMaternity &&  fullMaternity  )
 			visitor.visitMaternidadPaternidadTiempoCompleto();
-		else if ( fullPaternity  )
+		else if ( iTPaternity && fullPaternity  )
 			visitor.visitMaternidadPaternidadTiempoCompleto();
-		else if ( partialMaternity )
+		else if ( iTMaternity && partialMaternity )
 			visitor.visitMaternidadPaternidadTiempoParcial();
-		else if ( partialPaternity )
+		else if ( iTPaternity && partialPaternity )
 			visitor.visitMaternidadPaternidadTiempoParcial();
 		else if ( atEPPagoDelegado )
 			visitor.visitIncapacidadTemporalATEPPagoDelegado();

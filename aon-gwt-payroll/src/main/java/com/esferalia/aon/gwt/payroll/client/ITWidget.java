@@ -106,7 +106,6 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -192,7 +191,7 @@ public abstract class ITWidget extends ResizeComposite {
 	HTMLPanel timelinePanel;
 	
 	@UiField
-	SplitLayoutPanel splitLayoutPanel;
+	DockLayoutPanel splitLayoutPanel;
 
 	HTMLPanel itTablePanel;
 	
@@ -2236,7 +2235,7 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	protected abstract void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure);
 	
-	public void setFooter(SplitLayoutPanel splitLayoutPanel, TabLayoutPanel tabLayout, AonMinimizePanel footPanel) {
+	public void setFooter(DockLayoutPanel splitLayoutPanel, TabLayoutPanel tabLayout, AonMinimizePanel footPanel) {
 		this.splitLayoutPanel.remove(this.footPanel);
 		this.footPanel = footPanel;
 		this.tabLayout = tabLayout;

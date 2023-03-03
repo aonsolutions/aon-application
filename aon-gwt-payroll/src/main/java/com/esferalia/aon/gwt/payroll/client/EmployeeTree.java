@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel.Task;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonEmployeesToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -82,8 +83,6 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -93,7 +92,6 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
@@ -103,7 +101,6 @@ import com.google.gwt.storage.client.Storage;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -120,7 +117,6 @@ import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -139,7 +135,7 @@ import net.aonsolutions.gwt.pdfjs.client.FullViewer;
  */
 
 public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Listener, Cost.Listener, Salary.Listener,
-		EmployeeSalary.Listener, WorkplaceSalary.Listener, EnterpriseSalary.Listener, SalaryDraft.Listener {
+		EmployeeSalary.Listener, WorkplaceSalary.Listener, EnterpriseSalary.Listener, SalaryDraft.Listener, AonEmployeesToolbar.Listener {
 	public static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	
 	
@@ -2564,7 +2560,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	@UiField
 	DetailPanel employeeDetail;
 	@UiField
-	SplitLayoutPanel splitLayoutPanel;
+	DockLayoutPanel dockLayoutPanel;
+	
+	@UiField
+	AonEmployeesToolbar toolbar;
 
 	@UiField(provided = true)
 	SimpleLayoutPanel messagePanel;
@@ -2636,7 +2635,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private MenuItem pasteItem;
 
 	private Storage storage;
-	
 	
 	private EmployeeTabLayoutPanel employeePanel;
 	private WorkplaceTabLayoutPanel workplacePanel;
@@ -2722,6 +2720,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		storage = Storage.getLocalStorageIfSupported();
 
 		employees.addListener(this);
+		
+		toolbar.addListener(this);
+		employeeDetail.setHeight("100%");
 
 		fileEditor = new FileEditor();
 		resultsPanel = new ResultsPanel();
@@ -2746,8 +2747,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		} catch (Throwable t) {
 
 		}
-		
-		initOpenCloseEmployees();
 			
 		initFootPanel();
 		
@@ -2764,67 +2763,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private void initMessagePanel() {
 		logEvent("initMessagePanel");
 		hideMessagePanel();
-	}
-
-	private void initOpenCloseEmployees() {
-		
-		Element closeEmployeesButton = Document.get().createSpanElement();
-		closeEmployeesButton.setInnerText("chevron_left");
-		closeEmployeesButton.setClassName("material-icons");
-		
-		closeEmployeesButton.getStyle().setOpacity(0.5);
-		closeEmployeesButton.getStyle().setPadding(5, Unit.PX);
-		closeEmployeesButton.getStyle().setBackgroundColor("#ddd");
-		closeEmployeesButton.getStyle().setProperty("borderTopLeftRadius", "50%");
-		closeEmployeesButton.getStyle().setProperty("borderBottomLeftRadius", "50%");
-		
-		closeEmployeesButton.getStyle().setPosition(Position.ABSOLUTE);
-		closeEmployeesButton.getStyle().setRight(5, Unit.PX);
-		closeEmployeesButton.getStyle().setBottom(7, Unit.PX);
-
-		employees.getElement().appendChild(closeEmployeesButton);
-		
-		Element openEmployeesButton = Document.get().createSpanElement();
-		openEmployeesButton.setInnerText("chevron_right");
-		openEmployeesButton.setClassName("material-icons");
-		
-		openEmployeesButton.getStyle().setOpacity(0.5);
-		openEmployeesButton.getStyle().setPadding(5, Unit.PX);
-		openEmployeesButton.getStyle().setBackgroundColor("#ddd");
-		openEmployeesButton.getStyle().setProperty("borderTopRightRadius", "50%");
-		openEmployeesButton.getStyle().setProperty("borderBottomRightRadius", "50%");
-
-		openEmployeesButton.getStyle().setPosition(Position.ABSOLUTE);
-		openEmployeesButton.getStyle().setLeft(5, Unit.PX);
-		openEmployeesButton.getStyle().setBottom(7, Unit.PX);
-		openEmployeesButton.getStyle().setDisplay(Display.NONE);
-
-		splitLayoutPanel.getElement().appendChild(openEmployeesButton);
-
-		InlineLabel.wrap(openEmployeesButton).addClickHandler(e -> {
-			splitLayoutPanel.setWidgetSize(employees, 275);
-			openEmployeesButton.getStyle().setDisplay(Display.NONE);
-			closeEmployeesButton.getStyle().setDisplay(Display.INITIAL);
-		});
-
-		InlineLabel.wrap(closeEmployeesButton).addClickHandler(e -> {
-			splitLayoutPanel.setWidgetSize(employees, 0);
-			closeEmployeesButton.getStyle().setDisplay(Display.NONE);
-			new Timer(){
-				@Override
-				public void run() {
-					openEmployeesButton.getStyle().setDisplay(Display.INITIAL);
-				}
-			}.schedule(500);
-			
-		});
-
-		employees.getElement().getParentElement().getStyle().setProperty("transition-property", "width");
-		employees.getElement().getParentElement().getStyle().setProperty("transition-duration", "500ms");
-		
-		employeeDetail.getElement().getParentElement().getStyle().setProperty("transition-property", "inset");
-		employeeDetail.getElement().getParentElement().getStyle().setProperty("transition-duration", "500ms");
-		
 	}
 
 	// --------------------------------------------------- Cost.Listener methods
@@ -3296,21 +3234,21 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 	
 	private void showMessagePanel() {
-		EmployeeTree.this.splitLayoutPanel.setWidgetHidden(EmployeeTree.this.getMessagePanel(), false);		
+		EmployeeTree.this.getMessagePanel().setVisible(true);
 	}
 
 	private void hideMessagePanel() {
-		EmployeeTree.this.splitLayoutPanel.setWidgetHidden(EmployeeTree.this.getMessagePanel(), true);		
+		EmployeeTree.this.getMessagePanel().setVisible(false);
 	}
 
 	private void showFootPanel() {
 		footPanel.addButtonMore();
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
+		dockLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
 	}
 	
 	private void closeFootPanel() {
 		footPanel.addButtonLess();
-		splitLayoutPanel.setWidgetSize(footPanel, 0);
+		dockLayoutPanel.setWidgetSize(footPanel, 0);
 	}
 
 	private void showResultsPanel() {
@@ -3320,7 +3258,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		EmployeeTree.this.footTabPanel.add(EmployeeTree.this.resultsPanel, tab);
 		footTabPanel.selectTab(resultsPanel);
-		EmployeeTree.this.splitLayoutPanel.setWidgetSize(EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
+		EmployeeTree.this.dockLayoutPanel.setWidgetSize(EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
 
 	}
 	
@@ -3331,7 +3269,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		EmployeeTree.this.footTabPanel.add(EmployeeTree.this.costsProblemsPanel, tab);
 		footTabPanel.selectTab(costsProblemsPanel);
-		EmployeeTree.this.splitLayoutPanel.setWidgetSize(EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
+		EmployeeTree.this.dockLayoutPanel.setWidgetSize(EmployeeTree.this.footPanel, Window.getClientHeight() / 4);
 		
 	}
 
@@ -3351,7 +3289,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
 		footTabPanel.add(progressPanel, tab);
 		footTabPanel.selectTab(progressPanel);
-		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
+		dockLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4);
 	}
 
 	private void hideProgressPanel() {
@@ -3409,7 +3347,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	private EnterpriseIT getEnterpriseIT() {
 		if (enterpriseIT == null) {
 			enterpriseIT = new EnterpriseIT();
-			enterpriseIT.setFooter(splitLayoutPanel, footTabPanel, footPanel);
+			enterpriseIT.setFooter(dockLayoutPanel, footTabPanel, footPanel);
 		} 
 		return enterpriseIT;
 	}
@@ -4700,6 +4638,28 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
             String mesDesde  = AonStringUtils.substringBetween(periodoDesde, "<Mes>","</Mes>"); 
             String now = DateTimeFormat.getFormat("MMddHHmm").format(new Date());
 	    return "SLD-Bases " + tipo + " " + provincia + numero + " " + anhoDesde+"-"+mesDesde + " " + now;
+	}
+
+	@Override
+	public void onCollapseMenuButtonClick(ClickEvent event) {
+		dockLayoutPanel.setWidgetSize(employees, 0);
+		dockLayoutPanel.animate(500);
+	}
+
+	@Override
+	public void onShowMenuButtonClick(ClickEvent event) {
+		dockLayoutPanel.setWidgetSize(employees, 350);
+		dockLayoutPanel.animate(500);
+	}
+
+	@Override
+	public void onSettingsButtonClick(ClickEvent event) {
+		// Implement when setting is needed. Uncomment button on toolbar
+	}
+
+	@Override
+	public void onTrashListButtonClick(ClickEvent event) {
+		// Implement when trash is needed. Uncomment button on toolbar
 	}
 	
 
