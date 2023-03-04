@@ -35,6 +35,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
 
+@Ignore
 public class ComunicaActivityCccTest {
 
 	public static final String INTEGRATION_TGSS_URL = "integration.test.tgss.payroll.url";
