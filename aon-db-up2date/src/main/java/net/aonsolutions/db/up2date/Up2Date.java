@@ -20,6 +20,11 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.MaxEmbargable4Daily;
+import net.aonsolutions.db.up2date.config.InsertTreasuryAndMarketingModule;
+import net.aonsolutions.db.up2date.finance.UpdateBankAccountUpperCase;
+import net.aonsolutions.db.up2date.security.UdpateAonSmb;
+import net.aonsolutions.db.up2date.security.UdpatePacksDomainApp;
+import net.aonsolutions.db.up2date.security.UdpatePortalConectaUsers;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 
 public class Up2Date {
@@ -253,7 +258,7 @@ public class Up2Date {
     		//AlterAgreement4Log.ALTERAGREEMENTLOG,
     		//RealDecreeLaw322021Art151Fix.REALDECREELAW322021ART151FIX,
     		//FellowsITIMS2022UpdateII.FELLOWSITIMS2022UPDATEII,
-	   	//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE,
+	   		//JacalInvoiceUpdateFix.JACA_INVOICE_UPDATE,
     		//AgriculturalMonthlyQuote2022Fix.AGRICULTURALMONTHLYQUOTE2022FIX,
     		//ContractTransfromUnify.CONTRACTTRANSFORMUNIFY,
     		//AlterFsMod200Audit.ALTER_FS_MOD200_AUDIT,
@@ -307,9 +312,9 @@ public class Up2Date {
 	    	//UnemploymentPercentageFix.UNEMPLOYMENTPERCENTAGEFIX,
 	    	//MEITrainingRemove.MEITRAININGREMOVE,
 	    	//MEIPECUpdateUndo.MEIPECUPDATEUNDO,
-	    	//sMEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
+	    	//MEITrainingRemoveUndo.MEITRAININGREMOVEUNDO,
 	    	//Embargar4Many.BIEMBARGAR4MANY,
-		//FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
+	    	//FinanceTrackingAmountFix.FINANCE_TRACKING_AMOUNT_FIX,
 	    	//OcupationITIMSFix.OCUPATIONITIMSFIX,
 	    	//Embargar4Many.BIEMBARGAR4MANY,
 	    	//BasesMin2023Update.BASESMIN2023UPDATE,
@@ -322,9 +327,23 @@ public class Up2Date {
 	    	MaxEmbargable4Daily.MAXEMBARGABLE4DAILY,
 	    	
 	    	
+
+		    //AgreementEmptyTrash.AGREEMENTEMPTYTRASH,
+   		
+        //UdpatePortalConectaUsers.UPDATE_PORTAL_CONECTA_USERS,
+        //UdpatePacksDomainApp.UPDATE_PACKS_DOMAIN_APP,
+        //InsertTreasuryAndMarketingModule.INSERT_TREASURY_AND_MARKETING_MODULE,
+        //UdpateAonSmb.UPDATE_AON_SMB,
+	    	//EmbargoDescriptionUpdate.EMBARGODESCRIPTIONUPDATE,	    	
 	    	//AgreementEmptyTrash.AGREEMENTEMPTYTRASH,
+	    	
+	    	//UpdateBankAccountUpperCase.UPDATE_BANK_ACCOUNT_UPPERCASE,
+        
     		//Important, not remove
-    		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE
+    		SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
+    		
+        //AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE
+
     		
     };
 

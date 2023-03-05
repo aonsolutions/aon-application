@@ -66,6 +66,10 @@ public class Domain implements Serializable {
 	public boolean isStandalone() {
 		return parentId == null && !isDomainManagement();
 	}
+	
+	public boolean isConsultancy() {
+		return DomainType.CONSULTANCY.equals(getDomainType());
+	}
 
 	public boolean isActive() {
 		return active;

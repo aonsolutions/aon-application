@@ -342,7 +342,8 @@ public class FiscalModelAdmonPanel<T extends IFiscalModel,O extends FiscalModelM
 				AonCertificationPopupParams params = new AonCertificationPopupParams()
 						.setDocument(doc)
 						.setName(name)
-						.setShowNRC(false);
+						.setShowNRC(false)
+						.setTestEnvironment(getCallback().getOptions().getConfiguration().fiscal().isTestEnvironment());
 				AonCertificationPopup certPopup = new AonCertificationPopup(getAPI(), params) {
 					
 					@Override

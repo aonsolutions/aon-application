@@ -94,7 +94,7 @@ public class Model111ScriptProvider {
 		,ARABA_2022_SCRIPT {
 			@Override
 			boolean accept(Mod111 mod111) {
-				return mod111.isAraba() && mod111.getYear() > 2021 && mod111.getYear() > 2023;
+				return mod111.isAraba() && mod111.getYear() > 2021 && mod111.getYear() < 2023;
 			}
 	
 			@Override

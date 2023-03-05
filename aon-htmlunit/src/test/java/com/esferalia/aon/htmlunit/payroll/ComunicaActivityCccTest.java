@@ -17,8 +17,9 @@ import java.util.logging.Level;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.Ignore;
+
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
@@ -156,7 +157,7 @@ public class ComunicaActivityCccTest {
 		HtmlTable cccTable = (HtmlTable)getElementById("cccTable");
 		Assert.assertEquals(cccTable.getRowCount(), 2);
 		
-		getElementById("tgssMenu_0").click();
+		getElementById("tgssMenu_1").click();
 		wait4Id("employeesWorking");
 		
 		wait4Id("pdfNotLoaded");
@@ -178,7 +179,7 @@ public class ComunicaActivityCccTest {
 		HtmlTable cccTable = (HtmlTable)getElementById("cccTable");
 		Assert.assertEquals(cccTable.getRowCount(), 2);
 		
-		getElementById("tgssMenu_0").click();
+		getElementById("tgssMenu_1").click();
 		wait4Id("employeePrevMov");
 		
 		wait4Id("pdfNotLoaded");
@@ -200,7 +201,7 @@ public class ComunicaActivityCccTest {
 		HtmlTable cccTable = (HtmlTable)getElementById("cccTable");
 		Assert.assertEquals(cccTable.getRowCount(), 2);
 		
-		getElementById("tgssMenu_0").click();
+		getElementById("tgssMenu_1").click();
 		wait4Id("idc");
 		
 		wait4Id("pdfNotLoaded");
@@ -222,7 +223,7 @@ public class ComunicaActivityCccTest {
 		HtmlTable cccTable = (HtmlTable)getElementById("cccTable");
 		Assert.assertEquals(cccTable.getRowCount(), 2);
 		
-		getElementById("tgssMenu_0").click();
+		getElementById("tgssMenu_1").click();
 		wait4Id("laboralLife");
 		
 		wait4Id("pdfNotLoaded");

@@ -289,13 +289,21 @@
 					<rich:panelBarItem id="booking"
 						label="#{bundle.admin_global_panel_booking}">
 						<aon:if test="#{aonRole.sysAdmin or (!domainSwitcher.disableDomainManagement)}">
+							<aon:if test="#{aonRole.sysAdmin and (domainSwitcher.type != 'ADMIN')}">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="adminDomain"
+										action="adminDomain_form"
+										actionListener="#{adminDomain.onInit}"
+										value="#{bundle.admin_domain_management}" />
+								</aon:div>
+							</aon:if>	
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="adminDomain"
-									action="adminDomain_form"
-									actionListener="#{adminDomain.onInit}"
-									value="#{bundle.admin_domain_management}" />
-							</aon:div>
+								<aon:commandLink id="new_suite_marketplace_2"
+									action="new_suite_marketplace"
+									value="#{bundle.admin_booking}" />
+							</aon:div>		
 						</aon:if>
+						<!-- 
 						<aon:if test="#{(aonRole.sysAdmin or domainSwitcher.parentDomainUserInChildDomain) and globalConfig.portalRegistered}">
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="portalAccess"
@@ -304,7 +312,8 @@
 									value="#{bundle.admin_global_portal_access}" >
 								</aon:commandLink>						
 							</aon:div>
-						</aon:if>	
+						</aon:if> 
+						-->
 																		
 					</rich:panelBarItem>
 

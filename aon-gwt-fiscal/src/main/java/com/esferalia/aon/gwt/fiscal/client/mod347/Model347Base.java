@@ -123,6 +123,7 @@ abstract class Model347Base extends DockLayoutPanel {
 	protected void select(Mod347 mod347) {
 		setModel(mod347);
 		refreshToolbarState();
+		styleStatusLabel();
 	}
 	
 	private Integer getTabPanelIndex() {

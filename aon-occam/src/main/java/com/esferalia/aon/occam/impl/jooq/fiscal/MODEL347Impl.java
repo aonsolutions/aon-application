@@ -68,6 +68,12 @@ public class MODEL347Impl implements IMODEL347 {
 	@Override
 	public void writeMailMergeReport(AONContext ctx, Mod347 mod347, Writer writer) {
 		Mod347DAO.writeMailMergeReport(ctx, mod347,writer);
-	}		
+	}
+	
+	@Override
+	public Mod347 aeatPresentation(AONContext ctx, Mod347 mod, String aeatResponse) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> Mod347DAO.aeatPresentation(ctx, mod, aeatResponse));
+	}
 	
 }

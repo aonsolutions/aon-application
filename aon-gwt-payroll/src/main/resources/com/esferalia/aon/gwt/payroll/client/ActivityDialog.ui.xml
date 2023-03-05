@@ -21,7 +21,7 @@
 			display: flex;
 			justify-content: flex-end;
 			gap: .5rem;
-			margin: .5rem 0;
+			margin: 0.5rem 0 0.8rem 0;
 		}
 		
 	</ui:Style>

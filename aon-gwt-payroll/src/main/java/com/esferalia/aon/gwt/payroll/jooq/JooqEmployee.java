@@ -1321,6 +1321,7 @@ public class JooqEmployee {
 				rbankTableId = findRBankRecord.get(0).get(RBANK.ID); 
 				
 				dslContext.update(RBANK)
+					.set(RBANK.BANK_ACCOUNT, account)
 					.set(RBANK.BIC, employeeData.getBic())
 					.set(RBANK.ALIAS, alias)
 					.where(RBANK.ID.eq(rbankTableId))
