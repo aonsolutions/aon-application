@@ -1,3 +1,4 @@
+
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ public class DomainUserRoles implements Serializable {
 	
 	private List<AonRole> domainUserRoles;
 	private List<AonRole> parentDomainUserRoles;
+	private boolean domainPayer;
 	
 	public DomainUserRoles() {
 		super();
@@ -55,6 +57,15 @@ public class DomainUserRoles implements Serializable {
 	
 	public DomainUserRoles setUser(User user) {
 		this.user = user;
+		return this;
+	}
+	
+	public boolean isDomainPayer() {
+		return domainPayer;
+	}
+	
+	public DomainUserRoles setDomainPayer(boolean domainPayer) {
+		this.domainPayer = domainPayer;
 		return this;
 	}
 	

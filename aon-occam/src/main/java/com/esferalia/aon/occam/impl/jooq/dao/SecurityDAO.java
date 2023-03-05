@@ -65,6 +65,7 @@ import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
@@ -104,6 +105,7 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AonRole;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -1540,6 +1542,8 @@ public class SecurityDAO {
 	public static DomainUserRoles getDomainUserRoles(AONContext ctx, Integer userId) {
 		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
 		Domain parentDomain = DomainDAO.getDomain(ctx, domain.getParentId());
+		ApplicationParameter domainPayer = AppParamDAO.fetchOne(ctx, AppParam.AON_DOMAIN_PAYER);
+		
 		
 		User user = userId != null ? UserDAO.get(ctx, f -> f.getIdProperty().eq(userId)) : new User();
 		user.setRoles(getUserRoles(ctx, userId));
@@ -1576,7 +1580,8 @@ public class SecurityDAO {
 				.setDomainApps(domainApps)
 				.setParentDomainApps(parentDomainApps)
 				.setDomainUserRoles(domainUserRoles)
-				.setParentDomainUserRoles(parentDomainUserRoles);
+				.setParentDomainUserRoles(parentDomainUserRoles)
+				.setDomainPayer(domainPayer != null);
 	}
 
 	public static boolean isOCRActive(AONContext ctx, int domain) {
