@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.MaxEmbargable4Daily;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 
 public class Up2Date {
@@ -317,6 +318,8 @@ public class Up2Date {
 	    	//IPREM2023Update.IPREM2022UPDATE,
 	    	//BasesMin2023Guess.BASESMIN2023GUESS,
 	    	//EmbargoDescriptionUpdate.EMBARGODESCRIPTIONUPDATE,
+	    	//AlterCostCode.ALTERCOSTCODE,
+	    	MaxEmbargable4Daily.MAXEMBARGABLE4DAILY,
 	    	
 	    	
 	    	//AgreementEmptyTrash.AGREEMENTEMPTYTRASH,
