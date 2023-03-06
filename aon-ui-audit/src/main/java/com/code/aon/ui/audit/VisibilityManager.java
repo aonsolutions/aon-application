@@ -142,6 +142,7 @@ public class VisibilityManager extends BasicVisibilityManager {
 	
 	@Override
 	public Set<Module> getEnabledModules( User user, boolean addExtraModules ) {
+		if(user == null) user = new User();
 		Set<Module> enabledModules = new HashSet<>();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		Integer domainId = ds.getDomainId();
