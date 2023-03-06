@@ -252,6 +252,8 @@ public enum AppParam {
 	, SERES_FTP_USER
 	, SERES_FTP_PASSWORD
 	, SERES_FTP_PORT
+	
+	,AON_DOMAIN_PAYER
 	;
 	
 	public String getValue() {

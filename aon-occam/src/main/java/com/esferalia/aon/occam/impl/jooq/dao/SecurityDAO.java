@@ -54,6 +54,7 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record6;
+import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Result;
 import org.jooq.SelectOnConditionStep;
@@ -65,6 +66,7 @@ import com.esferalia.aon.jooq.tables.records.MailAccountRecord;
 import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
@@ -104,6 +106,7 @@ import com.esferalia.aon.occam.api.model.security.UserScope;
 import com.esferalia.aon.occam.api.model.security.UserWorkgroup;
 import com.esferalia.aon.occam.api.model.task.TaskHolder;
 import com.esferalia.aon.occam.api.model.type.AonRole;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
@@ -620,14 +623,14 @@ public class SecurityDAO {
 	@Deprecated
 	public static User getUser(AONContext ctx, String login) {
 		ctx.checkRead();
-		Record6<Integer, Integer, String, String, Byte, Integer> record = 
-			ctx.getDslContext()
+		Record7<Integer, Integer, String, String, Byte, Integer, byte[]> record = ctx.getDslContext()
 				.select(USER.ID, 
 						USER.DOMAIN, 
 						USER.NAME, 
 						USER.LOGIN,
 						USER.ACTIVE,
-						USER.REGISTRY)
+						USER.REGISTRY,
+						USER.AUTH)
 				.from(USER)
 				.where(USER.DOMAIN.equal(ctx.getDomainId()))
 				.and(USER.LOGIN.equal(login))
@@ -640,7 +643,8 @@ public class SecurityDAO {
 								USER.NAME, 
 								USER.LOGIN,
 								USER.ACTIVE,
-								USER.REGISTRY)
+								USER.REGISTRY,
+								USER.AUTH)
 						.from(DOMAIN)
 						.join(PARENT_DOMAIN).on(DOMAIN.PARENT.equal(PARENT_DOMAIN.ID))
 						.join(USER).on(USER.DOMAIN.equal(PARENT_DOMAIN.ID))
@@ -657,6 +661,7 @@ public class SecurityDAO {
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
 			user.setRegistry(new Registry().setId(record.getValue(USER.REGISTRY)));
 			user.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
+			user.setAuth(new Auth().setAuth(record.getValue(USER.AUTH)));
 		}
 		return user;
 	}
@@ -1540,6 +1545,8 @@ public class SecurityDAO {
 	public static DomainUserRoles getDomainUserRoles(AONContext ctx, Integer userId) {
 		Domain domain = DomainDAO.getDomain(ctx, ctx.getDomainId());
 		Domain parentDomain = DomainDAO.getDomain(ctx, domain.getParentId());
+		ApplicationParameter domainPayer = AppParamDAO.fetchOne(ctx, AppParam.AON_DOMAIN_PAYER);
+		
 		
 		User user = userId != null ? UserDAO.get(ctx, f -> f.getIdProperty().eq(userId)) : new User();
 		user.setRoles(getUserRoles(ctx, userId));
@@ -1576,7 +1583,8 @@ public class SecurityDAO {
 				.setDomainApps(domainApps)
 				.setParentDomainApps(parentDomainApps)
 				.setDomainUserRoles(domainUserRoles)
-				.setParentDomainUserRoles(parentDomainUserRoles);
+				.setParentDomainUserRoles(parentDomainUserRoles)
+				.setDomainPayer(domainPayer != null);
 	}
 
 	public static boolean isOCRActive(AONContext ctx, int domain) {
