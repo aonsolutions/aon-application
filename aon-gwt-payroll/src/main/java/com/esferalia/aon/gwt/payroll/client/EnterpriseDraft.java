@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
@@ -172,13 +171,13 @@ public abstract class EnterpriseDraft extends Composite {
 		}
 
 		@Override
-		public void fireErrorMessage(Map<String, String> errorMap) {
-			AonMessagePanel.showError(messageContainer, errorMap);
+		public void fireErrorMessage(Map<String, String> messages) {
+			showErrorMessage(messages);
 		}
 		
 		@Override
-		public void fireInfoMessage(Map<String, String> errorMap) {
-			AonMessagePanel.showInfo(messageContainer, errorMap);
+		public void fireWarningMessage(Map<String, String> messages) {
+			showWarningMessage(messages);
 		}
 		
 	}
@@ -236,9 +235,6 @@ public abstract class EnterpriseDraft extends Composite {
 	
 	@UiField
 	DockLayoutPanel dockLayoutPanel;
-	
-	@UiField
-	HTMLPanel messageContainer;
 	
 	@UiField
 	HTMLPanel centerContainer;
@@ -419,14 +415,14 @@ public abstract class EnterpriseDraft extends Composite {
 	}
 	
 	private void onAccept() {
-		showLoading("Guardando " + enterpriseDraftObject.getName() + " ...");
+		showLoadingMessage("Guardando " + enterpriseDraftObject.getName() + " ...");
 		enterpriseDraftObject.saveEnterprise(
 				r -> {
-					showSuccess("Guardado", "La empresa " + enterpriseDraftObject.getEnterpriseInfo().getName() + " ha sido actualizada correctamente");
+					showSuccessMessage(new HashMap<String, String>(){{ put("Guardado", "La empresa " + enterpriseDraftObject.getEnterpriseInfo().getName() + " ha sido actualizada correctamente"); }});
 					onSaved.accept(enterpriseDraftObject.getEnterpriseInfo());
 					setHasChange(false);
 				}, 
-				t -> showError("Guardado", "La empresa " + enterpriseDraftObject.getEnterpriseInfo().getName() + " ha sido actualizada correctamente")
+				t -> showSuccessMessage(new HashMap<String, String>(){{ put("Error", t.getMessage()); }})
 		);
 	}
 	
@@ -434,22 +430,6 @@ public abstract class EnterpriseDraft extends Composite {
 		NativeEvent nativeEvent = event.getNativeEvent();
 		contextMenu.setPopupPosition(nativeEvent.getClientX(), nativeEvent.getClientY());
 		contextMenu.show();
-	}
-	
-	private void showError(String title, String message) {
-		Map<String, String> messageMap = new HashMap<>();
-		messageMap.put(title,message);
-		AonMessagePanel.showSuccess(messageContainer, messageMap);
-	}
-	
-	private void showSuccess(String title, String message) {
-		Map<String, String> messageMap = new HashMap<>();
-		messageMap.put(title,message);
-		AonMessagePanel.showSuccess(messageContainer, messageMap);
-	}
-	
-	private void showLoading(String message) {
-		AonMessagePanel.showLoading(messageContainer, message);
 	}
 	
 	private void setHasChange(boolean hasChange) {
@@ -470,5 +450,9 @@ public abstract class EnterpriseDraft extends Composite {
 	// -------------------------------------------------- Abstract Methods
 	
 	protected abstract void onCheckStatus(EnterpriseDraftObject enterpriseDraftObject);
+	protected abstract void showErrorMessage(Map<String, String> messages);
+	protected abstract void showWarningMessage(Map<String, String> messages);
+	protected abstract void showSuccessMessage(Map<String, String> messages);
+	protected abstract void showLoadingMessage(String message);
 
 }

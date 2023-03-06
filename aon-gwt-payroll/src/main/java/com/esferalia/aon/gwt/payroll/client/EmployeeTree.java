@@ -107,6 +107,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -761,23 +762,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 			showResults(result, dialog.getSelectedData(), resultsPanel, CreateResponseCommand.this::onBases,
 					r -> showResultsPanel());
-
-//			CretaResults cretaResults = new CretaResults() {
-//				@Override
-//				protected void onBases(JsBasesResult result) {
-//					CreateResponseCommand.this.onBases(result);
-//				}
-//			};
-//			cretaResults.addErrors(result.getErrors());
-//			cretaResults.addWarnings(result.getWarnings());
-//			cretaResults.addUnknown(result.getUnknown());
-//			cretaResults.setJsFiles(dialog.getSelectedData());
-//			resultsPanel.setWidget(cretaResults);
-//
-//			if (result.getErrors().length > 0
-//					|| result.getWarnings().length > 0)
-//				showResultsPanel();
-
 		}
 
 		// --------------------------------------------------------------------
@@ -1438,9 +1422,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 						}
 
 					}, AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
-//			addItem("SLD-Fichero de Bases (Desde el fichero de Trabajadores y Tramos)",
-//					cccCommands[6] = new CCCCreateResponseCommand(File.BASES, File.TRABAJADORES_TRAMOS),
-//					AON.AON_ICON_SEGSOCIAL_SMALL, AON.AON_ICON_CMD_BUTTON);
 			addSeparator();
 			addItem("Resultados", new ShowResultsCommand(), AON.AON_ICON_TIME, AON.AON_ICON_CMD_BUTTON);
 		}
@@ -1758,8 +1739,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			up2DateButton = new Button("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", (ClickHandler) e -> onClickUp2DateSSButton(e));
 			addSLDMenuItem("INFORME DATOS DE COTIZACI\u00D3N-CCC (IDC)", new IdcCommand());
 			addSLDMenuItem("VIDA LABORAL", new laboralLifeCommand());
-			// TODO: esta en la actividad
-//			addSLDMenuItem("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.", new Up2DateCommand());
 		}
 
 		public void setCCC(CCC ccc) {
@@ -1829,7 +1808,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		void showLaboralLifeCommand(Date date) {
 			FullViewer viewer = getLaboralLifePDF(employeeDetail, date);
 			DomainEnterprisesServiceAsync enterpriseService = DomainEnterprisesServiceAsync.newInstance();
-			AonMessagePanel.showLoading(getMessagePanel(), "Cargando vida laboral del ccc " + ccc.getRegime() + " " + ccc.getCode());
+			showLoadingMessage("Cargando vida laboral del ccc " + ccc.getRegime() + " " + ccc.getCode());
+			
 			enterpriseService.getCCCLaboralLife(ccc.getRegime(), ccc.getCode(), date, new Date(), new AsyncCallback<String>() {
 				
 				@Override
@@ -1840,7 +1820,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				
 				@Override
 				public void onFailure(Throwable caught) {
-					AonMessagePanel.showError(getMessagePanel(), "Error Vida Laboral : " + caught.getMessage());
+					showErrorMessage(new HashMap<String, String>(){{ put("Error Vida Laboral", caught.getMessage()); }});
 				}
 			});
 		}
@@ -1887,7 +1867,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					try {
 						String dataURI = xhr.getResponseText();
 						viewer.open(dataURI);
-						// showIDC(dataURI, employeeDetail, date);
 						AON.stop();
 					} catch ( Throwable t ) {
 						Window.alert(t.getMessage());
@@ -2262,19 +2241,16 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			add("Contrato", getEmployeeDraft(), this::onEmployeeSelected);
 			add("N\u00f3minas", getEmployeeSalary(), this::onSalariesSelected);
 			add("Calendario", getEmployeeCalendarDraftNew(), this::onCalendarSelected);
-//			add("Bonificaciones", getEmployeeSSBonus(), this::onSSBonusSelected);
 			add("Peculiaridades", getEmployeeSSPEC(), this::onSSPECSelected);
 			add("Mod145", getMod145(), this::onMod145Selected);
 			add("Borrador", getSalaryDraft(), this::onDraftSelected);
 			add("Variables", getEmployeeEventsDraft(), this::onEventsSelected);
-//			add("Convenio", getCategoryDraft(), this::onAgreementSelected);
 			add("Convenio", getAgreementPreview(), this::onAgreementTabSelected);
 			add("Conceptos de C\u00e1lculo", getEmployeeContractPayments(), this::onPaymentsSelected);
 			add("Variables de C\u00e1lculo", getEmployeeContractVariables(), this::onVariablesSelected);
 		}
 
 		void onDraftSelected() {
-			//employees.getEmployeeSalaryDraft(salaryDraft, o -> getSalaryDraft().setSalaryDraftObject(o));
 			getSalaryDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			getSalaryDraft().setSalaryDraftObject(salaryDraft);
 		}
@@ -2340,26 +2316,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			});	
 		}
 		
-//		void onAgreementSelected(){
-//			getCategoryDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
-//			CategoryDraftObject categoryDraftObject = 
-//					contractCategoriesMap.computeIfAbsent(salaryDraft.getEmployeeId(), id -> newCategoryDraftObject(salaryDraft.getEmployee()));
-//			getCategoryDraft().setCategoryDraftObject(categoryDraftObject);
-//		}
-		
 		void onAgreementTabSelected(){
 			Integer agreementId = salaryDraft.getEmployee().getCategory().getAgreement().getId();
 			Integer levelId = salaryDraft.getEmployee().getCategory().getLevelId();
 			
-			AonMessagePanel.showLoading(getMessagePanel(), "Obteniendo convenio " + salaryDraft.getEmployee().getCategory().getAgreement().getDescription()  + " ...");
-			showMessagePanel();
+			showLoadingMessage("Obteniendo convenio " + salaryDraft.getEmployee().getCategory().getAgreement().getDescription()  + " ...");
 			
 			DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 			impl.getAgreementInfo(agreementId, false, new AsyncCallback<AgreementInfo>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					agreementPreview.showError("Error carga convenio", caught.getMessage());
+					showErrorMessage(new HashMap<String, String>(){{ put("Error Convenio", caught.getMessage()); }});
 				}
 
 				@Override
@@ -2385,39 +2353,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 			getAgreementPreview().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			setVisibleWidget(getAgreementPreview(), salaryDraft.getEmployee().getCategory() != null );
-			
-			// TODO: comento el convenio antiguo
-//			getCategoryDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
-//			setVisibleWidget(getCategoryDraft(), salaryDraft.getEmployee().getCategory() != null );
 		}
 		
 		private EmployeeContractVariablesObject newEmployeeContractVariablesObject(Integer contractId){
 			return new EmployeeContractVariablesObject(contractId, salaryDraft.getEmployee().getStartDate(), salaryDraft.getEmployee().getEndDate());
 		}
-		
-//		private CategoryDraftObject newCategoryDraftObject(Employee employee) {
-//			
-//			Category category = employee.getCategory();
-//			Agreement agreement = category.getAgreement(); 
-//			
-//			com.esferalia.aon.gwt.payroll.shared.CategoryDraft categoryDraft = 
-//			new com.esferalia.aon.gwt.payroll.shared.CategoryDraft();
-//			categoryDraft.setId(agreement.getId());
-//			categoryDraft.setDomain(agreement.getDomain());
-//			categoryDraft.setLevelId(category.getLevelId());
-//			categoryDraft.setDescription(agreement.getDescription());
-//			categoryDraft.setSSNumber(agreement.getSSNumber());
-//			categoryDraft.setStartDate(DateUtils.getFirstDayOfMonth());
-//			categoryDraft.setEndDate(DateUtils.getLastDayOfMonth());
-//			
-//			return 
-//			new CategoryDraftObject(
-//					enterprise.getDomain(),
-//					Wnd.getCurrentDomainNameURL(),
-//					Wnd.getCurrentUser(),
-//					categoryDraft, 
-//					DomainEmployeesServiceAsync.newInstance());			
-//		}
 		
 		private String getTitle(Employee employee) {
 			return employee.getFullname();
@@ -2477,15 +2417,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		void onAgreementTabSelected(){
 			Integer agreementId = workplace.getAgreement().getId();
 			
-			AonMessagePanel.showLoading(getMessagePanel(), "Obteniendo convenio " + workplace.getAgreement().getDescription()  + " ...");
-			showMessagePanel();
+			showLoadingMessage("Obteniendo convenio " + workplace.getAgreement().getDescription()  + " ...");
 			
 			DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 			impl.getAgreementInfo(agreementId, true, new AsyncCallback<AgreementInfo>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					agreementPreview.showError("Error carga convenio", caught.getMessage());
+					showErrorMessage(new HashMap<String, String>(){{ put("Error Convenio", caught.getMessage()); }});
 				}
 
 				@Override
@@ -2537,7 +2476,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}
 
 		void onEnterpriseSelected() {
-			
+			// NOOP
 		}
 
 		public void setEnterprise(Enterprise enterprise) {
@@ -2565,8 +2504,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	@UiField
 	AonEmployeesToolbar toolbar;
 
-	@UiField(provided = true)
-	SimpleLayoutPanel messagePanel;
+	@UiField
+	HTMLPanel messagePanel;
 
 	@UiField
 	AonMinimizePanel footPanel;
@@ -2677,27 +2616,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				}
 			}
 		};
-		
-		messagePanel = new SimpleLayoutPanel() {
-			@Override
-			public void add(Widget widget) {
-				super.add(widget);
-				EmployeeTree.this.showMessagePanel();
-			}
-			
-			@Override
-			public boolean remove(Widget w) {
-				boolean remove = super.remove(w);
-				EmployeeTree.this.hideMessagePanel();
-				return remove;
-			};
-			@Override
-			public void clear() {
-				super.clear();
-				EmployeeTree.this.hideMessagePanel();
-			}
-			
-		};
 
 		
 		// Create the UI defined in Employee.ui.xml.
@@ -2712,7 +2630,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		// Add the outer panel to the RootLayoutPanel, so that it will be
 		// displayed.
 		RootLayoutPanel root = RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel");
-		// RootPanel root = RootPanel.get("rootPanel");
 		root.add(ui);
 		logEvent("addedToRootPanel");
 
@@ -2773,7 +2690,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -2845,7 +2761,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -2870,7 +2785,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-
 			}
 
 			@Override
@@ -3186,7 +3100,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	@Override
 	public void onEmployeeCut(Employee employee) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -3213,33 +3126,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		getDeductionEditor().setDeduction(deduction);
 		employeeDetail.setWidget(getDeductionEditor());
 	}
-
-	// ------------------------------------------------------- UiHandler methods
-
-//	@UiHandler("footPanel")
-//	void onFootMinimize(MinimizeEvent event) {
-//		closeFootPanel();
-//	}
-//
-//	@UiHandler("footPanel")
-//	void onFootMaximize(MaximizeEvent event) {
-//		showFootPanel();
-//	}
-	
 	
 	// --------------------------------------------------------- Private methods
-
-	private Panel getMessagePanel() {
-		return messagePanel;
-	}
-	
-	private void showMessagePanel() {
-		EmployeeTree.this.getMessagePanel().setVisible(true);
-	}
-
-	private void hideMessagePanel() {
-		EmployeeTree.this.getMessagePanel().setVisible(false);
-	}
 
 	private void showFootPanel() {
 		footPanel.addButtonMore();
@@ -3252,7 +3140,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	private void showResultsPanel() {
-
 		InlineLabel tab = new InlineLabel("Resultados");
 		tab.addStyleName(AON.AON_ICON_TIME);
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
@@ -3263,7 +3150,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 	
 	private void showCostProblemsPanel() {
-		
 		InlineLabel tab = new InlineLabel("Costes");
 		tab.addStyleName(AON.AON_ICON_TIME);
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
@@ -3274,7 +3160,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	private void selectResultsPanel() {
-
 		InlineLabel tab = new InlineLabel("Resultados");
 		tab.addStyleName(AON.AON_ICON_TIME);
 		tab.addStyleName(AON.AON_ICON_CMD_BUTTON);
@@ -3417,7 +3302,29 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				@Override
 				protected void onCheckStatus(EnterpriseDraftObject enterpriseDraftObject) {
 					checkStatus(enterpriseDraftObject);
-				}}.setOnSaved(w -> refreshEnterprise());
+				}
+				
+				@Override
+				protected void showSuccessMessage(Map<String, String> messages) {
+					EmployeeTree.this.showSuccessMessage(messages);
+				}
+
+				@Override
+				protected void showErrorMessage(Map<String, String> messages) {
+					EmployeeTree.this.showErrorMessage(messages);
+				}
+				
+				@Override
+				protected void showWarningMessage(Map<String, String> messages) {
+					EmployeeTree.this.showWarningMessage(messages);
+				}
+
+				@Override
+				protected void showLoadingMessage(String message) {
+					EmployeeTree.this.showLoadingMessage(message);
+				}
+			
+			}.setOnSaved(w -> refreshEnterprise());
 		return enterpriseDraft;
 	}
 	
@@ -3426,7 +3333,29 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			@Override
 			protected void onCheckStatus(EnterpriseDraftObject enterpriseDraftObject) {
 				checkStatus(enterpriseDraftObject);
-			}}.setOnSaved(w -> refreshEnterprise());
+			}
+		
+			@Override
+			protected void showSuccessMessage(Map<String, String> messages) {
+				EmployeeTree.this.showSuccessMessage(messages);
+			}
+
+			@Override
+			protected void showErrorMessage(Map<String, String> messages) {
+				EmployeeTree.this.showErrorMessage(messages);
+			}
+			
+			@Override
+			protected void showWarningMessage(Map<String, String> messages) {
+				EmployeeTree.this.showWarningMessage(messages);
+			}
+
+			@Override
+			protected void showLoadingMessage(String message) {
+				EmployeeTree.this.showLoadingMessage(message);
+			}
+			
+		}.setOnSaved(w -> refreshEnterprise());
 	}
 
 	private EmployeeTabLayoutPanel getEmployeePanel() {
@@ -3458,7 +3387,39 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	private ActivityDraft getActivityDraft() {
 		if (activityDraft == null)
-			activityDraft = new ActivityDraft();
+			activityDraft = new ActivityDraft() {
+
+				@Override
+				protected void showSuccessMessage(Map<String, String> messages) {
+					EmployeeTree.this.showSuccessMessage(messages);
+				}
+
+				@Override
+				protected void showErrorMessage(Map<String, String> messages) {
+					EmployeeTree.this.showErrorMessage(messages);
+				}
+				
+				@Override
+				protected void showWarningMessage(Map<String, String> messages) {
+					EmployeeTree.this.showWarningMessage(messages);
+				}
+				
+				@Override
+				protected void showInfoMessage(Map<String, String> messages) {
+					EmployeeTree.this.showInfoMessage(messages);
+				}
+
+				@Override
+				protected void showLoadingMessage(String message) {
+					EmployeeTree.this.showLoadingMessage(message);
+				}
+
+				@Override
+				protected void hideMessage() {
+					EmployeeTree.this.hideMessagePanel();
+				}
+			};
+				
 		return activityDraft;
 	}
 
@@ -3516,15 +3477,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				@Override
 				protected void showLoading() {
 					super.showLoading();
-					AonMessagePanel.showLoading(getMessagePanel(), 
-					"Obteniendo variables de c\u00E1lculo del trabajador ...");
-					showMessagePanel();
+					showLoadingMessage("Obteniendo variables de c\u00E1lculo del trabajador ...");
 				}
 				
 				@Override
 				protected void initLoadingPanel() {
+					// NOOP
 				}
-				
 				
 			};
 		return employeeEventsDraft;
@@ -3618,26 +3577,22 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				
 				@Override
 				protected void showWarningMessage(String title, String message) {
-					AonMessagePanel.showWarning(getMessagePanel(), title + " : " + message);
-					showMessagePanel();
+					EmployeeTree.this.showWarningMessage(new HashMap<String, String>(){{ put(title, message); }});
 				}
 				
 				@Override
 				protected void showSuccessMessage(String title, String message) {
-					AonMessagePanel.showSuccess(getMessagePanel(), title + " : " + message);
-					showMessagePanel();
-				}
-				
-				@Override
-				protected void showLoadingMessage(String message) {
-					AonMessagePanel.showLoading(getMessagePanel(), message);
-					showMessagePanel();
+					EmployeeTree.this.showSuccessMessage(new HashMap<String, String>(){{ put(title, message); }});
 				}
 				
 				@Override
 				protected void showErrorMessage(String title, String message) {
-					AonMessagePanel.showError(getMessagePanel(), title + " : " + message);
-					showMessagePanel();
+					EmployeeTree.this.showErrorMessage(new HashMap<String, String>(){{ put(title, message); }});
+				}
+				
+				@Override
+				protected void showLoadingMessage(String message) {
+					EmployeeTree.this.showLoadingMessage(message);
 				}
 				
 				@Override
@@ -3661,8 +3616,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				
 				@Override
 				protected void printPDF(String dataURI) {
+					EmployeeTree.this.hideMessagePanel();
 					viewer.open(dataURI);
-					hideMessagePanel();
 				}
 			};
 			
@@ -3970,15 +3925,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		dock.add(viewer);
 		detailPanel.setWidget(dock);
 		viewer.open(dataURI);
-		
-//		PDFViewer viewer = new PDFViewer() {
-//			public String getFileName() {
-//				return "CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.pdf";
-//			};
-//		};
-//		detailPanel.setWidget(viewer);
-//		viewer.setTitle("CERTI. ESTAR AL CORRIENTE EN OBLIGAC. DE S.S.");
-//		viewer.setDocument(dataURI, Constants.DEFAULT_ZOOM / 100.00 );
 	}
 
 	protected static JsBasesResult showBases(String json, DetailPanel detailPanel, CreateRequestCommand cretaCommand) {
@@ -4150,7 +4096,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	// --------------------------------------------------------- Private methods
 
 	protected static void showSaltraOptions(EmployeeStatus employeeStatus) {
-
+		// NOOP
 	}
 
 	protected static void showEmployeeEvents(String variable, int [] years) {
@@ -4218,9 +4164,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	protected static void invokeRefreshEnterprise() {
-//		Window.alert("Refresh Enterprise : " + singlenton.enterprise + ", Employees : " + singlenton.employees);
 		getEmployeeTree().employees.refresh(getEmployeeTree().enterprise);
-//		singlenton.employees.refresh(singlenton.enterprise);
 	}
 
 	protected static void showSalaryDraft(int employeeId, int workplaceId, Date startDate, Date endDate) {
@@ -4241,7 +4185,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		// Send request to server and catch any errors.
 		share(requestDataBuffer.toString(), callback);
-
 	}
 
 	private static <T extends HasId<?>> void shareSalary(SalaryInfo salary, String type,
@@ -4253,7 +4196,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		// Send request to server and catch any errors.
 		share(requestDataBuffer.toString(), callback);
-
 	}
 
 	private static <T extends HasId<?>> void share(com.esferalia.aon.gwt.payroll.shared.Cost cost, String type,
@@ -4297,7 +4239,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					} catch (IndexOutOfBoundsException e) {
 					}
 				}
-
 			}
 
 			private JsShareResult read(String text) {
@@ -4639,6 +4580,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
             String now = DateTimeFormat.getFormat("MMddHHmm").format(new Date());
 	    return "SLD-Bases " + tipo + " " + provincia + numero + " " + anhoDesde+"-"+mesDesde + " " + now;
 	}
+	
+	// EmployeeTree Toolbar
 
 	@Override
 	public void onCollapseMenuButtonClick(ClickEvent event) {
@@ -4660,6 +4603,36 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	@Override
 	public void onTrashListButtonClick(ClickEvent event) {
 		// Implement when trash is needed. Uncomment button on toolbar
+	}
+	
+	// MessagePanel
+	
+	private HTMLPanel getMessagePanel() {
+		return messagePanel;
+	}
+	
+	private void hideMessagePanel() {
+		AonMessagePanel.hideMessage(getMessagePanel());
+	}
+	
+	private void showSuccessMessage(Map<String, String> messages) {
+		AonMessagePanel.showSuccess(getMessagePanel(), messages);
+	}
+	
+	private void showWarningMessage(Map<String, String> messages) {
+		AonMessagePanel.showWarning(getMessagePanel(), messages);
+	}
+	
+	private void showErrorMessage(Map<String, String> messages) {
+		AonMessagePanel.showError(getMessagePanel(), messages);
+	}
+	
+	private void showInfoMessage(Map<String, String> messages) {
+		AonMessagePanel.showInfo(getMessagePanel(), messages);
+	}
+	
+	private void showLoadingMessage(String message) {
+		AonMessagePanel.showLoading(getMessagePanel(), message);
 	}
 	
 
