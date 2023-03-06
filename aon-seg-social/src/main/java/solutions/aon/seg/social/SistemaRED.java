@@ -566,6 +566,14 @@ public class SistemaRED {
 		SistemaREDMov.updateOccupation(certificateInputStream, certificatePassword, certificateType, ipf, regimen,
 				ctaCti, nss, ocup, fecha);
 	}
+	
+	public static void cambioCno(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String cno,
+			Date fecha) throws SegSocialException {
+
+		SistemaREDMov.updateCno(certificateInputStream, certificatePassword, certificateType, ipf, regimen,
+				ctaCti, nss, cno, fecha);
+	}
 
 	public static void cambioCatProf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha)

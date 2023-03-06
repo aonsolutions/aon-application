@@ -831,6 +831,13 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
+	public void cambioCno(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+			String cno, Date fecha) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
 			String cat, Date fecha) {
 		// TODO Auto-generated method stub

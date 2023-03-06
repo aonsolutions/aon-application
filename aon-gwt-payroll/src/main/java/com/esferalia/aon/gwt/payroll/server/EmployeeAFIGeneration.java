@@ -367,11 +367,13 @@ public final class EmployeeAFIGeneration {
 	public static class MC{
 		FAB fab;
 		DAM dam;
+		ODL odl;
 		
-		public MC(FAB fab, DAM dam) {
+		public MC(FAB fab, DAM dam, ODL odl) {
 			super();
 			this.fab = fab;
 			this.dam = dam;
+			this.odl = odl;
 		}
 
 		public FAB getFab() {
@@ -385,6 +387,12 @@ public final class EmployeeAFIGeneration {
 		}
 		public void setDam(DAM dam) {
 			this.dam = dam;
+		}
+		public ODL getOdl() {
+			return odl;
+		}
+		public void setOdl(ODL odl) {
+			this.odl = odl;
 		}
 		
 	}
@@ -543,7 +551,7 @@ public final class EmployeeAFIGeneration {
 		
 		public ODL( String convCollective,  String cno ) {
 			this.header = "ODL";
-			this.convCollective = convCollective;
+			this.convCollective = AonStringUtils.leftPad(convCollective, 14, '0');
 			this.reserved6 = AonStringUtils.rightPad("", 6, ' ');
 			this.cno = AonStringUtils.leftPad(cno, 4, '0');;
 			this.reservedN6 = AonStringUtils.rightPad("", 6, '0');
@@ -922,7 +930,12 @@ public final class EmployeeAFIGeneration {
 			JSONObject damJson = (JSONObject) chcJson.get("DAM");
 			DAM dam = new DAM(damJson.get("ocupation") == null ? "" : damJson.get("ocupation").toString());
 			
-			mc = new MC(fab, dam);
+			JSONObject odlJson = (JSONObject) chcJson.get("ODL");
+			ODL odl = new ODL(
+					odlJson.get("convCollective") == null ? "" : odlJson.get("convCollective").toString(),
+					odlJson.get("cno") == null ? "" : odlJson.get("cno").toString());
+			
+			mc = new MC(fab, dam, odl);
 		}
 	
 		//CONF
@@ -1198,6 +1211,16 @@ public final class EmployeeAFIGeneration {
 					mc.getDam().getReserved16() +
 					mc.getDam().getOcupation() +
 					mc.getDam().getReserved8() +
+					"\r\n";
+			
+			employeeAFI +=
+					mc.getOdl().getHeader() +
+					mc.getOdl().getConvCollective() +
+					mc.getOdl().getReserved6() +
+					mc.getOdl().getCno() +
+					mc.getOdl().getReservedN6() +
+					mc.getOdl().getContribution() +
+					mc.getOdl().getReserved31() +
 					"\r\n";
 
 		}

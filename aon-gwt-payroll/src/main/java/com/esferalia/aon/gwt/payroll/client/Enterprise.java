@@ -352,8 +352,8 @@ public abstract class Enterprise extends ResizeComposite {
 	public abstract void onEnterpriseAgreementChange(Integer agreementId);
 	public abstract void onEnterpriseScopeChange(Integer scopeId);
 	
-	public abstract void fireErrorMessage(Map<String, String> errorMap);
-	public abstract void fireInfoMessage(Map<String, String> errorMap);
+	public abstract void fireErrorMessage(Map<String, String> messages);
+	public abstract void fireWarningMessage(Map<String, String> messages);
 	
 	// ------------------------------------------------- Auxiliar Methods	
 	
@@ -370,14 +370,14 @@ public abstract class Enterprise extends ResizeComposite {
 			if(checkDocumentValidation()) {
 				showDocumentError();
 				if(Boolean.TRUE.equals(fireMessage))
-					fireInfoMessage(infoMap);
+					fireWarningMessage(infoMap);
 			}else {
 				hideDocumentError();
 			}
 		}else {
 			showDocumentError();
 			if(Boolean.TRUE.equals(fireMessage))
-				fireInfoMessage(infoMap);
+				fireWarningMessage(infoMap);
 		}
 	}
 	

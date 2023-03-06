@@ -428,6 +428,16 @@ public class JooqEmployee {
 				.set(CONTRACT_DATA.END_DATE, contractEndDate)
 				.execute();
 		
+		if(AonStringUtils.isNotBlank(contractData.getCno()))
+			dslContext.insertInto(CONTRACT_DATA)
+				.set(CONTRACT_DATA.DOMAIN, domain)
+				.set(CONTRACT_DATA.NAME, "CNO")
+				.set(CONTRACT_DATA.CONTRACT, contractId)
+				.set(CONTRACT_DATA.EXPRESSION, parseContractTableStr(contractData.getCno()))
+				.set(CONTRACT_DATA.START_DATE, contractStartDate)
+				.set(CONTRACT_DATA.END_DATE, contractEndDate)
+				.execute();
+		
 		if(AonStringUtils.isNotBlank(contractData.getEmployeesColective()))
 			dslContext.insertInto(CONTRACT_DATA)
 				.set(CONTRACT_DATA.DOMAIN, domain)
@@ -912,6 +922,7 @@ public class JooqEmployee {
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "COLECTIVO_TRABAJADORES")) {
 				contractData.setEmployeesColective(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "CNO")) {
+				contractData.setCnoId(r.get(CONTRACT_DATA.ID));
 				contractData.setCno(r.get(CONTRACT_DATA.EXPRESSION));
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "IRPF_TYPE")) {
 				contractData.setMdTBT(Byte.parseByte(parseContractTable(r.get(CONTRACT_DATA.EXPRESSION))));
@@ -1650,6 +1661,34 @@ public class JooqEmployee {
 					.set(CONTRACT_DATA.START_DATE, startDate)
 					.set(CONTRACT_DATA.END_DATE, endDate)
 					.where(CONTRACT_DATA.ID.eq(contractData.getRlceId()))
+					.execute();
+				}
+			}
+			
+			if(null == contractData.getCnoId()){
+				if(AonStringUtils.isNotBlank(contractData.getCno())){
+					ContractDataRecord cnoRecord = null;
+					
+					cnoRecord = dslContext.insertInto(CONTRACT_DATA, CONTRACT_DATA.ID, CONTRACT_DATA.DOMAIN, CONTRACT_DATA.NAME, CONTRACT_DATA.CONTRACT, CONTRACT_DATA.EXPRESSION, 
+							CONTRACT_DATA.START_DATE, CONTRACT_DATA.END_DATE)
+						.values(contractData.getRlceId(), domain, "CNO", contractData.getContractId(), "\""+ contractData.getCno()+"\"", 
+								startDate, endDate)
+						.returning(CONTRACT_DATA.ID)
+						.fetchOne();
+					
+					contractData.setCnoId(cnoRecord.getId());
+				}
+			}else{
+				if(AonStringUtils.isBlank(contractData.getCno())){
+					dslContext.delete(CONTRACT_DATA).where(CONTRACT_DATA.ID.eq(contractData.getCnoId())).execute();
+					contractData.setCnoId(null);
+					contractData.setCno(null);
+				}else{
+					dslContext.update(CONTRACT_DATA)
+					.set(CONTRACT_DATA.EXPRESSION, "\""+ contractData.getCno()+"\"")
+					.set(CONTRACT_DATA.START_DATE, startDate)
+					.set(CONTRACT_DATA.END_DATE, endDate)
+					.where(CONTRACT_DATA.ID.eq(contractData.getCnoId()))
 					.execute();
 				}
 			}

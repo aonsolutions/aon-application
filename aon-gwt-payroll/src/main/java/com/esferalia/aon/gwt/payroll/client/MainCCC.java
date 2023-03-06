@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -44,11 +45,11 @@ public class MainCCC extends MainEntryPoint{
 		
 		@Override
 		protected void onInsertRows() {
-			if(mainCCCObject.getActiveCCCs().isEmpty())
+			if(mainCCCObject.getCCCs().isEmpty())
 				showCCCMessage();
 			else {
 				showCCCTable();
-				mainCCCObject.getActiveCCCs().forEach(ccc -> cccWidget.insertRow(ccc));
+				mainCCCObject.getCCCs().forEach(ccc -> cccWidget.insertRow(ccc));
 			}
 		}
 
@@ -74,10 +75,20 @@ public class MainCCC extends MainEntryPoint{
 		protected Set<Entry<Integer, String>> getActivities() {
 			return mainCCCObject.getActivities();
 		}
+		
+		@Override
+		public List<EnterpriseCCC> getEnterpriseCCCs() {
+			return mainCCCObject.getActiveCCCs();
+		}
 
 		@Override
-		protected void fireWarningMessage(Map<String, String> warningMap) {
-			AonMessagePanel.showWarning(messagePanel, warningMap);
+		protected void fireWarningMessage(Map<String, String> messages) {
+			AonMessagePanel.showWarning(messagePanel, messages);
+		}
+		
+		@Override
+		protected void fireInfoMessage(Map<String, String> messages) {
+			AonMessagePanel.showInfo(messagePanel, messages);
 		}
 
 		@Override

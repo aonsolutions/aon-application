@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -197,6 +198,11 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		@Override
 		public void onContractRLCEChange(String rlce) {
 			contrataEmployeeObject.setContractRlce(rlce);
+		}
+
+		@Override
+		public void onEmployeeCnoSuggestionChange(String cno) {
+			contrataEmployeeObject.setContractCno(cno);
 		}
 		
 		@Override
@@ -640,6 +646,9 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		employee.getEnableDisableButton(employee.quoteGroupCotizB, contractData.getQuoteGroupIdxMonth());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
+		
+		CNO cno = employee.getCNOByCode(contractData.getCno());
+		if(cno != null) employee.cnoSB.setValue(cno.getCode() + " - " + cno.getTitle());
 	}
 	
 	private static boolean isCompleteJourneyContract(String contractTypeCodeStr) {

@@ -25,7 +25,6 @@
 		</g:north>
 		<g:center>
 			<g:HTMLPanel ui:field="centerContainer" styleName="{style.widthAll}">
-				<g:HTMLPanel ui:field="messagePanel" />
 				<g:DeckPanel ui:field="mainDeckPanel">
 					<g:HTMLPanel ui:field="mainPanel" styleName="{style.mainPanel}"/>
 					<g:SimpleLayoutPanel ui:field="scrolledPDFPanel">
