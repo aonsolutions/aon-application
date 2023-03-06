@@ -54,6 +54,7 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record6;
+import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Result;
 import org.jooq.SelectOnConditionStep;
@@ -622,14 +623,14 @@ public class SecurityDAO {
 	@Deprecated
 	public static User getUser(AONContext ctx, String login) {
 		ctx.checkRead();
-		Record6<Integer, Integer, String, String, Byte, Integer> record = 
-			ctx.getDslContext()
+		Record7<Integer, Integer, String, String, Byte, Integer, byte[]> record = ctx.getDslContext()
 				.select(USER.ID, 
 						USER.DOMAIN, 
 						USER.NAME, 
 						USER.LOGIN,
 						USER.ACTIVE,
-						USER.REGISTRY)
+						USER.REGISTRY,
+						USER.AUTH)
 				.from(USER)
 				.where(USER.DOMAIN.equal(ctx.getDomainId()))
 				.and(USER.LOGIN.equal(login))
@@ -642,7 +643,8 @@ public class SecurityDAO {
 								USER.NAME, 
 								USER.LOGIN,
 								USER.ACTIVE,
-								USER.REGISTRY)
+								USER.REGISTRY,
+								USER.AUTH)
 						.from(DOMAIN)
 						.join(PARENT_DOMAIN).on(DOMAIN.PARENT.equal(PARENT_DOMAIN.ID))
 						.join(USER).on(USER.DOMAIN.equal(PARENT_DOMAIN.ID))
@@ -659,6 +661,7 @@ public class SecurityDAO {
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
 			user.setRegistry(new Registry().setId(record.getValue(USER.REGISTRY)));
 			user.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
+			user.setAuth(new Auth().setAuth(record.getValue(USER.AUTH)));
 		}
 		return user;
 	}
