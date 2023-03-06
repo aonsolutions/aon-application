@@ -1778,9 +1778,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			// Nothing to do here
 		}
 		
-		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), contractEmployeeUI.getContractType(),
-				contractEmployeeUI.getQuoteGroup(), contractEmployeeUI.getOccupation(),
-				contractEmployeeUI.getPartialityCoef(), this.contrataEmployeeObject.getContractData().getContractId(),
+		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), 
+				contractEmployeeUI.getContractType(),
+				contractEmployeeUI.getQuoteGroup(), 
+				contractEmployeeUI.getOccupation(),
+				contractEmployeeUI.getPartialityCoef(), 
+				this.contrataEmployeeObject.getContractData().getCno(), 
+				this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId(),
 				this.contrataEmployeeObject.getContractData().hasSettle(),
@@ -1823,6 +1827,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				// Nothing to do here
 			}
 
+			@Override
+			protected void onCnoContract(String cno, Date date) {
+				// TODO Auto-generated method stub
+				
+			}
+
 		};
 	}
 
@@ -1835,9 +1845,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			// Nothing to do here
 		}
 		
-		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), contractEmployeeUI.getContractType(),
-				contractEmployeeUI.getQuoteGroup(), contractEmployeeUI.getOccupation(),
-				contractEmployeeUI.getPartialityCoef(), this.contrataEmployeeObject.getContractData().getContractId(),
+		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), 
+				contractEmployeeUI.getContractType(),
+				contractEmployeeUI.getQuoteGroup(), 
+				contractEmployeeUI.getOccupation(),
+				contractEmployeeUI.getPartialityCoef(), 
+				this.contrataEmployeeObject.getContractData().getCno(), 
+				this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId(), 
 				this.contrataEmployeeObject.getContractData().hasSettle(),
@@ -1855,6 +1869,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.cambioCoef(partialityCoef, date,
 						s -> showSuccess("AVISO: Parcialidad",
 								"El coeficiente de parcialidad ha sido notificado a la Seguridad Social."),
+						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+			}
+			
+			@Override
+			protected void onCnoContract(String cno, Date date) {
+				showLoading("Comunicando CNO (TGSS) ...");
+				contrataEmployeeObject.cambioCno(cno, date,
+						s -> showSuccess("AVISO: CNO",
+								"El cambio de CNO ha sido notificado a la Seguridad Social."),
 						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 			}
 

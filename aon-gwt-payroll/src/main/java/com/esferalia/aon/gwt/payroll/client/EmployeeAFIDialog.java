@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.payroll.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -16,6 +18,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.AFIChanges.AFIChange;
 import com.esferalia.aon.gwt.payroll.shared.SettleReason;
 import com.esferalia.aon.occam.api.model.type.ContractType;
@@ -31,6 +34,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -45,8 +49,10 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
@@ -115,6 +121,9 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	DoubleBox partialityCoef;
 	
 	@UiField
+	SuggestBox cno;
+	
+	@UiField
 	HTMLPanel afiFilePanel;
 
 	@UiField
@@ -145,6 +154,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	private String quoteGroupOriginal;
 	private String ocupationOriginal;
 	private Double partialityCoefOriginal;
+	private String cnoOriginal;
 
 	private ArrayList<Date> dateList;
 	private AFIChanges afiChangesMap;
@@ -156,10 +166,12 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	private boolean isComunication = false;
 	private boolean isTransform = false;
 	private boolean hasSettle = false;
+	
+	private Map<String, CNO> cnoMap;
 
 	// ------------------------------------------------- Constructor
 
-	protected EmployeeAFIDialog(Date contractStartDate, Date contractEndDate, String tc2, String quoteGroup, String ocupation, Double partialityCoef, 
+	protected EmployeeAFIDialog(Date contractStartDate, Date contractEndDate, String tc2, String quoteGroup, String ocupation, Double partialityCoef, String cno,
 			Integer contractId, Integer domainId, Integer workplaceId, boolean hasSettle, boolean isTransform, boolean isComunication) {
 
 		setCaption(isComunication ? "Notificaci\u00f3n TGSS (AFI)" : "Datos AFI");
@@ -186,6 +198,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		this.quoteGroupOriginal = quoteGroup;
 		this.ocupationOriginal = ocupation;
 		this.partialityCoefOriginal = partialityCoef;
+		this.cnoOriginal = cno;
 
 		this.contractId = contractId;
 		this.domainId = domainId;
@@ -200,18 +213,70 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 
 			@Override
 			public void onSuccess(AFIChanges afiChanges) {
-				afiChangesMap = afiChanges;
-				dateList = new ArrayList<>();
-				dateList.addAll(afiChangesMap.getAFIChanges().keySet());
-				Collections.reverse(dateList);
-				selectedDate = dateList.get(0);
-				initView();
-				showDialog();
+				
+				impl.getCNOs(new AsyncCallback<Map<String,CNO>>() {
+					
+					@Override
+					public void onSuccess(Map<String, CNO> cnoMapIn) {
+						afiChangesMap = afiChanges;
+						cnoMap = cnoMapIn;
+						
+						initializeCNOSuggest();
+						
+						dateList = new ArrayList<>();
+						dateList.addAll(afiChangesMap.getAFIChanges().keySet());
+						Collections.reverse(dateList);
+						
+						selectedDate = dateList.get(0);
+						initView();
+						showDialog();
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
 			}
 		});
 
 		// EnsureDebugID para TEST
 		this.acceptBtnDialog.ensureDebugId("input_accept");
+	}
+	
+	private void initializeCNOSuggest() {
+		List<String> cnoSuggest = new ArrayList<>();
+		for(Entry<String, CNO> entry : cnoMap.entrySet())
+			cnoSuggest.add(entry.getKey() + " - " + entry.getValue().getTitle());
+		
+		cnoSuggest.sort((o1, o2) -> o1.compareTo(o2));
+
+		MultiWordSuggestOracle orclCnaes = (MultiWordSuggestOracle) cno.getSuggestOracle();
+		orclCnaes.addAll(cnoSuggest);
+		orclCnaes.setDefaultSuggestionsFromText(cnoSuggest);
+		cno.setAutoSelectEnabled(false);
+		cno.getElement().setPropertyString("placeholder", "C\u00f3digo CNO... (Ctrl + espacio para ver sugerencias)");
+		
+		cno.getValueBox().addKeyUpHandler(e -> {
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				cno.setText("");
+				cno.showSuggestionList();
+			} else if(e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
+				cno.hideSuggestionList();
+		});
+		
+		cno.addSelectionHandler(e -> {
+			String cnoValue = cno.getValue();
+			if(!AonStringUtils.isBlank(cnoValue))
+				cnoValue = cnoValue.split(" -")[0];
+			
+			// Do something with cnoValue
+			if (AonStringUtils.isBlank(cnoValue))
+				afiChangesMap.addAFIChangeByDate(selectedDate, "CNO", null);
+			else
+				afiChangesMap.addAFIChangeByDate(selectedDate, "CNO", cnoValue);
+		});
 	}
 
 	// ------------------------------------------------- Constructor Methods
@@ -458,6 +523,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 		this.ocupation.setSelectedIndex(0);
 		this.ocupation.setEnabled(false);
 		this.partialityCoef.setValue(null);
+		this.cno.setValue(null);
 	}
 
 	// ------------------------------------------------- Table AFI Movs
@@ -472,6 +538,7 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 			quoteGroup.setSelectedIndex(0);
 			ocupation.setSelectedIndex(0);
 			partialityCoef.setValue(null);
+			cno.setValue("");
 			
 			for (AFIChange afiChange : afiChangeList) {
 				switch (afiChange.getName()) {
@@ -490,6 +557,12 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 				case "COEFICIENTE_PARCIALIDAD":
 					String valueP = afiChange.getValue();
 					partialityCoef.setValue(AonStringUtils.isBlank(valueP) ? null : Double.parseDouble(valueP));
+					break;
+				case "CNO":
+					String cnoCode = afiChange.getValue();
+					CNO cnoObj = cnoMap.get(cnoCode);
+					if(null != cnoObj)
+						cno.setText(cnoObj.getCode() + " - " + cnoObj.getTitle());
 					break;
 				default:
 					break;
@@ -617,6 +690,11 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 //		Window.alert("onPartialityCoefContract : " + afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD", partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString()));
 		return afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD", partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString());
 	}
+	
+	public boolean isCnoContract() {
+//		Window.alert("onPartialityCoefContract : " + afiChangesMap.hasChange("COEFICIENTE_PARCIALIDAD", partialityCoefOriginal == null ? "" : partialityCoefOriginal.toString()));
+		return afiChangesMap.hasChange("CNO", cnoOriginal);
+	}
 
 	// ------------------------------------------------- ToggleButton
 
@@ -711,6 +789,9 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 					onOcupationContract(afiChangesMap.getChangeValue("OCUPACION"), afiChangesMap.getChangeDate());
 				if (isPartialityCoefContract())
 					onPartialityCoefContract(afiChangesMap.getChangeValue("COEFICIENTE_PARCIALIDAD"), afiChangesMap.getChangeDate());
+				if (isCnoContract())
+					onCnoContract(afiChangesMap.getChangeValue("CNO"), afiChangesMap.getChangeDate());
+				
 				// Solo para las transformaciones que tienen una pestaña y necesitan comunicar el cambio de tc2
 				if (!isChangeContract() && isTransform && dateList != null && dateList.size() == 1)
 					onChangeContract(this.tc2Original, afiChangesMap.getChangeDate());
@@ -733,8 +814,9 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 							+ (isStartContract() ? 1 : 0) + "&isEndContract=" + (isEndContract() ? 1 : 0)
 							+ "&isChangeContract=" + (isChangeContract() ? 1 : 0) + "&isQuoteContract="
 							+ (isQuoteContract() ? 1 : 0) + "&isOcupationContract=" + (isOcupationContract() ? 1 : 0)
-							+ "&isPartialityCoefContract=" + (isPartialityCoefContract() ? 1 : 0
-							+ "&settleReason=" + settleReasonLB.getSelectedValue());
+							+ "&isPartialityCoefContract=" + (isPartialityCoefContract() ? 1 : 0)
+							+ "&isCnoContract=" + (isCnoContract() ? 1 : 0)
+							+ "&settleReason=" + settleReasonLB.getSelectedValue();
 	
 					Window.open(fileDownloadURL, "_blank", null);
 				}
@@ -771,6 +853,8 @@ public abstract class EmployeeAFIDialog extends AonCustomDialog {
 	protected abstract void onPartialityCoefContract(String partialityCoef, Date date);
 
 	protected abstract void onOcupationContract(String ocupation, Date date);
+	
+	protected abstract void onCnoContract(String cno, Date date);
 
 	protected abstract void onQuoteContract(String quoteGroup, Date date);
 

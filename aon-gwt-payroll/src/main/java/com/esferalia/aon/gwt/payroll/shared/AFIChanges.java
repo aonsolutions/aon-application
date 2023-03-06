@@ -76,11 +76,13 @@ public class AFIChanges implements Serializable {
 		AFIChange quoteGroup = new AFIChange("GRUPO_COTIZACION", getValueOfEntry(lastEntry.getValue(), "GRUPO_COTIZACION"));
 		AFIChange ocupation = new AFIChange("OCUPACION", getValueOfEntry(lastEntry.getValue(), "OCUPACION"));
 		AFIChange partialityCoef = new AFIChange("COEFICIENTE_PARCIALIDAD", getValueOfEntry(lastEntry.getValue(), "COEFICIENTE_PARCIALIDAD"));
+		AFIChange cno = new AFIChange("CNO", getValueOfEntry(lastEntry.getValue(), "CNO"));
 		
 		afiChangesList.add(tc2);
 		afiChangesList.add(quoteGroup);
 		afiChangesList.add(ocupation);
 		afiChangesList.add(partialityCoef);
+		afiChangesList.add(cno);
 		
 		DateUtils.resetTime(date);
 		

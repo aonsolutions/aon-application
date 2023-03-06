@@ -37,6 +37,7 @@ public class EmployeeAFIServlet extends HttpServlet {
 		Boolean isQuoteContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isQuoteContract"), "1");
 		Boolean isOcupationContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isOcupationContract"), "1");
 		Boolean isPartialityCoefContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isPartialityCoefContract"), "1");
+		Boolean isCnoContract = AonStringUtils.equalsIgnoreCase(request.getParameter("isCnoContract"), "1");
 		String settleReason = request.getParameter("settleReason");
 		
 		//Este JSON lo deberia obtener del Request cuando me llaman al Servlet
@@ -63,6 +64,7 @@ public class EmployeeAFIServlet extends HttpServlet {
 					isQuoteContract, 
 					isOcupationContract, 
 					isPartialityCoefContract,
+					isCnoContract,
 					settleReason);
 			
 			

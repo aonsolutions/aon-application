@@ -102,6 +102,7 @@ public class JooqEmployeeAFI {
 			Boolean isQuoteContract, 
 			Boolean isOcupationContract, 
 			Boolean isPartialityCoefContract,
+			Boolean isCnoContract,
 			String settleReason) {
 		
 		JSONObject employeeAFIJSON = new JSONObject();
@@ -224,7 +225,7 @@ public class JooqEmployeeAFI {
 			}
 			
 			// Movimientos Contrato
-			if(Boolean.TRUE.equals(isChangeContract || isQuoteContract || isOcupationContract || isPartialityCoefContract)) {
+			if(Boolean.TRUE.equals(isChangeContract || isQuoteContract || isOcupationContract || isPartialityCoefContract || isCnoContract)) {
 				contSeg++;
 				JSONObject mc = getMC(contractId, dslContext);
 				employeeAFIJSON.put("MC", mc);
@@ -568,6 +569,7 @@ public class JooqEmployeeAFI {
 		JSONObject json = new JSONObject();
 		JSONObject fab = new JSONObject();
 		JSONObject dam = new JSONObject();
+		JSONObject odl = new JSONObject();
 		
 		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
 		
@@ -601,6 +603,12 @@ public class JooqEmployeeAFI {
 				.orderBy(CONTRACT_DATA.ID.desc())
 				.fetch();
 		
+		Result<Record> contractDataCnoRecord = dslContext.select().from(CONTRACT_DATA)
+				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.and(CONTRACT_DATA.NAME.eq(CNO))
+				.orderBy(CONTRACT_DATA.ID.desc())
+				.fetch();
+		
 		Byte gender = dslContext.select(PERSON.GENDER).from(PERSON)
 				.where(PERSON.REGISTRY.eq(contractRecord.get(CONTRACT.PERSON)))
 				.fetchOne(PERSON.GENDER);
@@ -620,12 +628,17 @@ public class JooqEmployeeAFI {
 		if(contractDataOcupationRecord.isNotEmpty())
 			dates.add(contractDataOcupationRecord.get(0).get(CONTRACT_DATA.START_DATE));
 		
+		if(contractDataCnoRecord.isNotEmpty())
+			dates.add(contractDataCnoRecord.get(0).get(CONTRACT_DATA.START_DATE));
+		
 		dates.sort((o1, o2) -> o1.compareTo(o2));
 		
 		String quoteGroup =  contractDataQuoteRecord.isEmpty() ? null : parseContractData(contractDataQuoteRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String tc2 = parseContractData(contractDataTC2Record.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String partialityCoef = contractDataPCRecord.isEmpty() ? null : parseContractData(contractDataPCRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		String employeeColective = contractDataEmployeeColectiveRecord.isEmpty() ? null : parseContractData(contractDataEmployeeColectiveRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
+		String ocupation = parseContractData(contractDataOcupationRecord.isEmpty() ? "" : contractDataOcupationRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
+		String cno = parseContractData(contractDataCnoRecord.isEmpty() ? "" : contractDataCnoRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
 		
 		//FAB
 		fab.put("action", "MC");
@@ -637,12 +650,16 @@ public class JooqEmployeeAFI {
 		fab.put("employeeColective", employeeColective);
 		fab.put("gender", gender);
 		
-		String ocupation = parseContractData(contractDataOcupationRecord.isEmpty() ? "" : contractDataOcupationRecord.get(0).get(CONTRACT_DATA.EXPRESSION));
-		
+		//DAM
 		dam.put("ocupation", ocupation);
+		
+		//ODL
+		odl.put("convCollective",  AonStringUtils.leftPad(employeeColective, 14, '0'));
+		odl.put("cno", cno);
 		
 		json.put("FAB", fab);
 		json.put("DAM", dam);
+		json.put("ODL", odl);
 		
 		return json;
 	}
@@ -746,6 +763,7 @@ public class JooqEmployeeAFI {
 		contractDataVars.add(QUOTE_GROUP);
 		contractDataVars.add(OCUPATION);
 		contractDataVars.add(PARTIALITY);
+		contractDataVars.add(CNO);
 		
 		dslContext.delete(CONTRACT_DATA)
 			.where(CONTRACT_DATA.CONTRACT.eq(contractId))
@@ -879,6 +897,7 @@ public class JooqEmployeeAFI {
 		contractDataVars.add(QUOTE_GROUP);
 		contractDataVars.add(OCUPATION);
 		contractDataVars.add(PARTIALITY);
+		contractDataVars.add(CNO);
 		
 		Result<Record> contractDataRecords = dslContext.select().from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contractId))

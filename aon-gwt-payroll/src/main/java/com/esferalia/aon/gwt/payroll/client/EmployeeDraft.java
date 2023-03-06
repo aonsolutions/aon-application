@@ -1108,6 +1108,7 @@ public abstract class EmployeeDraft extends Composite {
 				employee.quoteGroup.getSelectedValue(),
 				employee.occupation.getSelectedValue(),
 				employee.partialityCoef.getValue(),
+				this.employeeDraftObject.getContractData().getCno(),
 				employeeDraftObject.getContractId(),
 				employeeDraftObject.getDomainId(),
 				employeeDraftObject.getWorkplaceId(),
@@ -1148,6 +1149,12 @@ public abstract class EmployeeDraft extends Composite {
 					@Override
 					protected void onStartContract() {
 						// Not use in this case
+					}
+
+					@Override
+					protected void onCnoContract(String cno, Date date) {
+						// TODO Auto-generated method stub
+						
 					}
 		
 		};
@@ -1281,9 +1288,13 @@ public abstract class EmployeeDraft extends Composite {
 			// Nothing to do here
 		}
 		
-		new EmployeeAFIDialog(employee.startDate.getValue(), employee.endDate.getValue(), employee.contractTypeLB.getSelectedValue(),
-				employee.quoteGroup.getSelectedValue(), employee.occupation.getSelectedValue(),
-				employee.partialityCoef.getValue(), this.employeeDraftObject.getContractData().getContractId(),
+		new EmployeeAFIDialog(employee.startDate.getValue(), employee.endDate.getValue(), 
+				employee.contractTypeLB.getSelectedValue(),
+				employee.quoteGroup.getSelectedValue(), 
+				employee.occupation.getSelectedValue(),
+				employee.partialityCoef.getValue(), 
+				this.employeeDraftObject.getContractData().getCno(),
+				this.employeeDraftObject.getContractData().getContractId(),
 				this.employeeDraftObject.getEmployeeData().getDomain(),
 				this.employeeDraftObject.getContractData().getWorkplaceId(), 
 				this.employeeDraftObject.getContractData().hasSettle(),
@@ -1301,6 +1312,15 @@ public abstract class EmployeeDraft extends Composite {
 				employeeDraftObject.cambioCoef(partialityCoef, date,
 						s -> showSuccess("AVISO: Parcialidad",
 								"El coeficiente de parcialidad ha sido notificado a la Seguridad Social."),
+						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+			}
+			
+			@Override
+			protected void onCnoContract(String cno, Date date) {
+				showLoading("Comunicando CNO (TGSS) ...");
+				employeeDraftObject.cambioCno(cno, date,
+						s -> showSuccess("AVISO: CNO",
+								"El cambio de CNO ha sido notificado a la Seguridad Social."),
 						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 			}
 

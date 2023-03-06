@@ -311,6 +311,9 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 
 	void cambioOcupacion(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
 			String ocup, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
+	void cambioCno(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
+			String cno, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;
 
 	void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
 			String cat, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException;

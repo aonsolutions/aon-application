@@ -307,6 +307,8 @@
 				<g:ListBox ui:field="ocupation" styleName="{style.width100}" />
 				<g:Label ui:field="partialityCoefL" styleName="{style.bold}">Coeficiente Parcialidad</g:Label>
 				<a:DoubleBox ui:field="partialityCoef" styleName="{style.width99}" />
+				<g:Label styleName="{style.bold}">CNO</g:Label>
+				<g:SuggestBox ui:field="cno" styleName="{style.width100}" />
 			</g:HTMLPanel>
 		
 		</g:DeckPanel>

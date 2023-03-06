@@ -341,10 +341,22 @@ public abstract class Employee extends ResizeComposite {
 		List<String> cnoSuggest = new ArrayList<>();
 		for(Entry<String, CNO> entry : cnoMap.entrySet())
 			cnoSuggest.add(entry.getKey() + " - " + entry.getValue().getTitle());
+		
+		cnoSuggest.sort((o1, o2) -> o1.compareTo(o2));
 
 		MultiWordSuggestOracle orclCno = (MultiWordSuggestOracle) cnoSB.getSuggestOracle();
 		orclCno.addAll(cnoSuggest);
+		orclCno.setDefaultSuggestionsFromText(cnoSuggest);
 		cnoSB.setAutoSelectEnabled(false);
+		cnoSB.getElement().setPropertyString("placeholder", "C\u00f3digo CNO... (Ctrl + espacio para ver sugerencias)");
+		
+		cnoSB.getValueBox().addKeyUpHandler(e -> {
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				cnoSB.setText("");
+				cnoSB.showSuggestionList();
+			} else if(e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
+				cnoSB.hideSuggestionList();
+		});
 		
 		cnoSB.addSelectionHandler(e -> {
 			String cnoValue = cnoSB.getValue();

@@ -6783,6 +6783,50 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+	
+	@Override
+	public void cambioCno(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo, String cno, Date fecha) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			// Domain, parentDomain and User id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			// Get certificate
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+
+			System.out.println("DATOS: \n" + employeeContractInfo.getEmployeeInfo().getDocument() + "\n"
+					+ employeeContractInfo.getEmployeeInfo().getSurName() + "\n"
+					+ employeeContractInfo.getEmployeeInfo().getSecondSurName() + "\n"
+					+ employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4) + "\n"
+					+ employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,employeeContractInfo.getContractInfo().getCompleteCCC().length())
+					+ "\n" + cno + "\n" + fecha);
+
+			// Get employee nafxipf
+			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
+					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
+					certificate.getType(), employeeContractInfo.getEmployeeInfo().getDocument(),
+					employeeContractInfo.getEmployeeInfo().getSurName(),
+					employeeContractInfo.getEmployeeInfo().getSecondSurName());
+
+			System.out.println(employeeAux.getNss());
+
+			// cambioOcupacion
+			SistemaRED.cambioCno(new ByteArrayInputStream(certificate.getData()),
+					certificate.getPassword(), certificate.getType(),
+					employeeContractInfo.getEmployeeInfo().getDocument(),
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4),
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
+							employeeContractInfo.getContractInfo().getCompleteCCC().length()),
+					employeeAux.getNss(), cno, fecha);
+
+		} catch (Exception e) {
+			if (e instanceof solutions.aon.seg.social.exception.CertificateNotFoundException)
+				throw new IllegalArgumentException("No existe certificado TGSS para realizar esta comunicacion");
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
 	@Override
 	public void cambioCatProf(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo, String cat, Date fecha) throws IllegalArgumentException {

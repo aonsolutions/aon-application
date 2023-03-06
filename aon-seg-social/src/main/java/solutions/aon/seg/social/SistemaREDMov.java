@@ -265,6 +265,23 @@ class SistemaREDMov {
 			throw new SegSocialException(e.getMessage());
 		}
 	}
+	
+	public static void updateCno(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String cno,
+			Date fecha) throws SegSocialException {
+		InvalidCertificateException.checkCertificate(certificateInputStream);
+		try {
+			updateCnoImpl(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
+					cno, fecha);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (IOException e) {
+			throw new CertificateNotFoundException();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SegSocialException(e.getMessage());
+		}
+	}
 
 	public static void updateCatProf(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha)
@@ -762,7 +779,7 @@ class SistemaREDMov {
 		updateCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
 				fecha, newOcu, fieldValue, fieldDate, url);
 	}
-
+	
 	private static void updateCatProfImpl(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String cat, Date fecha)
 			throws Exception {
@@ -774,6 +791,57 @@ class SistemaREDMov {
 		updateCatOcupGc(certificateInputStream, certificatePassword, certificateType, ipf, regimen, ctaCti, nss,
 				fecha, cat, fieldValue, fieldDate, url);
 	}
+	
+	private static void updateCnoImpl(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String cno,
+			Date fecha) throws Exception {
+
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,certificateType)) {
+			
+			webClient.getOptions().setUseInsecureSSL(true);
+
+			Integer ident = Integer.parseInt(Toolkit.getIdentityType(ipf));
+
+			// Date
+			String[] fr = formatDate(fecha); // date [day,month,year]
+
+			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=ATR55&E=I&AP=AFIR");
+
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+
+			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+			// form fist
+			form.getInputByName("txt_SDFPROAFI").setValueAttribute(nss.substring(0, 2));
+			form.getInputByName("txt_SDFCODAFI").setValueAttribute(nss.substring(2));
+
+			form.getInputByName("txt_SDFTIPPFI_ayuda").setValueAttribute(ident.toString());
+			form.getInputByName("txt_SDFNUMPFI").setValueAttribute(ipf);
+
+			HtmlInput regimenInput = htmlPage.querySelector("#SDFREGAFI");
+			regimenInput.setValueAttribute(regimen);
+			
+			form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(ctaCti.substring(0, 2));
+			form.getInputByName("txt_SDFCTACOT").setValueAttribute(ctaCti.substring(2));
+
+			HtmlInput btnSubmit = htmlPage.querySelector("#Sub2207001004_42");
+			htmlPage = btnSubmit.click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+
+			form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
+
+			form.getInputByName("txt_SDFDREAL").setValueAttribute(fr[0]);
+			form.getInputByName("txt_SDFMREAL").setValueAttribute(fr[1]);
+			form.getInputByName("txt_SDFAREAL").setValueAttribute(fr[2]);
+			
+			if(cno != null) form.getInputByName("txt_SDFCNOCUP_ayuda").setValueAttribute(cno);
+
+			btnSubmit = htmlPage.querySelector("#Sub2207001004_85");
+			htmlPage = btnSubmit.click();
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+		}
+	}
+
+	
 
 	private static void updateContractCoefImpl(final InputStream certificateInputStream,
 			final String certificatePassword, final String certificateType, String ipf, String regimen, String ctaCti,

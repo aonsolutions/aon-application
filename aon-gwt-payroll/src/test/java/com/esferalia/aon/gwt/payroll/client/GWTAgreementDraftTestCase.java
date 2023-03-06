@@ -307,6 +307,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 			// TODO Auto-generated method stub
 			
 		}
+		
+		@Override
+		public void cambioCno(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+				String cno, Date fecha, AsyncCallback<Void> callback) {
+			// TODO Auto-generated method stub
+			
+		}
 
 		@Override
 		public void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
@@ -903,6 +910,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void cambioOcupacion(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
 							String ocup, Date fecha, AsyncCallback<Void> callback) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void cambioCno(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+							String cno, Date fecha, AsyncCallback<Void> callback) {
 						// TODO Auto-generated method stub
 						
 					}
