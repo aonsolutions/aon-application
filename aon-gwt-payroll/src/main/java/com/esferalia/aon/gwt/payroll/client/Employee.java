@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.common.shared.SocialSecurity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.BankSwift;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.Geozone;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
@@ -205,6 +206,9 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiField
 	DoubleBox partialityCoef;
+	
+	@UiField
+	SuggestBox cnoSB;
 
 	// TABLA DATOS EMPLEADO
 	
@@ -279,6 +283,8 @@ public abstract class Employee extends ResizeComposite {
 	
 	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	private List<com.esferalia.aon.gwt.payroll.shared.Country> countries;
+	
+	private Map<String, CNO> cnoMap;
 
 	// ------------------------------------------------- Constructor
 
@@ -301,6 +307,21 @@ public abstract class Employee extends ResizeComposite {
 			public void onSuccess(List<com.esferalia.aon.gwt.payroll.shared.Country> countriesResult) {
 				countries = countriesResult;
 				initializeProvince();
+				
+				impl.getCNOs(new AsyncCallback<Map<String,CNO>>() {
+					
+					@Override
+					public void onSuccess(Map<String, CNO> cnoMapIn) {
+						cnoMap = cnoMapIn;
+						initializeCNOSuggest();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
 			}
 			
 			@Override
@@ -314,6 +335,29 @@ public abstract class Employee extends ResizeComposite {
 		horizontalPanel.clear();
 		horizontalPanel.add(clearEmployee);
 		horizontalPanel.add(documentType);	
+	}
+	
+	private void initializeCNOSuggest() {
+		List<String> cnoSuggest = new ArrayList<>();
+		for(Entry<String, CNO> entry : cnoMap.entrySet())
+			cnoSuggest.add(entry.getKey() + " - " + entry.getValue().getTitle());
+
+		MultiWordSuggestOracle orclCno = (MultiWordSuggestOracle) cnoSB.getSuggestOracle();
+		orclCno.addAll(cnoSuggest);
+		cnoSB.setAutoSelectEnabled(false);
+		
+		cnoSB.addSelectionHandler(e -> {
+			String cnoValue = cnoSB.getValue();
+			if(!AonStringUtils.isBlank(cnoValue))
+				cnoValue = cnoValue.split(" -")[0];
+			
+			// Do something with cnoValue
+			onEmployeeCnoSuggestionChange(cnoValue);
+		});
+	}
+	
+	public CNO getCNOByCode(String cnoCode) {
+		return this.cnoMap.get(cnoCode);
 	}
 	
 	private void providedNationality() {
@@ -848,6 +892,7 @@ public abstract class Employee extends ResizeComposite {
 	public abstract void onContractJourneyTypeChange(Boolean journeyType);
 	public abstract void onContractPartialityChange(Double partialityCoef);
 	public abstract void onContractJourneyDurationClick();
+	public abstract void onEmployeeCnoSuggestionChange(String cno);
 	
 	// TABLA DATOS EMPLEADO
 	
@@ -912,6 +957,7 @@ public abstract class Employee extends ResizeComposite {
 		this.journeyType.clear();
 		this.partialityCoef.setValue(null);
 		this.journeyDuration.clear();
+		this.cnoSB.setValue(null);
 
 		// TABLA DATOS EMPLEADO
 		
@@ -1206,6 +1252,7 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(17).getStyle().clearDisplay();
 
 		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void hideElementsFreelancerTable() {
@@ -1223,6 +1270,7 @@ public abstract class Employee extends ResizeComposite {
 		
 		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getRows().getItem(18).getStyle().clearDisplay();
 	}
 	
 	// ------------------------------------------------- Show/hide methods partial/full time
@@ -1575,6 +1623,7 @@ public abstract class Employee extends ResizeComposite {
 			if(!isWokplaceSelected()) messageMap.put("Centro de trabajo", "Campo obligatorio");
 			if(!isActivityCCCSelected()) messageMap.put("Actividad", "Campo obligatorio");
 			if(!isContractTypeSelected()) messageMap.put("Tipo de contrato", "Campo obligatorio");
+			if(!isCnoSelected()) messageMap.put("CNO", "Campo obligatorio");
 			if(!isAgreementAndLevelSelected()) messageMap.put("Convenio", "Para poder asigar un convenio se debe seleccionar un nivel/categoria");
 		}
 		
@@ -1617,8 +1666,9 @@ public abstract class Employee extends ResizeComposite {
 			boolean isWokplaceSelected = isWokplaceSelected();
 			boolean isActivityCCCSelected = isActivityCCCSelected();
 			boolean isContractTypeSelected = isContractTypeSelected();
+			boolean isCnoSelected = isCnoSelected();
 			
-			return  isNotNameBlank && isWokplaceSelected && isActivityCCCSelected && isContractTypeSelected;
+			return  isNotNameBlank && isWokplaceSelected && isActivityCCCSelected && isContractTypeSelected && isCnoSelected;
 		}
 	}
 	
@@ -1658,6 +1708,10 @@ public abstract class Employee extends ResizeComposite {
 			return false;
 		} else
 			return true;
+	}
+	
+	private boolean isCnoSelected() {
+		return AonStringUtils.isNotBlank(cnoSB.getValue());
 	}
 	
 	private boolean isAgreementAndLevelSelected() {

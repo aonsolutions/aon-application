@@ -399,6 +399,10 @@ public class EmployeeDialogObject {
 		contractData.setRlce(rlce);		
 	}
 	
+	public void setContractCno(String cno) {
+		contractData.setCno(cno);		
+	}
+	
 	public void setContractEmployeesColective(String employeesColective) {
 		contractData.setEmployeesColective(employeesColective);
 	}

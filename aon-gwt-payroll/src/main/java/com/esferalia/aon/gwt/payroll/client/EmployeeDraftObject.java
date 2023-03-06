@@ -756,6 +756,14 @@ public class EmployeeDraftObject extends AbstractDraftObject{
 		contractData.setRlce(rlce);		
 	}
 	
+	public void setContractCno(String cno) {
+		add(contractData::setCno, 
+				contractData.getCno(), 
+				cno );
+		
+		contractData.setCno(cno);		
+	}
+	
 	public void setContractEmployeesColective(String employeesColective) {
 		add(contractData::setEmployeesColective, 
 				contractData.getEmployeesColective(), 

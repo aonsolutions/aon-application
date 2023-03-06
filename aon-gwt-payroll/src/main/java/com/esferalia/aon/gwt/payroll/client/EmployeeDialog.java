@@ -211,6 +211,11 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		}
 		
 		@Override
+		public void onEmployeeCnoSuggestionChange(String cno) {
+			employeeDialogObject.setContractCno(cno);
+		}
+		
+		@Override
 		public void onContractEmployeesColectiveChange(String employeesColective) {
 			employeeDialogObject.setContractEmployeesColective(employeesColective);
 		}

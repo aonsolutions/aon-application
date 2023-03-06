@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
@@ -211,6 +212,11 @@ public abstract class EmployeeDraft extends Composite {
 		@Override
 		public void onContractRLCEChange(String rlce) {
 			employeeDraftObject.setContractRlce(rlce);
+		}
+
+		@Override
+		public void onEmployeeCnoSuggestionChange(String cno) {
+			employeeDraftObject.setContractCno(cno);
 		}
 		
 		@Override
@@ -623,7 +629,7 @@ public abstract class EmployeeDraft extends Composite {
 		
 		onSaved = this::onSavedNoop;
 		
-		scrolledPanel.setHeight((Window.getClientHeight() - 200) + "px");
+		scrolledPanel.setHeight((Window.getClientHeight() - 250) + "px");
 				
 	}
 		
@@ -916,6 +922,8 @@ public abstract class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		
+		CNO cno = employee.getCNOByCode(contractData.getCno());
+		if(cno != null) employee.cnoSB.setValue(cno.getCode() + " - " + cno.getTitle());
 	}
 	
 	private static boolean isCompleteJourneyContract(String contractTypeCodeStr) {
