@@ -73,6 +73,7 @@ import com.esferalia.aon.gwt.payroll.shared.ShareService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService;
 import com.esferalia.aon.gwt.payroll.shared.SistemaREDService.JsSistemaREDResults;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -84,6 +85,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
@@ -110,6 +112,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Panel;
@@ -1698,7 +1701,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				EmployeeTree.this::requestSendRNT,
 				EmployeeTree.this::acceptPrevBases,
 				EmployeeTree.this::showResultsPanel,
-				EmployeeTree.this::showProgressPanel
+				EmployeeTree.this::showProgressPanel,
+				EmployeeTree.this::i54
 				);
 		}
 
@@ -3747,6 +3751,11 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 				.map(s -> "on".equalsIgnoreCase(s)).orElse(false);
 	}
 
+	private void i54(String i54) {
+		MainCreta.run(Collections.singletonMap(CretaService.Parameter.I54,
+				i54), resultsPanel);
+	}
+
 	private void reftification(Void v) {
 		MainCreta.run(Collections.singletonMap(CretaService.Parameter.INDICADOR_RECTIFICACION,
 				isReftification() ? "off" : "on"), resultsPanel);
@@ -4002,7 +4011,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	}
 
 	protected static void showBases(CretaService.JsBasesResult result, DetailPanel detailPanel,
-			ClickHandler reftificationClickHandler, ClickHandler rntClickHandler, ClickHandler prevBasesClickHandler ) {
+			ClickHandler reftificationClickHandler, ClickHandler rntClickHandler, ClickHandler prevBasesClickHandler, ChangeHandler i54ChangeHandler ) {
 		MergeEditor mergeEditor = new MainCreta.BasesMergeEditor();
 		mergeEditor.setOrig(result.getBasesFile());
 		mergeEditor.setMode("text/xml");
@@ -4065,6 +4074,20 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 					aceptarBasesAnteriores.setStyleName("aon-finding-toolbar-item");
 					aceptarBasesAnteriores.addClickHandler(prevBasesClickHandler);
 					basesEditor.add(aceptarBasesAnteriores);
+
+					if ( "L03".equalsIgnoreCase(result.getType()) ) {
+						Label i54Label = new Label("Causa");
+						i54Label.setStyleName("aon-finding-toolbar-item");
+						basesEditor.add(i54Label );
+						ListBox i54ListBox = new ListBox();
+						i54ListBox.addItem("1- Atrasos de convenio", "1");
+						i54ListBox.addItem("2- Normativa (disposici\u00f3n legal)", "2");
+						i54ListBox.addItem("3- Acta de conciliaci\u00f3n", "3");
+						i54ListBox.addItem("4- Sentencia judicial", "4");
+						i54ListBox.addItem("5- Cualquier otro t\u00edtulo leg\u00edtimo", "5");
+						i54ListBox.addChangeHandler( i54ChangeHandler );
+						basesEditor.add(i54ListBox);
+					}
 				}
 			}
 		}
@@ -4083,6 +4106,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}),
 		e -> cretaCommand.reexecute(d -> {
 			d.aceptarBasesAnterioresCheckBox.setValue(!result.isAcceptPrevBases());
+		}),
+		e -> cretaCommand.reexecute(d -> {
+		    	d.i54ListBox.setSelectedIndex(Math.max(AonNumberUtils.toint(result.getI54())-1,0));
 		})		
 		);
 	}
@@ -4100,6 +4126,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}),
 		e -> cretaCommand.reexecute(d -> {
 			d.aceptarBasesAnterioresCheckBox.setValue(!result.isAcceptPrevBases());
+		}),
+		e -> cretaCommand.reexecute(d -> {
+		    	d.i54ListBox.setSelectedIndex(Math.max(AonNumberUtils.toint(result.getI54())-1,0));
 		})		
 		);
 	}
@@ -4117,6 +4146,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		}),
 		e -> cretaCommand.reexecute(d -> {
 			d.aceptarBasesAnterioresCheckBox.setValue(!result.isAcceptPrevBases());
+		}),
+		e -> cretaCommand.reexecute(d -> {
+		    	d.i54ListBox.setSelectedIndex(Math.max(AonNumberUtils.toint(result.getI54())-1,0));
 		})		
 		);
 
