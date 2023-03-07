@@ -167,6 +167,25 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 
 	
 	}
+
+	@Test
+	public void TestMEI() throws Exception {
+
+		close("cotizacion_formacion_y_el_aprendizaje");
+		open("cotizacion_formacion_y_el_aprendizaje");
+
+		wait4Id("mecanismo,_equidad");
+
+		draft("MECANISMO, EQUIDAD");
+		calculate(Calendar.MARCH, 2023);
+		assertText("common_contingency", "1,17");
+		click("costsCheck-input");
+		assertText("common_contingency_cost", "5,83");
+		
+		
+		
+		
+	}
 	// -------------------------------------------------------------------------
 
 }

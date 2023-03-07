@@ -175,10 +175,8 @@ public class VisibilityManager extends BasicVisibilityManager {
 			        iterator.remove();
 			    }
 			}
-			addConfiguration = userOfParentDomain;
-		} else if ( domainModules.contains(Module.AON_FINANCE) ) {
-			addConfiguration = userOfParentDomain;
-		}
+		} 
+
 
 		if ( addConfiguration ) {
 			enabledModules.add(Module.CONFIGURATION);

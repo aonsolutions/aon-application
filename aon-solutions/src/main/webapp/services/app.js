@@ -1297,7 +1297,7 @@ export const ENTERPRISE = {
 
 export const ACADEMY = {
   app: "academy",
-  icon: AON_ICONS.AON_OFFICE,
+  icon: AON_ICONS.AON_ACADEMY,
   title: "Academia",
   color: "black",
   domainType: true,
