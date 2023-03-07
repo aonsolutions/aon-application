@@ -445,7 +445,9 @@ public class DomainUserRoles implements Serializable {
 	
 	public boolean isInvoice() {
 		return (hasInvoice() || ((isParentUser() || isEnterpriseChild()) && hasParentInvoice()))
-			&& (isAdmin() || hasRole(AonRole.INVOICE));
+			&& ((isAdmin() || hasRole(AonRole.INVOICE))
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.SALE)
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.PURCHASE));
 	}
 	
 	public boolean isInvoicePortal() {
