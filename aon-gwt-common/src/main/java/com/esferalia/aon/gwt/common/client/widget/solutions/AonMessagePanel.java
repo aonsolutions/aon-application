@@ -330,15 +330,18 @@ public class AonMessagePanel extends FlowPanel {
 	}
 	
 	private static void fillMessages(AonMessagePanel aonMessagePanel, Map<String, String> messages) {
+		int index = 0;
 		for(Entry<String, String> entry : messages.entrySet()) {
 			HTMLPanel messageRowPanel = new HTMLPanel("");
 			messageRowPanel.addStyleName(AON.CSS.aonMessageRow());
 			Label titleText = new Label(entry.getKey());
 			titleText.addStyleName(AON.CSS.aonMessageTitle());
 			Label messageText = new Label(entry.getValue());
+			messageText.ensureDebugId("message_" + index);
 			messageRowPanel.add(titleText);
 			messageRowPanel.add(messageText);
 			aonMessagePanel.messagePanel.add(messageRowPanel);
+			index++;
 		}
 	}
 	
