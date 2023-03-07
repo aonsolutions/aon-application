@@ -181,6 +181,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("common_contingency", "1,17");
 		click("costsCheck-input");
 		assertText("common_contingency_cost", "5,83");
+		click("costsCheck-input");
 		
 		
 		
