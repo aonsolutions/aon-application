@@ -4205,7 +4205,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			ISalary salary = getSalary(domain, agreement, context, levelId);
+			com.esferalia.aon.payroll.Salary salary = getSalary(domain, agreement, context, levelId);
 
 			try {
 				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);

@@ -1658,7 +1658,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		try {
 		    	conn = AonServletUtils.getConnection(domain);
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			ISalary salary = EmployeesServiceHelper.calculate(conn, draft, new SmartContractSalaryCalculator<>(new SalaryBuilder()));
+			com.esferalia.aon.payroll.Salary salary = EmployeesServiceHelper.calculate(conn, draft, new SmartContractSalaryCalculator<>(new SalaryBuilder()));
 
 			DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
 			byte [] reportByteArray = reportOut.toByteArray();
@@ -1699,7 +1699,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		try {
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			ISalary salary = getSalary(domain, agreementDraft, context, levelId);
+			com.esferalia.aon.payroll.Salary salary = getSalary(domain, agreementDraft, context, levelId);
 
 			try {
 				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);

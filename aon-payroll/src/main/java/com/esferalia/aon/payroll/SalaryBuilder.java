@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import com.esferalia.aon.salary.ISalary;
@@ -325,6 +326,10 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		salaryCost.setAmount(amount);
 		salaryCost.setCostConcept(cost.getName());
 		salaryCost.setDescription(description);
+		
+		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {
+			addData(entry.getKey(), entry.getValue());
+		}
 
 		this.salary.getSalaryCosts().add(salaryCost);
 	}
