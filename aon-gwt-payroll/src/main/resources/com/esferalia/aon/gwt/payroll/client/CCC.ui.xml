@@ -18,6 +18,8 @@
 		.container{
 			width: 100%;
 			padding: 5px;
+			display: flex;
+			flex-direction: column;
 		}
 		
 		.emptyMessage{
@@ -30,7 +32,6 @@
 		.flexCenter{
 			display: flex;
 			justify-content: center;
-			margin-top: 1rem;
 		}
 		
 		.flexEvenly{
@@ -54,11 +55,6 @@
 		    align-items: center;
 		}
 		
-		.gridStyle{
-			width: 100%;
-			max-width: 875px;
-		}
-		
 		.headerStyle{
 			font-weight: bold;
 			padding-left: 5px;
@@ -77,14 +73,8 @@
 			padding-left: .5rem !important;
 		}
 		
-		.scrollStyle {
-			width: 100%;
-			max-width: 875px;
-		}
-		
 		.styleBorder{
 			width: 100%;
-			max-width: 900px;
 			border: 1px solid black;
 			border-radius: 5px;
 			padding: 0 1rem .5rem;
@@ -116,23 +106,23 @@
 	</ui:style>
 
 	<g:HTMLPanel styleName="{style.widthAll} {style.flexCenter}" ui:field="centerContainer" debugId="activityHTMLPanel">
-   		<g:VerticalPanel styleName="{style.styleBorder}">
+   		<g:HTMLPanel styleName="{style.styleBorder}">
     		<g:Label styleName='{style.tittle}'>Cuentas de cotización</g:Label>
 	    	<g:HTMLPanel styleName="{style.widthAll}" debugId="paymetDialogHTMLPanel">
-	    		<g:VerticalPanel styleName="{style.container}">
-	    			<g:Grid ui:field="cccDataTableHeader" styleName="{style.gridStyle}"></g:Grid>
+	    		<g:HTMLPanel styleName="{style.container}">
+	    			<g:Grid ui:field="cccDataTableHeader" styleName="{style.widthAll}"></g:Grid>
 	    			<g:HTMLPanel>
 	    				<hr align="left" noshade="noshade" style="margin-bottom: 10px;border-width: 0.5px;"/>
 	    			</g:HTMLPanel>
-		    		<g:ScrollPanel ui:field="scrollPanel" styleName="{style.scrollStyle}">
+		    		<g:ScrollPanel ui:field="scrollPanel">
 		    			<g:DeckPanel styleName="{style.widthAll}" ui:field="deckPanel">
 		    				<g:Grid ui:field="cccDataTable" styleName="{style.heigthAuto}"/>
 		    				<g:Label text="No existe cuentas de cotización" styleName="{style.emptyMessage}" />
 		    			</g:DeckPanel>
 		    		</g:ScrollPanel>
-	    		</g:VerticalPanel>
+	    		</g:HTMLPanel>
 	    	</g:HTMLPanel>
-	    </g:VerticalPanel>
+	    </g:HTMLPanel>
    	</g:HTMLPanel>
 </ui:UiBinder> 
 

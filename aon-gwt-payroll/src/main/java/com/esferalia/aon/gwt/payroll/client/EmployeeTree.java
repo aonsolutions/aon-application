@@ -3381,7 +3381,24 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	
 	private WorkplaceDraft getWorkplaceDraft() {
 		if (workplaceDraft == null)
-			workplaceDraft = new WorkplaceDraft();
+			workplaceDraft = new WorkplaceDraft() {
+				
+				@Override
+				protected void showSuccessMessage(Map<String, String> messages) {
+					EmployeeTree.this.showSuccessMessage(messages);
+				}
+	
+				@Override
+				protected void showErrorMessage(Map<String, String> messages) {
+					EmployeeTree.this.showErrorMessage(messages);
+				}
+
+				@Override
+				protected void hideMessage() {
+					EmployeeTree.this.hideMessagePanel();
+				}
+			
+			};
 		return workplaceDraft;
 	}
 

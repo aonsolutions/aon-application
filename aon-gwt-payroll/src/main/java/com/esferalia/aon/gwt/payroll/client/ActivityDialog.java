@@ -147,6 +147,8 @@ public class ActivityDialog extends AonCustomDialog {
 		setCaption("Nueva Actividad");
 		setWidget(binder.createAndBindUi(this));
 		
+		AonMessagePanel.hideMessage(messagePanel);
+		
 		getButtonsPanel();
 	}
 

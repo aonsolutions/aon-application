@@ -11,9 +11,10 @@
 		.checkBox { transform: scale(1.4); }
 		
 		.container {
-			width: 100%;
-			max-width: 740px;
-			margin: auto;
+			margin: 0 1rem;
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
 		}
 		
 		.dateBoxStyle{
@@ -64,7 +65,6 @@
 		
 		.styleBorder{
 			width: 100%;
-			max-width: 900px;
 			border: 1px solid black;
 			border-radius: 5px;
 			padding: 0 1rem .5rem;
@@ -90,9 +90,9 @@
 		
 	</ui:style>
 
-	<g:VerticalPanel styleName="{style.container}">
+	<g:HTMLPanel styleName="{style.container}">
 		<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexCenter}" debugId="activityHTMLPanel">
-	   		<g:VerticalPanel styleName="{style.styleBorder}">
+	   		<g:HTMLPanel styleName="{style.styleBorder}">
 	    		<g:Label styleName='{style.tittle}'>Datos de actividad</g:Label>
 		    	<g:HTMLPanel ui:field="activityDataTable" styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
 		    		<g:HTMLPanel ui:field="activityDescriptionPanel" styleName="{style.flex}">
@@ -116,11 +116,11 @@
 		    			<g:CheckBox ui:field="activityActive" styleName="{style.checkBox}"></g:CheckBox>
 					</g:HTMLPanel>	
 		    	</g:HTMLPanel>
-		    </g:VerticalPanel>
+		    </g:HTMLPanel>
 	   	</g:HTMLPanel>
 		
 	    <aon:CCC ui:field="cccWidget"></aon:CCC>    
-	</g:VerticalPanel>
+	</g:HTMLPanel>
 			
 </ui:UiBinder> 
 

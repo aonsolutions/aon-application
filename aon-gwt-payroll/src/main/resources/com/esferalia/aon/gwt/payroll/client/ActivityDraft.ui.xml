@@ -11,8 +11,6 @@
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.ActivityDraft.MyStyle">
 		.container { margin: 0 10px; }
 		
-		.mainPanel { margin-top: 1rem; }
-		
 		.widthAll { width: 100%; }
 	</ui:style>
 
@@ -26,7 +24,7 @@
 		<g:center>
 			<g:HTMLPanel ui:field="centerContainer" styleName="{style.widthAll}">
 				<g:DeckPanel ui:field="mainDeckPanel">
-					<g:HTMLPanel ui:field="mainPanel" styleName="{style.mainPanel}"/>
+					<g:HTMLPanel ui:field="mainPanel"/>
 					<g:SimpleLayoutPanel ui:field="scrolledPDFPanel">
 						<p:FullViewer styleName="reset" ui:field='pdfViewer' debugId="printPreviewViewer" />
 					</g:SimpleLayoutPanel> 
