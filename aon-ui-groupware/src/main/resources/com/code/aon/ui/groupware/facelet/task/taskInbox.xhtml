@@ -24,6 +24,11 @@
 					action="task_search" actionListener="#{task.onEditSearch}"
 					styleClass="aon-finding-toolbar-item aon-icon-search"
 					accesskey="#{bundle.aon_key_search}" />
+				<aon:htmlCommandLink id="taskInbox-excelReport"
+					target="_blank" title="#{bundle.aon_report}"
+					styleClass="aon-finding-toolbar-item aon-icon-excel"
+					action="#{task.onExcel}">
+				</aon:htmlCommandLink>
 				<aon:htmlCommandLink id="taskInbox-report"
 					target="_blank" value="#{bundle.aon_report}"
 					styleClass="aon-finding-toolbar-item aon-icon-printer"
@@ -281,7 +286,7 @@
 
 					</aon:column>
 
-					<aon:column alias="Task.workGroup" rendered="#{task.monitor}" styleClass="aon-editDataTable-text aon-width-100">
+					<aon:column alias="Task.workGroup" rendered="#{task.monitor}" styleClass="aon-editDataTable-text aon-width-150">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_group}" />
 						</f:facet>
@@ -289,7 +294,7 @@
 							style="font-size: 0.8em;#{to.expired?'color:red;':''}" />
 					</aon:column>
 
-					<aon:column alias="Task.taskHolder" rendered="#{task.monitor}" styleClass="aon-editDataTable-text aon-width-100">
+					<aon:column alias="Task.taskHolder" rendered="#{task.monitor}" styleClass="aon-editDataTable-text aon-width-150">
 						<f:facet name="header">
 							<aon:outputText value="#{bundle.aon_login_user}" />
 						</f:facet>
