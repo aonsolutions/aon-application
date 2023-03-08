@@ -65,7 +65,8 @@ WORKDIR $AON_SOLUTIONS_COMMON/aon-report
 
 COPY aon-common-resources/target/aon-common-resources-${AON_VERSION}-templates.jar aon-common-resources-templates.jar
 
-RUN set -x \
+RUN apt update
+RUN apt install unzip \
 	&& unzip aon-common-resources-templates.jar -x META-INF/* \
 	&& rm aon-common-resources-templates.jar 
 
