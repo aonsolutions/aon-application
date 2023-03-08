@@ -2444,6 +2444,28 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 	}
 
+	@Test
+	public void TestJubilacionActiva() throws Exception {
+		
+		if (!isDisplayed("jubilacion,_activa"))
+			open("jubilacion_activa");
+
+
+		wait4Id("jubilacion,_activa");
+
+		draft("JUBILACION, ACTIVA");
+		calculate(Calendar.MARCH,2023);
+		double cgcBase = getValue("cgcBaseLabel");
+		double cgpBase = getValue("cgpBaseLabel");
+		assertText("common_contingency", cgcBase*0.25/100.00);
+		click("costsCheck-input");
+		assertText("common_contingency_cost", cgcBase*1.30/100.00);
+		assertText("it_cost", cgpBase*0.80/100.00);
+		assertText("ims_cost", cgpBase*0.70/100.00);
+		click("costsCheck-input");
+		
+	}
+
 	// -------------------------------------------------------------------------
 	
 	private void changeDisplayedHolidays(boolean flag) throws IndexOutOfBoundsException, IOException, InterruptedException{
