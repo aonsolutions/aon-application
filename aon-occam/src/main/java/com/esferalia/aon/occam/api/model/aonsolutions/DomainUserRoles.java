@@ -601,4 +601,9 @@ public class DomainUserRoles implements Serializable {
 		return (hasGroupware() || ((isParentUser() || isEnterpriseChild()) && hasParentGroupware()))
 			 && (this.isAdmin() || this.hasRole(AonRole.GROUPWARE));
 	}
+	
+	public boolean isCallCenter() {
+		return hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER)
+			|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER_MANAGER);
+	}
 }
