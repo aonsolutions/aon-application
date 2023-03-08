@@ -121,6 +121,7 @@ import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -2503,7 +2504,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	@UiField
 	DetailPanel employeeDetail;
 	@UiField
-	DockLayoutPanel dockLayoutPanel;
+	SplitLayoutPanel dockLayoutPanel;
 	
 	@UiField
 	AonEmployeesToolbar toolbar;

@@ -48,7 +48,7 @@
 	<ui:image field='employeesgroup' src='employeesgroup.png' />
 
 
-	<g:DockLayoutPanel ui:field="dockLayoutPanel"  styleName="aon-EmployeeTree" >
+	<g:SplitLayoutPanel ui:field="dockLayoutPanel"  styleName="aon-EmployeeTree" >
 		<g:north size="35" >
 			<commonsolutions:AonEmployeesToolbar ui:field="toolbar" styleName="{style.toolbar} aon-MainAgreement-ToolBar"/>
 		</g:north>
@@ -70,6 +70,6 @@
 			</aon:solutions.AonMinimizePanel>
 		</g:south>
 
-	</g:DockLayoutPanel>
+	</g:SplitLayoutPanel>
 
 </ui:UiBinder>
