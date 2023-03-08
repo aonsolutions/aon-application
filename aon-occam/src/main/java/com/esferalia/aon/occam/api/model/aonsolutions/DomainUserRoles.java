@@ -446,18 +446,24 @@ public class DomainUserRoles implements Serializable {
 	public boolean isInvoice() {
 		return (hasInvoice() || ((isParentUser() || isEnterpriseChild()) && hasParentInvoice()))
 			&& ((isAdmin() || hasRole(AonRole.INVOICE))
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.SALE)
-				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.PURCHASE));
+				|| isOldManagementRoles());
 	}
 	
 	public boolean isInvoicePortal() {
 		return (hasInvoice() || ((isParentUser() || isEnterpriseChild()) && hasParentInvoice()))
-			&& (isAdmin() || hasRole(AonRole.INVOICE_PORTAL));
+			&& ((isAdmin() || hasRole(AonRole.INVOICE_PORTAL))
+				|| isOldManagementRoles());
 	}
 	
 	public boolean isInvoiceManager() {
 		return (hasInvoice() || ((isParentUser() || isEnterpriseChild()) && hasParentInvoice()))
-			&& (isAdmin() || hasRole(AonRole.INVOICE_MANAGER));
+			&& ((isAdmin() || hasRole(AonRole.INVOICE_MANAGER))
+				|| isOldManagementRoles());
+	}
+	
+	private boolean isOldManagementRoles() {
+		return hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.SALE)
+		|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.PURCHASE);
 	}
 	
 	public boolean hasManagement() {
