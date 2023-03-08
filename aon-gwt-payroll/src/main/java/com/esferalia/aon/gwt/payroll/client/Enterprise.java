@@ -160,6 +160,8 @@ public abstract class Enterprise extends ResizeComposite {
 	// -------------------------------------------------- initializeView
 	
 	public void initializeView() {
+		removeWarning(enterpriseName);
+		
 		resetElements();
 		initializeListBox();
 	}

@@ -59,7 +59,7 @@
 		
 		<g:center>
 			<g:HTMLPanel styleName="{style.felxColumn}">
-				<g:HTMLPanel ui:field="messagePanel" styleName="{style.messageMT} aon-EmployeeTree-Messages" />
+				<g:HTMLPanel ui:field="messagePanel" debugId="messagePanel" styleName="{style.messageMT} aon-EmployeeTree-Messages" />
 				<aon:DetailPanel ui:field='employeeDetail' styleName="aon-EmployeeTree-EmployeeDetail" />
 			</g:HTMLPanel>
 		</g:center>

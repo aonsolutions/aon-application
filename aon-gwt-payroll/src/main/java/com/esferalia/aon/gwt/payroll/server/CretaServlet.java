@@ -259,7 +259,9 @@ public class CretaServlet extends HttpServlet
 					;
 			
 			String i54 = req.getParameter(CretaService.Parameter.I54.name() );
-			ConstantDatoBasesCallback i54Callback = new ConstantDatoBasesCallback("54", "I", i54);
+			BasesCallback i54Callback = AonStringUtils.isBlank(i54) ? 
+				new Bases.DefaultsCallback().add("54", "1")
+				:new ConstantDatoBasesCallback("54", "I", i54 );
 	
 			InfoPickerBasesCallback pickerBasesCb = new InfoPickerBasesCallback();
 	
@@ -368,6 +370,11 @@ public class CretaServlet extends HttpServlet
 	
 			os.printf("\"messages\":[],\r\n");
 	
+			AonStringUtils.mapIfNotBlank(i54, str -> os.printf("\"i54\":\"%s\",\r\n", str ));
+
+			pickerBasesCb.getBases().getLiquidacion().stream().findFirst()
+			.ifPresent(l -> os.printf("\"type\":\"%s\",\r\n", l.getTipo() ));
+				
 			os.printf("\"rectifying\":%b,\r\n", indicadorReftificacion );
 	
 			os.printf("\"requestSendRNT\":%b,\r\n", solicitudRecepcionRNT );

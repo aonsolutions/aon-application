@@ -300,6 +300,7 @@ public abstract class CCC extends ResizeComposite {
 		account.setValue(cccInfo.getCcc());
 		account.addStyleName("aon-inputText");
 		account.addStyleName(style.inputTextHeight());
+		account.getElement().getStyle().setProperty("width", "65%");
 		account.addKeyPressHandler(e -> {
 			char keyCode = e.getCharCode();
 	        if (!Character.isDigit(keyCode)) {
@@ -529,6 +530,7 @@ public abstract class CCC extends ResizeComposite {
 		account.setMaxLength(11);
 		account.addStyleName("aon-inputText");
 		account.addStyleName(style.inputTextHeight());
+		account.getElement().getStyle().setProperty("width", "65%");
 		account.addKeyPressHandler(e -> {
 			char keyCode = e.getCharCode();
 	        if (!Character.isDigit(keyCode)) {

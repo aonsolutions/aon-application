@@ -2,13 +2,19 @@ package com.code.aon.ui.groupware.controller;
 
 import static com.code.aon.ui.common.ICommonMessages.GROUPWARE_TASK_FINALIZATION_PANEL;
 
+import java.io.IOException;
+import java.sql.Types;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +24,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.groupware.ProcessDetailTransition;
 import com.code.aon.groupware.Task;
 import com.code.aon.groupware.TaskHolder;
@@ -27,6 +34,11 @@ import com.code.aon.groupware.task.TaskManager;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
+import com.code.aon.report.ReportException;
+import com.code.aon.report.poi.ExcelReportExporter;
+import com.code.aon.report.poi.IReportExporter;
+import com.code.aon.report.poi.ReportColumnMetadata;
+import com.code.aon.report.poi.ReportMetadata;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.config.controller.ConfigConstants;
@@ -36,6 +48,7 @@ import com.code.aon.ui.project.controller.IProjectConstants;
 import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class TaskController extends BasicController {
 	
@@ -521,5 +534,136 @@ public class TaskController extends BasicController {
 			t.setTaskHolder(new TaskHolder());
 		}
 	}
+	
+	public String onExcel() {
+		try {
+			FacesContext context = FacesContext.getCurrentInstance();
+			Locale locale = AonUtil.getCurrentLocale();
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+			String fileName = "BandejaTareas";
+			response.setContentType(MimeType.MIME_MS_EXCEL_2007.getName());
+			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xls\";");
+			ServletOutputStream out = response.getOutputStream();
+			IManagerBean bean = BeanManager.getManagerBean(Task.class);
+
+			ExcelReportExporter exporter = new ExcelReportExporter();
+			exporter.startExport(IReportExporter.DEFAULT_NAME);
+			ReportMetadata metadata = getMetadata();
+			exporter.exportHeader(metadata);
+			int rows = 0;
+			List<ITransferObject> list = bean.getList(getCriteria());
+			for (ITransferObject to : list) {
+				Task  am = (Task) to;
+				exporter.startLine();
+				int i = 0;
+				String taskHolder = "";
+				if (am.getTaskHolder() != null) {
+					if (am.getTaskHolder().getUser() != null) {
+						taskHolder = am.getTaskHolder().getUser().getName();
+					} else if (am.getTaskHolder().getRegistry() != null) {
+						taskHolder = am.getTaskHolder().getRegistry().getName();
+					}
+				}
+				String sender = "";
+				if (am.getSender() != null) {
+					if (am.getSender().getUser() != null) {
+						sender = am.getSender().getUser().getName();
+					} else if (am.getSender().getRegistry() != null) {
+						sender = am.getSender().getRegistry().getName();
+					}
+				}
+				String comments = am.getComments();
+				if ( AonStringUtils.isNotBlank(comments) && AonStringUtils.isNotBlank(am.getProcessComments())) {
+					comments = comments + ". ";
+				}
+				if ( AonStringUtils.isNotBlank(am.getProcessComments())) {
+					comments = comments + am.getProcessComments();
+				}
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getId() );
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getDescription() );
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getStartDate());
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getEndDate());
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getDueDate());
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getPriority()==null?"":am.getPriority().getName(locale));
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getStatus()==null?"":am.getStatus().getName(locale));
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getRegistry()==null?"":am.getRegistry().getFullName());
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getProject()==null?"":am.getProject().getName());
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getActivityType()==null?"":am.getActivityType().getDescription());
+				
+				
+				exporter.exportColumn(metadata.getColumns().get((i++)), sender);
+				exporter.exportColumn(metadata.getColumns().get((i++)), am.getWorkGroup()==null?"":am.getWorkGroup().getDescription());
+				exporter.exportColumn(metadata.getColumns().get((i++)), taskHolder);
+				exporter.exportColumn(metadata.getColumns().get((i++)), comments );
+				rows++;
+				if (rows > 65533) {
+					// 
+					// AVOID FORMAT LIMITATION & EXCEPTION
+					//	java.lang.IllegalArgumentException: Invalid row number (65536) outside allowable range (0..65535)
+					//		at org.apache.poi.hssf.usermodel.HSSFRow.setRowNum(HSSFRow.java:252)
+					//		at org.apache.poi.hssf.usermodel.HSSFRow.<init>(HSSFRow.java:86)
+					exporter.startLine();
+					exporter.exportColumn(metadata.getColumns().get((1)), "NO SE HA EXPORTADO TODOS LOS DATOS");
+					break;
+				}
+			}
+			exporter.endExport(out);
+			out.flush();
+			response.flushBuffer();
+			context.responseComplete();
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			e.printStackTrace();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			e.printStackTrace();
+		} catch (ReportException e) {
+			LOGGER.error(e.getMessage(), e);
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private static final ReportColumnMetadata[] COLUMN_LABELS = new ReportColumnMetadata[] {
+			new ReportColumnMetadata("NUME", Types.INTEGER, "Número", 10),
+			new ReportColumnMetadata("DESC", Types.VARCHAR, "Descripción.", 50),
+			new ReportColumnMetadata("START_DATE", Types.DATE, "Fec. Inicio.", 12),
+			new ReportColumnMetadata("END_DATE", Types.DATE, "Fec. Fin.", 12),
+			new ReportColumnMetadata("DUE_DATE", Types.DATE, "Fec. Vto.", 12),
+			new ReportColumnMetadata("PRIORITY", Types.VARCHAR, "Prioridad", 10),
+			new ReportColumnMetadata("STATUS", Types.VARCHAR, "Estado", 10),
+			new ReportColumnMetadata("REGISTRY", Types.VARCHAR, "Exp. Asignado a", 40),
+			new ReportColumnMetadata("PROJECT", Types.VARCHAR, "Exp. Nombre", 30),
+			new ReportColumnMetadata("ACTIVITY", Types.VARCHAR, "Exp. Tipo Act.", 20),
+			new ReportColumnMetadata("SENDER", Types.VARCHAR, "Remitente.", 25),
+
+			new ReportColumnMetadata("GROUP", Types.VARCHAR, "Grupo", 25),
+			new ReportColumnMetadata("USER", Types.VARCHAR, "Usuario.", 25),
+			
+			new ReportColumnMetadata("COMMENTS", Types.VARCHAR, "Comentarios.", 50),
+			
+//			new ReportColumnMetadata("CUSER", Types.VARCHAR, "Usr. Creac.", 15),
+//			new ReportColumnMetadata("CDATE", Types.TIMESTAMP, "Usr. Creac.", 15),
+//			new ReportColumnMetadata("MUSER", Types.VARCHAR, "Usr. Modif.", 15),
+//			new ReportColumnMetadata("MDATE", Types.TIMESTAMP, "Usr. Modif.", 15),
+	};
+	
+	private ReportMetadata getMetadata() throws ReportException {
+
+		ReportMetadata metadata = new ReportMetadata();
+		for (ReportColumnMetadata rcm : COLUMN_LABELS) {
+			metadata.getColumns().add(rcm);
+		}
+		return metadata;
+	}
+	
+
+
+
+
+
 
 }
+
+
+
