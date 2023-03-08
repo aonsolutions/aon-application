@@ -215,6 +215,8 @@ public class VisibilityManager extends BasicVisibilityManager {
 		if(dur.isMarketing() && !dur.getDomain().isDomainManagement()) enabledModules.add(Module.MARKETING);
 		if(dur.isTreasury() && !dur.getDomain().isDomainManagement()) enabledModules.add(Module.TREASURY);
 		if(dur.isCommercial() && !dur.getDomain().isDomainManagement()) enabledModules.add(Module.CRM);
+
+		if(dur.isCallCenter()) enabledModules.add(Module.CALL_CENTER);
 		
 		if (ds.isEnabledGoToParent() && ds.isConsultancyDomain() && DomainType.OFFICE != ds.getType()) {
 			enabledModules.remove(Module.CRM);
@@ -224,7 +226,6 @@ public class VisibilityManager extends BasicVisibilityManager {
 			enabledModules.remove(Module.MARKETING);
 			enabledModules.remove(Module.POS);
 			enabledModules.remove(Module.AON_ONE);
-			enabledModules.remove(Module.CALL_CENTER);
 			enabledModules.remove(Module.ACADEMY);
 			enabledModules.remove(Module.GARAGE);
 			enabledModules.remove(Module.HOTEL);
