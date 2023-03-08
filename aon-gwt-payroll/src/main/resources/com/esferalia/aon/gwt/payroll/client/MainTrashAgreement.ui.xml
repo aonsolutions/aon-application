@@ -3,6 +3,8 @@
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:commonsolutions='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
+	
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources" />
 
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainTrashAgreement.MyStyle">

@@ -1009,6 +1009,7 @@ public abstract class Employee extends ResizeComposite {
 		this.mdTBTLB.addItem("COM\u00daN", "0");
 		this.mdTBTLB.addItem("Adm./Consejero Negocio < 100.000 \u20ac", "1");
 		this.mdTBTLB.addItem("Adm./Consejero Negocio > 100.000 \u20ac", "2");
+		this.mdTBTLB.addItem("No Residente", "3");
 		
 		// MODALIDAD DE COTIZACION
 		this.mdCTZLB.addItem("-", "-1");
