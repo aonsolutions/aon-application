@@ -94,7 +94,7 @@ public class AccountStatementDAO {
 				.leftOuterJoin(BAL_ACCOUNT).on(BAL_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
 				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(ACCOUNT_ENTRY.ACTIVITY))
 				.where(getLedgerCondition(ctx, params))
-				.orderBy(DET_ACCOUNT.CODE,ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.JOURNAL)
+				.orderBy(DET_ACCOUNT.CODE,ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY_DETAIL.ID)
 				.limit(offset, limit)
 				.fetch()
 				.stream()
