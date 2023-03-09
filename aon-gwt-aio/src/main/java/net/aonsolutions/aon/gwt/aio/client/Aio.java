@@ -149,7 +149,7 @@ public class Aio implements EntryPoint {
 				@Override
 				public void onSuccess() {
 					MainEntryPoint stat = new MainEntryPoint(aonData);
-					stat.onModuleLoad(getToken() != null ? "StatControlPanel" : getSubEntryPoint());
+					stat.onModuleLoad(getSubEntryPoint());
 				}
 			});		
 			break;
