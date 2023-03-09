@@ -133,7 +133,7 @@ public abstract class WorkplaceDraft extends Composite {
 	}
 	
 	private void initializeView() {
-		setToolbaTitle(workplaceDraftObject.getAgreementDescription());
+		setToolbaTitle(workplaceDraftObject.getWorkplaceDescription());
 		
 		workplace.initializeView();
 		initializeListBox();

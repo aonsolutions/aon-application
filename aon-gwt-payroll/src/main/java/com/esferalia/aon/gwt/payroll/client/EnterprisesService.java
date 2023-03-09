@@ -60,6 +60,7 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -436,6 +437,12 @@ public interface EnterprisesService extends RemoteService {
 
 	// ------------------------------------------------ Country/Province
 	
-	List<Country> getCountries(String currentDomainName);
+	List<Country> getCountries(String currentDomainName) throws IllegalArgumentException;
+	
+	// ------------------------------------------------ MainMassiveContracts
+
+	List<ContractData> getMassiveCNOs(String currentDomainName, String currentUser) throws IllegalArgumentException;
+
+	void updateMassiveCNOs(String currentDomainName, String currentUser, List<ContractData> contractDatas) throws IllegalArgumentException;
 
 }

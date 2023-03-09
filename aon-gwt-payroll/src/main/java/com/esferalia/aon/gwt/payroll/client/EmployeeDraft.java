@@ -924,6 +924,7 @@ public abstract class EmployeeDraft extends Composite {
 		
 		CNO cno = employee.getCNOByCode(contractData.getCno());
 		if(cno != null) employee.cnoSB.setValue(cno.getCode() + " - " + cno.getTitle());
+		if(!employee.isCnoSelected()) showWarning("CNO", "El CNO es obligatorio para todas las altas a partir del 01/01/2023");
 	}
 	
 	private static boolean isCompleteJourneyContract(String contractTypeCodeStr) {
@@ -1596,6 +1597,12 @@ public abstract class EmployeeDraft extends Composite {
 		Map<String, String> errorMap = new HashMap<>();
 		errorMap.put(title, message);
 		AonMessagePanel.showError(getMessagePanel(), errorMap);
+	}
+	
+	protected void showWarning(String title, String message) {
+		Map<String, String> messages = new HashMap<>();
+		messages.put(title, message);
+		AonMessagePanel.showWarning(getMessagePanel(), messages);
 	}
 	
 	protected void showSuccess(String title, String message) {

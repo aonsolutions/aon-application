@@ -276,14 +276,17 @@
 										value="Informe de personal asalariado" target="gwt">
 									</aon:commandLink>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_main_certificates" 
-										action="gwt_main_certificates"
-										title="#{bundle.certificate_management_menu}"
-										value="#{bundle.certificate_management_menu}" 
-										target="gwt">
-									</aon:commandLink>
-								</aon:div>
+								
+								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_massive_contracts"
+											action="gwt_main_massive_contracts"
+											title="#{bundle.payroll_massive_contracts_module}"
+											value="#{bundle.payroll_massive_contracts_module}" target="gwt">
+										</aon:commandLink>
+									</aon:div>
+								</aon:if>
+								
 								<!--  
 								<aon:div styleClass="aon-direct-access-list-element">
 									<a4j:commandLink ajaxSingle="true" immediate="true"
@@ -296,6 +299,7 @@
 										value="Generación Apuntes Contables" style="color:grey;font-style:oblique;" />
 								</aon:div>
 								-->
+								
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
@@ -410,7 +414,7 @@
 					</aon:if>
 
 					<!--
-						EMPTY 
+						UTILITIES 
 						 -->
 					<aon:panelGroup>
 						<aon:panelGrid id="group_configuration_utilities"
@@ -420,6 +424,14 @@
 								<aon:outputText value="#{bundle.aon_utilities}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="gwt_main_certificates" 
+										action="gwt_main_certificates"
+										title="#{bundle.certificate_management_menu}"
+										value="#{bundle.certificate_management_menu}" 
+										target="gwt">
+									</aon:commandLink>
+								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_main_trash"
 										action="gwt_main_trash"
@@ -437,16 +449,6 @@
 									</aon:div>
 								</aon:if>
 								<aon:if test="#{domainSwitcher.comunica and domainSwitcher.childDomain}">
-									<!-- 
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="gwt_main_config_comunica" 
-											action="gwt_main_config_comunica"
-											title="Configuración Comunic@"
-											value="Configuración Comunic@" 
-											target="gwt">
-										</aon:commandLink>
-									</aon:div>
-									 -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="aon_comunica" 
 											title="Comunic@"

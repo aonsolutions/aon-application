@@ -119,6 +119,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void showErrorMessage(String title, String message) {
 			showError(title, message);
 		}
+		
+		@Override
+		protected void showWarningMessage(String title, String message) {
+			showWarning(title, message);
+		}
 
 		@Override
 		protected void showAfiOption() {

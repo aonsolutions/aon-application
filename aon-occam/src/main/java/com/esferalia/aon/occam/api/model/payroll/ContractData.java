@@ -16,6 +16,8 @@ public class ContractData implements Serializable, HasStartDate, HasEndDate{
 	String expression;
 	Date startDate;
 	Date endDate;
+	
+	Boolean modify = false;
 		
 	public ContractData() {
 	
@@ -84,8 +86,16 @@ public class ContractData implements Serializable, HasStartDate, HasEndDate{
 		return this;
 	}
 	
-		
-   @Override
+   public Boolean getModify() {
+		return modify;
+	}
+
+	public ContractData setModify(Boolean modify) {
+		this.modify = modify;
+		return this;
+	}
+
+@Override
     public String toString() {
         return "ContractData{"
         		+ "id=" + id +","

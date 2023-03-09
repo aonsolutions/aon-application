@@ -315,7 +315,22 @@
 		.stackHeader {
 			padding: .7em .5em .7em .6em;
 		}
-
+		
+		.flexBtwn {
+			display: flex;
+			justify-content: space-between;
+			padding: 0 .5rem 0 0;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+			gap: .5rem;
+		}
+		
+		.wAuto {
+			width: auto;
+		}
 
 	</ui:style>
 	
@@ -374,35 +389,40 @@
 				
 				<g:FlowPanel styleName="aon-finding-title-toolbar aon-width-all">
 					<g:HorizontalPanel styleName="aon-width-all">
-			
-						<g:HorizontalPanel styleName="aon-finding-toolbar aon-width-all">
-							<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
-								<g:CheckBox debugId='eventsCheck' ui:field='eventsCheck'
-									styleName='aon-finding-toolbar-item aon-icon-warn {style.toolBar-checkBox}'
-									text="AVISOS" checked="false" />
-								<g:CheckBox debugId='costsCheck' ui:field='costsCheck'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="COSTES" checked="false" />
-								<g:CheckBox debugId='notDefinedVarsCheck' ui:field='notDefinedVarsCheck'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="VARIABLES NO DEFINIDAS" checked="false" />
-								<g:CheckBox debugId='disabledPaymentsCheck' ui:field='disabledPaymentsCheck'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="CONCEPTOS NO ACTIVOS" checked="false" />
-								<g:CheckBox debugId='dbSalaryCheck' ui:field='dbSalaryCheck'
-									styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
-									text="DIFERENCIAS" checked="false" />
-								<g:CheckBox debugId='tgssCheck' ui:field='tgssCheck'
-									styleName='aon-finding-toolbar-item {style.aon-toolbar-button} {style.toolBar-checkBox} '
-									text="SILTRA" checked="false" />
-								
-								<g:ListBox debugId="settlePreviewListBox" ui:field="settlePreviewListBox" visible="false" >
-									<g:item value="{JASPER}">EST&Aacute;NDAR</g:item>
-									<g:item value="{LETTER}">CARTA (&Beta;)</g:item>
-								</g:ListBox>
-
-							</g:HTMLPanel>
-						</g:HorizontalPanel>
+						<g:HTMLPanel styleName="{style.flexBtwn}">
+						
+							<g:HorizontalPanel styleName="aon-finding-toolbar {style.wAuto}">
+								<g:HTMLPanel styleName="aon-finding-toolbar-item-group">
+									<g:CheckBox debugId='eventsCheck' ui:field='eventsCheck'
+										styleName='aon-finding-toolbar-item aon-icon-warn {style.toolBar-checkBox}'
+										text="AVISOS" checked="false" />
+									<g:CheckBox debugId='costsCheck' ui:field='costsCheck'
+										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+										text="COSTES" checked="false" />
+									<g:CheckBox debugId='notDefinedVarsCheck' ui:field='notDefinedVarsCheck'
+										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+										text="VARIABLES NO DEFINIDAS" checked="false" />
+									<g:CheckBox debugId='disabledPaymentsCheck' ui:field='disabledPaymentsCheck'
+										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+										text="CONCEPTOS NO ACTIVOS" checked="false" />
+									<g:CheckBox debugId='dbSalaryCheck' ui:field='dbSalaryCheck'
+										styleName='aon-finding-toolbar-item {style.toolBar-checkBox}'
+										text="DIFERENCIAS" checked="false" />
+									<g:CheckBox debugId='tgssCheck' ui:field='tgssCheck'
+										styleName='aon-finding-toolbar-item {style.aon-toolbar-button} {style.toolBar-checkBox} '
+										text="SILTRA" checked="false" />
+									
+									<g:ListBox debugId="settlePreviewListBox" ui:field="settlePreviewListBox" visible="false" >
+										<g:item value="{JASPER}">EST&Aacute;NDAR</g:item>
+										<g:item value="{LETTER}">CARTA (&Beta;)</g:item>
+									</g:ListBox>
+	
+								</g:HTMLPanel>
+							</g:HorizontalPanel>
+							
+							<g:HTMLPanel ui:field="collapContextPanel" styleName="{style.flex}" />
+						
+						</g:HTMLPanel>
 					</g:HorizontalPanel>
 				</g:FlowPanel>
 
