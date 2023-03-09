@@ -437,7 +437,8 @@ public class IdcplcccParser {
 
 	private static final Pattern EMPLOYEE_QUOTE_PEC = 
 	Pattern.compile(
-	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<colective>[0-9]{4})([^0-9]+)\\s+(?<law>[0-9]{4}[^0-9]+).*$"
+	"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<colective>[0-9]{4})(.+)\\s+(?<law>[0-9]{4}[^0-9]+).*$"
+	//"^\\s*(?<code>[0-9]+)\\s+(?<description>.*)\\s+(?<tipo>[0-9,]+)\\s+(?<quota>[0-9]{2})([^0-9]+)\\s+(?<colective>[0-9]{4})([^0-9]+)\\s+(?<law>[0-9]{4}[^0-9]+).*$"
 	, Pattern.CASE_INSENSITIVE);
 
 	private static final Pattern EMPLOYEE_NO_QUOTE_PEC = 
