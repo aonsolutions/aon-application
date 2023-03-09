@@ -7,7 +7,7 @@
 	xmlns:p="urn:import:net.aonsolutions.gwt.pdfjs.client"
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions' >
 
-	<ui:with field='res' type='com.esferalia.aon.gwt.common.client.css.AonResources' />
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources"></ui:with>
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainContrataContract.MyStyle">
 		
@@ -79,8 +79,8 @@
 						 	<c:DataGrid ui:field="employeeDataGrid" styleName="{style.pointer}" />
 						</g:HTMLPanel>
 					</g:center>
-					<g:south size="20">
-						<aon:AonMinimizePanel ui:field="footPanel" styleName="{res.css.aonSelector}" >
+					<g:south size="17">
+						<aon:AonMinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector} aon-EmployeeTree-Events" >
 							<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
 						</aon:AonMinimizePanel>
 					</g:south>
@@ -88,7 +88,6 @@
 			</g:center>
 		</g:DockLayoutPanel>
 		
-
 		<g:DockLayoutPanel unit="PX">
 			<g:north size="50">
 				<aon:AonToolbar ui:field="employeeTrashToolbar"/>
