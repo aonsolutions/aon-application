@@ -159,6 +159,14 @@ public interface AonSolutionsResources extends ClientBundle {
 	@MimeType("image/svg+xml")
 	DataResource aonIconPaste();
 	
+	@Source("icons/aon-icon-format-indent-increase.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconFormatIndentIncrease();
+	
+	@Source("icons/aon-icon-format-indent-decrease.svg")
+	@MimeType("image/svg+xml")
+	DataResource aonIconFormatIndentDecrease();
+	
 	@Source("icons/aon-icon-table-view.svg")
 	@MimeType("image/svg+xml")
 	DataResource aonIconTableView();

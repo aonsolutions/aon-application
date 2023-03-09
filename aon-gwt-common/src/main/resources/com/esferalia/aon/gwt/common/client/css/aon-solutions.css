@@ -210,6 +210,10 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconFormatIndentIncrease aonIconFormatIndentIncrease;
+.aon_icon_format_indent_increase { background-image: iconFormatIndentIncrease;}
+@url iconFormatIndentDecrease aonIconFormatIndentDecrease;
+.aon_icon_format_indent_decrease { background-image: iconFormatIndentDecrease;}
 @url iconTableView aonIconTableView;
 .aon_icon_table_view { background-image: iconTableView;}
 @url iconCloudSync aonIconCloudSync;
