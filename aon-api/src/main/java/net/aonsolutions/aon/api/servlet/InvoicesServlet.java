@@ -85,9 +85,9 @@ public class InvoicesServlet extends AonApiHttpServlet {
         try {
             AonApiData api = initialize(req);
             Object object = new AonRouting(api)
-                    .addRoute(INVOICES, InvoicesServlet::saveInvoice)
-                    .addRoute(INVOICE, InvoicesServlet::saveInvoice)
                     .addRoute(ACCEPT, InvoicesServlet::acceptInvoice)
+            		.addRoute(INVOICES, InvoicesServlet::saveInvoice)
+                    .addRoute(INVOICE, InvoicesServlet::saveInvoice)
                     .apply();
 
             response(req, resp, object);
