@@ -1263,7 +1263,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void initFootPanel() {
 		footPanel.addMaximizeHandler(e -> showFootPanel());
-		footPanel.addMinimizeHandler(e -> hideFootPanel());
+		footPanel.addMinimizeHandler(e -> closeFootPanel());
 		footPanel.clearButtons();
 		footPanel.addButtonLess();
 	}
@@ -2764,23 +2764,20 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		footPanel.addButtonLess();
 	}
 
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 20);
-		splitLayoutPanel.animate(500);
-	}
-
 	private void optionNotAllowed() {
 		AonDialog dialog = new AonDialog("Informaci\u00f3n", new HTML("Opci\u00f3n no permitida"));
 		dialog.info();
 	}
-
-	private void hideFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 20);
+	
+	private void showFootPanel() {
+		footPanel.addButtonMore();
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
 		splitLayoutPanel.animate(500);
 	}
-
-	private void showFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 200);
+	
+	private void closeFootPanel() {
+		footPanel.addButtonLess();
+		splitLayoutPanel.setWidgetSize(footPanel, 17);
 		splitLayoutPanel.animate(500);
 	}
 

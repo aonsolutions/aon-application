@@ -169,6 +169,8 @@ public class AonMinimizePanel extends ResizeComposite implements HasWidgets, Acc
 		minimizeButton.setStyleName(AON.CSS.aonTabButton());
 		minimizeButton.addStyleName(AON.CSS.aonIconMinimize());
 		minimizeButton.addStyleName(AON.CSS.aonPointerEventsAuto());
+		minimizeButton.getElement().getStyle().setPosition(Position.RELATIVE);
+		minimizeButton.getElement().getStyle().setZIndex(1);
 		minimizeButton.addClickHandler( new ClickHandler() {
 			
 			@Override
@@ -181,6 +183,8 @@ public class AonMinimizePanel extends ResizeComposite implements HasWidgets, Acc
 		maximizeButton.setStyleName(AON.CSS.aonTabButton());
 		maximizeButton.addStyleName(AON.CSS.aonIconMaximize());
 		maximizeButton.addStyleName(AON.CSS.aonPointerEventsAuto());
+		maximizeButton.getElement().getStyle().setPosition(Position.RELATIVE);
+		maximizeButton.getElement().getStyle().setZIndex(1);
 		maximizeButton.addClickHandler( new ClickHandler() {
 			
 			@Override
@@ -316,6 +320,8 @@ public class AonMinimizePanel extends ResizeComposite implements HasWidgets, Acc
 		btn.getElement().setAttribute("title", title);
 		btn.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
 		btn.getElement().getStyle().setBackgroundColor("transparent");
+		btn.getElement().getStyle().setPosition(Position.RELATIVE);
+		btn.getElement().getStyle().setZIndex(1);
 
 		return btn;
 	}
