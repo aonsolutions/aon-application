@@ -463,7 +463,8 @@ public class DomainUserRoles implements Serializable {
 	
 	private boolean isOldManagementRoles() {
 		return hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.SALE)
-		|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.PURCHASE);
+		|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.PURCHASE)
+		|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.FINANCE);
 	}
 	
 	public boolean hasManagement() {
@@ -569,7 +570,7 @@ public class DomainUserRoles implements Serializable {
 
 	public boolean isTreasury() {
 		return (hasTreasury() || ((isParentUser() || isEnterpriseChild()) && hasParentTreasury()))
-			&& (isAdmin() || hasRole(AonRole.TREASURY));
+			&& (isAdmin() || hasRole(AonRole.TREASURY) || hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.FINANCE));
 	}
 	
 	// MARKETING
