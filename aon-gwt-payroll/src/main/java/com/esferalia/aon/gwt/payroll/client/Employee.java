@@ -1636,7 +1636,7 @@ public abstract class Employee extends ResizeComposite {
 			if(!isWokplaceSelected()) messageMap.put("Centro de trabajo", "Campo obligatorio");
 			if(!isActivityCCCSelected()) messageMap.put("Actividad", "Campo obligatorio");
 			if(!isContractTypeSelected()) messageMap.put("Tipo de contrato", "Campo obligatorio");
-			if(!isCnoSelected()) messageMap.put("CNO", "Campo obligatorio");
+//			if(!isCnoSelected()) messageMap.put("CNO", "Campo obligatorio");
 			if(!isAgreementAndLevelSelected()) messageMap.put("Convenio", "Para poder asigar un convenio se debe seleccionar un nivel/categoria");
 		}
 		
@@ -1679,9 +1679,9 @@ public abstract class Employee extends ResizeComposite {
 			boolean isWokplaceSelected = isWokplaceSelected();
 			boolean isActivityCCCSelected = isActivityCCCSelected();
 			boolean isContractTypeSelected = isContractTypeSelected();
-			boolean isCnoSelected = isCnoSelected();
+//			boolean isCnoSelected = isCnoSelected();
 			
-			return  isNotNameBlank && isWokplaceSelected && isActivityCCCSelected && isContractTypeSelected && isCnoSelected;
+			return  isNotNameBlank && isWokplaceSelected && isActivityCCCSelected && isContractTypeSelected/* && isCnoSelected*/;
 		}
 	}
 	
@@ -1723,7 +1723,7 @@ public abstract class Employee extends ResizeComposite {
 			return true;
 	}
 	
-	private boolean isCnoSelected() {
+	public boolean isCnoSelected() {
 		return AonStringUtils.isNotBlank(cnoSB.getValue());
 	}
 	

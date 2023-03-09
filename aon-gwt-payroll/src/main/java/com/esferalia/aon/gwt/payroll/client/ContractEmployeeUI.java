@@ -649,6 +649,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		
 		CNO cno = employee.getCNOByCode(contractData.getCno());
 		if(cno != null) employee.cnoSB.setValue(cno.getCode() + " - " + cno.getTitle());
+		if(!employee.isCnoSelected()) showWarning2("CNO", "El CNO es obligatorio para todas las altas a partir del 01/01/2023");
 	}
 	
 	private static boolean isCompleteJourneyContract(String contractTypeCodeStr) {
@@ -738,6 +739,10 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		showErrorMessage(title, message);
 	}
 	
+	public void showWarning2(String title, String message) {
+		showWarningMessage(title, message);
+	}
+	
 	// ------------------------------------------------- Getters
 	
 	public Date getStartDate() {
@@ -774,6 +779,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected abstract AonMinimizePanel getFootPanel();
 	protected abstract MonthListBox getIDCMonthListBox();
 	protected abstract void showErrorMessage(String title, String message);
+	protected abstract void showWarningMessage(String title, String message);
 	protected abstract void showAfiOption();
 	protected abstract void hideAfiOption();
 	
