@@ -108,14 +108,17 @@ export class AonMenu extends AonElement {
 		let open = this.getAttribute('opened');
 
 		if(open) {
+			this.getElement('aonShowMenuButton').style.display = 'block';
 			this.close();
 		} else if(this.getAttribute('app')){
 			aonMenuSidenav.style.width = '250px';
 			this.setAttribute('opened', true);
+			this.getElement('aonShowMenuButton').style.display = 'none';
 		} else {
 			aonMenuSidenav.style.width = '60px';
 			this.getRootPanel().style.marginRight = '60px';
 			this.setAttribute('opened', true);
+			this.getElement('aonShowMenuButton').style.display = 'none';
 		}
 		this.toolbarClose();
 	}
@@ -565,6 +568,7 @@ export class AonMenu extends AonElement {
 		let aonMenuSidenav = this.getElement(this.AON_MENU_SIDENAV);
 		aonMenuSidenav.style.transitionDuration = '0ms';
 		aonMenuSidenav.style.width = '0px';
+		this.getElement('aonShowMenuButton').style.display = 'block';
 		this.getRootPanel().style.marginRight = '0px';
 		this.removeAttribute('opened');
 		this.toolbarClose();
