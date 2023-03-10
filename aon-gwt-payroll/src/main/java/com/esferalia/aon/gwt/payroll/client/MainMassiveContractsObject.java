@@ -9,7 +9,9 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -19,23 +21,44 @@ public class MainMassiveContractsObject {
 	
 	private final DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	
+	private List<EmployeeContractInfo> allEmployeesList;
 	private List<EmployeeContractInfo> employees;
 	private List<ContractData> contractDatas;
 	private Map<String, CNO> cnos;
 	private Integer domainId;
+	private boolean hasValue = true;
+	
+	private EnterpriseContext enterpriseContext;
 	
 	// -------------------------------------------- Constructor
 	
 	public MainMassiveContractsObject() {
 		super();
+		allEmployeesList = new ArrayList<>();
 		employees = new ArrayList<>();
 		cnos = new HashMap<>();
 	}
 	
 	// -------------------------------------------- Database Methods
 	
-	public void getEmployees(String dataType, Consumer<List<EmployeeContractInfo>> success, Consumer<Throwable> failure) {
-		impl.getEmployeesInfo(true, new AsyncCallback<List<EmployeeContractInfo>>() {
+	public void getContextInfo(Consumer<EnterpriseContext> success, Consumer<Throwable> failure){
+		impl.getEnterpriseContext(new AsyncCallback<EnterpriseContext>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+
+			@Override
+			public void onSuccess(EnterpriseContext enterpriseContextDB) {
+				enterpriseContext = enterpriseContextDB;
+				success.accept(enterpriseContext);
+			}}
+		);
+	}
+	
+	public void getEmployees(String dataType, boolean allEmployees, Consumer<List<EmployeeContractInfo>> success, Consumer<Throwable> failure) {
+		impl.getEmployeesInfo(allEmployees, new AsyncCallback<List<EmployeeContractInfo>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -44,7 +67,7 @@ public class MainMassiveContractsObject {
 
 			@Override
 			public void onSuccess(List<EmployeeContractInfo> employeesDB) {
-				employees = employeesDB;
+				initEmployeeList(employeesDB);
 				employees.sort((o1, o2) -> o1.getEmployeeInfo().getFullName().compareTo(o2.getEmployeeInfo().getFullName()));
 				
 				impl.getDomain(new AsyncCallback<Integer>() {
@@ -135,6 +158,54 @@ public class MainMassiveContractsObject {
 	
 	// -------------------------------------------- Getters
 	
+	private void initEmployeeList(List<EmployeeContractInfo> employeesInfoList) {
+		allEmployeesList.clear();
+		employees.clear();
+		allEmployeesList.addAll(employeesInfoList);
+		employees.addAll(employeesInfoList);
+	}
+	
+	public void resetEmployeesList() {
+		this.employees.clear();
+		this.employees.addAll(allEmployeesList);
+	}
+	
+	public void filterEmployeesList(Integer workplaceId) {
+		this.employees.clear();
+		
+		for(EmployeeContractInfo employee : allEmployeesList) {
+			Integer employeeWorkplaceId = employee.getContractInfo().getWorkplaceId();
+			if(null != employeeWorkplaceId && AonNumberUtils.equals(workplaceId, employeeWorkplaceId))
+				this.employees.add(employee);
+		}
+		
+		filterHasValue();
+	}
+	
+	public void filterEmployeesList(String pattern) {
+		this.employees.clear();
+		
+		for(EmployeeContractInfo employee : allEmployeesList)
+			if(isEmployeeByPattern(employee, pattern))
+				this.employees.add(employee);
+	
+		filterHasValue();		
+	}
+
+	private boolean isEmployeeByPattern(EmployeeContractInfo employee, String pattern) {
+		String fullName = employee.getEmployeeInfo().getFullName();
+		String document = employee.getEmployeeInfo().getDocument();
+		String ssNumber = employee.getEmployeeInfo().getSsNumber();
+		
+		return AonStringUtils.containsIgnoreCase(fullName, pattern) ||
+				(AonStringUtils.isNotBlank(document) && AonStringUtils.containsIgnoreCase(document, pattern)) ||
+				(AonStringUtils.isNotBlank(ssNumber) && AonStringUtils.containsIgnoreCase(ssNumber, pattern));
+	}
+	
+	public EnterpriseContext getEnterpriseContext() {
+		return enterpriseContext;
+	}
+
 	public List<EmployeeContractInfo> getEmployees() {
 		return this.employees;
 	}
@@ -177,6 +248,21 @@ public class MainMassiveContractsObject {
 			);
 			employee.setModify(true);
 		}
+	}
+
+	public void filterHasValue() {
+		if(!hasValue) {
+			List<EmployeeContractInfo> iterableEmployees = new ArrayList<>(employees);
+			this.employees.clear();
+			for(EmployeeContractInfo employee : iterableEmployees) {
+				Optional<ContractData> contractData = getContractData(employee.getContractInfo().getContractId(), "CNO");
+				if(!contractData.isPresent() || AonStringUtils.isBlank(contractData.get().getExpression())) employees.add(employee);
+			}
+		}
+	}
+
+	public void setHasValue(Boolean value) {
+		this.hasValue = value;
 	}
 		
 }

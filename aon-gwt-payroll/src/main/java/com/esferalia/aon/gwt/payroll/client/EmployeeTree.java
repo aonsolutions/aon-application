@@ -4641,7 +4641,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	@Override
 	public void onShowMenuButtonClick(ClickEvent event) {
-		dockLayoutPanel.setWidgetSize(employees, 350);
+		dockLayoutPanel.setWidgetSize(employees, 275);
 		dockLayoutPanel.animate(500);
 	}
 

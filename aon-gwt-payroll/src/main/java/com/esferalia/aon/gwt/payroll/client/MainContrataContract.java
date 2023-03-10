@@ -902,23 +902,6 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 
 	private void initEnterpriseSB() {
-		// Enteprise List
-
-//		List<EmployeeContractInfo> employees = mainContrataContractObject.getAllEmployeesList();
-//
-//		List<String> enterprisesSuggest = new ArrayList<>();
-//		for (EmployeeContractInfo employee : employees) {
-//			String fullName = employee.getEmployeeInfo().getFullName();
-//			String document = employee.getEmployeeInfo().getDocument();
-//			String ssNumber = employee.getEmployeeInfo().getSsNumber();
-//			
-//			enterprisesSuggest.add(fullName + ", "+ document + ", " + ssNumber);
-//		}
-//			
-//		MultiWordSuggestOracle orclEnterprise = (MultiWordSuggestOracle) employeeSB.getSuggestOracle();
-//		orclEnterprise.addAll(enterprisesSuggest);
-//		employeeSB.setAutoSelectEnabled(false);
-
 		employeeSB.addKeyUpHandler(e -> {
 			String value = employeeSB.getValue();
 			if (AonStringUtils.isBlank(value) || value.length() < 3)

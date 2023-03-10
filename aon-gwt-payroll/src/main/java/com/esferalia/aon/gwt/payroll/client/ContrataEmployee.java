@@ -1299,6 +1299,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		loadData(s -> {
 			loadToolbar();
 			hideMessage();
+			// CheckCNO
+			if(0 == tabLayOutPanel.getSelectedIndex() && contrataEmployeeObject.getContractData().getSsRegimen() != (byte)3 && !contractEmployeeUI.employee.isCnoSelected())
+				showWarning("CNO", "El CNO es obligatorio para todas las altas a partir del 01/01/2023");
 			checkButtonsToolbar();
 			finish.accept(null);
 		});
