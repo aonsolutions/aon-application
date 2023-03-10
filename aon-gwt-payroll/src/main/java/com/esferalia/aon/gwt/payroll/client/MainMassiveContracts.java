@@ -19,11 +19,15 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
@@ -39,6 +43,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainMassiveContracts extends MainEntryPoint{
@@ -56,6 +61,8 @@ public class MainMassiveContracts extends MainEntryPoint{
 
 	interface MyStyle extends CssResource {
 		String dockLayoutPanel();
+		String filterPanel();
+		String flex();
 		String gridTitle();
 		String headerFixed();
 		String headerFSize();
@@ -69,6 +76,9 @@ public class MainMassiveContracts extends MainEntryPoint{
 	
 	@UiField
 	HTMLPanel messagePanel;
+	
+	@UiField
+	HTMLPanel filterEmployeePanel;
 	
 	@UiField
 	Grid contractsDataTableHeader;
@@ -91,6 +101,11 @@ public class MainMassiveContracts extends MainEntryPoint{
 	
 	private boolean hasChange = false;
 	
+	private TextBox employeeSB;
+	private CheckBox inactiveContractsCB;
+	private CheckBox noValueCB;
+	private ListBox workplaceLB;
+	
 	private AonToolbarButton saveBtn;
 	private AonToolbarButton undoAllButton;
 	private AonToolbarButton addMasiveValueBtn;
@@ -112,8 +127,118 @@ public class MainMassiveContracts extends MainEntryPoint{
 		Widget ui = binder.createAndBindUi(this);
 		ui.addStyleName(style.dockLayoutPanel());
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
+
+		getFilterEmployeePanel();
 		
 		AonMessagePanel.hideMessage(messagePanel);
+	}
+	
+	// ------------------------------------------ Filter Panel
+
+	private void getFilterEmployeePanel() {
+		filterEmployeePanel.setStyleName(AON.CSS.aonSearchPanel());
+		filterEmployeePanel.addStyleName(AON.CSS.aonScrollArea());
+		filterEmployeePanel.addStyleName(AON.CSS.aonMarginBottom());
+		filterEmployeePanel.addStyleName(AON.CSS.aonMarginLeft());
+		filterEmployeePanel.addStyleName(AON.CSS.aonMarginRight());
+		filterEmployeePanel.addStyleName(AON.CSS.aonBlockCenter());
+
+		HTMLPanel filterPanel = new HTMLPanel("");
+		filterPanel.addStyleName(style.filterPanel());
+
+		HTMLPanel employeePanel = new HTMLPanel("");
+		employeePanel.addStyleName(style.flex());
+		Label employeeL = new Label("Persona : ");
+		employeeL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		employeeL.getElement().getStyle().setMarginRight(10, Unit.PX);
+		employeeSB = new TextBox();
+		employeeSB.getElement().getStyle().setWidth(300, Unit.PX);
+		employeeSB.addKeyUpHandler(e -> {
+			String value = employeeSB.getValue();
+			if (AonStringUtils.isBlank(value) || value.length() < 3)
+				mainMassiveContractsObject.resetEmployeesList();
+			else
+				mainMassiveContractsObject.filterEmployeesList(value);
+
+			initPreview();
+		});
+		
+		employeePanel.add(employeeL);
+		employeePanel.add(employeeSB);
+
+		HTMLPanel showPanel = new HTMLPanel("");
+		showPanel.addStyleName(style.flex());
+		Label workplaceL = new Label("Centro Trabajo : ");
+		workplaceL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		workplaceL.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		workplaceLB = new ListBox();
+		workplaceLB.setStyleName("aon-selectOneMenu");
+		workplaceLB.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		workplaceLB.getElement().getStyle().setMarginRight(5, Unit.PX);
+
+		Label inactiveL = new Label("Empleados Inactivos");
+		inactiveL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		inactiveL.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		inactiveContractsCB = new CheckBox();
+		inactiveContractsCB.addValueChangeHandler(e -> {
+			AonMessagePanel.showLoading(messagePanel, e.getValue() ? "Cargando trabajadores (inactivos incluidos) ..." : "Cargando trabajadores activos ...");
+		this.mainMassiveContractsObject.getEmployees(dataType.getSelectedValue(), e.getValue(),
+				employees -> {
+					selectionModel = new HashMap<>();
+					employeeSB.setValue("");
+					workplaceLB.setSelectedIndex(0);
+					noValueCB.setValue(false);
+					
+					initPreview();
+					addMasiveValueBtn.setEnabled(false);
+					setHasChange(false);
+					AonMessagePanel.showWarning(messagePanel, new HashMap<String, String>(){{ put("Remesa AFI CNO", "Se recomienda notificar la remesa AFI, con el dato CNO actualizado para todos los contratos, antes del 22/03/2023.\nYa que es necesario antes de confirmar las liquidaciones de Seguridad Social de Marzo."); }});
+				}, f -> AonMessagePanel.showWarning(messagePanel, new HashMap<String, String>(){{ put("Error Contratos", f.getMessage()); }}));
+		});
+		
+		Label noValueL = new Label("Sin Valor");
+		noValueL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		noValueL.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		noValueCB = new CheckBox();
+		noValueCB.addValueChangeHandler(e -> {
+			this.mainMassiveContractsObject.setHasValue(!e.getValue());
+			employeeSB.setValue("");
+			if(e.getValue()){
+				this.mainMassiveContractsObject.filterHasValue();
+				initPreview();
+			} else DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.workplaceLB);
+		});
+
+		showPanel.add(workplaceL);
+		showPanel.add(workplaceLB);
+		showPanel.add(inactiveL);
+		showPanel.add(inactiveContractsCB);
+		showPanel.add(noValueL);
+		showPanel.add(noValueCB);
+
+		filterPanel.add(employeePanel);
+		filterPanel.add(showPanel);
+
+		filterEmployeePanel.add(filterPanel);
+	}
+	
+	private void initWorkplaceLB() {
+		workplaceLB.clear();
+		workplaceLB.addItem("-", "");
+		for (Workplace workplace : mainMassiveContractsObject.getEnterpriseContext().getWorkplaces())
+			workplaceLB.addItem(workplace.getDescription(), workplace.getId().toString());
+		
+		workplaceLB.addChangeHandler(e -> {
+			String workplaceIdStr = workplaceLB.getSelectedValue();
+			if (AonStringUtils.isBlank(workplaceIdStr))
+				mainMassiveContractsObject.resetEmployeesList();
+			else {
+				Integer workplaceId = Integer.parseInt(workplaceIdStr);
+				mainMassiveContractsObject.filterEmployeesList(workplaceId);
+			}
+
+			initPreview();
+		});
 	}
 	
 	// ----------------------------------------------- onModuleLoad
@@ -132,14 +257,24 @@ public class MainMassiveContracts extends MainEntryPoint{
 	public void onModuleLoad(MainMassiveContractsObject mainMassiveContractsObject) {
 		this.mainMassiveContractsObject = mainMassiveContractsObject;
 		AonMessagePanel.showLoading(messagePanel, "Cargando CNO contratos");
-		this.mainMassiveContractsObject.getEmployees(dataType.getSelectedValue(), 
-			employees -> {
-				selectionModel = new HashMap<>();
-				initPreview();
-				addMasiveValueBtn.setEnabled(false);
-				setHasChange(false);
-				AonMessagePanel.showWarning(messagePanel, new HashMap<String, String>(){{ put("Remesa AFI CNO", "Se recomienda notificar la remesa AFI, con el dato CNO actualizado para todos los contratos, antes del 22/03/2023.\nYa que es necesario antes de confirmar las liquidaciones de Seguridad Social de Marzo."); }});
-			}, f -> AonMessagePanel.showWarning(messagePanel, new HashMap<String, String>(){{ put("Error Contratos", f.getMessage()); }}));
+		this.mainMassiveContractsObject.getContextInfo(
+				s -> {
+					initWorkplaceLB();
+					mainMassiveContractsObject.getEmployees(dataType.getSelectedValue(), false,
+							employees -> {
+								selectionModel = new HashMap<>();
+								this.employeeSB.setValue("");
+								this.inactiveContractsCB.setValue(false);
+								this.noValueCB.setValue(false);
+								this.workplaceLB.setSelectedIndex(0);
+								
+								initPreview();
+								addMasiveValueBtn.setEnabled(false);
+								setHasChange(false);
+								AonMessagePanel.showWarning(messagePanel, new HashMap<String, String>(){{ put("Remesa AFI CNO", "Se recomienda notificar la remesa AFI, con el dato CNO actualizado para todos los contratos, antes del 22/03/2023.\nYa que es necesario antes de confirmar las liquidaciones de Seguridad Social de Marzo."); }});
+							}, f -> AonMessagePanel.showWarning(messagePanel, new HashMap<String, String>(){{ put("Error Contratos", f.getMessage()); }}));
+				}, f -> {}
+		);
 		
 	}
 	
@@ -380,15 +515,17 @@ public class MainMassiveContracts extends MainEntryPoint{
 	}
 
 	private void setScrollHeight() {
-		scrollPanel.setHeight((Window.getClientHeight() - 250) + "px");
+		scrollPanel.setHeight((Window.getClientHeight() - 290) + "px");
 	}
 	
 	private void showContractTable() {
 		deckPanel.showWidget(0);
+		cnoAFIBtn.setEnabled(true);
 	}
 	
 	private void showContractMessage() {
 		deckPanel.showWidget(1);
+		cnoAFIBtn.setEnabled(false);
 	}
 	
 	// ----------------------------------------------- Toolbar
