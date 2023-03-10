@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -839,6 +841,24 @@ public class SistemaRED {
 			final String certificateType) throws SegSocialException{
 		SistemaREDMov.validateCert(certificateInputStream, certificatePassword, certificateType);
 	}
+	
+	public static void setCnoCertificate(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String nss, String dni, String regimen, String cc, String cno)
+			throws Exception {
+		AonSegSocialJuanma.setCnoCertificate(certificateInputStream, certificatePassword, certificateType, nss, dni, regimen, cc, cno);
+		
+	}
+	
+	public static void onlineSettlementCCC(WebClient webClient, HtmlPage htmlPage, String ccc, String regimen, 
+    		String startMonth, String startYear, String endMonth, String endYear, String liquidationType) throws Exception {
+		AonSegSocialJuanma.onlineSettlementOption1(webClient, htmlPage, ccc, regimen, startMonth, startYear, endMonth, endYear, liquidationType);
+		
+	}
+	
+	public static void onlineSettlementNLiquidation(WebClient webClient, HtmlPage htmlPage, String liquidationNumber, String rnt) throws Exception{
+		AonSegSocialJuanma.onlineSettlementOption2(webClient, htmlPage, liquidationNumber, rnt);
+	}
+	
 	
 
 	public static void main(String[] args)
