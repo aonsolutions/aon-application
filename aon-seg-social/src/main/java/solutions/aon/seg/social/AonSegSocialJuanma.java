@@ -1,23 +1,12 @@
 package solutions.aon.seg.social;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Scanner;
 
-import org.junit.Assert;
-import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -28,18 +17,12 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
-import solutions.aon.seg.social.exception.InvalidCertificateException;
-import solutions.aon.seg.social.exception.OutOfServiceException;
+
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.SegSocialOutOfService;
-import solutions.aon.seg.social.exception.StatusCodeException;
-import solutions.aon.seg.social.exception.invalid.WrongRegimeException;
-import solutions.aon.seg.social.object.SituacionEmpresa;
-import solutions.aon.seg.social.object.SituationType;
+
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
-import solutions.aon.seg.social.toolkit.Toolkit;
 
 public class AonSegSocialJuanma extends SegSocialException {
 
