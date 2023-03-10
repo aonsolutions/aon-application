@@ -1,4 +1,4 @@
-FROM tomcat:9-jdk17
+FROM tomcat:10-jdk17
 
 ARG AON_VERSION=9.23-SNAPSHOT
 
@@ -6,7 +6,7 @@ ENV AWS_HOME /root/.aws
 
 ENV CATALINA_HOME /usr/local/tomcat
 
-ENV AON_SOLUTIONS_HOME $CATALINA_HOME/webapps/ROOT
+ENV AON_SOLUTIONS_HOME $CATALINA_HOME/webapps-javaee/ROOT
 
 ARG NET_MAVEN_REPOSITORY_URL=http://repo.maven.aonsolutions.net/maven2/net/aonsolutions/
 ARG AON_MAVEN_REPOSITORY_URL=http://dev.esferalia.net/maven2_repositories/inhouse_snapshot/com/code/aon
@@ -55,7 +55,7 @@ ENV AON_SOLUTIONS_CONF /etc/aon-aio
 ENV AON_SOLUTIONS_COMMON /home/COMMON-RESOURCES
 
 
-WORKDIR $CATALINA_HOME/webapps
+WORKDIR $CATALINA_HOME/webapps-javaee
  
 RUN set -x \
 	&& rm -rf docs \
