@@ -91,6 +91,7 @@ public class Mod145DAO {
 					.setFoodAnnuity(r.getValue(IRPF_DATA.FOOD_ANNUITY))
 					.setIrpfPercent(r.getValue(IRPF_DATA.REQUEST_IRPF))
 					.setDeductionHomeLoan(getBoolean(r, IRPF_DATA.DEDUCT_HOME_LOAN))
+					.setCeutaMelillaPalma(getBoolean(r, IRPF_DATA.CEUTA_MELILLA))
 					.setDeleted(false)
 					;
 					
@@ -272,6 +273,7 @@ public class Mod145DAO {
 			.set(IRPF_DATA.FOOD_ANNUITY, mod145.getFoodAnnuity())
 			.set(IRPF_DATA.REQUEST_IRPF, mod145.getIrpfPercent())
 			.set(IRPF_DATA.DEDUCT_HOME_LOAN, mod145.isDeductionHomeLoan() ? (byte)1 : null)
+			.set(IRPF_DATA.CEUTA_MELILLA, mod145.isCeutaMelillaPalma() ? (byte)1 : (byte)0)
 			.returning(IRPF_DATA.ID).fetchOne().getId();
 			ctx.log().debug("INSERT IRPF DATA id: " + id);
 			
@@ -304,6 +306,7 @@ public class Mod145DAO {
 			.set(IRPF_DATA.FOOD_ANNUITY, mod145.getFoodAnnuity())
 			.set(IRPF_DATA.REQUEST_IRPF, mod145.getIrpfPercent())
 			.set(IRPF_DATA.DEDUCT_HOME_LOAN, mod145.isDeductionHomeLoan() ? (byte)1 : null)
+			.set(IRPF_DATA.CEUTA_MELILLA, mod145.isCeutaMelillaPalma() ? (byte)1 : (byte)0)
 			.where(IRPF_DATA.ID.eq(mod145.getId()))
 			.execute();		
 		ctx.log().debug("UPDATE IRPF DATA id: " + mod145.getId());	
