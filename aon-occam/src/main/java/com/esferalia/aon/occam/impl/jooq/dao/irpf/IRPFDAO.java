@@ -25,7 +25,6 @@ import org.jooq.Record1;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
-import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
@@ -37,6 +36,7 @@ import com.esferalia.aon.occam.api.model.finance.Properties.IRPFProperties;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParams;
 import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsGroupedBy;
+import com.esferalia.aon.occam.api.model.fiscal.IRPFParamsOrderBy;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.IrpfSummary;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -109,6 +109,17 @@ public class IRPFDAO {
 	// ********************************************************************
 	// ******************************************************* [INVOICES]
 	// ********************************************************************
+//	private static SelectConditionStep<? extends Record> getOutputInvoiceIrpBreakdownSelectWhere(final AONContext ctx, final FiscalModel fm) {
+//		return getOutputInvoiceIrpBreakdownSelectWhere(getInvoiceIrpBreakdownSelect(ctx),fm);
+//	}
+//	private static SelectConditionStep<? extends Record> getOutputInvoiceIrpBreakdownSelectWhere(SelectOnConditionStep<? extends Record> select, final FiscalModel fm) {
+//		return select
+//			.where(INVOICE.DOMAIN.equal(fm.getDomain()))
+//			.and(INVOICE.TYPE.eq(InvoiceType.SALES.value()))
+//			.and(INVOICE.ISSUE_DATE.between(getStartDate(fm),getEndDate(fm)))
+//			.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+//			;		
+//	}
 	private static SelectConditionStep<? extends Record> getInputInvoiceIrpBreakdownSelectWhere(final AONContext ctx, final FiscalModel fm) {
 		return getInputInvoiceIrpBreakdownSelectWhere(getInvoiceIrpBreakdownSelect(ctx),fm);
 	}
@@ -207,6 +218,47 @@ public class IRPFDAO {
 		return stream;
 	}
 	
+	public static Stream<IrpfBreakdown> getOutputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
+		IRPFParams params = new IRPFParams()
+			.setDomain(fm.getDomain())
+			.setOutput(true)
+			.setFromDate(getStartDate(fm))
+			.setToDate(getEndDate(fm))
+			.setGroupedBy(IRPFParamsGroupedBy.INVOICE)
+			.setOrderBy(IRPFParamsOrderBy.INVOICE_ISSUE_DATE);
+		return getInvoicesIrpfBreakdown(ctx, params);
+	}
+	public static Stream<IrpfBreakdown> getModelOutputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
+		return getInvoiceIrpBreakdownSelect(ctx)
+			.innerJoin(ALCATRAZ).on(ALCATRAZ.INVOICE.equal(INVOICE.ID))
+			.where(INVOICE.DOMAIN.equal(fm.getDomain()))
+				.and(ALCATRAZ.FS_MODEL.eq(fm.getId()))
+				.and(INVOICE.TYPE.eq(InvoiceType.SALES.value()))
+				.and(INVOICE_TAX.TAX_TYPE.equal(TaxType.RETENTION.value()))
+			.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
+			.fetch()
+			.stream()
+			.map( new IrpfInvoiceBreakdownFiller() );
+	}
+//	public static Stream<IrpfBreakdown> getNotInModelOutputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
+//		Table<Record1<Integer>> modelInvoice = ctx.getDslContext().select( ALCATRAZ_INVOICE_ID )
+//			.from(ALCATRAZ)
+//			.join(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
+//			.where(FS_MODEL.DOMAIN.eq(fm.getDomain()))
+//			.and(FS_MODEL.YEAR.eq(fm.getYear()))
+//			.and(FS_MODEL.ADMINISTRATION.eq(fm.getAdministration().value()))
+//			.and(FS_MODEL.MODEL.eq(fm.getModel().getValue()))
+//			.asTable("modelInvoice")
+//		;
+//		return getOutputInvoiceIrpBreakdownSelectWhere(
+//			getInvoiceIrpBreakdownSelect(ctx)
+//				.leftAntiJoin(modelInvoice).on(ALCATRAZ_INVOICE_ID.equal(INVOICE.ID)),fm)
+//			.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
+//			.fetch()
+//			.stream()
+//			.map( new IrpfInvoiceBreakdownFiller() );
+//	}
+
 	public static Stream<IrpfBreakdown> getInputInvoicesIrpfBreakdown(final AONContext ctx, final FiscalModel fm) {
 		return getInputInvoiceIrpBreakdownSelectWhere(ctx,fm)
 			.orderBy(INVOICE.ISSUE_DATE,INVOICE.ID,INVOICE.RDOCUMENT)
@@ -510,10 +562,10 @@ public class IRPFDAO {
 		filter = AonObjectUtils.computeIfTrue(Objects.isNull( params.getPercent() )
 			, filter, prop ->  prop.and(p.getPercentProperty().eq( params.getPercent())));
 		
-		if (params.getOutput() != null && params.isOutput()) {
+		if (params.isOutput()) {
 				filter = filter.and(p.getInvoiceTypeProperty().eq( InvoiceType.SALES.value()));
 		}
-		if (params.getOutput() != null && !params.isOutput()) {
+		if (params.isInput()) {
 				filter = filter.and(p.getInvoiceTypeProperty().in( INPUT_TYPES ));
 		}
 		return filter;

@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.fiscal.RefreshMod130Result;
 import net.aonsolutions.db.up2date.payroll.AlterCostCode;
 import net.aonsolutions.db.up2date.payroll.MaxEmbargable4Daily;
 import net.aonsolutions.db.up2date.tgss.ActiveRetirementInsert;
@@ -335,6 +336,8 @@ public class Up2Date {
 	    //MEITrainingBaseCgcMinFix.MEITRAININGBASECGCMINFIX,
 	    ActiveRetirementInsert.ACTIVERETIREMENTINSERT,
 
+	    RefreshMod130Result.REFRESH_MOD130_RESULT,
+	    
 	    // Important, not remove
 	    SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
 

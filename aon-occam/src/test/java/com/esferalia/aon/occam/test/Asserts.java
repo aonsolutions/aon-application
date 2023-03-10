@@ -35,6 +35,7 @@ import com.esferalia.aon.occam.api.model.fiscal.IrpfBreakdown;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
@@ -845,6 +846,9 @@ public class Asserts {
 		assertFiscalModel(expected, actual);
 	}
 	public static void assertMod123(Mod123 expected, Mod123 actual) {
+		assertFiscalModel(expected, actual);
+	}
+	public static void assertMod130(Mod130 expected, Mod130 actual) {
 		assertFiscalModel(expected, actual);
 	}
 	public static void assertMod303(Mod303 expected, Mod303 actual) {

@@ -572,7 +572,7 @@ public class TaskController extends BasicController {
 						sender = am.getSender().getRegistry().getName();
 					}
 				}
-				String comments = am.getComments();
+				String comments = AonStringUtils.defaultIfBlank( am.getComments() );
 				if ( AonStringUtils.isNotBlank(comments) && AonStringUtils.isNotBlank(am.getProcessComments())) {
 					comments = comments + ". ";
 				}
