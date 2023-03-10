@@ -449,8 +449,6 @@ public class FiscalModelDAO {
 	protected static <T extends FiscalModel> T initializeFiscalModel(AONContext ctx, T fm) {
 		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);		 
 		if (fm.getDomain() == 0) throw new AonCoreException("[INTERNO] No se ha indicado el dominio para la declaraci\u00F3n.");
-		fm.setDocument(conf.getCompany().getDocument());
-		fm.setName(conf.getCompany().getName());
 		if (fm.getAdministration() == null) {
 			fm.setAdministration(conf.fiscal().getAdministration(Administration.COMMON_TERRITORY));
 		}
@@ -469,10 +467,21 @@ public class FiscalModelDAO {
 				fm.setPeriod( Period.getQuarterlyPeriod(month-1));
 			}
 		}
-		fm.setAdmonAeat(conf.fiscal().getAdministrationCode());
 		fm.setStatus(FiscalStatus.PENDING);
+		if (fm.isAEAT()) {
+			fm.setAdmonAeat(conf.fiscal().getAdministrationCode());
+		}
+		boolean isCompanyDeponent = AonStringUtils.isBlank(fm.getDocument()) || AonStringUtils.equals(fm.getDocument(),conf.getCompany().getDocument()); 
+		boolean mustInitializeDeponent = 
+				!fm.getModel().isOtherDeponentAllowedInSamePeriod()
+			|| ( fm.getModel().isOtherDeponentAllowedInSamePeriod() && isCompanyDeponent);
 		
-		return initializeIdentificationData(ctx, fm, conf);
+		if (mustInitializeDeponent) {
+			fm.setDocument(conf.getCompany().getDocument());
+			fm.setName(conf.getCompany().getName());
+			return initializeIdentificationData(ctx, fm, conf);
+		}
+		return fm; 
 	}
 	
 	protected static <T extends FiscalModel> T initializeIdentificationData(AONContext ctx, T fm) {

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.occam.api.model.Occam;
+import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.IModelScript;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
@@ -56,11 +57,41 @@ public class Mod130ServiceAsyncDecorator implements Mod130ServiceAsync {
 	}
 	
 	@Override
+	public void initialize(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
+		AON.start();
+		fsa.initialize(occam,mod130,new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void create(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
+		AON.start();
+		fsa.create(occam, mod130,new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void delete(Occam occam, Mod130 mod130, AsyncCallback<Void> callback) {
+		AON.start();
+		fsa.delete(occam, mod130, new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
+	public void getInfo(Occam occam, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey, AsyncCallback<String> callback) {
+		AON.start();
+		fsa.getInfo(occam, mod130, script, infoKey,new AsyncCallbackWrapper<>(callback));
+	}
+
+	@Override
 	public void markAsFinished(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
 		AON.start();
 		fsa.markAsFinished(occam, mod130, new AsyncCallbackWrapper<>(callback));
 	}
 	
+	@Override
+	public void markAsPending(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
+		AON.start();
+		fsa.markAsPending(occam, mod130, new AsyncCallbackWrapper<>(callback));
+	}
+
 	@Override
 	public void markAsSent(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
 		AON.start();
@@ -74,38 +105,21 @@ public class Mod130ServiceAsyncDecorator implements Mod130ServiceAsync {
 	}
 
 	@Override
-	public void markAsPending(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
+	public void markAsCustomerAccepted(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
 		AON.start();
-		fsa.markAsPending(occam, mod130, new AsyncCallbackWrapper<>(callback));
+		fsa.markAsCustomerAccepted(occam, mod130, new AsyncCallbackWrapper<>(callback));
 	}
 
+	
 	@Override
-	public void initialize(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
+	public void markAsCustomerRejected(Occam occam, Mod130 mod130, String reason, AsyncCallback<Mod130> callback) {
 		AON.start();
-		fsa.initialize(occam,mod130,new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void create(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
-		AON.start();
-		fsa.create(occam, mod130,new AsyncCallbackWrapper<>(callback));
-	}
-
-	@Override
-	public void reset(Occam occam, Mod130 mod130, AsyncCallback<Mod130> callback) {
-		AON.start();
-		fsa.reset(occam, mod130,new AsyncCallbackWrapper<>(callback));
+		fsa.markAsCustomerRejected(occam, mod130, reason, new AsyncCallbackWrapper<>(callback));
 	}
 	
 	@Override
-	public void delete(Occam occam, Mod130 mod130, AsyncCallback<Void> callback) {
+	public void getInvoice(Occam occam, int invoiceId, AsyncCallback<Invoice> callback) {
 		AON.start();
-		fsa.delete(occam, mod130, new AsyncCallbackWrapper<>(callback));
+		fsa.getInvoice(occam, invoiceId, new AsyncCallbackWrapper<>(callback));
 	}
-	@Override
-	public void getInfo(Occam occam, Mod130 mod130, IModelScript<Mod130Key> script, FiscalModelKeyInfo infoKey, AsyncCallback<String> callback) {
-		AON.start();
-		fsa.getInfo(occam, mod130, script, infoKey,new AsyncCallbackWrapper<>(callback));
-	}
-	
 }

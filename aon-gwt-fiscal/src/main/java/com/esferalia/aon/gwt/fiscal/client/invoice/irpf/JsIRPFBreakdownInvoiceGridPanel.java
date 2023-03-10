@@ -18,13 +18,20 @@ import com.google.gwt.user.client.ui.Label;
 
 public class JsIRPFBreakdownInvoiceGridPanel extends FlowPanel implements HasSelectionHandlers<JsIRPFBreakdown>{
 	
+	private boolean participationInfo;
 	private final Label title;
 	private final Label subTitle;
 	private final AonDisplayGrid grid;
 	private double sumBase = 0.0;
 	private double sumQuota = 0.0;
+	private double sumParticipationQuota = 0.0;
 	
 	public JsIRPFBreakdownInvoiceGridPanel() {
+		this(false);
+	}
+	
+	public JsIRPFBreakdownInvoiceGridPanel( boolean participationInfo ) {
+		this.participationInfo =  participationInfo;
 		title = new Label();
 		title.setStyleName(AON.CSS.aonMarginTop());
 		title.addStyleName(AON.CSS.aonBold());
@@ -69,6 +76,8 @@ public class JsIRPFBreakdownInvoiceGridPanel extends FlowPanel implements HasSel
 			.addCell(new Label("Base Imp."),AON.CSS.aonTextRight(),AON.CSS.aonWidth80(), AON.CSS.aonNowrap())		
 			.addCell(new Label("% IRPF"),AON.CSS.aonTextRight(),AON.CSS.aonWidth40(), AON.CSS.aonNowrap())
 			.addCell(new Label("Cuota"),AON.CSS.aonTextRight(),AON.CSS.aonWidth80())
+			.addCellIf(participationInfo, new Label("% Part."),AON.CSS.aonTextRight(),AON.CSS.aonWidth40())
+			.addCellIf(participationInfo, new Label("Cuota Part."),AON.CSS.aonTextRight(),AON.CSS.aonWidth100())
 			.addCell(new Label("N\u00BA Referencia"),AON.CSS.aonWidth100(), AON.CSS.aonNowrap())
 		;
 	}
@@ -108,10 +117,13 @@ public class JsIRPFBreakdownInvoiceGridPanel extends FlowPanel implements HasSel
 					?"------" 
 					:AON.CURRENCY_FORMAT.format(br.getPercent()) + "%"),AON.CSS.aonTextRight())
 			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getQuota())),AON.CSS.aonTextRight())
+			.addCellIf(participationInfo, new Label(AON.CURRENCY_FORMAT.format(br.getParticipationPercent()) + "%"),AON.CSS.aonTextRight())
+			.addCellIf(participationInfo, new Label(AON.CURRENCY_FORMAT.format(br.getParticipationQuota())),AON.CSS.aonTextRight())
 			.addCell(new Label(ensure(br.getReferenceCode(), br::getReferenceCode, AonStringUtils.EMPTY)))
 		;
 		sumBase += br.getBase();
 		sumQuota += br.getQuota();
+		sumParticipationQuota += br.getParticipationQuota();
 	}
 
 	public void addFooterRow() {
@@ -127,6 +139,8 @@ public class JsIRPFBreakdownInvoiceGridPanel extends FlowPanel implements HasSel
 			.addCell(new Label(AON.CURRENCY_FORMAT.format(sumBase)),AON.CSS.aonTextRight(),AON.CSS.aonBold())
 			.addCell(new Label())
 			.addCell(new Label(AON.CURRENCY_FORMAT.format(sumQuota)),AON.CSS.aonTextRight(),AON.CSS.aonBold())
+			.addCellIf(participationInfo, new Label())
+			.addCellIf(participationInfo, new Label(AON.CURRENCY_FORMAT.format(sumParticipationQuota)),AON.CSS.aonTextRight(),AON.CSS.aonBold())
 			.addCell(new Label())
 		;
 	}

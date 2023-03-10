@@ -89,6 +89,12 @@ public class JsIRPFBreakdown extends JavaScriptObject {
 	public final native double getDeductibleQuota() /*-{
 		return this.deductibleQuota;
 	}-*/;
+	public final native double getParticipationPercent() /*-{
+		return this.participationPercent;
+	}-*/;
+	public final native double getParticipationQuota() /*-{
+		return this.participationQuota;
+	}-*/;
 	public final native int getGroupByNif() /*-{
 		return this.groupByNif;
 	}-*/;
