@@ -46,8 +46,8 @@ phases:
         {"name":"TOMCAT-10","imageUri":"%s/aon-solutions:%s"}
         ]' $REPOSITORY_URI $TAG > tomcat10imgdef.json
       - cat tomcat10imgdef.json
-  artifacts:
-    files:
-      #- snapshotimgdef.json
-      - tomcat10imgdef.json
+artifacts:
+  files:
+    #- snapshotimgdef.json
+    - tomcat10imgdef.json
     # - location
