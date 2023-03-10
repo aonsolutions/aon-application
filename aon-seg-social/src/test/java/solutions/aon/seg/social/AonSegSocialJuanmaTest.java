@@ -14,7 +14,6 @@ import solutions.aon.seg.social.exception.SegSocialException;
 
 public class AonSegSocialJuanmaTest {
 
-	
 	@Test
 	public void testSetCnoWrongCCC() throws Exception {
 		String certificate = "/tmp/AyudaTFNMT.p12";
@@ -106,181 +105,140 @@ public class AonSegSocialJuanmaTest {
 			Assert.assertEquals("3820* CNO INCORRECTO", e.getMessage());
 		}
 	}
-	
+
 	@Test
-	private static void testOnlineSettlementCccWrongCcc(WebClient webClient, HtmlPage htmlPage, String ccc, String regimen,
-			String startMonth, String startYear, String endMonth, String endYear, String liquidationType) throws Exception{
+	private static void testOnlineSettlementCccWrongCcc(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String authorized, String ccc,
+			String regimen, String startMonth, String startYear, String endMonth, String endYear,
+			String liquidationType) throws Exception {
 		try {
-			AonSegSocialJuanma.onlineSettlementOption1(webClient,
-					htmlPage, 
-					"123", 
-					"0111",
-					"05",
-					"2019",
-					"05",
-					"2022",
-					"L90");
+			AonSegSocialJuanma.onlineSettlementOptionCCC(certificateInputStream, certificatePassword, certificateType,
+					authorized, "123", "0111", "05", "2019", "05", "2022", "L90");
 			Assert.fail();
 		} catch (SegSocialException e) {
-			//Comprobar mensajes de error
+			// Comprobar mensajes de error
 			Assert.assertEquals("Wrong data :", e.getMessage());
 
 		}
-		
+
 	}
-	
+
 	@Test
-	public void testOnlineSettlementCccWrongRegimen(WebClient webClient, HtmlPage htmlPage, String ccc, String regimen,
-			String startMonth, String startYear, String endMonth, String endYear, String liquidationType) throws Exception {
+	public void testOnlineSettlementCccWrongRegimen(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String authorized, String ccc,
+			String regimen, String startMonth, String startYear, String endMonth, String endYear,
+			String liquidationType) throws Exception {
 		try {
-			AonSegSocialJuanma.onlineSettlementOption1(webClient,
-					htmlPage,
-					"11122534302",
-					"000",
-					"05",
-					"2019",
-					"05",
-					"2022",
-					"L90");
+			AonSegSocialJuanma.onlineSettlementOptionCCC(certificateInputStream, certificatePassword, certificateType,
+					authorized, "11122534302", "000", "05", "2019", "05", "2022", "L90");
 			Assert.fail();
 		} catch (SegSocialException e) {
-			//Comprobar mensajes de error
+			// Comprobar mensajes de error
 			Assert.assertEquals("Wrong data :", e.getMessage());
 		}
 	}
-	
+
 	@Test
-	public void testOnlineSettlementCccWrongStartMonth(WebClient webClient, HtmlPage htmlPage, String ccc, String regimen,
-			String startMonth, String startYear, String endMonth, String endYear, String liquidationType) throws Exception {
+	public void testOnlineSettlementCccWrongStartMonth(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String authorized, String ccc,
+			String regimen, String startMonth, String startYear, String endMonth, String endYear,
+			String liquidationType) throws Exception {
 		try {
-			AonSegSocialJuanma.onlineSettlementOption1(webClient,
-					htmlPage,
-					"11122534302",
-					"0111",
-					"13",
-					"2019",
-					"05",
-					"2022",
-					"L90");
+			AonSegSocialJuanma.onlineSettlementOptionCCC(certificateInputStream, certificatePassword, certificateType,
+					authorized, "11122534302", "0111", "13", "2019", "05", "2022", "L90");
 			Assert.fail();
 		} catch (SegSocialException e) {
-			//Comprobar mensajes de error
+			// Comprobar mensajes de error
 			Assert.assertEquals("Wrong data :", e.getMessage());
 		}
 	}
-	
+
 	@Test
-	public void testOnlineSettlementCccWrongStartYear(WebClient webClient, HtmlPage htmlPage, String ccc, String regimen,
-			String startMonth, String startYear, String endMonth, String endYear, String liquidationType) throws Exception {
+	public void testOnlineSettlementCccWrongStartYear(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String authorized, String ccc,
+			String regimen, String startMonth, String startYear, String endMonth, String endYear,
+			String liquidationType) throws Exception {
 		try {
-			AonSegSocialJuanma.onlineSettlementOption1(webClient,
-					htmlPage,
-					"11122534302",
-					"0111",
-					"05",
-					"20",
-					"05",
-					"2022",
-					"L90");
+			AonSegSocialJuanma.onlineSettlementOptionCCC(certificateInputStream, certificatePassword, certificateType,
+					authorized, "11122534302", "0111", "05", "20", "05", "2022", "L90");
 			Assert.fail();
 		} catch (SegSocialException e) {
-			//Comprobar mensajes de error
+			// Comprobar mensajes de error
 			Assert.assertEquals("Wrong data :", e.getMessage());
 		}
 	}
-	
+
 	@Test
-	public void testOnlineSettlementCccWrongEndMonth(WebClient webClient, HtmlPage htmlPage, String ccc, String regimen,
-			String startMonth, String startYear, String endMonth, String endYear, String liquidationType) throws Exception {
+	public void testOnlineSettlementCccWrongEndMonth(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String authorized, String ccc,
+			String regimen, String startMonth, String startYear, String endMonth, String endYear,
+			String liquidationType) throws Exception {
 		try {
-			AonSegSocialJuanma.onlineSettlementOption1(webClient,
-					htmlPage,
-					"11122534302",
-					"0111",
-					"05",
-					"2019",
-					"00",
-					"2022",
-					"L90");
+			AonSegSocialJuanma.onlineSettlementOptionCCC(certificateInputStream, certificatePassword, certificateType,
+					authorized, "11122534302", "0111", "05", "2019", "00", "2022", "L90");
 			Assert.fail();
 		} catch (SegSocialException e) {
-			//Comprobar mensajes de error
+			// Comprobar mensajes de error
 			Assert.assertEquals("Wrong data :", e.getMessage());
 		}
 	}
-	
+
 	@Test
-	public void testOnlineSettlementCccWrongEndYear(WebClient webClient, HtmlPage htmlPage, String ccc, String regimen,
-			String startMonth, String startYear, String endMonth, String endYear, String liquidationType) throws Exception {
+	public void testOnlineSettlementCccWrongEndYear(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String authorized, String ccc,
+			String regimen, String startMonth, String startYear, String endMonth, String endYear,
+			String liquidationType) throws Exception {
 		try {
-			AonSegSocialJuanma.onlineSettlementOption1(webClient,
-					htmlPage,
-					"11122534302",
-					"0111",
-					"05",
-					"2019",
-					"05",
-					"20226",
-					"L90");
+			AonSegSocialJuanma.onlineSettlementOptionCCC(certificateInputStream, certificatePassword, certificateType,
+					authorized, "11122534302", "0111", "05", "2019", "05", "20226", "L90");
 			Assert.fail();
 		} catch (SegSocialException e) {
-			//Comprobar mensajes de error
+			// Comprobar mensajes de error
 			Assert.assertEquals("Wrong data :", e.getMessage());
 		}
 	}
-	
+
 	@Test
-	public void testOnlineSettlementCccWrongLiquidationNumber(WebClient webClient, HtmlPage htmlPage, String ccc, String regimen,
-			String startMonth, String startYear, String endMonth, String endYear, String liquidationType) throws Exception {
+	public void testOnlineSettlementCccWrongLiquidationNumber(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String authorized, String ccc,
+			String regimen, String startMonth, String startYear, String endMonth, String endYear,
+			String liquidationType) throws Exception {
 		try {
-			AonSegSocialJuanma.onlineSettlementOption1(webClient,
-					htmlPage,
-					"11122534302",
-					"0111",
-					"05",
-					"2019",
-					"00",
-					"2022",
-					"L9045");
+			AonSegSocialJuanma.onlineSettlementOptionCCC(certificateInputStream, certificatePassword, certificateType,
+					authorized, "11122534302", "0111", "05", "2019", "00", "2022", "L9045");
 			Assert.fail();
 		} catch (SegSocialException e) {
-			//Comprobar mensajes de error
+			// Comprobar mensajes de error
 			Assert.assertEquals("Wrong data :", e.getMessage());
 		}
 	}
-	
+
 	@Test
-	public void testOnlineSettlementLiquidationNumberWrongLiquidationNumber(WebClient webClient, HtmlPage htmlPage,
+	public void testOnlineSettlementLiquidationNumberWrongLiquidationNumber(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String authorized,
 			String liquidationNumber, String rnt) throws Exception {
-		
+
 		try {
-			AonSegSocialJuanma.onlineSettlementOption2(webClient,
-					htmlPage,
-					"02",
-					"S");
+			AonSegSocialJuanma.OnlineSettlementOptionLiquidationNumber(certificateInputStream, certificatePassword, certificateType,  authorized, "02", "S");
 			Assert.fail();
 		} catch (Exception e) {
 			Assert.assertEquals("Wrong data :", e.getMessage());
 		}
-		
+
 	}
-	
+
 	@Test
-	public void testOnlineSettlementLiquidationNumberWrongRnt(WebClient webClient, HtmlPage htmlPage,
+	public void testOnlineSettlementLiquidationNumberWrongRnt(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String authorized,
 			String liquidationNumber, String rnt) throws Exception {
-		
+
 		try {
-			AonSegSocialJuanma.onlineSettlementOption2(webClient,
-					htmlPage,
-					"12345678912345678",
-					"f");
+			AonSegSocialJuanma.OnlineSettlementOptionLiquidationNumber(certificateInputStream, certificatePassword, certificateType, authorized, "12345678912345678", "f");
 			Assert.fail();
 		} catch (Exception e) {
 			Assert.assertEquals("Wrong data :", e.getMessage());
 		}
-		
+
 	}
-	
-	
-	
+
 }

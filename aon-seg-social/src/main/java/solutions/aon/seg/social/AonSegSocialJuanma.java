@@ -1,11 +1,9 @@
 package solutions.aon.seg.social;
 
-
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-
+import java.util.Date;
 
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.Page;
@@ -17,7 +15,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-
 
 import solutions.aon.seg.social.exception.SegSocialException;
 import solutions.aon.seg.social.exception.SegSocialOutOfService;
@@ -45,16 +42,17 @@ public class AonSegSocialJuanma extends SegSocialException {
 		final InputStream certificateInputStream = new FileInputStream(file);
 		final String certificatePassword = "123456";
 		final String certificateType = "pkcs12";
-		WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
-				certificateType);
 		String authorized = "127770";
 
 		try {
+			
 
-			HtmlPage page = AonSegSocialJuanma.onlineSettlement(webClient, authorized);
-//
-//			AonSegSocialJuanma.onlineSettlementOption1(webClient, page, ccc, regimen, startMonth, startYear, endMonth, endYear, liquidationType );
-//			AonSegSocialJuanma.onlineSettlementOption2(webClient, page, liquidationNumber, rnt);
+			
+			
+
+			AonSegSocialJuanma.onlineSettlementOptionCCC(certificateInputStream, certificatePassword, certificateType, authorized, ccc, regimen, startMonth, startYear, endMonth, endYear, liquidationType);
+
+			AonSegSocialJuanma.OnlineSettlementOptionLiquidationNumber(certificateInputStream, certificatePassword, certificateType, authorized, liquidationNumber, rnt);
 
 		} catch (SegSocialOutOfService e) {
 			e.printStackTrace();
@@ -63,7 +61,7 @@ public class AonSegSocialJuanma extends SegSocialException {
 
 	}
 
-	public static void setCnoCertificate(final InputStream certificateInputStream, final String certificatePassword,
+	private static void setCnoCertificateP(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, String nss, String ident, String regimen, String cc, String cno)
 			throws Exception {
 
@@ -129,118 +127,192 @@ public class AonSegSocialJuanma extends SegSocialException {
 
 	}
 
+	public static void setCnoCertificate(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String nss, String ident, String regimen, String cc, String cno)
+			throws Exception {
+		try {
+			AonSegSocialJuanma.setCnoCertificateP(certificateInputStream, certificatePassword, certificateType, nss,
+					ident, regimen, cc, cno);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	//
 
 	// Metodo para navegar en la pagina
-	private static HtmlPage onlineSettlement(WebClient webClient, String authorized) throws Exception {
-		webClient.getOptions().setCssEnabled(true);
-		webClient.getOptions().setDownloadImages(true);
-		webClient.setJavaScriptTimeout(10000);
-		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+//	public static HtmlPage onlineSettlement(final InputStream certificateInputStream, final String certificatePassword,
+//			final String certificateType, String authorized) throws Exception {
+//
+//		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+//				certificateType)) {
+//
+//			webClient.getOptions().setCssEnabled(true);
+//			webClient.getOptions().setDownloadImages(true);
+//			webClient.setJavaScriptTimeout(10000);
+//			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+//
+//			HtmlPage htmlPage = webClient.getPage(
+//					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y600");
+//			HtmlRadioButtonInput radioButton = (HtmlRadioButtonInput) htmlPage
+//					.getElementById("autorizado" + authorized);
+//			radioButton.setChecked(true);
+//			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Aceptar]")).click();
+//			HtmlRadioButtonInput radioButton2 = (HtmlRadioButtonInput) htmlPage.getElementById("idOPCION1");
+//			radioButton2.setChecked(true);
+//			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Aceptar]")).click();
+//			System.out.println(htmlPage.asXml());
+//
+//			return htmlPage;
+//		}
+//
+//	}
 
-		HtmlPage htmlPage = webClient.getPage(
-				"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y600");
-		HtmlRadioButtonInput radioButton = (HtmlRadioButtonInput) htmlPage.getElementById("autorizado" + authorized);
-		radioButton.setChecked(true);
-		htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Aceptar]")).click();
-		HtmlRadioButtonInput radioButton2 = (HtmlRadioButtonInput) htmlPage.getElementById("idOPCION1");
-		radioButton2.setChecked(true);
-		htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Aceptar]")).click();
-		System.out.println(htmlPage.asXml());
+	private static void onlineSettlementOption1(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String authorized, String ccc,
+			String regimen, String startMonth, String startYear, String endMonth, String endYear,
+			String liquidationType) throws Exception {
+		
+		
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
 
-		return htmlPage;
+			webClient.getOptions().setCssEnabled(true);
+			webClient.getOptions().setDownloadImages(true);
+			webClient.setJavaScriptTimeout(10000);
+			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+			
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y600");
+			HtmlRadioButtonInput radioButton = (HtmlRadioButtonInput) htmlPage
+					.getElementById("autorizado" + authorized);
+			radioButton.setChecked(true);
+			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Aceptar]")).click();
+			HtmlRadioButtonInput radioButton2 = (HtmlRadioButtonInput) htmlPage.getElementById("idOPCION1");
+			radioButton2.setChecked(true);
+			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Aceptar]")).click();
 
+			DomElement formSubmit = null;
+			for (int i = 0; i < 20; i++) {
+				formSubmit = htmlPage.getElementById("SPM.ACC.ACEPTAR");
+				if (formSubmit != null)
+					break;
+				synchronized (htmlPage) {
+					htmlPage.wait(500);
+				}
+			}
+
+			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getHtmlElementById("formDatos"))
+					.orElseThrow();
+			// Seleccionar opcion1
+			HtmlRadioButtonInput radioButton3 = (HtmlRadioButtonInput) htmlPage.getElementById("idOpcion1");
+			radioButton3.setChecked(true);
+			// Codigo de cuenta de cotizacion
+			form.getInputByName("CCC").setValueAttribute(ccc);
+
+			// Regimen
+			HtmlSelect select = (HtmlSelect) htmlPage.getElementById("idRegimen");
+			HtmlOption option = select.getOptionByValue(regimen);
+			select.setSelectedAttribute(option, true);
+
+			// Periodo de liquidacion
+			// Fecha de inicio
+			HtmlSelect selectMesInicio = (HtmlSelect) htmlPage.getElementById("idMesDesde");
+			HtmlOption optionMesInicio = selectMesInicio.getOptionByValue(startMonth);
+			selectMesInicio.setSelectedAttribute(optionMesInicio, true);
+			HtmlSelect selectAnioInicio = (HtmlSelect) htmlPage.getElementById("idAnioDesde");
+			HtmlOption optionAnioInicio = selectAnioInicio.getOptionByValue(startYear);
+			selectAnioInicio.setSelectedAttribute(optionAnioInicio, true);
+			// Fecha de fin
+			HtmlSelect selectMesFin = (HtmlSelect) htmlPage.getElementById("idMesHasta");
+			HtmlOption optionMesFin = selectMesFin.getOptionByValue(endMonth);
+			selectMesFin.setSelectedAttribute(optionMesFin, true);
+			HtmlSelect selectAnioFin = (HtmlSelect) htmlPage.getElementById("idAnioHasta");
+			HtmlOption optionAnioFin = selectAnioFin.getOptionByValue(endYear);
+			selectAnioFin.setSelectedAttribute(optionAnioFin, true);
+			HtmlSelect liquidacion = (HtmlSelect) htmlPage.getElementById("idTipoLiquidacion");
+			HtmlOption optionLiquidacion = liquidacion.getOptionByValue(liquidationType);
+			liquidacion.setSelectedAttribute(optionLiquidacion, true);
+//			formSubmit.click();
+			System.out.println(htmlPage.asXml());
+		}
 	}
 
+	public static void onlineSettlementOptionCCC(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType,  String ccc,
+			String regimen, String startMonth, String startYear, String endMonth, String endYear,
+			String liquidationType, String authorized) throws Exception {
 
-	public static void onlineSettlementOption1(WebClient webClient, HtmlPage htmlPage, String ccc, String regimen,
-			String startMonth, String startYear, String endMonth, String endYear, String liquidationType)
-			throws Exception {
-
-		webClient.getOptions().setCssEnabled(true);
-		webClient.getOptions().setDownloadImages(true);
-		webClient.setJavaScriptTimeout(10000);
-		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-
-		DomElement formSubmit = null;
-		for (int i = 0; i < 20; i++) {
-			formSubmit = htmlPage.getElementById("SPM.ACC.ACEPTAR");
-			if (formSubmit != null)
-				break;
-			synchronized (htmlPage) {
-				htmlPage.wait(500);
-			}
+		try {		
+			AonSegSocialJuanma.onlineSettlementOption1(certificateInputStream, certificatePassword, certificateType,
+					 ccc, regimen, startMonth, startYear, endMonth, endYear, liquidationType, authorized);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
-		HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getHtmlElementById("formDatos"))
-				.orElseThrow();
-		// Seleccionar opcion1
-		HtmlRadioButtonInput radioButton = (HtmlRadioButtonInput) htmlPage.getElementById("idOpcion1");
-		radioButton.setChecked(true);
-		// Codigo de cuenta de cotizacion
-		form.getInputByName("CCC").setValueAttribute(ccc);
-
-		// Regimen
-		HtmlSelect select = (HtmlSelect) htmlPage.getElementById("idRegimen");
-		HtmlOption option = select.getOptionByValue(regimen);
-		select.setSelectedAttribute(option, true);
-
-		// Periodo de liquidacion
-		// Fecha de inicio
-		HtmlSelect selectMesInicio = (HtmlSelect) htmlPage.getElementById("idMesDesde");
-		HtmlOption optionMesInicio = selectMesInicio.getOptionByValue(startMonth);
-		selectMesInicio.setSelectedAttribute(optionMesInicio, true);
-		HtmlSelect selectAnioInicio = (HtmlSelect) htmlPage.getElementById("idAnioDesde");
-		HtmlOption optionAnioInicio = selectAnioInicio.getOptionByValue(startYear);
-		selectAnioInicio.setSelectedAttribute(optionAnioInicio, true);
-		// Fecha de fin
-		HtmlSelect selectMesFin = (HtmlSelect) htmlPage.getElementById("idMesHasta");
-		HtmlOption optionMesFin = selectMesFin.getOptionByValue(endMonth);
-		selectMesFin.setSelectedAttribute(optionMesFin, true);
-		HtmlSelect selectAnioFin = (HtmlSelect) htmlPage.getElementById("idAnioHasta");
-		HtmlOption optionAnioFin = selectAnioFin.getOptionByValue(endYear);
-		selectAnioFin.setSelectedAttribute(optionAnioFin, true);
-		HtmlSelect liquidacion = (HtmlSelect) htmlPage.getElementById("idTipoLiquidacion");
-		HtmlOption optionLiquidacion = liquidacion.getOptionByValue(liquidationType);
-		liquidacion.setSelectedAttribute(optionLiquidacion, true);
-		formSubmit.click();
-		System.out.println(htmlPage.asXml());
 	}
 
-	public static void onlineSettlementOption2(WebClient webClient, HtmlPage htmlPage, String liquidationNumber,
+	private static void onlineSettlementOption2(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String authorized, String liquidationNumber,
 			String rnt) throws Exception {
 
-		webClient.getOptions().setCssEnabled(true);
-		webClient.getOptions().setDownloadImages(true);
-		webClient.setJavaScriptTimeout(10000);
-		webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+				certificateType)) {
 
-		DomElement formSubmit = null;
-		for (int i = 0; i < 20; i++) {
-			formSubmit = htmlPage.getElementById("SPM.ACC.ACEPTAR");
-			if (formSubmit != null)
-				break;
-			synchronized (htmlPage) {
-				htmlPage.wait(500);
+			webClient.getOptions().setCssEnabled(true);
+			webClient.getOptions().setDownloadImages(true);
+			webClient.setJavaScriptTimeout(10000);
+			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+			
+			HtmlPage htmlPage = webClient.getPage(
+					"https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y600");
+			HtmlRadioButtonInput radioButton = (HtmlRadioButtonInput) htmlPage
+					.getElementById("autorizado" + authorized);
+			radioButton.setChecked(true);
+			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Aceptar]")).click();
+			HtmlRadioButtonInput radioButton2 = (HtmlRadioButtonInput) htmlPage.getElementById("idOPCION1");
+			radioButton2.setChecked(true);
+			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Aceptar]")).click();
+
+			DomElement formSubmit = null;
+			for (int i = 0; i < 20; i++) {
+				formSubmit = htmlPage.getElementById("SPM.ACC.ACEPTAR");
+				if (formSubmit != null)
+					break;
+				synchronized (htmlPage) {
+					htmlPage.wait(500);
+				}
 			}
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+
+			HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getHtmlElementById("formDatos"))
+					.orElseThrow();
+
+			HtmlRadioButtonInput radioButton3 = (HtmlRadioButtonInput) htmlPage.getElementById("idOpcion2");
+			radioButton3.setChecked(true);
+
+			form.getInputByName("numeroLiquidacion").setValueAttribute(liquidationNumber);
+
+			HtmlSelect select = (HtmlSelect) htmlPage.getElementById("solicitudRNT");
+			HtmlOption selectOption = select.getOptionByValue(rnt);
+			select.setSelectedAttribute(selectOption, true);
+
+			formSubmit.click();
+
+			System.out.println(htmlPage.asXml());
 		}
-		HtmlUnitToolkit.manageStatusCode(htmlPage);
 
-		HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getHtmlElementById("formDatos"))
-				.orElseThrow();
+	}
 
-		HtmlRadioButtonInput radioButton = (HtmlRadioButtonInput) htmlPage.getElementById("idOpcion2");
-		radioButton.setChecked(true);
-
-		form.getInputByName("numeroLiquidacion").setValueAttribute(liquidationNumber);
-
-		HtmlSelect select = (HtmlSelect) htmlPage.getElementById("solicitudRNT");
-		HtmlOption selectOption = select.getOptionByValue(rnt);
-		select.setSelectedAttribute(selectOption, true);
-
-		formSubmit.click();
-
-		System.out.println(htmlPage.asXml());
+	public static void OnlineSettlementOptionLiquidationNumber(final InputStream certificateInputStream,
+			final String certificatePassword, final String certificateType, String authorized,  String liquidationNumber,
+			String rnt) throws Exception {
+		try {
+			AonSegSocialJuanma.onlineSettlementOption2(certificateInputStream, certificatePassword, certificateType, authorized,
+					liquidationNumber, rnt);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 
