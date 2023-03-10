@@ -7,11 +7,13 @@ import com.google.gwt.user.client.ui.ListBox;
 
 public class PeriodListBox extends ListBox {
 
+	boolean monthPeriods;
 	
 	public PeriodListBox() {
 		this(true);
 	}
 	public PeriodListBox(boolean monthPeriods) {
+		this.monthPeriods = monthPeriods;
 		setWidth("90px");
 		this.addItem(" --- ", "");
 		for (Period p : Period.values()) {
@@ -26,7 +28,7 @@ public class PeriodListBox extends ListBox {
 		if (period == null) {
 			setSelectedIndex(0);
 		} else {
-			setSelectedIndex(period.ordinal() + 1);
+			setSelectedIndex(period.ordinal() - (monthPeriods?0:12) + 1);
 		}
 	}
 	

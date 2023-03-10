@@ -262,4 +262,28 @@ public class AonMathUtils {
         }
         return a;
     }
+    
+    
+	/**
+	 * Devuelve cero si el valor es menor que zero
+	 * 
+	 * @param value primer num. 
+	 * 
+	 * @return Cero si negativo
+	 */
+    public static double zeroIfNegative(double value) {
+    	return isLessThanZero(value)?0.0:value;
+    }
+
+    
+	/**
+	 * Devuelve cero si el valor es mayor que zero
+	 * 
+	 * @param value primer num. 
+	 * 
+	 * @return Cero si positivo
+	 */
+    public static double zeroIfPositive(double value) {
+    	return isGreatherThanZero(value)?0.0:value;
+    }
 }
