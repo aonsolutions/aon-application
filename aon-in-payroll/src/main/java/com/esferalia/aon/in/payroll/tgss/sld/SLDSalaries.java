@@ -361,6 +361,7 @@ public class SLDSalaries {
 			return Optional.of(DeductionType.UNEMPLOYMENT);
 		case "CONTINGENCIAS COMUNES":
 		case "CONTING.COM.COTIZ.EMPRESARIAL" :
+		case "MEI COTIZACI\u00D3N EMPRESARIAL":
 		case "MECANISMO EQUIDAD INTERGENERACIONAL":
 		case "INCREMENTO COTI.CONTRATO TEMP.MENOR 6-7D":
 			return Optional.of(DeductionType.COMMON_CONTINGENCY);
@@ -496,6 +497,7 @@ public class SLDSalaries {
 			return Optional.of(ContextVariable.UNEMPLOY_ENTERPRISE);
 		case "CONTINGENCIAS COMUNES":
 			return Optional.of(ContextVariable.CGC_ENTERPRISE);
+		case "MEI COTIZACI\u00D3N EMPRESARIAL":
 		case "MECANISMO EQUIDAD INTERGENERACIONAL":
 			return Optional.of(ContextVariable.MEI_ENTERPRISE);
 		case "IT DE ACCIDENTES DE TRABAJO":
@@ -525,6 +527,7 @@ public class SLDSalaries {
 		case "CONTINGENCIAS COMUNES":
 		case "CONTING.COM.COTIZ.EMPRESARIAL":	
 			return Optional.of(ContextVariable.CGC_ENTERPRISE_PERCENT);
+		case "MEI COTIZACI\u00D3N EMPRESARIAL":
 		case "MECANISMO EQUIDAD INTERGENERACIONAL":
 			return Optional.of(ContextVariable.MEI_ENTERPRISE_PERCENT);
 		case "IT DE ACCIDENTES DE TRABAJO":
