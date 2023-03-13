@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.payroll.AlterCostCode;
 import net.aonsolutions.db.up2date.payroll.MaxEmbargable4Daily;
 import net.aonsolutions.db.up2date.tgss.ActiveRetirementInsert;
+import net.aonsolutions.db.up2date.tgss.FixPec01Quota01;
 import net.aonsolutions.db.up2date.tgss.MEITrainingBaseCgcMinFix;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 
@@ -333,7 +334,8 @@ public class Up2Date {
 	    // UpdateBankAccountUpperCase.UPDATE_BANK_ACCOUNT_UPPERCASE,
 	    //AlterCostCode.ALTERCOSTCODE,
 	    //MEITrainingBaseCgcMinFix.MEITRAININGBASECGCMINFIX,
-	    ActiveRetirementInsert.ACTIVERETIREMENTINSERT,
+	    //ActiveRetirementInsert.ACTIVERETIREMENTINSERT,
+	    FixPec01Quota01.FIXPEC01QUOTA01,
 
 	    // Important, not remove
 	    SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
