@@ -4917,6 +4917,13 @@ public class IdcTest extends AbstractSQLTestCase {
 				put("PORCENTAJE_FOGASA", "0.20");
 			}
 		});
+		addSystemData(aonContext, getFirstDayOf(2023), null, new HashMap<String, String>() {
+			{
+				put("PORCENTAJE_MEI", "0.10");
+				put("PORCENTAJE_MEI_E", "0.50");
+			}
+		});
+
 		PaymentConceptRecord prestIT = addConcept(aonContext, ContextVariable.PREST_IT);
 
 		addSSRegimePayment(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), prestIT,
@@ -4942,8 +4949,12 @@ public class IdcTest extends AbstractSQLTestCase {
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(startDate), "FP_E", DeductionType.FOGASA,
 				"BASE_CGP_E * PORCENTAJE_FP_E/100");
 
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOf(2023), "MEI_E",
+			DeductionType.COMMON_CONTINGENCY, "BASE_CGC_E * PORCENTAJE_MEI_E/100");
+
 		DeductionConceptRecord fpConcept = addDeductionConcept(aonContext, "FP", DeductionType.COMMON_CONTINGENCY);
 		DeductionConceptRecord cgcConcept = addDeductionConcept(aonContext, "CGC", DeductionType.COMMON_CONTINGENCY);
+		DeductionConceptRecord meiConcept = addDeductionConcept(aonContext, "MEI", DeductionType.COMMON_CONTINGENCY);
 		DeductionConceptRecord desmplConcept = addDeductionConcept(aonContext, "DESMPL",
 				DeductionType.COMMON_CONTINGENCY);
 
@@ -4951,6 +4962,7 @@ public class IdcTest extends AbstractSQLTestCase {
 		addSSRegimeDeduction(aonContext, cgcConcept, SSRegimeType.GENERAL, startDate, "BASE_CGC * PORCENTAJE_CGC/100");
 		addSSRegimeDeduction(aonContext, desmplConcept, SSRegimeType.GENERAL, startDate,
 				"BASE_CGC * PORCENTAJE_DESMPL/100");
+		addSSRegimeDeduction(aonContext, meiConcept, SSRegimeType.GENERAL, getFirstDayOf(2023), "BASE_CGC * PORCENTAJE_MEI/100");
 
 		ContractRecord contract = newContract(aonContext, getFirstDayOfYear(startDate), new HashMap<String, String>() {
 			{
@@ -5111,6 +5123,78 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		}
 	}
+
+	@Test
+	public void testIdcXXVIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SalaryException, SQLException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXVII.pdf")) {
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			Assert.assertEquals(1, ssPecs.size());
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.DAY_OF_MONTH, 21);
+			calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+
+			Date december212022 = calendar.getTime();
+
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 4);
+			calendar.set(Calendar.MONTH, Calendar.APRIL);
+
+			Date april42023 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals(december212022, pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> Assert.assertEquals(april42023, pec.getEndDate()));
+
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
+					+ pec.getFormula() + ", " + pec.getStartDate()));
+
+
+			List<Data> datas = new ArrayList<>();
+			datas.add(new Data() {
+				{
+					endDate = null;
+					startDate = december212022;
+					expression = "0.75";
+					name = ContextVariable.PARTIAL_FACTOR.getName();
+				}
+			});
+
+			
+			List<Double> notBonusCosts = new ArrayList<>();
+			Salary salary = calculate(ssPecs, datas, december212022, new SalaryBuilder() {
+			    public void addCost(Double amount, String description, Date start, Date end, IDeduction cost, java.util.Map<String,ITimedVariable<?>> context) {
+				if ( AonDateUtils.getFirstDayOfMonth(start).equals(start) )
+				    notBonusCosts.add(amount);
+				super.addCost(amount, description, start, end, cost, context);
+			    };
+			});
+			
+			double totalEnterprise = notBonusCosts.stream().collect(Collectors.summingDouble(d->d));
+
+			assertEquals(totalEnterprise, salary.getTotalEnterprise(), DELTA);
+
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+			
+			Date february12023 = calendar.getTime();
+
+			salary = calculate(ssPecs, datas, february12023);
+
+			double meiCost = salary.getSalaryCosts().stream().filter( c -> "MEI_E".equals( c.getName())).collect(Collectors.summingDouble(SalaryCost::getAmount));
+
+			assertEquals(meiCost, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
 
 	@Test
 	public void testIdcplnssTrabajadoresTramosXIX()
@@ -5451,6 +5535,21 @@ public class IdcTest extends AbstractSQLTestCase {
 
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
+	}
+	
+	private static java.sql.Date getFirstDayOf( int year) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+
+		return  new java.sql.Date(calendar.getTimeInMillis());
+	    
 	}
 
 }
