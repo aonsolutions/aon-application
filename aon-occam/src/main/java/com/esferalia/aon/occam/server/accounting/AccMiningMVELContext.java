@@ -2,10 +2,11 @@ package com.esferalia.aon.occam.server.accounting;
 
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import org.mvel2.MVEL;
 
@@ -21,12 +22,12 @@ public class AccMiningMVELContext implements Map<String, Object> {
 	private Map<String, Object> context;
 	private Map<String, String> expressionMap;
 	private IAccMiningKeyAccept resolver;
-	private Stack<String> stack = new Stack<String>();
+	private Deque<String> stack = new LinkedList<>();
 	
 	public AccMiningMVELContext(IAccMiningKeyAccept resolver) {
-		this.context = new HashMap<String, Object>();
-		this.accounts = new HashMap<String, AccountBalance>();
-		this.expressionMap = new HashMap<String, String>();
+		this.context = new HashMap<>();
+		this.accounts = new HashMap<>();
+		this.expressionMap = new HashMap<>();
 		this.resolver = resolver;
 	}
 
@@ -75,7 +76,7 @@ public class AccMiningMVELContext implements Map<String, Object> {
 		return getContainsKey(keyObject) ? context.get(keyObject) : evaluate(keyObject.toString());
 	}
 	
-	private Boolean getContainsKey(Object keyObject) {
+	private boolean getContainsKey(Object keyObject) {
 		return this.context.containsKey(keyObject) 
 			&& (!expressionMap.containsKey(keyObject) || stack.contains(keyObject));
 	}
@@ -146,11 +147,6 @@ public class AccMiningMVELContext implements Map<String, Object> {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		context = null;
-		super.finalize();
-	}
 
 	// ***********************************************************************
 	// Métodos disponibles en las expresiones MVEL.

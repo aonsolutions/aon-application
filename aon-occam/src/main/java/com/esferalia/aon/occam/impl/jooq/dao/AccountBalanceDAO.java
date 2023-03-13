@@ -5,7 +5,7 @@ import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -46,6 +46,11 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountBalanceDAO {
+	
+	
+	private AccountBalanceDAO() {
+		
+	}
 
 	private static class BalanceTypeVisitor implements IBalanceTypeVisitor {
 
@@ -81,8 +86,7 @@ public class AccountBalanceDAO {
 		BalanceScript script = visitor.getScript();
 		if (script == null)
 			throw new AonCoreException("No se ha indicado un tipo de balance adecuado");
-		AccountBalanceReport report = balanceReport(ctx, params, script);
-		return report;
+		return balanceReport(ctx, params, script);
 	}
 
 	private static AccountBalanceReport balanceReport(AONContext ctx, AccountingReportParams params, BalanceScript script) {
@@ -103,19 +107,17 @@ public class AccountBalanceDAO {
 			report.setSelectedActivity(CompanyDAO.getEnterpriseActivity(ctx, params.getActivity()));
 		}
 		LinkedHashMap<DateInterval, AccountingReportParams> intervals = getDateIntervals(ctx, params);
-		for (DateInterval inter : intervals.keySet()) {
-			fillReport(ctx, intervals.get(inter), script, report, inter.getName());
-		}
-
+		intervals.entrySet()
+			.stream()
+			.forEach(entry -> fillReport(ctx, entry.getValue(), script, report, entry.getKey().getName()));
 		return report;
 	}
 
-	private static LinkedHashMap<DateInterval, AccountingReportParams> getDateIntervals(AONContext ctx,
-			AccountingReportParams params) {
+	private static LinkedHashMap<DateInterval, AccountingReportParams> getDateIntervals(AONContext ctx, AccountingReportParams params) {
 		LinkedList<AccountPeriod> periods = AccountPeriodDAO
 				.getPeriods(ctx, p -> p.getDomainProperty().eq(ctx.getDomainId()))
 				.collect(Collectors.toCollection(LinkedList::new));
-		LinkedHashMap<DateInterval, AccountingReportParams> map = new LinkedHashMap<DateInterval, AccountingReportParams>();
+		LinkedHashMap<DateInterval, AccountingReportParams> map = new LinkedHashMap<>();
 		for (AccountPeriod ap : periods) {
 			if (AonNumberUtils.equals(ap.getId(), params.getPeriod())) {
 				DateInterval inter = new DateInterval().setStart(params.getFromDate()).setEnd(params.getToDate())
@@ -136,12 +138,8 @@ public class AccountBalanceDAO {
 		}
 		return map;
 	}
-
-	private static void fillReport(AONContext ctx, AccountingReportParams params, BalanceScript script, AccountBalanceReport report, String bal) {
-		AccMiningMVELContext mvelCtx = new AccMiningMVELContext(script.getAccepter());
-		LinkedHashMap<String, String> initialMap = new LinkedHashMap<String, String>();
-		LinkedHashMap<String, String> computeMap = new LinkedHashMap<String, String>();
-
+	
+	private static AccMiningParameters getAccMiningParameters(AONContext ctx, AccountingReportParams params) {
 		AccMiningParameters mParams = new AccMiningParameters();
 		mParams.setDomain(ctx.getDomainId());
 		mParams.setStartDate(params.getFromDate());
@@ -154,93 +152,46 @@ public class AccountBalanceDAO {
 			}
 			mParams.setDomains(domains);
 		}
-		
-		Map<String, AccountBalance> accounts = ACCOUNTING.getAccountBalances(ctx, mParams, params.getBalanceType().isPyG());
-		mvelCtx.setAccounts(accounts);
+		return mParams;
+	}
+	
+	private static void fillReport(AONContext ctx, AccountingReportParams params, BalanceScript script, AccountBalanceReport report, String bal) {
+		AccMiningMVELContext mvelCtx = new AccMiningMVELContext(script.getAccepter());
+		LinkedHashMap<String, String> initialMap = new LinkedHashMap<>();
+		LinkedHashMap<String, String> computeMap = new LinkedHashMap<>();
+
+		mvelCtx.setAccounts( ACCOUNTING.getAccountBalances(ctx, getAccMiningParameters(ctx, params), params.getBalanceType().isPyG()) );
 		for (IBalanceKey key : script.getKeyList() ) {
 			if (!report.getBalances().containsKey(key.getCode())) {
 				String expressionParsed = parseExpression(key.getInitialExpression());
-				report.getBalances().put(key.getCode(),
-						new BalanceLine()
-							.setLevel(key.getLevel())
-							.setPrefix(key.getPrefix())
-							.setCode(key.getCode())
-							.setDescription(key.getName())
-							.setType(key.getType())
-							.setAccounts(expressionParsed))
-				;
-				if (params.isBreakdownEnabled() && AonStringUtils.isNotBlank( expressionParsed )) {
-					String[] tokens = AonStringUtils.split(expressionParsed,'|');
-					if (tokens != null && tokens.length > 0) {
-						Condition c = null;
-						for (String token : tokens ) {
-							boolean add = true;
-							if (isSaPositivo(token, key.getInitialExpression() )) {
-								AccountBalance sum = new AccountBalance();
-								for (String accountKey : accounts.keySet()) {
-									if ( AonStringUtils.startsWith(accountKey, token)) {
-										AccountBalance bal0 = accounts.get(accountKey);		
-										sum.add(-1, bal0.getDebitSum(), bal0.getCreditSum());
-									}
-								}
-								add = AonMathUtils.isGreatherThanZero( sum.getCreditBalance() );
-								if (!add) {
-									expressionParsed = AonStringUtils.replace(expressionParsed, token, "");
-									expressionParsed = AonStringUtils.replace(expressionParsed, "||", "|");
-									report.getBalances().get(key.getCode()).setAccounts(expressionParsed);
-								}
-							}
-							if (isSdPositivo(token, key.getInitialExpression() )) {
-								AccountBalance sum = new AccountBalance();
-								for (String accountKey : accounts.keySet()) {
-									if ( AonStringUtils.startsWith(accountKey, token)) {
-										AccountBalance bal0 = accounts.get(accountKey);		
-										sum.add(-1, bal0.getDebitSum(), bal0.getCreditSum());
-									}
-								}
-								add = AonMathUtils.isGreatherThanZero( sum.getDebitBalance() );
-								if (!add) {
-									expressionParsed = AonStringUtils.replace(expressionParsed, token, "");
-									expressionParsed = AonStringUtils.replace(expressionParsed, "||", "|");
-									report.getBalances().get(key.getCode()).setAccounts(expressionParsed);
-								}
-							}
-							if (add) {
-								Condition c1 = ACCOUNT.CODE.like(token + "%");
-								c = c==null?c1:c.or(c1);
-							}
-						}
-						c = c.and(DSL.length(ACCOUNT.CODE).eq(4));
-						AccountDAO.getAccounts(ctx, c)
-							.forEach(account -> {
-								AccountBalance b = accounts.get(account.getCode());
-								if (b != null) {
-									report.getBalances().put( ("*"+account.getCode()) ,
-											new BalanceLine().setLevel(5)
-											.setPrefix(account.getCode())
-											.setCode(account.getCode())
-											.setDescription(account.getDescription())
-											.setType(AccountBalanceLineStyle.BREAKDOWN)
-											.setAccounts(account.getCode())
-											.setBreakdown( b )
-											)
-									;
-								}
-							});
-					}
+				report.getBalances().put(key.getCode(), new BalanceLine()
+					.setLevel(key.getLevel())
+					.setPrefix(key.getPrefix())
+					.setCode(key.getCode())
+					.setDescription(key.getName())
+					.setType(key.getType())
+					.setAccounts(expressionParsed));
+				
+				if (params.isBreakdownEnabled()) {
+					fillBreakDownIfRequested(ctx,report,mvelCtx,key,expressionParsed);
 				}
+				
 				mvelCtx.put(key.getCode(), 0.0);
 			}
-			String exp = key.getInitialExpression();
-			if (AonStringUtils.isNotBlank(exp)) {
-				initialMap.put(key.getCode(), exp);
+			if (AonStringUtils.isNotBlank(key.getInitialExpression())) {
+				initialMap.put(key.getCode(), key.getInitialExpression());
 			}
-			String computeExp = key.getComputeExpression();
-			if (AonStringUtils.isNotBlank(computeExp)) {
-				computeMap.put(key.getCode(), computeExp);
+			if (AonStringUtils.isNotBlank(key.getComputeExpression())) {
+				computeMap.put(key.getCode(), key.getComputeExpression());
 			}
-			
 		}
+		resolveInitialMap( report, bal, initialMap, mvelCtx);
+		report.getUnreadAccounts().put(bal, getUnreadAccounts( ctx, mvelCtx ));
+		report.setHelpLink(params.getBalanceType().getHelpLink());
+		resolveComputeMap( report, bal, computeMap, mvelCtx);
+	}
+
+	private static void resolveInitialMap(AccountBalanceReport report, String bal, LinkedHashMap<String, String> initialMap, AccMiningMVELContext mvelCtx) {
 		mvelCtx.setExpressionMap(initialMap);
 		for (String keyCode : mvelCtx.getExpressionMap().keySet()) {
 			String initialExp = mvelCtx.getExpressionMap().get(keyCode);
@@ -251,28 +202,9 @@ public class AccountBalanceDAO {
 				report.setAmount(keyCode, bal, AonNumberUtils.todouble(ret));
 			}
 		}
+	}
 
-		// Se chequean las cuentas que no se han tenido en cuenta, para facilitar al
-		// cliene la búsqueda del descuadre.
-		LinkedList<AccountBalance> unreadBalances = new LinkedList<AccountBalance>();
-		for (String code : mvelCtx.getAccounts().keySet()) {
-			AccountBalance accountBalance = mvelCtx.getAccounts().get(code);
-			if (!accountBalance.isChecked()) {
-				if (AonStringUtils.length(code) == 4
-						&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0, 3)).isChecked()
-						&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0, 2)).isChecked()
-						&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0, 1)).isChecked()) {
-					Account account = AccountDAO.get(ctx, code);
-					accountBalance.setAccountDescription(account != null ? account.getDescription() : null);
-					accountBalance.setAccountCode(code);
-					unreadBalances.add(accountBalance);
-				}
-			}
-		}
-		report.getUnreadAccounts().put(bal, unreadBalances);
-		report.setHelpLink(params.getBalanceType().getHelpLink());
-		/// [fin chequeo]
-
+	private static void resolveComputeMap(AccountBalanceReport report, String bal, LinkedHashMap<String, String> computeMap, AccMiningMVELContext mvelCtx) {
 		mvelCtx.getExpressionMap().clear();
 		mvelCtx.setExpressionMap(computeMap);
 		for (String keyCode : mvelCtx.getExpressionMap().keySet()) {
@@ -285,12 +217,81 @@ public class AccountBalanceDAO {
 		}
 	}
 
+	private static void fillBreakDownIfRequested(AONContext ctx, AccountBalanceReport report,  AccMiningMVELContext mvelCtx, IBalanceKey key, String expressionParsed) {
+		if (AonStringUtils.isBlank( expressionParsed )) return;
+
+		String[] tokens = AonStringUtils.split(expressionParsed,'|');
+		if (tokens != null && tokens.length > 0) {
+			Condition c = null;
+			List<String> saPositivoTokens = new LinkedList<>(); 
+			List<String> sdPositivoTokens = new LinkedList<>();
+			for (String token : tokens ) {
+				if (isSaPositivo(token, key.getInitialExpression() )) {
+					saPositivoTokens.add(token);		
+				}
+				if (isSdPositivo(token, key.getInitialExpression() )) {
+					sdPositivoTokens.add(token);		
+				}
+				Condition c1 = ACCOUNT.CODE.like(token + "%");
+				c = c==null?c1:c.or(c1);
+			}
+			Condition c2 = DSL.length(ACCOUNT.CODE).eq(4);
+			c = c==null?c2:c.and(c2);
+			AccountDAO.getAccounts(ctx, c)
+				.forEach(account -> {
+					AccountBalance b = mvelCtx.getAccounts().get(account.getCode());
+					if (b != null) {
+						boolean saPositivo = saPositivoTokens.stream().anyMatch(token -> AonStringUtils.startsWith(account.getCode(),token));
+						boolean sdPositivo = sdPositivoTokens.stream().anyMatch(token -> AonStringUtils.startsWith(account.getCode(),token));
+						boolean mustAdd = !saPositivo && !sdPositivo;
+						if (!mustAdd && saPositivo && AonMathUtils.isGreatherThanZero( b.getCreditBalance() )) {
+							mustAdd = true;
+						}
+						if (!mustAdd && sdPositivo && AonMathUtils.isGreatherThanZero( b.getDebitBalance() )) {
+							mustAdd = true;
+						}
+						if (mustAdd) {
+							report.getBalances().put( ("*"+account.getCode()) ,
+									new BalanceLine().setLevel(5)
+									.setPrefix(account.getCode())
+									.setCode(account.getCode())
+									.setDescription(account.getDescription())
+									.setType(AccountBalanceLineStyle.BREAKDOWN)
+									.setAccounts(account.getCode())
+									.setBreakdown( b )
+									)
+							;
+						}
+					}
+				});
+		}
+	}
+
+	private static LinkedList<AccountBalance> getUnreadAccounts(AONContext ctx, AccMiningMVELContext mvelCtx) {
+		// Se chequean las cuentas que no se han tenido en cuenta, para facilitar al
+		// cliene la búsqueda del descuadre.
+		LinkedList<AccountBalance> unreadBalances = new LinkedList<>();
+		for (String code : mvelCtx.getAccounts().keySet()) {
+			AccountBalance accountBalance = mvelCtx.getAccounts().get(code);
+			if (!accountBalance.isChecked() &&  (AonStringUtils.length(code) == 4
+				&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0, 3)).isChecked()
+				&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0, 2)).isChecked()
+				&& !mvelCtx.getAccounts().get(AonStringUtils.substring(code, 0, 1)).isChecked())) {
+				
+				Account account = AccountDAO.get(ctx, code);
+				accountBalance.setAccountDescription(account != null ? account.getDescription() : null);
+				accountBalance.setAccountCode(code);
+				unreadBalances.add(accountBalance);
+			}
+		}
+		return unreadBalances;
+	}
+
 	private static String parseExpression(String initialExpression) {
-		if (AonStringUtils.isBlank(initialExpression))
-			return null;
+		if (AonStringUtils.isBlank(initialExpression)) return null;
 		Pattern p = Pattern.compile("-?\\d+");
 		Matcher m = p.matcher(initialExpression);
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		while (m.find()) {
 			if (buf.length() > 0) {
 				buf.append('|');
