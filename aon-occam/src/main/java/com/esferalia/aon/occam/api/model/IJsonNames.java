@@ -186,6 +186,7 @@ public final class IJsonNames {
 	public static final String ENTRY_ENABLED = "entryEnabled";
 	public static final String ENTRY_ID = "entryId";
 	public static final String EPIGRAPH = "epigraph";
+	public static final String EPIGRAPH_SECTION = "epigraphSection";
 	public static final String ERROR = "error";
 	public static final String EXPENSES = "expenses";
 	public static final String EXPENSES_FIXED = "expensesFixed";
@@ -366,6 +367,8 @@ public final class IJsonNames {
 	public static final String PARENT = "parent";
 	public static final String PARENT_DOMAIN = "parentDomain";
 	public static final String PARENT_ID = "parentId";
+	public static final String PARTICIPATION_PERCENT = "participationPercent";
+	public static final String PARTICIPATION_QUOTA = "participationQuota";
 	public static final String PASSWORD = "password";
 	public static final String PATTERN = "pattern";
 	public static final String PAYMENT = "payment";

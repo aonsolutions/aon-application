@@ -497,7 +497,9 @@ public class TaskServlet extends AonApiHttpServlet{
 		
 		AonToken aonToken = SECURITY.getAonToken(api.getToken());
 
-		Auth auth = AON_SOLUTIONS.getAuth(aonToken.getAuth());
+		Auth auth = aonToken.getAuth() != null
+			? AON_SOLUTIONS.getAuth(aonToken.getAuth())
+			: AON_SOLUTIONS.getAuth(api.getUser().getAuth().getAuth());
 		json.put(IJsonNames.AUTH, AuthJSON.toJSON(auth));
 		
 		return json;

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
@@ -22,7 +22,6 @@ public class ActivityDraftObject extends AbstractDraftObject {
 	
 	private Activity activity;
 	private DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
-	private Map<Integer, String> cnae2009;
 	private Integer domain;
 		
 	// ------------------------------------------- Constructor	
@@ -30,7 +29,6 @@ public class ActivityDraftObject extends AbstractDraftObject {
 	public ActivityDraftObject(Integer activityId) {
 		this.activity = new Activity();
 		this.activity.setId(activityId);
-		this.cnae2009 = new HashMap<>();
 	}
 	
 	// ------------------------------------------- Getter Methods
@@ -65,32 +63,19 @@ public class ActivityDraftObject extends AbstractDraftObject {
 	}
 	
 	public List<EnterpriseCCC> getActiveCCCs() {
-		return this.activity.getActiveCCCs();
+		return getCCCs().stream().filter(ccc -> !ccc.isDeleted()).collect(Collectors.toList());
 	}
 	
 	// ------------------------------------------- DataBase Methods
 
 	public void initializeActivity(Consumer<Activity> success, Consumer<Throwable> failure) {
-		enterprisesService.getCNAE2009(new AsyncCallback<Map<Integer,String>>() {
+		enterprisesService.getActivity(activity.getId(), new AsyncCallback<Activity>() {
 			
 			@Override
-			public void onSuccess(Map<Integer, String> result) {
-				cnae2009 = result;
-				
-				enterprisesService.getActivity(activity.getId(), new AsyncCallback<Activity>() {
-					
-					@Override
-					public void onSuccess(Activity result) {
-						domain = result.getDomain();
-						activity = result;
-						success.accept(result);
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						failure.accept(caught);
-					}
-				});
+			public void onSuccess(Activity result) {
+				domain = result.getDomain();
+				activity = result;
+				success.accept(result);
 			}
 			
 			@Override
@@ -156,14 +141,10 @@ public class ActivityDraftObject extends AbstractDraftObject {
 		this.activity.setDescription(description);
 	}
 	
-	public void setActivityCNAE2009(Entry<Integer, String> cnae2009Entry) {
-		Integer cnae = cnae2009Entry.getKey();
-		String cnae2009Code = cnae2009Entry.getValue().split(" -")[0];
-		String cnae2009Title = cnae2009Entry.getValue().split("- ")[1];
-		
-		this.activity.setCnae(cnae);
-		this.activity.setCnaeCode(cnae2009Code);
-		this.activity.setCnaeDescription(cnae2009Title);
+	public void setActivityCNAE2009(Integer cnaeId, String cnaeCode, String cnaeTitle) {
+		this.activity.setCnae(cnaeId);
+		this.activity.setCnaeCode(cnaeCode);
+		this.activity.setCnaeDescription(cnaeTitle);
 	}
 	
 	public void setActivityStartDate(Date startDate) {
@@ -182,10 +163,6 @@ public class ActivityDraftObject extends AbstractDraftObject {
 		HashMap<Integer, String> activities = new HashMap<>();
 		activities.put(activity.getId(), activity.getDescription());
 		return activities.entrySet();
-	}
-	
-	public Map<Integer, String> getAllCNAE2009() {
-		return this.cnae2009;
 	}
 
 	public void deleteCCC(Integer cccId) {

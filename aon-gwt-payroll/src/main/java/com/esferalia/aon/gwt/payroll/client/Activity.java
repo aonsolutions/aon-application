@@ -1,9 +1,13 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.widget.DateBoxEx;
@@ -12,14 +16,17 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
@@ -61,10 +68,20 @@ public abstract class Activity extends ResizeComposite {
 		protected Set<Entry<Integer, String>> getActivities() {
 			return Activity.this.getActivities();
 		}
+		
+		@Override
+		protected List<EnterpriseCCC> getEnterpriseCCCs() {
+			return Activity.this.getEnterpriseCCCs();
+		}
 
 		@Override
 		protected void fireWarningMessage(Map<String, String> warningMap) {
 			Activity.this.fireWarningMessage(warningMap);
+		}
+		
+		@Override
+		protected void fireInfoMessage(Map<String, String> warningMap) {
+			Activity.this.fireInfoMessage(warningMap);
 		}
 
 		@Override
@@ -74,7 +91,7 @@ public abstract class Activity extends ResizeComposite {
 
 		@Override
 		protected void hideMessage() {
-			Activity.this.hideMessage();
+			Activity.this.fireHideMessage();
 		}
 
 		@Override
@@ -129,6 +146,11 @@ public abstract class Activity extends ResizeComposite {
 	
 	@UiField (provided = true)
 	CCC cccWidget;
+	
+	// ------------------------------------------- Variables
+	
+	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
+	private Map<Integer, String> cnaeMap = Collections.emptyMap();
 
 	// ------------------------------------------- Constructor
 
@@ -148,9 +170,7 @@ public abstract class Activity extends ResizeComposite {
 			addWarningIcon(activityDescription);
 			activityDescription.setTitle("La descripci\u00f3n debe rellenarse");
 			
-			Map<String, String> warningMap = new HashMap<>();
-			warningMap.put("Descripco\u00F3n obligatoria", "El campo descripci\u00F3n es obligatorio");
-			fireWarningMessage(warningMap);
+			fireErrorMessage(new HashMap<String, String>(){{ put("Descripci\u00F3n obligatoria", "El campo descripci\u00F3n es obligatorio"); }});
 		} else {
 			removeWarningIcon(activityDescription);
 			activityDescription.setTitle("");
@@ -161,7 +181,14 @@ public abstract class Activity extends ResizeComposite {
 	
 	@UiHandler("activityCNAE2009")
 	void onCNAE2009SelectionValue(SelectionEvent<Suggestion> event) {
-		onActivityCNAE2009Change(); 
+		String cnae2009Value = activityCNAE2009.getValue();
+		Optional<Entry<Integer, String>> cnae2009Opt = this.cnaeMap.entrySet().stream().filter(entry -> AonStringUtils.equalsIgnoreCase(entry.getValue(), cnae2009Value)).findAny();
+		if(cnae2009Opt.isPresent()) { 
+			Integer cnaeId = cnae2009Opt.get().getKey();
+			String cnaeCode = cnae2009Opt.get().getValue().split(" - ")[0];
+			String cnaeTitle = cnae2009Opt.get().getValue().split(" - ")[1];
+			onActivityCNAE2009Change(cnaeId, cnaeCode, cnaeTitle); 
+		} else onActivityCNAE2009Change(null, null, null);
 	}
 	
 	@UiHandler("startDate")
@@ -184,7 +211,7 @@ public abstract class Activity extends ResizeComposite {
 	// TABLA DATOS ACTIVIDAD
 	
 	public abstract void onActivityDescriptionChange();
-	public abstract void onActivityCNAE2009Change();
+	public abstract void onActivityCNAE2009Change(Integer cnaeId, String cnaeCode, String cnaeTitle);
 	public abstract void onActivityStartDateChange();
 	public abstract void onActivityEndDateChange();
 	public abstract void onActivityActiveChange();
@@ -194,19 +221,60 @@ public abstract class Activity extends ResizeComposite {
 	public abstract void onDeleteCCC(Integer cccId);
 	public abstract void onInsertCCC(EnterpriseCCC ccc);
 	public abstract Set<Entry<Integer, String>> getActivities();
+	public abstract List<EnterpriseCCC> getEnterpriseCCCs();
 
-	public abstract void fireWarningMessage(Map<String, String> warningMap);
+	protected abstract void fireErrorMessage(Map<String, String> messages);
+	protected abstract void fireWarningMessage(Map<String, String> messages);
+	protected abstract void fireInfoMessage(Map<String, String> messages);
 	protected abstract void fireLoadingMessage(String message);
-	protected abstract void hideMessage();
+	protected abstract void fireHideMessage();
 	
 	public abstract void showPDF(String dataURI, boolean isLaboralLife);
 
 	// ------------------------------------------- Auxiliar Methods
 
-	private void initializeView() {
+	public void initializeView() {
+		initializeCnae();
+		removeWarningIcon(activityDescription);
 		cccWidget.resetPreview();
 	}
 	
+	private void initializeCnae() {
+		impl.getCNAE2009(new AsyncCallback<Map<Integer,String>>() {
+			
+			@Override
+			public void onSuccess(Map<Integer, String> cnaeMapIn) {
+				cnaeMap = cnaeMapIn;
+				List<String> cnaeDescriptions = new ArrayList<>();
+				
+				for (Entry<Integer, String> entry : cnaeMap.entrySet())
+					cnaeDescriptions.add(entry.getValue());
+				
+				cnaeDescriptions.sort((o1, o2) -> o1.compareTo(o2));
+				
+				MultiWordSuggestOracle orclCnaes = (MultiWordSuggestOracle) activityCNAE2009.getSuggestOracle();
+				orclCnaes.addAll(cnaeDescriptions);
+				orclCnaes.setDefaultSuggestionsFromText(cnaeDescriptions);
+				activityCNAE2009.setAutoSelectEnabled(true);
+				activityCNAE2009.getElement().setPropertyString("placeholder", "C\u00f3digo/Descripci\u00f3n del CNAE... (Ctrl + espacio para ver sugerencias)");
+				
+				activityCNAE2009.getValueBox().addKeyUpHandler(e -> {
+					if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+						activityCNAE2009.setText("");
+						activityCNAE2009.showSuggestionList();
+					} else if(e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
+						activityCNAE2009.hideSuggestionList();
+				});
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				fireWarningMessage(new HashMap<String,String>() {{ put("ERRO CNAE", caught.getMessage()); }});
+			}
+		});
+		
+	}
+
 	public void addNewCCC() {
 		cccWidget.insertNewRow();
 	}

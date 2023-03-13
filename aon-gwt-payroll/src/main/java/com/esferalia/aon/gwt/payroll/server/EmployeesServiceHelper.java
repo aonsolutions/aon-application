@@ -2279,7 +2279,7 @@ public class EmployeesServiceHelper {
 	}
 	
 
-	public static <S extends ISalary >  S calculate(Connection conn, SalaryDraft draft, GenericContractSalaryCalculator<S, ISQLContractSalaryCalculatorContext> calculator) {
+	public static <S extends com.esferalia.aon.payroll.Salary >  S calculate(Connection conn, SalaryDraft draft, GenericContractSalaryCalculator<S, ISQLContractSalaryCalculatorContext> calculator) {
 
         	try {
         	    ISQLContractSalaryCalculatorContext ctx = 

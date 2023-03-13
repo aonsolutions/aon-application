@@ -8,6 +8,8 @@ import java.util.Map;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
+import com.esferalia.aon.gwt.common.client.css.AonResources;
+import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ProgressPanel;
@@ -349,8 +351,12 @@ public class MainContrataContract extends MainEntryPoint {
 	
 		getTrashToolbarPanel();
 
-		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
+		// Inject rich styles.
 		AON.ensureInjected();
+		GWT.<GWTResources>create(GWTResources.class).css().ensureInjected();
+		GWT.<AonResources>create(AonResources.class).css().ensureInjected();
+		GWT.<MainEntryPoint.CodeMirrorResources>create(MainEntryPoint.CodeMirrorResources.class).css().ensureInjected();
+		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 
 		Widget ui = binder.createAndBindUi(this);
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
@@ -896,23 +902,6 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 
 	private void initEnterpriseSB() {
-		// Enteprise List
-
-//		List<EmployeeContractInfo> employees = mainContrataContractObject.getAllEmployeesList();
-//
-//		List<String> enterprisesSuggest = new ArrayList<>();
-//		for (EmployeeContractInfo employee : employees) {
-//			String fullName = employee.getEmployeeInfo().getFullName();
-//			String document = employee.getEmployeeInfo().getDocument();
-//			String ssNumber = employee.getEmployeeInfo().getSsNumber();
-//			
-//			enterprisesSuggest.add(fullName + ", "+ document + ", " + ssNumber);
-//		}
-//			
-//		MultiWordSuggestOracle orclEnterprise = (MultiWordSuggestOracle) employeeSB.getSuggestOracle();
-//		orclEnterprise.addAll(enterprisesSuggest);
-//		employeeSB.setAutoSelectEnabled(false);
-
 		employeeSB.addKeyUpHandler(e -> {
 			String value = employeeSB.getValue();
 			if (AonStringUtils.isBlank(value) || value.length() < 3)
@@ -1109,8 +1098,6 @@ public class MainContrataContract extends MainEntryPoint {
 	// ------------------------------------------ Auxiliar Methods
 
 	private void initFootPanel() {
-		footPanel.setStyleName(AON.CSS.aonSelector());
-		footPanel.addStyleName(AON.AON_CSS.aonBackgroundWhite());
 		footPanel.addMaximizeHandlerNew(event -> showFootPanel());
 		footPanel.addMinimizeHandlerNew(event -> closeFootPanel());
 		footPanel.clearButtons();
@@ -1135,13 +1122,14 @@ public class MainContrataContract extends MainEntryPoint {
 	}
 	
 	private void showFootPanel() {
+		footPanel.addButtonMore();
 		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
 		splitLayoutPanel.animate(500);
-	
 	}
-
+	
 	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 20);
+		footPanel.addButtonLess();
+		splitLayoutPanel.setWidgetSize(footPanel, 17);
 		splitLayoutPanel.animate(500);
 	}
 

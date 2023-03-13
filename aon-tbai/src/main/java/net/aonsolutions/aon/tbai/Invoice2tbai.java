@@ -237,7 +237,8 @@ public class Invoice2tbai {
 			receiver.setCodigoPostal(invoice.getAddress().getZip());
 			receiver.setDireccion(invoice.getAddress().getFullAddress()); 
 
-			if(invoice.isNational() || (invoice.isIsp() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
+			if((invoice.isNational() && Country.ES.equals(invoice.getRegistryDocumentCountry())) 
+					|| (invoice.isIsp() && Country.ES.equals(invoice.getRegistryDocumentCountry()))) {
 				receiver.setNIF(invoice.getRegistryDocument().replace(" ", ""));			
 			} else {
 				IDOtro other = new IDOtro();

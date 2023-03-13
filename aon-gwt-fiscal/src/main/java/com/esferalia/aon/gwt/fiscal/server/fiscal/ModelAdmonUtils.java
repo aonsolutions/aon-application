@@ -346,7 +346,7 @@ public class ModelAdmonUtils {
 	public static StringBuilder formatRespuestaCorrecta(ServicioConsultasDirectas scd) {
 		StringBuilder buff = new StringBuilder();
 		buff.append("<html>");
-		//buff.append("<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>");
+		buff.append("<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/></head>");
 		buff.append("<style>");
 		buff.append("#aeat {");
 		buff.append(" margin: 10px;");

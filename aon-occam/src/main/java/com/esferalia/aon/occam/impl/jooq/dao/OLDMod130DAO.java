@@ -35,8 +35,8 @@ import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 
-public class Mod130DAO extends FiscalModelDAO {
-
+public class OLDMod130DAO extends FiscalModelDAO {
+/*
 	// Á --> \u00C1 á --> \u00E1 
 	// É --> \u00C9 é --> \u00E9 
 	// Í --> \u00CD í --> \u00ED 
@@ -832,5 +832,5 @@ public class Mod130DAO extends FiscalModelDAO {
 	private static boolean isFarmer(IrpfBreakdown br) {
 		return br.isFromInvoice() && br.getWithholdingType() == WithholdingType.FARMER;
 	}
-
+*/
 }

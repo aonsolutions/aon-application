@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import {ConsultancyBookingApps, BookingApps, ClassicApps, Services, Packs, ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT,
-	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
+	 PROFESSIONAL_MANAGEMENT, GARAGE, ACADEMY, HOTEL, OFFICE, COMMERCE, KIT_DIGITAL_ERP, KIT_DIGITAL_CRM, KIT_DIGITAL_FACE} from  '../../services/app.js';
 import {getDomainUserRoles, setDomainApp} from  '../../services/service.js';
 import {DomainUserRoles} from '../../models/DomainUserRoles.js';
 import {App, ToolbarType} from '../../models/enums.js';
@@ -18,6 +18,7 @@ import { AonToast } from '../../components/aon-toast.js';
 import { AonDialog } from '../../components/aon-dialog.js';
 import { AonCheckbox } from '../../components/aon-checkbox.js';
 import { AonSelect } from '../../components/aon-select.js';
+import { AonIconButton } from '../../components/aon-icon-button.js';
 export class AonBooking extends AonElement {
 
 	TOOLBAR;
@@ -28,6 +29,7 @@ export class AonBooking extends AonElement {
 	users;
 	definedUsers;
 	dur;
+	domainPayer;
 
 	get id() {
 		return this.getAttribute('id');
@@ -45,6 +47,7 @@ export class AonBooking extends AonElement {
 		this.initialize();
 		getDomainUserRoles({reload: true}).then(r => {
 			this.dur = new DomainUserRoles(r);
+			this.domainPayer = this.dur.isDomainPayer();
 			this.apps = this.dur.getDomainApps();
 			if(!this.dur.getDomain().isConsultancy() && this.dur.getParentDomain().isConsultancy())
 				this.completeDomainApps(this.dur);
@@ -118,6 +121,10 @@ export class AonBooking extends AonElement {
 			return this.dur.isEnterpriseChild()
 				? {GARAGE}
 				: {GARAGE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
+		else if(this.dur.getDomain().isHotel())
+			return this.dur.isEnterpriseChild()
+				? {HOTEL}
+				: {HOTEL, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT};
 		else if(this.dur.getDomain().isAcademy())
 			return this.dur.isEnterpriseChild()
 				? {ACADEMY}
@@ -278,6 +285,24 @@ export class AonBooking extends AonElement {
 
 			if(!app.domainType)
 				span.appendChild(buttons);
+			else if (this.dur.isConsoleUser()){
+				
+				let domainPayer = new AonSwitch();
+				domainPayer.id = this.APP + app.app + 'DomainPayment';
+				domainPayer.title = 'Dominio Pagador';
+				domainPayer.checked = this.domainPayer;
+
+				domainPayer.addEventListener(EVENT.CHANGE, (e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					this.domainPayer = domainPayer.checked;
+				});
+
+				this.clearElement(buttons);
+				buttons.appendChild(domainPayer);
+
+				span.appendChild(buttons);
+			}
 			li.appendChild(span);
 			ul.appendChild(li);
 		}
@@ -442,7 +467,8 @@ export class AonBooking extends AonElement {
 		} else {
 			setDomainApp({
 				apps: this.apps,
-				users: this.users
+				users: this.users,
+				domainPayer: this.domainPayer
 			}).then(() => {
 				toast.start({
 					type: 'success',

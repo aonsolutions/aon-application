@@ -455,6 +455,15 @@
 								</g:HTMLPanel>
 							</td>
 						</tr>
+						<!-- LINEA 19 -->
+						<tr>
+							<td rowspan="2" style="background-color: #f6f6f6; width: 200px;">
+								<g:Label styleName="{style.firstColumnTextStyle}">CNO</g:Label>
+							</td>
+							<td colspan="6">
+								<g:SuggestBox ui:field="cnoSB" debugId="cnoSB" styleName='aon-inputText {style.maxWidthTextBox}'></g:SuggestBox>
+							</td>
+						</tr>
 					</tbody>
 				</table>
 			</g:HTMLPanel>

@@ -58,6 +58,7 @@ export class AonHome extends AonElement {
 		aonShowMenuButton.icon = MATERIAL_ICONS.KEYBOARD_ARROW_LEFT;
 		aonShowMenuButton.noHover = true;
 		aonShowMenuButton.title = "Mostrar Menu";
+		aonShowMenuButton.style.display = 'none';
 		aonShowMenu.appendChild(aonShowMenuButton);
 		this.appendChild(aonShowMenu);
 

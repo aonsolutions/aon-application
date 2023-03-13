@@ -28,7 +28,7 @@ public class Mod130CheckAEAT extends HttpServlet {
 					.setDomainName(aeatParams.getDomainName())
 					.setDomain(aeatParams.getDomainId())
 					.setUser(aeatParams.getUser());
-			Mod130 mod130 = MODEL130.getMod130(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
+			Mod130 mod130 = MODEL130.get(occam, ModelAdmonUtils.getFiscalModelId(aeatParams));
 			if (mod130 == null) {
 				throw new AonCoreException("[INT] Modelo no encontrado");
 			}

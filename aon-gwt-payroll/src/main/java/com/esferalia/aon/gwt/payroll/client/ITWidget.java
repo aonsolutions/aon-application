@@ -106,6 +106,7 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -772,13 +773,16 @@ public abstract class ITWidget extends ResizeComposite {
 		AonMessagePanel.showLoading(messagePanel, "Obteniendo ITs de los trabajadores...");
 		
 		getITEmployeeListDB(itEmployeeList -> {
-			itEmployeeIts = itEmployeeList;
-			int deckIdx = mainDeckPanel.getVisibleWidget();
-			if(0 == deckIdx) showStatics();
-			else showList();
+			if(itEmployeeList.isEmpty()){
+				showMessage();
+			} else {
+				itEmployeeIts = itEmployeeList;
+				int deckIdx = mainDeckPanel.getVisibleWidget();
+				if(0 == deckIdx) showStatics();
+				else showList();
+			}	
+
 			AonMessagePanel.hideMessage(messagePanel);
-			
-		
 		}, f -> {});
 	}
 	
@@ -2139,17 +2143,14 @@ public abstract class ITWidget extends ResizeComposite {
 		footPanel.addMaximizeHandlerNew(event -> showFootPanel());
 		footPanel.addMinimizeHandlerNew(event -> closeFootPanel());
 		footPanel.setStyleName(AON.CSS.aonSelector());
+		footPanel.addStyleName("aon-EmployeeTree-Events");
+		
 		tabLayout = new TabLayoutPanel(26, Unit.PX);
-	
 		tabLayout.setWidth("100%");
-	
-		footPanel.addStyleName(AON.AON_CSS.aonBackgroundWhite());
-		
-		footPanel.add(tabLayout);
-		
 		tabLayout.setAnimationDuration(300);
+		footPanel.add(tabLayout);
 
-		splitLayoutPanel.addSouth(footPanel, 30);
+		splitLayoutPanel.addSouth(footPanel, 17);
 		footPanel.initNewButtons();
 	}
 
@@ -2162,7 +2163,7 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	private void closeFootPanel() {
 		footPanel.addButtonLess();
-		splitLayoutPanel.setWidgetSize(footPanel, 20);
+		splitLayoutPanel.setWidgetSize(footPanel, 17);
 		splitLayoutPanel.animate(500);
 	}
 	
@@ -2235,7 +2236,7 @@ public abstract class ITWidget extends ResizeComposite {
 	
 	protected abstract void checkStatus(Consumer<EnterpriseITStatus> success, Consumer<Throwable> failure);
 	
-	public void setFooter(DockLayoutPanel splitLayoutPanel, TabLayoutPanel tabLayout, AonMinimizePanel footPanel) {
+	public void setFooter(SplitLayoutPanel splitLayoutPanel, TabLayoutPanel tabLayout, AonMinimizePanel footPanel) {
 		this.splitLayoutPanel.remove(this.footPanel);
 		this.footPanel = footPanel;
 		this.tabLayout = tabLayout;

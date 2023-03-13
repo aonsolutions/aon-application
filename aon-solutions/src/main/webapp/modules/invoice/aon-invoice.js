@@ -1136,10 +1136,14 @@ export class AonInvoice extends AonElement {
 		// this.clearElement(div);
 
 		// ----- WITHHOLDING
-
-		let irpfTable = new AonBasicTable();
-		irpfTable.id = 'irpfTable';
-		card.addContent(irpfTable);
+		let irpfTableId = 'irpfTable';
+		let irpfTable = this.getElement(irpfTableId);
+		if(!irpfTable){
+			irpfTable = new AonBasicTable();
+			irpfTable.id = 'irpfTable';
+			card.addContent(irpfTable);
+		}
+		irpfTable.removeRows();
 		irpfTable.addRow();
 
 		if(!this.invoice.isReadonly() && this.invoice.details.length === 0) {

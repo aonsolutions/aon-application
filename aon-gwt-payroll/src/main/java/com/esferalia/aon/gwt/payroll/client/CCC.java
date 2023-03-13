@@ -2,8 +2,10 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -248,6 +250,8 @@ public abstract class CCC extends ResizeComposite {
 	// --------------------------------------------------	   INSERT ROWS		--------------------------------------------------------
 	
 	public void insertRow(EnterpriseCCC cccInfo) {
+		if(cccInfo.isDeleted()) return;
+		
 		int row = cccDataTable.insertRow(cccDataTable.getRowCount());
 		
 		Set<Entry<Integer, String>> activitiesList = getActivities();
@@ -296,12 +300,11 @@ public abstract class CCC extends ResizeComposite {
 		account.setValue(cccInfo.getCcc());
 		account.addStyleName("aon-inputText");
 		account.addStyleName(style.inputTextHeight());
+		account.getElement().getStyle().setProperty("width", "65%");
 		account.addKeyPressHandler(e -> {
 			char keyCode = e.getCharCode();
 	        if (!Character.isDigit(keyCode)) {
-	        	Map<String, String> warnMap = new HashMap<>();
-	        	warnMap.put("Error formato", "La cuenta de cotizac\u00f3n solo puede contener n\u00fameros");
-	        	fireWarningMessage(warnMap);
+	        	fireWarningMessage(new HashMap<String, String>(){{ put("Error formato", "La cuenta de cotizac\u00f3n solo puede contener n\u00fameros"); }});
 	        	account.cancelKey();
 	        }
 		});
@@ -321,6 +324,8 @@ public abstract class CCC extends ResizeComposite {
 					
 					account.setTitle("");
 					account.removeStyleName(style.warningTB());
+					
+					checkCCCGeozones();
 				}else {
 					geozone.setTitle("CCC incorrecto");
 					geozone.setText(provinceAux);
@@ -333,9 +338,7 @@ public abstract class CCC extends ResizeComposite {
 					account.setTitle("CCC incorrecto");
 					account.addStyleName(style.warningTB());
 					
-					Map<String, String> warningMap = new HashMap<>();
-					warningMap.put("Error formato CCC", "El CCC " + accountValue + " no es correcto, rev\u00EDselo por favor");
-					fireWarningMessage(warningMap);
+					fireWarningMessage(new HashMap<String, String>(){{ put("Formato CCC", "El CCC " + accountValue + " no es correcto, rev\u00EDselo por favor"); }});
 				}
 				
 				createEnterpriseCCC(
@@ -402,17 +405,13 @@ public abstract class CCC extends ResizeComposite {
 		AonTableButton delete = new AonTableButton("Eliminar CCC", AON.CSS.aonIconDelete());
 		delete.ensureDebugId("delete_" + row);
 		delete.addClickHandler(e -> {
-			if(Boolean.TRUE.equals(cccInfo.isUseByContracts())) {
-				Map<String, String> warningMap = new HashMap<>();
-				warningMap.put("AVISO: Contratos asociados",  "No se puede eliminar una cuenta de cotizaci\u00F3n que esta "
-						+ "siendo usada por un centro de trabajo y/o por un contrato");
-				fireWarningMessage(warningMap);
-			} else if(Boolean.TRUE.equals(cccInfo.isUseByCra())) {
-				Map<String, String> warningMap = new HashMap<>();
-				warningMap.put("AVISO: CRAs asociados",  "No se puede eliminar una cuenta de cotizaci\u00F3n que esta "
-						+ "siendo referenciada desde un CRA existente");
-				fireWarningMessage(warningMap);
-			} else {
+			if(Boolean.TRUE.equals(cccInfo.isUseByContracts())) 
+				fireWarningMessage(new HashMap<String, String>(){{ put("AVISO: Contratos asociados",  "No se puede eliminar una cuenta de cotizaci\u00F3n que esta "
+						+ "siendo usada por un centro de trabajo y/o por un contrato"); }});
+			else if(Boolean.TRUE.equals(cccInfo.isUseByCra())) 
+				fireWarningMessage(new HashMap<String, String>(){{ put("AVISO: CRAs asociados",  "No se puede eliminar una cuenta de cotizaci\u00F3n que esta "
+						+ "siendo referenciada desde un CRA existente"); }});
+			else {
 				AonDialog deleteDialog = new AonDialog("Eliminar concepto",
 						new HTML("\u00BFDesea eliminar el CCC seleccionado\u003F"));
 				deleteDialog.confirm(new AonAcceptDialogCallback() {
@@ -531,12 +530,11 @@ public abstract class CCC extends ResizeComposite {
 		account.setMaxLength(11);
 		account.addStyleName("aon-inputText");
 		account.addStyleName(style.inputTextHeight());
+		account.getElement().getStyle().setProperty("width", "65%");
 		account.addKeyPressHandler(e -> {
 			char keyCode = e.getCharCode();
 	        if (!Character.isDigit(keyCode)) {
-	        	Map<String, String> warnMap = new HashMap<>();
-	        	warnMap.put("Error formato", "La cuenta de cotizac\u00f3n solo puede contener n\u00fameros");
-	        	fireWarningMessage(warnMap);
+	        	fireWarningMessage(new HashMap<String, String>(){{ put("Error formato", "La cuenta de cotizac\u00f3n solo puede contener n\u00fameros"); }});
 	        	account.cancelKey();
 	        }
 		});
@@ -556,6 +554,8 @@ public abstract class CCC extends ResizeComposite {
 					
 					account.setTitle("");
 					account.removeStyleName(style.warningTB());
+					
+					checkCCCGeozones();
 				}else {
 					province = null == province ? UNKNOWN : province;
 					
@@ -570,9 +570,7 @@ public abstract class CCC extends ResizeComposite {
 					account.setTitle("CCC incorrecto");
 					account.addStyleName(style.warningTB());
 					
-					Map<String, String> warningMap = new HashMap<>();
-					warningMap.put("Error formato CCC", "El CCC " + accountValue + " no es correcto, rev\u00EDselo por favor");
-					fireWarningMessage(warningMap);
+					fireWarningMessage(new HashMap<String, String>(){{ put("Formato CCC", "El CCC " + accountValue + " no es correcto, rev\u00EDselo por favor"); }});
 				}
 				
 				createEnterpriseCCC(
@@ -652,6 +650,16 @@ public abstract class CCC extends ResizeComposite {
 	}
 	
 	// -------------------------------------------- Auxiliar Methods
+	
+	private void checkCCCGeozones(){
+		List<EnterpriseCCC> cccs = getEnterpriseCCCs();
+		if(!cccs.isEmpty() && cccs.size() > 1) {
+			String geozoneCode = cccs.get(0).getGeozoneCode();
+			Optional<EnterpriseCCC> noSameGeozoneCCC = cccs.stream().filter(ccc -> !AonStringUtils.equalsIgnoreCase(ccc.getGeozoneCode(), geozoneCode)).findAny();
+			if(noSameGeozoneCCC.isPresent())
+				fireInfoMessage(new HashMap<String, String>(){{ put("Provincia CCC", "Las provincias de los CCCs no coinciden"); }});
+		}
+	}
 	
 	private void createEnterpriseCCC(Integer cccId, Integer activity, Byte type, String cccAccount, String province, String provinceCode) {
 		EnterpriseCCC ccc = new EnterpriseCCC()
@@ -789,8 +797,10 @@ public abstract class CCC extends ResizeComposite {
 	protected abstract void onInsertActivity(Activity activity);
 
 	protected abstract Set<Entry<Integer, String>> getActivities();
+	protected abstract List<EnterpriseCCC> getEnterpriseCCCs();
 	
 	protected abstract void fireWarningMessage(Map<String, String> warningMap);
+	protected abstract void fireInfoMessage(Map<String, String> warningMap);
 	protected abstract void fireLoadingMessage(String message);
 	protected abstract void hideMessage();
 	
@@ -821,9 +831,7 @@ public abstract class CCC extends ResizeComposite {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				Map<String, String> warningMap = new HashMap<>();
-				warningMap.put("Error obtenci\u00f3n TGSS", caught.getMessage());
-				fireWarningMessage(warningMap);
+				fireWarningMessage(new HashMap<String, String>(){{ put("TGSS Trabajadores Alta", caught.getMessage()); }});
 			}
 		});
 	}
@@ -840,9 +848,7 @@ public abstract class CCC extends ResizeComposite {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				Map<String, String> warningMap = new HashMap<>();
-				warningMap.put("Error obtenci\u00f3n TGSS", caught.getMessage());
-				fireWarningMessage(warningMap);
+				fireWarningMessage(new HashMap<String, String>(){{ put("TGSS Movimientos Previos", caught.getMessage()); }});
 			}
 		});
 	}
@@ -859,9 +865,7 @@ public abstract class CCC extends ResizeComposite {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				Map<String, String> warningMap = new HashMap<>();
-				warningMap.put("Error obtenci\u00f3n TGSS", caught.getMessage());
-				fireWarningMessage(warningMap);
+				fireWarningMessage(new HashMap<String, String>(){{ put("TGSS Idc", caught.getMessage()); }});
 			}
 		});
 	}
@@ -878,9 +882,7 @@ public abstract class CCC extends ResizeComposite {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				Map<String, String> warningMap = new HashMap<>();
-				warningMap.put("Error obtenci\u00f3n TGSS", caught.getMessage());
-				fireWarningMessage(warningMap);
+				fireWarningMessage(new HashMap<String, String>(){{ put("TGSS Vida Laboral", caught.getMessage()); }});
 			}
 		});
 	}

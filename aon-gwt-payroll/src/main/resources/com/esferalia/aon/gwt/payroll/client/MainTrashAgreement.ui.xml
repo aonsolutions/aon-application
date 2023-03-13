@@ -3,6 +3,8 @@
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.payroll.client'
 	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'
 	xmlns:commonsolutions='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
+	
+	<ui:with type="com.esferalia.aon.gwt.common.client.css.AonResources" field="aonResources" />
 
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.MainTrashAgreement.MyStyle">
@@ -64,19 +66,19 @@
 	
 	<g:DockLayoutPanel ui:field="splitLayoutPanel" unit="PX">
 		<g:north size="45">
-			<commonsolutions:AonTrashAgreementsToolbar ui:field="toolbar" />
+			<commonsolutions:AonTrashAgreementsToolbar ui:field="toolbar" styleName="aon-MainAgreement-ToolBar" />
 		</g:north>
 		<g:west size='350'>
-			<aon:TrashAgreements debugId="agreements" ui:field='agreements' />
+			<aon:TrashAgreements debugId="agreements" ui:field='agreements' styleName="aon-MainAgreement-Agreements" />
 		</g:west>
 		<g:center>
-			<g:HTMLPanel styleName="{style.flexColumn}">
-				<g:HTMLPanel ui:field="messagePanel" />
-				<g:HTMLPanel ui:field="agreementContainer" styleName="{style.flexColumn} {style.heigthAll}"> 
+			<g:HTMLPanel styleName="{style.flexColumn} aon-MainAgreement-Detail">
+				<g:HTMLPanel ui:field="messagePanel" styleName="aon-MainAgreement-Messages" />
+				<g:HTMLPanel ui:field="agreementContainer" styleName="{style.flexColumn} {style.heigthAll} aon-MainAgreement-Preview"> 
 					<aon:AgreementPreview debugId="agreementPreview" ui:field="agreementPreview" />
 				</g:HTMLPanel>
 				<!-- AGREEMENT SELECT LABEL -->
-				<g:HTMLPanel ui:field="agreementMessage" styleName="{style.flexCenter}">
+				<g:HTMLPanel ui:field="agreementMessage" styleName="{style.flexCenter} aon-MainAgreement-Select">
 					<g:Label text="SELECCIONE UN CONVENIO PARA SER VISUALIZADO" styleName="{style.message}" />
 				</g:HTMLPanel>
 			</g:HTMLPanel>

@@ -10,8 +10,6 @@
 			justify-content: space-between;
 			align-items: center;
 			height: 37px;
-			border-top: 0px none;
-			border-bottom: 1px solid rgb(221, 221, 221);
 		}
 		
 		.textBox{

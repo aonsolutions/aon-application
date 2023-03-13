@@ -358,6 +358,16 @@ public class GWTSalaryDraftTestCase extends GWTTestCase {
 
 
 
+			
+			@Override
+			public void cambioCno(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+					String cno, Date fecha, AsyncCallback<Void> callback) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
 			@Override
 			public void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
 					String cat, Date fecha, AsyncCallback<Void> callback) {

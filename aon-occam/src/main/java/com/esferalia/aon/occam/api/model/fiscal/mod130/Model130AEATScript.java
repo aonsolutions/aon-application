@@ -1,10 +1,9 @@
-package com.esferalia.aon.gwt.fiscal.shared.mod130;
+package com.esferalia.aon.occam.api.model.fiscal.mod130;
 
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.ACT_ACCOUNT;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.COMPUTE_KEY;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.INVOICE;
-import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.DIFF_INVOICE;
+import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.MODEL_INVOICE_IRPF_BREAKDOWN;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.NONE;
 import static com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo.TITLE;
 
@@ -15,9 +14,9 @@ import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 public enum Model130AEATScript implements IModelScript<Mod130Key> {
 	
 	 P00	("R\u00E9gimen de determinaci\u00F3n de rendimientos"
-				,new Mod130Key[]{Mod130Key.P0},NONE)
+			,new Mod130Key[]{Mod130Key.P0},NONE)
 	,P01	("Porcentaje de participaci\u00F3n"
-				,new Mod130Key[]{Mod130Key.P1},NONE)
+			,new Mod130Key[]{Mod130Key.P1},NONE)
 	,P02	("Realiza pagos por pr\u00E9stamos destinados a la adquisici\u00F3n o rehabilitaci\u00F3n de su vivienda habitual."
 			,new Mod130Key[]{Mod130Key.P2},NONE)
 	,R00	("I. Actividades econ\u00F3micas en estimaci\u00F3n directa, modalidad "
@@ -36,7 +35,7 @@ public enum Model130AEATScript implements IModelScript<Mod130Key> {
 			,new Mod130Key[]{Mod130Key.C03},COMPUTE)
 	,C04	("20 por 100 del importe positivo de la casilla [03], si dicho"
 			+ " importe es positivo"
-			,new Mod130Key[]{Mod130Key.C04},COMPUTE)
+			,new Mod130Key[]{Mod130Key.C04},COMPUTE_KEY)
 	,C05	("A deducir. De los trimestres anteriores: suma de los importe"
 			+ "s positivos de la casilla [07] menos la suma de los importe"
 			+ "s de la casilla [16]"
@@ -45,7 +44,7 @@ public enum Model130AEATScript implements IModelScript<Mod130Key> {
 			+ "s actividades incluidas en este apartado y correspondientes"
 			+ " al per\u00EDodo comprendido entre el primer d\u00EDa del a\u00F1o y el \u00FAl"
 			+ "timo d\u00EDa del trimestre"
-			,new Mod130Key[]{Mod130Key.C06},INVOICE)
+			,new Mod130Key[]{Mod130Key.C06},MODEL_INVOICE_IRPF_BREAKDOWN)
 	,C07	("Pago fraccionado previo del trimestre ([04]-[05]-[06])"
 			,new Mod130Key[]{Mod130Key.C07},COMPUTE)
 	,R01	("II. Actividades agr\u00EDcolas, ganaderas, forestales y pesqueras "
@@ -59,12 +58,12 @@ public enum Model130AEATScript implements IModelScript<Mod130Key> {
 	,C10	("A deducir: Retenciones e ingresos a cuenta soportados por las"
 			+ " actividades incluidas en este apartado y correspondientes a"
 			+ "l trimestre"
-			,new Mod130Key[]{Mod130Key.C10},INVOICE,DIFF_INVOICE)
+			,new Mod130Key[]{Mod130Key.C10},MODEL_INVOICE_IRPF_BREAKDOWN)
 	,C11	("Pago fraccionado previo del trimestre ([09]-[10])"
 			,new Mod130Key[]{Mod130Key.C11},COMPUTE)
 	,R02	("III. Total liquidaci\u00F3n",null,TITLE)
 	,C12	("Suma de pagos fraccionados previos del trimestre ([07]+[11])"
-			,new Mod130Key[]{Mod130Key.C12},COMPUTE)
+			,new Mod130Key[]{Mod130Key.C12},COMPUTE_KEY)
 	,C13	("A deducir: Minoraci\u00F3n por aplicaci\u00F3n de la deducci\u00F3n a que se "
 			+ "refiere el art\u00EDculo 110.3 c) del Reglamento del Impuesto"
 			,new Mod130Key[]{Mod130Key.C131},NONE)
@@ -75,7 +74,7 @@ public enum Model130AEATScript implements IModelScript<Mod130Key> {
 			,new Mod130Key[]{Mod130Key.C15},COMPUTE_KEY)
 	,C16	("El 2 por 100 del [03] (m\u00E1ximo: 660,14 euros por trimestre) o el "
 			+ "2 por 100 de [08] (m\u00E1ximo: 660,14 euros anuales)"
-			,new Mod130Key[]{Mod130Key.C16},COMPUTE)
+			,new Mod130Key[]{Mod130Key.C16},COMPUTE_KEY)
 	,C17	("Total ([14]-[15]-[16])"
 			,new Mod130Key[]{Mod130Key.C17},COMPUTE)
 	,C18	("Resultado a ingresar de las anteriores autoliquidaciones presenta"
@@ -110,7 +109,11 @@ public enum Model130AEATScript implements IModelScript<Mod130Key> {
 	@Override
 	public boolean isEnabled() {
 		return getInfoKeys()[0] != COMPUTE
-			&& getInfoKeys()[0] != TITLE;
+			&& getInfoKeys()[0] != TITLE
+			&& this != C04
+			&& this != C12
+			&& this != C16
+			;
 	}
 	@Override
 	public FiscalModelKeyInfo[] getInfoKeys() {

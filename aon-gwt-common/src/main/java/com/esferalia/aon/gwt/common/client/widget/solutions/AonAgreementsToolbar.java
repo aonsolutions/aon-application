@@ -86,16 +86,20 @@ public class AonAgreementsToolbar extends Composite {
 	
 	private void createToolbar() {
 		
-		showMenuButton = new AonToolbarButton("Ocultar", AON.CSS.aonIconMenu() );
+		showMenuButton = new AonToolbarButton("Ocultar", AON.CSS.aonIconMenuCollapse() );
 		showMenuButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				if(agreementTreeShowed) {
 					showMenuButton.setTitle("Mostrar");
+					showMenuButton.removeStyleName(AON.CSS.aonIconMenuCollapse());
+					showMenuButton.addStyleName(AON.CSS.aonIconMenu());
 					for(Listener listener : listeners)
 						listener.onCollapseMenuButtonClick(event);
 				} else {
 					showMenuButton.setTitle("Ocultar");
+					showMenuButton.removeStyleName(AON.CSS.aonIconMenu());
+					showMenuButton.addStyleName(AON.CSS.aonIconMenuCollapse());
 					for(Listener listener : listeners)
 						listener.onShowMenuButtonClick(event);
 				}

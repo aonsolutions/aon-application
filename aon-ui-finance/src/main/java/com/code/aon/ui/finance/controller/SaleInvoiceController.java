@@ -979,7 +979,8 @@ public class SaleInvoiceController extends InvoiceController {
 	public String getCodeAsignacion() {
 		if(AonStringUtils.isBlank(codeAsignacion) && getInvoice().getDetailList().size() > 0) {
 			InvoiceDetail det = (InvoiceDetail) getInvoice().getDetailList().get(0);
-			codeAsignacion = getInvoice().getProject() != null ? det.getProject().getName() : "";
+			codeAsignacion = det.getProject() != null 
+					? det.getProject().getName() : "";
 		}
 		return codeAsignacion;
 	}

@@ -48,7 +48,7 @@
 	<ui:image field='employeesgroup' src='employeesgroup.png' />
 
 
-	<g:DockLayoutPanel ui:field="dockLayoutPanel" debugId="messagePanel"  styleName="aon-EmployeeTree" >
+	<g:SplitLayoutPanel ui:field="dockLayoutPanel"  styleName="aon-EmployeeTree" >
 		<g:north size="35" >
 			<commonsolutions:AonEmployeesToolbar ui:field="toolbar" styleName="{style.toolbar} aon-MainAgreement-ToolBar"/>
 		</g:north>
@@ -59,7 +59,7 @@
 		
 		<g:center>
 			<g:HTMLPanel styleName="{style.felxColumn}">
-				<g:SimpleLayoutPanel ui:field="messagePanel" styleName="{style.messageMT} aon-EmployeeTree-Messages" />
+				<g:HTMLPanel ui:field="messagePanel" debugId="messagePanel" styleName="{style.messageMT} aon-EmployeeTree-Messages" />
 				<aon:DetailPanel ui:field='employeeDetail' styleName="aon-EmployeeTree-EmployeeDetail" />
 			</g:HTMLPanel>
 		</g:center>
@@ -70,6 +70,6 @@
 			</aon:solutions.AonMinimizePanel>
 		</g:south>
 
-	</g:DockLayoutPanel>
+	</g:SplitLayoutPanel>
 
 </ui:UiBinder>

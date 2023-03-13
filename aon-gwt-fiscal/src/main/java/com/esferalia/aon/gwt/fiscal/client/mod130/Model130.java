@@ -67,16 +67,20 @@ public class Model130 extends MainEntryPoint {
 		public void hideError() {
 			aonLayout.hideErrorPanel();
 		}
-
+		
 		@Override
 		public void showInfoPanel(String htmlText) {
-			openFootPanelIfNeeded();
-			tabLayout.selectTab(INFORMATION_TAB);
-			HTMLPanel panel = new HTMLPanel(htmlText);
-			breakdownPanel.setWidget(panel);
-			breakdownPanel.scrollToTop();
+			showInfoPanelWidget(new HTMLPanel(htmlText));
 		}
 		
+		public void showInfoPanelWidget(Widget widget) {
+			cleanInfoPanel();
+			openFootPanelIfNeeded();
+			tabLayout.selectTab(INFORMATION_TAB);
+			breakdownPanel.setWidget(widget);
+			breakdownPanel.scrollToTop();
+		}
+
 		@Override
 		public void cleanInfoPanel() {
 			Widget w = breakdownPanel.getWidget();
@@ -97,11 +101,17 @@ public class Model130 extends MainEntryPoint {
 
 		@Override
 		public void onCancel(Mod130 model) {
-			cleanInfoPanel();
-			declarationContainer.setWidget(model130Table);
-			model130Table.refresh( new Model130Callback() );
-			tabLayout.selectTab(INFORMATION_TAB);
-			closeFootPanel();
+			if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
+				getOptions().getExternalCallback().onExit(model);
+			} else {
+				cleanInfoPanel();
+				hideError();
+				declarationContainer.setWidget(model130Table);
+				model130Table.refresh( new Model130Callback() );
+				tabLayout.selectTab(INFORMATION_TAB);
+				closeFootPanel();
+				
+			}
 		}
 
 		@Override
@@ -122,7 +132,7 @@ public class Model130 extends MainEntryPoint {
 					cleanInfoPanel();
 					tabLayout.selectTab(INFORMATION_TAB);
 					closeFootPanel();
-					showNewDeclarationPopup(m130);
+					showNewDeclarationPanel(m130);
 				}
 
 
@@ -253,7 +263,7 @@ public class Model130 extends MainEntryPoint {
 			public void onSuccess(Mod130 m130) {
 				tabLayout.selectTab(INFORMATION_TAB);
 				closeFootPanel();
-				showNewDeclarationPopup( m130 );
+				showNewDeclarationPanel( m130 );
 			}
 
 			@Override
@@ -326,36 +336,27 @@ public class Model130 extends MainEntryPoint {
 		});
 	}
 	
-	private void showNewDeclarationPopup( Mod130 mod130) {
-		Model130NewDeclarationPopup newDialog = new Model130NewDeclarationPopup(mod130,
-			new Model130Callback() {
+	private void showNewDeclarationPanel( Mod130 mod130) {
+		Model130NewDeclarationPanel newDeclarationPanel = new Model130NewDeclarationPanel(mod130,new Model130Callback() {
+			@Override
+			public void onAccept(Mod130 mod130) {
+				SERVICE.create(getOptions().getOccam(),mod130,
+					new AsyncCallback<Mod130>() {
+						@Override
+						public void onSuccess(Mod130 m130) {
+							select(m130);
+						}
 
-				@Override
-				public void onAccept(Mod130 mod130) {
-					SERVICE.create(getOptions().getOccam(),mod130,
-							new AsyncCallback<Mod130>() {
-								@Override
-								public void onSuccess(Mod130 m130) {
-									select(m130);
-								}
-
-								@Override
-								public void onFailure(Throwable caught) {
-									showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
-								}
-							});
-				}
-				@Override
-				public void onCancel(Mod130 model) {
-					if (getOptions().isBackButtonVisible() && getOptions().hasExternalCallback()) {
-						getOptions().getExternalCallback().onExit(model);
-					}						
-				}
-
+						@Override
+						public void onFailure(Throwable caught) {
+							showErrorMessage(AON.MSG.unableToReadFiscalParameters(caught.getMessage()));
+						}
+				});
 			}
-		); 
-		newDialog.center();
-		newDialog.show();
+		}); 
+		declarationContainer.setWidget(newDeclarationPanel);
+		tabLayout.selectTab(INFORMATION_TAB);
+		closeFootPanel();
 	}
 	
 	private void showErrorMessage(String msg) {

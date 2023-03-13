@@ -22,6 +22,7 @@ export class DomainUserRoles {
   oldParentDomainModules;
   oldUserRoles;
 
+  domainPayer;
 
   constructor(data) {
     this.domain = new Domain(data.domain);
@@ -39,6 +40,7 @@ export class DomainUserRoles {
 
     this.maxDefinedUsers = data.maxDefinedUsers;
     this.definedUsers = data.definedUsers;
+    this.domainPayer = data.domainPayer;
   }
 
   checkUsers() {
@@ -618,5 +620,14 @@ export class DomainUserRoles {
 
   isEmptyDomain() {
     return !(this.domain && this.domain.id);
+  }
+  
+  isConsoleUser() {
+    if(this.user.domain != undefined) return this.user.domain == 0;
+    else return false;
+  }
+
+  isDomainPayer() {
+    return this.domainPayer;
   }
 }

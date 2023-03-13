@@ -171,6 +171,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.doc.Doc;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -4205,7 +4206,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 		try {
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			ISalary salary = getSalary(domain, agreement, context, levelId);
+			com.esferalia.aon.payroll.Salary salary = getSalary(domain, agreement, context, levelId);
 
 			try {
 				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
@@ -4750,7 +4751,28 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
+	
+	// ------------------------------------------------ MainMassiveContracts
 
+	@Override
+	public List<ContractData> getMassiveCNOs(String domainName, String user) throws IllegalArgumentException {
+		try {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			return PAYROLL.getContractDataStream(domainName, domainId, user, f -> f.getDomainProperty().eq(domainId).and(f.getNameProperty().eq("CNO"))).collect(Collectors.toList());
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	@Override
+	public void updateMassiveCNOs(String domainName, String user, List<ContractData> contractDatas) throws IllegalArgumentException {
+		try {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			PAYROLL.saveContractDatas(domainName, domainId, user, contractDatas);
+		} catch (SQLException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
 	// ------------------------------------------------ Partes IT
 

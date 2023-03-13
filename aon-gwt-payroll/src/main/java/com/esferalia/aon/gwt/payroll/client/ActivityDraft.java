@@ -1,21 +1,18 @@
 package com.esferalia.aon.gwt.payroll.client;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.occam.api.model.EnterpriseCCC;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -31,13 +28,12 @@ import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
-public class ActivityDraft extends Composite{
+public abstract class ActivityDraft extends Composite{
 	
 	// ---------------------------------------------- Activity
 
@@ -51,10 +47,8 @@ public class ActivityDraft extends Composite{
 		}
 
 		@Override
-		public void onActivityCNAE2009Change() {
-			String cnae2009Value = activityCNAE2009.getValue();
-			Optional<Entry<Integer, String>> cnae2009Opt = activityDraftObject.getAllCNAE2009().entrySet().stream().filter(entry -> AonStringUtils.equalsIgnoreCase(entry.getValue(), cnae2009Value)).findAny();
-			if(cnae2009Opt.isPresent()) activityDraftObject.setActivityCNAE2009(cnae2009Opt.get());
+		public void onActivityCNAE2009Change(Integer cnaeId, String cnaeCode, String cnaeTitle) {
+			 activityDraftObject.setActivityCNAE2009(cnaeId, cnaeCode, cnaeTitle);
 			setHasChange(true);
 		}
 
@@ -83,11 +77,11 @@ public class ActivityDraft extends Composite{
 		
 		@Override
 		public void onInsertRows() {
-			if(activityDraftObject.getActiveCCCs().isEmpty())
+			if(activityDraftObject.getCCCs().isEmpty())
 				activity.showCCCMessage();
 			else {
 				activity.showCCCTable();
-				activityDraftObject.getActiveCCCs().forEach(ccc -> this.cccWidget.insertRow(ccc));
+				activityDraftObject.getCCCs().forEach(ccc -> this.cccWidget.insertRow(ccc));
 			}
 			
 			activity.hideActivityColumn();
@@ -109,23 +103,38 @@ public class ActivityDraft extends Composite{
 		public Set<Entry<Integer, String>> getActivities() {
 			return activityDraftObject.getActivities();
 		}
+		
+		@Override
+		public List<EnterpriseCCC> getEnterpriseCCCs() {
+			return activityDraftObject.getActiveCCCs();
+		}
+		
+		@Override
+		public void fireErrorMessage(Map<String, String> messages) {
+			showErrorMessage(messages);
+		}
 
 		@Override
-		public void fireWarningMessage(Map<String, String> warningMap) {
-			AonMessagePanel.showWarning(messagePanel, warningMap);
+		public void fireWarningMessage(Map<String, String> messages) {
+			showWarningMessage(messages);
 			
 			// Need to create specific method, but this fire when file fail loading
 			setPDFLoadedEnsureDebugId("pdfNotLoaded");
 		}
-
+		
 		@Override
-		protected void fireLoadingMessage(String message) {
-			AonMessagePanel.showLoading(messagePanel, message);
+		public void fireInfoMessage(Map<String, String> messages) {
+			showInfoMessage(messages);
 		}
 
 		@Override
-		protected void hideMessage() {
-			AonMessagePanel.hideMessage(messagePanel);
+		protected void fireLoadingMessage(String message) {
+			showLoadingMessage(message);
+		}
+
+		@Override
+		protected void fireHideMessage() {
+			hideMessage();
 		}
 
 		@Override
@@ -161,9 +170,6 @@ public class ActivityDraft extends Composite{
 	
 	@UiField(provided = true)
 	AonToolbar toolbarPDFViewer;
-	
-	@UiField
-	HTMLPanel messagePanel;
 	
 	@UiField
 	DeckPanel mainDeckPanel;
@@ -209,7 +215,7 @@ public class ActivityDraft extends Composite{
 		
 		dockLayoutPanel.addStyleName(style.container());
 
-		scrolledPDFPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 170.00, Unit.PX);
+		scrolledPDFPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 185.00, Unit.PX);
 		
 		activity.setActivityDraftCCCHeight();
 		
@@ -226,26 +232,15 @@ public class ActivityDraft extends Composite{
 	private void initializeActivity() {
 		activityDraftObject.initializeActivity(
 				r -> {
-					initSuggestBox();
+					activity.initializeView();
 					fillActivityInfo();
 					activity.cccWidget.setDomain(activityDraftObject.getDomain());
-					activity.cccWidget.resetPreview();
 					activity.onInsertRows();
 					setHasChange(false);
 					toolbar.setTitle(activityDraftObject.getActivityDescription());
-					AonMessagePanel.hideMessage(messagePanel);
+					hideMessage();
 				}, t -> {}
 			);
-	}
-	
-	private void initSuggestBox() {
-		List<String> cnae2009Suggest = new ArrayList<>();
-		for(Entry<Integer, String> entry : activityDraftObject.getAllCNAE2009().entrySet())
-			cnae2009Suggest.add(entry.getValue());
-	
-		MultiWordSuggestOracle orclCNAE2009 = (MultiWordSuggestOracle) activity.activityCNAE2009.getSuggestOracle();
-		orclCNAE2009.addAll(cnae2009Suggest);
-		activity.activityCNAE2009.setAutoSelectEnabled(true);
 	}
 	
 	private void fillActivityInfo() {
@@ -277,7 +272,7 @@ public class ActivityDraft extends Composite{
 				
 				@Override
 				public void onAccept() {
-					AonMessagePanel.showLoading(messagePanel, "Deshaciendo los cambios realizados ...");
+					showLoadingMessage("Deshaciendo los cambios realizados ...");
 					initializeActivity();
 				}
 			});
@@ -322,7 +317,7 @@ public class ActivityDraft extends Composite{
 	// ---------------------------------------------- Toolbar.Methods
 
 	private void onAccept() {
-		AonMessagePanel.showLoading(messagePanel, "Guardando los cambios realizados en la actividad " + activityDraftObject.getActivityDescription() + " ...");
+		showLoadingMessage("Guardando los cambios realizados en la actividad " + activityDraftObject.getActivityDescription() + " ...");
 		if(checkIfSaveIsPossible()) updateActivity();
 	}
 
@@ -331,7 +326,6 @@ public class ActivityDraft extends Composite{
 			s -> {
 				activityDraftObject.initializeActivity(
 						r -> {
-							initSuggestBox();
 							fillActivityInfo();
 							activity.cccWidget.setDomain(activityDraftObject.getDomain());
 							activity.cccWidget.resetPreview();
@@ -339,9 +333,7 @@ public class ActivityDraft extends Composite{
 							setHasChange(false);
 							toolbar.setTitle(activityDraftObject.getActivityDescription());
 							
-							Map<String, String> successMap = new HashMap<>();
-							successMap.put("Actividad actualizada", "Los cambios realizados se han guardado correctamente");
-							AonMessagePanel.showSuccess(messagePanel, successMap);
+							showSuccessMessage(createMapMessage("Actividad actualizada", "Los cambios realizados se han guardado correctamente"));
 						}, t -> {}
 					);
 			},
@@ -356,7 +348,7 @@ public class ActivityDraft extends Composite{
 	// ---------------------------------------------- Toolbar.Methods TGSS
 	
 	public void onCheckUpdateCert() {
-		AonMessagePanel.showLoading(messagePanel, "Obteniendo Cert. de estar al corriente con TGSS ...");
+		showLoadingMessage("Obteniendo Cert. de estar al corriente con TGSS ...");
 		Pair<String, String> completeCCC = activityDraftObject.getPrincipalAccount();
 		
 		activityDraftObject.getUpdateCert(completeCCC.getKey(), completeCCC.getValue(),
@@ -364,11 +356,9 @@ public class ActivityDraft extends Composite{
 					showPdf(false);
 					setPDFLoadedEnsureDebugId("pdfLoaded");
 					pdfViewer.open(dataURI);
-					AonMessagePanel.hideMessage(messagePanel);
+					hideMessage();
 				}, f -> {
-					Map<String, String> warningMap = new HashMap<>();
-					warningMap.put("Error obtenci\u00f3n TGSS", f.getMessage());
-					AonMessagePanel.showWarning(messagePanel, warningMap);
+					showWarningMessage(createMapMessage("Error obtenci\u00f3n TGSS", f.getMessage()));
 				});
 	}
 	
@@ -413,5 +403,17 @@ public class ActivityDraft extends Composite{
 		acceptButton.setEnabled(this.hasChange);
 		undoAllButton.setEnabled(this.hasChange);
 	}
+	
+	@SuppressWarnings("serial")
+	private Map<String, String> createMapMessage(String title, String message) {
+		return new HashMap<String, String>() {{ put(title, message); }};
+	}
+	
+	protected abstract void showSuccessMessage(Map<String, String> messages);
+	protected abstract void showErrorMessage(Map<String, String> messages);
+	protected abstract void showWarningMessage(Map<String, String> messages);
+	protected abstract void showInfoMessage(Map<String, String> messages);
+	protected abstract void showLoadingMessage(String message);
+	protected abstract void hideMessage();
 	
 }

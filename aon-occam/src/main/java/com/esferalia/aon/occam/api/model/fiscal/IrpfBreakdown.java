@@ -42,6 +42,8 @@ public class IrpfBreakdown implements Serializable {
 	private Integer groupedBy;
 	private String zip;
 	private String city;
+	private Double participationPercent;
+	private double participationQuota;
 	
 	public Integer getActivity() {
 		return activity;
@@ -198,6 +200,14 @@ public class IrpfBreakdown implements Serializable {
 		return this;
 	}
 	
+	public boolean isInKind() {
+		return inKind;
+	}
+	public IrpfBreakdown setInKind(boolean inKind) {
+		this.inKind = inKind;
+		return this;
+	}
+
 	public double getBase() {
 		return base;
 	}
@@ -261,15 +271,23 @@ public class IrpfBreakdown implements Serializable {
 		this.city = city;
 		return this;
 	}
-	
-	public boolean isInKind() {
-		return inKind;
+
+	public Double getParticipationPercent() {
+		return participationPercent;
 	}
-	public IrpfBreakdown setInKind(boolean inKind) {
-		this.inKind = inKind;
+	public IrpfBreakdown setParticipationPercent(Double participationPercent) {
+		this.participationPercent = participationPercent;
 		return this;
 	}
 	
+	public double getParticipationQuota() {
+		return participationQuota;
+	}
+	public IrpfBreakdown setParticipationQuota(double participationQuota) {
+		this.participationQuota = participationQuota;
+		return this;
+	}
+	// -------------------------------	
 	public String getDocumentNumber() {
 		return FinanceUtil.getDocumentNumber(getInvoiceType(), getSeries(), getNumber());
 	}

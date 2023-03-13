@@ -1066,6 +1066,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Declarantes")
 	String deponents();
 
+	@DefaultMessage("Declarantes definidos")
+	String definedDeponents();
+
 	@DefaultMessage("Datos de la declaraci\u00F3n")
 	String declarationData();
 

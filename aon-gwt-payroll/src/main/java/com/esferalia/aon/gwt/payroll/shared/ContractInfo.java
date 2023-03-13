@@ -70,6 +70,7 @@ public class ContractInfo implements Serializable{
 	private String colectiveAgreement;
 	private String colectiveEmployees;
 	
+	private Integer cnoId;
 	private String cno;
 	
 	private Integer mdCtzId;
@@ -516,6 +517,14 @@ public class ContractInfo implements Serializable{
 			}	
 		else
 			this.colectiveEmployees = colectiveEmployees;
+	}
+	
+	public Integer getCnoId() {
+		return cnoId;
+	}
+
+	public void setCnoId(Integer cnoId) {
+		this.cnoId = cnoId;
 	}
 	
 	public String getCno() {

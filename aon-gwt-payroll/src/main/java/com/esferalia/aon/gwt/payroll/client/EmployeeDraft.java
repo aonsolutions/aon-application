@@ -23,6 +23,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
@@ -211,6 +212,11 @@ public abstract class EmployeeDraft extends Composite {
 		@Override
 		public void onContractRLCEChange(String rlce) {
 			employeeDraftObject.setContractRlce(rlce);
+		}
+
+		@Override
+		public void onEmployeeCnoSuggestionChange(String cno) {
+			employeeDraftObject.setContractCno(cno);
 		}
 		
 		@Override
@@ -623,7 +629,7 @@ public abstract class EmployeeDraft extends Composite {
 		
 		onSaved = this::onSavedNoop;
 		
-		scrolledPanel.setHeight((Window.getClientHeight() - 200) + "px");
+		scrolledPanel.setHeight((Window.getClientHeight() - 250) + "px");
 				
 	}
 		
@@ -916,6 +922,9 @@ public abstract class EmployeeDraft extends Composite {
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
 		
+		CNO cno = employee.getCNOByCode(contractData.getCno());
+		if(cno != null) employee.cnoSB.setValue(cno.getCode() + " - " + cno.getTitle());
+		if(!employee.isCnoSelected()) showWarning("CNO", "El CNO es obligatorio para todas las altas a partir del 01/01/2023");
 	}
 	
 	private static boolean isCompleteJourneyContract(String contractTypeCodeStr) {
@@ -1100,6 +1109,7 @@ public abstract class EmployeeDraft extends Composite {
 				employee.quoteGroup.getSelectedValue(),
 				employee.occupation.getSelectedValue(),
 				employee.partialityCoef.getValue(),
+				this.employeeDraftObject.getContractData().getCno(),
 				employeeDraftObject.getContractId(),
 				employeeDraftObject.getDomainId(),
 				employeeDraftObject.getWorkplaceId(),
@@ -1140,6 +1150,12 @@ public abstract class EmployeeDraft extends Composite {
 					@Override
 					protected void onStartContract() {
 						// Not use in this case
+					}
+
+					@Override
+					protected void onCnoContract(String cno, Date date) {
+						// TODO Auto-generated method stub
+						
 					}
 		
 		};
@@ -1273,9 +1289,13 @@ public abstract class EmployeeDraft extends Composite {
 			// Nothing to do here
 		}
 		
-		new EmployeeAFIDialog(employee.startDate.getValue(), employee.endDate.getValue(), employee.contractTypeLB.getSelectedValue(),
-				employee.quoteGroup.getSelectedValue(), employee.occupation.getSelectedValue(),
-				employee.partialityCoef.getValue(), this.employeeDraftObject.getContractData().getContractId(),
+		new EmployeeAFIDialog(employee.startDate.getValue(), employee.endDate.getValue(), 
+				employee.contractTypeLB.getSelectedValue(),
+				employee.quoteGroup.getSelectedValue(), 
+				employee.occupation.getSelectedValue(),
+				employee.partialityCoef.getValue(), 
+				this.employeeDraftObject.getContractData().getCno(),
+				this.employeeDraftObject.getContractData().getContractId(),
 				this.employeeDraftObject.getEmployeeData().getDomain(),
 				this.employeeDraftObject.getContractData().getWorkplaceId(), 
 				this.employeeDraftObject.getContractData().hasSettle(),
@@ -1293,6 +1313,15 @@ public abstract class EmployeeDraft extends Composite {
 				employeeDraftObject.cambioCoef(partialityCoef, date,
 						s -> showSuccess("AVISO: Parcialidad",
 								"El coeficiente de parcialidad ha sido notificado a la Seguridad Social."),
+						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+			}
+			
+			@Override
+			protected void onCnoContract(String cno, Date date) {
+				showLoading("Comunicando CNO (TGSS) ...");
+				employeeDraftObject.cambioCno(cno, date,
+						s -> showSuccess("AVISO: CNO",
+								"El cambio de CNO ha sido notificado a la Seguridad Social."),
 						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 			}
 
@@ -1568,6 +1597,12 @@ public abstract class EmployeeDraft extends Composite {
 		Map<String, String> errorMap = new HashMap<>();
 		errorMap.put(title, message);
 		AonMessagePanel.showError(getMessagePanel(), errorMap);
+	}
+	
+	protected void showWarning(String title, String message) {
+		Map<String, String> messages = new HashMap<>();
+		messages.put(title, message);
+		AonMessagePanel.showWarning(getMessagePanel(), messages);
 	}
 	
 	protected void showSuccess(String title, String message) {

@@ -348,8 +348,8 @@ class Mod303WriterAEAT2023 implements IMod303Writer{
 					   ?AonFiscalFileUtils.unsigned(mod.getReplacedNumber(), 13,0)
 							   :AonStringUtils.repeat(' ', 13))
 			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 35))			// Reservado para la AEAT
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 52))			// Reservado para la AEAT
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 513))			// Reservado para la AEAT
+			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 86))			// Reservado para la AEAT
+			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 479))			// Reservado para la AEAT
 			   ,(wr, mod) -> wr.append("</T30303000>")
 		})
 		

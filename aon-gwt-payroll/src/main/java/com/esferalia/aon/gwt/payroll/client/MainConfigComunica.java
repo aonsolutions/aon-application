@@ -1,5 +1,6 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -70,9 +71,19 @@ public class MainConfigComunica extends MainEntryPoint{
 		protected Set<Entry<Integer, String>> getActivities() {
 			return mainConfigComunicaObject.getActivities();
 		}
+		
+		@Override
+		public List<EnterpriseCCC> getEnterpriseCCCs() {
+			return mainConfigComunicaObject.getActiveCCCs();
+		}
 
 		@Override
 		protected void fireWarningMessage(Map<String, String> warningMap) {
+			// Nothing to do here
+		}
+		
+		@Override
+		protected void fireInfoMessage(Map<String, String> warningMap) {
 			// Nothing to do here
 		}
 

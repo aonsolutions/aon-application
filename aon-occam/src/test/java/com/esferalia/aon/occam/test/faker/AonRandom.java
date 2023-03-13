@@ -26,7 +26,6 @@ import com.esferalia.aon.occam.api.model.GeoZone;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.accounting.BalanceType;
 import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IWithholdingTypeVisitor;
-import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.product.Tariff;
@@ -43,6 +42,7 @@ import com.esferalia.aon.occam.api.model.type.Gender;
 import com.esferalia.aon.occam.api.model.type.InvoiceTransactionType;
 import com.esferalia.aon.occam.api.model.type.MediaType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
+import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.api.model.type.RectificationType;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
@@ -61,6 +61,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.RegistryMediaDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.SupplierDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.TariffDAO;
+import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.occam.test.faker.InvoiceFaker.InvoiceFakerParams;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
@@ -163,6 +164,12 @@ public class AonRandom {
     	return Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
     
+    public static Date getRangeDate( Date year, Period period ) {
+    	return getRangeDate(
+			FiscalUtils.getPeriodStart(AonDateUtils.getYear(year),period),
+			FiscalUtils.getPeriodEnd(AonDateUtils.getYear(year),period));
+    }
+
     public static Date getRangeDate( Date start, Date end ) {
     	return faker.date().between(start, end);
     }
@@ -516,6 +523,46 @@ public class AonRandom {
 		},null);
 		return inv;
 	}
+
+	public static Invoice generateRandomSalesRetentionInvoice(final AONContext ctx, final Occam occam, final AonConfiguration configuration, WithholdingType withholdingType) {
+		Invoice inv = withholdingType.visit(new IWithholdingTypeVisitor<Invoice>() {
+
+			@Override public Invoice visitProfessional(Invoice i) { return getRetentionInvoice( WithholdingType.PROFESSIONAL);   }
+			@Override public Invoice visitRenting(Invoice t) { return getRetentionInvoice( WithholdingType.RENTING);   }
+			@Override public Invoice visitMovableCapital(Invoice t) { return getRetentionInvoice( WithholdingType.MOVABLE_CAPITAL);   }
+			@Override public Invoice visitTransportOperator(Invoice t) { return getRetentionInvoice( WithholdingType.TRANSPORT_OPERATOR);   }
+			@Override public Invoice visitM190G02(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_G_02);   }
+			@Override public Invoice visitM190G03(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_G_03);   }
+			@Override public Invoice visitM190H02(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_H_02);   }
+			@Override public Invoice visitM190H03(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_H_03);   }
+			@Override public Invoice visitM190I01(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_I_01);   }
+			@Override public Invoice visitM190I02(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_I_02);   }
+			@Override public Invoice visitM190J(Invoice t)    { return getRetentionInvoice( WithholdingType.M190_J   );   }
+			@Override public Invoice visitM190K01(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_K_01);   }
+			@Override public Invoice visitM190K03(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_K_03);   }
+			@Override public Invoice visitM190K02(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_K_02);   }
+			@Override public Invoice visitM193C1(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C1);     }
+			@Override public Invoice visitM193C2(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C2);     }
+			@Override public Invoice visitM193C3(Invoice t)   { return getRetentionInvoice( WithholdingType.M193_C3);     }
+			@Override public Invoice visitM190F01(Invoice t)  { return getRetentionInvoice( WithholdingType.M190_F_01);   }
+			@Override public Invoice visitM190F021(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_1); }
+			@Override public Invoice visitM190F022(Invoice t) { return getRetentionInvoice( WithholdingType.M190_F_02_2); }
+			
+			@Override
+			public Invoice visitFarmer(Invoice t) {
+				InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration)
+					.setIssueDate(AonRandom.getYearDay(new Date()));
+				return InvoiceFaker.getSalesFarmerRetention(params);
+			}
+
+			private Invoice getRetentionInvoice( final WithholdingType wt) {
+				return InvoiceFaker.getSalesRetentionInvoice( ctx, occam, configuration, wt);
+			}
+			
+		},null);
+		return inv;
+	}
+	
 	public static <T> T get(List<T> list) {
 		if (AonCollectionUtils.isEmpty(list)) return null;
 		return list.get( getInt(0, (list.size() - 1) ) );
