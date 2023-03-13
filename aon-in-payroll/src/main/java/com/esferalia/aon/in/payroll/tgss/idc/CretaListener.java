@@ -3,6 +3,7 @@ package com.esferalia.aon.in.payroll.tgss.idc;
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
 
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ public class CretaListener implements IdcParserListener {
 	
 	private static final class CretaTramoBuilder extends TramoBuilder {
 		Map<String, DatoSolicitado> datosMap = new HashMap<>();
+		List<Predicate<DatoSolicitado>> filters = new ArrayList<>();
 
 		public void clear() {
 			datosMap.clear();
@@ -39,7 +41,8 @@ public class CretaListener implements IdcParserListener {
 		
 		@Override
 		public TramoBuilder addDato(DatoSolicitado dato) {
-			datosMap.putIfAbsent(getKey(dato), dato);
+		    	if (!filter(dato))
+		    	    datosMap.putIfAbsent(getKey(dato), dato);
 			return this;
 		}
 
@@ -57,6 +60,15 @@ public class CretaListener implements IdcParserListener {
 
 		private String getKey(DatoSolicitado dato) {
 			return dato.getTipoDato() + dato.getCodigo();
+		}
+		
+		protected void filter(Predicate<DatoSolicitado> filter) {
+		    clear(filter);
+		    filters.add(filter);
+		}
+
+		private boolean filter(DatoSolicitado datoSolicitado) {
+		    return filters.stream().anyMatch(predicate -> predicate.test(datoSolicitado));
 		}
 		
 	}
@@ -226,6 +238,16 @@ public class CretaListener implements IdcParserListener {
 		});
 	}
 	
+	@Override
+	public void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo,
+	    String quota, String colective, Date start, Date end) {
+	    if (isMonthlySEA(colective)) { 
+		tramoBuilder .ifPresent(b -> b.filter(d -> "I".equals(d.getTipoDato())));
+	    }
+		
+	    IdcParserListener.super.onEmployeeQuotePEC(ssNum, ccc, code, description, portTipo, quota, colective, start, end);
+	}
+	
 	public TrabajadoresTramos getTrabajadoresTramos() {
 		tramoBuilder
 		.ifPresent(b -> trabajadorBuilder.get().addTramo(b.create()));
@@ -241,6 +263,10 @@ public class CretaListener implements IdcParserListener {
 		return trabajadoresTramosBuilder.create();
 	}
 	
+	private static boolean isMonthlySEA(String colective) {
+		return AonStringUtils.equals("4216", colective); 
+	}
+
 	private static String getName( String fullName) {
 		String names []  = fullName.split("\\s", -1);
 		return names.length > 0 ? names[0] : "-";

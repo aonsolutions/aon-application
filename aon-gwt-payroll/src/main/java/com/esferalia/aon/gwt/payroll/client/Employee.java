@@ -366,6 +366,11 @@ public abstract class Employee extends ResizeComposite {
 			// Do something with cnoValue
 			onEmployeeCnoSuggestionChange(cnoValue);
 		});
+		
+		cnoSB.addValueChangeHandler(e -> {
+			if(AonStringUtils.isBlank(e.getValue()))
+				onEmployeeCnoSuggestionChange(null);
+		});
 	}
 	
 	public CNO getCNOByCode(String cnoCode) {
@@ -1263,7 +1268,6 @@ public abstract class Employee extends ResizeComposite {
 		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
 		
 		this.contractDataTable.getRows().getItem(17).getStyle().clearDisplay();
-
 		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(19).getStyle().setDisplay(Display.NONE);
 	}
@@ -1283,7 +1287,7 @@ public abstract class Employee extends ResizeComposite {
 		
 		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
 		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(18).getStyle().clearDisplay();
+		this.contractDataTable.getRows().getItem(19).getStyle().clearDisplay();
 	}
 	
 	// ------------------------------------------------- Show/hide methods partial/full time

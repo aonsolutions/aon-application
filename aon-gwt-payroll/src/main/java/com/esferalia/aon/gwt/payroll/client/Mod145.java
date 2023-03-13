@@ -76,6 +76,9 @@ public abstract class Mod145 extends Composite {
 	DateBoxEx endDateBx;
 	
 	@UiField
+	Button ceutaMelillaB;
+	
+	@UiField
 	Button fiscalExclusionB;
 	
 	@UiField
@@ -169,7 +172,7 @@ public abstract class Mod145 extends Composite {
 		getElement().getStyle().setHeight(100, Unit.PCT);
 		dockLayoutPanel.addNorth(toolbar, AonToolbar.HEIGTH);
 		
-		scrollPanel.setHeight((Window.getClientHeight() - 230) + "px");
+		scrollPanel.setHeight((Window.getClientHeight() - 260) + "px");
 		
 		familySituationLB.addStyleName(style.fsMaxWidth());
 		
@@ -274,6 +277,7 @@ public abstract class Mod145 extends Composite {
 		
 		this.startDateBx.setValue(this.mod145.getStartDate());
 		this.endDateBx.setValue(this.mod145.getEndDate());
+		getEnableDisableButton(this.ceutaMelillaB, this.mod145.isCeutaMelillaPalma());
 		getEnableDisableButton(this.fiscalExclusionB, this.mod145.isFiscalExclusion());
 		getEnableDisableButton(this.irpfRequestB, null != this.mod145.getIrpfPercent());
 		
@@ -443,6 +447,7 @@ public abstract class Mod145 extends Composite {
 		startDateBx.setValue(null);
 		endDateBx.setValue(null);
 		
+		getEnableDisableButton(ceutaMelillaB, false);
 		getEnableDisableButton(fiscalExclusionB, false);
 		getEnableDisableButton(irpfRequestB, false);
 		
@@ -582,6 +587,14 @@ public abstract class Mod145 extends Composite {
 	@UiHandler("endDateBx")
 	void onEndDateBxChange(ValueChangeEvent<Date> event) {
 		this.mod145.setEndDate(endDateBx.getValue());
+	}
+	
+	@UiHandler("ceutaMelillaB")
+	void onCeutaMelillaBChange(ClickEvent event) {
+		Boolean oldValue = isActiveToggleButton(ceutaMelillaB);
+		Boolean value = !oldValue;
+		getEnableDisableButton(ceutaMelillaB, value);
+		this.mod145.setCeutaMelillaPalma(value);
 	}
 	
 	@UiHandler("fiscalExclusionB")

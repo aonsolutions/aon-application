@@ -230,6 +230,7 @@ public class IdcplcccParser {
 				String description = m.group("description");
 				String tipo = m.group("tipo");
 				String quota = m.group("quota");
+				String colective = m.group("colective");
 				
 				onEmployeeQuotePEC(listener, 
 						ccc, 
@@ -239,7 +240,8 @@ public class IdcplcccParser {
 						code, 
 						description,
 						tipo, 
-						quota);
+						quota,
+						colective);
 				try {
 					m = attempt(reader, EMPLOYEE_QUOTE_PEC).orElse(null);
 				} catch (IOException e) {
@@ -293,6 +295,24 @@ public class IdcplcccParser {
 				startDate,
 				endDate);
 	}
+
+	private static void onEmployeeQuotePEC(IdcParserListener listener, String enterpriseCCC, String employeeeNss,
+		Date startDate, Date endDate, String code, String description, String tipo, String quota, String colective) {
+	code = remove(code, " ");
+	tipo = remove(tipo, " ");
+	quota = remove(quota, " ");
+	colective = remove(colective, " ");
+	listener.onEmployeeQuotePEC(
+			employeeeNss,
+			enterpriseCCC,
+			code, 
+			description,
+			tipo, 
+			quota,
+			colective,
+			startDate,
+			endDate);
+}
 
 	private static void onEmployeeQuoteGroup(IdcParserListener listener, String group) {
 		group = trim(group);

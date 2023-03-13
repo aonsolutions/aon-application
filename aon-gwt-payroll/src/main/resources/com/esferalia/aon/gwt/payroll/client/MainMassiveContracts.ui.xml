@@ -22,6 +22,17 @@
 			font-weight: bold;
 			padding-top: .5rem;
 		}
+		
+		.filterPanel{
+			display: flex;
+			justify-content: space-between;
+			margin: auto 15px;
+		}
+		
+		.flex{
+			display: flex;
+			align-items: center;
+		}
 	
 		.flexColumn {
 			display: flex;
@@ -70,6 +81,7 @@
 		<g:center>
 			<g:HTMLPanel styleName="{style.flexColumn}">
 				<g:HTMLPanel ui:field="messagePanel" />
+				<g:HTMLPanel ui:field="filterEmployeePanel" />
 				
 				<g:HTMLPanel styleName="{style.flexColumn} {style.container}">
 					<g:Grid ui:field="contractsDataTableHeader" styleName="{style.widthAll}" />
