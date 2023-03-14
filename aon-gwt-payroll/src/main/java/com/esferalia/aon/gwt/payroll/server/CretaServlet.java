@@ -158,7 +158,7 @@ public class CretaServlet extends HttpServlet
 		public boolean isPartTimeEmployee(String naf, String ccc, Date start, Date end) {
 			return 
 			getEmployee(naf, start)
-			.map( e -> isPartialTime(e, start) || is2XX(e, start) || is3XX(e, start) || is5XX(e, start))
+			.map( e -> !isFullTime(e, start) &&( isPartialTime(e, start) || is2XX(e, start) || is3XX(e, start) || is5XX(e, start)))
 			.orElse(TrabajadoresTramosCallback.super.isPartTimeEmployee(naf, ccc, start, end))
 			;
 		}
@@ -198,6 +198,10 @@ public class CretaServlet extends HttpServlet
 			return employee.getContractType(Employee.toLocalDate(date)).map( tc2 -> AonStringUtils.startsWith(tc2, "5")).orElse(false);
 		}
 
+
+		private boolean isFullTime(Employee employee, Date date) {
+			return employee.getFactor(Employee.toLocalDate(date)).map( factor ->  factor == 1.00  ).orElse(false);
+		}
 
 		private boolean isPartialTime(Employee employee, Date date) {
 			return employee.getFactor(Employee.toLocalDate(date)).map( factor ->  factor < 1.00  ).orElse(false);
