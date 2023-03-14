@@ -96,8 +96,11 @@
 	}*/
 	
 	.aon-top-menu-item-select {
-    	background-color: transparent !important;
+    	/*background-color: transparent !important;*/
+    	border-top-left-radius: 6px;
+    	border-top-right-radius: 6px;
 	}
+	
 	.aon-header-search {
 		padding: 14px 20px;
 		border-radius: 50%;
@@ -2162,7 +2165,7 @@
 			<aon:panelGroup>
 
 				<aon:div style="margin-bottom:2px;">
-					<aon:commandLink id="index" action="index" title="#{bundle.aon_home}" >
+					<aon:commandLink id="index" action="start" title="#{bundle.aon_home}" >
 					<aon:graphicImage style="height: 24px; vertical-align: middle;"
 						value="#{customize.headerLogo}" />
 					</aon:commandLink>
@@ -2177,7 +2180,7 @@
 			<aon:panelGroup>
 		<aon:commandLink 
 			id="new_aon"
-			action="index" 
+			action="start" 
 			immediate="true"
 			style="color: #002469;"
 			styleClass="aon-top-menu-item"
@@ -2397,7 +2400,7 @@
 						<aon:outputText value="#{domainSwitcher.domainName}"
 							style="vertical-align: middle; color: #5f6368;"
 							styleClass="aon-nowrap aon-header-domain-title aon-margin-right"/>
-						<aon:commandLink id="home" action="index"
+						<aon:commandLink id="home" action="start"
 							rendered="#{!aonConfiguration.properties.hideMenuHome}"
 							title="#{bundle.aon_home}"
 							styleClass="aon-header-home"
