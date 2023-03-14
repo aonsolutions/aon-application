@@ -57,7 +57,11 @@ public abstract class Mod130Declaration {
 		String info(AONContext ctx,Mod130 mod);
 	}
 	private enum Declarations {
-		 AEAT_2015 {
+		AEAT_2023 {
+			@Override boolean accept(Mod130 mod) { return Mod130AEAT2023Declaration.accept(mod);}
+			@Override Mod130Declaration get() {return new Mod130AEAT2023Declaration();}
+		}
+		,AEAT_2015 {
 			@Override boolean accept(Mod130 mod) { return Mod130AEAT2015Declaration.accept(mod);}
 			@Override Mod130Declaration get() {return new Mod130AEAT2015Declaration();}
 		}

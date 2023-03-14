@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 
 public class BOEPyGAbbreviateScript extends BalanceScript {
 	
+	private static final long serialVersionUID = -4091731086540346603L;
 	private IAccMiningKeyAccept accepter;
 	
 	private static enum AccBOEPyGAbbreviateKey implements IBalanceKey{

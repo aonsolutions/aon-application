@@ -39,13 +39,13 @@ import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 
-public class Mod130AEAT2015Declaration extends Mod130Declaration {
+public class Mod130AEAT2023Declaration extends Mod130Declaration {
 	
 	private static final int LIMITE_GASTOS_DIF_JUST = 2000;
 	private static final double C16_MAX_VALUE = 660.14;
 
 	public static boolean accept(Mod130 mod) {
-		return mod.isAEAT() && mod.getYear() >= 2015 && mod.getYear() <= 2022; 
+		return mod.isAEAT() && mod.getYear() >= 2023; 
 	}
 	@Override
 	IMod130KeyDAO[] getKeys() {
@@ -264,7 +264,7 @@ public class Mod130AEAT2015Declaration extends Mod130Declaration {
 			double c01 = getRawC01(ctx, mod);
 			double c02_ = AonMathUtils.round( c01 - c02);
 			if (c02_ > 0 ) {
-				double dif = (c02_*5/100);
+				double dif = (c02_* 7 /100);
 				if (dif > LIMITE_GASTOS_DIF_JUST ) {
 					dif = LIMITE_GASTOS_DIF_JUST;
 				}
@@ -452,13 +452,13 @@ public class Mod130AEAT2015Declaration extends Mod130Declaration {
 					} else {
 						buf.append("<tr>")
 							.append(MessageFormat.format(fullStyledTag, "td", textCenter,
-								"- Al no ser negativo el rendimiento neto previo, se procede a la aplicaci\u00F3n del 5% de gastos de dif\u00EDcil justificaci\u00F3n"))
+								"- Al no ser negativo el rendimiento neto previo, se procede a la aplicaci\u00F3n del 7% de gastos de dif\u00EDcil justificaci\u00F3n"))
 						.append("</tr>");
 						
-						double c02a = AonMathUtils.round(c02p * 5 / 100);
+						double c02a = AonMathUtils.round(c02p * 7 / 100);
 						buf.append("<tr>")
 							.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+noWrap,
-									"<li>5% de "+ DEC2.format( c02p ) + "</li>"))
+									"<li>7% de "+ DEC2.format( c02p ) + "</li>"))
 							.append(MessageFormat.format(fullStyledTag, "td", paddingLeft+textRight+fontMedium+bold, DEC2.format(c02a)))
 						.append("</tr>");
 						if (AonMathUtils.isGreatherThan(c02a, LIMITE_GASTOS_DIF_JUST) ) {

@@ -191,6 +191,10 @@ public class DomainUserRoles implements Serializable {
 		return  hasRole(AonRole.DEV);
 	}
 	
+	public boolean isConsole() {
+		return  hasRole(AonRole.CONSOLE);
+	}
+	
 	// ACCOUNTING - CONTABILIDAD
 	
 	public boolean hasAccounting() {
@@ -490,16 +494,32 @@ public class DomainUserRoles implements Serializable {
 		return hasApp(AonApp.OCR);
 	}
 	
+	public boolean hasParentOcr() {
+		return hasParentApp(AonApp.OCR);
+	}
+	
 	public boolean isOcr() {
-		return hasOcr() && (isAdmin() || hasRole(AonRole.OCR));
+		return (hasOcr() || ((isParentUser() || isEnterpriseChild()) && hasParentOcr()))
+			&& (isAdmin() || hasRole(AonRole.OCR));
 	}
 	
 	public boolean isBank() {
 		return hasApp(AonApp.BANK) && (isAdmin() || hasRole(AonRole.BANK));
 	}
 	
+	// CONVENIOS
+	
+	private boolean hasConvenios() {
+		return hasApp(AonApp.CONVENIOS);
+	}
+	
+	private boolean hasParentConvenios() {
+		return hasParentApp(AonApp.CONVENIOS);
+	}
+	
 	public boolean isConvenios() {
-		return hasApp(AonApp.CONVENIOS); // TODO añadir -> && (isAdmin() || hasRole(AonRole.CONVENIOS));
+		return hasConvenios() || ((isParentUser() || isEnterpriseChild()) && hasParentConvenios());
+			// TODO añadir -> && (isAdmin() || hasRole(AonRole.CONVENIOS));
 	}
 	
 	public boolean isAon() {
