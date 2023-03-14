@@ -337,8 +337,8 @@ public class Up2Date {
 	    //AlterCostCode.ALTERCOSTCODE,
 	    //MEITrainingBaseCgcMinFix.MEITRAININGBASECGCMINFIX,
 	    //ActiveRetirementInsert.ACTIVERETIREMENTINSERT,
+   		//RefreshMod130Result.REFRESH_MOD130_RESULT,
 	    FixPec01Quota01.FIXPEC01QUOTA01,
-	    RefreshMod130Result.REFRESH_MOD130_RESULT,
 	    AlterFsMod349FsModel.ALTER_FS_MOD349_FS_MODEL,
 
       // Important, not remove
