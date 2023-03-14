@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<groupId>com.code.aon</groupId>
+		<artifactId>aon.parent</artifactId>
+		<version>9.23-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>aon.jaas.jakarta</artifactId>
+	<description>AON JAAS</description>
+	<name>AON JAAS</name>
+	<dependencies>
+		<dependency>
+		    <groupId>net.aonsolutions.core</groupId>
+		    <artifactId>pool</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+    		<groupId>org.json</groupId>
+    		<artifactId>json</artifactId>
+    		<version>20180813</version>
+		</dependency>
+		<dependency>
+	    	<groupId>com.auth0</groupId>
+		    <artifactId>java-jwt</artifactId>
+		    <version>3.9.0</version>
+		    <scope>compile</scope>
+		</dependency>
+		<dependency>
+		    <groupId>commons-dbutils</groupId>
+		    <artifactId>commons-dbutils</artifactId>
+		    <version>1.7</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+			<scope>compile</scope>
+		</dependency>
+	    <dependency>
+	      <groupId>org.apache.tomcat</groupId>
+	      <artifactId>tomcat-catalina</artifactId>
+	      <version>10.1.7</version>
+	      <scope>provided</scope>
+	    </dependency>
+		<dependency>
+			<groupId>org.jboss.slf4j</groupId>
+			<artifactId>slf4j-jboss-logging</artifactId>
+			<version>1.0.2.GA</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.logging</groupId>
+					<artifactId>jboss-logging-spi</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>		
+	</dependencies>
+</project>
+ 

@@ -9,6 +9,6 @@
 */target/*
 !*/target/*.war
 !pool/target/*SNAPSHOT.jar
-!aon-jaas/target/*SNAPSHOT.jar
+!aon-jaas-jakarta/target/*SNAPSHOT.jar
 !aon-common-resources/target/*SNAPSHOT-templates.jar
 

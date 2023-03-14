@@ -1,4 +1,4 @@
-FROM tomcat:9-jdk17
+FROM tomcat:10-jdk17
 
 ARG AON_VERSION=9.23-SNAPSHOT
 
@@ -6,7 +6,7 @@ ENV AWS_HOME /root/.aws
 
 ENV CATALINA_HOME /usr/local/tomcat
 
-ENV AON_AIO_HOME $CATALINA_HOME/webapps/ROOT
+ENV AON_AIO_HOME $CATALINA_HOME/webapps-javaee/ROOT
 
 ARG NET_MAVEN_REPOSITORY_URL=http://repo.maven.aonsolutions.net/maven2/net/aonsolutions/
 
@@ -14,7 +14,7 @@ ENV TOMCAT_LIBDIR $CATALINA_HOME/lib
 
 WORKDIR $TOMCAT_LIBDIR
 
-COPY aon-jaas/target/aon.jaas-${AON_VERSION}.jar aon-jaas.jar
+COPY aon-jaas-jakarta/target/aon.jaas.jakarta-${AON_VERSION}.jar aon-jaas.jar
 COPY pool/target/pool-${AON_VERSION}.jar pool.jar
 
 
@@ -70,7 +70,7 @@ ENV AON_AIO_CONF /etc/aon-aio
 ENV AON_AIO_COMMON /home/COMMON-RESOURCES
 
 
-WORKDIR $CATALINA_HOME/webapps
+WORKDIR $CATALINA_HOME/webapps-javaee
 
 RUN set -x \
 	&& rm -rf docs \
