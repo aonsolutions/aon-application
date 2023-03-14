@@ -52,11 +52,11 @@ class PECListener  implements IdcParserListener {
 	@SuppressWarnings("serial")
 	static final Map<String, String> BONUS_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
-			put("01", "CUOTA_EMPRESARIAL"); 	// 
-			put("03", "CGC_E"); 				// Cuota empresarial por Contingencias Comunes
-			put("51", "CUOTA_EMPRESARIAL"); 	// Cuota Empresarial - Horas extras			
-			put("57", "CUOTA_EMPRESARIAL"); 	// Cuota Total
-			put("68", "CGC_E + IT_E + IMS_E"); 	// Contingencias Comunes y Profesionales - Cuota Total
+			put("01", "CGC_E + IT_E + IMS_E + FP_E + DESMPL_E + FOGASA_E"); 	// Cuota empresarial por AT y EP, Cuotas de recaudación	conjunta
+			put("03", "CGC_E"); 							// Cuota empresarial por Contingencias Comunes
+			put("51", "CUOTA_EMPRESARIAL"); 					// Cuota Empresarial - Horas extras			
+			put("57", "CUOTA_EMPRESARIAL"); 					// Cuota Total
+			put("68", "CGC_E + IT_E + IMS_E"); 					// Contingencias Comunes y Profesionales - Cuota Total
 			//put("81", "");
 		}
 	};

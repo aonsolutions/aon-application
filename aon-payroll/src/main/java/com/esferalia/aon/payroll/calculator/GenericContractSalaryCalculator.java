@@ -1177,11 +1177,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					total += cost;
 					
 				} catch (RemoveException | RemoveVariableError e) {
+				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 					// TODO: Something ??? It's really necessary...
 				} catch (IllegalArgumentException e) {
+				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 					// costStart > costEnd, ignore .
 				} catch (UndefinedVariablesException e) {
-
+				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 				} catch (ExpressionException e) {
 					throw new SalaryException(e.getMessage(), e);
 				}
