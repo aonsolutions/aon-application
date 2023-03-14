@@ -236,6 +236,7 @@
 		<module>paradoxdriver</module>
 		<module>aon-dsi-nominas</module>				
 		
+		<module>aon-jaas-jakarta</module>
 		<!-- TESTS  
 		<module>aon-hibernate-test</module>
 		-->
