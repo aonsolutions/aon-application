@@ -352,6 +352,8 @@
 			function showMenuPopup(menuPopup, el){
 				if ( isDisabled(el) ) 
 					return;
+				if(el.classList.contains("aon-top-menu-item-select"))
+					return;
 				select(el);
 				delayMenu( function() { 
 						menuPopup = getMenuPopup(menuPopup);
