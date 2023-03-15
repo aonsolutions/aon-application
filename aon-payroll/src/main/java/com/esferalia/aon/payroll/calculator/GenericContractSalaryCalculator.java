@@ -1084,12 +1084,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			for (IContractEmbargo contractEmbargo : contractEmbargos) {
 
-				Date embargoStart = Period.max(contractEmbargo.getStartDate(), start);
-				Date embargoEnd = Period.min(contractEmbargo.getEndDate(), end);
-
-				double left = contractEmbargo.getAmount();
-				expressionContext.setVariable(EMBARGO_PAID, left, embargoStart, embargoEnd);
 				try {
+					Date embargoStart = Period.max(contractEmbargo.getStartDate(), start);
+					Date embargoEnd = Period.min(contractEmbargo.getEndDate(), end);
+					
+					double left = contractEmbargo.getAmount();
+					expressionContext.setVariable(EMBARGO_PAID, left, embargoStart, embargoEnd);
+
 					double embargo = resolveEmbargo(expressionContext, contractEmbargo, embargoStart, embargoEnd);
 					total += embargo;
 					
@@ -1107,6 +1108,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					onUndefinedData(contractEmbargo, e.getMessage(), e.getVariableNames());
 				} catch (CompileException e) {
 					onCompileError(contractEmbargo, getSyntaxExpressionErrorMessage(contractEmbargo));
+				} catch ( Exception e) {
+				    	onCheckError(e.getMessage());
 				}
 
 			}
@@ -1177,11 +1180,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					total += cost;
 					
 				} catch (RemoveException | RemoveVariableError e) {
+				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 					// TODO: Something ??? It's really necessary...
 				} catch (IllegalArgumentException e) {
+				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 					// costStart > costEnd, ignore .
 				} catch (UndefinedVariablesException e) {
-
+				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 				} catch (ExpressionException e) {
 					throw new SalaryException(e.getMessage(), e);
 				}

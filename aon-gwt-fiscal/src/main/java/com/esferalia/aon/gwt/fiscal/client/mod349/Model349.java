@@ -112,6 +112,14 @@ public class Model349 extends MainEntryPoint {
 				breakdownPanel.remove( breakdownPanel.getWidget() ); 
 			}
 		}
+		
+		public void cleanAndCloseInfoPanel() {
+			Widget w = breakdownPanel.getWidget();
+			if (w != null) {
+				breakdownPanel.remove( breakdownPanel.getWidget() ); 
+			}
+			closeFootPanel();
+		}
 
 		public void onSelect(Mod349 mod349, Integer selectedIndex) {
 			select(mod349, selectedIndex);

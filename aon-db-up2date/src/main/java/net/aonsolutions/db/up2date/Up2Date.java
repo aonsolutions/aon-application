@@ -20,8 +20,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.finance.SagardoBusUpdate;
+import net.aonsolutions.db.up2date.fiscal.AlterFsMod349FsModel;
 import net.aonsolutions.db.up2date.fiscal.RefreshMod130Result;
-import net.aonsolutions.db.up2date.tgss.ActiveRetirementInsert;
+import net.aonsolutions.db.up2date.tgss.FixPec01Quota01;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 
 public class Up2Date {
@@ -333,10 +334,14 @@ public class Up2Date {
 	    // UpdateBankAccountUpperCase.UPDATE_BANK_ACCOUNT_UPPERCASE,
 	    //AlterCostCode.ALTERCOSTCODE,
 	    //MEITrainingBaseCgcMinFix.MEITRAININGBASECGCMINFIX,
-	    ActiveRetirementInsert.ACTIVERETIREMENTINSERT,
+	    //ActiveRetirementInsert.ACTIVERETIREMENTINSERT,
+   		//RefreshMod130Result.REFRESH_MOD130_RESULT,
+	    FixPec01Quota01.FIXPEC01QUOTA01,
+	    AlterFsMod349FsModel.ALTER_FS_MOD349_FS_MODEL,
 
 	    RefreshMod130Result.REFRESH_MOD130_RESULT,
 
+	   
 	    // Important, not remove
 	    SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
 	    SagardoBusUpdate.SAGARDOBUS_UPDATE

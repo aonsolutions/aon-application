@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.dom.client.Style.Unit;
@@ -128,49 +129,50 @@ public class Model130NewDeclarationPanel extends DockLayoutPanel {
 		regimeList.addChangeHandler(event -> {
 			model.setRegime(regimeList.getSelectedIndex() == 1?IRPFRegime.SIMPLIFIED:IRPFRegime.NORMAL);
 		});
-		
-		int d = 0;
-		for ( FiscalModel fm : model.getDeponents().values() ) {
-			deponentBox.addItem(fm.getFullName(), fm.getDocument());
-			if (AonStringUtils.equals(fm.getDocument(), model.getDocument())) {
-				deponentBox.setSelectedIndex( d );
-			}
-			d++;
-		}
-		deponentBox.addChangeHandler( event -> {
-			Mod130 fm = model.getDeponents().get(deponentBox.getSelectedValue());
-			if (fm != null) {
-				model.setDocument(fm.getDocument());
-				model.setSurname(fm.getSurname());
-				model.setName(fm.getName());
-				model.setStreetInitial(fm.getStreetInitial());
-				model.setStreetName(fm.getStreetName());
-				model.setStreetNumber(fm.getStreetNumber());
-				model.setStreetStair(fm.getStreetStair());
-				model.setStreetFloor(fm.getStreetFloor());
-				model.setStreetDoor(fm.getStreetDoor());
-				model.setPhone(fm.getPhone());
-				model.setTown(fm.getTown());
-				model.setProvince(fm.getProvince());
-				model.setZip(fm.getZip());
-				model.setAdmonAeat(fm.getAdmonAeat());
-				model.setContactPerson(fm.getContactPerson());
-				model.setContactPhone(fm.getContactPhone());
-				model.setContactCellular(fm.getContactCellular());
-				model.setContactEmail(fm.getContactEmail());
-				model.putAmount(Mod130Key.P1, fm.getAmount(Mod130Key.P1) );
-				model.setRegime(fm.getRegime() );
-				model.putAmount(Mod130Key.P2, fm.getAmount(Mod130Key.P2) );
-				
-				documentBox.setValue(model.getDocument());				
-				nameBox.setValue(model.getName());
-				surnameBox.setValue(model.getSurname());
-				if (model.isAEAT()) {
-					percentBox.setValue( model.getAmount(Mod130Key.P1));
-					regularHome.setValue( model.getAmount(Mod130Key.P2)==1 );
+		if (AonCollectionUtils.isNotEmpty(model.getDeponents())) {
+			int d = 0;
+			for ( FiscalModel fm : model.getDeponents().values() ) {
+				deponentBox.addItem(fm.getFullName(), fm.getDocument());
+				if (AonStringUtils.equals(fm.getDocument(), model.getDocument())) {
+					deponentBox.setSelectedIndex( d );
 				}
+				d++;
 			}
-		});	
+			deponentBox.addChangeHandler( event -> {
+				Mod130 fm = model.getDeponents().get(deponentBox.getSelectedValue());
+				if (fm != null) {
+					model.setDocument(fm.getDocument());
+					model.setSurname(fm.getSurname());
+					model.setName(fm.getName());
+					model.setStreetInitial(fm.getStreetInitial());
+					model.setStreetName(fm.getStreetName());
+					model.setStreetNumber(fm.getStreetNumber());
+					model.setStreetStair(fm.getStreetStair());
+					model.setStreetFloor(fm.getStreetFloor());
+					model.setStreetDoor(fm.getStreetDoor());
+					model.setPhone(fm.getPhone());
+					model.setTown(fm.getTown());
+					model.setProvince(fm.getProvince());
+					model.setZip(fm.getZip());
+					model.setAdmonAeat(fm.getAdmonAeat());
+					model.setContactPerson(fm.getContactPerson());
+					model.setContactPhone(fm.getContactPhone());
+					model.setContactCellular(fm.getContactCellular());
+					model.setContactEmail(fm.getContactEmail());
+					model.putAmount(Mod130Key.P1, fm.getAmount(Mod130Key.P1) );
+					model.setRegime(fm.getRegime() );
+					model.putAmount(Mod130Key.P2, fm.getAmount(Mod130Key.P2) );
+					
+					documentBox.setValue(model.getDocument());				
+					nameBox.setValue(model.getName());
+					surnameBox.setValue(model.getSurname());
+					if (model.isAEAT()) {
+						percentBox.setValue( model.getAmount(Mod130Key.P1));
+						regularHome.setValue( model.getAmount(Mod130Key.P2)==1 );
+					}
+				}
+			});	
+		}
 		documentBox.addChangeHandler( event -> {
 			model.setDocument( documentBox.getValue() );
 			initialize(model, callback );
