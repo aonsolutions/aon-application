@@ -11,8 +11,8 @@ public class SegSocialOutOfService extends Exception {
 		super(string);
 	}
 
-	public SegSocialOutOfService(String string, Throwable motivation) {
-		super(string, motivation);
+	public SegSocialOutOfService(String string, Throwable motivation ,boolean enableSuppression, boolean writableStackTrace) {
+		super(string, motivation, enableSuppression, writableStackTrace);
 	}
 
 	public SegSocialOutOfService(FailingHttpStatusCodeException ex) {
@@ -36,11 +36,14 @@ public class SegSocialOutOfService extends Exception {
 	};
 
 	public static void ThrowSegSocialOutOfService(FailingHttpStatusCodeException e) throws SegSocialOutOfService {
+		int statusCode = 500;
 		HTTP_MAP.getOrDefault(e.getStatusCode(), ex -> {
-			throw new SegSocialOutOfService(ex);
+			if (statusCode == e.getStatusCode() ) {
+				System.out.println("La pagina esta caida");
+				throw new SegSocialOutOfService(ex);
+			}
+			
 		}).ThrowSegSocialOutOfService(e);
-		HTTP_MAP.getOrDefault(e.getMessage(), ex2 -> {
-			throw new SegSocialOutOfService(ex2);
-		}).ThrowSegSocialOutOfService(e);
+		
 	}
 }
