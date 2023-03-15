@@ -21,11 +21,11 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.fiscal.AlterFsMod349FsModel;
 import net.aonsolutions.db.up2date.fiscal.RefreshMod130Result;
-import net.aonsolutions.db.up2date.payroll.AlterCostCode;
+import net.aonsolutions.db.up2date.payroll.AgreementPurge;
+import net.aonsolutions.db.up2date.payroll.EmbargoDescriptionUpdate;
 import net.aonsolutions.db.up2date.payroll.MaxEmbargable4Daily;
-import net.aonsolutions.db.up2date.tgss.ActiveRetirementInsert;
+import net.aonsolutions.db.up2date.payroll.MaxEmbargable4ProrratedFix;
 import net.aonsolutions.db.up2date.tgss.FixPec01Quota01;
-import net.aonsolutions.db.up2date.tgss.MEITrainingBaseCgcMinFix;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 
 public class Up2Date {
@@ -334,14 +334,16 @@ public class Up2Date {
 	    // EmbargoDescriptionUpdate.EMBARGODESCRIPTIONUPDATE,
 	    // AgreementEmptyTrash.AGREEMENTEMPTYTRASH,
 	    // UpdateBankAccountUpperCase.UPDATE_BANK_ACCOUNT_UPPERCASE,
-	    //AlterCostCode.ALTERCOSTCODE,
-	    //MEITrainingBaseCgcMinFix.MEITRAININGBASECGCMINFIX,
-	    //ActiveRetirementInsert.ACTIVERETIREMENTINSERT,
-	    FixPec01Quota01.FIXPEC01QUOTA01,
-	    RefreshMod130Result.REFRESH_MOD130_RESULT,
-	    AlterFsMod349FsModel.ALTER_FS_MOD349_FS_MODEL,
+	    // AlterCostCode.ALTERCOSTCODE,
+	    // MEITrainingBaseCgcMinFix.MEITRAININGBASECGCMINFIX,
+	    // ActiveRetirementInsert.ACTIVERETIREMENTINSERT,
+	    // FixPec01Quota01.FIXPEC01QUOTA01,
+	    // RefreshMod130Result.REFRESH_MOD130_RESULT,
+	    // AlterFsMod349FsModel.ALTER_FS_MOD349_FS_MODEL,
+	    //AgreementPurge.AGREEMENTPURGE,
+	    MaxEmbargable4ProrratedFix.MAXEMBARGABLE4PRORRATEDFIX,
 
-      // Important, not remove
+	    // Important, not remove
 	    SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
 
 	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE
