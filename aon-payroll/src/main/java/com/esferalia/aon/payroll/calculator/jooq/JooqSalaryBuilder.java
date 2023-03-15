@@ -59,6 +59,7 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
 import com.esferalia.aon.salary.expression.Variables;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 
@@ -578,10 +579,10 @@ public class JooqSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 		
 					InsertSetStep<SalaryDataRecord> insertData = insertMoreData == null ? dslContext.insertInto(SALARY_DATA)
 							: insertMoreData.newRecord();
-		
+					
 					insertMoreData = insertData.set(SALARY_DATA.DOMAIN, this.domainId)
 							.set(SALARY_DATA.SALARY, this.salaryId)
-							.set(SALARY_DATA.NAME, name)
+							.set(SALARY_DATA.NAME, AonStringUtils.substring(name, 0, 32))
 							.set(SALARY_DATA.EXPRESSION, expression)
 							.set(SALARY_DATA.START_DATE, toSqlDate(variable.getPeriod().getStart()))
 							.set(SALARY_DATA.END_DATE, toSqlDate(variable.getPeriod().getEnd()));

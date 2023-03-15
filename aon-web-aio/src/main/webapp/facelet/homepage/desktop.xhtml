@@ -13,7 +13,7 @@
 
 	<aon:form id="mainForm">
 
-		<aon:div styleClass="aon-scroll-area" style="padding: 1.5em 1.5em 0 0 !important;">
+		<aon:div styleClass="aon-scroll-area" style="padding: .7em 1.5em 0 0 !important;">
 
 			<aon:panelGrid columns="3" styleClass="aon-panelGrid-formatting"
 				columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
@@ -137,5 +137,13 @@
 		</aon:div>
 	</aon:form>
 	
+	<script type="text/javascript">
+		const allElements = document.querySelectorAll('*');
+	
+		allElements.forEach((element) => {
+		  element.classList.remove('aon-top-menu-item-select');
+		});
+	</script>
+	 
 </ui:composition>
 

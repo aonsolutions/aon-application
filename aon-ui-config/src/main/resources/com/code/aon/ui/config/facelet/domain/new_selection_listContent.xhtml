@@ -7,37 +7,65 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich">
+	
+	<script type="text/javascript">
+		function fixHeaderColSpan() {
+			document.getElementById("aonContent:mainForm:domainSwitcherData:enterprisePanel").parentNode.parentNode.setAttribute("colspan", "3");
+			var fourthColumn = document.getElementById("aonContent:mainForm:domainSwitcherData:enterprisePanel").parentNode.parentNode.nextSibling.nextSibling;
+			var thirdColumn = document.getElementById("aonContent:mainForm:domainSwitcherData:enterprisePanel").parentNode.parentNode.nextSibling;
+			fourthColumn.parentNode.removeChild(fourthColumn);
+			thirdColumn.parentNode.removeChild(thirdColumn);
+		}
+	
+		function showInfoGroup() {
+			document.getElementById("aonContent:mainForm:domainSwitcherData:menu").style.display='none';
+			document.getElementById("aonContent:mainForm:domainSwitcherData:menuCollapse").style.display='initial';
+			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='250px';
+			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='100%';
+			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display="block";
+		}
+					
+		function hideInfoGroup() {
+			document.getElementById("aonContent:mainForm:domainSwitcherData:enterprisePanel").parentNode.parentNode.setAttribute("colspan", "3");
+			document.getElementById("aonContent:mainForm:domainSwitcherData:menu").style.display='initial';
+			document.getElementById("aonContent:mainForm:domainSwitcherData:menuCollapse").style.display='none';
+			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='0px';
+			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='0px';
+			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display="none";				
+		}
+	</script>
 			
+	<c:if test="#{domainSwitcher.adminDomain or !userUtils.newAONTheme }" >
 		
-	<h:panelGrid columns="2" styleClass="aon-width-all aon-padding-bottom"
-		columnClasses="aon-float-left,aon-float-right">		
-		<aon:panelGroup  >
-			<c:if test="#{domainSwitcher.adminDomain or !userUtils.newAONTheme }" >
-			<aon:outputText styleClass="aon-margin-right aon-bold" value="#{bundle.aon_filter}:" />
-			<aon:inputText id="domainFilter" size="90" styleClass="aon-input-search" value="#{domainSwitcher.filter}" >
-				<a4j:support 
-					event="onkeyup"
-					reRender="domainSwitcherTableContainer"
-					eventsQueue="domainSwitcherFilterKeyUp"
-					requestDelay="500"
-					ajaxSingle="true"
-					ignoreDupResponses="true"
-					limitToList="true"/>
-			</aon:inputText>
-			</c:if>
-		</aon:panelGroup>
-		<aon:panelGroup>
-				<aon:commandLink id="domainBooking"
-					actionListener="#{domainBooking.onInit}" action="domainBooking_list">
-					<aon:outputText value="#{bundle.config_domain_booking}"
-						style="padding-bottom: 1px;padding-top: 1px;"
-						styleClass="aon-portlet-title-text aon-icon aon-button-goto"/>
-					<f:setPropertyActionListener target="#{domainBooking.backAction}"
-						value="#{null}"/>						
-				</aon:commandLink>
-		</aon:panelGroup>
+		<h:panelGrid columns="2" styleClass="aon-width-all aon-padding-bottom"
+			columnClasses="aon-float-left,aon-float-right">		
+			<aon:panelGroup  >
+				<aon:outputText styleClass="aon-margin-right aon-bold" value="#{bundle.aon_filter}:" />
+				<aon:inputText id="domainFilter" size="90" styleClass="aon-input-search" value="#{domainSwitcher.filter}" >
+					<a4j:support 
+						event="onkeyup"
+						reRender="domainSwitcherTableContainer"
+						eventsQueue="domainSwitcherFilterKeyUp"
+						requestDelay="500"
+						ajaxSingle="true"
+						ignoreDupResponses="true"
+						limitToList="true"/>
+				</aon:inputText>
+			</aon:panelGroup>
+			<aon:panelGroup>
+					<aon:commandLink id="domainBooking"
+						actionListener="#{domainBooking.onInit}" action="domainBooking_list">
+						<aon:outputText value="#{bundle.config_domain_booking}"
+							style="padding-bottom: 1px;padding-top: 1px;"
+							styleClass="aon-portlet-title-text aon-icon aon-button-goto"/>
+						<f:setPropertyActionListener target="#{domainBooking.backAction}"
+							value="#{null}"/>						
+					</aon:commandLink>
+			</aon:panelGroup>
+			
+		</h:panelGrid>
 		
-	</h:panelGrid>
+	</c:if>
 	<aon:div id="domainSwitcherTableContainer" styleClass="aon-width-all">
 		<aon:methodParam name="rowSelectorAction" value="start" />
 		<aon:methodParam name="rowSelectorActionListener" value="#{domains.onSelectChildDomain}" type="actionListener" />
@@ -49,6 +77,27 @@
 			<ui:define name="columns">
 				<aon:column styleClass="aon-width-30">
 					<c:set var="heredity" value="#{to.enableHeredity ? bundle.aon_domian_enableHeredity : bundle.aon_domian_disableHeredity}"/>
+					<c:if test="#{ userUtils.newAONTheme }" >
+						<f:facet name="header">
+							<aon:div style="display:flex; justify-content: flex-end;">
+								<aon:graphicImage 
+									id="menuCollapse"
+									title="Cerrar"
+									styleClass="aon_button aon_toolbar_button"
+									url="#{aonResource.resolve['/images/aon-icon-menu-collapse.svg']}"
+									onclick="javascript:hideInfoGroup()"/>
+							
+								<aon:graphicImage 
+									id="menu"
+									title="Abrir"
+									style="display: none;"
+									styleClass="aon_button aon_toolbar_button"
+									url="#{aonResource.resolve['/images/aon-icon-menu.svg']}" 
+									onclick="javascript:showInfoGroup()"/>
+							</aon:div>
+						</f:facet>	
+					</c:if>
+					
 					<aon:outputText 
 						rendered="#{!to.active}"
 						title="#{bundle.admin_domain_inactive}"
@@ -67,10 +116,24 @@
 						styleClass="material-icons  aon-vertical-middle aon-gray" value="domain" 
 					/>
 				</aon:column>
+				
 				<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 					<f:facet name="header">
-						<aon:outputText value="EMPRESAS" />
-					</f:facet>							
+						<aon:div id="enterprisePanel" style="display:flex; justify-content: space-between; width: 100%;">
+							<aon:outputText value="EMPRESAS" />
+							<c:if test="#{ userUtils.newAONTheme }" >
+								<aon:commandLink id="domainBooking2"
+									actionListener="#{domainBooking.onInit}" action="domainBooking_list">
+									<aon:outputText value="#{bundle.config_domain_booking}"
+										style="padding-bottom: 1px;padding-top: 1px;"
+										styleClass="aon-portlet-title-text aon-icon aon-button-goto"/>
+									<f:setPropertyActionListener target="#{domainBooking.backAction}"
+										value="#{null}"/>						
+								</aon:commandLink>		
+							</c:if>
+						</aon:div>
+					</f:facet>	
+									
 					<aon:outputText value="#{to.description}"
 						title="#{(!to.active)?bundle.admin_domain_inactive:''}#{(to.expired)?bundle.admin_domain_expired:''}"
 					/>
@@ -102,5 +165,16 @@
 			</ui:define>
 		</ui:decorate>
 	</aon:div>
+	
+	<script type='text/javascript' >
+		fixHeaderColSpan();
+	</script>
+	
+	<aon:if test="#{userUtils.newAONTheme and !domainSwitcher.childDomain or timeControl.active}">
+		<script type='text/javascript' >
+			showInfoGroup();
+		</script>
+	</aon:if>
+	
 
 </ui:composition>
