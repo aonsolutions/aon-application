@@ -105,7 +105,7 @@ phases:
       - echo Updating the 'tomcat-10' branch with the latest changes from the 'master' branch... 
       - git checkout tomcat-10
       - git pull
-      - git merge master
+      - git merge master -m "Auto-merge master into tomcat-10"
       - git push
       # - command
       # - command
