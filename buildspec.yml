@@ -102,11 +102,6 @@ phases:
       - cat snapshotsolutionsimgdef.json
       - cp -av aon-oauth2/target/aon.oauth2-9.23-SNAPSHOT-jar-with-dependencies.jar aon-oauth2.jar
       - cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll.jar
-      - echo Updating the 'tomcat-10' branch with the latest changes from the 'master' branch... 
-      - git checkout tomcat-10
-      - git pull
-      - git merge master -m "Auto-merge master into tomcat-10"
-      - git push
       # - command
       # - command
 artifacts:
