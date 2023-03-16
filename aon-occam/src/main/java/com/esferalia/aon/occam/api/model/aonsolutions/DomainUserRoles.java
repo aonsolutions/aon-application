@@ -620,7 +620,8 @@ public class DomainUserRoles implements Serializable {
 
 	public boolean isGroupware() {
 		return (hasGroupware() || ((isParentUser() || isEnterpriseChild()) && hasParentGroupware()))
-			 && (this.isAdmin() || this.hasRole(AonRole.GROUPWARE));
+			 && (isAdmin() || hasRole(AonRole.GROUPWARE) 
+				 || hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.TASK_MONITORING));
 	}
 	
 	public boolean isCallCenter() {
