@@ -335,9 +335,9 @@ public class Up2Date {
 	    // FixPec01Quota01.FIXPEC01QUOTA01,
 	    // RefreshMod130Result.REFRESH_MOD130_RESULT,
 	    // AlterFsMod349FsModel.ALTER_FS_MOD349_FS_MODEL,
-	    // AgreementPurge.AGREEMENTPURGE,
 	    // MaxEmbargable4ProrratedFix.MAXEMBARGABLE4PRORRATEDFIX,
 	    ArtistBaseCgcMax2023Update.ARTISTBASECGCMAX2023UPDATE,
+	    AgreementPurge.AGREEMENTPURGE,
 
 	    // Important, not remove
 	    SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
