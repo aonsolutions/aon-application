@@ -1,12 +1,14 @@
 package com.esferalia.aon.in.payroll;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.EnterpriseActivity.ENTERPRISE_ACTIVITY;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.salary.expression.Period.max;
 import static com.esferalia.aon.salary.expression.Period.min;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -35,11 +37,13 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.in.payroll.pdf.JooqEnterpriseSalaryBuilder;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.tgss.idc.Idc.IdcListener;
 import com.esferalia.aon.in.payroll.tgss.idc.PEC;
 import com.esferalia.aon.in.payroll.tgss.sld.SLDSalaries;
 import com.esferalia.aon.in.payroll.utils.EmployeeParse;
+import com.esferalia.aon.jooq.tables.EnterpriseActivity;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
@@ -168,6 +172,7 @@ public class SistemaRED2AON {
 					.select()
 					.from(DOMAIN)
 					.innerJoin(ENTERPRISE_CCC).on(DOMAIN.ID.eq(ENTERPRISE_CCC.DOMAIN))
+					.innerJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_CCC.ENTERPRISE_ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
 					.leftJoin(USER).on(DOMAIN.PARENT.eq(USER.DOMAIN))
 					.where(condition)
 					.groupBy(ENTERPRISE_CCC.CCC)
@@ -192,7 +197,7 @@ public class SistemaRED2AON {
 						java.sql.Date endDate = AonDateUtils.getLastDayOfMonth(date);
 						
 						try {
-							if ( calcs )
+							if ( calcs ) {
 								addCalcs(aonContext, 
 										login, 
 										domainName, 
@@ -205,6 +210,20 @@ public class SistemaRED2AON {
 										startDate, 
 										endDate,
 										nafs);
+								
+								Integer enterpriseId = domain.get(ENTERPRISE_ACTIVITY.ENTERPRISE);
+
+								JooqEnterpriseSalaryBuilder.generateEnterprisePayroll(
+									new FileOutputStream("/tmp/costs.pdf"), 
+									domainName, 
+									domainId, 
+									login, 
+									startDate, 
+									endDate, 
+									enterpriseId, 
+									null, 
+									SalaryType.values());
+							}
 							if ( idc )
 								syncWithIdcs(
 										login, 
