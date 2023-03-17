@@ -327,7 +327,7 @@
 					var eles = document.getElementsByName(id);
 					eles[0].classList.add('aon-top-menu-item-select');
 					eles[0].classList.add('aon-top-menu-item-select-inner');
-				}, 300);
+				}, 800); // Too long, wait for loaded
 			}
 
 			function hideMenuPopup(menuPopup){
@@ -370,9 +370,9 @@
 				if ( isDisabled(el) ) 
 					return;
 				
-				try { 
-					if(el.classList.contains("aon-top-menu-item-select") && !el.classList.contains("aon-top-menu-item-select-inner")) return;
-				} catch ( e ) {} 
+				//try { 
+				//	if(el.classList.contains("aon-top-menu-item-select") && !el.classList.contains("aon-top-menu-item-select-inner")) return;
+				//} catch ( e ) {} 
 				
 				select(el);
 				delayMenu( function() { 

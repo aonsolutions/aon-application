@@ -140,7 +140,7 @@ import net.aonsolutions.gwt.pdfjs.client.FullViewer;
  */
 
 public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Listener, Cost.Listener, Salary.Listener,
-		EmployeeSalary.Listener, WorkplaceSalary.Listener, EnterpriseSalary.Listener, SalaryDraft.Listener, AonEmployeesToolbar.Listener {
+		EmployeeSalary.Listener, WorkplaceSalary.Listener, EnterpriseSalary.Listener, SalaryDraft.Listener {
 	public static String SHARE_URL = URL.encode(GWT.getModuleBaseURL() + "share");
 	
 	
@@ -2505,9 +2505,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	DetailPanel employeeDetail;
 	@UiField
 	SplitLayoutPanel dockLayoutPanel;
-	
-	@UiField
-	AonEmployeesToolbar toolbar;
 
 	@UiField
 	HTMLPanel messagePanel;
@@ -2643,7 +2640,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		employees.addListener(this);
 		
-		toolbar.addListener(this);
 		employeeDetail.setHeight("100%");
 
 		fileEditor = new FileEditor();
@@ -4631,30 +4627,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	    return "SLD-Bases " + tipo + " " + provincia + numero + " " + anhoDesde+"-"+mesDesde + " " + now;
 	}
 	
-	// EmployeeTree Toolbar
-
-	@Override
-	public void onCollapseMenuButtonClick(ClickEvent event) {
-		dockLayoutPanel.setWidgetSize(employees, 0);
-		dockLayoutPanel.animate(500);
-	}
-
-	@Override
-	public void onShowMenuButtonClick(ClickEvent event) {
-		dockLayoutPanel.setWidgetSize(employees, 275);
-		dockLayoutPanel.animate(500);
-	}
-
-	@Override
-	public void onSettingsButtonClick(ClickEvent event) {
-		// Implement when setting is needed. Uncomment button on toolbar
-	}
-
-	@Override
-	public void onTrashListButtonClick(ClickEvent event) {
-		// Implement when trash is needed. Uncomment button on toolbar
-	}
-	
 	// MessagePanel
 	
 	private HTMLPanel getMessagePanel() {
@@ -4683,6 +4655,20 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	
 	private void showLoadingMessage(String message) {
 		AonMessagePanel.showLoading(getMessagePanel(), message);
+	}
+
+	@Override
+	public void onCollapseEmployees() {
+		dockLayoutPanel.setWidgetSize(employees, 36);
+		dockLayoutPanel.animate(500);
+		employees.createStaticEmployees();
+	}
+
+	@Override
+	public void onShowEmployees() {
+		employees.showEmployees();
+		dockLayoutPanel.setWidgetSize(employees, 275);
+		dockLayoutPanel.animate(500);
 	}
 	
 

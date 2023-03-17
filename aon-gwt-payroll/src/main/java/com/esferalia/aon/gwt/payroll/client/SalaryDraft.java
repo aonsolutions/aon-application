@@ -2885,7 +2885,7 @@ public class SalaryDraft extends ResizeComposite
 	
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
-		createCollapContextPanel();
+		if (Wnd.isNewAONTheme()) createCollapContextPanel();
 		initPaymentsTable();
 		initPrintPreview();
 		scope = Scope.CONTRACT;
