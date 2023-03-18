@@ -49,10 +49,6 @@
 
 
 	<g:SplitLayoutPanel ui:field="dockLayoutPanel"  styleName="aon-EmployeeTree" >
-		<g:north size="35" >
-			<commonsolutions:AonEmployeesToolbar ui:field="toolbar" styleName="{style.toolbar} aon-MainAgreement-ToolBar"/>
-		</g:north>
-
 		<g:west size='275' >
 				<payroll:Employees ui:field='employees' extended="true" formers="false" styleName="aon-EmployeeTree-Employees" />
 		</g:west>
