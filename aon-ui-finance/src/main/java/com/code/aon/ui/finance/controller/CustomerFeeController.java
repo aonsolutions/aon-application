@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.controller;
 import static com.code.aon.ui.common.ICommonMessages.NO_FEE_CUSTOMER_REPORT;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +39,7 @@ import com.code.aon.ui.form.DataScrollerState;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class CustomerFeeController extends LinesController implements IFinanceConstants {
 
@@ -178,7 +180,6 @@ public class CustomerFeeController extends LinesController implements IFinanceCo
 
 	@SuppressWarnings("unchecked")
 	public void onNoFeeCustomers(ActionEvent event) {
-		Calendar calendar = new GregorianCalendar();
 		String select = "select distinct(customer) "
 			+ " from Customer as customer "
 			+ " where " + DomainManager.getSQLWhereClause("customer.domain") 
@@ -186,7 +187,7 @@ public class CustomerFeeController extends LinesController implements IFinanceCo
 			+ " customer.id NOT IN (select customerFee.customer.id from CustomerFee as customerFee) "
 			+ " AND "
 			+ "customer.id NOT IN (select customerFee.customer.id from CustomerFee as customerFee where finalDate < '"
-			+ calendar.getTime() + "')))";	
+			+ AonDateUtils.format(new Date(), "yyyy-MM-dd") + "')))";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		Query query = session.createQuery(select);
 		noFeeCustomersList = query.list();
