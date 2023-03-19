@@ -8,6 +8,7 @@ import static com.esferalia.aon.jooq.tables.AgreementLevelData.AGREEMENT_LEVEL_D
 import static com.esferalia.aon.jooq.tables.AgreementLevelCategory.AGREEMENT_LEVEL_CATEGORY;
 import static com.esferalia.aon.jooq.tables.AgreementPayment.AGREEMENT_PAYMENT;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.PayrollWorkplace.PAYROLL_WORKPLACE;
 
 import java.sql.Connection;
 
@@ -18,6 +19,8 @@ import org.jooq.SelectHavingConditionStep;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
+
+import com.esferalia.aon.jooq.tables.PayrollWorkplace;
 
 import net.aonsolutions.db.up2date.Update;
 
@@ -55,6 +58,10 @@ public class AgreementPurge implements Update {
         			.limit(50)
         			.fetchArray(AGREEMENT_LEVEL.AGREEMENT);
         
+        			dsl.update(PAYROLL_WORKPLACE)
+        			.set(PAYROLL_WORKPLACE.AGREEMENT, DSL.castNull(PAYROLL_WORKPLACE.AGREEMENT))
+        			.where(PAYROLL_WORKPLACE.AGREEMENT.in(unusedAgreement));
+
         			dsl.delete(AGREEMENT_LEVEL_DATA).using(AGREEMENT_LEVEL_DATA.innerJoin(AGREEMENT_LEVEL).onKey()).where(AGREEMENT_LEVEL.AGREEMENT.in(unusedAgreement)).execute();
         			dsl.delete(AGREEMENT_LEVEL_CATEGORY).using(AGREEMENT_LEVEL_CATEGORY.innerJoin(AGREEMENT_LEVEL).onKey()).where(AGREEMENT_LEVEL.AGREEMENT.in(unusedAgreement)).execute();
         
