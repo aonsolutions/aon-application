@@ -22,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraft.DateField;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.BooleanEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.DecimalEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaData;
+import com.esferalia.aon.gwt.payroll.client.Employee.MyStyle;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -69,6 +70,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -298,6 +300,13 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private static final int EMPLOYEE_EVENTS_INDEX = 4;
 
 	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT);
+	
+	@UiField
+	MyStyle style;
+
+	interface MyStyle extends CssResource {
+		String staticEmployees();
+	}
 
 	@UiField
 	DeckPanel employeesDeck;
@@ -2801,6 +2810,8 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 					  showMenuButton.setTitle("Mostrar");
 						showMenuButton.removeStyleName(AON.CSS.aonIconMenuCollapse());
 						showMenuButton.addStyleName(AON.CSS.aonIconMenu());
+						removeStyleName(style.staticEmployees());
+						scrollPanel.setHeight("100%");
 						onCollapseEmployees();
 				  }
 					  
@@ -2822,6 +2833,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		AonToolbarButton menuBtn = new AonToolbarButton("Mostrar", AON.CSS.aonIconMenu());
 		menuBtn.addClickHandler(e -> {
 			employeeTreeCollapsed = false;
+			removeStyleName(style.staticEmployees());
 			showMenuButton.click();
 		});
 		staticEmployees.add(menuBtn);
@@ -2913,6 +2925,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			showMenuButton.setTitle("Ocultar");
 			showMenuButton.removeStyleName(AON.CSS.aonIconMenu());
 			showMenuButton.addStyleName(AON.CSS.aonIconMenuCollapse());
+			addStyleName(style.staticEmployees());
+			if ( !Wnd.isNewAONTheme() ) getElement().getStyle().setBackgroundColor("white");
+			else getElement().getStyle().setBackgroundColor("transparent");
+			scrollPanel.setHeight("85%");
 			onShowEmployees();
 		}, MouseOverEvent.getType());
 		
