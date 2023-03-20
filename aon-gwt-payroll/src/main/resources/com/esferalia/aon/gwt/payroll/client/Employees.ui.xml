@@ -4,7 +4,11 @@
 	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
 
-	<ui:style>
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.Employees.MyStyle">
+	
+		.animate {
+			transition: 0.5s;
+		}
 	
 		.employees img {
 			filter: grayscale(100%) contrast(200%);
@@ -21,17 +25,26 @@
 			flex-direction: column;
 			gap: .5rem;
 		}
+		
+		.staticEmployees {
+			position: fixed !important;
+			width: 290px !important;
+			height: 90% !important;
+			z-index: 1;
+		}
+		
+		.heightAll { height: 100%; }
 	
 	</ui:style>
 
 
-	<g:DockLayoutPanel unit='PX' >
+	<g:DockLayoutPanel unit='PX' styleName="{style.animate}" >
 		<g:center>
 			<g:DeckPanel ui:field="employeesDeck">
 				<g:HTMLPanel styleName="{style.flexColumn}" ui:field="dynamicEmployees">
 					<g:HTMLPanel styleName="{style.flex}" ui:field="employeesToolbar"/>
 					<aon:AonEmployeesTreeToolbar ui:field="toolbar" />
-					<g:ScrollPanel styleName="{style.employees}"  ui:field="scrollPanel" debugId="employeesScrollPanel">
+					<g:ScrollPanel styleName="{style.employees} {style.heightAll}"  ui:field="scrollPanel" debugId="employeesScrollPanel">
 						<g:Tree  ui:field="tree" debugId="employeesTree"/>
 					</g:ScrollPanel>
 				</g:HTMLPanel>
