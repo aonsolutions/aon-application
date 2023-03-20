@@ -32,6 +32,8 @@ import com.esferalia.aon.occam.api.model.warehouse.Delivery;
 import com.esferalia.aon.occam.api.model.warehouse.DeliveryDetail;
 import com.esferalia.aon.occam.impl.jooq.dao.DeliveryDAO.DeliveryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ItemDAO.ItemFiller;
+import com.esferalia.aon.occam.impl.jooq.validation.DeliveryDetailValidation;
+import com.esferalia.aon.occam.impl.jooq.validation.DeliveryValidation;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
 public class DeliveryDetailDAO {
@@ -108,14 +110,16 @@ public class DeliveryDetailDAO {
 		return getStream(ctx, filter).collect(Collectors.toCollection(LinkedList::new));
 	}
 
-	public static List<DeliveryDetail> save(AONContext ctx, List<DeliveryDetail> details) {
+	public static List<DeliveryDetail> save(AONContext ctx, Delivery delivery, List<DeliveryDetail> details) {
 		LinkedList<DeliveryDetail> list = new LinkedList<>();
-		details.stream().forEach(detail -> list.add(save(ctx, detail)));
+		details.stream().forEach(detail -> list.add(save(ctx, detail.setDelivery(delivery))));
 		return list;
 	}
 	
 	public static DeliveryDetail save(AONContext ctx, DeliveryDetail detail) {
 		// TODO AUTOCOMPLETE & VALIDATE
+		DeliveryDetailValidation.validate(ctx, detail);
+		
 		return detail.getId() != null
 			? update(ctx, detail)
 			: insert(ctx, detail);
