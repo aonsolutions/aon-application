@@ -4659,16 +4659,18 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	@Override
 	public void onCollapseEmployees() {
-		dockLayoutPanel.setWidgetSize(employees, 36);
-		dockLayoutPanel.animate(500);
+//		dockLayoutPanel.setWidgetSize(employees, 36);
+//		dockLayoutPanel.animate(500);
+		employees.setWidth("36px");
 		employees.createStaticEmployees();
 	}
 
 	@Override
 	public void onShowEmployees() {
 		employees.showEmployees();
-		dockLayoutPanel.setWidgetSize(employees, 275);
-		dockLayoutPanel.animate(500);
+		employees.setWidth("340px");
+//		dockLayoutPanel.setWidgetSize(employees, 275);
+//		dockLayoutPanel.animate(500);
 	}
 	
 

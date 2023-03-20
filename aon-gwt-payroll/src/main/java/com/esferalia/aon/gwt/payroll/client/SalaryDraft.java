@@ -5208,17 +5208,21 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private void hideContextAtLeft() {
-		collapseContextBtn.setTitle("Mostrar");
-		collapseContextBtn.removeStyleName(AON.CSS.aonIconFormatIndentIncrease());
-		collapseContextBtn.addStyleName(AON.CSS.aonIconFormatIndentDecrease());
+		if ( Wnd.isNewAONTheme() ) {
+			collapseContextBtn.setTitle("Mostrar");
+			collapseContextBtn.removeStyleName(AON.CSS.aonIconFormatIndentIncrease());
+			collapseContextBtn.addStyleName(AON.CSS.aonIconFormatIndentDecrease());
+		}
 		drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 0);
 		drafSplitLayoutPanel.animate(500);
 	}
 	
 	private void showContextAtLeft() {
-		collapseContextBtn.setTitle("Ocultar");
-		collapseContextBtn.removeStyleName(AON.CSS.aonIconFormatIndentDecrease());
-		collapseContextBtn.addStyleName(AON.CSS.aonIconFormatIndentIncrease());
+		if ( Wnd.isNewAONTheme() ) {
+			collapseContextBtn.setTitle("Ocultar");
+			collapseContextBtn.removeStyleName(AON.CSS.aonIconFormatIndentDecrease());
+			collapseContextBtn.addStyleName(AON.CSS.aonIconFormatIndentIncrease());
+		}
 		drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 275);
 		drafSplitLayoutPanel.animate(500);
 	}
