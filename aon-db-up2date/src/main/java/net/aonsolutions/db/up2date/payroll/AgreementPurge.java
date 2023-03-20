@@ -60,7 +60,8 @@ public class AgreementPurge implements Update {
         
         			dsl.update(PAYROLL_WORKPLACE)
         			.set(PAYROLL_WORKPLACE.AGREEMENT, DSL.castNull(PAYROLL_WORKPLACE.AGREEMENT))
-        			.where(PAYROLL_WORKPLACE.AGREEMENT.in(unusedAgreement));
+        			.where(PAYROLL_WORKPLACE.AGREEMENT.in(unusedAgreement))
+        			.execute();
 
         			dsl.delete(AGREEMENT_LEVEL_DATA).using(AGREEMENT_LEVEL_DATA.innerJoin(AGREEMENT_LEVEL).onKey()).where(AGREEMENT_LEVEL.AGREEMENT.in(unusedAgreement)).execute();
         			dsl.delete(AGREEMENT_LEVEL_CATEGORY).using(AGREEMENT_LEVEL_CATEGORY.innerJoin(AGREEMENT_LEVEL).onKey()).where(AGREEMENT_LEVEL.AGREEMENT.in(unusedAgreement)).execute();
