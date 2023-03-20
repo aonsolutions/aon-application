@@ -62,7 +62,7 @@ public class DeliveryJSON {
 			.setDriverDocument(JsonUtils.getString(json, IJsonNames.DRIVER_DOCUMENT))
 			
 			.setTotalPackages(JsonUtils.getdouble(json, IJsonNames.TOTAL_PACKAGES))
-			.setTotalPackages(JsonUtils.getdouble(json, IJsonNames.TOTAL_WEIGHT))
+			.setTotalWeight(JsonUtils.getdouble(json, IJsonNames.TOTAL_WEIGHT))
 			.setShippingAlternativeAddress(JsonUtils.getString(json, IJsonNames.SHIPPING_ALTERNATIVE_ADDRESS))
 			.setShippingAlternativeAddress2(JsonUtils.getString(json, IJsonNames.SHIPPING_ALTERNATIVE_ADDRESS2))
 			.setShippingAlternativeZip(JsonUtils.getString(json, IJsonNames.SHIPPING_ALTERNATIVE_ZIP))
@@ -73,6 +73,7 @@ public class DeliveryJSON {
 			.setShippingPeriod(ShipmentPeriod.safeValueOf(JsonUtils.getString(json, IJsonNames.SHIPPING_PERIOD)))
 			.setShippingStatus(ShipmentStatus.safeValueOf(JsonUtils.getString(json, IJsonNames.SHIPPING_STATUS)))
 			.setStatusModificationDate(JsonUtils.getDate(json, IJsonNames.STATUS_MODIFICATION_DATE))
+			.setDetails(DeliveryDetailJSON.fromJSON(JsonUtils.getJSONArray(json, IJsonNames.DETAILS)))
 			;
 	}
 	
