@@ -8,7 +8,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Project configuration
 
-After cloning the project, create the `libraries` folder in the root of the project. Unzip the [setProduct](https://redmine.ayudat.es/attachments/download/50492/Setproduct%20components%20(Angular%2011).zip) in folder `libraries`
+After cloning the project, create the `libraries` folder in the root of the project. Unzip the [setProduct](https://redmine.ayudat.es/attachments/download/50492/Setproduct%20components%20(Angular%2011).zip) in folder `libraries` and run `npm i` to solve dependencies.
 
 ## Development server
 
