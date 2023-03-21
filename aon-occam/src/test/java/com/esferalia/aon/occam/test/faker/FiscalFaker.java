@@ -45,6 +45,8 @@ public class FiscalFaker {
 		private boolean generateFromYearStart;
 		private double prorratePercent;
 		private boolean specialProrrate;
+		private boolean diffEnabled;
+		private boolean manualEnabled;
 		
 		public FiscalFakerParams(AONContext ctx, Occam occam) {
 			this.ctx = ctx;
@@ -114,6 +116,24 @@ public class FiscalFaker {
 		}
 		public FiscalFakerParams setSpecialProrrate(boolean specialProrrate) {
 			this.specialProrrate = specialProrrate;
+			return this;
+		}
+
+		public boolean isDiffEnabled() {
+			return diffEnabled;
+		}
+
+		public FiscalFakerParams setDiffEnabled(boolean diffEnabled) {
+			this.diffEnabled = diffEnabled;
+			return this;
+		}
+
+		public boolean isManualEnabled() {
+			return manualEnabled;
+		}
+
+		public FiscalFakerParams setManualEnabled(boolean manualEnabled) {
+			this.manualEnabled = manualEnabled;
 			return this;
 		}
 	}
@@ -262,7 +282,8 @@ public class FiscalFaker {
 		mod349.setPeriod( params.isMonthly()
 				       		? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
 				       		: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
-		mod349.setManualDeclaration(true); // FALTA - PASARLO COMO PARAMETRO
+		mod349.setManualDeclaration(params.isManualEnabled());
+		mod349.setDiffEnabled(params.isDiffEnabled());		
 		return MODEL349.save(params.getOccam(), mod349);
 	}
 	

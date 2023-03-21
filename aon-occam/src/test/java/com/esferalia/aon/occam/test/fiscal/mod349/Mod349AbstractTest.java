@@ -42,7 +42,28 @@ public abstract class Mod349AbstractTest extends AbstractOccamTest {
 		Asserts.assertEqualsCollection("Gipuzkoa " + gipuzkoa.getModelFullName() + ". Resultado no coincide.", aeat.getDetails(), gipuzkoa.getDetails());
 		Asserts.assertEqualsCollection("Navarra " + navarra.getModelFullName() + ". Resultado no coincide.", aeat.getDetails(), navarra.getDetails());
 	}
-
+	
+	
+	// Inserta Normal, Sustitutiva y Complementaria
+	protected void mod349InsertAll(FiscalFakerParams params) {
+	
+		// Normal
+		params.setReplacement(false);
+		params.setComplementary(false);
+		mod349Insert(params);
+		
+		// Sustitutiva
+		params.setReplacement(true);
+		params.setComplementary(false);
+		mod349Insert(params);
+		
+		// Complementaria
+		params.setReplacement(false);
+		params.setComplementary(true);
+		mod349Insert(params);
+	
+	}
+	
 	private Mod349 insertModel(FiscalFakerParams params) {
 		Mod349 mod349 = FiscalFaker.createMod349(params);
 		MODEL349.save(getOccam(), mod349);

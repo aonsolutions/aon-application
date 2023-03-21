@@ -10,20 +10,21 @@ import com.esferalia.aon.occam.test.faker.AonRandom;
 import com.esferalia.aon.occam.test.faker.FiscalFaker.FiscalFakerParams;
 import com.esferalia.aon.watson.server.AonDateUtils;
 
-public class Mod349InsertQuaterlyTest extends Mod349AbstractTest {
+public class Mod349InsertNoDiffQuaterlyTest extends Mod349AbstractTest {
 	
 	@Test
-	public void mod349InsertQuaterlyTest() { 	
+	public void mod349InsertNoDiffQuaterlyTest() { 	
 		
 		// Crear modelos periodo trimestral
 		Date today = getTestDate();
 		FiscalFakerParams params = new FiscalFakerParams(ctx,getOccam())
-			.setMonthly(false);			
+			.setMonthly(false)
+			.setDiffEnabled(false);			
 		for (Period period : Period.values()) {
 			Date start =  FiscalUtils.getPeriodStart(AonDateUtils.getYear(today),period);
 			Date end =  FiscalUtils.getPeriodEnd(AonDateUtils.getYear(today),period);
 			if (period.isQuarterPeriod()) {
-				mod349Insert(params.setIssueDate(AonRandom.getRangeDate(start,end)));
+				mod349InsertAll(params.setIssueDate(AonRandom.getRangeDate(start,end)));				
 			}
 		}
 		
