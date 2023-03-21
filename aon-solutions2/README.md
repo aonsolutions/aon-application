@@ -2,6 +2,14 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.19.
 
+## Wiki Proyecto
+
+[Wiki](https://redmine.ayudat.es/projects/sc3/wiki)
+
+## Project configuration
+
+After cloning the project, create the `libraries` folder in the root of the project. Unzip the [setProduct](https://redmine.ayudat.es/attachments/download/50492/Setproduct%20components%20(Angular%2011).zip) in folder `libraries`
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
