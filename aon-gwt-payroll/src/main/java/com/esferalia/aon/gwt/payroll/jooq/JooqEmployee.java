@@ -66,6 +66,7 @@ import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.RmediaRecord;
 import com.esferalia.aon.jooq.tables.records.RpaymethodRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
+import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -1421,22 +1422,6 @@ public class JooqEmployee {
 					.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
 					.execute();
 				
-//				if(payMethodType == (byte) 5)
-//					dslContext.update(RPAYMETHOD)
-//							.set(RPAYMETHOD.PAY_METHOD, payMethodId)
-//							.set(RPAYMETHOD.RBANK, rbankTableId)
-//							.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
-//							.execute();
-//				else {
-//					
-//					Integer rbank = null;
-//					dslContext.update(RPAYMETHOD)
-//						.set(RPAYMETHOD.PAY_METHOD, payMethodId)
-//						.set(RPAYMETHOD.RBANK, rbank)
-//						.where(RPAYMETHOD.ID.eq(employeeData.getRpaymethodId()))
-//						.execute();
-//				}
-				
 			}
 		}
 		
@@ -1739,11 +1724,6 @@ public class JooqEmployee {
 				}
 			}
 			
-//			if(null != contractData.getJourneytypeId())
-//				dslContext.delete(CONTRACT_DATA)
-//					.where(CONTRACT_DATA.ID.eq(contractData.getJourneytypeId()))
-//					.execute();
-			
 			if(null != contractData.getRetaId())
 				dslContext.delete(CONTRACT_INFO)
 				.where(CONTRACT_INFO.ID.eq(contractData.getRetaId()))
@@ -1786,15 +1766,6 @@ public class JooqEmployee {
 				contractData.setContracttypeId(null);
 				contractData.setContractType(null);
 			}
-			
-//			if(null != contractData.getQuotegroupId()){
-//				dslContext.delete(CONTRACT_DATA)
-//				.where(CONTRACT_DATA.ID.eq(contractData.getQuotegroupId()))
-//				.execute();
-//			
-//				contractData.setQuotegroupId(null);
-//				contractData.setQuoteGroup(null);
-//			}
 			
 			if(null != contractData.getOcupationId()){
 				dslContext.delete(CONTRACT_DATA)
@@ -1872,13 +1843,10 @@ public class JooqEmployee {
 			}
 			
 			TreeMap<java.util.Date, ArrayList<JourneyDuration>> contractJourneyDuration = contractData.getContractJourneyDuration().getContractJourneyDuration();
-//			if(contractJourneyDuration.isEmpty()) {
-			//ACTUALIZAR DURACION JORNADA
 			dslContext.delete(CONTRACT_DATA)
 				.where(CONTRACT_DATA.NAME.like("HORAS%"))
 				.and(CONTRACT_DATA.CONTRACT.eq(contractData.getContractId()))
 				.execute();
-//			}
 			
 			if(!contractJourneyDuration.isEmpty() && (null != contractData.getJourneyType() && contractData.getJourneyType() == 0)){
 			 
@@ -2017,9 +1985,31 @@ public class JooqEmployee {
 			employeeContractInfo.getContractInfo().setAgreementColective(agreementSSNumber);
 		}
 		
+		// UDPATE SALARY EMPLOYEE INFO
+		updateSalaryEmployeeInfo(dslContext, employeeContractInfo);
+		
 		employeeContractInfo.setEmployeeInfo(employeeData);
 		employeeContractInfo.setContractInfo(contractData);
 		return employeeContractInfo;
+	}
+
+	private static void updateSalaryEmployeeInfo(DSLContext dslContext, EmployeeContractInfo employeeContractInfo) {
+		SalaryRecord salaryRecord = dslContext.newRecord(SALARY);
+		
+		Integer contractId = employeeContractInfo.getContractInfo().getContractId();
+		
+		String employeeFullName = employeeContractInfo.getEmployeeInfo().getFullName();
+		String employeeDocument = employeeContractInfo.getEmployeeInfo().getDocument();
+		String employeeSSNumber = employeeContractInfo.getEmployeeInfo().getSsNumber();
+		
+		if(AonStringUtils.isNotBlank(employeeFullName)) salaryRecord.set(SALARY.EMPLOYEE_NAME, employeeFullName);
+		if(AonStringUtils.isNotBlank(employeeDocument)) salaryRecord.set(SALARY.EMPLOYEE_DOCUMENT, employeeDocument);
+		if(AonStringUtils.isNotBlank(employeeSSNumber)) salaryRecord.set(SALARY.SOCIAL_SECURITY_NUMBER, employeeSSNumber);
+		
+		dslContext.update(SALARY)
+			.set(salaryRecord)
+			.where(SALARY.CONTRACT.eq(contractId))
+			.execute();
 	}
 
 	// --------------------------------------- AUX METHODS -----------------------------

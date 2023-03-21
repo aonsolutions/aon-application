@@ -130,9 +130,17 @@ public class JooqCertifica2 {
 			certifica2Info.setSuspensionCode(suspensionReasonCode);
 			certifica2Info.setSuspension(suspensionReason);
 			
-			Map<String, String> fieldsMap = createCertifica2PDFFieldsMap(certifica2Info);
+			Map<String, String> fieldsMap;
 			
-			return CertificaFill.exportCertEnterprisePDF(fieldsMap);
+			if (AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163"))
+				fieldsMap = createCertifica2AgrarianPDFFieldsMap(certifica2Info);
+			else
+				fieldsMap = createCertifica2PDFFieldsMap(certifica2Info);
+			
+			if (AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163"))
+				return CertificaFill.exportCertEnterpriseAgrarianPDF(fieldsMap);
+			else
+				return CertificaFill.exportCertEnterprisePDF(fieldsMap);
 		} catch (Exception e) {
 			return new byte[0];
 		}
@@ -213,6 +221,89 @@ public class JooqCertifica2 {
 		fieldMap.put("01022", dayDateFormat.format(date));
 		fieldMap.put("01023", monthStrDateFormat.format(date));
 		fieldMap.put("01024", yearDateFormat.format(date).substring(2, 4));
+		
+		return fieldMap;
+	}
+	
+	private static Map<String, String> createCertifica2AgrarianPDFFieldsMap(Certifica2Info certifica2Info) {
+		Map<String, String> fieldMap = new HashMap<>();
+		
+		fieldMap.put("03", certifica2Info.getRepresentativeName() + " " + certifica2Info.getRepresentativeSurname() + " con DNI o NIE " + certifica2Info.getRepresentativeDocument());
+		fieldMap.put("04", certifica2Info.getRepresentativeWork());
+		fieldMap.put("05", certifica2Info.getEnterpriseName());
+		fieldMap.put("06", certifica2Info.getCompleteCCC());
+		fieldMap.put("07", certifica2Info.getAddress());
+		fieldMap.put("08", certifica2Info.getCity());
+		fieldMap.put("09", certifica2Info.getZip());
+		fieldMap.put("010", certifica2Info.getGeozone());
+		fieldMap.put("011", certifica2Info.getCnaeCode());
+		fieldMap.put("012", certifica2Info.getCnae());
+		fieldMap.put("015", certifica2Info.getName() + " " + certifica2Info.getSurname());
+		fieldMap.put("016", certifica2Info.getDocument());
+		fieldMap.put("017", certifica2Info.getSSNumber());
+		fieldMap.put("018", certifica2Info.getContractType());
+		fieldMap.put("019", certifica2Info.getContractDuration() + " dias");
+		fieldMap.put("020", certifica2Info.getCnoCode());
+		fieldMap.put("021", certifica2Info.getCno());
+		fieldMap.put("025", dateFormat.format(certifica2Info.getStartDate()));
+		fieldMap.put("026", certifica2Info.getSuspensionCode());
+		fieldMap.put("028", certifica2Info.getSuspension());
+		fieldMap.put("029", dateFormat.format(certifica2Info.getEndDate()));
+		
+		Double totalDays = 0.00;
+		Double totalCgp = 0.00;
+		
+		Integer idx = 37;
+		for(Map<String, String> quoteData : certifica2Info.getQuoteDataList()) {
+			fieldMap.put(checkIdx(idx), quoteData.get("anioCtz"));
+			idx++;
+			fieldMap.put(checkIdx(idx), quoteData.get("monthCtz"));
+			idx++;
+			fieldMap.put(checkIdx(idx), certifica2Info.getQuoteGroup());
+			idx++;
+			
+			Double days = Double.parseDouble(quoteData.get("daysCtz"));
+			totalDays += days;
+			
+			if(AonStringUtils.isNotBlank(certifica2Info.getMdCtz()) && AonStringUtils.equalsIgnoreCase(certifica2Info.getMdCtz(), "2")) {
+				idx++;
+				fieldMap.put(checkIdx(idx), quoteData.get("daysCtz"));
+				idx++;
+			} else {
+				fieldMap.put(checkIdx(idx), quoteData.get("daysCtz"));
+				idx++;
+				idx++;
+			}
+			
+			Double bcd = Double.parseDouble(quoteData.get("bcd"));
+			totalCgp += bcd;
+			fieldMap.put(checkIdx(idx), quoteData.get("bcd"));
+			idx++;
+			idx++;
+			
+		}
+		
+		fieldMap.put("095", certifica2Info.getQuoteGroup());
+		if(AonStringUtils.isNotBlank(certifica2Info.getMdCtz()) && AonStringUtils.equalsIgnoreCase(certifica2Info.getMdCtz(), "2"))
+			fieldMap.put("094", certifica2Info.getSettleQuoteDays().toString());
+		else fieldMap.put("093", certifica2Info.getSettleQuoteDays().toString());
+		fieldMap.put("097", certifica2Info.getBaseUnemployment().toString());
+		
+		totalDays += certifica2Info.getSettleQuoteDays();
+		totalCgp += certifica2Info.getBaseUnemployment();
+		
+		if(AonStringUtils.isNotBlank(certifica2Info.getMdCtz()) && AonStringUtils.equalsIgnoreCase(certifica2Info.getMdCtz(), "2"))
+			fieldMap.put("099", totalDays.toString());
+		else fieldMap.put("098", totalDays.toString());
+		
+		fieldMap.put("0102", totalCgp.toString());
+		
+		fieldMap.put("101", certifica2Info.getGeozone());
+		
+		java.util.Date date = new java.util.Date();
+		fieldMap.put("102", dayDateFormat.format(date));
+		fieldMap.put("103", monthStrDateFormat.format(date));
+		fieldMap.put("104", yearDateFormat.format(date).substring(2, 4));
 		
 		return fieldMap;
 	}
@@ -391,6 +482,7 @@ public class JooqCertifica2 {
 		if(null != cnaeCodeInt) {
 			cnaeCode = cnaeCodeInt.toString();
 			cnae = dslContext.select(CNAE2009.TITLE).from(CNAE2009).where(CNAE2009.CODE.eq(cnaeCode)).fetchOne(CNAE2009.TITLE);
+			if(AonStringUtils.isBlank(cnae)) cnae = dslContext.select(CNAE2009.TITLE).from(CNAE2009).where(CNAE2009.ID.eq(cnaeCodeInt)).fetchOne(CNAE2009.TITLE);
 		}
 			
 		
