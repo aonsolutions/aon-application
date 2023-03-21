@@ -31,9 +31,14 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "./libraries/setproduct-ui/setproduct-ui.min.css",
+              "./libraries/setproduct-icons/setproduct-icons.min.css"
             ],
-            "scripts": []
+            "scripts": [
+              "./libraries/setproduct-icons/setproduct-icons.all.min.js",
+              "node_modules/@webcomponents/custom-elements/custom-elements.min.js"
+            ]
           },
           "configurations": {
             "production": {

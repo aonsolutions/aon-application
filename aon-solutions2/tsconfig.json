@@ -26,5 +26,9 @@
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
+  },
+  "paths": {
+    "@crionic/system-angular": ["./lib/setproduct-angular-material"],
   }
+
 }
