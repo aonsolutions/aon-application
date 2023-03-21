@@ -103,6 +103,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_FACTO
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_YEARS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKING_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORK_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.parse;
 import static com.esferalia.aon.salary.expression.ExpressionContext.getCurrentBindings;
 import static com.esferalia.aon.watson.util.AonDateUtils.add;
@@ -5102,6 +5103,25 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				ctx.putVariable(WORKED_DAYS, workedDays);
 			} else {
 			}
+
+			ITimedVariable<Double> workDays = new ITimedVariable<Double>() {
+				@Override
+				public Period getPeriod() {
+					return period;
+				}
+
+				@Override
+				public Double getValue(Period p) {
+					return getWorkDays(ctx, p);
+				}
+
+			};
+			ITimedVariable<?> userWorkDays = getExpressionContext().getVariable(WORK_DAYS, period.getStart(),
+					period.getEnd());
+
+			if (userWorkDays == null) {
+				ctx.putVariable(WORK_DAYS, workDays);
+			} 
 
 			ITimedVariable<Double> workedHours = new ITimedVariable<Double>() {
 				private Map<Integer, ContextVariable> DAYS = new HashMap<Integer, ContextVariable>() {
