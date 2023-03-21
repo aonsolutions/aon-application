@@ -390,5 +390,17 @@ public class EnterpriseSite implements EntryPoint, Employees.Listener {
 		
 	}
 
+	@Override
+	public void onCollapseEmployees() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onShowEmployees() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

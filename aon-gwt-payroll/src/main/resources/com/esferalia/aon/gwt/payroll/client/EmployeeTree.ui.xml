@@ -23,6 +23,14 @@
 		margin-top: 5px;
 	}
 	
+	.animate{
+		width: 340px;
+	}
+	
+	.flex {
+		display: flex;
+	}
+	
 	.felxColumn {
 		display: flex;
 		flex-direction: column;
@@ -41,35 +49,37 @@
 	}
 	
 	.heightAll { height: 100%; }
+	
+	.widthAll { width: 100%; } 
 
 	</ui:style>
 
 	<ui:image field='configgroup' src='configgroup.png' />
 	<ui:image field='employeesgroup' src='employeesgroup.png' />
+	
+	<g:HTMLPanel styleName="{style.flex} {style.widthAll}">
+	
+		<payroll:Employees ui:field='employees' extended="true" formers="false" styleName="aon-EmployeeTree-Employees {style.animate}" />
+	
+		<g:SplitLayoutPanel ui:field="dockLayoutPanel"  styleName="aon-EmployeeTree {style.widthAll}" >
+			<g:center>
+				<g:HTMLPanel styleName="{style.felxColumn}">
+					<g:HTMLPanel ui:field="messagePanel" debugId="messagePanel" styleName="{style.messageMT} aon-EmployeeTree-Messages" />
+					<aon:DetailPanel ui:field='employeeDetail' styleName="aon-EmployeeTree-EmployeeDetail" />
+				</g:HTMLPanel>
+			</g:center>
+	
+			<g:south size="0">
+				<aon:solutions.AonMinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector} aon-EmployeeTree-Events">
+					<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
+				</aon:solutions.AonMinimizePanel>
+			</g:south>
+	
+		</g:SplitLayoutPanel>
+	
+	</g:HTMLPanel>
 
 
-	<g:SplitLayoutPanel ui:field="dockLayoutPanel"  styleName="aon-EmployeeTree" >
-		<g:north size="35" >
-			<commonsolutions:AonEmployeesToolbar ui:field="toolbar" styleName="{style.toolbar} aon-MainAgreement-ToolBar"/>
-		</g:north>
-
-		<g:west size='275' >
-				<payroll:Employees ui:field='employees' extended="true" formers="false" styleName="aon-EmployeeTree-Employees" />
-		</g:west>
-		
-		<g:center>
-			<g:HTMLPanel styleName="{style.felxColumn}">
-				<g:HTMLPanel ui:field="messagePanel" debugId="messagePanel" styleName="{style.messageMT} aon-EmployeeTree-Messages" />
-				<aon:DetailPanel ui:field='employeeDetail' styleName="aon-EmployeeTree-EmployeeDetail" />
-			</g:HTMLPanel>
-		</g:center>
-
-		<g:south size="0">
-			<aon:solutions.AonMinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector} aon-EmployeeTree-Events">
-				<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
-			</aon:solutions.AonMinimizePanel>
-		</g:south>
-
-	</g:SplitLayoutPanel>
+	
 
 </ui:UiBinder>

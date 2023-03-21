@@ -1,28 +1,58 @@
 <ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
 	xmlns:g='urn:import:com.google.gwt.user.client.ui' 
 	xmlns:employee='urn:import:com.esferalia.aon.gwt.payroll.client'
-	xmlns:common='urn:import:com.esferalia.aon.gwt.common.client.widget'
-	xmlns:commonsolutions='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
+	xmlns:aon='urn:import:com.esferalia.aon.gwt.common.client.widget.solutions'>
 
 
-	<ui:style>
+	<ui:style type="com.esferalia.aon.gwt.payroll.client.Employees.MyStyle">
 	
-	.employees img {
-		filter: grayscale(100%) contrast(200%);
-	}
+		.animate {
+			transition: 0.5s;
+		}
+	
+		.employees img {
+			filter: grayscale(100%) contrast(200%);
+		}
+		
+		.flex {
+			display: flex;
+			gap: .5rem;
+			align-items: center;
+		}
+		
+		.flexColumn {
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
+		}
+		
+		.staticEmployees {
+			position: fixed !important;
+			width: 290px !important;
+			height: 90% !important;
+			z-index: 1;
+		}
+		
+		.heightAll { height: 100%; }
 	
 	</ui:style>
 
 
-	<g:DockLayoutPanel unit='PX' >
-		<g:north size="50">
-			<commonsolutions:AonEmployeesTreeToolbar ui:field="toolbar" />
-		</g:north>
-
+	<g:DockLayoutPanel unit='PX' styleName="{style.animate}" >
 		<g:center>
-			<g:ScrollPanel styleName="{style.employees}"  ui:field="scrollPanel" debugId="employeesScrollPanel">
-				<g:Tree  ui:field="tree" debugId="employeesTree"/>
-			</g:ScrollPanel>
+			<g:DeckPanel ui:field="employeesDeck">
+				<g:HTMLPanel styleName="{style.flexColumn}" ui:field="dynamicEmployees">
+					<g:HTMLPanel styleName="{style.flex}" ui:field="employeesToolbar"/>
+					<aon:AonEmployeesTreeToolbar ui:field="toolbar" />
+					<g:ScrollPanel styleName="{style.employees} {style.heightAll}"  ui:field="scrollPanel" debugId="employeesScrollPanel">
+						<g:Tree  ui:field="tree" debugId="employeesTree"/>
+					</g:ScrollPanel>
+				</g:HTMLPanel>
+				
+				<g:HTMLPanel ui:field="staticEmployees" styleName="{style.flexColumn}" />
+			
+			</g:DeckPanel>
+			
 		</g:center>
 	</g:DockLayoutPanel>
 
