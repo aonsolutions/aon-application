@@ -46,7 +46,7 @@ public class AgreementPaymentStartDateUpdate implements Update {
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.DAY_OF_MONTH, 1);
 		cal.set(Calendar.MONTH, Calendar.JANUARY);
-		cal.set(Calendar.YEAR, 2000);
+		cal.set(Calendar.YEAR, 1970);
 		java.sql.Date date = new java.sql.Date(cal.getTimeInMillis());
 
 		try {
@@ -55,6 +55,7 @@ public class AgreementPaymentStartDateUpdate implements Update {
 			.update(AGREEMENT_PAYMENT)
 			.set(AGREEMENT_PAYMENT.START_DATE, date)
 			.where(AGREEMENT_PAYMENT.START_DATE.gt(date))
+			.and(AGREEMENT_PAYMENT.END_DATE.isNull())
 			.execute();
 			
 			long millis = (new Date()).getTime() - now.getTime();

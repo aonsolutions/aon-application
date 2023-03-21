@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.AgreementPaymentStartDateUpdate;
 import net.aonsolutions.db.up2date.payroll.AgreementPurge;
 import net.aonsolutions.db.up2date.tgss.ArtistBaseCgcMax2023Update;
 import net.aonsolutions.db.up2date.finance.SagardoBusUpdate;
@@ -340,12 +341,13 @@ public class Up2Date {
 	    // RefreshMod130Result.REFRESH_MOD130_RESULT,
 	    // AlterFsMod349FsModel.ALTER_FS_MOD349_FS_MODEL,
 	    // MaxEmbargable4ProrratedFix.MAXEMBARGABLE4PRORRATEDFIX,
-	    ArtistBaseCgcMax2023Update.ARTISTBASECGCMAX2023UPDATE,
-	    MaxEmbargable4ProrratedFix.MAXEMBARGABLE4PRORRATEDFIX,
-	    RefreshMod130Result.REFRESH_MOD130_RESULT,
-	    AgreementPurge.AGREEMENTPURGE,
+	    // ArtistBaseCgcMax2023Update.ARTISTBASECGCMAX2023UPDATE,
+	    // MaxEmbargable4ProrratedFix.MAXEMBARGABLE4PRORRATEDFIX,
+	    // RefreshMod130Result.REFRESH_MOD130_RESULT,
+            AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE,
 
 	    // Important, not remove
+	    // AgreementPurge.AGREEMENTPURGE,
 	    SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
 	    SagardoBusUpdate.SAGARDOBUS_UPDATE
 	    
