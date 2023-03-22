@@ -8432,7 +8432,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				,contractStartDate
 				, new HashMap<String,String>(){
 					{
-						put("DIAS_MES", "30.00");
+						//put("DIAS_MES", "30.00");
 					}
 				}				
 				,category);
@@ -8483,6 +8483,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		//salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() +" : " + p.getAmount() ));
 
 		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00 + 1000.00 / 12 * 3.00, salary.getTotalPayment(), 0.005);
+		
+		org.junit.Assert.assertEquals(31, salary.getTimeUnits(),0);
 	}
 	
 	@Test
@@ -8577,7 +8579,7 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 				,contractStartDate
 				, new HashMap<String,String>(){
 					{
-						put("DIAS_MES", "30.00");
+						//put("DIAS_MES", "30.00");
 					}
 				}				
 				,category);
@@ -8621,6 +8623,13 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
         			System.out.println( startDate + "[" + description + " ]: " + amount + ", " + quote );
         			super.addPayment(amount, quote, tax, description, startDate, endDate, payment, context);
         		}
+        		
+        		@Override
+        		public void addData(String name, ITimedVariable<?> data) {
+        		    if ( "DIAS_TRABAJADOS".equals(name))
+        			System.out.println(name + "=" + data.getValue(data.getPeriod())+ "(" + data.getPeriod().getStart() + ")");
+        		    super.addData(name, data);
+        		}
 		};
 		
 		Salary salary = new SmartContractSalaryCalculator<Salary>(salaryBuilder).calculate(ctx);
@@ -8630,6 +8639,8 @@ public class SQLExtraTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(ContextVariable.TOTAL_PAYMENT.getName(), 1010.00 + 1000.00 / 12 * 2.00, salary.getTotalPayment(), 0.005);
 
 		Assert.assertEquals(1010.00 / 12.00 * 2 + 1000.00 / 12.00 , salary.getExtraPayProration(), 0.005);
+
+		org.junit.Assert.assertEquals(31, salary.getTimeUnits(),0);
 	}
 
 	@Test
