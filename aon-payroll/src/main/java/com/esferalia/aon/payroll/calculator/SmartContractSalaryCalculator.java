@@ -1757,8 +1757,11 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		try {
 		    expressionContext.eval(contractPayment.getExpression(), paymentStart,paymentEnd, Double.class);
 		} catch ( UndefinedVariablesException  e) {
-		    if ( Arrays.stream(e.getVariableNames()).anyMatch( name -> ContextVariable.getVariableByName(name) == null ) )
+		    if ( Arrays.stream(e.getVariableNames()).anyMatch( name -> ContextVariable.getVariableByName(name) == null ) ) {
 			throw e;
+		    }
+		} catch ( Exception e ) {
+		    return;
 		}
 
 		try {
