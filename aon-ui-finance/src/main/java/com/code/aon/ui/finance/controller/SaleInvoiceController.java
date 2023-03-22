@@ -75,6 +75,7 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
@@ -85,7 +86,6 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.seres.writer.udapa.UdapaSaleInvoiceWriter;
@@ -735,7 +735,7 @@ public class SaleInvoiceController extends InvoiceController {
 	private Certificate checkCertificate() throws Exception {
 		Certificate cert = getCertData();
 		try {
-			if(!checkCert(cert.getCertificate(), cert.getPassword())) {
+			if(!checkCert(cert.getData(), cert.getPassword())) {
 				throw new AbortProcessingException("El certificado o la contraseña no son correctos.");
 			}
 		} catch (Exception e) {
@@ -883,7 +883,7 @@ public class SaleInvoiceController extends InvoiceController {
 		Domain domain = getDomain();
 		User user = getUser();
 		Attach attach = AON.getAttach(domain.getName(), domain.getId(), user.getLogin(), f -> f.getIdProperty().eq(getCertificate()), AttachType.REGISTRY);
-		cert.setCertificate(attach.getData());
+		cert.setData(attach.getData());
 		return cert;
 	}
 	
@@ -921,10 +921,11 @@ public class SaleInvoiceController extends InvoiceController {
 			Domain domain = getDomain();
 			User user = getUser();
 			AON.getCertificates(domain, user, f -> certificateFilter(domain, user, f)).forEach(certificate -> {
-				SelectItem item = new SelectItem(certificate.getId(), certificate.getName());
+				SelectItem item = new SelectItem(certificate.getId(), certificate.getDescription());
 				digitalCertificates.add(item);
 				certificates.add(certificate);
 			});
+			
 			if(!certificates.isEmpty())
 				certificate = certificates.getFirst().getId();
 		}

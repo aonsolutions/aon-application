@@ -67,10 +67,10 @@ import com.esferalia.aon.jooq.tables.records.SignatureRecord;
 import com.esferalia.aon.jooq.tables.records.UserRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Contact;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.AuthFilter;
-import com.esferalia.aon.occam.api.model.Filter.CertificateFilter;
 import com.esferalia.aon.occam.api.model.Filter.ContactFilter;
 import com.esferalia.aon.occam.api.model.Filter.DomainAppFilter;
 import com.esferalia.aon.occam.api.model.Filter.MailAccountFilter;
@@ -85,7 +85,6 @@ import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.MailAccountType;
 import com.esferalia.aon.occam.api.model.Module;
 import com.esferalia.aon.occam.api.model.Properties.AuthProperties;
-import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
 import com.esferalia.aon.occam.api.model.Properties.ContactProperties;
 import com.esferalia.aon.occam.api.model.Properties.MailAccountProperties;
 import com.esferalia.aon.occam.api.model.Properties.SignatureProperties;
@@ -98,7 +97,6 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
-import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -110,6 +108,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO.CertificatePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DomainAppPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ScopePropertiesDAO;
@@ -122,6 +121,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.UserWorkgroupDAO.UserWorkgroupPrope
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.server.codec.binary.AonHex;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -130,7 +130,7 @@ public class SecurityDAO {
 	private SecurityDAO() {
 		throw new IllegalStateException("Utility class");
 	}
-	
+	private static final CertificatePropertiesDAO CERTIFICATE_PROPERTIES = new CertificatePropertiesDAO();
 	private static final String DIGITAL_CERTIFICATE_PASSWORD = "DIGITAL_CERTIFICATE_PASSWORD";
 	private static final UserPropertiesDAO USER_PROPERTIES = new UserPropertiesDAO();
 	private static final UserScopePropertiesDAO USER_SCOPE_PROPERTIES = new UserScopePropertiesDAO();
@@ -139,7 +139,6 @@ public class SecurityDAO {
 	private static final SignaturePropertiesDAO SIGNATURE_PROPERTIES = new SignaturePropertiesDAO();
 	private static final DomainAppPropertiesDAO DOMAIN_APP_PROPERTIES = new DomainAppPropertiesDAO();
 	private static final UserAppRolePropertiesDAO USER_APP_ROLE_PROPERTIES = new UserAppRolePropertiesDAO();
-	private static final CertificatePropertiesDAO CERTIFICATE_PROPERTIES = new CertificatePropertiesDAO();
 	protected static class SignaturePropertiesDAO implements SignatureProperties {
 		protected Condition[] getConditions(SignatureFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -154,21 +153,10 @@ public class SecurityDAO {
 		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<>(SIGNATURE.USER_ID);}
 	}
 	
-	protected static class CertificatePropertiesDAO implements CertificateProperties {
-		protected Condition[] getConditions(CertificateFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.DOMAIN);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.REGISTRY);}
-		@Override public Property<String> getTypeProperty() {return new FilterDAO.PropertyDAO<>(TAG.NAME);}
-
-	}
-	
+	@Deprecated
 	private static final AuthPropertiesDAO AUTH_PROPERTIES = new AuthPropertiesDAO();
+	
+	@Deprecated
 	protected static class AuthPropertiesDAO implements AuthProperties {
 		protected Condition[] getConditions(AuthFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
@@ -184,6 +172,7 @@ public class SecurityDAO {
 		@Override public Property<String> getPhoneProperty() {return new FilterDAO.PropertyDAO<>(AUTH.PHONE);}
 	}
 
+	@Deprecated
 	public static Auth getAuth(AONContext ctx, byte[] auth) {
 		return ctx.getDslContext()
 			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
@@ -192,6 +181,7 @@ public class SecurityDAO {
 			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
 	}
 
+	@Deprecated
 	public static Stream<Auth> getAuthStream(AONContext ctx, AuthFilter filter) {
 		return ctx.getDslContext()
 			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
@@ -200,6 +190,7 @@ public class SecurityDAO {
 			.fetch().stream().map(new AuthFiller());
 	}
 	
+	@Deprecated
 	public static Auth getAuth(AONContext ctx, String email) {
 		return ctx.getDslContext()
 			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
@@ -208,6 +199,7 @@ public class SecurityDAO {
 			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
 	}
 	
+	@Deprecated
 	public static Auth getAuthByDocument(AONContext ctx, String document) {
 		return ctx.getDslContext()
 			.select(AUTH.ID, DSLExtensions.hex(AUTH.ID), AUTH.EMAIL, AUTH.PASSWORD, AUTH.NAME, AUTH.SURNAME, AUTH.DOCUMENT, AUTH.PHONE)
@@ -216,6 +208,7 @@ public class SecurityDAO {
 			.fetch().stream().map(new AuthFiller()).findFirst().orElse(new Auth());
 	}
 	
+	@Deprecated
 	public static Integer[] getAuthDomains (AONContext ctx, byte[] auth) {
 		return ctx.getDslContext()
 			.select(USER.DOMAIN)
@@ -224,6 +217,7 @@ public class SecurityDAO {
 			.fetch().stream().map(r -> r.getValue(USER.DOMAIN)).toArray(Integer[]::new);
 	}
 
+	@Deprecated
 	public static Integer[] getAuthScopes (AONContext ctx, byte[] auth) {
 		return ctx.getDslContext()
 			.select(USER_SCOPE.SCOPE)
@@ -240,6 +234,12 @@ public class SecurityDAO {
 		return ctx.getDslContext().select(DSLExtensions.unhex(uuid)).stream().map(r -> r.value1()).findFirst().orElse(new byte[]{});
 	}
 	
+	   public static String hexUuid(AONContext ctx, byte[] uuid) {
+	        return ctx.getDslContext().select(DSLExtensions.hex(uuid))
+	             .stream().map(r -> r.value1()).findFirst().orElse(null);
+	    }
+	
+	@Deprecated
 	public static Auth insertAuth(AONContext ctx, Auth auth) {
 		String uuid = ctx.getDslContext().fetch("select uuid();").stream().map(r -> r.getValue(0).toString()).findFirst().get().replace("-", "");
 		ctx.getDslContext().insertInto(AUTH)
@@ -255,6 +255,7 @@ public class SecurityDAO {
 		return getAuth(ctx, auth.getEmail());
 	}
 	
+	@Deprecated
 	public static Auth updateAuth(AONContext ctx, Auth auth) {
 		ctx.getDslContext().update(AUTH)
 			.set(AUTH.NAME, auth.getName())
@@ -266,6 +267,7 @@ public class SecurityDAO {
 		return auth;
 	}
 	
+	@Deprecated
 	public static Auth updateAuthPassword(AONContext ctx, Auth auth) {
 		ctx.getDslContext().update(AUTH)
 			.set(AUTH.PASSWORD, auth.getPassword())
@@ -365,7 +367,7 @@ public class SecurityDAO {
 		if (record != null) {
 			user = new User();
 			user.setId(record.getValue(USER.ID));
-			user.setDomain(record.getValue(USER.DOMAIN));
+			user.setDomain(new Domain().setId(record.getValue(USER.DOMAIN)));
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN)); 
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
@@ -399,8 +401,10 @@ public class SecurityDAO {
 			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain())
-			.set(USER.AUTH, user.getAuth().getAuth())
+			.set(USER.DOMAIN, user.getDomain().getId())
+			.set(USER.AUTH, user.getAuth() != null 
+				? unHexUuid(ctx, user.getAuth())
+				: null)
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
 			.set(USER.TOOLBAR, user.getToolbar().value())
@@ -411,13 +415,13 @@ public class SecurityDAO {
 	}
 	
 	public static User updateUser(AONContext ctx, User user) {
-		ctx.getDslContext().update(USER)
+	    ctx.getDslContext().update(USER)
 			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain())
-			.set(USER.AUTH, user.getAuth().getAuth())
+			.set(USER.DOMAIN, user.getDomain().getId())
+			.set(USER.AUTH, unHexUuid(ctx, user.getAuth()))
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
 			.set(USER.TOOLBAR, user.getToolbar().value())
@@ -517,6 +521,7 @@ public class SecurityDAO {
 		.fetch().stream().map(new DomainFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
+	@Deprecated
 	public static class AuthFiller extends Filler implements Function<Record8<byte[], String, String, String, String, String, String, String>,Auth> {
 
 		@Override
@@ -534,25 +539,6 @@ public class SecurityDAO {
 				.setDocument(r.getValue(AUTH.DOCUMENT))
 				.setPhone(r.getValue(AUTH.PHONE))
 				.setPassword(r.getValue(AUTH.PASSWORD));
-		}
-		
-	}
-	
-	public static class CertificateFiller extends Filler implements Function<Record, Certificate>{
-
-		@Override
-		public Certificate apply(Record r) {
-			return build(r);
-		}
-		
-		public static Certificate build(Record r) {
-			return new Certificate()
-				.setId(getValue(r, RATTACH.ID))
-				.setDomain(getValue(r, RATTACH.DOMAIN))
-				.setType(MimeType.PKCS12.name())
-				.setDescription(getValue(r, RATTACH.DESCRIPTION))
-				.setCertificate(getValue(r, RATTACH.DATA))
-				.setConfidential(getBoolean(r, RATTACH.SECURITY_LEVEL));
 		}
 		
 	}
@@ -655,13 +641,15 @@ public class SecurityDAO {
 		User user = new User();
 		if (record != null) {
 			user.setId(record.getValue(USER.ID));
-			user.setDomain(record.getValue(USER.DOMAIN));
+			user.setDomain(new Domain().setId(record.getValue(USER.DOMAIN)));
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN)); 
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
 			user.setRegistry(new Registry().setId(record.getValue(USER.REGISTRY)));
 			user.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
-			user.setAuth(new Auth().setAuth(record.getValue(USER.AUTH)));
+			user.setAuth(record.getValue(USER.AUTH) != null
+				? AonHex.encodeHexString(record.getValue(USER.AUTH))
+				: null);
 		}
 		return user;
 	}
@@ -778,8 +766,8 @@ public class SecurityDAO {
 			throw new IllegalAccessError("Usuario no encontrado.");
 		}
 		// Es un usuario del dominio, por lo que hay que consultar los scopes del dominio
-		int dom = user.getDomain();
-		if ( user.getDomain() == ctx.getDomainId()) {
+		int dom = user.getDomain().getId();
+		if ( user.getDomain().getId() == ctx.getDomainId()) {
 			final List<Integer> list = new ArrayList<Integer>();
 			ctx.getDslContext()
 				.select(USER_SCOPE.SCOPE)
@@ -1255,16 +1243,6 @@ public class SecurityDAO {
 			.execute();
 	}
 	
-	public static Stream<Certificate> getCertificates(AONContext ctx, CertificateFilter filter) {
-		return ctx.getDslContext().select().from(RATTACH)
-			.leftOuterJoin(RATTACH_TAG).on(RATTACH_TAG.RATTACH.eq(RATTACH.ID))
-			.leftOuterJoin(TAG).on(TAG.ID.eq(RATTACH_TAG.TAG))
-			.where(CERTIFICATE_PROPERTIES.getConditions(filter))
-			.and(RATTACH.TYPE.eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value()))
-			.groupBy(RATTACH.ID)
-			.fetch().stream().map(new CertificateFiller());
-	}
-	
 	public static Certificate getCertificate(AONContext ctx, Integer userId, String certificateType) {
 		Certificate certificate;
 		DSLContext dslContext = ctx.getDslContext();
@@ -1311,7 +1289,8 @@ public class SecurityDAO {
 		
 		if(null == certificateRecord) return null;
 		
-		String password = certificateRecord.get(RATTACH.DESCRIPTION).split("HIDE\\(")[1].split("\\)")[0];
+		String password = certificateRecord.get(RATTACH.DESCRIPTION)
+				.split("HIDE\\(")[1].split("\\)")[0];
 		
 		return new Certificate()
 				.setType(MimeType.PKCS12.name())
@@ -1568,7 +1547,12 @@ public class SecurityDAO {
 						.map(r -> r.getRole()).collect(Collectors.toCollection(LinkedList::new))
 				: new LinkedList<>();	
 		
-		Long userNum = getDomainUserStream(ctx, f -> f.getDomainProperty().eq(domain.getId()).and(f.getEnterpriseProperty().isNull()).and(f.getActiveProperty().eq((byte) 1)).and(f.getSharedProperty().eq((byte)0))).count();
+		Long userNum = getDomainUserStream(ctx, f -> 
+			f.getDomainProperty().eq(domain.getId())
+			.and(f.getEnterpriseProperty().isNull())
+			.and(f.getActiveProperty().eq((byte) 1))
+			.and(f.getSharedProperty().eq((byte)0)))
+			.count();
 		domain.setDefinedUsers(userNum.intValue());
 		
 
@@ -1591,7 +1575,7 @@ public class SecurityDAO {
 		User user = getUser(ctx);
 		if (user != null) {
 			return getDomainAppStream(ctx, p -> 
-				p.getDomainProperty().eq(user.getDomain())
+				p.getDomainProperty().eq(user.getDomain().getId())
 					.and(p.getAppProperty().eq( AonApp.OCR.value()))
 					.and(p.getActiveProperty().eq( (byte) 1 )))
 				.findFirst()

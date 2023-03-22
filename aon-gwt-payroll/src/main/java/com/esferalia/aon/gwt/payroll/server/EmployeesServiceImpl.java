@@ -208,7 +208,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.ContractAttachType;
 import com.esferalia.aon.occam.api.model.type.ContractType;
@@ -2475,7 +2475,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			PAYROLL.getCCCStream(domainName, domainId, userLogin).forEach(ccc -> {
 				try {
 					Map<String, Map<String, WorkerLiquidation>> cccSldCost = SistemaRED.getCosts(
-							certificate.getCertificate(), certificate.getPassword(), certificate.getType(),
+							certificate.getData(), certificate.getPassword(), certificate.getType(),
 							ccc.getCccRegimeCode(), ccc.getCcc(), startDate, endDate);
 					cccSldCosts.put(ccc.getCcc(), cccSldCost);
 
@@ -6468,7 +6468,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// Get employees ipdxnaf
 			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaRED.ipfxnaf(
-					new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(),
+					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
 					certificate.getType(), nssList);
 
 			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux
@@ -6481,7 +6481,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			System.out.println(employee);
 
 			// sendAlta
-			SistemaRED.sendAlta(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(),
+			SistemaRED.sendAlta(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
 					certificate.getType(), employee);
 
 		} catch (Exception e) {
@@ -6510,7 +6510,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// Get employees ipdxnaf
 			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaRED.ipfxnaf(
-					new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(),
+					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
 					certificate.getType(), nssList);
 
 			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux
@@ -6523,7 +6523,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			System.out.println("sendEmployeeBaja \n" + employee.toString());
 
 			// sendBaja
-			SistemaRED.sendBaja(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(),
+			SistemaRED.sendBaja(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
 					certificate.getType(), employee);
 
 		} catch (Exception e) {
@@ -6547,7 +6547,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 
-			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
 			// movPrevDelete
 			SistemaRED.movPrevDelete(certificateInputStream, certificate.getPassword(), certificate.getType(),
@@ -6574,7 +6574,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 
-			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
 			ArrayList<String> nssList = new ArrayList<>();
 			nssList.add(nss);

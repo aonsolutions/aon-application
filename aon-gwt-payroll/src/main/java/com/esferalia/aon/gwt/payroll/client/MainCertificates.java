@@ -19,7 +19,7 @@ import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateSecurity;
-import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextAlign;
@@ -518,7 +518,7 @@ public class MainCertificates extends MainEntryPoint{
 		});
 		
 		Hidden rattachIdHidden = new Hidden("rattachId", certificate.getId().toString());
-		Hidden raddinfoIdHidden = new Hidden("raddinfoId", null == certificate.getPasswordId() ? "" : certificate.getPasswordId().toString());
+		Hidden raddinfoIdHidden = new Hidden("raddinfoId", "");
 		Hidden extensionHidden = new Hidden("extension", "");
 		Hidden fileNameHidden = new Hidden("filename", certificate.getDescription());
 		Hidden passwordHidden = new Hidden("password", certificate.getPassword());
@@ -664,7 +664,7 @@ public class MainCertificates extends MainEntryPoint{
 		checkCertificateButton.addClickHandler(e -> getCertificateInfo(certificate));
 		
 		// Buttons visibility
-		if(Boolean.FALSE.equals(certificate.getHasCertificate())) {
+		if(Boolean.FALSE.equals(certificate.hasCertificate())) {
 			verifyButton.setVisible(false);
 			secondaryUsersButton.setVisible(false);
 			checkCertificateButton.setVisible(false);
