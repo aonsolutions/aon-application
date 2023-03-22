@@ -3625,7 +3625,7 @@ public class SalaryDraft extends ResizeComposite
 		employeePartialFactorTitle.setVisible(employeePartialFactorLabel.isVisible() );
 		employeePartialFactorButton.setVisible(employeePartialFactorLabel.isVisible() );
 
-		double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
+		double workDays = getValuesOf("DIAS_TRABAJADOS", salaryStartDate, salaryEndDate).collect(Collectors.summingDouble( AonNumberUtils::todouble));
 		employeeWorkedDaysLabel.setText(formatValue(workDays));
 		employeeWorkedDaysLabel.setVisible(isSalary() && !hoursBase  && salaryPartialFactor == 1.00 && workDays > 0 );
 		employeeWorkedDaysTitle.setVisible(employeeWorkedDaysLabel.isVisible());
@@ -3729,6 +3729,17 @@ public class SalaryDraft extends ResizeComposite
 	public Stream<String> getValuesOf(String name) {
 		return salaryDraftObject.getContext().stream()
 		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		.map(Variable::getValue)
+		.filter(Objects::nonNull)
+		.map(String::valueOf )
+		;
+	}
+
+	public Stream<String> getValuesOf(String name, Date startDate, Date endDate) {
+		return salaryDraftObject.getContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		.filter(v -> v.getStartDate().compareTo(endDate) <= 0 )
+		.filter(v -> v.getEndDate().compareTo(startDate) >= 0 )
 		.map(Variable::getValue)
 		.filter(Objects::nonNull)
 		.map(String::valueOf )
