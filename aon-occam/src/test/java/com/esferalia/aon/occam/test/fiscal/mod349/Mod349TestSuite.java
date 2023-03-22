@@ -8,7 +8,7 @@ import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	
+
 	Mod349DeleteTest.class,
 	Mod349InsertManualQuaterlyTest.class,
 	Mod349InsertManualMonthlyTest.class,
@@ -39,3 +39,4 @@ import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
 public class Mod349TestSuite {
 
 }
+
