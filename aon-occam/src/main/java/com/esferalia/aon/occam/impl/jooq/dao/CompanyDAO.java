@@ -199,7 +199,7 @@ public class CompanyDAO {
 	public static Company getByDomain(AONContext ctx, Integer domain){
 		return getStream(ctx, p -> p.getDomainProperty().eq(domain))
 			.findFirst()
-			.orElse(new Company());
+			.orElse(null);
 	}
 
 	public static Company getCompany(AONContext ctx,int domain) {
