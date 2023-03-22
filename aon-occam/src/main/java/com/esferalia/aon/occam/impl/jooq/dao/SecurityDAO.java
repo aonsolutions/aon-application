@@ -121,7 +121,6 @@ import com.esferalia.aon.occam.impl.jooq.dao.UserWorkgroupDAO.UserWorkgroupPrope
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
-import com.esferalia.aon.watson.server.codec.binary.AonHex;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -234,10 +233,10 @@ public class SecurityDAO {
 		return ctx.getDslContext().select(DSLExtensions.unhex(uuid)).stream().map(r -> r.value1()).findFirst().orElse(new byte[]{});
 	}
 	
-	   public static String hexUuid(AONContext ctx, byte[] uuid) {
-	        return ctx.getDslContext().select(DSLExtensions.hex(uuid))
-	             .stream().map(r -> r.value1()).findFirst().orElse(null);
-	    }
+	public static String hexUuid(AONContext ctx, byte[] uuid) {
+		return ctx.getDslContext().select(DSLExtensions.hex(uuid))
+				.stream().map(r -> r.value1()).findFirst().orElse(null);
+	}
 	
 	@Deprecated
 	public static Auth insertAuth(AONContext ctx, Auth auth) {
@@ -367,7 +366,7 @@ public class SecurityDAO {
 		if (record != null) {
 			user = new User();
 			user.setId(record.getValue(USER.ID));
-			user.setDomain(new Domain().setId(record.getValue(USER.DOMAIN)));
+			user.setDomain(record.getValue(USER.DOMAIN));
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN)); 
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
@@ -401,9 +400,9 @@ public class SecurityDAO {
 			.set(USER.TYPE, user.getTypeValue())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain().getId())
+			.set(USER.DOMAIN, user.getDomain())
 			.set(USER.AUTH, user.getAuth() != null 
-				? unHexUuid(ctx, user.getAuth())
+				? user.getAuth().getAuth()
 				: null)
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
@@ -420,8 +419,8 @@ public class SecurityDAO {
 			.set(USER.NAME, user.getName())
 			.set(USER.LOGIN, user.getLogin())
 			.set(USER.ACTIVE, user.isActive() ? (byte) 1 : (byte) 0)
-			.set(USER.DOMAIN, user.getDomain().getId())
-			.set(USER.AUTH, unHexUuid(ctx, user.getAuth()))
+			.set(USER.DOMAIN, user.getDomain())
+			.set(USER.AUTH, user.getAuth().getAuth())
 			.set(USER.SHARED, user.isShared() ? (byte) 1 : (byte) 0)
 			.set(USER.ENTERPRISE, user.getEnterprise())
 			.set(USER.TOOLBAR, user.getToolbar().value())
@@ -641,15 +640,13 @@ public class SecurityDAO {
 		User user = new User();
 		if (record != null) {
 			user.setId(record.getValue(USER.ID));
-			user.setDomain(new Domain().setId(record.getValue(USER.DOMAIN)));
+			user.setDomain(record.getValue(USER.DOMAIN));
 			user.setName(record.getValue(USER.NAME));
 			user.setLogin(record.getValue(USER.LOGIN)); 
 			user.setActive(AonEnumUtils.getBoolean(record.getValue(USER.ACTIVE)));
 			user.setRegistry(new Registry().setId(record.getValue(USER.REGISTRY)));
 			user.setRoles( SecurityDAO.getUserRoles(ctx, user.getId()));
-			user.setAuth(record.getValue(USER.AUTH) != null
-				? AonHex.encodeHexString(record.getValue(USER.AUTH))
-				: null);
+			user.setAuth(new Auth().setAuth(record.getValue(USER.AUTH)));
 		}
 		return user;
 	}
@@ -766,8 +763,8 @@ public class SecurityDAO {
 			throw new IllegalAccessError("Usuario no encontrado.");
 		}
 		// Es un usuario del dominio, por lo que hay que consultar los scopes del dominio
-		int dom = user.getDomain().getId();
-		if ( user.getDomain().getId() == ctx.getDomainId()) {
+		int dom = user.getDomain();
+		if ( user.getDomain() == ctx.getDomainId()) {
 			final List<Integer> list = new ArrayList<Integer>();
 			ctx.getDslContext()
 				.select(USER_SCOPE.SCOPE)
@@ -1575,7 +1572,7 @@ public class SecurityDAO {
 		User user = getUser(ctx);
 		if (user != null) {
 			return getDomainAppStream(ctx, p -> 
-				p.getDomainProperty().eq(user.getDomain().getId())
+				p.getDomainProperty().eq(user.getDomain())
 					.and(p.getAppProperty().eq( AonApp.OCR.value()))
 					.and(p.getActiveProperty().eq( (byte) 1 )))
 				.findFirst()

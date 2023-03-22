@@ -72,6 +72,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Salary;
@@ -80,12 +81,10 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
-import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
-import com.esferalia.aon.payroll.tgss.creta.Bases.AddZeroDatoBasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.ConstantDatoBasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.CustomizeBasesCallback;
@@ -789,7 +788,7 @@ public class CretaServlet extends HttpServlet
 		String number = ccc.substring(4);
 		
 		byte [] idc = SistemaRED.getIDCCCC(
-			certificate.getCertificate(), 
+			certificate.getData(), 
 			certificate.getPassword(), 
 			certificate.getType(), 
 			regime, 
@@ -807,7 +806,7 @@ public class CretaServlet extends HttpServlet
 		List<byte[]> list = new LinkedList<>();
 		for ( String naf: nafs ) {
 			byte [] idc = SistemaRED.getIDCNSS(
-				certificate.getCertificate(), 
+				certificate.getData(), 
 				certificate.getPassword(), 
 				certificate.getType(), 
 				regime, 

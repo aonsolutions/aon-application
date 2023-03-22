@@ -161,7 +161,7 @@ import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.DOC;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.SECURITY;
-import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EmployeeIT;
@@ -172,8 +172,8 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.doc.Doc;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
@@ -225,7 +225,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SystemDeductionColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemPaymentColumns;
 import com.esferalia.aon.payroll.tgss.cra.Cra;
 import com.esferalia.aon.payroll.tgss.cra.MainCRAGenerator;
-import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.bonus.Bonuses;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
@@ -3103,7 +3102,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			Collection<SecondaryUser> secondaryUsersCollection = SistemaRED.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
 			
 			List<SecondaryUser> secondaryUsers = new ArrayList<SecondaryUser>(secondaryUsersCollection);
@@ -3146,7 +3145,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
 			
 		} catch (SQLException | SegSocialException e) {
@@ -3163,7 +3162,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			SistemaRED.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
 			
 		} catch (SQLException | SegSocialException e) {
@@ -3180,7 +3179,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			
 			Collection<solutions.aon.seg.social.object.Employee> employeeCollection = SistemaRED.ipfxnaf(is, certificate.getPassword(), certificate.getType(), nssList);
 			solutions.aon.seg.social.object.Employee employee = (solutions.aon.seg.social.object.Employee) employeeCollection.toArray()[0];
@@ -3206,7 +3205,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			
 			solutions.aon.seg.social.object.Employee employee = SistemaRED.nafxipf(is, certificate.getPassword(), certificate.getType(), ipf, apellido1, apellido2);
 			
@@ -3242,7 +3241,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			days = JooqEmployee.getDays(connection, docNum, dateFrom);
 			
-//			return SistemaRED.sendPaternity(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
+//			return SistemaRED.sendPaternity(certificate.getData(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, docType, docNum, applicantType, reason, dateFrom, dateTo, baseCC, baseCP, days);
 			return false;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -3261,7 +3260,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			SistemaRED.removePaternity(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
+			SistemaRED.removePaternity(certificate.getData(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
 		
 		} catch (SQLException | SegSocialException e) {
 			throw new RuntimeException(e);
@@ -3363,7 +3362,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.registerITBaja(
-					certificate.getCertificate(), 
+					certificate.getData(), 
 					certificate.getPassword(), 
 					certificate.getType(), 
 					regime, 
@@ -3400,7 +3399,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.registerITConfirmation(
-					certificate.getCertificate(), 
+					certificate.getData(), 
 					certificate.getPassword(), 
 					certificate.getType(), 
 					regime, 
@@ -3433,7 +3432,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
 			SistemaRED.registerITAlta(
-					certificate.getCertificate(), 
+					certificate.getData(), 
 					certificate.getPassword(), 
 					certificate.getType(), 
 					regime, 
@@ -3462,7 +3461,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);	
 			
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			
 			Contract contract = Sepe.getContractData(is, certificate.getPassword(), certificate.getType(), ipf, startDate, endDate);
 			
@@ -3595,13 +3594,13 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			if(certificateType == com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType.TGSS) {
 				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-				InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
+				InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
 				SistemaRED.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 			}
 			
 			if(certificateType == com.esferalia.aon.gwt.payroll.shared.DigitalCertificate.CertificateType.SEPE) {
 				certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
-				InputStream certificateIS = new ByteArrayInputStream(certificate.getCertificate());
+				InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
 				Sepe.validateCert(certificateIS, certificate.getPassword(), certificate.getType());
 			}
 			
@@ -3662,8 +3661,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			Integer domainId = AonServletUtils.getDomainID(domain);
 			AON.deleteCertificate(domain, domainId, login, 
 					certificate.getId(),
-					f -> f.getIdProperty().eq(certificate.getId()), 
-					r -> r.getIdProperty().eq(certificate.getPasswordId()));
+					f -> f.getIdProperty().eq(certificate.getId()), null);
 		} catch (SQLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -3740,7 +3738,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			} else
 				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			Collection<SecondaryUser> secondaryUsersCollection = SistemaRED.getSecondaryUsers(is, certificate.getPassword(), certificate.getType());
 			
 			List<SecondaryUser> secondaryUsers = new ArrayList<>(secondaryUsersCollection);
@@ -3776,7 +3774,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	
 	private Certificate parseCertificate(com.esferalia.aon.occam.api.model.Certificate certificate) {
 		return new Certificate()
-				.setCertificate(certificate.getData())
+				.setData(certificate.getData())
 				.setPassword(certificate.getPassword())
 				.setType(certificate.getType());
 	}
@@ -3796,7 +3794,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			SistemaRED.deleteSecondaryUser(is, certificate.getPassword(), certificate.getType(), ipfType, ipf);
 			
 		} catch (SQLException | SegSocialException e) {
@@ -3818,7 +3816,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			} else
 				certificate = parseCertificate(AON.getCertificate(domainName, domainId, userLogin, f -> f.getIdProperty().eq(rattachId)));
 			
-			InputStream is = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream is = new ByteArrayInputStream(certificate.getData());
 			SistemaRED.registerSecondaryUserByNie(is, certificate.getPassword(), certificate.getType(), ipfType, ipf, naf);
 			
 		} catch (SQLException | SegSocialException e) {
