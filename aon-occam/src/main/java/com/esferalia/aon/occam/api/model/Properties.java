@@ -1569,7 +1569,7 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<Integer> getRegistryProperty();
 		Property<String> getTypeProperty();
-		
+		Property<Byte> getSecurityLevelProperty();	
 	}
 
 	public interface TimeControlProperties {

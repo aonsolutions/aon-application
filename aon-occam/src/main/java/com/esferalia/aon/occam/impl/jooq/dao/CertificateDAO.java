@@ -54,7 +54,7 @@ public class CertificateDAO {
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.DOMAIN);}
 		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.REGISTRY);}
 		@Override public Property<String> getTypeProperty() {return new FilterDAO.PropertyDAO<>(TAG.NAME);}
-
+		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.SECURITY_LEVEL);}
 	}
 	
 	// -------------------------- Constructor
@@ -149,14 +149,13 @@ public class CertificateDAO {
 			Stream<Certificate> stream = ctx.getDslContext().select().from(RATTACH)
 					.where(RATTACH.REGISTRY.eq(registryUserId))
 					.and(RATTACH.TYPE.eq((byte)4))
-					.fetch().stream().map(new CertificateFiller());
-
-			stream.map(cert -> {
-				cert.setOwner(CertificateOwner.ENTERPRISE);
-				getCertificateTags(ctx, cert);
-				getCertificateInfo(ctx, cert);
-				return cert;
-			});
+					.fetch().stream().map(r -> {	
+						Certificate cert = CertificateFiller.build(r);	
+						cert.setOwner(CertificateOwner.ENTERPRISE);
+						getCertificateTags(ctx, cert);
+						getCertificateInfo(ctx, cert);
+						return cert;
+					});
 			
 			certificateList.addAll(stream.toList());
 		} catch (Exception e) {
@@ -175,15 +174,13 @@ public class CertificateDAO {
 					.where(RATTACH.REGISTRY.eq(registryEnterpriseId))
 					.and(RATTACH.TYPE.eq((byte)4))
 					.and(RATTACH.DOMAIN.eq(domainId))
-					.fetch().stream().map(new CertificateFiller());
-			
-			stream.map(cert -> {
-				cert.setOwner(CertificateOwner.ENTERPRISE);
-				getCertificateTags(ctx, cert);
-				getCertificateInfo(ctx, cert);
-				return cert;
-			});
-			
+					.fetch().stream().map(r -> {
+						Certificate cert = CertificateFiller.build(r);	
+						cert.setOwner(CertificateOwner.ENTERPRISE);
+						getCertificateTags(ctx, cert);
+						getCertificateInfo(ctx, cert);
+						return cert;
+					});
 			certificateList.addAll(stream.toList());
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
@@ -202,15 +199,13 @@ public class CertificateDAO {
 					.and(RATTACH.TYPE.eq((byte)4))
 					.and(RATTACH.SECURITY_LEVEL.eq((byte)0))
 					.and(RATTACH.DOMAIN.eq(parentDomainId))
-					.fetch().stream().map(new CertificateFiller());
-			
-			stream.map(cert -> {
-				cert.setOwner(CertificateOwner.ENTERPRISE);
-				getCertificateTags(ctx, cert);
-				getCertificateInfo(ctx, cert);
-				return cert;
-			});
-			
+					.fetch().stream().map(r -> {
+						Certificate cert = CertificateFiller.build(r);
+						cert.setOwner(CertificateOwner.ENTERPRISE);
+						getCertificateTags(ctx, cert);
+						getCertificateInfo(ctx, cert);
+						return cert;
+					});
 			certificateList.addAll(stream.toList());
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());

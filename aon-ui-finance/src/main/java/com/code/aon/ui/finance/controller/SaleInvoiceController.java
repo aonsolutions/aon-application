@@ -88,6 +88,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.seres.writer.udapa.UdapaSaleInvoiceWriter;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -937,8 +938,15 @@ public class SaleInvoiceController extends InvoiceController {
 		
 		Filter filter;
 		if(domain.getParentId() != null) {
-			Integer[] domains = {domain.getId(), domain.getParentId()};
-			filter = f.getDomainProperty().in(domains);
+			if(!user.getDomain().equals(domain.getParentId())) {
+				filter = (f.getDomainProperty().eq(domain.getId()).or(
+						f.getDomainProperty().eq(domain.getParentId())
+						.and(f.getSecurityLevelProperty().eq(SecurityLevel.OFFICIAL.value())))
+					);
+			} else {
+				Integer[] domains = {domain.getId(), domain.getParentId()};
+				filter = f.getDomainProperty().in(domains);
+			}
 		} else filter = f.getDomainProperty().eq(domain.getId());
     	
 		if(!user.getRegistry().isEmpty() && domain.getParentId() != null) {
@@ -953,7 +961,6 @@ public class SaleInvoiceController extends InvoiceController {
 			Integer[] registries = {company.getId(), parentCompany.getId()};
 			filter = filter.and(f.getRegistryProperty().in(registries));
 		} else filter = filter.and(f.getRegistryProperty().eq(company.getId()));
-		
 		
 		filter = filter.and(f.getTypeProperty().eq(CertificateType.AEAT.name()).or(f.getTypeProperty().isNull()));
 		
