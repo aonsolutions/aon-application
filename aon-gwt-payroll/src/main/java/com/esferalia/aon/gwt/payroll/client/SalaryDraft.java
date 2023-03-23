@@ -3697,7 +3697,7 @@ public class SalaryDraft extends ResizeComposite
 		//dumpContext(constants, Scope.CONTRACT, true, null);
 		
 		if ( Wnd.isNewAONTheme() ) {
-		    showContextAtLeft();
+		    if(contextMenuShowed) showContextAtLeft();
 		    dumpContextAtLeft(visibleContext);
 		    notDefinedVarsCheck.removeFromParent();
 		} else {
