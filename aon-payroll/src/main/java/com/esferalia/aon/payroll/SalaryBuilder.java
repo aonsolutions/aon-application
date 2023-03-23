@@ -296,6 +296,12 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		salaryData.setExpression(String.valueOf(value));
 		this.salary.getSalaryDatas().add(salaryData);
 	}
+	
+	private void addDatas(Map<String, ITimedVariable<?>> context) {
+		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {
+			addData(entry.getKey(), entry.getValue());
+		}
+	}
 
 	@Override
 	public void addBonus(Double amount, String description, Date startDate,
@@ -327,9 +333,7 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		salaryCost.setCostConcept(cost.getName());
 		salaryCost.setDescription(description);
 		
-		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {
-			addData(entry.getKey(), entry.getValue());
-		}
+		addDatas(context);
 
 		this.salary.getSalaryCosts().add(salaryCost);
 	}
@@ -430,6 +434,7 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 			}
 		}
 
+		addDatas(context);
 	}
 
 	@Override
