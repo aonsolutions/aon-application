@@ -691,7 +691,7 @@ public class AgreementUpdate {
 			Calendar defaultPaymentStartDate = Calendar.getInstance();
 			defaultPaymentStartDate.set(Calendar.DAY_OF_MONTH, 1);
 			defaultPaymentStartDate.set(Calendar.MONTH, 0);
-			defaultPaymentStartDate.set(Calendar.YEAR, 2010);
+			defaultPaymentStartDate.set(Calendar.YEAR, 1970);
 			
 			removeServiAgreementPayments(dslContext, agreementId);
 			

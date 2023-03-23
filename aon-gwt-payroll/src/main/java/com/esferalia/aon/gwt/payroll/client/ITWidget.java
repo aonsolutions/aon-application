@@ -1477,6 +1477,7 @@ public abstract class ITWidget extends ResizeComposite {
 		ContractInfo contractInfo = new ContractInfo();	
 		contractInfo.setActivityId(jsContractInfo.getActivityId());
 		contractInfo.setEnterpriseCIF(jsContractInfo.getEnterpriseCIF());
+		contractInfo.setEnterpriseName(jsContractInfo.getEnterpriseName());
 		contractInfo.setCccId(jsContractInfo.getCccId());
 		contractInfo.setCompleteCCC(jsContractInfo.getCompleteCCC());
 		contractInfo.setCccType(jsContractInfo.getCccType());

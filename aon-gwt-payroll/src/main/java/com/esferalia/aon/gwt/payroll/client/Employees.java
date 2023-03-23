@@ -185,7 +185,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		void onCollapseEmployees();
 		
-		void onShowEmployees();
+		void onShowEmployees(boolean isCollapsed);
 	}
 	
 	protected static class HideScrollPanel extends ScrollPanel {
@@ -1607,9 +1607,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		}
 	}
 	
-	private void onShowEmployees() {
+	private void onShowEmployees(boolean isCollapsed) {
 		for (Listener listener : listeners) {
-			listener.onShowEmployees();
+			listener.onShowEmployees(isCollapsed);
 		}
 	}
 
@@ -2789,7 +2789,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 					showMenuButton.setTitle("Ocultar");
 					showMenuButton.removeStyleName(AON.CSS.aonIconMenu());
 					showMenuButton.addStyleName(AON.CSS.aonIconMenuCollapse());
-					onShowEmployees();
+					onShowEmployees(false);
 				}
 				
 				employeeTreeShowed = !employeeTreeShowed;
@@ -2929,7 +2929,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			if ( !Wnd.isNewAONTheme() ) getElement().getStyle().setBackgroundColor("white");
 			else getElement().getStyle().setBackgroundColor("transparent");
 			scrollPanel.setHeight("85%");
-			onShowEmployees();
+			onShowEmployees(true);
 		}, MouseOverEvent.getType());
 		
 		staticEmployees.add(enterprisePanel);
