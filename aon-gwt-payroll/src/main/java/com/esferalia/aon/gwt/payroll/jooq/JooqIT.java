@@ -5,6 +5,7 @@ import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 import static com.esferalia.aon.jooq.tables.ContractInfo.CONTRACT_INFO;
 import static com.esferalia.aon.jooq.tables.ContractLeave.CONTRACT_LEAVE;
 import static com.esferalia.aon.jooq.tables.ContractLeaveDetail.CONTRACT_LEAVE_DETAIL;
+import static com.esferalia.aon.jooq.tables.Enterprise.ENTERPRISE;
 import static com.esferalia.aon.jooq.tables.EnterpriseCcc.ENTERPRISE_CCC;
 import static com.esferalia.aon.jooq.tables.LeaveBatch.LEAVE_BATCH;
 import static com.esferalia.aon.jooq.tables.LeaveBatchDetail.LEAVE_BATCH_DETAIL;
@@ -886,6 +887,15 @@ public class JooqIT {
 		//ENTERPRISE CCC TABLE
 		Integer enterpriseCCC = contractTable.get(CONTRACT.ENTERPRISE_CCC);
 		
+		Record enterpriseRecord = dslContext.select().from(REGISTRY)
+				.where(REGISTRY.ID.eq(
+					dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(contractTable.get(CONTRACT.DOMAIN))).fetchOne(ENTERPRISE.REGISTRY)
+				))
+				.fetchOne();
+		
+		contractData.setEnterpriseCIF(enterpriseRecord.get(REGISTRY.DOCUMENT));
+		contractData.setEnterpriseName(enterpriseRecord.get(REGISTRY.NAME));
+		
 		if(null == enterpriseCCC) {
 			contractData.setCccId(null);
 			contractData.setCccType(null);
@@ -1369,6 +1379,13 @@ public class JooqIT {
 			.and(CONTRACT_DATA.START_DATE.eq(startDate))
 			.execute();
 		
+		dslContext.delete(LEAVE_BATCH_DETAIL)
+		.where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.in(
+				dslContext.select(CONTRACT_LEAVE_DETAIL.ID).from(CONTRACT_LEAVE_DETAIL)
+					.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(itId))
+					.fetch(CONTRACT_LEAVE_DETAIL.ID)
+		)).execute();
+		
 		dslContext.delete(LEAVE_BATCH)
 			.where(LEAVE_BATCH.ID.in(
 					dslContext.select(LEAVE_BATCH_DETAIL.LEAVE_BATCH).from(LEAVE_BATCH_DETAIL)
@@ -1377,13 +1394,6 @@ public class JooqIT {
 									.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(itId))
 									.fetch(CONTRACT_LEAVE_DETAIL.ID)
 						)).fetch(LEAVE_BATCH_DETAIL.LEAVE_BATCH)
-			)).execute();
-		
-		dslContext.delete(LEAVE_BATCH_DETAIL)
-			.where(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL.in(
-					dslContext.select(CONTRACT_LEAVE_DETAIL.ID).from(CONTRACT_LEAVE_DETAIL)
-						.where(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE.eq(itId))
-						.fetch(CONTRACT_LEAVE_DETAIL.ID)
 			)).execute();
 		
 		dslContext.delete(CONTRACT_LEAVE_DETAIL)
