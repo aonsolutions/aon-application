@@ -3738,8 +3738,8 @@ public class SalaryDraft extends ResizeComposite
 	public Stream<String> getValuesOf(String name, Date startDate, Date endDate) {
 		return salaryDraftObject.getContext().stream()
 		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
-		.filter(v -> v.getStartDate().compareTo(endDate) <= 0 )
-		.filter(v -> v.getEndDate().compareTo(startDate) >= 0 )
+		.filter(v -> AonDateUtils.compare(v.getStartDate(),endDate) <= 0 )
+		.filter(v -> AonDateUtils.compare(v.getEndDate(),startDate) >= 0 )
 		.map(Variable::getValue)
 		.filter(Objects::nonNull)
 		.map(String::valueOf )
