@@ -1748,6 +1748,22 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			ExpressionContext expressionContext, TaxCalculator taxCalculator, QuoteCalculator quoteCalculator,
 			List<Period> leavePeriods, List<Period> strikePeriods) 
 			throws AonException {
+
+	    	
+	    	Date paymentStart = Period.max(contractPayment.getStartDate(), start);
+		Date paymentEnd = Period.min(contractPayment.getEndDate(), end);
+		if (paymentEnd.before(paymentStart))
+			return;
+		try {
+		    expressionContext.eval(contractPayment.getExpression(), paymentStart,paymentEnd, Double.class);
+		} catch ( UndefinedVariablesException  e) {
+		    if ( Arrays.stream(e.getVariableNames()).anyMatch( name -> ContextVariable.getVariableByName(name) == null ) ) {
+			throw e;
+		    }
+		} catch ( Exception e ) {
+		    return;
+		}
+
 		try {
 			IExtraPayment extraPayment = getExtraPayment(contractPayment);
 			
@@ -1826,6 +1842,21 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				};
 				
 				taxCalculator.tax(salaryExtraContractPayment, start, end, extraIssueDate, extra.getTotalPayment(), extra.getTotalPayment());
+				
+				Date extraEnd = parseExtraDate(extraPayment.getExtraEndDate(), issueDate).getTime();
+				Date extraEndDate = AonDateUtils.getLastDayOfMonth(extraEnd);
+				Date salaryStartDate = AonDateUtils.getFirstDayOfMonth(start);
+				if ( extraEndDate.before(salaryStartDate) ) {
+				    super.resolvePayment(contractPayment, 
+					    paymentStart, 
+					    paymentEnd, 
+					    extraIssueDate, 
+					    expressionContext, 
+					    taxCalculator, 
+					    quoteCalculator, 
+					    leavePeriods, 
+					    strikePeriods);
+				}
 				
 				return;
 			}

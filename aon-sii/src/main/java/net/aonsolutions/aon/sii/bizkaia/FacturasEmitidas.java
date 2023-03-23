@@ -275,7 +275,7 @@ public class FacturasEmitidas extends SIIBuilt {
 			
 			// IMPORTE TOTAL 
 			//Double total2 = contextList.stream().filter(g -> g.getInvoice().equals(invoice)).mapToDouble(g -> g.getBase() + g.getQuota()).sum();
-			Double total = noSujeta + exenta + noExenta.stream().mapToDouble(f -> f.getBase() + f.getQuota()).sum();
+			Double total = noSujeta + exenta + noExenta.stream().mapToDouble(f -> f.getBase() + f.getQuota() + f.getSurchargeQuota()).sum();
 			fet.setImporteTotal(Double.toString(AonMathUtils.round(total)));
 			fet.setMacrodato(total >= 100000000 ? MacrodatoType.S: MacrodatoType.N);
 			// BASE IMPONIBLE A COSTE (OPTIONAL)

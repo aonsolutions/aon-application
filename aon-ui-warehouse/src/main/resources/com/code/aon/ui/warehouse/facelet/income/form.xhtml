@@ -381,16 +381,14 @@
 									</aon:if>
 								</ui:include>
 							</aon:panelTab>
-							<aon:if test="#{actionDenied.moduleEnabled['pos']}">
-								<aon:panelTab label="#{bundle.report_print_of} #{bundle.registry_tag_module}"
-									actionListener="#{income.onItemTagPrintShow}">
-									<ui:decorate template="/com/code/aon/ui/product/facelet/itemTagPrint/list_content.xhtml" >
-										<ui:param name="innerToolbar" value="#{true}" />
-										<ui:param name="skipSearchButton" value="#{true}" />
-										<ui:param name="showItemTagReportTemplate" value="#{true}" />
-									</ui:decorate>
-								</aon:panelTab>
-							</aon:if>
+							<aon:panelTab label="#{bundle.report_print_of} #{bundle.registry_tag_module}"
+								actionListener="#{income.onItemTagPrintShow}">
+								<ui:decorate template="/com/code/aon/ui/product/facelet/itemTagPrint/list_content.xhtml" >
+									<ui:param name="innerToolbar" value="#{true}" />
+									<ui:param name="skipSearchButton" value="#{true}" />
+									<ui:param name="showItemTagReportTemplate" value="#{true}" />
+								</ui:decorate>
+							</aon:panelTab>
 						</aon:panelTabSet>
 					</aon:if>
 				</aon:div>
