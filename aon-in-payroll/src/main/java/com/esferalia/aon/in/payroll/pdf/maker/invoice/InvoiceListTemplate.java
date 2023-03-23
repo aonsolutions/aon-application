@@ -21,6 +21,7 @@ import com.esferalia.aon.in.payroll.pdf.maker.exception.CanNotCreatePdfException
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.watson.util.AonDateUtils;
+import com.esferalia.aon.watson.util.AonMathUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -36,7 +37,7 @@ public class InvoiceListTemplate {
 	private static final float SEVENTH_COLUMN = SIXTH_COLUMN + 47.5f;
 	private static final float EIGTH_COLUMN = SEVENTH_COLUMN + 58.5f;
 	private static final float DATA_FONT_SIZE = 7.5f;
-	private static final int MAX_ENTRIES_PER_PAGE = 54;
+	protected static final int MAX_ENTRIES_PER_PAGE = 54;
 	
 	//NORMAL TEXTS
 	private static final String PAGE_TXT = "Página";
@@ -231,8 +232,9 @@ public class InvoiceListTemplate {
 	
 	private void calculatePages() {
 		if (entries != null && !entries.isEmpty()) {
+			int basePages = (int) AonMathUtils.ceil((double) entries.size() / MAX_ENTRIES_PER_PAGE, 0);
 			//ENTRADAS / ENTRADAS MÁXIMAS + (SI HAY RESTO -> +1) + (SI FALTAN 2 O MENOS ENTRADAS PARA COMPLETAR LA ÚLTIMA PÁGINA -> +1)
-			totalPages = entries.size() / MAX_ENTRIES_PER_PAGE + (entries.size() % MAX_ENTRIES_PER_PAGE > 0 ? 1 : 0) + (entries.size() % MAX_ENTRIES_PER_PAGE > MAX_ENTRIES_PER_PAGE - 2 ? 1 : 0);
+			totalPages = basePages + (entries.size() % MAX_ENTRIES_PER_PAGE == 0 || entries.size() % MAX_ENTRIES_PER_PAGE > MAX_ENTRIES_PER_PAGE - 2 ? 1 : 0);
 		} else {
 			totalPages = 1;
 		}
