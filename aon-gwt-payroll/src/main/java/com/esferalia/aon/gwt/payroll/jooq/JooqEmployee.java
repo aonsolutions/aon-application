@@ -777,12 +777,13 @@ public class JooqEmployee {
 			contractData.setActivityId(enterpriseActivityId);
 			
 			//ENTERPRISE DATA
-			String enterpriseDocument = dslContext.select(REGISTRY.DOCUMENT).from(REGISTRY)
+			Record enterpriseRecord = dslContext.select().from(REGISTRY)
 					.where(REGISTRY.ID.eq(
 							dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(employeeData.getDomain())).fetchOne(ENTERPRISE.REGISTRY)
-					)).fetchOne(REGISTRY.DOCUMENT);
+					)).fetchOne();
 			
-			contractData.setEnterpriseCIF(enterpriseDocument);
+			contractData.setEnterpriseCIF(enterpriseRecord.get(REGISTRY.DOCUMENT));
+			contractData.setEnterpriseName(enterpriseRecord.get(REGISTRY.NAME));
 			
 			//ENTERPRISE CCC TABLE
 			Integer enterpriseCCCId = contractTable.get(CONTRACT.ENTERPRISE_CCC);

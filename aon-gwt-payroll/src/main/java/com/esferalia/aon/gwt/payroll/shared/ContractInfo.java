@@ -31,6 +31,7 @@ public class ContractInfo implements Serializable{
 	private String seniorityDate;
 	private Integer activityId;
 	private String enterpriseCIF;
+	private String enterpriseName;
 	private Byte ssRegimen;
 	private Byte mdTBT;
 	private String agreementCategory;
@@ -118,6 +119,7 @@ public class ContractInfo implements Serializable{
 		this.seniorityDate = null;
 		this.activityId = null;
 		this.enterpriseCIF = null;
+		this.enterpriseName = null;
 		this.ssRegimen = null;
 		this.mdTBT = null;
 		this.agreementCategory = null;
@@ -178,6 +180,14 @@ public class ContractInfo implements Serializable{
 
 	public void setEnterpriseCIF(String enterpriseCIF) {
 		this.enterpriseCIF = enterpriseCIF;
+	}
+	
+	public String getEnterpriseName() {
+		return enterpriseName;
+	}
+
+	public void setEnterpriseName(String enterpriseName) {
+		this.enterpriseName = enterpriseName;
 	}
 
 	public Integer getCccId() {
