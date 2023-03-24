@@ -25,6 +25,7 @@ import net.aonsolutions.db.up2date.tgss.ArtistBaseCgcMax2023Update;
 import net.aonsolutions.db.up2date.finance.SagardoBusUpdate;
 import net.aonsolutions.db.up2date.fiscal.RefreshMod130Result;
 import net.aonsolutions.db.up2date.payroll.MaxEmbargable4ProrratedFix;
+import net.aonsolutions.db.up2date.payroll.Mod145StartDateUpdate;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 
 public class Up2Date {
@@ -344,7 +345,8 @@ public class Up2Date {
 	    // ArtistBaseCgcMax2023Update.ARTISTBASECGCMAX2023UPDATE,
 	    // MaxEmbargable4ProrratedFix.MAXEMBARGABLE4PRORRATEDFIX,
 	    // RefreshMod130Result.REFRESH_MOD130_RESULT,
-            AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE,
+        AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE,
+        Mod145StartDateUpdate.MOD145STARTDATEUPDATE,
 
 	    // Important, not remove
 	    // AgreementPurge.AGREEMENTPURGE,

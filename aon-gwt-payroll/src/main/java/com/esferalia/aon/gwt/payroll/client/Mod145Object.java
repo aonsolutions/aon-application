@@ -89,8 +89,10 @@ public class Mod145Object {
 	
 	public List<Date> getDateList() {
 		List<Date> dateList = this.mod145List.stream().map(mod145 -> mod145.getStartDate()).collect(Collectors.toList());
-		dateList.sort((o1, o2) -> o1.compareTo(o2));
-		Collections.reverse(dateList);
+		if(!dateList.isEmpty() && dateList.size() > 1) {
+			dateList.sort((o1, o2) -> o1.compareTo(o2));
+			Collections.reverse(dateList);
+		}
 		return dateList;
 	}
 
