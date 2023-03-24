@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 
 public class Domain implements Serializable {
@@ -31,6 +32,8 @@ public class Domain implements Serializable {
 	private Date creationDate;
 	private String modificationUser;
 	private Date modificationDate;
+	private Integer aonCustomer;
+	private AonStatus aonStatus;
 	
 	
 	public Integer getId() {
@@ -234,6 +237,22 @@ public class Domain implements Serializable {
 	}
 	public Domain setModificationDate(Date modificationDate) {
 		this.modificationDate = modificationDate;
+		return this;
+	}
+	
+	public Integer getAonCustomer() {
+		return aonCustomer;
+	}
+	public Domain setAonCustomer(Integer aonCustomer) {
+		this.aonCustomer = aonCustomer;
+		return this;
+	}
+	
+	public AonStatus getAonStatus() {
+		return aonStatus;
+	}
+	public Domain setAonStatus(AonStatus aonStatus) {
+		this.aonStatus = aonStatus;
 		return this;
 	}
 	
