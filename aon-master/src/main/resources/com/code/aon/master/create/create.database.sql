@@ -2740,6 +2740,8 @@ CREATE TABLE `domain` (
   `expirationDate` date DEFAULT NULL COMMENT 'Fecha de Expiracion del Dominio',
   `lastAccess_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de ultimo acceso',
   `lastAccess_date` datetime DEFAULT NULL COMMENT 'Fecha de ultimo acceso',
+  `aonCustomer` int DEFAULT NULL COMMENT 'Referencia al customer en Aon',
+  `aonStatus` tinyint NOT NULL DEFAULT '0' COMMENT 'Estado del customer en Aon',
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_UNQ_DOMAIN_NAME` (`name`),
   KEY `IDX_DOMAIN_PARENT` (`parent`),
