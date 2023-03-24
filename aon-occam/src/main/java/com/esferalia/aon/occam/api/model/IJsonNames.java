@@ -391,6 +391,7 @@ public final class IJsonNames {
 	public static final String PREVIOUS_PERIODS = "previousPeriods";
 	public static final String PRICE = "price";
 	public static final String PRINCIPAL = "principal";
+	public static final String PRINTER = "printer";
 	public static final String PRIORITY = "priority";
 	public static final String PROCESS_ID = "processId";
 	public static final String PRODUCT = "product";

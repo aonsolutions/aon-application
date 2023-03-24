@@ -46,6 +46,8 @@ import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 import org.mvel2.CompileException;
+import org.mvel2.ConversionException;
+import org.mvel2.ScriptRuntimeException;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.AonException;
@@ -72,15 +74,21 @@ import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.HideException;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.InterruptedException;
+import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.TimedResult;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
+import com.esferalia.aon.salary.expression.ExpressionContext.RemoveVariableError;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -1756,13 +1764,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			return;
 		try {
 		    expressionContext.eval(contractPayment.getExpression(), paymentStart,paymentEnd, Double.class);
+		} catch (InterruptedException | UndefinedTotalPaymentException e) {
+			throw e; // Not catch
 		} catch ( UndefinedVariablesException  e) {
 		    if ( Arrays.stream(e.getVariableNames()).anyMatch( name -> ContextVariable.getVariableByName(name) == null ) ) {
 			throw e;
 		    }
-		} catch ( Exception e ) {
-		    return;
-		}
+		} catch (RemoveException | CheckException |RemoveVariableError | CompileException | ScriptRuntimeException e) {
+		    	return;
+		} catch ( ConversionException | NumberFormatException e ) {
+			throw new UndefinedVariablesException();
+		} 
 
 		try {
 			IExtraPayment extraPayment = getExtraPayment(contractPayment);
