@@ -39,4 +39,3 @@ import com.esferalia.aon.occam.test.fiscal.invoice.InsertRandomInvoicesTest;
 public class Mod349TestSuite {
 
 }
-
