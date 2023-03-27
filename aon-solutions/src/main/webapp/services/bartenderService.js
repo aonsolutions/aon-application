@@ -1,4 +1,5 @@
-import { postXml } from "./request";
+import { API_URL } from "../environments/environments";
+import { postXml, post } from "./request";
 
 //Genera un objeto Blob con los datos en un archivo XML
 export const generateXml = (printer, tag, datos)  => {
@@ -58,3 +59,6 @@ export const printDeliveryTag = (printer, tag, data) => {
     let xml = generateXml(printer, tag, data);
     postXml('https://192.168.1.252/Integration/BartenderTecnipesa/execute', xml);
 };
+
+
+export const sendDeliveryTag = (data) => post(`${API_URL}/bartender/email`, data);

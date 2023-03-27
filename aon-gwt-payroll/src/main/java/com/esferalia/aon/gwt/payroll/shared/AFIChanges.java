@@ -2,6 +2,7 @@ package com.esferalia.aon.gwt.payroll.shared;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -125,6 +126,8 @@ public class AFIChanges implements Serializable {
 		datesList.addAll(afiChanges.keySet());
 		
 		if(!datesList.isEmpty() && datesList.size() > 1) {
+			datesList.sort((o1, o2) -> o1.compareTo(o2));
+			Collections.reverse(datesList);
 			Date date = datesList.get(datesList.size() - 1);
 			for(AFIChange afiChange : afiChanges.get(date)) {
 				if(afiChange.getName().equals(type) && (null != afiChange.getValue() && !value.equals(afiChange.getValue())))
