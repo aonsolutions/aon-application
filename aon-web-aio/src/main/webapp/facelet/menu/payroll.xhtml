@@ -270,12 +270,25 @@
 										value="Resumen de actividad" target="gwt">
 									</aon:commandLink>
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="gwt_contractMedia"
-										action="gwt_contract_media"
-										value="Informe de personal asalariado" target="gwt">
-									</aon:commandLink>
-								</aon:div>
+								
+								<aon:if test="#{domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_massive_fie"
+											action="gwt_main_massive_fie"
+											title="#{bundle.payroll_massive_fie_module}"
+											value="#{bundle.payroll_massive_fie_module}" target="gwt">
+										</aon:commandLink>
+									</aon:div>
+								</aon:if>
+								
+								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_contractMedia"
+											action="gwt_contract_media"
+											value="Informe de personal asalariado" target="gwt">
+										</aon:commandLink>
+									</aon:div>
+								</aon:if>
 								
 								<aon:if test="#{!domainSwitcher.domainManagementAvailable}">
 									<aon:div styleClass="aon-direct-access-list-element">

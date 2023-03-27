@@ -1,7 +1,5 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
-import java.util.Date;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -13,6 +11,52 @@ public interface FIEService {
 		FILE, 
 		USER,
 		DOMAIN
+	}
+	
+	public static class JsITPart extends JavaScriptObject {
+		protected JsITPart() {
+		}
+		
+		public final native int getId() /*-{
+			return this.id;
+		}-*/;
+		
+		
+		public final native int getDomain() /*-{
+			return this.domain;
+		}-*/;
+		
+
+		public final native byte getType() /*-{
+			return this.type;
+		}-*/;
+		
+		
+		public final native int getIt() /*-{
+			return this.it;
+		}-*/;
+		
+
+		public final native String getCollegeNumber() /*-{
+			return this.collegeNumber;
+		}-*/;
+		
+		public final native byte getConfirmOrderNumber() /*-{
+			return this.confirmOrderNumber;
+		}-*/;
+		
+		public final native String getCias() /*-{
+			return this.cias;
+		}-*/;
+
+		public final native String getDate() /*-{
+			return this.date;
+		}-*/;
+		
+		public final native byte getStatus() /*-{
+			return this.status;
+		}-*/;
+		
 	}
 	
 	public static class JsIT extends JavaScriptObject {
@@ -84,7 +128,7 @@ public interface FIEService {
 		}-*/;
 		
 
-		public final native JsArray<JavaScriptObject> getITParts() /*-{
+		public final native JsArray<JsITPart> getITParts() /*-{
 			return this.itParts;
 		}-*/;
 		
@@ -333,6 +377,10 @@ public interface FIEService {
 		
 		public final native String getEnterpriseCIF() /*-{
 			return this.enterpriseCIF;
+		}-*/;
+		
+		public final native String getEnterpriseName() /*-{
+			return this.enterpriseName;
 		}-*/;
 		
 		public final native int getCccId() /*-{
