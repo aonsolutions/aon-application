@@ -217,6 +217,16 @@
 												actionListener="#{customerFee.onNoFeeCustomers}"
 												value="#{bundle.finance_fee_no_fee_customer_module}"/>
 										</aon:div>
+										
+										<!-- Listado de Cuotas (New) -->
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="gwt_customer_fee"
+												action="gwt_main_customer_fee"
+												title="#{bundle.finance_fee_print_module} (New)"
+												value="#{bundle.finance_fee_print_module} (New)" target="gwt">
+											</aon:commandLink>
+										</aon:div>
+										
 									</aon:div>
 								</aon:panelGrid>
 							</aon:if>
