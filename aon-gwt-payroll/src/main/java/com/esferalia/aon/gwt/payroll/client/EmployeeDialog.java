@@ -40,7 +40,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 			employeeDialogObject.resetEmptyInfo();
 			this.resetEmployeeInfo();
 			this.unblockVariablesExistingContract();
-			this.hideClearEmployee();
 		}
 		
 		@Override
@@ -397,8 +396,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		
 		getButtonsPanel();
 		
-		employee.hideClearEmployee();
-		
 		if(Boolean.TRUE.equals(hideEmployeePanel))
 			employee.hideEmployeeTable();
 	}
@@ -433,7 +430,16 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		initAgreements();
 		initPayMethods();
 		fillDefaultFields();
-		initFocus();	
+		initFocus();
+		showDialog();
+	}
+	
+	public void showDialog() {
+		// Show center
+		Scheduler.get().scheduleDeferred(() -> {
+			center();
+			show();
+		});
 	}
 
 	private void initSuggestBox() {
@@ -487,7 +493,6 @@ public abstract class EmployeeDialog extends AonCustomDialog {
 		fillExistingContract();
 		if(isContractActive)
 		   employee.blockVariablesExistingContract();
-		employee.showClearEmployee();
 	}
 
 	private void fillExistingEmployee() {
