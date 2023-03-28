@@ -24,26 +24,26 @@ public class Model190CertificatePrintTestCase {
 
 	public static void main(String[] args) {
 		
-		Mod190CertificatePrint print = new Mod190CertificatePrint();
-		
-		try {
-			Map<String, RetentionCertificate> employeeCertificates = new HashMap<String, RetentionCertificate>();
-			employeeCertificates.put("", getTestEmployeeCertificates());
-			byte[] employeeData = print.createReport(new FileInputStream(TESTING_TEMPLATE_EMPLOYEE), employeeCertificates.values());
-			FileUtils.writeByteArrayToFile(File.createTempFile("certificado_mod190",".pdf"), employeeData);
-			
-			Map<String, RetentionCertificate> professionalCertificates = new HashMap<String, RetentionCertificate>();
-			professionalCertificates.put("", getTestProfessionalCertificates());
-			byte[] professionalData = print.createReport(new FileInputStream(TESTING_TEMPLATE_PROFESSIONAL), professionalCertificates.values());
-			FileUtils.writeByteArrayToFile(File.createTempFile("certificado_mod190_prof",".pdf"), professionalData);
-			
-		} catch (JRException e) {
-			System.out.println(e.getMessage());
-		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
+//		Mod190CertificatePrint print = new Mod190CertificatePrint();
+//		
+//		try {
+//			Map<String, RetentionCertificate> employeeCertificates = new HashMap<String, RetentionCertificate>();
+//			employeeCertificates.put("", getTestEmployeeCertificates());
+//			byte[] employeeData = print.createReport(new FileInputStream(TESTING_TEMPLATE_EMPLOYEE), employeeCertificates.values());
+//			FileUtils.writeByteArrayToFile(File.createTempFile("certificado_mod190",".pdf"), employeeData);
+//			
+//			Map<String, RetentionCertificate> professionalCertificates = new HashMap<String, RetentionCertificate>();
+//			professionalCertificates.put("", getTestProfessionalCertificates());
+//			byte[] professionalData = print.createReport(new FileInputStream(TESTING_TEMPLATE_PROFESSIONAL), professionalCertificates.values());
+//			FileUtils.writeByteArrayToFile(File.createTempFile("certificado_mod190_prof",".pdf"), professionalData);
+//			
+//		} catch (JRException e) {
+//			System.out.println(e.getMessage());
+//		} catch (FileNotFoundException e) {
+//			System.out.println(e.getMessage());
+//		} catch (IOException e) {
+//			System.out.println(e.getMessage());
+//		}
 	}
 
 	private static RetentionCertificate getTestEmployeeCertificates() {
