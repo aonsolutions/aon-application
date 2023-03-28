@@ -7,19 +7,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.dom.client.BodyElement;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.CssResource.NotStrict;
 import com.google.gwt.user.client.Window;
 
 public class MainEntryPoint implements EntryPoint {
 	
-	interface CodeMirrorResources extends ClientBundle {
-		@NotStrict
-		@Source("codemirror.css")
-		CssResource css();
-	}
-
 	@Override
 	public void onModuleLoad() {
 		Window.alert("onModuleLoad");

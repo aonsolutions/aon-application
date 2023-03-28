@@ -110,6 +110,38 @@
 		<scope>compile</scope>
 	</dependency>
 	<dependency>
+      <groupId>com.google.gwt.google-apis</groupId>
+      <artifactId>gwt-visualization</artifactId>
+      <version>1.1.2</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+		<groupId>net.aonsolutions</groupId>
+		<artifactId>aon.gwt.pdfjs</artifactId>
+		<version>${project.version}</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>net.aonsolutions</groupId>
+		<artifactId>aon.gwt.pdfjs</artifactId>
+		<version>${project.version}</version>
+      <scope>provided</scope>
+      <classifier>sources</classifier>
+	</dependency>
+	<dependency>
+		<groupId>com.esferalia.aon</groupId>
+		<artifactId>aon.gwt.api</artifactId>
+		<version>${project.version}</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>com.esferalia.aon</groupId>
+		<artifactId>aon.gwt.api</artifactId>
+		<version>${project.version}</version>
+		<scope>provided</scope>
+		<classifier>sources</classifier>
+	</dependency>
+	<dependency>
  		<groupId>com.vaadin.polymer</groupId>
    		<artifactId>vaadin-gwt-polymer-elements</artifactId>
    		<version>1.7.0.0</version>
@@ -127,5 +159,6 @@
   			<scope>provided</scope>
 		</dependency>
   </dependencies>
+  
 
 </project>
