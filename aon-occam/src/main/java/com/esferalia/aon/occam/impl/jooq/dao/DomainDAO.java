@@ -82,6 +82,8 @@ public class DomainDAO {
 		@Override public Property<Integer> getScopeProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.SCOPE);}
 		@Override public Property<String> getSubdomainsuffixProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.SUBDOMAINSUFFIX);}
 		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.TYPE);}
+		@Override public Property<Integer> getAonCustomerProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.AONCUSTOMER);}
+		@Override public Property<Byte> getAonStatusProperty() {return new FilterDAO.PropertyDAO<>(DOMAIN.AONSTATUS);}
 	}
 	public static Domain getDomain(AONContext ctx, Integer domainId){
 		return ctx.getDslContext().select()
