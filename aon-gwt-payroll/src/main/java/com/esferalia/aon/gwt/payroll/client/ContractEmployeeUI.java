@@ -365,13 +365,6 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected ContractEmployeeUI() {
 		employee = new EmployeeImplementation();
 		initWidget(uiBinder.createAndBindUi(this));
-		setDefaultEmployeeView();
-	}
-
-	// ------------------------------------------------- Init preView
-
-	private void setDefaultEmployeeView() {
-		employee.hideClearEmployee();
 	}
 	
 	// ------------------------------------------------- setContrataEmployeeObject

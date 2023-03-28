@@ -1409,8 +1409,6 @@ public class MainContrataContract extends MainEntryPoint {
 		employeeDialog.setEmployeeDialogObject(employeeDialogObject);
 		employeeDialog.setModal(true);
 		employeeDialog.setAnimationEnabled(true);
-		employeeDialog.center();
-		employeeDialog.show();
 	}
 	
 	private void onTrashListBtn() {

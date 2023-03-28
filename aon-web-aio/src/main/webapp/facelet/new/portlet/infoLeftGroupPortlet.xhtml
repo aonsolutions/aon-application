@@ -80,9 +80,21 @@
 			el.firstChild.innerText= 'expand_less';
 			el.onclick=function() { collapseMenuPortlet(el); };
 		} 
+
+		function showInfoGroup() {
+			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='250px';
+			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='100%';
+			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display='block';
+		}
+		
+		function hideInfoGroup() {
+			document.getElementById("aonContent:mainForm:desktopDiv1").parentNode.style.width='30px';
+			document.getElementById("aonContent:mainForm:desktopDiv1").style.width='30px';
+			document.getElementById("aonContent:mainForm:infoGroupDiv").style.display='none';
+		}
 	</script>
 
-		<aon:div id="infoGroupDiv" style="display:none;  position:relative;" >
+		<aon:div id="infoGroupDiv" style="display:none;  position:relative; top: -0px" >
 
 			<ui:include src="/facelet/homepage/portlet/logoPortlet.xhtml" />					
 
@@ -97,6 +109,12 @@
 			</aon:if>
 
 		</aon:div>
+		
+		<aon:if test="#{!domainSwitcher.childDomain or timeControl.active}">
+			<script type='text/javascript' >
+				showInfoGroup();
+			</script>
+		</aon:if>
 	
 	</aon:div>
 					

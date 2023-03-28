@@ -7,13 +7,10 @@
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.EmployeeDraft.MyStyle">
 		
-		.horizontal-center  {
-			margin-top: 5px;
-			margin-left: auto;
-			margin-right: auto;
-			margin-bottom: 15px;
-			inset: 0 50% !important;
-			transform: translateX(-50%);
+		.flexColumn  {
+			display: flex;
+			flex-direction: column;
+			gap: .5rem;
 		}
 		
 		.cmdBtn{
@@ -36,13 +33,13 @@
 		</g:north> 
 		<g:center> 
     		<g:DeckLayoutPanel   ui:field="deckPanel" >
-     			<g:VerticalPanel ui:field="verticalPanel" styleName="{style.horizontal-center}">
+    			<g:HTMLPanel styleName="{style.flexColumn}">
     				<g:HTMLPanel ui:field="messageContainer"/>
 		    		<g:ScrollPanel ui:field="scrolledPanel"  >
 	    				<e:Employee ui:field="employee" />
 			    	</g:ScrollPanel>
-			    </g:VerticalPanel>
-    			<p:FullViewer styleName="reset" ui:field='pdfViewer' /> 
+    			</g:HTMLPanel>
+     			<p:FullViewer styleName="reset" ui:field='pdfViewer' /> 
     		</g:DeckLayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>
