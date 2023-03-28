@@ -625,12 +625,10 @@ public abstract class EmployeeDraft extends Composite {
 		
 		fillToolbarPanel();
 		
-		employee.hideClearEmployee();
-		
 		onSaved = this::onSavedNoop;
 		
-		scrolledPanel.setHeight((Window.getClientHeight() - 250) + "px");
-				
+		scrolledPanel.setHeight((Window.getClientHeight() - 240) + "px");
+		scrolledPanel.setWidth("100%");		
 	}
 		
 	public void setToolbarTitle(String title) {
