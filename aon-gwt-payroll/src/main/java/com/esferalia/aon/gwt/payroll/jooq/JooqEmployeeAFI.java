@@ -560,9 +560,19 @@ public class JooqEmployeeAFI {
 	}
 	
 	private static String parseCoefLengnt(String partialityCoef) {
-		if(partialityCoef.length() <= 3)
-			return partialityCoef;
-		return partialityCoef.length() <= 3 ? partialityCoef : partialityCoef.substring(partialityCoef.length()-3, partialityCoef.length());
+		if(AonStringUtils.isBlank(partialityCoef) || AonStringUtils.equalsIgnoreCase(partialityCoef, "1")) return "";
+		
+		try {
+			Double coef = Double.parseDouble(partialityCoef);
+			coef = coef * 1000;
+			return coef.toString();
+		} catch (Exception e) {
+			return "";
+		}
+
+//		if(partialityCoef.length() <= 3)
+//			return partialityCoef;
+//		return partialityCoef.length() <= 3 ? partialityCoef : partialityCoef.substring(partialityCoef.length()-3, partialityCoef.length());
 	}
 
 	// -------------------------------------------- getEmployeeAFIInfo. MC
@@ -961,6 +971,8 @@ public class JooqEmployeeAFI {
 			eti.put("prorityCode", "N");
 			employeesCNOAFIJSON.put("ETI", eti);
 			
+			Calendar currentDate = Calendar.getInstance();
+			
 			// 01-01-2023
 			Calendar startDate = Calendar.getInstance();
 			startDate.set(Calendar.YEAR, 2023);
@@ -983,6 +995,7 @@ public class JooqEmployeeAFI {
 				.and(ENTERPRISE_CCC.TYPE.ne((byte)6)) 	// Emplead@s de hogar
 				.and(ENTERPRISE_CCC.TYPE.ne((byte)8)) 	// Artistas
 				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.gt(new Date(startDate.getTime().getTime()))))
+				.and(CONTRACT.START_DATE.le(new Date(currentDate.getTimeInMillis())))
 				.fetch();
 			
 			JSONArray contractsArr = new JSONArray();
@@ -1064,6 +1077,8 @@ public class JooqEmployeeAFI {
 		JSONObject fab = new JSONObject();
 		JSONObject odl = new JSONObject();
 		
+		Calendar currentDate = Calendar.getInstance();
+		
 		Record contractRecord = dslContext.select().from(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
 		
 		Result<Record> contractDataQuoteRecord = dslContext.select().from(CONTRACT_DATA)
@@ -1081,7 +1096,11 @@ public class JooqEmployeeAFI {
 		Result<Record> contractDataPCRecord = dslContext.select().from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.CONTRACT.eq(contractId))
 				.and(CONTRACT_DATA.NAME.eq(PARTIALITY))
-				.orderBy(CONTRACT_DATA.START_DATE.desc())
+				.and(
+					CONTRACT_DATA.END_DATE.isNull()
+					.or(CONTRACT_DATA.END_DATE.ge(new Date(currentDate.getTimeInMillis())))
+					.or(CONTRACT_DATA.END_DATE.eq(contractRecord.get(CONTRACT.END_DATE)))
+				).orderBy(CONTRACT_DATA.START_DATE.desc())
 				.fetch();
 		
 		Result<Record> contractDataEmployeeColectiveRecord = dslContext.select().from(CONTRACT_DATA)
