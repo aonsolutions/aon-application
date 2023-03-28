@@ -670,16 +670,17 @@ public class AgreementUpdate {
 							.set(AGREEMENT_LEVEL_DATA.CREATION_USER, userLogin)
 							.set(AGREEMENT_LEVEL_DATA.CREATION_DATE, modificationDate)
 							.execute();
-					} else {
-						if( !AonStringUtils.containsIgnoreCase(lvlData.getName(), "TOTAL") &&
-							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "PAGA_EXTRA") &&
-							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "PAGAS_EXTRA") &&
-							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "+") &&
-							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "%"))
-								
-								System.out.println("Not updated -> " + lvlData.getName());
-	//							mapVarNotInsert.put(lvlData.getName(), lvlData.getName());
-					}
+					} 
+//					else {
+//						if( !AonStringUtils.containsIgnoreCase(lvlData.getName(), "TOTAL") &&
+//							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "PAGA_EXTRA") &&
+//							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "PAGAS_EXTRA") &&
+//							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "+") &&
+//							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "%"))
+//								
+//								System.out.println("Not updated -> " + lvlData.getName());
+//	//							mapVarNotInsert.put(lvlData.getName(), lvlData.getName());
+//					}
 				}
 				
 			}
