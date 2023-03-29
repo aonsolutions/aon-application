@@ -3685,7 +3685,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
 		for ( Date date = firstDayOfYear; date.before(contractStartDate); date = add(date,Calendar.MONTH,1))
-			newIrpfSalary(aonContext, contract, date, getLastDayOfMonth(date), 1000.00, 2.00);
+			newIrpfSalary(aonContext, contract, date, getLastDayOfMonth(date), 1000.00, 2.00, M190);
 		
 		
 		ctx = getContractSalaryCalculatorContext(
@@ -3752,7 +3752,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
 		for ( Date date = firstDayOfYear; date.before(contractStartDate); date = add(date,Calendar.MONTH,1))
-			newIrpfSalary(aonContext, contract, date, getLastDayOfMonth(date), 0.00, 0.00);
+			newIrpfSalary(aonContext, contract, date, getLastDayOfMonth(date), 0.00, 0.00, M190);
 		
 		
 		ctx = getContractSalaryCalculatorContext(
@@ -3819,7 +3819,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
 		
 		for ( Date date = firstDayOfYear; get(date, Calendar.MONTH) <= Calendar.MARCH; date = add(date,Calendar.MONTH,1))
-			newIrpfSalary(aonContext, contract, date, getLastDayOfMonth(date), 1000.00, 2.00);
+			newIrpfSalary(aonContext, contract, date, getLastDayOfMonth(date), 1000.00, 2.00, M190);
 		
 		
 		ctx = getContractSalaryCalculatorContext(
@@ -3842,6 +3842,90 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		
 	}
 
+	@Test
+	public void testRegularizationIII() throws ExpressionException,
+			SQLException, SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		Date firstDayOfYear = getFirstDayOfYear(getToday());
+		Date contractStartDate = add(firstDayOfYear, Calendar.MONTH,6);
+		
+		ContractRecord contract = newContract(aonContext, 
+				contractStartDate, 
+				null, 
+				new HashMap<String,String>() {
+		    			{
+		    			    put("PORCENTAJE_IRPF", "SISTEMA('PORCENTAJE_IRPF')");
+                			}
+				}, 
+				new String [] {
+						"2500.00",
+						"250.00",
+				}, 
+				new String [] {
+						"PORCENTAJE_IRPF / 100.00 * BASE_IRPF"
+				}, 
+				null);
+		double annualRemunerations [] = {0.00};
+		Date startDate = contractStartDate;
+		Date endDate = getLastDayOfMonth(startDate);
+
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate,
+			endDate, endDate, contract, new Listener() {
+			    @Override
+			    public void onIrpf(IrpfOutcome irpfOutcome) {
+				super.onIrpf(irpfOutcome);
+
+				System.out.println("Irpf:" + irpfOutcome.getIrpfResult().getIrpf());
+				System.out.println("BaseIrpf:" + irpfOutcome.getIrpfResult().getBaseIrpf());
+				System.out.println("AnnualIrpf:" + irpfOutcome.getIrpfResult().getAnnualIrpf());
+				System.out.println(
+					"AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
+
+				double annualRemuneration = irpfOutcome.getIrpfResult().getAnnualRemuneration();
+				assertAnnualRemuneration(2750.00 * 12.00, annualRemuneration, DELTA);
+				annualRemunerations[0] = annualRemuneration;
+			    }
+			});
+		Salary salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		for ( Date date = firstDayOfYear; date.before(contractStartDate); date = add(date,Calendar.MONTH,1)) {
+			newIrpfSalary(aonContext, contract, date, getLastDayOfMonth(date), 1000.00, 2.00, com.esferalia.aon.occam.api.model.type.SalaryType.SALARY);
+		}
+		
+		newIrpfSalary(aonContext, contract, add(firstDayOfYear, Calendar.MONTH, -6), add(firstDayOfYear, Calendar.MONTH, 5), 1000.00, 2.00, com.esferalia.aon.occam.api.model.type.SalaryType.DELAY);
+
+		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract,
+			new Listener() {
+			    @Override
+			    public void onIrpf(IrpfOutcome irpfOutcome) {
+				super.onIrpf(irpfOutcome);
+				
+				
+				System.out.println("Irpf:" + irpfOutcome.getIrpfResult().getIrpf());
+				System.out.println("BaseIrpf:" + irpfOutcome.getIrpfResult().getBaseIrpf());
+				System.out.println("AnnualIrpf:" + irpfOutcome.getIrpfResult().getAnnualIrpf());
+				System.out.println(
+					"AnnualRemuneration:" + irpfOutcome.getIrpfResult().getAnnualRemuneration());
+				
+				org.junit.Assert.assertNotNull(irpfOutcome.getIrpfRegularization());
+				
+				System.out.println(
+					"PaidRemuneration:" + irpfOutcome.getIrpfRegularization().getPaidRemuneration());
+				System.out.println(
+					"PaidIrpf:" + irpfOutcome.getIrpfRegularization().getPaidIrpf());
+
+				double annualRemuneration = irpfOutcome.getIrpfResult().getAnnualRemuneration();
+				org.junit.Assert.assertEquals(1000.00 * 7 + 2750.00 * 6.00,
+					annualRemuneration, DELTA);
+				
+				org.junit.Assert.assertEquals( 1000.00 * 7, irpfOutcome.getIrpfRegularization().getPaidRemuneration(), 0.00 );
+				org.junit.Assert.assertEquals( 2.00 * 7, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.00 );
+			    }
+			});
+		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
+		
+	}
 	// ------------------------------------------------------------------------
 
 	protected void assertAnnualRemuneration(double expected,
@@ -4070,7 +4154,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		return jooqSalaryBuilder.execute();
 	}
 	
-	private static void newIrpfSalary(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, Double irpfBase, Double totalIrpf ) {
+	private static void newIrpfSalary(AONContext aonContext, ContractRecord contract, Date startDate, Date endDate, Double irpfBase, Double totalIrpf , com.esferalia.aon.occam.api.model.type.SalaryType salaryType) {
 
 		Record person = 
 		aonContext.getDslContext()
@@ -4106,7 +4190,7 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		.set(SALARY.CHARGE_DATE, endDate)
 		.set(SALARY.START_DATE, startDate)
 		
-		.set(SALARY.TYPE, (byte) M190.ordinal())
+		.set(SALARY.TYPE, (byte) salaryType.ordinal())
 		
 		.set(SALARY.IRPF_BASE, irpfBase)
 		.set(SALARY.MONEY_IRPF_BASE, irpfBase)
