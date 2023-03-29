@@ -3915,12 +3915,13 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 				System.out.println(
 					"PaidIrpf:" + irpfOutcome.getIrpfRegularization().getPaidIrpf());
 
-				double annualRemuneration = irpfOutcome.getIrpfResult().getAnnualRemuneration();
-				org.junit.Assert.assertEquals(1000.00 * 7 + 2750.00 * 6.00,
-					annualRemuneration, DELTA);
 				
 				org.junit.Assert.assertEquals( 1000.00 * 7, irpfOutcome.getIrpfRegularization().getPaidRemuneration(), 0.00 );
 				org.junit.Assert.assertEquals( 2.00 * 7, irpfOutcome.getIrpfRegularization().getPaidIrpf(), 0.00 );
+
+				double annualRemuneration = irpfOutcome.getIrpfResult().getAnnualRemuneration();
+				org.junit.Assert.assertEquals(1000.00 * 7 + annualRemunerations[0] / 2,
+					annualRemuneration, DELTA);
 			    }
 			});
 		salary = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(ctx);
