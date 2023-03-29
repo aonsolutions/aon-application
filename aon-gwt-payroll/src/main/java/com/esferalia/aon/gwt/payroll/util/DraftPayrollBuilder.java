@@ -35,12 +35,10 @@ import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryPayment;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 /**
@@ -498,8 +496,10 @@ public class DraftPayrollBuilder {
 		}*/
 	}
 
-	private static boolean filter (IPayment payment) {
-		return !(payment.getAmount() == 0 && !AonStringUtils.equalsIgnoreCase(payment.getName(), ContextVariable.PREST_IT));
+	private static boolean filter (SalaryPayment payment) {
+		//Igual que el de JooqPayrollBuilder
+		return !(payment.getAmount() == 0 && payment.getQuote() == 0);
+//		return !(payment.getAmount() == 0 && !AonStringUtils.equalsIgnoreCase(payment.getName(), ContextVariable.PREST_IT));
 	}
 	
 	
