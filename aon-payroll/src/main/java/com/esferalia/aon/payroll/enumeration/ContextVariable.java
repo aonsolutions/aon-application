@@ -392,6 +392,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String MONTHS = "MESES";
 	public static final String SECTION = "TRAMO";
 	public static final String WARNING = "AVISO";
+	public static final String SCOPE = "AMBITO";
 	public static final String ISDEF = "DEFINIDA";
 	public static final String ISREAD = "UTILIZADA";
 	public static final String CHECK_VAR = "CHECK_VAR";
