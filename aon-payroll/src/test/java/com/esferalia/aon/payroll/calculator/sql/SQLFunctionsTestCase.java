@@ -75,6 +75,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.RemoveException;
 import com.esferalia.aon.salary.expression.UndefinedVariablesException;
@@ -1680,6 +1681,111 @@ public class SQLFunctionsTestCase extends
 		;
 		
 		
+	}
+
+	@Test
+	public void testScopeFunctionI() throws ExpressionException, SQLException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(getToday());
+		
+		
+		AgreementLevelCategoryRecord category = newAgreement(aonContext, new Extra[] {},
+			new HashMap<String, String>() {
+			    {
+				put("SALARIO_MENSUAL", "1000.00");
+			    }
+			});
+		
+		//@formatter:off
+		ISQLContractSalaryCalculatorContext ctx = 
+				getContractSalaryCalculatorContext(connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				newContract(
+				aonContext, 
+				getToday(), 
+				new HashMap<String,String>(){{
+				    put("DIAS_MES", "30.00");
+				}} ,
+				new String[0], 
+				new String[0],
+				category
+				));
+		//@formatter:on
+		
+		
+		Date today = getToday();
+		
+		List<ITimedResult<ExpressionScope>>  scopes = 
+				ctx.getExpressionContext().eval(
+						String.format("AMBITO('%s')",
+							ContextVariable.IRPF_PERCENT.getName()
+						)
+						, startDate
+						, endDate, ExpressionScope.class );
+		
+		Assert.assertEquals(ExpressionScope.APPLICATION, scopes.get(0).getValue());
+
+		ctx.getExpressionContext().eval(
+			String.format("AMBITO('%s') == APPLICATION ",
+				ContextVariable.IRPF_PERCENT.getName()
+			)
+			, startDate
+			, endDate, Boolean.class )
+		.forEach( r -> org.junit.Assert.assertTrue(r.getValue()) );
+
+		scopes = 
+			ctx.getExpressionContext().eval(
+					String.format("AMBITO('%s')",
+						ContextVariable.MONTH_DAYS.getName()
+					)
+					, startDate
+					, endDate, ExpressionScope.class );
+	
+		Assert.assertEquals(ExpressionScope.CONTRACT, scopes.get(0).getValue());
+
+		ctx.getExpressionContext().eval(
+			String.format("AMBITO('%s') == CONTRACT ",
+				ContextVariable.MONTH_DAYS.getName()
+			)
+			, startDate
+			, endDate, Boolean.class )
+		.forEach( r -> org.junit.Assert.assertTrue(r.getValue()) );
+
+		scopes = 
+			ctx.getExpressionContext().eval(
+					String.format("AMBITO('SALARIO_MENSUAL')"
+					)
+					, startDate
+					, endDate, ExpressionScope.class );
+	
+		Assert.assertEquals(ExpressionScope.AGREEMENT, scopes.get(0).getValue());
+
+		ctx.getExpressionContext().eval(
+			String.format("AMBITO('SALARIO_MENSUAL') == AGREEMENT "
+			)
+			, startDate
+			, endDate, Boolean.class )
+		.forEach( r -> org.junit.Assert.assertTrue(r.getValue()) );
+
+		ctx.getExpressionContext().eval(
+			String.format("AMBITO('SALARIO_MENSUAL') < CONTRACT "
+			)
+			, startDate
+			, endDate, Boolean.class )
+		.forEach( r -> org.junit.Assert.assertTrue(r.getValue()) );
+
+		ctx.getExpressionContext().eval(
+			String.format("AMBITO('SALARIO_MENSUAL') < APPLICATION "
+			)
+			, startDate
+			, endDate, Boolean.class )
+		.forEach( r -> org.junit.Assert.assertFalse(r.getValue()) );
 	}
 
 	//------------------------------------------------------------------------
