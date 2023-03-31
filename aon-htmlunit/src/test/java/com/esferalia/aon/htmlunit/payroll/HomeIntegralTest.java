@@ -193,8 +193,8 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		assertText("cgc_bonus", (cgcBase*23.60/100.00)*0.20);
 		assertText("desmpl_bonus", (cgpBase*5.2/100.00)*0.80);
 		calculate(Calendar.JANUARY, 2023);
-		assertValue("cgpBaseLabel", 250.00);
-		assertValue("cgcBaseLabel", 250.00);
+		assertValue("cgpBaseLabel", 270.00);
+		assertValue("cgcBaseLabel", 270.00);
 		cgcBase = getValue("cgcBaseLabel");
 		cgpBase = getValue("cgcBaseLabel");
 		assertText("common_contingency", cgcBase*4.70/100.00);
@@ -231,8 +231,8 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		assertText("cgc_bonus", (cgcBase*23.60/100.00)*0.20);
 		assertText("desmpl_bonus", (cgpBase*5.2/100.00)*0.80);
 		calculate(Calendar.JANUARY, 2023);
-		assertValue("cgpBaseLabel", 357.00);
-		assertValue("cgcBaseLabel", 357.00);
+		assertValue("cgpBaseLabel", 386.00);
+		assertValue("cgcBaseLabel", 386.00);
 		cgcBase = getValue("cgcBaseLabel");
 		cgpBase = getValue("cgcBaseLabel");
 		assertText("common_contingency", cgcBase*4.70/100.00);
@@ -283,8 +283,8 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		assertText("cgc_bonus", (cgcBase*23.60/100.00)*0.20);
 		assertText("desmpl_bonus", (cgpBase*5.2/100.00)*0.80);
 		calculate(Calendar.JANUARY, 2023);
-		assertValue("cgpBaseLabel", 493.00);
-		assertValue("cgcBaseLabel", 493.00);
+		assertValue("cgpBaseLabel", 532.00);
+		assertValue("cgcBaseLabel", 532.00);
 		cgcBase = getValue("cgcBaseLabel");
 		cgpBase = getValue("cgcBaseLabel");
 		assertText("common_contingency", cgcBase*4.70/100.00);
@@ -320,8 +320,8 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		assertText("cgc_bonus", (cgcBase*23.60/100.00)*0.20);
 		assertText("desmpl_bonus", (cgpBase*5.2/100.00)*0.80);
 		calculate(Calendar.JANUARY, 2023);
-		assertValue("cgpBaseLabel", 643.00);
-		assertValue("cgcBaseLabel", 643.00);
+		assertValue("cgpBaseLabel", 694.00);
+		assertValue("cgcBaseLabel", 694.00);
 		cgcBase = getValue("cgcBaseLabel");
 		cgpBase = getValue("cgcBaseLabel");
 		assertText("common_contingency", cgcBase*4.70/100.00);
@@ -356,8 +356,8 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		assertText("cgc_bonus", (cgcBase*23.60/100.00)*0.20);
 		assertText("desmpl_bonus", (cgpBase*5.2/100.00)*0.80);
 		calculate(Calendar.JANUARY, 2023);
-		assertValue("cgpBaseLabel", 794.00);
-		assertValue("cgcBaseLabel", 794.00);
+		assertValue("cgpBaseLabel", 858.00);
+		assertValue("cgcBaseLabel", 858.00);
 		cgcBase = getValue("cgcBaseLabel");
 		cgpBase = getValue("cgcBaseLabel");
 		assertText("common_contingency", cgcBase*4.70/100.00);
@@ -390,8 +390,8 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		assertText("cgc_bonus", (cgcBase*23.60/100.00)*0.20);
 		assertText("desmpl_bonus", (cgpBase*5.2/100.00)*0.80);
 		calculate(Calendar.JANUARY, 2023);
-		assertValue("cgpBaseLabel", 943.00);
-		assertValue("cgcBaseLabel", 943.00);
+		assertValue("cgpBaseLabel", 858.00);
+		assertValue("cgcBaseLabel", 858.00);
 		cgcBase = getValue("cgcBaseLabel");
 		cgpBase = getValue("cgcBaseLabel");
 		assertText("common_contingency", cgcBase*4.70/100.00);
@@ -425,8 +425,8 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		assertText("cgc_bonus", (cgcBase*23.60/100.00)*0.20);
 		assertText("desmpl_bonus", (cgpBase*5.2/100.00)*0.80);
 		calculate(Calendar.JANUARY, 2023);
-		assertValue("cgpBaseLabel", 1166.70);
-		assertValue("cgcBaseLabel", 1166.70);
+		assertValue("cgpBaseLabel", 1018.00);
+		assertValue("cgcBaseLabel", 1018.00);
 		cgcBase = getValue("cgcBaseLabel");
 		cgpBase = getValue("cgcBaseLabel");
 		assertText("common_contingency", cgcBase*4.70/100.00);
@@ -461,8 +461,8 @@ public class HomeIntegralTest extends BaseIntegralTestCase {
 		assertText("cgc_bonus", (cgcBase*23.60/100.00)*0.20);
 		assertText("desmpl_bonus", (cgpBase*5.2/100.00)*0.80);
 		calculate(Calendar.JANUARY, 2023);
-		assertValue("cgpBaseLabel", 1166.71);
-		assertValue("cgcBaseLabel", 1166.71);
+		assertValue("cgpBaseLabel", 1260.00);
+		assertValue("cgcBaseLabel", 1260.00);
 		cgcBase = getValue("cgcBaseLabel");
 		cgpBase = getValue("cgcBaseLabel");
 		assertText("common_contingency", cgcBase*4.70/100.00);
