@@ -19,16 +19,10 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.AgreementPaymentStartDateUpdate;
-import net.aonsolutions.db.up2date.payroll.AgreementPurge;
-import net.aonsolutions.db.up2date.tgss.ArtistBaseCgcMax2023Update;
-import net.aonsolutions.db.up2date.domain.DomainAonCustomer;
-import net.aonsolutions.db.up2date.domain.DomainAonStatus;
 import net.aonsolutions.db.up2date.finance.SagardoBusUpdate;
-import net.aonsolutions.db.up2date.fiscal.RefreshMod130Result;
-import net.aonsolutions.db.up2date.irpf.IrpfDelaysUpdate;
-import net.aonsolutions.db.up2date.payroll.MaxEmbargable4ProrratedFix;
-import net.aonsolutions.db.up2date.payroll.Mod145StartDateUpdate;
+import net.aonsolutions.db.up2date.tgss.AgriculturalBases2023Update;
+import net.aonsolutions.db.up2date.tgss.Bases2023Update;
+import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateII;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 
 public class Up2Date {
@@ -350,7 +344,10 @@ public class Up2Date {
 	    // RefreshMod130Result.REFRESH_MOD130_RESULT,
 	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE,
             // Mod145StartDateUpdate.MOD145STARTDATEUPDATE,
-	    IrpfDelaysUpdate.IRPFDELAYSUPDATE,
+	    // IrpfDelaysUpdate.IRPFDELAYSUPDATE,
+	    Bases2023Update.BASES2023UPDATE,
+	    AgriculturalBases2023Update.AGRICULTURALBASES2023UPDATE,
+	    HomeBases2023UpdateII.HOMEBASES2023UPDATEII,
 		
 	    //DOMAIN
 	    // DomainAonStatus.DOMAIN_AON_STATUS,
