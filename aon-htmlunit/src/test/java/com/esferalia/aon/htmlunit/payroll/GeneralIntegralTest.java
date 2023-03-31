@@ -490,6 +490,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY,2023);
 		assertValue("cgcBaseLabel", 4495.50);
 		assertValue("cgpBaseLabel", 4495.50);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÁXIMA ( GRUPO 10 )");
 		calculate(Calendar.JANUARY,2022);
@@ -504,6 +505,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.FEBRUARY,2023);
 		assertValue("cgcBaseLabel", 4495.50 / 30.00 * 28);
 		assertValue("cgpBaseLabel", 4495.50 / 30.00 * 28);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÍNIMA ( GRUPO 01 )");
 //		calculate(Calendar.DECEMBER,2016);
@@ -525,11 +527,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1629.30);
 		assertValue("cgpBaseLabel", 1166.70);
 		calculate(Calendar.JANUARY,2023);
-		assertValue("cgcBaseLabel", 1629.30);
-		assertValue("cgpBaseLabel", 1166.70);
-		selectOption("editor-bases_provisonales", "true");
-		assertValue("cgcBaseLabel", 1759.60);
+		assertValue("cgcBaseLabel", 1759.50);
 		assertValue("cgpBaseLabel", 1260.00);
+		assertNotElement("editor-bases_provisonales");
 		
 		draft("BASE, MÍNIMA ( GRUPO 02 )");
 //		calculate(Calendar.JANUARY,2018);
@@ -545,11 +545,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1351.20);
 		assertValue("cgpBaseLabel", 1166.70);
 		calculate(Calendar.JANUARY,2023);
-		assertValue("cgcBaseLabel", 1351.20);
-		assertValue("cgpBaseLabel", 1166.70);
-		selectOption("editor-bases_provisonales", "true");
-		assertValue("cgcBaseLabel", 1459.40);
+		assertValue("cgcBaseLabel", 1459.20);
 		assertValue("cgpBaseLabel", 1260.00);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÍNIMA ( GRUPO 03 )");
 //		calculate(Calendar.JANUARY,2018);
@@ -565,11 +563,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1175.40);
 		assertValue("cgpBaseLabel", 1166.70);
 		calculate(Calendar.JANUARY,2023);
-		assertValue("cgcBaseLabel", 1175.40);
-		assertValue("cgpBaseLabel", 1166.70);
-		selectOption("editor-bases_provisonales", "true");
-		assertValue("cgcBaseLabel", 1269.40);
+		assertValue("cgcBaseLabel", 1269.30);
 		assertValue("cgpBaseLabel", 1260.00);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÍNIMA ( GRUPO 04 )");
 //		calculate(Calendar.JANUARY,2018);
@@ -585,11 +581,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1166.70);
 		assertValue("cgpBaseLabel", 1166.70);
 		calculate(Calendar.JANUARY,2023);
-		assertValue("cgcBaseLabel", 1166.70);
-		assertValue("cgpBaseLabel", 1166.70);
-		selectOption("editor-bases_provisonales", "true");
 		assertValue("cgcBaseLabel", 1260.00);
 		assertValue("cgpBaseLabel", 1260.00);
+		assertNotElement("editor-bases_provisonales");
 
 		// M : 2
 		// T : 4
@@ -631,11 +625,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1166.70);
 		assertValue("cgpBaseLabel", 1166.70);
 		calculate(Calendar.JANUARY,2023);
-		assertValue("cgcBaseLabel", 1166.70);
-		assertValue("cgpBaseLabel", 1166.70);
-		selectOption("editor-bases_provisonales", "true");
 		assertValue("cgcBaseLabel", 1260.00);
 		assertValue("cgpBaseLabel", 1260.00);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÍNIMA ( GRUPO 10 )");
 		calculate(Calendar.AUGUST,2019);
@@ -651,11 +643,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 38.89 * 31);
 		assertValue("cgpBaseLabel", 1166.70);
 		calculate(Calendar.JANUARY,2023);
-		assertValue("cgcBaseLabel", 38.89 * 31);
-		assertValue("cgpBaseLabel", 1166.70);
-		selectOption("editor-bases_provisonales", "true");
 		assertValue("cgcBaseLabel", 42 * 31);
 		assertValue("cgpBaseLabel", 1260.00);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÍNIMA IT ( GRUPO 01 )");
 		calculate(Calendar.JUNE,2016);
@@ -680,9 +670,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1629.30);
 		//assertValue("cgpBaseLabel", 1050.00);
 		calculate(Calendar.JANUARY,2023);
-		assertValue("cgcBaseLabel", 1629.30);
-		selectOption("editor-bases_provisonales", "true");
-		assertValue("cgcBaseLabel", 1759.59);
+		assertValue("cgcBaseLabel", 1759.50);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÍNIMA PARCIAL ( HORAS )");
 		calculate(Calendar.AUGUST,2019);
@@ -699,11 +688,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 38.89 * 0.25 * 31.00);
 		assertValue("cgpBaseLabel", 38.89 * 0.25 * 31.00);
 		calculate(Calendar.JANUARY,2023);
-		assertValue("cgcBaseLabel", 38.89 * 0.25 * 31.00);
-		assertValue("cgpBaseLabel", 38.89 * 0.25 * 31.00);
-		selectOption("editor-bases_provisonales", "true");
 		assertValue("cgcBaseLabel", 42.00 * 0.25 * 31.00);
 		assertValue("cgpBaseLabel", 42.00 * 0.25 * 31.00);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÍNIMA PARCIAL ( MENSUAL )");
 		calculate(Calendar.AUGUST,2019);
@@ -719,11 +706,9 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1166.70 * 0.25);
 		assertValue("cgpBaseLabel", 1166.70 * 0.25);
 		calculate(Calendar.JANUARY,2023);
-//		assertValue("cgcBaseLabel", 1166.70 * 0.25);
-//		assertValue("cgpBaseLabel", 1166.70 * 0.25);
-		selectOption("editor-bases_provisonales", "true");
 		assertValue("cgcBaseLabel", 1260.00 * 0.25);
 		assertValue("cgpBaseLabel", 1260.00 * 0.25);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("HORAS TRABAJADAS, MENSUAL");
 		calculate(Calendar.JANUARY,2022);
@@ -734,22 +719,18 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgcBaseLabel", 1166.70 * 0.50);
 		assertValue("cgpBaseLabel", 1166.70 * 0.50);
 		calculate(Calendar.JANUARY,2023);
-		assertValue("cgcBaseLabel", 1166.70 * 0.50);
-		assertValue("cgpBaseLabel", 1166.70 * 0.50);
-		selectOption("editor-bases_provisonales", "true");
 		assertValue("cgcBaseLabel", 1260.00 * 0.50);
 		assertValue("cgpBaseLabel", 1260.00 * 0.50);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE MÍNIMA, DIARIA ( TRAMOS )");
 		calculate(Calendar.JANUARY,2022);
 		assertValue("cgcBaseLabel", 38.89 * 31 * 0.85);
 		assertValue("cgpBaseLabel", 38.89 * 31 * 0.85);
 		calculate(Calendar.JANUARY,2023);
-		assertValue("cgcBaseLabel", 38.89 * 31 * 0.85);
-		assertValue("cgpBaseLabel", 38.89 * 31 * 0.85);
-		selectOption("editor-bases_provisonales", "true");
 		assertValue("cgcBaseLabel", 42.00 * 31 * 0.85);
 		assertValue("cgpBaseLabel", 42.00 * 31 * 0.85);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("HORAS NÓMINA, ( GRUPO 10 )");
 		calculate(Calendar.JANUARY,2022);
@@ -760,13 +741,11 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		//click("expand-button-system");
 		assertNotElement("editor-base_cgc_min_hora");
 		calculate(Calendar.JANUARY,2023);
-		assertValue("cgcBaseLabel", 38.89 * 31 * 0.25);
-		assertValue("cgpBaseLabel", 38.89 * 31 * 0.25);
-		selectOption("editor-bases_provisonales", "true");
 		assertValue("cgcBaseLabel", 42.00 * 31 * 0.25);
 		assertValue("cgpBaseLabel", 42.00 * 31 * 0.25);
 		salaryHours = getValue("db-amount-label-1");
-		assertTrue((salaryHours * 7.60 ) <  ( 42.00 * 31 * 0.25 )  ) ;
+		assertTrue((salaryHours * 7.59 ) <  ( 42.00 * 31 * 0.25 )  ) ;
+		assertNotElement("editor-bases_provisonales");
 
 		draft("HORAS NÓMINA, (PATERNIDAD PARCIAL)");
 		calculate(Calendar.JUNE,2022);
@@ -776,11 +755,8 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JUNE,2023);
 		cgcBase = getValue("cgcBaseLabel");
 		salaryHours = getValue("db-amount-label-6");
-		assertTrue((salaryHours * 7.03 ) <  ( cgcBase * 0.5 ) ) ;
-		selectOption("editor-bases_provisonales", "true");
-		cgcBase = getValue("cgcBaseLabel");
-		salaryHours = getValue("db-amount-label-6");
-		assertTrue((salaryHours * 7.60 ) <  ( cgcBase * 0.5 ) ) ;
+		assertTrue((salaryHours * 7.59 ) <  ( cgcBase * 0.5 ) ) ;
+		assertNotElement("editor-bases_provisonales");
 
 	}
 

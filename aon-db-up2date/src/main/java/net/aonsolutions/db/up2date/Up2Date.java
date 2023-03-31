@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.payroll.AgreementPaymentStartDateUpdate;
 import net.aonsolutions.db.up2date.payroll.AgreementPurge;
 import net.aonsolutions.db.up2date.tgss.ArtistBaseCgcMax2023Update;
+import net.aonsolutions.db.up2date.tgss.Bases2023Update;
 import net.aonsolutions.db.up2date.domain.DomainAonCustomer;
 import net.aonsolutions.db.up2date.domain.DomainAonStatus;
 import net.aonsolutions.db.up2date.finance.SagardoBusUpdate;
@@ -350,7 +351,8 @@ public class Up2Date {
 	    // RefreshMod130Result.REFRESH_MOD130_RESULT,
 	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE,
             // Mod145StartDateUpdate.MOD145STARTDATEUPDATE,
-	    IrpfDelaysUpdate.IRPFDELAYSUPDATE,
+	    // IrpfDelaysUpdate.IRPFDELAYSUPDATE,
+	    Bases2023Update.BASES2023UPDATE,
 		
 	    //DOMAIN
 	    // DomainAonStatus.DOMAIN_AON_STATUS,
