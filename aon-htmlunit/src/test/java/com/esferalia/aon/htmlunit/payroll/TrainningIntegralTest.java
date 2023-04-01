@@ -93,9 +93,9 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("common_contingency", "9,43");
 		assertText("unemployment", "18,08");
 		assertNotElement("job_training");
-		assertValue("cgcBaseLabel", "1.166,70");
-		assertValue("cgpBaseLabel", "1.166,70");
-		assertText("totalDeductionLabel", "40,68");
+		assertValue("cgcBaseLabel", "1.260,00");
+		assertValue("cgpBaseLabel", "1.260,00");
+		assertText("totalDeductionLabel", "40,77");
 		
 //		getElementById("costsCheck-input").click();
 		wait4Id("common_contingency_cost");
@@ -178,9 +178,9 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 
 		draft("MECANISMO, EQUIDAD");
 		calculate(Calendar.MARCH, 2023);
-		assertText("common_contingency", "1,17");
+		assertText("common_contingency", "1,26");
 		click("costsCheck-input");
-		assertText("common_contingency_cost", "5,83");
+		assertText("common_contingency_cost", "6,30");
 		click("costsCheck-input");
 		
 		

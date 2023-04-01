@@ -2286,9 +2286,14 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		draft("BASE MÍNIMA HORAS, PACTADAS");
 		//assertDisplay("employeeWorkedDaysLabel", true);
+		calculate(Calendar.DECEMBER, 2022);
 		assertValue("quote-label-2", 7.03 * 10.00);
 		assertValue("quote-label-3", 1166.70 * 0.5 - 50.00);
 		assertValue("cgcBaseLabel", 1166.70 * 0.5 + 7.03 * 10.00);
+		calculate(Calendar.JANUARY, 2023);
+		assertValue("quote-label-2", 7.59 * 10.00);
+		assertValue("quote-label-3", 1260.00 * 0.5 - 50.00);
+		assertValue("cgcBaseLabel", 1260.00 * 0.5 + 7.59 * 10.00);
 		
 		
 		
