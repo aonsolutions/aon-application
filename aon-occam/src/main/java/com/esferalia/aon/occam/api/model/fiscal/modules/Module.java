@@ -37,7 +37,12 @@ public class Module implements Serializable {
 	public boolean isSalariedStaff() {
 		return getKey() == ModuleInfo.M01
 			|| getKey() == ModuleInfo.M15
-			|| getKey() == ModuleInfo.M16;
+			|| getKey() == ModuleInfo.M16
+			|| getKey() == ModuleInfo.M26 
+			|| getKey() == ModuleInfo.M27 
+			|| getKey() == ModuleInfo.M56 
+			|| getKey() == ModuleInfo.M59 
+			|| getKey() == ModuleInfo.M62;
 	}
 	public boolean isNoSalariedStaff() {
 		return getKey() == ModuleInfo.M02;

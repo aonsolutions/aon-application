@@ -211,7 +211,103 @@ class Mod303WriterAEAT2023 implements IMod303Writer{
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_S56)  ,17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_S57)  ,17,2))
 		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_S58)  ,17,2))
-		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 590))
+		   
+//		   90	1105	3	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - ACTIVIDAD DE TEMPORADA: nº de días en los que se ejerció la actividad en el año anterior - 1T/2T/3T		3 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1X1) ,3,0))
+//		   91	1108	2	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Número de días de ejercicio de la actividad en el trimestre - 1T/2T/3T		2 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1X2) ,2,0))
+//		   92	1110	3	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Nº de empleados a uno de enero del ejercicio (o en la fecha de inicio de la actividad) - 1T/2T/3T		3 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1X3) ,3,0))
+//		   93	1113	3	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Actividad de temporada. Número de días de ejercicio - 4T		3 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1Y1) ,3,0))
+//		   94	1116	3	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Nº máximo de asalariados que han trabajado simultáneamente durante el ejercicio - 4T		3 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1Y2) ,3,0))
+//		   95	1119	1	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Si en el ejercicio realiza la actividad en LORCA, seleccione lo que proceda		Nota 5
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1X4) ,1,0))
+//		   96	1120	17	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Cuotas soportadas - 4T		15 enteros y 2 decimales
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S12Y)  ,17,2))
+//		   97	1137	17	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Compensaciones satisfechas a sujetos pasivos en R.E.A.G.P. - 4T		15 enteros y 2 decimales
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S13Y)  ,17,2))
+//		   98	1154	7	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Personal Empleado - Personal Asalariado - Horas anuales - Mayores de 19 años		7 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1P1) ,7,0))
+//		   99	1161	7	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Personal Empleado - Personal Asalariado - Horas anuales - Menores de 19 años y trabajadores con contratos de aprendizaje o formación que no sean discapacitados		7 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1P2) ,7,0))
+//		   100	1168	7	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Personal Empleado - Personal Asalariado - Horas anuales - Discapacitados con grado de minusvalía igual o superior al 33 por 100		7 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1P3) ,7,0))
+//		   101	1175	4	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Personal Empleado - Personal Asalariado - Horas anuales - Horas anuales fijadas en el convenio colectivo vigente		4 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1P4) ,4,0))
+//		   102	1179	4	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Personal Empleado - Personal No Asalariado - Horas anuales: titular		4 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1E1) ,4,0))
+//		   103	1183	1	An	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Personal Empleado - Personal No Asalariado - El titular es discapacitado en grado igual o superior al 33 por 100.		X o blanco
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getAmount(Mod303Key.CT_S1E2)==1?"X":" ",1))  // Declaración complementaria
+//		   104	1184	4	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Personal Empleado - Personal No Asalariado - Horas anuales: cónyuge		4 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1E3) ,4,0))
+//		   105	1188	7	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Personal Empleado - Personal No Asalariado - Horas anuales: hijos menores de 18 años		7 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1E4) ,7,0))
+//		   106	1195	2	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Mesas - Capacidad		2 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1C1) ,2,0))
+//		   107	1197	4	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Mesas - Mesas		4 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1M1) ,4,0))
+//		   108	1201	3	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Mesas - Días - 4T		3 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1D1) ,3,0))
+//		   109	1204	2	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Mesas - Capacidad		2 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1C2) ,2,0))
+//		   110	1206	4	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Mesas - Mesas		4 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1M2) ,4,0))
+//		   111	1210	3	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Mesas - Días - 4T		3 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1D2) ,3,0))
+//		   112	1213	2	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Mesas - Capacidad		2 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1C3) ,2,0))
+//		   113	1215	4	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Mesas - Mesas		4 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1M3) ,4,0))
+//		   114	1219	3	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Mesas - Días - 4T		3 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1D3) ,3,0))
+//		   115	1222	2	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Mesas - Capacidad		2 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1C4) ,2,0))
+//		   116	1224	4	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Mesas - Mesas		4 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S1M4) ,4,0))
+//		   117	1228	3	Num	C	Liquidación (3) - RS - (B) Actividades en RS (exc. a, g y f) - Actividad 1 - Módulo Mesas - Días - 4T		3 enteros
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S1D4) ,3,0))
+
+
+// ******************************************************************
+// ******************************************************************
+// ))******************************************************************
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2X1) ,3,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2X2) ,2,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2X3) ,3,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2Y1) ,3,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2Y2) ,3,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2X4) ,1,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S22Y)  ,17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S23Y)  ,17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2P1) ,7,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2P2) ,7,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2P3) ,7,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2P4) ,4,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2E1) ,4,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getAmount(Mod303Key.CT_S2E2)==1?"X":" ",1))  // Declaración complementaria
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2E3) ,4,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2E4) ,7,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2C1) ,2,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2M1) ,4,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2D1) ,3,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2C2) ,2,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2M2) ,4,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2D2) ,3,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2C3) ,2,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2M3) ,4,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2D3) ,3,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2C4) ,2,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S2M4) ,4,0))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S2D4) ,3,0))
+		   
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA1A) ,17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA1B) ,17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA2A) ,17,2))
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA2B) ,17,2))
+
+		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 270))
 		   ,(wr, mod) -> wr.append("</T30302000>")
 		})
 		
@@ -313,7 +409,72 @@ class Mod303WriterAEAT2023 implements IMod303Writer{
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_S56)  ,17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_S57)  ,17,2))
 			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod303Key.CT_S58)  ,17,2))
-			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 590))
+
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3X1) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3X2) ,2,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3X3) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3Y1) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3Y2) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3X4) ,1,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S32Y)  ,17,2))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S33Y)  ,17,2))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3P1) ,7,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3P2) ,7,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3P3) ,7,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3P4) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3E1) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getAmount(Mod303Key.CT_S3E2)==1?"X":" ",1))  // Declaración complementaria
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3E3) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3E4) ,7,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3C1) ,2,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3M1) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3D1) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3C2) ,2,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3M2) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3D2) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3C3) ,2,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3M3) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3D3) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3C4) ,2,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S3M4) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S3D4) ,3,0))
+
+
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4X1) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4X2) ,2,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4X3) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4Y1) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4Y2) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4X4) ,1,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S42Y)  ,17,2))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.signedZero(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S43Y)  ,17,2))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4P1) ,7,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4P2) ,7,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4P3) ,7,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4P4) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4E1) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getAmount(Mod303Key.CT_S4E2)==1?"X":" ",1))  // Declaración complementaria
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4E3) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4E4) ,7,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4C1) ,2,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4M1) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4D1) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4C2) ,2,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4M2) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4D2) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4C3) ,2,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4M3) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4D3) ,3,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4C4) ,2,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod303Key.CT_S4M4) ,4,0))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_S4D4) ,3,0))
+			   
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA3A) ,17,2))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA3B) ,17,2))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA4A) ,17,2))
+			   ,(wr, mod) -> wr.append(AonFiscalFileUtils.unsigned(!mod.isLastPeriod()?0.0:mod.getAmount(Mod303Key.CT_SA4B) ,17,2))
+			   
+			   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 270))
 			   ,(wr, mod) -> wr.append("</T30302000>")
 		})
 		

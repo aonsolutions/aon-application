@@ -182,20 +182,7 @@ class Model303AEATActivity2020 extends DockLayoutPanel implements HasValueChange
 		toolbarPanel.add(cancel);
 		 
 		final AonToolbarButton remove = new AonToolbarButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
-		remove.addClickHandler( event -> {
-				AonConfirmDialog dialog = new AonConfirmDialog();
-				dialog.confirm(AON.MSG.confirmDeleteAction(), new AonConfirmDialogCallback() {
-					@Override
-					public void onCancel() {
-						// Nothing
-					}
-					
-					@Override
-					public void onAccept() {
-						callback.onRemove();
-					}
-				});
-		});
+		remove.addClickHandler( event -> AonConfirmDialog.showConfirm(AON.MSG.confirmDeleteAction(), () -> callback.onRemove()));
 		toolbarPanel.add(remove);
 				
 		FlowPanel epigraphContainerPanel = new FlowPanel();

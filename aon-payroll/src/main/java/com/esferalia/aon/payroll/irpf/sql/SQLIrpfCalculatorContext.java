@@ -1178,7 +1178,7 @@ public class SQLIrpfCalculatorContext implements IIrpfCalculatorContext {
 				totalIrpf += salaryRs.getDouble(SalaryColumns.TOTAL_IRPF);
 				socialSecurityContributons += salaryRs
 						.getDouble(SalaryColumns.SOCIAL_SECURITY_CONTRIBUTIONS);
-				dates.add(salaryRs.getDate(SalaryColumns.START_DATE));
+				dates.add(AonDateUtils.getMonthFirstDay(salaryRs.getDate(SalaryColumns.END_DATE)));
 				int type = salaryRs.getInt(SalaryColumns.TYPE);
 				if ( type == 1)  {
 					proExtBase -= salaryRs.getDouble(SalaryColumns.IRPF_BASE);
