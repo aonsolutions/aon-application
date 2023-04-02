@@ -22,8 +22,11 @@ import org.apache.commons.cli.ParseException;
 import net.aonsolutions.db.up2date.finance.SagardoBusUpdate;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2023Update;
 import net.aonsolutions.db.up2date.tgss.Bases2023Update;
+import net.aonsolutions.db.up2date.tgss.FellowBases2023Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateII;
+import net.aonsolutions.db.up2date.tgss.MEITrainingBaseCgcMinUndo;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
+import net.aonsolutions.db.up2date.tgss.TrainningBases2023Update;
 
 public class Up2Date {
 
@@ -346,8 +349,11 @@ public class Up2Date {
             // Mod145StartDateUpdate.MOD145STARTDATEUPDATE,
 	    // IrpfDelaysUpdate.IRPFDELAYSUPDATE,
 	    Bases2023Update.BASES2023UPDATE,
-	    AgriculturalBases2023Update.AGRICULTURALBASES2023UPDATE,
 	    HomeBases2023UpdateII.HOMEBASES2023UPDATEII,
+	    FellowBases2023Update.FELLOWBASES2023UPDATE,
+	    TrainningBases2023Update.TRAINNINGBASES2023UPDATE,
+	    MEITrainingBaseCgcMinUndo.MEITRAININGBASECGCMINUNDO,
+	    AgriculturalBases2023Update.AGRICULTURALBASES2023UPDATE,
 		
 	    //DOMAIN
 	    // DomainAonStatus.DOMAIN_AON_STATUS,
