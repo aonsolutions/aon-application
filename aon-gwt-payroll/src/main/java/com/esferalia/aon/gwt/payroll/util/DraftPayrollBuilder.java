@@ -240,15 +240,15 @@ public class DraftPayrollBuilder {
 				deductionsMap.put(2, new ArrayList<PDFDeduction>());
 			
 			if (!inserted.contains("CGC"))
-				deductionsMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias comunes", 0d));
+				deductionsMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias Comunes", 0d));
 			if (!inserted.contains("DESMPL"))
 				deductionsMap.get(1).add(new PDFDeduction(0d, "DESMPL", "Desempleo", 0d));
 			if (!inserted.contains("FP"))
-				deductionsMap.get(1).add(new PDFDeduction(0d, "FP", "Formación profesional", 0d));
+				deductionsMap.get(1).add(new PDFDeduction(0d, "FP", "Formación Profesional", 0d));
 			if (!inserted.contains("IRPF"))
-				deductionsMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones dinerarias", 0d));
+				deductionsMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones Dinerarias", 0d));
 			if (!inserted.contains("MEI"))
-				deductionsMap.get(1).add(new PDFDeduction(0d, "MEI", "Mecanismo de equidad intergeneracional", 0d, DeductionType.COMMON_CONTINGENCY));
+				deductionsMap.get(1).add(new PDFDeduction(0d, "MEI", "Mecanismo de Equidad Intergeneracional (MEI)", 0d, DeductionType.MEI));
 			
 			
 			//EMBARGOS (placed at 'Other deductions' -type 5- field on 'Deductions')

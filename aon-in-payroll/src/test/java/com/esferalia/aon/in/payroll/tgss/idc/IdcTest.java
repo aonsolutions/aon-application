@@ -4950,13 +4950,13 @@ public class IdcTest extends AbstractSQLTestCase {
 				"BASE_CGP_E * PORCENTAJE_FP_E/100");
 
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOf(2023), "MEI_E",
-			DeductionType.COMMON_CONTINGENCY, "BASE_CGC_E * PORCENTAJE_MEI_E/100");
+			DeductionType.MEI, "BASE_CGC_E * PORCENTAJE_MEI_E/100");
 
 		DeductionConceptRecord fpConcept = addDeductionConcept(aonContext, "FP", DeductionType.COMMON_CONTINGENCY);
 		DeductionConceptRecord cgcConcept = addDeductionConcept(aonContext, "CGC", DeductionType.COMMON_CONTINGENCY);
-		DeductionConceptRecord meiConcept = addDeductionConcept(aonContext, "MEI", DeductionType.COMMON_CONTINGENCY);
+		DeductionConceptRecord meiConcept = addDeductionConcept(aonContext, "MEI", DeductionType.MEI);
 		DeductionConceptRecord desmplConcept = addDeductionConcept(aonContext, "DESMPL",
-				DeductionType.COMMON_CONTINGENCY);
+				DeductionType.MEI);
 
 		addSSRegimeDeduction(aonContext, fpConcept, SSRegimeType.GENERAL, startDate, "BASE_CGC * PORCENTAJE_FP/100");
 		addSSRegimeDeduction(aonContext, cgcConcept, SSRegimeType.GENERAL, startDate, "BASE_CGC * PORCENTAJE_CGC/100");

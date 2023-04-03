@@ -2299,6 +2299,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			}
 			
 			@Override
+			public void visitMei(DeductionType deductionType) {
+			    add();
+			}
+			
+			@Override
 			public void visitCommonContigency(DeductionType deductionType) {
 				add();
 			}
