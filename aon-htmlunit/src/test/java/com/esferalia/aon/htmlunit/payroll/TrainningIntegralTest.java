@@ -122,7 +122,7 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("common_contingency", "9,43");
 		calculate(Calendar.JANUARY, 2023);
 		assertText("common_contingency", "9,43");
-		assertText("totalDeductionLabel", "10,60"); // + MEI
+		assertText("totalDeductionLabel", "10,69"); // + MEI
 		
 		if ( !isDisplayed("it_cost") )
 			click("costsCheck-input");
