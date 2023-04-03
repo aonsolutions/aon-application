@@ -627,22 +627,6 @@ public class FiscalModelDAO {
 	
 	public static Stream<FiscalModel> getMatrixRecords(AONContext ctx,int domain, FiscalModelFilter filter)  {
 		ctx.checkRead();
-		
-		System.out.println(
-				
-				ctx.getDslContext()
-				.select()
-				.from(FS_MODEL)
-				.leftOuterJoin(DOMAIN).on(FS_MODEL.DOMAIN.equal(DOMAIN.ID))
-				.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.equal(SCOPE.ID))
-				.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
-				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
-				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
-				.where(FS_MODEL_PROPERTIES.getConditions(filter))
-				.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc(),FS_MODEL.ID.desc())
-				.getSQL(ParamType.INLINED)
-				);
-		
 		return ctx.getDslContext()
 				.select()
 				.from(FS_MODEL)
