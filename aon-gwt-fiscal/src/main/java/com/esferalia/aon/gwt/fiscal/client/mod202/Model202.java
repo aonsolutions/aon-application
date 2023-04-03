@@ -264,6 +264,31 @@ public class Model202 extends MainEntryPoint {
 	}
 	
 	enum Mod202Declarations {
+		AEAT_2023 {
+			@Override
+			public boolean accept(Mod202 mod202) {
+				return mod202.isAEAT() && mod202.getYear() >= 2023;
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod202 mod202, Model202Callback cbk) {
+				return new Model2022023AEAT(mod202, cbk);
+			}
+		},
+		AEAT_2018 {
+			@Override
+			public boolean accept(Mod202 mod202) {
+				return mod202.isAEAT() 
+					&& mod202.getYear() < 2023
+					&& (mod202.getYear() > 2018 
+					|| (mod202.getYear() == 2018 && mod202.getPeriod().ordinal() >= Period.T2.ordinal()));
+			}
+
+			@Override
+			public Widget getDeclarationWidget(Mod202 mod202, Model202Callback cbk) {
+				return new Model2022018AEAT(mod202, cbk);
+			}
+		},
 		AEAT {
 			@Override
 			public boolean accept(Mod202 mod202) {
@@ -274,19 +299,6 @@ public class Model202 extends MainEntryPoint {
 			@Override
 			public Widget getDeclarationWidget(Mod202 mod202, Model202Callback cbk) {
 				return new Model202AEAT(mod202, cbk);
-			}
-		},
-		AEAT_2018 {
-			@Override
-			public boolean accept(Mod202 mod202) {
-				return mod202.isAEAT() 
-					&& (mod202.getYear() > 2018 
-					|| (mod202.getYear() == 2018 && mod202.getPeriod().ordinal() >= Period.T2.ordinal()));
-			}
-
-			@Override
-			public Widget getDeclarationWidget(Mod202 mod202, Model202Callback cbk) {
-				return new Model2022018AEAT(mod202, cbk);
 			}
 		},
 		;

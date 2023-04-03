@@ -56,7 +56,7 @@ public abstract class Model202Base extends DockLayoutPanel {
 
 	private static final String WIDTH_140PX = "140px";
 	private static final String BLANK = "_blank";
-	private static final int MAX_LABEL_LENGTH = 100;
+	private static final int MAX_LABEL_LENGTH = 180;
 	private static final int COL_NUMBER = 8;
 	private static final String MODEL202_PRINT = "/aon_gwt_fiscal/ms/Model202Print";
 	protected static final String MODEL202_FILE = "/aon_gwt_fiscal/ms/Model202File";

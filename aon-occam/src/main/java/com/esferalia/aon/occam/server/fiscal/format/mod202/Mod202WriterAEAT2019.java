@@ -1,17 +1,18 @@
-package com.esferalia.aon.occam.server.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format.mod202;
 
 import java.io.IOException;
 import java.io.Writer;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
-import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer.IMod202Writer;
-import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer.IModelAccepter;
-import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer.IPropertyFiller;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer.IMod202Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer.IModelAccepter;
+import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer.IPropertyFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod202WriterAEAT20172 implements IMod202Writer{ 
+public class Mod202WriterAEAT2019 implements IMod202Writer{ 
 
 	private static enum Mod202File {
 		
@@ -23,11 +24,11 @@ public class Mod202WriterAEAT20172 implements IMod202Writer{
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.getMod202Period(mod))
 			,(wr,mod) -> wr.append("0000>")
 			,(wr,mod) -> wr.append("<AUX>")
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 70))
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 4))
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 4))
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 9))
-			,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 213))
+		    ,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 70))
+		    ,(wr,mod) -> wr.append(AonFiscalFileUtils.text("2020", 4))
+		    ,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 4))
+		    ,(wr,mod) -> wr.append(AonFiscalFileUtils.text(AonFiscalFileUtils.DEVELOPER_NIF, 9))
+		    ,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 213))
 			,(wr,mod) -> wr.append("</AUX>")
 			
 			,(wr,mod) -> wr.append("<T20201000>")
@@ -139,7 +140,6 @@ public class Mod202WriterAEAT20172 implements IMod202Writer{
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.year(mod.getYear()))
 			,(wr, mod) -> wr.append(AonFiscalFileUtils.getMod202Period(mod))
 			,(wr, mod) -> wr.append("0000>")
-			,(wr, mod) -> wr.append(AonStringUtils.CR_LF)
 			})
 		;
 		
