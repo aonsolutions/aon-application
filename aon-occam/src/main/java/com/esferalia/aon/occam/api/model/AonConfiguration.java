@@ -33,6 +33,7 @@ public class AonConfiguration implements Serializable {
 	private LinkedList<String> invoiceSalesSeries;
 	private LinkedList<String> invoiceRectificationSeries;
 	private LinkedList<EnterpriseActivity> enterpriseActivities;
+	private LinkedList<EnterpriseActivity> allEnterpriseActivities;
 	private LinkedList<InvestAsset> investAsset;
 	private LinkedList<Workplace> workplaces;
 	private LinkedList<Tax> vatTaxes;
@@ -142,6 +143,16 @@ public class AonConfiguration implements Serializable {
 		this.invoiceRectificationSeries.add(serie);
 	}
 
+	public LinkedList<EnterpriseActivity> getAllActivities() {
+		return allEnterpriseActivities;
+	}
+	public AonConfiguration setAllEnterpriseActivities(LinkedList<EnterpriseActivity> allEnterpriseActivities) {
+		this.allEnterpriseActivities = allEnterpriseActivities;
+		return this;
+	}
+	public boolean hasAllActivities() {
+		return this.allEnterpriseActivities != null && this.allEnterpriseActivities.size() > 0;
+	}
 	public LinkedList<EnterpriseActivity> getActivities() {
 		return enterpriseActivities;
 	}

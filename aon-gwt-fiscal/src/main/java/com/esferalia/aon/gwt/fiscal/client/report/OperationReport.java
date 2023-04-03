@@ -246,12 +246,12 @@ public class OperationReport extends MainEntryPoint {
 		fromDate.addStyleName(AON.CSS.aonMarginLeft());
 		toDate = new AonDateBox();
 	
-		if (options.getConfiguration() != null && options.getConfiguration().hasActivities()) {
+		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities()) {
 			activity = new ListBox();
 			activity.addStyleName(AON.CSS.aonMarginLeft());
 			activity.setWidth("300px");
 			int i = 0;
-			for (EnterpriseActivity ea : options.getConfiguration().getActivities()) {
+			for (EnterpriseActivity ea : options.getConfiguration().getAllActivities()) {
 				
 				activity.addItem(ea.getDescription() + (ea.getIae().isEmpty()?"":(" ("+ea.getEpigraph()+")")), AonNumberUtils.toString( ea.getId()));
 				if (ea.isPrincipal()) {
@@ -312,7 +312,7 @@ public class OperationReport extends MainEntryPoint {
 		firstRowPanel.add(to);
 		firstRowPanel.add(toDate);
 
-		if (options.getConfiguration() != null && options.getConfiguration().hasActivities()) {
+		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities()) {
 			InlineLabel activityLabel = new InlineLabel(AON.MSG.activity());
 			activityLabel.setStyleName(AON.CSS.aonSearchPanelLabel());
 			firstRowPanel.add(activityLabel);
@@ -355,7 +355,7 @@ public class OperationReport extends MainEntryPoint {
 		year.setValue(DateUtils.getYear(),false);
 		period.setSelectedIndex(0);
 		fillDates();
-		if (options.getConfiguration() != null && options.getConfiguration().hasActivities()) {
+		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities()) {
 			activity.setSelectedIndex(indexMainActivity);
 		}
 //		 onSearch(); Disable initial search
@@ -379,7 +379,7 @@ public class OperationReport extends MainEntryPoint {
 			.setUnifiedBook(false)
 			.setExpenses(type.getSelectedIndex() == 0)
 			;
-		if (options.getConfiguration() != null && options.getConfiguration().hasActivities() ) {
+		if (options.getConfiguration() != null && options.getConfiguration().hasAllActivities() ) {
 			params.setActivity( AonNumberUtils.toInteger( activity.getSelectedValue()));
 			params.setActivityDescription( activity.getSelectedItemText() == null ? "" : activity.getSelectedItemText().replace("*",""));
 		}
