@@ -75,6 +75,7 @@ public class ConfigurationDAO {
 		conf.setMd5(getMd5(conf.getUser().getLogin()+conf.getDomain().getName()))
 			.setUserOperator(operator)
 			.setEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId(), params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
+			.setAllEnterpriseActivities( CompanyDAO.getEnterpriseActivities(ctx,ctx.getDomainId()).collect(Collectors.toCollection(LinkedList::new)))
 			.setInvestAsset( CompanyDAO.getInvestAssets(ctx,ctx.getDomainId(), params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
 			.setWorkplaces( WorkplaceDAO.getWorkplaceList(ctx, 
 					p -> {
