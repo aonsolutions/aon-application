@@ -7628,7 +7628,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					.and(f.getEndDateProperty().le(endDate))
 					.and(
 						f.getIsSalaryProperty().eq(true)
-						.or(f.getIsDelayProperty().eq(true))
+//						.or(f.getIsDelayProperty().eq(true))
 						.or(f.getIsSettlementProperty().eq(true))
 					)
 			)
