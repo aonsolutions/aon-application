@@ -1922,7 +1922,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 		// 51 Cuotas devengadas - Adquisiciones intracomunitarias de bienes
 		,
 		CT_S51(Mod303Key.CT_S51,
-				(mod, vat) -> adqIntracomunitariasFilterSimp(vat, mod), // && AonMathUtils.isNotZero(vat.getPercentage()),
+				(mod, vat) -> adqIntracomunitariasFilterSimp(vat, mod) && AonMathUtils.isNotZero(vat.getPercentage()),
 				(ctx, mod, vat) -> add(Mod303Key.CT_S51, mod, vat.getDeductibleQuota()), null, null, null)
 		// 52 Cuotas devengadas - Entregas de activos fijos
 		, CT_S52(Mod303Key.CT_S52, (mod, vat) -> entregasActivosFijosFilterSimp(vat, mod),
@@ -2319,14 +2319,14 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 
 	private static boolean operacionesInterioresCorrientesFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && !vat.isInvestment()
-				&& !vat.isRectification() && !vat.isFarmerRegime() // && AonMathUtils.isNotZero(vat.getPercentage())
+				&& !vat.isRectification() && !vat.isFarmerRegime() && AonMathUtils.isNotZero(vat.getPercentage())
 				&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilterGene(vat, mod));
 
 	}
 
 	private static boolean operacionesInterioresInversionFilter(VatContext vat, Mod303 mod) {
 		return vat.isVatGeneralRegime(mod.getDefaultVATRegime()) && !vat.isVatSurchargeRegime() && vat.isInvestment()
-				&& !vat.isRectification() && !vat.isFarmerRegime() // && AonMathUtils.isNotZero(vat.getPercentage())
+				&& !vat.isRectification() && !vat.isFarmerRegime() && AonMathUtils.isNotZero(vat.getPercentage())
 				&& (vat.isNationalPurchase() || vat.isNationalExpenses() || operacionesISPFilterGene(vat, mod));
 	}
 
