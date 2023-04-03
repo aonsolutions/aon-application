@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api.model.fiscal;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 
+import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.IRPFRegime;
 import com.esferalia.aon.occam.api.model.type.Mod130Key;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -72,6 +73,12 @@ public class Mod130 extends FiscalModel implements Serializable {
 			 || (AonMathUtils.isLessThanZero(getDeclarationResult()) && getPeriod() == Period.T4));
 	}
 
+	@Override
+	public boolean isStrictToDeposit() {
+		return (isFinished() || isCustomerAccepted() ||isSent()) 
+			&& (getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT);
+	}
+	
 	// ************************************************************
 	// ************************************************************
 	@Override
