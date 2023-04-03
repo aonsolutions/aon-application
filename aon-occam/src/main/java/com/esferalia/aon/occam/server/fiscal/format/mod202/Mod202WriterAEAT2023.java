@@ -1,21 +1,22 @@
-package com.esferalia.aon.occam.server.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format.mod202;
 
 import java.io.IOException;
 import java.io.Writer;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
-import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer.IMod202Writer;
-import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer.IModelAccepter;
-import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer.IPropertyFiller;
+import com.esferalia.aon.occam.server.fiscal.format.AonFiscalFileUtils;
+import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer.IMod202Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer.IModelAccepter;
+import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer.IPropertyFiller;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public class Mod202WriterAEAT2019 implements IMod202Writer{ 
+public class Mod202WriterAEAT2023 implements IMod202Writer{ 
 
 	private static enum Mod202File {
 		
-		AEAT_2017_2 ( mod202 -> true,new IPropertyFiller[] { 
+		AEAT ( mod202 -> true,new IPropertyFiller[] { 
 			 (wr,mod) -> wr.append("<T")
 			,(wr,mod) -> wr.append("202")
 			,(wr,mod) -> wr.append("0")
@@ -29,8 +30,9 @@ public class Mod202WriterAEAT2019 implements IMod202Writer{
 		    ,(wr,mod) -> wr.append(AonFiscalFileUtils.text(AonFiscalFileUtils.DEVELOPER_NIF, 9))
 		    ,(wr,mod) -> wr.append(AonStringUtils.repeat(' ', 213))
 			,(wr,mod) -> wr.append("</AUX>")
-			
-			,(wr,mod) -> wr.append("<T20201000>")
+		}),
+		AEAT_1 ( mod202 -> true,new IPropertyFiller[] { 
+			 (wr,mod) -> wr.append("<T20201000>")
 			,(wr,mod) -> wr.append( AonStringUtils.SPACE )
 			,(wr,mod) -> wr.append( mod.getAeatDeclarationType() )
 			,(wr,mod) -> wr.append( AonFiscalFileUtils.document(mod.getDocument()))
@@ -87,10 +89,12 @@ public class Mod202WriterAEAT2019 implements IMod202Writer{
 				}
 			}
 			,(wr,mod) -> wr.append( AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X19) == 1))
-			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(173))
+			,(wr,mod) -> wr.append( AonFiscalFileUtils.mark(mod.getAmount(Mod202Key.X20) == 1))
+			,(wr,mod) -> wr.append(AonFiscalFileUtils.spaces(172))
 			,(wr,mod) -> wr.append("</T20201000>")
-			
-			,(wr,mod) -> wr.append("<T20202000>")
+		}),
+		AEAT_2 ( mod202 -> true,new IPropertyFiller[] { 
+			 (wr,mod) -> wr.append("<T20202000>")
 			,(wr,mod) -> wr.append( AonStringUtils.SPACE )
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.unsigned(mod.getAmount(Mod202Key.C19),17))
 			,(wr,mod) -> wr.append(AonFiscalFileUtils.signedZero(mod.getAmount(Mod202Key.C20),17))

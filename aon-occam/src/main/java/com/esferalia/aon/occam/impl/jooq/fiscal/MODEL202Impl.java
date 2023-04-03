@@ -9,7 +9,7 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202.Mod202DAO;
 
 public class MODEL202Impl implements IMODEL202 {
 
