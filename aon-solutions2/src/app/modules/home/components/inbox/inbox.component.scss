@@ -38,11 +38,30 @@
   width: 100%;
   height: 17%;
   display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+  flex-direction: column;
+  justify-content: space-around;
 }
-.seeAll{
-
+.footer .seeAll{
+  color: #f6655a;
+  cursor: pointer;
+  margin-right: 1% ;
+}
+.footer .circle{
+  width: 28px;
+  height: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 16px;
+  background-color: #feedec;
+}
+.circle .numberCircle{
+  font-size: 14px;
+  font-weight: 500;
+}
+.seeAllMessages{
+  display: flex;
 }
 
 

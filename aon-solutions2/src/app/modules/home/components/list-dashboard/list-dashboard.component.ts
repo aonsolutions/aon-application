@@ -1,5 +1,10 @@
 import { Component, OnInit ,Input} from '@angular/core';
-
+export interface ITile {
+  color: string;
+  cols: number;
+  rows: number;
+  text: string;
+}
 @Component({
   selector: 'app-list-dashboard',
   templateUrl: './list-dashboard.component.html',
@@ -19,5 +24,4 @@ export class ListDashboardComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
 }
