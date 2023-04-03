@@ -25,7 +25,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.esferalia.aon.occam.api.model.type.MimeType;
-import com.esferalia.aon.occam.server.fiscal.format.Mod202Writer;
+import com.esferalia.aon.occam.server.fiscal.format.mod202.Mod202Writer;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.http.AonHttpUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
