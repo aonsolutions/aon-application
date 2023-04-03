@@ -1,0 +1,26 @@
+<div class="banks">
+    <div class="banksHeader">
+        <div class="banksHeaderName">
+            <div class="banksHeaderLine"></div>
+            <div class="banksHeaderText">
+                Bancos
+            </div>
+        </div>
+    </div>
+    <div class="banksContent">
+        <div *ngFor="let bank of banks" class="banksContentElement">
+            <div class="banksContentElementName">
+                {{bank.name}}
+            </div>
+            <div class="banksContentElementAmount">
+                {{bank.amount}}
+            </div>
+        </div>
+    </div>
+    <div class="dividerParent">
+        <mat-divider class="divider"></mat-divider>
+    </div>
+    <div class="banksFooter">
+        {{totalAmount}}
+    </div>
+</div>

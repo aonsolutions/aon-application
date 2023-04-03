@@ -1,0 +1,14 @@
+.toolBar {
+    width: 100%;
+    background-color: white;
+    border: solid;
+    border-width: 1px;
+    border-color: lightgrey;
+    height: max(65px,7vh);
+    justify-content: space-between;
+}
+
+.toolbarIcons {
+    align-items: center;
+    justify-self: end;
+}

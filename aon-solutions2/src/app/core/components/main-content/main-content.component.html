@@ -1,0 +1,9 @@
+<mat-sidenav-container #content class="example-container mat-typography" [autosize]="!service.opened">
+  <mat-sidenav  #sidenav mode="side" disableClose="true" opened="true"
+  [ngStyle]="!selectedProduct ? {'width': 'max(65px,7vh)'} : {'width': 'max(65px,25vh)'}">
+    <app-sidenav (onSelected)="onSelectedProduct($event)"></app-sidenav>
+  </mat-sidenav>
+  <mat-sidenav-content style="background-color: white">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

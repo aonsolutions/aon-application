@@ -1,0 +1,210 @@
+.example-container {
+    position: absolute;
+    top: max(65px,7vh);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #eee;
+}
+
+.menuIndex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: solid;
+    height: 10%;
+    width: 80%;
+    border-radius: 10px;
+    border-color: white;
+}
+
+.menuIndexOpened {
+    display: flex;
+    align-items: center;
+    margin-left: 1vh !important;
+    padding-left: 1vh !important;
+    border: solid;
+    height: 10%;
+    width: 80%;
+    border-radius: 10px;
+    border-color: white;
+}
+
+.menuIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: solid;
+    height: 10%;
+    width: 80%;
+    border-radius: 10px;
+    border-color: white;
+    cursor: pointer;
+}
+
+.menuOpened {
+    display: flex;
+    align-items: center;
+    margin-left: 1vh !important;
+    padding-left: 2vh !important;
+    border: solid;
+    height: 10%;
+    width: 80%;
+    border-radius: 10px;
+    border-color: white;
+    cursor: pointer;
+}
+
+.menuOpened:hover {
+    background-color: lightgray;
+}
+
+.menuIcon:hover {
+    background-color: lightgrey;
+}
+
+.myAppBar {
+    background-color: lightblue;
+}
+
+.mat-list-base {
+    padding-top: 0px !important;
+}
+
+.floatButton1 {
+    position: fixed;
+    display: flex;
+    border: solid;
+    justify-content: center;
+    align-items: center;
+    justify-content: center;
+    border-width: 1px;
+    border-color: lightgrey;
+    border-radius: 50px;
+    height: 2vh;
+    width: 2vh;
+    z-index: 5;
+    left: 24vh;
+    background-color: white;
+    cursor: pointer;
+}
+
+.floatButton2 {
+    position: fixed;
+    display: flex;
+    border: solid;
+    justify-content: center;
+    align-items: center;
+    border-width: 1px;
+    border-color: lightgrey;
+    border-radius: 50px;
+    height: max(15px,2vh);
+    width: max(15px,2vh);
+    left: max(55px,6vh);
+    z-index: 5;
+    background-color: white;
+    cursor: pointer;
+}
+
+.menuIconsDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    height: 55%;
+}
+
+.menuTextDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 55%;
+}
+
+.openCloseShortcuts {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 10%;
+    width: 80%;
+    cursor: pointer;
+}
+
+.shortcutMenuClosed {
+    display: flex;
+    flex-direction: column-reverse;
+    position: relative;
+    align-items: center;
+    justify-content: space-around;
+    height: 45%;
+    z-index: 1;
+}
+
+.shortcutClosed {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 10%;
+    width: 80%;
+}
+
+.shortcutOpened {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 10%;
+    width: 80%;
+    background-color: #f0f0f1;
+    border: solid;
+    border-radius: 10px;
+    border-color: white;
+}
+
+.shortcutOpened:hover {
+    background-color: #f9f9fa;
+}
+
+.menuTextShortcut {
+    height: 45%;
+    z-index: 1;
+    display: flex;
+    flex-direction: column-reverse;
+
+}
+
+.shortcutIndex {
+    display: flex;
+    align-items: center;
+    margin-left: 1vh !important;
+    padding-left: 1vh !important;
+    border: solid;
+    height: 10%;
+    width: 80%;
+    border-radius: 10px;
+    border-color: white;
+    justify-content: space-between;
+}
+
+.shortcutMenuOpened {
+    background-color: white;
+    flex-direction: row;
+    width: 100%;
+}
+
+.shortcutGrid {
+    width: 50%;
+    height: 50%;
+    background-color: #f0f0f1;
+    border: solid;
+    border-color: white;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.shortcutGrid:hover{
+    background-color: #f9f9fa;
+}
