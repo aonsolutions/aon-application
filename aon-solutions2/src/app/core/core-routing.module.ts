@@ -13,10 +13,40 @@ const routes: Routes = [
           import('src/app/modules/home/home.module').then((m) => m.HomeModule),
       },
       {
-        path: 'bandeja',
+        path: 'inbox',
         loadChildren: () =>
-          import('src/app/modules/bandeja/bandeja.module').then((m) => m.BandejaModule),
+          import('src/app/modules/inbox/inbox.module').then((m) => m.InboxModule),
       },
+      {
+        path: 'auth',
+        loadChildren: () =>
+          import('src/app/modules/auth/auth.module').then((m) => m.AuthModule),
+      },
+      {
+        path: 'billing',
+        loadChildren: () =>
+          import('src/app/modules/billing/billing.module').then((m) => m.BillingModule),
+      },
+      {
+        path: 'consulting',
+        loadChildren: () =>
+          import('src/app/modules/consulting/consulting.module').then((m) => m.ConsultingModule),
+      },
+      {
+        path: 'documentation',
+        loadChildren: () =>
+          import('src/app/modules/documentation/documentation.module').then((m) => m.DocumentationModule),
+      },
+      {
+        path: 'employee-panel',
+        loadChildren: () =>
+          import('src/app/modules/employee-panel/employee-panel.module').then((m) => m.EmployeePanelModule),
+      },
+      {
+        path: 'tax-panel',
+        loadChildren: () =>
+          import('src/app/modules/tax-panel/tax-panel.module').then((m) => m.TaxPanelModule),
+      }
     ],
   },
 ];

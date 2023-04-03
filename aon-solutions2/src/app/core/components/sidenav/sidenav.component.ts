@@ -20,12 +20,12 @@ export class SidenavComponent implements OnInit {
   }
 
   items: MenuButton[] = [
-    {routerlink: 'home', shape: 'inbox', color: 'alt-attention', text: 'BANDEJA'},
-    {routerlink: 'bandeja', shape: 'assessment', color: 'primary', text: 'FACTURACIÓN'},
-    {routerlink: '', shape: 'euro_symbol', color: 'attention', text: 'PANEL DE IMPUESTOS'},
-    {routerlink: '', shape: 'people', color: 'alt-positive', text: 'PANEL DE EMPLEADOS'},
-    {routerlink: '', shape: 'description', color: 'alt-warning', text: 'DOCUMENTACIÓN'},
-    {routerlink: '', shape: 'work', color: 'alt-primary', text: 'ASESORÍA'}
+    {routerlink: 'inbox', shape: 'inbox', color: 'alt-attention', text: 'BANDEJA'},
+    {routerlink: 'billing', shape: 'assessment', color: 'primary', text: 'FACTURACIÓN'},
+    {routerlink: 'tax-panel', shape: 'euro_symbol', color: 'attention', text: 'PANEL DE IMPUESTOS'},
+    {routerlink: 'employee-panel', shape: 'people', color: 'alt-positive', text: 'PANEL DE EMPLEADOS'},
+    {routerlink: 'documentation', shape: 'description', color: 'alt-warning', text: 'DOCUMENTACIÓN'},
+    {routerlink: 'consulting', shape: 'work', color: 'alt-primary', text: 'ASESORÍA'}
   ];
 
   shortcuts: Shortcut[] = [

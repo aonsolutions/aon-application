@@ -53,11 +53,15 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CoreModule } from './core/core.module';
 import { LayoutModule } from '@angular/cdk/layout';
+import { TaxPanelComponent } from './modules/tax-panel/tax-panel.component';
+import { EmployeePanelComponent } from './modules/employee-panel/employee-panel.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    TaxPanelComponent,
+    EmployeePanelComponent,
   ],
   imports: [
     CoreModule,
