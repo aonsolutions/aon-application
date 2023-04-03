@@ -23,6 +23,7 @@ import org.jooq.BatchBindStep;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.conf.ParamType;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
@@ -125,7 +126,7 @@ public class FiscalModelDAO {
 			model.setNumber(rec.getValue(FS_MODEL.NUMBER));
 			model.setReplacedNumber(rec.getValue(FS_MODEL.REPLACED_NUMBER));
 			model.setComments(rec.getValue(FS_MODEL.COMMENTS));
-			model.setFinance(rec.getValue(FS_MODEL.FINANCE) == null?null:new FinanceDAO.FullFinanceFiller().apply(rec));
+			model.setFinance(rec.getValue(FINANCE.ID) == null?null:new FinanceDAO.FullFinanceFiller().apply(rec));
 			model.setDocument(rec.getValue(FS_MODEL.DOCUMENT));
 			model.setSurname(rec.getValue(FS_MODEL.SURNAME));
 			model.setName(rec.getValue(FS_MODEL.NAME));
@@ -626,6 +627,22 @@ public class FiscalModelDAO {
 	
 	public static Stream<FiscalModel> getMatrixRecords(AONContext ctx,int domain, FiscalModelFilter filter)  {
 		ctx.checkRead();
+		
+		System.out.println(
+				
+				ctx.getDslContext()
+				.select()
+				.from(FS_MODEL)
+				.leftOuterJoin(DOMAIN).on(FS_MODEL.DOMAIN.equal(DOMAIN.ID))
+				.leftOuterJoin(SCOPE).on(DOMAIN.SCOPE.equal(SCOPE.ID))
+				.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
+				.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
+				.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+				.where(FS_MODEL_PROPERTIES.getConditions(filter))
+				.orderBy(FS_MODEL.YEAR.desc(),FS_MODEL.MODEL.asc(),FS_MODEL.PERIOD.desc(),FS_MODEL.COMPLEMENTARY.desc(),FS_MODEL.ID.desc())
+				.getSQL(ParamType.INLINED)
+				);
+		
 		return ctx.getDslContext()
 				.select()
 				.from(FS_MODEL)
