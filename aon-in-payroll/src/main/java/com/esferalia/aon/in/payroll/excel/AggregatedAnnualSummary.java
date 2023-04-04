@@ -151,6 +151,11 @@ public class AggregatedAnnualSummary {
 		public String visitIMS(DeductionType deductionType) {
 			return "IMS";
 		}
+		
+		@Override
+		public String visitMEI(DeductionType deductionType) {
+		    return "MECANISMO EQUIDAD INTERGENERACIONAL";
+		}
 	};
 
 	public static void writeExcel (OutputStream oos, String domainName, String user, Optional<Integer> enterpriseId, Optional<Integer> workplaceId, Integer year, SummaryType type, boolean complete) {

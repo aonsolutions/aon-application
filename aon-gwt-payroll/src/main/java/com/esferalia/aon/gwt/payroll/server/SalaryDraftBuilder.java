@@ -1905,7 +1905,7 @@ public class SalaryDraftBuilder
 			switch (deduction.getName()) {
 			case "MEI" :
 			case "MEI_E" :
-				return "Mecanismo de Equidad Intergeneracional";
+				return "Mecanismo de Equidad Intergeneracional (MEI)";
 			case "ECSS_E" :
 				return "Prestaci\u00f3n por Incapacidad Temporal a cargo del INSS";
 //			case "ATEP_E" :
