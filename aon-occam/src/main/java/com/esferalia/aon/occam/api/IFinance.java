@@ -106,6 +106,7 @@ public interface IFinance {
 	public Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter);
 	
 	public Fee save(AONContext ctx, Fee fee);
+	public void saveList(AONContext ctx, LinkedList<Fee> feeList);
 	public void deleteFee(AONContext ctx,Fee f);
 	public void deleteFee(AONContext ctx,Stream<Fee> fs);
 	

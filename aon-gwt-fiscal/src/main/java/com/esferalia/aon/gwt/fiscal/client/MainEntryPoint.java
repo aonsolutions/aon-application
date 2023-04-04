@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.fiscal.client.mod140.Model140;
 import com.esferalia.aon.gwt.fiscal.client.mod240.Model240;
 import com.esferalia.aon.gwt.fiscal.client.rawdoc.RawdocModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.CreditorModule;
+import com.esferalia.aon.gwt.fiscal.client.registry.CustomerFee;
 import com.esferalia.aon.gwt.fiscal.client.registry.CustomerModule;
 import com.esferalia.aon.gwt.fiscal.client.registry.SupplierModule;
 import com.esferalia.aon.gwt.fiscal.client.sii.Sii;
@@ -192,6 +193,7 @@ public class MainEntryPoint implements EntryPoint {
 	//    ================================================================== REGISTRY
 	//
 	private static final String RG_CUSTOMER_ENTRY_POINT = "Customer";
+	private static final String RG_CUSTOMER_FEE_ENTRY_POINT = "CustomerFee";
 	private static final String RG_SUPPLIER_ENTRY_POINT = "Supplier";
 	private static final String RG_CREDITOR_ENTRY_POINT = "Creditor";
 	//	
@@ -347,6 +349,21 @@ public class MainEntryPoint implements EntryPoint {
 				public void onSuccess() {
 					CustomerModule customerModule = new CustomerModule();
 					customerModule.onModuleLoad();
+				}
+				
+			});
+		} else if ( entryPoint.equalsIgnoreCase(RG_CUSTOMER_FEE_ENTRY_POINT)) {
+			GWT.runAsync(FinanceModule.class, new RunAsyncCallback() {
+
+				@Override
+				public void onFailure(Throwable reason) {
+					Window.alert(ERROR_MSG);
+				}
+
+				@Override
+				public void onSuccess() {
+					CustomerFee customerFee = new CustomerFee();
+					customerFee.onModuleLoad();
 				}
 				
 			});
