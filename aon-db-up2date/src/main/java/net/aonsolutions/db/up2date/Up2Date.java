@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.finance.SagardoBusUpdate;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2023Update;
+import net.aonsolutions.db.up2date.tgss.Art1512023Update;
 import net.aonsolutions.db.up2date.tgss.Bases2023Update;
 import net.aonsolutions.db.up2date.tgss.FellowBases2023Update;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2023Update;
@@ -358,6 +359,7 @@ public class Up2Date {
 	    // MEITrainingBaseCgcMinUndo.MEITRAININGBASECGCMINUNDO,
 	    // AgriculturalBases2023Update.AGRICULTURALBASES2023UPDATE,
 	    MEIUpdate.MEIUPDATE,
+	    Art1512023Update.ART1512023UPDATE,
 	    FellowsPercentages2023Update.FELLOWSPERCENTAGES2023UPDATE,
             TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
 		
