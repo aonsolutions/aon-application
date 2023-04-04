@@ -13,6 +13,7 @@ import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
 import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.sql.Date;
+import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -80,7 +81,7 @@ public class FeeDAO {
 	
 	
 	public static Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter){
-		return ctx.getDslContext().select().from(CUSTOMER_FEE)
+		Result<Record> feeRecords = ctx.getDslContext().select().from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
@@ -92,7 +93,11 @@ public class FeeDAO {
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
 				.where(FEE_PROPERTIES.getConditions(filter))
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
-			.fetch().stream().map(new FeeFiller());
+			.fetch();
+		
+		System.out.println("Customer Fee size : " + feeRecords.size());
+		
+		return feeRecords.stream().map(new FeeFiller());
 	}
 	
 	protected static class FeeFiller extends Filler implements Function<Record, Fee> {
@@ -163,6 +168,22 @@ public class FeeDAO {
 			fee.setLine((n.isEmpty() || n.get(0).value1()==null) ? (short) 1 :  (short) (n.get(0).value1() + 1));
 		}
 		return fee.getId() != null ? update(ctx, fee) : insert(ctx, fee);
+	}
+	
+	public static void saveList(AONContext ctx, LinkedList<Fee> feeList) {
+		feeList.stream()
+			.filter(fee -> fee.isModify())
+			.forEach(fee -> {
+				FeeValidation.validate(ctx, fee);
+				
+				ctx.getDslContext()
+					.update(CUSTOMER)
+						.set(CUSTOMER.STATUS, fee.getCustomer().getStatus().value())
+						.where(CUSTOMER.REGISTRY.eq(fee.getCustomer().getId()))
+						.execute();
+				
+				update(ctx, fee);
+			});
 	}
 	
 	private static Fee insert(AONContext ctx, Fee fee) {
@@ -243,9 +264,5 @@ public class FeeDAO {
 			.where(FEE_PROPERTIES.getConditions(filter))
 			.execute();
 	}
-	
-	
-	
-	
 	
 }

@@ -2719,6 +2719,12 @@ public class AON {
 			return getFinance().save(ctx, fee);
 		}
 	}
+	
+	public static void saveFees(String domainName, Integer domainId, String login, LinkedList<Fee> feeList) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			getFinance().saveList(ctx, feeList);
+		}
+	}
 
 	public static void deleteFee(AONContext ctx, Fee f) {
 		getFinance().deleteFee(ctx, f);

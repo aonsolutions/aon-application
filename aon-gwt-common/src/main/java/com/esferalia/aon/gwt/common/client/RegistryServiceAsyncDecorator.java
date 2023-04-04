@@ -1,10 +1,12 @@
 package com.esferalia.aon.gwt.common.client;
 
+import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.RegistryParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
@@ -84,6 +86,20 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	public void save(String domainName, int domain, String user, SupplierFull supplierFull, AsyncCallback<SupplierFull> callback) {
 		AON.start();
 		serviceAsync.save(domainName, domain, user, supplierFull, new AsyncCallbackWrapper<SupplierFull>(callback));
+	}
+	
+	// **************************************************
+	// *********************************** [CUSTOMER FEE]
+	// **************************************************
+	@Override
+	public void getCustomerFeeList(String domainName, int domain, String user, Date findDate, AsyncCallback<LinkedList<Fee>> callback) {
+		AON.start();
+		serviceAsync.getCustomerFeeList(domainName, domain, user, findDate, new AsyncCallbackWrapper<LinkedList<Fee>>(callback));
+	}
+	@Override
+	public void saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> feeList, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.saveCustomerFeeList(domainName, domain, user, feeList, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 }

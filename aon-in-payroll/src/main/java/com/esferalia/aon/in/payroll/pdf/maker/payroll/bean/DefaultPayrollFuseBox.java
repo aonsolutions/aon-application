@@ -207,6 +207,7 @@ public class DefaultPayrollFuseBox {
 	public static List<PDFDeduction> getOtherDeductions(final Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions) {
 		
 		DeductionType[] filteredTypes = {	DeductionType.COMMON_CONTINGENCY,
+							DeductionType.MEI,
 							DeductionType.UNEMPLOYMENT,
 							DeductionType.JOB_TRAINING,
 							DeductionType.NON_STRUCTURAL_OVERTIME,
