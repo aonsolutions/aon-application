@@ -1,8 +1,9 @@
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202;
 
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
+import com.esferalia.aon.occam.impl.jooq.dao.ModelMVELContext;
 import com.esferalia.aon.watson.util.AonMathUtils;
 
 public class Mod202MVELContext extends ModelMVELContext implements Map<String, Object> {

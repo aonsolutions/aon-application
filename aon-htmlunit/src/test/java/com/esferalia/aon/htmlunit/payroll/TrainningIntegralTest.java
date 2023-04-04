@@ -80,30 +80,22 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertNotElement("job_training");
 		assertValue("cgcBaseLabel", "1.166,70");
 		assertValue("cgpBaseLabel", "1.166,70");
-		
-		getElementById("costsCheck-input").click();
-		wait4Id("common_contingency_cost");
-		assertText("common_contingency_cost", "47,28");
-		assertText("unemployment_cost", "64,17");
-		assertText("fogasa_cost", "3,59");
-		assertText("it_cost", "3,64");
-		assertText("ims_cost", "2,87");
-		
+
 		calculate(Calendar.JANUARY, 2023);
-		assertText("common_contingency", "9,43");
-		assertText("unemployment", "18,08");
-		assertNotElement("job_training");
+		assertText("common_contingency", "10,18");
+		assertText("unemployment", "19,53");
+		assertText("job_training", "0,25");
 		assertValue("cgcBaseLabel", "1.260,00");
 		assertValue("cgpBaseLabel", "1.260,00");
-		assertText("totalDeductionLabel", "40,77");
-		
-//		getElementById("costsCheck-input").click();
+		getElementById("costsCheck-input").click();
 		wait4Id("common_contingency_cost");
-		assertText("common_contingency_cost", "47,28");
-		assertText("unemployment_cost", "64,17");
-		assertText("fogasa_cost", "3,59");
-		assertText("it_cost", "3,64");
-		assertText("ims_cost", "2,87");
+		assertText("common_contingency_cost", "51,06");
+		assertText("unemployment_cost", "69,30");
+		assertText("job_training_cost", "1,90");
+		assertText("fogasa_cost", "3,88");
+		assertText("it_cost", "3,93");
+		assertText("ims_cost", "3,10");
+		
 
 		//costsCheck-input
 
@@ -120,17 +112,21 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("common_contingency", "9,10");
 		calculate(Calendar.JANUARY, 2022);
 		assertText("common_contingency", "9,43");
+
 		calculate(Calendar.JANUARY, 2023);
-		assertText("common_contingency", "9,43");
-		assertText("totalDeductionLabel", "10,69"); // + MEI
-		
+		assertValue("cgcBaseLabel", "1.260,00");
+		assertValue("cgpBaseLabel", "1.260,00");
+		assertText("common_contingency", "10,18");
+		assertText("job_training", "0,25");
+		//assertText("totalDeductionLabel", "10,69"); // + MEI
 		if ( !isDisplayed("it_cost") )
 			click("costsCheck-input");
 		wait4Id("it_cost");
-		assertText("it_cost", "3,64");
-		assertText("ims_cost", "2,87");
-		wait4Id("common_contingency_cost");
-		assertText("common_contingency_cost", "47,28");
+		assertText("common_contingency_cost", "51,06");
+		assertText("job_training_cost", "1,90");
+		assertText("fogasa_cost", "3,88");
+		assertText("it_cost", "3,93");
+		assertText("ims_cost", "3,10");
 
 		draft("FORMACION Y APRENDIZAJE, IT");
 		calculate(Calendar.OCTOBER, 2018);

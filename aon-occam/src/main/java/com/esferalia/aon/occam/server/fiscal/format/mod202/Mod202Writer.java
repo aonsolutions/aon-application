@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.server.fiscal.format;
+package com.esferalia.aon.occam.server.fiscal.format.mod202;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -28,7 +28,8 @@ public class Mod202Writer {
 
 	
 	private enum Writers {
-		 AEAT_2019		(mod202 -> (mod202.isAEAT() && (mod202.getYear() >= 2019))	, Mod202WriterAEAT2019::new)
+		 AEAT_2023		(mod202 -> (mod202.isAEAT() && (mod202.getYear() >= 2023))	, Mod202WriterAEAT2023::new)
+		,AEAT_2019		(mod202 -> (mod202.isAEAT() && (mod202.getYear() >= 2019 && mod202.getYear() < 2023))	, Mod202WriterAEAT2019::new)
 		,AEAT_2017_1	(mod202 -> (mod202.isAEAT() && (mod202.getYear() == 2018 && mod202.getPeriod().ordinal() >= Period.T2.ordinal()))	, Mod202WriterAEAT20172::new)
 		,AEAT_2017_2	(mod202 -> (mod202.isAEAT() && (mod202.getYear() == 2017 || (mod202.getYear() == 2018 && mod202.getPeriod().ordinal() < Period.T2.ordinal()) ))	, Mod202WriterAEAT20171::new)
 		,AEAT_2016_2	(mod202 -> (mod202.isAEAT() && mod202.getYear() == 2016 && mod202.getPeriod() != Period.T1)	, Mod202WriterAEAT20162::new)
