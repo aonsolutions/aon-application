@@ -24,6 +24,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1092,10 +1094,10 @@ public class JooqCertifica2 {
 	}
 
 	private static int getDaysBetween(Date startDate, Date endDate) {
-		java.util.Date salaryStartDateJava = new java.util.Date(startDate.getTime());
-		java.util.Date salaryEndDateJava = new java.util.Date(endDate.getTime());
-		int daysBtw = DateUtils.getDaysBetween(salaryStartDateJava, salaryEndDateJava);
-		return 0 == daysBtw ? 1 : daysBtw + 2;
+		LocalDate startDateLocale = LocalDate.of(startDate.getYear() + 1900, startDate.getMonth() + 1, startDate.getDate());
+        LocalDate endDateLocale = LocalDate.of(endDate.getYear() + 1900, endDate.getMonth() + 1, endDate.getDate());
+        Long daysBetween = ChronoUnit.DAYS.between(startDateLocale, endDateLocale) + 1;
+        return daysBetween.intValue();
 	}
 
 	// ----------------------------------------------------- Auxiliar methods
