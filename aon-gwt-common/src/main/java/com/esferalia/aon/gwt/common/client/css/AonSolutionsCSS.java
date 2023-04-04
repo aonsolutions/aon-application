@@ -583,6 +583,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_display_flex")
 	String aonDisplayFlex();
 	
+	@ClassName("aon_display_flex_center")
+	String aonDisplayFlexCenter();
+	
 	@ClassName("aon_display_table")
 	String aonDisplayTable();
 
@@ -753,6 +756,15 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_clickable_block")
 	String aonClickableBlock();
+	
+	@ClassName("aon_flex_column")
+	String aonFlexColumn();
+	
+	@ClassName("aon_flex_wrap")
+	String aonFlexWrap();
+	
+	@ClassName("aon_item_flex")
+	String aonItemFlex();
 
 	@ClassName("aon_flex_block_inline")
 	String aonFlexBlockInline();
@@ -1120,6 +1132,9 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_input_calc")
 	String aonInputCalc();
+	
+	@ClassName("aon_filter_panel")
+	String aonFilterPanel();
 
 	@ClassName("aon_search_panel")
 	String aonSearchPanel();
@@ -1205,6 +1220,18 @@ public interface AonSolutionsCSS extends CssResource {
 
 	@ClassName("aon_toast_header")
 	String aonToastHeader();
+	
+	@ClassName("aon_header_table")
+	String aonHeaderTable();
+	
+	@ClassName("aon_header_sticky")
+	String aonHeaderSticky();
+	
+	@ClassName("aon_odd_table_row")
+	String aonOddTableRow();
+	
+	@ClassName("aon_modify_table_row")
+	String aonModifyTableRow();
 
 	@ClassName("aon_toast_content")
 	String aonToastContent();

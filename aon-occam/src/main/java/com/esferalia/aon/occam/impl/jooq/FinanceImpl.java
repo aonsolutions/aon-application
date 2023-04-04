@@ -205,6 +205,12 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.save(ctx, fee));
 	}
+	
+	@Override
+	public void saveList(AONContext ctx, LinkedList<Fee> feeList) {
+		ctx.getDslContext().transaction(configuration
+				-> FeeDAO.saveList(ctx, feeList));
+	}
 
 	@Override
 	public void deleteFee(AONContext ctx, Fee f) {
