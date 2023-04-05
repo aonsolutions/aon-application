@@ -174,9 +174,9 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 
 		draft("MECANISMO, EQUIDAD");
 		calculate(Calendar.MARCH, 2023);
-		assertText("common_contingency", "1,26");
+		assertText("mei", "1,26");
 		click("costsCheck-input");
-		assertText("common_contingency_cost", "6,30");
+		assertText("mei_cost", "6,30");
 		click("costsCheck-input");
 		
 		
