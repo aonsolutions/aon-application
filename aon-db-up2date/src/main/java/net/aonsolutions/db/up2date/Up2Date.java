@@ -358,10 +358,10 @@ public class Up2Date {
 	    // TrainningBases2023Update.TRAINNINGBASES2023UPDATE,
 	    // MEITrainingBaseCgcMinUndo.MEITRAININGBASECGCMINUNDO,
 	    // AgriculturalBases2023Update.AGRICULTURALBASES2023UPDATE,
-	    MEIUpdate.MEIUPDATE,
-	    Art1512023Update.ART1512023UPDATE,
-	    FellowsPercentages2023Update.FELLOWSPERCENTAGES2023UPDATE,
-            TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
+	    // MEIUpdate.MEIUPDATE,
+	    // Art1512023Update.ART1512023UPDATE,
+	    // FellowsPercentages2023Update.FELLOWSPERCENTAGES2023UPDATE,
+            // TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
 		
 	    //DOMAIN
 	    // DomainAonStatus.DOMAIN_AON_STATUS,
