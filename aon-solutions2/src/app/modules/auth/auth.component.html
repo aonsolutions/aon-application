@@ -1,1 +1,30 @@
-<p>auth works!</p>
+<div class="formContent">
+  <div class="loginTitle">
+    <h5 style="margin-bottom:10px; font-size: 34px;">{{title}}</h5>
+    <p id="textInitial" style="margin-top:0px; font-size:20px;">{{subtitle}}</p>
+  </div>
+  <div class="centerContent">
+    <mat-form-field class="loginFormField" appearance="outline" mat-form-field-appearance-bold-outline>
+      <mat-label>Usuario</mat-label><span><set-icon (click)="clean()" class="eyeIcon" shape="delete" set-color
+          color="black" size="29"></set-icon></span>
+      <input matInput placeholder="Usuario" type="user" [(ngModel)]="user" />
+    </mat-form-field>
+    <mat-form-field class="loginFormField" appearance="outline" mat-form-field-appearance-bold-outline>
+      <mat-label>Contraseña</mat-label><span><set-icon class="eyeIcon" shape="eye" set-color color="black" size="29"
+          (click)="hidePassword = !hidePassword"></set-icon></span>
+      <input matInput placeholder="Contraseña" type="password" [(ngModel)]="password"
+        [type]="hidePassword ? 'password' : 'text'" />
+    </mat-form-field>
+    <div class="loginButtonSessionDiv">
+      <button class="loginButton" id="initSessionButton" color="black" mat-button disabled="false"
+        (click)="getUser()">{{login}}</button>
+    </div>
+    <div class="line">
+      <span id="loginMiddleLine">{{orLogin}}</span>
+    </div>
+    <div class="loginButtonSessionDiv">
+      <button class="loginButton" id="notPasswordButton" color="black" mat-stroked-button
+        disabled="false">{{noPassword}}</button>
+    </div>
+  </div>
+</div>
