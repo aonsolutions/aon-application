@@ -107,9 +107,9 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			resp.setContentType("text/html");
 			resp.setContentLength(content.length);
 			os.write(content);
-			
-
-		} 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private static Collection<Integer> doFieMassive(InputStream is, DSLContext ctx) throws IOException, SQLException {
@@ -439,7 +439,7 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 		
 		try {
 			
-			ContractRecord contractRecord = getContract(ctx, /*domainId,*/ it);		
+			ContractRecord contractRecord = getContract(ctx, /*domainId,*/ it);	
 			
 			try {
 				ContractLeaveRecord contractLeaveRecord = 
@@ -535,7 +535,11 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			} catch ( TooManyRowsException e) {
 				throw new TooManyITsException(e);
 			}
-		} catch ( TooManyRowsException e) {
+		} catch (EmployeeNotFoundexception e) {
+			System.out.println("Contract not found --> CCC :" + it.getCcc() + ", Naf : " + it.getNaf());
+			throw new EmployeeNotFoundexception(e);
+		}
+		catch ( TooManyRowsException e) {
 			throw new TooManyEmployeesException(e);
 		}
 		
@@ -619,18 +623,18 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 	public static ContractRecord getContract(DSLContext ctx, IT it) {
 		java.sql.Date itStartDate = normalizeStartDateToSave(it.getContingency(), it.getStartDate());
 		
-		System.out.println(
-				ctx.select()
-				.from(REGISTRY)
-				.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
-				.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-				.innerJoin(ENTERPRISE_CCC).onKey()
-				.where(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
-				.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
-				.and(CONTRACT.START_DATE.le(itStartDate))
-				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
-				.orderBy(CONTRACT.ID.desc()).getSQL().toString()
-		);
+//		System.out.println(
+//				ctx.select()
+//				.from(REGISTRY)
+//				.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
+//				.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+//				.innerJoin(ENTERPRISE_CCC).onKey()
+//				.where(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
+//				.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
+//				.and(CONTRACT.START_DATE.le(itStartDate))
+//				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
+//				.orderBy(CONTRACT.ID.desc()).getSQL().toString()
+//		);
 		
 		return ctx.select()
 				.from(REGISTRY)
