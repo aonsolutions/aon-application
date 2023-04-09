@@ -242,6 +242,11 @@ public class JooqPDFSettlementBuilder {
 					public Double visitCommonContigency(DeductionType deductionType) {
 						return AonNumberUtils.zeroIfNull(salary.getCommonContingenciesBase()) > 0 ? deduction.getAmount() / salary.getCommonContingenciesBase() * 100: null;
 					}
+					
+					@Override
+					public Double visitMEI(DeductionType deductionType) {
+						return AonNumberUtils.zeroIfNull(salary.getCommonContingenciesBase()) > 0 ? deduction.getAmount() / salary.getCommonContingenciesBase() * 100: null;
+					}
 
 					@Override
 					public Double visitProfessionalContigency(DeductionType deductionType) {
@@ -316,18 +321,24 @@ public class JooqPDFSettlementBuilder {
 	private static String getDeductionDescription(String name, DeductionType type) {
 		if (type == null)
 			return "Otros";
+		// TODO: Delete this
 		if ( AonStringUtils.equals("MEI", name))
-			return "Mecanismo de equidad intergeneracional";
+			return "Mecanismo Equidad Intergeneracional (MEI)";
 		return type.accept(new DeductionType.Visitor<String> () {
 						
 			@Override
 			public String visitCommonContigency(DeductionType deductionType) {
-				return "Contingencias comunes";
+				return "Contingencias Comunes";
+			}
+			
+			@Override
+			public String visitMEI(DeductionType deductionType) {
+			    return "Mecanismo Equidad Intergeneracional (MEI)";
 			}
 
 			@Override
 			public String visitProfessionalContigency(DeductionType deductionType) {
-				return "Contingencias profesionales";
+				return "Contingencias Profesionales";
 			}
 
 			@Override
@@ -337,22 +348,22 @@ public class JooqPDFSettlementBuilder {
 
 			@Override
 			public String visitJobTraining(DeductionType deductionType) {
-				return "Formación profesional";
+				return "Formación Profesional";
 			}
 
 			@Override
 			public String visitStructuralOvertime(DeductionType deductionType) {
-				return "Horas extraordinarias estructurales";
+				return "Horas Extraordinarias Estructurales";
 			}
 
 			@Override
 			public String visitNonStructuralOvertime(DeductionType deductionType) {
-				return "Horas extraordinarias de fuerza mayor";
+				return "Horas Extraordinarias de Fuerza Mayor";
 			}
 
 			@Override
 			public String visitIrpf(DeductionType deductionType) {
-				return "Retribuciones dinerarias";
+				return "Retribuciones Dinerarias";
 			}
 
 			@Override
@@ -362,7 +373,7 @@ public class JooqPDFSettlementBuilder {
 
 			@Override
 			public String visitInkind(DeductionType deductionType) {
-				return "En especie";
+				return "En Especie";
 			}
 
 			@Override
@@ -377,7 +388,7 @@ public class JooqPDFSettlementBuilder {
 
 			@Override
 			public String visitIT(DeductionType deductionType) {
-				return "Incapacidad temporal";
+				return "Incapacidad Temporal";
 			}
 
 			@Override
@@ -402,11 +413,16 @@ public class JooqPDFSettlementBuilder {
 		if (type == null)
 			return 6;
 		return type.accept(new DeductionType.Visitor<Integer> () {
-
+		    
 			@Override
 			public Integer visitCommonContigency(DeductionType deductionType) {
 				return 1;
 			}
+
+		    	@Override
+		    	public Integer visitMEI(DeductionType deductionType) {
+		    	    return 1;
+		    	}
 
 			@Override
 			public Integer visitProfessionalContigency(DeductionType deductionType) {

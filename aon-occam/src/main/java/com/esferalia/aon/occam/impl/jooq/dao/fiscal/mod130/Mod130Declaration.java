@@ -192,7 +192,11 @@ public abstract class Mod130Declaration {
 		if (AonMathUtils.isGreatherThanZero(mod130.getDeclarationResult() )) {
 			mod130.setDeclarationResultType(FiscalModelDeclarationType.DEPOSIT);
 		} else {
-			mod130.setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
+			if (mod130.isLastPeriod() || AonMathUtils.isZero(mod130.getDeclarationResult()) ) {
+				mod130.setDeclarationResultType(FiscalModelDeclarationType.NEGATIVE);
+			} else {
+				mod130.setDeclarationResultType(FiscalModelDeclarationType.TO_DEDUCE);
+			}
 		}
 	}
 

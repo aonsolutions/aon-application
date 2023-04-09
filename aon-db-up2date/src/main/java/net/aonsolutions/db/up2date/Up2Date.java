@@ -21,11 +21,13 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.finance.SagardoBusUpdate;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2023Update;
+import net.aonsolutions.db.up2date.tgss.Art1512023Update;
 import net.aonsolutions.db.up2date.tgss.Bases2023Update;
 import net.aonsolutions.db.up2date.tgss.FellowBases2023Update;
 import net.aonsolutions.db.up2date.tgss.FellowsPercentages2023Update;
 import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateII;
 import net.aonsolutions.db.up2date.tgss.MEITrainingBaseCgcMinUndo;
+import net.aonsolutions.db.up2date.tgss.MEIUpdate;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
 import net.aonsolutions.db.up2date.tgss.TrainingPercentages2023Update;
 import net.aonsolutions.db.up2date.tgss.TrainningBases2023Update;
@@ -356,8 +358,10 @@ public class Up2Date {
 	    // TrainningBases2023Update.TRAINNINGBASES2023UPDATE,
 	    // MEITrainingBaseCgcMinUndo.MEITRAININGBASECGCMINUNDO,
 	    // AgriculturalBases2023Update.AGRICULTURALBASES2023UPDATE,
-	    FellowsPercentages2023Update.FELLOWSPERCENTAGES2023UPDATE,
-            TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
+	    // MEIUpdate.MEIUPDATE,
+	    // Art1512023Update.ART1512023UPDATE,
+	    // FellowsPercentages2023Update.FELLOWSPERCENTAGES2023UPDATE,
+            // TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
 		
 	    //DOMAIN
 	    // DomainAonStatus.DOMAIN_AON_STATUS,

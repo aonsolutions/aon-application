@@ -7690,7 +7690,8 @@ public class SalaryDraft extends ResizeComposite
 	private static boolean isSSDeduction(Item<?> item) {
 		Enum<?> type = item.getType();
 		if (
-			type == Deduction.Type.BONUS
+			type == Deduction.Type.MEI
+			|| type == Deduction.Type.BONUS
 			|| type == Deduction.Type.FOGASA
 			|| type == Deduction.Type.JOB_TRAINING
 			|| type == Deduction.Type.UNEMPLOYMENT

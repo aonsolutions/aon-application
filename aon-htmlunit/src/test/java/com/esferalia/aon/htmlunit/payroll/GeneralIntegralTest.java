@@ -672,6 +672,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.JANUARY,2023);
 		assertValue("cgcBaseLabel", 1759.50);
 		assertNotElement("editor-bases_provisonales");
+		calculate(Calendar.APRIL,2023);
+		assertValue("cgcBaseLabel", 1759.50);
+		assertValue("quote-label-8", (1759.50 / 30.00 - 38.89 ) * 24);
+		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÍNIMA PARCIAL ( HORAS )");
 		calculate(Calendar.AUGUST,2019);

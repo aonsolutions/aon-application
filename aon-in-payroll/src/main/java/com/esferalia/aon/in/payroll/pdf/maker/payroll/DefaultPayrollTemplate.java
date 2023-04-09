@@ -459,11 +459,11 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		
 		Optional<Map<Integer, ArrayList<PDFDeduction>>> allDeductions = p.getDeductions();
 		
-		PDFDeduction ccDeduction = DefaultPayrollFuseBox.getSingleDeductionByType(allDeductions, DeductionType.COMMON_CONTINGENCY, "Contingencias comunes", d -> AonStringUtils.notEquals("MEI", d.getName().orElse(null)));
+		PDFDeduction ccDeduction = DefaultPayrollFuseBox.getSingleDeductionByType(allDeductions, DeductionType.COMMON_CONTINGENCY, "Contingencias Comunes", d -> AonStringUtils.notEquals("MEI", d.getName().orElse(null)));
 		y -= NORMAL_LINE_JUMP + 2;
 		drawDeduction(ccDeduction.getDescription().orElse(""), ccDeduction.getPercent().orElse(0d), ccDeduction.getAmount().orElse(0d));
 		
-		PDFDeduction meiDeduction = getSingleDeductionByType(allDeductions, DeductionType.COMMON_CONTINGENCY, "Mecanismo de equidad intergeneracional", d -> AonStringUtils.equals("MEI", d.getName().orElse(null)));
+		PDFDeduction meiDeduction = getSingleDeductionByType(allDeductions, DeductionType.MEI, "Mecanismo de Equidad Intergeneracional (MEI)", d -> AonStringUtils.equals("MEI", d.getName().orElse(null)));
 		y -= LITTLE_LINE_JUMP;
 		drawDeduction(meiDeduction.getDescription().orElse(""), meiDeduction.getPercent().orElse(0d), meiDeduction.getAmount().orElse(0d));
 
@@ -478,18 +478,18 @@ public class DefaultPayrollTemplate implements IPayrollTemplate {
 		y -= LITTLE_LINE_JUMP;
 		drawText(contents, "Horas extraordinarias", x + 10, y, BLACK, HELVETICA, FONT_SIZE);
 		
-		PDFDeduction strucDeduction = getSingleDeductionByType(allDeductions, DeductionType.STRUCTURAL_OVERTIME, "Fuerza mayor o estructurales");
+		PDFDeduction strucDeduction = getSingleDeductionByType(allDeductions, DeductionType.STRUCTURAL_OVERTIME, "Fuerza mayor o Estructurales");
 		y -= LITTLE_LINE_JUMP;
 		drawDeduction(strucDeduction.getDescription().orElse(""), strucDeduction.getPercent().orElse(0d), strucDeduction.getAmount().orElse(0d), 10);
 		
-		PDFDeduction noStrucDeduction = getSingleDeductionByType(allDeductions, DeductionType.NON_STRUCTURAL_OVERTIME, "No estructurales");
+		PDFDeduction noStrucDeduction = getSingleDeductionByType(allDeductions, DeductionType.NON_STRUCTURAL_OVERTIME, "No Estructurales");
 		y -= LITTLE_LINE_JUMP;
 		drawDeduction(noStrucDeduction.getDescription().orElse(""), noStrucDeduction.getPercent().orElse(0d), noStrucDeduction.getAmount().orElse(0d), 10);
 		
 		y -= LITTLE_LINE_JUMP;
 		drawDeductionNoPercent("TOTAL APORTACIONES", p.getTotalSSContributions().orElse(0d));
 		
-		PDFDeduction irpfDeduction = getSingleDeductionByType(allDeductions, DeductionType.IRPF, "2. Impuesto sobre la renta de las personas físicas");
+		PDFDeduction irpfDeduction = getSingleDeductionByType(allDeductions, DeductionType.IRPF, "2. Impuesto sobre la renta de las personas Físicas");
 		y -= LITTLE_LINE_JUMP;
 		drawDeduction(irpfDeduction.getDescription().orElse(""), irpfDeduction.getPercent().orElse(0d), irpfDeduction.getAmount().orElse(0d), -10f);
 		

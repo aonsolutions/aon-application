@@ -2867,6 +2867,11 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 				return "CONTINGENCIAS COMUNES";
 			}
 			
+			@Override
+			public String visitMEI(DeductionType deductionType) {
+			    return "MECANISMO EQUIDAD INTERGENERACIONAL";
+			}
+			
 		});
 	}
 

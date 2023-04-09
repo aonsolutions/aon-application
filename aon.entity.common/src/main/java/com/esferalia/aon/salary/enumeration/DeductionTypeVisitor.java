@@ -2,6 +2,8 @@ package com.esferalia.aon.salary.enumeration;
 
 public interface DeductionTypeVisitor {
 
+	void visitMei(DeductionType deductionType);
+
 	void visitCommonContigency(DeductionType deductionType);
 
 	void visitProfessionalContigency(DeductionType deductionType);
@@ -27,4 +29,5 @@ public interface DeductionTypeVisitor {
 	void visitEmbargo(DeductionType deductionType);
 
 	void visitBonus(DeductionType deductionType);
+
 }
