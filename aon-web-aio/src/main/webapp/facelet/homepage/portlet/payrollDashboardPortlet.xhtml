@@ -82,8 +82,10 @@
 								var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:salaryChartDiv'));
 								chart.draw(data, options);
 							}
+							
 							google.charts.load('current', {packages: [ 'corechart']});
-							google.charts.setOnLoadCallback(drawSalaryColumnChart);							
+							google.charts.setOnLoadCallback(drawSalaryColumnChart);
+											
 					   </script>
 				</aon:div>
 
@@ -146,8 +148,10 @@
 								var chart = new google.visualization.ColumnChart(document.getElementById('aonContent:mainForm:contractChartDiv'));
 								chart.draw(data, options);
 							}
-							//google.charts.load('current', {packages: ['bar']});
-							google.charts.setOnLoadCallback(drawContractColumnChart);							
+							
+							google.charts.load('current', {packages: ['bar']});
+							google.charts.setOnLoadCallback(drawContractColumnChart);
+												
 					   </script>
 				</aon:div>
 			</aon:panelGrid>
