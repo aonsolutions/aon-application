@@ -620,6 +620,16 @@ public class ContextFunctions {
 		};
 	}
 
+	public static Double proration(Double amount, int months) throws MacroException{ 
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.PRORATION),
+						String.format("%s\\(%s,", _PRORATION, ContextVariable.CONTEXT));
+			}
+		};
+	}
+
 	public static Double proration(Double amount, int start, int end) throws MacroException{ 
 		throw new MacroException() {
 			@Override
@@ -679,6 +689,10 @@ public class ContextFunctions {
 			return 0.00;
 		
 		return amount / extraMonths.size()  ;
+	}
+
+	public static Double proration(ExpressionContext context, Double amount, int months) {				
+		return amount / months   ;
 	}
 	
 	public static Double proration(ExpressionContext context, Double amount, int start, int end) {

@@ -992,12 +992,17 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 				double cgcBaseMin = get(expressionContext, period, ContextVariable.CGC_BASE_MIN, ContextVariable.MONTHLY_PAYMENTS, ContextVariable.BASE_SALARY);
 				double paymentMin = (( cgcBaseMin * 12 ) / 14) * 0.90; // 90% of 14th Base Min 
 				if ( contractPayment.getSalaryType() == SalaryType.SALARY
-					&& contractPayment.getMonth() != null )
+					&& contractPayment.getMonth() != null ) {
 					fixed.add( result );
-				else if ( value == null || value == 0.00 || paymentMin <= 0.00 || value < paymentMin )
+				}else if ( value == null || value == 0.00 || paymentMin <= 0.00 || value < paymentMin ) {
 					fixed.add( result );
-				else
-					fixed.add( new TimedResult<Double>(value/12, period, result.getContext())); // TODO: 12?
+				} else {
+				    double prorrated = expressionContext
+					    .eval(String.format(Locale.ROOT, "%s(%f,12)", ContextVariable.PRORATION,
+						    value), start, end, Double.class)
+					    .stream().collect(Collectors.summingDouble(r -> r.getValue()));
+				    fixed.add(new TimedResult<>(prorrated, period, result.getContext()));
+				}
 			} catch (ExpressionException e) {
 				fixed.add( result );
 			}
@@ -1584,24 +1589,32 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 			.and(p.getStartDateProperty().le(endExtraDate))
 			.and(p.getEndDateProperty().ge(startExtraDate)))
 		.forEach(salary -> {
-		    	
+		    	Payment payment = 
 			salary.getPayments().stream()
 			.filter(p -> AonStringUtils.equals(contractPayment.getDescription(), p.getDescription()))
 			.sorted(SmartContractSalaryCalculator.sorting(Payment::getAmount))
-			.findFirst().ifPresentOrElse(
-			(p) -> monthlyQuotedPayments.add(p), 
+			.findFirst().orElseGet(
 			() -> salary.getPayments().stream()
 			.filter(p -> AonStringUtils.equals(contractPayment.getName(), p.getName()) && AonStringUtils.containsIgnoreCase(p.getDescription(), contractPayment.getMonth().getName(new Locale("es"))))
-			.findFirst().ifPresentOrElse(
-			(p) -> monthlyQuotedPayments.add(p), 
+			.findFirst().orElseGet( 
 			() -> salary.getPayments().stream()
 			.filter(p -> AonStringUtils.equals(contractPayment.getName(), p.getName()))
 			.sorted(SmartContractSalaryCalculator.sorting(contractPayment.getDescription()))
 			.sorted(SmartContractSalaryCalculator.sorting(Payment::getAmount))
-			.findFirst().ifPresentOrElse(
-			p -> monthlyQuotedPayments.add(p), 
-			() -> monthlyQuotedPayments.add( new Payment(0.00, 0.00, contractPayment.getExpression(), contractPayment.getDescription(), contractPayment.getName(), null)) ) ) ) ;
-
+			.findFirst().orElseGet( 
+			() -> new Payment(0.00, 0.00, contractPayment.getExpression(), contractPayment.getDescription(), contractPayment.getName(), null) ) ) ) ;
+			
+		    	
+		    	try {
+		    	    Double quote = salary.getContextData(ContextVariable.getDecimalNameFor(payment.getQuote()), Collectors.summingDouble( Double::parseDouble ));
+		    	    if ( quote != null && quote > 0.00 ) {
+		    		payment = new Payment(payment.getAmount(), quote, payment.getExpression(), payment.getDescription(), payment.getName(), payment.getPaymentType());
+		    	    }
+		    	} catch ( Exception e ) {
+		    	    // 
+		    	}
+		    	
+			monthlyQuotedPayments.add(payment);
 		})
 		;
 				
