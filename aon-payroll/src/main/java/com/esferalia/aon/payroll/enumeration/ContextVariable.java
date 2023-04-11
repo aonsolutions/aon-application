@@ -560,4 +560,8 @@ public enum ContextVariable implements IResourceable {
 		return 666;
 	}
 
+	public static String getDecimalNameFor(Double round) {
+	    return String.format(Locale.ROOT, "DECIMAL_%.2f", round);
+	}
+
 }
