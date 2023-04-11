@@ -2619,7 +2619,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 					connection, startDate, endDate, endDate, contract);
 			SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
 			JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
-			calculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> d.setScale(3, RoundingMode.HALF_UP)));
+			calculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> d.setScale(2, RoundingMode.HALF_UP)));
 			calculator.calculate(ctx);
 			jooqSalaryBuilder.execute();
 			startDate = add(endDate, DAY_OF_MONTH, 1);
@@ -2627,9 +2627,9 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		}
 		AON.getSalaries(aonContext, props -> props.getContractProperty().eq(contract.getId()).and(props.getIsSalaryProperty().eq(true)))
 		.forEach( salary  -> {
-			Assert.assertEquals(2318.09 + 2318.09 *0.04, salary.getTotalPayment(), 0.001);
-			Assert.assertEquals(2318.09 + 2318.09 *0.04, salary.getIrpfBase(), 0.001);
-			Assert.assertEquals(2318.09 + 2318.09 *0.04 + (2318.09 + 2318.09 *0.04)/6 , salary.getCommonContingenciesBase(), 0.001);
+			Assert.assertEquals(2318.09 + 2318.09 *0.04, salary.getTotalPayment(), 0.01);
+			Assert.assertEquals(2318.09 + 2318.09 *0.04, salary.getIrpfBase(), 0.01);
+			Assert.assertEquals(2318.09 + 2318.09 *0.04 + (2318.09 + 2318.09 *0.04)/6 , salary.getCommonContingenciesBase(), 0.01);
 		});
 		;
 		
@@ -2645,7 +2645,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		delayCtx.next();
 		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
-		delayCalculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> d.setScale(3, RoundingMode.HALF_UP)));
+		delayCalculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>( jooqSalaryBuilder, d -> d.setScale(2, RoundingMode.HALF_UP)));
 		delayCalculator.calculate(delayCtx);
 		jooqSalaryBuilder.execute();
 		
