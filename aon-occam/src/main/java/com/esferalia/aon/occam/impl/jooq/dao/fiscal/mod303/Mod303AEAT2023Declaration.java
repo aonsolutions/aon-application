@@ -339,7 +339,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 		,CT_SA12(Mod303Key.CT_SA12, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_SA12, ensureFarmerActivity(mod, 0).getVol())
 			,mod -> ensureFarmerActivity(mod, 0).setVol(mod.getAmount(Mod303Key.CT_SA12))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA12))
+			,null)
 		// (1) Actividades agrícolas, ganaderas y forestales. Índice de cuota
 		,CT_SA13(Mod303Key.CT_SA13, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_SA13, (ensureFarmerActivity(mod, 0).getInd() * 10000))
@@ -831,7 +831,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,null)
 		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
 		,CT_S120(Mod303Key.CT_S120, null, null, null
-			,"calculatePorcentajeIngresoCuenta2021(0,CT_S1X5)", null
+			,"calculatePorcentajeIngresoCuenta2023(0,CT_S1X5)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S120, ensureActivity(mod, 0).getPor())
 			,mod -> ensureActivity(mod, 0).setPor(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S120))
 			,null)
@@ -1174,7 +1174,8 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> ensureActivity(mod, 1).setInd(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S219))
 			,null)
 		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
-		,CT_S220(Mod303Key.CT_S220, null, null, null,"calculatePorcentajeIngresoCuenta2021(1,CT_S2X5)", null
+		,CT_S220(Mod303Key.CT_S220, null, null, null
+			,"calculatePorcentajeIngresoCuenta2023(1,CT_S2X5)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S220, ensureActivity(mod, 1).getPor())
 			,mod -> ensureActivity(mod, 1).setPor(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S220))
 			,null)
@@ -1515,7 +1516,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,null)
 		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
 		,CT_S320(Mod303Key.CT_S320, null, null, null
-			,"calculatePorcentajeIngresoCuenta2021(2,CT_S3X5)", null
+			,"calculatePorcentajeIngresoCuenta2023(2,CT_S3X5)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S320, ensureActivity(mod, 2).getPor())
 			,mod -> ensureActivity(mod, 2).setPor(mod.getAmount(Mod303Key.CT_S320))
 			,null)
@@ -1855,7 +1856,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,null)
 		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
 		,CT_S420(Mod303Key.CT_S420, null, null, null
-			,"calculatePorcentajeIngresoCuenta2021(3,CT_S4X5)", null
+			,"calculatePorcentajeIngresoCuenta2023(3,CT_S4X5)", null
 			,mod -> mod.putAmount(Mod303Key.CT_S420, ensureActivity(mod, 3).getPor())
 			,mod -> ensureActivity(mod, 3).setPor(mod.getAmount(Mod303Key.CT_S420))
 			,null)

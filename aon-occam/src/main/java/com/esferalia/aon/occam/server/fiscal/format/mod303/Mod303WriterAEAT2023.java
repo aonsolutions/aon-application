@@ -639,7 +639,7 @@ class Mod303WriterAEAT2023 implements IMod303Writer{
 		,T303DID00 (mod303 -> true ,new IPropertyFiller[] {
 			(wr, mod) -> wr.append("<T303DID00>")
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 11))                   	// Devolución - SWIFT-BIC
-		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(mod.getFinanceIban(),34)) 	// Domiciliacion/Devolucion - IBAN
+		   ,(wr, mod) -> wr.append(AonFiscalFileUtils.text(getFinanceIban(mod),34)) 	// Domiciliacion/Devolucion - IBAN
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 70))          		 	// Devolución - Banco/Bank name
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 35))					 	// Devolución - Dirección del Banco/ Bank address
 		   ,(wr, mod) -> wr.append(AonStringUtils.repeat(' ', 30))					 	// Devolución - Ciudad/City
@@ -675,6 +675,12 @@ class Mod303WriterAEAT2023 implements IMod303Writer{
 			for (IPropertyFiller propertyFiller : this.propertyFillers) {
 				propertyFiller.propertyFill(wr, mod303);
 			}
+		}
+		private static String getFinanceIban(Mod303 mod) {
+			if (mod.getDeclarationResultType() == FiscalModelDeclarationType.DEPOSIT) {
+				return null;
+			}
+			return mod.getFinanceIban();
 		}
 		private static String appendMark(Mod303 mod, Mod303Key epigrphKey, Mod303Key markKey, Mod303Key modulFactorKey , double factor1, double factor2) {
 			   if ("722".equals(mod.getDescription(epigrphKey))) {

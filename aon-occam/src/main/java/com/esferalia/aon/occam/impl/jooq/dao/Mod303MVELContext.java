@@ -104,6 +104,15 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 		return 0;
 	}
 	
+	public double calculatePorcentajeIngresoCuenta2023(int actIdx,double covid) {
+		if (isLastPeriod()) return 0.0;
+		String epi = this.mod303.getActivityList().get(actIdx).getEpigraph();
+		Epigraph epig = Modules2018.Epigraph.getEpigraph(epi);		
+		double por = 0.0;
+		if (epig != null) por = epig.getVatPorc();
+		return por;
+	}
+
 	public double calculatePorcentajeIngresoCuenta2021(int actIdx,double covid) {
 		if (isLastPeriod())
 			return 0.0;

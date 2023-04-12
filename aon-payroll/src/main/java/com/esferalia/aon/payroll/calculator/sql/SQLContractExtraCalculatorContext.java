@@ -39,6 +39,7 @@ import com.code.aon.ql.OrderByList;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Salary;
+import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.DelegateIterator;
@@ -396,7 +397,8 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			com.esferalia.aon.occam.api.model.Salary salary, 
 			com.esferalia.aon.occam.api.model.Salary.Payment salaryPayment, 
 			IContractPayment contractPayment) {
-		DelegateContractPayment payment = new DelegateContractPayment(contractPayment) {
+
+	    	DelegateContractPayment payment = new DelegateContractPayment(contractPayment) {
 			
 			@Override
 			public Integer getId() {
@@ -425,7 +427,13 @@ public class SQLContractExtraCalculatorContext extends SQLContractSalaryCalculat
 			
 			@Override
 			public String getExpression() {
-				return String.format(Locale.ROOT,"/*var:%s*/%f", getOverrideVarName(), salaryPayment.getQuote());
+			    	Double quote  = 0.00;
+			    	try {
+			    	    quote = salary.getContextData(ContextVariable.getDecimalNameFor(salaryPayment.getQuote()), Collectors.summingDouble( Double::parseDouble ));
+			    	} catch ( Exception e ) {
+			    	    // 
+			    	}
+				return String.format(Locale.ROOT,"/*var:%s*/%f", getOverrideVarName(), ( quote != null && quote > 0.00 ) ? quote : salaryPayment.getQuote());
 			}
 			
 			@Override

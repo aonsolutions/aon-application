@@ -4,6 +4,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.jooq.tables.DeductionConcept.DEDUCTION_CONCEPT;
+import static com.esferalia.aon.jooq.tables.SalaryData.SALARY_DATA;
 import static com.esferalia.aon.jooq.tables.SystemDeduction.SYSTEM_DEDUCTION;
 import static com.esferalia.aon.payroll.enumeration.SSRegimeType.GENERAL;
 import static com.esferalia.aon.salary.enumeration.DeductionType.COMMON_CONTINGENCY;
@@ -15,33 +16,46 @@ import static com.esferalia.aon.salary.enumeration.DeductionType.PROFESSIONAL_CO
 import static com.esferalia.aon.salary.enumeration.DeductionType.STRUCTURAL_OVERTIME;
 import static com.esferalia.aon.salary.enumeration.DeductionType.UNEMPLOYMENT;
 import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfMonth;
+import static com.esferalia.aon.watson.util.AonDateUtils.getFirstDayOfYear;
 import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfMonth;
-import static java.util.Calendar.DAY_OF_MONTH;
+import static com.esferalia.aon.watson.util.AonDateUtils.getLastDayOfYear;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.jooq.DSLContext;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import com.code.aon.common.enumeration.Month;
+import com.esferalia.aon.jooq.tables.SalaryData;
+import com.esferalia.aon.jooq.tables.records.AgreementExtraRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementLevelCategoryRecord;
+import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DeductionConceptRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
+import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator.Listener;
+import com.esferalia.aon.payroll.calculator.jooq.JooqSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase.Extra;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -56,6 +70,7 @@ import com.esferalia.aon.watson.util.AonDateUtils;
  */
 public class SQLRoundTestCase extends AbstractSQLTestCase {
 
+	private static final double DELTA = 0.00001;
 	private static final double FLOATING_POINT_ERROR = 0.0000000001;
 
 
@@ -652,6 +667,268 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testRoundPaymentsIII()
+			throws ExpressionException, SQLException, SalaryException {
+		
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		try {
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {}, 
+				new String[] {}, null);
+		//@formatter:on
+		
+		PaymentConceptRecord pagaExtraConcept = addConcept(aonContext, "PAGA_EXTRA");
+		PaymentConceptRecord salarioBaseConcept = addConcept(aonContext, "SALARIO_BASE");
+		
+		addPayment(aonContext, contract, pagaExtraConcept, "PAGA EXTRA NAVIDAD", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, pagaExtraConcept, "PAGA EXTRA VERANO", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004);
+		addPayment(aonContext, contract, salarioBaseConcept, "SALARIO BASE", "1000.00 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0001);
+
+		Salary salary = calculate(connection, aonContext, contract);
+		
+		assertTotalPayment(salary);
+		assertCommanBase(salary);
+		
+		salary.getSalaryPayments().forEach( p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
+		
+		long distinct = 
+		salary.getSalaryPayments()
+		.stream().filter(p -> p.getType().equals(PaymentType.CRA_0004))
+		.map(SalaryPayment::getAmount )
+		.distinct()
+		.count();
+		
+		Assert.assertEquals(1, distinct);
+		
+		Assert.assertEquals(1000+ 83.33 * 2 , salary.getTotalPayment(), 0.00);
+		
+
+		} finally {
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		}
+	}
+
+	@Test
+	public void testRoundPaymentsIV() throws ExpressionException, SQLException, SalaryException {
+
+	    Connection connection = getConnection();
+	    AONContext aonContext = new AONContext(connection);
+	    try {
+
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {}, 
+				new String[] {}, null);
+		//@formatter:on
+
+		PaymentConceptRecord pagaExtraConcept = addConcept(aonContext, "PAGA_EXTRA");
+		PaymentConceptRecord salarioBaseConcept = addConcept(aonContext, "SALARIO_BASE");
+
+		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), pagaExtraConcept,
+			"PAGA EXTRA NAVIDAD", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, Month.JUNE);
+		addPayment(aonContext, contract, contract.getStartDate(), contract.getEndDate(), pagaExtraConcept,
+			"PAGA EXTRA VERANO", "SALARIO_BASE", "_P", "_P", PaymentType.CRA_0004, Month.DECEMBER);
+		addPayment(aonContext, contract, salarioBaseConcept, "SALARIO BASE",
+			"1000.00 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0001);
+
+		Salary salary = calculate(connection, aonContext, contract, AonDateUtils.getFirstDayOfYear(getToday()));
+
+		//salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
+
+		Assert.assertEquals(1000.00, salary.getTotalPayment(), 0.00);
+		
+		// PAGA EXTRA NAVIDAD
+		Date decemberStart = getFirstDayOfMonth(getLastDayOfYear(getToday()));
+		Date decemberEnd = getLastDayOfMonth(decemberStart);
+		salary = 
+		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) ))
+		.calculate(getContractSalaryCalculatorContext(connection, decemberStart, decemberEnd, decemberEnd, contract));
+		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
+		Assert.assertEquals(2000.00, salary.getTotalPayment(), 0.00);
+		
+		// PAGA EXTRA VERANO 1/2
+		Date juneStart = add(decemberStart, Calendar.MONTH, -6);
+		Date juneEnd = getLastDayOfMonth(juneStart);
+		salary = 
+		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) ))
+		.calculate(getContractSalaryCalculatorContext(connection, juneStart, juneEnd, juneEnd, contract));
+		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
+		Assert.assertEquals(1500.00, salary.getTotalPayment(), 0.00);
+		
+		
+		Date date = getFirstDayOfYear(getToday());
+		while ( AonDateUtils.get(date, Calendar.MONTH) < 5 ) {
+		    JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
+		    new SmartContractSalaryCalculator<Salary>(new RoundSalaryBuilder<Salary>(jooqSalaryBuilder,
+			    d -> d.setScale(2, RoundingMode.HALF_UP)))
+			    .calculate(getContractSalaryCalculatorContext(connection, date, getLastDayOfMonth(date), getLastDayOfMonth(date),
+				    contract));
+		    jooqSalaryBuilder.execute();
+		    date = AonDateUtils.add(date, Calendar.MONTH, 1);
+		}
+		// PAGA EXTRA VERANO 1/2
+		salary = 
+		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) ))
+		.calculate(getContractSalaryCalculatorContext(connection, juneStart, juneEnd, juneEnd, contract));
+		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
+		Assert.assertEquals(1500.00, salary.getTotalPayment(), 0.00);
+
+		while ( AonDateUtils.get(date, Calendar.MONTH) < 10 ) {
+		    JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
+		    new SmartContractSalaryCalculator<Salary>(new RoundSalaryBuilder<Salary>(jooqSalaryBuilder,
+			    d -> d.setScale(2, RoundingMode.HALF_UP)))
+			    .calculate(getContractSalaryCalculatorContext(connection, date, getLastDayOfMonth(date), getLastDayOfMonth(date),
+				    contract));
+		    jooqSalaryBuilder.execute();
+		    date = AonDateUtils.add(date, Calendar.MONTH, 1);
+		}
+
+		// PAGA MAVIDAD
+		salary = 
+		new SmartContractSalaryCalculator<Salary>( new RoundSalaryBuilder<Salary>(new SalaryBuilder(), d -> d.setScale(2, RoundingMode.HALF_UP) ))
+		.calculate(getContractSalaryCalculatorContext(connection, decemberStart, decemberEnd, decemberEnd, contract));
+		salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
+		Assert.assertEquals(2000.00, salary.getTotalPayment(), 0.00);
+
+	    } finally {
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+	    }
+	}
+
+	@Test
+	public void testRoundPaymentsV() throws ExpressionException, SQLException, SalaryException {
+
+	    Connection connection = getConnection();
+	    AONContext aonContext = new AONContext(connection);
+	    try {
+
+		cleanSalaries(aonContext);
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+		
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { 
+				new Extra() {
+					{	
+						this.expression = "/*PAGA NAVIDAD*/ SALARIO_BASE";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, 
+				new Extra() {
+					{
+						this.expression = "/*PAGA VERANO*/ SALARIO_BASE";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, 
+				});
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext, 
+				new String[] {}, 
+				new String[] {}, category);
+		//@formatter:on
+
+		PaymentConceptRecord salarioBaseConcept = addConcept(aonContext, "SALARIO_BASE");
+
+		addPayment(aonContext, contract, salarioBaseConcept, "SALARIO BASE",
+			"1000.00 * DIAS_TRABAJADOS / DIAS_MES", "_P", "_P", PaymentType.CRA_0001);
+
+		Salary salary = calculate(connection, aonContext, contract, AonDateUtils.getFirstDayOfYear(getToday()));
+
+		//salary.getSalaryPayments().forEach(p -> System.out.println(p.getDescription() + " = " + p.getAmount()));
+
+		Assert.assertEquals(1000.00, salary.getTotalPayment(), 0.00);
+		
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+
+		// PAGA EXTRA NAVIDAD
+		Date decemberEnd = getLastDayOfYear(getToday());
+		Date decemberStart = getFirstDayOfMonth(decemberEnd);
+		int year = AonDateUtils.get(decemberEnd, Calendar.YEAR);
+		Date december15 = AonDateUtils.add(decemberStart, Calendar.DAY_OF_MONTH, 14);
+		AgreementExtraRecord decemberExtra = getExtra(aonContext, agreement.getId(), "15/12");
+		ISQLContractSalaryCalculatorContext extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, december15);
+		Salary extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
+		Assert.assertEquals(1000.00, extra.getTotalPayment(), 0.0000001);
+		
+		// PAGA EXTRA VERANO 1/2
+		Date julyStart = add(getFirstDayOfYear(getToday()), Calendar.MONTH,6 );
+		AgreementExtraRecord julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
+		extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, julyStart);
+		extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
+		Assert.assertEquals(500.00, extra.getTotalPayment(), DELTA);
+		
+		
+		Date date = getFirstDayOfYear(getToday());
+		while ( AonDateUtils.get(date, Calendar.MONTH) < 6 ) {
+		    JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
+		    new SmartContractSalaryCalculator<Salary>(new RoundSalaryBuilder<Salary>(jooqSalaryBuilder,
+			    d -> d.setScale(2, RoundingMode.HALF_UP)))
+			    .calculate(getContractSalaryCalculatorContext(connection, date, getLastDayOfMonth(date), getLastDayOfMonth(date),
+				    contract));
+		    jooqSalaryBuilder.execute();
+		    date = AonDateUtils.add(date, Calendar.MONTH, 1);
+		}
+		extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, julyStart);
+		extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
+		Assert.assertEquals(500.00, extra.getTotalPayment(), DELTA);
+		while ( AonDateUtils.get(date, Calendar.MONTH) > 0 ) {
+		    JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<>(connection);
+		    new SmartContractSalaryCalculator<Salary>(new RoundSalaryBuilder<Salary>(jooqSalaryBuilder,
+			    d -> d.setScale(2, RoundingMode.HALF_UP)))
+			    .calculate(getContractSalaryCalculatorContext(connection, date, getLastDayOfMonth(date), getLastDayOfMonth(date),
+				    contract));
+		    jooqSalaryBuilder.execute();
+		    date = AonDateUtils.add(date, Calendar.MONTH, 1);
+		}
+		extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, december15);
+		extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
+		Assert.assertEquals(1000.00, extra.getTotalPayment(), DELTA);
+		
+		aonContext.getDslContext().deleteFrom(SALARY_DATA).where(SALARY_DATA.NAME.like("DECIMAL_%")).execute();
+		
+		extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, julyStart);
+		extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
+		Assert.assertEquals(83.33 * 6, extra.getTotalPayment(), DELTA);
+
+		extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, december15);
+		extra = new SmartContractSalaryCalculator<Salary>(new SalaryBuilder()).calculate(extraCtx);
+		Assert.assertEquals(83.33 * 12, extra.getTotalPayment(), DELTA);
+		
+		
+
+	    } finally {
+		cleanSystemData(aonContext);
+		cleanSystemCosts(aonContext);
+		cleanSystemDeductions(aonContext);
+	    }
+	}
+
+
 	private Salary calculate(
 			String[] payments,
 			Connection connection, 
@@ -680,9 +957,18 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 	}
 
 	private Salary calculate(
+		Connection connection, 
+		AONContext aonContext,
+		ContractRecord contract)
+		throws SalaryException, ExpressionException, SQLException {
+	    return calculate(connection, aonContext, contract, getToday());
+	}
+
+	private Salary calculate(
 			Connection connection, 
 			AONContext aonContext,
-			ContractRecord contract)
+			ContractRecord contract, 
+			Date date )
 			throws SalaryException, ExpressionException, SQLException {
 		
 		Date firstDayOfYear = AonDateUtils.getFirstDayOfYear(contract.getStartDate());
@@ -725,7 +1011,7 @@ public class SQLRoundTestCase extends AbstractSQLTestCase {
 		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "FOGASA_E", FOGASA, "BASE_CGP_E * PORCENTAJE_FOGASA / 100");
 		addSSRegimeCost(aonContext, GENERAL, firstDayOfYear, "FP_E", JOB_TRAINING, "BASE_CGP_E * PORCENTAJE_FP_E/100");
 		
-		Date firstDayOfMonth = getFirstDayOfMonth(getToday());
+		Date firstDayOfMonth = getFirstDayOfMonth(date);
 		Date lastDayOfMonth = getLastDayOfMonth(firstDayOfMonth);
 		
 		IContractSalaryCalculatorContext contractSalaryCalculatorContext = 

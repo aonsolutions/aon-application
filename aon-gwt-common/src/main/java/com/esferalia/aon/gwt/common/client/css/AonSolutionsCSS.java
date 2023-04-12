@@ -637,6 +637,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_width_all")
 	String aonWidthAll();
 
+	@ClassName("aon_width_half")
+	String aonWidthHalf();
+	
 	@ClassName("aon_width_almost_all")
 	String aonWidthAlmostAll();
 	
