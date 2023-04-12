@@ -782,6 +782,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	public void setExpressionContext(ExpressionContext expressionContext) {
 	    this.expressionContext = expressionContext;
 	    override(expressionContext);
+	    salaryBuilder.setExpressionContext(expressionContext);
 	}
 
 	// ------------------------------------------------------------------------
