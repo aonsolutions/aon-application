@@ -339,7 +339,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 		,CT_SA12(Mod303Key.CT_SA12, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_SA12, ensureFarmerActivity(mod, 0).getVol())
 			,mod -> ensureFarmerActivity(mod, 0).setVol(mod.getAmount(Mod303Key.CT_SA12))
-			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA12))
+			,null)
 		// (1) Actividades agrícolas, ganaderas y forestales. Índice de cuota
 		,CT_SA13(Mod303Key.CT_SA13, null, null, null, null, null
 			,mod -> mod.putAmount(Mod303Key.CT_SA13, (ensureFarmerActivity(mod, 0).getInd() * 10000))
