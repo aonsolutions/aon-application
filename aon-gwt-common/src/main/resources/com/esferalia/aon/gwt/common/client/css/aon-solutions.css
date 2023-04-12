@@ -528,6 +528,9 @@
 .aon_width_all {
 	width: 100%;
 }
+.aon_width_half {
+	width: 50%;
+}
 .aon_height_all {
 	height: 100%;
 }
