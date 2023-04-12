@@ -9,14 +9,14 @@ export interface Message{
 }
 @Component({
   selector: 'app-inbox',
-  templateUrl: './inbox.component.html',
-  styleUrls: ['./inbox.component.scss'],
+  templateUrl: './inbox-dashboard.component.html',
+  styleUrls: ['./inbox-dashboard.component.scss'],
   host: {
     '[style.width]': "'100%'",
     '[style.height]': "'100%'",
   },
 })
-export class InboxComponent implements OnInit {
+export class InboxDashboardComponent implements OnInit {
 
   messages : Message[] = [
     {name : "Nombre ", type : 1, subject : "Asunto", date:"dia,00:00", description:"Descripción del mensaje"},

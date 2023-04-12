@@ -1,0 +1,51 @@
+<div [ngClass]="mainTabContent">
+    <mat-form-field mat-form-field-appearance-raised
+                    set-search
+                    disabled="false"
+                    class="searchButton" (click)="closeDetail()">
+    <mat-label class="searchInput">Buscar...</mat-label>
+    <set-icon shape="search" matPrefix style="color:#19191d" size="24"></set-icon>
+    <input matInput class="searchInput"/>
+    </mat-form-field>
+    
+    <div class="bandejaFilters">
+        <div class="tabFilterText">
+            {{selectedFilter}}
+        </div>
+        <div class="tabHeaderFilterIcon" [matMenuTriggerFor]="menu">
+            <set-icon shape="more_vert" set-color [ngStyle]="{'color': 'black'}"></set-icon>
+        </div>
+        <mat-menu #menu="matMenu" xPosition="before">
+            <button *ngFor="let item of itemsFilter" mat-menu-item (click)="selectedFilter=item" class="menuText">
+                {{item}}
+            </button>
+        </mat-menu>
+    </div>
+    
+    <mat-tab-group  class="tabContent"
+                    color="warning"
+                    mat-flat-tab-group
+                    class="matTab">
+        <mat-tab *ngFor="let tab of tabs; index as i">
+            <ng-template mat-tab-label >
+                <div (click)="this.selectedTab = this.tab.type;this.callGetMessages();">
+                    <ng-container *ngIf="tab.icon!=''">
+                        <div class="tabHeader">
+                            <set-icon [attr.shape]="tab.icon" style="color:#19191d"></set-icon>
+                            <span class="tabHeaderText">&nbsp;&nbsp;{{ tab.header }}&nbsp;&nbsp;</span>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="tab.icon==''">
+                        <span class="tabHeaderText">{{ tab.header }}</span>
+                    </ng-container>
+                </div>
+            </ng-template>
+            <div class="contentTab">
+                <app-message-inbox *ngFor="let item of items" [message]="item" [detailView]="hiddenDetail" (click)="showDetail(item)"></app-message-inbox>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</div>
+<div [ngClass]="detail" *ngIf='hiddenDetail==true'>
+    content
+</div>

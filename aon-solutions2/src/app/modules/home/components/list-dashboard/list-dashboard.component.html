@@ -10,7 +10,7 @@
     <div class="textMessage">{{name}}</div>
   </mat-grid-tile>
   <mat-grid-tile colspan="2" rowspan="1">
-    <div class="statusMessage">
+    <div *ngIf="type==1" class="statusMessage">
       <set-icon class="icon " shape="watch_later"></set-icon>
       <div class="pending">Pendiente</div>
     </div>

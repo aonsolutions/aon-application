@@ -16,7 +16,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { ModelsDashboardComponent } from './components/models-dashboard/models-dashboard.component';
 import { BanksDashboardComponent } from './components/banks-dashboard/banks-dashboard.component';
 import { ChartDashboardComponent } from './components/chart-dashboard/chart-dashboard.component';
-import { InboxComponent } from './components/inbox/inbox.component';
+import { InboxDashboardComponent } from './components/inbox-dashboard/inbox-dashboard.component';
 import { ListDashboardComponent } from './components/list-dashboard/list-dashboard.component';
 
 @NgModule({
@@ -28,7 +28,7 @@ import { ListDashboardComponent } from './components/list-dashboard/list-dashboa
     ModelsDashboardComponent,
     BanksDashboardComponent,
     ChartDashboardComponent,
-    InboxComponent,
+    InboxDashboardComponent,
     ListDashboardComponent
   ],
   imports: [
