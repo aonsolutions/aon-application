@@ -198,7 +198,7 @@ class Model130Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mo
 				.addCell( sust , AON.CSS.aonTextCenter())
 				.addCell( new InlineLabel(mod130.getDocument()))
 				.addCell( new InlineLabel(mod130.getFullName()))
-				.addCell( new InlineLabel(AON.FMT.format(mod130.getDeclarationResult())), AON.CSS.aonTextRight())
+				.addCell( new InlineLabel(mod130.getDeclarationResult()==null?"":AON.FMT.format(mod130.getDeclarationResult())), AON.CSS.aonTextRight())
 				.addCell( new InlineLabel(mod130.getDeclarationResultType() == null ? "" : mod130.getDeclarationResultType().getDescription()))
 				.addCell( new InlineLabel(
 						(mod130.getFinance() != null && mod130.getFinance().getFinanceStatus() != null)
