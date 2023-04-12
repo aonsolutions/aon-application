@@ -17,8 +17,6 @@ import static com.esferalia.aon.payroll.sql.SQLConstants.SALARY_PAYMENT;
 import static java.util.Calendar.DAY_OF_MONTH;
 
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -37,7 +35,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import org.mvel2.util.MethodStub;
@@ -49,7 +46,6 @@ import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.calculator.CompositeIterator;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
-import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.UndefinedContextVariablesException;
 import com.esferalia.aon.payroll.calculator.Variable;
@@ -410,8 +406,6 @@ public class SQLContractDelayCalculatorContext extends
 		}
 	}
 	
-	private UnaryOperator<BigDecimal> round = d -> d.setScale(2, RoundingMode.HALF_UP);
-	
 
 	public SQLContractDelayCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate) throws SQLException,
@@ -431,10 +425,6 @@ public class SQLContractDelayCalculatorContext extends
 			Criteria criteria) throws SQLException, ExpressionException {
 		super(connection, startDate, endDate, issueDate, chargeDate, criteria,
 				getPaymentsCriteria(SalaryType.DELAY));
-	}
-	
-	public void setRound(UnaryOperator<BigDecimal> round) {
-	    this.round = round;
 	}
 
 	@Override
@@ -700,7 +690,6 @@ public class SQLContractDelayCalculatorContext extends
 		ISalaryBuilder<ISalary> compositeBuilder = getSalaryBuilder(
 				new CompositeSalaryBuilder<ISalary, ISalaryBuilder<ISalary>>(delayPaymentBuilder, extrasDelayPaymentBuilder));
 		
-		RoundSalaryBuilder<ISalary> roundSalaryBuilder = new RoundSalaryBuilder<ISalary>(compositeBuilder,  round);
 
 		Collection<Period> periods = getCgcPeriods(connection, getId(), startDate, endDate);//split(startDate, endDate);
 		Collection<Period> itPeriods = getItPeriods(connection, getId(), startDate, endDate);
@@ -710,7 +699,7 @@ public class SQLContractDelayCalculatorContext extends
 
 		//	ContractSalaryCalculator calculator = new ContractSalaryCalculator();
 		SmartContractSalaryCalculator<ISalary> calculator = new SmartContractDelayCalculator<ISalary>(monthDays, itDays, itPeriods);
-		calculator.setSalaryBuilder(roundSalaryBuilder);
+		calculator.setSalaryBuilder(compositeBuilder);
 		
 		long prevDays = 0;
 		
