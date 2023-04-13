@@ -674,7 +674,10 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertNotElement("editor-bases_provisonales");
 		calculate(Calendar.APRIL,2023);
 		assertValue("cgcBaseLabel", 1759.50);
-		assertValue("quote-label-8", (1759.50 / 30.00 - 38.89 ) * 24);
+		assertValue("quote-label-8", (1759.50 / 30.00 - 38.89 ) * 3);
+		assertValue("quote-label-9", (1759.50 / 30.00 - 38.89 ) * 12);
+		assertValue("quote-label-10", (1759.50 / 30.00 - 38.89 ) * 5);
+		assertValue("quote-label-11", (1759.50 / 30.00 - 38.89 ) * 4);
 		assertNotElement("editor-bases_provisonales");
 
 		draft("BASE, MÍNIMA PARCIAL ( HORAS )");
@@ -762,6 +765,13 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertTrue((salaryHours * 7.59 ) <  ( cgcBase * 0.5 ) ) ;
 		assertNotElement("editor-bases_provisonales");
 
+		draft("BASE, MÍNIMA PAGO DIRECTO ( GRUPO 05 )");
+		calculate(Calendar.APRIL,2023);
+		assertValue("cgcBaseLabel", 1260.00);
+		assertValue("cgpBaseLabel", 1260.00);
+		calculate(Calendar.MAY,2023);
+		assertValue("cgcBaseLabel", 1260.00);
+		assertValue("cgpBaseLabel", 1260.00);
 	}
 
 	@Test

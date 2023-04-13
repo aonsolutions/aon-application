@@ -7,6 +7,7 @@ import static com.esferalia.aon.jooq.tables.Salary.SALARY;
 import static com.esferalia.aon.jooq.tables.SalaryPayment.SALARY_PAYMENT;
 import static com.esferalia.aon.payroll.calculator.ContextFunctions.parseExtraDate;
 import static com.esferalia.aon.payroll.calculator.TaxCalculator.getMonth;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.DIRECT_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IMPROVEMENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
@@ -424,9 +425,19 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		public Double getMaternityBase() throws AonException {
 			return delegate.getMaternityBase();
 		}
+		
+		@Override
+		public Double getRawMaternityBase() throws AonException {
+			return delegate.getRawMaternityBase();
+		}
 
 		public Double getDirectPayBase() throws AonException {
 			return delegate.getDirectPayBase();
+		}
+		
+		@Override
+		public Double getRawDirectPayBase() throws AonException {
+		    return delegate.getRawDirectPayBase();
 		}
 		
 		@Override
@@ -1152,6 +1163,24 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 		}
 	}
 
+	@Override
+	protected void fixBaseMin(SalaryType salaryType, ExpressionContext expressionContext, Date start, Date end,
+			QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
+			List<Period> offPeriods, Double rawCgcbase, Double cgcBase, ContextVariable baseVariable) throws AonException {
+	    	
+	    	
+	    	
+	    
+		try {
+			if ( expressionContext.isDef(ContextVariable.HIDE_BASE_CGC_MIN) ) 
+				return;
+			   fixBaseMin(salaryType, expressionContext, start, end, quoteCalculator, taxCalculator,
+        				issueDate, leavePeriods, offPeriods, baseVariable);
+		} catch ( UndefinedContextVariablesException e ) {
+			
+		}
+	}
+
 	
 	@Override
 	protected List<ITimedResult<Double>> fixStrikeResults(
@@ -1266,6 +1295,20 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	    }
 	}
 
+	protected void fixBaseMin(SalaryType salaryType, ExpressionContext expressionContext, Date start, Date end,
+		QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
+		List<Period> offPeriods, ContextVariable baseVariable) throws AonException {
+	    
+	    try {
+		if ( expressionContext.isDef(baseVariable) ) {
+        		addBaseMinPayment(salaryType, expressionContext, start, end, quoteCalculator, taxCalculator,
+        			issueDate, leavePeriods, offPeriods, baseVariable );
+		}
+	    } catch (UndefinedContextVariablesException e) {
+
+	    }
+	}
+
 	private void addBaseCgcMinPayment(SalaryType salaryType, ExpressionContext expressionContext, Date start, Date end,
 		QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
 		List<Period> offPeriods, ContextVariable daysVariable) throws AonException {
@@ -1276,7 +1319,7 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	    .setStartDate(start)
 	    .setEndDate(end)
 	    //.setExpression("/*default*/(/*user*/0.00/**/)+(0.00 * TOTAL_DEVENGADO * (isdef DIAS_TRABAJADOS ? DIAS_TRABAJADOS : DIAS_VACACIONES_NO_DISFRUTADOS ))")
-	    .setExpression(String.format("/*default*/(/*user*/0.00/**/)+(0.00 * TOTAL_DEVENGADO * %s)", daysVariable ))
+	    .setExpression(String.format("/*default*/(/*user*/0.00/**/)+(0.00 * TOTAL_DEVENGADO * %s * BASE_CGC)", daysVariable ))
 	    .setIrpfExpression("_P")
 	    .setType(PaymentType.CRA_0001)
 	    .setSalaryType(salaryType)
@@ -1295,6 +1338,34 @@ public class SmartContractSalaryCalculator<T extends ISalary> extends GenericCon
 	    );
 	}
 	
+	private void addBaseMinPayment(SalaryType salaryType, ExpressionContext expressionContext, Date start, Date end,
+		QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
+		List<Period> offPeriods, ContextVariable baseName ) throws AonException {
+	    resolvePayment(
+	    new SimpleContractPayment()
+	    .setId(Integer.MAX_VALUE)
+	    .setName(baseName.getName().replace("BASE_", ""))
+	    .setStartDate(start)
+	    .setEndDate(end)
+	    .setExpression(String.format("/*default*/(/*user*/0.00/**/)+(0.00 * TOTAL_DEVENGADO * %s)", baseName ))
+	    .setIrpfExpression("_P")
+	    .setType(PaymentType.CRA_0001)
+	    .setSalaryType(salaryType)
+	    .setDescription("COTIZACIÓN MÍNIMA POR CONTINGENCIAS COMUNES")
+	    .setQuoteExpression(String.format("/*fixBaseCgcMin*/MAX(_P,(%s - %s_BRUTA))", baseName, baseName ) )
+	    .setIrpfExpression("/*fixBaseCgcMin*/_P" )
+	    , 
+	    start, 
+	    end, 
+	    issueDate, 
+	    expressionContext, 
+	    taxCalculator, 
+	    quoteCalculator, 
+	    leavePeriods, 
+	    offPeriods
+	    );
+	}
+
 	// ------------------------------------------------------------------------
 
 	static List<ITimedResult<Double>> fixEREITResults(List<ITimedResult<Double>> results , ExpressionContext ctx) {
