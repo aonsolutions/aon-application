@@ -962,7 +962,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calculate(Calendar.APRIL,2018);
 		cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.MAY,2018);
-		assertValue("cgcBaseLabel", 0.00 );
+		assertValue("cgcBaseLabel", cgcBase );
 	}
 
 	@Test
