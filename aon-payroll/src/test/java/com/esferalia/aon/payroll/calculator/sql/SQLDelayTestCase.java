@@ -351,7 +351,12 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				contract.getStartDate(), 
 				add(startDate, DAY_OF_MONTH, -1), 
 				endDate, 
-				criteria);
+				criteria) {
+			@Override
+			protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(ISalaryBuilder<T> salaryBuilder) {
+				return new RoundSalaryBuilder<T>(salaryBuilder, round(2));
+			}
+		};
 		delayCtx.next();
 		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		delayCalculator.setSalaryBuilder(new SalaryBuilder());
@@ -569,7 +574,13 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				contract.getStartDate(), 
 				add(startDate, DAY_OF_MONTH, -1), 
 				endDate, 
-				criteria);
+				criteria) {
+		    @Override
+		    protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(
+		            ISalaryBuilder<T> salaryBuilder) {
+		        return new RoundSalaryBuilder<T>(salaryBuilder, round(2));
+		    }
+		};
 		delayCtx.next();
 		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		delayCalculator.setSalaryBuilder(new RoundSalaryBuilder<Salary>(new SalaryBuilder(), round(2)));
@@ -2641,7 +2652,14 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 				getFirstDayOfMonth(getToday()), 
 				add(startDate, DAY_OF_MONTH, -1), 
 				endDate, 
-				criteria);
+				criteria) {
+		    @Override
+		    protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(
+		            ISalaryBuilder<T> salaryBuilder) {
+		        return new RoundSalaryBuilder<T>(salaryBuilder, round(2));
+		    }
+		    
+		};
 		delayCtx.next();
 		SmartContractSalaryCalculator<Salary> delayCalculator = new SmartContractSalaryCalculator<Salary>();
 		JooqSalaryBuilder<Salary> jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
@@ -2979,7 +2997,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
 				.getSalaryPayments()) {
 			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
-					+ " (" + payment.getExpression() + ")");
+					+ " (" + payment.getExpression() + ")" + payment.getQuote() );
 		}
 		
 		Assert.assertEquals(100.00, delay.getTotalPayment());
