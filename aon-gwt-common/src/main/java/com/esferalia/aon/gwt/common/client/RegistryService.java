@@ -1,6 +1,5 @@
 package com.esferalia.aon.gwt.common.client;
 
-import java.util.Date;
 import java.util.LinkedList;
 
 import com.esferalia.aon.occam.api.model.Customer;
@@ -9,6 +8,7 @@ import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -44,7 +44,9 @@ public interface RegistryService extends RemoteService {
 	// **************************************************
 	// *************************************** [CUSTOMER]
 	// **************************************************
-	LinkedList<Fee> getCustomerFeeList(String domainName, int domain, String user, Date findDate) ;
+	LinkedList<String> getCustomersSuggestion(String domainName, int domain, String user, String query);
+	LinkedList<String> getProductsSuggestion(String domainName, int domain, String user, String query);
+	LinkedList<Fee> getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams) ;
 	void saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee>  feeList) ;
 
 }

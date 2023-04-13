@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
@@ -37,6 +38,7 @@ import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParam
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -103,6 +105,11 @@ public interface IFinance {
 	// 	***********************************************
 	// 	**************************** INVOICE SERIES ***
 	// 	***********************************************
+
+	public LinkedList<String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public LinkedList<String> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);
+	
+	public LinkedList<Fee> getFeeList(CloseableAONContext ctx, CustomerFeeParams customerFeeParams);
 	public Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter);
 	
 	public Fee save(AONContext ctx, Fee fee);

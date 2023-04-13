@@ -219,6 +219,7 @@ import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -2693,6 +2694,18 @@ public class AON {
 	// ************************************* FEE **
 	// ********************************************
 	
+	public static LinkedList<String> getProductsSuggestion(String domainName, int domainId, String login, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getProductsSuggestion(ctx, domainId, query);
+		}
+	}
+
+	public static LinkedList<String> getCustomersSuggestion(String domainName, int domainId, String login, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getCustomersSuggestion(ctx, domainId, query);
+		}
+	}
+	
 	public static Stream<Fee> getFeeStream(String domainName, Integer domainId, String login, FeeFilter filter){
 		CloseableAONContext ctx = null;
 		try {
@@ -2707,6 +2720,12 @@ public class AON {
 	public static Fee getFee(String domainName, Integer domainId, String login, FeeFilter filter){
 		return getFeeStream(domainName, domainId, login, filter)
 			.findFirst().orElse(new Fee());
+	}
+	
+	public static LinkedList<Fee> getFeeList(String domainName, Integer domainId, String login, CustomerFeeParams customerFeeParams){
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getFeeList(ctx, customerFeeParams);
+		}
 	}
 	
 	public static LinkedList<Fee> getFeeList(String domainName, Integer domainId, String login, FeeFilter filter){
