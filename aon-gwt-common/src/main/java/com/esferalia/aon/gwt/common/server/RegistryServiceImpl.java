@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -86,14 +87,26 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	// *********************************** [CUSTOMER FEE]
 	// **************************************************
 
+//	@Override
+//	public CustomerFeeParams getCustomerFeeParams(String domainName, int domain, String user, Date billingDate) {
+//		return AON.getCustomerFeeParams(domainName, domain, user, 
+//				f -> f.getDomainProperty().eq(domain)
+//					.and(f.getBillingDateProperty().eq(parseSQLDate(billingDate)))
+//					.and(f.getFinalDateProperty().isNull().or(f.getFinalDateProperty().ge(parseSQLDate(billingDate)))));
+//	}
+	
 	@Override
-	public LinkedList<Fee> getCustomerFeeList(String domainName, int domain, String user, Date findDate) {
-		Date startDate = DateUtils.getFirstDayOfMonth(findDate);
-		
-		return AON.getFeeList(domainName, domain, user, 
-				f -> f.getDomainProperty().eq(domain)
-					.and(f.getBillingDateProperty().eq(parseSQLDate(startDate)))
-					.and(f.getFinalDateProperty().isNull().or(f.getFinalDateProperty().ge(parseSQLDate(startDate)))));
+	public LinkedList<String> getCustomersSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getCustomersSuggestion(domainName, domain, user, query);
+	}
+	@Override
+	public LinkedList<String> getProductsSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getProductsSuggestion(domainName, domain, user, query);
+	}
+	
+	@Override
+	public LinkedList<Fee> getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams) {
+		return AON.getFeeList(domainName, domain, user, customerFeeParams);
 	}
 	
 	@Override
