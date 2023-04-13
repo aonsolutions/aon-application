@@ -111,6 +111,7 @@
 
 .hoverMenu {
     padding-left: .5rem;
+    padding-right: .5rem;
 }
 
 .mat-menu-item:hover:not(.set-menu-item-active) {
@@ -123,8 +124,19 @@
 
 .mat-menu-item {
     margin: .5rem;
+    width: calc(auto);
+    text-overflow: ellipsis;
+    white-space: nowrap;
     color:#19191d!important;
     height: 2.5rem!important;
     line-height: 2.5rem!important;
     padding: 0rem 0rem!important;
+    font-size: 1rem;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: 0.44px;
+    text-align: left;
+    color: #19191d;
 }
