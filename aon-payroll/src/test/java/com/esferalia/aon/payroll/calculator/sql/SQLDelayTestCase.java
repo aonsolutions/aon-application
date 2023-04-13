@@ -2997,7 +2997,7 @@ public class SQLDelayTestCase extends AbstractSQLTestCase {
 		for (com.esferalia.aon.payroll.SalaryPayment payment : delay
 				.getSalaryPayments()) {
 			System.out.println(payment.getName() + " [ " + payment.getDescription() + "] :" + payment.getAmount()
-					+ " (" + payment.getExpression() + ")");
+					+ " (" + payment.getExpression() + ")" + payment.getQuote() );
 		}
 		
 		Assert.assertEquals(100.00, delay.getTotalPayment());
