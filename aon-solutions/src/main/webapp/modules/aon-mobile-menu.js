@@ -20,7 +20,7 @@ import { AonWarehouse } from "./warehouse/aon-warehouse.js";
 
 import * as WAREHOUSE_OPTION from './warehouse/WarehouseOptions.js';
 
-export class AonNewMobileMenu extends AonElement {
+export class AonMobileMenu extends AonElement {
 
   dur;
   SELECTED;
@@ -479,5 +479,7 @@ export class AonNewMobileMenu extends AonElement {
 		this.getElement(this.INPUT_INVOICE_FILE).click();
 	}
 }
+if(!window.customElements.get(TAG.AON_MOBILE_MENU)){
+  window.customElements.define(TAG.AON_MOBILE_MENU, AonMobileMenu);
+}
 
-window.customElements.define("aon-new-mobile-menu", AonNewMobileMenu);

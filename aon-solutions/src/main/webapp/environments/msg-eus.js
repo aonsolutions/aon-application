@@ -207,6 +207,8 @@ export const LANGUAGE = 'Hizkuntza';
 export const LAST = 'Azken';
 export const LAST_LOCATION = 'Azken kokapena';
 export const LAST_STATUS = 'Azken egoera';
+export const LINK = 'Estekatu';
+export const LINK_DOMAINS = 'Dominioak Estekatu';
 export const LOCATION = 'Kokapena';
 
 // ----- M
@@ -383,6 +385,7 @@ export const USER = 'Erabiltzailea';
 export const USER_DATA = 'Erabiltzailearen Datuak';
 export const USER_MANAGEMENT = 'Erabiltzaileen Kudeaketa';
 export const USERS = 'Erabiltzaileak';
+export const UTILITIES = 'Utilitateak';
 
 // ----- V
 

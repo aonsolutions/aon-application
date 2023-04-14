@@ -207,6 +207,8 @@ export const LANGUAGE = 'Language';
 export const LAST = 'Last';
 export const LAST_LOCATION = 'Last Location';
 export const LAST_STATUS = 'Last Status';
+export const LINK = 'Link';
+export const LINK_DOMAINS = 'Link Domains';
 export const LOCATION = 'Location';
 
 // ----- M
@@ -384,6 +386,7 @@ export const USER = 'User';
 export const USER_DATA = 'User Data';
 export const USER_MANAGEMENT = 'User Management';
 export const USERS = 'Users';
+export const UTILITIES = 'Utilities';
 
 // ----- V
 
