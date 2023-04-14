@@ -16,6 +16,7 @@ import './fiscal/aon-fiscal.js';
 import './accounting/aon-accounting.js';
 import { AonTimecontrol } from './timecontrol/aon-timecontrol.js';
 import { AonWarehouse } from './warehouse/aon-warehouse.js';
+import { AonConsole } from './console/aon-console.js';
 
 
 export class AonApps extends AonElement {
@@ -117,6 +118,9 @@ export class AonApps extends AonElement {
 
 	appSelection(app) {
 		switch(app){
+			case Apps.CONSOLE.app:
+				this.rootPanel(new AonConsole());
+				break;
 			case Apps.DOCUMENTAL.app:
 				const aonDocumental = this.getDur().isBidoq() ? new AonDocumentalAyudat() : new AonDocumental();
 				this.rootPanel(aonDocumental);
@@ -177,6 +181,8 @@ export class AonApps extends AonElement {
 		else if(Apps.WAREHOUSE.app === app.app){
 			const domain = this.getDur().getDomain();
 			return domain.getName() && (domain.getName().includes("udapa") || domain.getName().includes("paturpat") || this.isLocal());
+		} else if(Apps.CONSOLE.app === app.app){
+			return this.isBeta();
 		} else 
 			return false;
 	}
