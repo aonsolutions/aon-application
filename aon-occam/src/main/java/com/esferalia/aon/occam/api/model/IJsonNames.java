@@ -39,6 +39,8 @@ public final class IJsonNames {
 	public static final String AMORTIZATION_INITIAL_DATE = "amortizationInitialDate";
 	public static final String AMOUNT = "amount";
 	public static final String AMOUNT_347 = "amount347";
+	public static final String AON_CUSTOMER = "aonCustomer";
+	public static final String AON_STATUS = "aonStatus";
 	public static final String AP1 = "ap1";
 	public static final String AP2 = "ap2";
 	public static final String APA = "apa";
