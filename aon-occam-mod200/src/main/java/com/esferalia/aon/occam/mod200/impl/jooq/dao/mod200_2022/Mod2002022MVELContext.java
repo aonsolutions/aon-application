@@ -580,17 +580,18 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		return AonMathUtils.round( (double) limit * getDays() / 365);	
 	}
 	
-	public double computeLQ1032() throws AonCoreException {
-		if (isGroup() && getContainsKey(Mod2002022Key.LQ1032)) {
-			return getValue(Mod2002022Key.LQ1032);
-		}
-		if (isGroup()) {
-			return 0.0;
-		}		
-		double lq1745 = roundKey(Mod2002022Key.LQ1745);
-		double lq1986 = roundKey(Mod2002022Key.LQ1986);
-		return round(lq1745+lq1986);
-	}
+	// FALTA - CREO QUE NO SE USA
+//	public double computeLQ1032() throws AonCoreException {
+//		if (isGroup() && getContainsKey(Mod2002022Key.LQ1032)) {
+//			return getValue(Mod2002022Key.LQ1032);
+//		}
+//		if (isGroup()) {
+//			return 0.0;
+//		}		
+//		double lq1745 = roundKey(Mod2002022Key.LQ1745);
+//		double lq1986 = roundKey(Mod2002022Key.LQ1986);
+//		return round(lq1745+lq1986);
+//	}
 
 	public double computeD1004(double d1004) throws AonCoreException {
 		if (d1004>getLimit(LIM_3)){

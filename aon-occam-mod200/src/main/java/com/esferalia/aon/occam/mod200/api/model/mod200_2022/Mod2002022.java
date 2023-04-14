@@ -29,7 +29,7 @@ public class Mod2002022 extends Mod200 {
 
 	private boolean initializedFromLastYear;
 	
-	private String cnae;
+	private String cnae;  // FALTA - SE PERMITE INDICAR MAS DE UNA ACTIVIDAD, VER SI SE QUEDA ASI PARA VER SI ES NECESARIO AÑADIR MAS CAMPOS O SE PONE EN REGISTRY
 	
 	private int periodType;
 	private Date periodStart;

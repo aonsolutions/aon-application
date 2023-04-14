@@ -22,40 +22,49 @@ public enum Mod2002022Key implements IMod200Key {
      X0000 // Tipo de ejercicio
     
 	// CARACTERES DE LA DECLARACION
-	// Tipo de Entidad
-	,C0001	,C0014	,C0031
-	,C0002	,C0017  ,C0032
-	,C0080	,C0018  ,C0036
-	,C0003	,C0019  ,C0048
-	,C0004	,C0021  ,C0058
-	,C0005	,C0023  ,C0060
-	,C0011	,C0024  ,C0066
-	,C0013	,C0025  ,C0078
+	// Tipo de Entidad     		
+	,C0001	,C0013	,C0031
+	,C0002	,C0014  ,C0032
+	,C0080	,C0017  ,C0036
+	,C0003	,C0018  ,C0048
+	,C0008  ,C0019	,C0058
+	,C0004	,C0021  ,C0060
+	,C0005	,C0023  ,C0066
+	,C0011	,C0024  ,C0078
+			,C0025	,C0056  
 		
 	// Regímenes aplicables
 	,C0006	,C0049	,C0046 
 	,C0015  ,C0035  ,C0012 ,C0012R 
 	,C0079  ,C0029  ,C0064
-	,C0022  ,C0033  ,C0057 
-	,C0028  ,C0034  ,C0062 
-	,C0047  ,C0038  ,C0020 
-	                 
+	,C0022  ,C0069  ,C0057 
+	,C0028  ,C0033  ,C0062 
+	,C0047  ,C0034  ,C0020 
+	        ,C0038
+	        
 	// Otros caracteres
-	,C0007	,C0030	,C0065	
-	,C0009  ,C0039  ,C0067
-	,C0010  ,C0043  ,C0072
-	,C0081  ,C0045  ,C0073
-	,C0082	,C0063  ,C0037
-	,C0016  ,C0071  ,C0044 		
-	,C0026  ,C0070  ,C0074
-	,C0027  ,C0059
+	,C0007	,C0030	,C0059		
+	,C0009  ,C0039  ,C0065
+	,C0010  ,C0043  ,C0077B   // FALTA - AÑADEN LA CASILLA 77 QUE ANTES ESTABA EN ESTADOS DE CUENTAS (ECPN PYMES), PERO EN ESTADOS DE CUENTAS TIENEN 2 CASILLAS REPETIDAS ??
+	,C0081  ,C0045  ,C0072
+	,C0082	,C0063  ,C0073
+	,C0016  ,C0071  ,C0037 		
+	,C0026  ,C0070  ,C0044
+	,C0027    		,C0074
 
+	// Importe neto de la cifra de negocios (INCN) de los doce meses anteriores a la fecha de inicio del período impositivo
+	// 1 - INCN inferior a 20 millones de euros					
+	// 2 - INCN de al menos 20 millones de euros pero inferior a 60 millones de euros					
+	// 3 - INCN de al menos 60 millones de euros					
+	,VOLOPE
+	
 	// ESTADOS DE CUENTAS
 	,C0050	,C0075	,C0053
 	,C0051  ,C0076  ,C0054
-	,C0052  ,C0077  ,C0055
+	,C0052  ,C0077  ,C0055  // FALTA - EN ESTADOS DE CUENTAS ECPN PYMES LE PONE TAMBIEN LA CASILLA 55
 	
 	,C0061
+	,C0068
 	
 	// PERSONAL ASALARIADO
 	,C0041	,C0042
@@ -443,6 +452,7 @@ public enum Mod2002022Key implements IMod200Key {
 	,I0508
 	,I1817
 	,I2469	,D2470
+	,I0333	,D0334
 	,I1807	,D1811
 	,I1808	,D1812
 	,I1813	,D1814
@@ -494,10 +504,12 @@ public enum Mod2002022Key implements IMod200Key {
 	,I0403	,D0404 // Reserva para inversiones en Canarias
 	,I0518	,D0519
 			,D1824
-	,I2312	,D2313		
+	,I1009	,D1013
+	,I1905	,D1906
 	,I0510	,D0512
 	,I0329	,D0330
-	,I0365	,D1026	
+	,I0365	,D1026
+			,D1014
 	,I0409	,D0410
 	,I0411	,D0412
 	,I1027	,D1028
@@ -520,8 +532,16 @@ public enum Mod2002022Key implements IMod200Key {
 	,LQ550TG  // Parte de la base imponible del período impositivo que tributa al tipo general (antes de compensación de bases imponibles negativas) 
 	,LQ550T0  // Parte de la base imponible del período impositivo que tributa al tipo del 0% (antes de compensación de bases imponibles negativas)
 	
-	,LQ1032   // Reserva de capitalizacion	    
-	,LQ547    // Compensación de bases imponibles negativas periodos anteriores	
+	,LQ1032   // Reserva de capitalizacion
+	
+	,LQ541	  // R.Esp.Navieras en Canarias: Parte de la base imponible que proceda de la realización de actividades a las que se aplica el régimen especial
+	,LQ564	  // R.Esp.Navieras en Canarias: Parte de la base imponible que proceda de la realización del resto de actividades
+	
+	,LQ547    // Compensación de bases imponibles negativas periodos anteriores
+	
+	,LQ1887   // R.Esp.Navieras en Canarias: Compensación de bases imponibles negativas períodos anteriores de la parte de base imponible régimen especial
+	,LQ1890	  // R.Esp.Navieras en Canarias: Compensación de bases imponibles negativas períodos anteriores de la parte de base imponible resto de actividades		
+	
 	,LQ552    // Base imponible
 	,LQ1033	,LQ1034 // Solo entidades de reducida dimensión (Reserva de Nivelación)
 	
@@ -604,8 +624,9 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN399  // Deducciones específicas de las entidades sometidas a normativa foral
 	,BN082  // Deducciones I + D + i excluidas de límite. Opción art. 39.2 LIS
 	,BN1040 // Deducción por reversión de medidas temporales DT 37ª.1 LIS
-	,BN1041 // Deducción por reversión de medidas temporales DT 37ª.2 LIS	
-	,BN592  // Cuota líquida positiva
+	,BN1041 // Deducción por reversión de medidas temporales DT 37ª.2 LIS
+	,BN619  // Cuota líquida mínima (art. 30 bis.2 LIS)
+	,BN592  // Cuota líquida 
 	
 // --------------- PAGINA 14 BIS --------------- //
 	
@@ -634,7 +655,8 @@ public enum Mod2002022Key implements IMod200Key {
 			,BN633	,BN642
 			,BN617	,BN618			
 	,BN1234B,BN083	,BN1332
-	,BN1200 ,BN1042	,BN1333
+	,BN1892 ,BN1042	,BN1333
+	,BN1319 ,BN1893	,BN1881
 			,LQ1586 ,LQ1587
 			
 	// Líquido a ingresar o a devolver
@@ -685,9 +707,23 @@ public enum Mod2002022Key implements IMod200Key {
 	,LQ1825	,LQ1826	,LQ1827
 	,LQ2193	,LQ2194	,LQ2195
 	,LQ194	,LQ195	,LQ196
+	,LQ151	,LQ152	,LQ164	
 	,LQ2316	,LQ2317	,LQ2318	
 	,LQ670			,LQ671	
 	,LQ1048			,LQ1049
+	
+	// Desglose LQ1887, LQ1890: Régimen especial de entidades navieras en Canarias: desglose de la compensación de bases imponibles negativas
+	,LQ168 	,LQ172 	,LQ173
+	,LQ175 	,LQ176 	,LQ177
+	,LQ178 	,LQ179 	,LQ198
+	,LQ202 	,LQ214 	,LQ215
+	,LQ1886  		,LQ1888
+	,LQ1889 		,LQ1891
+	,LQ216 	,LQ243 	,LQ265
+	,LQ266 			,LQ267
+	,LQ290 			,LQ344
+	
+// --------------- PAGINA 15 BIS --------------- //
 	
 	// Desglose BN570 - Deducciones doble imposición interna RDLeg. 4/2004
 	,BN104	,BN105	,BN846	,BN847	,BN848
@@ -700,6 +736,11 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN116			,BN117			,BN118
 	,BN103A
 	
+// FALTA - DUPLICIDAD DE CLAVES
+//	LAS CLAVES 1907 A 1914 ESTAN DUPLICADAS O TRIPLICADAS EN EL MODELO DEL PROYECTO DE ORDEN
+//	POR AHORA LAS PONGO TODAS COMO ...A, ...B o ...C, YA LES PONDRE LAS CLAVES REALES CUANDO 
+//	SALGA PUBLICADA LA ORDEN
+	
 	// Desglose BN1344 - Deducciones doble imposición interna periodos anteriores (DT 23ª.1 LIS)
 	,BN101	,BN102	,BN119	,BN120	,BN121
 	,BN122	,BN123	,BN124	,BN125	,BN126
@@ -708,14 +749,13 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN2196	,BN2197	,BN2198	,BN2199	,BN2200
 	,BN2319	,BN2320	,BN2321	,BN2322	,BN2323
 	,BN199 	,BN203 	,BN204 	,BN205 	,BN206
+	,BN394 	,BN436 	,BN437 	,BN438 	,BN1910A  // FALTA - DUPLICIDAD DE CLAVES
 	,BN1342			,BN1343			,BN1345
 	,BN103B
 	
 	// Desglose BN1280 - DI interna generada y aplicada en el ejercicio (DT 23ª.1 LIS)
 	,BN127	,BN128	,BN129
 	,BN1346			,BN1347
- 
-// --------------- PAGINA 16 --------------- //
 	
 	// Desglose BN572 - Deducciones doble imposición internacional RDLeg. 4/2004
 	,BN153	,BN728	,BN637	,BN638	,BN639
@@ -730,6 +770,8 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN134	,BN926	,BN135	,BN136	,BN137
 	,BN160			,BN161			,BN162
 	,BN103C
+ 
+// --------------- PAGINA 16 --------------- //
 	
 	// Desglose BN571 - Deducciones doble imposición internacional periodos anteriores (LIS)
 	,BN1054	,BN1050	,BN1051	,BN1052	,BN1053
@@ -739,6 +781,7 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN2201	,BN2202	,BN2203	,BN2204	,BN2205
 	,BN2324	,BN2325	,BN2326	,BN2327	,BN2328
 	,BN207 	,BN208 	,BN209 	,BN212 	,BN213
+	,BN490 	,BN491 	,BN492 	,BN493 	,BN620
 	,BN131			,BN132			,BN133
 	,BN103D
 	
@@ -748,8 +791,7 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN171			,BN174
 
 	 // Desglose BN585 - Deducción DT 24ª.7 LIS, art. 42 RDLeg. 4/2004		
-	,BN090	,BN091	
-	,BN004	,BN005	,BN006
+	,BN004	,BN005	
 	,BN031	,BN032	,BN033
 	,BN022	,BN023	,BN024
 	,BN040	,BN041	,BN042
@@ -764,11 +806,10 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN1838	,BN1839	,BN1840
 	,BN2206	,BN2207	,BN2208
 	,BN2329	,BN2330	,BN2331	
-	,BN249	,BN252	,BN253	
-	,BN841			,BN843	
+	,BN249	,BN252	,BN253
+	,BN696	,BN697	,BN710
+	,BN841			,BN843
 	
-// --------------- PAGINA 16 BIS --------------- //	
-
 	// Desglose BN584 - Deducciones DT 24ª.1 LIS
 	,BN749	,BN750	
 	,BN752	,BN753	,BN754
@@ -778,6 +819,8 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN744	,BN745	,BN746
 	,BN779	,BN783	,BN784
 	,BN764			,BN765
+	
+// --------------- PAGINA 16 BIS --------------- //	
 	
 	 // Desglose BN590 - Deducciones Inversión Canarias
 	,BN854	,BN855	,BN1356
@@ -792,14 +835,15 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN2116	,BN2117	,BN2118
 	,BN2209	,BN2210	,BN2211
 	,BN2332	,BN2333	,BN2334
-	,BN237	,BN238	,BN239	
+	,BN237	,BN238	,BN239
+	,BN711	,BN712	,BN1911A  // FALTA - DUPLICIDAD DE CLAVES
 	,BN2335	,BN2336	,BN2337
 	,BN2338	,BN2339	,BN2340
 	,BN2341	,BN2342	,BN2343
 	,BN2344	,BN2345	,BN2346
 	,BN244	,BN245	,BN2497
-	,BN877	,BN878	
-	,BN880	,BN881	,BN882
+	,BN1912A ,BN1913A ,BN766  // FALTA - DUPLICIDAD DE CLAVES		
+	,BN880	,BN881	
 	,BN866	,BN867	,BN870
 	,BN939	,BN940	,BN941
 	,BN191	,BN192	,BN193
@@ -817,15 +861,15 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN2122	,BN2123	,BN2124
 	,BN2212	,BN2213	,BN2214
 	,BN2347	,BN2348	,BN2349	
-	,BN217	,BN218	,BN219	
+	,BN217	,BN218	,BN219
+	,BN767	,BN768	,BN769
 	,BN2119	,BN2120	,BN2121
 	,BN2125	,BN2126	,BN2127
 	,BN2215	,BN2216	,BN2217
 	,BN2350	,BN2351	,BN2352
 	,BN220	,BN221	,BN222
+	,BN770	,BN771	,BN774
 	,BN886  		,BN887
-	
-// --------------- PAGINAS 17 Y 18 --------------- //
 	
 	// Deducciones inversión en Canarias con límites incrementados (continuación)	
 	,BN2287
@@ -833,9 +877,10 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN2495
 	,BN2496
 	
-	// Desglose BN588 - Deducciones con límite del Capítulo IV Título VI y DT 24.3 LIS		
-	,BN198	,BN896	
-	,BN288	,BN289	,BN290
+// --------------- PAGINAS 17, 18 Y 18 BIS --------------- //
+	
+	// Desglose BN588 - Deducciones con límite del Capítulo IV Título VI y DT 24.3 LIS
+	,BN288	,BN289	
 	,BN466	,BN467	,BN468
 	,BN061	,BN498	,BN586
 	,BN472	,BN473	,BN478
@@ -850,54 +895,54 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN1063	,BN1064	,BN1065
 	,BN1066	,BN1067	,BN1068
 	,BN1069	,BN1070	,BN1071
-	,BN813	,BN814	,BN815
+	,BN2294 ,BN2295 ,BN2296
 	,BN986	,BN810	,BN507
 	,BN557  ,BN591	,BN594
-	,BN1614	,BN1615	,BN1616
+	,BN1907A ,BN1908A ,BN1909A  // FALTA - DUPLICIDAD DE CLAVES
+	,BN2297 ,BN2298 ,BN2299
 	,BN1617	,BN1618	,BN1619
 	,BN1620	,BN1621	,BN1622
-	,BN1847	,BN1848	,BN1849
+	,BN1910B ,BN1911B ,BN1912B  // FALTA - DUPLICIDAD DE CLAVES
+	,BN2300 ,BN2500 ,BN3401
 	,BN1850	,BN1851	,BN1852
 	,BN1853	,BN1854	,BN1855		
-	,BN2218 ,BN2219	,BN2220
+	,BN1913B ,BN1914A ,BN1915  // FALTA - DUPLICIDAD DE CLAVES
+	,BN3402 ,BN3403 ,BN3404
 	,BN2221	,BN2222	,BN2223
-	,BN2224	,BN2225	,BN2226	
-	,BN2353	,BN2354	,BN2355
+	,BN2224	,BN2225	,BN2226
+	,BN1916 ,BN1917 ,BN1918
+	,BN3405 ,BN3406 ,BN3407
 	,BN2356	,BN2357	,BN2358
 	,BN2359	,BN2360	,BN2361
-	,BN223  ,BN224  ,BN227
+	,BN1919 ,BN1920 ,BN1921
+	,BN3408 ,BN3409 ,BN3410	
 	,BN228  ,BN229  ,BN230
 	,BN234  ,BN235  ,BN236
-	,BN1360	,BN1361	,BN1362
+	,BN1922 ,BN1923 ,BN1924
+	,BN3411 ,BN3412 ,BN3413
+	,BN780  ,BN781 	,BN782
+	,BN786 	,BN787 	,BN788
+	,BN1925 ,BN1926 ,BN1927
+	,BN3414 ,BN3415 ,BN3416	
 	,BN1363	,BN1364	,BN1365
 	,BN1366	,BN1367	,BN1368
+	,BN1928 ,BN1929 ,BN1930
 	,BN828  ,BN829	,BN830
 	,BN798	,BN799	,BN800
 	,BN096	,BN698	,BN713
 	,BN807	,BN808	,BN809
 	,BN1075	,BN1076	,BN1077
 	,BN795	,BN796	,BN797
+	,BN792 	,BN793 	,BN794
 	,BN549	,BN888	,BN889		
 	,BN1369	,BN1370	,BN1371
 	,BN2190	,BN2191	,BN2192
 	,BN1626	,BN1627	,BN1628
 	,BN1638	,BN1639	,BN1640
-	,BN1707	,BN1708	,BN1709
-	,BN1800	,BN1801	,BN1802
+	,BN1707	,BN1708	,BN1709	
 	,BN1874	,BN1875	,BN1876
-	,BN1889	,BN1890	,BN1891
-	,BN1892	,BN1893	,BN1894
-	,BN1901	,BN1902	,BN1903
-	,BN1907	,BN1908	,BN1909
-	,BN1910	,BN1911	,BN1912
-	,BN1913	,BN1914	,BN1915
-	,BN1946	,BN1947	,BN1948
-	,BN1871	,BN1872	,BN1873
-	,BN1895	,BN1896	,BN1897
-	,BN1898	,BN1899	,BN1900
-	,BN1904	,BN1905	,BN1906
-	,BN1916	,BN1917	,BN1918
-	,BN1928	,BN1929	,BN1930
+	,BN1907B	,BN1908B	,BN1909B  // FALTA - DUPLICIDAD DE CLAVES
+	,BN1910C	,BN1911C	,BN1912C  // FALTA - DUPLICIDAD DE CLAVES
 	,BN1934	,BN1935	,BN1936
 	,BN2362	,BN2363	,BN2364
 	,BN2365	,BN2366	,BN2367
@@ -907,8 +952,7 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN2377	,BN2378	,BN2379
 	,BN254  ,BN255  ,BN258
 	,BN259  ,BN260  ,BN261
-	,BN262  ,BN263  ,BN264
-	,BN265  ,BN266  ,BN267
+	,BN262  ,BN263  ,BN264	
 	,BN268  ,BN269  ,BN270
 	,BN271  ,BN273  ,BN274
 	,BN291  ,BN292  ,BN293
@@ -923,8 +967,7 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN422  ,BN423  ,BN424
 	,BN425  ,BN428  ,BN429
 	,BN430  ,BN431  ,BN432
-	,BN433  ,BN434  ,BN435
-	,BN436  ,BN437  ,BN438
+	,BN433  ,BN434  ,BN435	
 	,BN439  ,BN440  ,BN441
 	,BN452  ,BN453  ,BN454
 	,BN455  ,BN456  ,BN463
@@ -935,19 +978,73 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN522  ,BN523  ,BN537
 	,BN540  ,BN542  ,BN595
 	,BN596  ,BN801  ,BN811
-	,BN812  ,BN816  ,BN817	
+	,BN812  ,BN816  ,BN817
+	,BN874 ,BN875 ,BN877
+	,BN878 ,BN879 ,BN882
+	,BN902 ,BN906 ,BN1870
+	,BN1914B ,BN955 ,BN956  // FALTA - DUPLICIDAD DE CLAVES
+	,BN957 ,BN1087 ,BN1088
+	,BN1089 ,BN1110 ,BN1141
+	,BN1142 ,BN1144 ,BN1145
+	,BN1146 ,BN1150 ,BN1151
+	,BN1152 ,BN1153 ,BN1154
+	,BN1155 ,BN1156 ,BN1157
+	,BN1871 ,BN1180 ,BN1195
+	,BN1197 ,BN1207 ,BN1208
+	,BN1217 ,BN1218 ,BN1219
+	,BN1220 ,BN1221 ,BN1222
+	,BN1223 ,BN1229 ,BN1232
+	,BN1233 ,BN1235 ,BN1236
+	,BN1237 ,BN1238 ,BN1239
+	,BN1261 ,BN1262 ,BN1263
+	,BN1264 ,BN1265 ,BN1266
+	,BN1267 ,BN1268 ,BN1269
+	,BN1272 ,BN1273 ,BN1274
+	,BN1277 ,BN1278 ,BN1279
+	,BN1281 ,BN1282 ,BN1283
+	,BN1883 ,BN1884 ,BN1885
 	,BN1683	,BN1684	,BN1685
 	,BN634	,BN635	,BN636		
 	,BN831      	,BN832
 	
-// --------------- PAGINA 18 BIS --------------- //
+	// Desglose BN2315: Deducción por inversiones y gastos realizados por las autoridades portuarias (art. 38 bis LIS)
+	,BN1284 ,BN1287 ,BN1288
+	,BN1289 ,BN1290 ,BN1291
+	,BN1292 ,BN1293 ,BN1294
+	,BN1295 ,BN1296 ,BN1297
+	,BN1298  		,BN1304
+	
+	// Desglose BN1039 y BN1892: Deducciones por producciones cinematográficas extranjeras (art. 36.2 LIS)
+	,BN1931 ,BN1932 ,BN1933 ,BN1937
+	,BN1938 ,BN1939 ,BN1940 ,BN1941
+	,BN1942 ,BN1943 ,BN1944 ,BN1945
+	,BN1946 ,BN1947 ,BN1948 ,BN1949
+	,BN2109 ,BN2110 ,BN2111 ,BN2112
+	,BN2128 ,BN2129 ,BN2130 ,BN2131
+	,BN2132 ,BN2133 ,BN2134 ,BN2135
+	,BN2136 ,BN2137 ,BN2138 ,BN2139
+	,BN2140 ,BN2141 ,BN2142 ,BN2143
+	,BN2144  				,BN2147
+	
+	// Desglose BN2314 y BN1319: Deducciones por producciones cinematográficas extranjeras en Canarias (art. 36.2 LIS y DA 14ª Ley 19/1994)
+	,BN2148 ,BN2149 ,BN2150 ,BN2151
+	,BN2152 ,BN2153 ,BN2154 ,BN2155
+	,BN2156 ,BN2157 ,BN2158 ,BN2159
+	,BN2160 ,BN2161 ,BN2162 ,BN2163
+	,BN2164 ,BN2165 ,BN2166 ,BN2167
+	,BN2168 ,BN2169 ,BN2170 ,BN2171
+	,BN2172 ,BN2173 ,BN2174 ,BN2175
+	,BN1309 ,BN1310 ,BN1311 ,BN1312
+	,BN1313 ,BN1314 ,BN1315 ,BN1316
+	,BN1317  				,BN1322
+	
+// --------------- PAGINA 18 TER --------------- //
 	
 	// Desglose BN565 - Deducción donaciones a entidades sin fines de lucro (Ley 49/2002)
 	
 	 // Donaciones de carácter general
 	
-	,BN201	,BN202	
-	,BN904	,BN905	,BN906
+	,BN904	,BN905	
 	,BN990	,BN991	,BN992
 	,BN997	,BN998	,BN999
 	,BN246	,BN247	,BN248
@@ -966,6 +1063,8 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN872 	,BN873 	,BN2498
 	,BN2499	,BN876 	,BN890
 	,BN891 	,BN892 	,BN893
+	,BN1323 ,BN1324 ,BN1325
+	,BN1326 ,BN1327 ,BN1328	
 	,BN1689 ,BN1690 ,BN1691
 	,BN1692 ,BN1693 ,BN1694
 	,BN1695 ,BN1696 ,BN1697
@@ -973,8 +1072,7 @@ public enum Mod2002022Key implements IMod200Key {
 	
 	 // Donaciones para actividades prioritarias de mecenazgo y otras con derecho a deducción incrementada
 	
-	,BN2471 ,BN898
-	,BN899  ,BN901  ,BN902
+	,BN899  ,BN901  
 	,BN903  ,BN917  ,BN929
 	,BN930  ,BN931  ,BN932
 	,BN933  ,BN934  ,BN942
@@ -993,6 +1091,8 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN1025 ,BN1035 ,BN1036
 	,BN1061 ,BN1062 ,BN1072
 	,BN1073 ,BN1074 ,BN1078
+	,BN1329 ,BN1372 ,BN1373
+	,BN1374 ,BN1375 ,BN1376	
 	,BN1701 ,BN1702 ,BN1703
 	,BN1704 ,BN1705 ,BN1706
 	,BN1729 ,BN2475 ,BN2476	
@@ -1018,6 +1118,7 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN2230	,BN2231	,BN2232	,BN2233
 	,BN2383	,BN2384	,BN2385	,BN2386
 	,BN1082	,BN1083	,BN1084	,BN1085	
+	,BN1377 ,BN1378 ,BN1379 ,BN1380
 	,BN1170	,BN1171	        ,BN1173
 	
     // Deducción por reversión de medidas temporales DT 37ª.2 LIS
@@ -1028,7 +1129,9 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN1957	,BN1958	,BN1959	,BN1960
 	,BN2234	,BN2235	,BN2236	,BN2237
 	,BN2387	,BN2388	,BN2389	,BN2390
-	,BN1086	,BN1087	,BN1088	,BN1089
+	// ,BN1086	,BN1087	,BN1088	,BN1089  FALTA - EN ESTA FILA HAN RENUMERADO LAS 3 ULTIMAS CASILLAS
+	,BN1086	,BN2477	,BN2478	,BN2479
+	,BN1381 ,BN1382 ,BN1383 ,BN1384
 	,BN1182	,BN1183      	,BN1185
 	
 	// Desglose BN082 - Deducciones I + D + i excluidas de límite. Opción art. 39.2 LIS
@@ -1051,7 +1154,9 @@ public enum Mod2002022Key implements IMod200Key {
 	,BN2391	,BN2392	,BN2393	,BN2394	,BN2394R 
 	,BN2395	,BN2396	,BN2397	,BN2398	,BN2398R
 	,BN1090 ,BN1091 ,BN1092 ,BN1093 ,BN1093R
-	,BN1094 ,BN1095 ,BN1096 ,BN1097 ,BN1097R
+	,BN1094 ,BN1095 ,BN1096 ,BN1097 ,BN1097R	
+	,BN1385 ,BN1386 ,BN1387 ,BN1388 ,BN1388R
+	,BN1389 ,BN1390 ,BN1391 ,BN1392 ,BN1392R
 	,BN517	,BN081	        ,BN1234A
 	
 	// Detalle (totales) de las correcciones al resultado contable
@@ -1100,47 +1205,49 @@ public enum Mod2002022Key implements IMod200Key {
 	,LM2253	,LM2254	,LM1979	,LM1980	,LM1981
 	,LM2399	,LM2400	,LM2255	,LM2256	,LM2257	
 	,LM1098	,LM1099	,LM2401	,LM2402	,LM2403
-					,LM1100	,LM1101	,LM1102
+	,LM1393	,LM1394	,LM1100	,LM1101	,LM1102
+					,LM1395	,LM1396	,LM1397
 	,LM1212	,LM1213	,LM1214	,LM1215	,LM1216
 	
 	// Pendiente de adición por límite beneficio operativo no aplicado	
-	,LM1217	,LM1218	
-	,LM1467	,LM1468	,LM1469
+		
+	,LM1467	,LM1468	
 	,LM1741	,LM1742	,LM1743
 	,LM1982	,LM1983	,LM1984
 	,LM2258	,LM2259	,LM2260
 	,LM2404	,LM2405	,LM2406
 	,LM1103	,LM1104	,LM1105
+	,LM1398 ,LM1399 ,LM1400
 	,LM538	,LM539	,LM546	
 
 // --------------- PAGINA 20 BIS --------------- //
 	
-	// Desglose LQ1032 - Reserva de capitalizacion
-	,LQ1744	,LQ1745		
-	,LQ1985	,LQ1986	,LQ1987
+	// Desglose LQ1032 - Reserva de capitalizacion			
+	,LQ1985	,LQ1986	
 	,LQ2407	,LQ2408	,LQ2409
 	,LQ1106	,LQ1107	,LQ1108
+	,LQ1401 ,LQ1402 ,LQ1403
 	,LQ1137			,LQ1139
 	
 	,LQ1140	
 	
-	// Desglose LQ1033, LQ1034 - Reserva de Nivelación 
-	,LQ1144	,LQ1145	,LQ1600	       
-	,LQ1455	,LQ1456	,LQ1601	,LQ1457
+	// Desglose LQ1033, LQ1034 - Reserva de Nivelación		       
+	,LQ1455	,LQ1456	,LQ1601	
 	,LQ1961	,LQ1962	,LQ1602 ,LQ1963
 	,LQ2238	,LQ2239	,LQ1603 ,LQ2240
 	,LQ2410	,LQ2411	,LQ1604 ,LQ2412
 	,LQ1109	,LQ1730	,LQ1605 ,LQ1111
+	,LQ1406 ,LQ1404 ,LQ1405 ,LQ1407
 	,LQ1034A 				,LQ1731
-	,LQ1147  		,LQ1606 ,LQ1149
+	,LQ1147  		,LQ1606 ,LQ1149	
 	
-	,LQ1154	,LQ1155	,LQ1156	,LQ1157
 	,LQ1458	,LQ1459	,LQ1460	,LQ1461
 	,LQ1732	,LQ1733	,LQ1734	,LQ1735
 	,LQ1964	,LQ1965	,LQ1966	,LQ1967
 	,LQ2241	,LQ2242	,LQ2243	,LQ2244
 	,LQ2413	,LQ2414	,LQ2415	,LQ2416
 	,LQ1112	,LQ1113	,LQ1114	,LQ1115
+	,LQ1872 ,LQ1410 ,LQ1411 ,LQ1412
 	,LQ1158	,LQ1159	,LQ1160	,LQ1161
 	
 // --------------- PAGINA 20 TER --------------- //
@@ -1159,17 +1266,19 @@ public enum Mod2002022Key implements IMod200Key {
 	,LM2100	,LM2101	,LM2102	,LM2103	,LM2104	,LM2267 ,LM2105	,LM2106	,LM2107	,LM2108	
 	,LM2268	,LM2269	,LM2270	,LM2271	,LM2272 ,LM2417	,LM2273	,LM2274	,LM2275	,LM2276
 	,LM2418	,LM2419	,LM2420	,LM2421	,LM2422	,LM1116	,LM2423	,LM2424	,LM2425	,LM2426
-	,LM1117	,LM1118	,LM1119	,LM1120	,LM1121			,LM1122	,LM1131	,LM1132	,LM1133
+	,LM1117	,LM1118	,LM1119	,LM1120	,LM1121	,LM1413	,LM1122	,LM1131	,LM1132	,LM1133
+	,LM1414 ,LM1415 ,LM1416 ,LM1417 ,LM1418 		,LM1419 ,LM1420 ,LM1421	,LM1422
+	
 	,LM1561, LM1562	,LM1563	,LM1564	,LM1565	,LM1566	,LM1567	,LM1568	,LM1569	,LM1570
 	
 	// Conversión de activos por impuesto diferido en crédito exigible frente a la Admón. tributaria
 	,LM393 // Las casillas LM150 y LM506 están en la página 14 
 	
-	// Exceso cuota líquida positiva (art. 130.1 y DT 33ª.4 LIS)	
-	,LM2109	,LM2110	,LM2111	
-	,LM2277	,LM2278	,LM2279	,LM2280
+	// Exceso cuota líquida positiva (art. 130.1 y DT 33ª.4 LIS)		
+	,LM2277	,LM2278	,LM2279	
 	,LM2427	,LM2428	,LM2429	,LM2430
 	,LM1134	,LM1135	,LM1136	,LM1138
+	,LM1423 ,LM1424 ,LM1425 ,LM1469
 	,LM1579	,LM1580	,LM1581	,LM1582
 	
 // --------------- PAGINA 20 QUARTER --------------- //
@@ -1205,22 +1314,19 @@ public enum Mod2002022Key implements IMod200Key {
 	,LM1991 ,LM2261 ,LM2262 ,LM1992	,LM1993, LM2263
 	,LM2264 ,LM2431 ,LM2432 ,LM2265	,LM2266, LM2433
 	,LM2434 ,LM1143 ,LM1148	,LM2435	,LM2436, LM1192
-	,LM1162        			,LM1163	,LM1164
+	,LM1162 ,LM1470 ,LM1471 ,LM1163	,LM1164 ,LM1915
+	,LM1479					,LM1480 ,LM1500
 	,LM1494	,LM1495	,LM1496	,LM1497	,LM1498	,LM1499
 
 // --------------- PAGINA 21 --------------- //
 	
 	// Comunicación del importe neto de la cifra de negocios
 	,CN987  // Importe neto de la cifra de negocios del conjunto de las entidades del grupo
+	,CN1897 // Importe neto de la cifra de negocios del conjunto de las actividades agrícolas y/o ganaderas
+	,CN1901 // Otros ingresos de explotación de actividades agrícolas y/o ganaderas
 	,CN988  // Importe neto cifra de negocios del conjunto de establecimientos permanentes de la misma persona física o entidad titular
 	,CNEST  // Número de establecimientos permanentes a través de los que opera, en caso de persona física titular
 	,CN989  // Importe neto de la cifra de negocios en el ejercicio, entidades que hayan marcado la clave de caracteres de la declaración [00003], [00004], [00024] ó [00025] 
-	
-	// Importe neto de la cifra de negocios (INCN) de los doce meses anteriores a la fecha de inicio del período impositivo
-	// 1 - INCN inferior a 20 millones de euros					
-	// 2 - INCN de al menos 20 millones de euros pero inferior a 60 millones de euros					
-	// 3 - INCN de al menos 60 millones de euros					
-	,VOLOPE
 	
 	// Desglose LQ579 - Entidades navieras en regimen de tributacion en funcion del tonelaje
 	,LQ0N1
@@ -1231,20 +1337,21 @@ public enum Mod2002022Key implements IMod200Key {
 // --------------- PAGINA 22 --------------- //
 	
 	// Desglose I0403, D0404 - Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994) 
-	,RC089	,RC094	,RC095	,RC2437	
-	,RC097	,RC098	,RC047	,RC2438	,RC048
+	,RC097	,RC098	,RC047	,RC2438	
 	,RC524	,RC525	,RC526	,RC2439	,RC527
 	,RC922	,RC923	,RC924	,RC2440	,RC925
 	,RC1165	,RC928	,RC938	,RC2441	,RC996
-			,RC1168	,RC1172	,RC1174	,RC1175
-			
+	,RC1744	,RC1168	,RC1172	,RC1174	,RC1175
+			,RC1745 ,RC1746 ,RC1820 ,RC1821
+	
 	,RC927
 	
-	,RC2442					,RC2443
-	,RC2444					,RC2445
+	,RC2442					
+	,RC2444					
 	,RC2446					,RC2447
 	,RC1176					,RC2451
-			,RC1177	,RC1180	,RC1184
+	,RC1823					,RC1184
+			,RC1523 ,RC130 	,RC1600
 			
 	// Desglose LQ553, LQ554 - Cooperativas - Determinacion de la base imponible 
 	,CP0C1	,CP0E1
@@ -1283,6 +1390,7 @@ public enum Mod2002022Key implements IMod200Key {
 	,LQ2281	,LQ2282	,LQ2283
 	,LQ2452	,LQ2453	,LQ2454
 	,LQ1186	,LQ1187	,LQ1190
+	,LQ1516 ,LQ1517 ,LQ1518
 	,LQ694  		,LQ695
 	,LQ1225  		,LQ1226
 	
@@ -1339,6 +1447,7 @@ public enum Mod2002022Key implements IMod200Key {
 	,TR486	,TR487	,TR488	,TR489	,TR618
 	,TR1334	,TR1335	,TR1336	,TR1337	,TR1332
 	,TR1338	,TR1339	,TR1340	,TR1341	,TR1333
+	,TR1877 ,TR1878 ,TR1879 ,TR1880 ,TR1881
 	,TR1624 ,TR1625 ,TR1629 ,TR1630 ,TR1587
 	,TR1607 ,TR1608 ,TR1609 ,TR1610 ,TR1583
 	,TR1611 ,TR1612 ,TR1613 ,TR1623 ,TR1585
@@ -1396,3 +1505,4 @@ public enum Mod2002022Key implements IMod200Key {
 	}
 	
 }
+

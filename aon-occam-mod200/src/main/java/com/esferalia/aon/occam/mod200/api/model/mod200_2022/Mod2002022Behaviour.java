@@ -282,13 +282,16 @@ public class Mod2002022Behaviour {
         // Base Imponible	
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ550, new Boolean[]{TRUE,TRUE});		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1032,new Boolean[]{FALSE,TRUE});
+		// FALTA - NUEVAS CASILLAS 541 Y 564 VER SI SE PUEDEN CUMPLIMENTAR
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ547,new Boolean[]{FALSE,TRUE});
+		// FALTA - NUEVAS CASILLAS 1887 Y 1890 VER SI SE PUEDEN CUMPLIMENTAR
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ552, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1033,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1034,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1330,new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ553, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ554, new Boolean[]{FALSE,TRUE});
+		// FALTA - NUEVAS CASILLAS 1576 Y 1577 VER SI SE PUEDEN CUMPLIMENTAR
 		
 		// Tipo de Gravamen
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ558,new Boolean[]{TRUE,FALSE});
@@ -318,6 +321,7 @@ public class Mod2002022Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN082,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1040,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1041,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN619, new Boolean[]{TRUE,TRUE});  // FALTA - SUPONGO QUE ESTA NUEVA CASILLA SERA CALCULADA
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN592, new Boolean[]{TRUE,TRUE});
 		
 		// Total retenciones e ingresos a cuenta
@@ -341,9 +345,13 @@ public class Mod2002022Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN618, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1234B,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1332,new Boolean[]{FALSE,TRUE});		
-		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1200,new Boolean[]{FALSE,TRUE});
+		//BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1200,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1892,new Boolean[]{FALSE,TRUE});  // FALTA - LA CASILLA 1200 LA RENUMERAN COMO 1892
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1042,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1333,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1319,new Boolean[]{FALSE,TRUE});  // FALTA - ESTA NUEVA CASILLA SE SUPONE QUE SERA CALCULADA (1893+1881)
+		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1893,new Boolean[]{FALSE,TRUE});  // FALTA - ESTA NUEVA CASILLA SE SUPONE QUE SERA CALCULADA
+		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1881,new Boolean[]{FALSE,TRUE});  // FALTA - ESTA NUEVA CASILLA SE SUPONE QUE SERA CALCULADA
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1586, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1587, new Boolean[]{FALSE,TRUE});
 		
@@ -384,6 +392,9 @@ public class Mod2002022Behaviour {
 		// Desglose Casilla 547
 		addBreakdown(Mod2002022LQ547Key.values(), Mod2002022Key.LQ547);
 		
+		// Desglose Casilla 243
+		addBreakdown(Mod2002022LQ243Key.values(), Mod2002022Key.LQ243);
+		
 		// Desglose Casilla 570
 		addBreakdown(Mod2002022BN570Key.values(), Mod2002022Key.BN570, new byte[] {2,4});  // Dos columnas calculadas 
 		
@@ -413,6 +424,15 @@ public class Mod2002022Behaviour {
 		
 		// Desglose Casilla 588
 		addBreakdown(Mod2002022BN588Key.values(), Mod2002022Key.BN588, Mod2002022Key.BN634);
+		
+		// Desglose Casilla 2315
+		addBreakdown(Mod2002022BN2315Key.values(), Mod2002022Key.BN2315);
+		
+		// Desglose Casilla 1039
+		addBreakdown(Mod2002022BN1039Key.values(), Mod2002022Key.BN1039);  // FALTA - ESTE DESGLOSE TIENE 4 COLUMNAS, NO SÉ SI ALGUNA COLUMNA MAS TAMBIEN ES CALCULADA
+		
+		// Desglose Casilla 2314
+		addBreakdown(Mod2002022BN2314Key.values(), Mod2002022Key.BN2314);  // FALTA - ESTE DESGLOSE TIENE 4 COLUMNAS, NO SÉ SI ALGUNA COLUMNA MAS TAMBIEN ES CALCULADA
 		
 		// Desglose Casilla 565
 		addBreakdown(Mod2002022BN565Key.values(), Mod2002022Key.BN565);
@@ -508,7 +528,7 @@ public class Mod2002022Behaviour {
 
 		// Dotaciones por deterioro de créditos u otros activos derivados de las posibles insolvencias de los deudores no
 	    // vinculados con el contribuyente y otras del art. 11.12 LIS con posibilidad de conversión en crédito exigible
-		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LM1164, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LM1500, new Boolean[]{FALSE,TRUE});
 		addBreakdown(Mod2002022LM1494Key.values(), Mod2002022Key.LM1494, new byte[]{});  // No lleva columnas de totales
 		
 	}
@@ -566,6 +586,7 @@ public class Mod2002022Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.TR618, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.TR1332,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.TR1333,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.TR1881,new Boolean[]{FALSE,TRUE});
 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.TR1624,new Boolean[]{FALSE,TRUE}); 
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.TR1625,new Boolean[]{FALSE,TRUE}); 
