@@ -595,6 +595,7 @@
   right: 0;
   overflow-x: hidden;
   background-color: var(--aonBackground);
+  border-radius: 6px;
   z-index: 2;
 }
 
