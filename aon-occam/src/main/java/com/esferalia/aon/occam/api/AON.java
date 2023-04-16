@@ -3785,8 +3785,9 @@ public class AON {
 	}
 	
 	public static Project getProject(String domainName, Integer domainId, String login, ProjectFilter filter) {
-		return getProjectStream(domainName, domainId, login, filter)
-				.findFirst().orElse(new Project());
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProject(ctx, filter);
+		}
 	}
 
 	public static LinkedList<Project> getProjectList(String domainName, Integer domainId, String login, ProjectFilter filter) {
