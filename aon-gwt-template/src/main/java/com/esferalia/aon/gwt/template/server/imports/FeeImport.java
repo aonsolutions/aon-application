@@ -32,6 +32,7 @@ import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.product.ProductKind;
 import com.esferalia.aon.occam.api.model.product.ProductStatus;
 import com.esferalia.aon.occam.api.model.product.Tax;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
@@ -254,12 +255,15 @@ public class FeeImport extends Import {
 		
 		// PROJECT
 		if(fee.getProject().getAlias() != null) {
-			fee.setProject(AON.getProject(domain.getName(), domain.getId(), user.getLogin(), f -> projectFilter(domain, user, feeInfo.getFee(), f)));			
-			if(fee.getProject().getId() == null) {
-				error.setError(false);
-				error.setTextError("Línea " + feeInfo.getLine() + ": El expediente introducido no existe.");
-				return error;
+			Project project = AON.getProject(domain.getName(), domain.getId(), user.getLogin(), f -> projectFilter(domain, user, feeInfo.getFee(), f));			
+			if(project.getId() == null) {
+				project = AON.saveProject(domain, user, new Project()
+						.setDomain(domain)
+						.setRegistry(fee.getCustomer())
+						.setAlias(fee.getProject().getAlias())
+						.setName(fee.getProject().getAlias()));
 			}
+			fee.setProject(project);
 		}
 		
 		// WORKPLACE
