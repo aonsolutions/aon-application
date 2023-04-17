@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.IFinance;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
@@ -96,6 +97,11 @@ public class FinanceImpl implements IFinance {
 				configuration -> InvoiceDAO.accept(ctx, invoice, rawdocId));
 	}
 	
+	@Override
+	public Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> InvoiceDAO.getInvoiceHeaders(ctx, params, offset, limit));
+	}
 	@Override
 	public Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
 		return ctx.getDslContext().transactionResult(
@@ -315,6 +321,11 @@ public class FinanceImpl implements IFinance {
 	public void updateWithholdingType(AONContext ctx, Integer invoiceId, WithholdingType newType) {
 		ctx.getDslContext().transaction(configuration
 				-> InvoiceDAO.updateWithholdingType( ctx , invoiceId, newType));
+	}
+	@Override
+	public void updateActivity(AONContext ctx, Integer invoiceId, Integer activity) {
+		ctx.getDslContext().transaction(configuration
+				-> InvoiceDAO.updateActivity( ctx , invoiceId, activity));
 	}
 	@Override
 	public FinanceUtilitiesResult missingFinanceInvoices(AONContext ctx,FinanceUtilitiesParams params) {

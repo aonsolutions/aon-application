@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.Alarm;
@@ -1815,6 +1816,12 @@ public class AON {
 	// ********************************* FINANCE **
 	// ********************************************
 	
+	public static Stream<Invoice> getInvoiceHeaders(Occam occam, AccountingReportParams params, int offset, int limit) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceHeaders(ctx, params, offset, limit);
+		}
+	}
+
 	public static Stream<Invoice> getInvoiceStream(Occam occam, InvoiceFilter filter){
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFinance().getInvoiceStream(ctx, filter);
