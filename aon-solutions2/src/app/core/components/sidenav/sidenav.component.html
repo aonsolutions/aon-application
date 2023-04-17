@@ -10,10 +10,10 @@
     </div>
     <div [ngClass]="!service.opened ? {'menuIcon': true} : {'menuOpened': true}" *ngFor="let item of items;" routerLink={{item.routerlink}}>
         <div style="display:flex; align-items: center;">
-        <set-icon [attr.shape]="item.shape" set-color color={{item.color}}></set-icon>
-        <div *ngIf="service.opened" style="margin-left: 5px;font-size: 14px;font-weight: 500;">
-            {{item.text}}
-        </div>
+            <set-icon [attr.shape]="item.shape" set-color color={{item.color}}></set-icon>
+            <div *ngIf="service.opened" style="margin-left: 5px;font-size: 14px;font-weight: 500;">
+                {{item.text}}
+            </div>
         </div>
     </div>
 </div>

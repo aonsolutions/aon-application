@@ -1,12 +1,3 @@
-.example-container {
-    position: absolute;
-    top: max(65px,7vh);
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #eee;
-}
-
 .menuIndex {
     display: flex;
     align-items: center;
@@ -21,8 +12,8 @@
 .menuIndexOpened {
     display: flex;
     align-items: center;
-    margin-left: 1vh !important;
-    padding-left: 1vh !important;
+    margin-left: 1rem !important;
+    padding-left: 1rem !important;
     border: solid;
     height: 10%;
     width: 80%;
@@ -45,8 +36,8 @@
 .menuOpened {
     display: flex;
     align-items: center;
-    margin-left: 1vh !important;
-    padding-left: 2vh !important;
+    margin-left: 1rem !important;
+    padding-left: 1rem !important;
     border: solid;
     height: 10%;
     width: 80%;
@@ -67,10 +58,6 @@
     background-color: lightblue;
 }
 
-.mat-list-base {
-    padding-top: 0px !important;
-}
-
 .floatButton1 {
     position: fixed;
     display: flex;
@@ -81,10 +68,10 @@
     border-width: 1px;
     border-color: lightgrey;
     border-radius: 50px;
-    height: 2vh;
-    width: 2vh;
+    height: 1.5rem;
+    width: 1.5rem;
     z-index: 5;
-    left: 24vh;
+    left: 15.25rem;
     background-color: white;
     cursor: pointer;
 }
@@ -98,9 +85,9 @@
     border-width: 1px;
     border-color: lightgrey;
     border-radius: 50px;
-    height: max(15px,2vh);
-    width: max(15px,2vh);
-    left: max(55px,6vh);
+    height: 1.5rem;
+    width: 1.5rem;
+    left: 3.25rem;
     z-index: 5;
     background-color: white;
     cursor: pointer;
