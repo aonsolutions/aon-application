@@ -43,6 +43,9 @@ public enum QualitySheetCode implements IsSerializable{
 	/** ANALISIS CALIDAD - COLOR - SOLO PARA BASERRI Y EUSKOLABEL */
 	UFQAC8("ufqac8"),
 	
+	/** ANALISIS CALIDAD - NITRATOS */
+	UFQAC9("ufqac9"),
+	
 	// CONTROL CALIBRES
 	
 	/** CONTROL CALIBRES - PESO MUESTRA */
