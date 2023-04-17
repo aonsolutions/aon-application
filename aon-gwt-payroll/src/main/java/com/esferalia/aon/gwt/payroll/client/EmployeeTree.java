@@ -221,9 +221,6 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(workplace);
 			employeeDialog.setEmployeeDialogObject(employeeDialogObject);
 			workplaceContextMenu.hide();
-			employeeDialog.center();
-			employeeDialog.show();
-//			EmployeeTree.this.employees.refresh(workplace);
 		}
 	}
 
@@ -4195,13 +4192,10 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	protected static void showNewContract() {
 		EmployeeDialog employeeDialog = new EmployeeDialog(true) {
 			@Override
-			protected void onAccept(Integer contractId) {
-			}
+			protected void onAccept(Integer contractId) {}
 		};
 		EmployeeDialogObject employeeDialogObject = new EmployeeDialogObject(getEmployeeTree().workplace);
 		employeeDialog.setEmployeeDialogObject(employeeDialogObject);
-		employeeDialog.center();
-		employeeDialog.show();
 	}
 
 	protected static void invokeRefreshWorkplace() {
@@ -4663,10 +4657,14 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 //		dockLayoutPanel.animate(500);
 		employees.setWidth("36px");
 		employees.createStaticEmployees();
+		dockLayoutPanel.getElement().getStyle().setMarginLeft(0, Unit.PX);
 	}
 
 	@Override
-	public void onShowEmployees() {
+	public void onShowEmployees(boolean isCollapsed) {
+		if(isCollapsed) dockLayoutPanel.getElement().getStyle().setMarginLeft(36, Unit.PX);
+		else dockLayoutPanel.getElement().getStyle().setMarginLeft(0, Unit.PX);
+			
 		employees.showEmployees();
 		employees.setWidth("340px");
 //		dockLayoutPanel.setWidgetSize(employees, 275);

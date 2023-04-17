@@ -670,16 +670,17 @@ public class AgreementUpdate {
 							.set(AGREEMENT_LEVEL_DATA.CREATION_USER, userLogin)
 							.set(AGREEMENT_LEVEL_DATA.CREATION_DATE, modificationDate)
 							.execute();
-					} else {
-						if( !AonStringUtils.containsIgnoreCase(lvlData.getName(), "TOTAL") &&
-							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "PAGA_EXTRA") &&
-							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "PAGAS_EXTRA") &&
-							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "+") &&
-							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "%"))
-								
-								System.out.println("Not updated -> " + lvlData.getName());
-	//							mapVarNotInsert.put(lvlData.getName(), lvlData.getName());
-					}
+					} 
+//					else {
+//						if( !AonStringUtils.containsIgnoreCase(lvlData.getName(), "TOTAL") &&
+//							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "PAGA_EXTRA") &&
+//							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "PAGAS_EXTRA") &&
+//							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "+") &&
+//							!AonStringUtils.containsIgnoreCase(lvlData.getName(), "%"))
+//								
+//								System.out.println("Not updated -> " + lvlData.getName());
+//	//							mapVarNotInsert.put(lvlData.getName(), lvlData.getName());
+//					}
 				}
 				
 			}
@@ -691,7 +692,7 @@ public class AgreementUpdate {
 			Calendar defaultPaymentStartDate = Calendar.getInstance();
 			defaultPaymentStartDate.set(Calendar.DAY_OF_MONTH, 1);
 			defaultPaymentStartDate.set(Calendar.MONTH, 0);
-			defaultPaymentStartDate.set(Calendar.YEAR, 2010);
+			defaultPaymentStartDate.set(Calendar.YEAR, 1970);
 			
 			removeServiAgreementPayments(dslContext, agreementId);
 			

@@ -62,38 +62,6 @@ public class HomeBases2023Update implements Update {
 		
 		Date start2023Date = new Date(calendar.getTimeInMillis());
 
-		boolean upgraded =
-		dslContext.fetchCount(
-		dslContext.select()
-		.from(SYSTEM_DATA)
-		.where(SYSTEM_DATA.DOMAIN.eq(DOMAIN))
-		.and(SYSTEM_DATA.NAME.eq(BASE_CGC_MIN))
-		.and(SYSTEM_DATA.START_DATE.eq(start2023Date))) > 0;
-
-		calendar.set(Calendar.DAY_OF_MONTH, 1);
-		calendar.set(Calendar.MONTH, Calendar.SEPTEMBER);
-		calendar.set(Calendar.YEAR, 2021);
-		
-		Date startSeptember2021Date = new Date(calendar.getTimeInMillis());
-
-		if ( upgraded ) 
-			return;
-
-		calendar.set(Calendar.DAY_OF_MONTH, 31);
-		calendar.set(Calendar.MONTH, Calendar.DECEMBER);
-		calendar.set(Calendar.YEAR, 2022);
-		Date end2022Date = new Date(calendar.getTimeInMillis());
-
-
-		UpdateConditionStep<SystemDataRecord> close2022BasesMin =
-		dslContext
-		.update(SYSTEM_DATA)
-		.set(SYSTEM_DATA.END_DATE, end2022Date)
-		.where(SYSTEM_DATA.DOMAIN.eq(DOMAIN))
-		.and(SYSTEM_DATA.NAME.in(BASE_CGC_MIN, BASE_CGP_MIN, BASE_CGC_MAX, BASE_CGP_MAX))
-		.and(SYSTEM_DATA.START_DATE.eq(startSeptember2021Date))
-		;
-		
 		InsertOnDuplicateStep<SystemDataRecord> insert2023Bases = 
 		dslContext
 		.insertInto(SYSTEM_DATA)
@@ -125,8 +93,6 @@ public class HomeBases2023Update implements Update {
 		dslContext.transaction( (config) -> {
 			
 			dslContext.execute("SET FOREIGN_KEY_CHECKS=0;");
-			
-			close2022BasesMin.execute();
 			
 			insert2023Bases.execute();
 			

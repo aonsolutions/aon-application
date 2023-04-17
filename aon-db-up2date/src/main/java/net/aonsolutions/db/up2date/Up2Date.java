@@ -19,13 +19,18 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import net.aonsolutions.db.up2date.payroll.AgreementPaymentStartDateUpdate;
-import net.aonsolutions.db.up2date.payroll.AgreementPurge;
-import net.aonsolutions.db.up2date.tgss.ArtistBaseCgcMax2023Update;
 import net.aonsolutions.db.up2date.finance.SagardoBusUpdate;
-import net.aonsolutions.db.up2date.fiscal.RefreshMod130Result;
-import net.aonsolutions.db.up2date.payroll.MaxEmbargable4ProrratedFix;
+import net.aonsolutions.db.up2date.tgss.AgriculturalBases2023Update;
+import net.aonsolutions.db.up2date.tgss.Art1512023Update;
+import net.aonsolutions.db.up2date.tgss.Bases2023Update;
+import net.aonsolutions.db.up2date.tgss.FellowBases2023Update;
+import net.aonsolutions.db.up2date.tgss.FellowsPercentages2023Update;
+import net.aonsolutions.db.up2date.tgss.HomeBases2023UpdateII;
+import net.aonsolutions.db.up2date.tgss.MEITrainingBaseCgcMinUndo;
+import net.aonsolutions.db.up2date.tgss.MEIUpdate;
 import net.aonsolutions.db.up2date.tgss.SiltraRattachOldDelete;
+import net.aonsolutions.db.up2date.tgss.TrainingPercentages2023Update;
+import net.aonsolutions.db.up2date.tgss.TrainningBases2023Update;
 
 public class Up2Date {
 
@@ -344,7 +349,23 @@ public class Up2Date {
 	    // ArtistBaseCgcMax2023Update.ARTISTBASECGCMAX2023UPDATE,
 	    // MaxEmbargable4ProrratedFix.MAXEMBARGABLE4PRORRATEDFIX,
 	    // RefreshMod130Result.REFRESH_MOD130_RESULT,
-            AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE,
+	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE,
+            // Mod145StartDateUpdate.MOD145STARTDATEUPDATE,
+	    // IrpfDelaysUpdate.IRPFDELAYSUPDATE,
+	    // Bases2023Update.BASES2023UPDATE,
+	    // HomeBases2023UpdateII.HOMEBASES2023UPDATEII,
+	    // FellowBases2023Update.FELLOWBASES2023UPDATE,
+	    // TrainningBases2023Update.TRAINNINGBASES2023UPDATE,
+	    // MEITrainingBaseCgcMinUndo.MEITRAININGBASECGCMINUNDO,
+	    // AgriculturalBases2023Update.AGRICULTURALBASES2023UPDATE,
+	    // MEIUpdate.MEIUPDATE,
+	    // Art1512023Update.ART1512023UPDATE,
+	    // FellowsPercentages2023Update.FELLOWSPERCENTAGES2023UPDATE,
+            // TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
+		
+	    //DOMAIN
+	    // DomainAonStatus.DOMAIN_AON_STATUS,
+	    // DomainAonCustomer.DOMAIN_AON_CUSTOMER,
 
 	    // Important, not remove
 	    // AgreementPurge.AGREEMENTPURGE,

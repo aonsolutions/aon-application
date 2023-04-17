@@ -777,12 +777,13 @@ public class JooqEmployee {
 			contractData.setActivityId(enterpriseActivityId);
 			
 			//ENTERPRISE DATA
-			String enterpriseDocument = dslContext.select(REGISTRY.DOCUMENT).from(REGISTRY)
+			Record enterpriseRecord = dslContext.select().from(REGISTRY)
 					.where(REGISTRY.ID.eq(
 							dslContext.select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(employeeData.getDomain())).fetchOne(ENTERPRISE.REGISTRY)
-					)).fetchOne(REGISTRY.DOCUMENT);
+					)).fetchOne();
 			
-			contractData.setEnterpriseCIF(enterpriseDocument);
+			contractData.setEnterpriseCIF(enterpriseRecord.get(REGISTRY.DOCUMENT));
+			contractData.setEnterpriseName(enterpriseRecord.get(REGISTRY.NAME));
 			
 			//ENTERPRISE CCC TABLE
 			Integer enterpriseCCCId = contractTable.get(CONTRACT.ENTERPRISE_CCC);
@@ -936,7 +937,10 @@ public class JooqEmployee {
 			}else if(AonStringUtils.equalsIgnoreCase(r.get(CONTRACT_DATA.NAME), "TRANSFORM_DATE")) {
 				try {
 					contractData.setTransformDate(formatDate.parse(r.get(CONTRACT_DATA.EXPRESSION)));
-					if(null != contractData.getTransformDate()) contractData.setOriginalEndDate(DateUtils.addDays2Date(contractData.getTransformDate(), -1));
+					if(null != contractData.getTransformDate()) {
+						java.util.Date originalEndDate = DateUtils.copyDateOnly(contractData.getTransformDate());
+						contractData.setOriginalEndDate(DateUtils.addDays2Date(originalEndDate, -1));
+					}
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}

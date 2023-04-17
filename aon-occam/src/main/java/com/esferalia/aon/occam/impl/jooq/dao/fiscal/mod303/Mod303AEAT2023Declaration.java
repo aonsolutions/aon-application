@@ -11,19 +11,22 @@ import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInf
 import static com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.DeclarationInfoUtil.width500;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.stream.IntStream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
-import com.esferalia.aon.occam.api.model.fiscal.FiscalModelDetail;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303Activity;
+import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityDesk;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityFarmer;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303ActivityModule;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IEpigraph;
 import com.esferalia.aon.occam.api.model.fiscal.modules.IFarmerIVA;
+import com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.Mod303Key;
 import com.esferalia.aon.occam.api.model.type.VATRegime;
@@ -47,6 +50,11 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 	@FunctionalInterface
 	private interface ISimplifiedRegimeActivityPopulator {
 		void populate(Mod303 mod);
+	}
+
+	@FunctionalInterface
+	private interface ISimplifiedRegimeCopier {
+		void copy(Mod303 prev, Mod303 current);
 	}
 
 	protected Mod303AEAT2023Declaration() {
@@ -86,7 +94,8 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 		,CM_007(Mod303Key.CM_007)
 //		,CM_072(Mod303Key.CM_072)
 
-		,CT_A12(Mod303Key.CT_A12, null, null, (ctx, mod) -> set(Mod303Key.CT_A12, mod, 2), null, null, null, null, true)
+		,CT_A12(Mod303Key.CT_A12, null, null, (ctx, mod) -> set(Mod303Key.CT_A12, mod, 2), null, null, null, null
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_A12))
 		,CM_002(Mod303Key.CM_002, null, null, (ctx, mod) -> add(Mod303Key.CM_002, mod,(AonStringUtils.equals(AppParamDAO.fetchValue(ctx, AppParam.FS_TAX_REFUND_REGISTRY),AonStringUtils.ONE)) ? 1 : 0),null, null)
 		,CT_A02(Mod303Key.CT_A02)
 		,CT_A03(Mod303Key.CT_A03)
@@ -97,8 +106,10 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 		,CT_A04(Mod303Key.CT_A04)
 		,CT_A05(Mod303Key.CT_A05)
 		,CT_A06(Mod303Key.CT_A06)
-		,CT_A13(Mod303Key.CT_A13, null, null, (ctx, mod) -> set(Mod303Key.CT_A13, mod, 2), null, null, null, null, true)
-		,CT_A14(Mod303Key.CT_A14, null, null, (ctx, mod) -> set(Mod303Key.CT_A14, mod, 0), null, null, null, null, true)
+		,CT_A13(Mod303Key.CT_A13, null, null, (ctx, mod) -> set(Mod303Key.CT_A13, mod, 2), null, null, null, null
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_A13))
+		,CT_A14(Mod303Key.CT_A14, null, null, (ctx, mod) -> set(Mod303Key.CT_A14, mod, 0), null, null, null, null
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_A14))
 		,CT_A11(Mod303Key.CT_A11)
 
 		// ---------------------------------------------------------
@@ -315,1177 +326,1596 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 		// --------------------------------------------------------------
 
 		// (1) Actividades agrícolas, ganaderas y forestales. Código
-		,
-		CT_SA11(Mod303Key.CT_SA11, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_SA11, ensureFarmerActivity(mod, 0).getCode()),
-				mod -> ensureFarmerActivity(mod, 0).setCode(mod.getDescription(Mod303Key.CT_SA11)), true)
+		,CT_SA11(Mod303Key.CT_SA11, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_SA11, ensureFarmerActivity(mod, 0).getCode())
+			,mod -> ensureFarmerActivity(mod, 0).setCode(mod.getDescription(Mod303Key.CT_SA11))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA11))
 		// (1) Actividades agrícolas, ganaderas y forestales. Descripción
-		,
-		CT_SA1D(Mod303Key.CT_SA1D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_SA1D, ensureFarmerActivity(mod, 0).getDescription()),
-				mod -> ensureFarmerActivity(mod, 0).setDescription(mod.getDescription(Mod303Key.CT_SA1D)), true)
+		,CT_SA1D(Mod303Key.CT_SA1D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_SA1D, ensureFarmerActivity(mod, 0).getDescription())
+			,mod -> ensureFarmerActivity(mod, 0).setDescription(mod.getDescription(Mod303Key.CT_SA1D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA1D))
 		// (1) Actividades agrícolas, ganaderas y forestales. Volumen de ingresos
-		,
-		CT_SA12(Mod303Key.CT_SA12, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_SA12, ensureFarmerActivity(mod, 0).getVol()),
-				mod -> ensureFarmerActivity(mod, 0).setVol(mod.getAmount(Mod303Key.CT_SA12)), false)
+		,CT_SA12(Mod303Key.CT_SA12, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_SA12, ensureFarmerActivity(mod, 0).getVol())
+			,mod -> ensureFarmerActivity(mod, 0).setVol(mod.getAmount(Mod303Key.CT_SA12))
+			,null)
 		// (1) Actividades agrícolas, ganaderas y forestales. Índice de cuota
-		,
-		CT_SA13(Mod303Key.CT_SA13, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_SA13, (ensureFarmerActivity(mod, 0).getInd() * 10000)),
-				mod -> ensureFarmerActivity(mod, 0).setInd(mod.getAmount(Mod303Key.CT_SA13) / 10000), false)
+		,CT_SA13(Mod303Key.CT_SA13, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_SA13, (ensureFarmerActivity(mod, 0).getInd() * 10000))
+			,mod -> ensureFarmerActivity(mod, 0).setInd(mod.getAmount(Mod303Key.CT_SA13) / 10000)
+			,null)
 		// (1) Actividades agrícolas, ganaderas y forestales. Cuota devengada
-		,
-		CT_SA14(Mod303Key.CT_SA14, null, null, null, "(hasFarmerActivity(0))?round(CT_SA12*CT_SA13/10000):(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA14, ensureFarmerActivity(mod, 0).getCuo()),
-				mod -> ensureFarmerActivity(mod, 0).setCuo(mod.getAmount(Mod303Key.CT_SA14)), true)
+		,CT_SA14(Mod303Key.CT_SA14, null, null, null
+			,"(hasFarmerActivity(0))?round(CT_SA12*CT_SA13/10000):(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA14, ensureFarmerActivity(mod, 0).getCuo())
+			,mod -> ensureFarmerActivity(mod, 0).setCuo(mod.getAmount(Mod303Key.CT_SA14))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA14))
 		// (1) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral
-		,
-		CT_SA15(Mod303Key.CT_SA15, null, null, null, "(hasFarmerActivity(0) && !isLastPeriod())?CT_SA15:(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA15, ensureFarmerActivity(mod, 0).getPor()),
-				mod -> ensureFarmerActivity(mod, 0).setPor(mod.getAmount(Mod303Key.CT_SA15)), false)
+		,CT_SA15(Mod303Key.CT_SA15, null, null, null
+			,"(hasFarmerActivity(0) && !isLastPeriod())?CT_SA15:(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA15, ensureFarmerActivity(mod, 0).getPor())
+			,mod -> ensureFarmerActivity(mod, 0).setPor(mod.getAmount(Mod303Key.CT_SA15))
+			,null)
 		// (1) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A]
-		,
-		CT_SA16(Mod303Key.CT_SA16, null, null, null,
-				"(hasFarmerActivity(0) && !isLastPeriod())?round(CT_SA14*CT_SA15/100):(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA16, ensureFarmerActivity(mod, 0).getIng()),
-				mod -> ensureFarmerActivity(mod, 0).setIng(mod.getAmount(Mod303Key.CT_SA16)), true)
+		,CT_SA16(Mod303Key.CT_SA16, null, null, null
+			,"(hasFarmerActivity(0) && !isLastPeriod())?round(CT_SA14*CT_SA15/100):(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA16, ensureFarmerActivity(mod, 0).getIng())
+			,mod -> ensureFarmerActivity(mod, 0).setIng(mod.getAmount(Mod303Key.CT_SA16))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA16))
 		// (1) Actividades agrícolas, ganaderas y forestales. Cuota soportada
-		,
-		CT_SA17(Mod303Key.CT_SA17, null, null, null, "(hasFarmerActivity(0) && isLastPeriod())?CT_SA17:(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA17, ensureFarmerActivity(mod, 0).getSop()),
-				mod -> ensureFarmerActivity(mod, 0).setSop(mod.getAmount(Mod303Key.CT_SA17)), true)
-		// (1) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del
-		// regimen simplificado [B]
-		,
-		CT_SA18(Mod303Key.CT_SA18, null, null, null,
-				"(hasFarmerActivity(0) && isLastPeriod())?round(CT_SA14-CT_SA17):(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA18, ensureFarmerActivity(mod, 0).getCad()),
-				mod -> ensureFarmerActivity(mod, 0).setCad(mod.getAmount(Mod303Key.CT_SA18)), true)
+		,CT_SA17(Mod303Key.CT_SA17, null, null, null
+			,"(hasFarmerActivity(0) && isLastPeriod())?CT_SA17:(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA17, ensureFarmerActivity(mod, 0).getSop())
+			,mod -> ensureFarmerActivity(mod, 0).setSop(mod.getAmount(Mod303Key.CT_SA17))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA17))
+		// (1) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
+		,CT_SA18(Mod303Key.CT_SA18, null, null, null
+			,"(hasFarmerActivity(0) && isLastPeriod())?round(CT_SA14-CT_SA17):(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA18, ensureFarmerActivity(mod, 0).getCad())
+			,mod -> ensureFarmerActivity(mod, 0).setCad(mod.getAmount(Mod303Key.CT_SA18))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA18))
 		// (2) Actividades agrícolas, ganaderas y forestales. Código
-		,
-		CT_SA21(Mod303Key.CT_SA21, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_SA21, ensureFarmerActivity(mod, 1).getCode()),
-				mod -> ensureFarmerActivity(mod, 1).setCode(mod.getDescription(Mod303Key.CT_SA21)), true)
+		,CT_SA21(Mod303Key.CT_SA21, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_SA21, ensureFarmerActivity(mod, 1).getCode())
+			,mod -> ensureFarmerActivity(mod, 1).setCode(mod.getDescription(Mod303Key.CT_SA21))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA21))
 		// (2) Actividades agrícolas, ganaderas y forestales. Descripción
-		,
-		CT_SA2D(Mod303Key.CT_SA2D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_SA2D, ensureFarmerActivity(mod, 1).getDescription()),
-				mod -> ensureFarmerActivity(mod, 1).setDescription(mod.getDescription(Mod303Key.CT_SA2D)), true)
+		,CT_SA2D(Mod303Key.CT_SA2D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_SA2D, ensureFarmerActivity(mod, 1).getDescription())
+			,mod -> ensureFarmerActivity(mod, 1).setDescription(mod.getDescription(Mod303Key.CT_SA2D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA2D))
 		// (2) Actividades agrícolas, ganaderas y forestales. Volumen de ingresos
-		,
-		CT_SA22(Mod303Key.CT_SA22, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_SA22, ensureFarmerActivity(mod, 1).getVol()),
-				mod -> ensureFarmerActivity(mod, 1).setVol(mod.getAmount(Mod303Key.CT_SA22)), false)
+		,CT_SA22(Mod303Key.CT_SA22, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_SA22, ensureFarmerActivity(mod, 1).getVol())
+			,mod -> ensureFarmerActivity(mod, 1).setVol(mod.getAmount(Mod303Key.CT_SA22))
+			,null)
 		// (2) Actividades agrícolas, ganaderas y forestales. Índice de cuota
-		,
-		CT_SA23(Mod303Key.CT_SA23, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_SA23, ensureFarmerActivity(mod, 1).getInd() * 10000),
-				mod -> ensureFarmerActivity(mod, 1).setInd(mod.getAmount(Mod303Key.CT_SA23) / 10000), true)
+		,CT_SA23(Mod303Key.CT_SA23, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_SA23, ensureFarmerActivity(mod, 1).getInd() * 10000)
+			,mod -> ensureFarmerActivity(mod, 1).setInd(mod.getAmount(Mod303Key.CT_SA23) / 10000)
+			,null)
 		// (2) Actividades agrícolas, ganaderas y forestales. Cuota devengada
-		,
-		CT_SA24(Mod303Key.CT_SA24, null, null, null, "(hasFarmerActivity(1))?round(CT_SA22*CT_SA23/10000):(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA24, ensureFarmerActivity(mod, 1).getCuo()),
-				mod -> ensureFarmerActivity(mod, 1).setCuo(mod.getAmount(Mod303Key.CT_SA24)), true)
+		,CT_SA24(Mod303Key.CT_SA24, null, null, null, "(hasFarmerActivity(1))?round(CT_SA22*CT_SA23/10000):(0.0)", null
+			,mod -> mod.putAmount(Mod303Key.CT_SA24, ensureFarmerActivity(mod, 1).getCuo())
+			,mod -> ensureFarmerActivity(mod, 1).setCuo(mod.getAmount(Mod303Key.CT_SA24))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA24))
 		// (2) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral
 		,
-		CT_SA25(Mod303Key.CT_SA25, null, null, null, "(hasFarmerActivity(1) && !isLastPeriod())?CT_SA25:(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA25, ensureFarmerActivity(mod, 1).getPor()),
-				mod -> ensureFarmerActivity(mod, 1).setPor(mod.getAmount(Mod303Key.CT_SA25)), true)
+		CT_SA25(Mod303Key.CT_SA25, null, null, null
+			,"(hasFarmerActivity(1) && !isLastPeriod())?CT_SA25:(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA25, ensureFarmerActivity(mod, 1).getPor())
+			,mod -> ensureFarmerActivity(mod, 1).setPor(mod.getAmount(Mod303Key.CT_SA25))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA25))
 		// (2) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A]
-		,
-		CT_SA26(Mod303Key.CT_SA26, null, null, null,
-				"(hasFarmerActivity(1) && !isLastPeriod())?round(CT_SA24*CT_SA25/100):(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA26, ensureFarmerActivity(mod, 1).getIng()),
-				mod -> ensureFarmerActivity(mod, 1).setIng(mod.getAmount(Mod303Key.CT_SA26)), true)
+		,CT_SA26(Mod303Key.CT_SA26, null, null, null
+			,"(hasFarmerActivity(1) && !isLastPeriod())?round(CT_SA24*CT_SA25/100):(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA26, ensureFarmerActivity(mod, 1).getIng())
+			,mod -> ensureFarmerActivity(mod, 1).setIng(mod.getAmount(Mod303Key.CT_SA26))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA26))
 		// (2) Actividades agrícolas, ganaderas y forestales. Cuota soportada
-		,
-		CT_SA27(Mod303Key.CT_SA27, null, null, null, "(hasFarmerActivity(1) && isLastPeriod())?CT_SA27:(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA27, ensureFarmerActivity(mod, 1).getSop()),
-				mod -> ensureFarmerActivity(mod, 1).setSop(mod.getAmount(Mod303Key.CT_SA27)), true)
-		// (2) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del
-		// regimen simplificado [B]
-		,
-		CT_SA28(Mod303Key.CT_SA28, null, null, null,
-				"(hasFarmerActivity(1) && isLastPeriod())?round(CT_SA24-CT_SA27):(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA28, ensureFarmerActivity(mod, 1).getCad()),
-				mod -> ensureFarmerActivity(mod, 1).setCad(mod.getAmount(Mod303Key.CT_SA28)), true)
-
+		,CT_SA27(Mod303Key.CT_SA27, null, null, null
+			,"(hasFarmerActivity(1) && isLastPeriod())?CT_SA27:(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA27, ensureFarmerActivity(mod, 1).getSop())
+			,mod -> ensureFarmerActivity(mod, 1).setSop(mod.getAmount(Mod303Key.CT_SA27))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA27))
+		// (2) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
+		,CT_SA28(Mod303Key.CT_SA28, null, null, null
+			,"(hasFarmerActivity(1) && isLastPeriod())?round(CT_SA24-CT_SA27):(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA28, ensureFarmerActivity(mod, 1).getCad())
+			,mod -> ensureFarmerActivity(mod, 1).setCad(mod.getAmount(Mod303Key.CT_SA28))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA28))
 		// (3) Actividades agrícolas, ganaderas y forestales. Código
-		,
-		CT_SA31(Mod303Key.CT_SA31, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_SA31, ensureFarmerActivity(mod, 2).getCode()),
-				mod -> ensureFarmerActivity(mod, 2).setCode(mod.getDescription(Mod303Key.CT_SA31)), true)
+		,CT_SA31(Mod303Key.CT_SA31, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_SA31, ensureFarmerActivity(mod, 2).getCode())
+			,mod -> ensureFarmerActivity(mod, 2).setCode(mod.getDescription(Mod303Key.CT_SA31))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA31))
 		// (3) Actividades agrícolas, ganaderas y forestales. Descripción
-		,
-		CT_SA3D(Mod303Key.CT_SA3D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_SA3D, ensureFarmerActivity(mod, 2).getDescription()),
-				mod -> ensureFarmerActivity(mod, 2).setDescription(mod.getDescription(Mod303Key.CT_SA3D)), true)
+		,CT_SA3D(Mod303Key.CT_SA3D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_SA3D, ensureFarmerActivity(mod, 2).getDescription())
+			,mod -> ensureFarmerActivity(mod, 2).setDescription(mod.getDescription(Mod303Key.CT_SA3D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA3D))
 		// (3) Actividades agrícolas, ganaderas y forestales. Volumen de ingresos
-		,
-		CT_SA32(Mod303Key.CT_SA32, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_SA32, ensureFarmerActivity(mod, 2).getVol()),
-				mod -> ensureFarmerActivity(mod, 2).setVol(mod.getAmount(Mod303Key.CT_SA32)), false)
+		,CT_SA32(Mod303Key.CT_SA32, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_SA32, ensureFarmerActivity(mod, 2).getVol())
+			,mod -> ensureFarmerActivity(mod, 2).setVol(mod.getAmount(Mod303Key.CT_SA32))
+			,null)
 		// (3) Actividades agrícolas, ganaderas y forestales. Índice de cuota
-		,
-		CT_SA33(Mod303Key.CT_SA33, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_SA33, ensureFarmerActivity(mod, 2).getInd() * 10000),
-				mod -> ensureFarmerActivity(mod, 2).setInd(mod.getAmount(Mod303Key.CT_SA33) / 10000), true)
+		,CT_SA33(Mod303Key.CT_SA33, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_SA33, ensureFarmerActivity(mod, 2).getInd() * 10000)
+			,mod -> ensureFarmerActivity(mod, 2).setInd(mod.getAmount(Mod303Key.CT_SA33) / 10000)
+			,null)
 		// (3) Actividades agrícolas, ganaderas y forestales. Cuota devengada
-		,
-		CT_SA34(Mod303Key.CT_SA34, null, null, null, "(hasFarmerActivity(2))?round(CT_SA32*CT_SA33/10000):(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA34, ensureFarmerActivity(mod, 2).getCuo()),
-				mod -> ensureFarmerActivity(mod, 2).setCuo(mod.getAmount(Mod303Key.CT_SA34)), true)
+		,CT_SA34(Mod303Key.CT_SA34, null, null, null
+			,"(hasFarmerActivity(2))?round(CT_SA32*CT_SA33/10000):(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA34, ensureFarmerActivity(mod, 2).getCuo())
+			,mod -> ensureFarmerActivity(mod, 2).setCuo(mod.getAmount(Mod303Key.CT_SA34))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA34))
 		// (3) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral
-		,
-		CT_SA35(Mod303Key.CT_SA35, null, null, null, "(hasFarmerActivity(2) && !isLastPeriod())?CT_SA35:(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA35, ensureFarmerActivity(mod, 2).getPor()),
-				mod -> ensureFarmerActivity(mod, 2).setPor(mod.getAmount(Mod303Key.CT_SA35)), true)
+		,CT_SA35(Mod303Key.CT_SA35, null, null, null
+			,"(hasFarmerActivity(2) && !isLastPeriod())?CT_SA35:(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA35, ensureFarmerActivity(mod, 2).getPor())
+			,mod -> ensureFarmerActivity(mod, 2).setPor(mod.getAmount(Mod303Key.CT_SA35))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA35))
 		// (3) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A]
-		,
-		CT_SA36(Mod303Key.CT_SA36, null, null, null,
-				"(hasFarmerActivity(2) && !isLastPeriod())?round(CT_SA34*CT_SA35/100):(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA36, ensureFarmerActivity(mod, 2).getIng()),
-				mod -> ensureFarmerActivity(mod, 2).setIng(mod.getAmount(Mod303Key.CT_SA36)), true)
+		,CT_SA36(Mod303Key.CT_SA36, null, null, null
+			,"(hasFarmerActivity(2) && !isLastPeriod())?round(CT_SA34*CT_SA35/100):(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA36, ensureFarmerActivity(mod, 2).getIng())
+			,mod -> ensureFarmerActivity(mod, 2).setIng(mod.getAmount(Mod303Key.CT_SA36))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA36))
 		// (3) Actividades agrícolas, ganaderas y forestales. Cuota soportada
-		,
-		CT_SA37(Mod303Key.CT_SA37, null, null, null, "(hasFarmerActivity(2) && isLastPeriod())?CT_SA37:(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA37, ensureFarmerActivity(mod, 2).getSop()),
-				mod -> ensureFarmerActivity(mod, 2).setSop(mod.getAmount(Mod303Key.CT_SA37)), true)
-		// (3) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del
-		// regimen simplificado [B]
-		,
-		CT_SA38(Mod303Key.CT_SA38, null, null, null,
-				"(hasFarmerActivity(2) && isLastPeriod())?round(CT_SA34-CT_SA37):(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA38, ensureFarmerActivity(mod, 2).getCad()),
-				mod -> ensureFarmerActivity(mod, 2).setCad(mod.getAmount(Mod303Key.CT_SA38)), true)
+		,CT_SA37(Mod303Key.CT_SA37, null, null, null
+			,"(hasFarmerActivity(2) && isLastPeriod())?CT_SA37:(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA37, ensureFarmerActivity(mod, 2).getSop())
+			,mod -> ensureFarmerActivity(mod, 2).setSop(mod.getAmount(Mod303Key.CT_SA37))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA37))
+		// (3) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
+		,CT_SA38(Mod303Key.CT_SA38, null, null, null
+			,"(hasFarmerActivity(2) && isLastPeriod())?round(CT_SA34-CT_SA37):(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA38, ensureFarmerActivity(mod, 2).getCad())
+			,mod -> ensureFarmerActivity(mod, 2).setCad(mod.getAmount(Mod303Key.CT_SA38))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA38))
 
 		// (4) Actividades agrícolas, ganaderas y forestales. Código
-		,
-		CT_SA41(Mod303Key.CT_SA41, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_SA41, ensureFarmerActivity(mod, 3).getCode()),
-				mod -> ensureFarmerActivity(mod, 3).setCode(mod.getDescription(Mod303Key.CT_SA41)), true)
+		,CT_SA41(Mod303Key.CT_SA41, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_SA41, ensureFarmerActivity(mod, 3).getCode())
+			,mod -> ensureFarmerActivity(mod, 3).setCode(mod.getDescription(Mod303Key.CT_SA41))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA41))
 		// (4) Actividades agrícolas, ganaderas y forestales. Descripción
-		,
-		CT_SA4D(Mod303Key.CT_SA4D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_SA4D, ensureFarmerActivity(mod, 3).getDescription()),
-				mod -> ensureFarmerActivity(mod, 3).setDescription(mod.getDescription(Mod303Key.CT_SA4D)), true)
+		,CT_SA4D(Mod303Key.CT_SA4D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_SA4D, ensureFarmerActivity(mod, 3).getDescription())
+			,mod -> ensureFarmerActivity(mod, 3).setDescription(mod.getDescription(Mod303Key.CT_SA4D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA4D))
 		// (4) Actividades agrícolas, ganaderas y forestales. Volumen de ingresos
-		,
-		CT_SA42(Mod303Key.CT_SA42, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_SA42, ensureFarmerActivity(mod, 3).getVol()),
-				mod -> ensureFarmerActivity(mod, 3).setVol(mod.getAmount(Mod303Key.CT_SA42)), false)
+		,CT_SA42(Mod303Key.CT_SA42, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_SA42, ensureFarmerActivity(mod, 3).getVol())
+			,mod -> ensureFarmerActivity(mod, 3).setVol(mod.getAmount(Mod303Key.CT_SA42))
+			,null)
 		// (4) Actividades agrícolas, ganaderas y forestales. Índice de cuota
 		,
-		CT_SA43(Mod303Key.CT_SA43, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_SA43, ensureFarmerActivity(mod, 3).getInd() * 10000),
-				mod -> ensureFarmerActivity(mod, 3).setInd(mod.getAmount(Mod303Key.CT_SA43) / 10000), true)
+		CT_SA43(Mod303Key.CT_SA43, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_SA43, ensureFarmerActivity(mod, 3).getInd() * 10000)
+			,mod -> ensureFarmerActivity(mod, 3).setInd(mod.getAmount(Mod303Key.CT_SA43) / 10000)
+			,null)
 		// (4) Actividades agrícolas, ganaderas y forestales. Cuota devengada
-		,
-		CT_SA44(Mod303Key.CT_SA44, null, null, null, "(hasFarmerActivity(3))?round(CT_SA42*CT_SA43/10000):(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA44, ensureFarmerActivity(mod, 3).getCuo()),
-				mod -> ensureFarmerActivity(mod, 3).setCuo(mod.getAmount(Mod303Key.CT_SA44)), true)
+		,CT_SA44(Mod303Key.CT_SA44, null, null, null
+			,"(hasFarmerActivity(3))?round(CT_SA42*CT_SA43/10000):(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA44, ensureFarmerActivity(mod, 3).getCuo())
+			,mod -> ensureFarmerActivity(mod, 3).setCuo(mod.getAmount(Mod303Key.CT_SA44))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA44))
 		// (4) Actividades agrícolas, ganaderas y forestales. Porcentaje trimestral
-		,
-		CT_SA45(Mod303Key.CT_SA45, null, null, null, "(hasFarmerActivity(3) && !isLastPeriod())?CT_SA45:(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA45, ensureFarmerActivity(mod, 3).getPor()),
-				mod -> ensureFarmerActivity(mod, 3).setPor(mod.getAmount(Mod303Key.CT_SA45)), true)
+		,CT_SA45(Mod303Key.CT_SA45, null, null, null
+			,"(hasFarmerActivity(3) && !isLastPeriod())?CT_SA45:(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA45, ensureFarmerActivity(mod, 3).getPor())
+			,mod -> ensureFarmerActivity(mod, 3).setPor(mod.getAmount(Mod303Key.CT_SA45))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA45))
 		// (4) Actividades agrícolas, ganaderas y forestales. Ingreso a cuenta [A]
-		,
-		CT_SA46(Mod303Key.CT_SA46, null, null, null,
-				"(hasFarmerActivity(3) && !isLastPeriod())?round(CT_SA44*CT_SA45/100):(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA46, ensureFarmerActivity(mod, 3).getIng()),
-				mod -> ensureFarmerActivity(mod, 3).setIng(mod.getAmount(Mod303Key.CT_SA46)), true)
+		,CT_SA46(Mod303Key.CT_SA46, null, null, null
+			,"(hasFarmerActivity(3) && !isLastPeriod())?round(CT_SA44*CT_SA45/100):(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA46, ensureFarmerActivity(mod, 3).getIng())
+			,mod -> ensureFarmerActivity(mod, 3).setIng(mod.getAmount(Mod303Key.CT_SA46))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA46))
 		// (4) Actividades agrícolas, ganaderas y forestales. Cuota soportada
+		,CT_SA47(Mod303Key.CT_SA47, null, null, null
+			,"(hasFarmerActivity(3) && isLastPeriod())?CT_SA47:(0.0)"
+			,null
+			,mod -> mod.putAmount(Mod303Key.CT_SA47, ensureFarmerActivity(mod, 3).getSop())
+			,mod -> ensureFarmerActivity(mod, 3).setSop(mod.getAmount(Mod303Key.CT_SA47))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA47))
+		// (4) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del regimen simplificado [B]
+		,CT_SA48(Mod303Key.CT_SA48, null, null, null
+			,"(hasFarmerActivity(3) && isLastPeriod())?round(CT_SA44-CT_SA47):(0.0)", null
+			,mod -> mod.putAmount(Mod303Key.CT_SA48, ensureFarmerActivity(mod, 3).getCad())
+			,mod -> ensureFarmerActivity(mod, 3).setCad(mod.getAmount(Mod303Key.CT_SA48))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_SA48))
+		
+		// (1) Actividades en régimen simplificado. Epigrafe IAE
+		,CT_S101(Mod303Key.CT_S101, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S101, ensureActivity(mod, 0).getEpigraph())
+			,mod -> ensureActivity(mod, 0).setEpigraph(mod.getDescription(Mod303Key.CT_S101))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S101))
+		// (1) Actividades en régimen simplificado. Epigrafe IAE - Descripción
+		,CT_S10D(Mod303Key.CT_S10D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S10D, ensureActivity(mod, 0).getDescription())
+			,mod -> ensureActivity(mod, 0).setDescription(mod.getDescription(Mod303Key.CT_S10D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S10D))
+		// (1) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722
+		,CT_S102(Mod303Key.CT_S102, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S102, ensureActivity(mod, 0).getSpecialEpigraph())
+			,mod -> ensureActivity(mod, 0).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S102))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S102))
+		// (1) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en los que se ejerció la actividad en el año anterior
+		,CT_S1X1(Mod303Key.CT_S1X1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1X1, ensureActivity(mod, 0).getTem())
+			,mod -> ensureActivity(mod, 0).setTem((int) mod.getAmount(Mod303Key.CT_S1X1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X1))
+		// (1) Actividades en régimen simplificado. Número de días de ejercicio de la actividad en el trimestre
+		,CT_S1X2(Mod303Key.CT_S1X2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1X2, ensureActivity(mod, 0).getDia())
+			,mod -> ensureActivity(mod, 0).setDia((int) mod.getAmount(Mod303Key.CT_S1X2))
+			,(prev,cur) -> ensureActivityDays(prev,cur, Mod303Key.CT_S101, Mod303Key.CT_S1X2))
+		// (1) Actividades en régimen simplificado. Número de empleados al inicio del ejercicio ( o al inicio de la actividad)
+		,CT_S1X3(Mod303Key.CT_S1X3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1X3, ensureActivity(mod, 0).getEmp())
+			,mod -> ensureActivity(mod, 0).setEmp((int) mod.getAmount(Mod303Key.CT_S1X3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X3))
+		// (1) Actividades en régimen simplificado. Si realiza la actividad en LORCA
+		,CT_S1X4(Mod303Key.CT_S1X4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1X4, ensureActivity(mod, 0).getLor())
+			,mod -> ensureActivity(mod, 0).setLor((int) mod.getAmount(Mod303Key.CT_S1X4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X4))
+		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
+		,CT_S1X5(Mod303Key.CT_S1X5, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1X5, ensureActivity(mod, 0).getCov())
+			,mod -> ensureActivity(mod, 0).setCov((int) mod.getAmount(Mod303Key.CT_S1X5))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1X5))
+		,CT_S11D(Mod303Key.CT_S11D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S11D, ensureModule(mod, 0, 0).getDescription())
+			,mod -> ensureModule(mod, 0, 0).setDescription(mod.getDescription(Mod303Key.CT_S11D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S11D))
+		,CT_S11I(Mod303Key.CT_S11I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S11I, ensureModule(mod, 0, 0).getValue())
+			,mod -> ensureModule(mod, 0, 0).setValue(mod.getAmount(Mod303Key.CT_S11I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S11I))
+		,CT_S11U(Mod303Key.CT_S11U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S11U, ensureModule(mod, 0, 0).getUnit())
+			,mod -> ensureModule(mod, 0, 0).setUnit(mod.getDescription(Mod303Key.CT_S11U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S11U))
+		,CT_S11F(Mod303Key.CT_S11F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S11F, ensureModule(mod, 0, 0).getFactor())
+			,mod -> ensureModule(mod, 0, 0).setFactor(mod.getAmount(Mod303Key.CT_S11F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S11F))
+		,CT_S11R(Mod303Key.CT_S11R, null, null, null
+			,"hasActivity(0)?round(CT_S11I*CT_S11F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S11R, ensureModule(mod, 0, 0).getResult())
+			,mod -> ensureModule(mod, 0, 0).setResult(mod.getAmount(Mod303Key.CT_S11R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S11R))
+		,CT_S12D(Mod303Key.CT_S12D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S12D, ensureModule(mod, 0, 1).getDescription())
+			,mod -> ensureModule(mod, 0, 1).setDescription(mod.getDescription(Mod303Key.CT_S12D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S12D))
+		,CT_S12I(Mod303Key.CT_S12I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S12I, ensureModule(mod, 0, 1).getValue())
+			,mod -> ensureModule(mod, 0, 1).setValue(mod.getAmount(Mod303Key.CT_S12I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S12I))
+		,CT_S12U(Mod303Key.CT_S12U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S12U, ensureModule(mod, 0, 1).getUnit())
+			,mod -> ensureModule(mod, 0, 1).setUnit(mod.getDescription(Mod303Key.CT_S12U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S12U))
+		,CT_S12F(Mod303Key.CT_S12F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S12F, ensureModule(mod, 0, 1).getFactor())
+			,mod -> ensureModule(mod, 0, 1).setFactor(mod.getAmount(Mod303Key.CT_S12F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S12F))
+		,CT_S12R(Mod303Key.CT_S12R, null, null, null
+			,"hasActivity(0)?round(CT_S12I*CT_S12F):0.0",null
+			,mod -> mod.putAmount(Mod303Key.CT_S12R, ensureModule(mod, 0, 1).getResult())
+			,mod -> ensureModule(mod, 0, 1).setResult(mod.getAmount(Mod303Key.CT_S12R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S12R))
+		,CT_S13D(Mod303Key.CT_S13D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S13D, ensureModule(mod, 0, 2).getDescription())
+			,mod -> ensureModule(mod, 0, 2).setDescription(mod.getDescription(Mod303Key.CT_S13D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S13D))
+		,CT_S13I(Mod303Key.CT_S13I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S13I, ensureModule(mod, 0, 2).getValue())
+			,mod -> ensureModule(mod, 0, 2).setValue(mod.getAmount(Mod303Key.CT_S13I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S13I))
+		,CT_S13U(Mod303Key.CT_S13U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S13U, ensureModule(mod, 0, 2).getUnit())
+			,mod -> ensureModule(mod, 0, 2).setUnit(mod.getDescription(Mod303Key.CT_S13U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S13U))
+		,CT_S13F(Mod303Key.CT_S13F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S13F, ensureModule(mod, 0, 2).getFactor())
+			,mod -> ensureModule(mod, 0, 2).setFactor(mod.getAmount(Mod303Key.CT_S13F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S13F))
+		,CT_S13R(Mod303Key.CT_S13R, null, null, null
+			,"hasActivity(0)?round(CT_S13I*CT_S13F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S13R, ensureModule(mod, 0, 2).getResult())
+			,mod -> ensureModule(mod, 0, 2).setResult(mod.getAmount(Mod303Key.CT_S13R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S13R))
+		,CT_S14D(Mod303Key.CT_S14D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S14D, ensureModule(mod, 0, 3).getDescription())
+			,mod -> ensureModule(mod, 0, 3).setDescription(mod.getDescription(Mod303Key.CT_S14D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S14D))
+		,CT_S14I(Mod303Key.CT_S14I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S14I, ensureModule(mod, 0, 3).getValue())
+			,mod -> ensureModule(mod, 0, 3).setValue(mod.getAmount(Mod303Key.CT_S14I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S14I))
+		,CT_S14U(Mod303Key.CT_S14U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S14U, ensureModule(mod, 0, 3).getUnit())
+			,mod -> ensureModule(mod, 0, 3).setUnit(mod.getDescription(Mod303Key.CT_S14U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S14U))
 		,
-		CT_SA47(Mod303Key.CT_SA47, null, null, null, "(hasFarmerActivity(3) && isLastPeriod())?CT_SA47:(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA47, ensureFarmerActivity(mod, 3).getSop()),
-				mod -> ensureFarmerActivity(mod, 3).setSop(mod.getAmount(Mod303Key.CT_SA47)), true)
-		// (4) Actividades agrícolas, ganaderas y forestales. Cuota anual derivada del
-		// regimen simplificado [B]
+		CT_S14F(Mod303Key.CT_S14F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S14F, ensureModule(mod, 0, 3).getFactor())
+			,mod -> ensureModule(mod, 0, 3).setFactor(mod.getAmount(Mod303Key.CT_S14F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S14F))
+		,CT_S14R(Mod303Key.CT_S14R, null, null, null, "hasActivity(0)?round(CT_S14I*CT_S14F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S14R, ensureModule(mod, 0, 3).getResult())
+			,mod -> ensureModule(mod, 0, 3).setResult(mod.getAmount(Mod303Key.CT_S14R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S14R))
+		,CT_S15D(Mod303Key.CT_S15D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S15D, ensureModule(mod, 0, 4).getDescription())
+			,mod -> ensureModule(mod, 0, 4).setDescription(mod.getDescription(Mod303Key.CT_S15D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S15D))
+		,CT_S15I(Mod303Key.CT_S15I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S15I, ensureModule(mod, 0, 4).getValue())
+			,mod -> ensureModule(mod, 0, 4).setValue(mod.getAmount(Mod303Key.CT_S15I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S15I))
+		,CT_S15U(Mod303Key.CT_S15U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S15U, ensureModule(mod, 0, 4).getUnit())
+			,mod -> ensureModule(mod, 0, 4).setUnit(mod.getDescription(Mod303Key.CT_S15U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S15U))
+		,CT_S15F(Mod303Key.CT_S15F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S15F, ensureModule(mod, 0, 4).getFactor())
+			,mod -> ensureModule(mod, 0, 4).setFactor(mod.getAmount(Mod303Key.CT_S15F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S15F))
+		,CT_S15R(Mod303Key.CT_S15R, null, null, null, "hasActivity(0)?round(CT_S15I*CT_S15F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S15R, ensureModule(mod, 0, 4).getResult())
+			,mod -> ensureModule(mod, 0, 4).setResult(mod.getAmount(Mod303Key.CT_S15R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S15R))
+		,CT_S16D(Mod303Key.CT_S16D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S16D, ensureModule(mod, 0, 5).getDescription())
+			,mod -> ensureModule(mod, 0, 5).setDescription(mod.getDescription(Mod303Key.CT_S16D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S16D))
+		,CT_S16I(Mod303Key.CT_S16I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S16I, ensureModule(mod, 0, 5).getValue())
+			,mod -> ensureModule(mod, 0, 5).setValue(mod.getAmount(Mod303Key.CT_S16I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S16I))
+		,CT_S16U(Mod303Key.CT_S16U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S16U, ensureModule(mod, 0, 5).getUnit())
+			,mod -> ensureModule(mod, 0, 5).setUnit(mod.getDescription(Mod303Key.CT_S16U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S16U))
+		,CT_S16F(Mod303Key.CT_S16F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S16F, ensureModule(mod, 0, 5).getFactor())
+			,mod -> ensureModule(mod, 0, 5).setFactor(mod.getAmount(Mod303Key.CT_S16F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S16F))
+		,CT_S16R(Mod303Key.CT_S16R, null, null, null, "hasActivity(0)?round(CT_S16I*CT_S16F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S16R, ensureModule(mod, 0, 5).getResult())
+			,mod -> ensureModule(mod, 0, 5).setResult(mod.getAmount(Mod303Key.CT_S16R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S16R))
+		,CT_S17D(Mod303Key.CT_S17D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S17D, ensureModule(mod, 0, 6).getDescription())
+			,mod -> ensureModule(mod, 0, 6).setDescription(mod.getDescription(Mod303Key.CT_S17D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S17D))
+		,CT_S17I(Mod303Key.CT_S17I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S17I, ensureModule(mod, 0, 6).getValue())
+			,mod -> ensureModule(mod, 0, 6).setValue(mod.getAmount(Mod303Key.CT_S17I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S17I))
+		,CT_S17U(Mod303Key.CT_S17U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S17U, ensureModule(mod, 0, 6).getUnit())
+			,mod -> ensureModule(mod, 0, 6).setUnit(mod.getDescription(Mod303Key.CT_S17U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S17U))
+		,CT_S17F(Mod303Key.CT_S17F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S17F, ensureModule(mod, 0, 6).getFactor())
+			,mod -> ensureModule(mod, 0, 6).setFactor(mod.getAmount(Mod303Key.CT_S17F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S17F))
+		,CT_S1P1(Mod303Key.CT_S1P1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1P1, ensureActivity(mod, 0).getMay19Hours())
+			,mod -> ensureActivity(mod, 0).setMay19Hours(mod.getAmount(Mod303Key.CT_S1P1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1P1))
+		,CT_S1P2(Mod303Key.CT_S1P2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1P2, ensureActivity(mod, 0).getMen19Hours())
+			,mod -> ensureActivity(mod, 0).setMen19Hours(mod.getAmount(Mod303Key.CT_S1P2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1P2))
+		,CT_S1P3(Mod303Key.CT_S1P3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1P3, ensureActivity(mod, 0).getDisHours())
+			,mod -> ensureActivity(mod, 0).setDisHours(mod.getAmount(Mod303Key.CT_S1P3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1P3))
+		,CT_S1P4(Mod303Key.CT_S1P4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1P4, ensureActivity(mod, 0).getYearHours())
+			,mod -> ensureActivity(mod, 0).setYearHours(mod.getAmount(Mod303Key.CT_S1P4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1P4))
+		,CT_S1E1(Mod303Key.CT_S1E1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1E1, ensureActivity(mod, 0).getOwnerHours())
+			,mod -> ensureActivity(mod, 0).setOwnerHours(mod.getAmount(Mod303Key.CT_S1E1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1E1))
+		,CT_S1E2(Mod303Key.CT_S1E2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1E2, ensureActivity(mod, 0).isOwnerDis()?1:0)
+			,mod -> ensureActivity(mod, 0).setOwnerDis(mod.getAmount(Mod303Key.CT_S1E2) == 1)
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1E2))
+		,CT_S1E3(Mod303Key.CT_S1E3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1E3, ensureActivity(mod, 0).getSpouseHours())
+			,mod -> ensureActivity(mod, 0).setSpouseHours(mod.getAmount(Mod303Key.CT_S1E3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1E3))
+		,CT_S1E4(Mod303Key.CT_S1E4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1E4, ensureActivity(mod, 0).getChildMen18Hours())
+			,mod -> ensureActivity(mod, 0).setChildMen18Hours(mod.getAmount(Mod303Key.CT_S1E4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1E4))
+
+		,CT_S1C1(Mod303Key.CT_S1C1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1C1, ensureDesk(mod, 0, 0).getDeskCapacity())
+			,mod -> ensureDesk(mod, 0, 0).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S1C1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1C1))
+		,CT_S1M1(Mod303Key.CT_S1M1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1M1, ensureDesk(mod, 0, 0).getDesks())
+			,mod -> ensureDesk(mod, 0, 0).setDesks((int) mod.getAmount(Mod303Key.CT_S1M1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1M1))
+		,CT_S1D1(Mod303Key.CT_S1D1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1D1, ensureDesk(mod, 0, 0).getDeskDays())
+			,mod -> ensureDesk(mod, 0, 0).setDeskDays((int) mod.getAmount(Mod303Key.CT_S1D1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1D1))
+		,CT_S1C2(Mod303Key.CT_S1C2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1C2, ensureDesk(mod, 0, 1).getDeskCapacity())
+			,mod -> ensureDesk(mod, 0, 1).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S1C2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1C2))
+		,CT_S1M2(Mod303Key.CT_S1M2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1M2, ensureDesk(mod, 0, 1).getDesks())
+			,mod -> ensureDesk(mod, 0, 1).setDesks((int) mod.getAmount(Mod303Key.CT_S1M2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1M2))
+		,CT_S1D2(Mod303Key.CT_S1D2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1D2, ensureDesk(mod, 0, 1).getDeskDays())
+			,mod -> ensureDesk(mod, 0, 1).setDeskDays((int) mod.getAmount(Mod303Key.CT_S1D2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1D2))
+		,CT_S1C3(Mod303Key.CT_S1C3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1C3, ensureDesk(mod, 0, 2).getDeskCapacity())
+			,mod -> ensureDesk(mod, 0, 2).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S1C3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1C3))
+		,CT_S1M3(Mod303Key.CT_S1M3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1M3, ensureDesk(mod, 0, 2).getDesks())
+			,mod -> ensureDesk(mod, 0, 2).setDesks((int) mod.getAmount(Mod303Key.CT_S1M3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1M3))
+		,CT_S1D3(Mod303Key.CT_S1D3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1D3, ensureDesk(mod, 0, 2).getDeskDays())
+			,mod -> ensureDesk(mod, 0, 2).setDeskDays((int) mod.getAmount(Mod303Key.CT_S1D3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1D3))
+		,CT_S1C4(Mod303Key.CT_S1C4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1C4, ensureDesk(mod, 0, 3).getDeskCapacity())
+			,mod -> ensureDesk(mod, 0, 3).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S1C4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1C4))
+		,CT_S1M4(Mod303Key.CT_S1M4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1M4, ensureDesk(mod, 0, 3).getDesks())
+			,mod -> ensureDesk(mod, 0, 3).setDesks((int) mod.getAmount(Mod303Key.CT_S1M4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1M4))
+		,CT_S1D4(Mod303Key.CT_S1D4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S1D4, ensureDesk(mod, 0, 3).getDeskDays())
+			,mod -> ensureDesk(mod, 0, 3).setDeskDays((int) mod.getAmount(Mod303Key.CT_S1D4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1D4))
+
+		,CT_S17R(Mod303Key.CT_S17R, null, null, null, "hasActivity(0)?round(CT_S17I*CT_S17F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S17R, ensureModule(mod, 0, 6).getResult())
+			,mod -> ensureModule(mod, 0, 6).setResult(mod.getAmount(Mod303Key.CT_S17R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S17R))
+		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones corrientes
+		,CT_S117(Mod303Key.CT_S117, null, null, null, "CT_S11R+CT_S12R+CT_S13R+CT_S14R+CT_S15R+CT_S16R+CT_S17R", null
+			,mod -> mod.putAmount(Mod303Key.CT_S117, ensureActivity(mod, 0).getDev())
+			,mod -> ensureActivity(mod, 0).setDev(mod.getAmount(Mod303Key.CT_S117))
+			,null)
+		// (1) Actividades en régimen simplificado. D Reducciones
 		,
-		CT_SA48(Mod303Key.CT_SA48, null, null, null,
-				"(hasFarmerActivity(3) && isLastPeriod())?round(CT_SA44-CT_SA47):(0.0)", null,
-				mod -> mod.putAmount(Mod303Key.CT_SA48, ensureFarmerActivity(mod, 3).getCad()),
-				mod -> ensureFarmerActivity(mod, 3).setCad(mod.getAmount(Mod303Key.CT_SA48)), true)
+		CT_S118(Mod303Key.CT_S118, null, null, null, "calculateReduccion2021(0,CT_S117,CT_S1X4,CT_S1X5)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S118, ensureActivity(mod, 0).getRed())
+			,mod -> ensureActivity(mod, 0).setRed(mod.getAmount(Mod303Key.CT_S118))
+			,null)
+		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de
+		// temporada
+		,CT_S119(Mod303Key.CT_S119, null, null, null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S1X1 )", null
+			,mod -> mod.putAmount(Mod303Key.CT_S119, ensureActivity(mod, 0).getInd())
+			,mod -> ensureActivity(mod, 0).setInd(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S119))
+			,null)
+		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
+		,CT_S120(Mod303Key.CT_S120, null, null, null
+			,"calculatePorcentajeIngresoCuenta2023(0,CT_S1X5)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S120, ensureActivity(mod, 0).getPor())
+			,mod -> ensureActivity(mod, 0).setPor(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S120))
+			,null)
+		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
+		,CT_S121(Mod303Key.CT_S121, null, null, null
+			,"calculateIngresoCuenta2021(0, CT_S1X1, CT_S1X2, CT_S117, CT_S118, CT_S119, CT_S120,CT_S1X5)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S121, ensureActivity(mod, 0).getIng())
+			,mod -> ensureActivity(mod, 0).setIng(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S121))
+			,null)
+		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes
+		,CT_S12X(Mod303Key.CT_S12X, null, null, null, "isLastPeriod()?round(CT_S117 * 1 / 100):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S12X, ensureActivity(mod, 0).getSopx())
+			,mod -> ensureActivity(mod, 0).setSopx(mod.getAmount(Mod303Key.CT_S12X))
+			,null)
+		// (1) Actividades en régimen simplificado. G Cuotas soportadas
+		,CT_S12Y(Mod303Key.CT_S12Y, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S12Y, ensureActivity(mod, 0).getSopy())
+			,mod -> ensureActivity(mod, 0).setSopy(mod.getAmount(Mod303Key.CT_S12Y))
+			,null)
+		// (1) Actividades en régimen simplificado. G Cuotas soportadas operaciones corrientes
+		,CT_S122(Mod303Key.CT_S122, null, null, null, "isLastPeriod()?(CT_S12X+CT_S12Y):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S122, ensureActivity(mod, 0).getSop())
+			,mod -> ensureActivity(mod, 0).setSop(mod.getAmount(Mod303Key.CT_S122))
+			,null)
+		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de temporada
+		,CT_S123(Mod303Key.CT_S123, null, null, null, "isLastPeriod()?calculateIndiceTemporada( CT_S1X1 ):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S123, ensureActivity(mod, 0).getIct())
+			,mod -> ensureActivity(mod, 0).setIct(mod.getAmount(Mod303Key.CT_S123))
+			,null)
+		// (1) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H])
+		,CT_S124(Mod303Key.CT_S124, null, null, null, "calculateResultadoAnual( CT_S117, CT_S118, CT_S122, CT_S123)",null
+			,mod -> mod.putAmount(Mod303Key.CT_S124, ensureActivity(mod, 0).getRes())
+			,mod -> ensureActivity(mod, 0).setRes(mod.getAmount(Mod303Key.CT_S124))
+			,null)
+		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
+		,CT_S125(Mod303Key.CT_S125, null, null, null, "isLastPeriod()?CT_S125:0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S125, ensureActivity(mod, 0).getPcm())
+			,mod -> ensureActivity(mod, 0).setPcm(mod.getAmount(Mod303Key.CT_S125))
+			,null)
+		// (1) Actividades en régimen simplificado. K Devolución cuotas soportadas otros países
+		,CT_S126(Mod303Key.CT_S126, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S126, ensureActivity(mod, 0).getDvc())
+			,mod -> ensureActivity(mod, 0).setDvc(mod.getAmount(Mod303Key.CT_S126))
+			,null)
+		// (1) Actividades en régimen simplificado. L Cuota mínima
+		,CT_S127(Mod303Key.CT_S127, null, null, null, "calculateCuotaMinima(CT_S117, CT_S118, CT_S125, CT_S126,CT_S123)",null
+			,mod -> mod.putAmount(Mod303Key.CT_S127, ensureActivity(mod, 0).getCmn())
+			,mod -> ensureActivity(mod, 0).setCmn(mod.getAmount(Mod303Key.CT_S127))
+			,null)
+		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado
+		,CT_S128(Mod303Key.CT_S128, null, null, null, "isLastPeriod()?((CT_S127>CT_S124)?CT_S127:CT_S124):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S128, ensureActivity(mod, 0).getCad())
+			,mod -> ensureActivity(mod, 0).setCad(mod.getAmount(Mod303Key.CT_S128))
+			,null)
+		
+		// (1) Actividades en régimen simplificado. Epigrafe IAE
+		,CT_S201(Mod303Key.CT_S201, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S201, ensureActivity(mod, 1).getEpigraph())
+			,mod -> ensureActivity(mod, 1).setEpigraph(mod.getDescription(Mod303Key.CT_S201))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S201))
+		// (1) Actividades en régimen simplificado. Epigrafe IAE - Descripción
+		,CT_S20D(Mod303Key.CT_S20D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S20D, ensureActivity(mod, 1).getDescription())
+			,mod -> ensureActivity(mod, 1).setDescription(mod.getDescription(Mod303Key.CT_S20D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S20D))
+		// (1) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722
+		,CT_S202(Mod303Key.CT_S202, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S202, ensureActivity(mod, 1).getSpecialEpigraph())
+			,mod -> ensureActivity(mod, 1).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S202))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S202))
+		// (1) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en los que se ejerció la actividad en el año anterior
+		,CT_S2X1(Mod303Key.CT_S2X1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2X1, ensureActivity(mod, 1).getTem())
+			,mod -> ensureActivity(mod, 1).setTem((int) mod.getAmount(Mod303Key.CT_S2X1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X1))
+		// (1) Actividades en régimen simplificado. Número de días de ejercicio de la actividad en el trimestre
+		,CT_S2X2(Mod303Key.CT_S2X2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2X2, ensureActivity(mod, 1).getDia())
+			,mod -> ensureActivity(mod, 1).setDia((int) mod.getAmount(Mod303Key.CT_S2X2))
+			,(prev,cur) -> ensureActivityDays(prev,cur, Mod303Key.CT_S201, Mod303Key.CT_S2X2))
+		// (1) Actividades en régimen simplificado. Número de empleados al inicio del ejercicio ( o al inicio de la actividad)
+		,CT_S2X3(Mod303Key.CT_S2X3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2X3, ensureActivity(mod, 1).getEmp())
+			,mod -> ensureActivity(mod, 1).setEmp((int) mod.getAmount(Mod303Key.CT_S2X3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X3))
+		// (1) Actividades en régimen simplificado. Si realiza la actividad en LORCA
+		,CT_S2X4(Mod303Key.CT_S2X4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2X4, ensureActivity(mod, 1).getLor())
+			,mod -> ensureActivity(mod, 1).setLor((int) mod.getAmount(Mod303Key.CT_S2X4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X4))
+		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
+		,CT_S2X5(Mod303Key.CT_S2X5, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2X5, ensureActivity(mod, 1).getCov())
+			,mod -> ensureActivity(mod, 1).setCov((int) mod.getAmount(Mod303Key.CT_S2X5))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2X5))
+		,CT_S21D(Mod303Key.CT_S21D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S21D, ensureModule(mod, 1, 0).getDescription())
+			,mod -> ensureModule(mod, 1, 0).setDescription(mod.getDescription(Mod303Key.CT_S21D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S21D))
+		,
+		CT_S21I(Mod303Key.CT_S21I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S21I, ensureModule(mod, 1, 0).getValue())
+			,mod -> ensureModule(mod, 1, 0).setValue(mod.getAmount(Mod303Key.CT_S21I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S21I))
+		,
+		CT_S21U(Mod303Key.CT_S21U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S21U, ensureModule(mod, 1, 0).getUnit())
+			,mod -> ensureModule(mod, 1, 0).setUnit(mod.getDescription(Mod303Key.CT_S21U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S21U))
+		,
+		CT_S21F(Mod303Key.CT_S21F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S21F, ensureModule(mod, 1, 0).getFactor())
+			,mod -> ensureModule(mod, 1, 0).setFactor(mod.getAmount(Mod303Key.CT_S21F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S21F))
+		,
+		CT_S21R(Mod303Key.CT_S21R, null, null, null
+			,"hasActivity(1)?round(CT_S21I*CT_S21F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S21R, ensureModule(mod, 1, 0).getResult())
+			,mod -> ensureModule(mod, 1, 0).setResult(mod.getAmount(Mod303Key.CT_S21R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S21R))
+		,
+		CT_S22D(Mod303Key.CT_S22D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S22D, ensureModule(mod, 1, 1).getDescription())
+			,mod -> ensureModule(mod, 1, 1).setDescription(mod.getDescription(Mod303Key.CT_S22D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S22D))
+		,CT_S22I(Mod303Key.CT_S22I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S22I, ensureModule(mod, 1, 1).getValue())
+			,mod -> ensureModule(mod, 1, 1).setValue(mod.getAmount(Mod303Key.CT_S22I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S22I))
+		,CT_S22U(Mod303Key.CT_S22U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S22U, ensureModule(mod, 1, 1).getUnit())
+			,mod -> ensureModule(mod, 1, 1).setUnit(mod.getDescription(Mod303Key.CT_S22U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S22U))
+		,CT_S22F(Mod303Key.CT_S22F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S22F, ensureModule(mod, 1, 1).getFactor())
+			,mod -> ensureModule(mod, 1, 1).setFactor(mod.getAmount(Mod303Key.CT_S22F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S22F))
+		,CT_S22R(Mod303Key.CT_S22R, null, null, null, "hasActivity(1)?round(CT_S22I*CT_S22F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S22R, ensureModule(mod, 1, 1).getResult())
+			,mod -> ensureModule(mod, 1, 1).setResult(mod.getAmount(Mod303Key.CT_S22R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S22R))
+		,CT_S23D(Mod303Key.CT_S23D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S23D, ensureModule(mod, 1, 2).getDescription())
+			,mod -> ensureModule(mod, 1, 2).setDescription(mod.getDescription(Mod303Key.CT_S23D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S23D))
+		,CT_S23I(Mod303Key.CT_S23I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S23I, ensureModule(mod, 1, 2).getValue())
+			,mod -> ensureModule(mod, 1, 2).setValue(mod.getAmount(Mod303Key.CT_S23I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S23I))
+		,CT_S23U(Mod303Key.CT_S23U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S23U, ensureModule(mod, 1, 2).getUnit())
+			,mod -> ensureModule(mod, 1, 2).setUnit(mod.getDescription(Mod303Key.CT_S23U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S23U))
+		,CT_S23F(Mod303Key.CT_S23F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S23F, ensureModule(mod, 1, 2).getFactor())
+			,mod -> ensureModule(mod, 1, 2).setFactor(mod.getAmount(Mod303Key.CT_S23F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S23F))
+		,CT_S23R(Mod303Key.CT_S23R, null, null, null, "hasActivity(1)?round(CT_S23I*CT_S23F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S23R, ensureModule(mod, 1, 2).getResult())
+			,mod -> ensureModule(mod, 1, 2).setResult(mod.getAmount(Mod303Key.CT_S23R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S23R))
+		,CT_S24D(Mod303Key.CT_S24D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S24D, ensureModule(mod, 1, 3).getDescription())
+			,mod -> ensureModule(mod, 1, 3).setDescription(mod.getDescription(Mod303Key.CT_S24D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S24D))
+		,CT_S24I(Mod303Key.CT_S24I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S24I, ensureModule(mod, 1, 3).getValue())
+			,mod -> ensureModule(mod, 1, 3).setValue(mod.getAmount(Mod303Key.CT_S24I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S24I))
+		,CT_S24U(Mod303Key.CT_S24U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S24U, ensureModule(mod, 1, 3).getUnit())
+			,mod -> ensureModule(mod, 1, 3).setUnit(mod.getDescription(Mod303Key.CT_S24U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S24U))
+		,CT_S24F(Mod303Key.CT_S24F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S24F, ensureModule(mod, 1, 3).getFactor())
+			,mod -> ensureModule(mod, 1, 3).setFactor(mod.getAmount(Mod303Key.CT_S24F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S24F))
+		,CT_S24R(Mod303Key.CT_S24R, null, null, null, "hasActivity(1)?round(CT_S24I*CT_S24F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S24R, ensureModule(mod, 1, 3).getResult())
+			,mod -> ensureModule(mod, 1, 3).setResult(mod.getAmount(Mod303Key.CT_S24R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S24R))
+		,CT_S25D(Mod303Key.CT_S25D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S25D, ensureModule(mod, 1, 4).getDescription())
+			,mod -> ensureModule(mod, 1, 4).setDescription(mod.getDescription(Mod303Key.CT_S25D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S25D))
+		,CT_S25I(Mod303Key.CT_S25I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S25I, ensureModule(mod, 1, 4).getValue())
+			,mod -> ensureModule(mod, 1, 4).setValue(mod.getAmount(Mod303Key.CT_S25I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S25I))
+		,CT_S25U(Mod303Key.CT_S25U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S25U, ensureModule(mod, 1, 4).getUnit())
+			,mod -> ensureModule(mod, 1, 4).setUnit(mod.getDescription(Mod303Key.CT_S25U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S25U))
+		,CT_S25F(Mod303Key.CT_S25F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S25F, ensureModule(mod, 1, 4).getFactor())
+			,mod -> ensureModule(mod, 1, 4).setFactor(mod.getAmount(Mod303Key.CT_S25F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S25F))
+		,CT_S25R(Mod303Key.CT_S25R, null, null, null, "hasActivity(1)?round(CT_S25I*CT_S25F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S25R, ensureModule(mod, 1, 4).getResult())
+			,mod -> ensureModule(mod, 1, 4).setResult(mod.getAmount(Mod303Key.CT_S25R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S25R))
+		,CT_S26D(Mod303Key.CT_S26D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S26D, ensureModule(mod, 1, 5).getDescription())
+			,mod -> ensureModule(mod, 1, 5).setDescription(mod.getDescription(Mod303Key.CT_S26D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S26D))
+		,CT_S26I(Mod303Key.CT_S26I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S26I, ensureModule(mod, 1, 5).getValue())
+			,mod -> ensureModule(mod, 1, 5).setValue(mod.getAmount(Mod303Key.CT_S26I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S26I))
+		,CT_S26U(Mod303Key.CT_S26U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S26U, ensureModule(mod, 1, 5).getUnit())
+			,mod -> ensureModule(mod, 1, 5).setUnit(mod.getDescription(Mod303Key.CT_S26U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S26U))
+		,CT_S26F(Mod303Key.CT_S26F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S26F, ensureModule(mod, 1, 5).getFactor())
+			,mod -> ensureModule(mod, 1, 5).setFactor(mod.getAmount(Mod303Key.CT_S26F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S26F))
+		,CT_S26R(Mod303Key.CT_S26R, null, null, null, "hasActivity(1)?round(CT_S26I*CT_S26F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S26R, ensureModule(mod, 1, 5).getResult())
+			,mod -> ensureModule(mod, 1, 5).setResult(mod.getAmount(Mod303Key.CT_S26R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S26R))
+		,CT_S27D(Mod303Key.CT_S27D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S27D, ensureModule(mod, 1, 6).getDescription())
+			,mod -> ensureModule(mod, 1, 6).setDescription(mod.getDescription(Mod303Key.CT_S27D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S27D))
+		,CT_S27I(Mod303Key.CT_S27I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S27I, ensureModule(mod, 1, 6).getValue())
+			,mod -> ensureModule(mod, 1, 6).setValue(mod.getAmount(Mod303Key.CT_S27I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S27I))
+		,CT_S27U(Mod303Key.CT_S27U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S27U, ensureModule(mod, 1, 6).getUnit())
+			,mod -> ensureModule(mod, 1, 6).setUnit(mod.getDescription(Mod303Key.CT_S27U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S27U))
+		,CT_S27F(Mod303Key.CT_S27F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S27F, ensureModule(mod, 1, 6).getFactor())
+			,mod -> ensureModule(mod, 1, 6).setFactor(mod.getAmount(Mod303Key.CT_S27F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S27F))
+		
+		
+		
+		,CT_S2P1(Mod303Key.CT_S2P1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2P1, ensureActivity(mod, 1).getMay19Hours())
+			,mod -> ensureActivity(mod, 1).setMay19Hours(mod.getAmount(Mod303Key.CT_S2P1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2P1))
+		,CT_S2P2(Mod303Key.CT_S2P2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2P2, ensureActivity(mod, 1).getMen19Hours())
+			,mod -> ensureActivity(mod, 1).setMen19Hours(mod.getAmount(Mod303Key.CT_S2P2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2P2))
+		,CT_S2P3(Mod303Key.CT_S2P3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2P3, ensureActivity(mod, 1).getDisHours())
+			,mod -> ensureActivity(mod, 1).setDisHours(mod.getAmount(Mod303Key.CT_S2P3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2P3))
+		,CT_S2P4(Mod303Key.CT_S2P4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2P4, ensureActivity(mod, 1).getYearHours())
+			,mod -> ensureActivity(mod, 1).setYearHours(mod.getAmount(Mod303Key.CT_S2P4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2P4))
+		,CT_S2E1(Mod303Key.CT_S2E1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2E1, ensureActivity(mod, 1).getOwnerHours())
+			,mod -> ensureActivity(mod, 1).setOwnerHours(mod.getAmount(Mod303Key.CT_S2E1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2E1))
+		,CT_S2E2(Mod303Key.CT_S2E2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2E2, ensureActivity(mod, 1).isOwnerDis()?1:0)
+			,mod -> ensureActivity(mod, 1).setOwnerDis(mod.getAmount(Mod303Key.CT_S2E2) == 1)
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2E2))
+		,CT_S2E3(Mod303Key.CT_S2E3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2E3, ensureActivity(mod, 1).getSpouseHours())
+			,mod -> ensureActivity(mod, 1).setSpouseHours(mod.getAmount(Mod303Key.CT_S2E3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2E3))
+		,CT_S2E4(Mod303Key.CT_S2E4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2E4, ensureActivity(mod, 1).getChildMen18Hours())
+			,mod -> ensureActivity(mod, 1).setChildMen18Hours(mod.getAmount(Mod303Key.CT_S2E4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2E4))
+		
+		,CT_S2C1(Mod303Key.CT_S2C1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2C1, ensureDesk(mod, 1, 0).getDeskCapacity())
+			,mod -> ensureDesk(mod, 1, 0).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S2C1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2C1))
+		,CT_S2M1(Mod303Key.CT_S2M1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2M1, ensureDesk(mod, 1, 0).getDesks())
+			,mod -> ensureDesk(mod, 1, 0).setDesks((int) mod.getAmount(Mod303Key.CT_S2M1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2M1))
+		,CT_S2D1(Mod303Key.CT_S2D1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2D1, ensureDesk(mod, 1, 0).getDeskDays())
+			,mod -> ensureDesk(mod, 1, 0).setDeskDays((int) mod.getAmount(Mod303Key.CT_S2D1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2D1))
+		,CT_S2C2(Mod303Key.CT_S2C2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2C2, ensureDesk(mod, 1, 1).getDeskCapacity())
+			,mod -> ensureDesk(mod, 1, 1).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S2C2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2C2))
+		,CT_S2M2(Mod303Key.CT_S2M2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2M2, ensureDesk(mod, 1, 1).getDesks())
+			,mod -> ensureDesk(mod, 1, 1).setDesks((int) mod.getAmount(Mod303Key.CT_S2M2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2M2))
+		,CT_S2D2(Mod303Key.CT_S2D2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2D2, ensureDesk(mod, 1, 1).getDeskDays())
+			,mod -> ensureDesk(mod, 1, 1).setDeskDays((int) mod.getAmount(Mod303Key.CT_S2D2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2D2))
+		,CT_S2C3(Mod303Key.CT_S2C3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2C3, ensureDesk(mod, 1, 2).getDeskCapacity())
+			,mod -> ensureDesk(mod, 1, 2).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S2C3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2C3))
+		,CT_S2M3(Mod303Key.CT_S2M3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2M3, ensureDesk(mod, 1, 2).getDesks())
+			,mod -> ensureDesk(mod, 1, 2).setDesks((int) mod.getAmount(Mod303Key.CT_S2M3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2M3))
+		,CT_S2D3(Mod303Key.CT_S2D3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2D3, ensureDesk(mod, 1, 2).getDeskDays())
+			,mod -> ensureDesk(mod, 1, 2).setDeskDays((int) mod.getAmount(Mod303Key.CT_S2D3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2D3))
+		,CT_S2C4(Mod303Key.CT_S2C4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2C4, ensureDesk(mod, 1, 3).getDeskCapacity())
+			,mod -> ensureDesk(mod, 1, 3).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S2C4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2C4))
+		,CT_S2M4(Mod303Key.CT_S2M4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2M4, ensureDesk(mod, 1, 3).getDesks())
+			,mod -> ensureDesk(mod, 1, 3).setDesks((int) mod.getAmount(Mod303Key.CT_S2M4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2M4))
+		,CT_S2D4(Mod303Key.CT_S2D4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S2D4, ensureDesk(mod, 1, 3).getDeskDays())
+			,mod -> ensureDesk(mod, 1, 3).setDeskDays((int) mod.getAmount(Mod303Key.CT_S2D4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2D4))
+		
+		,CT_S27R(Mod303Key.CT_S27R, null, null, null, "hasActivity(1)?round(CT_S27I*CT_S27F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S27R, ensureModule(mod, 1, 6).getResult())
+			,mod -> ensureModule(mod, 1, 6).setResult(mod.getAmount(Mod303Key.CT_S27R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S27R))
+		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones corrientes
+		,CT_S217(Mod303Key.CT_S217, null, null, null, "CT_S21R+CT_S22R+CT_S23R+CT_S24R+CT_S25R+CT_S26R+CT_S27R", null
+			,mod -> mod.putAmount(Mod303Key.CT_S217, ensureActivity(mod, 1).getDev())
+			,mod -> ensureActivity(mod, 1).setDev(mod.getAmount(Mod303Key.CT_S217))
+			,null)
+		// (1) Actividades en régimen simplificado. D Reducciones
+		,CT_S218(Mod303Key.CT_S218, null, null, null, "calculateReduccion2021(1,CT_S217,CT_S2X4,CT_S2X5)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S218, ensureActivity(mod, 1).getRed())
+			,mod -> ensureActivity(mod, 1).setRed(mod.getAmount(Mod303Key.CT_S218))
+			,null)
+		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de temporada
+		,CT_S219(Mod303Key.CT_S219, null, null, null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S2X1 )", null
+			,mod -> mod.putAmount(Mod303Key.CT_S219, ensureActivity(mod, 1).getInd())
+			,mod -> ensureActivity(mod, 1).setInd(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S219))
+			,null)
+		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
+		,CT_S220(Mod303Key.CT_S220, null, null, null
+			,"calculatePorcentajeIngresoCuenta2023(1,CT_S2X5)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S220, ensureActivity(mod, 1).getPor())
+			,mod -> ensureActivity(mod, 1).setPor(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S220))
+			,null)
+		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
+		,CT_S221(Mod303Key.CT_S221, null, null, null
+			,"calculateIngresoCuenta2021(1, CT_S2X1, CT_S2X2, CT_S217, CT_S218, CT_S219, CT_S220,CT_S2X5)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S221, ensureActivity(mod, 1).getIng())
+			,mod -> ensureActivity(mod, 1).setIng(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S221))
+			,null)
+		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes
+		,CT_S22X(Mod303Key.CT_S22X, null, null, null, "isLastPeriod()?round(CT_S217 * 1 / 100):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S22X, ensureActivity(mod, 1).getSopx())
+			,mod -> ensureActivity(mod, 1).setSopx(mod.getAmount(Mod303Key.CT_S22X))
+			,null)
+		// (1) Actividades en régimen simplificado. G Cuotas soportadas
+		,CT_S22Y(Mod303Key.CT_S22Y, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S22Y, ensureActivity(mod, 1).getSopy())
+			,mod -> ensureActivity(mod, 1).setSopy(mod.getAmount(Mod303Key.CT_S22Y))
+			,null)
+		// (1) Actividades en régimen simplificado. G Cuotas soportadas operaciones corrientes
+		,CT_S222(Mod303Key.CT_S222, null, null, null, "isLastPeriod()?(CT_S22X+CT_S22Y):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S222, ensureActivity(mod, 1).getSop())
+			,mod -> ensureActivity(mod, 1).setSop(mod.getAmount(Mod303Key.CT_S222))
+			,null)
+		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de temporada
+		,CT_S223(Mod303Key.CT_S223, null, null, null, "isLastPeriod()?calculateIndiceTemporada( CT_S2X1 ):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S223, ensureActivity(mod, 1).getIct())
+			,mod -> ensureActivity(mod, 1).setIct(mod.getAmount(Mod303Key.CT_S223))
+			,null)
+		// (1) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H])
+		,CT_S224(Mod303Key.CT_S224, null, null, null, "calculateResultadoAnual( CT_S217, CT_S218, CT_S222, CT_S223)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S224, ensureActivity(mod, 1).getRes())
+			,mod -> ensureActivity(mod, 1).setRes(mod.getAmount(Mod303Key.CT_S224))
+			,null)
+		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
+		,CT_S225(Mod303Key.CT_S225, null, null, null, "isLastPeriod()?CT_S225:0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S225, ensureActivity(mod, 1).getPcm())
+			,mod -> ensureActivity(mod, 1).setPcm(mod.getAmount(Mod303Key.CT_S225))
+			,null)
+		// (1) Actividades en régimen simplificado. K Devolución cuotas soportadas otros países
+		,CT_S226(Mod303Key.CT_S226, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S226, ensureActivity(mod, 1).getDvc())
+			,mod -> ensureActivity(mod, 1).setDvc(mod.getAmount(Mod303Key.CT_S226))
+			,null)
+		// (1) Actividades en régimen simplificado. L Cuota mínima
+		,CT_S227(Mod303Key.CT_S227, null, null, null, "calculateCuotaMinima(CT_S217, CT_S218, CT_S225, CT_S226,CT_S223)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S227, ensureActivity(mod, 1).getCmn())
+			,mod -> ensureActivity(mod, 1).setCmn(mod.getAmount(Mod303Key.CT_S227))
+			,null)
+		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado
+		,CT_S228(Mod303Key.CT_S228, null, null, null, "isLastPeriod()?((CT_S227>CT_S224)?CT_S227:CT_S224):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S228, ensureActivity(mod, 1).getCad())
+			,mod -> ensureActivity(mod, 1).setCad(mod.getAmount(Mod303Key.CT_S228))
+			,null)
+		
+		// (1) Actividades en régimen simplificado. Epigrafe IAE
+		,CT_S301(Mod303Key.CT_S301, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S301, ensureActivity(mod, 2).getEpigraph())
+			,mod -> ensureActivity(mod, 2).setEpigraph(mod.getDescription(Mod303Key.CT_S301))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S301))
+		// (1) Actividades en régimen simplificado. Epigrafe IAE - Descripción
+		,CT_S30D(Mod303Key.CT_S30D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S30D, ensureActivity(mod, 2).getDescription())
+			,mod -> ensureActivity(mod, 2).setDescription(mod.getDescription(Mod303Key.CT_S30D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S30D))
+		// (1) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722
+		,CT_S302(Mod303Key.CT_S302, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S302, ensureActivity(mod, 2).getSpecialEpigraph())
+			,mod -> ensureActivity(mod, 2).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S302))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S302))
+		// (1) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en los que se ejerció la actividad en el año anterior
+		,CT_S3X1(Mod303Key.CT_S3X1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3X1, ensureActivity(mod, 2).getTem())
+			,mod -> ensureActivity(mod, 2).setTem((int) mod.getAmount(Mod303Key.CT_S3X1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X1))
+		// (1) Actividades en régimen simplificado. Número de días de ejercicio de la actividad en el trimestre
+		,CT_S3X2(Mod303Key.CT_S3X2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3X2, ensureActivity(mod, 2).getDia())
+			,mod -> ensureActivity(mod, 2).setDia((int) mod.getAmount(Mod303Key.CT_S3X2))
+			,(prev,cur) -> ensureActivityDays(prev,cur, Mod303Key.CT_S301, Mod303Key.CT_S3X2))
+		// (1) Actividades en régimen simplificado. Número de empleados al inicio del ejercicio ( o al inicio de la actividad)
+		,CT_S3X3(Mod303Key.CT_S3X3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3X3, ensureActivity(mod, 2).getEmp())
+			,mod -> ensureActivity(mod, 2).setEmp((int) mod.getAmount(Mod303Key.CT_S3X3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X3))
+		// (1) Actividades en régimen simplificado. Si realiza la actividad en LORCA
+		,CT_S3X4(Mod303Key.CT_S3X4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3X4, ensureActivity(mod, 2).getLor())
+			,mod -> ensureActivity(mod, 2).setLor((int) mod.getAmount(Mod303Key.CT_S3X4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X3))
+		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
+		,CT_S3X5(Mod303Key.CT_S3X5, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3X5, ensureActivity(mod, 2).getCov())
+			,mod -> ensureActivity(mod, 2).setCov((int) mod.getAmount(Mod303Key.CT_S3X5))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3X3))
+		,CT_S31D(Mod303Key.CT_S31D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S31D, ensureModule(mod, 2, 0).getDescription())
+			,mod -> ensureModule(mod, 2, 0).setDescription(mod.getDescription(Mod303Key.CT_S31D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S31D))
+		,CT_S31I(Mod303Key.CT_S31I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S31I, ensureModule(mod, 2, 0).getValue())
+			,mod -> ensureModule(mod, 2, 0).setValue(mod.getAmount(Mod303Key.CT_S31I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S31I))
+		,CT_S31U(Mod303Key.CT_S31U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S31U, ensureModule(mod, 2, 0).getUnit())
+			,mod -> ensureModule(mod, 2, 0).setUnit(mod.getDescription(Mod303Key.CT_S31U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S31U))
+		,CT_S31F(Mod303Key.CT_S31F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S31F, ensureModule(mod, 2, 0).getFactor())
+			,mod -> ensureModule(mod, 2, 0).setFactor(mod.getAmount(Mod303Key.CT_S31F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S31F))
+		,CT_S31R(Mod303Key.CT_S31R, null, null, null, "hasActivity(2)?round(CT_S31I*CT_S31F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S31R, ensureModule(mod, 2, 0).getResult())
+			,mod -> ensureModule(mod, 2, 0).setResult(mod.getAmount(Mod303Key.CT_S31R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S31R))
+		,CT_S32D(Mod303Key.CT_S32D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S32D, ensureModule(mod, 2, 1).getDescription())
+			,mod -> ensureModule(mod, 2, 1).setDescription(mod.getDescription(Mod303Key.CT_S32D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S32D))
+		,CT_S32I(Mod303Key.CT_S32I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S32I, ensureModule(mod, 2, 1).getValue())
+			,mod -> ensureModule(mod, 2, 1).setValue(mod.getAmount(Mod303Key.CT_S32I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S32I))
+		,CT_S32U(Mod303Key.CT_S32U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S32U, ensureModule(mod, 2, 1).getUnit())
+			,mod -> ensureModule(mod, 2, 1).setUnit(mod.getDescription(Mod303Key.CT_S32U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S32U))
+		,CT_S32F(Mod303Key.CT_S32F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S32F, ensureModule(mod, 2, 1).getFactor())
+			,mod -> ensureModule(mod, 2, 1).setFactor(mod.getAmount(Mod303Key.CT_S32F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S32F))
+		,CT_S32R(Mod303Key.CT_S32R, null, null, null, "hasActivity(2)?round(CT_S32I*CT_S32F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S32R, ensureModule(mod, 2, 1).getResult())
+			,mod -> ensureModule(mod, 2, 1).setResult(mod.getAmount(Mod303Key.CT_S32R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S32R))
+		,CT_S33D(Mod303Key.CT_S33D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S33D, ensureModule(mod, 2, 2).getDescription())
+			,mod -> ensureModule(mod, 2, 2).setDescription(mod.getDescription(Mod303Key.CT_S33D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S33D))
+		,CT_S33I(Mod303Key.CT_S33I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S33I, ensureModule(mod, 2, 2).getValue())
+			,mod -> ensureModule(mod, 2, 2).setValue(mod.getAmount(Mod303Key.CT_S33I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S33I))
+		,CT_S33U(Mod303Key.CT_S33U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S33U, ensureModule(mod, 2, 2).getUnit())
+			,mod -> ensureModule(mod, 2, 2).setUnit(mod.getDescription(Mod303Key.CT_S33U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S33U))
+		,CT_S33F(Mod303Key.CT_S33F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S33F, ensureModule(mod, 2, 2).getFactor())
+			,mod -> ensureModule(mod, 2, 2).setFactor(mod.getAmount(Mod303Key.CT_S33F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S33F))
+		,CT_S33R(Mod303Key.CT_S33R, null, null, null, "hasActivity(2)?round(CT_S33I*CT_S33F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S33R, ensureModule(mod, 2, 2).getResult())
+			,mod -> ensureModule(mod, 2, 2).setResult(mod.getAmount(Mod303Key.CT_S33R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S33R))
+		,
+		CT_S34D(Mod303Key.CT_S34D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S34D, ensureModule(mod, 2, 3).getDescription())
+			,mod -> ensureModule(mod, 2, 3).setDescription(mod.getDescription(Mod303Key.CT_S34D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S34D))
+		,
+		CT_S34I(Mod303Key.CT_S34I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S34I, ensureModule(mod, 2, 3).getValue())
+			,mod -> ensureModule(mod, 2, 3).setValue(mod.getAmount(Mod303Key.CT_S34I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S34I))
+		,CT_S34U(Mod303Key.CT_S34U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S34U, ensureModule(mod, 2, 3).getUnit())
+			,mod -> ensureModule(mod, 2, 3).setUnit(mod.getDescription(Mod303Key.CT_S34U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S34U))
+		,CT_S34F(Mod303Key.CT_S34F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S34F, ensureModule(mod, 2, 3).getFactor())
+			,mod -> ensureModule(mod, 2, 3).setFactor(mod.getAmount(Mod303Key.CT_S34F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S34F))
+		,CT_S34R(Mod303Key.CT_S34R, null, null, null, "hasActivity(2)?round(CT_S34I*CT_S34F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S34R, ensureModule(mod, 2, 3).getResult())
+			,mod -> ensureModule(mod, 2, 3).setResult(mod.getAmount(Mod303Key.CT_S34R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S34R))
+		,CT_S35D(Mod303Key.CT_S35D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S35D, ensureModule(mod, 2, 4).getDescription())
+			,mod -> ensureModule(mod, 2, 4).setDescription(mod.getDescription(Mod303Key.CT_S35D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S35D))
+		,CT_S35I(Mod303Key.CT_S35I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S35I, ensureModule(mod, 2, 4).getValue())
+			,mod -> ensureModule(mod, 2, 4).setValue(mod.getAmount(Mod303Key.CT_S35I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S35I))
+		,CT_S35U(Mod303Key.CT_S35U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S35U, ensureModule(mod, 2, 4).getUnit())
+			,mod -> ensureModule(mod, 2, 4).setUnit(mod.getDescription(Mod303Key.CT_S35U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S35U))
+		,CT_S35F(Mod303Key.CT_S35F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S35F, ensureModule(mod, 2, 4).getFactor())
+			,mod -> ensureModule(mod, 2, 4).setFactor(mod.getAmount(Mod303Key.CT_S35F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S35F))
+		,CT_S35R(Mod303Key.CT_S35R, null, null, null, "hasActivity(2)?round(CT_S35I*CT_S35F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S35R, ensureModule(mod, 2, 4).getResult())
+			,mod -> ensureModule(mod, 2, 4).setResult(mod.getAmount(Mod303Key.CT_S35R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S35R))
+		,CT_S36D(Mod303Key.CT_S36D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S36D, ensureModule(mod, 2, 5).getDescription())
+			,mod -> ensureModule(mod, 2, 5).setDescription(mod.getDescription(Mod303Key.CT_S36D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S36D))
+		,CT_S36I(Mod303Key.CT_S36I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S36I, ensureModule(mod, 2, 5).getValue())
+			,mod -> ensureModule(mod, 2, 5).setValue(mod.getAmount(Mod303Key.CT_S36I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S36I))
+		,CT_S36U(Mod303Key.CT_S36U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S36U, ensureModule(mod, 2, 5).getUnit())
+			,mod -> ensureModule(mod, 2, 5).setUnit(mod.getDescription(Mod303Key.CT_S36U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S36U))
+		,CT_S36F(Mod303Key.CT_S36F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S36F, ensureModule(mod, 2, 5).getFactor())
+			,mod -> ensureModule(mod, 2, 5).setFactor(mod.getAmount(Mod303Key.CT_S36F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S36F))
+		,CT_S36R(Mod303Key.CT_S36R, null, null, null, "hasActivity(2)?round(CT_S36I*CT_S36F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S36R, ensureModule(mod, 2, 5).getResult())
+			,mod -> ensureModule(mod, 2, 5).setResult(mod.getAmount(Mod303Key.CT_S36R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S36R))
+		,CT_S37D(Mod303Key.CT_S37D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S37D, ensureModule(mod, 2, 6).getDescription())
+			,mod -> ensureModule(mod, 2, 6).setDescription(mod.getDescription(Mod303Key.CT_S37D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S37D))
+		,CT_S37I(Mod303Key.CT_S37I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S37I, ensureModule(mod, 2, 6).getValue())
+			,mod -> ensureModule(mod, 2, 6).setValue(mod.getAmount(Mod303Key.CT_S37I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S37I))
+		,CT_S37U(Mod303Key.CT_S37U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S37U, ensureModule(mod, 2, 6).getUnit())
+			,mod -> ensureModule(mod, 2, 6).setUnit(mod.getDescription(Mod303Key.CT_S37U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S37U))
+		,CT_S37F(Mod303Key.CT_S37F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S37F, ensureModule(mod, 2, 6).getFactor())
+			,mod -> ensureModule(mod, 2, 6).setFactor(mod.getAmount(Mod303Key.CT_S37F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S37F))
+		
+
+		,CT_S3P1(Mod303Key.CT_S3P1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3P1, ensureActivity(mod, 2).getMay19Hours())
+			,mod -> ensureActivity(mod, 2).setMay19Hours(mod.getAmount(Mod303Key.CT_S3P1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3P1))
+		,CT_S3P2(Mod303Key.CT_S3P2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3P2, ensureActivity(mod, 2).getMen19Hours())
+			,mod -> ensureActivity(mod, 2).setMen19Hours(mod.getAmount(Mod303Key.CT_S3P2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3P2))
+		,CT_S3P3(Mod303Key.CT_S3P3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3P3, ensureActivity(mod, 2).getDisHours())
+			,mod -> ensureActivity(mod, 2).setDisHours(mod.getAmount(Mod303Key.CT_S3P3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3P3))
+		,CT_S3P4(Mod303Key.CT_S3P4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3P4, ensureActivity(mod, 2).getYearHours())
+			,mod -> ensureActivity(mod, 2).setYearHours(mod.getAmount(Mod303Key.CT_S3P4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3P4))
+		,CT_S3E1(Mod303Key.CT_S3E1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3E1, ensureActivity(mod, 2).getOwnerHours())
+			,mod -> ensureActivity(mod, 2).setOwnerHours(mod.getAmount(Mod303Key.CT_S3E1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3E1))
+		,CT_S3E2(Mod303Key.CT_S3E2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3E2, ensureActivity(mod, 2).isOwnerDis()?1:0)
+			,mod -> ensureActivity(mod, 2).setOwnerDis(mod.getAmount(Mod303Key.CT_S3E2) == 1)
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3E2))
+		,CT_S3E3(Mod303Key.CT_S3E3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3E3, ensureActivity(mod, 2).getSpouseHours())
+			,mod -> ensureActivity(mod, 2).setSpouseHours(mod.getAmount(Mod303Key.CT_S3E3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3E3))
+		,CT_S3E4(Mod303Key.CT_S3E4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3E4, ensureActivity(mod, 2).getChildMen18Hours())
+			,mod -> ensureActivity(mod, 2).setChildMen18Hours(mod.getAmount(Mod303Key.CT_S3E4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3E4))
+
+		,CT_S3C1(Mod303Key.CT_S3C1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3C1, ensureDesk(mod, 2, 0).getDeskCapacity())
+			,mod -> ensureDesk(mod, 2, 0).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S3C1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3C1))
+		,CT_S3M1(Mod303Key.CT_S3M1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3M1, ensureDesk(mod, 2, 0).getDesks())
+			,mod -> ensureDesk(mod, 2, 0).setDesks((int) mod.getAmount(Mod303Key.CT_S3M1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3M1))
+		,CT_S3D1(Mod303Key.CT_S3D1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3D1, ensureDesk(mod, 2, 0).getDeskDays())
+			,mod -> ensureDesk(mod, 2, 0).setDeskDays((int) mod.getAmount(Mod303Key.CT_S3D1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3D1))
+		,CT_S3C2(Mod303Key.CT_S3C2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3C2, ensureDesk(mod, 2, 1).getDeskCapacity())
+			,mod -> ensureDesk(mod, 2, 1).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S3C2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3C2))
+		,CT_S3M2(Mod303Key.CT_S3M2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3M2, ensureDesk(mod, 2, 1).getDesks())
+			,mod -> ensureDesk(mod, 2, 1).setDesks((int) mod.getAmount(Mod303Key.CT_S3M2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3M2))
+		,CT_S3D2(Mod303Key.CT_S3D2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3D2, ensureDesk(mod, 2, 1).getDeskDays())
+			,mod -> ensureDesk(mod, 2, 1).setDeskDays((int) mod.getAmount(Mod303Key.CT_S3D2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3D2))
+		,CT_S3C3(Mod303Key.CT_S3C3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3C3, ensureDesk(mod, 2, 2).getDeskCapacity())
+			,mod -> ensureDesk(mod, 2, 2).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S3C3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3C3))
+		,CT_S3M3(Mod303Key.CT_S3M3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3M3, ensureDesk(mod, 2, 2).getDesks())
+			,mod -> ensureDesk(mod, 2, 2).setDesks((int) mod.getAmount(Mod303Key.CT_S3M3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3M3))
+		,CT_S3D3(Mod303Key.CT_S3D3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3D3, ensureDesk(mod, 2, 2).getDeskDays())
+			,mod -> ensureDesk(mod, 2, 2).setDeskDays((int) mod.getAmount(Mod303Key.CT_S3D3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3D3))
+		,CT_S3C4(Mod303Key.CT_S3C4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3C4, ensureDesk(mod, 2, 3).getDeskCapacity())
+			,mod -> ensureDesk(mod, 2, 3).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S3C4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3C4))
+		,CT_S3M4(Mod303Key.CT_S3M4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3M4, ensureDesk(mod, 2, 3).getDesks())
+			,mod -> ensureDesk(mod, 2, 3).setDesks((int) mod.getAmount(Mod303Key.CT_S3M4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3M4))
+		,CT_S3D4(Mod303Key.CT_S3D4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S3D4, ensureDesk(mod, 2, 3).getDeskDays())
+			,mod -> ensureDesk(mod, 2, 3).setDeskDays((int) mod.getAmount(Mod303Key.CT_S3D4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3D4))
+			
+		
+		,CT_S37R(Mod303Key.CT_S37R, null, null, null, "hasActivity(2)?round(CT_S37I*CT_S37F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S37R, ensureModule(mod, 2, 6).getResult())
+			,mod -> ensureModule(mod, 2, 6).setResult(mod.getAmount(Mod303Key.CT_S37R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S37R))
+
+		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones corrientes
+		,CT_S317(Mod303Key.CT_S317, null, null, null, "CT_S31R+CT_S32R+CT_S33R+CT_S34R+CT_S35R+CT_S36R+CT_S37R", null
+			,mod -> mod.putAmount(Mod303Key.CT_S317, ensureActivity(mod, 2).getDev())
+			,mod -> ensureActivity(mod, 2).setDev(mod.getAmount(Mod303Key.CT_S317))
+			,null)
+		// (1) Actividades en régimen simplificado. D Reducciones
+		,CT_S318(Mod303Key.CT_S318, null, null, null, "calculateReduccion2021(2,CT_S317,CT_S3X4,CT_S3X5)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S318, ensureActivity(mod, 2).getRed())
+			,mod -> ensureActivity(mod, 2).setRed(mod.getAmount(Mod303Key.CT_S318))
+			,null)
+		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de temporada
+		,CT_S319(Mod303Key.CT_S319, null, null, null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S3X1 )", null
+			,mod -> mod.putAmount(Mod303Key.CT_S319, ensureActivity(mod, 2).getInd())
+			,mod -> ensureActivity(mod, 2).setInd(mod.getAmount(Mod303Key.CT_S319))
+			,null)
+		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
+		,CT_S320(Mod303Key.CT_S320, null, null, null
+			,"calculatePorcentajeIngresoCuenta2023(2,CT_S3X5)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S320, ensureActivity(mod, 2).getPor())
+			,mod -> ensureActivity(mod, 2).setPor(mod.getAmount(Mod303Key.CT_S320))
+			,null)
+		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
+		,CT_S321(Mod303Key.CT_S321, null, null, null
+			,"calculateIngresoCuenta2021(2, CT_S3X1, CT_S3X2, CT_S317, CT_S318, CT_S319, CT_S320,CT_S3X5)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S321, ensureActivity(mod, 2).getIng())
+			,mod -> ensureActivity(mod, 2).setIng(mod.getAmount(Mod303Key.CT_S321))
+			,null)
+		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes
+		,CT_S32X(Mod303Key.CT_S32X, null, null, null, "isLastPeriod()?round(CT_S317 * 1 / 100):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S32X, ensureActivity(mod, 2).getSopx())
+			,mod -> ensureActivity(mod, 2).setSopx(mod.getAmount(Mod303Key.CT_S32X))
+			,null)
+		// (1) Actividades en régimen simplificado. G Cuotas soportadas
+		,CT_S32Y(Mod303Key.CT_S32Y, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S32Y, ensureActivity(mod, 2).getSopy())
+			,mod -> ensureActivity(mod, 2).setSopy(mod.getAmount(Mod303Key.CT_S32Y))
+			,null)
+		// (1) Actividades en régimen simplificado. G Cuotas soportadas operaciones corrientes
+		,CT_S322(Mod303Key.CT_S322, null, null, null, "isLastPeriod()?(CT_S32X+CT_S32Y):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S322, ensureActivity(mod, 2).getSop())
+			,mod -> ensureActivity(mod, 2).setSop(mod.getAmount(Mod303Key.CT_S322))
+			,null)
+		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de temporada
+		,CT_S323(Mod303Key.CT_S323, null, null, null, "isLastPeriod()?calculateIndiceTemporada( CT_S3X1 ):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S323, ensureActivity(mod, 2).getIct())
+			,mod -> ensureActivity(mod, 2).setIct(mod.getAmount(Mod303Key.CT_S323))
+			,null)
+		// (1) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H])
+		,CT_S324(Mod303Key.CT_S324, null, null, null, "calculateResultadoAnual( CT_S317, CT_S318, CT_S322, CT_S323)",null
+			,mod -> mod.putAmount(Mod303Key.CT_S324, ensureActivity(mod, 2).getRes())
+			,mod -> ensureActivity(mod, 2).setRes(mod.getAmount(Mod303Key.CT_S324))
+			,null)
+		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
+		,CT_S325(Mod303Key.CT_S325, null, null, null, "isLastPeriod()?CT_S325:0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S325, ensureActivity(mod, 2).getPcm())
+			,mod -> ensureActivity(mod, 2).setPcm(mod.getAmount(Mod303Key.CT_S325))
+			,null)
+		// (1) Actividades en régimen simplificado. K Devolución cuotas soportadas otros países
+		,CT_S326(Mod303Key.CT_S326, null, null, null, null, null
+				,mod -> mod.putAmount(Mod303Key.CT_S326, ensureActivity(mod, 2).getDvc())
+				,mod -> ensureActivity(mod, 2).setDvc(mod.getAmount(Mod303Key.CT_S326))
+				, null )
+		// (1) Actividades en régimen simplificado. L Cuota mínima
+		,CT_S327(Mod303Key.CT_S327, null, null, null, "calculateCuotaMinima(CT_S317, CT_S318, CT_S325, CT_S326,CT_S323)",null
+			,mod -> mod.putAmount(Mod303Key.CT_S327, ensureActivity(mod, 2).getCmn())
+			,mod -> ensureActivity(mod, 2).setCmn(mod.getAmount(Mod303Key.CT_S327))
+			,null)
+		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado
+		,CT_S328(Mod303Key.CT_S328, null, null, null, "isLastPeriod()?((CT_S327>CT_S324)?CT_S327:CT_S324):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S328, ensureActivity(mod, 2).getCad())
+			,mod -> ensureActivity(mod, 2).setCad(mod.getAmount(Mod303Key.CT_S328))
+			,null)
 
 		// (1) Actividades en régimen simplificado. Epigrafe IAE
-		,
-		CT_S101(Mod303Key.CT_S101, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S101, ensureActivity(mod, 0).getEpigraph()),
-				mod -> ensureActivity(mod, 0).setEpigraph(mod.getDescription(Mod303Key.CT_S101)), true)
+		,CT_S401(Mod303Key.CT_S401, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S401, ensureActivity(mod, 3).getEpigraph())
+			,mod -> ensureActivity(mod, 3).setEpigraph(mod.getDescription(Mod303Key.CT_S401))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S401))
 		// (1) Actividades en régimen simplificado. Epigrafe IAE - Descripción
-		,
-		CT_S10D(Mod303Key.CT_S10D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S10D, ensureActivity(mod, 0).getDescription()),
-				mod -> ensureActivity(mod, 0).setDescription(mod.getDescription(Mod303Key.CT_S10D)), true)
-		// (1) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de
-		// actividad en el caso de ep\u00EDgrafes 691.9 y 722
-		,
-		CT_S102(Mod303Key.CT_S102, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S102, ensureActivity(mod, 0).getSpecialEpigraph()),
-				mod -> ensureActivity(mod, 0).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S102)), true)
+		,CT_S40D(Mod303Key.CT_S40D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S40D, ensureActivity(mod, 3).getDescription())
+			,mod -> ensureActivity(mod, 3).setDescription(mod.getDescription(Mod303Key.CT_S40D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S40D))
+		// (1) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de actividad en el caso de ep\u00EDgrafes 691.9 y 722
+		,CT_S402(Mod303Key.CT_S402, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S402, ensureActivity(mod, 3).getSpecialEpigraph())
+			,mod -> ensureActivity(mod, 3).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S402))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S402))
 		// (1) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en
 		// los que se ejerció la actividad en el año anterior
 		,
-		CT_S1X1(Mod303Key.CT_S1X1, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S1X1, ensureActivity(mod, 0).getTem()),
-				mod -> ensureActivity(mod, 0).setTem((int) mod.getAmount(Mod303Key.CT_S1X1)), true)
-		// (1) Actividades en régimen simplificado. Número de días de ejercicio de la
-		// actividad en el trimestre
-		,
-		CT_S1X2(Mod303Key.CT_S1X2, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S1X2, ensureActivity(mod, 0).getDia()),
-				mod -> ensureActivity(mod, 0).setDia((int) mod.getAmount(Mod303Key.CT_S1X2)), true)
-		// (1) Actividades en régimen simplificado. Número de empleados al inicio del
-		// ejercicio ( o al inicio de la actividad)
-		,
-		CT_S1X3(Mod303Key.CT_S1X3, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S1X3, ensureActivity(mod, 0).getEmp()),
-				mod -> ensureActivity(mod, 0).setEmp((int) mod.getAmount(Mod303Key.CT_S1X3)), true)
+		CT_S4X1(Mod303Key.CT_S4X1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4X1, ensureActivity(mod, 3).getTem())
+			,mod -> ensureActivity(mod, 3).setTem((int) mod.getAmount(Mod303Key.CT_S4X1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X1))
+		// (1) Actividades en régimen simplificado. Número de días de ejercicio de la actividad en el trimestre
+		,CT_S4X2(Mod303Key.CT_S4X2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4X2, ensureActivity(mod, 3).getDia())
+			,mod -> ensureActivity(mod, 3).setDia((int) mod.getAmount(Mod303Key.CT_S4X2))
+			,(prev,cur) -> ensureActivityDays(prev,cur, Mod303Key.CT_S401, Mod303Key.CT_S4X2))
+		// (1) Actividades en régimen simplificado. Número de empleados al inicio del ejercicio ( o al inicio de la actividad)
+		,CT_S4X3(Mod303Key.CT_S4X3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4X3, ensureActivity(mod, 3).getEmp())
+			,mod -> ensureActivity(mod, 3).setEmp((int) mod.getAmount(Mod303Key.CT_S4X3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X3))
 		// (1) Actividades en régimen simplificado. Si realiza la actividad en LORCA
-		,
-		CT_S1X4(Mod303Key.CT_S1X4, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S1X4, ensureActivity(mod, 0).getLor()),
-				mod -> ensureActivity(mod, 0).setLor((int) mod.getAmount(Mod303Key.CT_S1X4)), true)
+		,CT_S4X4(Mod303Key.CT_S4X4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4X4, ensureActivity(mod, 3).getLor())
+			,mod -> ensureActivity(mod, 3).setLor((int) mod.getAmount(Mod303Key.CT_S4X4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X4))
 		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
-		,
-		CT_S1X5(Mod303Key.CT_S1X5, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S1X5, ensureActivity(mod, 0).getCov()),
-				mod -> ensureActivity(mod, 0).setCov((int) mod.getAmount(Mod303Key.CT_S1X5)), true),
-		CT_S11D(Mod303Key.CT_S11D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S11D, ensureModule(mod, 0, 0).getDescription()),
-				mod -> ensureModule(mod, 0, 0).setDescription(mod.getDescription(Mod303Key.CT_S11D)), true),
-		CT_S11I(Mod303Key.CT_S11I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S11I, ensureModule(mod, 0, 0).getValue()),
-				mod -> ensureModule(mod, 0, 0).setValue(mod.getAmount(Mod303Key.CT_S11I)), true),
-		CT_S11U(Mod303Key.CT_S11U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S11U, ensureModule(mod, 0, 0).getUnit()),
-				mod -> ensureModule(mod, 0, 0).setUnit(mod.getDescription(Mod303Key.CT_S11U)), true),
-		CT_S11F(Mod303Key.CT_S11F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S11F, ensureModule(mod, 0, 0).getFactor()),
-				mod -> ensureModule(mod, 0, 0).setFactor(mod.getAmount(Mod303Key.CT_S11F)), true),
-		CT_S11R(Mod303Key.CT_S11R, null, null, null, "hasActivity(0)?round(CT_S11I*CT_S11F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S11R, ensureModule(mod, 0, 0).getResult()),
-				mod -> ensureModule(mod, 0, 0).setResult(mod.getAmount(Mod303Key.CT_S11R)), true),
-		CT_S12D(Mod303Key.CT_S12D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S12D, ensureModule(mod, 0, 1).getDescription()),
-				mod -> ensureModule(mod, 0, 1).setDescription(mod.getDescription(Mod303Key.CT_S12D)), true),
-		CT_S12I(Mod303Key.CT_S12I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S12I, ensureModule(mod, 0, 1).getValue()),
-				mod -> ensureModule(mod, 0, 1).setValue(mod.getAmount(Mod303Key.CT_S12I)), true),
-		CT_S12U(Mod303Key.CT_S12U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S12U, ensureModule(mod, 0, 1).getUnit()),
-				mod -> ensureModule(mod, 0, 1).setUnit(mod.getDescription(Mod303Key.CT_S12U)), true),
-		CT_S12F(Mod303Key.CT_S12F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S12F, ensureModule(mod, 0, 1).getFactor()),
-				mod -> ensureModule(mod, 0, 1).setFactor(mod.getAmount(Mod303Key.CT_S12F)), true),
-		CT_S12R(Mod303Key.CT_S12R, null, null, null, "hasActivity(0)?round(CT_S12I*CT_S12F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S12R, ensureModule(mod, 0, 1).getResult()),
-				mod -> ensureModule(mod, 0, 1).setResult(mod.getAmount(Mod303Key.CT_S12R)), true),
-		CT_S13D(Mod303Key.CT_S13D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S13D, ensureModule(mod, 0, 2).getDescription()),
-				mod -> ensureModule(mod, 0, 2).setDescription(mod.getDescription(Mod303Key.CT_S13D)), true),
-		CT_S13I(Mod303Key.CT_S13I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S13I, ensureModule(mod, 0, 2).getValue()),
-				mod -> ensureModule(mod, 0, 2).setValue(mod.getAmount(Mod303Key.CT_S13I)), true),
-		CT_S13U(Mod303Key.CT_S13U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S13U, ensureModule(mod, 0, 2).getUnit()),
-				mod -> ensureModule(mod, 0, 2).setUnit(mod.getDescription(Mod303Key.CT_S13U)), true),
-		CT_S13F(Mod303Key.CT_S13F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S13F, ensureModule(mod, 0, 2).getFactor()),
-				mod -> ensureModule(mod, 0, 2).setFactor(mod.getAmount(Mod303Key.CT_S13F)), true),
-		CT_S13R(Mod303Key.CT_S13R, null, null, null, "hasActivity(0)?round(CT_S13I*CT_S13F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S13R, ensureModule(mod, 0, 2).getResult()),
-				mod -> ensureModule(mod, 0, 2).setResult(mod.getAmount(Mod303Key.CT_S13R)), true)
+		,CT_S4X5(Mod303Key.CT_S4X5, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4X5, ensureActivity(mod, 3).getCov())
+			,mod -> ensureActivity(mod, 3).setCov((int) mod.getAmount(Mod303Key.CT_S4X5))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4X5))
+		,CT_S41D(Mod303Key.CT_S41D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S41D, ensureModule(mod, 3, 0).getDescription())
+			,mod -> ensureModule(mod, 3, 0).setDescription(mod.getDescription(Mod303Key.CT_S41D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S41D))
+		,CT_S41I(Mod303Key.CT_S41I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S41I, ensureModule(mod, 3, 0).getValue())
+			,mod -> ensureModule(mod, 3, 0).setValue(mod.getAmount(Mod303Key.CT_S41I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S41I))
+		,CT_S41U(Mod303Key.CT_S41U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S41U, ensureModule(mod, 3, 0).getUnit())
+			,mod -> ensureModule(mod, 3, 0).setUnit(mod.getDescription(Mod303Key.CT_S41U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S41U))
+		,CT_S41F(Mod303Key.CT_S41F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S41F, ensureModule(mod, 3, 0).getFactor())
+			,mod -> ensureModule(mod, 3, 0).setFactor(mod.getAmount(Mod303Key.CT_S41F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S41F))
+		,CT_S41R(Mod303Key.CT_S41R, null, null, null, "hasActivity(3)?round(CT_S41I*CT_S41F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S41R, ensureModule(mod, 3, 0).getResult())
+			,mod -> ensureModule(mod, 3, 0).setResult(mod.getAmount(Mod303Key.CT_S41R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S41R))
+		,CT_S42D(Mod303Key.CT_S42D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S42D, ensureModule(mod, 3, 1).getDescription())
+			,mod -> ensureModule(mod, 3, 1).setDescription(mod.getDescription(Mod303Key.CT_S42D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S42D))
+		,CT_S42I(Mod303Key.CT_S42I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S42I, ensureModule(mod, 3, 1).getValue())
+			,mod -> ensureModule(mod, 3, 1).setValue(mod.getAmount(Mod303Key.CT_S42I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S42I))
+		,CT_S42U(Mod303Key.CT_S42U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S42U, ensureModule(mod, 3, 1).getUnit())
+			,mod -> ensureModule(mod, 3, 1).setUnit(mod.getDescription(Mod303Key.CT_S42U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S42U))
+		,CT_S42F(Mod303Key.CT_S42F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S42F, ensureModule(mod, 3, 1).getFactor())
+			,mod -> ensureModule(mod, 3, 1).setFactor(mod.getAmount(Mod303Key.CT_S42F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S42F))
+		,CT_S42R(Mod303Key.CT_S42R, null, null, null, "hasActivity(3)?round(CT_S42I*CT_S42F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S42R, ensureModule(mod, 3, 1).getResult())
+			,mod -> ensureModule(mod, 3, 1).setResult(mod.getAmount(Mod303Key.CT_S42R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S42R))
+		,CT_S43D(Mod303Key.CT_S43D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S43D, ensureModule(mod, 3, 2).getDescription())
+			,mod -> ensureModule(mod, 3, 2).setDescription(mod.getDescription(Mod303Key.CT_S43D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S43D))
+		,CT_S43I(Mod303Key.CT_S43I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S43I, ensureModule(mod, 3, 2).getValue())
+			,mod -> ensureModule(mod, 3, 2).setValue(mod.getAmount(Mod303Key.CT_S43I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S43I))
+		,CT_S43U(Mod303Key.CT_S43U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S43U, ensureModule(mod, 3, 2).getUnit())
+			,mod -> ensureModule(mod, 3, 2).setUnit(mod.getDescription(Mod303Key.CT_S43U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S43U))
+		,CT_S43F(Mod303Key.CT_S43F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S43F, ensureModule(mod, 3, 2).getFactor())
+			,mod -> ensureModule(mod, 3, 2).setFactor(mod.getAmount(Mod303Key.CT_S43F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S43F))
+		,CT_S43R(Mod303Key.CT_S43R, null, null, null, "hasActivity(3)?round(CT_S43I*CT_S43F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S43R, ensureModule(mod, 3, 2).getResult())
+			,mod -> ensureModule(mod, 3, 2).setResult(mod.getAmount(Mod303Key.CT_S43R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S43R))
+		,CT_S44D(Mod303Key.CT_S44D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S44D, ensureModule(mod, 3, 3).getDescription())
+			,mod -> ensureModule(mod, 3, 3).setDescription(mod.getDescription(Mod303Key.CT_S44D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S44D))
+		,CT_S44I(Mod303Key.CT_S44I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S44I, ensureModule(mod, 3, 3).getValue())
+			,mod -> ensureModule(mod, 3, 3).setValue(mod.getAmount(Mod303Key.CT_S44I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S44I))
+		,CT_S44U(Mod303Key.CT_S44U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S44U, ensureModule(mod, 3, 3).getUnit())
+			,mod -> ensureModule(mod, 3, 3).setUnit(mod.getDescription(Mod303Key.CT_S44U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S44U))
+		,CT_S44F(Mod303Key.CT_S44F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S44F, ensureModule(mod, 3, 3).getFactor())
+			,mod -> ensureModule(mod, 3, 3).setFactor(mod.getAmount(Mod303Key.CT_S44F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S44F))
+		,CT_S44R(Mod303Key.CT_S44R, null, null, null, "hasActivity(3)?round(CT_S44I*CT_S44F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S44R, ensureModule(mod, 3, 3).getResult())
+			,mod -> ensureModule(mod, 3, 3).setResult(mod.getAmount(Mod303Key.CT_S44R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S44R))
+		,CT_S45D(Mod303Key.CT_S45D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S45D, ensureModule(mod, 3, 4).getDescription())
+			,mod -> ensureModule(mod, 3, 4).setDescription(mod.getDescription(Mod303Key.CT_S45D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S45D))
+		,CT_S45I(Mod303Key.CT_S45I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S45I, ensureModule(mod, 3, 4).getValue())
+			,mod -> ensureModule(mod, 3, 4).setValue(mod.getAmount(Mod303Key.CT_S45I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S45I))
+		,CT_S45U(Mod303Key.CT_S45U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S45U, ensureModule(mod, 3, 4).getUnit())
+			,mod -> ensureModule(mod, 3, 4).setUnit(mod.getDescription(Mod303Key.CT_S45U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S45U))
+		,CT_S45F(Mod303Key.CT_S45F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S45F, ensureModule(mod, 3, 4).getFactor())
+			,mod -> ensureModule(mod, 3, 4).setFactor(mod.getAmount(Mod303Key.CT_S45F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S45F))
+		,CT_S45R(Mod303Key.CT_S45R, null, null, null, "hasActivity(3)?round(CT_S45I*CT_S45F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S45R, ensureModule(mod, 3, 4).getResult())
+			,mod -> ensureModule(mod, 3, 4).setResult(mod.getAmount(Mod303Key.CT_S45R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S45R))
+		,CT_S46D(Mod303Key.CT_S46D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S46D, ensureModule(mod, 3, 5).getDescription())
+			,mod -> ensureModule(mod, 3, 5).setDescription(mod.getDescription(Mod303Key.CT_S46D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S46D))
+		,CT_S46I(Mod303Key.CT_S46I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S46I, ensureModule(mod, 3, 5).getValue())
+			,mod -> ensureModule(mod, 3, 5).setValue(mod.getAmount(Mod303Key.CT_S46I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S46I))
+		,CT_S46U(Mod303Key.CT_S46U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S46U, ensureModule(mod, 3, 5).getUnit())
+			,mod -> ensureModule(mod, 3, 5).setUnit(mod.getDescription(Mod303Key.CT_S46U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S46U))
+		,CT_S46F(Mod303Key.CT_S46F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S46F, ensureModule(mod, 3, 5).getFactor())
+			,mod -> ensureModule(mod, 3, 5).setFactor(mod.getAmount(Mod303Key.CT_S46F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S46F))
+		,CT_S46R(Mod303Key.CT_S46R, null, null, null, "hasActivity(3)?round(CT_S46I*CT_S46F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S46R, ensureModule(mod, 3, 5).getResult())
+			,mod -> ensureModule(mod, 3, 5).setResult(mod.getAmount(Mod303Key.CT_S46R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S46R))
+		,CT_S47D(Mod303Key.CT_S47D, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S47D, ensureModule(mod, 3, 6).getDescription())
+			,mod -> ensureModule(mod, 3, 6).setDescription(mod.getDescription(Mod303Key.CT_S47D))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S47D))
+		,CT_S47I(Mod303Key.CT_S47I, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S47I, ensureModule(mod, 3, 6).getValue())
+			,mod -> ensureModule(mod, 3, 6).setValue(mod.getAmount(Mod303Key.CT_S47I))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S47I))
+		,CT_S47U(Mod303Key.CT_S47U, null, null, null, null, null
+			,mod -> mod.putDescription(Mod303Key.CT_S47U, ensureModule(mod, 3, 6).getUnit())
+			,mod -> ensureModule(mod, 3, 6).setUnit(mod.getDescription(Mod303Key.CT_S47U))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S47U))
+		,CT_S47F(Mod303Key.CT_S47F, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S47F, ensureModule(mod, 3, 6).getFactor())
+			,mod -> ensureModule(mod, 3, 6).setFactor(mod.getAmount(Mod303Key.CT_S47F))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S47F))
 
-		,
-		CT_S14D(Mod303Key.CT_S14D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S14D, ensureModule(mod, 0, 3).getDescription()),
-				mod -> ensureModule(mod, 0, 3).setDescription(mod.getDescription(Mod303Key.CT_S14D)), true),
-		CT_S14I(Mod303Key.CT_S14I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S14I, ensureModule(mod, 0, 3).getValue()),
-				mod -> ensureModule(mod, 0, 3).setValue(mod.getAmount(Mod303Key.CT_S14I)), true),
-		CT_S14U(Mod303Key.CT_S14U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S14U, ensureModule(mod, 0, 3).getUnit()),
-				mod -> ensureModule(mod, 0, 3).setUnit(mod.getDescription(Mod303Key.CT_S14U)), true),
-		CT_S14F(Mod303Key.CT_S14F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S14F, ensureModule(mod, 0, 3).getFactor()),
-				mod -> ensureModule(mod, 0, 3).setFactor(mod.getAmount(Mod303Key.CT_S14F)), true),
-		CT_S14R(Mod303Key.CT_S14R, null, null, null, "hasActivity(0)?round(CT_S14I*CT_S14F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S14R, ensureModule(mod, 0, 3).getResult()),
-				mod -> ensureModule(mod, 0, 3).setResult(mod.getAmount(Mod303Key.CT_S14R)), true),
-		CT_S15D(Mod303Key.CT_S15D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S15D, ensureModule(mod, 0, 4).getDescription()),
-				mod -> ensureModule(mod, 0, 4).setDescription(mod.getDescription(Mod303Key.CT_S15D)), true),
-		CT_S15I(Mod303Key.CT_S15I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S15I, ensureModule(mod, 0, 4).getValue()),
-				mod -> ensureModule(mod, 0, 4).setValue(mod.getAmount(Mod303Key.CT_S15I)), true),
-		CT_S15U(Mod303Key.CT_S15U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S15U, ensureModule(mod, 0, 4).getUnit()),
-				mod -> ensureModule(mod, 0, 4).setUnit(mod.getDescription(Mod303Key.CT_S15U)), true),
-		CT_S15F(Mod303Key.CT_S15F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S15F, ensureModule(mod, 0, 4).getFactor()),
-				mod -> ensureModule(mod, 0, 4).setFactor(mod.getAmount(Mod303Key.CT_S15F)), true),
-		CT_S15R(Mod303Key.CT_S15R, null, null, null, "hasActivity(0)?round(CT_S15I*CT_S15F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S15R, ensureModule(mod, 0, 4).getResult()),
-				mod -> ensureModule(mod, 0, 4).setResult(mod.getAmount(Mod303Key.CT_S15R)), true),
-		CT_S16D(Mod303Key.CT_S16D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S16D, ensureModule(mod, 0, 5).getDescription()),
-				mod -> ensureModule(mod, 0, 5).setDescription(mod.getDescription(Mod303Key.CT_S16D)), true),
-		CT_S16I(Mod303Key.CT_S16I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S16I, ensureModule(mod, 0, 5).getValue()),
-				mod -> ensureModule(mod, 0, 5).setValue(mod.getAmount(Mod303Key.CT_S16I)), true),
-		CT_S16U(Mod303Key.CT_S16U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S16U, ensureModule(mod, 0, 5).getUnit()),
-				mod -> ensureModule(mod, 0, 5).setUnit(mod.getDescription(Mod303Key.CT_S16U)), true),
-		CT_S16F(Mod303Key.CT_S16F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S16F, ensureModule(mod, 0, 5).getFactor()),
-				mod -> ensureModule(mod, 0, 5).setFactor(mod.getAmount(Mod303Key.CT_S16F)), true),
-		CT_S16R(Mod303Key.CT_S16R, null, null, null, "hasActivity(0)?round(CT_S16I*CT_S16F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S16R, ensureModule(mod, 0, 5).getResult()),
-				mod -> ensureModule(mod, 0, 5).setResult(mod.getAmount(Mod303Key.CT_S16R)), true),
-		CT_S17D(Mod303Key.CT_S17D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S17D, ensureModule(mod, 0, 6).getDescription()),
-				mod -> ensureModule(mod, 0, 6).setDescription(mod.getDescription(Mod303Key.CT_S17D)), true),
-		CT_S17I(Mod303Key.CT_S17I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S17I, ensureModule(mod, 0, 6).getValue()),
-				mod -> ensureModule(mod, 0, 6).setValue(mod.getAmount(Mod303Key.CT_S17I)), true),
-		CT_S17U(Mod303Key.CT_S17U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S17U, ensureModule(mod, 0, 6).getUnit()),
-				mod -> ensureModule(mod, 0, 6).setUnit(mod.getDescription(Mod303Key.CT_S17U)), true),
-		CT_S17F(Mod303Key.CT_S17F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S17F, ensureModule(mod, 0, 6).getFactor()),
-				mod -> ensureModule(mod, 0, 6).setFactor(mod.getAmount(Mod303Key.CT_S17F)), true),
-		CT_S17R(Mod303Key.CT_S17R, null, null, null, "hasActivity(0)?round(CT_S17I*CT_S17F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S17R, ensureModule(mod, 0, 6).getResult()),
-				mod -> ensureModule(mod, 0, 6).setResult(mod.getAmount(Mod303Key.CT_S17R)), true)
-
-		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones
-		// corrientes
-		,
-		CT_S117(Mod303Key.CT_S117, null, null, null, "CT_S11R+CT_S12R+CT_S13R+CT_S14R+CT_S15R+CT_S16R+CT_S17R", null,
-				mod -> mod.putAmount(Mod303Key.CT_S117, ensureActivity(mod, 0).getDev()),
-				mod -> ensureActivity(mod, 0).setDev(mod.getAmount(Mod303Key.CT_S117)), false)
+		
+		,CT_S4P1(Mod303Key.CT_S4P1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4P1, ensureActivity(mod, 3).getMay19Hours())
+			,mod -> ensureActivity(mod, 3).setMay19Hours(mod.getAmount(Mod303Key.CT_S4P1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4P1))
+		,CT_S4P2(Mod303Key.CT_S4P2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4P2, ensureActivity(mod, 3).getMen19Hours())
+			,mod -> ensureActivity(mod, 3).setMen19Hours(mod.getAmount(Mod303Key.CT_S4P2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4P2))
+		,CT_S4P3(Mod303Key.CT_S4P3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4P3, ensureActivity(mod, 3).getDisHours())
+			,mod -> ensureActivity(mod, 3).setDisHours(mod.getAmount(Mod303Key.CT_S4P3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4P3))
+		,CT_S4P4(Mod303Key.CT_S4P4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4P4, ensureActivity(mod, 3).getYearHours())
+			,mod -> ensureActivity(mod, 3).setYearHours(mod.getAmount(Mod303Key.CT_S4P4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4P4))
+		,CT_S4E1(Mod303Key.CT_S4E1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4E1, ensureActivity(mod, 3).getOwnerHours())
+			,mod -> ensureActivity(mod, 3).setOwnerHours(mod.getAmount(Mod303Key.CT_S4E1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4E1))
+		,CT_S4E2(Mod303Key.CT_S4E2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4E2, ensureActivity(mod, 3).isOwnerDis()?1:0)
+			,mod -> ensureActivity(mod, 3).setOwnerDis(mod.getAmount(Mod303Key.CT_S4E2) == 1)
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4E2))
+		,CT_S4E3(Mod303Key.CT_S4E3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4E3, ensureActivity(mod, 3).getSpouseHours())
+			,mod -> ensureActivity(mod, 3).setSpouseHours(mod.getAmount(Mod303Key.CT_S4E3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4E3))
+		,CT_S4E4(Mod303Key.CT_S4E4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4E4, ensureActivity(mod, 3).getChildMen18Hours())
+			,mod -> ensureActivity(mod, 3).setChildMen18Hours(mod.getAmount(Mod303Key.CT_S4E4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4E4))
+		
+		,CT_S4C1(Mod303Key.CT_S4C1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4C1, ensureDesk(mod, 3, 0).getDeskCapacity())
+			,mod -> ensureDesk(mod, 3, 0).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S4C1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4C1))
+		,CT_S4M1(Mod303Key.CT_S4M1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4M1, ensureDesk(mod, 3, 0).getDesks())
+			,mod -> ensureDesk(mod, 3, 0).setDesks((int) mod.getAmount(Mod303Key.CT_S4M1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4M1))
+		,CT_S4D1(Mod303Key.CT_S4D1, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4D1, ensureDesk(mod, 3, 0).getDeskDays())
+			,mod -> ensureDesk(mod, 3, 0).setDeskDays((int) mod.getAmount(Mod303Key.CT_S4D1))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4D1))
+		,CT_S4C2(Mod303Key.CT_S4C2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4C2, ensureDesk(mod, 3, 1).getDeskCapacity())
+			,mod -> ensureDesk(mod, 3, 1).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S4C2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4C2))
+		,CT_S4M2(Mod303Key.CT_S4M2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4M2, ensureDesk(mod, 3, 1).getDesks())
+			,mod -> ensureDesk(mod, 3, 1).setDesks((int) mod.getAmount(Mod303Key.CT_S4M2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4M2))
+		,CT_S4D2(Mod303Key.CT_S4D2, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4D2, ensureDesk(mod, 3, 1).getDeskDays())
+			,mod -> ensureDesk(mod, 3, 1).setDeskDays((int) mod.getAmount(Mod303Key.CT_S4D2))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4D2))
+		,CT_S4C3(Mod303Key.CT_S4C3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4C3, ensureDesk(mod, 3, 2).getDeskCapacity())
+			,mod -> ensureDesk(mod, 3, 2).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S4C3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4C3))
+		,CT_S4M3(Mod303Key.CT_S4M3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4M3, ensureDesk(mod, 3, 2).getDesks())
+			,mod -> ensureDesk(mod, 3, 2).setDesks((int) mod.getAmount(Mod303Key.CT_S4M3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4M3))
+		,CT_S4D3(Mod303Key.CT_S4D3, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4D3, ensureDesk(mod, 3, 2).getDeskDays())
+			,mod -> ensureDesk(mod, 3, 2).setDeskDays((int) mod.getAmount(Mod303Key.CT_S4D3))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4D3))
+		,CT_S4C4(Mod303Key.CT_S4C4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4C4, ensureDesk(mod, 3, 3).getDeskCapacity())
+			,mod -> ensureDesk(mod, 3, 3).setDeskCapacity((int) mod.getAmount(Mod303Key.CT_S4C4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4C4))
+		,CT_S4M4(Mod303Key.CT_S4M4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4M4, ensureDesk(mod, 3, 3).getDesks())
+			,mod -> ensureDesk(mod, 3, 3).setDesks((int) mod.getAmount(Mod303Key.CT_S4M4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4M4))
+		,CT_S4D4(Mod303Key.CT_S4D4, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S4D4, ensureDesk(mod, 3, 3).getDeskDays())
+			,mod -> ensureDesk(mod, 3, 3).setDeskDays((int) mod.getAmount(Mod303Key.CT_S4D4))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4D4))
+		
+		
+		,CT_S47R(Mod303Key.CT_S47R, null, null, null, "hasActivity(3)?round(CT_S47I*CT_S47F):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S47R, ensureModule(mod, 3, 6).getResult())
+			,mod -> ensureModule(mod, 3, 6).setResult(mod.getAmount(Mod303Key.CT_S47R))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S47R))
+		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones // corrientes
+		,CT_S417(Mod303Key.CT_S417, null, null, null, "CT_S41R+CT_S42R+CT_S43R+CT_S44R+CT_S45R+CT_S46R+CT_S47R", null
+			,mod -> mod.putAmount(Mod303Key.CT_S417, ensureActivity(mod, 3).getDev())
+			,mod -> ensureActivity(mod, 3).setDev(mod.getAmount(Mod303Key.CT_S417))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S417))
 		// (1) Actividades en régimen simplificado. D Reducciones
-		,
-		CT_S118(Mod303Key.CT_S118, null, null, null, "calculateReduccion2021(0,CT_S117,CT_S1X4,CT_S1X5)", null,
-				mod -> mod.putAmount(Mod303Key.CT_S118, ensureActivity(mod, 0).getRed()),
-				mod -> ensureActivity(mod, 0).setRed(mod.getAmount(Mod303Key.CT_S118)), false)
-		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de
-		// temporada
-		,
-		CT_S119(Mod303Key.CT_S119, null, null, null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S1X1 )", null,
-				mod -> mod.putAmount(Mod303Key.CT_S119, ensureActivity(mod, 0).getInd()),
-				mod -> ensureActivity(mod, 0).setInd(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S119)),
-				false)
+		,CT_S418(Mod303Key.CT_S418, null, null, null, "calculateReduccion2021(3,CT_S417,CT_S4X4,CT_S4X5)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S418, ensureActivity(mod, 3).getRed())
+			,mod -> ensureActivity(mod, 3).setRed(mod.getAmount(Mod303Key.CT_S418))
+			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S418))
+		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de temporada
+		,CT_S419(Mod303Key.CT_S419, null, null, null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S4X1 )", null
+			,mod -> mod.putAmount(Mod303Key.CT_S419, ensureActivity(mod, 3).getInd())
+			,mod -> ensureActivity(mod, 3).setInd(mod.getAmount(Mod303Key.CT_S419))
+			,null)
 		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
-		,
-		CT_S120(Mod303Key.CT_S120, null, null, null, 
-				"calculatePorcentajeIngresoCuenta2021(0,CT_S1X5)", null,
-				mod -> mod.putAmount(Mod303Key.CT_S120, ensureActivity(mod, 0).getPor()),
-				mod -> ensureActivity(mod, 0).setPor(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S120)),
-				false)
-		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x
-		// [E])
-		,
-		CT_S121(Mod303Key.CT_S121, null, null, null,
-				"calculateIngresoCuenta2021(0, CT_S1X1, CT_S1X2, CT_S117, CT_S118, CT_S119, CT_S120,CT_S1X5)", null,
-				mod -> mod.putAmount(Mod303Key.CT_S121, ensureActivity(mod, 0).getIng()),
-				mod -> ensureActivity(mod, 0).setIng(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S121)),
-				false)
-		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por
-		// operaciones corrientes
-		,
-		CT_S12X(Mod303Key.CT_S12X, null, null, null, "isLastPeriod()?round(CT_S117 * 1 / 100):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S12X, ensureActivity(mod, 0).getSopx()),
-				mod -> ensureActivity(mod, 0).setSopx(mod.getAmount(Mod303Key.CT_S12X)), false)
+		,CT_S420(Mod303Key.CT_S420, null, null, null
+			,"calculatePorcentajeIngresoCuenta2023(3,CT_S4X5)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S420, ensureActivity(mod, 3).getPor())
+			,mod -> ensureActivity(mod, 3).setPor(mod.getAmount(Mod303Key.CT_S420))
+			,null)
+		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x [E])
+		,CT_S421(Mod303Key.CT_S421, null, null, null
+			,"calculateIngresoCuenta2021(3, CT_S4X1, CT_S4X2, CT_S417, CT_S418, CT_S419, CT_S420,CT_S4X5)", null
+			,mod -> mod.putAmount(Mod303Key.CT_S421, ensureActivity(mod, 3).getIng())
+			,mod -> ensureActivity(mod, 3).setIng(mod.getAmount(Mod303Key.CT_S421))
+			,null)
+		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por operaciones corrientes
+		,CT_S42X(Mod303Key.CT_S42X, null, null, null, "isLastPeriod()?round(CT_S417 * 1 / 100):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S42X, ensureActivity(mod, 3).getSopx())
+			,mod -> ensureActivity(mod, 3).setSopx(mod.getAmount(Mod303Key.CT_S42X))
+			,null)
 		// (1) Actividades en régimen simplificado. G Cuotas soportadas
-		,
-		CT_S12Y(Mod303Key.CT_S12Y, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S12Y, ensureActivity(mod, 0).getSopy()),
-				mod -> ensureActivity(mod, 0).setSopy(mod.getAmount(Mod303Key.CT_S12Y)), false)
-		// (1) Actividades en régimen simplificado. G Cuotas soportadas operaciones
-		// corrientes
-		,
-		CT_S122(Mod303Key.CT_S122, null, null, null, "isLastPeriod()?(CT_S12X+CT_S12Y):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S122, ensureActivity(mod, 0).getSop()),
-				mod -> ensureActivity(mod, 0).setSop(mod.getAmount(Mod303Key.CT_S122)), false)
-		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de
-		// temporada
-		,
-		CT_S123(Mod303Key.CT_S123, null, null, null, "isLastPeriod()?calculateIndiceTemporada( CT_S1X1 ):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S123, ensureActivity(mod, 0).getIct()),
-				mod -> ensureActivity(mod, 0).setIct(mod.getAmount(Mod303Key.CT_S123)), false)
-		// (1) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x
-		// [H])
-		,
-		CT_S124(Mod303Key.CT_S124, null, null, null, "calculateResultadoAnual( CT_S117, CT_S118, CT_S122, CT_S123)",
-				null, mod -> mod.putAmount(Mod303Key.CT_S124, ensureActivity(mod, 0).getRes()),
-				mod -> ensureActivity(mod, 0).setRes(mod.getAmount(Mod303Key.CT_S124)), false)
+		,CT_S42Y(Mod303Key.CT_S42Y, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S42Y, ensureActivity(mod, 3).getSopy())
+			,mod -> ensureActivity(mod, 3).setSopy(mod.getAmount(Mod303Key.CT_S42Y))
+			,null)
+		// (1) Actividades en régimen simplificado. G Cuotas soportadas operaciones corrientes
+		,CT_S422(Mod303Key.CT_S422, null, null, null, "isLastPeriod()?(CT_S42X+CT_S42Y):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S422, ensureActivity(mod, 3).getSop())
+			,mod -> ensureActivity(mod, 3).setSop(mod.getAmount(Mod303Key.CT_S422))
+			,null)
+		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de temporada
+		,CT_S423(Mod303Key.CT_S423, null, null, null, "isLastPeriod()?calculateIndiceTemporada( CT_S4X1 ):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S423, ensureActivity(mod, 3).getIct())
+			,mod -> ensureActivity(mod, 3).setIct(mod.getAmount(Mod303Key.CT_S423))
+			,null)
+		// (1) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x [H])
+		,CT_S424(Mod303Key.CT_S424, null, null, null, "calculateResultadoAnual( CT_S417, CT_S418, CT_S422, CT_S423)",null
+			,mod -> mod.putAmount(Mod303Key.CT_S424, ensureActivity(mod, 3).getRes())
+			,mod -> ensureActivity(mod, 3).setRes(mod.getAmount(Mod303Key.CT_S424))
+			,null)
 		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
-		,
-		CT_S125(Mod303Key.CT_S125, null, null, null, "isLastPeriod()?CT_S125:0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S125, ensureActivity(mod, 0).getPcm()),
-				mod -> ensureActivity(mod, 0).setPcm(mod.getAmount(Mod303Key.CT_S125)), false)
-		// (1) Actividades en régimen simplificado. K Devolución cuotas soportadas otros
-		// países
-		,
-		CT_S126(Mod303Key.CT_S126, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S126, ensureActivity(mod, 0).getDvc()),
-				mod -> ensureActivity(mod, 0).setDvc(mod.getAmount(Mod303Key.CT_S126)), false)
+		,CT_S425(Mod303Key.CT_S425, null, null, null, "isLastPeriod()?CT_S425:0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S425, ensureActivity(mod, 3).getPcm())
+			,mod -> ensureActivity(mod, 3).setPcm(mod.getAmount(Mod303Key.CT_S425))
+			,null)
+		// (1) Actividades en régimen simplificado. K Devolución cuotas soportadas otros países
+		,CT_S426(Mod303Key.CT_S426, null, null, null, null, null
+			,mod -> mod.putAmount(Mod303Key.CT_S426, ensureActivity(mod, 3).getDvc())
+			,mod -> ensureActivity(mod, 3).setDvc(mod.getAmount(Mod303Key.CT_S426))
+			,null)
 		// (1) Actividades en régimen simplificado. L Cuota mínima
-		,
-		CT_S127(Mod303Key.CT_S127, null, null, null, "calculateCuotaMinima(CT_S117, CT_S118, CT_S125, CT_S126,CT_S123)",
-				null, mod -> mod.putAmount(Mod303Key.CT_S127, ensureActivity(mod, 0).getCmn()),
-				mod -> ensureActivity(mod, 0).setCmn(mod.getAmount(Mod303Key.CT_S127)), false)
-		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen
-		// simplificado
-		,
-		CT_S128(Mod303Key.CT_S128, null, null, null, "isLastPeriod()?((CT_S127>CT_S124)?CT_S127:CT_S124):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S128, ensureActivity(mod, 0).getCad()),
-				mod -> ensureActivity(mod, 0).setCad(mod.getAmount(Mod303Key.CT_S128)), false)
-
-		// (1) Actividades en régimen simplificado. Epigrafe IAE
-		,
-		CT_S201(Mod303Key.CT_S201, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S201, ensureActivity(mod, 1).getEpigraph()),
-				mod -> ensureActivity(mod, 1).setEpigraph(mod.getDescription(Mod303Key.CT_S201)), true)
-		// (1) Actividades en régimen simplificado. Epigrafe IAE - Descripción
-		,
-		CT_S20D(Mod303Key.CT_S20D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S20D, ensureActivity(mod, 1).getDescription()),
-				mod -> ensureActivity(mod, 1).setDescription(mod.getDescription(Mod303Key.CT_S20D)), true)
-		// (1) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de
-		// actividad en el caso de ep\u00EDgrafes 691.9 y 722
-		,
-		CT_S202(Mod303Key.CT_S202, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S202, ensureActivity(mod, 1).getSpecialEpigraph()),
-				mod -> ensureActivity(mod, 1).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S202)), true)
-		// (1) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en
-		// los que se ejerció la actividad en el año anterior
-		,
-		CT_S2X1(Mod303Key.CT_S2X1, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S2X1, ensureActivity(mod, 1).getTem()),
-				mod -> ensureActivity(mod, 1).setTem((int) mod.getAmount(Mod303Key.CT_S2X1)), true)
-		// (1) Actividades en régimen simplificado. Número de días de ejercicio de la
-		// actividad en el trimestre
-		,
-		CT_S2X2(Mod303Key.CT_S2X2, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S2X2, ensureActivity(mod, 1).getDia()),
-				mod -> ensureActivity(mod, 1).setDia((int) mod.getAmount(Mod303Key.CT_S2X2)), true)
-		// (1) Actividades en régimen simplificado. Número de empleados al inicio del
-		// ejercicio ( o al inicio de la actividad)
-		,
-		CT_S2X3(Mod303Key.CT_S2X3, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S2X3, ensureActivity(mod, 1).getEmp()),
-				mod -> ensureActivity(mod, 1).setEmp((int) mod.getAmount(Mod303Key.CT_S2X3)), true)
-		// (1) Actividades en régimen simplificado. Si realiza la actividad en LORCA
-		,
-		CT_S2X4(Mod303Key.CT_S2X4, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S2X4, ensureActivity(mod, 1).getLor()),
-				mod -> ensureActivity(mod, 1).setLor((int) mod.getAmount(Mod303Key.CT_S2X4)), true)
-		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
-		,
-		CT_S2X5(Mod303Key.CT_S2X5, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S2X5, ensureActivity(mod, 1).getCov()),
-				mod -> ensureActivity(mod, 1).setCov((int) mod.getAmount(Mod303Key.CT_S2X5)), true),
-		CT_S21D(Mod303Key.CT_S21D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S21D, ensureModule(mod, 1, 0).getDescription()),
-				mod -> ensureModule(mod, 1, 0).setDescription(mod.getDescription(Mod303Key.CT_S21D)), true),
-		CT_S21I(Mod303Key.CT_S21I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S21I, ensureModule(mod, 1, 0).getValue()),
-				mod -> ensureModule(mod, 1, 0).setValue(mod.getAmount(Mod303Key.CT_S21I)), true),
-		CT_S21U(Mod303Key.CT_S21U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S21U, ensureModule(mod, 1, 0).getUnit()),
-				mod -> ensureModule(mod, 1, 0).setUnit(mod.getDescription(Mod303Key.CT_S21U)), true),
-		CT_S21F(Mod303Key.CT_S21F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S21F, ensureModule(mod, 1, 0).getFactor()),
-				mod -> ensureModule(mod, 1, 0).setFactor(mod.getAmount(Mod303Key.CT_S21F)), true),
-		CT_S21R(Mod303Key.CT_S21R, null, null, null, "hasActivity(1)?round(CT_S21I*CT_S21F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S21R, ensureModule(mod, 1, 0).getResult()),
-				mod -> ensureModule(mod, 1, 0).setResult(mod.getAmount(Mod303Key.CT_S21R)), true)
-
-		,
-		CT_S22D(Mod303Key.CT_S22D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S22D, ensureModule(mod, 1, 1).getDescription()),
-				mod -> ensureModule(mod, 1, 1).setDescription(mod.getDescription(Mod303Key.CT_S22D)), true),
-		CT_S22I(Mod303Key.CT_S22I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S22I, ensureModule(mod, 1, 1).getValue()),
-				mod -> ensureModule(mod, 1, 1).setValue(mod.getAmount(Mod303Key.CT_S22I)), true),
-		CT_S22U(Mod303Key.CT_S22U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S22U, ensureModule(mod, 1, 1).getUnit()),
-				mod -> ensureModule(mod, 1, 1).setUnit(mod.getDescription(Mod303Key.CT_S22U)), true),
-		CT_S22F(Mod303Key.CT_S22F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S22F, ensureModule(mod, 1, 1).getFactor()),
-				mod -> ensureModule(mod, 1, 1).setFactor(mod.getAmount(Mod303Key.CT_S22F)), true),
-		CT_S22R(Mod303Key.CT_S22R, null, null, null, "hasActivity(1)?round(CT_S22I*CT_S22F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S22R, ensureModule(mod, 1, 1).getResult()),
-				mod -> ensureModule(mod, 1, 1).setResult(mod.getAmount(Mod303Key.CT_S22R)), true)
-
-		,
-		CT_S23D(Mod303Key.CT_S23D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S23D, ensureModule(mod, 1, 2).getDescription()),
-				mod -> ensureModule(mod, 1, 2).setDescription(mod.getDescription(Mod303Key.CT_S23D)), true),
-		CT_S23I(Mod303Key.CT_S23I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S23I, ensureModule(mod, 1, 2).getValue()),
-				mod -> ensureModule(mod, 1, 2).setValue(mod.getAmount(Mod303Key.CT_S23I)), true),
-		CT_S23U(Mod303Key.CT_S23U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S23U, ensureModule(mod, 1, 2).getUnit()),
-				mod -> ensureModule(mod, 1, 2).setUnit(mod.getDescription(Mod303Key.CT_S23U)), true),
-		CT_S23F(Mod303Key.CT_S23F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S23F, ensureModule(mod, 1, 2).getFactor()),
-				mod -> ensureModule(mod, 1, 2).setFactor(mod.getAmount(Mod303Key.CT_S23F)), true),
-		CT_S23R(Mod303Key.CT_S23R, null, null, null, "hasActivity(1)?round(CT_S23I*CT_S23F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S23R, ensureModule(mod, 1, 2).getResult()),
-				mod -> ensureModule(mod, 1, 2).setResult(mod.getAmount(Mod303Key.CT_S23R)), true)
-
-		,
-		CT_S24D(Mod303Key.CT_S24D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S24D, ensureModule(mod, 1, 3).getDescription()),
-				mod -> ensureModule(mod, 1, 3).setDescription(mod.getDescription(Mod303Key.CT_S24D)), true),
-		CT_S24I(Mod303Key.CT_S24I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S24I, ensureModule(mod, 1, 3).getValue()),
-				mod -> ensureModule(mod, 1, 3).setValue(mod.getAmount(Mod303Key.CT_S24I)), true),
-		CT_S24U(Mod303Key.CT_S24U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S24U, ensureModule(mod, 1, 3).getUnit()),
-				mod -> ensureModule(mod, 1, 3).setUnit(mod.getDescription(Mod303Key.CT_S24U)), true),
-		CT_S24F(Mod303Key.CT_S24F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S24F, ensureModule(mod, 1, 3).getFactor()),
-				mod -> ensureModule(mod, 1, 3).setFactor(mod.getAmount(Mod303Key.CT_S24F)), true),
-		CT_S24R(Mod303Key.CT_S24R, null, null, null, "hasActivity(1)?round(CT_S24I*CT_S24F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S24R, ensureModule(mod, 1, 3).getResult()),
-				mod -> ensureModule(mod, 1, 3).setResult(mod.getAmount(Mod303Key.CT_S24R)), true)
-
-		,
-		CT_S25D(Mod303Key.CT_S25D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S25D, ensureModule(mod, 1, 4).getDescription()),
-				mod -> ensureModule(mod, 1, 4).setDescription(mod.getDescription(Mod303Key.CT_S25D)), true),
-		CT_S25I(Mod303Key.CT_S25I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S25I, ensureModule(mod, 1, 4).getValue()),
-				mod -> ensureModule(mod, 1, 4).setValue(mod.getAmount(Mod303Key.CT_S25I)), true),
-		CT_S25U(Mod303Key.CT_S25U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S25U, ensureModule(mod, 1, 4).getUnit()),
-				mod -> ensureModule(mod, 1, 4).setUnit(mod.getDescription(Mod303Key.CT_S25U)), true),
-		CT_S25F(Mod303Key.CT_S25F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S25F, ensureModule(mod, 1, 4).getFactor()),
-				mod -> ensureModule(mod, 1, 4).setFactor(mod.getAmount(Mod303Key.CT_S25F)), true),
-		CT_S25R(Mod303Key.CT_S25R, null, null, null, "hasActivity(1)?round(CT_S25I*CT_S25F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S25R, ensureModule(mod, 1, 4).getResult()),
-				mod -> ensureModule(mod, 1, 4).setResult(mod.getAmount(Mod303Key.CT_S25R)), true)
-
-		,
-		CT_S26D(Mod303Key.CT_S26D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S26D, ensureModule(mod, 1, 5).getDescription()),
-				mod -> ensureModule(mod, 1, 5).setDescription(mod.getDescription(Mod303Key.CT_S26D)), true),
-		CT_S26I(Mod303Key.CT_S26I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S26I, ensureModule(mod, 1, 5).getValue()),
-				mod -> ensureModule(mod, 1, 5).setValue(mod.getAmount(Mod303Key.CT_S26I)), true),
-		CT_S26U(Mod303Key.CT_S26U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S26U, ensureModule(mod, 1, 5).getUnit()),
-				mod -> ensureModule(mod, 1, 5).setUnit(mod.getDescription(Mod303Key.CT_S26U)), true),
-		CT_S26F(Mod303Key.CT_S26F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S26F, ensureModule(mod, 1, 5).getFactor()),
-				mod -> ensureModule(mod, 1, 5).setFactor(mod.getAmount(Mod303Key.CT_S26F)), true),
-		CT_S26R(Mod303Key.CT_S26R, null, null, null, "hasActivity(1)?round(CT_S26I*CT_S26F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S26R, ensureModule(mod, 1, 5).getResult()),
-				mod -> ensureModule(mod, 1, 5).setResult(mod.getAmount(Mod303Key.CT_S26R)), true)
-
-		,
-		CT_S27D(Mod303Key.CT_S27D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S27D, ensureModule(mod, 1, 6).getDescription()),
-				mod -> ensureModule(mod, 1, 6).setDescription(mod.getDescription(Mod303Key.CT_S27D)), true),
-		CT_S27I(Mod303Key.CT_S27I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S27I, ensureModule(mod, 1, 6).getValue()),
-				mod -> ensureModule(mod, 1, 6).setValue(mod.getAmount(Mod303Key.CT_S27I)), true),
-		CT_S27U(Mod303Key.CT_S27U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S27U, ensureModule(mod, 1, 6).getUnit()),
-				mod -> ensureModule(mod, 1, 6).setUnit(mod.getDescription(Mod303Key.CT_S27U)), true),
-		CT_S27F(Mod303Key.CT_S27F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S27F, ensureModule(mod, 1, 6).getFactor()),
-				mod -> ensureModule(mod, 1, 6).setFactor(mod.getAmount(Mod303Key.CT_S27F)), true),
-		CT_S27R(Mod303Key.CT_S27R, null, null, null, "hasActivity(1)?round(CT_S27I*CT_S27F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S27R, ensureModule(mod, 1, 6).getResult()),
-				mod -> ensureModule(mod, 1, 6).setResult(mod.getAmount(Mod303Key.CT_S27R)), true)
-		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones
-		// corrientes
-		,
-		CT_S217(Mod303Key.CT_S217, null, null, null, "CT_S21R+CT_S22R+CT_S23R+CT_S24R+CT_S25R+CT_S26R+CT_S27R", null,
-				mod -> mod.putAmount(Mod303Key.CT_S217, ensureActivity(mod, 1).getDev()),
-				mod -> ensureActivity(mod, 1).setDev(mod.getAmount(Mod303Key.CT_S217)), false)
-		// (1) Actividades en régimen simplificado. D Reducciones
-		,
-		CT_S218(Mod303Key.CT_S218, null, null, null, "calculateReduccion2021(1,CT_S217,CT_S2X4,CT_S2X5)", null,
-				mod -> mod.putAmount(Mod303Key.CT_S218, ensureActivity(mod, 1).getRed()),
-				mod -> ensureActivity(mod, 1).setRed(mod.getAmount(Mod303Key.CT_S218)), false)
-		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de
-		// temporada
-		,
-		CT_S219(Mod303Key.CT_S219, null, null, null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S2X1 )", null,
-				mod -> mod.putAmount(Mod303Key.CT_S219, ensureActivity(mod, 1).getInd()),
-				mod -> ensureActivity(mod, 1).setInd(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S219)),
-				false)
-		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
-		,
-		CT_S220(Mod303Key.CT_S220, null, null, null, 
-				"calculatePorcentajeIngresoCuenta2021(1,CT_S2X5)", null,
-				mod -> mod.putAmount(Mod303Key.CT_S220, ensureActivity(mod, 1).getPor()),
-				mod -> ensureActivity(mod, 1).setPor(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S220)),
-				false)
-		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x
-		// [E])
-		,
-		CT_S221(Mod303Key.CT_S221, null, null, null,
-				"calculateIngresoCuenta2021(1, CT_S2X1, CT_S2X2, CT_S217, CT_S218, CT_S219, CT_S220,CT_S2X5)", null,
-				mod -> mod.putAmount(Mod303Key.CT_S221, ensureActivity(mod, 1).getIng()),
-				mod -> ensureActivity(mod, 1).setIng(mod.isLastPeriod() ? 0.0 : mod.getAmount(Mod303Key.CT_S221)),
-				false)
-		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por
-		// operaciones corrientes
-		,
-		CT_S22X(Mod303Key.CT_S22X, null, null, null, "isLastPeriod()?round(CT_S217 * 1 / 100):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S22X, ensureActivity(mod, 1).getSopx()),
-				mod -> ensureActivity(mod, 1).setSopx(mod.getAmount(Mod303Key.CT_S22X)), false)
-		// (1) Actividades en régimen simplificado. G Cuotas soportadas
-		,
-		CT_S22Y(Mod303Key.CT_S22Y, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S22Y, ensureActivity(mod, 1).getSopy()),
-				mod -> ensureActivity(mod, 1).setSopy(mod.getAmount(Mod303Key.CT_S22Y)), false)
-		// (1) Actividades en régimen simplificado. G Cuotas soportadas operaciones
-		// corrientes
-		,
-		CT_S222(Mod303Key.CT_S222, null, null, null, "isLastPeriod()?(CT_S22X+CT_S22Y):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S222, ensureActivity(mod, 1).getSop()),
-				mod -> ensureActivity(mod, 1).setSop(mod.getAmount(Mod303Key.CT_S222)), false)
-		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de
-		// temporada
-		,
-		CT_S223(Mod303Key.CT_S223, null, null, null, "isLastPeriod()?calculateIndiceTemporada( CT_S2X1 ):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S223, ensureActivity(mod, 1).getIct()),
-				mod -> ensureActivity(mod, 1).setIct(mod.getAmount(Mod303Key.CT_S223)), false)
-		// (1) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x
-		// [H])
-		,
-		CT_S224(Mod303Key.CT_S224, null, null, null, "calculateResultadoAnual( CT_S217, CT_S218, CT_S222, CT_S223)",
-				null, mod -> mod.putAmount(Mod303Key.CT_S224, ensureActivity(mod, 1).getRes()),
-				mod -> ensureActivity(mod, 1).setRes(mod.getAmount(Mod303Key.CT_S224)), false)
-		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
-		,
-		CT_S225(Mod303Key.CT_S225, null, null, null, "isLastPeriod()?CT_S225:0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S225, ensureActivity(mod, 1).getPcm()),
-				mod -> ensureActivity(mod, 1).setPcm(mod.getAmount(Mod303Key.CT_S225)), false)
-		// (1) Actividades en régimen simplificado. K Devolución cuotas soportadas otros
-		// países
-		,
-		CT_S226(Mod303Key.CT_S226, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S226, ensureActivity(mod, 1).getDvc()),
-				mod -> ensureActivity(mod, 1).setDvc(mod.getAmount(Mod303Key.CT_S226)), false)
-		// (1) Actividades en régimen simplificado. L Cuota mínima
-		,
-		CT_S227(Mod303Key.CT_S227, null, null, null, "calculateCuotaMinima(CT_S217, CT_S218, CT_S225, CT_S226,CT_S223)",
-				null, mod -> mod.putAmount(Mod303Key.CT_S227, ensureActivity(mod, 1).getCmn()),
-				mod -> ensureActivity(mod, 1).setCmn(mod.getAmount(Mod303Key.CT_S227)), false)
-		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen
-		// simplificado
-		,
-		CT_S228(Mod303Key.CT_S228, null, null, null, "isLastPeriod()?((CT_S227>CT_S224)?CT_S227:CT_S224):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S228, ensureActivity(mod, 1).getCad()),
-				mod -> ensureActivity(mod, 1).setCad(mod.getAmount(Mod303Key.CT_S228)), false)
-
-		// (1) Actividades en régimen simplificado. Epigrafe IAE
-		,
-		CT_S301(Mod303Key.CT_S301, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S301, ensureActivity(mod, 2).getEpigraph()),
-				mod -> ensureActivity(mod, 2).setEpigraph(mod.getDescription(Mod303Key.CT_S301)), true)
-		// (1) Actividades en régimen simplificado. Epigrafe IAE - Descripción
-		,
-		CT_S30D(Mod303Key.CT_S30D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S30D, ensureActivity(mod, 2).getDescription()),
-				mod -> ensureActivity(mod, 2).setDescription(mod.getDescription(Mod303Key.CT_S30D)), true)
-		// (1) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de
-		// actividad en el caso de ep\u00EDgrafes 691.9 y 722
-		,
-		CT_S302(Mod303Key.CT_S302, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S302, ensureActivity(mod, 2).getSpecialEpigraph()),
-				mod -> ensureActivity(mod, 2).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S302)), true)
-		// (1) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en
-		// los que se ejerció la actividad en el año anterior
-		,
-		CT_S3X1(Mod303Key.CT_S3X1, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S3X1, ensureActivity(mod, 2).getTem()),
-				mod -> ensureActivity(mod, 2).setTem((int) mod.getAmount(Mod303Key.CT_S3X1)), true)
-		// (1) Actividades en régimen simplificado. Número de días de ejercicio de la
-		// actividad en el trimestre
-		,
-		CT_S3X2(Mod303Key.CT_S3X2, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S3X2, ensureActivity(mod, 2).getDia()),
-				mod -> ensureActivity(mod, 2).setDia((int) mod.getAmount(Mod303Key.CT_S3X2)), true)
-		// (1) Actividades en régimen simplificado. Número de empleados al inicio del
-		// ejercicio ( o al inicio de la actividad)
-		,
-		CT_S3X3(Mod303Key.CT_S3X3, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S3X3, ensureActivity(mod, 2).getEmp()),
-				mod -> ensureActivity(mod, 2).setEmp((int) mod.getAmount(Mod303Key.CT_S3X3)), true)
-		// (1) Actividades en régimen simplificado. Si realiza la actividad en LORCA
-		,
-		CT_S3X4(Mod303Key.CT_S3X4, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S3X4, ensureActivity(mod, 2).getLor()),
-				mod -> ensureActivity(mod, 2).setLor((int) mod.getAmount(Mod303Key.CT_S3X4)), true)
-		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
-		,
-		CT_S3X5(Mod303Key.CT_S3X5, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S3X5, ensureActivity(mod, 2).getCov()),
-				mod -> ensureActivity(mod, 2).setCov((int) mod.getAmount(Mod303Key.CT_S3X5)), true),
-		CT_S31D(Mod303Key.CT_S31D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S31D, ensureModule(mod, 2, 0).getDescription()),
-				mod -> ensureModule(mod, 2, 0).setDescription(mod.getDescription(Mod303Key.CT_S31D)), true),
-		CT_S31I(Mod303Key.CT_S31I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S31I, ensureModule(mod, 2, 0).getValue()),
-				mod -> ensureModule(mod, 2, 0).setValue(mod.getAmount(Mod303Key.CT_S31I)), true),
-		CT_S31U(Mod303Key.CT_S31U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S31U, ensureModule(mod, 2, 0).getUnit()),
-				mod -> ensureModule(mod, 2, 0).setUnit(mod.getDescription(Mod303Key.CT_S31U)), true),
-		CT_S31F(Mod303Key.CT_S31F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S31F, ensureModule(mod, 2, 0).getFactor()),
-				mod -> ensureModule(mod, 2, 0).setFactor(mod.getAmount(Mod303Key.CT_S31F)), true),
-		CT_S31R(Mod303Key.CT_S31R, null, null, null, "hasActivity(2)?round(CT_S31I*CT_S31F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S31R, ensureModule(mod, 2, 0).getResult()),
-				mod -> ensureModule(mod, 2, 0).setResult(mod.getAmount(Mod303Key.CT_S31R)), true)
-
-		,
-		CT_S32D(Mod303Key.CT_S32D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S32D, ensureModule(mod, 2, 1).getDescription()),
-				mod -> ensureModule(mod, 2, 1).setDescription(mod.getDescription(Mod303Key.CT_S32D)), true),
-		CT_S32I(Mod303Key.CT_S32I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S32I, ensureModule(mod, 2, 1).getValue()),
-				mod -> ensureModule(mod, 2, 1).setValue(mod.getAmount(Mod303Key.CT_S32I)), true),
-		CT_S32U(Mod303Key.CT_S32U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S32U, ensureModule(mod, 2, 1).getUnit()),
-				mod -> ensureModule(mod, 2, 1).setUnit(mod.getDescription(Mod303Key.CT_S32U)), true),
-		CT_S32F(Mod303Key.CT_S32F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S32F, ensureModule(mod, 2, 1).getFactor()),
-				mod -> ensureModule(mod, 2, 1).setFactor(mod.getAmount(Mod303Key.CT_S32F)), true),
-		CT_S32R(Mod303Key.CT_S32R, null, null, null, "hasActivity(2)?round(CT_S32I*CT_S32F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S32R, ensureModule(mod, 2, 1).getResult()),
-				mod -> ensureModule(mod, 2, 1).setResult(mod.getAmount(Mod303Key.CT_S32R)), true)
-
-		,
-		CT_S33D(Mod303Key.CT_S33D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S33D, ensureModule(mod, 2, 2).getDescription()),
-				mod -> ensureModule(mod, 2, 2).setDescription(mod.getDescription(Mod303Key.CT_S33D)), true),
-		CT_S33I(Mod303Key.CT_S33I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S33I, ensureModule(mod, 2, 2).getValue()),
-				mod -> ensureModule(mod, 2, 2).setValue(mod.getAmount(Mod303Key.CT_S33I)), true),
-		CT_S33U(Mod303Key.CT_S33U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S33U, ensureModule(mod, 2, 2).getUnit()),
-				mod -> ensureModule(mod, 2, 2).setUnit(mod.getDescription(Mod303Key.CT_S33U)), true),
-		CT_S33F(Mod303Key.CT_S33F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S33F, ensureModule(mod, 2, 2).getFactor()),
-				mod -> ensureModule(mod, 2, 2).setFactor(mod.getAmount(Mod303Key.CT_S33F)), true),
-		CT_S33R(Mod303Key.CT_S33R, null, null, null, "hasActivity(2)?round(CT_S33I*CT_S33F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S33R, ensureModule(mod, 2, 2).getResult()),
-				mod -> ensureModule(mod, 2, 2).setResult(mod.getAmount(Mod303Key.CT_S33R)), true)
-
-		,
-		CT_S34D(Mod303Key.CT_S34D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S34D, ensureModule(mod, 2, 3).getDescription()),
-				mod -> ensureModule(mod, 2, 3).setDescription(mod.getDescription(Mod303Key.CT_S34D)), true),
-		CT_S34I(Mod303Key.CT_S34I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S34I, ensureModule(mod, 2, 3).getValue()),
-				mod -> ensureModule(mod, 2, 3).setValue(mod.getAmount(Mod303Key.CT_S34I)), true),
-		CT_S34U(Mod303Key.CT_S34U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S34U, ensureModule(mod, 2, 3).getUnit()),
-				mod -> ensureModule(mod, 2, 3).setUnit(mod.getDescription(Mod303Key.CT_S34U)), true),
-		CT_S34F(Mod303Key.CT_S34F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S34F, ensureModule(mod, 2, 3).getFactor()),
-				mod -> ensureModule(mod, 2, 3).setFactor(mod.getAmount(Mod303Key.CT_S34F)), true),
-		CT_S34R(Mod303Key.CT_S34R, null, null, null, "hasActivity(2)?round(CT_S34I*CT_S34F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S34R, ensureModule(mod, 2, 3).getResult()),
-				mod -> ensureModule(mod, 2, 3).setResult(mod.getAmount(Mod303Key.CT_S34R)), true)
-
-		,
-		CT_S35D(Mod303Key.CT_S35D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S35D, ensureModule(mod, 2, 4).getDescription()),
-				mod -> ensureModule(mod, 2, 4).setDescription(mod.getDescription(Mod303Key.CT_S35D)), true),
-		CT_S35I(Mod303Key.CT_S35I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S35I, ensureModule(mod, 2, 4).getValue()),
-				mod -> ensureModule(mod, 2, 4).setValue(mod.getAmount(Mod303Key.CT_S35I)), true),
-		CT_S35U(Mod303Key.CT_S35U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S35U, ensureModule(mod, 2, 4).getUnit()),
-				mod -> ensureModule(mod, 2, 4).setUnit(mod.getDescription(Mod303Key.CT_S35U)), true),
-		CT_S35F(Mod303Key.CT_S35F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S35F, ensureModule(mod, 2, 4).getFactor()),
-				mod -> ensureModule(mod, 2, 4).setFactor(mod.getAmount(Mod303Key.CT_S35F)), true),
-		CT_S35R(Mod303Key.CT_S35R, null, null, null, "hasActivity(2)?round(CT_S35I*CT_S35F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S35R, ensureModule(mod, 2, 4).getResult()),
-				mod -> ensureModule(mod, 2, 4).setResult(mod.getAmount(Mod303Key.CT_S35R)), true)
-
-		,
-		CT_S36D(Mod303Key.CT_S36D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S36D, ensureModule(mod, 2, 5).getDescription()),
-				mod -> ensureModule(mod, 2, 5).setDescription(mod.getDescription(Mod303Key.CT_S36D)), true),
-		CT_S36I(Mod303Key.CT_S36I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S36I, ensureModule(mod, 2, 5).getValue()),
-				mod -> ensureModule(mod, 2, 5).setValue(mod.getAmount(Mod303Key.CT_S36I)), true),
-		CT_S36U(Mod303Key.CT_S36U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S36U, ensureModule(mod, 2, 5).getUnit()),
-				mod -> ensureModule(mod, 2, 5).setUnit(mod.getDescription(Mod303Key.CT_S36U)), true),
-		CT_S36F(Mod303Key.CT_S36F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S36F, ensureModule(mod, 2, 5).getFactor()),
-				mod -> ensureModule(mod, 2, 5).setFactor(mod.getAmount(Mod303Key.CT_S36F)), true),
-		CT_S36R(Mod303Key.CT_S36R, null, null, null, "hasActivity(2)?round(CT_S36I*CT_S36F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S36R, ensureModule(mod, 2, 5).getResult()),
-				mod -> ensureModule(mod, 2, 5).setResult(mod.getAmount(Mod303Key.CT_S36R)), true)
-
-		,
-		CT_S37D(Mod303Key.CT_S37D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S37D, ensureModule(mod, 2, 6).getDescription()),
-				mod -> ensureModule(mod, 2, 6).setDescription(mod.getDescription(Mod303Key.CT_S37D)), true),
-		CT_S37I(Mod303Key.CT_S37I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S37I, ensureModule(mod, 2, 6).getValue()),
-				mod -> ensureModule(mod, 2, 6).setValue(mod.getAmount(Mod303Key.CT_S37I)), true),
-		CT_S37U(Mod303Key.CT_S37U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S37U, ensureModule(mod, 2, 6).getUnit()),
-				mod -> ensureModule(mod, 2, 6).setUnit(mod.getDescription(Mod303Key.CT_S37U)), true),
-		CT_S37F(Mod303Key.CT_S37F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S37F, ensureModule(mod, 2, 6).getFactor()),
-				mod -> ensureModule(mod, 2, 6).setFactor(mod.getAmount(Mod303Key.CT_S37F)), true),
-		CT_S37R(Mod303Key.CT_S37R, null, null, null, "hasActivity(2)?round(CT_S37I*CT_S37F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S37R, ensureModule(mod, 2, 6).getResult()),
-				mod -> ensureModule(mod, 2, 6).setResult(mod.getAmount(Mod303Key.CT_S37R)), true)
-
-		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones
-		// corrientes
-		,
-		CT_S317(Mod303Key.CT_S317, null, null, null, "CT_S31R+CT_S32R+CT_S33R+CT_S34R+CT_S35R+CT_S36R+CT_S37R", null,
-				mod -> mod.putAmount(Mod303Key.CT_S317, ensureActivity(mod, 2).getDev()),
-				mod -> ensureActivity(mod, 2).setDev(mod.getAmount(Mod303Key.CT_S317)), false)
-		// (1) Actividades en régimen simplificado. D Reducciones
-		,
-		CT_S318(Mod303Key.CT_S318, null, null, null, "calculateReduccion2021(2,CT_S317,CT_S3X4,CT_S3X5)", null,
-				mod -> mod.putAmount(Mod303Key.CT_S318, ensureActivity(mod, 2).getRed()),
-				mod -> ensureActivity(mod, 2).setRed(mod.getAmount(Mod303Key.CT_S318)), false)
-		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de
-		// temporada
-		,
-		CT_S319(Mod303Key.CT_S319, null, null, null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S3X1 )", null,
-				mod -> mod.putAmount(Mod303Key.CT_S319, ensureActivity(mod, 2).getInd()),
-				mod -> ensureActivity(mod, 2).setInd(mod.getAmount(Mod303Key.CT_S319)), false)
-		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
-		,
-		CT_S320(Mod303Key.CT_S320, null, null, null, 
-				"calculatePorcentajeIngresoCuenta2021(2,CT_S3X5)", null,
-				mod -> mod.putAmount(Mod303Key.CT_S320, ensureActivity(mod, 2).getPor()),
-				mod -> ensureActivity(mod, 2).setPor(mod.getAmount(Mod303Key.CT_S320)), false)
-		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x
-		// [E])
-		,
-		CT_S321(Mod303Key.CT_S321, null, null, null,
-				"calculateIngresoCuenta2021(2, CT_S3X1, CT_S3X2, CT_S317, CT_S318, CT_S319, CT_S320,CT_S3X5)", null,
-				mod -> mod.putAmount(Mod303Key.CT_S321, ensureActivity(mod, 2).getIng()),
-				mod -> ensureActivity(mod, 2).setIng(mod.getAmount(Mod303Key.CT_S321)), false)
-		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por
-		// operaciones corrientes
-		,
-		CT_S32X(Mod303Key.CT_S32X, null, null, null, "isLastPeriod()?round(CT_S317 * 1 / 100):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S32X, ensureActivity(mod, 2).getSopx()),
-				mod -> ensureActivity(mod, 2).setSopx(mod.getAmount(Mod303Key.CT_S32X)), false)
-		// (1) Actividades en régimen simplificado. G Cuotas soportadas
-		,
-		CT_S32Y(Mod303Key.CT_S32Y, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S32Y, ensureActivity(mod, 2).getSopy()),
-				mod -> ensureActivity(mod, 2).setSopy(mod.getAmount(Mod303Key.CT_S32Y)), false)
-		// (1) Actividades en régimen simplificado. G Cuotas soportadas operaciones
-		// corrientes
-		,
-		CT_S322(Mod303Key.CT_S322, null, null, null, "isLastPeriod()?(CT_S32X+CT_S32Y):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S322, ensureActivity(mod, 2).getSop()),
-				mod -> ensureActivity(mod, 2).setSop(mod.getAmount(Mod303Key.CT_S322)), false)
-		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de
-		// temporada
-		,
-		CT_S323(Mod303Key.CT_S323, null, null, null, "isLastPeriod()?calculateIndiceTemporada( CT_S3X1 ):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S323, ensureActivity(mod, 2).getIct()),
-				mod -> ensureActivity(mod, 2).setIct(mod.getAmount(Mod303Key.CT_S323)), false)
-		// (1) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x
-		// [H])
-		,
-		CT_S324(Mod303Key.CT_S324, null, null, null, "calculateResultadoAnual( CT_S317, CT_S318, CT_S322, CT_S323)",
-				null, mod -> mod.putAmount(Mod303Key.CT_S324, ensureActivity(mod, 2).getRes()),
-				mod -> ensureActivity(mod, 2).setRes(mod.getAmount(Mod303Key.CT_S324)), false)
-		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
-		,
-		CT_S325(Mod303Key.CT_S325, null, null, null, "isLastPeriod()?CT_S325:0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S325, ensureActivity(mod, 2).getPcm()),
-				mod -> ensureActivity(mod, 2).setPcm(mod.getAmount(Mod303Key.CT_S325)), false)
-		// (1) Actividades en régimen simplificado. K Devolución cuotas soportadas otros
-		// países
-		,
-		CT_S326(Mod303Key.CT_S326, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S326, ensureActivity(mod, 2).getDvc()),
-				mod -> ensureActivity(mod, 2).setDvc(mod.getAmount(Mod303Key.CT_S326)), false)
-		// (1) Actividades en régimen simplificado. L Cuota mínima
-		,
-		CT_S327(Mod303Key.CT_S327, null, null, null, "calculateCuotaMinima(CT_S317, CT_S318, CT_S325, CT_S326,CT_S323)",
-				null, mod -> mod.putAmount(Mod303Key.CT_S327, ensureActivity(mod, 2).getCmn()),
-				mod -> ensureActivity(mod, 2).setCmn(mod.getAmount(Mod303Key.CT_S327)), false)
-		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen
-		// simplificado
-		,
-		CT_S328(Mod303Key.CT_S328, null, null, null, "isLastPeriod()?((CT_S327>CT_S324)?CT_S327:CT_S324):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S328, ensureActivity(mod, 2).getCad()),
-				mod -> ensureActivity(mod, 2).setCad(mod.getAmount(Mod303Key.CT_S328)), false)
-
-		// (1) Actividades en régimen simplificado. Epigrafe IAE
-		,
-		CT_S401(Mod303Key.CT_S401, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S401, ensureActivity(mod, 3).getEpigraph()),
-				mod -> ensureActivity(mod, 3).setEpigraph(mod.getDescription(Mod303Key.CT_S401)), true)
-		// (1) Actividades en régimen simplificado. Epigrafe IAE - Descripción
-		,
-		CT_S40D(Mod303Key.CT_S40D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S40D, ensureActivity(mod, 3).getDescription()),
-				mod -> ensureActivity(mod, 3).setDescription(mod.getDescription(Mod303Key.CT_S40D)), true)
-		// (1) Actividades en régimen simplificado. Epigrafe IAE - Indicador auxiliar de
-		// actividad en el caso de ep\u00EDgrafes 691.9 y 722
-		,
-		CT_S402(Mod303Key.CT_S402, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S402, ensureActivity(mod, 3).getSpecialEpigraph()),
-				mod -> ensureActivity(mod, 3).setSpecialEpigraph((int) mod.getAmount(Mod303Key.CT_S402)), true)
-		// (1) Actividades en régimen simplificado. Actividad de Temporada. Nº Días en
-		// los que se ejerció la actividad en el año anterior
-		,
-		CT_S4X1(Mod303Key.CT_S4X1, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S4X1, ensureActivity(mod, 3).getTem()),
-				mod -> ensureActivity(mod, 3).setTem((int) mod.getAmount(Mod303Key.CT_S4X1)), true)
-		// (1) Actividades en régimen simplificado. Número de días de ejercicio de la
-		// actividad en el trimestre
-		,
-		CT_S4X2(Mod303Key.CT_S4X2, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S4X2, ensureActivity(mod, 3).getDia()),
-				mod -> ensureActivity(mod, 3).setDia((int) mod.getAmount(Mod303Key.CT_S4X2)), true)
-		// (1) Actividades en régimen simplificado. Número de empleados al inicio del
-		// ejercicio ( o al inicio de la actividad)
-		,
-		CT_S4X3(Mod303Key.CT_S4X3, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S4X3, ensureActivity(mod, 3).getEmp()),
-				mod -> ensureActivity(mod, 3).setEmp((int) mod.getAmount(Mod303Key.CT_S4X3)), true)
-		// (1) Actividades en régimen simplificado. Si realiza la actividad en LORCA
-		,
-		CT_S4X4(Mod303Key.CT_S4X4, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S4X4, ensureActivity(mod, 3).getLor()),
-				mod -> ensureActivity(mod, 3).setLor((int) mod.getAmount(Mod303Key.CT_S4X4)), true)
-		// (1) Reduccion extraordinaria por covid-19, art. 9 RD-Ley 35/2020)
-		,
-		CT_S4X5(Mod303Key.CT_S4X5, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S4X5, ensureActivity(mod, 3).getCov()),
-				mod -> ensureActivity(mod, 3).setCov((int) mod.getAmount(Mod303Key.CT_S4X5)), true),
-		CT_S41D(Mod303Key.CT_S41D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S41D, ensureModule(mod, 3, 0).getDescription()),
-				mod -> ensureModule(mod, 3, 0).setDescription(mod.getDescription(Mod303Key.CT_S41D)), true),
-		CT_S41I(Mod303Key.CT_S41I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S41I, ensureModule(mod, 3, 0).getValue()),
-				mod -> ensureModule(mod, 3, 0).setValue(mod.getAmount(Mod303Key.CT_S41I)), true),
-		CT_S41U(Mod303Key.CT_S41U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S41U, ensureModule(mod, 3, 0).getUnit()),
-				mod -> ensureModule(mod, 3, 0).setUnit(mod.getDescription(Mod303Key.CT_S41U)), true),
-		CT_S41F(Mod303Key.CT_S41F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S41F, ensureModule(mod, 3, 0).getFactor()),
-				mod -> ensureModule(mod, 3, 0).setFactor(mod.getAmount(Mod303Key.CT_S41F)), true),
-		CT_S41R(Mod303Key.CT_S41R, null, null, null, "hasActivity(3)?round(CT_S41I*CT_S41F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S41R, ensureModule(mod, 3, 0).getResult()),
-				mod -> ensureModule(mod, 3, 0).setResult(mod.getAmount(Mod303Key.CT_S41R)), true)
-
-		,
-		CT_S42D(Mod303Key.CT_S42D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S42D, ensureModule(mod, 3, 1).getDescription()),
-				mod -> ensureModule(mod, 3, 1).setDescription(mod.getDescription(Mod303Key.CT_S42D)), true),
-		CT_S42I(Mod303Key.CT_S42I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S42I, ensureModule(mod, 3, 1).getValue()),
-				mod -> ensureModule(mod, 3, 1).setValue(mod.getAmount(Mod303Key.CT_S42I)), true),
-		CT_S42U(Mod303Key.CT_S42U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S42U, ensureModule(mod, 3, 1).getUnit()),
-				mod -> ensureModule(mod, 3, 1).setUnit(mod.getDescription(Mod303Key.CT_S42U)), true),
-		CT_S42F(Mod303Key.CT_S42F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S42F, ensureModule(mod, 3, 1).getFactor()),
-				mod -> ensureModule(mod, 3, 1).setFactor(mod.getAmount(Mod303Key.CT_S42F)), true),
-		CT_S42R(Mod303Key.CT_S42R, null, null, null, "hasActivity(3)?round(CT_S42I*CT_S42F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S42R, ensureModule(mod, 3, 1).getResult()),
-				mod -> ensureModule(mod, 3, 1).setResult(mod.getAmount(Mod303Key.CT_S42R)), true)
-
-		,
-		CT_S43D(Mod303Key.CT_S43D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S43D, ensureModule(mod, 3, 2).getDescription()),
-				mod -> ensureModule(mod, 3, 2).setDescription(mod.getDescription(Mod303Key.CT_S43D)), true),
-		CT_S43I(Mod303Key.CT_S43I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S43I, ensureModule(mod, 3, 2).getValue()),
-				mod -> ensureModule(mod, 3, 2).setValue(mod.getAmount(Mod303Key.CT_S43I)), true),
-		CT_S43U(Mod303Key.CT_S43U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S43U, ensureModule(mod, 3, 2).getUnit()),
-				mod -> ensureModule(mod, 3, 2).setUnit(mod.getDescription(Mod303Key.CT_S43U)), true),
-		CT_S43F(Mod303Key.CT_S43F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S43F, ensureModule(mod, 3, 2).getFactor()),
-				mod -> ensureModule(mod, 3, 2).setFactor(mod.getAmount(Mod303Key.CT_S43F)), true),
-		CT_S43R(Mod303Key.CT_S43R, null, null, null, "hasActivity(3)?round(CT_S43I*CT_S43F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S43R, ensureModule(mod, 3, 2).getResult()),
-				mod -> ensureModule(mod, 3, 2).setResult(mod.getAmount(Mod303Key.CT_S43R)), true)
-
-		,
-		CT_S44D(Mod303Key.CT_S44D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S44D, ensureModule(mod, 3, 3).getDescription()),
-				mod -> ensureModule(mod, 3, 3).setDescription(mod.getDescription(Mod303Key.CT_S44D)), true),
-		CT_S44I(Mod303Key.CT_S44I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S44I, ensureModule(mod, 3, 3).getValue()),
-				mod -> ensureModule(mod, 3, 3).setValue(mod.getAmount(Mod303Key.CT_S44I)), true),
-		CT_S44U(Mod303Key.CT_S44U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S44U, ensureModule(mod, 3, 3).getUnit()),
-				mod -> ensureModule(mod, 3, 3).setUnit(mod.getDescription(Mod303Key.CT_S44U)), true),
-		CT_S44F(Mod303Key.CT_S44F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S44F, ensureModule(mod, 3, 3).getFactor()),
-				mod -> ensureModule(mod, 3, 3).setFactor(mod.getAmount(Mod303Key.CT_S44F)), true),
-		CT_S44R(Mod303Key.CT_S44R, null, null, null, "hasActivity(3)?round(CT_S44I*CT_S44F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S44R, ensureModule(mod, 3, 3).getResult()),
-				mod -> ensureModule(mod, 3, 3).setResult(mod.getAmount(Mod303Key.CT_S44R)), true)
-
-		,
-		CT_S45D(Mod303Key.CT_S45D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S45D, ensureModule(mod, 3, 4).getDescription()),
-				mod -> ensureModule(mod, 3, 4).setDescription(mod.getDescription(Mod303Key.CT_S45D)), true),
-		CT_S45I(Mod303Key.CT_S45I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S45I, ensureModule(mod, 3, 4).getValue()),
-				mod -> ensureModule(mod, 3, 4).setValue(mod.getAmount(Mod303Key.CT_S45I)), true),
-		CT_S45U(Mod303Key.CT_S45U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S45U, ensureModule(mod, 3, 4).getUnit()),
-				mod -> ensureModule(mod, 3, 4).setUnit(mod.getDescription(Mod303Key.CT_S45U)), true),
-		CT_S45F(Mod303Key.CT_S45F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S45F, ensureModule(mod, 3, 4).getFactor()),
-				mod -> ensureModule(mod, 3, 4).setFactor(mod.getAmount(Mod303Key.CT_S45F)), true),
-		CT_S45R(Mod303Key.CT_S45R, null, null, null, "hasActivity(3)?round(CT_S45I*CT_S45F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S45R, ensureModule(mod, 3, 4).getResult()),
-				mod -> ensureModule(mod, 3, 4).setResult(mod.getAmount(Mod303Key.CT_S45R)), true)
-
-		,
-		CT_S46D(Mod303Key.CT_S46D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S46D, ensureModule(mod, 3, 5).getDescription()),
-				mod -> ensureModule(mod, 3, 5).setDescription(mod.getDescription(Mod303Key.CT_S46D)), true),
-		CT_S46I(Mod303Key.CT_S46I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S46I, ensureModule(mod, 3, 5).getValue()),
-				mod -> ensureModule(mod, 3, 5).setValue(mod.getAmount(Mod303Key.CT_S46I)), true),
-		CT_S46U(Mod303Key.CT_S46U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S46U, ensureModule(mod, 3, 5).getUnit()),
-				mod -> ensureModule(mod, 3, 5).setUnit(mod.getDescription(Mod303Key.CT_S46U)), true),
-		CT_S46F(Mod303Key.CT_S46F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S46F, ensureModule(mod, 3, 5).getFactor()),
-				mod -> ensureModule(mod, 3, 5).setFactor(mod.getAmount(Mod303Key.CT_S46F)), true),
-		CT_S46R(Mod303Key.CT_S46R, null, null, null, "hasActivity(3)?round(CT_S46I*CT_S46F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S46R, ensureModule(mod, 3, 5).getResult()),
-				mod -> ensureModule(mod, 3, 5).setResult(mod.getAmount(Mod303Key.CT_S46R)), true)
-
-		,
-		CT_S47D(Mod303Key.CT_S47D, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S47D, ensureModule(mod, 3, 6).getDescription()),
-				mod -> ensureModule(mod, 3, 6).setDescription(mod.getDescription(Mod303Key.CT_S47D)), true),
-		CT_S47I(Mod303Key.CT_S47I, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S47I, ensureModule(mod, 3, 6).getValue()),
-				mod -> ensureModule(mod, 3, 6).setValue(mod.getAmount(Mod303Key.CT_S47I)), true),
-		CT_S47U(Mod303Key.CT_S47U, null, null, null, null, null,
-				mod -> mod.putDescription(Mod303Key.CT_S47U, ensureModule(mod, 3, 6).getUnit()),
-				mod -> ensureModule(mod, 3, 6).setUnit(mod.getDescription(Mod303Key.CT_S47U)), true),
-		CT_S47F(Mod303Key.CT_S47F, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S47F, ensureModule(mod, 3, 6).getFactor()),
-				mod -> ensureModule(mod, 3, 6).setFactor(mod.getAmount(Mod303Key.CT_S47F)), true),
-		CT_S47R(Mod303Key.CT_S47R, null, null, null, "hasActivity(3)?round(CT_S47I*CT_S47F):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S47R, ensureModule(mod, 3, 6).getResult()),
-				mod -> ensureModule(mod, 3, 6).setResult(mod.getAmount(Mod303Key.CT_S47R)), true)
-
-		// (1) Actividades en régimen simplificado. C Cuota devengada operaciones
-		// corrientes
-		,
-		CT_S417(Mod303Key.CT_S417, null, null, null, "CT_S41R+CT_S42R+CT_S43R+CT_S44R+CT_S45R+CT_S46R+CT_S47R", null,
-				mod -> mod.putAmount(Mod303Key.CT_S417, ensureActivity(mod, 3).getDev()),
-				mod -> ensureActivity(mod, 3).setDev(mod.getAmount(Mod303Key.CT_S417)), false)
-		// (1) Actividades en régimen simplificado. D Reducciones
-		,
-		CT_S418(Mod303Key.CT_S418, null, null, null, "calculateReduccion2021(3,CT_S417,CT_S4X4,CT_S4X5)", null,
-				mod -> mod.putAmount(Mod303Key.CT_S418, ensureActivity(mod, 3).getRed()),
-				mod -> ensureActivity(mod, 3).setRed(mod.getAmount(Mod303Key.CT_S418)), false)
-		// (1) Actividades en régimen simplificado. Z Índice corrector actividades de
-		// temporada
-		,
-		CT_S419(Mod303Key.CT_S419, null, null, null, "isLastPeriod()?0.0:calculateIndiceTemporada( CT_S4X1 )", null,
-				mod -> mod.putAmount(Mod303Key.CT_S419, ensureActivity(mod, 3).getInd()),
-				mod -> ensureActivity(mod, 3).setInd(mod.getAmount(Mod303Key.CT_S419)), false)
-		// (1) Actividades en régimen simplificado. E Porcentaje de ingreso a cuenta
-		,
-		CT_S420(Mod303Key.CT_S420, null, null, null, 
-				"calculatePorcentajeIngresoCuenta2021(3,CT_S4X5)", null,
-				mod -> mod.putAmount(Mod303Key.CT_S420, ensureActivity(mod, 3).getPor()),
-				mod -> ensureActivity(mod, 3).setPor(mod.getAmount(Mod303Key.CT_S420)), false)
-		// (1) Actividades en régimen simplificado. F Ingreso a cuenta ( ([C] - [D] ) x
-		// [E])
-		,
-		CT_S421(Mod303Key.CT_S421, null, null, null,
-				"calculateIngresoCuenta2021(3, CT_S4X1, CT_S4X2, CT_S417, CT_S418, CT_S419, CT_S420,CT_S4X5)", null,
-				mod -> mod.putAmount(Mod303Key.CT_S421, ensureActivity(mod, 3).getIng()),
-				mod -> ensureActivity(mod, 3).setIng(mod.getAmount(Mod303Key.CT_S421)), false)
-		// (1) Actividades en régimen simplificado. 1% de la cuota devengada por
-		// operaciones corrientes
-		,
-		CT_S42X(Mod303Key.CT_S42X, null, null, null, "isLastPeriod()?round(CT_S417 * 1 / 100):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S42X, ensureActivity(mod, 3).getSopx()),
-				mod -> ensureActivity(mod, 3).setSopx(mod.getAmount(Mod303Key.CT_S42X)), false)
-		// (1) Actividades en régimen simplificado. G Cuotas soportadas
-		,
-		CT_S42Y(Mod303Key.CT_S42Y, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S42Y, ensureActivity(mod, 3).getSopy()),
-				mod -> ensureActivity(mod, 3).setSopy(mod.getAmount(Mod303Key.CT_S42Y)), false)
-		// (1) Actividades en régimen simplificado. G Cuotas soportadas operaciones
-		// corrientes
-		,
-		CT_S422(Mod303Key.CT_S422, null, null, null, "isLastPeriod()?(CT_S42X+CT_S42Y):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S422, ensureActivity(mod, 3).getSop()),
-				mod -> ensureActivity(mod, 3).setSop(mod.getAmount(Mod303Key.CT_S422)), false)
-		// (1) Actividades en régimen simplificado. H Índice corrector de actividades de
-		// temporada
-		,
-		CT_S423(Mod303Key.CT_S423, null, null, null, "isLastPeriod()?calculateIndiceTemporada( CT_S4X1 ):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S423, ensureActivity(mod, 3).getIct()),
-				mod -> ensureActivity(mod, 3).setIct(mod.getAmount(Mod303Key.CT_S423)), false)
-		// (1) Actividades en régimen simplificado. I RESULTADO (( [C] - [D] - [G] ) x
-		// [H])
-		,
-		CT_S424(Mod303Key.CT_S424, null, null, null, "calculateResultadoAnual( CT_S417, CT_S418, CT_S422, CT_S423)",
-				null, mod -> mod.putAmount(Mod303Key.CT_S424, ensureActivity(mod, 3).getRes()),
-				mod -> ensureActivity(mod, 3).setRes(mod.getAmount(Mod303Key.CT_S424)), false)
-		// (1) Actividades en régimen simplificado. J Porcentaje cuota mínima
-		,
-		CT_S425(Mod303Key.CT_S425, null, null, null, "isLastPeriod()?CT_S425:0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S425, ensureActivity(mod, 3).getPcm()),
-				mod -> ensureActivity(mod, 3).setPcm(mod.getAmount(Mod303Key.CT_S425)), false)
-		// (1) Actividades en régimen simplificado. K Devolución cuotas soportadas otros
-		// países
-		,
-		CT_S426(Mod303Key.CT_S426, null, null, null, null, null,
-				mod -> mod.putAmount(Mod303Key.CT_S426, ensureActivity(mod, 3).getDvc()),
-				mod -> ensureActivity(mod, 3).setDvc(mod.getAmount(Mod303Key.CT_S426)), false)
-		// (1) Actividades en régimen simplificado. L Cuota mínima
-		,
-		CT_S427(Mod303Key.CT_S427, null, null, null, "calculateCuotaMinima(CT_S417, CT_S418, CT_S425, CT_S426,CT_S423)",
-				null, mod -> mod.putAmount(Mod303Key.CT_S427, ensureActivity(mod, 3).getCmn()),
-				mod -> ensureActivity(mod, 3).setCmn(mod.getAmount(Mod303Key.CT_S427)), false)
-		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen
-		// simplificado
-		,
-		CT_S428(Mod303Key.CT_S428, null, null, null, "isLastPeriod()?((CT_S427>CT_S424)?CT_S427:CT_S424):0.0", null,
-				mod -> mod.putAmount(Mod303Key.CT_S428, ensureActivity(mod, 3).getCad()),
-				mod -> ensureActivity(mod, 3).setCad(mod.getAmount(Mod303Key.CT_S428)), false)
+		,CT_S427(Mod303Key.CT_S427, null, null, null, "calculateCuotaMinima(CT_S417, CT_S418, CT_S425, CT_S426,CT_S423)",null
+			,mod -> mod.putAmount(Mod303Key.CT_S427, ensureActivity(mod, 3).getCmn())
+			,mod -> ensureActivity(mod, 3).setCmn(mod.getAmount(Mod303Key.CT_S427))
+			,null)
+		// (1) Actividades en régimen simplificado. M Cuota anual derivada régimen simplificado
+		,CT_S428(Mod303Key.CT_S428, null, null, null, "isLastPeriod()?((CT_S427>CT_S424)?CT_S427:CT_S424):0.0", null
+			,mod -> mod.putAmount(Mod303Key.CT_S428, ensureActivity(mod, 3).getCad())
+			,mod -> ensureActivity(mod, 3).setCad(mod.getAmount(Mod303Key.CT_S428))
+			,null)
 
 		// 47 Suma de ingresos a cuenta del conjunto de actividades
-		, CT_S47(Mod303Key.CT_S47, null, null, null, "CT_SA16+CT_SA26+CT_SA36+CT_SA46+CT_S121+CT_S221+CT_S321+CT_S421",
-				null)
+		, CT_S47(Mod303Key.CT_S47, null, null, null, "CT_SA16+CT_SA26+CT_SA36+CT_SA46+CT_S121+CT_S221+CT_S321+CT_S421", null)
 		// 48 Suma de cuotas derivadas RS del conjunto de actividades
-		, CT_S48(Mod303Key.CT_S48, null, null, null,
-				"isLastPeriod()?(CT_SA18+CT_SA28+CT_SA38+CT_SA48+CT_S128+CT_S228+CT_S328+CT_S428):0.0", null)
+		, CT_S48(Mod303Key.CT_S48, null, null, null, "isLastPeriod()?(CT_SA18+CT_SA28+CT_SA38+CT_SA48+CT_S128+CT_S228+CT_S328+CT_S428):0.0", null)
 		// 49 (A+B) Suma de ingresos a cuenta realizados en el ejercicio
 		, CT_S49(Mod303Key.CT_S49)
 		// 50 (A+B) Resultado
@@ -1666,7 +2096,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 		private String template;
 		private ISimplifiedRegimeActivityPopulator populator;
 		private ISimplifiedRegimeActivityFiller filler;
-		private boolean copyable;
+		private ISimplifiedRegimeCopier copier;
 
 		private Mod303KeyDAO(Mod303Key key) {
 			this(key, null, null, null, null, null);
@@ -1674,13 +2104,18 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 
 		private Mod303KeyDAO(Mod303Key key, IValueAccepter acceptValue, IValueIntializer initializer,
 				IValueFirstIntializer firstInitializer, String expression, String template) {
-			this(key, acceptValue, initializer, firstInitializer, expression, template, null, null, false);
+			this(key, acceptValue, initializer, firstInitializer, expression, template, null, null, null);
 		}
 
-		private Mod303KeyDAO(Mod303Key key, IValueAccepter acceptValue, IValueIntializer initializer,
-				IValueFirstIntializer firstInitializer, String expression, String template,
-				ISimplifiedRegimeActivityPopulator populator, ISimplifiedRegimeActivityFiller filler,
-				boolean copyable) {
+		private Mod303KeyDAO(Mod303Key key
+			,IValueAccepter acceptValue
+			,IValueIntializer initializer,
+			IValueFirstIntializer firstInitializer
+			,String expression, String template,
+			ISimplifiedRegimeActivityPopulator populator
+			,ISimplifiedRegimeActivityFiller filler,
+			ISimplifiedRegimeCopier copier) {
+			
 			this.key = key;
 			this.acceptValue = acceptValue;
 			this.initializer = initializer;
@@ -1689,7 +2124,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			this.template = template;
 			this.populator = populator;
 			this.filler = filler;
-			this.copyable = copyable;
+			this.copier = copier;
 		}
 
 		@Override
@@ -1707,8 +2142,8 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			return template;
 		}
 
-		public boolean isCopyable() {
-			return copyable;
+		public boolean hasCopier() {
+			return copier != null;
 		}
 
 		@Override
@@ -1732,6 +2167,12 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 		public void firstInitialize(AONContext ctx, Mod303 mod) {
 			if (firstInitializer != null) {
 				firstInitializer.initialize(ctx, mod);
+			}
+		}
+
+		public void copy(Mod303 previous, Mod303 current) {
+			if (hasCopier()) {
+				copier.copy(previous, current);
 			}
 		}
 
@@ -1961,7 +2402,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 
 	private static Mod303ActivityFarmer ensureFarmerActivity(Mod303 mod, int idx) {
 		if (idx < 0 || idx > 3)
-			throw new IllegalArgumentException("0, 1, 3, ó 3");
+			throw new IllegalArgumentException("0, 1, 3, o 3");
 
 		if (mod.getActivityFarmerList() == null) {
 			mod.setActivityFarmerList(new LinkedList<>());
@@ -1976,7 +2417,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 
 	private static Mod303Activity ensureActivity(Mod303 mod, int idx) {
 		if (idx < 0 || idx > 3)
-			throw new IllegalArgumentException("0, 1, 2, ó 3");
+			throw new IllegalArgumentException("0, 1, 2, o 3");
 
 		if (mod.getActivityList() == null) {
 			mod.setActivityList(new LinkedList<>());
@@ -1990,8 +2431,7 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 	}
 
 	private static Mod303ActivityModule ensureModule(Mod303 mod, int act, int idx) {
-		if (idx < 0 || idx > 6)
-			throw new IllegalArgumentException("0, 1, 2, 3, 4, 5, ó 6");
+		if (idx < 0 || idx > 6) throw new IllegalArgumentException("0, 1, 2, 3, 4, 5, o 6");
 		Mod303Activity a = ensureActivity(mod, act);
 		if (a.getModules() == null) {
 			a.setModules(new LinkedList<>());
@@ -2004,180 +2444,18 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 		return a.getModules().get(idx);
 	}
 
-	// -----------------------------------------------------------------------
-	// ----------------------------------------------- REGIMEN SIMPLIFICADO --
-	// -----------------------------------------------------------------------
-	@Override
-	public void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303) {
-		Mod303 previous = Mod303DAO.getMod303s(ctx, mod303.getDomain()).findFirst().orElse(null);
-		if (previous != null) {
-			Date curStart = FiscalUtils.getPeriodStart(mod303);
-			Date curEnd = FiscalUtils.getPeriodEnd(mod303);
-			int curMaxDias = AonNumberUtils.toint(AonDateUtils.getDaysBetweenDates(curStart, curEnd)) + 1;
-
-			Date prevStart = FiscalUtils.getPeriodStart(previous);
-			Date prevEnd = FiscalUtils.getPeriodEnd(previous);
-			int prevMaxDias = AonNumberUtils.toint(AonDateUtils.getDaysBetweenDates(prevStart, prevEnd)) + 1;
-			
-			previous = Mod303DAO.get(ctx, previous.getId());
-			if (previous.getAmount(Mod303Key.CT_A02) == 0 || previous.getAmount(Mod303Key.CT_A02) == 1) {
-				mod303.putAmount(Mod303Key.CT_A02, previous.getAmount(Mod303Key.CT_A02));
-				for (Mod303KeyDAO key : Mod303KeyDAO.values()) {
-					if (key.isCopyable()) {
-						FiscalModelDetail prev = previous.ensureDetail(key.getKey());
-						FiscalModelDetail det = mod303.ensureDetail(key.getKey());
-						det.setAmount(prev.getAmount());
-						det.setDescription(prev.getDescription());
-						if (key == Mod303KeyDAO.CT_SA11
-								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_SA11))) {
-							IFarmerIVA farmerIVA = getFarmerIVA(mod303, Mod303Key.CT_SA11);
-							if (farmerIVA != null) {
-								mod303.ensureDetail(Mod303Key.CT_SA13)
-										.setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
-								if (!mod303.isLastPeriod()) {
-									mod303.ensureDetail(Mod303Key.CT_SA15).setAmount(farmerIVA.getPorcentaje());
-								}
-							}
-						}
-						if (key == Mod303KeyDAO.CT_SA21
-								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_SA21))) {
-							IFarmerIVA farmerIVA = getFarmerIVA(mod303, Mod303Key.CT_SA21);
-							if (farmerIVA != null) {
-								mod303.ensureDetail(Mod303Key.CT_SA23)
-										.setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
-								if (!mod303.isLastPeriod()) {
-									mod303.ensureDetail(Mod303Key.CT_SA25).setAmount(farmerIVA.getPorcentaje());
-								}
-							}
-						}
-						if (key == Mod303KeyDAO.CT_SA31
-								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_SA31))) {
-							IFarmerIVA farmerIVA = getFarmerIVA(mod303, Mod303Key.CT_SA31);
-							if (farmerIVA != null) {
-								mod303.ensureDetail(Mod303Key.CT_SA33)
-										.setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
-								if (!mod303.isLastPeriod()) {
-									mod303.ensureDetail(Mod303Key.CT_SA35).setAmount(farmerIVA.getPorcentaje());
-								}
-							}
-						}
-						if (key == Mod303KeyDAO.CT_SA41
-								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_SA41))) {
-							IFarmerIVA farmerIVA = getFarmerIVA(mod303, Mod303Key.CT_SA41);
-							if (farmerIVA != null) {
-								mod303.ensureDetail(Mod303Key.CT_SA43)
-										.setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
-								if (!mod303.isLastPeriod()) {
-									mod303.ensureDetail(Mod303Key.CT_SA45).setAmount(farmerIVA.getPorcentaje());
-								}
-							}
-						}
-
-						if (key == Mod303KeyDAO.CT_S101 && AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_S101))) {
-							IEpigraph epi = getEpigraph(mod303, Mod303Key.CT_S101);
-							if (epi != null) {
-								mod303.ensureDetail(Mod303Key.CT_S125).setAmount(epi.getPorcMin());
-								if (mod303.isLastPeriod()) {
-									mod303.ensureDetail(Mod303Key.CT_S125).setAmount(epi.getPorcMin());
-								} else {
-									mod303.ensureDetail(Mod303Key.CT_S120).setAmount(epi.getVatPorc());
-								}
-							}
-						}
-						if (key == Mod303KeyDAO.CT_S1X2 
-							&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_S101))
-							&& AonNumberUtils.equals(prevMaxDias, previous.getAmount(Mod303Key.CT_S1X2))) {
-								mod303.ensureDetail(Mod303Key.CT_S1X2).setAmount(curMaxDias);
-						}
-						
-						if (key == Mod303KeyDAO.CT_S201
-								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_S201))) {
-							IEpigraph epi = getEpigraph(mod303, Mod303Key.CT_S201);
-							if (epi != null) {
-								if (mod303.isLastPeriod()) {
-									mod303.ensureDetail(Mod303Key.CT_S225).setAmount(epi.getPorcMin());
-								} else {
-									mod303.ensureDetail(Mod303Key.CT_S220).setAmount(epi.getVatPorc());
-								}
-							}
-						}
-						if (key == Mod303KeyDAO.CT_S2X2 
-								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_S201))
-								&& AonNumberUtils.equals(prevMaxDias, previous.getAmount(Mod303Key.CT_S2X2))) {
-							mod303.ensureDetail(Mod303Key.CT_S2X2).setAmount(curMaxDias);
-						}
-						
-						if (key == Mod303KeyDAO.CT_S301
-								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_S301))) {
-							IEpigraph epi = getEpigraph(mod303, Mod303Key.CT_S301);
-							if (epi != null) {
-								if (mod303.isLastPeriod()) {
-									mod303.ensureDetail(Mod303Key.CT_S325).setAmount(epi.getPorcMin());
-								} else {
-									mod303.ensureDetail(Mod303Key.CT_S320).setAmount(epi.getVatPorc());
-								}
-							}
-						}
-						if (key == Mod303KeyDAO.CT_S3X2 
-								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_S301))
-								&& AonNumberUtils.equals(prevMaxDias, previous.getAmount(Mod303Key.CT_S3X2))) {
-							mod303.ensureDetail(Mod303Key.CT_S3X2).setAmount(curMaxDias);
-						}
-						
-						if (key == Mod303KeyDAO.CT_S401
-								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_S401))) {
-							IEpigraph epi = getEpigraph(mod303, Mod303Key.CT_S401);
-							if (epi != null) {
-								if (mod303.isLastPeriod()) {
-									mod303.ensureDetail(Mod303Key.CT_S425).setAmount(epi.getPorcMin());
-								} else {
-									mod303.ensureDetail(Mod303Key.CT_S420).setAmount(epi.getVatPorc());
-								}
-							}
-						}
-						if (key == Mod303KeyDAO.CT_S4X2 
-								&& AonStringUtils.isNotBlank(mod303.getDescription(Mod303Key.CT_S401))
-								&& AonNumberUtils.equals(prevMaxDias, previous.getAmount(Mod303Key.CT_S4X2))) {
-							mod303.ensureDetail(Mod303Key.CT_S4X2).setAmount(curMaxDias);
-						}
-						
-					}
-				}
+	private static Mod303ActivityDesk ensureDesk(Mod303 mod, int act, int idx) {
+		if (idx < 0 || idx > 6) throw new IllegalArgumentException("0, 1, 2, o 3");
+		Mod303Activity a = ensureActivity(mod, act);
+		if (a.getDesks() == null) {
+			a.setDesks(new LinkedList<>());
+		}
+		for (int i = 0; i <= idx; i++) {
+			if (idx == a.getDesks().size()) {
+				a.getDesks().add(new Mod303ActivityDesk());
 			}
-			fillSimplifiedRegime(mod303);
 		}
-	}
-
-	private IEpigraph getEpigraph(Mod303 mod303, Mod303Key key) {
-		if (mod303.getYear() < 2018) {
-			return com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.Epigraph
-					.getEpigraph(mod303.getDescription(key));
-		}
-		return com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.Epigraph
-				.getEpigraph(mod303.getDescription(key));
-	}
-
-	private IFarmerIVA getFarmerIVA(Mod303 mod303, Mod303Key key) {
-		if (mod303.getYear() < 2018) {
-			return com.esferalia.aon.occam.api.model.fiscal.modules.Modules2016.FarmerIVA
-					.getFarmerIVA(mod303.getDescription(key));
-		}
-		return com.esferalia.aon.occam.api.model.fiscal.modules.Modules2018.FarmerIVA
-				.getFarmerIVA(mod303.getDescription(key));
-	}
-
-	@Override
-	public void fillSimplifiedRegime(Mod303 mod303) {
-		for (Mod303KeyDAO key : Mod303KeyDAO.values()) {
-			key.fill(mod303);
-		}
-	}
-
-	@Override
-	public void populateSimplifiedRegime(Mod303 mod303) {
-		for (Mod303KeyDAO key : Mod303KeyDAO.values()) {
-			key.populate(mod303);
-		}
+		return a.getDesks().get(idx);
 	}
 
 	@Override
@@ -2254,5 +2532,114 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 	@Override
 	protected String getRegularizationExplain(AONContext ctx, Mod303 mod303, Mod303Key key) {
 		return DeclarationInfoUtil.getRegularizationExplain( ctx, mod303, key );
+	}
+	
+	// -----------------------------------------------------------------------
+	// ----------------------------------------------- REGIMEN SIMPLIFICADO --
+	// -----------------------------------------------------------------------
+	@Override
+	public void initializeSimplifiedRegime(AONContext ctx, Mod303 mod303) {
+		Integer previousId = Mod303DAO.getMod303s(ctx, mod303.getDomain())
+			.map( m -> m.getId())
+			.findFirst().orElse(null);
+		if (previousId != null) {
+			Mod303 previous = Mod303DAO.get(ctx, previousId);
+			if (hasSimplifiedRegime( previous )) {
+				mod303.putAmount(Mod303Key.CT_A02, previous.getAmount(Mod303Key.CT_A02));
+				Arrays.stream(Mod303KeyDAO.values())
+					.filter( key -> key.hasCopier() )
+					.forEach( key -> key.copy(previous, mod303));
+			}
+			ensureSimplifiedRegimeActivities(mod303);
+			fillSimplifiedRegime(mod303);
+		}
+	}
+
+	private IEpigraph getEpigraph(Mod303 mod303, Mod303Key key) {
+		return Modules2018.Epigraph.getEpigraph(mod303.getDescription(key));
+	}
+
+	private IFarmerIVA getFarmerIVA(Mod303 mod303, Mod303Key key) {
+		return Modules2018.FarmerIVA.getFarmerIVA(mod303.getDescription(key));
+	}
+
+	@Override
+	public void fillSimplifiedRegime(Mod303 mod303) {
+		for (Mod303KeyDAO key : Mod303KeyDAO.values()) {
+			key.fill(mod303);
+		}
+	}
+
+	@Override
+	public void populateSimplifiedRegime(Mod303 mod303) {
+		for (Mod303KeyDAO key : Mod303KeyDAO.values()) {
+			key.populate(mod303);
+		}
+	}
+
+	private static void copyKey(Mod303 previous,Mod303 current, Mod303Key key) {
+		current.putAmount(key, previous.getAmount(key));
+		current.putDescription(key, previous.getDescription(key));
+	}
+	
+	private static boolean hasSimplifiedRegime(Mod303 mod303) {
+		return AonNumberUtils.notEquals(mod303.getAmount(Mod303Key.CT_A02), 2);
+	}
+
+	private static void ensureActivityDays(Mod303 previous, Mod303 current,Mod303Key epiKey,Mod303Key daysKey) {
+		if (AonStringUtils.isNotBlank(current.getDescription(Mod303Key.CT_S101))) {
+			Date curStart = FiscalUtils.getPeriodStart(current);
+			Date curEnd = FiscalUtils.getPeriodEnd(current);
+			int curMaxDias = AonNumberUtils.toint(AonDateUtils.getDaysBetweenDates(curStart, curEnd)) + 1;
+			Date prevStart = FiscalUtils.getPeriodStart(previous);
+			Date prevEnd = FiscalUtils.getPeriodEnd(previous);
+			int prevMaxDias = AonNumberUtils.toint(AonDateUtils.getDaysBetweenDates(prevStart, prevEnd)) + 1;
+			if (AonNumberUtils.equals(prevMaxDias, previous.getAmount(daysKey))) {
+				current.ensureDetail(daysKey).setAmount(curMaxDias);			
+			}
+		}
+	}
+
+	private void ensureSimplifiedRegimeActivities(Mod303 mod303) {
+		Mod303Key[][] farmerKeys = new Mod303Key[][]{
+			new Mod303Key[] {Mod303Key.CT_SA11,Mod303Key.CT_SA13,Mod303Key.CT_SA15},
+			new Mod303Key[] {Mod303Key.CT_SA21,Mod303Key.CT_SA23,Mod303Key.CT_SA25},
+			new Mod303Key[] {Mod303Key.CT_SA31,Mod303Key.CT_SA33,Mod303Key.CT_SA35},
+			new Mod303Key[] {Mod303Key.CT_SA41,Mod303Key.CT_SA43,Mod303Key.CT_SA45},
+		};
+		
+		IntStream.range(0, farmerKeys.length)
+			.boxed()
+			.map(i -> farmerKeys[i])
+			.filter(farmerActivity -> AonStringUtils.isNotBlank(mod303.getDescription(farmerActivity[0])))
+			.forEach(farmerActivity -> {
+				IFarmerIVA farmerIVA = getFarmerIVA(mod303, farmerActivity[0]);
+				if (farmerIVA != null) {
+					mod303.ensureDetail(farmerActivity[1]).setAmount(farmerIVA.getIndiceRendimientoNeto() * 10000);
+					if (!mod303.isLastPeriod()) {
+						mod303.ensureDetail(farmerActivity[2]).setAmount(farmerIVA.getPorcentaje());
+					}
+				}
+			});
+		
+		Mod303Key[][] actKeys = new Mod303Key[][]{
+			new Mod303Key[] {Mod303Key.CT_S101,Mod303Key.CT_S125,Mod303Key.CT_S120},
+			new Mod303Key[] {Mod303Key.CT_S201,Mod303Key.CT_S225,Mod303Key.CT_S220},
+			new Mod303Key[] {Mod303Key.CT_S301,Mod303Key.CT_S325,Mod303Key.CT_S320},
+			new Mod303Key[] {Mod303Key.CT_S401,Mod303Key.CT_S425,Mod303Key.CT_S420},
+		};
+		IntStream.range(0, actKeys.length)
+			.boxed()
+			.map(i -> actKeys[i])
+			.filter(actActivity -> AonStringUtils.isNotBlank(mod303.getDescription(actActivity[0])))
+			.forEach(actActivity -> {
+				IEpigraph epi = getEpigraph(mod303, actActivity[0]);
+				if (epi != null) {
+					mod303.ensureDetail(actActivity[1]).setAmount(epi.getPorcMin());
+					if (!mod303.isLastPeriod()) {
+						mod303.ensureDetail(actActivity[2]).setAmount(epi.getVatPorc());
+					}
+				}
+			});
 	}
 }

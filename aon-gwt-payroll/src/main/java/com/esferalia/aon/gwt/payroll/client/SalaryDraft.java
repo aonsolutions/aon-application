@@ -3625,7 +3625,7 @@ public class SalaryDraft extends ResizeComposite
 		employeePartialFactorTitle.setVisible(employeePartialFactorLabel.isVisible() );
 		employeePartialFactorButton.setVisible(employeePartialFactorLabel.isVisible() );
 
-		double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
+		double workDays = getValuesOf("DIAS_TRABAJADOS", salaryStartDate, salaryEndDate).collect(Collectors.summingDouble( AonNumberUtils::todouble));
 		employeeWorkedDaysLabel.setText(formatValue(workDays));
 		employeeWorkedDaysLabel.setVisible(isSalary() && !hoursBase  && salaryPartialFactor == 1.00 && workDays > 0 );
 		employeeWorkedDaysTitle.setVisible(employeeWorkedDaysLabel.isVisible());
@@ -3697,7 +3697,7 @@ public class SalaryDraft extends ResizeComposite
 		//dumpContext(constants, Scope.CONTRACT, true, null);
 		
 		if ( Wnd.isNewAONTheme() ) {
-		    showContextAtLeft();
+		    if(contextMenuShowed) showContextAtLeft();
 		    dumpContextAtLeft(visibleContext);
 		    notDefinedVarsCheck.removeFromParent();
 		} else {
@@ -3729,6 +3729,17 @@ public class SalaryDraft extends ResizeComposite
 	public Stream<String> getValuesOf(String name) {
 		return salaryDraftObject.getContext().stream()
 		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		.map(Variable::getValue)
+		.filter(Objects::nonNull)
+		.map(String::valueOf )
+		;
+	}
+
+	public Stream<String> getValuesOf(String name, Date startDate, Date endDate) {
+		return salaryDraftObject.getContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		.filter(v -> AonDateUtils.compare(v.getStartDate(),endDate) <= 0 )
+		.filter(v -> AonDateUtils.compare(v.getEndDate(),startDate) >= 0 )
 		.map(Variable::getValue)
 		.filter(Objects::nonNull)
 		.map(String::valueOf )
@@ -7679,7 +7690,8 @@ public class SalaryDraft extends ResizeComposite
 	private static boolean isSSDeduction(Item<?> item) {
 		Enum<?> type = item.getType();
 		if (
-			type == Deduction.Type.BONUS
+			type == Deduction.Type.MEI
+			|| type == Deduction.Type.BONUS
 			|| type == Deduction.Type.FOGASA
 			|| type == Deduction.Type.JOB_TRAINING
 			|| type == Deduction.Type.UNEMPLOYMENT

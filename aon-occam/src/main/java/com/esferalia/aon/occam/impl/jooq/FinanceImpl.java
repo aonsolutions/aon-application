@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IFinance;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
@@ -41,6 +42,7 @@ import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParam
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -195,6 +197,24 @@ public class FinanceImpl implements IFinance {
 	// ------------------------------------- FEE
 	
 	@Override
+	public LinkedList<String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getCustomersSuggestion(ctx, domainId, query));
+	}
+
+	@Override
+	public LinkedList<String> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getProductsSuggestion(ctx, domainId, query));
+	}
+
+	@Override
+	public LinkedList<Fee> getFeeList(CloseableAONContext ctx, CustomerFeeParams customerFeeParams) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getFeeList(ctx, customerFeeParams));
+	}
+	
+	@Override
 	public Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getFeeStream(ctx, filter));
@@ -204,6 +224,12 @@ public class FinanceImpl implements IFinance {
 	public Fee save(AONContext ctx, Fee fee) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.save(ctx, fee));
+	}
+	
+	@Override
+	public void saveList(AONContext ctx, LinkedList<Fee> feeList) {
+		ctx.getDslContext().transaction(configuration
+				-> FeeDAO.saveList(ctx, feeList));
 	}
 
 	@Override

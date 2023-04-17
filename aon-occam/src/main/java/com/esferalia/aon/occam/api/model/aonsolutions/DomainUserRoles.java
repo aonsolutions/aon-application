@@ -503,8 +503,19 @@ public class DomainUserRoles implements Serializable {
 			&& (isAdmin() || hasRole(AonRole.OCR));
 	}
 	
+	// BANK
+	
+	public boolean hasBank() {
+		return hasApp(AonApp.BANK);
+	}
+	
+	public boolean hasParentBank() {
+		return hasParentApp(AonApp.BANK);
+	}
+	
 	public boolean isBank() {
-		return hasApp(AonApp.BANK) && (isAdmin() || hasRole(AonRole.BANK));
+		return (hasBank() || ((isParentUser() || isEnterpriseChild()) && hasParentBank()))
+				&& (isAdmin() || hasRole(AonRole.BANK));
 	}
 	
 	// CONVENIOS

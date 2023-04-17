@@ -36,6 +36,7 @@ public enum Mod202Key implements IFiscalModelKey{
 	,X12("202-X12",0,"Entidad que cumpla los requisitos del art. 101 LIS y apliquen tipo gravamen art. 29.1, 1 er p\u00E1rrafo LIS.")
 	,X13("202-X13",0,"Cooperativa fiscalmente protegida.")
 	,X14("202-X14",0,"Otras entidades con posibilidad de aplicar dos tipos impositivos.")
+	,X20("202-X20",0,"Entidad con importe neto de la cifra de negocios del per\u00EDodo impositivo inmediato anterior inferior a 1 mill\u00F3n de euros")
 	
 	,X15("202-X15",0,"Contribuyente sometido a normativa de Territorio Foral de Navarra/Nafarroa")
 	,X16("202-X16",0,"Contribuyente sometido a normativa de Territorio Foral de Gipuzkoa")

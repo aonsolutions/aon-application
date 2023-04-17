@@ -418,7 +418,7 @@ public class FiscalModelDAO {
 			.execute();
 	}
 	
-	static void initializeFiscalModel(AONContext ctx, FiscalModel fm) {
+	public static void initializeFiscalModel(AONContext ctx, FiscalModel fm) {
 		AonConfiguration conf = ConfigurationDAO.getConfiguration(ctx);		 
 		if (fm.getDomain() == 0) throw new AonCoreException("[INTERNO] No se ha indicado el dominio para la declaraci\u00F3n.");
 		fm.setDocument(conf.getCompany().getDocument());
@@ -447,7 +447,7 @@ public class FiscalModelDAO {
 		initializeIdentificationData(ctx, fm, conf);
 	}
 	
-	static void initializeIdentificationData(AONContext ctx, FiscalModel fm) {
+	public static void initializeIdentificationData(AONContext ctx, FiscalModel fm) {
 		initializeIdentificationData(ctx, fm, ConfigurationDAO.getConfiguration(ctx));	
 	}
 	

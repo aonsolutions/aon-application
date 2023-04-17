@@ -383,7 +383,7 @@ public class CretaServlet extends HttpServlet
 			os.printf("\"messages\":[],\r\n");
 	
 			AonStringUtils.mapIfNotBlank(i54, str -> os.printf("\"i54\":\"%s\",\r\n", str ));
-
+			
 			pickerBasesCb.getBases().getLiquidacion().stream().findFirst()
 			.ifPresent(l -> os.printf("\"type\":\"%s\",\r\n", l.getTipo() ));
 				
@@ -1432,7 +1432,8 @@ public class CretaServlet extends HttpServlet
 
 	private static class InfoPickerBasesCallback implements BasesCallback {
 		
-		private net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases;
+		private net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = 
+			new net.aonsolutions.core.tgss.creta.jaxb.bases.Bases();
 
 		private List<Event> errors = new ArrayList<Event>();
 		private List<Event> warnings = new ArrayList<Event>();

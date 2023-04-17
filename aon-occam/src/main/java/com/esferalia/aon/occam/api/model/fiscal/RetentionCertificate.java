@@ -61,7 +61,7 @@ public class RetentionCertificate implements Serializable {
 	 * ****************************************
 	 */
 	// Rendimientos de actividades agricolas o ganaderas
-	// clave H, subclave 02
+	// clave H, subclaves 01 y 02
 	private RetentionCertificate prof1;
 	// Rendimientos de actividades forestales
 	// clave H, subclave 03
@@ -72,6 +72,7 @@ public class RetentionCertificate implements Serializable {
 	private RetentionCertificate prof3;
 	// Rendimientos a que se refiere el articulo 75.2.b) del Reglamento del
 	// IRPF, que deban calificarse como rendimientos de actividades economicas
+	// clave I
 	private RetentionCertificate prof4;
 	
 	

@@ -418,15 +418,15 @@ public class JooqPayrollBuilder {
 					deductionMap.put(2, new ArrayList<PDFDeduction>());
 
 				if (!inserted.contains("CGC"))
-					deductionMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias comunes", 0d));
+					deductionMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias Comunes", 0d));
 				if (!inserted.contains("MEI"))
-					deductionMap.get(1).add(new PDFDeduction(0d, "MEI", "Mecanismo de equidad intergeneracional", 0d, DeductionType.COMMON_CONTINGENCY));
+					deductionMap.get(1).add(new PDFDeduction(0d, "MEI", "Mecanismo de Equidad Intergeneracional (MEI)", 0d, DeductionType.MEI));
 				if (!inserted.contains("DESMPL"))
 					deductionMap.get(1).add(new PDFDeduction(0d, "DESMPL", "Desempleo", 0d));
 				if (!inserted.contains("FP"))
-					deductionMap.get(1).add(new PDFDeduction(0d, "FP", "Formación profesional", 0d));
+					deductionMap.get(1).add(new PDFDeduction(0d, "FP", "Formación Profesional", 0d));
 				if (!inserted.contains("IRPF"))
-					deductionMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones dinerarias", 0d));
+					deductionMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones Dinerarias", 0d));
 
 				// EMBARGOS (placed at 'Other deductions' -type 5- field on 'Deductions')
 				{
@@ -466,10 +466,10 @@ public class JooqPayrollBuilder {
 						totalEnterprise += (cost.getAmount() != null ? cost.getAmount() : 0d);
 						switch (cost.getCostType()) {
 							case COMMON_CONTINGENCY:
-							    	if (AonStringUtils.equals("MEI_E", cost.getName()))
-							    	    meiApEnterprise += safeValue(cost.getAmount());
-							    	else
-							    	    commonContApEnterprise += safeValue(cost.getAmount());
+							    	commonContApEnterprise += safeValue(cost.getAmount());
+								break;
+							case MEI:
+							    	meiApEnterprise += safeValue(cost.getAmount());
 								break;
 							case IT:
 							case IMS:
@@ -1041,6 +1041,7 @@ public class JooqPayrollBuilder {
 		case 3:
 		case 4:
 		case 5:
+		case 13:
 			return 1;
 		case 6:
 			return 2;
@@ -1066,6 +1067,7 @@ public class JooqPayrollBuilder {
 		case 3:
 		case 4:
 		case 5:
+		case 13:
 			return 1;
 		case 6:
 			return 2;
@@ -1084,7 +1086,7 @@ public class JooqPayrollBuilder {
 	    switch (deductionName) {
 	    	case "MEI" :
 		case "MEI_E" :
-			return "Mecanismo de equidad intergeneracional";
+			return "Mecanismo de Equidad Intergeneracional (MEI)";
 		default:
 			return null;
 	    }
@@ -1097,27 +1099,29 @@ public class JooqPayrollBuilder {
 	private static String chooseDescription (DeductionType dt) {
 		switch (dt.ordinal()) {
 		case 0:
-			return "Contingencias comunes";
+			return "Contingencias Comunes";
 		case 1:
-			return "Contingencias profesionales";
+			return "Contingencias Profesionales";
 		case 2:
 			return "Desempleo";
 		case 3:
-			return "Formación profesional";
+			return "Formación Profesional";
 		case 4:
-			return "Horas extraordinarias (Estruc.)";
+			return "Horas Extraordinarias (Estruc.)";
 		case 5:
-			return "Horas extraordinarias (No Estruc.)";
+			return "Horas Extraordinarias (No Estruc.)";
 		case 6:
-			return "Retribuciones dinerarias";
+			return "Retribuciones Dinerarias";
 		case 7:
 			return "Anticipo";
 		case 8:
-			return "En especie";
+			return "En Especie";
 		case 10:
 			return "Embargo";
+		case 13:
+			return "Mecanismo de Equidad Intergeneracional (MEI)";
 		default:
-			return "Otras deducciones";
+			return "Otras Deducciones";
 		}
 	}
 	
@@ -1148,6 +1152,8 @@ public class JooqPayrollBuilder {
 			return "En especie";
 		case 10:
 			return "Embargo";
+		case 13:
+			return "Mecanismo de Equidad Intergeneracional (MEI)";
 		default:
 			return "Otras deducciones";
 		}
@@ -1175,6 +1181,8 @@ public class JooqPayrollBuilder {
 				return "OTRO";
 			case 10:
 				return "EMBARGO";
+			case 13:
+				return "MEI";
 			default:
 				return null;
 		}

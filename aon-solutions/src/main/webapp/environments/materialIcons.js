@@ -101,6 +101,7 @@ export const CREDIT_CARD = 'credit_card';
 // ----- D
 
 export const DATA_OBJECT = 'data_object';
+export const DATASET_LINKED = 'dataset_linked';
 export const DELETE = 'delete';
 export const DELETE_SWEEP = 'delete_sweep';
 export const DONE = 'done';

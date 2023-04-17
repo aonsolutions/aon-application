@@ -35,12 +35,10 @@ import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryPayment;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 /**
@@ -240,15 +238,15 @@ public class DraftPayrollBuilder {
 				deductionsMap.put(2, new ArrayList<PDFDeduction>());
 			
 			if (!inserted.contains("CGC"))
-				deductionsMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias comunes", 0d));
+				deductionsMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias Comunes", 0d));
 			if (!inserted.contains("DESMPL"))
 				deductionsMap.get(1).add(new PDFDeduction(0d, "DESMPL", "Desempleo", 0d));
 			if (!inserted.contains("FP"))
-				deductionsMap.get(1).add(new PDFDeduction(0d, "FP", "Formación profesional", 0d));
+				deductionsMap.get(1).add(new PDFDeduction(0d, "FP", "Formación Profesional", 0d));
 			if (!inserted.contains("IRPF"))
-				deductionsMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones dinerarias", 0d));
+				deductionsMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones Dinerarias", 0d));
 			if (!inserted.contains("MEI"))
-				deductionsMap.get(1).add(new PDFDeduction(0d, "MEI", "Mecanismo de equidad intergeneracional", 0d, DeductionType.COMMON_CONTINGENCY));
+				deductionsMap.get(1).add(new PDFDeduction(0d, "MEI", "Mecanismo de Equidad Intergeneracional (MEI)", 0d, DeductionType.MEI));
 			
 			
 			//EMBARGOS (placed at 'Other deductions' -type 5- field on 'Deductions')
@@ -498,8 +496,10 @@ public class DraftPayrollBuilder {
 		}*/
 	}
 
-	private static boolean filter (IPayment payment) {
-		return !(payment.getAmount() == 0 && !AonStringUtils.equalsIgnoreCase(payment.getName(), ContextVariable.PREST_IT));
+	private static boolean filter (SalaryPayment payment) {
+		//Igual que el de JooqPayrollBuilder
+		return !(payment.getAmount() == 0 && payment.getQuote() == 0);
+//		return !(payment.getAmount() == 0 && !AonStringUtils.equalsIgnoreCase(payment.getName(), ContextVariable.PREST_IT));
 	}
 	
 	

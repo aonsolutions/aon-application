@@ -94,6 +94,12 @@ public enum DeductionType {
 		}
 
 	},
+	MEI {
+		@Override
+		public <T> T accept(Visitor<T> visitor) {
+			return visitor.visitMEI(this);
+		}
+	},
 	;
 	
 	public static DeductionType BONUS = IMS;
@@ -161,6 +167,10 @@ public enum DeductionType {
 		default T visitBonus(DeductionType deductionType) {
 			return null;
 		}
+		T visitMEI(DeductionType deductionType);
+//		default T visitMEI(DeductionType deductionType) {
+//			return null;
+//		}
 	}
 	
 	@SuppressWarnings("serial")

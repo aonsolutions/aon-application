@@ -18,6 +18,10 @@ public class AonMathUtils {
 		return new BigDecimal(Double.toString(value)).setScale(precision, RoundingMode.HALF_UP).doubleValue();
 	}
 
+	public static double roundDown(double value, int precision) {
+		return new BigDecimal(Double.toString(value)).setScale(precision, RoundingMode.HALF_DOWN).doubleValue();
+	}
+
 	/**
 	 * Redondea un valor decimal a 2 digitos en la parte decimal
 	 * 

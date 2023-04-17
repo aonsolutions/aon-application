@@ -24,7 +24,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -374,7 +375,7 @@ public class JooqCertifica2 {
 		if (null == endDate)
 			throw new IllegalArgumentException("No existe fecha fin para este contrato");
 
-		Long contractDuration = getDaysBetween(startDate, endDate);
+		int contractDuration = getDaysBetween(startDate, endDate);
 
 		Record personRecord = dslContext.select().from(PERSON).where(PERSON.REGISTRY.eq(personId)).fetchOne();
 
@@ -431,7 +432,7 @@ public class JooqCertifica2 {
 		certifica2Info.setSecondSurname(secondSurName);
 		certifica2Info.setContractType(tc2);
 		certifica2Info.setQuoteGroup(quoteGroup);
-		certifica2Info.setContractDuration(contractDuration.intValue());
+		certifica2Info.setContractDuration(contractDuration);
 		certifica2Info.setProfesionalCategory(cnoCode);
 		certifica2Info.setCnoCode(cnoCode);
 		certifica2Info.setCno(cno);
@@ -618,14 +619,14 @@ public class JooqCertifica2 {
 			Date salaryStartDate = salary.get(SALARY.START_DATE);
 			Date salaryEndDate = salary.get(SALARY.END_DATE);
 
-			Long salaryDaysBetween = null;
+			int salaryDaysBetween = 0;
 			if (AonStringUtils.equalsIgnoreCase(certifica2Info.getRegime(), "0163")) {
 				if(AonStringUtils.isNotBlank(certifica2Info.getMdCtz()) && AonStringUtils.equalsIgnoreCase(certifica2Info.getMdCtz(), "2")) {
 					salaryDaysBetween = getAgrarianDays(dslContext, salaryId);
-					contractDuration += salaryDaysBetween.intValue();
+					contractDuration += salaryDaysBetween;
 				} else {
 					salaryDaysBetween = getDaysBetween(salaryStartDate, salaryEndDate);
-					contractDuration += salaryDaysBetween.intValue();
+					contractDuration += salaryDaysBetween;
 				}
 			} else
 				salaryDaysBetween = getDaysBetween(salaryStartDate, salaryEndDate);
@@ -638,20 +639,20 @@ public class JooqCertifica2 {
 
 			// Ya has cumplido los 180 dias de registro
 			if (maxDays + salaryDaysBetween > 180) {
-				Long restDays = salaryDaysBetween - (maxDays + salaryDaysBetween - 180);
+				int restDays = salaryDaysBetween - (maxDays + salaryDaysBetween - 180);
 				if(0 == restDays) continue;
 
 				certifica2Period = new Certifica2Period(yearDateFormat.format(salaryStartDate),
-						monthDateFormat.format(salaryStartDate), restDays.intValue(),
-						baseCGC / 30 * restDays.intValue(), baseCGP / 30 * restDays.intValue());
+						monthDateFormat.format(salaryStartDate), restDays,
+						baseCGC / 30 * restDays, baseCGP / 30 * restDays);
 
-				maxDays += salaryDaysBetween.intValue();
+				maxDays += salaryDaysBetween;
 
 			} else {
 				certifica2Period = new Certifica2Period(yearDateFormat.format(salaryStartDate),
-						monthDateFormat.format(salaryStartDate), salaryDaysBetween.intValue(), baseCGC, baseCGP);
+						monthDateFormat.format(salaryStartDate), salaryDaysBetween, baseCGC, baseCGP);
 
-				maxDays += salaryDaysBetween.intValue();
+				maxDays += salaryDaysBetween;
 			}
 
 			certifica2List.add(certifica2Period);
@@ -1076,26 +1077,27 @@ public class JooqCertifica2 {
 	// ----------------------------------------------------- Get days between
 	// methods
 
-	private static Long getAgrarianDays(DSLContext dslContext, Integer salaryId) {
+	private static int getAgrarianDays(DSLContext dslContext, Integer salaryId) {
 		Result<Record> agrarianRecords = dslContext.select().from(SALARY_DATA).where(SALARY_DATA.SALARY.eq(salaryId))
 				.and(SALARY_DATA.NAME.eq("JORNADAS_REALES")).fetch();
 
-		Long agrarian = (long) 0;
+		int agrarian = 0;
 
 		if (agrarianRecords.isEmpty())
 			return agrarian;
 
 		for (Record agrarianRecord : agrarianRecords) {
-			Long itValue = Long.parseLong(agrarianRecord.get(SALARY_DATA.EXPRESSION));
+			int itValue = Integer.parseInt(agrarianRecord.get(SALARY_DATA.EXPRESSION));
 			agrarian += itValue;
 		}
 		return agrarian;
 	}
 
-	private static Long getDaysBetween(Date startDate, Date endDate) {
-		java.util.Date salaryStartDateJava = new java.util.Date(startDate.getTime());
-		java.util.Date salaryEndDateJava = new java.util.Date(endDate.getTime());
-		return Duration.between(salaryStartDateJava.toInstant(), salaryEndDateJava.toInstant()).toDays() + 1;
+	private static int getDaysBetween(Date startDate, Date endDate) {
+		LocalDate startDateLocale = LocalDate.of(startDate.getYear() + 1900, startDate.getMonth() + 1, startDate.getDate());
+        LocalDate endDateLocale = LocalDate.of(endDate.getYear() + 1900, endDate.getMonth() + 1, endDate.getDate());
+        Long daysBetween = ChronoUnit.DAYS.between(startDateLocale, endDateLocale) + 1;
+        return daysBetween.intValue();
 	}
 
 	// ----------------------------------------------------- Auxiliar methods
