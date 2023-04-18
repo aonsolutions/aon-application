@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ApiService } from 'src/app/shared/services/api.service';
 
 @Component({
   selector: 'app-auth',
@@ -8,17 +9,11 @@ import { Component, OnInit } from '@angular/core';
 })
 
 export class AuthComponent implements OnInit {
-
-  title :string      = "Inicia Sesión";
-  subtitle :string   ="Entra en tu cuenta de AON";
-  login :string      ="INICIAR SESIÓN";
-  orLogin :string    = "O INICIA SESIÓN";
-  noPassword :string ="SIN CONTRASEÑA";
   user :string       ="";
   password :string;
   hidePassword :boolean = true;
 
-  constructor() {
+  constructor(public api: ApiService) {
     this.user     = "";
     this.password = "";
   }
@@ -34,5 +29,12 @@ export class AuthComponent implements OnInit {
   getUser(){
     console.log('User: ', this.user);
     console.log('password: ', this.password);
+  }
+
+  loginUser() {
+    this.api.login({
+      username: this.user,
+      password: this.password
+    });
   }
 }
