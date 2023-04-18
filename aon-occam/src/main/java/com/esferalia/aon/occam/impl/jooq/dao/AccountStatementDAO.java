@@ -93,7 +93,7 @@ public class AccountStatementDAO {
 				.innerJoin(DET_ACCOUNT).on(DET_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 				.leftOuterJoin(BAL_ACCOUNT).on(BAL_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
 				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(ACCOUNT_ENTRY.ACTIVITY))
-				.where(getLedgerCondition(ctx, params))
+				.where(getLedgerCondition(ctx, params).and(DET_ACCOUNT.DOMAIN.eq(ctx.getDomainId())))
 				.orderBy(DET_ACCOUNT.CODE,ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY_DETAIL.ID)
 				.limit(offset, limit)
 				.fetch()
@@ -143,7 +143,7 @@ public class AccountStatementDAO {
 							)
 							.from(ACCOUNT_ENTRY_DETAIL)
 							.innerJoin(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))			
-							.where(ACCOUNT_ENTRY_DETAIL.DOMAIN.eq(flat.getEntryDomain()))
+							.where(ACCOUNT_ENTRY.DOMAIN.eq(flat.getEntryDomain()))
 							  .and(ACCOUNT_ENTRY_DETAIL.ACCOUNT.eq(flat.getAccount()))
 							  .and(ACCOUNT_ENTRY.ENTRY_DATE.lessThan(AonDateUtils.toSql( flat.getEntryDate())))
 							.fetch()
@@ -269,7 +269,7 @@ public class AccountStatementDAO {
 				.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
 				.join(DET_ACCOUNT).on(DET_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
 				.leftOuterJoin(BAL_ACCOUNT).on(BAL_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
-				.where(getBalanceCondition(ctx, params, true))
+				.where(getBalanceCondition(ctx, params, true).and(DET_ACCOUNT.DOMAIN.eq(ctx.getDomainId())))
 				.and(params.getPeriod()==null?DSL.trueCondition():ACCOUNT_ENTRY.ENTRY_TYPE.notIn(AccountEntryType.OPENING.getValue(),AccountEntryType.CLOSING.getValue()))
 				.orderBy(ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY)
 				.fetch()
@@ -481,7 +481,7 @@ public class AccountStatementDAO {
 				.from(ACCOUNT_ENTRY_DETAIL)
 				.join(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
 				.join(ACCOUNT).on(ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT))
-				.where(getOperatingCondition(ctx, params))
+				.where(getOperatingCondition(ctx, params).and(ACCOUNT.DOMAIN.eq(ctx.getDomainId())))
 				.and(ACCOUNT_ENTRY.ENTRY_TYPE.notIn(AccountEntryType.OPERATING.getValue(),AccountEntryType.CLOSING.getValue()))
 				.and(ACCOUNT.CODE.like("6%").or(ACCOUNT.CODE.like("7%")) )
 				.groupBy(CODE,(params.isByMonth()? MONTH:CODE))
@@ -706,7 +706,7 @@ public class AccountStatementDAO {
 				.from( ACCOUNT_ENTRY )
 				.join(ACCOUNT_ENTRY_DETAIL).on(ACCOUNT_ENTRY.ID.equal(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))
 				.join(ACCOUNT).on(ACCOUNT_ENTRY_DETAIL.ACCOUNT.equal(ACCOUNT.ID))
-				.where(conditions.get(accountStatementPeriod))
+				.where(conditions.get(accountStatementPeriod).and(ACCOUNT.DOMAIN.eq(ctx.getDomainId())))
 				.groupBy(ACCOUNT.ID)
 				.fetch()
 				.stream()
@@ -811,7 +811,7 @@ public class AccountStatementDAO {
 	}
 	
 	private static Condition getBasicCondition(AONContext ctx , IAccountParams params, boolean applyDateFilterIfNeeded ) {
-		Condition condition = ACCOUNT_ENTRY_DETAIL.DOMAIN.equal(ctx.getDomainId());
+		Condition condition = ACCOUNT_ENTRY.DOMAIN.equal(ctx.getDomainId());
 		if (applyDateFilterIfNeeded) {
 			java.sql.Date sqlStart = null;
 			java.sql.Date sqlEnd = null;
