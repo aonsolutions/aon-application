@@ -25,16 +25,6 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class DomainCustomerDAO {
 	
 	private static Stream<DomainCompany> getDomains(AONContext ctx, Condition condition) {
-		System.out.println(ctx.getDslContext().select()
-		.from(DOMAIN)
-		.leftJoin(COMPANY).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
-		.leftJoin(REGISTRY).on(COMPANY.REGISTRY.eq(REGISTRY.ID))
-		.leftJoin(AppParam.APP_PARAM).on(
-				AppParam.APP_PARAM.DOMAIN.eq(DOMAIN.ID)
-				.and(APP_PARAM.NAME.eq(com.esferalia.aon.occam.api.model.type.AppParam.AON_DOMAIN_PAYER.toString()))
-				.and(APP_PARAM.VALUE.isNotNull())
-				.and(DSL.trim(APP_PARAM.VALUE).ne(""))
-		).where(condition).toString());
 		return ctx.getDslContext().select()
 				.from(DOMAIN)
 				.leftJoin(COMPANY).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
