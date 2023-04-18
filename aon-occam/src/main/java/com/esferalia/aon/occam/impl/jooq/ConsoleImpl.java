@@ -94,4 +94,10 @@ public class ConsoleImpl implements IConsole {
 	public List<Domain> updateDomainCustomer(AONContext ctx, List<DomainCompany> domainCompanies, Customer customer) {
 		return DomainCustomerDAO.updateDomains(ctx, domainCompanies, customer);
 	}
+	
+	@Override
+	public Stream<DomainCompany> getDomainsByDocument(AONContext ctx, String customerDocument, Integer customerId) {
+		return DomainCustomerDAO.getDomainsByDocument(ctx, customerDocument, customerId);
+	}
+	
 }

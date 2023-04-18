@@ -17,6 +17,7 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
@@ -101,7 +102,13 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	
 	private static JSONArray getDomains(AonApiData api) {
 		JSONArray domains = new JSONArray();
-		CONSOLE.getAllDomains().map(DomainCompanyJSON::toJSON).forEach(domains::put);
+		String customerDocument = api.getData().optString(IJsonNames.REGISTRY_DOCUMENT);
+		int customerId = api.getData().optInt("customerId");
+		if (AonStringUtils.isBlank(customerDocument)) {
+			CONSOLE.getAllDomains().map(DomainCompanyJSON::toJSON).forEach(domains::put);
+		} else {
+			CONSOLE.getDomainsByDocument(customerDocument, customerId).map(DomainCompanyJSON::toJSON).forEach(domains::put);
+		}
 		return domains;
 	}
 	

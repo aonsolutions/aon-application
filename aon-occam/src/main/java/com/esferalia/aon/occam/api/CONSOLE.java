@@ -66,6 +66,19 @@ public class CONSOLE {
 		return list.stream();
 
 	}
+
+	public static Stream<DomainCompany> getDomainsByDocument(String customerDocument, Integer customerId) {
+		List<DomainCompany> list = new LinkedList<>();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+				List<DomainCompany> domains = getConsole().getDomainsByDocument(ctx, customerDocument, customerId).collect(Collectors.toList());
+				list.addAll(domains);
+			}
+		}
+		return list.stream();
+		
+	}
 	
 	public static List<Domain> updateDomainCustomerData(List<DomainCompany> domainCompanies, Customer customer) {
 		List<Domain> updatedDomains = new LinkedList<>(); 
@@ -135,4 +148,5 @@ public class CONSOLE {
 			return getConsole().delete(ctx,row);
 		}
 	}
+
 }

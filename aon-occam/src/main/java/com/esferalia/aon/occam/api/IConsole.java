@@ -31,4 +31,5 @@ public interface IConsole {
 	public Stream<DomainCompany> getAllDomains(AONContext ctx);
 	public Stream<DomainCompany> getCustomerDomains(AONContext ctx, Integer customer);
 	public List<Domain> updateDomainCustomer(AONContext ctx, List<DomainCompany> domainCompanies, Customer customer);
+	public Stream<DomainCompany> getDomainsByDocument(AONContext ctx, String customerDocument, Integer customerId);
 }
