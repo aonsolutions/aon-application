@@ -1,4 +1,4 @@
-package com.esferalia.aon.occam.impl.jooq.dao;
+package com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202;
 
 import static com.esferalia.aon.jooq.tables.FsModel200.FS_MODEL200;
 import static com.esferalia.aon.jooq.tables.FsModel200Detail.FS_MODEL200_DETAIL;
@@ -32,6 +32,12 @@ import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.api.model.type.FiscalModelKeyInfo;
 import com.esferalia.aon.occam.api.model.type.Mod202Key;
 import com.esferalia.aon.occam.api.model.type.Period;
+import com.esferalia.aon.occam.impl.jooq.dao.AccountEntryDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.FiscalModelDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.IRPFFormatter;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.FiscalUtils;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -123,6 +129,7 @@ public class Mod202DAO extends FiscalModelDAO {
 		,X17(Mod202Key.X17,(mod -> mod.isAEAT() && (mod.getYear() > 2018 || (mod.getYear() == 2018 && mod.getPeriod().ordinal() >= Period.T2.ordinal()))),null,null,null)
 		,X18(Mod202Key.X18,(mod -> mod.isAEAT() && (mod.getYear() > 2018 || (mod.getYear() == 2018 && mod.getPeriod().ordinal() >= Period.T2.ordinal()))),null,null,null)
 		,X19(Mod202Key.X19,(mod -> mod.isAEAT() && (mod.getYear() > 2018 || (mod.getYear() == 2018 && mod.getPeriod().ordinal() >= Period.T2.ordinal()))),null,null,null)
+		,X20(Mod202Key.X20,(mod -> mod.isAEAT() && (mod.getYear() >= 2023)),null,null,null)
 		
 		,X00(Mod202Key.X00,(Mod202::isAEAT),null,null,null)
 		,C01(Mod202Key.C01,(Mod202::isAEAT)

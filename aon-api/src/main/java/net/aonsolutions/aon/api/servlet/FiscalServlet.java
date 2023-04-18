@@ -31,11 +31,11 @@ import com.esferalia.aon.occam.api.model.fiscal.Mod303;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.impl.jooq.dao.FiscalMenuDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.Mod131DAO;
-import com.esferalia.aon.occam.impl.jooq.dao.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod111.Mod111DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod115.Mod115DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod123.Mod123DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod130.Mod130DAO;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202.Mod202DAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod303.Mod303DAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -112,7 +112,7 @@ public class FiscalServlet extends AonApiHttpServlet{
 			models.forEach(model-> {
 				try {jsonModels.put(FiscalModelJSON.toJSON(model));}
 				catch (Exception e) {
-//					throw new AonApiException("Error al obtener el modelo "+ model.getModel().getName()+" "+e.getMessage());
+					throw new AonApiException("Error al obtener el modelo "+ model.getModel().getName()+" "+e.getMessage());
 				}
 			});
 

@@ -5,8 +5,10 @@ import java.util.LinkedList;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.RegistryParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -38,5 +40,13 @@ public interface RegistryService extends RemoteService {
 	LinkedList<Supplier> getSuppliers(String domainName, int domain, String user, RegistryParams params, int ofs, int limit);
 	SupplierFull getSupplierFull(String domainName,int domain, String user, Integer id) throws AonCoreException;
 	SupplierFull save(String domainName,int domain, String user, SupplierFull supplierFull) throws AonCoreException;
+	
+	// **************************************************
+	// *************************************** [CUSTOMER]
+	// **************************************************
+	LinkedList<String> getCustomersSuggestion(String domainName, int domain, String user, String query);
+	LinkedList<String> getProductsSuggestion(String domainName, int domain, String user, String query);
+	LinkedList<Fee> getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams) ;
+	void saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee>  feeList) ;
 
 }

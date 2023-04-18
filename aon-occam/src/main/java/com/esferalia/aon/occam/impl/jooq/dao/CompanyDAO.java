@@ -467,6 +467,10 @@ public class CompanyDAO {
 			.collect(Collectors.toList()));
 		return list;
 	}
+	
+	public static Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx,int domain) {
+		return getEnterpriseActivities(ctx,domain,null);
+	}
 
 	public static Stream<EnterpriseActivity> getEnterpriseActivities(AONContext ctx,int domain, Date atDate) {
 		return ctx.getDslContext()

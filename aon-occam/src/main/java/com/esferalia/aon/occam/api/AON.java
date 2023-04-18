@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.Alarm;
@@ -219,6 +220,7 @@ import com.esferalia.aon.occam.api.model.registry.Category;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.Project;
@@ -1815,6 +1817,12 @@ public class AON {
 	// ********************************* FINANCE **
 	// ********************************************
 	
+	public static Stream<Invoice> getInvoiceHeaders(Occam occam, AccountingReportParams params, int offset, int limit) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceHeaders(ctx, params, offset, limit);
+		}
+	}
+
 	public static Stream<Invoice> getInvoiceStream(Occam occam, InvoiceFilter filter){
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFinance().getInvoiceStream(ctx, filter);
@@ -2693,6 +2701,18 @@ public class AON {
 	// ************************************* FEE **
 	// ********************************************
 	
+	public static LinkedList<String> getProductsSuggestion(String domainName, int domainId, String login, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getProductsSuggestion(ctx, domainId, query);
+		}
+	}
+
+	public static LinkedList<String> getCustomersSuggestion(String domainName, int domainId, String login, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getCustomersSuggestion(ctx, domainId, query);
+		}
+	}
+	
 	public static Stream<Fee> getFeeStream(String domainName, Integer domainId, String login, FeeFilter filter){
 		CloseableAONContext ctx = null;
 		try {
@@ -2709,6 +2729,12 @@ public class AON {
 			.findFirst().orElse(new Fee());
 	}
 	
+	public static LinkedList<Fee> getFeeList(String domainName, Integer domainId, String login, CustomerFeeParams customerFeeParams){
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getFeeList(ctx, customerFeeParams);
+		}
+	}
+	
 	public static LinkedList<Fee> getFeeList(String domainName, Integer domainId, String login, FeeFilter filter){
 		return getFeeStream(domainName, domainId, login, filter)
 			.collect(Collectors.toCollection(LinkedList::new));
@@ -2717,6 +2743,12 @@ public class AON {
 	public static Fee save(String domainName, Integer domainId, String login, Fee fee) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().save(ctx, fee);
+		}
+	}
+	
+	public static void saveFees(String domainName, Integer domainId, String login, LinkedList<Fee> feeList) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			getFinance().saveList(ctx, feeList);
 		}
 	}
 
@@ -3760,8 +3792,9 @@ public class AON {
 	}
 	
 	public static Project getProject(String domainName, Integer domainId, String login, ProjectFilter filter) {
-		return getProjectStream(domainName, domainId, login, filter)
-				.findFirst().orElse(new Project());
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProject(ctx, filter);
+		}
 	}
 
 	public static LinkedList<Project> getProjectList(String domainName, Integer domainId, String login, ProjectFilter filter) {

@@ -160,7 +160,7 @@ export class AonMobilePackage extends AonElement {
 		d.clear();
 		if(!this.isMobile())d.width = '400px';
 		d.setTitle(MSG.ADD_COMPOSITION);
-		d.setContentHTML('Esta opción está en desarrollo...');
+		d.setContentHTML(MSG.IN_DEVELOPMENT);
 		d.addAcceptAction(() => {});
 		d.open();
 	}

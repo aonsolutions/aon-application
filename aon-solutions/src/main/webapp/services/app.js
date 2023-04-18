@@ -1,4 +1,4 @@
-import { MSG, CONSTANT, AON_ICONS } from "../environments/environments.js";
+import { MSG, CONSTANT, AON_ICONS, COLORS } from "../environments/environments.js";
 import * as GWT from "../gwt/gwt.js";
 import * as MSG_ES from "../environments/msg-es.js";
 
@@ -402,6 +402,13 @@ export const BANK = {
   price: " ", // 'Desde 45€/mes'
 };
 
+export const CONSOLE = {
+  app: CONSTANT.CONSOLE,
+  icon: AON_ICONS.AON_APP,
+  title: MSG.CONSOLE,
+  color: COLORS.AON_BLACK
+};
+
 export const OFFICE = {
   app: "office",
   icon: AON_ICONS.AON_OFFICE,
@@ -440,6 +447,7 @@ export const CUSTOM_VIEW = {
 };
 
 export const MenuApps = {
+  CONSOLE,
   OFFICE,
   // GARAGE,
   // ACADEMY,
@@ -501,6 +509,7 @@ export const EnterpriseApps = [
 ];
 
 export const Apps = {
+  CONSOLE,
   OFFICE,
   // GARAGE,
   // ACADEMY,

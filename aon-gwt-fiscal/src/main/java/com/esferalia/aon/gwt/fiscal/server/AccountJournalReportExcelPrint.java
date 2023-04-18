@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -58,8 +57,6 @@ public class AccountJournalReportExcelPrint extends HttpServlet {
 			
 			AccountEntryParams params = JsonParser.parse(accountEntryParams);
 			
-			Date start = new Date();
-			
 			AonConfiguration config = AON.getConfiguration(domainName, domainId, user);
 			Company company = config.getCompany();
 			String companyName = company == null ? "" : company.getName();
@@ -72,7 +69,6 @@ public class AccountJournalReportExcelPrint extends HttpServlet {
 			resp.setHeader("Content-disposition", "attachment; filename=\"DIARIO."+ MimeType.MS_EXCEL_2007.getExtension()+ "\";");
 			action.finalize(resp.getOutputStream());
 			resp.flushBuffer();
-			Date end = new Date();
 			stream.close();
 		} catch (Throwable e) {
 			throw new ServletException(e);

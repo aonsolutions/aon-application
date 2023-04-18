@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
@@ -13,16 +14,21 @@ import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
 import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.sql.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Record2;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
@@ -32,6 +38,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
@@ -44,6 +51,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FeeDAO {
 	
@@ -78,9 +86,47 @@ public class FeeDAO {
 		@Override public Property<Integer> getSegmentProperty() {return new FilterDAO.PropertyDAO<Integer>(RSEGMENT.SEGMENT);}
 	}
 	
+	public static LinkedList<Fee> getFeeList(AONContext ctx, CustomerFeeParams customerFeeParams){
+		Condition condition = createFeeCondition(customerFeeParams);
+		
+		Result<Record> feeRecords = ctx.getDslContext().select().from(CUSTOMER_FEE)
+				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
+				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
+				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
+				.where(condition)
+				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+				.offset(customerFeeParams.getOffset())
+				.limit(customerFeeParams.getLimit())
+			.fetch();
+		
+		System.out.println("Customer Fee size : " + feeRecords.size());
+		
+		return feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
 	
+	private static Condition createFeeCondition(CustomerFeeParams customerFeeParams) {
+		Condition condition = CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain())
+				.and(CUSTOMER_FEE.BILLING_DATE.eq(parseSQLDate(customerFeeParams.getBillingDate())))
+				.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(parseSQLDate(customerFeeParams.getBillingDate()))));
+		
+		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomer())) 
+			condition = condition.and(CUSTOMER_ALIAS.NAME.eq(customerFeeParams.getCustomer()));
+		if(AonStringUtils.isNotBlank(customerFeeParams.getProductCode()))
+			condition = condition.and(PRODUCT.CODE.eq(customerFeeParams.getProductCode()));
+		if(null != customerFeeParams.getCustomerStatus())
+			condition = condition.and(CUSTOMER.STATUS.eq(customerFeeParams.getCustomerStatus()));
+		
+		return condition;
+	}
+
 	public static Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter){
-		return ctx.getDslContext().select().from(CUSTOMER_FEE)
+		Result<Record> feeRecords = ctx.getDslContext().select().from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
@@ -92,7 +138,11 @@ public class FeeDAO {
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
 				.where(FEE_PROPERTIES.getConditions(filter))
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
-			.fetch().stream().map(new FeeFiller());
+			.fetch();
+		
+		System.out.println("Customer Fee size : " + feeRecords.size());
+		
+		return feeRecords.stream().map(new FeeFiller());
 	}
 	
 	protected static class FeeFiller extends Filler implements Function<Record, Fee> {
@@ -163,6 +213,22 @@ public class FeeDAO {
 			fee.setLine((n.isEmpty() || n.get(0).value1()==null) ? (short) 1 :  (short) (n.get(0).value1() + 1));
 		}
 		return fee.getId() != null ? update(ctx, fee) : insert(ctx, fee);
+	}
+	
+	public static void saveList(AONContext ctx, LinkedList<Fee> feeList) {
+		feeList.stream()
+			.filter(fee -> fee.isModify())
+			.forEach(fee -> {
+				FeeValidation.validate(ctx, fee);
+				
+				ctx.getDslContext()
+					.update(CUSTOMER)
+						.set(CUSTOMER.STATUS, fee.getCustomer().getStatus().value())
+						.where(CUSTOMER.REGISTRY.eq(fee.getCustomer().getId()))
+						.execute();
+				
+				update(ctx, fee);
+			});
 	}
 	
 	private static Fee insert(AONContext ctx, Fee fee) {
@@ -244,8 +310,38 @@ public class FeeDAO {
 			.execute();
 	}
 	
+	private static java.sql.Date parseSQLDate(java.util.Date date){
+		return null == date ? null : new java.sql.Date(date.getTime());
+	}
 	
-	
-	
+	// --------------------------------------------------------------------
+	// 					CUSTOMER / PRODUCT SUGGESTIONS
+	// --------------------------------------------------------------------
+
+	public static LinkedList<String> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		List<String> customerRecords = ctx.getDslContext().selectDistinct(PRODUCT.CODE)
+			.from(PRODUCT)
+			.where(PRODUCT.DOMAIN.eq(domainId))
+			.and(PRODUCT.CODE.containsIgnoreCase(query))
+			.and(PRODUCT.CODE.isNotNull())
+			.fetch(PRODUCT.CODE);
+		
+		return new LinkedList<>(customerRecords);
+	}
+
+	public static LinkedList<String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		List<String> customerRecords = ctx.getDslContext().selectDistinct(REGISTRY.NAME)
+			.from(REGISTRY)
+			.join(CUSTOMER)
+			.on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
+			.where(CUSTOMER.DOMAIN.eq(domainId))
+			.and(REGISTRY.NAME.isNotNull())
+			.and(REGISTRY.NAME.containsIgnoreCase(query)
+					.or(REGISTRY.DOCUMENT.containsIgnoreCase(query))
+					.or(REGISTRY.ALIAS.isNotNull().and(REGISTRY.ALIAS.containsIgnoreCase(query)))
+			).fetch(REGISTRY.NAME);
+		
+		return new LinkedList<>(customerRecords);
+	}
 	
 }

@@ -51,7 +51,7 @@ public class Paternity {
 	 
 	private static String DATE_FORMAT = "dd/MM/yyyy";
 	
-	static final String ADOPTERS = "Adopción/Tutela/Acogimiento";
+	static final String ADOPTERS = "AdopciÃ³n/Tutela/Acogimiento";
 	static final String BASE_URL = "https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV23H100";
 
 	public static boolean sendPaternity(final InputStream certificateInputStream, final String certificatePassword,
@@ -63,6 +63,7 @@ public class Paternity {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 			webClient.getOptions().setJavaScriptEnabled(false);
+			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
 			htmlPage = htmlPage
 					.getAnchorByHref("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ"
@@ -115,9 +116,10 @@ public class Paternity {
 			);
 			
 			// BASE CC
-			formDatos2.getInputByName("baseCC1").setValue("" + Float.toString(baseCC).replace(".", ","));
-			formDatos2.getInputByName("baseCP1").setValue("" + Float.toString(baseCP).replace(".", ","));
-			formDatos2.getInputByName("prestacion1").setValue("" + days);
+      //Toolkit.buildFile(htmlPage.asXml().getBytes(), "/Users/svaldepenas/Desktop/Paternity.html");
+      //formDatos2.getInputByName("baseCC1").setValueAttribute("" + Float.toString(baseCC).replace(".", ","));
+      //formDatos2.getInputByName("baseCP1").setValueAttribute("" + Float.toString(baseCP).replace(".", ","));
+      //formDatos2.getInputByName("prestacion1").setValueAttribute("" + days);
 		
 			// CONFIRM
 			htmlPage = formDatos2.getInputByValue("Confirmar").click();
@@ -217,6 +219,8 @@ public class Paternity {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
+			
+			webClient.getOptions().setUseInsecureSSL(true);
 
 			HtmlPage htmlPage = webClient.getPage(BASE_URL);
 			
@@ -390,7 +394,7 @@ public class Paternity {
 //
 //			HtmlButton docButton = htmlPage.querySelector("button[class='botonDesplegable desplegar']");
 //			htmlPage = docButton.click();
-//			HtmlAnchor docAnchor = htmlPage.querySelector("a[title='Informe:Anulación de certificado de Otro progenitor (Nacimiento de hijo)']");
+//			HtmlAnchor docAnchor = htmlPage.querySelector("a[title='Informe:AnulaciÃ³n de certificado de Otro progenitor (Nacimiento de hijo)']");
 //			
 //			InputStream is = docAnchor.click().getWebResponse().getContentAsStream();
 //			byte[] pdf = is.readAllBytes();
@@ -416,7 +420,7 @@ public class Paternity {
 					pcb.setMunicipality(value);
 				} else if (text.indexOf("Motivo:")>=0) {
 					pcb.setReason(PaternityCertificate.ReasonType.safeValueOf(value));
-				} else if (text.indexOf("Fecha de recepción:")>=0) {
+				} else if (text.indexOf("Fecha de recepciÃ³n:")>=0) {
 					pcb.setReceptionDate(Toolkit.parseDate(value, DATE_FORMAT));
 				} else if (text.indexOf("Trabajador")>=0) {
 					pcb.setWorkerName(value);
@@ -457,6 +461,7 @@ public class Paternity {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage(BASE_URL);
 			// MOVING TO 'MODIFICAR/ANULAR CERTIFICADOS' SECTION
 			HtmlForm formDatos = (HtmlForm) htmlPage.getElementById("formDatos");

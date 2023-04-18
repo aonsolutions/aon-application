@@ -206,6 +206,8 @@ export const LANGUAGE = 'Idioma';
 export const LAST = 'Última';
 export const LAST_LOCATION = 'Última ubicació';
 export const LAST_STATUS = 'Último estat';
+export const LINK = 'Vincular';
+export const LINK_DOMAINS = 'Vincular Dominis';
 export const LOCATION = 'Ubicació';
 
 // ----- M
@@ -383,6 +385,7 @@ export const USER = 'Usuari';
 export const USER_DATA = `Dades de l'Usuari`;
 export const USER_MANAGEMENT = `Gestió d'Usuaris`;
 export const USERS = 'Usuaris';
+export const UTILITIES = 'Utilitats';
 
 // ----- V
 

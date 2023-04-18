@@ -22,6 +22,7 @@ public interface IProject {
 	
 	// ---------- PROJECT
 	
+	public Project getProject(AONContext ctx, ProjectFilter filter);	
 	public Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter);
 	public Stream<Project> getProjectStream(AONContext ctx, ProjectFilter filter, Integer page, Integer perPage);
 	public Integer insertProject(AONContext ctx, Project project);
