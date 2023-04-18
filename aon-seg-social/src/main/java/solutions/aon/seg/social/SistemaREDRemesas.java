@@ -6,18 +6,18 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlFieldSet;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlSpan;
+import org.htmlunit.ElementNotFoundException;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.DomNode;
+import org.htmlunit.html.DomNodeList;
+import org.htmlunit.html.HtmlDivision;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlFieldSet;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.HtmlSpan;
 
 import solutions.aon.seg.social.SistemaRED.LiquidationType;
 import solutions.aon.seg.social.SistemaRED.Regime;
@@ -51,7 +51,7 @@ class SistemaREDRemesas {
 			htmlPage=htmlPage.getElementById("SPM.ACC.ACEPTAR").click();
 			HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
 			//ccc
-			formDatos.getInputByName("CCC").setValueAttribute(ccc);
+			formDatos.getInputByName("CCC").setValue(ccc);
 			//regime
 			HtmlSelect selectRegime=formDatos.getSelectByName("REGIMEN");
 			selectRegime.getOptionByValue(regime.getValue());
@@ -125,7 +125,7 @@ class SistemaREDRemesas {
 			htmlPage=htmlPage.getElementById("SPM.ACC.ACEPTAR").click();
 			HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
 			//ccc
-			formDatos.getInputByName("CCC").setValueAttribute(ccc);
+			formDatos.getInputByName("CCC").setValue(ccc);
 			//regime
 			HtmlSelect selectRegime=formDatos.getSelectByName("REGIMEN");
 			selectRegime.getOptionByValue(regime.getValue());
@@ -194,7 +194,7 @@ class SistemaREDRemesas {
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/M/menuSLD-REMESAS.html");
 			htmlPage=htmlPage.getAnchorByHref("/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y800").click();
 			HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
-			formDatos.getInputByName("CCC").setValueAttribute(ccc);
+			formDatos.getInputByName("CCC").setValue(ccc);
 			HtmlSelect regimeSelect=formDatos.getSelectByName("REGIMEN");
 			regimeSelect.getOptionByValue(regime.getValue());
 			htmlPage=formDatos.getInputByName("SPM.ACC.ACEPTAR").click();
@@ -218,7 +218,7 @@ class SistemaREDRemesas {
 			HtmlPage htmlPage=webClient.getPage("https://w2.seg-social.es/M/menuSLD-REMESAS.html");
 			htmlPage=htmlPage.getAnchorByHref("/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV21Y800").click();
 			HtmlForm formDatos=(HtmlForm)htmlPage.getElementById("formDatos");
-			formDatos.getInputByName("CCC").setValueAttribute(ccc);
+			formDatos.getInputByName("CCC").setValue(ccc);
 			HtmlSelect regimeSelect=formDatos.getSelectByName("REGIMEN");
 			regimeSelect.getOptionByValue(regime.getValue());
 			htmlPage=formDatos.getInputByName("SPM.ACC.ACEPTAR").click();
