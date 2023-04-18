@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 
-public abstract class CustomerFeeDialog extends AonCustomDialog {
+public abstract class CustomerMassiveFeeDialog extends AonCustomDialog {
 
 	// ------------------------------------------------- Variables
 	
@@ -33,7 +33,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 
 	// ------------------------------------------------- Constructor
 
-	protected CustomerFeeDialog() {
+	protected CustomerMassiveFeeDialog() {
 		setCaption("Editor Cuotas");
 		this.fee = new Fee();
 		initView();

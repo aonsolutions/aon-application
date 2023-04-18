@@ -1012,7 +1012,7 @@ public class CustomerFee extends MainEntryPoint {
 		addValueButton = new AonToolbarButton("Editar Cuota", AON.CSS.aonIconEdit());
 		addValueButton.setEnabled(false);
 		addValueButton.addClickHandler(e -> {
-			new CustomerFeeDialog() {
+			new CustomerMassiveFeeDialog() {
 				
 				@Override
 				protected void onAccept(Fee fee) {
