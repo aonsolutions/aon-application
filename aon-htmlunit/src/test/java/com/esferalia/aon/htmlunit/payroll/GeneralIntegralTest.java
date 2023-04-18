@@ -18,15 +18,15 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.esferalia.aon.htmlunit.HtmlUnitIT;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableDataCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
-import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlCheckBoxInput;
+import org.htmlunit.html.HtmlDivision;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlTable;
+import org.htmlunit.html.HtmlTableDataCell;
+import org.htmlunit.html.HtmlTableRow;
+import org.htmlunit.html.HtmlTextArea;
 
 
 public class GeneralIntegralTest extends BaseIntegralTestCase {
@@ -301,12 +301,12 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 		HtmlInput input = getElementById("description-box-new-payment");
 		input.focus();
-		input.setValueAttribute("[2] PLU3");
+		input.setValue("[2] PLU3");
 		input.blur();
 		//setValue("description-box-new-payment", "[2] PLU3");
 		input = getElementById("amount-box-new-payment");
 		input.focus();
-		input.setValueAttribute("100.00 * DIAS_TRABAJADOS / DIAS_MES");
+		input.setValue("100.00 * DIAS_TRABAJADOS / DIAS_MES");
 		input.blur();
 		//setValue("amount-box-new-payment", "100.00 * DIAS_TRABAJADOS / DIAS_MES");
 		wait4Id("description-box-2");
