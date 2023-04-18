@@ -8,19 +8,19 @@ import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlPasswordInput;
+import org.htmlunit.html.HtmlSubmitInput;
+import org.htmlunit.html.HtmlTextInput;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HtmlUnitIT {
 
 	public static final Logger LOGGER = Logger
-			.getLogger("com.gargoylesoftware.htmlunit");
+			.getLogger("org.htmlunit");
 	
 	public static final String GWT_DEBUG_ID_PREFIX= "gwt-debug-";
 	public static final String AON_MAIN_MENU_FORM = "aonContent:mainMenuForm";
@@ -76,9 +76,9 @@ public class HtmlUnitIT {
 				.getInputByName("j_password");
 
 		// Sets the value of user name text field
-		userText.setValueAttribute(user);
+		userText.setValue(user);
 		// Sets the value of password text field
-		passwdPassword.setValueAttribute(password);
+		passwdPassword.setValue(password);
 
 		// Now submit the form by clicking the button and get back the second
 		// page

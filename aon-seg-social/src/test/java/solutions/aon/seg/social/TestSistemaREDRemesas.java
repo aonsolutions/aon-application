@@ -12,7 +12,7 @@ import java.util.Date;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.FailingHttpStatusCodeException;
 
 import solutions.aon.seg.social.SistemaREDRemesas;
 import solutions.aon.seg.social.exception.SegSocialException;
