@@ -908,6 +908,11 @@
     gap: .5rem;
 }
 
+.aon_flex_between {
+	display: flex;
+	justify-content: space-between;
+}
+
 .aon_flex_wrap {
     display: flex;
     align-items: center;
@@ -965,9 +970,9 @@
 	/*height: 2rem;*/
 	min-height: 2.2rem;
 	/*align-items: center;*/
-	border-radius: 0.5em;
+	border-radius: 0.5rem;
     display: flex;
-    margin: 0 1em;
+    margin: 0 1rem;
     width: auto;
     justify-content: space-between;
    /* margin-top: .5rem;*/

@@ -63,6 +63,7 @@ public class Paternity {
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
 			webClient.getOptions().setJavaScriptEnabled(false);
+			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/GetAccess/ResourceList");
 			htmlPage = htmlPage
 					.getAnchorByHref("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ"
@@ -115,9 +116,10 @@ public class Paternity {
 			);
 			
 			// BASE CC
-			formDatos2.getInputByName("baseCC1").setValueAttribute("" + Float.toString(baseCC).replace(".", ","));
-			formDatos2.getInputByName("baseCP1").setValueAttribute("" + Float.toString(baseCP).replace(".", ","));
-			formDatos2.getInputByName("prestacion1").setValueAttribute("" + days);
+//			Toolkit.buildFile(htmlPage.asXml().getBytes(), "/Users/svaldepenas/Desktop/Paternity.html");
+//			formDatos2.getInputByName("baseCC1").setValueAttribute("" + Float.toString(baseCC).replace(".", ","));
+//			formDatos2.getInputByName("baseCP1").setValueAttribute("" + Float.toString(baseCP).replace(".", ","));
+//			formDatos2.getInputByName("prestacion1").setValueAttribute("" + days);
 		
 			// CONFIRM
 			htmlPage = formDatos2.getInputByValue("Confirmar").click();
@@ -217,6 +219,8 @@ public class Paternity {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
+			
+			webClient.getOptions().setUseInsecureSSL(true);
 
 			HtmlPage htmlPage = webClient.getPage(BASE_URL);
 			
@@ -457,6 +461,7 @@ public class Paternity {
 		InvalidCertificateException.checkCertificate(certificateInputStream);
 		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
 				certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
 			HtmlPage htmlPage = webClient.getPage(BASE_URL);
 			// MOVING TO 'MODIFICAR/ANULAR CERTIFICADOS' SECTION
 			HtmlForm formDatos = (HtmlForm) htmlPage.getElementById("formDatos");

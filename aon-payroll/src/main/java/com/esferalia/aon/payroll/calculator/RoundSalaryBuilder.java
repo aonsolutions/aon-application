@@ -599,6 +599,13 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 				// wrong ERE_BASE
 			}
 		}
+		
+		try {
+			this.cgcBase = add(this.cgcBase, round(ContextVariable.DIRECT_BASE));			
+		} catch ( Exception e ) {
+			// wrong DIRECT_BASE
+		}
+
 		try {
 			this.cgcBase = add(this.cgcBase, round(ContextVariable.MATERNITY_BASE));			
 		} catch ( Exception e ) {
@@ -634,6 +641,13 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 				// wrong ERE_BASE
 			}
 		}
+
+		try {
+			this.cgpBase = add(this.cgpBase, round(ContextVariable.DIRECT_BASE));			
+		} catch ( Exception e ) {
+			// wrong DIRECT_BASE
+		}
+
 		try {
 			this.cgpBase = add(this.cgpBase, round(ContextVariable.MATERNITY_BASE));			
 		} catch ( Exception e ) {

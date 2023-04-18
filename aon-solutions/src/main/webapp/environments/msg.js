@@ -133,6 +133,7 @@ export const CONCEPT = MSG.CONCEPT;
 export const CONCEPTS = MSG.CONCEPTS;
 export const CONFIDENTIAL = MSG.CONFIDENTIAL;
 export const CONFIGURATION = MSG.CONFIGURATION;
+export const CONSOLE = 'Console'; 
 export const CONTACT = MSG.CONTACT;
 export const CONTACT_DATA = MSG.CONTACT_DATA;
 export const CONTACTS = MSG.CONTACTS;
@@ -335,7 +336,8 @@ export const LAST_LOCATION = MSG.LAST_LOCATION;
 export const LAST_STATUS = MSG.LAST_STATUS;
 export const LAST_MODIFICATION = "Última modificación";
 export const LOCATION = MSG.LOCATION;
-export const LINK = "Vincular";//TODO
+export const LINK = MSG.LINK;
+export const LINK_DOMAINS = MSG.LINK_DOMAINS;
 // ----- M
 
 export const MARK_ENTRY = MSG.MARK_ENTRY;
@@ -583,6 +585,7 @@ export const USER = MSG.USER;
 export const USER_DATA = MSG.USER_DATA;
 export const USER_MANAGEMENT = MSG.USER_MANAGEMENT;
 export const USERS = MSG.USERS;
+export const UTILITIES = MSG.UTILITIES;
 
 // ----- V
 

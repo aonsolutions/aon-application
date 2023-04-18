@@ -766,6 +766,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_flex_wrap")
 	String aonFlexWrap();
 	
+	@ClassName("aon_flex_between")
+	String aonFlexBetween();
+	
 	@ClassName("aon_item_flex")
 	String aonItemFlex();
 

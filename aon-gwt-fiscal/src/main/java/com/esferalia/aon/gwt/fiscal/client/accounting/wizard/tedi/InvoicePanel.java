@@ -464,6 +464,7 @@ public class InvoicePanel extends WizardContentBase<AccountingInvoice> implement
 	}
 
 	public void entryDateChanged(Date entryDate) {
+		getWrapper().getInvoice().setIssueDate(entryDate);
 	}
 	public void activityChanged(Integer activty) {
 	}
