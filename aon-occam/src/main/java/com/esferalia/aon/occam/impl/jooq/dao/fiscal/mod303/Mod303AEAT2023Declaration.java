@@ -603,7 +603,8 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> ensureModule(mod, 0, 0).setFactor(mod.getAmount(Mod303Key.CT_S11F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S11F))
 		,CT_S11R(Mod303Key.CT_S11R, null, null, null
-			,"hasActivity(0)?round(CT_S11I*CT_S11F):0.0", null
+			,"calculateResult(0,CT_S11I,CT_S11F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S11R, ensureModule(mod, 0, 0).getResult())
 			,mod -> ensureModule(mod, 0, 0).setResult(mod.getAmount(Mod303Key.CT_S11R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S11R))
@@ -624,7 +625,8 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> ensureModule(mod, 0, 1).setFactor(mod.getAmount(Mod303Key.CT_S12F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S12F))
 		,CT_S12R(Mod303Key.CT_S12R, null, null, null
-			,"hasActivity(0)?round(CT_S12I*CT_S12F):0.0",null
+			,"calculateResult(0,CT_S12I,CT_S12F)"	
+			,null
 			,mod -> mod.putAmount(Mod303Key.CT_S12R, ensureModule(mod, 0, 1).getResult())
 			,mod -> ensureModule(mod, 0, 1).setResult(mod.getAmount(Mod303Key.CT_S12R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S12R))
@@ -645,7 +647,8 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> ensureModule(mod, 0, 2).setFactor(mod.getAmount(Mod303Key.CT_S13F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S13F))
 		,CT_S13R(Mod303Key.CT_S13R, null, null, null
-			,"hasActivity(0)?round(CT_S13I*CT_S13F):0.0", null
+			,"calculateResult(0,CT_S13I,CT_S13F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S13R, ensureModule(mod, 0, 2).getResult())
 			,mod -> ensureModule(mod, 0, 2).setResult(mod.getAmount(Mod303Key.CT_S13R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S13R))
@@ -666,7 +669,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S14F, ensureModule(mod, 0, 3).getFactor())
 			,mod -> ensureModule(mod, 0, 3).setFactor(mod.getAmount(Mod303Key.CT_S14F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S14F))
-		,CT_S14R(Mod303Key.CT_S14R, null, null, null, "hasActivity(0)?round(CT_S14I*CT_S14F):0.0", null
+		,CT_S14R(Mod303Key.CT_S14R, null, null, null
+			,"calculateResult(0,CT_S14I,CT_S14F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S14R, ensureModule(mod, 0, 3).getResult())
 			,mod -> ensureModule(mod, 0, 3).setResult(mod.getAmount(Mod303Key.CT_S14R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S14R))
@@ -686,7 +691,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S15F, ensureModule(mod, 0, 4).getFactor())
 			,mod -> ensureModule(mod, 0, 4).setFactor(mod.getAmount(Mod303Key.CT_S15F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S15F))
-		,CT_S15R(Mod303Key.CT_S15R, null, null, null, "hasActivity(0)?round(CT_S15I*CT_S15F):0.0", null
+		,CT_S15R(Mod303Key.CT_S15R, null, null, null
+			,"calculateResult(0,CT_S15I,CT_S15F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S15R, ensureModule(mod, 0, 4).getResult())
 			,mod -> ensureModule(mod, 0, 4).setResult(mod.getAmount(Mod303Key.CT_S15R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S15R))
@@ -706,7 +713,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S16F, ensureModule(mod, 0, 5).getFactor())
 			,mod -> ensureModule(mod, 0, 5).setFactor(mod.getAmount(Mod303Key.CT_S16F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S16F))
-		,CT_S16R(Mod303Key.CT_S16R, null, null, null, "hasActivity(0)?round(CT_S16I*CT_S16F):0.0", null
+		,CT_S16R(Mod303Key.CT_S16R, null, null, null
+			,"calculateResult(0,CT_S16I,CT_S16F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S16R, ensureModule(mod, 0, 5).getResult())
 			,mod -> ensureModule(mod, 0, 5).setResult(mod.getAmount(Mod303Key.CT_S16R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S16R))
@@ -808,7 +817,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> ensureDesk(mod, 0, 3).setDeskDays((int) mod.getAmount(Mod303Key.CT_S1D4))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S1D4))
 
-		,CT_S17R(Mod303Key.CT_S17R, null, null, null, "hasActivity(0)?round(CT_S17I*CT_S17F):0.0", null
+		,CT_S17R(Mod303Key.CT_S17R, null, null, null
+			,"calculateResult(0,CT_S17I,CT_S17F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S17R, ensureModule(mod, 0, 6).getResult())
 			,mod -> ensureModule(mod, 0, 6).setResult(mod.getAmount(Mod303Key.CT_S17R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S17R))
@@ -948,7 +959,8 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S21F))
 		,
 		CT_S21R(Mod303Key.CT_S21R, null, null, null
-			,"hasActivity(1)?round(CT_S21I*CT_S21F):0.0", null
+			,"calculateResult(1,CT_S21I,CT_S21F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S21R, ensureModule(mod, 1, 0).getResult())
 			,mod -> ensureModule(mod, 1, 0).setResult(mod.getAmount(Mod303Key.CT_S21R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S21R))
@@ -969,7 +981,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S22F, ensureModule(mod, 1, 1).getFactor())
 			,mod -> ensureModule(mod, 1, 1).setFactor(mod.getAmount(Mod303Key.CT_S22F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S22F))
-		,CT_S22R(Mod303Key.CT_S22R, null, null, null, "hasActivity(1)?round(CT_S22I*CT_S22F):0.0", null
+		,CT_S22R(Mod303Key.CT_S22R, null, null, null
+			,"calculateResult(1,CT_S22I,CT_S22F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S22R, ensureModule(mod, 1, 1).getResult())
 			,mod -> ensureModule(mod, 1, 1).setResult(mod.getAmount(Mod303Key.CT_S22R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S22R))
@@ -989,7 +1003,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S23F, ensureModule(mod, 1, 2).getFactor())
 			,mod -> ensureModule(mod, 1, 2).setFactor(mod.getAmount(Mod303Key.CT_S23F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S23F))
-		,CT_S23R(Mod303Key.CT_S23R, null, null, null, "hasActivity(1)?round(CT_S23I*CT_S23F):0.0", null
+		,CT_S23R(Mod303Key.CT_S23R, null, null, null
+			,"calculateResult(1,CT_S23I,CT_S23F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S23R, ensureModule(mod, 1, 2).getResult())
 			,mod -> ensureModule(mod, 1, 2).setResult(mod.getAmount(Mod303Key.CT_S23R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S23R))
@@ -1009,7 +1025,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S24F, ensureModule(mod, 1, 3).getFactor())
 			,mod -> ensureModule(mod, 1, 3).setFactor(mod.getAmount(Mod303Key.CT_S24F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S24F))
-		,CT_S24R(Mod303Key.CT_S24R, null, null, null, "hasActivity(1)?round(CT_S24I*CT_S24F):0.0", null
+		,CT_S24R(Mod303Key.CT_S24R, null, null, null
+			,"calculateResult(1,CT_S24I,CT_S24F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S24R, ensureModule(mod, 1, 3).getResult())
 			,mod -> ensureModule(mod, 1, 3).setResult(mod.getAmount(Mod303Key.CT_S24R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S24R))
@@ -1029,7 +1047,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S25F, ensureModule(mod, 1, 4).getFactor())
 			,mod -> ensureModule(mod, 1, 4).setFactor(mod.getAmount(Mod303Key.CT_S25F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S25F))
-		,CT_S25R(Mod303Key.CT_S25R, null, null, null, "hasActivity(1)?round(CT_S25I*CT_S25F):0.0", null
+		,CT_S25R(Mod303Key.CT_S25R, null, null, null
+			,"calculateResult(1,CT_S25I,CT_S25F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S25R, ensureModule(mod, 1, 4).getResult())
 			,mod -> ensureModule(mod, 1, 4).setResult(mod.getAmount(Mod303Key.CT_S25R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S25R))
@@ -1049,7 +1069,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S26F, ensureModule(mod, 1, 5).getFactor())
 			,mod -> ensureModule(mod, 1, 5).setFactor(mod.getAmount(Mod303Key.CT_S26F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S26F))
-		,CT_S26R(Mod303Key.CT_S26R, null, null, null, "hasActivity(1)?round(CT_S26I*CT_S26F):0.0", null
+		,CT_S26R(Mod303Key.CT_S26R, null, null, null
+			,"calculateResult(1,CT_S26I,CT_S26F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S26R, ensureModule(mod, 1, 5).getResult())
 			,mod -> ensureModule(mod, 1, 5).setResult(mod.getAmount(Mod303Key.CT_S26R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S26R))
@@ -1154,7 +1176,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> ensureDesk(mod, 1, 3).setDeskDays((int) mod.getAmount(Mod303Key.CT_S2D4))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S2D4))
 		
-		,CT_S27R(Mod303Key.CT_S27R, null, null, null, "hasActivity(1)?round(CT_S27I*CT_S27F):0.0", null
+		,CT_S27R(Mod303Key.CT_S27R, null, null, null
+			,"calculateResult(1,CT_S27I,CT_S27F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S27R, ensureModule(mod, 1, 6).getResult())
 			,mod -> ensureModule(mod, 1, 6).setResult(mod.getAmount(Mod303Key.CT_S27R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S27R))
@@ -1287,7 +1311,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S31F, ensureModule(mod, 2, 0).getFactor())
 			,mod -> ensureModule(mod, 2, 0).setFactor(mod.getAmount(Mod303Key.CT_S31F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S31F))
-		,CT_S31R(Mod303Key.CT_S31R, null, null, null, "hasActivity(2)?round(CT_S31I*CT_S31F):0.0", null
+		,CT_S31R(Mod303Key.CT_S31R, null, null, null
+			,"calculateResult(2,CT_S31I,CT_S31F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S31R, ensureModule(mod, 2, 0).getResult())
 			,mod -> ensureModule(mod, 2, 0).setResult(mod.getAmount(Mod303Key.CT_S31R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S31R))
@@ -1307,7 +1333,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S32F, ensureModule(mod, 2, 1).getFactor())
 			,mod -> ensureModule(mod, 2, 1).setFactor(mod.getAmount(Mod303Key.CT_S32F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S32F))
-		,CT_S32R(Mod303Key.CT_S32R, null, null, null, "hasActivity(2)?round(CT_S32I*CT_S32F):0.0", null
+		,CT_S32R(Mod303Key.CT_S32R, null, null, null
+			,"calculateResult(2,CT_S32I,CT_S32F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S32R, ensureModule(mod, 2, 1).getResult())
 			,mod -> ensureModule(mod, 2, 1).setResult(mod.getAmount(Mod303Key.CT_S32R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S32R))
@@ -1327,7 +1355,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S33F, ensureModule(mod, 2, 2).getFactor())
 			,mod -> ensureModule(mod, 2, 2).setFactor(mod.getAmount(Mod303Key.CT_S33F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S33F))
-		,CT_S33R(Mod303Key.CT_S33R, null, null, null, "hasActivity(2)?round(CT_S33I*CT_S33F):0.0", null
+		,CT_S33R(Mod303Key.CT_S33R, null, null, null
+			,"calculateResult(2,CT_S33I,CT_S33F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S33R, ensureModule(mod, 2, 2).getResult())
 			,mod -> ensureModule(mod, 2, 2).setResult(mod.getAmount(Mod303Key.CT_S33R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S33R))
@@ -1349,7 +1379,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S34F, ensureModule(mod, 2, 3).getFactor())
 			,mod -> ensureModule(mod, 2, 3).setFactor(mod.getAmount(Mod303Key.CT_S34F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S34F))
-		,CT_S34R(Mod303Key.CT_S34R, null, null, null, "hasActivity(2)?round(CT_S34I*CT_S34F):0.0", null
+		,CT_S34R(Mod303Key.CT_S34R, null, null, null
+			,"calculateResult(2,CT_S34I,CT_S34F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S34R, ensureModule(mod, 2, 3).getResult())
 			,mod -> ensureModule(mod, 2, 3).setResult(mod.getAmount(Mod303Key.CT_S34R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S34R))
@@ -1369,7 +1401,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S35F, ensureModule(mod, 2, 4).getFactor())
 			,mod -> ensureModule(mod, 2, 4).setFactor(mod.getAmount(Mod303Key.CT_S35F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S35F))
-		,CT_S35R(Mod303Key.CT_S35R, null, null, null, "hasActivity(2)?round(CT_S35I*CT_S35F):0.0", null
+		,CT_S35R(Mod303Key.CT_S35R, null, null, null
+			,"calculateResult(2,CT_S35I,CT_S35F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S35R, ensureModule(mod, 2, 4).getResult())
 			,mod -> ensureModule(mod, 2, 4).setResult(mod.getAmount(Mod303Key.CT_S35R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S35R))
@@ -1389,7 +1423,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S36F, ensureModule(mod, 2, 5).getFactor())
 			,mod -> ensureModule(mod, 2, 5).setFactor(mod.getAmount(Mod303Key.CT_S36F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S36F))
-		,CT_S36R(Mod303Key.CT_S36R, null, null, null, "hasActivity(2)?round(CT_S36I*CT_S36F):0.0", null
+		,CT_S36R(Mod303Key.CT_S36R, null, null, null
+			,"calculateResult(2,CT_S36I,CT_S36F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S36R, ensureModule(mod, 2, 5).getResult())
 			,mod -> ensureModule(mod, 2, 5).setResult(mod.getAmount(Mod303Key.CT_S36R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S36R))
@@ -1494,7 +1530,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S3D4))
 			
 		
-		,CT_S37R(Mod303Key.CT_S37R, null, null, null, "hasActivity(2)?round(CT_S37I*CT_S37F):0.0", null
+		,CT_S37R(Mod303Key.CT_S37R, null, null, null
+			,"calculateResult(2,CT_S37I,CT_S37F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S37R, ensureModule(mod, 2, 6).getResult())
 			,mod -> ensureModule(mod, 2, 6).setResult(mod.getAmount(Mod303Key.CT_S37R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S37R))
@@ -1630,7 +1668,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S41F, ensureModule(mod, 3, 0).getFactor())
 			,mod -> ensureModule(mod, 3, 0).setFactor(mod.getAmount(Mod303Key.CT_S41F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S41F))
-		,CT_S41R(Mod303Key.CT_S41R, null, null, null, "hasActivity(3)?round(CT_S41I*CT_S41F):0.0", null
+		,CT_S41R(Mod303Key.CT_S41R, null, null, null
+			,"calculateResult(3,CT_S41I,CT_S41F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S41R, ensureModule(mod, 3, 0).getResult())
 			,mod -> ensureModule(mod, 3, 0).setResult(mod.getAmount(Mod303Key.CT_S41R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S41R))
@@ -1650,7 +1690,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S42F, ensureModule(mod, 3, 1).getFactor())
 			,mod -> ensureModule(mod, 3, 1).setFactor(mod.getAmount(Mod303Key.CT_S42F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S42F))
-		,CT_S42R(Mod303Key.CT_S42R, null, null, null, "hasActivity(3)?round(CT_S42I*CT_S42F):0.0", null
+		,CT_S42R(Mod303Key.CT_S42R, null, null, null
+			,"calculateResult(3,CT_S42I,CT_S42F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S42R, ensureModule(mod, 3, 1).getResult())
 			,mod -> ensureModule(mod, 3, 1).setResult(mod.getAmount(Mod303Key.CT_S42R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S42R))
@@ -1670,7 +1712,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S43F, ensureModule(mod, 3, 2).getFactor())
 			,mod -> ensureModule(mod, 3, 2).setFactor(mod.getAmount(Mod303Key.CT_S43F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S43F))
-		,CT_S43R(Mod303Key.CT_S43R, null, null, null, "hasActivity(3)?round(CT_S43I*CT_S43F):0.0", null
+		,CT_S43R(Mod303Key.CT_S43R, null, null, null
+			,"calculateResult(3,CT_S43I,CT_S43F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S43R, ensureModule(mod, 3, 2).getResult())
 			,mod -> ensureModule(mod, 3, 2).setResult(mod.getAmount(Mod303Key.CT_S43R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S43R))
@@ -1690,7 +1734,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S44F, ensureModule(mod, 3, 3).getFactor())
 			,mod -> ensureModule(mod, 3, 3).setFactor(mod.getAmount(Mod303Key.CT_S44F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S44F))
-		,CT_S44R(Mod303Key.CT_S44R, null, null, null, "hasActivity(3)?round(CT_S44I*CT_S44F):0.0", null
+		,CT_S44R(Mod303Key.CT_S44R, null, null, null
+			,"calculateResult(3,CT_S44I,CT_S44F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S44R, ensureModule(mod, 3, 3).getResult())
 			,mod -> ensureModule(mod, 3, 3).setResult(mod.getAmount(Mod303Key.CT_S44R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S44R))
@@ -1710,7 +1756,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S45F, ensureModule(mod, 3, 4).getFactor())
 			,mod -> ensureModule(mod, 3, 4).setFactor(mod.getAmount(Mod303Key.CT_S45F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S45F))
-		,CT_S45R(Mod303Key.CT_S45R, null, null, null, "hasActivity(3)?round(CT_S45I*CT_S45F):0.0", null
+		,CT_S45R(Mod303Key.CT_S45R, null, null, null
+			,"calculateResult(3,CT_S45I,CT_S45F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S45R, ensureModule(mod, 3, 4).getResult())
 			,mod -> ensureModule(mod, 3, 4).setResult(mod.getAmount(Mod303Key.CT_S45R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S45R))
@@ -1730,7 +1778,9 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S46F, ensureModule(mod, 3, 5).getFactor())
 			,mod -> ensureModule(mod, 3, 5).setFactor(mod.getAmount(Mod303Key.CT_S46F))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S46F))
-		,CT_S46R(Mod303Key.CT_S46R, null, null, null, "hasActivity(3)?round(CT_S46I*CT_S46F):0.0", null
+		,CT_S46R(Mod303Key.CT_S46R, null, null, null
+			,"calculateResult(3,CT_S46I,CT_S46F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S46R, ensureModule(mod, 3, 5).getResult())
 			,mod -> ensureModule(mod, 3, 5).setResult(mod.getAmount(Mod303Key.CT_S46R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S46R))
@@ -1833,9 +1883,10 @@ class Mod303AEAT2023Declaration extends Mod303AEAT {
 			,mod -> mod.putAmount(Mod303Key.CT_S4D4, ensureDesk(mod, 3, 3).getDeskDays())
 			,mod -> ensureDesk(mod, 3, 3).setDeskDays((int) mod.getAmount(Mod303Key.CT_S4D4))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S4D4))
-		
-		
-		,CT_S47R(Mod303Key.CT_S47R, null, null, null, "hasActivity(3)?round(CT_S47I*CT_S47F):0.0", null
+
+		,CT_S47R(Mod303Key.CT_S47R, null, null, null
+			,"calculateResult(3,CT_S47I,CT_S47F)"
+			, null
 			,mod -> mod.putAmount(Mod303Key.CT_S47R, ensureModule(mod, 3, 6).getResult())
 			,mod -> ensureModule(mod, 3, 6).setResult(mod.getAmount(Mod303Key.CT_S47R))
 			,(prev,cur) -> copyKey(prev,cur, Mod303Key.CT_S47R))
