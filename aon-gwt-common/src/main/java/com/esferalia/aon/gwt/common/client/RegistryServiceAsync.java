@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.common.client;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -41,9 +42,12 @@ public interface RegistryServiceAsync {
 	// **************************************************
 	// *********************************** [CUSTOMER FEE]
 	// **************************************************
-	void getCustomersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<String>> asyncCallback);
-	void getProductsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<String>> asyncCallback);
+	void getCustomersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, String>> asyncCallback);
+	void getProductsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, String>> asyncCallback);
+	void getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<Map<Integer, Integer>> asyncCallback);
 	
 	void getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<LinkedList<Fee>> asyncCallback);
-	void saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> feeList, AsyncCallback<Void> asyncCallback);
+	void saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> feeList, AsyncCallback<Integer> asyncCallback);
+	void saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params, AsyncCallback<Integer> asyncCallback);
+	void getMinMaxCustomerFeeYear(String domainName, int domain, String user, AsyncCallback<Map<Integer, Integer>> asyncCallback);
 }

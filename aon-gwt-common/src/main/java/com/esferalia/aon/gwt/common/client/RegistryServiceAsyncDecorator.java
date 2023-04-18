@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.common.client;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -93,15 +94,21 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	// **************************************************
 	
 	@Override
-	public void getCustomersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<String>> callback) {
+	public void getCustomersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, String>> callback) {
 		AON.start();
-		serviceAsync.getCustomersSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<LinkedList<String>>(callback));
+		serviceAsync.getCustomersSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, String>>(callback));
 	}
 
 	@Override
-	public void getProductsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<LinkedList<String>> callback) {
+	public void getProductsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, String>> callback) {
 		AON.start();
-		serviceAsync.getProductsSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<LinkedList<String>>(callback));
+		serviceAsync.getProductsSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, String>>(callback));
+	}
+	
+	@Override
+	public void getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<Map<Integer, Integer>> callback) {
+		AON.start();
+		serviceAsync.getCustomerProductsUpdates(domainName, domain, user, customerFeeParams, new AsyncCallbackWrapper<Map<Integer, Integer>>(callback));
 	}
 	
 	@Override
@@ -110,9 +117,21 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		serviceAsync.getCustomerFeeList(domainName, domain, user, customerFeeParams, new AsyncCallbackWrapper<LinkedList<Fee>>(callback));
 	}
 	@Override
-	public void saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> feeList, AsyncCallback<Void> callback) {
+	public void saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> feeList, AsyncCallback<Integer> callback) {
 		AON.start();
-		serviceAsync.saveCustomerFeeList(domainName, domain, user, feeList, new AsyncCallbackWrapper<Void>(callback));
+		serviceAsync.saveCustomerFeeList(domainName, domain, user, feeList, new AsyncCallbackWrapper<Integer>(callback));
+	}
+
+	@Override
+	public void saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params, AsyncCallback<Integer> callback) {
+		AON.start();
+		serviceAsync.saveMassiveCustomerFee(domainName, domain, user, fee, params, new AsyncCallbackWrapper<Integer>(callback));
+	}
+
+	@Override
+	public void getMinMaxCustomerFeeYear(String domainName, int domain, String user, AsyncCallback<Map<Integer, Integer>> callback) {
+		AON.start();
+		serviceAsync.getMinMaxCustomerFeeYear(domainName, domain, user, new AsyncCallbackWrapper<Map<Integer, Integer>>(callback));
 	}
 
 }

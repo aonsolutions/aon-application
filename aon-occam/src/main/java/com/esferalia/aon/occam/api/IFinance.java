@@ -3,6 +3,7 @@ package com.esferalia.aon.occam.api;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
@@ -106,17 +107,20 @@ public interface IFinance {
 	// 	**************************** INVOICE SERIES ***
 	// 	***********************************************
 
-	public LinkedList<String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
-	public LinkedList<String> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public Map<String, String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public Map<String, String> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public Map<Integer, Integer> getCustomerProductsUpdates(CloseableAONContext ctx, int domainId, CustomerFeeParams customerFeeParams);
 	
 	public LinkedList<Fee> getFeeList(CloseableAONContext ctx, CustomerFeeParams customerFeeParams);
 	public Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter);
 	
 	public Fee save(AONContext ctx, Fee fee);
-	public void saveList(AONContext ctx, LinkedList<Fee> feeList);
+	public Integer saveList(AONContext ctx, LinkedList<Fee> feeList);
+	public Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams);
 	public void deleteFee(AONContext ctx,Fee f);
 	public void deleteFee(AONContext ctx,Stream<Fee> fs);
 	
+	public Map<Integer, Integer> getMinMaxCustomerFeeYear(CloseableAONContext ctx, int domainId);
 	
 	// 	***********************************************
 	// 	************************** INVOICE REGISTRY ***
