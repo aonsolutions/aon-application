@@ -13,21 +13,21 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlHeading3;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+import org.htmlunit.ElementNotFoundException;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.DomNode;
+import org.htmlunit.html.DomNodeList;
+import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlHeading3;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.HtmlSubmitInput;
+import org.htmlunit.html.HtmlTable;
+import org.htmlunit.html.HtmlTableRow;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -71,20 +71,20 @@ public class Paternity {
 			HtmlForm formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
 			
 			// REGIME
-			formDatos.getInputByName("regimen").setValueAttribute(regime);
+			formDatos.getInputByName("regimen").setValue(regime);
 			// CCC
 			String[] cccArr = Toolkit.SplitString(contributionAccount, 2);
-			formDatos.getInputByName("ccc2").setValueAttribute(cccArr[0]);
-			formDatos.getInputByName("ccc9").setValueAttribute(cccArr[1]);
+			formDatos.getInputByName("ccc2").setValue(cccArr[0]);
+			formDatos.getInputByName("ccc9").setValue(cccArr[1]);
 			// NAF
 			String[] nssArr = Toolkit.SplitString(affiliationNumber, 2);
-			formDatos.getInputByName("naf2").setValueAttribute(nssArr[0]);
-			formDatos.getInputByName("naf10").setValueAttribute(nssArr[1]);
+			formDatos.getInputByName("naf2").setValue(nssArr[0]);
+			formDatos.getInputByName("naf10").setValue(nssArr[1]);
 			// ID TYPE
 			HtmlSelect idTypeSelect = htmlPage.querySelector("select[name=tipoIpf]");
 			idTypeSelect.setSelectedAttribute(Toolkit.getIdentityType(docNum), true);
 			// ID NUM
-			formDatos.getInputByName("codIpf").setValueAttribute(docNum);
+			formDatos.getInputByName("codIpf").setValue(docNum);
 			// APPLICANT TYPE
 			HtmlSelect applicantTypeSelect = formDatos.getSelectByName("tipoPrestacion");
 			applicantTypeSelect.setSelectedAttribute(applicantType.getValueTGSS(), true);
@@ -100,7 +100,7 @@ public class Paternity {
 			reasonSelect.setSelectedAttribute(reason.getValueTGSS(), true);
 			// START DATE
 			Toolkit.formatDate(dateFrom, DATE_FORMAT).ifPresent(date->
-				formDatos.getInputByName("fechaInicio").setValueAttribute(date)
+				formDatos.getInputByName("fechaInicio").setValue(date)
 			);
 			// SUBMIT
 			htmlPage = formDatos.getInputByValue("Validar").click();
@@ -111,13 +111,13 @@ public class Paternity {
 		
 			// END DATE
 			Toolkit.formatDate(dateTo, DATE_FORMAT).ifPresent(date-> 
-				formDatos2.getInputByName("fechaFinPeriodo1").setValueAttribute(date)
+				formDatos2.getInputByName("fechaFinPeriodo1").setValue(date)
 			);
 			
 			// BASE CC
-			formDatos2.getInputByName("baseCC1").setValueAttribute("" + Float.toString(baseCC).replace(".", ","));
-			formDatos2.getInputByName("baseCP1").setValueAttribute("" + Float.toString(baseCP).replace(".", ","));
-			formDatos2.getInputByName("prestacion1").setValueAttribute("" + days);
+			formDatos2.getInputByName("baseCC1").setValue("" + Float.toString(baseCC).replace(".", ","));
+			formDatos2.getInputByName("baseCP1").setValue("" + Float.toString(baseCP).replace(".", ","));
+			formDatos2.getInputByName("prestacion1").setValue("" + days);
 		
 			// CONFIRM
 			htmlPage = formDatos2.getInputByValue("Confirmar").click();
@@ -154,21 +154,21 @@ public class Paternity {
 			htmlPage = formDatos.getInputByValue("Modificar/Anular certificado").click();
 			formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
 			// REGIME
-			formDatos.getInputByName("regimen").setValueAttribute(regime);
+			formDatos.getInputByName("regimen").setValue(regime);
 			// CCC
-			formDatos.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
-			formDatos.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
+			formDatos.getInputByName("ccc2").setValue(Toolkit.SplitString(ccc, 2)[0]);
+			formDatos.getInputByName("ccc9").setValue(Toolkit.SplitString(ccc, 2)[1]);
 			// DATE FROM
-			formDatos.getInputByName("fechaDesde").setValueAttribute(Toolkit.formatDate(dateFrom, DATE_FORMAT).get());
+			formDatos.getInputByName("fechaDesde").setValue(Toolkit.formatDate(dateFrom, DATE_FORMAT).get());
 			// END DATE
-			formDatos.getInputByName("fechaHasta").setValueAttribute(Toolkit.formatDate(dateTo, DATE_FORMAT).get());
+			formDatos.getInputByName("fechaHasta").setValue(Toolkit.formatDate(dateTo, DATE_FORMAT).get());
 			// NAF
-			formDatos.getInputByName("naf2").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[0]);
-			formDatos.getInputByName("naf10").setValueAttribute(Toolkit.SplitString(affiliationNumber, 2)[1]);
+			formDatos.getInputByName("naf2").setValue(Toolkit.SplitString(affiliationNumber, 2)[0]);
+			formDatos.getInputByName("naf10").setValue(Toolkit.SplitString(affiliationNumber, 2)[1]);
 			// START DATE (OPTIONAL)
 			if (!startDate.isEmpty()) {
 				formDatos.getInputByName("fechaInicio")
-						.setValueAttribute(Toolkit.formatDate(startDate.get(), DATE_FORMAT).get());
+						.setValue(Toolkit.formatDate(startDate.get(), DATE_FORMAT).get());
 			}
 
 			// SUBMIT
@@ -227,27 +227,27 @@ public class Paternity {
 			
 			HtmlForm formD = (HtmlForm) htmlPage.getElementById("formDatos");
 
-			formD.getInputByName("regimen").setValueAttribute(regime);
-			formD.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
-			formD.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
+			formD.getInputByName("regimen").setValue(regime);
+			formD.getInputByName("ccc2").setValue(Toolkit.SplitString(ccc, 2)[0]);
+			formD.getInputByName("ccc9").setValue(Toolkit.SplitString(ccc, 2)[1]);
 			Toolkit.formatDate(dateFrom, DATE_FORMAT).ifPresent(date-> 
-				formD.getInputByName("fechaDesde").setValueAttribute(date)
+				formD.getInputByName("fechaDesde").setValue(date)
 			);
 			
 			Toolkit.formatDate(dateTo, DATE_FORMAT).ifPresent(date->
-				formD.getInputByName("fechaHasta").setValueAttribute(date)
+				formD.getInputByName("fechaHasta").setValue(date)
 			);
 	
 			// NAF
 			if(nss.isPresent()) {
 				String[] naf = Toolkit.SplitString(nss.get(), 2);
-				formD.getInputByName("naf2").setValueAttribute(naf[0]);
-				formD.getInputByName("naf10").setValueAttribute(naf[1]);
+				formD.getInputByName("naf2").setValue(naf[0]);
+				formD.getInputByName("naf10").setValue(naf[1]);
 			}
 			
 			// START DATE (OPTIONAL)
 			if (!startDate.isEmpty()) 
-				formD.getInputByName("fechaInicio").setValueAttribute(Toolkit.formatDate(startDate.get(), DATE_FORMAT).get());
+				formD.getInputByName("fechaInicio").setValue(Toolkit.formatDate(startDate.get(), DATE_FORMAT).get());
 
 			// SUBMIT
 			htmlPage = formD.getInputByValue("Buscar").click();
@@ -463,20 +463,20 @@ public class Paternity {
 			htmlPage = formDatos.getInputByValue("Consultar certificado").click();
 			formDatos = (HtmlForm) htmlPage.getElementById("formDatos");
 			// REGIME
-			formDatos.getInputByName("regimen").setValueAttribute(regime);
+			formDatos.getInputByName("regimen").setValue(regime);
 			// CCC
-			formDatos.getInputByName("ccc2").setValueAttribute(Toolkit.SplitString(ccc, 2)[0]);
-			formDatos.getInputByName("ccc9").setValueAttribute(Toolkit.SplitString(ccc, 2)[1]);
+			formDatos.getInputByName("ccc2").setValue(Toolkit.SplitString(ccc, 2)[0]);
+			formDatos.getInputByName("ccc9").setValue(Toolkit.SplitString(ccc, 2)[1]);
 			// DATE FROM
-			formDatos.getInputByName("fechaDesde").setValueAttribute(Toolkit.formatDate(dateFrom, DATE_FORMAT).get());
+			formDatos.getInputByName("fechaDesde").setValue(Toolkit.formatDate(dateFrom, DATE_FORMAT).get());
 			// END DATE
-			formDatos.getInputByName("fechaHasta").setValueAttribute(Toolkit.formatDate(dateTo, DATE_FORMAT).get());
+			formDatos.getInputByName("fechaHasta").setValue(Toolkit.formatDate(dateTo, DATE_FORMAT).get());
 			// NAF
-			formDatos.getInputByName("naf2").setValueAttribute(Toolkit.SplitString(nss, 2)[0]);
-			formDatos.getInputByName("naf10").setValueAttribute(Toolkit.SplitString(nss, 2)[1]);
+			formDatos.getInputByName("naf2").setValue(Toolkit.SplitString(nss, 2)[0]);
+			formDatos.getInputByName("naf10").setValue(Toolkit.SplitString(nss, 2)[1]);
 			// START DATE (OPTIONAL)
 			if (!startDate.isEmpty()) 
-				formDatos.getInputByName("fechaInicio").setValueAttribute(Toolkit.formatDate(startDate.get(), DATE_FORMAT).get());
+				formDatos.getInputByName("fechaInicio").setValue(Toolkit.formatDate(startDate.get(), DATE_FORMAT).get());
 
 
 			// SUBMIT
