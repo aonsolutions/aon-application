@@ -409,6 +409,13 @@ public class AccountingReportParams implements IAccountParams, Cloneable {
 		this.output = output;
 		return this;
 	}
+	public boolean isOutput() {
+		return output != null && output.booleanValue();
+	}
+	public boolean isInput() {
+		return output != null && !output.booleanValue();
+	}
+	
 	public VatSummaryType getVatSummaryType() {
 		return vatSummaryType;
 	}
