@@ -30,4 +30,9 @@ public interface FinanceUtilitiesService extends RemoteService {
 
 	// Chequeo de tipos de retenci\u00F3n en facturas.
 	void updateWithholdingType(Occam occam, Integer invoiceId, WithholdingType newType ) throws AonCoreException;
+	
+	// Modificación de actividades en facturas.
+	void updateActivity(Occam occam, Integer invoiceId, Integer activity) throws AonCoreException;
+	
+	
 }

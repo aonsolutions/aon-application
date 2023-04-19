@@ -26,7 +26,7 @@ import com.esferalia.aon.occam.api.model.type.ContractLeaveDetailType;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveDischargeCause;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.occam.api.model.type.Gender;
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
+import org.htmlunit.ElementNotFoundException;
 
 import solutions.aon.seg.social.Paternity;
 import solutions.aon.seg.social.SistemaRED;

@@ -27,23 +27,23 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.ScriptException;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebRequest;
-import com.gargoylesoftware.htmlunit.WebResponse;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
-import com.gargoylesoftware.htmlunit.util.WebConnectionWrapper;
+import org.htmlunit.BrowserVersion;
+import org.htmlunit.NicelyResynchronizingAjaxController;
+import org.htmlunit.ScriptException;
+import org.htmlunit.WebClient;
+import org.htmlunit.WebRequest;
+import org.htmlunit.WebResponse;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlDivision;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.HtmlTable;
+import org.htmlunit.javascript.JavaScriptErrorListener;
+import org.htmlunit.util.WebConnectionWrapper;
 
 public class MainAgreementTest {
 
@@ -175,7 +175,7 @@ public class MainAgreementTest {
 		wait4Id("textBox_SALARIO_MENSUAL_I");
 		
 		HtmlInput htmlInput = getElementById("textBox_SALARIO_MENSUAL_I");
-		String value = htmlInput.getValueAttribute();
+		String value = htmlInput.getValue();
 		Assert.assertNotNull(value);
 		Assert.assertNotEquals(value.trim(), "");
 
@@ -189,7 +189,7 @@ public class MainAgreementTest {
 		wait4Id("textBox_SALARIO_MENSUAL_I");
 		
 		htmlInput = getElementById("textBox_SALARIO_MENSUAL_I");
-		value = htmlInput.getValueAttribute();
+		value = htmlInput.getValue();
 		Assert.assertNotNull(value);
 		Assert.assertNotEquals(value.trim(), "");
 
@@ -252,7 +252,7 @@ public class MainAgreementTest {
 		Assert.assertEquals(true, hidden.matcher(deleteItem.getAttribute("style")).find());
 		
 		// Comprobamos que los campos descripcion y ssNumber han cargado y estan en readOnly
-		wait4(htmlPage, htmlPage -> "ESTATUTO DE LOS TRABAJADORES".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
+		wait4(htmlPage, htmlPage -> "ESTATUTO DE LOS TRABAJADORES".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValue()));
 		
 		Assert.assertEquals(((HtmlInput) getElementById("descriptionTextBox")).isReadOnly(), true);
 		Assert.assertEquals(((HtmlInput) getElementById("ssNumberTextBox")).isReadOnly(), true);
@@ -273,7 +273,7 @@ public class MainAgreementTest {
 		agreementTreeItem.click();
 
 		// Comprobamos el campo descripcion
-		wait4(htmlPage, htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
+		wait4(htmlPage, htmlPage -> "STAR WARS AGREEMENT".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValue()));
 		
 		// Esperamos a la tabla de Devengos
 		wait4Id("agreementPaymentDG");
@@ -339,7 +339,7 @@ public class MainAgreementTest {
 		LOGGER.warning("Cick on: " + agreementTreeItem.asNormalizedText());
 		agreementTreeItem.click();
 
-		wait4(htmlPage, htmlPage -> "CONVENIO COLECTIVO DE OFICINAS Y DESPACHOS PARA MADRID".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
+		wait4(htmlPage, htmlPage -> "CONVENIO COLECTIVO DE OFICINAS Y DESPACHOS PARA MADRID".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValue()));
 
 		wait4Id("printPreviewButton");
 		wait4Id("pdfNotLoaded");
@@ -371,16 +371,16 @@ public class MainAgreementTest {
 	protected void setValue(String id, String text) throws ParseException {
 		HtmlInput input = getElementById(id);
 		input.focus();
-		input.setValueAttribute(text);
+		input.setValue(text);
 		input.blur();
 	}
 
 	protected void wait4Value(String id, String value) throws InterruptedException {
 		wait4(htmlPage, htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id) != null);
 		LOGGER.warning("wait4Value : [ " + id + "] '"
-				+ ((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id)).getValueAttribute().trim() + "' = '"
+				+ ((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id)).getValue().trim() + "' = '"
 				+ value.trim() + "'");
-		wait4(htmlPage, htmlPage -> ((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id)).getValueAttribute()
+		wait4(htmlPage, htmlPage -> ((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id)).getValue()
 				.trim().equals(value.trim()));
 	}
 
@@ -421,7 +421,7 @@ public class MainAgreementTest {
 		agreementTreeItem.click();
 
 		// Comprobamos el campo descripcion
-		wait4(htmlPage, htmlPage -> "PAGAS EXTRAS, BONOS Y BENEFICIOS".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValueAttribute()));
+		wait4(htmlPage, htmlPage -> "PAGAS EXTRAS, BONOS Y BENEFICIOS".equals(((HtmlInput) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + "descriptionTextBox")).getValue()));
 		
 		wait4Id("category_filter");
 	}

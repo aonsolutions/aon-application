@@ -260,7 +260,7 @@ public class FeeImport extends Import {
 				project = AON.saveProject(domain, user, new Project()
 						.setDomain(domain)
 						.setRegistry(fee.getCustomer())
-						.setAlias(fee.getProject().getAlias())
+						.setAlias("")
 						.setName(fee.getProject().getAlias()));
 			}
 			fee.setProject(project);

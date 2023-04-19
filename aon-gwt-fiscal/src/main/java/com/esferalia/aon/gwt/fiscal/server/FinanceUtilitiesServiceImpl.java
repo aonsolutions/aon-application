@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.finance.utilities.FinanceUtilitiesService;
 import com.esferalia.aon.occam.api.AON;
@@ -16,6 +17,7 @@ import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParam
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 @WebServlet(name = "Finance Utilities Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/FinanceUtilities" })
 public class FinanceUtilitiesServiceImpl extends AonStatelessRemoteServiceServlet implements FinanceUtilitiesService {
@@ -61,6 +63,11 @@ public class FinanceUtilitiesServiceImpl extends AonStatelessRemoteServiceServle
 	@Override
 	public void updateWithholdingType(Occam occam, Integer invoiceId, WithholdingType newType) throws AonCoreException {
 		FINANCE.updateWithholdingType(occam, invoiceId, newType);
-		
+	}
+	
+	// Modificación de actividades en facturas.
+	@Override
+	public void updateActivity(Occam occam, Integer invoiceId, Integer activity) throws AonCoreException {
+		FINANCE.updateActivity(occam, invoiceId, activity);
 	}
 }

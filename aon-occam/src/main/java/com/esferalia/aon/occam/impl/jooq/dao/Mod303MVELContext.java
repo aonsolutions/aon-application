@@ -1,5 +1,7 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
@@ -249,6 +251,15 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 			c78 = 0;	
 		return c78;
 		
+	}
+	public double calculateResult(int activity,double value,double factor) {
+		if (hasActivity(activity)) {
+			BigDecimal i = new BigDecimal(Double.toString(value)).setScale(2, RoundingMode.HALF_UP);			
+			BigDecimal f = new BigDecimal(Double.toString(factor)).setScale(2, RoundingMode.HALF_UP);
+			return AonMathUtils.round(i.multiply(f).doubleValue());
+		} else {
+			return 0.0;
+		}
 	}
 	
 }

@@ -26,22 +26,22 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.UnexpectedPage;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlLabel;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+import org.htmlunit.ElementNotFoundException;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.UnexpectedPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.DomNode;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlLabel;
+import org.htmlunit.html.HtmlOption;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSubmitInput;
+import org.htmlunit.html.HtmlTable;
+import org.htmlunit.html.HtmlTableCell;
+import org.htmlunit.html.HtmlTableRow;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -113,8 +113,8 @@ class SistemaREDEmployee {
 		HtmlForm formParts = wait4(page, p -> p.getFormByName("jacadaform")).orElseThrow();
 		manageStatusCode(page);
 
-		formParts.getInputByName("txt_SDFTESORNAF").setValueAttribute(nss.substring(0, 2));
-		formParts.getInputByName("txt_SDFNUMNAF").setValueAttribute(nss.substring(2));
+		formParts.getInputByName("txt_SDFTESORNAF").setValue(nss.substring(0, 2));
+		formParts.getInputByName("txt_SDFNUMNAF").setValue(nss.substring(2));
 		formParts.getInputByName("btn_Sub2207601004").focus();
 		page = formParts.getInputByName("btn_Sub2207601004").click();
 
@@ -148,7 +148,7 @@ class SistemaREDEmployee {
 			
 		    while (page.getElementById("Sub0400101079_77")!=null) {
 		    	
-		    	String text = page.asText();
+		    	String text = page.asNormalizedText();
 		    	
 //		    	String[] lines = text.split("\\r?\\n");
 //		    	for (String line : lines) {
@@ -277,7 +277,7 @@ class SistemaREDEmployee {
 //					if(next!=null) {
 //						 page = ((HtmlSubmitInput) next).click();
 //						 
-//						 Matcher contractTwoMatcher = CONTRACT_DATA.matcher(page.asText());
+//						 Matcher contractTwoMatcher = CONTRACT_DATA.matcher(page.asNormalizedText());
 //							
 //						 if (contractTwoMatcher.find()) {
 //							  System.out.println("---------------CONTRACT DATA-----------------");
@@ -517,9 +517,9 @@ class SistemaREDEmployee {
 			manageStatusCode(htmlPage);
 
 			HtmlForm formParts = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-			formParts.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regimen);
-			formParts.getInputByName("txt_SDFTESO62").setValueAttribute(ccc.substring(0, 2));
-			formParts.getInputByName("txt_SDFNUM62").setValueAttribute(ccc.substring(2));
+			formParts.getInputByName("txt_SDFREG62_ayuda").setValue(regimen);
+			formParts.getInputByName("txt_SDFTESO62").setValue(ccc.substring(0, 2));
+			formParts.getInputByName("txt_SDFNUM62").setValue(ccc.substring(2));
 			formParts.getInputByName("chk_chkgrupo1_1").setChecked(true);
 			htmlPage = formParts.getInputByName("btn_Sub2207601004").click();
 			manageStatusCode(htmlPage);
@@ -564,9 +564,9 @@ class SistemaREDEmployee {
 			manageStatusCode(htmlPage);
 
 			HtmlForm formParts = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-			formParts.getInputByName("txt_SDFREG62_ayuda").setValueAttribute(regimen);
-			formParts.getInputByName("txt_SDFTESO62").setValueAttribute(ccc.substring(0, 2));
-			formParts.getInputByName("txt_SDFNUM62").setValueAttribute(ccc.substring(2));
+			formParts.getInputByName("txt_SDFREG62_ayuda").setValue(regimen);
+			formParts.getInputByName("txt_SDFTESO62").setValue(ccc.substring(0, 2));
+			formParts.getInputByName("txt_SDFNUM62").setValue(ccc.substring(2));
 			formParts.getInputByName("chk_chkgrupo1_2").setChecked(true);
 			htmlPage = formParts.getInputByName("btn_Sub2207601004").click();
 			manageStatusCode(htmlPage);
@@ -779,8 +779,8 @@ class SistemaREDEmployee {
 			HtmlInput nssInput = document.querySelector("#SDFTESORNAF");
 			HtmlInput nssInput1 = document.querySelector("#SDFNUMNAF");
 			
-			nssInput.setValueAttribute(nss.substring(0, 2));
-			nssInput1.setValueAttribute(nss.substring(2));
+			nssInput.setValue(nss.substring(0, 2));
+			nssInput1.setValue(nss.substring(2));
 			
 			HtmlOption onlineOption = document.querySelector("#ListaTipoImpresion option:nth-child(3)");
 			onlineOption.click();

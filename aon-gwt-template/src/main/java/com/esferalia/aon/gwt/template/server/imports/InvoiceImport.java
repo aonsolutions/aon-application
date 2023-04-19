@@ -660,7 +660,10 @@ public class InvoiceImport extends ImportUtils{
 				}
 
 				ai.addVat(vat);
-				total = total + (invoice.mustApplyISP() ? ivs.get(j).getBase() : ivs.get(j).getTotal());
+				double retentionQuota = ivs.get(j).getRetentionQuota() != null ? ivs.get(j).getRetentionQuota() : 0.0;
+				total = total + (invoice.mustApplyISP() 
+						? ivs.get(j).getBase() - retentionQuota
+						: ivs.get(j).getTotal());
 				base = base + ivs.get(j).getBase();
 				j++;
 			}
@@ -984,7 +987,11 @@ public class InvoiceImport extends ImportUtils{
 					vat.setSurchargeQuota(0.0);
 				}
 				ai.addVat(vat);
-				total = total + (invoice.isIsp() ? aux.getBase() : aux.getTotal());
+				double retentionQuota = aux.getRetentionQuota() != null ? aux.getRetentionQuota() : 0.0;
+	
+				total = total + (invoice.isIsp() 
+						? aux.getBase() - retentionQuota
+						: aux.getTotal());
 				base = base + aux.getBase();
 				checkCuotas(domain, aux);
 			}

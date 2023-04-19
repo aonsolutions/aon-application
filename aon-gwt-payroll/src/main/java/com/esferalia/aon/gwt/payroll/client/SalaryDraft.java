@@ -290,6 +290,10 @@ public class SalaryDraft extends ResizeComposite
 			"BASE_CGC_E", 
 			"BASE_CGP_E", // internals
 			"BASE_CGC_MIN_HORA",
+			"BASE_PAGO_DIRECTO",
+			"BASE_PAGO_DIRECTO_BRUTA",
+			"BASE_MTNAD",
+			"BASE_MTNAD_BRUTA",
 			
 			"BASE_CGC_MAX_MES", "BASE_CGC_MIN_MES", 
 			"BASE_CGP_MAX_MES", "BASE_CGP_MIN_MES",
