@@ -649,6 +649,7 @@ public class CustomerFee extends MainEntryPoint {
 
 		feeTable.getCellFormatter().addStyleName(row, 0, AON.CSS.aonHeaderSticky());
 		feeTable.getCellFormatter().addStyleName(row, 1, AON.CSS.aonHeaderSticky());
+		feeTable.getCellFormatter().getElement(row, 1).getStyle().setProperty("z-index", "1");
 		feeTable.getCellFormatter().addStyleName(row, 2, AON.CSS.aonHeaderSticky());
 		feeTable.getCellFormatter().addStyleName(row, 3, AON.CSS.aonHeaderSticky());
 		feeTable.getCellFormatter().addStyleName(row, 4, AON.CSS.aonHeaderSticky());
