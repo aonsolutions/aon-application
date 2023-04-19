@@ -32,19 +32,19 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
 import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.Page;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlOption;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.HtmlTable;
+import org.htmlunit.html.HtmlTableCell;
+import org.htmlunit.html.HtmlTableRow;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -299,7 +299,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			
 			form.getInputByName(ARQ_SPM_OUT).remove(); 
 			
-			Toolkit.formatDate(startdate, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBaja").setValueAttribute(d));
+			Toolkit.formatDate(startdate, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBaja").setValue(d));
 
 			// Data Contract
 			HtmlOption contractTypeOption = null;
@@ -323,22 +323,22 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 
 			String baseCotStr = Toolkit.parseDecimalToString(baseCot);
 			if(cotBaseInput!=null && !baseCotStr.isEmpty()) {
-				cotBaseInput.setValueAttribute(baseCotStr);
+				cotBaseInput.setValue(baseCotStr);
 			}
 
 			if(cotDaysInput!=null && cotDays>0) {
-				cotDaysInput.setValueAttribute(cotDays+"");
+				cotDaysInput.setValue(cotDays+"");
 			}
 			
 			if (occupation.isPresent()) {				
 				((HtmlSelect) form.querySelector("#ocupacion")).setSelectedAttribute(occupation.get(), true);
 			}
 			
-			licenseNumber.ifPresent(d-> form.getInputByName("numcolegiado").setValueAttribute(d));
-			cias.ifPresent(c-> form.getInputByName("cias").setValueAttribute(c));
+			licenseNumber.ifPresent(d-> form.getInputByName("numcolegiado").setValue(d));
+			cias.ifPresent(c-> form.getInputByName("cias").setValue(c));
 
 			if (fATEP.isPresent()) {
-				Toolkit.formatDate(fATEP.get(), DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaATEP").setValueAttribute(d));
+				Toolkit.formatDate(fATEP.get(), DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaATEP").setValue(d));
 			}
 
 			if (accidentType.isPresent()) {
@@ -395,12 +395,12 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			form.getInputByName(ARQ_SPM_OUT).remove(); 
 			
 
-			Toolkit.formatDate(fbaja, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBaja").setValueAttribute(d));
+			Toolkit.formatDate(fbaja, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBaja").setValue(d));
 			
-			Toolkit.formatDate(falta, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaAlta").setValueAttribute(d));
+			Toolkit.formatDate(falta, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaAlta").setValue(d));
 			
 			if (fATEP.isPresent()) {
-				Toolkit.formatDate(fATEP.get(), DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaATEP").setValueAttribute(d));
+				Toolkit.formatDate(fATEP.get(), DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaATEP").setValue(d));
 			}
 
 			if (accidentType.isPresent()) {
@@ -458,11 +458,11 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			
 			form.getInputByName(ARQ_SPM_OUT).remove(); 
 			
-			Toolkit.formatDate(fbaja, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBaja").setValueAttribute(d));
+			Toolkit.formatDate(fbaja, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBaja").setValue(d));
 			
-			Toolkit.formatDate(fconfirmation, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaConfirmacion").setValueAttribute(d));
+			Toolkit.formatDate(fconfirmation, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaConfirmacion").setValue(d));
 			
-			npartConfimation.ifPresent(c-> form.getInputByName("numConfirmacion").setValueAttribute(c));
+			npartConfimation.ifPresent(c-> form.getInputByName("numConfirmacion").setValue(c));
 
 			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			htmlPage = validate.click();
@@ -496,10 +496,10 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			form.getInputByName(ARQ_SPM_OUT).remove(); 
 
-			form.getInputByName("regimenAnulacion").setValueAttribute(regime);
-			form.getInputByName("cccAnulacion").setValueAttribute(ccc);
-			form.getInputByName("nafAnulacion").setValueAttribute(naf);
-			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBajaMedAnulacion").setValueAttribute(d) );
+			form.getInputByName("regimenAnulacion").setValue(regime);
+			form.getInputByName("cccAnulacion").setValue(ccc);
+			form.getInputByName("nafAnulacion").setValue(naf);
+			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBajaMedAnulacion").setValue(d) );
 			
 			HtmlButton continueIn= (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[value=\"CONTINUAR_ANULACION\"]")).orElseThrow();
 			htmlPage = continueIn.click();
@@ -555,14 +555,14 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			form.getInputByName(ARQ_SPM_OUT).remove(); 
 
-			form.getInputByName("regimenEmision").setValueAttribute(regime);
-			form.getInputByName("cccEmision").setValueAttribute(ccc);
-			form.getInputByName("nafEmision").setValueAttribute(nss);
-			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBajaMedEmision").setValueAttribute(d));
+			form.getInputByName("regimenEmision").setValue(regime);
+			form.getInputByName("cccEmision").setValue(ccc);
+			form.getInputByName("nafEmision").setValue(nss);
+			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBajaMedEmision").setValue(d));
 			
 //			//DATES
-//			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaDesdeEmision").setValueAttribute(d));
-//			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaHastaEmision").setValueAttribute(d));
+//			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaDesdeEmision").setValue(d));
+//			Toolkit.formatDate(dateBj, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaHastaEmision").setValue(d));
 			
 			HtmlButton continueIn = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[value=\"CONTINUAR_EMISION\"]")).orElseThrow();
 			htmlPage = continueIn.click();
@@ -586,9 +586,9 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 		wait4(htmlPage, p ->p.querySelector("[name=\"regimen\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 
-		form.getInputByName("regimen").setValueAttribute(regime); 
-		form.getInputByName("ccc").setValueAttribute(ccc); 
-		form.getInputByName("naf").setValueAttribute(naf); 
+		form.getInputByName("regimen").setValue(regime); 
+		form.getInputByName("ccc").setValue(ccc); 
+		form.getInputByName("naf").setValue(naf); 
 		
 		form.getInputByName(ARQ_SPM_OUT).remove(); 
 		

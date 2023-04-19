@@ -108,6 +108,10 @@ public class FinanceUtilitiesModule extends MainEntryPoint{
 		invoiceDisclosurePanel.setOpen(true);
 		FlowPanel invoicePanel = new FlowPanel();
 		invoiceDisclosurePanel.add(invoicePanel);
+
+		ActivityUpdateCheck activityTypeCheck = new ActivityUpdateCheck(options,domain);
+		invoicePanel.add(activityTypeCheck.getSidebarWidget());
+		activityTypeCheck.addSelectionHandler( event -> content.setWidget( activityTypeCheck ));
 		
 		WithholdingTypeCheck withholdingTypeCheck = new WithholdingTypeCheck(options,domain);
 		invoicePanel.add(withholdingTypeCheck.getSidebarWidget());
@@ -148,7 +152,7 @@ public class FinanceUtilitiesModule extends MainEntryPoint{
 		FlowPanel titlePanel = new FlowPanel();
 		titlePanel.setStyleName(AON.AON_CSS.aonFindingTitleInternal());
 		toolbar.setWidget(0, 0, titlePanel);
-		toolbar.setWidget(0, 0, new Label("Utilidades de tesorer\u00EDa"));
+		toolbar.setWidget(0, 0, new Label("Utilidades de facturaci\u00F3a / tesorer\u00EDa"));
 		toolbar.getCellFormatter().setStyleName(0,0, AON.AON_CSS.aonFindingTitle());
 		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonBold());
 		toolbar.getCellFormatter().addStyleName(0,0, AON.AON_CSS.aonNowrap());

@@ -10,7 +10,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.esferalia.aon.htmlunit.HtmlUnitIT;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlPage;
 
 public class TrainningIntegralTest extends BaseIntegralTestCase {
 

@@ -1,7 +1,7 @@
 package solutions.aon.seg.social.exception;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.html.HtmlPage;
 
 public class OutOfServiceException extends SegSocialException{
 

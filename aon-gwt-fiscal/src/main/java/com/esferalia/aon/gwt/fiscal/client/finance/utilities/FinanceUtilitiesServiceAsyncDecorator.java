@@ -72,5 +72,11 @@ public class FinanceUtilitiesServiceAsyncDecorator implements FinanceUtilitiesSe
 		fsa.updateWithholdingType(occam, invoiceId, newType, new AsyncCallbackWrapper<>(callback));
 	}
 	
+	// Modificación de actividades en facturas.
+	@Override
+	public void updateActivity(Occam occam, Integer invoiceId, Integer activity, AsyncCallback<Void> callback) throws AonCoreException {
+		AON.start();
+		fsa.updateActivity(occam, invoiceId, activity, new AsyncCallbackWrapper<>(callback));
+	}
 
 }

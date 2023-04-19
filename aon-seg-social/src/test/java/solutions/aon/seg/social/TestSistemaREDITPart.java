@@ -259,4 +259,16 @@ public class TestSistemaREDITPart {
 		catch (IOException e) {fail("IOException");}
 	}	
 	
+	@Test
+	public void testGetItsSuccessTest() {
+		
+		try (final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("AyudaTFNMT.p12")) {			
+			Collection<It> its = SistemaREDITPart.getIts(certificateInputStream, "123456", "pkcs12", "0111","11122534302", Toolkit.parseDate("1-1-2023", "dd-MM-yyyy"), new Date(), Optional.empty());
+			its.stream().map(It::getStart).forEach(it -> System.out.println( it.getNaf() +" , " + it.getNameEmployee() + " " + it.getBjInitDate().get() ));
+		}
+		catch (StatusCodeException | InvalidDataException e) {} catch (InvalidCertificateException e) {fail("unexpected certificate exception");}
+		catch (SegSocialException e) {fail("unexpected SegSocialException" + e);}
+		catch (FileNotFoundException e) {fail("File not found");}
+		catch (IOException e) {fail("IOException");}
+	}	
 }

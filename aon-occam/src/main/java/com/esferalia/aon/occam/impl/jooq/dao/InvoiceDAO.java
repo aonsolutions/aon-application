@@ -54,6 +54,7 @@ import com.esferalia.aon.jooq.tables.records.InvoiceRecord;
 import com.esferalia.aon.jooq.tables.records.InvoiceTaxRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Account;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
@@ -77,6 +78,7 @@ import com.esferalia.aon.occam.api.model.finance.InvoiceSeries;
 import com.esferalia.aon.occam.api.model.finance.InvoiceTax;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroupFilter;
+import com.esferalia.aon.occam.api.model.fiscal.VatSummaryType;
 import com.esferalia.aon.occam.api.model.management.PurchaseDetail;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistryType;
@@ -1672,6 +1674,164 @@ public class InvoiceDAO {
 						.execute())
 			);
 		ctx.log().info("UPDATE WITHHOLDING TYPE: {0}: {1} filas.",invoiceId, sum.getValue());
-		;
 	}
+
+	public static Condition getWhere(AccountingReportParams params) {
+		
+		Condition condition = INVOICE.DOMAIN.equal( params.getDomain() );
+		
+		if (params.getActivity() != null) {
+			if (AonMathUtils.isNegative(params.getActivity())) {
+				// Sólo las comunes. Los "sin activdad".
+				condition = condition.and( INVOICE.ACTIVITY.isNull());
+			} else {
+				condition = condition.and( INVOICE.ACTIVITY.eq( params.getActivity() ));
+			}
+		}
+		if(params.getInvoices() != null){
+			condition = condition.and( INVOICE.ID.in( params.getInvoices() ));
+		}
+			
+		if(params.getFromDate() != null){
+			condition = condition.and( INVOICE.ISSUE_DATE.ge( AonDateUtils.toSql(params.getFromDate())));
+		}
+		if(params.getToDate() != null){
+			condition = condition.and( INVOICE.ISSUE_DATE.le( AonDateUtils.toSql(params.getToDate())));
+		}
+
+		if(params.getActivity() != null){
+			condition = condition.and( INVOICE.ACTIVITY.eq( params.getActivity()));
+		}
+
+		if (params.getRegistry()  != null && params.getRegistry().intValue() != 0 ) {
+			condition = condition.and( INVOICE.REGISTRY.eq( params.getRegistry() ));
+		}
+		
+		if (params.getAccrualRegime() != null) {
+			condition = condition.and( INVOICE.VAT_ACCRUAL_PAYMENT.eq( AonEnumUtils.getByte(params.getAccrualRegime())));
+		}
+		
+		if (params.getInvestment() != null) {
+			condition = condition.and( INVOICE.INVESTMENT.eq( AonEnumUtils.getByte(params.getInvestment())));
+		}
+		
+		if (params.getRectificationType() != null) {
+			condition = condition.and( INVOICE.RECTIFICATION_TYPE.eq( params.getRectificationType().value()));
+		}
+		
+		if (params.getService() != null) {
+			if ( params.getService().booleanValue() ) {
+				condition = condition.and( INVOICE.SERVICE.eq((byte)1).or( INVOICE.TYPE.eq( InvoiceType.EXPENSES.value())));
+			} else {
+				condition = condition.and( INVOICE.SERVICE.ne((byte)1).and( INVOICE.TYPE.ne( InvoiceType.EXPENSES.value())));
+			}
+		}
+		
+		if (params.getOutput() != null) {
+			if (params.getOutput().booleanValue()) {
+				condition = condition.and( INVOICE.TYPE.eq( InvoiceType.SALES.value() ));
+			} else {
+				condition = condition.and( INVOICE.TYPE.in( InvoiceType.EXPENSES.value(), InvoiceType.PURCHASE.value() ));
+			}
+		}
+			
+		if (params.getVatSummaryType() != null) {
+			if (params.getVatSummaryType() == VatSummaryType.NATIONAL) {
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.NATIONAL.value() ));
+				condition = condition.and( INVOICE.WITHHOLDING_FARMER.eq( AonEnumUtils.getByte(false)));
+			} else if (params.getVatSummaryType() == VatSummaryType.SURCHARGE){	
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.NATIONAL.value() ));
+				condition = condition.and( INVOICE.SURCHARGE.eq( AonEnumUtils.getByte(true)));
+			} else if (params.getVatSummaryType() == VatSummaryType.FARMER) {
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.NATIONAL.value() ));
+				condition = condition.and( INVOICE.WITHHOLDING_FARMER.eq( AonEnumUtils.getByte(true)));
+			} else if (params.getVatSummaryType() == VatSummaryType.INTRACOMMUNITY) {
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.INTRACOMMUNITY.value() ));
+			} else if (params.getVatSummaryType() == VatSummaryType.EXTRACOMMUNITY) {
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.EXTRACOMMUNITY.value() ));
+			} else if (params.getVatSummaryType() == VatSummaryType.CAN_CEU_MEL) {
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.CAN_CEU_MEL.value() ));
+			} else if (params.getVatSummaryType() == VatSummaryType.OTHER_ISP) {
+				condition = condition.and( INVOICE.TRANSACTION.eq( InvoiceTransactionType.OTHER_ISP.value() ));
+			}
+		}
+		return condition;
+	}
+	
+	public static Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset , int numberOfRows) {
+		ctx.checkRead();
+		Field<Integer> orderedType = getOrderedType();
+		return ctx.getDslContext()
+			.select(
+				 INVOICE.ID
+				,INVOICE.DOMAIN
+				,orderedType
+				,INVOICE.ACTIVITY
+				,INVOICE.TYPE
+				,INVOICE.TRANSACTION
+				,INVOICE.SERIES
+				,INVOICE.NUMBER
+				,INVOICE.REFERENCE_CODE
+				,INVOICE.ISSUE_DATE
+				,INVOICE.TAX_DATE
+				,INVOICE.REGISTRY
+				,INVOICE.RDOCUMENT
+				,INVOICE.RDOCUMENT_TYPE
+				,INVOICE.RDOCUMENT_COUNTRY
+				,INVOICE.RNAME
+				,INVOICE.SECURITY_LEVEL
+				
+				,ENTERPRISE_ACTIVITY.DESCRIPTION
+				,IAE.EPIGRAPH				
+			)
+			.from(INVOICE)
+			.join(REGISTRY).on(REGISTRY.ID.equal(INVOICE.REGISTRY))
+			.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(INVOICE.ACTIVITY))
+			.leftOuterJoin(IAE).on(IAE.ID.equal(ENTERPRISE_ACTIVITY.IAE))
+			.where(getWhere(params))
+			.orderBy(orderedType,INVOICE.TYPE,INVOICE.ISSUE_DATE.desc(),INVOICE.REFERENCE_CODE)
+			.limit(offset , numberOfRows )
+			.fetch()
+			.stream()
+			.map(new HeaderInvoiceFiller());
+	}
+
+	public static class HeaderInvoiceFiller  implements Function<Record,Invoice> {
+
+		@Override
+		public Invoice apply(Record record) {
+			return new Invoice()
+				.setId(record.getValue(INVOICE.ID))
+				.setDomain(record.getValue(INVOICE.DOMAIN))
+				.setType(AonEnumUtils.enumValue(InvoiceType.class,record.getValue(INVOICE.TYPE)))
+				.setSeries(record.getValue(INVOICE.SERIES))
+				.setNumber(record.getValue(INVOICE.NUMBER))
+				.setReferenceCode(record.getValue(INVOICE.REFERENCE_CODE))
+				.setIssueDate(record.getValue(INVOICE.ISSUE_DATE))
+				.setTaxDate(record.getValue(INVOICE.TAX_DATE))
+				.setSecurityLevel(AonEnumUtils.enumValue(SecurityLevel.class,record.getValue(INVOICE.SECURITY_LEVEL)))
+				.setRegistry(record.getValue(INVOICE.REGISTRY))
+				.setRegistryDocument(record.getValue(INVOICE.RDOCUMENT))
+				.setRegistryDocumentType(AonEnumUtils.enumValue(DocumentType.class,record.getValue(INVOICE.RDOCUMENT_TYPE)))
+				.setRegistryDocumentCountry(Country.safeValueOf(record.getValue(INVOICE.RDOCUMENT_COUNTRY)))
+				.setRegistryName(record.getValue(INVOICE.RNAME))
+				.setActivity(new EnterpriseActivity()
+					.setId(record.getValue(INVOICE.ACTIVITY))
+					.setDescription(record.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
+					.setEpigraph(record.getValue(IAE.EPIGRAPH))
+					)
+			;
+		}
+		
+	}
+
+	public static void updateActivity(AONContext ctx, Integer invoiceId, Integer activity) {
+		if (invoiceId == null)  throw new AonCoreException("El Identificador de factura no puede estar vacio");
+		int count = ctx.getDslContext().update(INVOICE)
+			.set(INVOICE.ACTIVITY, activity)
+			.where(INVOICE.ID.eq(invoiceId))
+			.execute();
+		ctx.log().info("UPDATE ACTIVITY: Invoice {0}: Activity {1}. {2} filas.",invoiceId, activity, count);
+	}
+	
 }
