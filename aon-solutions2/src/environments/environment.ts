@@ -4,7 +4,15 @@
 
 export const environment = {
   production: false,
-  urlApiAon: "https://aonsolutions.org/ms/api/"
+  urlApiAon: "https://aonsolutions.org/ms/api/",
+  headerApi: {
+    domainName: "a54212356-cau.aonsolutions.org",
+    domainId: 545,
+    domainLogin: 87811999
+  },
+  localStorageJwt: {
+    accessToken: "session_id"
+  }
 };
 
 /*

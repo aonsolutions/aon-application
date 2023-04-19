@@ -1,8 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Usuario } from '../../core/models/usuario';
+import { Usuario } from '../models/usuario';
 import { Observable } from 'rxjs';
+import { JwtAuthService } from './jwt-auth.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -11,23 +13,18 @@ export class ApiService {
 
   urlBase:string = environment.urlApiAon;
   headers: any = {
-    domain_name: "a54212356-cau.aonsolutions.org",
-    domain_id: 545,
-    domain_login: 87811999,
+    domain_name: environment.headerApi.domainName,
+    domain_id: environment.headerApi.domainId,
+    domain_login: environment.headerApi.domainLogin,
   };
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private jwtAuth: JwtAuthService, private router: Router) { }
 
   login(user: any) {
     this.http.post<any>(this.urlBase+'login', user).subscribe(data => { // Subscribe actua como una 'promesa' de JS
       this.headers['session_id'] = data.session_id;
-      console.log('Login exitoso. Veamos los detalles de este user');
-      // this.setToken(data.session_id);
-      this.getUser().subscribe(usuario => {
-        console.log(usuario);
-      }
-      )
-      // console.log('Se ha establecido el siguiente token: '+this.getToken());
+      this.jwtAuth.login(data.session_id);
+      this.router.navigateByUrl("/home");
     });
   }
 
