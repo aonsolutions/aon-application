@@ -256,7 +256,7 @@ public class Mod303MVELContext extends ModelMVELContext implements Map<String, O
 		if (hasActivity(activity)) {
 			BigDecimal i = new BigDecimal(Double.toString(value)).setScale(2, RoundingMode.HALF_UP);			
 			BigDecimal f = new BigDecimal(Double.toString(factor)).setScale(2, RoundingMode.HALF_UP);
-			return i.multiply(f).doubleValue();
+			return AonMathUtils.round(i.multiply(f).doubleValue());
 		} else {
 			return 0.0;
 		}
