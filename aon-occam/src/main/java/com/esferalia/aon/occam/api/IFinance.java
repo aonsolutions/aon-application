@@ -122,6 +122,8 @@ public interface IFinance {
 	
 	public Map<Integer, Integer> getMinMaxCustomerFeeYear(CloseableAONContext ctx, int domainId);
 	
+	public Integer getItemIdByProductCode(CloseableAONContext ctx, int domainId, String productCode);
+	
 	// 	***********************************************
 	// 	************************** INVOICE REGISTRY ***
 	// 	***********************************************

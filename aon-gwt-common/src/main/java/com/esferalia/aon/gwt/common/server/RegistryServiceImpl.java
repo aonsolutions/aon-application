@@ -119,5 +119,9 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domain, String user) {
 		return AON.getMinMaxCustomerFeeYear(domainName, domain, user);
 	}
+	@Override
+	public Integer getItemIdByProductCode(String domainName, int domain, String user, String productCode) {
+		return AON.getItemIdByProductCode(domainName, domain, user, productCode);
+	}
 	
 }

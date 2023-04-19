@@ -2770,6 +2770,12 @@ public class AON {
 			return getFinance().getMinMaxCustomerFeeYear(ctx, domainId);
 		}
 	}
+	
+	public static Integer getItemIdByProductCode(String domainName, int domainId, String login, String productCode) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getItemIdByProductCode(ctx, domainId, productCode);
+		}
+	}
 
 	// ********************************************
 	// ****************************** GWT-OFFICE **

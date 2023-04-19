@@ -134,4 +134,10 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		serviceAsync.getMinMaxCustomerFeeYear(domainName, domain, user, new AsyncCallbackWrapper<Map<Integer, Integer>>(callback));
 	}
 
+	@Override
+	public void getItemIdByProductCode(String domainName, int domain, String user, String productCode, AsyncCallback<Integer> callback) {
+		AON.start();
+		serviceAsync.getItemIdByProductCode(domainName, domain, user, productCode, new AsyncCallbackWrapper<Integer>(callback));
+	}
+
 }

@@ -16,6 +16,7 @@ import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -131,8 +132,30 @@ public class FeeDAO {
 			condition = condition.and(CUSTOMER_FEE.DISCOUNT_EXPR.eq(customerFeeParams.getDiscount()));
 		
 		if(AonStringUtils.isNotBlank(customerFeeParams.getPrice())) {
-			Double price = Double.parseDouble(customerFeeParams.getPrice());
-			condition = condition.and(CUSTOMER_FEE.PRICE.eq(price));
+			if(AonStringUtils.containsIgnoreCase(customerFeeParams.getPrice(), ">")) {
+				String priceStr = customerFeeParams.getPrice().split(">")[1].trim();
+				if(AonStringUtils.containsIgnoreCase(priceStr, "=")) {
+					priceStr = priceStr.split("=")[1].trim();
+					Double price = Double.parseDouble(priceStr);
+					condition = condition.and(CUSTOMER_FEE.PRICE.ge(price));
+				} else {
+					Double price = Double.parseDouble(priceStr);
+					condition = condition.and(CUSTOMER_FEE.PRICE.gt(price));
+				}
+			} else if(AonStringUtils.containsIgnoreCase(customerFeeParams.getPrice(), "<")) {
+				String priceStr = customerFeeParams.getPrice().split("<")[1].trim();
+				if(AonStringUtils.containsIgnoreCase(priceStr, "=")) {
+					priceStr = priceStr.split("=")[1].trim();
+					Double price = Double.parseDouble(priceStr);
+					condition = condition.and(CUSTOMER_FEE.PRICE.le(price));
+				} else {
+					Double price = Double.parseDouble(priceStr);
+					condition = condition.and(CUSTOMER_FEE.PRICE.lt(price));
+				}
+			} else {
+				Double price = Double.parseDouble(customerFeeParams.getPrice());
+				condition = condition.and(CUSTOMER_FEE.PRICE.eq(price));
+			}
 		}
 		
 		return condition;
@@ -258,20 +281,6 @@ public class FeeDAO {
 		return fee.setId(id);
 	}
 
-//	MULTIPLE FEE INSERT
-//	
-//	private static void insert(AONContext ctx, Stream<Fee> fs) {
-//		ctx.checkWrite();
-//		ctx.getDslContext().transaction(configuration -> {
-//			InsertValuesStep17<ProductRecord, Integer, Integer, Integer, Short, Integer, String, Double, Double, String, Date, Date, Date, Short, Byte, Integer, Integer, Integer> insertQuery = ctx.getDslContext().insertInto(PRODUCT, PRODUCT.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE);
-//			fs.forEach(f ->{
-//				FeeValidation.validate(ctx, f);
-//				insertQuery.values(f.getDomain().getId(), f.getProject().getId(), f.getCustomer().getId(), f.getLine(), f.getItem().getId(), f.getDescription(), f.getQuantity(), f.getPrice(), f.getDiscountExpr(), new Date(f.getStartDate().getTime()), new Date(f.getEndDate().getTime()), new Date(f.getBillingDate().getTime()), (short) f.getPeriod().value(), f.getSecurityLevel().value(), f.getInvoicingGroup().getId(), f.getSeller().getId(), f.getWorkplace().getId());
-//			});
-//			insertQuery.execute();
-//		});
-//	}
-
 	private static Fee update(AONContext ctx, Fee f) {
 		Date startDate = f.getStartDate() != null ? new Date(f.getStartDate().getTime()) : null;
 		Date endDate = f.getEndDate() != null ? new Date(f.getEndDate().getTime()) : null;
@@ -382,10 +391,10 @@ public class FeeDAO {
 		
 		UpdateSetMoreStep<CustomerRecord> updateQuery = (UpdateSetMoreStep) ctx.getDslContext().update(CUSTOMER_FEE);
 		
+		if(null != fee.getItem() && null != fee.getItem().getId()) updateQuery.set(CUSTOMER_FEE.ITEM, fee.getItem().getId());
 		if(null != fee.getPeriod()) updateQuery.set(CUSTOMER_FEE.PERIOD, (short) fee.getPeriod().value());
-		if(null != fee.getQuantity()) updateQuery.set(CUSTOMER_FEE.QUANTITY, fee.getQuantity());
 		if(null != fee.getPrice()) updateQuery.set(CUSTOMER_FEE.PRICE, fee.getPrice());
-		if(null != fee.getDiscountExpr()) updateQuery.set(CUSTOMER_FEE.DISCOUNT_EXPR, fee.getDiscountExpr());
+		if(AonStringUtils.isNotBlank(fee.getDiscountExpr()) && !AonStringUtils.equalsIgnoreCase(fee.getDiscountExpr(), "0.0")) updateQuery.set(CUSTOMER_FEE.DISCOUNT_EXPR, fee.getDiscountExpr());
 		
 		if(null != fee.getBillingDate()) updateQuery.set(CUSTOMER_FEE.BILLING_DATE, parseSQLDate(fee.getBillingDate()));
 		if(null != fee.getStartDate()) updateQuery.set(CUSTOMER_FEE.INITIAL_DATE, parseSQLDate(fee.getStartDate()));
@@ -443,6 +452,16 @@ public class FeeDAO {
 		Map<Integer, Integer> result = new HashMap<>();
 		result.put(customerRecords.size(), customerFeeRecords.size());
 		return result;
+	}
+
+	public static Integer getItemIdByProductCode(CloseableAONContext ctx, int domainId, String productCode) {
+		List<Integer> itemRecords = ctx.getDslContext().select(ITEM.ID).from(ITEM)
+			.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+			.where(PRODUCT.CODE.eq(productCode))
+			.and(ITEM.DOMAIN.eq(domainId))
+			.fetch(ITEM.ID);
+		
+		return itemRecords.isEmpty() ? null : itemRecords.get(0);
 	}
 	
 }

@@ -54,5 +54,5 @@ public interface RegistryService extends RemoteService {
 	Integer saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee>  feeList);
 	Integer saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params);
 	Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domain, String user);
-	
+	Integer getItemIdByProductCode(String domainName, int domain, String user, String productCode);
 }

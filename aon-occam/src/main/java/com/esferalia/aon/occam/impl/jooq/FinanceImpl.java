@@ -264,6 +264,12 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getMinMaxCustomerFeeYear(ctx, domainId));
 	}
+	
+	@Override
+	public Integer getItemIdByProductCode(CloseableAONContext ctx, int domainId, String productCode) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getItemIdByProductCode(ctx, domainId, productCode));
+	}
 
 	@Override
 	public Stream<InvoiceDetail> getBoughtProductStream(AONContext ctx, InvoiceFilter filter) {
