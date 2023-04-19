@@ -4,7 +4,7 @@ package solutions.aon.sepe.exceptions;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.FailingHttpStatusCodeException;
 
 import solutions.aon.sepe.exceptions.statusCode.ForbiddenException;
 

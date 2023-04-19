@@ -3,12 +3,14 @@ package com.esferalia.aon.occam.impl.jooq;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IFinance;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
@@ -98,6 +100,11 @@ public class FinanceImpl implements IFinance {
 				configuration -> InvoiceDAO.accept(ctx, invoice, rawdocId));
 	}
 	
+	@Override
+	public Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit) {
+		return ctx.getDslContext().transactionResult(
+			configuration -> InvoiceDAO.getInvoiceHeaders(ctx, params, offset, limit));
+	}
 	@Override
 	public Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter){
 		return ctx.getDslContext().transactionResult(
@@ -197,15 +204,21 @@ public class FinanceImpl implements IFinance {
 	// ------------------------------------- FEE
 	
 	@Override
-	public LinkedList<String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
+	public Map<String, String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getCustomersSuggestion(ctx, domainId, query));
 	}
 
 	@Override
-	public LinkedList<String> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query) {
+	public Map<String, String> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getProductsSuggestion(ctx, domainId, query));
+	}
+	
+	@Override
+	public Map<Integer, Integer> getCustomerProductsUpdates(CloseableAONContext ctx, int domainId, CustomerFeeParams customerFeeParamsy) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getCustomerProductsUpdates(ctx, customerFeeParamsy));
 	}
 
 	@Override
@@ -227,9 +240,15 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
-	public void saveList(AONContext ctx, LinkedList<Fee> feeList) {
-		ctx.getDslContext().transaction(configuration
+	public Integer saveList(AONContext ctx, LinkedList<Fee> feeList) {
+		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.saveList(ctx, feeList));
+	}
+	
+	@Override
+	public Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.saveMassiveFees(ctx, fee, customerFeeParams));
 	}
 
 	@Override
@@ -244,6 +263,12 @@ public class FinanceImpl implements IFinance {
 		ctx.getDslContext().transaction(configuration -> {
 			FeeDAO.delete(ctx, fs);
 		} );			
+	}
+	
+	@Override
+	public Map<Integer, Integer> getMinMaxCustomerFeeYear(CloseableAONContext ctx, int domainId) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getMinMaxCustomerFeeYear(ctx, domainId));
 	}
 
 	@Override
@@ -335,6 +360,11 @@ public class FinanceImpl implements IFinance {
 	public void updateWithholdingType(AONContext ctx, Integer invoiceId, WithholdingType newType) {
 		ctx.getDslContext().transaction(configuration
 				-> InvoiceDAO.updateWithholdingType( ctx , invoiceId, newType));
+	}
+	@Override
+	public void updateActivity(AONContext ctx, Integer invoiceId, Integer activity) {
+		ctx.getDslContext().transaction(configuration
+				-> InvoiceDAO.updateActivity( ctx , invoiceId, activity));
 	}
 	@Override
 	public FinanceUtilitiesResult missingFinanceInvoices(AONContext ctx,FinanceUtilitiesParams params) {
@@ -613,4 +643,5 @@ public class FinanceImpl implements IFinance {
 		ctx.getDslContext().transaction(
 				configuration -> InvoiceInfoDAO.delete(ctx, f -> f.getInvoiceProperty().eq(invoiceId)));
 	}
+	
 }

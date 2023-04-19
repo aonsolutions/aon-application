@@ -288,6 +288,12 @@ public class QualitySheet extends Composite{
 			qualityTest.setWidget(3, 2, new Label(""));
 			qualityTest.setWidget(3, 3, new Label(""));
 		}
+		
+		qualityTest.setWidget(4, 0, new Label("Nitratos"));
+		qualityTest.setWidget(4, 1, doubleBox(QualitySheetCode.UFQAC9));
+		
+		qualityTest.setWidget(4, 2, new Label(""));
+		qualityTest.setWidget(4, 3, new Label(""));
 	}
 	
 	private void caliberControl() {

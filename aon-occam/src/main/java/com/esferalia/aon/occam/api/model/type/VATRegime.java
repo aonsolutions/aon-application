@@ -20,22 +20,28 @@ public enum VATRegime implements Serializable {
 		this.abbr = abbr;
 		this.description = description;
 	}
+	
 	public String getName() {
 		return name;
 	}
+	
 	public String getAbbr() {
 		return abbr;
 	}
+	
 	public String getDescription() {
 		return description;
 	}
+	
 	public byte value() {
 		return (byte) ordinal();
 	}	
+	
 	public static VATRegime safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 
 	}
+	
 	public static VATRegime safeValueOf( Integer i ) {
 		if (i == null) return null;
 		if (i < 0 || i.intValue() >= VATRegime.values().length) return null;
@@ -49,6 +55,18 @@ public enum VATRegime implements Serializable {
 				return rs;
 		}
 		return GENERAL;
+	}
+	
+	public boolean isGeneral() {
+		return this.equals(GENERAL);
+	}
+	
+	public boolean isSimplified() {
+		return this.equals(SIMPLIFIED);
+	}
+	
+	public boolean isExempt() {
+		return this.equals(EXEMPT);
 	}
 
 }

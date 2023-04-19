@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.common.client;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -13,6 +14,7 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -44,9 +46,13 @@ public interface RegistryService extends RemoteService {
 	// **************************************************
 	// *************************************** [CUSTOMER]
 	// **************************************************
-	LinkedList<String> getCustomersSuggestion(String domainName, int domain, String user, String query);
-	LinkedList<String> getProductsSuggestion(String domainName, int domain, String user, String query);
-	LinkedList<Fee> getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams) ;
-	void saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee>  feeList) ;
-
+	Map<String, String> getCustomersSuggestion(String domainName, int domain, String user, String query);
+	Map<String, String> getProductsSuggestion(String domainName, int domain, String user, String query);
+	Map<Integer, Integer> getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams);
+	
+	LinkedList<Fee> getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams);
+	Integer saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee>  feeList);
+	Integer saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params);
+	Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domain, String user);
+	
 }

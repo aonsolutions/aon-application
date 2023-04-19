@@ -7,8 +7,8 @@ import java.io.InputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.exception.SegSocialException;
 

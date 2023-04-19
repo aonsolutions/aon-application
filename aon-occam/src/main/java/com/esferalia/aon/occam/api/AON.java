@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.Alarm;
@@ -1816,6 +1817,12 @@ public class AON {
 	// ********************************* FINANCE **
 	// ********************************************
 	
+	public static Stream<Invoice> getInvoiceHeaders(Occam occam, AccountingReportParams params, int offset, int limit) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceHeaders(ctx, params, offset, limit);
+		}
+	}
+
 	public static Stream<Invoice> getInvoiceStream(Occam occam, InvoiceFilter filter){
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFinance().getInvoiceStream(ctx, filter);
@@ -2694,15 +2701,21 @@ public class AON {
 	// ************************************* FEE **
 	// ********************************************
 	
-	public static LinkedList<String> getProductsSuggestion(String domainName, int domainId, String login, String query) {
+	public static Map<String, String> getProductsSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getProductsSuggestion(ctx, domainId, query);
 		}
 	}
 
-	public static LinkedList<String> getCustomersSuggestion(String domainName, int domainId, String login, String query) {
+	public static Map<String, String> getCustomersSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getCustomersSuggestion(ctx, domainId, query);
+		}
+	}
+	
+	public static Map<Integer, Integer> getCustomerProductsUpdates(String domainName, int domainId, String login, CustomerFeeParams customerFeeParams) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getCustomerProductsUpdates(ctx, domainId, customerFeeParams);
 		}
 	}
 	
@@ -2739,9 +2752,15 @@ public class AON {
 		}
 	}
 	
-	public static void saveFees(String domainName, Integer domainId, String login, LinkedList<Fee> feeList) {
+	public static Integer saveFees(String domainName, Integer domainId, String login, LinkedList<Fee> feeList) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
-			getFinance().saveList(ctx, feeList);
+			return getFinance().saveList(ctx, feeList);
+		}
+	}
+	
+	public static Integer saveMassiveFees(String domainName, Integer domainId, String login, Fee fee, CustomerFeeParams params) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().saveMassiveFees(ctx, fee, params);
 		}
 	}
 
@@ -2751,6 +2770,12 @@ public class AON {
 
 	public static void deleteFee(AONContext ctx, Stream<Fee> fs) {
 		getFinance().deleteFee(ctx, fs);
+	}
+	
+	public static Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domainId, String login) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getMinMaxCustomerFeeYear(ctx, domainId);
+		}
 	}
 
 	// ********************************************
@@ -3785,8 +3810,9 @@ public class AON {
 	}
 	
 	public static Project getProject(String domainName, Integer domainId, String login, ProjectFilter filter) {
-		return getProjectStream(domainName, domainId, login, filter)
-				.findFirst().orElse(new Project());
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProject(ctx, filter);
+		}
 	}
 
 	public static LinkedList<Project> getProjectList(String domainName, Integer domainId, String login, ProjectFilter filter) {
@@ -7675,4 +7701,5 @@ public class AON {
 			return getCommon().getCno(ctx);
 		}
 	}
+	
 }
