@@ -733,7 +733,7 @@ public class MainCertificates extends MainEntryPoint{
 		}
 		
 		// Para poder visualizar certificados publicos del padre pero con edicion restringida
-		if(Boolean.TRUE.equals(isEnterprise) && (certificate.getDomain() != null && certificate.getDomain() != domainId)) {
+		if(Boolean.TRUE.equals(isEnterprise) && (certificate.getDomain() != null && !certificate.getDomain().equals(domainId))) {
 			alias.setEnabled(false);
 			alias.setTitle("Certificado p\u00fablico del dominio padre");
 			security.setEnabled(false);
