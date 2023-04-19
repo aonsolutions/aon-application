@@ -26,6 +26,10 @@ import com.esferalia.aon.occam.impl.jooq.dao.RegistryDAO.RegistryFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.ScopeFiller;
 
 public class SellerDAO {
+    
+    private SellerDAO() {
+
+    }
 	
 	public static final com.esferalia.aon.jooq.tables.Registry SELLER_ALIAS = REGISTRY.as("registry_seller");
 	private static final SellerPropertiesDAO SELLER_PROPERTIES = new SellerPropertiesDAO();
