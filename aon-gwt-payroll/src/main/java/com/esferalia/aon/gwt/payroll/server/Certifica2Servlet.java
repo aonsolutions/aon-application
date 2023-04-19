@@ -21,7 +21,7 @@ import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqCertifica2;
 import com.esferalia.aon.gwt.payroll.jooq.JooqContractAttach;
 import com.esferalia.aon.occam.api.AON;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 

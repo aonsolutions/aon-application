@@ -36,8 +36,8 @@ import javax.xml.soap.SOAPMessage;
 
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
-import com.esferalia.aon.occam.api.model.security.Certificate;
 
 public class SIIPost {
 	

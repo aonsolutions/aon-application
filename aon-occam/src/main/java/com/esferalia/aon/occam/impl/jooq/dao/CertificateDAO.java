@@ -12,39 +12,39 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
-import org.jooq.Result;
 
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateSecurity;
-import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Filter.AttachFilter;
+import com.esferalia.aon.occam.api.model.Filter.CertificateFilter;
 import com.esferalia.aon.occam.api.model.Filter.Property;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddInfoFilter;
-import com.esferalia.aon.occam.api.model.Properties.AttachProperties;
-import com.esferalia.aon.occam.api.model.Properties.RegistryAddInfoProperties;
+import com.esferalia.aon.occam.api.model.Properties.CertificateProperties;
+import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.impl.jooq.dao.AttachPropertiesDAO.RattachPropertiesDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.RegistryAddInfoPropertiesDAO;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class CertificateDAO {
-	
-	// -------------------------- AttachPropertiesDAO
-	
-	protected static class AttachPropertiesDAO implements AttachProperties {
-		
-		protected Condition[] getConditions(AttachFilter filter) {
+
+	protected static class CertificatePropertiesDAO implements CertificateProperties {
+		protected Condition[] getConditions(CertificateFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];
 			return new Condition[] { filterDAO.getCondition() };
@@ -52,48 +52,9 @@ public class CertificateDAO {
 
 		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.ID);}
 		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.DOMAIN);}
-		@Override public Property<String> getDescriptionProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.DESCRIPTION);}
-		@Override public Property<Byte> getTypeProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.TYPE);}
-		@Override public Property<Date> getAttachDateProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.ATTACH_DATE);}
-		@Override public Property<Timestamp> getAttachDateTimeStampProperty() {return null;}
-		@Override public Property<Integer> getCategoryProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.CATEGORY);}
-		@Override public Property<Integer> getTagProperty() {return new FilterDAO.PropertyDAO<>(RATTACH_TAG.TAG);}
-		@Override public Property<Date> getAttachCreationDateProperty() {return null;}
-		@Override public Property<Timestamp> getCreationDateTimeStampProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.CREATION_DATE);}
-		@Override public Property<String> getCreationUserProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.CREATION_USER);}
-		@Override public Property<byte[]> getDataProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.DATA);}
-		@Override public Property<String> getDparentIdProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.DPARENT_ID);}
-		@Override public Property<String> getDriveIdProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.DRIVE_ID);}
-		@Override public Property<Byte> getMimeTypeProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.MIMETYPE);}
-		@Override public Property<Date> getAttachModificationDateProperty() {return null;}
-		@Override public Property<Timestamp> getModificationDateTimeStampProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.MODIFICATION_DATE);}
-		@Override public Property<String> getModificationUserProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.MODIFICATION_USER);}
-		@Override public Property<Integer> getAttachModuleProperty() {return null;}
-		@Override public Property<Integer> getScopeProperty() {return null;}
+		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.REGISTRY);}
+		@Override public Property<String> getTypeProperty() {return new FilterDAO.PropertyDAO<>(TAG.NAME);}
 		@Override public Property<Byte> getSecurityLevelProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.SECURITY_LEVEL);}
-		@Override public Property<Integer> getSourceBatchProperty() {return null;}
-		@Override public Property<Byte> getSourceTypeProperty() {return null;}
-		@Override public Property<Integer> getContractProperty() {return null;}
-		
-	}
-
-	// -------------------------- RegistryAddInfoPropertiesDAO
-	
-	protected static class RegistryAddInfoPropertiesDAO implements RegistryAddInfoProperties {
-		
-		protected Condition[] getConditions(RegistryAddInfoFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-	
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RADDINFO.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RADDINFO.DOMAIN);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RADDINFO.REGISTRY);}
-		@Override public Property<String> getAttributeProperty() {return new FilterDAO.PropertyDAO<>(RADDINFO.ATTRIBUTE);}
-		@Override public Property<String> getValueProperty() {return new FilterDAO.PropertyDAO<>(RADDINFO.VALUE);}
-		@Override public Property<Date> getValueDate() {return new FilterDAO.PropertyDAO<>(RADDINFO.VALUE_DATE);}
-		
 	}
 	
 	// -------------------------- Constructor
@@ -104,10 +65,21 @@ public class CertificateDAO {
 	
 	// -------------------------- Variables
 	
-	private static final AttachPropertiesDAO ATTACH_PROPERTIES = new AttachPropertiesDAO();
+	private static final RattachPropertiesDAO ATTACH_PROPERTIES = new RattachPropertiesDAO();
 	private static final RegistryAddInfoPropertiesDAO RADDINFO_PROPERTIES = new RegistryAddInfoPropertiesDAO();
-	
+	private static final CertificatePropertiesDAO CERTIFICATE_PROPERTIES = new CertificatePropertiesDAO();
+
 	// -------------------------- Methods
+	
+	public static Stream<Certificate> getStream(AONContext ctx, CertificateFilter filter) {
+		return ctx.getDslContext().select().from(RATTACH)
+			.leftOuterJoin(RATTACH_TAG).on(RATTACH_TAG.RATTACH.eq(RATTACH.ID))
+			.leftOuterJoin(TAG).on(TAG.ID.eq(RATTACH_TAG.TAG))
+			.where(CERTIFICATE_PROPERTIES.getConditions(filter))
+			.and(RATTACH.TYPE.eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value()))
+			.groupBy(RATTACH.ID)
+			.fetch().stream().map(new CertificateFiller());
+	}
 	
 	public static List<Certificate> getList(AONContext ctx, Integer domainId, Integer userId) throws IllegalArgumentException {
 		try {
@@ -126,7 +98,7 @@ public class CertificateDAO {
 			List<Certificate> certificateList = new ArrayList<>();
 			getUserCertificates(ctx, userId, certificateList);
 			getEnterpriseCertificates(ctx, domainId, certificateList);
-			getEnterprisParentCertificates(ctx, parentDomainId, certificateList);
+			getEnterpriseParentCertificates(ctx, parentDomainId, certificateList);
 			return certificateList;
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
@@ -174,29 +146,18 @@ public class CertificateDAO {
 			
 			if(null == registryUserId) return;
 			
-			Result<Record> certificateRecords = ctx.getDslContext().select().from(RATTACH)
+			Stream<Certificate> stream = ctx.getDslContext().select().from(RATTACH)
 					.where(RATTACH.REGISTRY.eq(registryUserId))
 					.and(RATTACH.TYPE.eq((byte)4))
-					.fetch();
+					.fetch().stream().map(r -> {	
+						Certificate cert = CertificateFiller.build(r);	
+						cert.setOwner(CertificateOwner.ENTERPRISE);
+						getCertificateTags(ctx, cert);
+						getCertificateInfo(ctx, cert);
+						return cert;
+					});
 			
-			for(Record certificateRecord : certificateRecords) {
-				
-				java.util.Date updateDate = null == certificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(certificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
-				String description = certificateRecord.get(RATTACH.DESCRIPTION);
-				
-				Certificate certificate = new Certificate();
-				certificate.setId(certificateRecord.get(RATTACH.ID));
-				certificate.setOwner(CertificateOwner.USER);
-				certificate.setDescription(parseDescription(description));
-				certificate.setConfidential(certificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE);
-				certificate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
-				certificate.setUpdateDate(updateDate);
-				parsePassword(ctx, registryUserId, description, certificate);
-				getCertificateTags(ctx, certificate);
-				getCertificateInfo(ctx, certificate);
-				
-				certificateList.add(certificate);
-			}
+			certificateList.addAll(stream.toList());
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
@@ -209,68 +170,43 @@ public class CertificateDAO {
 			if(null == registryEnterpriseId)
 				return;
 			
-			Result<Record> certificateRecords = ctx.getDslContext().select().from(RATTACH)
+			Stream<Certificate> stream = ctx.getDslContext().select().from(RATTACH)
 					.where(RATTACH.REGISTRY.eq(registryEnterpriseId))
 					.and(RATTACH.TYPE.eq((byte)4))
 					.and(RATTACH.DOMAIN.eq(domainId))
-					.fetch();
-			
-			for(Record certificateRecord : certificateRecords) {
-				
-				java.util.Date updateDate = null == certificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(certificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
-				String description = certificateRecord.get(RATTACH.DESCRIPTION);
-				
-				Certificate certificate = new Certificate();
-				certificate.setId(certificateRecord.get(RATTACH.ID));
-				certificate.setOwner(CertificateOwner.ENTERPRISE);
-				certificate.setDescription(parseDescription(description));
-				certificate.setConfidential(certificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE);
-				certificate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
-				certificate.setUpdateDate(updateDate);
-				parsePassword(ctx, registryEnterpriseId, description, certificate);
-				getCertificateTags(ctx, certificate);
-				getCertificateInfo(ctx, certificate);
-				
-				certificateList.add(certificate);
-			}
+					.fetch().stream().map(r -> {
+						Certificate cert = CertificateFiller.build(r);	
+						cert.setOwner(CertificateOwner.ENTERPRISE);
+						getCertificateTags(ctx, cert);
+						getCertificateInfo(ctx, cert);
+						return cert;
+					});
+			certificateList.addAll(stream.toList());
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
 	}
 	
-	private static void getEnterprisParentCertificates(AONContext ctx, Integer parentDomainId, List<Certificate> certificateList) throws IllegalArgumentException {
+	private static void getEnterpriseParentCertificates(AONContext ctx, Integer parentDomainId, List<Certificate> certificateList) throws IllegalArgumentException {
 		try {
 			Integer registryEnterpriseId = ctx.getDslContext().select(ENTERPRISE.REGISTRY).from(ENTERPRISE).where(ENTERPRISE.DOMAIN.eq(parentDomainId)).fetchOne(ENTERPRISE.REGISTRY);
 			
 			if(null == registryEnterpriseId)
 				return;
 			
-			Result<Record> certificateRecords = ctx.getDslContext().select().from(RATTACH)
+			Stream<Certificate> stream = ctx.getDslContext().select().from(RATTACH)
 					.where(RATTACH.REGISTRY.eq(registryEnterpriseId))
 					.and(RATTACH.TYPE.eq((byte)4))
 					.and(RATTACH.SECURITY_LEVEL.eq((byte)0))
 					.and(RATTACH.DOMAIN.eq(parentDomainId))
-					.fetch();
-			
-			for(Record certificateRecord : certificateRecords) {
-				
-				java.util.Date updateDate = null == certificateRecord.get(RATTACH.MODIFICATION_DATE) ? null : new java.util.Date(certificateRecord.get(RATTACH.MODIFICATION_DATE).getTime());
-				String description = certificateRecord.get(RATTACH.DESCRIPTION);
-				
-				Certificate certificate = new Certificate();
-				certificate.setId(certificateRecord.get(RATTACH.ID));
-				certificate.setDomain(certificateRecord.get(RATTACH.DOMAIN));
-				certificate.setOwner(CertificateOwner.ENTERPRISE);
-				certificate.setDescription(parseDescription(description));
-				certificate.setConfidential(certificateRecord.get(RATTACH.SECURITY_LEVEL) == 0 ? CertificateSecurity.PUBLIC : CertificateSecurity.PRIVATE);
-				certificate.setHasCertificate(null != certificateRecord.get(RATTACH.DATA));
-				certificate.setUpdateDate(updateDate);
-				parsePassword(ctx, registryEnterpriseId, description, certificate);
-				getCertificateTags(ctx, certificate);
-				getCertificateInfo(ctx, certificate);
-				
-				certificateList.add(certificate);
-			}
+					.fetch().stream().map(r -> {
+						Certificate cert = CertificateFiller.build(r);
+						cert.setOwner(CertificateOwner.ENTERPRISE);
+						getCertificateTags(ctx, cert);
+						getCertificateInfo(ctx, cert);
+						return cert;
+					});
+			certificateList.addAll(stream.toList());
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
@@ -386,10 +322,7 @@ public class CertificateDAO {
 		
 		if(null == certificate.getId()) certificate.setId(insert(ctx, userDomain, registryUserId, certificate));
 		else update(ctx, certificate);
-		
-		// Update Password
-		if(null != certificate.getPasswordId()) updatePassword(ctx, certificate);
-			
+	
 		// Rattach Tags
 		updateCertificateTags(ctx, userDomain, certificate);
 	}
@@ -405,10 +338,7 @@ public class CertificateDAO {
 		
 		if(null == certificate.getId()) certificate.setId(insert(ctx, domainId, registryEntepriseId, certificate));
 		else update(ctx, certificate);
-		
-		// Update Password
-		if(null != certificate.getPasswordId()) updatePassword(ctx, certificate);
-			
+					
 		// Rattach Tags
 		updateCertificateTags(ctx, domainId, certificate);
 	}
@@ -446,12 +376,7 @@ public class CertificateDAO {
 				.execute();
 	}
 	
-	private static void updatePassword(AONContext ctx, Certificate certificate) {
-		ctx.getDslContext().update(RADDINFO)
-			.set(RADDINFO.VALUE, certificate.getPassword())
-			.where(RADDINFO.ID.eq(certificate.getPasswordId()))
-			.execute();
-	}
+
 	
 	private static void updateCertificateTags(AONContext ctx, Integer domainId, Certificate certificate) {
 		ctx.getDslContext().delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(certificate.getId())).execute();
@@ -486,39 +411,7 @@ public class CertificateDAO {
 	
 	// -------------------------- Methods auxiliar methods
 	
-	private static String parseDescription(String description) {
-		if( AonStringUtils.isNotBlank(description) && 
-			AonStringUtils.containsIgnoreCase(description, "HIDE(")) {
-			try {
-				return description.split("HIDE\\(")[0];
-			} catch (Exception e) {
-				return description;
-			}
-		} else 
-			return description;
-	}
-	
-	private static void parsePassword(AONContext ctx, Integer registryId, String description, Certificate certificate) {
-		Record certificatePasswordRecord = ctx.getDslContext().select().from(RADDINFO)
-				.where(RADDINFO.REGISTRY.eq(registryId))
-				.and(RADDINFO.ATTRIBUTE.eq("PASSWORD_CERTIFICATE_" + certificate.getId()))
-				.fetchOne();
-		
-		if( AonStringUtils.isNotBlank(description) && 
-			AonStringUtils.containsIgnoreCase(description, "HIDE(")) {
-			try {
-				certificate.setPassword(description.split("HIDE\\(")[1].split("\\)")[0]);
-			} catch (Exception e) {
-				certificate.setPassword("");
-			}
-		} else {
-			if(null != certificatePasswordRecord) {
-				certificate.setPasswordId(certificatePasswordRecord.get(RADDINFO.ID));
-				certificate.setPassword(certificatePasswordRecord.get(RADDINFO.VALUE));
-			}
-		}
-	}
-	
+
 	private static void getCertificateTags(AONContext ctx, Certificate certificate) {
 		List<Record> certificateTags = ctx.getDslContext().select().from(RATTACH_TAG)
 				.where(RATTACH_TAG.RATTACH.eq(certificate.getId())).fetch();
@@ -588,6 +481,26 @@ public class CertificateDAO {
 	
 	private static byte parseCertificateSecurity(CertificateSecurity certificateSecurity) {
 		return certificateSecurity == CertificateSecurity.PUBLIC ? (byte)0 : (byte)1;
+	}
+	
+	
+	public static class CertificateFiller extends Filler implements Function<Record, Certificate>{
+
+		@Override
+		public Certificate apply(Record r) {
+			return build(r);
+		}
+		
+		public static Certificate build(Record r) {
+			return new Certificate()
+				.setId(getValue(r, RATTACH.ID))
+				.setDomain(getValue(r, RATTACH.DOMAIN))
+				.setType(MimeType.PKCS12.name())
+				.setDescription(getValue(r, RATTACH.DESCRIPTION))
+				.setData(getValue(r, RATTACH.DATA))
+				.setConfidential(getBoolean(r, RATTACH.SECURITY_LEVEL))
+				.setUpdateDate(getValue(r, RATTACH.MODIFICATION_DATE));
+		}
 	}
 	
 }

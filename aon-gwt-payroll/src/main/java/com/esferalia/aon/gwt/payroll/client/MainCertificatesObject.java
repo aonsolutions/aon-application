@@ -6,9 +6,9 @@ import java.util.function.Consumer;
 
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
-import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.SecondaryUserCertificate;
@@ -332,8 +332,7 @@ public class MainCertificatesObject {
 
 	public void createCertificate(CertificateOwner owner) {
 		Certificate certificate = new Certificate()
-			.setOwner(owner)
-			.setHasCertificate(false);
+			.setOwner(owner);
 		
 		certificateList.add(certificate);
 	}

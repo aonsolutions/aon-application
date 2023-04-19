@@ -22,9 +22,9 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateOwner;
 import com.esferalia.aon.occam.api.model.Certificate.CertificateSecurity;
-import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -148,7 +148,6 @@ public class CertificateServlet extends AonApiHttpServlet {
 					.setData(data)
 					.setPassword(password)
 					.setId(rattachId)
-					.setPasswordId(raddinfoId)
 					.setConfidential(security);
 			
 			AON.saveCertificate(domainName, domain.getId(), currentUser, user.getId(), certificate);
