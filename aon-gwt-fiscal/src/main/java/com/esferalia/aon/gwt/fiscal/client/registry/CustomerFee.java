@@ -29,6 +29,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
@@ -77,6 +78,7 @@ public class CustomerFee extends MainEntryPoint {
 	private AonToolbarButton saveButton;
 	private AonToolbarButton undoAllButton;
 	private AonToolbarButton addValueButton;
+	private AonToolbarButton deleteFeeButton;
 	
 	// Filter
 	private ListBox monthListBox;
@@ -199,6 +201,7 @@ public class CustomerFee extends MainEntryPoint {
 		AonMessagePanel.showLoading(messagePanel, "Cargando panel de facturaci\u00f3n ...");
 		resetFilter();
 		setHasChange(false);
+		onSearchFees();
 		AonMessagePanel.hideMessage(messagePanel);
 	}
 
@@ -368,9 +371,10 @@ public class CustomerFee extends MainEntryPoint {
 		customerStatusListBox = new ListBox();
 		customerStatusListBox.setHeight("2em");
 		customerStatusListBox.getElement().getStyle().setProperty("padding", "0 5px");
-		customerStatusListBox.addItem("Activo", "Activo");
-		customerStatusListBox.addItem("Inactivo", "Inactivo");
-		customerStatusListBox.addItem("Bloqueado", "Bloqueado");
+		customerStatusListBox.addItem("-", "");
+		customerStatusListBox.addItem("Activo", "0");
+		customerStatusListBox.addItem("Inactivo", "1");
+		customerStatusListBox.addItem("Bloqueado", "2");
 		customerStatusListBox.addChangeHandler(e -> onSearchFees());
 	}
 	
@@ -462,7 +466,8 @@ public class CustomerFee extends MainEntryPoint {
 		discountTextBox.setValue("");
 		
 		if(null != params) {
-			params.setBillingDate(null);
+			params.setMonth(null);
+			params.setYear(null);
 			params.setCustomer(null);
 			params.setProductCode(null);
 			params.setCustomerStatus(null);
@@ -472,17 +477,16 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void onSearchFees() {
-		feeList.clear();
-		resetFeeTable();
+		if(checkBillingDate()) return;
 		enableMoreData();
 		offset.setValue(0);
 		searchFees();
+		feeList.clear();
+		resetFeeTable();
 	}
 
 	private void searchFees() {
-		if (!isMoreData()) return;
-		
-		billingDate = createBillingDate();
+		if (!isMoreData() || checkBillingDate()) return;
 		
 		createParams();
 		
@@ -502,6 +506,7 @@ public class CustomerFee extends MainEntryPoint {
 						disableMoreData();
 						if(feeList.isEmpty()) showEmptyFeeMessage();
 					} else {
+						if(offset.getValue() == 0) selectionModel.clear();
 						showFeeTable();
 						feeListDB.forEach( fee -> paintRow(fee));
 						feeList.addAll(feeListDB);
@@ -516,12 +521,20 @@ public class CustomerFee extends MainEntryPoint {
 		
 	}
 	
+	private boolean checkBillingDate() {
+		Integer month = AonStringUtils.isBlank(monthListBox.getSelectedValue()) ? null : Integer.parseInt(monthListBox.getSelectedValue());
+		Integer year = AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue());
+
+		return month != null && year == null;
+	}
+
 	private void createParams() {
 		if(null == params) params = new CustomerFeeParams();
 		params.setDomain(options.getDomain());
-		params.setBillingDate(billingDate);
+		params.setMonth(AonStringUtils.isBlank(monthListBox.getSelectedValue()) ? null : Integer.parseInt(monthListBox.getSelectedValue()));
+		params.setYear(AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue()));
 		params.setCustomer(customerSuggestions.get(customerSuggestBox.getValue()));
-		params.setCustomerStatus((byte)customerStatusListBox.getSelectedIndex());
+		params.setCustomerStatus(AonStringUtils.isBlank(customerStatusListBox.getSelectedValue()) ? null : Byte.parseByte(customerStatusListBox.getSelectedValue()));
 		params.setProductCode(productSuggestions.get(conceptSuggestBox.getValue()));
 		params.setPrice(priceTextBox.getValue());
 		params.setDiscount(discountTextBox.getValue());
@@ -590,7 +603,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 
 	private void createFeeHeader() {
-		feeTable = new Grid(0, 11);
+		feeTable = new Grid(0, 12);
 		feeTable.clear();
 		feeTable.setWidth("100%");
 
@@ -600,6 +613,7 @@ public class CustomerFee extends MainEntryPoint {
 		select.addValueChangeHandler(e -> {
 			selectionModel.forEach((checkBox, fee) -> checkBox.setValue(e.getValue()));
 			addValueButton.setEnabled(e.getValue());
+			deleteFeeButton.setEnabled(e.getValue());
 		});
 
 		Label customer = new Label("CLIENTE");
@@ -659,14 +673,14 @@ public class CustomerFee extends MainEntryPoint {
 		feeTable.getColumnFormatter().getElement(0).getStyle().setWidth(2, Unit.PCT);
 		feeTable.getColumnFormatter().getElement(1).getStyle().setWidth(20, Unit.PCT);
 		feeTable.getColumnFormatter().getElement(2).getStyle().setWidth(8, Unit.PCT);
-		feeTable.getColumnFormatter().getElement(3).getStyle().setWidth(22, Unit.PCT);
+		feeTable.getColumnFormatter().getElement(3).getStyle().setWidth(19, Unit.PCT);
 		feeTable.getColumnFormatter().getElement(4).getStyle().setWidth(8, Unit.PCT);
 		feeTable.getColumnFormatter().getElement(5).getStyle().setWidth(8, Unit.PCT);
 		feeTable.getColumnFormatter().getElement(6).getStyle().setWidth(8, Unit.PCT);
 		feeTable.getColumnFormatter().getElement(7).getStyle().setWidth(8, Unit.PCT);
-		feeTable.getColumnFormatter().getElement(8).getStyle().setWidth(8, Unit.PCT);
-		feeTable.getColumnFormatter().getElement(9).getStyle().setWidth(8, Unit.PCT);
-		feeTable.getColumnFormatter().getElement(10).getStyle().setWidth(8, Unit.PCT);
+		feeTable.getColumnFormatter().getElement(8).getStyle().setWidth(9, Unit.PCT);
+		feeTable.getColumnFormatter().getElement(9).getStyle().setWidth(9, Unit.PCT);
+		feeTable.getColumnFormatter().getElement(10).getStyle().setWidth(9, Unit.PCT);
 	}
 	
 	private void disableMoreData() {
@@ -700,13 +714,14 @@ public class CustomerFee extends MainEntryPoint {
 		select.addValueChangeHandler(e -> {
 			Optional<CheckBox> checked = selectionModel.keySet().stream().filter(cb -> cb.getValue()).findAny();
 			addValueButton.setEnabled(checked.isPresent());
+			deleteFeeButton.setEnabled(checked.isPresent());
 		});
-
+		
 		Label customerLabel = new Label(fee.getCustomer().getName());
 
 		ListBox statusListBox = createStatusListBox(fee, row);
-		statusListBox.setWidth("90px");
-		statusListBox.setHeight("2em");
+		statusListBox.setWidth("85px");
+		setInputStyle(statusListBox);
 		setSelectedValueLB(statusListBox, fee.getCustomer().getStatus().getDescription());
 
 		AutoResizeTextArea conceptTextArea = new AutoResizeTextArea(fee, row);
@@ -715,12 +730,12 @@ public class CustomerFee extends MainEntryPoint {
 
 		ListBox periodListBox = createPeriodListBox(fee, row);
 		periodListBox.setWidth("100px");
-		periodListBox.setHeight("2em");
+		setInputStyle(periodListBox);
 		setSelectedValueLB(periodListBox, fee.getPeriod().getValue().toString());
 
 		TextBox quantityTextBox = new TextBox();
 		quantityTextBox.setWidth("65px");
-		quantityTextBox.setHeight("2em");
+		setInputStyle(quantityTextBox);
 		quantityTextBox.setValue(null == fee.getQuantity() ? "" : fee.getQuantity().toString());
 		quantityTextBox.addValueChangeHandler(e -> {
 			fee.setQuantity(Double.parseDouble(e.getValue()));
@@ -728,8 +743,8 @@ public class CustomerFee extends MainEntryPoint {
 		});
 
 		TextBox priceTextBox = new TextBox();
-		priceTextBox.setWidth("90px");
-		priceTextBox.setHeight("2em");
+		priceTextBox.setWidth("80px");
+		setInputStyle(priceTextBox);
 		priceTextBox.setValue(null == fee.getPrice() ? "" : fee.getPrice().toString());
 		priceTextBox.addValueChangeHandler(e -> {
 			fee.setPrice(Double.parseDouble(e.getValue()));
@@ -738,7 +753,7 @@ public class CustomerFee extends MainEntryPoint {
 
 		TextBox discountTextBox = new TextBox();
 		discountTextBox.setWidth("80px");
-		discountTextBox.setHeight("2em");
+		setInputStyle(discountTextBox);
 		discountTextBox.setValue(null == fee.getDiscountExpr() ? "" : fee.getDiscountExpr());
 		discountTextBox.addValueChangeHandler(e -> {
 			String expression = e.getValue();
@@ -764,8 +779,7 @@ public class CustomerFee extends MainEntryPoint {
 		AonDateBox billingDateBox = new AonDateBox();
 		billingDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		billingDateBox.addStyleName("gwt-TextBox");
-		billingDateBox.setWidth("65px");
-		billingDateBox.setHeight("2em");
+		setInputStyle(billingDateBox);
 		billingDateBox.setValue(fee.getBillingDate());
 		billingDateBox.addValueChangeHandler(e -> {
 			Date date = e.getValue() == null ? null : DateUtils.getFirstDayOfMonth(e.getValue());
@@ -777,8 +791,7 @@ public class CustomerFee extends MainEntryPoint {
 		AonDateBox startDateBox = new AonDateBox();
 		startDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		startDateBox.addStyleName("gwt-TextBox");
-		startDateBox.setWidth("65px");
-		startDateBox.setHeight("2em");
+		setInputStyle(startDateBox);
 		startDateBox.setValue(fee.getStartDate());
 		startDateBox.addValueChangeHandler(e -> {
 			fee.setStartDate(e.getValue());
@@ -788,8 +801,7 @@ public class CustomerFee extends MainEntryPoint {
 		AonDateBox endDateBox = new AonDateBox();
 		endDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		endDateBox.addStyleName("gwt-TextBox");
-		endDateBox.setWidth("65px");
-		endDateBox.setHeight("2em");
+		setInputStyle(endDateBox);
 		endDateBox.setValue(fee.getEndDate());
 		endDateBox.addValueChangeHandler(e -> {
 			fee.setEndDate(e.getValue());
@@ -950,6 +962,11 @@ public class CustomerFee extends MainEntryPoint {
 		feeTable.getWidget(row, 9).addStyleName(AON.CSS.aonModifyTableRow());
 		feeTable.getWidget(row, 10).addStyleName(AON.CSS.aonModifyTableRow());
 	}
+	
+	private void setInputStyle(Widget widget) {
+		widget.setHeight("2em");
+		widget.getElement().getStyle().setProperty("padding", "0 5px");
+	}
 
 	// -------------------------------- TOOLBAR
 	
@@ -972,6 +989,7 @@ public class CustomerFee extends MainEntryPoint {
 						public void onSuccess(Integer updates) {
 							AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
 							addValueButton.setEnabled(false);
+							deleteFeeButton.setEnabled(false);
 							selectionModel.clear();
 							setHasChange(false);
 							feeList.clear();
@@ -997,6 +1015,7 @@ public class CustomerFee extends MainEntryPoint {
 				public void onAccept() {
 					AonMessagePanel.showLoading(messagePanel, "Deshaciendo cambios panel facturaci\u00f3n ...");
 					addValueButton.setEnabled(false);
+					deleteFeeButton.setEnabled(false);
 					selectionModel.clear();
 					setHasChange(false);
 					feeList.clear();
@@ -1012,70 +1031,198 @@ public class CustomerFee extends MainEntryPoint {
 		addValueButton = new AonToolbarButton("Editar Cuota", AON.CSS.aonIconEdit());
 		addValueButton.setEnabled(false);
 		addValueButton.addClickHandler(e -> {
-			new CustomerMassiveFeeDialog() {
-				
-				@Override
-				protected void onAccept(Fee fee) {
-					long selectedItems = selectionModel.keySet().stream().filter(cb -> cb.getValue()).count();
-					
-					// Cambio masivo (todo seleccionado)
-					if(selectedItems == feeList.size()) {
-						createParams();
+			long selectedItems = selectionModel.keySet().stream().filter(cb -> cb.getValue()).count();
+			if(selectedItems == 1) {
+				Optional<Fee> selectedFee = selectionModel.entrySet().stream().filter(entry -> entry.getKey().getValue()).map(entry -> entry.getValue()).findFirst();
+				if(selectedFee.isPresent())
+					new CustomerFeeDialog(selectedFee.get(), options) {
 						
-						SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), params, new AsyncCallback<Map<Integer,Integer>>() {
+						@Override
+						protected void onAccept(Fee fee) {
+							LinkedList<Fee> fees = new LinkedList<Fee>();
+							fee.setModify(true);
+							fees.add(fee);
 							
-							@Override
-							public void onSuccess(Map<Integer, Integer> result) {
-								Optional<Entry<Integer, Integer>> resultEntry = result.entrySet().stream().findFirst();
-								AonDialog dialog = new AonDialog("Edici\u00f3n Cuotas",
-										new HTML("El cambio afectara a <b>" + resultEntry.get().getKey() + " clientes</b> y <b>" + resultEntry.get().getValue() + " cuotas</b>.<br>\u00bfEsta seguro que desea proceder a la actualizacion\u003f"));
-								
-								dialog.confirm(new AonAcceptDialogCallback() {
+							SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fees,
+									new AsyncCallback<Integer>() {
 
-									@Override
-									public void onCancel() {
-										// Nothing to do here
-									}
+										@Override
+										public void onFailure(Throwable caught) {
+											AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
+										}
 
-									@Override
-									public void onAccept() {
-										AonMessagePanel.showLoading(messagePanel, "Actualizando datos de cuotas masivamente ...");
-										SERVICE.saveMassiveCustomerFee(options.getDomainName(), options.getDomain(), options.getUser(), fee, params,
-											new AsyncCallback<Integer>() {
+										@Override
+										public void onSuccess(Integer updates) {
+											AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+											selectionModel.clear();
+											addValueButton.setEnabled(false);
+											setHasChange(false);
+											feeList.clear();
+											resetFeeTable();
+											enableMoreData();
+											offset.setValue(0);
+											searchFees();
+										}
+									});
+						}
 
-												@Override
-												public void onFailure(Throwable caught) {
-													AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
-												}
+						@Override
+						protected void onAccept(Optional<Integer> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
+							// TODO Auto-generated method stub
+						}
+						
+					};
+			} else {
+				new CustomerFeeDialog(conceptSuggestBox.getValue(), options) {
+					
+					@Override
+					protected void onAccept(Fee fee) {}
 
-												@Override
-												public void onSuccess(Integer updates) {
-													AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
-													addValueButton.setEnabled(false);
-													selectionModel.clear();
-													setHasChange(false);
-													feeList.clear();
-													resetFeeTable();
-													enableMoreData();
-													offset.setValue(0);
-													searchFees();
-												}
-											});
-									}
-								});
-							}
+					@Override
+					protected void onAccept(Optional<Integer> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
+						Fee fee = new Fee();
+						
+						if(item.isPresent()) { 
+							OldItem oldItem = new OldItem();
+							oldItem.setId(item.get());
+							fee.setItem(oldItem);
+						}
+						if(price.isPresent()) fee.setPrice(price.get());
+						if(discountExpr.isPresent()) fee.setDiscountExpr(discountExpr.get());
+						if(startDate.isPresent()) fee.setStartDate(startDate.get());
+						if(endDate.isPresent()) fee.setEndDate(endDate.get());
+						if(billingDate.isPresent()) fee.setBillingDate(billingDate.get());
+						
+						if(selectedItems == feeList.size()) {
+							// Cambio masivo (todo seleccionado)
+							offset.setValue(0);
+							createParams();
 							
-							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub
+							SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), params, new AsyncCallback<Map<Integer,Integer>>() {
 								
-							}
-						});
-					} else {
-						// Solo cuotas seleccionadas
-						LinkedList<Fee> selectedFees = selectionModel.entrySet().stream().filter(e -> e.getKey().getValue()).map(e -> e.getValue()).collect(Collectors.toCollection(LinkedList::new));
-						AonDialog dialog = new AonDialog("Edici\u00f3n Cuotas",
-								new HTML("El cambio afectara a <b>" + selectedFees.size() + " cuotas</b>.<br>\u00bfEsta seguro que desea proceder a la actualizacion\u003f"));
+								@Override
+								public void onSuccess(Map<Integer, Integer> result) {
+									Optional<Entry<Integer, Integer>> resultEntry = result.entrySet().stream().findFirst();
+									AonDialog dialog = new AonDialog("Edici\u00f3n Cuotas",
+											new HTML("El cambio afectara a <b>" + resultEntry.get().getKey() + " clientes</b> y <b>" + resultEntry.get().getValue() + " cuotas</b>.<br>\u00bfEsta seguro que desea proceder a la actualizacion\u003f"));
+									
+									dialog.confirm(new AonAcceptDialogCallback() {
+
+										@Override
+										public void onCancel() {
+											// Nothing to do here
+										}
+
+										@Override
+										public void onAccept() {
+											AonMessagePanel.showLoading(messagePanel, "Actualizando datos de cuotas masivamente ...");
+											SERVICE.saveMassiveCustomerFee(options.getDomainName(), options.getDomain(), options.getUser(), fee, params,
+												new AsyncCallback<Integer>() {
+
+													@Override
+													public void onFailure(Throwable caught) {
+														AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
+													}
+
+													@Override
+													public void onSuccess(Integer updates) {
+														AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+														addValueButton.setEnabled(false);
+														selectionModel.clear();
+														setHasChange(false);
+														feeList.clear();
+														resetFeeTable();
+														enableMoreData();
+														offset.setValue(0);
+														searchFees();
+													}
+												});
+										}
+									});
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									// TODO Auto-generated method stub
+									
+								}
+							});
+						} else {
+							// Solo cuotas seleccionadas
+							LinkedList<Fee> selectedFees = selectionModel.entrySet().stream().filter(e -> e.getKey().getValue()).map(e -> e.getValue()).collect(Collectors.toCollection(LinkedList::new));
+							AonDialog dialog = new AonDialog("Edici\u00f3n Cuotas",
+									new HTML("El cambio afectara a <b>" + selectedFees.size() + " cuotas</b>.<br>\u00bfEsta seguro que desea proceder a la actualizacion\u003f"));
+							
+							dialog.confirm(new AonAcceptDialogCallback() {
+
+								@Override
+								public void onCancel() {
+									// Nothing to do here
+								}
+
+								@Override
+								public void onAccept() {
+									AonMessagePanel.showLoading(messagePanel, "Actualizando datos de cuotas masivamente ...");
+									selectedFees.forEach(feeIt -> {
+										feeIt.setModify(true);
+										
+										if(null != fee.getPeriod()) feeIt.setPeriod(fee.getPeriod());
+										if(null != fee.getQuantity()) feeIt.setQuantity(fee.getQuantity());
+										if(null != fee.getPrice()) feeIt.setPrice(fee.getPrice());
+										if(null != fee.getDiscountExpr()) feeIt.setDiscountExpr(fee.getDiscountExpr());
+										
+										if(null != fee.getBillingDate()) feeIt.setBillingDate(fee.getBillingDate());
+										if(null != fee.getStartDate()) feeIt.setStartDate(fee.getStartDate());
+										if(null != fee.getEndDate()) feeIt.setEndDate(fee.getEndDate());
+										
+										SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), selectedFees,
+												new AsyncCallback<Integer>() {
+
+													@Override
+													public void onFailure(Throwable caught) {
+														AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
+													}
+
+													@Override
+													public void onSuccess(Integer updates) {
+														AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+														selectionModel.clear();
+														addValueButton.setEnabled(false);
+														setHasChange(false);
+														feeList.clear();
+														resetFeeTable();
+														enableMoreData();
+														offset.setValue(0);
+														searchFees();
+													}
+												});
+									});
+								}
+							});
+						} 
+					}
+					
+				};
+			}
+		});
+		
+		deleteFeeButton = new AonToolbarButton("Eliminar", AON.CSS.aonIconDelete());
+		deleteFeeButton.setEnabled(false);
+		deleteFeeButton.addClickHandler(event -> {
+			LinkedList<Fee> selectedFees = selectionModel.entrySet().stream().filter(e -> e.getKey().getValue()).map(e -> e.getValue()).collect(Collectors.toCollection(LinkedList::new));
+			
+			if(selectedFees.size() == feeList.size()) {
+				// Cambio masivo (todo seleccionado)
+				offset.setValue(0);
+				createParams();
+				
+				SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), params, new AsyncCallback<Map<Integer,Integer>>() {
+					
+					@Override
+					public void onSuccess(Map<Integer, Integer> result) {
+						Optional<Entry<Integer, Integer>> resultEntry = result.entrySet().stream().findFirst();
+						AonDialog dialog = new AonDialog("Eliminaci\u00f3n Cuotas",
+								new HTML("Se va a proceder a eliminar <b>" + resultEntry.get().getValue() + " cuotas</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f. Este proceso ser\u00e1 irreversible"));
 						
 						dialog.confirm(new AonAcceptDialogCallback() {
 
@@ -1086,52 +1233,82 @@ public class CustomerFee extends MainEntryPoint {
 
 							@Override
 							public void onAccept() {
-								AonMessagePanel.showLoading(messagePanel, "Actualizando datos de cuotas masivamente ...");
-								selectedFees.forEach(feeIt -> {
-									feeIt.setModify(true);
-									
-									if(null != fee.getPeriod()) feeIt.setPeriod(fee.getPeriod());
-									if(null != fee.getQuantity()) feeIt.setQuantity(fee.getQuantity());
-									if(null != fee.getPrice()) feeIt.setPrice(fee.getPrice());
-									if(null != fee.getDiscountExpr()) feeIt.setDiscountExpr(fee.getDiscountExpr());
-									
-									if(null != fee.getBillingDate()) feeIt.setBillingDate(fee.getBillingDate());
-									if(null != fee.getStartDate()) feeIt.setStartDate(fee.getStartDate());
-									if(null != fee.getEndDate()) feeIt.setEndDate(fee.getEndDate());
-									
-									SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), selectedFees,
-											new AsyncCallback<Integer>() {
+								AonMessagePanel.showLoading(messagePanel, "Elimando cuotas seleccionadas ...");
+								SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), params,
+										new AsyncCallback<Void>() {
 
-												@Override
-												public void onFailure(Throwable caught) {
-													AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
-												}
+											@Override
+											public void onFailure(Throwable caught) {
+												AonMessagePanel.showError(messagePanel, "Error eliminando cuotas: " + caught.getMessage());
+											}
 
-												@Override
-												public void onSuccess(Integer updates) {
-													AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
-													selectionModel.clear();
-													addValueButton.setEnabled(false);
-													setHasChange(false);
-													feeList.clear();
-													resetFeeTable();
-													enableMoreData();
-													offset.setValue(0);
-													searchFees();
-												}
-											});
-								});
+											@Override
+											public void onSuccess(Void result) {
+												AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + resultEntry.get().getValue() + " cuotas correctamente");
+												selectionModel.clear();
+												addValueButton.setEnabled(false);
+												setHasChange(false);
+												feeList.clear();
+												resetFeeTable();
+												enableMoreData();
+												offset.setValue(0);
+												searchFees();
+											}
+										});
 							}
 						});
 					}
-				}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+			} else {
+				AonDialog dialog = new AonDialog("Eliminaci\u00f3n Cuotas",
+						new HTML("Se va a proceder a eliminar <b>" + selectedFees.size() + " cuotas</b>.<br>\u00bfEsta seguro que desea proceder con la eliminaci\u00f3n\u003f<br>Este proceso ser\u00e5 irreversible"));
 				
-			};
+				dialog.confirm(new AonAcceptDialogCallback() {
+
+					@Override
+					public void onCancel() {
+						// Nothing to do here
+					}
+
+					@Override
+					public void onAccept() {
+						AonMessagePanel.showLoading(messagePanel, "Elimando cuotas seleccionadas ...");
+						SERVICE.deleteCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), selectedFees,
+								new AsyncCallback<Void>() {
+
+									@Override
+									public void onFailure(Throwable caught) {
+										AonMessagePanel.showError(messagePanel, "Error eliminando cuotas: " + caught.getMessage());
+									}
+
+									@Override
+									public void onSuccess(Void result) {
+										AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + selectedFees.size() + " cuotas correctamente");
+										selectionModel.clear();
+										addValueButton.setEnabled(false);
+										setHasChange(false);
+										feeList.clear();
+										resetFeeTable();
+										enableMoreData();
+										offset.setValue(0);
+										searchFees();
+									}
+								});
+					}
+				});
+			}
 		});
 
 		toolbar.add(saveButton);
 		toolbar.add(undoAllButton);
 		toolbar.add(addValueButton);
+		toolbar.add(deleteFeeButton);
 	}
 
 	// ------------------------------------------ HasChange

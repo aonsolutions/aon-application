@@ -250,11 +250,18 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.saveMassiveFees(ctx, fee, customerFeeParams));
 	}
-
+	
 	@Override
 	public void deleteFee(AONContext ctx, Fee f) {
 		ctx.getDslContext().transaction(configuration -> {
 			FeeDAO.delete(ctx, f);
+		} );			
+	}
+
+	@Override
+	public void deleteFee(AONContext ctx, CustomerFeeParams customerFeeParams) {
+		ctx.getDslContext().transaction(configuration -> {
+			FeeDAO.delete(ctx, customerFeeParams);
 		} );			
 	}
 
@@ -269,6 +276,12 @@ public class FinanceImpl implements IFinance {
 	public Map<Integer, Integer> getMinMaxCustomerFeeYear(CloseableAONContext ctx, int domainId) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getMinMaxCustomerFeeYear(ctx, domainId));
+	}
+	
+	@Override
+	public Integer getItemIdByProductCode(CloseableAONContext ctx, int domainId, String productCode) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getItemIdByProductCode(ctx, domainId, productCode));
 	}
 
 	@Override

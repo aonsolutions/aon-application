@@ -1,7 +1,6 @@
 package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class CustomerFeeParams implements Serializable {
 
@@ -9,7 +8,8 @@ public class CustomerFeeParams implements Serializable {
 	
 	private Integer domain;
 	
-	private Date billingDate;
+	private Integer month;
+	private Integer year;
 	
 	private String customer;
 	private Byte customerStatus;
@@ -33,11 +33,18 @@ public class CustomerFeeParams implements Serializable {
 		this.domain = domain;
 		return this;
 	}
-	public Date getBillingDate() {
-		return billingDate;
+	public Integer getMonth() {
+		return month;
 	}
-	public CustomerFeeParams setBillingDate(Date billingDate) {
-		this.billingDate = billingDate;
+	public CustomerFeeParams setMonth(Integer month) {
+		this.month = month;
+		return this;
+	}
+	public Integer getYear() {
+		return year;
+	}
+	public CustomerFeeParams setYear(Integer year) {
+		this.year = year;
 		return this;
 	}
 	public String getCustomer() {

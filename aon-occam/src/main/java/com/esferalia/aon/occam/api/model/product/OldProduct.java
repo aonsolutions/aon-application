@@ -38,6 +38,8 @@ public class OldProduct implements Serializable{
 	Date modificationDate;
 	Byte kind;
 	
+	boolean modify;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -263,6 +265,15 @@ public class OldProduct implements Serializable{
 	
 	public OldProduct setBrandName(String brandName){
 		this.brandName = brandName;
+		return this;
+	}
+	
+	public boolean isModify() {
+		return modify;
+	}
+	
+	public OldProduct setModify(boolean modify) {
+		this.modify = modify;
 		return this;
 	}
 	
