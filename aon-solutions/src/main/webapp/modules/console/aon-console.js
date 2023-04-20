@@ -4,6 +4,7 @@ import { CONSTANT, EVENT, MSG, TAG } from '../../environments/environments.js';
 import { ConsoleSidenav, LINK_DOMAINS } from './ConsoleOptions.js';
 
 import Apps from '../../services/app.js';
+import { AonLinkDomains } from '../domains/aon-link-domains.js';
 
 export class AonConsole extends AonElement {
 
@@ -53,14 +54,14 @@ export class AonConsole extends AonElement {
 	}
 
 	aonLinkDomains() {
-		let d = this.getApplication().getDialog();
-		d.clear();
-		if(!this.isMobile())d.width = '400px';
-		d.setTitle(MSG.LINK_DOMAINS);
-		d.setContentHTML(MSG.IN_DEVELOPMENT);
-		d.addAcceptAction(() => {});
-		d.open();
-		// this.getApplication().setContent(new AonLinkDomains());
+		// let d = this.getApplication().getDialog();
+		// d.clear();
+		// if(!this.isMobile())d.width = '400px';
+		// d.setTitle(MSG.LINK_DOMAINS);
+		// d.setContentHTML(MSG.IN_DEVELOPMENT);
+		// d.addAcceptAction(() => {});
+		// d.open();
+		this.getApplication().setContent(new AonLinkDomains());
 	}
 
 }
