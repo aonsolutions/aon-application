@@ -5,7 +5,7 @@
     border: solid;
     height: 10%;
     width: 80%;
-    border-radius: 10px;
+    border-radius: .625rem;
     border-color: white;
 }
 
@@ -17,7 +17,7 @@
     border: solid;
     height: 10%;
     width: 80%;
-    border-radius: 10px;
+    border-radius: .625rem;
     border-color: white;
 }
 
@@ -28,7 +28,7 @@
     border: solid;
     height: 10%;
     width: 80%;
-    border-radius: 10px;
+    border-radius: .625rem;
     border-color: white;
     cursor: pointer;
 }
@@ -41,7 +41,7 @@
     border: solid;
     height: 10%;
     width: 80%;
-    border-radius: 10px;
+    border-radius: .625rem;
     border-color: white;
     cursor: pointer;
 }
@@ -65,9 +65,9 @@
     justify-content: center;
     align-items: center;
     justify-content: center;
-    border-width: 1px;
+    border-width: .0625rem;
     border-color: lightgrey;
-    border-radius: 50px;
+    border-radius: 3.125rem;
     height: 1.5rem;
     width: 1.5rem;
     z-index: 5;
@@ -82,9 +82,9 @@
     border: solid;
     justify-content: center;
     align-items: center;
-    border-width: 1px;
+    border-width: .0625rem;
     border-color: lightgrey;
-    border-radius: 50px;
+    border-radius: 3.125rem;
     height: 1.5rem;
     width: 1.5rem;
     left: 3.25rem;
@@ -145,7 +145,7 @@
     width: 80%;
     background-color: #f0f0f1;
     border: solid;
-    border-radius: 10px;
+    border-radius: .625rem;
     border-color: white;
 }
 
@@ -164,12 +164,12 @@
 .shortcutIndex {
     display: flex;
     align-items: center;
-    margin-left: 1vh !important;
-    padding-left: 1vh !important;
+    margin-left: .5rem !important;
+    padding-left: .5rem !important;
     border: solid;
     height: 10%;
     width: 80%;
-    border-radius: 10px;
+    border-radius: .625rem;
     border-color: white;
     justify-content: space-between;
 }
@@ -186,7 +186,7 @@
     background-color: #f0f0f1;
     border: solid;
     border-color: white;
-    border-radius: 10px;
+    border-radius: .625rem;
     display: flex;
     justify-content: center;
     align-items: center;
