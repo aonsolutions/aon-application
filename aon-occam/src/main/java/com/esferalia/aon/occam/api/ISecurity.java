@@ -26,7 +26,7 @@ import com.esferalia.aon.occam.api.model.aonsolutions.UserAppRole;
 import com.esferalia.aon.occam.api.model.security.Auth;
 import com.esferalia.aon.occam.api.model.security.AuthDevice;
 import com.esferalia.aon.occam.api.model.security.Booking;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserScope;

@@ -51,7 +51,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.occam.api.model.type.MimeType;

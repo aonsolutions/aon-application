@@ -24,7 +24,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.registry.CompanyFull;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.io.AonIOUtils;

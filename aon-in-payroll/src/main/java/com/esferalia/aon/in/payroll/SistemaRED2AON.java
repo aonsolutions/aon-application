@@ -49,13 +49,13 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Bonus;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
-import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.BonusType;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
@@ -506,7 +506,7 @@ public class SistemaRED2AON {
 //			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			byte data [] = SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
+			byte data [] = SistemaRED.getIDC(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 			
 			syncWithIdc(data, userLogin, domainName, domainId, date, ccc, naf);
 			
@@ -523,7 +523,7 @@ public class SistemaRED2AON {
 //			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 			
-			byte data [] = SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
+			byte data [] = SistemaRED.getIDC(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 			com.esferalia.aon.in.payroll.tgss.idc.Idc.parse(data, new IdcListener() {
 				
 				@Override
@@ -704,7 +704,7 @@ public class SistemaRED2AON {
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 		try {
 			solutions.aon.seg.social.object.Idc [] idcs = 
-			SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf)
+			SistemaRED.getIDCDates(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf)
 			.stream()
 			.sorted((idc1, idc2) -> AonDateUtils.compare(idc1.getFecha(), idc2.getFecha()))
 			.toArray(solutions.aon.seg.social.object.Idc[]::new);
@@ -751,7 +751,7 @@ public class SistemaRED2AON {
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 		try {
 			Collection<solutions.aon.seg.social.object.Idc> idcs = 
-			SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
+			SistemaRED.getIDCDates(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf);
 			
 			Date idcDates [] = 
 			idcs.stream()
