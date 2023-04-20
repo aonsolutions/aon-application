@@ -140,4 +140,16 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		serviceAsync.getItemIdByProductCode(domainName, domain, user, productCode, new AsyncCallbackWrapper<Integer>(callback));
 	}
 
+	@Override
+	public void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.deleteCustomerFeeList(domainName, domain, user, selectedFees, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.deleteCustomerFeeList(domainName, domain, user, params, new AsyncCallbackWrapper<Void>(callback));
+	}
+
 }

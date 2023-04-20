@@ -123,5 +123,13 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	public Integer getItemIdByProductCode(String domainName, int domain, String user, String productCode) {
 		return AON.getItemIdByProductCode(domainName, domain, user, productCode);
 	}
+	@Override
+	public void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees) {
+		AON.deleteFee(domainName, domain, user, selectedFees.stream());
+	}
+	@Override
+	public void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params) {
+		AON.deleteFee(domainName, domain, user, params);
+	}
 	
 }

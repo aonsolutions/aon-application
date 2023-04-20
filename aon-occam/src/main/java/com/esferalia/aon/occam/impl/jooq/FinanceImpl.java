@@ -244,11 +244,18 @@ public class FinanceImpl implements IFinance {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.saveMassiveFees(ctx, fee, customerFeeParams));
 	}
-
+	
 	@Override
 	public void deleteFee(AONContext ctx, Fee f) {
 		ctx.getDslContext().transaction(configuration -> {
 			FeeDAO.delete(ctx, f);
+		} );			
+	}
+
+	@Override
+	public void deleteFee(AONContext ctx, CustomerFeeParams customerFeeParams) {
+		ctx.getDslContext().transaction(configuration -> {
+			FeeDAO.delete(ctx, customerFeeParams);
 		} );			
 	}
 

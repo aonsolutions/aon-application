@@ -48,6 +48,7 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
@@ -93,7 +94,7 @@ public class FeeDAO {
 	}
 	
 	public static LinkedList<Fee> getFeeList(AONContext ctx, CustomerFeeParams customerFeeParams){
-		Condition condition = createFeeCondition(customerFeeParams);
+		Condition condition = createFeeCondition(ctx, customerFeeParams);
 		
 		Result<Record> feeRecords = ctx.getDslContext().select().from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
@@ -116,12 +117,29 @@ public class FeeDAO {
 		return feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
 	}
 	
-	private static Condition createFeeCondition(CustomerFeeParams customerFeeParams) {
+	private static Condition createFeeCondition(AONContext ctx, CustomerFeeParams customerFeeParams) {
 		Condition condition = CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain());
-				
-		if(null != customerFeeParams.getBillingDate())
-			condition = condition.and(CUSTOMER_FEE.BILLING_DATE.eq(parseSQLDate(customerFeeParams.getBillingDate())))
-					.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(parseSQLDate(customerFeeParams.getBillingDate()))));
+		
+		User user = SecurityDAO.getUser(ctx);
+		if(user.getDomain() == ctx.getDomainId()) {
+			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
+			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
+		}
+		
+		if(null == customerFeeParams.getMonth() && null != customerFeeParams.getYear()) {
+			Date startBillingDate = new Date(customerFeeParams.getYear(), 0, 1);
+			Date endBillingDate = new Date(customerFeeParams.getYear(), 11, 31);
+			
+			condition = condition.and(CUSTOMER_FEE.BILLING_DATE.between(startBillingDate, endBillingDate))
+					.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(startBillingDate)));
+			
+		} else if(null != customerFeeParams.getMonth() && null != customerFeeParams.getYear()) {
+			Date billingDate = new Date(customerFeeParams.getYear(), customerFeeParams.getMonth(), 1);
+			
+			condition = condition.and(CUSTOMER_FEE.BILLING_DATE.eq(parseSQLDate(billingDate)))
+					.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(parseSQLDate(billingDate))));
+		}
+			
 		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomer())) 
 			condition = condition.and(CUSTOMER_ALIAS.NAME.eq(customerFeeParams.getCustomer()));
 		if(AonStringUtils.isNotBlank(customerFeeParams.getProductCode()))
@@ -309,6 +327,17 @@ public class FeeDAO {
 				.execute();
 		return f;
 	}
+	
+	public static void delete(AONContext ctx, CustomerFeeParams customerFeeParams) {
+		ctx.checkWrite();
+		LinkedList<Fee> paramsFeeList = getFeeList(ctx, customerFeeParams);
+		paramsFeeList.forEach(fee -> ctx.getDslContext().transaction(configuration -> {
+			ctx.getDslContext()
+			.delete(CUSTOMER_FEE)
+			.where(CUSTOMER_FEE.ID.equal(fee.getId())).execute();
+		}));
+		
+	}
 
 	public static void delete(AONContext ctx, Fee f) {
 		ctx.checkWrite();
@@ -373,7 +402,7 @@ public class FeeDAO {
 	}
 
 	public static Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams) {
-		Condition condition = createFeeCondition(customerFeeParams);
+		Condition condition = createFeeCondition(ctx, customerFeeParams);
 		
 		Result<Record1<Integer>> customerFeeRecords = ctx.getDslContext().select(CUSTOMER_FEE.ID).from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
@@ -415,7 +444,7 @@ public class FeeDAO {
 	}
 
 	public static Map<Integer, Integer> getCustomerProductsUpdates(CloseableAONContext ctx, CustomerFeeParams customerFeeParams) {
-		Condition condition = createFeeCondition(customerFeeParams);
+		Condition condition = createFeeCondition(ctx, customerFeeParams);
 		
 		Result<Record1<Integer>> customerRecords = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.CUSTOMER).from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))

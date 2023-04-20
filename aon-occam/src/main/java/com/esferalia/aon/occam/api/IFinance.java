@@ -119,6 +119,7 @@ public interface IFinance {
 	public Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams);
 	public void deleteFee(AONContext ctx,Fee f);
 	public void deleteFee(AONContext ctx,Stream<Fee> fs);
+	public void deleteFee(AONContext ctx,CustomerFeeParams customerFeeParams);
 	
 	public Map<Integer, Integer> getMinMaxCustomerFeeYear(CloseableAONContext ctx, int domainId);
 	
