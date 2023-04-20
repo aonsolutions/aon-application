@@ -33,7 +33,6 @@ export class AonDomainCustomer extends AonElement {
   loadedCustomers;
 
   selectedDomain;
-  selectedDomains;
   selectedCustomer;
 
   searchTimeout;
@@ -661,7 +660,7 @@ export class AonDomainCustomer extends AonElement {
 
   removeAllDomains() {
     this.loadedDomains = [];
-    this.selectedDomains = [];
+    this.selectedDomain = null;
     this.domainList.innerHTML = "";
   }
   
@@ -676,7 +675,7 @@ export class AonDomainCustomer extends AonElement {
     for (const option of this.customerList.children) {
       option.classList.remove("selectedCustomer");
     }
-    this.selectedDomains = [];
+    this.selectedDomain = null;
     for (const option of this.domainList.children) {
       option.classList.remove("selectedDomain");
     }
