@@ -10,10 +10,14 @@ public class CustomerFeeParams implements Serializable {
 	private Integer domain;
 	
 	private Date billingDate;
+	
 	private String customer;
 	private Byte customerStatus;
+	
 	private String productCode;
-	private Byte productStatus;
+	
+	private String price;
+	private String discount;
 	
 	private Integer limit;
 	private Integer offset;
@@ -57,11 +61,18 @@ public class CustomerFeeParams implements Serializable {
 		this.productCode = productCode;
 		return this;
 	}
-	public Byte getProductStatus() {
-		return productStatus;
+	public String getPrice() {
+		return price;
 	}
-	public CustomerFeeParams setProductStatus(Byte productStatus) {
-		this.productStatus = productStatus;
+	public CustomerFeeParams setPrice(String price) {
+		this.price = price;
+		return this;
+	}
+	public String getDiscount() {
+		return discount;
+	}
+	public CustomerFeeParams setDiscount(String discount) {
+		this.discount = discount;
 		return this;
 	}
 	public Integer getLimit() {

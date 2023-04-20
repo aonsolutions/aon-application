@@ -4,6 +4,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.TreeMap;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.CommonService;
@@ -45,6 +50,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -70,6 +76,7 @@ public class CustomerFee extends MainEntryPoint {
 	private AonToolbar toolbar;
 	private AonToolbarButton saveButton;
 	private AonToolbarButton undoAllButton;
+	private AonToolbarButton addValueButton;
 	
 	// Filter
 	private ListBox monthListBox;
@@ -77,7 +84,8 @@ public class CustomerFee extends MainEntryPoint {
 	private SuggestBox customerSuggestBox;
 	private ListBox customerStatusListBox;
 	private SuggestBox conceptSuggestBox;
-	private ListBox productStatus;
+	private TextBox priceTextBox;
+	private TextBox discountTextBox;
 	
 	// Fee Table
 	private HTMLPanel container;
@@ -94,6 +102,9 @@ public class CustomerFee extends MainEntryPoint {
 	// Search Variables
 	private CustomerFeeParams params;
 	private Date billingDate;
+	
+	private Map<String, String> customerSuggestions = new TreeMap<>();
+	private Map<String, String> productSuggestions = new TreeMap<>();
 	
 	final private int limit = 100;
 	final private MutableInt offset = new MutableInt(0);
@@ -187,6 +198,7 @@ public class CustomerFee extends MainEntryPoint {
 	private void loadModule() {
 		AonMessagePanel.showLoading(messagePanel, "Cargando panel de facturaci\u00f3n ...");
 		resetFilter();
+		setHasChange(false);
 		AonMessagePanel.hideMessage(messagePanel);
 	}
 
@@ -206,11 +218,15 @@ public class CustomerFee extends MainEntryPoint {
 		Label periodLabel = new Label("Periodo");
 		periodLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		monthListBox = createMonthListBox();
-		yearListBox = createYearListBox();
-
+		monthListBox.addChangeHandler(e -> onSearchFees());
+		createYearListBox(lb -> {
+			yearListBox = lb;
+			yearListBox.addChangeHandler(e -> onSearchFees());
+			periodItemPanel.add(yearListBox);
+		});
+		
 		periodItemPanel.add(periodLabel);
 		periodItemPanel.add(monthListBox);
-		periodItemPanel.add(yearListBox);
 
 		filterLeftPanel.add(periodItemPanel);
 
@@ -242,24 +258,53 @@ public class CustomerFee extends MainEntryPoint {
 
 		filterLeftPanel.add(conceptItemPanel);
 		
+		// Price
+		HTMLPanel priceItemPanel = new HTMLPanel("");
+		priceItemPanel.addStyleName(AON.CSS.aonItemFlex());
+
+		Label priceLabel = new Label("Precio");
+		priceLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		priceTextBox = new TextBox();
+		priceTextBox.setWidth("80px");
+		priceTextBox.setHeight("2em");
+		priceTextBox.getElement().getStyle().setProperty("padding", "0 5px");
+		priceTextBox.addValueChangeHandler(e -> onSearchFees());
+
+		priceItemPanel.add(priceLabel);
+		priceItemPanel.add(priceTextBox);
+
+		filterLeftPanel.add(priceItemPanel);
+		
+		// Price
+		HTMLPanel discountItemPanel = new HTMLPanel("");
+		discountItemPanel.addStyleName(AON.CSS.aonItemFlex());
+
+		Label discountLabel = new Label("Descuento");
+		discountLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		discountTextBox = new TextBox();
+		discountTextBox.setWidth("80px");
+		discountTextBox.setHeight("2em");
+		discountTextBox.getElement().getStyle().setProperty("padding", "0 5px");
+		discountTextBox.addValueChangeHandler(e -> onSearchFees());
+
+		discountItemPanel.add(discountLabel);
+		discountItemPanel.add(discountTextBox);
+
+		filterLeftPanel.add(discountItemPanel);
+		
 		HTMLPanel filterRightPanel = new HTMLPanel("");
 		filterRightPanel.addStyleName(AON.CSS.aonFlexWrap());
 		
 		AonToolbarSmallButton resetBtn = new AonToolbarSmallButton("Borrar filtros", AON.CSS.aonIconClear());
 		resetBtn.addClickHandler(e -> {
 			resetFilter();
-		});
-		filterRightPanel.add(resetBtn);
-		
-		AonToolbarSmallButton searchBtn = new AonToolbarSmallButton("Buscar", AON.CSS.aonIconSearch());
-		searchBtn.addClickHandler(e -> {
 			feeList.clear();
 			resetFeeTable();
 			enableMoreData();
 			offset.setValue(0);
-			searchFees();
+			showInitialMessage();
 		});
-		filterRightPanel.add(searchBtn);
+		filterRightPanel.add(resetBtn);
 		
 		filterContentPanel.add(filterLeftPanel);
 		filterContentPanel.add(filterRightPanel);
@@ -269,67 +314,92 @@ public class CustomerFee extends MainEntryPoint {
 	
 	private ListBox createMonthListBox() {
 		ListBox lb = new ListBox();
-		lb.setHeight("27px");
+		lb.setHeight("2em");
+		lb.getElement().getStyle().setProperty("padding", "0 5px");
 
 		lb.addItem("-", "");
-		lb.addItem("Enero", "0");
-		lb.addItem("Febrero", "1");
-		lb.addItem("Marzo", "2");
-		lb.addItem("Abril", "3");
-		lb.addItem("Mayo", "4");
-		lb.addItem("Junio", "5");
-		lb.addItem("Julio", "6");
-		lb.addItem("Agosto", "7");
-		lb.addItem("Septiembre", "8");
-		lb.addItem("Octubre", "9");
-		lb.addItem("Noviembre", "10");
-		lb.addItem("Diciembre", "11");
+		lb.addItem("Ene.", "0");
+		lb.addItem("Feb.", "1");
+		lb.addItem("Mar.", "2");
+		lb.addItem("Abr.", "3");
+		lb.addItem("May.", "4");
+		lb.addItem("Jun.", "5");
+		lb.addItem("Jul.", "6");
+		lb.addItem("Ago.", "7");
+		lb.addItem("Sep.", "8");
+		lb.addItem("Oct.", "9");
+		lb.addItem("Nov.", "10");
+		lb.addItem("Dic.", "11");
 
 		return lb;
 	}
 
-	private ListBox createYearListBox() {
-		ListBox lb = new ListBox();
-		lb.setHeight("27px");
+	private void createYearListBox(Consumer<ListBox> consumer) {
+		SERVICE.getMinMaxCustomerFeeYear(options.getDomainName(), options.getDomain(), options.getUser(), new AsyncCallback<Map<Integer, Integer>>() {
 
-		Integer currentYear = new Date().getYear();
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
 
-		lb.addItem((currentYear + 1900) + "", currentYear.toString());
-		lb.addItem((currentYear - 1 + 1900) + "", (currentYear - 1) + "");
-		lb.addItem((currentYear - 2 + 1900) + "", (currentYear - 2) + "");
+			@Override
+			public void onSuccess(Map<Integer, Integer> minMaxYear) {
+				Optional<Entry<Integer, Integer>> firstEntry = minMaxYear.entrySet().stream().findFirst();
+				Integer minYear = firstEntry.get().getKey();
+				Integer maxYear = firstEntry.get().getValue();
+				
+				ListBox lb = new ListBox();
+				lb.setHeight("2em");
+				lb.getElement().getStyle().setProperty("padding", "0 5px");
+				lb.addItem("-", "");
+				
+				while(maxYear >= minYear) {
+					lb.addItem(maxYear.toString(), (maxYear - 1900) + "");
+					maxYear--;
+				}
 
-		return lb;
+				consumer.accept(lb);
+			}
+			
+		});
 	}
 	
 	private void createCustomerStatusListBox() {
 		customerStatusListBox = new ListBox();
-		customerStatusListBox.setHeight("27px");
+		customerStatusListBox.setHeight("2em");
+		customerStatusListBox.getElement().getStyle().setProperty("padding", "0 5px");
 		customerStatusListBox.addItem("Activo", "Activo");
 		customerStatusListBox.addItem("Inactivo", "Inactivo");
 		customerStatusListBox.addItem("Bloqueado", "Bloqueado");
+		customerStatusListBox.addChangeHandler(e -> onSearchFees());
 	}
 	
 	private void createCustomerSuggestBox() {
 		customerSuggestBox = new SuggestBox();
 		customerSuggestBox.setWidth("300px");
+		customerSuggestBox.setHeight("2em");
+		customerSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
 		customerSuggestBox.setAutoSelectEnabled(false);
 		customerSuggestBox.getElement().setPropertyString("placeholder", "Clientes: busque por nombre, nif o alias");
 		
 		customerSuggestBox.addSelectionHandler(e -> {
 			customerSuggestBox.hideSuggestionList();
+			onSearchFees();
 		});
 		
 		customerSuggestBox.addKeyUpHandler(e -> {
 			String customerQuery = customerSuggestBox.getValue();
 			if(AonStringUtils.isNotBlank(customerQuery) && customerQuery.length() > 3) {
-				SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<LinkedList<String>>() {
+				SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, String>>() {
 					
 					@Override
-					public void onSuccess(LinkedList<String> customerSuggestions) {
+					public void onSuccess(Map<String, String> customerSuggestionsDB) {
+						customerSuggestions = customerSuggestionsDB;
+						
 						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerSuggestBox.getSuggestOracle();
 						orclSb.clear();
-						orclSb.addAll(customerSuggestions);
-						orclSb.setDefaultSuggestionsFromText(customerSuggestions);
+						orclSb.addAll(customerSuggestions.keySet());
+						orclSb.setDefaultSuggestionsFromText(customerSuggestions.keySet());
 						customerSuggestBox.showSuggestionList();
 					}
 					
@@ -346,24 +416,29 @@ public class CustomerFee extends MainEntryPoint {
 	private void createConceptSuggestBox() {
 		conceptSuggestBox = new SuggestBox();
 		conceptSuggestBox.setWidth("300px");
+		conceptSuggestBox.setHeight("2em");
+		conceptSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
 		conceptSuggestBox.setAutoSelectEnabled(false);
-		conceptSuggestBox.getElement().setPropertyString("placeholder", "Producto: busque por c\u00f3digo");
+		conceptSuggestBox.getElement().setPropertyString("placeholder", "Producto: busque por c\u00f3digo o descripci\u00f3n");
 		
 		conceptSuggestBox.addSelectionHandler(e -> {
 			conceptSuggestBox.hideSuggestionList();
+			onSearchFees();
 		});
 		
 		conceptSuggestBox.addKeyUpHandler(e -> {
 			String productQuery = conceptSuggestBox.getValue();
 			if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 3) {
-				SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<LinkedList<String>>() {
+				SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, String>>() {
 					
 					@Override
-					public void onSuccess(LinkedList<String> productSuggestions) {
+					public void onSuccess(Map<String, String> productSuggestionsDB) {
+						productSuggestions = productSuggestionsDB;
+						
 						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) conceptSuggestBox.getSuggestOracle();
 						orclSb.clear();
-						orclSb.addAll(productSuggestions);
-						orclSb.setDefaultSuggestionsFromText(productSuggestions);
+						orclSb.addAll(productSuggestions.keySet());
+						orclSb.setDefaultSuggestionsFromText(productSuggestions.keySet());
 						conceptSuggestBox.showSuggestionList();
 					}
 					
@@ -379,14 +454,29 @@ public class CustomerFee extends MainEntryPoint {
 	
 	private void resetFilter() {
 		monthListBox.setSelectedIndex(0);
+		if (null != yearListBox) yearListBox.setSelectedIndex(0);
 		customerSuggestBox.setValue("");
+		customerStatusListBox.setSelectedIndex(0);
 		conceptSuggestBox.setValue("");
+		priceTextBox.setValue("");
+		discountTextBox.setValue("");
 		
 		if(null != params) {
+			params.setBillingDate(null);
 			params.setCustomer(null);
 			params.setProductCode(null);
 			params.setCustomerStatus(null);
+			params.setPrice(null);
+			params.setDiscount(null);
 		}
+	}
+	
+	private void onSearchFees() {
+		feeList.clear();
+		resetFeeTable();
+		enableMoreData();
+		offset.setValue(0);
+		searchFees();
 	}
 
 	private void searchFees() {
@@ -394,54 +484,56 @@ public class CustomerFee extends MainEntryPoint {
 		
 		billingDate = createBillingDate();
 		
-		if(null == billingDate)
-			AonMessagePanel.showError(messagePanel, "No se puede realizar la busqueda si no existe un periodo seleccionado");
-		else {
-			if(null == params) params = new CustomerFeeParams();
-			params.setDomain(options.getDomain());
-			params.setBillingDate(billingDate);
-			params.setCustomer(customerSuggestBox.getValue());
-			params.setCustomerStatus((byte)customerStatusListBox.getSelectedIndex());
-			params.setProductCode(conceptSuggestBox.getValue());
-			params.setLimit(limit);
-			params.setOffset(offset.getValue());
-			
-			SERVICE.getCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), params,
-				new AsyncCallback<LinkedList<Fee>>() {
+		createParams();
+		
+		SERVICE.getCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), params,
+			new AsyncCallback<LinkedList<Fee>>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						AonMessagePanel.showError(messagePanel, "Error cargando panel de facturaci\u00f3n: " + caught.getMessage());
-					}
+				@Override
+				public void onFailure(Throwable caught) {
+					AonMessagePanel.showError(messagePanel, "Error cargando panel de facturaci\u00f3n: " + caught.getMessage());
+				}
 
-					@Override
-					public void onSuccess(LinkedList<Fee> feeListDB) {
-						if(params.getOffset() == 0 && (feeListDB == null || feeListDB.isEmpty()))
-							showEmptyFeeMessage();
-						else if(feeListDB == null || feeListDB.isEmpty()) {
-							disableMoreData();
-							if(feeList.isEmpty()) showEmptyFeeMessage();
-						} else {
-							showFeeTable();
-							feeListDB.forEach( fee -> paintRow(fee));
-							feeList.addAll(feeListDB);
-							enableMoreData();
-							offset.setValue(offset.getValue() + feeListDB.size());
-						}
-						
-						enableSearch();
-						setHasChange(false);
-						AonMessagePanel.hideMessage(messagePanel);
+				@Override
+				public void onSuccess(LinkedList<Fee> feeListDB) {
+					if(params.getOffset() == 0 && (feeListDB == null || feeListDB.isEmpty()))
+						showEmptyFeeMessage();
+					else if(feeListDB == null || feeListDB.isEmpty()) {
+						disableMoreData();
+						if(feeList.isEmpty()) showEmptyFeeMessage();
+					} else {
+						showFeeTable();
+						feeListDB.forEach( fee -> paintRow(fee));
+						feeList.addAll(feeListDB);
+						enableMoreData();
+						offset.setValue(offset.getValue() + feeListDB.size());
 					}
-				});
-		}
+					
+					enableSearch();
+					setHasChange(false);
+				}
+			});
+		
 	}
 	
+	private void createParams() {
+		if(null == params) params = new CustomerFeeParams();
+		params.setDomain(options.getDomain());
+		params.setBillingDate(billingDate);
+		params.setCustomer(customerSuggestions.get(customerSuggestBox.getValue()));
+		params.setCustomerStatus((byte)customerStatusListBox.getSelectedIndex());
+		params.setProductCode(productSuggestions.get(conceptSuggestBox.getValue()));
+		params.setPrice(priceTextBox.getValue());
+		params.setDiscount(discountTextBox.getValue());
+		params.setLimit(limit);
+		params.setOffset(offset.getValue());
+	}
+
 	private Date createBillingDate() {
 		String monthStr = monthListBox.getSelectedValue();
-		String yearStr = yearListBox.getSelectedValue();
+		String yearStr = null == yearListBox ? "" : yearListBox.getSelectedValue();
 		
-		if(AonStringUtils.isBlank(monthStr))return null;
+		if(AonStringUtils.isBlank(monthStr) || AonStringUtils.isBlank(yearStr)) return null;
 		
 		return new Date(Integer.parseInt(yearStr), Integer.parseInt(monthStr), 1);
 	}
@@ -507,6 +599,7 @@ public class CustomerFee extends MainEntryPoint {
 		CheckBox select = new CheckBox();
 		select.addValueChangeHandler(e -> {
 			selectionModel.forEach((checkBox, fee) -> checkBox.setValue(e.getValue()));
+			addValueButton.setEnabled(e.getValue());
 		});
 
 		Label customer = new Label("CLIENTE");
@@ -516,11 +609,11 @@ public class CustomerFee extends MainEntryPoint {
 		Label quantity = new Label("CANTIDAD");
 		Label price = new Label("PRECIO");
 		Label discount = new Label("DESCUENTO");
-		Label billingDate = new Label("F. FACTURACI\u00f3nN");
+		Label billingDate = new Label("F. FACTURACI\u00f3N");
 		Label startDate = new Label("F. DESDE");
-		startDate.setTitle("F. DESDE FACTURACI\u00f3nN");
+		startDate.setTitle("F. DESDE FACTURACI\u00f3N");
 		Label endDate = new Label("F. HASTA");
-		endDate.setTitle("F. HASTA FACTURACI\u00f3nN");
+		endDate.setTitle("F. HASTA FACTURACI\u00f3N");
 
 		select.addStyleName(AON.CSS.aonHeaderTable());
 		select.getElement().getStyle().setPaddingLeft(0, Unit.PX);
@@ -604,13 +697,16 @@ public class CustomerFee extends MainEntryPoint {
 		int row = feeTable.insertRow(feeTable.getRowCount());
 
 		CheckBox select = new CheckBox();
-		select.addValueChangeHandler(e -> {});
+		select.addValueChangeHandler(e -> {
+			Optional<CheckBox> checked = selectionModel.keySet().stream().filter(cb -> cb.getValue()).findAny();
+			addValueButton.setEnabled(checked.isPresent());
+		});
 
 		Label customerLabel = new Label(fee.getCustomer().getName());
 
 		ListBox statusListBox = createStatusListBox(fee, row);
 		statusListBox.setWidth("90px");
-		statusListBox.setHeight("30px");
+		statusListBox.setHeight("2em");
 		setSelectedValueLB(statusListBox, fee.getCustomer().getStatus().getDescription());
 
 		AutoResizeTextArea conceptTextArea = new AutoResizeTextArea(fee, row);
@@ -619,12 +715,12 @@ public class CustomerFee extends MainEntryPoint {
 
 		ListBox periodListBox = createPeriodListBox(fee, row);
 		periodListBox.setWidth("100px");
-		periodListBox.setHeight("30px");
+		periodListBox.setHeight("2em");
 		setSelectedValueLB(periodListBox, fee.getPeriod().getValue().toString());
 
 		TextBox quantityTextBox = new TextBox();
 		quantityTextBox.setWidth("65px");
-		quantityTextBox.setHeight("20px");
+		quantityTextBox.setHeight("2em");
 		quantityTextBox.setValue(null == fee.getQuantity() ? "" : fee.getQuantity().toString());
 		quantityTextBox.addValueChangeHandler(e -> {
 			fee.setQuantity(Double.parseDouble(e.getValue()));
@@ -633,7 +729,7 @@ public class CustomerFee extends MainEntryPoint {
 
 		TextBox priceTextBox = new TextBox();
 		priceTextBox.setWidth("90px");
-		priceTextBox.setHeight("20px");
+		priceTextBox.setHeight("2em");
 		priceTextBox.setValue(null == fee.getPrice() ? "" : fee.getPrice().toString());
 		priceTextBox.addValueChangeHandler(e -> {
 			fee.setPrice(Double.parseDouble(e.getValue()));
@@ -642,8 +738,8 @@ public class CustomerFee extends MainEntryPoint {
 
 		TextBox discountTextBox = new TextBox();
 		discountTextBox.setWidth("80px");
-		discountTextBox.setHeight("20px");
-		discountTextBox.setValue(null == fee.getDiscount() ? "" : fee.getDiscount().toString());
+		discountTextBox.setHeight("2em");
+		discountTextBox.setValue(null == fee.getDiscountExpr() ? "" : fee.getDiscountExpr());
 		discountTextBox.addValueChangeHandler(e -> {
 			String expression = e.getValue();
 			String result = e.getValue();
@@ -655,11 +751,12 @@ public class CustomerFee extends MainEntryPoint {
 				
 				Double expressionValue = evalExpression(expression);
 				result = null == expressionValue ? "" : expressionValue.toString();
+				fee.setDiscount(Double.parseDouble(result));
 			} catch (Exception ex) {
-				// TODO: handle exception
+				AonMessagePanel.showWarning(messagePanel, new HTML("La expresi\u00f3n de <b>Descuento</b> que ha introducido no es correcta"));
 			}
 			
-			fee.setDiscount(Double.parseDouble(result));
+			fee.setDiscountExpr(expression);
 			setFeeModify(fee, row);
 			
 		});
@@ -668,10 +765,11 @@ public class CustomerFee extends MainEntryPoint {
 		billingDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		billingDateBox.addStyleName("gwt-TextBox");
 		billingDateBox.setWidth("65px");
-		billingDateBox.setHeight("20px");
+		billingDateBox.setHeight("2em");
 		billingDateBox.setValue(fee.getBillingDate());
 		billingDateBox.addValueChangeHandler(e -> {
 			Date date = e.getValue() == null ? null : DateUtils.getFirstDayOfMonth(e.getValue());
+			billingDateBox.setValue(date);
 			fee.setBillingDate(date);
 			setFeeModify(fee, row);
 		});
@@ -680,7 +778,7 @@ public class CustomerFee extends MainEntryPoint {
 		startDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		startDateBox.addStyleName("gwt-TextBox");
 		startDateBox.setWidth("65px");
-		startDateBox.setHeight("20px");
+		startDateBox.setHeight("2em");
 		startDateBox.setValue(fee.getStartDate());
 		startDateBox.addValueChangeHandler(e -> {
 			fee.setStartDate(e.getValue());
@@ -691,7 +789,7 @@ public class CustomerFee extends MainEntryPoint {
 		endDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 		endDateBox.addStyleName("gwt-TextBox");
 		endDateBox.setWidth("65px");
-		endDateBox.setHeight("20px");
+		endDateBox.setHeight("2em");
 		endDateBox.setValue(fee.getEndDate());
 		endDateBox.addValueChangeHandler(e -> {
 			fee.setEndDate(e.getValue());
@@ -778,19 +876,6 @@ public class CustomerFee extends MainEntryPoint {
 		});
 		return lb;
 	}
-
-	private ListBox createBillingYearListBox() {
-		ListBox lb = new ListBox();
-
-		Integer currentYear = new Date().getYear();
-
-		lb.addItem((currentYear + 1 + 1900) + "", (currentYear + 1) + "");
-		lb.addItem((currentYear + 1900) + "", currentYear.toString());
-		lb.addItem((currentYear - 1 + 1900) + "", (currentYear - 1) + "");
-		lb.addItem((currentYear - 2 + 1900) + "", (currentYear - 2) + "");
-
-		return lb;
-	}
 	
 	private void setSelectedValueLB(ListBox lBox, String str) {
 		String text = str;
@@ -869,14 +954,14 @@ public class CustomerFee extends MainEntryPoint {
 	// -------------------------------- TOOLBAR
 	
 	private void createToolbar() {
-		toolbar = new AonToolbar("Panel Facturaci\u00f3n");
+		toolbar = new AonToolbar("Panel Facturaci\u00f3n de Cuotas");
 
 		saveButton = new AonToolbarButton(AON.MSG.saveAction(), AON.CSS.aonIconSave());
 		saveButton.addClickHandler(e -> {
 			AonMessagePanel.showLoading(messagePanel, "Guardando panel facturaci\u00f3n ...");
 			setHasChange(false);
 			SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), feeList,
-					new AsyncCallback<Void>() {
+					new AsyncCallback<Integer>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -884,8 +969,10 @@ public class CustomerFee extends MainEntryPoint {
 						}
 
 						@Override
-						public void onSuccess(Void result) {
-							AonMessagePanel.hideMessage(messagePanel);
+						public void onSuccess(Integer updates) {
+							AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+							addValueButton.setEnabled(false);
+							selectionModel.clear();
 							setHasChange(false);
 							feeList.clear();
 							resetFeeTable();
@@ -909,18 +996,142 @@ public class CustomerFee extends MainEntryPoint {
 				@Override
 				public void onAccept() {
 					AonMessagePanel.showLoading(messagePanel, "Deshaciendo cambios panel facturaci\u00f3n ...");
+					addValueButton.setEnabled(false);
+					selectionModel.clear();
 					setHasChange(false);
 					feeList.clear();
 					resetFeeTable();
 					enableMoreData();
 					offset.setValue(0);
 					searchFees();
+					AonMessagePanel.hideMessage(messagePanel);
 				}
 			});
+		});
+		
+		addValueButton = new AonToolbarButton("Editar Cuota", AON.CSS.aonIconEdit());
+		addValueButton.setEnabled(false);
+		addValueButton.addClickHandler(e -> {
+			new CustomerMassiveFeeDialog() {
+				
+				@Override
+				protected void onAccept(Fee fee) {
+					long selectedItems = selectionModel.keySet().stream().filter(cb -> cb.getValue()).count();
+					
+					// Cambio masivo (todo seleccionado)
+					if(selectedItems == feeList.size()) {
+						createParams();
+						
+						SERVICE.getCustomerProductsUpdates(options.getDomainName(), options.getDomain(), options.getUser(), params, new AsyncCallback<Map<Integer,Integer>>() {
+							
+							@Override
+							public void onSuccess(Map<Integer, Integer> result) {
+								Optional<Entry<Integer, Integer>> resultEntry = result.entrySet().stream().findFirst();
+								AonDialog dialog = new AonDialog("Edici\u00f3n Cuotas",
+										new HTML("El cambio afectara a <b>" + resultEntry.get().getKey() + " clientes</b> y <b>" + resultEntry.get().getValue() + " cuotas</b>.<br>\u00bfEsta seguro que desea proceder a la actualizacion\u003f"));
+								
+								dialog.confirm(new AonAcceptDialogCallback() {
+
+									@Override
+									public void onCancel() {
+										// Nothing to do here
+									}
+
+									@Override
+									public void onAccept() {
+										AonMessagePanel.showLoading(messagePanel, "Actualizando datos de cuotas masivamente ...");
+										SERVICE.saveMassiveCustomerFee(options.getDomainName(), options.getDomain(), options.getUser(), fee, params,
+											new AsyncCallback<Integer>() {
+
+												@Override
+												public void onFailure(Throwable caught) {
+													AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
+												}
+
+												@Override
+												public void onSuccess(Integer updates) {
+													AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+													addValueButton.setEnabled(false);
+													selectionModel.clear();
+													setHasChange(false);
+													feeList.clear();
+													resetFeeTable();
+													enableMoreData();
+													offset.setValue(0);
+													searchFees();
+												}
+											});
+									}
+								});
+							}
+							
+							@Override
+							public void onFailure(Throwable caught) {
+								// TODO Auto-generated method stub
+								
+							}
+						});
+					} else {
+						// Solo cuotas seleccionadas
+						LinkedList<Fee> selectedFees = selectionModel.entrySet().stream().filter(e -> e.getKey().getValue()).map(e -> e.getValue()).collect(Collectors.toCollection(LinkedList::new));
+						AonDialog dialog = new AonDialog("Edici\u00f3n Cuotas",
+								new HTML("El cambio afectara a <b>" + selectedFees.size() + " cuotas</b>.<br>\u00bfEsta seguro que desea proceder a la actualizacion\u003f"));
+						
+						dialog.confirm(new AonAcceptDialogCallback() {
+
+							@Override
+							public void onCancel() {
+								// Nothing to do here
+							}
+
+							@Override
+							public void onAccept() {
+								AonMessagePanel.showLoading(messagePanel, "Actualizando datos de cuotas masivamente ...");
+								selectedFees.forEach(feeIt -> {
+									feeIt.setModify(true);
+									
+									if(null != fee.getPeriod()) feeIt.setPeriod(fee.getPeriod());
+									if(null != fee.getQuantity()) feeIt.setQuantity(fee.getQuantity());
+									if(null != fee.getPrice()) feeIt.setPrice(fee.getPrice());
+									if(null != fee.getDiscountExpr()) feeIt.setDiscountExpr(fee.getDiscountExpr());
+									
+									if(null != fee.getBillingDate()) feeIt.setBillingDate(fee.getBillingDate());
+									if(null != fee.getStartDate()) feeIt.setStartDate(fee.getStartDate());
+									if(null != fee.getEndDate()) feeIt.setEndDate(fee.getEndDate());
+									
+									SERVICE.saveCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), selectedFees,
+											new AsyncCallback<Integer>() {
+
+												@Override
+												public void onFailure(Throwable caught) {
+													AonMessagePanel.showError(messagePanel, "Error guardando panel de facturaci\u00f3n: " + caught.getMessage());
+												}
+
+												@Override
+												public void onSuccess(Integer updates) {
+													AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
+													selectionModel.clear();
+													addValueButton.setEnabled(false);
+													setHasChange(false);
+													feeList.clear();
+													resetFeeTable();
+													enableMoreData();
+													offset.setValue(0);
+													searchFees();
+												}
+											});
+								});
+							}
+						});
+					}
+				}
+				
+			};
 		});
 
 		toolbar.add(saveButton);
 		toolbar.add(undoAllButton);
+		toolbar.add(addValueButton);
 	}
 
 	// ------------------------------------------ HasChange

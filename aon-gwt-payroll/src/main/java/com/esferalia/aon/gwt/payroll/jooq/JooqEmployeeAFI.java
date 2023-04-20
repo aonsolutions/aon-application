@@ -565,14 +565,10 @@ public class JooqEmployeeAFI {
 		try {
 			Double coef = Double.parseDouble(partialityCoef);
 			coef = coef * 1000;
-			return coef.toString();
+			return (int) Math.floor(coef) + "";
 		} catch (Exception e) {
 			return "";
 		}
-
-//		if(partialityCoef.length() <= 3)
-//			return partialityCoef;
-//		return partialityCoef.length() <= 3 ? partialityCoef : partialityCoef.substring(partialityCoef.length()-3, partialityCoef.length());
 	}
 
 	// -------------------------------------------- getEmployeeAFIInfo. MC
@@ -750,8 +746,6 @@ public class JooqEmployeeAFI {
 	}
 	
 	private static String parseContractData( String data ) {
-		if(null != data)
-			data = data.replace(".", "");
 		if(null != data && data.contains("\""))
 			return data.split("\"")[1];
 		else

@@ -14,6 +14,7 @@ public class InvoiceImportClass implements IsSerializable {
 	
 	InvoiceOpType type;
 	InvoiceType invoiceType;
+	String activity;
 	Date date;
 	String serie;
 	Integer number;
@@ -49,7 +50,16 @@ public class InvoiceImportClass implements IsSerializable {
 	LinkedList<Finance> finances;
 	
 	public InvoiceImportClass() {
-		// TODO Auto-generated constructor stub
+
+	}
+	
+	public String getActivity() {
+		return activity;
+	}
+	
+	public InvoiceImportClass setActivity(String activity) {
+		this.activity = activity;
+		return this;		
 	}
 
 	public InvoiceOpType getType() {

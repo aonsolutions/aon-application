@@ -433,6 +433,12 @@
 	align-items: center;
 }
 
+.aon_display_flex_end {
+	display: flex;	
+	justify-content: flex-end;
+	align-items: center;
+}
+
 .aon_display_table {
 	display: table;
 	box-sizing: border-box;
@@ -833,6 +839,23 @@
 	text-align: center;
 }
 
+.aon_dialog_button {
+	background-attachment: scroll;
+	background-clip: border-box;
+	background-color: inherit;
+	background-position: 1px -2px;
+	background-repeat: no-repeat;
+	background-size: auto auto;
+	border: 1px solid #aaa;
+	cursor: pointer;
+	height: 24px;
+	overflow: visible;
+	padding-left: 25px;
+	text-align: left;
+	text-transform: uppercase;
+	width: auto;
+}
+
 /* TABLE  */
 .aon_table {
 	border-collapse: collapse;
@@ -911,6 +934,8 @@
 .aon_flex_between {
 	display: flex;
 	justify-content: space-between;
+	align-items: center;
+    gap: .5rem;
 }
 
 .aon_flex_wrap {

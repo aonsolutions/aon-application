@@ -100,7 +100,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.payroll.Contract;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.Occupation;
@@ -195,7 +195,7 @@ public class EmployeesServiceHelper {
 		
 //		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
-		byte data [] =  SistemaRED.getTA(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
+		byte data [] =  SistemaRED.getTA(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 		return Base64.getEncoder().encodeToString(data);
 	}
 
@@ -214,7 +214,7 @@ public class EmployeesServiceHelper {
 //		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 
-		byte data [] =  SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
+		byte data [] =  SistemaRED.getIDC(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 		return Base64.getEncoder().encodeToString(data);
 	}
 
@@ -231,7 +231,7 @@ public class EmployeesServiceHelper {
 //		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId);
 		Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 		
-		byte data [] =  SistemaRED.getIDCNSS(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
+		byte data [] =  SistemaRED.getIDCNSS(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, naf, date);
 		return Base64.getEncoder().encodeToString(data);
 	}
 	
@@ -1006,7 +1006,7 @@ public class EmployeesServiceHelper {
 		
 		Collection<Idc> idcDates;
 		try {
-			idcDates = SistemaRED.getIDCDates(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, nss);
+			idcDates = SistemaRED.getIDCDates(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, nss);
 		} catch (SegSocialException e1) {
 			return ssContractData;
 		}
@@ -1026,7 +1026,7 @@ public class EmployeesServiceHelper {
 		for (Date startDate : dates) {				
 			byte data[] = null;
 			try {
-				data = SistemaRED.getIDC(certificate.getCertificate(), certificate.getPassword(), certificate.getType(), regime, ccc, nss, startDate);
+				data = SistemaRED.getIDC(certificate.getData(), certificate.getPassword(), certificate.getType(), regime, ccc, nss, startDate);
 				Map<ContextVariable, Object> contractData = com.esferalia.aon.in.payroll.tgss.idc.Idc.getContractData(data);
 				for ( ContextVariable v : stringVars ) {
 					if ( contractData.containsKey(v) ) {					
