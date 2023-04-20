@@ -2711,9 +2711,27 @@ public class AON {
 		getFinance().deleteFee(ctx, fs);
 	}
 	
+	public static void deleteFee(String domainName, int domainId, String login, Stream<Fee> fs) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			getFinance().deleteFee(ctx, fs);;
+		}	
+	}
+	
+	public static void deleteFee(String domainName, int domainId, String login, CustomerFeeParams params) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			getFinance().deleteFee(ctx, params);
+		}	
+	}
+	
 	public static Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domainId, String login) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getMinMaxCustomerFeeYear(ctx, domainId);
+		}
+	}
+	
+	public static Integer getItemIdByProductCode(String domainName, int domainId, String login, String productCode) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getItemIdByProductCode(ctx, domainId, productCode);
 		}
 	}
 

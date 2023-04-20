@@ -14,7 +14,6 @@ import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.watson.error.AonCoreException;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -54,5 +53,7 @@ public interface RegistryService extends RemoteService {
 	Integer saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee>  feeList);
 	Integer saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params);
 	Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domain, String user);
-	
+	Integer getItemIdByProductCode(String domainName, int domain, String user, String productCode);
+	void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees);
+	void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params);
 }
