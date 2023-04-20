@@ -1,11 +1,16 @@
 package com.esferalia.aon.occam.api;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
@@ -34,6 +39,56 @@ public class CONSOLE {
 		try (CloseableAONContext ctx = AONContext.getAONContext(params.getSchema())) {
 			return getConsole().getDomains(ctx, params);
 		}
+	}
+	
+	public static Stream<DomainCompany> getAllDomains() {
+		List<DomainCompany> list = new LinkedList<>();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+				List<DomainCompany> domains = getConsole().getAllDomains(ctx).collect(Collectors.toList());
+				list.addAll(domains);
+			}
+		}
+		return list.stream();
+
+	}
+	
+	public static Stream<DomainCompany> getCustomerDomains(Integer customer) {
+		List<DomainCompany> list = new LinkedList<>();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+				List<DomainCompany> domains = getConsole().getCustomerDomains(ctx, customer).collect(Collectors.toList());
+				list.addAll(domains);
+			}
+		}
+		return list.stream();
+
+	}
+
+	public static Stream<DomainCompany> getDomainsByDocument(String customerDocument, Integer customerId) {
+		List<DomainCompany> list = new LinkedList<>();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+				List<DomainCompany> domains = getConsole().getDomainsByDocument(ctx, customerDocument, customerId).collect(Collectors.toList());
+				list.addAll(domains);
+			}
+		}
+		return list.stream();
+		
+	}
+	
+	public static List<Domain> updateDomainCustomerData(List<DomainCompany> domainCompanies, Customer customer) {
+		List<Domain> updatedDomains = new LinkedList<>(); 
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+				updatedDomains.addAll(getConsole().updateDomainCustomer(ctx, domainCompanies, customer));
+			}
+		}
+		return updatedDomains;
 	}
 
 	public static boolean deleteDomain(DomainParams params, Integer domainId) {
@@ -93,4 +148,5 @@ public class CONSOLE {
 			return getConsole().delete(ctx,row);
 		}
 	}
+
 }
