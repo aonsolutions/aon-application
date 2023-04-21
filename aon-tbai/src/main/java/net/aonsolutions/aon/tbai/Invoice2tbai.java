@@ -246,9 +246,13 @@ public class Invoice2tbai {
 				other.setIDType(invoice.isIntracommunity() 
 						? IDType.NIF_IVA.getName()
 						: IDType.OTRO.getName());
+				
 				String doc = invoice.getRegistryDocument().replace(" ", "");
-				if(invoice.isIntracommunity())
-					doc = invoice.getRegistryDocumentCountry().getIso2() + doc;
+				if(!doc.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
+					boolean isGrecia = Country.GR.equals(invoice.getRegistryDocumentCountry());
+					String countryDocument = isGrecia ? "EL" : invoice.getRegistryDocumentCountry().getIso2();
+					doc = countryDocument + document;
+				}
 				other.setID(doc);
 				receiver.setIDOtro(other);
 			}
