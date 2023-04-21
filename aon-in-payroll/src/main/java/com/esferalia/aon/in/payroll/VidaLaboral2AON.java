@@ -5,10 +5,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -39,11 +43,13 @@ import com.code.aon.common.enumeration.Province;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.RegistryType;
+import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.in.payroll.ivl.IvlCccParser;
 import com.esferalia.aon.in.payroll.ivl.IvlParserListener;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
 import com.esferalia.aon.in.payroll.pdf.template.AltaiPDFTemplate.PDFContract;
 import com.esferalia.aon.in.payroll.utils.Utils;
+import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.DomainRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
@@ -56,9 +62,13 @@ import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.WorkplaceRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.type.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import antlr.collections.List;
 
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
@@ -76,6 +86,7 @@ import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 import static com.esferalia.aon.jooq.tables.Geozone.GEOZONE;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Contract.CONTRACT;
+import static com.esferalia.aon.jooq.tables.ContractData.CONTRACT_DATA;
 
 
 
@@ -83,37 +94,45 @@ public class VidaLaboral2AON implements IvlParserListener{
 	
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/yyyy");
-	static InputStream is = VidaLaboral2AON.class.getResourceAsStream("tmp/ivl-aon.pdf");		
+	static InputStream is = VidaLaboral2AON.class.getResourceAsStream("tmp/document-31.pdf");		
 	static Connection connection = null;
 	AONContext aonContext = new AONContext(connection);
 	DSLContext dslContext = aonContext.getDslContext();
-	
-	
+	static Date startDate;
+	static Date endDate;
+	static String sDate;
+	static String eDate;
+	static String situationn;
 	static String socialReason;
 	String fullname;
 	String naf;
 	String docNum;
+	String docType;
 	String address;
 	static String ccc;
 	static String nif;
 	String economicActivityCode;
 	String domainNamePreffix = "payroll";
-	String parentDomainName = "-test.aonsolutions.org";
+	String parentDomainName = "assimilated-payroll-test.aonsolutions.org";
 	String creationUser;
 	String regime; 
 	String economicActivityDescription;
 	String pdf;
+	String fullName;
 	int zone;
 	byte enableHeredity;
-	EnterpriseRecord enterprise;
 	PDDocument doc;
-	EnterpriseCccRecord enterpriseCcc;
-	DomainRecord parentDomain;
+	static EnterpriseRecord enterprise;
+	static EnterpriseCccRecord enterpriseCcc;
+	static PayrollWorkplaceRecord payRollWorkPlace;
+	static RegistryRecord person;
+	static DomainRecord parentDomain;
 	static int domainId = 8776;
 		 
 		
 		
 
+	@SuppressWarnings("static-access")
 	public VidaLaboral2AON(DSLContext dslContext, String parentDomainName) {
 			super();
 			this.dslContext = dslContext;
@@ -121,7 +140,7 @@ public class VidaLaboral2AON implements IvlParserListener{
 			this.enableHeredity = 1;
 			this.parentDomainName = parentDomainName;
 			this.parentDomain = getParentDomain(parentDomainName);
-			
+					
 			
 		}
 	public VidaLaboral2AON(DSLContext dslContext) {
@@ -253,7 +272,6 @@ public class VidaLaboral2AON implements IvlParserListener{
 
 	
 	public void import2AON(InputStream is, IvlParserListener ivl, String pdf) throws IOException, UnknownPDFException {
-		VidaLaboral2AON on = new VidaLaboral2AON(dslContext);
 		dslContext.transaction(ctx ->{
 				InputStream iis = new FileInputStream(pdf);
 				IvlCccParser.parse(iis, ivl);
@@ -273,6 +291,10 @@ public class VidaLaboral2AON implements IvlParserListener{
 				.fetchOptionalInto(REGISTRY);
 		
 	}
+	
+	
+	
+	
 	
 	private RegistryRecord newPerson(int domainId, String ccc, String fullname, String naf) {
 		
@@ -303,6 +325,7 @@ public class VidaLaboral2AON implements IvlParserListener{
 
 				});
 		//Separar nombres y apellidos
+		
 		String names [] = Utils.split(fullname);
 //		try {
 			PersonRecord person = getDSLContext(dslContext).newRecord(PERSON);
@@ -544,22 +567,271 @@ public class VidaLaboral2AON implements IvlParserListener{
 
 	}
 	
-	private ContractRecord newContract(EnterpriseCccRecord enterpriseCcc, RegistryRecord person, PayrollWorkplaceRecord workplace) {
+	
+	//TENER EN CUENTA CASOS DONDE G:C/M = 10/M  	 (VALOR DE NAME EN CONTRACT_DATA DIAS_MES)
+	private ContractRecord newContract(EnterpriseCccRecord enterpriseCcc, RegistryRecord person, PayrollWorkplaceRecord workplace, 
+			String start, String end,String startSit ,String effectSit, String gc, String tc, String ctp, String cotDays)    {
+		System.out.println(person.getId());
+		System.out.println(workplace.getWorkplace());
+		 Record existingContract = getDSLContext(dslContext)
+		            .select().from(CONTRACT).innerJoin(CONTRACT_DATA)
+		            .onKey()
+		            .where(CONTRACT.PERSON.eq(person.getId())
+		                    .and(CONTRACT.WORKPLACE.eq(workplace.getWorkplace()))
+		                    .and(CONTRACT.START_DATE.eq(CONTRACT_DATA.START_DATE))).limit(1)
+		            .fetchOne();
+		 
+		 ContractRecord contract = 
+					getDSLContext(dslContext).newRecord(CONTRACT);
+			
+			ContractDataRecord quoteGroupData =
+					getDSLContext(dslContext).newRecord(CONTRACT_DATA);
+		 if (existingContract != null) {
+			 System.out.println("el contrato ya existe");
+
+		 }else {
+				
+
+				String situacion = getSituation(situationn);
+				java.util.Date utilDate;
+				java.sql.Date sqlDate;
+				//CASO DONDE EL TRABAJADOR ESTA DE BAJA
+				if (situacion.equals("BAJA ")) {
+					 contract = 
+							getDSLContext(dslContext).newRecord(CONTRACT);
+					contract.setDomain(enterpriseCcc.getDomain());
+					contract.setPerson(person.getId());
+					contract.setWorkplace(workplace.getWorkplace());
+					contract.setEnterpriseCcc(enterpriseCcc.getId());
+					contract.setEnterpriseActivity(enterpriseCcc.getEnterpriseActivity());
+					String startDate = getStartDate(start);
+					String endDate = getEndDate(startSit);
+					
+					try {
+						utilDate = new SimpleDateFormat("dd-MM-yyyy").parse(startDate);
+						sqlDate = new java.sql.Date(utilDate.getTime());
+						contract.setStartDate(sqlDate);
+
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						utilDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDate);
+						sqlDate = new java.sql.Date(utilDate.getTime());
+						contract.setEndDate(sqlDate);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} 
+					
+					byte baja = 0;
+					contract.setSsStatus(baja);
+					contract.setRegistration(null);
+					contract.setCategoryDescription("prueba-BAJA");
+					contract.setSsRegime(type(SSRegimeType.GENERAL));
+					contract.insert();
+					
+					//INSERT PARA GRUPO DE COTIZACION
+					quoteGroupData =
+							getDSLContext(dslContext).newRecord(CONTRACT_DATA);	
+					quoteGroupData.setDomain(contract.getDomain());
+					quoteGroupData.setContract(contract.getId());
+					quoteGroupData.setName(ContextVariable.QUOTE_GROUP.getName());
+					quoteGroupData.setStartDate(contract.getStartDate());
+					quoteGroupData.setEndDate(contract.getEndDate());
+					quoteGroupData.setExpression(String.format("\"%s\"", gc));
+					quoteGroupData.insert();
+					
+					//INSERT PARA TC2
+					 quoteGroupData =
+							getDSLContext(dslContext).newRecord(CONTRACT_DATA);	
+					quoteGroupData.setDomain(contract.getDomain());
+					quoteGroupData.setContract(contract.getId());
+					quoteGroupData.setName(ContextVariable.TC2.getName());
+					quoteGroupData.setStartDate(contract.getStartDate());
+					quoteGroupData.setEndDate(contract.getEndDate());
+					quoteGroupData.setExpression(String.format("\"%s\"", tc));
+					quoteGroupData.insert();
+					//INSERT PARA COEFICIENTE DE PARCIALIDAD
+					quoteGroupData =
+							getDSLContext(dslContext).newRecord(CONTRACT_DATA);	
+					quoteGroupData.setDomain(contract.getDomain());
+					quoteGroupData.setContract(contract.getId());
+					quoteGroupData.setName(ContextVariable.PARTIAL_FACTOR.getName());
+					quoteGroupData.setStartDate(contract.getStartDate());
+					quoteGroupData.setEndDate(contract.getEndDate());
+					if (ctp == null) {
+						quoteGroupData.setExpression(ctp);
+
+					}else {
+						quoteGroupData.setExpression(ctp.replaceAll(",", "."));
+
+					}
+					quoteGroupData.insert();
+					
+
+					//CASO DONDE EL TRABAJADOR ESTA EN ALTA
+				}else if(situacion.equals("ALTA ")){
+					 contract = 
+							getDSLContext(dslContext).newRecord(CONTRACT);
+					contract.setDomain(enterpriseCcc.getDomain());
+					contract.setPerson(person.getId());
+					contract.setWorkplace(workplace.getWorkplace());
+					contract.setEnterpriseCcc(enterpriseCcc.getId());
+					contract.setEnterpriseActivity(enterpriseCcc.getEnterpriseActivity());
+					String startDate = getStartDate(start);
+			
+					try {
+						utilDate = new SimpleDateFormat("dd-MM-yyyy").parse(startDate);
+						sqlDate = new java.sql.Date(utilDate.getTime());
+						contract.setStartDate(sqlDate);	
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+							
+					byte alta = 1;
+					contract.setSsStatus(alta);
+					contract.setRegistration(null);
+					contract.setCategoryDescription("prueba-ALTA");
+					contract.setSsRegime(type(SSRegimeType.GENERAL));
+					contract.insert();
+					//INSERT PARA GRUPO DE COTIZACION
+
+					quoteGroupData =
+							getDSLContext(dslContext).newRecord(CONTRACT_DATA);
+					quoteGroupData.setDomain(contract.getDomain());
+					quoteGroupData.setContract(contract.getId());
+					quoteGroupData.setName(ContextVariable.QUOTE_GROUP.getName());
+					quoteGroupData.setStartDate(contract.getStartDate());
+					quoteGroupData.setEndDate(contract.getEndDate());
+					quoteGroupData.setExpression(String.format("\"%s\"", gc));
+					quoteGroupData.insert();
+					//INSERT PARA TC2
+
+					quoteGroupData =
+							getDSLContext(dslContext).newRecord(CONTRACT_DATA);	
+					quoteGroupData.setDomain(contract.getDomain());
+					quoteGroupData.setContract(contract.getId());
+					quoteGroupData.setName(ContextVariable.TC2.getName());
+					quoteGroupData.setStartDate(contract.getStartDate());
+					quoteGroupData.setEndDate(contract.getEndDate());
+					quoteGroupData.setExpression(String.format("\"%s\"", tc));
+					quoteGroupData.insert();
+					//INSERT PARA COEFICIENTE DE PARCIALIDAD
+
+					quoteGroupData =
+							getDSLContext(dslContext).newRecord(CONTRACT_DATA);	
+					quoteGroupData.setDomain(contract.getDomain());
+					quoteGroupData.setContract(contract.getId());
+					quoteGroupData.setName(ContextVariable.PARTIAL_FACTOR.getName());
+					quoteGroupData.setStartDate(contract.getStartDate());
+					quoteGroupData.setEndDate(contract.getEndDate());
+					if (ctp == null) {
+						quoteGroupData.setExpression(ctp);
+
+					}else {
+						quoteGroupData.setExpression(ctp.replaceAll(",", "."));
+
+					}
+					quoteGroupData.insert();
+					
+					
+					
+					
+				//CASO PARA LOS DIAS DE VACACIONES
+				}else if(situacion.equals("VAC.RETRIB.NO ")) {
+					
+					 	contract = 
+								getDSLContext(dslContext).newRecord(CONTRACT);
+					 
+						contract.setDomain(enterpriseCcc.getDomain());
+						contract.setPerson(person.getId());
+						contract.setWorkplace(workplace.getWorkplace());
+						contract.setEnterpriseCcc(enterpriseCcc.getId());
+						contract.setEnterpriseActivity(enterpriseCcc.getEnterpriseActivity());
+						String startDate = getStartDate(start);
+						try {
+							utilDate = new SimpleDateFormat("dd-MM-yyyy").parse(startDate);
+							sqlDate = new java.sql.Date(utilDate.getTime());
+							contract.setStartDate(sqlDate);
+						} catch (ParseException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+									
+						contract.setSsStatus(null);
+						contract.setRegistration(null);
+						contract.setCategoryDescription("prueba-VACACIONES");
+						contract.setSsRegime(type(SSRegimeType.GENERAL));
+						contract.insert();
+					
+					quoteGroupData =
+							getDSLContext(dslContext).newRecord(CONTRACT_DATA);
+					quoteGroupData.setDomain(contract.getDomain());
+					quoteGroupData.setContract(contract.getId());
+					quoteGroupData.setName(ContextVariable.NO_HOLIDAYS.getName());
+					quoteGroupData.setExpression(cotDays);
+
+					String effectDate = getStartDate(start);
+					try {
+						utilDate = new SimpleDateFormat("dd-MM-yyyy").parse(effectDate);
+						sqlDate = new java.sql.Date(utilDate.getTime());
+						quoteGroupData.setStartDate(sqlDate);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					
+					try {
+						start = start.substring(7,10);
+						end = end + start;
+						effectDate = getStartDate(end);
+						utilDate = new SimpleDateFormat("dd-MM-yyyy").parse(effectDate);
+						sqlDate = new java.sql.Date(utilDate.getTime());
+						quoteGroupData.setEndDate(sqlDate);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					quoteGroupData.insert();
+				}
+		 }
 		
-		ContractRecord contract = 
-				getDSLContext(dslContext).newRecord(CONTRACT);
+	
+		 
+		return contract;
+		}
+	
+		private Optional<ContractRecord> getContract(RegistryRecord person, PayrollWorkplaceRecord workplace, EnterpriseCccRecord enterprise){
+			//contract_data.contract
+			System.out.println(person.getId() +" id");
+			 return getDSLContext(dslContext)
+			            .select()
+			            .from(CONTRACT)
+			            .where(CONTRACT.PERSON.eq(person.getId()))
+			            .and(CONTRACT.WORKPLACE.eq(workplace.getWorkplace()))
+			            .and(CONTRACT.ENTERPRISE_CCC.eq(enterprise.getId()))
+			            .fetchOptionalInto(CONTRACT);
+				
+		}
 		
-		contract.setDomain(enterpriseCcc.getDomain());
-		contract.setPerson(person.getId());
-		contract.setWorkplace(workplace.getWorkplace());
-		return null;
 		
-		
+	public String getSituation(String situation) {
+		return situation;
 	}
 	
+	public String getStartDate(String start) {
+		return start;
+	}
+	public String getEndDate(String end) {
+		return end;
+	}	
 	
-	
-	
+
 	
 	private DomainRecord getParentDomain(String parentDomainName){
 		return getDSLContext(dslContext).select().from(DOMAIN).where(DOMAIN.NAME.eq(parentDomainName)).fetchOneInto(DOMAIN);	
@@ -612,7 +884,7 @@ public class VidaLaboral2AON implements IvlParserListener{
 		
 		VidaLaboral2AON on = new VidaLaboral2AON(dslContext);
 		
-		EnterpriseRecord enterprise = getEnterprise(ccc, socialReason, nif)
+		enterprise = getEnterprise(ccc, socialReason, nif)
 				.orElseGet(()-> newEnterprise(nif, socialReason, economicActivityDescription));
 
 		String provCode = ccc.substring(0,2);
@@ -620,14 +892,13 @@ public class VidaLaboral2AON implements IvlParserListener{
 		GeozoneRecord zoneCode =on.getGeoZone(provCode);
 		zone = zoneCode.getId();
 		
-		EnterpriseCccRecord enterpriseCcc = getEnterpriseCCC(ccc, nif)
+		enterpriseCcc = getEnterpriseCCC(ccc, nif)
 				.orElseGet(()-> newEnterpriseCCC(enterprise, socialReason, ccc, nif, economicActivityDescription, zone));
 		
-		PayrollWorkplaceRecord payRollWorkPlace = getWorkplace(domainId, nif)
-				.orElseGet(()-> newWorkPlace(enterprise, enterpriseCcc, economicActivityCode));		
-				
+		payRollWorkPlace = getWorkplace(domainId, nif)
+				.orElseGet(()-> newWorkPlace(enterprise, enterpriseCcc, economicActivityCode));
+		
 	}
-	
 	@Override
 	public void onEnterpriseAddress(String city, String address, String cp, String economicActivityCode ) {
 
@@ -642,17 +913,27 @@ public class VidaLaboral2AON implements IvlParserListener{
 	}
 	@Override
 	public void onEmployee(String naf, String docType, String docNum, String fullName) {
-		RegistryRecord person = getPerson(domainId, naf).orElseGet(()-> newPerson(domainId, docNum, fullName, naf));
-
+		 person = getPerson(domainId, naf).orElseGet(()-> newPerson(domainId, docNum, fullName, naf));
 		
 	}
+	
+	//MANTENER EL ORDEN EN EL QUE ENTRAN LOS DATOS
 	@Override
 	public void onEmployeeIdent(String nss, String ident) {
 		
 	}
 	@Override
 	public void onEmployeeSituation(String situation, String start, String effect, String startSit, String effectSit,
-			String gc, String tc, String it, String ep, String ims, String total, String cotDays, String clv) {
+			String gc, String tc,String ctp, String ep, String it, String ims, String total, String cotDays, String clv) {
+		situationn = getSituation(situation);
+		System.out.println(situationn);
+//		ContractRecord contract = getContract(person, payRollWorkPlace, enterpriseCcc)
+//				.orElseGet(() -> newContract(enterpriseCcc, person, payRollWorkPlace, start, effect, startSit, effectSit, gc, tc, ctp, cotDays));
+//		
+//		
+		
+		System.out.println(person.getId());
+		ContractRecord contract = newContract(enterpriseCcc, person, payRollWorkPlace, start,effect, startSit,effectSit,gc, tc, ctp, cotDays);
 		
 	}
 	

@@ -41,7 +41,7 @@ public interface IvlParserListener {
 	};
 
 	default void onEmployeeSituation(String situation, String start, String effect, String startSit, String effectSit,
-			String gc, String tc, String it, String ep, String ims, String total, String cotDays, String clv) {
+			String gc, String tc,String ctp, String ep, String it, String ims, String total, String cotDays, String clv) {
 
 	};
 

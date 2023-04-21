@@ -52,11 +52,12 @@ public class IvlCccParser implements IvlParserListener{
 			throw new IOException("You do not have permission to extract text");
 
 		}
+		
 		PDFTextStripper stripper = new PDFTextStripper();
 
 		stripper.setSortByPosition(true);
 		// Contador de paginas
-		for (int p = 0; p <= doc.getNumberOfPages(); p++) {
+		for (int p = 1; p <= doc.getNumberOfPages(); p++) {
 			// Set the page interval to extract.
 			// If we don't, then all pages would be extracted.
 			stripper.setStartPage(p);
@@ -189,7 +190,6 @@ public class IvlCccParser implements IvlParserListener{
 					String cl = matcher.group("clv");
 
 					listener.onEmployee(nss, docType, docNum, name);
-//					System.out.println(name);
 
 					Pattern vac = GET_VAC_RETRIB_NO;
 
@@ -211,14 +211,18 @@ public class IvlCccParser implements IvlParserListener{
 
 							String gc = optional.get().group("gc");
 							String tc = optional.get().group("tc");
+//							System.out.println(tc + "DEBE SER UN NUMERO");
+							String ctp = optional.get().group("ctp");
+//							System.out.println(ctp + "prueba");
 							String ep = optional.get().group("ep");
+//							System.out.println(ep );
 							it = optional.get().group("it");
 							ims = optional.get().group("ims");
 							total = optional.get().group("total");
 							String cotDays = optional.get().group("diasCot");
 							String clv = optional.get().group("clv");
 
-							listener.onEmployeeSituation(situation, start, effect, startSit, effectSit, gc, tc, ep, it, ims,
+							listener.onEmployeeSituation(situation, start, effect, startSit, effectSit, gc, tc,ctp, ep, it, ims,
 									total, cotDays, clv);
 
 						}
@@ -301,7 +305,7 @@ public class IvlCccParser implements IvlParserListener{
 			Pattern.CASE_INSENSITIVE);
 
 	protected static final Pattern GET_VAC_RETRIB_NO = Pattern.compile(
-			"\\s*(?<situation>.*[a-z][^0-9])\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)*\\s*(?<effect>[0-9]+-[0-9]+-[0-9]+)\\s*(?<startSit>[0-9]+-[0-9]+-[0-9]+)*\\s*(?<effectSit>[0-9]+-[0-9]+-[0-9]+)*\\s*(?<gc>[0-9]{2})*\\s*(?<tc>[0-9]{3})*\\s*(?<ep>[a-z]{1})*\\s*(?<it>[-,0-9]+)\\s*(?<ims>[-,0-9]+)\\s*(?<total>[-,0-9]+)\\s*(?<diasCot>[0-9]+)\\s*(?<clv>.+)",
+			"\\s*(?<situation>.*[a-z][^0-9])\\s*(?<start>[0-9]+-[0-9]+-[0-9]+)*\\s*(?<effect>[0-9]+-[0-9]+-[0-9]+)\\s*(?<startSit>[0-9]+-[0-9]+-[0-9]+)*\\s*(?<effectSit>[0-9]+-[0-9]+-[0-9]+)*\\s*(?<gc>[0-9]{2})*\\s*(?<tc>[0-9]{3})\\s*(?<ctp>[0-9]{1}.[0-9]{3})*\\s*(?<ep>[a-z]{1})*\\s*(?<it>[-,0-9]+)\\s*(?<ims>[-,0-9]+)\\s*(?<total>[-,0-9]+)\\s*(?<diasCot>[0-9]+)\\s*(?<clv>.+)",
 			Pattern.CASE_INSENSITIVE);
 
 }
