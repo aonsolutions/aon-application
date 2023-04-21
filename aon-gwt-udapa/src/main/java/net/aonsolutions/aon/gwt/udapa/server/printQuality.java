@@ -579,23 +579,6 @@ public class printQuality {
 		c4444.setBorder(PdfPCell.NO_BORDER);
 		content.addCell(c4444);
 		
-		
-	   	PdfPCell c11111 = new PdfPCell(new Phrase("Nitratos:",getFont2()));
-	   	c11111.setBorder(PdfPCell.NO_BORDER);
-		content.addCell(c11111);
-			
-		PdfPCell c22222 = new PdfPCell(new Phrase(map.get(QualitySheetCode.UFQAC9.getName()),getFont2()));
-		c22222.setBorder(PdfPCell.NO_BORDER);
-		content.addCell(c22222);
-		
-		PdfPCell c33333 = new PdfPCell(new Phrase("",getFont2()));
-		c33333.setBorder(PdfPCell.NO_BORDER);
-		content.addCell(c33333);
-
-		PdfPCell c44444 = new PdfPCell(new Phrase("",getFont2()));
-		c44444.setBorder(PdfPCell.NO_BORDER);
-		content.addCell(c44444);
-		
     	PdfPTable table = new PdfPTable(1);
     	table.setWidthPercentage(90);
     	table.addCell(getCell(content, " Análisis Calidad "));
