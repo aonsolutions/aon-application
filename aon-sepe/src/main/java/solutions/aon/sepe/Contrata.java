@@ -409,7 +409,9 @@ public class Contrata {
 				form.getInputByName("nif").setValueAttribute(cto.getIpf());
 				form.getInputByName("nifnie").setValueAttribute(tipodoc + "  " + cto.getIpf());
 
-				form.getInputByName("nombre").setValueAttribute(cto.getName());
+				String name = cto.getName();
+				if(null != name && name.length() > 15) name = name.substring(0, 15);
+				form.getInputByName("nombre").setValueAttribute(name);
 				form.getInputByName("apellido1").setValueAttribute(cto.getSurname());
 
 				if (cto.getLastSurname() != null) {
