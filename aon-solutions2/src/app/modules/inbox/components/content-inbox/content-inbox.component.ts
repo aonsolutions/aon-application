@@ -33,6 +33,8 @@ export class ContentInboxComponent implements OnInit, OnChanges {
   mainTabContentOpen : string = 'mainTabContentOpen';
   mainTabContentClose : string = 'mainTabContentClose';
   hiddenDetail: boolean = false;
+  sendItem: Message = new Message();
+
 
   constructor(private inboxService: InboxService) {}
 
@@ -52,7 +54,8 @@ export class ContentInboxComponent implements OnInit, OnChanges {
   showDetail(item : Message){
     this.mainTabContent = this.mainTabContentOpen;
     this.detail = this.detailOpen;
-    this.hiddenDetail = true;  
+    this.hiddenDetail = true;
+    this.sendItem = item;
   }
 
   closeDetail(){
@@ -63,6 +66,39 @@ export class ContentInboxComponent implements OnInit, OnChanges {
 
   callGetMessages(){
     this.items = this.inboxService.getMessages(this.selectedMenu,this.selectedTab);
+  }
+
+  calcTiles(item: Message): any {
+    if(this.hiddenDetail != true){
+      if(item.type == 3){
+        return [5,5,14];
+      } else {
+        return [5,5,8,5,1];
+      }
+    }else{
+      if(item.type == 3){
+        return [5,7,12];
+      } else {
+        return [5,7,6,6,0];
+      }
+    }
+  }
+
+  calcAllTiles(item: Message): any{
+    if(this.hiddenDetail != true){
+      if(item.type == 3){
+        return false;
+      }else{
+        return true;
+      }
+    }else{
+      if(item.type == 3){
+        return false;
+      }else{
+        return true;
+      }
+    }
+    
   }
 
   chooseBetweenTabs() {

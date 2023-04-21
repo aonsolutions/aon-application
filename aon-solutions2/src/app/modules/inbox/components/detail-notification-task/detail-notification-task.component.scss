@@ -1,0 +1,245 @@
+.messageSubject {
+    font-size: 1rem;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: 0.44px;
+    text-align: left;
+    color: #292a31;
+}
+
+.elementMessage {
+    width: calc(100%);
+    height: calc(3.75rem);
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    font-size: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.statusMessage {
+    // padding: 0.2rem;
+    padding: .3125rem .625rem;
+    border-radius: .25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.57;
+    letter-spacing: 0.1px;
+    text-align: left;
+    color: #292a31;
+    width: calc(auto);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.iconButtonMessage {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.dateMessageBlack {
+    font-size: .875rem;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.57;
+    letter-spacing: 0.1px;
+    text-align: left;
+    color: #292a31;
+}
+
+.dateMessageRed {
+    font-size: .875rem;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.57;
+    letter-spacing: 0.1px;
+    text-align: left;
+    color: #f6655a;
+}
+
+.messageDate {
+    font-size: .875rem;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.43;
+    letter-spacing: 0.25px;
+    text-align: left;
+    color: #787885;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.statusDate {
+    width: 100%;
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.subjectDetail {
+    display: flex;
+    align-items: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.messageSubjectDetail {
+    font-family: Roboto;
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+    text-align: left;
+    color: #000;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.descriptionNameDetail {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: calc(100%);
+}
+
+.nameDetail {
+    width: calc(100%);
+    font-family: Roboto;
+    font-size: .875rem;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 0.75px;
+    text-align: left;
+    color: #292a31;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.descriptionDetail {
+    width: calc(100%);
+    font-family: Roboto;
+    font-size: 1rem;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: 0.44px;
+    text-align: justify;
+    color: #787885;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.buttonsDetail {
+    width: calc(100%);
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.buttonDetailSize {
+    height: 3rem;
+    width: calc(30%);
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    gap: 1rem;
+    padding-left: .5rem;
+    cursor: pointer;
+}
+
+.processButton {
+    border: solid;
+    border-width: .0625rem;
+    border-radius: .25rem;
+    border-color: #f6655a;
+    background-color: #f6655a;
+    box-sizing: border-box;
+    color: white;
+}
+
+.processButton:hover {
+    background-color: #f8877f;
+}
+
+.consultButton {
+    border: solid;
+    border-width: .0625rem;
+    border-radius: .25rem;
+    border-color: #f6655a;
+    color: #292a31;
+}
+
+.consultButton:hover {
+    background-color: #feedec;
+}
+
+.fontButton {
+    font-family: Roboto;
+    font-size: .875rem;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: 0.75px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.inputTextArea {
+    width: 100%;
+}
+
+.textAreaDetail{
+    width: calc(100%)!important;
+    height: calc(10rem)!important;
+    font-family: Roboto;
+    font-size: 1rem;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: 0.44px;
+    text-align: justify;
+    color: #787885;
+}
+
+::-webkit-scrollbar {
+    width: .3125rem;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

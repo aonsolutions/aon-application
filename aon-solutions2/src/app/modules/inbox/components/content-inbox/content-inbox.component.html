@@ -8,7 +8,7 @@
     <input matInput class="searchInput"/>
     </mat-form-field>
     
-    <div class="bandejaFilters">
+    <div [ngClass]="hiddenDetail!=true ? 'bandejaFilters' : 'bandejaFiltersOpen'">
         <div class="tabFilterText">
             {{selectedFilter}}
         </div>
@@ -41,11 +41,11 @@
                 </div>
             </ng-template>
             <div class="contentTab">
-                <app-message-inbox *ngFor="let item of items" [message]="item" [detailView]="hiddenDetail" (click)="showDetail(item)"></app-message-inbox>
+                <app-message-inbox *ngFor="let item of items" [message]="item" [detailView]="hiddenDetail" [tiles]="calcTiles(item)" [allTiles]="calcAllTiles(item)" (click)="showDetail(item)"></app-message-inbox>
             </div>
         </mat-tab>
     </mat-tab-group>
 </div>
-<div [ngClass]="detail" *ngIf='hiddenDetail==true'>
-    content
+<div [ngClass]="detail" *ngIf='hiddenDetail==true' class="detailBox">
+    <app-detail-notification-task *ngIf="sendItem.type == 2 || sendItem.type == 3" [message]="sendItem" (closed)="closeDetail()" style="width: 100%;height: 100%;"></app-detail-notification-task>
 </div>
