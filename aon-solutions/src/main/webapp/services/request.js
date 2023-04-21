@@ -144,6 +144,41 @@ export const requestSig = (method, url, token, sendData, fn) => {
   }
 };
 
+export const requestPro = (method, url, sendData, fn) => {
+  try {
+    let xhr = new XMLHttpRequest();
+    if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
+    xhr.open(method, url);
+    xhr.setRequestHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+    xhr.send(JSON.stringify(sendData));
+    xhr.onload = () => {
+      if (xhr.status != 200) {
+        // analyze HTTP status of the response
+        console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        fn(undefined, xhr.response);
+      } else {
+        // show the result
+        console.log(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+        let response = !xhr.response ? "[]" : xhr.response;
+        fn(response);
+      }
+    };
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        console.log(`Received ${event.loaded} of ${event.total} bytes`);
+      } else {
+        console.log(`Received ${event.loaded} bytes`); // no Content-Length
+      }
+    };
+    xhr.onerror = () => {
+      console.log("Request failed");
+    };
+  } catch (error) {
+    console.log("error");
+    fn(undefined, error);
+  }
+};
+
 
 export const requestFile = (method, url, sendData, fn) => {
   try {
@@ -180,9 +215,31 @@ export const get = (url, data) => {
   });
 };
 
+export const getPro = (url, data) => {
+  return new Promise((resolve, reject) => {
+    requestPro("GET", url, data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
 export const post = (url, data) => {
   return new Promise((resolve, reject) => {
     request("POST", url, getToken(), data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
+export const postPro = (url, data) => {
+  return new Promise((resolve, reject) => {
+    requestPro("POST", url, data, (result, error) => {
       try{
         if (error) reject(error);
         else resolve(JSON.parse(result));
@@ -213,9 +270,31 @@ export const put = (url, data) => {
   });
 };
 
+export const putPro = (url, data) => {
+  return new Promise((resolve, reject) => {
+    requestPro("PUT", url, data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
 export const remove = (url, data) => {
   return new Promise((resolve, reject) => {
     request("DELETE", url, getToken(), data, (result, error) => {
+      try{
+        if (error) reject(error);
+        else resolve(JSON.parse(result));
+      } catch(e){reject(e);}
+    });
+  });
+};
+
+export const removePro = (url, data) => {
+  return new Promise((resolve, reject) => {
+    requestPro("DELETE", url, data, (result, error) => {
       try{
         if (error) reject(error);
         else resolve(JSON.parse(result));

@@ -121,7 +121,7 @@ public class CertificateDAO {
 	public static void delete(AONContext ctx, Integer attachId, AttachFilter attachFilter, RegistryAddInfoFilter raddinfoFilter) {
 		ctx.getDslContext().delete(RATTACH_TAG).where(RATTACH_TAG.RATTACH.eq(attachId)).execute();
 		ctx.getDslContext().delete(RATTACH).where(ATTACH_PROPERTIES.getConditions(attachFilter)).execute();
-		ctx.getDslContext().delete(RADDINFO).where(RADDINFO_PROPERTIES.getConditions(raddinfoFilter)).execute();
+		if(raddinfoFilter != null) ctx.getDslContext().delete(RADDINFO).where(RADDINFO_PROPERTIES.getConditions(raddinfoFilter)).execute();
 	}
 	
 	public static void save(AONContext ctx, Integer domainId, Integer userId, Certificate certificate) {
