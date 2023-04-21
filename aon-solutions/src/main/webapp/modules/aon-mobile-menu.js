@@ -300,7 +300,6 @@ export class AonMobileMenu extends AonElement {
       fn :  (ev) => {
         if(isInvoice){
           dialog.close();
-          ev.preventDefault();
           this.addInvoiceFile();
         }
       }
