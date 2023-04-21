@@ -16,13 +16,14 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
 import { DetailNotificationTaskComponent } from './components/detail-notification-task/detail-notification-task.component';
 import { MatDividerModule } from '@angular/material/divider';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
     InboxComponent,
     ContentInboxComponent,
     MessageInboxComponent,
-    DetailNotificationTaskComponent
+    DetailNotificationTaskComponent,
   ],
   imports: [
     CommonModule,
@@ -36,7 +37,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatTabsModule,
     MatGridListModule,
     MatMenuModule,
-    MatDividerModule
-  ]
+    MatDividerModule,
+    ScrollingModule
+  ],
 })
-export class InboxModule { }
+export class InboxModule {}
