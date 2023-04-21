@@ -46,6 +46,18 @@
     height: calc(2.25rem);
 }
 
+.bandejaFiltersOpen {
+    position: absolute;
+    right: calc(1rem + 45%);
+    z-index: 999;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    width: calc(auto);
+    height: calc(2.25rem);
+}
+
 .tabFilterText {
     font-size: .875rem;
     font-weight: 500;
@@ -76,4 +88,16 @@
 
 .detailOpen {
     width: calc(45%);
+}
+
+.detailBox{
+    border-left: solid;
+    border-width: .0625rem;
+    border-color: lightgray;
+    box-sizing: border-box;
+    padding: 1rem;
+}
+
+.messageHover:hover{
+    background-color: #feedec;
 }

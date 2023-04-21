@@ -1,10 +1,11 @@
 <mat-drawer-container class="inbox">
   <mat-drawer mode="side" opened class="sideInbox">
-    <div class="buttonSideInbox">
+    <div class="buttonSideInbox" *ngIf="this.selectedMenu == 'consultas'">
         <button mat-flat-button disabled="false" class="createInbox">
             <set-icon shape="add_comment" set-color size="24" [ngStyle]="{'color': 'white'}"></set-icon>
             Crear</button>
     </div>
+    <div class="buttonSideInbox" *ngIf="this.selectedMenu != 'consultas'" style="height: 3rem;"></div>
     <div class="typesInbox">
         <div [ngClass]="bandejaClass" (click)="this.selectedMenu = 'bandeja'; this.resetClass(); this.bandejaClass = this.onClickClass" #bandeja>
             <set-icon class="optionMenuInboxIcon" shape="all_inbox" set-color size="24" [ngStyle]="{'color': '#f6655a'}"></set-icon>

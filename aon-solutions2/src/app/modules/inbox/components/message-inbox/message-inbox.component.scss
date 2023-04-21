@@ -132,3 +132,11 @@
     text-align: right;
     color: #f6655a;
 }
+
+.transformIcon {
+    transform: rotateY(180deg);
+}
+
+.message:hover { 
+    background-color: #feedec;
+}

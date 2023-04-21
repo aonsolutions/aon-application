@@ -14,12 +14,15 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MessageInboxComponent } from './components/message-inbox/message-inbox.component';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
+import { DetailNotificationTaskComponent } from './components/detail-notification-task/detail-notification-task.component';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [
     InboxComponent,
     ContentInboxComponent,
-    MessageInboxComponent
+    MessageInboxComponent,
+    DetailNotificationTaskComponent
   ],
   imports: [
     CommonModule,
@@ -32,7 +35,8 @@ import { MatMenuModule } from '@angular/material/menu';
     MatInputModule,
     MatTabsModule,
     MatGridListModule,
-    MatMenuModule
+    MatMenuModule,
+    MatDividerModule
   ]
 })
 export class InboxModule { }

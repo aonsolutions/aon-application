@@ -6,7 +6,7 @@
 }
 
 .sideInbox {
-    width: 250px;
+    width: 15.625rem;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -15,7 +15,7 @@
 }
 
 .contentInbox {
-    width: calc(100% - 250px);
+    width: calc(100% - 15.625rem);
     height: 100%;
 }
 
@@ -24,37 +24,37 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 58px;
-    margin-bottom: 41px;
+    margin-top: 3.625rem;
+    margin-bottom: 2.5625rem;
 }
 
 .createInbox {
     width: 90%;
-    height: 48px;
+    height: 3rem;
     color: white;
     background-color: #f6655a;
     text-align-last: start;
 }
 
 .circle {
-    font-size: 14px;
+    font-size: .875rem;
     font-weight: 600;
     border: solid;
-    width: 24px;
-    height: 24px;
+    width: 1.5rem;
+    height: 1.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
     border-width: 0px;
-    border-radius: 16px;
+    border-radius: 1rem;
     background-color: #feedec;
 }
 
 .optionMenuInbox {
-    height: 60px;
+    height: 3.75rem;
     display: flex;
-    padding: 0px 20px;
-    gap: 20px;
+    padding: 0px 1.25rem;
+    gap: 1.25rem;
     align-items: center;
 }
 
@@ -90,7 +90,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: normal;
     font-stretch: normal;
     font-style: normal;

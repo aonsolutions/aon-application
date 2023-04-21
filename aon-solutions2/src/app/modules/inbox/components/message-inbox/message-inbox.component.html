@@ -1,5 +1,5 @@
 <div class="message">
-  <mat-grid-list cols="24" rowHeight="60px" gutterSize="1rem">
+  <mat-grid-list cols="24" rowHeight="3.75rem" gutterSize="1rem">
     <mat-grid-tile [colspan]="tiles[0]">
       <div class="messageName elementMessage">
         {{ message.name }}
@@ -10,8 +10,7 @@
         <ng-container *ngIf="message.type==1">
             <div class="iconButtonMessage">
               <set-icon *ngIf="message.status == 1 && message.lastMessageOrigin == false" shape="reply_all" size="24" style="color:#a9d3ab;"></set-icon>
-              <set-icon *ngIf="message.status == 1 && message.lastMessageOrigin == true" shape="reply" size="24" style="color:#9dc2ff;"></set-icon>
-              <set-icon *ngIf="message.status == 0" shape="reply" size="24" style="color:white;"></set-icon>
+              <set-icon *ngIf="message.status == 1 && message.lastMessageOrigin == true" shape="reply" size="24" style="color:#9dc2ff;" class="transformIcon"></set-icon>
             </div>
             <div *ngIf="message.status == 1 && message.lastMessageOrigin == false" class="statusMessage" style="background-color:#fddcda;">Abierta</div>
             <div *ngIf="message.status == 1 && message.lastMessageOrigin == true" class="statusMessage" style="background-color:#fddcda;">Abierta</div>
@@ -20,17 +19,13 @@
         <ng-container *ngIf="message.type==2">
             <div class="iconButtonMessage">
               <set-icon *ngIf="message.status == 1 && message.lastMessageOrigin == true" shape="watch_later" size="24" style="color:#f6655a;"></set-icon>
-              <set-icon *ngIf="message.status == 1 && message.lastMessageOrigin == false" shape="watch_later" size="24" style="color:white;"></set-icon>
-              <set-icon *ngIf="message.status == 0" shape="reply" size="24" style="color:white;"></set-icon>
             </div>
             <div *ngIf="message.status == 1 && message.lastMessageOrigin == true" class="statusMessage" style="background-color:#f8877f;">Pendiente</div>
             <div *ngIf="message.status == 1 && message.lastMessageOrigin == false" class="statusMessage" style="background-color:#fddcda;">Pendiente</div>
             <div *ngIf="message.status == 0" class="statusMessage" style="background-color:#f0f0f1;">Realizada</div>
         </ng-container>
         <ng-container *ngIf="message.type==3">
-            <div class="iconButtonMessage">
-              <set-icon shape="reply" size="24" style="color:white;"></set-icon>
-            </div>
+            <div class="iconButtonMessage"></div>
             <div *ngIf="message.status == 1" class="statusMessage" style="background-color:#fddcda;">Nueva</div>
             <div *ngIf="message.status == 0" class="statusMessage" style="background-color:#f0f0f1;">Vista</div>
         </ng-container>
@@ -54,10 +49,10 @@
             <div *ngIf="message.type==1" class="dateMessage">
               {{ message.date }}
             </div>
-            <div *ngIf="message.type==2 && message.status == 1" class="dateMessageBlack">
+            <div *ngIf="message.type==2 && message.status == 0" class="dateMessageBlack">
               {{ message.date }}
             </div>
-            <div *ngIf="message.type==2 && message.status == 0" class="dateMessageRed">
+            <div *ngIf="message.type==2 && message.status == 1" class="dateMessageRed">
               {{ message.date }}
             </div>
             <ng-container *ngIf="message.type==1">
@@ -68,7 +63,7 @@
             </ng-container>
         </div>
     </mat-grid-tile>
-    <mat-grid-tile *ngIf="allTiles" [colspan]="tiles[4]">
+    <mat-grid-tile *ngIf="allTiles && tiles[4] != 0" [colspan]="tiles[4]">
     </mat-grid-tile>
   </mat-grid-list>
 </div>
