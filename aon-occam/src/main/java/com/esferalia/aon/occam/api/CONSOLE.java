@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jooq.exception.DataAccessException;
+
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -46,8 +48,10 @@ public class CONSOLE {
 		List<String> schemas = AONContext.getSchemas();
 		for(String schema: schemas) {
 			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
-				List<DomainCompany> domains = getConsole().getAllDomains(ctx).collect(Collectors.toList());
-				list.addAll(domains);
+					List<DomainCompany> domains = getConsole().getAllDomains(ctx).collect(Collectors.toList());
+					list.addAll(domains);
+			} catch (DataAccessException e) {
+				e.printStackTrace();
 			}
 		}
 		return list.stream();
@@ -61,6 +65,8 @@ public class CONSOLE {
 			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
 				List<DomainCompany> domains = getConsole().getCustomerDomains(ctx, customer).collect(Collectors.toList());
 				list.addAll(domains);
+			} catch (DataAccessException e) {
+				e.printStackTrace();
 			}
 		}
 		return list.stream();
@@ -74,6 +80,8 @@ public class CONSOLE {
 			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
 				List<DomainCompany> domains = getConsole().getDomainsByDocument(ctx, customerDocument, customerId).collect(Collectors.toList());
 				list.addAll(domains);
+			} catch (DataAccessException e) {
+				e.printStackTrace();
 			}
 		}
 		return list.stream();
@@ -86,6 +94,8 @@ public class CONSOLE {
 		for(String schema: schemas) {
 			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
 				updatedDomains.addAll(getConsole().updateDomainCustomer(ctx, domainCompanies, customer));
+			} catch (DataAccessException e) {
+				e.printStackTrace();
 			}
 		}
 		return updatedDomains;
