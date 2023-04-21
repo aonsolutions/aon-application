@@ -11,9 +11,9 @@ import com.google.gwt.user.client.ui.FlexTable;
 
 public class Page15 extends PageAbs {
 	
-	private static final String FOOTER_1212_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene gastos financieros pendientes por otro per\u00EDodo impositivo iniciado en 2021, pero inferior a 12 meses y previo al declarado.";
+	private static final String FOOTER_1212_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene gastos financieros pendientes por otro per\u00EDodo impositivo iniciado en 2022, pero inferior a 12 meses y previo al declarado.";
 	private static final String FOOTER_1212_2 = "(**) S\u00F3lo debe cumplimentarse si la entidad tiene gastos financieros pendientes, devengados en el propio per\u00EDodo impositivo, deducibles en los pr\u00F3ximos per\u00EDodos impositivos.";
-	private static final String FOOTER_538_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado por otro per\u00EDodo impositivo iniciado en 2021, pero inferior a 12 meses y previo al declarado.";
+	private static final String FOOTER_538_1 = "(*) S\u00F3lo debe cumplimentarse si la entidad tiene pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado por otro per\u00EDodo impositivo iniciado en 2022, pero inferior a 12 meses y previo al declarado.";
 	private static final String FOOTER_538_2 = "(**) S\u00F3lo debe cumplimentarse si la entidad tiene pendiente de adici\u00F3n por l\u00EDmite beneficio operativo no aplicado, generado en el propio per\u00EDodo impositivo, aplicable en los pr\u00F3ximos per\u00EDodos impositivos.";	
 
 	public Page15( Model200PageCallback callback ) {

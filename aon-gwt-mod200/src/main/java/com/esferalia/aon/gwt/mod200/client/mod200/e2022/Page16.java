@@ -36,7 +36,7 @@ public class Page16 extends PageAbs {
 				"Pendiente de materializar RIC al final de per\u00EDodo"	
 			});
 		
-		// Importe de la dotación RIC con cargo a beneficios de 2021 (Casilla 927)
+		// Importe de la dotación RIC con cargo a beneficios de 2022 (Casilla 927)
 		FlexTable table2 = new FlexTable();
 		basePanel.add(table2);
 		

@@ -68,7 +68,7 @@ public enum Mod2002022BN588Key implements Serializable, IMod200KeysProvider {
 	,C058(new Mod2002022Key[]{Mod2002022Key.BN1626,Mod2002022Key.BN1627,Mod2002022Key.BN1628},"2022: 4\u00AA Edici\u00F3n de la Barcelona World Race (4BWR)")
 	,C059(new Mod2002022Key[]{Mod2002022Key.BN1638,Mod2002022Key.BN1639,Mod2002022Key.BN1640},"2022: V Centenario de la expedici\u00F3n de la primera vuelta al mundo de Fernando de Magallanes y Juan Sebasti\u00E1n Elcano (EPVM)")
 	,C060(new Mod2002022Key[]{Mod2002022Key.BN1707,Mod2002022Key.BN1708,Mod2002022Key.BN1709},"2022: Plan Decenio Millarium Montserrat 1025-2025 (PDMM)")
-	,C061(new Mod2002022Key[]{Mod2002022Key.BN1874,Mod2002022Key.BN1875,Mod2002022Key.BN1876},"2022: Andaluc\u00EDa Valderrama Masters (AVM)")
+	,C061(new Mod2002022Key[]{Mod2002022Key.BN1874,Mod2002022Key.BN1875,Mod2002022Key.BN1876},"2022: Andaluc\u00EDa Valderrama Masters 2022/2024 (AVM22)")
 	,C062(new Mod2002022Key[]{Mod2002022Key.BN1907B,Mod2002022Key.BN1908B,Mod2002022Key.BN1909B},"2022: A\u00F1o Santo Jacobeo 2021 (J21)")
 	,C063(new Mod2002022Key[]{Mod2002022Key.BN1910C,Mod2002022Key.BN1911C,Mod2002022Key.BN1912C},"2022: VIII Centenario de la Catedral de Burgos 2021 (CB21)")
 	,C064(new Mod2002022Key[]{Mod2002022Key.BN1934,Mod2002022Key.BN1935,Mod2002022Key.BN1936},"2022: Expo Dubai 2020 (D20)")

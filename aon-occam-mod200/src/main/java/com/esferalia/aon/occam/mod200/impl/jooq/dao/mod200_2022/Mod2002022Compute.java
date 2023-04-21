@@ -6,10 +6,13 @@ import java.util.LinkedHashMap;
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN082Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN1039Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN1040Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN1041Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN1280Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN1344Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN2314Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN2315Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN565_1Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN565_2Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN570Key;
@@ -32,6 +35,7 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LM538Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ1032Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ1033_1Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ1033_2Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ243Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ547Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ561Key;
 
@@ -398,29 +402,38 @@ public class Mod2002022Compute {
 		
 		// Casilla 1032: Reserva de capitalización
 		addBreakdown(Mod2002022LQ1032Key.values(), Mod2002022Key.LQ1032);
+		
+		// FALTA - NUEVAS CASILLAS 541 Y 564 NO SE SI LLEVAN ALGUN CALCULO ESPECIAL
 
 		// Casilla 547: Compensación de bases imponibles negativas de períodos anteriores
 		addBreakdown(Mod2002022LQ547Key.values(), Mod2002022Key.LQ547);
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1049,"LQ1048");
+		
+		// FALTA - NUEVAS CASILLAS 1887 Y 1890 LLEVAN UN DESGLOSE CON 2 SUBTOTALES Y 1 TOTAL
+		addBreakdown(Mod2002022LQ243Key.values(), Mod2002022Key.LQ1886, true, Mod2002022Key.LQ168 , Mod2002022Key.LQ202 );
+		addBreakdown(Mod2002022LQ243Key.values(), Mod2002022Key.LQ1889, true, Mod2002022Key.LQ168 , Mod2002022Key.LQ202 );
+		addBreakdown(Mod2002022LQ243Key.values(), Mod2002022Key.LQ216 , true, Mod2002022Key.LQ1886, Mod2002022Key.LQ1889);
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ267,"LQ266");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ344,"LQ290");
 		
 		// Base imponible
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ552,"LQ550-LQ1032-LQ547");
 				
 		// Casilla 1033: Reserva de nivelación - Reducción de la base imponible 
 		// Lleva cálculos especiales en las casillas de la columna 2
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1145,"LQ1144-LQ1600");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1456,"computeLQ1033_1(LQ1455,LQ1601,LQ1145)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1962,"computeLQ1033_1(LQ1961,LQ1602,LQ1145+LQ1456)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ2239,"computeLQ1033_1(LQ2238,LQ1603,LQ1145+LQ1456+LQ1962)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ2411,"computeLQ1033_1(LQ2410,LQ1604,LQ1145+LQ1456+LQ1962+LQ2239)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1730,"computeLQ1033_1(LQ1109,LQ1605,LQ1145+LQ1456+LQ1962+LQ2239+LQ2411)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1456,"LQ1601-LQ1455");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1962,"computeLQ1033_1(LQ1961,LQ1602,LQ1456)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ2239,"computeLQ1033_1(LQ2238,LQ1603,LQ1456+LQ1962)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ2411,"computeLQ1033_1(LQ2410,LQ1604,LQ1456+LQ1962+LQ2239)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1730,"computeLQ1033_1(LQ1109,LQ1605,LQ1456+LQ1962+LQ2239+LQ2411)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1404,"computeLQ1033_1(LQ1109,LQ1605,LQ1456+LQ1962+LQ2239+LQ2411+LQ1730)");
 		
 		// Además las casillas de la última columna, no siguen la regla de la diferencia de las dos columnas anteriores
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1457,"LQ1455-LQ1456-LQ1601");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1963,"LQ1961-LQ1962-LQ1602");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ2240,"LQ2238-LQ2239-LQ1603");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ2412,"LQ2410-LQ2411-LQ1604");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1111,"LQ1109-LQ1730-LQ1605");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1407,"LQ1406-LQ1404-LQ1405");
 		
 		// Penúltima fila (casilla 1034)
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1034A,"computeLQ1034A()");
@@ -498,6 +511,7 @@ public class Mod2002022Compute {
 		// Casilla 573: DI internacional generada y aplicada en el ejercicio actual (arts. 31 y 32 LIS)
 		addBreakdown(Mod2002022BN573Key.values(),Mod2002022Key.BN573);
 		
+		// Casilla 582: Cuota íntegra ajustada positiva
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN582,"(LQ562+LQ1038)-(BN567+BN568+BN563+BN566+BN576+BN569+BN570+BN1344+BN1280+BN572+BN571+BN573+BN575+BN577+BN581)");
 	}
 	
@@ -515,15 +529,26 @@ public class Mod2002022Compute {
 		// Lleva 2 totales, la fila de las casillas 634, 635 y 636 y la fila de las casillas 831, 588, 832		
 		addBreakdown(Mod2002022BN588Key.values(), Mod2002022Key.BN635, true, Mod2002022Key.BN1626, Mod2002022Key.BN1683);
 		addBreakdown(Mod2002022BN588Key.values(), Mod2002022Key.BN588, true, null, Mod2002022Key.BN1683);
+		
+		// FALTA - AHORA ES DESGLOSADA - DESGLOSE DE 4 CASILLAS QUE NO SE COMO SERÁN LOS CALCULOS 
+		// Casilla 1039: Deducciones por producciones cinematográficas extranjeras (art. 36.2 LIS)
+		addBreakdown(Mod2002022BN1039Key.values(), Mod2002022Key.BN1039);
+		
+		// FALTA - AHORA ES DESGLOSADA - DESGLOSE DE 4 CASILLAS QUE NO SE COMO SERÁN LOS CALCULOS 
+		// Casilla 2314: Deducciones por producciones cinematográficas extranjeras en Canarias (art. 36.2 LIS y DA 14ª Ley 19/1994)
+		addBreakdown(Mod2002022BN2314Key.values(), Mod2002022Key.BN2314);
+		
+		// FALTA - AHORA ES DESGLOSADA - Casilla 2315: Deducción por inversiones y gastos realizados por las autoridades portuarias (art. 38 bis LIS)
+		addBreakdown(Mod2002022BN2315Key.values(), Mod2002022Key.BN2315);
 
 		// Casilla 565: Deducción donaciones a entidades sin fines de lucro (Ley 49/2002). Tiene dos apartados con varios subtotales
 		// Donaciones de carácter general 
-		addBreakdown(Mod2002022BN565_1Key.values(), Mod2002022Key.BN1689, true, Mod2002022Key.BN201, Mod2002022Key.BN997);
+		addBreakdown(Mod2002022BN565_1Key.values(), Mod2002022Key.BN1689, true, Mod2002022Key.BN904, Mod2002022Key.BN997);
 		addBreakdown(Mod2002022BN565_1Key.values(), Mod2002022Key.BN1692, true, Mod2002022Key.BN246, Mod2002022Key.BN891);
 		addBreakdown(Mod2002022BN565_1Key.values(), Mod2002022Key.BN1695, true, Mod2002022Key.BN246, Mod2002022Key.BN891);
 		addBreakdown(Mod2002022BN565_1Key.values(), Mod2002022Key.BN1698, true, Mod2002022Key.BN1689, Mod2002022Key.BN1695);
 		// Donaciones para actividades prioritarias de mecenazgo y otras con derecho a deducción incrementada
-		addBreakdown(Mod2002022BN565_2Key.values(), Mod2002022Key.BN1701, true, Mod2002022Key.BN2471, Mod2002022Key.BN930);
+		addBreakdown(Mod2002022BN565_2Key.values(), Mod2002022Key.BN1701, true, Mod2002022Key.BN899, Mod2002022Key.BN930);
 		addBreakdown(Mod2002022BN565_2Key.values(), Mod2002022Key.BN1704, true, Mod2002022Key.BN933, Mod2002022Key.BN1073);
 		addBreakdown(Mod2002022BN565_2Key.values(), Mod2002022Key.BN1729, true, Mod2002022Key.BN933, Mod2002022Key.BN1073);
 		addBreakdown(Mod2002022BN565_2Key.values(), Mod2002022Key.BN1079, true, Mod2002022Key.BN1701, Mod2002022Key.BN1729);
@@ -547,9 +572,11 @@ public class Mod2002022Compute {
 		addPreBreakdownTemporaryMeasures(Mod2002022BN1041Key.values(), Mod2002022Key.BN1041);
 		addBreakdown(Mod2002022BN1041Key.values(), Mod2002022Key.BN1041);
 		
-		// Cuota líquida positiva
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN592,
-				"(BN582<=0.0)?(0.0):(BN582-(BN583+BN585+BN584+BN588+BN1039+BN2314+BN2315+BN565+BN590+BN399+BN082+BN1040+BN1041))");
+		// FALTA - Casilla 619: Cuota líquida mínima (art. 30 bis.2 LIS  
+		// NUEVA CASILLA QUE TENGO QUE VER COMO SE CALCULA, PUEDE QUE AFECTE A LA SIGUIENTE CASILLA TAMBIEN
+		
+		// Casilla 592: Cuota líquida 
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN592,"(BN582<=0.0)?(0.0):(BN582-(BN583+BN585+BN584+BN588+BN1039+BN2314+BN2315+BN565+BN590+BN399+BN082+BN1040+BN1041))");
 	}
 	
 	// LIQUIDACION V
@@ -590,11 +617,12 @@ public class Mod2002022Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR618, "C0028?(TR486+TR487+TR488+TR489 ):0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR1332, "C0028?(TR1334+TR1335+TR1336+TR1337):0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR1333, "C0028?(TR1338+TR1339+TR1340+TR1341):0.0");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR1881, "C0028?(TR1877+TR1878+TR1879+TR1880):0.0");
 		
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR1624, "C0028?(TR474+TR482+TR913+TR486-TR1334-TR1338):0.0");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR1625, "C0028?(TR475+TR483+TR914+TR487-TR1335-TR1339):0.0");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR1629, "C0028?(TR476+TR484+TR915+TR488-TR1336-TR1340):0.0");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR1630, "C0028?(TR477+TR485+TR916+TR489-TR1337-TR1341):0.0");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR1624, "C0028?(TR474+TR482+TR913+TR486-TR1334-TR1338-TR1877):0.0");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR1625, "C0028?(TR475+TR483+TR914+TR487-TR1335-TR1339-TR1878):0.0");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR1629, "C0028?(TR476+TR484+TR915+TR488-TR1336-TR1340-TR1879):0.0");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR1630, "C0028?(TR477+TR485+TR916+TR489-TR1337-TR1341-TR1880):0.0");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR1587, "C0028?(TR1624+TR1625+TR1629+TR1630):0.0");
 		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.TR1583, "C0028?(TR1607+TR1608+TR1609+TR1610):0.0");
@@ -648,10 +676,19 @@ public class Mod2002022Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN618, "TR618");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN1332, "TR1332");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN1333, "TR1333");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN1234B,"BN083+BN1332"); 
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN1200,"(BN1039M-BN1039)+(BN2314M-BN2314)");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN1042,"(C0028)?(BN1200-BN1333):(BN1200)");  
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1586, "BN611+BN615+BN633+BN617-BN083-BN1042");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN1881, "TR1881");
+		
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN1234B,"BN083+BN1332");
+		
+		// FALTA - VER QUE CALCULO TIENE ESTA CASILLA QUE ANTES ERA 1200 Y AHORA ES 1892
+//		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN1200,"(BN1039M-BN1039)+(BN2314M-BN2314)");
+		//COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN1042,"(C0028)?(BN1200-BN1333):(BN1200)");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN1042,"(C0028)?(BN1892-BN1333):(BN1892)");
+		
+		// FALTA - VER QUE CALCULOS TIENEN LAS CASILLAS 1319, 1893 - VER SI SIGUE EL MISMO CRITERIO QUE LA 1042
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.BN1893,"(C0028)?(BN1319-BN1881):(BN1319)");
+		
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1586, "BN611+BN615+BN633+BN617-BN083-BN1042-BN1893");  // FALTA - COMPROBAR QUE LA CASILLA 1893 TAMBIEN RESTA
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LQ1587, "TR1587");
 		
 		// Liquido a ingresar o a devolver
@@ -728,11 +765,11 @@ public class Mod2002022Compute {
 		// Conversión de activos por impuesto diferido en crédito exigible frente a la Admón. tributaria		
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LM393,"LM1537+LM1567");
 
-		// Exceso cuota líquida positiva (art. 130.1 y DT 33ª.4 LIS)
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LM2280,"LM2277-LM2278-LM2279");
+		// Exceso cuota líquida positiva (art. 130.1 y DT 33ª.4 LIS). La columna de totales no sigue la regla estandar
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LM2430,"LM2427-LM2428-LM2429");
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LM1138,"LM1134-LM1135-LM1136");
-		addBreakdown(Mod2002022LM1579Key.values(), Mod2002022Key.LM1579, false);
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LM1469,"LM1423-LM1424-LM1425");
+		addBreakdown(Mod2002022LM1579Key.values(), Mod2002022Key.LM1579, false);  // Calcular fila de totales
 		
 	}
 	
@@ -745,15 +782,15 @@ public class Mod2002022Compute {
 		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.ID666,"ID654+ID655+ID656+ID658+ID659+ID660+ID662+ID664+ID665");
 		
 		// Dotaciones por deterioro de créditos u otros activos ...
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LM1164,"LM1162-LM1163");
-		addBreakdown(Mod2002022LM1494Key.values(), Mod2002022Key.LM1494, false);
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.LM1500,"LM1479-LM1480");  // Fila 2022
+		addBreakdown(Mod2002022LM1494Key.values(), Mod2002022Key.LM1494, false);  // Fila de totales
 		
-		// Régimen especial de la reserva para inversiones en Canarias
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.RC048,"RC097-RC098-RC047");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.RC527,"RC524-RC525-RC526");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.RC925,"RC922-RC923-RC924");		
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.RC996,"RC1165-RC928-RC938");
-		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.RC1175,"RC927-RC1174");
+		// Régimen especial de la reserva para inversiones en Canarias. La última columna no sigue la regla estandar y no tiene fila de totales
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.RC527 ,"RC524-RC525-RC526");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.RC925 ,"RC922-RC923-RC924");		
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.RC996 ,"RC1165-RC928-RC938");
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.RC1175,"RC1744-RC1168-RC1172");		
+		COMPUTE_EXPRESSION_MAP.put(Mod2002022Key.RC1821,"RC927-RC1820");  // FALTA - COMPROBAR ESTA OPERACION CON LAS NUEVAS CASILLAS PARA 2022
 		
 	}
 
@@ -811,14 +848,18 @@ public class Mod2002022Compute {
 				row++;
 				boolean accumulate = true;
 				
-				// Desglose [565], subtotales [1692] y [1704] solo leen filas impares				
-				if (totalRowKey == Mod2002022Key.BN1692 || totalRowKey == Mod2002022Key.BN1704) {
+				// Desglose [565], subtotales [1692] y [1704] solo leen filas impares
+				// Desglose [1887][243], subtotal [1886] solo lee filas impares
+				if (totalRowKey == Mod2002022Key.BN1692 || totalRowKey == Mod2002022Key.BN1704 ||
+					totalRowKey == Mod2002022Key.LQ1886) {
 					if (row % 2 == 0)
 						accumulate = false;					
 				}
 				
 				// Desglose [565], subtotales [1695] y [1729] solo leen filas pares
-				if (totalRowKey == Mod2002022Key.BN1695 || totalRowKey == Mod2002022Key.BN1729) {
+				// Desglose [1890][243], subtotal [1889] solo lee filas impares
+				if (totalRowKey == Mod2002022Key.BN1695 || totalRowKey == Mod2002022Key.BN1729 ||
+					totalRowKey == Mod2002022Key.LQ1889) {
 					if (row % 2 != 0)
 						accumulate = false;					
 				}
@@ -882,7 +923,6 @@ public class Mod2002022Compute {
 				Mod2002022Key key3 = (Mod2002022Key) keys[2];  // 2022 deducción pendiente
 				
 				COMPUTE_EXPRESSION_MAP.put(key3, "("+taxRateKey.toString()+"==0||"+key2.toString()+"==0||LQ562==0)?("+key1.toString()+"):(round("+key1.toString()+"*"+taxRateKey.toString()+"/"+key2.toString()+"))");
-				
 			}
 		}		
 	}

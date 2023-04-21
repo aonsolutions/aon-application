@@ -37,3 +37,4 @@ public class Page04 extends PageAbs {
 		return super.isDisabled(key);
 	}
 }
+

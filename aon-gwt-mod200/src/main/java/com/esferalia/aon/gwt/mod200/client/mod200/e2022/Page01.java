@@ -401,6 +401,11 @@ public class Page01 extends PageAbs {
 		otherInputs.add(addButton2);
 		basePanel.add(addButton2);
 		
+		// FALTA - APARTADO E. Actividades desarrolladas por el declarante
+		
+		// FALTA - APARTADO F. Socios de SICAV en régimen especial de disolución y liquidación (DT 41ª LIS)
+		
+		
 	}
 	
 }

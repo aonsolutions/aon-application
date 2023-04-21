@@ -405,7 +405,7 @@ public class Page20 extends PageAbs {
 	
 	@Override
 	protected boolean isEditable(IMod200Key k) {
-		// Caso especial algunas casillas de la página 20 que siempre van deshabilitadas
+		// Caso especial de algunas casillas que siempre van deshabilitadas
 		if (k == Mod2002022Key.BN1020 || k == Mod2002022Key.BN1021	|| k == Mod2002022Key.LQ3318 || k == Mod2002022Key.LQ2490 || k ==  Mod2002022Key.LQ2493)
 			return false;
 		else

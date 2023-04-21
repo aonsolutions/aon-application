@@ -103,6 +103,12 @@ public class Page19 extends PageAbs {
 		
 		paintFooterNote(basePanel, "(*) Grupos mercantiles con entidad dominante residente en territorio espa\u00F1ol; s\u00F3lo deber\u00E1 cumplimentar el cuadro dicha entidad dominante.");
 		paintFooterNote(basePanel, "(**) NIF de las entidades del grupo (o equivalente al NIF del pa\u00EDs de residencia, si no tiene NIF en Espa\u00F1a) (excepto el de la entidad declarante)");
+				
+		// Actividades agrícolas y/o ganaderas
+		// FALTA - COMPROBAR SI ESTA CLAVE SOLO TIENE QUE SALIR EN FUNCION DE DETERMINADOS CARACTERES
+		FlexTable tab21 = addTable("Actividades agr\u00EDcolas y/o ganaderas");
+		paintKey(tab21, Mod2002022Key.CN1897, 0);
+		paintKey(tab21, Mod2002022Key.CN1901, 1);
 		
 		// No residentes con más de un establecimiento permanente
 		

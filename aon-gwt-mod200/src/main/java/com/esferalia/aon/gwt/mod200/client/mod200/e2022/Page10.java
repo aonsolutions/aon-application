@@ -32,7 +32,7 @@ public class Page10 extends PageAbs {
 			AON.MSG.futurePending()
 	};
 	
-	private static final String FOOTER_1 = "(*) S\u00F3lo debe cumplimentarse esta fila si la entidad tiene deducciones pendientes de aplicar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2021.";
+	private static final String FOOTER_1 = "(*) S\u00F3lo debe cumplimentarse esta fila si la entidad tiene deducciones pendientes de aplicar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2022.";
 	private static final String FOOTER_2 = "(**) Para los contribuyentes cuyo importe neto de la cifra de negocios sea al menos de 20 millones de euros durante los 12 meses anteriores a la fecha en que se inicie el per\u00EDodo impositivo, el importe no podr\u00E1 exceder conjuntamente del 50% de la cuota \u00EDntegra del contribuyente (DA 15\u00AA LIS).";
 	
 	public Page10( Model200PageCallback callback ) {

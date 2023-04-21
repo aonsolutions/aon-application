@@ -310,7 +310,7 @@ public abstract class PageAbs extends ResizeComposite {
 				// las casillas en la pantalla y tal y como está montado ahora el 
 				// repintado de todas las casillas, al recalcular solo se pinta una de las 
 				// casillas, si ambas casillas son la misma
-				if (k != null && k != breakdownKey) {
+				if (k != null && k != breakdownKey && k != Mod2002022Key.LQ1890) {  // Caso especial desglose CASILLA 243, lleva dos subtotales
 					if (paintDesc) {
 						// Casilla [2287] comienza bloque de información adicional, dentro del desglose de la [590]
 						if (k == Mod2002022Key.BN2287) {							
@@ -543,3 +543,4 @@ public abstract class PageAbs extends ResizeComposite {
 	}
 	
 }
+

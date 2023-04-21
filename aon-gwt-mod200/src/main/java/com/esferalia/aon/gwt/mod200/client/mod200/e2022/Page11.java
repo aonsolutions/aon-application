@@ -9,8 +9,11 @@ import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200Pag
 import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN082Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN1039Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN1040Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN1041Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN2314Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN2315Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN565Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN565_1Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN565_2Key;
@@ -60,9 +63,17 @@ public class Page11 extends PageAbs {
 			"Deducci\u00F3n resto del grupo"
 	};
 	
-	private static final String FOOTER_1 = "(*) S\u00F3lo debe cumplimentarse si tiene deducciones pendientes de aplicar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2021.";
+	private static final String[] HEADERS_1039_2314 = new String[] {
+			"Ejercicio de generaci\u00F3n",
+			AON.MSG.pendingDeduction(),			
+			AON.MSG.current(),
+			"Importe abonado por insuficiencia de cuota",
+			AON.MSG.futurePending()
+	};		
+	
+	private static final String FOOTER_1 = "(*) S\u00F3lo debe cumplimentarse si tiene deducciones pendientes de aplicar correspondientes a un per\u00EDodo impositivo anterior iniciado en 2022.";
 	private static final String FOOTER_588_1 = "(***) Excepto deducciones por producciones cinematogr\u00E1ficas extranjeras (art. 36.2 LIS) que se declaran en las casillas [01039] de la p\u00E1g. 14 y, en su caso, en la casilla [01042] de la p\u00E1g. 14 bis.";
-	private static final String FOOTER_588_2 = "(****) Programas cuya vigencia se inicia a partir de 2022: S\u00F3lo debe cumplimentarse esta fila si la entidad tiene un per\u00EDodo impositivo que no coincida con el a\u00F1o natural y ha realizado gastos con derecho a deducci\u00F3n a partir de 2022.";
+	private static final String FOOTER_588_2 = "(****) Programas cuya vigencia se inicia a partir de 2023: S\u00F3lo debe cumplimentarse esta fila si la entidad tiene un per\u00EDodo impositivo que no coincida con el a\u00F1o natural y ha realizado gastos con derecho a deducci\u00F3n a partir de 2022.";
 	private static final String FOOTER_082 = "(**) Entre otros requisitos, ser\u00E1 necesario que transcurra, al menos, uno a\u00F1o desde la finalizaci\u00F3n del per\u00EDodo impositivo en que se gener\u00F3 la deducci\u00F3n, sin que la misma haya sido objeto de aplicaci\u00F3n.";
 	
 	private FlowPanel filmPanel;
@@ -107,8 +118,15 @@ public class Page11 extends PageAbs {
 				}
 				if (key == Mod2002022Key.BN1041) {
 					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN1041,Mod2002022BN1041Key.values(),HEADERS_3, FOOTER_1);
-				}				
-				if (key == Mod2002022Key.BN1039) {
+				}	
+				
+				// FALTA - DESGLOSE CLAVE 2315
+				if (key == Mod2002022Key.BN2315) {
+					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN2315,Mod2002022BN2315Key.values(),HEADERS_1, FOOTER_1);
+				}
+				
+				if (key == Mod2002022Key.BN1039) {  // FALTA - DESGLOSE CLAVE 1039
+					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN1039,Mod2002022BN1039Key.values(),HEADERS_1039_2314, FOOTER_1);
 					FlexTable table2 = new FlexTable();
 					table2.setWidth("100%");
 					table2.setCellSpacing(0);
@@ -117,8 +135,10 @@ public class Page11 extends PageAbs {
 					paintKey(table2,Mod2002022Key.BN1039M,0);
 					table.setWidget(row, 0, table2);
 					row++;
-				}				
-				if (key == Mod2002022Key.BN2314) {
+				}	
+				
+				if (key == Mod2002022Key.BN2314) {  // FALTA - DESGLOSE CLAVE 2314
+					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN2314,Mod2002022BN2314Key.values(),HEADERS_1039_2314, FOOTER_1);
 					FlexTable table2 = new FlexTable();
 					table2.setWidth("100%");
 					table2.setCellSpacing(0);
@@ -128,6 +148,7 @@ public class Page11 extends PageAbs {
 					table.setWidget(row, 0, table2);
 					row++;
 				}
+				
 				
 			}
 		}
@@ -146,7 +167,7 @@ public class Page11 extends PageAbs {
 		filmPanel.clear();
 		
 		filmPanel.add(getTitle("Informaci\u00F3n adicional producciones cinematogr\u00E1ficas espa\u00F1olas y espect\u00E1culos en vivo"));
-		paintLabel(filmPanel, "Los contribuyentes que participen en la financiaci\u00F3n de producciones cinematogr\u00E1ficas espa\u00F1olas y espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales (arts. 36.1 y 3 LIS y art. 39.7 LIS) consignar\u00E1n, a continuaci\u00F3n, el NIF del contribuyente que realiza la producci\u00F3n o espect\u00E1culo.", false);
+		paintLabel(filmPanel, "Los contribuyentes que participen en la financiaci\u00F3n de producciones cinematogr\u00E1ficas espa\u00F1olas y espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales (arts. 36.1, 36.3 y 39.7 LIS) consignar\u00E1n, a continuaci\u00F3n, el NIF del contribuyente que realiza la producci\u00F3n o espect\u00E1culo.", false);
 		
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.setWidth("30%");

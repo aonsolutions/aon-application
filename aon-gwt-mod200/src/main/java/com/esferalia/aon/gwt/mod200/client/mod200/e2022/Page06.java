@@ -39,3 +39,4 @@ public class Page06 extends PageAbs {
   			   (callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0077)) );  				  
 	}
 }
+

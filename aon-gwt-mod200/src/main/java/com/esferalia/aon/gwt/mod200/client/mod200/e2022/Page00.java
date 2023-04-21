@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class Page00 extends PageAbs {
@@ -55,6 +56,7 @@ public class Page00 extends PageAbs {
 		Mod2002022Key.C0002,
 		Mod2002022Key.C0080,
 		Mod2002022Key.C0003,
+		Mod2002022Key.C0008,
 		Mod2002022Key.C0004,
 		Mod2002022Key.C0005,		
 		Mod2002022Key.C0011,
@@ -74,7 +76,8 @@ public class Page00 extends PageAbs {
 		Mod2002022Key.C0058,
 		Mod2002022Key.C0060,
 		Mod2002022Key.C0066,
-		Mod2002022Key.C0078
+		Mod2002022Key.C0078,
+		Mod2002022Key.C0056
 	};
 
 	public static final Mod2002022Key[] DECLARATION_CHARACTERS_BLOCK2 = new Mod2002022Key[] {
@@ -87,6 +90,7 @@ public class Page00 extends PageAbs {
 		Mod2002022Key.C0049,
 		Mod2002022Key.C0035,		
 		Mod2002022Key.C0029,
+		Mod2002022Key.C0069,
 		Mod2002022Key.C0033,
 		Mod2002022Key.C0034,
 		Mod2002022Key.C0038,
@@ -117,7 +121,7 @@ public class Page00 extends PageAbs {
 		Mod2002022Key.C0070,
 		Mod2002022Key.C0059,
 		Mod2002022Key.C0065,
-		Mod2002022Key.C0067,
+		Mod2002022Key.C0077, // FALTA - ESTA CLAVE ESTA DUPLICADA CON LOS ESTADOS CONTABLES, VER SI AL FINAL SE QUEDA CON ESTE CODIGO O NO
 		Mod2002022Key.C0072,
 		Mod2002022Key.C0073,
 		Mod2002022Key.C0037,
@@ -145,6 +149,7 @@ public class Page00 extends PageAbs {
 	private ListBox profitAndLossType;
 	private AonDoubleBox c041;
 	private AonDoubleBox c042;	
+	private ListBox opeVol;
 	
 	public Page00( Model200PageCallback callback ) {
 		super(callback);		
@@ -198,6 +203,13 @@ public class Page00 extends PageAbs {
 		if (sv != null && inputsCheckBox.containsKey(Mod2002022Key.C0027)) {
 			inputsCheckBox.get(Mod2002022Key.C0027).setValue(AonMathUtils.equals(sv.getValue(), 1.0));
 		}
+		
+		DoubleVariableEx dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002022Key.VOLOPE);
+		index = 0;
+		if (dv != null) {
+			index = dv.getValue().intValue();
+		}
+		opeVol.setSelectedIndex(index);
 		
 		// Hago la llamada despues, porque para setEnabled(), necesito que algunos campos ya contengan el valor
 		super.dump();		
@@ -483,6 +495,32 @@ public class Page00 extends PageAbs {
 		
 		tab3.addLabelWidgetRow(AON.MSG.fixedPersonal(), c041)
 	    	.addLabelWidgetRow(AON.MSG.nonFixedPersonal(), c042);
+		
+		// CIFRA DE NEGOCIOS		
+		
+		basePanel.add(getTitle("Cifra de negocios"));
+		
+		FlexTable tableVol = addTable();
+
+		tableVol.setWidget(0, 0, new Label("Importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del periodo impositivo"));
+		
+		opeVol = new ListBox();
+		opeVol.addItem("0 - No consta");
+		opeVol.addItem("1 - Inferior a 20 millones de euros");
+		opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
+		opeVol.addItem("3 - Al menos 60 millones de euros");
+		opeVol.addChangeHandler( event -> {
+			DoubleVariableEx bv = new DoubleVariableEx(Mod2002022Key.VOLOPE);
+			bv.setValue((double)opeVol.getSelectedIndex());
+			callback.getMod200Object().getMod200().addVariable(bv);
+			callback.markAsDirty();
+		});
+		otherInputs.add(opeVol);
+		
+		basePanel.add(opeVol);
+		tableVol.setWidget(1, 0, opeVol);
+		
+		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si proceden, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstos en los art\u00EDculos 30 bis, 31, 32, 100.11 y DT 23\u00AA LIS.");
 		
 		// CARACTERES DE LA DECLARACION
 		

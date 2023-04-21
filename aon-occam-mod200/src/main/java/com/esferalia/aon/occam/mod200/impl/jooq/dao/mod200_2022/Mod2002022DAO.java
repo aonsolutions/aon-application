@@ -63,6 +63,10 @@ public class Mod2002022DAO  {
 		boolean populate(Mod2002022 mod, FsModel200RegistryRecord reg);
 	}
 
+	// FALTA - NUEVOS APARTADOS DE LA PAGINA 2 BIS:
+	//  E. Actividades desarrolladas por el declarante
+	//  F. Socios de SICAV en régimen especial de disolución y liquidación (DT 41ª LIS)
+	
 	private static enum Mod2002022RegistryType {
 		 ADMINISTRATOR ( 
 			(mod,reg) -> mod.getAdministrators().add(new Mod200CompanyAdministrator()
@@ -145,7 +149,7 @@ public class Mod2002022DAO  {
 		
 		private IPopulater populater;
 		
-		private Mod2002022RegistryType( IPopulater populater){
+		private Mod2002022RegistryType(IPopulater populater){
 			this.populater = populater;
 		}
 		
@@ -257,7 +261,7 @@ public class Mod2002022DAO  {
 	private static Mod2002022 insert(AONContext ctx, Mod2002022 mod200)  {
         mod200.setCreationUser(ctx.getUser());
 		mod200.setCreationDate(new Timestamp(System.currentTimeMillis()));        
-//		mod200.setFsModel(Mod200DAO.saveFsModel(ctx, mod200)); // Se utilizará a partir del ejercicio 2022
+		mod200.setFsModel(Mod200DAO.saveFsModel(ctx, mod200)); 
 		FsModel200Record record = ctx.getDslContext()
 			.insertInto(FS_MODEL200)
 			 .set(FS_MODEL200.DOMAIN, mod200.getDomain() )
@@ -551,7 +555,7 @@ public class Mod2002022DAO  {
 	private static Mod2002022 update(AONContext ctx, Mod2002022 mod200)  {		
         mod200.setModificationUser(ctx.getUser());
 		mod200.setModificationDate(new Timestamp( System.currentTimeMillis()));
-//		mod200.setFsModel(Mod200DAO.saveFsModel(ctx, mod200)); // Se utilizará a partir del ejercicio 2022
+		mod200.setFsModel(Mod200DAO.saveFsModel(ctx, mod200)); 
 		ctx.getDslContext().update(FS_MODEL200)
 		 .set(FS_MODEL200.DOMAIN, mod200.getDomain() )
 		 .set(FS_MODEL200.ENTERPRISE, mod200.getEnterprise())
@@ -630,7 +634,7 @@ public class Mod2002022DAO  {
 			int count = ctx.getDslContext().delete(FS_MODEL200)
 				.where(FS_MODEL200.ID.equal(id) )
 				.execute();
-//			Mod200DAO.deleteFsModel(ctx, mod200.getFsModel()); // Se utilizará a partir del ejercicio 2022
+			Mod200DAO.deleteFsModel(ctx, mod200.getFsModel()); 
 			ctx.log().info("------ [END OK] DELETE MOD 200 ["+id+"] (" + count +" rows )");
 		} catch (Throwable t) {
 			ctx.log().info("------ [END FAIL] DELETE MOD 200 [" + t.getMessage() + "]");
@@ -977,6 +981,7 @@ public class Mod2002022DAO  {
 	}
 	
 	private static void fillMod202(AONContext ctx,Mod2002022 mod200) {
+		// FALTA - REVISAR LECTURA DEL MODELO 202, AHORA SOLO SE LEEN LOS QUE ESTAN FINALIZADOS Y SI ESTAN ENVIADOS ??
 		Mod202DAO.getMod202s(ctx, mod200.getDomain())
 			.filter(mod -> mod.getYear() == mod200.getYear() && mod.getStatus() == FiscalStatus.FINISHED )
 			
@@ -1144,3 +1149,4 @@ public class Mod2002022DAO  {
 	}
 	
 }
+

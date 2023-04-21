@@ -282,15 +282,22 @@ public class Mod2002022Behaviour {
         // Base Imponible	
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ550, new Boolean[]{TRUE,TRUE});		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1032,new Boolean[]{FALSE,TRUE});
+		
 		// FALTA - NUEVAS CASILLAS 541 Y 564 VER SI SE PUEDEN CUMPLIMENTAR
+		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ547,new Boolean[]{FALSE,TRUE});
-		// FALTA - NUEVAS CASILLAS 1887 Y 1890 VER SI SE PUEDEN CUMPLIMENTAR
+		
+		// FALTA - NUEVAS CASILLAS 1887 Y 1890 VER SI SE PUEDEN CUMPLIMENTAR - SE SUPONE QUE SON DESGLOSES ASI QUE IRAN DESHABILITADAS
+		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1887,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1890,new Boolean[]{FALSE,TRUE});
+		
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ552, new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1033,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1034,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ1330,new Boolean[]{TRUE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ553, new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LQ554, new Boolean[]{FALSE,TRUE});
+		
 		// FALTA - NUEVAS CASILLAS 1576 Y 1577 VER SI SE PUEDEN CUMPLIMENTAR
 		
 		// Tipo de Gravamen
@@ -316,7 +323,10 @@ public class Mod2002022Behaviour {
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN585,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN584,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN588,new Boolean[]{FALSE,TRUE});
-		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN565,new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1039,new Boolean[]{FALSE,TRUE});  // FALTA - ESTA CASILLA ESTE AÑO LLEVA DESGLOSE
+		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN2314,new Boolean[]{FALSE,TRUE});  // FALTA - ESTA CASILLA ESTE AÑO LLEVA DESGLOSE
+		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN2315,new Boolean[]{FALSE,TRUE});  // FALTA - ESTA CASILLA ESTE AÑO LLEVA DESGLOSE
+ 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN565,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN590,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN082,new Boolean[]{FALSE,TRUE});
 		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.BN1040,new Boolean[]{FALSE,TRUE});
@@ -393,7 +403,7 @@ public class Mod2002022Behaviour {
 		addBreakdown(Mod2002022LQ547Key.values(), Mod2002022Key.LQ547);
 		
 		// Desglose Casilla 243
-		addBreakdown(Mod2002022LQ243Key.values(), Mod2002022Key.LQ243);
+		addBreakdown(Mod2002022LQ243Key.values(), Mod2002022Key.LQ1886, Mod2002022Key.LQ1889, Mod2002022Key.LQ243);  // FALTA - NUEVO DESGLOSE CON 2 FILAS DE SUBTOTALES Y UNA DE TOTALES
 		
 		// Desglose Casilla 570
 		addBreakdown(Mod2002022BN570Key.values(), Mod2002022Key.BN570, new byte[] {2,4});  // Dos columnas calculadas 
@@ -426,13 +436,13 @@ public class Mod2002022Behaviour {
 		addBreakdown(Mod2002022BN588Key.values(), Mod2002022Key.BN588, Mod2002022Key.BN634);
 		
 		// Desglose Casilla 2315
-		addBreakdown(Mod2002022BN2315Key.values(), Mod2002022Key.BN2315);
+		addBreakdown(Mod2002022BN2315Key.values(), Mod2002022Key.BN2315);  // FALTA - NUEVO DESGLOSE
 		
 		// Desglose Casilla 1039
-		addBreakdown(Mod2002022BN1039Key.values(), Mod2002022Key.BN1039);  // FALTA - ESTE DESGLOSE TIENE 4 COLUMNAS, NO SÉ SI ALGUNA COLUMNA MAS TAMBIEN ES CALCULADA
+		addBreakdown(Mod2002022BN1039Key.values(), Mod2002022Key.BN1039);  // FALTA - NUEVO DESGLOSE - ESTE DESGLOSE TIENE 4 COLUMNAS, NO SÉ SI ALGUNA COLUMNA MAS TAMBIEN ES CALCULADA
 		
 		// Desglose Casilla 2314
-		addBreakdown(Mod2002022BN2314Key.values(), Mod2002022Key.BN2314);  // FALTA - ESTE DESGLOSE TIENE 4 COLUMNAS, NO SÉ SI ALGUNA COLUMNA MAS TAMBIEN ES CALCULADA
+		addBreakdown(Mod2002022BN2314Key.values(), Mod2002022Key.BN2314);  // FALTA - NUEVO DESGLOSE - ESTE DESGLOSE TIENE 4 COLUMNAS, NO SÉ SI ALGUNA COLUMNA MAS TAMBIEN ES CALCULADA
 		
 		// Desglose Casilla 565
 		addBreakdown(Mod2002022BN565Key.values(), Mod2002022Key.BN565);
@@ -528,7 +538,7 @@ public class Mod2002022Behaviour {
 
 		// Dotaciones por deterioro de créditos u otros activos derivados de las posibles insolvencias de los deudores no
 	    // vinculados con el contribuyente y otras del art. 11.12 LIS con posibilidad de conversión en crédito exigible
-		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LM1500, new Boolean[]{FALSE,TRUE});
+		BEHAVIOUR_KEYS_MAP.put(Mod2002022Key.LM1500, new Boolean[]{FALSE,TRUE}); // FALTA - COMPROBAR SI REALMENTE VA DESHABILITADO ESTE AÑO
 		addBreakdown(Mod2002022LM1494Key.values(), Mod2002022Key.LM1494, new byte[]{});  // No lleva columnas de totales
 		
 	}

@@ -39,7 +39,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class Model200Table extends SimpleLayoutPanel implements HasSelectionHandlers<Mod200>{
 	
 	public static final int MAX_YEAR = 2022;  // Máximo Ejercicio para el que se puede hacer el modelo 200
-	public static final int BETA_YEAR = 0; // Ejercicio para el cual la creación del modelo 200 aparece solo si el dominio tiene marcado "BETA"	
+	// FALTA - SE VUELVE A PONER EL 2022 COMO BETA, SI HABIA CREADO ALGUN MODELO DEL 2022 TENDRÁN QUE BORRARLO Y VOLVER A CREARLO
+	public static final int BETA_YEAR = 2022; // Ejercicio para el cual la creación del modelo 200 aparece solo si el dominio tiene marcado "BETA"	
 	
 	// PARA COMPILAR LOS ANTERIORES LO USABA LA CLASE ErrorPage
 	public static final CellTable.Resources TABLE_STYLE = GWT.create(AonCellTable.class);
@@ -138,7 +139,7 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 	    , STA("A"					, 20 ,AON.CSS.aonTextCenter()) // Administración
 	    , YER(AON.MSG.fiscalYear()	, 50 ,AON.CSS.aonTextCenter()) // Año
 		, SEC(AON.MSG.period()		, 75 ,AON.CSS.aonTextCenter()) // Periodo
-//		, DCT(AON.MSG.status()		, 75 ,AON.CSS.aonTextCenter()) // Estado - SE EMPEZARA A USAR A PARTIR DEL 2022
+		, DCT(AON.MSG.status()		, 75 ,AON.CSS.aonTextCenter()) // Estado
 		, CMP("C"					, 20 ,AON.CSS.aonTextCenter()) // Complementaria
 		, DOC("Documento"			, 100,AON.CSS.aonTextLeft())   // Documento (NIF)
 		, AUTO(AON.MSG.name()		, 0  ,AON.CSS.aonTextLeft())   // Nombre
@@ -202,12 +203,12 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 			comp.setStyleName(AON.CSS.aonIconLabel());
 			comp.addStyleName( mod200.isComplementary()?AON.CSS.aonIconChecked():AON.CSS.aonIconCheck() );
 			
-			// Estado - SE EMPEZARA A USAR A PARTIR DEL 2022
-//			AonDisplayGridCell statusCell = new AonDisplayGridCell();
-//			statusCell.add(new InlineLabel(mod200.getYear() < 2022 ? "" : mod200.getStatus().getName()));
-//			statusCell.addStyleName(AON.CSS.aonTextCenter());
-//			statusCell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB(mod200.getStatus()));
-//			statusCell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod200.getStatus()));
+			// Estado
+			AonDisplayGridCell statusCell = new AonDisplayGridCell();
+			statusCell.add(new InlineLabel(mod200.getYear() < 2022 ? "" : mod200.getStatus().getName()));
+			statusCell.addStyleName(AON.CSS.aonTextCenter());
+			statusCell.getElement().getStyle().setBackgroundColor(FiscalModelUtils.getStatusBckColorRGB(mod200.getStatus()));
+			statusCell.getElement().getStyle().setColor(FiscalModelUtils.getStatusFrgColorRGB(mod200.getStatus()));
 
 			// Tipo Resultado (Cuota cero, Ingreso o Devolución)
 			String resultType = AON.MSG.zeroQuota();
@@ -226,7 +227,7 @@ public class Model200Table extends SimpleLayoutPanel implements HasSelectionHand
 			   .addCell(admon, AON.CSS.aonTextCenter())                                                      	// Administración
  			   .addCell(new InlineLabel(AonNumberUtils.toString(mod200.getYear())), AON.CSS.aonTextCenter()) 	// Ejercicio
 			   .addCell(new InlineLabel(mod200.getPeriod().getDescription()), AON.CSS.aonTextCenter());      	// Periodo			
-//			row.add(statusCell); 																				// Estado - SE EMPEZARA A USAR A PARTIR DEL 2022
+			row.add(statusCell); 																				// Estado
 			row.addCell(comp, AON.CSS.aonTextCenter()) 															// Complementaria
 			   .addCell(new InlineLabel(mod200.getDocument())) 													// NIF
 			   .addCell(new InlineLabel(mod200.getFullName())) 													// Apellidos y Nombre o Razón Social

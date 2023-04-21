@@ -558,7 +558,7 @@ public class Mod2002022Writer {
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002022Key.C0070, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002022Key.C0059, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002022Key.C0065, 1, 0)
-				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002022Key.C0067, 1, 0)
+//				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002022Key.C0067, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002022Key.C0072, 1, 0)
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002022Key.C0073, 1, 0)				
 				,(line, mod200, label) -> addUnSignedKey(line, mod200, Mod2002022Key.C0037, 1, 0)
@@ -1427,7 +1427,7 @@ public class Mod2002022Writer {
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002022Key.BN1234A)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002022Key.BN083)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002022Key.BN1332)
-				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002022Key.BN1200)
+//				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002022Key.BN1200)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002022Key.BN1042)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002022Key.BN1333)
 				,(line, mod200, label) -> addSignedKey(line, mod200, Mod2002022Key.LQ1586) // Liquidación IV - Resultado de la autoliquidación - Estado 
