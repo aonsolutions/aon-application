@@ -408,9 +408,11 @@ public class Contrata {
 				((HtmlSelect) form.querySelector("select[name=tipodoc]")).setSelectedAttribute(tipodoc, true);
 				form.getInputByName("nif").setValue(cto.getIpf());
 				form.getInputByName("nifnie").setValue(tipodoc + "  " + cto.getIpf());
-
-				form.getInputByName("nombre").setValue(cto.getName());
-				form.getInputByName("apellido1").setValue(cto.getSurname());
+        
+				String name = cto.getName();
+				if(null != name && name.length() > 15) name = name.substring(0, 15);
+				form.getInputByName("nombre").setValueAttribute(name);
+				form.getInputByName("apellido1").setValueAttribute(cto.getSurname());
 
 				if (cto.getLastSurname() != null) {
 					form.getInputByName("apellido2").setValue(cto.getLastSurname());
@@ -2064,11 +2066,11 @@ public class Contrata {
 		
 		String href = null;
 
-		if(Arrays.asList("421", "450").contains(codCto)) { // Formación en alternancia tiempo completo
+		if(Arrays.asList("421", "450").contains(codCto)) { // FormaciÃ³n en alternancia tiempo completo
 			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=6";
-		} else if(codCto.equals("420")) { //Formativo para la obtención de la práctica profesional tiempo completo
+		} else if(codCto.equals("420")) { //Formativo para la obtenciÃ³n de la prÃ¡ctica profesional tiempo completo
 			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=7";
-		} else if(Arrays.asList("520", "550").contains(codCto)) { // Formativo para la obtención de la práctica profesional tiempo parcial
+		} else if(Arrays.asList("520", "550").contains(codCto)) { // Formativo para la obtenciÃ³n de la prÃ¡ctica profesional tiempo parcial
 			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=8";
 		} else {
 			String oneCodCto = codCto.substring(0, 1);
