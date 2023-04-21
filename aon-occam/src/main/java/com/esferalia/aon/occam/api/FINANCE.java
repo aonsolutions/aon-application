@@ -49,5 +49,11 @@ public class FINANCE {
 			getFinance().updateWithholdingType(ctx,invoiceId, newType);
 		}
 	}
+
+	public static void updateActivity(Occam occam, Integer invoiceId, Integer activity) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			getFinance().updateActivity(ctx,invoiceId, activity);
+		}
+	}
 	
 }

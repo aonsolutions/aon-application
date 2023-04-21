@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -43,8 +44,10 @@ import com.esferalia.aon.occam.api.model.Properties.DomainGserviceaccountPropert
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Scope;
+import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.watson.util.AonEnumUtils;
 
 import net.aonsolutions.core.dbutils.AonSQLException;
 import net.aonsolutions.core.dbutils.AonSQLFile;
@@ -347,6 +350,20 @@ public class DomainDAO {
 	public static Integer getParentDomain(AONContext ctx) {
 		return getParentDomain(ctx, ctx.getDomainId())
 				.getValue(DOMAIN.PARENT);
+	}
+	
+	public static Domain updateDomainCustomer(AONContext ctx, Integer domainId, String domainName, Integer aonCustomer, AonStatus aonStatus) {
+		return ctx.getDslContext().update(DOMAIN)
+		.set(DOMAIN.AONCUSTOMER, aonCustomer)
+		.set(DOMAIN.AONSTATUS, aonStatus != null ? AonEnumUtils.getByte(aonStatus) : 0)
+		.where(DOMAIN.ID.eq(domainId))
+		.and(DOMAIN.NAME.eq(domainName))
+		.returningResult(DSL.asterisk())
+		.fetchStreamInto(DOMAIN)
+		.filter(Objects::nonNull)
+		.findFirst()
+		.map(new DomainFiller())
+		.orElse(null);
 	}
 	
 	//-------------------- DOMAIN G SERVICE ACCOUNT

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.ActivityType;
 import com.esferalia.aon.occam.api.model.Agreement;
 import com.esferalia.aon.occam.api.model.Alarm;
@@ -19,6 +20,7 @@ import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.BonusFilter;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Cno;
 import com.esferalia.aon.occam.api.model.CommercialActivity;
@@ -243,7 +245,6 @@ import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.occam.api.model.registry.Target;
 import com.esferalia.aon.occam.api.model.security.Booking;
-import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -653,68 +654,7 @@ public class AON {
 		}
 	}
 	
-	// ---------- CERTIFICATES
 	
-	public static Stream<Certificate> getCertificates(Domain domain, User user, CertificateFilter filter) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
-			return getSecurity().getCertificates(ctx, filter);
-		}
-	}
-
-	public static Certificate getCertificate(Domain domain, User user, String certificateType) {
-		return getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), certificateType); 
-	}	
-	
-	public static Certificate getCertificate(String domainName, Integer domainId, String login, Integer userId, String certificateType) {
-		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
-			Certificate certificate =  getSecurity().getCertificate(ctx, userId, certificateType);
-			if(null == certificate.getCertificate())
-				throw new CertificateNotFoundException();
-			return certificate;
-		} catch (ArrayIndexOutOfBoundsException e) {
-			throw new IllegalArgumentException("El certificado no se ha podido obtener. Revise que los certificados esten en vigor");
-		}
-	}
-	
-	public static Certificate getCertificate(String domainName, Integer domainId, String login, Integer userId) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			Certificate certificate =  getSecurity().getCertificate(ctx, p -> p.getIdProperty().eq(userId));
-			if(null == certificate.getCertificate())
-				throw new CertificateNotFoundException();
-			return certificate;
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-
-
-	public static Certificate insertCertificate(String domainName, Integer domainId, String login, Integer userId, Certificate certificate) {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			return getSecurity().insertCertificate(ctx, p -> p.getIdProperty().eq(userId), certificate);
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
-	
-	public static Certificate getCertificateSEPE(String domainName, Integer domainId, String login) throws CertificateNotFoundException {
-		CloseableAONContext ctx = null;
-		try {
-			ctx = AONContext.getAONContext(domainName, domainId, login);
-			Certificate certificate =  getSecurity().getCertificateSEPE(ctx, domainId);
-			if(null == certificate || null == certificate.getCertificate())
-				throw new CertificateNotFoundException();
-			return certificate;
-		} finally {
-			if (ctx != null)
-				ctx.close();
-		}
-	}
 
 	// ********************************************
 	// ********************************** COMMON **
@@ -1816,6 +1756,12 @@ public class AON {
 	// ********************************* FINANCE **
 	// ********************************************
 	
+	public static Stream<Invoice> getInvoiceHeaders(Occam occam, AccountingReportParams params, int offset, int limit) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			return getFinance().getInvoiceHeaders(ctx, params, offset, limit);
+		}
+	}
+
 	public static Stream<Invoice> getInvoiceStream(Occam occam, InvoiceFilter filter){
 		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
 			return getFinance().getInvoiceStream(ctx, filter);
@@ -3821,8 +3767,9 @@ public class AON {
 	}
 	
 	public static Project getProject(String domainName, Integer domainId, String login, ProjectFilter filter) {
-		return getProjectStream(domainName, domainId, login, filter)
-				.findFirst().orElse(new Project());
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+			return getProject().getProject(ctx, filter);
+		}
 	}
 
 	public static LinkedList<Project> getProjectList(String domainName, Integer domainId, String login, ProjectFilter filter) {
@@ -6541,21 +6488,84 @@ public class AON {
 		}
 	}
 	
+	// ---------- CERTIFICATES
+	
+		public static Stream<Certificate> getCertificates(Domain domain, User user, CertificateFilter filter) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)){
+				return getSecurity().getCertificates(ctx, filter);
+			}
+		}
+
+		public static Certificate getCertificate(Domain domain, User user, String certificateType) {
+			return getCertificate(domain.getName(), domain.getId(), user.getLogin(), user.getId(), certificateType); 
+		}	
+		
+		public static Certificate getCertificate(String domainName, Integer domainId, String login, Integer userId, String certificateType) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)){
+				Certificate certificate =  getSecurity().getCertificate(ctx, userId, certificateType);
+				if(null == certificate.getData())
+					throw new CertificateNotFoundException();
+				return certificate;
+			} catch (ArrayIndexOutOfBoundsException e) {
+				throw new IllegalArgumentException("El certificado no se ha podido obtener. Revise que los certificados esten en vigor");
+			}
+		}
+		
+		public static Certificate getCertificate(String domainName, Integer domainId, String login, Integer userId) {
+			CloseableAONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domainId, login);
+				Certificate certificate =  getSecurity().getCertificate(ctx, p -> p.getIdProperty().eq(userId));
+				if(null == certificate.getData())
+					throw new CertificateNotFoundException();
+				return certificate;
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+
+
+		public static Certificate insertCertificate(String domainName, Integer domainId, String login, Integer userId, Certificate certificate) {
+			CloseableAONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domainId, login);
+				return getSecurity().insertCertificate(ctx, p -> p.getIdProperty().eq(userId), certificate);
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+		
+		public static Certificate getCertificateSEPE(String domainName, Integer domainId, String login) throws CertificateNotFoundException {
+			CloseableAONContext ctx = null;
+			try {
+				ctx = AONContext.getAONContext(domainName, domainId, login);
+				Certificate certificate =  getSecurity().getCertificateSEPE(ctx, domainId);
+				if(null == certificate || null == certificate.getData())
+					throw new CertificateNotFoundException();
+				return certificate;
+			} finally {
+				if (ctx != null)
+					ctx.close();
+			}
+		}
+	
 	// ------------------- CERTIFICATES
 	
-	public static List<com.esferalia.aon.occam.api.model.Certificate> getCertificates(String domainName, Integer domainId, String login, Integer userId) throws IllegalArgumentException {
+	public static List<Certificate> getCertificates(String domainName, Integer domainId, String login, Integer userId) throws IllegalArgumentException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getCertificates(ctx, domainId, userId);
 		}
 	}
 	
-	public static List<com.esferalia.aon.occam.api.model.Certificate> getCertificatesWithParent(String domainName, Integer domainId, Integer parentDomainId, String login, Integer userId) throws IllegalArgumentException {
+	public static List<Certificate> getCertificatesWithParent(String domainName, Integer domainId, Integer parentDomainId, String login, Integer userId) throws IllegalArgumentException {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getCertificatesWithParent(ctx, domainId, parentDomainId, userId);
 		}
 	}
 	
-	public static com.esferalia.aon.occam.api.model.Certificate getCertificate(String domainName, Integer domainId, String login, AttachFilter attachFilter){
+	public static Certificate getCertificate(String domainName, Integer domainId, String login, AttachFilter attachFilter){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			return getCommon().getCertificate(ctx, attachFilter);
 		}
@@ -6577,7 +6587,7 @@ public class AON {
 		}
 	}
 	
-	public static void saveCertificate(String domainName, Integer domainId, String login, Integer userId, com.esferalia.aon.occam.api.model.Certificate certificate){
+	public static void saveCertificate(String domainName, Integer domainId, String login, Integer userId, Certificate certificate){
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domainId, login)) {
 			getCommon().saveCertificate(ctx, domainId, userId, certificate);
 		}

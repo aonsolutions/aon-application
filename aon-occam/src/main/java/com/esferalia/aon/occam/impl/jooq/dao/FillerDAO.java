@@ -80,6 +80,7 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.type.Administration;
+import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.CCCType;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
@@ -152,6 +153,8 @@ public class FillerDAO {
 				.setLastAccessUser(getValue(r, domainTable.LASTACCESS_USER))
 				.setLastAccessDate(getValue(r, domainTable.LASTACCESS_DATE))
 				.setExpirationDate(getValue(r, domainTable.EXPIRATIONDATE))
+				.setAonCustomer(r.getValue(domainTable.AONCUSTOMER))
+				.setAonStatus(AonStatus.safeValueOf(r.getValue(domainTable.AONSTATUS)))
 				;	
 		}
 	}

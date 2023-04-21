@@ -305,10 +305,20 @@ public class InvoiceImport extends ImportUtils{
 			|| compare(IConstants.PAGO_POR_CAJA, value);
 	}
 	
+	private boolean isActivity(String value) {
+		return compare(IConstants.ACTIVIDAD, value);
+	}
+	
  	private void check(String title, Cell cell) {
 		Object o = Utils.getObjectValue(cell);
 		if(o == null) return;
 	
+		if(isActivity(title)) {
+			if(CellType.NUMERIC == cell.getCellTypeEnum()) { 
+				inv.setActivity(Integer.toString(Utils.parseDouble(o.toString()).intValue()));
+			}  else inv.setActivity(o.toString());
+		}
+		
 		if(isTipoOperacion(title)) {
 			inv.setType(InvoiceOpType.safeValueOf(o.toString().trim()));
 			return;
@@ -578,7 +588,7 @@ public class InvoiceImport extends ImportUtils{
 			ai.setWorkplace(aonCtx.getWorkplaces().get(0).getId());
 
 			RegistryAddress address = buildAddress(aonCtx, domain, ivs.get(i));
-			Invoice invoice = buildInvoice(domain, user, ivs.get(i));
+			Invoice invoice = buildInvoice(aonCtx, domain, user, ivs.get(i));
 			AccountingRegistry ar = getRegistry(domain, user, invoice, ivs.get(i), address);			
 			invoice.setRegistry(ar.getId());
 			ai.setRegistry(ar);
@@ -660,7 +670,10 @@ public class InvoiceImport extends ImportUtils{
 				}
 
 				ai.addVat(vat);
-				total = total + (invoice.mustApplyISP() ? ivs.get(j).getBase() : ivs.get(j).getTotal());
+				double retentionQuota = ivs.get(j).getRetentionQuota() != null ? ivs.get(j).getRetentionQuota() : 0.0;
+				total = total + (invoice.mustApplyISP() 
+						? ivs.get(j).getBase() - retentionQuota
+						: ivs.get(j).getTotal());
 				base = base + ivs.get(j).getBase();
 				j++;
 			}
@@ -773,7 +786,7 @@ public class InvoiceImport extends ImportUtils{
 		}
 	}
 	
-	private static Invoice buildInvoice(Domain domain, User user, InvoiceImportClass iic) {
+	private static Invoice buildInvoice(AonConfiguration aonCtx, Domain domain, User user, InvoiceImportClass iic) {
 		Invoice invoice = new Invoice();
 		invoice.setScope(getScope(domain, user));
 		invoice.setService(InvoiceOpType.PIS.equals(iic.getType())|| InvoiceOpType.AIS.equals(iic.getType()));
@@ -804,6 +817,16 @@ public class InvoiceImport extends ImportUtils{
 		if(iic.getTotal() < 0) {
 			invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
 		}
+		
+		EnterpriseActivity ea = aonCtx.getMainActivity();		
+		if(!AonStringUtils.isBlank(iic.getActivity()) && AonStringUtils.isNumeric(iic.getActivity())) {
+			List<EnterpriseActivity> list = AON.getEnterpriseActivities(domain.getName(), domain.getId(), user.getLogin()).toList();
+			for(EnterpriseActivity act : list) {
+				if(iic.getActivity().equalsIgnoreCase(act.getCnaeCode()))
+					ea = act;
+			}
+		}
+		invoice.setActivity(ea);
 		return invoice;
 	}
 
@@ -915,6 +938,16 @@ public class InvoiceImport extends ImportUtils{
 			if(iic.getTotal() < 0) {
 				invoice.setRectificationType(RectificationType.NORMAL_RECTIFIER);
 			}
+			
+			EnterpriseActivity ea = aonCtx.getMainActivity();		
+			if(!AonStringUtils.isBlank(iic.getActivity()) && AonStringUtils.isNumeric(iic.getActivity())) {
+				List<EnterpriseActivity> list = AON.getEnterpriseActivities(domain.getName(), domain.getId(), user.getLogin()).toList();
+				for(EnterpriseActivity act : list) {
+					if(iic.getActivity().equalsIgnoreCase(act.getCnaeCode()))
+						ea = act;
+				}
+			}
+			invoice.setActivity(ea);
 		
 			RegistryAddress address = buildAddress(aonCtx, domain, iic);
 
@@ -984,7 +1017,11 @@ public class InvoiceImport extends ImportUtils{
 					vat.setSurchargeQuota(0.0);
 				}
 				ai.addVat(vat);
-				total = total + (invoice.isIsp() ? aux.getBase() : aux.getTotal());
+				double retentionQuota = aux.getRetentionQuota() != null ? aux.getRetentionQuota() : 0.0;
+	
+				total = total + (invoice.isIsp() 
+						? aux.getBase() - retentionQuota
+						: aux.getTotal());
 				base = base + aux.getBase();
 				checkCuotas(domain, aux);
 			}
@@ -1343,8 +1380,6 @@ public class InvoiceImport extends ImportUtils{
 	}
 	
 	private static AccountEntry getEntryBase(Domain domain, String login, AonConfiguration aonCtx,AccountingInvoice ai) {
-		EnterpriseActivity ea = aonCtx.getMainActivity();
-		Integer activity = (ea==null?null:ea.getId());
 		Integer periodId = null;
 		if (ai.getInvoice().getIssueDate() != null) {
 			CloseableAONContext ctx = null;
@@ -1362,7 +1397,7 @@ public class InvoiceImport extends ImportUtils{
 				.setDomain(ai.getInvoice().getDomain())
 				.setConfidential(false)
 				.setEntryDate(ai.getInvoice().getIssueDate())
-				.setActivity(activity)
+				.setActivity(ai.getInvoice().getActivity().getId())
 				.setComments(ai.getInvoice().getComments())
 				.setDirty(false);
 		ai.getInvoice().getType().visit(ai.getInvoice(),  new IInvoiceTypeVisitor() {

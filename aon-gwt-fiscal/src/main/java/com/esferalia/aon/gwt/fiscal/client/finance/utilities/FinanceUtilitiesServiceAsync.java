@@ -27,6 +27,8 @@ public interface FinanceUtilitiesServiceAsync {
 	void financeInvoiceIntegrityFix(Occam occam, Finance finance,AsyncCallback<Finance> callback) throws AonCoreException;
 
 	// Chequeo de tipos de retenci\u00F3n en facturas.
-	void updateWithholdingType(Occam occam, Integer invoiceId, WithholdingType newType, AsyncCallback<Void> callback);
+	void updateWithholdingType(Occam occam, Integer invoiceId, WithholdingType newType, AsyncCallback<Void> callback) throws AonCoreException;
 	
+	// Modificación de actividades en facturas.
+	void updateActivity(Occam occam, Integer invoiceId, Integer activity, AsyncCallback<Void> callback) throws AonCoreException;
 }

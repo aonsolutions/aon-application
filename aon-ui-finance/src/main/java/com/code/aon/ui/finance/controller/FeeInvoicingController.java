@@ -34,8 +34,8 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.entity.IEntityAlias;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
-import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 
 public class FeeInvoicingController implements IFinanceConstants, Serializable {
@@ -174,7 +174,7 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 			throw new Exception("Error al obtener el certificado.");
 		}
 		try {
-			if(!checkCert(cert.getCertificate(), cert.getPassword())) {
+			if(!checkCert(cert.getData(), cert.getPassword())) {
 				throw new Exception("El certificado o la contraseña no son correctos.");
 			}
 		} catch (Exception e) {

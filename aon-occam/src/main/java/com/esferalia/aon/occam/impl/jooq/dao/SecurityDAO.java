@@ -98,7 +98,7 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.security.Auth;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -110,6 +110,7 @@ import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.api.model.type.TagType;
+import com.esferalia.aon.occam.impl.jooq.dao.CertificateDAO.CertificatePropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.DomainAppPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.PropertiesDAO.ScopePropertiesDAO;
@@ -152,20 +153,6 @@ public class SecurityDAO {
 		@Override public Property<String> getNameProperty() {return new FilterDAO.PropertyDAO<>(SIGNATURE.NAME);}
 		@Override public Property<String> getSignatureProperty() {return new FilterDAO.PropertyDAO<>(SIGNATURE.SIGNATURE_);}
 		@Override public Property<Integer> getUserIdProperty() {return new FilterDAO.PropertyDAO<>(SIGNATURE.USER_ID);}
-	}
-	
-	protected static class CertificatePropertiesDAO implements CertificateProperties {
-		protected Condition[] getConditions(CertificateFilter filter) {
-			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
-			if (filterDAO == null) return new Condition[0];
-			return new Condition[] { filterDAO.getCondition() };
-		}
-
-		@Override public Property<Integer> getIdProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.ID);}
-		@Override public Property<Integer> getDomainProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.DOMAIN);}
-		@Override public Property<Integer> getRegistryProperty() {return new FilterDAO.PropertyDAO<>(RATTACH.REGISTRY);}
-		@Override public Property<String> getTypeProperty() {return new FilterDAO.PropertyDAO<>(TAG.NAME);}
-
 	}
 	
 	private static final AuthPropertiesDAO AUTH_PROPERTIES = new AuthPropertiesDAO();
@@ -534,25 +521,6 @@ public class SecurityDAO {
 				.setDocument(r.getValue(AUTH.DOCUMENT))
 				.setPhone(r.getValue(AUTH.PHONE))
 				.setPassword(r.getValue(AUTH.PASSWORD));
-		}
-		
-	}
-	
-	public static class CertificateFiller extends Filler implements Function<Record, Certificate>{
-
-		@Override
-		public Certificate apply(Record r) {
-			return build(r);
-		}
-		
-		public static Certificate build(Record r) {
-			return new Certificate()
-				.setId(getValue(r, RATTACH.ID))
-				.setDomain(getValue(r, RATTACH.DOMAIN))
-				.setType(MimeType.PKCS12.name())
-				.setDescription(getValue(r, RATTACH.DESCRIPTION))
-				.setCertificate(getValue(r, RATTACH.DATA))
-				.setConfidential(getBoolean(r, RATTACH.SECURITY_LEVEL));
 		}
 		
 	}
@@ -1255,16 +1223,6 @@ public class SecurityDAO {
 			.execute();
 	}
 	
-	public static Stream<Certificate> getCertificates(AONContext ctx, CertificateFilter filter) {
-		return ctx.getDslContext().select().from(RATTACH)
-			.leftOuterJoin(RATTACH_TAG).on(RATTACH_TAG.RATTACH.eq(RATTACH.ID))
-			.leftOuterJoin(TAG).on(TAG.ID.eq(RATTACH_TAG.TAG))
-			.where(CERTIFICATE_PROPERTIES.getConditions(filter))
-			.and(RATTACH.TYPE.eq(RegistryAttachmentType.DIGITAL_CERTIFICATE.value()))
-			.groupBy(RATTACH.ID)
-			.fetch().stream().map(new CertificateFiller());
-	}
-	
 	public static Certificate getCertificate(AONContext ctx, Integer userId, String certificateType) {
 		Certificate certificate;
 		DSLContext dslContext = ctx.getDslContext();
@@ -1637,4 +1595,3 @@ public class SecurityDAO {
 	}
 	
 }
-

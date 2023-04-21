@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
@@ -5195,6 +5196,115 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testIdcXXVIIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SalaryException, SQLException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXVIII.pdf")) {
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			//Assert.assertEquals(5, ssPecs.size());
+
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
+				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			calendar.set(Calendar.YEAR, 2020);
+			calendar.set(Calendar.DAY_OF_MONTH, 01);
+			calendar.set(Calendar.MONTH, Calendar.OCTOBER);
+			Date october01102020 = calendar.getTime();
+
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.MONTH, Calendar.MAY);
+			Date may01052021 = calendar.getTime();
+
+			assertPECS(ssPecs, october01102020, may01052021, 1, pec -> pec.getFormula().contains("pec:16,quota:51") );
+			
+			//ssPecs.stream().forEach(pec -> Assert.assertEquals(april42023, pec.getEndDate()));
+
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH, 31);
+			calendar.set(Calendar.MONTH, Calendar.JANUARY);
+			Date january31012021 = calendar.getTime();
+
+			assertPECS(ssPecs, october01102020, january31012021, 1, pec -> pec.getFormula().contains("pec:37,quota:57") );
+
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH, 01);
+			calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+			Date february01022021 = calendar.getTime();
+
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH, 28);
+			calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+			Date february28022021 = calendar.getTime();
+
+			assertPECS(ssPecs, february01022021, february28022021, 1, pec -> pec.getFormula().contains("pec:37,quota:57") );
+
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.MONTH, Calendar.MARCH);
+			Date march01032021 = calendar.getTime();
+
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH, 31);
+			calendar.set(Calendar.MONTH, Calendar.MARCH);
+			Date march31032021 = calendar.getTime();
+
+			assertPECS(ssPecs, march01032021, march31032021, 1, pec -> pec.getFormula().contains("pec:37,quota:57") );
+
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 20);
+			calendar.set(Calendar.MONTH, Calendar.MARCH);
+			Date march20032023 = calendar.getTime();
+
+			assertPECS(ssPecs, march20032023, null, 1, pec -> pec.getFormula().contains("pec:03,quota:03") );
+
+
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 20);
+			calendar.set(Calendar.MONTH, Calendar.MARCH);
+			Date march01032023 = calendar.getTime();
+
+			Salary salary = calculate(ssPecs, Collections.emptyList(), march01032023);
+			
+			double totalCgcE = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+			    	if ("CGC_E".equals(cost.getName()) )
+			    	    totalCgcE += cost.getAmount();
+			}
+			
+			double totalBonus = 0.00;
+			for (SalaryBonus bonus : salary.getSalaryBonus()) {
+				totalBonus += bonus.getAmount();
+				
+			}
+			
+			assertEquals(totalCgcE * 0.75 * 12 / 31 , totalBonus, DELTA);
+
+//			
+//			double totalEnterprise = notBonusCosts.stream().collect(Collectors.summingDouble(d->d));
+//
+//			assertEquals(totalEnterprise, salary.getTotalEnterprise(), DELTA);
+//
+//			calendar.set(Calendar.YEAR, 2023);
+//			calendar.set(Calendar.DAY_OF_MONTH, 1);
+//			calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+//			
+//			Date february12023 = calendar.getTime();
+//
+//			salary = calculate(ssPecs, datas, february12023);
+//
+//			double meiCost = salary.getSalaryCosts().stream().filter( c -> "MEI_E".equals( c.getName())).collect(Collectors.summingDouble(SalaryCost::getAmount));
+//
+//			assertEquals(meiCost, salary.getTotalEnterprise(), DELTA);
+		}
+	}
 
 	@Test
 	public void testIdcplnssTrabajadoresTramosXIX()
@@ -5549,6 +5659,18 @@ public class IdcTest extends AbstractSQLTestCase {
 		calendar.set(Calendar.MONTH, Calendar.JANUARY);
 
 		return  new java.sql.Date(calendar.getTimeInMillis());
+	    
+	}
+	
+	private static void assertPECS(Collection<PEC> ssPecs, Date startDate, Date endDate, int size, Predicate<PEC> test ) {
+	    PEC [] pecs = 
+             ssPecs.stream()
+	    .filter( pec -> Objects.equals(pec.getEndDate(),endDate))
+	    .filter( pec -> Objects.equals(pec.getStartDate(),startDate))
+	    .toArray(PEC[]::new);
+	    
+	    Assert.assertEquals(1, pecs.length);
+	    Arrays.stream(pecs).forEach(pec -> Assert.assertTrue(test.test(pec)));
 	    
 	}
 

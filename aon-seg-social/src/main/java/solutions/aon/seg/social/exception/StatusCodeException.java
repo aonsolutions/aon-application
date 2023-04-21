@@ -1,6 +1,6 @@
 package solutions.aon.seg.social.exception;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.FailingHttpStatusCodeException;
 
 public class StatusCodeException extends SegSocialException{
 

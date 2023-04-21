@@ -309,7 +309,7 @@ public class CertificateController implements Serializable {
 		Domain domain = getDomain();
 		User user = getUser();
 		AON.getCertificates(domain, user, f -> certificateFilter(domain, user, f)).forEach(certificate -> {
-			SelectItem item = new SelectItem(certificate.getId(), certificate.getName());
+			SelectItem item = new SelectItem(certificate.getId(), certificate.getDescription());
 			digitalCertificates.add(item);
 		});
 	}	

@@ -246,9 +246,13 @@ public class Invoice2tbai {
 				other.setIDType(invoice.isIntracommunity() 
 						? IDType.NIF_IVA.getName()
 						: IDType.OTRO.getName());
+				
 				String doc = invoice.getRegistryDocument().replace(" ", "");
-				if(invoice.isIntracommunity())
-					doc = invoice.getRegistryDocumentCountry().getIso2() + doc;
+				if(!doc.substring(0,2).equals(invoice.getRegistryDocumentCountry().getIso2())) {
+					boolean isGrecia = Country.GR.equals(invoice.getRegistryDocumentCountry());
+					String countryDocument = isGrecia ? "EL" : invoice.getRegistryDocumentCountry().getIso2();
+					doc = countryDocument + document;
+				}
 				other.setID(doc);
 				receiver.setIDOtro(other);
 			}
@@ -388,11 +392,14 @@ public class Invoice2tbai {
 
 		SujetaType sujeta = new SujetaType();
 		
+		boolean exempt = invoice.getActivity().getVatRegime().isExempt() || invoice.isIntracommunity() || invoice.isExtracommunity();
+		
 		NoExentaType noExenta = new NoExentaType();
 		DetalleNoExentaType detalleNoExenta = new DetalleNoExentaType();
 		detalleNoExenta.setTipoNoExenta(invoice.isIsp() ? TipoOperacionSujetaNoExentaType.S_2 : TipoOperacionSujetaNoExentaType.S_1);
 		DesgloseIVAType desgloseIVA = new DesgloseIVAType();
-		invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && (f.getPercentage() > 0 || invoice.isIsp())).forEach(r -> {
+		invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) 
+				&& (!exempt || (exempt && f.getPercentage() > 0) || invoice.isIsp())).forEach(r -> {
 			if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
 				r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
 			}
@@ -420,7 +427,7 @@ public class Invoice2tbai {
 		}
 		
 		ExentaType exenta = new ExentaType();
-		invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) && f.getPercentage() == 0 && !invoice.isIsp()).forEach(r -> {
+		invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()) &&  exempt && f.getPercentage() == 0 && !invoice.isIsp()).forEach(r -> {
 			DetalleExentaType detalleExenta = new DetalleExentaType();
 			detalleExenta.setBaseImponible(Double.toString(AonMathUtils.round(r.getBase())));
 			detalleExenta.setCausaExencion(CausaExencionType.E_6);

@@ -6,7 +6,7 @@ import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.Optional;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.FailingHttpStatusCodeException;
 
 import aon.sepe.objects.Certificates;
 import aon.sepe.objects.Contract;
