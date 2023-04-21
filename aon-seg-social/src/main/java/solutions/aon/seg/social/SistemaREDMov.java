@@ -719,13 +719,18 @@ class SistemaREDMov {
 			if (pageAux instanceof XmlPage) {
 				XmlPage xmlPage = (XmlPage) pageAux;
 				DomNode employeeHtml = xmlPage.querySelector("usuario_red");
-
+				if(employeeHtml == null)
+					employeeHtml = xmlPage.querySelector("USUARIO_RED");
+				System.out.println(xmlPage.asXml());
 				if(employeeHtml!=null) {
-					String nss      = getStringNode(employeeHtml.querySelector("na5numsegsocialcompleto"));
-					String doc      = getStringNode(employeeHtml.querySelector("ip6numero_documento"));
-					String name     = getStringNode(employeeHtml.querySelector("nombre_completo"));
+					String nss = getStringNode(employeeHtml.querySelector("na5numsegsocialcompleto"));
+					if(nss == null) nss = getStringNode(employeeHtml.querySelector("NA5NumSegSocialCompleto"));
+					String doc = getStringNode(employeeHtml.querySelector("ip6numero_documento"));
+					if(doc == null) doc = getStringNode(employeeHtml.querySelector("IP6NUMERO_DOCUMENTO"));
+					String name = getStringNode(employeeHtml.querySelector("nombre_completo"));
+					if(name == null) name = getStringNode(employeeHtml.querySelector("NOMBRE_COMPLETO"));
 					String identNew = getStringNode(employeeHtml.querySelector("codigo_tipo"));
-
+					if(identNew == null) identNew = getStringNode(employeeHtml.querySelector("CODIGO_TIPO"));
 					if (nss!=null && doc!=null && name!=null && identNew!=null) {
 						builder
 						.setNss(nss)						
