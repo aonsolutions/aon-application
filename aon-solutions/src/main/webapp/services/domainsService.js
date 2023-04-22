@@ -1,4 +1,4 @@
-import { put, get } from "./request.js";
+import { getPro, putPro, get } from "./request.js";
 import { PRO_URL, API_URL } from "../environments/environments.js";
 
 //Quitar PRO_URL para pruebas en local
