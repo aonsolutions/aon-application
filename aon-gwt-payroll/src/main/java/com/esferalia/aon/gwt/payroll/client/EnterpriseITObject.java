@@ -554,16 +554,11 @@ public class EnterpriseITObject {
 	private void initITList(List<ITEmployee> employeesInfoList) {
 		itsList.clear();
 
-		for(ITEmployee employee : employeesList)
+		for(ITEmployee employee : employeesInfoList)
 			for(IT it : employee.getIts())
 				itsList.add(it);
 		
-		itsList.sort(new Comparator<IT>() {
-			@Override
-			public int compare(IT it1, IT it2) {
-				return it1.getStartDate().compareTo(it2.getStartDate());
-			}
-		});
+		itsList.sort((IT it1, IT it2) -> it1.getStartDate().compareTo(it2.getStartDate()) );
 		
 		Collections.reverse(itsList);
 	}

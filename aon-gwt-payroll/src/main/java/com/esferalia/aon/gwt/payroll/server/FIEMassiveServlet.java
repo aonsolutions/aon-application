@@ -60,7 +60,7 @@ import com.google.gson.GsonBuilder;
 @MultipartConfig
 @SuppressWarnings("serial")
 @WebServlet(
-		name = "INNS-FIE", 
+		name = "INNS-FIE-M", 
 		urlPatterns = { 
 				"/aon_gwt_aio/fie_massive/*" ,
 				"/aon_gwt_payroll/fie_massive/*" 

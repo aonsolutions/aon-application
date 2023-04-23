@@ -1,16 +1,24 @@
 package com.esferalia.aon.gwt.payroll.shared;
 
+import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
+
+import java.util.Date;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.i18n.shared.DateTimeFormat;
 
 public interface FIEService {
 
 	public static enum Parameter {
+	    	CCC,
 		FILE, 
 		USER,
-		DOMAIN
+		DOMAIN,
+	    	END_DATE,
+	    	START_DATE
 	}
 	
 	public static class JsITPart extends JavaScriptObject {
@@ -21,6 +29,9 @@ public interface FIEService {
 			return this.id;
 		}-*/;
 		
+		public final Date getDate() {
+		    return parse(getDateStr());
+		}
 		
 		public final native int getDomain() /*-{
 			return this.domain;
@@ -49,14 +60,14 @@ public interface FIEService {
 			return this.cias;
 		}-*/;
 
-		public final native String getDate() /*-{
-			return this.date;
-		}-*/;
-		
 		public final native byte getStatus() /*-{
 			return this.status;
 		}-*/;
 		
+		private final native String getDateStr() /*-{
+			return this.date;
+		}-*/;
+	
 	}
 	
 	public static class JsIT extends JavaScriptObject {
@@ -68,6 +79,15 @@ public interface FIEService {
 		}-*/;
 		
 		
+		public final Date getStartDate() {
+		    return parse(getStartDateStr());
+		}
+		
+		public final Date getEndDate() {
+		    return parse(getEndDateStr());
+		}
+
+
 		public final native int getDomain() /*-{
 			return this.id;
 		}-*/;
@@ -88,16 +108,6 @@ public interface FIEService {
 		}-*/;
 		
 
-		public final native String getStartDate() /*-{
-			return this.startDate;
-		}-*/;
-		
-
-		public final native String getEndDate() /*-{
-			return this.endDate;
-		}-*/;
-		
-		
 		public final native String getDescription() /*-{
 			return this.description;
 		}-*/;
@@ -144,6 +154,16 @@ public interface FIEService {
 			return this.dailyREGBase;
 		}-*/;
 		
+		private final native String getStartDateStr() /*-{
+			return this.startDate;
+		}-*/;
+	
+		private final native String getEndDateStr() /*-{
+			return this.endDate;
+		}-*/;
+	
+	
+
 	}
 
 	public static class JsITEmployee extends JavaScriptObject {
@@ -177,6 +197,10 @@ public interface FIEService {
 		protected JsEmployeeInfo() {		
 		}
 		
+		public final Date getBirthdate() {
+		    return parse(getBirthdateStr());
+		}
+
 		public final native String getAccount() /*-{
 			return this.account;
 		}-*/;
@@ -214,11 +238,6 @@ public interface FIEService {
 		
 		public final native String getBic() /*-{
 			return this.bic;
-		}-*/;
-		
-		
-		public final native String getBirthdate() /*-{
-			return this.birthdate;
 		}-*/;
 		
 		
@@ -362,7 +381,9 @@ public interface FIEService {
 		}-*/;
 		
 		
-		
+		private final native String getBirthdateStr() /*-{
+			return this.birthdate;
+		}-*/;
 
 	}
 	public static class JsContractInfo extends JavaScriptObject {
@@ -371,6 +392,30 @@ public interface FIEService {
 		protected JsContractInfo() {		
 		}
 		
+		public final Date getPayrollDate() {
+			return parse(getPayrollDateStr());
+        	}
+        	
+		public final Date getSeniorityDate() {
+			return parse(getSeniorityDateStr());
+		}
+
+		public final Date getStartDate() {
+			return parse(getStartDateStr());
+		}
+
+		public final Date getEndDate() {
+			return parse(getEndDateStr());
+		}	
+
+		public final Date getOldStartDate() {
+			return parse(getOldStartDateStr());
+		}
+
+		public final Date getOldEndDate() {
+			return parse(getOldEndDateStr());
+		}
+
 		public final native int getActivityId() /*-{
 			return this.activityId;
 		}-*/;
@@ -413,18 +458,6 @@ public interface FIEService {
 		
 		public final native int getContractModel() /*-{
 			return this.contractModel;
-		}-*/;
-		
-		public final native String getStartDate() /*-{
-			return this.startDate;
-		}-*/;
-		
-		public final native String getEndDate() /*-{
-			return this.endDate;
-		}-*/;
-		
-		public final native String getSeniorityDate() /*-{
-			return this.seniorityDate;
 		}-*/;
 		
 		public final native int getAgreementId() /*-{
@@ -487,28 +520,43 @@ public interface FIEService {
 			return this.contractJourneyDuration;
 		}-*/;
 		
-		public final native String getOldStartDate() /*-{
-			return this.oldStartDate;
-		}-*/;
-		
-		public final native String getOldEndDate() /*-{
-			return this.oldEndDate;
-		}-*/;
 		
 		public final native boolean getHasPayroll() /*-{
 			return this.hasPayroll;
 		}-*/;
 		
-		public final native String getPayrollDate() /*-{
+		private final native String getPayrollDateStr() /*-{
 			return this.payrollDate;
 		}-*/;
+		
+		private final native String getStartDateStr() /*-{
+			return this.startDate;
+		}-*/;
+	
+		private final native String getEndDateStr() /*-{
+			return this.endDate;
+		}-*/;
+	
+		private final native String getOldStartDateStr() /*-{
+			return this.oldStartDate;
+		}-*/;
+	
+		private final native String getOldEndDateStr() /*-{
+			return this.oldEndDate;
+		}-*/;
+		
+		private final native String getSeniorityDateStr() /*-{
+			return this.seniorityDate;
+		}-*/;
+	
 		
 	}
 	
 	public static final String FIE_URL = URL
 			.encode(GWT.getModuleBaseURL() + "fie");
 	
-	
+	public static final DateTimeFormat DATE_FORMAT = 
+		DateTimeFormat.getFormat("dd/MM/yyyy"); 
 	
 	
 }
