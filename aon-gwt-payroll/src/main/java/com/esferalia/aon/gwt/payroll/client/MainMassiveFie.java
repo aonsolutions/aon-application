@@ -515,7 +515,7 @@ public class MainMassiveFie extends MainEntryPoint{
 		it.setDailyREGBase(jsIT.getDailyREGBase());
 		it.setDescription(jsIT.getDescription());
 		it.setDomain(jsIT.getDomain());
-		it.setEndDate(parseJsDate(jsIT.getEndDate()));
+		it.setEndDate(jsIT.getEndDate());
 		it.setFullName(jsIT.getFullName());
 		it.setMaternityReason(jsIT.getMaternityReason());
 		it.setMaternityType(jsIT.getMaternityType());
@@ -523,7 +523,7 @@ public class MainMassiveFie extends MainEntryPoint{
 		it.setIsParent(jsIT.isParent());
 		it.setITParts(createDefaultITParts(jsIT));
 		it.setParent(jsIT.getParent());
-		it.setStartDate(parseJsDate(jsIT.getStartDate()));
+		it.setStartDate(jsIT.getStartDate());
 		it.setTypeHighPart(jsIT.getTypeHighPart());
 		it.setTypeLowPart(jsIT.getTypeLowPart());
 		return it;
@@ -544,7 +544,7 @@ public class MainMassiveFie extends MainEntryPoint{
 			itPart.setCollegeNumber(jsITPart.getCollegeNumber());
 			itPart.setConfirmOrderNumber(jsITPart.getConfirmOrderNumber());
 			itPart.setCias(jsITPart.getCias());
-			itPart.setDate(parseJsDate(jsITPart.getDate()));
+			itPart.setDate(jsITPart.getDate());
 			itPart.setStatus(jsITPart.getStatus());
 			
 			itParts.add(itPart);
@@ -567,9 +567,9 @@ public class MainMassiveFie extends MainEntryPoint{
 		contractInfo.setWorkplaceFullAddress(jsContractInfo.getWorkplaceFullAddress());
 		contractInfo.setContractType(jsContractInfo.getContractType());
 		contractInfo.setContractModel(jsContractInfo.getContractModel());
-		contractInfo.setStartDate(parseJsDate(jsContractInfo.getStartDate()));
-		contractInfo.setEndDate(parseJsDate(jsContractInfo.getEndDate()));
-		contractInfo.setSeniorityDate(parseJsDate(jsContractInfo.getSeniorityDate()));
+		contractInfo.setStartDate(jsContractInfo.getStartDate());
+		contractInfo.setEndDate(jsContractInfo.getEndDate());
+		contractInfo.setSeniorityDate(jsContractInfo.getSeniorityDate());
 		contractInfo.setAgreementId(jsContractInfo.getAgreementId());
 		contractInfo.setAgreementLevelId(jsContractInfo.getAgreementLevelId());
 		contractInfo.setAgreementCategory(jsContractInfo.getAgreementCategory());
@@ -585,7 +585,7 @@ public class MainMassiveFie extends MainEntryPoint{
 		contractInfo.setContractmodelId(jsContractInfo.getContractmodelId());
 		contractInfo.setRetaId(jsContractInfo.getRetaId());
 		contractInfo.setHasPayroll(jsContractInfo.getHasPayroll());
-		contractInfo.setPayrollDate(parseJsDate(jsContractInfo.getPayrollDate()));
+		contractInfo.setPayrollDate(jsContractInfo.getPayrollDate());
 		return contractInfo;
 	}
 
@@ -599,7 +599,7 @@ public class MainMassiveFie extends MainEntryPoint{
 		employeeInfo.setAddressInfo(jsEmployeeInfo.getAddressInfo());
 		employeeInfo.setAddressZip(jsEmployeeInfo.getAddressZip());
 		employeeInfo.setBic(jsEmployeeInfo.getBic());
-		employeeInfo.setBirthdate(parseJsDate(jsEmployeeInfo.getBirthdate()));
+		employeeInfo.setBirthdate(jsEmployeeInfo.getBirthdate());
 		employeeInfo.setCivilStatus(jsEmployeeInfo.getCivilStatus());
 		employeeInfo.setContractActive(jsEmployeeInfo.getContractActive());
 		employeeInfo.setContractId(jsEmployeeInfo.getContractId());
