@@ -33,6 +33,7 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
+import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 import org.jooq.TableField;
 import org.jooq.Transaction;
@@ -252,11 +253,12 @@ public class VidaLaboral2AON implements IvlParserListener{
                 settings.setRenderSchema(false);
                 settings.setParamType(ParamType.INLINED);
 			try (Connection connection = DriverManager.getConnection(url,properties)){
-				
+				connection.setAutoCommit(false);
 	            DSLContext dslContext = DSL.using(connection, SQLDialect.MYSQL, settings);
                 dslContext.select().from(DOMAIN).fetchInto(DOMAIN).forEach( r -> System.out.println(r.getDescription()));
 				 VidaLaboral2AON vidaLaboral2AON = new VidaLaboral2AON(dslContext);
 					vidaLaboral2AON.import2AON(is, vidaLaboral2AON, pdf);		
+					connection.commit();
 			}
 			
 		} catch (Exception e) {
@@ -273,6 +275,7 @@ public class VidaLaboral2AON implements IvlParserListener{
 	
 	public void import2AON(InputStream is, IvlParserListener ivl, String pdf) throws IOException, UnknownPDFException {
 		dslContext.transaction(ctx ->{
+			
 				InputStream iis = new FileInputStream(pdf);
 				IvlCccParser.parse(iis, ivl);
 				});
@@ -571,27 +574,13 @@ public class VidaLaboral2AON implements IvlParserListener{
 	//TENER EN CUENTA CASOS DONDE G:C/M = 10/M  	 (VALOR DE NAME EN CONTRACT_DATA DIAS_MES)
 	private ContractRecord newContract(EnterpriseCccRecord enterpriseCcc, RegistryRecord person, PayrollWorkplaceRecord workplace, 
 			String start, String end,String startSit ,String effectSit, String gc, String tc, String ctp, String cotDays)    {
-		System.out.println(person.getId());
-		System.out.println(workplace.getWorkplace());
-		 Record existingContract = getDSLContext(dslContext)
-		            .select().from(CONTRACT).innerJoin(CONTRACT_DATA)
-		            .onKey()
-		            .where(CONTRACT.PERSON.eq(person.getId())
-		                    .and(CONTRACT.WORKPLACE.eq(workplace.getWorkplace()))
-		                    .and(CONTRACT.START_DATE.eq(CONTRACT_DATA.START_DATE))).limit(1)
-		            .fetchOne();
-		 
-		 ContractRecord contract = 
+
+		 	ContractRecord contract = 
 					getDSLContext(dslContext).newRecord(CONTRACT);
 			
 			ContractDataRecord quoteGroupData =
 					getDSLContext(dslContext).newRecord(CONTRACT_DATA);
-		 if (existingContract != null) {
-			 System.out.println("el contrato ya existe");
-
-		 }else {
 				
-
 				String situacion = getSituation(situationn);
 				java.util.Date utilDate;
 				java.sql.Date sqlDate;
@@ -737,9 +726,6 @@ public class VidaLaboral2AON implements IvlParserListener{
 					}
 					quoteGroupData.insert();
 					
-					
-					
-					
 				//CASO PARA LOS DIAS DE VACACIONES
 				}else if(situacion.equals("VAC.RETRIB.NO ")) {
 					
@@ -752,15 +738,20 @@ public class VidaLaboral2AON implements IvlParserListener{
 						contract.setEnterpriseCcc(enterpriseCcc.getId());
 						contract.setEnterpriseActivity(enterpriseCcc.getEnterpriseActivity());
 						String startDate = getStartDate(start);
+						String endDate = end + start.substring(7,10);
 						try {
 							utilDate = new SimpleDateFormat("dd-MM-yyyy").parse(startDate);
 							sqlDate = new java.sql.Date(utilDate.getTime());
 							contract.setStartDate(sqlDate);
+							utilDate = new SimpleDateFormat("dd-MM-yyyy").parse(endDate);
+							sqlDate = new java.sql.Date(utilDate.getTime());
+							contract.setEndDate(sqlDate);
+
 						} catch (ParseException e1) {
-							// TODO Auto-generated catch block
+
 							e1.printStackTrace();
 						}
-									
+			
 						contract.setSsStatus(null);
 						contract.setRegistration(null);
 						contract.setCategoryDescription("prueba-VACACIONES");
@@ -780,43 +771,46 @@ public class VidaLaboral2AON implements IvlParserListener{
 						sqlDate = new java.sql.Date(utilDate.getTime());
 						quoteGroupData.setStartDate(sqlDate);
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
 					
 					try {
-						start = start.substring(7,10);
+						start = start.substring(7, 10);
 						end = end + start;
 						effectDate = getStartDate(end);
 						utilDate = new SimpleDateFormat("dd-MM-yyyy").parse(effectDate);
 						sqlDate = new java.sql.Date(utilDate.getTime());
 						quoteGroupData.setEndDate(sqlDate);
 					} catch (ParseException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
 					quoteGroupData.insert();
-				}
-		 }
-		
+				}		
 	
-		 
 		return contract;
 		}
 	
-		private Optional<ContractRecord> getContract(RegistryRecord person, PayrollWorkplaceRecord workplace, EnterpriseCccRecord enterprise){
-			//contract_data.contract
-			System.out.println(person.getId() +" id");
-			 return getDSLContext(dslContext)
-			            .select()
-			            .from(CONTRACT)
-			            .where(CONTRACT.PERSON.eq(person.getId()))
-			            .and(CONTRACT.WORKPLACE.eq(workplace.getWorkplace()))
-			            .and(CONTRACT.ENTERPRISE_CCC.eq(enterprise.getId()))
-			            .fetchOptionalInto(CONTRACT);
-				
+		private Optional<ContractRecord> getContract(RegistryRecord person, PayrollWorkplaceRecord workplace, EnterpriseCccRecord enterprise, String start, String end){
+	
+			try {
+				java.util.Date utilDate = new SimpleDateFormat("dd-MM-yyyy").parse(start);
+				java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+				 return getDSLContext(dslContext)
+				            .select()
+				            .from(CONTRACT)
+				            .where(CONTRACT.PERSON.eq(person.getId()))
+				            .and(CONTRACT.WORKPLACE.eq(workplace.getWorkplace()))
+				            .and(CONTRACT.ENTERPRISE_CCC.eq(enterprise.getId()))
+				            .and(CONTRACT.START_DATE.eq(sqlDate))
+				            .limit(1)
+				            .fetchOptionalInto(CONTRACT);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			return null;
+			
 		}
 		
 		
@@ -926,14 +920,11 @@ public class VidaLaboral2AON implements IvlParserListener{
 	public void onEmployeeSituation(String situation, String start, String effect, String startSit, String effectSit,
 			String gc, String tc,String ctp, String ep, String it, String ims, String total, String cotDays, String clv) {
 		situationn = getSituation(situation);
-		System.out.println(situationn);
-//		ContractRecord contract = getContract(person, payRollWorkPlace, enterpriseCcc)
-//				.orElseGet(() -> newContract(enterpriseCcc, person, payRollWorkPlace, start, effect, startSit, effectSit, gc, tc, ctp, cotDays));
-//		
-//		
+//		System.out.println(situationn);
+		ContractRecord contract = getContract(person, payRollWorkPlace, enterpriseCcc, start, effect)
+				.orElseGet(() -> newContract(enterpriseCcc, person, payRollWorkPlace, start, effect, startSit, effectSit, gc, tc, ctp, cotDays));
 		
-		System.out.println(person.getId());
-		ContractRecord contract = newContract(enterpriseCcc, person, payRollWorkPlace, start,effect, startSit,effectSit,gc, tc, ctp, cotDays);
+//		ContractRecord contract = newContract(enterpriseCcc, person, payRollWorkPlace, start,effect, startSit,effectSit,gc, tc, ctp, cotDays);
 		
 	}
 	
