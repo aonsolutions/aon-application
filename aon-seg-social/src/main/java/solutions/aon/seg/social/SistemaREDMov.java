@@ -664,12 +664,19 @@ class SistemaREDMov {
 			if (pageAux instanceof XmlPage) {
 				XmlPage xmlPage = (XmlPage) pageAux;
 				DomNodeList<DomNode> employeesHtml = xmlPage.querySelectorAll("trabajador");
+				if(null == employeesHtml || employeesHtml.isEmpty()) employeesHtml = xmlPage.querySelectorAll("TRABAJADOR");
 				EmployeeBuilder builder = new EmployeeBuilder();
 				for (DomNode employee : employeesHtml) {
-					String ipf = employee.querySelector("ip9numdoc").getTextContent();
-					String fieldName = employee.querySelector("nombre_completo").getTextContent();
+					DomNode ipfNode = null != employee.querySelector("ip9numdoc") ? employee.querySelector("ip9numdoc") : employee.querySelector("IP9NumDoc");
+					String ipf = ipfNode.getTextContent();
+					
+					DomNode fieldNameNode = null != employee.querySelector("nombre_completo") ? employee.querySelector("nombre_completo") : employee.querySelector("NOMBRE_COMPLETO");
+					String fieldName = fieldNameNode.getTextContent();
+					
 					if (!ipf.isEmpty()) {
-						String nss = employee.querySelector("na5numsegsocialcompleto").getTextContent().trim();
+						DomNode nssNode = null != employee.querySelector("na5numsegsocialcompleto") ? employee.querySelector("na5numsegsocialcompleto") : employee.querySelector("NA5NumSegSocialCompleto");
+						String nss = nssNode.getTextContent();
+						
 						Employee empl = builder.setNss(nss).setName(fieldName.trim()).setIpf(ipf).build();
 						employees.add(empl);
 					} else if (!fieldName.isEmpty()) {
