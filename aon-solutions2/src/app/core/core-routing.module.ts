@@ -42,7 +42,10 @@ const routes: Routes = [
         path: 'tax-panel',
         loadChildren: () =>
           import('src/app/modules/tax-panel/tax-panel.module').then((m) => m.TaxPanelModule),
-      }
+      },
+      {
+        path: '', redirectTo: 'home', pathMatch: 'full'
+      },
     ], canActivate: [AuthGuard],
   },
   // { path: 'auth', component: AuthComponent },

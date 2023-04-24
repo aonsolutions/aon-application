@@ -15,11 +15,11 @@ export class SidenavComponent implements OnInit {
   currentRoute: string = this.router.url.replace('/','');
   subMenuOpened: boolean;
   @Output() onSelected = new EventEmitter<any>();
-  @ViewChild('iconHover') iconHover : any; 
+  @ViewChild('iconHover') iconHover : any;
 
   constructor(public service : SidenavService, private router: Router){
     this.router.events.subscribe((event) => {
-      event instanceof NavigationEnd ? this.currentRoute = this.router.url.replace('/','') : null     
+      event instanceof NavigationEnd ? this.currentRoute = this.router.url.replace('/','') : null
     })
     this.subMenuOpened = false;
     this.service.opened = false;
@@ -50,7 +50,7 @@ export class SidenavComponent implements OnInit {
       }
     });
   }
-  
+
   onSelectedProduct(selected:any) {
     this.onSelected.emit(selected);
   }
@@ -61,7 +61,6 @@ export class SidenavComponent implements OnInit {
         element.selected = "true";
       }
     });
-    console.log(this.iconHover.nativeElement.value);
   }
 
   deselectAll(){
