@@ -17,6 +17,10 @@ import { MatMenuModule } from '@angular/material/menu';
 import { DetailNotificationTaskComponent } from './components/detail-notification-task/detail-notification-task.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { DetailConsultComponent } from './components/detail-consult/detail-consult.component';
+import { RateInboxComponent } from './components/rate-inbox/rate-inbox.component';
+import { MatDialogModule } from '@angular/material/dialog';
+
 
 @NgModule({
   declarations: [
@@ -24,6 +28,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     ContentInboxComponent,
     MessageInboxComponent,
     DetailNotificationTaskComponent,
+    DetailConsultComponent,
+    RateInboxComponent,
   ],
   imports: [
     CommonModule,
@@ -38,7 +44,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     MatGridListModule,
     MatMenuModule,
     MatDividerModule,
-    ScrollingModule
+    ScrollingModule,
+    MatDialogModule
   ],
 })
 export class InboxModule {}

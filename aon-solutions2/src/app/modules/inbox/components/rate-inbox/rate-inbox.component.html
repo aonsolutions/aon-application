@@ -1,0 +1,16 @@
+<div class="inboxDialog">
+    <div class="dialogSubject">
+        {{data.subject}}
+    </div>
+    <div class="textDialog">
+        Valora tu consulta
+    </div>
+    <div class="iconsDialog">
+        <set-icon class="dialogIcon" shape="sentiment_dissatisfied" [mat-dialog-close]="1"></set-icon>
+        <set-icon class="dialogIcon" shape="sentiment_satisfied" [mat-dialog-close]="2"></set-icon>
+        <set-icon class="dialogIcon" shape="mood" [mat-dialog-close]="3"></set-icon>
+    </div>
+    <div class="closeDialog" (click)="onNoClick()">
+        Salir sin valorar
+    </div>
+</div>

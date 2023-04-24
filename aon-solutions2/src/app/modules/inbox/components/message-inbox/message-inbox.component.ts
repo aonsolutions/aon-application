@@ -12,12 +12,13 @@ export class MessageInboxComponent implements OnInit {
   @Input() detailView: boolean = false;
   @Input() tiles: number[] = [];
   @Input() allTiles: boolean = true;
+  @Input() selectedMenu: string = ''
 
   constructor() {
   }
 
   ngOnInit(): void {
-    
+        
   }
 
   ngOnChange(): void {
