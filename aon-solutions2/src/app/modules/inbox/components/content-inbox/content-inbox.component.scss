@@ -62,7 +62,7 @@
     font-weight: 500;
     font-stretch: normal;
     font-style: normal;
-    line-height: 1.57;
+    line-height: 0;
     letter-spacing: 0.1px;
     text-align: right;
     color: #b4b4bb;
@@ -129,6 +129,55 @@
 }
 
 .paginationInbox {
+    height: 1.5rem;
     display: flex;
     align-items: center;
+    font-family: Roboto;
+    font-size: .75rem;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    letter-spacing: 0.4px;
+    text-align: left;
+    color: #5a5b6a;
+}
+
+// dropdown filtros
+
+.hoverMenu:hover {
+    background-color: #f0f0f1;
+    border-radius: 7px;
+}
+
+.hoverMenu {
+    padding-left: .5rem;
+    padding-right: .5rem;
+}
+
+.mat-menu-item:hover:not(.set-menu-item-active) {
+    background:none;
+}
+
+.mat-menu-item:hover {
+    background:none;
+}
+
+.mat-menu-item {
+    margin: .5rem;
+    width: calc(auto);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color:#19191d!important;
+    height: 2.5rem!important;
+    line-height: 2.5rem!important;
+    padding: 0rem 0rem!important;
+    font-family: Roboto;
+    font-size: .875rem;
+    font-weight: 500;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.57;
+    letter-spacing: 0.1px;
+    text-align: left;
+    color: #292a31;
 }

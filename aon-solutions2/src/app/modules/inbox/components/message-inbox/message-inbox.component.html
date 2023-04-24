@@ -2,6 +2,11 @@
   <mat-grid-list cols="24" rowHeight="3.75rem" gutterSize="1rem">
     <mat-grid-tile [colspan]="tiles[0]">
       <div class="messageName elementMessage">
+        <div class="iconButtonMessage" *ngIf="selectedMenu == 'bandeja'">
+          <set-icon *ngIf="message.type==1" shape="speaker_notes" size="24" style="color:#f6655a;"></set-icon>
+          <set-icon *ngIf="message.type==2" shape="playlist_add_check" size="24" style="color:#f6655a;"></set-icon>
+          <set-icon *ngIf="message.type==3" shape="notifications" size="24" style="color:#f6655a;"></set-icon>
+        </div>
         {{ message.name }}
       </div>
     </mat-grid-tile>
@@ -56,7 +61,7 @@
               {{ message.date }}
             </div>
             <ng-container *ngIf="message.type==1">
-              <div class="iconButtonMessage">
+              <div class="iconButtonMessage" *ngIf="detailView == false">
                 <set-icon *ngIf="message.status == 1" shape="archive" set-color color="black"></set-icon>
                 <set-icon *ngIf="message.status == 0" shape="replay" set-color color="black"></set-icon>
               </div>

@@ -47,4 +47,8 @@ export class InboxService {
     return [];
   }
 
+  getAllMessagesFromConsult(){
+    return this.consultas;
+  }
+
 }

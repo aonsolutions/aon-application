@@ -4,14 +4,15 @@
         <mat-form-field mat-form-field-appearance-raised
                         set-search
                         disabled="false"
-                        [ngStyle]="{'width': searchWidth}" 
-                        (click)="closeDetail()">
+                        [ngStyle]="{'width': searchWidth}">
         <mat-label class="searchInput">Buscar...</mat-label>
         <set-icon shape="search" matPrefix style="color:#19191d" size="24"></set-icon>
         <input matInput class="searchInput"/>
         </mat-form-field>
         <div class="paginationInbox">
-            {{initialElement}}-{{finalElement}} de {{totalElement}}
+            <div style="display: flex; align-items: center; height: 100%;">
+                {{initialElement}}-{{finalElement}} de {{totalElement}}
+            </div>
             <set-icon shape="chevron_left"  style="color:#19191d" (click)="prevPag()" style="width: 1.5rem; height: 1.5rem; cursor:pointer;"></set-icon>
             <set-icon shape="chevron_right"  style="color:#19191d" (click)="nextPag()" style="width: 1.5rem; height: 1.5rem; cursor:pointer;"></set-icon>
         </div>
@@ -25,9 +26,12 @@
             <set-icon shape="more_vert" set-color [ngStyle]="{'color': 'black'}"></set-icon>
         </div>
         <mat-menu #menu="matMenu" xPosition="before">
-            <button *ngFor="let item of itemsFilter" mat-menu-item (click)="selectedFilter=item" class="menuText">
-                {{item}}
-            </button>
+            <a mat-menu-item *ngFor="let item of itemsFilter">
+                <div (click)="selectedFilter=item" class="hoverMenu">
+                    &nbsp;&nbsp;
+                    {{item}}
+                </div>
+            </a>
         </mat-menu>
     </div>
     <!-- Contenido del tab -->
@@ -53,7 +57,7 @@
             <!-- Contenido de cada tab -->
             <div class="contentTab">
                 <!-- Bucle para pintar todos los mensajes dentro del tab -->
-                <app-message-inbox *ngFor="let item of items" [message]="item" [detailView]="hiddenDetail" [tiles]="calcTiles(item)" [allTiles]="calcAllTiles(item)" (click)="showDetail(item)"></app-message-inbox>
+                <app-message-inbox *ngFor="let item of items" [selectedMenu]="selectedMenu" [message]="item" [detailView]="hiddenDetail" [tiles]="calcTiles(item)" [allTiles]="calcAllTiles(item)" (click)="showDetail(item)"></app-message-inbox>
             </div>
         </mat-tab>
     </mat-tab-group>
@@ -61,4 +65,5 @@
 <!-- Llamada al componente detalle -->
 <div [ngClass]="detail" *ngIf='hiddenDetail==true' class="detailBox">
     <app-detail-notification-task *ngIf="sendItem.type == 2 || sendItem.type == 3" [message]="sendItem" (closed)="closeDetail()" style="width: 100%;height: 100%;"></app-detail-notification-task>
+    <app-detail-consult *ngIf="sendItem.type == 1" [message]="sendItem" (closed)="closeDetail()" style="width: 100%;height: 100%;"></app-detail-consult>
 </div>

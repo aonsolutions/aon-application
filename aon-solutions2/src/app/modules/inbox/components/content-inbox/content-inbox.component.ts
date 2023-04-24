@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
 } from '@angular/core';
 import { Message } from 'src/app/core/models/message';
@@ -77,9 +79,9 @@ export class ContentInboxComponent implements OnInit, OnChanges {
       this.selectedMenu,
       this.selectedTab
     );
+    this.initialElement = 1;
     this.totalElement = this.items.length;
-    if (this.finalElement > this.totalElement)
-      this.finalElement = this.totalElement;
+    this.finalElement = this.totalElement;
   }
 
   // Permite volver una página atrás y calcula los números a mostrar
