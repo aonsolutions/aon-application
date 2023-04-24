@@ -137,7 +137,12 @@
 		<artifactId>javafaker</artifactId>
 		<version>0.15</version>
 		<scope>test</scope>
-     </dependency>               
+     </dependency>
+     <dependency>
+     	<groupId>com.code.aon</groupId>
+     	<artifactId>aon-htmlunit</artifactId>
+     	<version>9.23-SNAPSHOT</version>
+     </dependency>
 	</dependencies>
 
   <profiles>

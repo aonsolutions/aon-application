@@ -619,7 +619,7 @@ public class SistemaRED2AON {
 	String domainName, 
 	Integer domainId, 
 	Date startDate, 
-	Date endDate, 
+	Date endDate,  
 	String ccc, 
 	String  naf) {
 		

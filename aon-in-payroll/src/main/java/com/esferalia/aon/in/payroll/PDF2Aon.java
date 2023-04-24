@@ -40,7 +40,7 @@ public class PDF2Aon {
 	
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM/yyyy");
 
-	 public static void main(String[] args) {
+	 public static void main(String[] args) { 
 		
 
 		@SuppressWarnings("static-access")

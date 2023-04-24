@@ -11,36 +11,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-<<<<<<< HEAD
-import org.apache.commons.io.FileUtils;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebResponse;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlDefinitionDescription;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlFieldSet;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlListItem;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
-import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-=======
 import org.htmlunit.NicelyResynchronizingAjaxController;
 import org.htmlunit.Page;
 import org.htmlunit.WebClient;
@@ -51,7 +28,7 @@ import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlRadioButtonInput;
 import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.HtmlSubmitInput;
->>>>>>> master
+
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.OutOfServiceException;
@@ -86,7 +63,8 @@ public class AonSegSocialJuanma extends SegSocialException {
 		final String certificateType = "pkcs12";
 		String authorized = "127770";
 		String href = "/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV24J001";
-
+		 
+	
 		try {
 
 //			AonSegSocialJuanma.liquidationStateAuthorized(certificateInputStream, certificatePassword, certificateType,
@@ -95,11 +73,13 @@ public class AonSegSocialJuanma extends SegSocialException {
 //			AonSegSocialJuanma.liquidationStateCcCode(certificateInputStream, certificatePassword, certificateType,
 //					href, ccc, regimen, startMonth, startYear, endMonth, endYear, liquidationType);
 
-			AonSegSocialJuanma.getPdfCcc(certificateInputStream, certificatePassword, certificateType, href, ccc, regimen,
-					startMonth, startYear, endMonth, endYear, liquidationType);
+//			AonSegSocialJuanma.getPdfCcc(certificateInputStream, certificatePassword, certificateType, href, ccc, regimen,
+//					startMonth, startYear, endMonth, endYear, liquidationType);
 
 //			AonSegSocialJuanma.liquidationNumberLiquidation(certificateInputStream, certificatePassword,
 //					certificateType, href, liquidationNumber);
+			
+			AonSegSocialJuanma.getItExcel(certificateInputStream, certificatePassword, certificateType, href, ccc, regimen, startMonth, startYear, endMonth, endYear);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -756,5 +736,76 @@ public class AonSegSocialJuanma extends SegSocialException {
 		}
 		
 	}
+	
+	
+	public static byte [] getItExcel(final InputStream certificateInputStream, final String certificatePassword,
+            final String certificateType, String href, String ccc, String regimen, String startMonth, String startYear,
+            String endMonth, String endYear) throws Exception{
+
+        InvalidCertificateException.checkCertificate(certificateInputStream);
+        try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
+                certificateType)){
+            webClient.getOptions().setCssEnabled(false);
+            webClient.getOptions().setDownloadImages(false);
+            webClient.setJavaScriptTimeout(10000);
+            webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+            HtmlPage htmlPage = webClient.getPage("https://www.seg-social.es/wps/portal/wss/internet/Inicio");
+
+            HtmlAnchor anchor = (HtmlAnchor) htmlPage.getAnchorByHref("https://w2.seg-social.es/fs/indexframes.html");
+            htmlPage = anchor.click();
+            anchor = (HtmlAnchor) htmlPage.getAnchorByHref("https://w2.seg-social.es/ProsaInternet/OnlineAccess?ARQ.SPM.ACTION=LOGIN&ARQ.SPM.APPTYPE=SERVICE&ARQ.IDAPP=XV26L100");
+            htmlPage = anchor.click();
+            HtmlRadioButtonInput radioButton = (HtmlRadioButtonInput) htmlPage.getElementById("OPCIONES_BUSQUEDA_3");
+            radioButton.setChecked(true);
+            HtmlForm form = htmlPage.getHtmlElementById("FORMULARIO_1");
+            form.getInputByName("regimen").setValueAttribute("0111");
+            form.getInputByName("provincia").setValueAttribute("11");
+            form.getInputByName("cccnum").setValueAttribute("122534302");
+
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            Date startDate = formatter.parse("16/05/2022");
+            Date endDate = formatter.parse("30/05/2022");
+
+            form.getInputByName("fechaIniEmpresa").setValueAttribute(formatter.format(startDate));
+            form.getInputByName("fechaFinEmpresa").setValueAttribute(formatter.format(endDate));
+            
+            HtmlElement button = (HtmlElement) htmlPage.getElementById("ENVIO_5");
+//            htmlPage = button.click();
+            XmlPage rPage = (XmlPage) button.click();
+
+//            System.out.println(rPage.asXml());
+          String redirectUrl = rPage.getWebResponse().getWebRequest().getUrl().toString();
+          htmlPage = webClient.getPage(redirectUrl);
+			HtmlUnitToolkit.manageStatusCode(htmlPage);
+
+          System.out.println(htmlPage.asXml());
+          
+          
+          
+          
+          if ( !rPage.isHtmlPage() ){
+                WebResponse response = HtmlUnitToolkit.wait4(rPage, p -> p.getWebResponse()).orElseGet(null);
+                InputStream is = response.getContentAsStream();
+                byte[] ret = is.readAllBytes();
+                is.close();
+                return ret;
+                
+            }
+            
+            
+            System.out.println(htmlPage);
+////            System.out.println(rPage.asText());
+
+//            System.out.println(htmlPage.asXml());
+            
+            
+           
+
+
+
+        }
+        return null;
+    }
+
 
 }

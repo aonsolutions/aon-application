@@ -24,11 +24,11 @@ public class AonSegSocialJuanmaTest {
 					"0111", // REGIMEN OK
 					"1112253430", // CCC ERRONEO
 					"0020" // CNO OK
-			);
+			); 
 			Assert.fail();
 		} catch (SegSocialException e) {
 			Assert.assertEquals("3823* CUENTA DE COTIZACION ERRONEA", e.getMessage());
-		}
+		} 
 	}
 
 	@Test

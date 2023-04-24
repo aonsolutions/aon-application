@@ -119,7 +119,7 @@ import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Trabajadores;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.TrabajadoresTramos;
 import net.aonsolutions.core.tgss.creta.jaxb.trabajadorestramos.Tramo;
 
-public class IdcTest extends AbstractSQLTestCase {
+public class IdcTest {
 
 	private static final double DELTA = 0.001;
 
@@ -131,9 +131,9 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
-	public void testIdcplccc() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException {
+	public void testIdcplccc() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException { 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplccc.pdf")) {
-			IdcplcccParser.parse(is, new IdcParserListener() {
+			IdcplcccParser.parse(is, new IdcParserListener() { 
 
 				@Override
 				public void onPeriod(Date date) {

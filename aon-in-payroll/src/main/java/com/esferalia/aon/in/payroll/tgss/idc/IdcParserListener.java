@@ -19,7 +19,7 @@ public interface IdcParserListener {
 
 	default void onEmployeeOtherInfo(String documentType, String document, String gender, Date birthDate) {
 	};
-
+ 
 	default void onEmployeePerido(String ssNum, String ccc, String gc, Date startDate, Date endDate) {
 		onEmployeePerido(ssNum, ccc, startDate, endDate);
 		onEmployeeQuoteGroup(gc);

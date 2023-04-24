@@ -59,7 +59,7 @@ public class IdcplcccParser {
 		stripper.setSortByPosition(true);
 		
 		SalaryPDFTemplate template = null;
-		
+		 
 		Parser parser = IdcplcccParser::parseFirstPage;
 		
 		for (int p = 1; p <= doc.getNumberOfPages(); p++) {
@@ -71,7 +71,7 @@ public class IdcplcccParser {
 			String text = stripper.getText(doc);
 			if ( AonStringUtils.isBlank(text) ) 
 				continue;
-			parser = parser.parse(text, listener);	
+			parser = parser.parse(text, listener);	 
 		}
 						
 			
@@ -80,7 +80,7 @@ public class IdcplcccParser {
 	private static Parser parseFirstPage(String text, IdcParserListener listener) throws IOException, UnknownPDFException {
 		//System.out.println(text);
 		try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
-			Matcher matcher = find(reader, ENTERPRISE_NAME_CCC_CIF_REGIME);
+			Matcher matcher = find(reader, ENTERPRISE_NAME_CCC_CIF_REGIME); 
 			
 			String socialReason = matcher.group("name");
 			String enterpriseCCC = matcher.group("province") + matcher.group("ccc");
