@@ -30,8 +30,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
-import org.xml.sax.SAXException;
-
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
 import org.htmlunit.WebClient;
@@ -45,7 +43,6 @@ import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
-import org.htmlunit.xml.XmlPage;
 import org.xml.sax.SAXException;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
@@ -558,7 +555,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		}
 	}
 	
-	private static HtmlPage fillGeneralData(HtmlPage htmlPage, String regime, String ccc, String naf,
+	private static HtmlPage fillGeneralData(HtmlPage htmlPage, String regime, String ccc, String naf, Date date,
 			SistemaRED.Contingencies contingency, SistemaRED.SituationEmployee situationEmployee, SistemaRED.PartType type)
 			throws IOException, InterruptedException, SegSocialException {
 		HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
