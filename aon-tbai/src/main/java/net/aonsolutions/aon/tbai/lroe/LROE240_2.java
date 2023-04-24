@@ -186,7 +186,12 @@ public class LROE240_2 extends LROE240 {
 		Double total = invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()))
 		.mapToDouble(r -> {
 			r.setBase(AonMathUtils.round(r.getBase()));
-			if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
+			if(invoice.isExtracommunity()) {
+				r.setPercentage(0.0);
+				r.setQuota(0.0);
+				r.setSurchargeQuota(0.0);
+			}
+ 			if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
 				r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
 			}
 			return AonMathUtils.round(r.getBase() + r.getQuota() + r.getSurchargeQuota());
@@ -218,6 +223,10 @@ public class LROE240_2 extends LROE240 {
 //				InvoiceTax irpf = detail.getInvoiceTaxes().stream().filter(e -> TaxType.RETENTION.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
 				
 				tax.setBase(AonMathUtils.round(tax.getBase()));
+				if(invoice.isExtracommunity()) {
+					tax.setPercentage(0.0);
+					tax.setQuota(0.0);
+				}
 				if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 					tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
 				}
