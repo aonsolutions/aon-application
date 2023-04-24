@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from 'src/app/core/services/auth.service';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -13,7 +13,7 @@ export class AuthComponent implements OnInit {
   password :string;
   hidePassword :boolean = true;
 
-  constructor(public auth: ApiService) {
+  constructor(public auth: AuthService) {
     this.user     = "";
     this.password = "";
   }
