@@ -37,13 +37,13 @@ public class IdcParser {
 	
 	public static void parse(byte [] data, IdcParserListener idcListener ) throws IOException, UnknownPDFException {
 		try ( InputStream is = new ByteArrayInputStream(data)) {
-			parse(is, idcListener);
-		}
+			parse(is, idcListener); 
+		} 
 	}
 
  	public static void parse( InputStream is ,IdcParserListener listener) throws IOException , UnknownPDFException {
 		try (PDDocument doc = Loader.loadPDF(is)){
-			parse(doc, listener);
+			parse(doc, listener); 
 		}
 	}
 
@@ -55,15 +55,17 @@ public class IdcParser {
 		
 		PDFTextStripper stripper= new PDFTextStripper();
 		
-		stripper.setSortByPosition(true);
+		stripper.setSortByPosition(true); 
 		
 		for (int p = 1; p <= doc.getNumberOfPages(); p++) {
             // Set the page interval to extract. 
+			
 			// If we don't, then all pages would be extracted.
 			stripper.setStartPage(p);
 			stripper.setEndPage(p);
 			
 			String text = stripper.getText(doc);
+			parse(text, listener);
 			if ( AonStringUtils.isBlank(text) ) 
 				continue;
 			
@@ -224,7 +226,7 @@ public class IdcParser {
 	private static void onEmployeeQuotePEC(IdcParserListener listener, String nss, String enterpriseCCC, String code,
 			String description, String portTipo, String quota, Date start, Date end) {
 		code = remove(code, " ");
-		quota = remove(quota, " ");
+		quota = remove(quota, " "); 
 		portTipo = remove(portTipo, " ");
 		listener.onEmployeeQuotePEC(nss, enterpriseCCC, code, description, portTipo, quota, start, end);
 	}
@@ -311,7 +313,7 @@ public class IdcParser {
 	Pattern.compile(
 	"^ACTIVIDAD\\s*ECONOMICA\\s*:\\s*(?<code>[0-9]+)\\s*(?<description>.*)REGIMEN\\s*:\\s*(?<regime>.*)$"
 	, Pattern.CASE_INSENSITIVE);
-	
+
 	//ACTIVIDAD ECONOMICA: 9311 Gestión de instalaciones deportivas REGIMEN: REGIMEN GENERAL
 	protected static final Pattern EMPLOYEE_PERIOD_START = 
 	Pattern.compile(

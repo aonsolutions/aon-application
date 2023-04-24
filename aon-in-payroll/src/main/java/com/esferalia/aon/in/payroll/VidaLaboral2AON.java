@@ -293,11 +293,7 @@ public class VidaLaboral2AON implements IvlParserListener{
 				.limit(1)
 				.fetchOptionalInto(REGISTRY);
 		
-	}
-	
-	
-	
-	
+	}	
 	
 	private RegistryRecord newPerson(int domainId, String ccc, String fullname, String naf) {
 		
