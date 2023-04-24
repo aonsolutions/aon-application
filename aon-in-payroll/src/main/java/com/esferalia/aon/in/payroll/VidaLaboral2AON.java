@@ -622,11 +622,17 @@ public class VidaLaboral2AON implements IvlParserListener{
 					contract.insert();
 					
 					//INSERT PARA GRUPO DE COTIZACION
+					String gcFormat = "\"+s+[0-9]\"";
+					
 					quoteGroupData =
 							getDSLContext(dslContext).newRecord(CONTRACT_DATA);	
 					quoteGroupData.setDomain(contract.getDomain());
 					quoteGroupData.setContract(contract.getId());
-					quoteGroupData.setName(ContextVariable.QUOTE_GROUP.getName());
+					if (gcFormat.matches(gc)) {
+						quoteGroupData.setName(ContextVariable.MONTH_DAYS.getName());
+					}else {
+						quoteGroupData.setName(ContextVariable.QUOTE_GROUP.getName());
+					}
 					quoteGroupData.setStartDate(contract.getStartDate());
 					quoteGroupData.setEndDate(contract.getEndDate());
 					quoteGroupData.setExpression(String.format("\"%s\"", gc));
