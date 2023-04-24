@@ -389,6 +389,7 @@ public class Contrata {
 				String cif = cto.getCifEnterprise();
 				
 				if (cif!= null) {
+					form.getInputByName("cifnif").setValueAttribute(cif);
 					form.getInputByName("cifnif").setValue(cif);
 					
 					((HtmlSelect) form.querySelector("select[name=tipodoc2]")).setSelectedAttribute(getCifType(cif), true);
@@ -399,6 +400,12 @@ public class Contrata {
 				form.getInputByName("numsec").setValue(ctaCti.substring(2, 9));
 				form.getInputByName("digcont").setValue(ctaCti.substring(9));
 				form.getInputByName("cuentacotizacion").setValue(regimen + ctaCti);
+				
+				form.getInputByName("regimen").setValueAttribute(regimen);
+				form.getInputByName("numsecprov").setValueAttribute(ctaCti.substring(0, 2));
+				form.getInputByName("numsec").setValueAttribute(ctaCti.substring(2, 9));
+				form.getInputByName("digcont").setValueAttribute(ctaCti.substring(9));
+				form.getInputByName("cuentacotizacion").setValueAttribute(regimen + ctaCti);
 			}
 
 			{// ---------------------------DATA EMPLOYEE-------------------------
@@ -408,14 +415,19 @@ public class Contrata {
 				((HtmlSelect) form.querySelector("select[name=tipodoc]")).setSelectedAttribute(tipodoc, true);
 				form.getInputByName("nif").setValue(cto.getIpf());
 				form.getInputByName("nifnie").setValue(tipodoc + "  " + cto.getIpf());
+				form.getInputByName("nif").setValueAttribute(cto.getIpf());
+				form.getInputByName("nifnie").setValueAttribute(tipodoc + "  " + cto.getIpf());
         
 				String name = cto.getName();
 				if(null != name && name.length() > 15) name = name.substring(0, 15);
+				form.getInputByName("nombre").setValue(name);
+				form.getInputByName("apellido1").setValue(cto.getSurname());
 				form.getInputByName("nombre").setValueAttribute(name);
 				form.getInputByName("apellido1").setValueAttribute(cto.getSurname());
 
 				if (cto.getLastSurname() != null) {
 					form.getInputByName("apellido2").setValue(cto.getLastSurname());
+					form.getInputByName("apellido2").setValueAttribute(cto.getLastSurname());
 				}
 
 				if (cto.getSex() != null) {
@@ -430,6 +442,10 @@ public class Contrata {
 					form.getInputByName("mesfechanac").setValue(dateBirth[1]);
 					form.getInputByName("anniofechanac").setValue(dateBirth[2]);
 					form.getInputByName("fechanacimiento").setValue(dateBirth[0]+"/"+dateBirth[1]+"/"+dateBirth[2]);
+					form.getInputByName("diafechanac").setValueAttribute(dateBirth[0]);
+					form.getInputByName("mesfechanac").setValueAttribute(dateBirth[1]);
+					form.getInputByName("anniofechanac").setValueAttribute(dateBirth[2]);
+					form.getInputByName("fechanacimiento").setValueAttribute(dateBirth[0]+"/"+dateBirth[1]+"/"+dateBirth[2]);
 				}
 
 				((HtmlSelect) form.querySelector("select[name=nacionalidad]"))
@@ -442,12 +458,14 @@ public class Contrata {
 				}
 
 				form.getInputByName("nass1").setValue(nss.substring(0, 2));
-
 				form.getInputByName("nass2").setValue(nss.substring(2, 10));
-
 				form.getInputByName("nass3").setValue(nss.substring(10));
-				
 				form.getInputByName("nass").setValue(nss);
+				
+				form.getInputByName("nass1").setValueAttribute(nss.substring(0, 2));
+				form.getInputByName("nass2").setValueAttribute(nss.substring(2, 10));
+				form.getInputByName("nass3").setValueAttribute(nss.substring(10));
+				form.getInputByName("nass").setValueAttribute(nss);
 			}
 
 			{// ----------------------DATA CONTRACT--------------------
@@ -456,6 +474,10 @@ public class Contrata {
 				form.getInputByName("diafechaini").setValue(startDate[0]);
 				form.getInputByName("mesfechaini").setValue(startDate[1]);
 				form.getInputByName("anniofechaini").setValue(startDate[2]);
+				form.getInputByName("fechainicio").setValueAttribute(startDate[0]+"/"+startDate[1]+"/"+startDate[2]);
+				form.getInputByName("diafechaini").setValueAttribute(startDate[0]);
+				form.getInputByName("mesfechaini").setValueAttribute(startDate[1]);
+				form.getInputByName("anniofechaini").setValueAttribute(startDate[2]);
 
 				// NIVEL FORMATIVO
 				if (cto.getCodFormativo() != null && cto.getCodFormativo() > 0) {
@@ -473,6 +495,7 @@ public class Contrata {
 
 				if (cto.getCodMunWork() != null) {
 					form.getInputByName("municipiocontrato").setValue(cto.getCodMunWork());// disabled
+					form.getInputByName("municipiocontrato").setValueAttribute(cto.getCodMunWork());// disabled
 				}
 
 				DomNode ofertaEmpleo = form.querySelector("select[name=procedeDeOfertaEmpleo]");
@@ -494,6 +517,9 @@ public class Contrata {
 						((HtmlInput) endDay).setValue(dateFinContract[0]);
 						form.getInputByName("mesfechafin").setValue(dateFinContract[1]);
 						form.getInputByName("anniofechafin").setValue(dateFinContract[2]);
+						((HtmlInput) endDay).setValueAttribute(dateFinContract[0]);
+						form.getInputByName("mesfechafin").setValueAttribute(dateFinContract[1]);
+						form.getInputByName("anniofechafin").setValueAttribute(dateFinContract[2]);
 					}
 				}
 				
@@ -506,33 +532,39 @@ public class Contrata {
 						DomNode jornadaHour = form.querySelector("[name=\"horasduracionjornada\"]");
 						if (jornadaHour!=null && cto.getDurationTypeJndHour() != null) {
 							((HtmlInput)jornadaHour).setValue(cto.getDurationTypeJndHour());
+							((HtmlInput)jornadaHour).setValueAttribute(cto.getDurationTypeJndHour());
 						}
 
 						DomNode jornadaMin = form.querySelector("[name=\"minutosduracionjornada\"]");
 						if (jornadaMin!=null && cto.getDurationTypeJndMin() != null) {
 							((HtmlInput)jornadaMin).setValue(cto.getDurationTypeJndMin());
+							((HtmlInput)jornadaMin).setValueAttribute(cto.getDurationTypeJndMin());
 						}
 
 						// ----------HORAS DE CONVENIO
 						DomNode convenioHour = form.querySelector("[name=\"horasduracionconvenio\"]");
 						if (convenioHour!=null && cto.getDurationTypeCvnHour() != null) {
 							((HtmlInput)convenioHour).setValue(cto.getDurationTypeCvnHour());
+							((HtmlInput)convenioHour).setValueAttribute(cto.getDurationTypeCvnHour());
 						}
 						
 						DomNode convenioMin = form.querySelector("[name=\"minutosduracionconvenio\"]"); 
 						if (convenioMin!=null && cto.getDurationTypeCvnMin() != null) {
 							((HtmlInput)convenioMin).setValue(cto.getDurationTypeCvnMin());
+							((HtmlInput)convenioMin).setValueAttribute(cto.getDurationTypeCvnMin());
 						}
 						
 						// ---------- HORAS DE FORMACION
 						DomNode formationHour = form.querySelector("[name=\"horasformacion\"]");
 						if (formationHour!=null && cto.getDurationFormationHour() != null) {
 							((HtmlInput)formationHour).setValue(cto.getDurationFormationHour());
+							((HtmlInput)formationHour).setValueAttribute(cto.getDurationFormationHour());
 						}
 						
 						DomNode formationMin = form.querySelector("[name=\"minutosformacion\"]");
 						if (formationMin!=null && cto.getDurationFormationMin() != null) {
 							((HtmlInput)formationMin).setValue(cto.getDurationFormationMin());
+							((HtmlInput)formationMin).setValueAttribute(cto.getDurationFormationMin());
 						}
 					}
 				}
@@ -555,6 +587,7 @@ public class Contrata {
 				if (interinidad.isPresent()) {
 					page++;
 					form.getInputByName("pagina2").setValue(page.toString());
+					form.getInputByName("pagina2").setValueAttribute(page.toString());
 
 					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkInterinidad");
 					check.click();
@@ -576,6 +609,7 @@ public class Contrata {
 				if(cto.isDiscapacidad()) {
 					page++;
 					form.getInputByName("pagina2").setValue(page.toString());
+					form.getInputByName("pagina2").setValueAttribute(page.toString());
 					
 					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkDiscapacidad");
 					check.click();
@@ -656,6 +690,7 @@ public class Contrata {
 				if(cto.getOver52Years().isPresent()) {
 					page++;
 					form.getInputByName("pagina2").setValue(page.toString());
+					form.getInputByName("pagina2").setValueAttribute(page.toString());
 					
 					Over52Years over25Years = cto.getOver52Years().get();
 
@@ -2040,11 +2075,13 @@ public class Contrata {
 			DomNode ocupacion = form.querySelector("[name=\"ocupacion\"]");
 			if (ocupacion != null) {
 				((HtmlInput) ocupacion).setValue(cto.getCodOccupation());
+				((HtmlInput) ocupacion).setValueAttribute(cto.getCodOccupation());
 			}
 
 			DomNode cocupacion = form.querySelector("[name=\"cocupacion\"]");
 			if (cocupacion != null) {
 				((HtmlInput) cocupacion).setValue(cto.getCodOccupation());
+				((HtmlInput) cocupacion).setValueAttribute(cto.getCodOccupation());
 			}
 		}
 	}
