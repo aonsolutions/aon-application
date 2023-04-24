@@ -30,8 +30,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContexts;
-import org.xml.sax.SAXException;
-
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
 import org.htmlunit.WebClient;
@@ -45,6 +43,7 @@ import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableCell;
 import org.htmlunit.html.HtmlTableRow;
+import org.xml.sax.SAXException;
 
 import solutions.aon.seg.social.exception.CertificateNotFoundException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -284,22 +283,21 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			SistemaRED.SituationEmployee situationEmployee, Date startdate, SistemaRED.ContractType contractType, float baseCot, int cotDays,
 			Optional<Date> fATEP, Optional<SistemaRED.AccidentType> accidentType,
 			Optional<String> licenseNumber, Optional<String> cias, Optional<String> occupation) throws FailingHttpStatusCodeException, IOException, InterruptedException, SegSocialException {
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
-				certificateType)) {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
 			webClient.getOptions().setUseInsecureSSL(true);
 			
 			HtmlPage htmlPage = webClient.getPage(BASE_URI);
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
-			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situationEmployee, BAJA);
+			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, startdate, contingency, situationEmployee, BAJA);
 
 			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			
-			wait4(htmlPage, p -> p.querySelector("[name=\"fechaBaja\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
-			
+//			wait4(htmlPage, p -> p.querySelector("[name=\"fechaBaja\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
+//			
 			form.getInputByName(ARQ_SPM_OUT).remove(); 
-			
-			Toolkit.formatDate(startdate, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBaja").setValue(d));
+//			
+//			Toolkit.formatDate(startdate, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBaja").setValue(d));
 
 			// Data Contract
 			HtmlOption contractTypeOption = null;
@@ -309,18 +307,18 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			switch (contractType) {
 				case FIJO_DISCONTINUO_Y_TIEMPO_PARCIAL:
 					contractTypeOption = form.querySelector("#tipoContrato option[value=\"1\"]");
+					htmlPage = contractTypeOption.click();
 					cotBaseInput = form.getInputByName("sumaBaseCot");
 					cotDaysInput = form.getInputByName("sumaDiasCot");
 				break;
 				case RESTO_Y_AUTONOMOS:
 					contractTypeOption = form.querySelector("#tipoContrato option[value=\"2\"]");
+					htmlPage = contractTypeOption.click();
 					cotBaseInput = form.getInputByName("BaseCot");
 					cotDaysInput = form.getInputByName("DiasCot");	
 				break;
 			}
 			
-			if(null!=contractTypeOption) contractTypeOption.click();
-
 			String baseCotStr = Toolkit.parseDecimalToString(baseCot);
 			if(cotBaseInput!=null && !baseCotStr.isEmpty()) {
 				cotBaseInput.setValue(baseCotStr);
@@ -332,29 +330,6 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			
 			if (occupation.isPresent()) {				
 				((HtmlSelect) form.querySelector("#ocupacion")).setSelectedAttribute(occupation.get(), true);
-			}
-			
-			licenseNumber.ifPresent(d-> form.getInputByName("numcolegiado").setValue(d));
-			cias.ifPresent(c-> form.getInputByName("cias").setValue(c));
-
-			if (fATEP.isPresent()) {
-				Toolkit.formatDate(fATEP.get(), DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaATEP").setValue(d));
-			}
-
-			if (accidentType.isPresent()) {
-				HtmlOption typeAccidentOption = null;
-				switch (accidentType.get()) {
-				case LEVE:
-					typeAccidentOption = form.querySelector("#tipoAccidente option[value=\"1\"]");
-					break;
-				case GRAVE:
-					typeAccidentOption = form.querySelector("#tipoAccidente option[value=\"2\"]");
-					break;
-				case MUY_GRAVE:
-					typeAccidentOption = form.querySelector("#tipoAccidente option[value=\"3\"]");
-					break;
-				}
-				if(null!=typeAccidentOption) typeAccidentOption.click();
 			}
 			
 			HtmlButton validate = (HtmlButton) wait4(htmlPage, p ->p.querySelector("button[type=\"submit\"][title=\"Validar\"]")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
@@ -386,7 +361,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			HtmlPage htmlPage = webClient.getPage(BASE_URI);
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 			
-			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situationEmployee, ALTA);
+			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, fbaja, contingency, situationEmployee, ALTA);
 
 			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			
@@ -450,7 +425,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 			HtmlPage htmlPage = webClient.getPage(BASE_URI);
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
-			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, contingency, situationEmployee, CONFIRMACION);
+			htmlPage = fillGeneralData(htmlPage, regime, ccc, naf, fbaja, contingency, situationEmployee, CONFIRMACION);
 
 			HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
 			
@@ -580,7 +555,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		}
 	}
 	
-	private static HtmlPage fillGeneralData(HtmlPage htmlPage, String regime, String ccc, String naf,
+	private static HtmlPage fillGeneralData(HtmlPage htmlPage, String regime, String ccc, String naf, Date date,
 			SistemaRED.Contingencies contingency, SistemaRED.SituationEmployee situationEmployee, SistemaRED.PartType type)
 			throws IOException, InterruptedException, SegSocialException {
 		HtmlForm form = (HtmlForm) wait4(htmlPage, p -> p.getElementById("FORMULARIO_6")).orElseThrow(()-> new SegSocialException(TRY_AGAIN));
@@ -589,6 +564,7 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 		form.getInputByName("regimen").setValue(regime); 
 		form.getInputByName("ccc").setValue(ccc); 
 		form.getInputByName("naf").setValue(naf); 
+		Toolkit.formatDate(date, DATE_FORMAT).ifPresent(d-> form.getInputByName("fechaBaja").setValue(d));
 		
 		form.getInputByName(ARQ_SPM_OUT).remove(); 
 		
