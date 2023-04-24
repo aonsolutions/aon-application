@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
-export class ApiService {
+export class AuthService {
 
   urlBase:string = environment.urlApiAon;
   headers: any = {
@@ -26,6 +26,10 @@ export class ApiService {
       this.jwtAuth.login(data.session_id);
       this.router.navigateByUrl("/home");
     });
+  }
+
+  logout() {
+    this.jwtAuth.logout();
   }
 
   getUser(): Observable<Usuario> {

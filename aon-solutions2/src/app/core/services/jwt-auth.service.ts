@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -6,14 +7,19 @@ import { environment } from 'src/environments/environment';
 })
 export class JwtAuthService {
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   login(token: string):void {
-    localStorage.setItem(environment.localStorageJwt.accessToken, token);
+    sessionStorage.setItem(environment.localStorageJwt.accessToken, token);
+  }
+
+  logout() {
+    sessionStorage.removeItem(environment.localStorageJwt.accessToken);
+    this.router.navigateByUrl("/auth");
   }
 
   isLoggedIn(): boolean {
-    const isLoggged = localStorage.getItem(environment.localStorageJwt.accessToken);
+    const isLoggged = this.getJwt();
 
     if(isLoggged) {
       return true;
@@ -21,5 +27,9 @@ export class JwtAuthService {
     else {
       return false;
     }
+  }
+
+  getJwt() {
+    return (sessionStorage.getItem(environment.localStorageJwt.accessToken) !== null);
   }
 }
