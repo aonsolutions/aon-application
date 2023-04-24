@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { Usuario } from '../models/usuario';
+import { User } from '../models/user';
 import { Observable } from 'rxjs';
 import { JwtAuthService } from './jwt-auth.service';
 import { Router } from '@angular/router';
@@ -12,17 +12,12 @@ import { Router } from '@angular/router';
 export class AuthService {
 
   urlBase:string = environment.urlApiAon;
-  headers: any = {
-    domain_name: environment.headerApi.domainName,
-    domain_id: environment.headerApi.domainId,
-    domain_login: environment.headerApi.domainLogin,
-  };
+
 
   constructor(private http: HttpClient, private jwtAuth: JwtAuthService, private router: Router) { }
 
   login(user: any) {
     this.http.post<any>(this.urlBase+'login', user).subscribe(data => { // Subscribe actua como una 'promesa' de JS
-      this.headers['session_id'] = data.session_id;
       this.jwtAuth.login(data.session_id);
       this.router.navigateByUrl("/home");
     });
@@ -30,11 +25,12 @@ export class AuthService {
 
   logout() {
     this.jwtAuth.logout();
+    this.jwtAuth.setHeaderSessionId('');
   }
 
-  getUser(): Observable<Usuario> {
-    let cabeceras: HttpHeaders = new HttpHeaders(this.headers);
+  getUser(): Observable<User> {
+    let _headers: HttpHeaders = new HttpHeaders(this.jwtAuth.getHeaders());
 
-    return this.http.get<Usuario>(this.urlBase+'auth', {headers: cabeceras});
+    return this.http.get<User>(this.urlBase+'auth', {headers: _headers});
   }
 }
