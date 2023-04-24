@@ -17,18 +17,25 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-
+import org.apache.commons.io.FileUtils;
+import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.NicelyResynchronizingAjaxController;
 import org.htmlunit.Page;
 import org.htmlunit.WebClient;
+import org.htmlunit.WebResponse;
 import org.htmlunit.html.DomElement;
+import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlDefinitionDescription;
+import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlListItem;
 import org.htmlunit.html.HtmlOption;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlRadioButtonInput;
 import org.htmlunit.html.HtmlSelect;
 import org.htmlunit.html.HtmlSubmitInput;
-
+import org.htmlunit.xml.XmlPage;
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.OutOfServiceException;
@@ -523,12 +530,12 @@ public class AonSegSocialJuanma extends SegSocialException {
 
 			AonSegSocialTableResult example = new AonSegSocialTableResult();
 
-			example.setTotalCccs(dd.get(0).asText());
-			example.setTotalLiquidations(dd.get(1).asText());
-			example.setAmount(dd.get(2).asText());
-			example.setStretches(dd.get(3).asText());
-			example.setCalculatedStretches(dd.get(4).asText());
-			example.setNoCalculatedStretches(dd.get(5).asText());
+			example.setTotalCccs(dd.get(0).toString());
+			example.setTotalLiquidations(dd.get(1).toString());
+			example.setAmount(dd.get(2).toString());
+			example.setStretches(dd.get(3).toString());
+			example.setCalculatedStretches(dd.get(4).toString());
+			example.setNoCalculatedStretches(dd.get(5).toString());
 
 			System.out.println(example.getTotalCccs());
 			System.out.println(example.getTotalLiquidations());
@@ -590,12 +597,12 @@ public class AonSegSocialJuanma extends SegSocialException {
 
 			AonSegSocialTableResult example = new AonSegSocialTableResult();
 
-			example.setTotalCccs(dd.get(0).asText());
-			example.setTotalLiquidations(dd.get(1).asText());
-			example.setAmount(dd.get(2).asText());
-			example.setStretches(dd.get(3).asText());
-			example.setCalculatedStretches(dd.get(4).asText());
-			example.setNoCalculatedStretches(dd.get(5).asText());
+			example.setTotalCccs(dd.get(0).toString());
+			example.setTotalLiquidations(dd.get(1).toString());
+			example.setAmount(dd.get(2).toString());
+			example.setStretches(dd.get(3).toString());
+			example.setCalculatedStretches(dd.get(4).toString());
+			example.setNoCalculatedStretches(dd.get(5).toString());
 
 			System.out.println(example.getTotalCccs());
 			System.out.println(example.getTotalLiquidations());
