@@ -18,6 +18,7 @@ import com.esferalia.aon.gwt.common.shared.SocialSecurity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.BankSwift;
 import com.esferalia.aon.gwt.payroll.shared.CCCInfo;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.Geozone;
 import com.esferalia.aon.gwt.payroll.shared.Iban;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
@@ -39,10 +40,6 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.OptionElement;
 import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.TextAlign;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.TableCellElement;
-import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DomEvent;
@@ -65,7 +62,6 @@ import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class Employee extends ResizeComposite {
@@ -84,40 +80,28 @@ public abstract class Employee extends ResizeComposite {
 	interface MyStyle extends CssResource {
 		String journeyDurationWarning();
 		String warningTB();
-		String flexGrow();
 		String errorBorder();
 	}
 
 	// TABLA DATOS CONTRATO
-	@UiField
-	HTMLPanel horizontalPanel;
 	
 	@UiField
-	TableElement contractDataTable;
+	HTMLPanel contractDataTable;
 	
 	@UiField
 	Label documentType;
 	
 	@UiField
-	HTMLPanel documentPanel;
-	
-	@UiField
 	SuggestBox document;
 	
 	@UiField
-	TableCellElement nationalityLabelCell;
-
-	@UiField
-	TableCellElement nationalityCell;
+	HTMLPanel nationalityPanel;
 
 	@UiField(provided = true)
 	SuggestBox nationality;
 	
 	@UiField
 	SuggestBox securitySocialNum;
-	
-	@UiField
-	HTMLPanel namePanel;
 
 	@UiField
 	SuggestBox name;
@@ -145,15 +129,9 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiField
 	ListBox workplace;
-	
-	@UiField
-	TableCellElement contractTypeNode;
 
 	@UiField
 	ListBox contractTypeLB;
-	
-	@UiField
-	TableCellElement contractFreelancerNode;
 
 	@UiField
 	Label contractTypeFreelance;
@@ -166,12 +144,6 @@ public abstract class Employee extends ResizeComposite {
 
 	@UiField
 	DateBoxEx endDate;
-
-	@UiField
-	Label seniorityDateLabel;
-	
-	@UiField
-	HTMLPanel seniorityDatePanel;
 
 	@UiField
 	DateBoxEx seniorityDate;
@@ -205,14 +177,14 @@ public abstract class Employee extends ResizeComposite {
 	
 	@UiField
 	DoubleBox partialityCoef;
+	
+	@UiField
+	SuggestBox cnoSB;
 
 	// TABLA DATOS EMPLEADO
 	
 	@UiField
-	VerticalPanel employeeTablePanel;
-
-	@UiField
-	TableElement employeeDataTable;
+	HTMLPanel employeeTablePanel;
 
 	@UiField
 	DateBoxEx birthDate;
@@ -273,12 +245,12 @@ public abstract class Employee extends ResizeComposite {
 	private ContractType contractType;
 	private Municipalities municipalities;
 	
-	private AonToolbarSmallButton clearEmployee;
-	
 	private List<Agreement> agreements;
 	
 	private DomainEnterprisesServiceAsync impl = DomainEnterprisesServiceAsync.newInstance();
 	private List<com.esferalia.aon.gwt.payroll.shared.Country> countries;
+	
+	private Map<String, CNO> cnoMap;
 
 	// ------------------------------------------------- Constructor
 
@@ -301,6 +273,20 @@ public abstract class Employee extends ResizeComposite {
 			public void onSuccess(List<com.esferalia.aon.gwt.payroll.shared.Country> countriesResult) {
 				countries = countriesResult;
 				initializeProvince();
+				
+				impl.getCNOs(new AsyncCallback<Map<String,CNO>>() {
+					
+					@Override
+					public void onSuccess(Map<String, CNO> cnoMapIn) {
+						cnoMap = cnoMapIn;
+						initializeCNOSuggest();
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+					}
+				});
 			}
 			
 			@Override
@@ -308,12 +294,46 @@ public abstract class Employee extends ResizeComposite {
 				// TODO: show error
 			}
 		});
+	}
+	
+	private void initializeCNOSuggest() {
+		List<String> cnoSuggest = new ArrayList<>();
+		for(Entry<String, CNO> entry : cnoMap.entrySet())
+			cnoSuggest.add(entry.getKey() + " - " + entry.getValue().getTitle());
 		
-		clearEmployee = new AonToolbarSmallButton("Limpiar empleado", AON.CSS.aonIconRefresh());
-		clearEmployee.addClickHandler(e -> onClearEmployeeClick());
-		horizontalPanel.clear();
-		horizontalPanel.add(clearEmployee);
-		horizontalPanel.add(documentType);	
+		cnoSuggest.sort((o1, o2) -> o1.compareTo(o2));
+
+		MultiWordSuggestOracle orclCno = (MultiWordSuggestOracle) cnoSB.getSuggestOracle();
+		orclCno.addAll(cnoSuggest);
+		orclCno.setDefaultSuggestionsFromText(cnoSuggest);
+		cnoSB.setAutoSelectEnabled(false);
+		cnoSB.getElement().setPropertyString("placeholder", "C\u00f3digo CNO... (Ctrl + espacio para ver sugerencias)");
+		
+		cnoSB.getValueBox().addKeyUpHandler(e -> {
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				cnoSB.setText("");
+				cnoSB.showSuggestionList();
+			} else if(e.getNativeKeyCode() == KeyCodes.KEY_ESCAPE)
+				cnoSB.hideSuggestionList();
+		});
+		
+		cnoSB.addSelectionHandler(e -> {
+			String cnoValue = cnoSB.getValue();
+			if(!AonStringUtils.isBlank(cnoValue))
+				cnoValue = cnoValue.split(" -")[0];
+			
+			// Do something with cnoValue
+			onEmployeeCnoSuggestionChange(cnoValue);
+		});
+		
+		cnoSB.addValueChangeHandler(e -> {
+			if(AonStringUtils.isBlank(e.getValue()))
+				onEmployeeCnoSuggestionChange(null);
+		});
+	}
+	
+	public CNO getCNOByCode(String cnoCode) {
+		return this.cnoMap.get(cnoCode);
 	}
 	
 	private void providedNationality() {
@@ -350,7 +370,7 @@ public abstract class Employee extends ResizeComposite {
 			else
 				addErrorBorder(this.document);
 				
-			showNationality(documentTypeStr);	
+//			showNationality(documentTypeStr);	
 			
 			onEmployeeDocumentChange(documentStr, documentTypeStr);
 		} else
@@ -360,7 +380,6 @@ public abstract class Employee extends ResizeComposite {
 	@UiHandler("nationality")
 	void onNationalitySelectionValue(SelectionEvent<Suggestion> event) {
 		String countryIso2 = getIso2(this.nationality.getValue());
-//		Window.alert("Name : " + this.nationality.getValue() + "\nIso2 : " + countryIso2);
 		onEmployeeNationalityChange(countryIso2);
 	}
 	
@@ -564,18 +583,24 @@ public abstract class Employee extends ResizeComposite {
 		Date startDateStr = this.startDate.getValue();
 		Date seniorityDateStr = this.seniorityDate.getValue();
 		
-		if(null == startDateStr)
-			addInfoIcon(seniorityDatePanel, this.seniorityDate, "La fecha de inicio no coincide con la de antig\u00FCedad.");
-		else if(null != seniorityDateStr) {
+		if(null == startDateStr) {
+			addWarnBorder(this.seniorityDate);
+			this.seniorityDate.setTitle("La fecha de inicio no coincide con la de antig\u00FCedad.");
+		} else if(null != seniorityDateStr) {
 			DateUtils.resetTime(startDateStr);
 			DateUtils.resetTime(seniorityDateStr);
 			
-			if(DateUtils.equals(startDateStr, seniorityDateStr))
-				removeInfoIcon(seniorityDatePanel, this.seniorityDate);
-			else
-				addInfoIcon(seniorityDatePanel, this.seniorityDate, "La fecha de inicio no coincide con la de antig\u00FCedad.");
-		} else
-			removeInfoIcon(seniorityDatePanel, this.seniorityDate);
+			if(DateUtils.equals(startDateStr, seniorityDateStr)) {
+				removeWarnBorder(this.seniorityDate);
+				this.seniorityDate.setTitle("");
+			} else {
+				addWarnBorder(this.seniorityDate);
+				this.seniorityDate.setTitle("La fecha de inicio no coincide con la de antig\u00FCedad.");
+			}
+		} else {
+			removeWarnBorder(this.seniorityDate);
+			this.seniorityDate.setTitle("");
+		}
 		
 		onContractSeniorityDateChange(seniorityDateStr);
 	}
@@ -595,7 +620,6 @@ public abstract class Employee extends ResizeComposite {
 			onContractAgreementChange(null, null);
 	}
 	
-
 	@UiHandler("level")
 	void onContractAgreementLevelChangeValue(ChangeEvent event) {
 		Integer agreementLevelId = Integer.parseInt(this.level.getSelectedValue());
@@ -794,6 +818,7 @@ public abstract class Employee extends ResizeComposite {
 	void onAccountChangeValue(ValueChangeEvent<String> event) {
 		String accountStr = this.account.getValue();
 		accountStr = accountStr.replaceAll("\\W+", "");
+		accountStr = accountStr.toUpperCase();
 		
 		if(accountStr.length() > 0) {
 			if(Iban.validateIBAN(accountStr)) {
@@ -847,6 +872,7 @@ public abstract class Employee extends ResizeComposite {
 	public abstract void onContractJourneyTypeChange(Boolean journeyType);
 	public abstract void onContractPartialityChange(Double partialityCoef);
 	public abstract void onContractJourneyDurationClick();
+	public abstract void onEmployeeCnoSuggestionChange(String cno);
 	
 	// TABLA DATOS EMPLEADO
 	
@@ -871,7 +897,6 @@ public abstract class Employee extends ResizeComposite {
 	
 	public abstract void fireError(String title, String message);
 		
-
 	// ------------------------------------------------- Methods preview
 	
 	public void initializeView() {
@@ -911,6 +936,7 @@ public abstract class Employee extends ResizeComposite {
 		this.journeyType.clear();
 		this.partialityCoef.setValue(null);
 		this.journeyDuration.clear();
+		this.cnoSB.setValue(null);
 
 		// TABLA DATOS EMPLEADO
 		
@@ -922,7 +948,6 @@ public abstract class Employee extends ResizeComposite {
 		this.addressNum.setValue("");
 		this.addressInfo.setValue("");
 		this.addressZip.setValue("");
-//		this.addressProvince.clear();
 		this.addressMunicipality.clear();
 		this.mobile.setValue("");
 		this.phone.setValue("");
@@ -950,6 +975,7 @@ public abstract class Employee extends ResizeComposite {
 		this.mdTBTLB.addItem("COM\u00daN", "0");
 		this.mdTBTLB.addItem("Adm./Consejero Negocio < 100.000 \u20ac", "1");
 		this.mdTBTLB.addItem("Adm./Consejero Negocio > 100.000 \u20ac", "2");
+		this.mdTBTLB.addItem("No Residente", "3");
 		
 		// MODALIDAD DE COTIZACION
 		this.mdCTZLB.addItem("-", "-1");
@@ -996,11 +1022,6 @@ public abstract class Employee extends ResizeComposite {
 		//TIPO DE VIA
 		for(int i=0; i<StreetType.values().length; i++)
 			this.streetType.addItem(StreetType.values()[i].getDescription(), StreetType.values()[i].getShortCode());
-		
-//		//PROVINCIA
-//		this.addressProvince.addItem("-", "-1");
-//		for(Entry<String, String> provinces : ProvinceContract.getProvinces().entrySet())
-//			this.addressProvince.addItem(provinces.getValue(), provinces.getKey());
 
 	}
 	
@@ -1018,21 +1039,21 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 	private void initDisplayElements() {
-		this.contractDataTable.getRows().getItem(4).getStyle().clearDisplay();
+		this.contractDataTable.getWidget(3).getElement().getStyle().clearDisplay();
 		
-		this.contractTypeNode.getStyle().clearDisplay();
-		this.contractFreelancerNode.getStyle().setDisplay(Display.NONE);
+		this.contractTypeLB.getElement().getStyle().clearDisplay();
+		this.contractTypeFreelance.getElement().getStyle().setDisplay(Display.NONE);
 		
-		this.contractDataTable.getRows().getItem(5).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(4).getElement().getStyle().setDisplay(Display.NONE);
 		
-		this.contractDataTable.getRows().getItem(8).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(14).getStyle().clearDisplay();
+		this.contractDataTable.getWidget(7).getElement().getStyle().clearDisplay();
+		this.contractDataTable.getWidget(10).getElement().getStyle().clearDisplay();
+		this.contractDataTable.getWidget(12).getElement().getStyle().clearDisplay();
 		
 		hideEmployeesColective();
 		
-		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(15).getElement().getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(16).getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------------------------------------- Fill default fields
@@ -1178,61 +1199,52 @@ public abstract class Employee extends ResizeComposite {
 		employeeTablePanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
-	// ------------------------------------------------- Show/hide clearEmployee
-
-	public void hideClearEmployee() {
-		clearEmployee.getElement().getStyle().setDisplay(Display.NONE);
-	}
-	
-	public void showClearEmployee() {
-		clearEmployee.getElement().getStyle().clearDisplay();
-	}
-	
 	// ------------------------------------------------- Show/hide methods freelancer
 
 	public void showElementsFreelancerTable() {
-		this.contractDataTable.getRows().getItem(4).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(3).getElement().getStyle().setDisplay(Display.NONE);
 		
-		this.contractTypeNode.getStyle().setDisplay(Display.NONE);
-		this.contractFreelancerNode.getStyle().clearDisplay();
+		this.contractTypeLB.getElement().getStyle().setDisplay(Display.NONE);
+		this.contractTypeFreelance.getElement().getStyle().clearDisplay();
 		
-		this.contractDataTable.getRows().getItem(5).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(4).getElement().getStyle().setDisplay(Display.NONE);
 		
-		this.contractDataTable.getRows().getItem(8).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(12).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(14).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(7).getElement().getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(10).getElement().getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(12).getElement().getStyle().setDisplay(Display.NONE);
 		
-		this.contractDataTable.getRows().getItem(17).getStyle().clearDisplay();
-
-		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(15).getElement().getStyle().clearDisplay();
+		this.contractDataTable.getWidget(16).getElement().getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(17).getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void hideElementsFreelancerTable() {
-		this.contractDataTable.getRows().getItem(4).getStyle().clearDisplay();
+		this.contractDataTable.getWidget(3).getElement().getStyle().clearDisplay();
 		
-		this.contractTypeNode.getStyle().clearDisplay();
-		this.contractFreelancerNode.getStyle().setDisplay(Display.NONE);
+		this.contractTypeLB.getElement().getStyle().clearDisplay();
+		this.contractTypeFreelance.getElement().getStyle().setDisplay(Display.NONE);
 		
-		this.contractDataTable.getRows().getItem(5).getStyle().clearDisplay();
+		this.contractDataTable.getWidget(4).getElement().getStyle().clearDisplay();
 		
-		this.contractDataTable.getRows().getItem(8).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(12).getStyle().clearDisplay();
-		this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(14).getStyle().clearDisplay();
+		this.contractDataTable.getWidget(7).getElement().getStyle().clearDisplay();
+		this.contractDataTable.getWidget(10).getElement().getStyle().clearDisplay();
+		this.contractDataTable.getWidget(11).getElement().getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(12).getElement().getStyle().clearDisplay();
 		
-		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(15).getElement().getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(16).getElement().getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(17).getElement().getStyle().clearDisplay();
 	}
 	
 	// ------------------------------------------------- Show/hide methods partial/full time
 	
 	public void showElementsFullTimeContract() {
-		this.contractDataTable.getRows().getItem(17).getStyle().setDisplay(Display.NONE);
-		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(15).getElement().getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(16).getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void showElementsFullTimeJourneyTypeContract() {
-		this.contractDataTable.getRows().getItem(18).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(16).getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	public void showPartialTimeContract() {
@@ -1249,18 +1261,18 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 	private void showElementsPartialTimeContract() {
-		this.contractDataTable.getRows().getItem(17).getStyle().clearDisplay();	
-		this.contractDataTable.getRows().getItem(18).getStyle().clearDisplay();	
+		this.contractDataTable.getWidget(15).getElement().getStyle().clearDisplay();	
+		this.contractDataTable.getWidget(16).getElement().getStyle().clearDisplay();	
 	}
 	
 	// ------------------------------------------------- Show/hide mdCtz methods
 	
 	public void showMdCtzContract() {
-		this.contractDataTable.getRows().getItem(5).getStyle().clearDisplay();	
+		this.contractDataTable.getWidget(4).getElement().getStyle().clearDisplay();	
 	}
 	
 	public void hideMdCtzContract() {
-		this.contractDataTable.getRows().getItem(5).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(4).getElement().getStyle().setDisplay(Display.NONE);
 		this.mdCTZLB.setSelectedIndex(0);
 		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.mdCTZLB);
 		
@@ -1269,20 +1281,20 @@ public abstract class Employee extends ResizeComposite {
 	// ------------------------------------------------- Show/hide EmployeeColective methods
 	
 	public void showEmployeesColective() {
-		this.contractDataTable.getRows().getItem(16).getStyle().clearDisplay();	
+		this.contractDataTable.getWidget(14).getElement().getStyle().clearDisplay();	
 	}
 	
 	public void hideEmployeesColective() {
-		this.contractDataTable.getRows().getItem(16).getStyle().setDisplay(Display.NONE);
+		this.contractDataTable.getWidget(14).getElement().getStyle().setDisplay(Display.NONE);
 	}
 	
 	// ------------------------------------------------- Show/hide Quote Idx
 	
 	public void showHideQuoteIdx(Integer quoteGroup) {
 		if(AonNumberUtils.equals(quoteGroup, 8) || AonNumberUtils.equals(quoteGroup, 9) || AonNumberUtils.equals(quoteGroup, 10) || AonNumberUtils.equals(quoteGroup, 11))
-			this.contractDataTable.getRows().getItem(13).getStyle().clearDisplay();	
+			this.contractDataTable.getWidget(11).getElement().getStyle().clearDisplay();	
 		else {
-			this.contractDataTable.getRows().getItem(13).getStyle().setDisplay(Display.NONE);
+			this.contractDataTable.getWidget(11).getElement().getStyle().setDisplay(Display.NONE);
 			getEnableDisableButton(quoteGroupCotizB, false);
 			onContractQuoteGroupIdx(false);
 		}
@@ -1334,6 +1346,8 @@ public abstract class Employee extends ResizeComposite {
 	// ------------------------------------------------- Account methods
 
 	private void addReformatAccount() {
+		account.getElement().setAttribute("style", "text-transform:uppercase");
+		account.getElement().setPropertyString("pattern", "[A-Z0-9]*");
 		account.addValueChangeHandler(e -> reformatAccount(account));
 	}
 	
@@ -1467,20 +1481,20 @@ public abstract class Employee extends ResizeComposite {
 	public String checkDocumentType(String document) {
 		
 		if(null == document)
-			return "Pasaporte";
+			return "( Pasaporte )";
 
 		RegExp dniPattern = RegExp.compile("\\d{8}\\-?[A-HJ-NP-TV-Z]");
 		RegExp niePattern = RegExp.compile("[A-Z]{1}\\d{7}[A-Z]{1}");
 		RegExp cifPattern = RegExp.compile("[A-Z]{1}\\d{8}");
 
 		if (dniPattern.test(document.toUpperCase()))
-			return "DNI";
+			return "( DNI )";
 		else if (niePattern.test(document.toUpperCase()))
-			return "NIE";
+			return "( NIE )";
 		else if (cifPattern.test(document.toUpperCase()))
-			return "CIF";
+			return "( CIF) ";
 		else
-			return "Pasaporte";
+			return "( Pasaporte )";
 	}
 	
 	public boolean checkDocumentValidation(String documentTypeStr, String document) {
@@ -1491,12 +1505,10 @@ public abstract class Employee extends ResizeComposite {
 	}
 	
 	public void showNationality(String documentTypeStr) {
-		if (documentTypeStr.equals("CIF") || documentTypeStr.equals("Pasaporte") || documentTypeStr.equals("NIE")) {
-			nationalityLabelCell.getStyle().clearDisplay();
-			nationalityCell.getStyle().clearDisplay();
-		} else {
-			nationalityLabelCell.getStyle().setDisplay(Display.NONE);
-			nationalityCell.getStyle().setDisplay(Display.NONE);
+		if (documentTypeStr.equals("CIF") || documentTypeStr.equals("Pasaporte") || documentTypeStr.equals("NIE"))
+			nationalityPanel.getElement().getStyle().clearDisplay();
+		else {
+			nationalityPanel.getElement().getStyle().setDisplay(Display.NONE);
 			nationality.setValue("");
 		}
 	}
@@ -1581,10 +1593,9 @@ public abstract class Employee extends ResizeComposite {
 		
 		String addressZipValue = addressZip.getValue();
 		String addressProvinceValue = addressProvince.getSelectedValue();
-//		String addressMunicipalityValue = addressMunicipality.getSelectedValue();
 		
-		if((AonStringUtils.isNotBlank(addressZipValue) || !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") /*|| !AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")*/) &&
-			(AonStringUtils.isBlank(addressZipValue) || AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1") /*|| AonStringUtils.equalsIgnoreCase(addressMunicipalityValue, "-1")*/))
+		if((AonStringUtils.isNotBlank(addressZipValue) || !AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1")) &&
+			(AonStringUtils.isBlank(addressZipValue) || AonStringUtils.equalsIgnoreCase(addressProvinceValue, "-1")))
 				messageMap.put("Direcci\u00F3n", "Si rellena la direccion del trabajador, debera rellenar los campos azules correcta y obligatoriamente");
 	
 		return messageMap;
@@ -1655,6 +1666,10 @@ public abstract class Employee extends ResizeComposite {
 			return true;
 	}
 	
+	public boolean isCnoSelected() {
+		return AonStringUtils.isNotBlank(cnoSB.getValue());
+	}
+	
 	private boolean isAgreementAndLevelSelected() {
 		String agreementValue = agreement.getValue();
 		if(AonStringUtils.isBlank(agreementValue)) {
@@ -1719,21 +1734,12 @@ public abstract class Employee extends ResizeComposite {
 		widget.removeStyleName(style.errorBorder());
 	}
 	
-	private void addInfoIcon(HTMLPanel panel, Widget widget, String message) {
-		panel.clear();
-		panel.add(widget);
-		message = AonStringUtils.isBlank(message) ? "Info" : message;
-		panel.add(new AonToolbarSmallButton(message, AON.CSS.aonIconInfo()));
-		widget.addStyleName(style.flexGrow());
+	private void addWarnBorder(Widget widget) {
+		widget.addStyleName(style.errorBorder());
 	}
 	
-	private void removeInfoIcon(HTMLPanel panel, Widget widget) {
-		panel.clear();
-		panel.add(widget);
-		widget.addStyleName("rich-calendar-input aon-selectInputDate-inputClass");
-		widget.getElement().getStyle().setWidth(96, Unit.PCT);
-		widget.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-		widget.removeStyleName(style.warningTB());
+	private void removeWarnBorder(Widget widget) {
+		widget.removeStyleName(style.errorBorder());
 	}
 	
 	private void disable(ListBox listBox , String value) {

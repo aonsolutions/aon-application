@@ -8,6 +8,10 @@ public class DSLExtensions {
         return DSL.field("hex({0})", String.class, field);
     }
     
+    public static Field<String> hex(byte[] field) {
+    	return DSL.field("hex({0})", String.class, field);
+    }
+    
     public static Field<byte[]> unhex(String str) {
         return DSL.field("unhex({0})", byte[].class, str);
     }

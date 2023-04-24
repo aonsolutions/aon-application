@@ -1,3 +1,4 @@
+
 package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ public class DomainUserRoles implements Serializable {
 	
 	private List<AonRole> domainUserRoles;
 	private List<AonRole> parentDomainUserRoles;
+	private boolean domainPayer;
 	
 	public DomainUserRoles() {
 		super();
@@ -55,6 +57,15 @@ public class DomainUserRoles implements Serializable {
 	
 	public DomainUserRoles setUser(User user) {
 		this.user = user;
+		return this;
+	}
+	
+	public boolean isDomainPayer() {
+		return domainPayer;
+	}
+	
+	public DomainUserRoles setDomainPayer(boolean domainPayer) {
+		this.domainPayer = domainPayer;
 		return this;
 	}
 	
@@ -178,6 +189,10 @@ public class DomainUserRoles implements Serializable {
 	
 	public boolean isDev() {
 		return  hasRole(AonRole.DEV);
+	}
+	
+	public boolean isConsole() {
+		return  hasRole(AonRole.CONSOLE);
 	}
 	
 	// ACCOUNTING - CONTABILIDAD
@@ -422,27 +437,38 @@ public class DomainUserRoles implements Serializable {
 	
 	public boolean hasInvoice() {
 		return hasApp(AonApp.INVOICE) || hasOldModule(Module.AON_FINANCE)
-			|| hasOldModule(Module.FINANCE_PORTAL) || hasOldModule(Module.MANAGEMENT);
+			|| hasOldModule(Module.FINANCE_PORTAL) || hasOldModule(Module.MANAGEMENT)
+			|| hasOldModule(Module.AON_ONE);
 	}
 	
 	public boolean hasParentInvoice() {
 		return hasParentApp(AonApp.INVOICE) || hasParentOldModule(Module.AON_FINANCE)
-			|| hasParentOldModule(Module.FINANCE_PORTAL) || hasParentOldModule(Module.MANAGEMENT);
+			|| hasParentOldModule(Module.FINANCE_PORTAL) || hasParentOldModule(Module.MANAGEMENT)
+			|| hasOldModule(Module.AON_ONE);
 	}
 	
 	public boolean isInvoice() {
 		return (hasInvoice() || ((isParentUser() || isEnterpriseChild()) && hasParentInvoice()))
-			&& (isAdmin() || hasRole(AonRole.INVOICE));
+			&& ((isAdmin() || hasRole(AonRole.INVOICE))
+				|| isOldManagementRoles());
 	}
 	
 	public boolean isInvoicePortal() {
 		return (hasInvoice() || ((isParentUser() || isEnterpriseChild()) && hasParentInvoice()))
-			&& (isAdmin() || hasRole(AonRole.INVOICE_PORTAL));
+			&& ((isAdmin() || hasRole(AonRole.INVOICE_PORTAL))
+				|| isOldManagementRoles());
 	}
 	
 	public boolean isInvoiceManager() {
 		return (hasInvoice() || ((isParentUser() || isEnterpriseChild()) && hasParentInvoice()))
-			&& (isAdmin() || hasRole(AonRole.INVOICE_MANAGER));
+			&& ((isAdmin() || hasRole(AonRole.INVOICE_MANAGER))
+				|| isOldManagementRoles());
+	}
+	
+	private boolean isOldManagementRoles() {
+		return hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.SALE)
+		|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.PURCHASE)
+		|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.FINANCE);
 	}
 	
 	public boolean hasManagement() {
@@ -468,16 +494,43 @@ public class DomainUserRoles implements Serializable {
 		return hasApp(AonApp.OCR);
 	}
 	
+	public boolean hasParentOcr() {
+		return hasParentApp(AonApp.OCR);
+	}
+	
 	public boolean isOcr() {
-		return hasOcr() && (isAdmin() || hasRole(AonRole.OCR));
+		return (hasOcr() || ((isParentUser() || isEnterpriseChild()) && hasParentOcr()))
+			&& (isAdmin() || hasRole(AonRole.OCR));
+	}
+	
+	// BANK
+	
+	public boolean hasBank() {
+		return hasApp(AonApp.BANK);
+	}
+	
+	public boolean hasParentBank() {
+		return hasParentApp(AonApp.BANK);
 	}
 	
 	public boolean isBank() {
-		return hasApp(AonApp.BANK) && (isAdmin() || hasRole(AonRole.BANK));
+		return (hasBank() || ((isParentUser() || isEnterpriseChild()) && hasParentBank()))
+				&& (isAdmin() || hasRole(AonRole.BANK));
+	}
+	
+	// CONVENIOS
+	
+	private boolean hasConvenios() {
+		return hasApp(AonApp.CONVENIOS);
+	}
+	
+	private boolean hasParentConvenios() {
+		return hasParentApp(AonApp.CONVENIOS);
 	}
 	
 	public boolean isConvenios() {
-		return hasApp(AonApp.CONVENIOS); // TODO añadir -> && (isAdmin() || hasRole(AonRole.CONVENIOS));
+		return hasConvenios() || ((isParentUser() || isEnterpriseChild()) && hasParentConvenios());
+			// TODO añadir -> && (isAdmin() || hasRole(AonRole.CONVENIOS));
 	}
 	
 	public boolean isAon() {
@@ -548,7 +601,7 @@ public class DomainUserRoles implements Serializable {
 
 	public boolean isTreasury() {
 		return (hasTreasury() || ((isParentUser() || isEnterpriseChild()) && hasParentTreasury()))
-			&& (isAdmin() || hasRole(AonRole.TREASURY));
+			&& (isAdmin() || hasRole(AonRole.TREASURY) || hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.FINANCE));
 	}
 	
 	// MARKETING
@@ -578,6 +631,12 @@ public class DomainUserRoles implements Serializable {
 
 	public boolean isGroupware() {
 		return (hasGroupware() || ((isParentUser() || isEnterpriseChild()) && hasParentGroupware()))
-			 && (this.isAdmin() || this.hasRole(AonRole.GROUPWARE));
+			 && (isAdmin() || hasRole(AonRole.GROUPWARE) 
+				 || hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.TASK_MONITORING));
+	}
+	
+	public boolean isCallCenter() {
+		return hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER)
+			|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER_MANAGER);
 	}
 }

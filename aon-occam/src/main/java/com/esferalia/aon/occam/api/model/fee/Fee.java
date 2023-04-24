@@ -36,6 +36,7 @@ public class Fee implements Serializable{
 	private InvoicingGroup invoicingGroup;
 	private Seller seller;
 	private Workplace workplace;
+	private boolean modify = false;
 	
 		
 	public Double getQuantity() {
@@ -249,4 +250,14 @@ public class Fee implements Serializable{
 		this.customer = customer;
 		return this;
 	}
+
+	public boolean isModify() {
+		return modify;
+	}
+
+	public Fee setModify(boolean modify) {
+		this.modify = modify;
+		return this;
+	}
+	
 }

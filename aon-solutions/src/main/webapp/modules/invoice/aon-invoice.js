@@ -1136,10 +1136,14 @@ export class AonInvoice extends AonElement {
 		// this.clearElement(div);
 
 		// ----- WITHHOLDING
-
-		let irpfTable = new AonBasicTable();
-		irpfTable.id = 'irpfTable';
-		card.addContent(irpfTable);
+		let irpfTableId = 'irpfTable';
+		let irpfTable = this.getElement(irpfTableId);
+		if(!irpfTable){
+			irpfTable = new AonBasicTable();
+			irpfTable.id = 'irpfTable';
+			card.addContent(irpfTable);
+		}
+		irpfTable.removeRows();
 		irpfTable.addRow();
 
 		if(!this.invoice.isReadonly() && this.invoice.details.length === 0) {
@@ -2287,7 +2291,7 @@ export class AonInvoice extends AonElement {
 				d.clear();
 				if(!this.isMobile())d.width = '400px';
 				d.setTitle(MSG.RECORD_INVOICE);
-				d.setContentHTML('Esta opción está en desarrollo...');
+				d.setContentHTML(MSG.IN_DEVELOPMENT);
 				d.addAcceptAction(() => {});
 				d.open();
 		}

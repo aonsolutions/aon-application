@@ -39,6 +39,8 @@ public final class IJsonNames {
 	public static final String AMORTIZATION_INITIAL_DATE = "amortizationInitialDate";
 	public static final String AMOUNT = "amount";
 	public static final String AMOUNT_347 = "amount347";
+	public static final String AON_CUSTOMER = "aonCustomer";
+	public static final String AON_STATUS = "aonStatus";
 	public static final String AP1 = "ap1";
 	public static final String AP2 = "ap2";
 	public static final String APA = "apa";
@@ -186,6 +188,7 @@ public final class IJsonNames {
 	public static final String ENTRY_ENABLED = "entryEnabled";
 	public static final String ENTRY_ID = "entryId";
 	public static final String EPIGRAPH = "epigraph";
+	public static final String EPIGRAPH_SECTION = "epigraphSection";
 	public static final String ERROR = "error";
 	public static final String EXPENSES = "expenses";
 	public static final String EXPENSES_FIXED = "expensesFixed";
@@ -366,6 +369,8 @@ public final class IJsonNames {
 	public static final String PARENT = "parent";
 	public static final String PARENT_DOMAIN = "parentDomain";
 	public static final String PARENT_ID = "parentId";
+	public static final String PARTICIPATION_PERCENT = "participationPercent";
+	public static final String PARTICIPATION_QUOTA = "participationQuota";
 	public static final String PASSWORD = "password";
 	public static final String PATTERN = "pattern";
 	public static final String PAYMENT = "payment";
@@ -388,6 +393,7 @@ public final class IJsonNames {
 	public static final String PREVIOUS_PERIODS = "previousPeriods";
 	public static final String PRICE = "price";
 	public static final String PRINCIPAL = "principal";
+	public static final String PRINTER = "printer";
 	public static final String PRIORITY = "priority";
 	public static final String PROCESS_ID = "processId";
 	public static final String PRODUCT = "product";

@@ -35,6 +35,7 @@ public enum ContextVariable implements IResourceable {
 	NO_HOLIDAYS("DIAS_VACACIONES_NO_DISFRUTADOS", VariableType.INTEGER, false),
 	WORKED_DAYS("DIAS_TRABAJADOS", VariableType.INTEGER, false), 
 	NON_WORKED_DAYS("DIAS_NO_TRABAJADOS", VariableType.INTEGER, false), 
+	WORK_DAYS("DIAS_TRABAJANDO", VariableType.INTEGER, false),
 	WEEK_DAYS("DIAS_SEMANA", VariableType.INTEGER, false),
 	CONTRACT_DAYS("DIAS_CONTRATO", VariableType.INTEGER, false),
 	SALARY_DAYS("DIAS_NOMINA", VariableType.INTEGER, false), PAY_DAYS("DIAS_PAGA", VariableType.INTEGER, false),
@@ -145,6 +146,8 @@ public enum ContextVariable implements IResourceable {
 	EMPLOYEE_QUOTA("CUOTA_TRABAJADOR", VariableType.DOUBLE),
 	STRUCTURAL_OVERTIME_EMPLOYEE("ESTR", VariableType.DOUBLE), STRUCTURAL_OVERTIME_ENTERPRISE("ESTR_E", VariableType.DOUBLE),
 	NON_STRUCTURAL_OVERTIME_EMPLOYEE("NESTR", VariableType.DOUBLE), NON_STRUCTURAL_OVERTIME_ENTERPRISE("NESTR_E", VariableType.DOUBLE),
+	SOLIDARITY_EMPLOYEE("SOLIDARIDAD", VariableType.DOUBLE ),SOLIDARITY_ENTERPRISE("SOLIDARIDAD_E", VariableType.DOUBLE ),
+	
 	
 
 	// Datos 'temporales' del contrato
@@ -280,7 +283,7 @@ public enum ContextVariable implements IResourceable {
 //	PREST_IT("PREST_IT", VariableType.DOUBLE),
 	DIRECT_PAY("PAGO_DIRECTO", VariableType.BOOLEAN),
 
-	MONTHLY_SALARY("MODALIDAD_MENSUAL", VariableType.BOOLEAN),
+	MONTHLY_SALARY("MODALIDAD_MENSUAL", VariableType.BOOLEAN, false),
 
 	ON_ACCOUNT_AGREEMENT("A_CUENTA_CONVENIO", VariableType.UNKNOWN),
 
@@ -330,6 +333,8 @@ public enum ContextVariable implements IResourceable {
 	UNEMPLOY_EMPLOYEE_PERCENT("PORCENTAJE_DESMPL", VariableType.DOUBLE, false), 
 	UNEMPLOY_ENTERPRISE_PERCENT("PORCENTAJE_DESMPL_E", VariableType.DOUBLE, false),
 	FOGASA_ENTERPRISE_PERCENT("PORCENTAJE_FOGASA", VariableType.DOUBLE, false), 
+	SOLIDARITY_EMPLOYEE_PERCENT("PORCENTAJE_SOLIDARIDAD", VariableType.DOUBLE,false), 
+	SOLIDARITY_ENTERPRISE_PERCENT("PORCENTAJE_SOLIDARIDAD_E", VariableType.DOUBLE,false), 
 	NON_STRUCTURAL_OVERTIME_EMPLOYEE_PERCENT("PORCENTAJE_NEXTR", VariableType.DOUBLE,false), 
 	NON_STRUCTURAL_OVERTIME_ENTERPRISE_PERCENT("PORCENTAJE_NEXTR", VariableType.DOUBLE,false), 
 	
@@ -387,6 +392,7 @@ public enum ContextVariable implements IResourceable {
 	public static final String MONTHS = "MESES";
 	public static final String SECTION = "TRAMO";
 	public static final String WARNING = "AVISO";
+	public static final String SCOPE = "AMBITO";
 	public static final String ISDEF = "DEFINIDA";
 	public static final String ISREAD = "UTILIZADA";
 	public static final String CHECK_VAR = "CHECK_VAR";
@@ -552,6 +558,10 @@ public enum ContextVariable implements IResourceable {
 
 	public static double br() {
 		return 666;
+	}
+
+	public static String getDecimalNameFor(Double round) {
+	    return String.format(Locale.ROOT, "DECIMAL_%.2f", round);
 	}
 
 }

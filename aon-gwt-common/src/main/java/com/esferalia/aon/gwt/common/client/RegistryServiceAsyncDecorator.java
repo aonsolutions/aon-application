@@ -1,12 +1,15 @@
 package com.esferalia.aon.gwt.common.client;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.RegistryParams;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -84,6 +87,69 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	public void save(String domainName, int domain, String user, SupplierFull supplierFull, AsyncCallback<SupplierFull> callback) {
 		AON.start();
 		serviceAsync.save(domainName, domain, user, supplierFull, new AsyncCallbackWrapper<SupplierFull>(callback));
+	}
+	
+	// **************************************************
+	// *********************************** [CUSTOMER FEE]
+	// **************************************************
+	
+	@Override
+	public void getCustomersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, String>> callback) {
+		AON.start();
+		serviceAsync.getCustomersSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, String>>(callback));
+	}
+
+	@Override
+	public void getProductsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, String>> callback) {
+		AON.start();
+		serviceAsync.getProductsSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, String>>(callback));
+	}
+	
+	@Override
+	public void getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<Map<Integer, Integer>> callback) {
+		AON.start();
+		serviceAsync.getCustomerProductsUpdates(domainName, domain, user, customerFeeParams, new AsyncCallbackWrapper<Map<Integer, Integer>>(callback));
+	}
+	
+	@Override
+	public void getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<LinkedList<Fee>> callback) {
+		AON.start();
+		serviceAsync.getCustomerFeeList(domainName, domain, user, customerFeeParams, new AsyncCallbackWrapper<LinkedList<Fee>>(callback));
+	}
+	@Override
+	public void saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> feeList, AsyncCallback<Integer> callback) {
+		AON.start();
+		serviceAsync.saveCustomerFeeList(domainName, domain, user, feeList, new AsyncCallbackWrapper<Integer>(callback));
+	}
+
+	@Override
+	public void saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params, AsyncCallback<Integer> callback) {
+		AON.start();
+		serviceAsync.saveMassiveCustomerFee(domainName, domain, user, fee, params, new AsyncCallbackWrapper<Integer>(callback));
+	}
+
+	@Override
+	public void getMinMaxCustomerFeeYear(String domainName, int domain, String user, AsyncCallback<Map<Integer, Integer>> callback) {
+		AON.start();
+		serviceAsync.getMinMaxCustomerFeeYear(domainName, domain, user, new AsyncCallbackWrapper<Map<Integer, Integer>>(callback));
+	}
+
+	@Override
+	public void getItemIdByProductCode(String domainName, int domain, String user, String productCode, AsyncCallback<Integer> callback) {
+		AON.start();
+		serviceAsync.getItemIdByProductCode(domainName, domain, user, productCode, new AsyncCallbackWrapper<Integer>(callback));
+	}
+
+	@Override
+	public void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.deleteCustomerFeeList(domainName, domain, user, selectedFees, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.deleteCustomerFeeList(domainName, domain, user, params, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 }

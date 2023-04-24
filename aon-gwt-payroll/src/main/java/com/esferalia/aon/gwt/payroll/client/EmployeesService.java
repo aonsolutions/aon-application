@@ -292,6 +292,9 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	void cambioOcupacion(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
 			String ocup, Date fecha) throws IllegalArgumentException;
+	
+	void cambioCno(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo, 
+			String cno, Date fecha) throws IllegalArgumentException;
 
 	void cambioCatProf(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo,
 			String cat, Date fecha) throws IllegalArgumentException;

@@ -10,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Agreement.Level;
+import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractJourneyDuration;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
@@ -198,6 +199,11 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		public void onContractRLCEChange(String rlce) {
 			contrataEmployeeObject.setContractRlce(rlce);
 		}
+
+		@Override
+		public void onEmployeeCnoSuggestionChange(String cno) {
+			contrataEmployeeObject.setContractCno(cno);
+		}
 		
 		@Override
 		public void onContractEmployeesColectiveChange(String employeesColective) {
@@ -359,13 +365,6 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected ContractEmployeeUI() {
 		employee = new EmployeeImplementation();
 		initWidget(uiBinder.createAndBindUi(this));
-		setDefaultEmployeeView();
-	}
-
-	// ------------------------------------------------- Init preView
-
-	private void setDefaultEmployeeView() {
-		employee.hideClearEmployee();
 	}
 	
 	// ------------------------------------------------- setContrataEmployeeObject
@@ -640,6 +639,10 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 		employee.getEnableDisableButton(employee.quoteGroupCotizB, contractData.getQuoteGroupIdxMonth());
 		setSelectedValueLB(employee.occupation, contractData.getOcupation());
 		setSelectedValueLB(employee.rlce, contractData.getRlce());
+		
+		CNO cno = employee.getCNOByCode(contractData.getCno());
+		if(cno != null) employee.cnoSB.setValue(cno.getCode() + " - " + cno.getTitle());
+		if(!employee.isCnoSelected()) showWarningMessage("CNO", "El CNO es obligatorio para todas las altas a partir del 01/01/2023");
 	}
 	
 	private static boolean isCompleteJourneyContract(String contractTypeCodeStr) {
@@ -765,6 +768,7 @@ public abstract class ContractEmployeeUI extends ResizeComposite {
 	protected abstract AonMinimizePanel getFootPanel();
 	protected abstract MonthListBox getIDCMonthListBox();
 	protected abstract void showErrorMessage(String title, String message);
+	protected abstract void showWarningMessage(String title, String message);
 	protected abstract void showAfiOption();
 	protected abstract void hideAfiOption();
 	

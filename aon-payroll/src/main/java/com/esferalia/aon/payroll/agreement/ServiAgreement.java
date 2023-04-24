@@ -4,12 +4,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
+import org.htmlunit.BrowserVersion;
+import org.htmlunit.DefaultCredentialsProvider;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.NicelyResynchronizingAjaxController;
+import org.htmlunit.Page;
+import org.htmlunit.WebClient;
 
 import solutions.aon.sepe.exceptions.certificate.InvalidCertificateException;
 

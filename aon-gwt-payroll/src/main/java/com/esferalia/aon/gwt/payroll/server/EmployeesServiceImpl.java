@@ -208,7 +208,7 @@ import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.registry.RDirStaff;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateNotFoundException;
 import com.esferalia.aon.occam.api.model.type.ContractAttachType;
 import com.esferalia.aon.occam.api.model.type.ContractType;
@@ -1658,7 +1658,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		try {
 		    	conn = AonServletUtils.getConnection(domain);
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			ISalary salary = EmployeesServiceHelper.calculate(conn, draft, new SmartContractSalaryCalculator<>(new SalaryBuilder()));
+			com.esferalia.aon.payroll.Salary salary = EmployeesServiceHelper.calculate(conn, draft, new SmartContractSalaryCalculator<>(new SalaryBuilder()));
 
 			DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
 			byte [] reportByteArray = reportOut.toByteArray();
@@ -1699,7 +1699,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		try {
 
 			ByteArrayOutputStream reportOut = new ByteArrayOutputStream();
-			ISalary salary = getSalary(domain, agreementDraft, context, levelId);
+			com.esferalia.aon.payroll.Salary salary = getSalary(domain, agreementDraft, context, levelId);
 
 			try {
 				DraftPayrollBuilder.generatePayroll(reportOut, domain, salary);
@@ -2475,7 +2475,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			PAYROLL.getCCCStream(domainName, domainId, userLogin).forEach(ccc -> {
 				try {
 					Map<String, Map<String, WorkerLiquidation>> cccSldCost = SistemaRED.getCosts(
-							certificate.getCertificate(), certificate.getPassword(), certificate.getType(),
+							certificate.getData(), certificate.getPassword(), certificate.getType(),
 							ccc.getCccRegimeCode(), ccc.getCcc(), startDate, endDate);
 					cccSldCosts.put(ccc.getCcc(), cccSldCost);
 
@@ -6468,7 +6468,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// Get employees ipdxnaf
 			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaRED.ipfxnaf(
-					new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(),
+					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
 					certificate.getType(), nssList);
 
 			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux
@@ -6481,7 +6481,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			System.out.println(employee);
 
 			// sendAlta
-			SistemaRED.sendAlta(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(),
+			SistemaRED.sendAlta(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
 					certificate.getType(), employee);
 
 		} catch (Exception e) {
@@ -6510,7 +6510,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// Get employees ipdxnaf
 			Collection<solutions.aon.seg.social.object.Employee> employeesAux = SistemaRED.ipfxnaf(
-					new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(),
+					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
 					certificate.getType(), nssList);
 
 			solutions.aon.seg.social.object.Employee eemployeeAux = (solutions.aon.seg.social.object.Employee) employeesAux
@@ -6523,7 +6523,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			System.out.println("sendEmployeeBaja \n" + employee.toString());
 
 			// sendBaja
-			SistemaRED.sendBaja(new ByteArrayInputStream(certificate.getCertificate()), certificate.getPassword(),
+			SistemaRED.sendBaja(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
 					certificate.getType(), employee);
 
 		} catch (Exception e) {
@@ -6547,7 +6547,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 
-			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
 			// movPrevDelete
 			SistemaRED.movPrevDelete(certificateInputStream, certificate.getPassword(), certificate.getType(),
@@ -6574,7 +6574,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// Get certificate
 			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
 
-			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getCertificate());
+			InputStream certificateInputStream = new ByteArrayInputStream(certificate.getData());
 
 			ArrayList<String> nssList = new ArrayList<>();
 			nssList.add(nss);
@@ -6776,6 +6776,50 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
 							employeeContractInfo.getContractInfo().getCompleteCCC().length()),
 					employeeAux.getNss(), ocup, fecha);
+
+		} catch (Exception e) {
+			if (e instanceof solutions.aon.seg.social.exception.CertificateNotFoundException)
+				throw new IllegalArgumentException("No existe certificado TGSS para realizar esta comunicacion");
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+	
+	@Override
+	public void cambioCno(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo, String cno, Date fecha) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			// Domain, parentDomain and User id
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			// Get certificate
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "TGSS");
+
+			System.out.println("DATOS: \n" + employeeContractInfo.getEmployeeInfo().getDocument() + "\n"
+					+ employeeContractInfo.getEmployeeInfo().getSurName() + "\n"
+					+ employeeContractInfo.getEmployeeInfo().getSecondSurName() + "\n"
+					+ employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4) + "\n"
+					+ employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,employeeContractInfo.getContractInfo().getCompleteCCC().length())
+					+ "\n" + cno + "\n" + fecha);
+
+			// Get employee nafxipf
+			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
+					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
+					certificate.getType(), employeeContractInfo.getEmployeeInfo().getDocument(),
+					employeeContractInfo.getEmployeeInfo().getSurName(),
+					employeeContractInfo.getEmployeeInfo().getSecondSurName());
+
+			System.out.println(employeeAux.getNss());
+
+			// cambioOcupacion
+			SistemaRED.cambioCno(new ByteArrayInputStream(certificate.getData()),
+					certificate.getPassword(), certificate.getType(),
+					employeeContractInfo.getEmployeeInfo().getDocument(),
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4),
+					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
+							employeeContractInfo.getContractInfo().getCompleteCCC().length()),
+					employeeAux.getNss(), cno, fecha);
 
 		} catch (Exception e) {
 			if (e instanceof solutions.aon.seg.social.exception.CertificateNotFoundException)
@@ -7584,7 +7628,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					.and(f.getEndDateProperty().le(endDate))
 					.and(
 						f.getIsSalaryProperty().eq(true)
-						.or(f.getIsDelayProperty().eq(true))
+//						.or(f.getIsDelayProperty().eq(true))
 						.or(f.getIsSettlementProperty().eq(true))
 					)
 			)

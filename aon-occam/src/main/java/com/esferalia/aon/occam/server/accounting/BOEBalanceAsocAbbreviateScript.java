@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 
 public class BOEBalanceAsocAbbreviateScript extends BalanceScript {
 	
+	private static final long serialVersionUID = 4359114330923297790L;
 	// Á --> \u00C1 á --> \u00E1 
 	// É --> \u00C9 é --> \u00E9 
 	// Í --> \u00CD í --> \u00ED 

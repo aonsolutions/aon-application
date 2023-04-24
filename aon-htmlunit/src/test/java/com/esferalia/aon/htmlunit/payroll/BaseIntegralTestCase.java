@@ -22,26 +22,26 @@ import java.util.logging.Level;
 import org.junit.AfterClass;
 import org.junit.Assert;
 
-import com.gargoylesoftware.htmlunit.AlertHandler;
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.ScriptException;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlSpan;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
-import com.gargoylesoftware.htmlunit.javascript.host.event.KeyboardEvent;
+import org.htmlunit.AlertHandler;
+import org.htmlunit.BrowserVersion;
+import org.htmlunit.NicelyResynchronizingAjaxController;
+import org.htmlunit.Page;
+import org.htmlunit.ScriptException;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlButton;
+import org.htmlunit.html.HtmlDivision;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlImage;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlOption;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.HtmlSpan;
+import org.htmlunit.html.HtmlTable;
+import org.htmlunit.javascript.JavaScriptErrorListener;
+import org.htmlunit.javascript.host.event.KeyboardEvent;
 
 public abstract class BaseIntegralTestCase {
 
@@ -439,9 +439,9 @@ public abstract class BaseIntegralTestCase {
 	protected static void wait4Value(String id, String value) throws InterruptedException {
 		wait4(htmlPage,
 				htmlPage -> htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id) != null);
-		LOGGER.warning("wait4Value : [ "+ id +"] '" + ((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id )).getValueAttribute().trim() +"' = '" +value.trim()+"'");
+		LOGGER.warning("wait4Value : [ "+ id +"] '" + ((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX + id )).getValue().trim() +"' = '" +value.trim()+"'");
 		wait4(htmlPage,
-				htmlPage -> ((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id)).getValueAttribute().trim().equals(value.trim()));
+				htmlPage -> ((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id)).getValue().trim().equals(value.trim()));
 	}
 
 	protected static void wait4Value(String id, Double value) throws InterruptedException {
@@ -451,7 +451,7 @@ public abstract class BaseIntegralTestCase {
 		
 		wait4(htmlPage,
 				htmlPage -> {
-						String attrStr = ((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id)).getValueAttribute();
+						String attrStr = ((HtmlInput)htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id)).getValue();
 						Double attrNum;
 						try {
 							attrNum = NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(attrStr).doubleValue();
@@ -508,17 +508,17 @@ public abstract class BaseIntegralTestCase {
 
 	protected static void assertValue(String id, String value) throws ParseException {
 		HtmlInput input = getElementById(id);
-		Assert.assertEquals(value, input.getValueAttribute());
+		Assert.assertEquals(value, input.getValue());
 	}
 
 	protected static void assertValue(String id, double value) throws ParseException {
 		HtmlInput input = getElementById(id);
-		Assert.assertEquals(value, NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(input.getValueAttribute()).doubleValue(), 0.04);
+		Assert.assertEquals(value, NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(input.getValue()).doubleValue(), 0.04);
 	}
 
 	protected static void assertValue(String id, double value, double delta) throws ParseException {
 		HtmlInput input = getElementById(id);
-		Assert.assertEquals(value, NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(input.getValueAttribute()).doubleValue(), delta);
+		Assert.assertEquals(value, NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(input.getValue()).doubleValue(), delta);
 	}
 
 	protected static void assertDisabled(String id, boolean disabled) throws InterruptedException {
@@ -533,7 +533,7 @@ public abstract class BaseIntegralTestCase {
 
 	protected static double getValue(String id) throws ParseException {
 		HtmlInput input = getElementById(id);
-		return NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(input.getValueAttribute()).doubleValue();
+		return NumberFormat.getNumberInstance(new Locale("es", "ES")).parse(input.getValue()).doubleValue();
 	}
 
 	protected static double getText(String id) throws ParseException {
@@ -544,7 +544,7 @@ public abstract class BaseIntegralTestCase {
 	protected static void setValue(String id, String text) throws ParseException {
 		HtmlInput input = getElementById(id);
 		input.focus();
-		input.setValueAttribute(text);
+		input.setValue(text);
 		input.blur();
 	}
 

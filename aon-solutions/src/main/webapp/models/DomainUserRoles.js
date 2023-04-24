@@ -22,6 +22,7 @@ export class DomainUserRoles {
   oldParentDomainModules;
   oldUserRoles;
 
+  domainPayer;
 
   constructor(data) {
     this.domain = new Domain(data.domain);
@@ -39,6 +40,7 @@ export class DomainUserRoles {
 
     this.maxDefinedUsers = data.maxDefinedUsers;
     this.definedUsers = data.definedUsers;
+    this.domainPayer = data.domainPayer;
   }
 
   checkUsers() {
@@ -438,12 +440,14 @@ export class DomainUserRoles {
 
   hasInvoice() {
     return this.hasApp(App.INVOICE) || this.hasOldModule(OldModule.FINANCE_PORTAL)
-      || this.hasOldModule(OldModule.AON_FINANCE) || this.hasOldModule(OldModule.MANAGEMENT);
+      || this.hasOldModule(OldModule.AON_FINANCE) || this.hasOldModule(OldModule.MANAGEMENT)
+      || this.hasOldModule(OldModule.AON_ONE);
   }
 
   hasParentInvoice() {
     return this.hasParentApp(App.INVOICE) || this.hasParentOldModule(OldModule.FINANCE_PORTAL)
-      || this.hasParentOldModule(OldModule.AON_FINANCE) || this.hasParentOldModule(OldModule.MANAGEMENT);
+      || this.hasParentOldModule(OldModule.AON_FINANCE) || this.hasParentOldModule(OldModule.MANAGEMENT)
+      || this.hasOldModule(OldModule.AON_ONE);
   }
 
 	isInvoice() {
@@ -536,16 +540,49 @@ export class DomainUserRoles {
 		return this.hasApp(App.ALMA) && (this.isAdmin() || this.hasRole(Role.ALMA));
 	}
 
+  // OCR
+
+  hasOcr() {
+    return this.hasApp(App.OCR);
+  }
+
+  hasParentOcr() {
+    return this.hasParentApp(App.OCR);
+  }
+
 	isOcr() {
-		return this.hasApp(App.OCR) && (this.isAdmin() || this.hasRole(Role.OCR));
+		return (this.hasOcr() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentOcr()))
+      && (this.isAdmin() || this.hasRole(Role.OCR));
 	}
 
-	isBank() {
-		return this.hasApp(App.BANK) && (this.isAdmin() || this.hasRole(Role.BANK));
+  // BANK
+
+  hasBank() {
+    this.hasApp(App.BANK)
+  }
+
+  hasParentBank() {
+    this.hasParentApp(App.BANK)
+  }
+
+  isBank() {
+		return (this.hasBank() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentBank()))
+      && (this.isAdmin() || this.hasRole(Role.BANK));
 	}
+
+  // CONVENIOS
+  
+  hasConvenios() {
+    return this.hasApp(App.CONVENIOS);
+  }
+
+  hasParentConvenios() {
+    return this.hasParentApp(App.CONVENIOS);
+  }
 
 	isConvenios() {
-		return this.hasApp(App.CONVENIOS) && (this.isAdmin() || this.hasRole(Role.CONVENIOS));
+		return (this.hasConvenios() || ((this.parentUser || this.isEnterpriseChild()) && this.hasParentConvenios()))
+      && (this.isAdmin() || this.hasRole(Role.CONVENIOS));
 	}
 
   hasAon() {
@@ -616,5 +653,14 @@ export class DomainUserRoles {
 
   isEmptyDomain() {
     return !(this.domain && this.domain.id);
+  }
+  
+  isConsoleUser() {
+    if(this.user.domain != undefined) return this.user.domain == 0;
+    else return false;
+  }
+
+  isDomainPayer() {
+    return this.domainPayer;
   }
 }

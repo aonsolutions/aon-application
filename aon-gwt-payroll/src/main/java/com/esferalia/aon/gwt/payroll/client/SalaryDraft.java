@@ -33,6 +33,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.AonDateUtils;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
@@ -79,12 +80,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.dom.client.Style.WhiteSpace;
@@ -292,6 +290,10 @@ public class SalaryDraft extends ResizeComposite
 			"BASE_CGC_E", 
 			"BASE_CGP_E", // internals
 			"BASE_CGC_MIN_HORA",
+			"BASE_PAGO_DIRECTO",
+			"BASE_PAGO_DIRECTO_BRUTA",
+			"BASE_MTNAD",
+			"BASE_MTNAD_BRUTA",
 			
 			"BASE_CGC_MAX_MES", "BASE_CGC_MIN_MES", 
 			"BASE_CGP_MAX_MES", "BASE_CGP_MIN_MES",
@@ -2801,6 +2803,9 @@ public class SalaryDraft extends ResizeComposite
 	CheckBox disabledPaymentsCheck;
 	@UiField
 	CheckBox dbSalaryCheck;
+	
+	@UiField
+	HTMLPanel collapContextPanel;
 
 	@UiField
 	Button closePreviewButton;
@@ -2879,11 +2884,14 @@ public class SalaryDraft extends ResizeComposite
 
 	private Timer fiscalModelsPopupTimer ;
 	
+	private AonToolbarSmallButton collapseContextBtn;
+	private boolean contextMenuShowed = true;
+	
 	public SalaryDraft() {
 		initWidget(binder.createAndBindUi(this));
+		if (Wnd.isNewAONTheme()) createCollapContextPanel();
 		initPaymentsTable();
 		initPrintPreview();
-		initOpenCloseContext();
 		scope = Scope.CONTRACT;
 		salarySelect.addListener(this);
 		showDraft();
@@ -2906,6 +2914,25 @@ public class SalaryDraft extends ResizeComposite
 		Window.addResizeHandler(e -> resizeContentPanel());
 	}
 	
+	private void createCollapContextPanel() {
+		Label title = new Label("Variables de calculo");
+		title.addStyleName("aon-finding-toolbar-item");
+		title.getElement().getStyle().setBorderStyle(BorderStyle.NONE);
+		
+		collapseContextBtn = new AonToolbarSmallButton("Ocultar", AON.CSS.aonIconFormatIndentIncrease());
+		collapseContextBtn.addClickHandler(e -> {
+			if(contextMenuShowed) 
+				hideContextAtLeft();
+			else
+				showContextAtLeft();
+			
+			contextMenuShowed = !contextMenuShowed;
+		});
+		
+		collapContextPanel.add(title);
+		collapContextPanel.add(collapseContextBtn);
+	}
+
 	public void setToolbarTitle(String title) {
 		toolbarTitleLabel.setText(title );
 	}
@@ -3602,7 +3629,7 @@ public class SalaryDraft extends ResizeComposite
 		employeePartialFactorTitle.setVisible(employeePartialFactorLabel.isVisible() );
 		employeePartialFactorButton.setVisible(employeePartialFactorLabel.isVisible() );
 
-		double workDays = getValuesOf("DIAS_TRABAJADOS").collect(Collectors.summingDouble( AonNumberUtils::todouble));
+		double workDays = getValuesOf("DIAS_TRABAJADOS", salaryStartDate, salaryEndDate).collect(Collectors.summingDouble( AonNumberUtils::todouble));
 		employeeWorkedDaysLabel.setText(formatValue(workDays));
 		employeeWorkedDaysLabel.setVisible(isSalary() && !hoursBase  && salaryPartialFactor == 1.00 && workDays > 0 );
 		employeeWorkedDaysTitle.setVisible(employeeWorkedDaysLabel.isVisible());
@@ -3674,7 +3701,7 @@ public class SalaryDraft extends ResizeComposite
 		//dumpContext(constants, Scope.CONTRACT, true, null);
 		
 		if ( Wnd.isNewAONTheme() ) {
-		    showContextAtLeft();
+		    if(contextMenuShowed) showContextAtLeft();
 		    dumpContextAtLeft(visibleContext);
 		    notDefinedVarsCheck.removeFromParent();
 		} else {
@@ -3706,6 +3733,17 @@ public class SalaryDraft extends ResizeComposite
 	public Stream<String> getValuesOf(String name) {
 		return salaryDraftObject.getContext().stream()
 		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		.map(Variable::getValue)
+		.filter(Objects::nonNull)
+		.map(String::valueOf )
+		;
+	}
+
+	public Stream<String> getValuesOf(String name, Date startDate, Date endDate) {
+		return salaryDraftObject.getContext().stream()
+		.filter(v-> AonStringUtils.equalsIgnoreCase(name, v.getName()))
+		.filter(v -> AonDateUtils.compare(v.getStartDate(),endDate) <= 0 )
+		.filter(v -> AonDateUtils.compare(v.getEndDate(),startDate) >= 0 )
 		.map(Variable::getValue)
 		.filter(Objects::nonNull)
 		.map(String::valueOf )
@@ -4061,69 +4099,6 @@ public class SalaryDraft extends ResizeComposite
 	}
 	private void initSalarySs() {
 		ssUIObjects = new LinkedList<HasStyleName>();
-	}
-
-	private void initOpenCloseContext() {
-		
-		SpanElement closeContextButton = 
-		Document.get().createSpanElement();
-		closeContextButton.setInnerText("chevron_right");
-		closeContextButton.setClassName("material-icons");
-		
-		closeContextButton.getStyle().setOpacity(0.5);
-		closeContextButton.getStyle().setPadding(5, Unit.PX);
-		closeContextButton.getStyle().setBackgroundColor("#ddd");
-		closeContextButton.getStyle().setProperty("borderTopRightRadius", "50%");
-		closeContextButton.getStyle().setProperty("borderBottomRightRadius", "50%");
-		
-		closeContextButton.getStyle().setPosition(Position.ABSOLUTE);
-		closeContextButton.getStyle().setRight(5, Unit.PX);
-		closeContextButton.getStyle().setBottom(0, Unit.PX);
-
-		scrolledPanel.getElement().getParentElement().appendChild(closeContextButton);
-		
-		SpanElement openContextButton = 
-		Document.get().createSpanElement();
-		openContextButton.setInnerText("chevron_left");
-		openContextButton.setClassName("material-icons");
-		
-		openContextButton.getStyle().setOpacity(0.5);
-		openContextButton.getStyle().setPadding(5, Unit.PX);
-		openContextButton.getStyle().setBackgroundColor("#ddd");
-		openContextButton.getStyle().setProperty("borderTopLeftRadius", "50%");
-		openContextButton.getStyle().setProperty("borderBottomLeftRadius", "50%");
-
-		openContextButton.getStyle().setPosition(Position.ABSOLUTE);
-		openContextButton.getStyle().setRight(5, Unit.PX);
-		openContextButton.getStyle().setBottom(0, Unit.PX);
-		openContextButton.getStyle().setDisplay(Display.NONE);
-
-		scrolledPanel.getElement().getParentElement().appendChild(openContextButton);
-
-		InlineLabel.wrap(openContextButton).addClickHandler(e -> {
-		    drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 275);
-			openContextButton.getStyle().setDisplay(Display.NONE);
-			closeContextButton.getStyle().setDisplay(Display.INITIAL);
-		});
-
-		InlineLabel.wrap(closeContextButton).addClickHandler(e -> {
-		    	drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 0);
-			closeContextButton.getStyle().setDisplay(Display.NONE);
-			new Timer(){
-				@Override
-				public void run() {
-					openContextButton.getStyle().setDisplay(Display.INITIAL);
-				}
-			}.schedule(500);
-			
-		});
-
-		contextStackLayoutPanel.getElement().getParentElement().getStyle().setProperty("transition-property", "width");
-		contextStackLayoutPanel.getElement().getParentElement().getStyle().setProperty("transition-duration", "500ms");
-		
-		scrolledPanel.getElement().getParentElement().getStyle().setProperty("transition-property", "inset");
-		scrolledPanel.getElement().getParentElement().getStyle().setProperty("transition-duration", "500ms");
-		
 	}
 
 	private void initEvents() {
@@ -5248,11 +5223,23 @@ public class SalaryDraft extends ResizeComposite
 	}
 	
 	private void hideContextAtLeft() {
-	    drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 0);
+		if ( Wnd.isNewAONTheme() ) {
+			collapseContextBtn.setTitle("Mostrar");
+			collapseContextBtn.removeStyleName(AON.CSS.aonIconFormatIndentIncrease());
+			collapseContextBtn.addStyleName(AON.CSS.aonIconFormatIndentDecrease());
+		}
+		drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 0);
+		drafSplitLayoutPanel.animate(500);
 	}
 	
 	private void showContextAtLeft() {
-	    drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 250);
+		if ( Wnd.isNewAONTheme() ) {
+			collapseContextBtn.setTitle("Ocultar");
+			collapseContextBtn.removeStyleName(AON.CSS.aonIconFormatIndentDecrease());
+			collapseContextBtn.addStyleName(AON.CSS.aonIconFormatIndentIncrease());
+		}
+		drafSplitLayoutPanel.setWidgetSize(contextStackLayoutPanel, 275);
+		drafSplitLayoutPanel.animate(500);
 	}
 
 	private void dumpContextAtTop(List<Variable> visibleContext) {
@@ -7707,7 +7694,8 @@ public class SalaryDraft extends ResizeComposite
 	private static boolean isSSDeduction(Item<?> item) {
 		Enum<?> type = item.getType();
 		if (
-			type == Deduction.Type.BONUS
+			type == Deduction.Type.MEI
+			|| type == Deduction.Type.BONUS
 			|| type == Deduction.Type.FOGASA
 			|| type == Deduction.Type.JOB_TRAINING
 			|| type == Deduction.Type.UNEMPLOYMENT

@@ -72,6 +72,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.PAYROLL;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Salary;
@@ -80,12 +81,10 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
-import com.esferalia.aon.occam.api.model.security.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
-import com.esferalia.aon.payroll.tgss.creta.Bases.AddZeroDatoBasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.ConstantDatoBasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.CustomizeBasesCallback;
@@ -158,7 +157,7 @@ public class CretaServlet extends HttpServlet
 		public boolean isPartTimeEmployee(String naf, String ccc, Date start, Date end) {
 			return 
 			getEmployee(naf, start)
-			.map( e -> isPartialTime(e, start) || is3XX(e, start))
+			.map( e -> !isFullTime(e, start) &&( isPartialTime(e, start) || is2XX(e, start) || is3XX(e, start) || is5XX(e, start)))
 			.orElse(TrabajadoresTramosCallback.super.isPartTimeEmployee(naf, ccc, start, end))
 			;
 		}
@@ -188,6 +187,19 @@ public class CretaServlet extends HttpServlet
 
 		private boolean is3XX(Employee employee, Date date) {
 			return employee.getContractType(Employee.toLocalDate(date)).map( tc2 -> AonStringUtils.startsWith(tc2, "3")).orElse(false);
+		}
+
+		private boolean is2XX(Employee employee, Date date) {
+			return employee.getContractType(Employee.toLocalDate(date)).map( tc2 -> AonStringUtils.startsWith(tc2, "2")).orElse(false);
+		}
+
+		private boolean is5XX(Employee employee, Date date) {
+			return employee.getContractType(Employee.toLocalDate(date)).map( tc2 -> AonStringUtils.startsWith(tc2, "5")).orElse(false);
+		}
+
+
+		private boolean isFullTime(Employee employee, Date date) {
+			return employee.getFactor(Employee.toLocalDate(date)).map( factor ->  factor == 1.00  ).orElse(false);
 		}
 
 		private boolean isPartialTime(Employee employee, Date date) {
@@ -259,7 +271,9 @@ public class CretaServlet extends HttpServlet
 					;
 			
 			String i54 = req.getParameter(CretaService.Parameter.I54.name() );
-			ConstantDatoBasesCallback i54Callback = new ConstantDatoBasesCallback("54", "I", i54);
+			BasesCallback i54Callback = AonStringUtils.isBlank(i54) ? 
+				new Bases.DefaultsCallback().add("54", "1")
+				:new ConstantDatoBasesCallback("54", "I", i54 );
 	
 			InfoPickerBasesCallback pickerBasesCb = new InfoPickerBasesCallback();
 	
@@ -368,6 +382,11 @@ public class CretaServlet extends HttpServlet
 	
 			os.printf("\"messages\":[],\r\n");
 	
+			AonStringUtils.mapIfNotBlank(i54, str -> os.printf("\"i54\":\"%s\",\r\n", str ));
+			
+			pickerBasesCb.getBases().getLiquidacion().stream().findFirst()
+			.ifPresent(l -> os.printf("\"type\":\"%s\",\r\n", l.getTipo() ));
+				
 			os.printf("\"rectifying\":%b,\r\n", indicadorReftificacion );
 	
 			os.printf("\"requestSendRNT\":%b,\r\n", solicitudRecepcionRNT );
@@ -769,7 +788,7 @@ public class CretaServlet extends HttpServlet
 		String number = ccc.substring(4);
 		
 		byte [] idc = SistemaRED.getIDCCCC(
-			certificate.getCertificate(), 
+			certificate.getData(), 
 			certificate.getPassword(), 
 			certificate.getType(), 
 			regime, 
@@ -787,7 +806,7 @@ public class CretaServlet extends HttpServlet
 		List<byte[]> list = new LinkedList<>();
 		for ( String naf: nafs ) {
 			byte [] idc = SistemaRED.getIDCNSS(
-				certificate.getCertificate(), 
+				certificate.getData(), 
 				certificate.getPassword(), 
 				certificate.getType(), 
 				regime, 
@@ -1413,7 +1432,8 @@ public class CretaServlet extends HttpServlet
 
 	private static class InfoPickerBasesCallback implements BasesCallback {
 		
-		private net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases;
+		private net.aonsolutions.core.tgss.creta.jaxb.bases.Bases bases = 
+			new net.aonsolutions.core.tgss.creta.jaxb.bases.Bases();
 
 		private List<Event> errors = new ArrayList<Event>();
 		private List<Event> warnings = new ArrayList<Event>();

@@ -827,6 +827,14 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				onInvalidData(e.getVariableNames());
 			}
 
+			Double ereBase = quoteCalculator.getEreBase();
+			Double maternityBase = quoteCalculator.getMaternityBase();
+			Double rawMaternityBase = quoteCalculator.getRawMaternityBase();
+			Double additionalBase = quoteCalculator.getAdditionalBase();
+
+			Double directPayBase = quoteCalculator.getDirectPayBase();
+			Double rawDirectPayBase = quoteCalculator.getRawDirectPayBase();
+
 			if (AonNumberUtils.compare(rawCgcbase, cgcBase, 3) > 0) 
 				onCheckError(String.format(BASE_CGC_MAX_MSG, CGC_BASE.getDescription(), rawCgcbase, cgcBase));
 			else if (AonNumberUtils.compare(rawCgcbase, cgcBase, 3) < 0) {
@@ -835,16 +843,24 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				rawCgcbase = quoteCalculator.getRawCgcBase();
 				salaryBuilder.setRawCgcBase(rawCgcbase);
 				cgcBase = quoteCalculator.getCgcBase();
+			} 
+			
+			if (AonNumberUtils.compare(rawDirectPayBase, directPayBase, 3) < 0) {
+				fixBaseMin(ctx.getSalaryType(), expressionContext, start, end, quoteCalculator, taxCalculator, issueDate, leavePeriods,
+					offPeriods, rawDirectPayBase, directPayBase, DIRECT_BASE);
+			}
+			if (AonNumberUtils.compare(rawMaternityBase, maternityBase, 3) < 0) {
+				fixBaseMin(ctx.getSalaryType(), expressionContext, start, end, quoteCalculator, taxCalculator, issueDate, leavePeriods,
+					offPeriods, rawMaternityBase, maternityBase, MATERNITY_BASE);
 			}
 
 
-			Double ereBase = quoteCalculator.getEreBase();
 			if (ereBase != null)
 				cgcBase += ereBase;
-			Double maternityBase = quoteCalculator.getMaternityBase();
+			if (directPayBase != null)
+				cgcBase += directPayBase;
 			if (maternityBase != null)
 				cgcBase += maternityBase;
-			Double additionalBase = quoteCalculator.getAdditionalBase();
 			if (additionalBase != null)
 				cgcBase += additionalBase;
 			
@@ -867,13 +883,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			} catch (UndefinedVariablesException e) {
 				onInvalidData(e.getVariableNames());
 			}
-			if (AonNumberUtils.compare(rawCgpbase, cgpBase, 3) > 0) // rawCgcbase
-																	// > cgpBase
+			if (AonNumberUtils.compare(rawCgpbase, cgpBase, 3) > 0) {
 				onCheckError(String.format(BASE_CGP_MAX_MSG, CGP_BASE.getDescription(), rawCgcbase, cgpBase));
-			else if (AonNumberUtils.compare(rawCgpbase, cgpBase, 3) < 0) // rawCgcbase
-																			// <
-																			// cgpBase
+			} else if (AonNumberUtils.compare(rawCgpbase, cgpBase, 3) < 0) {
 				onCheckError(String.format(BASE_CGP_MIN_MSG, CGP_BASE.getDescription(), rawCgcbase, cgpBase));
+			}
 
 			if (ereBase != null)
 				cgpBase += ereBase;
@@ -881,6 +895,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				cgpBase += maternityBase;
 			if (additionalBase != null)
 				cgpBase += additionalBase;
+			if (directPayBase != null)
+				cgpBase += directPayBase;
 			
 			addVars(expressionContext, CGP_BASE,  ADDITIONAL_BASE);
 
@@ -1084,12 +1100,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 
 			for (IContractEmbargo contractEmbargo : contractEmbargos) {
 
-				Date embargoStart = Period.max(contractEmbargo.getStartDate(), start);
-				Date embargoEnd = Period.min(contractEmbargo.getEndDate(), end);
-
-				double left = contractEmbargo.getAmount();
-				expressionContext.setVariable(EMBARGO_PAID, left, embargoStart, embargoEnd);
 				try {
+					Date embargoStart = Period.max(contractEmbargo.getStartDate(), start);
+					Date embargoEnd = Period.min(contractEmbargo.getEndDate(), end);
+					
+					double left = contractEmbargo.getAmount();
+					expressionContext.setVariable(EMBARGO_PAID, left, embargoStart, embargoEnd);
+
 					double embargo = resolveEmbargo(expressionContext, contractEmbargo, embargoStart, embargoEnd);
 					total += embargo;
 					
@@ -1107,6 +1124,8 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					onUndefinedData(contractEmbargo, e.getMessage(), e.getVariableNames());
 				} catch (CompileException e) {
 					onCompileError(contractEmbargo, getSyntaxExpressionErrorMessage(contractEmbargo));
+				} catch ( Exception e) {
+				    	onCheckError(e.getMessage());
 				}
 
 			}
@@ -1177,11 +1196,13 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					total += cost;
 					
 				} catch (RemoveException | RemoveVariableError e) {
+				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 					// TODO: Something ??? It's really necessary...
 				} catch (IllegalArgumentException e) {
+				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 					// costStart > costEnd, ignore .
 				} catch (UndefinedVariablesException e) {
-
+				    	addResult(expressionContext, contractCost.getName(), start, end, 0.00);
 				} catch (ExpressionException e) {
 					throw new SalaryException(e.getMessage(), e);
 				}
@@ -1469,6 +1490,12 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 		})
 		.collect(Collectors.toList());
 		
+	}
+
+	protected void fixBaseMin(SalaryType salaryType, ExpressionContext expressionContext, Date start, Date end,
+		QuoteCalculator quoteCalculator, TaxCalculator taxCalculator, Date issueDate, List<Period> leavePeriods,
+		List<Period> offPeriods, Double rawBase, Double base, ContextVariable baseVar ) throws AonException {
+	    onCheckError(String.format(BASE_CGC_MIN_MSG, baseVar.getDescription(), rawBase, base));
 	}
 
 	protected void fixBaseCgcMin(SalaryType salaryType, ExpressionContext expressionContext, Date start, Date end,
@@ -2291,6 +2318,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			@Override
 			public void visitJobTraining(DeductionType deductionType) {
 				add();
+			}
+			
+			@Override
+			public void visitMei(DeductionType deductionType) {
+			    add();
 			}
 			
 			@Override

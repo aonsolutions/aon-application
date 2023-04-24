@@ -51,6 +51,10 @@
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/customer.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>gwt_main_customer_fee_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/customer_fee.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>gwt_supplier</from-outcome>
 			<to-view-id>/com/esferalia/aon/gwt/fiscal/facelet/registry/supplier.xhtml</to-view-id>
 		</navigation-case>

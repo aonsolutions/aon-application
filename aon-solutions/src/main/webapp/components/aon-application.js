@@ -346,7 +346,7 @@ export class AonApplication extends AonElement {
     div.id = sidenav.id + data.id;
     div.style.paddingBottom = "10px";
     if(!this.isBeta()) div.style.borderBottom = '1px solid #ebebeb';
-    div.style.backgroundColor = "#fff";
+
     sidenav.appendChild(div);
 
     if (newButton && !this.isMobile()) {

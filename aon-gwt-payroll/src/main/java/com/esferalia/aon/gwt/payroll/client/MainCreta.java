@@ -64,8 +64,8 @@ import com.esferalia.aon.gwt.payroll.shared.PEC;
 import com.esferalia.aon.gwt.payroll.shared.Province;
 import com.esferalia.aon.gwt.payroll.shared.SaveService;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.gargoylesoftware.htmlunit.javascript.host.Console;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -95,6 +95,8 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -385,6 +387,10 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		for ( Map.Entry<CretaService.Parameter, String> entry: params.entrySet() )
 			results.setParameter(entry.getKey(), entry.getValue());
 		results.run();
+	}
+
+	public void i54(String i54) {
+		run(Collections.singletonMap(CretaService.Parameter.I54, i54));
 	}
 
 	public void reftification(Void v) {
@@ -948,6 +954,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 		private Consumer<Void> onReftificativa;
 		private Consumer<Void> onSolicitudRecepcionRNT;
 		private Consumer<Void> onAceptarBasesAnteriores;
+		private Consumer<String> onI54;
 		
 		public AbstractBaseCretaDetail(
 				DetailPanel detailPanel, 
@@ -957,7 +964,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				Consumer<Void> onSolicitudRecepcionRNT,
 				Consumer<Void> onAceptarBasesAnteriores,
 				Consumer<Void> showResults,
-				Consumer<Void> showProgress
+				Consumer<Void> showProgress,
+				Consumer<String> onI54
 				) {
 			this.detailPanel = detailPanel;
 			this.resultsPanel = resultsPanel;
@@ -967,6 +975,7 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			this.onAceptarBasesAnteriores = onAceptarBasesAnteriores;
 			this.showResults = showResults;
 			this.showProgress = showProgress;
+			this.onI54 = onI54;
 		}
 		
 		@Override
@@ -1052,6 +1061,22 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 						aceptarBasesAnterioresRNT.setStyleName("aon-finding-toolbar-item");
 						aceptarBasesAnterioresRNT.addClickHandler(e-> onAceptarBasesAnteriores.accept(null));
 						basesEditor.add(aceptarBasesAnterioresRNT);
+						
+						if ( "L03".equalsIgnoreCase(result.getType()) ) {
+        						Label i54Label = new Label("Causa");
+        						i54Label.setStyleName("aon-finding-toolbar-item");
+        						basesEditor.add(i54Label );
+        						ListBox i54ListBox = new ListBox();
+        						i54ListBox.addItem("1- Atrasos de convenio", "1");
+        						i54ListBox.addItem("2- Normativa (disposici\u00f3n legal)", "2");
+        						i54ListBox.addItem("3- Acta de conciliaci\u00f3n", "3");
+        						i54ListBox.addItem("4- Sentencia judicial", "4");
+        						i54ListBox.addItem("5- Cualquier otro t\u00edtulo leg\u00edtimo", "5");
+        						i54ListBox.setSelectedIndex(Math.max(AonNumberUtils.toint(result.getI54())-1,0));
+        						i54ListBox.addChangeHandler( e -> onI54.accept(i54ListBox.getSelectedValue()));
+        						basesEditor.add(i54ListBox);
+						}
+						
 					}
 				}
 			}
@@ -1089,7 +1114,20 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 			aceptarBasesAnteriores.addClickHandler(e-> onAceptarBasesAnteriores.accept(null));
 			mergeEditor.add(aceptarBasesAnteriores);
 			
-
+			if ( "L03".equalsIgnoreCase(result.getType()) ) {
+        			Label i54Label = new Label("Causa");
+        			i54Label.setStyleName("aon-finding-toolbar-item");
+        			mergeEditor.add(i54Label );
+        			ListBox i54ListBox = new ListBox();
+        			i54ListBox.addItem("1- Atrasos de convenio", "1");
+        			i54ListBox.addItem("2- Normativa (disposici\u00f3n legal)", "2");
+        			i54ListBox.addItem("3- Acta de conciliaci\u00f3n", "3");
+        			i54ListBox.addItem("4- Sentencia judicial", "4");
+        			i54ListBox.addItem("5- Cualquier otro t\u00edtulo leg\u00edtimo", "5");
+        			i54ListBox.setSelectedIndex(Math.max(AonNumberUtils.toint(result.getI54())-1,0));
+        			i54ListBox.addChangeHandler( e -> onI54.accept(i54ListBox.getSelectedValue()));
+        			mergeEditor.add(i54ListBox);
+			}
 		}
 
 		private String getFileName() {
@@ -1224,7 +1262,8 @@ public class MainCreta extends MainEntryPoint implements Enterprises.Listener {
 				MainCreta.this::requestSendRNT,
 				MainCreta.this::acceptPrevBases,
 				MainCreta.this::showResultsPanel,
-				MainCreta.this::showProgressPanel);
+				MainCreta.this::showProgressPanel,
+				MainCreta.this::i54);
 		}
 
 		@Override

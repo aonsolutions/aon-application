@@ -9,11 +9,9 @@
 
 	<ui:include	src="/facelet/shared/array.prototype.js.xhtml" />
 
-	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
 	<aon:form id="mainForm">
 
-		<aon:div styleClass="aon-scroll-area" style="padding: 1.5em 1.5em 0 0 !important;">
+		<aon:div styleClass="aon-scroll-area" style="padding: .7em 1.5em 0 0 !important;">
 
 			<aon:panelGrid columns="3" styleClass="aon-panelGrid-formatting"
 				columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
@@ -45,7 +43,6 @@
 							
 							<aon:if test="#{desktop.state.fiscalInfoVisibleForPortal or desktop.state.accountingInfoVisibleForPortal or desktop.state.payrollInfoVisibleForPortal}">
 								<aon:div styleClass="aon-portlet">
-									<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 									
 									<aon:div styleClass="aon-portlet-title">								
 										<aon:div styleClass="aon-portlet-title-buttons">
@@ -137,5 +134,13 @@
 		</aon:div>
 	</aon:form>
 	
+	<script type="text/javascript">
+		const allElements = document.querySelectorAll('*');
+	
+		allElements.forEach((element) => {
+		  element.classList.remove('aon-top-menu-item-select');
+		});
+	</script>
+	 
 </ui:composition>
 

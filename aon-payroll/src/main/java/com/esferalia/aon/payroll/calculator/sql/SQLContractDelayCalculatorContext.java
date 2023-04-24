@@ -1254,7 +1254,7 @@ public class SQLContractDelayCalculatorContext extends
 
 		@Override
 		public void setCgcBase(Double cgcBase) {
-			values.put(SalaryColumns.CGC_BASE, cgcBase + directBase);
+			values.put(SalaryColumns.CGC_BASE, cgcBase /*+ directBase*/);
 		}
 
 		@Override

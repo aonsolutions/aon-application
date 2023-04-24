@@ -52,11 +52,11 @@ class PECListener  implements IdcParserListener {
 	@SuppressWarnings("serial")
 	static final Map<String, String> BONUS_QUOTA_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
-			put("01", "CUOTA_EMPRESARIAL"); 	// 
-			put("03", "CGC_E"); 				// Cuota empresarial por Contingencias Comunes
-			put("51", "CUOTA_EMPRESARIAL"); 	// Cuota Empresarial - Horas extras			
-			put("57", "CUOTA_EMPRESARIAL"); 	// Cuota Total
-			put("68", "CGC_E + IT_E + IMS_E"); 	// Contingencias Comunes y Profesionales - Cuota Total
+			put("01", "CGC_E + IT_E + IMS_E + FP_E + DESMPL_E + FOGASA_E"); 	// Cuota empresarial por AT y EP, Cuotas de recaudación	conjunta
+			put("03", "CGC_E"); 							// Cuota empresarial por Contingencias Comunes
+			put("51", "CUOTA_EMPRESARIAL"); 					// Cuota Empresarial - Horas extras			
+			put("57", "CUOTA_EMPRESARIAL"); 					// Cuota Total
+			put("68", "CGC_E + IT_E + IMS_E"); 					// Contingencias Comunes y Profesionales - Cuota Total
 			//put("81", "");
 		}
 	};
@@ -133,6 +133,7 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, String> PEC_BONUS_MAP = new HashMap<String, String>() {
 		{
 			put("01", "BONIFICACIÓN INEM");
+			put("03", "RED.CUOTA SS-PORCENT");
 			put("13", "BONIFICACIÓN SPEE PROG FOMENTO DE EMPLEO-PORCENTAJE");
 			put("16", "BONIFICACIÓN SPEE PROG FOMENTO DE EMPLEO. CUANTÍA");
 			put("15", "EXONERACIÓN E.R.E. FUERZA MAYOR. TIEMPO PARCIAL");
@@ -165,6 +166,7 @@ class PECListener  implements IdcParserListener {
 	static final Map<String, String> PEC_EXPRESSION_MAP = new HashMap<String, String>() {
 		{
 			put("01", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
+			put("03", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
 			put("13", "( %s ) * %.2f / 100.00"); 															// BONIFICACIÓN INEM
 			put("16",  String.format(Locale.ROOT,"TOTAL_BONF_SEPE=(isdef TOTAL_RED_CUOTA_SS ? TOTAL_BONF_SEPE : 0.00); BONF_SEPE=MIN(%%s, MIN(%%2$.2f, (%1$s == %2$s) ? %%2$.2f : MIN( %%2$.2f - TOTAL_BONF_SEPE, ROUND(%%2$.2f/30.00, 2)*%3$s) ));SELF.addVariable('TOTAL_BONF_SEPE', TOTAL_BONF_SEPE + BONF_SEPE ) ; BONF_SEPE", ContextVariable.SALARY_DAYS , ContextVariable.MONTH_DAYS, ContextVariable.QUOTE_DAYS)); 																	// 
 			//put("16",  String.format(Locale.ROOT,"MIN(%%s, MIN(%%2$.2f, (%s == %s) ? %%2$.2f : ROUND(%%2$.2f/30.00, 2)*%s))", ContextVariable.SALARY_DAYS , ContextVariable.MONTH_DAYS, ContextVariable.QUOTE_DAYS)); 																	// 

@@ -2,7 +2,7 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.util.Date;
 
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.type.Administration;
 
 public class TbaiConfiguration {

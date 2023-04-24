@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import com.esferalia.aon.salary.ISalary;
@@ -295,6 +296,12 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		salaryData.setExpression(String.valueOf(value));
 		this.salary.getSalaryDatas().add(salaryData);
 	}
+	
+	private void addDatas(Map<String, ITimedVariable<?>> context) {
+		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {
+			addData(entry.getKey(), entry.getValue());
+		}
+	}
 
 	@Override
 	public void addBonus(Double amount, String description, Date startDate,
@@ -325,6 +332,8 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 		salaryCost.setAmount(amount);
 		salaryCost.setCostConcept(cost.getName());
 		salaryCost.setDescription(description);
+		
+		addDatas(context);
 
 		this.salary.getSalaryCosts().add(salaryCost);
 	}
@@ -425,6 +434,7 @@ public class SalaryBuilder implements ISalaryBuilder<Salary> {
 			}
 		}
 
+		addDatas(context);
 	}
 
 	@Override

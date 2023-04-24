@@ -25,6 +25,22 @@
 		border-radius: 16px;
 	}
 	
+	/* Think looks better, but need to be checked in all pages */
+	
+	#rootPanel > div{
+		margin: .5rem;
+		border-radius: 1rem;
+		background-color: #fff !important;
+	}
+	
+	/* AonToolbar removes paddings for buttons and title panel */
+	
+	#gwt-debug-buttonBarBeta > div{
+		padding: 0;
+	}
+	
+	/* ------------------------------------------------------- */
+	
 	#rootPanel > div, 
 	#aonContent\:contentScrollDiv > div,
 	#aonContent\:contentScrollDiv > table,
@@ -64,7 +80,7 @@
 	}
 
 	form > div[id*="Menu:"] {
-	margin: 16px;
+		margin: 16px;
 		border-radius: 16px;
 		background-color: #ffffff !important;
 	}
@@ -73,15 +89,14 @@
 		display: none;
 	}
 	
-	/*
-	.aon-top-menu-item:hover,
-	.aon-top-menu-item-select:hover {
-		background-color: #f6f6f6 !important;
-	}*/
-	
 	.aon-top-menu-item-select {
-    	background-color: transparent !important;
+    	background-color: #f6f8fc !important;
+		font-weight: bold;
+		border-bottom: 2px solid #2152a5;
 	}
+	
+	.aon-top-menu-item-select-inner {}
+	
 	.aon-header-search {
 		padding: 14px 20px;
 		border-radius: 50%;
@@ -1752,6 +1767,10 @@
 		background-color: #f6f8fc !important;
 	}
 	
+	.gwt-Selector .gwt-SplitLayoutPanel-VDragger {
+		background-color: #f6f8fc !important;
+	}
+	
 	.aon-Model-Info * {
 		border-color : #f6f8fc !important;
 		background-color: transparent !important;
@@ -2142,7 +2161,7 @@
 			<aon:panelGroup>
 
 				<aon:div style="margin-bottom:2px;">
-					<aon:commandLink id="index" action="index" title="#{bundle.aon_home}" >
+					<aon:commandLink id="index" action="start" title="#{bundle.aon_home}" >
 					<aon:graphicImage style="height: 24px; vertical-align: middle;"
 						value="#{customize.headerLogo}" />
 					</aon:commandLink>
@@ -2157,7 +2176,7 @@
 			<aon:panelGroup>
 		<aon:commandLink 
 			id="new_aon"
-			action="index" 
+			action="start" 
 			immediate="true"
 			style="color: #002469;"
 			styleClass="aon-top-menu-item"
@@ -2377,7 +2396,7 @@
 						<aon:outputText value="#{domainSwitcher.domainName}"
 							style="vertical-align: middle; color: #5f6368;"
 							styleClass="aon-nowrap aon-header-domain-title aon-margin-right"/>
-						<aon:commandLink id="home" action="index"
+						<aon:commandLink id="home" action="start"
 							rendered="#{!aonConfiguration.properties.hideMenuHome}"
 							title="#{bundle.aon_home}"
 							styleClass="aon-header-home"

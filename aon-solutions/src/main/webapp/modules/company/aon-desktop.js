@@ -124,6 +124,7 @@ export class AonDesktop extends AonElement {
 				img.id = this.id + 'LogoImg';
 				img.style.maxHeight = '60px';
 				img.style.maxWidth = '100%';
+				img.style.borderRadius = '10px';
 				img.src = url;
 				divLogo.appendChild(img);
 			}

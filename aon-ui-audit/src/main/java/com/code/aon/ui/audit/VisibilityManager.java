@@ -142,6 +142,7 @@ public class VisibilityManager extends BasicVisibilityManager {
 	
 	@Override
 	public Set<Module> getEnabledModules( User user, boolean addExtraModules ) {
+		if(user == null) user = new User();
 		Set<Module> enabledModules = new HashSet<>();
 		DomainSwitcher ds = (DomainSwitcher) AonUtil.getRegisteredBean(DOMAIN_SWITCHER);
 		Integer domainId = ds.getDomainId();
@@ -174,10 +175,8 @@ public class VisibilityManager extends BasicVisibilityManager {
 			        iterator.remove();
 			    }
 			}
-			addConfiguration = userOfParentDomain;
-		} else if ( domainModules.contains(Module.AON_FINANCE) ) {
-			addConfiguration = userOfParentDomain;
-		}
+		} 
+
 
 		if ( addConfiguration ) {
 			enabledModules.add(Module.CONFIGURATION);
@@ -210,12 +209,14 @@ public class VisibilityManager extends BasicVisibilityManager {
 		if(dur.isAccountingManager()) enabledModules.add(Module.ACCOUNTING);
 		if(dur.isFiscalManager()) enabledModules.add(Module.FISCAL);
 		if(dur.isPayrollManager()) enabledModules.add(Module.PAYROLL);
-		if(dur.isGroupware() && dur.getDomain().isChild()) enabledModules.add(Module.GROUPWARE);
-		if((dur.isInvoiceManager() || dur.isInvoicePortal()) && dur.getDomain().isChild()) enabledModules.add(Module.MANAGEMENT);
-		if(dur.isWarehouse() && dur.getDomain().isChild()) enabledModules.add(Module.WAREHOUSE);
-		if(dur.isMarketing() && dur.getDomain().isChild()) enabledModules.add(Module.MARKETING);
-		if(dur.isTreasury() && dur.getDomain().isChild()) enabledModules.add(Module.TREASURY);
-		if(dur.isCommercial() && dur.getDomain().isChild()) enabledModules.add(Module.CRM);
+		if(dur.isGroupware() && !dur.getDomain().isDomainManagement()) enabledModules.add(Module.GROUPWARE);
+		if((dur.isInvoiceManager() || dur.isInvoicePortal()) && !dur.getDomain().isDomainManagement()) enabledModules.add(Module.MANAGEMENT);
+		if(dur.isWarehouse() && !dur.getDomain().isDomainManagement()) enabledModules.add(Module.WAREHOUSE);
+		if(dur.isMarketing() && !dur.getDomain().isDomainManagement()) enabledModules.add(Module.MARKETING);
+		if(dur.isTreasury() && !dur.getDomain().isDomainManagement()) enabledModules.add(Module.TREASURY);
+		if(dur.isCommercial() && !dur.getDomain().isDomainManagement()) enabledModules.add(Module.CRM);
+
+		if(dur.isCallCenter()) enabledModules.add(Module.CALL_CENTER);
 		
 		if (ds.isEnabledGoToParent() && ds.isConsultancyDomain() && DomainType.OFFICE != ds.getType()) {
 			enabledModules.remove(Module.CRM);
@@ -225,7 +226,6 @@ public class VisibilityManager extends BasicVisibilityManager {
 			enabledModules.remove(Module.MARKETING);
 			enabledModules.remove(Module.POS);
 			enabledModules.remove(Module.AON_ONE);
-			enabledModules.remove(Module.CALL_CENTER);
 			enabledModules.remove(Module.ACADEMY);
 			enabledModules.remove(Module.GARAGE);
 			enabledModules.remove(Module.HOTEL);

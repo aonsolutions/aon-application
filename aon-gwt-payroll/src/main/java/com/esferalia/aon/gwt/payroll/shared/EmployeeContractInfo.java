@@ -27,6 +27,8 @@ public class EmployeeContractInfo implements Serializable{
 	private List<Workplace> workplaces;
 	private Map<String, String> payMethods;
 	
+	private boolean isModify = false;
+	
 	public static final ProvidesKey<EmployeeContractInfo> KEY_PROVIDER = item -> item == null ? null : item.getContractInfo().getContractId();
 	
 	public EmployeeContractInfo(){
@@ -151,6 +153,14 @@ public class EmployeeContractInfo implements Serializable{
 
 	public void setPayMethods(Map<String, String> payMethods) {
 		this.payMethods = payMethods;
+	}
+
+	public boolean isModify() {
+		return isModify;
+	}
+
+	public void setModify(boolean isModify) {
+		this.isModify = isModify;
 	}
 
 }

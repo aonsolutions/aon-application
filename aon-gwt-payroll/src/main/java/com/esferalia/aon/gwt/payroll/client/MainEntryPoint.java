@@ -27,45 +27,49 @@ public class MainEntryPoint implements EntryPoint {
 				Constants.ENTRY_POINT_PARAM);
 
 		if (entryPoint.equalsIgnoreCase(Constants.ENTERPRISE_SITE_ENTRY_POINT)) {
-			runAsync( EnterpriseSite.class, new EnterpriseSite());
+			runAsync(EnterpriseSite.class, new EnterpriseSite());
 		}else if (entryPoint
 				.equalsIgnoreCase(Constants.EMPLOYEE_TREE_ENTRY_POINT)) {
-			runAsync( EmployeeTree.class, new EmployeeTree() );
+			runAsync(EmployeeTree.class, new EmployeeTree() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CALCULATOR_ENTRY_POINT)) {
-			runAsync( MainCalculator.class, new MainCalculator() );
+			runAsync(MainCalculator.class, new MainCalculator() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_AGREEMENT_ENTRY_POINT)) {
-			runAsync( MainAgreement.class, new MainAgreement());
+			runAsync(MainAgreement.class, new MainAgreement());
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_TRASH_ENTRY_POINT)) {
-			runAsync(  MainTrash.class, new MainTrash() );
+			runAsync(MainTrash.class, new MainTrash() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CRETA_ENTRY_POINT)) {
-			runAsync( MainCreta.class, new MainCreta() );
+			runAsync(MainCreta.class, new MainCreta() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_AFI_ENTRY_POINT)) {
-			runAsync( AgrarianAFI.class, new AgrarianAFI() );
+			runAsync(AgrarianAFI.class, new AgrarianAFI() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CRA_ENTRY_POINT)) {
-			runAsync( MainCRA.class, new MainCRA() );
+			runAsync(MainCRA.class, new MainCRA() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CONTRATA_ENTRY_POINT)) {
 			runAsync(MainContrataContract.class,  new MainContrataContract() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_IT_ENTRY_POINT)) {
-			runAsync( MainContrataIT.class, new MainContrataIT() );
+			runAsync(MainContrataIT.class, new MainContrataIT() );
 		} else if (entryPoint
 				.equalsIgnoreCase(Constants.MAIN_CERTIFICATES_ENTRY_POINT)) {
 			runAsync(MainCertificates.class, new MainCertificates());
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_CCC_ENTRY_POINT)) {
 			runAsync(MainCCC.class, new MainCCC());
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_CONFIG_COMUNICA_ENTRY_POINT)) {
-			runAsync( MainConfigComunica.class, new MainConfigComunica());
+			runAsync(MainConfigComunica.class, new MainConfigComunica());
 		} else if (entryPoint.equalsIgnoreCase(Constants.ACTIVITY_SUMMARY_ENTRY_POINT)) {
 			runAsync(ActivitySummary.class, new ActivitySummary() );
 		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_SALARY_PRINT_ENTRY_POINT)) {
 			runAsync(MainSalaryPrint.class, new MainSalaryPrint() );
+		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_MASSIVE_CONTRACTS_ENTRY_POINT)) {
+			runAsync(MainMassiveContracts.class, new MainMassiveContracts() );
+		} else if (entryPoint.equalsIgnoreCase(Constants.MAIN_MASSIVE_FIE_ENTRY_POINT)) {
+			runAsync(MainMassiveFie.class, new MainMassiveFie() );
 		}
 	}
 	
@@ -255,6 +259,32 @@ public class MainEntryPoint implements EntryPoint {
 			});
 		} else if (name == MainSalaryPrint.class ) {
 			GWT.runAsync(MainSalaryPrint.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == MainMassiveContracts.class ) {
+			GWT.runAsync(MainMassiveContracts.class, new RunAsyncCallback() {
+				
+				@Override
+				public void onSuccess() {
+					entryPoint.onModuleLoad();;
+				}
+				
+				@Override
+				public void onFailure(Throwable reason) {
+	                Window.alert("Error al cargar");
+				}
+			});
+		} else if (name == MainMassiveFie.class ) {
+			GWT.runAsync(MainMassiveFie.class, new RunAsyncCallback() {
 				
 				@Override
 				public void onSuccess() {

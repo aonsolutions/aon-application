@@ -3,8 +3,11 @@ package com.esferalia.aon.occam.api;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
+import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
@@ -37,6 +40,7 @@ import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesParam
 import com.esferalia.aon.occam.api.model.finance.utilities.FinanceUtilitiesResult;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -64,6 +68,7 @@ public interface IFinance {
 	
 	Invoice acceptInvoice(AONContext ctx, Invoice invoice, Integer rawdocId);
 	Invoice getFullInvoice(AONContext ctx, Integer id);
+	Stream<Invoice> getInvoiceHeaders(AONContext ctx, AccountingReportParams params, int offset, int limit);
 	Stream<Invoice> getInvoiceStream(AONContext ctx, InvoiceFilter filter);
 	Invoice insertInvoice(AONContext ctx, Invoice invoice);
 	Invoice updateInvoice(AONContext ctx, Invoice invoice);
@@ -103,12 +108,24 @@ public interface IFinance {
 	// 	***********************************************
 	// 	**************************** INVOICE SERIES ***
 	// 	***********************************************
+
+	public Map<String, String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public Map<String, String> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public Map<Integer, Integer> getCustomerProductsUpdates(CloseableAONContext ctx, int domainId, CustomerFeeParams customerFeeParams);
+	
+	public LinkedList<Fee> getFeeList(CloseableAONContext ctx, CustomerFeeParams customerFeeParams);
 	public Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter);
 	
 	public Fee save(AONContext ctx, Fee fee);
+	public Integer saveList(AONContext ctx, LinkedList<Fee> feeList);
+	public Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams);
 	public void deleteFee(AONContext ctx,Fee f);
 	public void deleteFee(AONContext ctx,Stream<Fee> fs);
+	public void deleteFee(AONContext ctx,CustomerFeeParams customerFeeParams);
 	
+	public Map<Integer, Integer> getMinMaxCustomerFeeYear(CloseableAONContext ctx, int domainId);
+	
+	public Integer getItemIdByProductCode(CloseableAONContext ctx, int domainId, String productCode);
 	
 	// 	***********************************************
 	// 	************************** INVOICE REGISTRY ***
@@ -120,6 +137,7 @@ public interface IFinance {
 	// 	***********************************************
 	// 	************************** UTILITIES ***
 	// 	***********************************************
+	public void updateActivity(AONContext ctx, Integer invoiceId, Integer activity);
 	public void updateWithholdingType(AONContext ctx, Integer invoiceId, WithholdingType newType);
 	public FinanceUtilitiesResult missingFinanceInvoices(AONContext ctx,FinanceUtilitiesParams params);
 	public Invoice missingFinanceInvoicesFix(AONContext ctx, Integer invoice);

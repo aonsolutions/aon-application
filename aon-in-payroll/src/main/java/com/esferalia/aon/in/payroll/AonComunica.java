@@ -10,7 +10,7 @@ import com.esferalia.aon.occam.api.PAYROLL;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.payroll.ContractAttach;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.type.ContractAttachType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 

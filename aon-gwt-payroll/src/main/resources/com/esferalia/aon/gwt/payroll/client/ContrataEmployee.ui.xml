@@ -256,8 +256,8 @@
 							 </g:HTMLPanel>
 						</g:DeckPanel>
 					</g:center>
-					<g:south size="20">
-						<aon:AonMinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector}" >
+					<g:south size="17">
+						<aon:AonMinimizePanel ui:field="footPanel" styleName="{aonResources.css.aonSelector} aon-EmployeeTree-Events" >
 							<g:TabLayoutPanel barHeight="26" barUnit="PX" ui:field="footTabPanel" addStyleNames="aon-pointer-events-auto"/>
 						</aon:AonMinimizePanel>
 					</g:south>

@@ -100,9 +100,7 @@ public class MainCCCObject {
 	}
 	
 	public List<EnterpriseCCC> getActiveCCCs() {
-		List<EnterpriseCCC> ccccs = new ArrayList<>();
-		this.activities.forEach(activity -> ccccs.addAll(activity.getCccs()));
-		return ccccs.isEmpty() ? ccccs : ccccs.stream().filter(ccc -> !ccc.isDeleted()).collect(Collectors.toList());
+		return getCCCs().stream().filter(ccc -> !ccc.isDeleted()).collect(Collectors.toList());
 	}
 	
 	public Set<Entry<Integer, String>> getActivities() {

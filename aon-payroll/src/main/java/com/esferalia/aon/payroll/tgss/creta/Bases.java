@@ -655,6 +655,95 @@ public class Bases {
 		};
 	}
 
+	public static class DefaultsCallback implements BasesCallback {
+
+		private Map<String, String> defaults;
+
+		public DefaultsCallback() {
+			defaults = new HashMap<String, String>();
+		}
+
+		public DefaultsCallback add(String codigo, String valor) {
+			defaults.put(codigo, valor);
+			return this;
+		}
+
+		@Override
+		public void unknownDato(Liquidacion<?, ?, ?, ?, ?> liquidacion,
+				DatoSolicitado datoSolicitado,
+				LiquidacionBuilder liquidacionBuilder) {
+			addDefault(datoSolicitado, liquidacion, liquidacionBuilder);
+		}
+
+		@Override
+		public void noSuchDato(Salary salary, Tramo<?> tramo, Dato datoSolicitado,
+				TramoBuilder tramoBuilder, boolean optional) {
+			addDefault(salary, tramo, datoSolicitado, tramoBuilder);
+		}
+
+		@Override
+		public void unknownDato(Salary salary, Trabajador<?> trabajador, Tramo<?> tramo,
+				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
+			addDefault(salary, tramo, datoSolicitado, tramoBuilder);
+		}
+
+		// --------------------------------------------------------------------
+
+		private void addDefault(Salary salary, Tramo<?> tramo, Dato datoSolicitado,
+				TramoBuilder tramoBuilder) {
+
+			String key = datoSolicitado.getCodigo() + salary.getEmployeeSSNumber();
+			if (!defaults.containsKey(key))
+				key = datoSolicitado.getCodigo();
+			
+			if (defaults.containsKey(key)) {
+				String valor = defaults.get(key);
+
+				System.err.printf(
+						"WARN: %s for %s (%s) [%s-%s-%s...%s-%s-%s] is default valor %s \r\n",
+						datoSolicitado.getCodigo(),
+						salary.getEmployeeSSNumber(),
+						salary.getEmployeeDocument(),
+						tramo.getFechaDesde().getDia(),
+						tramo.getFechaDesde().getMes(),
+						tramo.getFechaDesde().getAnho(),
+						tramo.getFechaHasta().getDia(),
+						tramo.getFechaHasta().getMes(),
+						tramo.getFechaHasta().getAnho(), valor);
+
+				if ( AonStringUtils.isBlank(valor) ) 
+					throw new Default(valor);
+
+				DatoBuilder datoBuilder = new DatoBuilder();
+				datoBuilder.setCodigo(datoSolicitado.getCodigo());
+				datoBuilder.setTipo(datoSolicitado.getTipoDato());
+				datoBuilder.setValor(valor);
+				tramoBuilder.addDato(datoBuilder.create());
+
+				throw new Default(valor);
+			}
+		}
+
+		private void addDefault(Dato datoSolicitado,
+				Liquidacion<?, ?, ?, ?, ?> liquidacion,
+				LiquidacionBuilder liquidacionBuilder) {
+
+			if (defaults.containsKey(datoSolicitado.getCodigo())) {
+				String valor = defaults.get(datoSolicitado.getCodigo());
+				DatoBuilder datoBuilder = new DatoBuilder();
+				datoBuilder.setCodigo(datoSolicitado.getCodigo());
+				datoBuilder.setTipo(datoSolicitado.getTipoDato());
+				datoBuilder.setValor(valor);
+				liquidacionBuilder.addDato(datoBuilder.create());
+				System.err.printf("WARN: %s for %s default valor %s \r\n",
+						datoSolicitado.getCodigo(),
+						liquidacion.getCcc().getNumero(), valor);
+				throw new Cancel();
+			}
+		}
+
+	}
+
 	@SuppressWarnings("serial")
 	private static class Cancel extends RuntimeException {
 
@@ -735,93 +824,6 @@ public class Bases {
 		
 	}
 
-	private static class DefaultsCallback implements BasesCallback {
-
-		private Map<String, String> defaults;
-
-		public DefaultsCallback() {
-			defaults = new HashMap<String, String>();
-		}
-
-		void add(String codigo, String valor) {
-			defaults.put(codigo, valor);
-		}
-
-		@Override
-		public void unknownDato(Liquidacion<?, ?, ?, ?, ?> liquidacion,
-				DatoSolicitado datoSolicitado,
-				LiquidacionBuilder liquidacionBuilder) {
-			addDefault(datoSolicitado, liquidacion, liquidacionBuilder);
-		}
-
-		@Override
-		public void noSuchDato(Salary salary, Tramo<?> tramo, Dato datoSolicitado,
-				TramoBuilder tramoBuilder, boolean optional) {
-			addDefault(salary, tramo, datoSolicitado, tramoBuilder);
-		}
-
-		@Override
-		public void unknownDato(Salary salary, Trabajador<?> trabajador, Tramo<?> tramo,
-				DatoSolicitado datoSolicitado, TramoBuilder tramoBuilder) {
-			addDefault(salary, tramo, datoSolicitado, tramoBuilder);
-		}
-
-		// --------------------------------------------------------------------
-
-		private void addDefault(Salary salary, Tramo<?> tramo, Dato datoSolicitado,
-				TramoBuilder tramoBuilder) {
-
-			String key = datoSolicitado.getCodigo() + salary.getEmployeeSSNumber();
-			if (!defaults.containsKey(key))
-				key = datoSolicitado.getCodigo();
-			
-			if (defaults.containsKey(key)) {
-				String valor = defaults.get(key);
-
-				System.err.printf(
-						"WARN: %s for %s (%s) [%s-%s-%s...%s-%s-%s] is default valor %s \r\n",
-						datoSolicitado.getCodigo(),
-						salary.getEmployeeSSNumber(),
-						salary.getEmployeeDocument(),
-						tramo.getFechaDesde().getDia(),
-						tramo.getFechaDesde().getMes(),
-						tramo.getFechaDesde().getAnho(),
-						tramo.getFechaHasta().getDia(),
-						tramo.getFechaHasta().getMes(),
-						tramo.getFechaHasta().getAnho(), valor);
-
-				if ( AonStringUtils.isBlank(valor) ) 
-					throw new Default(valor);
-
-				DatoBuilder datoBuilder = new DatoBuilder();
-				datoBuilder.setCodigo(datoSolicitado.getCodigo());
-				datoBuilder.setTipo(datoSolicitado.getTipoDato());
-				datoBuilder.setValor(valor);
-				tramoBuilder.addDato(datoBuilder.create());
-
-				throw new Default(valor);
-			}
-		}
-
-		private void addDefault(Dato datoSolicitado,
-				Liquidacion<?, ?, ?, ?, ?> liquidacion,
-				LiquidacionBuilder liquidacionBuilder) {
-
-			if (defaults.containsKey(datoSolicitado.getCodigo())) {
-				String valor = defaults.get(datoSolicitado.getCodigo());
-				DatoBuilder datoBuilder = new DatoBuilder();
-				datoBuilder.setCodigo(datoSolicitado.getCodigo());
-				datoBuilder.setTipo(datoSolicitado.getTipoDato());
-				datoBuilder.setValor(valor);
-				liquidacionBuilder.addDato(datoBuilder.create());
-				System.err.printf("WARN: %s for %s default valor %s \r\n",
-						datoSolicitado.getCodigo(),
-						liquidacion.getCcc().getNumero(), valor);
-				throw new Cancel();
-			}
-		}
-
-	}
 
 	private static class FixConceptUnMatchedCallback implements BasesCallback {
 
@@ -2180,7 +2182,7 @@ public class Bases {
 				.and(props.getIsSalaryProperty().eq(AonStringUtils.containsIgnoreCase("L00,L91", tipo)))
 		)
 		.forEach( salary -> {
-			Double c763 = salary.getContextData(ContextVariable.SLD_C763.getName(), Collectors.summingDouble(s -> Double.parseDouble(s)));
+			Double c763 = salary.getContextData(ContextVariable.SLD_C763.getName(), Collectors.summingDouble(Double::parseDouble));
 			if ( c763 != null && c763 > 0.00 )
 				codigoValorMap.put("763", codigoValorMap.getOrDefault("763", 0.00) + c763);
 		} );
@@ -3124,15 +3126,6 @@ public class Bases {
 				);
 		callbacksList.add(fixConceptsUnMatched);
 
-		DefaultsCallback defaultsCb = new DefaultsCallback();
-
-		if (defaultsValues != null) {
-			for (String defaultValue : defaultsValues) {
-				String codeValue[] = defaultValue.split("=");
-				defaultsCb.add(codeValue[0], codeValue[1]);
-			}
-		}
-		callbacksList.add(defaultsCb);
 
 		if (nafs != null) {
 			NAFFilterCallback nafFilterCb = new NAFFilterCallback(nafs);
@@ -3145,6 +3138,15 @@ public class Bases {
 
 		BasesCallback callbacks[] = callbacksList
 				.toArray(new BasesCallback[callbacksList.size()]);
+
+		DefaultsCallback defaultsCb = new DefaultsCallback();
+		if (defaultsValues != null) {
+			for (String defaultValue : defaultsValues) {
+				String codeValue[] = defaultValue.split("=");
+				defaultsCb.add(codeValue[0], codeValue[1]);
+			}
+		}
+		callbacksList.add(defaultsCb);
 
 		Set<String> autorizados = new HashSet<String>();
 

@@ -1896,7 +1896,7 @@ CREATE TABLE `contract_cost` (
   `domain` int NOT NULL COMMENT 'Identificador del Dominio',
   `contract` int NOT NULL COMMENT 'Contrato',
   `type` tinyint DEFAULT NULL COMMENT 'Tipo de Coste',
-  `code` varchar(10) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo',
+  `code` varchar(25) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo',
   `expression` varchar(256) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Formula',
   `description` varchar(128) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL,
   `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
@@ -2740,6 +2740,8 @@ CREATE TABLE `domain` (
   `expirationDate` date DEFAULT NULL COMMENT 'Fecha de Expiracion del Dominio',
   `lastAccess_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de ultimo acceso',
   `lastAccess_date` datetime DEFAULT NULL COMMENT 'Fecha de ultimo acceso',
+  `aonCustomer` int DEFAULT NULL COMMENT 'Referencia al customer en Aon',
+  `aonStatus` tinyint NOT NULL DEFAULT '0' COMMENT 'Estado del customer en Aon',
   PRIMARY KEY (`id`),
   UNIQUE KEY `IDX_UNQ_DOMAIN_NAME` (`name`),
   KEY `IDX_DOMAIN_PARENT` (`parent`),
@@ -3430,9 +3432,12 @@ CREATE TABLE `fs_mod349` (
   `creation_date` datetime DEFAULT NULL COMMENT 'Fecha de creacion',
   `modification_user` varchar(16) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Usuario de modificacion',
   `modification_date` datetime DEFAULT NULL COMMENT 'Fecha de modificacion',
+  `fs_model` int DEFAULT NULL COMMENT 'Identificador de fs_model',
   PRIMARY KEY (`id`),
   KEY `IDX_FS_MOD349_DOMAIN` (`domain`),
-  CONSTRAINT `FK_FS_MOD349_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)
+  KEY `IDX_FS_MOD349_FS_MODEL` (`fs_model`),
+  CONSTRAINT `FK_FS_MOD349_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`),
+  CONSTRAINT `FK_FS_MOD349_FS_MODEL` FOREIGN KEY (`fs_model`) REFERENCES `fs_model` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Declaracion de Modelo 349';
 
 #
@@ -7638,7 +7643,7 @@ CREATE TABLE `salary_cost` (
   `amount` decimal(15,3) DEFAULT '0.000' COMMENT 'Importe',
   `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `type` tinyint DEFAULT NULL COMMENT 'Tipo de deduccion Salarial',
-  `cost_concept` varchar(10) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del concepto',
+  `cost_concept` varchar(25) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Codigo del concepto',
   PRIMARY KEY (`id`),
   KEY `IDX_SALARY_COST_SALARY` (`salary`),
   KEY `IDX_SALARY_COST_DOMAIN` (`domain`),
@@ -8204,7 +8209,7 @@ CREATE TABLE `system_cost` (
   `description` varchar(64) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Descripcion',
   `expression` text CHARACTER SET latin1 COLLATE latin1_spanish_ci COMMENT 'Expresion',
   `type` tinyint DEFAULT NULL COMMENT 'Tipo de Costo',
-  `code` varchar(10) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Código',
+  `code` varchar(25) CHARACTER SET latin1 COLLATE latin1_spanish_ci DEFAULT NULL COMMENT 'Código',
   PRIMARY KEY (`id`),
   KEY `IDX_SYSTEM_COST_DOMAIN` (`domain`),
   CONSTRAINT `FK_SYSTEM_COST_DOMAIN` FOREIGN KEY (`domain`) REFERENCES `domain` (`id`)

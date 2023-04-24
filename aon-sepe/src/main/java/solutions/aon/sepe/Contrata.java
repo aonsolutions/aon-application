@@ -15,27 +15,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.gargoylesoftware.htmlunit.CollectingAlertHandler;
-import com.gargoylesoftware.htmlunit.ElementNotFoundException;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
-import com.gargoylesoftware.htmlunit.html.HtmlLegend;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
-import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
+import org.htmlunit.CollectingAlertHandler;
+import org.htmlunit.ElementNotFoundException;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.Page;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.DomNode;
+import org.htmlunit.html.DomNodeList;
+import org.htmlunit.html.HtmlCheckBoxInput;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlLegend;
+import org.htmlunit.html.HtmlOption;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlRadioButtonInput;
+import org.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.HtmlSubmitInput;
+import org.htmlunit.html.HtmlTable;
+import org.htmlunit.html.HtmlTableCell;
+import org.htmlunit.html.HtmlTableRow;
+import org.htmlunit.html.HtmlTextArea;
 
 import aon.sepe.exceptions.invalidData.InvalidDataException;
 import aon.sepe.objects.Contract;
@@ -378,10 +378,10 @@ public class Contrata {
 
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 			
-			form.getInputByName("hoy").setValueAttribute(now[0]+"/"+now[1]+"/"+now[2]);
-			form.getInputByName("DIA").setValueAttribute(now[0]);
-			form.getInputByName("MES").setValueAttribute(now[1]);
-			form.getInputByName("ANYO").setValueAttribute(now[2]);
+			form.getInputByName("hoy").setValue(now[0]+"/"+now[1]+"/"+now[2]);
+			form.getInputByName("DIA").setValue(now[0]);
+			form.getInputByName("MES").setValue(now[1]);
+			form.getInputByName("ANYO").setValue(now[2]);
 
 			{// -------------------------DATA ENTERPRISE----------------------------
 				String ctaCti = cto.getCtaCti();
@@ -389,16 +389,16 @@ public class Contrata {
 				String cif = cto.getCifEnterprise();
 				
 				if (cif!= null) {
-					form.getInputByName("cifnif").setValueAttribute(cif);
+					form.getInputByName("cifnif").setValue(cif);
 					
 					((HtmlSelect) form.querySelector("select[name=tipodoc2]")).setSelectedAttribute(getCifType(cif), true);
 				}
 
-				form.getInputByName("regimen").setValueAttribute(regimen);
-				form.getInputByName("numsecprov").setValueAttribute(ctaCti.substring(0, 2));
-				form.getInputByName("numsec").setValueAttribute(ctaCti.substring(2, 9));
-				form.getInputByName("digcont").setValueAttribute(ctaCti.substring(9));
-				form.getInputByName("cuentacotizacion").setValueAttribute(regimen + ctaCti);
+				form.getInputByName("regimen").setValue(regimen);
+				form.getInputByName("numsecprov").setValue(ctaCti.substring(0, 2));
+				form.getInputByName("numsec").setValue(ctaCti.substring(2, 9));
+				form.getInputByName("digcont").setValue(ctaCti.substring(9));
+				form.getInputByName("cuentacotizacion").setValue(regimen + ctaCti);
 			}
 
 			{// ---------------------------DATA EMPLOYEE-------------------------
@@ -406,14 +406,16 @@ public class Contrata {
 
 				String nss = cto.getNss();
 				((HtmlSelect) form.querySelector("select[name=tipodoc]")).setSelectedAttribute(tipodoc, true);
-				form.getInputByName("nif").setValueAttribute(cto.getIpf());
-				form.getInputByName("nifnie").setValueAttribute(tipodoc + "  " + cto.getIpf());
-
-				form.getInputByName("nombre").setValueAttribute(cto.getName());
+				form.getInputByName("nif").setValue(cto.getIpf());
+				form.getInputByName("nifnie").setValue(tipodoc + "  " + cto.getIpf());
+        
+				String name = cto.getName();
+				if(null != name && name.length() > 15) name = name.substring(0, 15);
+				form.getInputByName("nombre").setValueAttribute(name);
 				form.getInputByName("apellido1").setValueAttribute(cto.getSurname());
 
 				if (cto.getLastSurname() != null) {
-					form.getInputByName("apellido2").setValueAttribute(cto.getLastSurname());
+					form.getInputByName("apellido2").setValue(cto.getLastSurname());
 				}
 
 				if (cto.getSex() != null) {
@@ -424,10 +426,10 @@ public class Contrata {
 
 				if (cto.getDateBirth() != null) {
 					String[] dateBirth = Toolkit.dateString(cto.getDateBirth());
-					form.getInputByName("diafechanac").setValueAttribute(dateBirth[0]);
-					form.getInputByName("mesfechanac").setValueAttribute(dateBirth[1]);
-					form.getInputByName("anniofechanac").setValueAttribute(dateBirth[2]);
-					form.getInputByName("fechanacimiento").setValueAttribute(dateBirth[0]+"/"+dateBirth[1]+"/"+dateBirth[2]);
+					form.getInputByName("diafechanac").setValue(dateBirth[0]);
+					form.getInputByName("mesfechanac").setValue(dateBirth[1]);
+					form.getInputByName("anniofechanac").setValue(dateBirth[2]);
+					form.getInputByName("fechanacimiento").setValue(dateBirth[0]+"/"+dateBirth[1]+"/"+dateBirth[2]);
 				}
 
 				((HtmlSelect) form.querySelector("select[name=nacionalidad]"))
@@ -436,24 +438,24 @@ public class Contrata {
 						.setSelectedAttribute(cto.getCodPaisDom().toString(), true);
 
 				if (cto.getCodMunDom() != null) {
-					form.getInputByName("municipio").setValueAttribute(cto.getCodMunDom());
+					form.getInputByName("municipio").setValue(cto.getCodMunDom());
 				}
 
-				form.getInputByName("nass1").setValueAttribute(nss.substring(0, 2));
+				form.getInputByName("nass1").setValue(nss.substring(0, 2));
 
-				form.getInputByName("nass2").setValueAttribute(nss.substring(2, 10));
+				form.getInputByName("nass2").setValue(nss.substring(2, 10));
 
-				form.getInputByName("nass3").setValueAttribute(nss.substring(10));
+				form.getInputByName("nass3").setValue(nss.substring(10));
 				
-				form.getInputByName("nass").setValueAttribute(nss);
+				form.getInputByName("nass").setValue(nss);
 			}
 
 			{// ----------------------DATA CONTRACT--------------------
-				form.getInputByName("contratoEscrito").setValueAttribute("N"); // contratoEscrito si la fecha fin es menor a 28
-				form.getInputByName("fechainicio").setValueAttribute(startDate[0]+"/"+startDate[1]+"/"+startDate[2]);
-				form.getInputByName("diafechaini").setValueAttribute(startDate[0]);
-				form.getInputByName("mesfechaini").setValueAttribute(startDate[1]);
-				form.getInputByName("anniofechaini").setValueAttribute(startDate[2]);
+				form.getInputByName("contratoEscrito").setValue("N"); // contratoEscrito si la fecha fin es menor a 28
+				form.getInputByName("fechainicio").setValue(startDate[0]+"/"+startDate[1]+"/"+startDate[2]);
+				form.getInputByName("diafechaini").setValue(startDate[0]);
+				form.getInputByName("mesfechaini").setValue(startDate[1]);
+				form.getInputByName("anniofechaini").setValue(startDate[2]);
 
 				// NIVEL FORMATIVO
 				if (cto.getCodFormativo() != null && cto.getCodFormativo() > 0) {
@@ -470,7 +472,7 @@ public class Contrata {
 				}
 
 				if (cto.getCodMunWork() != null) {
-					form.getInputByName("municipiocontrato").setValueAttribute(cto.getCodMunWork());// disabled
+					form.getInputByName("municipiocontrato").setValue(cto.getCodMunWork());// disabled
 				}
 
 				DomNode ofertaEmpleo = form.querySelector("select[name=procedeDeOfertaEmpleo]");
@@ -489,9 +491,9 @@ public class Contrata {
 					DomNode endDay = form.querySelector("[name=\"diafechafin\"]");
 					if (endDay != null) {
 						String[] dateFinContract = Toolkit.dateString(cto.getDateFinContract());
-						((HtmlInput) endDay).setValueAttribute(dateFinContract[0]);
-						form.getInputByName("mesfechafin").setValueAttribute(dateFinContract[1]);
-						form.getInputByName("anniofechafin").setValueAttribute(dateFinContract[2]);
+						((HtmlInput) endDay).setValue(dateFinContract[0]);
+						form.getInputByName("mesfechafin").setValue(dateFinContract[1]);
+						form.getInputByName("anniofechafin").setValue(dateFinContract[2]);
 					}
 				}
 				
@@ -503,34 +505,34 @@ public class Contrata {
 						// ----------HORAS DE JORNADA
 						DomNode jornadaHour = form.querySelector("[name=\"horasduracionjornada\"]");
 						if (jornadaHour!=null && cto.getDurationTypeJndHour() != null) {
-							((HtmlInput)jornadaHour).setValueAttribute(cto.getDurationTypeJndHour());
+							((HtmlInput)jornadaHour).setValue(cto.getDurationTypeJndHour());
 						}
 
 						DomNode jornadaMin = form.querySelector("[name=\"minutosduracionjornada\"]");
 						if (jornadaMin!=null && cto.getDurationTypeJndMin() != null) {
-							((HtmlInput)jornadaMin).setValueAttribute(cto.getDurationTypeJndMin());
+							((HtmlInput)jornadaMin).setValue(cto.getDurationTypeJndMin());
 						}
 
 						// ----------HORAS DE CONVENIO
 						DomNode convenioHour = form.querySelector("[name=\"horasduracionconvenio\"]");
 						if (convenioHour!=null && cto.getDurationTypeCvnHour() != null) {
-							((HtmlInput)convenioHour).setValueAttribute(cto.getDurationTypeCvnHour());
+							((HtmlInput)convenioHour).setValue(cto.getDurationTypeCvnHour());
 						}
 						
 						DomNode convenioMin = form.querySelector("[name=\"minutosduracionconvenio\"]"); 
 						if (convenioMin!=null && cto.getDurationTypeCvnMin() != null) {
-							((HtmlInput)convenioMin).setValueAttribute(cto.getDurationTypeCvnMin());
+							((HtmlInput)convenioMin).setValue(cto.getDurationTypeCvnMin());
 						}
 						
 						// ---------- HORAS DE FORMACION
 						DomNode formationHour = form.querySelector("[name=\"horasformacion\"]");
 						if (formationHour!=null && cto.getDurationFormationHour() != null) {
-							((HtmlInput)formationHour).setValueAttribute(cto.getDurationFormationHour());
+							((HtmlInput)formationHour).setValue(cto.getDurationFormationHour());
 						}
 						
 						DomNode formationMin = form.querySelector("[name=\"minutosformacion\"]");
 						if (formationMin!=null && cto.getDurationFormationMin() != null) {
-							((HtmlInput)formationMin).setValueAttribute(cto.getDurationFormationMin());
+							((HtmlInput)formationMin).setValue(cto.getDurationFormationMin());
 						}
 					}
 				}
@@ -552,7 +554,7 @@ public class Contrata {
 				Optional<String> interinidad = cto.getInterinidad();
 				if (interinidad.isPresent()) {
 					page++;
-					form.getInputByName("pagina2").setValueAttribute(page.toString());
+					form.getInputByName("pagina2").setValue(page.toString());
 
 					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkInterinidad");
 					check.click();
@@ -573,7 +575,7 @@ public class Contrata {
 				//------------DISCAPACIDAD
 				if(cto.isDiscapacidad()) {
 					page++;
-					form.getInputByName("pagina2").setValueAttribute(page.toString());
+					form.getInputByName("pagina2").setValue(page.toString());
 					
 					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkDiscapacidad");
 					check.click();
@@ -606,7 +608,7 @@ public class Contrata {
 				//------------BONIFICACION
 				if(cto.isBonus()) {
 					page++;
-					form.getInputByName("pagina2").setValueAttribute(page.toString());
+					form.getInputByName("pagina2").setValue(page.toString());
 
 					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkBonificacion");
 					check.click();
@@ -653,7 +655,7 @@ public class Contrata {
 				//------------MAYORES DE 52
 				if(cto.getOver52Years().isPresent()) {
 					page++;
-					form.getInputByName("pagina2").setValueAttribute(page.toString());
+					form.getInputByName("pagina2").setValue(page.toString());
 					
 					Over52Years over25Years = cto.getOver52Years().get();
 
@@ -892,10 +894,10 @@ public class Contrata {
 				HtmlRadioButtonInput forNif = (HtmlRadioButtonInput) form.querySelector("[name=tipoacceso][value='2']");
 				forNif.click();
 
-				form.getInputByName("tipoacceso").setValueAttribute("2");
+				form.getInputByName("tipoacceso").setValue("2");
 
 				if (cif != null) {
-					form.getInputByName("cifnifnie").setValueAttribute(cif);
+					form.getInputByName("cifnifnie").setValue(cif);
 					((HtmlSelect) form.querySelector("select[name=tipodocumentoaux]")).setSelectedAttribute(getCifType(cif), true);
 				}
 			}
@@ -907,15 +909,15 @@ public class Contrata {
 
 				((HtmlSelect) form.querySelector("select[name=tipodocumento]")).setSelectedAttribute(tipodoc, true);
 
-				form.getInputByName("nifnietrabajador").setValueAttribute("  " + cto.getIpf());
+				form.getInputByName("nifnietrabajador").setValue("  " + cto.getIpf());
 			}
 //
 			{// DATA CONTRACT
 				// FECHA DE INICIO DEL CONTRATO ANTERIOR
 				String[] dateInitContract = Toolkit.dateString(cto.getOldDateIniContract());
-				form.getInputByName("diafechaini").setValueAttribute(dateInitContract[0]);
-				form.getInputByName("mesfechaini").setValueAttribute(dateInitContract[1]);
-				form.getInputByName("anniofechaini").setValueAttribute(dateInitContract[2]);
+				form.getInputByName("diafechaini").setValue(dateInitContract[0]);
+				form.getInputByName("mesfechaini").setValue(dateInitContract[1]);
+				form.getInputByName("anniofechaini").setValue(dateInitContract[2]);
 
 				String contract = cto.getCodContract();
 
@@ -928,9 +930,9 @@ public class Contrata {
 
 				// FECHA DE COMUNICACION
 				String[] dateComContract = Toolkit.dateString(cto.getDateComContract());
-				form.getInputByName("dia").setValueAttribute(dateComContract[0]);
-				form.getInputByName("mes").setValueAttribute(dateComContract[1]);
-				form.getInputByName("annio").setValueAttribute(dateComContract[2]);
+				form.getInputByName("dia").setValue(dateComContract[0]);
+				form.getInputByName("mes").setValue(dateComContract[1]);
+				form.getInputByName("annio").setValue(dateComContract[2]);
 			}
 
 			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
@@ -940,15 +942,15 @@ public class Contrata {
 			form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 
 			{// DATA TRANSFORMATION
-				form.getInputByName("ocupacion").setValueAttribute(cto.getCodOccupation()); // disabled
-				form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation());// repeat cod contract
+				form.getInputByName("ocupacion").setValue(cto.getCodOccupation()); // disabled
+				form.getInputByName("cocupacion").setValue(cto.getCodOccupation());// repeat cod contract
 
 				((HtmlSelect) form.querySelector("select[name=nacionalidadCT]"))
 						.setSelectedAttribute(cto.getCodPaisWork().toString(), true);
 
 				String municipio = cto.getCodMunWork();
-				form.getInputByName("municipiocontrato").setValueAttribute(municipio);// repeat cod contract
-				form.getInputByName("municipioCT").setValueAttribute(municipio);// repeat cod contract
+				form.getInputByName("municipiocontrato").setValue(municipio);// repeat cod contract
+				form.getInputByName("municipioCT").setValue(municipio);// repeat cod contract
 
 				DomNode fijoDiscontinuo = form.querySelector("[name=fijoDiscontinuo]");
 				if (fijoDiscontinuo != null) {
@@ -964,9 +966,9 @@ public class Contrata {
 				if (endDateDay != null && cto.getOldDateFindContract() != null) { // FECHA DE FIN DE CONTRATO DEL
 																					// CONTRATO ANTERIOR
 					String[] endDateOld = Toolkit.dateString(cto.getOldDateFindContract());
-					((HtmlInput) endDateDay).setValueAttribute(endDateOld[0]);
-					form.getInputByName("mesfechafin").setValueAttribute(endDateOld[1]);
-					form.getInputByName("anniofechafin").setValueAttribute(endDateOld[2]);
+					((HtmlInput) endDateDay).setValue(endDateOld[0]);
+					form.getInputByName("mesfechafin").setValue(endDateOld[1]);
+					form.getInputByName("anniofechafin").setValue(endDateOld[2]);
 				}
 
 				{// DATA JORNADA
@@ -975,13 +977,13 @@ public class Contrata {
 						((HtmlSelect) tipoJornada).setSelectedAttribute(cto.getJndType().getValue(), true);
 						String hours = Toolkit.fillStringLeft(cto.getDurationTypeJndHour(), "0", 4);
 						String min = cto.getDurationTypeJndMin();
-						form.getInputByName("horas").setValueAttribute(hours);
-						form.getInputByName("minutos").setValueAttribute(min);
-						form.getInputByName("duracjornada").setValueAttribute(hours + min);
+						form.getInputByName("horas").setValue(hours);
+						form.getInputByName("minutos").setValue(min);
+						form.getInputByName("duracjornada").setValue(hours + min);
 
 //						DomNode duracConvenio = form.querySelector("select[name=duracconvenio]");
 //						if(duracConvenio!=null) {
-//							((HtmlInput) duracConvenio).setValueAttribute(hours+min);
+//							((HtmlInput) duracConvenio).setValue(hours+min);
 //						}
 					}
 
@@ -1203,49 +1205,49 @@ public class Contrata {
 			String ide1 = ide.substring(0, 2);
 			String ide2 = ide.substring(2, 6);
 			String ide3 = ide.substring(6);
-			formDatos.getInputByName("idcomunicacion1").setValueAttribute(ide1);
-			formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide2);
-			formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide3);
-			formDatos.getInputByName("idcontrato").setValueAttribute(ide1 + "-" + ide2 + "-" + ide3);
+			formDatos.getInputByName("idcomunicacion1").setValue(ide1);
+			formDatos.getInputByName("idcomunicacion2").setValue(ide2);
+			formDatos.getInputByName("idcomunicacion3").setValue(ide3);
+			formDatos.getInputByName("idcontrato").setValue(ide1 + "-" + ide2 + "-" + ide3);
 
 			htmlPage = formDatos.getInputByName("enviar").click();
 			handleSepeExceptions(htmlPage);
 
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 
-			String cifValue = form.getInputByName("cifnifempresapro").getValueAttribute();
+			String cifValue = form.getInputByName("cifnifempresapro").getValue();
 			if (cifValue != null && cifValue.isEmpty()) {
 				String cif = contractExtension.getCif();
 				
 				((HtmlSelect) form.querySelector("select[name=tipodocumento]")).setSelectedAttribute(getCifType(cif), true);
-				form.getInputByName("cifnifempresapro").setValueAttribute(cif);
+				form.getInputByName("cifnifempresapro").setValue(cif);
 			}
 
 			HtmlInput ccc1 = form.getInputByName("cuentacotizacion2pro");
-			String cccValue = ccc1.getValueAttribute();
+			String cccValue = ccc1.getValue();
 			if (cccValue != null && cccValue.isEmpty()) {
 				String ccc = contractExtension.getCtaCti();
-				form.getInputByName("cuentacotizacion1pro").setValueAttribute(contractExtension.getRegime());
-				ccc1.setValueAttribute(ccc.substring(0, 9));
-				form.getInputByName("cuentacotizacion3pro").setValueAttribute(ccc.substring(9));
+				form.getInputByName("cuentacotizacion1pro").setValue(contractExtension.getRegime());
+				ccc1.setValue(ccc.substring(0, 9));
+				form.getInputByName("cuentacotizacion3pro").setValue(ccc.substring(9));
 			}
 
 			String[] startDate = Toolkit.dateString(contractExtension.getStartDate());
-			form.getInputByName("diainiciopro").setValueAttribute(startDate[0]);
-			form.getInputByName("mesiniciopro").setValueAttribute(startDate[1]);
-			form.getInputByName("annoiniciopro").setValueAttribute(startDate[2]);
+			form.getInputByName("diainiciopro").setValue(startDate[0]);
+			form.getInputByName("mesiniciopro").setValue(startDate[1]);
+			form.getInputByName("annoiniciopro").setValue(startDate[2]);
 
 			String[] endDate = Toolkit.dateString(contractExtension.getEndDate());
-			form.getInputByName("diafinpro").setValueAttribute(endDate[0]);
-			form.getInputByName("mesfinpro").setValueAttribute(endDate[1]);
-			form.getInputByName("annofinpro").setValueAttribute(endDate[2]);
+			form.getInputByName("diafinpro").setValue(endDate[0]);
+			form.getInputByName("mesfinpro").setValue(endDate[1]);
+			form.getInputByName("annofinpro").setValue(endDate[2]);
 
 			DomNode discontinuidad = form.querySelector("[name=\"discontinuidad\"]");
 			if (discontinuidad != null && contractExtension.isDiscontinuo()) {
 				((HtmlSelect) discontinuidad).setSelectedAttribute("S", true);
 			}
 
-			form.getInputByName("idprorroga").setValueAttribute(ide1 + "-" + ide2 + "-" + ide3);
+			form.getInputByName("idprorroga").setValue(ide1 + "-" + ide2 + "-" + ide3);
 			
 			checkContractExist(htmlPage);
 
@@ -1300,10 +1302,10 @@ public class Contrata {
 				String ide1 = ide.substring(0, 2);
 				String ide2 = ide.substring(2, 6);
 				String ide3 = ide.substring(6);
-				formTwo.getInputByName("idcomunicacion1").setValueAttribute(ide1);
-				formTwo.getInputByName("idcomunicacion2").setValueAttribute(ide2);
-				formTwo.getInputByName("idcomunicacion3").setValueAttribute(ide3);
-				formTwo.getInputByName("idcomunicacion").setValueAttribute(ide1 + "-" + ide2 + "-" + ide3);
+				formTwo.getInputByName("idcomunicacion1").setValue(ide1);
+				formTwo.getInputByName("idcomunicacion2").setValue(ide2);
+				formTwo.getInputByName("idcomunicacion3").setValue(ide3);
+				formTwo.getInputByName("idcomunicacion").setValue(ide1 + "-" + ide2 + "-" + ide3);
 
 				htmlPage = formTwo.getInputByName("aceptar").click();
 
@@ -1380,10 +1382,10 @@ public class Contrata {
 				String ide1 = ide.substring(0, 2);
 				String ide2 = ide.substring(2, 6);
 				String ide3 = ide.substring(6);
-				formDatos.getInputByName("idcomunicacion1").setValueAttribute(ide1);
-				formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide2);
-				formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide3);
-				formDatos.getInputByName("idcontrato").setValueAttribute(ide1 + "-" + ide2 + "-" + ide3);
+				formDatos.getInputByName("idcomunicacion1").setValue(ide1);
+				formDatos.getInputByName("idcomunicacion2").setValue(ide2);
+				formDatos.getInputByName("idcomunicacion3").setValue(ide3);
+				formDatos.getInputByName("idcontrato").setValue(ide1 + "-" + ide2 + "-" + ide3);
 			} else {
 
 				((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"2\"]")).click();
@@ -1392,7 +1394,7 @@ public class Contrata {
 				if (cif != null) {
 					((HtmlSelect) formDatos.querySelector("select[name=tipodocumentoaux]")).setSelectedAttribute(getCifType(cif), true);
 					
-					formDatos.getInputByName("cifnifnie").setValueAttribute(cif);
+					formDatos.getInputByName("cifnifnie").setValue(cif);
 				}
 				
 				String ipf = copyBasic.getIpf().get();
@@ -1401,12 +1403,12 @@ public class Contrata {
 				HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipodocumento]>option").get(ident);
 				option.click();
 
-				formDatos.getInputByName("nifnietrabajador").setValueAttribute(Toolkit.appendStringLeft(ipf, " ", 2));
+				formDatos.getInputByName("nifnietrabajador").setValue(Toolkit.appendStringLeft(ipf, " ", 2));
 
 				String[] fri = Toolkit.formatDate(startDate);
-				formDatos.getInputByName("diafechaini").setValueAttribute(fri[0]);
-				formDatos.getInputByName("mesfechaini").setValueAttribute(fri[1]);
-				formDatos.getInputByName("anniofechaini").setValueAttribute(fri[2]);
+				formDatos.getInputByName("diafechaini").setValue(fri[0]);
+				formDatos.getInputByName("mesfechaini").setValue(fri[1]);
+				formDatos.getInputByName("anniofechaini").setValue(fri[2]);
 			}
 
 			htmlPage = formDatos.getInputByName("aceptar").click();
@@ -1472,9 +1474,9 @@ public class Contrata {
 
 				HtmlForm formTwo = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 				String ide = sepeId.get();
-				formTwo.getInputByName("idcomunicacion1").setValueAttribute(ide.substring(0, 2));
-				formTwo.getInputByName("idcomunicacion2").setValueAttribute(ide.substring(2, 6));
-				formTwo.getInputByName("idcomunicacion3").setValueAttribute(ide.substring(6));
+				formTwo.getInputByName("idcomunicacion1").setValue(ide.substring(0, 2));
+				formTwo.getInputByName("idcomunicacion2").setValue(ide.substring(2, 6));
+				formTwo.getInputByName("idcomunicacion3").setValue(ide.substring(6));
 
 				htmlPage = formTwo.getInputByName("aceptar").click();
 				handleSepeExceptions(htmlPage);
@@ -1544,10 +1546,10 @@ public class Contrata {
 				String ide1 = ide.substring(0, 2);
 				String ide2 = ide.substring(2, 6);
 				String ide3 = ide.substring(6);
-				formTwo.getInputByName("idcomunicacion1").setValueAttribute(ide1);
-				formTwo.getInputByName("idcomunicacion2").setValueAttribute(ide2);
-				formTwo.getInputByName("idcomunicacion3").setValueAttribute(ide3);
-				formTwo.getInputByName("idcomunicacion").setValueAttribute(ide1 + "-" + ide2 + "-" + ide3);
+				formTwo.getInputByName("idcomunicacion1").setValue(ide1);
+				formTwo.getInputByName("idcomunicacion2").setValue(ide2);
+				formTwo.getInputByName("idcomunicacion3").setValue(ide3);
+				formTwo.getInputByName("idcomunicacion").setValue(ide1 + "-" + ide2 + "-" + ide3);
 
 				htmlPage = formTwo.getInputByName("aceptar").click();
 
@@ -1616,16 +1618,16 @@ public class Contrata {
 				String ide1 = ide.substring(0, 2);
 				String ide2 = ide.substring(2, 6);
 				String ide3 = ide.substring(6);
-				formDatos.getInputByName("idcomunicacion1").setValueAttribute(ide1);
-				formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide2);
-				formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide3);
-				formDatos.getInputByName("idcontrato").setValueAttribute(ide1 + "-" + ide2 + "-" + ide3);
+				formDatos.getInputByName("idcomunicacion1").setValue(ide1);
+				formDatos.getInputByName("idcomunicacion2").setValue(ide2);
+				formDatos.getInputByName("idcomunicacion3").setValue(ide3);
+				formDatos.getInputByName("idcontrato").setValue(ide1 + "-" + ide2 + "-" + ide3);
 			} else {
 
 				((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"2\"]")).click();
 
 				// ENTERPRISE
-				String cifValue = formDatos.getInputByName("cifnifnie").getValueAttribute();
+				String cifValue = formDatos.getInputByName("cifnifnie").getValue();
 
 				if (cifValue != null && cifValue.isEmpty()) {
 					String cifTypeStr = Toolkit.getIdentityType(cif);
@@ -1640,7 +1642,7 @@ public class Contrata {
 							.get(cifType);// " " cif, "D" NIF, "E" NIE
 					option.click();
 
-					formDatos.getInputByName("cifnifnie").setValueAttribute(cif);
+					formDatos.getInputByName("cifnifnie").setValue(cif);
 				}
 
 				// EMPLOYEE
@@ -1649,12 +1651,12 @@ public class Contrata {
 						.get(ident);
 				option.click();
 
-				formDatos.getInputByName("nifnietrabajador").setValueAttribute(Toolkit.appendStringLeft(ipf, " ", 2));
+				formDatos.getInputByName("nifnietrabajador").setValue(Toolkit.appendStringLeft(ipf, " ", 2));
 
 				String[] fri = Toolkit.formatDate(startDate);
-				formDatos.getInputByName("diafechaini").setValueAttribute(fri[0]);
-				formDatos.getInputByName("mesfechaini").setValueAttribute(fri[1]);
-				formDatos.getInputByName("anniofechaini").setValueAttribute(fri[2]);
+				formDatos.getInputByName("diafechaini").setValue(fri[0]);
+				formDatos.getInputByName("mesfechaini").setValue(fri[1]);
+				formDatos.getInputByName("anniofechaini").setValue(fri[2]);
 			}
 
 			htmlPage = formDatos.getInputByName("aceptar").click();
@@ -1776,15 +1778,15 @@ public class Contrata {
 		String ide4 = ide.substring(13);
 		boolean ide4Exist = ide4 != null && !ide4.isEmpty();
 
-		formDatos.getInputByName("idcomunicacion1").setValueAttribute(ide1);
-		formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide2);
-		formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide3);
+		formDatos.getInputByName("idcomunicacion1").setValue(ide1);
+		formDatos.getInputByName("idcomunicacion2").setValue(ide2);
+		formDatos.getInputByName("idcomunicacion3").setValue(ide3);
 
 		DomNode idcomunicacion4Node = formDatos.querySelector("[name=\"idcomunicacion4\"]");
 		if (idcomunicacion4Node != null && ide4Exist) {
 			HtmlInput idcomunicacion4 = ((HtmlInput) idcomunicacion4Node);
-			if (idcomunicacion4.getValueAttribute().isEmpty()) {
-				idcomunicacion4.setValueAttribute(ide4);
+			if (idcomunicacion4.getValue().isEmpty()) {
+				idcomunicacion4.setValue(ide4);
 			}
 		}
 
@@ -1794,7 +1796,7 @@ public class Contrata {
 			if (ide4Exist) {
 				ideStr += "-" + Toolkit.fillStringLeft(ide4, "0", 2);
 			}
-			((HtmlInput) ideEl).setValueAttribute(ideStr);
+			((HtmlInput) ideEl).setValue(ideStr);
 		}
 	
 		HtmlElement inputSubmit = formDatos.querySelector("input[value=aceptar]");
@@ -1823,14 +1825,14 @@ public class Contrata {
 		HtmlForm formDatos = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
 		HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipodoc2]>option").get(ident);
 		option.click();
-		formDatos.getInputByName("nifnietrabajador").setValueAttribute(Toolkit.appendStringLeft(ipf, " ", 2));
-		formDatos.getInputByName("diadesde").setValueAttribute(fri[0]);
-		formDatos.getInputByName("mesdesde").setValueAttribute(fri[1]);
-		formDatos.getInputByName("anniodesde").setValueAttribute(fri[2]);
+		formDatos.getInputByName("nifnietrabajador").setValue(Toolkit.appendStringLeft(ipf, " ", 2));
+		formDatos.getInputByName("diadesde").setValue(fri[0]);
+		formDatos.getInputByName("mesdesde").setValue(fri[1]);
+		formDatos.getInputByName("anniodesde").setValue(fri[2]);
 
-		formDatos.getInputByName("diahasta").setValueAttribute(fre[0]);
-		formDatos.getInputByName("meshasta").setValueAttribute(fre[1]);
-		formDatos.getInputByName("anniohasta").setValueAttribute(fre[2]);
+		formDatos.getInputByName("diahasta").setValue(fre[0]);
+		formDatos.getInputByName("meshasta").setValue(fre[1]);
+		formDatos.getInputByName("anniohasta").setValue(fre[2]);
 
 		htmlPage = formDatos.getInputByName("aceptar").click();
 		handleSepeExceptions(htmlPage);
@@ -1844,7 +1846,7 @@ public class Contrata {
 			HtmlTableCell cell = row.getCell(5);
 			if (cell.getVisibleText().indexOf(startDateStr) >= 0) {
 				firstColumn = row.getCell(0).querySelector("input[name=indice]");
-				columnCheck = firstColumn.getValueAttribute();
+				columnCheck = firstColumn.getValue();
 				break;
 			}
 		}
@@ -1876,15 +1878,15 @@ public class Contrata {
 
 			((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"1\"]")).click();
 
-			formDatos.getInputByName("idcomunicacion1").setValueAttribute(ide1);
-			formDatos.getInputByName("idcomunicacion2").setValueAttribute(ide2);
-			formDatos.getInputByName("idcomunicacion3").setValueAttribute(ide3);
+			formDatos.getInputByName("idcomunicacion1").setValue(ide1);
+			formDatos.getInputByName("idcomunicacion2").setValue(ide2);
+			formDatos.getInputByName("idcomunicacion3").setValue(ide3);
 
 			DomNode idcomunicacion4Node = formDatos.querySelector("[name=\"idcomunicacion4\"]");
 			if (idcomunicacion4Node != null && ide4Exist) {
 				HtmlInput idcomunicacion4 = ((HtmlInput) idcomunicacion4Node);
-				if (idcomunicacion4.getValueAttribute().isEmpty()) {
-					idcomunicacion4.setValueAttribute(Toolkit.fillStringLeft(ide4, "0", 2));
+				if (idcomunicacion4.getValue().isEmpty()) {
+					idcomunicacion4.setValue(Toolkit.fillStringLeft(ide4, "0", 2));
 				}
 			}
 
@@ -1895,7 +1897,7 @@ public class Contrata {
 				if (ide4Exist) {
 					ideStr += "-" + Toolkit.fillStringLeft(ide4, "0", 2);
 				}
-				idcontrato.setValueAttribute(ideStr);
+				idcontrato.setValue(ideStr);
 			}
 
 		} else {
@@ -1903,7 +1905,7 @@ public class Contrata {
 			((HtmlRadioButtonInput) formDatos.querySelector("[name=\"tipoacceso\"][value=\"2\"]")).click();
 
 			// ENTERPRISE
-			String cifValue = formDatos.getInputByName("cifnifnie").getValueAttribute();
+			String cifValue = formDatos.getInputByName("cifnifnie").getValue();
 
 			if (cifValue != null && cifValue.isEmpty()) {
 				String cifTypeStr = Toolkit.getIdentityType(cif);
@@ -1918,7 +1920,7 @@ public class Contrata {
 						.get(cifType);// " " cif, "D" NIF, "E" NIE
 				option.click();
 
-				formDatos.getInputByName("cifnifnie").setValueAttribute(cif);
+				formDatos.getInputByName("cifnifnie").setValue(cif);
 			}
 
 			// EMPLOYEE
@@ -1926,18 +1928,18 @@ public class Contrata {
 			HtmlOption option = (HtmlOption) formDatos.querySelectorAll("select[name=tipodocumento]>option").get(ident);
 			option.click();
 
-			formDatos.getInputByName("nifnietrabajador").setValueAttribute(Toolkit.appendStringLeft(ipf, " ", 2));
+			formDatos.getInputByName("nifnietrabajador").setValue(Toolkit.appendStringLeft(ipf, " ", 2));
 
 			String[] fri = Toolkit.formatDate(oldDateIniContract);
-			formDatos.getInputByName("diafechaini").setValueAttribute(fri[0]);
-			formDatos.getInputByName("mesfechaini").setValueAttribute(fri[1]);
-			formDatos.getInputByName("anniofechaini").setValueAttribute(fri[2]);
+			formDatos.getInputByName("diafechaini").setValue(fri[0]);
+			formDatos.getInputByName("mesfechaini").setValue(fri[1]);
+			formDatos.getInputByName("anniofechaini").setValue(fri[2]);
 			
 
 			nprorroga.ifPresent(n -> {
 				DomNode numprorrogaNode = formDatos.querySelector("[name=\"numprorroga\"]");
 				if (numprorrogaNode != null) {
-					((HtmlInput) numprorrogaNode).setValueAttribute(n + "");
+					((HtmlInput) numprorrogaNode).setValue(n + "");
 				}
 			});
 		}
@@ -2037,12 +2039,12 @@ public class Contrata {
 		if (cto.getCodOccupation() != null) {
 			DomNode ocupacion = form.querySelector("[name=\"ocupacion\"]");
 			if (ocupacion != null) {
-				((HtmlInput) ocupacion).setValueAttribute(cto.getCodOccupation());
+				((HtmlInput) ocupacion).setValue(cto.getCodOccupation());
 			}
 
 			DomNode cocupacion = form.querySelector("[name=\"cocupacion\"]");
 			if (cocupacion != null) {
-				((HtmlInput) cocupacion).setValueAttribute(cto.getCodOccupation());
+				((HtmlInput) cocupacion).setValue(cto.getCodOccupation());
 			}
 		}
 	}
@@ -2064,11 +2066,11 @@ public class Contrata {
 		
 		String href = null;
 
-		if(Arrays.asList("421", "450").contains(codCto)) { // Formación en alternancia tiempo completo
+		if(Arrays.asList("421", "450").contains(codCto)) { // FormaciÃ³n en alternancia tiempo completo
 			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=6";
-		} else if(codCto.equals("420")) { //Formativo para la obtención de la práctica profesional tiempo completo
+		} else if(codCto.equals("420")) { //Formativo para la obtenciÃ³n de la prÃ¡ctica profesional tiempo completo
 			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=7";
-		} else if(Arrays.asList("520", "550").contains(codCto)) { // Formativo para la obtención de la práctica profesional tiempo parcial
+		} else if(Arrays.asList("520", "550").contains(codCto)) { // Formativo para la obtenciÃ³n de la prÃ¡ctica profesional tiempo parcial
 			href = "/ccomunicacto/comunicacto/jsp/atraves_comunicacion2.jsp?com=8";
 		} else {
 			String oneCodCto = codCto.substring(0, 1);
@@ -2144,9 +2146,9 @@ public class Contrata {
 
 		htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("#volver")).click();
 		HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
-		form.getInputByName("cocupacion").setValueAttribute(cto.getCodOccupation());// repeat cod contract
-		form.getInputByName("contratoEscrito").setValueAttribute("N"); // contratoEscrito si la fecha fin es menor a 28
-		form.getInputByName("nass").setValueAttribute(cto.getNss());
+		form.getInputByName("cocupacion").setValue(cto.getCodOccupation());// repeat cod contract
+		form.getInputByName("contratoEscrito").setValue("N"); // contratoEscrito si la fecha fin es menor a 28
+		form.getInputByName("nass").setValue(cto.getNss());
 
 		// ---------------------PREVISIBLE---------------------
 		if (Arrays.asList("402", "502").contains(cto.getCodContract())) { // es previsible
@@ -2195,7 +2197,7 @@ public class Contrata {
 			((HtmlSelect) discontinuidad).setSelectedAttribute("S", true);
 		}
 		
-		form.getInputByName("idprorroga").setValueAttribute(ide1 + "-" + ide2 + "-" + ide3);
+		form.getInputByName("idprorroga").setValue(ide1 + "-" + ide2 + "-" + ide3);
 		
 		htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("[name=\"enviar\"]")).click();
 
@@ -2208,7 +2210,7 @@ public class Contrata {
 			if (error != null && !error.getVisibleText().isEmpty()) {
 				throw new SepeException(error.getVisibleText());
 			} else {
-				String body = htmlPage.asText();
+				String body = htmlPage.asNormalizedText();
 				if (body != null) {
 					Pattern pattern = Pattern.compile("(?<certificate>certificado\\s*digital\\s*no\\s*v.lido)|(?<permission>no\\s*est.{1,3}\\s*autorizado)", Pattern.CASE_INSENSITIVE);
 					Matcher matcher = pattern.matcher(body);

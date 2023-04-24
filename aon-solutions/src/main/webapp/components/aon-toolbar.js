@@ -172,6 +172,7 @@ export class AonToolbar extends AonElement {
 			let aonMenu = this.getElement('aonMenu');
 			let toolSection = this.getElement(this.TOOL_SECTION);
 			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
+			toolSection.style.marginBottom = '2px';
 			if(toolSection.children.length > 0) {
 				toolSection.insertBefore(span, toolSection.children[0]);
 			} else toolSection.appendChild(span);
@@ -191,6 +192,7 @@ export class AonToolbar extends AonElement {
 			let aonMenu = this.getElement('aonMenu');
 			let toolSection = this.getElement(this.TOOL_SECTION);
 			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
+			toolSection.style.marginBottom = '2px';
 			if(toolSection.children.length > 0) {
 				toolSection.insertBefore(search, toolSection.children[0]);
 			} else{
@@ -237,6 +239,7 @@ export class AonToolbar extends AonElement {
 			let aonMenu = this.getElement('aonMenu');
 			let toolSection = this.getElement(this.TOOL_SECTION);
 			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
+			toolSection.style.marginBottom = '2px';
 			if(toolSection.children.length > 0) {
 				toolSection.insertBefore(span, toolSection.children[0]);
 			} else toolSection.appendChild(span);
@@ -262,6 +265,7 @@ export class AonToolbar extends AonElement {
 			let aonMenu = this.getElement('aonMenu');
 			let toolSection = this.getElement(this.TOOL_SECTION);
 			toolSection.style.paddingRight = (aonMenu && aonMenu.getAttribute('opened')) || this.isMobile() ? '0px' : '40px';
+			toolSection.style.marginBottom = '2px';
 			if(after && this.getElement(this.TOOL_SECTION + after + 'Button')) {
 				let btn = this.getElement(this.TOOL_SECTION + after + 'Button');
 				toolSection.insertBefore(span, btn.parentNode);

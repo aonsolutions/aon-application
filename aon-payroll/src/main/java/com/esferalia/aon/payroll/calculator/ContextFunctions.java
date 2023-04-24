@@ -9,7 +9,6 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.PAYMENT_VARI
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.SECTION;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.START;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WARNING;
-import static com.esferalia.aon.watson.server.AonDateUtils.getDaysBetweenDates;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -17,10 +16,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.mvel2.MVEL;
 import org.mvel2.util.MethodStub;
@@ -37,8 +36,10 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 import com.esferalia.aon.salary.expression.ExpressionContext.MacroException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.FullHideException;
 import com.esferalia.aon.salary.expression.HideException;
+import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.InvalidVariables;
@@ -125,6 +126,19 @@ public class ContextFunctions {
 
 	public static boolean isRead(String name, ExpressionContext context) throws CheckException {
 		return context.isRead(name);
+	}
+
+	public static ExpressionScope scope(String name, ExpressionContext context) throws CheckException {
+	    	return
+	    	context.getVariables(name).stream()
+		.filter( IExpressionVariable.class::isInstance )
+		.map( v -> (IExpressionVariable<?>) v)
+		.map( v -> v.getExpression() )
+		.filter(Objects::nonNull)
+		.map( e ->  e.getScope() )
+		.filter(Objects::nonNull)
+		.collect(Collectors.maxBy(Comparable::compareTo))
+		.orElse(ExpressionScope.APPLICATION);
 	}
 
 	public static void section(Date date) throws MacroException {
@@ -606,6 +620,16 @@ public class ContextFunctions {
 		};
 	}
 
+	public static Double proration(Double amount, int months) throws MacroException{ 
+		throw new MacroException() {
+			@Override
+			public String doMacro(String expr) {
+				return expr.replaceAll(String.format("%s\\s*\\(", ContextVariable.PRORATION),
+						String.format("%s\\(%s,", _PRORATION, ContextVariable.CONTEXT));
+			}
+		};
+	}
+
 	public static Double proration(Double amount, int start, int end) throws MacroException{ 
 		throw new MacroException() {
 			@Override
@@ -665,6 +689,10 @@ public class ContextFunctions {
 			return 0.00;
 		
 		return amount / extraMonths.size()  ;
+	}
+
+	public static Double proration(ExpressionContext context, Double amount, int months) {				
+		return amount / months   ;
 	}
 	
 	public static Double proration(ExpressionContext context, Double amount, int start, int end) {
@@ -990,6 +1018,27 @@ public class ContextFunctions {
 		}
 	}
 	
+	private static void loadScopeFunction(ExpressionContext context, Date startDate, Date endDate)
+		throws ExpressionException {
+
+	try {
+	    	for ( ExpressionScope expressionScope : ExpressionScope.values() ) {
+			context.setVariable(expressionScope.name(), expressionScope, startDate, endDate);
+	    	}
+
+		Method scope = ContextFunctions.class.getMethod("scope", String.class,
+				ExpressionContext.class);
+
+		MethodStub scopeStub = new MethodStub(scope);
+		context.setVariable("SCOPE", scopeStub, startDate, endDate);
+		String functionScript = String.format("%s = def(variable) { SCOPE(variable, %s) };",
+				ContextVariable.SCOPE, ContextVariable.CONTEXT);
+
+		context.eval(functionScript, startDate, endDate);
+	} catch (SecurityException e) {
+	} catch (NoSuchMethodException e) {
+	}
+}
 
 	private static void loadExcessFunction(ExpressionContext context, Date startDate, Date endDate)
 			throws ExpressionException {
@@ -1095,6 +1144,7 @@ public class ContextFunctions {
 		loadSeniorityFunction(context, startDate, endDate);
 		loadSectionFunction(context, startDate, endDate);
 		loadProrationFunction(context, startDate, endDate);
+		loadScopeFunction(context, startDate, endDate);
 	}
 	
 	public static void loadDaysFunctions(ExpressionContext context, Date startDate, Date endDate)

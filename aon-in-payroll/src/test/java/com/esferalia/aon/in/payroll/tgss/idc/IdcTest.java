@@ -50,6 +50,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
@@ -3682,6 +3683,191 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdcplcccTrabajadoresTramosXXII()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplcccXXII.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is,
+				new TrabajadoresTramosCallback() {
+			    		@Override
+			    		public boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
+			    		    return true;
+			    		}
+				});
+	
+			marshal(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("09", liquidacion.getCcc().getProvincia());
+			assertEquals("106684847", liquidacion.getCcc().getNumero());
+	
+			assertEquals("02", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2023", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("02", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2023", liquidacion.getPeriodoHasta().getAnho());
+	
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+	
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("02", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2023", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(5, trabajadores.getTrabajador().size());
+	
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+			    	if (trabajador.getNaf().equals("091011246369") ) {
+	
+				assertEquals(2, trabajador.getTramos().getTramo().size());
+	
+				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+				assertEquals("06", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("01", tramo.getFechaDesde().getDia());
+				assertEquals("02", tramo.getFechaDesde().getMes());
+				assertEquals("2023", tramo.getFechaDesde().getAnho());
+				assertEquals("24", tramo.getFechaHasta().getDia());
+				assertEquals("02", tramo.getFechaHasta().getMes());
+				assertEquals("2023", tramo.getFechaHasta().getAnho());
+				assertTramoTiempoParcial(tramo);	
+
+				tramo = trabajador.getTramos().getTramo().get(1);
+				assertEquals("06", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("25", tramo.getFechaDesde().getDia());
+				assertEquals("02", tramo.getFechaDesde().getMes());
+				assertEquals("2023", tramo.getFechaDesde().getAnho());
+				assertEquals("28", tramo.getFechaHasta().getDia());
+				assertEquals("02", tramo.getFechaHasta().getMes());
+				assertEquals("2023", tramo.getFechaHasta().getAnho());
+				assertTramoIT15PrimerosDias(tramo);	
+			    }
+			}
+	
+		}
+	}
+
+	@Test
+	public void testIdcplcccTrabajadoresTramosXXIII()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplcccXXIII.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is,
+				new TrabajadoresTramosCallback() {
+			    		@Override
+			    		public boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
+			    		    return true;
+			    		}
+				});
+	
+			marshal(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("41", liquidacion.getCcc().getProvincia());
+			assertEquals("111822622", liquidacion.getCcc().getNumero());
+	
+			assertEquals("02", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2023", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("02", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2023", liquidacion.getPeriodoHasta().getAnho());
+	
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+	
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("02", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2023", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size());
+	
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+			    	assertEquals("411003115722", trabajador.getNaf());
+				assertEquals(2, trabajador.getTramos().getTramo().size());
+	
+				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+				assertEquals("08", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("01", tramo.getFechaDesde().getDia());
+				assertEquals("02", tramo.getFechaDesde().getMes());
+				assertEquals("2023", tramo.getFechaDesde().getAnho());
+				assertEquals("19", tramo.getFechaHasta().getDia());
+				assertEquals("02", tramo.getFechaHasta().getMes());
+				assertEquals("2023", tramo.getFechaHasta().getAnho());
+				assertTramoTiempoParcial(tramo);	
+
+				tramo = trabajador.getTramos().getTramo().get(1);
+				assertEquals("08", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("20", tramo.getFechaDesde().getDia());
+				assertEquals("02", tramo.getFechaDesde().getMes());
+				assertEquals("2023", tramo.getFechaDesde().getAnho());
+				assertEquals("28", tramo.getFechaHasta().getDia());
+				assertEquals("02", tramo.getFechaHasta().getMes());
+				assertEquals("2023", tramo.getFechaHasta().getAnho());
+				assertTramoTiempoParcial(tramo);	
+			}
+	
+		}
+	}
+
+	@Test
+	public void testIdcplcccTrabajadoresTramosXIV()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplcccXIV.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is,
+				new TrabajadoresTramosCallback() {
+			    		@Override
+			    		public boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
+			    		    return false;
+			    		}
+				});
+	
+			marshal(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0163", liquidacion.getCcc().getRegimen());
+			assertEquals("06", liquidacion.getCcc().getProvincia());
+			assertEquals("115046920", liquidacion.getCcc().getNumero());
+	
+			assertEquals("02", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2023", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("02", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2023", liquidacion.getPeriodoHasta().getAnho());
+	
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+	
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("02", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2023", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size());
+	
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+			    	if (trabajador.getNaf().equals("280382731678") ) {
+	
+				assertEquals(1, trabajador.getTramos().getTramo().size());
+	
+				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+				assertEquals("08", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				assertEquals("01", tramo.getFechaDesde().getDia());
+				assertEquals("02", tramo.getFechaDesde().getMes());
+				assertEquals("2023", tramo.getFechaDesde().getAnho());
+				assertEquals("28", tramo.getFechaHasta().getDia());
+				assertEquals("02", tramo.getFechaHasta().getMes());
+				assertEquals("2023", tramo.getFechaHasta().getAnho());
+				assertTramoActivoNormal(tramo);	
+				assertNoDatosSolicitado(tramo, "I", "51");
+				assertNoDatosSolicitado(tramo, "H", "01");
+
+			    }
+			}
+	
+		}
+	}
+
+
+	
+	@Test
 	public void testIdcSyncI() throws IOException, UnknownPDFException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcI.pdf")) {
 			byte data[] = is.readAllBytes();
@@ -4732,6 +4918,13 @@ public class IdcTest extends AbstractSQLTestCase {
 				put("PORCENTAJE_FOGASA", "0.20");
 			}
 		});
+		addSystemData(aonContext, getFirstDayOf(2023), null, new HashMap<String, String>() {
+			{
+				put("PORCENTAJE_MEI", "0.10");
+				put("PORCENTAJE_MEI_E", "0.50");
+			}
+		});
+
 		PaymentConceptRecord prestIT = addConcept(aonContext, ContextVariable.PREST_IT);
 
 		addSSRegimePayment(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(getToday()), prestIT,
@@ -4757,15 +4950,20 @@ public class IdcTest extends AbstractSQLTestCase {
 		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOfYear(startDate), "FP_E", DeductionType.FOGASA,
 				"BASE_CGP_E * PORCENTAJE_FP_E/100");
 
+		addSSRegimeCost(aonContext, SSRegimeType.GENERAL, getFirstDayOf(2023), "MEI_E",
+			DeductionType.MEI, "BASE_CGC_E * PORCENTAJE_MEI_E/100");
+
 		DeductionConceptRecord fpConcept = addDeductionConcept(aonContext, "FP", DeductionType.COMMON_CONTINGENCY);
 		DeductionConceptRecord cgcConcept = addDeductionConcept(aonContext, "CGC", DeductionType.COMMON_CONTINGENCY);
+		DeductionConceptRecord meiConcept = addDeductionConcept(aonContext, "MEI", DeductionType.MEI);
 		DeductionConceptRecord desmplConcept = addDeductionConcept(aonContext, "DESMPL",
-				DeductionType.COMMON_CONTINGENCY);
+				DeductionType.MEI);
 
 		addSSRegimeDeduction(aonContext, fpConcept, SSRegimeType.GENERAL, startDate, "BASE_CGC * PORCENTAJE_FP/100");
 		addSSRegimeDeduction(aonContext, cgcConcept, SSRegimeType.GENERAL, startDate, "BASE_CGC * PORCENTAJE_CGC/100");
 		addSSRegimeDeduction(aonContext, desmplConcept, SSRegimeType.GENERAL, startDate,
 				"BASE_CGC * PORCENTAJE_DESMPL/100");
+		addSSRegimeDeduction(aonContext, meiConcept, SSRegimeType.GENERAL, getFirstDayOf(2023), "BASE_CGC * PORCENTAJE_MEI/100");
 
 		ContractRecord contract = newContract(aonContext, getFirstDayOfYear(startDate), new HashMap<String, String>() {
 			{
@@ -4924,6 +5122,187 @@ public class IdcTest extends AbstractSQLTestCase {
 			assertEquals(costs - 141.15, salary.getTotalEnterprise(), DELTA);
 			// assertEquals(0.00, salary.getSocialSecurityContributions(), DELTA);
 
+		}
+	}
+
+	@Test
+	public void testIdcXXVIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SalaryException, SQLException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXVII.pdf")) {
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			Assert.assertEquals(1, ssPecs.size());
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.DAY_OF_MONTH, 21);
+			calendar.set(Calendar.MONTH, Calendar.DECEMBER);
+
+			Date december212022 = calendar.getTime();
+
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 4);
+			calendar.set(Calendar.MONTH, Calendar.APRIL);
+
+			Date april42023 = calendar.getTime();
+
+			ssPecs.stream().forEach(pec -> Assert.assertEquals(december212022, pec.getStartDate()));
+			ssPecs.stream().forEach(pec -> Assert.assertEquals(april42023, pec.getEndDate()));
+
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
+					+ pec.getFormula() + ", " + pec.getStartDate()));
+
+
+			List<Data> datas = new ArrayList<>();
+			datas.add(new Data() {
+				{
+					endDate = null;
+					startDate = december212022;
+					expression = "0.75";
+					name = ContextVariable.PARTIAL_FACTOR.getName();
+				}
+			});
+
+			
+			List<Double> notBonusCosts = new ArrayList<>();
+			Salary salary = calculate(ssPecs, datas, december212022, new SalaryBuilder() {
+			    public void addCost(Double amount, String description, Date start, Date end, IDeduction cost, java.util.Map<String,ITimedVariable<?>> context) {
+				if ( AonDateUtils.getFirstDayOfMonth(start).equals(start) )
+				    notBonusCosts.add(amount);
+				super.addCost(amount, description, start, end, cost, context);
+			    };
+			});
+			
+			double totalEnterprise = notBonusCosts.stream().collect(Collectors.summingDouble(d->d));
+
+			assertEquals(totalEnterprise, salary.getTotalEnterprise(), DELTA);
+
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+			
+			Date february12023 = calendar.getTime();
+
+			salary = calculate(ssPecs, datas, february12023);
+
+			double meiCost = salary.getSalaryCosts().stream().filter( c -> "MEI_E".equals( c.getName())).collect(Collectors.summingDouble(SalaryCost::getAmount));
+
+			assertEquals(meiCost, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
+	@Test
+	public void testIdcXXVIIIBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SalaryException, SQLException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXVIII.pdf")) {
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+			//Assert.assertEquals(5, ssPecs.size());
+
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
+				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			calendar.set(Calendar.YEAR, 2020);
+			calendar.set(Calendar.DAY_OF_MONTH, 01);
+			calendar.set(Calendar.MONTH, Calendar.OCTOBER);
+			Date october01102020 = calendar.getTime();
+
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.MONTH, Calendar.MAY);
+			Date may01052021 = calendar.getTime();
+
+			assertPECS(ssPecs, october01102020, may01052021, 1, pec -> pec.getFormula().contains("pec:16,quota:51") );
+			
+			//ssPecs.stream().forEach(pec -> Assert.assertEquals(april42023, pec.getEndDate()));
+
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH, 31);
+			calendar.set(Calendar.MONTH, Calendar.JANUARY);
+			Date january31012021 = calendar.getTime();
+
+			assertPECS(ssPecs, october01102020, january31012021, 1, pec -> pec.getFormula().contains("pec:37,quota:57") );
+
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH, 01);
+			calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+			Date february01022021 = calendar.getTime();
+
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH, 28);
+			calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+			Date february28022021 = calendar.getTime();
+
+			assertPECS(ssPecs, february01022021, february28022021, 1, pec -> pec.getFormula().contains("pec:37,quota:57") );
+
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.MONTH, Calendar.MARCH);
+			Date march01032021 = calendar.getTime();
+
+			calendar.set(Calendar.YEAR, 2021);
+			calendar.set(Calendar.DAY_OF_MONTH, 31);
+			calendar.set(Calendar.MONTH, Calendar.MARCH);
+			Date march31032021 = calendar.getTime();
+
+			assertPECS(ssPecs, march01032021, march31032021, 1, pec -> pec.getFormula().contains("pec:37,quota:57") );
+
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 20);
+			calendar.set(Calendar.MONTH, Calendar.MARCH);
+			Date march20032023 = calendar.getTime();
+
+			assertPECS(ssPecs, march20032023, null, 1, pec -> pec.getFormula().contains("pec:03,quota:03") );
+
+
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 20);
+			calendar.set(Calendar.MONTH, Calendar.MARCH);
+			Date march01032023 = calendar.getTime();
+
+			Salary salary = calculate(ssPecs, Collections.emptyList(), march01032023);
+			
+			double totalCgcE = 0.00;
+			for (SalaryCost cost : salary.getSalaryCosts()) {
+			    	if ("CGC_E".equals(cost.getName()) )
+			    	    totalCgcE += cost.getAmount();
+			}
+			
+			double totalBonus = 0.00;
+			for (SalaryBonus bonus : salary.getSalaryBonus()) {
+				totalBonus += bonus.getAmount();
+				
+			}
+			
+			assertEquals(totalCgcE * 0.75 * 12 / 31 , totalBonus, DELTA);
+
+//			
+//			double totalEnterprise = notBonusCosts.stream().collect(Collectors.summingDouble(d->d));
+//
+//			assertEquals(totalEnterprise, salary.getTotalEnterprise(), DELTA);
+//
+//			calendar.set(Calendar.YEAR, 2023);
+//			calendar.set(Calendar.DAY_OF_MONTH, 1);
+//			calendar.set(Calendar.MONTH, Calendar.FEBRUARY);
+//			
+//			Date february12023 = calendar.getTime();
+//
+//			salary = calculate(ssPecs, datas, february12023);
+//
+//			double meiCost = salary.getSalaryCosts().stream().filter( c -> "MEI_E".equals( c.getName())).collect(Collectors.summingDouble(SalaryCost::getAmount));
+//
+//			assertEquals(meiCost, salary.getTotalEnterprise(), DELTA);
 		}
 	}
 
@@ -5266,6 +5645,33 @@ public class IdcTest extends AbstractSQLTestCase {
 
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
+	}
+	
+	private static java.sql.Date getFirstDayOf( int year) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.set(Calendar.MONTH, Calendar.JANUARY);
+
+		return  new java.sql.Date(calendar.getTimeInMillis());
+	    
+	}
+	
+	private static void assertPECS(Collection<PEC> ssPecs, Date startDate, Date endDate, int size, Predicate<PEC> test ) {
+	    PEC [] pecs = 
+             ssPecs.stream()
+	    .filter( pec -> Objects.equals(pec.getEndDate(),endDate))
+	    .filter( pec -> Objects.equals(pec.getStartDate(),startDate))
+	    .toArray(PEC[]::new);
+	    
+	    Assert.assertEquals(1, pecs.length);
+	    Arrays.stream(pecs).forEach(pec -> Assert.assertTrue(test.test(pec)));
+	    
 	}
 
 }

@@ -119,6 +119,11 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		protected void showErrorMessage(String title, String message) {
 			showError(title, message);
 		}
+		
+		@Override
+		protected void showWarningMessage(String title, String message) {
+			showWarning(title, message);
+		}
 
 		@Override
 		protected void showAfiOption() {
@@ -1248,7 +1253,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 	// ------------------------------------------------- Initialize View
 	
 	private void setScrollPanelsHeight() {
-		scrolledPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
+		scrolledPanel.getElement().getStyle().setHeight(Window.getClientHeight() - 260.00, Unit.PX);
 		scrolledPanelContractOtherData.getElement().getStyle().setHeight(Window.getClientHeight() - 250.00, Unit.PX);
 		scrolledPanelClauses.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
 		scrolledPanelAttach.getElement().getStyle().setHeight(Window.getClientHeight() - 230.00, Unit.PX);
@@ -1258,7 +1263,7 @@ public abstract class ContrataEmployee extends ResizeComposite {
 
 	private void initFootPanel() {
 		footPanel.addMaximizeHandler(e -> showFootPanel());
-		footPanel.addMinimizeHandler(e -> hideFootPanel());
+		footPanel.addMinimizeHandler(e -> closeFootPanel());
 		footPanel.clearButtons();
 		footPanel.addButtonLess();
 	}
@@ -1294,6 +1299,9 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		loadData(s -> {
 			loadToolbar();
 			hideMessage();
+			// CheckCNO
+			if(0 == tabLayOutPanel.getSelectedIndex() && contrataEmployeeObject.getContractData().getSsRegimen() != (byte)3 && !contractEmployeeUI.employee.isCnoSelected())
+				showWarning("CNO", "El CNO es obligatorio para todas las altas a partir del 01/01/2023");
 			checkButtonsToolbar();
 			finish.accept(null);
 		});
@@ -1778,9 +1786,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			// Nothing to do here
 		}
 		
-		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), contractEmployeeUI.getContractType(),
-				contractEmployeeUI.getQuoteGroup(), contractEmployeeUI.getOccupation(),
-				contractEmployeeUI.getPartialityCoef(), this.contrataEmployeeObject.getContractData().getContractId(),
+		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), 
+				contractEmployeeUI.getContractType(),
+				contractEmployeeUI.getQuoteGroup(), 
+				contractEmployeeUI.getOccupation(),
+				contractEmployeeUI.getPartialityCoef(), 
+				this.contrataEmployeeObject.getContractData().getCno(), 
+				this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId(),
 				this.contrataEmployeeObject.getContractData().hasSettle(),
@@ -1823,6 +1835,12 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				// Nothing to do here
 			}
 
+			@Override
+			protected void onCnoContract(String cno, Date date) {
+				// TODO Auto-generated method stub
+				
+			}
+
 		};
 	}
 
@@ -1835,9 +1853,13 @@ public abstract class ContrataEmployee extends ResizeComposite {
 			// Nothing to do here
 		}
 		
-		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), contractEmployeeUI.getContractType(),
-				contractEmployeeUI.getQuoteGroup(), contractEmployeeUI.getOccupation(),
-				contractEmployeeUI.getPartialityCoef(), this.contrataEmployeeObject.getContractData().getContractId(),
+		new EmployeeAFIDialog(contractEmployeeUI.getStartDate(), contractEmployeeUI.getEndDate(), 
+				contractEmployeeUI.getContractType(),
+				contractEmployeeUI.getQuoteGroup(), 
+				contractEmployeeUI.getOccupation(),
+				contractEmployeeUI.getPartialityCoef(), 
+				this.contrataEmployeeObject.getContractData().getCno(), 
+				this.contrataEmployeeObject.getContractData().getContractId(),
 				this.contrataEmployeeObject.getEmployeeData().getDomain(),
 				this.contrataEmployeeObject.getContractData().getWorkplaceId(), 
 				this.contrataEmployeeObject.getContractData().hasSettle(),
@@ -1855,6 +1877,15 @@ public abstract class ContrataEmployee extends ResizeComposite {
 				contrataEmployeeObject.cambioCoef(partialityCoef, date,
 						s -> showSuccess("AVISO: Parcialidad",
 								"El coeficiente de parcialidad ha sido notificado a la Seguridad Social."),
+						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
+			}
+			
+			@Override
+			protected void onCnoContract(String cno, Date date) {
+				showLoading("Comunicando CNO (TGSS) ...");
+				contrataEmployeeObject.cambioCno(cno, date,
+						s -> showSuccess("AVISO: CNO",
+								"El cambio de CNO ha sido notificado a la Seguridad Social."),
 						f -> showError("Error comunicaci\u00F3n", f.getMessage()));
 			}
 
@@ -2736,23 +2767,20 @@ public abstract class ContrataEmployee extends ResizeComposite {
 		footPanel.addButtonLess();
 	}
 
-	private void closeFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 20);
-		splitLayoutPanel.animate(500);
-	}
-
 	private void optionNotAllowed() {
 		AonDialog dialog = new AonDialog("Informaci\u00f3n", new HTML("Opci\u00f3n no permitida"));
 		dialog.info();
 	}
-
-	private void hideFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 20);
+	
+	private void showFootPanel() {
+		footPanel.addButtonMore();
+		splitLayoutPanel.setWidgetSize(footPanel, Window.getClientHeight() / 4.00);
 		splitLayoutPanel.animate(500);
 	}
-
-	private void showFootPanel() {
-		splitLayoutPanel.setWidgetSize(footPanel, 200);
+	
+	private void closeFootPanel() {
+		footPanel.addButtonLess();
+		splitLayoutPanel.setWidgetSize(footPanel, 17);
 		splitLayoutPanel.animate(500);
 	}
 

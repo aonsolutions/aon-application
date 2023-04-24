@@ -210,6 +210,8 @@ export const LANGUAGE = 'Idioma';
 export const LAST = 'Última';
 export const LAST_LOCATION = 'Última ubicación';
 export const LAST_STATUS = 'Último estado';
+export const LINK = 'Vincular';
+export const LINK_DOMAINS = 'Vincular Dominios';
 export const LOCATION = 'Ubicación';
 
 // ----- M
@@ -387,6 +389,7 @@ export const USER = 'Usuario';
 export const USER_DATA = 'Datos del Usuario';
 export const USER_MANAGEMENT = 'Gestión de Usuarios';
 export const USERS = 'Usuarios';
+export const UTILITIES = 'Utilidades';
 
 // ----- V
 

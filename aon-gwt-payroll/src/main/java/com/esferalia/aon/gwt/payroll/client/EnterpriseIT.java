@@ -181,7 +181,7 @@ public class EnterpriseIT extends Composite {
 	}
 	
 	// ------ setFooter
-	public void setFooter(SplitLayoutPanel splitLayoutPanel, TabLayoutPanel tab, AonMinimizePanel footPanel) {		
-		itWidget.setFooter(splitLayoutPanel, tab, footPanel);
+	public void setFooter(SplitLayoutPanel dockLayoutPanel, TabLayoutPanel tab, AonMinimizePanel footPanel) {		
+		itWidget.setFooter(dockLayoutPanel, tab, footPanel);
 	}
 }

@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+<<<<<<< HEAD
 import org.apache.commons.io.FileUtils;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
@@ -39,6 +40,18 @@ import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
+=======
+import org.htmlunit.NicelyResynchronizingAjaxController;
+import org.htmlunit.Page;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.DomElement;
+import org.htmlunit.html.HtmlForm;
+import org.htmlunit.html.HtmlOption;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlRadioButtonInput;
+import org.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.HtmlSubmitInput;
+>>>>>>> master
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.exception.OutOfServiceException;
@@ -120,16 +133,16 @@ public class AonSegSocialJuanma extends SegSocialException {
 			}
 
 			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
-			form.getInputByName("txt_SDFPROAFI").setValueAttribute(nss.substring(0, 2));
-			form.getInputByName("txt_SDFCODAFI").setValueAttribute(nss.substring(2));
+			form.getInputByName("txt_SDFPROAFI").setValue(nss.substring(0, 2));
+			form.getInputByName("txt_SDFCODAFI").setValue(nss.substring(2));
 
-			form.getInputByName("txt_SDFTIPPFI_ayuda").setValueAttribute(ident.substring(0, 1));
-			form.getInputByName("txt_SDFNUMPFI").setValueAttribute(ident.substring(1));
+			form.getInputByName("txt_SDFTIPPFI_ayuda").setValue(ident.substring(0, 1));
+			form.getInputByName("txt_SDFNUMPFI").setValue(ident.substring(1));
 
-			form.getInputByName("txt_SDFREGAFI").setValueAttribute(regimen);
+			form.getInputByName("txt_SDFREGAFI").setValue(regimen);
 
-			form.getInputByName("txt_SDFTESCTACOT").setValueAttribute(cc.substring(0, 2));
-			form.getInputByName("txt_SDFCTACOT").setValueAttribute(cc.substring(2));
+			form.getInputByName("txt_SDFTESCTACOT").setValue(cc.substring(0, 2));
+			form.getInputByName("txt_SDFCTACOT").setValue(cc.substring(2));
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
 			System.out.println(htmlPage.asXml());
@@ -152,7 +165,7 @@ public class AonSegSocialJuanma extends SegSocialException {
 				}
 			}
 
-			form2.getInputByName("txt_SDFCNOCUP_ayuda").setValueAttribute(cno);
+			form2.getInputByName("txt_SDFCNOCUP_ayuda").setValue(cno);
 			formSubmit.click();
 
 			System.out.println(htmlPage.asXml());
@@ -241,7 +254,7 @@ public class AonSegSocialJuanma extends SegSocialException {
 			HtmlRadioButtonInput radioButton3 = (HtmlRadioButtonInput) htmlPage.getElementById("idOpcion1");
 			radioButton3.setChecked(true);
 			// Codigo de cuenta de cotizacion
-			form.getInputByName("CCC").setValueAttribute(ccc);
+			form.getInputByName("CCC").setValue(ccc);
 
 			// Regimen
 			HtmlSelect select = (HtmlSelect) htmlPage.getElementById("idRegimen");
@@ -324,7 +337,7 @@ public class AonSegSocialJuanma extends SegSocialException {
 			HtmlRadioButtonInput radioButton3 = (HtmlRadioButtonInput) htmlPage.getElementById("idOpcion2");
 			radioButton3.setChecked(true);
 
-			form.getInputByName("numeroLiquidacion").setValueAttribute(liquidationNumber);
+			form.getInputByName("numeroLiquidacion").setValue(liquidationNumber);
 
 			HtmlSelect select = (HtmlSelect) htmlPage.getElementById("solicitudRNT");
 			HtmlOption selectOption = select.getOptionByValue(rnt);

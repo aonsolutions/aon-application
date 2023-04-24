@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.FailingHttpStatusCodeException;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlPage;
 
 import solutions.aon.seg.social.exception.ForbiddenException;
 import solutions.aon.seg.social.exception.InvalidCertificateException;
@@ -584,6 +584,14 @@ public class SistemaRED {
 
 		SistemaREDMov.updateOccupation(certificateInputStream, certificatePassword, certificateType, ipf, regimen,
 				ctaCti, nss, ocup, fecha);
+	}
+	
+	public static void cambioCno(final InputStream certificateInputStream, final String certificatePassword,
+			final String certificateType, String ipf, String regimen, String ctaCti, String nss, String cno,
+			Date fecha) throws SegSocialException {
+
+		SistemaREDMov.updateCno(certificateInputStream, certificatePassword, certificateType, ipf, regimen,
+				ctaCti, nss, cno, fecha);
 	}
 
 	public static void cambioCatProf(final InputStream certificateInputStream, final String certificatePassword,

@@ -48,7 +48,7 @@ export class AonSearchBox extends AonElement {
 		div.id = 'aon-search-div';
 		div.style.height = '40px';
 		div.style.minWidth = '400px';
-		div.style.backgroundColor = '#f0f0f0';
+		div.style.backgroundColor = '#eaf1fb';
 		div.style.borderRadius = '10px';
 		this.appendChild(div);
 
@@ -63,7 +63,7 @@ export class AonSearchBox extends AonElement {
 		input.placeholder = MSG.SEARCH;
 		input.title = MSG.SEARCH;
 		input.className = 'aonSearchBox';
-		input.style.backgroundColor = '#f0f0f0';
+		input.style.backgroundColor = '#eaf1fb';
 		input.style.width = '350px';
 		div.appendChild(input);
 

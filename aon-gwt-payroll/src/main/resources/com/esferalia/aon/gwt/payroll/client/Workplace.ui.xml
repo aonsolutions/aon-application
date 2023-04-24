@@ -4,21 +4,16 @@
 
 	<ui:style type="com.esferalia.aon.gwt.payroll.client.Workplace.MyStyle">
 
-		.container{
-			width: 100%;
-			min-width: 600px;
-			max-width: 700px;
-			padding: 10px;
-			margin: auto;
-			margin-top: 10px;
+		.container {
+			margin: 1rem 1rem 0;
+			display: flex;
+			flex-direction: column;
 		}
 		
-		.widthAll{
-			width: 100%;
-		}
-		
-		.heightAll{
-			height: 100%;
+		.firstColumn{
+			min-width: 200px;
+			padding: 5px;
+			background-color: #f6f6f6; 
 		}
 		
 		.flex{
@@ -29,13 +24,6 @@
 			gap: 5px;
 		}
 		
-		.flexCenter{
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			margin-bottom: 20px;
-		}
-		
 		.flexColumn{
 			display: flex;
 			justify-content: center;
@@ -43,16 +31,37 @@
 			flex-direction: column;
 		}
 		
+		.heightAll { height: 100%; }
+		
+		.inputPadding { padding: 0 0 0 .5rem; }
+
+		.inputLBHeight { 
+			height: 1.4rem !important; 
+			border-radius: 0;
+			text-transform: uppercase;
+		}
+		
+		.inputTextHeight { 
+			height: 1.2rem !important; 
+			text-transform: uppercase;	
+		}
+		
+		.mt20 { margin-top: 20px; }
+		
+		.requiredColor{
+			color: #2152A5;
+			font-weight: bold !important;
+		}
+		
 		.styleBorder{
-			width: 100%;
-			max-width: 900px;
 			border: 1px solid black;
-			padding: 5px;
+			border-radius: 5px;
+			padding: 0 1rem .5rem;
 		}
 		
 		.tittle{
 			position: relative;
-			top: -1.2em;
+			top: -10px;
 			left: 20px;
 			width: 130px;
 			padding: 0 5px;
@@ -62,72 +71,55 @@
 			text-align: center;
 		}
 		
-		.firstColumn{
-			min-width: 200px;
-			padding: 5px;
-			background-color: #f6f6f6; 
-		}
+		.warningTB { border: 1px solid red; }
 		
-		.requiredColor{
-			color: #2152A5;
-			font-weight: bold !important;
-		}
+		.widthAll { width: 100%; }
 		
-		.mt-20{
-			margin-top: 20px;
-		}
-		
-		.flexGrow{
-			flex-grow: 1;
-		}
-		
-		.warningTB{
-			border: 1px solid red;
-		}
+		@external warningTB;
 		
 	</ui:style>
 	
-	<g:VerticalPanel styleName="{style.container}">
-		<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexCenter}" debugId="activityHTMLPanel">
-	   		<g:VerticalPanel styleName="{style.styleBorder}">
+	<g:HTMLPanel styleName="{style.container}">
+		<g:HTMLPanel styleName="{style.widthAll} {style.heightAll}">
+	   		<g:HTMLPanel styleName="{style.styleBorder}">
 	    		<g:Label styleName='{style.tittle}'>Datos Generales</g:Label>
 		    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
 		    		<g:HTMLPanel ui:field="workplaceDescriptionPanel" styleName="{style.flex}">
 		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Descripción</g:Label>
-		    			<g:TextBox ui:field="workplaceDescription" styleName='aon-inputText {style.widthAll}'></g:TextBox>
+		    			<g:TextBox ui:field="workplaceDescription" debugId="workplaceDescriptionTB" styleName='aon-inputText {style.inputTextHeight}  {style.inputPadding} {style.widthAll}' />
 					</g:HTMLPanel>
 					<g:HTMLPanel ui:field="workplaceAddressParentPanel" styleName="{style.flex}">
 		    			<g:Label  styleName='{style.requiredColor} {style.firstColumn}'>Dirección</g:Label>
-		    			<g:HTMLPanel ui:field="workplaceAddressPanel" styleName='{style.widthAll}'></g:HTMLPanel>
+		    			<g:HTMLPanel ui:field="workplaceAddressPanel" styleName='{style.widthAll}' />
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.firstColumn}'>Concierto económico</g:Label>
-		    			<g:ListBox ui:field="workplaceEconomicConcert" styleName='aon-selectOneMenu {style.widthAll}'></g:ListBox>
+		    			<g:ListBox ui:field="workplaceEconomicConcert" styleName='aon-selectOneMenu {style.inputLBHeight} {style.inputPadding} {style.widthAll}' />
 					</g:HTMLPanel>
 		    	</g:HTMLPanel>
-		    </g:VerticalPanel>
+		    </g:HTMLPanel>
 	   	</g:HTMLPanel>
 	   	
-	   	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexCenter} {style.mt-20}" debugId="activityHTMLPanel">
-	   		<g:VerticalPanel styleName="{style.styleBorder}">
+	   	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.mt20}" debugId="activityHTMLPanel">
+	   		<g:HTMLPanel styleName="{style.styleBorder} ">
 	    		<g:Label styleName='{style.tittle}'>Datos Laborables</g:Label>
 		    	<g:HTMLPanel styleName="{style.widthAll} {style.heightAll} {style.flexColumn}">
 		    		<g:HTMLPanel ui:field="workplaceCalendarHTMLPanel" styleName="{style.flex}">
 		    			<g:Label  styleName='{style.firstColumn}'>Calendario</g:Label>
-		    			<g:HTMLPanel ui:field="workplaceCalendarPanel" styleName='{style.widthAll}'></g:HTMLPanel>
+		    			<g:HTMLPanel ui:field="workplaceCalendarPanel" styleName='{style.widthAll}' />
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label  styleName='{style.firstColumn}'>Convenio</g:Label>
-		    			<g:HTMLPanel ui:field="workplaceAgreementPanel" styleName='{style.widthAll}'></g:HTMLPanel>
+		    			<g:HTMLPanel ui:field="workplaceAgreementPanel" styleName='{style.widthAll}' />
 					</g:HTMLPanel>
 					<g:HTMLPanel styleName="{style.flex}">
 		    			<g:Label styleName='{style.firstColumn}'>Actividad</g:Label>
-		    			<g:HTMLPanel ui:field="workplaceActivityPanel" styleName='{style.widthAll}'></g:HTMLPanel>
+		    			<g:HTMLPanel ui:field="workplaceActivityPanel" styleName='{style.widthAll}' />
 					</g:HTMLPanel>
 		    	</g:HTMLPanel>
-		    </g:VerticalPanel>
+		    </g:HTMLPanel>
 	   	</g:HTMLPanel>
-	</g:VerticalPanel>
+	</g:HTMLPanel>
 			
 </ui:UiBinder> 
 

@@ -592,6 +592,10 @@ public class DomainEmployeesServiceAsync {
 		employeesServiceAsync.cambioOcupacion(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, ocup, fecha, callback);
 	}
 	
+	public void cambioCno(EmployeeContractInfo employeeContractInfo, String cno, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.cambioCno(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, cno, fecha, callback);
+	}
+	
 	public void cambioCatProf(EmployeeContractInfo employeeContractInfo, String cat, Date fecha, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.cambioCatProf(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, cat, fecha, callback);
 	}

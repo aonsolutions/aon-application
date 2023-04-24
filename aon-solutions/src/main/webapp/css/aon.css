@@ -1,5 +1,7 @@
 :root{
   --aonBlue : #002469;
+  --aonBackground: #f6f8fc;
+  --aonLightBlue: #eaf1fb;
   --aonGray : gray;
   --aonLightGray : #f1f1f1;
   --aonDarkGray : #5F6368;
@@ -39,6 +41,17 @@
 }
 
 .aonBody {
+  padding: 0px !important;
+  margin: 0px !important;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 14px !important;
+  line-height: normal !important;
+  height: 100%;
+}
+
+.aonBodyBeta {
+  background-color: #f6f8fc !important;
   padding: 0px !important;
   margin: 0px !important;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif !important;
@@ -352,7 +365,6 @@
 }
 
 .aonHeaderBeta {
-  background-color: var(--aonWhite);
   padding: 0 !important;
   margin: 0 !important;
   color: #5f6368;
@@ -581,8 +593,9 @@
   position: fixed;
   top: 60px;
   right: 0;
-  background-color: var(--aonWhite);
   overflow-x: hidden;
+  background-color: var(--aonBackground);
+  border-radius: 6px;
   z-index: 2;
 }
 
@@ -635,7 +648,6 @@
   flex-grow: 0;
   flex-shrink: 0;
   left: 0;
-  background-color: var(--aonWhite);
   border-right: 1px solid #ddd;
   transition-duration: 500ms;
   overflow-x: hidden;
@@ -648,7 +660,6 @@
   flex-grow: 0;
   flex-shrink: 0;
   left: 0;
-  background-color: var(--aonWhite);
   transition-duration: 500ms;
   overflow-x: hidden;
   height: calc(100vh - 102px);
@@ -660,7 +671,6 @@
   position: fixed;
   z-index: 1;
   left: 0;
-  background-color: var(--aonWhite);
   border-right: 1px solid #ddd;
   transition-duration: 500ms;
   overflow-x: hidden;
@@ -668,6 +678,10 @@
 }
 
 .aonSidenav::-webkit-scrollbar {
+  display: none;
+}
+
+.aonSidenavBeta::-webkit-scrollbar {
   display: none;
 }
 
@@ -692,7 +706,7 @@
   height: calc(100vh - 102px);
   overflow-y: auto;
   border-radius: 10px;
-  background-color: #f1f1f1;
+  background-color: white;
 }
 
 .aonSubContent {

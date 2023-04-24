@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -89,7 +90,9 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.IWrapTimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.Variables;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -101,13 +104,17 @@ public class SalaryDraftBuilder
 		GenericContractSalaryCalculator.IListener,
 		IContractSalaryCalculatorContext.IListener {
 
-	private SalaryDraft salaryDraft;
-
-	private Map<String, boolean[]> defined;
-	
 	private Runnable sed ;
 
+	private Variables variables;
+
+	private SalaryDraft salaryDraft;
+	
+	private Map<String, boolean[]> defined;
+
+	
 	public SalaryDraftBuilder(SalaryDraft salaryDraft) {
+		variables = new Variables();
 		this.salaryDraft = salaryDraft;
 		defined = Collections.emptyMap();
 		clearSalaryDraft();
@@ -131,6 +138,7 @@ public class SalaryDraftBuilder
 	public void clearSs() {
 		salaryDraft.clearSs();
 	}
+
 
 	private static String formatItemDescription(Item<?> item, Date draftStart, Date draftEnd) {
 
@@ -1272,6 +1280,7 @@ public class SalaryDraftBuilder
 		salaryDraft.clear();
 
 	}
+
 	private void addContext(Map<String, ITimedVariable<?>> context) {
 		for (Entry<String, ITimedVariable<?>> entry : context.entrySet()) {
 
@@ -1286,7 +1295,7 @@ public class SalaryDraftBuilder
 	}
 
 	private void addVariable(String name, ITimedVariable<?> var) {
-
+	    	
 		ContextVariable contextVariable = ContextVariable
 				.getVariableByName(name);
 		if (contextVariable != null && contextVariable.isInternal()) {
@@ -1312,10 +1321,17 @@ public class SalaryDraftBuilder
 					defined.get(name));
 			addContext(exprVar.getContext());
 		} else {
-			
 			addVariable(name, value, period.getStart(),
 					period.getEnd());
 		}
+		
+		if ( var instanceof IWrapTimedVariable ) {
+		    ITimedVariable<?> wrapVar =((IWrapTimedVariable<?>) var).getVariable();
+		    if ( Objects.equals(var.getValue(var.getPeriod()),  wrapVar.getValue(wrapVar.getPeriod()))) {
+			var = wrapVar;
+		    }
+		}
+		variables.put(name, var );
 
 	}
 
@@ -1686,44 +1702,8 @@ public class SalaryDraftBuilder
 				return payment2.getDescription();
 		
 		
-		Map<String, Object> map = new AbstractMap<String, Object>(){
-
-			@Override
-			public Set<Entry<String, Object>> entrySet() {
-				return
-				salaryDraft.getContext().stream().map(variable -> new Entry<String, Object>() {
-
-					@Override
-					public String getKey() {
-						return variable.getName();
-					}
-
-					@Override
-					public Object getValue() {
-
-						double sum = 						
-						salaryDraft.getContext().stream()
-						.filter( v -> v.getName().equals(getKey()))
-						.map(Variable::getValue)
-						.filter(Number.class::isInstance)
-						.mapToDouble(v -> ((Number)v).doubleValue() )
-						.sum();
-						if ( sum % 1 == 0.00 ) 
-							return Math.round(sum);
-						else 
-							return sum;
-					}
-
-					@Override
-					public Object setValue(Object value) {
-						throw new UnsupportedOperationException();
-					}
-				}).collect(Collectors.toSet());
-			}
-			
-		};
 		try {
-			return ExpressionContext.evalTemplate(payment1.getDescriptionTemplate(), map );
+			return ExpressionContext.evalTemplate(payment1.getDescriptionTemplate(), variables );
 		} catch ( Exception e) {
 			return AonStringUtils.defaultIfBlank(payment1.getDescription(), payment2.getDescription() );
 		}
@@ -1925,7 +1905,7 @@ public class SalaryDraftBuilder
 			switch (deduction.getName()) {
 			case "MEI" :
 			case "MEI_E" :
-				return "Mecanismo de Equidad Intergeneracional";
+				return "Mecanismo de Equidad Intergeneracional (MEI)";
 			case "ECSS_E" :
 				return "Prestaci\u00f3n por Incapacidad Temporal a cargo del INSS";
 //			case "ATEP_E" :

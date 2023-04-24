@@ -15,6 +15,7 @@ export const ALIAS = 'alias';
 export const AMOUNT = 'amount';
 export const AON_APPLICATION = 'aonApplication';
 export const AON_ACCOUNTING = 'aonAccounting';
+export const AON_CONSOLE = 'aonConsole';
 export const AON_INVEST = 'aonInvest';
 export const AON_INVEST_LIST = 'aonInvestList';
 export const AON_INVOICE = 'aonInvoice';
@@ -70,6 +71,7 @@ export const CONCEPTS = 'concepts';
 export const CONFIGURATION = 'configuration';
 export const CONFIGURATION_PRINT = 'configurationPrint';
 export const CONFIGURATION_SII_TBAI = 'configurationSiiTbai';
+export const CONSOLE = 'console';
 export const CREATE_INVOICE = 'createInvoice';
 export const CREATE_INVOICE_ISSUED = 'createInvoiceIssued';
 export const CREATE_INVOICE_RECEIVED = 'createInvoiceReceived';
@@ -158,6 +160,7 @@ export const ITEM = 'item';
 // ----- L
 
 export const LAST_ACCESS = 'lastAccess';
+export const LINK_DOMAINS = 'linkDomains';
 export const LIST = 'list';
 export const LOGO = 'logo';
 
@@ -305,6 +308,7 @@ export const UPLOAD = 'upload';
 export const UPLOAD_FILE = 'uploadFile';
 export const USER = 'user';
 export const USERS = 'users';
+export const UTILITIES = 'utilities'
 
 // ----- V
 

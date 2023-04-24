@@ -299,11 +299,12 @@ public class JooqContrataContract {
 					
 					contractData.setActivityId(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ID));
 					
-					String enterpriseDocument = dslContext.select(REGISTRY.DOCUMENT).from(REGISTRY)
+					Record enterpriseRecord = dslContext.select().from(REGISTRY)
 							.where(REGISTRY.ID.eq(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ENTERPRISE)))
-							.fetchOne(REGISTRY.DOCUMENT);
+							.fetchOne();
 					
-					contractData.setEnterpriseCIF(enterpriseDocument);
+					contractData.setEnterpriseCIF(enterpriseRecord.get(REGISTRY.DOCUMENT));
+					contractData.setEnterpriseName(enterpriseRecord.get(REGISTRY.NAME));
 				}
 				
 				//ENTERPRISE CCC TABLE
@@ -899,11 +900,12 @@ public class JooqContrataContract {
 				
 				contractData.setActivityId(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ID));
 				
-				String enterpriseDocument = dslContext.select(REGISTRY.DOCUMENT).from(REGISTRY)
+				Record enterpriseRecord = dslContext.select().from(REGISTRY)
 						.where(REGISTRY.ID.eq(enterpriseActivityTable.get(ENTERPRISE_ACTIVITY.ENTERPRISE)))
-						.fetchOne(REGISTRY.DOCUMENT);
+						.fetchOne();
 				
-				contractData.setEnterpriseCIF(enterpriseDocument);
+				contractData.setEnterpriseCIF(enterpriseRecord.get(REGISTRY.DOCUMENT));
+				contractData.setEnterpriseName(enterpriseRecord.get(REGISTRY.NAME));
 			}
 			
 			//ENTERPRISE CCC TABLE

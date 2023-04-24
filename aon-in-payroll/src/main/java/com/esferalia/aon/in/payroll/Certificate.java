@@ -20,9 +20,6 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 
 public class Certificate {
-	
-
-
 
 	 public static void main(String[] args) {
 		
@@ -161,7 +158,7 @@ public class Certificate {
 			
 			int aonUserId = AON.getUser(aonDomain, aonDomainId , aonUser).getId();
 			
-			com.esferalia.aon.occam.api.model.security.Certificate certificate = 
+			com.esferalia.aon.occam.api.model.Certificate certificate = 
 			
 			AON.getCertificate(aonDomain, aonDomainId, aonUser, aonUserId, "SEPE");
 			

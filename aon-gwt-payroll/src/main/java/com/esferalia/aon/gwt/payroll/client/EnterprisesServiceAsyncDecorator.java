@@ -57,13 +57,14 @@ import com.esferalia.aon.gwt.payroll.shared.Variable;
 import com.esferalia.aon.gwt.payroll.shared.Workplace;
 import com.esferalia.aon.gwt.payroll.shared.WorkplaceInfo;
 import com.esferalia.aon.occam.api.model.Certificate;
-import com.esferalia.aon.occam.api.model.Certificate.CertificateType;
 import com.esferalia.aon.occam.api.model.CertificateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.MailAccount;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.mod145.Mod145;
 import com.esferalia.aon.occam.api.model.payroll.Activity;
+import com.esferalia.aon.occam.api.model.payroll.ContractData;
+import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -1189,6 +1190,20 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void getCountries(String domainName, AsyncCallback<List<Country>> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.getCountries(domainName, callback);
+	}
+	
+	// ------------------------------------------------ MainMassiveContracts
+
+	@Override
+	public void getMassiveCNOs(String domainName, String currentUser, AsyncCallback<List<ContractData>> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.getMassiveCNOs(domainName, currentUser, callback);
+	}
+
+	@Override
+	public void updateMassiveCNOs(String domainName, String currentUser, List<ContractData> contractDatas, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.updateMassiveCNOs(domainName, currentUser, contractDatas, callback);
 	}
 
 }

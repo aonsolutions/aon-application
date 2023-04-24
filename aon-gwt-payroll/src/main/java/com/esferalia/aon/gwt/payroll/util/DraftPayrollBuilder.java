@@ -11,12 +11,12 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,14 +30,15 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
-import com.esferalia.aon.payroll.enumeration.ContextVariable;
-import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryCost;
+import com.esferalia.aon.payroll.SalaryData;
+import com.esferalia.aon.payroll.SalaryDeduction;
+import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.data.IData;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 /**
@@ -52,7 +53,7 @@ public class DraftPayrollBuilder {
 	 * @throws SalaryException
 	 */
 	@SuppressWarnings("static-access")
-	public static void generatePayroll (OutputStream outputStream, String domainName, ISalary salary) throws CanNotCreatePdfException, SalaryException {
+	public static void generatePayroll (OutputStream outputStream, String domainName, Salary salary) throws CanNotCreatePdfException, SalaryException {
 		DefaultPayrollBuilder dpb = new DefaultPayrollBuilder();
 			//ENTERPRISE RELATED DATA
 			dpb.setCcc(salary.getCcc());
@@ -122,7 +123,7 @@ public class DraftPayrollBuilder {
 			
 			dpb.setAccrualTotal(salary.getTotalPayment());
 			HashMap<Integer, ArrayList<PDFPayment>> paymentMap = new HashMap<Integer, ArrayList<PDFPayment>>();
-			Collection<IPayment> payments = salary.getPaymentS();
+			Collection<SalaryPayment> payments = salary.getPaymentS();
 			payments.stream().filter(DraftPayrollBuilder::filter).sorted(Comparator.comparing(p -> {
 				return !(p.getDescription() == null || p.getDescription().isEmpty()) ? p.getDescription() : "zzzzzz"; //Nulls or empties down
 			})).forEach(p -> {
@@ -170,7 +171,7 @@ public class DraftPayrollBuilder {
 			
 			ArrayList<String> inserted = new ArrayList<String>();
 			
-			Collection<IDeduction> deductions = salary.getDeductionS();
+			Collection<SalaryDeduction> deductions = salary.getDeductionS();
 			HashMap<Integer, ArrayList<PDFDeduction>> deductionsMap = new HashMap<Integer, ArrayList<PDFDeduction>>();
 			deductions.stream().filter(p -> p != null).filter(p -> p.getType() != null).sorted(Comparator.comparing(d -> d.getType().getName(new Locale("es")))).forEach(d -> {
 				Double percent = null;
@@ -182,13 +183,15 @@ public class DraftPayrollBuilder {
 				}
 				
 				try {
-					List<IData> percentList = salary.getDataS().getOrDefault(dataName, Collections.emptyList());
 					
-					if (percentList.size() > 0 && percentList.get(0) != null) {
-						IData percentData = percentList.get(0);
-						if (percentData.getValue() != null) {
-							percent = AonNumberUtils.toDouble(percentData.getValue());
-						}
+					
+					final String dName = dataName;
+					Set<SalaryData> datas = salary.getSalaryDatas();
+					Optional<SalaryData> optPercent = datas.stream().filter(data -> AonStringUtils.equalsIgnoreCase(data.getName(), dName)).findFirst();
+					
+					if (optPercent.isPresent()) {
+						SalaryData data = optPercent.get();
+						percent = AonNumberUtils.todouble(data.getExpression());
 					} else {
 						try {
 							if(d.getDescription() != null) {
@@ -235,15 +238,15 @@ public class DraftPayrollBuilder {
 				deductionsMap.put(2, new ArrayList<PDFDeduction>());
 			
 			if (!inserted.contains("CGC"))
-				deductionsMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias comunes", 0d));
+				deductionsMap.get(1).add(new PDFDeduction(0d, "CGC", "Contingencias Comunes", 0d));
 			if (!inserted.contains("DESMPL"))
 				deductionsMap.get(1).add(new PDFDeduction(0d, "DESMPL", "Desempleo", 0d));
 			if (!inserted.contains("FP"))
-				deductionsMap.get(1).add(new PDFDeduction(0d, "FP", "Formación profesional", 0d));
+				deductionsMap.get(1).add(new PDFDeduction(0d, "FP", "Formación Profesional", 0d));
 			if (!inserted.contains("IRPF"))
-				deductionsMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones dinerarias", 0d));
+				deductionsMap.get(2).add(new PDFDeduction(0d, "IRPF", "Retribuciones Dinerarias", 0d));
 			if (!inserted.contains("MEI"))
-				deductionsMap.get(1).add(new PDFDeduction(0d, "MEI", "Mecanismo de equidad intergeneracional", 0d, DeductionType.COMMON_CONTINGENCY));
+				deductionsMap.get(1).add(new PDFDeduction(0d, "MEI", "Mecanismo de Equidad Intergeneracional (MEI)", 0d, DeductionType.MEI));
 			
 			
 			//EMBARGOS (placed at 'Other deductions' -type 5- field on 'Deductions')
@@ -288,7 +291,7 @@ public class DraftPayrollBuilder {
 			cbb.setUnemploymentType(Optional.empty());
 
 			//PICKING THEM UP
-			Collection<IDeduction> costs = salary.getCostS();
+			Collection<SalaryCost> costs = salary.getCostS();
 			
 			cbb.setMonthlyAmount(Optional.ofNullable(salary.getRemuneration()));
 			cbb.setExtraProrationAmount(Optional.ofNullable(salary.getExtraPayProration()));
@@ -318,7 +321,6 @@ public class DraftPayrollBuilder {
 //						} catch (NullPointerException e) {}
 //					}
 //				}
-			
 			for (IDeduction c : costs) {
 				
 				Double percentD = null;
@@ -330,12 +332,13 @@ public class DraftPayrollBuilder {
 						dataName = "PORCENTAJE_FOGASA";
 					}
 					
-					List<IData> percentList = salary.getDataS().getOrDefault(dataName, Collections.emptyList());
-					if (percentList.size() > 0 && percentList.get(0) != null) {
-						IData percentData = percentList.get(0);
-						if (percentData.getValue() != null) {
-							percentD = AonNumberUtils.toDouble(percentData.getValue());
-						}
+					final String dName = dataName;
+					Set<SalaryData> datas = salary.getSalaryDatas();
+					Optional<SalaryData> optPercent = datas.stream().filter(data -> AonStringUtils.equalsIgnoreCase(data.getName(), dName)).findFirst();
+					
+					if (optPercent.isPresent()) {
+						SalaryData data = optPercent.get();
+						percentD = AonNumberUtils.todouble(data.getExpression());
 					} else {							
 						percentD = Double.parseDouble(c.getDescription().replaceAll("\\s*(\\d+\\.+\\d+).*","$1"));
 					}
@@ -362,15 +365,26 @@ public class DraftPayrollBuilder {
 					
 					String dataName = "TARIFA_IMS";
 					
-					List<IData> percentList = salary.getDataS().getOrDefault(dataName, Collections.emptyList());
-					if (percentList.size() > 0 && percentList.get(0) != null) {
-						IData percentData = percentList.get(0);
-						if (percentData.getValue() != null) {
-							percentD = AonNumberUtils.toDouble(percentData.getValue());
-							common_cont_ap_enterprise_percent += percentD;
-							percent = Optional.ofNullable(common_cont_ap_enterprise_percent);
-						}
+					Set<SalaryData> datas = salary.getSalaryDatas();
+					Optional<SalaryData> optPercent = datas.stream().filter(data -> AonStringUtils.equalsIgnoreCase(data.getName(), dataName)).findFirst();
+					
+					if (optPercent.isPresent()) {
+						SalaryData data = optPercent.get();
+						percentD = AonNumberUtils.todouble(data.getExpression());
+						common_cont_ap_enterprise_percent += percentD;
+						percent = Optional.ofNullable(common_cont_ap_enterprise_percent);
 					}
+					
+					
+//					List<IData> percentList = salary.getDataS().getOrDefault(dataName, Collections.emptyList());
+//					if (percentList.size() > 0 && percentList.get(0) != null) {
+//						IData percentData = percentList.get(0);
+//						if (percentData.getValue() != null) {
+//							percentD = AonNumberUtils.toDouble(percentData.getValue());
+//							common_cont_ap_enterprise_percent += percentD;
+//							percent = Optional.ofNullable(common_cont_ap_enterprise_percent);
+//						}
+//					}
 					
 					
 					setPercent(percent, at_ep_ap_enterprise, salary.getProfessionalBase(), (p) -> cbb.setAtEpType(p));
@@ -383,15 +397,25 @@ public class DraftPayrollBuilder {
 					
 					String dataName = "TARIFA_IT";
 					
-					List<IData> percentList = salary.getDataS().getOrDefault(dataName, Collections.emptyList());
-					if (percentList.size() > 0 && percentList.get(0) != null) {
-						IData percentData = percentList.get(0);
-						if (percentData.getValue() != null) {
-							percentD = AonNumberUtils.toDouble(percentData.getValue());
-							common_cont_ap_enterprise_percent += percentD;
-							percent = Optional.ofNullable(common_cont_ap_enterprise_percent);
-						}
+					Set<SalaryData> datas = salary.getSalaryDatas();
+					Optional<SalaryData> optPercent = datas.stream().filter(data -> AonStringUtils.equalsIgnoreCase(data.getName(), dataName)).findFirst();
+					
+					if (optPercent.isPresent()) {
+						SalaryData data = optPercent.get();
+						percentD = AonNumberUtils.todouble(data.getExpression());
+						common_cont_ap_enterprise_percent += percentD;
+						percent = Optional.ofNullable(common_cont_ap_enterprise_percent);
 					}
+					
+//					List<IData> percentList = salary.getDataS().getOrDefault(dataName, Collections.emptyList());
+//					if (percentList.size() > 0 && percentList.get(0) != null) {
+//						IData percentData = percentList.get(0);
+//						if (percentData.getValue() != null) {
+//							percentD = AonNumberUtils.toDouble(percentData.getValue());
+//							common_cont_ap_enterprise_percent += percentD;
+//							percent = Optional.ofNullable(common_cont_ap_enterprise_percent);
+//						}
+//					}
 					
 					setPercent(percent, at_ep_ap_enterprise, salary.getProfessionalBase(), (p) -> cbb.setAtEpType(p));
 				}
@@ -472,8 +496,10 @@ public class DraftPayrollBuilder {
 		}*/
 	}
 
-	private static boolean filter (IPayment payment) {
-		return !(payment.getAmount() == 0 && !AonStringUtils.equalsIgnoreCase(payment.getName(), ContextVariable.PREST_IT));
+	private static boolean filter (SalaryPayment payment) {
+		//Igual que el de JooqPayrollBuilder
+		return !(payment.getAmount() == 0 && payment.getQuote() == 0);
+//		return !(payment.getAmount() == 0 && !AonStringUtils.equalsIgnoreCase(payment.getName(), ContextVariable.PREST_IT));
 	}
 	
 	

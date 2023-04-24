@@ -184,7 +184,8 @@ export class AonTable extends AonElement {
       aonCheckbox.id = checkBoxId;
       aonCheckbox.addEventListener(EVENT.CHANGE, () => {
         if (aonCheckbox.isChecked()) {
-          this.selected.push(value);
+          if(!this.selected.includes(value))
+            this.selected.push(value);
           tr.style.backgroundColor = "aliceblue";
         } else {
           this.selected.forEach((item, i) => {

@@ -31,7 +31,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonToken;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
-import com.esferalia.aon.occam.api.model.security.Certificate;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.CertificateType;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
@@ -155,9 +155,16 @@ public class AonApiHttpServlet extends HttpServlet{
 		} else if(api.getDomain().getId() != null && api.getDomain().getId() != 0){
 			user = AON.getUser(api.getDomain().getName(), api.getDomain().getId(), domainLogin);
 		}
-		if(user.getAuth().isEmpty() && !AonStringUtils.isBlank(api.getToken()) && !api.isPredefinedToken()) {
+		
+		if(user.isEmpty()) {
+			user = AON.getUser(api.getDomain().getName(), 0, domainLogin);
+		}
+		
+		if((user.getAuth().isEmpty() || AonStringUtils.isBlank(user.getAuth().getEmail()))
+				&& !AonStringUtils.isBlank(api.getToken()) && !api.isPredefinedToken()) {
 			AonToken aonToken = SECURITY.getAonToken(api.getToken());
-			user.setAuth(AON_SOLUTIONS.getAuth(aonToken.getAuth()));
+			user.setAuth(AON_SOLUTIONS.getAuth(user.getAuth().getAuth() != null 
+					? user.getAuth().getAuth() : aonToken.getAuth()));
 		}
 		if(user.getLogin() == null) user.setLogin("");
 		return user;

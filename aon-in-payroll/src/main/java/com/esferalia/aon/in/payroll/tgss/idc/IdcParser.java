@@ -341,7 +341,8 @@ public class IdcParser {
 	//GC/M*: 08 RELEVO:  TIPO DE INACTIVIDAD/COEFIC: T.ACT.PAR.PR.COVID19/300 C.C.C.: 0111 11 112501771
 	protected static final Pattern CONTRACT_QUOTEGROUP_MONTHLY_INACTIVITY_COMPLETECCC =
 	Pattern.compile(
-	"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})/?(?<monthly>.)?\\S*\\s*RELEVO\\s*:\\s*TIPO\\s*DE\\s*INACTIVIDAD/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
+	"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})/?(?<monthly>.)?\\S*\\s*RELEVO\\s*:\\s*\\S*\\s*TIPO\\s*DE\\s*INACTIVIDAD/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
+//	"^GC/M\\*:\\s*(?<quoteGroup>[0-9]{2})/?(?<monthly>.)?\\S*\\s*RELEVO\\s*:\\s*TIPO\\s*DE\\s*INACTIVIDAD\\/COEFIC\\s*:\\s*(?<inactivity>.*)C\\.C\\.C\\.:\\s*(?<completeCCC>[0-9]{4}\\s*[0-9]{2}\\s*[0-9]+)?$"
 	, Pattern.CASE_INSENSITIVE);
 	
 	//TRABAJADOR SUSTITUTO*:  OCUPACION*:   

@@ -8,9 +8,12 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.function.Consumer;
 
+import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.images.Images;
 import com.esferalia.aon.gwt.common.client.widget.FilterDialog;
-import com.esferalia.aon.gwt.common.client.widget.OptionsToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonButton;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonEmployeesTreeToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.CollectionUtils;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.common.shared.NumberUtils;
@@ -19,6 +22,7 @@ import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraft.DateField;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.BooleanEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.DecimalEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaData;
+import com.esferalia.aon.gwt.payroll.client.Employee.MyStyle;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -41,6 +45,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.TextTransform;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -54,6 +60,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
@@ -63,6 +70,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -76,8 +84,11 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DeckPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasTreeItems;
 import com.google.gwt.user.client.ui.IsTreeItem;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -88,7 +99,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Employees extends ResizeComposite implements OpenHandler<TreeItem>, SelectionHandler<TreeItem>,
-		ScrollHandler, ContextMenuHandler, KeyDownHandler, LoadHandler, OptionsToolbar.Listener {
+		ScrollHandler, ContextMenuHandler, KeyDownHandler, LoadHandler, AonEmployeesTreeToolbar.Listener {
 
 	private static final int MIN_EMPLOYEE_LIMIT = 35;
 
@@ -171,6 +182,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		void onEmployeeCut(Employee employee);
 
 		void onSuprPress(Employee employee);
+		
+		void onCollapseEmployees();
+		
+		void onShowEmployees(boolean isCollapsed);
 	}
 	
 	protected static class HideScrollPanel extends ScrollPanel {
@@ -267,8 +282,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	private static final Template TEMPLATE = GWT.create(Template.class);
 
-	interface Binder extends UiBinder<Widget, Employees> {
-	}
+	interface Binder extends UiBinder<Widget, Employees> {}
 
 	private static final Binder binder = GWT.create(Binder.class);
 
@@ -286,15 +300,34 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	private static final int EMPLOYEE_EVENTS_INDEX = 4;
 
 	private static final DateTimeFormat END_DATE_FORMAT = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT);
+	
+	@UiField
+	MyStyle style;
 
-	@UiField(provided = true)
-	Tree tree;
-	@UiField(provided = true)
-	ScrollPanel scrollPanel;
+	interface MyStyle extends CssResource {
+		String staticEmployees();
+	}
 
 	@UiField
-	OptionsToolbar toolbar;
-
+	DeckPanel employeesDeck;
+	
+	@UiField
+	HTMLPanel dynamicEmployees;
+	
+	@UiField
+	HTMLPanel employeesToolbar;
+	
+	@UiField
+	AonEmployeesTreeToolbar toolbar;
+	
+	@UiField(provided = true)
+	ScrollPanel scrollPanel;
+	
+	@UiField(provided = true)
+	Tree tree;
+	
+	@UiField
+	HTMLPanel staticEmployees;
 
 	private Images images;
 	private List<Listener> listeners;
@@ -322,6 +355,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	
 	private EnterpriseContext enterpriseContext;
 
+	private AonButton showMenuButton;
+	private boolean employeeTreeShowed = true;
+	private boolean employeeTreeCollapsed = false;
+
 	public Employees() {
 		this(false, true);
 	}
@@ -335,11 +372,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		listeners = new LinkedList<Employees.Listener>();
 		employeeCentinels = new LinkedList<TreeItem>();
 
-		// Create a remote service proxy to talk to the server-side Employees
-		// service.
-		EmployeesServiceAsync employeesServiceRaw = GWT.create(EmployeesService.class);
-		employeesService = DomainEmployeesServiceAsync.newInstance();
-		
+		employeesService = DomainEmployeesServiceAsync.newInstance();		
 		enterprisesService = DomainEnterprisesServiceAsync.newInstance();
 		
 		tree = new Tree(new Tree.Resources() {
@@ -363,7 +396,11 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		scrollPanel = new HideScrollPanel();
 		
 		initWidget(binder.createAndBindUi(this));
-
+		
+		if(!Wnd.isNewAONTheme()) employeesDeck.getElement().getStyle().setProperty("margin-top", ".5rem");
+		showEmployees();
+		
+		createEmployeesToolbar();
 
 		tree.addOpenHandler(this);
 		tree.addSelectionHandler(this);
@@ -371,13 +408,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		tree.addKeyDownHandler(this);
 		
 		toolbar.addListener(this);
-		toolbar.setVisibleNewButton(false);
-		toolbar.setVisibleCopyButton(false);
-		toolbar.setVisiblePasteButton(false);
-		toolbar.setVisibleDraftButton(false);
-		toolbar.setSearchHint("Empleados (Nombre, NIF, NAF)");
 
-
+		toolbar.setVisibleLoadingButton(true);
+		
 		employeesService.getEnterprises(new AsyncCallback<Enterprise[]>() {
 
 			@Override
@@ -399,6 +432,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 						enterpriseContext = enterpriseContextDB;
 						for (Enterprise enterprise : enterprises)
 							Employees.this.onEnterprise(enterprise);
+						toolbar.setVisibleLoadingButton(false);
 					}
 				});
 			}
@@ -504,8 +538,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		
 		scrollPanel.scrollToLeft();
 
-		initViewButton(toolbar.getViewButton());
-		toolbar.setVisibleSearchTextBox(true);
+		initViewButton(toolbar.getCollapseAllButton());
 
 	}
 
@@ -884,7 +917,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return enterpriseContext;
 	}
 
-	OptionsToolbar getOptionsToolbar() {
+	AonEmployeesTreeToolbar getOptionsToolbar() {
 		return toolbar;
 	}
 
@@ -954,6 +987,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		TreeItem activityItem = addImageItem(enterpriseItem, description, images.ine());
 		activityItem.setUserObject(activity);
 		activityItem.ensureDebugId(getId(activity));
+		activityItem.getElement().getStyle().setWidth(100, Unit.PCT);
 		
 		activity.getCccs().forEach( (ccc ) ->{
 			addActivityCCCItem(activityItem, ccc);
@@ -972,9 +1006,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		workplaceItem.setHTML(materialIconItemHTML("place", description));
 		workplaceItem.setUserObject(workplace);
 		workplaceItem.setVisible(isWorkPlaceVisible(workplace));
-		workplaceItem.ensureDebugId(getId(workplace));
+		workplaceItem.ensureDebugId(getId(workplace));	
 		enterpriseItem.addItem(workplaceItem);
 		loadWorkplace(enterprise, workplaceItem, workplace);
+		workplaceItem.getElement().getParentElement().getStyle().setWidth(100, Unit.PCT);
 		return workplaceItem;
 	}
 
@@ -1565,6 +1600,18 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			listener.onSuprPress(employee);
 		}
 	}
+	
+	private void onCollapseEmployees() {
+		for (Listener listener : listeners) {
+			listener.onCollapseEmployees();
+		}
+	}
+	
+	private void onShowEmployees(boolean isCollapsed) {
+		for (Listener listener : listeners) {
+			listener.onShowEmployees(isCollapsed);
+		}
+	}
 
 	private void onSalariesDocumentsSelected(final TreeItem salariesItem) {
 		TreeItem parentItem = salariesItem.getParentItem();
@@ -1926,24 +1973,10 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 			private MenuItem inactiveMenuItem;
 			private MenuItem endDateMenuItem;
 			private MenuItem filterMenuItem;
-//			private MenuItem shortenMenuItem;
 			private FilterDialog filterDialog;
 
 			{
 				MenuBar menuBar = new MenuBar(true);
-
-//				shortenMenuItem = new MenuItem("Reducido", new Command() {
-//					@Override
-//					public void execute() {
-//						shorten = !shorten;
-//						shortenTree(shorten);
-//						shortenMenuItem.setStyleName("aon-MenuItemCheckYes", shorten);
-//						popup.hide();
-//					}
-//				});
-//				shortenMenuItem.setStyleName("aon-MenuItemCheckYes", formers);
-//				shortenMenuItem.ensureDebugId("shortenMenuItem");
-//				menuBar.addItem(shortenMenuItem);
 
 				endDateMenuItem = new MenuItem("Fecha Fin", new Command() {
 					@Override
@@ -2373,38 +2406,38 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	}
 
-	@Override
-	public void onNewButtonClick(ClickEvent event) {
-
-	}
-
-	@Override
-	public void onPasteButtonClick(ClickEvent event) {
-		Object object = tree.getSelectedItem().getUserObject();
-
-		if (object instanceof Workplace)
-			onEmployeePaste((Workplace) object);
-	}
-
-	@Override
-	public void onCopyButtonClick(ClickEvent event) {
-
-		Object object = tree.getSelectedItem().getUserObject();
-
-		if (object instanceof EmployeeDraftObject)
-			onEmployeeCopy(((EmployeeDraftObject) object).getEmployee());
-	}
-
-	@Override
-	public void onDraftButtonClick(ClickEvent event) {
-		Object object = tree.getSelectedItem().getUserObject();
-		if (object instanceof EmployeeDraftObject)
-			onSuprPressed(((EmployeeDraftObject) object).getEmployee());
-	}
+//	@Override
+//	public void onNewButtonClick(ClickEvent event) {
+//
+//	}
+//
+//	@Override
+//	public void onPasteButtonClick(ClickEvent event) {
+//		Object object = tree.getSelectedItem().getUserObject();
+//
+//		if (object instanceof Workplace)
+//			onEmployeePaste((Workplace) object);
+//	}
+//
+//	@Override
+//	public void onCopyButtonClick(ClickEvent event) {
+//
+//		Object object = tree.getSelectedItem().getUserObject();
+//
+//		if (object instanceof EmployeeDraftObject)
+//			onEmployeeCopy(((EmployeeDraftObject) object).getEmployee());
+//	}
+//
+//	@Override
+//	public void onDraftButtonClick(ClickEvent event) {
+//		Object object = tree.getSelectedItem().getUserObject();
+//		if (object instanceof EmployeeDraftObject)
+//			onSuprPressed(((EmployeeDraftObject) object).getEmployee());
+//	}
 
 	@Override
 	public void onCollapseAllButtonClick(ClickEvent event) {
-		collapse();
+//		collapse();
 	}
 	
 	@Override
@@ -2739,7 +2772,169 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 	
 	private static native void log (String message ) /*-{
 		console.log(message);
-	}-*/
-;
+	}-*/;
+	
+	private void createEmployeesToolbar() {
+		showMenuButton = new AonToolbarButton("Ocultar", AON.CSS.aonIconMenuCollapse() );
+		showMenuButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if(employeeTreeShowed) {
+					showMenuButton.setTitle("Mostrar");
+					showMenuButton.removeStyleName(AON.CSS.aonIconMenuCollapse());
+					showMenuButton.addStyleName(AON.CSS.aonIconMenu());
+					employeeTreeCollapsed = true;
+					onCollapseEmployees();
+				} else {
+					showMenuButton.setTitle("Ocultar");
+					showMenuButton.removeStyleName(AON.CSS.aonIconMenu());
+					showMenuButton.addStyleName(AON.CSS.aonIconMenuCollapse());
+					onShowEmployees(false);
+				}
+				
+				employeeTreeShowed = !employeeTreeShowed;
+				
+			}
+		});
+		
+		employeesToolbar.add(showMenuButton);
+		
+		Label title = new Label("Integral de n\u00f3minas");
+		title.getElement().getStyle().setTextTransform(TextTransform.UPPERCASE);
+		employeesToolbar.add(title);
+		
+		dynamicEmployees.addDomHandler(new MouseOutHandler() {
+			  @Override
+			  public void onMouseOut(MouseOutEvent event) {
+				  if(employeeTreeCollapsed) {
+					  showMenuButton.setTitle("Mostrar");
+						showMenuButton.removeStyleName(AON.CSS.aonIconMenuCollapse());
+						showMenuButton.addStyleName(AON.CSS.aonIconMenu());
+						removeStyleName(style.staticEmployees());
+						scrollPanel.setHeight("100%");
+						onCollapseEmployees();
+				  }
+					  
+			  }
+			}, MouseOutEvent.getType());
+	}
+
+	public void showEmployees() {
+		employeesDeck.showWidget(0);
+	}
+	
+	private void showStaticEmployees() {
+		employeesDeck.showWidget(1);
+	}
+
+	public void createStaticEmployees() {
+		staticEmployees.clear();
+		
+		AonToolbarButton menuBtn = new AonToolbarButton("Mostrar", AON.CSS.aonIconMenu());
+		menuBtn.addClickHandler(e -> {
+			employeeTreeCollapsed = false;
+			removeStyleName(style.staticEmployees());
+			showMenuButton.click();
+		});
+		staticEmployees.add(menuBtn);
+		
+		HTMLPanel enterprisePanel = new HTMLPanel("");
+		enterprisePanel.getElement().getStyle().setProperty("display", "flex");
+		enterprisePanel.getElement().getStyle().setProperty("flex-direction", "column");
+		enterprisePanel.getElement().getStyle().setProperty("gap", ".55rem");
+		enterprisePanel.getElement().getStyle().setProperty("align-items", "center");
+		enterprisePanel.setHeight("100%");
+		
+		AonToolbarButton searchBtn = new AonToolbarButton("", AON.CSS.aonIconSearch());
+		enterprisePanel.add(searchBtn);
+		
+		for(int i=0; i<tree.getItemCount(); i++) {
+			TreeItem treeItem = tree.getItem(i);
+			Object userObject = treeItem.getUserObject();
+			
+			if(!treeItem.isVisible()) continue;
+			
+			AonToolbarButton btn = new AonToolbarButton("");
+			
+			if(userObject instanceof Enterprise) {
+				btn = new AonToolbarButton("", AON.CSS.aonIconEnterprise());
+				btn.setHeight("20px");
+				btn.setWidth("20px");
+				btn.getElement().getStyle().setProperty("border-radius", "0");
+				enterprisePanel.add(btn);
+			} else if(userObject instanceof Activity) {
+				btn = new AonToolbarButton("", AON.CSS.aonIconActivity());
+				btn.setHeight("20px");
+				btn.setWidth("20px");
+				btn.getElement().getStyle().setProperty("filter", "grayscale(100%) contrast(200%)");
+				enterprisePanel.add(btn);
+				
+				if(treeItem.getState()) {
+					AonToolbarButton btnChild = new AonToolbarButton("", AON.CSS.aonIconTgss());
+					btnChild.setHeight("20px");
+					btnChild.setWidth("20px");
+					btnChild.getElement().getStyle().setProperty("border-radius", "0");
+					enterprisePanel.add(btnChild);
+					
+					if(treeItem.getChildCount() > 1) {
+						AonToolbarButton btnAddChild = new AonToolbarButton("", AON.CSS.aonIconAdd());
+						btnAddChild.setHeight("20px");
+						btnAddChild.setWidth("20px");
+						enterprisePanel.add(btnAddChild);	
+					} 
+				}
+			} else if(userObject instanceof Workplace) {
+				btn = new AonToolbarButton("", AON.CSS.aonIconPin());
+				btn.setHeight("20px");
+				btn.setWidth("20px");
+				enterprisePanel.add(btn);
+				
+				if(treeItem.getState()) {
+					TreeItem childTreeItem = treeItem.getChild(0);
+					Object childUserObject = childTreeItem.getUserObject();
+					
+					if(childUserObject instanceof SalaryDraftObject) {
+						AonToolbarButton btnChild = new AonToolbarButton("");
+						Employee employee = ((SalaryDraftObject)childUserObject).getEmployee();
+						if(isActive(employee)) { 
+							btnChild = new AonToolbarButton("", AON.CSS.aonIconPerson());
+							btnChild.setHeight("20px");
+							btnChild.setWidth("20px");
+						} else {
+							btnChild = new AonToolbarButton("", AON.CSS.aonIconPersonOff());
+							btnChild.setHeight("20px");
+							btnChild.setWidth("20px");
+							
+						}
+							
+						enterprisePanel.add(btnChild);
+					}
+					
+					if(treeItem.getChildCount() > 1) {
+						AonToolbarButton btnChild = new AonToolbarButton("", AON.CSS.aonIconAdd());
+						btnChild.setHeight("20px");
+						btnChild.setWidth("20px");
+						enterprisePanel.add(btnChild);	
+					}	
+				}
+			}
+				
+		}
+		
+		enterprisePanel.addDomHandler(e -> {
+			showMenuButton.setTitle("Ocultar");
+			showMenuButton.removeStyleName(AON.CSS.aonIconMenu());
+			showMenuButton.addStyleName(AON.CSS.aonIconMenuCollapse());
+			addStyleName(style.staticEmployees());
+			if ( !Wnd.isNewAONTheme() ) getElement().getStyle().setBackgroundColor("white");
+			else getElement().getStyle().setBackgroundColor("transparent");
+			scrollPanel.setHeight("85%");
+			onShowEmployees(true);
+		}, MouseOverEvent.getType());
+		
+		staticEmployees.add(enterprisePanel);
+		
+		showStaticEmployees();
+	}
 	
 }

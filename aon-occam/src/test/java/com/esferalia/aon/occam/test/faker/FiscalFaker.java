@@ -10,16 +10,20 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.fiscal.MODEL111;
 import com.esferalia.aon.occam.api.fiscal.MODEL115;
 import com.esferalia.aon.occam.api.fiscal.MODEL123;
+import com.esferalia.aon.occam.api.fiscal.MODEL130;
 import com.esferalia.aon.occam.api.fiscal.MODEL190;
 import com.esferalia.aon.occam.api.fiscal.MODEL303;
+import com.esferalia.aon.occam.api.fiscal.MODEL349;
 import com.esferalia.aon.occam.api.fiscal.MODEL390HF;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.Mod111;
 import com.esferalia.aon.occam.api.model.fiscal.Mod115;
 import com.esferalia.aon.occam.api.model.fiscal.Mod123;
+import com.esferalia.aon.occam.api.model.fiscal.Mod130;
 import com.esferalia.aon.occam.api.model.fiscal.Mod190;
 import com.esferalia.aon.occam.api.model.fiscal.Mod303;
+import com.esferalia.aon.occam.api.model.fiscal.Mod349;
 import com.esferalia.aon.occam.api.model.fiscal.Mod390HF;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Period;
@@ -41,6 +45,8 @@ public class FiscalFaker {
 		private boolean generateFromYearStart;
 		private double prorratePercent;
 		private boolean specialProrrate;
+		private boolean diffEnabled;
+		private boolean manualEnabled;
 		
 		public FiscalFakerParams(AONContext ctx, Occam occam) {
 			this.ctx = ctx;
@@ -110,6 +116,24 @@ public class FiscalFaker {
 		}
 		public FiscalFakerParams setSpecialProrrate(boolean specialProrrate) {
 			this.specialProrrate = specialProrrate;
+			return this;
+		}
+
+		public boolean isDiffEnabled() {
+			return diffEnabled;
+		}
+
+		public FiscalFakerParams setDiffEnabled(boolean diffEnabled) {
+			this.diffEnabled = diffEnabled;
+			return this;
+		}
+
+		public boolean isManualEnabled() {
+			return manualEnabled;
+		}
+
+		public FiscalFakerParams setManualEnabled(boolean manualEnabled) {
+			this.manualEnabled = manualEnabled;
 			return this;
 		}
 	}
@@ -196,6 +220,17 @@ public class FiscalFaker {
 		return mod123;
 	}
 
+	public static Mod130 getMod130( FiscalFakerParams params) {
+		return getFiscalModel(params,Mod130::new,
+			(m) -> MODEL130.initialize( params.getOccam(), m));
+	}
+	
+	public static Mod130 createMod130( FiscalFakerParams params) {
+		Mod130 mod130 = getMod130( params );
+		MODEL130.create(params.getOccam(), mod130);
+		return mod130;
+	}
+
 	public static Mod303 getMod303( FiscalFakerParams params) {
 		return  getFiscalModel(params,Mod303::new,
 			(m) -> {
@@ -237,6 +272,21 @@ public class FiscalFaker {
 		mod190.setReplacement(params.isReplacement());
 		return MODEL190.save(params.getOccam(), mod190);
 	}
+	
+	public static Mod349 createMod349(FiscalFakerParams params) {
+		Mod349 mod349 = MODEL349.initialize(params.getOccam());
+		mod349.setAdministration(Objects.requireNonNullElse(params.getAdministration(), getRandomAdministration()));
+		mod349.setComplementary(params.isComplementary());
+		mod349.setReplacement(params.isReplacement());				
+		mod349.setYear(AonDateUtils.getYear(params.getIssueDate()));
+		mod349.setPeriod( params.isMonthly()
+				       		? Period.getMonthlyPeriod(AonDateUtils.getMonth(params.getIssueDate()))
+				       		: Period.getQuarterlyPeriod(AonDateUtils.getMonth(params.getIssueDate())) );
+		mod349.setManualDeclaration(params.isManualEnabled());
+		mod349.setDiffEnabled(params.isDiffEnabled());		
+		return MODEL349.save(params.getOccam(), mod349);
+	}
+	
 
 	
 }

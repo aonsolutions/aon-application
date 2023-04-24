@@ -5,6 +5,7 @@ public enum AonApiError {
 	UNAUTHORIZED("No está autorizado."),
 	EXPIRED_TOKEN("La sesión ha expirado."),
 	ROUTE_ERROR("La ruta introducida es incorrecta."),
+	METHOD_NOT_SUPPORTED("El método no está soportado."),
 	EMPTY_DATA("No existen datos para la consulta."),
 	
     INCORRECT_PASSWORD("La Contraseña no coincide."),

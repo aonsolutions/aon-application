@@ -293,6 +293,31 @@ public class InvoiceFaker {
 				return InvoiceFaker.fill(params, invoice);
 			}
 		},
+		SALES_RETENTION {
+			@Override 
+			public InvoiceType getType() { return InvoiceType.SALES; }
+			
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				invoice.setWithholding(true);
+				invoice.setWithholdingFarmer(false);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
+		// Venta con retención en régimen agríccola
+		SALES_FARMER_RETENTION{
+			@Override 
+			public InvoiceType getType() { return InvoiceType.SALES; }
+
+			public Invoice get( InvoiceFakerParams params ) {
+				Invoice invoice = InvoiceFaker.getHeader(params, InvoiceType.SALES);
+				invoice.setTransaction(InvoiceTransactionType.NATIONAL);
+				invoice.setWithholding(true);
+				invoice.setWithholdingFarmer(true);
+				return InvoiceFaker.fill(params, invoice);
+			}
+		},
 		// Compra con retención en régimen agríccola
 		PURCHASE_FARMER_RETENTION{
 			@Override 
@@ -759,15 +784,15 @@ public class InvoiceFaker {
 				.setMustForceRegistry(true);
 	}
 	public static Invoice getRetentionInvoice( AONContext ctx, Occam occam, AonConfiguration configuration, final WithholdingType wt) {
-		InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration).setIssueDate(AonRandom.getYearDay(new Date()));
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration)
+			.setIssueDate(AonRandom.getYearDay(new Date()));
 		InvoiceFaker.fillRetentionParams(ctx, params, wt);
 		return InvoiceFaker.getExpensesRetention(params);
 	}
-	
 	public static Invoice getExpensesRetention(InvoiceFakerParams invParams) {
 		return InvoiceFakerTypes.EXPENSES_RETENTION.get(invParams);
 	}
-	
+
 	public static Invoice getPurchaseFarmerRetention(AONContext ctx, AonConfiguration configuration) {
 		InvoiceFakerParams invParams = new InvoiceFakerParams(ctx,configuration);
 		return getPurchaseFarmerRetention(invParams);
@@ -779,6 +804,19 @@ public class InvoiceFaker {
 			.setMustForceRegistry(true);
 		return InvoiceFakerTypes.PURCHASE_FARMER_RETENTION.get(invParams);
 	}
-		
+	public static Invoice getSalesFarmerRetention(InvoiceFakerParams invParams) {
+		invParams.setWithholding(new InvoiceWithholding()
+			.setPercentage(getRetentionPercent())
+			.setWithholdingType(WithholdingType.FARMER))
+			.setMustForceRegistry(true);
+		return InvoiceFakerTypes.SALES_FARMER_RETENTION.get(invParams);
+	}
+	
+	public static Invoice getSalesRetentionInvoice( AONContext ctx, Occam occam, AonConfiguration configuration, final WithholdingType wt) {
+		InvoiceFakerParams params = new InvoiceFakerParams(ctx,configuration)
+			.setIssueDate(AonRandom.getYearDay(new Date()));
+		InvoiceFaker.fillRetentionParams(ctx, params, wt);
+		return InvoiceFakerTypes.SALES_RETENTION.get(params);
+	}
 }
 

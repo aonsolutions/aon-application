@@ -94,7 +94,7 @@ public class AccountStatementDAO {
 				.leftOuterJoin(BAL_ACCOUNT).on(BAL_ACCOUNT.ID.eq(ACCOUNT_ENTRY_DETAIL.BALANCING_ACCOUNT))
 				.leftOuterJoin(ENTERPRISE_ACTIVITY).on(ENTERPRISE_ACTIVITY.ID.equal(ACCOUNT_ENTRY.ACTIVITY))
 				.where(getLedgerCondition(ctx, params))
-				.orderBy(DET_ACCOUNT.CODE,ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.JOURNAL)
+				.orderBy(DET_ACCOUNT.CODE,ACCOUNT_ENTRY.ENTRY_DATE,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_ENTRY_DETAIL.ID)
 				.limit(offset, limit)
 				.fetch()
 				.stream()
@@ -143,7 +143,7 @@ public class AccountStatementDAO {
 							)
 							.from(ACCOUNT_ENTRY_DETAIL)
 							.innerJoin(ACCOUNT_ENTRY).on(ACCOUNT_ENTRY.ID.eq(ACCOUNT_ENTRY_DETAIL.ACCOUNT_ENTRY))			
-							.where(ACCOUNT_ENTRY_DETAIL.DOMAIN.eq(flat.getEntryDomain()))
+							.where(ACCOUNT_ENTRY.DOMAIN.eq(flat.getEntryDomain()))
 							  .and(ACCOUNT_ENTRY_DETAIL.ACCOUNT.eq(flat.getAccount()))
 							  .and(ACCOUNT_ENTRY.ENTRY_DATE.lessThan(AonDateUtils.toSql( flat.getEntryDate())))
 							.fetch()
@@ -811,7 +811,7 @@ public class AccountStatementDAO {
 	}
 	
 	private static Condition getBasicCondition(AONContext ctx , IAccountParams params, boolean applyDateFilterIfNeeded ) {
-		Condition condition = ACCOUNT_ENTRY_DETAIL.DOMAIN.equal(ctx.getDomainId());
+		Condition condition = ACCOUNT_ENTRY.DOMAIN.equal(ctx.getDomainId());
 		if (applyDateFilterIfNeeded) {
 			java.sql.Date sqlStart = null;
 			java.sql.Date sqlEnd = null;

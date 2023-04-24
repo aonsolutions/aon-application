@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Module;
@@ -20,9 +21,11 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.security.Booking;
+import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class BookingDAO {
 
@@ -65,6 +68,19 @@ public class BookingDAO {
 		if(booking.getNumberOfUsers() != null) {
 			SecurityDAO.saveDomainMaxDefinedUser(ctx, booking.getNumberOfUsers());
 		}
+		ApplicationParameter domainPayer = AppParamDAO.fetchOne(ctx, AppParam.AON_DOMAIN_PAYER);
+		if(!AonStringUtils.isBlank(booking.getPayer())) {
+			if(domainPayer == null) {
+				AppParamDAO.saveApplicationParameter(ctx, new ApplicationParameter()
+					.setDomain(booking.getDomain().getId())
+					.setName(AppParam.AON_DOMAIN_PAYER)
+					.setValue(booking.getPayer()));
+			}
+		} else if(domainPayer != null) {
+			AppParamDAO.deleteApplicationParameter(ctx, f -> 
+				f.getIdProperty().eq(domainPayer.getId()));
+		}
+		
 		saveBookingHistory(ctx, booking);
 		
 		AonApp.getValues().stream().filter(f -> !booking.getApps().contains(f))

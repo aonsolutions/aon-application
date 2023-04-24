@@ -342,6 +342,8 @@ public interface Properties {
 		Property<Integer> getScopeProperty();
 		Property<String> getSubdomainsuffixProperty();
 		Property<Byte> getTypeProperty();
+		Property<Integer> getAonCustomerProperty();
+		Property<Byte> getAonStatusProperty();
 	}
 	
 	public interface DomainAppProperties {
@@ -1569,7 +1571,7 @@ public interface Properties {
 		Property<Integer> getDomainProperty();
 		Property<Integer> getRegistryProperty();
 		Property<String> getTypeProperty();
-		
+		Property<Byte> getSecurityLevelProperty();	
 	}
 
 	public interface TimeControlProperties {

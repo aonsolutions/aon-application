@@ -4,6 +4,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEA
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.COMMON_DISEASE_DAYS_4_15;
 import static java.math.BigDecimal.ZERO;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -15,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -24,6 +27,8 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.mvel2.util.MethodStub;
 
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.AbstractSalaryBuilder;
@@ -48,6 +53,10 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	
 	private static final BigDecimal THIRTY = BigDecimal.valueOf(30.00);
 	
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface Variable {
+		String name();
+	}
 	
 	private static class Deductions {
 		
@@ -307,11 +316,11 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		    }
 
 		    Arrays.sort(unround, RoundSalaryBuilder::compare);
-		    
 
 		    for (int i = 0; i < ( unround.length - 1 ); i++) {
-			if ( unround[i].amount.compareTo(unround[i].quote) == 0)
+			if ( unround[i].amount.compareTo(unround[i].quote) == 0) {
 			    unround[i].quote = f.apply(unround[i].quote);
+			}
 			unround[i].amount = f.apply(unround[i].amount);
 
 			remain = remain.subtract(unround[i].amount);
@@ -319,8 +328,9 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		    
 		    // And de last one, all remain
 		    for (int i = unround.length - 1; i < unround.length; i++) {
-			if ( unround[i].amount.compareTo(unround[i].quote) == 0)
+			if ( unround[i].amount.compareTo(unround[i].quote) == 0) {
 			    unround[i].quote = remain;
+			}
 			unround[i].amount = remain;
 		    }
 		}
@@ -577,6 +587,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		
 		try {
 			this.cgcBase = round(ContextVariable.CGC_BASE);			
+			//round(ContextVariable.CGC_BASE);			
 		} catch ( Exception e ) {
 			// wrong CGC_BASE
 		}
@@ -588,6 +599,13 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 				// wrong ERE_BASE
 			}
 		}
+		
+		try {
+			this.cgcBase = add(this.cgcBase, round(ContextVariable.DIRECT_BASE));			
+		} catch ( Exception e ) {
+			// wrong DIRECT_BASE
+		}
+
 		try {
 			this.cgcBase = add(this.cgcBase, round(ContextVariable.MATERNITY_BASE));			
 		} catch ( Exception e ) {
@@ -623,6 +641,13 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 				// wrong ERE_BASE
 			}
 		}
+
+		try {
+			this.cgpBase = add(this.cgpBase, round(ContextVariable.DIRECT_BASE));			
+		} catch ( Exception e ) {
+			// wrong DIRECT_BASE
+		}
+
 		try {
 			this.cgpBase = add(this.cgpBase, round(ContextVariable.MATERNITY_BASE));			
 		} catch ( Exception e ) {
@@ -769,7 +794,9 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	
 	@Override
 	public void setExpressionContext(ExpressionContext expressionContext) {
-		this.expressionContext = expressionContext;
+	    this.expressionContext = expressionContext;
+	    override(expressionContext);
+	    salaryBuilder.setExpressionContext(expressionContext);
 	}
 
 	// ------------------------------------------------------------------------
@@ -868,6 +895,49 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 	}
 
 	// ------------------------------------------------------------------------
+	// PRORATION
+	
+	public static Double proration(ExpressionContext context, Double amount) {
+	   Double raw = ContextFunctions.proration(context, amount);
+	   Double round = doubleValue(F.get().apply(bigDecimalValue(raw))); 
+	   ROUND.get().put(round, raw);
+	   return round;
+	}
+	
+	@Variable(name=ContextFunctions._PRORATION)
+	public static Double proration(ExpressionContext context, Double amount, int months) {
+	    Double raw = ContextFunctions.proration(context, amount, months);
+	    Double round = doubleValue(F.get().apply(bigDecimalValue(raw)));
+	    ROUND.get().put(round, raw);
+	    return round;
+	}
+
+	public static Double proration(ExpressionContext context, Double amount, int start, int end) {
+	    Double raw = ContextFunctions.proration(context, amount, start, end);
+	    Double round = doubleValue(F.get().apply(bigDecimalValue(raw)));
+	    ROUND.get().put(round, raw);
+	    return round;
+	}
+	
+	// ------------------------------------------------------------------------
+	
+	private static final ThreadLocal<Map<Double,Double>> ROUND = new ThreadLocal<>();
+	private static final ThreadLocal< UnaryOperator<BigDecimal>> F = new ThreadLocal<>();
+
+
+	private void override(ExpressionContext expressionContext) {
+	    F.set(f);
+	    ROUND.set(new HashMap<>());
+	    
+	    Arrays.stream(RoundSalaryBuilder.class.getMethods() )
+	    .filter(method -> method.isAnnotationPresent(Variable.class))
+	    .forEach(method -> { 
+		MethodStub methodStub = new MethodStub(method);
+		String methodName = method.getAnnotation(Variable.class).name();
+		expressionContext.getPeriods(methodName)
+		.forEach( period ->  expressionContext.setVariable(methodName, methodStub, period.getStart(), period.getEnd()));
+	    });
+	}
 	
 	private BigDecimal getTotalSS() {
 		return deductions.getTotalSS(f);
@@ -920,6 +990,13 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		}
 	}
 	
+	protected void fireRoundData() {
+	    ROUND.get().entrySet().stream()
+	    		.filter(entry -> entry.getValue() != null && entry.getValue() > 0.00 )
+	    		.forEach(entry -> salaryBuilder.addData(ContextVariable.getDecimalNameFor(entry.getKey()),
+		    new TimedObject<>(entry.getValue(), startDate, endDate)));
+	}
+
 	private void round() {
 		
 		totalEnterprise = add(getTotalEnterprise(), getTotalBonuses().negate());
@@ -973,6 +1050,7 @@ public class RoundSalaryBuilder<T extends ISalary> extends AbstractSalaryBuilder
 		salaryBuilder.setTotalEnterprise(doubleValue(totalEnterprise));
 		
 		addIrpfQuotas();
+		fireRoundData();
 		
 	}
 

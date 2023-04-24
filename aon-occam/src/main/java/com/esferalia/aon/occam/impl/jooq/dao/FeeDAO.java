@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
@@ -13,16 +14,27 @@ import static com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CUSTOMER_ALIAS;
 import static com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SELLER_ALIAS;
 
 import java.sql.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Record2;
+import org.jooq.Record3;
 import org.jooq.Result;
+import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
+import com.esferalia.aon.jooq.tables.records.CustomerRecord;
 import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
@@ -32,9 +44,11 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Seller;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
@@ -44,6 +58,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class FeeDAO {
 	
@@ -78,9 +93,94 @@ public class FeeDAO {
 		@Override public Property<Integer> getSegmentProperty() {return new FilterDAO.PropertyDAO<Integer>(RSEGMENT.SEGMENT);}
 	}
 	
+	public static LinkedList<Fee> getFeeList(AONContext ctx, CustomerFeeParams customerFeeParams){
+		Condition condition = createFeeCondition(ctx, customerFeeParams);
+		
+		Result<Record> feeRecords = ctx.getDslContext().select().from(CUSTOMER_FEE)
+				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
+				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
+				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
+				.where(condition)
+				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+				.offset(customerFeeParams.getOffset())
+				.limit(customerFeeParams.getLimit())
+			.fetch();
+		
+		System.out.println("Customer Fee size : " + feeRecords.size());
+		
+		return feeRecords.stream().map(new FeeFiller()).collect(Collectors.toCollection(LinkedList::new));
+	}
 	
+	private static Condition createFeeCondition(AONContext ctx, CustomerFeeParams customerFeeParams) {
+		Condition condition = CUSTOMER_FEE.DOMAIN.eq(customerFeeParams.getDomain());
+		
+		User user = SecurityDAO.getUser(ctx);
+		if(user.getDomain() == ctx.getDomainId()) {
+			Integer[] userScopes = SecurityDAO.getUserScopes(ctx);
+			condition = condition.and(CUSTOMER.SCOPE.in(userScopes));
+		}
+		
+		if(null == customerFeeParams.getMonth() && null != customerFeeParams.getYear()) {
+			Date startBillingDate = new Date(customerFeeParams.getYear(), 0, 1);
+			Date endBillingDate = new Date(customerFeeParams.getYear(), 11, 31);
+			
+			condition = condition.and(CUSTOMER_FEE.BILLING_DATE.between(startBillingDate, endBillingDate))
+					.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(startBillingDate)));
+			
+		} else if(null != customerFeeParams.getMonth() && null != customerFeeParams.getYear()) {
+			Date billingDate = new Date(customerFeeParams.getYear(), customerFeeParams.getMonth(), 1);
+			
+			condition = condition.and(CUSTOMER_FEE.BILLING_DATE.eq(parseSQLDate(billingDate)))
+					.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(parseSQLDate(billingDate))));
+		}
+			
+		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomer())) 
+			condition = condition.and(CUSTOMER_ALIAS.NAME.eq(customerFeeParams.getCustomer()));
+		if(AonStringUtils.isNotBlank(customerFeeParams.getProductCode()))
+			condition = condition.and(PRODUCT.CODE.eq(customerFeeParams.getProductCode()));
+		if(null != customerFeeParams.getCustomerStatus())
+			condition = condition.and(CUSTOMER.STATUS.eq(customerFeeParams.getCustomerStatus()));
+		if(AonStringUtils.isNotBlank(customerFeeParams.getDiscount()))
+			condition = condition.and(CUSTOMER_FEE.DISCOUNT_EXPR.eq(customerFeeParams.getDiscount()));
+		
+		if(AonStringUtils.isNotBlank(customerFeeParams.getPrice())) {
+			if(AonStringUtils.containsIgnoreCase(customerFeeParams.getPrice(), ">")) {
+				String priceStr = customerFeeParams.getPrice().split(">")[1].trim();
+				if(AonStringUtils.containsIgnoreCase(priceStr, "=")) {
+					priceStr = priceStr.split("=")[1].trim();
+					Double price = Double.parseDouble(priceStr);
+					condition = condition.and(CUSTOMER_FEE.PRICE.ge(price));
+				} else {
+					Double price = Double.parseDouble(priceStr);
+					condition = condition.and(CUSTOMER_FEE.PRICE.gt(price));
+				}
+			} else if(AonStringUtils.containsIgnoreCase(customerFeeParams.getPrice(), "<")) {
+				String priceStr = customerFeeParams.getPrice().split("<")[1].trim();
+				if(AonStringUtils.containsIgnoreCase(priceStr, "=")) {
+					priceStr = priceStr.split("=")[1].trim();
+					Double price = Double.parseDouble(priceStr);
+					condition = condition.and(CUSTOMER_FEE.PRICE.le(price));
+				} else {
+					Double price = Double.parseDouble(priceStr);
+					condition = condition.and(CUSTOMER_FEE.PRICE.lt(price));
+				}
+			} else {
+				Double price = Double.parseDouble(customerFeeParams.getPrice());
+				condition = condition.and(CUSTOMER_FEE.PRICE.eq(price));
+			}
+		}
+		
+		return condition;
+	}
+
 	public static Stream<Fee> getFeeStream(AONContext ctx, FeeFilter filter){
-		return ctx.getDslContext().select().from(CUSTOMER_FEE)
+		Result<Record> feeRecords = ctx.getDslContext().select().from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
@@ -92,7 +192,11 @@ public class FeeDAO {
 				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
 				.where(FEE_PROPERTIES.getConditions(filter))
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
-			.fetch().stream().map(new FeeFiller());
+			.fetch();
+		
+		System.out.println("Customer Fee size : " + feeRecords.size());
+		
+		return feeRecords.stream().map(new FeeFiller());
 	}
 	
 	protected static class FeeFiller extends Filler implements Function<Record, Fee> {
@@ -165,6 +269,24 @@ public class FeeDAO {
 		return fee.getId() != null ? update(ctx, fee) : insert(ctx, fee);
 	}
 	
+	public static Integer saveList(AONContext ctx, LinkedList<Fee> feeList) {
+		feeList.stream()
+			.filter(fee -> fee.isModify())
+			.forEach(fee -> {
+				FeeValidation.validate(ctx, fee);
+				
+				ctx.getDslContext()
+					.update(CUSTOMER)
+						.set(CUSTOMER.STATUS, fee.getCustomer().getStatus().value())
+						.where(CUSTOMER.REGISTRY.eq(fee.getCustomer().getId()))
+						.execute();
+				
+				update(ctx, fee);
+			});
+				
+		return (int) feeList.stream().filter(fee -> fee.isModify()).count();
+	}
+	
 	private static Fee insert(AONContext ctx, Fee fee) {
 		Date startDate = fee.getStartDate() != null ? new Date(fee.getStartDate().getTime()) : null;
 		Date endDate = fee.getEndDate() != null ? new Date(fee.getEndDate().getTime()) : null;
@@ -176,20 +298,6 @@ public class FeeDAO {
 			.returning(CUSTOMER_FEE.ID).fetchOne().getValue(CUSTOMER_FEE.ID);
 		return fee.setId(id);
 	}
-
-//	MULTIPLE FEE INSERT
-//	
-//	private static void insert(AONContext ctx, Stream<Fee> fs) {
-//		ctx.checkWrite();
-//		ctx.getDslContext().transaction(configuration -> {
-//			InsertValuesStep17<ProductRecord, Integer, Integer, Integer, Short, Integer, String, Double, Double, String, Date, Date, Date, Short, Byte, Integer, Integer, Integer> insertQuery = ctx.getDslContext().insertInto(PRODUCT, PRODUCT.DOMAIN, CUSTOMER_FEE.PROJECT, CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE, CUSTOMER_FEE.ITEM, CUSTOMER_FEE.DESCRIPTION, CUSTOMER_FEE.QUANTITY, CUSTOMER_FEE.PRICE, CUSTOMER_FEE.DISCOUNT_EXPR, CUSTOMER_FEE.INITIAL_DATE, CUSTOMER_FEE.FINAL_DATE, CUSTOMER_FEE.BILLING_DATE, CUSTOMER_FEE.PERIOD, CUSTOMER_FEE.SECURITY_LEVEL, CUSTOMER_FEE.INVOICING_GROUP, CUSTOMER_FEE.SELLER, CUSTOMER_FEE.WORKPLACE);
-//			fs.forEach(f ->{
-//				FeeValidation.validate(ctx, f);
-//				insertQuery.values(f.getDomain().getId(), f.getProject().getId(), f.getCustomer().getId(), f.getLine(), f.getItem().getId(), f.getDescription(), f.getQuantity(), f.getPrice(), f.getDiscountExpr(), new Date(f.getStartDate().getTime()), new Date(f.getEndDate().getTime()), new Date(f.getBillingDate().getTime()), (short) f.getPeriod().value(), f.getSecurityLevel().value(), f.getInvoicingGroup().getId(), f.getSeller().getId(), f.getWorkplace().getId());
-//			});
-//			insertQuery.execute();
-//		});
-//	}
 
 	private static Fee update(AONContext ctx, Fee f) {
 		Date startDate = f.getStartDate() != null ? new Date(f.getStartDate().getTime()) : null;
@@ -219,6 +327,17 @@ public class FeeDAO {
 				.execute();
 		return f;
 	}
+	
+	public static void delete(AONContext ctx, CustomerFeeParams customerFeeParams) {
+		ctx.checkWrite();
+		LinkedList<Fee> paramsFeeList = getFeeList(ctx, customerFeeParams);
+		paramsFeeList.forEach(fee -> ctx.getDslContext().transaction(configuration -> {
+			ctx.getDslContext()
+			.delete(CUSTOMER_FEE)
+			.where(CUSTOMER_FEE.ID.equal(fee.getId())).execute();
+		}));
+		
+	}
 
 	public static void delete(AONContext ctx, Fee f) {
 		ctx.checkWrite();
@@ -244,8 +363,134 @@ public class FeeDAO {
 			.execute();
 	}
 	
+	private static java.sql.Date parseSQLDate(java.util.Date date){
+		return null == date ? null : new java.sql.Date(date.getTime());
+	}
 	
-	
-	
+	// --------------------------------------------------------------------
+	// 					CUSTOMER / PRODUCT SUGGESTIONS
+	// --------------------------------------------------------------------
+
+	public static Map<String, String> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		Result<Record2<String, String>> customerRecords = ctx.getDslContext().selectDistinct(PRODUCT.CODE, PRODUCT.NAME)
+			.from(PRODUCT)
+			.where(PRODUCT.DOMAIN.eq(domainId))
+			.and(PRODUCT.CODE.isNotNull().and(PRODUCT.CODE.containsIgnoreCase(query)))
+			.or(PRODUCT.NAME.isNotNull().and(PRODUCT.NAME.containsIgnoreCase(query)))
+			.fetch();
+		
+		Map<String, String> productsSuggestion = new TreeMap<>();
+		customerRecords.forEach(r -> productsSuggestion.put(r.get(PRODUCT.NAME) + " (" + r.get(PRODUCT.CODE) + ")",  r.get(PRODUCT.CODE)));
+		return productsSuggestion;
+	}
+
+	public static Map<String, String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		Result<Record3<String, String, String>> customerRecords = ctx.getDslContext().selectDistinct(REGISTRY.NAME, REGISTRY.DOCUMENT, REGISTRY.ALIAS)
+			.from(REGISTRY)
+			.join(CUSTOMER)
+			.on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
+			.where(CUSTOMER.DOMAIN.eq(domainId))
+			.and(REGISTRY.NAME.isNotNull())
+			.and(REGISTRY.NAME.containsIgnoreCase(query)
+					.or(REGISTRY.DOCUMENT.containsIgnoreCase(query))
+					.or(REGISTRY.ALIAS.isNotNull().and(REGISTRY.ALIAS.containsIgnoreCase(query)))
+			).fetch();
+		
+		Map<String, String> customerSuggestion = new TreeMap<>();
+		customerRecords.forEach(r -> customerSuggestion.put(r.get(REGISTRY.NAME) + " ( " + r.get(REGISTRY.DOCUMENT) + " )" + (AonStringUtils.isBlank(r.get(REGISTRY.ALIAS)) ? "" : " - " + r.get(REGISTRY.ALIAS)), r.get(REGISTRY.NAME)));
+		return customerSuggestion;
+	}
+
+	public static Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams) {
+		Condition condition = createFeeCondition(ctx, customerFeeParams);
+		
+		Result<Record1<Integer>> customerFeeRecords = ctx.getDslContext().select(CUSTOMER_FEE.ID).from(CUSTOMER_FEE)
+				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
+				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
+				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
+				.where(condition)
+				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+			.fetch();
+		
+		UpdateSetMoreStep<CustomerRecord> updateQuery = (UpdateSetMoreStep) ctx.getDslContext().update(CUSTOMER_FEE);
+		
+		if(null != fee.getItem() && null != fee.getItem().getId()) updateQuery.set(CUSTOMER_FEE.ITEM, fee.getItem().getId());
+		if(null != fee.getPeriod()) updateQuery.set(CUSTOMER_FEE.PERIOD, (short) fee.getPeriod().value());
+		if(null != fee.getPrice()) updateQuery.set(CUSTOMER_FEE.PRICE, fee.getPrice());
+		if(AonStringUtils.isNotBlank(fee.getDiscountExpr()) && !AonStringUtils.equalsIgnoreCase(fee.getDiscountExpr(), "0.0")) updateQuery.set(CUSTOMER_FEE.DISCOUNT_EXPR, fee.getDiscountExpr());
+		
+		if(null != fee.getBillingDate()) updateQuery.set(CUSTOMER_FEE.BILLING_DATE, parseSQLDate(fee.getBillingDate()));
+		if(null != fee.getStartDate()) updateQuery.set(CUSTOMER_FEE.INITIAL_DATE, parseSQLDate(fee.getStartDate()));
+		if(null != fee.getEndDate()) updateQuery.set(CUSTOMER_FEE.FINAL_DATE, parseSQLDate(fee.getEndDate()));
+		
+		updateQuery.where(CUSTOMER_FEE.ID.in(customerFeeRecords));
+		
+		return updateQuery.execute();
+	}
+
+	public static Map<Integer, Integer> getMinMaxCustomerFeeYear(CloseableAONContext ctx, int domainId) {
+		Date maxDate = (Date) ctx.getDslContext().select(DSL.max(CUSTOMER_FEE.BILLING_DATE)).from(CUSTOMER_FEE).where(CUSTOMER_FEE.DOMAIN.eq(domainId)).fetchOne().get(0);
+		Date minDate = (Date) ctx.getDslContext().select(DSL.min(CUSTOMER_FEE.BILLING_DATE)).from(CUSTOMER_FEE).where(CUSTOMER_FEE.DOMAIN.eq(domainId)).fetchOne().get(0);
+		Map<Integer, Integer> datesMap = new HashMap<Integer, Integer>();
+		datesMap.put(minDate.getYear() + 1900,  maxDate.getYear() + 1900);
+		
+		return datesMap;
+	}
+
+	public static Map<Integer, Integer> getCustomerProductsUpdates(CloseableAONContext ctx, CustomerFeeParams customerFeeParams) {
+		Condition condition = createFeeCondition(ctx, customerFeeParams);
+		
+		Result<Record1<Integer>> customerRecords = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.CUSTOMER).from(CUSTOMER_FEE)
+				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
+				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
+				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
+				.where(condition)
+				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+			.fetch();
+		
+		System.out.println("Customer Updates : " + customerRecords.size());
+		
+		Result<Record1<Integer>> customerFeeRecords = ctx.getDslContext().select(CUSTOMER_FEE.ID).from(CUSTOMER_FEE)
+				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
+				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
+				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
+				.join(ITEM).on(ITEM.ID.eq(CUSTOMER_FEE.ITEM))
+				.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
+				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
+				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
+				.where(condition)
+				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+			.fetch();
+		
+		System.out.println("Customer Fee Updates : " + customerFeeRecords.size());
+		
+		Map<Integer, Integer> result = new HashMap<>();
+		result.put(customerRecords.size(), customerFeeRecords.size());
+		return result;
+	}
+
+	public static Integer getItemIdByProductCode(CloseableAONContext ctx, int domainId, String productCode) {
+		List<Integer> itemRecords = ctx.getDslContext().select(ITEM.ID).from(ITEM)
+			.join(PRODUCT).on(PRODUCT.ID.eq(ITEM.PRODUCT))
+			.where(PRODUCT.CODE.eq(productCode))
+			.and(ITEM.DOMAIN.eq(domainId))
+			.fetch(ITEM.ID);
+		
+		return itemRecords.isEmpty() ? null : itemRecords.get(0);
+	}
 	
 }
