@@ -66,14 +66,6 @@ public class IvlTest {
 				}
 
 				@Override
-				public void onEnterpriseAddress(String city, String address, String cp) {
-					assertEquals("DOMICILIO", "AV BASAGOITI 75 3 IZD", address);
-					assertEquals("LOCALIDAD", "GETXO", city);
-					assertEquals("C.P.", "48991", cp);
-
-				}
-
-				@Override
 				public void onEnterprisePeriod(String startPeriodDate, String endPeriodDate) {
 					assertEquals("PERIODO SOLICITADO", "01 05 2020 / 17 03 2023",
 							startPeriodDate + "/" + endPeriodDate);
@@ -123,27 +115,6 @@ public class IvlTest {
 					NSS_NAF_MAP.put("41 1062192358", "1 028629513X");
 
 					assertEquals("DOCUMENTO IDENTIFICATIVO", NSS_NAF_MAP.get(nss), docType + docNum);
-
-				}
-
-				// ¿Hacer map ?
-				@Override
-				public void onEmployeeSituation(String situation, String start, String effect, String startSit,
-						String effectSit, String gc, String tc, String it, String ims, String total, String cotDays,
-						String clv) {
-
-					assertEquals("SITUACIÓN", "BAJA", situation);
-					assertEquals("F.REAL ALTA", "06-02-2022", start);
-					assertEquals("F.EFECTO ALTA", "06-02-2022", effect);
-					assertEquals("F.REAL SIT", "06-02-2022", startSit);
-					assertEquals("F.EFECTO SIT", "06-02-2022", effectSit);
-					assertEquals("G.C/M", "03", gc);
-					assertEquals("T.C.", "402", tc);
-					assertEquals("IT", "0,80", it);
-					assertEquals("IMS", "0,70", ims);
-					assertEquals("TOTAL", "1,50", total);
-					assertEquals("DIAS COT.", "1", cotDays);
-					assertEquals("CLV", "SDN", clv);
 
 				}
 

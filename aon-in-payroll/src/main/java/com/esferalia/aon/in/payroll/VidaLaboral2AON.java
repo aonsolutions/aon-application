@@ -211,7 +211,6 @@ public class VidaLaboral2AON implements IvlParserListener{
 		options.addOption(ivlOption);
 		options.addOption(pdfOption);
 		
-//		CommandLine commandLine = null;
 		CommandLineParser parser = new DefaultParser();
 		try {
 			CommandLine commandLine = parser.parse(options, args);
