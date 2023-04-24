@@ -161,6 +161,11 @@ public class LROE140_2_1 extends LROE140 {
 		Double total = invoice.getBreakdown().stream().filter(f -> TaxType.VAT.equals(f.getTaxType()))
 		.mapToDouble(r -> {
 			r.setBase(AonMathUtils.round(r.getBase()));
+			if(invoice.isExtracommunity()) {
+				r.setPercentage(0.0);
+				r.setQuota(0.0);
+				r.setSurchargeQuota(0.0);	
+			}
 			if(r.getPercentage() > 0 && r.getQuota() == 0.0) {
 				r.setQuota(AonMathUtils.round(r.getBase() * r.getPercentage() / 100));
 			}
@@ -190,6 +195,10 @@ public class LROE140_2_1 extends LROE140 {
 			InvoiceTax tax = detail.getInvoiceTaxes().stream().filter(e -> TaxType.VAT.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
 			InvoiceTax irpf = detail.getInvoiceTaxes().stream().filter(e -> TaxType.RETENTION.equals(e.getTaxType())).findFirst().orElse(new InvoiceTax());
 			tax.setBase(AonMathUtils.round(tax.getBase()));			
+			if(invoice.isExtracommunity()) {
+				tax.setPercentage(0.0);
+				tax.setQuota(0.0);
+			}
 			if(tax.getPercentage() > 0 && tax.getQuota() == 0.0) {
 				tax.setQuota(AonMathUtils.round(tax.getBase() * tax.getPercentage() / 100));
 			}
@@ -198,6 +207,7 @@ public class LROE140_2_1 extends LROE140 {
 
 			r.setBaseImponible(Double.toString(tax.getBase()));	
 			r.setTipoImpositivo(Double.toString(tax.getPercentage()));
+			
 			if(tax.getDeductiblePercent() > 0 && tax.getDeductibleQuota() == 0.0) {
 				tax.setDeductibleQuota(AonMathUtils.round(tax.getQuota() * tax.getDeductiblePercent() / 100));
 			}
