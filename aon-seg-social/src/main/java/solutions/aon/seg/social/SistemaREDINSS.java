@@ -1,6 +1,5 @@
 package solutions.aon.seg.social;
 
-<<<<<<< HEAD
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,21 +11,7 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.xerces.impl.xs.identity.Selector.Matcher;
 
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.WebResponse;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlButton;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
-import com.gargoylesoftware.htmlunit.xml.XmlPage;
-=======
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -48,13 +33,11 @@ import org.htmlunit.html.HtmlForm;
 import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlRadioButtonInput;
 import org.htmlunit.xml.XmlPage;
->>>>>>> master
 
 import solutions.aon.seg.social.exception.InvalidCertificateException;
 import solutions.aon.seg.social.toolkit.HtmlUnitToolkit;
 
 public class SistemaREDINSS {
-<<<<<<< HEAD
 
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
