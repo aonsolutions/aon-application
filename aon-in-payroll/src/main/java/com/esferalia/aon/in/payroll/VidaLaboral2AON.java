@@ -1,6 +1,5 @@
 package com.esferalia.aon.in.payroll;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,9 +9,7 @@ import java.sql.DriverManager;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -24,31 +21,17 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.xalan.xsltc.compiler.sym;
-import org.hibernate.annotations.Where;
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Record1;
-import org.jooq.Result;
 import org.jooq.SQLDialect;
-import org.jooq.Select;
-import org.jooq.SelectJoinStep;
-import org.jooq.TableField;
-import org.jooq.Transaction;
-import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
 
 import com.code.aon.common.enumeration.Province;
-import com.code.aon.geozone.GeoZone;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.esferalia.aon.calendar.Calendar;
 import com.esferalia.aon.in.payroll.ivl.IvlCccParser;
 import com.esferalia.aon.in.payroll.ivl.IvlParserListener;
 import com.esferalia.aon.in.payroll.pdf.UnknownPDFException;
-import com.esferalia.aon.in.payroll.pdf.template.AltaiPDFTemplate.PDFContract;
 import com.esferalia.aon.in.payroll.utils.Utils;
 import com.esferalia.aon.jooq.tables.records.ContractDataRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
@@ -68,8 +51,6 @@ import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.watson.util.AonStringUtils;
-
-import antlr.collections.List;
 
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
