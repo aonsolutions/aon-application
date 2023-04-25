@@ -6,7 +6,8 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
-	GetInvoicesTest.class
+	ActivityTest.class
+	,InvoiceTest.class
 })
 public class InvoiceTestSuite {
 

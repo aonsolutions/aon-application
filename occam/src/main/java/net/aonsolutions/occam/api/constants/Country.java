@@ -1,6 +1,8 @@
 package net.aonsolutions.occam.api.constants;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Optional;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -279,6 +281,9 @@ public enum Country implements Serializable {
 		return name;
 	}
 
+	public String value() {
+		return getIso2();
+	}
 	public String getIso2() {
 		return iso2;
 	}
@@ -301,44 +306,20 @@ public enum Country implements Serializable {
 		return ibanLength - 4;
 	}
 
-	public boolean isIntracommunityCountry() {
-		return this == DE || this == AT || this == BE || this == BG || this == HR || this == CY || this == DK
-			|| this == SI || this == EE || this == FI || this == FR || this == GR || this == GB || this == NL
-			|| this == HU || this == IT || this == IE || this == LV || this == LT || this == LU || this == MT
-			|| this == PL || this == PT || this == CZ || this == SK || this == RO || this == SE || this == XI;
-	}
-
-	public static Country safeValueOf(String iso2) {
-		if (AonStringUtils.isBlank(iso2)) {
-			return null;
-		}
+	public static Optional<Country> safeValueOf(String iso2) {
+		if (AonStringUtils.isBlank(iso2)) return Optional.empty();
 		try {
-			return Country.valueOf(iso2);
+			return Optional.of(Country.valueOf(iso2));
 		} catch (IllegalArgumentException e) {
-			return null;
+			return Optional.empty();
 		}
 	}
 	
-	public static Country getCountryByName(String name) {
-		if (AonStringUtils.isBlank(name)) {
-			return null;
-		}
-		try {
-			for(int i=0; i<Country.values().length; i++)
-				if(AonStringUtils.equalsIgnoreCase(Country.values()[i].getName(), name))
-					return Country.values()[i];
-			
-			return null;
-		} catch (IllegalArgumentException e) {
-			return null;
-		}
-	}
-
-	public static String safeIso2(Country country) {
-		if (country == null) {
-			return null;
-		}
-		return country.getIso2();
+	public static Optional<Country> getCountryByName(String name) {
+		if (AonStringUtils.isBlank(name)) return Optional.empty();
+		return Arrays.stream(Country.values())
+			.filter(c -> AonStringUtils.equalsIgnoreCase(c.getName(), name))
+			.findFirst();
 	}
 	
 }

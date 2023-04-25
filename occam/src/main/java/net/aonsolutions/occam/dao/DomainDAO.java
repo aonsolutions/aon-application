@@ -32,7 +32,7 @@ public class DomainDAO {
 		
 	}
 	
-	private static final DomainFilterDAO DOMAIN_PROPERTIES = new DomainFilterDAO();
+	private static final DomainFilterDAO DOMAIN_FILTER = new DomainFilterDAO();
 	private static class DomainFilterDAO implements DomainFilters {
 		@Override public Property<Integer> withId() {return new PropertyDAO<>(DOMAIN.ID);}
 		@Override public Property<String> withName() {return new PropertyDAO<>(DOMAIN.NAME);}
@@ -60,27 +60,6 @@ public class DomainDAO {
 		@Override public Property<Byte> withAonStatus() {return new PropertyDAO<>(DOMAIN.AONSTATUS);}
 	}
 	
-	private static DomainSelectBuilderDAO getBuilder( AONContext ctx, DomainFilter filter ) {
-		return new DomainSelectBuilderDAO(ctx,filter);
-	}
-	
-	public static Optional<Domain> getDomain(AONContext ctx, DomainFilter filter){
-		return getDomains(ctx, filter, b -> b).findFirst(); 
-	}
-	public static Optional<Domain> getDomain(AONContext ctx, DomainFilter filter, DomainBuilderFactory<Stream<Domain>> factory){
-		return getDomains(ctx, filter, factory).findFirst(); 
-	}
-
-	public static Stream<Domain> getDomains(AONContext ctx, DomainFilter filter){
-		return getDomains(ctx, filter, b -> b); 
-	}
-	
-	public static Stream<Domain> getDomains(AONContext ctx, DomainFilter filter, DomainBuilderFactory<Stream<Domain>> factory){
-		DAOUtils.checkNullFactory(factory);
-		DAOUtils.checkNullFilter(filter);
-		return factory.create( getBuilder(ctx,filter)).build();
-	}
-
 	private static class DomainSelectBuilderDAO implements DomainBuilder<Stream<Domain>> {
 		
 		private static final Field<?>[] DOMAIN_BASIC_FIELDS = new Field[]{
@@ -129,7 +108,7 @@ public class DomainDAO {
 		}
 		
 		private DomainSelectBuilderDAO where(DomainFilter filter) {
-			if ( filter.filter(DOMAIN_PROPERTIES) instanceof FilterDAO filterDAO) {
+			if ( filter.filter(DOMAIN_FILTER) instanceof FilterDAO filterDAO) {
 				this.where = this.from.where(  filterDAO.getCondition() );
 				return this;
 			}
@@ -152,16 +131,18 @@ public class DomainDAO {
 
 	private static class DomainFiller extends Filler<Domain> implements Function<Record,Domain> {
 		
+		@Override
 		public Domain apply(Record r) {
 			return map(r, Domain::new);
 		}
 		
+		@Override
 		Domain map(Record r, Supplier<Domain> supplier) {
 			return supplier.get()
 				.setId(getValue(r,DOMAIN.ID))
 				.setName(getValue(r,DOMAIN.NAME))
 				.setDescription(getValue(r,DOMAIN.DESCRIPTION))
-				.setParentId(getValue(r,DOMAIN.PARENT))
+				.setParent(getValue(r,DOMAIN.PARENT))
 				.setType( DomainType.safeValueOf( getValue(r,DOMAIN.TYPE)).orElse(null))
 				.setScope(getValue(r,DOMAIN.SCOPE))
 				.setSubDomainSuffix(getValue(r,DOMAIN.SUBDOMAINSUFFIX))
@@ -182,10 +163,30 @@ public class DomainDAO {
 				.setLastAccessDate(getValue(r, DOMAIN.LASTACCESS_DATE))
 				.setAonCustomer(getValue(r,DOMAIN.AONCUSTOMER))
 				.setAonStatus( AonStatus.safeValueOf( getValue(r,DOMAIN.AONSTATUS)).orElse(null))
+				.setDirty(false)
 				;	
 		}
 	}
 	
+	private static DomainSelectBuilderDAO getBuilder( AONContext ctx, DomainFilter filter ) {
+		return new DomainSelectBuilderDAO(ctx,filter);
+	}
 	
+	public static Optional<Domain> get(AONContext ctx, DomainFilter filter){
+		return getStream(ctx, filter, b -> b).findFirst(); 
+	}
+	public static Optional<Domain> get(AONContext ctx, DomainFilter filter, DomainBuilderFactory<Stream<Domain>> factory){
+		return getStream(ctx, filter, factory).findFirst(); 
+	}
+
+	public static Stream<Domain> getStream(AONContext ctx, DomainFilter filter){
+		return getStream(ctx, filter, b -> b); 
+	}
+	
+	public static Stream<Domain> getStream(AONContext ctx, DomainFilter filter, DomainBuilderFactory<Stream<Domain>> factory){
+		DAOUtils.checkNullFactory(factory);
+		DAOUtils.checkNullFilter(filter);
+		return factory.create( getBuilder(ctx,filter)).build();
+	}
 	
 }

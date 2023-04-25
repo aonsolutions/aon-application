@@ -37,7 +37,7 @@ public class AonRandom {
         		: null;
     }
     public static String string( int maxLength ) {
-    	return faker.lorem().characters(0, maxLength);
+    	return faker.lorem().characters(-1, maxLength);
     }
     public static String string( int nullThreshold,  int maxLength ) {
     	return ( gt(nullThreshold) )
@@ -121,8 +121,11 @@ public class AonRandom {
     public static Date getYearDay( Date date ) {
     	return faker.date().between(AonDateUtils.getYearFirstDay(date), AonDateUtils.getYearLastDay(date));
     }
+    public static Date getFutureDate( ) {
+    	return getFutureDate(new Date());
+    }
     public static Date getFutureDate( Date date ) {
-    	return getFutureDate(0, new Date());
+    	return getFutureDate(-1, new Date());
     }
     public static Date getFutureDate( int threshold ) {
     	return getFutureDate(threshold, new Date());

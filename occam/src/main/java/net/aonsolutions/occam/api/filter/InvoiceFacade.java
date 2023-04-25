@@ -6,32 +6,47 @@ import java.sql.Timestamp;
 
 import net.aonsolutions.occam.api.Filter;
 import net.aonsolutions.occam.api.Filter.Property;
+import net.aonsolutions.occam.api.filter.AonFacade.AonBuilder;
 
 public interface InvoiceFacade extends Serializable{
 	
 	@FunctionalInterface
 	public interface InvoiceFilter extends Serializable {
-		Filter filter(InvoiceProperties properties);
+		Filter filter(InvoiceFilters properties);
 	}
 	
-	public interface InvoiceProperties {
-		
-		Property<Integer> getIdProperty();
-		Property<Integer> getDomainProperty();
-		Property<String> getSeriesProperty();
-		Property<Integer> getNumberProperty();	
-		Property<String> getReferenceCodeProperty();
-		Property<Integer> getRegistryProperty();
-		Property<String> getRegistryDocumentProperty();
-		Property<String> getRegistryNameProperty();
-		Property<Byte> getTypeProperty();
-		Property<Date> getIssueDateProperty();
-		Property<Date> getTaxDateProperty();
-		Property<Byte> getConfidentialProperty();
-		Property<String> getCreationUserProperty();
-		Property<Timestamp> getCreationDateProperty();
-		Property<String> getModificationUserProperty();
-		Property<Timestamp> getModificationDateProperty();
+	public interface InvoiceFilters {
+		Property<Integer> withId();
+		Property<Integer> withDomain();
+		Property<Byte> withType();
+		Property<String> withSeries();
+		Property<Integer> withNumber();	
+		Property<String> withReferenceCode();
+		Property<Date> withIssueDate();
+		Property<Date> withTaxDate();
+		Property<Byte> withConfidential();
+		Property<Integer> withRegistry();
+		Property<String> withRegistryDocument();
+		Property<Byte> withRegistryDocumentType();
+		Property<String> withRegistryDocumentCountry();
+		Property<String> withRegistryName();
+		Property<Integer> withActivity();
+		Property<String> withActivityDescription();
+		Property<String> withActivityEpigraph();
+		Property<String> withCreationUser();
+		Property<Timestamp> withCreationDate();
+		Property<String> withModificationUser();
+		Property<Timestamp> withModificationDate();
 	}
 	
+	public interface InvoiceBuilder<T> extends AonBuilder<T> {
+		public InvoiceBuilder<T> limit(int offest, int rows);
+		public InvoiceBuilder<T> full();
+	}
+	
+	
+	@FunctionalInterface
+	public interface InvoiceBuilderFactory<T> {
+		public InvoiceBuilder<T> create( InvoiceBuilder<T> builder );
+	}
 }

@@ -13,8 +13,8 @@ import net.aonsolutions.occam.test.invoice.InvoiceTestSuite;
 @SelectClasses({
 	ConstantsTestSuite.class
 	,ConfigTestSuite.class
-	,DAOTestSuite.class
 	,InvoiceTestSuite.class
+	,DAOTestSuite.class
 })
 public class OccamTestSuite {
 

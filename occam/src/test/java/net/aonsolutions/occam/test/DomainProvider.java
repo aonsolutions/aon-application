@@ -10,7 +10,7 @@ class DomainProvider {
 	}
 	
 	static Domain getOrCreateDomain(AONContext ctx,String domainName, String user) {
-		return DomainDAO.getDomain(ctx, p -> p.withName().eq(domainName))
+		return DomainDAO.get(ctx, p -> p.withName().eq(domainName))
 			.orElseThrow(() -> new IllegalStateException(
 				"NO DOMAIN!. Run aon-occam tests for provide suitable environment")); 
 	}

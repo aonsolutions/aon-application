@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilter;
 import net.aonsolutions.occam.api.filter.InvoiceFacade.InvoiceFilter;
-import net.aonsolutions.occam.api.invoice.InvoiceMin;
+import net.aonsolutions.occam.api.invoice.Invoice;
 import net.aonsolutions.occam.dao.DomainDAO;
 import net.aonsolutions.occam.dao.InvoiceDAO;
 
@@ -17,14 +17,14 @@ public class AON {
 	// ******************************** [DOMAIN]
 	public static Optional<Domain> getDomain(Occam occam, DomainFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return DomainDAO.getDomain(ctx, filter);
+			return DomainDAO.get(ctx, filter);
 		}
 	}
 	
 	// ******************************** [INVOICE]
-	public static Stream<InvoiceMin> getInvoices(Occam occam, InvoiceFilter filter) {
+	public static Stream<Invoice> getInvoices(Occam occam, InvoiceFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return InvoiceDAO.getInvoices(ctx, filter);
+			return InvoiceDAO.getStream(ctx, filter);
 		}
 	}
 }
