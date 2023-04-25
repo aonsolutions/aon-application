@@ -32,6 +32,7 @@ public class DomainCompanyJSON {
 	public static DomainCompany fromJSON(JSONObject json) {
 		if(json == null) return new DomainCompany();
 		return new DomainCompany()
+				.setSchema(json.getString(IJsonNames.SCHEMA))
 				.setDomain(DomainJSON.fromJSON(json.optJSONObject(IJsonNames.DOMAIN)))
 				.setCompany(CompanyJSON.fromJSON(json.optJSONObject(IJsonNames.COMPANY)))
 		;
@@ -50,6 +51,7 @@ public class DomainCompanyJSON {
 	public static JSONObject toJSON(DomainCompany domainCompany) {
 		if(domainCompany == null) return new JSONObject();
 		return new JSONObject()
+				.putOpt(IJsonNames.SCHEMA, domainCompany.getSchema())
 			.putOpt(IJsonNames.DOMAIN, DomainJSON.toJSON(domainCompany.getDomain()))
 			.putOpt(IJsonNames.COMPANY, CompanyJSON.toJSON(domainCompany.getCompany()))
 			;		

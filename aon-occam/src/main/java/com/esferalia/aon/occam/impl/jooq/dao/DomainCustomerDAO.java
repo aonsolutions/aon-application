@@ -43,7 +43,7 @@ public class DomainCustomerDAO {
 	}
 	
 	public static Stream<DomainCompany> getAllDomains(AONContext ctx){
-		return getDomains(ctx, DOMAIN.PARENT.isNull().or(AppParam.APP_PARAM.ID.isNotNull()));
+		return getDomains(ctx, DOMAIN.ID.gt(0).and(DOMAIN.PARENT.isNull().or(AppParam.APP_PARAM.ID.isNotNull())));
 	}
 	
 	public static Stream<DomainCompany> getAllLinkedDomains(AONContext ctx){
