@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -157,7 +158,7 @@ public class CertificateDAO {
 						return cert;
 					});
 			
-			certificateList.addAll(stream.toList());
+			certificateList.addAll(stream.collect(Collectors.toList()));
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
@@ -181,7 +182,7 @@ public class CertificateDAO {
 						getCertificateInfo(ctx, cert);
 						return cert;
 					});
-			certificateList.addAll(stream.toList());
+			certificateList.addAll(stream.collect(Collectors.toList()));
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
@@ -206,7 +207,7 @@ public class CertificateDAO {
 						getCertificateInfo(ctx, cert);
 						return cert;
 					});
-			certificateList.addAll(stream.toList());
+			certificateList.addAll(stream.collect(Collectors.toList()));
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e.getMessage());
 		}
