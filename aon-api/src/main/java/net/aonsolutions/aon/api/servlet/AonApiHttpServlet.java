@@ -348,7 +348,6 @@ public class AonApiHttpServlet extends HttpServlet{
 			} else {
 				cert =  AON.getCertificate(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), api.getUser().getId(), CertificateType.AEAT.name());				
 			}
-
 		} catch (Exception e) {
 			throw new AonApiException("Error al obtener el certificado.");
 		}
@@ -362,8 +361,7 @@ public class AonApiHttpServlet extends HttpServlet{
 		if(cert.isEmpty()) {
 			throw new AonApiException("El certificado no existe.");
 		}
-		return cert;
-		
+		return cert;	
 	}
 	
 	public static boolean checkCert(byte[] cert, String password) {
