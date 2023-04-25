@@ -1,0 +1,14 @@
+<!-- <div class="customSelect">
+    <div class="optionSelect" *ngFor="let item of asesores">
+        {{item.name}} - {{item.type}}
+    </div>
+</div>
+<set-icon shape="arrow_down" style="color:#787885" class="selectIcon"></set-icon> -->
+
+<mat-form-field appearance="outline" class="customFormField">
+    <mat-select [(ngModel)]="selected" name="food" class="customSelect">
+      <mat-option *ngFor="let item of asesores" [value]="item.id" class="customOption">
+        {{item.name}}
+      </mat-option>
+    </mat-select>
+</mat-form-field>

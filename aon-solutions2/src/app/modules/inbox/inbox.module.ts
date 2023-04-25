@@ -20,6 +20,10 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DetailConsultComponent } from './components/detail-consult/detail-consult.component';
 import { RateInboxComponent } from './components/rate-inbox/rate-inbox.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ModalCreateConsultComponent } from './components/modal-create-consult/modal-create-consult.component';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -30,6 +34,7 @@ import { MatDialogModule } from '@angular/material/dialog';
     DetailNotificationTaskComponent,
     DetailConsultComponent,
     RateInboxComponent,
+    ModalCreateConsultComponent,
   ],
   imports: [
     CommonModule,
@@ -45,7 +50,10 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatMenuModule,
     MatDividerModule,
     ScrollingModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSelectModule,
+    FormsModule,
+    SharedModule
   ],
 })
 export class InboxModule {}

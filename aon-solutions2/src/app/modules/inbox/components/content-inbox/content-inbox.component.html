@@ -57,7 +57,8 @@
             <!-- Contenido de cada tab -->
             <div class="contentTab">
                 <!-- Bucle para pintar todos los mensajes dentro del tab -->
-                <app-message-inbox *ngFor="let item of items" [selectedMenu]="selectedMenu" [message]="item" [detailView]="hiddenDetail" [tiles]="calcTiles(item)" [allTiles]="calcAllTiles(item)" (click)="showDetail(item)"></app-message-inbox>
+                <app-message-inbox *ngFor="let item of items" [selectedMenu]="selectedMenu" [message]="item" [detailView]="hiddenDetail" 
+                [tiles]="calcTiles(item)" [allTiles]="calcAllTiles(item)" (click)="showDetail(item)"></app-message-inbox>
             </div>
         </mat-tab>
     </mat-tab-group>

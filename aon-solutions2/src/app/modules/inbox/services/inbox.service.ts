@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Message } from 'src/app/core/models/message';
+import { Asesor } from 'src/app/core/models/asesor';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,12 @@ export class InboxService {
   notificaciones : Message [] = [
     {type:3,name:'Nombre',subject:'Asunto',description:'Descripción del mensaje',date:'fecha',status:1,lastMessageOrigin:false},
     {type:3,name:'Nombre',subject:'Asunto',description:'Descripción del mensaje',date:'fecha',status:0,lastMessageOrigin:false},
+  ]
+  asesores: Asesor [] = [
+    {id:1,name:'Nombre Apellidos',type:'Asesor fiscal'},
+    {id:2,name:'Nombre Apellidos',type:'Asesor contable'},
+    {id:3,name:'Nombre Apellidos',type:'Asesor laboral'},
+    {id:4,name:'Nombre Apellidos',type:'Asesor jurídico'}
   ]
 
   todas: Message [] = this.consultas.concat(this.tareas).concat(this.notificaciones);
@@ -49,6 +56,10 @@ export class InboxService {
 
   getAllMessagesFromConsult(){
     return this.consultas;
+  }
+
+  getAsesores(){
+    return this.asesores;
   }
 
 }
