@@ -428,18 +428,18 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 
 	public static void addIT(String domainName, Integer domainId, String userLogin, IT it) {
 		try (CloseableAONContext aonContext = AONContext.getAONContext(domainName, domainId, userLogin)) {
-			addIT(aonContext.getDslContext(), /*domainId,*/ it);
+			addIT(aonContext.getDslContext(), it);
 		}
 	}
 	
-	public static Integer addIT(DSLContext ctx , /*Integer domainId,*/ IT it) throws EmployeeNotFoundexception, TooManyEmployeesException {
+	public static Integer addIT(DSLContext ctx , IT it) throws EmployeeNotFoundexception, TooManyEmployeesException {
 		java.sql.Date startDateO = new java.sql.Date(it.getStartDate().getTime());
 		java.sql.Date itStartDate = normalizeStartDateToSave(it.getContingency(), it.getStartDate());
 		java.sql.Date itEndDate = it.getEndDate().map( d -> new java.sql.Date(d.getTime())).orElse(null);
 		
 		try {
 			
-			ContractRecord contractRecord = getContract(ctx, /*domainId,*/ it);	
+			ContractRecord contractRecord = getContract(ctx, it);	
 			
 			try {
 				ContractLeaveRecord contractLeaveRecord = 
@@ -539,7 +539,7 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			System.out.println("Contract not found --> CCC :" + it.getCcc() + ", Naf : " + it.getNaf());
 			throw new EmployeeNotFoundexception(e);
 		}
-		catch ( TooManyRowsException e) {
+		catch ( Exception e) {
 			throw new TooManyEmployeesException(e);
 		}
 		
@@ -580,34 +580,37 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 					.orElseThrow(() -> new EmployeeNotFoundexception() ) 
 			);
 			
-			try {
-				ContractLeaveRecord contractLeaveRecord = 
-				ctx
-				.select()
-				.from(CONTRACT_LEAVE)
-				.where(CONTRACT_LEAVE.CONTRACT.eq(contractRecord.getId()))
-				.and(CONTRACT_LEAVE.START_DATE.eq(itStartDate))
-				.fetchOptionalInto(CONTRACT_LEAVE)
-				.orElseGet(() -> {
-					ContractLeaveRecord r = ctx.newRecord(CONTRACT_LEAVE);
-					r.setContract(contractRecord.getId());
-					r.setDomain(contractRecord.getDomain());
-					return r;
-				});
-	
-				// Create Contract Leave Detail
-				
-				ctx.insertInto(CONTRACT_LEAVE_DETAIL)
-					.set(CONTRACT_LEAVE_DETAIL.DOMAIN, contractRecord.getDomain())
-					.set(CONTRACT_LEAVE_DETAIL.TYPE, (byte)1)
-					.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, contractLeaveRecord.getId())
-					.set(CONTRACT_LEAVE_DETAIL.DATE, itConfirmationDate)
-					.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, Byte.parseByte(it.getConfirmationPartNumber()))
-					.execute();
-				
-			} catch ( TooManyRowsException e) {
-				throw new TooManyITsException(e);
+			if(null != contractRecord) {
+				try {
+					ContractLeaveRecord contractLeaveRecord = 
+					ctx
+					.select()
+					.from(CONTRACT_LEAVE)
+					.where(CONTRACT_LEAVE.CONTRACT.eq(contractRecord.getId()))
+					.and(CONTRACT_LEAVE.START_DATE.eq(itStartDate))
+					.fetchOptionalInto(CONTRACT_LEAVE)
+					.orElseGet(() -> {
+						ContractLeaveRecord r = ctx.newRecord(CONTRACT_LEAVE);
+						r.setContract(contractRecord.getId());
+						r.setDomain(contractRecord.getDomain());
+						return r;
+					});
+		
+					// Create Contract Leave Detail
+					
+					ctx.insertInto(CONTRACT_LEAVE_DETAIL)
+						.set(CONTRACT_LEAVE_DETAIL.DOMAIN, contractRecord.getDomain())
+						.set(CONTRACT_LEAVE_DETAIL.TYPE, (byte)1)
+						.set(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE, contractLeaveRecord.getId())
+						.set(CONTRACT_LEAVE_DETAIL.DATE, itConfirmationDate)
+						.set(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER, Byte.parseByte(it.getConfirmationPartNumber()))
+						.execute();
+					
+				} catch ( TooManyRowsException e) {
+					throw new TooManyITsException(e);
+				}
 			}
+			
 		} catch ( TooManyRowsException e) {
 			throw new TooManyEmployeesException(e);
 		}
@@ -622,19 +625,6 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 	
 	public static ContractRecord getContract(DSLContext ctx, IT it) {
 		java.sql.Date itStartDate = normalizeStartDateToSave(it.getContingency(), it.getStartDate());
-		
-//		System.out.println(
-//				ctx.select()
-//				.from(REGISTRY)
-//				.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
-//				.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-//				.innerJoin(ENTERPRISE_CCC).onKey()
-//				.where(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
-//				.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
-//				.and(CONTRACT.START_DATE.le(itStartDate))
-//				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
-//				.orderBy(CONTRACT.ID.desc()).getSQL().toString()
-//		);
 		
 		return ctx.select()
 				.from(REGISTRY)
