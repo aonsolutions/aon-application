@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -106,6 +107,16 @@ public class AonObjectUtils {
     public static <T> T computeIfTrue(boolean condition, T object, UnaryOperator<T> operator) {
         return condition ? object : operator.apply(object);
     }
+    public static <T,R> R ifOptionalPresent(Optional<T> value,Function<T,R> action) {
+    	return ifPresent(value.orElse(null), action); 	
+    }
+    public static <T,R> R ifPresent(T value,Function<T,R> action) {
+        if (value != null) {
+            return action.apply(value);
+        } 
+        return null;
+    }
+    
     
     /**
      * <p>Returns the first value in the array which is not {@code null}.
