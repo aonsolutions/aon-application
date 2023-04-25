@@ -1,7 +1,15 @@
-.domainOption:not(.selectedDomain):hover, .customerOption:not(.selectedCustomer):not(.linkedCustomer):hover {
+.domainOption:not(.selectedDomain):hover,
+.domainOption:not(.selectedDomain):hover *,
+.customerOption:not(.selectedCustomer):not(.linkedCustomer):hover,
+.customerOption:not(.selectedCustomer):not(.linkedCustomer):hover * {
     /* background-color: var(--aonLightBlue) !important; */
-    color: var(--aonBlue);
+    color: var(--aonBlue) !important;
 }
+
+.inactiveDomainName {
+    color: firebrick;
+}
+
 .selectedCustomer, .selectedDomain {
     background-color: var(--aonBlue) !important;
     color: white;
