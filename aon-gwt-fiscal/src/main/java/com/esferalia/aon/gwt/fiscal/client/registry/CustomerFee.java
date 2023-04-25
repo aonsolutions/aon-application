@@ -106,7 +106,7 @@ public class CustomerFee extends MainEntryPoint {
 	private Date billingDate;
 	
 	private Map<String, String> customerSuggestions = new TreeMap<>();
-	private Map<String, String> productSuggestions = new TreeMap<>();
+	private Map<String, OldItem> productSuggestions = new TreeMap<>();
 	
 	final private int limit = 100;
 	final private MutableInt offset = new MutableInt(0);
@@ -306,6 +306,7 @@ public class CustomerFee extends MainEntryPoint {
 			enableMoreData();
 			offset.setValue(0);
 			showInitialMessage();
+			onSearchFees();
 		});
 		filterRightPanel.add(resetBtn);
 		
@@ -433,10 +434,10 @@ public class CustomerFee extends MainEntryPoint {
 		conceptSuggestBox.addKeyUpHandler(e -> {
 			String productQuery = conceptSuggestBox.getValue();
 			if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 3) {
-				SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, String>>() {
+				SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
 					
 					@Override
-					public void onSuccess(Map<String, String> productSuggestionsDB) {
+					public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
 						productSuggestions = productSuggestionsDB;
 						
 						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) conceptSuggestBox.getSuggestOracle();
@@ -535,7 +536,7 @@ public class CustomerFee extends MainEntryPoint {
 		params.setYear(AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue()));
 		params.setCustomer(customerSuggestions.get(customerSuggestBox.getValue()));
 		params.setCustomerStatus(AonStringUtils.isBlank(customerStatusListBox.getSelectedValue()) ? null : Byte.parseByte(customerStatusListBox.getSelectedValue()));
-		params.setProductCode(productSuggestions.get(conceptSuggestBox.getValue()));
+		params.setProductCode(null != productSuggestions.get(conceptSuggestBox.getValue()) ? productSuggestions.get(conceptSuggestBox.getValue()).getProduct().getCode() : null);
 		params.setPrice(priceTextBox.getValue());
 		params.setDiscount(discountTextBox.getValue());
 		params.setLimit(limit);
@@ -1067,26 +1068,22 @@ public class CustomerFee extends MainEntryPoint {
 						}
 
 						@Override
-						protected void onAccept(Optional<Integer> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
+						protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
 							// TODO Auto-generated method stub
 						}
 						
 					};
 			} else {
-				new CustomerFeeDialog(conceptSuggestBox.getValue(), options) {
+				new CustomerFeeDialog(productSuggestions.get(conceptSuggestBox.getValue()), options) {
 					
 					@Override
 					protected void onAccept(Fee fee) {}
 
 					@Override
-					protected void onAccept(Optional<Integer> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
+					protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
 						Fee fee = new Fee();
 						
-						if(item.isPresent()) { 
-							OldItem oldItem = new OldItem();
-							oldItem.setId(item.get());
-							fee.setItem(oldItem);
-						}
+						if(item.isPresent()) fee.setItem(item.get());
 						if(price.isPresent()) fee.setPrice(price.get());
 						if(discountExpr.isPresent()) fee.setDiscountExpr(discountExpr.get());
 						if(startDate.isPresent()) fee.setStartDate(startDate.get());
@@ -1210,7 +1207,6 @@ public class CustomerFee extends MainEntryPoint {
 		deleteFeeButton.setEnabled(false);
 		deleteFeeButton.addClickHandler(event -> {
 			LinkedList<Fee> selectedFees = selectionModel.entrySet().stream().filter(e -> e.getKey().getValue()).map(e -> e.getValue()).collect(Collectors.toCollection(LinkedList::new));
-			
 			if(selectedFees.size() == feeList.size()) {
 				// Cambio masivo (todo seleccionado)
 				offset.setValue(0);

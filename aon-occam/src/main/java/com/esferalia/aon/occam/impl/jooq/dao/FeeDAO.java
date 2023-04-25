@@ -281,6 +281,14 @@ public class FeeDAO {
 						.where(CUSTOMER.REGISTRY.eq(fee.getCustomer().getId()))
 						.execute();
 				
+				if(fee.getItem().getProduct().isModify()) {
+					ctx.getDslContext()
+					.update(PRODUCT)
+						.set(PRODUCT.NAME, fee.getItem().getProduct().getName())
+						.where(PRODUCT.ID.eq(fee.getItem().getProduct().getId()))
+						.execute();
+				}
+				
 				update(ctx, fee);
 			});
 				
@@ -330,6 +338,8 @@ public class FeeDAO {
 	
 	public static void delete(AONContext ctx, CustomerFeeParams customerFeeParams) {
 		ctx.checkWrite();
+		customerFeeParams.setOffset(0);
+		customerFeeParams.setLimit(Integer.MAX_VALUE);
 		LinkedList<Fee> paramsFeeList = getFeeList(ctx, customerFeeParams);
 		paramsFeeList.forEach(fee -> ctx.getDslContext().transaction(configuration -> {
 			ctx.getDslContext()
@@ -371,16 +381,22 @@ public class FeeDAO {
 	// 					CUSTOMER / PRODUCT SUGGESTIONS
 	// --------------------------------------------------------------------
 
-	public static Map<String, String> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query) {
-		Result<Record2<String, String>> customerRecords = ctx.getDslContext().selectDistinct(PRODUCT.CODE, PRODUCT.NAME)
+	public static Map<String, OldItem> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		Map<String, OldItem> productsSuggestion = new TreeMap<>();
+		Result<Record> customerRecords = ctx.getDslContext().select()
 			.from(PRODUCT)
+			.join(ITEM)
+			.on(ITEM.PRODUCT.eq(PRODUCT.ID))
 			.where(PRODUCT.DOMAIN.eq(domainId))
 			.and(PRODUCT.CODE.isNotNull().and(PRODUCT.CODE.containsIgnoreCase(query)))
 			.or(PRODUCT.NAME.isNotNull().and(PRODUCT.NAME.containsIgnoreCase(query)))
 			.fetch();
 		
-		Map<String, String> productsSuggestion = new TreeMap<>();
-		customerRecords.forEach(r -> productsSuggestion.put(r.get(PRODUCT.NAME) + " (" + r.get(PRODUCT.CODE) + ")",  r.get(PRODUCT.CODE)));
+		
+		customerRecords.forEach(r -> {
+			OldItem item = ItemFiller.buildItem(r);
+			productsSuggestion.put(r.get(PRODUCT.NAME) + " (" + r.get(PRODUCT.CODE) + ")", item);
+		});
 		return productsSuggestion;
 	}
 
@@ -400,6 +416,56 @@ public class FeeDAO {
 		customerRecords.forEach(r -> customerSuggestion.put(r.get(REGISTRY.NAME) + " ( " + r.get(REGISTRY.DOCUMENT) + " )" + (AonStringUtils.isBlank(r.get(REGISTRY.ALIAS)) ? "" : " - " + r.get(REGISTRY.ALIAS)), r.get(REGISTRY.NAME)));
 		return customerSuggestion;
 	}
+	
+	public static Map<String, Workplace> getWorkplacesSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		Map<String, Workplace> suggestions = new HashMap<>();
+		Result<Record> workplaceRecords = ctx.getDslContext()
+				.select().from(WORKPLACE)
+				.where(WORKPLACE.DOMAIN.eq(domainId))
+				.and(WORKPLACE.DESCRIPTION.containsIgnoreCase(query))
+				.fetch();
+		
+		workplaceRecords.forEach(r -> {
+			Workplace workplace = WorkplaceFiller.build(r);
+			suggestions.put(r.get(WORKPLACE.DESCRIPTION), workplace);
+		});
+		
+		return suggestions;
+	}
+	
+	public static Map<String, Seller> getSellersSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		Map<String, Seller> suggestions = new HashMap<>();
+		Result<Record> sellerRecords = ctx.getDslContext()
+				.select().from(SELLER)
+				.join(REGISTRY)
+				.on(REGISTRY.ID.eq(SELLER.REGISTRY))
+				.where(SELLER.DOMAIN.eq(domainId))
+				.and(REGISTRY.NAME.containsIgnoreCase(query))
+				.fetch();
+		
+		sellerRecords.forEach(r -> {
+			Seller seller = SellerFiller.build(r);
+			suggestions.put(r.get(REGISTRY.NAME), seller);
+		});
+		
+		return suggestions;
+	}
+	
+	public static Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		Map<String, InvoicingGroup> suggestions = new HashMap<>();
+		Result<Record> sellerRecords = ctx.getDslContext()
+				.select().from(INVOICING_GROUP)
+				.where(INVOICING_GROUP.DOMAIN.eq(domainId))
+				.and(INVOICING_GROUP.DESCRIPTION.containsIgnoreCase(query))
+				.fetch();
+
+		sellerRecords.forEach(r -> {
+			InvoicingGroup invoicingGroup = InvoicingGroupFiller.buildInvoicingGroup(r);
+			suggestions.put(r.get(INVOICING_GROUP.DESCRIPTION), invoicingGroup);
+		});
+		
+		return suggestions;
+	}
 
 	public static Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams) {
 		Condition condition = createFeeCondition(ctx, customerFeeParams);
@@ -417,6 +483,14 @@ public class FeeDAO {
 				.where(condition)
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 			.fetch();
+		
+		// Update Product name if is modified
+		if(null != fee.getItem() && null != fee.getItem().getProduct() && fee.getItem().getProduct().isModify()) {
+			ctx.getDslContext().update(PRODUCT)
+				.set(PRODUCT.NAME, fee.getItem().getProduct().getName())
+				.where(PRODUCT.ID.eq(fee.getItem().getProduct().getId()))
+				.execute();
+		}
 		
 		UpdateSetMoreStep<CustomerRecord> updateQuery = (UpdateSetMoreStep) ctx.getDslContext().update(CUSTOMER_FEE);
 		
