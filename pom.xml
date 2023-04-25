@@ -59,6 +59,9 @@
 		<module>aon-occam</module>
 		<module>aon-occam-mod200</module>
 		
+		<module>occam</module>
+
+		
 		<!-- FRAMEWORK -->
 		<module>aon-audit</module>
 		<module>aon-ui-audit</module>
