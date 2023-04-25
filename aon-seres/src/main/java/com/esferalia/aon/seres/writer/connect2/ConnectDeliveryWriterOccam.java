@@ -116,7 +116,14 @@ public class ConnectDeliveryWriterOccam  implements Serializable {
 		seh1c.setFuncionDelMensaje(SEH1C.SEH1C_4.ORIGINAL___EL_ENVIO_DE_UN_AVISO_DE_EXPEDICION_ORIGINAL_9
 				.getValue());
 		seh1c.setFecha_horaDelDocumento_137__102_203_(SeresUtils.dateTimeFormat().format(delivery.getDate()));
-		seh1c.setFecha_horaEstimadaDeEntrega_17__102_203_(SeresUtils.dateTimeFormat().format(delivery.getDate()));
+
+		Integer salesDetail = delivery.getDetails().get(0).getSalesDetail();
+		SalesDetail detail = AON.getSalesDetailStream(domainName, domainId, login, f -> f.getIdProperty().eq(salesDetail))
+		.findFirst().orElse(new SalesDetail());
+		Date salesDeliveryDate = detail.getSales().getDeliveryDate();
+		seh1c.setFecha_horaEstimadaDeEntrega_17__102_203_(SeresUtils.dateTimeFormat().format(
+				salesDeliveryDate != null ? salesDeliveryDate : delivery.getDate()));
+	
 		seh1c.setCalificadorFecha_Hora1_2_11_64_(null);
 		seh1c.setFecha_hora1(null);
 		seh1c.setCalificadorFecha_Hora2_2_11_63_(null);
