@@ -240,7 +240,7 @@ public class ConnectSaleInvoiceWriter {
 		String ediIV = isDia(customer) ? ediCodes.getCustomerEdiInvoice() : ediCodes.getCustomerEdiHeader() ;
 		List<SINCP> list = new ArrayList<>();
 		list.add(createSINCPRecord(SINCP.SINCP_2.PROVEEDOR__SU,
-				ediCodes.getCompanyEdiCode(), company, companyAddress, recordData, "API", ediCodes.getDepartment()));
+				ediCodes.getCompanyEdiCode(), company, companyAddress, recordData));
 		list.add(createSINCPRecord(SINCP.SINCP_2.EMISOR_DE_UNA_FACTURA__QUIEN_FACTURA__II,
 		        ediCodes.getCompanyEdiCode(), company, companyAddress, recordData));
 		list.add(createSINCPRecord(SINCP.SINCP_2.PUNTO_DESTINO_DE_LA_MERCANCIA_DP,
@@ -250,7 +250,7 @@ public class ConnectSaleInvoiceWriter {
 //					ediCodes.getCustomerEdiHeader(), customer, invoiceAddress, null));
 //		}
 		list.add(createSINCPRecord(SINCP.SINCP_2.COMPRADOR_BY,
-				ediBY, customer, invoiceAddress, null, calificadorReferenciaAdicional, referenciaAdicional));
+				ediBY, customer, invoiceAddress, null, "API", ediCodes.getDepartment()));
 		list.add(createSINCPRecord(SINCP.SINCP_2.A_QUIEN_SE_FACTURA_IV,
 				ediIV, customer, invoicingMainAddress?customerMainAddress:invoiceAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA__PE,
