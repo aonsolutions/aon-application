@@ -2640,7 +2640,25 @@ public class AON {
 	// ************************************* FEE **
 	// ********************************************
 	
-	public static Map<String, String> getProductsSuggestion(String domainName, int domainId, String login, String query) {
+	public static Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domainId, String login, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getWorkplacesSuggestion(ctx, domainId, query);
+		}
+	}
+	
+	public static Map<String, Seller> getSellersSuggestion(String domainName, int domainId, String login, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getSellersSuggestion(ctx, domainId, query);
+		}
+	}
+	
+	public static Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domainId, String login, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getInvoicingGroupsSuggestion(ctx, domainId, query);
+		}
+	}
+	
+	public static Map<String, OldItem> getProductsSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getProductsSuggestion(ctx, domainId, query);
 		}
