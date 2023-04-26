@@ -47,10 +47,15 @@ phases:
       #  ]' $REPOSITORY_URI $TAG > snapshotsolutionsimgdef.json
       #- cat snapshotsolutionsimgdef.json
 reports:
-  payroll-report-group: #payroll junit reports
+  occam-report-group: #payroll junit reports
     files:
       - '**/*'
-    base-directory: 'aon-payroll/target/surefire-reports'
+    base-directory: 'aon-occam/target/surefire-reports'
+  payroll-report-group: #payroll junit reports
+    files:
+      - 'aon-payroll/target/surefire-reports/**/*'
+      - 'aon-in-payroll/target/surefire-reports/**/*'
+      - 'aon-gwt-payroll/target/surefire-reports/**/*'
 # artifacts:
   # files:
     # - snapshotimgdef.json
