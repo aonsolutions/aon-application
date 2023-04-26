@@ -104,6 +104,20 @@ phases:
       - cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll.jar
       # - command
       # - command
+reports:
+  occam-report-group: #payroll junit reports
+    files:
+      - '**/*'
+    base-directory: 'aon-occam/target/surefire-reports'
+  payroll-report-group: #payroll junit reports
+    files:
+      - 'aon-payroll/target/surefire-reports/**/*'
+      - 'aon-in-payroll/target/surefire-reports/**/*'
+      - 'aon-gwt-payroll/target/surefire-reports/**/*'
+  htmlunit-report-group: #htmlunit reports
+    files:
+      - '**/*'
+    base-directory: 'aon-htmlunit/target/surefire-reports'
 artifacts:
   files:
     - aon-oauth2.jar
