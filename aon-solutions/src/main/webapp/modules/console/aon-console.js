@@ -5,6 +5,7 @@ import { ConsoleSidenav, LINK_DOMAINS } from './ConsoleOptions.js';
 
 import Apps from '../../services/app.js';
 import { AonLinkDomains } from '../domains/aon-link-domains.js';
+import { AonMobileConsoleHome } from './aon-mobile-console-home.js';
 
 export class AonConsole extends AonElement {
 
@@ -26,6 +27,9 @@ export class AonConsole extends AonElement {
  	build() {
 		this.createApplication(this.AON_CONSOLE, MSG.CONSOLE, new AonApplication());
 		this.buildSidenav();
+		if(this.isMobile()) 
+			this.getApplication().setContent(new AonMobileConsoleHome());
+		else this.getApplication().setContent(new AonLinkDomains());
 	}
 
 	buildSidenav() {
