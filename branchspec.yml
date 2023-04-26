@@ -46,11 +46,11 @@ phases:
       #  {"name":"SNAPSHOT-SOLUTIONS","imageUri":"%s/aon-solutions:%s"}
       #  ]' $REPOSITORY_URI $TAG > snapshotsolutionsimgdef.json
       #- cat snapshotsolutionsimgdef.json
-  reports:
-    payroll-report-group: #payroll junit reports
-      files:
-        - '**/*'
-      base-directory: 'aon-payroll/target/surefire-reports'
+reports:
+  payroll-report-group: #payroll junit reports
+    files:
+      - '**/*'
+    base-directory: 'aon-payroll/target/surefire-reports'
 # artifacts:
   # files:
     # - snapshotimgdef.json
