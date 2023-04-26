@@ -173,17 +173,18 @@ public class DomainDAO {
 	}
 	
 	public static Optional<Domain> get(AONContext ctx, DomainFilter filter){
-		return getStream(ctx, filter, b -> b).findFirst(); 
+		return get(ctx, filter, b -> b); 
 	}
-	public static Optional<Domain> get(AONContext ctx, DomainFilter filter, DomainBuilderFactory<Stream<Domain>> factory){
-		return getStream(ctx, filter, factory).findFirst(); 
+	public static Optional<Domain> get(AONContext ctx, DomainFilter filter, DomainBuilderFactory factory){
+		return getStream(ctx, filter, factory).findFirst();
 	}
 
 	public static Stream<Domain> getStream(AONContext ctx, DomainFilter filter){
 		return getStream(ctx, filter, b -> b); 
 	}
 	
-	public static Stream<Domain> getStream(AONContext ctx, DomainFilter filter, DomainBuilderFactory<Stream<Domain>> factory){
+	public static Stream<Domain> getStream(AONContext ctx, DomainFilter filter, DomainBuilderFactory factory){
+		ctx.checkRead();
 		DAOUtils.checkNullFactory(factory);
 		DAOUtils.checkNullFilter(filter);
 		return factory.create( getBuilder(ctx,filter)).build();

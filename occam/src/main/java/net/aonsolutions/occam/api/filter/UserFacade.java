@@ -20,9 +20,14 @@ public interface UserFacade extends Serializable{
 		Property<Byte> withActive();
 	}
 
+	public interface UserBuilder<T> extends AonBuilder<T> {
+		public UserBuilder<T> limit(int offest, int rows);
+		public UserBuilder<T> full();
+	}
+
 	@FunctionalInterface
 	public interface UserBuilderFactory<T> {
-		public AonBuilder<T> create( AonBuilder<T> builder );
+		public UserBuilder<T> create( UserBuilder<T> builder );
 	}
 
 }

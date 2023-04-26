@@ -7,11 +7,11 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import net.aonsolutions.occam.api.Filter;
 import net.aonsolutions.occam.api.Filter.Property;
 
-class PropertyDAO<T> implements Property<T> {
+public class PropertyDAO<T> implements Property<T> {
 
 	private Field<T> field;
 
-	PropertyDAO(Field<T> field) {
+	public PropertyDAO(Field<T> field) {
 		this.field = field;
 	}
 

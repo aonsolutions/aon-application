@@ -36,18 +36,6 @@ public class FilterDAO implements Filter {
 		return (filter == null)?this:new FilterDAO(condition.not());
 	}
 	
-	@Override
-	public Filter limit(int offset, int rows) {
-		return new FilterDAO(condition) {
-			private static final long serialVersionUID = -9187574706245974673L;
-
-			@Override
-			public Select<Record> build(SelectJoinStep<Record> select) {
-				return select.where(getCondition()).limit(offset, rows);
-			}
-		};
-	}
-	
 	public Select<Record> build(SelectJoinStep<Record> select) {
 		return select.where(getCondition());
 	}

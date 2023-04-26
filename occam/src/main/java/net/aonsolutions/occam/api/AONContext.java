@@ -1,9 +1,6 @@
 package net.aonsolutions.occam.api;
 
 import java.sql.Connection;
-import java.text.MessageFormat;
-import java.util.Date;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
@@ -23,11 +20,13 @@ public class AONContext implements AutoCloseable {
 	
 	private static Settings settings = null;
 	
-	private ILogger logger;
+	private AonLogger logger;
 	private DSLContext dslContext;
 	private Connection connection;
 	private String domainName;
 	private String user;
+	private Boolean canRead = null;
+	private Boolean canWrite = null;
 	
 	private static Settings getDefaultSettings(){
 		if (settings == null) {
@@ -70,10 +69,22 @@ public class AONContext implements AutoCloseable {
 	}
 	
 	public boolean canWrite() {
-		return true;
+		return canWrite == null || canWrite;
+	}
+	public void allowWrite() {
+		canWrite = Boolean.TRUE;
+	}
+	public void denyWrite() {
+		canWrite = Boolean.FALSE;
 	}
 	public boolean canRead() {
-		return true;
+		return canRead == null || canRead;
+	}
+	public void allowRead() {
+		canRead = Boolean.TRUE;
+	}
+	public void denyRead() {
+		canRead = Boolean.FALSE;
 	}
 
 	public void checkRead() {
@@ -89,59 +100,24 @@ public class AONContext implements AutoCloseable {
 		getDslContext().transaction(transactional);
 	}
 	
-	public static void closeQuietly(AONContext ctx) {
-		if (ctx != null) ctx.close();
-	}
-
 	@Override
 	public void close() {
 		AonDatabaseUtil.closeQuietly(connection);
 	}
 
-	public ILogger log() {
+	public AonLogger log() {
 		if (logger == null) {
-			logger = new ILogger() {
-
-				private final Logger log = Logger.getLogger(this.getClass().getName());
-
-				@Override
-				public void error(String msg) {
-					log.log(Level.SEVERE, ERR, new Object[]{new Date(), AONContext.this.domainName ,msg});
-				}
-				@Override
-				public void error(String msg, Object ... params) {
-					this.error(MessageFormat.format(msg,params));
-				}
-
-				@Override
-				public void warn(String msg) {
-					log.log(Level.WARNING, WAR, new Object[]{new Date(), AONContext.this.domainName ,msg});
-				}
-				@Override
-				public void warn(String msg, Object ... params) {
-					this.warn(MessageFormat.format(msg,params));
-				}
-
-				@Override
-				public void info(String msg) {
-					log.log(Level.INFO, INF, new Object[]{new Date(), AONContext.this.domainName ,msg});
-				}
-				@Override
-				public void info(String msg, Object ... params) {
-					this.info(MessageFormat.format(msg,params));
-				}
-
-				@Override
-				public void debug(String msg) {
-					log.log(Level.FINE, DEB, new Object[]{new Date(), AONContext.this.domainName,msg});
-				}
-				@Override
-				public void debug(String msg, Object ... params) {
-					this.debug(MessageFormat.format(msg,params));
-				}
-				
-			};
+			logger = new AonLogger(Logger.getLogger(this.getClass().getName()), getDomainName());
 		}
 		return logger; 
 	}
+	
+	// [BEGIN] Methods for tests purpose.
+	public Boolean canWriteForTests() {return canWrite;}
+	public void setCanWriteValueForTests(Boolean canWrite) {this.canWrite = canWrite;}
+	public Boolean canReadForTests() {return canRead;}
+	public void setCanReadValueForTests(Boolean canRead) {this.canRead = canRead;}
+	public void setLoggerForTests(AonLogger logger) {this.logger = logger;}
+	// [END] Methods for tests purpose.
+	
 }

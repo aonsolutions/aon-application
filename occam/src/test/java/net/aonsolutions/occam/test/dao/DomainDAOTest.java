@@ -11,9 +11,11 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
+import net.aonsolutions.occam.api.AON;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.dao.DAOUtils;
 import net.aonsolutions.occam.dao.DomainDAO;
@@ -122,4 +124,14 @@ class DomainDAOTest extends AbstractOccamTest {
 		Asserts.assertEqualsDomain(expected, optActual.get());
 	}
 	
+	@Test()
+	void denyReadOneTest() {
+		try {
+			ctx.denyRead();
+			SecurityException e = assertThrows(SecurityException.class, () -> DomainDAO.get(ctx,p -> p.withName().eq( DOMAIN_NAME )));
+			assertEquals(AonError.READ_FORBIDDEN.getMessage(), e.getMessage());
+		} finally {
+			ctx.allowRead();
+		}
+	}
 }

@@ -1,4 +1,4 @@
-package net.aonsolutions.occam.test.config;
+package net.aonsolutions.occam.test.dao.client;
 
 
 import org.junit.platform.suite.api.SelectClasses;
@@ -6,10 +6,9 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
-	DomainTest.class
-	,UserTest.class
+	PublicDomainTest.class
 })
-public class ConfigTestSuite {
+public class PublicDomainTestSuite {
 
 	
 }

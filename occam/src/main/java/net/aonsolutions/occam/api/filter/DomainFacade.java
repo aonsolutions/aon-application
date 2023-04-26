@@ -3,9 +3,11 @@ package net.aonsolutions.occam.api.filter;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.stream.Stream;
 
 import net.aonsolutions.occam.api.Filter;
 import net.aonsolutions.occam.api.Filter.Property;
+import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.filter.AonFacade.AonBuilder;
 public interface DomainFacade extends Serializable{
 
@@ -48,8 +50,8 @@ public interface DomainFacade extends Serializable{
 	
 	
 	@FunctionalInterface
-	public interface DomainBuilderFactory<T> {
-		public DomainBuilder<T> create( DomainBuilder<T> builder );
+	public interface DomainBuilderFactory {
+		public DomainBuilder<Stream<Domain>> create( DomainBuilder<Stream<Domain>> builder );
 	}
 	
 }

@@ -1,6 +1,5 @@
 package net.aonsolutions.occam.dao;
 
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.util.Optional;
@@ -19,7 +18,7 @@ import org.jooq.TableLike;
 import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.api.config.User;
-import net.aonsolutions.occam.api.filter.AonFacade.AonBuilder;
+import net.aonsolutions.occam.api.filter.UserFacade.UserBuilder;
 import net.aonsolutions.occam.api.filter.UserFacade.UserBuilderFactory;
 import net.aonsolutions.occam.api.filter.UserFacade.UserFilter;
 import net.aonsolutions.occam.api.filter.UserFacade.UserFilters;
@@ -39,21 +38,25 @@ public class UserDAO {
 		@Override public Property<Byte> withActive() {return new PropertyDAO<>(USER.ACTIVE);}
 	}
 	
-	public static Optional<User> getUser(AONContext ctx, UserFilter filter){
-		return getUsers(ctx, filter, b -> b).findFirst(); 
+	public static Optional<User> get(AONContext ctx, UserFilter filter){
+		return get(ctx, filter, b -> b); 
+	}
+	
+	public static Optional<User> get(AONContext ctx, UserFilter filter, UserBuilderFactory<Stream<User>> factory){
+		return getStream(ctx, filter, factory).findFirst(); 
 	}
 
-	public static Stream<User> getUsers(AONContext ctx, UserFilter filter){
-		return getUsers(ctx, filter, b -> b); 
+	public static Stream<User> getStream(AONContext ctx, UserFilter filter){
+		return getStream(ctx, filter, b -> b); 
 	}
 
-	public static Stream<User> getUsers(AONContext ctx, UserFilter filter, UserBuilderFactory<Stream<User>> factory){
+	public static Stream<User> getStream(AONContext ctx, UserFilter filter, UserBuilderFactory<Stream<User>> factory){
 		DAOUtils.checkNullFactory(factory);
 		DAOUtils.checkNullFilter(filter);
 		return factory.create(new UserSelectBuilderDAO(ctx,filter)).build();
 	}
 
-	private static class UserSelectBuilderDAO implements AonBuilder<Stream<User>> {
+	private static class UserSelectBuilderDAO implements UserBuilder<Stream<User>> {
 		
 		private static final Field<?>[] USER_BASIC_FIELDS = new Field[]{
 			USER.ID,USER.DOMAIN,USER.NAME,USER.LOGIN,USER.ACTIVE
@@ -70,7 +73,7 @@ public class UserDAO {
 			this.where(filter);
 		}
 		
-		public AonBuilder<Stream<User>> from(TableLike<?> table) {
+		public UserBuilder<Stream<User>> from(TableLike<?> table) {
 			if ( this.from == null) {
 				this.from = select.from(table);
 			}
@@ -84,7 +87,7 @@ public class UserDAO {
 				.map(new UserFiller());
 		}
 		
-		private AonBuilder<Stream<User>> where(UserFilter filter) {
+		private UserBuilder<Stream<User>> where(UserFilter filter) {
 			if ( filter.filter(USER_FILTERS) instanceof FilterDAO filterDAO) {
 				this.where = this.from.where(  filterDAO.getCondition() );
 				return this;
@@ -93,8 +96,13 @@ public class UserDAO {
 		}
 
 		@Override
-		public AonBuilder<Stream<User>> limit(int offest, int rows) {
+		public UserBuilder<Stream<User>> limit(int offest, int rows) {
 			this.limit = this.where.limit(offest, rows);
+			return this;
+		}
+		
+		@Override
+		public UserSelectBuilderDAO full() {
 			return this;
 		}
 
@@ -108,11 +116,12 @@ public class UserDAO {
 		
 		User map(Record r, Supplier<User> supplier) {
 			return supplier.get()
-				.setId(getValue(r,DOMAIN.ID))
+				.setId(getValue(r,USER.ID))
 				.setDomain(getValue(r,USER.DOMAIN))
 				.setName(getValue(r,USER.NAME))
 				.setLogin(getValue(r,USER.LOGIN))
 				.setActive(getBoolean(r, USER.ACTIVE))
+				.setDirty(false)
 				;	
 		}
 	}
