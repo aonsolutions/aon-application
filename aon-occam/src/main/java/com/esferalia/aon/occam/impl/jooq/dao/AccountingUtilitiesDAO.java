@@ -808,26 +808,22 @@ public class AccountingUtilitiesDAO {
 	}
 	
 	private static Field<Integer> INVOICE_COUNT_FIELD = DSL.count(INVOICE.ID);
-//	private static Field<Integer> INVOICE_YEAR_FIELD = DSL.year(INVOICE.SERIES);
+	private static Field<Integer> INVOICE_YEAR_FIELD = DSL.year(INVOICE.ISSUE_DATE);
 	private static Field<Integer> INVOICE_MAX_NUMBER = DSL.max(INVOICE.NUMBER);
 	
 	public static AccUtilitiesResult getInputVatRegenerationInfo(AONContext ctx) {
 		AccUtilitiesResult result = new AccUtilitiesResult();
 		ctx.getDslContext()
-			.select( INVOICE_COUNT_FIELD, INVOICE.SERIES , INVOICE_MAX_NUMBER)
+			.select( INVOICE_COUNT_FIELD, INVOICE.SERIES , INVOICE_YEAR_FIELD, INVOICE_MAX_NUMBER)
 			.from(INVOICE)
 			.where(INVOICE.DOMAIN.eq(ctx.getDomainId()))
 			.and(INVOICE.TYPE.in( InvoiceType.PURCHASE.value(),InvoiceType.EXPENSES.value()))
-//			.groupBy(INVOICE_YEAR_FIELD)
-//			.orderBy(INVOICE_YEAR_FIELD)
-			.groupBy(INVOICE.SERIES)
-			.orderBy(INVOICE.SERIES)
-			
+			.groupBy(INVOICE_YEAR_FIELD,INVOICE.SERIES)
+			.orderBy(INVOICE_YEAR_FIELD,INVOICE.SERIES)
 			.fetch()
 			.stream()
 			.forEach( rec -> {
-				String seriesValue = rec.get(INVOICE.SERIES);
-				Integer year = AonNumberUtils.toInteger(seriesValue);
+				Integer year = rec.get(INVOICE_YEAR_FIELD);
 				Date from = AonDateUtils.getYearFirstDay( year );
 				Date to = AonDateUtils.getYearLastDay( year );
 				LinkedList<InvoiceSeries> series = InvoiceDAO.getInvoiceSeries(ctx, from, to, false);
