@@ -369,7 +369,7 @@ public class Up2Date {
 
 	    // Important, not remove
 	    // AgreementPurge.AGREEMENTPURGE,
-	    SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
+	    // SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
 	    SagardoBusUpdate.SAGARDOBUS_UPDATE
 	    
 	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE
