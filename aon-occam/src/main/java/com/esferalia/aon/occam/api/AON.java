@@ -2658,6 +2658,12 @@ public class AON {
 		}
 	}
 	
+	public static Map<String, Project> getProjectsSuggestion(String domainName, int domainId, String login, Integer customerId, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getProjectsSuggestion(ctx, domainId, customerId, query);
+		}
+	}
+	
 	public static Map<String, OldItem> getProductsSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getProductsSuggestion(ctx, domainId, query);

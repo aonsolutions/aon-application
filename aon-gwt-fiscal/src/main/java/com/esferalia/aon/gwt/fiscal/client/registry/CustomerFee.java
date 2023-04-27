@@ -349,19 +349,22 @@ public class CustomerFee extends MainEntryPoint {
 			@Override
 			public void onSuccess(Map<Integer, Integer> minMaxYear) {
 				Optional<Entry<Integer, Integer>> firstEntry = minMaxYear.entrySet().stream().findFirst();
-				Integer minYear = firstEntry.get().getKey();
-				Integer maxYear = firstEntry.get().getValue();
 				
 				ListBox lb = new ListBox();
 				lb.setHeight("2em");
 				lb.getElement().getStyle().setProperty("padding", "0 5px");
 				lb.addItem("-", "");
 				
-				while(maxYear >= minYear) {
-					lb.addItem(maxYear.toString(), (maxYear - 1900) + "");
-					maxYear--;
-				}
-
+				if(firstEntry.isPresent()) {
+					Integer minYear = firstEntry.get().getKey();
+					Integer maxYear = firstEntry.get().getValue();
+					
+					while(maxYear >= minYear) {
+						lb.addItem(maxYear.toString(), (maxYear - 1900) + "");
+						maxYear--;
+					}
+				} 
+				
 				consumer.accept(lb);
 			}
 			
@@ -394,30 +397,37 @@ public class CustomerFee extends MainEntryPoint {
 		
 		customerSuggestBox.addKeyUpHandler(e -> {
 			String customerQuery = customerSuggestBox.getValue();
-			if(AonStringUtils.isNotBlank(customerQuery) && customerQuery.length() > 3) {
-				SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, String>>() {
-					
-					@Override
-					public void onSuccess(Map<String, String> customerSuggestionsDB) {
-						customerSuggestions = customerSuggestionsDB;
-						
-						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerSuggestBox.getSuggestOracle();
-						orclSb.clear();
-						orclSb.addAll(customerSuggestions.keySet());
-						orclSb.setDefaultSuggestionsFromText(customerSuggestions.keySet());
-						customerSuggestBox.showSuggestionList();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub	
-					}
-					
-				});
-			}
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				customerSuggestBox.setValue("");
+				customerQuery = null;
+				getCustomersSuggestion(customerQuery);
+			} else if(AonStringUtils.isNotBlank(customerQuery) && customerQuery.length() > 3)
+				getCustomersSuggestion(customerQuery);
 		});
 	}
 	
+	private void getCustomersSuggestion(String customerQuery) {
+		SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> customerSuggestionsDB) {
+				customerSuggestions = customerSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(customerSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(customerSuggestions.keySet());
+				customerSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+
 	private void createConceptSuggestBox() {
 		conceptSuggestBox = new SuggestBox();
 		conceptSuggestBox.setWidth("300px");
@@ -433,30 +443,37 @@ public class CustomerFee extends MainEntryPoint {
 		
 		conceptSuggestBox.addKeyUpHandler(e -> {
 			String productQuery = conceptSuggestBox.getValue();
-			if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 3) {
-				SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
-					
-					@Override
-					public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
-						productSuggestions = productSuggestionsDB;
-						
-						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) conceptSuggestBox.getSuggestOracle();
-						orclSb.clear();
-						orclSb.addAll(productSuggestions.keySet());
-						orclSb.setDefaultSuggestionsFromText(productSuggestions.keySet());
-						conceptSuggestBox.showSuggestionList();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub	
-					}
-					
-				});
-			}
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				conceptSuggestBox.setValue("");
+				productQuery = null;
+				getProductsSuggestion(productQuery);
+			} else if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 3)
+				getProductsSuggestion(productQuery);
 		});
 	}
 	
+	private void getProductsSuggestion(String productQuery) {
+		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
+			
+			@Override
+			public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
+				productSuggestions = productSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) conceptSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(productSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(productSuggestions.keySet());
+				conceptSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+
 	private void resetFilter() {
 		monthListBox.setSelectedIndex(0);
 		if (null != yearListBox) yearListBox.setSelectedIndex(0);
