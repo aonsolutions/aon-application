@@ -49,7 +49,10 @@ public class CONSOLE {
 		for(String schema: schemas) {
 			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
 					List<DomainCompany> domains = getConsole().getAllDomains(ctx).collect(Collectors.toList());
-					list.addAll(domains);
+					domains.forEach(domain -> {
+						domain.setSchema(schema);
+						list.add(domain);						
+					});
 			} catch (DataAccessException e) {
 				e.printStackTrace();
 			}

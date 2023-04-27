@@ -1,6 +1,10 @@
 package com.esferalia.aon.gwt.payroll.client;
 
+import static com.google.gwt.user.client.ui.FormPanel.METHOD_GET;
+import static com.google.gwt.user.client.ui.FormPanel.METHOD_POST;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +17,7 @@ import java.util.Optional;
 import java.util.SortedSet;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
@@ -107,6 +112,7 @@ import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.SubmitButton;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -142,7 +148,7 @@ public abstract class ITWidget extends ResizeComposite {
 
 		@Override
 		public void execute() {
-			onFIE();
+			onFIEFileUpload();
 		}
 	}
 	
@@ -153,7 +159,7 @@ public abstract class ITWidget extends ResizeComposite {
 		private MenuItem fie;
 		public TGSSContextMenu() {
 			
-			fie = addItem("Mensaje del INSS Empresa (FIE)", new MsjFIECommand(), 
+			fie = addItem("Mensaje/Fichero INSS (FIE)", new MsjFIECommand(), 
 					AON.CSS.aonIconTgss(), AON.AON_ICON_CMD_BUTTON, style.cmdBtn());
 			fie.ensureDebugId("fie");
 			
@@ -251,7 +257,12 @@ public abstract class ITWidget extends ResizeComposite {
 	private AonToolbarButton showList;
 	private AonToolbarButton showStatics;
 	private AonToolbarButton leyend;
+
+	private FormPanel msjFIEFormPanel;
+	private SubmitButton msjFIESubmitButton;	
+
 	private MultiFileUpload msjFIEFileUpload;
+	
 	private TGSSContextMenu tgssContextMenu;
 
 	private boolean minimizedByUser;
@@ -268,6 +279,7 @@ public abstract class ITWidget extends ResizeComposite {
 	private ProgressPanel progressPanel;
 
 	private ITDialog itDialogEdit;
+
 	
 	// --------------------------------------------------- Constructor
 
@@ -763,7 +775,26 @@ public abstract class ITWidget extends ResizeComposite {
 
 	}
     
-    // --------------------------------------------------- ContextMenu
+	public void loadITWidget(Runnable success, Consumer<Throwable> failure) {
+		AonMessagePanel.showLoading(messagePanel, "Obteniendo ITs de los trabajadores...");
+		
+		getITEmployeeListDB(itEmployeeList -> {
+			if(itEmployeeList.isEmpty()){
+				showMessage();
+			} else {
+				itEmployeeIts = itEmployeeList;
+				int deckIdx = mainDeckPanel.getVisibleWidget();
+				if(0 == deckIdx) showStatics();
+				else showList();
+			}	
+
+			AonMessagePanel.hideMessage(messagePanel);
+			
+			success.run();
+		}, f -> {});
+	}
+
+	// --------------------------------------------------- ContextMenu
 
 	
 	
@@ -803,8 +834,9 @@ public abstract class ITWidget extends ResizeComposite {
 		initDateListBox();
 		initSuggestBox();
 		printTimelineChart();
-		
-		checkStatusITs();
+
+		// By now this doesn't work
+		//checkStatusITs();
 	}
 	
 	private void loadITsList() {
@@ -1038,6 +1070,8 @@ public abstract class ITWidget extends ResizeComposite {
 	private final AbstractDataTable createTable() {
 		String container = employeeSB.getText().toUpperCase();
 		
+		String [] patterns = AonStringUtils.split(container, '|');
+		
 		data = new DataTableWrapper();
 		ifNull = true;
 
@@ -1045,7 +1079,10 @@ public abstract class ITWidget extends ResizeComposite {
 
 			String fullName = itEmployee.getEmployeeInfo().getFullName();
 			
-			if (fullName.contains(container)) {
+			//if (fullName.contains(container)) {
+			if ( patterns == null 
+				|| patterns.length == 0 
+				|| Arrays.stream(patterns).anyMatch( p -> AonStringUtils.contains(fullName, p))) {
 
 				ifNull = false;
 
@@ -1445,7 +1482,7 @@ public abstract class ITWidget extends ResizeComposite {
 		it.setDailyREGBase(jsIT.getDailyREGBase());
 		it.setDescription(jsIT.getDescription());
 		it.setDomain(jsIT.getDomain());
-		it.setEndDate(parseDate(jsIT.getEndDate()));
+		it.setEndDate(jsIT.getEndDate());
 		it.setFullName(jsIT.getFullName());
 		it.setMaternityReason(jsIT.getMaternityReason());
 		it.setMaternityType(jsIT.getMaternityType());
@@ -1453,7 +1490,7 @@ public abstract class ITWidget extends ResizeComposite {
 		it.setIsParent(jsIT.isParent());
 		it.setITParts(createDefaultITParts(jsIT));
 		it.setParent(jsIT.getParent());
-		it.setStartDate(parseDate(jsIT.getStartDate()));
+		it.setStartDate(jsIT.getStartDate());
 		it.setTypeHighPart(jsIT.getTypeHighPart());
 		it.setTypeLowPart(jsIT.getTypeLowPart());
 		return it;
@@ -1466,7 +1503,7 @@ public abstract class ITWidget extends ResizeComposite {
 		ITPart itPart = new ITPart();
 		itPart.setType((byte)0);
 		itPart.setDomain(jsIT.getDomain());
-		itPart.setDate(parseDate(jsIT.getStartDate()));
+		itPart.setDate(jsIT.getStartDate());
 		
 		itParts.add(itPart);
 		
@@ -1486,9 +1523,9 @@ public abstract class ITWidget extends ResizeComposite {
 		contractInfo.setWorkplaceFullAddress(jsContractInfo.getWorkplaceFullAddress());
 		contractInfo.setContractType(jsContractInfo.getContractType());
 		contractInfo.setContractModel(jsContractInfo.getContractModel());
-		contractInfo.setStartDate(parseDate(jsContractInfo.getStartDate()));
-		contractInfo.setEndDate(parseDate(jsContractInfo.getEndDate()));
-		contractInfo.setSeniorityDate(parseDate(jsContractInfo.getSeniorityDate()));
+		contractInfo.setStartDate(jsContractInfo.getStartDate());
+		contractInfo.setEndDate(jsContractInfo.getEndDate());
+		contractInfo.setSeniorityDate(jsContractInfo.getSeniorityDate());
 		contractInfo.setAgreementId(jsContractInfo.getAgreementId());
 		contractInfo.setAgreementLevelId(jsContractInfo.getAgreementLevelId());
 		contractInfo.setAgreementCategory(jsContractInfo.getAgreementCategory());
@@ -1504,7 +1541,7 @@ public abstract class ITWidget extends ResizeComposite {
 		contractInfo.setContractmodelId(jsContractInfo.getContractmodelId());
 		contractInfo.setRetaId(jsContractInfo.getRetaId());
 		contractInfo.setHasPayroll(jsContractInfo.getHasPayroll());
-		contractInfo.setPayrollDate(parseDate(jsContractInfo.getPayrollDate()));
+		contractInfo.setPayrollDate(jsContractInfo.getPayrollDate());
 		return contractInfo;
 	}
 
@@ -1519,7 +1556,7 @@ public abstract class ITWidget extends ResizeComposite {
 //		employeeInfo.setAddressProvinces(jsEmployeeInfo.getAddressProvinces());
 		employeeInfo.setAddressZip(jsEmployeeInfo.getAddressZip());
 		employeeInfo.setBic(jsEmployeeInfo.getBic());
-		employeeInfo.setBirthdate(parseDate(jsEmployeeInfo.getBirthdate()));
+		employeeInfo.setBirthdate(jsEmployeeInfo.getBirthdate());
 		employeeInfo.setCivilStatus(jsEmployeeInfo.getCivilStatus());
 		employeeInfo.setContractActive(jsEmployeeInfo.getContractActive());
 		employeeInfo.setContractId(jsEmployeeInfo.getContractId());
@@ -1552,18 +1589,6 @@ public abstract class ITWidget extends ResizeComposite {
 		return employeeInfo;
 	}
 	
-	private static Date parseDate(String str) {
-		if ( str == null || str.trim().length() == 0)
-			return null;
-		
-		try {
-			return DateTimeFormat.getFormat("yyyy-MM-dd").parse(str);
-		} catch ( IllegalArgumentException e ) {
-			return null;
-		}
-	}
-
-
 	private static native <T extends JavaScriptObject> T eval(String javascript)
 	/*-{
 		return eval(javascript);
@@ -1637,8 +1662,7 @@ public abstract class ITWidget extends ResizeComposite {
 	private void getToolbarPanel() {
 		this.toolbar = new AonToolbar("Partes IT");
 		
-		// FORM
-		FormPanel msjFIEFormPanel = new FormPanel();
+		msjFIEFormPanel = new FormPanel();
 		msjFIEFormPanel.setMethod(FormPanel.METHOD_POST);
 		msjFIEFormPanel.setEncoding(FormPanel.ENCODING_MULTIPART);
 		msjFIEFormPanel.setAction(FIEService.FIE_URL);
@@ -1646,10 +1670,13 @@ public abstract class ITWidget extends ResizeComposite {
 		Hidden userNameHidden = new Hidden(FIEService.Parameter.USER.name(), Wnd.getCurrentUser());
 		Hidden domainNameHidden = new Hidden(FIEService.Parameter.DOMAIN.name(), Wnd.getCurrentDomainNameURL());
 		
+		msjFIESubmitButton =  new SubmitButton();
+		msjFIESubmitButton.setVisible(false);
+
 		msjFIEFileUpload = new MultiFileUpload();
 		msjFIEFileUpload.setName(FIEService.Parameter.FILE.name());
 		msjFIEFileUpload.setVisible(false);
-		msjFIEFileUpload.setAccept(".msj");
+		msjFIEFileUpload.setAccept(".msj,application/vnd.ms-excel (.xls)");
 		msjFIEFileUpload.addChangeHandler(e -> msjFIEFormPanel.submit());
 		msjFIEFormPanel.addSubmitCompleteHandler(e -> {
 			String json = e.getResults();
@@ -1664,16 +1691,33 @@ public abstract class ITWidget extends ResizeComposite {
 				itEmployees.add(itEmployee); 		
 			}
 			
+			
 			setITEmployeeList(itEmployees, 
-					s -> loadITWidget(), 
-					f -> {}
-			);
+					s ->  { 
+					    loadITWidget(() -> {
+						    String pattern = 
+							    itEmployees.stream()
+							    .map(ITEmployee::getEmployeeInfo)
+							    .map(EmployeeInfo::getFullName)
+							    .collect(Collectors.joining("|"));
+						    employeeSB.getValueBox().setValue(pattern, true);
+						
+					    }, 
+						    f -> {});
+					}, 
+					f -> {
+					}
+					);
+			
+			
 		});
 		
 		FlowPanel formFlowPanel = new FlowPanel();
 		formFlowPanel.add(userNameHidden);
 		formFlowPanel.add(domainNameHidden);
 		formFlowPanel.add(msjFIEFileUpload);
+		formFlowPanel.add(msjFIESubmitButton);
+		
 		
 		msjFIEFormPanel.add(formFlowPanel);
 		toolbar.add(msjFIEFormPanel);
@@ -1702,7 +1746,7 @@ public abstract class ITWidget extends ResizeComposite {
 			
 			@Override
 			public void onDefaultClick(ClickEvent evet) {
-				onFIE();
+				onFIEFileSync();
 			}
 		};
 		toolbar.add(tgssExpand);
@@ -1736,24 +1780,18 @@ public abstract class ITWidget extends ResizeComposite {
 		newITDialog();
 	}
 	
-	private void onFIE() {
+	private void onFIEFileSync() {
+	    	msjFIEFormPanel.setMethod(METHOD_GET);
+		msjFIESubmitButton.click();
+		AonMessagePanel.showLoading(messagePanel, "Consultando/Descargando el Fichero INSS Empresas (FIER)");
+	}
+
+	private void onFIEFileUpload() {
+	    	msjFIEFormPanel.setMethod(METHOD_POST);
 		msjFIEFileUpload.click();
 	}
 	
-	private void onSyncIT() {
-		showLoading("Descargando partes IT desde la Seguridad Social (TGSS)");
-		syncITs(s -> {
-			loadITWidget();
-			showSyncMessage();
-		}, f -> {
-			Map<String, String> errorMap = new HashMap<>();
-			errorMap.put("Sincronizaci\u00f3n ITs", f.getMessage());
-			AonMessagePanel.showError(messagePanel, errorMap);
-		});
-	}
-	
-	
-	private void checkStatusITs() {
+	private void __checkStatusITs() {
 		showProgressPanel();
 		checkStatus(status -> {
 			SistemaREDITResults results = new SistemaREDITResults() {
@@ -2053,19 +2091,23 @@ public abstract class ITWidget extends ResizeComposite {
           AonMessagePanel.showSuccess(messagePanel, successMap);
      }
     	
-	private void showCreateMessage() {
-		showMessage("Creaci\u00F3n IT", "El parte ha sido creado correctamente");
-	}
-	
-	private void showUpdateMessage() {
-	    showMessage("Actualizaci\u00F3n IT", "El parte ha sido actualizado correctamente");
-	}
-	
-	private void showCommunicateIT() {
-	    showMessage("Comunicaci\u00F3n", "Parte IT comunicada a la TGSS");
-	}
-	   
-    private void showDeleteMessage() {
+     private void showMessages(String ...messages) {
+         AonMessagePanel.showSuccess(messagePanel, messages);
+    }
+
+     private void showCreateMessage() {
+	 showMessage("Creaci\u00F3n IT", "El parte ha sido creado correctamente");
+     }
+
+     private void showUpdateMessage() {
+	 showMessage("Actualizaci\u00F3n IT", "El parte ha sido actualizado correctamente");
+     }
+
+     private void showCommunicateIT() {
+	 showMessage("Comunicaci\u00F3n", "Parte IT comunicada a la TGSS");
+     }
+
+     private void showDeleteMessage() {
         showMessage("Borrado IT", "El parte ha sido eliminado correctamente");
     }
     
@@ -2200,6 +2242,7 @@ public abstract class ITWidget extends ResizeComposite {
 			tabLayout.remove(progressPanel);
 	}
 	
+	
 	// --------------------------------------------------- Abstract Methdos
 	
 	protected abstract void syncITs(Consumer<Void> success, Consumer<Throwable> failure);
@@ -2247,5 +2290,5 @@ public abstract class ITWidget extends ResizeComposite {
 	public void removeFootPanel() {
 		this.splitLayoutPanel.remove(this.footPanel);
 	}
-
+	
 }

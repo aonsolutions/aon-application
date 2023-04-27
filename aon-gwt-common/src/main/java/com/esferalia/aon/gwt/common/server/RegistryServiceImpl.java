@@ -10,11 +10,15 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.RegistryParams;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -91,7 +95,7 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 		return AON.getCustomersSuggestion(domainName, domain, user, query);
 	}
 	@Override
-	public Map<String, String> getProductsSuggestion(String domainName, int domain, String user, String query) {
+	public Map<String, OldItem> getProductsSuggestion(String domainName, int domain, String user, String query) {
 		return AON.getProductsSuggestion(domainName, domain, user, query);
 	}
 	
@@ -130,6 +134,18 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params) {
 		AON.deleteFee(domainName, domain, user, params);
+	}
+	@Override
+	public Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getWorkplacesSuggestion(domainName, domain, user, query);
+	}
+	@Override
+	public Map<String, Seller> getSellersSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getSellersSuggestion(domainName, domain, user, query);
+	}
+	@Override
+	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getInvoicingGroupsSuggestion(domainName, domain, user, query);
 	}
 	
 }

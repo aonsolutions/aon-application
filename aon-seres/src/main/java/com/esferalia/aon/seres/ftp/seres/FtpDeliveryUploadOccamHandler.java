@@ -36,8 +36,6 @@ import com.esferalia.aon.occam.api.model.registry.NoteType;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
-import com.esferalia.aon.seres.ftp.FtpException;
-import com.esferalia.aon.seres.ftp.FtpLoginException;
 import com.esferalia.aon.seres.ftp.SeresFtpConnectionProvider;
 import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.ResponseMessageType;
 import com.esferalia.aon.seres.ftp.seres.FtpStoreProcess.SeresFtpProcessThread;

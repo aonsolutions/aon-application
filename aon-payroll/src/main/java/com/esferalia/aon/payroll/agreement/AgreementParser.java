@@ -155,6 +155,8 @@ public class AgreementParser {
 			String line = scaner.nextLine();
 			String[] lineSplit = line.split(" :: ");
 			
+//			System.out.println(line);
+			
 			AgreementPayment agreementPayment = new AgreementPayment()
 					.setName(lineSplit[0])
 					.setDescription(lineSplit[1])

@@ -150,6 +150,8 @@ export const requestPro = (method, url, sendData, fn) => {
     if (sendData && method === "GET") url = url + formatParams(sendData); //send params url method GET
     xhr.open(method, url);
     xhr.setRequestHeader("session_id", "AONd95770f269e711eb94390242ac130002");
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
     xhr.send(JSON.stringify(sendData));
     xhr.onload = () => {
       if (xhr.status != 200) {

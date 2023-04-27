@@ -208,7 +208,7 @@ export const LAST = 'Azken';
 export const LAST_LOCATION = 'Azken kokapena';
 export const LAST_STATUS = 'Azken egoera';
 export const LINK = 'Estekatu';
-export const LINK_DOMAINS = 'Dominioak Estekatu';
+export const LINK_DOMAINS = 'Dominioak Bezeroekin Estekatu';
 export const LOCATION = 'Kokapena';
 
 // ----- M
