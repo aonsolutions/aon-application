@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -73,6 +74,9 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	private HTMLPanel invoicingGroupPanel;
 	private SuggestBox invoicingGroupSuggestBox;
 	
+	private HTMLPanel projectPanel;
+	private SuggestBox projectSuggestBox;
+	
 	private HTMLPanel buttonsPanel;
 	
 	private static RegistryServiceAsync SERVICE;
@@ -82,6 +86,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	private Map<String, Workplace> workplaceSuggestions = new TreeMap<>();
 	private Map<String, Seller> sellerSuggestions = new TreeMap<>();
 	private Map<String, InvoicingGroup> invoicingGroupSuggestions = new TreeMap<>();
+	private Map<String, Project> projectSuggestions = new TreeMap<>();
 
 	private Fee fee;
 	private boolean isSameProduct = false;
@@ -146,6 +151,9 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			
 			createInvoicingGroupPanel();
 			container.add(invoicingGroupPanel);
+			
+			createProjectPanel();
+			container.add(projectPanel);
 		} 
 		
 		getButtonsPanel();
@@ -446,33 +454,40 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		workplaceSuggestBox.addKeyUpHandler(e -> {
 			String workplaceQuery = workplaceSuggestBox.getValue();
-			if(AonStringUtils.isNotBlank(workplaceQuery) && workplaceQuery.length() > 3) {
-				SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
-					
-					@Override
-					public void onSuccess(Map<String, Workplace> workplaceSuggestionsDB) {
-						workplaceSuggestions = workplaceSuggestionsDB;
-						
-						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) workplaceSuggestBox.getSuggestOracle();
-						orclSb.clear();
-						orclSb.addAll(workplaceSuggestions.keySet());
-						orclSb.setDefaultSuggestionsFromText(workplaceSuggestions.keySet());
-						workplaceSuggestBox.showSuggestionList();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub	
-					}
-					
-				});
-			}
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				workplaceSuggestBox.setValue("");
+				workplaceQuery = null;
+				getWorkplacesSuggestion(workplaceQuery);
+			} else if(AonStringUtils.isNotBlank(workplaceQuery) && workplaceQuery.length() > 3) 
+				getWorkplacesSuggestion(workplaceQuery);
 		});
 		
 		if(null != fee) workplaceSuggestBox.setValue(fee.getWorkplace().getDescription());
 		
 		workplacePanel.add(workplaceLabel);
 		workplacePanel.add(workplaceSuggestBox);
+	}
+
+	private void getWorkplacesSuggestion(String workplaceQuery) {
+		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Workplace> workplaceSuggestionsDB) {
+				workplaceSuggestions = workplaceSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) workplaceSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(workplaceSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(workplaceSuggestions.keySet());
+				workplaceSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
 	}
 
 	private void createSellerPanel() {
@@ -498,33 +513,40 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		sellerSuggestBox.addKeyUpHandler(e -> {
 			String sellerQuery = sellerSuggestBox.getValue();
-			if(AonStringUtils.isNotBlank(sellerQuery) && sellerQuery.length() > 3) {
-				SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), sellerQuery, new AsyncCallback<Map<String, Seller>>() {
-					
-					@Override
-					public void onSuccess(Map<String, Seller> sellerSuggestionsDB) {
-						sellerSuggestions = sellerSuggestionsDB;
-						
-						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) sellerSuggestBox.getSuggestOracle();
-						orclSb.clear();
-						orclSb.addAll(sellerSuggestions.keySet());
-						orclSb.setDefaultSuggestionsFromText(sellerSuggestions.keySet());
-						sellerSuggestBox.showSuggestionList();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub	
-					}
-					
-				});
-			}
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				sellerSuggestBox.setValue("");
+				sellerQuery = null;
+				getSellersSuggestion(sellerQuery);
+			} else if(AonStringUtils.isNotBlank(sellerQuery) && sellerQuery.length() > 3)
+				getSellersSuggestion(sellerQuery);
 		});
 		
 		if(null != fee) sellerSuggestBox.setValue(fee.getSeller().getName());
 		
 		sellerPanel.add(sellerLabel);
 		sellerPanel.add(sellerSuggestBox);
+	}
+
+	private void getSellersSuggestion(String sellerQuery) {
+		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), sellerQuery, new AsyncCallback<Map<String, Seller>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Seller> sellerSuggestionsDB) {
+				sellerSuggestions = sellerSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) sellerSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(sellerSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(sellerSuggestions.keySet());
+				sellerSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
 	}
 
 	private void createInvoicingGroupPanel() {
@@ -550,27 +572,12 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		invoicingGroupSuggestBox.addKeyUpHandler(e -> {
 			String invoicingGroupQuery = invoicingGroupSuggestBox.getValue();
-			if(AonStringUtils.isNotBlank(invoicingGroupQuery) && invoicingGroupQuery.length() > 3) {
-				SERVICE.getInvoicingGroupsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), invoicingGroupQuery, new AsyncCallback<Map<String, InvoicingGroup>>() {
-					
-					@Override
-					public void onSuccess(Map<String, InvoicingGroup> invoicingGroupSuggestionsDB) {
-						invoicingGroupSuggestions = invoicingGroupSuggestionsDB;
-						
-						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) invoicingGroupSuggestBox.getSuggestOracle();
-						orclSb.clear();
-						orclSb.addAll(invoicingGroupSuggestions.keySet());
-						orclSb.setDefaultSuggestionsFromText(invoicingGroupSuggestions.keySet());
-						invoicingGroupSuggestBox.showSuggestionList();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub	
-					}
-					
-				});
-			}
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				invoicingGroupSuggestBox.setValue("");
+				invoicingGroupQuery = null;
+				getInvoicingGroupsSuggestion(invoicingGroupQuery);
+			} else if(AonStringUtils.isNotBlank(invoicingGroupQuery) && invoicingGroupQuery.length() > 3)
+				getInvoicingGroupsSuggestion(invoicingGroupQuery);
 		});
 		
 		if(null != fee) invoicingGroupSuggestBox.setValue(fee.getInvoicingGroup().getDescription());
@@ -579,6 +586,88 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		invoicingGroupPanel.add(invoicingGroupSuggestBox);
 	}
 	
+	private void getInvoicingGroupsSuggestion(String invoicingGroupQuery) {
+		SERVICE.getInvoicingGroupsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), invoicingGroupQuery, new AsyncCallback<Map<String, InvoicingGroup>>() {
+			
+			@Override
+			public void onSuccess(Map<String, InvoicingGroup> invoicingGroupSuggestionsDB) {
+				invoicingGroupSuggestions = invoicingGroupSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) invoicingGroupSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(invoicingGroupSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(invoicingGroupSuggestions.keySet());
+				invoicingGroupSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+
+	private void createProjectPanel() {
+		projectPanel = new HTMLPanel("");
+		projectPanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		Label projectLabel = new Label("Proyecto");
+		projectLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
+		projectLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		
+		projectSuggestBox = new SuggestBox();
+		projectSuggestBox.setWidth("100%");
+		projectSuggestBox.setHeight("2em");
+		projectSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
+		projectSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
+		projectSuggestBox.setAutoSelectEnabled(false);
+		projectSuggestBox.getElement().setPropertyString("placeholder", "Proyecto: busque por descripci\u00f3n");
+		
+		projectSuggestBox.addSelectionHandler(e -> {
+			projectSuggestBox.hideSuggestionList();
+			if(null != fee) fee.setProject(projectSuggestions.get(projectSuggestBox.getValue()));
+		});
+		
+		projectSuggestBox.addKeyUpHandler(e -> {
+			String projectQuery = projectSuggestBox.getValue();
+			Integer customerId = null != fee ? fee.getCustomer().getId() : null;
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				projectSuggestBox.setValue("");
+				projectQuery = null;
+				getProjectsSuggestion(customerId, projectQuery);
+			} else if(AonStringUtils.isNotBlank(projectQuery) && projectQuery.length() > 3)
+				getProjectsSuggestion(customerId, projectQuery);
+		});
+		
+		if(null != fee) projectSuggestBox.setValue(fee.getProject().getName());
+		
+		projectPanel.add(projectLabel);
+		projectPanel.add(projectSuggestBox);
+	}
+	
+	private void getProjectsSuggestion(Integer customerId, String projectQuery) {
+		SERVICE.getProjectsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerId, projectQuery, new AsyncCallback<Map<String, Project>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Project> projectProjectSuggestionsDB) {
+				projectSuggestions = projectProjectSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) projectSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(projectSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(projectSuggestions.keySet());
+				projectSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+
 	private Date createBillingDate() {
 		if(AonStringUtils.isBlank(monthListBox.getSelectedValue()) || AonStringUtils.isBlank(yearListBox.getSelectedValue())) return null;
 		
