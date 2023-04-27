@@ -15,7 +15,6 @@ import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
-import net.aonsolutions.occam.api.AON;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.dao.DAOUtils;
 import net.aonsolutions.occam.dao.DomainDAO;
