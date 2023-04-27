@@ -1,5 +1,6 @@
 package com.esferalia.aon.occam.api;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +18,7 @@ import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.impl.jooq.ConsoleImpl;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
@@ -91,17 +93,32 @@ public class CONSOLE {
 		
 	}
 	
-	public static List<Domain> updateDomainCustomerData(List<DomainCompany> domainCompanies, Customer customer) {
+	public static List<Domain> updateDomainCustomerData(List<DomainCompany> domainCompanies, Integer customer) {
 		List<Domain> updatedDomains = new LinkedList<>(); 
-		List<String> schemas = AONContext.getSchemas();
-		for(String schema: schemas) {
-			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
-				updatedDomains.addAll(getConsole().updateDomainCustomer(ctx, domainCompanies, customer));
-			} catch (DataAccessException e) {
-				e.printStackTrace();
+		if (domainCompanies != null) {
+			for (DomainCompany domainCompany : domainCompanies) {
+				Domain domain = domainCompany.getDomain();
+				if (domain != null) {
+					try (CloseableAONContext ctx = AONContext.getAONContext(domain, "")) {
+						updatedDomains.addAll(getConsole().updateDomainCustomer(ctx, Arrays.asList(domainCompany), customer));
+					} catch (DataAccessException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 		return updatedDomains;
+	}
+	
+	public DomainCompany updateDomainStatus(DomainCompany domainCompany, AonStatus aonStatus) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainCompany.getDomain(), "")) {
+			if (domainCompany != null && domainCompany.getDomain() != null) {
+				getConsole().updateDomainStatus(ctx, domainCompany, aonStatus);
+			}
+		} catch (DataAccessException e) {
+			e.printStackTrace();
+		}
+		return domainCompany;
 	}
 
 	public static boolean deleteDomain(DomainParams params, Integer domainId) {
