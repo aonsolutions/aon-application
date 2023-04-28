@@ -30,6 +30,7 @@ public interface IConsole {
 	public Boolean delete(CloseableAONContext ctx, ConsoleTableRow row);
 	public Stream<DomainCompany> getAllDomains(AONContext ctx);
 	public Stream<DomainCompany> getCustomerDomains(AONContext ctx, Integer customer);
-	public List<Domain> updateDomainCustomer(AONContext ctx, List<DomainCompany> domainCompanies, Customer customer);
+	public List<Domain> updateDomainCustomer(AONContext ctx, List<DomainCompany> domainCompanies, Integer customer);
+	public DomainCompany updateDomainStatus(AONContext ctx, DomainCompany domainCompany, AonStatus aonStatus);
 	public Stream<DomainCompany> getDomainsByDocument(AONContext ctx, String customerDocument, Integer customerId);
 }

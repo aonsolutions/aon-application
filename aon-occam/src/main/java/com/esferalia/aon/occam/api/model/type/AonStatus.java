@@ -4,8 +4,8 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum AonStatus {
 
+	BILLABLE("Facturable"),
 	NOT_BILLABLE("No facturable"),
-	BILLABLE("Facturable")
 	;
 
 	private String name;
