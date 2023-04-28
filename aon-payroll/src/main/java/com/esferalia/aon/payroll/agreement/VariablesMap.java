@@ -540,7 +540,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("COMPLEMENTO_NO_SALARIAL_MENSUAL", "COMPL_NO_SALARIAL_MEN");
 		variablesMap.put("COMPLEMENTO_PARTICIPACION_ANUAL", "COMPLEMENTO_PARTICIPACION");
 		variablesMap.put("COMPLEMENTO_PARTICIPACION_MENSUAL", "COMPLEMENTO_PARTICIPACION");
-		variablesMap.put("COMPLEMENTO_PERMANENCIA_MENSUAL", "COMPLEMENTO_PERMANENCIA");
+		variablesMap.put("COMPLEMENTO_PERMANENCIA_ANUAL", "PERMANENCIA_A");
+		variablesMap.put("COMPLEMENTO_PERMANENCIA_MENSUAL", "PERMANENCIA_M");
 		variablesMap.put("COMPLEMENTO_PERSONAL_DE_ANTIGUEDAD_MENSUAL", "IMPORTE_ANTIGUEDAD");
 		variablesMap.put("COMPLEMENTO_PERSONAL_ANUAL", "COMPL_PERSONAL_A");
 		variablesMap.put("COMPLEMENTO_PERSONAL_DIARIO", "COMPL_PERSONAL_D");
@@ -1237,7 +1238,8 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_FESTIVOS_ESPECIALES_DIARIO", "FESTIVOS_ESP_D");
 		variablesMap.put("PLUS_FESTIVOS_ESPECIALES_HORAS", "FESTIVOS_ESP_H");
 		variablesMap.put("PLUS_FESTIVO_NOCTURNO_DIARIO", "P_FESTIVO_NOCT_D");
-		variablesMap.put("PLUS_FIDELIDAD_MENSUAL", "PLUS_FIDELIDAD");
+		variablesMap.put("PLUS_FIDELIDAD_ANUAL", "FIDELIDAD_A");
+		variablesMap.put("PLUS_FIDELIDAD_MENSUAL", "FIDELIDAD_M");
 		variablesMap.put("PLUS_FIESTAS_PATRONALES_ANUAL", "P_FIESTAS_PATRONALES_A");
 		variablesMap.put("PLUS_FIN_DE_SEMANA_DIARIO", "PLUS_FIN_SEMANA_D");
 		variablesMap.put("PLUS_FIN_DE_SEMANA_HORAS", "PLUS_FIN_SEMANA_H");
@@ -1409,6 +1411,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_RIESGO_DIARIO", "PLUS_RIESGO");
 		variablesMap.put("PLUS_RIESGOS_LABORALES_MENSUAL", "PLUS_RIESGO_LABORAL");
 		variablesMap.put("PLUS_ROTACION_MENSUAL", "ROTACION_M");
+		variablesMap.put("PLUS_ROTACION_DIARIO", "ROTACION_D");
 		variablesMap.put("PLUS_ROTACION_HORAS", "ROTACION_H");
 		variablesMap.put("PLUS_SABADOS_ANUAL", "PLUS_SABADOS_A");
 		variablesMap.put("PLUS_SABADOS_DIARIO", "PLUS_SABADOS_D");
@@ -1466,6 +1469,7 @@ public class VariablesMap implements Serializable {
 		variablesMap.put("PLUS_TURNICIDAD_3_TURNOS_DIARIO", "P_TURNICIDAD_3T_D");
 		variablesMap.put("PLUS_TURNICIDAD_3_TURNOS_MENSUAL", "P_TURNICIDAD_3T_M");
 		variablesMap.put("PLUS_URGENCIA_MENSUAL", "URGENCIA_M");
+		variablesMap.put("PLUS_VACACIONES_NO_ESTIVALES_ANUAL", "VACACIONES_NO_ESTIV_A");
 		variablesMap.put("PLUS_VESTUARIO_ANUAL", "VESTUARIO_A");
 		variablesMap.put("PLUS_VESTUARIO_DIARIO", "VESTUARIO_D");
 		variablesMap.put("PLUS_VESTUARIO_MENSUAL", "VESTUARIO_M");
