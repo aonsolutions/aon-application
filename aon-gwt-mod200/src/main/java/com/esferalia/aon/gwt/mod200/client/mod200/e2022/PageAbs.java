@@ -50,7 +50,7 @@ public abstract class PageAbs extends ResizeComposite {
 	protected HashMap<IMod200Key, AonDoubleBox> inputs = new HashMap<IMod200Key, AonDoubleBox>();
 	protected ArrayList<Widget> otherInputs = new ArrayList<Widget>();
 	protected FlowPanel basePanel;
-	protected Model200PageCallback callback;
+	protected Model200PageCallback callback = null;
 	
 	public PageAbs(Model200PageCallback callback) {
 		this.callback = callback;
@@ -75,22 +75,31 @@ public abstract class PageAbs extends ResizeComposite {
 
 	}
 	
+	public PageAbs() {
+		// FALTA
+		// TODO Auto-generated constructor stub
+		super();
+	}
+
 	protected abstract void initializeTable();
 	
-	protected void dump() {		
+	protected void dump() {
 		
-		// Se repintan los valores calculados automáticamente. DraftMap lleva los valores que se han modificado o 
-		// calculado automáticamente, desde que hemos entrado en el modelo
-		for (IMod200Key key : callback.getMod200Object().getMod200().getDraftMap().keySet()) {
-			if (inputs.containsKey(key)) {
-				AonDoubleBox input = inputs.get(key);
-				DoubleVariableEx var = callback.getMod200Object().getMod200().getDraftMap().get(key);
-				input.setValue(var.getValue());
+		if (callback != null) {
+			
+			// Se repintan los valores calculados automáticamente. DraftMap lleva los valores que se han modificado o 
+			// calculado automáticamente, desde que hemos entrado en el modelo			
+			for (IMod200Key key : callback.getMod200Object().getMod200().getDraftMap().keySet()) {
+				if (inputs.containsKey(key)) {
+					AonDoubleBox input = inputs.get(key);
+					DoubleVariableEx var = callback.getMod200Object().getMod200().getDraftMap().get(key);
+					input.setValue(var.getValue());
+				}
 			}
-		}
+		}	
 		
 		// Habilitar/Deshabilitar controles de la pagina
-		setEnabled();
+		setEnabled();		
 		
 	}
 	
@@ -120,20 +129,23 @@ public abstract class PageAbs extends ResizeComposite {
 	// Habilitar/Deshabilitar los controles de edicion de la página 
 	protected void setEnabled() {
 		
-		// Se habilitan si el modelo es editable y la casilla no está deshabilitada
-		for (IMod200Key key : inputs.keySet()) {
-			inputs.get(key).setEnabled(isEditable(key));
-		}
-		
-		// Se habilitan si el modelo es editable
-		boolean enabled = isEditable();
-		for (Widget input : otherInputs) {
-			if (input instanceof AonDateBox) {
-				((AonDateBox) input).setEnabled(enabled);
-			} else if (input instanceof FocusWidget) {
-				((FocusWidget) input).setEnabled(enabled);
-			} else if (input instanceof AonIbanTextBox) {
-				((AonIbanTextBox) input).setEnabled(enabled);
+		// FALTA - PRUEBA 
+		if (callback != null) {		
+			// Se habilitan si el modelo es editable y la casilla no está deshabilitada
+			for (IMod200Key key : inputs.keySet()) {
+				inputs.get(key).setEnabled(isEditable(key));
+			}
+			
+			// Se habilitan si el modelo es editable
+			boolean enabled = isEditable();
+			for (Widget input : otherInputs) {
+				if (input instanceof AonDateBox) {
+					((AonDateBox) input).setEnabled(enabled);
+				} else if (input instanceof FocusWidget) {
+					((FocusWidget) input).setEnabled(enabled);
+				} else if (input instanceof AonIbanTextBox) {
+					((AonIbanTextBox) input).setEnabled(enabled);
+				}
 			}
 		}
 		

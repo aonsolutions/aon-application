@@ -23,7 +23,8 @@ import net.aonsolutions.aon.api.ewok.AonApiData;
 @SuppressWarnings("serial")
 @WebServlet(name = "AonCertificateServlet", urlPatterns = {"/ms/api/cert/*",
 														  "/aon_gwt_aio/ms/api/cert/*",
-														  "/aon_gwt_fiscal/ms/api/cert/*"})
+														  "/aon_gwt_fiscal/ms/api/cert/*",
+														  "/aon_gwt_mod200/ms/api/cert/*"})
 public class CertificateServlet extends AonApiHttpServlet {
 	
 	private static final Logger LOGGER  = Logger.getLogger(CertificateServlet.class.getName());

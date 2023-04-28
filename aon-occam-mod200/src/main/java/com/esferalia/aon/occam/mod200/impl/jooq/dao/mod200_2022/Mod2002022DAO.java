@@ -24,11 +24,13 @@ import com.esferalia.aon.occam.api.model.accounting.IAccMiningKeyAccept;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
 import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
 import com.esferalia.aon.occam.api.model.fiscal.Mod202;
+import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATResponse;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.impl.jooq.dao.AccountPeriodDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.ConfigurationDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.fiscal.mod202.Mod202DAO;
 import com.esferalia.aon.occam.mod200.api.model.BalanceType;
 import com.esferalia.aon.occam.mod200.api.model.DoubleVariableEx;
@@ -50,6 +52,7 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022KeyDC;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2021.Mod2002021DAO;
 import com.esferalia.aon.occam.mod200.server.format.Mod2002022Import2021;
+import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonEnumUtils;
@@ -1147,6 +1150,25 @@ public class Mod2002022DAO  {
 		Mod2002021 old = Mod2002021DAO.getByYear(ctx, 2021);
 		return Mod2002022Import2021.import2021(old);
 	}
+	
+	// FALTA
+	// Presentación Directa del Modelo: Grabar Respuesta AEAT (PDF) y marcar el modelo como enviado
+	public static Mod2002022 aeatPresentation(AONContext ctx, Mod2002022 mod, String aeatResponse) {
+		if (AonStringUtils.isNotBlank(aeatResponse)) {
+			DataResponseDAO.insertAEATResponse(ctx, mod, aeatResponse);
+			AEATResponse response = AEATJson.toJSON(aeatResponse.getBytes());
+			if (mod != null && mod.getId() != null) {
+				ctx.getDslContext().update(FS_MODEL200)
+					.set(FS_MODEL200.RECEIPT, response.getJustificante())
+					.set(FS_MODEL200.STATUS, FiscalStatus.SENT.value())
+					.where(FS_MODEL200.ID.equal(mod.getId()))
+					.execute();
+				return getById(ctx, mod.getId());
+			}
+		}
+		return mod;
+	}
+	
 	
 }
 

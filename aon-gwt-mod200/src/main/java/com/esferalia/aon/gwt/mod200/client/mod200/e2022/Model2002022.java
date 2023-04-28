@@ -23,6 +23,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -42,10 +43,15 @@ public class Model2002022 extends DockLayoutPanel {
 	protected interface Model200PageCallback {	
 		public Mod2002022Object getMod200Object();
 		public void markAsDirty(); 
+		public Model200Callback getMod200Callback();
+		public boolean isDirty();
 	}
 	
-	private PageAbs[] PAGES = new PageAbs[20];
+	//private PageAbs[] PAGES = new PageAbs[20];	 
+	private PageAbs[] PAGES = new PageAbs[22];
 	private int P00 = 0;
+	private PageAEAT pageAEAT = null;
+	private WestFocusPanel westFocusPanelAEAT = null;
 	
 	protected Mod2002022Object mod200Object;
 	private Model200Callback mod200Callback;
@@ -160,6 +166,18 @@ public class Model2002022 extends DockLayoutPanel {
 			public void markAsDirty() {
 				Model2002022.this.markAsDirty();
 			}
+
+			@Override
+			public Model200Callback getMod200Callback() {				
+				return mod200Callback;
+			}
+
+			@Override
+			public boolean isDirty() {
+				// FALTA
+				// TODO Auto-generated method stub
+				return Model2002022.this.isDirty();
+			}
 			
 		}).dump();
 		pageContainer.setWidget(getPage(P00));
@@ -268,6 +286,17 @@ public class Model2002022 extends DockLayoutPanel {
 													public void markAsDirty() {
 														Model2002022.this.markAsDirty();						
 													}
+
+													@Override
+													public Model200Callback getMod200Callback() {
+														return mod200Callback;
+													}
+
+													@Override
+													public boolean isDirty() {
+														// TODO Auto-generated method stub
+														return Model2002022.this.isDirty();
+													}
 												});
 			if (pageAbs.isAvailable()) {
 				pageAbs.dump();
@@ -315,7 +344,11 @@ public class Model2002022 extends DockLayoutPanel {
 			if (i == 17) PAGES[i] = new Page17(cbk); 
 			if (i == 18) PAGES[i] = new Page18(cbk); 
 			if (i == 19) PAGES[i] = new Page19(cbk); 
-			if (i == 20) PAGES[i] = new Page20(cbk); 
+			if (i == 20) PAGES[i] = new Page20(cbk);
+			if (i == 21) {
+				pageAEAT = new PageAEAT(cbk);
+				PAGES[i] = pageAEAT;
+			}
 		}
 		return getPage(i);
 	}
@@ -578,19 +611,21 @@ public class Model2002022 extends DockLayoutPanel {
 		aeatPrintButton.addClickHandler(event -> {
 				mod200Callback.cleanErrorPanel();
 			
-			AonConfirmDialog cd = new AonConfirmDialog();
-			cd.confirm(AON.MSG.confirmAeatPrintMod200(),					
-				new AonConfirmDialogCallback() {
-					
-					@Override
-					public void onCancel() {}
-					
-					@Override
-					public void onAccept() {
-						submitForm("/aon_gwt_mod200/ms/Model2002022Print");
-					}
-				}
-			);
+			// FALTA - AHORA ESTE BOTON SACA EL PANEL DE LA AGENCIA TRIBUTARIA	
+//			AonConfirmDialog cd = new AonConfirmDialog();
+//			cd.confirm(AON.MSG.confirmAeatPrintMod200(),					
+//				new AonConfirmDialogCallback() {
+//					
+//					@Override
+//					public void onCancel() {}
+//					
+//					@Override
+//					public void onAccept() {
+//						submitForm("/aon_gwt_mod200/ms/Model2002022Print");
+//					}
+//				}
+//			);				
+			westFocusPanelAEAT.checkAndShowPage(21);			
 		});
 		toolbarPanel.add(aeatPrintButton);
 		
@@ -688,7 +723,12 @@ public class Model2002022 extends DockLayoutPanel {
 		linkContainer.add(new WestFocusPanel(18,"Dotaciones por deterioro, Conversi\u00F3n de activos"));
 		linkContainer.add(new WestFocusPanel(19,"Agrupaciones de inter\u00E9s econ\u00F3mico y UTES (r\u00E9gimen especial)"));
 		linkContainer.add(new WestFocusPanel(20,"Comunicaci\u00F3n importe neto cifra de negocios: Grupos de sociedades, No residentes"));
-		linkContainer.add(new WestFocusPanel(21,AON.MSG.idDocument()));		
+		linkContainer.add(new WestFocusPanel(21,AON.MSG.idDocument()));
+		
+		westFocusPanelAEAT = new WestFocusPanel(22,"Agencia Tributaria");
+		linkContainer.add(westFocusPanelAEAT);
+		
+		//linkContainer.add(new WestFocusPanel(22,"Agencia Tributaria"));
 
 		// PAGINA AGENCIA TRIBUTARIA CON INFO, FICHERO Y BORRADOR - POR AHORA SE PONEN 
 		// LOS BOTONES COMO ESTABAN ANTES, PUES EN LOS OTROS MODELOS SE ESTA LLAMANDO A UNA CLASE
@@ -714,6 +754,8 @@ public class Model2002022 extends DockLayoutPanel {
 		this.dirty = dirty;
 		styleDirtyLabel();
 		refreshButtonsVisibility();
+		if (pageAEAT != null)
+			pageAEAT.setEnabled();
 	}
 	
 	private void audit() {

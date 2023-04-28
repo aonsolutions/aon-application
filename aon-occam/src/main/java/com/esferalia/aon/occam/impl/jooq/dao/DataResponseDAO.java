@@ -333,7 +333,9 @@ public class DataResponseDAO {
 				pair.setLeft( DataResponseSource.MOD347 ).setRight(DataAttachSource.MOD347); 
 			}
 			
-			@Override public void visitM200() { /* nothing */ }
+			@Override public void visitM200() {
+				pair.setLeft( DataResponseSource.MOD200 ).setRight(DataAttachSource.MOD200);				 
+			}
 			
 			@Override 
 			public void visitM193() { 
