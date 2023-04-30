@@ -558,11 +558,11 @@ export class DomainUserRoles {
   // BANK
 
   hasBank() {
-    this.hasApp(App.BANK)
+    return this.hasApp(App.BANK)
   }
 
   hasParentBank() {
-    this.hasParentApp(App.BANK)
+    return this.hasParentApp(App.BANK)
   }
 
   isBank() {
