@@ -22,6 +22,7 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.payroll.sepe.contrata.Contrata;
 import com.esferalia.aon.sepe.api.contract.model.IContratoType;
 import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
@@ -154,6 +155,8 @@ public class JooqContractSEPE {
 		getContractTrueDate(dslContext, contractId, contractSpecificData);
 		getContractExtensions(dslContext, contractId, contractSpecificData);
 		
+		boolean hasCNO = AonStringUtils.isNotBlank(contractSpecificData.getCno());
+		
 		Result<Record> contractAttachRecords = dslContext.select().from(CONTRACT_ATTACH)
 			.where(CONTRACT_ATTACH.CONTRACT.eq(contractId))
 			.and(CONTRACT_ATTACH.TYPE.eq((byte)4))
@@ -184,6 +187,10 @@ public class JooqContractSEPE {
 			if(null == contratos || null == contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150() || contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().isEmpty()) return contractSpecificData;
 			Object obj = contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
 			JooqContrata.completeContratosParams(obj, contractSpecificData);
+			
+			// Check if cno exist only on contrata file
+			if(!hasCNO && AonStringUtils.isNotBlank(contractSpecificData.getCno()))
+				updateCNOContractData(dslContext, contractId, contractSpecificData.getCno());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e.getMessage());
@@ -192,10 +199,23 @@ public class JooqContractSEPE {
 		return contractSpecificData;
 	}
 	
+	private static void updateCNOContractData(DSLContext dslContext, Integer contractId, String cno) {
+		ContractRecord contractRecord = dslContext.selectFrom(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
+		dslContext.insertInto(CONTRACT_DATA)
+			.set(CONTRACT_DATA.DOMAIN, contractRecord.getDomain())
+			.set(CONTRACT_DATA.NAME, "CNO")
+			.set(CONTRACT_DATA.CONTRACT, contractId)
+			.set(CONTRACT_DATA.EXPRESSION, "\"" + cno + "\"")
+			.set(CONTRACT_DATA.START_DATE, contractRecord.getStartDate())
+			.set(CONTRACT_DATA.END_DATE, contractRecord.getEndDate())
+			.execute();
+	}
+
 	private static void getContractCNO(DSLContext dslContext, Integer contractId, ContractSpecificData contractSpecificData) {
 		Result<Record> cnoRecords = dslContext.select().from(CONTRACT_DATA)
 				.where(CONTRACT_DATA.NAME.eq("CNO"))
 				.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+				.orderBy(CONTRACT_DATA.START_DATE.desc())
 				.fetch();
 		
 		if(cnoRecords.isNotEmpty()) {
@@ -402,6 +422,7 @@ public class JooqContractSEPE {
 		dslContext.delete(CONTRACT_DATA)
 			.where(CONTRACT_DATA.NAME.eq("CNO"))
 			.and(CONTRACT_DATA.CONTRACT.eq(contractId))
+			.and(CONTRACT_DATA.START_DATE.eq(startDate))
 			.execute();
 		
 		if(AonStringUtils.isNotBlank(cno)) {
