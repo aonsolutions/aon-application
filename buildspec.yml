@@ -104,6 +104,11 @@ phases:
       - cp -av aon-in-payroll/target/aon.in.payroll-9.23-SNAPSHOT-jar-with-dependencies.jar aon-in-payroll.jar
       # - command
       # - command
+reports:
+  occam-coverage-report:
+    files:
+      - 'occam/target/site/jacoco/jacoco.xml'
+    file-format: 'JACOCOXML'
 artifacts:
   files:
     - aon-oauth2.jar
