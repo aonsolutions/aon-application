@@ -105,10 +105,6 @@ phases:
       # - command
       # - command
 reports:
-  occam-coverage-report:
-    files:
-      - 'occam/target/site/jacoco/jacoco.xml'
-    file-format: 'JACOCOXML'
   occam-report-group: #payroll junit reports
     files:
       - '**/*'
