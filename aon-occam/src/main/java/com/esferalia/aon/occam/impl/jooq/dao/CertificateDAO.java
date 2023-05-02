@@ -125,9 +125,7 @@ public class CertificateDAO {
 		if(raddinfoFilter != null) ctx.getDslContext().delete(RADDINFO).where(RADDINFO_PROPERTIES.getConditions(raddinfoFilter)).execute();
 	}
 	
-	public static void save(AONContext ctx, Integer domainId, Integer userId, Certificate certificate) {
-		ctx.getDslContext().execute("SET FOREIGN_KEY_CHECKS=0;");
-		
+	public static void save(AONContext ctx, Integer domainId, Integer userId, Certificate certificate) {		
 		// TGSS CERTIFICATE
 		if(certificate.getOwner() == CertificateOwner.USER)
 			saveUserCertificate(ctx, userId, certificate);
@@ -135,8 +133,6 @@ public class CertificateDAO {
 		// SEPE CERTIFICATE
 		if(certificate.getOwner() == CertificateOwner.ENTERPRISE)
 			saveEnterpriseCertificate(ctx, domainId, certificate);
-		
-		ctx.getDslContext().execute("SET FOREIGN_KEY_CHECKS=1;");
 	}
 
 	// -------------------------- Methods auxiliar methods (getList)
@@ -152,7 +148,7 @@ public class CertificateDAO {
 					.and(RATTACH.TYPE.eq((byte)4))
 					.fetch().stream().map(r -> {	
 						Certificate cert = CertificateFiller.build(r);	
-						cert.setOwner(CertificateOwner.ENTERPRISE);
+						cert.setOwner(CertificateOwner.USER);
 						getCertificateTags(ctx, cert);
 						getCertificateInfo(ctx, cert);
 						return cert;
@@ -317,10 +313,6 @@ public class CertificateDAO {
 		// User Registry
 		if(null == registryUserId) registryUserId = createRegistryForUser(ctx, userRecord);
 		
-		// Description	
-		String description = parseDescriptionLength(certificate.getDescription(), certificate.getPassword());
-		certificate.setDescription(description);
-		
 		if(null == certificate.getId()) certificate.setId(insert(ctx, userDomain, registryUserId, certificate));
 		else update(ctx, certificate);
 	
@@ -332,10 +324,6 @@ public class CertificateDAO {
 		Integer registryEntepriseId = ctx.getDslContext().select(ENTERPRISE.REGISTRY).from(ENTERPRISE)
 				.where(ENTERPRISE.DOMAIN.eq(domainId))
 				.fetchOne(ENTERPRISE.REGISTRY);
-		
-		// Description	
-		String description = parseDescriptionLength(certificate.getDescription(), certificate.getPassword());
-		certificate.setDescription(description);
 		
 		if(null == certificate.getId()) certificate.setId(insert(ctx, domainId, registryEntepriseId, certificate));
 		else update(ctx, certificate);
@@ -353,7 +341,7 @@ public class CertificateDAO {
 			.set(RATTACH.DATA, certificate.getData())
 			.set(RATTACH.SECURITY_LEVEL, parseCertificateSecurity(certificate.getConfidential()))
 			.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
-			.set(RATTACH.DESCRIPTION, certificate.getDescription())
+			.set(RATTACH.DESCRIPTION, parseDescriptionLength(certificate.getDescription(), certificate.getPassword()))
 			.returning(RATTACH.ID)
 			.fetchOne()
 			.getId();
@@ -365,14 +353,14 @@ public class CertificateDAO {
 				.set(RATTACH.DATA, certificate.getData())
 				.set(RATTACH.SECURITY_LEVEL, parseCertificateSecurity(certificate.getConfidential()))
 				.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
-				.set(RATTACH.DESCRIPTION, certificate.getDescription())
+				.set(RATTACH.DESCRIPTION, parseDescriptionLength(certificate.getDescription(), certificate.getPassword()))
 				.where(RATTACH.ID.eq(certificate.getId()))
 				.execute();
 		else
 			ctx.getDslContext().update(RATTACH)
 				.set(RATTACH.SECURITY_LEVEL, parseCertificateSecurity(certificate.getConfidential()))
 				.set(RATTACH.CREATION_DATE, new Timestamp(new java.util.Date().getTime()))
-				.set(RATTACH.DESCRIPTION, certificate.getDescription())
+				.set(RATTACH.DESCRIPTION, parseDescriptionLength(certificate.getDescription(), certificate.getPassword()))
 				.where(RATTACH.ID.eq(certificate.getId()))
 				.execute();
 	}
