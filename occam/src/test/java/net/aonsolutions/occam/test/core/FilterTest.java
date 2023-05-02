@@ -15,10 +15,13 @@ import org.jooq.Field;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.esferalia.aon.watson.server.AonDateUtils;
+
 import net.aonsolutions.occam.api.Filter;
 import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.dao.FilterDAO;
 import net.aonsolutions.occam.dao.PropertyDAO;
+import net.aonsolutions.occam.dao.DatePropertyDAO;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
 
@@ -55,13 +58,25 @@ class FilterTest extends AbstractOccamTest {
 	private static final Pattern SBET 	= Pattern.compile(FNAME + " between [\\\"|']1[\\\"|'] and [\\\"|']2[\\\"|']");
 	private static final Pattern SLIKE   = Pattern.compile(FNAME + " like [\\\"|']1[\\\"|']");
 	private static final Pattern SIN     = Pattern.compile(FNAME + 
-		" in \\(\\s*[\\\"|\\']1[\\\"|\\']\\s*\\,\\s*[\\\"|\\']2[\\\"|\\']\\s*\\)");
-	private static final Pattern SNOT_IN = Pattern.compile(FNAME + " not in \\(\\s*[\\\"|\\']1[\\\"|']\\s*\\,\\s*[\\\"|']2[\\\"|']\\\\s*\\)");
+		" in \\(\\s*[\\\"|\\']1[\\\"|\\']\\s*\\,\\s*[\\\"|\\']2[\\\"|\\']\\s*\\)", Pattern.MULTILINE);
+	private static final Pattern SNOT_IN = Pattern.compile(FNAME + 
+		" not in \\(\\s*[\\\"|\\']1[\\\"|\\']\\s*\\,\\s*[\\\"|\\']2[\\\"|\\']\\s*\\)", Pattern.MULTILINE);
 
-	private final String S1 = "1";
-	private final String S2 = "2";
-	private final byte B1 = 1;
-	private final byte B2 = 2;
+
+	private static final String S1 = "1";
+	private static final String S2 = "2";
+	private static final byte B1 = 1;
+	private static final byte B2 = 2;
+	private static final Date D1 = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(new java.util.Date()));
+	private static final Date D2 = AonDateUtils.toSql(AonDateUtils.getYearLastDay(new java.util.Date()));
+	
+	private static final Pattern DEQ = Pattern.compile(FNAME + " = date [\\\"|']" + D1.toString() + "[\\\"|']");
+	private static final Pattern DNE 		= Pattern.compile(FNAME + " <> date [\\\"|']" + D1.toString() + "[\\\"|']");
+	private static final Pattern DGE 		= Pattern.compile(FNAME + " >= date [\\\"|']" + D1.toString() + "[\\\"|']");
+	private static final Pattern DGT 		= Pattern.compile(FNAME + " > date [\\\"|']" + D1.toString() + "[\\\"|']");
+	private static final Pattern DLE 		= Pattern.compile(FNAME + " <= date [\\\"|']" + D1.toString() + "[\\\"|']");
+	private static final Pattern DLT 		= Pattern.compile(FNAME + " < date [\\\"|']" + D1.toString() + "[\\\"|']");
+	private static final Pattern DBET 	= Pattern.compile(FNAME + " between date [\\\"|']" + D1.toString() + "[\\\"|'] and date [\\\"|']" + D2.toString() + "[\\\"|']");
 	
 	@FunctionalInterface
 	public interface TestFilter {
@@ -86,7 +101,7 @@ class FilterTest extends AbstractOccamTest {
 		@Override public Property<Integer> withInteger() {return new PropertyDAO<>(INTEGER);}
 		@Override public Property<String> withString() {return new PropertyDAO<>(STRING);}
 		@Override public Property<Byte> withByte() {return new PropertyDAO<>(BYTE);}
-		@Override public Property<Date> withDate() {return new PropertyDAO<>(DATE);}
+		@Override public Property<Date> withDate() {return new DatePropertyDAO(DATE);}
 		@Override public Property<Timestamp> withTimestamp() {return new PropertyDAO<>(TIMESTAMP);}
 	}
 	
@@ -140,10 +155,37 @@ class FilterTest extends AbstractOccamTest {
 		assertThat(FILTER_TEST.getConditions(p -> p.withString().lt(S1)).toString(), matchesPattern(SLT));
 		assertThat(FILTER_TEST.getConditions(p -> p.withString().between(S1,S2)).toString(), matchesPattern(SBET));
 		assertThat(FILTER_TEST.getConditions(p -> p.withString().like(S1)).toString(), matchesPattern(SLIKE));
-//		assertThat(FILTER_TEST.getConditions(p -> p.withString().in(new String[] {S1,S2})).toString(), matchesPattern(SIN));
-//		assertThat(FILTER_TEST.getConditions(p -> p.withString().notIn(new String[] {S1,S2})).toString(), matchesPattern(SNOT_IN));
-		
-		
+		assertThat(FILTER_TEST.getConditions(p -> p.withString().in(new String[] {S1,S2})).toString(), matchesPattern(SIN));
+		assertThat(FILTER_TEST.getConditions(p -> p.withString().notIn(new String[] {S1,S2})).toString(), matchesPattern(SNOT_IN));
+	}
+	
+	@Test()
+	void datePropertyDAOTest() {
+		assertThat(FILTER_TEST.getConditions(p -> p.withDate().isNull()).toString(), matchesPattern(IS_NULL));
+		assertThat(FILTER_TEST.getConditions(p -> p.withDate().eq(null)).toString(), matchesPattern(IS_NULL));
+		assertThat(FILTER_TEST.getConditions(p -> p.withDate().eq(D1)).toString(), matchesPattern(DEQ));
+		assertThat(FILTER_TEST.getConditions(p -> p.withDate().isNotNull()).toString(), matchesPattern(IS_NOT_NULL));
+		assertThat(FILTER_TEST.getConditions(p -> p.withDate().ne(null)).toString(), matchesPattern(IS_NOT_NULL));
+		assertThat(FILTER_TEST.getConditions(p -> p.withDate().ne(D1)).toString(), matchesPattern(DNE));
+		assertThat(FILTER_TEST.getConditions(p -> p.withDate().ge(D1)).toString(), matchesPattern(DGE));
+		assertThat(FILTER_TEST.getConditions(p -> p.withDate().gt(D1)).toString(), matchesPattern(DGT));
+		assertThat(FILTER_TEST.getConditions(p -> p.withDate().le(D1)).toString(), matchesPattern(DLE));
+		assertThat(FILTER_TEST.getConditions(p -> p.withDate().lt(D1)).toString(), matchesPattern(DLT));
+		assertThat(FILTER_TEST.getConditions(p -> p.withDate().between(D1,D2)).toString(), matchesPattern(DBET));
+		assertThrows(UnsupportedOperationException.class, () -> FILTER_TEST.getConditions(p -> p.withDate().like(D1)) );
+//		assertThat(FILTER_TEST.getConditions(p -> p.withByte().in(new Byte[] {B1,B2})).toString(), matchesPattern(IN));
+//		assertThat(FILTER_TEST.getConditions(p -> p.withByte().notIn(new Byte[] {B1,B2})).toString(), matchesPattern(NOT_IN));
+	}
+	
+	public static void main(String[] args) {
+		Pattern p =  Pattern.compile(FNAME + 
+				" in \\(\\s*[\\\"|\\']1[\\\"|\\']\\s*\\,\\s*[\\\"|\\']2[\\\"|\\']\\s*\\)", Pattern.MULTILINE);
+		String a = "\"field\" in (\n  \"1\",\"2\"\n)";
+		System.out.println( p.matcher(a).matches() );
+						
+		assertThat(FILTER_TEST.getConditions(pr -> pr.withString().in(new String[] {S1,S1})).toString(), matchesPattern(p));				
 	}
 	
 }
+
+

@@ -8,11 +8,11 @@ import org.jooq.Field;
 import net.aonsolutions.occam.api.Filter;
 import net.aonsolutions.occam.api.Filter.Property;
 
-class DatePropertyDAO implements Property<Date> {
+public class DatePropertyDAO implements Property<Date> {
 
 	private Field<Date> field;
 	
-	DatePropertyDAO(Field<Date> field) {
+	public DatePropertyDAO(Field<Date> field) {
 		this.field = field;
 	}
 
@@ -57,7 +57,7 @@ class DatePropertyDAO implements Property<Date> {
 
 	@Override
 	public Filter isNull() {
-		return new FilterDAO(field.isNotNull());
+		return new FilterDAO(field.isNull());
 	}
 
 	@Override
