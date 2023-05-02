@@ -64,6 +64,7 @@ import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedQuoteGroup;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.MismatchedStartDate;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeStatus.Visitor;
 import com.esferalia.aon.gwt.payroll.shared.Enterprise;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseContext;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseStatus;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
 import com.esferalia.aon.gwt.payroll.shared.Payment;
@@ -239,7 +240,8 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		public void execute() {
 			WorkplaceDialog workplaceDialog = new WorkplaceDialog();
 			WorkplaceDialogObject workplaceDialogObject = new WorkplaceDialogObject(enterprise);
-			workplaceDialogObject.setAgreements(employees.getEnterpriseContext().getAgreements());
+			getEnterpriseContext(enterpriseCtx -> workplaceDialogObject.setAgreements(enterpriseCtx.getAgreements()) );
+			;
 			workplaceDialog.setWorkplaceDialogObject(workplaceDialogObject);
 			enterpriseContextMenu.hide();
 		}
@@ -2312,7 +2314,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		void onEmployeeSelected() {
 			getEmployeeDraft().setToolbarTitle(getTitle(salaryDraft.getEmployee()));
 			employees.getEmployeeDraft(salaryDraft, o -> { 
-				o.setEnterpriseContext(employees.getEnterpriseContext());
+				getEnterpriseContext( o::setEnterpriseContext );
 				getEmployeeDraft().setEmployeeDraftObject(o);
 				singlenton.employee = o.getEmployee();
 			});	
@@ -2580,6 +2582,9 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 	// Cret@
 	private CCCCretaDetail cccCretaDetail;
+	
+	
+	private EnterpriseContext enterpriseContext;
 
 	public static native String getRootPanel()
 	/*-{
@@ -2814,10 +2819,13 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 		employeeDetail.setWidget(getEnterprisePanel());
 		getEnterprisePanel().setEnterprise(enterprise);
 		getEnterprisePanel().selectWidget(getEnterpriseDraft());
-		enterpriseDraftObject.setAgreements(employees.getEnterpriseContext().getAgreements());
-		enterpriseDraftObject.setScopes(employees.getEnterpriseContext().getScopes());
-		enterpriseDraftObject.setScopes(employees.getEnterpriseContext().getScopes());
-		getEnterpriseDraft().setEnterpriseDraftObject(enterpriseDraftObject);
+		
+		getEnterpriseContext(enterpriseCtx -> {
+			enterpriseDraftObject.setAgreements(enterpriseCtx.getAgreements());
+			enterpriseDraftObject.setScopes(enterpriseCtx.getScopes());
+			getEnterpriseDraft().setEnterpriseDraftObject(enterpriseDraftObject);
+		});
+		
 
 		this.enterprise = enterprise;
 	}
@@ -2826,7 +2834,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	public void onWorkplaceSelected(Workplace workplace) {
 
 		WorkplaceDraftObject employeeNewDraftObject = new WorkplaceDraftObject(enterprise, workplace);
-		employeeNewDraftObject.setAgreements(employees.getEnterpriseContext().getAgreements());
+		getEnterpriseContext(enterpriseCtx -> employeeNewDraftObject.setAgreements(enterpriseCtx.getAgreements()));
 
 		employeeDetail.setWidget(getWorkplacePanel());
 		getWorkplacePanel().setWorkplace(workplace);
@@ -3076,7 +3084,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 
 		getEmployeePanel().selectWidget(getEmployeeDraft());
 		
-		employeeDraftObject.setEnterpriseContext(employees.getEnterpriseContext());
+		getEnterpriseContext(employeeDraftObject::setEnterpriseContext);
 		getEmployeeDraft().setEmployeeDraftObject(employeeDraftObject);
 		singlenton.employee = employeeDraftObject.getEmployee();
 		
@@ -4649,6 +4657,28 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 	
 	private void showLoadingMessage(String message) {
 		AonMessagePanel.showLoading(getMessagePanel(), message);
+	}
+
+	private void getEnterpriseContext( Consumer<EnterpriseContext> callback) {
+	    if (EmployeeTree.this.enterpriseContext != null ) {
+		    callback.accept(EmployeeTree.this.enterpriseContext);
+	    }
+
+	    DomainEnterprisesServiceAsync enterprisesService = DomainEnterprisesServiceAsync.newInstance();
+	    
+	    enterprisesService.getEnterpriseContext(new AsyncCallback<EnterpriseContext>() {
+
+		@Override
+		public void onFailure(Throwable caught) {
+		    // Window.alert("NO");
+		}
+
+		@Override
+		public void onSuccess(EnterpriseContext enterpriseContext) {
+		    EmployeeTree.this.enterpriseContext = enterpriseContext;
+		    callback.accept(EmployeeTree.this.enterpriseContext);
+		}
+	    });
 	}
 
 	@Override
