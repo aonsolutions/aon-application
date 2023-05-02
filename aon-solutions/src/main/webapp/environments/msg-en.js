@@ -208,7 +208,7 @@ export const LAST = 'Last';
 export const LAST_LOCATION = 'Last Location';
 export const LAST_STATUS = 'Last Status';
 export const LINK = 'Link';
-export const LINK_DOMAINS = 'Link Domains';
+export const LINK_DOMAINS = 'Link Domains with Customers';
 export const LOCATION = 'Location';
 
 // ----- M

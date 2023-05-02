@@ -6,11 +6,16 @@ import java.util.Map;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.RegistryParams;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -43,7 +48,7 @@ public interface RegistryServiceAsync {
 	// *********************************** [CUSTOMER FEE]
 	// **************************************************
 	void getCustomersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, String>> asyncCallback);
-	void getProductsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, String>> asyncCallback);
+	void getProductsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, OldItem>> asyncCallback);
 	void getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<Map<Integer, Integer>> asyncCallback);
 	
 	void getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<LinkedList<Fee>> asyncCallback);
@@ -53,4 +58,9 @@ public interface RegistryServiceAsync {
 	void getItemIdByProductCode(String domainName, int domain, String user, String productCode, AsyncCallback<Integer> asyncCallback);
 	void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees, AsyncCallback<Void> asyncCallback);
 	void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<Void> asyncCallback);
+	
+	void getWorkplacesSuggestion(String domainName, int domain, String user, String workplaceQuery, AsyncCallback<Map<String, Workplace>> asyncCallback);
+	void getSellersSuggestion(String domainName, int domain, String user, String sellerQuery, AsyncCallback<Map<String, Seller>> asyncCallback);
+	void getInvoicingGroupsSuggestion(String domainName, int domain, String user, String invoicingGroupQuery, AsyncCallback<Map<String, InvoicingGroup>> asyncCallback);
+	void getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String projectQuery, AsyncCallback<Map<String, Project>> asyncCallback);
 }

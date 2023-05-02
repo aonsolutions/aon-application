@@ -38,7 +38,7 @@ public class OldProduct implements Serializable{
 	Date modificationDate;
 	Byte kind;
 	
-	boolean modify;
+	boolean modify = false;
 	
 	public Integer getId() {
 		return id;

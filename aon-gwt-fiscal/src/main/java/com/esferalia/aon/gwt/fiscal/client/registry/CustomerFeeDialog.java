@@ -13,7 +13,13 @@ import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
+import com.esferalia.aon.occam.api.model.product.OldItem;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
@@ -42,6 +48,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	
 	private HTMLPanel productPanel;
 	private SuggestBox productSuggestBox;
+	private TextBox productTextBox;
 	
 	private HTMLPanel quantityPricePanel;
 	private TextBox quantityTextBox;
@@ -58,24 +65,40 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	private Label periodLabel;
 	private ListBox periodListBox;
 	
+	private HTMLPanel workplacePanel;
+	private SuggestBox workplaceSuggestBox;
+	
+	private HTMLPanel sellerPanel;
+	private SuggestBox sellerSuggestBox;
+	
+	private HTMLPanel invoicingGroupPanel;
+	private SuggestBox invoicingGroupSuggestBox;
+	
+	private HTMLPanel projectPanel;
+	private SuggestBox projectSuggestBox;
+	
 	private HTMLPanel buttonsPanel;
 	
 	private static RegistryServiceAsync SERVICE;
 	private RegistryModuleOptions options;
-	private Map<String, String> productSuggestions = new TreeMap<>();
+	private Map<String, OldItem> productSuggestions = new TreeMap<>();
+	
+	private Map<String, Workplace> workplaceSuggestions = new TreeMap<>();
+	private Map<String, Seller> sellerSuggestions = new TreeMap<>();
+	private Map<String, InvoicingGroup> invoicingGroupSuggestions = new TreeMap<>();
+	private Map<String, Project> projectSuggestions = new TreeMap<>();
 
 	private Fee fee;
 	private boolean isSameProduct = false;
-	private String product;
-	private Integer item;
+	private OldItem item;
 
 	// ------------------------------------------------- Constructor
 
-	protected CustomerFeeDialog(String product, RegistryModuleOptions options) {
+	protected CustomerFeeDialog(OldItem item, RegistryModuleOptions options) {
 		setCaption("Editor Cuotas");
 		
-		this.isSameProduct = AonStringUtils.isNotBlank(product);
-		this.product = product;
+		this.isSameProduct = null != item;
+		this.item = item;
 		this.options = options;
 		
 		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
@@ -119,6 +142,20 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		createDatesPanel();
 		createPeriodicityPanel();
 		
+		if(null != this.fee) {
+			createWorkplacePanel();
+			container.add(workplacePanel);
+			
+			createSellerPanel();
+			container.add(sellerPanel);
+			
+			createInvoicingGroupPanel();
+			container.add(invoicingGroupPanel);
+			
+			createProjectPanel();
+			container.add(projectPanel);
+		} 
+		
 		getButtonsPanel();
 		container.add(buttonsPanel);
 		
@@ -157,7 +194,10 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 
 	private void createProductPanel() {
 		productPanel = new HTMLPanel("");
-		productPanel.addStyleName(AON.CSS.aonItemFlex());
+		productPanel.addStyleName(AON.CSS.aonFlexColumn());
+		
+		HTMLPanel itemPanel = new HTMLPanel("");
+		itemPanel.addStyleName(AON.CSS.aonItemFlex());
 		
 		Label productLabel = new Label("Producto");
 		productLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
@@ -173,27 +213,22 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		productSuggestBox.addSelectionHandler(e -> {
 			productSuggestBox.hideSuggestionList();
-			SERVICE.getItemIdByProductCode(options.getDomainName(), options.getDomain(), options.getUser(), productSuggestions.get(productSuggestBox.getValue()), new AsyncCallback<Integer>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					// TODO Auto-generated method stub
-				}
-
-				@Override
-				public void onSuccess(Integer itemId) {
-					item = itemId;
-					if(null != fee) fee.getItem().setId(itemId);
-				}});
+			item = productSuggestions.get(productSuggestBox.getValue());
+			
+			productSuggestBox.setEnabled(false);
+			productTextBox.setValue(item.getProduct().getName());
+			productTextBox.setVisible(true);
+			
+			if(null != fee) fee.setItem(item);
 		});
 		
 		productSuggestBox.addKeyUpHandler(e -> {
 			String productQuery = productSuggestBox.getValue();
 			if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 3) {
-				SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, String>>() {
+				SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
 					
 					@Override
-					public void onSuccess(Map<String, String> productSuggestionsDB) {
+					public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
 						productSuggestions = productSuggestionsDB;
 						
 						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) productSuggestBox.getSuggestOracle();
@@ -212,11 +247,41 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			}
 		});
 		
-		if(null != fee) productSuggestBox.setValue(fee.getItem().getProduct().getName() + " ( " + fee.getItem().getProduct().getCode() + " )");
-		else if(this.isSameProduct) productSuggestBox.setValue(product);
+		AonToolbarSmallButton resetBtn = new AonToolbarSmallButton("Borrar producto", AON.CSS.aonIconClear());
+		resetBtn.addClickHandler(e -> {
+			productTextBox.setValue("");
+			productTextBox.setVisible(false);
+			productSuggestBox.setEnabled(true);
+			productSuggestBox.setValue("");
+		});
 		
-		productPanel.add(productLabel);
-		productPanel.add(productSuggestBox);
+		productTextBox = new TextBox();
+		productTextBox.getElement().getStyle().setProperty("margin-left", "6rem");
+		productTextBox.addValueChangeHandler(e ->{
+			if(null != item) {
+				item.getProduct().setName(productTextBox.getValue());
+				item.getProduct().setModify(true);
+			}
+			if(null != fee) {
+				fee.getItem().getProduct().setName(productTextBox.getValue());
+				fee.getItem().getProduct().setModify(true);
+			}
+		});
+		
+		if(null != fee) productSuggestBox.setValue(fee.getItem().getProduct().getName() + " ( " + fee.getItem().getProduct().getCode() + " )");
+		else if(this.isSameProduct) productSuggestBox.setValue(this.item.getProduct().getName() + " ( " + this.item.getProduct().getCode() + " )");
+		
+		if(null != fee || this.isSameProduct) {
+			productSuggestBox.setEnabled(false);
+			productTextBox.setValue(null != fee ? fee.getItem().getProduct().getName() : this.item.getProduct().getName());
+			productTextBox.setVisible(true);
+		}
+		
+		itemPanel.add(productLabel);
+		itemPanel.add(productSuggestBox);
+		itemPanel.add(resetBtn);
+		productPanel.add(itemPanel);
+		productPanel.add(productTextBox);
 	}
 
 	private void createQuantityPricePanel() {
@@ -351,7 +416,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			
 			periodListBox = new ListBox();
 			periodListBox.setHeight("2em");
-			periodListBox.setWidth("7.4em");
+			periodListBox.setWidth("9em");
 			periodListBox.addItem("Sin periodo", "0");
 			periodListBox.addItem("Mensual", "1");
 			periodListBox.addItem("Bimensual", "2");
@@ -365,7 +430,244 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		container.add(periodicityPanel);
 	}
+
+	private void createWorkplacePanel() {
+		workplacePanel = new HTMLPanel("");
+		workplacePanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		Label workplaceLabel = new Label("C. Trabajo");
+		workplaceLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
+		workplaceLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		
+		workplaceSuggestBox = new SuggestBox();
+		workplaceSuggestBox.setWidth("100%");
+		workplaceSuggestBox.setHeight("2em");
+		workplaceSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
+		workplaceSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
+		workplaceSuggestBox.setAutoSelectEnabled(false);
+		workplaceSuggestBox.getElement().setPropertyString("placeholder", "C. Trabajo: busque por descripci\u00f3n");
+		
+		workplaceSuggestBox.addSelectionHandler(e -> {
+			workplaceSuggestBox.hideSuggestionList();
+			if(null != fee) fee.setWorkplace(workplaceSuggestions.get(workplaceSuggestBox.getValue()));
+		});
+		
+		workplaceSuggestBox.addKeyUpHandler(e -> {
+			String workplaceQuery = workplaceSuggestBox.getValue();
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				workplaceSuggestBox.setValue("");
+				workplaceQuery = null;
+				getWorkplacesSuggestion(workplaceQuery);
+			} else if(AonStringUtils.isNotBlank(workplaceQuery) && workplaceQuery.length() > 3) 
+				getWorkplacesSuggestion(workplaceQuery);
+		});
+		
+		if(null != fee) workplaceSuggestBox.setValue(fee.getWorkplace().getDescription());
+		
+		workplacePanel.add(workplaceLabel);
+		workplacePanel.add(workplaceSuggestBox);
+	}
+
+	private void getWorkplacesSuggestion(String workplaceQuery) {
+		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Workplace> workplaceSuggestionsDB) {
+				workplaceSuggestions = workplaceSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) workplaceSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(workplaceSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(workplaceSuggestions.keySet());
+				workplaceSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+
+	private void createSellerPanel() {
+		sellerPanel = new HTMLPanel("");
+		sellerPanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		Label sellerLabel = new Label("Comercial");
+		sellerLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
+		sellerLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		
+		sellerSuggestBox = new SuggestBox();
+		sellerSuggestBox.setWidth("100%");
+		sellerSuggestBox.setHeight("2em");
+		sellerSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
+		sellerSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
+		sellerSuggestBox.setAutoSelectEnabled(false);
+		sellerSuggestBox.getElement().setPropertyString("placeholder", "Comercial: busque por nombre");
+		
+		sellerSuggestBox.addSelectionHandler(e -> {
+			sellerSuggestBox.hideSuggestionList();
+			if(null != fee) fee.setSeller(sellerSuggestions.get(sellerSuggestBox.getValue()));
+		});
+		
+		sellerSuggestBox.addKeyUpHandler(e -> {
+			String sellerQuery = sellerSuggestBox.getValue();
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				sellerSuggestBox.setValue("");
+				sellerQuery = null;
+				getSellersSuggestion(sellerQuery);
+			} else if(AonStringUtils.isNotBlank(sellerQuery) && sellerQuery.length() > 3)
+				getSellersSuggestion(sellerQuery);
+		});
+		
+		if(null != fee) sellerSuggestBox.setValue(fee.getSeller().getName());
+		
+		sellerPanel.add(sellerLabel);
+		sellerPanel.add(sellerSuggestBox);
+	}
+
+	private void getSellersSuggestion(String sellerQuery) {
+		SERVICE.getSellersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), sellerQuery, new AsyncCallback<Map<String, Seller>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Seller> sellerSuggestionsDB) {
+				sellerSuggestions = sellerSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) sellerSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(sellerSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(sellerSuggestions.keySet());
+				sellerSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+
+	private void createInvoicingGroupPanel() {
+		invoicingGroupPanel = new HTMLPanel("");
+		invoicingGroupPanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		Label invoicingGroupLabel = new Label("G. Facturaci\u00f3n");
+		invoicingGroupLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
+		invoicingGroupLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		
+		invoicingGroupSuggestBox = new SuggestBox();
+		invoicingGroupSuggestBox.setWidth("100%");
+		invoicingGroupSuggestBox.setHeight("2em");
+		invoicingGroupSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
+		invoicingGroupSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
+		invoicingGroupSuggestBox.setAutoSelectEnabled(false);
+		invoicingGroupSuggestBox.getElement().setPropertyString("placeholder", "G. Facturaci\u00f3n: busque por descripci\u00f3n");
+		
+		invoicingGroupSuggestBox.addSelectionHandler(e -> {
+			invoicingGroupSuggestBox.hideSuggestionList();
+			if(null != fee) fee.setInvoicingGroup(invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue()));
+		});
+		
+		invoicingGroupSuggestBox.addKeyUpHandler(e -> {
+			String invoicingGroupQuery = invoicingGroupSuggestBox.getValue();
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				invoicingGroupSuggestBox.setValue("");
+				invoicingGroupQuery = null;
+				getInvoicingGroupsSuggestion(invoicingGroupQuery);
+			} else if(AonStringUtils.isNotBlank(invoicingGroupQuery) && invoicingGroupQuery.length() > 3)
+				getInvoicingGroupsSuggestion(invoicingGroupQuery);
+		});
+		
+		if(null != fee) invoicingGroupSuggestBox.setValue(fee.getInvoicingGroup().getDescription());
+		
+		invoicingGroupPanel.add(invoicingGroupLabel);
+		invoicingGroupPanel.add(invoicingGroupSuggestBox);
+	}
 	
+	private void getInvoicingGroupsSuggestion(String invoicingGroupQuery) {
+		SERVICE.getInvoicingGroupsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), invoicingGroupQuery, new AsyncCallback<Map<String, InvoicingGroup>>() {
+			
+			@Override
+			public void onSuccess(Map<String, InvoicingGroup> invoicingGroupSuggestionsDB) {
+				invoicingGroupSuggestions = invoicingGroupSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) invoicingGroupSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(invoicingGroupSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(invoicingGroupSuggestions.keySet());
+				invoicingGroupSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+
+	private void createProjectPanel() {
+		projectPanel = new HTMLPanel("");
+		projectPanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		Label projectLabel = new Label("Proyecto");
+		projectLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
+		projectLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		
+		projectSuggestBox = new SuggestBox();
+		projectSuggestBox.setWidth("100%");
+		projectSuggestBox.setHeight("2em");
+		projectSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
+		projectSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
+		projectSuggestBox.setAutoSelectEnabled(false);
+		projectSuggestBox.getElement().setPropertyString("placeholder", "Proyecto: busque por descripci\u00f3n");
+		
+		projectSuggestBox.addSelectionHandler(e -> {
+			projectSuggestBox.hideSuggestionList();
+			if(null != fee) fee.setProject(projectSuggestions.get(projectSuggestBox.getValue()));
+		});
+		
+		projectSuggestBox.addKeyUpHandler(e -> {
+			String projectQuery = projectSuggestBox.getValue();
+			Integer customerId = null != fee ? fee.getCustomer().getId() : null;
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				projectSuggestBox.setValue("");
+				projectQuery = null;
+				getProjectsSuggestion(customerId, projectQuery);
+			} else if(AonStringUtils.isNotBlank(projectQuery) && projectQuery.length() > 3)
+				getProjectsSuggestion(customerId, projectQuery);
+		});
+		
+		if(null != fee) projectSuggestBox.setValue(fee.getProject().getName());
+		
+		projectPanel.add(projectLabel);
+		projectPanel.add(projectSuggestBox);
+	}
+	
+	private void getProjectsSuggestion(Integer customerId, String projectQuery) {
+		SERVICE.getProjectsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerId, projectQuery, new AsyncCallback<Map<String, Project>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Project> projectProjectSuggestionsDB) {
+				projectSuggestions = projectProjectSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) projectSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(projectSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(projectSuggestions.keySet());
+				projectSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+
 	private Date createBillingDate() {
 		if(AonStringUtils.isBlank(monthListBox.getSelectedValue()) || AonStringUtils.isBlank(yearListBox.getSelectedValue())) return null;
 		
@@ -511,6 +813,6 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	// ------------------------------------------------- Abstract Methods
 
 	protected abstract void onAccept(Fee fee);
-	protected abstract void onAccept(Optional<Integer> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate);
+	protected abstract void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate);
 
 }

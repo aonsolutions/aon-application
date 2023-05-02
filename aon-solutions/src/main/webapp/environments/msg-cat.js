@@ -207,7 +207,7 @@ export const LAST = 'Última';
 export const LAST_LOCATION = 'Última ubicació';
 export const LAST_STATUS = 'Último estat';
 export const LINK = 'Vincular';
-export const LINK_DOMAINS = 'Vincular Dominis';
+export const LINK_DOMAINS = 'Vincular Dominis amb Clients';
 export const LOCATION = 'Ubicació';
 
 // ----- M

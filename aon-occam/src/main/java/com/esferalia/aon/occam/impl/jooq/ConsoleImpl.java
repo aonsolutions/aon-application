@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDeleteDomain;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainCustomerDAO;
@@ -91,13 +92,19 @@ public class ConsoleImpl implements IConsole {
 	}
 
 	@Override
-	public List<Domain> updateDomainCustomer(AONContext ctx, List<DomainCompany> domainCompanies, Customer customer) {
+	public List<Domain> updateDomainCustomer(AONContext ctx, List<DomainCompany> domainCompanies, Integer customer) {
 		return DomainCustomerDAO.updateDomains(ctx, domainCompanies, customer);
+	}
+
+	@Override
+	public DomainCompany updateDomainStatus(AONContext ctx, DomainCompany domainCompany, AonStatus aonStatus) {
+		return DomainCustomerDAO.updateDomainAonStatus(ctx, domainCompany, aonStatus);
 	}
 	
 	@Override
 	public Stream<DomainCompany> getDomainsByDocument(AONContext ctx, String customerDocument, Integer customerId) {
 		return DomainCustomerDAO.getDomainsByDocument(ctx, customerDocument, customerId);
 	}
+
 	
 }

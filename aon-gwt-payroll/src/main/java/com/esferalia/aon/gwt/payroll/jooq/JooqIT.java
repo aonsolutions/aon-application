@@ -17,12 +17,17 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.jooq.Condition;
+import org.jooq.Cursor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -37,11 +42,13 @@ import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.jooq.tables.ContractData;
+import com.esferalia.aon.jooq.tables.Registry;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveDetailRecord;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveRecord;
 import com.esferalia.aon.jooq.tables.records.LeaveBatchRecord;
 import com.esferalia.aon.occam.api.AONContext;
-import java.util.Calendar;
+import com.google.api.client.util.Objects;
 
 public class JooqIT {
 
@@ -56,23 +63,23 @@ public class JooqIT {
 	}
 	
 	public static List<ITEmployee> getEmployeesITInfo(Connection conn, Integer itIds []) {
-		return getEmployeesITInfoDB(DSL.using(conn, getDefaultSettings()), CONTRACT_LEAVE.ID.in(itIds) );
+		return getEmployeesITInfo(DSL.using(conn, getDefaultSettings()), CONTRACT_LEAVE.ID.in(itIds) );
 	}
 
 	public static List<ITEmployee> getEmployeesITInfo(AONContext aonContext, Collection<Integer> itIds) {
-		return getEmployeesITInfoDB(aonContext.getDslContext(), CONTRACT_LEAVE.ID.in(itIds) );
+	    	return getEmployeesITInfo(aonContext.getDslContext(), CONTRACT_LEAVE.ID.in(itIds));
 	}
 
 	public static List<ITEmployee> getEmployeesITInfo(Connection conn, Integer domainId, Boolean allEmployees) {
-		return getEmployeesITInfoDB(DSL.using(conn, getDefaultSettings()), domainId, allEmployees);
+		return getEmployeesITInfo(DSL.using(conn, getDefaultSettings()), CONTRACT.DOMAIN.eq(domainId));
 	}
 	
 	public static List<ITEmployee> getWorkplaceEmployeeITInfo(Connection conn, Integer workplaceId, Boolean allEmployees) {
-		return getWorkplaceEmployeeITInfoDB(DSL.using(conn, getDefaultSettings()), workplaceId, allEmployees);
+	    	return getEmployeesITInfo(DSL.using(conn, getDefaultSettings()), CONTRACT.WORKPLACE.eq(workplaceId));
 	}
 	
 	public static List<ITEmployee> getEmployeeITInfo(Connection conn, Integer contractId) {
-		return getEmployeeITInfoDB(DSL.using(conn, getDefaultSettings()), contractId);
+	    	return getEmployeesITInfo(DSL.using(conn, getDefaultSettings()), CONTRACT.ID.eq(contractId));
 	}
 	
 	public static String deleteIT(Connection conn, Integer domainId, Integer itId) {
@@ -87,6 +94,224 @@ public class JooqIT {
 		setComunicationITDB(DSL.using(conn, getDefaultSettings()), domainId, itEmployee, it);
 	}
 	
+	private static List<ITEmployee> getEmployeesITInfo(DSLContext dslContext, Condition condition) {
+	    
+	    Registry PERSON_REGISTRY = REGISTRY.as("person_registry");
+	    Registry ENTERPRISE_REGISTRY = REGISTRY.as("enterprise_registry");
+	    
+	    ContractData MOTIVO_MAT_PAT = CONTRACT_DATA.as("motivo_mat_pat");
+	    ContractData BASE_REGULADORA = CONTRACT_DATA.as("base_reguladora");
+	    ContractData INICIO_PAGO_DIRECTO = CONTRACT_DATA.as("inicio_pago_directo");
+	    ContractData COEFICIENTE_PATERNIDAD = CONTRACT_DATA.as("coeficiente_paternidad");
+	    ContractData COEFICIENTE_MATERNIDAD = CONTRACT_DATA.as("coeficiente_maternidad");
+	    ContractData TIPO_SOLICITANTE_MAT_PAT = CONTRACT_DATA.as("tipo_solicitante_mat_pat");
+	    
+	    
+	    
+	    Date today = new Date(new java.util.Date().getTime());
+	    
+	    Cursor<Record> cursor =
+	    dslContext
+	    .select()
+	    .from(CONTRACT)
+	    .innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+	    .innerJoin(PERSON_REGISTRY).on(PERSON.REGISTRY.eq(PERSON_REGISTRY.ID))
+	    
+	    .leftJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
+	    
+	    //.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
+	    //.innerJoin(ENTERPRISE_REGISTRY).on(WORKPLACE.ENTERPRISE.eq(ENTERPRISE_REGISTRY.ID))
+
+	    .leftJoin(CONTRACT_LEAVE).on(CONTRACT.ID.eq(CONTRACT_LEAVE.CONTRACT))
+
+	    .leftJoin(MOTIVO_MAT_PAT).on(CONTRACT_LEAVE.CONTRACT.eq(MOTIVO_MAT_PAT.CONTRACT)
+		    	.and(MOTIVO_MAT_PAT.NAME.eq("MOTIVO_MAT_PAT")
+		    	.and(MOTIVO_MAT_PAT.START_DATE.eq(CONTRACT_LEAVE.START_DATE))))
+
+	    .leftJoin(TIPO_SOLICITANTE_MAT_PAT).on(CONTRACT_LEAVE.CONTRACT.eq(TIPO_SOLICITANTE_MAT_PAT.CONTRACT)
+		    	.and(TIPO_SOLICITANTE_MAT_PAT.NAME.eq("TIPO_SOLICITANTE_MAT_PAT")
+		    	.and(TIPO_SOLICITANTE_MAT_PAT.START_DATE.eq(CONTRACT_LEAVE.START_DATE))))
+
+	    .leftJoin(BASE_REGULADORA).on(CONTRACT_LEAVE.CONTRACT.eq(BASE_REGULADORA.CONTRACT)
+		    	.and(BASE_REGULADORA.NAME.eq("BASE_REGULADORA")
+		    	.and(BASE_REGULADORA.START_DATE.eq(CONTRACT_LEAVE.START_DATE))))
+
+	    .leftJoin(INICIO_PAGO_DIRECTO).on(CONTRACT_LEAVE.CONTRACT.eq(INICIO_PAGO_DIRECTO.CONTRACT)
+			.and(INICIO_PAGO_DIRECTO.NAME.eq("INICIO_PAGO_DIRECTO")
+			.and(INICIO_PAGO_DIRECTO.START_DATE.eq(CONTRACT_LEAVE.START_DATE))))
+	    
+	    .leftJoin(COEFICIENTE_PATERNIDAD).on(CONTRACT_LEAVE.CONTRACT.eq(COEFICIENTE_PATERNIDAD.CONTRACT)
+			.and(COEFICIENTE_PATERNIDAD.NAME.eq("COEFICIENTE_PATERNIDAD")
+			.and(COEFICIENTE_PATERNIDAD.START_DATE.eq(CONTRACT_LEAVE.START_DATE))))
+
+	    .leftJoin(COEFICIENTE_MATERNIDAD).on(CONTRACT_LEAVE.CONTRACT.eq(COEFICIENTE_MATERNIDAD.CONTRACT)
+			.and(COEFICIENTE_PATERNIDAD.NAME.eq("COEFICIENTE_PATERNIDAD")
+			.and(COEFICIENTE_PATERNIDAD.START_DATE.eq(CONTRACT_LEAVE.START_DATE))))
+
+	    .leftJoin(CONTRACT_LEAVE_DETAIL).on(CONTRACT_LEAVE.ID.eq(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE))
+
+	    .leftJoin(LEAVE_BATCH_DETAIL).on(CONTRACT_LEAVE_DETAIL.ID.eq(LEAVE_BATCH_DETAIL.CONTRACT_LEAVE_DETAIL))
+	    .leftJoin(LEAVE_BATCH).on(LEAVE_BATCH_DETAIL.LEAVE_BATCH.eq(LEAVE_BATCH.ID).and(LEAVE_BATCH.COMMUNICATION_ID.eq("COMUNICA")))
+
+	    .where(condition)
+	    .orderBy(CONTRACT.PERSON)
+	    .fetchLazy();
+	    
+	    Map<Integer, Map<Integer,IT>> itsMap = new LinkedHashMap<>();
+	    Map<Integer, ITEmployee> itEmployeesMap = new LinkedHashMap<>();
+	    
+	    while ( cursor.hasNext() ) {
+		Record r = cursor.fetchNext();
+		
+		Integer contractId = r.get(CONTRACT.ID);
+
+		itEmployeesMap.computeIfAbsent(contractId, id -> {
+			ContractInfo contractInfo = new ContractInfo();
+			contractInfo.setContractId(r.get(CONTRACT.ID));
+			contractInfo.setSsRegimen(r.get(CONTRACT.SS_REGIME));
+			contractInfo.setEndDate(r.get(CONTRACT.END_DATE));
+			contractInfo.setStartDate(r.get(CONTRACT.START_DATE));
+			contractInfo.setSeniorityDate(r.get(CONTRACT.SENIORITY_DATE));
+			
+			//contractInfo.setEnterpriseName(r.get(ENTERPRISE_REGISTRY.NAME));
+			//contractInfo.setEnterpriseCIF(r.get(ENTERPRISE_REGISTRY.DOCUMENT));
+			
+			Optional.ofNullable(r.get(ENTERPRISE_CCC.ID))
+			.ifPresent( contractInfo::setCccId);
+			Optional.ofNullable(r.get(ENTERPRISE_CCC.TYPE))
+			.ifPresent( contractInfo::setCccType);
+			Optional.ofNullable(r.get(ENTERPRISE_CCC.TYPE))
+			.ifPresent( cccType -> contractInfo.setCompleteCCC(getCCCRegimeCode(cccType)+r.get(ENTERPRISE_CCC.CCC)) );
+			
+			
+			EmployeeInfo employeeInfo = new EmployeeInfo();
+			employeeInfo.setEmployeeId(r.get(PERSON.REGISTRY));
+			employeeInfo.setName(r.get(PERSON.NAME));
+			employeeInfo.setSurName(r.get(PERSON.FIRST_SURNAME));
+			employeeInfo.setSecondSurName(r.get(PERSON.SECOND_SURNAME));
+			employeeInfo.setSsNumber(r.get(PERSON.SOCIAL_SECURITY_NUM));
+			employeeInfo.setDocument(r.get(PERSON_REGISTRY.DOCUMENT));
+			
+			ITEmployee itEmployee = new ITEmployee() ;
+			
+			itEmployee.setContractInfo(contractInfo);
+			itEmployee.setEmployeeInfo(employeeInfo);
+
+			itEmployee.setStatus(r.get(CONTRACT_LEAVE.END_DATE) == null ? (byte)1 : (byte)0);
+			
+			return itEmployee;
+		});
+		
+		Integer contractLeaveId = r.get(CONTRACT_LEAVE.ID);
+		
+		if ( r.get(CONTRACT_LEAVE.ID) == null )
+		    continue;
+		
+		IT currentIt =
+		itsMap.computeIfAbsent(contractId, id -> new HashMap<>())
+		.computeIfAbsent(contractLeaveId, id -> {
+		    IT it = new IT();
+		    it.setIsParent(false);
+		    it.setId(r.get(CONTRACT_LEAVE.ID));
+		    it.setContract(r.get(CONTRACT.ID));
+		    it.setDomain(r.get(CONTRACT_LEAVE.DOMAIN));
+		    it.setTypeLowPart(r.get(CONTRACT_LEAVE.TYPE));
+		    it.setContract(r.get(CONTRACT_LEAVE.CONTRACT));
+		    it.setDescription(r.get(CONTRACT_LEAVE.DESCRIPTION));
+		    it.setStartDate(r.get(CONTRACT_LEAVE.START_DATE));
+		    it.setEndDate(r.get(CONTRACT_LEAVE.END_DATE));
+		    it.setDailyCGCBase(r.get(CONTRACT_LEAVE.DAILY_CGC_BASE));
+		    it.setDailyCGPBase(r.get(CONTRACT_LEAVE.DAILY_CGP_BASE));
+		    it.setParent(r.get(CONTRACT_LEAVE.PARENT));
+		    it.setDailyREGBase(r.get(CONTRACT_LEAVE.DAILY_REG_BASE));
+		    it.setTypeHighPart(r.get(CONTRACT_LEAVE.DISCHARGE_CAUSE));
+
+		    it.setFullName(r.get(PERSON_REGISTRY.NAME));
+		    it.setContractStartDate(r.get(CONTRACT.START_DATE));
+		    it.setContractEndDate(r.get(CONTRACT.END_DATE));
+		    
+    		    it.setComunicationDate(r.get(LEAVE_BATCH.DATE));
+    		    Optional.ofNullable(r.get(LEAVE_BATCH.STATUS))
+    		    .ifPresentOrElse( status -> it.setIsComunicate(status == (byte)1 ? true : false), () -> it.setIsComunicate(false)); 
+		    
+		    try {
+    		    Optional.ofNullable(r.get(TIPO_SOLICITANTE_MAT_PAT.EXPRESSION))
+    		    .ifPresent( expression -> it.setMaternityType(Byte.parseByte(expression)));
+		    } catch (Exception e) {
+			// Unknow expression, must be byte;
+		    }
+
+		    try {
+        		    Optional.ofNullable(r.get(MOTIVO_MAT_PAT.EXPRESSION))
+        		    .ifPresent( expression -> it.setMaternityReason(Byte.parseByte(expression)));
+		    } catch (Exception e) {
+			// Unknow expression, must be byte;
+		    }
+
+		    try {
+			Optional.ofNullable(r.get(COEFICIENTE_MATERNIDAD.EXPRESSION))
+				.ifPresent(expression -> it.setPartialityCoef(Double.parseDouble(expression)));
+		    } catch (Exception e) {
+			// Unknow expression, must be a double;
+		    }
+
+		    try {
+			Optional.ofNullable(r.get(COEFICIENTE_PATERNIDAD.EXPRESSION))
+				.ifPresent(expression -> it.setPartialityCoef(Double.parseDouble(expression)));
+		    } catch (Exception e) {
+			// Unknow expression, must be a double;
+		    }
+		    
+		    try {
+			Optional.ofNullable(r.get(INICIO_PAGO_DIRECTO.EXPRESSION)).ifPresent(expression -> it
+				.setDirectPayDate(getDirectPayDateByExpression(r.get(INICIO_PAGO_DIRECTO.EXPRESSION))));
+		    } catch (Exception e) {
+			// Unknow expression, must be FECHA(yyyy,MM,dd);
+		    }
+
+		    
+		    Optional.ofNullable(itsMap.get(r.get(CONTRACT.ID)).get(r.get(CONTRACT_LEAVE.PARENT)))
+		    .ifPresent(parentIt ->parentIt.setIsParent(true));
+
+		    return it;
+		});
+		
+		if ( r.get(CONTRACT_LEAVE_DETAIL.ID) == null )
+		    continue;
+		
+		if ( currentIt.getITParts().stream()
+		.anyMatch(itPart -> Objects.equal(itPart.getId(),r.get(CONTRACT_LEAVE_DETAIL.ID))))
+		    continue;
+		
+		ITPart itPart = new ITPart();
+		itPart.setIt(r.get(CONTRACT_LEAVE_DETAIL.CONTRACT_LEAVE));
+		itPart.setId(r.get(CONTRACT_LEAVE_DETAIL.ID));
+		itPart.setDomain(r.get(CONTRACT_LEAVE_DETAIL.DOMAIN));
+		itPart.setType(r.get(CONTRACT_LEAVE_DETAIL.TYPE));
+		itPart.setCias(r.get(CONTRACT_LEAVE_DETAIL.CIAS));
+		itPart.setDate(r.get(CONTRACT_LEAVE_DETAIL.DATE));
+		itPart.setStatus(r.get(CONTRACT_LEAVE_DETAIL.STATUS));
+		itPart.setCollegeNumber(r.get(CONTRACT_LEAVE_DETAIL.COLLEGE_NUMBER));
+		itPart.setConfirmOrderNumber(r.get(CONTRACT_LEAVE_DETAIL.CONFIRM_ORDER));
+		
+		itPart.setModify(false);
+		itPart.setDelete(false);
+		
+		currentIt.addITPart(itPart);
+		
+	    }
+	    
+	    itsMap.forEach((i1,map) -> map.forEach((i2,it) -> it.getITParts().sort( (part1,part2) -> part2.getDate().compareTo(part1.getDate()))));
+	    
+	    ArrayList<ITEmployee> itEmployees = new ArrayList<>();
+	    itEmployeesMap.forEach((employeeId, itEmployee) ->{ 
+		itsMap.getOrDefault(employeeId, Collections.emptyMap()).values().stream()
+		.sorted( (it1,it2) -> it1.getStartDate().compareTo(it2.getStartDate())).forEach(itEmployee::addIT);
+		itEmployees.add(itEmployee);
+	    });	    
+	    return itEmployees;
+	}
+
 	private static List<ITEmployee> getEmployeesITInfoDB(DSLContext dslContext, Integer domainId, Boolean allEmployees) {
 		List<ITEmployee> itEmployees = new ArrayList<ITEmployee>();
 		
@@ -137,6 +362,7 @@ public class JooqIT {
 					IT it = new IT();
 					
 					Integer contractLeaveId = contractLeaveRecord.get(CONTRACT_LEAVE.ID);
+					it.setIsComunicate(false);
 					
 					it.setId(contractLeaveId);
 					it.setDomain(contractLeaveRecord.get(CONTRACT_LEAVE.DOMAIN));
@@ -257,8 +483,8 @@ public class JooqIT {
 							} else
 								it.setIsComunicate(false);
 							
-//							it.setIsComunicate(false);
 						}
+						
 						
 					}
 					
@@ -1004,7 +1230,8 @@ public class JooqIT {
 				Date startDate = null == it.getStartDate() ? null : new Date(it.getStartDate().getTime());
 				Date endDate = null == it.getEndDate() ? null : new Date(it.getEndDate().getTime());
 				
-				String nss = employeeInfo.getSsNumber();
+				//String nss = employeeInfo.getSsNumber();
+				Integer contractId = contractInfo.getContractId();
 
 				SelectConditionStep<Record> query = dslContext
 					.select()
@@ -1012,7 +1239,8 @@ public class JooqIT {
 					.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 					.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 					.leftJoin(ENTERPRISE_CCC).onKey()
-					.where(PERSON.SOCIAL_SECURITY_NUM.eq(nss))
+					//.where(PERSON.SOCIAL_SECURITY_NUM.eq(nss))
+					.where(CONTRACT.ID.eq(contractId))
 					.and(CONTRACT.START_DATE.le(startDate))
 					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(startDate)))
 				;
@@ -1031,7 +1259,7 @@ public class JooqIT {
 				if(contractRecords.isEmpty())
 					throw new IllegalArgumentException("No existe contrato activo para este trabajador en el periodo de la baja");
 				
-				Integer contractId = contractRecords.get(0).get(CONTRACT.ID);
+				//Integer contractId = contractRecords.get(0).get(CONTRACT.ID);
 				
 				ContractLeaveRecord contractLeaveRecord = dslContext.insertInto(CONTRACT_LEAVE)
 					.set(CONTRACT_LEAVE.DOMAIN, domainId)
@@ -1500,5 +1728,59 @@ public class JooqIT {
 			return "0111";
 		}
 	}
+	
+//	public static void main(String[] args) {
+//	    
+//	    try ( CloseableAONContext aonContext = AONContext.getAONContext("b72384936-ayudat.aonsolutions.org", "aon") ){
+//		Integer domainId = aonContext.getDomainId();
+//		DSLContext dslContext = aonContext.getDslContext();
+//
+//		List<ITEmployee> oldEmployeesIT = getEmployeesITInfoDB(dslContext, domainId, true);
+//		List<ITEmployee> newEmployeesIT = getEmployeesITInfo(dslContext, CONTRACT.DOMAIN.eq(domainId).and(CONTRACT.ID.gt(0)));
+//		
+//		for (int i = 0; i < newEmployeesIT.size(); i++) {
+//		    ITEmployee newEmployeeIT = newEmployeesIT.get(i);
+//		    ITEmployee oldEmployeeIT = oldEmployeesIT.get(i);
+//		    
+//		    if ( !EqualsBuilder.reflectionEquals(newEmployeeIT, oldEmployeeIT, true) ) {
+//			
+//			    EmployeeInfo newEmployeeInfo = newEmployeeIT.getEmployeeInfo();
+//			    EmployeeInfo oldEmployeeInfo = oldEmployeeIT.getEmployeeInfo();
+//			    
+//			    if ( !EqualsBuilder.reflectionEquals(newEmployeeInfo, oldEmployeeInfo, true)) {
+//				System.err.println("ERROR [EmployeeInfo] : " + newEmployeeInfo.getFullName());
+//			    }
+//			    
+//			    List<IT> newIts = newEmployeeIT.getIts();
+//			    List<IT> oldIts = oldEmployeeIT.getIts();
+//			    
+//			    for ( int j = 0; j < newIts.size() ; j++ ) {
+//				IT newIt = newIts.get(j);
+//				IT oldIt = oldIts.get(j);
+//				if (!EqualsBuilder.reflectionEquals(newIt, oldIt, true, null, "itParts")) {
+//				    System.err.println("ERROR [IT] : " + newIt.getFullName() +", " + newIt.getStartDate() + " (" + newIt.getTypeLowPart() +")" );
+//				}				
+//				
+//				List<ITPart> newItParts = newIt.getITParts();
+//				List<ITPart> oldItParts = oldIt.getITParts();
+//				for (int z = 0; z < newItParts.size(); z++) {
+//				    ITPart newItPart = newItParts.get(z);
+//				    ITPart oldItPart = oldItParts.get(z);
+//					if (!EqualsBuilder.reflectionEquals(newItPart, oldItPart, true, null, "itParts")) {
+//					    System.err.println("ERROR [ITPART] : " + newIt.getFullName() +", " + newIt.getStartDate() + " (" + newItPart.getConfirmOrderNumber() +")" );
+//					}				
+//				}
+//				
+//			    }
+//			    
+//			    ContractInfo newContractInfo = newEmployeeIT.getContractInfo();
+//			    ContractInfo oldContractInfo = oldEmployeeIT.getContractInfo();
+//
+//		    }
+//		    
+//		}
+//		
+//	    }
+//	}
 
 }

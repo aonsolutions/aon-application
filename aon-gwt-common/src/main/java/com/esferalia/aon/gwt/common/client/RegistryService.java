@@ -6,14 +6,20 @@ import java.util.Map;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.RegistryParams;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.esferalia.aon.watson.error.AonCoreException;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -46,7 +52,7 @@ public interface RegistryService extends RemoteService {
 	// *************************************** [CUSTOMER]
 	// **************************************************
 	Map<String, String> getCustomersSuggestion(String domainName, int domain, String user, String query);
-	Map<String, String> getProductsSuggestion(String domainName, int domain, String user, String query);
+	Map<String, OldItem> getProductsSuggestion(String domainName, int domain, String user, String query);
 	Map<Integer, Integer> getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams);
 	
 	LinkedList<Fee> getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams);
@@ -56,4 +62,9 @@ public interface RegistryService extends RemoteService {
 	Integer getItemIdByProductCode(String domainName, int domain, String user, String productCode);
 	void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees);
 	void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params);
+	
+	Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domain, String user, String workplaceQuery);
+	Map<String, Seller> getSellersSuggestion(String domainName, int domain, String user, String sellerQuery);
+	Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domain, String user, String invoicingGroupQuery);
+	Map<String, Project> getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String projectQuery);
 }

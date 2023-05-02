@@ -19,6 +19,7 @@ import com.esferalia.aon.occam.api.model.Filter.RegistryFilter;
 import com.esferalia.aon.occam.api.model.Rawdoc;
 import com.esferalia.aon.occam.api.model.RawdocDomainData;
 import com.esferalia.aon.occam.api.model.RawdocUserData;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceFilter;
@@ -42,7 +43,9 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 import com.esferalia.aon.occam.api.model.type.WithholdingType;
 
@@ -108,9 +111,14 @@ public interface IFinance {
 	// 	***********************************************
 	// 	**************************** INVOICE SERIES ***
 	// 	***********************************************
+	
+	public Map<String, Workplace> getWorkplacesSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public Map<String, Seller> getSellersSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public Map<String, Project> getProjectsSuggestion(CloseableAONContext ctx, int domainId, Integer customerId, String query);
 
 	public Map<String, String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
-	public Map<String, String> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public Map<String, OldItem> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<Integer, Integer> getCustomerProductsUpdates(CloseableAONContext ctx, int domainId, CustomerFeeParams customerFeeParams);
 	
 	public LinkedList<Fee> getFeeList(CloseableAONContext ctx, CustomerFeeParams customerFeeParams);

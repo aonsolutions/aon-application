@@ -6,11 +6,16 @@ import java.util.Map;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.RegistryParams;
+import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
+import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
+import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -100,9 +105,9 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	}
 
 	@Override
-	public void getProductsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, String>> callback) {
+	public void getProductsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, OldItem>> callback) {
 		AON.start();
-		serviceAsync.getProductsSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, String>>(callback));
+		serviceAsync.getProductsSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, OldItem>>(callback));
 	}
 	
 	@Override
@@ -150,6 +155,30 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	public void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params, AsyncCallback<Void> callback) {
 		AON.start();
 		serviceAsync.deleteCustomerFeeList(domainName, domain, user, params, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
+	public void getWorkplacesSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Workplace>> callback) {
+		AON.start();
+		serviceAsync.getWorkplacesSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, Workplace>>(callback));
+	}
+
+	@Override
+	public void getSellersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Seller>> callback) {
+		AON.start();
+		serviceAsync.getSellersSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, Seller>>(callback));
+	}
+
+	@Override
+	public void getInvoicingGroupsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, InvoicingGroup>> callback) {
+		AON.start();
+		serviceAsync.getInvoicingGroupsSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, InvoicingGroup>>(callback));
+	}
+
+	@Override
+	public void getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String query, AsyncCallback<Map<String, Project>> callback) {
+		AON.start();
+		serviceAsync.getProjectsSuggestion(domainName, domain, user, customerId, query, new AsyncCallbackWrapper<Map<String, Project>>(callback));
 	}
 
 }

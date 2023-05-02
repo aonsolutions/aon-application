@@ -106,7 +106,7 @@ public class CustomerFee extends MainEntryPoint {
 	private Date billingDate;
 	
 	private Map<String, String> customerSuggestions = new TreeMap<>();
-	private Map<String, String> productSuggestions = new TreeMap<>();
+	private Map<String, OldItem> productSuggestions = new TreeMap<>();
 	
 	final private int limit = 100;
 	final private MutableInt offset = new MutableInt(0);
@@ -306,6 +306,7 @@ public class CustomerFee extends MainEntryPoint {
 			enableMoreData();
 			offset.setValue(0);
 			showInitialMessage();
+			onSearchFees();
 		});
 		filterRightPanel.add(resetBtn);
 		
@@ -348,19 +349,22 @@ public class CustomerFee extends MainEntryPoint {
 			@Override
 			public void onSuccess(Map<Integer, Integer> minMaxYear) {
 				Optional<Entry<Integer, Integer>> firstEntry = minMaxYear.entrySet().stream().findFirst();
-				Integer minYear = firstEntry.get().getKey();
-				Integer maxYear = firstEntry.get().getValue();
 				
 				ListBox lb = new ListBox();
 				lb.setHeight("2em");
 				lb.getElement().getStyle().setProperty("padding", "0 5px");
 				lb.addItem("-", "");
 				
-				while(maxYear >= minYear) {
-					lb.addItem(maxYear.toString(), (maxYear - 1900) + "");
-					maxYear--;
-				}
-
+				if(firstEntry.isPresent()) {
+					Integer minYear = firstEntry.get().getKey();
+					Integer maxYear = firstEntry.get().getValue();
+					
+					while(maxYear >= minYear) {
+						lb.addItem(maxYear.toString(), (maxYear - 1900) + "");
+						maxYear--;
+					}
+				} 
+				
 				consumer.accept(lb);
 			}
 			
@@ -393,30 +397,37 @@ public class CustomerFee extends MainEntryPoint {
 		
 		customerSuggestBox.addKeyUpHandler(e -> {
 			String customerQuery = customerSuggestBox.getValue();
-			if(AonStringUtils.isNotBlank(customerQuery) && customerQuery.length() > 3) {
-				SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, String>>() {
-					
-					@Override
-					public void onSuccess(Map<String, String> customerSuggestionsDB) {
-						customerSuggestions = customerSuggestionsDB;
-						
-						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerSuggestBox.getSuggestOracle();
-						orclSb.clear();
-						orclSb.addAll(customerSuggestions.keySet());
-						orclSb.setDefaultSuggestionsFromText(customerSuggestions.keySet());
-						customerSuggestBox.showSuggestionList();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub	
-					}
-					
-				});
-			}
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				customerSuggestBox.setValue("");
+				customerQuery = null;
+				getCustomersSuggestion(customerQuery);
+			} else if(AonStringUtils.isNotBlank(customerQuery) && customerQuery.length() > 3)
+				getCustomersSuggestion(customerQuery);
 		});
 	}
 	
+	private void getCustomersSuggestion(String customerQuery) {
+		SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, String>>() {
+			
+			@Override
+			public void onSuccess(Map<String, String> customerSuggestionsDB) {
+				customerSuggestions = customerSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(customerSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(customerSuggestions.keySet());
+				customerSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+
 	private void createConceptSuggestBox() {
 		conceptSuggestBox = new SuggestBox();
 		conceptSuggestBox.setWidth("300px");
@@ -432,30 +443,37 @@ public class CustomerFee extends MainEntryPoint {
 		
 		conceptSuggestBox.addKeyUpHandler(e -> {
 			String productQuery = conceptSuggestBox.getValue();
-			if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 3) {
-				SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, String>>() {
-					
-					@Override
-					public void onSuccess(Map<String, String> productSuggestionsDB) {
-						productSuggestions = productSuggestionsDB;
-						
-						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) conceptSuggestBox.getSuggestOracle();
-						orclSb.clear();
-						orclSb.addAll(productSuggestions.keySet());
-						orclSb.setDefaultSuggestionsFromText(productSuggestions.keySet());
-						conceptSuggestBox.showSuggestionList();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub	
-					}
-					
-				});
-			}
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				conceptSuggestBox.setValue("");
+				productQuery = null;
+				getProductsSuggestion(productQuery);
+			} else if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 3)
+				getProductsSuggestion(productQuery);
 		});
 	}
 	
+	private void getProductsSuggestion(String productQuery) {
+		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
+			
+			@Override
+			public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
+				productSuggestions = productSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) conceptSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(productSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(productSuggestions.keySet());
+				conceptSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+
 	private void resetFilter() {
 		monthListBox.setSelectedIndex(0);
 		if (null != yearListBox) yearListBox.setSelectedIndex(0);
@@ -535,7 +553,7 @@ public class CustomerFee extends MainEntryPoint {
 		params.setYear(AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue()));
 		params.setCustomer(customerSuggestions.get(customerSuggestBox.getValue()));
 		params.setCustomerStatus(AonStringUtils.isBlank(customerStatusListBox.getSelectedValue()) ? null : Byte.parseByte(customerStatusListBox.getSelectedValue()));
-		params.setProductCode(productSuggestions.get(conceptSuggestBox.getValue()));
+		params.setProductCode(null != productSuggestions.get(conceptSuggestBox.getValue()) ? productSuggestions.get(conceptSuggestBox.getValue()).getProduct().getCode() : null);
 		params.setPrice(priceTextBox.getValue());
 		params.setDiscount(discountTextBox.getValue());
 		params.setLimit(limit);
@@ -1067,26 +1085,22 @@ public class CustomerFee extends MainEntryPoint {
 						}
 
 						@Override
-						protected void onAccept(Optional<Integer> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
+						protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
 							// TODO Auto-generated method stub
 						}
 						
 					};
 			} else {
-				new CustomerFeeDialog(conceptSuggestBox.getValue(), options) {
+				new CustomerFeeDialog(productSuggestions.get(conceptSuggestBox.getValue()), options) {
 					
 					@Override
 					protected void onAccept(Fee fee) {}
 
 					@Override
-					protected void onAccept(Optional<Integer> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
+					protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
 						Fee fee = new Fee();
 						
-						if(item.isPresent()) { 
-							OldItem oldItem = new OldItem();
-							oldItem.setId(item.get());
-							fee.setItem(oldItem);
-						}
+						if(item.isPresent()) fee.setItem(item.get());
 						if(price.isPresent()) fee.setPrice(price.get());
 						if(discountExpr.isPresent()) fee.setDiscountExpr(discountExpr.get());
 						if(startDate.isPresent()) fee.setStartDate(startDate.get());
@@ -1210,7 +1224,6 @@ public class CustomerFee extends MainEntryPoint {
 		deleteFeeButton.setEnabled(false);
 		deleteFeeButton.addClickHandler(event -> {
 			LinkedList<Fee> selectedFees = selectionModel.entrySet().stream().filter(e -> e.getKey().getValue()).map(e -> e.getValue()).collect(Collectors.toCollection(LinkedList::new));
-			
 			if(selectedFees.size() == feeList.size()) {
 				// Cambio masivo (todo seleccionado)
 				offset.setValue(0);

@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.InvoicingGroup.INVOICING_GROUP;
 import static com.esferalia.aon.jooq.tables.Item.ITEM;
 import static com.esferalia.aon.jooq.tables.Product.PRODUCT;
+import static com.esferalia.aon.jooq.tables.Project.PROJECT;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Rsegment.RSEGMENT;
 import static com.esferalia.aon.jooq.tables.Seller.SELLER;
@@ -55,6 +56,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.CustomerDAO.CustomerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.InvoiceDAO.InvoicingGroupFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.ProductOldDAO.ItemFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.ProjectDAO.ProjectFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SellerDAO.SellerFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.WorkplaceDAO.WorkplaceFiller;
 import com.esferalia.aon.occam.impl.jooq.validation.FeeValidation;
@@ -281,6 +283,14 @@ public class FeeDAO {
 						.where(CUSTOMER.REGISTRY.eq(fee.getCustomer().getId()))
 						.execute();
 				
+				if(fee.getItem().getProduct().isModify()) {
+					ctx.getDslContext()
+					.update(PRODUCT)
+						.set(PRODUCT.NAME, fee.getItem().getProduct().getName())
+						.where(PRODUCT.ID.eq(fee.getItem().getProduct().getId()))
+						.execute();
+				}
+				
 				update(ctx, fee);
 			});
 				
@@ -330,6 +340,8 @@ public class FeeDAO {
 	
 	public static void delete(AONContext ctx, CustomerFeeParams customerFeeParams) {
 		ctx.checkWrite();
+		customerFeeParams.setOffset(0);
+		customerFeeParams.setLimit(Integer.MAX_VALUE);
 		LinkedList<Fee> paramsFeeList = getFeeList(ctx, customerFeeParams);
 		paramsFeeList.forEach(fee -> ctx.getDslContext().transaction(configuration -> {
 			ctx.getDslContext()
@@ -371,34 +383,140 @@ public class FeeDAO {
 	// 					CUSTOMER / PRODUCT SUGGESTIONS
 	// --------------------------------------------------------------------
 
-	public static Map<String, String> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query) {
-		Result<Record2<String, String>> customerRecords = ctx.getDslContext().selectDistinct(PRODUCT.CODE, PRODUCT.NAME)
+	public static Map<String, OldItem> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		Map<String, OldItem> productsSuggestion = new TreeMap<>();
+		
+		// Condition
+		Condition condition = PRODUCT.DOMAIN.eq(domainId);
+		if(AonStringUtils.isNotBlank(query)) 
+			condition = condition.and(PRODUCT.CODE.isNotNull().and(PRODUCT.CODE.containsIgnoreCase(query)))
+					.or(PRODUCT.NAME.isNotNull().and(PRODUCT.NAME.containsIgnoreCase(query)));
+
+		Result<Record> customerRecords = ctx.getDslContext().select()
 			.from(PRODUCT)
-			.where(PRODUCT.DOMAIN.eq(domainId))
-			.and(PRODUCT.CODE.isNotNull().and(PRODUCT.CODE.containsIgnoreCase(query)))
-			.or(PRODUCT.NAME.isNotNull().and(PRODUCT.NAME.containsIgnoreCase(query)))
+			.join(ITEM)
+			.on(ITEM.PRODUCT.eq(PRODUCT.ID))
+			.where(condition)
 			.fetch();
 		
-		Map<String, String> productsSuggestion = new TreeMap<>();
-		customerRecords.forEach(r -> productsSuggestion.put(r.get(PRODUCT.NAME) + " (" + r.get(PRODUCT.CODE) + ")",  r.get(PRODUCT.CODE)));
+		customerRecords.forEach(r -> {
+			OldItem item = ItemFiller.buildItem(r);
+			productsSuggestion.put(r.get(PRODUCT.NAME) + " (" + r.get(PRODUCT.CODE) + ")", item);
+		});
 		return productsSuggestion;
 	}
 
 	public static Map<String, String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		// Condition
+		Condition condition = CUSTOMER.DOMAIN.eq(domainId);
+		if(AonStringUtils.isNotBlank(query)) 
+			condition = condition.and(REGISTRY.NAME.isNotNull())
+				.and(REGISTRY.NAME.containsIgnoreCase(query)
+						.or(REGISTRY.DOCUMENT.containsIgnoreCase(query))
+						.or(REGISTRY.ALIAS.isNotNull().and(REGISTRY.ALIAS.containsIgnoreCase(query)))
+				);
+		
 		Result<Record3<String, String, String>> customerRecords = ctx.getDslContext().selectDistinct(REGISTRY.NAME, REGISTRY.DOCUMENT, REGISTRY.ALIAS)
 			.from(REGISTRY)
 			.join(CUSTOMER)
 			.on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
-			.where(CUSTOMER.DOMAIN.eq(domainId))
-			.and(REGISTRY.NAME.isNotNull())
-			.and(REGISTRY.NAME.containsIgnoreCase(query)
-					.or(REGISTRY.DOCUMENT.containsIgnoreCase(query))
-					.or(REGISTRY.ALIAS.isNotNull().and(REGISTRY.ALIAS.containsIgnoreCase(query)))
-			).fetch();
+			.where(condition)
+			.fetch();
 		
 		Map<String, String> customerSuggestion = new TreeMap<>();
 		customerRecords.forEach(r -> customerSuggestion.put(r.get(REGISTRY.NAME) + " ( " + r.get(REGISTRY.DOCUMENT) + " )" + (AonStringUtils.isBlank(r.get(REGISTRY.ALIAS)) ? "" : " - " + r.get(REGISTRY.ALIAS)), r.get(REGISTRY.NAME)));
 		return customerSuggestion;
+	}
+	
+	public static Map<String, Workplace> getWorkplacesSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		Map<String, Workplace> suggestions = new HashMap<>();
+		
+		// Condition
+		Condition condition = WORKPLACE.DOMAIN.eq(domainId);
+		if(AonStringUtils.isNotBlank(query)) condition = condition.and(WORKPLACE.DESCRIPTION.containsIgnoreCase(query));
+
+		Result<Record> workplaceRecords = ctx.getDslContext()
+				.select().from(WORKPLACE)
+				.where(condition)
+				.fetch();
+		
+		workplaceRecords.forEach(r -> {
+			Workplace workplace = WorkplaceFiller.build(r);
+			suggestions.put(r.get(WORKPLACE.DESCRIPTION), workplace);
+		});
+		
+		return suggestions;
+	}
+	
+	public static Map<String, Seller> getSellersSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		Map<String, Seller> suggestions = new HashMap<>();
+		
+		// Condition
+		Condition condition = SELLER.DOMAIN.eq(domainId);
+		if(AonStringUtils.isNotBlank(query)) condition = condition.and(REGISTRY.NAME.containsIgnoreCase(query));
+		
+		Result<Record> sellerRecords = ctx.getDslContext()
+				.select().from(SELLER)
+				.join(REGISTRY)
+				.on(REGISTRY.ID.eq(SELLER.REGISTRY))
+				.where(condition)
+				.fetch();
+		
+		sellerRecords.forEach(r -> {
+			Seller seller = SellerFiller.build(r);
+			suggestions.put(r.get(REGISTRY.NAME), seller);
+		});
+		
+		return suggestions;
+	}
+	
+	public static Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		Map<String, InvoicingGroup> suggestions = new HashMap<>();
+		
+		// Condition
+		Condition condition = INVOICING_GROUP.DOMAIN.eq(domainId);
+		if(AonStringUtils.isNotBlank(query)) condition = condition.and(INVOICING_GROUP.DESCRIPTION.containsIgnoreCase(query));
+		
+		Result<Record> sellerRecords = ctx.getDslContext()
+				.select().from(INVOICING_GROUP)
+				.where(condition)
+				.fetch();
+
+		sellerRecords.forEach(r -> {
+			InvoicingGroup invoicingGroup = InvoicingGroupFiller.buildInvoicingGroup(r);
+			suggestions.put(r.get(INVOICING_GROUP.DESCRIPTION), invoicingGroup);
+		});
+		
+		return suggestions;
+	}
+	
+	public static Map<String, Project> getProjectsSuggestion(CloseableAONContext ctx, int domainId, Integer customerId, String query) {
+		Map<String, Project> suggestions = new HashMap<>();
+		
+		// Condition
+		Condition condition = PROJECT.DOMAIN.eq(domainId);
+		if(AonStringUtils.isNotBlank(query))
+			condition = condition
+					.and(REGISTRY.NAME.isNotNull())
+					.and(REGISTRY.NAME.containsIgnoreCase(query)
+							.or(REGISTRY.DOCUMENT.containsIgnoreCase(query))
+							.or(REGISTRY.ALIAS.isNotNull().and(REGISTRY.ALIAS.containsIgnoreCase(query)))
+					);
+		if(null != customerId) condition = condition.and(PROJECT.REGISTRY.eq(customerId));
+		
+		Result<Record> projectRecords = ctx.getDslContext()
+				.select().from(PROJECT)
+				.join(DOMAIN).on(PROJECT.DOMAIN.eq(DOMAIN.ID))
+				.join(REGISTRY).on(PROJECT.REGISTRY.eq(REGISTRY.ID))
+				.where(condition)
+				.fetch();
+
+		projectRecords.forEach(r -> {
+			Project project = ProjectFiller.build(r);
+			suggestions.put(r.get(PROJECT.NAME), project);
+		});
+		
+		return suggestions;
 	}
 
 	public static Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams) {
@@ -417,6 +535,14 @@ public class FeeDAO {
 				.where(condition)
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 			.fetch();
+		
+		// Update Product name if is modified
+		if(null != fee.getItem() && null != fee.getItem().getProduct() && fee.getItem().getProduct().isModify()) {
+			ctx.getDslContext().update(PRODUCT)
+				.set(PRODUCT.NAME, fee.getItem().getProduct().getName())
+				.where(PRODUCT.ID.eq(fee.getItem().getProduct().getId()))
+				.execute();
+		}
 		
 		UpdateSetMoreStep<CustomerRecord> updateQuery = (UpdateSetMoreStep) ctx.getDslContext().update(CUSTOMER_FEE);
 		
@@ -438,7 +564,8 @@ public class FeeDAO {
 		Date maxDate = (Date) ctx.getDslContext().select(DSL.max(CUSTOMER_FEE.BILLING_DATE)).from(CUSTOMER_FEE).where(CUSTOMER_FEE.DOMAIN.eq(domainId)).fetchOne().get(0);
 		Date minDate = (Date) ctx.getDslContext().select(DSL.min(CUSTOMER_FEE.BILLING_DATE)).from(CUSTOMER_FEE).where(CUSTOMER_FEE.DOMAIN.eq(domainId)).fetchOne().get(0);
 		Map<Integer, Integer> datesMap = new HashMap<Integer, Integer>();
-		datesMap.put(minDate.getYear() + 1900,  maxDate.getYear() + 1900);
+		if(null != maxDate && null != minDate)
+			datesMap.put(minDate.getYear() + 1900,  maxDate.getYear() + 1900);
 		
 		return datesMap;
 	}
