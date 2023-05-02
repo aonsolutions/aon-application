@@ -52,7 +52,9 @@ import com.esferalia.aon.occam.api.model.Bonus;
 import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Cost;
 import com.esferalia.aon.occam.api.model.Deduction;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter.EmployeeFilter;
+import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.payroll.ContractData;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
@@ -396,9 +398,16 @@ public class SistemaRED2AON {
 	}
 	
 	private static String getAuthorized(String login, Integer domainId, String domainName, String ccc) {
-		ApplicationParameter PAY_authorization_key_PAY = 
+		ApplicationParameter payAuthorizationKeyPay = 
 		AON.getApplicationParameter(domainName, domainId, login, AppParam.PAY_authorization_key_PAY);
-		return PAY_authorization_key_PAY.getValue();
+		String authorized = payAuthorizationKeyPay.getValue();
+		if ( AonStringUtils.isBlank(authorized)) { 
+		    Domain domain = AON.getDomain(domainName, domainId, login);
+		    payAuthorizationKeyPay = AON.getApplicationParameter(domain.getName(), domain.getParentId(), login,
+			    AppParam.PAY_authorization_key_PAY);
+		    authorized = payAuthorizationKeyPay.getValue();
+		}
+		return authorized;
 	}
 	
 	private static Map<String,List<Employee>> getEmployees(String login, Integer domainId, String domainName, String ccc,
