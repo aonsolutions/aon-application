@@ -13,6 +13,7 @@ import com.esferalia.aon.occam.api.IFinance;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Company;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
@@ -231,7 +232,7 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
-	public Map<String, String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
+	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getCustomersSuggestion(ctx, domainId, query));
 	}
@@ -276,6 +277,12 @@ public class FinanceImpl implements IFinance {
 	public Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.saveMassiveFees(ctx, fee, customerFeeParams));
+	}
+	
+	@Override
+	public void createCustomerFeeList(AONContext ctx, Fee fee) {
+		ctx.getDslContext().transaction(configuration
+				-> FeeDAO.createCustomerFeeList(ctx, fee));
 	}
 	
 	@Override

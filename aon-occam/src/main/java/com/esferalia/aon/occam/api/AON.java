@@ -2670,7 +2670,7 @@ public class AON {
 		}
 	}
 
-	public static Map<String, String> getCustomersSuggestion(String domainName, int domainId, String login, String query) {
+	public static Map<String, Customer> getCustomersSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getCustomersSuggestion(ctx, domainId, query);
 		}
@@ -2724,6 +2724,12 @@ public class AON {
 	public static Integer saveMassiveFees(String domainName, Integer domainId, String login, Fee fee, CustomerFeeParams params) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().saveMassiveFees(ctx, fee, params);
+		}
+	}
+	
+	public static void createCustomerFeeList(String domainName, Integer domainId, String login, Fee fee) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			getFinance().createCustomerFeeList(ctx, fee);
 		}
 	}
 

@@ -99,9 +99,9 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	// **************************************************
 	
 	@Override
-	public void getCustomersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, String>> callback) {
+	public void getCustomersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Customer>> callback) {
 		AON.start();
-		serviceAsync.getCustomersSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, String>>(callback));
+		serviceAsync.getCustomersSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, Customer>>(callback));
 	}
 
 	@Override
@@ -131,6 +131,12 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	public void saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params, AsyncCallback<Integer> callback) {
 		AON.start();
 		serviceAsync.saveMassiveCustomerFee(domainName, domain, user, fee, params, new AsyncCallbackWrapper<Integer>(callback));
+	}
+
+	@Override
+	public void createCustomerFeeList(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> callback) {
+		AON.start();
+		serviceAsync.createCustomerFeeList(domainName, domain, user, fee, new AsyncCallbackWrapper<Void>(callback));
 	}
 
 	@Override
