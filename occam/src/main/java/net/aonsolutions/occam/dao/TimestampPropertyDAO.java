@@ -8,11 +8,11 @@ import org.jooq.Field;
 import net.aonsolutions.occam.api.Filter;
 import net.aonsolutions.occam.api.Filter.Property;
 
-class TimestampPropertyDAO implements Property<Timestamp> {
+public class TimestampPropertyDAO implements Property<Timestamp> {
 
 	private Field<Timestamp> field;
 	
-	TimestampPropertyDAO(Field<Timestamp> field) {
+	public TimestampPropertyDAO(Field<Timestamp> field) {
 		this.field = field;
 	}
 
@@ -57,7 +57,7 @@ class TimestampPropertyDAO implements Property<Timestamp> {
 
 	@Override
 	public Filter isNull() {
-		return new FilterDAO(field.isNotNull());
+		return new FilterDAO(field.isNull());
 	}
 
 	@Override

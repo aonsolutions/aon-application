@@ -21,6 +21,7 @@ import net.aonsolutions.occam.api.Filter;
 import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.dao.FilterDAO;
 import net.aonsolutions.occam.dao.PropertyDAO;
+import net.aonsolutions.occam.dao.TimestampPropertyDAO;
 import net.aonsolutions.occam.dao.DatePropertyDAO;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
@@ -58,9 +59,9 @@ class FilterTest extends AbstractOccamTest {
 	private static final Pattern SBET 	= Pattern.compile(FNAME + " between [\\\"|']1[\\\"|'] and [\\\"|']2[\\\"|']");
 	private static final Pattern SLIKE   = Pattern.compile(FNAME + " like [\\\"|']1[\\\"|']");
 	private static final Pattern SIN     = Pattern.compile(FNAME + 
-		" in \\(\\s*[\\\"|\\']1[\\\"|\\']\\s*\\,\\s*[\\\"|\\']2[\\\"|\\']\\s*\\)", Pattern.MULTILINE);
+		" in \\(\\s*[\\\"|']1[\\\"|']\\s*\\,\\s*[\\\"|']2[\\\"|']\\s*\\)", Pattern.MULTILINE);
 	private static final Pattern SNOT_IN = Pattern.compile(FNAME + 
-		" not in \\(\\s*[\\\"|\\']1[\\\"|\\']\\s*\\,\\s*[\\\"|\\']2[\\\"|\\']\\s*\\)", Pattern.MULTILINE);
+		" not in \\(\\s*[\\\"|']1[\\\"|']\\s*\\,\\s*[\\\"|']2[\\\"|']\\s*\\)", Pattern.MULTILINE);
 
 
 	private static final String S1 = "1";
@@ -69,6 +70,8 @@ class FilterTest extends AbstractOccamTest {
 	private static final byte B2 = 2;
 	private static final Date D1 = AonDateUtils.toSql(AonDateUtils.getYearFirstDay(new java.util.Date()));
 	private static final Date D2 = AonDateUtils.toSql(AonDateUtils.getYearLastDay(new java.util.Date()));
+	private static final Timestamp T1 = AonDateUtils.toTimestamp(AonDateUtils.getYearFirstDay(new java.util.Date()));
+	private static final Timestamp T2 = AonDateUtils.toTimestamp(AonDateUtils.getYearLastDay(new java.util.Date()));
 	
 	private static final Pattern DEQ = Pattern.compile(FNAME + " = date [\\\"|']" + D1.toString() + "[\\\"|']");
 	private static final Pattern DNE 		= Pattern.compile(FNAME + " <> date [\\\"|']" + D1.toString() + "[\\\"|']");
@@ -77,7 +80,23 @@ class FilterTest extends AbstractOccamTest {
 	private static final Pattern DLE 		= Pattern.compile(FNAME + " <= date [\\\"|']" + D1.toString() + "[\\\"|']");
 	private static final Pattern DLT 		= Pattern.compile(FNAME + " < date [\\\"|']" + D1.toString() + "[\\\"|']");
 	private static final Pattern DBET 	= Pattern.compile(FNAME + " between date [\\\"|']" + D1.toString() + "[\\\"|'] and date [\\\"|']" + D2.toString() + "[\\\"|']");
+	private static final Pattern DIN     = Pattern.compile(FNAME + 
+		" in \\(\\s*date [\\\"|']" + D1.toString() + "[\\\"|']\\s*\\,\\s*date [\\\"|']" + D2.toString() + "[\\\"|']\\s*\\)", Pattern.MULTILINE);
+	private static final Pattern DNOT_IN = Pattern.compile(FNAME + 
+		" not in \\(\\s*date [\\\"|']" + D1.toString() + "[\\\"|']\\s*\\,\\s*date [\\\"|']" + D2.toString() + "[\\\"|']\\s*\\)", Pattern.MULTILINE);
 	
+	private static final Pattern TEQ = Pattern.compile(FNAME + " = timestamp [\\\"|']" + T1.toString() + "[\\\"|']");
+	private static final Pattern TNE = Pattern.compile(FNAME + " <> timestamp [\\\"|']" + T1.toString() + "[\\\"|']");
+	private static final Pattern TGE = Pattern.compile(FNAME + " >= timestamp [\\\"|']" + T1.toString() + "[\\\"|']");
+	private static final Pattern TGT = Pattern.compile(FNAME + " > timestamp [\\\"|']" + T1.toString() + "[\\\"|']");
+	private static final Pattern TLE = Pattern.compile(FNAME + " <= timestamp [\\\"|']" + T1.toString() + "[\\\"|']");
+	private static final Pattern TLT = Pattern.compile(FNAME + " < timestamp [\\\"|']" + T1.toString() + "[\\\"|']");
+	private static final Pattern TBET = Pattern.compile(FNAME + " between timestamp [\\\"|']" + T1.toString() + "[\\\"|'] and timestamp [\\\"|']" + T2.toString() + "[\\\"|']");
+	private static final Pattern TIN = Pattern.compile(FNAME + 
+		" in \\(\\s*timestamp [\\\"|']" + T1.toString() + "[\\\"|']\\s*\\,\\s*timestamp [\\\"|']" + T2.toString() + "[\\\"|']\\s*\\)", Pattern.MULTILINE);
+	private static final Pattern TNOT_IN = Pattern.compile(FNAME + 
+		" not in \\(\\s*timestamp [\\\"|']" + T1.toString() + "[\\\"|']\\s*\\,\\s*timestamp [\\\"|']" + T2.toString() + "[\\\"|']\\s*\\)", Pattern.MULTILINE);
+
 	@FunctionalInterface
 	public interface TestFilter {
 		Filter filter(FilterTests properties);
@@ -102,7 +121,7 @@ class FilterTest extends AbstractOccamTest {
 		@Override public Property<String> withString() {return new PropertyDAO<>(STRING);}
 		@Override public Property<Byte> withByte() {return new PropertyDAO<>(BYTE);}
 		@Override public Property<Date> withDate() {return new DatePropertyDAO(DATE);}
-		@Override public Property<Timestamp> withTimestamp() {return new PropertyDAO<>(TIMESTAMP);}
+		@Override public Property<Timestamp> withTimestamp() {return new TimestampPropertyDAO(TIMESTAMP);}
 	}
 	
 	@Test()
@@ -173,19 +192,67 @@ class FilterTest extends AbstractOccamTest {
 		assertThat(FILTER_TEST.getConditions(p -> p.withDate().lt(D1)).toString(), matchesPattern(DLT));
 		assertThat(FILTER_TEST.getConditions(p -> p.withDate().between(D1,D2)).toString(), matchesPattern(DBET));
 		assertThrows(UnsupportedOperationException.class, () -> FILTER_TEST.getConditions(p -> p.withDate().like(D1)) );
-//		assertThat(FILTER_TEST.getConditions(p -> p.withByte().in(new Byte[] {B1,B2})).toString(), matchesPattern(IN));
-//		assertThat(FILTER_TEST.getConditions(p -> p.withByte().notIn(new Byte[] {B1,B2})).toString(), matchesPattern(NOT_IN));
+		assertThat(FILTER_TEST.getConditions(p -> p.withDate().in(new Date[] {D1,D2})).toString(), matchesPattern(DIN));
+		assertThat(FILTER_TEST.getConditions(p -> p.withDate().notIn(new Date[] {D1,D2})).toString(), matchesPattern(DNOT_IN));
 	}
 	
-	public static void main(String[] args) {
-		Pattern p =  Pattern.compile(FNAME + 
-				" in \\(\\s*[\\\"|\\']1[\\\"|\\']\\s*\\,\\s*[\\\"|\\']2[\\\"|\\']\\s*\\)", Pattern.MULTILINE);
-		String a = "\"field\" in (\n  \"1\",\"2\"\n)";
-		System.out.println( p.matcher(a).matches() );
-						
-		assertThat(FILTER_TEST.getConditions(pr -> pr.withString().in(new String[] {S1,S1})).toString(), matchesPattern(p));				
+	@Test()
+	void dateTimePropertyDAOTest() {
+		assertThat(FILTER_TEST.getConditions(p -> p.withTimestamp().isNull()).toString(), matchesPattern(IS_NULL));
+		assertThat(FILTER_TEST.getConditions(p -> p.withTimestamp().eq(null)).toString(), matchesPattern(IS_NULL));
+		assertThat(FILTER_TEST.getConditions(p -> p.withTimestamp().eq(T1)).toString(), matchesPattern(TEQ));
+		assertThat(FILTER_TEST.getConditions(p -> p.withTimestamp().isNotNull()).toString(), matchesPattern(IS_NOT_NULL));
+		assertThat(FILTER_TEST.getConditions(p -> p.withTimestamp().ne(null)).toString(), matchesPattern(IS_NOT_NULL));
+		assertThat(FILTER_TEST.getConditions(p -> p.withTimestamp().ne(T1)).toString(), matchesPattern(TNE));
+		assertThat(FILTER_TEST.getConditions(p -> p.withTimestamp().ge(T1)).toString(), matchesPattern(TGE));
+		assertThat(FILTER_TEST.getConditions(p -> p.withTimestamp().gt(T1)).toString(), matchesPattern(TGT));
+		assertThat(FILTER_TEST.getConditions(p -> p.withTimestamp().le(T1)).toString(), matchesPattern(TLE));
+		assertThat(FILTER_TEST.getConditions(p -> p.withTimestamp().lt(T1)).toString(), matchesPattern(TLT));
+		assertThat(FILTER_TEST.getConditions(p -> p.withTimestamp().between(T1,T2)).toString(), matchesPattern(TBET));
+		assertThrows(UnsupportedOperationException.class, () -> FILTER_TEST.getConditions(p -> p.withTimestamp().like(T1)) );
+		assertThat(FILTER_TEST.getConditions(p -> p.withTimestamp().in(new Timestamp[] {T1,T2})).toString(), matchesPattern(TIN));
+		assertThat(FILTER_TEST.getConditions(p -> p.withTimestamp().notIn(new Timestamp[] {T1,T2})).toString(), matchesPattern(TNOT_IN));
 	}
 	
+	@Test()
+	void orPropertyDAOTest() {
+		Pattern PAT = Pattern.compile("\\(\\s*"
+			+FNAME + " is null"
+			+ "\\s*or\\s*" 
+			+ FNAME + " is not null"
+			+ "\\s*or\\s*"
+			+FNAME + " is null"
+			+"\\s*\\)",Pattern.MULTILINE);
+		assertThat(FILTER_TEST.getConditions(p -> p.withString().isNull()
+				.or(p.withString().isNotNull())
+				.or(p.withString().isNull())
+				).toString(), 
+				matchesPattern(PAT));
+		assertThat(FILTER_TEST.getConditions(p -> p.withString().isNull()
+				.or(null)
+				).toString(), 
+				matchesPattern(IS_NULL));
+	}
+	
+	@Test()
+	void andPropertyDAOTest() {
+		Pattern PAT = Pattern.compile("\\(\\s*"
+			+FNAME + " is null"
+			+"\\s*and\\s*" 
+			+FNAME + " is not null"
+			+ "\\s*and\\s*"
+			+FNAME + " is null"
+			+"\\s*\\)"
+			,Pattern.MULTILINE);
+		assertThat(FILTER_TEST.getConditions(p -> p.withString().isNull()
+			.and(p.withString().isNotNull())
+			.and(p.withString().isNull())
+			).toString(), 
+			matchesPattern(PAT));
+		assertThat(FILTER_TEST.getConditions(p -> p.withString().isNull()
+			.and(null)
+			).toString(), 
+			matchesPattern(IS_NULL));
+	}
+
 }
-
-
