@@ -38,14 +38,15 @@ public class InsertRandomInvoicesTest extends AbstractOccamTest {
 			invoice = AON.insertInvoice(getOccam(),invoice);
 			AccountingInvoiceDAO.saveFinances(ctx, invoice);
 			if (invoice.isVatAccrualPayment() && AonCollectionUtils.isNotEmpty(invoice.getFinances()) && AonRandom.gt(40)) {
-				AonRandom.get( invoice.getFinances() );
 				Finance finance = AonRandom.get(invoice.getFinances());
-				FinanceTracking tracking = new FinanceTracking()
-						.setDomain(invoice.getDomain())
-						.setFinance(finance)
-						.setTrackingDate( AonRandom.getFutureDate(finance.getDueDate()) )
-						.setAmount(finance.getAmount() );
-				FinanceTrackingDAO.pay(ctx, tracking);
+				if (finance != null) {
+					FinanceTracking tracking = new FinanceTracking()
+							.setDomain(invoice.getDomain())
+							.setFinance(finance)
+							.setTrackingDate( AonRandom.getFutureDate(finance.getDueDate()) )
+							.setAmount(finance.getAmount() );
+					FinanceTrackingDAO.pay(ctx, tracking);
+				}
 			}
 			System.out.println(MessageFormat.format("\t\t ["
 					+ AonStringUtils.repeat("-", count)
