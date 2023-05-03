@@ -22,7 +22,6 @@ import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraft.DateField;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.BooleanEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.DecimalEventMetaData;
 import com.esferalia.aon.gwt.payroll.client.AbstractEventsDraftObject.EventMetaData;
-import com.esferalia.aon.gwt.payroll.client.Employee.MyStyle;
 import com.esferalia.aon.gwt.payroll.shared.Activity;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.AgreementDraft;
@@ -186,6 +185,7 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		void onCollapseEmployees();
 		
 		void onShowEmployees(boolean isCollapsed);
+		
 	}
 	
 	protected static class HideScrollPanel extends ScrollPanel {
@@ -353,8 +353,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 	private List<TreeItem> employeeCentinels;
 	
-	private EnterpriseContext enterpriseContext;
-
 	private AonButton showMenuButton;
 	private boolean employeeTreeShowed = true;
 	private boolean employeeTreeCollapsed = false;
@@ -420,21 +418,9 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 
 			@Override
 			public void onSuccess(Enterprise[] enterprises) {
-				enterprisesService.getEnterpriseContext(new AsyncCallback<EnterpriseContext>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						Window.alert("NO");
-					}
-
-					@Override
-					public void onSuccess(EnterpriseContext enterpriseContextDB) {
-						enterpriseContext = enterpriseContextDB;
-						for (Enterprise enterprise : enterprises)
-							Employees.this.onEnterprise(enterprise);
-						toolbar.setVisibleLoadingButton(false);
-					}
-				});
+				for (Enterprise enterprise : enterprises)
+					Employees.this.onEnterprise(enterprise);
+				toolbar.setVisibleLoadingButton(false);
 			}
 
 		});
@@ -913,10 +899,6 @@ public class Employees extends ResizeComposite implements OpenHandler<TreeItem>,
 		return employeesService;
 	}
 	
-	EnterpriseContext getEnterpriseContext() {
-		return enterpriseContext;
-	}
-
 	AonEmployeesTreeToolbar getOptionsToolbar() {
 		return toolbar;
 	}

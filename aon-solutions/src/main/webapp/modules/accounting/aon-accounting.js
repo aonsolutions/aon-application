@@ -83,18 +83,6 @@ export class AonAccounting extends AonElement {
 		
 		if(this.dur.isBank()) {
 			options.push({
-				id: 'banks',
-				name: MSG.BANKS + '[Hasta el 31/12/2022]',
-				icon: MATERIAL_ICONS.ACCOUNT_BALANCE,
-				fn: () => {
-					this.getApplication().removeSidenavById("Opciones");
-					this.clearElementById(this.getApplication().getContent().id);
-					GWT.load(GWT.CHECKIT, this.getApplication().CONTENT);
-					this.loader(`#${this.getApplication().getContent().id} .aon_toolbar`);
-				}
-			});
-
-			options.push({
 				id: 'banksnordigen',
 				name: MSG.BANKS,
 				icon: MATERIAL_ICONS.ACCOUNT_BALANCE,

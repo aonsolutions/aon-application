@@ -38,7 +38,8 @@ public class FinanceJSON {
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(JsonUtils.getInteger(json, IJsonNames.DOMAIN))
 				.setPayMethod(paymethod)
-				.setPayMethodType(PayMethodType.safeValueOf(json.optString(IJsonNames.PAYMETHOD)))
+				.setPayMethodName(JsonUtils.getString(json, IJsonNames.PAYMETHOD_NAME))
+				.setPayMethodType(PayMethodType.safeValueOf(JsonUtils.getString(json, IJsonNames.PAYMETHOD_TYPE)))
 				.setBankAccount(new BankAccount(json.optString(IJsonNames.BANK_ACCOUNT)))
 				.setAmount(JsonUtils.getdouble(json, IJsonNames.AMOUNT))
 				.setDueDate(date);
@@ -57,6 +58,8 @@ public class FinanceJSON {
 			.put(IJsonNames.DOMAIN, finance.getDomain())
 			.put(IJsonNames.DUE_DATE, AonDateUtils.format(finance.getDueDate(), "yyyy-MM-dd"))
 			.put(IJsonNames.PAYMETHOD, finance.getPayMethod())
+			.put(IJsonNames.PAYMETHOD_NAME, finance.getPayMethodName() != null ? finance.getPayMethodName() : null)
+			.put(IJsonNames.PAYMETHOD_TYPE, finance.getPayMethodType() != null ? finance.getPayMethodType().name() : null)
 			.put(IJsonNames.BANK_ACCOUNT, finance.getBankAccount() != null
 				? finance.getBankAccount().getIban() : null)
 			.put(IJsonNames.AMOUNT, finance.getAmount());

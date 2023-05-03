@@ -376,6 +376,8 @@ public final class IJsonNames {
 	public static final String PAYMENT = "payment";
 	public static final String PAY_METHOD = "payMethod";
 	public static final String PAYMETHOD = "paymethod";
+	public static final String PAYMETHOD_NAME = "paymethodName";
+	public static final String PAYMETHOD_TYPE = "paymethodType";
 	public static final String PENDING = "pending";
 	public static final String PER_PAGE = "perPage";
 	public static final String PERCENTAGE = "percentage";
