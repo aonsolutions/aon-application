@@ -13,7 +13,9 @@ import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
@@ -21,12 +23,14 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
+import com.esferalia.aon.occam.api.model.type.SecurityLevel;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -38,9 +42,15 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public abstract class CustomerFeeDialog extends AonCustomDialog {
 
-	// ------------------------------------------------- Variables
+	// ------------------------------------------------- Variables (UI)
 	
 	private HTMLPanel container;
+	private HTMLPanel mainPanel;
+	
+	private HTMLPanel messagePanel;
+	
+	private HTMLPanel customerPanel;
+	private SuggestBox customerSuggestBox;
 	
 	private HTMLPanel lineConfidentialPanel;
 	private TextBox lineTextBox;
@@ -79,8 +89,12 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 	
 	private HTMLPanel buttonsPanel;
 	
+	// ------------------------------------------------- Variables
+	
 	private static RegistryServiceAsync SERVICE;
 	private RegistryModuleOptions options;
+	
+	private Map<String, Customer> customerSuggestions = new TreeMap<>();
 	private Map<String, OldItem> productSuggestions = new TreeMap<>();
 	
 	private Map<String, Workplace> workplaceSuggestions = new TreeMap<>();
@@ -90,6 +104,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 
 	private Fee fee;
 	private boolean isSameProduct = false;
+	private boolean isNewFee = false;
 	private OldItem item;
 
 	// ------------------------------------------------- Constructor
@@ -120,20 +135,45 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		initView();
 		showDialog();
 	}
+	
+	protected CustomerFeeDialog(RegistryModuleOptions options) {
+		setCaption("Creador Cuota");
+		
+		this.isNewFee = true;
+		this.options = options;
+		
+		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
+		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
+		
+		initView();
+		showDialog();
+	}
 
 	// ------------------------------------------------- Auxiliar Methods
 
 	private void initView() {
+		mainPanel = new HTMLPanel("");
+		mainPanel.addStyleName(AON.CSS.aonFlexColumn());
+		mainPanel.getElement().getStyle().setProperty("margin-top", ".5rem");
+		
+		messagePanel = new HTMLPanel("");
+		mainPanel.add(messagePanel);
+		
 		container = new HTMLPanel("");
 		container.addStyleName(AON.CSS.aonFlexColumn());
-		container.getElement().getStyle().setProperty("margin", "1rem");
+		container.getElement().getStyle().setProperty("margin", "0 1rem 1rem");
 		
-		if(null != this.fee) {
+		if(this.isNewFee) {
+			createCustomerPanel();
+			container.add(customerPanel);
+		}
+		
+		if(null != this.fee || this.isNewFee) {
 			createLineConfidentialPanel();
 			container.add(lineConfidentialPanel);
 		} 
 		
-		if(null != this.fee || this.isSameProduct) {
+		if(null != this.fee || this.isSameProduct || this.isNewFee) {
 			createProductPanel();
 			container.add(productPanel);
 		} 
@@ -142,7 +182,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		createDatesPanel();
 		createPeriodicityPanel();
 		
-		if(null != this.fee) {
+		if(null != this.fee || this.isNewFee) {
 			createWorkplacePanel();
 			container.add(workplacePanel);
 			
@@ -159,7 +199,65 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		getButtonsPanel();
 		container.add(buttonsPanel);
 		
-		this.setWidget(container);
+		mainPanel.add(container);
+		
+		this.setWidget(mainPanel);
+	}
+	
+	private void createCustomerPanel() {
+		customerPanel = new HTMLPanel("");
+		customerPanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		Label customerLabel = new Label("Cliente");
+		customerLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
+		customerLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		
+		customerSuggestBox = new SuggestBox();
+		customerSuggestBox.setWidth("100%");
+		customerSuggestBox.setHeight("2em");
+		customerSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
+		customerSuggestBox.getElement().getStyle().setProperty("min-width", "400px");
+		customerSuggestBox.setAutoSelectEnabled(false);
+		customerSuggestBox.getElement().setPropertyString("placeholder", "Cliente: busque por nombre, nif o alias");
+		
+		customerSuggestBox.addSelectionHandler(e -> {
+			customerSuggestBox.hideSuggestionList();
+		});
+		
+		customerSuggestBox.addKeyUpHandler(e -> {
+			String customerQuery = customerSuggestBox.getValue();
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				customerSuggestBox.setValue("");
+				customerQuery = null;
+				getCustomersSuggestion(customerQuery);
+			} else if(AonStringUtils.isNotBlank(customerQuery) && customerQuery.length() > 3) 
+				getCustomersSuggestion(customerQuery);
+		});
+		
+		customerPanel.add(customerLabel);
+		customerPanel.add(customerSuggestBox);
+	}
+
+	private void getCustomersSuggestion(String customerQuery) {
+		SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, Customer>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Customer> customerSuggestionsDB) {
+				customerSuggestions = customerSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(customerSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(customerSuggestions.keySet());
+				customerSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
 	}
 
 	private void createLineConfidentialPanel() {
@@ -175,16 +273,16 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		lineTextBox.setWidth("8.2em");
 		lineTextBox.getElement().getStyle().setProperty("padding", "0 5px");
 		lineTextBox.addValueChangeHandler(e -> { if(null != fee) fee.setLine(Double.parseDouble(e.getValue()));});
-		lineTextBox.setValue(fee.getLine().toString());
+		if(null != fee) lineTextBox.setValue(fee.getLine().toString());
 		
 		Label confidentialLabel = new Label("Confidencial");
 		confidentialLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		confidentialButton = new Button();
 		confidentialButton.addClickHandler(e -> {
 			getEnableDisableButton(confidentialButton, !isActiveToggleButton(confidentialButton));
-			if(null != fee) fee.setConfidential(isActiveToggleButton(confidentialButton));
+			if(null != fee) fee.setSecurityLevel(SecurityLevel.safeValueOf(isActiveToggleButton(confidentialButton) ? 1 : 0));
 		});
-		getEnableDisableButton(confidentialButton, fee.isConfidential());
+		getEnableDisableButton(confidentialButton, null != fee && fee.getSecurityLevel() != null && fee.getSecurityLevel() == SecurityLevel.CONFIDENTIAL);
 		
 		lineConfidentialPanel.add(lineLabel);
 		lineConfidentialPanel.add(lineTextBox);
@@ -289,7 +387,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		quantityPricePanel.addStyleName(AON.CSS.aonItemFlex());
 		
 		Label quantityLabel = new Label();
-		if(null != this.fee) {
+		if(null != this.fee || this.isNewFee) {
 			quantityLabel = new Label("Cantidad");
 			quantityLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
 			quantityLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -299,11 +397,11 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			quantityTextBox.setHeight("2em");
 			quantityTextBox.getElement().getStyle().setProperty("padding", "0 5px");
 			quantityTextBox.addValueChangeHandler(e -> { if(null != fee) fee.setQuantity(Double.parseDouble(e.getValue()));});
-			if(null != fee) quantityTextBox.setValue(fee.getQuantity().toString());
+			if(null != fee && null != fee.getQuantity()) quantityTextBox.setValue(fee.getQuantity().toString());
 		}
 		
 		Label priceLabel = new Label("Precio");
-		if(null == this.fee) priceLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
+		if(null == this.fee && !this.isNewFee) priceLabel.getElement().getStyle().setProperty("min-width", "5.5rem");
 		else priceLabel.setWidth("3.5rem");
 		priceLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		
@@ -312,7 +410,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		priceTextBox.setWidth("8.2em");
 		priceTextBox.getElement().getStyle().setProperty("padding", "0 5px");
 		priceTextBox.addValueChangeHandler(e -> { if(null != fee) fee.setPrice(Double.parseDouble(e.getValue()));});
-		if(null != fee) priceTextBox.setValue(fee.getPrice().toString());
+		if(null != fee && null != fee.getPrice()) priceTextBox.setValue(fee.getPrice().toString());
 		
 		Label discountLabel = new Label("Dto.");
 		discountLabel.setWidth("3.5rem");
@@ -325,7 +423,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		discountTextBox.addValueChangeHandler(e -> { if(null != fee) fee.setDiscountExpr(e.getValue());});
 		if(null != fee) discountTextBox.setValue(fee.getDiscountExpr());
 		
-		if(null != this.fee) {
+		if(null != this.fee || this.isNewFee) {
 			quantityPricePanel.add(quantityLabel);
 			quantityPricePanel.add(quantityTextBox);
 		}
@@ -401,7 +499,9 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			periodicityPanel.add(monthListBox);
 			periodicityPanel.add(yearListBox);
 			
-			if(null != this.fee) {
+			if(null != fee) setSelectedValueLB(yearListBox, fee.getBillingDate().getYear() + "");
+			
+			if(null != this.fee || this.isNewFee) {
 				periodicityPanel.add(periodLabel);
 				periodicityPanel.add(periodListBox);
 			}
@@ -409,7 +509,7 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		});
 		
 		periodLabel = new Label();
-		if(null != this.fee) {
+		if(null != this.fee || this.isNewFee) {
 			periodLabel = new Label("Periodo");
 			periodLabel.setWidth("3.5rem");
 			periodLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -710,6 +810,9 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 				Integer minYear = firstEntry.get().getKey();
 				Integer maxYear = firstEntry.get().getValue();
 				
+				Integer currentYear = new Date().getYear() + 1900;
+				if(currentYear > maxYear) maxYear = currentYear;
+				
 				ListBox lb = new ListBox();
 				lb.setHeight("2em");
 				lb.getElement().getStyle().setProperty("padding", "0 5px");
@@ -776,7 +879,15 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		Button acceptBtnDialog = null;
 		
-		if(null != this.fee) {
+		if(this.isNewFee) {
+			acceptBtnDialog = new Button();
+			acceptBtnDialog.setStyleName(AON.CSS.aonDialogButton());
+			acceptBtnDialog.addStyleName(AON.CSS.aonIconSave());
+			acceptBtnDialog.setText(AON.MSG.saveAction());
+			acceptBtnDialog.addClickHandler(e -> {
+				createNewFee();
+			});
+		} else if(null != this.fee) {
 			acceptBtnDialog = new Button();
 			acceptBtnDialog.setStyleName(AON.CSS.aonDialogButton());
 			acceptBtnDialog.addStyleName(AON.CSS.aonIconSave());
@@ -799,6 +910,55 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		buttonsPanel.add(acceptBtnDialog);
 	}
 
+	private void createNewFee() {
+		Fee newFee = new Fee();
+		
+		if(AonStringUtils.isNotBlank(projectSuggestBox.getValue())) newFee.setProject(projectSuggestions.get(projectSuggestBox.getValue()));
+		if(AonStringUtils.isNotBlank(customerSuggestBox.getValue())) newFee.setCustomer(customerSuggestions.get(customerSuggestBox.getValue()));
+		
+		if(AonStringUtils.isBlank(customerSuggestBox.getValue())) {
+			AonMessagePanel.showError(messagePanel, "El campo cliente es obligatorio");
+			return;
+		}
+		
+		newFee.setLine(AonStringUtils.isBlank(lineTextBox.getValue()) ? 1.00 : Double.parseDouble(lineTextBox.getValue()));
+		newFee.setItem(item);
+		
+		if(item == null) {
+			AonMessagePanel.showError(messagePanel, "El campo producto es obligatorio");
+			return;
+		}
+		
+		newFee.setDescription(newFee.getItem().getProduct().getName());
+		newFee.setQuantity(AonStringUtils.isBlank(quantityTextBox.getValue()) ? null : Double.parseDouble(quantityTextBox.getValue()));
+		newFee.setPrice(AonStringUtils.isBlank(priceTextBox.getValue()) ? null : Double.parseDouble(priceTextBox.getValue()));
+		newFee.setDiscountExpr(discountTextBox.getValue());
+		
+		newFee.setStartDate(startDateBox.getValue());
+		newFee.setEndDate(endDateBox.getValue());
+		newFee.setBillingDate(createBillingDate());
+		
+		if(newFee.getStartDate() == null || newFee.getEndDate() == null || newFee.getBillingDate() == null) {
+			AonMessagePanel.showError(messagePanel, "Las fechas desde, hasta y facturaci\u00f3n son obligatorias");
+			return;
+		}
+		
+		newFee.setPeriod(BillingPeriod.safeValueOf(periodListBox.getSelectedValue()));
+		newFee.setSecurityLevel(SecurityLevel.safeValueOf(isActiveToggleButton(confidentialButton) ? 1 : 0));
+		
+		if(AonStringUtils.isNotBlank(invoicingGroupSuggestBox.getValue())) newFee.setInvoicingGroup(invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue()));
+		if(AonStringUtils.isNotBlank(sellerSuggestBox.getValue())) newFee.setSeller(sellerSuggestions.get(sellerSuggestBox.getValue()));
+		if(AonStringUtils.isNotBlank(workplaceSuggestBox.getValue())) newFee.setWorkplace(workplaceSuggestions.get(workplaceSuggestBox.getValue()));
+		
+		if(AonStringUtils.isBlank(workplaceSuggestBox.getValue())) {
+			AonMessagePanel.showError(messagePanel, "El campo centro de trabajo es obligatorio");
+			return;
+		}
+		
+		hide();
+		onCreate(newFee);
+	}
+
 	private void acceptDialog() {
 		onAccept(
 			Optional.ofNullable(item),
@@ -814,5 +974,6 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 
 	protected abstract void onAccept(Fee fee);
 	protected abstract void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate);
+	protected abstract void onCreate(Fee fee);
 
 }
