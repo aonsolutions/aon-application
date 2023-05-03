@@ -10,6 +10,7 @@ import net.aonsolutions.occam.test.core.CoreTestSuite;
 import net.aonsolutions.occam.test.dao.DAOTestSuite;
 import net.aonsolutions.occam.test.dao.client.PublicDomainTestSuite;
 import net.aonsolutions.occam.test.invoice.InvoiceTestSuite;
+import net.aonsolutions.occam.test.json.JSONTestSuite;
 
 @Suite
 @SelectClasses({
@@ -17,6 +18,7 @@ import net.aonsolutions.occam.test.invoice.InvoiceTestSuite;
 	,ConstantsTestSuite.class
 	,ConfigTestSuite.class
 	,InvoiceTestSuite.class
+	,JSONTestSuite.class
 	,DAOTestSuite.class
 	,PublicDomainTestSuite.class
 })

@@ -44,7 +44,12 @@ public class AonRandom {
         		?faker.lorem().characters(0, maxLength)
         		:null;
     }
-    public static Integer integer( int nullThreshold,  int maxLength ) {
+    public static Integer integer( int nullThreshold ) {
+    	return ( gt(nullThreshold) )
+        		?Integer.valueOf( getInt(0, Integer.MAX_VALUE-1) )
+        		:null;
+    }
+    public static Integer integer( int nullThreshold,  int max ) {
     	return ( gt(nullThreshold) )
         		?Integer.valueOf( getInt(0, 20) )
         		:null;

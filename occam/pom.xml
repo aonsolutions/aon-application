@@ -90,21 +90,6 @@
 										</limit>
 									</limits>
 								</rule>
-<!--								
-								<rule>
-									<element>SOURCEFILE</element>
-									<excludes>
-										<exclude>com.asimio.demo.Application</exclude>
-									</excludes>
-									<limits>
-										<limit>
-											<counter>LINE</counter>
-											<value>COVEREDRATIO</value>
-											<minimum>50%</minimum>
-										</limit>
-									</limits>
-								</rule>
--->
 							</rules>
 						</configuration>
 					</execution>

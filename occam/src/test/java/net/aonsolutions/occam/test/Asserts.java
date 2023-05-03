@@ -1,8 +1,11 @@
 package net.aonsolutions.occam.test;
 
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.util.Collection;
 
 import net.aonsolutions.occam.api.config.Activity;
 import net.aonsolutions.occam.api.config.Domain;
@@ -22,6 +25,17 @@ public class Asserts {
 		if ( expected != null) assertNotNull(actual,msg);
 	}
 
+	public static void assertEqualsCollection(Collection<?> expected, Collection<?> actual, String msg) {
+		if ( (expected == null || expected.isEmpty()) && ( (actual != null && !actual.isEmpty()))) 
+			fail( msg + " actual List is not Empty");
+		if ( (expected != null && !expected.isEmpty()) 
+			&& (actual == null || actual.isEmpty()))  
+			fail( msg + " actual List is Empty");
+		if ( expected != null && actual != null) {
+			assertEquals(expected.size(), actual.size()," sizes not fit");	
+		}
+	}
+	
 	public static void assertEqualsDomain(Domain expected, Domain actual) {
 		assertEqualsNulls(expected, actual,"Domain");
 		assertEquals(expected.getId(), actual.getId(),"Id");
