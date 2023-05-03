@@ -8,7 +8,7 @@ import net.aonsolutions.occam.test.config.ConfigTestSuite;
 import net.aonsolutions.occam.test.constants.ConstantsTestSuite;
 import net.aonsolutions.occam.test.core.CoreTestSuite;
 import net.aonsolutions.occam.test.dao.DAOTestSuite;
-import net.aonsolutions.occam.test.dao.client.PublicDomainTestSuite;
+import net.aonsolutions.occam.test.dao.client.PublicTestSuite;
 import net.aonsolutions.occam.test.invoice.InvoiceTestSuite;
 import net.aonsolutions.occam.test.json.JSONTestSuite;
 
@@ -20,7 +20,7 @@ import net.aonsolutions.occam.test.json.JSONTestSuite;
 	,InvoiceTestSuite.class
 	,JSONTestSuite.class
 	,DAOTestSuite.class
-	,PublicDomainTestSuite.class
+	,PublicTestSuite.class
 })
 public class OccamTestSuite {
 

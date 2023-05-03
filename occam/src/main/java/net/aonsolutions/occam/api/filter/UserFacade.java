@@ -1,9 +1,11 @@
 package net.aonsolutions.occam.api.filter;
 
 import java.io.Serializable;
+import java.util.stream.Stream;
 
 import net.aonsolutions.occam.api.Filter;
 import net.aonsolutions.occam.api.Filter.Property;
+import net.aonsolutions.occam.api.config.User;
 import net.aonsolutions.occam.api.filter.AonFacade.AonBuilder;
 public interface UserFacade extends Serializable{
 
@@ -26,8 +28,9 @@ public interface UserFacade extends Serializable{
 	}
 
 	@FunctionalInterface
-	public interface UserBuilderFactory<T> {
-		public UserBuilder<T> create( UserBuilder<T> builder );
+	public interface UserBuilderFactory {
+		public UserBuilder<Stream<User>> create( UserBuilder<Stream<User>> builder );
 	}
+	
 
 }

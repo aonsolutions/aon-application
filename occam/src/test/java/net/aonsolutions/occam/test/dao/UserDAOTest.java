@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
 import net.aonsolutions.occam.api.config.User;
@@ -101,4 +102,14 @@ class UserDAOTest extends AbstractOccamTest {
 		Asserts.assertEqualsUser(expected, optActual.get());
 	}
 	
+	@Test()
+	void denyReadOneTest() {
+		try {
+			ctx.denyRead();
+			SecurityException e = assertThrows(SecurityException.class, () -> UserDAO.get(ctx,p -> p.withLogin().eq( USER )));
+			assertEquals(AonError.READ_FORBIDDEN.getMessage(), e.getMessage());
+		} finally {
+			ctx.allowRead();
+		}
+	}
 }

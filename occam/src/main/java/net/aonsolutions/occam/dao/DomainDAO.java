@@ -100,6 +100,7 @@ public class DomainDAO {
 			this.where(filter);
 		}
 		
+		@Override
 		public Stream<Domain> build( ) {
 			return ((limit == null)?this.where:this.limit)
 				.fetch()

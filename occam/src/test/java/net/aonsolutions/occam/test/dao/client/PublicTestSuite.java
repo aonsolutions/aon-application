@@ -7,8 +7,9 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @SelectClasses({
 	PublicDomainTest.class
+	,PublicUserTest.class
 })
-public class PublicDomainTestSuite {
+public class PublicTestSuite {
 
 	
 }

@@ -13,7 +13,6 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectSelectStep;
 import org.jooq.SelectWithTiesAfterOffsetStep;
-import org.jooq.TableLike;
 
 import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.Filter.Property;
@@ -42,7 +41,7 @@ public class UserDAO {
 		return get(ctx, filter, b -> b); 
 	}
 	
-	public static Optional<User> get(AONContext ctx, UserFilter filter, UserBuilderFactory<Stream<User>> factory){
+	public static Optional<User> get(AONContext ctx, UserFilter filter, UserBuilderFactory factory){
 		return getStream(ctx, filter, factory).findFirst(); 
 	}
 
@@ -50,7 +49,8 @@ public class UserDAO {
 		return getStream(ctx, filter, b -> b); 
 	}
 
-	public static Stream<User> getStream(AONContext ctx, UserFilter filter, UserBuilderFactory<Stream<User>> factory){
+	public static Stream<User> getStream(AONContext ctx, UserFilter filter, UserBuilderFactory factory){
+		ctx.checkRead();
 		DAOUtils.checkNullFactory(factory);
 		DAOUtils.checkNullFilter(filter);
 		return factory.create(new UserSelectBuilderDAO(ctx,filter)).build();
@@ -69,17 +69,11 @@ public class UserDAO {
 		
 		public UserSelectBuilderDAO( AONContext ctx, UserFilter filter ) {
 			this.select = ctx.getDslContext().select(USER_BASIC_FIELDS);
-			this.from(USER);
+			this.from = select.from(USER);
 			this.where(filter);
 		}
 		
-		public UserBuilder<Stream<User>> from(TableLike<?> table) {
-			if ( this.from == null) {
-				this.from = select.from(table);
-			}
-			return this;
-		}
-		
+		@Override
 		public Stream<User> build( ) {
 			return ((limit == null)?this.where:this.limit)
 				.fetch()
@@ -87,7 +81,7 @@ public class UserDAO {
 				.map(new UserFiller());
 		}
 		
-		private UserBuilder<Stream<User>> where(UserFilter filter) {
+		private UserSelectBuilderDAO where(UserFilter filter) {
 			if ( filter.filter(USER_FILTERS) instanceof FilterDAO filterDAO) {
 				this.where = this.from.where(  filterDAO.getCondition() );
 				return this;
@@ -96,7 +90,7 @@ public class UserDAO {
 		}
 
 		@Override
-		public UserBuilder<Stream<User>> limit(int offest, int rows) {
+		public UserSelectBuilderDAO limit(int offest, int rows) {
 			this.limit = this.where.limit(offest, rows);
 			return this;
 		}
