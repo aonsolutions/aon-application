@@ -24,7 +24,6 @@ public class ActivityDAO {
 			return map(r, () -> Optional.of(new Activity()));
 		}
 		
-		@Override
 		Optional<Activity> map(Record r, Supplier<Optional<Activity>> supplier) {
 			Activity act = new Activity()
 				.setId(r.getValue(ENTERPRISE_ACTIVITY.ID))

@@ -149,7 +149,6 @@ public class InvoiceDAO {
 			return map(r, Invoice::new);
 		}
 		
-		@Override
 		Invoice map(Record r, Supplier<Invoice> supplier) {
 			return supplier.get()
 				.setId(getValue(r,INVOICE.ID))

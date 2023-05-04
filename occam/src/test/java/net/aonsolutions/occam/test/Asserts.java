@@ -1,9 +1,11 @@
 package net.aonsolutions.occam.test;
 
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collection;
 
@@ -25,6 +27,19 @@ public class Asserts {
 		if ( expected != null) assertNotNull(actual,msg);
 	}
 
+	
+	public static void assertNullCollection(String msg,Collection<?> actual) {
+		assertNull(actual,msg);		
+	}
+	public static void assertNotEmpty(Collection<?> expected, String msg) {
+		assertNotNull(expected,msg);
+		assertFalse(expected.isEmpty(),msg);
+	}
+	public static void assertEmpty(Collection<?> expected, String msg) {
+		assertNotNull(expected,msg);
+		assertTrue(expected.isEmpty(),msg);
+	}
+	
 	public static void assertEqualsCollection(Collection<?> expected, Collection<?> actual, String msg) {
 		if ( (expected == null || expected.isEmpty()) && ( (actual != null && !actual.isEmpty()))) 
 			fail( msg + " actual List is not Empty");
@@ -42,7 +57,10 @@ public class Asserts {
 		assertEquals(expected.getName(), actual.getName(),"Name");
 		assertEquals(expected.getDescription(), actual.getDescription(),"Description");
 		assertEquals(expected.getOwner(), actual.getOwner(),"Owner");
-		assertEquals(expected.getParent(), actual.getParent(),"ParentId");
+		assertEqualsNulls(expected.getParent(), actual.getParent(),"Parent Domain");
+		if ( expected.getParent().isPresent() ) {
+			assertEqualsDomain(expected.getParent().orElse(null), actual.getParent().orElse(null));
+		}
 		assertEquals(expected.getType(), actual.getType(),"DomainType");
 		assertEquals(expected.getSubDomainSuffix(), actual.getSubDomainSuffix(),"SubDomainSuffix");
 		assertEquals(expected.isEnableHeredity(), actual.isEnableHeredity(),"EnableHeredity");

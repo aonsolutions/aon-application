@@ -1,19 +1,20 @@
 package net.aonsolutions.occam.api;
 
 import java.util.Date;
+import java.util.Optional;
 
 public interface HasAudit<T> {
 
-	String getCreationUser();
+	Optional<String> getCreationUser();
 	T setCreationUser( String user);
 	
-	Date getCreationDate();
+	Optional<Date> getCreationDate();
 	T setCreationDate( Date creationDate);
 	
-	String getModificationUser();
+	Optional<String> getModificationUser();
 	T setModificationUser( String user);
 	
-	Date getModificationDate();
+	Optional<Date> getModificationDate();
 	T setModificationDate( Date creationDate);
 
 }

@@ -220,8 +220,8 @@ public class Invoice implements Serializable, HasAudit<Invoice>, HasConfidential
 	}
 	// ---------------------------------------------------------- HasAudit<Invoice>
 	@Override
-	public String getCreationUser() {
-		return creationUser;
+	public Optional<String> getCreationUser() {
+		return Optional.ofNullable(creationUser);
 	}
 	@Override
 	public Invoice setCreationUser(String creationUser) {
@@ -230,8 +230,8 @@ public class Invoice implements Serializable, HasAudit<Invoice>, HasConfidential
 		return this;
 	}
 	@Override
-	public Date getCreationDate() {
-		return creationDate;
+	public Optional<Date> getCreationDate() {
+		return Optional.ofNullable(creationDate);
 	}
 	@Override
 	public Invoice setCreationDate(Date creationDate) {
@@ -240,8 +240,8 @@ public class Invoice implements Serializable, HasAudit<Invoice>, HasConfidential
 		return this;
 	}
 	@Override
-	public String getModificationUser() {
-		return modificationUser;
+	public Optional<String> getModificationUser() {
+		return Optional.ofNullable(modificationUser);
 	}
 	@Override
 	public Invoice setModificationUser(String modificationUser) {
@@ -250,8 +250,8 @@ public class Invoice implements Serializable, HasAudit<Invoice>, HasConfidential
 		return this;
 	}
 	@Override
-	public Date getModificationDate() {
-		return modificationDate;
+	public Optional<Date> getModificationDate() {
+		return Optional.ofNullable(modificationDate);
 	}
 	@Override
 	public Invoice setModificationDate(Date modificationDate) {

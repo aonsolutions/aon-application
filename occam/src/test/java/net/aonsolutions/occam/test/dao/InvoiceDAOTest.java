@@ -112,10 +112,10 @@ class InvoiceDAOTest extends AbstractOccamTest {
 			.and(p.withActivity().eq( AonObjectUtils.ifOptionalPresent( expected.getActivity(), a -> a.getId()) ))
 			.and(p.withActivityDescription().eq( AonObjectUtils.ifOptionalPresent( expected.getActivity(), a -> a.getDescription()) ))
 			.and(p.withActivityEpigraph().eq( AonObjectUtils.ifOptionalPresent( expected.getActivity(), a -> a.getEpigraph()) ))
-			.and(p.withCreationUser().eq( expected.getCreationUser() ))
-			.and(p.withCreationDate().eq( AonDateUtils.toTimestamp(expected.getCreationDate() )))
-			.and(p.withModificationUser().eq( expected.getModificationUser() ))
-			.and(p.withModificationDate().eq( AonDateUtils.toTimestamp(expected.getModificationDate() )))
+			.and(p.withCreationUser().eq( expected.getCreationUser().orElse(null) ))
+			.and(p.withCreationDate().eq( AonDateUtils.toTimestamp(expected.getCreationDate().orElse(null))))
+			.and(p.withModificationUser().eq( expected.getModificationUser().orElse(null)))
+			.and(p.withModificationDate().eq( AonDateUtils.toTimestamp(expected.getModificationDate().orElse(null))))
 			,b -> b.full()
 		);
 		assertTrue(optActual.isPresent(),"Invoice not found!");

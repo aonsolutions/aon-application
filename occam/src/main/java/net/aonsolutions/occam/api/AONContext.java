@@ -63,6 +63,9 @@ public class AONContext implements AutoCloseable {
 	public String getUser() {
 		return user;
 	}
+	public Occam getOccam() {
+		return new Occam().setDomainName(getDomainName()).setUser(getUser());
+	}
 
 	public DSLContext getDslContext() {
 		return dslContext;

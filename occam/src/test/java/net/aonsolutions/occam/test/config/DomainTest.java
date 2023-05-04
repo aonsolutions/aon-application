@@ -45,7 +45,7 @@ class DomainTest extends AbstractOccamTest {
 	@Test()
 	void dirtyParentTest() {
 		Domain d = new Domain();
-		d.setParent( Integer.MAX_VALUE);
+		d.setParent( new Domain().setId(Integer.MAX_VALUE) );
 		assertTrue(d.isDirty());
 	}
 	@Test()
@@ -62,26 +62,22 @@ class DomainTest extends AbstractOccamTest {
 	}
 	@Test()
 	void dirtyEnableHeredityTest() {
-		Domain d = new Domain();
-		d.setEnableHeredity( !d.isEnableHeredity() );
+		Domain d = new Domain().setEnableHeredity(true);
 		assertTrue(d.isDirty());
 	}
 	@Test()
 	void dirtyDomainManagementTest() {
-		Domain d = new Domain();
-		d.setDomainManagement( !d.isDomainManagement() );
+		Domain d = new Domain().setDomainManagement(true);
 		assertTrue(d.isDirty());
 	}
 	@Test()
 	void dirtyDisableDomainManagementTest() {
-		Domain d = new Domain();
-		d.setDisableDomainManagement(!d.isDisableDomainManagement());
+		Domain d = new Domain().setDisableDomainManagement(true);
 		assertTrue(d.isDirty());
 	}
 	@Test()
 	void dirtyActiveTest() {
-		Domain d = new Domain();
-		d.setActive( !d.isActive());
+		Domain d = new Domain().setActive(true);
 		assertTrue(d.isDirty());
 	}
 	@Test()

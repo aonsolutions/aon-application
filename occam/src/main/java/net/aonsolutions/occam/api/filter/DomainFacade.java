@@ -45,7 +45,11 @@ public interface DomainFacade extends Serializable{
 	
 	public interface DomainBuilder<T> extends AonBuilder<T> {
 		public DomainBuilder<T> limit(int offest, int rows);
+		public DomainBuilder<T> withParent();
+		public DomainBuilder<T> withAudit();
+		public DomainBuilder<T> withAllRow();
 		public DomainBuilder<T> full();
+		public DomainBuilder<T> withUsers();
 	}
 	
 	
