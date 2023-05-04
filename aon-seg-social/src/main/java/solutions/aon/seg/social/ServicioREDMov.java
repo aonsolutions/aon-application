@@ -39,7 +39,7 @@ public class ServicioREDMov extends ServicioREDRegeXML {
 		SSLContext sslContext = null;
 
 		try {
-			sslContext = Toolkit.getTrustedSSLContext(certificateInputStream, certificatePassword, certificateType);
+			sslContext = SSLContexts.custom().loadKeyMaterial(Toolkit.readStore(certificateInputStream, certificatePassword, certificateType), certificatePassword.toCharArray()).build();
 		} catch (Exception e1) {
 			throw new InvalidCertificateException();
 		}

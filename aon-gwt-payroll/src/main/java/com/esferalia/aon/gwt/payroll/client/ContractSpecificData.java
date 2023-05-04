@@ -430,8 +430,6 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		this.isTransform = null == contractTypeRecord ? false : contractTypeRecord.isTransform();
 		this.isExtension = contractEmployeeInfo.getContractInfo().isHasExtension();
 		
-		resetView();
-		
 		setDefaultView(contractEmployeeInfo.getContractInfo().getContractType());
 		reloadSepeData(finish);
 	}
@@ -1814,34 +1812,6 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			journeyTypeLB.addItem("JORNADA SEMANAL","S");
 			journeyTypeLB.addItem("JORNADA DIARIA","D");
 		}
-	}
-	
-	private void resetView() {
-		otherDataTableElement.getRows().getItem(1).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(2).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(3).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(4).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(5).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(6).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(7).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(8).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(9).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(10).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(11).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(12).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(13).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(14).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(15).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(16).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(17).getStyle().clearDisplay();
-		otherDataTableElement.getRows().getItem(18).getStyle().clearDisplay();
-		
-		workProgramDataCBPanel.getElement().getStyle().setDisplay(Display.NONE);
-		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
-		interimCauseCBPanel.getElement().getStyle().setDisplay(Display.NONE);
-		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
-		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
-		bonusCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 	}
 
 	private void setDefaultView() {

@@ -21,7 +21,7 @@ public class ProductAutoComplete {
 	
 	public static final BiConsumer<AONContext, Product> COMPLETE_DOMAIN = (ctx, product) -> {
 		if(product.getDomain() == null || product.getDomain().getId() == null) {
-			Domain domain = AON.getDomain(ctx.getDomainName(), ctx.getDomainId(), ctx.getUser());
+			Domain domain = AON.getDomain(ctx.getDomainName(), product.getDomain().getId(), ctx.getUser());
 			product.setDomain(domain);
 		}
 	};

@@ -23,11 +23,12 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ServiAgreementsFilter {
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private static String SERVIAGREEMENTS = "aconvenios";
 	
 	
 	public static Map<String, String> getServiAgreementsMap(boolean isConvenios) {
 		
-		InputStream is = ServiAgreement.get_agreements_file();
+		InputStream is = ServiAgreementsFilter.class.getResourceAsStream(SERVIAGREEMENTS + ".xml");
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 	    DocumentBuilder documentBuilder;
 	    Document document = null;
