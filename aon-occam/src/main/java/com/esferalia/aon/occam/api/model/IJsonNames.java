@@ -367,12 +367,15 @@ public final class IJsonNames {
 	public static final String PAID = "paid";
 	public static final String PARAMS = "params";
 	public static final String PARENT = "parent";
+	public static final String PARENT_APPS = "parentApps";
 	public static final String PARENT_DOMAIN = "parentDomain";
 	public static final String PARENT_ID = "parentId";
 	public static final String PARTICIPATION_PERCENT = "participationPercent";
 	public static final String PARTICIPATION_QUOTA = "participationQuota";
 	public static final String PASSWORD = "password";
+	public static final String PATH = "path";
 	public static final String PATTERN = "pattern";
+	public static final String PAYER = "payer";
 	public static final String PAYMENT = "payment";
 	public static final String PAY_METHOD = "payMethod";
 	public static final String PAYMETHOD = "paymethod";

@@ -411,41 +411,44 @@ public class Certificado {
 				{// DATA VACATION
 					HtmlForm formVacation = (HtmlForm) HtmlUnitToolkit
 							.wait4(htmlPage, p -> p.querySelector("#BeanMecanizacionOLIPre")).orElseThrow();
-					if (certificates.getDaysCtzVc() != null) {
-						DomNode input = formVacation.querySelector(
-								"[name=\"orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srDiasCotizacion\"]");
-						if (input == null) {
-							input = formVacation.querySelector(
-									"[name=\"orDatosTrabajador.orDatosInsercionCotizacionREAVacacionesPre.srMesesCotizados\"]");
+					if(certificates.getDaysCtzVc() != null && certificates.getDaysCtzVc() != 0) {
+						if (certificates.getDaysCtzVc() != null) {
+							DomNode input = formVacation.querySelector(
+									"[name=\"orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srDiasCotizacion\"]");
+							if (input == null) {
+								input = formVacation.querySelector(
+										"[name=\"orDatosTrabajador.orDatosInsercionCotizacionREAVacacionesPre.srMesesCotizados\"]");
+							}
+							if (input != null) {
+								((HtmlInput) input).setValue(certificates.getDaysCtzVc().toString());
+							}
 						}
-						if (input != null) {
-							((HtmlInput) input).setValue(certificates.getDaysCtzVc().toString());
-						}
+	
+						certificates.getBcccVc().ifPresent(d -> {
+							DomNode input = formVacation.querySelector(
+									"[name=\"orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasComunes\"]");
+							if (input != null) {
+								((HtmlInput) input).setValue(decimalFormat.format(d));
+							}
+						});
+	
+						certificates.getBcdVc().ifPresent(d -> {
+							DomNode input = formVacation.querySelector(
+									"[name=\"orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasDesempleo\"]");
+							if (input == null) {
+								input = formVacation.querySelector(
+										"[name=\"orDatosTrabajador.orDatosInsercionCotizacionREAVacacionesPre.srCotizacionDesempleo\"]");
+							}
+							if (input != null) {
+								((HtmlInput) input).setValue(decimalFormat.format(d));
+							}
+						});
 					}
-
-					certificates.getBcccVc().ifPresent(d -> {
-						DomNode input = formVacation.querySelector(
-								"[name=\"orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasComunes\"]");
-						if (input != null) {
-							((HtmlInput) input).setValue(decimalFormat.format(d));
-						}
-					});
-
-					certificates.getBcdVc().ifPresent(d -> {
-						DomNode input = formVacation.querySelector(
-								"[name=\"orDatosTrabajador.orDatosInsercionCotizacionVacacionesPre.srBaseContingenciasDesempleo\"]");
-						if (input == null) {
-							input = formVacation.querySelector(
-									"[name=\"orDatosTrabajador.orDatosInsercionCotizacionREAVacacionesPre.srCotizacionDesempleo\"]");
-						}
-						if (input != null) {
-							((HtmlInput) input).setValue(decimalFormat.format(d));
-						}
-					});
-
+					
 					htmlPage = ((HtmlSubmitInput) htmlPage
 							.querySelector("form[name=BeanMecanizacionOLIPre] input[name=btActualizarTotales]"))
 							.click();
+					
 					handleSepeExceptions(htmlPage);
 				}
 

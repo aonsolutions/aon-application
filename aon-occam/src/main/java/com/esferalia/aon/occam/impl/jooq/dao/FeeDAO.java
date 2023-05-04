@@ -317,7 +317,7 @@ public class FeeDAO {
 		ctx.getDslContext()
 			.update(CUSTOMER_FEE)
 				.set(CUSTOMER_FEE.DOMAIN, f.getDomain().getId())
-				.set(CUSTOMER_FEE.PROJECT, f.getProject().getId())
+				.set(CUSTOMER_FEE.PROJECT, null == f.getProject() ? null : f.getProject().getId())
 				.set(CUSTOMER_FEE.CUSTOMER, f.getCustomer().getId())
 				.set(CUSTOMER_FEE.LINE, f.getLine())
 				.set(CUSTOMER_FEE.ITEM, f.getItem().getId())
@@ -403,10 +403,13 @@ public class FeeDAO {
 			OldItem item = ItemFiller.buildItem(r);
 			productsSuggestion.put(r.get(PRODUCT.NAME) + " (" + r.get(PRODUCT.CODE) + ")", item);
 		});
+		
+		System.out.println("getProductsSuggestion size : " + productsSuggestion.size());
+		
 		return productsSuggestion;
 	}
 
-	public static Map<String, String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
+	public static Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query) {
 		// Condition
 		Condition condition = CUSTOMER.DOMAIN.eq(domainId);
 		if(AonStringUtils.isNotBlank(query)) 
@@ -416,15 +419,21 @@ public class FeeDAO {
 						.or(REGISTRY.ALIAS.isNotNull().and(REGISTRY.ALIAS.containsIgnoreCase(query)))
 				);
 		
-		Result<Record3<String, String, String>> customerRecords = ctx.getDslContext().selectDistinct(REGISTRY.NAME, REGISTRY.DOCUMENT, REGISTRY.ALIAS)
-			.from(REGISTRY)
-			.join(CUSTOMER)
-			.on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
-			.where(condition)
-			.fetch();
+		Result<Record> feeRecords = ctx.getDslContext().select().from(CUSTOMER)
+				.join(REGISTRY).on(CUSTOMER.REGISTRY.eq(REGISTRY.ID))
+				.where(condition)
+				.orderBy(REGISTRY.NAME)
+				.fetch();
 		
-		Map<String, String> customerSuggestion = new TreeMap<>();
-		customerRecords.forEach(r -> customerSuggestion.put(r.get(REGISTRY.NAME) + " ( " + r.get(REGISTRY.DOCUMENT) + " )" + (AonStringUtils.isBlank(r.get(REGISTRY.ALIAS)) ? "" : " - " + r.get(REGISTRY.ALIAS)), r.get(REGISTRY.NAME)));
+		Map<String, Customer> customerSuggestion = new TreeMap<>();
+		
+		feeRecords.forEach(r -> {
+			Customer customer = CustomerFiller.buildCustomer(r, REGISTRY);
+			customerSuggestion.put(r.get(REGISTRY.NAME) + " ( " + r.get(REGISTRY.DOCUMENT) + " )" + (AonStringUtils.isBlank(r.get(REGISTRY.ALIAS)) ? "" : " - " + r.get(REGISTRY.ALIAS)), customer);
+		});
+		
+		System.out.println("getCustomersSuggestion size : " + customerSuggestion.size());
+		
 		return customerSuggestion;
 	}
 	
@@ -444,6 +453,8 @@ public class FeeDAO {
 			Workplace workplace = WorkplaceFiller.build(r);
 			suggestions.put(r.get(WORKPLACE.DESCRIPTION), workplace);
 		});
+		
+		System.out.println("getWorkplacesSuggestion size : " + suggestions.size());
 		
 		return suggestions;
 	}
@@ -467,6 +478,8 @@ public class FeeDAO {
 			suggestions.put(r.get(REGISTRY.NAME), seller);
 		});
 		
+		System.out.println("getSellersSuggestion size : " + suggestions.size());
+		
 		return suggestions;
 	}
 	
@@ -486,6 +499,8 @@ public class FeeDAO {
 			InvoicingGroup invoicingGroup = InvoicingGroupFiller.buildInvoicingGroup(r);
 			suggestions.put(r.get(INVOICING_GROUP.DESCRIPTION), invoicingGroup);
 		});
+		
+		System.out.println("getInvoicingGroupsSuggestion size : " + suggestions.size());
 		
 		return suggestions;
 	}
@@ -516,7 +531,13 @@ public class FeeDAO {
 			suggestions.put(r.get(PROJECT.NAME), project);
 		});
 		
+		System.out.println("getProjectsSuggestion size : " + suggestions.size());
+		
 		return suggestions;
+	}
+	
+	public static void createCustomerFeeList(AONContext ctx, Fee fee) {
+		insert(ctx, fee);
 	}
 
 	public static Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams) {

@@ -15,6 +15,7 @@ public class Booking implements Serializable {
 	private Domain domain;
 	private Company company;
 	private List<AonApp> apps;
+	private List<AonApp> parentApps;
 	private Integer numberOfUsers;
 	private String payer;
 
@@ -50,6 +51,23 @@ public class Booking implements Serializable {
 	
 	public Booking addApp(AonApp app) {
 		getApps().add(app);
+		return this;
+	}
+	
+	public List<AonApp> getParentApps() {
+		if(parentApps == null) {
+			parentApps = new LinkedList<>();
+		}
+		return parentApps;
+	}
+	
+	public Booking setParentApps(List<AonApp> parentApps) {
+		this.parentApps = parentApps;
+		return this;
+	}
+	
+	public Booking addParentApp(AonApp parentApp) {
+		getParentApps().add(parentApp);
 		return this;
 	}
 	

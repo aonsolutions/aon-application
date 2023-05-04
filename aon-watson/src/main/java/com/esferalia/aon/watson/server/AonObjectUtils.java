@@ -23,7 +23,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -96,6 +95,7 @@ public class AonObjectUtils {
     public static <T> T defaultIfNull(final T object, final T defaultValue) {
         return object != null ? object : defaultValue;
     }
+
     public static <T> String defaultIfNull(final T object, Function<T,String> valuesupplier) {
     	return defaultIfNull(object, valuesupplier, AonStringUtils.EMPTY);
     }
@@ -103,26 +103,9 @@ public class AonObjectUtils {
         return object != null ? valuesupplier.apply(object) : defaultValue;
     }
 
-    public static <T> T ifNotNull(final T object, final T value) {
-        return object == null ? null : value;
-    }
-    public static <T,R> R ifNotNullDo(final T object, Function<T,R> value) {
-        return object == null ? null : value.apply(object);
-    }
-
     public static <T> T computeIfTrue(boolean condition, T object, UnaryOperator<T> operator) {
         return condition ? object : operator.apply(object);
     }
-    public static <T,R> R ifOptionalPresent(Optional<T> value,Function<T,R> action) {
-    	return ifPresent(value.orElse(null), action); 	
-    }
-    public static <T,R> R ifPresent(T value,Function<T,R> action) {
-        if (value != null) {
-            return action.apply(value);
-        } 
-        return null;
-    }
-    
     
     /**
      * <p>Returns the first value in the array which is not {@code null}.

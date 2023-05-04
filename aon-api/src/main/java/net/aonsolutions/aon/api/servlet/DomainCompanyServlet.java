@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.json.DomainCompanyJSON;
 import com.esferalia.aon.occam.api.json.DomainJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -125,7 +126,8 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		JSONArray domainsJson = api.getData().optJSONArray(IJsonNames.DOMAINS);
 		Integer customer = api.getData().optInt(IJsonNames.CUSTOMER) > 0 ? api.getData().optInt(IJsonNames.CUSTOMER) : null;
 		List<DomainCompany> domains = DomainCompanyJSON.fromJSON(domainsJson);
-		return DomainJSON.toJSON(CONSOLE.updateDomainCustomerData(domains, customer));
+		List<Domain> updatedDomain = CONSOLE.updateDomainCustomerData(domains, customer);
+		return DomainJSON.toJSON(updatedDomain);
 	}
 	
 	private static JSONObject putAction(AonApiData api) {
