@@ -95,12 +95,18 @@ public class AonObjectUtils {
     public static <T> T defaultIfNull(final T object, final T defaultValue) {
         return object != null ? object : defaultValue;
     }
-
     public static <T> String defaultIfNull(final T object, Function<T,String> valuesupplier) {
     	return defaultIfNull(object, valuesupplier, AonStringUtils.EMPTY);
     }
     public static <T> String defaultIfNull(final T object, Function<T,String> valuesupplier, String defaultValue) {
         return object != null ? valuesupplier.apply(object) : defaultValue;
+    }
+
+    public static <T> T ifNotNull(final T object, final T value) {
+        return object == null ? null : value;
+    }
+    public static <T,R> R ifNotNullDo(final T object, Function<T,R> value) {
+        return object == null ? null : value.apply(object);
     }
 
     public static <T> T computeIfTrue(boolean condition, T object, UnaryOperator<T> operator) {
