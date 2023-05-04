@@ -58,8 +58,14 @@ public class BookingDAO {
 				.setPayer("");
 		
 		booking.setApps(SecurityDAO.getDomainAppStream(ctx, f -> 
-			f.getDomainProperty().eq(ctx.getDomainId()).and(f.getActiveProperty().eq((byte) 1))
+			f.getDomainProperty().eq(domain.getId()).and(f.getActiveProperty().eq((byte) 1))
 		).map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new)));
+		
+		if(domain.isChild()) {
+			booking.setParentApps(SecurityDAO.getDomainAppStream(ctx, f -> 
+				f.getDomainProperty().eq(domain.getParentId()).and(f.getActiveProperty().eq((byte) 1))
+			).map(r -> r.getApp()).collect(Collectors.toCollection(LinkedList::new)));
+		}
 		
 		return booking;
 	}
