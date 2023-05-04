@@ -317,7 +317,7 @@ public class FeeDAO {
 		ctx.getDslContext()
 			.update(CUSTOMER_FEE)
 				.set(CUSTOMER_FEE.DOMAIN, f.getDomain().getId())
-				.set(CUSTOMER_FEE.PROJECT, f.getProject().getId())
+				.set(CUSTOMER_FEE.PROJECT, null == f.getProject() ? null : f.getProject().getId())
 				.set(CUSTOMER_FEE.CUSTOMER, f.getCustomer().getId())
 				.set(CUSTOMER_FEE.LINE, f.getLine())
 				.set(CUSTOMER_FEE.ITEM, f.getItem().getId())
