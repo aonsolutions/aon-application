@@ -118,10 +118,6 @@ reports:
     files:
       - '**/*'
     base-directory: 'aon-htmlunit/target/surefire-reports'
-  coverage-report-group:
-    files:
-      - 'occam/target/site/jacoco/jacoco.xml'
-    file-format: 'JACOCOXML'
 artifacts:
   files:
     - aon-oauth2.jar
