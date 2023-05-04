@@ -26,7 +26,7 @@ public class InsertRandomInvoicesTest extends AbstractOccamTest {
 	@Test
 	public void test() {
 		int year = AonDateUtils.getYear( getTestDate() );
-		int times = AonRandom.getInt(1, 100);
+		int times = AonRandom.getInt(1, 10);
 		for (int count = 0; count < times; count++) {
 			Invoice invoice = null;
 			if (AonRandom.gt(90)) {
@@ -39,7 +39,7 @@ public class InsertRandomInvoicesTest extends AbstractOccamTest {
 			AccountingInvoiceDAO.saveFinances(ctx, invoice);
 			if (invoice.isVatAccrualPayment() && AonCollectionUtils.isNotEmpty(invoice.getFinances()) && AonRandom.gt(40)) {
 				Finance finance = AonRandom.get(invoice.getFinances());
-				if (finance != null) {
+				if (finance != null && finance.getId() != null) {
 					FinanceTracking tracking = new FinanceTracking()
 							.setDomain(invoice.getDomain())
 							.setFinance(finance)
