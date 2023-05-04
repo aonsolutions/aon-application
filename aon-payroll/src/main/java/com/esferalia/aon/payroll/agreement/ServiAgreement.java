@@ -15,7 +15,6 @@ import solutions.aon.sepe.exceptions.certificate.InvalidCertificateException;
 
 public class ServiAgreement {
 	
-	private final static String AGREEMENTS_URL = "www2.serviconvenios.com/aconvenios.xml";
 	private final static String URL = "aonsolutions.serviconvenios.com/";
 	private final static String USER = "aonsolutions";
 	private final static String PASS = "lNgFdEw&65hD@";
@@ -33,23 +32,6 @@ public class ServiAgreement {
 		
 		private Extension(String value) {
 			this.value = value;
-		}
-	}
-	
-	public static InputStream get_agreements_file() throws IllegalArgumentException {
-		try {
-			WebClient webClient = new WebClient(BrowserVersion.BEST_SUPPORTED);
-			webClient.getOptions().setCssEnabled(false);
-			webClient.getOptions().setDownloadImages(false);
-			webClient.setJavaScriptTimeout(10000);
-			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-			
-			Page page = webClient.getPage("http://" + AGREEMENTS_URL);
-			InputStream is = page.getWebResponse().getContentAsStream();
-			return is;
-		} catch (FailingHttpStatusCodeException | IOException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException(e);
 		}
 	}
 	

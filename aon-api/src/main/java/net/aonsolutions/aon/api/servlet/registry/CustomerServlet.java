@@ -14,8 +14,6 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
-import com.esferalia.aon.occam.api.model.type.RegistryStatus;
-import com.esferalia.aon.watson.server.AonEnumUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
@@ -118,12 +116,6 @@ public class CustomerServlet extends AonApiHttpServlet {
 					.or(f.getAliasProperty().like("%" + value + "%"));
 			filter = filter.and(valueFilter);
 		}
-		
-		if (api.getData().opt(IJsonNames.STATUS) != null) {
-			RegistryStatus status = RegistryStatus.safeValueOf(api.getData().optString(IJsonNames.STATUS));
-			filter = filter.and(f.getStatusProperty().eq(AonEnumUtils.getByte(status)));
-		}
-		
 		return filter;
 	}
 	

@@ -29,7 +29,6 @@ import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.DefaultPayroll.IMPRES
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFDeduction;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PDFPayment;
 import com.esferalia.aon.in.payroll.pdf.maker.payroll.bean.PayrollTypes;
-import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryCost;
@@ -125,9 +124,7 @@ public class DraftPayrollBuilder {
 			dpb.setAccrualTotal(salary.getTotalPayment());
 			HashMap<Integer, ArrayList<PDFPayment>> paymentMap = new HashMap<Integer, ArrayList<PDFPayment>>();
 			Collection<SalaryPayment> payments = salary.getPaymentS();
-			payments.stream()
-			.filter(DraftPayrollBuilder::filter)
-			.sorted(Comparator.comparing(p -> {
+			payments.stream().filter(DraftPayrollBuilder::filter).sorted(Comparator.comparing(p -> {
 				return !(p.getDescription() == null || p.getDescription().isEmpty()) ? p.getDescription() : "zzzzzz"; //Nulls or empties down
 			})).forEach(p -> {
 				
@@ -498,22 +495,12 @@ public class DraftPayrollBuilder {
 			}
 		}*/
 	}
-	
-	private static boolean filter(SalaryPayment payment) {
-		List<String> excludedConcepts = Arrays.asList("PREST_IT");
-		List<String> excludedDescriptionWords = Arrays.asList("vacaciones");
-		
-		return !(payment.getAmount() == 0 && payment.getQuote() == 0)
-				|| excludedConcepts.contains(payment.getName())
-				|| excludedDescriptionWords.stream().anyMatch(word -> AonStringUtils.containsIgnoreCase(payment.getDescription(), word));
-	}
 
-//	private static boolean filter (SalaryPayment payment) {
-//		payment.get
-//		//Igual que el de JooqPayrollBuilder
-//		return !(payment.getAmount() == 0 && payment.getQuote() == 0);
-////		return !(payment.getAmount() == 0 && !AonStringUtils.equalsIgnoreCase(payment.getName(), ContextVariable.PREST_IT));
-//	}
+	private static boolean filter (SalaryPayment payment) {
+		//Igual que el de JooqPayrollBuilder
+		return !(payment.getAmount() == 0 && payment.getQuote() == 0);
+//		return !(payment.getAmount() == 0 && !AonStringUtils.equalsIgnoreCase(payment.getName(), ContextVariable.PREST_IT));
+	}
 	
 	
 

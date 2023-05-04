@@ -322,9 +322,11 @@ export class AonDomainCustomer extends AonElement {
     this.customerStatusFilter.options = JSON.stringify(domainAonStatusFilterOptions);
     this.customerStatusFilter.value = "";
 
-    this.customerStatusFilter.addEventListener("change", (event) => this.customerSearchFunction());
+    [this.noCustomerDomainsOnlyCheck, this.customerStatusFilter].forEach(filterEl => {
+      filterEl.addEventListener('change', (event) => this.searchFunction());
+    });
 
-    domainAonStatusFilterContainer.appendChild(this.customerStatusFilter);
+    // domainAonStatusFilterContainer.appendChild(this.customerStatusFilter); //TODO: OCULTADO HASTA QUE SEA FUNCIONAL
     
     searchFiltersContainer.appendChild(domainAonStatusFilterContainer);
 
@@ -487,16 +489,16 @@ export class AonDomainCustomer extends AonElement {
         )
         && (this.noCustomerDomainsOnlyCheck.getValue() ? !(domainCompany.domain ? domainCompany.domain.aonCustomer : null): true)
         && (this.domainAonStatusFilter.value ? (domainCompany.domain ? this.domainAonStatusFilter.value === domainCompany.domain.aonStatus : false) : true)
-        && this.checkAccess(domainCompany)
+        && this.checkSitaution(domainCompany)
         );
         this.filterDomains(filteredDomains);
   }
 
-  checkAccess(domainCompany) {
+  checkSitaution(domainCompany) {
     let domain = domainCompany ? domainCompany.domain : null;
     if (domain) {
-      let access = this.domainStatusFilter.value;
-      switch (access) {
+      let situation = this.domainStatusFilter.value;
+      switch (situation) {
         case "":
           return true;
           break;
@@ -523,24 +525,18 @@ export class AonDomainCustomer extends AonElement {
       this.customerSearchEnded = false;
       await this.findPaginatedCustomers();
     } else {
-      await this.findRelatedCustomers();
+      this.findRelatedCustomers();
     }
-    this.manageEmptyCustomerList();
   }
   
   findPaginatedCustomers() {
     return new Promise(async (res, rej) => {
       let entriesPerPage = 100;
-      let customerStatus = this.customerStatusFilter ? this.customerStatusFilter.value : "";
-      let parameters = {
+      let newCustomers = await getCustomers({
         perPage: entriesPerPage,
         page: this.customerPage++,
         value: this.customerSearchInput.value.toLowerCase()
-      };
-      if (customerStatus) {
-        parameters.status = customerStatus;
-      }
-      let newCustomers = await getCustomers(parameters);
+      });
       this.customerSearchEnded = !newCustomers || newCustomers.length < entriesPerPage;
 
       if (!this.loadedCustomers) {
@@ -572,7 +568,6 @@ export class AonDomainCustomer extends AonElement {
       let aonCustomer = domain ? domain.aonCustomer : null;
       let searchDocument = company ? (company.document ? company.document.trim() : null) : null;
       let searchAlias = domain ? (company.name ? domain.name.trim().substring(0, 32) : null) : null;
-      let customerStatus = this.customerStatusFilter ? this.customerStatusFilter.value : "";
       
       let customers = [];
       
@@ -583,25 +578,17 @@ export class AonDomainCustomer extends AonElement {
         customers.push(cust);
       } else {
         if (searchDocument) {
-          let parameters = {
+          let newCustomers = await getCustomers({
             perPage: 2000,
             value: searchDocument
-          };
-          if (customerStatus) {
-            parameters.status = customerStatus;
-          }
-          let newCustomers = await getCustomers(parameters);
+          });
           this.addNonExisting(customers, newCustomers);
         }
         if (searchAlias) {
-          let parameters = {
+          let newCustomers = await getCustomers({
             perPage: 2000,
             value: searchAlias
-          };
-          if (customerStatus) {
-            parameters.status = customerStatus;
-          }
-          let newCustomers = await getCustomers(parameters);
+          });
           this.addNonExisting(customers, newCustomers);
         }
       }
@@ -885,12 +872,12 @@ export class AonDomainCustomer extends AonElement {
   }
 
   manageCustomerSearch() {
-    this.customerSearchInput.value = "";
-    if (this.selectedDomain) {
-      this.customerSearchContainer.style.display = "flex";
-    } else {
-      this.customerSearchContainer.style.display = "none";
-    }
+    // this.customerSearchInput.value = "";
+    // if (this.selectedDomain) {
+    //   this.customerSearchContainer.style.display = "flex";
+    // } else {
+    //   this.customerSearchContainer.style.display = "none";
+    // }
   }
 
   linkClickHandler(customer) {
@@ -1013,11 +1000,7 @@ export class AonDomainCustomer extends AonElement {
       let message = "";
       let messageSpan = document.createElement("span");
       if (this.selectedDomain) {
-        if ((this.customerSearchInput && this.customerSearchInput.value) || (this.customerStatusFilter && this.customerStatusFilter.value)) {
-          message = "No se encontraron clientes relacionados con esta búsqueda";
-        } else {
-          message = "No se encontraron clientes relacionados con este dominio";
-        }
+        message = "No se encontraron clientes relacionados con este dominio";
       } else {
         message = "Por favor, seleccione un dominio";
       }

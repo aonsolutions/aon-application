@@ -51,14 +51,13 @@ public interface RegistryService extends RemoteService {
 	// **************************************************
 	// *************************************** [CUSTOMER]
 	// **************************************************
-	Map<String, Customer> getCustomersSuggestion(String domainName, int domain, String user, String query);
+	Map<String, String> getCustomersSuggestion(String domainName, int domain, String user, String query);
 	Map<String, OldItem> getProductsSuggestion(String domainName, int domain, String user, String query);
 	Map<Integer, Integer> getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams);
 	
 	LinkedList<Fee> getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams);
 	Integer saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee>  feeList);
 	Integer saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params);
-	void createCustomerFeeList(String domainName, int domain, String user, Fee fee);
 	Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domain, String user);
 	Integer getItemIdByProductCode(String domainName, int domain, String user, String productCode);
 	void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees);

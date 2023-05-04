@@ -448,10 +448,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			data.put(IJsonNames.ID, invoiceAttach.getId());
 			data.put(IConstants.ATTACH_TYPE, AttachType.INVOICE.getName());
 			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			String path = "/ms/api/file/" +  result;	
-			String url = "https://" + domain.getName() + path; 
+			String url = "https://" + domain.getName() + "/ms/api/file/" +  result;	
 		    json.put(IJsonNames.URL, url);
-		    json.put(IJsonNames.PATH, path);
 		    json.put(IConstants.CONTENT_TYPE, invoiceAttach.getMimeType().getName());
 		} else {
 			JSONObject data = new JSONObject();
@@ -462,10 +460,8 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			data.put(IJsonNames.LOGIN, login);
 		
 			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			String path = "/ms/api/download_invoice_pdf?json=" +  result;
-			String url = "https://" + domain.getName() + path;
+			String url = "https://" + domain.getName() + "/ms/api/download_invoice_pdf?json=" +  result;
 		    json.put(IJsonNames.URL, url);
-		    json.put(IJsonNames.PATH, path);
 		    json.put(IConstants.CONTENT_TYPE, MimeType.PDF.getName());
 		}
 		return json;

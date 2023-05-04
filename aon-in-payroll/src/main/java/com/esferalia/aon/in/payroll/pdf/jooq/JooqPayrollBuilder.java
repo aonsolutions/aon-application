@@ -58,7 +58,6 @@ import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
-import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Salary;
 import com.esferalia.aon.occam.api.model.Salary.ContextData;
 import com.esferalia.aon.occam.api.model.Salary.Cost;
@@ -66,10 +65,7 @@ import com.esferalia.aon.occam.api.model.Salary.Embargo;
 import com.esferalia.aon.occam.api.model.Salary.Payment;
 import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.registry.RAddress;
-import com.esferalia.aon.occam.api.model.registry.RegistryAddress;
-import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
-import com.esferalia.aon.occam.api.model.type.PaymentType;
 import com.esferalia.aon.occam.api.model.type.SalaryType;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.watson.server.AonDateUtils;
@@ -229,35 +225,19 @@ public class JooqPayrollBuilder {
 					.innerJoin(RADDRESS).on(WORKPLACE.ADDRESS.eq(RADDRESS.ID))
 					.where(SALARY.ID.eq(salary.getId())).fetchOneInto(RADDRESS);
 				
-				//----- FOR MAIN ADDRESS -----
-				List<RAddress> raddessList = AON.getRAddressStream(
-						aonContext.getDomainName(), 
-						aonContext.getDomainId(),
-						aonContext.getUser(), 
-						f -> f.getRegistryProperty().eq(registryAddress.getRegistry()).and(f.getDomainProperty().eq(aonContext.getDomainId())))
-				.collect(Collectors.toList());
-				
-				Optional<RAddress> mainRaddress = raddessList.stream().filter(rad -> rad != null && AonNumberUtils.equals(AonNumberUtils.toByte(0), rad.getType())).findFirst();
-				
-				RAddress raddress = null;
-				
-				if (raddessList != null && !raddessList.isEmpty()) {
-					raddress = mainRaddress.isPresent() ? mainRaddress.get() : raddessList.get(0);
-				}
-				
-				//----------------------------
-				/*
-				//----- FOR WORKPLACE ADDRESS -----
-				
+//				Registry registry = AON.getRegistry(
+//						aonContext.getDomainName(), 
+//						aonContext.getDomainId(), 
+//						"",
+//						p -> p.getDocumentProperty().eq(salary.getEnterpriseDocument()).and(p.getDomainProperty().eq(aonContext.getDomainId()))
+//				);
+
 				RAddress raddress = AON.getRAddress(
-						aonContext.getDomainName(), 
-						aonContext.getDomainId(),
-						aonContext.getUser(), 
-						f -> f.getIdProperty().eq(registryAddress.getId()).and(f.getDomainProperty().eq(aonContext.getDomainId())));
-				
-				//---------------------------------
-				*/
-				
+							aonContext.getDomainName(), 
+							aonContext.getDomainId(),
+							aonContext.getUser(), 
+							p -> p.getRegistryProperty().eq(registryAddress.getRegistry()).and(p.getDomainProperty().eq(aonContext.getDomainId()))
+						);
 				
 				String add = !isEmpty(raddress.getFullAddress()) ? raddress.getFullAddress() : salary.getEnterpriseAddress();
 
@@ -988,12 +968,7 @@ public class JooqPayrollBuilder {
 	 * @return true | false
 	 */
 	private static boolean filter(Payment payment) {
-		List<String> excludedConcepts = Arrays.asList("PREST_IT");
-		List<String> excludedDescriptionWords = Arrays.asList("vacaciones");
-		
-		return !(payment.getAmount() == 0 && payment.getQuote() == 0)
-				|| excludedConcepts.contains(payment.getName())
-				|| excludedDescriptionWords.stream().anyMatch(word -> AonStringUtils.containsIgnoreCase(payment.getDescription(), word));
+		return !(payment.getAmount() == 0 && payment.getQuote() == 0);
 	}
 
 	/**

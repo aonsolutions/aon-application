@@ -28,7 +28,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButto
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -78,7 +77,6 @@ public class CustomerFee extends MainEntryPoint {
 	private AonToolbar toolbar;
 	private AonToolbarButton saveButton;
 	private AonToolbarButton undoAllButton;
-	private AonToolbarButton createButton;
 	private AonToolbarButton addValueButton;
 	private AonToolbarButton deleteFeeButton;
 	
@@ -107,7 +105,7 @@ public class CustomerFee extends MainEntryPoint {
 	private CustomerFeeParams params;
 	private Date billingDate;
 	
-	private Map<String, Customer> customerSuggestions = new TreeMap<>();
+	private Map<String, String> customerSuggestions = new TreeMap<>();
 	private Map<String, OldItem> productSuggestions = new TreeMap<>();
 	
 	final private int limit = 100;
@@ -190,7 +188,8 @@ public class CustomerFee extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
-//							dockLayoutPanel.add(new Label(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage() + "]"));
+							dockLayoutPanel.add(new Label(
+									AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage() + "]"));
 						}
 					});
 		} else {
@@ -408,10 +407,10 @@ public class CustomerFee extends MainEntryPoint {
 	}
 	
 	private void getCustomersSuggestion(String customerQuery) {
-		SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, Customer>>() {
+		SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, String>>() {
 			
 			@Override
-			public void onSuccess(Map<String, Customer> customerSuggestionsDB) {
+			public void onSuccess(Map<String, String> customerSuggestionsDB) {
 				customerSuggestions = customerSuggestionsDB;
 				
 				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerSuggestBox.getSuggestOracle();
@@ -552,7 +551,7 @@ public class CustomerFee extends MainEntryPoint {
 		params.setDomain(options.getDomain());
 		params.setMonth(AonStringUtils.isBlank(monthListBox.getSelectedValue()) ? null : Integer.parseInt(monthListBox.getSelectedValue()));
 		params.setYear(AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue()));
-		params.setCustomer(null != customerSuggestions.get(customerSuggestBox.getValue()) ? customerSuggestions.get(customerSuggestBox.getValue()).getName() : null);
+		params.setCustomer(customerSuggestions.get(customerSuggestBox.getValue()));
 		params.setCustomerStatus(AonStringUtils.isBlank(customerStatusListBox.getSelectedValue()) ? null : Byte.parseByte(customerStatusListBox.getSelectedValue()));
 		params.setProductCode(null != productSuggestions.get(conceptSuggestBox.getValue()) ? productSuggestions.get(conceptSuggestBox.getValue()).getProduct().getCode() : null);
 		params.setPrice(priceTextBox.getValue());
@@ -1047,49 +1046,6 @@ public class CustomerFee extends MainEntryPoint {
 			});
 		});
 		
-		createButton = new AonToolbarButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
-		createButton.addClickHandler(e -> {
-			new CustomerFeeDialog(options) {
-				
-				@Override
-				protected void onCreate(Fee fee) {
-					SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Void>() {
-						
-						@Override
-						public void onSuccess(Void result) {
-							AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
-							addValueButton.setEnabled(false);
-							selectionModel.clear();
-							setHasChange(false);
-							feeList.clear();
-							resetFeeTable();
-							enableMoreData();
-							offset.setValue(0);
-							searchFees();
-						}
-						
-						@Override
-						public void onFailure(Throwable caught) {
-							AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
-						}
-					});
-				}
-				
-				@Override
-				protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr,
-						Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				protected void onAccept(Fee fee) {
-					// TODO Auto-generated method stub
-					
-				}
-			};
-		});
-		
 		addValueButton = new AonToolbarButton("Editar Cuota", AON.CSS.aonIconEdit());
 		addValueButton.setEnabled(false);
 		addValueButton.addClickHandler(e -> {
@@ -1129,10 +1085,9 @@ public class CustomerFee extends MainEntryPoint {
 						}
 
 						@Override
-						protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
-
-						@Override
-						protected void onCreate(Fee fee) {}
+						protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
+							// TODO Auto-generated method stub
+						}
 						
 					};
 			} else {
@@ -1140,9 +1095,6 @@ public class CustomerFee extends MainEntryPoint {
 					
 					@Override
 					protected void onAccept(Fee fee) {}
-					
-					@Override
-					protected void onCreate(Fee fee) {}
 
 					@Override
 					protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
@@ -1368,7 +1320,6 @@ public class CustomerFee extends MainEntryPoint {
 
 		toolbar.add(saveButton);
 		toolbar.add(undoAllButton);
-		toolbar.add(createButton);
 		toolbar.add(addValueButton);
 		toolbar.add(deleteFeeButton);
 	}
