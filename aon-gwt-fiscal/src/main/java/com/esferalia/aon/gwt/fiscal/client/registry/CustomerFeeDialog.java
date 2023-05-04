@@ -222,6 +222,8 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		customerSuggestBox.addSelectionHandler(e -> {
 			customerSuggestBox.hideSuggestionList();
+			projectSuggestBox.setValue("");
+			if(null != this.fee) this.fee.setProject(null);
 		});
 		
 		customerSuggestBox.addKeyUpHandler(e -> {
@@ -322,27 +324,12 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		productSuggestBox.addKeyUpHandler(e -> {
 			String productQuery = productSuggestBox.getValue();
-			if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 3) {
-				SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
-					
-					@Override
-					public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
-						productSuggestions = productSuggestionsDB;
-						
-						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) productSuggestBox.getSuggestOracle();
-						orclSb.clear();
-						orclSb.addAll(productSuggestions.keySet());
-						orclSb.setDefaultSuggestionsFromText(productSuggestions.keySet());
-						productSuggestBox.showSuggestionList();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub	
-					}
-					
-				});
-			}
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				productSuggestBox.setValue("");
+				productQuery = null;
+				getProductsSuggestion(productQuery);
+			} else  if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 3)
+				getProductsSuggestion(productQuery);
 		});
 		
 		AonToolbarSmallButton resetBtn = new AonToolbarSmallButton("Borrar producto", AON.CSS.aonIconClear());
@@ -380,6 +367,28 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		itemPanel.add(resetBtn);
 		productPanel.add(itemPanel);
 		productPanel.add(productTextBox);
+	}
+
+	private void getProductsSuggestion(String productQuery) {
+		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
+			
+			@Override
+			public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
+				productSuggestions = productSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) productSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(productSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(productSuggestions.keySet());
+				productSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
 	}
 
 	private void createQuantityPricePanel() {
@@ -731,7 +740,14 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		
 		projectSuggestBox.addKeyUpHandler(e -> {
 			String projectQuery = projectSuggestBox.getValue();
-			Integer customerId = null != fee ? fee.getCustomer().getId() : null;
+			
+			Integer customerId = null;
+			if(AonStringUtils.isNotBlank(customerSuggestBox.getValue())) {
+				Customer customer = customerSuggestions.get(customerSuggestBox.getValue());
+				if(null != customer) customerId = customer.getId();
+				else if(null != fee && null != fee.getCustomer()) customerId = fee.getCustomer().getId();
+			}
+			
 			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
 				projectSuggestBox.setValue("");
 				projectQuery = null;
