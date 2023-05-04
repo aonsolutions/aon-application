@@ -9,6 +9,10 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.json.BookingJSON;
+import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
@@ -66,6 +70,12 @@ public class BookingServlet extends AonApiHttpServlet {
 	}
 	
 	private static JSONObject getBooking(AonApiData api) {
+		String domainName = api.getData().optString(IJsonNames.DOMAIN_NAME);
+		Integer domainId = api.getData().optInt(IJsonNames.DOMAIN_ID);
+		if (AonStringUtils.isNotBlank(domainName) && AonNumberUtils.zeroIfNull(domainId) > 0) {
+			Domain domain = AON.getDomain(domainName, domainId, api.getUser().getLogin());
+			return BookingJSON.toJSON(AON.getBooking(domain, api.getUser()));			
+		}
 		return BookingJSON.toJSON(AON.getBooking(api.getDomain(), api.getUser()));
 	}
 	
