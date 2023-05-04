@@ -373,6 +373,7 @@ public final class IJsonNames {
 	public static final String PARTICIPATION_PERCENT = "participationPercent";
 	public static final String PARTICIPATION_QUOTA = "participationQuota";
 	public static final String PASSWORD = "password";
+	public static final String PATH = "path";
 	public static final String PATTERN = "pattern";
 	public static final String PAYER = "payer";
 	public static final String PAYMENT = "payment";
