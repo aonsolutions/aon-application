@@ -48,4 +48,5 @@ public class ITEmployee extends EmployeeContractInfo implements Serializable {
 	public void addIT(IT it) {
 		this.its.add(it);
 	}
+	
 }

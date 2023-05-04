@@ -53,6 +53,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.BankEntities;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractSalaryInfo;
+import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
@@ -69,6 +70,8 @@ import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryRecord;
 import com.esferalia.aon.occam.api.model.type.ContractType;
 import com.esferalia.aon.occam.api.model.type.ContractType.ContractTypeRecord;
+import com.esferalia.aon.payroll.sepe.contrata.Contrata;
+import com.esferalia.aon.sepe.api.contrata.contratos.CONTRATOS;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class JooqEmployee {
@@ -955,6 +958,9 @@ public class JooqEmployee {
 			
 		}
 		
+		//Check if CNO exist on Contrata file
+		checkCnoContrata(dslContext, contract, contractData);
+		
 		//CONTRACT INFO TABLE
 		Result<Record> contractInfoTableRecords = dslContext.select().from(CONTRACT_INFO)
 			.where(CONTRACT_INFO.CONTRACT.eq(contract))
@@ -1116,6 +1122,63 @@ public class JooqEmployee {
 		employeeContractInfo.setContractInfo(contractData);
 		
 		return employeeContractInfo;
+	}
+
+	private static void checkCnoContrata(DSLContext dslContext, Integer contract, ContractInfo contractData) {
+		Result<Record> contractAttachRecords = dslContext.select().from(CONTRACT_ATTACH)
+			.where(CONTRACT_ATTACH.CONTRACT.eq(contract))
+			.and(CONTRACT_ATTACH.TYPE.eq((byte)4))
+			.and(CONTRACT_ATTACH.MIMETYPE.eq((byte)5))
+			.orderBy(CONTRACT_ATTACH.ID.desc())
+			.fetch();
+		
+		if(null != contractAttachRecords && !contractAttachRecords.isEmpty()) {
+			
+			Record contractAttachRecord = contractAttachRecords.get(0);
+		
+			if(contractAttachRecords.size() > 1) {
+				dslContext.delete(CONTRACT_ATTACH).where(CONTRACT_ATTACH.CONTRACT.eq(contract))
+					.and(CONTRACT_ATTACH.TYPE.eq((byte)4))
+					.and(CONTRACT_ATTACH.MIMETYPE.eq((byte)5))
+					.and(CONTRACT_ATTACH.ID.ne(contractAttachRecord.get(CONTRACT_ATTACH.ID)))
+					.execute();
+			}
+	
+			ContractSpecificData contractSpecificData = new ContractSpecificData();
+			contractSpecificData.setId(contractAttachRecord.get(CONTRACT_ATTACH.ID));
+	
+			try {
+				Contrata contrata = new Contrata();
+				CONTRATOS contratos = contrata.getCONTRATOS(contractAttachRecord.get(CONTRACT_ATTACH.DATA));
+				if(null != contratos && null != contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150() && !contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().isEmpty()) {
+					Object obj = contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
+					JooqContrata.completeContratosParams(obj, contractSpecificData);
+					
+					// Check if cno exist only on contrata file
+					if(AonStringUtils.isBlank(contractData.getCno()) && AonStringUtils.isNotBlank(contractSpecificData.getCno()))
+						updateCNOContractData(dslContext, contract, contractSpecificData.getCno(), contractData);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new IllegalArgumentException(e.getMessage());
+			}
+		}
+	}
+	
+	private static void updateCNOContractData(DSLContext dslContext, Integer contractId, String cno, ContractInfo contractData) {
+		ContractRecord contractRecord = dslContext.selectFrom(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
+		ContractDataRecord contractDataRecord = dslContext.insertInto(CONTRACT_DATA)
+			.set(CONTRACT_DATA.DOMAIN, contractRecord.getDomain())
+			.set(CONTRACT_DATA.NAME, "CNO")
+			.set(CONTRACT_DATA.CONTRACT, contractId)
+			.set(CONTRACT_DATA.EXPRESSION, "\"" + cno + "\"")
+			.set(CONTRACT_DATA.START_DATE, contractRecord.getStartDate())
+			.set(CONTRACT_DATA.END_DATE, contractRecord.getEndDate())
+			.returning(CONTRACT_DATA.ID)
+			.fetchOne();
+		
+		contractData.setCnoId(contractDataRecord.getId());
+		contractData.setCno(contractDataRecord.getExpression());
 	}
 
 	private static boolean canHaveHoursAviable(Byte journeyType, ContractTypeRecord contractTypeRecord) {

@@ -47,12 +47,13 @@ public interface RegistryServiceAsync {
 	// **************************************************
 	// *********************************** [CUSTOMER FEE]
 	// **************************************************
-	void getCustomersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, String>> asyncCallback);
+	void getCustomersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Customer>> asyncCallback);
 	void getProductsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, OldItem>> asyncCallback);
 	void getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<Map<Integer, Integer>> asyncCallback);
 	
 	void getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<LinkedList<Fee>> asyncCallback);
 	void saveCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> feeList, AsyncCallback<Integer> asyncCallback);
+	void createCustomerFeeList(String domainName, int domain, String user, Fee fee, AsyncCallback<Void> asyncCallback);
 	void saveMassiveCustomerFee(String domainName, int domain, String user, Fee fee, CustomerFeeParams params, AsyncCallback<Integer> asyncCallback);
 	void getMinMaxCustomerFeeYear(String domainName, int domain, String user, AsyncCallback<Map<Integer, Integer>> asyncCallback);
 	void getItemIdByProductCode(String domainName, int domain, String user, String productCode, AsyncCallback<Integer> asyncCallback);
