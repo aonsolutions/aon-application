@@ -18,6 +18,9 @@
     background-color: var(--aonBlue) !important;
     color: white;
 }
+.selectedCustomer i {
+    color: white;
+}
 /* .domainCustomerScroll::-webkit-scrollbar {
     width: 6px;
     background: transparent;
