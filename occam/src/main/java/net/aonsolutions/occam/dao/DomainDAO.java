@@ -1,6 +1,7 @@
 package net.aonsolutions.occam.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -19,7 +20,6 @@ import org.jooq.SelectJoinStep;
 
 import com.esferalia.aon.watson.server.AonArrayUtils;
 
-import net.aonsolutions.occam.api.AON;
 import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.api.config.Domain;
@@ -29,6 +29,7 @@ import net.aonsolutions.occam.api.filter.DomainFacade.DomainBuilder;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainBuilderFactory;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilter;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilters;
+import net.aonsolutions.occam.dao.UserDAO.UserFiller;
 
 public class DomainDAO {
 	
@@ -78,7 +79,7 @@ public class DomainDAO {
 		private static final Field<?>[] DOMAIN_AUDIT_FIELDS = new Field[]{
 			DOMAIN.CREATION_USER,DOMAIN.CREATION_DATE,DOMAIN.MODIFICATION_USER,DOMAIN.MODIFICATION_DATE
 		};
-
+		
 		private static final Field<?>[] DOMAIN_OTHER_FIELDS = new Field[]{
 			 DOMAIN.PARENT
 			,DOMAIN.TYPE
@@ -119,6 +120,9 @@ public class DomainDAO {
 		public Stream<Domain> build( ) {
 			SelectJoinStep<Record> step1 = ctx.getDslContext().select( getSelectedFields() )
 				.from(DOMAIN);
+			if ( withUsers ) {
+				step1 = step1.leftOuterJoin(USER).on(USER.DOMAIN.eq(DOMAIN.ID));
+			}
 			if ( withParent ) {
 				step1 = step1.leftOuterJoin(PARENT_DOMAIN).on(PARENT_DOMAIN.ID.eq(DOMAIN.PARENT));	
 			}
@@ -127,22 +131,26 @@ public class DomainDAO {
 			if ( limit ) {
 				step1.limit(offset,rows);
 			}
-			DomainFiller filler = new DomainFiller(); 
-			return  step3
-				.fetch()
-				.stream()
-				.map(filler::apply )
-				// ---------------------------------- [EUKE]
-				// Esto es una cochinada que hay que cambiar.
-				// Hacer el stream contra las tablas que sea necesario y usar 
-				// reduce/gruping para organizar la informacion como debe ser.
-				// Este código no debe salir a producción en ningún caso.
-				// SE ABRE OTRA CONNECTION A LA BD cuando es absolutamente innecesario. 
-				.map(d -> withUsers
-					?d.setUsers(AON.getUsers(ctx.getOccam(), p -> p.withDomain().eq(d.getId())).collect(Collectors.toCollection(LinkedList::new)))
-					:d)
-				// -----------------
-				;
+			DomainFiller filler = new DomainFiller();
+			UserFiller userFiller =  new UserFiller();
+			
+			if (withUsers) {
+				return step3
+					.fetchGroups( filler::apply, userFiller::apply)
+					.entrySet()
+					.stream()
+					.map(e -> e.getKey().addUsers( 
+						e.getValue()
+							.stream()
+							.filter(u -> u.getId() != null )
+							.collect(Collectors.toCollection(LinkedList::new))));
+			} else {
+				return  step3
+					.fetch()
+					.stream()
+					.map(filler::apply )
+					;
+			}
 		}
 		
 		private Field<?>[] getSelectedFields() {
@@ -156,6 +164,9 @@ public class DomainDAO {
 			}
 			if (withParent) {
 				fields = AonArrayUtils.addAll(fields,DOMAIN_PARENT_BASIC_FIELDS);
+			}
+			if (withUsers) {
+				fields = AonArrayUtils.addAll(fields,UserDAO.USER_BASIC_FIELDS);
 			}
 			return fields;
 		}

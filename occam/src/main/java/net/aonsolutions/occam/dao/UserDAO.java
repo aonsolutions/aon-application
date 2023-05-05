@@ -24,6 +24,10 @@ import net.aonsolutions.occam.api.filter.UserFacade.UserFilters;
 
 public class UserDAO {
 	
+	public static final Field<?>[] USER_BASIC_FIELDS = new Field[]{
+		USER.ID,USER.DOMAIN,USER.NAME,USER.LOGIN,USER.ACTIVE
+	};
+
 	private UserDAO() {
 		
 	}
@@ -57,10 +61,6 @@ public class UserDAO {
 	}
 
 	private static class UserSelectBuilderDAO implements UserBuilder<Stream<User>> {
-		
-		private static final Field<?>[] USER_BASIC_FIELDS = new Field[]{
-			USER.ID,USER.DOMAIN,USER.NAME,USER.LOGIN,USER.ACTIVE
-		};
 		
 		protected SelectSelectStep<Record> select;
 		protected SelectJoinStep<Record> from;
@@ -102,7 +102,7 @@ public class UserDAO {
 
 	}
 
-	private static class UserFiller extends Filler<User> implements Function<Record,User> {
+	public static class UserFiller extends Filler<User> implements Function<Record,User> {
 		
 		public User apply(Record r) {
 			return map(r, User::new);

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
 import net.aonsolutions.occam.api.HasAudit;
@@ -297,5 +298,26 @@ public class Domain implements Serializable, HasAudit<Domain>, HasSelector<Domai
 		this.users = users;
 		return this;
 	}
+	public Domain addUsers(List<User> users) {
+		if ( getUsers().isPresent() ) {
+			getUsers().get().addAll(users);
+		} else {
+			setUsers(users);
+		}
+		return this;
+	}	
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+		if (obj instanceof Domain other) {
+			return AonNumberUtils.equals(this.id,other.id);
+		}
+	    return false;
+	}
+	
+	@Override
+	public int hashCode() {
+	    return 31 * 7 + (id == null ? 0 : id.hashCode());
+	}
 }
