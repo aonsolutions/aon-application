@@ -626,7 +626,7 @@ export class AonDomainCustomer extends AonElement {
           let dName = domain.name;
           let dId = domain.id;
           let linkedCustomerDomain = cust.domain;
-          if (linkedCustomerDomain) {
+          if (dName && dId) {
             booking = await getBooking({
               domainName: dName,
               domainId: dId,
