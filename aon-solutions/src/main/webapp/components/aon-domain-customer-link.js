@@ -1,7 +1,7 @@
 import { AonElement } from './AonElement.js';
 
 import { CONSTANT, EVENT, TAG, MATERIAL_ICONS, MSG, CSS } from '../environments/environments.js';
-import { getDomains, getCustomers, updateDomains } from '../services/domainsService.js';
+import { getDomains, getCustomers, updateDomains, getBooking } from '../services/domainsService.js';
 
 import '../css/aon-domain-customer.css';
 import { AonIconButton } from './aon-icon-button.js';
@@ -408,12 +408,15 @@ export class AonDomainCustomer extends AonElement {
 
   // --- CARGAR LOS LISTADOS ---
   
-  loadCustomers() {
+  loadCustomers(linked) {
     this.customerList.innerHTML = "";
     if (this.loadedCustomers) {
       for (let i = 0; i < this.loadedCustomers.length; i++) {
         let customerElement = this.createCustomerElement(this.loadedCustomers[i]);
         customerElement.dataset.ind = i;
+        if (linked && this.loadedCustomers.length === 1) {
+          customerElement.classList.add("selectedCustomer");
+        }
         this.customerList.appendChild(customerElement);
       }
     }
@@ -471,10 +474,10 @@ export class AonDomainCustomer extends AonElement {
     this.manageEmptyCustomerList();
   }
 
-  customerSearchFilterAction() {
+  async customerSearchFilterAction() {
     let lowerCasedInputText = this.customerSearchInput.value.toLowerCase();
     this.removeAllCustomers();
-    this.customerSearch(lowerCasedInputText);
+    await this.customerSearch(lowerCasedInputText);
     // this.manageEmptyCustomerList();
   }
   
@@ -575,12 +578,24 @@ export class AonDomainCustomer extends AonElement {
       let customerStatus = this.customerStatusFilter ? this.customerStatusFilter.value : "";
       
       let customers = [];
+      let booking = null;
       
       if (aonCustomer) {
         let cust = await getCustomers({
           id: aonCustomer
         });
         customers.push(cust);
+        if (cust) {
+          let linkedCustomerDomain = cust.domain;
+          if (linkedCustomerDomain) {
+            booking = await getBooking({
+              domainName: linkedCustomerDomain.name,
+              domainId: linkedCustomerDomain.id,
+            });
+            console.log(booking);
+          }
+        }
+
       } else {
         if (searchDocument) {
           let parameters = {
@@ -607,9 +622,117 @@ export class AonDomainCustomer extends AonElement {
       }
       
       this.loadedCustomers = customers;
-      this.loadCustomers();
+      this.loadCustomers(aonCustomer ? true : false);
+      if (booking) {
+        this.createBookingElement(booking);
+      }
       this.manageEmptyCustomerList();
       
+    }
+  }
+
+  createBookingElement(booking) {
+    if (booking) {
+      let bookingContainer = document.createElement("div");
+      bookingContainer.style.display = "flex";
+      bookingContainer.style.flexDirection = "column";
+      bookingContainer.style.gap = "10px";
+      bookingContainer.style.padding = "10px";
+      bookingContainer.style.borderRadius = "5px";
+      bookingContainer.style.backgroundColor = "AliceBlue";
+      bookingContainer.style.width = "100%";
+      // bookingContainer.style.height = "300px";
+      bookingContainer.style.marginTop = "10px";
+
+      let bookingTitleContainer = document.createElement("div");
+      bookingTitleContainer.style.display = "block";
+      bookingTitleContainer.style.width = "100%";
+      bookingTitleContainer.style.textAlign = "center";
+      bookingTitleContainer.style.fontWeight = "bold";
+      bookingTitleContainer.style.textTransform = "uppercase";
+      bookingTitleContainer.innerText = "Datos de contratación";
+      bookingContainer.appendChild(bookingTitleContainer);
+      
+      let appsContainer = document.createElement("div");
+      appsContainer.style.display = "flex";
+      appsContainer.style.flexDirection = "row";
+      appsContainer.style.justifyContent = "space-between";
+      appsContainer.style.alignItems = "flex-start";
+      
+      let childAppsContainer = document.createElement("div");
+      childAppsContainer.style.display = "flex";
+      childAppsContainer.style.flexDirection = "column";
+      childAppsContainer.style.justifyContent = "flex-start";
+      childAppsContainer.style.alignItems = "center";
+      childAppsContainer.style.width = "45%";
+      let childAppsTitleContainer = document.createElement("div");
+      childAppsTitleContainer.style.display = "block";
+      childAppsTitleContainer.style.width = "100%";
+      childAppsTitleContainer.style.textAlign = "center";
+      childAppsTitleContainer.style.fontWeight = "bold";
+      childAppsTitleContainer.innerText = "Aplicaciones";
+
+      childAppsContainer.appendChild(childAppsTitleContainer);
+      let childApps = booking.apps;
+      if (childApps) {
+        childApps.forEach(app => {
+          let childApp = document.createElement("div");
+          childApp.style.display = "block";
+          childApp.style.width = "100%";
+          childApp.innerText = app;
+          // childApp.style.textIndent = "10px";
+          childAppsContainer.appendChild(childApp);
+        });
+      }
+
+      appsContainer.appendChild(childAppsContainer);
+
+      let parentAppsContainer = document.createElement("div");
+      parentAppsContainer.style.display = "flex";
+      parentAppsContainer.style.flexDirection = "column";
+      parentAppsContainer.style.justifyContent = "flex-start";
+      parentAppsContainer.style.alignItems = "center";
+      parentAppsContainer.style.width = "45%";
+      let parentAppsTitleContainer = document.createElement("div");
+      parentAppsTitleContainer.style.display = "block";
+      parentAppsTitleContainer.style.width = "100%";
+      parentAppsTitleContainer.style.textAlign = "center";
+      parentAppsTitleContainer.style.fontWeight = "bold";
+      parentAppsTitleContainer.innerText = "Aplicaciones del padre";
+      
+      parentAppsContainer.appendChild(parentAppsTitleContainer);
+      let parentApps = booking.parentApps;
+      if (parentApps) {
+        parentApps.forEach(app => {
+          let parentApp = document.createElement("div");
+          parentApp.style.display = "block";
+          parentApp.style.width = "100%";
+          parentApp.innerText = app;
+          // parentApp.style.textIndent = "5px";
+          parentAppsContainer.appendChild(parentApp);
+        });
+      }
+
+      appsContainer.appendChild(parentAppsContainer);
+      
+      let numberOfUsersContainer = document.createElement("div");
+      numberOfUsersContainer.style.display = "block";
+      numberOfUsersContainer.style.width = "100%";
+      let numberOfUsersTitleSpan = document.createElement("span");
+      numberOfUsersTitleSpan.style.fontWeight = "bold";
+      numberOfUsersTitleSpan.innerText = "Número de usuarios: ";
+      numberOfUsersContainer.appendChild(numberOfUsersTitleSpan);
+      let numberOfUsersSpan = document.createElement("span");
+      numberOfUsersSpan.innerText = booking.numberOfUsers;
+      numberOfUsersContainer.appendChild(numberOfUsersSpan);
+      
+      
+      bookingContainer.appendChild(appsContainer);
+      if (booking.numberOfUsers) {
+        bookingContainer.appendChild(numberOfUsersContainer);
+      }
+
+      this.customerList.appendChild(bookingContainer);
     }
   }
 
@@ -655,7 +778,9 @@ export class AonDomainCustomer extends AonElement {
     linkedIcon.classList.add(CSS.MATERIAL_ICONS);
     linkedIcon.innerHTML = MATERIAL_ICONS.LINK;
     linkedIcon.title = "Vinculado";
+    linkedIcon.classList.add("linkedIcon");
     linkedIcon.style.width = "25px";
+    linkedIcon.style.display = "none";
 
     let domainOptionName = document.createElement("div");
     domainOptionName.style.display = "inline";
@@ -676,8 +801,9 @@ export class AonDomainCustomer extends AonElement {
     domainOptionName.appendChild(domainOptionNameSchemaSpan);
 
     
+    domainOptionFirstLine.appendChild(linkedIcon);
     if (domain && domain.aonCustomer) {
-      domainOptionFirstLine.appendChild(linkedIcon);
+      linkedIcon.style.display = "inline";
     }
     domainOptionFirstLine.appendChild(domainOptionName);
     domainOption.appendChild(domainOptionFirstLine);
@@ -915,14 +1041,23 @@ export class AonDomainCustomer extends AonElement {
     aonButtonAccept.title = "Aceptar";
     confirmUnlinkContainer.appendChild(aonButtonAccept);
     aonButtonAccept.addEventListener("click", async (ev) => {
-      await updateDomains({
+      let updatedDomains = await updateDomains({
         domains: [this.selectedDomain],
         customer: customer ? customer.id : null
       });
+      if (this.selectedDomain) {
+        this.selectedDomain.domain = (updatedDomains && updatedDomains[0] ? updatedDomains[0] : this.selectedDomain.domain);
+      }
       this.customerListScrollPromise = null;
       this.customerSearchEnded = true;
-      this.removeAllDomains();
-      await this.refreshLists();
+      if (customer) {
+        this.customerSearchInput.value = "";
+        await this.findRelatedCustomers();
+        this.showLinkedIcon();
+      } else {
+        this.removeAllDomains();
+        await this.refreshLists();
+      }
       this.manageCustomerSearch();
       dialog.close();
     });
@@ -989,6 +1124,16 @@ export class AonDomainCustomer extends AonElement {
   // -------------------------------
 
   // --- OTROS ---
+
+  showLinkedIcon() {
+    if (this.domainList) {
+      let icon = this.domainList.querySelector(".selectedDomain .linkedIcon")
+      if (icon) {
+        icon.style.display = "inline";
+      }
+
+    }
+  }
 
   async refreshLists() {
     this.selectedDomain = null;
