@@ -17,7 +17,7 @@ import org.jooq.ResultQuery;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 
-import com.esferalia.aon.watson.util.AonArrayUtils;
+import com.esferalia.aon.watson.server.AonArrayUtils;
 
 import net.aonsolutions.occam.api.AON;
 import net.aonsolutions.occam.api.AONContext;
