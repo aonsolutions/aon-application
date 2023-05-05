@@ -86,11 +86,13 @@ public class DomainCustomerDAO {
 				Domain domain = domainCompany.getDomain();
 				if (domain != null && domain.getId() != null && AonStringUtils.isNotBlank(domain.getName())) {
 					AonStatus aonStatus = domain.getAonStatus();
-					if (customer != null && customer != null) {						
-						updatedDomains.add(DomainDAO.updateDomainCustomer(ctx, domain.getId(), domain.getName(), customer, aonStatus));
+					if (customer != null && customer != null) {
+						DomainDAO.updateDomainCustomer(ctx, domain.getId(), domain.getName(), customer, aonStatus);
 					} else {
-						updatedDomains.add(DomainDAO.updateDomainCustomer(ctx, domain.getId(), domain.getName(), null, aonStatus));
+						DomainDAO.updateDomainCustomer(ctx, domain.getId(), domain.getName(), null, aonStatus);
 					}
+					
+					updatedDomains.add(DomainDAO.getDomain(ctx, domain.getId()));
 				}
 			}
 		}
@@ -104,8 +106,9 @@ public class DomainCustomerDAO {
 		&& aonStatus != null
 		) {
 			Domain domain = domainCompany.getDomain();
+			DomainDAO.updateDomainCustomer(ctx, domain.getId(), domain.getName(), domain.getAonCustomer(), aonStatus);
 			return domainCompany.setDomain(
-					DomainDAO.updateDomainCustomer(ctx, domain.getId(), domain.getName(), domain.getAonCustomer(), aonStatus)
+					DomainDAO.getDomain(ctx, domain.getId())
 			);
 		}
 		return domainCompany;
