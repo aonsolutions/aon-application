@@ -96,7 +96,7 @@ import com.esferalia.aon.occam.api.model.type.DataResponseSource;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Period;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
-import com.esferalia.aon.occam.mod200.server.format.Mod2002022Writer;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2022.Mod2002022Writer;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.occam.server.fiscal.format.Mod130Writer;
 import com.esferalia.aon.occam.server.fiscal.format.Mod131Writer;

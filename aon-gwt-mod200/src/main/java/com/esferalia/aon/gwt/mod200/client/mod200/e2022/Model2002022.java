@@ -12,10 +12,12 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.mod200.client.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.mod200.client.FiscalModelUtils;
+import com.esferalia.aon.gwt.mod200.client.IModel200PageCallback;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200.Model200Callback;
 import com.esferalia.aon.gwt.mod200.client.mod200.Model200ModuleOptions;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalStatus;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.mod200.api.model.Mod200;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -40,14 +42,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class Model2002022 extends DockLayoutPanel {
 	
-	protected interface Model200PageCallback {	
+	protected interface Model200PageCallback extends IModel200PageCallback {	
 		public Mod2002022Object getMod200Object();
-		public void markAsDirty(); 
-		public Model200Callback getMod200Callback();
-		public boolean isDirty();
+//		public void markAsDirty(); 
+//		public Model200Callback getMod200Callback();
+//		public boolean isDirty();
 	}
 	
-	//private PageAbs[] PAGES = new PageAbs[20];	 
 	private PageAbs[] PAGES = new PageAbs[22];
 	private int P00 = 0;
 	private PageAEAT pageAEAT = null;
@@ -60,10 +61,11 @@ public class Model2002022 extends DockLayoutPanel {
 	AonToolbarButton saveButton;
 	AonToolbarButton removeButton;
 	AonToolbarButton resetButton;
-	AonToolbarButton importAccountingButton;
-	AonToolbarButton aeatAccountingFileButton;
-	AonToolbarButton aeatFileButton;
-	AonToolbarButton aeatPrintButton;
+//	AonToolbarButton importAccountingButton;
+//	AonToolbarButton aeatAccountingFileButton;
+//	AonToolbarButton aeatFileButton;
+//	AonToolbarButton aeatPrintButton;
+	AonToolbarButton aeatButton;  // Boton AEAT muestra la página de la Agencia Tributaria
 	AonToolbarButton commentsButton;
 	AonToolbarButton auditButton;
 	
@@ -74,7 +76,6 @@ public class Model2002022 extends DockLayoutPanel {
 	AonToolbarButton markAsSentButton;
 	AonToolbarButton markAsPendingButton;
 	Label statusLabel;
-
 	SimpleLayoutPanel pageContainer = new SimpleLayoutPanel();
 	
 	FormPanel diskForm;
@@ -155,31 +156,32 @@ public class Model2002022 extends DockLayoutPanel {
 	}
 
 	private void dumpP00( boolean charactersEnabled) {
-		ensurePage(P00, new Model200PageCallback(){
-
-			@Override
-			public Mod2002022Object getMod200Object() {
-				return mod200Object;
-			}
-
-			@Override
-			public void markAsDirty() {
-				Model2002022.this.markAsDirty();
-			}
-
-			@Override
-			public Model200Callback getMod200Callback() {				
-				return mod200Callback;
-			}
-
-			@Override
-			public boolean isDirty() {
-				// FALTA
-				// TODO Auto-generated method stub
-				return Model2002022.this.isDirty();
-			}
-			
-		}).dump();
+//		ensurePage(P00, new Model200PageCallback(){
+//
+//			@Override
+//			public Mod2002022Object getMod200Object() {
+//				return mod200Object;
+//			}
+//
+//			@Override
+//			public void markAsDirty() {
+//				Model2002022.this.markAsDirty();
+//			}
+//
+//			@Override
+//			public Model200Callback getMod200Callback() {				
+//				return mod200Callback;
+//			}
+//
+//			@Override
+//			public boolean isDirty() {
+//				// FALTA
+//				// TODO Auto-generated method stub
+//				return Model2002022.this.isDirty();
+//			}
+//			
+//		}).dump();
+		ensurePage(P00).dump();		
 		pageContainer.setWidget(getPage(P00));
 		refreshButtonsVisibility();
 		
@@ -193,14 +195,15 @@ public class Model2002022 extends DockLayoutPanel {
 		FiscalStatus status = mod200Object.getMod200().getStatus();
 		
 		initializeButton.setVisible(!mod200Object.isInitialized());
-		importAccountingButton.setVisible(mod200Object.isInitialized() && !mod200Object.getMod200().isFinished() && !mod200Object.getMod200().isSent());
+//		importAccountingButton.setVisible(mod200Object.isInitialized() && !mod200Object.getMod200().isFinished() && !mod200Object.getMod200().isSent());
 		saveButton.setVisible(mod200Object.isInitialized() && !mod200Object.getMod200().isFinished() && !mod200Object.getMod200().isSent());
 		removeButton.setVisible(isNotNew && !mod200Object.getMod200().isFinished() && !mod200Object.getMod200().isSent());
 		resetButton.setVisible(isNotNew && !mod200Object.getMod200().isFinished() && !mod200Object.getMod200().isSent());
-		aeatAccountingFileButton.setVisible(isNotNew);		
-		aeatFileButton.setVisible(isNotNew && mod200Object.getMod200().isFinished());
+//		aeatAccountingFileButton.setVisible(isNotNew);		
+//		aeatFileButton.setVisible(isNotNew && mod200Object.getMod200().isFinished());
 		//aeatFileButton.setVisible(isNotNew); // El estado se empezará a usar a partir del 2022, por eso ahora este botón aparece siempre aunque esté pendiente
-		aeatPrintButton.setVisible(isNotNew);		
+//		aeatPrintButton.setVisible(isNotNew);
+		aeatButton.setVisible(mod200Object.isInitialized());
 		commentsButton.setVisible(isNotNew);
 		auditButton.setVisible(isNotNew);
 		
@@ -212,9 +215,10 @@ public class Model2002022 extends DockLayoutPanel {
 				(status == FiscalStatus.FINISHED || status == FiscalStatus.BATCHED || status == FiscalStatus.SENT || status == FiscalStatus.CUSTOMER_CHECK || status == FiscalStatus.BLOCKED));
 		
 		saveButton.setEnabled(true);
-		aeatAccountingFileButton.setEnabled(!isDirty());
-		aeatFileButton.setEnabled(!isDirty());
-		aeatPrintButton.setEnabled(!isDirty());
+//		aeatAccountingFileButton.setEnabled(!isDirty());
+//		aeatFileButton.setEnabled(!isDirty());
+//		aeatPrintButton.setEnabled(!isDirty());
+		//aeatButton.setEnabled(!isDirty());
 		
 		// Estado		
 		markAsFinishedButton.setEnabled(!isDirty());
@@ -224,16 +228,16 @@ public class Model2002022 extends DockLayoutPanel {
 		
 	}
 	
-	private void submitForm(String action) {
-		
-		diskForm.setAction(GWT.getHostPageBaseURL() + action);
-        modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
-        domainIdHidden.setValue(String.valueOf(options.getDomain()));
-        domainNameHidden.setValue(options.getDomainName());
-        userHidden.setValue(options.getUser());
-        diskForm.submit();
-		
-	}
+//	private void submitForm(String action) {
+//		
+//		diskForm.setAction(GWT.getHostPageBaseURL() + action);
+//        modIdHidden.setValue(String.valueOf(mod200Object.getMod200().getId()));
+//        domainIdHidden.setValue(String.valueOf(options.getDomain()));
+//        domainNameHidden.setValue(options.getDomainName());
+//        userHidden.setValue(options.getUser());
+//        diskForm.submit();
+//		
+//	}
 	
 	private class WestFocusPanel extends FocusPanel {
 		
@@ -276,28 +280,29 @@ public class Model2002022 extends DockLayoutPanel {
 				parent.getWidget(i).removeStyleName(AON.CSS.aonBackgroundLigthGray());
 			}
 			
-			PageAbs pageAbs = ensurePage(page, new Model200PageCallback(){
-													@Override 
-													public Mod2002022Object getMod200Object() {
-														return mod200Object;
-													}
-							
-													@Override
-													public void markAsDirty() {
-														Model2002022.this.markAsDirty();						
-													}
-
-													@Override
-													public Model200Callback getMod200Callback() {
-														return mod200Callback;
-													}
-
-													@Override
-													public boolean isDirty() {
-														// TODO Auto-generated method stub
-														return Model2002022.this.isDirty();
-													}
-												});
+//			PageAbs pageAbs = ensurePage(page, new Model200PageCallback(){
+//													@Override 
+//													public Mod2002022Object getMod200Object() {
+//														return mod200Object;
+//													}
+//							
+//													@Override
+//													public void markAsDirty() {
+//														Model2002022.this.markAsDirty();						
+//													}
+//
+//													@Override
+//													public Model200Callback getMod200Callback() {
+//														return mod200Callback;
+//													}
+//
+//													@Override
+//													public boolean isDirty() {
+//														// TODO Auto-generated method stub
+//														return Model2002022.this.isDirty();
+//													}
+//												});
+			PageAbs pageAbs = ensurePage(page);			
 			if (pageAbs.isAvailable()) {
 				pageAbs.dump();
 				pageContainer.setWidget(pageAbs);
@@ -322,7 +327,144 @@ public class Model2002022 extends DockLayoutPanel {
 		return PAGES[i];
 	}
 	
-	private PageAbs ensurePage(int i,Model200PageCallback cbk) {
+	//private PageAbs ensurePage(int i,Model200PageCallback cbk) {
+	private PageAbs ensurePage(int i) {
+		
+		Model200PageCallback cbk = new Model200PageCallback(){
+
+			@Override
+			public Mod2002022Object getMod200Object() {
+				return mod200Object;
+			}
+
+			@Override
+			public void markAsDirty() {
+				Model2002022.this.markAsDirty();
+			}
+
+			@Override
+			public String getCheckAction() {
+				// TODO Auto-generated method stub
+				return GWT.getHostPageBaseURL() +"aon_gwt_mod200/ms/Mod2002022CheckAEAT";
+			}
+
+			@Override
+			public String getCheckDataResponseDataAction() {
+				// TODO Auto-generated method stub
+				return GWT.getHostPageBaseURL() +"aon_gwt_mod200/ms/Mod2002022CheckDataResponseData";
+			}
+
+			@Override
+			public IFiscalModel getModel() {
+				// TODO Auto-generated method stub
+				return mod200Object.getMod200();
+			}
+
+			@Override
+			public String getDownloadFileAction() {
+				// TODO Auto-generated method stub
+				return "/aon_gwt_mod200/ms/Model2002022File";
+			}
+
+			@Override
+			public void showError(String msg) {
+				// TODO Auto-generated method stub
+				mod200Callback.showError(msg);
+			}
+
+			@Override
+			public String getExportAccountingAction() {
+				// TODO Auto-generated method stub
+				return "/aon_gwt_mod200/ms/Model2002022AccountingFile";
+			}
+
+			@Override
+			public String getModelInformationURL() {
+				// TODO Auto-generated method stub
+				return "https://sede.agenciatributaria.gob.es/Sede/procedimientoini/GE04.shtml";
+			}
+
+			@Override
+			public Model200ModuleOptions getOptions() {
+				// TODO Auto-generated method stub
+				return Model2002022.this.options;
+			}
+
+			@Override
+			public String getValidatePrintAction() {
+				// TODO Auto-generated method stub
+				return GWT.getHostPageBaseURL() +"aon_gwt_mod200/ms/Mod2002022ValidatePrintAEAT";
+			}
+
+			@Override
+			public String getSendAction() {
+				// TODO Auto-generated method stub
+				return GWT.getHostPageBaseURL() +"aon_gwt_mod200/ms/Mod2002022SendAEAT";
+			}
+
+			@Override
+			public void sendSuccessfully() {
+				// TODO Auto-generated method stub
+				// FALTA
+				Model200.getMod2002022Service().getMod2002022ById(options.getOccam(), mod200Object.getMod200().getId()
+						, new AsyncCallback<Mod2002022>() {
+
+							@Override
+							public void onSuccess(Mod2002022 mod200) {
+								mod200Object.setMod200(mod200);
+							}
+
+							@Override
+							public void onFailure(Throwable caught) {
+							}
+						});				
+				
+				
+			}
+
+			@Override
+			public boolean isDirty() {
+				// TODO Auto-generated method stub
+				return Model2002022.this.isDirty();
+			}
+
+			@Override
+			public void importAccountingFile() {
+				// TODO Auto-generated method stub
+				// FALTA - SI DA ERROR LA CARGA PORQUE EL ARCHIVO NO ES CORRECTO O ALGO ASI, NO SALE NADA EN PANTALLA
+				mod200Callback.cleanErrorPanel();			
+				Upload upload = new Upload() {
+					
+					@Override
+					protected void onUpload(String data) {
+						mod200Object.fillMod2002022AccountingData(options.getDomainName(), options.getDomain(), options.getUser(), data, new AsyncCallback<Mod2002022>() {
+							@Override public void onSuccess(Mod2002022 result) {	
+								markAsDirty();
+							}
+							@Override public void onFailure(Throwable caught) {
+								mod200Callback.showError(caught.getMessage());
+							}
+						});				
+					}
+				};
+				upload.upload();				
+				
+			}
+
+//			@Override
+//			public Model200Callback getMod200Callback() {				
+//				return mod200Callback;
+//			}
+//
+//			@Override
+//			public boolean isDirty() {
+//				// FALTA
+//				// TODO Auto-generated method stub
+//				return Model2002022.this.isDirty();
+//			}
+			
+		};		
+		
 		if (PAGES[i] == null) {
 			if (i ==  0) PAGES[i] = new Page00(cbk); 
 			if (i ==  1) PAGES[i] = new Page01(cbk); 
@@ -538,80 +680,79 @@ public class Model2002022 extends DockLayoutPanel {
 		
 		// Importar XML con información contable (formato AEAT)  
 			
-		importAccountingButton = new AonToolbarButton(AON.MSG.importAccounting(), AON.CSS.aonIconUpload());
-		importAccountingButton.addClickHandler(event -> {
-			importAccountingButton.setEnabled(false);
-			mod200Callback.cleanErrorPanel();			
-			Upload upload = new Upload() {
-				
-				@Override
-				protected void onUpload(String data) {
-					mod200Object.fillMod2002022AccountingData(options.getDomainName(), options.getDomain(), options.getUser(), data, new AsyncCallback<Mod2002022>() {
-						@Override public void onSuccess(Mod2002022 result) {	
-							markAsDirty();
-						}
-						@Override public void onFailure(Throwable caught) {
-							mod200Callback.showError(caught.getMessage());
-						}
-					});				
-				}
-			};
-			upload.upload();
-			importAccountingButton.setEnabled(true);
-		});
-		toolbarPanel.add(importAccountingButton);
+//		importAccountingButton = new AonToolbarButton(AON.MSG.importAccounting(), AON.CSS.aonIconUpload());
+//		importAccountingButton.addClickHandler(event -> {
+//			importAccountingButton.setEnabled(false);
+//			mod200Callback.cleanErrorPanel();			
+//			Upload upload = new Upload() {
+//				
+//				@Override
+//				protected void onUpload(String data) {
+//					mod200Object.fillMod2002022AccountingData(options.getDomainName(), options.getDomain(), options.getUser(), data, new AsyncCallback<Mod2002022>() {
+//						@Override public void onSuccess(Mod2002022 result) {	
+//							markAsDirty();
+//						}
+//						@Override public void onFailure(Throwable caught) {
+//							mod200Callback.showError(caught.getMessage());
+//						}
+//					});				
+//				}
+//			};
+//			upload.upload();
+//			importAccountingButton.setEnabled(true);
+//		});
+//		toolbarPanel.add(importAccountingButton);
 		
 		// Exportar XML con información contable (formato AEAT)
 		
-		aeatAccountingFileButton = new AonToolbarButton(AON.MSG.aeatAccountingFile(), AON.CSS.aonIconDownload());
-		aeatAccountingFileButton.addClickHandler(event -> {
-			mod200Callback.cleanErrorPanel();
-			
-			AonConfirmDialog cd = new AonConfirmDialog();
-			cd.confirm(AON.MSG.confirmAccountingFileMod200(),			
-				new AonConfirmDialogCallback() {
-					
-					@Override
-					public void onCancel() {}
-					
-					@Override
-					public void onAccept() {
-						submitForm("/aon_gwt_mod200/ms/Model2002022AccountingFile");
-					}
-				}
-			);
-		});
-		toolbarPanel.add(aeatAccountingFileButton);
+//		aeatAccountingFileButton = new AonToolbarButton(AON.MSG.aeatAccountingFile(), AON.CSS.aonIconDownload());
+//		aeatAccountingFileButton.addClickHandler(event -> {
+//			mod200Callback.cleanErrorPanel();
+//			
+//			AonConfirmDialog cd = new AonConfirmDialog();
+//			cd.confirm(AON.MSG.confirmAccountingFileMod200(),			
+//				new AonConfirmDialogCallback() {
+//					
+//					@Override
+//					public void onCancel() {}
+//					
+//					@Override
+//					public void onAccept() {
+//						submitForm("/aon_gwt_mod200/ms/Model2002022AccountingFile");
+//					}
+//				}
+//			);
+//		});
+//		toolbarPanel.add(aeatAccountingFileButton);
 		
 		// Fichero AEAT para presentación		
 
-		aeatFileButton = new AonToolbarButton(AON.MSG.generateFile(), AON.CSS.aonIconAeat());
-		aeatFileButton.addClickHandler(event -> {
-			mod200Callback.cleanErrorPanel();
-			
-			AonConfirmDialog cd = new AonConfirmDialog();
-			cd.confirm(AON.MSG.confirmAeatFileMod200(),			
-				new AonConfirmDialogCallback() {
-					
-					@Override
-					public void onCancel() {}
-					
-					@Override
-					public void onAccept() {
-						submitForm("/aon_gwt_mod200/ms/Model2002022File");
-					}
-				}
-			);
-		});
-		toolbarPanel.add(aeatFileButton);
+//		aeatFileButton = new AonToolbarButton(AON.MSG.generateFile(), AON.CSS.aonIconAeat());
+//		aeatFileButton.addClickHandler(event -> {
+//			mod200Callback.cleanErrorPanel();
+//			
+//			AonConfirmDialog cd = new AonConfirmDialog();
+//			cd.confirm(AON.MSG.confirmAeatFileMod200(),			
+//				new AonConfirmDialogCallback() {
+//					
+//					@Override
+//					public void onCancel() {}
+//					
+//					@Override
+//					public void onAccept() {
+//						submitForm("/aon_gwt_mod200/ms/Model2002022File");
+//					}
+//				}
+//			);
+//		});
+//		toolbarPanel.add(aeatFileButton);
 
 		// Borrador AEAT: Invocación al Servicio de Validación y Prueba
 
-		aeatPrintButton = new AonToolbarButton(AON.MSG.validatePrintViaAeat(), AON.CSS.aonIconAeatBw());
-		aeatPrintButton.addClickHandler(event -> {
-				mod200Callback.cleanErrorPanel();
-			
-			// FALTA - AHORA ESTE BOTON SACA EL PANEL DE LA AGENCIA TRIBUTARIA	
+//		aeatPrintButton = new AonToolbarButton(AON.MSG.validatePrintViaAeat(), AON.CSS.aonIconAeatBw());
+//		aeatPrintButton.addClickHandler(event -> {
+//			mod200Callback.cleanErrorPanel();
+//				
 //			AonConfirmDialog cd = new AonConfirmDialog();
 //			cd.confirm(AON.MSG.confirmAeatPrintMod200(),					
 //				new AonConfirmDialogCallback() {
@@ -625,9 +766,18 @@ public class Model2002022 extends DockLayoutPanel {
 //					}
 //				}
 //			);				
-			westFocusPanelAEAT.checkAndShowPage(21);			
+//						
+//		});
+//		toolbarPanel.add(aeatPrintButton);
+		
+		// Botón Agencia Tributaria		
+
+		aeatButton = new AonToolbarButton("Agencia Tributaria", AON.CSS.aonIconAeat());
+		aeatButton.addClickHandler(event -> {
+			mod200Callback.cleanErrorPanel();
+			westFocusPanelAEAT.checkAndShowPage(PAGES.length-1);  // La página de la Agencia Tributaria, es la última
 		});
-		toolbarPanel.add(aeatPrintButton);
+		toolbarPanel.add(aeatButton);
 		
 		// Comentarios
 		

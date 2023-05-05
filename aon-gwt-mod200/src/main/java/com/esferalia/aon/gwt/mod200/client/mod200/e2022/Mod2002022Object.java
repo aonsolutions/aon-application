@@ -53,8 +53,7 @@ public class Mod2002022Object implements Serializable {
 			for (IMod200ChangeListener listener : changeListeners) {
 				listener.mod200Changed(mod2002);
 			}
-		}
-		
+		}		
 	}
 
 	public void initializeMod200(final AsyncCallback<Mod2002022> callback) {
@@ -129,7 +128,7 @@ public class Mod2002022Object implements Serializable {
 		return mod200;
 	}
 
-	private void setMod200(Mod2002022 mod200) {
+	public void setMod200(Mod2002022 mod200) {
 		this.mod200 = mod200;
 		fireMod200Changed(mod200);
 	}
@@ -145,7 +144,7 @@ public class Mod2002022Object implements Serializable {
 	}
 
 	public boolean isVisible(Mod2002022Key key) {
-		return  mod200.getVisibleMap().containsKey(key);
+		return mod200.getVisibleMap().containsKey(key);
 	}
 	
 	public void doubleValueChanged(IMod200Key k, double value) {

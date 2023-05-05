@@ -17,7 +17,7 @@ import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.mod200.api.MODEL2002022;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
-import com.esferalia.aon.occam.mod200.server.format.Mod2002022Writer;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2022.Mod2002022Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")

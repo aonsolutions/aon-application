@@ -51,7 +51,7 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022KeyDC;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.Mod200DAO;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2021.Mod2002021DAO;
-import com.esferalia.aon.occam.mod200.server.format.Mod2002022Import2021;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2022.Mod2002022Import2021;
 import com.esferalia.aon.occam.server.fiscal.AEATJson;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;

@@ -1,0 +1,883 @@
+package com.esferalia.aon.occam.mod200.server.format.mod200_2016;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+
+import com.esferalia.aon.occam.api.model.fiscal.LegalRepresentative;
+import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyAdministrator;
+import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyParticipation;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2015.DoubleVariable2015;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015Key;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2016.DoubleVariable2016;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016;
+import com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016Key;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2015.Mod2002015Reader;
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonMathUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
+
+public class Mod2002016Import2015 {
+
+	@FunctionalInterface
+	private static interface IPropertyFiller {
+		public void propertyFill(Mod2002015 mod200old, Mod2002016 mod200new);
+	}
+	
+	// ***************************************
+	// **** METODOS ESTATICOS DE UTILIDAD ****
+	// ***************************************
+	
+	// Añadir casilla si no existe o asignar el valor a la casilla, al Modelo 200
+	private static void setDoubleValue(Mod2002016 mod200, Mod2002016Key key, double value) {	
+		 
+		DoubleVariable2016 t = mod200.getVariable(key);
+		if (t == null) {
+			t = new DoubleVariable2016(key);
+			t.setValue(value);
+			mod200.addVariable(t);		
+		}
+		else {
+			t.setValue(value);
+		}
+	}
+	
+	// El metodo addYears de AonDateUtils, devuelve una excepcion si la fecha es null
+	private static Date addOneYear(Date d) {
+		if (d==null)
+			return null;
+		else return com.esferalia.aon.watson.server.AonDateUtils.addYears(d,1);
+	}
+	
+	// Ajuste de las casillas de la columna "deducción pendiente/generada" de los 
+	// apartados "Deducciones por doble imposicion interna e internacional"
+	// Se recalcula la columna deduccion pendiente/generada de las deducciones
+	// por doble imposicion interna/internacional, si en la linea esta el tipo de
+	// gravamen, y el tipo de gravamen del ejercicio anterior es distinto al del
+	// año de generacion, en ese caso se hace la proporcion, pues habria que poner
+	// aqui el importe pendiente, en relacion al tipo de gravamen en que se genero
+	// hay que tener en cuenta que a estas casillas, primero se pasa simplemente
+	// el importe pendiente del año anterior, que es en relacion al tipo de gravamen
+	// que se genero y al tipo de gravamen aplicable el año anterior
+	// Mirar el manual practico, para ver un ejemplo
+	private static double adjustDoubleTax(double value, double type, double type2015 ) {
+		
+		if (type2015 != 0 && type != 0 && type != type2015) {
+			return AonMathUtils.round( value * type / type2015 );
+	    }
+		else return value;
+		
+	}
+
+	// **** FIN METODOS ESTATICOS DE UTILIDAD ****
+	
+	// Paginas del modelo 
+	private enum Pages2016 {
+		
+		 PAG1 ( new IPropertyFiller[] {
+			 (mod200old,mod200new) -> mod200new.setPeriodStart( addOneYear(mod200old.getPeriodStart()))   // Periodo Impositivo - Inicio					
+			,(mod200old,mod200new) -> mod200new.setPeriodEnd( addOneYear(mod200old.getPeriodEnd()))       // Periodo Impositivo - Fin
+			,(mod200old,mod200new) -> mod200new.setPeriodType( mod200old.getPeriodType())                 // Identificación - Tipo de ejercicio
+			,(mod200old,mod200new) -> mod200new.setCnae( mod200old.getCnae() )  						  // Identificación - C.N.A.E.  Actividad principal (convertido a CNAE 2009)
+			// No podemos asegurar que el id de enterprise viene bien cumplimentado en mod200old
+			// respetamos los id que vienen con mod200new
+			//,(mod200old,mod200new) -> mod200new.setEnterprise( mod200old.getEnterprise()) 				  // Identificación - Empresa 
+			,(mod200old,mod200new) -> mod200new.setEnterpriseDocument( mod200old.getEnterpriseDocument()) // Identificación - NIF 
+			,(mod200old,mod200new) -> mod200new.setEnterpriseName(mod200old.getEnterpriseName())          // Identificación - Apellidos y nombre o Razón Social
+			,(mod200old,mod200new) -> mod200new.setEnterprisePhone1(mod200old.getEnterprisePhone1())      // Identificación - Teléfono 1
+			,(mod200old,mod200new) -> mod200new.setEnterprisePhone2(mod200old.getEnterprisePhone2())      // Identificación - Teléfono 2
+			,(mod200old,mod200new) -> mod200new.setYear( 2016 )                                           // Ejercicio
+			,(mod200old,mod200new) -> mod200new.setAdministration( mod200old.getAdministration() )		  // Administracion                                           
+			
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0001, mod200old.getDoubleValue(Mod2002015Key.C0001))  // Entidad sin ánimo de lucro acogida régimen fiscal Título II Ley 49/2002 [001]			                                                    
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0002, mod200old.getDoubleValue(Mod2002015Key.C0002))  // Entidad parcialmente exenta [002]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0003, mod200old.getDoubleValue(Mod2002015Key.C0003))  // Sociedad de inversión de capital variable o fondo de inversión de carácter financiero [003]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0004, mod200old.getDoubleValue(Mod2002015Key.C0004))  // Sociedad de inversión inmobiliaria o fondo de inversión inmobiliaria [004]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0005, mod200old.getDoubleValue(Mod2002015Key.C0005))  // Comunidades titulares de montes vecinales en mano común [005]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0011, mod200old.getDoubleValue(Mod2002015Key.C0011))  // Entidad de tenencia de valores extranjeros [011]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0013, mod200old.getDoubleValue(Mod2002015Key.C0013))  // Agrupación de interés económico española o U.T.E. [013]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0014, mod200old.getDoubleValue(Mod2002015Key.C0014))  // Agrupación europea de  interés económico [014]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0017, mod200old.getDoubleValue(Mod2002015Key.C0017))  // Cooperativa protegida [017]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0018, mod200old.getDoubleValue(Mod2002015Key.C0018))  // Cooperativa especialmente protegida [018]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0019, mod200old.getDoubleValue(Mod2002015Key.C0019))  // Resto cooperativas [019]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0021, mod200old.getDoubleValue(Mod2002015Key.C0021))  // Establecimiento permanente [021]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0023, mod200old.getDoubleValue(Mod2002015Key.C0023))  // Gran empresa [023]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0024, mod200old.getDoubleValue(Mod2002015Key.C0024))  // Entidad de crédito [024]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0025, mod200old.getDoubleValue(Mod2002015Key.C0025))  // Entidad aseguradora [025]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0031, mod200old.getDoubleValue(Mod2002015Key.C0031))  // Entidades de capital-riesgo [031]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0032, mod200old.getDoubleValue(Mod2002015Key.C0032))  // Sociedades desarrollo industrial regional [032]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0036, mod200old.getDoubleValue(Mod2002015Key.C0036))  // Sociedad de garantía recíproca o de reafianzamiento [036]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0048, mod200old.getDoubleValue(Mod2002015Key.C0048))  // Fondo de Pensiones Real Decreto Legislativo 1/2002 de 29 de noviembre [048]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0058, mod200old.getDoubleValue(Mod2002015Key.C0058))  // Mutua de seguros o Mutualidad de previsión social [058]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0060, mod200old.getDoubleValue(Mod2002015Key.C0060))  // Fondos o activos de titulización [060]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0066, mod200old.getDoubleValue(Mod2002015Key.C0066))  // Entidad patrimonial
+			
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0006, mod200old.getDoubleValue(Mod2002015Key.C0006))  // Incentivos empresa de reducida dimensión (cap XI, tít VII LIS)  [006]			
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0015, mod200old.getDoubleValue(Mod2002015Key.C0015))  // Entidad ZEC [015]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0022, mod200old.getDoubleValue(Mod2002015Key.C0022))  // Régimen entidades navieras en función del tonelaje [022]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0028, mod200old.getDoubleValue(Mod2002015Key.C0028))  // Tributación conjunta Estado/Diput.Cdad.Forales [028]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0047, mod200old.getDoubleValue(Mod2002015Key.C0047))  // Entidades sometidas a normativa foral [047]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0035, mod200old.getDoubleValue(Mod2002015Key.C0035))  // Aplicación rég. especial fusiones, escisiones, aportaciones activos y canjes valores (Cap. VII, Tít VII) 
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0049, mod200old.getDoubleValue(Mod2002015Key.C0049))  // Regímenes especiales de normativa foral [049]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0029, mod200old.getDoubleValue(Mod2002015Key.C0029))  // Régimen especial Canarias [029]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0033, mod200old.getDoubleValue(Mod2002015Key.C0033))  // Régimen especial minería [033]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0034, mod200old.getDoubleValue(Mod2002015Key.C0034))  // Régimen especial hidrocarburos [034]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0038, mod200old.getDoubleValue(Mod2002015Key.C0038))  // Entidad dedicada al arrend.viviendas [038]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0046, mod200old.getDoubleValue(Mod2002015Key.C0046))  // Entidad en rég. atribución de rentas constituida en el extranjero con presencia en territorio español [046]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0012, mod200old.getDoubleValue(Mod2002015Key.C0012))  // SOCIMI [012]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0064, mod200old.getDoubleValue(Mod2002015Key.C0064))  // Régimen fiscal entrada SOCIMI
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0057, mod200old.getDoubleValue(Mod2002015Key.C0057))  // Régimen fiscal salida SOCIMI
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0020, mod200old.getDoubleValue(Mod2002015Key.C0020))  // Otros regímenes especiales [020]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0062, mod200old.getDoubleValue(Mod2002015Key.C0062))  // Rég. fiscal de operaciones de aportación de activos a sociedades para la gestión de activos (Ley 8/2012)
+
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0007, mod200old.getDoubleValue(Mod2002015Key.C0007))  // Imputación en base imp. rentas positivas art. 100 LIS
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0009, mod200old.getDoubleValue(Mod2002015Key.C0009))  // Entidad dominante de grupo fiscal [009]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0010, mod200old.getDoubleValue(Mod2002015Key.C0010))  // Entidad dependiente de grupo fiscal [010]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0016, mod200old.getDoubleValue(Mod2002015Key.C0016))  // Opción art. 46.2 LIS
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0026, mod200old.getDoubleValue(Mod2002015Key.C0026))  // Entidad  inactiva [026]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0027, mod200old.getDoubleValue(Mod2002015Key.C0027))  // Base imponible negativa o cero [027]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0030, mod200old.getDoubleValue(Mod2002015Key.C0030))  // Transmisión elementos patrimoniales arts. 27.2.d) y 77.1 LIS
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0039, mod200old.getDoubleValue(Mod2002015Key.C0039))  // Entidad que forma parte de un grupo mercantil (art. 42 del Cód. Comercio) [039]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0043, mod200old.getDoubleValue(Mod2002015Key.C0043))  // Obligación información DT 5ª RIS
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0045, mod200old.getDoubleValue(Mod2002015Key.C0045))  // Inversiones anticipadas - reserva inversiones en Canarias (art. 27.11 Ley 19/1994) [045]
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0063, mod200old.getDoubleValue(Mod2002015Key.C0063))  // Tipo de gravamen reducido para entidades de nueva creción (DT 22ª LIS)
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0071, mod200old.getDoubleValue(Mod2002015Key.C0071))  // Tipo de gravamen reducido para entidades de nueva creción (art. 29.1 LIS)
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0059, mod200old.getDoubleValue(Mod2002015Key.C0059))  // Opciones arts. 39.2 y 39.3 LIS
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.C0065, mod200old.getDoubleValue(Mod2002015Key.C0065))  // Bonificación personal investigador (RD 475/2014)
+			
+			,(mod200old,mod200new) -> mod200new.setBalanceType( mod200old.getBalanceType().ordinal() )  // Balance y ECPN 0.No consta 1.Mod.normal 2.Mod.abreviado 3. Mod.PYMES                
+			,(mod200old,mod200new) -> mod200new.setPygType(mod200old.getPygType().ordinal() )           // Pérdidas y ganancias 0.No consta 1.Mod.normal 2.Mod.abreviado 3. Mod.PYMES
+			
+			,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002016Key.C0061, mod200old.getDoubleValue(Mod2002015Key.C0061))  // Estados de cuentas de Instituciones de inversión colectiva [061]
+			
+			,(mod200old,mod200new) -> mod200new.setFiscalGroup( mod200old.getFiscalGroup() )              // Nº de grupo fiscal al que pertenecen las entidades  que hayan marcado las claves 009 ó 010  [040]
+			,(mod200old,mod200new) -> mod200new.setDominantDocument( mod200old.getDominantDocument() )    // NIF de la entidad representante/dominante (incluida en el grupo fiscal)
+			,(mod200old,mod200new) -> mod200new.setDominantIdentificationNumber(mod200old.getDominantIdentificationNumber() ) // Nº identificación de la entidad dominante (en el caso de grupos constituidos sólo por entidades dependientes)
+			
+			,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002016Key.C0041, mod200old.getDoubleValue(Mod2002015Key.C0041))  // Personal asalariado (cifra media del ejercicio) Personal fijo [041] 
+			,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002016Key.C0042, mod200old.getDoubleValue(Mod2002015Key.C0042))  // Personal asalariado (cifra media del ejercicio) Personal no fijo [042] 
+			                  
+            ,(mod200old,mod200new) -> mod200new.getSecretary().setName(mod200old.getSecretary().getName())              // Nombre o Razón social - Secretario del Consejo de Administración 
+			,(mod200old,mod200new) -> mod200new.getSecretary().setDocument(mod200old.getSecretary().getDocument())      // N.I.F. - Secretario del Consejo de Administración
+			,(mod200old,mod200new) -> mod200new.getSecretary().setIrnr( addOneYear(mod200old.getSecretary().getIrnr())) // Fecha - Contribuyentes por el I.R.N.R. 
+						
+			,(mod200old,mod200new) -> mod200new.getRepresentatives().addAll(mod200old.getRepresentatives())  // Declaración representantes legales entidad
+			})
+			
+		,PAG2 ( new IPropertyFiller[] {				
+				
+			 (mod200old,mod200new) -> mod200new.getAdministrators().addAll(mod200old.getAdministrators())       // A. Relación de administradores
+			,(mod200old,mod200new) -> mod200new.getParticipationsOut().addAll(mod200old.getParticipationsOut()) // B. Participaciones directas - B.1. Participaciones declarante en otras entidades
+			,(mod200old,mod200new) -> mod200new.getParticipationsIn().addAll(mod200old.getParticipationsIn())   // B. Participaciones directas - B.2. Participaciones de personas o entidades en la declarante
+			                                      
+		    ,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002016Key.POR51, mod200old.getDoubleValue(Mod2002015Key.POR51))  // B .Participaciones directas - B.2. Suma de  porcentajes de participación de personas o entidades en el capital de la  declarante inferiores al 5% o al 1% si se trata de valores que coticen en un mercado secundario organizado 
+		    ,(mod200old,mod200new) -> setDoubleValue(mod200new, Mod2002016Key.PORES, mod200old.getDoubleValue(Mod2002015Key.PORES))  // B. Participaciones directas - B.2. Suma de porcentajes de participaciones en situaciones especiales
+			})
+			
+		,PAG13 ( new IPropertyFiller[] {
+			(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ558, mod200old.getDoubleValue(Mod2002015Key.LQ558))  // Tipo de Gravamen				
+			})			
+			
+		,PAG15 ( new IPropertyFiller[] {
+				
+		    // Compensación bases imponibles negativas
+			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ640, mod200old.getDoubleValue(Mod2002015Key.LQ548))  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ643, mod200old.getDoubleValue(Mod2002015Key.LQ645))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ646, mod200old.getDoubleValue(Mod2002015Key.LQ648))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ649, mod200old.getDoubleValue(Mod2002015Key.LQ651))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ652, mod200old.getDoubleValue(Mod2002015Key.LQ654))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ655, mod200old.getDoubleValue(Mod2002015Key.LQ657))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ658, mod200old.getDoubleValue(Mod2002015Key.LQ660))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ661, mod200old.getDoubleValue(Mod2002015Key.LQ663))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ664, mod200old.getDoubleValue(Mod2002015Key.LQ666))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ667, mod200old.getDoubleValue(Mod2002015Key.LQ669))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ743, mod200old.getDoubleValue(Mod2002015Key.LQ748))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ275, mod200old.getDoubleValue(Mod2002015Key.LQ277))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ608, mod200old.getDoubleValue(Mod2002015Key.LQ610))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ704, mod200old.getDoubleValue(Mod2002015Key.LQ706))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ013, mod200old.getDoubleValue(Mod2002015Key.LQ015))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ725, mod200old.getDoubleValue(Mod2002015Key.LQ727))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ534, mod200old.getDoubleValue(Mod2002015Key.LQ536))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ607, mod200old.getDoubleValue(Mod2002015Key.LQ699))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ1045, mod200old.getDoubleValue(Mod2002015Key.LQ1047)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.LQ1049)+
+					                                                                   (mod200old.getDoubleValue(Mod2002015Key.C0017)==0 
+                                                                                        && mod200old.getDoubleValue(Mod2002015Key.C0018)==0 
+                                                                                        && mod200old.getDoubleValue(Mod2002015Key.C0019)==0 
+                                                                                        && mod200old.getDoubleValue(Mod2002015Key.LQ552)<0 
+                                                                                        ?Math.abs(mod200old.getDoubleValue(Mod2002015Key.LQ552)) 
+                                                                                        : 0) )  // Si la base imponible (casilla 552) del 2015 era negativa, tambien se suma a la 
+									                                                            // esta casilla (si no es cooperativa)
+						
+			// Deducciones por doble imposición interna RDL 4/2004
+			
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN104, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN846)-mod200old.getDoubleValue(Mod2002015Key.BN847), // se vuelve a aceptar poner las pendientes del 2008 aunque el año pasado no habia casilla para poner lo que quedaba pendiente
+					mod200old.getDoubleValue(Mod2002015Key.BN105), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ) )
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN106, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN284), 
+					mod200old.getDoubleValue(Mod2002015Key.BN107), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ) )  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN108, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN707), 
+					mod200old.getDoubleValue(Mod2002015Key.BN109), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ) )  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN110, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN300), 
+					mod200old.getDoubleValue(Mod2002015Key.BN111), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ) )  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN112, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN027), 
+					mod200old.getDoubleValue(Mod2002015Key.BN113), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ) )  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN114, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN716), 
+					mod200old.getDoubleValue(Mod2002015Key.BN115), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ) )
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN735, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN738), 
+					mod200old.getDoubleValue(Mod2002015Key.BN920), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ) )
+					
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN105, mod200old.getDoubleValue(Mod2002015Key.BN105))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN107, mod200old.getDoubleValue(Mod2002015Key.BN107))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN109, mod200old.getDoubleValue(Mod2002015Key.BN109))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN111, mod200old.getDoubleValue(Mod2002015Key.BN111))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN113, mod200old.getDoubleValue(Mod2002015Key.BN113))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN115, mod200old.getDoubleValue(Mod2002015Key.BN115))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN920, mod200old.getDoubleValue(Mod2002015Key.BN920))
+                                                                                  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN846, mod200old.getDoubleValue(Mod2002015Key.BN846)-mod200old.getDoubleValue(Mod2002015Key.BN847))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN282, mod200old.getDoubleValue(Mod2002015Key.BN284))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN702, mod200old.getDoubleValue(Mod2002015Key.BN707))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN071, mod200old.getDoubleValue(Mod2002015Key.BN300))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN025, mod200old.getDoubleValue(Mod2002015Key.BN027))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN714, mod200old.getDoubleValue(Mod2002015Key.BN716))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN736, mod200old.getDoubleValue(Mod2002015Key.BN738))
+			                                                                          
+			// Deducciones por doble imposición interna (DT 23ª.1 LIS)
+			// En el ejercicio anterior (2015) no había casillas para indicar el importe que queda pendiente 
+			// para periodos futuros			                                                                          
+            
+			// Deducciones por doble imposición internacional RDL 4/2004
+ 			
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN153, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN637)-mod200old.getDoubleValue(Mod2002015Key.BN638), // Se vuelve a permitir poner el pendiente del 2005 aunque en el ejercicio anterior no habia casilla para ello 
+					mod200old.getDoubleValue(Mod2002015Key.BN728), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN154, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN197), 
+					mod200old.getDoubleValue(Mod2002015Key.BN729), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ))  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN155, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN287), 
+					mod200old.getDoubleValue(Mod2002015Key.BN730), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ))  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN156, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN827), 
+					mod200old.getDoubleValue(Mod2002015Key.BN731), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ))  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN157, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN003), 
+					mod200old.getDoubleValue(Mod2002015Key.BN732), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ))  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN158, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN030), 
+					mod200old.getDoubleValue(Mod2002015Key.BN733), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ))  
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN159, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN719), 
+					mod200old.getDoubleValue(Mod2002015Key.BN734), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN720, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN724), 
+					mod200old.getDoubleValue(Mod2002015Key.BN721), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN739, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN742), 
+					mod200old.getDoubleValue(Mod2002015Key.BN921), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN134, adjustDoubleTax( 
+					mod200old.getDoubleValue(Mod2002015Key.BN137), 
+					mod200old.getDoubleValue(Mod2002015Key.BN926), 
+					mod200old.getDoubleValue(Mod2002015Key.BN103) ))
+					
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN728, mod200old.getDoubleValue(Mod2002015Key.BN728))  // tipo de gravamen
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN729, mod200old.getDoubleValue(Mod2002015Key.BN729))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN730, mod200old.getDoubleValue(Mod2002015Key.BN730))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN731, mod200old.getDoubleValue(Mod2002015Key.BN731))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN732, mod200old.getDoubleValue(Mod2002015Key.BN732))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN733, mod200old.getDoubleValue(Mod2002015Key.BN733))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN734, mod200old.getDoubleValue(Mod2002015Key.BN734))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN721, mod200old.getDoubleValue(Mod2002015Key.BN721))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN921, mod200old.getDoubleValue(Mod2002015Key.BN921))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN926, mod200old.getDoubleValue(Mod2002015Key.BN926))
+
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN637, mod200old.getDoubleValue(Mod2002015Key.BN637)-mod200old.getDoubleValue(Mod2002015Key.BN638))  // pendiente
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN849, mod200old.getDoubleValue(Mod2002015Key.BN197))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN285, mod200old.getDoubleValue(Mod2002015Key.BN287))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN825, mod200old.getDoubleValue(Mod2002015Key.BN827))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN001, mod200old.getDoubleValue(Mod2002015Key.BN003))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN028, mod200old.getDoubleValue(Mod2002015Key.BN030))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN717, mod200old.getDoubleValue(Mod2002015Key.BN719))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN722, mod200old.getDoubleValue(Mod2002015Key.BN724))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN740, mod200old.getDoubleValue(Mod2002015Key.BN742))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN135, mod200old.getDoubleValue(Mod2002015Key.BN137))
+			                                                                    
+			})                                                                  
+			                                                                    
+		,PAG16 ( new IPropertyFiller[] {
+				
+			// Deducciones por doble imposición internacional LIS				
+			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN1054, mod200old.getDoubleValue(Mod2002015Key.BN1053)+
+						                                                               mod200old.getDoubleValue(Mod2002015Key.BN174))
+				
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN1050, mod200old.getDoubleValue(Mod2002015Key.BN103))
+				
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN1051,mod200old.getDoubleValue(Mod2002015Key.BN1053)+
+						                                                              mod200old.getDoubleValue(Mod2002015Key.BN174))
+										
+			// Deducciones disposición transitoria 24ª.7 LIS, art. 42 RDL 4/2004 y art. 36 ter Ley 43/95
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN835, mod200old.getDoubleValue(Mod2002015Key.BN837))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN838, mod200old.getDoubleValue(Mod2002015Key.BN840))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN932, mod200old.getDoubleValue(Mod2002015Key.BN934))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN297, mod200old.getDoubleValue(Mod2002015Key.BN299))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN090, mod200old.getDoubleValue(Mod2002015Key.BN092))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN004, mod200old.getDoubleValue(Mod2002015Key.BN006))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN031, mod200old.getDoubleValue(Mod2002015Key.BN033))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN022, mod200old.getDoubleValue(Mod2002015Key.BN024))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN040, mod200old.getDoubleValue(Mod2002015Key.BN042))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN138, mod200old.getDoubleValue(Mod2002015Key.BN140))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN141, mod200old.getDoubleValue(Mod2002015Key.BN143))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN188, mod200old.getDoubleValue(Mod2002015Key.BN190))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN803, mod200old.getDoubleValue(Mod2002015Key.BN805))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN1055, mod200old.getDoubleValue(Mod2002015Key.BN1057)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN709 ) )
+				
+			// Deducciones disposición transitoria 24ª.1 LIS		
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN749, mod200old.getDoubleValue(Mod2002015Key.BN754))				
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN752, mod200old.getDoubleValue(Mod2002015Key.BN757))				
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN755, mod200old.getDoubleValue(Mod2002015Key.BN760))			 
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN758, mod200old.getDoubleValue(Mod2002015Key.BN763))			
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN761, mod200old.getDoubleValue(Mod2002015Key.BN746)+
+					                                                                  mod200old.getDoubleValue(Mod2002015Key.BN784) )
+			})                                                                  
+        
+		,PAG16B ( new IPropertyFiller[] {
+					    
+			// Deducciones inversión en Canarias
+			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN854, mod200old.getDoubleValue(Mod2002015Key.BN854)-
+					                                                                  mod200old.getDoubleValue(Mod2002015Key.BN855))  // Se vuelve a admitir pendiente ejercicio anterior, aunque el año pasado no había casilla
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN857, mod200old.getDoubleValue(Mod2002015Key.BN859))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN860, mod200old.getDoubleValue(Mod2002015Key.BN862))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN863, mod200old.getDoubleValue(Mod2002015Key.BN865))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN883, mod200old.getDoubleValue(Mod2002015Key.BN885))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN785, mod200old.getDoubleValue(Mod2002015Key.BN790)+
+																					  mod200old.getDoubleValue(Mod2002015Key.BN856))
+			
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN088, mod200old.getDoubleValue(Mod2002015Key.BN196))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN194, mod200old.getDoubleValue(Mod2002015Key.BN834))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN868, mod200old.getDoubleValue(Mod2002015Key.BN873))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN871, mod200old.getDoubleValue(Mod2002015Key.BN876))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN874, mod200old.getDoubleValue(Mod2002015Key.BN879))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN877, mod200old.getDoubleValue(Mod2002015Key.BN882))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN880, mod200old.getDoubleValue(Mod2002015Key.BN870))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN866, mod200old.getDoubleValue(Mod2002015Key.BN941))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN939, mod200old.getDoubleValue(Mod2002015Key.BN193))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN191, mod200old.getDoubleValue(Mod2002015Key.BN701))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN613, mod200old.getDoubleValue(Mod2002015Key.BN011))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN200, mod200old.getDoubleValue(Mod2002015Key.BN039))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN037, mod200old.getDoubleValue(Mod2002015Key.BN046))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN044, mod200old.getDoubleValue(Mod2002015Key.BN530))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN528, mod200old.getDoubleValue(Mod2002015Key.BN146))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN144, mod200old.getDoubleValue(Mod2002015Key.BN149))
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN147, mod200old.getDoubleValue(Mod2002015Key.BN242))
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN240, mod200old.getDoubleValue(Mod2002015Key.BN1060)+
+            		                                                                  mod200old.getDoubleValue(Mod2002015Key.BN806))
+			})
+			
+		,PAG17 ( new IPropertyFiller[] {
+				
+		    // Deducciones para incentivar determinadas actividades (Cap. IV Tit. VI y DT 24ª.3 LIS)
+			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN774 , mod200old.getDoubleValue(Mod2002015Key.BN776) ) // 1999
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN780 , mod200old.getDoubleValue(Mod2002015Key.BN782) ) // 2000
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN786 , mod200old.getDoubleValue(Mod2002015Key.BN788) ) // 2001
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN766 , mod200old.getDoubleValue(Mod2002015Key.BN833) ) // 2002
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN198 , mod200old.getDoubleValue(Mod2002015Key.BN897) ) // 2003
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN288 , mod200old.getDoubleValue(Mod2002015Key.BN290) ) // 2004
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN466 , mod200old.getDoubleValue(Mod2002015Key.BN468) ) // 2005
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN061 , mod200old.getDoubleValue(Mod2002015Key.BN586) ) // 2006
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN472 , mod200old.getDoubleValue(Mod2002015Key.BN478) ) // 2007
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN180 , mod200old.getDoubleValue(Mod2002015Key.BN182) ) // 2008
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN531 , mod200old.getDoubleValue(Mod2002015Key.BN533) ) // 2009
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN945 , mod200old.getDoubleValue(Mod2002015Key.BN947) ) // 2010
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN960 , mod200old.getDoubleValue(Mod2002015Key.BN962) ) // 2011
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN183 , mod200old.getDoubleValue(Mod2002015Key.BN186) ) // 2012
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN966 , mod200old.getDoubleValue(Mod2002015Key.BN968) ) // 2013 excepto I+D+i
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN457 , mod200old.getDoubleValue(Mod2002015Key.BN459) ) // 2013 CT 
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN460 , mod200old.getDoubleValue(Mod2002015Key.BN462) ) // 2013 IT
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN1063, mod200old.getDoubleValue(Mod2002015Key.BN1065)) // 2014 excepto I+D+i
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN1066, mod200old.getDoubleValue(Mod2002015Key.BN1068)) // 2014 CT 
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN1069, mod200old.getDoubleValue(Mod2002015Key.BN1071)) // 2014 IT
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN813 , mod200old.getDoubleValue(Mod2002015Key.BN815 )+ // 2015 excepto I+D+i
+																					   mod200old.getDoubleValue(Mod2002015Key.BN797 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN889 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN809 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN1352)+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN1077)+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN965 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN751 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN1080)+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN073 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN080 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN087 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN058 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN209 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN218 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN206 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN221 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN230 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN239 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN016 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN293 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN423 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN428 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN431 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN434 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN437 )+
+																					   mod200old.getDoubleValue(Mod2002015Key.BN440 )+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1083)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1086)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1089)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1092)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1095)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1098)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1101)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1104)+		
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1107)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1110)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1113)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1116)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1119)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN1122)+
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN830 ))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN986 , mod200old.getDoubleValue(Mod2002015Key.BN507)+  // 2015 CT
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN800)) 
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN557 , mod200old.getDoubleValue(Mod2002015Key.BN594)+  // 2015 IT
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.BN713)) 
+			})
+			
+		,PAG18 ( new IPropertyFiller[] {
+				
+			// El año pasado la casilla 919 era el 80% de la casilla 918 y en la casilla 580 quedaba lo pendiente, por lo tanto 
+			// para pasar lo pendiente del 2013 (casilla 580) a la casilla 918, habria que tener en cuenta que esa 918 esta reducida 
+			// en un 20%, es decir hacer la operacion inversa. Se asume lo mismo para el resto de ejercicios
+			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN918 ,AonMathUtils.round(mod200old.getDoubleValue(Mod2002015Key.BN580 )*100/80)) // 2013 CTE
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN589 ,AonMathUtils.round(mod200old.getDoubleValue(Mod2002015Key.BN978 )*100/80)) // 2013 ITE
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN822 ,AonMathUtils.round(mod200old.getDoubleValue(Mod2002015Key.BN231 )*100/80)) // 2014 CTE
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN232 ,AonMathUtils.round(mod200old.getDoubleValue(Mod2002015Key.BN851 )*100/80)) // 2014 ITE
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN1123,AonMathUtils.round(mod200old.getDoubleValue(Mod2002015Key.BN1126)*100/80)) // 2015 CTE
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN1127,AonMathUtils.round(mod200old.getDoubleValue(Mod2002015Key.BN1130)*100/80)) // 2015 ITE
+
+			// Deducción donativos a entidades sin fines de lucro. Ley 49/2002
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN942, mod200old.getDoubleValue(Mod2002015Key.BN944))  // 2006
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN294, mod200old.getDoubleValue(Mod2002015Key.BN296))  // 2007
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN066, mod200old.getDoubleValue(Mod2002015Key.BN084))  // 2008
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN008, mod200old.getDoubleValue(Mod2002015Key.BN010))  // 2009
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN034, mod200old.getDoubleValue(Mod2002015Key.BN036))  // 2010
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN201, mod200old.getDoubleValue(Mod2002015Key.BN203))  // 2011
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN904, mod200old.getDoubleValue(Mod2002015Key.BN906))  // 2012
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN990, mod200old.getDoubleValue(Mod2002015Key.BN992))  // 2013
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN997, mod200old.getDoubleValue(Mod2002015Key.BN999))  // 2014
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN246, mod200old.getDoubleValue(Mod2002015Key.BN248)+  // 2015
+					                                                                  mod200old.getDoubleValue(Mod2002015Key.BN995))
+			
+			// Deducción por reversión de medidas temporales (D.T. 37ª.1 LIS)
+		    // El año pasado las casillas 1163 y 1167 eran el 2% de las casillas 1162 y 1166 respectivamente, por lo tanto para
+	        // obtener en la casilla 1166 la base pendiente del 2015, habrá que hacer la operacion inversa, pues en el importe
+	        // pendiente del año anterior lo tendremos despues de aplicar el 2% a la base 
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN1166, AonMathUtils.round(mod200old.getDoubleValue(Mod2002015Key.BN1169)/0.02)+  // 2015
+			                                                                           AonMathUtils.round(mod200old.getDoubleValue(Mod2002015Key.BN1165)/0.02))
+			                                                                          
+  			// Deducción por reversión de medidas temporales (D.T. 37ª.2 LIS)
+  		    // El año pasado las casillas 1175 y 1179 eran el 2% de las casillas 1174 y 1178 respectivamente, por lo tanto para
+  	        // obtener en la casilla 1178 la base pendiente del 2015, habrá que hacer la operacion inversa, pues en el importe
+  	        // pendiente del año anterior lo tendremos despues de aplicar el 2% a la base 
+  			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.BN1178, AonMathUtils.round(mod200old.getDoubleValue(Mod2002015Key.BN1181)/0.02)+  // 2015
+			                                                              			   AonMathUtils.round(mod200old.getDoubleValue(Mod2002015Key.BN1177)/0.02))
+					                                                                  
+			})
+			
+		,PAG19 ( new IPropertyFiller[] {
+			
+			// Reserva de nivelación - Reducción en base imponible 	
+			(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ1141, mod200old.getDoubleValue(Mod2002015Key.LQ1143)+  // 2015
+																					  mod200old.getDoubleValue(Mod2002015Key.LQ1146))
+				
+			})		
+			
+		,PAG20 ( new IPropertyFiller[] {
+				
+			// Limitacion en la deducilidad de gastos financieros. Gastos financieros pendientes de deducir
+			 (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LM1188, mod200old.getDoubleValue(Mod2002015Key.LM1191))  // 2012
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LM1193, mod200old.getDoubleValue(Mod2002015Key.LM1196))  // 2013
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LM1198, mod200old.getDoubleValue(Mod2002015Key.LM1201))  // 2014
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LM1202, mod200old.getDoubleValue(Mod2002015Key.LM1205)+  // 2015 Por límite 16.5 y 83 LIS
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.LM1210))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LM1203, mod200old.getDoubleValue(Mod2002015Key.LM1206)+  // 2015 Resto
+					                                                                   mod200old.getDoubleValue(Mod2002015Key.LM1211))
+			
+			// Pendiente de adición por límite beneficio operativo no aplicado
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LM890, mod200old.getDoubleValue(Mod2002015Key.LM892))   // 2012
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LM503, mod200old.getDoubleValue(Mod2002015Key.LM523))   // 2013
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LM273, mod200old.getDoubleValue(Mod2002015Key.LM537))   // 2014
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LM955, mod200old.getDoubleValue(Mod2002015Key.LM957)+   // 2015
+						                                                                  mod200old.getDoubleValue(Mod2002015Key.LM1219))
+			})
+			
+		,PAG20B ( new IPropertyFiller[] {
+			
+			// Reserva de capitalización
+			(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ1131, mod200old.getDoubleValue(Mod2002015Key.LQ1133)+  // 2015
+					                                                                  mod200old.getDoubleValue(Mod2002015Key.LQ1136))
+			
+            // Dotaciones por deterioro de créditos u otros activos derivados de las posibles insolvencias de los deudores no
+            // vinculados con el contribuyente y otras del art. 11.12 LIS con posibilidad de conversión en crédito exigible            
+               // Este apartado ha cambiado todas sus casillas en 2016, desglosando más aún las existentes en 2015, por lo que 
+               // no veo forma de pasar lo pendiente de forma automática, ya que no existe equivalencia entre unas y otras.
+               // Se deja sin traspasar del 2015 y si el usuario tenía algo pendiente, que lo introduzca manualmente en las
+               // casillas que corresponda, según la nueva distribución del 2016.
+					                                                                  
+			})
+		
+        ,PAG22 ( new IPropertyFiller[] {
+        		
+    		// [...] Régimen especial de la reserva para inversiones en Canarias (Ley 19/1994)
+    		   // Este apartado no existía en AON Sociedades en 2015
+					                                                                  
+        	// Régimen de cooperativas - Detalle de compensación de cuotas	                                                                				
+             (mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ673, mod200old.getDoubleValue(Mod2002015Key.LQ1224))  // 2000 			
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ676, mod200old.getDoubleValue(Mod2002015Key.LQ678 ))  // 2001				
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ679, mod200old.getDoubleValue(Mod2002015Key.LQ681 ))  // 2002				
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ682, mod200old.getDoubleValue(Mod2002015Key.LQ684 ))  // 2003				
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ685, mod200old.getDoubleValue(Mod2002015Key.LQ687 ))  // 2004				
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ688, mod200old.getDoubleValue(Mod2002015Key.LQ690 ))  // 2005				
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ691, mod200old.getDoubleValue(Mod2002015Key.LQ693 ))  // 2006				
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ623, mod200old.getDoubleValue(Mod2002015Key.LQ672 ))  // 2007				
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ279, mod200old.getDoubleValue(Mod2002015Key.LQ281 ))  // 2008				
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ587, mod200old.getDoubleValue(Mod2002015Key.LQ900 ))  // 2009				
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ059, mod200old.getDoubleValue(Mod2002015Key.LQ100 ))  // 2010				
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ017, mod200old.getDoubleValue(Mod2002015Key.LQ019 ))  // 2011				
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ772, mod200old.getDoubleValue(Mod2002015Key.LQ777 ))  // 2012				
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ907, mod200old.getDoubleValue(Mod2002015Key.LQ909 ))  // 2013
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ910, mod200old.getDoubleValue(Mod2002015Key.LQ912 ))  // 2014
+            ,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002016Key.LQ935, mod200old.getDoubleValue(Mod2002015Key.LQ937)+   // 2015 (Tambien se añade la casilla 560 del ejercicio anterior si es negativa y es cooperativa)
+            		                                                                  mod200old.getDoubleValue(Mod2002015Key.LQ1226)+
+            		                                                                  ((mod200old.getDoubleValue(Mod2002015Key.C0017)==1 || mod200old.getDoubleValue(Mod2002015Key.C0018)==1 || mod200old.getDoubleValue(Mod2002015Key.C0019)==1) && (mod200old.getDoubleValue(Mod2002015Key.LQ560)<0) ? Math.abs(mod200old.getDoubleValue(Mod2002015Key.LQ560)) : 0)  )  
+			
+			})
+			
+			
+		
+		;
+		
+		private IPropertyFiller[] propertyFillers;
+		
+		private Pages2016 (IPropertyFiller[] propertyFillers) {
+			this.propertyFillers = propertyFillers;
+		}
+
+		public static void fill(Mod2002015 mod200old, Mod2002016 mod200new) {
+			for ( Pages2016 page : Pages2016.values()) {
+					for (IPropertyFiller propertyFiller : page.propertyFillers) {
+						propertyFiller.propertyFill(mod200old, mod200new);
+					}				
+			}
+		}
+	}
+	
+	public static void import2015(Mod2002016 mod200new,Mod2002015 mod200old) {
+		try {
+			Pages2016.fill(mod200old, mod200new);
+		} catch (Exception e) {
+			throw new AonCoreException(e);
+		}
+	}
+
+	public static Mod2002016 import2015(Mod2002015 mod200old) {
+		
+		try {
+			// Creamos el objeto Mod200 del ejercicio actual, donde importaremos los datos del ejercicio anterior
+			Mod2002016 mod200new = new Mod2002016();
+			import2015(mod200new, mod200old);
+			return mod200new;
+		} catch (Exception e) {
+			throw new AonCoreException(e);
+		}
+		
+	}
+	
+	// ---- PRUEBAS ---- 
+	
+	private static String formatDate(Date d) {
+		if (d==null)
+			return null;
+		else {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			return sdf.format(d);			
+		}
+	}
+	
+	private static void toString(Mod2002016 mod200) {
+		
+		System.out.println("PeriodStart...........: " + formatDate(mod200.getPeriodStart()));
+		System.out.println("PeriodEnd.............: " + formatDate(mod200.getPeriodEnd()));
+		System.out.println("PeriodType............: " + mod200.getPeriodType());
+		System.out.println("Cnae .................: " + mod200.getCnae());
+		System.out.println("Document..............: " + mod200.getEnterpriseDocument());
+		System.out.println("Name..................: " + mod200.getEnterpriseName());
+		System.out.println("Phone1................: " + mod200.getEnterprisePhone1());
+		System.out.println("Phone2................: " + mod200.getEnterprisePhone2());
+		System.out.println("Year..................: " + mod200.getYear());
+		System.out.println("BalanceType...........: " + mod200.getBalanceType());
+		System.out.println("PygType...............: " + mod200.getPygType());
+		System.out.println("FiscalGroup...........: " + mod200.getFiscalGroup());
+		System.out.println("DominantDocument......: " + mod200.getDominantDocument());
+		System.out.println("Complementary.........: " + mod200.isComplementary());
+		System.out.println("ComplementaryReceipt..: " + mod200.getComplementaryReceipt());
+		System.out.println("Secretary_Name........: " + mod200.getSecretary().getName());
+		System.out.println("Secretary_Document....: " + mod200.getSecretary().getDocument());
+		System.out.println("Secretary_Irnr........: " + formatDate(mod200.getSecretary().getIrnr()));
+		
+		System.out.println();
+		System.out.println("-- CLAVES --");
+		for (Mod2002016Key key : Mod2002016Key.values()) {			
+			if (mod200.getKey(key) != null) {
+				System.out.println(AonStringUtils.join(AonStringUtils.SPACE
+						,mod200.getKey(key).getKey()
+						," ...: "
+						,mod200.getKey(key).getValue()));
+			}
+		}
+
+		System.out.println();
+		List<LegalRepresentative> l1 = mod200.getRepresentatives();
+		System.out.println("-- REPRESENTANTES -- "+l1.size());		
+		for (int i = 0; i < l1.size(); i++) {
+			LegalRepresentative lr = l1.get(i);
+			System.out.println( AonStringUtils.join(lr.getDocument()
+				,AonStringUtils.SPACE
+				,lr.getName()
+				,AonStringUtils.SPACE
+				,formatDate(lr.getNotaryDate()).toString()				
+				,AonStringUtils.SPACE
+				,lr.getNotary()));
+		}
+		
+		System.out.println();
+		List<Mod200CompanyAdministrator> l2 = mod200.getAdministrators();
+		System.out.println("-- ADMINISTRADORES -- "+l2.size());		
+		for (int i = 0; i < l2.size(); i++) {
+			Mod200CompanyAdministrator ca = l2.get(i);
+			System.out.println( AonStringUtils.join(ca.getDocument()
+				,AonStringUtils.SPACE
+				,ca.isRepresentative()
+				,AonStringUtils.SPACE
+				,ca.getName()
+				,AonStringUtils.SPACE
+				,ca.getResidence()
+				,AonStringUtils.SPACE
+				,ca.getProvince()));
+		}
+		
+		System.out.println();
+		List<Mod200CompanyParticipation> cpo = mod200.getParticipationsOut();
+		System.out.println("-- PARTICIPATIONS OUT -- "+cpo.size());		
+		for (int i = 0; i < cpo.size(); i++) {
+			Mod200CompanyParticipation cp = cpo.get(i);
+			System.out.println( AonStringUtils.join( cp.getDocument()
+													,AonStringUtils.SPACE
+													,cp.getName()
+													,AonStringUtils.SPACE
+													,cp.getProvince()
+													,AonStringUtils.SPACE
+													,cp.getPercent()
+													,AonStringUtils.SPACE
+													,cp.getNominalValue()
+													,AonStringUtils.SPACE
+													,cp.getBookValue()
+													,AonStringUtils.SPACE
+													,cp.getIncomes()
+													,AonStringUtils.SPACE
+													,cp.getValueCorrection()
+													,AonStringUtils.SPACE
+													,cp.getLossReversion()
+													,AonStringUtils.SPACE
+													,cp.getCorrectionEffect()
+													,AonStringUtils.SPACE
+													,cp.getCorrectionsBalance()
+													,AonStringUtils.SPACE
+													,cp.getCapital()
+													,AonStringUtils.SPACE
+													,cp.getReserve()
+													,AonStringUtils.SPACE
+													,cp.getOtherAmounts()
+													,AonStringUtils.SPACE
+													,cp.getResult()));
+		}
+
+		System.out.println();
+		List<Mod200CompanyParticipation> cpi = mod200.getParticipationsIn();
+		System.out.println("-- PARTICIPATIONS IN -- "+cpi.size());		
+		for (int i = 0; i < cpi.size(); i++) {
+			Mod200CompanyParticipation cp = cpi.get(i);
+			System.out.println( AonStringUtils.join( cp.getDocument()
+													,AonStringUtils.SPACE
+													,cp.isRepresentative()
+													,AonStringUtils.SPACE
+													,cp.getName()
+													,AonStringUtils.SPACE
+													,cp.getProvince()
+													,AonStringUtils.SPACE
+													,cp.getNominalValue()
+													,AonStringUtils.SPACE
+													,cp.getPercent()));
+		}
+		
+	}
+	
+	private static void setDoubleValue2015(Mod2002015 mod200, Mod2002015Key key, double value) {	
+		 
+		DoubleVariable2015 t = mod200.getVariable(key);
+		if (t == null) {
+			t = new DoubleVariable2015(key);
+			t.setValue(value);
+			mod200.addVariable(t);		
+		}
+		else {
+			t.setValue(value);
+		}
+	}
+	
+	public static void main_old(String argv[]) throws UnsupportedEncodingException, FileNotFoundException {
+		
+		// La prueba consiste en leer un archivo con el formato del modelo 200 del ejercicio anterior,
+		// despues inicializar todas las casillas con su correspondiente codigo y posteriormente
+		// llamar a la importación y mostrar el resultado, para comprobar que todas las casillas se 
+		// quedan con los importes que le correspondan del ejercicio anterior
+		
+		try {
+			String filename = "/AEAT/LOTES/ENVIAR/200/2015";  // directorio por defecto
+			
+			// Mostrar una ventana de dialogo para seleccionar ficheros
+			JFileChooser fc = new JFileChooser();
+			fc.setCurrentDirectory(new File(filename));
+            int res = fc.showOpenDialog(new JFrame()); 
+		    
+	        if (res == JFileChooser.APPROVE_OPTION) {
+	        	filename = fc.getSelectedFile().getAbsolutePath();
+        		System.out.println("***** Inicio Fichero : "+filename);
+				System.out.println("");
+				
+				File file = new File(filename);
+				FileInputStream in = new FileInputStream(file);
+				
+				Mod2002015 mod200old = Mod2002015Reader.getMod2002015(in);
+				if (mod200old!=null) {
+					
+					// PRUEBA - Inicializamos todas las claves con sus numeros
+					 
+					for (Mod2002015Key key : Mod2002015Key.values()) {						
+						try {
+							setDoubleValue2015(mod200old, key, Double.parseDouble(key.name().substring(2)));
+						} catch (NumberFormatException e) {
+							// TODO Auto-generated catch block
+							//e.printStackTrace();
+						}
+					}					
+					
+					// Prueba base imponible negativa (casilla 552)
+					setDoubleValue2015(mod200old, Mod2002015Key.LQ552, -552 );
+					
+					// Cooperativas Casillas 17, 18 y 19. Cuota compensacion negativa (casilla 560) 
+					setDoubleValue2015(mod200old, Mod2002015Key.C0017, 0 );
+					setDoubleValue2015(mod200old, Mod2002015Key.C0018, 0 );
+					setDoubleValue2015(mod200old, Mod2002015Key.C0019, 0 );
+					setDoubleValue2015(mod200old, Mod2002015Key.LQ560, 0 );
+					
+					// FIN PRUEBA
+					
+					Mod2002016 mod200new = import2015(mod200old);					
+					toString(mod200new);
+				}
+			
+        		System.out.println("");
+				System.out.println("***** Fin Fichero : "+filename);
+				System.out.println("");
+	        }	        
+		} 
+//	        catch (Exception e) {
+//			//e.printStackTrace();			
+//		}
+		finally {
+			System.exit(0);
+		}
+	}
+	
+	public static void main(String argv[]) throws UnsupportedEncodingException, FileNotFoundException {
+		
+		// Esta prueba unicamente crea un objeto del año anterior e inicializa sus casillas con 
+		// los códigos, posteriormente llama a la importacion para ver que se trasladan correctamente
+		try {			
+				Mod2002015 mod200old = new Mod2002015();
+				if (mod200old!=null) {				
+					
+					// PRUEBA - Inicializamos todas las claves con sus numeros
+					
+					mod200old.setBalanceType(2); // PYMES
+					mod200old.setPygType(2); // PYMES
+					 
+					for (Mod2002015Key key : Mod2002015Key.values()) {						
+						try {
+							setDoubleValue2015(mod200old, key, Double.parseDouble(key.name().substring(2)));
+						} catch (NumberFormatException e) {
+							// TODO Auto-generated catch block
+							//e.printStackTrace();
+						}
+					}					
+					
+					// Prueba base imponible negativa (casilla 552)
+					setDoubleValue2015(mod200old, Mod2002015Key.LQ552, -552 );
+					
+					// Cooperativas Casillas 17, 18 y 19. Cuota compensacion negativa (casilla 560) 
+					setDoubleValue2015(mod200old, Mod2002015Key.C0017, 0 );
+					setDoubleValue2015(mod200old, Mod2002015Key.C0018, 0 );
+					setDoubleValue2015(mod200old, Mod2002015Key.C0019, 0 );
+					setDoubleValue2015(mod200old, Mod2002015Key.LQ560, 0 );
+					
+					// FIN PRUEBA
+					
+					Mod2002016 mod200new = import2015(mod200old);					
+					toString(mod200new);
+				}
+		}
+        catch (Exception e) {
+		    e.printStackTrace();
+        }
+		finally {
+			System.exit(0);
+		}
+	}
+	
+}
+
+
