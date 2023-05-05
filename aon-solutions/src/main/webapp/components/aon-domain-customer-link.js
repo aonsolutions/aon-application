@@ -31,6 +31,7 @@ export class AonDomainCustomer extends AonElement {
   searchMode;
 
   noCustomerDomainsOnlyCheck;
+  linkStatusFilter;
   domainAonStatusFilter;
   domainStatusFilter;
   customerStatusFilter;
@@ -170,7 +171,7 @@ export class AonDomainCustomer extends AonElement {
     searchFiltersContainer.style.marginTop = "5px";
     
     let noCustomerDomainsOnlyCheckContainer = document.createElement('div');
-    noCustomerDomainsOnlyCheckContainer.style.width = "33%";
+    noCustomerDomainsOnlyCheckContainer.style.width = "25%";
     noCustomerDomainsOnlyCheckContainer.style.height = "50%";
     noCustomerDomainsOnlyCheckContainer.style.display = "flex";
     noCustomerDomainsOnlyCheckContainer.style.justifyContent = "center";
@@ -182,8 +183,22 @@ export class AonDomainCustomer extends AonElement {
     this.noCustomerDomainsOnlyCheck.checked = false;
     this.noCustomerDomainsOnlyCheck.description = "No vinculados"; 
     this.noCustomerDomainsOnlyCheck.title  = "Solo dominios sin cliente vinculado"
-
+    
+    this.linkStatusFilter = new AonSelect();
+    this.linkStatusFilter.id = this.id + "linkStatusFilter";
+    this.linkStatusFilter.classList.add("domainLinkAonSelect");
+    this.linkStatusFilter.title = "Vinculación";
+    this.linkStatusFilter.readonly = false;
+    let linkStatusFilterOptions =
+    [ {value: "", name: "Todos"},
+      {value: "linked", name: "Vinculados"},
+      {value: "unlinked", name: "Sin vincular"}
+    ];
+    this.linkStatusFilter.options = JSON.stringify(linkStatusFilterOptions);
+    this.linkStatusFilter.value = "";
+    
     noCustomerDomainsOnlyCheckContainer.appendChild(this.noCustomerDomainsOnlyCheck);
+    // noCustomerDomainsOnlyCheckContainer.appendChild(this.linkStatusFilter);
     
     let domainAonStatusFilterContainer = document.createElement('div');
     domainAonStatusFilterContainer.style.width = "25%";
@@ -200,7 +215,7 @@ export class AonDomainCustomer extends AonElement {
     this.domainAonStatusFilter.readonly = false;
     let domainAonStatusFilterOptions = [{value: "", name: "Todos"}];
     this.DOMAIN_STATUS_OPTIONS.forEach(status => {
-      domainAonStatusFilterOptions.push({value: status, name: this.getDomainStatusDescription(status)})
+      domainAonStatusFilterOptions.push({value: status, name: this.getDomainStatusDescription(status)});
     });
     this.domainAonStatusFilter.options = JSON.stringify(domainAonStatusFilterOptions);
     this.domainAonStatusFilter.value = "";
@@ -231,7 +246,7 @@ export class AonDomainCustomer extends AonElement {
     this.domainStatusFilter.options = JSON.stringify(domainStatusFilterOptions);
     this.domainStatusFilter.value = "";
 
-    [this.noCustomerDomainsOnlyCheck, this.domainAonStatusFilter, this.domainStatusFilter].forEach(filterEl => {
+    [this.noCustomerDomainsOnlyCheck, this.domainAonStatusFilter, this.domainStatusFilter, this.linkStatusFilter].forEach(filterEl => {
       filterEl.addEventListener('change', (event) => this.searchFunction());
     });
 
@@ -491,6 +506,7 @@ export class AonDomainCustomer extends AonElement {
         && (this.noCustomerDomainsOnlyCheck.getValue() ? !(domainCompany.domain ? domainCompany.domain.aonCustomer : null): true)
         && (this.domainAonStatusFilter.value ? (domainCompany.domain ? this.domainAonStatusFilter.value === domainCompany.domain.aonStatus : false) : true)
         && this.checkAccess(domainCompany)
+        // && this.checkLinkStatus(domainCompany)
         );
         this.filterDomains(filteredDomains);
   }
@@ -511,6 +527,27 @@ export class AonDomainCustomer extends AonElement {
           break;
         case "expired":
           return (domain.expirationDate ? true : false);
+          break;
+        default:
+          break;
+      }
+    }
+    return false;
+  }
+
+  checkLinkStatus(domainCompany) {
+    let domain = domainCompany ? domainCompany.domain : null;
+    if (domain) {
+      let linkStatus = this.linkStatusFilter.value;
+      switch (linkStatus) {
+        case "":
+          return true;
+          break;
+        case "linked":
+          return (domain.aonCustomer ? true : false);
+          break;
+        case "unlinked":
+          return (!domain.aonCustomer ? true : false);
           break;
         default:
           break;
@@ -585,12 +622,14 @@ export class AonDomainCustomer extends AonElement {
           id: aonCustomer
         });
         customers.push(cust);
-        if (cust) {
+        if (cust && domain) {
+          let dName = domain.name;
+          let dId = domain.id;
           let linkedCustomerDomain = cust.domain;
           if (linkedCustomerDomain) {
             booking = await getBooking({
-              domainName: linkedCustomerDomain.name,
-              domainId: linkedCustomerDomain.id,
+              domainName: dName,
+              domainId: dId,
             });
             console.log(booking);
           }
