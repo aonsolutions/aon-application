@@ -255,7 +255,7 @@ public class PartTimeTemplate {
 	}
 	private void drawSubTitle() {
 		x = MARGIN_SIDE;
-		String subTitleText = "En cumplimiento de la obligación establecida en el Art. 12.5 h) del Estatuto de los Trabajadores";
+		String subTitleText = "En cumplimiento de la obligación establecida en el Art. 12.4 c) del Estatuto de los Trabajadores";
 		PdfText text = new PdfText(x, y, getPageWidth() - MARGIN_SIDE * 2, 11f, contentStream, subTitleText, BLACK, new PDType1Font(FontName.HELVETICA), 11f, PdfSettings.ALIGNMENT.CENTER);
 		text.draw();
 		
