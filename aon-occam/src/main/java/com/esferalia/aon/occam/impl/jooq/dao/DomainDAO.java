@@ -352,18 +352,13 @@ public class DomainDAO {
 				.getValue(DOMAIN.PARENT);
 	}
 	
-	public static Domain updateDomainCustomer(AONContext ctx, Integer domainId, String domainName, Integer aonCustomer, AonStatus aonStatus) {
-		return ctx.getDslContext().update(DOMAIN)
-		.set(DOMAIN.AONCUSTOMER, aonCustomer)
-		.set(DOMAIN.AONSTATUS, aonStatus != null ? AonEnumUtils.getByte(aonStatus) : 0)
-		.where(DOMAIN.ID.eq(domainId))
-		.and(DOMAIN.NAME.eq(domainName))
-		.returningResult(DSL.asterisk())
-		.fetchStreamInto(DOMAIN)
-		.filter(Objects::nonNull)
-		.findFirst()
-		.map(new DomainFiller())
-		.orElse(null);
+	public static void updateDomainCustomer(AONContext ctx, Integer domainId, String domainName, Integer aonCustomer, AonStatus aonStatus) {
+		ctx.getDslContext().update(DOMAIN)
+				.set(DOMAIN.AONCUSTOMER, aonCustomer)
+				.set(DOMAIN.AONSTATUS, aonStatus != null ? AonEnumUtils.getByte(aonStatus) : 0)
+				.where(DOMAIN.ID.eq(domainId))
+				.and(DOMAIN.NAME.eq(domainName))
+				.execute();
 	}
 	
 	//-------------------- DOMAIN G SERVICE ACCOUNT

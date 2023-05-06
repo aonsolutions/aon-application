@@ -256,6 +256,9 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			case "/rawdoc":
 				response(req, resp, deleteInvoiceObject(api));
 				break;
+			case "/cancel":
+				response(req, resp, deleteInvoiceTBAI(api));
+				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
 			}
@@ -305,6 +308,33 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if(!invoiceIds.isEmpty()) {
 			deleteInvoices(api.getDomain(), api.getUser().getLogin(), invoiceIds);
 		}
+		return new JSONObject();
+	}
+	
+	private JSONObject deleteInvoiceTBAI(AonApiData api) {
+		Company company = AON.getCompanyForDomain(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin());
+		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(api.getDomain(), api.getUser());
+		tbaiConfiguration.setCertificate(checkCertificate(api));
+		
+		List<Integer> invoiceIds = toList(api.getData().optJSONArray(IConstants.ID));
+		invoiceIds.stream().forEach(id -> {
+			
+			Invoice invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(),
+					api.getUser().getLogin(), id);
+
+			try {
+				TbaiMain tbai = new TbaiMain();
+				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
+				AON.deleteInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), invoice.getId());
+			} catch (Exception e) {
+				if(tbaiConfiguration.isTest()) {
+					AON.deleteInvoice(api.getDomain().getName(), invoice.getDomain(), api.getUser().getLogin(), invoice.getId());
+				} else {
+					e.printStackTrace();
+				}
+			}
+			
+		});
 		return new JSONObject();
 	}
 	
@@ -448,8 +478,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			data.put(IJsonNames.ID, invoiceAttach.getId());
 			data.put(IConstants.ATTACH_TYPE, AttachType.INVOICE.getName());
 			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			String url = "https://" + domain.getName() + "/ms/api/file/" +  result;	
+			String path = "/ms/api/file/" +  result;	
+			String url = "https://" + domain.getName() + path; 
 		    json.put(IJsonNames.URL, url);
+		    json.put(IJsonNames.PATH, path);
 		    json.put(IConstants.CONTENT_TYPE, invoiceAttach.getMimeType().getName());
 		} else {
 			JSONObject data = new JSONObject();
@@ -460,8 +492,10 @@ public class InvoiceServlet extends AonApiHttpServlet{
 			data.put(IJsonNames.LOGIN, login);
 		
 			String result = Base64.getEncoder().encodeToString(data.toString().getBytes(StandardCharsets.UTF_8));
-			String url = "https://" + domain.getName() + "/ms/api/download_invoice_pdf?json=" +  result;
+			String path = "/ms/api/download_invoice_pdf?json=" +  result;
+			String url = "https://" + domain.getName() + path;
 		    json.put(IJsonNames.URL, url);
+		    json.put(IJsonNames.PATH, path);
 		    json.put(IConstants.CONTENT_TYPE, MimeType.PDF.getName());
 		}
 		return json;
