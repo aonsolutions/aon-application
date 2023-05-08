@@ -17,6 +17,8 @@ export class AonDomainCustomer extends AonElement {
   domainList;
   customerList;
 
+  loadingPanel;
+
   customerListScrollPromise;
   customerListScrollListener;
 
@@ -68,9 +70,6 @@ export class AonDomainCustomer extends AonElement {
   async initialize() {
     this.id = this.id || 'aonDomainCustomer';
     this.customerListScrollListener = () => {};
-
-    await this.updateDomains();
-    // await this.updateCustomers();
   }
   
   async updateDomains() {
@@ -97,18 +96,25 @@ export class AonDomainCustomer extends AonElement {
     this.mainContainer.style.flexWrap = "wrap";
     this.mainContainer.style.justifyContent = "space-between";
     this.mainContainer.style.alignItems = "center";
+    this.mainContainer.style.position = "relative";
 
     this.buildSearchBar();
     this.buildDomainList();
     this.buildCustomerList();
+    this.buildLoadingPanel();
 
+    this.appendChild(this.loadingPanel);
     this.mainContainer.appendChild(this.searchBar);
     this.mainContainer.appendChild(this.domainList);
     this.mainContainer.appendChild(this.customerList);
 
     this.appendChild(this.mainContainer);
-    this.loadDomains();
-    this.manageEmptyCustomerList();
+    this.displayLoadingPanel(true);
+    this.updateDomains().then(() => {
+      this.loadDomains();
+      this.displayLoadingPanel(false);
+      this.manageEmptyCustomerList();
+    });
   }
 
   // --- CONSTRUIR ELEMENTOS PRINCIPALES ---
@@ -388,7 +394,39 @@ export class AonDomainCustomer extends AonElement {
     this.customerList.classList.add("domainCustomerScroll");
     this.customerList.addEventListener("scroll", (event) => {
       this.scrollFunction();
-    })
+    });
+  }
+
+  buildLoadingPanel() {
+    this.loadingPanel = document.createElement('div');
+    this.loadingPanel.style.position = "absolute";
+    this.loadingPanel.style.width = "100%";
+    this.loadingPanel.style.height = "100%";
+    this.loadingPanel.style.display = "none";
+    this.loadingPanel.style.justifyContent = "center";
+    this.loadingPanel.style.alignItems = "center";
+    this.loadingPanel.style.backgroundColor = "rgba(240,248,255,0.5)";
+    this.loadingPanel.style.zIndex = "9999";
+
+    let loadingLine = document.createElement('div');
+    loadingLine.style.display = "flex";
+    loadingLine.style.justifyContent = "center";
+    loadingLine.style.alignItems = "center";
+
+    let loadingIcon = document.createElement('span');
+    loadingIcon.classList.add(CSS.MATERIAL_ICONS);
+    loadingIcon.classList.add("linkLoadSpinner")
+    loadingIcon.innerHTML = MATERIAL_ICONS.CACHED;
+    loadingIcon.style.fontSize = "40px";
+
+    let loadingText = document.createElement('span');
+    loadingText.innerText =  "Cargando...";
+
+    loadingLine.appendChild(loadingIcon);
+    loadingLine.appendChild(loadingText);
+
+    this.loadingPanel.appendChild(loadingLine);
+
   }
   
   // ---------------------------------------
@@ -707,7 +745,7 @@ export class AonDomainCustomer extends AonElement {
       let childAppsTitleContainer = document.createElement("div");
       childAppsTitleContainer.style.display = "block";
       childAppsTitleContainer.style.width = "100%";
-      childAppsTitleContainer.style.textAlign = "center";
+      childAppsTitleContainer.style.textAlign = "left";
       childAppsTitleContainer.style.fontWeight = "bold";
       childAppsTitleContainer.innerText = "Aplicaciones";
 
@@ -735,7 +773,7 @@ export class AonDomainCustomer extends AonElement {
       let parentAppsTitleContainer = document.createElement("div");
       parentAppsTitleContainer.style.display = "block";
       parentAppsTitleContainer.style.width = "100%";
-      parentAppsTitleContainer.style.textAlign = "center";
+      parentAppsTitleContainer.style.textAlign = "left";
       parentAppsTitleContainer.style.fontWeight = "bold";
       parentAppsTitleContainer.innerText = "Aplicaciones del padre";
       
@@ -882,15 +920,27 @@ export class AonDomainCustomer extends AonElement {
     companyOptionDocument.innerText = `${company && company.document ? company.document : ""}`;
     domainOptionSelectLine.appendChild(companyOptionDocument);
 
+    let expireTypeContainer = document.createElement("div");
+    expireTypeContainer.style.width = "130px";
+    expireTypeContainer.style.display = "flex";
+    expireTypeContainer.style.flexDirection = "column";
+    expireTypeContainer.style.alignItems = "flex-start";
     if (domain && domain.expirationDate) {
       if (domain.active) {
         domainOptionNameSpan.classList.add(`expireDomainName`);
       }
       let companyOptionExpire = document.createElement("div");
+      companyOptionExpire.style.width = "100%";
       companyOptionExpire.innerText = `Expira: ${AonDateUtils.formatDate(domain.expirationDate)}`;
-      domainOptionSelectLine.appendChild(companyOptionExpire);
+      expireTypeContainer.appendChild(companyOptionExpire);
     }
-    
+    let domainTypeElement = document.createElement("div");
+    domainTypeElement.style.width = "100%";
+    domainTypeElement.innerText = `${this.getDomainTypeDescription(domain ? domain.domainType : "")}`;
+    expireTypeContainer.appendChild(domainTypeElement);
+
+    domainOptionSelectLine.appendChild(expireTypeContainer);
+
     let aonStatusDrop = document.createElement("select");
     aonStatusDrop.style.width = "111px";
     
@@ -967,13 +1017,19 @@ export class AonDomainCustomer extends AonElement {
     customerAliasDiv.style.textOverflow = "ellipsis";
 
     let customerDocumentDiv = document.createElement("div");
-    customerDocumentDiv.style.width = "50%";
+    customerDocumentDiv.style.width = "33%";
     customerDocumentDiv.style.margin = "auto";
     customerDocumentDiv.style.height = "20px";
     customerDocumentDiv.innerText = customer.document;
 
+    let customerIdDiv = document.createElement("div");
+    customerIdDiv.style.width = "33%";
+    customerIdDiv.style.margin = "auto";
+    customerIdDiv.style.height = "20px";
+    customerIdDiv.innerText = customer.id ? `SIG: ${customer.id}` : "";
+
     let customerStatusDiv = document.createElement("div");
-    customerStatusDiv.style.width = "50%";
+    customerStatusDiv.style.width = "33%";
     customerStatusDiv.style.margin = "auto";
     customerStatusDiv.style.height = "20px";
     customerStatusDiv.dataset.value = `${customer.status}`;
@@ -1004,6 +1060,7 @@ export class AonDomainCustomer extends AonElement {
     infoDiv.appendChild(customerNameDiv);
     infoDiv.appendChild(customerAliasDiv);
     infoDiv.appendChild(customerDocumentDiv);
+    infoDiv.appendChild(customerIdDiv);
     infoDiv.appendChild(customerStatusDiv);
     
     unlinkDiv.appendChild(unlinkButton);
@@ -1089,16 +1146,18 @@ export class AonDomainCustomer extends AonElement {
       }
       this.customerListScrollPromise = null;
       this.customerSearchEnded = true;
+
       if (customer) {
         this.customerSearchInput.value = "";
         await this.findRelatedCustomers();
         this.showLinkedIcon();
+        dialog.close();
       } else {
+        dialog.close();
         this.removeAllDomains();
         await this.refreshLists();
       }
       this.manageCustomerSearch();
-      dialog.close();
     });
     
     dialog.setContent(confirmUnlinkContainer);
@@ -1160,9 +1219,44 @@ export class AonDomainCustomer extends AonElement {
     }
   }
 
+  getDomainTypeDescription(type) {
+    switch (type) {
+      case "ENTERPRISE":
+        return "Empresa";
+      case "CONSULTANCY":
+        return "Asesoría";
+      case "GARAGE":
+        return "Garaje";
+      case "ACADEMY":
+        return "Academia";
+      case "HOTEL":  
+        return "Hotel";
+      case "ADMIN":
+        return "Administración";
+      case "OFFICE":
+        return "Despacho";
+      case "GENERIC":
+        return "Genérico";
+      case "COMMERCE":
+        return "Comercio";
+      case "KIT_DIGITAL":
+        return "Kit Digital";
+      default:
+        return type;
+    }
+  }
+
   // -------------------------------
 
   // --- OTROS ---
+
+  displayLoadingPanel(display) {
+    // if (display) {
+    //   this.loadingPanel.style.display = "flex";
+    // } else {
+    //   this.loadingPanel.style.display = "none";
+    // }
+  }
 
   showLinkedIcon() {
     if (this.domainList) {
@@ -1177,7 +1271,9 @@ export class AonDomainCustomer extends AonElement {
   async refreshLists() {
     this.selectedDomain = null;
     this.removeAllCustomers();
+    this.displayLoadingPanel(true);
     await this.updateDomains();
+    this.displayLoadingPanel(false);
     this.loadDomains();
     this.searchFilterAction();
     this.manageEmptyCustomerList();
