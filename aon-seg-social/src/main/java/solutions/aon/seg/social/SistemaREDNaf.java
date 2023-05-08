@@ -161,10 +161,8 @@ public static void getNaf(final InputStream certificateInputStream, final String
 			identForm.getInputByName("txt_SDFPRPREFSMS_ayuda").setValue(nafRequest.mobilePrefix);
 			identForm.getInputByName("txt_SDFPRMOVILSMS").setValue(nafRequest.mobileNumber);
 			mat = pat.matcher(nafRequest.mobileNumber);
-			if (mat.find()) {
-				
-			}else if(identForm.getInputByName("txt_SDFPRMOVILSMS").getValue().equals("")){
-				
+			if (mat.find() || identForm.getInputByName("txt_SDFPRMOVILSMS").getValue().equals("") ) {
+								
 			}else {
 				throw new InvalidDataException("El numero de telefono movil no es correcto, intentelo otra vez");
 			}
@@ -193,9 +191,6 @@ public static void getNaf(final InputStream certificateInputStream, final String
 
 			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
 			
-//			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
-//
-//			
 			HtmlElement targetElement = (HtmlElement) htmlPage.getElementById("Frame");
 			if (targetElement != null) {
 				throw new IpfAlreadyExistsReachedPage(" --------------------------------------------------------------\n"
@@ -206,10 +201,6 @@ public static void getNaf(final InputStream certificateInputStream, final String
 						+ "			 |								|\n"
 						+ "			 --------------------------------------------------------------");
 			}
-
-//			System.out.println(htmlPage.asXml());
-			
-//			htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
 
 			try {
 			    HtmlUnitToolkit.manageStatusCode(htmlPage);
@@ -230,23 +221,12 @@ public static void getNaf(final InputStream certificateInputStream, final String
 			    String msg = labels.stream().map(HtmlLabel::getTextContent).collect(Collectors.joining("" , "El campo '", "' es obligatorio." ));
 			    throw new UnfilledMandatory(msg);
 		
-			}
-			
-			// TODO: Check custom erros like :
-//			 --------------------------------------------------------------
-//			 |								|
-//			 | SEGÚN LA INFORMACIÓN EXISTENTE EN NUESTRAS BASES DE DATOS, |
-//			 | EL IPF QUE SE ESTÁ TRAMITANDO YA EXISTE. 			|
-//			 | DEBE REALIZAR ESTE TRÁMITE A TRAVÉS DE CASIA 		|
-//			 |								|
-//			 --------------------------------------------------------------
-			
-			
-			
+			}			
 		}
 	}
 	
 	public enum Sexo{
+		EMPTY(""),
 		VARON("Varón"),
 		MUJER("Mujer");
 		
@@ -262,6 +242,7 @@ public static void getNaf(final InputStream certificateInputStream, final String
 	}
 	
 	public enum IdentCode{
+		EMPTY(""),
 		DNI("1"),
 		NIE("6");
 
@@ -277,256 +258,39 @@ public static void getNaf(final InputStream certificateInputStream, final String
 	}
 	//NO ENTRAN PAISES QUE NO SEAN DE EUROPA
 	public enum Nationality{
-		AFGANISTAN("004"),
-		ALBANIA ("008"),
-		ANTARTIDA("010"),
-		ARGELIA("012"),
-		SAMOA_AMERICANA("016"),
-		ANDORRA("020"),
-		ANGOLA("024"),
-		ANTIGUA_Y_BARBUDA("28"),
-		AZERBAYAN("031"),
-		ARGENTINA("032"),
-		AUSTRALIA("036"),
+		EMPTY(""),
 		AUSTRIA("040"),
-		BAHAMAS("044"),
-		BAHREIN("048"),
-		BANGLADESH("050"),
-		ARMENIA("051"),
-		BARBADOS("052"),
 		BELGICA("056"),
-		BERMUDAS("060"),
-		BUTAN("064"),
-		BOLIVIA("068"),
-		BOSNIA_HERZEGOVINA("070"),
-		BOTSWANA("072"),
-		BOUVET("074"),
-		BRASIL("076"),
-		BELICE("084"),
-		OC_INDICO_TERRITORIO_BRITANICO("086"),
-		SALOMON ("090"),
-		ISLAS_VIRGENES_BRITANICAS("092"),
-		BRUNEI_DARUSSALAM("096"),
 		BULGARIA("100"),
-		MYANMAR("104"),
-		BURUNDI("108"),
-		BIELORRUSIA("112"),
-		CAMBOYA("116"),
-		CAMERUN("120"),
-		CANADA("124"),
-		CABO_VERDE("132"),
-		CAIMANES_ISLAS("136"),
-		REPUBLICA_CENTROAFRICANA("140"),
-		SRI_LANKA("144"),
-		CHAD("148"),
-		CHILE("152"),
-		CHINA("156"),
-		TAIWAN_PROVINCIA_DE_CHINA("158"),
-		CHRISTMAS_ISLAS("162"),
-		COCOS_ISLAS("166"),
-		COLOMBIA("170"),
-		COMORES("174"),
-		MAYOTTE("175"),
-		CONGO("178"),
-		ZAIRE("180"),
-		COOK_ISLAS("184"),
-		COSTA_RICA("188"),
 		CROACIA("191"),
-		CUBA("192"),
 		CHIPRE("196"),
 		REPUBLICA_CHECA("203"),
 		BENIN("204"),
 		DINAMARCA("208"),
-		DOMINICA("212"),
-		DOMINICANA_REPUBLICA("214"),
-		ECUADOR("218"),
-		EL_SALVADOR("222"),
-		GUINEA_ECUATORIAL("226"),
-		ETIOPIA("231"),
-		ERITREA("232"),
 		ESTONIA("233"),
-		ISLAS_FEROE("234"),
-		FALKLAND_O_MALVINAS("238"),
-		GEORGIA_DEL_SUR_E_ISLAS_SANDWICH("239"),
-		FIDJI("242"),
 		FINLANDIA("246"),
 		FRANCIA("250"),
-		GUAYANA_FRANCESA("254"),
-		POLINESIA_FRANCESA("258"),
-		TIERRAS_AUSTRALES_FRANCESAS("260"),
-		DJIBUTI("262"),
-		GABON("266"),
-		GEORGIA("268"),
-		GAMBIA("270"),
-		PALESTINA("275"),
 		ALEMANIA("276"),
-		GHANA("288"),
-		GIBRALTAR("292"),
-		KIRIBATI("296"),
 		GRECIA("300"),
-		GROENLANDIA("304"),
-		GRANADA("308"),
-		GUADALUPE("312"),
-		GUAM("316"),
-		GUATEMALA("320"), 
-		GUINEA("324"),
-		GUAYANA("328"),
-		HAITI("332"),
-		HEARD_Y_MC_DONALD_ISLAS("334"),
-		VATICANO_CIUDAD("336"),
-		HONDURAS("340"),
-		HONG_KONG("344"),
 		HUNGRIA("348"),
 		ISLANDIA("352"),
-		INDIA("356"),
-		INDONESIA("360"),
-		IRAN("364"),
-		IRAQ("368"),
 		IRLANDA("372"),
-		ISRAEL("376"),
 		ITALIA("380"),
-		COSTA_DE_MARFIL("384"),
-		JAMAICA("388"),
-		JAPON("392"),
-		KAZAKSTAN("398"),
-		JORDANIA("400"),
-		KENIA("404"),
-		COREA_NORTE_REPUBLICA_DEMOCRATICA("408"),
-		COREA_SUR_REPUBLICA("410"),
-		KUWAIT("414"),
-		KIRGHIZISTAN("417"),
-		LAOS_REPUBLICA_DEMOCRATICA_POPULAR("418"),
-		LIBANO("422"),
-		LESOTHO("426"),
 		LETONIA("428"),
-		LIBERIA("430"),
-		LIBIA_JAMAHIRIYA_ARABE("434"),
 		LIECHTENSTEIN("438"),
 		LITUANIA("440"),
 		LUXEMBURGO("442"),
-		MACAO("446"),
-		MADAGASCAR("450"),
-		MALAWI("454"),
-		MALASIA("458"),
-		MALDIVAS_ISLAS("462"),
-		MALI("466"),
 		MALTA("470"),
-		MARTINICA("474"),
-		MAURITANIA("478"),
-		MAURICIO("480"),
-		MEJICO("484"),
-		MONACO("492"),
-		MONGOLIA("496"),
-		REPUBLICA_DE_MOLDAVIA("498"),
-		MONTENEGRO("499"),
-		MONTSERRAT("500"),
-		MARRUECOS("504"),
-		MOZAMBIQUE("508"),
-		OMAN("512"),
-		NAMIBIA("516"),
-		NAURU("520"),
-		NEPAL("524"),
 		PAISES_BAJOS("528"),
-		CURAZAO("531"),
-		ARUBA("533"),
-		SINT_MARTEEN("534"),
-		BONAIRE_SAINT_EAUSTATIUS_Y_SABA("535"),
-		NUEVA_CALEDONIA_Y_DEPENDENCIAS("540"),
-		VANUATU("548"),
-		NUEVA_ZELANDA("554"),
-		NICARAGUA("558"),
-		NIGER("562"),
-		NIGERIA("566"),
-		NIUE("570"),
-		NORFOLK_ISLA("574"),
 		NORUEGA("578"),
-		ISLAS_MARIANAS_DEL_NORTE("580"),
-		ISLAS_MENORES_ALEJADAS_E_E_U_U("581"),
-		MICRONESIA("583"),
-		ISLAS_MARSHALL("584"),
-		PALAU("585"),
-		PAKISTAN("586"),
-		PANAMA("591"),
-		PAPUA_NUEVA_GUINEA("598"),
-		PARAGUAY("600"),
-		PERU("604"),
-		FILIPINAS("608"),
-		PITCAIRN("612"),
 		POLONIA("616"),
 		PORTUGAL("620"),
-		GUINEA_BISSAU("624"),
-		TIMOR_ORIENTAL("626"),
-		PUERTO_RICO("630"),
-		QATAR("634"),
-		REUNION("638"),
 		RUMANIA("642"),
-		FEDERACION_DE_RUSIA("643"),
-		RUANDA("646"),
-		SANTA_HELENA("654"),
-		SAN_CRISTOBAL_Y_NIEVES("659"),
-		ANGUILA("660"),
-		SANTA_LUCIA("662"),
-		SAN_PEDRO_Y_MIQUELON("660"),
-		SAN_VICENTE_Y_GRANADINAS("670"),
-		SAN_MARINO("674"),
-		SANTO_TOME_Y_PRINCIPE("678"),
-		ARABIA_SAUDI("682"),
-		SENEGAL("686"),
-		SERBIA("688"),
-		SEYCHELLES("690"),
-		SIERRA_LEONA("694"),
-		SINGAPUR("702"),
 		ESLOVAQUIA("703"),
-		VIETNAM("704"),
 		ESLOVENIA("705"),
-		SOMALIA("706"),
-		REPUBLICA_DE_SUDAFRICA("710"),
-		ZINBABWE("716"),
 		ESPAÑA("724"),
-		SUDAN_DEL_SUR("728"),
-		SUDAN("729"),
-		SAHARA_OCCIDENTAL("732"),
-		SURINAM("740"),
-		SVALBARD_E_ISLA_JUAN_MAYEN("744"),
-		SWAZILANDIA("748"),
 		SUECIA("752"),
-		SUIZA("756"),
-		SIRIA_REPUBLICA_ARABE("760"),
-		TADJIKISTAN("762"),
-		TAILANDIA("764"),
-		TOGO("768"),
-		TOKELAU("772"),
-		TONGA("776"),
-		TRINIDAD_Y_TOBAGO("780"),
-		EMIRATOS_ARABES_UNIDOS("784"),
-		TUNEZ("788"),
-		TURQUIA("792"),
-		TURKMENISTAN("795"),
-		TURKS_Y_CAICOS_ISLAS("796"),
-		TUVALU("798"),
-		UGANDA("800"),
-		UCRANIA("804"),
-		MACEDONIA_TERR_ANT_REP_YUGOSLAVA("807"),
-		EGIPTO("818"),
-		REINO_UNIDO("826"),
-		GUERNSEY("831"),
-		JERSEY("832"),
-		ISLA_DE_MAN("833"),
-		REPUBLICA_UNIDA_DE_TANZANIA("834"),
-		ESTADOS_UNIDOS("840"),
-		VIRGENES_DE_E_E_U_U_ISLAS("850"),
-		BURKINA_FASO("854"),
-		URUGUAY("858"),
-		UZBEKISTAN("860"),
-		VENEZUELA("862"),
-		WALLIS_Y_FUTUNA_ISLAS("876"),
-		SAMOA("882"),
-		YEMEN("887"),
-		ZAMBIA("894"),
-		APATRIDAS("952"),
-		PAIS_DESCONOCIDO("953"),
-		DESCONOCIDO_SIN_CONVENIO("954"),
-		DESCONOCIDO_CON_CONVENIO("955");
+		SUIZA("756");
 		
 		private String value;
 		
@@ -586,21 +350,18 @@ public static void getNaf(final InputStream certificateInputStream, final String
 		IdentCode identCode, 
 		String identNumber) {
 	    
-	    	// TODO: Check if any parameter is null , something like  this.name = name != null ? name : "" 
-		this.name = name;
-		this.firstSurname = firstSurname;
-		this.secondSurname = secondSurname;
-		this.nationality = nationality;
-		this.fatherName = fatherName;
-		this.motherName = motherName;
-		this.sex = sex;
-		this.birthDate = birthDate;
-		this.identCode = identCode;
-		this.identNumber = identNumber;
+		this.name = name !=null ? name :"";
+		this.firstSurname = firstSurname != null ? firstSurname : "";
+		this.secondSurname = secondSurname != null ? secondSurname : "";
+		this.nationality = nationality != null ? nationality : Nationality.EMPTY;
+		this.fatherName = fatherName != null ? fatherName : "";
+		this.motherName = motherName != null ? motherName : "";
+		this.sex = sex != null ? sex : Sexo.EMPTY;
+		this.birthDate = birthDate != null ? birthDate : new Date();
+		this.identCode = identCode != null ? identCode : IdentCode.EMPTY;
+		this.identNumber = identNumber != null ? identNumber : "";
 	}
-	
-	//TODO : if null assing empty string, this for all withXXXX methods 
-	
+		
 	public NafRequest setAuthorized(String authorized) {
 	    this.authorized = authorized;
 		return this;
@@ -608,67 +369,106 @@ public static void getNaf(final InputStream certificateInputStream, final String
 	
 	public NafRequest withMobilePrefix(String mobilePrefix) {
 		this.mobilePrefix = mobilePrefix;
+		if (mobilePrefix == null) {
+			this.mobilePrefix = "";
+		}
 		return this;
 	}
 	
 	public NafRequest withMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
+		if (mobileNumber == null) {
+			this.mobileNumber = "";
+		}
 		return this;
 	}
 	
 	public NafRequest withFixedNumber(String fixedNumber) {
 		this.fixedNumber = fixedNumber;
+		if (fixedNumber == null) {
+			this.fixedNumber = "";
+		}
 		return this;
 	}
 	
 	public NafRequest withStreetType(String streetType) {
 		this.streetType = streetType;
+		if (streetType == null) {
+			this.streetType = "";
+		}
 		return this;
 	}
 	
 	
 	public NafRequest withStreetName(String streetName) {
 		this.streetName = streetName;
+		if (streetName == null) {
+			this.streetName = "";
+		}
 		return this;
 	}
 	
 	public NafRequest withStreetNumber(String streetNumber) {
 		this.streetNumber = streetNumber;
+		if (streetNumber == null) {
+			this.streetNumber = "";
+		}
 		return this;
 	}
 	
 	public NafRequest withBis(String bis) {
 		this.bis = bis;
+		if (bis == null) {
+			this.bis = "";
+		}
 		return this;
 	}
 	
 	public NafRequest withBlock(String block) {
 		this.block = block;
+		if (block == null) {
+			this.block = "";
+		}
 		return this;
 	}
 	
 	public NafRequest withStair(String stair) {
 		this.stair = stair;
+		if (stair == null) {
+			this.stair = "";
+		}
 		return this;
 	}
 	
 	public NafRequest withFloor(String floor) {
 		this.floor = floor;
+		if (floor == null) {
+			this.floor = "";
+		}
 		return this;
 	}
 	
 	public NafRequest withDoor(String door) {
 		this.door = door;
+		if (door == null) {
+			this.door = "";
+		}
 		return this;
 	}
 	
 	public NafRequest withPostalCode(String postalCode) {
 		this.postalCode = postalCode;
+		if (postalCode == null) {
+			this.postalCode = "";
+		}
 		return this;
 	}
 	
 	public NafRequest withLocality(String locality) {
 		this.locality = locality;
+		if (locality == null) {
+			this.locality = "";
+		}
 		return this;
 	}
 }
