@@ -28,6 +28,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButto
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -77,6 +78,7 @@ public class CustomerFee extends MainEntryPoint {
 	private AonToolbar toolbar;
 	private AonToolbarButton saveButton;
 	private AonToolbarButton undoAllButton;
+	private AonToolbarButton createButton;
 	private AonToolbarButton addValueButton;
 	private AonToolbarButton deleteFeeButton;
 	
@@ -105,7 +107,7 @@ public class CustomerFee extends MainEntryPoint {
 	private CustomerFeeParams params;
 	private Date billingDate;
 	
-	private Map<String, String> customerSuggestions = new TreeMap<>();
+	private Map<String, Customer> customerSuggestions = new TreeMap<>();
 	private Map<String, OldItem> productSuggestions = new TreeMap<>();
 	
 	final private int limit = 100;
@@ -188,8 +190,7 @@ public class CustomerFee extends MainEntryPoint {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							dockLayoutPanel.add(new Label(
-									AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage() + "]"));
+//							dockLayoutPanel.add(new Label(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage() + "]"));
 						}
 					});
 		} else {
@@ -349,19 +350,22 @@ public class CustomerFee extends MainEntryPoint {
 			@Override
 			public void onSuccess(Map<Integer, Integer> minMaxYear) {
 				Optional<Entry<Integer, Integer>> firstEntry = minMaxYear.entrySet().stream().findFirst();
-				Integer minYear = firstEntry.get().getKey();
-				Integer maxYear = firstEntry.get().getValue();
 				
 				ListBox lb = new ListBox();
 				lb.setHeight("2em");
 				lb.getElement().getStyle().setProperty("padding", "0 5px");
 				lb.addItem("-", "");
 				
-				while(maxYear >= minYear) {
-					lb.addItem(maxYear.toString(), (maxYear - 1900) + "");
-					maxYear--;
-				}
-
+				if(firstEntry.isPresent()) {
+					Integer minYear = firstEntry.get().getKey();
+					Integer maxYear = firstEntry.get().getValue();
+					
+					while(maxYear >= minYear) {
+						lb.addItem(maxYear.toString(), (maxYear - 1900) + "");
+						maxYear--;
+					}
+				} 
+				
 				consumer.accept(lb);
 			}
 			
@@ -394,30 +398,37 @@ public class CustomerFee extends MainEntryPoint {
 		
 		customerSuggestBox.addKeyUpHandler(e -> {
 			String customerQuery = customerSuggestBox.getValue();
-			if(AonStringUtils.isNotBlank(customerQuery) && customerQuery.length() > 3) {
-				SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, String>>() {
-					
-					@Override
-					public void onSuccess(Map<String, String> customerSuggestionsDB) {
-						customerSuggestions = customerSuggestionsDB;
-						
-						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerSuggestBox.getSuggestOracle();
-						orclSb.clear();
-						orclSb.addAll(customerSuggestions.keySet());
-						orclSb.setDefaultSuggestionsFromText(customerSuggestions.keySet());
-						customerSuggestBox.showSuggestionList();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub	
-					}
-					
-				});
-			}
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				customerSuggestBox.setValue("");
+				customerQuery = null;
+				getCustomersSuggestion(customerQuery);
+			} else if(AonStringUtils.isNotBlank(customerQuery) && customerQuery.length() > 3)
+				getCustomersSuggestion(customerQuery);
 		});
 	}
 	
+	private void getCustomersSuggestion(String customerQuery) {
+		SERVICE.getCustomersSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), customerQuery, new AsyncCallback<Map<String, Customer>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Customer> customerSuggestionsDB) {
+				customerSuggestions = customerSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) customerSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(customerSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(customerSuggestions.keySet());
+				customerSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+
 	private void createConceptSuggestBox() {
 		conceptSuggestBox = new SuggestBox();
 		conceptSuggestBox.setWidth("300px");
@@ -433,30 +444,37 @@ public class CustomerFee extends MainEntryPoint {
 		
 		conceptSuggestBox.addKeyUpHandler(e -> {
 			String productQuery = conceptSuggestBox.getValue();
-			if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 3) {
-				SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
-					
-					@Override
-					public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
-						productSuggestions = productSuggestionsDB;
-						
-						MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) conceptSuggestBox.getSuggestOracle();
-						orclSb.clear();
-						orclSb.addAll(productSuggestions.keySet());
-						orclSb.setDefaultSuggestionsFromText(productSuggestions.keySet());
-						conceptSuggestBox.showSuggestionList();
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub	
-					}
-					
-				});
-			}
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				conceptSuggestBox.setValue("");
+				productQuery = null;
+				getProductsSuggestion(productQuery);
+			} else if(AonStringUtils.isNotBlank(productQuery) && productQuery.length() > 3)
+				getProductsSuggestion(productQuery);
 		});
 	}
 	
+	private void getProductsSuggestion(String productQuery) {
+		SERVICE.getProductsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productQuery, new AsyncCallback<Map<String, OldItem>>() {
+			
+			@Override
+			public void onSuccess(Map<String, OldItem> productSuggestionsDB) {
+				productSuggestions = productSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) conceptSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(productSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(productSuggestions.keySet());
+				conceptSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+
 	private void resetFilter() {
 		monthListBox.setSelectedIndex(0);
 		if (null != yearListBox) yearListBox.setSelectedIndex(0);
@@ -534,7 +552,7 @@ public class CustomerFee extends MainEntryPoint {
 		params.setDomain(options.getDomain());
 		params.setMonth(AonStringUtils.isBlank(monthListBox.getSelectedValue()) ? null : Integer.parseInt(monthListBox.getSelectedValue()));
 		params.setYear(AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue()));
-		params.setCustomer(customerSuggestions.get(customerSuggestBox.getValue()));
+		params.setCustomer(null != customerSuggestions.get(customerSuggestBox.getValue()) ? customerSuggestions.get(customerSuggestBox.getValue()).getName() : null);
 		params.setCustomerStatus(AonStringUtils.isBlank(customerStatusListBox.getSelectedValue()) ? null : Byte.parseByte(customerStatusListBox.getSelectedValue()));
 		params.setProductCode(null != productSuggestions.get(conceptSuggestBox.getValue()) ? productSuggestions.get(conceptSuggestBox.getValue()).getProduct().getCode() : null);
 		params.setPrice(priceTextBox.getValue());
@@ -1029,6 +1047,49 @@ public class CustomerFee extends MainEntryPoint {
 			});
 		});
 		
+		createButton = new AonToolbarButton(AON.MSG.newAction(), AON.CSS.aonIconAdd());
+		createButton.addClickHandler(e -> {
+			new CustomerFeeDialog(options) {
+				
+				@Override
+				protected void onCreate(Fee fee) {
+					SERVICE.createCustomerFeeList(options.getDomainName(), options.getDomain(), options.getUser(), fee, new AsyncCallback<Void>() {
+						
+						@Override
+						public void onSuccess(Void result) {
+							AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
+							addValueButton.setEnabled(false);
+							selectionModel.clear();
+							setHasChange(false);
+							feeList.clear();
+							resetFeeTable();
+							enableMoreData();
+							offset.setValue(0);
+							searchFees();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							AonMessagePanel.showError(messagePanel, "Error creando cuota: " + caught.getMessage());
+						}
+					});
+				}
+				
+				@Override
+				protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr,
+						Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				protected void onAccept(Fee fee) {
+					// TODO Auto-generated method stub
+					
+				}
+			};
+		});
+		
 		addValueButton = new AonToolbarButton("Editar Cuota", AON.CSS.aonIconEdit());
 		addValueButton.setEnabled(false);
 		addValueButton.addClickHandler(e -> {
@@ -1068,9 +1129,10 @@ public class CustomerFee extends MainEntryPoint {
 						}
 
 						@Override
-						protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
-							// TODO Auto-generated method stub
-						}
+						protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {}
+
+						@Override
+						protected void onCreate(Fee fee) {}
 						
 					};
 			} else {
@@ -1078,6 +1140,9 @@ public class CustomerFee extends MainEntryPoint {
 					
 					@Override
 					protected void onAccept(Fee fee) {}
+					
+					@Override
+					protected void onCreate(Fee fee) {}
 
 					@Override
 					protected void onAccept(Optional<OldItem> item, Optional<Double> price, Optional<String> discountExpr, Optional<Date> startDate, Optional<Date> endDate, Optional<Date> billingDate) {
@@ -1303,6 +1368,7 @@ public class CustomerFee extends MainEntryPoint {
 
 		toolbar.add(saveButton);
 		toolbar.add(undoAllButton);
+		toolbar.add(createButton);
 		toolbar.add(addValueButton);
 		toolbar.add(deleteFeeButton);
 	}

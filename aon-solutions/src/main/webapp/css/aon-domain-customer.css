@@ -10,8 +10,15 @@
     color: firebrick;
 }
 
+.expireDomainName {
+    color: orange;
+}
+
 .selectedCustomer, .selectedDomain {
     background-color: var(--aonBlue) !important;
+    color: white;
+}
+.selectedCustomer i {
     color: white;
 }
 /* .domainCustomerScroll::-webkit-scrollbar {

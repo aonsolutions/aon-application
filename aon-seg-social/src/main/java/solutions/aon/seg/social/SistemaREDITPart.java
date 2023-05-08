@@ -33,6 +33,7 @@ import org.apache.http.ssl.SSLContexts;
 import org.htmlunit.FailingHttpStatusCodeException;
 import org.htmlunit.Page;
 import org.htmlunit.WebClient;
+import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlForm;
@@ -317,6 +318,11 @@ class SistemaREDITPart extends ServicioREDPartUtils {
 					cotBaseInput = form.getInputByName("BaseCot");
 					cotDaysInput = form.getInputByName("DiasCot");	
 				break;
+			}
+			
+			if(fATEP.isPresent()) {
+				DomNode inputATEP = form.querySelector("#fechaATEP");
+				if(null != inputATEP) ((HtmlInput)inputATEP).setValue(Toolkit.formatDate(fATEP.get(), DATE_FORMAT).get());
 			}
 			
 			String baseCotStr = Toolkit.parseDecimalToString(baseCot);

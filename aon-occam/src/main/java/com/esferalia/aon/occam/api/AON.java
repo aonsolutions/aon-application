@@ -2658,13 +2658,19 @@ public class AON {
 		}
 	}
 	
+	public static Map<String, Project> getProjectsSuggestion(String domainName, int domainId, String login, Integer customerId, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getProjectsSuggestion(ctx, domainId, customerId, query);
+		}
+	}
+	
 	public static Map<String, OldItem> getProductsSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getProductsSuggestion(ctx, domainId, query);
 		}
 	}
 
-	public static Map<String, String> getCustomersSuggestion(String domainName, int domainId, String login, String query) {
+	public static Map<String, Customer> getCustomersSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().getCustomersSuggestion(ctx, domainId, query);
 		}
@@ -2718,6 +2724,12 @@ public class AON {
 	public static Integer saveMassiveFees(String domainName, Integer domainId, String login, Fee fee, CustomerFeeParams params) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
 			return getFinance().saveMassiveFees(ctx, fee, params);
+		}
+	}
+	
+	public static void createCustomerFeeList(String domainName, Integer domainId, String login, Fee fee) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			getFinance().createCustomerFeeList(ctx, fee);
 		}
 	}
 

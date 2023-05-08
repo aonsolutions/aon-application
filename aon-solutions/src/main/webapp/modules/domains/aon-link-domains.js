@@ -10,9 +10,6 @@ export class AonLinkDomains extends AonElement {
 
 	AON_DOMAINS;
 
-	domains;
-	customers;
-
 	constructor () {
 		super();
 	}
@@ -27,11 +24,7 @@ export class AonLinkDomains extends AonElement {
 	}
 
  	async build() {
-
-		this.domains = await getDomains();
-		this.customers = await getCustomers({perPage: 1000});
 		this.paintView();
-		console.log(this.domains);
 
 		this.applicationEl = this.getApplication();
 		this.applicationParentEl = this.getApplicationParent();

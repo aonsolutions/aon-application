@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.AccountingReportParams;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
+import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter.FeeFilter;
 import com.esferalia.aon.occam.api.model.Filter.InvoiceInfoFilter;
 import com.esferalia.aon.occam.api.model.Filter.ItemFilter;
@@ -43,6 +44,7 @@ import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -114,8 +116,9 @@ public interface IFinance {
 	public Map<String, Workplace> getWorkplacesSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, Seller> getSellersSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public Map<String, Project> getProjectsSuggestion(CloseableAONContext ctx, int domainId, Integer customerId, String query);
 
-	public Map<String, String> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, OldItem> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<Integer, Integer> getCustomerProductsUpdates(CloseableAONContext ctx, int domainId, CustomerFeeParams customerFeeParams);
 	
@@ -125,6 +128,7 @@ public interface IFinance {
 	public Fee save(AONContext ctx, Fee fee);
 	public Integer saveList(AONContext ctx, LinkedList<Fee> feeList);
 	public Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams);
+	public void createCustomerFeeList(AONContext ctx, Fee fee);
 	public void deleteFee(AONContext ctx,Fee f);
 	public void deleteFee(AONContext ctx,Stream<Fee> fs);
 	public void deleteFee(AONContext ctx,CustomerFeeParams customerFeeParams);

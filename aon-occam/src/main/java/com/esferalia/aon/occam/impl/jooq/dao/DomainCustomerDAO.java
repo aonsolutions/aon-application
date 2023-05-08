@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO.CompanyFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DomainCustomerDAO {
@@ -78,22 +79,39 @@ public class DomainCustomerDAO {
 		return getDomains(ctx, condition);
 	}
 	
-	public static List<Domain> updateDomains(AONContext ctx, List<DomainCompany> domainCompanies, Customer customer) {
+	public static List<Domain> updateDomains(AONContext ctx, List<DomainCompany> domainCompanies, Integer customer) {
 		List<Domain> updatedDomains = new LinkedList<>();
 		if (domainCompanies != null && !domainCompanies.isEmpty()) {
 			for (DomainCompany domainCompany : domainCompanies) {
 				Domain domain = domainCompany.getDomain();
 				if (domain != null && domain.getId() != null && AonStringUtils.isNotBlank(domain.getName())) {
 					AonStatus aonStatus = domain.getAonStatus();
-					if (customer != null && customer.getId() != null) {						
-						updatedDomains.add(DomainDAO.updateDomainCustomer(ctx, domain.getId(), domain.getName(), customer.getId(), aonStatus));
+					if (customer != null && customer != null) {
+						DomainDAO.updateDomainCustomer(ctx, domain.getId(), domain.getName(), customer, aonStatus);
 					} else {
-						updatedDomains.add(DomainDAO.updateDomainCustomer(ctx, domain.getId(), domain.getName(), null, aonStatus));
+						DomainDAO.updateDomainCustomer(ctx, domain.getId(), domain.getName(), null, aonStatus);
 					}
+					
+					updatedDomains.add(DomainDAO.getDomain(ctx, domain.getId()));
 				}
 			}
 		}
 		return updatedDomains;
+	}
+	
+	public static DomainCompany updateDomainAonStatus(AONContext ctx, DomainCompany domainCompany, AonStatus aonStatus) {
+		if (domainCompany != null
+		&& domainCompany.getDomain() != null
+		&& AonNumberUtils.zeroIfNull(domainCompany.getDomain().getId()) > 0
+		&& aonStatus != null
+		) {
+			Domain domain = domainCompany.getDomain();
+			DomainDAO.updateDomainCustomer(ctx, domain.getId(), domain.getName(), domain.getAonCustomer(), aonStatus);
+			return domainCompany.setDomain(
+					DomainDAO.getDomain(ctx, domain.getId())
+			);
+		}
+		return domainCompany;
 	}
 	
 }

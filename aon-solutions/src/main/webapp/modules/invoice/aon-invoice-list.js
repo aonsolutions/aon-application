@@ -1,7 +1,9 @@
 import { AonElement } from '../../components/AonElement.js';
+import { AonSelect } from '../../components/aon-select.js';
+
 import { Paymethods } from '../../services/paymethod.js';
 import { getInvoices, getInvoice, insertInvoice, deleteRawdocInvoices,
-	 sendInvoiceMail, downloadInvoices, getDomainUserRoles } from '../../services/service.js';
+	 sendInvoiceMail, downloadInvoices, getDomainUserRoles, getAeatCertificates } from '../../services/service.js';
 import { Invoice } from './Invoice.js';
 
 import {addInvoices, setInvoices, setIndex} from './InvoiceCache.js';
@@ -211,6 +213,9 @@ export class AonInvoiceList extends AonElement {
 		} else if(this.getFilter().status === 'accounting'){
 			aonInvoice.addToolbarOption2(ACTION.DOWNLOAD_INVOICE, () => this.downloadInvoices());
 			aonInvoice.addToolbarOption2(ACTION.SEND_INVOICE, () => this.sendInvoices());
+			if(this.isBeta()) {
+				aonInvoice.addToolbarOption2(ACTION.DELETE_INVOICES, () => this.nullInvoices());
+			}
 		}
 	}
 
@@ -286,6 +291,38 @@ export class AonInvoiceList extends AonElement {
 		d.open();
 	}
 
+
+	nullInvoices() {
+		let d = this.getApplication().getDialog();
+		d.clear();
+		if(!this.isMobile()) d.width = '400px';
+		d.setTitle(MSG.ACCEPT);
+		let certSelect = this.createAonElement(new AonSelect(), "cert", "Certificado");
+		getAeatCertificates().then(certs => {
+			certSelect.setOptions(certs.map(s => {
+				return {
+				  value: s.id,
+				  name: s.name
+				}
+			  }));
+		}); 
+		d.setContent(certSelect);
+		d.addAcceptAction(() => {
+			this.getApplication().startLoader();
+			let aonInvoiceTable = document.getElementById('aonInvoiceTable');
+			let data = {invoices: aonInvoiceTable.selected}
+			data.cert = certSelect.value;
+			nullInvoices(data).then(r => {
+				this.getApplication().stopLoader(); 
+				this.reload();
+			}).catch(e => {
+				this.getApplication().stopLoader(); 
+				this.showError(e)
+			});
+		});			
+		d.open();
+	}
+
 	restoreInvoices() {
 		let cont = 0;
 		let aonInvoiceTable = document.getElementById('aonInvoiceTable');
@@ -353,6 +390,9 @@ export class AonInvoiceList extends AonElement {
     	let aonInvoice = this.getElement('aonInvoice');
    		let d = document.getElementById(aonInvoice.OPTION_DIALOG);
 
+		let deleteTBAI = ACTION.DELETE_INVOICES;
+		deleteTBAI.fn = () => this.nullInvoices();
+		
 		let send = ACTION.SEND_INVOICE;
 		send.fn = () => this.sendInvoices();
 
@@ -404,7 +444,9 @@ export class AonInvoiceList extends AonElement {
 	    	  actions = [download, deleteInvoice];
 	    	}
 		} else {
-			actions = [send, download];
+			actions = this.isBeta() 
+				? [deleteTBAI, send, download]
+				: [send, download];
 		}
 	  	if(!inv.file && !inv.isEmitida() && number === 1){
 	  		actions.push(addFile);

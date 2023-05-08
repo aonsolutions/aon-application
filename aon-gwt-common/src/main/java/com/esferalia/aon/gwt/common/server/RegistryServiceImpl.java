@@ -18,6 +18,7 @@ import com.esferalia.aon.occam.api.model.registry.Creditor;
 import com.esferalia.aon.occam.api.model.registry.CreditorFull;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.CustomerFull;
+import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
@@ -91,7 +92,7 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	// **************************************************
 	
 	@Override
-	public Map<String, String> getCustomersSuggestion(String domainName, int domain, String user, String query) {
+	public Map<String, Customer> getCustomersSuggestion(String domainName, int domain, String user, String query) {
 		return AON.getCustomersSuggestion(domainName, domain, user, query);
 	}
 	@Override
@@ -120,32 +121,50 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	}
 	
 	@Override
+	public void createCustomerFeeList(String domainName, int domainId, String user, Fee fee) {
+		Domain domain = AON.getDomain(domainName, domainId, user);
+		fee.setDomain(domain);
+		AON.createCustomerFeeList(domainName, domainId, user, fee);
+	}
+	
+	@Override
 	public Map<Integer, Integer> getMinMaxCustomerFeeYear(String domainName, int domain, String user) {
 		return AON.getMinMaxCustomerFeeYear(domainName, domain, user);
 	}
+	
 	@Override
 	public Integer getItemIdByProductCode(String domainName, int domain, String user, String productCode) {
 		return AON.getItemIdByProductCode(domainName, domain, user, productCode);
 	}
+	
 	@Override
 	public void deleteCustomerFeeList(String domainName, int domain, String user, LinkedList<Fee> selectedFees) {
 		AON.deleteFee(domainName, domain, user, selectedFees.stream());
 	}
+	
 	@Override
 	public void deleteCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams params) {
 		AON.deleteFee(domainName, domain, user, params);
 	}
+	
 	@Override
 	public Map<String, Workplace> getWorkplacesSuggestion(String domainName, int domain, String user, String query) {
 		return AON.getWorkplacesSuggestion(domainName, domain, user, query);
 	}
+	
 	@Override
 	public Map<String, Seller> getSellersSuggestion(String domainName, int domain, String user, String query) {
 		return AON.getSellersSuggestion(domainName, domain, user, query);
 	}
+	
 	@Override
 	public Map<String, InvoicingGroup> getInvoicingGroupsSuggestion(String domainName, int domain, String user, String query) {
 		return AON.getInvoicingGroupsSuggestion(domainName, domain, user, query);
+	}
+	
+	@Override
+	public Map<String, Project> getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String query) {
+		return AON.getProjectsSuggestion(domainName, domain, user, customerId, query);
 	}
 	
 }
