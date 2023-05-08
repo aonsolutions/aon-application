@@ -1,8 +1,10 @@
 package com.esferalia.aon.gwt.fiscal.client.registry;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -45,6 +47,9 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.json.client.JSONNumber;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -81,6 +86,8 @@ public class CustomerFee extends MainEntryPoint {
 	private AonToolbarButton createButton;
 	private AonToolbarButton addValueButton;
 	private AonToolbarButton deleteFeeButton;
+	private AonToolbarButton exportButton;
+//	private AonToolbarButton importButton;
 	
 	// Filter
 	private ListBox monthListBox;
@@ -565,9 +572,10 @@ public class CustomerFee extends MainEntryPoint {
 		String monthStr = monthListBox.getSelectedValue();
 		String yearStr = null == yearListBox ? "" : yearListBox.getSelectedValue();
 		
-		if(AonStringUtils.isBlank(monthStr) || AonStringUtils.isBlank(yearStr)) return null;
+		if(AonStringUtils.isBlank(yearStr)) return null;
 		
-		return new Date(Integer.parseInt(yearStr), Integer.parseInt(monthStr), 1);
+		if(AonStringUtils.isBlank(monthStr)) return new Date(Integer.parseInt(yearStr), 0, 1);
+		else return new Date(Integer.parseInt(yearStr), Integer.parseInt(monthStr), 1);
 	}
 
 	private void initializeDeckPanel() {
@@ -633,6 +641,7 @@ public class CustomerFee extends MainEntryPoint {
 			selectionModel.forEach((checkBox, fee) -> checkBox.setValue(e.getValue()));
 			addValueButton.setEnabled(e.getValue());
 			deleteFeeButton.setEnabled(e.getValue());
+			exportButton.setEnabled(e.getValue());
 		});
 
 		Label customer = new Label("CLIENTE");
@@ -734,6 +743,7 @@ public class CustomerFee extends MainEntryPoint {
 			Optional<CheckBox> checked = selectionModel.keySet().stream().filter(cb -> cb.getValue()).findAny();
 			addValueButton.setEnabled(checked.isPresent());
 			deleteFeeButton.setEnabled(checked.isPresent());
+			exportButton.setEnabled(checked.isPresent());
 		});
 		
 		Label customerLabel = new Label(fee.getCustomer().getName());
@@ -1009,6 +1019,7 @@ public class CustomerFee extends MainEntryPoint {
 							AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
 							addValueButton.setEnabled(false);
 							deleteFeeButton.setEnabled(false);
+							exportButton.setEnabled(false);
 							selectionModel.clear();
 							setHasChange(false);
 							feeList.clear();
@@ -1035,6 +1046,7 @@ public class CustomerFee extends MainEntryPoint {
 					AonMessagePanel.showLoading(messagePanel, "Deshaciendo cambios panel facturaci\u00f3n ...");
 					addValueButton.setEnabled(false);
 					deleteFeeButton.setEnabled(false);
+					exportButton.setEnabled(false);
 					selectionModel.clear();
 					setHasChange(false);
 					feeList.clear();
@@ -1059,6 +1071,7 @@ public class CustomerFee extends MainEntryPoint {
 						public void onSuccess(Void result) {
 							AonMessagePanel.showSuccess(messagePanel, "Se ha creado la cuota correctamente");
 							addValueButton.setEnabled(false);
+							exportButton.setEnabled(false);
 							selectionModel.clear();
 							setHasChange(false);
 							feeList.clear();
@@ -1118,6 +1131,7 @@ public class CustomerFee extends MainEntryPoint {
 											AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
 											selectionModel.clear();
 											addValueButton.setEnabled(false);
+											exportButton.setEnabled(false);
 											setHasChange(false);
 											feeList.clear();
 											resetFeeTable();
@@ -1190,6 +1204,7 @@ public class CustomerFee extends MainEntryPoint {
 													public void onSuccess(Integer updates) {
 														AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
 														addValueButton.setEnabled(false);
+														exportButton.setEnabled(false);
 														selectionModel.clear();
 														setHasChange(false);
 														feeList.clear();
@@ -1250,6 +1265,7 @@ public class CustomerFee extends MainEntryPoint {
 														AonMessagePanel.showSuccess(messagePanel, "Se han actualizado " + updates + " cuotas correctamente");
 														selectionModel.clear();
 														addValueButton.setEnabled(false);
+														exportButton.setEnabled(false);
 														setHasChange(false);
 														feeList.clear();
 														resetFeeTable();
@@ -1308,6 +1324,7 @@ public class CustomerFee extends MainEntryPoint {
 												AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + resultEntry.get().getValue() + " cuotas correctamente");
 												selectionModel.clear();
 												addValueButton.setEnabled(false);
+												exportButton.setEnabled(false);
 												setHasChange(false);
 												feeList.clear();
 												resetFeeTable();
@@ -1353,6 +1370,7 @@ public class CustomerFee extends MainEntryPoint {
 										AonMessagePanel.showSuccess(messagePanel, "Se han eliminado " + selectedFees.size() + " cuotas correctamente");
 										selectionModel.clear();
 										addValueButton.setEnabled(false);
+										exportButton.setEnabled(false);
 										setHasChange(false);
 										feeList.clear();
 										resetFeeTable();
@@ -1365,13 +1383,63 @@ public class CustomerFee extends MainEntryPoint {
 				});
 			}
 		});
+		
+		exportButton = new AonToolbarButton("Exportar Cuotas", AON.CSS.aonIconExcel());
+		exportButton.setEnabled(false);
+		exportButton.addClickHandler(e -> {
+			LinkedList<Fee> selectedFees = selectionModel.entrySet().stream().filter(a -> a.getKey().getValue()).map(c -> c.getValue()).collect(Collectors.toCollection(LinkedList::new));
+			if(selectedFees.size() == feeList.size()) {
+				// Exportacion masiva (todo seleccionado)
+				exportFees(null);
+			} else {
+				List<Integer> feeIds = new ArrayList<>();
+				feeIds = selectedFees.stream().map(fee -> fee.getId()).collect(Collectors.toList());
+				exportFees(feeIds);
+			}
+		});
+		
+//		importButton = new AonToolbarButton("Importar Cuotas", AON.CSS.aonIconExcel());
+//		importButton.addClickHandler(e -> {
+//			
+//		});
 
 		toolbar.add(saveButton);
 		toolbar.add(undoAllButton);
 		toolbar.add(createButton);
 		toolbar.add(addValueButton);
 		toolbar.add(deleteFeeButton);
+		toolbar.add(exportButton);
+//		toolbar.add(importButton);
 	}
+
+	private void exportFees(List<Integer> feeIds) {
+		JSONObject json = new JSONObject();
+		
+		if(null == feeIds) {
+			if(!checkBillingDate() && null != createBillingDate()) json.put("from", new JSONNumber(createBillingDate().getTime()));
+			if(null != customerSuggestions.get(customerSuggestBox.getValue())) json.put("customer", new JSONNumber(customerSuggestions.get(customerSuggestBox.getValue()).getId()));
+			if(AonStringUtils.isNotBlank(customerStatusListBox.getSelectedValue())) json.put("status", new JSONNumber(Integer.parseInt(customerStatusListBox.getSelectedValue())));
+			if(null != productSuggestions.get(conceptSuggestBox.getValue())) json.put("item", new JSONNumber(productSuggestions.get(conceptSuggestBox.getValue()).getId()));
+		} else {
+			JSONObject feeJson = new JSONObject();
+			for(int i=0; i<feeIds.size(); i++) 
+				feeJson.put("feeId"+i, new JSONString(feeIds.get(i).toString()));
+			
+			json.put("feeIds", feeJson);
+		}
+		
+		String fileDownloadURL = GWT.getModuleBaseURL()+ "ms/gwt_download_fee/"
+            	+ "?filter=" + btoa(json.toString())
+            	+ "&domain_name=" + options.getDomainName()
+            	+ "&domain_id=" + options.getDomain()
+				+ "&username="+ options.getUser();
+		
+		Window.open( fileDownloadURL, "_blank",null);
+	}
+	
+	private native String btoa(String str) /*-{
+	    return btoa(str);
+	}-*/;
 
 	// ------------------------------------------ HasChange
 	
