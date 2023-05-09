@@ -906,6 +906,24 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 						public Void visitCommonProfessionalDisease(LeaveType leaveType) {
 							return visitOcupationalDisease(leaveType);
 						}
+						
+						@Override
+						public Void visitMenstruation(LeaveType leaveType) {
+							exprCtx.setVariable(ContextVariable.MENSTRUATION_DAYS, 0, guarenteeStart, guarenteeEnd);
+							return null;
+						}
+						
+						@Override
+						public Void visitPregnacyStop(LeaveType leaveType) {
+							exprCtx.setVariable(ContextVariable.PREGNANCY_STOP_DAYS, 0, guarenteeStart, guarenteeEnd);
+							return null;
+						}
+						
+						@Override
+						public Void visitPregnacy39Week(LeaveType leaveType) {
+							exprCtx.setVariable(ContextVariable.PREGNANCY_39_WEEK_DAYS, 0, guarenteeStart, guarenteeEnd);
+							return null;
+						}
 
 					});
 
@@ -6411,6 +6429,25 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			public Double visitCommonProfessionalDisease(LeaveType leaveType) {
 				return visitOcupationalDisease(leaveType);
 			}
+			
+			@Override
+			public Double visitMenstruation(LeaveType leaveType) {
+        			// TODO Auto-generated method stub
+        			return null;
+			}
+			
+			@Override
+			public Double visitPregnacyStop(LeaveType leaveType) {
+        			// TODO Auto-generated method stub
+        			return null;
+			}
+			
+			@Override
+			public Double visitPregnacy39Week(LeaveType leaveType) {
+        			// TODO Auto-generated method stub
+        			return null;
+			}
+			
 
 		});
 

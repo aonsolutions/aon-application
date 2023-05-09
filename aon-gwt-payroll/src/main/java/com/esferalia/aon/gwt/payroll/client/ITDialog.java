@@ -456,9 +456,13 @@ public abstract class ITDialog extends AonCustomDialog {
 		causeLowPart.addItem("Paternidad", "3");
 		causeLowPart.addItem("Riesgo para el embarazo", "4");
 		causeLowPart.addItem("Riesgo durante la lactancia", "5");
+		causeLowPart.addItem("Menstruaci\u00F3n Incapacitante Secundaria","10");
+		causeLowPart.addItem("Interrupci\u00F3n del Embarazo", "11" );
+		causeLowPart.addItem("Semana Trig\u00E9sima Novena de Gestaci\u00F3n", "12");
 		causeLowPart.addItem("Accidente no laboral", "6");
 		causeLowPart.addItem("Enfermedad com\u00Fan periodo de carencia", "7");
 		causeLowPart.addItem("Enfermedad com\u00Fan, prestaci\u00F3n profesional (COVID-19)", "8");
+		
 		
 		// Uncomment this line when this cause is developed on SalaryDraft
 		// causeLowPart.addItem("Periodo de Observaci\u00f3n por Enfermedad Profesional", "9");
