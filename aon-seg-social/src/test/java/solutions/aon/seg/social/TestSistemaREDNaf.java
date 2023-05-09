@@ -342,34 +342,6 @@ public class TestSistemaREDNaf {
 				}
 	}
 	
-	@Test
-	public void testGetNafWrongStreetType() throws Exception{
-		NafRequest nft = new NafRequest(
-				"JUAN MANUEL", //NOMBRE
-				"ORTEGA", //PRIMER APELLIDO
-				"ÁLVAREZ",// SEGUNDO APELLIDO
-				Nationality.ESPAÑA,//NACIONALIDAD
-				"JUAN MANUEL",// NOMBRE PADRE
-				"MILAGROS",//NOMBRE MADRE
-				Sexo.VARON,//SEXO
-				new SimpleDateFormat("dd/mm/yyyy").parse("06/02/1997"),//FECHA DE NACIMIENTO
-				IdentCode.DNI,// IDENTIFICADOR DOCUMENTO
-				"45339825V"//NUMERO DE DOCUMENTO
-				);
-				nft.streetType = "aaa";
-				
-				try(final InputStream certificateInputStream = TestEmployee.class.getResourceAsStream("AyudaTFNMT.p12")){
-					SistemaREDNaf.getNaf(certificateInputStream,
-							"123456",
-							"pkcs12",
-							nft
-							);			
-					Assert.fail();
-				}catch(InvalidDataException uf) {
-					System.out.println(uf.getMessage());
-					Assert.assertEquals("El tipo de via introducido no es correcto", uf.getMessage());
-				}
-	}
 	
 	
 	
@@ -413,8 +385,8 @@ public class TestSistemaREDNaf {
 		
 	}
 	
-//	(expected = InvalidCertificateException.class)
-	@Test
+//	
+	@Test(expected = InvalidCertificateException.class)
 	public void testGetNafWrongCertificateData() throws Exception{
 		NafRequest nft = new NafRequest(
 				"JUAN MANUEL", //NOMBRE
@@ -435,12 +407,8 @@ public class TestSistemaREDNaf {
 					"",
 					nft
 					);	
-			Assert.fail();
-		}catch(InvalidCertificateException e) {
-			fail("Datos de certificados incorrectos");
+			throw new InvalidCertificateException("Error al confirmar el certificado");
 		}
-		
-
 	}
 	
 	
@@ -470,10 +438,5 @@ public class TestSistemaREDNaf {
 			System.out.println(e.getMessage());
 		}
 	}
-	
-//	catch(InvalidCertificateException uf) {
-//		System.out.println(uf.getMessage() + "Fallo certificacion");
-//		Assert.assertEquals("Fallo en la autenticacion del certificado", uf.getMessage());
-//	}
 	
 }

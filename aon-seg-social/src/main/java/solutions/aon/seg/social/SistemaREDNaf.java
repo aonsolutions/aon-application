@@ -109,9 +109,7 @@ public class SistemaREDNaf {
 		
 public static void getNaf(final InputStream certificateInputStream, final String certificatePassword, final String certificateType, NafRequest nafRequest) throws SegSocialException, FailingHttpStatusCodeException, IOException, InterruptedException {
 		
-		String regMovil ="^\\d{9}$";
-		Pattern pat = Pattern.compile(regMovil);
-		Matcher mat;
+		
 		try(WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)){
 			
 			HtmlPage htmlPage = webClient.getPage("https://w2.seg-social.es/Xhtml?JacadaApplicationName=SGIRED&TRANSACCION=APR01&E=I&AP=AFIR");
@@ -160,24 +158,28 @@ public static void getNaf(final InputStream certificateInputStream, final String
 			//-------------------- Optionals ----------------------
 			identForm.getInputByName("txt_SDFPRPREFSMS_ayuda").setValue(nafRequest.mobilePrefix);
 			identForm.getInputByName("txt_SDFPRMOVILSMS").setValue(nafRequest.mobileNumber);
-			mat = pat.matcher(nafRequest.mobileNumber);
-			if (mat.find() || identForm.getInputByName("txt_SDFPRMOVILSMS").getValue().equals("") ) {
+			String regMovil ="^\\d{9}$";
+			Pattern pat = Pattern.compile(regMovil);
+			Matcher mat = pat.matcher(nafRequest.mobileNumber);
+			boolean aux = mat.find();
+
+			if (identForm.getInputByName("txt_SDFPRMOVILSMS").getValue().equals("") || aux) {
 				
-			}else {
+				identForm.getInputByName("txt_SDFPRTIPOVIA_ayuda").setValue(nafRequest.streetType);
+				identForm.getInputByName("txt_SDFPRNOMVIA").setValue(nafRequest.streetName);
+				identForm.getInputByName("txt_SDFPRNUMERO").setValue(nafRequest.streetNumber);
+				identForm.getInputByName("txt_SDFPRBIS").setValue(nafRequest.bis);
+				identForm.getInputByName("txt_SDFPRBLOQUE").setValue(nafRequest.block);
+				identForm.getInputByName("txt_SDFPRESCALERA").setValue(nafRequest.stair);
+				identForm.getInputByName("txt_SDFPRPISO").setValue(nafRequest.floor);
+				identForm.getInputByName("txt_SDFPRPUERTA").setValue(nafRequest.door);
+				identForm.getInputByName("txt_SDFPRTELEFONO9").setValue(nafRequest.fixedNumber);
+				identForm.getInputByName("txt_SDFPRCODPOS_ayuda").setValue(nafRequest.postalCode);
+				identForm.getInputByName("txt_SDFPRLOCRES_ayuda").setValue("");
+				identForm.getInputByName("txt_SDFPRLOCRES_ayuda").setValue(nafRequest.locality);
+			}else if(!aux ) {
 				throw new InvalidDataException("El numero de telefono movil no es correcto, intentelo otra vez");
 			}
-			identForm.getInputByName("txt_SDFPRTIPOVIA_ayuda").setValue(nafRequest.streetType);
-			identForm.getInputByName("txt_SDFPRNOMVIA").setValue(nafRequest.streetName);
-			identForm.getInputByName("txt_SDFPRNUMERO").setValue(nafRequest.streetNumber);
-			identForm.getInputByName("txt_SDFPRBIS").setValue(nafRequest.bis);
-			identForm.getInputByName("txt_SDFPRBLOQUE").setValue(nafRequest.block);
-			identForm.getInputByName("txt_SDFPRESCALERA").setValue(nafRequest.stair);
-			identForm.getInputByName("txt_SDFPRPISO").setValue(nafRequest.floor);
-			identForm.getInputByName("txt_SDFPRPUERTA").setValue(nafRequest.door);
-			identForm.getInputByName("txt_SDFPRTELEFONO9").setValue(nafRequest.fixedNumber);
-			identForm.getInputByName("txt_SDFPRCODPOS_ayuda").setValue(nafRequest.postalCode);
-			identForm.getInputByName("txt_SDFPRLOCRES_ayuda").setValue("");
-			identForm.getInputByName("txt_SDFPRLOCRES_ayuda").setValue(nafRequest.locality);
 			
 			HtmlSelect registAddressNot = htmlPage.getHtmlElementById("ListaSiNo");
 			HtmlOption yes = registAddressNot.getOptionByValue("SI");
@@ -191,7 +193,8 @@ public static void getNaf(final InputStream certificateInputStream, final String
 			
 			HtmlElement targetElement = (HtmlElement) htmlPage.getElementById("Frame");
 			if (targetElement != null) {
-				throw new IpfAlreadyExistsReachedPage(" --------------------------------------------------------------\n"
+				throw new IpfAlreadyExistsReachedPage(" "
+						+ "\n--------------------------------------------------------------\n"
 						+ "			 |								|\n"
 						+ "			 | SEGÚN LA INFORMACIÓN EXISTENTE EN NUESTRAS BASES DE DATOS, |\n"
 						+ "			 | EL IPF QUE SE ESTÁ TRAMITANDO YA EXISTE. 			|\n"
