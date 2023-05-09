@@ -17,7 +17,7 @@ public class ActivityDAO {
 
 	}
 	
-	static class ActivityFiller extends Filler<Optional<Activity>>  implements Function<Record,Optional<Activity>> {
+	static class ActivityFiller implements Function<Record,Optional<Activity>> {
 
 		@Override
 		public Optional<Activity> apply(Record r) {

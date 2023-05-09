@@ -8,6 +8,57 @@ public class AonArrayUtils {
 		
 	}
 
+    /**
+     * The index value when an element is not found in a list or array: {@code -1}.
+     * This value is returned by methods in this class and can also be used in comparisons with values returned by
+     * various method from {@link java.util.List}.
+     */
+    public static final int INDEX_NOT_FOUND = -1;
+
+    /**
+     * <p>Copies the given array and adds the given element at the end of the new array.
+     *
+     * <p>The new array contains the same elements of the input
+     * array plus the given element in the last position. The component type of
+     * the new array is the same as that of the input array.
+     *
+     * <p>If the input array is {@code null}, a new one element array is returned
+     *  whose component type is the same as the element, unless the element itself is null,
+     *  in which case the return type is Object[]
+     *
+     * <pre>
+     * ArrayUtils.add(null, null)      = IllegalArgumentException
+     * ArrayUtils.add(null, "a")       = ["a"]
+     * ArrayUtils.add(["a"], null)     = ["a", null]
+     * ArrayUtils.add(["a"], "b")      = ["a", "b"]
+     * ArrayUtils.add(["a", "b"], "c") = ["a", "b", "c"]
+     * </pre>
+     *
+     * @param <T> the component type of the array
+     * @param array  the array to "add" the element to, may be {@code null}
+     * @param element  the object to add, may be {@code null}
+     * @return A new array containing the existing elements plus the new element
+     * The returned array type will be that of the input array (unless null),
+     * in which case it will have the same type as the element.
+     * If both are null, an IllegalArgumentException is thrown
+     * @since 2.1
+     * @throws IllegalArgumentException if both arguments are null
+     */
+    public static <T> T[] add(final T[] array, final T element) {
+        final Class<?> type;
+        if (array != null) {
+            type = array.getClass().getComponentType();
+        } else if (element != null) {
+            type = element.getClass();
+        } else {
+            throw new IllegalArgumentException("Arguments cannot both be null");
+        }
+        @SuppressWarnings("unchecked") // type must be T
+        final
+        T[] newArray = (T[]) copyArrayGrow1(array, type);
+        newArray[newArray.length - 1] = element;
+        return newArray;
+    }
 
     /**
      * <p>Adds all the elements of the given arrays into a new array.
@@ -84,4 +135,89 @@ public class AonArrayUtils {
         return array.clone();
     }
 
+    // Object IndexOf
+    //-----------------------------------------------------------------------
+    /**
+     * <p>Finds the index of the given object in the array.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param objectToFind  the object to find, may be {@code null}
+     * @return the index of the object within the array,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final Object[] array, final Object objectToFind) {
+        return indexOf(array, objectToFind, 0);
+    }
+    
+    /**
+     * <p>Finds the index of the given object in the array starting at the given index.
+     *
+     * <p>This method returns {@link #INDEX_NOT_FOUND} ({@code -1}) for a {@code null} input array.
+     *
+     * <p>A negative startIndex is treated as zero. A startIndex larger than the array
+     * length will return {@link #INDEX_NOT_FOUND} ({@code -1}).
+     *
+     * @param array  the array to search through for the object, may be {@code null}
+     * @param objectToFind  the object to find, may be {@code null}
+     * @param startIndex  the index to start searching at
+     * @return the index of the object within the array starting at the index,
+     *  {@link #INDEX_NOT_FOUND} ({@code -1}) if not found or {@code null} array input
+     */
+    public static int indexOf(final Object[] array, final Object objectToFind, int startIndex) {
+        if (array == null) {
+            return INDEX_NOT_FOUND;
+        }
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+        if (objectToFind == null) {
+            for (int i = startIndex; i < array.length; i++) {
+                if (array[i] == null) {
+                    return i;
+                }
+            }
+        } else {
+            for (int i = startIndex; i < array.length; i++) {
+                if (objectToFind.equals(array[i])) {
+                    return i;
+                }
+            }
+        }
+        return INDEX_NOT_FOUND;
+    }
+    
+    /**
+     * <p>Checks if the object is in the given array.
+     *
+     * <p>The method returns {@code false} if a {@code null} array is passed in.
+     *
+     * @param array  the array to search through
+     * @param objectToFind  the object to find
+     * @return {@code true} if the array contains the object
+     */
+    public static boolean contains(final Object[] array, final Object objectToFind) {
+        return indexOf(array, objectToFind) != INDEX_NOT_FOUND;
+    }
+    
+    /**
+     * Returns a copy of the given array of size 1 greater than the argument.
+     * The last value of the array is left to the default value.
+     *
+     * @param array The array to copy, must not be {@code null}.
+     * @param newArrayComponentType If {@code array} is {@code null}, create a
+     * size 1 array of this type.
+     * @return A new copy of the array of size 1 greater than the input.
+     */
+    private static Object copyArrayGrow1(final Object array, final Class<?> newArrayComponentType) {
+        if (array != null) {
+            final int arrayLength = Array.getLength(array);
+            final Object newArray = Array.newInstance(array.getClass().getComponentType(), arrayLength + 1);
+            System.arraycopy(array, 0, newArray, 0, arrayLength);
+            return newArray;
+        }
+        return Array.newInstance(newArrayComponentType, 1);
+    }
+    
 }

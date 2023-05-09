@@ -142,7 +142,7 @@ public class InvoiceDAO {
 
 	}
 	
-	private static class InvoiceFiller extends Filler<Invoice> implements Function<Record,Invoice> {
+	private static class InvoiceFiller implements Function<Record,Invoice> {
 		
 		@Override
 		public Invoice apply(Record r) {
@@ -151,25 +151,25 @@ public class InvoiceDAO {
 		
 		Invoice map(Record r, Supplier<Invoice> supplier) {
 			return supplier.get()
-				.setId(getValue(r,INVOICE.ID))
-				.setDomain(getValue(r,INVOICE.DOMAIN))
+				.setId(FillerUtils.getValue(r,INVOICE.ID))
+				.setDomain(FillerUtils.getValue(r,INVOICE.DOMAIN))
 				.setType(InvoiceType.safeValueOf(r.getValue(INVOICE.TYPE)).orElse(null))
-				.setSeries(getValue(r,INVOICE.SERIES))
-				.setNumber(getValue(r,INVOICE.NUMBER))
-				.setReferenceCode(getValue(r,INVOICE.REFERENCE_CODE))
-				.setIssueDate(getValue(r,INVOICE.ISSUE_DATE))
-				.setTaxDate(getValue(r,INVOICE.TAX_DATE))
+				.setSeries(FillerUtils.getValue(r,INVOICE.SERIES))
+				.setNumber(FillerUtils.getValue(r,INVOICE.NUMBER))
+				.setReferenceCode(FillerUtils.getValue(r,INVOICE.REFERENCE_CODE))
+				.setIssueDate(FillerUtils.getValue(r,INVOICE.ISSUE_DATE))
+				.setTaxDate(FillerUtils.getValue(r,INVOICE.TAX_DATE))
 				.setConfidential(SecurityLevel.safeValueOf(r.getValue(INVOICE.SECURITY_LEVEL)).orElse(null) == SecurityLevel.CONFIDENTIAL)
-				.setRegistry(getValue(r,INVOICE.REGISTRY))
-				.setRegistryDocument(getValue(r,INVOICE.RDOCUMENT))
+				.setRegistry(FillerUtils.getValue(r,INVOICE.REGISTRY))
+				.setRegistryDocument(FillerUtils.getValue(r,INVOICE.RDOCUMENT))
 				.setRegistryDocumentType(DocumentType.safeValueOf(r.getValue(INVOICE.RDOCUMENT_TYPE)).orElse(null) )
 				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)).orElse(null))
-				.setRegistryName(getValue(r,INVOICE.RNAME))
+				.setRegistryName(FillerUtils.getValue(r,INVOICE.RNAME))
 				.setActivity( new ActivityDAO.ActivityFiller().apply(r).orElse(null) )
-				.setCreationUser(getValue(r,INVOICE.CREATION_USER))
-				.setCreationDate(getValue(r,INVOICE.CREATION_DATE))
-				.setModificationUser(getValue(r,INVOICE.MODIFICATION_USER))
-				.setModificationDate(getValue(r,INVOICE.MODIFICATION_DATE))
+				.setCreationUser(FillerUtils.getValue(r,INVOICE.CREATION_USER))
+				.setCreationDate(FillerUtils.getValue(r,INVOICE.CREATION_DATE))
+				.setModificationUser(FillerUtils.getValue(r,INVOICE.MODIFICATION_USER))
+				.setModificationDate(FillerUtils.getValue(r,INVOICE.MODIFICATION_DATE))
 				.setDirty(false)
 			;
 		}

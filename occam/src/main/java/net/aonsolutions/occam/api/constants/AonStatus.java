@@ -7,10 +7,10 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum AonStatus {
 
-	NOT_BILLABLE("No facturable")
-		{ @Override public <R,T> R visit(AonStatusVisitor<R,T> v, T t) { return v.visitNonBillable(t);} }
-	,BILLABLE("Facturable")
+	BILLABLE("Facturable")
 		{ @Override public <R,T> R visit(AonStatusVisitor<R,T> v, T t) { return v.visitBillable(t);} }
+	,NOT_BILLABLE("No facturable")
+		{ @Override public <R,T> R visit(AonStatusVisitor<R,T> v, T t) { return v.visitNonBillable(t);} }
 	;
 
 	private String name;

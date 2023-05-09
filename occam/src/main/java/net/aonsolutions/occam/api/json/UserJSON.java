@@ -36,7 +36,7 @@ public class UserJSON {
 	}
 	
 	public static JSONArray to(List<User> list) {
-		if (AonCollectionUtils.isEmpty(list)) return new JSONArray();
+		if (AonCollectionUtils.isEmpty(list)) return null;
 		return to(list.stream());
 	}
 	

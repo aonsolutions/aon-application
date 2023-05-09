@@ -58,8 +58,10 @@ public class Asserts {
 		assertEquals(expected.getDescription(), actual.getDescription(),"Description");
 		assertEquals(expected.getOwner(), actual.getOwner(),"Owner");
 		assertEqualsNulls(expected.getParent(), actual.getParent(),"Parent Domain");
-		if ( expected.getParent().isPresent() ) {
-			assertEqualsDomain(expected.getParent().orElse(null), actual.getParent().orElse(null));
+		if ( expected.getParent().isPresent() && expected.getParent().get() != null) {
+			Domain d1 = expected.getParent().get();
+			Domain d2 = actual.getParent().get();
+			assertEqualsDomain(d1, d2);
 		}
 		assertEquals(expected.getType(), actual.getType(),"DomainType");
 		assertEquals(expected.getSubDomainSuffix(), actual.getSubDomainSuffix(),"SubDomainSuffix");

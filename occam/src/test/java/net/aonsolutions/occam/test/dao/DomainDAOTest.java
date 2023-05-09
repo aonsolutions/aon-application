@@ -91,9 +91,10 @@ class DomainDAOTest extends AbstractOccamTest {
 		Optional<Domain> optDomain = DomainDAO.get(ctx
 			,p -> p.withName().eq( DOMAIN_NAME )
 			,b -> b.full());
+		
+		
 		assertTrue(optDomain.isPresent());
 		Domain expected = optDomain.get();
-		
 		Optional<Domain> optActual = DomainDAO.get(ctx
 			,p -> p.withId().eq( expected.getId() )
 				.and(p.withName().eq( expected.getName() )) 
@@ -180,7 +181,7 @@ class DomainDAOTest extends AbstractOccamTest {
 	void usersStreamTest() {
 		DomainDAO.getStream(ctx
 			, p -> p.withId().gt( 0 )
-			, b -> b.withUsers()
+			, b -> b.withUsers().withParentDomain().withAllRow().withAudit()
 			)
 		.forEach(d -> {
 			if (AonStringUtils.equals(d.getName(),DOMAIN_NAME)) {

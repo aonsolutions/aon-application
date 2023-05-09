@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,16 +16,20 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.ResultQuery;
-import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
+import org.jooq.SelectLimitStep;
+import org.jooq.SelectSelectStep;
+import org.jooq.SelectWithTiesAfterOffsetStep;
 
-import com.esferalia.aon.watson.server.AonArrayUtils;
+import com.esferalia.aon.watson.util.Pair;
 
 import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.DomainType;
+import net.aonsolutions.occam.api.filter.AonFacade.AonFillerBuilder;
+import net.aonsolutions.occam.api.filter.DomainFacade.CompositeDomainBuilder;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainBuilder;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainBuilderFactory;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilter;
@@ -38,6 +43,19 @@ public class DomainDAO {
 	}
 	private static final com.esferalia.aon.jooq.tables.Domain PARENT_DOMAIN = DOMAIN.as("parent_domain");
 	
+	private static class DomainMapper extends Pair<Record,Domain> {
+		private static final long serialVersionUID = 2371435245238661388L;
+		private DomainMapper(Record rec) {
+			super(rec, new Domain());
+		}
+		private Domain getDomain() {
+			return getRight();
+		}
+		private Record getRecord() {
+			return getLeft();
+		}
+	}
+
 	private static final DomainFilterDAO DOMAIN_FILTER = new DomainFilterDAO();
 	private static class DomainFilterDAO implements DomainFilters {
 		@Override public Property<Integer> withId() {return new PropertyDAO<>(DOMAIN.ID);}
@@ -66,12 +84,63 @@ public class DomainDAO {
 		@Override public Property<Byte> withAonStatus() {return new PropertyDAO<>(DOMAIN.AONSTATUS);}
 	}
 	
-	private static class DomainSelectBuilderDAO implements DomainBuilder<Stream<Domain>> {
+	private static class DomainSelectBuilderDAO extends  CompositeDomainBuilder<Stream<Domain>> {
+		
+		private Stream<Domain> stream;
+		private final ResultQuery<Record> query;
+		private final FillerBuilder fillerBuilder; 
+		
+		public DomainSelectBuilderDAO( AONContext ctx, DomainFilter filter ) {
+			
+			SelectBuilder selectBuilder = new SelectBuilder( ctx );
+			FromBuilder fromBuilder = new  FromBuilder( selectBuilder.build() );
+			SelectJoinStep<Record> from = fromBuilder.build();
+			WhereBuilder whereBuilder = new WhereBuilder(from,filter);
+			LimitBuilder limitBuilder = new  LimitBuilder( whereBuilder.build() );
+			fillerBuilder = new  FillerBuilder();
+			query =  limitBuilder.build();
+		
+			addBuilder(selectBuilder);
+			addBuilder(fromBuilder);
+			addBuilder(whereBuilder);
+			addBuilder(limitBuilder);
+			addBuilder(fillerBuilder);
+			 
+		}
+		
+		@Override 
+		public DomainSelectBuilderDAO withUsers() {
+			super.withUsers();
+			UserFiller userFiller =  new UserFiller();
+			this.stream = query
+				.fetchGroups( fillerBuilder::build, userFiller::apply)
+				.entrySet()
+				.stream()
+				.map(e -> e.getKey().addUsers( 
+					e.getValue()
+						.stream()
+						.filter(u -> u.getId() != null )
+						.collect(Collectors.toCollection(LinkedList::new))));
+			return this;
+		}
+		
+		public Stream<Domain> build() {
+			return this.stream != null 
+				? this.stream 
+				: this.query
+				.fetch()
+				.stream()
+				.map(fillerBuilder::build );
+		}
+		
+	}
+	
+	private static class SelectBuilder implements DomainBuilder<SelectSelectStep<Record>> {
 		
 		private static final Field<?>[] DOMAIN_BASIC_FIELDS = new Field[]{
 			DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION
 		};
-		
+			
 		private static final Field<?>[] DOMAIN_PARENT_BASIC_FIELDS = new Field[]{
 			PARENT_DOMAIN.ID,PARENT_DOMAIN.NAME,PARENT_DOMAIN.DESCRIPTION
 		};
@@ -79,193 +148,230 @@ public class DomainDAO {
 		private static final Field<?>[] DOMAIN_AUDIT_FIELDS = new Field[]{
 			DOMAIN.CREATION_USER,DOMAIN.CREATION_DATE,DOMAIN.MODIFICATION_USER,DOMAIN.MODIFICATION_DATE
 		};
-		
-		private static final Field<?>[] DOMAIN_OTHER_FIELDS = new Field[]{
-			 DOMAIN.PARENT
-			,DOMAIN.TYPE
-			,DOMAIN.SCOPE
-			,DOMAIN.SUBDOMAINSUFFIX
-			,DOMAIN.ENABLEHEREDITY
-			,DOMAIN.DOMAINMANAGEMENT
-			,DOMAIN.DISABLEDOMAINMANAGEMENT
-			,DOMAIN.MAXDOCUMENTSIZE
-			,DOMAIN.MAXTOTALDOCUMENTSIZE
-			,DOMAIN.MAXDEFINEDUSERS
-			,DOMAIN.ACTIVE
-			,DOMAIN.OWNER
-			,DOMAIN.EXPIRATIONDATE
-			,DOMAIN.LASTACCESS_USER
-			,DOMAIN.LASTACCESS_DATE
-			,DOMAIN.AONCUSTOMER
-			,DOMAIN.AONSTATUS
-		};
-		
-		private final AONContext ctx;
-		private final DomainFilter filter;
-		private boolean limit = false;
-		private int offset;
-		private int rows;
-		
-		private boolean withAllRow = false;
-		private boolean withParent = false;
-		private boolean withAudit = false;
-		private boolean withUsers = false;
+		private SelectSelectStep<Record> select;
 
-		public DomainSelectBuilderDAO( AONContext ctx, DomainFilter filter ) {
-			this.ctx = ctx;
-			this.filter = filter;
+		public SelectBuilder(AONContext ctx) {
+			this.select = ctx.getDslContext().select( DOMAIN_BASIC_FIELDS );
+		}
+
+		@Override
+		public SelectBuilder limit(int offest, int rows) {return this;}
+
+		@Override
+		public SelectBuilder withParentDomain() {
+			this.select = select.select( DOMAIN_PARENT_BASIC_FIELDS );
+			return this;
+		}
+
+		@Override
+		public SelectBuilder withAudit() {
+			this.select = select.select( DOMAIN_AUDIT_FIELDS );
+			return this;
+		}
+
+		@Override
+		public SelectBuilder withAllRow() {
+			this.select = select.select(DOMAIN.fields());
+			return this;
+		}
+
+		@Override
+		public SelectBuilder full() {
+			withAllRow();
+			withParentDomain();
+			withAudit();
+			return this;
+		}
+
+		@Override
+		public SelectBuilder withUsers() {
+			this.select = select.select(UserDAO.USER_BASIC_FIELDS);
+			return this;
 		}
 		
 		@Override
-		public Stream<Domain> build( ) {
-			SelectJoinStep<Record> step1 = ctx.getDslContext().select( getSelectedFields() )
-				.from(DOMAIN);
-			if ( withUsers ) {
-				step1 = step1.leftOuterJoin(USER).on(USER.DOMAIN.eq(DOMAIN.ID));
-			}
-			if ( withParent ) {
-				step1 = step1.leftOuterJoin(PARENT_DOMAIN).on(PARENT_DOMAIN.ID.eq(DOMAIN.PARENT));	
-			}
-			SelectConditionStep<Record> step2 = step1.where( getWhere() );
-			ResultQuery<Record> step3 =  limit?step2.limit(offset,rows):step2;
-			if ( limit ) {
-				step1.limit(offset,rows);
-			}
-			DomainFiller filler = new DomainFiller();
-			UserFiller userFiller =  new UserFiller();
-			
-			if (withUsers) {
-				return step3
-					.fetchGroups( filler::apply, userFiller::apply)
-					.entrySet()
-					.stream()
-					.map(e -> e.getKey().addUsers( 
-						e.getValue()
-							.stream()
-							.filter(u -> u.getId() != null )
-							.collect(Collectors.toCollection(LinkedList::new))));
-			} else {
-				return  step3
-					.fetch()
-					.stream()
-					.map(filler::apply )
-					;
-			}
+		public SelectSelectStep<Record> build() {
+			return select;
+		}
+	}
+	
+	private static class FromBuilder implements DomainBuilder<SelectJoinStep<Record>> {
+		private SelectJoinStep<Record> from;
+		
+		public FromBuilder(SelectSelectStep<Record> select ) {
+			from = select.from(DOMAIN);
 		}
 		
-		private Field<?>[] getSelectedFields() {
-			Field<?>[] fields = new Field<?>[] {};
-			fields = AonArrayUtils.addAll(fields,DOMAIN_BASIC_FIELDS);
-			if (withAllRow) {
-				fields = AonArrayUtils.addAll(fields,DOMAIN_OTHER_FIELDS);	
-			}
-			if (withAudit) {
-				fields = AonArrayUtils.addAll(fields,DOMAIN_AUDIT_FIELDS);
-			}
-			if (withParent) {
-				fields = AonArrayUtils.addAll(fields,DOMAIN_PARENT_BASIC_FIELDS);
-			}
-			if (withUsers) {
-				fields = AonArrayUtils.addAll(fields,UserDAO.USER_BASIC_FIELDS);
-			}
-			return fields;
+		@Override
+		public FromBuilder withParentDomain() {
+			from = from.leftOuterJoin(PARENT_DOMAIN).on(PARENT_DOMAIN.ID.eq(DOMAIN.PARENT));
+			return this;
 		}
 
-		private Condition getWhere() {
+		@Override
+		public FromBuilder withUsers() {
+			from = from.leftOuterJoin(USER).on(USER.DOMAIN.eq(DOMAIN.ID));
+			return this;
+		}
+		@Override 
+		public FromBuilder full() {
+			withParentDomain();
+			return this;
+		}
+
+		@Override public FromBuilder limit(int offest, int rows) { return this; }
+		@Override public FromBuilder withAudit() {return this; }
+		@Override public FromBuilder withAllRow() {return this; }
+		
+		public SelectJoinStep<Record> build() {
+			return from;
+		}
+	}
+	
+	private static class WhereBuilder implements DomainBuilder<SelectLimitStep<Record>> {
+		private SelectLimitStep<Record> where;
+		
+		public WhereBuilder(SelectJoinStep<Record> from, DomainFilter filter) {
+			where = from.where( getWhere(filter) );
+		}
+		
+		@Override public WhereBuilder limit(int offset, int rows) {return this;}
+		@Override public WhereBuilder withParentDomain() {return this;}
+		@Override public WhereBuilder withUsers() {return this;}
+		@Override public WhereBuilder withAudit() {return this; }
+		@Override public WhereBuilder withAllRow() {return this; }
+		@Override public WhereBuilder full() {return this; }
+		
+		public SelectLimitStep<Record> build() {
+			return where;
+		}
+		
+		private Condition getWhere(DomainFilter filter) {
 			if ( filter.filter(DOMAIN_FILTER) instanceof FilterDAO filterDAO) {
 				return filterDAO.getCondition();
 			}
 			throw new IllegalArgumentException("Filter can not be null.");
 		}
-
-		@Override
-		public DomainSelectBuilderDAO limit(final int offset, final int rows) {
-			this.limit = true;
-			this.offset = offset;
-			this.rows = rows;
-			return this;
-		}
-		
-		@Override
-		public DomainBuilder<Stream<Domain>> withAllRow() {
-			withAllRow = true;
-			return this;
-		}
-		
-		@Override
-		public DomainBuilder<Stream<Domain>> withUsers() {
-			withUsers = true;
-			return this;
-		}
-		@Override
-		public DomainBuilder<Stream<Domain>> withAudit() {
-			withAudit = true;
-			return this;
-		}
-		
-		@Override
-		public DomainBuilder<Stream<Domain>> withParent() {
-			withParent = true;
-			return this;
-		}
-
-		@Override
-		public DomainSelectBuilderDAO full() {
-			withAllRow = true;
-			withParent = true;
-			withAudit = true;
-			return this;
-		}
-
-		
-		private class DomainFiller extends Filler<Domain> implements Function<Record,Domain> {
-			
-			@Override
-			public Domain apply(Record r) {
-				final Domain domain = new Domain()
-					.setId(getValue(r,DOMAIN.ID))
-					.setName(getValue(r,DOMAIN.NAME))
-					.setDescription(getValue(r,DOMAIN.DESCRIPTION));
-				if (DomainSelectBuilderDAO.this.withAllRow) {
-					domain
-						.setType( DomainType.safeValueOf( getValue(r,DOMAIN.TYPE)).orElse(null))
-						.setScope(getValue(r,DOMAIN.SCOPE))
-						.setSubDomainSuffix(getValue(r,DOMAIN.SUBDOMAINSUFFIX))
-						.setEnableHeredity(getBoolean(r, DOMAIN.ENABLEHEREDITY))
-						.setDomainManagement(getBoolean(r, DOMAIN.DOMAINMANAGEMENT))
-						.setDisableDomainManagement(getBoolean(r, DOMAIN.DISABLEDOMAINMANAGEMENT))
-						.setMaxDocumentSize(getValue(r, DOMAIN.MAXDOCUMENTSIZE))
-						.setMaxTotalDocumentSize(getValue(r, DOMAIN.MAXTOTALDOCUMENTSIZE))
-						.setMaxDefinedUsers(getValue(r,DOMAIN.MAXDEFINEDUSERS))
-						.setActive(getBoolean(r, DOMAIN.ACTIVE))
-						.setOwner(getValue(r, DOMAIN.OWNER))
-						.setExpirationDate(getValue(r, DOMAIN.EXPIRATIONDATE))
-						.setLastAccessUser(getValue(r, DOMAIN.LASTACCESS_USER))
-						.setLastAccessDate(getValue(r, DOMAIN.LASTACCESS_DATE))
-						.setAonCustomer(getValue(r,DOMAIN.AONCUSTOMER))
-						.setAonStatus( AonStatus.safeValueOf( getValue(r,DOMAIN.AONSTATUS)).orElse(null))
-						;	
-				}
-				if (DomainSelectBuilderDAO.this.withAudit) {
-					domain
-						.setCreationUser(getValue(r, DOMAIN.CREATION_USER))
-						.setCreationDate(getValue(r, DOMAIN.CREATION_DATE))
-						.setModificationUser(getValue(r, DOMAIN.MODIFICATION_USER))
-						.setModificationDate(getValue(r, DOMAIN.MODIFICATION_DATE));
-				}
-				if (DomainSelectBuilderDAO.this.withParent) {
-					domain.setParent(new Domain()
-						.setId(getValue(r,PARENT_DOMAIN.PARENT))
-						.setName(getValue(r,PARENT_DOMAIN.NAME))
-						.setDescription(getValue(r,PARENT_DOMAIN.DESCRIPTION))
-					);
-				}
-				return domain.setDirty(false);	
-			}
-		}
-		
 	}
 
+	private static class LimitBuilder implements DomainBuilder<ResultQuery<Record>> {
+		private SelectLimitStep<Record> where;
+		private SelectWithTiesAfterOffsetStep<Record> limit;
+		
+		public LimitBuilder(SelectLimitStep<Record> where) {
+			this.where = where;
+		}
+		
+		@Override 
+		public LimitBuilder limit(int offset, int rows) {
+			limit = where.limit(offset,rows);
+			return this;
+		}
+
+		@Override public LimitBuilder withParentDomain() {return this;}
+		@Override public LimitBuilder withUsers() {return this;}
+		@Override public LimitBuilder withAudit() {return this; }
+		@Override public LimitBuilder withAllRow() {return this; }
+		@Override public LimitBuilder full() {return this; }
+		
+		public ResultQuery<Record> build() {
+			return limit==null?where:limit;
+		}
+	}
+
+	private static class FillerBuilder implements DomainBuilder<Function<Record, DomainMapper>>,AonFillerBuilder<Domain> {
+		private UnaryOperator<DomainMapper> withAudit = t -> t;
+		private UnaryOperator<DomainMapper> withParent = t -> t;
+		private UnaryOperator<DomainMapper> withAllRow = t -> t;
+		
+		@Override
+		public Function<Record, DomainMapper> build() {
+			return null;
+		}
+		
+		@Override
+		public Domain build(Record rec) {
+			Function<Record, DomainMapper> f = DomainMapper::new;
+			return f.andThen( mapper -> {
+					mapper.getDomain()
+					.setId(FillerUtils.getValue(mapper.getRecord(),DOMAIN.ID))
+					.setName(FillerUtils.getValue(mapper.getRecord(),DOMAIN.NAME))
+					.setDescription(FillerUtils.getValue(mapper.getRecord(),DOMAIN.DESCRIPTION));
+					return mapper;
+				})
+				.andThen( withAllRow)
+				.andThen( withAudit )
+				.andThen( withParent )
+				.apply(rec)
+				.getDomain()
+				.setDirty(false)
+			;
+		}
+		
+		@Override
+		public DomainBuilder<Function<Record, DomainMapper>> withAudit() {
+			withAudit = mapper -> {
+				mapper.getDomain()
+					.setCreationUser(FillerUtils.getValue(mapper.getRecord(), DOMAIN.CREATION_USER))
+					.setCreationDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.CREATION_DATE))
+					.setModificationUser(FillerUtils.getValue(mapper.getRecord(), DOMAIN.MODIFICATION_USER))
+					.setModificationDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.MODIFICATION_DATE));
+				return mapper;
+			};
+			return this;
+		}
+		
+		@Override
+		public DomainBuilder<Function<Record, DomainMapper>> withParentDomain() {
+			withParent = mapper -> {
+				mapper.getDomain().setParent(new Domain()
+					.setId(FillerUtils.getValue(mapper.getRecord(), PARENT_DOMAIN.PARENT))
+					.setName(FillerUtils.getValue(mapper.getRecord(), PARENT_DOMAIN.NAME))
+					.setDescription(FillerUtils.getValue(mapper.getRecord(), PARENT_DOMAIN.DESCRIPTION)));
+				return mapper;
+			};
+			return this;
+		}
+		
+		@Override
+		public DomainBuilder<Function<Record, DomainMapper>> withAllRow() {
+			withAllRow = mapper -> {
+				mapper.getDomain()
+					.setType( DomainType.safeValueOf( FillerUtils.getValue(mapper.getRecord(),DOMAIN.TYPE)).orElse(null))
+					.setScope(FillerUtils.getValue(mapper.getRecord(),DOMAIN.SCOPE))
+					.setSubDomainSuffix(FillerUtils.getValue(mapper.getRecord(),DOMAIN.SUBDOMAINSUFFIX))
+					.setEnableHeredity(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.ENABLEHEREDITY))
+					.setDomainManagement(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.DOMAINMANAGEMENT))
+					.setDisableDomainManagement(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.DISABLEDOMAINMANAGEMENT))
+					.setMaxDocumentSize(FillerUtils.getValue(mapper.getRecord(), DOMAIN.MAXDOCUMENTSIZE))
+					.setMaxTotalDocumentSize(FillerUtils.getValue(mapper.getRecord(), DOMAIN.MAXTOTALDOCUMENTSIZE))
+					.setMaxDefinedUsers(FillerUtils.getValue(mapper.getRecord(),DOMAIN.MAXDEFINEDUSERS))
+					.setActive(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.ACTIVE))
+					.setOwner(FillerUtils.getValue(mapper.getRecord(), DOMAIN.OWNER))
+					.setExpirationDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.EXPIRATIONDATE))
+					.setLastAccessUser(FillerUtils.getValue(mapper.getRecord(), DOMAIN.LASTACCESS_USER))
+					.setLastAccessDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.LASTACCESS_DATE))
+					.setAonCustomer(FillerUtils.getValue(mapper.getRecord(),DOMAIN.AONCUSTOMER))
+					.setAonStatus( AonStatus.safeValueOf( FillerUtils.getValue(mapper.getRecord(),DOMAIN.AONSTATUS)).orElse(null))
+				;
+				return mapper;
+			};
+			return this;
+		}
+
+		@Override
+		public DomainBuilder<Function<Record, DomainMapper>> full() {
+			withAllRow();
+			withParentDomain();
+			withAudit();
+			return null;
+		}
+
+		@Override public DomainBuilder<Function<Record, DomainMapper>> limit(int offset, int rows) { return null; }
+		@Override public DomainBuilder<Function<Record, DomainMapper>> withUsers() {return null;}
+
+	}
+	
 	private static DomainSelectBuilderDAO getBuilder( AONContext ctx, DomainFilter filter ) {
 		return new DomainSelectBuilderDAO(ctx,filter);
 	}

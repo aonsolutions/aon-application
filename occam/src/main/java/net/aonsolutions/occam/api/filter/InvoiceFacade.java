@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 
 import net.aonsolutions.occam.api.Filter;
 import net.aonsolutions.occam.api.Filter.Property;
-import net.aonsolutions.occam.api.filter.AonFacade.AonBuilder;
 
 public interface InvoiceFacade extends Serializable{
 	
@@ -39,9 +38,10 @@ public interface InvoiceFacade extends Serializable{
 		Property<Timestamp> withModificationDate();
 	}
 	
-	public interface InvoiceBuilder<T> extends AonBuilder<T> {
+	public interface InvoiceBuilder<T> {
 		public InvoiceBuilder<T> limit(int offest, int rows);
 		public InvoiceBuilder<T> full();
+		public T build();
 	}
 	
 	

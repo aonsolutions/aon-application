@@ -102,7 +102,7 @@ public class UserDAO {
 
 	}
 
-	public static class UserFiller extends Filler<User> implements Function<Record,User> {
+	public static class UserFiller  implements Function<Record,User> {
 		
 		public User apply(Record r) {
 			return map(r, User::new);
@@ -110,11 +110,11 @@ public class UserDAO {
 		
 		User map(Record r, Supplier<User> supplier) {
 			return supplier.get()
-				.setId(getValue(r,USER.ID))
-				.setDomain(getValue(r,USER.DOMAIN))
-				.setName(getValue(r,USER.NAME))
-				.setLogin(getValue(r,USER.LOGIN))
-				.setActive(getBoolean(r, USER.ACTIVE))
+				.setId(FillerUtils.getValue(r,USER.ID))
+				.setDomain(FillerUtils.getValue(r,USER.DOMAIN))
+				.setName(FillerUtils.getValue(r,USER.NAME))
+				.setLogin(FillerUtils.getValue(r,USER.LOGIN))
+				.setActive(FillerUtils.getBoolean(r, USER.ACTIVE))
 				.setDirty(false)
 				;	
 		}

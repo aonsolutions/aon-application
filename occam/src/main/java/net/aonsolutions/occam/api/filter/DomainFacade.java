@@ -1,15 +1,19 @@
 package net.aonsolutions.occam.api.filter;
 
-import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import net.aonsolutions.occam.api.Filter;
 import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.api.config.Domain;
-import net.aonsolutions.occam.api.filter.AonFacade.AonBuilder;
-public interface DomainFacade extends Serializable{
+
+public class DomainFacade {
+	
+	private DomainFacade() {
+		
+	}
 
 	@FunctionalInterface
 	public interface DomainFilter {
@@ -43,16 +47,51 @@ public interface DomainFacade extends Serializable{
 		Property<Timestamp> withModificationDate();
 	}
 	
-	public interface DomainBuilder<T> extends AonBuilder<T> {
-		public DomainBuilder<T> limit(int offest, int rows);
-		public DomainBuilder<T> withParent();
-		public DomainBuilder<T> withAudit();
-		public DomainBuilder<T> withAllRow();
-		public DomainBuilder<T> full();
-		public DomainBuilder<T> withUsers();
+	public interface DomainBuilder<T> {
+		DomainBuilder<T> limit(int offset, int rows);
+		DomainBuilder<T> withParentDomain();
+		DomainBuilder<T> withAudit();
+		DomainBuilder<T> withAllRow();
+		DomainBuilder<T> full();
+		DomainBuilder<T> withUsers();
+		T build();
 	}
 	
 	
+	public abstract static class CompositeDomainBuilder<T> implements DomainBuilder<T> {
+		private LinkedList<DomainBuilder<?>> builders = new LinkedList<>();
+		
+		public CompositeDomainBuilder<T> addBuilder(DomainBuilder<?> builder) {
+			builders.add(builder);
+			return this;
+		}
+		
+		public DomainBuilder<T> withParentDomain() {
+			builders.stream().forEach( b -> b.withParentDomain());
+			return this;
+		}
+		public DomainBuilder<T> withAudit() {
+			builders.stream().forEach( b -> b.withAudit());
+			return this;
+		}
+		public DomainBuilder<T> withAllRow(){
+			builders.stream().forEach( b -> b.withAllRow());
+			return this;
+		}
+		public DomainBuilder<T> withUsers(){
+			builders.stream().forEach( b -> b.withUsers());
+			return this;
+		}
+		public DomainBuilder<T> full() {
+			builders.stream().forEach( b -> b.full());
+			return this;
+		}
+		public DomainBuilder<T> limit(int offset, int rows){
+			builders.stream().forEach( b -> b.limit(offset,rows));
+			return this;
+		}
+	}
+
 	@FunctionalInterface
 	public interface DomainBuilderFactory {
 		public DomainBuilder<Stream<Domain>> create( DomainBuilder<Stream<Domain>> builder );

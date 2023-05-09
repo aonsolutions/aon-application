@@ -123,6 +123,9 @@ public class AonRandom {
     public static Date getRangeDate( Date start, Date end ) {
     	return faker.date().between(start, end);
     }
+    public static Date getYearDay() {
+    	return getYearDay(today());
+    }
     public static Date getYearDay( Date date ) {
     	return faker.date().between(AonDateUtils.getYearFirstDay(date), AonDateUtils.getYearLastDay(date));
     }

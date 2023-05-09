@@ -7,22 +7,22 @@ import org.jooq.Record;
 
 import com.esferalia.aon.watson.server.AonObjectUtils;
 
-abstract class Filler<T> {
+class FillerUtils {
 	
 	private static final Byte TRUE_BYTE = Byte.valueOf((byte) 1);
 
-	protected boolean checkField(Record r , Field<?> f) {
+	static boolean checkField(Record r , Field<?> f) {
 		return Arrays.stream(r.fields())
 			.anyMatch(field -> AonObjectUtils.equals(field, f));
 	}
 	
-	protected <K> K getValue(Record r, Field<K> field) {
+	static <K> K getValue(Record r, Field<K> field) {
 		return checkField(r, field)
 			? r.getValue(field)
 			: null;
 	}
 
-	protected boolean getBoolean(Record r, Field<Byte> field) {
+	static boolean getBoolean(Record r, Field<Byte> field) {
 		return checkField(r, field) && AonObjectUtils.equals (r.getValue(field) , TRUE_BYTE );
 	}
 	
