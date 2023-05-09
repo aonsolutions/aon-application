@@ -162,12 +162,10 @@ public static void getNaf(final InputStream certificateInputStream, final String
 			identForm.getInputByName("txt_SDFPRMOVILSMS").setValue(nafRequest.mobileNumber);
 			mat = pat.matcher(nafRequest.mobileNumber);
 			if (mat.find() || identForm.getInputByName("txt_SDFPRMOVILSMS").getValue().equals("") ) {
-								
+				
 			}else {
 				throw new InvalidDataException("El numero de telefono movil no es correcto, intentelo otra vez");
 			}
-			
-			
 			identForm.getInputByName("txt_SDFPRTIPOVIA_ayuda").setValue(nafRequest.streetType);
 			identForm.getInputByName("txt_SDFPRNOMVIA").setValue(nafRequest.streetName);
 			identForm.getInputByName("txt_SDFPRNUMERO").setValue(nafRequest.streetNumber);
@@ -207,12 +205,11 @@ public static void getNaf(final InputStream certificateInputStream, final String
 			} catch ( UnfilledMandatory unfilledMandatory) {
 
 			    String unfilledId = htmlPage.getFocusedElement().getId();
-			    System.out.println(unfilledId);
+
 			    if (unfilledId.equals("SDFPRCODPF")  && htmlPage.getElementById(unfilledId).getTextContent() !=null) {
 			    	unfilledId = "SDFPRTIPOPF_ayuda";
 				}
-			    System.out.println(unfilledId);
-
+			    
 			    List<HtmlLabel> labels = identForm.getByXPath("//label[@for=\""+unfilledId+"\"]");
 			    if ( labels.isEmpty()) {
 				throw unfilledMandatory;
