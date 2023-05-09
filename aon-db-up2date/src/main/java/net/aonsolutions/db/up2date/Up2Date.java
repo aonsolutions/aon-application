@@ -20,6 +20,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.finance.SagardoBusUpdate;
+import net.aonsolutions.db.up2date.payroll.PrestITSexAndHealthInsert;
 import net.aonsolutions.db.up2date.tgss.AgriculturalBases2023Update;
 import net.aonsolutions.db.up2date.tgss.Art1512023Update;
 import net.aonsolutions.db.up2date.tgss.Bases2023Update;
@@ -362,6 +363,8 @@ public class Up2Date {
 	    // Art1512023Update.ART1512023UPDATE,
 	    // FellowsPercentages2023Update.FELLOWSPERCENTAGES2023UPDATE,
             // TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
+	     PrestITSexAndHealthInsert.PRESTITSEXANDHEALTHINSERT,
+
 		
 	    //DOMAIN
 	    // DomainAonStatus.DOMAIN_AON_STATUS,
@@ -369,7 +372,7 @@ public class Up2Date {
 
 	    // Important, not remove
 	    // AgreementPurge.AGREEMENTPURGE,
-	    SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
+	    // SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
 	    SagardoBusUpdate.SAGARDOBUS_UPDATE
 	    
 	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE
