@@ -271,6 +271,16 @@ public class DownloadFeeServlet extends HttpServlet {
 			filter = filter.and(f.getPeriodProperty().eq(period.shortValue()));
 		}
 		
+		if(filterJSON.opt("price") != null) {
+			Double price = filterJSON.optDouble("price");
+			filter = filter.and(f.getPriceProperty().eq(price));
+		}
+		
+		if(filterJSON.opt("discount") != null) {
+			String discount = filterJSON.optString("discount");
+			filter = filter.and(f.getDiscountExprProperty().eq(discount));
+		}
+		
 		if(filterJSON.opt("feeIds") != null) {
 			 JSONObject feeIds = filterJSON.optJSONObject("feeIds");
 			 List<Integer> ids = new ArrayList<>();
