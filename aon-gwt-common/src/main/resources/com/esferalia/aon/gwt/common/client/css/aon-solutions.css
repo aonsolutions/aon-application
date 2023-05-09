@@ -210,6 +210,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconTune aonIconTune;
+.aon_icon_tune { background-image: iconTune;}
 @url iconPin aonIconPin;
 .aon_icon_pin { background-image: iconPin;}
 @url iconPerson aonIconPerson;
