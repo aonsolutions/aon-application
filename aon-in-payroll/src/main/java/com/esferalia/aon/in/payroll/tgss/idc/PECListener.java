@@ -249,8 +249,8 @@ class PECListener  implements IdcParserListener {
 	    benefitsLoss.setEndDate(end);
 	    benefitsLoss.setDescription(cause);
 	    benefitsLoss.setFormula(String.format(""
-	    	+ "AVISO(\"<div>PERDIDA DE BENEFICIOS: <span style='color:red;'>%s</span></div>"
-	    	+ "<div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>\")", cause));
+	    	+ "/*epoch:%d*/AVISO(\"<div>PERDIDA DE BENEFICIOS: <span style='color:red;'>%s</span></div>"
+	    	+ "<div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>\")", Calendar.getInstance().getTimeInMillis(), cause));
 
 	    ssPECs.add(benefitsLoss);
 	    
