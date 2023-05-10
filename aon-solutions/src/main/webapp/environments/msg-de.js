@@ -1,6 +1,7 @@
 // ----- A
 
 export const ACCEPT = 'Akzeptieren';
+export const ACCESS = "Zugang";
 export const ACCOUNT = 'Konto';
 export const ACCOUNTED = 'Accounted';
 export const ACCOUNTEDS = 'Accounted';
@@ -22,6 +23,8 @@ export const ADD_TAX = 'Steuern Hinzufügen';
 export const ADD_TYPE = 'Typ Hinzufügen';
 export const ADDITIONAL_INFORMATION = 'Additional Information';
 export const ADDRESS = 'Address';
+export const ALL = 'Alle';
+export const ALL1 = 'Alle';
 export const ALL_FILES = 'All Files';
 export const AMOUNT = 'Amount';
 export const API_DOCUMENTATION = 'API Documentation';
@@ -59,6 +62,7 @@ export const CERTIFICATE = 'Zertifikat';
 export const CERTIFICATES = 'Zertifikate';
 export const CHANGE_TYPE = 'Typ ändern';
 export const CHARGES_AND_PAYMENTS = 'Gebühren und Zahlungen';
+export const CHOOSE_A_DOMAIN = 'Bitte wählen Sie eine Domain aus';
 export const CITY = 'Stadt';
 export const CLASSIC_APPLICATIONS = 'Classic Applications';
 export const CLASSIC_VIEW = 'Classic View';
@@ -90,6 +94,8 @@ export const CREDITORS = 'Creditors';
 export const CUSTOM_VIEW = 'Custom View';
 export const CUSTOMER = 'Customer';
 export const CUSTOMER_SEARCH = 'Kundensuche';
+export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND = "Es wurden keine Kunden im Zusammenhang mit dieser Domain gefunden";
+export const CUSTOMER_SEARCH_NOT_FOUND = "Es wurden keine Kunden im Zusammenhang mit dieser Suche gefunden";
 export const CUSTOMERS = 'Customers';
 
 // ----- D
@@ -144,6 +150,7 @@ export const EXIT = 'Exit';
 export const EXPENSE = 'Expense';
 export const EXPENSES = 'Expenses';
 export const EXPIRATIONS = 'Expirations';
+export const EXPIRED = 'Abgelaufen';
 
 // ----- F
 
@@ -210,7 +217,12 @@ export const LAST = 'Last';
 export const LAST_LOCATION = 'Last Location';
 export const LAST_STATUS = 'Last Status';
 export const LINK = 'Verknüpfen';
+export const LINK_CLIENT = "Client vinden";
+export const LINKED = 'Verlinkt';
+export const LINKED1 = 'Verlinkt';
 export const LINK_DOMAINS = 'Domains Verknüpfen';
+export const LINK_DOMAIN_QUESTION = "Möchten Sie diesen Client mit der Domain verknüpfen?";
+export const LOADING = 'Wird geladen';
 export const LOCATION = 'Location';
 
 // ----- M
@@ -243,6 +255,7 @@ export const NOTIFICATIONS = 'Benachrichtigungen';
 export const NOTES = 'Notes';
 export const NOTE = 'Note';
 export const NUMBER = 'Number';
+export const NUMBER_OF_USERS = 'Anzahl der Nutzer';
 
 // ----- O
 export const OBSERVATION = 'Observation';
@@ -258,6 +271,7 @@ export const OTHER_SERVICES = 'Other Services';
 
 // ----- P
 
+export const PARENT_APPS = 'Vater-Apps';
 export const PAUSE = 'Pause';
 export const PASSWORD = 'Passwort';
 export const PAYMETHOD = 'Payment Method';
@@ -381,6 +395,10 @@ export const TYPES = 'Types';
 
 // ----- U
 
+export const UNLINK = "Verknüpfung aufheben";
+export const UNLINK_DOMAIN_QUESTION = "Möchten Sie die Verknüpfung dieses Clients mit der Domäne aufheben?";
+export const UNLINK_CLIENT = "Verknüpfung mit dem Client aufheben";
+export const UNLINKED = "Nicht verknüpft";
 export const UPDATED_CONTRACT = "The contract has been modified successfully";
 export const UPLOAD = 'Upload';
 export const UPLOAD_FILE = 'Upload File';

@@ -1,6 +1,7 @@
 // ----- A
 
 export const ACCEPT = 'Onartu';
+export const ACCESS = "Sarbidea";
 export const ACCOUNT = 'Kuenta';
 export const ACCOUNTED = 'Kontabilizatuta';
 export const ACCOUNTEDS = 'Kontabilizatutak';
@@ -22,6 +23,8 @@ export const ADD_TAX = 'Zerga Gehitu';
 export const ADD_TYPE = 'Mota Gehitu';
 export const ADDITIONAL_INFORMATION = 'Informazio Gehigarria';
 export const ADDRESS = 'Helbidea';
+export const ALL = 'Guztia';
+export const ALL1 = 'GuztiaK';
 export const ALL_FILES = 'Fitxategi Guztiak';
 export const AMOUNT = 'Zenbatekoa';
 export const API_DOCUMENTATION = 'APIren Dokumentazioa';
@@ -59,6 +62,7 @@ export const CERTIFICATE = 'Ziurtagiria';
 export const CERTIFICATES = 'Ziurtagiriak';
 export const CHANGE_TYPE = 'Mota Aldatu';
 export const CHARGES_AND_PAYMENTS = 'Kobrantza eta Ordainketa';
+export const CHOOSE_A_DOMAIN = 'Aukeratu domeinuren bat, mesedez';
 export const CITY = 'Hiria';
 export const CLASSIC_APPLICATIONS = 'Aplikazio Klasikoak';
 export const CLASSIC_VIEW = 'Ikuspegi Klasikoa';
@@ -90,6 +94,8 @@ export const CREDITORS = 'Hartzekodunak';
 export const CUSTOM_VIEW = 'Ikuspegi Pertsonalizatua';
 export const CUSTOMER = 'Bezero';
 export const CUSTOMER_SEARCH = 'Bezero bilaketa';
+export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND = "Domeinu honekin erlazionaturiko bezerorik ez da aurkitu"
+export const CUSTOMER_SEARCH_NOT_FOUND = "Bilaketa honekin erlazionaturiko bezerorik ez da aurkitu"
 export const CUSTOMERS = 'Bezeroak';
 
 // ----- D
@@ -144,6 +150,7 @@ export const EXIT = 'Irteera';
 export const EXPENSE = 'Gastu';
 export const EXPENSES = 'Gastuak';
 export const EXPIRATIONS = 'Epemugak';
+export const EXPIRED = 'Iraungita';
 
 // ----- F
 
@@ -210,7 +217,12 @@ export const LAST = 'Azken';
 export const LAST_LOCATION = 'Azken kokapena';
 export const LAST_STATUS = 'Azken egoera';
 export const LINK = 'Estekatu';
+export const LINK_CLIENT = "Bezeroa estekatu";
+export const LINKED = 'Estekatuta';
+export const LINKED1 = 'Estekatuak';
 export const LINK_DOMAINS = 'Dominioak Bezeroekin Estekatu';
+export const LINK_DOMAIN_QUESTION = "Domeinuarekin bezero hau estekatu nahi duzu?";
+export const LOADING = 'Kargatzen';
 export const LOCATION = 'Kokapena';
 
 // ----- M
@@ -243,6 +255,7 @@ export const NOTIFICATIONS = 'Jakinarazpenak';
 export const NOTES = 'Oharrak';
 export const NOTE = 'Oharra';
 export const NUMBER = 'Zenbakia';
+export const NUMBER_OF_USERS = 'Erabiltzaile kopurua';
 
 // ----- O
 export const OBSERVATION = 'Oharra';
@@ -257,6 +270,7 @@ export const OTHER_SERVICES = 'Beste Zerbitzuak';
 
 // ----- P
 
+export const PARENT_APPS = "Aitaren aplikazioak";
 export const PAUSE = 'Pausa';
 export const PASSWORD = 'Pasahitza';
 export const PAYMETHOD = 'Ordainketa Era';
@@ -380,6 +394,10 @@ export const TYPES = 'Motak';
 
 // ----- U
 
+export const UNLINK = "Deslotu";
+export const UNLINK_DOMAIN_QUESTION = "Domeinutik bezero hau deslotu nahi duzu?";
+export const UNLINK_CLIENT = "Bezeroa deslotu";
+export const UNLINKED = "Deslotuta";
 export const UPDATED_CONTRACT = "Kontratua zuzen aldatu da";
 export const UPLOAD = 'Igo';
 export const UPLOAD_FILE = 'Fitxategia Igo';
