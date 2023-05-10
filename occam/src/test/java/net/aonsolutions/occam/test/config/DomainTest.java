@@ -11,6 +11,7 @@ import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
+import net.aonsolutions.occam.test.faker.AonFaker;
 import net.aonsolutions.occam.test.faker.AonRandom;
 
 
@@ -83,7 +84,7 @@ class DomainTest extends AbstractOccamTest {
 	@Test()
 	void dirtyScopeTest() {
 		Domain d = new Domain();
-		d.setScope( Integer.MAX_VALUE );
+		d.setScope( AonFaker.getScope() );
 		assertTrue(d.isDirty());
 	}
 	@Test()

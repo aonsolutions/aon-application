@@ -1,18 +1,24 @@
 package net.aonsolutions.occam.dao;
 
 import static com.esferalia.aon.jooq.tables.User.USER;
+import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectSelectStep;
 import org.jooq.SelectWithTiesAfterOffsetStep;
+import org.jooq.impl.DSL;
+
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.Filter.Property;
@@ -22,13 +28,13 @@ import net.aonsolutions.occam.api.filter.UserFacade.UserBuilderFactory;
 import net.aonsolutions.occam.api.filter.UserFacade.UserFilter;
 import net.aonsolutions.occam.api.filter.UserFacade.UserFilters;
 
-public class UserDAO {
+public class SecurityDAO {
 	
 	public static final Field<?>[] USER_BASIC_FIELDS = new Field[]{
 		USER.ID,USER.DOMAIN,USER.NAME,USER.LOGIN,USER.ACTIVE
 	};
 
-	private UserDAO() {
+	private SecurityDAO() {
 		
 	}
 	
@@ -121,5 +127,33 @@ public class UserDAO {
 	}
 	
 	
-	
+	public static Condition getUserScopesCondition(AONContext ctx, Field<Integer> field) {
+		return getUserScopesCondition(ctx, field, ctx.getUser());
+	}
+	public static Condition getUserScopesCondition(AONContext ctx, Field<Integer> field, String userLogin ) {
+		return getUserScopesCondition(ctx, field, get(ctx, p -> p.withLogin().eq(userLogin))
+				.orElseThrow( () -> new IllegalAccessError(AonError.USER_NOT_FOUND.getMessage())));
+	}
+	public static Condition getUserScopesCondition(AONContext ctx, Field<Integer> field, Integer userId) {
+		return getUserScopesCondition(ctx, field, get(ctx, p -> p.withId().eq(userId) )
+				.orElseThrow( () -> new IllegalAccessError(AonError.USER_NOT_FOUND.getMessage())));
+	}
+	public static Condition getUserScopesCondition (AONContext ctx, Field<Integer> field, User user) {
+		Integer[] scopes = getUserScopes(ctx,user);
+		return AonCollectionUtils.isEmpty(scopes)
+				? DSL.trueCondition() 
+				: field.isNull().or(field.in(scopes));
+	}
+	public static Integer[] getUserScopes (AONContext ctx, User user) {
+		ctx.checkRead();
+		if (user == null) throw new IllegalAccessError(AonError.USER_INVALID.getMessage());
+		return ctx.getDslContext()
+			.select(USER_SCOPE.SCOPE)
+			.from(USER_SCOPE)
+			.where(USER_SCOPE.USER_ID.equal(user.getId()))
+			.fetch()
+			.stream()
+			.map( r -> r.getValue(USER_SCOPE.SCOPE) )
+			.toArray(s -> new Integer[s]);
+	} 
 }

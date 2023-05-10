@@ -16,7 +16,7 @@ import com.esferalia.aon.watson.server.AonEnumUtils;
 
 import net.aonsolutions.occam.api.config.User;
 import net.aonsolutions.occam.dao.DAOUtils;
-import net.aonsolutions.occam.dao.UserDAO;
+import net.aonsolutions.occam.dao.SecurityDAO;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;
@@ -27,44 +27,44 @@ class UserDAOTest extends AbstractOccamTest {
 
 	@Test()
 	void selectOneTest() {
-		Optional<User> user = UserDAO.get(ctx,p -> p.withLogin().eq( USER ));
+		Optional<User> user = SecurityDAO.get(ctx,p -> p.withLogin().eq( USER ));
 		assertTrue(user.isPresent());
 	}
 
 	@Test()
 	void selectNoneTest() {
-		Optional<User> user = UserDAO.get(ctx,p -> p.withId().eq( Integer.MIN_VALUE ));
+		Optional<User> user = SecurityDAO.get(ctx,p -> p.withId().eq( Integer.MIN_VALUE ));
 		assertFalse(user.isPresent());
 	}
 
 	@Test()
 	void selectDirtyTest() {
-		Optional<User> user = UserDAO.get(ctx,p -> p.withLogin().eq( USER ));
+		Optional<User> user = SecurityDAO.get(ctx,p -> p.withLogin().eq( USER ));
 		assertTrue(user.isPresent());
 		assertFalse(user.get().isDirty(), "Dirty flag not set" );
 	}
 
 	@Test()
 	void emptyFilterTest() {
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> UserDAO.get(ctx, null));
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> SecurityDAO.get(ctx, null));
 		assertEquals(DAOUtils.NULL_FILTER_MSG, e.getMessage());
 	}
 
 	@Test()
 	void selectNoBuilderNoFacturyStreamTest() {
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> UserDAO.getStream(ctx,p -> p.withLogin().eq( USER ), null));
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> SecurityDAO.getStream(ctx,p -> p.withLogin().eq( USER ), null));
 		assertEquals(DAOUtils.NULL_FACTORY_MSG, e.getMessage());
 	}
 
 	@Test()
 	void selectNoBuilderStreamTest() {
-		Stream<User> user = UserDAO.getStream(ctx,p -> p.withLogin().eq( USER ));
+		Stream<User> user = SecurityDAO.getStream(ctx,p -> p.withLogin().eq( USER ));
 		assertTrue(user.findAny().isPresent());
 	}
 
 	@Test()
 	void selectStreamTest() {
-		Stream<User> user = UserDAO.getStream(ctx
+		Stream<User> user = SecurityDAO.getStream(ctx
 			,p -> p.withLogin().eq( USER )
 		);
 		assertTrue(user.findAny().isPresent());
@@ -72,11 +72,11 @@ class UserDAOTest extends AbstractOccamTest {
 	
 	@Test
 	void streamLimitTest() {
-		long max = UserDAO.getStream(ctx, p -> p.withLogin().like("%"))
+		long max = SecurityDAO.getStream(ctx, p -> p.withLogin().like("%"))
 			.limit(10)
 			.count();
 		int rows = AonRandom.getInt(0, (int) max);
-		long count = UserDAO.getStream(ctx, p -> p.withLogin().like("%")
+		long count = SecurityDAO.getStream(ctx, p -> p.withLogin().like("%")
 			,b -> b.limit(0, rows))
 		.count();
 		assertEquals(count, rows, "Limit not working" );
@@ -84,13 +84,13 @@ class UserDAOTest extends AbstractOccamTest {
 	
 	@Test
 	void filterTest() {
-		Optional<User> optUser = UserDAO.get(ctx
+		Optional<User> optUser = SecurityDAO.get(ctx
 			,p -> p.withLogin().eq( USER )
 			,b -> b.full());
 		assertTrue(optUser.isPresent());
 		User expected = optUser.get();
 		
-		Optional<User> optActual = UserDAO.get(ctx
+		Optional<User> optActual = SecurityDAO.get(ctx
 			,p -> p.withId().eq( expected.getId() )
 				.and(p.withDomain().eq( expected.getDomain() ))
 				.and(p.withName().eq( expected.getName() )) 
@@ -106,7 +106,7 @@ class UserDAOTest extends AbstractOccamTest {
 	void denyReadOneTest() {
 		try {
 			ctx.denyRead();
-			SecurityException e = assertThrows(SecurityException.class, () -> UserDAO.get(ctx,p -> p.withLogin().eq( USER )));
+			SecurityException e = assertThrows(SecurityException.class, () -> SecurityDAO.get(ctx,p -> p.withLogin().eq( USER )));
 			assertEquals(AonError.READ_FORBIDDEN.getMessage(), e.getMessage());
 		} finally {
 			ctx.allowRead();

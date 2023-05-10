@@ -30,7 +30,7 @@ public class Domain implements Serializable, HasAudit<Domain>, HasSelector<Domai
 	private Boolean domainManagement;
 	private Boolean disableDomainManagement;
 	private Boolean active;
-	private Integer scope;
+	private Scope scope;
 	private Integer maxDefinedUsers;
 	private Integer maxDocumentSize;
 	private Integer maxTotalDocumentSize;
@@ -148,10 +148,10 @@ public class Domain implements Serializable, HasAudit<Domain>, HasSelector<Domai
 		return this;
 	}
 	
-	public Optional<Integer> getScope() {
+	public Optional<Scope> getScope() {
 		return Optional.ofNullable(scope);
 	}
-	public Domain setScope(Integer scope) {
+	public Domain setScope(Scope scope) {
 		this.dirtyMark( AonUtils.notEquals(this.scope,scope) );
 		this.scope = scope;
 		return this;

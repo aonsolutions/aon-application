@@ -1,6 +1,7 @@
 package net.aonsolutions.occam.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.sql.Date;
@@ -34,7 +35,8 @@ import net.aonsolutions.occam.api.filter.DomainFacade.DomainBuilder;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainBuilderFactory;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilter;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilters;
-import net.aonsolutions.occam.dao.UserDAO.UserFiller;
+import net.aonsolutions.occam.dao.ScopeDAO.ScopeFiller;
+import net.aonsolutions.occam.dao.SecurityDAO.UserFiller;
 
 public class DomainDAO {
 	
@@ -95,7 +97,7 @@ public class DomainDAO {
 			SelectBuilder selectBuilder = new SelectBuilder( ctx );
 			FromBuilder fromBuilder = new  FromBuilder( selectBuilder.build() );
 			SelectJoinStep<Record> from = fromBuilder.build();
-			WhereBuilder whereBuilder = new WhereBuilder(from,filter);
+			WhereBuilder whereBuilder = new WhereBuilder(ctx, from,filter);
 			LimitBuilder limitBuilder = new  LimitBuilder( whereBuilder.build() );
 			fillerBuilder = new  FillerBuilder();
 			query =  limitBuilder.build();
@@ -151,7 +153,9 @@ public class DomainDAO {
 		private SelectSelectStep<Record> select;
 
 		public SelectBuilder(AONContext ctx) {
-			this.select = ctx.getDslContext().select( DOMAIN_BASIC_FIELDS );
+			this.select = ctx.getDslContext()
+					.select( DOMAIN_BASIC_FIELDS )
+					.select( SCOPE.fields() );
 		}
 
 		@Override
@@ -185,7 +189,7 @@ public class DomainDAO {
 
 		@Override
 		public SelectBuilder withUsers() {
-			this.select = select.select(UserDAO.USER_BASIC_FIELDS);
+			this.select = select.select(SecurityDAO.USER_BASIC_FIELDS);
 			return this;
 		}
 		
@@ -199,7 +203,8 @@ public class DomainDAO {
 		private SelectJoinStep<Record> from;
 		
 		public FromBuilder(SelectSelectStep<Record> select ) {
-			from = select.from(DOMAIN);
+			from = select.from(DOMAIN)
+				.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(DOMAIN.SCOPE));
 		}
 		
 		@Override
@@ -231,8 +236,9 @@ public class DomainDAO {
 	private static class WhereBuilder implements DomainBuilder<SelectLimitStep<Record>> {
 		private SelectLimitStep<Record> where;
 		
-		public WhereBuilder(SelectJoinStep<Record> from, DomainFilter filter) {
-			where = from.where( getWhere(filter) );
+		public WhereBuilder(AONContext ctx, SelectJoinStep<Record> from, DomainFilter filter) {
+			where = from.where( SecurityDAO.getUserScopesCondition(ctx, DOMAIN.SCOPE) )
+						.and( getWhere(filter) );
 		}
 		
 		@Override public WhereBuilder limit(int offset, int rows) {return this;}
@@ -338,7 +344,7 @@ public class DomainDAO {
 			withAllRow = mapper -> {
 				mapper.getDomain()
 					.setType( DomainType.safeValueOf( FillerUtils.getValue(mapper.getRecord(),DOMAIN.TYPE)).orElse(null))
-					.setScope(FillerUtils.getValue(mapper.getRecord(),DOMAIN.SCOPE))
+					.setScope( FillerUtils.getValue(mapper.getRecord(),SCOPE.ID) == null ? null : new ScopeFiller().apply(mapper.getRecord()))
 					.setSubDomainSuffix(FillerUtils.getValue(mapper.getRecord(),DOMAIN.SUBDOMAINSUFFIX))
 					.setEnableHeredity(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.ENABLEHEREDITY))
 					.setDomainManagement(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.DOMAINMANAGEMENT))
