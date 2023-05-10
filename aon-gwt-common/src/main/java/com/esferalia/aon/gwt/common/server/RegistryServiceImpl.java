@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.common.server;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.annotation.WebServlet;
@@ -9,6 +10,7 @@ import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.ImportError;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -22,7 +24,10 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.error.AonCoreException;
+
+import net.aonsolutions.aon.templates.FeeImport;
 
 @WebServlet(name = "Aon Registry Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/Registry", "/aon_gwt_aio/ms/Registry"})
 public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implements RegistryService {
@@ -165,6 +170,15 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public Map<String, Project> getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String query) {
 		return AON.getProjectsSuggestion(domainName, domain, user, customerId, query);
+	}
+	@Override
+	public List<Fee> parseFeeFile(Domain domain, User user, String data) {
+		byte[] fileData = java.util.Base64.getDecoder().decode(data);
+		return FeeImport.getInstance().importation(domain, user.getLogin(), fileData);
+	}
+	@Override
+	public ImportError importFee(Domain domain, User user, Fee fee, Integer index) {
+		return FeeImport.insertFee(domain, user, index, fee);
 	}
 	
 }
