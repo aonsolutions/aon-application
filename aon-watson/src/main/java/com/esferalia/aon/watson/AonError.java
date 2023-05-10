@@ -21,6 +21,9 @@ public enum AonError implements Serializable{
 	// -----------------------------------------------------------
 	 READ_FORBIDDEN("El acceso de lectura al recurso solicitado, ha sido denegado.")
 	,WRITE_FORBIDDEN("El acceso de escritura al recurso solicitado, ha sido denegado.")
+	,USER_NOT_FOUND("Usuario no encontrado.")
+	,USER_INVALID("Usuario no v\u00E1lido.")
+	,USER_UNSCOPED("Usuario sin \u00E1mbitos definidos.")
 
 	// -----------------------------------------------------------
 	// --------------------- COMMON ------------------------------

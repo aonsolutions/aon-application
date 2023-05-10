@@ -49,7 +49,7 @@ public abstract class AbstractOccamTest {
 	public static void beforeClass() throws ClassNotFoundException, SQLException, AonConnectionException {
 		shutUp();
 		if ( DOMAIN_ID == null) {
-			AONTestContext context = new AONTestContext(connect());
+			AONTestContext context = new AONTestContext(connect(), DOMAIN_NAME, USER);
 			Domain domain = DomainProvider.getOrCreateDomain(context, DOMAIN_NAME, USER);
 			DOMAIN_ID = domain.getId();
 		}

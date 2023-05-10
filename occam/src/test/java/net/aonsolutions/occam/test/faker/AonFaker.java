@@ -5,6 +5,7 @@ import java.util.Locale;
 import com.github.javafaker.Faker;
 
 import net.aonsolutions.occam.api.config.Domain;
+import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
 
 public class AonFaker {
@@ -17,6 +18,17 @@ public class AonFaker {
 			.setName(faker.pokemon().name())
 			.setLogin(AonRandom.string(50, 10))
 			.setActive(AonRandom.gt(50));
+	}
+
+	
+	public static Scope getScope(int nullThreshold) {
+    	return AonRandom.gt(nullThreshold)?getScope():null;
+	}
+	public static Scope getScope( ) {
+		return new Scope()
+			.setId(AonRandom.integer(50))
+			.setDomain(AonRandom.integer(50))
+			.setDescription(faker.pokemon().name());
 	}
 
 	public static Domain getDomain( ) {

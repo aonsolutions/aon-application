@@ -6,7 +6,8 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
-	DomainTest.class
+	 ScopeTest.class
+	,DomainTest.class
 	,UserTest.class
 })
 public class ConfigTestSuite {

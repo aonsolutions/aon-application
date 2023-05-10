@@ -10,7 +10,7 @@ import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilter;
 import net.aonsolutions.occam.api.filter.UserFacade.UserBuilderFactory;
 import net.aonsolutions.occam.api.filter.UserFacade.UserFilter;
 import net.aonsolutions.occam.dao.DomainDAO;
-import net.aonsolutions.occam.dao.UserDAO;
+import net.aonsolutions.occam.dao.SecurityDAO;
 
 public class AON {
 
@@ -40,22 +40,22 @@ public class AON {
 	// ******************************** [USER]
 	public static Optional<User> getUser(Occam occam, UserFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return UserDAO.get(ctx, filter);
+			return SecurityDAO.get(ctx, filter);
 		}
 	}
 	public static Optional<User> getUser(Occam occam, UserFilter filter, UserBuilderFactory factory) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return UserDAO.get(ctx, filter,  factory);
+			return SecurityDAO.get(ctx, filter,  factory);
 		}
 	}
 	public static Stream<User> getUsers(Occam occam, UserFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return UserDAO.getStream(ctx, filter);
+			return SecurityDAO.getStream(ctx, filter);
 		}
 	}
 	public static Stream<User> getUsers(Occam occam, UserFilter filter, UserBuilderFactory factory) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return UserDAO.getStream(ctx, filter,  factory);
+			return SecurityDAO.getStream(ctx, filter,  factory);
 		}
 	}
 	

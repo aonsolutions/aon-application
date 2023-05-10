@@ -11,6 +11,7 @@ import java.util.Collection;
 
 import net.aonsolutions.occam.api.config.Activity;
 import net.aonsolutions.occam.api.config.Domain;
+import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
 import net.aonsolutions.occam.api.invoice.Invoice;
 
@@ -59,9 +60,7 @@ public class Asserts {
 		assertEquals(expected.getOwner(), actual.getOwner(),"Owner");
 		assertEqualsNulls(expected.getParent(), actual.getParent(),"Parent Domain");
 		if ( expected.getParent().isPresent() && expected.getParent().get() != null) {
-			Domain d1 = expected.getParent().get();
-			Domain d2 = actual.getParent().get();
-			assertEqualsDomain(d1, d2);
+			assertEqualsDomain(expected.getParent().get(), actual.getParent().get());
 		}
 		assertEquals(expected.getType(), actual.getType(),"DomainType");
 		assertEquals(expected.getSubDomainSuffix(), actual.getSubDomainSuffix(),"SubDomainSuffix");
@@ -69,7 +68,9 @@ public class Asserts {
 		assertEquals(expected.isDomainManagement(), actual.isDomainManagement(),"DomainManagement");
 		assertEquals(expected.isDisableDomainManagement(), actual.isDisableDomainManagement(),"DisableDomainManagement");
 		assertEquals(expected.isActive(), actual.isActive(),"Active");
-		assertEquals(expected.getScope(), actual.getScope(),"Scope");
+		if ( expected.getScope().isPresent() && expected.getScope().get() != null) {
+			assertEqualsScope(expected.getScope().get(), actual.getScope().get());
+		}
 		assertEquals(expected.getMaxDefinedUsers(), actual.getMaxDefinedUsers(),"MaxDefinedUsers");
 		assertEquals(expected.getMaxDocumentSize(), actual.getMaxDocumentSize(),"MaxDocumentSize");
 		assertEquals(expected.getMaxTotalDocumentSize(), actual.getMaxTotalDocumentSize(),"MaxTotalDocumentSize");
@@ -84,6 +85,13 @@ public class Asserts {
 		assertEquals(expected.getAonStatus(), actual.getAonStatus(),"AonStatus");
 	}
 	
+	public static void assertEqualsScope(Scope expected, Scope actual) {
+		assertEqualsNulls(expected, actual,"Scope");
+		assertEquals(expected.getId(), actual.getId(),"Id");
+		assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+		assertEquals(expected.getDescription(), actual.getDescription(),"Description");
+	}
+
 	public static void assertEqualsUser(User expected, User actual) {
 		assertEqualsNulls(expected, actual,"User");
 		assertEquals(expected.getId(), actual.getId(),"Id");

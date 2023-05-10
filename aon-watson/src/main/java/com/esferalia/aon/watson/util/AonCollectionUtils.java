@@ -9,7 +9,13 @@ public class AonCollectionUtils {
 		
 	}
 
-    /**
+	public static boolean isEmpty(Object[] array){
+		return array == null || array.length == 0;
+	}
+
+	
+	
+	/**
      * Null-safe check if the specified collection is empty.
      * <p>
      * Null returns true.

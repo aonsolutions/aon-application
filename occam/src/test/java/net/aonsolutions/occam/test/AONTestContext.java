@@ -12,8 +12,8 @@ public class AONTestContext extends AONContext {
 	 * 
 	 * @param connection
 	 */
-	public AONTestContext(Connection connection) {
-		super(connection,null,null);
+	public AONTestContext(Connection connection,String domainName, String user) {
+		super(connection,domainName, user);
 	}
 	
 }
