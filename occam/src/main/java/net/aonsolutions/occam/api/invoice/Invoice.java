@@ -8,16 +8,16 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
-import net.aonsolutions.occam.api.HasAudit;
 import net.aonsolutions.occam.api.HasConfidentiality;
 import net.aonsolutions.occam.api.HasSelector;
 import net.aonsolutions.occam.api.config.Activity;
+import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.constants.Country;
 import net.aonsolutions.occam.api.constants.DocumentType;
 import net.aonsolutions.occam.api.constants.InvoiceType;
 import net.aonsolutions.occam.api.constants.InvoiceType.InvoiceTypeVisitor;
 
-public class Invoice implements Serializable, HasAudit<Invoice>, HasConfidentiality<Invoice>, HasSelector<Invoice> {
+public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSelector<Invoice> {
 
 	private static final long serialVersionUID = 8287791278573182024L;
 	
@@ -37,10 +37,7 @@ public class Invoice implements Serializable, HasAudit<Invoice>, HasConfidential
 	private Country registryDocumentCountry;
 	private String registryName;
 	
-	private String creationUser;
-	private Date creationDate;
-	private String modificationUser;
-	private Date modificationDate;
+	private Audit audit;
 	
 	private Activity activity; 
 	
@@ -101,8 +98,11 @@ public class Invoice implements Serializable, HasAudit<Invoice>, HasConfidential
 				@Override public StringBuilder visitExpenses(StringBuilder t) { return t.append("R"); }
 				@Override public StringBuilder visitUndeductible(StringBuilder t) { return t.append("G"); }
 			}, buf ));
-		Optional.of(getSeries()).ifPresent(s -> buf.append(series).append("/"));
-		buf.append(AonStringUtils.leftPad(AonNumberUtils.toString(number), 6, "0"));
+		buf.append("-");
+		if (AonStringUtils.isNotEmpty(getSeries())) {
+			buf.append(getSeries()).append("/");
+		}
+		buf.append(AonStringUtils.leftPad(AonNumberUtils.toString(getNumber()), 6, "0"));
 		return buf.toString();
 	}
 	
@@ -184,6 +184,14 @@ public class Invoice implements Serializable, HasAudit<Invoice>, HasConfidential
 		return this;
 	}
 	
+	public Optional<Audit> getAudit() {
+		return Optional.ofNullable(audit);
+	}
+	public Invoice setAudit(Audit audit) {
+		this.audit = audit;
+		return this;
+	}
+
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -216,47 +224,6 @@ public class Invoice implements Serializable, HasAudit<Invoice>, HasConfidential
 	public Invoice setConfidential(boolean confidential) {
 		this.dirtyMark( AonUtils.notEquals(this.confidential,confidential) );
 		this.confidential = confidential;
-		return this;
-	}
-	// ---------------------------------------------------------- HasAudit<Invoice>
-	@Override
-	public Optional<String> getCreationUser() {
-		return Optional.ofNullable(creationUser);
-	}
-	@Override
-	public Invoice setCreationUser(String creationUser) {
-		this.dirtyMark( AonUtils.notEquals(this.creationUser,creationUser) );
-		this.creationUser = creationUser;
-		return this;
-	}
-	@Override
-	public Optional<Date> getCreationDate() {
-		return Optional.ofNullable(creationDate);
-	}
-	@Override
-	public Invoice setCreationDate(Date creationDate) {
-		this.dirtyMark( AonUtils.notEquals(this.creationDate,creationDate) );
-		this.creationDate = creationDate;
-		return this;
-	}
-	@Override
-	public Optional<String> getModificationUser() {
-		return Optional.ofNullable(modificationUser);
-	}
-	@Override
-	public Invoice setModificationUser(String modificationUser) {
-		this.dirtyMark( AonUtils.notEquals(this.modificationUser,modificationUser) );
-		this.modificationUser = modificationUser;
-		return this;
-	}
-	@Override
-	public Optional<Date> getModificationDate() {
-		return Optional.ofNullable(modificationDate);
-	}
-	@Override
-	public Invoice setModificationDate(Date modificationDate) {
-		this.dirtyMark( AonUtils.notEquals(this.modificationDate,modificationDate) );
-		this.modificationDate = modificationDate;
 		return this;
 	}
 	

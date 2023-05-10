@@ -24,7 +24,10 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -109,7 +112,12 @@ public class AonObjectUtils {
     public static <T,R> R ifNotNullDo(final T object, Function<T,R> value) {
         return object == null ? null : value.apply(object);
     }
-
+    public static <R> R ifGet(boolean cond, Supplier<R> sup ) {
+        return cond ? sup.get() : null;
+    }
+    public static <R> R ifElseGet(boolean cond, Supplier<R> sup, Supplier<R> elseSup ) {
+        return cond ? sup.get() : elseSup.get();
+    }
     public static <T> T computeIfTrue(boolean condition, T object, UnaryOperator<T> operator) {
         return condition ? object : operator.apply(object);
     }

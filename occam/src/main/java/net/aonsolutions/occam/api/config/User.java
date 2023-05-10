@@ -1,7 +1,9 @@
 package net.aonsolutions.occam.api.config;
 
 import java.io.Serializable;
+import java.util.Objects;
 
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
 import net.aonsolutions.occam.api.HasSelector;
@@ -81,4 +83,17 @@ public class User implements Serializable, HasSelector<User> {
 		return this;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+		if (obj instanceof User other) {
+			return AonNumberUtils.equals(this.id,other.id);
+		}
+	    return false;
+	}
+	
+	@Override
+	public int hashCode() {
+	    return 31 * 7 + Objects.requireNonNullElse(id, 0).hashCode();
+	}
 }

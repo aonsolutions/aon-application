@@ -26,6 +26,7 @@ public class ScopeJSON {
 	}
 	
 	public static Scope from(JSONObject json) {
+		if (json == null) return null;
 		return new Scope()
 			.setId(AonJSONUtils.getInteger(json, AonNames.ID))
 			.setDomain(AonJSONUtils.getInteger(json, AonNames.DOMAIN))

@@ -1,10 +1,15 @@
 package net.aonsolutions.occam.test.invoice;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 import net.aonsolutions.occam.api.config.Activity;
 import net.aonsolutions.occam.api.constants.Country;
@@ -116,31 +121,6 @@ class InvoiceTest extends AbstractOccamTest {
 		i.setNumber( Integer.MAX_VALUE);
 		assertTrue(i.isDirty());
 	}
-
-	@Test()
-	void dirtyCreationUserTest() {
-		Invoice i = new Invoice();
-		i.setCreationUser(AonRandom.string(10));
-		assertTrue(i.isDirty());
-	}
-	@Test()
-	void dirtyCreationDateTest() {
-		Invoice i = new Invoice();
-		i.setCreationDate( AonRandom.getFutureDate());
-		assertTrue(i.isDirty());
-	}
-	@Test()
-	void dirtyModificationUserTest() {
-		Invoice i = new Invoice();
-		i.setModificationUser(AonRandom.string(10));
-		assertTrue(i.isDirty());
-	}
-	@Test()
-	void dirtyModificationDateTest() {
-		Invoice i = new Invoice();
-		i.setModificationDate( AonRandom.getFutureDate());
-		assertTrue(i.isDirty());
-	}
 	
 	@Test()
 	void dirtyActivityTest() {
@@ -165,4 +145,19 @@ class InvoiceTest extends AbstractOccamTest {
 		assertFalse(i.isDirty());
 	}
 	
+	//@Test()
+	@RepeatedTest(100)
+	void documentNumberTest() {
+		Invoice i = new Invoice();
+		i.setType(AonRandom.getInvoiceType().orElse(null));
+		i.setSeries(AonRandom.string(20, 5));
+		i.setNumber(AonRandom.number(0, 1000000));
+		int l = 2 
+			+ (AonStringUtils.isEmpty( i.getSeries() )? 0 : AonStringUtils.length(i.getSeries()) + 1)
+			+ 6
+		;
+		String doc = i.getDocumentNumber();
+		assertNotNull(doc);
+		assertEquals(doc.length(), l, doc);
+	}
 }

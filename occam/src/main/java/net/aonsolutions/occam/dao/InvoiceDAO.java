@@ -29,6 +29,7 @@ import net.aonsolutions.occam.api.filter.InvoiceFacade.InvoiceBuilderFactory;
 import net.aonsolutions.occam.api.filter.InvoiceFacade.InvoiceFilter;
 import net.aonsolutions.occam.api.filter.InvoiceFacade.InvoiceFilters;
 import net.aonsolutions.occam.api.invoice.Invoice;
+import net.aonsolutions.occam.dao.Fillers.AuditFiller;
 
 public class InvoiceDAO {
 	
@@ -166,10 +167,7 @@ public class InvoiceDAO {
 				.setRegistryDocumentCountry(Country.safeValueOf(r.getValue(INVOICE.RDOCUMENT_COUNTRY)).orElse(null))
 				.setRegistryName(FillerUtils.getValue(r,INVOICE.RNAME))
 				.setActivity( new ActivityDAO.ActivityFiller().apply(r).orElse(null) )
-				.setCreationUser(FillerUtils.getValue(r,INVOICE.CREATION_USER))
-				.setCreationDate(FillerUtils.getValue(r,INVOICE.CREATION_DATE))
-				.setModificationUser(FillerUtils.getValue(r,INVOICE.MODIFICATION_USER))
-				.setModificationDate(FillerUtils.getValue(r,INVOICE.MODIFICATION_DATE))
+				.setAudit( new AuditFiller().apply(r) )
 				.setDirty(false)
 			;
 		}

@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import com.github.javafaker.Faker;
 
+import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
@@ -46,18 +47,21 @@ public class AonFaker {
 			.setActive(AonRandom.gt(50))
 			.setId(AonRandom.integer(50))
 			.setMaxDefinedUsers(AonRandom.integer(50))
-			.setMaxDocumentSize(AonRandom.integer(50))
-			.setMaxTotalDocumentSize(AonRandom.integer(50))
 			.setLastAccessUser(AonRandom.string(50, 10))
 			.setLastAccessDate(AonRandom.getPastDate(50))
 			.setExpirationDate(AonRandom.getPastDate(50))
-			.setCreationUser(AonRandom.string(50, 10))
-			.setCreationDate(AonRandom.getPastDate(50))
-			.setModificationUser(AonRandom.string(50, 10))
-			.setModificationDate(AonRandom.getPastDate(50))
+			.setAudit( AonRandom.gt(50) ? getAudit() : null)
 			.setAonCustomer(AonRandom.integer(50))
 			.setAonStatus(AonRandom.getAonStatus(20).orElse(null))
 		;
 		
+	}
+
+	public static Audit getAudit() {
+		return new Audit()
+			.setCreationUser(AonRandom.string(50, 10))
+			.setCreationDate(AonRandom.getPastDate(50))
+			.setModificationUser(AonRandom.string(50, 10))
+			.setModificationDate(AonRandom.getPastDate(50));
 	}
 }

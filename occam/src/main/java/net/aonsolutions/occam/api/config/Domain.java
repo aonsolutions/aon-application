@@ -3,46 +3,42 @@ package net.aonsolutions.occam.api.config;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
-import net.aonsolutions.occam.api.HasAudit;
 import net.aonsolutions.occam.api.HasSelector;
 import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.DomainType;
 
-public class Domain implements Serializable, HasAudit<Domain>, HasSelector<Domain> {
+public class Domain implements Serializable, HasSelector<Domain> {
 
 	private static final long serialVersionUID = 2356532157666489635L;
 	
 	private Integer id;
 	private String name;
 	private String description;
-	
-	private String owner;
-	private Domain parent;
 	private DomainType type;
-	private String subDomainSuffix;
-	
-	private Boolean enableHeredity;
-	private Boolean domainManagement;
-	private Boolean disableDomainManagement;
 	private Boolean active;
 	private Scope scope;
-	private Integer maxDefinedUsers;
-	private Integer maxDocumentSize;
-	private Integer maxTotalDocumentSize;
+	private Date expirationDate;
+	private Domain parent;
+	
+	private String owner;
+	private String subDomainSuffix;
+	private Boolean enableHeredity;
 	private String lastAccessUser;
 	private Date lastAccessDate;
-	private Date expirationDate;
-	private String creationUser;
-	private Date creationDate;
-	private String modificationUser;
-	private Date modificationDate;
+	
+	private Boolean domainManagement;
+	private Boolean disableDomainManagement;
+	private Integer maxDefinedUsers;
 	private Integer aonCustomer;
 	private AonStatus aonStatus;
+	
+	private Audit audit;
 	
 	private List<User> users; 
 	
@@ -166,24 +162,6 @@ public class Domain implements Serializable, HasAudit<Domain>, HasSelector<Domai
 		return this;
 	}
 	
-	public Optional<Integer> getMaxDocumentSize() {
-		return Optional.ofNullable(maxDocumentSize);
-	}
-	public Domain setMaxDocumentSize(Integer maxDocumentSize) {
-		this.dirtyMark( AonUtils.notEquals(this.maxDocumentSize,maxDocumentSize) );
-		this.maxDocumentSize = maxDocumentSize;
-		return this;
-	}
-	
-	public Optional<Integer> getMaxTotalDocumentSize() {
-		return Optional.ofNullable(maxTotalDocumentSize);
-	}
-	public Domain setMaxTotalDocumentSize(Integer maxTotalDocumentSize) {
-		this.dirtyMark( AonUtils.notEquals(this.maxTotalDocumentSize,maxTotalDocumentSize) );
-		this.maxTotalDocumentSize = maxTotalDocumentSize;
-		return this;
-	}
-	
 	public Optional<String> getLastAccessUser() {
 		return Optional.ofNullable(lastAccessUser);
 	}
@@ -229,6 +207,15 @@ public class Domain implements Serializable, HasAudit<Domain>, HasSelector<Domai
 		return this;
 	}
 	
+	public Optional<Audit> getAudit() {
+		return Optional.ofNullable(audit);
+	}
+
+	public Domain setAudit(Audit audit) {
+		this.audit = audit;
+		return this;
+	}
+
 	public boolean isDirty() {
 		return dirty;
 	}
@@ -252,44 +239,6 @@ public class Domain implements Serializable, HasAudit<Domain>, HasSelector<Domai
 		return this;
 	}
 	
-	// ---------------------------------------------------------- HasAudit<Domain>
-	public Optional<String> getCreationUser() {
-		return Optional.ofNullable(creationUser);
-	}
-
-	public Domain setCreationUser(String creationUser) {
-		this.dirtyMark( AonUtils.notEquals(this.creationUser,creationUser) );
-		this.creationUser = creationUser;
-		return this;
-	}
-
-	public Optional<Date> getCreationDate() {
-		return Optional.ofNullable(creationDate);
-	}
-
-	public Domain setCreationDate(Date creationDate) {
-		this.dirtyMark( AonUtils.notEquals(this.creationDate,creationDate) );
-		this.creationDate = creationDate;
-		return this;
-	}
-
-	public Optional<String> getModificationUser() {
-		return Optional.ofNullable(modificationUser);
-	}
-	public Domain setModificationUser(String modificationUser) {
-		this.dirtyMark( AonUtils.notEquals(this.modificationUser,modificationUser) );
-		this.modificationUser = modificationUser;
-		return this;
-	}
-
-	public Optional<Date> getModificationDate() {
-		return Optional.ofNullable(modificationDate);
-	}
-	public Domain setModificationDate(Date modificationDate) {
-		this.dirtyMark( AonUtils.notEquals(this.modificationDate,modificationDate) );
-		this.modificationDate = modificationDate;
-		return this;
-	}
 	// ---------------------------------------------------------- 
 	public Optional<List<User>> getUsers() {
 		return Optional.ofNullable(users);
@@ -318,6 +267,6 @@ public class Domain implements Serializable, HasAudit<Domain>, HasSelector<Domai
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + (id == null ? 0 : id.hashCode());
+	    return 31 * 7 + Objects.requireNonNullElse(id, 0).hashCode();
 	}
 }

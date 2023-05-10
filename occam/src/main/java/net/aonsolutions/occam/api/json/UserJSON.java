@@ -26,6 +26,7 @@ public class UserJSON {
 	}
 	
 	public static User from(JSONObject json) {
+		if (json == null) return null; 
 		return new User()
 			.setId(AonJSONUtils.getInteger(json, AonNames.ID))
 			.setDomain(AonJSONUtils.getInteger(json, AonNames.DOMAIN))

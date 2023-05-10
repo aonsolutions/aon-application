@@ -112,10 +112,10 @@ class InvoiceDAOTest extends AbstractOccamTest {
 			.and(p.withActivity().eq( AonObjectUtils.ifOptionalPresent( expected.getActivity(), a -> a.getId()) ))
 			.and(p.withActivityDescription().eq( AonObjectUtils.ifOptionalPresent( expected.getActivity(), a -> a.getDescription()) ))
 			.and(p.withActivityEpigraph().eq( AonObjectUtils.ifOptionalPresent( expected.getActivity(), a -> a.getEpigraph()) ))
-			.and(p.withCreationUser().eq( expected.getCreationUser().orElse(null) ))
-			.and(p.withCreationDate().eq( AonDateUtils.toTimestamp(expected.getCreationDate().orElse(null))))
-			.and(p.withModificationUser().eq( expected.getModificationUser().orElse(null)))
-			.and(p.withModificationDate().eq( AonDateUtils.toTimestamp(expected.getModificationDate().orElse(null))))
+			.and(p.withCreationUser().eq( AonObjectUtils.ifOptionalPresent( expected.getAudit(), a -> a.getCreationUser().orElse(null)) ))
+			.and(p.withCreationDate().eq( AonDateUtils.toTimestamp(AonObjectUtils.ifOptionalPresent( expected.getAudit(), a -> a.getCreationDate().orElse(null)))))
+			.and(p.withModificationUser().eq( AonObjectUtils.ifOptionalPresent( expected.getAudit(), a -> a.getCreationUser().orElse(null)) ))
+			.and(p.withModificationDate().eq( AonDateUtils.toTimestamp(AonObjectUtils.ifOptionalPresent( expected.getAudit(), a -> a.getCreationDate().orElse(null)))))
 			,b -> b.full()
 		);
 		assertTrue(optActual.isPresent(),"Invoice not found!");

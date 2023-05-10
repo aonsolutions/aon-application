@@ -26,6 +26,7 @@ import com.esferalia.aon.watson.util.Pair;
 
 import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.Filter.Property;
+import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.DomainType;
@@ -70,8 +71,6 @@ public class DomainDAO {
 		@Override public Property<Byte> withEnableHeredity() {return new PropertyDAO<>(DOMAIN.ENABLEHEREDITY);}
 		@Override public Property<Byte> withDomainManagement() {return new PropertyDAO<>(DOMAIN.DOMAINMANAGEMENT);}
 		@Override public Property<Byte> withDisableDomainManagement() {return new PropertyDAO<>(DOMAIN.DISABLEDOMAINMANAGEMENT);}
-		@Override public Property<Integer> withMaxDocumentSize() {return new PropertyDAO<>(DOMAIN.MAXDOCUMENTSIZE);}
-		@Override public Property<Integer> withMaxTotalDocumentSize() {return new PropertyDAO<>(DOMAIN.MAXTOTALDOCUMENTSIZE);}
 		@Override public Property<Integer> withMaxDefinedUsers() {return new PropertyDAO<>(DOMAIN.MAXDEFINEDUSERS);}
 		@Override public Property<Byte> withActive() {return new PropertyDAO<>(DOMAIN.ACTIVE);}
 		@Override public Property<String> withOwner() {return new PropertyDAO<>(DOMAIN.OWNER);}
@@ -317,11 +316,12 @@ public class DomainDAO {
 		@Override
 		public DomainBuilder<Function<Record, DomainMapper>> withAudit() {
 			withAudit = mapper -> {
-				mapper.getDomain()
+				mapper.getDomain().setAudit(new Audit()
 					.setCreationUser(FillerUtils.getValue(mapper.getRecord(), DOMAIN.CREATION_USER))
 					.setCreationDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.CREATION_DATE))
 					.setModificationUser(FillerUtils.getValue(mapper.getRecord(), DOMAIN.MODIFICATION_USER))
-					.setModificationDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.MODIFICATION_DATE));
+					.setModificationDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.MODIFICATION_DATE))
+				);
 				return mapper;
 			};
 			return this;
@@ -349,8 +349,6 @@ public class DomainDAO {
 					.setEnableHeredity(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.ENABLEHEREDITY))
 					.setDomainManagement(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.DOMAINMANAGEMENT))
 					.setDisableDomainManagement(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.DISABLEDOMAINMANAGEMENT))
-					.setMaxDocumentSize(FillerUtils.getValue(mapper.getRecord(), DOMAIN.MAXDOCUMENTSIZE))
-					.setMaxTotalDocumentSize(FillerUtils.getValue(mapper.getRecord(), DOMAIN.MAXTOTALDOCUMENTSIZE))
 					.setMaxDefinedUsers(FillerUtils.getValue(mapper.getRecord(),DOMAIN.MAXDEFINEDUSERS))
 					.setActive(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.ACTIVE))
 					.setOwner(FillerUtils.getValue(mapper.getRecord(), DOMAIN.OWNER))

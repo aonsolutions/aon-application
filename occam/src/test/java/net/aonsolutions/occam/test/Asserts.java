@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.Collection;
 
 import net.aonsolutions.occam.api.config.Activity;
+import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
@@ -54,82 +55,90 @@ public class Asserts {
 	
 	public static void assertEqualsDomain(Domain expected, Domain actual) {
 		assertEqualsNulls(expected, actual,"Domain");
-		assertEquals(expected.getId(), actual.getId(),"Id");
-		assertEquals(expected.getName(), actual.getName(),"Name");
-		assertEquals(expected.getDescription(), actual.getDescription(),"Description");
-		assertEquals(expected.getOwner(), actual.getOwner(),"Owner");
-		assertEqualsNulls(expected.getParent(), actual.getParent(),"Parent Domain");
-		if ( expected.getParent().isPresent() && expected.getParent().get() != null) {
-			assertEqualsDomain(expected.getParent().get(), actual.getParent().get());
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getName(), actual.getName(),"Name");
+			assertEquals(expected.getDescription(), actual.getDescription(),"Description");
+			assertEquals(expected.getOwner(), actual.getOwner(),"Owner");
+			assertEqualsNulls(expected.getParent(), actual.getParent(),"Parent Domain");
+			assertEqualsDomain(expected.getParent().orElse(null), actual.getParent().orElse(null));
+			assertEquals(expected.getType(), actual.getType(),"DomainType");
+			assertEquals(expected.getSubDomainSuffix(), actual.getSubDomainSuffix(),"SubDomainSuffix");
+			assertEquals(expected.isEnableHeredity(), actual.isEnableHeredity(),"EnableHeredity");
+			assertEquals(expected.isDomainManagement(), actual.isDomainManagement(),"DomainManagement");
+			assertEquals(expected.isDisableDomainManagement(), actual.isDisableDomainManagement(),"DisableDomainManagement");
+			assertEquals(expected.isActive(), actual.isActive(),"Active");
+			assertEqualsScope(expected.getScope().orElse(null), actual.getScope().orElse(null));
+			assertEquals(expected.getMaxDefinedUsers(), actual.getMaxDefinedUsers(),"MaxDefinedUsers");
+			assertEquals(expected.getLastAccessUser(), actual.getLastAccessUser(),"LastAccessUser");
+			assertEquals(expected.getLastAccessDate(), actual.getLastAccessDate(),"LastAccessDate");
+			assertEquals(expected.getExpirationDate(), actual.getExpirationDate(),"ExpirationDate");
+			assertEqualsAudit(expected.getAudit().orElse(null), actual.getAudit().orElse(null));
+			assertEquals(expected.getAonCustomer(), actual.getAonCustomer(),"AonCustomer");
+			assertEquals(expected.getAonStatus(), actual.getAonStatus(),"AonStatus");
 		}
-		assertEquals(expected.getType(), actual.getType(),"DomainType");
-		assertEquals(expected.getSubDomainSuffix(), actual.getSubDomainSuffix(),"SubDomainSuffix");
-		assertEquals(expected.isEnableHeredity(), actual.isEnableHeredity(),"EnableHeredity");
-		assertEquals(expected.isDomainManagement(), actual.isDomainManagement(),"DomainManagement");
-		assertEquals(expected.isDisableDomainManagement(), actual.isDisableDomainManagement(),"DisableDomainManagement");
-		assertEquals(expected.isActive(), actual.isActive(),"Active");
-		if ( expected.getScope().isPresent() && expected.getScope().get() != null) {
-			assertEqualsScope(expected.getScope().get(), actual.getScope().get());
-		}
-		assertEquals(expected.getMaxDefinedUsers(), actual.getMaxDefinedUsers(),"MaxDefinedUsers");
-		assertEquals(expected.getMaxDocumentSize(), actual.getMaxDocumentSize(),"MaxDocumentSize");
-		assertEquals(expected.getMaxTotalDocumentSize(), actual.getMaxTotalDocumentSize(),"MaxTotalDocumentSize");
-		assertEquals(expected.getLastAccessUser(), actual.getLastAccessUser(),"LastAccessUser");
-		assertEquals(expected.getLastAccessDate(), actual.getLastAccessDate(),"LastAccessDate");
-		assertEquals(expected.getExpirationDate(), actual.getExpirationDate(),"ExpirationDate");
-		assertEquals(expected.getCreationUser(), actual.getCreationUser(),"CreationUser");
-		assertEquals(expected.getCreationDate(), actual.getCreationDate(),"CreationDate");
-		assertEquals(expected.getModificationUser(), actual.getModificationUser(),"ModificationUser");
-		assertEquals(expected.getModificationDate(), actual.getModificationDate(),"ModificationDate");
-		assertEquals(expected.getAonCustomer(), actual.getAonCustomer(),"AonCustomer");
-		assertEquals(expected.getAonStatus(), actual.getAonStatus(),"AonStatus");
 	}
-	
+
+	public static void assertEqualsAudit(Audit expected, Audit actual) {
+		assertEqualsNulls(expected, actual,"Audit");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getCreationUser(), actual.getCreationUser(),"CreationUser");
+			assertEquals(expected.getCreationDate(), actual.getCreationDate(),"CreationDate");
+			assertEquals(expected.getModificationUser(), actual.getModificationUser(),"ModificationUser");
+			assertEquals(expected.getModificationDate(), actual.getModificationDate(),"ModificationDate");
+		}
+	}
+
 	public static void assertEqualsScope(Scope expected, Scope actual) {
 		assertEqualsNulls(expected, actual,"Scope");
-		assertEquals(expected.getId(), actual.getId(),"Id");
-		assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
-		assertEquals(expected.getDescription(), actual.getDescription(),"Description");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getDescription(), actual.getDescription(),"Description");
+		}
 	}
 
 	public static void assertEqualsUser(User expected, User actual) {
 		assertEqualsNulls(expected, actual,"User");
-		assertEquals(expected.getId(), actual.getId(),"Id");
-		assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
-		assertEquals(expected.getName(), actual.getName(),"Name");
-		assertEquals(expected.getLogin(), actual.getLogin(),"Login");
-		assertEquals(expected.isActive(), actual.isActive(),"Active");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getName(), actual.getName(),"Name");
+			assertEquals(expected.getLogin(), actual.getLogin(),"Login");
+			assertEquals(expected.isActive(), actual.isActive(),"Active");
+		}
 	}
 
 	public static void assertEqualsInvoice(Invoice expected, Invoice actual) {
 		assertEqualsNulls(expected, actual, "Invoice");
-		assertEquals(expected.getId(), actual.getId(),"Id");
-		assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
-		assertEquals(expected.getType(), actual.getType(),"Type");
-		assertEquals(expected.getSeries(), actual.getSeries(),"Series");
-		assertEquals(expected.getNumber(), actual.getNumber(),"Number");
-		assertEquals(expected.getReferenceCode(), actual.getReferenceCode(),"ReferenceCode");
-		assertEquals(expected.getIssueDate(), actual.getIssueDate(),"IssueDate");
-		assertEquals(expected.getTaxDate(), actual.getTaxDate(),"TaxDate");
-		assertEquals(expected.isConfidential(), actual.isConfidential(),"Confidential");
-		assertEquals(expected.getRegistry(), actual.getRegistry(),"Registry");
-		assertEquals(expected.getRegistryDocument(), actual.getRegistryDocument(),"RegistryDocument");
-		assertEquals(expected.getRegistryDocumentType(), actual.getRegistryDocumentType(),"RegistryDocumentType");
-		assertEquals(expected.getRegistryDocumentCountry(), actual.getRegistryDocumentCountry(),"RegistryDocumentCountry");
-		assertEquals(expected.getRegistryName(), actual.getRegistryName(),"RegistryName");
-		assertEquals(expected.getCreationUser(), actual.getCreationUser(),"CreationUser");
-		assertEquals(expected.getCreationDate(), actual.getCreationDate(),"CreationDate");
-		assertEquals(expected.getModificationUser(), actual.getModificationUser(),"ModificationUser");
-		assertEquals(expected.getModificationDate(), actual.getModificationDate(),"ModificationDate");
-		assertEqualsActivity(expected.getActivity().orElse(null), actual.getActivity().orElse(null));
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getType(), actual.getType(),"Type");
+			assertEquals(expected.getSeries(), actual.getSeries(),"Series");
+			assertEquals(expected.getNumber(), actual.getNumber(),"Number");
+			assertEquals(expected.getReferenceCode(), actual.getReferenceCode(),"ReferenceCode");
+			assertEquals(expected.getIssueDate(), actual.getIssueDate(),"IssueDate");
+			assertEquals(expected.getTaxDate(), actual.getTaxDate(),"TaxDate");
+			assertEquals(expected.isConfidential(), actual.isConfidential(),"Confidential");
+			assertEquals(expected.getRegistry(), actual.getRegistry(),"Registry");
+			assertEquals(expected.getRegistryDocument(), actual.getRegistryDocument(),"RegistryDocument");
+			assertEquals(expected.getRegistryDocumentType(), actual.getRegistryDocumentType(),"RegistryDocumentType");
+			assertEquals(expected.getRegistryDocumentCountry(), actual.getRegistryDocumentCountry(),"RegistryDocumentCountry");
+			assertEquals(expected.getRegistryName(), actual.getRegistryName(),"RegistryName");
+			assertEqualsAudit(expected.getAudit().orElse(null), actual.getAudit().orElse(null));
+			assertEqualsActivity(expected.getActivity().orElse(null), actual.getActivity().orElse(null));
+		}
 	}
 	
 	public static void assertEqualsActivity(Activity expected, Activity actual) {
 		assertEqualsNulls(expected, actual, "Invoice");
-		assertEquals(expected.getId(), actual.getId(),"Id");
-		assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
-		assertEquals(expected.getDescription(), actual.getDescription(),"Description");
-		assertEquals(expected.getEpigraph(), actual.getEpigraph(),"Epigraph");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getDescription(), actual.getDescription(),"Description");
+			assertEquals(expected.getEpigraph(), actual.getEpigraph(),"Epigraph");
+		}
 	}
 	
 }

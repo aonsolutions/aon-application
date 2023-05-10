@@ -10,6 +10,10 @@ import com.esferalia.aon.watson.server.AonObjectUtils;
 class FillerUtils {
 	
 	private static final Byte TRUE_BYTE = Byte.valueOf((byte) 1);
+	
+	private FillerUtils() {
+		
+	}
 
 	static boolean checkField(Record r , Field<?> f) {
 		return Arrays.stream(r.fields())

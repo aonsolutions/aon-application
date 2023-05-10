@@ -1,6 +1,7 @@
 package net.aonsolutions.occam.api.config;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonUtils;
@@ -78,6 +79,6 @@ public class Scope implements Serializable, HasSelector<Scope> {
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + (id == null ? 0 : id.hashCode());
+		return 31 * 7 + Objects.requireNonNullElse(id, 0).hashCode();
 	}
 }

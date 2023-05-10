@@ -94,18 +94,6 @@ class DomainTest extends AbstractOccamTest {
 		assertTrue(d.isDirty());
 	}
 	@Test()
-	void dirtyMaxDocumentSizeTest() {
-		Domain d = new Domain();
-		d.setMaxDocumentSize(Integer.MAX_VALUE );
-		assertTrue(d.isDirty());
-	}
-	@Test()
-	void dirtyMaxTotalDocumentSizeTest() {
-		Domain d = new Domain();
-		d.setMaxTotalDocumentSize(Integer.MAX_VALUE );
-		assertTrue(d.isDirty());
-	}
-	@Test()
 	void dirtyLastAccessUserTest() {
 		Domain d = new Domain();
 		d.setLastAccessUser(AonRandom.string(10));
@@ -121,30 +109,6 @@ class DomainTest extends AbstractOccamTest {
 	void dirtyexpirationDateTest() {
 		Domain d = new Domain();
 		d.setExpirationDate(AonRandom.getFutureDate());
-		assertTrue(d.isDirty());
-	}
-	@Test()
-	void dirtyCreationUserTest() {
-		Domain d = new Domain();
-		d.setCreationUser(AonRandom.string(10));
-		assertTrue(d.isDirty());
-	}
-	@Test()
-	void dirtyCreationDateTest() {
-		Domain d = new Domain();
-		d.setCreationDate( AonRandom.getFutureDate());
-		assertTrue(d.isDirty());
-	}
-	@Test()
-	void dirtyModificationUserTest() {
-		Domain d = new Domain();
-		d.setModificationUser(AonRandom.string(10));
-		assertTrue(d.isDirty());
-	}
-	@Test()
-	void dirtyModificationDateTest() {
-		Domain d = new Domain();
-		d.setModificationDate( AonRandom.getFutureDate());
 		assertTrue(d.isDirty());
 	}
 	@Test()

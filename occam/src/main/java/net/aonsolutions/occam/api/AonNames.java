@@ -48,6 +48,7 @@ public final class AonNames {
 	public static final String ATTACH = "attach";
 	public static final String ATTACH_MODULE = "attachModule";
 	public static final String ATTACH_TYPE = "attachType";
+	public static final String AUDIT = "audit";
 	public static final String AUTH = "auth";
 	public static final String AUTOSEND = "autosend";
 	public static final String AVATAR = "avatar";

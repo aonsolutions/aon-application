@@ -31,8 +31,6 @@ public class DomainFacade {
 		Property<Byte> withEnableHeredity();
 		Property<Byte> withDomainManagement();
 		Property<Byte> withDisableDomainManagement();
-		Property<Integer> withMaxDocumentSize();
-		Property<Integer> withMaxTotalDocumentSize();
 		Property<Integer> withMaxDefinedUsers();
 		Property<Byte> withActive();
 		Property<String> withOwner();

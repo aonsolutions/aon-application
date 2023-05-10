@@ -1,6 +1,7 @@
 package net.aonsolutions.occam.test.constants;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
@@ -62,6 +63,10 @@ class DocumentTypeTest extends AbstractOccamTest {
 	void rightNameSafeValueTest() {
 		DocumentType dt = AonRandom.getDocumentType().get();
 		assertEquals(dt,DocumentType.safeValueOf( dt.toString() ).get());
+	}
+	@Test()
+	void descriptionNotNullTest() {
+		Arrays.stream(DocumentType.values()).forEach(s -> assertNotNull(s.getDescription() ));
 	}
 	
 	@Test()

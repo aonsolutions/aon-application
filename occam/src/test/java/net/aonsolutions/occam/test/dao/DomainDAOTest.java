@@ -106,8 +106,6 @@ class DomainDAOTest extends AbstractOccamTest {
 				.and(p.withEnableHeredity().eq( AonEnumUtils.getByte(expected.isEnableHeredity())))
 				.and(p.withDomainManagement().eq( AonEnumUtils.getByte(expected.isDomainManagement())))
 				.and(p.withDisableDomainManagement().eq( AonEnumUtils.getByte(expected.isDisableDomainManagement())))
-				.and(p.withMaxDocumentSize().eq( expected.getMaxDocumentSize().orElse(null)))
-				.and(p.withMaxTotalDocumentSize().eq( expected.getMaxTotalDocumentSize().orElse(null)))
 				.and(p.withMaxDefinedUsers().eq( expected.getMaxDefinedUsers().orElse(null)))
 				.and(p.withActive().eq( AonEnumUtils.getByte(expected.isActive())))
 				.and(p.withOwner().eq( expected.getOwner().orElse(null)))
@@ -116,10 +114,10 @@ class DomainDAOTest extends AbstractOccamTest {
 				.and(p.withLastAccessUser().eq( expected.getLastAccessUser().orElse(null)))
 				.and(p.withAonCustomer().eq( expected.getAonCustomer().orElse(null)))
 				.and(p.withAonStatus().eq( AonEnumUtils.getByte(expected.getAonStatus().orElse(null))))
-				.and(p.withCreationUser().eq( expected.getCreationUser().orElse(null)))
-				.and(p.withCreationDate().eq( AonDateUtils.toTimestamp(expected.getCreationDate().orElse(null))))
-				.and(p.withModificationUser().eq( expected.getModificationUser().orElse(null)))
-				.and(p.withModificationDate().eq( AonDateUtils.toTimestamp(expected.getModificationDate().orElse(null))))
+				.and(p.withCreationUser().eq(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getCreationUser().orElse(null))))
+				.and(p.withCreationDate().eq(AonDateUtils.toTimestamp(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getCreationDate().orElse(null)))))
+				.and(p.withModificationUser().eq(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getModificationUser().orElse(null))))
+				.and(p.withModificationDate().eq(AonDateUtils.toTimestamp(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getModificationDate().orElse(null)))))
 			,b -> b.full()
 		);
 		assertTrue(optActual.isPresent(),"Domain not found!");
@@ -152,17 +150,12 @@ class DomainDAOTest extends AbstractOccamTest {
 		assertTrue(optDomain.get().isActive().isEmpty());
 		assertTrue(optDomain.get().getScope().isEmpty());
 		assertTrue(optDomain.get().getMaxDefinedUsers().isEmpty());
-		assertTrue(optDomain.get().getMaxDocumentSize().isEmpty());
-		assertTrue(optDomain.get().getMaxTotalDocumentSize().isEmpty());
 		assertTrue(optDomain.get().getLastAccessUser().isEmpty());
 		assertTrue(optDomain.get().getLastAccessDate().isEmpty());
 		assertTrue(optDomain.get().getExpirationDate().isEmpty());
 		assertTrue(optDomain.get().getAonCustomer().isEmpty());
 		assertTrue(optDomain.get().getAonStatus().isEmpty());
-		assertTrue(optDomain.get().getCreationUser().isEmpty());
-		assertTrue(optDomain.get().getCreationDate().isEmpty());
-		assertTrue(optDomain.get().getModificationUser().isEmpty());
-		assertTrue(optDomain.get().getModificationDate().isEmpty());
+		assertTrue(optDomain.get().getAudit().isEmpty());
 	}
 	
 	@Test

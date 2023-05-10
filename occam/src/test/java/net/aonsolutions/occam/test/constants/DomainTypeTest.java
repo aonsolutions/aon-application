@@ -1,6 +1,7 @@
 package net.aonsolutions.occam.test.constants;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
@@ -62,6 +63,10 @@ class DomainTypeTest extends AbstractOccamTest {
 	void rightNameSafeValueTest() {
 		DomainType dt = AonRandom.getDomainType().get();
 		assertEquals(dt,DomainType.safeValueOf( dt.toString() ).get());
+	}
+	@Test()
+	void descriptionNotNullTest() {
+		Arrays.stream(DomainType.values()).forEach(s -> assertNotNull(s.getName() ));
 	}
 	
 	@Test()

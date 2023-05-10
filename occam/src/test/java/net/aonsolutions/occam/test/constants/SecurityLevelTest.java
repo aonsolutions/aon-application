@@ -1,7 +1,10 @@
 package net.aonsolutions.occam.test.constants;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,6 +48,10 @@ class SecurityLevelTest extends AbstractOccamTest {
 	void rightIndexSafeValueTest() {
 		SecurityLevel dt = AonRandom.getSecurityLevel().get();
 		assertEquals(dt, SecurityLevel.safeValueOf( dt.ordinal() ).get());
+	}
+	@Test()
+	void nameNotNullTest() {
+		Arrays.stream(SecurityLevel.values()).forEach(s ->  assertNotNull(s.getName() ));
 	}
 	
 }
