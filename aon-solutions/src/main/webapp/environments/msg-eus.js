@@ -89,6 +89,7 @@ export const CREDITOR = 'Hartzekodun';
 export const CREDITORS = 'Hartzekodunak';
 export const CUSTOM_VIEW = 'Ikuspegi Pertsonalizatua';
 export const CUSTOMER = 'Bezero';
+export const CUSTOMER_SEARCH = 'Bezero bilaketa';
 export const CUSTOMERS = 'Bezeroak';
 
 // ----- D
@@ -114,6 +115,7 @@ export const DEUTSCH = 'Alemana';
 export const DOCUMENT = 'Dokumentua';
 export const DOCUMENTS = 'Dokumentuak';
 export const DOCUMENTARY = 'Dokumentala';
+export const DOMAIN_SEARCH = 'Domeinu bilaketa';
 export const DOWNLOAD = 'Deskargatu';
 export const DOWNLOAD_FILE = 'Fitxategia Deskargatu';
 export const DOWNLOAD_FILES = 'Fitxategiak Deskargatu';

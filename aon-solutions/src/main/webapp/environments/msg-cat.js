@@ -88,6 +88,7 @@ export const CREDITOR = 'Creditor';
 export const CREDITORS = 'Creditors';
 export const CUSTOM_VIEW = 'Vista Personalitzada';
 export const CUSTOMER =  'Client';
+export const CUSTOMER_SEARCH =  'cerca de client';
 export const CUSTOMERS = 'Clients';
 
 // ----- D
@@ -113,6 +114,7 @@ export const DEUTSCH = 'Alemany';
 export const DOCUMENT = 'Document';
 export const DOCUMENTS = 'Documents';
 export const DOCUMENTARY = 'Documental';
+export const DOMAIN_SEARCH = 'Cerca de domini';
 export const DOWNLOAD = 'Descarregar';
 export const DOWNLOAD_FILE = 'Descarregar Fitxer';
 export const DOWNLOAD_FILES = 'Descarregar Fitxers';

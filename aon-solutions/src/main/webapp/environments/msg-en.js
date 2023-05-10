@@ -89,6 +89,7 @@ export const CREDITOR = 'Creditor';
 export const CREDITORS = 'Creditors';
 export const CUSTOM_VIEW = 'Custom View';
 export const CUSTOMER = 'Customer';
+export const CUSTOMER_SEARCH = 'Customer search';
 export const CUSTOMERS = 'Customers';
 
 // ----- D
@@ -114,6 +115,7 @@ export const DEUTSCH = 'German';
 export const DOCUMENT = 'Document';
 export const DOCUMENTS = 'Documents';
 export const DOCUMENTARY = 'Documentary';
+export const DOMAIN_SEARCH = 'Domain search';
 export const DOWNLOAD = 'Download';
 export const DOWNLOAD_FILE = 'Download File';
 export const DOWNLOAD_FILES = 'Download Files';

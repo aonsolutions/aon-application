@@ -90,6 +90,7 @@ export const CREDITOR = 'Acredor';
 export const CREDITORS = 'Acredores';
 export const CUSTOM_VIEW = 'Vista Personalizada';
 export const CUSTOMER = 'Cliente';
+export  const CUSTOMER_SEARCH = 'Procura de cliente';
 export const CUSTOMERS = 'Clientes';
 
 // ----- D
@@ -115,6 +116,7 @@ export const DEUTSCH = 'Alemán';
 export const DOCUMENT = 'Documento';
 export const DOCUMENTS = 'Documentos';
 export const DOCUMENTARY = 'Documental';
+export const DOMAIN_SEARCH = 'Procura de dominio';
 export const DOWNLOAD = 'Descargar';
 export const DOWNLOAD_FILE = 'Descargar Ficheiro';
 export const DOWNLOAD_FILES = 'Descargar Ficheiros';
