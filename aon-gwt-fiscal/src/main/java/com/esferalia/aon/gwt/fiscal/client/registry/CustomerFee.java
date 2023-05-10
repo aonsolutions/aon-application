@@ -20,10 +20,12 @@ import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
 import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
+import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonProgressBarDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
@@ -31,6 +33,7 @@ import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.ImportError;
 import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
@@ -66,6 +69,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CustomerFee extends MainEntryPoint {
@@ -87,7 +91,7 @@ public class CustomerFee extends MainEntryPoint {
 	private AonToolbarButton addValueButton;
 	private AonToolbarButton deleteFeeButton;
 	private AonToolbarButton exportButton;
-//	private AonToolbarButton importButton;
+	private AonToolbarButton importButton;
 	
 	// Filter
 	private ListBox periocityListBox;
@@ -123,6 +127,11 @@ public class CustomerFee extends MainEntryPoint {
 	final private MutableInt moreData = new MutableInt(0);
 	final private MutableInt searchEnabled = new MutableInt(0); 
 	private int lastScrollPos = 0;
+	
+	// Import fees
+	AonProgressBarDialog pbd;
+	LinkedList<String> verror = new LinkedList<>();
+	LinkedList<String> werror = new LinkedList<>();
 
 	@Override
 	public void onModuleLoad() {
@@ -1456,10 +1465,38 @@ public class CustomerFee extends MainEntryPoint {
 			}
 		});
 		
-//		importButton = new AonToolbarButton("Importar Cuotas", AON.CSS.aonIconExcel());
-//		importButton.addClickHandler(e -> {
-//			
-//		});
+		importButton = new AonToolbarButton("Importar Cuotas", AON.CSS.aonIconExcel());
+		importButton.addClickHandler(e -> {
+			Upload upload = new Upload() {
+				
+				@Override
+				protected void onUpload(String data) {
+					pbd = new AonProgressBarDialog("Procesando Excel...") {};
+					pbd.addStyleName("gwt-PopupPanel-template");
+					pbd.setGlassEnabled(true);
+					pbd.center();
+					pbd.show();
+					
+					SERVICE.parseFeeFile(options.getConfiguration().getDomain(), options.getConfiguration().getUser(), data, new AsyncCallback<List<Fee>>() {
+						@Override
+						public void onSuccess(List<Fee> result) {
+							pbd.completed();
+							pbd.hide();
+							pbd = new AonProgressBarDialog("Importando Cuotas...") {};
+							pbd.addStyleName("gwt-PopupPanel-template");
+							pbd.setGlassEnabled(true);
+							pbd.center();
+							pbd.show();
+							insertFee(result, 0);
+						}
+							
+						@Override
+						public void onFailure(Throwable caught) {}
+					});
+				}
+			};
+			upload.upload();
+		});
 
 		toolbar.add(saveButton);
 		toolbar.add(undoAllButton);
@@ -1467,7 +1504,46 @@ public class CustomerFee extends MainEntryPoint {
 		toolbar.add(addValueButton);
 		toolbar.add(deleteFeeButton);
 		toolbar.add(exportButton);
-//		toolbar.add(importButton);
+		toolbar.add(importButton);
+	}
+	
+	private void insertFee(List<Fee> fee, Integer index) {
+		Integer lines = fee.size();
+		AsyncCallback<ImportError> callback = new AsyncCallback<ImportError>() {
+			@Override
+			public void onSuccess(ImportError result) {
+				Double progress = (result.getLine().doubleValue() / lines.doubleValue()) * 100.0;
+				if(!result.getError()) {
+					verror.add(result.getTextError().getFirst());
+				}
+				if(result.getTextWarning() != null && result.getTextWarning().size() > 0) {
+					werror.addAll(result.getTextWarning());
+				}
+				pbd.updateProgress(progress.intValue());
+				if(result.getLine() < lines - 1) {
+					insertFee(fee, result.getLine() + 1);
+				} else {
+					pbd.completed();
+					pbd.hide();
+					ImportError error = new ImportError();
+					error.setError(verror.size() == 0);
+					error.setTextError(verror);
+					error.setTextWarning(werror);
+					VerticalPanel vPanel = new VerticalPanel();
+					error.getTextError().forEach(errorIt -> vPanel.add(new Label(errorIt)));
+					error.getTextWarning().forEach(warnIt -> vPanel.add(new Label(warnIt)));
+					AonDialog dialog = new AonDialog("Importar Cuotas", vPanel);
+					dialog.info();
+				}
+			}
+				
+			@Override public void onFailure(Throwable caught) {
+				pbd.completed();
+				pbd.hide();
+			}
+		};	
+		
+		SERVICE.importFee(options.getConfiguration().getDomain(), options.getConfiguration().getUser(), fee.get(index), index, callback);
 	}
 
 	private void exportFees(List<Integer> feeIds) {
