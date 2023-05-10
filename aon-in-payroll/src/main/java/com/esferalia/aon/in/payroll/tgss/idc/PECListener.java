@@ -14,8 +14,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import com.esferalia.aon.in.payroll.tgss.idc.PEC.Bonus;
 import com.esferalia.aon.occam.api.model.type.DeductionType;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 class PECListener  implements IdcParserListener {
 	
@@ -44,6 +46,11 @@ class PECListener  implements IdcParserListener {
 				Date start, 
 				Date end);
 	}
+	
+	private static class BenefitsLoss extends PEC.Bonus {
+	}
+
+
 
 	private static final NumberFormat NUMBER_FORMAT = DecimalFormat.getNumberInstance(new Locale("es", "ES"));
 
@@ -208,6 +215,8 @@ class PECListener  implements IdcParserListener {
 	@Override
 	public void onEmployeeQuotePEC(String nss, String ccc, String code, String description, String portTipo,
 			String quota, Date start, Date end) {
+		if ( hasBenefitsLoss( nss, ccc, code, quota))
+		    return;
 		
 		Date pecEnd = Objects.equals(end, contractEnd) ? null : end;
 		
@@ -231,6 +240,30 @@ class PECListener  implements IdcParserListener {
 	}
 	
 	
+	@Override
+	public void onEmployeeBenefitsLoss(String nss, String ccc, String cause, Date start, Date end) {
+	    PEC benefitsLoss = new BenefitsLoss();
+	    benefitsLoss.setCcc(ccc);
+	    benefitsLoss.setNss(nss);
+	    benefitsLoss.setStartDate(start);
+	    benefitsLoss.setEndDate(end);
+	    benefitsLoss.setDescription(cause);
+	    benefitsLoss.setFormula(String.format(""
+	    	+ "AVISO(\"<div>PERDIDA DE BENEFICIOS: <span style='color:red;'>%s</span></div>"
+	    	+ "<div class='aon-text-right'><span class='aon-icon aon-icon-logo' />aon Solutions</div>\")", cause));
+
+	    ssPECs.add(benefitsLoss);
+	    
+	}
+	
+	// ------------------------------------------------------------------------
+
+	private boolean hasBenefitsLoss(String nss, String ccc, String code, String quota) {
+	    return ssPECs.stream()
+	    .anyMatch(pec -> pec instanceof BenefitsLoss 
+		    	&& AonStringUtils.equalsIgnoreCase(ccc, pec.getCcc()) 
+		    	&& AonStringUtils.equalsIgnoreCase(nss, pec.getSsNum()) );
+	}
 	
 	
 	// ------------------------------------------------------------------------

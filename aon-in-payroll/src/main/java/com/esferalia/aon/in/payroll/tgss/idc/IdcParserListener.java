@@ -49,6 +49,9 @@ public interface IdcParserListener {
 			String quota, Date start, Date end) {
 	};
 
+	default void onEmployeeBenefitsLoss(String ssNum, String ccc, String cause, Date start, Date end) {
+	};
+
 	
 	// --------------------------------------------------------------- Contract
 	
