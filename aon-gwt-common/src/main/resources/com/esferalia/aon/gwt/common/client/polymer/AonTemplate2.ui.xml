@@ -28,7 +28,7 @@
 	}	
 </ui:style>
 <g:DockLayoutPanel ui:field="dockLayoutPanel">
-	<g:north size="40">
+	<g:north size="50">
 		<g:SimpleLayoutPanel ui:field="toolbar" />
 	</g:north>
 	<g:west size="0">
