@@ -89,6 +89,7 @@
 		<module>aon-external-sources</module>
 		<module>aon-sign</module>		
 		<module>aon-bank</module>
+		<module>aon-templates</module>
 		
 		<!-- ENTITY -->
 		<module>aon-carrier</module>

@@ -12,6 +12,7 @@ import static com.esferalia.aon.jooq.tables.LeaveBatchDetail.LEAVE_BATCH_DETAIL;
 import static com.esferalia.aon.jooq.tables.Person.PERSON;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Salary.SALARY;
+import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -116,12 +117,11 @@ public class JooqIT {
 	    .from(CONTRACT)
 	    .innerJoin(PERSON).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 	    .innerJoin(PERSON_REGISTRY).on(PERSON.REGISTRY.eq(PERSON_REGISTRY.ID))
+	    .innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
+	    .innerJoin(ENTERPRISE_REGISTRY).on(WORKPLACE.ENTERPRISE.eq(ENTERPRISE_REGISTRY.ID))
 	    
 	    .leftJoin(ENTERPRISE_CCC).on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
 	    
-	    //.innerJoin(WORKPLACE).on(CONTRACT.WORKPLACE.eq(WORKPLACE.ID))
-	    //.innerJoin(ENTERPRISE_REGISTRY).on(WORKPLACE.ENTERPRISE.eq(ENTERPRISE_REGISTRY.ID))
-
 	    .leftJoin(CONTRACT_LEAVE).on(CONTRACT.ID.eq(CONTRACT_LEAVE.CONTRACT))
 
 	    .leftJoin(MOTIVO_MAT_PAT).on(CONTRACT_LEAVE.CONTRACT.eq(MOTIVO_MAT_PAT.CONTRACT)
@@ -172,6 +172,7 @@ public class JooqIT {
 			contractInfo.setEndDate(r.get(CONTRACT.END_DATE));
 			contractInfo.setStartDate(r.get(CONTRACT.START_DATE));
 			contractInfo.setSeniorityDate(r.get(CONTRACT.SENIORITY_DATE));
+			contractInfo.setEnterpriseName(r.get(ENTERPRISE_REGISTRY.NAME));
 			
 			//contractInfo.setEnterpriseName(r.get(ENTERPRISE_REGISTRY.NAME));
 			//contractInfo.setEnterpriseCIF(r.get(ENTERPRISE_REGISTRY.DOCUMENT));

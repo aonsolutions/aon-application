@@ -142,6 +142,8 @@ public class FeeDAO {
 					.and(CUSTOMER_FEE.FINAL_DATE.isNull().or(CUSTOMER_FEE.FINAL_DATE.ge(parseSQLDate(billingDate))));
 		}
 			
+		if(null != customerFeeParams.getPeriodicity())
+			condition = condition.and(CUSTOMER_FEE.PERIOD.eq(customerFeeParams.getPeriodicity().shortValue()));
 		if(AonStringUtils.isNotBlank(customerFeeParams.getCustomer())) 
 			condition = condition.and(CUSTOMER_ALIAS.NAME.eq(customerFeeParams.getCustomer()));
 		if(AonStringUtils.isNotBlank(customerFeeParams.getProductCode()))
