@@ -1,19 +1,21 @@
 package net.aonsolutions.occam.api.config;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
+import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonUtils;
 
+import net.aonsolutions.occam.api.HasDirtyFlag;
 import net.aonsolutions.occam.api.HasSelector;
-import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.DomainType;
 
-public class Domain implements Serializable, HasSelector<Domain> {
+public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Domain> {
 
 	private static final long serialVersionUID = 2356532157666489635L;
 	
@@ -23,24 +25,13 @@ public class Domain implements Serializable, HasSelector<Domain> {
 	private DomainType type;
 	private Boolean active;
 	private Scope scope;
-	private Date expirationDate;
 	private Domain parent;
-	
-	private String owner;
-	private String subDomainSuffix;
 	private Boolean enableHeredity;
-	private String lastAccessUser;
-	private Date lastAccessDate;
 	
-	private Boolean domainManagement;
-	private Boolean disableDomainManagement;
-	private Integer maxDefinedUsers;
-	private Integer aonCustomer;
-	private AonStatus aonStatus;
+	private Booking booking;
+	private DomainAudit audit;
 	
-	private Audit audit;
-	
-	private List<User> users; 
+	private Set<User> users; 
 	
 	private boolean dirty;
 	private boolean selected;
@@ -72,15 +63,6 @@ public class Domain implements Serializable, HasSelector<Domain> {
 		return this;
 	}
 
-	public Optional<String> getOwner() {
-		return Optional.ofNullable(owner);
-	}
-	public Domain setOwner(String owner) {
-		this.dirtyMark( AonUtils.notEquals(this.owner,owner) );
-		this.owner = owner;
-		return this;
-	}
-	
 	public Optional<Domain> getParent() {
 		return Optional.ofNullable(parent);
 	}
@@ -99,15 +81,6 @@ public class Domain implements Serializable, HasSelector<Domain> {
 		return this;
 	}
 	
-	public Optional<String> getSubDomainSuffix() {
-		return Optional.ofNullable(subDomainSuffix);
-	}
-	public Domain setSubDomainSuffix(String subDomainSuffix) {
-		this.dirtyMark( AonUtils.notEquals(this.subDomainSuffix,subDomainSuffix) );
-		this.subDomainSuffix = subDomainSuffix;
-		return this;
-	}
-	
 	public Optional<Boolean> isEnableHeredity() {
 		return Optional.ofNullable(enableHeredity);
 	}
@@ -116,25 +89,7 @@ public class Domain implements Serializable, HasSelector<Domain> {
 		this.enableHeredity = enableHeredity;
 		return this;
 	}
-	
-	public Optional<Boolean> isDomainManagement() {
-		return Optional.ofNullable(domainManagement);
-	}
-	public Domain setDomainManagement(Boolean domainManagement) {
-		this.dirtyMark( AonUtils.notEquals(this.domainManagement,domainManagement) );
-		this.domainManagement = domainManagement;
-		return this;
-	}
-	
-	public Optional<Boolean> isDisableDomainManagement() {
-		return Optional.ofNullable(disableDomainManagement);
-	}
-	public Domain setDisableDomainManagement(Boolean disableDomainManagement) {
-		this.dirtyMark( AonUtils.notEquals(this.disableDomainManagement,disableDomainManagement) );
-		this.disableDomainManagement = disableDomainManagement;
-		return this;
-	}
-	
+
 	public Optional<Boolean> isActive() {
 		return Optional.ofNullable(active);
 	}
@@ -153,78 +108,33 @@ public class Domain implements Serializable, HasSelector<Domain> {
 		return this;
 	}
 	
-	public Optional<Integer> getMaxDefinedUsers() {
-		return Optional.ofNullable(maxDefinedUsers);
+	public Optional<Booking> getBooking() {
+		return Optional.ofNullable(booking);
 	}
-	public Domain setMaxDefinedUsers(Integer maxDefinedUsers) {
-		this.dirtyMark( AonUtils.notEquals(this.maxDefinedUsers,maxDefinedUsers) );
-		this.maxDefinedUsers = maxDefinedUsers;
-		return this;
-	}
-	
-	public Optional<String> getLastAccessUser() {
-		return Optional.ofNullable(lastAccessUser);
-	}
-	public Domain setLastAccessUser(String lastAccessUser) {
-		this.dirtyMark( AonUtils.notEquals(this.lastAccessUser,lastAccessUser) );
-		this.lastAccessUser = lastAccessUser;
+
+	public Domain setBooking(Booking booking) {
+		this.dirtyMark( this.booking, booking );
+		this.booking = booking;
 		return this;
 	}
 
-	public Optional<Date> getLastAccessDate() {
-		return Optional.ofNullable(lastAccessDate);
-	}
-	public Domain setLastAccessDate(Date lastAccessDate) {
-		this.dirtyMark( AonUtils.notEquals(this.lastAccessDate,lastAccessDate) );
-		this.lastAccessDate = lastAccessDate; 
-		return this;
-	}
-	
-	public Optional<Date> getExpirationDate() {
-		return Optional.ofNullable(expirationDate);  
-	}
-	public Domain setExpirationDate(Date expirationDate) {
-		this.dirtyMark( AonUtils.notEquals(this.expirationDate,expirationDate) );
-		this.expirationDate = expirationDate;
-		return this;
-	}
-
-	public Optional<Integer> getAonCustomer() {
-		return Optional.ofNullable(aonCustomer);
-	}
-	public Domain setAonCustomer(Integer aonCustomer) {
-		this.dirtyMark( AonUtils.notEquals(this.aonCustomer,aonCustomer) );
-		this.aonCustomer = aonCustomer;
-		return this;
-	}
-	
-	public Optional<AonStatus> getAonStatus() {
-		return Optional.ofNullable(aonStatus);
-	}
-	public Domain setAonStatus(AonStatus aonStatus) {
-		this.dirtyMark( AonUtils.notEquals(this.aonStatus,aonStatus) );
-		this.aonStatus = aonStatus;
-		return this;
-	}
-	
-	public Optional<Audit> getAudit() {
+	public Optional<DomainAudit> getAudit() {
 		return Optional.ofNullable(audit);
 	}
 
-	public Domain setAudit(Audit audit) {
+	public Domain setAudit(DomainAudit audit) {
+		this.dirtyMark( this.audit, audit);
 		this.audit = audit;
 		return this;
 	}
 
+	@Override
 	public boolean isDirty() {
 		return dirty;
 	}
+	@Override
 	public Domain setDirty(boolean dirty) {
 		this.dirty = dirty;
-		return this;
-	}
-	public Domain dirtyMark(boolean dirty) {
-		this.dirty = isDirty() || dirty;
 		return this;
 	}
 
@@ -240,18 +150,19 @@ public class Domain implements Serializable, HasSelector<Domain> {
 	}
 	
 	// ---------------------------------------------------------- 
-	public Optional<List<User>> getUsers() {
+	public Optional<Collection<User>> getUsers() {
 		return Optional.ofNullable(users);
 	}
-	public Domain setUsers(List<User> users) {
-		this.users = users;
-		return this;
+	public Domain setUsers(Collection<User> users) {
+		this.users = null;
+		return addUsers(users);
 	}
-	public Domain addUsers(List<User> users) {
-		if ( getUsers().isPresent() ) {
-			getUsers().get().addAll(users);
-		} else {
-			setUsers(users);
+	public Domain addUsers(Collection<User> users) {
+		if (AonCollectionUtils.isNotEmpty(users)) {
+			if (this.users == null ) {
+				this.users = new LinkedHashSet<>();
+			}
+			this.users.addAll(users);
 		}
 		return this;
 	}	

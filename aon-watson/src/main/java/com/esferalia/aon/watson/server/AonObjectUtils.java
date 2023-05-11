@@ -24,9 +24,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
@@ -102,7 +100,7 @@ public class AonObjectUtils {
     public static <T> String defaultIfNull(final T object, Function<T,String> valuesupplier) {
     	return defaultIfNull(object, valuesupplier, AonStringUtils.EMPTY);
     }
-    public static <T> String defaultIfNull(final T object, Function<T,String> valuesupplier, String defaultValue) {
+    public static <T,R> R defaultIfNull(final T object, Function<T,R> valuesupplier, R defaultValue) {
         return object != null ? valuesupplier.apply(object) : defaultValue;
     }
 

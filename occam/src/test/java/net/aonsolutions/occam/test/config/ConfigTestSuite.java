@@ -7,8 +7,9 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @SelectClasses({
 	 ScopeTest.class
-	,DomainTest.class
+	,BookingTest.class
 	,UserTest.class
+	,DomainTest.class
 })
 public class ConfigTestSuite {
 

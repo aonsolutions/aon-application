@@ -14,8 +14,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import net.aonsolutions.occam.api.config.Domain;
-import net.aonsolutions.occam.api.json.DomainJSON;
+import net.aonsolutions.occam.api.config.DomainAudit;
+import net.aonsolutions.occam.api.json.DomainAuditJSON;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;
@@ -24,20 +24,20 @@ import net.aonsolutions.occam.test.faker.AonRandom;
 
 
 @ExtendWith(TimingExtension.class)
-class DomainJSONTest extends AbstractOccamTest {
+class DomainAuditJSONTest extends AbstractOccamTest {
 
 	@RepeatedTest(20)
 	void testSimpleConvert() {
-		Domain expected = AonFaker.getDomain( );
-		JSONObject json = DomainJSON.to(expected);
-		Domain actual = DomainJSON.from(json);
-		Asserts.assertEqualsDomain(expected, actual);
+		DomainAudit expected = AonFaker.getDomainAudit( );
+		JSONObject json = DomainAuditJSON.to(expected);
+		DomainAudit actual = DomainAuditJSON.from(json);
+		Asserts.assertEqualsDomainAudit(expected, actual);
 	}
 	
 	@Test
 	void testEmptyArrayConvert() {
 		JSONArray expected = null;
-		List<Domain> actual = DomainJSON.from(expected);
+		List<DomainAudit> actual = DomainAuditJSON.from(expected);
 		assertNotNull( actual );
 		assertTrue(actual.isEmpty());
 	}
@@ -45,38 +45,38 @@ class DomainJSONTest extends AbstractOccamTest {
 	@Test
 	void testArrayConvert() {
 		JSONArray expected = IntStream.range(0, AonRandom.getInt(0, 50))
-			.mapToObj(i -> AonFaker.getDomain())
-			.map(domain -> DomainJSON.to(domain))
+			.mapToObj(i -> AonFaker.getDomainAudit())
+			.map(s -> DomainAuditJSON.to(s))
 			.collect( JSONArray::new,JSONArray::put,JSONArray::put )
 		;
 		assertNotNull( expected );
-		List<Domain> actual = DomainJSON.from(expected);
+		List<DomainAudit> actual = DomainAuditJSON.from(expected);
 		assertNotNull( actual );
 		assertEquals(expected.length(), actual.size());
 		IntStream.range(0, expected.length())
 			.forEach(i -> {
-				JSONObject expectedDomainJson = expected.getJSONObject(i);
-				Domain expectedDomain = DomainJSON.from( expectedDomainJson );
-				Asserts.assertEqualsDomain(actual.get(i), expectedDomain);		
+				JSONObject expectedDomainAuditJson = expected.getJSONObject(i);
+				DomainAudit expectedDomainAudit = DomainAuditJSON.from( expectedDomainAuditJson );
+				Asserts.assertEqualsDomainAudit(actual.get(i), expectedDomainAudit);		
 			});
 	}
 
 	@Test
 	void testEmptyListConvert() {
-		List<Domain> expected = null;
-		JSONArray array = DomainJSON.to(expected);
-		List<Domain> actual = DomainJSON.from(array);
-		Asserts.assertEqualsCollection(expected, actual, "JSON Empty Domain collections");
+		List<DomainAudit> expected = null;
+		JSONArray array = DomainAuditJSON.to(expected);
+		List<DomainAudit> actual = DomainAuditJSON.from(array);
+		Asserts.assertEqualsCollection(expected, actual, "JSON Empty DomainAudit collections");
 	}
 
 	@Test
 	void testListConvert() {
-		List<Domain> expected = IntStream.range(1, AonRandom.getInt(2, 50))
-			.mapToObj(i -> AonFaker.getDomain())
+		List<DomainAudit> expected = IntStream.range(0, AonRandom.getInt(0, 50))
+			.mapToObj(i -> AonFaker.getDomainAudit())
 			.toList()
 		;
-		JSONArray array = DomainJSON.to(expected);
-		List<Domain> actual = DomainJSON.from(array);
-		Asserts.assertEqualsCollection(expected, actual, "JSON Domain collections");
+		JSONArray array = DomainAuditJSON.to(expected);
+		List<DomainAudit> actual = DomainAuditJSON.from(array);
+		Asserts.assertEqualsCollection(expected, actual, "JSON Audit collections");
 	}
 }

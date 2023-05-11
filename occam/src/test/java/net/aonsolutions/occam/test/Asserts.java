@@ -11,7 +11,9 @@ import java.util.Collection;
 
 import net.aonsolutions.occam.api.config.Activity;
 import net.aonsolutions.occam.api.config.Audit;
+import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
+import net.aonsolutions.occam.api.config.DomainAudit;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
 import net.aonsolutions.occam.api.invoice.Invoice;
@@ -33,9 +35,15 @@ public class Asserts {
 	public static void assertNullCollection(String msg,Collection<?> actual) {
 		assertNull(actual,msg);		
 	}
+	public static void assertNotEmpty(Collection<?> expected) {
+		assertNotEmpty(expected, "");	
+	}
 	public static void assertNotEmpty(Collection<?> expected, String msg) {
 		assertNotNull(expected,msg);
 		assertFalse(expected.isEmpty(),msg);
+	}
+	public static void assertEmpty(Collection<?> expected) {
+		assertEmpty(expected, "");	
 	}
 	public static void assertEmpty(Collection<?> expected, String msg) {
 		assertNotNull(expected,msg);
@@ -59,23 +67,35 @@ public class Asserts {
 			assertEquals(expected.getId(), actual.getId(),"Id");
 			assertEquals(expected.getName(), actual.getName(),"Name");
 			assertEquals(expected.getDescription(), actual.getDescription(),"Description");
-			assertEquals(expected.getOwner(), actual.getOwner(),"Owner");
-			assertEqualsNulls(expected.getParent(), actual.getParent(),"Parent Domain");
 			assertEqualsDomain(expected.getParent().orElse(null), actual.getParent().orElse(null));
 			assertEquals(expected.getType(), actual.getType(),"DomainType");
-			assertEquals(expected.getSubDomainSuffix(), actual.getSubDomainSuffix(),"SubDomainSuffix");
 			assertEquals(expected.isEnableHeredity(), actual.isEnableHeredity(),"EnableHeredity");
-			assertEquals(expected.isDomainManagement(), actual.isDomainManagement(),"DomainManagement");
-			assertEquals(expected.isDisableDomainManagement(), actual.isDisableDomainManagement(),"DisableDomainManagement");
 			assertEquals(expected.isActive(), actual.isActive(),"Active");
 			assertEqualsScope(expected.getScope().orElse(null), actual.getScope().orElse(null));
-			assertEquals(expected.getMaxDefinedUsers(), actual.getMaxDefinedUsers(),"MaxDefinedUsers");
-			assertEquals(expected.getLastAccessUser(), actual.getLastAccessUser(),"LastAccessUser");
-			assertEquals(expected.getLastAccessDate(), actual.getLastAccessDate(),"LastAccessDate");
+			assertEqualsBooking(expected.getBooking().orElse(null), actual.getBooking().orElse(null));
+			assertEqualsDomainAudit(expected.getAudit().orElse(null), actual.getAudit().orElse(null));
+		}
+	}
+
+	public static void assertEqualsBooking(Booking expected, Booking actual) {
+		assertEqualsNulls(expected, actual,"Booking");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getOwner(), actual.getOwner(),"Owner");
 			assertEquals(expected.getExpirationDate(), actual.getExpirationDate(),"ExpirationDate");
-			assertEqualsAudit(expected.getAudit().orElse(null), actual.getAudit().orElse(null));
+			assertEquals(expected.isDomainManagement(), actual.isDomainManagement(),"DomainManagement");
+			assertEquals(expected.isDisableDomainManagement(), actual.isDisableDomainManagement(),"DisableDomainManagement");
+			assertEquals(expected.getMaxDefinedUsers(), actual.getMaxDefinedUsers(),"MaxDefinedUsers");
 			assertEquals(expected.getAonCustomer(), actual.getAonCustomer(),"AonCustomer");
 			assertEquals(expected.getAonStatus(), actual.getAonStatus(),"AonStatus");
+		}
+	}
+
+	public static void assertEqualsDomainAudit(DomainAudit expected, DomainAudit actual) {
+		assertEqualsNulls(expected, actual,"DomainAudit");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getLastAccessUser(), actual.getLastAccessUser(),"LastAccessUser");
+			assertEquals(expected.getLastAccessDate(), actual.getLastAccessDate(),"LastAccessDate");
+			assertEqualsAudit(expected, actual);
 		}
 	}
 

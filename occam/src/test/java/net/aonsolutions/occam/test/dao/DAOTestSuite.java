@@ -6,8 +6,8 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
-	DomainDAOTest.class
-	,UserDAOTest.class
+	 SecurityDAOTest.class
+	,DomainDAOTest.class
 	,InvoiceDAOTest.class
 })
 public class DAOTestSuite {

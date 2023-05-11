@@ -91,8 +91,6 @@ class DomainDAOTest extends AbstractOccamTest {
 		Optional<Domain> optDomain = DomainDAO.get(ctx
 			,p -> p.withName().eq( DOMAIN_NAME )
 			,b -> b.full());
-		
-		
 		assertTrue(optDomain.isPresent());
 		Domain expected = optDomain.get();
 		Optional<Domain> optActual = DomainDAO.get(ctx
@@ -102,22 +100,24 @@ class DomainDAOTest extends AbstractOccamTest {
 				.and(p.withParent().eq( AonObjectUtils.ifOptionalPresent(expected.getParent(), o -> o.getId()) ))
 				.and(p.withType().eq( AonEnumUtils.getOptEnumByte(expected.getType())))
 				.and(p.withScope().eq( AonObjectUtils.ifOptionalPresent(expected.getScope(), o -> o.getId()) ))
-				.and(p.withSubDomainSuffix().eq( expected.getSubDomainSuffix().orElse(null) ))
 				.and(p.withEnableHeredity().eq( AonEnumUtils.getByte(expected.isEnableHeredity())))
-				.and(p.withDomainManagement().eq( AonEnumUtils.getByte(expected.isDomainManagement())))
-				.and(p.withDisableDomainManagement().eq( AonEnumUtils.getByte(expected.isDisableDomainManagement())))
-				.and(p.withMaxDefinedUsers().eq( expected.getMaxDefinedUsers().orElse(null)))
 				.and(p.withActive().eq( AonEnumUtils.getByte(expected.isActive())))
-				.and(p.withOwner().eq( expected.getOwner().orElse(null)))
-				.and(p.withExpirationDate().eq( AonDateUtils.toSql(expected.getExpirationDate().orElse(null))))
-				.and(p.withLastAccessDate().eq( AonDateUtils.toTimestamp(expected.getLastAccessDate().orElse(null))))
-				.and(p.withLastAccessUser().eq( expected.getLastAccessUser().orElse(null)))
-				.and(p.withAonCustomer().eq( expected.getAonCustomer().orElse(null)))
-				.and(p.withAonStatus().eq( AonEnumUtils.getByte(expected.getAonStatus().orElse(null))))
+				// Booking
+				.and(p.withOwner().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getOwner().orElse(null))))
+				.and(p.withExpirationDate().eq( AonDateUtils.toSql(AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getExpirationDate().orElse(null)))))
+				.and(p.withDomainManagement().eq(AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> AonEnumUtils.getByte(a.isDomainManagement().orElse(null)))))
+				.and(p.withDisableDomainManagement().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> AonEnumUtils.getByte(a.isDisableDomainManagement().orElse(null)))))
+				.and(p.withMaxDefinedUsers().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getMaxDefinedUsers().orElse(null))))
+				.and(p.withAonCustomer().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getAonCustomer().orElse(null))))
+				.and(p.withAonStatus().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> AonEnumUtils.getByte(a.getAonStatus().orElse(null)))))
+				// Audit
+				.and(p.withLastAccessDate().eq( AonDateUtils.toTimestamp(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getLastAccessDate().orElse(null)))))
+				.and(p.withLastAccessUser().eq( AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getLastAccessUser().orElse(null))))
 				.and(p.withCreationUser().eq(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getCreationUser().orElse(null))))
 				.and(p.withCreationDate().eq(AonDateUtils.toTimestamp(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getCreationDate().orElse(null)))))
 				.and(p.withModificationUser().eq(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getModificationUser().orElse(null))))
 				.and(p.withModificationDate().eq(AonDateUtils.toTimestamp(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getModificationDate().orElse(null)))))
+				
 			,b -> b.full()
 		);
 		assertTrue(optActual.isPresent(),"Domain not found!");
@@ -139,22 +139,8 @@ class DomainDAOTest extends AbstractOccamTest {
 	void basicGetTest() {
 		Optional<Domain> optDomain = DomainDAO.get(ctx, p -> p.withName().eq( DOMAIN_NAME ));
 		assertTrue(optDomain.isPresent());
-		
-		assertTrue(optDomain.get().getOwner().isEmpty());
 		assertTrue(optDomain.get().getParent().isEmpty());
-		assertTrue(optDomain.get().getType().isEmpty());
-		assertTrue(optDomain.get().getSubDomainSuffix().isEmpty());
-		assertTrue(optDomain.get().isEnableHeredity().isEmpty());
-		assertTrue(optDomain.get().isDomainManagement().isEmpty());
-		assertTrue(optDomain.get().isDisableDomainManagement().isEmpty());
-		assertTrue(optDomain.get().isActive().isEmpty());
-		assertTrue(optDomain.get().getScope().isEmpty());
-		assertTrue(optDomain.get().getMaxDefinedUsers().isEmpty());
-		assertTrue(optDomain.get().getLastAccessUser().isEmpty());
-		assertTrue(optDomain.get().getLastAccessDate().isEmpty());
-		assertTrue(optDomain.get().getExpirationDate().isEmpty());
-		assertTrue(optDomain.get().getAonCustomer().isEmpty());
-		assertTrue(optDomain.get().getAonStatus().isEmpty());
+		assertTrue(optDomain.get().getBooking().isEmpty());
 		assertTrue(optDomain.get().getAudit().isEmpty());
 	}
 	
@@ -174,7 +160,7 @@ class DomainDAOTest extends AbstractOccamTest {
 	void usersStreamTest() {
 		DomainDAO.getStream(ctx
 			, p -> p.withId().gt( 0 )
-			, b -> b.withUsers().withParentDomain().withAllRow().withAudit()
+			, b -> b.withUsers().withParentDomain().withBooking().withAudit()
 			)
 		.forEach(d -> {
 			if (AonStringUtils.equals(d.getName(),DOMAIN_NAME)) {
@@ -182,8 +168,7 @@ class DomainDAOTest extends AbstractOccamTest {
 				Asserts.assertNotEmpty(d.getUsers().get(), "Users");
 				assertTrue(d.getUsers().get().stream().anyMatch(u -> AonStringUtils.equals( u.getLogin(), USER)));
 			} else {
-				assertTrue(d.getUsers().isPresent());
-				Asserts.assertEmpty(d.getUsers().get(), "Users");
+				assertFalse(d.getUsers().isPresent());
 			}
 		});
 	}

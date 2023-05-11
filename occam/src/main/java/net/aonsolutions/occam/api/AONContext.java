@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
-import org.jooq.TransactionalRunnable;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
@@ -63,9 +62,6 @@ public class AONContext implements AutoCloseable {
 	public String getUser() {
 		return user;
 	}
-	public Occam getOccam() {
-		return new Occam().setDomainName(getDomainName()).setUser(getUser());
-	}
 
 	public DSLContext getDslContext() {
 		return dslContext;
@@ -97,10 +93,6 @@ public class AONContext implements AutoCloseable {
 	public void checkWrite() {
 		if (!canWrite()) 
 			throw new SecurityException( AonError.WRITE_FORBIDDEN.getMessage() );	
-	}
-	
-	public void transaction(TransactionalRunnable transactional) {
-		getDslContext().transaction(transactional);
 	}
 	
 	@Override

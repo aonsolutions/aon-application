@@ -5,7 +5,9 @@ import java.util.Locale;
 import com.github.javafaker.Faker;
 
 import net.aonsolutions.occam.api.config.Audit;
+import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
+import net.aonsolutions.occam.api.config.DomainAudit;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
 
@@ -37,24 +39,35 @@ public class AonFaker {
 			.setId(AonRandom.integer(50))
 			.setName(AonRandom.string(50, 10))
 			.setDescription(AonRandom.string(50, 10))
-			.setOwner((AonRandom.string(50, 10)))
 			.setParent( AonRandom.gt(50) ? getDomain() : null)
 			.setType(AonRandom.getDomainType(20).orElse(null))
-			.setSubDomainSuffix(AonRandom.string(50, 10))
 			.setEnableHeredity(AonRandom.gt(50))
-			.setDomainManagement(AonRandom.gt(50))
-			.setDisableDomainManagement(AonRandom.gt(50))
 			.setActive(AonRandom.gt(50))
 			.setId(AonRandom.integer(50))
-			.setMaxDefinedUsers(AonRandom.integer(50))
-			.setLastAccessUser(AonRandom.string(50, 10))
-			.setLastAccessDate(AonRandom.getPastDate(50))
+			.setBooking( AonRandom.gt(50) ? getBooking() : null)
+			.setAudit( AonRandom.gt(50) ? getDomainAudit() : null)
+		;
+	}
+	public static Booking getBooking() {
+		return new Booking()
+			.setOwner((AonRandom.string(50, 10)))
 			.setExpirationDate(AonRandom.getPastDate(50))
-			.setAudit( AonRandom.gt(50) ? getAudit() : null)
+			.setDomainManagement(AonRandom.gt(50))
+			.setDisableDomainManagement(AonRandom.gt(50))
+			.setMaxDefinedUsers(AonRandom.integer(50))
 			.setAonCustomer(AonRandom.integer(50))
 			.setAonStatus(AonRandom.getAonStatus(20).orElse(null))
 		;
-		
+	}
+
+	public static DomainAudit getDomainAudit() {
+		return new DomainAudit()
+			.setLastAccessUser(AonRandom.string(50, 10))
+			.setLastAccessDate(AonRandom.getPastDate(50))
+			.setCreationUser(AonRandom.string(50, 10))
+			.setCreationDate(AonRandom.getPastDate(50))
+			.setModificationUser(AonRandom.string(50, 10))
+			.setModificationDate(AonRandom.getPastDate(50));
 	}
 
 	public static Audit getAudit() {

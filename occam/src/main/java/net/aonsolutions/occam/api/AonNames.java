@@ -73,6 +73,7 @@ public final class AonNames {
 	public static final String BIC = "bic";
 	public static final String BLOCKED = "blocked";
 	public static final String BORDER = "border";
+	public static final String BOOKING = "booking";
 	public static final String BOX_BORDER_COLOR = "boxBorderColor";
 	public static final String BOX_BODY_BACKGROUND_COLOR = "boxBodyBackgroundColor";
 	public static final String BOX_TITLE_BACKGROUND_COLOR = "boxTitleBackgroundColor";

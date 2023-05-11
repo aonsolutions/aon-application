@@ -11,46 +11,50 @@ import org.json.JSONObject;
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.AonNames;
-import net.aonsolutions.occam.api.config.Audit;
+import net.aonsolutions.occam.api.config.DomainAudit;
 
-public class AuditJSON {
+public class DomainAuditJSON {
 	
-	private AuditJSON() {
+	private DomainAuditJSON() {
 	}
 	
-	public static List<Audit> from(JSONArray array) {
+	public static List<DomainAudit> from(JSONArray array) {
 		if (array == null || array.isEmpty()) return new LinkedList<>();
 		return AonJSONUtils.stream(array)
-			.map(AuditJSON::from)
+			.map(DomainAuditJSON::from)
 			.toList();		
 	}
 	
-	public static Audit from(JSONObject json) {
+	public static DomainAudit from(JSONObject json) {
 		if (json == null) return null; 
-		return new Audit()
+		return new DomainAudit()
+			.setLastAccessUser(AonJSONUtils.getString(json, AonNames.LAST_ACCESS_USER))
+			.setLastAccessDate(AonJSONUtils.getDateTime(json, AonNames.LAST_ACCESS_DATE))
 			.setCreationUser( AonJSONUtils.getString(json, AonNames.CREATION_USER))
-			.setCreationDate(AonJSONUtils.getDate(json, AonNames.CREATION_DATE))
+			.setCreationDate(AonJSONUtils.getDateTime(json, AonNames.CREATION_DATE))
 			.setModificationUser(AonJSONUtils.getString(json, AonNames.MODIFICATION_USER))
 			.setModificationDate(AonJSONUtils.getDateTime(json, AonNames.MODIFICATION_DATE))
 		;
 	}
 	
-	public static JSONArray to(List<Audit> list) {
+	public static JSONArray to(List<DomainAudit> list) {
 		if (AonCollectionUtils.isEmpty(list)) return new JSONArray();
 		return to(list.stream());
 	}
 	
-	public static JSONArray to(Stream<Audit> stream) {
+	public static JSONArray to(Stream<DomainAudit> stream) {
 		return stream
-			.map(AuditJSON::to)
+			.map(DomainAuditJSON::to)
 			.collect(Collector.of(JSONArray::new,JSONArray::put,JSONArray::put));
 	}
 	
-	public static JSONObject to(Audit audit) {
+	public static JSONObject to(DomainAudit audit) {
 		if (audit == null) return null;
 		return new JSONObject()
+			.putOpt(AonNames.LAST_ACCESS_DATE, AonJSONUtils.formatDateTime(audit.getLastAccessDate().orElse(null)))
+			.putOpt(AonNames.LAST_ACCESS_USER, audit.getLastAccessUser().orElse(null))
 			.putOpt(AonNames.CREATION_USER, audit.getCreationUser().orElse(null))
-			.putOpt(AonNames.CREATION_DATE, AonJSONUtils.formatDate(audit.getCreationDate().orElse(null)))
+			.putOpt(AonNames.CREATION_DATE, AonJSONUtils.formatDateTime(audit.getCreationDate().orElse(null)))
 			.putOpt(AonNames.MODIFICATION_USER, audit.getModificationUser().orElse(null))
 			.putOpt(AonNames.MODIFICATION_DATE, AonJSONUtils.formatDateTime(audit.getModificationDate().orElse(null)))
 			;

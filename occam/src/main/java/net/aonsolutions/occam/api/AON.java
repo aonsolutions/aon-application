@@ -40,22 +40,22 @@ public class AON {
 	// ******************************** [USER]
 	public static Optional<User> getUser(Occam occam, UserFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return SecurityDAO.get(ctx, filter);
+			return SecurityDAO.getUser(ctx, filter);
 		}
 	}
 	public static Optional<User> getUser(Occam occam, UserFilter filter, UserBuilderFactory factory) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return SecurityDAO.get(ctx, filter,  factory);
+			return SecurityDAO.getUser(ctx, filter,  factory);
 		}
 	}
 	public static Stream<User> getUsers(Occam occam, UserFilter filter) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return SecurityDAO.getStream(ctx, filter);
+			return SecurityDAO.getUserStream(ctx, filter);
 		}
 	}
 	public static Stream<User> getUsers(Occam occam, UserFilter filter, UserBuilderFactory factory) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return SecurityDAO.getStream(ctx, filter,  factory);
+			return SecurityDAO.getUserStream(ctx, filter,  factory);
 		}
 	}
 	

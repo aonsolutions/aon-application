@@ -8,7 +8,9 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
 	AonJSONUtilsTest.class
 	,AuditJSONTest.class
+	,DomainAuditJSONTest.class
 	,ScopeJSONTest.class
+	,BookingJSONTest.class
 	,UserJSONTest.class
 	,DomainJSONTest.class
 })

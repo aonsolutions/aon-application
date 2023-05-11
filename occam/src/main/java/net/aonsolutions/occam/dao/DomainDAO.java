@@ -26,8 +26,9 @@ import com.esferalia.aon.watson.util.Pair;
 
 import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.Filter.Property;
-import net.aonsolutions.occam.api.config.Audit;
+import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
+import net.aonsolutions.occam.api.config.DomainAudit;
 import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.api.filter.AonFacade.AonFillerBuilder;
@@ -139,16 +140,31 @@ public class DomainDAO {
 	private static class SelectBuilder implements DomainBuilder<SelectSelectStep<Record>> {
 		
 		private static final Field<?>[] DOMAIN_BASIC_FIELDS = new Field[]{
-			DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION
+			DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.TYPE
+			,DOMAIN.SCOPE,DOMAIN.ENABLEHEREDITY,DOMAIN.ACTIVE
 		};
 			
 		private static final Field<?>[] DOMAIN_PARENT_BASIC_FIELDS = new Field[]{
 			PARENT_DOMAIN.ID,PARENT_DOMAIN.NAME,PARENT_DOMAIN.DESCRIPTION
+			,PARENT_DOMAIN.TYPE,PARENT_DOMAIN.ACTIVE
 		};
 
 		private static final Field<?>[] DOMAIN_AUDIT_FIELDS = new Field[]{
-			DOMAIN.CREATION_USER,DOMAIN.CREATION_DATE,DOMAIN.MODIFICATION_USER,DOMAIN.MODIFICATION_DATE
+			DOMAIN.LASTACCESS_USER, DOMAIN.LASTACCESS_DATE,DOMAIN.CREATION_USER
+			,DOMAIN.CREATION_DATE,DOMAIN.MODIFICATION_USER,DOMAIN.MODIFICATION_DATE
+			
 		};
+		
+		private static final Field<?>[] DOMAIN_BOOKING_FIELDS = new Field[]{
+				DOMAIN.OWNER,
+				DOMAIN.EXPIRATIONDATE,
+				DOMAIN.DOMAINMANAGEMENT,
+				DOMAIN.DISABLEDOMAINMANAGEMENT,
+				DOMAIN.MAXDEFINEDUSERS,
+				DOMAIN.AONCUSTOMER,
+				DOMAIN.AONSTATUS
+		};
+
 		private SelectSelectStep<Record> select;
 
 		public SelectBuilder(AONContext ctx) {
@@ -173,15 +189,15 @@ public class DomainDAO {
 		}
 
 		@Override
-		public SelectBuilder withAllRow() {
-			this.select = select.select(DOMAIN.fields());
+		public SelectBuilder withBooking() {
+			this.select = select.select(DOMAIN_BOOKING_FIELDS);
 			return this;
 		}
 
 		@Override
 		public SelectBuilder full() {
-			withAllRow();
 			withParentDomain();
+			withBooking();
 			withAudit();
 			return this;
 		}
@@ -225,7 +241,7 @@ public class DomainDAO {
 
 		@Override public FromBuilder limit(int offest, int rows) { return this; }
 		@Override public FromBuilder withAudit() {return this; }
-		@Override public FromBuilder withAllRow() {return this; }
+		@Override public FromBuilder withBooking() {return this; }
 		
 		public SelectJoinStep<Record> build() {
 			return from;
@@ -244,7 +260,7 @@ public class DomainDAO {
 		@Override public WhereBuilder withParentDomain() {return this;}
 		@Override public WhereBuilder withUsers() {return this;}
 		@Override public WhereBuilder withAudit() {return this; }
-		@Override public WhereBuilder withAllRow() {return this; }
+		@Override public WhereBuilder withBooking() {return this; }
 		@Override public WhereBuilder full() {return this; }
 		
 		public SelectLimitStep<Record> build() {
@@ -276,7 +292,7 @@ public class DomainDAO {
 		@Override public LimitBuilder withParentDomain() {return this;}
 		@Override public LimitBuilder withUsers() {return this;}
 		@Override public LimitBuilder withAudit() {return this; }
-		@Override public LimitBuilder withAllRow() {return this; }
+		@Override public LimitBuilder withBooking() {return this; }
 		@Override public LimitBuilder full() {return this; }
 		
 		public ResultQuery<Record> build() {
@@ -287,7 +303,7 @@ public class DomainDAO {
 	private static class FillerBuilder implements DomainBuilder<Function<Record, DomainMapper>>,AonFillerBuilder<Domain> {
 		private UnaryOperator<DomainMapper> withAudit = t -> t;
 		private UnaryOperator<DomainMapper> withParent = t -> t;
-		private UnaryOperator<DomainMapper> withAllRow = t -> t;
+		private UnaryOperator<DomainMapper> withBooking = t -> t;
 		
 		@Override
 		public Function<Record, DomainMapper> build() {
@@ -296,15 +312,21 @@ public class DomainDAO {
 		
 		@Override
 		public Domain build(Record rec) {
+			
 			Function<Record, DomainMapper> f = DomainMapper::new;
 			return f.andThen( mapper -> {
 					mapper.getDomain()
 					.setId(FillerUtils.getValue(mapper.getRecord(),DOMAIN.ID))
 					.setName(FillerUtils.getValue(mapper.getRecord(),DOMAIN.NAME))
-					.setDescription(FillerUtils.getValue(mapper.getRecord(),DOMAIN.DESCRIPTION));
+					.setDescription(FillerUtils.getValue(mapper.getRecord(),DOMAIN.DESCRIPTION))
+					.setType( DomainType.safeValueOf( FillerUtils.getValue(mapper.getRecord(),DOMAIN.TYPE)).orElse(null))
+					.setScope( FillerUtils.getValue(mapper.getRecord(),SCOPE.ID) == null ? null : new ScopeFiller().apply(mapper.getRecord()))
+					.setEnableHeredity(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.ENABLEHEREDITY))
+					.setActive(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.ACTIVE))
+					;
 					return mapper;
 				})
-				.andThen( withAllRow)
+				.andThen( withBooking )
 				.andThen( withAudit )
 				.andThen( withParent )
 				.apply(rec)
@@ -316,7 +338,9 @@ public class DomainDAO {
 		@Override
 		public DomainBuilder<Function<Record, DomainMapper>> withAudit() {
 			withAudit = mapper -> {
-				mapper.getDomain().setAudit(new Audit()
+				mapper.getDomain().setAudit(new DomainAudit()
+					.setLastAccessUser(FillerUtils.getValue(mapper.getRecord(), DOMAIN.LASTACCESS_USER))
+					.setLastAccessDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.LASTACCESS_DATE))
 					.setCreationUser(FillerUtils.getValue(mapper.getRecord(), DOMAIN.CREATION_USER))
 					.setCreationDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.CREATION_DATE))
 					.setModificationUser(FillerUtils.getValue(mapper.getRecord(), DOMAIN.MODIFICATION_USER))
@@ -330,33 +354,32 @@ public class DomainDAO {
 		@Override
 		public DomainBuilder<Function<Record, DomainMapper>> withParentDomain() {
 			withParent = mapper -> {
-				mapper.getDomain().setParent(new Domain()
-					.setId(FillerUtils.getValue(mapper.getRecord(), PARENT_DOMAIN.PARENT))
-					.setName(FillerUtils.getValue(mapper.getRecord(), PARENT_DOMAIN.NAME))
-					.setDescription(FillerUtils.getValue(mapper.getRecord(), PARENT_DOMAIN.DESCRIPTION)));
+				mapper.getDomain().setParent(
+					FillerUtils.getValue(mapper.getRecord(),DOMAIN.PARENT) == null 
+					? null 
+					: new Domain()
+						.setId(FillerUtils.getValue(mapper.getRecord(), PARENT_DOMAIN.PARENT))
+						.setName(FillerUtils.getValue(mapper.getRecord(), PARENT_DOMAIN.NAME))
+						.setDescription(FillerUtils.getValue(mapper.getRecord(), PARENT_DOMAIN.DESCRIPTION))
+						.setType( DomainType.safeValueOf( FillerUtils.getValue(mapper.getRecord(),PARENT_DOMAIN.TYPE)).orElse(null))
+						.setActive(FillerUtils.getBoolean(mapper.getRecord(), PARENT_DOMAIN.ACTIVE))
+				);
 				return mapper;
 			};
 			return this;
 		}
 		
 		@Override
-		public DomainBuilder<Function<Record, DomainMapper>> withAllRow() {
-			withAllRow = mapper -> {
-				mapper.getDomain()
-					.setType( DomainType.safeValueOf( FillerUtils.getValue(mapper.getRecord(),DOMAIN.TYPE)).orElse(null))
-					.setScope( FillerUtils.getValue(mapper.getRecord(),SCOPE.ID) == null ? null : new ScopeFiller().apply(mapper.getRecord()))
-					.setSubDomainSuffix(FillerUtils.getValue(mapper.getRecord(),DOMAIN.SUBDOMAINSUFFIX))
-					.setEnableHeredity(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.ENABLEHEREDITY))
+		public DomainBuilder<Function<Record, DomainMapper>> withBooking() {
+			withBooking = mapper -> {
+				mapper.getDomain().setBooking(new Booking()
+					.setOwner(FillerUtils.getValue(mapper.getRecord(), DOMAIN.OWNER))
+					.setExpirationDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.EXPIRATIONDATE))
 					.setDomainManagement(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.DOMAINMANAGEMENT))
 					.setDisableDomainManagement(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.DISABLEDOMAINMANAGEMENT))
 					.setMaxDefinedUsers(FillerUtils.getValue(mapper.getRecord(),DOMAIN.MAXDEFINEDUSERS))
-					.setActive(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.ACTIVE))
-					.setOwner(FillerUtils.getValue(mapper.getRecord(), DOMAIN.OWNER))
-					.setExpirationDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.EXPIRATIONDATE))
-					.setLastAccessUser(FillerUtils.getValue(mapper.getRecord(), DOMAIN.LASTACCESS_USER))
-					.setLastAccessDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.LASTACCESS_DATE))
 					.setAonCustomer(FillerUtils.getValue(mapper.getRecord(),DOMAIN.AONCUSTOMER))
-					.setAonStatus( AonStatus.safeValueOf( FillerUtils.getValue(mapper.getRecord(),DOMAIN.AONSTATUS)).orElse(null))
+					.setAonStatus( AonStatus.safeValueOf( FillerUtils.getValue(mapper.getRecord(),DOMAIN.AONSTATUS)).orElse(null)))
 				;
 				return mapper;
 			};
@@ -365,7 +388,7 @@ public class DomainDAO {
 
 		@Override
 		public DomainBuilder<Function<Record, DomainMapper>> full() {
-			withAllRow();
+			withBooking();
 			withParentDomain();
 			withAudit();
 			return null;

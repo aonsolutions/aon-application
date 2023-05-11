@@ -1,11 +1,14 @@
 package net.aonsolutions.occam.test.core;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Stack;
 import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -13,6 +16,10 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
+
+import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.AonLogger;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
@@ -21,13 +28,32 @@ import net.aonsolutions.occam.test.TimingExtension;
 class AonContextTest extends AbstractOccamTest {
 	
 	@Test()
+	void instanceTest() {
+		AONContext aonContext = assertDoesNotThrow(() -> AONContext.getAONContext(DOMAIN_NAME,USER));
+		aonContext.close();
+		String wrongDomainName = "INVALID_DOMAIN";
+		AonCoreException e = assertThrows(AonCoreException.class, () -> AONContext.getAONContext(wrongDomainName,USER));
+		assertEquals("No es posible encontrar el dominio: "+wrongDomainName, e.getMessage());
+	}
+
+	@Test()
 	void canReadTest() {
 		Boolean canRead = ctx.canReadForTests();
 		try {
 			ctx.denyRead();
 			assertFalse( ctx.canRead() );
+			SecurityException e = assertThrows(SecurityException.class, () -> ctx.checkRead());
+			assertEquals(AonError.READ_FORBIDDEN.getMessage(), e.getMessage());
+			
+			ctx.setCanReadValueForTests( null );
+			assertTrue( ctx.canRead() );
+			assertDoesNotThrow(() -> ctx.checkRead());
+
 			ctx.allowRead();
 			assertTrue( ctx.canRead() );
+			
+			assertDoesNotThrow(() -> ctx.checkRead());
+			
 		} finally {
 			ctx.setCanReadValueForTests(  canRead );	
 		}
@@ -39,8 +65,17 @@ class AonContextTest extends AbstractOccamTest {
 		try {
 			ctx.denyWrite();
 			assertFalse( ctx.canWrite() );
+			SecurityException e = assertThrows(SecurityException.class, () -> ctx.checkWrite());
+			assertEquals(AonError.WRITE_FORBIDDEN.getMessage(), e.getMessage());
+			
+			ctx.setCanWriteValueForTests( null );
+			assertTrue( ctx.canWrite() );
+			assertDoesNotThrow(() -> ctx.checkWrite());
+
 			ctx.allowWrite();
 			assertTrue( ctx.canWrite() );
+			
+			assertDoesNotThrow(() -> ctx.checkWrite());
 		} finally {
 			ctx.setCanWriteValueForTests(  canWrite );	
 		}
@@ -69,37 +104,51 @@ class AonContextTest extends AbstractOccamTest {
 			l.addHandler(handler);
 			AonLogger testLogger = new AonLogger(l, DOMAIN_NAME);
 			ctx.setLoggerForTests(testLogger);
-			
-			if (l.isLoggable(Level.FINE)) {
-				ctx.log().debug("Testing Loggers: DEBUG MESSAGE");
-				assertEquals(AonLogger.DEB, handler.pop());
-				ctx.log().debug("Testing Loggers: DEBUG MESSAGE {0}", "param");
-				assertEquals(AonLogger.DEB, handler.pop());
-			}
-
-			if (l.isLoggable(Level.WARNING)) {
-				ctx.log().warn("Testing Loggers: WARN MESSAGE");
-				assertEquals(AonLogger.WAR, handler.pop());
-				ctx.log().warn("Testing Loggers: WARN MESSAGE {0}", "param");
-				assertEquals(AonLogger.WAR, handler.pop());
-			}
-			
-			if (l.isLoggable(Level.INFO)) {
-				ctx.log().info("Testing Loggers: INFO MESSAGE");
-				assertEquals(AonLogger.INF, handler.pop());
-				ctx.log().info("Testing Loggers: INFO MESSAGE {0}", "param");
-				assertEquals(AonLogger.INF, handler.pop());
-			}
-			
-			if (l.isLoggable(Level.SEVERE)) {
-				ctx.log().error("Testing Loggers: ERROR MESSAGE");
-				assertEquals(AonLogger.ERR, handler.pop());
-				ctx.log().error("Testing Loggers: ERROR MESSAGE {0}", "param");
-				assertEquals(AonLogger.ERR, handler.pop());
+			Logger root = Logger.getLogger("");
+			Level originalLevel = root.getLevel();
+			try {
+				setLevel(Level.FINE);
+				if (l.isLoggable(Level.FINE)) {
+					ctx.log().debug("Testing Loggers: DEBUG MESSAGE");
+					assertEquals(AonLogger.DEB, handler.pop());
+					ctx.log().debug("Testing Loggers: DEBUG MESSAGE {0}", "param");
+					assertEquals(AonLogger.DEB, handler.pop());
+				}
+				setLevel(Level.WARNING);
+				if (l.isLoggable(Level.WARNING)) {
+					ctx.log().warn("Testing Loggers: WARN MESSAGE");
+					assertEquals(AonLogger.WAR, handler.pop());
+					ctx.log().warn("Testing Loggers: WARN MESSAGE {0}", "param");
+					assertEquals(AonLogger.WAR, handler.pop());
+				}
+				setLevel(Level.INFO);
+				if (l.isLoggable(Level.INFO)) {
+					ctx.log().info("Testing Loggers: INFO MESSAGE");
+					assertEquals(AonLogger.INF, handler.pop());
+					ctx.log().info("Testing Loggers: INFO MESSAGE {0}", "param");
+					assertEquals(AonLogger.INF, handler.pop());
+				}
+				setLevel(Level.SEVERE);
+				if (l.isLoggable(Level.SEVERE)) {
+					ctx.log().error("Testing Loggers: ERROR MESSAGE");
+					assertEquals(AonLogger.ERR, handler.pop());
+					ctx.log().error("Testing Loggers: ERROR MESSAGE {0}", "param");
+					assertEquals(AonLogger.ERR, handler.pop());
+				}
+			} finally {
+				setLevel(originalLevel);			
 			}
 		} finally {
 			ctx.setLoggerForTests(logger);
 		}
 	}
-	
+
+	private static void setLevel(Level targetLevel) {
+	      Logger root = Logger.getLogger("");
+	      root.setLevel(targetLevel);
+	      for (Handler handler : root.getHandlers()) {
+	          handler.setLevel(targetLevel);
+	      }
+	      System.out.println("Level set: " + targetLevel.getName());
+	  }
 }

@@ -59,4 +59,10 @@ class ActivityTest extends AbstractOccamTest {
 		assertFalse(a.isDirty());
 	}
 	
+	@Test()
+	void selectedMarkTest() {
+		Activity a = new Activity();
+		a.setSelected( true );
+		assertTrue(a.isSelected());
+	}
 }

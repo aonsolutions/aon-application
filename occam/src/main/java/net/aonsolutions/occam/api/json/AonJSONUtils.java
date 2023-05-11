@@ -1,9 +1,10 @@
 package net.aonsolutions.occam.api.json;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -15,13 +16,12 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AonJSONUtils {
-	private static final Logger LOGGER = Logger.getLogger(AonJSONUtils.class.getName());
-	
-	public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-	public static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static final String DATE_PATTERN = "yyyy-MM-dd";
+	private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_PATTERN);
+	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN);
 	
 	private AonJSONUtils() {
-	
 	}
 	
 	public static Stream<JSONObject> stream(JSONArray array) {
@@ -59,42 +59,28 @@ public class AonJSONUtils {
 		return false;
 	}
 	
-	public static Date getDate(JSONObject json, String key ) throws ParseException {
-		if(json != null && AonStringUtils.isNotBlank(getString(json, key))) { 
-			return DATE_FORMAT.parse(json.optString(key, null));
+	public static Date getDate(JSONObject json, String key ) {
+		if(json != null && AonStringUtils.isNotBlank(getString(json, key))) {
+			LocalDate ld = LocalDate.parse( json.optString(key, null), DATE_FORMATTER);
+			return Date.from(ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		}
 		return null;
-	}
-	public static Date getSilentDate(JSONObject json, String key ) {
-		try {
-			return getDate(json, key);
-		} catch (ParseException e) {
-			LOGGER.warning("JSON Date Parse error " + e.getMessage() );
-			return null;
-		}
 	}
 	public static String formatDate(Date date) {
 		if (date == null) return null;
-		return DATE_FORMAT.format(date);
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().format(DATE_FORMATTER);
 	}
 	
-	public static Date getDateTime(JSONObject json, String key ) throws ParseException {
+	public static Date getDateTime(JSONObject json, String key ) {
 		if(json != null && AonStringUtils.isNotBlank(getString(json, key))) { 
-			return DATE_TIME_FORMAT.parse(json.optString(key, null));
+			LocalDateTime ld = LocalDateTime.parse( json.optString(key, null), DATE_TIME_FORMATTER);
+			return Date.from(ld.atZone(ZoneId.systemDefault()).toInstant());
 		}
 		return null;
 	}
-	public static Date getSilentDateTime(JSONObject json, String key ) {
-		try {
-			return getDateTime(json, key);
-		} catch (ParseException e) {
-			LOGGER.warning("JSON Date Parse error " + e.getMessage() );
-			return null;
-		}
-	}
 	public static String formatDateTime(Date date) {
 		if (date == null) return null;
-		return DATE_TIME_FORMAT.format(date);
+		return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().format(DATE_TIME_FORMATTER);
 	}
 
 }

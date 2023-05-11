@@ -49,7 +49,7 @@ public class DomainFacade {
 		DomainBuilder<T> limit(int offset, int rows);
 		DomainBuilder<T> withParentDomain();
 		DomainBuilder<T> withAudit();
-		DomainBuilder<T> withAllRow();
+		DomainBuilder<T> withBooking();
 		DomainBuilder<T> full();
 		DomainBuilder<T> withUsers();
 		T build();
@@ -72,8 +72,8 @@ public class DomainFacade {
 			builders.stream().forEach( b -> b.withAudit());
 			return this;
 		}
-		public DomainBuilder<T> withAllRow(){
-			builders.stream().forEach( b -> b.withAllRow());
+		public DomainBuilder<T> withBooking(){
+			builders.stream().forEach( b -> b.withBooking());
 			return this;
 		}
 		public DomainBuilder<T> withUsers(){

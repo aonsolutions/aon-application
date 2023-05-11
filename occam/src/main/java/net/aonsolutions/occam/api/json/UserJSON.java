@@ -1,5 +1,6 @@
 package net.aonsolutions.occam.api.json;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collector;
@@ -36,7 +37,7 @@ public class UserJSON {
 		;
 	}
 	
-	public static JSONArray to(List<User> list) {
+	public static JSONArray to(Collection<User> list) {
 		if (AonCollectionUtils.isEmpty(list)) return null;
 		return to(list.stream());
 	}

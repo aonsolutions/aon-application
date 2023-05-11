@@ -13,7 +13,6 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.config.Domain;
-import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.DomainType;
 
 public class DomainJSON {
@@ -34,22 +33,13 @@ public class DomainJSON {
 			.setId(AonJSONUtils.getInteger(json, AonNames.ID))
 			.setName(AonJSONUtils.getString(json, AonNames.NAME))
 			.setDescription(AonJSONUtils.getString(json, AonNames.DESCRIPTION))
-			.setOwner(AonJSONUtils.getString(json, AonNames.OWNER))
 			.setParent(DomainJSON.from(AonJSONUtils.getObject(json, AonNames.PARENT)))
 			.setType( DomainType.safeValueOf(AonJSONUtils.getString(json, AonNames.TYPE)).orElse(null) )
-			.setSubDomainSuffix(AonJSONUtils.getString(json, AonNames.SUBDOMAIN_SUFFIX))
 			.setEnableHeredity(AonJSONUtils.getBoolean(json, AonNames.ENABLE_HEREDITY))
-			.setDomainManagement(AonJSONUtils.getBoolean(json, AonNames.DOMAIN_MANAGEMENT))
-			.setDisableDomainManagement(AonJSONUtils.getBoolean(json, AonNames.DISABLE_DOMAIN_MANAGEMENT))
 			.setActive(AonJSONUtils.getBoolean(json, AonNames.ACTIVE))
 			.setScope(ScopeJSON.from(AonJSONUtils.getObject(json, AonNames.SCOPE)))
-			.setMaxDefinedUsers(AonJSONUtils.getInteger(json, AonNames.MAX_DEFINED_USERS))
-			.setLastAccessUser(AonJSONUtils.getString(json, AonNames.LAST_ACCESS_USER))
-			.setLastAccessDate(AonJSONUtils.getSilentDateTime(json, AonNames.LAST_ACCESS_DATE))
-			.setExpirationDate(AonJSONUtils.getSilentDate(json, AonNames.EXPIRATION_DATE))
-			.setAonCustomer(AonJSONUtils.getInteger(json, AonNames.AON_CUSTOMER))  
-			.setAonStatus( AonStatus.safeValueOf(AonJSONUtils.getString(json, AonNames.AON_STATUS)).orElse(null) )
-			.setAudit( AuditJSON.from(AonJSONUtils.getObject(json, AonNames.AUDIT)))
+			.setBooking( BookingJSON.from(AonJSONUtils.getObject(json, AonNames.BOOKING)))
+			.setAudit( DomainAuditJSON.from(AonJSONUtils.getObject(json, AonNames.AUDIT)))
 			.setUsers(UserJSON.from(AonJSONUtils.getArray(json, AonNames.USERS)))
 		;
 	}
@@ -71,22 +61,13 @@ public class DomainJSON {
 			.put(AonNames.ID, domain.getId())
 			.put(AonNames.NAME, domain.getName())
 			.put(AonNames.DESCRIPTION, domain.getDescription())
-			.putOpt(AonNames.OWNER, domain.getOwner().orElse(null))
 			.putOpt(AonNames.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), DomainJSON::to ) )
 			.putOpt(AonNames.TYPE, AonObjectUtils.ifOptionalPresent(domain.getType(), Object::toString) )
-			.putOpt(AonNames.SUBDOMAIN_SUFFIX, domain.getSubDomainSuffix().orElse(null))
 			.putOpt(AonNames.ENABLE_HEREDITY, domain.isEnableHeredity().orElse(null))
-			.putOpt(AonNames.DOMAIN_MANAGEMENT, domain.isDomainManagement().orElse(null))
-			.putOpt(AonNames.DISABLE_DOMAIN_MANAGEMENT, domain.isDisableDomainManagement().orElse(null))
 			.putOpt(AonNames.ACTIVE, domain.isActive().orElse(null))
 			.putOpt(AonNames.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), ScopeJSON::to ) )
-			.putOpt(AonNames.MAX_DEFINED_USERS, domain.getMaxDefinedUsers().orElse(null))
-			.putOpt(AonNames.LAST_ACCESS_USER, domain.getLastAccessUser().orElse(null))
-			.putOpt(AonNames.LAST_ACCESS_DATE, AonJSONUtils.formatDateTime(domain.getLastAccessDate().orElse(null)))
-			.putOpt(AonNames.EXPIRATION_DATE, AonJSONUtils.formatDate(domain.getExpirationDate().orElse(null)))
-			.putOpt(AonNames.AON_STATUS, AonObjectUtils.ifOptionalPresent(domain.getAonStatus(), Object::toString) )
-			.putOpt(AonNames.AON_CUSTOMER, domain.getAonCustomer().orElse(null))
-			.putOpt(AonNames.AUDIT, AuditJSON.to(domain.getAudit().orElse(null)))
+			.putOpt(AonNames.BOOKING, BookingJSON.to(domain.getBooking().orElse(null)))
+			.putOpt(AonNames.AUDIT, DomainAuditJSON.to(domain.getAudit().orElse(null)))
 			.putOpt(AonNames.USERS, UserJSON.to(domain.getUsers().orElse(null)))
 			;
 	}

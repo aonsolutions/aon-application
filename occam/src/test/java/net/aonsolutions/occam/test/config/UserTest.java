@@ -1,6 +1,8 @@
 package net.aonsolutions.occam.test.config;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -62,6 +64,27 @@ class UserTest extends AbstractOccamTest {
 		d.setId( null );
 		d.setName( null );
 		assertFalse(d.isDirty());
+	}
+	
+	@Test()
+	void selectedMarkTest() {
+		User d = new User();
+		d.setSelected( true );
+		assertTrue(d.isSelected());
+	}
+	
+	@Test()
+	void equalsTest() {
+		User d1 = new User();
+		User d2 = null;
+		assertNotEquals(d1,d2);
+		assertEquals(d1,d1);
+		d2 = new User();
+		assertEquals(d1,d2);
+		d1.setId(1);
+		assertNotEquals(d1,d2);
+		d2.setId(1);
+		assertEquals(d1,d2);
 	}
 	
 }

@@ -5,7 +5,6 @@ import static com.esferalia.aon.jooq.tables.Iae.IAE;
 
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.jooq.Record;
 
@@ -21,10 +20,6 @@ public class ActivityDAO {
 
 		@Override
 		public Optional<Activity> apply(Record r) {
-			return map(r, () -> Optional.of(new Activity()));
-		}
-		
-		Optional<Activity> map(Record r, Supplier<Optional<Activity>> supplier) {
 			Activity act = new Activity()
 				.setId(r.getValue(ENTERPRISE_ACTIVITY.ID))
 				.setDomain(r.getValue(ENTERPRISE_ACTIVITY.DOMAIN))

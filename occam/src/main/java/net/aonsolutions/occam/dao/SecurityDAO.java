@@ -1,11 +1,15 @@
 package net.aonsolutions.occam.dao;
 
+import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -22,15 +26,17 @@ import com.esferalia.aon.watson.util.AonCollectionUtils;
 
 import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.Filter.Property;
+import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
 import net.aonsolutions.occam.api.filter.UserFacade.UserBuilder;
 import net.aonsolutions.occam.api.filter.UserFacade.UserBuilderFactory;
 import net.aonsolutions.occam.api.filter.UserFacade.UserFilter;
 import net.aonsolutions.occam.api.filter.UserFacade.UserFilters;
+import net.aonsolutions.occam.dao.ScopeDAO.ScopeFiller;
 
 public class SecurityDAO {
 	
-	public static final Field<?>[] USER_BASIC_FIELDS = new Field[]{
+	static final Field<?>[] USER_BASIC_FIELDS = new Field[]{
 		USER.ID,USER.DOMAIN,USER.NAME,USER.LOGIN,USER.ACTIVE
 	};
 
@@ -47,19 +53,19 @@ public class SecurityDAO {
 		@Override public Property<Byte> withActive() {return new PropertyDAO<>(USER.ACTIVE);}
 	}
 	
-	public static Optional<User> get(AONContext ctx, UserFilter filter){
-		return get(ctx, filter, b -> b); 
+	public static Optional<User> getUser(AONContext ctx, UserFilter filter){
+		return getUser(ctx, filter, b -> b); 
 	}
 	
-	public static Optional<User> get(AONContext ctx, UserFilter filter, UserBuilderFactory factory){
-		return getStream(ctx, filter, factory).findFirst(); 
+	public static Optional<User> getUser(AONContext ctx, UserFilter filter, UserBuilderFactory factory){
+		return getUserStream(ctx, filter, factory).findFirst(); 
 	}
 
-	public static Stream<User> getStream(AONContext ctx, UserFilter filter){
-		return getStream(ctx, filter, b -> b); 
+	public static Stream<User> getUserStream(AONContext ctx, UserFilter filter){
+		return getUserStream(ctx, filter, b -> b); 
 	}
 
-	public static Stream<User> getStream(AONContext ctx, UserFilter filter, UserBuilderFactory factory){
+	public static Stream<User> getUserStream(AONContext ctx, UserFilter filter, UserBuilderFactory factory){
 		ctx.checkRead();
 		DAOUtils.checkNullFactory(factory);
 		DAOUtils.checkNullFilter(filter);
@@ -131,29 +137,33 @@ public class SecurityDAO {
 		return getUserScopesCondition(ctx, field, ctx.getUser());
 	}
 	public static Condition getUserScopesCondition(AONContext ctx, Field<Integer> field, String userLogin ) {
-		return getUserScopesCondition(ctx, field, get(ctx, p -> p.withLogin().eq(userLogin))
+		return getUserScopesCondition(ctx, field, getUser(ctx, p -> p.withLogin().eq(userLogin))
 				.orElseThrow( () -> new IllegalAccessError(AonError.USER_NOT_FOUND.getMessage())));
 	}
 	public static Condition getUserScopesCondition(AONContext ctx, Field<Integer> field, Integer userId) {
-		return getUserScopesCondition(ctx, field, get(ctx, p -> p.withId().eq(userId) )
+		return getUserScopesCondition(ctx, field, getUser(ctx, p -> p.withId().eq(userId) )
 				.orElseThrow( () -> new IllegalAccessError(AonError.USER_NOT_FOUND.getMessage())));
 	}
 	public static Condition getUserScopesCondition (AONContext ctx, Field<Integer> field, User user) {
-		Integer[] scopes = getUserScopes(ctx,user);
-		return AonCollectionUtils.isEmpty(scopes)
+		Integer[] ids = getUserScopes(ctx,user)
+			.stream()
+			.map( Scope::getId )
+			.toArray(s -> new Integer[s]);
+		return AonCollectionUtils.isEmpty(ids)
 				? DSL.trueCondition() 
-				: field.isNull().or(field.in(scopes));
+				: field.isNull().or(field.in(ids));
 	}
-	public static Integer[] getUserScopes (AONContext ctx, User user) {
+	public static Collection<Scope> getUserScopes (AONContext ctx, User user) {
 		ctx.checkRead();
 		if (user == null) throw new IllegalAccessError(AonError.USER_INVALID.getMessage());
 		return ctx.getDslContext()
-			.select(USER_SCOPE.SCOPE)
+			.select(SCOPE.fields())
 			.from(USER_SCOPE)
+			.innerJoin(SCOPE).on(SCOPE.ID.eq(USER_SCOPE.SCOPE))
 			.where(USER_SCOPE.USER_ID.equal(user.getId()))
 			.fetch()
 			.stream()
-			.map( r -> r.getValue(USER_SCOPE.SCOPE) )
-			.toArray(s -> new Integer[s]);
+			.map( r -> new ScopeFiller().apply(r) )
+			.collect(Collectors.toCollection(LinkedHashSet::new));
 	} 
 }
