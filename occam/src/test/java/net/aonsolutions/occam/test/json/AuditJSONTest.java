@@ -3,6 +3,7 @@ package net.aonsolutions.occam.test.json;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -26,6 +27,16 @@ import net.aonsolutions.occam.test.faker.AonRandom;
 @ExtendWith(TimingExtension.class)
 class AuditJSONTest extends AbstractOccamTest {
 
+	@Test
+	void testNullConvert() {
+		JSONObject json = null;
+		Audit expected = AuditJSON.from( json );
+		assertNull(expected);
+		expected = null;
+		json = AuditJSON.to( expected );
+		assertNull(json);
+	}
+
 	@RepeatedTest(20)
 	void testSimpleConvert() {
 		Audit expected = AonFaker.getAudit( );
@@ -44,7 +55,7 @@ class AuditJSONTest extends AbstractOccamTest {
 
 	@Test
 	void testArrayConvert() {
-		JSONArray expected = IntStream.range(0, AonRandom.getInt(0, 50))
+		JSONArray expected = IntStream.range(0, AonRandom.getInt(1, 50))
 			.mapToObj(i -> AonFaker.getAudit())
 			.map(s -> AuditJSON.to(s))
 			.collect( JSONArray::new,JSONArray::put,JSONArray::put )

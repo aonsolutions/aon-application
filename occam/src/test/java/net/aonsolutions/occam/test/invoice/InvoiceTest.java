@@ -160,4 +160,13 @@ class InvoiceTest extends AbstractOccamTest {
 		assertNotNull(doc);
 		assertEquals(doc.length(), l, doc);
 	}
+	
+	
+	@Test()
+	void selectedMarkTest() {
+		Invoice a = new Invoice();
+		a.setSelected( true );
+		assertTrue(a.isSelected());
+	}
+	
 }

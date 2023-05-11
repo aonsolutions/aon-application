@@ -49,6 +49,7 @@ public class UserJSON {
 	}
 	
 	public static JSONObject to(User user) {
+		if (user == null) return null;
 		return new JSONObject()
 			.put(AonNames.ID, user.getId())
 			.put(AonNames.DOMAIN, user.getDomain())

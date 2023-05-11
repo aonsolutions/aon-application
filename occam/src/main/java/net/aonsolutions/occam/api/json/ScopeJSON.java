@@ -46,6 +46,7 @@ public class ScopeJSON {
 	}
 	
 	public static JSONObject to(Scope scope) {
+		if (scope == null) return null;
 		return new JSONObject()
 			.put(AonNames.ID, scope.getId())
 			.put(AonNames.DOMAIN, scope.getDomain())
