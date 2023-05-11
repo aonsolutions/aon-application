@@ -12,6 +12,7 @@ public class Booking implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	
 	private Domain domain;
 	private Company company;
 	private List<AonApp> apps;
@@ -19,6 +20,8 @@ public class Booking implements Serializable {
 	private Integer numberOfUsers;
 	private String payer;
 
+	private BookingResume resume;
+	
 	public Domain getDomain() {
 		return domain;
 	}
@@ -86,6 +89,15 @@ public class Booking implements Serializable {
 	
 	public Booking setPayer(String payer) {
 		this.payer = payer;
+		return this;
+	}
+	
+	public BookingResume getResume() {
+		return resume;
+	}
+	
+	public Booking setResume(BookingResume resume) {
+		this.resume = resume;
 		return this;
 	}
 }

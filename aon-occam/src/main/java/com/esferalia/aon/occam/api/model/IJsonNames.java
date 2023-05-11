@@ -458,6 +458,7 @@ public final class IJsonNames {
 	public static final String REPLACEMENT = "replacement";
 	public static final String RESERVATION = "reservation";
 	public static final String RESULT = "result";
+	public static final String RESUME = "resume";
 	public static final String RETENTION = "retention";
 	public static final String RETENTION_PERCENT = "retentionPercent";
 	public static final String RETURNED = "returned";
