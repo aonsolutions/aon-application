@@ -105,20 +105,20 @@ phases:
       # - command
       # - command
 reports:
-  occam-report-group: #payroll junit reports
-    files:
-      - '**/*'
-    base-directory: 'aon-occam/target/surefire-reports'
-  payroll-report-group: #payroll junit reports
-    files:
-      - 'aon-payroll/target/surefire-reports/**/*'
-      - 'aon-in-payroll/target/surefire-reports/**/*'
-      - 'aon-gwt-payroll/target/surefire-reports/**/*'
-  htmlunit-report-group: #htmlunit reports
-    files:
-      - '**/*'
-    base-directory: 'aon-htmlunit/target/surefire-reports'
-  coverage-report-group:
+#  occam-report-group: #payroll junit reports
+#    files:
+#      - '**/*'
+#    base-directory: 'aon-occam/target/surefire-reports'
+#  payroll-report-group: #payroll junit reports
+#    files:
+#      - 'aon-payroll/target/surefire-reports/**/*'
+#      - 'aon-in-payroll/target/surefire-reports/**/*'
+#      - 'aon-gwt-payroll/target/surefire-reports/**/*'
+#  htmlunit-report-group: #htmlunit reports
+#    files:
+#      - '**/*'
+#    base-directory: 'aon-htmlunit/target/surefire-reports'
+  occam-report-group:
     files:
       - 'occam/target/site/jacoco/jacoco.xml'
     file-format: 'JACOCOXML'
