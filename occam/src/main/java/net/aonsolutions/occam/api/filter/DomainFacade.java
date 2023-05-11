@@ -27,7 +27,6 @@ public class DomainFacade {
 		Property<Integer> withParent();
 		Property<Byte> withType();
 		Property<Integer> withScope();
-		Property<String> withSubDomainSuffix();
 		Property<Byte> withEnableHeredity();
 		Property<Byte> withDomainManagement();
 		Property<Byte> withDisableDomainManagement();

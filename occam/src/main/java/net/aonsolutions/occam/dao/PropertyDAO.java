@@ -68,8 +68,6 @@ public class PropertyDAO<T> implements Property<T> {
 	public Filter like(T t) {
 		if (t instanceof String tstring) {
 			return new FilterDAO(field.like(tstring));
-		} else if (t instanceof byte[] tbyte) {
-			return new FilterDAO(field.like(new String(tbyte)));
 		} else if (t instanceof Integer tint) {
 			return new FilterDAO(field.like("%" + AonNumberUtils.toString(tint) + "%"));
 		} else {

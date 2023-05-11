@@ -68,7 +68,6 @@ public class DomainDAO {
 		@Override public Property<Integer> withParent() {return new PropertyDAO<>(DOMAIN.PARENT);}
 		@Override public Property<Byte> withType() {return new PropertyDAO<>(DOMAIN.TYPE);}
 		@Override public Property<Integer> withScope() {return new PropertyDAO<>(DOMAIN.SCOPE);}
-		@Override public Property<String> withSubDomainSuffix() {return new PropertyDAO<>(DOMAIN.SUBDOMAINSUFFIX);}
 		@Override public Property<Byte> withEnableHeredity() {return new PropertyDAO<>(DOMAIN.ENABLEHEREDITY);}
 		@Override public Property<Byte> withDomainManagement() {return new PropertyDAO<>(DOMAIN.DOMAINMANAGEMENT);}
 		@Override public Property<Byte> withDisableDomainManagement() {return new PropertyDAO<>(DOMAIN.DISABLEDOMAINMANAGEMENT);}
