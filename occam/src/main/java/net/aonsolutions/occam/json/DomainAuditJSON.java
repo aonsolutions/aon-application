@@ -1,4 +1,4 @@
-package net.aonsolutions.occam.api.json;
+package net.aonsolutions.occam.json;
 
 import java.util.LinkedList;
 import java.util.List;

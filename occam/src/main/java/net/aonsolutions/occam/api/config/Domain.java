@@ -23,10 +23,10 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 	private String name;
 	private String description;
 	private DomainType type;
-	private Boolean active;
+	private boolean active;
 	private Scope scope;
 	private Domain parent;
-	private Boolean enableHeredity;
+	private boolean enableHeredity;
 	
 	private Booking booking;
 	private DomainAudit audit;
@@ -72,8 +72,8 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return this;
 	}
 	
-	public Optional<DomainType> getType() {
-		return Optional.ofNullable(type);
+	public DomainType getType() {
+		return type;
 	}
 	public Domain setType(DomainType type) {
 		this.dirtyMark( AonUtils.notEquals(this.type,type) );
@@ -81,8 +81,8 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return this;
 	}
 	
-	public Optional<Boolean> isEnableHeredity() {
-		return Optional.ofNullable(enableHeredity);
+	public boolean isEnableHeredity() {
+		return enableHeredity;
 	}
 	public Domain setEnableHeredity(Boolean enableHeredity) {
 		this.dirtyMark( AonUtils.notEquals(this.enableHeredity,enableHeredity) );
@@ -90,10 +90,10 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return this;
 	}
 
-	public Optional<Boolean> isActive() {
-		return Optional.ofNullable(active);
+	public boolean isActive() {
+		return active;
 	}
-	public Domain setActive(Boolean active) {
+	public Domain setActive(boolean active) {
 		this.dirtyMark( AonUtils.notEquals(this.active,active) );
 		this.active = active;
 		return this;

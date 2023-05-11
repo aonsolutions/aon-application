@@ -8,6 +8,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -22,6 +23,9 @@ import org.jooq.SelectLimitStep;
 import org.jooq.SelectSelectStep;
 import org.jooq.SelectWithTiesAfterOffsetStep;
 
+import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.esferalia.aon.watson.util.Pair;
 
 import net.aonsolutions.occam.api.AONContext;
@@ -420,4 +424,108 @@ public class DomainDAO {
 		return factory.create( getBuilder(ctx,filter)).build();
 	}
 	
+	public static Domain save(AONContext ctx, Domain domain) {
+		ctx.checkWrite();
+		DomainAutoComplete.autoComplete(ctx, domain);
+		DomainValidation.validate(ctx, domain);
+		if (domain.isDirty()) {
+			return (domain.getId() == null)
+				?insert(ctx,domain)
+				:update(ctx,domain);
+		} else {
+			ctx.log().debug("NOT SAVED DOMAIN (not dirty) id: {0}",domain.getId());
+		}
+		return domain;  
+	}
+	private static Domain insert(AONContext ctx, Domain domain) {
+		return domain;
+	}
+	private static Domain update(AONContext ctx, Domain domain) {
+		return domain;
+	}
+	
+	
+	private static class DomainAutoComplete {
+		
+		public static final BiConsumer<AONContext,Domain> COMPLETE_TYPE = (ctx,domain) -> {
+			if (domain.getType() == null) {
+				ctx.log().debug("\t saving domain: autocomplete type: ENTERPRISE");
+				domain.setType(DomainType.ENTERPRISE);
+			}
+		};
+ 
+		public static final BiConsumer<AONContext,Domain> COMPLETE_ENABLE_HEREDITY = (ctx,domain) -> {
+			if (domain.isEnableHeredity() && !domain.getParent().isPresent()) {
+				ctx.log().debug("\t saving domain: EnableHeredity to false (no parent)");
+				domain.setEnableHeredity(false);
+			}
+		};
+
+		public static void autoComplete(AONContext ctx, Domain domain) throws AonCoreException {
+			COMPLETE_TYPE
+				.andThen(COMPLETE_ENABLE_HEREDITY)
+				.accept(ctx, domain);
+		}
+
+	}
+	
+	private static class DomainValidation {
+		
+		public static final BiConsumer<AONContext,Domain> BOOKING_EMPTY = (ctx,domain) -> {
+			if (!domain.getBooking().isPresent()) {
+				throw new AonCoreException(AonError.DOMAIN_NO_BOOKING_INFO.getMessage());
+			}
+		};
+
+		public static final BiConsumer<AONContext,Domain> OWNER_EMPTY = (ctx,domain) -> {
+			Booking booking = domain.getBooking().get();
+			if (!booking.getOwner().isPresent()) {
+				throw new AonCoreException(AonError.DOMAIN_NO_OWNER.getMessage());	
+			} else {
+				if (AonStringUtils.length(booking.getOwner().get()) > DOMAIN.OWNER.getDataType().length() )
+					throw new AonCoreException(AonError.INVALID_LENGTH.format( "Creador", DOMAIN.OWNER.getDataType().length() ));
+			}
+		};
+
+		public static final BiConsumer<AONContext,Domain> OVERFLOW_OWNER = (ctx,domain) -> {
+			Booking booking = domain.getBooking().get();
+			if (booking.getOwner().isPresent()) {
+				if (AonStringUtils.length(booking.getOwner().get()) > DOMAIN.OWNER.getDataType().length() )
+					throw new AonCoreException(AonError.INVALID_LENGTH.format( "Creador", DOMAIN.OWNER.getDataType().length() ));
+			}
+		};
+
+		public static final BiConsumer<AONContext,Domain> OVERFLOW_NAME = (ctx,domain) -> {
+			if (AonStringUtils.length(domain.getName()) > DOMAIN.NAME.getDataType().length() )
+				throw new AonCoreException(AonError.INVALID_LENGTH.format( "Nombre", DOMAIN.NAME.getDataType().length() ));
+		};
+		
+		public static final BiConsumer<AONContext,Domain> OVERFLOW_DESCRIPTION = (ctx,domain) -> {
+			if (AonStringUtils.length(domain.getDescription()) > DOMAIN.DESCRIPTION.getDataType().length() )
+				throw new AonCoreException(AonError.INVALID_LENGTH.format( "Descripci\u00F3n", DOMAIN.DESCRIPTION.getDataType().length() ));
+		};
+		
+		public static void validate(AONContext ctx, Domain domain) throws AonCoreException{
+			BOOKING_EMPTY
+			.andThen(OWNER_EMPTY)
+			.andThen(OVERFLOW_OWNER)
+			.andThen(OVERFLOW_NAME)
+			.andThen(OVERFLOW_DESCRIPTION)
+			.accept(ctx, domain);
+		}
+		
+	}
+	
 }
+
+//| id                      | int(11)      | NO   | PRI | NULL    | auto_increment |
+//| name                    | varchar(253) | NO   | UNI | NULL    |                |
+//| description             | varchar(128) | NO   |     | NULL    |                |
+//| type                    | tinyint(4)   | NO   |     | 0       |                |
+//| enableHeredity          | tinyint(1)   | NO   |     | 0       |                |
+//| domainManagement        | tinyint(1)   | NO   |     | 0       |                |
+//| disableDomainManagement | tinyint(1)   | NO   |     | 0       |                |
+//| active                  | tinyint(1)   | NO   |     | 1       |                |
+		//| owner                   | varchar(256) | NO   |     | NULL    |                |
+//| aonStatus               | tinyint(4)   | NO   |     | 0       |                |
+//

@@ -50,6 +50,12 @@ public enum AonError implements Serializable{
 	,SECURITY_LEVEL_INVALID("Valor incorrecto para el enumerado 'Nivel de seguridad - Confidencial' ({0})")
 	,ACCOUNT_ENTRY_TYPE_INVALID("Valor incorrecto para el enumerado 'Tipo de asiento' ({0})")
 	
+	// ------------------------------------------------------
+	// --------------------- DOMAIN -------------------------
+	// ------------------------------------------------------
+	,DOMAIN_NO_BOOKING_INFO("No hay informaci\u00F3n de facturaci\u00F3n.")
+	,DOMAIN_NO_OWNER("No hay informaci\u00F3n sobre el creador del dominio.")
+
 	// -----------------------------------------------------------
 	// --------------------- REGISTRY --------------------------
 	// -----------------------------------------------------------

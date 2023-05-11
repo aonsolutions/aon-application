@@ -20,7 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-import net.aonsolutions.occam.api.json.AonJSONUtils;
+import net.aonsolutions.occam.json.AonJSONUtils;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
 

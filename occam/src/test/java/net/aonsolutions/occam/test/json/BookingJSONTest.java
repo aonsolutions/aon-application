@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import net.aonsolutions.occam.api.config.Booking;
-import net.aonsolutions.occam.api.json.BookingJSON;
+import net.aonsolutions.occam.json.BookingJSON;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;

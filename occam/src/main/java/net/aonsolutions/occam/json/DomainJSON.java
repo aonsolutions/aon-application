@@ -1,4 +1,4 @@
-package net.aonsolutions.occam.api.json;
+package net.aonsolutions.occam.json;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -62,9 +62,9 @@ public class DomainJSON {
 			.put(AonNames.NAME, domain.getName())
 			.put(AonNames.DESCRIPTION, domain.getDescription())
 			.putOpt(AonNames.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), DomainJSON::to ) )
-			.putOpt(AonNames.TYPE, AonObjectUtils.ifOptionalPresent(domain.getType(), Object::toString) )
-			.putOpt(AonNames.ENABLE_HEREDITY, domain.isEnableHeredity().orElse(null))
-			.putOpt(AonNames.ACTIVE, domain.isActive().orElse(null))
+			.putOpt(AonNames.TYPE, AonObjectUtils.ifNotNullDo(domain.getType(), Object::toString ))
+			.putOpt(AonNames.ENABLE_HEREDITY, domain.isEnableHeredity())
+			.putOpt(AonNames.ACTIVE, domain.isActive())
 			.putOpt(AonNames.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), ScopeJSON::to ) )
 			.putOpt(AonNames.BOOKING, BookingJSON.to(domain.getBooking().orElse(null)))
 			.putOpt(AonNames.AUDIT, DomainAuditJSON.to(domain.getAudit().orElse(null)))

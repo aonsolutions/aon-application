@@ -98,7 +98,7 @@ class DomainDAOTest extends AbstractOccamTest {
 				.and(p.withName().eq( expected.getName() )) 
 				.and(p.withDescription().eq( expected.getDescription() ))
 				.and(p.withParent().eq( AonObjectUtils.ifOptionalPresent(expected.getParent(), o -> o.getId()) ))
-				.and(p.withType().eq( AonEnumUtils.getOptEnumByte(expected.getType())))
+				.and(p.withType().eq( AonEnumUtils.getByte(expected.getType())))
 				.and(p.withScope().eq( AonObjectUtils.ifOptionalPresent(expected.getScope(), o -> o.getId()) ))
 				.and(p.withEnableHeredity().eq( AonEnumUtils.getByte(expected.isEnableHeredity())))
 				.and(p.withActive().eq( AonEnumUtils.getByte(expected.isActive())))
