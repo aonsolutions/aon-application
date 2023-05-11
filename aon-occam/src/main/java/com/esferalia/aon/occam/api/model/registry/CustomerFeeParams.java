@@ -11,6 +11,8 @@ public class CustomerFeeParams implements Serializable {
 	private Integer month;
 	private Integer year;
 	
+	private Byte periodicity;
+	
 	private String customer;
 	private Byte customerStatus;
 	
@@ -45,6 +47,13 @@ public class CustomerFeeParams implements Serializable {
 	}
 	public CustomerFeeParams setYear(Integer year) {
 		this.year = year;
+		return this;
+	}
+	public Byte getPeriodicity() {
+		return periodicity;
+	}
+	public CustomerFeeParams setPeriodicity(Byte periodicity) {
+		this.periodicity = periodicity;
 		return this;
 	}
 	public String getCustomer() {

@@ -27,6 +27,9 @@ public class ITDataPerson implements Serializable, Comparable {
 		COMMON_DISEASE_AT_LACK("Enfermedad Com\u00FAn Periodo de Carencia"),
 		COMMON_OCCUPATIONAL_DISEASE("Enfermedad Com\u00FAn, Prestaci\u00F3n Profesional (COVID-19)"),
 		OCCUPATIONAL_DISEASE_OBSERVATION("Periodo de Observaci\u00f3n por Enfermedad Profesional"),
+		MENSTRUATION("Menstruaci\u00F3n Incapacitante Secundaria"),
+		PREGNANCY_STOP("Interrupci\u00F3n del Embarazo"),
+		PREGNANCY_39_WEEK("Semana Trig\u00E9sima Novena de Gestaci\u00F3n"),
 		;
 		
 		private String description;

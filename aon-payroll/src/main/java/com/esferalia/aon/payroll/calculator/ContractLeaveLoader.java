@@ -117,6 +117,18 @@ public class ContractLeaveLoader {
 	}, new DaysRange(366), };
 	// @formatter:on
 
+	protected static final DaysRange[] getSexHealthRanges(Date start, ExpressionContext ctx, long parentDays) {
+	    	DaysRange [] ranges = new DaysRange[2];
+		ranges[0] = new DaysRange(1, 20);
+		ranges[1] = new DaysRange(21) {
+			@Override
+			public String getName(ContextVariable variable) {
+				return String.format("%s_%d", variable, start);
+			}
+		};
+		return ranges;
+	}
+
 	protected static final DaysRange[] getCommonRanges(Date start, ExpressionContext ctx, long parentDays) {
 		
 		Date directPayStart = getDirectPayStart(ctx, start);//ctx.getVariable(DIRECT_PAY_START, start, null, Date.class);
@@ -417,6 +429,51 @@ public class ContractLeaveLoader {
 			public Void visitCommonProfessionalDisease(LeaveType leaveType) {
 				return this.visitOcupationalDisease(leaveType);
 			}
+			
+			@Override
+			public Void visitMenstruation(LeaveType leaveType) {
+			    return visitSexHealth(ContextVariable.MENSTRUATION_DAYS);
+			}
+			
+			@Override
+			public Void visitPregnacyStop(LeaveType leaveType) {
+			    return visitSexHealth(ContextVariable.PREGNANCY_STOP_DAYS);
+			}
+			
+			@Override
+			public Void visitPregnacy39Week(LeaveType leaveType) {
+        			return visitSexHealth(ContextVariable.PREGNANCY_39_WEEK_DAYS);
+			}
+
+			private Void visitSexHealth(ContextVariable daysVariable) {
+				for (DaysRange range : getSexHealthRanges(start, exprCtx, parentDays)) {
+
+					String name = range.getName(daysVariable);
+
+					long days = range.getDays(parentDays, leaveDays);
+
+					if (days == 0) {
+						continue;
+					}
+
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(start);
+					calendar.add(Calendar.DATE, (int) (range.start - 1 - parentDays));
+					Date rangeStart = Period.max(calendar.getTime(), start);
+
+					calendar.setTime(rangeStart);
+					calendar.add(Calendar.DATE, (int) days - 1);
+					Date rangeEnd = calendar.getTime();
+
+					Date varStart = Period.max(rangeStart, start);
+					exprCtx.putVariable(name, new ExpressionContext.DaysVariable(varStart, rangeEnd));
+					exprCtx.putVariable(QUOTE_DAYS, new QuoteDays(exprCtx, start, end));
+					exprCtx.putVariable(SALARY_DAYS, new QuoteDays(exprCtx, start, end));
+				}
+				exprCtx.setVariable(ContextVariable.MENSTRUATION_DAYS, leaveDays, start, end);
+				return null;
+			}
+			
 
 			private void visit(ContextVariable factorVariable, ContextVariable daysVariable) {
 				List<ITimedVariable<Number>> factors = exprCtx.getVariables(factorVariable, start, end);
@@ -773,6 +830,21 @@ public class ContractLeaveLoader {
 
 			@Override
 			public Date visitCommonProfessionalDisease(LeaveType leaveType) {
+				return AonDateUtils.add(startDate, DAY_OF_MONTH,1);
+			}
+			
+			@Override
+			public Date visitMenstruation(LeaveType leaveType) {
+			    return startDate;
+			}
+			
+			@Override
+			public Date visitPregnacy39Week(LeaveType leaveType) {
+				return AonDateUtils.add(startDate, DAY_OF_MONTH,1);
+			}
+			
+			@Override
+			public Date visitPregnacyStop(LeaveType leaveType) {
 				return AonDateUtils.add(startDate, DAY_OF_MONTH,1);
 			}
 			

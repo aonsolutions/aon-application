@@ -297,6 +297,9 @@ public interface AonSolutionsCSS extends CssResource {
 	@ClassName("aon_icon_paste")
 	String aonIconPaste();
 	
+	@ClassName("aon_icon_tune")
+	String aonIconTune();
+	
 	@ClassName("aon_icon_pin")
 	String aonIconPin();
 	

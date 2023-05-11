@@ -4,8 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -35,7 +37,8 @@ import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.watson.server.io.ByteArrayOutputStream;
 
 @WebServlet(name = "DownloadTemplatesFee", urlPatterns = { "/aon_gwt_template/ms/gwt_download_fee/*"
-															 ,"/aon_gwt_aio/ms/gwt_download_fee/*"})
+															 ,"/aon_gwt_aio/ms/gwt_download_fee/*"
+															 ,"/aon_gwt_fiscal/ms/gwt_download_fee/*"})
 public class DownloadFeeServlet extends HttpServlet {
 
 	/**
@@ -243,17 +246,6 @@ public class DownloadFeeServlet extends HttpServlet {
 			filter = filter.and(f.getCustomerProperty().in(a));
 		}
 		
-//		if(filterJSON.opt("segment") != null) {
-//			JSONArray segment = filterJSON.optJSONArray("segment");
-//			if(segment.length() > 0) {
-//				Integer[] segments = new Integer[segment.length()];
-//				for (Integer i = 0; i < segment.length(); i++) {
-//					segments[i] = segment.getInt(i);
-//				}
-//				filter = filter.and(f.getSegmentProperty().in(segments));
-//			}
-//		}
-		
 		if(filterJSON.opt("seller") != null) {
 			Integer seller = filterJSON.optInt("seller");
 			filter = filter.and(f.getSellerProperty().eq(seller));
@@ -278,6 +270,27 @@ public class DownloadFeeServlet extends HttpServlet {
 			Integer period = filterJSON.optInt("period");
 			filter = filter.and(f.getPeriodProperty().eq(period.shortValue()));
 		}
+		
+		if(filterJSON.opt("price") != null) {
+			Double price = filterJSON.optDouble("price");
+			filter = filter.and(f.getPriceProperty().eq(price));
+		}
+		
+		if(filterJSON.opt("discount") != null) {
+			String discount = filterJSON.optString("discount");
+			filter = filter.and(f.getDiscountExprProperty().eq(discount));
+		}
+		
+		if(filterJSON.opt("feeIds") != null) {
+			 JSONObject feeIds = filterJSON.optJSONObject("feeIds");
+			 List<Integer> ids = new ArrayList<>();
+			 for(int i=0; i<feeIds.length(); i++) {
+				 ids.add(feeIds.optInt("feeId"+i));
+			 }
+			
+			filter = filter.and(f.getIdProperty().in(ids.toArray(Integer[]::new)));
+		}
+		
 		return filter;
 	
 	}
