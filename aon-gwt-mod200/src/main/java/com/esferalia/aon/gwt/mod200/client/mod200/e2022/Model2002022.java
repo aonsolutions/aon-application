@@ -405,13 +405,15 @@ public class Model2002022 extends DockLayoutPanel {
 			@Override
 			public void sendSuccessfully() {
 				// TODO Auto-generated method stub
-				// FALTA
+				// FALTA - RECARGAR EL MODELO UNA VEZ QUE SE HA ENVIADO CORRECTAMENTE A LA AEAT (SE HABRA GRABADO EL ESTADO Y EL NUMERO DE DECLARACION)
 				Model200.getMod2002022Service().getMod2002022ById(options.getOccam(), mod200Object.getMod200().getId()
 						, new AsyncCallback<Mod2002022>() {
 
 							@Override
 							public void onSuccess(Mod2002022 mod200) {
 								mod200Object.setMod200(mod200);
+								// ACTUALIZAR BOTONES DEL ESTADO
+								refreshButtonsVisibility();
 							}
 
 							@Override

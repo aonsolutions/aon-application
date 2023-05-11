@@ -9,6 +9,8 @@ import javax.servlet.annotation.WebServlet;
 import com.esferalia.aon.gwt.common.client.CommonService;
 import com.esferalia.aon.occam.api.ACCOUNTING;
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.AONContext;
+import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.Account;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.CompanyBank;
@@ -16,9 +18,11 @@ import com.esferalia.aon.occam.api.model.Enterprise;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.config.ConfigParams;
 import com.esferalia.aon.occam.api.model.finance.PayMethod;
+import com.esferalia.aon.occam.api.model.fiscal.IFiscalModel;
 import com.esferalia.aon.occam.api.model.product.OldProduct;
 import com.esferalia.aon.occam.api.model.registry.InvoiceRegistry;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.impl.jooq.dao.DataResponseDAO;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -162,5 +166,14 @@ public class CommonServiceImpl extends AonStatelessRemoteServiceServlet implemen
 						.or(p.getCodeProperty().like(q))
 				).collect(Collectors.toCollection(LinkedList::new));
 	}
+	
+	// Para carga del PDF del modelo
+	@Override
+	public void savePDFModel(Occam occam, IFiscalModel model, String data) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(occam)) {
+			DataResponseDAO.insertPDFModel(ctx, model, data);
+		} 
+	}
+
 	
 }

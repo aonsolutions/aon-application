@@ -2,6 +2,10 @@ package com.esferalia.aon.gwt.mod200.client;
 
 import com.esferalia.aon.gwt.api.client.API;
 import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.CommonService;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsync;
+import com.esferalia.aon.gwt.common.client.CommonServiceAsyncDecorator;
+import com.esferalia.aon.gwt.common.client.widget.Upload;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonSplash;
@@ -20,6 +24,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.typedarrays.shared.ArrayBuffer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -490,43 +495,43 @@ public class FiscalModel200AdmonPanel extends DockLayoutPanel {
 	
 	protected void uploadPDFData() {
 		// FALTA - MOVER EL CODIGO de FiscalMSService a CommonService
-//		if (!uploadingPDFData) {
-//			if (!getCallback().getModel().isSent()) {
-//				getCallback().showError("El modelo no est\u00E1 presentado.");	
-//			} else {
-//				cleanViewers();
-//				
-//				Upload upload = new Upload() {
-//					
-//					@Override
-//					protected void onUpload(String data) {
-//						uploadingPDFData = true;
-//						
-//						// Grabar el fichero en data_response - data_attach
-//						CommonServiceAsync serviceRaw = GWT.create(CommonService.class);
-//						CommonServiceAsync service = new CommonServiceAsyncDecorator(serviceRaw);
-//						
-//						service.savePDFModel(getCallback().getOptions().getOccam(), getCallback().getModel(),  data,
-//								new AsyncCallback<Void>() {
-//									
-//									@Override
-//									public void onSuccess(Void result) {										
-//										uploadingPDFData = false;
-//										// Si se ha cargado de forma correcta, se muestra en pantalla
-//										checkDataResponseData();
-//									}
-//									
-//									@Override
-//									public void onFailure(Throwable caught) {										
-//										uploadingPDFData = false;
-//										getCallback().showError("Error al cargar el archivo.");
-//									}
-//								});
-//					}							
-//				};
-//				upload.upload();				
-//			}
-//		}
+		if (!uploadingPDFData) {
+			if (!getCallback().getModel().isSent()) {
+				getCallback().showError("El modelo no est\u00E1 presentado.");	
+			} else {
+				cleanViewers();
+				
+				Upload upload = new Upload() {
+					
+					@Override
+					protected void onUpload(String data) {
+						uploadingPDFData = true;
+						
+						// Grabar el fichero en data_response - data_attach
+						CommonServiceAsync serviceRaw = GWT.create(CommonService.class);
+						CommonServiceAsync service = new CommonServiceAsyncDecorator(serviceRaw);
+						
+						service.savePDFModel(getCallback().getOptions().getOccam(), getCallback().getModel(),  data,
+								new AsyncCallback<Void>() {
+									
+									@Override
+									public void onSuccess(Void result) {										
+										uploadingPDFData = false;
+										// Si se ha cargado de forma correcta, se muestra en pantalla
+										checkDataResponseData();
+									}
+									
+									@Override
+									public void onFailure(Throwable caught) {										
+										uploadingPDFData = false;
+										getCallback().showError("Error al cargar el archivo.");
+									}
+								});
+					}							
+				};
+				upload.upload();				
+			}
+		}
 	}
 	
 	protected void showPDF(String dataURI) {
