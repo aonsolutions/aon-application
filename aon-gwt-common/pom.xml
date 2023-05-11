@@ -45,6 +45,19 @@
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>aon.templates</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+			 <groupId>net.aonsolutions</groupId>
+			 <artifactId>aon.templates</artifactId>
+			 <version>${project.version}</version>
+			 <scope>provided</scope>
+			 <classifier>sources</classifier>
+	    </dependency>
+		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.jaas</artifactId>
 			<version>${project.version}</version>

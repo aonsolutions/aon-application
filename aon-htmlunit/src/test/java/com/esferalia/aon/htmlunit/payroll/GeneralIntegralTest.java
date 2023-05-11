@@ -966,6 +966,42 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 	}
 
 	@Test
+	public void TestITII() throws Exception {
+
+		open("i.t");
+
+		wait4Id("menstruacion_incapacitante,_secundaria");
+
+		draft("MENSTRUACIÓN INCAPACITANTE, SECUNDARIA");
+		calculate(Calendar.MAY,2023);
+		double cgcBase = getValue("cgcBaseLabel");
+		calculate(Calendar.JUNE,2023);
+		assertValue("cgcBaseLabel", cgcBase );
+		calculate(Calendar.JULY,2023);
+		assertValue("cgcBaseLabel", cgcBase );
+		click("costsCheck-input");
+		assertText("totalEnterpriseLabel", cgcBase * 31.90 / 100.00 - ( cgcBase / 30.00 * 7 * 0.75 ) );
+		click("costsCheck-input");
+
+
+		draft("SEMANA 39, EMBARAZO");
+		calculate(Calendar.MAY,2023);
+		cgcBase = getValue("cgcBaseLabel");
+		calculate(Calendar.JUNE,2023);
+		assertValue("cgcBaseLabel", cgcBase );
+		calculate(Calendar.JULY,2023);
+		assertValue("cgcBaseLabel", cgcBase );
+
+		draft("INTERRUPCIÓN DEL, EMBARAZO");
+		calculate(Calendar.MAY,2023);
+		cgcBase = getValue("cgcBaseLabel");
+		calculate(Calendar.JUNE,2023);
+		assertValue("cgcBaseLabel", cgcBase );
+		calculate(Calendar.JULY,2023);
+		assertValue("cgcBaseLabel", cgcBase );
+	}
+
+	@Test
 	public void TestBrutoYNeto() throws Exception {
 
 		open("bruto_y_neto");
