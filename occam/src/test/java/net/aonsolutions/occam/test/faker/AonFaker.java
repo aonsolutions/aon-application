@@ -33,24 +33,27 @@ public class AonFaker {
 			.setDomain(AonRandom.integer(50))
 			.setDescription(faker.pokemon().name());
 	}
+	public static Domain getDomain() {
+		return getDomain(false); 
+	}
 
-	public static Domain getDomain( ) {
+	public static Domain getDomain( boolean bookingRequired) {
 		return  new Domain()
 			.setId(AonRandom.integer(50))
-			.setName(AonRandom.string(50, 10))
-			.setDescription(AonRandom.string(50, 10))
+			.setName(AonRandom.domainName())
+			.setDescription(AonRandom.lorem(50))
 			.setParent( AonRandom.gt(50) ? getDomain() : null)
 			.setType(AonRandom.getDomainType(20).orElse(null))
 			.setEnableHeredity(AonRandom.gt(50))
 			.setActive(AonRandom.gt(50))
 			.setId(AonRandom.integer(50))
-			.setBooking( AonRandom.gt(50) ? getBooking() : null)
+			.setBooking( bookingRequired || AonRandom.gt(50) ? getBooking() : null)
 			.setAudit( AonRandom.gt(50) ? getDomainAudit() : null)
 		;
 	}
 	public static Booking getBooking() {
 		return new Booking()
-			.setOwner((AonRandom.string(50, 10)))
+			.setOwner((AonRandom.string(50)))
 			.setExpirationDate(AonRandom.getPastDate(50))
 			.setDomainManagement(AonRandom.gt(50))
 			.setDisableDomainManagement(AonRandom.gt(50))

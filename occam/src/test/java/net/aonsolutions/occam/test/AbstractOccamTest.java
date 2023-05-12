@@ -11,6 +11,9 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -117,4 +120,12 @@ public abstract class AbstractOccamTest {
 		return AonObjectUtils.defaultIfNull(testDate, new Date());
 	}
 	
+	protected void setLoggerLevel(Level targetLevel) {
+      Logger root = Logger.getLogger("");
+      root.setLevel(targetLevel);
+      for (Handler handler : root.getHandlers()) {
+          handler.setLevel(targetLevel);
+      }
+      System.out.println("Level set: " + targetLevel.getName());
+  }
 }

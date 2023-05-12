@@ -30,6 +30,9 @@ public class AonRandom {
     public static String uuid( int maxLength ) {
     	return AonStringUtils.substring(faker.internet().uuid(),0 ,maxLength);
     }
+    public static String domainName() {
+    	return faker.internet().domainName();
+    }
 
     public static String string( int nullThreshold, int minLength, int maxLength ) {
     	return ( gt(nullThreshold) )
@@ -53,6 +56,9 @@ public class AonRandom {
     	return ( gt(nullThreshold) )
         		?Integer.valueOf( getInt(0, 20) )
         		:null;
+    }
+    public static String lorem( int maxLength ) {
+    	return lorem(-1, maxLength);
     }
     public static String lorem( int nullThreshold, int maxLength ) {
     	return ( gt(nullThreshold) )

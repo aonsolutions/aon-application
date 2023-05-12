@@ -16,8 +16,8 @@ public class Booking implements Serializable,HasDirtyFlag<Booking> {
 	private Date expirationDate;
 	private String owner;
 	
-	private Boolean domainManagement;
-	private Boolean disableDomainManagement;
+	private boolean domainManagement;
+	private boolean disableDomainManagement;
 	private Integer maxDefinedUsers;
 	private Integer aonCustomer;
 	private AonStatus aonStatus;
@@ -32,8 +32,8 @@ public class Booking implements Serializable,HasDirtyFlag<Booking> {
 		return this;
 	}
 
-	public Optional<String> getOwner() {
-		return Optional.ofNullable(owner);
+	public String getOwner() {
+		return owner;
 	}
 	public Booking setOwner(String owner) {
 		this.dirtyMark( AonUtils.notEquals(this.owner,owner) );
@@ -41,19 +41,19 @@ public class Booking implements Serializable,HasDirtyFlag<Booking> {
 		return this;
 	}
 
-	public Optional<Boolean> isDomainManagement() {
-		return Optional.ofNullable(domainManagement);
+	public boolean isDomainManagement() {
+		return domainManagement;
 	}
-	public Booking setDomainManagement(Boolean domainManagement) {
+	public Booking setDomainManagement(boolean domainManagement) {
 		this.dirtyMark( AonUtils.notEquals(this.domainManagement,domainManagement) );
 		this.domainManagement = domainManagement;
 		return this;
 	}
 	
-	public Optional<Boolean> isDisableDomainManagement() {
-		return Optional.ofNullable(disableDomainManagement);
+	public boolean isDisableDomainManagement() {
+		return disableDomainManagement;
 	}
-	public Booking setDisableDomainManagement(Boolean disableDomainManagement) {
+	public Booking setDisableDomainManagement(boolean disableDomainManagement) {
 		this.dirtyMark( AonUtils.notEquals(this.disableDomainManagement,disableDomainManagement) );
 		this.disableDomainManagement = disableDomainManagement;
 		return this;
@@ -77,8 +77,8 @@ public class Booking implements Serializable,HasDirtyFlag<Booking> {
 		return this;
 	}
 	
-	public Optional<AonStatus> getAonStatus() {
-		return Optional.ofNullable(aonStatus);
+	public AonStatus getAonStatus() {
+		return aonStatus;
 	}
 	public Booking setAonStatus(AonStatus aonStatus) {
 		this.dirtyMark( AonUtils.notEquals(this.aonStatus,aonStatus) );

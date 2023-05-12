@@ -406,17 +406,10 @@ public class DomainDAO {
 		return new DomainSelectBuilderDAO(ctx,filter);
 	}
 	
-	public static Optional<Domain> get(AONContext ctx, DomainFilter filter){
-		return get(ctx, filter, b -> b); 
-	}
 	public static Optional<Domain> get(AONContext ctx, DomainFilter filter, DomainBuilderFactory factory){
 		return getStream(ctx, filter, factory).findFirst();
 	}
 
-	public static Stream<Domain> getStream(AONContext ctx, DomainFilter filter){
-		return getStream(ctx, filter, b -> b); 
-	}
-	
 	public static Stream<Domain> getStream(AONContext ctx, DomainFilter filter, DomainBuilderFactory factory){
 		ctx.checkRead();
 		DAOUtils.checkNullFactory(factory);
@@ -426,14 +419,15 @@ public class DomainDAO {
 	
 	public static Domain save(AONContext ctx, Domain domain) {
 		ctx.checkWrite();
-		DomainAutoComplete.autoComplete(ctx, domain);
-		DomainValidation.validate(ctx, domain);
-		if (domain.isDirty()) {
+		if (domain == null) throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
+		if (domain.isDirty()) { 
+			DomainAutoComplete.autoComplete(ctx, domain);
+			DomainValidation.validate(ctx, domain);
 			return (domain.getId() == null)
 				?insert(ctx,domain)
 				:update(ctx,domain);
 		} else {
-			ctx.log().debug("NOT SAVED DOMAIN (not dirty) id: {0}",domain.getId());
+			ctx.log().debug(AonError.NOT_DIRTY.format("Domain",domain.getId()));
 		}
 		return domain;  
 	}
@@ -471,46 +465,41 @@ public class DomainDAO {
 	
 	private static class DomainValidation {
 		
-		public static final BiConsumer<AONContext,Domain> BOOKING_EMPTY = (ctx,domain) -> {
-			if (!domain.getBooking().isPresent()) {
-				throw new AonCoreException(AonError.DOMAIN_NO_BOOKING_INFO.getMessage());
-			}
-		};
-
-		public static final BiConsumer<AONContext,Domain> OWNER_EMPTY = (ctx,domain) -> {
-			Booking booking = domain.getBooking().get();
-			if (!booking.getOwner().isPresent()) {
-				throw new AonCoreException(AonError.DOMAIN_NO_OWNER.getMessage());	
-			} else {
-				if (AonStringUtils.length(booking.getOwner().get()) > DOMAIN.OWNER.getDataType().length() )
-					throw new AonCoreException(AonError.INVALID_LENGTH.format( "Creador", DOMAIN.OWNER.getDataType().length() ));
-			}
-		};
-
-		public static final BiConsumer<AONContext,Domain> OVERFLOW_OWNER = (ctx,domain) -> {
-			Booking booking = domain.getBooking().get();
-			if (booking.getOwner().isPresent()) {
-				if (AonStringUtils.length(booking.getOwner().get()) > DOMAIN.OWNER.getDataType().length() )
-					throw new AonCoreException(AonError.INVALID_LENGTH.format( "Creador", DOMAIN.OWNER.getDataType().length() ));
-			}
-		};
-
-		public static final BiConsumer<AONContext,Domain> OVERFLOW_NAME = (ctx,domain) -> {
+		public static final BiConsumer<AONContext,Domain> VALIDATE_NAME = (ctx,domain) -> {
+			if (AonStringUtils.isBlank(domain.getName())) 
+				throw new AonCoreException(AonError.EMPTY_NAME.getMessage());
 			if (AonStringUtils.length(domain.getName()) > DOMAIN.NAME.getDataType().length() )
 				throw new AonCoreException(AonError.INVALID_LENGTH.format( "Nombre", DOMAIN.NAME.getDataType().length() ));
 		};
 		
-		public static final BiConsumer<AONContext,Domain> OVERFLOW_DESCRIPTION = (ctx,domain) -> {
+		public static final BiConsumer<AONContext,Domain> VALIDATE_DESCRIPTION = (ctx,domain) -> {
+			if (AonStringUtils.isBlank(domain.getDescription())) 
+				throw new AonCoreException(AonError.EMPTY_DESCRIPTION.getMessage());
 			if (AonStringUtils.length(domain.getDescription()) > DOMAIN.DESCRIPTION.getDataType().length() )
 				throw new AonCoreException(AonError.INVALID_LENGTH.format( "Descripci\u00F3n", DOMAIN.DESCRIPTION.getDataType().length() ));
 		};
 		
+		public static final BiConsumer<AONContext,Domain> VALIDATE_BOOKING_EMPTY = (ctx,domain) -> {
+			if (!domain.getBooking().isPresent()) {
+				throw new AonCoreException(AonError.DOMAIN_NO_BOOKING_INFO.getMessage());
+			}
+		};
+		public static final BiConsumer<AONContext,Domain> VALIDATE_BOOKING_OWNER_EMPTY = (ctx,domain) -> {
+			Booking booking = domain.getBooking().get();
+			if (AonStringUtils.isBlank(booking.getOwner())) {
+				throw new AonCoreException(AonError.DOMAIN_NO_OWNER.getMessage());	
+			} else {
+				if (AonStringUtils.length(booking.getOwner()) > DOMAIN.OWNER.getDataType().length() )
+					throw new AonCoreException(AonError.INVALID_LENGTH.format( "Creador", DOMAIN.OWNER.getDataType().length() ));
+			}
+		};
+
+		
 		public static void validate(AONContext ctx, Domain domain) throws AonCoreException{
-			BOOKING_EMPTY
-			.andThen(OWNER_EMPTY)
-			.andThen(OVERFLOW_OWNER)
-			.andThen(OVERFLOW_NAME)
-			.andThen(OVERFLOW_DESCRIPTION)
+			VALIDATE_NAME
+			.andThen(VALIDATE_DESCRIPTION)
+			.andThen(VALIDATE_BOOKING_EMPTY)
+			.andThen(VALIDATE_BOOKING_OWNER_EMPTY)
 			.accept(ctx, domain);
 		}
 		
@@ -523,9 +512,9 @@ public class DomainDAO {
 //| description             | varchar(128) | NO   |     | NULL    |                |
 //| type                    | tinyint(4)   | NO   |     | 0       |                |
 //| enableHeredity          | tinyint(1)   | NO   |     | 0       |                |
-//| domainManagement        | tinyint(1)   | NO   |     | 0       |                |
-//| disableDomainManagement | tinyint(1)   | NO   |     | 0       |                |
+		//| domainManagement        | tinyint(1)   | NO   |     | 0       |                |
+		//| disableDomainManagement | tinyint(1)   | NO   |     | 0       |                |
 //| active                  | tinyint(1)   | NO   |     | 1       |                |
 		//| owner                   | varchar(256) | NO   |     | NULL    |                |
-//| aonStatus               | tinyint(4)   | NO   |     | 0       |                |
+		//| aonStatus               | tinyint(4)   | NO   |     | 0       |                |
 //

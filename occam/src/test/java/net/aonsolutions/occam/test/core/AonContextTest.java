@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Stack;
 import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
@@ -104,31 +103,30 @@ class AonContextTest extends AbstractOccamTest {
 			l.addHandler(handler);
 			AonLogger testLogger = new AonLogger(l, DOMAIN_NAME);
 			ctx.setLoggerForTests(testLogger);
-			Logger root = Logger.getLogger("");
-			Level originalLevel = root.getLevel();
+			Level originalLevel = ctx.getLoggerLevelForTests();
 			try {
-				setLevel(Level.FINE);
+				setLoggerLevel(Level.FINE);
 				if (l.isLoggable(Level.FINE)) {
 					ctx.log().debug("Testing Loggers: DEBUG MESSAGE");
 					assertEquals(AonLogger.DEB, handler.pop());
 					ctx.log().debug("Testing Loggers: DEBUG MESSAGE {0}", "param");
 					assertEquals(AonLogger.DEB, handler.pop());
 				}
-				setLevel(Level.WARNING);
+				setLoggerLevel(Level.WARNING);
 				if (l.isLoggable(Level.WARNING)) {
 					ctx.log().warn("Testing Loggers: WARN MESSAGE");
 					assertEquals(AonLogger.WAR, handler.pop());
 					ctx.log().warn("Testing Loggers: WARN MESSAGE {0}", "param");
 					assertEquals(AonLogger.WAR, handler.pop());
 				}
-				setLevel(Level.INFO);
+				setLoggerLevel(Level.INFO);
 				if (l.isLoggable(Level.INFO)) {
 					ctx.log().info("Testing Loggers: INFO MESSAGE");
 					assertEquals(AonLogger.INF, handler.pop());
 					ctx.log().info("Testing Loggers: INFO MESSAGE {0}", "param");
 					assertEquals(AonLogger.INF, handler.pop());
 				}
-				setLevel(Level.SEVERE);
+				setLoggerLevel(Level.SEVERE);
 				if (l.isLoggable(Level.SEVERE)) {
 					ctx.log().error("Testing Loggers: ERROR MESSAGE");
 					assertEquals(AonLogger.ERR, handler.pop());
@@ -136,19 +134,10 @@ class AonContextTest extends AbstractOccamTest {
 					assertEquals(AonLogger.ERR, handler.pop());
 				}
 			} finally {
-				setLevel(originalLevel);			
+				setLoggerLevel(originalLevel);			
 			}
 		} finally {
 			ctx.setLoggerForTests(logger);
 		}
 	}
-
-	private static void setLevel(Level targetLevel) {
-	      Logger root = Logger.getLogger("");
-	      root.setLevel(targetLevel);
-	      for (Handler handler : root.getHandlers()) {
-	          handler.setLevel(targetLevel);
-	      }
-	      System.out.println("Level set: " + targetLevel.getName());
-	  }
 }

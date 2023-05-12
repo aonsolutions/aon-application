@@ -1,6 +1,7 @@
 package net.aonsolutions.occam.api;
 
 import java.sql.Connection;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jooq.DSLContext;
@@ -112,7 +113,9 @@ public class AONContext implements AutoCloseable {
 	public void setCanWriteValueForTests(Boolean canWrite) {this.canWrite = canWrite;}
 	public Boolean canReadForTests() {return canRead;}
 	public void setCanReadValueForTests(Boolean canRead) {this.canRead = canRead;}
+	public AonLogger getLoggerForTests() { return this.logger; }
 	public void setLoggerForTests(AonLogger logger) {this.logger = logger;}
+	public Level getLoggerLevelForTests() { return Logger.getLogger("").getLevel(); }
 	// [END] Methods for tests purpose.
 	
 }

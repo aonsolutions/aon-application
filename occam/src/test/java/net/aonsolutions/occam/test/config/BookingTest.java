@@ -68,8 +68,8 @@ class BookingTest extends AbstractOccamTest {
 	@Test()
 	void dirtyMarkFalseTest() {
 		Booking d = new Booking();
-		d.setDomainManagement(null);
-		d.setDisableDomainManagement(null);
+		d.setDomainManagement(false);
+		d.setDisableDomainManagement(false);
 		d.setMaxDefinedUsers(null);
 		d.setAonCustomer( null );
 		d.setAonStatus( null );

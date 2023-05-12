@@ -18,9 +18,7 @@ public class AON {
 	}
 	// ******************************** [DOMAIN]
 	public static Optional<Domain> getDomain(Occam occam, DomainFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return DomainDAO.get(ctx, filter);
-		}
+		return getDomain(occam, filter, b -> b);
 	}
 	public static Optional<Domain> getDomain(Occam occam, DomainFilter filter, DomainBuilderFactory factory) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
@@ -28,13 +26,16 @@ public class AON {
 		}
 	}
 	public static Stream<Domain> getDomains(Occam occam, DomainFilter filter) {
-		try (AONContext ctx = AONContext.getAONContext(occam)) {
-			return DomainDAO.getStream(ctx, filter);
-		}
+		return getDomains(occam, filter, b -> b);
 	}
 	public static Stream<Domain> getDomains(Occam occam, DomainFilter filter, DomainBuilderFactory factory) {
 		try (AONContext ctx = AONContext.getAONContext(occam)) {
 			return DomainDAO.getStream(ctx, filter,  factory);
+		}
+	}
+	public static Domain save(Occam occam, Domain domain) {
+		try (AONContext ctx = AONContext.getAONContext(occam)) {
+			return ctx.getDslContext().transactionResult(c -> DomainDAO.save(ctx, domain));
 		}
 	}
 	// ******************************** [USER]

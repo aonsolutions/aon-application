@@ -1,28 +1,36 @@
 package net.aonsolutions.occam.test.dao;
 
+import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.esferalia.aon.watson.AonError;
+import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 import com.esferalia.aon.watson.server.AonObjectUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.occam.api.AonLogger;
+import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.dao.DAOUtils;
 import net.aonsolutions.occam.dao.DomainDAO;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;
+import net.aonsolutions.occam.test.faker.AonFaker;
 import net.aonsolutions.occam.test.faker.AonRandom;
 
 
@@ -31,26 +39,26 @@ class DomainDAOTest extends AbstractOccamTest {
 
 	@Test()
 	void selectOneTest() {
-		Optional<Domain> domain = DomainDAO.get(ctx,p -> p.withName().eq( DOMAIN_NAME ));
+		Optional<Domain> domain = DomainDAO.get(ctx,p -> p.withName().eq( DOMAIN_NAME ), b -> b);
 		assertTrue(domain.isPresent());
 	}
 
 	@Test()
 	void selectNoneTest() {
-		Optional<Domain> domain = DomainDAO.get(ctx,p -> p.withId().eq( Integer.MIN_VALUE ));
+		Optional<Domain> domain = DomainDAO.get(ctx,p -> p.withId().eq( Integer.MIN_VALUE ), b -> b);
 		assertFalse(domain.isPresent());
 	}
 
 	@Test()
 	void selectDirtyTest() {
-		Optional<Domain> domain = DomainDAO.get(ctx,p -> p.withName().eq( DOMAIN_NAME ));
+		Optional<Domain> domain = DomainDAO.get(ctx,p -> p.withName().eq( DOMAIN_NAME ), b -> b);
 		assertTrue(domain.isPresent());
 		assertFalse(domain.get().isDirty(), "Dirty flag not set" );
 	}
 
 	@Test()
 	void emptyFilterTest() {
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> DomainDAO.get(ctx, null));
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> DomainDAO.get(ctx, null, b -> b));
 		assertEquals(DAOUtils.NULL_FILTER_MSG, e.getMessage());
 	}
 
@@ -61,22 +69,17 @@ class DomainDAOTest extends AbstractOccamTest {
 	}
 
 	@Test()
-	void selectNoBuilderStreamTest() {
-		Stream<Domain> domain = DomainDAO.getStream(ctx,p -> p.withName().eq( DOMAIN_NAME ));
-		assertTrue(domain.findAny().isPresent());
-	}
-
-	@Test()
 	void selectStreamTest() {
 		Stream<Domain> domain = DomainDAO.getStream(ctx
 			,p -> p.withName().eq( DOMAIN_NAME )
+			,b -> b
 		);
 		assertTrue(domain.findAny().isPresent());
 	}
 	
 	@Test
 	void streamLimitTest() {
-		long max = DomainDAO.getStream(ctx, p -> p.withName().like("a%"))
+		long max = DomainDAO.getStream(ctx, p -> p.withName().like("a%"), b -> b)
 			.limit(10)
 			.count();
 		int rows = AonRandom.getInt(0, (int) max);
@@ -103,13 +106,13 @@ class DomainDAOTest extends AbstractOccamTest {
 				.and(p.withEnableHeredity().eq( AonEnumUtils.getByte(expected.isEnableHeredity())))
 				.and(p.withActive().eq( AonEnumUtils.getByte(expected.isActive())))
 				// Booking
-				.and(p.withOwner().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getOwner().orElse(null))))
+				.and(p.withOwner().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getOwner())))
 				.and(p.withExpirationDate().eq( AonDateUtils.toSql(AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getExpirationDate().orElse(null)))))
-				.and(p.withDomainManagement().eq(AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> AonEnumUtils.getByte(a.isDomainManagement().orElse(null)))))
-				.and(p.withDisableDomainManagement().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> AonEnumUtils.getByte(a.isDisableDomainManagement().orElse(null)))))
+				.and(p.withDomainManagement().eq(AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> AonEnumUtils.getByte(a.isDomainManagement()))))
+				.and(p.withDisableDomainManagement().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> AonEnumUtils.getByte(a.isDisableDomainManagement()))))
 				.and(p.withMaxDefinedUsers().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getMaxDefinedUsers().orElse(null))))
 				.and(p.withAonCustomer().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getAonCustomer().orElse(null))))
-				.and(p.withAonStatus().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> AonEnumUtils.getByte(a.getAonStatus().orElse(null)))))
+				.and(p.withAonStatus().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> AonEnumUtils.getByte(a.getAonStatus()))))
 				// Audit
 				.and(p.withLastAccessDate().eq( AonDateUtils.toTimestamp(AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getLastAccessDate().orElse(null)))))
 				.and(p.withLastAccessUser().eq( AonObjectUtils.ifOptionalPresent(expected.getAudit(), a -> a.getLastAccessUser().orElse(null))))
@@ -128,7 +131,7 @@ class DomainDAOTest extends AbstractOccamTest {
 	void denyReadOneTest() {
 		try {
 			ctx.denyRead();
-			SecurityException e = assertThrows(SecurityException.class, () -> DomainDAO.get(ctx,p -> p.withName().eq( DOMAIN_NAME )));
+			SecurityException e = assertThrows(SecurityException.class, () -> DomainDAO.get(ctx,p -> p.withName().eq( DOMAIN_NAME ), b -> b));
 			assertEquals(AonError.READ_FORBIDDEN.getMessage(), e.getMessage());
 		} finally {
 			ctx.allowRead();
@@ -137,7 +140,7 @@ class DomainDAOTest extends AbstractOccamTest {
 	
 	@Test
 	void basicGetTest() {
-		Optional<Domain> optDomain = DomainDAO.get(ctx, p -> p.withName().eq( DOMAIN_NAME ));
+		Optional<Domain> optDomain = DomainDAO.get(ctx, p -> p.withName().eq( DOMAIN_NAME ), b -> b);
 		assertTrue(optDomain.isPresent());
 		assertTrue(optDomain.get().getParent().isEmpty());
 		assertTrue(optDomain.get().getBooking().isEmpty());
@@ -172,4 +175,95 @@ class DomainDAOTest extends AbstractOccamTest {
 			}
 		});
 	}
+	
+	@Test
+	void saveDirtyFlagTes() {
+		AonLogger originalLogger = ctx.getLoggerForTests();
+		Level originalLevel = ctx.getLoggerLevelForTests();
+		try {
+			StringBuilder debugMessage = new StringBuilder(); 
+			Logger thisLogger = Logger.getLogger(this.getClass().getName());
+			setLoggerLevel(Level.FINEST);
+			ctx.setLoggerForTests( new AonLogger(thisLogger, DOMAIN_NAME) {
+				@Override
+				public void debug(String msg) {
+					super.debug(msg);
+					debugMessage.append(msg);
+				}
+			});
+			Domain domain = new Domain();
+			DomainDAO.save(ctx, domain);
+			assertEquals(AonError.NOT_DIRTY.format("Domain",domain.getId()), debugMessage.toString());
+		} finally {
+			ctx.setLoggerForTests( originalLogger );
+			setLoggerLevel(originalLevel);
+		}
+	}
+	@Test
+	void saveValidationEmptyTest() {
+		AonCoreException e = assertThrows(AonCoreException.class, () -> DomainDAO.save(ctx, (Domain) null));
+		assertEquals(AonError.EMPTY_DOMAIN.getMessage(), e.getMessage());
+	}
+	
+	@Test
+	void saveValidationNameTest() {
+		Domain domain = AonFaker.getDomain();
+		
+		domain.setName(null);
+		AonCoreException e = assertThrows(AonCoreException.class, () -> DomainDAO.save(ctx, domain));
+		assertEquals(AonError.EMPTY_NAME.getMessage(), e.getMessage());
+		
+		domain.setName( AonStringUtils.repeat("A",DOMAIN.NAME.getDataType().length() + 1));
+		e = assertThrows(AonCoreException.class, () -> DomainDAO.save(ctx, domain));
+		assertEquals(AonError.INVALID_LENGTH.format( "Nombre", DOMAIN.NAME.getDataType().length() ), e.getMessage());
+	}
+	
+	@Test
+	void saveValidationDescriptionTest() {
+		Domain domain = AonFaker.getDomain();
+
+		domain.setDescription(null);
+		AonCoreException e = assertThrows(AonCoreException.class, () -> DomainDAO.save(ctx, domain));
+		assertEquals(AonError.EMPTY_DESCRIPTION.getMessage(), e.getMessage());
+		
+		domain.setDescription( AonStringUtils.repeat("A",DOMAIN.DESCRIPTION.getDataType().length() + 1));
+		e = assertThrows(AonCoreException.class, () -> DomainDAO.save(ctx, domain));
+		assertEquals(AonError.INVALID_LENGTH.format( "Descripci\u00F3n", DOMAIN.DESCRIPTION.getDataType().length() ), e.getMessage());
+	}
+	
+	@Test
+	void saveValidationBookingTest() {
+		Domain domain = AonFaker.getDomain();
+		domain.setBooking(null);
+		AonCoreException e = assertThrows(AonCoreException.class, () -> DomainDAO.save(ctx, domain));
+		assertEquals(AonError.DOMAIN_NO_BOOKING_INFO.getMessage(), e.getMessage());
+		
+	}
+
+	@Test
+	void saveValidationOwnerTest() {
+		Domain domain = AonFaker.getDomain();
+		if (!domain.getBooking().isPresent()) {
+			domain.setBooking(AonFaker.getBooking());
+		}
+		Booking booking = domain.getBooking().get();
+		booking.setOwner(null);
+		AonCoreException e = assertThrows(AonCoreException.class, () -> DomainDAO.save(ctx, domain));
+		assertEquals(AonError.DOMAIN_NO_OWNER.getMessage(), e.getMessage());
+		
+		booking.setOwner(AonStringUtils.repeat("A",DOMAIN.OWNER.getDataType().length() + 1));
+		e = assertThrows(AonCoreException.class, () -> DomainDAO.save(ctx, domain));
+		assertEquals(AonError.INVALID_LENGTH.format( "Creador", DOMAIN.OWNER.getDataType().length() ), e.getMessage());
+	}
+	
+	@Test
+	void saveTest() {
+		Domain insertDomain = AonFaker.getDomain(true);
+		assertDoesNotThrow(() -> DomainDAO.save(ctx, insertDomain));
+
+		Domain updateDomain = AonFaker.getDomain(true);
+		updateDomain.setId(1);
+		assertDoesNotThrow(() -> DomainDAO.save(ctx, updateDomain));
+	}
+	
 }
