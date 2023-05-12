@@ -169,7 +169,9 @@ public class InvoicesServlet extends AonApiHttpServlet {
 		JSONObject vars = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);
 		Integer invoiceId = vars.getInt(IJsonNames.ID);
 		Invoice invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
-		return InvoiceJSON.toJSON(invoice);
+		JSONObject json = InvoiceJSON.toJSON(invoice);
+		json.put(IJsonNames.FILE, InvoiceServlet.buildInvoiceFileJSON(api.getDomain(), api.getUser().getLogin(), invoice));
+		return json;
     }
     
     private static JSONObject getRawdoc(AonApiData api) {
