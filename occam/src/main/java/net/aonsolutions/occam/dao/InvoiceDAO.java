@@ -72,8 +72,8 @@ public class InvoiceDAO {
 	}
 
 	private static class InvoiceSelectBuilderDAO implements InvoiceBuilder<Stream<Invoice>> {
-		
-		private static final Field<?>[] INVOICE_BASIC_FIELDS = new Field[]{
+		@SuppressWarnings("rawtypes")
+		private static final Field[] INVOICE_BASIC_FIELDS = new Field[]{
 				 INVOICE.ID	
 				,INVOICE.DOMAIN
 				,INVOICE.TYPE

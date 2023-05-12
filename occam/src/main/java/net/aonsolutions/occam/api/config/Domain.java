@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import com.esferalia.aon.watson.util.AonCollectionUtils;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -31,7 +30,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 	private Booking booking;
 	private DomainAudit audit;
 	
-	private Set<User> users; 
+	private LinkedHashSet<User> users; 
 	
 	private boolean dirty;
 	private boolean selected;

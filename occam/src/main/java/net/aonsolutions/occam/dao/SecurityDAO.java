@@ -36,7 +36,9 @@ import net.aonsolutions.occam.dao.ScopeDAO.ScopeFiller;
 
 public class SecurityDAO {
 	
-	static final Field<?>[] USER_BASIC_FIELDS = new Field[]{
+		
+	@SuppressWarnings("rawtypes")
+	static final Field[] USER_BASIC_FIELDS = new Field[]{
 		USER.ID,USER.DOMAIN,USER.NAME,USER.LOGIN,USER.ACTIVE
 	};
 

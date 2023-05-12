@@ -142,30 +142,30 @@ public class DomainDAO {
 	
 	private static class SelectBuilder implements DomainBuilder<SelectSelectStep<Record>> {
 		
-		private static final Field<?>[] DOMAIN_BASIC_FIELDS = new Field[]{
+		@SuppressWarnings("rawtypes")
+		private static final Field[] DOMAIN_BASIC_FIELDS = new Field[]{
 			DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.TYPE
 			,DOMAIN.SCOPE,DOMAIN.ENABLEHEREDITY,DOMAIN.ACTIVE
 		};
 			
-		private static final Field<?>[] DOMAIN_PARENT_BASIC_FIELDS = new Field[]{
+		@SuppressWarnings("rawtypes")
+		private static final Field[] DOMAIN_PARENT_BASIC_FIELDS = new Field[]{
 			PARENT_DOMAIN.ID,PARENT_DOMAIN.NAME,PARENT_DOMAIN.DESCRIPTION
 			,PARENT_DOMAIN.TYPE,PARENT_DOMAIN.ACTIVE
 		};
 
-		private static final Field<?>[] DOMAIN_AUDIT_FIELDS = new Field[]{
+		@SuppressWarnings("rawtypes")
+		private static final Field[] DOMAIN_AUDIT_FIELDS = new Field[]{
 			DOMAIN.LASTACCESS_USER, DOMAIN.LASTACCESS_DATE,DOMAIN.CREATION_USER
 			,DOMAIN.CREATION_DATE,DOMAIN.MODIFICATION_USER,DOMAIN.MODIFICATION_DATE
 			
 		};
 		
-		private static final Field<?>[] DOMAIN_BOOKING_FIELDS = new Field[]{
-				DOMAIN.OWNER,
-				DOMAIN.EXPIRATIONDATE,
-				DOMAIN.DOMAINMANAGEMENT,
-				DOMAIN.DISABLEDOMAINMANAGEMENT,
-				DOMAIN.MAXDEFINEDUSERS,
-				DOMAIN.AONCUSTOMER,
-				DOMAIN.AONSTATUS
+		@SuppressWarnings("rawtypes")
+		private static final Field[] DOMAIN_BOOKING_FIELDS = new Field[]{
+			DOMAIN.OWNER,DOMAIN.EXPIRATIONDATE,DOMAIN.DOMAINMANAGEMENT,
+			DOMAIN.DISABLEDOMAINMANAGEMENT,DOMAIN.MAXDEFINEDUSERS,
+			DOMAIN.AONCUSTOMER,DOMAIN.AONSTATUS
 		};
 
 		private SelectSelectStep<Record> select;
