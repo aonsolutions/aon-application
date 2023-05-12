@@ -8,10 +8,9 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.watson.util.AonCollectionUtils;
-
 import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.config.DomainAudit;
+import net.aonsolutions.watson.client.util.AonCollectionUtils;
 
 public class DomainAuditJSON {
 	

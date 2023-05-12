@@ -9,8 +9,6 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.esferalia.aon.watson.util.AonStringUtils;
-
 import net.aonsolutions.occam.api.config.Activity;
 import net.aonsolutions.occam.api.constants.Country;
 import net.aonsolutions.occam.api.constants.DocumentType;
@@ -19,6 +17,7 @@ import net.aonsolutions.occam.api.invoice.Invoice;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
 import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.watson.client.util.AonStringUtils;
 
 
 @ExtendWith(TimingExtension.class)	

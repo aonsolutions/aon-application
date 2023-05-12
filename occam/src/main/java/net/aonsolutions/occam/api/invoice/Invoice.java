@@ -4,10 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Optional;
 
-import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.AonUtils;
-
 import net.aonsolutions.occam.api.HasConfidentiality;
 import net.aonsolutions.occam.api.HasSelector;
 import net.aonsolutions.occam.api.config.Activity;
@@ -16,6 +12,9 @@ import net.aonsolutions.occam.api.constants.Country;
 import net.aonsolutions.occam.api.constants.DocumentType;
 import net.aonsolutions.occam.api.constants.InvoiceType;
 import net.aonsolutions.occam.api.constants.InvoiceType.InvoiceTypeVisitor;
+import net.aonsolutions.watson.client.util.AonNumberUtils;
+import net.aonsolutions.watson.client.util.AonStringUtils;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSelector<Invoice> {
 
@@ -48,7 +47,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return id;
 	}
 	public Invoice setId(Integer id) {
-		this.dirtyMark( AonUtils.notEquals(this.id,id) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.id,id) );
 		this.id = id;
 		return this;
 	}
@@ -57,7 +56,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return domain;
 	}
 	public Invoice setDomain(Integer domain) {
-		this.dirtyMark( AonUtils.notEquals(this.domain,domain) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.domain,domain) );
 		this.domain = domain;
 		return this;
 	}
@@ -66,7 +65,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return type;
 	}
 	public Invoice setType(InvoiceType type) {
-		this.dirtyMark( AonUtils.notEquals(this.type,type) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.type,type) );
 		this.type = type;
 		return this;
 	}
@@ -75,7 +74,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return series;
 	}
 	public Invoice setSeries(String series) {
-		this.dirtyMark( AonUtils.notEquals(this.series,series) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.series,series) );
 		this.series = series;
 		return this;
 	}
@@ -84,7 +83,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return number;
 	}
 	public Invoice setNumber(int number) {
-		this.dirtyMark( AonUtils.notEquals(this.number,number) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.number,number) );
 		this.number = number;
 		return this;
 	}
@@ -110,7 +109,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return referenceCode;
 	}
 	public Invoice setReferenceCode(String referenceCode) {
-		this.dirtyMark( AonUtils.notEquals(this.referenceCode,referenceCode) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.referenceCode,referenceCode) );
 		this.referenceCode = referenceCode;
 		return this;
 	}
@@ -119,7 +118,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return issueDate;
 	}
 	public Invoice setIssueDate(Date issueDate) {
-		this.dirtyMark( AonUtils.notEquals(this.issueDate,issueDate) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.issueDate,issueDate) );
 		this.issueDate = issueDate;
 		return this;
 	}
@@ -128,7 +127,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return taxDate;
 	}
 	public Invoice setTaxDate(Date taxDate) {
-		this.dirtyMark( AonUtils.notEquals(this.taxDate,taxDate) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.taxDate,taxDate) );
 		this.taxDate = taxDate;
 		return this;
 	}
@@ -137,7 +136,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return registry;
 	}
 	public Invoice setRegistry(Integer registry) {
-		this.dirtyMark( AonUtils.notEquals(this.registry,registry) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.registry,registry) );
 		this.registry = registry;
 		return this;
 	}
@@ -146,7 +145,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return registryDocument;
 	}
 	public Invoice setRegistryDocument(String registryDocument) {
-		this.dirtyMark( AonUtils.notEquals(this.registryDocument,registryDocument) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.registryDocument,registryDocument) );
 		this.registryDocument = registryDocument;
 		return this;
 	}
@@ -154,7 +153,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return registryDocumentType;
 	}
 	public Invoice setRegistryDocumentType(DocumentType registryDocumentType) {
-		this.dirtyMark( AonUtils.notEquals(this.registryDocumentType,registryDocumentType) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.registryDocumentType,registryDocumentType) );
 		this.registryDocumentType = registryDocumentType;
 		return this;
 	}
@@ -162,7 +161,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return registryDocumentCountry;
 	}
 	public Invoice setRegistryDocumentCountry(Country registryDocumentCountry) {
-		this.dirtyMark( AonUtils.notEquals(this.registryDocumentCountry,registryDocumentCountry) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.registryDocumentCountry,registryDocumentCountry) );
 		this.registryDocumentCountry = registryDocumentCountry;
 		return this;
 	}
@@ -170,7 +169,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return registryName;
 	}
 	public Invoice setRegistryName(String registryName) {
-		this.dirtyMark( AonUtils.notEquals(this.registryName,registryName) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.registryName,registryName) );
 		this.registryName = registryName;
 		return this;
 	}
@@ -179,7 +178,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return Optional.ofNullable( activity );
 	}
 	public Invoice setActivity(Activity activity) {
-		this.dirtyMark( AonUtils.notEquals(this.activity,activity) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.activity,activity) );
 		this.activity = activity;
 		return this;
 	}
@@ -222,7 +221,7 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 	}
 	@Override
 	public Invoice setConfidential(boolean confidential) {
-		this.dirtyMark( AonUtils.notEquals(this.confidential,confidential) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.confidential,confidential) );
 		this.confidential = confidential;
 		return this;
 	}

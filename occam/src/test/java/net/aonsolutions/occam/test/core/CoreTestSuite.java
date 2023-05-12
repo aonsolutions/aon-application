@@ -6,7 +6,8 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
-	AonContextTest.class
+	 AonCoreExceptionTest.class
+	,AonContextTest.class
 	,FilterTest.class
 })
 public class CoreTestSuite {

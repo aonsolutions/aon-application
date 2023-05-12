@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.jooq.Field;
 import org.jooq.Record;
 
-import com.esferalia.aon.watson.server.AonObjectUtils;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 class FillerUtils {
 	

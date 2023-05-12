@@ -3,10 +3,9 @@ package net.aonsolutions.occam.api.config;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonUtils;
-
 import net.aonsolutions.occam.api.HasSelector;
+import net.aonsolutions.watson.client.util.AonNumberUtils;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class Scope implements Serializable, HasSelector<Scope> {
 
@@ -23,7 +22,7 @@ public class Scope implements Serializable, HasSelector<Scope> {
 		return id;
 	}
 	public Scope setId(Integer id) {
-		this.dirtyMark( AonUtils.notEquals(this.id,id) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.id,id) );
 		this.id = id;
 		return this;
 	}
@@ -32,7 +31,7 @@ public class Scope implements Serializable, HasSelector<Scope> {
 		return domain;
 	}
 	public Scope setDomain(Integer domain) {
-		this.dirtyMark( AonUtils.notEquals(this.domain,domain) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.domain,domain) );
 		this.domain = domain;
 		return this;
 	}
@@ -41,7 +40,7 @@ public class Scope implements Serializable, HasSelector<Scope> {
 		return description;
 	}
 	public Scope setDescription(String description) {
-		this.dirtyMark( AonUtils.notEquals(this.description,description) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.description,description) );
 		this.description = description;
 		return this;
 	}

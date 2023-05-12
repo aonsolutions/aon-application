@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Optional;
 
-import com.esferalia.aon.watson.util.AonStringUtils;
+import net.aonsolutions.watson.client.util.AonStringUtils;
 
 public enum InvoiceType implements Serializable  {
 

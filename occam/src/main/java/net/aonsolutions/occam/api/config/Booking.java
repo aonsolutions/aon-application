@@ -4,10 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Optional;
 
-import com.esferalia.aon.watson.util.AonUtils;
-
 import net.aonsolutions.occam.api.HasDirtyFlag;
 import net.aonsolutions.occam.api.constants.AonStatus;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class Booking implements Serializable,HasDirtyFlag<Booking> {
 
@@ -27,7 +26,7 @@ public class Booking implements Serializable,HasDirtyFlag<Booking> {
 		return Optional.ofNullable(expirationDate);  
 	}
 	public Booking setExpirationDate(Date expirationDate) {
-		this.dirtyMark( AonUtils.notEquals(this.expirationDate,expirationDate) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.expirationDate,expirationDate) );
 		this.expirationDate = expirationDate;
 		return this;
 	}
@@ -36,7 +35,7 @@ public class Booking implements Serializable,HasDirtyFlag<Booking> {
 		return owner;
 	}
 	public Booking setOwner(String owner) {
-		this.dirtyMark( AonUtils.notEquals(this.owner,owner) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.owner,owner) );
 		this.owner = owner;
 		return this;
 	}
@@ -45,7 +44,7 @@ public class Booking implements Serializable,HasDirtyFlag<Booking> {
 		return domainManagement;
 	}
 	public Booking setDomainManagement(boolean domainManagement) {
-		this.dirtyMark( AonUtils.notEquals(this.domainManagement,domainManagement) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.domainManagement,domainManagement) );
 		this.domainManagement = domainManagement;
 		return this;
 	}
@@ -54,7 +53,7 @@ public class Booking implements Serializable,HasDirtyFlag<Booking> {
 		return disableDomainManagement;
 	}
 	public Booking setDisableDomainManagement(boolean disableDomainManagement) {
-		this.dirtyMark( AonUtils.notEquals(this.disableDomainManagement,disableDomainManagement) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.disableDomainManagement,disableDomainManagement) );
 		this.disableDomainManagement = disableDomainManagement;
 		return this;
 	}
@@ -63,7 +62,7 @@ public class Booking implements Serializable,HasDirtyFlag<Booking> {
 		return Optional.ofNullable(maxDefinedUsers);
 	}
 	public Booking setMaxDefinedUsers(Integer maxDefinedUsers) {
-		this.dirtyMark( AonUtils.notEquals(this.maxDefinedUsers,maxDefinedUsers) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.maxDefinedUsers,maxDefinedUsers) );
 		this.maxDefinedUsers = maxDefinedUsers;
 		return this;
 	}
@@ -72,7 +71,7 @@ public class Booking implements Serializable,HasDirtyFlag<Booking> {
 		return Optional.ofNullable(aonCustomer);
 	}
 	public Booking setAonCustomer(Integer aonCustomer) {
-		this.dirtyMark( AonUtils.notEquals(this.aonCustomer,aonCustomer) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.aonCustomer,aonCustomer) );
 		this.aonCustomer = aonCustomer;
 		return this;
 	}
@@ -81,7 +80,7 @@ public class Booking implements Serializable,HasDirtyFlag<Booking> {
 		return aonStatus;
 	}
 	public Booking setAonStatus(AonStatus aonStatus) {
-		this.dirtyMark( AonUtils.notEquals(this.aonStatus,aonStatus) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.aonStatus,aonStatus) );
 		this.aonStatus = aonStatus;
 		return this;
 	}

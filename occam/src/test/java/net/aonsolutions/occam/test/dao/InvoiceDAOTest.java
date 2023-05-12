@@ -13,10 +13,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.AonEnumUtils;
-import com.esferalia.aon.watson.server.AonObjectUtils;
-
 import net.aonsolutions.occam.api.invoice.Invoice;
 import net.aonsolutions.occam.dao.DAOUtils;
 import net.aonsolutions.occam.dao.InvoiceDAO;
@@ -24,6 +20,9 @@ import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;
 import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.watson.server.AonDateUtils;
+import net.aonsolutions.watson.server.AonEnumUtils;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 
 @ExtendWith(TimingExtension.class)	

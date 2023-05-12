@@ -2,9 +2,8 @@ package net.aonsolutions.occam.api.config;
 
 import java.io.Serializable;
 
-import com.esferalia.aon.watson.util.AonUtils;
-
 import net.aonsolutions.occam.api.HasSelector;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class Activity implements Serializable, HasSelector<Activity> {
 
@@ -22,7 +21,7 @@ public class Activity implements Serializable, HasSelector<Activity> {
 		return id;
 	}
 	public Activity setId(Integer id) {
-		this.dirtyMark( AonUtils.notEquals(this.id,id) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.id,id) );
 		this.id = id;
 		return this;
 	}
@@ -31,7 +30,7 @@ public class Activity implements Serializable, HasSelector<Activity> {
 		return domain;
 	}
 	public Activity setDomain(Integer domain) {
-		this.dirtyMark( AonUtils.notEquals(this.domain,domain) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.domain,domain) );
 		this.domain = domain;
 		return this;
 	}
@@ -40,7 +39,7 @@ public class Activity implements Serializable, HasSelector<Activity> {
 		return description;
 	}
 	public Activity setDescription(String description) {
-		this.dirtyMark( AonUtils.notEquals(this.description,description) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.description,description) );
 		this.description = description;
 		return this;
 	}
@@ -49,7 +48,7 @@ public class Activity implements Serializable, HasSelector<Activity> {
 		return epigraph;
 	}
 	public Activity setEpigraph(String epigraph) {
-		this.dirtyMark( AonUtils.notEquals(this.epigraph,epigraph) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.epigraph,epigraph) );
 		this.epigraph = epigraph;
 		return this;
 	}

@@ -23,12 +23,9 @@ import org.jooq.SelectLimitStep;
 import org.jooq.SelectSelectStep;
 import org.jooq.SelectWithTiesAfterOffsetStep;
 
-import com.esferalia.aon.watson.AonError;
-import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.util.AonStringUtils;
-import com.esferalia.aon.watson.util.Pair;
-
 import net.aonsolutions.occam.api.AONContext;
+import net.aonsolutions.occam.api.AonCoreException;
+import net.aonsolutions.occam.api.AonError;
 import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
@@ -43,6 +40,8 @@ import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilter;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilters;
 import net.aonsolutions.occam.dao.ScopeDAO.ScopeFiller;
 import net.aonsolutions.occam.dao.SecurityDAO.UserFiller;
+import net.aonsolutions.watson.client.Pair;
+import net.aonsolutions.watson.client.util.AonStringUtils;
 
 public class DomainDAO {
 	

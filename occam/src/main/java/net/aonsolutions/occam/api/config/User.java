@@ -3,10 +3,9 @@ package net.aonsolutions.occam.api.config;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonUtils;
-
 import net.aonsolutions.occam.api.HasSelector;
+import net.aonsolutions.watson.client.util.AonNumberUtils;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class User implements Serializable, HasSelector<User> {
 
@@ -25,7 +24,7 @@ public class User implements Serializable, HasSelector<User> {
 		return id;
 	}
 	public User setId(Integer id) {
-		this.setDirty( isDirty() || AonUtils.notEquals(this.id,id) );
+		this.setDirty( isDirty() || AonObjectUtils.notEquals(this.id,id) );
 		this.id = id;
 		return this;
 	}
@@ -34,7 +33,7 @@ public class User implements Serializable, HasSelector<User> {
 		return domain;
 	}
 	public User setDomain(Integer domain) {
-		this.setDirty( isDirty() || AonUtils.notEquals(this.domain,domain) );
+		this.setDirty( isDirty() || AonObjectUtils.notEquals(this.domain,domain) );
 		this.domain = domain;
 		return this;
 	}
@@ -43,7 +42,7 @@ public class User implements Serializable, HasSelector<User> {
 		return name;
 	}
 	public User setName(String name) {
-		this.setDirty( isDirty() || AonUtils.notEquals(this.name,name) );
+		this.setDirty( isDirty() || AonObjectUtils.notEquals(this.name,name) );
 		this.name = name;
 		return this;
 	}
@@ -52,7 +51,7 @@ public class User implements Serializable, HasSelector<User> {
 		return login;
 	}
 	public User setLogin(String login) {
-		this.setDirty( isDirty() || AonUtils.notEquals(this.login,login) );
+		this.setDirty( isDirty() || AonObjectUtils.notEquals(this.login,login) );
 		this.login = login;
 		return this;
 	}
@@ -61,7 +60,7 @@ public class User implements Serializable, HasSelector<User> {
 		return active;
 	}
 	public User setActive(boolean active) {
-		this.setDirty( isDirty() || AonUtils.notEquals(this.active,active) );
+		this.setDirty( isDirty() || AonObjectUtils.notEquals(this.active,active) );
 		this.active = active;
 		return this;
 	}

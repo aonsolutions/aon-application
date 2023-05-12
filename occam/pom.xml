@@ -137,6 +137,20 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>watson</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.aonsolutions</groupId>
+			<artifactId>watson</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+			<classifier>sources</classifier>
+		</dependency>
+		
+		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon-master</artifactId>
 			<version>${project.version}</version>
@@ -147,19 +161,6 @@
 			<artifactId>aon.master.jooq</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.watson</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.watson</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>

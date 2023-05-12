@@ -21,10 +21,8 @@ import org.jooq.SelectSelectStep;
 import org.jooq.SelectWithTiesAfterOffsetStep;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.watson.AonError;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
-
 import net.aonsolutions.occam.api.AONContext;
+import net.aonsolutions.occam.api.AonError;
 import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
@@ -33,6 +31,7 @@ import net.aonsolutions.occam.api.filter.UserFacade.UserBuilderFactory;
 import net.aonsolutions.occam.api.filter.UserFacade.UserFilter;
 import net.aonsolutions.occam.api.filter.UserFacade.UserFilters;
 import net.aonsolutions.occam.dao.ScopeDAO.ScopeFiller;
+import net.aonsolutions.watson.client.util.AonCollectionUtils;
 
 public class SecurityDAO {
 	

@@ -2,10 +2,9 @@ package net.aonsolutions.occam.dao;
 
 import org.jooq.Field;
 
-import com.esferalia.aon.watson.util.AonNumberUtils;
-
 import net.aonsolutions.occam.api.Filter;
 import net.aonsolutions.occam.api.Filter.Property;
+import net.aonsolutions.watson.client.util.AonNumberUtils;
 
 public class PropertyDAO<T> implements Property<T> {
 

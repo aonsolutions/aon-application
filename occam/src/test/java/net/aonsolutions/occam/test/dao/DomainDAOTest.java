@@ -1,10 +1,10 @@
 package net.aonsolutions.occam.test.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -15,13 +15,8 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.esferalia.aon.watson.AonError;
-import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.server.AonEnumUtils;
-import com.esferalia.aon.watson.server.AonObjectUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
-
+import net.aonsolutions.occam.api.AonCoreException;
+import net.aonsolutions.occam.api.AonError;
 import net.aonsolutions.occam.api.AonLogger;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
@@ -32,6 +27,10 @@ import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;
 import net.aonsolutions.occam.test.faker.AonFaker;
 import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.watson.client.util.AonStringUtils;
+import net.aonsolutions.watson.server.AonDateUtils;
+import net.aonsolutions.watson.server.AonEnumUtils;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 
 @ExtendWith(TimingExtension.class)	

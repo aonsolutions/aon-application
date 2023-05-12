@@ -30,6 +30,9 @@
 
 	<modules>
 
+		<!-- NEW MODULES  -->
+		<module>watson</module>
+		<module>occam</module>
 
 		<!-- MAVEN PLUGINS -->
 		<module>aon-alias-maven-plugin</module>
@@ -58,8 +61,6 @@
 		<module>aon-watson</module>
 		<module>aon-occam</module>
 		<module>aon-occam-mod200</module>
-		
-		<module>occam</module>
 
 		
 		<!-- FRAMEWORK -->

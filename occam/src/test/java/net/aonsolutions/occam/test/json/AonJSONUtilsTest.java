@@ -18,11 +18,10 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.esferalia.aon.watson.util.AonStringUtils;
-
 import net.aonsolutions.occam.json.AonJSONUtils;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
+import net.aonsolutions.watson.client.util.AonStringUtils;
 
 
 @ExtendWith(TimingExtension.class)

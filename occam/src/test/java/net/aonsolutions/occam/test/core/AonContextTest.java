@@ -15,10 +15,9 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.esferalia.aon.watson.AonError;
-import com.esferalia.aon.watson.error.AonCoreException;
-
 import net.aonsolutions.occam.api.AONContext;
+import net.aonsolutions.occam.api.AonCoreException;
+import net.aonsolutions.occam.api.AonError;
 import net.aonsolutions.occam.api.AonLogger;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;

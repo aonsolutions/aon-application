@@ -15,16 +15,15 @@ import org.jooq.Field;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.esferalia.aon.watson.server.AonDateUtils;
-
 import net.aonsolutions.occam.api.Filter;
 import net.aonsolutions.occam.api.Filter.Property;
+import net.aonsolutions.occam.dao.DatePropertyDAO;
 import net.aonsolutions.occam.dao.FilterDAO;
 import net.aonsolutions.occam.dao.PropertyDAO;
 import net.aonsolutions.occam.dao.TimestampPropertyDAO;
-import net.aonsolutions.occam.dao.DatePropertyDAO;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
+import net.aonsolutions.watson.server.AonDateUtils;
 
 @ExtendWith(TimingExtension.class)	
 class FilterTest extends AbstractOccamTest {

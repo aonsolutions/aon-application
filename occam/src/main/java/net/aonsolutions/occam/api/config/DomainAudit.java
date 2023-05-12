@@ -3,9 +3,8 @@ package net.aonsolutions.occam.api.config;
 import java.util.Date;
 import java.util.Optional;
 
-import com.esferalia.aon.watson.util.AonUtils;
-
 import net.aonsolutions.occam.api.HasDirtyFlag;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class DomainAudit extends Audit implements HasDirtyFlag<DomainAudit>{
 
@@ -21,7 +20,7 @@ public class DomainAudit extends Audit implements HasDirtyFlag<DomainAudit>{
 	}
 
 	public DomainAudit setLastAccessUser(String lastAccessUser) {
-		this.dirtyMark( AonUtils.notEquals(this.lastAccessUser,lastAccessUser) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.lastAccessUser,lastAccessUser) );
 		this.lastAccessUser = lastAccessUser;
 		return this;
 	}
@@ -31,7 +30,7 @@ public class DomainAudit extends Audit implements HasDirtyFlag<DomainAudit>{
 	}
 
 	public DomainAudit setLastAccessDate(Date lastAccessDate) {
-		this.dirtyMark( AonUtils.notEquals(this.lastAccessDate,lastAccessDate) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.lastAccessDate,lastAccessDate) );
 		this.lastAccessDate = lastAccessDate;
 		return this;
 	}

@@ -15,9 +15,7 @@ import org.jooq.Condition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.esferalia.aon.watson.AonError;
-import com.esferalia.aon.watson.server.AonEnumUtils;
-
+import net.aonsolutions.occam.api.AonError;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
 import net.aonsolutions.occam.dao.DAOUtils;
@@ -26,6 +24,7 @@ import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;
 import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.watson.server.AonEnumUtils;
 
 @ExtendWith(TimingExtension.class)	
 class SecurityDAOTest extends AbstractOccamTest {

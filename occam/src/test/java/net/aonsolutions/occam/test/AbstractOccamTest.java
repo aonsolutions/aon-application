@@ -18,12 +18,11 @@ import java.util.logging.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
-import com.esferalia.aon.watson.server.AonObjectUtils;
-
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.Occam;
 import net.aonsolutions.occam.api.config.Domain;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 public abstract class AbstractOccamTest {
 

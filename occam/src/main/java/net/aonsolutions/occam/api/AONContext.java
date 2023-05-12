@@ -1,6 +1,7 @@
 package net.aonsolutions.occam.api;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -8,10 +9,6 @@ import org.jooq.DSLContext;
 import org.jooq.conf.ParamType;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;
-
-import com.esferalia.aon.watson.AonError;
-import com.esferalia.aon.watson.error.AonCoreException;
-import com.esferalia.aon.watson.server.AonDatabaseUtil;
 
 import net.aonsolutions.core.pool.AonConnectionException;
 import net.aonsolutions.core.pool.AonDataSource;
@@ -98,7 +95,13 @@ public class AONContext implements AutoCloseable {
 	
 	@Override
 	public void close() {
-		AonDatabaseUtil.closeQuietly(connection);
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// Nothing
+			}
+		}
 	}
 
 	public AonLogger log() {

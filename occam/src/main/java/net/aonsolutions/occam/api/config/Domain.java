@@ -6,13 +6,12 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.esferalia.aon.watson.util.AonCollectionUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonUtils;
-
 import net.aonsolutions.occam.api.HasDirtyFlag;
 import net.aonsolutions.occam.api.HasSelector;
 import net.aonsolutions.occam.api.constants.DomainType;
+import net.aonsolutions.watson.client.util.AonCollectionUtils;
+import net.aonsolutions.watson.client.util.AonNumberUtils;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Domain> {
 
@@ -39,7 +38,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return id;
 	}
 	public Domain setId(Integer id) {
-		this.dirtyMark( AonUtils.notEquals(this.id,id) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.id,id) );
 		this.id = id;
 		return this;
 	}
@@ -48,7 +47,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return name;
 	}
 	public Domain setName(String name) {
-		this.dirtyMark( AonUtils.notEquals(this.name,name) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.name,name) );
 		this.name = name;
 		return this;
 	}
@@ -57,7 +56,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return description;
 	}
 	public Domain setDescription(String description) {
-		this.dirtyMark( AonUtils.notEquals(this.description,description) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.description,description) );
 		this.description = description;
 		return this;
 	}
@@ -66,7 +65,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return Optional.ofNullable(parent);
 	}
 	public Domain setParent(Domain parent) {
-		this.dirtyMark( AonUtils.notEquals(this.parent,parent) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.parent,parent) );
 		this.parent = parent;
 		return this;
 	}
@@ -75,7 +74,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return type;
 	}
 	public Domain setType(DomainType type) {
-		this.dirtyMark( AonUtils.notEquals(this.type,type) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.type,type) );
 		this.type = type;
 		return this;
 	}
@@ -84,7 +83,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return enableHeredity;
 	}
 	public Domain setEnableHeredity(Boolean enableHeredity) {
-		this.dirtyMark( AonUtils.notEquals(this.enableHeredity,enableHeredity) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.enableHeredity,enableHeredity) );
 		this.enableHeredity = enableHeredity;
 		return this;
 	}
@@ -93,7 +92,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return active;
 	}
 	public Domain setActive(boolean active) {
-		this.dirtyMark( AonUtils.notEquals(this.active,active) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.active,active) );
 		this.active = active;
 		return this;
 	}
@@ -102,7 +101,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return Optional.ofNullable(scope);
 	}
 	public Domain setScope(Scope scope) {
-		this.dirtyMark( AonUtils.notEquals(this.scope,scope) );
+		this.dirtyMark( AonObjectUtils.notEquals(this.scope,scope) );
 		this.scope = scope;
 		return this;
 	}

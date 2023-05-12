@@ -9,10 +9,6 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import com.esferalia.aon.watson.server.AonDateUtils;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
-import com.esferalia.aon.watson.util.AonMathUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.github.javafaker.Faker;
 
 import net.aonsolutions.occam.api.constants.AonStatus;
@@ -20,6 +16,10 @@ import net.aonsolutions.occam.api.constants.DocumentType;
 import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.api.constants.InvoiceType;
 import net.aonsolutions.occam.api.constants.SecurityLevel;
+import net.aonsolutions.watson.client.util.AonCollectionUtils;
+import net.aonsolutions.watson.client.util.AonMathUtils;
+import net.aonsolutions.watson.client.util.AonStringUtils;
+import net.aonsolutions.watson.server.AonDateUtils;
 
 public class AonRandom {
 	private static Faker faker = Faker.instance(Locale.of("es"));

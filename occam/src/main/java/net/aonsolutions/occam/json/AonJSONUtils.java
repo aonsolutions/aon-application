@@ -11,9 +11,9 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.watson.server.AonObjectUtils;
-import com.esferalia.aon.watson.util.AonNumberUtils;
-import com.esferalia.aon.watson.util.AonStringUtils;
+import net.aonsolutions.watson.client.util.AonNumberUtils;
+import net.aonsolutions.watson.client.util.AonStringUtils;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class AonJSONUtils {
 	private static final String DATE_PATTERN = "yyyy-MM-dd";

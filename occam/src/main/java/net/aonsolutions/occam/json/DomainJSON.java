@@ -8,12 +8,11 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.esferalia.aon.watson.server.AonObjectUtils;
-import com.esferalia.aon.watson.util.AonCollectionUtils;
-
 import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.constants.DomainType;
+import net.aonsolutions.watson.client.util.AonCollectionUtils;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class DomainJSON {
 	
