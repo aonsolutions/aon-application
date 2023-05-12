@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.security.Booking;
+import com.esferalia.aon.occam.api.model.security.BookingResume;
 
 public class BookingJSON {
 	
@@ -59,7 +60,28 @@ public class BookingJSON {
 			.put(IJsonNames.APPS, apps) 
 			.put(IJsonNames.PARENT_APPS, parentApps) 
 			.put(IJsonNames.NUMBER_OF_USERS, object.getNumberOfUsers())
-			.put(IJsonNames.PAYER, object.getPayer());
+			.put(IJsonNames.PAYER, object.getPayer())
+			.put(IJsonNames.RESUME, bookingResume(object.getResume()));
+	}
+	
+	private static JSONObject bookingResume(BookingResume resume) {
+		JSONObject o = new JSONObject();
+			
+		JSONObject apps = new JSONObject();
+		resume.getChildApps().keySet().forEach(r -> apps.put(r.name(), resume.getChildApps().get(r)));
+		o.put(IJsonNames.APPS, apps);
+		
+		JSONObject domain = new JSONObject();
+		resume.getDomainTypes().keySet().forEach(r -> domain.put(r.name(), resume.getDomainTypes().get(r)));
+		o.put(IJsonNames.DOMAIN, domain);
+
+		JSONObject user = new JSONObject();
+		resume.getUserTypes().keySet().forEach(r -> user.put(r.name(), resume.getUserTypes().get(r)));
+		user.put("childDefinedUsers", resume.getChildDefinedUsers());
+		user.put("childBillingUsers", resume.getChildDefinedUsers());
+		o.put(IJsonNames.USER, user);
+
+		return o;
 	}
 
 }

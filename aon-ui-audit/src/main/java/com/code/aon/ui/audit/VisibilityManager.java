@@ -231,8 +231,6 @@ public class VisibilityManager extends BasicVisibilityManager {
 			enabledModules.remove(Module.HOTEL);
 			enabledModules.remove(Module.PAYROLL_PORTAL);
 		}
-	
-		enabledModules.stream().forEach(r -> System.out.println(r.getName()));
 		return enabledModules;
 	}
 

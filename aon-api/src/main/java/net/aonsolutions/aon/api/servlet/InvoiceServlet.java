@@ -465,7 +465,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		return json;
 	}
 	
-	private static JSONObject buildInvoiceFileJSON(Domain domain, String login, Invoice invoice) {
+	public static JSONObject buildInvoiceFileJSON(Domain domain, String login, Invoice invoice) {
 		Attach invoiceAttach = AON.getAttach(domain.getName(), domain.getId(), login,
 				f -> f.getAttachModuleProperty().eq(invoice.getId())
 				, AttachType.INVOICE);

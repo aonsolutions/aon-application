@@ -45,9 +45,9 @@ public class UdpateAonSmb implements Update {
 		for (DomainApps  packSuite : packSuiteList) {
 			if(packSuite.isActive()) {
 				updateDomainApp(dslContext, packSuite.getDomain(), STANDAR);
-				updateDomainApp(dslContext, packSuite.getDomain(), INVOICE);
-				updateDomainApp(dslContext, packSuite.getDomain(), COMMERCIAL);
-				updateDomainApp(dslContext, packSuite.getDomain(), TREASURY);
+//				updateDomainApp(dslContext, packSuite.getDomain(), INVOICE);
+//				updateDomainApp(dslContext, packSuite.getDomain(), COMMERCIAL);
+//				updateDomainApp(dslContext, packSuite.getDomain(), TREASURY);
 			}
 		}
 
