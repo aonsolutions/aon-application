@@ -1,7 +1,7 @@
 import { AonElement } from './AonElement.js';
 
 import { CONSTANT, EVENT, TAG, MATERIAL_ICONS, MSG, CSS } from '../environments/environments.js';
-import { getDomains, getCustomers, updateDomains, getBooking } from '../services/domainsService.js';
+import { getDomains, getCustomers, updateDomains, getBooking, deleteDomainLinked, saveDomainLinked } from '../services/domainsService.js';
 
 import '../css/aon-domain-customer.css';
 import { AonIconButton } from './aon-icon-button.js';
@@ -1115,10 +1115,30 @@ export class AonDomainCustomer extends AonElement {
     aonButtonAccept.title = MSG.ACCEPT;
     confirmUnlinkContainer.appendChild(aonButtonAccept);
     aonButtonAccept.addEventListener("click", async (ev) => {
+      let customerId = customer ? customer.id : null;
+      let aonCustomer = this.selectedDomain && this.selectedDomain.domain ? this.selectedDomain.domain.aonCustomer : null;
       let updatedDomains = await updateDomains({
         domains: [this.selectedDomain],
-        customer: customer ? customer.id : null
+        customer: customerId
       });
+
+      if (customerId) {
+        if (aonCustomer) {
+          await deleteDomainLinked({
+            domain: this.selectedDomain,
+            customer: aonCustomer
+          });          
+        }
+        await saveDomainLinked({
+          domain: this.selectedDomain,
+          customer: customerId
+        });
+      } else {
+        await deleteDomainLinked({
+          domain: this.selectedDomain,
+          customer: aonCustomer
+        });
+      }
       if (this.selectedDomain) {
         this.selectedDomain.domain = (updatedDomains && updatedDomains[0] ? updatedDomains[0] : this.selectedDomain.domain);
       }
