@@ -75,7 +75,7 @@ public class DNIParser {
 	}
 	
 	//FORMAT FOR DNI OF 2021 ONWARDS
-	public static Object[] getDataNewFormatDni(String text) {
+	public static void getDataNewFormatDni(String text, DniDataListener listener) {
 
 		String [] lineas = text.split("\n");
 		String dni = null;
@@ -91,50 +91,37 @@ public class DNIParser {
 			String linea = lineas[i];
 			if (linea.startsWith("DOCUMENTO NACIONAL DE IDENTIDAD")) {
 				dni = lineas[i+1];
+				listener.onDniData(dni);
 			}else if (linea.startsWith("APELLIDOS")) {
 				apellido1 = lineas[i+1];
 				apellido2 = lineas[i+2];
+				listener.onApellidosData(apellido1, apellido2);
 			}else if(linea.startsWith("NOMBRE")){
 				nombre = lineas[i+1];
+	            listener.onNombreData(nombre);
 			}else if(linea.startsWith("SEXO")) {
 				sexo = lineas[i+3];
+	            listener.onSexoData(sexo);
 			}else if(linea.startsWith("NACIONALIDAD")) {
 				nacionalidad = lineas[i+3];
+	            listener.onNacionalidadData(nacionalidad);
 			}else if(linea.startsWith("NACIMIENTO")) {
 				fechaNacimiento = lineas[i+3];
-				
-			}
-		}
-		
-		 Object[] data = new Object[7];
-		    data[0] = apellido1;
-		    data[1] = apellido2;
-		    data[2] = nombre;
-		    data[3] = sexo;
-		    data[4] = nacionalidad;
-		    data[5] = dni;
-		    
-		    SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-			try {
-				fechaNac = format.parse(fechaNacimiento);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			
-			data[6] = fechaNac;
-			
-		
-		    for (int i = 0; i < data.length; i++) {
-		    System.out.println(data[i]);
+			    SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
+				try {
+				    fechaNac = format.parse(fechaNacimiento);
+	                listener.onFechaNacimientoData(fechaNac);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
-		}
-			return data;
-		
+			}
+		}		
 		
 	}
 	
 	//FORMAT FOR PRE2021 DNI 
-	public static Object[] getDataOldFormatDni(String text) {
+	public static void getDataOldFormatDni(String text, DniDataListener listener) {
 	    String [] lineas = text.split("\n");
 	    String dni = null;
 	    String nombre = null;
@@ -151,40 +138,31 @@ public class DNIParser {
 	        if (linea.startsWith("APELLIDOS")) {
 	            apellido1 = lineas[i+1];
 	            apellido2 = lineas[i+2];
+				listener.onApellidosData(apellido1, apellido2);
 	        } else if(linea.startsWith("NOMBRE")) {
 	            nombre = lineas[i+1];
+	            listener.onNombreData(nombre);
 	        } else if(linea.startsWith("SEXO")) {
 	            sexo = lineas[i+2];
+	            listener.onSexoData(sexo);
 	        } else if(linea.startsWith("NACIONALIDAD")) {
 	            nacionalidad = lineas[i+2];
+	            listener.onNacionalidadData(nacionalidad);
 	        } else if (linea.startsWith("FECHA DE NACIMIENTO")) {
 	            fechaNacimiento = lineas[i+1];
+			    SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
+			    try {
+			    	 fechaNac = format.parse(fechaNacimiento);
+		                listener.onFechaNacimientoData(fechaNac);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 	        } else if (linea.startsWith("DNI")) {
 	            dni = lineas[i];
+				listener.onDniData(dni);
+
 	        }
-	    }
-
-	    Object[] data = new Object[7]; 
-	    data[0] = apellido1;
-	    data[1] = apellido2;
-	    data[2] = nombre;
-	    data[3] = sexo;
-	    data[4] = nacionalidad;
-	    data[5] = dni;
-
-	    SimpleDateFormat formatter = new SimpleDateFormat("dd MM yyyy");
-	    try {
-	        fechaNac = formatter.parse(fechaNacimiento);
-	    } catch (ParseException e) {
-	        e.printStackTrace();
-	    }
-
-	    data[6] = fechaNac;
-	    for (int i = 0; i < data.length; i++) {
-	    System.out.println(data[i]);
-
-	}
-	    return data;
+	    }	    
 	}
 	
 	
