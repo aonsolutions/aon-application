@@ -16,7 +16,7 @@ public class AonCharSequenceUtils {
 	 * @param length     character length of the region
 	 * @return whether the region matched
 	 */
-	static boolean regionMatches(final CharSequence cs, final boolean ignoreCase, final int thisStart,
+	public static boolean regionMatches(final CharSequence cs, final boolean ignoreCase, final int thisStart,
 			final CharSequence substring, final int start, final int length) {
 		if (cs instanceof String csString && substring instanceof String substringString) {
 			return csString.regionMatches(ignoreCase, thisStart, substringString, start, length);

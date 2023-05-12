@@ -31,7 +31,7 @@ import net.aonsolutions.occam.api.filter.UserFacade.UserBuilderFactory;
 import net.aonsolutions.occam.api.filter.UserFacade.UserFilter;
 import net.aonsolutions.occam.api.filter.UserFacade.UserFilters;
 import net.aonsolutions.occam.dao.ScopeDAO.ScopeFiller;
-import net.aonsolutions.watson.client.util.AonCollectionUtils;
+import net.aonsolutions.watson.client.util.AonArrayUtils;
 
 public class SecurityDAO {
 	
@@ -150,7 +150,7 @@ public class SecurityDAO {
 			.stream()
 			.map( Scope::getId )
 			.toArray(s -> new Integer[s]);
-		return AonCollectionUtils.isEmpty(ids)
+		return AonArrayUtils.isEmpty(ids)
 				? DSL.trueCondition() 
 				: field.isNull().or(field.in(ids));
 	}
