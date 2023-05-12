@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class MyDniDataListener implements DniDataListener{
 
-	  @Override
+		@Override
 	    public void onDniData(String dni) {
 	        System.out.println("DNI: " + dni);
 	    }
