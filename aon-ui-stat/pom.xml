@@ -53,13 +53,13 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.1.0</version>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-servlet-api</artifactId>
+      <version>10.1.7</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>javax.faces</groupId>
+      <groupId>jakarta.faces</groupId>
       <artifactId>jsf-api</artifactId>
       <version>1.2_14</version>
       <scope>provided</scope>
@@ -71,7 +71,7 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>javax.el</groupId>
+      <groupId>jakarta.el</groupId>
       <artifactId>el-api</artifactId>
       <version>1.0</version>
       <scope>provided</scope>

@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.stat.server;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.stat.client.StatService;

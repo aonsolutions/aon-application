@@ -3,8 +3,8 @@ package com.code.aon.oauth2.amazon;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.GenericUrl;

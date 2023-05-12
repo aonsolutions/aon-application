@@ -30,7 +30,7 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 
-import javax.persistence.Table;
+import jakarta.persistence.Table;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;

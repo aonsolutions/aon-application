@@ -1,7 +1,6 @@
 // ----- A
 
 export const ACCEPT = 'Acceptar';
-export const ACCESS = "Accés";
 export const ACCOUNT = 'Cuenta';
 export const ACCOUNTED = 'Comptabilitzada';
 export const ACCOUNTEDS = 'Comptabilitzades';
@@ -23,8 +22,6 @@ export const ADD_TAX = 'Afegir Impost';
 export const ADD_TYPE = 'Afegir Tipus';
 export const ADDITIONAL_INFORMATION = 'Informació Addicional';
 export const ADDRESS = 'Dirección';
-export const ALL = 'Tot';
-export const ALL1 = 'Tots';
 export const ALL_FILES = 'Tots els Fitxers';
 export const AMOUNT = 'Import';
 export const API_DOCUMENTATION = 'Documentació API';
@@ -61,7 +58,6 @@ export const CATEGORIES = 'Categories';
 export const CERTIFICATE = 'Certificat';
 export const CERTIFICATES = 'Certificats';
 export const CHANGE_TYPE = 'Canviar Tipus';
-export const CHOOSE_A_DOMAIN = 'Si us plau, seleccioneu un domini';
 export const CITY = 'Ciudad';
 export const CLASSIC_APPLICATIONS = 'Aplicacions Clàssiques';
 export const CLASSIC_VIEW = 'Vista Clàssica';
@@ -92,9 +88,6 @@ export const CREDITOR = 'Creditor';
 export const CREDITORS = 'Creditors';
 export const CUSTOM_VIEW = 'Vista Personalitzada';
 export const CUSTOMER =  'Client';
-export const CUSTOMER_SEARCH =  'cerca de client';
-export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND = "No s'han trobat clients relacionats amb aquest aquest domini";
-export const CUSTOMER_SEARCH_NOT_FOUND = "No s'han trobat clients relacionats amb aquesta cerca";
 export const CUSTOMERS = 'Clients';
 
 // ----- D
@@ -120,7 +113,6 @@ export const DEUTSCH = 'Alemany';
 export const DOCUMENT = 'Document';
 export const DOCUMENTS = 'Documents';
 export const DOCUMENTARY = 'Documental';
-export const DOMAIN_SEARCH = 'Cerca de domini';
 export const DOWNLOAD = 'Descarregar';
 export const DOWNLOAD_FILE = 'Descarregar Fitxer';
 export const DOWNLOAD_FILES = 'Descarregar Fitxers';
@@ -141,7 +133,7 @@ export const EDIT_WAREHOUSE = 'Editar Magatzem';
 export const EMAIL = 'Email';
 export const EMPLOYEE = 'Empleat';
 export const END_DATE = 'Data Fin';
-export const ENGLISH = 'Anglès';
+export const ENGLISH = 'Anglès';;
 export const ENTERPRISE = 'Empresa';
 export const ENTRY = 'Entrada';
 export const EQUIVALENCE_SURCHARGE = `Recàrrec d'Equivalència`;
@@ -149,7 +141,6 @@ export const EXIT = 'Sortida';
 export const EXPENSE = 'Despesa';
 export const EXPENSES = 'Despeses';
 export const EXPIRATIONS = 'Venciments';
-export const EXPIRED = 'Caducat';
 
 // ----- F
 
@@ -216,12 +207,7 @@ export const LAST = 'Última';
 export const LAST_LOCATION = 'Última ubicació';
 export const LAST_STATUS = 'Último estat';
 export const LINK = 'Vincular';
-export const LINK_CLIENT = "Vincular cliente";
-export const LINKED = 'Vinculat';
-export const LINKED1 = 'Vinculats';
 export const LINK_DOMAINS = 'Vincular Dominis amb Clients';
-export const LINK_DOMAIN_QUESTION = "Voleu desvincular aquest client del domini?";
-export const LOADING = 'Carregant';
 export const LOCATION = 'Ubicació';
 
 // ----- M
@@ -254,7 +240,6 @@ export const NOTIFICATIONS = 'Notificacions';
 export const NOTES = 'Notes';
 export const NOTE = 'Nota';
 export const NUMBER = 'Nombre';
-export const NUMBER_OF_USERS = "Nombre d'usuaris";
 
 // ----- O
 
@@ -270,7 +255,6 @@ export const OTHER_SERVICES = 'Altres Serveis';
 
 // ----- P
 
-export const PARENT_APPS = "Aplicacions del pare";
 export const PAUSE = 'Pausa';
 export const PASSWORD = 'Contrasenya';
 export const PAYMETHOD = 'Forma de Pagament';
@@ -394,11 +378,6 @@ export const TYPES = 'Tipues';
 
 // ----- U
 
-
-export const UNLINK = "Desvincular";
-export const UNLINK_DOMAIN_QUESTION = "¿Desea desvincular aquest client del domini?";
-export const UNLINK_CLIENT = "Desvincular client";
-export const UNLINKED = "Sense vincular";
 export const UPDATED_CONTRACT = "El contrato se ha modificado correctamente";
 export const UPLOAD = 'Pujar';
 export const UPLOAD_FILE = 'Pujar Fitxer';

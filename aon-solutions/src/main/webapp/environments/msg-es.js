@@ -1,7 +1,6 @@
 // ----- A
 
 export const ACCEPT = 'Aceptar';
-export const ACCESS = 'Acceso';
 export const ACCOUNT = 'Cuenta';
 export const ACCOUNTED = 'Contabilizada';
 export const ACCOUNTEDS = 'Contabilizadas';
@@ -23,8 +22,6 @@ export const ADD_TAX = 'Añadir Impuesto';
 export const ADD_TYPE = 'Añadir Tipo';
 export const ADDITIONAL_INFORMATION = 'Información Adicional';
 export const ADDRESS = 'Dirección';
-export const ALL = 'Todo';
-export const ALL1 = 'Todos';
 export const ALL_FILES = 'Todos los Ficheros';
 export const AMOUNT = 'Importe';
 export const API_DOCUMENTATION = 'Documentación API';
@@ -63,7 +60,6 @@ export const CERTIFICATE = 'Certificado';
 export const CERTIFICATES = 'Certificados';
 export const CHANGE_TYPE = 'Cambiar Tipo';
 export const CHARGES_AND_PAYMENTS = 'Cobros y Pagos';
-export const CHOOSE_A_DOMAIN = 'Por favor, seleccione un dominio';
 export const CITY = 'Ciudad';
 export const CLASSIC_APPLICATIONS = 'Aplicaciones Clásicas';
 export const CLASSIC_VIEW = 'Vista Clásica';
@@ -95,9 +91,6 @@ export const CREDITOR = 'Acreedor';
 export const CREDITORS = 'Acreedores';
 export const CUSTOM_VIEW = 'Vista Personalizada';
 export const CUSTOMER = 'Cliente';
-export const CUSTOMER_SEARCH = 'Búsqueda de cliente';
-export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND  = "No se encontraron clientes relacionados con este dominio";
-export const CUSTOMER_SEARCH_NOT_FOUND = 'No se encontraron clientes relacionados con esta búsqueda';
 export const CUSTOMERS = 'Clientes';
 
 // ----- D
@@ -123,7 +116,6 @@ export const DEUTSCH = 'Alemán';
 export const DOCUMENT = 'Documento';
 export const DOCUMENTS = 'Documentos';
 export const DOCUMENTARY = 'Documental';
-export const DOMAIN_SEARCH = "Búsqueda de dominio";
 export const DOWNLOAD = 'Descargar';
 export const DOWNLOAD_FILE = 'Descargar Fichero';
 export const DOWNLOAD_FILES = 'Descargar Ficheros';
@@ -152,7 +144,6 @@ export const EXIT = 'Salida';
 export const EXPENSE = 'Gasto';
 export const EXPENSES = 'Gastos';
 export const EXPIRATIONS = 'Vencimientos';
-export const EXPIRED = 'Expirado';
 
 // ----- F
 
@@ -220,12 +211,7 @@ export const LAST = 'Última';
 export const LAST_LOCATION = 'Última ubicación';
 export const LAST_STATUS = 'Último estado';
 export const LINK = 'Vincular';
-export const LINK_CLIENT = "Vincular Cliente";
-export const LINKED = 'Vinculado';
-export const LINKED1 = 'Vinculados';
 export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
-export const LINK_DOMAIN_QUESTION = "¿Desea desvincular este cliente del dominio?";
-export const LOADING = 'Cargando';
 export const LOCATION = 'Ubicación';
 
 // ----- M
@@ -258,7 +244,6 @@ export const NOTIFICATIONS = 'Notificaciones';
 export const NOTES = 'Notas';
 export const NOTE = 'Nota';
 export const NUMBER = 'Número';
-export const NUMBER_OF_USERS = 'Número de usuarios';
 
 // ----- O
 
@@ -274,7 +259,6 @@ export const OTHER_SERVICES = 'Otros Servicios';
 
 // ----- P
 
-export const PARENT_APPS = 'Aplicacionesd del padre';
 export const PAUSE = 'Pausa';
 export const PASSWORD = 'Contraseña';
 export const PAYMETHOD = 'Forma de Pago';
@@ -398,10 +382,6 @@ export const TYPES = 'Tipos';
 
 // ----- U
 
-export const UNLINK = "Desvincular";
-export const UNLINK_DOMAIN_QUESTION = "¿Desea desvincular este cliente del dominio?";
-export const UNLINK_CLIENT = "Desvincular cliente";
-export const UNLINKED = "Sin vincular";
 export const UPDATED_CONTRACT = "El contrato se ha modificado correctamente";
 export const UPLOAD = 'Subir';
 export const UPLOAD_FILE = 'Subir Fichero';

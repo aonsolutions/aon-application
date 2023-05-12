@@ -1,8 +1,8 @@
 package com.code.aon.groupware;
 
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 import com.code.aon.AonVersion;
 import com.code.aon.groupware.enumeration.TaskHolderType;

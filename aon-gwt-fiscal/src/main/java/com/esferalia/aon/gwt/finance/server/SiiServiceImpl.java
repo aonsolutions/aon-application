@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.SiiService;

@@ -2,9 +2,9 @@ package com.code.aon.ui.audit;
 
 import java.io.Serializable;
 
-import javax.el.ELContext;
-import javax.el.ExpressionFactory;
-import javax.el.ValueExpression;
+import jakarta.el.ELContext;
+import jakarta.el.ExpressionFactory;
+import jakarta.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 

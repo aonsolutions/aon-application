@@ -1,6 +1,6 @@
 package com.code.aon.oauth2.fnmt;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.api.client.json.JsonFactory;

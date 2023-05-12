@@ -2201,7 +2201,7 @@ export class AonInvoice extends AonElement {
 				? 'application/pdf' : this.getInvoice().file.content_type;
 			viewer.file = !this.getInvoice().file || this.getInvoice().isEmitida()
 				? '/ms/api/download_invoice_pdf?json=' + btoa(JSON.stringify(json))
-				: this.getInvoice().file.path;
+				: this.getInvoice().file.url;
 			viewer.width = fileDiv.offsetWidth;
 			viewer.addEventListener(EVENT.SEND_MAIL, () => this.sendInvoice());
 			fileDiv.appendChild(viewer);

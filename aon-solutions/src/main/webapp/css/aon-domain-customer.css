@@ -18,9 +18,6 @@
     background-color: var(--aonBlue) !important;
     color: white;
 }
-.selectedCustomer i {
-    color: white;
-}
 /* .domainCustomerScroll::-webkit-scrollbar {
     width: 6px;
     background: transparent;
@@ -68,9 +65,3 @@
 .domainLinkAonSelect, .domainLinkAonSelect * {
     cursor: pointer;
 }
-.linkLoadSpinner {
-    animation: rotate 1.5s linear infinite; 
-}
-@keyframes rotate{
-    to{ transform: rotate(360deg); }
-  }

@@ -3,7 +3,7 @@ package com.esferalia.aon.gwt.common.server;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.client.AccountingRegistryService;
 import com.esferalia.aon.occam.api.ACCOUNTING;

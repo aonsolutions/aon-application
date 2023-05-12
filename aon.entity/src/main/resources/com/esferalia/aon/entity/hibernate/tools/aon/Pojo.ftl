@@ -1,8 +1,8 @@
 // AON-ENTITY ${date} - ${version}
 package ${aonPackage};
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import com.code.aon.AonVersion;
 import ${generatedPackage}.${generatedEntity};
 

@@ -13,8 +13,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

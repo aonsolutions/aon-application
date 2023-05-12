@@ -11,7 +11,7 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;

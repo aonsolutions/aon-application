@@ -1,8 +1,8 @@
 package com.code.aon.fiscal;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.util.CommonUtil;

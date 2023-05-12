@@ -18,7 +18,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate</artifactId>
+			<artifactId>hibernate-jakarta</artifactId>
 			<version>3.2.7.ga</version>
 			<scope>provided</scope>
 			<exclusions>
@@ -30,7 +30,7 @@
 		</dependency>		
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
+			<artifactId>hibernate-annotations-jakarta</artifactId>
 			<version>3.3.1.GA</version>
 			<scope>provided</scope>
 			<exclusions>
@@ -46,7 +46,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-commons-annotations</artifactId>
+			<artifactId>hibernate-commons-annotations-jakarta</artifactId>
 			<version>3.3.0.ga</version>
 			<scope>provided</scope>
 			<exclusions>

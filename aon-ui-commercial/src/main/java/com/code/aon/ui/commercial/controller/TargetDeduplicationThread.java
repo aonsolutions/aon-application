@@ -1,6 +1,6 @@
 package com.code.aon.ui.commercial.controller;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;

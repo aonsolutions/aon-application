@@ -6,13 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.LazyCollection;

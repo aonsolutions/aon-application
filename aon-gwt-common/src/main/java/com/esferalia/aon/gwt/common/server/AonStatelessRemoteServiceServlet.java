@@ -8,8 +8,8 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.Arrays;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.google.gwt.user.server.Base64Utils;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;

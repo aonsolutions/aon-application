@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import org.json.JSONObject;
 

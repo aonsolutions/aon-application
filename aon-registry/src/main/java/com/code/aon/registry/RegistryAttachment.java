@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;

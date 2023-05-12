@@ -4,8 +4,8 @@ import static com.code.aon.faces.controller.IRichConstants.CURRENT_COMPONENT_GRO
 
 import java.io.IOException;
 
-import javax.el.ELException;
-import javax.el.MethodExpression;
+import jakarta.el.ELException;
+import jakarta.el.MethodExpression;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;

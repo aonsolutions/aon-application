@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
