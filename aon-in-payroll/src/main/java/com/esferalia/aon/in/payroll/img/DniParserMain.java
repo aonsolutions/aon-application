@@ -28,12 +28,13 @@ public class DniParserMain {
 
 		InputStream is = new FileInputStream("/tmp/dniJuanmaDelante.jpg");
 		InputStream is2 = new FileInputStream("/tmp/dniPapaDelante.jpg");
+		MyDniDataListener listener = new MyDniDataListener();
 		byte[] bytes = IOUtils.toByteArray(is);
 		String text =	DNIParser.extract(bytes);
-		DNIParser.getDataNewFormatDni(text);
+		DNIParser.getDataNewFormatDni(text, listener);
 		bytes = IOUtils.toByteArray(is2);
 		text = DNIParser.extract(bytes);
-		DNIParser.getDataOldFormatDni(text);
+		DNIParser.getDataOldFormatDni(text, listener);
 	}
 	
 	
