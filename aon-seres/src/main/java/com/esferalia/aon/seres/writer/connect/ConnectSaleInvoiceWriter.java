@@ -60,6 +60,7 @@ import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCU;
 import com.esferalia.aon.file.seres.connect.invoice.v4.data.SINCV;
 import com.esferalia.aon.occam.api.model.seres.EdiCodes;
 import com.esferalia.aon.seres.SeresUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class ConnectSaleInvoiceWriter {
 
@@ -236,6 +237,12 @@ public class ConnectSaleInvoiceWriter {
 			calificadorReferenciaAdicional = "API";
 			referenciaAdicional = rr.getComments();
 		}
+		
+		if(!AonStringUtils.isBlank(ediCodes.getDepartment())) {
+			calificadorReferenciaAdicional = "API";
+			referenciaAdicional = ediCodes.getDepartment();
+		}
+		
 		String ediBY = isDia(customer) ? ediCodes.getCustomerEdiHeader() : ediCodes.getCustomerEdiInvoice();
 		String ediIV = isDia(customer) ? ediCodes.getCustomerEdiInvoice() : ediCodes.getCustomerEdiHeader() ;
 		List<SINCP> list = new ArrayList<>();
@@ -250,7 +257,7 @@ public class ConnectSaleInvoiceWriter {
 //					ediCodes.getCustomerEdiHeader(), customer, invoiceAddress, null));
 //		}
 		list.add(createSINCPRecord(SINCP.SINCP_2.COMPRADOR_BY,
-				ediBY, customer, invoiceAddress, null, "API", ediCodes.getDepartment()));
+				ediBY, customer, invoiceAddress, null, calificadorReferenciaAdicional, referenciaAdicional));
 		list.add(createSINCPRecord(SINCP.SINCP_2.A_QUIEN_SE_FACTURA_IV,
 				ediIV, customer, invoicingMainAddress?customerMainAddress:invoiceAddress, null));
 		list.add(createSINCPRecord(SINCP.SINCP_2.SUJETO_DEL_PAGO__A_QUIEN_SE_PAGA__PE,
