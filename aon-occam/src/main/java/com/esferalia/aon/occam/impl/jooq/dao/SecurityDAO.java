@@ -903,14 +903,14 @@ public class SecurityDAO {
 		}
 	}
 	
-	private static class DomainAppFiller implements Function<Record, DomainApp> {
+	public static class DomainAppFiller extends Filler implements Function<Record, DomainApp> {
 		@Override
 		public DomainApp apply(Record r) {
 			return new DomainApp()
 				.setId(r.getValue(DOMAIN_APP.ID))
 				.setDomain(r.getValue(DOMAIN_APP.DOMAIN))
 				.setApp(AonApp.safeValueOf(r.getValue(DOMAIN_APP.APP)))
-				.setActive(r.getValue(DOMAIN_APP.ACTIVE) == 1);
+				.setActive(getBoolean(r, DOMAIN_APP.ACTIVE));
 		}
 	}
 	
