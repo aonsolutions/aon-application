@@ -1,4 +1,4 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Mon May 08 14:01:49 CEST 2023
-jta-1.0.1B.pom>central=
-jta-1.0.1B.jar>external_free=
+#Wed May 10 17:49:35 CEST 2023
+mail-1.4.pom>=
+mail-1.4.jar>=

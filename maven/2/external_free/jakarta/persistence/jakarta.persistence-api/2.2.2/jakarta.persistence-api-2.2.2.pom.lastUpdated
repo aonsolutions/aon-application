@@ -1,0 +1,8 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Thu May 11 19:33:59 CEST 2023
+https\://repo.maven.apache.org/maven2/.lastUpdated=1683826439902
+https\://mvnrepository.com/repos/central/.error=Could not transfer artifact jakarta.persistence\:jakarta.persistence-api\:pom\:2.2.2 from/to central-repository (https\://mvnrepository.com/repos/central)\: authorization failed for https\://mvnrepository.com/repos/central/jakarta/persistence/jakarta.persistence-api/2.2.2/jakarta.persistence-api-2.2.2.pom, status\: 403 Forbidden
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1683802138549
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
+@default-central-repository-https\://mvnrepository.com/repos/central/.lastUpdated=1683802138578
+https\://repo1.maven.org/maven2/.lastUpdated=1683802138620

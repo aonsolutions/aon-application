@@ -1,0 +1,14 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed May 10 17:22:16 CEST 2023
+https\://repo1.maven.org/maven2/.error=
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
+https\://repo1.maven.org/maven2/.lastUpdated=1683732135505
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.error=
+https\://repo.maven.apache.org/maven2/.lastUpdated=1683732136095
+https\://mvnrepository.com/repos/central/.error=Could not transfer artifact jakarta.mail\:mail\:pom\:1.4 from/to central-repository (https\://mvnrepository.com/repos/central)\: authorization failed for https\://mvnrepository.com/repos/central/jakarta/mail/mail/1.4/mail-1.4.pom, status\: 403 Forbidden
+https\://repository.jboss.org/nexus/content/groups/public-jboss/.lastUpdated=1683732135978
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1683732135359
+@default-central-repository-https\://mvnrepository.com/repos/central/.lastUpdated=1683732135389
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.error=
+https\://repo.maven.apache.org/maven2/.error=
+https\://repository.jboss.org/nexus/content/repositories/thirdparty-releases/.lastUpdated=1683732135767

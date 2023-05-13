@@ -1,0 +1,7 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed May 10 17:25:06 CEST 2023
+https\://mvnrepository.com/repos/central/.error=Could not transfer artifact javax.mail\:mail\:pom\:1.4 from/to central-repository (https\://mvnrepository.com/repos/central)\: authorization failed for https\://mvnrepository.com/repos/central/javax/mail/mail/1.4/mail-1.4.pom, status\: 403 Forbidden
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1683732305887
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
+@default-central-repository-https\://mvnrepository.com/repos/central/.lastUpdated=1683732306007
+https\://repo1.maven.org/maven2/.lastUpdated=1683732306164

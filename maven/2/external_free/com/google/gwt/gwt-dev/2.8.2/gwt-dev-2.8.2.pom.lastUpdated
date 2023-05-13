@@ -1,0 +1,10 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Fri May 12 11:32:14 CEST 2023
+http\://0.0.0.0/.error=Could not transfer artifact com.google.gwt\:gwt-dev\:pom\:2.8.2 from/to maven-default-http-blocker (http\://0.0.0.0/)\: Blocked mirror for repositories\: [maven2-repository.dev.java.net (http\://download.java.net/maven/2/, default, releases), ossrh-snapshots (http\://oss.sonatype.org/content/repositories/snapshots, default, snapshots)]
+https\://mvnrepository.com/repos/central/.error=Could not transfer artifact com.google.gwt\:gwt-dev\:pom\:2.8.2 from/to central-repository (https\://mvnrepository.com/repos/central)\: authorization failed for https\://mvnrepository.com/repos/central/com/google/gwt/gwt-dev/2.8.2/gwt-dev-2.8.2.pom, status\: 403 Forbidden
+@default-maven-default-http-blocker-http\://0.0.0.0/.lastUpdated=1683883933596
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1683880385176
+https\://repository-master.mulesoft.org/nexus/content/groups/public/.lastUpdated=1683883934262
+https\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
+@default-central-repository-https\://mvnrepository.com/repos/central/.lastUpdated=1683880385329
+https\://repo1.maven.org/maven2/.lastUpdated=1683880385445
