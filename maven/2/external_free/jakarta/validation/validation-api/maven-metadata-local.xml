@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>jakarta.validation</groupId>
+  <artifactId>validation-api</artifactId>
+  <versioning>
+    <release>1.0.0.GA</release>
+    <versions>
+      <version>1.0.0.GA</version>
+    </versions>
+    <lastUpdated>20230513185133</lastUpdated>
+  </versioning>
+</metadata>

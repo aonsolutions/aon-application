@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.hibernate</groupId>
+  <artifactId>ejb3-persistence-jakarta</artifactId>
+  <versioning>
+    <release>1.0.1.GA</release>
+    <versions>
+      <version>1.0.1.GA</version>
+    </versions>
+    <lastUpdated>20230513185100</lastUpdated>
+  </versioning>
+</metadata>

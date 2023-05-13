@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.hibernate</groupId>
+  <artifactId>hibernate-commons-annotations-jakarta</artifactId>
+  <versioning>
+    <release>3.3.0.ga</release>
+    <versions>
+      <version>3.3.0.ga</version>
+    </versions>
+    <lastUpdated>20230513185115</lastUpdated>
+  </versioning>
+</metadata>
