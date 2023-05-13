@@ -1,6 +1,0 @@
-#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Thu May 11 17:53:16 CEST 2023
-bcprov-jdk14-1.38.jar>central=
-bcprov-jdk14-1.38.pom>central=
-bcprov-jdk14-1.38.pom>repo1.maven.org=
-bcprov-jdk14-1.38.jar>repo1.maven.org=

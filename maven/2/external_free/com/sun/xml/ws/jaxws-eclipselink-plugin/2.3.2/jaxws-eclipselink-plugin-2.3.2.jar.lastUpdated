@@ -1,7 +1,0 @@
-#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Thu May 11 12:49:03 CEST 2023
-https\://mvnrepository.com/repos/central/.error=Could not transfer artifact com.sun.xml.ws\:jaxws-eclipselink-plugin\:jar\:2.3.2 from/to central-repository (https\://mvnrepository.com/repos/central)\: authorization failed for https\://mvnrepository.com/repos/central/com/sun/xml/ws/jaxws-eclipselink-plugin/2.3.2/jaxws-eclipselink-plugin-2.3.2.jar, status\: 403 Forbidden
-https\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1683802141820
-https\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
-@default-central-repository-https\://mvnrepository.com/repos/central/.lastUpdated=1683802142070
-https\://repo1.maven.org/maven2/.lastUpdated=1683802143790

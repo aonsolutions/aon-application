@@ -1,7 +1,0 @@
-#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Wed May 10 16:35:09 CEST 2023
-https\://mvnrepository.com/repos/central/.error=Could not transfer artifact com.google.api-client\:google-api-client-servlet\:jar\:1.27.0 from/to central-repository (https\://mvnrepository.com/repos/central)\: authorization failed for https\://mvnrepository.com/repos/central/com/google/api-client/google-api-client-servlet/1.27.0/google-api-client-servlet-1.27.0.jar, status\: 403 Forbidden
-https\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1683729309720
-https\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
-@default-central-repository-https\://mvnrepository.com/repos/central/.lastUpdated=1683729309753
-https\://repo1.maven.org/maven2/.lastUpdated=1683729309971

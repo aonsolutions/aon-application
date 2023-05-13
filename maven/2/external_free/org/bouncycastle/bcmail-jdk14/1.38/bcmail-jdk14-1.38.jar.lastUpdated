@@ -1,9 +1,0 @@
-#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Thu May 11 17:46:34 CEST 2023
-http\://0.0.0.0/.error=Could not transfer artifact org.bouncycastle\:bcmail-jdk14\:jar\:1.38 from/to maven-default-http-blocker (http\://0.0.0.0/)\: Blocked mirror for repositories\: [maven2-repository.dev.java.net (http\://download.java.net/maven/2/, default, releases+snapshots)]
-@default-maven-default-http-blocker-http\://0.0.0.0/.lastUpdated=1683819994115
-https\://mvnrepository.com/repos/central/.error=Could not transfer artifact org.bouncycastle\:bcmail-jdk14\:jar\:1.38 from/to central-repository (https\://mvnrepository.com/repos/central)\: authorization failed for https\://mvnrepository.com/repos/central/org/bouncycastle/bcmail-jdk14/1.38/bcmail-jdk14-1.38.jar, status\: 403 Forbidden
-https\://aonsolutions.github.io/aon-application/maven/2/external_free/.lastUpdated=1683819994529
-https\://aonsolutions.github.io/aon-application/maven/2/external_free/.error=
-@default-central-repository-https\://mvnrepository.com/repos/central/.lastUpdated=1683819994744
-https\://repo1.maven.org/maven2/.lastUpdated=1683819994969
