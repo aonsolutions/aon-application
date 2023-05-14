@@ -626,7 +626,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			, salary.getTotalPayment(), DELTA);
 		
 		
-		startDate = add(startDate, Calendar.MONTH,1);
+		startDate = add(startDate, Calendar.MONTH,2);
 		endDate = getLastDayOfMonth(startDate);
 		
 		ctx = getContractSalaryCalculatorContext(
@@ -693,7 +693,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			, salary.getTotalPayment(), DELTA);
 		
 		
-		startDate = add(startDate, Calendar.MONTH,1);
+		startDate = add(startDate, Calendar.MONTH,2);
 		endDate = getLastDayOfMonth(startDate);
 		
 		ctx = getContractSalaryCalculatorContext(
@@ -760,7 +760,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 			, salary.getTotalPayment(), DELTA);
 		
 		
-		startDate = add(startDate, Calendar.MONTH,1);
+		startDate = add(startDate, Calendar.MONTH,2);
 		endDate = getLastDayOfMonth(startDate);
 		
 		ctx = getContractSalaryCalculatorContext(
