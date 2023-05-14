@@ -27,8 +27,6 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.Record2;
-import org.jooq.Record3;
 import org.jooq.Result;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
@@ -179,6 +177,21 @@ public class FeeDAO {
 				condition = condition.and(CUSTOMER_FEE.PRICE.eq(price));
 			}
 		}
+		
+		if(null != customerFeeParams.getStartDate())
+			condition = condition.and(CUSTOMER_FEE.INITIAL_DATE.eq(new Date(customerFeeParams.getStartDate().getTime())));
+		if(null != customerFeeParams.getEndDate())
+			condition = condition.and(CUSTOMER_FEE.FINAL_DATE.eq(new Date(customerFeeParams.getEndDate().getTime())));
+		if(AonStringUtils.isNotBlank(customerFeeParams.getQuantity()))
+			condition = condition.and(CUSTOMER_FEE.QUANTITY.eq( Double.parseDouble(customerFeeParams.getQuantity())));
+		if(AonStringUtils.isNotBlank(customerFeeParams.getWorkplace())) 
+			condition = condition.and(WORKPLACE.DESCRIPTION.eq(customerFeeParams.getWorkplace()));
+		if(AonStringUtils.isNotBlank(customerFeeParams.getSeller())) 
+			condition = condition.and(SELLER_ALIAS.NAME.eq(customerFeeParams.getSeller()));
+		if(AonStringUtils.isNotBlank(customerFeeParams.getInvoicingGroup())) 
+			condition = condition.and(INVOICING_GROUP.DESCRIPTION.eq(customerFeeParams.getInvoicingGroup()));
+		if(null != customerFeeParams.getProject()) 
+			condition = condition.and(CUSTOMER_FEE.PROJECT.eq(customerFeeParams.getProject()));
 		
 		return condition;
 	}
