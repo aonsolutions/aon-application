@@ -1014,12 +1014,18 @@ public class JooqEmployee {
 		if(canHaveHoursAviable(contractData.getJourneyType(), contractTypeRecord)) {
 		
 			Result<Record> journiesDB = dslContext.select().from(CONTRACT_DATA)
-					.where(CONTRACT_DATA.NAME.like("HORAS%"))
-					.and(CONTRACT_DATA.CONTRACT.eq(contract))
+					.where(CONTRACT_DATA.NAME.eq("HORAS_LUNES")
+						.or(CONTRACT_DATA.NAME.eq("HORAS_MARTES"))
+						.or(CONTRACT_DATA.NAME.eq("HORAS_MIERCOLES"))
+						.or(CONTRACT_DATA.NAME.eq("HORAS_JUEVES"))
+						.or(CONTRACT_DATA.NAME.eq("HORAS_VIERNES"))
+						.or(CONTRACT_DATA.NAME.eq("HORAS_SABADO"))
+						.or(CONTRACT_DATA.NAME.eq("HORAS_DOMINGO"))
+					).and(CONTRACT_DATA.CONTRACT.eq(contract))
 					.orderBy(CONTRACT_DATA.START_DATE)
 					.fetch();
 			
-			Map<java.util.Date, ArrayList<JourneyDuration>> journies = new HashMap<>();
+			Map<java.util.Date, ArrayList<JourneyDuration>> journies = new TreeMap<>();
 			
 			if(null != journiesDB && !journiesDB.isEmpty()) {
 				Date iterableDate = journiesDB.get(0).get(CONTRACT_DATA.START_DATE);

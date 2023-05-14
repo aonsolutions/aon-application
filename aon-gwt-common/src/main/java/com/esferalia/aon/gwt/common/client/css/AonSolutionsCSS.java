@@ -452,6 +452,9 @@ public interface AonSolutionsCSS extends CssResource {
 	
 	@ClassName("aon_icon_upload")
 	String aonIconUpload();
+	
+	@ClassName("aon_icon_upload_file")
+	String aonIconUploadFile();
 
 	@ClassName("aon_icon_wizard")
 	String aonIconWizard();
