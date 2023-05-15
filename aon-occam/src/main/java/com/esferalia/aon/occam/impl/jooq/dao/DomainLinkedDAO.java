@@ -1,10 +1,12 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.model.DomainLinked;
@@ -24,7 +26,7 @@ public class DomainLinkedDAO {
 		).forEach(r -> {
 			String[] split = r.getAttribute().substring(10).split("_");
 			Integer key = AonNumberUtils.toint(split[0]);
-			if(!map.containsKey(key)) map.put(key, new DomainLinked());
+			if(!map.containsKey(key)) map.put(key, new DomainLinked().setIndex(key).setRegistry(r.getRegistry()));
 			if("ID".equalsIgnoreCase(split[1])) {
 				map.get(key).setId(AonNumberUtils.toInteger(r.getValue()));
 			} else if("NAME".equalsIgnoreCase(split[1])) {
@@ -40,6 +42,20 @@ public class DomainLinkedDAO {
 	}
 	
 	public static DomainLinked save(AONContext ctx, DomainLinked domainLinked) {
+		//Inserta el index automáticamente si no se especifica
+		if (domainLinked != null && domainLinked.getIndex() == null) {
+			List<DomainLinked> domainLinkedList = getList(ctx, domainLinked.getRegistry());
+			Optional<Integer> lastIndex = domainLinkedList
+			.stream()
+			.max(Comparator.comparing(DomainLinked::getIndex, Comparator.nullsLast(Integer::compareTo)))
+			.map(DomainLinked::getIndex);
+			if (lastIndex.isPresent() && lastIndex.get() != null) {
+				domainLinked.setIndex(lastIndex.get() + 1);
+			} else {
+				domainLinked.setIndex(0);				
+			}
+		}
+		
 		RegistryAddInfo addInfo = new RegistryAddInfo()
 				.setRegistry(domainLinked.getRegistry())
 				.setDomain(ctx.getDomainId())
@@ -73,6 +89,29 @@ public class DomainLinkedDAO {
 		RegistryOldDAO.insertRegistryAddInfo(ctx, addInfo3);
 
 		return domainLinked;
+	}
+	
+	public static void delete(AONContext ctx, DomainLinked domainLinked) {
+		if (domainLinked != null) {
+			if (domainLinked.getIndex() != null) {
+				System.out.println(AON_DOMAIN  + domainLinked.getIndex() + "%");
+				RegistryOldDAO.deleteRegistryAddInfo(ctx, f -> f.getRegistryProperty().eq(domainLinked.getRegistry())
+						.and(f.getAttributeProperty().like(AON_DOMAIN  + domainLinked.getIndex() + "%")));
+			} else {				
+				RegistryOldDAO.deleteRegistryAddInfo(ctx, f -> f.getRegistryProperty().eq(domainLinked.getRegistry())
+						.and(f.getAttributeProperty().like(AON_DOMAIN + "%"))
+						.and(f.getValueProperty().eq(domainLinked.getName())));
+				RegistryOldDAO.deleteRegistryAddInfo(ctx, f -> f.getRegistryProperty().eq(domainLinked.getRegistry())
+						.and(f.getAttributeProperty().like(AON_DOMAIN + "%"))
+						.and(f.getValueProperty().eq(domainLinked.getId().toString())));
+				RegistryOldDAO.deleteRegistryAddInfo(ctx, f -> f.getRegistryProperty().eq(domainLinked.getRegistry())
+						.and(f.getAttributeProperty().like(AON_DOMAIN + "%"))
+						.and(f.getValueProperty().eq(domainLinked.getSchema())));
+				RegistryOldDAO.deleteRegistryAddInfo(ctx, f -> f.getRegistryProperty().eq(domainLinked.getRegistry())
+						.and(f.getAttributeProperty().like(AON_DOMAIN + "%"))
+						.and(f.getValueProperty().eq(domainLinked.getType())));
+			}
+		}
 	}
 	
 }

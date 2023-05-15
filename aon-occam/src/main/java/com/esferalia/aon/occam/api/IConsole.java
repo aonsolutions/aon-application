@@ -6,9 +6,9 @@ import java.util.stream.Stream;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
@@ -33,4 +33,6 @@ public interface IConsole {
 	public List<Domain> updateDomainCustomer(AONContext ctx, List<DomainCompany> domainCompanies, Integer customer);
 	public DomainCompany updateDomainStatus(AONContext ctx, DomainCompany domainCompany, AonStatus aonStatus);
 	public Stream<DomainCompany> getDomainsByDocument(AONContext ctx, String customerDocument, Integer customerId);
+	public DomainLinked saveDomainLink(AONContext ctx, DomainLinked domainLinked);
+	public void deleteDomainLink(AONContext ctx, DomainLinked domainLinked);
 }
