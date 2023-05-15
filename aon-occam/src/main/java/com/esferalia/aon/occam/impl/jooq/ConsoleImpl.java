@@ -10,9 +10,9 @@ import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.IConsole;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleDeleteDomain;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleParams;
 import com.esferalia.aon.occam.impl.jooq.dao.DomainCustomerDAO;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainLinkedDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.console.ConsoleDAO;
 
 public class ConsoleImpl implements IConsole {
@@ -106,5 +107,14 @@ public class ConsoleImpl implements IConsole {
 		return DomainCustomerDAO.getDomainsByDocument(ctx, customerDocument, customerId);
 	}
 
+	@Override
+	public DomainLinked saveDomainLink(AONContext ctx, DomainLinked domainLinked) {
+		return DomainLinkedDAO.save(ctx, domainLinked);
+	}
+
+	@Override
+	public void deleteDomainLink(AONContext ctx, DomainLinked domainLinked) {
+		DomainLinkedDAO.delete(ctx, domainLinked);
+	}
 	
 }

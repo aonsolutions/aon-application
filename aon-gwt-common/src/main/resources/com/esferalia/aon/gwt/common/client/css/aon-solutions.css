@@ -314,6 +314,8 @@
 .aon_icon_download { background-image: iconDownload;}
 @url iconUpload aonIconUpload;
 .aon_icon_upload { background-image: iconUpload;}
+@url iconUploadFile aonIconUploadFile;
+.aon_icon_upload_file { background-image: iconUploadFile;}
 @url iconWizard aonIconWizard;
 .aon_icon_wizard { background-image: iconWizard;}
 @url iconMinus aonIconMinus;

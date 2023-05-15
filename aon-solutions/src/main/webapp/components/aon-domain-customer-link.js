@@ -1,7 +1,7 @@
 import { AonElement } from './AonElement.js';
 
 import { CONSTANT, EVENT, TAG, MATERIAL_ICONS, MSG, CSS } from '../environments/environments.js';
-import { getDomains, getCustomers, updateDomains, getBooking } from '../services/domainsService.js';
+import { getDomains, getCustomers, updateDomains, getBooking, deleteDomainLinked, saveDomainLinked } from '../services/domainsService.js';
 
 import '../css/aon-domain-customer.css';
 import { AonIconButton } from './aon-icon-button.js';
@@ -415,7 +415,7 @@ export class AonDomainCustomer extends AonElement {
     let loadingIcon = document.createElement('span');
     loadingIcon.classList.add(CSS.MATERIAL_ICONS);
     loadingIcon.classList.add("linkLoadSpinner")
-    loadingIcon.innerHTML = MATERIAL_ICONS.CACHED;
+    loadingIcon.innerHTML = MATERIAL_ICONS.AUTORENEW;
     loadingIcon.style.fontSize = "40px";
 
     let loadingText = document.createElement('span');
@@ -616,6 +616,9 @@ export class AonDomainCustomer extends AonElement {
       if (customerStatus) {
         parameters.status = customerStatus;
       }
+      if (!this.selectedDomain) {
+        parameters.linked = false;
+      }
       let newCustomers = await getCustomers(parameters);
       this.customerSearchEnded = !newCustomers || newCustomers.length < entriesPerPage;
 
@@ -663,11 +666,15 @@ export class AonDomainCustomer extends AonElement {
           let dId = domain.id;
           let linkedCustomerDomain = cust.domain;
           if (dName && dId) {
-            booking = await getBooking({
-              domainName: dName,
-              domainId: dId,
-            });
-            console.log(booking);
+            try {
+              booking = await getBooking({
+                domainName: dName,
+                domainId: dId,
+              });
+              console.log(booking);
+            } catch (error) {
+              console.error(error);
+            }
           }
         }
 
@@ -1048,7 +1055,9 @@ export class AonDomainCustomer extends AonElement {
     infoDiv.appendChild(customerIdDiv);
     infoDiv.appendChild(customerStatusDiv);
     
-    unlinkDiv.appendChild(unlinkButton);
+    if (this.selectedDomain) {
+      unlinkDiv.appendChild(unlinkButton);
+    }
     
     customerOptionContainer.appendChild(infoDiv);
     customerOptionContainer.classList.add("linkedCustomer");
@@ -1115,10 +1124,30 @@ export class AonDomainCustomer extends AonElement {
     aonButtonAccept.title = MSG.ACCEPT;
     confirmUnlinkContainer.appendChild(aonButtonAccept);
     aonButtonAccept.addEventListener("click", async (ev) => {
+      let customerId = customer ? customer.id : null;
+      let aonCustomer = this.selectedDomain && this.selectedDomain.domain ? this.selectedDomain.domain.aonCustomer : null;
       let updatedDomains = await updateDomains({
         domains: [this.selectedDomain],
-        customer: customer ? customer.id : null
+        customer: customerId
       });
+
+      if (customerId) {
+        if (aonCustomer) {
+          await deleteDomainLinked({
+            domain: this.selectedDomain,
+            customer: aonCustomer
+          });          
+        }
+        await saveDomainLinked({
+          domain: this.selectedDomain,
+          customer: customerId
+        });
+      } else {
+        await deleteDomainLinked({
+          domain: this.selectedDomain,
+          customer: aonCustomer
+        });
+      }
       if (this.selectedDomain) {
         this.selectedDomain.domain = (updatedDomains && updatedDomains[0] ? updatedDomains[0] : this.selectedDomain.domain);
       }
