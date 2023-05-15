@@ -28,6 +28,7 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Result;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.UpdateSetMoreStep;
 import org.jooq.impl.DSL;
 
@@ -95,8 +96,7 @@ public class FeeDAO {
 	
 	public static LinkedList<Fee> getFeeList(AONContext ctx, CustomerFeeParams customerFeeParams){
 		Condition condition = createFeeCondition(ctx, customerFeeParams);
-		
-		Result<Record> feeRecords = ctx.getDslContext().select().from(CUSTOMER_FEE)
+		SelectOnConditionStep<Record> fromCustomerRecords = ctx.getDslContext().select().from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
@@ -105,7 +105,13 @@ public class FeeDAO {
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
 				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
-				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
+		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
+			fromCustomerRecords = fromCustomerRecords 	
+				.join(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
+		}
+				
+		Result<Record> feeRecords = fromCustomerRecords 
 				.where(condition)
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 				.offset(customerFeeParams.getOffset())
@@ -192,6 +198,9 @@ public class FeeDAO {
 			condition = condition.and(INVOICING_GROUP.DESCRIPTION.eq(customerFeeParams.getInvoicingGroup()));
 		if(null != customerFeeParams.getProject()) 
 			condition = condition.and(CUSTOMER_FEE.PROJECT.eq(customerFeeParams.getProject()));
+		
+		if(null != customerFeeParams.getSegment()) 
+			condition = condition.and(RSEGMENT.SEGMENT.eq(customerFeeParams.getSegment()));
 		
 		return condition;
 	}
@@ -557,8 +566,7 @@ public class FeeDAO {
 
 	public static Integer saveMassiveFees(AONContext ctx, Fee fee, CustomerFeeParams customerFeeParams) {
 		Condition condition = createFeeCondition(ctx, customerFeeParams);
-		
-		Result<Record1<Integer>> customerFeeRecords = ctx.getDslContext().select(CUSTOMER_FEE.ID).from(CUSTOMER_FEE)
+		SelectOnConditionStep<Record1<Integer>> fromCustomerRecords = ctx.getDslContext().select(CUSTOMER_FEE.ID).from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
@@ -567,10 +575,15 @@ public class FeeDAO {
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
 				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
-				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
-				.where(condition)
-				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
-			.fetch();
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
+		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
+			fromCustomerRecords = fromCustomerRecords 	
+				.join(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
+		}
+		Result<Record1<Integer>> customerFeeRecords = fromCustomerRecords	
+			.where(condition)
+			.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
+		.fetch();
 		
 		// Update Product name if is modified
 		if(null != fee.getItem() && null != fee.getItem().getProduct() && fee.getItem().getProduct().isModify()) {
@@ -609,7 +622,7 @@ public class FeeDAO {
 	public static Map<Integer, Integer> getCustomerProductsUpdates(CloseableAONContext ctx, CustomerFeeParams customerFeeParams) {
 		Condition condition = createFeeCondition(ctx, customerFeeParams);
 		
-		Result<Record1<Integer>> customerRecords = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.CUSTOMER).from(CUSTOMER_FEE)
+		SelectOnConditionStep<Record1<Integer>> fromCustomerRecords = ctx.getDslContext().selectDistinct(CUSTOMER_FEE.CUSTOMER).from(CUSTOMER_FEE)
 				.join(DOMAIN).on(DOMAIN.ID.eq(CUSTOMER_FEE.DOMAIN))
 				.join(CUSTOMER).on(CUSTOMER.REGISTRY.eq(CUSTOMER_FEE.CUSTOMER))
 				.join(CUSTOMER_ALIAS).on(CUSTOMER.REGISTRY.eq(CUSTOMER_ALIAS.ID))
@@ -618,7 +631,12 @@ public class FeeDAO {
 				.join(WORKPLACE).on(CUSTOMER_FEE.WORKPLACE.eq(WORKPLACE.ID))
 				.leftOuterJoin(SELLER).on(CUSTOMER_FEE.SELLER.eq(SELLER.REGISTRY))
 				.leftOuterJoin(SELLER_ALIAS).on(SELLER.REGISTRY.eq(SELLER_ALIAS.ID))
-				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP))
+				.leftOuterJoin(INVOICING_GROUP).on(INVOICING_GROUP.ID.eq(CUSTOMER_FEE.INVOICING_GROUP));
+		if (customerFeeParams != null && customerFeeParams.getSegment() != null) {
+			fromCustomerRecords = fromCustomerRecords 	
+				.join(RSEGMENT).on(RSEGMENT.REGISTRY.eq(CUSTOMER.REGISTRY));
+		}
+		Result<Record1<Integer>> customerRecords = fromCustomerRecords 
 				.where(condition)
 				.orderBy(CUSTOMER_FEE.CUSTOMER, CUSTOMER_FEE.LINE)
 			.fetch();

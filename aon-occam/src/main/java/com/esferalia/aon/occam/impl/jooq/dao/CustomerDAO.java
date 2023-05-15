@@ -114,7 +114,7 @@ public class CustomerDAO {
 					.setTransaction(InvoiceTransactionType.safeValueOf(getValue(r, CUSTOMER.TRANSACTION)))
 					.setWithholding(getBoolean(r, CUSTOMER.WITHHOLDING))
 					.setStatus(RegistryStatus.safeValueOf(getValue(r, CUSTOMER.STATUS)))
-					.setRelationship(r.getValue(RRELATIONSHIP.ID)!=null);
+					.setRelationship(getValue(r, RRELATIONSHIP.ID)!=null);
 		}
 	}
 	
