@@ -224,7 +224,7 @@ export const LINK_CLIENT = "Vincular Cliente";
 export const LINKED = 'Vinculado';
 export const LINKED1 = 'Vinculados';
 export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
-export const LINK_DOMAIN_QUESTION = "¿Desea desvincular este cliente del dominio?";
+export const LINK_DOMAIN_QUESTION = "¿Desea vincular este cliente con el dominio?";
 export const LOADING = 'Cargando';
 export const LOCATION = 'Ubicación';
 

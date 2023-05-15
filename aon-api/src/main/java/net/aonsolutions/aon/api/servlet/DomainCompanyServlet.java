@@ -160,20 +160,12 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		DomainCompany domainCompany = DomainCompanyJSON.fromJSON(domainJson);
 		if (customer != null) {
 			Domain domain = domainCompany.getDomain();
-			String schema = domainCompany.getSchema();
-//			DomainLinked domainLinked = new DomainLinked()
-//					.setId(domain.getId())
-//					.setName(domain.getName())
-//					.setRegistry(customer)
-//					.setSchema(schema)
-//					.setType(domain.getDomainType().getName());
 			List<DomainLinked> domainLinkeds = AON.getDomainLinkedList(apiDomain.getName(), apiDomain.getId(), apiUser.getLogin(), customer);
 			domainLinkeds
 			.stream()
 			.filter(dl -> AonStringUtils.equals(dl.getName(), domain.getName())
 					&& AonNumberUtils.equals(dl.getId(), domain.getId()))
 			.forEach(dl -> {
-				System.out.println("registry: " + dl.getRegistry());
 				CONSOLE.deleteDomainLink(apiDomain, apiUser, dl);				
 			});
 			

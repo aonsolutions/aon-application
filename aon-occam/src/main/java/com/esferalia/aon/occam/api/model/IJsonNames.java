@@ -296,6 +296,7 @@ public final class IJsonNames {
 	public static final String LEVEL = "level";
 	public static final String LIMIT = "limit";
 	public static final String LINE = "line";
+	public static final String LINKED = "linKED";
 	public static final String LINES_PAGE_LIMIT = "linesPageLimit";
 	public static final String LOCALE = "locale";
 	public static final String LOGIN = "login";
@@ -326,6 +327,7 @@ public final class IJsonNames {
 	public static final String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
 	public static final String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded"; 
 	public static final String NOTARY = "notary";
+	public static final String NOT_LINKED = "notLinked";
 	public static final String NRS = "nrs";
 	public static final String NULL = "null";
 	public static final String NUMBER = "number";

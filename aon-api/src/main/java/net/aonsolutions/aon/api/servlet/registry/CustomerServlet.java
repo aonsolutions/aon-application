@@ -1,4 +1,5 @@
 package net.aonsolutions.aon.api.servlet.registry;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import javax.servlet.annotation.WebServlet;
@@ -14,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
+import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.server.AonEnumUtils;
 
@@ -100,6 +102,21 @@ public class CustomerServlet extends AonApiHttpServlet {
 	private Filter customerFilter(AonApiData api, CustomerProperties f) {
 		Filter filter = f.getDomainProperty().eq(api.getDomain().getId()) ;
 				//.and(f.getStatusProperty().eq(RegistryStatus.ACTIVE.value()));
+		
+		if (api.getData().opt(IJsonNames.LINKED) != null) {
+			Integer[] linkedCustomerRegistries = AON.getRegistryAddInfoStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					p -> p.getAttributeProperty().like("AON_DOMAIN%").and(p.getRegistryProperty().isNotNull()))
+			.filter(Objects::nonNull)
+			.map(RegistryAddInfo::getRegistry)
+			.distinct()
+			.toArray(Integer[]::new);
+			
+			if (api.getData().optBoolean(IJsonNames.LINKED)) {
+				filter = filter.and(f.getRegistryProperty().in(linkedCustomerRegistries));
+			} else {				
+				filter = filter.and(f.getRegistryProperty().notIn(linkedCustomerRegistries));
+			}
+		}
 		
 		if(api.getData().opt(IJsonNames.REGISTRY) != null) {
 			filter = filter.and(f.getIdProperty().eq(JsonUtils.getInteger(api.getData(), IJsonNames.REGISTRY)));
