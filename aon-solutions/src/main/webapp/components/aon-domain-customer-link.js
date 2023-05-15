@@ -1,7 +1,7 @@
 import { AonElement } from './AonElement.js';
 
 import { CONSTANT, EVENT, TAG, MATERIAL_ICONS, MSG, CSS } from '../environments/environments.js';
-import { getDomains, getCustomers, updateDomains } from '../services/domainsService.js';
+import { getDomains, getCustomers, updateDomains, getBooking, deleteDomainLinked, saveDomainLinked } from '../services/domainsService.js';
 
 import '../css/aon-domain-customer.css';
 import { AonIconButton } from './aon-icon-button.js';
@@ -373,7 +373,39 @@ export class AonDomainCustomer extends AonElement {
     this.customerList.classList.add("domainCustomerScroll");
     this.customerList.addEventListener("scroll", (event) => {
       this.scrollFunction();
-    })
+    });
+  }
+
+  buildLoadingPanel() {
+    this.loadingPanel = document.createElement('div');
+    this.loadingPanel.style.position = "absolute";
+    this.loadingPanel.style.width = "100%";
+    this.loadingPanel.style.height = "100%";
+    this.loadingPanel.style.display = "none";
+    this.loadingPanel.style.justifyContent = "center";
+    this.loadingPanel.style.alignItems = "center";
+    this.loadingPanel.style.backgroundColor = "rgba(240,248,255,0.5)";
+    this.loadingPanel.style.zIndex = "9999";
+
+    let loadingLine = document.createElement('div');
+    loadingLine.style.display = "flex";
+    loadingLine.style.justifyContent = "center";
+    loadingLine.style.alignItems = "center";
+
+    let loadingIcon = document.createElement('span');
+    loadingIcon.classList.add(CSS.MATERIAL_ICONS);
+    loadingIcon.classList.add("linkLoadSpinner")
+    loadingIcon.innerHTML = MATERIAL_ICONS.AUTORENEW;
+    loadingIcon.style.fontSize = "40px";
+
+    let loadingText = document.createElement('span');
+    loadingText.innerText =  `${MSG.LOADING}...`;
+
+    loadingLine.appendChild(loadingIcon);
+    loadingLine.appendChild(loadingText);
+
+    this.loadingPanel.appendChild(loadingLine);
+
   }
   
   // ---------------------------------------
@@ -540,6 +572,9 @@ export class AonDomainCustomer extends AonElement {
       if (customerStatus) {
         parameters.status = customerStatus;
       }
+      if (!this.selectedDomain) {
+        parameters.linked = false;
+      }
       let newCustomers = await getCustomers(parameters);
       this.customerSearchEnded = !newCustomers || newCustomers.length < entriesPerPage;
 
@@ -581,6 +616,23 @@ export class AonDomainCustomer extends AonElement {
           id: aonCustomer
         });
         customers.push(cust);
+        if (cust && domain) {
+          let dName = domain.name;
+          let dId = domain.id;
+          let linkedCustomerDomain = cust.domain;
+          if (dName && dId) {
+            try {
+              booking = await getBooking({
+                domainName: dName,
+                domainId: dId,
+              });
+              console.log(booking);
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        }
+
       } else {
         if (searchDocument) {
           let parameters = {
@@ -841,7 +893,9 @@ export class AonDomainCustomer extends AonElement {
     infoDiv.appendChild(customerDocumentDiv);
     infoDiv.appendChild(customerStatusDiv);
     
-    unlinkDiv.appendChild(unlinkButton);
+    if (this.selectedDomain) {
+      unlinkDiv.appendChild(unlinkButton);
+    }
     
     customerOptionContainer.appendChild(infoDiv);
     // if (isLinked) {
@@ -915,10 +969,33 @@ export class AonDomainCustomer extends AonElement {
     aonButtonAccept.title = "Aceptar";
     confirmUnlinkContainer.appendChild(aonButtonAccept);
     aonButtonAccept.addEventListener("click", async (ev) => {
-      await updateDomains({
+      let customerId = customer ? customer.id : null;
+      let aonCustomer = this.selectedDomain && this.selectedDomain.domain ? this.selectedDomain.domain.aonCustomer : null;
+      let updatedDomains = await updateDomains({
         domains: [this.selectedDomain],
-        customer: customer ? customer.id : null
+        customer: customerId
       });
+
+      if (customerId) {
+        if (aonCustomer) {
+          await deleteDomainLinked({
+            domain: this.selectedDomain,
+            customer: aonCustomer
+          });          
+        }
+        await saveDomainLinked({
+          domain: this.selectedDomain,
+          customer: customerId
+        });
+      } else {
+        await deleteDomainLinked({
+          domain: this.selectedDomain,
+          customer: aonCustomer
+        });
+      }
+      if (this.selectedDomain) {
+        this.selectedDomain.domain = (updatedDomains && updatedDomains[0] ? updatedDomains[0] : this.selectedDomain.domain);
+      }
       this.customerListScrollPromise = null;
       this.customerSearchEnded = true;
       this.removeAllDomains();

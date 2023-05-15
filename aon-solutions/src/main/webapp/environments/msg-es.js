@@ -212,6 +212,8 @@ export const LAST_LOCATION = 'Última ubicación';
 export const LAST_STATUS = 'Último estado';
 export const LINK = 'Vincular';
 export const LINK_DOMAINS = 'Vincular Dominios a Clientes';
+export const LINK_DOMAIN_QUESTION = "¿Desea vincular este cliente con el dominio?";
+export const LOADING = 'Cargando';
 export const LOCATION = 'Ubicación';
 
 // ----- M

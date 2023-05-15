@@ -466,6 +466,7 @@ public class CompanyServlet extends AonApiHttpServlet{
 		Booking newBooking = new Booking()
 			.setDomain(api.getDomain())
 			.setCompany(oldBooking.getCompany())
+			.setType(DomainType.safeValueOf(JsonUtils.getString(api.getData(), IJsonNames.TYPE)))
 			.setApps(safeValueOf(JsonUtils.getJSONArray(api.getData(), IJsonNames.APPS)))
 			.setNumberOfUsers(JsonUtils.getInteger(api.getData(), IJsonNames.USERS))
 			.setPayer(domainPayer ? api.getDomain().getId().toString() : "");
