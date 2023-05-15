@@ -7,6 +7,7 @@ import java.util.List;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.type.DomainType;
 
 public class Booking implements Serializable {
 
@@ -15,6 +16,7 @@ public class Booking implements Serializable {
 	
 	private Domain domain;
 	private Company company;
+	private DomainType type;
 	private List<AonApp> apps;
 	private List<AonApp> parentApps;
 	private Integer numberOfUsers;
@@ -98,6 +100,15 @@ public class Booking implements Serializable {
 	
 	public Booking setResume(BookingResume resume) {
 		this.resume = resume;
+		return this;
+	}
+	
+	public DomainType getType() {
+		return type;
+	}
+	
+	public Booking setType(DomainType type) {
+		this.type = type;
 		return this;
 	}
 }
