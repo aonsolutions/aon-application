@@ -56,6 +56,6 @@ public class MyDniDataListener implements DniDataListener{
 	    
 	    @Override
 	    public void onNombreMadreData(String nombreMadre) {
-	    	System.out.println("nombre de madre: " +nombreMadre);
+	    	System.out.println("Nombre de madre: " +nombreMadre);
 	    }
 }
