@@ -281,6 +281,41 @@ public class DownloadFeeServlet extends HttpServlet {
 			filter = filter.and(f.getDiscountExprProperty().eq(discount));
 		}
 		
+		if(filterJSON.opt("quantity") != null) {
+			Double quantity = filterJSON.optDouble("quantity");
+			filter = filter.and(f.getQuantityProperty().eq(quantity));
+		}
+		
+		if(filterJSON.opt("startDate") != null) {
+			java.sql.Date startDate = new java.sql.Date(filterJSON.optLong("startDate"));
+			filter = filter.and(f.getInitialDateProperty().eq(startDate));
+		}
+		
+		if(filterJSON.opt("endDate") != null) {
+			java.sql.Date endDate = new java.sql.Date(filterJSON.optLong("endDate"));
+			filter = filter.and(f.getFinalDateProperty().eq(endDate));
+		}
+		
+		if(filterJSON.opt("workplace") != null) {
+			Integer workplace = filterJSON.optInt("workplace");
+			filter = filter.and(f.getWorkplaceProperty().eq(workplace));
+		}
+		
+		if(filterJSON.opt("seller") != null) {
+			Integer seller = filterJSON.optInt("seller");
+			filter = filter.and(f.getSellerProperty().eq(seller));
+		}
+		
+		if(filterJSON.opt("invoicingGroup") != null) {
+			Integer invoicingGroup = filterJSON.optInt("invoicingGroup");
+			filter = filter.and(f.getInvoicingGroupProperty().eq(invoicingGroup));
+		}
+		
+		if(filterJSON.opt("project") != null) {
+			Integer project = filterJSON.optInt("project");
+			filter = filter.and(f.getProjectProperty().eq(project));
+		}
+		
 		if(filterJSON.opt("feeIds") != null) {
 			 JSONObject feeIds = filterJSON.optJSONObject("feeIds");
 			 List<Integer> ids = new ArrayList<>();

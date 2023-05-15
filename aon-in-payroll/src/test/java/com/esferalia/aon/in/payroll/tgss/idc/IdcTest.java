@@ -88,6 +88,8 @@ import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase;
@@ -843,18 +845,24 @@ public class IdcTest extends AbstractSQLTestCase {
 
 	protected Salary calculate(Collection<PEC> ssPECs, Collection<Data> datas, Date date,
 			ISalaryBuilder<Salary> salaryBuilder) throws ExpressionException, SQLException, SalaryException {
-		java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(date));
-		java.sql.Date endDate = toSQL(AonDateUtils.getLastDayOfMonth(date));
+		return calculate(ssPECs, datas, date, salaryBuilder, null);
+	}
 
-		Connection connection = getConnection();
-		AONContext aonContext = new AONContext(connection);
-		ContractRecord contract = newContract(aonContext, toSQL(startDate), ssPECs, datas);
+	protected Salary calculate(Collection<PEC> ssPECs, Collection<Data> datas, Date date,
+		ISalaryBuilder<Salary> salaryBuilder, GenericContractSalaryCalculator.IListener listener) throws ExpressionException, SQLException, SalaryException {
+	    java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(date));
+	    java.sql.Date endDate = toSQL(AonDateUtils.getLastDayOfMonth(date));
 
-		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate,
-				endDate, contract);
-		SmartContractSalaryCalculator<Salary> builder = new SmartContractSalaryCalculator<Salary>(salaryBuilder);
-		Salary salary = builder.calculate(ctx);
-		return salary;
+	    Connection connection = getConnection();
+	    AONContext aonContext = new AONContext(connection);
+	    ContractRecord contract = newContract(aonContext, toSQL(startDate), ssPECs, datas);
+
+	    ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate,
+		    endDate, contract);
+	    SmartContractSalaryCalculator<Salary> builder = new SmartContractSalaryCalculator<Salary>(salaryBuilder);
+	    builder.setListener(listener);
+	    Salary salary = builder.calculate(ctx);
+	    return salary;
 	}
 
 	protected Salary calculate(Collection<PEC> ssPECs, Collection<Data> datas, String[] payments, Date startDate,
@@ -5303,6 +5311,47 @@ public class IdcTest extends AbstractSQLTestCase {
 //			double meiCost = salary.getSalaryCosts().stream().filter( c -> "MEI_E".equals( c.getName())).collect(Collectors.summingDouble(SalaryCost::getAmount));
 //
 //			assertEquals(meiCost, salary.getTotalEnterprise(), DELTA);
+		}
+	}
+
+	@Test
+	public void testIdcXXIXBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SalaryException, SQLException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXIX.pdf")) {
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
+				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
+			//Assert.assertEquals(1, ssPecs.size());
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.DAY_OF_MONTH, 24);
+			calendar.set(Calendar.MONTH, Calendar.AUGUST);
+			Date august282023 = calendar.getTime();
+
+			assertPECS(ssPecs, august282023, null, 1, pec -> pec.getFormula().contains("AVISO") );
+			
+			try {
+			Salary salary = calculate(ssPecs, Collections.emptyList(), august282023, new  SalaryBuilder(), new GenericContractSalaryCalculator.Listener() {
+			    public void onCheckError(IContractBonus bonus, String message) {
+				throw new Error(message); 
+			    };
+			});
+			} catch ( Error error ) {
+			    System.out.println(error.getMessage());
+			    return;
+			}
+			
+			Assert.fail();
+			
+
 		}
 	}
 

@@ -2,8 +2,6 @@ package com.esferalia.aon.occam.api.model.aonsolutions;
 
 import java.io.Serializable;
 
-import org.json.JSONObject;
-
 public class DomainApp implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
@@ -48,15 +46,6 @@ public class DomainApp implements Serializable{
 	public DomainApp setActive(Boolean active) {
 		this.active = active;
 		return this;
-	}
-	
-	public JSONObject toJSON() {
-		JSONObject json = new JSONObject();
-		json.put("id", getId());
-		json.put("domain", getDomain());
-		json.put("app", getApp().name());
-		json.put("active", isActive());
-		return json;
 	}
 	
 	public boolean isEmpty() {
