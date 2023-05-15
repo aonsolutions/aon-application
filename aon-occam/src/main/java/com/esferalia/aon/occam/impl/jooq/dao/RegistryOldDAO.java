@@ -1039,6 +1039,10 @@ public class RegistryOldDAO {
 		int i = ctx.getDslContext().delete(RADDINFO).where(RADDINFO.ID.eq(raddinfoId)).execute();
 		ctx.log().info("DELETE RBANK ("+i+") id: " + raddinfoId);
 	}
+
+	public static void deleteRegistryAddInfo(AONContext ctx, RegistryAddInfoFilter filter){
+		ctx.getDslContext().delete(RADDINFO).where(RADDINFO_PROPERTIES.getConditions(filter)).execute();
+	}
 	
 	// ------------------- RDIRSTAFF
 	
