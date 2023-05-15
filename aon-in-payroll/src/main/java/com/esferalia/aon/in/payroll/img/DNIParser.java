@@ -120,6 +120,37 @@ public class DNIParser {
 		
 	}
 	
+	public static void getDataNewFormatDniBack(String text, DniDataListener listener) {
+		String [] lineas = text.split("\n");
+		String direccion = null;
+		String localidad = null;
+		String lugarNacimiento = null;
+		String nombrePadre = null;
+		String nombreMadre = null;
+		
+		for(int i = 0; i<lineas.length; i++) {
+			String linea = lineas[i];
+			
+			if(linea.startsWith("DOMICILIO")) {
+				direccion = lineas[i+1];
+				listener.onDireccionData(direccion);
+				localidad = lineas[i+2];
+				listener.onLocalidadData(localidad);
+			}else if(linea.startsWith("LUGAR DE NACIMIENTO")) {
+				lugarNacimiento = lineas[i+1];
+				listener.onLugarNacimientoData(lugarNacimiento);
+			}else if(linea.startsWith("HIJO/A DE")) {
+				nombrePadre = lineas[i+1];
+				listener.onNombrePadreData(nombrePadre);
+				nombreMadre = lineas[i+3];
+				listener.onNombreMadreData(nombreMadre);
+			}
+			
+			
+		}
+		
+	}
+	
 	//FORMAT FOR PRE2021 DNI 
 	public static void getDataOldFormatDni(String text, DniDataListener listener) {
 	    String [] lineas = text.split("\n");
@@ -165,7 +196,35 @@ public class DNIParser {
 	    }	    
 	}
 	
-	
+	public static void getDataOldFormatDniBack(String text, DniDataListener listener) {
+		String [] lineas = text.split("\n");
+		String direccion = null;
+		String localidad = null;
+		String lugarNacimiento = null;
+		String nombrePadres = null;
+		
+		for(int i = 0; i<lineas.length; i++) {
+			String linea = lineas[i];
+			if (linea.startsWith("DOMICILIO")) {
+				direccion = lineas[i+1];
+				listener.onDireccionData(direccion);
+				localidad = lineas[i+2];
+				listener.onLocalidadData(localidad);
+			}else if(linea.startsWith("LUGAR DE NACIMIENTO")) {
+				lugarNacimiento = lineas[i+1];
+				listener.onLugarNacimientoData(lugarNacimiento);
+			}else if(linea.startsWith("HIJO/A DE")) {
+				nombrePadres = lineas[i+1];
+				String[] aux = nombrePadres.split("/");
+				String part1 = aux[0];
+				String part2 = aux[1];
+				listener.onNombrePadreData(part1);
+				listener.onNombreMadreData(part2);
+			}
+			
+		}
+		
+	}
 	
 	private static boolean intersects(Block b1, Block b2) {
 		float top1 = b1.getGeometry().getBoundingBox().getTop();

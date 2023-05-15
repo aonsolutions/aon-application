@@ -9,4 +9,9 @@ public interface DniDataListener {
 	    void onSexoData(String sexo);
 	    void onNacionalidadData(String nacionalidad);
 	    void onFechaNacimientoData(Date fechaNacimiento);
+	    void onDireccionData(String direccion);
+	    void onLocalidadData(String localidad);
+	    void onLugarNacimientoData(String lugarNacimiento);
+	    void onNombrePadreData(String nombrePadre);
+	    void onNombreMadreData(String nombreMadre);
 }

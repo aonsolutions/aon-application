@@ -33,4 +33,29 @@ public class MyDniDataListener implements DniDataListener{
 	    public void onFechaNacimientoData(Date fechaNacimiento) {
 	    	System.out.println("Fecha nacimiento: " +fechaNacimiento);
 	    }
+	    
+	    @Override
+	    public void onDireccionData(String direccion) {
+	    	System.out.println("Direccion: " +direccion);
+	    }
+	    
+	    @Override
+	    public void onLocalidadData(String localidad) {
+	    	System.out.println("Localidad: " +localidad);
+	    }
+	    
+	    @Override
+	    public void onLugarNacimientoData(String lugarNacimiento) {
+	    	System.out.println("Lugar de nacimiento: " +lugarNacimiento);
+	    }
+	    
+	    @Override
+	    public void onNombrePadreData(String nombrePadre) {
+	    	System.out.println("Nombre de padre: " +nombrePadre);
+	    }
+	    
+	    @Override
+	    public void onNombreMadreData(String nombreMadre) {
+	    	System.out.println("nombre de madre: " +nombreMadre);
+	    }
 }
