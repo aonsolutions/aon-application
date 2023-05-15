@@ -962,12 +962,54 @@ public class JooqEmployee {
 		checkCnoContrata(dslContext, contract, contractData);
 		
 		//CONTRACT INFO TABLE
-		Result<Record> contractInfoTableRecords = dslContext.select().from(CONTRACT_INFO)
-			.where(CONTRACT_INFO.CONTRACT.eq(contract))
-			.and(CONTRACT_INFO.NAME.eq("OPCION_CONTRATO"))
-			.and(CONTRACT_INFO.START_DATE.le(currentDate))
-			.and(CONTRACT_INFO.END_DATE.isNull().or(CONTRACT_INFO.END_DATE.ge(currentDate)))
-			.fetch();
+		Result<Record> contractInfoTableRecords = null;
+		
+		if(null != contractData.getEndDate()) { //Para contratos finalizados
+			if(currentDate.after(contractData.getEndDate())) {
+				contractInfoTableRecords = dslContext.select().from(CONTRACT_INFO)
+					.where(CONTRACT_INFO.CONTRACT.eq(contract))
+					.and(CONTRACT_INFO.NAME.eq("OPCION_CONTRATO"))
+					.orderBy(CONTRACT_INFO.START_DATE)
+					.fetch();
+			}else {
+				contractInfoTableRecords = dslContext.select().from(CONTRACT_INFO)
+						.where(CONTRACT_INFO.CONTRACT.eq(contract))
+						.and(CONTRACT_INFO.NAME.eq("OPCION_CONTRATO"))
+						.and(CONTRACT_INFO.END_DATE.ge(currentDate).or(CONTRACT_INFO.END_DATE.isNull()))
+						.fetch();
+				
+				if(contractDataTable.isEmpty())
+					contractInfoTableRecords = dslContext.select().from(CONTRACT_INFO)
+					.where(CONTRACT_INFO.CONTRACT.eq(contract))
+					.and(CONTRACT_INFO.NAME.eq("OPCION_CONTRATO"))
+					.orderBy(CONTRACT_INFO.ID)
+					.fetch();
+			}
+		}else {
+			
+			if(contractData.getStartDate().after(currentDate)) {
+				contractInfoTableRecords = dslContext.select().from(CONTRACT_INFO)
+						.where(CONTRACT_INFO.CONTRACT.eq(contract))
+						.and(CONTRACT_INFO.NAME.eq("OPCION_CONTRATO"))
+						.and(CONTRACT_INFO.START_DATE.le(new Date(contractData.getStartDate().getTime())))
+						.and(CONTRACT_INFO.END_DATE.ge(new Date(contractData.getStartDate().getTime())).or(CONTRACT_INFO.END_DATE.isNull()))
+						.fetch();
+			}else
+				contractInfoTableRecords = dslContext.select().from(CONTRACT_INFO)
+						.where(CONTRACT_INFO.CONTRACT.eq(contract))
+						.and(CONTRACT_INFO.NAME.eq("OPCION_CONTRATO"))
+						.and(CONTRACT_INFO.END_DATE.isNull().or(CONTRACT_INFO.END_DATE.ge(currentDate)))
+						.orderBy(CONTRACT_INFO.START_DATE.asc())
+						.fetch();
+			
+			if(contractInfoTableRecords.isEmpty())
+				contractInfoTableRecords = dslContext.select().from(CONTRACT_INFO)
+				.where(CONTRACT_INFO.CONTRACT.eq(contract))
+				.and(CONTRACT_INFO.NAME.eq("OPCION_CONTRATO"))
+				.orderBy(CONTRACT_INFO.ID)
+				.fetch();
+		}
+		
 		
 		Record contractInfoTable = null;
 		
