@@ -114,6 +114,10 @@ public class BookingDAO {
 	}
 
 	public static Booking save(AONContext ctx, Booking booking) {
+		if(booking.getType() != null) {
+			changeDomainType(ctx, booking);
+		}
+		
 		if (booking.getNumberOfUsers() != null) {
 			SecurityDAO.saveDomainMaxDefinedUser(ctx, booking.getNumberOfUsers());
 		}
@@ -245,4 +249,13 @@ public class BookingDAO {
 			.collect(Collectors.groupingBy(r -> r.getValue(DOMAIN_APP.ID)))
 			.entrySet().stream().map(o -> o.getValue().stream().findFirst().map(new DomainAppFiller()).orElse(new DomainApp())).toList()))
 		.toList();
-	}}
+	}
+	
+	public static void changeDomainType(AONContext ctx, Booking booking){
+		ctx.getDslContext()
+			.update(DOMAIN)
+			.set(DOMAIN.TYPE, booking.getType().value())
+			.where(DOMAIN.ID.eq(booking.getDomain().getId()))
+			.execute();
+	}
+}
