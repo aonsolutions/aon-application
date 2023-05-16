@@ -37,6 +37,8 @@ export class AonDomainCustomer extends AonElement {
   domainAonStatusFilter;
   domainStatusFilter;
   customerStatusFilter;
+  customerAccessFilter;
+  customerLinkStatusFilter;
 
   customerPage;
 
@@ -271,7 +273,7 @@ export class AonDomainCustomer extends AonElement {
   buildCustomerSearch() {
 
     let domainSearchContainer = document.createElement("div");
-    domainSearchContainer.style.display = "none";
+    domainSearchContainer.style.display = "flex";
     domainSearchContainer.style.flexDirection = "row";
     domainSearchContainer.style.flexWrap = "wrap";
     domainSearchContainer.style.width = "45%";
@@ -319,36 +321,88 @@ export class AonDomainCustomer extends AonElement {
     searchFiltersContainer.style.width = "100%";
     searchFiltersContainer.style.height = "100%";
     searchFiltersContainer.style.display = "flex";
-    searchFiltersContainer.style.justifyContent = "flex-start";
+    searchFiltersContainer.style.justifyContent = "space-evenly";
     searchFiltersContainer.style.alignItems = "center";
     searchFiltersContainer.style.flexWrap = "wrap";
     searchFiltersContainer.style.marginTop = "5px";
-    
-    let domainAonStatusFilterContainer = document.createElement('div');
-    domainAonStatusFilterContainer.style.width = "45%";
-    domainAonStatusFilterContainer.style.height = "50%";
-    domainAonStatusFilterContainer.style.display = "flex";
-    domainAonStatusFilterContainer.style.justifyContent = "flex-start";
-    domainAonStatusFilterContainer.style.alignItems = "center";
-    domainAonStatusFilterContainer.style.gap = "5px";
+
+    let customerStatusFilterContainer = document.createElement('div');
+    customerStatusFilterContainer.style.width = "25%";
+    customerStatusFilterContainer.style.height = "50%";
+    customerStatusFilterContainer.style.display = "flex";
+    customerStatusFilterContainer.style.justifyContent = "flex-start";
+    customerStatusFilterContainer.style.alignItems = "center";
+    customerStatusFilterContainer.style.gap = "5px";
 
     this.customerStatusFilter = new AonSelect();
     this.customerStatusFilter.id = this.id + "CustomerStatusFilter";
     this.customerStatusFilter.classList.add("domainLinkAonSelect");
     this.customerStatusFilter.title = MSG.STATUS;
     this.customerStatusFilter.readonly = false;
-    let domainAonStatusFilterOptions = [{value: "", name: "Todos"}];
-    this.CUSTOMER_STATUS_OPTIONS.forEach(status => {
-      domainAonStatusFilterOptions.push({value: status, name: this.getCustomerStatusDescription(status)});
+    let customerStatusFilterOptions = [{value: "", name: MSG.ALL1}];
+    this.DOMAIN_STATUS_OPTIONS.forEach(status => {
+      customerStatusFilterOptions.push({
+        value: status,
+        name: this.getDomainStatusDescription(status)
+      });
     });
-    this.customerStatusFilter.options = JSON.stringify(domainAonStatusFilterOptions);
+    this.customerStatusFilter.options = JSON.stringify(customerStatusFilterOptions);
     this.customerStatusFilter.value = "";
 
-    this.customerStatusFilter.addEventListener("change", (event) => this.customerSearchFunction());
-
-    domainAonStatusFilterContainer.appendChild(this.customerStatusFilter);
+    customerStatusFilterContainer.appendChild(this.customerStatusFilter);
     
-    searchFiltersContainer.appendChild(domainAonStatusFilterContainer);
+    let customerAonStatusFilterContainer = document.createElement('div');
+    customerAonStatusFilterContainer.style.width = "25%";
+    customerAonStatusFilterContainer.style.height = "50%";
+    customerAonStatusFilterContainer.style.display = "flex";
+    customerAonStatusFilterContainer.style.justifyContent = "flex-start";
+    customerAonStatusFilterContainer.style.alignItems = "center";
+    customerAonStatusFilterContainer.style.gap = "5px";
+
+    this.customerAccessFilter = new AonSelect();
+    this.customerAccessFilter.id = this.id + "CustomerAccessFilter";
+    this.customerAccessFilter.classList.add("domainLinkAonSelect");
+    this.customerAccessFilter.title = MSG.ACCESS;
+    this.customerAccessFilter.readonly = false;
+    let customerAonStatusFilterOptions = [{value: "", name: "Todos"}];
+    this.CUSTOMER_STATUS_OPTIONS.forEach(status => {
+      customerAonStatusFilterOptions.push({value: status, name: this.getCustomerStatusDescription(status)});
+    });
+    this.customerAccessFilter.options = JSON.stringify(customerAonStatusFilterOptions);
+    this.customerAccessFilter.value = "";
+
+    this.customerAccessFilter.addEventListener("change", (event) => this.customerSearchFunction());
+    customerAonStatusFilterContainer.appendChild(this.customerAccessFilter);
+
+    let customerLinkStatusFilterContainer = document.createElement('div');
+    customerLinkStatusFilterContainer.style.width = "25%";
+    customerLinkStatusFilterContainer.style.height = "50%";
+    customerLinkStatusFilterContainer.style.display = "flex";
+    customerLinkStatusFilterContainer.style.justifyContent = "flex-start";
+    customerLinkStatusFilterContainer.style.alignItems = "center";
+    customerLinkStatusFilterContainer.style.gap = "5px";
+
+    this.customerLinkStatusFilter = new AonSelect();
+    this.customerLinkStatusFilter.id = this.id + "CustomerLinkStatusFilter";
+    this.customerLinkStatusFilter.classList.add("domainLinkAonSelect");
+    this.customerLinkStatusFilter.title = "Vinculación";
+    this.customerLinkStatusFilter.readonly = false;
+    let domainAonLinkStatusFilterOptions =
+    [ {value: "", name: "Todos"},
+      {value: "linked", name: "Vinculados"},
+      {value: "notLinked", name: "No vinculados"}
+    ];
+
+    this.customerLinkStatusFilter.options = JSON.stringify(domainAonLinkStatusFilterOptions);
+    this.customerLinkStatusFilter.value = "";
+
+    this.customerLinkStatusFilter.addEventListener("change", (event) => this.customerSearchFunction());
+
+    customerLinkStatusFilterContainer.appendChild(this.customerLinkStatusFilter);
+    
+    // searchFiltersContainer.appendChild(customerStatusFilterContainer);
+    searchFiltersContainer.appendChild(customerAonStatusFilterContainer);
+    searchFiltersContainer.appendChild(customerLinkStatusFilterContainer);
 
     domainSearchContainer.appendChild(searchBarContainer);
     domainSearchContainer.appendChild(searchFiltersContainer);
@@ -607,7 +661,7 @@ export class AonDomainCustomer extends AonElement {
   findPaginatedCustomers() {
     return new Promise(async (res, rej) => {
       let entriesPerPage = 100;
-      let customerStatus = this.customerStatusFilter ? this.customerStatusFilter.value : "";
+      let customerStatus = this.customerAccessFilter ? this.customerAccessFilter.value : "";
       let parameters = {
         perPage: entriesPerPage,
         page: this.customerPage++,
@@ -616,8 +670,17 @@ export class AonDomainCustomer extends AonElement {
       if (customerStatus) {
         parameters.status = customerStatus;
       }
-      if (!this.selectedDomain) {
-        parameters.linked = false;
+      if (this.customerLinkStatusFilter) {
+        switch (this.customerLinkStatusFilter.value) {
+          case "linked":
+            parameters.linked = true;
+            break;
+          case "notLinked":
+            parameters.linked = false;
+            break;
+          default:
+            break;
+        }
       }
       let newCustomers = await getCustomers(parameters);
       this.customerSearchEnded = !newCustomers || newCustomers.length < entriesPerPage;
@@ -651,7 +714,7 @@ export class AonDomainCustomer extends AonElement {
       let aonCustomer = domain ? domain.aonCustomer : null;
       let searchDocument = company ? (company.document ? company.document.trim() : null) : null;
       let searchAlias = domain ? (company.name ? domain.name.trim().substring(0, 32) : null) : null;
-      let customerStatus = this.customerStatusFilter ? this.customerStatusFilter.value : "";
+      let customerStatus = this.customerAccessFilter ? this.customerAccessFilter.value : "";
       
       let customers = [];
       let booking = null;
@@ -713,111 +776,11 @@ export class AonDomainCustomer extends AonElement {
     }
   }
 
-  createBookingElement(booking) {
-    if (booking) {
-      let bookingContainer = document.createElement("div");
-      bookingContainer.style.display = "flex";
-      bookingContainer.style.flexDirection = "column";
-      bookingContainer.style.gap = "10px";
-      bookingContainer.style.padding = "10px";
-      bookingContainer.style.borderRadius = "5px";
-      bookingContainer.style.backgroundColor = "AliceBlue";
-      bookingContainer.style.width = "100%";
-      bookingContainer.style.marginTop = "10px";
-
-      let bookingTitleContainer = document.createElement("div");
-      bookingTitleContainer.style.display = "block";
-      bookingTitleContainer.style.width = "100%";
-      bookingTitleContainer.style.textAlign = "center";
-      bookingTitleContainer.style.fontWeight = "bold";
-      bookingTitleContainer.style.textTransform = "uppercase";
-      bookingTitleContainer.innerText = "Datos de contratación";
-      bookingContainer.appendChild(bookingTitleContainer);
-      
-      let appsContainer = document.createElement("div");
-      appsContainer.style.display = "flex";
-      appsContainer.style.flexDirection = "row";
-      appsContainer.style.justifyContent = "space-between";
-      appsContainer.style.alignItems = "flex-start";
-      
-      let childAppsContainer = document.createElement("div");
-      childAppsContainer.style.display = "flex";
-      childAppsContainer.style.flexDirection = "column";
-      childAppsContainer.style.justifyContent = "flex-start";
-      childAppsContainer.style.alignItems = "center";
-      childAppsContainer.style.width = "45%";
-      let childAppsTitleContainer = document.createElement("div");
-      childAppsTitleContainer.style.display = "block";
-      childAppsTitleContainer.style.width = "100%";
-      childAppsTitleContainer.style.textAlign = "left";
-      childAppsTitleContainer.style.fontWeight = "bold";
-      childAppsTitleContainer.innerText = MSG.APPLICATIONS;
-
-      childAppsContainer.appendChild(childAppsTitleContainer);
-      let childApps = booking.apps;
-      if (childApps) {
-        childApps.forEach(app => {
-          let childApp = document.createElement("div");
-          childApp.style.display = "block";
-          childApp.style.width = "100%";
-          childApp.innerText = app;
-          childAppsContainer.appendChild(childApp);
-        });
-      }
-
-      appsContainer.appendChild(childAppsContainer);
-
-      let parentAppsContainer = document.createElement("div");
-      parentAppsContainer.style.display = "flex";
-      parentAppsContainer.style.flexDirection = "column";
-      parentAppsContainer.style.justifyContent = "flex-start";
-      parentAppsContainer.style.alignItems = "center";
-      parentAppsContainer.style.width = "45%";
-      let parentAppsTitleContainer = document.createElement("div");
-      parentAppsTitleContainer.style.display = "block";
-      parentAppsTitleContainer.style.width = "100%";
-      parentAppsTitleContainer.style.textAlign = "left";
-      parentAppsTitleContainer.style.fontWeight = "bold";
-      parentAppsTitleContainer.innerText = MSG.PARENT_APPS;
-      
-      parentAppsContainer.appendChild(parentAppsTitleContainer);
-      let parentApps = booking.parentApps;
-      if (parentApps) {
-        parentApps.forEach(app => {
-          let parentApp = document.createElement("div");
-          parentApp.style.display = "block";
-          parentApp.style.width = "100%";
-          parentApp.innerText = app;
-          parentAppsContainer.appendChild(parentApp);
-        });
-      }
-
-      appsContainer.appendChild(parentAppsContainer);
-      
-      let numberOfUsersContainer = document.createElement("div");
-      numberOfUsersContainer.style.display = "block";
-      numberOfUsersContainer.style.width = "100%";
-      let numberOfUsersTitleSpan = document.createElement("span");
-      numberOfUsersTitleSpan.style.fontWeight = "bold";
-      numberOfUsersTitleSpan.innerText = `${MSG.NUMBER_OF_USERS}: `;
-      numberOfUsersContainer.appendChild(numberOfUsersTitleSpan);
-      let numberOfUsersSpan = document.createElement("span");
-      numberOfUsersSpan.innerText = booking.numberOfUsers;
-      numberOfUsersContainer.appendChild(numberOfUsersSpan);
-      
-      bookingContainer.appendChild(appsContainer);
-      if (booking.numberOfUsers) {
-        bookingContainer.appendChild(numberOfUsersContainer);
-      }
-
-      this.customerList.appendChild(bookingContainer);
-    }
-  }
-
+  
   // -----------------------------
-
+  
   // --- ELEMENTOS DE LISTADOS ---
-
+  
   createDomainElement(domainCustomer) {
     let domain = domainCustomer.domain;
     let company = domainCustomer.company;
@@ -984,7 +947,7 @@ export class AonDomainCustomer extends AonElement {
     customerOptionContainer.style.display = "flex";
     customerOptionContainer.style.flexDirection = "row";
     customerOptionContainer.style.justifyContent = "center";
-    customerOptionContainer.style.alignItems = "center";
+    customerOptionContainer.style.alignItems = "flex-start";
     customerOptionContainer.style.flexWrap = "wrap";
     customerOptionContainer.style.backgroundColor = "AliceBlue";
     customerOptionContainer.style.borderRadius = "5px";
@@ -1009,24 +972,63 @@ export class AonDomainCustomer extends AonElement {
     customerAliasDiv.style.whiteSpace = "nowrap";
     customerAliasDiv.style.textOverflow = "ellipsis";
 
+    let customerInfoContainer = document.createElement("div");
+    customerInfoContainer.style.display = "flex";
+    customerInfoContainer.style.flexDirection = "row";
+    customerInfoContainer.style.width = "100%";
+    customerInfoContainer.style.justifyContent = "flex-start";
+    customerInfoContainer.style.alignItems = "flex-start";
+    customerInfoContainer.style.gap = "5px";
+
     let customerDocumentDiv = document.createElement("div");
     customerDocumentDiv.style.width = "33%";
-    customerDocumentDiv.style.margin = "auto";
-    customerDocumentDiv.style.height = "20px";
+    // customerDocumentDiv.style.textAlign = "center";
+    // customerDocumentDiv.style.margin = "auto";
+    // customerDocumentDiv.style.height = "20px";
     customerDocumentDiv.innerText = customer.document;
 
     let customerIdDiv = document.createElement("div");
     customerIdDiv.style.width = "33%";
-    customerIdDiv.style.margin = "auto";
-    customerIdDiv.style.height = "20px";
+    // customerIdDiv.style.textAlign = "center";
+    // customerIdDiv.style.margin = "auto";
+    // customerIdDiv.style.height = "20px";
     customerIdDiv.innerText = customer.id ? `SIG: ${customer.id}` : "";
 
+    let customerStatusAndBillingContainer =  document.createElement("div");
+    customerStatusAndBillingContainer.style.display = "flex";
+    customerStatusAndBillingContainer.style.flexDirection = "column";
+    customerStatusAndBillingContainer.style.justifyContent = "flex-start";
+    customerStatusAndBillingContainer.style.alignItems = "flex-start";
+    customerStatusAndBillingContainer.style.width = "33%";
+    customerStatusAndBillingContainer.style.margin = "auto";
+    // customerStatusAndBillingContainer.style.height = "20px";
+
+
     let customerStatusDiv = document.createElement("div");
-    customerStatusDiv.style.width = "33%";
-    customerStatusDiv.style.margin = "auto";
-    customerStatusDiv.style.height = "20px";
+    customerStatusDiv.style.width = "100%";
+    // customerStatusDiv.style.textAlign = "left";
+    // customerStatusDiv.style.height = "20px";
     customerStatusDiv.dataset.value = `${customer.status}`;
     customerStatusDiv.innerText = `${MSG.STATUS}: ${this.getCustomerStatusDescription(customer.status)}`;
+
+    let aonStatusDrop = document.createElement("select");
+    aonStatusDrop.style.width = "100%";
+    
+    this.DOMAIN_STATUS_OPTIONS.forEach((status) => {
+      let option = document.createElement("option");
+      option.value = status;
+      option.innerText = this.getDomainStatusDescription(status);
+      aonStatusDrop.appendChild(option);
+    });
+
+    customerStatusAndBillingContainer.appendChild(customerStatusDiv);
+    // if (isLinked) {
+    //   customerStatusAndBillingContainer.appendChild(aonStatusDrop);
+    // }
+
+    customerInfoContainer.appendChild(customerDocumentDiv);
+    customerInfoContainer.appendChild(customerIdDiv);
+    customerInfoContainer.appendChild(customerStatusAndBillingContainer);
 
     let infoDiv = document.createElement("div");
     infoDiv.style.display = "flex";
@@ -1043,6 +1045,7 @@ export class AonDomainCustomer extends AonElement {
     unlinkDiv.style.alignItems = "center";
     unlinkDiv.style.backgroundColor = "transparent";
     unlinkDiv.style.width = "15%";
+    unlinkDiv.style.height = "100%";
     
     let unlinkButton = new AonIconButton();
     unlinkButton.icon = isLinked ? MATERIAL_ICONS.LINK_OFF : MATERIAL_ICONS.LINK;
@@ -1051,9 +1054,7 @@ export class AonDomainCustomer extends AonElement {
     
     infoDiv.appendChild(customerNameDiv);
     infoDiv.appendChild(customerAliasDiv);
-    infoDiv.appendChild(customerDocumentDiv);
-    infoDiv.appendChild(customerIdDiv);
-    infoDiv.appendChild(customerStatusDiv);
+    infoDiv.appendChild(customerInfoContainer);
     
     if (this.selectedDomain) {
       unlinkDiv.appendChild(unlinkButton);
@@ -1067,6 +1068,106 @@ export class AonDomainCustomer extends AonElement {
     return customerOptionContainer;
   }
 
+  createBookingElement(booking) {
+    if (booking) {
+      let bookingContainer = document.createElement("div");
+      bookingContainer.style.display = "flex";
+      bookingContainer.style.flexDirection = "column";
+      bookingContainer.style.gap = "10px";
+      bookingContainer.style.padding = "10px";
+      bookingContainer.style.borderRadius = "5px";
+      bookingContainer.style.backgroundColor = "AliceBlue";
+      bookingContainer.style.width = "100%";
+      bookingContainer.style.marginTop = "10px";
+
+      let bookingTitleContainer = document.createElement("div");
+      bookingTitleContainer.style.display = "block";
+      bookingTitleContainer.style.width = "100%";
+      bookingTitleContainer.style.textAlign = "center";
+      bookingTitleContainer.style.fontWeight = "bold";
+      bookingTitleContainer.style.textTransform = "uppercase";
+      bookingTitleContainer.innerText = "Datos de contratación";
+      bookingContainer.appendChild(bookingTitleContainer);
+      
+      let appsContainer = document.createElement("div");
+      appsContainer.style.display = "flex";
+      appsContainer.style.flexDirection = "row";
+      appsContainer.style.justifyContent = "space-between";
+      appsContainer.style.alignItems = "flex-start";
+      
+      let childAppsContainer = document.createElement("div");
+      childAppsContainer.style.display = "flex";
+      childAppsContainer.style.flexDirection = "column";
+      childAppsContainer.style.justifyContent = "flex-start";
+      childAppsContainer.style.alignItems = "center";
+      childAppsContainer.style.width = "45%";
+      let childAppsTitleContainer = document.createElement("div");
+      childAppsTitleContainer.style.display = "block";
+      childAppsTitleContainer.style.width = "100%";
+      childAppsTitleContainer.style.textAlign = "left";
+      childAppsTitleContainer.style.fontWeight = "bold";
+      childAppsTitleContainer.innerText = MSG.APPLICATIONS;
+
+      childAppsContainer.appendChild(childAppsTitleContainer);
+      let childApps = booking.apps;
+      if (childApps) {
+        childApps.forEach(app => {
+          let childApp = document.createElement("div");
+          childApp.style.display = "block";
+          childApp.style.width = "100%";
+          childApp.innerText = app;
+          childAppsContainer.appendChild(childApp);
+        });
+      }
+
+      appsContainer.appendChild(childAppsContainer);
+
+      let parentAppsContainer = document.createElement("div");
+      parentAppsContainer.style.display = "flex";
+      parentAppsContainer.style.flexDirection = "column";
+      parentAppsContainer.style.justifyContent = "flex-start";
+      parentAppsContainer.style.alignItems = "center";
+      parentAppsContainer.style.width = "45%";
+      let parentAppsTitleContainer = document.createElement("div");
+      parentAppsTitleContainer.style.display = "block";
+      parentAppsTitleContainer.style.width = "100%";
+      parentAppsTitleContainer.style.textAlign = "left";
+      parentAppsTitleContainer.style.fontWeight = "bold";
+      parentAppsTitleContainer.innerText = MSG.PARENT_APPS;
+      
+      parentAppsContainer.appendChild(parentAppsTitleContainer);
+      let parentApps = booking.parentApps;
+      if (parentApps) {
+        parentApps.forEach(app => {
+          let parentApp = document.createElement("div");
+          parentApp.style.display = "block";
+          parentApp.style.width = "100%";
+          parentApp.innerText = app;
+          parentAppsContainer.appendChild(parentApp);
+        });
+      }
+
+      appsContainer.appendChild(parentAppsContainer);
+      
+      let numberOfUsersContainer = document.createElement("div");
+      numberOfUsersContainer.style.display = "block";
+      numberOfUsersContainer.style.width = "100%";
+      let numberOfUsersTitleSpan = document.createElement("span");
+      numberOfUsersTitleSpan.style.fontWeight = "bold";
+      numberOfUsersTitleSpan.innerText = `${MSG.NUMBER_OF_USERS}: `;
+      numberOfUsersContainer.appendChild(numberOfUsersTitleSpan);
+      let numberOfUsersSpan = document.createElement("span");
+      numberOfUsersSpan.innerText = booking.numberOfUsers;
+      numberOfUsersContainer.appendChild(numberOfUsersSpan);
+      
+      bookingContainer.appendChild(appsContainer);
+      if (booking.numberOfUsers) {
+        bookingContainer.appendChild(numberOfUsersContainer);
+      }
+
+      this.customerList.appendChild(bookingContainer);
+    }
+  }
   // -----------------------------
 
   // --- MANEJADORES DE EVENTOS ---
@@ -1095,11 +1196,11 @@ export class AonDomainCustomer extends AonElement {
 
   manageCustomerSearch() {
     this.customerSearchInput.value = "";
-    if (this.selectedDomain) {
-      this.customerSearchContainer.style.display = "flex";
-    } else {
-      this.customerSearchContainer.style.display = "none";
-    }
+    // if (this.selectedDomain) {
+    //   this.customerSearchContainer.style.display = "flex";
+    // } else {
+    //   this.customerSearchContainer.style.display = "none";
+    // }
   }
 
   linkClickHandler(customer) {
@@ -1300,7 +1401,7 @@ export class AonDomainCustomer extends AonElement {
       let message = "";
       let messageSpan = document.createElement("span");
       if (this.selectedDomain) {
-        if ((this.customerSearchInput && this.customerSearchInput.value) || (this.customerStatusFilter && this.customerStatusFilter.value)) {
+        if ((this.customerSearchInput && this.customerSearchInput.value) || (this.customerAccessFilter && this.customerAccessFilter.value)) {
           message = MSG.CUSTOMER_SEARCH_NOT_FOUND;
         } else {
           message = MSG.CUSTOMER_SEARCH_DOMAIN_NOT_FOUND;
