@@ -25,6 +25,7 @@ export class AonBooking extends AonElement {
 	USER_NUMBER;
 	APP;
 	SAVE_DIALOG;
+	EDIT_TYPE_DIALOG;
 	apps;
 	users;
 	definedUsers;
@@ -73,6 +74,7 @@ export class AonBooking extends AonElement {
 		this.TOOLBAR = this.id + 'Toolbar';
 		this.USER_NUMBER = this.id + 'UserNumber';
 		this.SAVE_DIALOG = this.id + 'SaveDialog';
+		this.EDIT_TYPE_DIALOG = this.id + 'EditTypeDialog';
 		this.apps = [];
 	}
 
@@ -142,6 +144,23 @@ export class AonBooking extends AonElement {
 		else return this.dur.isEnterpriseChild()
 				? {ENTERPRISE}
 				:{ENTERPRISE, BASIC_MANAGEMENT, STANDAR_MANAGEMENT, PROFESSIONAL_MANAGEMENT} ;
+
+	}
+
+	getTypeName(){
+		if(this.dur.getDomain().isGarage())
+			return 'Taller';
+		else if(this.dur.getDomain().isHotel())
+			return 'Hotel';
+		else if(this.dur.getDomain().isAcademy())
+			return 'Academia';
+		else if(this.dur.getDomain().isCommerce())
+			return 'Comercio';
+		else if(this.dur.getDomain().isOffice())
+			return 'Despacho';
+		else if(this.dur.getDomain().isKitDigital()) 
+			return 'Kit Digital'
+		else return 'Empresa';
 
 	}
 
@@ -215,6 +234,10 @@ export class AonBooking extends AonElement {
 			span2.className = 'aonAppTitle';
 			span2.innerHTML = app.title;
 			span.appendChild(span2);
+			if(app.domainType && this.dur.isConsoleUser()) {
+				span2.style.cursor = 'pointer';
+				span2.addEventListener(EVENT.CLICK, () => this.editTypeDialog());
+			}
 
 			if(app.subtitle){
 				let span3 = document.createElement('span');
@@ -286,7 +309,6 @@ export class AonBooking extends AonElement {
 			if(!app.domainType)
 				span.appendChild(buttons);
 			else if (this.dur.isConsoleUser()){
-				
 				let domainPayer = new AonSwitch();
 				domainPayer.id = this.APP + app.app + 'DomainPayment';
 				domainPayer.title = 'Dominio Pagador';
@@ -444,6 +466,53 @@ export class AonBooking extends AonElement {
 		dialog.open();
 	}
 
+	editTypeDialog() {
+		let types = [{
+			name: 'Empresa',
+			value: 'ENTERPRISE',
+		}, {
+			name: 'Garaje',
+			value: 'GARAGE',
+		}, {
+			name: 'Academia',
+			value: 'ACADEMY',
+		}, {
+			name: 'Hotel',
+			value: 'HOTEL',
+		}, {
+			name: 'Despacho',
+			value: 'OFFICE',
+		}, {
+			name: 'Genérico',
+			value: 'GENERIC',
+		}, {
+			name: 'Comercio',
+			value: 'Commerce',
+		}];
+
+		let type = new AonSelect();
+		type.id = this.TYPE;
+		type.title = MSG.TYPE;
+		type.setOptions(types);
+		type.value = this.getDur().getDomain().domainType;
+
+		let dialog = this.getElement(this.EDIT_TYPE_DIALOG);
+		if(!dialog){
+			dialog = new AonDialog();
+			dialog.id = this.EDIT_TYPE_DIALOG;
+			this.appendChild(dialog);
+		}
+		dialog.clear();
+		dialog.setTitle(MSG.CHANGE_TYPE);
+		dialog.setContent(type);
+		dialog.addAcceptAction(() => this.changeType(type.value));
+		dialog.open();
+	}
+
+	changeType(val) {
+		this.dur.domain.type = val;
+	}
+
 	saveDialogContent() {
 		let checkBox = new AonCheckbox();
 		checkBox.description = 'He leido las condiciones de servicio y estoy de acuerdo con las mismas';
@@ -466,6 +535,7 @@ export class AonBooking extends AonElement {
 			});
 		} else {
 			setDomainApp({
+				type: this.dur.domain.type,
 				apps: this.apps,
 				users: this.users,
 				domainPayer: this.domainPayer

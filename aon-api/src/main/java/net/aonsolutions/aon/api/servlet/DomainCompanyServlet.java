@@ -9,15 +9,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.CONSOLE;
-import com.esferalia.aon.occam.api.json.CustomerJSON;
 import com.esferalia.aon.occam.api.json.DomainCompanyJSON;
 import com.esferalia.aon.occam.api.json.DomainJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -30,7 +31,8 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	private static final Logger LOGGER  = Logger.getLogger(DomainCompanyServlet.class.getName());
 	
 	public static final String DOMAINS = "/";
-	public static final String CUSTOMER_DOMAINS = "/:customer"; //buscar entre todos los schemas los que tengan ese aonCustomer
+//	public static final String CUSTOMER_DOMAINS = "/:customer"; //buscar entre todos los schemas los que tengan ese aonCustomer
+	public static final String DOMAIN_LINKED = "/link/";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -59,7 +61,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(DOMAINS, DomainCompanyServlet::getDomains)
-				.addRoute(CUSTOMER_DOMAINS, DomainCompanyServlet::getCustomerDomains)
+//				.addRoute(CUSTOMER_DOMAINS, DomainCompanyServlet::getCustomerDomains)
 				.apply();
 			
 			response(req, resp, object);
@@ -75,6 +77,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			
 			Object object = new AonRouting(api)
 				.addRoute(DOMAINS, DomainCompanyServlet::updateCustomerDomains)
+				.addRoute(DOMAIN_LINKED, DomainCompanyServlet::saveDomainLinked)
 				.apply();
 			
 			response(req, resp, object);
@@ -89,7 +92,8 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			AonApiData api = initialize(req);
 			
 			Object object = new AonRouting(api)
-				.addRoute(CUSTOMER_DOMAINS, DomainCompanyServlet::deleteAction)
+//				.addRoute(CUSTOMER_DOMAINS, DomainCompanyServlet::deleteAction)
+				.addRoute(DOMAIN_LINKED, DomainCompanyServlet::deleteDomainLinked)
 				.apply();
 			
 			response(req, resp, object);
@@ -128,6 +132,45 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		List<DomainCompany> domains = DomainCompanyJSON.fromJSON(domainsJson);
 		List<Domain> updatedDomain = CONSOLE.updateDomainCustomerData(domains, customer);
 		return DomainJSON.toJSON(updatedDomain);
+	}
+	
+	private static JSONObject saveDomainLinked(AonApiData api) {
+		Integer customer = api.getData().optInt(IJsonNames.CUSTOMER) > 0 ? api.getData().optInt(IJsonNames.CUSTOMER) : null;
+		JSONObject domainJson = api.getData().optJSONObject(IJsonNames.DOMAIN);
+		DomainCompany domainCompany = DomainCompanyJSON.fromJSON(domainJson);
+		if (customer != null) {
+			Domain domain = domainCompany.getDomain();
+			String schema = domainCompany.getSchema();
+			DomainLinked domainLinked = new DomainLinked()
+					.setId(domain.getId())
+					.setName(domain.getName())
+					.setRegistry(customer)
+					.setSchema(schema)
+					.setType(domain.getDomainType().getName());
+			CONSOLE.saveDomainLink(api.getDomain(), api.getUser(), domainLinked);
+		}
+		return new JSONObject();
+	}
+	
+	private static JSONObject deleteDomainLinked(AonApiData api) {
+		Domain apiDomain = api.getDomain();
+		User apiUser = api.getUser();
+		Integer customer = api.getData().optInt(IJsonNames.CUSTOMER) > 0 ? api.getData().optInt(IJsonNames.CUSTOMER) : null;
+		JSONObject domainJson = api.getData().optJSONObject(IJsonNames.DOMAIN);
+		DomainCompany domainCompany = DomainCompanyJSON.fromJSON(domainJson);
+		if (customer != null) {
+			Domain domain = domainCompany.getDomain();
+			List<DomainLinked> domainLinkeds = AON.getDomainLinkedList(apiDomain.getName(), apiDomain.getId(), apiUser.getLogin(), customer);
+			domainLinkeds
+			.stream()
+			.filter(dl -> AonStringUtils.equals(dl.getName(), domain.getName())
+					&& AonNumberUtils.equals(dl.getId(), domain.getId()))
+			.forEach(dl -> {
+				CONSOLE.deleteDomainLink(apiDomain, apiUser, dl);				
+			});
+			
+		}
+		return new JSONObject();
 	}
 	
 	private static JSONObject putAction(AonApiData api) {

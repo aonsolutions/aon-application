@@ -97,6 +97,7 @@ public class ConfigurationDAO {
 				?null
 				:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultVatPercent)))
 			.setWithholdingTaxes( TaxDAO.getWithholdingTaxs(ctx,params.getAtDate()).collect(Collectors.toCollection(LinkedList::new)))
+			.setSegments( RegistrySegmentDAO.getSegments(ctx, p-> p.getDomainProperty().eq( ctx.getDomainId())).collect(Collectors.toCollection(LinkedList::new)))
 			.setDefaultWithholdingPercent(defaultWithholdingPercent== 0
 				?null
 				:TaxDAO.getTax(ctx, filter -> filter.getIdProperty().eq(defaultWithholdingPercent)))
