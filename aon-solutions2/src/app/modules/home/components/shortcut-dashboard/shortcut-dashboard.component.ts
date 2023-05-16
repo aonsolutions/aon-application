@@ -17,7 +17,6 @@ export class ShortcutDashboardComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log(this.shape);
   }
 
 }

@@ -17,14 +17,14 @@
     <mat-grid-tile colspan="4" rowspan="4">
       <app-banks-dashboard></app-banks-dashboard>
     </mat-grid-tile>
-    <mat-grid-tile colspan="24" rowspan="7">
-      <app-inbox></app-inbox>
-    </mat-grid-tile>
   </mat-grid-list>
   <div class="dashboardDivider">
     <mat-divider></mat-divider>
   </div>
   <mat-grid-list cols="24" rowHeight="70px" gutterSize="20px">
+    <mat-grid-tile colspan="24" rowspan="5">
+      <app-inbox></app-inbox>
+    </mat-grid-tile>
     <mat-grid-tile *ngFor="let menuItem of menuItems" colspan="6" rowspan="2" >
       <app-menu-button-dashboard [shape]="menuItem.shape" [name]="menuItem.name" [color]="menuItem.color"></app-menu-button-dashboard>
     </mat-grid-tile>

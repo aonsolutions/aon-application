@@ -1,14 +1,71 @@
 <mat-toolbar class="toolBar">
-  <img src="../../../assets/images/logo/logo-aon.png" class="logo-aon" />
-  <mat-form-field disabled="false">
-    <mat-select placeholder="" value="Empresa1" disabled="false">
-      <mat-option value="Empresa1">Empresa1</mat-option>
-      <mat-option value="Empresa2">Empresa2</mat-option>
-      <mat-option value="Empresa3">Empresa3</mat-option>
-      <mat-option value="Empresa4">Empresa4</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <div class="toolbarIcons">
-    <set-icon shape="person" set-color color="black"> </set-icon>
-  </div>
+  <mat-grid-list cols="3" rowHeight="64px" style="width: 100%;">
+    <mat-grid-tile colspan="1" style="align-items: left;">
+      <div class="logo">
+        <img src="../../../assets/images/logo/logo-aon.png" routerLink="home" class="logoAon" />
+      </div>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <div class="breadcumb">
+        <div mat-button [matMenuTriggerFor]="menuEnterprise" class="enterpriseSelector">
+          {{this.selectedEnterprise}}
+          <set-icon shape="arrow_drop_down"></set-icon>
+        </div>
+        <div class="currentRoute" *ngIf="this.currentRoute != 'home'">
+          {{this.currentRoute}}
+          <set-icon shape="arrow_right"></set-icon>
+        </div>
+        <mat-menu #menuEnterprise="matMenu">
+          <ng-container>
+            <a mat-menu-item *ngFor="let item of enterprises" (click)="this.selectedEnterprise = item.name">
+              <div class="hoverMenu">
+                <set-icon shape="business"></set-icon>
+                &nbsp;&nbsp;
+                {{item.name}}
+              </div>
+            </a>
+          </ng-container>
+        </mat-menu>
+      </div>
+    </mat-grid-tile>
+    <mat-grid-tile colspan="1">
+      <div class="toolbarIcons">
+        <div *ngIf="this.displayHomeIcon" class="buttonTopbar" routerLink="home">
+          <div class="iconToolbar">
+            <set-icon shape="home" set-color color="black"> </set-icon>
+          </div>
+        </div>
+        <div mat-button [matMenuTriggerFor]="menu" class="buttonTopbar">
+          <div class="iconToolbar">
+            <set-icon shape="person" set-color color="black"> </set-icon>
+          </div>
+        </div>
+        <mat-menu #menu="matMenu">
+          <ng-container>
+            <a mat-menu-item>
+              <div class="hoverMenu">
+                <set-icon shape="person_pin"></set-icon>
+                &nbsp;&nbsp;
+                Editar perfil
+              </div>
+            </a>
+            <a mat-menu-item>
+              <div class="hoverMenu">
+                <set-icon shape="help"></set-icon>
+                &nbsp;&nbsp;
+                Ayuda
+              </div>
+            </a>
+            <a mat-menu-item (click)="auth.logout()">
+              <div class="hoverMenu">
+                <set-icon shape="exit_to_app"></set-icon>
+                &nbsp;&nbsp;
+                Cerrar sesión
+              </div>
+            </a>
+          </ng-container>
+        </mat-menu>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
 </mat-toolbar>

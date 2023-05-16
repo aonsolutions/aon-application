@@ -20,7 +20,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -120,6 +120,7 @@ import { EmployeePanelComponent } from './modules/employee-panel/employee-panel.
     MatNativeDateModule,
     MatRippleModule,
     LayoutModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -3,6 +3,10 @@ import { CommonModule } from '@angular/common';
 
 import { AuthRoutingModule } from './auth-routing.module';
 import { AuthComponent } from './auth.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { SetMaterialModule } from 'libraries/setproduct-angular-material';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -11,7 +15,11 @@ import { AuthComponent } from './auth.component';
   ],
   imports: [
     CommonModule,
-    AuthRoutingModule
+    AuthRoutingModule,
+    MatFormFieldModule,
+    SetMaterialModule,
+    MatInputModule,
+    FormsModule,
   ]
 })
 export class AuthModule { }

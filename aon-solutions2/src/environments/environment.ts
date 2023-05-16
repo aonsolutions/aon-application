@@ -3,7 +3,16 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  urlApiAon: "https://aonsolutions.org/ms/api/",
+  headerApi: {
+    domainName: "a54212356-cau.aonsolutions.org",
+    domainId: 545,
+    domainLogin: 87811999
+  },
+  localStorageJwt: {
+    accessToken: "session_id"
+  }
 };
 
 /*

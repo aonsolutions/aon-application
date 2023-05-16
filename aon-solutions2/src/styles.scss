@@ -1,2 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 @import '../libraries/setproduct-ui/set-theming';
+
+$roboto-font-path: "~roboto-fontface/fonts" !default;
+@import "~roboto-fontface/css/roboto/sass/roboto-fontface";
+
+html {
+   font-size: 16px!important;
+}

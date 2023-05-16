@@ -13,11 +13,10 @@ import { UploadDashboardComponent } from './components/upload-dashboard/upload-d
 import { ShortcutDashboardComponent } from './components/shortcut-dashboard/shortcut-dashboard.component';
 import { MenuButtonDashboardComponent } from './components/menu-button-dashboard/menu-button-dashboard.component';
 import { MatDividerModule } from '@angular/material/divider';
-import { InboxDashboardComponent } from './components/inbox-dashboard/inbox-dashboard.component';
 import { ModelsDashboardComponent } from './components/models-dashboard/models-dashboard.component';
 import { BanksDashboardComponent } from './components/banks-dashboard/banks-dashboard.component';
 import { ChartDashboardComponent } from './components/chart-dashboard/chart-dashboard.component';
-import { InboxComponent } from './components/inbox/inbox.component';
+import { InboxDashboardComponent } from './components/inbox-dashboard/inbox-dashboard.component';
 import { ListDashboardComponent } from './components/list-dashboard/list-dashboard.component';
 
 @NgModule({
@@ -26,11 +25,10 @@ import { ListDashboardComponent } from './components/list-dashboard/list-dashboa
     UploadDashboardComponent,
     ShortcutDashboardComponent,
     MenuButtonDashboardComponent,
-    InboxDashboardComponent,
     ModelsDashboardComponent,
     BanksDashboardComponent,
     ChartDashboardComponent,
-    InboxComponent,
+    InboxDashboardComponent,
     ListDashboardComponent
   ],
   imports: [

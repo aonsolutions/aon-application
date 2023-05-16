@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CoreComponent } from './core.component';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -16,11 +17,6 @@ const routes: Routes = [
         path: 'inbox',
         loadChildren: () =>
           import('src/app/modules/inbox/inbox.module').then((m) => m.InboxModule),
-      },
-      {
-        path: 'auth',
-        loadChildren: () =>
-          import('src/app/modules/auth/auth.module').then((m) => m.AuthModule),
       },
       {
         path: 'billing',
@@ -46,9 +42,19 @@ const routes: Routes = [
         path: 'tax-panel',
         loadChildren: () =>
           import('src/app/modules/tax-panel/tax-panel.module').then((m) => m.TaxPanelModule),
-      }
-    ],
+      },
+      {
+        path: '', redirectTo: 'home', pathMatch: 'full'
+      },
+    ], canActivate: [AuthGuard],
   },
+  // { path: 'auth', component: AuthComponent },
+  {
+    path: 'auth',
+    loadChildren: () =>
+      import('src/app/modules/auth/auth.module').then((m) => m.AuthModule),
+  },
+  { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
 
 @NgModule({

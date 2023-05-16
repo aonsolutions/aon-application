@@ -1,31 +1,31 @@
 <div [ngClass]="!service.opened ? {'menuIconsDiv' : true} : {'menuTextDiv' : true}">
     <div [ngClass]="!service.opened ? {'menuIndex': true} : {'menuIndexOpened': true}">
-        <div [ngStyle]="{'font-weight':'bold', 'font-size':'10px','display':'flex', 'align-items': 'center', 'justify-content': ''}">MENU</div>
+        <div [ngStyle]="{'font-weight':'bold', 'font-size':'.625rem','display':'flex', 'align-items': 'center', 'justify-content': ''}">MENU</div>
         <div class="floatButton2" (click)="service.opened = !service.opened; service.resize = service.resize + 1; onSelectedProduct(service.opened);" *ngIf="!service.opened" >
-        <set-icon shape="keyboard_arrow_right" set-color color="black" size="21"></set-icon>
+        <set-icon shape="keyboard_arrow_right" set-color color="black" style="width: 1.2rem; height: 1.2rem;"></set-icon>
         </div>
         <div class="floatButton1" (click)="service.opened = !service.opened; onSelectedProduct(service.opened);" *ngIf="service.opened" >
-        <set-icon shape="keyboard_arrow_left" set-color color="black" size="21"></set-icon>
+        <set-icon shape="keyboard_arrow_left" set-color color="black" style="width: 1.2rem; height: 1.2rem;"></set-icon>
         </div>
     </div>
-    <div [ngClass]="!service.opened ? {'menuIcon': true} : {'menuOpened': true}" *ngFor="let item of items;" routerLink={{item.routerlink}}>
+    <div #iconHover appSidenavHover color="{{item.hover}}" selected="{{item.selected}}" (click)="deselectAll();select(item);" [ngClass]="!service.opened ? {'menuIcon': true} : {'menuOpened': true}" *ngFor="let item of items;" routerLink={{item.routerlink}} [ngStyle]="item.routerlink == this.currentRoute ? {'backgroundColor':item.hover} : {'backgroundColor': 'white'}">
         <div style="display:flex; align-items: center;">
-        <set-icon [attr.shape]="item.shape" set-color color={{item.color}}></set-icon>
-        <div *ngIf="service.opened" style="margin-left: 5px;font-size: 14px;font-weight: 500;">
-            {{item.text}}
-        </div>
+            <set-icon [attr.shape]="item.shape" set-color color={{item.color}} [ngStyle]="{'width': '1.5rem', 'height': '1.5rem', 'color': item.color}"></set-icon>
+            <div *ngIf="service.opened" style="margin-left: 5px;font-size: .875rem;font-weight: 500;">
+                {{item.text}}
+            </div>
         </div>
     </div>
 </div>
 <div *ngIf="!service.opened" class="shortcutMenuClosed">
     <ng-container>
     <div (click)="subMenuOpened = !subMenuOpened" class="openCloseShortcuts">
-        <set-icon *ngIf="!subMenuOpened" shape="add" set-color color="black"></set-icon>
-        <set-icon *ngIf="subMenuOpened" shape="remove" set-color color="black"></set-icon>
+        <set-icon *ngIf="!subMenuOpened" shape="add" set-color color="black" style="width: 1.5rem; height: 1.5rem;"></set-icon>
+        <set-icon *ngIf="subMenuOpened" shape="remove" set-color color="black" style="width: 1.5rem; height: 1.5rem;"></set-icon>
     </div>
     <div *ngFor="let shortcut of shortcuts;" [ngClass]="!subMenuOpened ? {'shortcutClosed' : true} : {'shortcutOpened' : true}" routerLink={{shortcut.routerlink}}>
         <div *ngIf="subMenuOpened" style="display:flex; align-items: center;">
-        <set-icon [attr.shape]="shortcut.shape" set-color color="black"></set-icon>
+        <set-icon [attr.shape]="shortcut.shape" set-color color="black" style="width: 1.5rem; height: 1.5rem;"></set-icon>
         </div>
     </div>
     </ng-container>
@@ -34,14 +34,14 @@
     <mat-grid-list cols="3" class="shortcutMenuOpened">
     <mat-grid-tile *ngFor="let shortcut of shortcuts;" colspan="1">
         <div class="shortcutGrid" style="cursor: pointer;" routerLink={{shortcut.routerlink}}>
-            <set-icon [attr.shape]="shortcut.shape" set-color color="black"></set-icon>
+            <set-icon [attr.shape]="shortcut.shape" set-color color="black" style="width: 1.5rem; height: 1.5rem;"></set-icon>
         </div>
     </mat-grid-tile>
     </mat-grid-list>
     <div class="shortcutIndex">
-    <div [ngStyle]="{'font-weight':'bold', 'font-size':'10px','display':'flex', 'align-items': 'center', 'justify-content': ''}">ACCESOS DIRECTOS</div>
+    <div [ngStyle]="{'font-weight':'bold', 'font-size':'.625rem','display':'flex', 'align-items': 'center', 'justify-content': ''}">ACCESOS DIRECTOS</div>
     <div class="">
-        <set-icon shape="edit" set-color color="black" size="21"></set-icon>
+        <set-icon shape="edit" set-color color="black" style="width: 1.5rem; height: 1.5rem;"></set-icon>
     </div>
     </div>
 </div>

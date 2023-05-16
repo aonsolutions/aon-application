@@ -1,27 +1,31 @@
-<!-- //ESTADOS : PENDIENTE/ REALIZADA. -->
-<!-- <div class="messages">
-  <div class="contentMessages"><set-icon class="icon" shape="playlist_add_check" size="27"></set-icon>{{name}}</div>
-  <div class="clockAndIndicatorState">
-    <set-icon class="icon" shape="access_time" size="22"></set-icon>
-    <div class="pending">PENDIENTE</div>
-  </div>
-</div> -->
-<div class="contentMessage" >
-  <div class="nameAndIcon"  [ngSwitch]="type">
-    <set-icon class="icon textMessage" shape="playlist_add_check" size="29" *ngSwitchCase="1"></set-icon>
-    <set-icon class="icon textMessage" shape="message" size="27" *ngSwitchCase="2"></set-icon>
-    <set-icon class="icon textMessage" shape="notifications" size="27" *ngSwitchCase="3"></set-icon>
-    <span class="nameMessage textMessage">{{name}}</span>
-  </div>
-  <div class="clockTagSubject">
-    <set-icon class="icon textMessage" shape="watch_later" size="27" ></set-icon>
-    <span class="pending textMessage">Pendiente</span>
-    <span class="textMessage">{{subject}}</span>
-  </div>
-  <div class="descriptionMessage textMessage">
-    {{description}}
-  </div>
-  <div class="descriptionMessage">
-    {{date}}
-  </div>
-</div>
+<mat-grid-list cols="24" rowHeight="60px" gutterSize="15px" class="contentMessage">
+  <mat-grid-tile colspan="1" rowspan="1" [ngSwitch]="type">
+    <div class="typeIcon" [ngSwitch]="type">
+      <set-icon class="icon" shape="playlist_add_check"  *ngSwitchCase="1"></set-icon>
+      <set-icon class="icon" shape="message" *ngSwitchCase="2"></set-icon>
+      <set-icon class="icon" shape="notifications" *ngSwitchCase="3"></set-icon>
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="3" rowspan="1">
+    <div class="textMessage">{{name}}</div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="2" rowspan="1">
+    <div *ngIf="type==1" class="statusMessage">
+      <set-icon class="icon " shape="watch_later"></set-icon>
+      <div class="pending">Pendiente</div>
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="3" rowspan="1">
+    <div class="subjectMessage">{{subject}}</div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="12" rowspan="1">
+    <div class= "descriptionMessage">
+      {{description}}
+    </div>
+  </mat-grid-tile>
+  <mat-grid-tile colspan="3" rowspan="1">
+    <div class="dateMessage">
+      {{date}}
+    </div>
+  </mat-grid-tile>
+</mat-grid-list>
