@@ -32,6 +32,8 @@ public class CustomerFeeParams implements Serializable {
 	private String invoicingGroup;
 	private Integer project;
 	
+	private Integer segment;
+
 	private Integer limit;
 	private Integer offset;
 	
@@ -163,6 +165,14 @@ public class CustomerFeeParams implements Serializable {
 	}
 	public CustomerFeeParams setOffset(Integer offset) {
 		this.offset = offset;
+		return this;
+	}
+
+	public Integer getSegment() {
+		return this.segment;
+	}
+	public CustomerFeeParams setSegment(Integer segment) {
+		this.segment = segment;
 		return this;
 	}
 }

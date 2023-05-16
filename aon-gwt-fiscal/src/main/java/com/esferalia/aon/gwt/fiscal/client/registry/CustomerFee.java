@@ -40,10 +40,12 @@ import com.esferalia.aon.occam.api.model.finance.InvoicingGroup;
 import com.esferalia.aon.occam.api.model.product.OldItem;
 import com.esferalia.aon.occam.api.model.registry.CustomerFeeParams;
 import com.esferalia.aon.occam.api.model.registry.Project;
+import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.type.BillingPeriod;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.mutable.MutableInt;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -64,9 +66,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -118,6 +122,7 @@ public class CustomerFee extends MainEntryPoint {
 	private SuggestBox sellerSuggestBox;
 	private SuggestBox invoicingGroupSuggestBox;
 	private SuggestBox projectSuggestBox;
+	private ListBox segmentListBox;
 	
 	// Fee Table
 	private HTMLPanel container;
@@ -179,6 +184,26 @@ public class CustomerFee extends MainEntryPoint {
 		
 		dockLayoutPanel.clear();
 
+		if (opt.getConfiguration() == null) {
+			COMMON_SERVICE.getAonConfiguration(opt.getDomainName(), opt.getDomain(), opt.getUser(),
+					new AsyncCallback<AonConfiguration>() {
+						@Override
+						public void onSuccess(AonConfiguration result) {
+							opt.setConfiguration(result);
+							loadModule(opt);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
+						}
+					});
+		} else {
+			loadModule(opt);
+		}
+	}
+
+	private void loadModule(final RegistryModuleOptions opt) {
 		createToolbar();
 		dockLayoutPanel.addNorth(toolbar, 50);
 
@@ -190,61 +215,52 @@ public class CustomerFee extends MainEntryPoint {
 		messagePanel = new HTMLPanel("");
 		container.add(messagePanel);
 		
-		createFilterPanel();
-		
-		deckPanel = new DeckPanel();
-		deckPanel.getElement().getStyle().setProperty("margin", "0 1rem");
-		container.add(deckPanel);
-		
-		scrollPanel = new ScrollPanel();
-		scrollPanel.setHeight((Window.getClientHeight() - 230) + "px");
-		scrollPanel.addScrollHandler(e -> {
-			// ------------------------------------ Ignore scroll up.
-			int oldScrollPos = lastScrollPos;
-			lastScrollPos = scrollPanel.getVerticalScrollPosition();
-			if (oldScrollPos >= lastScrollPos) {
-				return;
+		createFilterPanel(opt, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				dockLayoutPanel.add(new Label(AON.MSG.loadError( " [Interno: " + caught.getMessage() + "]")));
 			}
-			// -----------------------------------------------------
-			if (isSearchEnabled()) {
-				int maxScrollTop = scrollPanel.getWidget().getOffsetHeight() - scrollPanel.getOffsetHeight();
-				if (lastScrollPos >= maxScrollTop) {
-					disableSearch();
-					searchFees();
-				}
+
+			@Override
+			public void onSuccess(Void result) {
+				deckPanel = new DeckPanel();
+				deckPanel.getElement().getStyle().setProperty("margin", "0 1rem");
+				container.add(deckPanel);
+				
+				scrollPanel = new ScrollPanel();
+				scrollPanel.setHeight((Window.getClientHeight() - 230) + "px");
+				scrollPanel.addScrollHandler(e -> {
+					// ------------------------------------ Ignore scroll up.
+					int oldScrollPos = lastScrollPos;
+					lastScrollPos = scrollPanel.getVerticalScrollPosition();
+					if (oldScrollPos >= lastScrollPos) {
+						return;
+					}
+					// -----------------------------------------------------
+					if (isSearchEnabled()) {
+						int maxScrollTop = scrollPanel.getWidget().getOffsetHeight() - scrollPanel.getOffsetHeight();
+						if (lastScrollPos >= maxScrollTop) {
+							disableSearch();
+							searchFees();
+						}
+					}
+				});
+				
+				initializeDeckPanel();
+
+				AonMessagePanel.showLoading(messagePanel, "Cargando panel de facturaci\u00f3n ...");
+				resetFilter();
+				setHasChange(false);
+				onSearchFees();
+				AonMessagePanel.hideMessage(messagePanel);
 			}
+			
 		});
 		
-		initializeDeckPanel();
-
-		if (opt.getConfiguration() == null) {
-			COMMON_SERVICE.getAonConfiguration(opt.getDomainName(), opt.getDomain(), opt.getUser(),
-					new AsyncCallback<AonConfiguration>() {
-						@Override
-						public void onSuccess(AonConfiguration result) {
-							opt.setConfiguration(result);
-							loadModule();
-						}
-
-						@Override
-						public void onFailure(Throwable caught) {
-//							dockLayoutPanel.add(new Label(AON.MSG.noActiveAccountPeriod() + "[Interno: " + caught.getMessage() + "]"));
-						}
-					});
-		} else {
-			loadModule();
-		}
 	}
 
-	private void loadModule() {
-		AonMessagePanel.showLoading(messagePanel, "Cargando panel de facturaci\u00f3n ...");
-		resetFilter();
-		setHasChange(false);
-		onSearchFees();
-		AonMessagePanel.hideMessage(messagePanel);
-	}
-
-	private void createFilterPanel() {
+	private void createFilterPanel(final RegistryModuleOptions opt, AsyncCallback<Void> endCallback) {
 		HTMLPanel filterContentPanel = new HTMLPanel("");
 		filterContentPanel.addStyleName(AON.CSS.aonFlexBetween());
 		filterContentPanel.addStyleName(AON.CSS.aonFilterPanel());
@@ -264,10 +280,12 @@ public class CustomerFee extends MainEntryPoint {
 		periodLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		monthListBox = createMonthListBox();
 		monthListBox.addChangeHandler(e -> onSearchFees());
+		
 		createYearListBox(lb -> {
 			yearListBox = lb;
 			yearListBox.addChangeHandler(e -> onSearchFees());
 			periodItemPanel.add(yearListBox);
+			endCallback.onSuccess(null);
 		});
 		
 		periodItemPanel.add(periodLabel);
@@ -460,6 +478,29 @@ public class CustomerFee extends MainEntryPoint {
 		projectItemPanel.add(projectSuggestBox);
 
 		filterExpandPanel.add(projectItemPanel);
+		
+		if (opt.getConfiguration().hasSegments()) {
+			FlowPanel segmentPanel = new FlowPanel();
+			InlineLabel segmentLabel = new InlineLabel("Segmento");
+			segmentLabel.setStyleName(AON.CSS.aonBold());
+			segmentLabel.addStyleName(AON.CSS.aonMarginRight());
+			segmentPanel.add(segmentLabel);
+			
+			segmentListBox = new ListBox();
+			
+			
+			segmentListBox.setWidth("120px");
+			segmentListBox.addItem("-- Todos --", "");
+			segmentListBox.setSelectedIndex(0);
+			for (Segment ea : opt.getConfiguration().getSegments()) {
+				segmentListBox.addItem(ea.getName(), AonNumberUtils.toString( ea.getId()));
+			}
+			segmentListBox.addChangeHandler(event -> onSearchFees());
+			
+			segmentPanel.add(segmentListBox);
+			filterExpandPanel.add(segmentPanel);
+		}
+		
 		
 		filterLeftPanel.add(filterExpandPanel);
 		
@@ -956,6 +997,11 @@ public class CustomerFee extends MainEntryPoint {
 		params.setSeller(null != sellerSuggestions.get(sellerSuggestBox.getValue()) ? sellerSuggestions.get(sellerSuggestBox.getValue()).getName() : null);
 		params.setInvoicingGroup(null != invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue()) ? invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue()).getDescription() : null);
 		params.setProject(null != projectSuggestions.get(projectSuggestBox.getValue()) ? projectSuggestions.get(projectSuggestBox.getValue()).getId() : null);
+		
+		if (segmentListBox != null && segmentListBox.getSelectedIndex() > 0) {
+			params.setSegment( AonNumberUtils.toInteger( segmentListBox.getSelectedValue()));
+		}
+
 		
 		params.setLimit(limit);
 		params.setOffset(offset.getValue());
