@@ -13,7 +13,6 @@ import { LayoutModule } from '@angular/cdk/layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
-import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   exports: [
@@ -34,8 +33,7 @@ import { SharedModule } from '../shared/shared.module';
     LayoutModule,
     MatButtonModule,
     MatListModule,
-    MatMenuModule,
-    SharedModule
+    MatMenuModule
   ]
 })
 
