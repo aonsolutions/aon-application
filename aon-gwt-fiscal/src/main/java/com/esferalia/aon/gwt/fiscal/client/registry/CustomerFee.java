@@ -1000,6 +1000,8 @@ public class CustomerFee extends MainEntryPoint {
 		
 		if (segmentListBox != null && segmentListBox.getSelectedIndex() > 0) {
 			params.setSegment( AonNumberUtils.toInteger( segmentListBox.getSelectedValue()));
+		} else {
+			params.setSegment( null );
 		}
 
 		
