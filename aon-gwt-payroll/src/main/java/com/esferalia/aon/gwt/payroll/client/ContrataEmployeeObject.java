@@ -290,6 +290,19 @@ public class ContrataEmployeeObject {
 		});
 	}
 	
+	public void saveContractExtensionExport(Consumer<Void> success, Consumer<Throwable> failure) {
+		employeesService.fillContractExtension(employeeData, contractData, new AsyncCallback<Void>() {
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
 	// ------------------------------------------------- Database Methods (SEPE Get files)
 
 	public void downloadCbc(Consumer<String> success, Consumer<Throwable> failure) {

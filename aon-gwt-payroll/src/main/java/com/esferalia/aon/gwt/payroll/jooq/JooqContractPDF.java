@@ -34,6 +34,8 @@ import org.jooq.impl.DSL;
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
 import com.esferalia.aon.gwt.payroll.shared.ContractClause;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.FormativeLevel;
 import com.esferalia.aon.gwt.payroll.shared.Municipalities;
 import com.esferalia.aon.occam.api.model.type.Country;
@@ -135,6 +137,39 @@ public class JooqContractPDF {
 		} 
 	}
 	
+	public static void saveDraftContractExtension(String domainName, Integer domainId, Integer contractId, byte[] pdfBytes) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			
+			// Id borrador contrato
+			List<Integer> attachIds = dslContext.select(CONTRACT_ATTACH.ID).from(CONTRACT_ATTACH)
+					.where(CONTRACT_ATTACH.DOMAIN.eq(domainId))
+					.and(CONTRACT_ATTACH.CONTRACT.eq(contractId))
+					.and(CONTRACT_ATTACH.TYPE.eq((byte)110))
+					.orderBy(CONTRACT_ATTACH.ID.desc()).fetch(CONTRACT_ATTACH.ID);
+			
+			if(attachIds.isEmpty())
+				dslContext.insertInto(CONTRACT_ATTACH)
+					.set(CONTRACT_ATTACH.DOMAIN, domainId)
+					.set(CONTRACT_ATTACH.CONTRACT, contractId)
+					.set(CONTRACT_ATTACH.MIMETYPE, (byte)22)
+					.set(CONTRACT_ATTACH.DESCRIPTION, "BORRADOR PRORROGA CONTRATO")
+					.set(CONTRACT_ATTACH.DATA, pdfBytes)
+					.set(CONTRACT_ATTACH.TYPE, (byte)110)
+					.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+					.execute();
+			else
+				dslContext.update(CONTRACT_ATTACH)
+					.set(CONTRACT_ATTACH.DATA, pdfBytes)
+					.set(CONTRACT_ATTACH.ATTACH_DATE, new Timestamp(new java.util.Date().getTime()))
+					.where(CONTRACT_ATTACH.ID.eq(attachIds.get(0)))
+					.execute();
+			
+		}catch (SQLException e) {
+			throw new RuntimeException(e);
+		} 
+	}
+	
 	// ---------------------------------------------------- Contract PDF (fill)
 	
 	public static byte[] contractFill(Connection connection, Integer domainId, Integer parentDomainId, Integer contractId, Integer contractType, String formativeLevelCode, boolean isTransform) throws IllegalArgumentException {
@@ -157,6 +192,177 @@ public class JooqContractPDF {
 			} catch (IllegalArgumentException e) {
 				throw new IllegalArgumentException(e.getMessage());
 			}
+	}
+	
+	public static byte[] contractExtensionFill(Connection connection, EmployeeInfo employeeData, ContractInfo contractData) {
+		DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+		
+		try {
+			Map<String, String> contractExtensionFillInfo = getContractExtensionFillInfoDB(dslContext, employeeData, contractData);
+			
+			return ContractFill.fillContractExtension(contractExtensionFillInfo);
+		} catch (IllegalArgumentException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	private static Map<String, String> getContractExtensionFillInfoDB(DSLContext dslContext, EmployeeInfo employeeData, ContractInfo contractData) {
+		Map<String, String> extensionInfo = new HashMap<>();
+		Municipalities municipalities = new Municipalities();
+		
+		// ENTRPRISE
+		Result<Record> entepriseRecords = dslContext.select().from(ENTERPRISE)
+				.leftJoin(RADDRESS)
+				.on(ENTERPRISE.REGISTRY.eq(RADDRESS.REGISTRY))
+				.where(ENTERPRISE.REGISTRY.eq(
+						dslContext.select(ENTERPRISE_ACTIVITY.ENTERPRISE).from(ENTERPRISE_ACTIVITY).where(ENTERPRISE_ACTIVITY.ID.eq(
+								dslContext.select(CONTRACT.ENTERPRISE_ACTIVITY).from(CONTRACT).where(CONTRACT.ID.eq(contractData.getContractId())).fetchOne(CONTRACT.ENTERPRISE_ACTIVITY)
+						)).fetchOne(ENTERPRISE_ACTIVITY.ENTERPRISE)
+				)).fetch();
+		
+		if(!entepriseRecords.isEmpty()) {
+			Record enterpriseRecord = entepriseRecords.get(0);
+			String address = enterpriseRecord.get(RADDRESS.STREET_TYPE) + " " + enterpriseRecord.get(RADDRESS.ADDRESS) + ", " + enterpriseRecord.get(RADDRESS.NUMBER);
+			String municipalityCode = enterpriseRecord.get(RADDRESS.MUNICIPALITY_CODE);
+			String zip = enterpriseRecord.get(RADDRESS.ZIP);
+			
+			extensionInfo.put("Texto1", contractData.getEnterpriseCIF());
+			extensionInfo.put("Texto5", contractData.getEnterpriseName());
+			extensionInfo.put("Texto6", address);
+			extensionInfo.put("Texto7", "ESPA\u00D1A");
+			extensionInfo.put("Cifra1", "7");
+			extensionInfo.put("Cifra2", "2");
+			extensionInfo.put("Cifra3", "4");
+			
+			if(null != municipalityCode) {
+				String municipality = municipalities.getMunicipalityByZip(municipalityCode);
+				
+				extensionInfo.put("Texto8", municipality);
+				extensionInfo.put("Cifra4", municipalityCode.substring(0, 1));
+				extensionInfo.put("Cifra5", municipalityCode.substring(1, 2));
+				extensionInfo.put("Cifra6", municipalityCode.substring(2, 3));
+				extensionInfo.put("Cifra7", municipalityCode.substring(3, 4));
+				extensionInfo.put("Cifra8", municipalityCode.substring(4, 5));
+			}
+			
+			extensionInfo.put("Cifra9", zip.substring(0, 1));
+			extensionInfo.put("Cifra10", zip.substring(1, 2));
+			extensionInfo.put("Cifra11", zip.substring(2, 3));
+			extensionInfo.put("Cifra12", zip.substring(3, 4));
+			extensionInfo.put("Cifra13", zip.substring(4, 5));
+			
+		}
+		
+		// ENTRPRISE CCC AND ACTIVITY
+		Result<Record> entepriseCCCRecords = dslContext.select().from(CONTRACT)
+				.leftJoin(ENTERPRISE_CCC)
+				.on(CONTRACT.ENTERPRISE_CCC.eq(ENTERPRISE_CCC.ID))
+				.leftJoin(ENTERPRISE_ACTIVITY)
+				.on(CONTRACT.ENTERPRISE_ACTIVITY.eq(ENTERPRISE_ACTIVITY.ID))
+				.where(CONTRACT.ID.eq(contractData.getContractId()))
+				.fetch();
+		
+		if(!entepriseCCCRecords.isEmpty()) {
+			Record entepriseCCCRecord = entepriseCCCRecords.get(0);
+			String regime = getCCCRegimeCode(entepriseCCCRecord.get(ENTERPRISE_CCC.TYPE));
+			String cccAcount = entepriseCCCRecord.get(ENTERPRISE_CCC.CCC);
+			String activity = entepriseCCCRecord.get(ENTERPRISE_ACTIVITY.DESCRIPTION);
+			
+			extensionInfo.put("Cifra14", regime.substring(0, 1));
+			extensionInfo.put("Cifra15", regime.substring(1, 2));
+			extensionInfo.put("Cifra16", regime.substring(2, 3));
+			extensionInfo.put("Cifra17", regime.substring(3, 4));
+			
+			try {
+				extensionInfo.put("Cifra18", cccAcount.substring(0, 1));
+				extensionInfo.put("Cifra19", cccAcount.substring(1, 2));
+				extensionInfo.put("Texto9", cccAcount.substring(2, 9));
+				extensionInfo.put("Cifra20", cccAcount.substring(9, 10));
+				extensionInfo.put("Cifra21", cccAcount.substring(10, 11));
+			} catch (IndexOutOfBoundsException e) {
+				throw new IllegalArgumentException("La cuenta de cotizaci\u00F3n no tiene el formato correcto (recuerde longuitud 11)");
+			}
+			
+			extensionInfo.put("Texto10", activity);
+			extensionInfo.put("Cifra22", "");
+			extensionInfo.put("Cifra23", "");
+		}
+		
+		// WORKPLACE
+		Record raddressRecord = dslContext.select().from(RADDRESS).where(RADDRESS.ID.in(
+					dslContext.select(WORKPLACE.ADDRESS).from(WORKPLACE).where(WORKPLACE.ID.in(
+								dslContext.select(CONTRACT.WORKPLACE).from(CONTRACT).where(CONTRACT.ID.eq(contractData.getContractId()))
+									.fetchOne(CONTRACT.WORKPLACE)
+							)).fetchOne(WORKPLACE.ADDRESS)
+				)).fetchOne();
+		
+		if(null != raddressRecord) {
+			String municipalityCode = raddressRecord.get(RADDRESS.MUNICIPALITY_CODE);
+			String municipality = municipalities.getMunicipalityByZip(municipalityCode);
+			
+			extensionInfo.put("Texto11", "ESPA\u00D1A");
+			extensionInfo.put("Cifra24", "7");
+			extensionInfo.put("Cifra25", "2");
+			extensionInfo.put("Cifra26", "4");
+			
+			if(null != municipalityCode) {
+				extensionInfo.put("Texto12", municipality);
+				extensionInfo.put("Cifra27", municipalityCode.substring(0, 1));
+				extensionInfo.put("Cifra28", municipalityCode.substring(1, 2));
+				extensionInfo.put("Cifra29", municipalityCode.substring(2, 3));
+				extensionInfo.put("Cifra30", municipalityCode.substring(3, 4));
+				extensionInfo.put("Cifra31", municipalityCode.substring(4, 5));
+			}
+		}
+		
+		// EMPLOYEE
+		Record contractRecord = dslContext.select().from(CONTRACT)
+				.leftJoin(REGISTRY)
+				.on(CONTRACT.PERSON.eq(REGISTRY.ID))
+				.leftJoin(PERSON)
+				.on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+				.leftJoin(RADDRESS)
+				.on(CONTRACT.PERSON.eq(RADDRESS.REGISTRY))
+				.where(CONTRACT.ID.eq(contractData.getContractId()))		
+				.fetchOne();
+		
+		Date birthDate = contractRecord.get(PERSON.BIRTH_DATE);
+		
+		String municipalityCode = contractRecord.get(RADDRESS.MUNICIPALITY_CODE);
+		
+		extensionInfo.put("Texto13", employeeData.getFullName());
+		extensionInfo.put("Texto14", contractRecord.get(REGISTRY.DOCUMENT));
+		extensionInfo.put("Texto15", null == birthDate ? "" : fullDateFormat.format(birthDate));
+		extensionInfo.put("Texto16", contractRecord.get(PERSON.SOCIAL_SECURITY_NUM));
+		extensionInfo.put("Texto18", employeeData.getNationality());
+//		extensionInfo.put("Cifra34", "7");
+//		extensionInfo.put("Cifra35", "2");
+//		extensionInfo.put("Cifra36", "4");
+		
+		if(null != municipalityCode) {
+			String municipality = municipalities.getMunicipalityByZip(municipalityCode);
+			
+			extensionInfo.put("Texto19", municipality);
+			extensionInfo.put("Cifra37", municipalityCode.substring(0, 1));
+			extensionInfo.put("Cifra38", municipalityCode.substring(1, 2));
+			extensionInfo.put("Cifra39", municipalityCode.substring(2, 3));
+			extensionInfo.put("Cifra40", municipalityCode.substring(3, 4));
+			extensionInfo.put("Cifra41", municipalityCode.substring(4, 5));
+		}
+		
+		extensionInfo.put("Texto20", "ESPA\u00D1A");
+		extensionInfo.put("Cifra42", "7");
+		extensionInfo.put("Cifra43", "2");
+		extensionInfo.put("Cifra44", "4");
+		
+		Date startDate = contractRecord.get(CONTRACT.START_DATE);
+		Date endDate = contractRecord.get(CONTRACT.END_DATE);
+		
+		extensionInfo.put("Renglon9", fullDateFormat.format(contractData.getExtensionDate()));
+		extensionInfo.put("Renglon10", fullDateFormat.format(endDate));
+		extensionInfo.put("Renglon11", fullDateFormat.format(startDate));
+		
+		return extensionInfo;
 	}
 
 	private static String getSepeIde(DSLContext dslContext, Integer contractId) {

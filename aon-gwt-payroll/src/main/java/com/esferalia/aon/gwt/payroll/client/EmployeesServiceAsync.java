@@ -11,6 +11,7 @@ import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
@@ -269,6 +270,8 @@ public interface EmployeesServiceAsync extends AgreementServiceAsync, Statistics
 	void getEmployeeStatus(String domain, String user, Integer contractId, AsyncCallback<EmployeeStatus> callback);
 
 	void fillContract(String currentDomainName, Integer contractId, Integer contractType, String formativeLvl, boolean isTransform, AsyncCallback<Void> callback) throws IllegalArgumentException;
+	
+	void fillContractExtension(String currentDomainName, EmployeeInfo employeeData, ContractInfo contractData, AsyncCallback<Void> callback) throws IllegalArgumentException;
 	
 	void setData(String currentDomainName, String user, Integer contractId, ArrayList<Variable> data, AsyncCallback<Void> callback);
 
