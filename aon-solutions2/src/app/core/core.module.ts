@@ -2,9 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SetMaterialModule } from 'libraries/setproduct-angular-material';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { TopbarComponent } from './components/topbar/topbar.component'
-import { SidenavComponent } from './components/sidenav/sidenav.component';
-import { MainContentComponent } from './components/main-content/main-content.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,10 +19,7 @@ import { SharedModule } from '../shared/shared.module';
   exports: [
   ],
   declarations: [
-    CoreComponent,
-    TopbarComponent,
-    SidenavComponent,
-    MainContentComponent
+    CoreComponent
   ],
   imports: [
     MatIconModule,
