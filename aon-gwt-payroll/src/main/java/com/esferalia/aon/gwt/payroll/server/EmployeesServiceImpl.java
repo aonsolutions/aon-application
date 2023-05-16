@@ -137,6 +137,7 @@ import com.esferalia.aon.gwt.payroll.shared.CompositePayment;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
@@ -6084,6 +6085,20 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			if(isTransform) JooqContractPDF.saveDraftContractTransform(domainName, domainId, contractId, pdfBytes);
 			else JooqContractPDF.saveDraftContract(domainName, domainId, contractId, pdfBytes);
+			
+		} catch (SQLException | IllegalArgumentException e) {
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
+
+	@Override
+	public void fillContractExtension(String domainName, EmployeeInfo employeeData, ContractInfo contractData) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+
+			byte[] pdfBytes = JooqContractPDF.contractExtensionFill(connection, employeeData, contractData);
+
+			JooqContractPDF.saveDraftContractExtension(domainName, domainId, contractData.getContractId(), pdfBytes);
 			
 		} catch (SQLException | IllegalArgumentException e) {
 			throw new IllegalArgumentException(e.getMessage());

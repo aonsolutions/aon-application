@@ -375,6 +375,8 @@ public abstract class ContractAttachUI extends ResizeComposite {
 				return "Transformaci\u00f3n (Comunicaci\u00f3n SEPE)";
 			case (byte)109:
 				return "Borrador trasnformaci\u00f3n contrato";
+			case (byte)110:
+				return "Borrador pr\u00f3rroga contrato";
 			default:
 				return "";
 		}
@@ -579,6 +581,26 @@ public abstract class ContractAttachUI extends ResizeComposite {
 		
 	}
 	
+	public void exportExtensionContract() {
+		if(existContractExtension()) {
+			AonDialog confirm = new AonDialog("Generar borrador pr\u00f3rroga contrato", new HTMLPanel("Ya existe un borrador de la pr\u00f3rroga del contrato generado. \u00bfRealmente desea sobreescribirlo\u003f"));
+			confirm.confirm(new AonAcceptDialogCallback() {
+				
+				@Override
+				public void onCancel() {
+					// Nothing to do
+				}
+				
+				@Override
+				public void onAccept() {
+					exportContractExtensionPDF();
+				}
+			});
+		} else
+			exportContractExtensionPDF();
+		
+	}
+	
 	private void exportContractPDF() {
 		onExportPDF(e -> {
 			showSuccessMessage("Contrato", "El contrato se ha generado correctamente");
@@ -591,6 +613,13 @@ public abstract class ContractAttachUI extends ResizeComposite {
 			showSuccessMessage("Contrato Transformaci\u00f3n", "El PDF trasformaci\u00f3n contrato se ha generado correctamente");
 			refreshPage();
 		}, f -> showErrorMessage("Contrato Transformaci\u00f3n", f.getMessage()));
+	}
+	
+	private void exportContractExtensionPDF() {
+		onExportExtensionPDF(e -> {
+			showSuccessMessage("Contrato Pr\u00f3rroga", "El PDF pr\u00f3rroga contrato se ha generado correctamente");
+			refreshPage();
+		}, f -> showErrorMessage("Contrato Pr\u00f3rroga", f.getMessage()));
 	}
 	
 	public void setAttachData(Integer attachId, String base64) {
@@ -650,6 +679,8 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	
 	protected abstract void onExportTransformPDF(Consumer<String> consumer, Consumer<Throwable> failure);
 	
+	protected abstract void onExportExtensionPDF(Consumer<String> consumer, Consumer<Throwable> failure);
+	
 	protected abstract void showAttachPDf(Integer attachId, String dataURI);
 
 	protected abstract void showErrorMessage(String title, String message);
@@ -701,6 +732,13 @@ public abstract class ContractAttachUI extends ResizeComposite {
 	public boolean existContractTransform() {
 		for (Attach attach : employeeContractInfo.getContractAttachments())
 			if(attach.getType().equals((byte)109))
+				return true;
+		return false;
+	}
+	
+	public boolean existContractExtension() {
+		for (Attach attach : employeeContractInfo.getContractAttachments())
+			if(attach.getType().equals((byte)110))
 				return true;
 		return false;
 	}

@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
@@ -1119,5 +1120,12 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 			throws IllegalArgumentException, EvalException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void fillContractExtension(String currentDomainName, EmployeeInfo employeeData, ContractInfo contractData)
+			throws IllegalArgumentException {
+		// TODO Auto-generated method stub
+		
 	}
 }
