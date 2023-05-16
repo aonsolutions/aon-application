@@ -296,7 +296,7 @@ public final class IJsonNames {
 	public static final String LEVEL = "level";
 	public static final String LIMIT = "limit";
 	public static final String LINE = "line";
-	public static final String LINKED = "linKED";
+	public static final String LINKED = "linked";
 	public static final String LINES_PAGE_LIMIT = "linesPageLimit";
 	public static final String LOCALE = "locale";
 	public static final String LOGIN = "login";
