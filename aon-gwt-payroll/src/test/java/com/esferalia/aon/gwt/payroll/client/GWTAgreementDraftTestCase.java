@@ -20,6 +20,7 @@ import com.esferalia.aon.gwt.payroll.shared.Certifica2Info;
 import com.esferalia.aon.gwt.payroll.shared.ContextDescriptor;
 import com.esferalia.aon.gwt.payroll.shared.ContractConceptCalc;
 import com.esferalia.aon.gwt.payroll.shared.ContractExtension;
+import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.ContractPaymentData;
 import com.esferalia.aon.gwt.payroll.shared.ContractTransform;
 import com.esferalia.aon.gwt.payroll.shared.ContractVariable;
@@ -621,6 +622,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 		@Override
 		public void evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel,
 				AsyncCallback<List<Result>> callback) throws IllegalArgumentException, EvalException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void fillContractExtension(String currentDomainName, EmployeeInfo employeeData,
+				ContractInfo contractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
 			// TODO Auto-generated method stub
 			
 		}		
@@ -1233,6 +1241,13 @@ public class GWTAgreementDraftTestCase extends GWTTestCase {
 					@Override
 					public void evalAgreement(String currentDomainName, String expression, Date startDate, int fxLevel,
 							AsyncCallback<List<Result>> callback) throws IllegalArgumentException, EvalException {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void fillContractExtension(String currentDomainName, EmployeeInfo employeeData,
+							ContractInfo contractData, AsyncCallback<Void> callback) throws IllegalArgumentException {
 						// TODO Auto-generated method stub
 						
 					}
