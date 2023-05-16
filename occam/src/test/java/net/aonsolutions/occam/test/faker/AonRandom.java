@@ -17,7 +17,7 @@ import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.api.constants.InvoiceType;
 import net.aonsolutions.occam.api.constants.SecurityLevel;
 import net.aonsolutions.watson.client.util.AonCollectionUtils;
-import net.aonsolutions.watson.client.util.AonMathUtils;
+import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.client.util.AonStringUtils;
 import net.aonsolutions.watson.server.AonDateUtils;
 
@@ -100,7 +100,7 @@ public class AonRandom {
     }
     public static double getDouble( int from, int to, int precision ) {
     	double r = faker.random().nextDouble();
-    	return AonMathUtils.round(from + ((to - from) * r), precision);
+    	return AonNumberUtils.round(from + ((to - from) * r), precision);
     }
     public static Double getDouble(int nullThreshold, int from, int to, int precision ) {
     	return ( gt(nullThreshold) )

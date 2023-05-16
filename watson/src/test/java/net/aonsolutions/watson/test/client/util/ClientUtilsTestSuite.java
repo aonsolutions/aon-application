@@ -9,6 +9,7 @@ import org.junit.platform.suite.api.Suite;
 	,AonCollectionUtilsTests.class
 	,AonNumberUtilsTests.class
 	,AonCharSequenceUtilsTests.class
+	,AonStringUtilsTests.class
 })
 public class ClientUtilsTestSuite {
 

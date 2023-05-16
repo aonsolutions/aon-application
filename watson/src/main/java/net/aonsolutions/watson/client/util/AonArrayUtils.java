@@ -45,5 +45,16 @@ public class AonArrayUtils {
         return getLength(array) == 0;
     }
 
+    /**
+     * <p>Checks if an array of primitive chars is empty or {@code null}.
+     *
+     * @param array  the array to test
+     * @return {@code true} if the array is empty or {@code null}
+     * @since 2.1
+     */
+    public static boolean isEmpty(final char[] array) {
+        return getLength(array) == 0;
+    }
+    
     
 }

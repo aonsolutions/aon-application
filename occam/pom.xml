@@ -224,14 +224,14 @@
 			<scope>test</scope>
 		</dependency>
 		
-		<!-- Borrar cuando se creen los datos en la BD de TESTs-->
+		<!-- Borrar cuando se creen los datos en la BD de TESTs
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.occam</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
-
+		-->
 		
 	</dependencies>
 </project>

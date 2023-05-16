@@ -12,7 +12,21 @@ import net.aonsolutions.watson.client.util.AonNumberUtils;
 
 class AonNumberUtilsTests {
 
-    @Test
+	static final double e1 = 0.54;
+	static final double e10 = 0.544;
+	
+	static final double d1 = 0.55;
+	static final double d10 = 0.545;
+	static final double d11 = 0.547;
+	
+	@Test
+	void roundTest(){
+    	assertEquals(e1, AonNumberUtils.round(e10));
+    	assertEquals(d1, AonNumberUtils.round(d10));
+    	assertEquals(d1, AonNumberUtils.round(d11));
+    }
+
+	@Test
     void equalsTest(){
 		Integer i1 = Integer.valueOf(1);
 		Integer i2 = Integer.valueOf(2);

@@ -1,9 +1,19 @@
 package net.aonsolutions.watson.client.util;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class AonNumberUtils {
 
 	private AonNumberUtils() {
 
+	}
+
+	public static double round(double value, int precision) {
+		return new BigDecimal(Double.toString(value)).setScale(precision, RoundingMode.HALF_UP).doubleValue();
+	}
+	public static double round(double value) {
+		return round(value, 2);
 	}
 
 	public static boolean equals(Number n1, Number n2) {

@@ -75,7 +75,7 @@ class AonArrayUtilsTests {
     void getEmpty() {
         final Object[] emptyObjectArray = new Object[0];
         final Object[] notEmptyObjectArray = new Object[]{"aValue"};
-        assertTrue(AonArrayUtils.isEmpty(null));
+        assertTrue(AonArrayUtils.isEmpty((Object[]) null));
         assertTrue(AonArrayUtils.isEmpty(emptyObjectArray));
         assertFalse(AonArrayUtils.isEmpty(notEmptyObjectArray));
     }
