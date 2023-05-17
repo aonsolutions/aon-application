@@ -1,1 +1,7 @@
-<p>content-header works!</p>
+<div class="contentHeaderContainer"
+[ngStyle]="{'height': 'calc(' + heightHeader + 'rem)'}">
+    <div class="contentHeaderContainerMain">
+        <ng-content></ng-content>
+    </div>
+    <mat-divider></mat-divider>
+</div>

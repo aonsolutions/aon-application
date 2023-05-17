@@ -1,0 +1,11 @@
+.contentMainContainer{
+    width: calc(100%);
+    z-index: 1;
+    overflow: auto;
+}
+
+.contentMainContainerDetailOpened{
+    width: calc(50%);
+    z-index: 1;
+    overflow: auto;
+}

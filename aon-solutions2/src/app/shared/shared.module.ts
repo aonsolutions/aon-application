@@ -17,6 +17,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDividerModule } from '@angular/material/divider';
 
 
 @NgModule({
@@ -40,14 +41,20 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatSidenavModule,
     RouterModule,
     MatGridListModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatDividerModule
   ],
   exports:[
     SidenavHoverDirective,
     SideNavComponent,
     TopBarComponent,
     BasicLayoutComponent,
-    SidenavLayoutComponent
+    SidenavLayoutComponent,
+    ContentComponent,
+    ContentHeaderComponent,
+    ContentMainComponent,
+    ContentDetailComponent,
+    ContentSideNavComponent
   ]
 })
 export class SharedModule { }

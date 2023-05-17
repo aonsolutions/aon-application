@@ -1,0 +1,11 @@
+.contentHeaderContainer {
+    width: calc(100%);
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    background-color: white;
+}
+
+.contentHeaderContainer > .contentHeaderContainerMain {
+    height: calc(100%);
+}

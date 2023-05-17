@@ -7,3 +7,8 @@ $roboto-font-path: "~roboto-fontface/fonts" !default;
 html {
    font-size: 16px!important;
 }
+
+.allSize {
+   width: calc(100%);
+   height: calc(100%);
+}

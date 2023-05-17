@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ContainerService } from '../../services/container.service';
 
 @Component({
   selector: 'app-content-header',
@@ -7,7 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContentHeaderComponent implements OnInit {
 
-  constructor() { }
+  @Input() heightHeader : number;
+
+  constructor(public containerService : ContainerService) { 
+    this.heightHeader = 0;
+  }
 
   ngOnInit(): void {
   }

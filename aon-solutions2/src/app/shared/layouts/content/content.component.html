@@ -1,1 +1,4 @@
-<p>content works!</p>
+<div class="contentContainer"
+[ngStyle]="{'height': 'calc(100% - ' + (heightHeader) + 'rem)'}">
+    <ng-content></ng-content>
+</div>

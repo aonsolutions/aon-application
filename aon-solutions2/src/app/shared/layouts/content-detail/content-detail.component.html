@@ -1,1 +1,5 @@
-<p>content-detail works!</p>
+<div *ngIf="containerService.detailOpened" class="contentDetailContainer"
+[ngStyle]="{'height': 'calc(100% - ' + (heightHeader) + 'rem)',
+'top': 'calc(' + heightHeader + '%)'}">
+    <ng-content></ng-content>
+</div>
