@@ -1,22 +1,23 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CoreComponent } from './core.component';
+import { BasicLayoutComponent } from '../shared/layouts/basic-layout/basic-layout.component';
+import { SidenavLayoutComponent } from '../shared/layouts/sidenav-layout/sidenav-layout.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: CoreComponent,
+    component: SidenavLayoutComponent,
     children: [
       {
         path: 'home',
         loadChildren: () =>
           import('src/app/modules/home/home.module').then((m) => m.HomeModule),
       },
-      // {
-      //   path: 'inbox',
-      //   loadChildren: () =>
-      //     import('src/app/modules/inbox/inbox.module').then((m) => m.InboxModule),
-      // },
+      {
+        path: 'inbox',
+        loadChildren: () =>
+          import('src/app/modules/inbox/inbox.module').then((m) => m.InboxModule),
+      },
       // {
       //   path: 'billing',
       //   loadChildren: () =>
@@ -50,8 +51,15 @@ const routes: Routes = [
   // { path: 'auth', component: AuthComponent },
   {
     path: 'auth',
-    loadChildren: () =>
-      import('src/app/modules/auth/auth.module').then((m) => m.AuthModule),
+    component: BasicLayoutComponent,
+    children:[
+      {
+        path: '',
+        loadChildren: () =>
+          import('src/app/modules/auth/auth.module').then((m) => m.AuthModule),
+      }
+    ]
+    
   },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
