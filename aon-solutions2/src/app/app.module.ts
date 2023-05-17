@@ -53,6 +53,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CoreModule } from './core/core.module';
 import { LayoutModule } from '@angular/cdk/layout';
+import { RouterModule } from '@angular/router';
 
 
 @NgModule({
@@ -117,6 +118,7 @@ import { LayoutModule } from '@angular/cdk/layout';
     MatRippleModule,
     LayoutModule,
     FormsModule,
+    RouterModule
   ],
   providers: [],
   bootstrap: [AppComponent]
