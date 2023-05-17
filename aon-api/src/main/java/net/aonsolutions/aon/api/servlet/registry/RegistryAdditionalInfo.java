@@ -9,7 +9,8 @@ public enum RegistryAdditionalInfo {
 	MEDIA,
 	RECORD_DATA,
 	RSEGMENT,
-	RRELATIONSHIP
+	RRELATIONSHIP,
+	BILLABLE
 	;
 
 	private RegistryAdditionalInfo() {
