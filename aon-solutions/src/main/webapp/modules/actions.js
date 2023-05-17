@@ -259,6 +259,14 @@ export const SEND_FILE = {
     icon: MATERIAL_ICONS.MAIL
 };
 
+
+export const DELETE_INVOICES = {
+    id: CONSTANT.DELETE_INVOICE.initCap(),
+    name: MSG.DELETE_INVOICE,
+    title: MSG.DELETE_INVOICE,
+    icon: MATERIAL_ICONS.DELETE
+};
+
 export const SEND_INVOICE = {
     id: CONSTANT.SEND_INVOICE.initCap(),
     name: MSG.SEND_INVOICE,

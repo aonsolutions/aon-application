@@ -27,6 +27,7 @@ if(Language.ENGLISH === language) {
 // ----- A
 
 export const ACCEPT = MSG.ACCEPT;
+export const ACCESS = MSG.ACCESS;
 export const ACCOUNT = MSG.ACCOUNT;
 export const ACCOUNTED = MSG.ACCOUNTED;
 export const ACCOUNTEDS = MSG.ACCOUNTEDS;
@@ -54,6 +55,8 @@ export const ADDITIONAL_INFORMATION = MSG.ADDITIONAL_INFORMATION;
 export const ADDITIONAL_DATA = "Datos adicionales"; //TODO
 export const ADDRESS = MSG.ADDRESS;
 export const ALIAS = 'Alias';// TODO
+export const ALL = MSG.ALL;
+export const ALL1 = MSG.ALL1;
 export const ALL_FILES = MSG.ALL_FILES;
 export const AMOUNT = MSG.AMOUNT;
 export const AON_BLUE = 'Azul Aon';
@@ -107,6 +110,7 @@ export const CERTIFICATES = MSG.CERTIFICATES;
 export const CHANGE_TYPE = MSG.CHANGE_TYPE;
 export const CHARGES_AND_PAYMENTS = MSG.CHARGES_AND_PAYMENTS;
 export const CHANGE_PASSWORD = "Cambiar Contraseña"; //TODO
+export const CHOOSE_A_DOMAIN = MSG.CHOOSE_A_DOMAIN;
 export const CITY = MSG.CITY;
 export const CLASSIC_APPLICATIONS = MSG.CLASSIC_APPLICATIONS;
 export const CLASSIC_VIEW = MSG.CLASSIC_VIEW;
@@ -149,6 +153,9 @@ export const CREDITOR = MSG.CREDITOR;
 export const CREDITORS = MSG.CREDITORS;
 export const CUSTOM_VIEW = MSG.CUSTOM_VIEW;
 export const CUSTOMER = MSG.CUSTOMER;
+export const CUSTOMER_SEARCH = MSG.CUSTOMER_SEARCH;
+export const CUSTOMER_SEARCH_DOMAIN_NOT_FOUND  = MSG.CUSTOMER_SEARCH_DOMAIN_NOT_FOUND;
+export const CUSTOMER_SEARCH_NOT_FOUND  = MSG.CUSTOMER_SEARCH_NOT_FOUND;
 export const CUSTOMERS = MSG.CUSTOMERS;
 export const CUSTOMIZE_INVOICE = 'Personalizar Factura';
 export const CONVERSATION = 'Conversación'; // TODO
@@ -186,6 +193,7 @@ export const DOCUMENTS = MSG.DOCUMENTS;
 export const DOMAIN = "Dominio"; //TODO
 export const DOMAIN_PARENT = "Dominio Padre"; //TODO
 export const DOCUMENTARY = MSG.DOCUMENTARY;
+export const DOMAIN_SEARCH = MSG.DOMAIN_SEARCH;
 export const DOWNLOAD = MSG.DOWNLOAD;
 export const DOWNLOAD_FILE = MSG.DOWNLOAD_FILE;
 export const DOWNLOAD_FILES = MSG.DOWNLOAD_FILES;
@@ -220,6 +228,7 @@ export const EXPENSE = MSG.EXPENSE;
 export const EXPENSES = MSG.EXPENSES; 
 export const EXPIRATION_DATE = "Fecha expiración"; // TODO;
 export const EXPIRATIONS = MSG.EXPIRATIONS;
+export const EXPIRED = MSG.EXPIRED;
 export const ESTIMATED_TIME = "Tiempo estimado";
 
 // ----- F
@@ -337,7 +346,12 @@ export const LAST_STATUS = MSG.LAST_STATUS;
 export const LAST_MODIFICATION = "Última modificación";
 export const LOCATION = MSG.LOCATION;
 export const LINK = MSG.LINK;
+export const LINK_CLIENT = MSG.LINK_CLIENT;
+export const LINKED = MSG.LINKED;
+export const LINKED1 = MSG.LINKED1;
 export const LINK_DOMAINS = MSG.LINK_DOMAINS;
+export const LINK_DOMAIN_QUESTION = MSG.LINK_DOMAIN_QUESTION;
+export const LOADING = MSG.LOADING;
 // ----- M
 
 export const MARK_ENTRY = MSG.MARK_ENTRY;
@@ -382,6 +396,7 @@ export const NIF = MSG.NIF;
 export const NOTIFICATION = MSG.NOTIFICATION;
 export const NOTIFICATIONS = MSG.NOTIFICATIONS;
 export const NUMBER = MSG.NUMBER;
+export const NUMBER_OF_USERS = MSG.NUMBER_OF_USERS;
 export const NOTARY = 'Notario'; //TODO
 export const NOTES = MSG.NOTES;
 export const NOTE = MSG.NOTE;
@@ -401,6 +416,7 @@ export const OTHER_SERVICES = MSG.OTHER_SERVICES;
 // ----- P
 
 export const PACKAGING = 'Empaquetado';
+export const PARENT_APPS = MSG.PARENT_APPS;
 export const PASSWORD = MSG.PASSWORD;
 export const PAUSE = MSG.PAUSE;
 export const PAYMETHOD = MSG.PAYMETHOD;
@@ -576,6 +592,10 @@ export const TO_SHOW = "Mostrar";//TODO
 
 // ----- U
 
+export const UNLINK = MSG.UNLINK;
+export const UNLINK_DOMAIN_QUESTION = MSG.UNLINK_DOMAIN_QUESTION;
+export const UNLINK_CLIENT = MSG.UNLINK_CLIENT;
+export const UNLINKED = MSG.UNLINKED;
 export const UPDATED_CONTRACT = MSG.UPDATED_CONTRACT;
 export const UPLOAD = MSG.UPLOAD;
 export const UPDATE = "Actualizar"; //TODO

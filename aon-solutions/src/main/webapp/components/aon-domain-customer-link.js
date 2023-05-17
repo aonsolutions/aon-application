@@ -17,6 +17,8 @@ export class AonDomainCustomer extends AonElement {
   domainList;
   customerList;
 
+  loadingPanel;
+
   customerListScrollPromise;
   customerListScrollListener;
 
@@ -31,6 +33,7 @@ export class AonDomainCustomer extends AonElement {
   searchMode;
 
   noCustomerDomainsOnlyCheck;
+  linkStatusFilter;
   domainAonStatusFilter;
   domainStatusFilter;
   customerStatusFilter;
@@ -69,9 +72,6 @@ export class AonDomainCustomer extends AonElement {
   async initialize() {
     this.id = this.id || 'aonDomainCustomer';
     this.customerListScrollListener = () => {};
-
-    await this.updateDomains();
-    // await this.updateCustomers();
   }
   
   async updateDomains() {
@@ -98,18 +98,25 @@ export class AonDomainCustomer extends AonElement {
     this.mainContainer.style.flexWrap = "wrap";
     this.mainContainer.style.justifyContent = "space-between";
     this.mainContainer.style.alignItems = "center";
+    this.mainContainer.style.position = "relative";
 
     this.buildSearchBar();
     this.buildDomainList();
     this.buildCustomerList();
+    this.buildLoadingPanel();
 
+    this.appendChild(this.loadingPanel);
     this.mainContainer.appendChild(this.searchBar);
     this.mainContainer.appendChild(this.domainList);
     this.mainContainer.appendChild(this.customerList);
 
     this.appendChild(this.mainContainer);
-    this.loadDomains();
-    this.manageEmptyCustomerList();
+    this.displayLoadingPanel(true);
+    this.updateDomains().then(() => {
+      this.loadDomains();
+      this.displayLoadingPanel(false);
+      this.manageEmptyCustomerList();
+    });
   }
 
   // --- CONSTRUIR ELEMENTOS PRINCIPALES ---
@@ -124,7 +131,6 @@ export class AonDomainCustomer extends AonElement {
     domainSearchContainer.style.justifyContent = "flex-start";
     domainSearchContainer.style.alignItems = "flex-start";
 
-    
     let searchBarContainer = document.createElement('div');
     searchBarContainer.style.display = "flex";
     searchBarContainer.style.justifyContent = "center";
@@ -146,7 +152,7 @@ export class AonDomainCustomer extends AonElement {
     this.searchInput.style.fontSize = "14px";
     this.searchInput.style.fontWeight = "bold";
     this.searchInput.style.backgroundColor = "transparent";
-    this.searchInput.placeholder = "Búsqueda de dominio";
+    this.searchInput.placeholder = MSG.DOMAIN_SEARCH;
     this.searchInput.id = this.id + "DomainSearchInput";
     
     this.searchInput.addEventListener('keyup', (event) => this.searchFunction());
@@ -172,7 +178,7 @@ export class AonDomainCustomer extends AonElement {
     searchFiltersContainer.style.marginTop = "5px";
     
     let noCustomerDomainsOnlyCheckContainer = document.createElement('div');
-    noCustomerDomainsOnlyCheckContainer.style.width = "33%";
+    noCustomerDomainsOnlyCheckContainer.style.width = "25%";
     noCustomerDomainsOnlyCheckContainer.style.height = "50%";
     noCustomerDomainsOnlyCheckContainer.style.display = "flex";
     noCustomerDomainsOnlyCheckContainer.style.justifyContent = "center";
@@ -184,8 +190,22 @@ export class AonDomainCustomer extends AonElement {
     this.noCustomerDomainsOnlyCheck.checked = false;
     this.noCustomerDomainsOnlyCheck.description = "No vinculados"; 
     this.noCustomerDomainsOnlyCheck.title  = "Solo dominios sin cliente vinculado"
-
-    noCustomerDomainsOnlyCheckContainer.appendChild(this.noCustomerDomainsOnlyCheck);
+    
+    this.linkStatusFilter = new AonSelect();
+    this.linkStatusFilter.id = this.id + "linkStatusFilter";
+    this.linkStatusFilter.classList.add("domainLinkAonSelect");
+    this.linkStatusFilter.title = "Vinculación";
+    this.linkStatusFilter.readonly = false;
+    let linkStatusFilterOptions =
+    [ {value: "", name: MSG.ALL1},
+      {value: "linked", name: MSG.LINKED1},
+      {value: "unlinked", name: MSG.UNLINKED}
+    ];
+    this.linkStatusFilter.options = JSON.stringify(linkStatusFilterOptions);
+    this.linkStatusFilter.value = "";
+    
+    // noCustomerDomainsOnlyCheckContainer.appendChild(this.noCustomerDomainsOnlyCheck); //La casilla
+    noCustomerDomainsOnlyCheckContainer.appendChild(this.linkStatusFilter); //El selector
     
     let domainAonStatusFilterContainer = document.createElement('div');
     domainAonStatusFilterContainer.style.width = "25%";
@@ -198,11 +218,14 @@ export class AonDomainCustomer extends AonElement {
     this.domainAonStatusFilter = new AonSelect();
     this.domainAonStatusFilter.id = this.id + "DomainAonStatusFilter";
     this.domainAonStatusFilter.classList.add("domainLinkAonSelect");
-    this.domainAonStatusFilter.title = "Estado";
+    this.domainAonStatusFilter.title = MSG.STATUS;
     this.domainAonStatusFilter.readonly = false;
-    let domainAonStatusFilterOptions = [{value: "", name: "Todos"}];
+    let domainAonStatusFilterOptions = [{value: "", name: MSG.ALL1}];
     this.DOMAIN_STATUS_OPTIONS.forEach(status => {
-      domainAonStatusFilterOptions.push({value: status, name: this.getDomainStatusDescription(status)})
+      domainAonStatusFilterOptions.push({
+        value: status,
+        name: this.getDomainStatusDescription(status)
+      });
     });
     this.domainAonStatusFilter.options = JSON.stringify(domainAonStatusFilterOptions);
     this.domainAonStatusFilter.value = "";
@@ -222,18 +245,18 @@ export class AonDomainCustomer extends AonElement {
     this.domainStatusFilter = new AonSelect();
     this.domainStatusFilter.id = this.id + "DomainStatusFilter";
     this.domainStatusFilter.classList.add("domainLinkAonSelect");
-    this.domainStatusFilter.title = "Acceso";
+    this.domainStatusFilter.title = MSG.ACCESS;
     this.domainStatusFilter.readonly = false;
     let domainStatusFilterOptions =
-    [ {value: "", name: "Todos"},
-      {value: "active", name: "Activo"},
-      {value: "inactive", name: "Inactivo"},
-      {value: "expired", name: "Expirado"}
+    [ {value: "", name: MSG.ALL1},
+      {value: "active", name: MSG.ACTIVE},
+      {value: "inactive", name: MSG.INACTIVE},
+      {value: "expired", name: MSG.EXPIRED}
     ];
     this.domainStatusFilter.options = JSON.stringify(domainStatusFilterOptions);
     this.domainStatusFilter.value = "";
 
-    [this.noCustomerDomainsOnlyCheck, this.domainAonStatusFilter, this.domainStatusFilter].forEach(filterEl => {
+    [this.noCustomerDomainsOnlyCheck, this.domainAonStatusFilter, this.domainStatusFilter, this.linkStatusFilter].forEach(filterEl => {
       filterEl.addEventListener('change', (event) => this.searchFunction());
     });
 
@@ -256,7 +279,6 @@ export class AonDomainCustomer extends AonElement {
     domainSearchContainer.style.width = "45%";
     domainSearchContainer.style.justifyContent = "flex-start";
     domainSearchContainer.style.alignItems = "flex-start";
-
     
     let searchBarContainer = document.createElement('div');
     searchBarContainer.style.display = "flex";
@@ -279,7 +301,7 @@ export class AonDomainCustomer extends AonElement {
     this.customerSearchInput.style.fontSize = "14px";
     this.customerSearchInput.style.fontWeight = "bold";
     this.customerSearchInput.style.backgroundColor = "transparent";
-    this.customerSearchInput.placeholder = "Búsqueda de cliente";
+    this.customerSearchInput.placeholder = MSG.CUSTOMER_SEARCH;
     this.customerSearchInput.id = this.id + "CustomerSearchInput";
     
     this.customerSearchInput.addEventListener('keyup', (event) => this.customerSearchFunction());
@@ -315,7 +337,7 @@ export class AonDomainCustomer extends AonElement {
     this.customerStatusFilter = new AonSelect();
     this.customerStatusFilter.id = this.id + "CustomerStatusFilter";
     this.customerStatusFilter.classList.add("domainLinkAonSelect");
-    this.customerStatusFilter.title = "Estado";
+    this.customerStatusFilter.title = MSG.STATUS;
     this.customerStatusFilter.readonly = false;
     let customerStatusFilterOptions = [{value: "", name: MSG.ALL1}];
     this.DOMAIN_STATUS_OPTIONS.forEach(status => {
@@ -412,7 +434,6 @@ export class AonDomainCustomer extends AonElement {
     this.domainList.style.display = "flex";
     this.domainList.style.flexDirection = "column";
     this.domainList.style.gap = "5px";
-    // this.domainList.style.overflowY = "scroll";
     this.domainList.classList.add("domainCustomerScroll");
   }
   
@@ -423,7 +444,6 @@ export class AonDomainCustomer extends AonElement {
     this.customerList.style.display = "flex";
     this.customerList.style.flexDirection = "column";
     this.customerList.style.gap = "5px";
-    // this.customerList.style.overflowY = "scroll";
     this.customerList.classList.add("domainCustomerScroll");
     this.customerList.addEventListener("scroll", (event) => {
       this.scrollFunction();
@@ -494,12 +514,15 @@ export class AonDomainCustomer extends AonElement {
 
   // --- CARGAR LOS LISTADOS ---
   
-  loadCustomers() {
+  loadCustomers(linked) {
     this.customerList.innerHTML = "";
     if (this.loadedCustomers) {
       for (let i = 0; i < this.loadedCustomers.length; i++) {
         let customerElement = this.createCustomerElement(this.loadedCustomers[i]);
         customerElement.dataset.ind = i;
+        if (linked && this.loadedCustomers.length === 1) {
+          customerElement.classList.add("selectedCustomer");
+        }
         this.customerList.appendChild(customerElement);
       }
     }
@@ -557,11 +580,10 @@ export class AonDomainCustomer extends AonElement {
     this.manageEmptyCustomerList();
   }
 
-  customerSearchFilterAction() {
+  async customerSearchFilterAction() {
     let lowerCasedInputText = this.customerSearchInput.value.toLowerCase();
     this.removeAllCustomers();
-    this.customerSearch(lowerCasedInputText);
-    // this.manageEmptyCustomerList();
+    await this.customerSearch(lowerCasedInputText);
   }
   
   search(inputText) {
@@ -571,9 +593,10 @@ export class AonDomainCustomer extends AonElement {
         || (domainCompany.company && domainCompany.company.name ? domainCompany.company.name : "").toLowerCase().includes(inputText)
         || (domainCompany.domain && domainCompany.domain.description ? domainCompany.domain.description : "").toLowerCase().includes(inputText)
         )
-        && (this.noCustomerDomainsOnlyCheck.getValue() ? !(domainCompany.domain ? domainCompany.domain.aonCustomer : null): true)
+        && this.checkLinkStatus(domainCompany)
         && (this.domainAonStatusFilter.value ? (domainCompany.domain ? this.domainAonStatusFilter.value === domainCompany.domain.aonStatus : false) : true)
         && this.checkAccess(domainCompany)
+        // && (this.noCustomerDomainsOnlyCheck.getValue() ? !(domainCompany.domain ? domainCompany.domain.aonCustomer : null): true)
         );
         this.filterDomains(filteredDomains);
   }
@@ -594,6 +617,27 @@ export class AonDomainCustomer extends AonElement {
           break;
         case "expired":
           return (domain.expirationDate ? true : false);
+          break;
+        default:
+          break;
+      }
+    }
+    return false;
+  }
+
+  checkLinkStatus(domainCompany) {
+    let domain = domainCompany ? domainCompany.domain : null;
+    if (domain) {
+      let linkStatus = this.linkStatusFilter.value;
+      switch (linkStatus) {
+        case "":
+          return true;
+          break;
+        case "linked":
+          return (domain.aonCustomer ? true : false);
+          break;
+        case "unlinked":
+          return (!domain.aonCustomer ? true : false);
           break;
         default:
           break;
@@ -659,7 +703,7 @@ export class AonDomainCustomer extends AonElement {
       if (contentHeight <= scrollTop + 200) {
         this.customerListScrollPromise = this.findPaginatedCustomers().then(() => {this.customerListScrollPromise = null});
       }
-  }
+    }
   }
   
   async findRelatedCustomers() {
@@ -673,6 +717,7 @@ export class AonDomainCustomer extends AonElement {
       let customerStatus = this.customerAccessFilter ? this.customerAccessFilter.value : "";
       
       let customers = [];
+      let booking = null;
       
       if (aonCustomer) {
         let cust = await getCustomers({
@@ -722,12 +767,16 @@ export class AonDomainCustomer extends AonElement {
       }
       
       this.loadedCustomers = customers;
-      this.loadCustomers();
+      this.loadCustomers(aonCustomer ? true : false);
+      if (booking) {
+        this.createBookingElement(booking);
+      }
       this.manageEmptyCustomerList();
       
     }
   }
 
+  
   // -----------------------------
   
   // --- ELEMENTOS DE LISTADOS ---
@@ -754,7 +803,6 @@ export class AonDomainCustomer extends AonElement {
     domainOption.style.height = "100%";
     domainOption.style.display = "flex";
     domainOption.style.flexDirection = "column";
-    // domainOption.style.flexWrap = "wrap";
     domainOption.style.justifyContent = "space-between";
     domainOption.style.alignItems = "flex-start";
 
@@ -765,17 +813,18 @@ export class AonDomainCustomer extends AonElement {
     domainOptionFirstLine.style.alignItems = "center";
     domainOptionFirstLine.style.justifyContent = "flex-start";
 
-
     let linkedIcon = document.createElement("span");
     linkedIcon.classList.add(CSS.MATERIAL_ICONS);
     linkedIcon.innerHTML = MATERIAL_ICONS.LINK;
-    linkedIcon.title = "Vinculado";
+    linkedIcon.title = MSG.LINKED;
+    linkedIcon.classList.add("linkedIcon");
     linkedIcon.style.width = "25px";
+    linkedIcon.style.display = "none";
 
     let domainOptionName = document.createElement("div");
     domainOptionName.style.display = "inline";
     domainOptionName.style.width = "calc(100% - 25px)";
-    domainOptionName.title = `${domain.active ? "Activo" : "Inactivo"}`;
+    domainOptionName.title = `${domain.active ? MSG.ACTIVE : MSG.INACTIVE}`;
     
     let domainOptionNameSpan = document.createElement("span");
     domainOptionNameSpan.style.fontWeight = "bold";
@@ -789,10 +838,10 @@ export class AonDomainCustomer extends AonElement {
     domainOptionNameSchemaSpan.innerText = ` (${domain && domain.id ? domain.id : ""}@${domainCustomer.schema ? domainCustomer.schema : ""})`;
     domainOptionName.appendChild(domainOptionNameSpan);
     domainOptionName.appendChild(domainOptionNameSchemaSpan);
-
     
+    domainOptionFirstLine.appendChild(linkedIcon);
     if (domain && domain.aonCustomer) {
-      domainOptionFirstLine.appendChild(linkedIcon);
+      linkedIcon.style.display = "inline";
     }
     domainOptionFirstLine.appendChild(domainOptionName);
     domainOption.appendChild(domainOptionFirstLine);
@@ -810,8 +859,7 @@ export class AonDomainCustomer extends AonElement {
     domainOptionDatesLine.style.justifyContent = "flex-start";
     domainOptionDatesLine.style.marginRight = "10px";
     domainOptionDatesLine.style.width = "150px";
-    
-    
+        
     if (domain && domain.lastAccessDate) {
       let companyOptionLastAccess = document.createElement("div");
       companyOptionLastAccess.innerText = `F.acceso.: ${AonDateUtils.formatDate(domain.lastAccessDate)}`;
@@ -828,19 +876,30 @@ export class AonDomainCustomer extends AonElement {
 
     let companyOptionDocument = document.createElement("div");
     companyOptionDocument.style.width = "78px";
-    // companyOptionDocument.style.margin = "auto";
     companyOptionDocument.innerText = `${company && company.document ? company.document : ""}`;
     domainOptionSelectLine.appendChild(companyOptionDocument);
 
+    let expireTypeContainer = document.createElement("div");
+    expireTypeContainer.style.width = "130px";
+    expireTypeContainer.style.display = "flex";
+    expireTypeContainer.style.flexDirection = "column";
+    expireTypeContainer.style.alignItems = "flex-start";
     if (domain && domain.expirationDate) {
       if (domain.active) {
         domainOptionNameSpan.classList.add(`expireDomainName`);
       }
       let companyOptionExpire = document.createElement("div");
+      companyOptionExpire.style.width = "100%";
       companyOptionExpire.innerText = `Expira: ${AonDateUtils.formatDate(domain.expirationDate)}`;
-      domainOptionSelectLine.appendChild(companyOptionExpire);
+      expireTypeContainer.appendChild(companyOptionExpire);
     }
-    
+    let domainTypeElement = document.createElement("div");
+    domainTypeElement.style.width = "100%";
+    domainTypeElement.innerText = `${this.getDomainTypeDescription(domain ? domain.domainType : "")}`;
+    expireTypeContainer.appendChild(domainTypeElement);
+
+    domainOptionSelectLine.appendChild(expireTypeContainer);
+
     let aonStatusDrop = document.createElement("select");
     aonStatusDrop.style.width = "111px";
     
@@ -858,8 +917,6 @@ export class AonDomainCustomer extends AonElement {
     domainOptionSelectLine.appendChild(domainOptionDatesLine);
     domainOption.appendChild(domainOptionSelectLine);
 
-
-
     aonStatusDrop.addEventListener("click", (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -874,7 +931,6 @@ export class AonDomainCustomer extends AonElement {
         customer: domain ? domain.aonCustomer : null,
       });
       console.log("estado actualizado");
-
     });
     
     domainOptionContainer.appendChild(domainOption);
@@ -953,7 +1009,7 @@ export class AonDomainCustomer extends AonElement {
     // customerStatusDiv.style.textAlign = "left";
     // customerStatusDiv.style.height = "20px";
     customerStatusDiv.dataset.value = `${customer.status}`;
-    customerStatusDiv.innerText = `Estado: ${this.getCustomerStatusDescription(customer.status)}`;
+    customerStatusDiv.innerText = `${MSG.STATUS}: ${this.getCustomerStatusDescription(customer.status)}`;
 
     let aonStatusDrop = document.createElement("select");
     aonStatusDrop.style.width = "100%";
@@ -991,10 +1047,9 @@ export class AonDomainCustomer extends AonElement {
     unlinkDiv.style.width = "15%";
     unlinkDiv.style.height = "100%";
     
-    
     let unlinkButton = new AonIconButton();
     unlinkButton.icon = isLinked ? MATERIAL_ICONS.LINK_OFF : MATERIAL_ICONS.LINK;
-    unlinkButton.title = `${isLinked ? "Desv" : "V"}incular`;
+    unlinkButton.title = `${isLinked ? MSG.UNLINK : MSG.LINK}`;
     unlinkButton.addEventListener("click", () => this.linkClickHandler(isLinked ? null : customer));
     
     infoDiv.appendChild(customerNameDiv);
@@ -1006,16 +1061,9 @@ export class AonDomainCustomer extends AonElement {
     }
     
     customerOptionContainer.appendChild(infoDiv);
-    // if (isLinked) {
     customerOptionContainer.classList.add("linkedCustomer");
     infoDiv.style.width = "85%";
     customerOptionContainer.appendChild(unlinkDiv);
-    // } else {
-    //   infoDiv.style.width = "100%";
-    // }
-    // if (!isLinked) {
-    //   customerOptionContainer.addEventListener("click", (event) => this.customerClickHandler(event, customer));
-    // }
 
     return customerOptionContainer;
   }
@@ -1158,7 +1206,7 @@ export class AonDomainCustomer extends AonElement {
   linkClickHandler(customer) {
     let dialog = this.getApplication().getDialog();
     dialog.clear();
-    dialog.setTitle(`${customer ? "V": "Desv"}incular cliente`);
+    dialog.setTitle(`${customer ? MSG.LINK_CLIENT: MSG.UNLINK_CLIENT}`);
     
     let confirmUnlinkContainer = document.createElement("div");
     confirmUnlinkContainer.style.display = "flex";
@@ -1169,12 +1217,12 @@ export class AonDomainCustomer extends AonElement {
     confirmUnlinkContainer.style.flexDirection = "row";
     
     let confirmUnlinkMessage = document.createElement("div");
-    confirmUnlinkMessage.innerText = `¿Desea ${customer ? "": "des"}vincular este cliente del dominio?`;
+    confirmUnlinkMessage.innerText = `${customer ? MSG.LINK_DOMAIN_QUESTION: MSG.UNLINK_DOMAIN_QUESTION}`;
     confirmUnlinkMessage.style.width = "100%";
     confirmUnlinkContainer.appendChild(confirmUnlinkMessage);
 
     let aonButtonAccept = new AonButton();
-    aonButtonAccept.title = "Aceptar";
+    aonButtonAccept.title = MSG.ACCEPT;
     confirmUnlinkContainer.appendChild(aonButtonAccept);
     aonButtonAccept.addEventListener("click", async (ev) => {
       let customerId = customer ? customer.id : null;
@@ -1206,10 +1254,18 @@ export class AonDomainCustomer extends AonElement {
       }
       this.customerListScrollPromise = null;
       this.customerSearchEnded = true;
-      this.removeAllDomains();
-      await this.refreshLists();
+
+      if (customer) {
+        this.customerSearchInput.value = "";
+        await this.findRelatedCustomers();
+        this.showLinkedIcon();
+        dialog.close();
+      } else {
+        dialog.close();
+        this.removeAllDomains();
+        await this.refreshLists();
+      }
       this.manageCustomerSearch();
-      dialog.close();
     });
     
     dialog.setContent(confirmUnlinkContainer);
@@ -1271,14 +1327,61 @@ export class AonDomainCustomer extends AonElement {
     }
   }
 
+  getDomainTypeDescription(type) {
+    switch (type) {
+      case "ENTERPRISE":
+        return "Empresa";
+      case "CONSULTANCY":
+        return "Asesoría";
+      case "GARAGE":
+        return "Garaje";
+      case "ACADEMY":
+        return "Academia";
+      case "HOTEL":  
+        return "Hotel";
+      case "ADMIN":
+        return "Administración";
+      case "OFFICE":
+        return "Despacho";
+      case "GENERIC":
+        return "Genérico";
+      case "COMMERCE":
+        return "Comercio";
+      case "KIT_DIGITAL":
+        return "Kit Digital";
+      default:
+        return type;
+    }
+  }
+
   // -------------------------------
 
   // --- OTROS ---
 
+  displayLoadingPanel(display) {
+    if (display) {
+      this.loadingPanel.style.display = "flex";
+    } else {
+      this.loadingPanel.style.display = "none";
+    }
+  }
+
+  showLinkedIcon() {
+    if (this.domainList) {
+      let icon = this.domainList.querySelector(".selectedDomain .linkedIcon")
+      if (icon) {
+        icon.style.display = "inline";
+      }
+
+    }
+  }
+
   async refreshLists() {
     this.selectedDomain = null;
     this.removeAllCustomers();
+    this.displayLoadingPanel(true);
     await this.updateDomains();
+    this.displayLoadingPanel(false);
     this.loadDomains();
     this.searchFilterAction();
     this.manageEmptyCustomerList();
@@ -1301,10 +1404,10 @@ export class AonDomainCustomer extends AonElement {
         if ((this.customerSearchInput && this.customerSearchInput.value) || (this.customerAccessFilter && this.customerAccessFilter.value)) {
           message = MSG.CUSTOMER_SEARCH_NOT_FOUND;
         } else {
-          message = "No se encontraron clientes relacionados con este dominio";
+          message = MSG.CUSTOMER_SEARCH_DOMAIN_NOT_FOUND;
         }
       } else {
-        message = "Por favor, seleccione un dominio";
+        message = MSG.CHOOSE_A_DOMAIN;
       }
       messageSpan.innerText = message;
       messageSpan.style.textAlign = "center";
