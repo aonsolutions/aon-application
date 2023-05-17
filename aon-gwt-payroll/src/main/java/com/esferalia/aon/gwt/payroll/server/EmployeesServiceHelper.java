@@ -1684,10 +1684,10 @@ public class EmployeesServiceHelper {
 				extends SQLContractSalaryCalculatorContext {
 
 			public SalaryCalculatorContextImpl(Connection connection,
-					Date startDate, Date endDate, Date issueDate,
+					Date startDate, Date endDate, Date issueDate, Date chargeDate,
 					Criteria criteria)
 							throws SQLException, ExpressionException {
-				super(connection, startDate, endDate, issueDate, criteria);
+				super(connection, startDate, endDate, issueDate, chargeDate, criteria);
 			}
 
 			public Object __br(Date date) throws ExpressionException, SQLException, SalaryException {
@@ -2041,8 +2041,12 @@ public class EmployeesServiceHelper {
 
 		}
 
-		SalaryCalculatorContextImpl ctx = new SalaryCalculatorContextImpl(conn,
-				draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(),
+		SalaryCalculatorContextImpl ctx = 
+			new SalaryCalculatorContextImpl(conn,
+				draft.getStartDate(), 
+				draft.getEndDate(), 
+				draft.getIssueDate(), 
+				draft.getChargeDate(),
 				criteria);
 
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
@@ -2070,7 +2074,7 @@ public class EmployeesServiceHelper {
 
 		SQLContractSalaryCalculatorContext ctx = new SQLContractExtraCalculatorContext(
 				conn, draft.getStartDate(), draft.getEndDate(),
-				draft.getIssueDate(), draft.getIssueDate(), criteria);
+				draft.getIssueDate(), draft.getChargeDate(), criteria);
 
 
 		SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext> draftCtx = new SalaryDraftCalculatorContext<SQLContractSalaryCalculatorContext>(
@@ -2102,7 +2106,7 @@ public class EmployeesServiceHelper {
 
 		SQLSettleDraftCalculatorContext draftCtx = new SQLSettleDraftCalculatorContext(
 				draft, conn, draft.getStartDate(), draft.getEndDate(),
-				draft.getIssueDate(), criteria);
+				draft.getIssueDate(), draft.getChargeDate(), criteria);
 		draftCtx.next();
 		draftCtx.setListener(listener);
 		return draftCtx;
@@ -2127,8 +2131,7 @@ public class EmployeesServiceHelper {
 				draft.getEmployee().getId());
 	
 		SQLContractSalaryCalculatorContext ctx = new SQLContractDelayCalculatorContext(
-				conn, draft.getStartDate(), draft.getEndDate(),
-				draft.getIssueDate(), criteria) {
+				conn, draft.getStartDate(), draft.getEndDate(), draft.getIssueDate(), draft.getChargeDate(), criteria) {
 			
 			@Override
 			protected <T extends ISalary> ISalaryBuilder<T> getSalaryBuilder(ISalaryBuilder<T> salaryBuilder) {

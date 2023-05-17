@@ -25,9 +25,9 @@ public class SQLSettleDraftCalculatorContext extends SQLSalaryDraftCalculatorCon
 	}
 
 	public SQLSettleDraftCalculatorContext(SalaryDraft draft, Connection connection, Date startDate, Date endDate,
-			Date issueDate, Criteria criteria) throws ExpressionException, SQLException {
+			Date issueDate, Date chargeDate, Criteria criteria) throws ExpressionException, SQLException {
 
-		super(draft, new SmartSQLContractSettleCalculatorContext(connection, startDate, endDate, issueDate, criteria) {
+		super(draft, new SmartSQLContractSettleCalculatorContext(connection, startDate, endDate, issueDate, chargeDate,  criteria) {
 			
 			private Date noHolidaysEndDate = getNoHolidaysEndDate();
 
