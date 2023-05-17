@@ -45,7 +45,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   exports:[
     SidenavHoverDirective,
     SideNavComponent,
-    TopBarComponent
+    TopBarComponent,
+    BasicLayoutComponent,
+    SidenavLayoutComponent
   ]
 })
 export class SharedModule { }
