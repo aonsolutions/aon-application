@@ -1,5 +1,5 @@
 <mat-sidenav-container #content class="example-container mat-typography" [autosize]="opened">
-    <mat-sidenav  #sidenav mode="side" disableClose="true" opened="true"
+    <mat-sidenav *ngIf="!hide" #sidenav mode="side" disableClose="true" opened="true"
     [ngStyle]="!selectedProduct ? {'width': '4rem'} : {'width': '16rem'}">
     <div [ngClass]="!opened ? {'menuIconsDiv' : true} : {'menuTextDiv' : true}">
         <div [ngClass]="!opened ? {'menuIndex': true} : {'menuIndexOpened': true}">
