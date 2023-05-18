@@ -1,6 +1,9 @@
 package net.aonsolutions.aon.api.servlet.registry;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +21,7 @@ import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.registry.RegistryAddInfo;
 import com.esferalia.aon.occam.api.model.type.RegistryStatus;
 import com.esferalia.aon.watson.server.AonEnumUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
@@ -52,6 +56,10 @@ public class CustomerServlet extends AonApiHttpServlet {
 			switch (api.getPath()) {
 			case "/":
 				response(req, resp, saveCustomer(api));
+				break;
+			case "/billable":
+			case "/billable/":
+				response(req, resp, updateCustomerBillable(api));
 				break;
 			default:
 				throw new AonApiException(AonApiError.ROUTE_ERROR.getMessage());
@@ -94,7 +102,13 @@ public class CustomerServlet extends AonApiHttpServlet {
 			? api.getData().optInt(IJsonNames.PAGE) : 1;
 		Integer perPage = api.getData().opt(IJsonNames.PER_PAGE) != null
 			? api.getData().optInt(IJsonNames.PER_PAGE) : 50;
-
+		if (api.getData().opt("additional_info") != null) {			
+			Stream<Customer> customers = AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
+					f -> customerFilter(api, f), perPage * (page -1), perPage);
+			
+			return RegistryServlet.getRegistryAdditionalInfo(api, customers);
+		}
+		
 		return CustomerJSON.toJSON(AON.getCustomerStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), 
 			f -> customerFilter(api, f), perPage * (page -1), perPage));
 	}
@@ -112,6 +126,20 @@ public class CustomerServlet extends AonApiHttpServlet {
 			.toArray(Integer[]::new);
 			
 			if (api.getData().optBoolean(IJsonNames.LINKED)) {
+				filter = filter.and(f.getRegistryProperty().in(linkedCustomerRegistries));
+			} else {				
+				filter = filter.and(f.getRegistryProperty().notIn(linkedCustomerRegistries));
+			}
+		}
+		if (api.getData().opt(IJsonNames.BILLABLE) != null) {
+			Integer[] linkedCustomerRegistries = AON.getRegistryAddInfoStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+					p -> p.getAttributeProperty().eq("AON_BILLABLE").and(p.getRegistryProperty().isNotNull()))
+					.filter(Objects::nonNull)
+					.map(RegistryAddInfo::getRegistry)
+					.distinct()
+					.toArray(Integer[]::new);
+			
+			if (api.getData().optBoolean(IJsonNames.BILLABLE)) {
 				filter = filter.and(f.getRegistryProperty().in(linkedCustomerRegistries));
 			} else {				
 				filter = filter.and(f.getRegistryProperty().notIn(linkedCustomerRegistries));
@@ -142,6 +170,45 @@ public class CustomerServlet extends AonApiHttpServlet {
 		}
 		
 		return filter;
+	}
+	
+	private JSONObject updateCustomerBillable(AonApiData api) {
+		JSONObject data = api.getData();
+		if (data.opt(IJsonNames.BILLABLE) != null && data.opt(IJsonNames.CUSTOMER) != null) {
+			JSONObject customerJson = data.optJSONObject(IJsonNames.CUSTOMER);
+			Customer customer = CustomerJSON.fromJSON(customerJson);
+			Integer customerId = customer.getId();
+			if (AonNumberUtils.zeroIfNull(customerId) > 0) {
+				//Primero borrar el que exista
+				AON.getRegistryAddInfoStream(
+						api.getDomain().getName(),
+						api.getDomain().getId(),
+						api.getUser().getLogin(),
+						f -> f.getAttributeProperty().eq("AON_BILLABLE").and(f.getRegistryProperty().eq(customerId))
+				)
+				.filter(Objects::nonNull)
+				.forEach(rai -> {
+					if (AonNumberUtils.zeroIfNull(rai.getId()) > 0) {
+						AON.deleteRegistryAddInfo(api.getDomain(), api.getUser().getLogin(), rai.getId());
+					}
+				});
+				
+				if (data.optBoolean(IJsonNames.BILLABLE)) {
+					RegistryAddInfo addInfo = new RegistryAddInfo()
+							.setRegistry(customerId)
+							.setDomain(customer.getDomain().getId())
+							.setAttribute("AON_BILLABLE")
+							.setValue("BILLABLE")
+							.setDate(new Date());
+					AON.insertRegistryAddInfo(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), addInfo);
+				}
+			}
+			
+			api.getData().put("additional_info", IJsonNames.BILLABLE);
+			
+			return RegistryServlet.getRegistryAdditionalInfo(CustomerJSON.toJSON(customer), api, api.getData(), customerId, null);
+		}
+		return new JSONObject();
 	}
 	
 	public static JSONObject saveCustomer(AonApiData api) {
