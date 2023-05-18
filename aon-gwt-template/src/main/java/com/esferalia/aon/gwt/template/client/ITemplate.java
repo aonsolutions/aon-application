@@ -1,14 +1,12 @@
 package com.esferalia.aon.gwt.template.client;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.template.shared.AccountEntryImportClass;
 import com.esferalia.aon.gwt.template.shared.AccountImportClass;
 import com.esferalia.aon.gwt.template.shared.Ecommerce;
 import com.esferalia.aon.gwt.template.shared.Error;
-import com.esferalia.aon.gwt.template.shared.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.ImportType;
 import com.esferalia.aon.gwt.template.shared.InvoiceImportClass;
@@ -83,12 +81,8 @@ public interface ITemplate extends RemoteService{
 
 	public List<AccountEntryImportClass> executeDiary(Domain domain , User user, String data);	
 
-	public List<FeeInfo> executeFee(Domain domain , User user, String data);
-
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient, 
 			Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number);
-	
-	public Error insertFee(Domain domain, User user);
 	
 	public Error insertTransferStock(Domain domain, User user);
 
@@ -124,8 +118,5 @@ public interface ITemplate extends RemoteService{
 
 	public void importFix(Domain domain, User user);
 	public void importRegistryEmptyFix(Domain domain, User user);
-
-	public Error insertFee(Domain domain, User user, Integer index);
-	public Error insertFee(Domain domain, User user, FeeInfo fee, Integer index);
 
 }
