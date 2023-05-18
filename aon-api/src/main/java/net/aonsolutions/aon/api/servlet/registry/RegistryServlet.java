@@ -16,6 +16,7 @@ import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.Options;
 import com.esferalia.aon.occam.api.json.CustomerJSON;
+import com.esferalia.aon.occam.api.json.DomainLinkedJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.json.RecordDataJSON;
 import com.esferalia.aon.occam.api.json.RegistryAddressJSON;
@@ -26,6 +27,7 @@ import com.esferalia.aon.occam.api.json.RegistryPaymethodJSON;
 import com.esferalia.aon.occam.api.json.RegistryRelationshipJSON;
 import com.esferalia.aon.occam.api.json.RegistrySegmentJSON;
 import com.esferalia.aon.occam.api.model.Customer;
+import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.Filter.RRelationshipFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryAddressFilter;
 import com.esferalia.aon.occam.api.model.Filter.RegistryMediaFilter;
@@ -212,7 +214,12 @@ public class RegistryServlet extends AonApiHttpServlet {
 				if(RegistryAdditionalInfo.BILLABLE.equals(rai)) {
 					Optional<RegistryAddInfo> addinfo = AON.getRegistryAddInfo(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getAttributeProperty().eq("AON_BILLABLE").and(f.getRegistryProperty().eq(registryId)));
 					object.put(IJsonNames.BILLABLE, addinfo.isPresent());
-				} 
+				}
+				
+				if (RegistryAdditionalInfo.DOMAIN_LINKED.equals(rai)) {
+					List<DomainLinked> domainsLinked = AON.getDomainLinkedList(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), registryId);
+					object.put(IJsonNames.DOMAIN_LINKED, DomainLinkedJSON.toJSON(domainsLinked));
+				}
 			});
 		}
 		return object;
