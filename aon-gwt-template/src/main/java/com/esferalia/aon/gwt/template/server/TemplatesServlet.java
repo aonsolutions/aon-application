@@ -47,7 +47,6 @@ import com.esferalia.aon.gwt.template.jooq.DBStock;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryImport;
 import com.esferalia.aon.gwt.template.server.delivery.DeliveryInfo;
 import com.esferalia.aon.gwt.template.server.imports.DiaryImport;
-import com.esferalia.aon.gwt.template.server.imports.FeeImport;
 import com.esferalia.aon.gwt.template.server.imports.ImportFixer;
 import com.esferalia.aon.gwt.template.server.imports.InvoiceImport;
 import com.esferalia.aon.gwt.template.server.imports.PGCImport;
@@ -65,7 +64,6 @@ import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct.ProductData.Ecommerce.PresetValues;
 import com.esferalia.aon.gwt.template.shared.EcommerceProduct.Template;
 import com.esferalia.aon.gwt.template.shared.Error;
-import com.esferalia.aon.gwt.template.shared.FeeInfo;
 import com.esferalia.aon.gwt.template.shared.Hotel;
 import com.esferalia.aon.gwt.template.shared.ImportType;
 import com.esferalia.aon.gwt.template.shared.InvoiceImportClass;
@@ -226,7 +224,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	}
 
 	//-------------------- IMPORTAR
-	HashMap<String, LinkedList<FeeInfo>> fis = new HashMap<>();
 	HashMap<String, LinkedList<ProjectCommercial>> pcs = new HashMap<>();
 	HashMap<String, LinkedList<CustomerIban>> cis = new HashMap<>();
 	HashMap<String, List<InvoiceImportClass>> ivs = new HashMap<>();
@@ -260,11 +257,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 		return DiaryImport.getInstance().importation(domain, user.getLogin(), fileData);
 	}
 	
-	public LinkedList<FeeInfo> executeFee(Domain domain , User user, String data) {
-		byte[] fileData = java.util.Base64.getDecoder().decode(data);
-		saveImportation(domain, user, ImportType.FEE, fileData);
-		return FeeImport.getInstance().importation(domain, user.getLogin(), fileData);
-	}
 	
 	public Integer executeExcel(Domain domain, User user, TemplateInfo ti, ImportType importType, Boolean ignoreInactiveClient,
 		Integer inventory, String warehouse1,String warehouse2 , String series, String comments,Boolean istransfer ,Integer number){
@@ -302,11 +294,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 			if(importType.equals(ImportType.PRODUCT))
 				executeExcelProduct(domain, user, rowIterator, error, evaluator);
-			else if(importType.equals(ImportType.FEE)) {
-				fis.put(hashId, FeeImport.getInstance().importation(domain, user.getLogin(), data));
-				rowCount = fis.get(hashId).size();
-				//executeExcelFee(domain, user, rowIterator, error, ignoreInactiveClient, evaluator);
-			}
 			else if(importType.equals(ImportType.PROPOSAL))
 				executeExcelProposal(domain, user, rowIterator, error);
 			else if(importType.equals(ImportType.STOCK))
@@ -357,11 +344,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 
 				if(importType.equals(ImportType.PRODUCT))
 					executeExcelProduct(domain, user,  rowIterator, error, evaluator);
-				else if(importType.equals(ImportType.FEE)) {
-					fis.put(hashId, FeeImport.getInstance().importationX(domain, user.getLogin(), data));
-					rowCount = fis.get(hashId).size();
-					//executeExcelFee(domain, user, rowIterator, error, ignoreInactiveClient, evaluator);
-				}
 				else if(importType.equals(ImportType.PROPOSAL))
 					executeExcelProposal(domain, user, rowIterator, error);
 				else if(importType.equals(ImportType.STOCK))
@@ -432,356 +414,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
     	} catch (Exception e) {
     		e.printStackTrace();
     	}
-	}
-	
-	//-------------------- IMPORTAR FEE
-	LinkedList<FeeInfo> fees;
-	FeeInfo fi;
-	List<Seller> sellers = new LinkedList<>();
-	LinkedList<Workplace> workplaces = new LinkedList<>();
-	LinkedList<InvoicingGroup> invoicingGroupList = new LinkedList<>();
-	Boolean feeBool;
-	private void executeExcelFee(final Domain domain, User user, Iterator<Row> rowIterator, Error error, Boolean ignoreInactiveClient, FormulaEvaluator evaluator){
-		LinkedList<FeeInfo> fees = new LinkedList<>();
-
-		sellers = DBFee.getInstance().getSellers(domain, user.getLogin());
-		workplaces = DBFee.getInstance().getWorkplaceList(domain, user);
-		invoicingGroupList = DBFee.getInstance().getInvoicingGroupList(domain, user);
-
-		feeBool = true;
-		/* LAMBDA java 1.8 */
-		Iterable<Row> rowIterable = () -> rowIterator;
-		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
-		rowStream.forEach(row ->{
-			if(row.getRowNum() !=0){
-				Iterator<Cell> cellIterator = row.cellIterator();
-				Iterable<Cell> cellIterable = () -> cellIterator;
-				fi = newFee();
-				Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
-				rowAux = row;
-				cellStream.forEach(cell ->{
-					if(cell.getColumnIndex() != ti.getColumns().size()){
-						if(cell.getRowIndex() == 1){//Primera fila del fichero Excel.
-							if(ti.getColumns().size()<= cell.getColumnIndex() || ti.getColumns().get(cell.getColumnIndex()) == null || !ti.getColumns().get(cell.getColumnIndex()).equalsIgnoreCase(cell.getStringCellValue())){
-								// El archivo no es compatible con la plantilla
-								error.setError(false);
-								if(verror.isEmpty()) verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
-								textError= textError +"*El archivo importado no es compatible con la plantilla seleccionada.";
-								error.setTextError(verror);
-								this.error = error;
-								rowCount = -1;
-								feeBool = false;
-							}
-						}
-						else if(feeBool){
-							if(cell.getColumnIndex() !=0){
-								Cell beforeCell = rowAux.getCell(cell.getColumnIndex()-1);
-								if((beforeCell == null || beforeCell.getCellTypeEnum() == CellType.BLANK) && isRequiredFee(ti.getColumns().get(cell.getColumnIndex()-1))){
-									if(beforeCell == null){
-										verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto");
-										textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn((cell.getColumnIndex()-1))+" : Dato Incorrecto \n";
-									}
-									else if(ti.getColumns().get(beforeCell.getColumnIndex()).equals("Nombre") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("C\u00f3digo") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Precio Coste") || ti.getColumns().get(beforeCell.getColumnIndex()).equals("Precio Venta Base")){
-										verror.add("*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto");
-										textError= textError + "*Fila "+(beforeCell.getRowIndex()+1)+", Columna "+Utils.getColumn(beforeCell.getColumnIndex())+" : Dato Incorrecto \n";
-									}
-								}
-							}
-
-							if(!ti.getColumns().get(cell.getColumnIndex()).equals("Texto Libre")){
-								fi = checkFee(domain, user, ti.getColumns().get(cell.getColumnIndex()),fi,cell, ignoreInactiveClient, evaluator);
-								if(fi == null){
-									verror.add("*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto ");
-									textError= textError + "*Fila "+(cell.getRowIndex()+1)+", Columna "+Utils.getColumn(cell.getColumnIndex())+" : Dato Incorrecto \n";
-									fi = newFee();
-								}
-							}
-						}
-					}
-				});
-				if(row.getLastCellNum() != ti.getColumns().size()+1){
-					if(row.getRowNum() == 1){
-						error.setError(false);
-						if(verror.isEmpty()) verror.add("*El archivo importado no es compatible con la plantilla seleccionada.");
-						textError= textError +"*El archivo importado no es compatible con la plantilla seleccionada.";
-						error.setTextError(verror);
-						this.error = error;
-						rowCount = -1;
-						feeBool = false;
-					}
-					else if(feeBool){
-						if(row.getLastCellNum() != -1){
-							Short cellnum = row.getLastCellNum();
-							if(row.getLastCellNum() == ti.getColumns().size())cellnum--;
-							if(ti.getColumns().get(cellnum).equals("Nombre") || ti.getColumns().get(cellnum).equals("C\u00f3digo") || ti.getColumns().get(cellnum).equals("Precio Coste") || ti.getColumns().get(cellnum).equals("Precio Venta Base")){
-								verror.add("*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n");
-								textError= textError + "*Fila "+(row.getRowNum()+1)+", Columna "+Utils.getColumn(row.getLastCellNum())+" : Dato Incorrecto \n";
-							}
-						}
-					}
-				}
-
-				if(row.getRowNum() > 1 && fi.getProduct()!= null){
-					fi.setRow(row.getRowNum());
-					fees.add(fi);
-				}
-			}
-		});
-
-		this.fees = fees;
-		if(rowCount != -1) rowCount = fees.size();
-		String hashId = Base64.encode(domain.getName() + user.getLogin());
-		getOut().remove(hashId);
-		setMimetype(null);
-
-	}
-
-	public Boolean isRequiredFee(String s){
-		return s.equals("Cliente") || s.equals("Producto") || s.equals("Cantidad") || s.equals("Precio")
-				|| s.equals("Descuento") || s.equals("Fecha Inicio") || s.equals("Fecha Facturaci\u00f3n" )
-				|| s.equals("Centro de Trabajo") ||  s.equals("Centro Trabajo") ;
-	}
-
-	public Error insertFee(Domain domain, User user) {
-		LinkedList<String> verror = error.getTextError();
-		Error error = new Error();
-		if(textError.equals("")){
-			error.setError(true);
-			verror.add("");
-			error.setTextError(verror);
-			error = DBFee.getInstance().insertFee(domain, user.getLogin(), fees);
-		}
-		else{
-			//Alguna de las filas contiene datos erroneos.
-			error.setError(false);
- 			error.setTextError(verror);
-		}
-		return error;
-	}
-
-	private FeeInfo newFee() {
-		FeeInfo feeInfo = new FeeInfo();
-		feeInfo.setPeriod(0);
-		feeInfo.setDiscount(0.0);
-		feeInfo.setConfidential(false);
-		feeInfo.setDetail("");
-		feeInfo.setDetail2("");
-		feeInfo.setDetail3("");
-		feeInfo.setDescription("");
-		return feeInfo;
-	}
-
-	private FeeInfo checkFee(Domain domain, User user, String template,FeeInfo fee, Cell cell, Boolean ignoreInactiveCliente, FormulaEvaluator evaluator) {
-		Integer row = cell.getRowIndex()+1;
-		String column = Utils.getColumn(cell.getColumnIndex());
-		String username = user.getLogin();
-		CellType type = cell.getCellTypeEnum();
-		Object value = getObjectValue(cell, evaluator);
-		switch (template) {
-		case "Cliente": case "Client":
-			if(type.equals(CellType.STRING) && !cell.getStringCellValue().equals("")){
-				Customer customer = DBFee.getInstance().getCustomer(domain, username, cell.getStringCellValue(), ignoreInactiveCliente);
-				if(customer != null){
-					fee.setClient(cell.getStringCellValue());
-					fee.setClientId(customer.getId());
-				}
-				else return null;
-			}
-			else return null;
-			break;
-		case "Producto": case "Product":
-			if((type.equals(CellType.STRING) && !cell.getStringCellValue().equals("")) || type.equals(CellType.NUMERIC)){
-				fee.setProduct(toString(value));
-				if(fee.getProduct().length() > 15){
-					verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.TOO_LARGE.getMessage());
-					textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.TOO_LARGE.getMessage() +"\n";
-				}
-			}
-			break;
-		case "Cantidad": case "Quantity":
-			if(type.equals(CellType.NUMERIC)){
-				fee.setQuantity(cell.getNumericCellValue());
-			}
-			else {
-				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
-				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
-			}
-			break;
-		case "Precio": case "Price":
-			if(type.equals(CellType.NUMERIC))
-				fee.setPrice(cell.getNumericCellValue());
-			else {
-				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
-				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
-			}			break;
-		case "Descuento": case "Discount":
-			if(type.equals(CellType.NUMERIC))
-				fee.setDiscount(cell.getNumericCellValue());
-			else {
-				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
-				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
-			}
-			break;
-		case "Fecha Inicio": case "Start Date":
-			if(type.equals(CellType.STRING)){
-				Date d = Utils.stringToDate(cell.getStringCellValue());
-				if(d != null) fee.setStartDate(d);
-				else return null;
-			}
-			else if(type.equals(CellType.NUMERIC)){
-				fee.setStartDate(cell.getDateCellValue());
-			}
-			else return null;
-			break;
-		case "Fecha Fin": case "End Date":
-			if(type.equals(CellType.STRING)){
-				Date d = Utils.stringToDate(cell.getStringCellValue());
-				if(d != null) fee.setEndDate(d);
-			}
-			else if(type.equals(CellType.NUMERIC)){
-				fee.setEndDate(cell.getDateCellValue());
-			}
-			break;
-		case "Fecha Facturaci\u00f3n": case "Billing Date":
-			if(type.equals(CellType.STRING)){
-				Date d = Utils.stringToDateBilling(cell.getStringCellValue());
-				if(d != null) fee.setBillingDate(d);
-				else return null;
-			}
-			else if(type.equals(CellType.NUMERIC)){
-				fee.setBillingDate(cell.getDateCellValue());
-			}
-			else return null;
-			break;
-		case "Periodo": case "period": //enum
-				String t = toString(value);
-				if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
-					if (t.equalsIgnoreCase(NO_PERIOD) || t.equals("0"))
-						fee.setPeriod(BillingPeriod.NO_PERIOD.ordinal());
-					else if(t.equalsIgnoreCase(MONTHLY)  || t.equals("1"))
-						fee.setPeriod(BillingPeriod.MONTHLY.ordinal());
-					else if(t.equalsIgnoreCase(BI_MONTHLY)  || t.equals("2"))
-						fee.setPeriod(BillingPeriod.BI_MONTHLY.ordinal());
-					else if(t.equalsIgnoreCase(THREE_MONTHLY) || t.equals("3"))
-						fee.setPeriod(BillingPeriod.THREE_MONTHLY.ordinal());
-					else if(t.equalsIgnoreCase(FOUR_MONTHLY)  || t.equals("4"))
-						fee.setPeriod(BillingPeriod.FOUR_MONTHLY.ordinal());
-					else if(t.equalsIgnoreCase(SIX_MONTHLY)  || t.equals("5"))
-						fee.setPeriod(BillingPeriod.SIX_MONTHLY.ordinal());
-					else if(t.equalsIgnoreCase(YEARLY)  || t.equals("6"))
-						fee.setPeriod(BillingPeriod.YEARLY.ordinal());
-					else return null;
-				}
-
-			break;
-		case "Comercial": case "Seller": //bd
-			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
-				Boolean b = true;
-				for(Seller s : sellers){
-					if(toString(value).equalsIgnoreCase(s.getDocument()) || toString(value).equalsIgnoreCase(s.getAlias()) || toString(value).equalsIgnoreCase(s.getName())){
-						fee.setSeller(cell.getStringCellValue());
-						fee.setSellerId(s.getId());
-						b= false;
-					}
-				}
-				if(b) return null;
-			}
-			else return null;
-			break;
-		case "Centro de Trabajo": case "Workplace": case "Centro Trabajo": //bd
-			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
-				Boolean b = true;
-				for(Workplace s : workplaces){
-					if(toString(value).equalsIgnoreCase(s.getDescription())){
-						fee.setWorkplace(cell.getStringCellValue());
-						fee.setWorkplaceId(s.getId());
-						b= false;
-					}
-				}
-				if(b) return null;
-			}
-			else return null;
-			break;
-		case "Grupo Facturaci\u00f3n":
-			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
-				Boolean b = true;
-				for(InvoicingGroup s : invoicingGroupList){
-					if(toString(value).equalsIgnoreCase(s.getDescription())){
-						fee.setBillingGroup(s.getId());
-						b= false;
-					}
-				}
-				if(b) return null;
-			}
-			else return null;
-			break;
-		case "Confidencial": case "Confidential":
-			Boolean bool2 = false;
-			switch (type) {
-			case STRING:
-				String string = cell.getStringCellValue();
-				if(string.equalsIgnoreCase("si") || string.equalsIgnoreCase("yes") || string.equalsIgnoreCase("true"))
-					bool2 = true;
-				else if( string.equalsIgnoreCase("no") || string.equalsIgnoreCase("false"))
-					bool2 = false;
-				else return null;
-				break;
-			case NUMERIC:
-				Double num = cell.getNumericCellValue();
-				if(num.equals(1.0)) bool2 = true;
-				else if(num.equals(0.0)) bool2 = false;
-				else return null;
-				break;
-			case BOOLEAN:
-				bool2 = cell.getBooleanCellValue();
-				break;
-			case BLANK:
-				return fee;
-			default:
-				return null;
-			}
-			fee.setConfidential(bool2);
-			break;
-		case "Expediente": case "Record":  //BD
-			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC)){
-				Project project = DBFee.getInstance().getProject(domain, toString(value), fee.getClientId(), user.getLogin());
-				if(project == null && fee.getClientId() != null){
-					project = new Project().setId(DBFee.getInstance().insertProject(domain, user, toString(value), fee.getClientId()));
-				}
-				if(project != null){
-					fee.setProject(cell.getStringCellValue());
-					fee.setProjectId(project.getId());
-				}
-			}
-			else return null;
-			break;
-		case "Detalle 1": case "Detail 1":
-			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC))
-				fee.setDetail(toString(value));
-			break;
-		case "Detalle 2": case "Detail 2":
-			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC))
-				fee.setDetail2(toString(value));
-			break;
-		case "Detalle 3": case "Detail 3":
-			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC))
-				fee.setDetail3(toString(value));
-			break;
-		case "Descripci\u00f3n":
-			if(type.equals(CellType.STRING) || type.equals(CellType.NUMERIC))
-				fee.setDescription(toString(value));
-			break;
-		case "L\u00EDnea": case "Line":
-			if(type.equals(CellType.NUMERIC))
-				fee.setLine(cell.getNumericCellValue());
-			else {
-				verror.add("*Fila "+ row +", Columna "+ column +" : "+ ErrorMessage.NOT_NUMERIC.getMessage());
-				textError= textError + "*Fila "+ row +", Columna "+ column +" : "+  ErrorMessage.NOT_NUMERIC.getMessage() +"\n";
-			}
-		default:
-			break;
-		}
-		return fee;
 	}
 
 	//-------------------- IMPORTAR STOCK
@@ -2790,17 +2422,6 @@ public class TemplatesServlet extends AonStatelessRemoteServiceServlet implement
 	@Override
 	public Error insertPGC(Domain domain, User user, AccountImportClass pgc, Integer index) {
 		return PGCImport.insertPGC(domain, user, index, pgc);			
-	}
-	
-	@Override
-	public Error insertFee(Domain domain, User user, Integer index) {
-		String hashId = Base64.encode(domain.getName() + user.getLogin());
-		return FeeImport.insertFees(domain, user, index, fis.get(hashId));			
-	}
-	
-	@Override
-	public Error insertFee(Domain domain, User user, FeeInfo fee, Integer index) {
-		return FeeImport.insertFee(domain, user, index, fee);
 	}
 
 	@Override
