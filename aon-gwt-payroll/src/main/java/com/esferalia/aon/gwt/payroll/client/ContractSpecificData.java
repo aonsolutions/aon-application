@@ -1731,6 +1731,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 			case "410":
 				set410View();
 				break;
+			case "418":
+				set410View();
+				break;
 			case "420":
 				set420View();
 				break;
@@ -1759,6 +1762,9 @@ public abstract class ContractSpecificData extends ResizeComposite {
 				set503View();
 				break;
 			case "510":
+				set510View();
+				break;
+			case "518":
 				set510View();
 				break;
 			case "520":
@@ -2232,6 +2238,7 @@ public abstract class ContractSpecificData extends ResizeComposite {
 		contractReliefCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		annexedCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		investCBPanel.getElement().getStyle().setDisplay(Display.NONE);
+		interimCauseCBPanel.getElement().getStyle().clearDisplay();
 		entrepreneurSupportCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		promotionMeasuresCBPanel.getElement().getStyle().setDisplay(Display.NONE);
 		quoteReductionsCBPanel.getElement().getStyle().setDisplay(Display.NONE);
