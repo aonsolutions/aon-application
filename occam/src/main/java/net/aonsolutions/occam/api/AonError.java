@@ -26,6 +26,7 @@ public enum AonError implements Serializable{
 //	// -----------------------------------------------------------
 //	// --------------------- COMMON ------------------------------
 //	// -----------------------------------------------------------
+	,SAVE_EMPTY("No se puede guardar un objeto vac\u00EDo.")
 //	,EMPTY_ENTERPRISE("No se ha indicado una empresa.")
 //	,EMPTY_DATE_FROM("No se ha indicado una fecha 'desde'.")
 //	,EMPTY_DATE_TO("No se ha indicado una fecha 'hasta'.")
@@ -34,6 +35,7 @@ public enum AonError implements Serializable{
 //	,EMPTY_STATUS("El estado es un dato obligatorio, no puede estar vac\u00EDo")
 //	,EMPTY_SCOPE("El \u00E1mbito es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_NAME("El nombre es un dato obligatorio, no puede estar vac\u00EDo")
+	,EMPTY_CODE("El c\u00F3digo es un dato obligatorio, no puede estar vac\u00EDo")
 	,EMPTY_DESCRIPTION("La descripci\u00F3n es un dato obligatorio, no puede estar vac\u00EDa")
 //	,EMPTY_YEAR("El ejercicio es un dato obligatorio, no puede estar vac\u00EDo")
 //	,EMPTY_DATA("El dato \"{0}\" es obligatorio, no puede estar vac\u00EDo")

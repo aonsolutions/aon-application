@@ -22,7 +22,9 @@ import net.aonsolutions.watson.client.util.AonStringUtils;
 import net.aonsolutions.watson.server.AonDateUtils;
 
 public class AonRandom {
+	
 	private static Faker faker = Faker.instance(Locale.of("es"));
+	private static final int REQUIRED = -1;
 	
     public static boolean gt( int threshold) {
 		return faker.random().nextInt(0,100) >= threshold;
@@ -40,13 +42,18 @@ public class AonRandom {
         		: null;
     }
     public static String string( int maxLength ) {
-    	return faker.lorem().characters(-1, maxLength);
+    	return faker.lorem().characters(REQUIRED, maxLength);
     }
     public static String string( int nullThreshold,  int maxLength ) {
     	return ( gt(nullThreshold) )
         		?faker.lorem().characters(0, maxLength)
         		:null;
     }
+    public static Integer integer( ) {
+    	return integer(REQUIRED);
+    }
+
+    	
     public static Integer integer( int nullThreshold ) {
     	return ( gt(nullThreshold) )
         		?Integer.valueOf( getInt(0, Integer.MAX_VALUE-1) )
@@ -58,11 +65,11 @@ public class AonRandom {
         		:null;
     }
     public static String lorem( int maxLength ) {
-    	return lorem(-1, maxLength);
+    	return lorem(REQUIRED, maxLength);
     }
     public static String lorem( int nullThreshold, int maxLength ) {
     	return ( gt(nullThreshold) )
-        		?faker.lorem().characters(0, maxLength)
+        		?faker.lorem().characters(1, maxLength)
         		:null;
     }
 
@@ -121,7 +128,7 @@ public class AonRandom {
     	return Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
     public static Date yesterday( ) {
-    	return Date.from(LocalDate.now().plusDays(-1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+    	return Date.from(LocalDate.now().plusDays(REQUIRED).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
     public static Date tomorrow( ) {
     	return Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -139,7 +146,7 @@ public class AonRandom {
     	return getFutureDate(new Date());
     }
     public static Date getFutureDate( Date date ) {
-    	return getFutureDate(-1, new Date());
+    	return getFutureDate(REQUIRED, new Date());
     }
     public static Date getFutureDate( int threshold ) {
     	return getFutureDate(threshold, new Date());
@@ -172,7 +179,7 @@ public class AonRandom {
 	}
 	
 	public static Optional<DomainType> getDomainType() {
-		return getDomainType(-1);
+		return getDomainType(REQUIRED);
 	}
 	public static Optional<DomainType> getDomainType(int nullThreshold) {
     	return gt(nullThreshold)
@@ -181,7 +188,7 @@ public class AonRandom {
 	}
 	
 	public static Optional<AonStatus> getAonStatus() {
-		return getAonStatus(-1);
+		return getAonStatus(REQUIRED);
 	}
 	public static Optional<AonStatus> getAonStatus(int nullThreshold) {
     	return gt(nullThreshold)
@@ -190,7 +197,7 @@ public class AonRandom {
 	}
 	
 	public static Optional<DocumentType> getDocumentType() {
-		return getDocumentType(-1);
+		return getDocumentType(REQUIRED);
 	}
 	public static Optional<DocumentType> getDocumentType(int nullThreshold) {
     	return gt(nullThreshold)
@@ -199,7 +206,7 @@ public class AonRandom {
 	}
 
 	public static Optional<InvoiceType> getInvoiceType() {
-		return getInvoiceType(-1);
+		return getInvoiceType(REQUIRED);
 	}
 	public static Optional<InvoiceType> getInvoiceType(int nullThreshold) {
     	return gt(nullThreshold)
@@ -208,7 +215,7 @@ public class AonRandom {
 	}
 
 	public static Optional<SecurityLevel> getSecurityLevel() {
-		return getSecurityLevel(-1);
+		return getSecurityLevel(REQUIRED);
 	}
 	public static Optional<SecurityLevel> getSecurityLevel(int nullThreshold) {
     	return gt(nullThreshold)

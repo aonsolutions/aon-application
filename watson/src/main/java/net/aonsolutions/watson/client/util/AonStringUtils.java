@@ -1,6 +1,7 @@
 package net.aonsolutions.watson.client.util;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 public class AonStringUtils {
 	public static final String EMPTY = "";
@@ -711,4 +712,31 @@ public class AonStringUtils {
         }
         return INDEX_NOT_FOUND;
     }
+    
+    /**
+     * <p>Converts a String to lower case as per {@link String#toLowerCase()}.</p>
+     *
+     * <p>A {@code null} input String returns {@code null}.</p>
+     *
+     * <pre>
+     * StringUtils.lowerCase(null)  = null
+     * StringUtils.lowerCase("")    = ""
+     * StringUtils.lowerCase("aBc") = "abc"
+     * </pre>
+     *
+     * <p><strong>Note:</strong> As described in the documentation for {@link String#toLowerCase()},
+     * the result of this method is affected by the current locale.
+     * For platform-independent case transformations, the method {@link #lowerCase(String, Locale)}
+     * should be used with a specific locale (e.g. {@link Locale#ENGLISH}).</p>
+     *
+     * @param str  the String to lower case, may be null
+     * @return the lower cased String, {@code null} if null String input
+     */
+    public static String lowerCase(final String str) {
+        if (str == null) {
+            return null;
+        }
+        return str.toLowerCase();
+    }
+    
 }

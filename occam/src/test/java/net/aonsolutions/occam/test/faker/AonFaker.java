@@ -8,35 +8,36 @@ import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
+import net.aonsolutions.occam.api.config.GeoZone;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
 
 public class AonFaker {
 	private static Faker faker = Faker.instance(Locale.of("es"));
 
-	public static User getUser( ) {
-		return  new User()
-			.setId(AonRandom.integer(50))
-			.setDomain(AonRandom.integer(50))
-			.setName(faker.pokemon().name())
-			.setLogin(AonRandom.string(50, 10))
-			.setActive(AonRandom.gt(50));
+	public static Audit getAudit() {
+		return new Audit()
+			.setCreationUser(AonRandom.string(50, 10))
+			.setCreationDate(AonRandom.getPastDate(50))
+			.setModificationUser(AonRandom.string(50, 10))
+			.setModificationDate(AonRandom.getPastDate(50));
 	}
 
-	
-	public static Scope getScope(int nullThreshold) {
-    	return AonRandom.gt(nullThreshold)?getScope():null;
+	public static Booking getBooking() {
+		return new Booking()
+			.setOwner((AonRandom.string(50)))
+			.setExpirationDate(AonRandom.getPastDate(50))
+			.setDomainManagement(AonRandom.gt(50))
+			.setDisableDomainManagement(AonRandom.gt(50))
+			.setMaxDefinedUsers(AonRandom.integer(50))
+			.setAonCustomer(AonRandom.integer(50))
+			.setAonStatus(AonRandom.getAonStatus(20).orElse(null))
+		;
 	}
-	public static Scope getScope( ) {
-		return new Scope()
-			.setId(AonRandom.integer(50))
-			.setDomain(AonRandom.integer(50))
-			.setDescription(faker.pokemon().name());
-	}
+
 	public static Domain getDomain() {
 		return getDomain(false); 
 	}
-
 	public static Domain getDomain( boolean bookingRequired) {
 		return  new Domain()
 			.setId(AonRandom.integer(50))
@@ -51,17 +52,6 @@ public class AonFaker {
 			.setAudit( AonRandom.gt(50) ? getDomainAudit() : null)
 		;
 	}
-	public static Booking getBooking() {
-		return new Booking()
-			.setOwner((AonRandom.string(50)))
-			.setExpirationDate(AonRandom.getPastDate(50))
-			.setDomainManagement(AonRandom.gt(50))
-			.setDisableDomainManagement(AonRandom.gt(50))
-			.setMaxDefinedUsers(AonRandom.integer(50))
-			.setAonCustomer(AonRandom.integer(50))
-			.setAonStatus(AonRandom.getAonStatus(20).orElse(null))
-		;
-	}
 
 	public static DomainAudit getDomainAudit() {
 		return new DomainAudit()
@@ -72,12 +62,33 @@ public class AonFaker {
 			.setModificationUser(AonRandom.string(50, 10))
 			.setModificationDate(AonRandom.getPastDate(50));
 	}
-
-	public static Audit getAudit() {
-		return new Audit()
-			.setCreationUser(AonRandom.string(50, 10))
-			.setCreationDate(AonRandom.getPastDate(50))
-			.setModificationUser(AonRandom.string(50, 10))
-			.setModificationDate(AonRandom.getPastDate(50));
+	
+	public static GeoZone getGeoZone( ) {
+		return new GeoZone()
+			.setId(AonRandom.integer(50))
+			.setDomain(AonRandom.integer())
+			.setName(faker.country().name())
+			.setCode(faker.country().countryCode2())
+			;
 	}
+
+	public static Scope getScope(int nullThreshold) {
+    	return AonRandom.gt(nullThreshold)?getScope():null;
+	}
+	public static Scope getScope( ) {
+		return new Scope()
+			.setId(AonRandom.integer(50))
+			.setDomain(AonRandom.integer(50))
+			.setDescription(faker.pokemon().name());
+	}
+	
+	public static User getUser( ) {
+		return  new User()
+			.setId(AonRandom.integer(50))
+			.setDomain(AonRandom.integer(50))
+			.setName(faker.pokemon().name())
+			.setLogin(AonRandom.string(50, 10))
+			.setActive(AonRandom.gt(50));
+	}
+	
 }

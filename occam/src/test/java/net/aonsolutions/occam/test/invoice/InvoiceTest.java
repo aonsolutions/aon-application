@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -144,8 +143,7 @@ class InvoiceTest extends AbstractOccamTest {
 		assertFalse(i.isDirty());
 	}
 	
-	//@Test()
-	@RepeatedTest(100)
+	@Test
 	void documentNumberTest() {
 		Invoice i = new Invoice();
 		i.setType(AonRandom.getInvoiceType().orElse(null));

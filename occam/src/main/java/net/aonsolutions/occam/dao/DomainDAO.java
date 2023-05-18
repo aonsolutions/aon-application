@@ -4,8 +4,8 @@ import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
-import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -30,6 +30,7 @@ import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
+import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.api.filter.AonFacade.AonFillerBuilder;
@@ -40,8 +41,9 @@ import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilter;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilters;
 import net.aonsolutions.occam.dao.ScopeDAO.ScopeFiller;
 import net.aonsolutions.occam.dao.SecurityDAO.UserFiller;
-import net.aonsolutions.watson.client.Pair;
 import net.aonsolutions.watson.client.util.AonStringUtils;
+import net.aonsolutions.watson.server.AonEnumUtils;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class DomainDAO {
 	
@@ -50,19 +52,6 @@ public class DomainDAO {
 	}
 	private static final com.esferalia.aon.jooq.tables.Domain PARENT_DOMAIN = DOMAIN.as("parent_domain");
 	
-	private static class DomainMapper extends Pair<Record,Domain> {
-		private static final long serialVersionUID = 2371435245238661388L;
-		private DomainMapper(Record rec) {
-			super(rec, new Domain());
-		}
-		private Domain getDomain() {
-			return getRight();
-		}
-		private Record getRecord() {
-			return getLeft();
-		}
-	}
-
 	private static final DomainFilterDAO DOMAIN_FILTER = new DomainFilterDAO();
 	private static class DomainFilterDAO implements DomainFilters {
 		@Override public Property<Integer> withId() {return new PropertyDAO<>(DOMAIN.ID);}
@@ -81,7 +70,7 @@ public class DomainDAO {
 		@Override public Property<Timestamp> withCreationDate() {return new PropertyDAO<>(DOMAIN.CREATION_DATE);}
 		@Override public Property<String> withModificationUser() {return new PropertyDAO<>(DOMAIN.MODIFICATION_USER);}
 		@Override public Property<Timestamp> withModificationDate() {return new PropertyDAO<>(DOMAIN.MODIFICATION_DATE);}
-		@Override public Property<Date> withExpirationDate() {return new PropertyDAO<>(DOMAIN.EXPIRATIONDATE);}
+		@Override public Property<java.sql.Date> withExpirationDate() {return new PropertyDAO<>(DOMAIN.EXPIRATIONDATE);}
 		@Override public Property<String> withLastAccessUser() {return new PropertyDAO<>(DOMAIN.LASTACCESS_USER);}
 		@Override public Property<Timestamp> withLastAccessDate() {return new PropertyDAO<>(DOMAIN.LASTACCESS_DATE);}
 		@Override public Property<Integer> withAonCustomer() {return new PropertyDAO<>(DOMAIN.AONCUSTOMER);}
@@ -302,22 +291,22 @@ public class DomainDAO {
 		}
 	}
 
-	private static class FillerBuilder implements DomainBuilder<Function<Record, DomainMapper>>,AonFillerBuilder<Domain> {
-		private UnaryOperator<DomainMapper> withAudit = t -> t;
-		private UnaryOperator<DomainMapper> withParent = t -> t;
-		private UnaryOperator<DomainMapper> withBooking = t -> t;
+	private static class FillerBuilder implements DomainBuilder<Function<Record, RecordMapper<Domain>>>,AonFillerBuilder<Domain> {
+		private UnaryOperator<RecordMapper<Domain>> withAudit = t -> t;
+		private UnaryOperator<RecordMapper<Domain>> withParent = t -> t;
+		private UnaryOperator<RecordMapper<Domain>> withBooking = t -> t;
 		
 		@Override
-		public Function<Record, DomainMapper> build() {
+		public Function<Record, RecordMapper<Domain>> build() {
 			return null;
 		}
 		
 		@Override
 		public Domain build(Record rec) {
 			
-			Function<Record, DomainMapper> f = DomainMapper::new;
+			Function<Record, RecordMapper<Domain>> f = a -> new RecordMapper<Domain>(rec, Domain::new );
 			return f.andThen( mapper -> {
-					mapper.getDomain()
+					mapper.get()
 					.setId(FillerUtils.getValue(mapper.getRecord(),DOMAIN.ID))
 					.setName(FillerUtils.getValue(mapper.getRecord(),DOMAIN.NAME))
 					.setDescription(FillerUtils.getValue(mapper.getRecord(),DOMAIN.DESCRIPTION))
@@ -332,15 +321,15 @@ public class DomainDAO {
 				.andThen( withAudit )
 				.andThen( withParent )
 				.apply(rec)
-				.getDomain()
+				.get()
 				.setDirty(false)
 			;
 		}
 		
 		@Override
-		public DomainBuilder<Function<Record, DomainMapper>> withAudit() {
+		public DomainBuilder<Function<Record, RecordMapper<Domain>>> withAudit() {
 			withAudit = mapper -> {
-				mapper.getDomain().setAudit(new DomainAudit()
+				mapper.get().setAudit(new DomainAudit()
 					.setLastAccessUser(FillerUtils.getValue(mapper.getRecord(), DOMAIN.LASTACCESS_USER))
 					.setLastAccessDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.LASTACCESS_DATE))
 					.setCreationUser(FillerUtils.getValue(mapper.getRecord(), DOMAIN.CREATION_USER))
@@ -354,9 +343,9 @@ public class DomainDAO {
 		}
 		
 		@Override
-		public DomainBuilder<Function<Record, DomainMapper>> withParentDomain() {
+		public DomainBuilder<Function<Record, RecordMapper<Domain>>> withParentDomain() {
 			withParent = mapper -> {
-				mapper.getDomain().setParent(
+				mapper.get().setParent(
 					FillerUtils.getValue(mapper.getRecord(),DOMAIN.PARENT) == null 
 					? null 
 					: new Domain()
@@ -372,9 +361,9 @@ public class DomainDAO {
 		}
 		
 		@Override
-		public DomainBuilder<Function<Record, DomainMapper>> withBooking() {
+		public DomainBuilder<Function<Record, RecordMapper<Domain>>> withBooking() {
 			withBooking = mapper -> {
-				mapper.getDomain().setBooking(new Booking()
+				mapper.get().setBooking(new Booking()
 					.setOwner(FillerUtils.getValue(mapper.getRecord(), DOMAIN.OWNER))
 					.setExpirationDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.EXPIRATIONDATE))
 					.setDomainManagement(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.DOMAINMANAGEMENT))
@@ -389,15 +378,15 @@ public class DomainDAO {
 		}
 
 		@Override
-		public DomainBuilder<Function<Record, DomainMapper>> full() {
+		public DomainBuilder<Function<Record, RecordMapper<Domain>>> full() {
 			withBooking();
 			withParentDomain();
 			withAudit();
 			return null;
 		}
 
-		@Override public DomainBuilder<Function<Record, DomainMapper>> limit(int offset, int rows) { return null; }
-		@Override public DomainBuilder<Function<Record, DomainMapper>> withUsers() {return null;}
+		@Override public DomainBuilder<Function<Record, RecordMapper<Domain>>> limit(int offset, int rows) { return null; }
+		@Override public DomainBuilder<Function<Record, RecordMapper<Domain>>> withUsers() {return null;}
 
 	}
 	
@@ -418,44 +407,77 @@ public class DomainDAO {
 	
 	public static Domain save(AONContext ctx, Domain domain) {
 		ctx.checkWrite();
-		if (domain == null) throw new AonCoreException(AonError.EMPTY_DOMAIN.getMessage());
+		if (domain == null) throw new AonCoreException(AonError.SAVE_EMPTY.getMessage());
 		if (domain.isDirty()) { 
 			DomainAutoComplete.autoComplete(ctx, domain);
 			DomainValidation.validate(ctx, domain);
-			return (domain.getId() == null)
-				?insert(ctx,domain)
-				:update(ctx,domain);
+//			return (domain.getId() == null)
+//				?insert(ctx,domain)
+//				:update(ctx,domain);
 		} else {
 			ctx.log().debug(AonError.NOT_DIRTY.format("Domain",domain.getId()));
 		}
 		return domain;  
 	}
-	private static Domain insert(AONContext ctx, Domain domain) {
-		return domain;
-	}
-	private static Domain update(AONContext ctx, Domain domain) {
-		return domain;
-	}
+	
+//	private static Domain insert(AONContext ctx, Domain domain) {
+//		throw new UnsupportedOperationException("Not implemented!");
+//		Integer id = ctx.getDslContext().insertInto(DOMAIN)
+//			.set(DOMAIN.NAME, domain.getName())
+//			.set(DOMAIN.DESCRIPTION, domain.getDescription())
+//			.set(DOMAIN.TYPE, AonEnumUtils.getByte(domain.getType() ))
+//			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isActive() ))
+//			.set(DOMAIN.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), Scope::getId))
+//			.set(DOMAIN.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), Domain::getId))
+//			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isEnableHeredity() ))
+//			.set(DOMAIN.OWNER, AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getOwner))
+//			.set(DOMAIN.DOMAINMANAGEMENT
+//				, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDomainManagement)))
+//			.set(DOMAIN.DISABLEDOMAINMANAGEMENT
+//				, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDisableDomainManagement)))
+//			.set(DOMAIN.MAXDEFINEDUSERS
+//				,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), b -> b.getMaxDefinedUsers().orElse(null)))
+//			.<Integer>set(DOMAIN.AONCUSTOMER
+//				,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), a -> a.getAonCustomer().orElse(null)))
+//			.set(DOMAIN.AONSTATUS
+//				,AonEnumUtils.getByte(AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getAonStatus)))
+//			.set(DOMAIN.CREATION_USER, ctx.getUser())
+//			.set(DOMAIN.CREATION_DATE, new Timestamp(new Date().getTime()))
+//			.returning(DOMAIN.ID)
+//			.fetchOne().getValue(DOMAIN.ID);
+//		domain.setId(id);
+//		ctx.log().info("INSERT DOMAIN id: {0} - {1}", domain.getId(), domain.getName());	
+//		return domain;
+//	}
+//	
+//	private static Domain update(AONContext ctx, Domain domain) {
+//		throw new UnsupportedOperationException("Not implemented!");
+//	}
 	
 	
 	private static class DomainAutoComplete {
 		
+		public static final BiConsumer<AONContext,Domain> LOWCASE_NAME = (ctx,domain) -> {
+			domain.setName( AonStringUtils.lowerCase(domain.getName()));
+		};
+
 		public static final BiConsumer<AONContext,Domain> COMPLETE_TYPE = (ctx,domain) -> {
 			if (domain.getType() == null) {
-				ctx.log().debug("\t saving domain: autocomplete type: ENTERPRISE");
+				ctx.log().debug("\t Saving domain: Type to ENTERPRISE");
 				domain.setType(DomainType.ENTERPRISE);
 			}
 		};
  
 		public static final BiConsumer<AONContext,Domain> COMPLETE_ENABLE_HEREDITY = (ctx,domain) -> {
 			if (domain.isEnableHeredity() && !domain.getParent().isPresent()) {
-				ctx.log().debug("\t saving domain: EnableHeredity to false (no parent)");
+				ctx.log().debug("\t Saving domain: EnableHeredity to false (no parent)");
 				domain.setEnableHeredity(false);
 			}
 		};
 
 		public static void autoComplete(AONContext ctx, Domain domain) throws AonCoreException {
-			COMPLETE_TYPE
+			LOWCASE_NAME
+				.andThen(COMPLETE_TYPE)
 				.andThen(COMPLETE_ENABLE_HEREDITY)
 				.accept(ctx, domain);
 		}
@@ -503,17 +525,31 @@ public class DomainDAO {
 		}
 		
 	}
-	
 }
 
+//+-------------------------+--------------+------+-----+---------+----------------+
 //| id                      | int(11)      | NO   | PRI | NULL    | auto_increment |
 //| name                    | varchar(253) | NO   | UNI | NULL    |                |
 //| description             | varchar(128) | NO   |     | NULL    |                |
+//| parent                  | int(11)      | YES  | MUL | NULL    |                |
 //| type                    | tinyint(4)   | NO   |     | 0       |                |
+//| scope                   | int(11)      | YES  | MUL | NULL    |                |
 //| enableHeredity          | tinyint(1)   | NO   |     | 0       |                |
-		//| domainManagement        | tinyint(1)   | NO   |     | 0       |                |
-		//| disableDomainManagement | tinyint(1)   | NO   |     | 0       |                |
+//| domainManagement        | tinyint(1)   | NO   |     | 0       |                |
+//| disableDomainManagement | tinyint(1)   | NO   |     | 0       |                |
+//| maxDocumentSize         | int(11)      | YES  |     | NULL    |                |
 //| active                  | tinyint(1)   | NO   |     | 1       |                |
-		//| owner                   | varchar(256) | NO   |     | NULL    |                |
-		//| aonStatus               | tinyint(4)   | NO   |     | 0       |                |
-//
+//| owner                   | varchar(256) | NO   |     | NULL    |                |
+//| creation_user           | varchar(16)  | YES  |     | NULL    |                |
+//| creation_date           | datetime     | YES  |     | NULL    |                |
+//| subDomainSuffix         | varchar(64)  | YES  |     | NULL    |                |
+//| maxTotalDocumentSize    | int(11)      | YES  |     | NULL    |                |
+//| maxDefinedUsers         | int(11)      | YES  |     | NULL    |                |
+//| modification_user       | varchar(16)  | YES  |     | NULL    |                |
+//| modification_date       | datetime     | YES  |     | NULL    |                |
+//| expirationDate          | date         | YES  |     | NULL    |                |
+//| lastAccess_user         | varchar(16)  | YES  |     | NULL    |                |
+//| lastAccess_date         | datetime     | YES  |     | NULL    |                |
+//| aonCustomer             | int(11)      | YES  |     | NULL    |                |
+//| aonStatus               | tinyint(4)   | NO   |     | 0       |                |
+//+-------------------------+--------------+------+-----+---------+----------------+

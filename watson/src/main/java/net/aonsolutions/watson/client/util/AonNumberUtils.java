@@ -2,11 +2,16 @@ package net.aonsolutions.watson.client.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Optional;
 
 public class AonNumberUtils {
 
 	private AonNumberUtils() {
 
+	}
+	
+	public static Integer getInteger( Optional<Integer> opt) {
+		return opt.orElse(null);
 	}
 
 	public static double round(double value, int precision) {

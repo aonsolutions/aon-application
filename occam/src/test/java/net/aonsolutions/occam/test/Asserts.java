@@ -14,6 +14,7 @@ import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
+import net.aonsolutions.occam.api.config.GeoZone;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
 import net.aonsolutions.occam.api.invoice.Invoice;
@@ -61,6 +62,17 @@ public class Asserts {
 		}
 	}
 	
+	public static void assertEqualsGeoZone(GeoZone expected, GeoZone actual) {
+		assertEqualsNulls(expected, actual,"GeoZone");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getName(), actual.getName(),"Name");
+			assertEquals(expected.getCode(), actual.getCode(),"Code");
+			assertEquals(expected.isSystem(), actual.isSystem(),"System");
+		}
+	}
+
 	public static void assertEqualsDomain(Domain expected, Domain actual) {
 		assertEqualsNulls(expected, actual,"Domain");
 		if (expected != null && actual != null) {
