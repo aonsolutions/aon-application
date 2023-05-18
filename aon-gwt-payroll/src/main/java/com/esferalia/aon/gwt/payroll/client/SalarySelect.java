@@ -119,6 +119,7 @@ public class SalarySelect extends Composite {
 	@UiField
 	MonthListBox fromMonthListBox;
 	
+	private Date payDate;
 	private boolean hasChanged;
 	
 	private List<Extra> extras;
@@ -139,7 +140,11 @@ public class SalarySelect extends Composite {
 		extrasDatesProvider = new ExtrasDateProvider();
 		settleDatesProvider = new SettleDateProvider();
 	}
-
+	
+	public void setPayDate(Date payDate) {
+	    this.payDate = payDate;
+	}
+	
 	public void setExtras(List<Extra> extras) {
 		this.extras = new ArrayList<>(extras);
 		sort(extras);
@@ -220,7 +225,6 @@ public class SalarySelect extends Composite {
 	    	hasChanged = hasChanged();
 		syncSalarySelectDates();
 		fireOnChange();
-		hasChanged = false;
 	}
 
 	@UiHandler("payDateListBox")
@@ -617,7 +621,7 @@ public class SalarySelect extends Composite {
         		if ( !hasChanged  && selectedDate != null ) 
         		    return;
 
-        		Date defautlPayDate = DateUtils.after(new Date(), endDate);
+        		Date defautlPayDate = payDate != null ? payDate : DateUtils.after(new Date(), endDate);
         		
         		int index = DateUtils.getDaysBetween(payStartDate, defautlPayDate);
         		int length = payDateListBox.getPageSize();
