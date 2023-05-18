@@ -565,7 +565,6 @@ export class AonInvoice extends AonElement {
 		table.addCell(responseDownload);
 	}
 	
-
 	buildCommentCard(parent) {
 		let commentsDiv = this.createElement(TAG.DIV);
 		commentsDiv.id = this.COMMENTS;
@@ -626,7 +625,12 @@ export class AonInvoice extends AonElement {
 			let div = this.createElement(TAG.DIV);
 			div.id = 'commentsLinesDiv';
 			commentsCard.setContent(div);
-			let strs = this.invoice.comments + '';
+			let strs = '';
+			if(this.isString(this.invoice.comments)){
+				strs = this.invoice.comments + '';
+			} else {
+				strs = JSON.stringify(this.invoice.comments);
+			}
 			strs.split('\n').forEach(str => {
 				let span = this.createElement(TAG.SPAN);
 				span.innerHTML = str;

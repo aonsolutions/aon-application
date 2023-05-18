@@ -218,4 +218,9 @@ export class AonElement extends HTMLElement{
   onClick(fn) {
     this.addEventListener(EVENT.CLICK, fn);
   }
+
+  isString(obj) {
+		return Object.prototype.toString.call(obj) === '[object String]';
+	}
+
 }

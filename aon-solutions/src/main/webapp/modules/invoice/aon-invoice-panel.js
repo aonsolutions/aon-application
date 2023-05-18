@@ -491,6 +491,7 @@ export class AonInvoicePanel extends AonElement {
 		yearSelect.id = "aonInvoiceSelfcontaYear";
 		yearSelect.title = MSG.YEAR;
 		yearSelect.options = JSON.stringify([
+			{name:'2023', value:2023},
 			{name:'2022', value:2022},
 			{name:'2021', value:2021},
 			{name:'2020', value:2020},
