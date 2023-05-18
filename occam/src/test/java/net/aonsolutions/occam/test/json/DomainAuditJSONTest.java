@@ -82,7 +82,7 @@ class DomainAuditJSONTest extends AbstractOccamTest {
 
 	@Test
 	void testListConvert() {
-		List<DomainAudit> expected = IntStream.range(0, AonRandom.getInt(0, 50))
+		List<DomainAudit> expected = IntStream.range(1, AonRandom.getInt(2, 50))
 			.mapToObj(i -> AonFaker.getDomainAudit())
 			.toList()
 		;

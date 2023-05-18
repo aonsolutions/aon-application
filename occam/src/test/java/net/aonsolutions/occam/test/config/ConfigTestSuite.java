@@ -10,6 +10,7 @@ import org.junit.platform.suite.api.Suite;
 	,GeoZoneTest.class
 	,BookingTest.class
 	,UserTest.class
+	,RegistryTest.class
 	,DomainTest.class
 })
 public class ConfigTestSuite {

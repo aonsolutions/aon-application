@@ -15,6 +15,7 @@ import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
 import net.aonsolutions.occam.api.config.GeoZone;
+import net.aonsolutions.occam.api.config.Registry;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
 import net.aonsolutions.occam.api.invoice.Invoice;
@@ -62,14 +63,36 @@ public class Asserts {
 		}
 	}
 	
-	public static void assertEqualsGeoZone(GeoZone expected, GeoZone actual) {
-		assertEqualsNulls(expected, actual,"GeoZone");
+	public static void assertEqualsActivity(Activity expected, Activity actual) {
+		assertEqualsNulls(expected, actual, "Invoice");
 		if (expected != null && actual != null) {
 			assertEquals(expected.getId(), actual.getId(),"Id");
 			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
-			assertEquals(expected.getName(), actual.getName(),"Name");
-			assertEquals(expected.getCode(), actual.getCode(),"Code");
-			assertEquals(expected.isSystem(), actual.isSystem(),"System");
+			assertEquals(expected.getDescription(), actual.getDescription(),"Description");
+			assertEquals(expected.getEpigraph(), actual.getEpigraph(),"Epigraph");
+		}
+	}
+
+	public static void assertEqualsAudit(Audit expected, Audit actual) {
+		assertEqualsNulls(expected, actual,"Audit");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getCreationUser(), actual.getCreationUser(),"CreationUser");
+			assertEquals(expected.getCreationDate(), actual.getCreationDate(),"CreationDate");
+			assertEquals(expected.getModificationUser(), actual.getModificationUser(),"ModificationUser");
+			assertEquals(expected.getModificationDate(), actual.getModificationDate(),"ModificationDate");
+		}
+	}
+
+	public static void assertEqualsBooking(Booking expected, Booking actual) {
+		assertEqualsNulls(expected, actual,"Booking");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getOwner(), actual.getOwner(),"Owner");
+			assertEquals(expected.getExpirationDate(), actual.getExpirationDate(),"ExpirationDate");
+			assertEquals(expected.isDomainManagement(), actual.isDomainManagement(),"DomainManagement");
+			assertEquals(expected.isDisableDomainManagement(), actual.isDisableDomainManagement(),"DisableDomainManagement");
+			assertEquals(expected.getMaxDefinedUsers(), actual.getMaxDefinedUsers(),"MaxDefinedUsers");
+			assertEquals(expected.getAonCustomer(), actual.getAonCustomer(),"AonCustomer");
+			assertEquals(expected.getAonStatus(), actual.getAonStatus(),"AonStatus");
 		}
 	}
 
@@ -89,19 +112,6 @@ public class Asserts {
 		}
 	}
 
-	public static void assertEqualsBooking(Booking expected, Booking actual) {
-		assertEqualsNulls(expected, actual,"Booking");
-		if (expected != null && actual != null) {
-			assertEquals(expected.getOwner(), actual.getOwner(),"Owner");
-			assertEquals(expected.getExpirationDate(), actual.getExpirationDate(),"ExpirationDate");
-			assertEquals(expected.isDomainManagement(), actual.isDomainManagement(),"DomainManagement");
-			assertEquals(expected.isDisableDomainManagement(), actual.isDisableDomainManagement(),"DisableDomainManagement");
-			assertEquals(expected.getMaxDefinedUsers(), actual.getMaxDefinedUsers(),"MaxDefinedUsers");
-			assertEquals(expected.getAonCustomer(), actual.getAonCustomer(),"AonCustomer");
-			assertEquals(expected.getAonStatus(), actual.getAonStatus(),"AonStatus");
-		}
-	}
-
 	public static void assertEqualsDomainAudit(DomainAudit expected, DomainAudit actual) {
 		assertEqualsNulls(expected, actual,"DomainAudit");
 		if (expected != null && actual != null) {
@@ -111,33 +121,15 @@ public class Asserts {
 		}
 	}
 
-	public static void assertEqualsAudit(Audit expected, Audit actual) {
-		assertEqualsNulls(expected, actual,"Audit");
-		if (expected != null && actual != null) {
-			assertEquals(expected.getCreationUser(), actual.getCreationUser(),"CreationUser");
-			assertEquals(expected.getCreationDate(), actual.getCreationDate(),"CreationDate");
-			assertEquals(expected.getModificationUser(), actual.getModificationUser(),"ModificationUser");
-			assertEquals(expected.getModificationDate(), actual.getModificationDate(),"ModificationDate");
-		}
-	}
 
-	public static void assertEqualsScope(Scope expected, Scope actual) {
-		assertEqualsNulls(expected, actual,"Scope");
-		if (expected != null && actual != null) {
-			assertEquals(expected.getId(), actual.getId(),"Id");
-			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
-			assertEquals(expected.getDescription(), actual.getDescription(),"Description");
-		}
-	}
-
-	public static void assertEqualsUser(User expected, User actual) {
-		assertEqualsNulls(expected, actual,"User");
+	public static void assertEqualsGeoZone(GeoZone expected, GeoZone actual) {
+		assertEqualsNulls(expected, actual,"GeoZone");
 		if (expected != null && actual != null) {
 			assertEquals(expected.getId(), actual.getId(),"Id");
 			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
 			assertEquals(expected.getName(), actual.getName(),"Name");
-			assertEquals(expected.getLogin(), actual.getLogin(),"Login");
-			assertEquals(expected.isActive(), actual.isActive(),"Active");
+			assertEquals(expected.getCode(), actual.getCode(),"Code");
+			assertEquals(expected.isSystem(), actual.isSystem(),"System");
 		}
 	}
 
@@ -162,14 +154,40 @@ public class Asserts {
 			assertEqualsActivity(expected.getActivity().orElse(null), actual.getActivity().orElse(null));
 		}
 	}
-	
-	public static void assertEqualsActivity(Activity expected, Activity actual) {
-		assertEqualsNulls(expected, actual, "Invoice");
+
+	public static void assertEqualsScope(Scope expected, Scope actual) {
+		assertEqualsNulls(expected, actual,"Scope");
 		if (expected != null && actual != null) {
 			assertEquals(expected.getId(), actual.getId(),"Id");
 			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
 			assertEquals(expected.getDescription(), actual.getDescription(),"Description");
-			assertEquals(expected.getEpigraph(), actual.getEpigraph(),"Epigraph");
+		}
+	}
+
+	public static void assertEqualsUser(User expected, User actual) {
+		assertEqualsNulls(expected, actual,"User");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getName(), actual.getName(),"Name");
+			assertEquals(expected.getLogin(), actual.getLogin(),"Login");
+			assertEquals(expected.isActive(), actual.isActive(),"Active");
+		}
+	}
+
+	
+	public static void assertEqualsRegistry (Registry expected, Registry actual) {
+		assertEqualsNulls( expected, actual, "Registry");
+		if (expected != null ) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getDocument(), actual.getDocument(),"Document");
+			assertEquals(expected.getDocumentType(), actual.getDocumentType(),"DocumentType");
+			assertEquals(expected.getDocumentCountry(), actual.getDocumentCountry(),"DocumentCountry");
+			assertEquals(expected.getName(), actual.getName(),"Name");
+			assertEquals(expected.getAlias(), actual.getAlias(),"Alias");
+			assertEquals(expected.getNationality(), actual.getNationality(),"Nationality");
+			assertEquals(expected.isConfidential() , actual.isConfidential(),"Confidential");
 		}
 	}
 	

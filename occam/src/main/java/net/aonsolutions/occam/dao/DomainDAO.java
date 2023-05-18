@@ -5,7 +5,6 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -30,7 +29,6 @@ import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
-import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.api.filter.AonFacade.AonFillerBuilder;
@@ -42,8 +40,6 @@ import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilters;
 import net.aonsolutions.occam.dao.ScopeDAO.ScopeFiller;
 import net.aonsolutions.occam.dao.SecurityDAO.UserFiller;
 import net.aonsolutions.watson.client.util.AonStringUtils;
-import net.aonsolutions.watson.server.AonEnumUtils;
-import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class DomainDAO {
 	
@@ -117,6 +113,7 @@ public class DomainDAO {
 			return this;
 		}
 		
+		@Override
 		public Stream<Domain> build() {
 			return this.stream != null 
 				? this.stream 
@@ -234,6 +231,7 @@ public class DomainDAO {
 		@Override public FromBuilder withAudit() {return this; }
 		@Override public FromBuilder withBooking() {return this; }
 		
+		@Override
 		public SelectJoinStep<Record> build() {
 			return from;
 		}
@@ -254,6 +252,7 @@ public class DomainDAO {
 		@Override public WhereBuilder withBooking() {return this; }
 		@Override public WhereBuilder full() {return this; }
 		
+		@Override
 		public SelectLimitStep<Record> build() {
 			return where;
 		}
@@ -286,6 +285,7 @@ public class DomainDAO {
 		@Override public LimitBuilder withBooking() {return this; }
 		@Override public LimitBuilder full() {return this; }
 		
+		@Override
 		public ResultQuery<Record> build() {
 			return limit==null?where:limit;
 		}

@@ -77,6 +77,7 @@ public class User implements Serializable, HasSelector<User> {
 	public boolean isSelected() {
 		return selected;
 	}
+	@Override
 	public User setSelected(boolean selected) {
 		this.selected = selected;
 		return this;

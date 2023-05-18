@@ -4,8 +4,17 @@ import java.util.Arrays;
 import java.util.Locale;
 
 public class AonStringUtils {
+	
+	public static final String CLOSE_PARENTHESIS= ")";
 	public static final String EMPTY = "";
-    public static final String SPACE = " ";
+	public static final String HYPHEN = "-";
+	public static final String OPEN_PARENTHESIS = "(";
+	public static final String QUESTION = "?";
+	public static final String SLASH = "/";
+	public static final String SPACE = " ";
+	public static final String UNDERSCORE = "_";
+    
+    
     private static final int PAD_LIMIT = 8192;
     public static final int INDEX_NOT_FOUND = -1;
 	
@@ -156,6 +165,34 @@ public class AonStringUtils {
         return false;
     }
     
+	/**
+	 * <p>
+	 * Returns either the passed in CharSequence, or if the CharSequence is
+	 * empty or {@code null}, the value of {@code defaultStr}.
+	 * </p>
+	 *
+	 * <pre>
+	 * StringUtils.defaultIfEmpty(null, "NULL") = "NULL"
+	 * StringUtils.defaultIfEmpty("", "NULL") = "NULL"
+	 * StringUtils.defaultIfEmpty(" ", "NULL") = " "
+	 * StringUtils.defaultIfEmpty("bat", "NULL") = "bat"
+	 * StringUtils.defaultIfEmpty("", null) = null
+	 * </pre>
+	 * 
+	 * @param <T>
+	 *            the specific kind of CharSequence
+	 * @param str
+	 *            the CharSequence to check, may be null
+	 * @param defaultStr
+	 *            the default CharSequence to return if the input is empty ("")
+	 *            or {@code null}, may be null
+	 * @return the passed in CharSequence, or the default
+	 * @see StringUtils#defaultString(String, String)
+	 */
+	public static <T extends CharSequence> T defaultIfEmpty(final T str, final T defaultStr) {
+		return isEmpty(str) ? defaultStr : str;
+	}
+	
     /**
      * <p>Abbreviates a String using ellipses. This will turn
      * "Now is the time for all good men" into "Now is the time for..."</p>

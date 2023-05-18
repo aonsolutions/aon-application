@@ -14,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
+import net.aonsolutions.occam.api.config.Registry;
 import net.aonsolutions.occam.api.config.User;
 import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.test.AbstractOccamTest;
@@ -89,6 +90,16 @@ class DomainTest extends AbstractOccamTest {
 		assertFalse(d.isDirty());
 	}
 	
+	@Test()
+	void dirtyCompanyTest() {
+		Domain d = new Domain();
+		Registry b = new Registry(); 
+		b.setName( "ddddd" );
+		assertTrue(b.isDirty());
+		d.setCompany(b);
+		assertTrue(d.isDirty());
+	}
+
 	@Test()
 	void dirtyBooking1Test() {
 		Domain d = new Domain();

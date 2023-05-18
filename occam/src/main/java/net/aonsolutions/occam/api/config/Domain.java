@@ -26,6 +26,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 	private Domain parent;
 	private boolean enableHeredity;
 	
+	private Registry company;
 	private Booking booking;
 	private DomainAudit audit;
 	
@@ -103,6 +104,15 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 	public Domain setScope(Scope scope) {
 		this.dirtyMark( AonObjectUtils.notEquals(this.scope,scope) );
 		this.scope = scope;
+		return this;
+	}
+	
+	public Optional<Registry> getCompany() {
+		return Optional.ofNullable(company);
+	}
+	public Domain setCompany(Registry company) {
+		this.dirtyMark( this.company, company);
+		this.company = company;
 		return this;
 	}
 	

@@ -17,6 +17,7 @@ public class ScopeDAO {
 	
 	public static class ScopeFiller  implements Function<Record,Scope> {
 		
+		@Override
 		public Scope apply(Record r) {
 			return map(r, Scope::new);
 		}

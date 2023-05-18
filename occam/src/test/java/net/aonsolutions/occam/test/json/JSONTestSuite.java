@@ -13,6 +13,7 @@ import org.junit.platform.suite.api.Suite;
 	,ScopeJSONTest.class
 	,BookingJSONTest.class
 	,UserJSONTest.class
+	,RegistryJSONTest.class
 	,DomainJSONTest.class
 })
 public class JSONTestSuite {

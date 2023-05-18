@@ -117,6 +117,7 @@ public class SecurityDAO {
 
 	public static class UserFiller  implements Function<Record,User> {
 		
+		@Override
 		public User apply(Record r) {
 			return map(r, User::new);
 		}

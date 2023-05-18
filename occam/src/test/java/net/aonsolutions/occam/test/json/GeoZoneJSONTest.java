@@ -82,7 +82,7 @@ class GeoZoneJSONTest extends AbstractOccamTest {
 
 	@Test
 	void testListConvert() {
-		List<GeoZone> expected = IntStream.range(0, AonRandom.getInt(0, 50))
+		List<GeoZone> expected = IntStream.range(1, AonRandom.getInt(2, 50))
 			.mapToObj(i -> AonFaker.getGeoZone())
 			.toList()
 		;

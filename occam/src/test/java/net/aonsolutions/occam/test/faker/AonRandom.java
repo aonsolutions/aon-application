@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import com.github.javafaker.Faker;
 
 import net.aonsolutions.occam.api.constants.AonStatus;
+import net.aonsolutions.occam.api.constants.Country;
 import net.aonsolutions.occam.api.constants.DocumentType;
 import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.api.constants.InvoiceType;
@@ -196,6 +197,15 @@ public class AonRandom {
 			:Optional.empty();
 	}
 	
+	public static Optional<Country> getCountry() {
+		return getCountry(REQUIRED);
+	}
+	public static Optional<Country> getCountry(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(Country.values()[faker.random().nextInt(Country.values().length)])
+			:Optional.empty();
+	}
+
 	public static Optional<DocumentType> getDocumentType() {
 		return getDocumentType(REQUIRED);
 	}

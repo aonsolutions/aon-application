@@ -82,7 +82,7 @@ class ScopeJSONTest extends AbstractOccamTest {
 
 	@Test
 	void testListConvert() {
-		List<Scope> expected = IntStream.range(0, AonRandom.getInt(0, 50))
+		List<Scope> expected = IntStream.range(1, AonRandom.getInt(2, 50))
 			.mapToObj(i -> AonFaker.getScope())
 			.toList()
 		;

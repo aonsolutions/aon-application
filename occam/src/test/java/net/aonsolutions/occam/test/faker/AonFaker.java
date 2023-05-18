@@ -9,11 +9,14 @@ import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
 import net.aonsolutions.occam.api.config.GeoZone;
+import net.aonsolutions.occam.api.config.Registry;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
+import net.aonsolutions.occam.api.constants.Country;
 
 public class AonFaker {
 	private static Faker faker = Faker.instance(Locale.of("es"));
+	private static final String DOCUMENT_REGEXP = "(\\d|[XYZ])\\d{7}[A-Z]";
 
 	public static Audit getAudit() {
 		return new Audit()
@@ -72,6 +75,22 @@ public class AonFaker {
 			;
 	}
 
+	public static Registry getRegistry(int nullThreshold) {
+    	return AonRandom.gt(nullThreshold)?getRegistry():null;
+	}
+	public static Registry getRegistry( ) {
+		return  new Registry()
+			.setId(AonRandom.integer(50))
+			.setDomain(AonRandom.integer(50))
+			.setDocument(faker.regexify(DOCUMENT_REGEXP))
+			.setDocumentType( AonRandom.getDocumentType(90).orElse(null) )
+			.setDocumentCountry( AonRandom.gt(5) ? Country.ES: AonRandom.getCountry(10).orElse(null))
+			.setName( faker.company().name() )
+			.setAlias( faker.company().profession() )
+			.setNationality( AonRandom.gt(5) ? Country.ES: AonRandom.getCountry(50).orElse(null))
+			.setConfidential( !AonRandom.gt(3) );
+	}
+	
 	public static Scope getScope(int nullThreshold) {
     	return AonRandom.gt(nullThreshold)?getScope():null;
 	}

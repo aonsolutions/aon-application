@@ -114,6 +114,7 @@ public class InvoiceDAO {
 			this.where(filter);
 		}
 		
+		@Override
 		public Stream<Invoice> build( ) {
 			return ((limit == null)?this.where:this.limit)
 				.fetch()

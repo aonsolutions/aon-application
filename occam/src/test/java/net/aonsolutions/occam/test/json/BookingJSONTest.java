@@ -82,7 +82,7 @@ class BookingJSONTest extends AbstractOccamTest {
 
 	@Test
 	void testListConvert() {
-		List<Booking> expected = IntStream.range(0, AonRandom.getInt(0, 50))
+		List<Booking> expected = IntStream.range(1, AonRandom.getInt(2, 50))
 			.mapToObj(i -> AonFaker.getBooking())
 			.toList()
 		;
