@@ -10,8 +10,12 @@ export class ContainerService {
   constructor() { 
     this.detailOpened = false;
   }
+  
+  showDetails(){
+    this.detailOpened = true;
+  }
 
-  showHideDetails(){
-    this.detailOpened ? this.detailOpened = false : this.detailOpened = true;
+  hideDetails(){
+    this.detailOpened = false;
   }
 }

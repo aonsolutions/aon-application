@@ -1,6 +1,7 @@
 <div class="contentHeaderContainer"
-[ngStyle]="{'height': 'calc(' + heightHeader + 'rem)'}">
-    <div class="contentHeaderContainerMain">
+[ngStyle]="{'height': 'calc(' + heightHeader + ')'}">
+    <div class="contentHeaderContainerMain"
+    [ngStyle]="{'padding': padding }">
         <ng-content></ng-content>
     </div>
     <mat-divider></mat-divider>

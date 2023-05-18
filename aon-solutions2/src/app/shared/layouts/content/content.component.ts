@@ -7,10 +7,12 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ContentComponent implements OnInit {
 
-  @Input() heightHeader : number;
+  @Input() heightHeader : string;
+  @Input() padding : string;
 
   constructor() {
-    this.heightHeader = 0;
+    this.heightHeader = '0%';
+    this.padding = '';
   }
 
   ngOnInit(): void {

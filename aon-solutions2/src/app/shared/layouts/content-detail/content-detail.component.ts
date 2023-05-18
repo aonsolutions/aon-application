@@ -8,10 +8,12 @@ import { ContainerService } from '../../services/container.service';
 })
 export class ContentDetailComponent implements OnInit {
 
-  @Input() heightHeader : number;
+  @Input() heightHeader : string;
+  @Input() padding : string;
 
   constructor(public containerService : ContainerService) {
-    this.heightHeader = 0;
+    this.heightHeader = '0';
+    this.padding = '0';
   }
 
   ngOnInit(): void {

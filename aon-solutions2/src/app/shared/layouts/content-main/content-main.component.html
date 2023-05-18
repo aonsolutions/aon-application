@@ -1,5 +1,8 @@
 <div class="contentMainContainer"
-[ngClass]="{'contentMainContainer': !containerService.detailOpened, 'contentMainContainerDetailOpened' : containerService.detailOpened }"
-[ngStyle]="{'height': 'calc(100% - ' + (heightHeader) + 'rem)'}">
+    [ngClass]="{'contentMainContainer': !containerService.detailOpened, 'contentMainContainerDetailOpened' : containerService.detailOpened }"
+    [ngStyle]="{'height': 'calc(100% - ' + (heightHeader) + ')',
+        'padding': padding
+    }"
+>
     <ng-content></ng-content>
 </div>

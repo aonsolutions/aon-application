@@ -1,5 +1,8 @@
 <div *ngIf="containerService.detailOpened" class="contentDetailContainer"
-[ngStyle]="{'height': 'calc(100% - ' + (heightHeader) + 'rem)',
-'top': 'calc(' + heightHeader + '%)'}">
+    [ngStyle]="{'height': 'calc(100% - ' + (heightHeader) + ')',
+        'top': 'calc(' + heightHeader + ')',
+        'padding': padding
+    }"
+>
     <ng-content></ng-content>
 </div>

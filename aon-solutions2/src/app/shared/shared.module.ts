@@ -54,7 +54,8 @@ import { MatDividerModule } from '@angular/material/divider';
     ContentHeaderComponent,
     ContentMainComponent,
     ContentDetailComponent,
-    ContentSideNavComponent
+    ContentSideNavComponent,
+    ListElementComponent
   ]
 })
 export class SharedModule { }
