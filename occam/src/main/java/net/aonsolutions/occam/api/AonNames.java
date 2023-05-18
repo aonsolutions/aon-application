@@ -473,6 +473,7 @@ public final class AonNames {
 	public static final String SCHEMA = "schema";
 	public static final String SCHEMA_FIRST_DOMAIN = "schema_first_domain";
 	public static final String SCOPE = "scope";
+	public static final String SEARCH = "search";
 	public static final String SECTION = "section";
 	public static final String SECURITY_LEVEL = "securityLevel";
 	public static final String SELECTED_ACCOUNT = "selectedAccount";
@@ -525,7 +526,8 @@ public final class AonNames {
 	public static final String SURCHARGEQUOTA = "surchargeQuota";
 	public static final String SURCHARGE = "surcharge";
 	public static final String SURNAME = "surname";
-	public static final String SEARCH = "search";
+	public static final String SYSTEM = "system";
+	
 	// ---------------------------------------------------------------------------------------------	[T] 
 	public static final String TABLE = "table";
 	public static final String TARIFF = "tariff";
