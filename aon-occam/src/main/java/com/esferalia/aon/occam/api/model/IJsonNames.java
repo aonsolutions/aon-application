@@ -70,6 +70,7 @@ public final class IJsonNames {
 	public static final String BEFORE_PERIOD_DEBIT = "beforePeriodDebit";
 	public static final String BEFORE_PERIOD_CREDIT = "beforePeriodCredit";
 	public static final String BIC = "bic";
+	public static final String BILLABLE = "billable";
 	public static final String BLOCKED = "blocked";
 	public static final String BORDER = "border";
 	public static final String BOX_BORDER_COLOR = "boxBorderColor";
@@ -168,6 +169,7 @@ public final class IJsonNames {
 	public static final String DOMAIN_NAME = "domainName";
 	public static final String DOMAIN_TYPE = "domainType";
 	public static final String DOMAIN_ACTIVE = "domainActive";
+	public static final String DOMAIN_LINKED = "domainLinked";
 	public static final String DOMAINS = "domains";
 	public static final String DRIVE_ID = "driveId";
 	public static final String DRIVER = "driver";
@@ -247,6 +249,7 @@ public final class IJsonNames {
 	public static final String INACTIVE = "inactive";
 	public static final String INCLUDE_DATE = "includeDate";
 	public static final String INCREASE_PERCENT = "increasePercent";
+	public static final String INDEX = "index";
 	public static final String INGENET = "ingenet";
 	public static final String INIT_ACTION = "initAction";
 	public static final String INITIATION_DATE = "initiationDate";
