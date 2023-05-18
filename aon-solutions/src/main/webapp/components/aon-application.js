@@ -131,7 +131,7 @@ export class AonApplication extends AonElement {
 
       <div class="${this.isMobile() ? 'aonMobileApplicationContent' :'aonFlex'}">
         <!-- AON APPLICATION MENU (SIDENAV) -->
-         <div id="${this.SIDENAV}" class="${this.isMobile() ? 'aonMobileSidenav' : (this.isBeta() ? 'aonSidenavBeta' : 'aonSidenav')}"></div>
+         <div id="${this.SIDENAV}" class="${this.isMobile() ? 'aonMobileSidenav' : 'aonSidenavBeta'}"></div>
 
 			   <!-- AON APPLICATION CONTENT -->
 			   <div id="${this.CONTENT}"></div>
@@ -160,7 +160,7 @@ export class AonApplication extends AonElement {
     content.className =
       this.isMobile() || this.isSidenavBlock()
         ? "aonMobileContent"
-        : (this.isBeta() ? CSS.AON_CONTENT_BETA : CSS.AON_CONTENT);
+        : CSS.AON_CONTENT_BETA;
     if(this.isMobile() && this.isSab()){
       content.style.bottom = '69px';
     }
@@ -302,7 +302,6 @@ export class AonApplication extends AonElement {
 
     let div = this.createElement(TAG.DIV);
     div.style.paddingBottom = "25px";
-    if(!this.isBeta()) div.style.borderBottom = '1px solid #ebebeb';
     sidenav.appendChild(div);
 
     let sidenavTitle = this.createElement(TAG.DIV);
@@ -322,7 +321,6 @@ export class AonApplication extends AonElement {
     if(sidenav){
       let div = this.createElement(TAG.DIV);
       div.style.paddingBottom = "25px";
-      if(!this.isBeta()) div.style.borderBottom = '1px solid #ebebeb';
       sidenav.appendChild(div);
 
       let sidenavTitle = this.createElement(TAG.DIV);
@@ -345,8 +343,7 @@ export class AonApplication extends AonElement {
     let div = this.createElement(TAG.DIV);
     div.id = sidenav.id + data.id;
     div.style.paddingBottom = "10px";
-    if(!this.isBeta()) div.style.borderBottom = '1px solid #ebebeb';
-
+  s
     sidenav.appendChild(div);
 
     if (newButton && !this.isMobile()) {

@@ -106,7 +106,7 @@ export class AonToolbar extends AonElement {
 			titleSection.appendChild(title);
 			header.appendChild(titleSection);
 		} else {
-			header.className = this.isBeta() ? CSS.AON_TOOLBAR_BETA : CSS.AON_TOOLBAR;
+			header.className = CSS.AON_TOOLBAR_BETA;
 
 			let titleSection = this.createElement(TAG.SECTION);
 			titleSection.id = this.TITLE_SECTION;
