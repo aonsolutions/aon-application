@@ -14,6 +14,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,6 +50,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesErrorI
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesInfoItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesInvoiceIntegrityItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesNoLowLevelAccountItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesOutOfDateEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesParams;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRegenerateInputVatItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRegenerateJournalItem;
@@ -56,6 +58,7 @@ import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesRemove
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesUnbalancedEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesWrongRecordedInvoicesItem;
+import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.AccUtilitiesItemType;
 import com.esferalia.aon.occam.api.model.finance.FinanceUtil;
 import com.esferalia.aon.occam.api.model.finance.IInvoiceTypeVisitor;
@@ -68,6 +71,7 @@ import com.esferalia.aon.occam.api.model.registry.IAccountingRegistryTypeVisitor
 import com.esferalia.aon.occam.api.model.registry.Registry;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.type.AccountEntryType;
+import com.esferalia.aon.occam.api.model.type.AccountPeriodStatus;
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.DocumentType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
@@ -519,6 +523,90 @@ public class AccountingUtilitiesDAO {
 						+ "]"
 						))
 		.forEach(item -> result.add(item) );
+	}
+	
+	public static AccUtilitiesResult outOfDateEntries(AONContext ctx) {
+		AccUtilitiesResult result = new AccUtilitiesResult();
+		Domain domain = DomainDAO.getDomain(ctx, p-> p.getIdProperty().eq(ctx.getDomainId()));
+		if (domain.isChild() || domain.isStandalone()) {
+			outOfDateEntries(ctx,domain,result);
+		} else {
+			LinkedList<Domain> domains = DomainDAO.getDomainList(ctx
+					, p -> p.getParentProperty().eq(domain.getId()));
+			for (Domain childDomain : domains) {
+				outOfDateEntries(ctx,childDomain,result);	
+			}
+		}
+		return result;
+	}
+	
+	private static void outOfDateEntries(AONContext ctx, Domain domain, AccUtilitiesResult result) {
+		ctx.getDslContext().select(ACCOUNT_ENTRY.ID,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_PERIOD.NAME,ACCOUNT_ENTRY.ENTRY_DATE)
+			.from(ACCOUNT_ENTRY)
+			.join(ACCOUNT_PERIOD).on(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ACCOUNT_PERIOD.ID))			
+			.where(ACCOUNT_ENTRY.DOMAIN.equal(domain.getId()).and(ACCOUNT_ENTRY.ENTRY_DATE.lessThan(ACCOUNT_PERIOD.INITIATION_DATE).or(ACCOUNT_ENTRY.ENTRY_DATE.greaterThan(ACCOUNT_PERIOD.DEADLINE))))
+		.orderBy(ACCOUNT_PERIOD.NAME)
+		.fetch()
+		.stream()
+		.map(rec -> new AccUtilitiesOutOfDateEntryItem()
+				.setEntryId(rec.getValue(ACCOUNT_ENTRY.ID) )
+				.setDomain(domain.getId())
+				.setDomainName(domain.getDescription())
+				.setEntryDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+				.setMessage("Apunte fuera de fecha en el ejercicio: " 
+						+ rec.getValue(ACCOUNT_PERIOD.NAME) 
+						+ "."
+						+ " [N\u00BA Diario: "
+						+ AonStringUtils.leftPad(AonNumberUtils.toString(rec.getValue(ACCOUNT_ENTRY.JOURNAL)), 6, '0')
+						+ ", Fecha: "
+						+ AonDateUtils.simpleFormat(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
+						+ "] "
+						))
+		.forEach(item -> result.add(item) );
+	}
+	
+	public static AccUtilitiesResult moveOutOfDateEntries(AONContext ctx, AccUtilitiesResult findResult) {
+		// Mover cada apunte, si se puede
+		for (IAccUtilitiesItem item : findResult.getItems()) {
+			moveOutOfDateEntry(ctx, (AccUtilitiesOutOfDateEntryItem) item);
+		}		
+		return findResult;
+	}
+	
+	private static void moveOutOfDateEntry(AONContext ctx, AccUtilitiesOutOfDateEntryItem item) {
+		
+		Integer accountPeriodId = null;
+		try {
+			// Obtenemos el ID del ejercicio contable según la fecha, si existe y está en estado ACTIVO o APERTURA
+			accountPeriodId = ctx.getDslContext()
+				.select(ACCOUNT_PERIOD.ID)
+				.from(ACCOUNT_PERIOD)
+				.where(ACCOUNT_PERIOD.DOMAIN.eq(item.getDomain()))
+						.and(ACCOUNT_PERIOD.INITIATION_DATE.lessOrEqual(AonDateUtils.toSql(item.getEntryDate())))
+						.and(ACCOUNT_PERIOD.DEADLINE.greaterOrEqual(AonDateUtils.toSql(item.getEntryDate())))
+						.and(ACCOUNT_PERIOD.STATUS.eq(AccountPeriodStatus.ACTIVE.getValue()).or(ACCOUNT_PERIOD.STATUS.eq(AccountPeriodStatus.OPENING.getValue())))
+			    .fetchOne(ACCOUNT_PERIOD.ID);
+			
+			// Si es distinto de null, modificar el ejercicio del apunte
+			if (accountPeriodId != null) {
+				ctx.getDslContext()
+					.update(ACCOUNT_ENTRY)
+					.set(ACCOUNT_ENTRY.ACCOUNT_PERIOD, accountPeriodId)
+					.set(ACCOUNT_ENTRY.MODIFICATION_USER, ctx.getUser())
+					.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp(System.currentTimeMillis()))
+					.where(ACCOUNT_ENTRY.ID.eq(item.getEntryId()))
+					.execute();
+				
+				item.setMessage(item.getMessage()+" >> MOVIDO");
+				
+			} else {
+				item.setMessage(item.getMessage()+" >> NO MOVIDO: El ejercicio destino no existe o no está en estado de activo o apertura.");
+			}			
+			
+		} catch (Exception e) {
+			item.setMessage(item.getMessage()+" >> NO MOVIDO: " + e.getMessage());						
+		}
+		
 	}
 	
 	public static AccUtilitiesResult getAccountLinks(AONContext ctx, AccUtilitiesParams params) {
