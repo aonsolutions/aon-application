@@ -3,7 +3,6 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.utilities;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
@@ -34,7 +33,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 class OutOfDateEntryFinder extends OptionBase {
 
-	private static AccountingUtilitiesServiceAsync SERVICE;
+	private static final AccountingUtilitiesServiceAsync SERVICE;
+	static {
+		AccountingUtilitiesServiceAsync serviceRaw = GWT.create(AccountingUtilitiesService.class);
+		SERVICE = new AccountingUtilitiesServiceAsyncDecorator(serviceRaw);
+	}
 	
 	SimpleLayoutPanel content;
 	ScrollPanel container;
@@ -52,9 +55,6 @@ class OutOfDateEntryFinder extends OptionBase {
 		this.user = user;
 		this.domain = domain;
 		
-		AccountingUtilitiesServiceAsync serviceRaw = GWT.create(AccountingUtilitiesService.class);
-		SERVICE = new AccountingUtilitiesServiceAsyncDecorator(serviceRaw);
-		
 		content = new SimpleLayoutPanel();
 		container = new ScrollPanel();
 		container.setStyleName(AON.CSS.aonScrollArea());
@@ -71,7 +71,6 @@ class OutOfDateEntryFinder extends OptionBase {
 	public void run() {		
 		
 		refresh.setVisible(true);
-		move.setVisible(false);
 		
 		final PopupPanel popup = new PopupPanel(false, true);
 		popup.add(getSplashWidget());
@@ -93,8 +92,6 @@ class OutOfDateEntryFinder extends OptionBase {
 				popup.hide();
 				container.setWidget( paintResults(result) );
 				move.setVisible(!result.isEmpty());
-				// TODO - ESTE ES EL BOTON PARA MOVER LOS APUNTES A LOS EJERCICIOS DE SU FECHA, SE DEJA DE MOMENTO ASI HASTA QUE EUKE LO REVISE
-				move.setVisible(false);
 			}
 		});
 	}
@@ -172,14 +169,22 @@ class OutOfDateEntryFinder extends OptionBase {
 			.setTrialBalanceFromPreviewEnabled(false)
 			.setExternalCallback( new ModuleCallback() {
 			
-				@Override public void onRemove(IAccountEntryWrapper removed) {
+				private static final long serialVersionUID = 8499632478536057454L;
+				
+				@Override 
+				public void onRemove(IAccountEntryWrapper removed) {
 					entryDialog.hide();
 				}
-				@Override public void onFailure(Throwable caught) {}
-				@Override public void onExit() {
+				@Override 
+				public void onFailure(Throwable caught) {
+					AonMessageDialog.error(caught.getMessage());	
+				}
+				@Override 
+				public void onExit() {
 					entryDialog.hide();
 				}
-				@Override public void onChange(IAccountEntryWrapper changed) {
+				@Override 
+				public void onChange(IAccountEntryWrapper changed) {
 					entryDialog.hide();
 				}
 			})
@@ -204,27 +209,18 @@ class OutOfDateEntryFinder extends OptionBase {
 		
 		move = new AonToolbarButton("Mover apuntes al ejercicio seg\u00FAn su fecha",AON.CSS.aonIconFix());
 		move.setVisible(false);
-		move.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if (!findResult.isEmpty()) {
-					new AonConfirmDialog().confirm("Mover apuntes","Esta opci\u00F3n mueve los apuntes encontrados, al ejercicio seg\u00FAn la fecha de cada apunte. Solo se mover\u00E1n los apuntes si el ejercicio destino existe y su estado es Activo o Apertura. \u00BFDesea continuar?" 
-							, new AonConfirmDialogCallback() {
-							
-							@Override
-							public void onAccept() {
-								refresh.setVisible(false);
-								move.setVisible(false);
-								moveEntries();
-							}
-			
-							@Override
-							public void onCancel() {
-								// Nothing
-							}
+		move.addClickHandler(event -> {
+			if (!findResult.isEmpty()) {
+				AonConfirmDialog.showConfirm("Mover apuntes"
+					,"Esta opci\u00F3n mueve los apuntes encontrados, al ejercicio "
+					+ "seg\u00FAn la fecha de cada apunte. Solo se mover\u00E1n los "
+					+ "apuntes si el ejercicio destino existe y su estado es Activo "
+					+ "o Apertura. \u00BFDesea continuar?" 
+						, () -> {
+							refresh.setVisible(false);
+							move.setVisible(false);
+							moveEntries();
 						});
-				}
 			}
 		});
 		toolbarPanel.add(move);
@@ -253,7 +249,9 @@ class OutOfDateEntryFinder extends OptionBase {
 			public void onSuccess(AccUtilitiesResult result) {
 				popup.hide();				
 				container.setWidget( paintResults(result) );
-				AonMessageDialog.show("MOVER APUNTES", "Para aquellos ejercicios a donde se han movido apuntes, es recomendable ejecutar los procesos de Regenerar el n\u00FAmero de diario y Regenerar el n\u00FAmero de IVA soportado, pues pueden encontrarse m\u00E1s de un apunte con el mismo n\u00FAmero de diario o m\u00E1s de una factura con el mismo n\u00FAmero de IVA soportado.");
+				AonMessageDialog.show("MOVER APUNTES", "Para aquellos ejercicios a donde se han movido apuntes, "
+					+ "es recomendable ejecutar el proceso de Regenerar el n\u00FAmero de diario, pues pueden "
+					+ "encontrarse m\u00E1s de un apunte con el mismo n\u00FAmero de diario ");
 			}
 		});
 		
@@ -276,35 +274,30 @@ class OutOfDateEntryFinder extends OptionBase {
 			
 			InlineLabel clickLabel = new InlineLabel("Ver/Editar");
 			clickLabel.setTitle("Click para Ver/Editar");
-			clickLabel.setStyleName(AON.CSS.aonMarginLeft());;
+			clickLabel.setStyleName(AON.CSS.aonMarginLeft());
 			clickLabel.addStyleName(AON.CSS.aonButton());
 			clickLabel.addStyleName(AON.CSS.aonIconSearch());
 			clickLabel.addStyleName(AON.CSS.aonTextButton());
 			itemPanel.add(clickLabel);
-			clickLabel.addClickHandler( new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					showEntry(item.getDomain(),item.getEntryId());
-				}
-			});
+			clickLabel.addClickHandler( event -> showEntry(item.getDomain(),item.getEntryId()));
 			domainPanel.add(itemPanel);
 		}
 		
-		@Override public void visitParentAccountLinker(AccUtilitiesItemType type) {}
-		@Override public void visitOther(AccUtilitiesItemType type) {}
-		@Override public void visitInfoMessage(AccUtilitiesItemType type) {}
-		@Override public void visitErrorMessage(AccUtilitiesItemType type) {}
-		@Override public void visitEmptyEntry(AccUtilitiesItemType type) {}
-		@Override public void visitDeleteEntries(AccUtilitiesItemType type) {}		
-		@Override public void visitAccountIntegrity(AccUtilitiesItemType type) {}
-		@Override public void visitDomainIntegrity(AccUtilitiesItemType type) {}
-		@Override public void visitNoLowLevelAccount(AccUtilitiesItemType type) {}
-		@Override public void visitCustomerAccount(AccUtilitiesItemType type) {}
-		@Override public void visitSupplierAccount(AccUtilitiesItemType type) {}
-		@Override public void visitCreditorAccount(AccUtilitiesItemType type) {}
-		@Override public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {}
-		@Override public void visitInvoiceIntegrity(AccUtilitiesItemType type) {}
-		@Override public void visitAccountChange(AccUtilitiesItemType type) {}
-		@Override public void visitUnbalancedEntry(AccUtilitiesItemType type) {}
+		@Override public void visitParentAccountLinker(AccUtilitiesItemType type) { /*Nothing*/ }
+		@Override public void visitOther(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitInfoMessage(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitErrorMessage(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitEmptyEntry(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitDeleteEntries(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitAccountIntegrity(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitDomainIntegrity(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitNoLowLevelAccount(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitCustomerAccount(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitSupplierAccount(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitCreditorAccount(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitInvoiceIntegrity(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitAccountChange(AccUtilitiesItemType type) {/*Nothing*/ }
+		@Override public void visitUnbalancedEntry(AccUtilitiesItemType type) {/*Nothing*/ }
 	}
 }
