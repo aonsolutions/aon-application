@@ -1,0 +1,9 @@
+.contentDetailContainer {
+    width: calc(50%);
+    position: absolute;
+    left: 50%;
+    z-index: 1;
+    overflow: auto;
+    box-sizing: border-box;
+    border-left: .0625rem solid lightgray;
+}
