@@ -271,6 +271,26 @@ All rights reserved.<br>Comments to: <a href="mailto:jpa-dev@eclipse.org">jpa-de
                     </bottom>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.3.1</version>
+                <executions>
+                    <execution>
+                       <goals>
+                           <goal>install-file</goal>
+                       </goals>
+                       <phase>install</phase>
+                       <configuration>
+                          <file>jakarta.persistence-api-2.2.2.jar</file>
+                          <generatePom>false</generatePom>
+                          <pomFile>pom.xml</pomFile>
+                          <version>2.2.2</version>
+                       </configuration>
+                </execution>
+            </executions>
+            </plugin>
+
         </plugins>
     </build>
 
