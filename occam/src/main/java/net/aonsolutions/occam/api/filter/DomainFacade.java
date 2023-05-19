@@ -47,6 +47,7 @@ public class DomainFacade {
 	public interface DomainBuilder<T> {
 		DomainBuilder<T> limit(int offset, int rows);
 		DomainBuilder<T> withParentDomain();
+		DomainBuilder<T> withCompany();
 		DomainBuilder<T> withAudit();
 		DomainBuilder<T> withBooking();
 		DomainBuilder<T> full();
@@ -60,6 +61,11 @@ public class DomainFacade {
 		
 		public CompositeDomainBuilder<T> addBuilder(DomainBuilder<?> builder) {
 			builders.add(builder);
+			return this;
+		}
+		@Override
+		public DomainBuilder<T> withCompany() {
+			builders.stream().forEach( b -> b.withCompany());
 			return this;
 		}
 		@Override

@@ -1,6 +1,8 @@
 package net.aonsolutions.occam.dao;
 
+import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.User.USER;
 
@@ -29,6 +31,7 @@ import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
+import net.aonsolutions.occam.api.config.Registry;
 import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.api.filter.AonFacade.AonFillerBuilder;
@@ -37,7 +40,7 @@ import net.aonsolutions.occam.api.filter.DomainFacade.DomainBuilder;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainBuilderFactory;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilter;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilters;
-import net.aonsolutions.occam.dao.ScopeDAO.ScopeFiller;
+import net.aonsolutions.occam.dao.FillerDAO.RegistryFiller;
 import net.aonsolutions.occam.dao.SecurityDAO.UserFiller;
 import net.aonsolutions.watson.client.util.AonStringUtils;
 
@@ -127,27 +130,23 @@ public class DomainDAO {
 	
 	private static class SelectBuilder implements DomainBuilder<SelectSelectStep<Record>> {
 		
-		@SuppressWarnings("rawtypes")
-		private static final Field[] DOMAIN_BASIC_FIELDS = new Field[]{
+		private static final Field<?>[] DOMAIN_BASIC_FIELDS = new Field<?>[]{
 			DOMAIN.ID,DOMAIN.NAME,DOMAIN.DESCRIPTION,DOMAIN.TYPE
 			,DOMAIN.SCOPE,DOMAIN.ENABLEHEREDITY,DOMAIN.ACTIVE
 		};
 			
-		@SuppressWarnings("rawtypes")
-		private static final Field[] DOMAIN_PARENT_BASIC_FIELDS = new Field[]{
+		private static final Field<?>[] DOMAIN_PARENT_BASIC_FIELDS = new Field<?>[]{
 			PARENT_DOMAIN.ID,PARENT_DOMAIN.NAME,PARENT_DOMAIN.DESCRIPTION
 			,PARENT_DOMAIN.TYPE,PARENT_DOMAIN.ACTIVE
 		};
 
-		@SuppressWarnings("rawtypes")
-		private static final Field[] DOMAIN_AUDIT_FIELDS = new Field[]{
+		private static final Field<?>[] DOMAIN_AUDIT_FIELDS = new Field<?>[]{
 			DOMAIN.LASTACCESS_USER, DOMAIN.LASTACCESS_DATE,DOMAIN.CREATION_USER
 			,DOMAIN.CREATION_DATE,DOMAIN.MODIFICATION_USER,DOMAIN.MODIFICATION_DATE
 			
 		};
-		
-		@SuppressWarnings("rawtypes")
-		private static final Field[] DOMAIN_BOOKING_FIELDS = new Field[]{
+
+		private static final Field<?>[] DOMAIN_BOOKING_FIELDS = new Field<?>[]{
 			DOMAIN.OWNER,DOMAIN.EXPIRATIONDATE,DOMAIN.DOMAINMANAGEMENT,
 			DOMAIN.DISABLEDOMAINMANAGEMENT,DOMAIN.MAXDEFINEDUSERS,
 			DOMAIN.AONCUSTOMER,DOMAIN.AONSTATUS
@@ -164,6 +163,11 @@ public class DomainDAO {
 		@Override
 		public SelectBuilder limit(int offest, int rows) {return this;}
 
+		@Override
+		public DomainBuilder<SelectSelectStep<Record>> withCompany() {
+			this.select = select.select( REGISTRY.fields() );
+			return null;
+		}
 		@Override
 		public SelectBuilder withParentDomain() {
 			this.select = select.select( DOMAIN_PARENT_BASIC_FIELDS );
@@ -206,10 +210,17 @@ public class DomainDAO {
 		private SelectJoinStep<Record> from;
 		
 		public FromBuilder(SelectSelectStep<Record> select ) {
-			from = select.from(DOMAIN)
+			from = select
+				.from(DOMAIN)
 				.leftOuterJoin(SCOPE).on(SCOPE.ID.eq(DOMAIN.SCOPE));
 		}
-		
+		@Override
+		public DomainBuilder<SelectJoinStep<Record>> withCompany() {
+			from = from
+				.innerJoin(COMPANY).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
+				.innerJoin(REGISTRY).on(REGISTRY.ID.eq(COMPANY.REGISTRY));
+			return this;
+		}
 		@Override
 		public FromBuilder withParentDomain() {
 			from = from.leftOuterJoin(PARENT_DOMAIN).on(PARENT_DOMAIN.ID.eq(DOMAIN.PARENT));
@@ -246,6 +257,7 @@ public class DomainDAO {
 		}
 		
 		@Override public WhereBuilder limit(int offset, int rows) {return this;}
+		@Override public WhereBuilder withCompany() {return this;}
 		@Override public WhereBuilder withParentDomain() {return this;}
 		@Override public WhereBuilder withUsers() {return this;}
 		@Override public WhereBuilder withAudit() {return this; }
@@ -279,6 +291,7 @@ public class DomainDAO {
 			return this;
 		}
 
+		@Override public LimitBuilder withCompany() {return this;}
 		@Override public LimitBuilder withParentDomain() {return this;}
 		@Override public LimitBuilder withUsers() {return this;}
 		@Override public LimitBuilder withAudit() {return this; }
@@ -292,6 +305,7 @@ public class DomainDAO {
 	}
 
 	private static class FillerBuilder implements DomainBuilder<Function<Record, RecordMapper<Domain>>>,AonFillerBuilder<Domain> {
+		private UnaryOperator<RecordMapper<Domain>> withCompany = t -> t;
 		private UnaryOperator<RecordMapper<Domain>> withAudit = t -> t;
 		private UnaryOperator<RecordMapper<Domain>> withParent = t -> t;
 		private UnaryOperator<RecordMapper<Domain>> withBooking = t -> t;
@@ -305,24 +319,17 @@ public class DomainDAO {
 		public Domain build(Record rec) {
 			
 			Function<Record, RecordMapper<Domain>> f = a -> new RecordMapper<Domain>(rec, Domain::new );
-			return f.andThen( mapper -> {
-					mapper.get()
-					.setId(FillerUtils.getValue(mapper.getRecord(),DOMAIN.ID))
-					.setName(FillerUtils.getValue(mapper.getRecord(),DOMAIN.NAME))
-					.setDescription(FillerUtils.getValue(mapper.getRecord(),DOMAIN.DESCRIPTION))
-					.setType( DomainType.safeValueOf( FillerUtils.getValue(mapper.getRecord(),DOMAIN.TYPE)).orElse(null))
-					.setScope( FillerUtils.getValue(mapper.getRecord(),SCOPE.ID) == null ? null : new ScopeFiller().apply(mapper.getRecord()))
-					.setEnableHeredity(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.ENABLEHEREDITY))
-					.setActive(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.ACTIVE))
-					;
+			return f
+				.andThen( mapper -> {
+					new FillerDAO.DomainFiller().apply(mapper.getRecord(), mapper.get());
 					return mapper;
 				})
+				.andThen( withCompany )
 				.andThen( withBooking )
 				.andThen( withAudit )
 				.andThen( withParent )
 				.apply(rec)
 				.get()
-				.setDirty(false)
 			;
 		}
 		
@@ -343,18 +350,17 @@ public class DomainDAO {
 		}
 		
 		@Override
+		public DomainBuilder<Function<Record, RecordMapper<Domain>>> withCompany() {
+			withCompany = mapper -> {
+				mapper.get().setCompany( new RegistryFiller( ).apply(mapper.getRecord(), new Registry()) );
+				return mapper;
+			};
+			return this;
+		}
+		@Override
 		public DomainBuilder<Function<Record, RecordMapper<Domain>>> withParentDomain() {
 			withParent = mapper -> {
-				mapper.get().setParent(
-					FillerUtils.getValue(mapper.getRecord(),DOMAIN.PARENT) == null 
-					? null 
-					: new Domain()
-						.setId(FillerUtils.getValue(mapper.getRecord(), PARENT_DOMAIN.PARENT))
-						.setName(FillerUtils.getValue(mapper.getRecord(), PARENT_DOMAIN.NAME))
-						.setDescription(FillerUtils.getValue(mapper.getRecord(), PARENT_DOMAIN.DESCRIPTION))
-						.setType( DomainType.safeValueOf( FillerUtils.getValue(mapper.getRecord(),PARENT_DOMAIN.TYPE)).orElse(null))
-						.setActive(FillerUtils.getBoolean(mapper.getRecord(), PARENT_DOMAIN.ACTIVE))
-				);
+				mapper.get().setParent(new FillerDAO.DomainFiller(PARENT_DOMAIN).apply(mapper.getRecord(), new Domain()));
 				return mapper;
 			};
 			return this;
@@ -371,6 +377,7 @@ public class DomainDAO {
 					.setMaxDefinedUsers(FillerUtils.getValue(mapper.getRecord(),DOMAIN.MAXDEFINEDUSERS))
 					.setAonCustomer(FillerUtils.getValue(mapper.getRecord(),DOMAIN.AONCUSTOMER))
 					.setAonStatus( AonStatus.safeValueOf( FillerUtils.getValue(mapper.getRecord(),DOMAIN.AONSTATUS)).orElse(null)))
+					.setDirty(false)
 				;
 				return mapper;
 			};

@@ -21,6 +21,7 @@ import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.dao.DAOUtils;
 import net.aonsolutions.occam.dao.DomainDAO;
+import net.aonsolutions.occam.json.DomainJSON;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;
@@ -155,6 +156,16 @@ class DomainDAOTest extends AbstractOccamTest {
 		assertTrue(optDomain.get().getUsers().isPresent());
 		Asserts.assertNotEmpty(optDomain.get().getUsers().get(), "Users");
 		assertTrue(optDomain.get().getUsers().get().stream().anyMatch(u -> AonStringUtils.equals( u.getLogin(), USER)));
+	}
+
+	@Test
+	void companyGetTest() {
+		Optional<Domain> optDomain = DomainDAO.get(ctx
+			, p -> p.withName().eq( DOMAIN_NAME )
+			, b -> b.withCompany().withBooking().withUsers()
+			);
+		assertTrue(optDomain.isPresent());
+		assertTrue(optDomain.get().getCompany().isPresent());
 	}
 
 	@Test
