@@ -16,6 +16,7 @@ export class ButtonComponent implements OnInit {
   @Input() padding : string = '';
   @Input() hoverBackgroundColor : string = '';
   @Input() hoverBorderColor : string = '';
+  @Input() hoverColor : string = '';
   @Input() fontSize : string = '1rem';
   @Input() align : string = '';
 
