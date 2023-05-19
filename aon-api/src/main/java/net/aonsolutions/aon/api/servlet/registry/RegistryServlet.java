@@ -213,7 +213,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 				
 				if(RegistryAdditionalInfo.BILLABLE.equals(rai)) {
 					Optional<RegistryAddInfo> addinfo = AON.getRegistryAddInfo(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getAttributeProperty().eq("AON_BILLABLE").and(f.getRegistryProperty().eq(registryId)));
-					object.put(IJsonNames.BILLABLE, addinfo.isPresent());
+					object.put(IJsonNames.BILLABLE, addinfo.isEmpty());
 				}
 				
 				if (RegistryAdditionalInfo.DOMAIN_LINKED.equals(rai)) {
