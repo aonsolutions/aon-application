@@ -1,1 +1,11 @@
-<p>list-element works!</p>
+<div class="listElement"
+    [ngStyle]="{
+        'height': heightContainer,
+        'width': widthContainer,
+        'padding': padding,
+        'border': border,
+        'borderColor': color,
+        'borderRadius': borderRadius
+}">
+    <ng-content></ng-content>
+</div>

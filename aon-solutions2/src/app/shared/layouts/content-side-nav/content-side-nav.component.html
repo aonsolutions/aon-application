@@ -1,1 +1,4 @@
-<p>content-side-nav works!</p>
+<mat-drawer-container class="contentSideNav">
+    <mat-drawer mode="side" opened class="contentSideNavMenu"><ng-content select="[nav]"></ng-content></mat-drawer>
+    <mat-drawer-content class="contentSideNavMain"><ng-content select="[content]"></ng-content></mat-drawer-content>
+</mat-drawer-container>

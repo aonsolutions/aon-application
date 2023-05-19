@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-content',
@@ -7,7 +7,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContentComponent implements OnInit {
 
-  constructor() { }
+  @Input() heightHeader : string;
+  @Input() padding : string;
+
+  constructor() {
+    this.heightHeader = '0%';
+    this.padding = '';
+  }
 
   ngOnInit(): void {
   }

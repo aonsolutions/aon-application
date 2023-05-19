@@ -1,0 +1,13 @@
+.contentHeaderContainer {
+    width: calc(100%);
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    background-color: white;
+    box-sizing: border-box;
+}
+
+.contentHeaderContainer > .contentHeaderContainerMain {
+    box-sizing: border-box;
+    height: calc(100%);
+}
