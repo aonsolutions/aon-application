@@ -14,6 +14,7 @@ import com.esferalia.aon.gwt.common.client.TextCell;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
 import com.esferalia.aon.gwt.common.client.widget.CustomDataGrid;
+import com.esferalia.aon.gwt.common.client.widget.DateListBox;
 import com.esferalia.aon.gwt.common.client.widget.MinimizePanel;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
 import com.esferalia.aon.gwt.common.client.widget.ResultsPanel;
@@ -48,6 +49,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.AbstractDataProvider;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.HasData;
@@ -84,13 +86,13 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 	public static final byte SAVE_OPTION = 0x01;
 
 	public static <T extends HasId<?>> void calculate(Salary.Type salaryType, Date startDate,
-			Date endDate, Date issueDate, String itemClass, Set<T> items, int optionsBits, Integer extra,
+			Date endDate, Date issueDate, Date chargeDate, String itemClass, Set<T> items, int optionsBits, Integer extra,
 			final AsyncCallback<JsSalaryResult> callback) {
-		calculate(salaryType, startDate, endDate, issueDate, startDate, endDate, itemClass, items, optionsBits, extra, callback);
+		calculate(salaryType, startDate, endDate, issueDate, chargeDate,  startDate, endDate, itemClass, items, optionsBits, extra, callback);
 	}
 
 	public static <T extends HasId<?>> void calculate(Salary.Type salaryType, Date startDate,
-			Date endDate, Date issueDate, Date startCheckDate, Date endCheckDate, 
+			Date endDate, Date issueDate, Date chargeDate,  Date startCheckDate, Date endCheckDate, 
 			String itemClass, Set<T> items, Integer extra, int optionsBits, 
 			final AsyncCallback<JsSalaryResult> callback) {
 	
@@ -110,6 +112,8 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 				.append("&" + END_DATE + "=" + DATE_FORMAT.format(endDate));
 		requestDataBuffer
 				.append("&" + ISSUE_DATE + "=" + DATE_FORMAT.format(issueDate));
+		requestDataBuffer
+				.append("&" + CHARGE_DATE + "=" + DATE_FORMAT.format(chargeDate));
 		requestDataBuffer
 				.append("&" + START_CHECK_DATE + "=" + DATE_FORMAT.format(startCheckDate));
 		requestDataBuffer
@@ -196,7 +200,10 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 	@UiField
 	MonthListBox monthListBox;
 	
+	@UiField
+	DateListBox payDateListBox;
 
+	
 	@UiField
 	ListBox dbMonthListBox;
 
@@ -272,6 +279,8 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 		resultsPanel.setWidget(results);
 		
+		initPayDateListBox();
+		
 	}
 
 
@@ -291,6 +300,11 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 	void onSaveClicked(ClickEvent event) {
 		keepRadioButton.setEnabled(saveCheckBox.getValue());
 		overwriteRadioButton.setEnabled(saveCheckBox.getValue());
+	}
+
+	@UiHandler("monthListBox")
+	void onMonthListBoxChanges(ChangeEvent event) {
+	    CalcDialog.changePayDateListBoxRange(payDateListBox, DateUtils.getLastDayOfMonth(monthListBox.getSelectedMonth()));
 	}
 
 	@UiHandler("dbMonthListBox")
@@ -325,6 +339,7 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 		Date startDate = DateUtils.getFirstDayOfMonth(month);
 		Date endDate = DateUtils.getLastDayOfMonth(month);
 		Date issueDate = DateUtils.getLastDayOfMonth(month);
+		Date chargeDate = payDateListBox.getSelectedDate();
 		
 		Date checkMonth = getCheckMonth();
 		Date startCheckDate = checkMonth == null ? startDate : DateUtils.getFirstDayOfMonth(checkMonth);
@@ -332,7 +347,7 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 		Set<Enterprise> enterprises = enterprisesSelectionModel.getSelectedSet();
 		
-		calculate(Salary.Type.SALARY, startDate, endDate, issueDate, startCheckDate, endCheckDate, ENPERPRISES, enterprises, null,optionsBits,  new AsyncCallback<JsSalaryResult>(){
+		calculate(Salary.Type.SALARY, startDate, endDate, issueDate, chargeDate, startCheckDate, endCheckDate, ENPERPRISES, enterprises, null,optionsBits,  new AsyncCallback<JsSalaryResult>(){
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
@@ -386,6 +401,10 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 						});
 			}
 		}).addDataDisplay(enterprisesDataGrid);
+	}
+	
+	private void initPayDateListBox() {
+	    CalcDialog.initPayDateListBox(payDateListBox, () -> DateUtils.getLastDayOfMonth(monthListBox.getSelectedMonth()));
 	}
 
 	private void onSelectionChange() {
@@ -527,7 +546,6 @@ public class MainCalculator extends MainEntryPoint implements CalculateService {
 
 	}
 	
-
 
 
 

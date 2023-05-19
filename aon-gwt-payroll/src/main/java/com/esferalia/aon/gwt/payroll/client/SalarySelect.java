@@ -7,16 +7,20 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.widget.DateListBox;
 import com.esferalia.aon.gwt.common.client.widget.MonthListBox;
+import com.esferalia.aon.gwt.common.shared.DateTimeFormatException;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
+import com.esferalia.aon.gwt.common.shared.EmptyStringException;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
 import com.esferalia.aon.gwt.payroll.shared.Extra;
-import com.esferalia.aon.gwt.payroll.shared.Period;
 import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.gwt.payroll.shared.Salary.Type;
 import com.esferalia.aon.gwt.payroll.shared.Salary.TypeVisitor;
+import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -28,6 +32,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
@@ -69,6 +74,13 @@ public class SalarySelect extends Composite {
 		protected abstract List<Date> getDates(int start, int length);
 	}
 
+	class PayDateProvider extends AbstractDateProvider {
+		@Override
+		protected List<Date> getDates(int start, int length) {
+			return getPayDates(start, length);
+		}
+	}
+
 	class ExtrasDateProvider extends AbstractDateProvider {
 
 		@Override
@@ -87,18 +99,35 @@ public class SalarySelect extends Composite {
 
 
 	@UiField
+	Label typeLabel;
+	@UiField
 	ListBox typeListBox;
+	@UiField
+	Label dateLabel;
 	@UiField
 	DateListBox dateListBox;
 	@UiField
+	Label payDateLabel;
+	@UiField
+	DateListBox payDateListBox;
+	@UiField
+	Label fromDateLabel;
+	@UiField
 	DateListBox fromDateListBox;
+	@UiField
+	Label monthLabel;
 	@UiField
 	MonthListBox monthListBox;
 	@UiField
+	Label fromMonthLabel;
+	@UiField
 	MonthListBox fromMonthListBox;
-
+	
+	private boolean hasChanged;
+	
 	private List<Extra> extras;
 	private List<Listener> listeners;
+	private PayDateProvider payDatesProvider;
 	private ExtrasDateProvider extrasDatesProvider;
 	private SettleDateProvider settleDatesProvider;
 	private com.esferalia.aon.gwt.payroll.shared.SalaryPreview salaryPreview;
@@ -107,19 +136,26 @@ public class SalarySelect extends Composite {
 		initWidget(binder.createAndBindUi(this));
 		initTypeListBox();
 		initMonthListBox();
-		listeners = new LinkedList<SalarySelect.Listener>();
+		hasChanged = true;
+		listeners = new LinkedList<>();
+		payDatesProvider = new PayDateProvider();
+		payDatesProvider.addDataDisplay(payDateListBox);
 		extrasDatesProvider = new ExtrasDateProvider();
 		settleDatesProvider = new SettleDateProvider();
 	}
-
+	
 	public void setExtras(List<Extra> extras) {
-		this.extras = new ArrayList<Extra>(extras);
+		this.extras = new ArrayList<>(extras);
 		sort(extras);
 		initExtraTypeItem();
 	}
 
 	public void setSalaryPreview(
 			com.esferalia.aon.gwt.payroll.shared.SalaryPreview salaryPreview) {
+	    	
+	    	hasChanged |= this.salaryPreview == null 
+	    		|| !this.salaryPreview.getEmployee().getId().equals(salaryPreview.getEmployee().getId());  
+	    	
 		this.salaryPreview = salaryPreview;
 		syncTypeListBox();
 		syncDateListBox(getSelectedType());
@@ -151,6 +187,7 @@ public class SalarySelect extends Composite {
 			}
 
 		});
+		hasChanged = false;
 		
 	}
 
@@ -167,30 +204,41 @@ public class SalarySelect extends Composite {
 	// -------------------------------------------------------------------------
 	@UiHandler("dateListBox")
 	void onDateListBoxChanged(ChangeEvent event) {
+	    	hasChanged = hasChanged();
 		syncSalarySelectDates();
 		fireOnChange();
 	}
 
 	@UiHandler("monthListBox")
 	void onMonthListBoxChanged(ChangeEvent event) {
+	    	hasChanged = hasChanged();
 		syncSalarySelectDates();
 		fireOnChange();
 	}
 
 	@UiHandler("fromMonthListBox")
 	void onFromMonthListBoxChanged(ChangeEvent event) {
+	    	hasChanged = hasChanged();
 		syncSalarySelectDates();
 		fireOnChange();
 	}
 
 	@UiHandler("fromDateListBox")
 	void onFromDateListBoxChanged(ChangeEvent event) {
+	    	hasChanged = hasChanged();
 		syncSalarySelectDates();
 		fireOnChange();
 	}
 
+	@UiHandler("payDateListBox")
+	void onPayDateListBoxChanged(ChangeEvent event) {
+	    	Date payDate = payDateListBox.getSelected();
+	    	salaryPreview.setChargeDate(payDate);
+	}
+
 	@UiHandler("typeListBox")
 	void onTypeListBoxChanged(ChangeEvent event) {
+	    	hasChanged = hasChanged();
 		Type type = getSelectedType();
 		syncDateListBox(type);
 		salaryPreview.setType(type);
@@ -252,9 +300,52 @@ public class SalarySelect extends Composite {
 		String value = typeListBox.getValue(selected);
 		return Type.valueOf(value);
 	}
+	
+	private boolean hasChanged() {
+	    if ( salaryPreview == null ) {
+		return true;
+	    }
+	    
+	    Type type = getSelectedType();
+
+	    if (salaryPreview.getType() != type ) {
+		return true;
+	    }
+		    
+
+	    return type.accept(new TypeVisitor<Boolean>() {
+
+		final Date draftEndDate = CalendarUtil.copyDate(salaryPreview.getEndDate());
+		final Date draftStartDate = CalendarUtil.copyDate(salaryPreview.getStartDate());
+
+		@Override
+		public Boolean visitSalary(Type type) {
+		    return isDifferentMonth(draftEndDate, monthListBox.getSelectedMonth());
+		}
+
+		@Override
+		public Boolean visitExtra(Type type) {
+		    return isDifferentDay(draftEndDate, dateListBox.getSelectedDate());
+		}
+
+		@Override
+		public Boolean visitSettle(Type type) {
+		    return isDifferentDay(draftStartDate, fromDateListBox.getSelectedDate())
+			    || !isDifferentDay(draftEndDate, dateListBox.getSelectedDate());
+		}
+
+		@Override
+		public Boolean visitDelay(Type type) {
+		    return isDifferentMonth(draftStartDate, fromMonthListBox.getSelectedMonth())
+			    || !isDifferentMonth(draftEndDate, monthListBox.getSelectedMonth());
+		}
+
+	    });
+	}
 
 	private void syncSalarySelectDates() {
 		Type type = getSelectedType();
+		
 		type.accept(new TypeVisitor<Void>() {
 
 			@Override
@@ -359,30 +450,42 @@ public class SalarySelect extends Composite {
 				.getEndDate());
 		final Date contractEndDate = CalendarUtil.copyDate(employee
 				.getEndDate());
+		
 
 		type.accept(new TypeVisitor<Void>() {
 
 			@Override
 			public Void visitSalary(Type type) {
 
+				dateLabel.setVisible(false);
 				dateListBox.setVisible(false);
+				fromDateLabel.setVisible(false);
 				fromDateListBox.setVisible(false);
+				fromMonthLabel.setVisible(false);
 				fromMonthListBox.setVisible(false);
+				
+				monthLabel.setText("MES DE C\u00C1LCULO");
+				monthLabel.setVisible(true);
 				monthListBox.setVisible(true);
 
 				monthListBox.setFirstMonth(contractStartDate);
 				monthListBox.setLastMonth(contractEndDate);
 				monthListBox.setSelectedMonth(draftEndDate);
-
+				
 				return null;
 			}
 
 			@Override
 			public Void visitExtra(Type type) {
 				try {
+					monthLabel.setVisible(false);
 					monthListBox.setVisible(false);
+					fromDateLabel.setVisible(false);
 					fromDateListBox.setVisible(false);
+					fromMonthLabel.setVisible(false);
 					fromMonthListBox.setVisible(false);
+					dateLabel.setText("FECHA DE LA PAGA");
+					dateLabel.setVisible(true);
 					dateListBox.setVisible(true);
 
 					if (settleDatesProvider.hasDataDisplay(dateListBox))
@@ -416,8 +519,14 @@ public class SalarySelect extends Composite {
 			@Override
 			public Void visitSettle(Type type) {
 				
+				monthLabel.setVisible(false);
 				monthListBox.setVisible(false);
+
+				fromMonthLabel.setVisible(false);
 				fromMonthListBox.setVisible(false);
+				
+				dateLabel.setText("FECHA DE FIN");
+				dateLabel.setVisible(true);
 				dateListBox.setVisible(true);
 				
 				if (extrasDatesProvider.hasDataDisplay(dateListBox))
@@ -430,11 +539,14 @@ public class SalarySelect extends Composite {
 					List<Date> fromDates = new ArrayList<Date>();
 					fromDates.add(employee.getSeniorityDate());
 					fromDates.add(employee.getStartDate());
+					fromDateLabel.setText("FECHA DE INICIO");
+					fromDateLabel.setVisible(true);
 					fromDateListBox.setVisible(true);
 					fromDateListBox.setRowCount(2, true);
 					fromDateListBox.setRowData(0, fromDates);
 					fromDateListBox.setSelected(employee.getSeniorityDate(), true);
 				} else {
+					fromDateLabel.setVisible(false);
 					fromDateListBox.setVisible(false);
 				}
 				
@@ -464,9 +576,17 @@ public class SalarySelect extends Composite {
 			@Override
 			public Void visitDelay(Type type) {
 
+				dateLabel.setVisible(false);
 				dateListBox.setVisible(false);
+				fromDateLabel.setVisible(false);
 				fromDateListBox.setVisible(false);
+				
+				fromMonthLabel.setText("MES DE INICIO");
+				fromMonthLabel.setVisible(true);
 				fromMonthListBox.setVisible(true);
+				
+				monthLabel.setText("MES DE FIN");
+				monthLabel.setVisible(true);
 				monthListBox.setVisible(true);
 
 				Date draftStartDate = null;
@@ -490,6 +610,35 @@ public class SalarySelect extends Composite {
 			}
 
 		});
+		
+		try {
+			payDateLabel.setVisible(true);
+			payDateListBox.setVisible(true);
+
+        		Date endDate = SalarySelect.this.salaryPreview.getEndDate();
+        		
+        		Date payStartDate = DateUtils.copyDateOnly(endDate);
+        		payStartDate  = DateUtils.addDays2Date(payStartDate, -20);
+
+        		Date selectedDate = payDateListBox.getSelectedDate();
+        		if ( !hasChanged  && selectedDate != null ) 
+        		    return;
+        		
+        		Date payDate = getPayDate();
+        		Date defautlPayDate = payDate != null ? payDate : DateUtils.after(new Date(), endDate);
+        		
+        		int index = DateUtils.getDaysBetween(payStartDate, defautlPayDate);
+        		int length = payDateListBox.getPageSize();
+        		int start = Math.max(0, index - length / 2);
+        
+        		payDateListBox.setVisibleRangeAndClearData(new Range(start, length), true);
+        		Scheduler.get().scheduleFinally(() -> payDateListBox.setSelected(defautlPayDate, true));
+		
+		} catch( Exception e ) {
+			payDateLabel.setVisible(false);
+			payDateListBox.setVisible(false);
+		}
+		
 	}
 
 	private void syncTypeListBox() {
@@ -517,12 +666,30 @@ public class SalarySelect extends Composite {
 		return firstExtra;
 	}
 
+	private List<Date> getPayDates(int start, int length) {
+
+		Date endDate = salaryPreview.getEndDate();
+
+		List<Date> dates = new ArrayList<>(length);
+
+		Date date = DateUtils.copyDateOnly(endDate);
+		date = DateUtils.addDays2Date(date,  -20);
+		
+		for (DateUtils.addDays2Date(date, start); dates.size() < length ; DateUtils
+				.addDays2Date(date, 1)) {
+			dates.add(DateUtils.copyDateOnly(date));
+		}
+
+		return dates;
+
+	}
+
 	private List<Date> getSettleDates(int start, int length) {
 
 		Employee employee = salaryPreview.getEmployee();
 		Date contractEndDate = employee.getEndDate();
 
-		List<Date> dates = new ArrayList<Date>(length);
+		List<Date> dates = new ArrayList<>(length);
 
 		
 		Date date = DateUtils.copyDateOnly(employee.getStartDate());
@@ -603,7 +770,7 @@ public class SalarySelect extends Composite {
 			index++;
 			Extra extra = extras.get(index % extras.size());
 			issueDate = DateUtils.copyDateOnly(contractStartDate);
-			DateUtils.addYears2Date(issueDate, (int) (index / extras.size()));
+			DateUtils.addYears2Date(issueDate, (index / extras.size()));
 			parseExtraDate(extra.getIssueDate(), issueDate);
 		} while (issueDate.compareTo(date) != 0
 				&& DateUtils.getYears(issueDate, date) <= 1);
@@ -625,6 +792,37 @@ public class SalarySelect extends Composite {
 		}
 		return null;
 
+	}
+	
+	private Date getPayDate() {
+	    Type type = salaryPreview.getType();
+	    
+	    if ( type != Type.SALARY  ) {
+		return null;
+	    }
+	    
+	    Salary [] salaries = salaryPreview.getEmployee().getSalaries();
+	    
+	    Map<String, Integer> payDays = 
+            Arrays.stream(salaries)
+	    .filter(s -> s.getType() == type )
+	    .filter( s -> isLastDayOfMonth(s.getEndDate()))
+	    .filter( s -> !isLastDayOfMonth(s.getChargeDate()))
+	    .map( SalarySelect::getPayDay )
+	    .collect(Collectors.toMap( s -> s, s -> 1, Integer::sum ));
+	    
+	    int max = payDays.values().stream().max(Integer::compare).orElse(0);
+
+	    String payDay = 
+	    payDays.entrySet().stream()
+	    .filter(e -> max == e.getValue())
+	    .findFirst().map( Map.Entry::getKey ).orElse(null);
+	    
+	    try {
+		return getPayDate(payDay, salaryPreview);
+	    } catch ( Exception e ) {
+		return null;
+	    }
 	}
 
 	// -------------------------------------------------------------------------
@@ -667,5 +865,75 @@ public class SalarySelect extends Composite {
 
 	private static Date min(Date a, Date b) {
 		return a.compareTo(b) <= 0 ? a : b;
+	}
+	
+	private static boolean isDifferentMonth(Date d1, Date d2) {
+	    if (d1 == d2)
+		return false;
+	    if (d1 == null)
+		return true;
+	    if (d2 == null)
+		return true;
+
+	    return d1.getYear() != d2.getYear() 
+		    || d1.getMonth() != d2.getMonth();
+	}
+
+	private static boolean isDifferentDay(Date d1, Date d2) {
+	    return !DateUtils.equals(d1, d2);
+	}
+	
+	private static boolean isLastDayOfMonth(Date date) {
+	    return DateUtils.equals( DateUtils.getLastDayOfMonth(date), date );
+	}
+	
+	private static String getPayDay(Salary salary) {
+	    Date endDate = salary.getEndDate();
+	    Date chargeDate = salary.getChargeDate();
+	    int months = DateUtils.getMonths(chargeDate, endDate);
+
+	    String day = DateTimeFormat.getFormat("d").format(chargeDate);
+
+	    return months == 0 ? day : day + " " + months;
+	}
+	
+	private static Date getPayDate(String payDay, Salary salary) {
+	    return getPayDate(payDay, salary.getEndDate());
+	}
+
+	private static Date getPayDate(String payDay, Date endDate) {
+		if (payDay == null)
+			throw new EmptyStringException();
+
+		DateTimeFormat format = DateTimeFormat.getFormat("d");
+
+		int start = -1;
+		while (++start < payDay.length() && Character.isSpace(payDay.charAt(start)))
+			;
+		if (start >= payDay.length())
+			throw new EmptyStringException();
+		
+		Date date = DateUtils.copyDateOnly(endDate);
+		try {
+			start += format.parse(payDay, start, date);
+		} catch (Throwable t) {
+			throw new DateTimeFormatException("'" + payDay + "/" + start + "' it's not a valid pay date");
+		}
+
+		while (++start < payDay.length() && Character.isSpace(payDay.charAt(start)))
+			;
+
+		int end = payDay.length();
+		while (--end > 0 && Character.isSpace(payDay.charAt(end)))
+			;
+
+		if (start > end)
+			return date;
+		try {
+			int months = Integer.valueOf(payDay.substring(start, end + 1));
+			return DateUtils.addMonths2Date(date, months);
+		} catch (Throwable t) {
+			throw new DateTimeFormatException("'" + payDay + "/" + start + "' it's not a valid pay date");
+		}
 	}
 }

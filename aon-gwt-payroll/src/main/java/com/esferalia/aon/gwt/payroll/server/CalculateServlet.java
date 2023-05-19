@@ -523,6 +523,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 			Date endDate = getEndDate(req);
 			Date startDate = getStartDate(req);
 			Date issueDate = getIssueDate(req);
+			Date chargeDate = getChargeDate(req);
 			Criteria criteria = getCriteria(req);
 
 			criteria.addOrder(SQLConstants.WORKPLACE + "." + SQLConstants.WorkplaceColumns.ID);
@@ -536,7 +537,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 				public ISQLContractSalaryCalculatorContext visitSalary(SalaryType salaryType) {
 					try {
 						return new SQLContractSalaryCalculatorContext(conn, startDate, endDate,
-								issueDate, criteria);
+								issueDate, chargeDate, criteria);
 					} catch (ExpressionException | SQLException e) {
 						throw new RuntimeException(e);
 					}
@@ -553,6 +554,7 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 								extra,
 								year,
 								issueDate, 
+								chargeDate,
 								criteria);
 					} catch (ParseException | SQLException e) {
 						throw new RuntimeException(e);
@@ -704,6 +706,10 @@ public class CalculateServlet extends HttpServlet implements CalculateService {
 
 	private static Date getStartDate(HttpServletRequest request) throws ParseException {
 		return getDate(request, START_DATE);
+	}
+
+	private static Date getChargeDate(HttpServletRequest request) throws ParseException {
+		return getDate(request, CHARGE_DATE);
 	}
 
 	private static Date getIssueDate(HttpServletRequest request) throws ParseException {
