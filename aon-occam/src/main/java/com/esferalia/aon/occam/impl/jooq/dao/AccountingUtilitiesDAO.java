@@ -15,12 +15,14 @@ import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Stack;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -88,6 +90,10 @@ import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class AccountingUtilitiesDAO {
+	
+	private AccountingUtilitiesDAO() {
+		
+	}
 
 	// Á --> \u00C1 á --> \u00E1 
 	// É --> \u00C9 é --> \u00E9 
@@ -98,6 +104,8 @@ public class AccountingUtilitiesDAO {
 	// Ñ --> \u00D1 ñ --> \u00F1
 	// º --> \u00BA ª --> \u00AA 
 	// ¿ --> \u00BF
+	private static final String OUT_OF_DATE_MESSAGE = "Apunte fuera de fecha en el ejercicio: {0}. [N\u00BA Diario: {1} , Fecha: {2}] ";
+	
 	private static SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static SimpleDateFormat DATETIME_FORMATTER = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 	
@@ -544,7 +552,9 @@ public class AccountingUtilitiesDAO {
 		ctx.getDslContext().select(ACCOUNT_ENTRY.ID,ACCOUNT_ENTRY.JOURNAL,ACCOUNT_PERIOD.NAME,ACCOUNT_ENTRY.ENTRY_DATE)
 			.from(ACCOUNT_ENTRY)
 			.join(ACCOUNT_PERIOD).on(ACCOUNT_ENTRY.ACCOUNT_PERIOD.eq(ACCOUNT_PERIOD.ID))			
-			.where(ACCOUNT_ENTRY.DOMAIN.equal(domain.getId()).and(ACCOUNT_ENTRY.ENTRY_DATE.lessThan(ACCOUNT_PERIOD.INITIATION_DATE).or(ACCOUNT_ENTRY.ENTRY_DATE.greaterThan(ACCOUNT_PERIOD.DEADLINE))))
+			.where(ACCOUNT_ENTRY.DOMAIN.equal(domain.getId())
+				.and(ACCOUNT_ENTRY.ENTRY_DATE.lessThan(ACCOUNT_PERIOD.INITIATION_DATE)
+				 .or(ACCOUNT_ENTRY.ENTRY_DATE.greaterThan(ACCOUNT_PERIOD.DEADLINE))))
 		.orderBy(ACCOUNT_PERIOD.NAME)
 		.fetch()
 		.stream()
@@ -553,16 +563,12 @@ public class AccountingUtilitiesDAO {
 				.setDomain(domain.getId())
 				.setDomainName(domain.getDescription())
 				.setEntryDate(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
-				.setMessage("Apunte fuera de fecha en el ejercicio: " 
-						+ rec.getValue(ACCOUNT_PERIOD.NAME) 
-						+ "."
-						+ " [N\u00BA Diario: "
-						+ AonStringUtils.leftPad(AonNumberUtils.toString(rec.getValue(ACCOUNT_ENTRY.JOURNAL)), 6, '0')
-						+ ", Fecha: "
-						+ AonDateUtils.simpleFormat(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))
-						+ "] "
-						))
-		.forEach(item -> result.add(item) );
+				.setMessage( MessageFormat.format(OUT_OF_DATE_MESSAGE  
+					,rec.getValue(ACCOUNT_PERIOD.NAME) 
+					,AonStringUtils.leftPad(AonNumberUtils.toString(rec.getValue(ACCOUNT_ENTRY.JOURNAL)), 6, '0')
+					,AonDateUtils.simpleFormat(rec.getValue(ACCOUNT_ENTRY.ENTRY_DATE))))
+			)
+		.forEach( result::add );
 	}
 	
 	public static AccUtilitiesResult moveOutOfDateEntries(AONContext ctx, AccUtilitiesResult findResult) {
@@ -575,23 +581,25 @@ public class AccountingUtilitiesDAO {
 	
 	private static void moveOutOfDateEntry(AONContext ctx, AccUtilitiesOutOfDateEntryItem item) {
 		
-		Integer accountPeriodId = null;
 		try {
 			// Obtenemos el ID del ejercicio contable según la fecha, si existe y está en estado ACTIVO o APERTURA
-			accountPeriodId = ctx.getDslContext()
+			Optional<Integer> accountPeriodId = ctx.getDslContext()
 				.select(ACCOUNT_PERIOD.ID)
 				.from(ACCOUNT_PERIOD)
 				.where(ACCOUNT_PERIOD.DOMAIN.eq(item.getDomain()))
-						.and(ACCOUNT_PERIOD.INITIATION_DATE.lessOrEqual(AonDateUtils.toSql(item.getEntryDate())))
-						.and(ACCOUNT_PERIOD.DEADLINE.greaterOrEqual(AonDateUtils.toSql(item.getEntryDate())))
-						.and(ACCOUNT_PERIOD.STATUS.eq(AccountPeriodStatus.ACTIVE.getValue()).or(ACCOUNT_PERIOD.STATUS.eq(AccountPeriodStatus.OPENING.getValue())))
-			    .fetchOne(ACCOUNT_PERIOD.ID);
+					.and(ACCOUNT_PERIOD.INITIATION_DATE.lessOrEqual(AonDateUtils.toSql(item.getEntryDate())))
+					.and(ACCOUNT_PERIOD.DEADLINE.greaterOrEqual(AonDateUtils.toSql(item.getEntryDate())))
+					.and(ACCOUNT_PERIOD.STATUS.eq(AccountPeriodStatus.ACTIVE.getValue())
+					 .or(ACCOUNT_PERIOD.STATUS.eq(AccountPeriodStatus.OPENING.getValue())))
+			    .fetch(ACCOUNT_PERIOD.ID)
+			    .stream()
+			    .findFirst();
 			
 			// Si es distinto de null, modificar el ejercicio del apunte
-			if (accountPeriodId != null) {
+			if (accountPeriodId.isPresent() ) {
 				ctx.getDslContext()
 					.update(ACCOUNT_ENTRY)
-					.set(ACCOUNT_ENTRY.ACCOUNT_PERIOD, accountPeriodId)
+					.set(ACCOUNT_ENTRY.ACCOUNT_PERIOD, accountPeriodId.get())
 					.set(ACCOUNT_ENTRY.MODIFICATION_USER, ctx.getUser())
 					.set(ACCOUNT_ENTRY.MODIFICATION_DATE, new Timestamp(System.currentTimeMillis()))
 					.where(ACCOUNT_ENTRY.ID.eq(item.getEntryId()))
