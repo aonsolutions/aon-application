@@ -424,6 +424,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			Date startDate = calcDialog.getStartDate();
 			Date endDate = calcDialog.getEndDate();
 			Date issueDate = calcDialog.getIssueDate();
+			Date chargeDate = calcDialog.getChargeDate();
 
 			Set<Workplace> workplaces = calcDialog.getSelectedData();
 
@@ -440,7 +441,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			Integer extra = calcDialog.getExtra();
 			com.esferalia.aon.gwt.payroll.shared.Salary.Type salaryType = calcDialog.getType();
 
-			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, WORKPLACES, workplaces, extra,
+			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, chargeDate, WORKPLACES, workplaces, extra,
 					optionsBits, this);
 
 			clear();
@@ -546,6 +547,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			Date startDate = calcDialog.getStartDate();
 			Date endDate = calcDialog.getEndDate();
 			Date issueDate = calcDialog.getIssueDate();
+			Date chargeDate = calcDialog.getChargeDate();
 
 			Set<Employee> employees = calcDialog.getSelectedData();
 
@@ -562,7 +564,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			Integer extra = calcDialog.getExtra();
 			com.esferalia.aon.gwt.payroll.shared.Salary.Type salaryType = calcDialog.getType();
 
-			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, EMPLOYEES, employees, extra,
+			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, chargeDate, EMPLOYEES, employees, extra,
 					optionsBits, this);
 			clear();
 
@@ -1303,6 +1305,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			Date startDate = calcDialog.getStartDate();
 			Date endDate = calcDialog.getEndDate();
 			Date issueDate = calcDialog.getIssueDate();
+			Date chargeDate = calcDialog.getChargeDate();
 
 			Set<Employee> employees = calcDialog.getSelectedData();
 
@@ -1319,7 +1322,7 @@ public class EmployeeTree implements EntryPoint, Employees.Listener, MetaData.Li
 			Integer extra = calcDialog.getExtra();
 			com.esferalia.aon.gwt.payroll.shared.Salary.Type salaryType = calcDialog.getType();
 
-			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, EMPLOYEES, employees, extra,
+			MainCalculator.calculate(salaryType, startDate, endDate, issueDate, chargeDate, EMPLOYEES, employees, extra,
 					optionsBits, this);
 			clear();
 			showResultsPanel(); // TODO: Here or at below 'onReadyStateChange'

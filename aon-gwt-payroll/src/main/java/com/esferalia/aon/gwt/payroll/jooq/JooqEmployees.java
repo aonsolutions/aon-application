@@ -69,6 +69,7 @@ import com.esferalia.aon.gwt.common.shared.StringUtils;
 import com.esferalia.aon.gwt.payroll.shared.Agreement;
 import com.esferalia.aon.gwt.payroll.shared.Category;
 import com.esferalia.aon.gwt.payroll.shared.Employee;
+import com.esferalia.aon.gwt.payroll.shared.Salary;
 import com.esferalia.aon.jooq.tables.Contract;
 import com.esferalia.aon.jooq.tables.Person;
 import com.esferalia.aon.jooq.tables.records.ContractBonusRecord;
@@ -358,14 +359,22 @@ public class JooqEmployees {
 	}
 	
 	private static void hasPayroll(DSLContext context, Employee employee) {
-		Result<Record> salaryRecords = context.select().from(SALARY)
-				.where(SALARY.CONTRACT.eq(employee.getId()))
-				.fetch();
+		Salary [] salaries = 
+			context.select()
+			.from(SALARY)
+			.where(SALARY.CONTRACT.eq(employee.getId()))
+			.orderBy(SALARY.START_DATE.desc())
+			.fetchStreamInto(SALARY)
+			.map( s -> new Salary()
+			.setType(s.getType())
+			.setEndDate(s.getEndDate()) 
+			.setStartDate(s.getStartDate()) 
+			.setIssueDate(s.getIssueDate()) 
+			.setChargeDate(s.getChargeDate()))
+			.toArray(Salary[]::new);
 		
-		if(salaryRecords.isEmpty())
-			employee.setHasSalaries(false);
-		else
-			employee.setHasSalaries(true);
+		employee.setSalaries(salaries);
+		
 	}
 
 	private static SelectOnConditionStep<Record> getEmployeeSelect(DSLContext context) {

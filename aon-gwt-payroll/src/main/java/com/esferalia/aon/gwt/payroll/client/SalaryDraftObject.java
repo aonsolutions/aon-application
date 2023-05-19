@@ -923,6 +923,10 @@ public class SalaryDraftObject implements IContextProvider , Payroll{
 	public List<Variable> getDbContext() {
 		return salaryDraft.getDbContext();
 	}
+	
+	public Date getDbChargeDate() {
+	    return salaryDraft.getDbChargeDate();
+	}
 
 	public Double getDbCgcBase() {
 		return salaryDraft.getDbGgcBase();

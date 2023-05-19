@@ -27,6 +27,8 @@ public class SalaryDraft extends SalaryPreview {
 
 	private Integer dbId;
 	private Integer ssId;
+	
+	private String dbChargeDate;
 
 	private String enterpriseName;
 	private String enterpriseCity;
@@ -145,6 +147,7 @@ public class SalaryDraft extends SalaryPreview {
 
 	public SalaryDraft clearDb() {
 		dbId = null;
+		dbChargeDate = null;
 		dbGgcBase = null;
 		dbGgpBase = null;
 		dbHExtraBase = null;
@@ -552,7 +555,7 @@ public class SalaryDraft extends SalaryPreview {
 	public Integer getDbId() {
 		return dbId;
 	}
-
+	
 	public String getEmployeeCity() {
 		return employeeCity;
 	}
@@ -1019,7 +1022,16 @@ public class SalaryDraft extends SalaryPreview {
 		fiscalModels.add(fiscalModel);
 		return this;
 	}
+	public Date getDbChargeDate() {
+	    return parse(dbChargeDate);
+	}
 	
+	public SalaryDraft setDbChargeDate(Date dbChargeDate) {
+		this.dbChargeDate = format(dbChargeDate);
+		return this;
+	}
+
+
 	// ------------------------------------------------------------------------
 
 }
