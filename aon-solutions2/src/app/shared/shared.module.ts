@@ -18,6 +18,11 @@ import { RouterModule } from '@angular/router';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
+import { InputComponent } from './components/input/input.component';
+import { ButtonComponent } from './components/button/button.component';
+import { IconComponent } from './components/icon/icon.component';
+import { MatButtonModule } from '@angular/material/button';
+import { GlobalHoverDirective } from './directives/global-hover.directive';
 
 
 @NgModule({
@@ -32,7 +37,11 @@ import { MatDividerModule } from '@angular/material/divider';
     ContentSideNavComponent,
     ListElementComponent,
     BasicLayoutComponent,
-    SidenavLayoutComponent
+    SidenavLayoutComponent,
+    InputComponent,
+    ButtonComponent,
+    IconComponent,
+    GlobalHoverDirective
   ],
   imports: [
     CommonModule,
@@ -42,7 +51,8 @@ import { MatDividerModule } from '@angular/material/divider';
     RouterModule,
     MatGridListModule,
     MatToolbarModule,
-    MatDividerModule
+    MatDividerModule,
+    MatButtonModule
   ],
   exports:[
     SidenavHoverDirective,
@@ -55,7 +65,9 @@ import { MatDividerModule } from '@angular/material/divider';
     ContentMainComponent,
     ContentDetailComponent,
     ContentSideNavComponent,
-    ListElementComponent
+    ListElementComponent,
+    IconComponent,
+    ButtonComponent
   ]
 })
 export class SharedModule { }
