@@ -1,12 +1,18 @@
 package com.code.aon.finance.invoicing.engine.delivery;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
 import com.code.aon.AonVersion;
@@ -14,6 +20,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.domain.DomainManager;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.Series;
 import com.code.aon.customer.InvoicingGroup;
@@ -69,9 +77,54 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 	}
 
 	public void invoice(InvoicingParameters params) throws ManagerBeanException {
+		checkSegments( params );
 		List<ITransferObject> deliveryList = obtainDeliveryList(createInvoicingCriteria(params));
 		invoiceDeliveries(deliveryList, params);
 	}
+	
+	public void checkSegments(InvoicingParameters params) throws ManagerBeanException {
+		if (params.getSegments() != null) {
+			Collection<Integer> segments =  Arrays.stream(params.getSegments())
+				.filter( s -> s != null)
+				.filter( s -> s.getId() != null)
+				.map( s -> s.getId() )
+				.collect(Collectors.toCollection(LinkedList::new));
+			if (segments != null && !segments.isEmpty()) {
+				String ids = segments.stream()
+					.map(Object::toString)
+					.collect(Collectors.joining(", "));
+				String select = "select registry.name customerName "
+					+ ", segment.name segmentName "
+					+ ", count(*) segments "
+					+"from rsegment "
+					+"inner join registry on rsegment.registry = registry.id "
+					+"inner join customer on registry.id = customer.registry "
+					+"inner join segment on rsegment.segment = segment.id "
+					+"where " + DomainManager.getSQLWhereClause("rsegment.domain")
+					+"and rsegment.segment in ("+ ids +") "
+					+"group by registry.name, segment.name "
+					+"having count(*) > 1 "; 
+				SQLQuery query = HibernateUtil
+					.getSession(HibernateUtil.getSessionFactoryName())
+					.createSQLQuery(select);
+				List<?> list = query
+					.addScalar("customerName", Hibernate.STRING)
+					.addScalar("segmentName", Hibernate.STRING)
+					.addScalar("segments", Hibernate.INTEGER)
+					.list();
+				if (!list.isEmpty()) {
+					StringBuilder buf = new StringBuilder();
+					buf.append("Existen clientes con segmentos definidos dos veces. Corrija la situación para poder continuar.");
+					for ( int i = 0; i < list.size(); i++ ) {
+						Object[] arr = (Object[])list.get(i);
+						buf.append(" [Cliente: " + arr[0] + " - Segmento: " + arr[1] + " - " + arr[2] + " veces]");
+					}
+					throw new ManagerBeanException(buf.toString());
+				}
+			}
+		}
+	}
+	
 
 	private Criteria createInvoicingCriteria(InvoicingParameters params) throws ManagerBeanException {
 		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
@@ -102,9 +155,30 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine, Serializable {
 		if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null) {
 			criteria.addEqualExpression(deliveryBean.getFieldName(IEntityAlias.DELIVERY_WORK_PLACE_ID), params.getWorkPlace().getId());
 		}
+		if (params.getSegments() != null) {
+			Collection<Integer> segments =  Arrays.stream(params.getSegments())
+					.filter( s -> s != null)
+					.filter( s -> s.getId() != null)
+					.map( s -> s.getId() )
+					.collect(Collectors.toCollection(LinkedList::new));
+			if (segments != null && !segments.isEmpty()) {
+				String alias = resolveAlias(deliveryBean,"Delivery_customer_registry_segments_segment_id");
+				criteria.addInExpression(alias,  segments );
+			}
+		}
 		return criteria;
 	}
 
+	private String resolveAlias(IManagerBean feeBean,String alias) {
+		String fieldName = StringUtils.substringBefore(alias, "-");
+		try {
+			fieldName = feeBean.getFieldName(fieldName);
+		} catch (ManagerBeanException e) {
+			fieldName = fieldName.replace('_', '.');
+		}
+		return fieldName;
+	}
+	
 	private List<ITransferObject> obtainDeliveryList(Criteria criteria) throws ManagerBeanException {
 		List<ITransferObject> deliveryList = BeanManager.getManagerBean(Delivery.class).getList(criteria);
 		return orderDeliveryList(deliveryList);

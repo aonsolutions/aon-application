@@ -5,10 +5,12 @@ import java.io.Serializable;
 import java.security.KeyStore;
 import java.util.Date;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.AonVersion;
@@ -26,6 +28,7 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.InvoicingParameters;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
+import com.code.aon.registry.Segment;
 import com.code.aon.ui.common.LongProcessThread;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.finance.util.FeeInvoicingProcess;
@@ -273,6 +276,18 @@ public class FeeInvoicingController implements IFinanceConstants, Serializable {
 	
 	public void setTbaiConfiguration(TbaiConfiguration tbaiConfiguration) {
 		this.tbaiConfiguration = tbaiConfiguration;
+	}
+
+	public void onAddSegment(ActionEvent event) {
+		this.getParams().setSegments((Segment[]) ArrayUtils.add(this.getParams().getSegments(), new Segment()));	}
+	
+	public void onRemoveSegment(ActionEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.parseInt(context.getExternalContext().getRequestParameterMap().get("index"));		
+		this.getParams().setSegments((Segment[]) ArrayUtils.remove(this.getParams().getSegments(), index));
+		if ( ArrayUtils.isEmpty(this.getParams().getSegments()) ) {
+			this.getParams().setSegments(new Segment[]{new Segment()});
+		}
 	}
 	
 }

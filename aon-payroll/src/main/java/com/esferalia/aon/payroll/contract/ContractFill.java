@@ -13,6 +13,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -60,6 +61,10 @@ public class ContractFill {
 		else 
 			return fillTemporalContract(contractType, sepeIde, comunicationDate, contractOtherInfo, contractFillInfo, contractClauses);
 		
+	}
+	
+	public static byte[] fillContractExtension(Map<String, String> contractExtensionFillInfo) throws IllegalArgumentException {
+		return fillExtensionContract(contractExtensionFillInfo);
 	}
 	
 	private static void initializeFieldNames() {
@@ -112,6 +117,46 @@ public class ContractFill {
 		if(contractOtherInfo.get("P_SEPE_MUNICIPALITY") == null) contractOtherInfo.put("P_SEPE_MUNICIPALITY", "A TRAVES DE CONTRATA");
 		if(contractOtherInfo.get("T_SEPE_MUNICIPALITY") == null) contractOtherInfo.put("T_SEPE_MUNICIPALITY", "A TRAVES DE CONTRATA");
 		
+	}
+	
+	private static byte[] fillExtensionContract(Map<String, String> contractExtensionFillInfo) {
+		InputStream is = ContractFill.class.getResourceAsStream("prorroga.pdf");
+		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+		
+		try (PDDocument pdfDocument = Loader.loadPDF(is)){
+			pdfDocument.setAllSecurityToBeRemoved(true);
+			
+			PDDocumentCatalog doc = pdfDocument.getDocumentCatalog();
+			PDAcroForm acroForm = doc.getAcroForm();
+			
+			if(null != acroForm) {
+				PDResources resources = new PDResources();
+				PDFont font = new PDType1Font(FontName.HELVETICA);
+				resources.add(font);
+				
+				acroForm.setDefaultResources(resources);
+				
+				for(PDField field : acroForm.getFields()) {
+					defaultCheckBox(field);
+					
+					String fieldName = field.getPartialName();
+					String newValue = contractExtensionFillInfo.getOrDefault(fieldName, "");
+					newValue = AonStringUtils.isBlank(newValue) ? "" : newValue.toUpperCase();
+					setField(field, newValue);	
+				}
+			}
+			
+	        pdfDocument.setAllSecurityToBeRemoved(true);
+	        
+			pdfDocument.save(out);
+			pdfDocument.close();
+			
+			return out.toByteArray();
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	private static byte[] fillIndefiniteContract(Integer contractType, String sepeIde, Date comunicationDate, Map<String, String> contractOtherInfo, Map<String, String> contractFillInfo, TreeMap<String, String> contractClauses) {

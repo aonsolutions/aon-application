@@ -70,6 +70,7 @@ public final class IJsonNames {
 	public static final String BEFORE_PERIOD_DEBIT = "beforePeriodDebit";
 	public static final String BEFORE_PERIOD_CREDIT = "beforePeriodCredit";
 	public static final String BIC = "bic";
+	public static final String BILLABLE = "billable";
 	public static final String BLOCKED = "blocked";
 	public static final String BORDER = "border";
 	public static final String BOX_BORDER_COLOR = "boxBorderColor";
@@ -168,6 +169,7 @@ public final class IJsonNames {
 	public static final String DOMAIN_NAME = "domainName";
 	public static final String DOMAIN_TYPE = "domainType";
 	public static final String DOMAIN_ACTIVE = "domainActive";
+	public static final String DOMAIN_LINKED = "domainLinked";
 	public static final String DOMAINS = "domains";
 	public static final String DRIVE_ID = "driveId";
 	public static final String DRIVER = "driver";
@@ -247,6 +249,7 @@ public final class IJsonNames {
 	public static final String INACTIVE = "inactive";
 	public static final String INCLUDE_DATE = "includeDate";
 	public static final String INCREASE_PERCENT = "increasePercent";
+	public static final String INDEX = "index";
 	public static final String INGENET = "ingenet";
 	public static final String INIT_ACTION = "initAction";
 	public static final String INITIATION_DATE = "initiationDate";
@@ -296,6 +299,7 @@ public final class IJsonNames {
 	public static final String LEVEL = "level";
 	public static final String LIMIT = "limit";
 	public static final String LINE = "line";
+	public static final String LINKED = "linked";
 	public static final String LINES_PAGE_LIMIT = "linesPageLimit";
 	public static final String LOCALE = "locale";
 	public static final String LOGIN = "login";
@@ -326,6 +330,7 @@ public final class IJsonNames {
 	public static final String NO_ACTIVITY_ACCOUNT_VISIBLE = "noActivityAccountVisible";
 	public static final String NO_BALANCE_ACCOUNT_EXCLUDED = "noBalanceAccountExcluded"; 
 	public static final String NOTARY = "notary";
+	public static final String NOT_LINKED = "notLinked";
 	public static final String NRS = "nrs";
 	public static final String NULL = "null";
 	public static final String NUMBER = "number";
@@ -458,6 +463,7 @@ public final class IJsonNames {
 	public static final String REPLACEMENT = "replacement";
 	public static final String RESERVATION = "reservation";
 	public static final String RESULT = "result";
+	public static final String RESUME = "resume";
 	public static final String RETENTION = "retention";
 	public static final String RETENTION_PERCENT = "retentionPercent";
 	public static final String RETURNED = "returned";

@@ -131,6 +131,8 @@ public interface IAccounting {
 	public AccUtilitiesResult noLowLevelAccounts(AONContext ctx);
 	public AccUtilitiesResult emptyEntries(AONContext ctx);
 	public AccUtilitiesResult unbalancedEntries(AONContext ctx);
+	public AccUtilitiesResult outOfDateEntries(AONContext ctx);
+	public AccUtilitiesResult moveOutOfDateEntries(AONContext ctx, AccUtilitiesResult findResult);
 	public AccUtilitiesResult wrongRecordedInvoices(AONContext ctx);
 	public AccUtilitiesResult removeWrongRecordedInvoice(AONContext ctx, Integer accountEntryId);
 	public AccUtilitiesResult removeWrongCheckedInvoice(AONContext ctx, Integer invoice);
@@ -155,8 +157,6 @@ public interface IAccounting {
 	
 	// REPORT
 	public Stream<OperationBreakdown> getOperationBreakdown(AONContext ctx, int domain, OperationParams params);
-	
-	
 	
 	
 }

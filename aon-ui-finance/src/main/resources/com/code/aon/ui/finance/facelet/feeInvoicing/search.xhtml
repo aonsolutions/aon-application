@@ -107,6 +107,31 @@
 								<f:selectItems value="#{currentUserScopes}" />
 							</aon:selectOneMenu>
 						</aon:if>
+						
+						<aon:outputLabel for="CustomerFee_Customer_Segment" value="#{bundle.aon_segment}" />				
+						<aon:div id="segmentDiv">
+							<a4j:repeat value="#{feeInvoicing.params.segments}" rowKeyVar="index" var="segmentTo">
+								<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+									<aon:selectOneMenu id="CustomerFee_Customer_Segment"
+										value="#{feeInvoicing.params.segments[index]}">
+										<f:selectItem itemLabel="-" itemValue="#{feeInvoicing.params.emptySegment}"/>
+										<f:selectItems value="#{registryCollections.segments}" />
+										<a4j:support event="onchange" reRender="segmentDiv"
+											ajaxSingle="true"
+											limitToList="true"/>
+									</aon:selectOneMenu>
+									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+										actionListener="#{feeInvoicing.onRemoveSegment}" reRender="segmentDiv" value="&#160;"
+										rendered="#{segmentTo.id != null}">
+										<f:param name="index" value="#{index}" />
+									</aon:commandButton>
+									<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" ajaxSingle="true"
+										actionListener="#{feeInvoicing.onAddSegment}" reRender="segmentDiv" value="&#160;"
+										rendered="#{(segmentTo.id != null) and (index == (feeInvoicing.params.segmentsSize-1))}"/>					
+								</aon:div>						
+							</a4j:repeat>
+						</aon:div>						
+						
 					</aon:panelGrid>
 				</aon:panel>
 

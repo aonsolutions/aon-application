@@ -85,6 +85,7 @@ public class JooqAgreementTab {
 		agreement.setVariables(variables);
 		
 		Set<String> allVariables = EmployeesServiceHelper.getVariables(conn, agreement, agreement.getDomain(), parentDomainId);
+		if(allVariables.contains("DIAS_TRABAJADOS")) allVariables.add("DIAS_NO_TRABAJADOS");
 		agreement.setAllVariables(allVariables);
 		
 		return agreement;

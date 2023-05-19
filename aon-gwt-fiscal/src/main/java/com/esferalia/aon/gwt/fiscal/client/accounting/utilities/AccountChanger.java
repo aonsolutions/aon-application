@@ -698,6 +698,7 @@ class AccountChanger extends OptionBase {
 		@Override public void visitEmptyEntry(AccUtilitiesItemType type) {}
 		@Override public void visitInvoiceIntegrity(AccUtilitiesItemType type) {}
 		@Override public void visitDeleteEntries(AccUtilitiesItemType type) {}
+		@Override public void visitOutOfDateEntry(AccUtilitiesItemType type) {}
 		
 		@Override public void visitAccountChange(AccUtilitiesItemType type) {
 			
@@ -770,6 +771,7 @@ class AccountChanger extends OptionBase {
 				.addCell(changeButton)
 				.addCell(messageLabel);
 		}
+		
 	}
 	public boolean check(){
 		if (oldAccount.getId() == null) {

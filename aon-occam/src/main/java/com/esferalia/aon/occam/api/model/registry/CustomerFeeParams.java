@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class CustomerFeeParams implements Serializable {
 
@@ -21,6 +22,18 @@ public class CustomerFeeParams implements Serializable {
 	private String price;
 	private String discount;
 	
+	private Date startDate;
+	private Date endDate;
+	
+	private String quantity;
+	
+	private String workplace;
+	private String seller;
+	private String invoicingGroup;
+	private Integer project;
+	
+	private Integer segment;
+
 	private Integer limit;
 	private Integer offset;
 	
@@ -91,6 +104,55 @@ public class CustomerFeeParams implements Serializable {
 		this.discount = discount;
 		return this;
 	}
+	public Date getStartDate() {
+		return startDate;
+	}
+	public CustomerFeeParams setStartDate(Date startDate) {
+		this.startDate = startDate;
+		return this;
+	}
+	public Date getEndDate() {
+		return endDate;
+	}
+	public CustomerFeeParams setEndDate(Date endDate) {
+		this.endDate = endDate;
+		return this;
+	}
+	public String getQuantity() {
+		return quantity;
+	}
+	public CustomerFeeParams setQuantity(String quantity) {
+		this.quantity = quantity;
+		return this;
+	}
+	public String getWorkplace() {
+		return workplace;
+	}
+	public CustomerFeeParams setWorkplace(String workplace) {
+		this.workplace = workplace;
+		return this;
+	}
+	public String getSeller() {
+		return seller;
+	}
+	public CustomerFeeParams setSeller(String seller) {
+		this.seller = seller;
+		return this;
+	}
+	public String getInvoicingGroup() {
+		return invoicingGroup;
+	}
+	public CustomerFeeParams setInvoicingGroup(String invoicingGroup) {
+		this.invoicingGroup = invoicingGroup;
+		return this;
+	}
+	public Integer getProject() {
+		return project;
+	}
+	public CustomerFeeParams setProject(Integer project) {
+		this.project = project;
+		return this;
+	}
 	public Integer getLimit() {
 		return limit;
 	}
@@ -103,6 +165,14 @@ public class CustomerFeeParams implements Serializable {
 	}
 	public CustomerFeeParams setOffset(Integer offset) {
 		this.offset = offset;
+		return this;
+	}
+
+	public Integer getSegment() {
+		return this.segment;
+	}
+	public CustomerFeeParams setSegment(Integer segment) {
+		this.segment = segment;
 		return this;
 	}
 }
