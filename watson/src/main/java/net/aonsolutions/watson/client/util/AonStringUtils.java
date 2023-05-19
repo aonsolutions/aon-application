@@ -165,7 +165,27 @@ public class AonStringUtils {
         return false;
     }
     
-	/**
+    /**
+     * <p>Returns either the passed in String,
+     * or if the String is {@code null}, an empty String ("").</p>
+     *
+     * <pre>
+     * StringUtils.defaultString(null)  = ""
+     * StringUtils.defaultString("")    = ""
+     * StringUtils.defaultString("bat") = "bat"
+     * </pre>
+     *
+     * @see ObjectUtils#toString(Object)
+     * @see String#valueOf(Object)
+     * @param str  the String to check, may be null
+     * @return the passed in String, or the empty String if it
+     *  was {@code null}
+     */
+    public static String defaultString(final String str) {
+        return str == null ? EMPTY : str;
+    }
+
+    /**
 	 * <p>
 	 * Returns either the passed in CharSequence, or if the CharSequence is
 	 * empty or {@code null}, the value of {@code defaultStr}.

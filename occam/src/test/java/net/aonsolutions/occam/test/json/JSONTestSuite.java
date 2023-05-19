@@ -9,6 +9,7 @@ import org.junit.platform.suite.api.Suite;
 	AonJSONUtilsTest.class
 	,AuditJSONTest.class
 	,GeoZoneJSONTest.class
+	,AccountJSONTest.class
 	,DomainAuditJSONTest.class
 	,ScopeJSONTest.class
 	,BookingJSONTest.class

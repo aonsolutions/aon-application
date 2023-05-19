@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.Optional;
 
 import net.aonsolutions.occam.api.HasConfidentiality;
+import net.aonsolutions.occam.api.HasDirtyFlag;
 import net.aonsolutions.occam.api.HasSelector;
 import net.aonsolutions.occam.api.config.Activity;
 import net.aonsolutions.occam.api.config.Audit;
@@ -16,7 +17,7 @@ import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.client.util.AonStringUtils;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSelector<Invoice> {
+public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSelector<Invoice>, HasDirtyFlag<Invoice> {
 
 	private static final long serialVersionUID = 8287791278573182024L;
 	
@@ -191,15 +192,13 @@ public class Invoice implements Serializable, HasConfidentiality<Invoice>, HasSe
 		return this;
 	}
 
+	@Override
 	public boolean isDirty() {
 		return dirty;
 	}
+	@Override
 	public Invoice setDirty(boolean dirty) {
 		this.dirty = dirty;
-		return this;
-	}
-	public Invoice dirtyMark(boolean dirty) {
-		this.dirty = isDirty() || dirty;
 		return this;
 	}
 	

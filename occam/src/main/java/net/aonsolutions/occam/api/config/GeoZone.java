@@ -3,11 +3,12 @@ package net.aonsolutions.occam.api.config;
 import java.io.Serializable;
 import java.util.Objects;
 
+import net.aonsolutions.occam.api.HasDirtyFlag;
 import net.aonsolutions.occam.api.HasSelector;
 import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class GeoZone implements Serializable, HasSelector<GeoZone> {
+public class GeoZone implements Serializable, HasSelector<GeoZone>, HasDirtyFlag<GeoZone> {
 
 	private static final long serialVersionUID = 100071842215890945L;
 	
@@ -66,15 +67,13 @@ public class GeoZone implements Serializable, HasSelector<GeoZone> {
 		return this;
 	}
 	
+	@Override
 	public boolean isDirty() {
 		return dirty;
 	}
+	@Override
 	public GeoZone setDirty(boolean dirty) {
 		this.dirty = dirty;
-		return this;
-	}
-	public GeoZone dirtyMark(boolean dirty) {
-		this.dirty = isDirty() || dirty;
 		return this;
 	}
 

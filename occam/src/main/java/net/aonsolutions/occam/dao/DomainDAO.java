@@ -464,10 +464,9 @@ public class DomainDAO {
 	
 	private static class DomainAutoComplete {
 		
-		public static final BiConsumer<AONContext,Domain> LOWCASE_NAME = (ctx,domain) -> {
-			domain.setName( AonStringUtils.lowerCase(domain.getName()));
-		};
-
+		public static final BiConsumer<AONContext,Domain> LOWCASE_NAME = 
+			(ctx,domain) -> domain.setName( AonStringUtils.lowerCase(domain.getName()));
+			
 		public static final BiConsumer<AONContext,Domain> COMPLETE_TYPE = (ctx,domain) -> {
 			if (domain.getType() == null) {
 				ctx.log().debug("\t Saving domain: Type to ENTERPRISE");

@@ -3,11 +3,12 @@ package net.aonsolutions.occam.api.config;
 import java.io.Serializable;
 import java.util.Objects;
 
+import net.aonsolutions.occam.api.HasDirtyFlag;
 import net.aonsolutions.occam.api.HasSelector;
 import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Scope implements Serializable, HasSelector<Scope> {
+public class Scope implements Serializable, HasSelector<Scope>, HasDirtyFlag<Scope> {
 
 	private static final long serialVersionUID = 2356532157666489635L;
 	
@@ -45,15 +46,13 @@ public class Scope implements Serializable, HasSelector<Scope> {
 		return this;
 	}
 
+	@Override
 	public boolean isDirty() {
 		return dirty;
 	}
+	@Override
 	public Scope setDirty(boolean dirty) {
 		this.dirty = dirty;
-		return this;
-	}
-	public Scope dirtyMark(boolean dirty) {
-		this.dirty = isDirty() || dirty;
 		return this;
 	}
 

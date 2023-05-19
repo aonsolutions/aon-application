@@ -55,7 +55,7 @@ public class GeoZoneDAO {
 			SelectBuilder selectBuilder = new SelectBuilder( ctx );
 			FromBuilder fromBuilder = new  FromBuilder( selectBuilder.build() );
 			SelectJoinStep<Record> from = fromBuilder.build();
-			WhereBuilder whereBuilder = new WhereBuilder(ctx, from,filter);
+			WhereBuilder whereBuilder = new WhereBuilder(from,filter);
 			LimitBuilder limitBuilder = new  LimitBuilder( whereBuilder.build() );
 			fillerBuilder = new  FillerBuilder();
 			query =  limitBuilder.build();
@@ -113,7 +113,7 @@ public class GeoZoneDAO {
 	private static class WhereBuilder implements GeoZoneBuilder<SelectLimitStep<Record>> {
 		private SelectLimitStep<Record> where;
 		
-		public WhereBuilder(AONContext ctx, SelectJoinStep<Record> from, GeoZoneFilter filter) {
+		public WhereBuilder(SelectJoinStep<Record> from, GeoZoneFilter filter) {
 			where = from.where( getWhere(filter) );
 		}
 		
@@ -174,7 +174,6 @@ public class GeoZoneDAO {
 					.setCode(FillerUtils.getValue(mapper.getRecord(), GEOZONE.CODE))
 					.setName(FillerUtils.getValue(mapper.getRecord(), GEOZONE.NAME))
 					.setSystem(FillerUtils.getBoolean(mapper.getRecord(), GEOZONE.SYSTEM));
-					;
 					return mapper;
 				})
 				.andThen( withBooking )

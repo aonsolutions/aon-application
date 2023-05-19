@@ -2,10 +2,11 @@ package net.aonsolutions.occam.api.config;
 
 import java.io.Serializable;
 
+import net.aonsolutions.occam.api.HasDirtyFlag;
 import net.aonsolutions.occam.api.HasSelector;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Activity implements Serializable, HasSelector<Activity> {
+public class Activity implements Serializable, HasSelector<Activity>,HasDirtyFlag<Activity> {
 
 	private static final long serialVersionUID = 8605536086019198332L;
 	
@@ -53,15 +54,13 @@ public class Activity implements Serializable, HasSelector<Activity> {
 		return this;
 	}
 	
+	@Override
 	public boolean isDirty() {
 		return dirty;
 	}
+	@Override
 	public Activity setDirty(boolean dirty) {
 		this.dirty = dirty;
-		return this;
-	}
-	public Activity dirtyMark(boolean dirty) {
-		this.dirty = isDirty() || dirty;
 		return this;
 	}
 	

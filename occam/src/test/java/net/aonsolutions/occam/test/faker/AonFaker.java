@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import com.github.javafaker.Faker;
 
+import net.aonsolutions.occam.api.accounting.Account;
 import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
@@ -17,6 +18,19 @@ import net.aonsolutions.occam.api.constants.Country;
 public class AonFaker {
 	private static Faker faker = Faker.instance(Locale.of("es"));
 	private static final String DOCUMENT_REGEXP = "(\\d|[XYZ])\\d{7}[A-Z]";
+
+	public static Account getAccount(int nullThreshold) {
+    	return AonRandom.gt(nullThreshold)?getAccount():null;
+	}
+	public static Account getAccount( ) {
+		return  new Account()
+			.setId(AonRandom.integer(50))
+			.setDomain(AonRandom.integer(50))
+			.setCode( faker.regexify("\\d{9}") )
+			.setDescription( faker.animal().name() )
+			.setAlias( faker.animal().name() )
+			.setActive( !AonRandom.gt(3) );
+	}
 
 	public static Audit getAudit() {
 		return new Audit()

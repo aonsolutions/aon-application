@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collection;
 
+import net.aonsolutions.occam.api.accounting.Account;
 import net.aonsolutions.occam.api.config.Activity;
 import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.config.Booking;
@@ -63,8 +64,20 @@ public class Asserts {
 		}
 	}
 	
+	public static void assertEqualsAccount(Account expected, Account actual) {
+		assertEqualsNulls(expected, actual, "Account");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getCode(), actual.getCode(),"Code");
+			assertEquals(expected.getDescription(), actual.getDescription(),"Description");
+			assertEquals(expected.getAlias(), actual.getAlias(),"Alias");
+			assertEquals(expected.isActive(), actual.isActive(),"Active");
+		}
+	}
+
 	public static void assertEqualsActivity(Activity expected, Activity actual) {
-		assertEqualsNulls(expected, actual, "Invoice");
+		assertEqualsNulls(expected, actual, "Activity");
 		if (expected != null && actual != null) {
 			assertEquals(expected.getId(), actual.getId(),"Id");
 			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");

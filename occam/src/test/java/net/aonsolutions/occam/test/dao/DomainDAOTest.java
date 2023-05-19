@@ -21,7 +21,6 @@ import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.dao.DAOUtils;
 import net.aonsolutions.occam.dao.DomainDAO;
-import net.aonsolutions.occam.json.DomainJSON;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;
