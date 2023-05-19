@@ -3004,7 +3004,6 @@ public class SalaryDraft extends ResizeComposite
 		
 		dumpSalaryDraft(!draftObjectChanged);
 
-		salarySelect.setPayDate(salaryDraftObject.getDbChargeDate());
 		salarySelect.setSalaryPreview(salaryDraftObject.asSalaryPreview());
 
 		loadContentAssistManager();

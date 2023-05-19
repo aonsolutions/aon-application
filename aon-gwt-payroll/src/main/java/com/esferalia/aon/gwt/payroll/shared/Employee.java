@@ -4,8 +4,8 @@ import static com.esferalia.aon.gwt.payroll.shared.Shared.format;
 import static com.esferalia.aon.gwt.payroll.shared.Shared.parse;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
-import java.util.NoSuchElementException;
 
 import com.esferalia.aon.gwt.common.shared.HasDescription;
 import com.esferalia.aon.gwt.common.shared.HasId;
@@ -184,7 +184,7 @@ public class Employee implements Serializable, HasId<Integer> {
 	
 	private Category category;
 	
-	private Boolean hasSalaries;
+	private Salary[] salaries;
 	
 	private String contractType;
 
@@ -308,12 +308,19 @@ public class Employee implements Serializable, HasId<Integer> {
 	}
 	
 	public Boolean hasSalries() {
-		return this.hasSalaries;
+		return salaries != null && this.salaries.length > 0;
 	}
 	
-	public Employee setHasSalaries(Boolean hasSalaries) {
-		this.hasSalaries = hasSalaries;
+	public Employee setSalaries(Salary [] salaries) {
+		this.salaries = salaries;
 		return this;
+	}
+	
+	public Salary[] getSalaries() {
+	    if ( salaries == null ) {
+		salaries = new Salary [] {};
+	    }
+	    return salaries ;
 	}
 
 	@Override
