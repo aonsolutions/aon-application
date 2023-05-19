@@ -182,7 +182,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 		Date start = contract.getStartDate();
 		Date end = contract.getEndDate();
 		Date issue = contract.getEndDate();
-		;
+		Date charge = contract.getEndDate();
 		
 		addPayment(aonContext, 
 				contract, 
@@ -219,7 +219,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 				contract.getId());
 
 		SQLSettleDraftCalculatorContext draftCtx = new SQLSettleDraftCalculatorContext(
-				draft, connection, contract.getStartDate(), noHolidaysEnd, contract.getEndDate(), criteria);
+				draft, connection, contract.getStartDate(), noHolidaysEnd, contract.getEndDate(), contract.getEndDate(),criteria);
 
 		draftCtx.next();
 
@@ -262,7 +262,7 @@ public class SQLDraftIrpfTestCase extends SQLIrpfTestCase {
 		draft.addDraftPayment(draftPayment);
 
 		SQLSettleDraftCalculatorContext draftCtx = new SQLSettleDraftCalculatorContext(
-				draft, connection, startDate, endDate, issueDate, criteria);
+				draft, connection, startDate, endDate, issueDate, issueDate, criteria);
 
 		draftCtx.next();
 		return draftCtx;
