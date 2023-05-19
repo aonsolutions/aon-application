@@ -11,8 +11,6 @@ export class LoginComponent implements OnInit {
 
   user :string       ="";
   password :string;
-  hidePassword :boolean = true;
-
 
   constructor(public auth: AuthService) {
     this.user     = "";
@@ -20,15 +18,6 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  }
-
-  clean(){
-    this.user ="";
-  }
-
-  getUser(){
-    console.log('User: ', this.user);
-    console.log('password: ', this.password);
   }
 
   loginUser() {
