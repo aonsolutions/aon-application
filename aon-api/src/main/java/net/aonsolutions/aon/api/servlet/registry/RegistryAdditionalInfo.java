@@ -10,7 +10,8 @@ public enum RegistryAdditionalInfo {
 	RECORD_DATA,
 	RSEGMENT,
 	RRELATIONSHIP,
-	BILLABLE
+	BILLABLE,
+	DOMAIN_LINKED
 	;
 
 	private RegistryAdditionalInfo() {

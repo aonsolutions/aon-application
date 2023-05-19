@@ -1,7 +1,7 @@
 import { AonElement } from './AonElement.js';
 
 import { CONSTANT, EVENT, TAG, MATERIAL_ICONS, MSG, CSS } from '../environments/environments.js';
-import { getDomains, getCustomers, updateDomains, getBooking, deleteDomainLinked, saveDomainLinked } from '../services/domainsService.js';
+import { getDomains, getCustomers, updateDomains, getBooking, deleteDomainLinked, saveDomainLinked, updateCustomerBillable } from '../services/domainsService.js';
 
 import '../css/aon-domain-customer.css';
 import { AonIconButton } from './aon-icon-button.js';
@@ -52,6 +52,7 @@ export class AonDomainCustomer extends AonElement {
 
   DOMAIN_STATUS_OPTIONS = ["NOT_BILLABLE", "BILLABLE"];
   CUSTOMER_STATUS_OPTIONS = ["ACTIVE", "INACTIVE", "BLOCKED"];
+  ADDITIONAL_INFOS = ['BILLABLE', 'DOMAIN_LINKED'];
 
 	get id() {
 		return this.getAttribute(CONSTANT.ID);
@@ -80,7 +81,7 @@ export class AonDomainCustomer extends AonElement {
   }
 
   async updateCustomers() {
-    let customers = await getCustomers({perPage: 2000});
+    let customers = await getCustomers({perPage: 2000, additional_info: this.this.ADDITIONAL_INFOS});
     this.loadedCustomers = customers ?  customers.sort((a, b) => (a.name ? a.name : "").trim().localeCompare((b.name ? b.name : "").trim())) : [];
   }
 
@@ -349,6 +350,7 @@ export class AonDomainCustomer extends AonElement {
     this.customerStatusFilter.options = JSON.stringify(customerStatusFilterOptions);
     this.customerStatusFilter.value = "";
 
+    this.customerStatusFilter.addEventListener("change", (event) => this.customerSearchFunction());
     customerStatusFilterContainer.appendChild(this.customerStatusFilter);
     
     let customerAonStatusFilterContainer = document.createElement('div');
@@ -364,7 +366,7 @@ export class AonDomainCustomer extends AonElement {
     this.customerAccessFilter.classList.add("domainLinkAonSelect");
     this.customerAccessFilter.title = MSG.ACCESS;
     this.customerAccessFilter.readonly = false;
-    let customerAonStatusFilterOptions = [{value: "", name: "Todos"}];
+    let customerAonStatusFilterOptions = [{value: "", name: MSG.ALL1}];
     this.CUSTOMER_STATUS_OPTIONS.forEach(status => {
       customerAonStatusFilterOptions.push({value: status, name: this.getCustomerStatusDescription(status)});
     });
@@ -388,9 +390,9 @@ export class AonDomainCustomer extends AonElement {
     this.customerLinkStatusFilter.title = "Vinculación";
     this.customerLinkStatusFilter.readonly = false;
     let domainAonLinkStatusFilterOptions =
-    [ {value: "", name: "Todos"},
-      {value: "linked", name: "Vinculados"},
-      {value: "notLinked", name: "No vinculados"}
+    [ {value: "", name: MSG.ALL1},
+      {value: "linked", name: MSG.LINKED1},
+      {value: "notLinked", name: MSG.UNLINKED}
     ];
 
     this.customerLinkStatusFilter.options = JSON.stringify(domainAonLinkStatusFilterOptions);
@@ -400,7 +402,7 @@ export class AonDomainCustomer extends AonElement {
 
     customerLinkStatusFilterContainer.appendChild(this.customerLinkStatusFilter);
     
-    // searchFiltersContainer.appendChild(customerStatusFilterContainer);
+    searchFiltersContainer.appendChild(customerStatusFilterContainer);
     searchFiltersContainer.appendChild(customerAonStatusFilterContainer);
     searchFiltersContainer.appendChild(customerLinkStatusFilterContainer);
 
@@ -665,7 +667,8 @@ export class AonDomainCustomer extends AonElement {
       let parameters = {
         perPage: entriesPerPage,
         page: this.customerPage++,
-        value: this.customerSearchInput.value.toLowerCase()
+        value: this.customerSearchInput.value.toLowerCase(),
+        additional_info: this.ADDITIONAL_INFOS
       };
       if (customerStatus) {
         parameters.status = customerStatus;
@@ -681,6 +684,9 @@ export class AonDomainCustomer extends AonElement {
           default:
             break;
         }
+      }
+      if (this.customerStatusFilter && this.customerStatusFilter.value) {
+        parameters.billable = (this.DOMAIN_STATUS_OPTIONS[1] === this.customerStatusFilter.value);
       }
       let newCustomers = await getCustomers(parameters);
       this.customerSearchEnded = !newCustomers || newCustomers.length < entriesPerPage;
@@ -721,7 +727,8 @@ export class AonDomainCustomer extends AonElement {
       
       if (aonCustomer) {
         let cust = await getCustomers({
-          id: aonCustomer
+          id: aonCustomer,
+          additional_info: this.ADDITIONAL_INFOS
         });
         customers.push(cust);
         if (cust && domain) {
@@ -745,7 +752,8 @@ export class AonDomainCustomer extends AonElement {
         if (searchDocument) {
           let parameters = {
             perPage: 2000,
-            value: searchDocument
+            value: searchDocument,
+            additional_info: this.ADDITIONAL_INFOS
           };
           if (customerStatus) {
             parameters.status = customerStatus;
@@ -756,7 +764,8 @@ export class AonDomainCustomer extends AonElement {
         if (searchAlias) {
           let parameters = {
             perPage: 2000,
-            value: searchAlias
+            value: searchAlias,
+            additional_info: this.ADDITIONAL_INFOS
           };
           if (customerStatus) {
             parameters.status = customerStatus;
@@ -1014,17 +1023,31 @@ export class AonDomainCustomer extends AonElement {
     let aonStatusDrop = document.createElement("select");
     aonStatusDrop.style.width = "100%";
     
-    this.DOMAIN_STATUS_OPTIONS.forEach((status) => {
+    this.DOMAIN_STATUS_OPTIONS.forEach((status, index) => {
       let option = document.createElement("option");
       option.value = status;
       option.innerText = this.getDomainStatusDescription(status);
+      if (index === 1 && customer.billable) {
+        option.selected = true;
+      }
       aonStatusDrop.appendChild(option);
     });
 
+    
+
+    aonStatusDrop.addEventListener("change", async () => {
+      let isBillable = aonStatusDrop.value === this.DOMAIN_STATUS_OPTIONS[1];
+      let updatedCustomer = await updateCustomerBillable({
+        customer: customer,
+        billable: isBillable,
+      });
+      customer.billable = isBillable;
+      console.log(updatedCustomer);
+    });
+
+
     customerStatusAndBillingContainer.appendChild(customerStatusDiv);
-    // if (isLinked) {
-    //   customerStatusAndBillingContainer.appendChild(aonStatusDrop);
-    // }
+    customerStatusAndBillingContainer.appendChild(aonStatusDrop);
 
     customerInfoContainer.appendChild(customerDocumentDiv);
     customerInfoContainer.appendChild(customerIdDiv);

@@ -14,3 +14,5 @@ export const getBooking = (data) => getPro(`${PRO_URL}/${API_URL}/booking`, data
 
 export const saveDomainLinked = (data) => put(`${API_URL}/domain/link`, data);
 export const deleteDomainLinked = (data) => remove(`${API_URL}/domain/link`, data);
+
+export const updateCustomerBillable = (data) => put(`${API_URL}/customer/billable`, data);
