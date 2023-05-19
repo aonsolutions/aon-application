@@ -1,5 +1,10 @@
-<button class="appButton" appGlobalHover [backgroundColor]="hoverBackgroundColor" [borderColor]="hoverBorderColor" 
-[oldBackgroundColor]="backgroundColor" [oldBorderColor]="(border.split(' ')[2] ? border.split(' ')[2] : '')"
+<button class="appButton" appGlobalHover 
+[backgroundColor]="hoverBackgroundColor" 
+[borderColor]="hoverBorderColor" 
+[oldBackgroundColor]="backgroundColor" 
+[oldBorderColor]="(border.split(' ')[2] ? border.split(' ')[2] : '')"
+[color]="hoverColor"
+[oldColor]="color"
 [ngStyle]="{
     'width': width,
     'height': height,
