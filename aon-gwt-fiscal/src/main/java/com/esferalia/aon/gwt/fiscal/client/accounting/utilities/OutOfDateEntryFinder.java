@@ -2,15 +2,18 @@ package com.esferalia.aon.gwt.fiscal.client.accounting.utilities;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.ModuleCallback;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonConfirmDialog.AonConfirmDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomPopup;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
-import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModule;
+import com.esferalia.aon.gwt.fiscal.client.accounting.AccountEntryModuleOptions;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IAccountEntryWrapper;
+import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesOutOfDateEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesResult;
-import com.esferalia.aon.occam.api.model.accounting.utilities.AccUtilitiesUnbalancedEntryItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.AccUtilitiesItemType;
 import com.esferalia.aon.occam.api.model.accounting.utilities.IAccUtilitiesItem.IAccUtilitiesItemTypeVisitor;
@@ -29,7 +32,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-class UnbalancedEntryFinder extends OptionBase {
+class OutOfDateEntryFinder extends OptionBase {
 
 	private static AccountingUtilitiesServiceAsync SERVICE;
 	
@@ -38,8 +41,12 @@ class UnbalancedEntryFinder extends OptionBase {
 	private String domainName;
 	private String user;
 	private Domain domain;
+
+	private AccUtilitiesResult findResult;
+	private AonToolbarButton refresh;
+	private AonToolbarButton move;	
 	
-	protected UnbalancedEntryFinder(String domainName, String user, Domain domain) {
+	protected OutOfDateEntryFinder(String domainName, String user, Domain domain) {
 		super(domainName, user, domain);
 		this.domainName = domainName;
 		this.user = user;
@@ -58,17 +65,21 @@ class UnbalancedEntryFinder extends OptionBase {
 	
 	@Override
 	public String getOptionDescription() {
-		return AonStringUtils.BULLET + " Buscador de apuntes descuadrados";
+		return AonStringUtils.BULLET + " Buscador de apuntes fuera de fecha";
 	}
 
-	public void run() {
+	public void run() {		
+		
+		refresh.setVisible(true);
+		move.setVisible(false);
+		
 		final PopupPanel popup = new PopupPanel(false, true);
 		popup.add(getSplashWidget());
 		popup.setGlassEnabled(true);
 		popup.setAnimationEnabled(true);
-		popup.center();
-		
-		SERVICE.unbalancedEntries(domainName, user, domain, new AsyncCallback<AccUtilitiesResult>(){
+		popup.center();		
+		 
+		SERVICE.outOfDateEntries(domainName, user, domain, new AsyncCallback<AccUtilitiesResult>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -81,12 +92,16 @@ class UnbalancedEntryFinder extends OptionBase {
 			public void onSuccess(AccUtilitiesResult result) {
 				popup.hide();
 				container.setWidget( paintResults(result) );
+				move.setVisible(!result.isEmpty());
+				// TODO - ESTE ES EL BOTON PARA MOVER LOS APUNTES A LOS EJERCICIOS DE SU FECHA, SE DEJA DE MOMENTO ASI HASTA QUE EUKE LO REVISE
+				move.setVisible(false);
 			}
 		});
 	}
 
 	@Override
 	protected Widget paintResults(AccUtilitiesResult result) {
+		findResult = result;
 		FlowPanel log = new FlowPanel();
 		log.setStyleName(AON.CSS.aonWidthAlmostAll());
 		log.addStyleName(AON.CSS.aonBlockCenter());
@@ -118,7 +133,7 @@ class UnbalancedEntryFinder extends OptionBase {
 					disclosurePanel.addStyleName(AON.CSS.aonFontMedium());
 					disclosurePanel.addStyleName(AON.CSS.aonNowrap());
 				}
-				item.getType().visit( new UnbalancedVisitor(domainPanel,(AccUtilitiesUnbalancedEntryItem) item) );
+				item.getType().visit( new OutOfDateVisitor(domainPanel,(AccUtilitiesOutOfDateEntryItem) item) );
 			}
 			if (disclosurePanel != null) {
 				String header = lastDomain + " (" + domainPanel.getWidgetCount() + ")";
@@ -173,31 +188,88 @@ class UnbalancedEntryFinder extends OptionBase {
 		entryDialog.show();
 	}
 	
-	protected Widget getToolbarPanel() {
+	protected Widget getToolbarPanel() {		
+		 
 		AonToolbar toolbarPanel = new AonToolbar(getOptionDescription());
-		final AonToolbarButton refresh = new AonToolbarButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
+		
+		refresh = new AonToolbarButton(AON.MSG.refresh(),AON.CSS.aonIconRefresh());
 		refresh.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				run();
 			}
-		});
+		});		
 		toolbarPanel.add(refresh);
+		
+		move = new AonToolbarButton("Mover apuntes al ejercicio seg\u00FAn su fecha",AON.CSS.aonIconFix());
+		move.setVisible(false);
+		move.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if (!findResult.isEmpty()) {
+					new AonConfirmDialog().confirm("Mover apuntes","Esta opci\u00F3n mueve los apuntes encontrados, al ejercicio seg\u00FAn la fecha de cada apunte. Solo se mover\u00E1n los apuntes si el ejercicio destino existe y su estado es Activo o Apertura. \u00BFDesea continuar?" 
+							, new AonConfirmDialogCallback() {
+							
+							@Override
+							public void onAccept() {
+								refresh.setVisible(false);
+								move.setVisible(false);
+								moveEntries();
+							}
+			
+							@Override
+							public void onCancel() {
+								// Nothing
+							}
+						});
+				}
+			}
+		});
+		toolbarPanel.add(move);
+		
 		return toolbarPanel;
+		
 	}
 
-	private class UnbalancedVisitor implements IAccUtilitiesItemTypeVisitor {
-		private FlowPanel domainPanel;
-		private AccUtilitiesUnbalancedEntryItem item;
+	protected void moveEntries() {
+		final PopupPanel popup = new PopupPanel(false, true);
+		popup.add(getSplashWidget());
+		popup.setGlassEnabled(true);
+		popup.setAnimationEnabled(true);
+		popup.center();		
+		 
+		SERVICE.moveOutOfDateEntries(domainName, user, domain, findResult, new AsyncCallback<AccUtilitiesResult>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				openFootPanelIfNeeded();
+				showErrorPanel(caught.getMessage());
+				popup.hide();
+			}
+
+			@Override
+			public void onSuccess(AccUtilitiesResult result) {
+				popup.hide();				
+				container.setWidget( paintResults(result) );
+				AonMessageDialog.show("MOVER APUNTES", "Para aquellos ejercicios a donde se han movido apuntes, es recomendable ejecutar los procesos de Regenerar el n\u00FAmero de diario y Regenerar el n\u00FAmero de IVA soportado, pues pueden encontrarse m\u00E1s de un apunte con el mismo n\u00FAmero de diario o m\u00E1s de una factura con el mismo n\u00FAmero de IVA soportado.");
+			}
+		});
 		
-		public UnbalancedVisitor(FlowPanel domainPanel, AccUtilitiesUnbalancedEntryItem item) {
+	}
+
+	private class OutOfDateVisitor implements IAccUtilitiesItemTypeVisitor {
+		private FlowPanel domainPanel;
+		private AccUtilitiesOutOfDateEntryItem item;
+		
+		public OutOfDateVisitor(FlowPanel domainPanel, AccUtilitiesOutOfDateEntryItem item) {
 			this.domainPanel = domainPanel;
 			this.item = item;
 		}
 		
 		@Override
-		public void visitUnbalancedEntry(AccUtilitiesItemType type) {
+		public void visitOutOfDateEntry(AccUtilitiesItemType type) {
 			FlowPanel itemPanel = new FlowPanel();
 			InlineLabel msgLabel = new InlineLabel(item.getMessage());
 			itemPanel.add(msgLabel);
@@ -233,6 +305,6 @@ class UnbalancedEntryFinder extends OptionBase {
 		@Override public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {}
 		@Override public void visitInvoiceIntegrity(AccUtilitiesItemType type) {}
 		@Override public void visitAccountChange(AccUtilitiesItemType type) {}
-		@Override public void visitOutOfDateEntry(AccUtilitiesItemType type) {}
+		@Override public void visitUnbalancedEntry(AccUtilitiesItemType type) {}
 	}
 }

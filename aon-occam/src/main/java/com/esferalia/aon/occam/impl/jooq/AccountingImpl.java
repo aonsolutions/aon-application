@@ -517,6 +517,19 @@ public class AccountingImpl implements IAccounting {
 				configuration -> AccountingUtilitiesDAO.unbalancedEntries(ctx)
 			 );		
 	}
+	
+	@Override
+	public AccUtilitiesResult outOfDateEntries(AONContext ctx) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.outOfDateEntries(ctx));		
+	}
+	
+	@Override
+	public AccUtilitiesResult moveOutOfDateEntries(AONContext ctx, AccUtilitiesResult findResult) {
+		return ctx.getDslContext().transactionResult(
+				configuration -> AccountingUtilitiesDAO.moveOutOfDateEntries(ctx, findResult));		
+	}
+	
 	@Override
 	public AccUtilitiesResult wrongRecordedInvoices(AONContext ctx) {
 		return ctx.getDslContext().transactionResult(

@@ -77,6 +77,16 @@ public class AccountingUtilitiesServiceImpl extends AonStatelessRemoteServiceSer
 	public AccUtilitiesResult unbalancedEntries(String domainName, String user, Domain domain) {
 		return ACCOUNTING.unbalancedEntries(domainName, user, domain);
 	}
+	
+	@Override
+	public AccUtilitiesResult outOfDateEntries(String domainName, String user, Domain domain) {
+		return ACCOUNTING.outOfDateEntries(domainName, user, domain);
+	}
+	
+	@Override
+	public AccUtilitiesResult moveOutOfDateEntries(String domainName, String user, Domain domain, AccUtilitiesResult findResult) {
+		return ACCOUNTING.moveOutOfDateEntries(domainName, user, domain, findResult);
+	}
 
 	@Override
 	public AccUtilitiesResult wrongRecordedInvoices(String domainName, String user, Domain domain) {
