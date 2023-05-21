@@ -52,6 +52,8 @@ public interface RegistryServiceAsync {
 	// **************************************************
 	void getCustomersSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Customer>> asyncCallback);
 	void getProductsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, OldItem>> asyncCallback);
+	void getProductCategoriesSuggestion(String domainName, int domain, String user, String productCategoryQuery, AsyncCallback<Map<String, Integer>> asyncCallback);
+	void getProductTagsSuggestion(String domainName, int domain, String user, String productTagQuery, AsyncCallback<Map<String, Integer>> asyncCallback);
 	void getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<Map<Integer, Integer>> asyncCallback);
 	
 	void getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<LinkedList<Fee>> asyncCallback);
@@ -70,4 +72,5 @@ public interface RegistryServiceAsync {
 	
 	void parseFeeFile(Domain domain, User user, String data, AsyncCallback<List<Fee>> asyncCallback);
 	void importFee(Domain domain, User user, Fee fee, Integer index, AsyncCallback<ImportError> callback);
+	
 }
