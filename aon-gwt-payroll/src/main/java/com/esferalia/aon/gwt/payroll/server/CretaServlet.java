@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,9 +82,11 @@ import com.esferalia.aon.occam.api.model.attachment.Attach;
 import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.payroll.Employee;
+import com.esferalia.aon.occam.api.model.payroll.Employee.ExpressionData;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.payroll.Pair;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.tgss.creta.Bases;
 import com.esferalia.aon.payroll.tgss.creta.Bases.BasesCallback;
 import com.esferalia.aon.payroll.tgss.creta.Bases.ConstantDatoBasesCallback;
@@ -152,6 +155,13 @@ public class CretaServlet extends HttpServlet
 			// TODO Auto-generated method stub
 			return TrabajadoresTramosCallback.super.getTipoIpf(naf);
 		}
+		
+		@Override
+		public boolean isQuoteByRealDays(String naf, String ccc, Date start, Date end) {
+		    return 
+		    getEmployee(naf, start).map(this::hasRealDays).orElse(false)
+		    ;
+		}
 
 		@Override
 		public boolean isPartTimeEmployee(String naf, String ccc, Date start, Date end) {
@@ -204,6 +214,12 @@ public class CretaServlet extends HttpServlet
 
 		private boolean isPartialTime(Employee employee, Date date) {
 			return employee.getFactor(Employee.toLocalDate(date)).map( factor ->  factor < 1.00  ).orElse(false);
+		}
+
+		private boolean hasRealDays(Employee employee) {
+			return employee.getDatas()
+			.getOrDefault("JORNADAS_REALES", Collections.emptyList()).stream()
+			.map( ExpressionData::getExpression ).filter(AonStringUtils::isNotBlank).count() > 0;
 		}
 	}
 
