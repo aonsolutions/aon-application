@@ -106,6 +106,16 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	}
 	
 	@Override
+	public Map<String, Integer> getProductCategoriesSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getProductCategoriesSuggestion(domainName, domain, user, query);
+	}
+	
+	@Override
+	public Map<String, Integer> getProductTagsSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getProductTagsSuggestion(domainName, domain, user, query);
+	}
+	
+	@Override
 	public Map<Integer, Integer> getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams) {
 		return AON.getCustomerProductsUpdates(domainName, domain, user, customerFeeParams);
 	}

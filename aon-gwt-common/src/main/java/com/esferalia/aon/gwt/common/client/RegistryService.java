@@ -55,6 +55,8 @@ public interface RegistryService extends RemoteService {
 	// **************************************************
 	Map<String, Customer> getCustomersSuggestion(String domainName, int domain, String user, String query);
 	Map<String, OldItem> getProductsSuggestion(String domainName, int domain, String user, String query);
+	Map<String, Integer> getProductCategoriesSuggestion(String domainName, int domain, String user, String productCategoryQuery);
+	Map<String, Integer> getProductTagsSuggestion(String domainName, int domain, String user, String productTagQuery);
 	Map<Integer, Integer> getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams);
 	
 	LinkedList<Fee> getCustomerFeeList(String domainName, int domain, String user, CustomerFeeParams customerFeeParams);

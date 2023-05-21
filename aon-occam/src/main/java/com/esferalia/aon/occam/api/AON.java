@@ -2669,6 +2669,18 @@ public class AON {
 			return getFinance().getProductsSuggestion(ctx, domainId, query);
 		}
 	}
+	
+	public static Map<String, Integer> getProductCategoriesSuggestion(String domainName, int domainId, String login, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getProductCategoriesSuggestion(ctx, domainId, query);
+		}
+	}
+	
+	public static Map<String, Integer> getProductTagsSuggestion(String domainName, int domainId, String login, String query) {
+		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){
+			return getFinance().getProductTagsSuggestion(ctx, domainId, query);
+		}
+	}
 
 	public static Map<String, Customer> getCustomersSuggestion(String domainName, int domainId, String login, String query) {
 		try(CloseableAONContext ctx =  AONContext.getAONContext(domainName, domainId, login)){

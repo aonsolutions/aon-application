@@ -17,12 +17,16 @@ public class CustomerFeeParams implements Serializable {
 	private String customer;
 	private Byte customerStatus;
 	
-	private String productCode;
+	private Integer product;
+	private Integer productCategory;
+	private Integer productTag;
 	
 	private String price;
 	private String discount;
 	
+	private Byte startCompare;
 	private Date startDate;
+	private Byte endCompare;
 	private Date endDate;
 	
 	private String quantity;
@@ -49,7 +53,7 @@ public class CustomerFeeParams implements Serializable {
 		return this;
 	}
 	public Integer getMonth() {
-		return month;
+		return null == month ? null : month + 1;
 	}
 	public CustomerFeeParams setMonth(Integer month) {
 		this.month = month;
@@ -83,11 +87,25 @@ public class CustomerFeeParams implements Serializable {
 		this.customerStatus = customerStatus;
 		return this;
 	}
-	public String getProductCode() {
-		return productCode;
+	public Integer getProduct() {
+		return product;
 	}
-	public CustomerFeeParams setProductCode(String productCode) {
-		this.productCode = productCode;
+	public CustomerFeeParams setProduct(Integer product) {
+		this.product = product;
+		return this;
+	}
+	public Integer getProductCategory() {
+		return productCategory;
+	}
+	public CustomerFeeParams setProductCategory(Integer productCategory) {
+		this.productCategory = productCategory;
+		return this;
+	}
+	public Integer getProductTag() {
+		return productTag;
+	}
+	public CustomerFeeParams setProductTag(Integer productTag) {
+		this.productTag = productTag;
 		return this;
 	}
 	public String getPrice() {
@@ -104,11 +122,25 @@ public class CustomerFeeParams implements Serializable {
 		this.discount = discount;
 		return this;
 	}
+	public Byte getStartCompare() {
+		return startCompare;
+	}
+	public CustomerFeeParams setStartCompare(Byte startCompare) {
+		this.startCompare = startCompare;
+		return this;
+	}
 	public Date getStartDate() {
 		return startDate;
 	}
 	public CustomerFeeParams setStartDate(Date startDate) {
 		this.startDate = startDate;
+		return this;
+	}
+	public Byte getEndCompare() {
+		return endCompare;
+	}
+	public CustomerFeeParams setEndCompare(Byte endCompare) {
+		this.endCompare = endCompare;
 		return this;
 	}
 	public Date getEndDate() {

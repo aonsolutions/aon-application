@@ -120,6 +120,8 @@ public interface IFinance {
 
 	public Map<String, Customer> getCustomersSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<String, OldItem> getProductsSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public Map<String, Integer> getProductCategoriesSuggestion(CloseableAONContext ctx, int domainId, String query);
+	public Map<String, Integer> getProductTagsSuggestion(CloseableAONContext ctx, int domainId, String query);
 	public Map<Integer, Integer> getCustomerProductsUpdates(CloseableAONContext ctx, int domainId, CustomerFeeParams customerFeeParams);
 	
 	public LinkedList<Fee> getFeeList(CloseableAONContext ctx, CustomerFeeParams customerFeeParams);
