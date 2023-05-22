@@ -142,7 +142,7 @@ public class FeeDAO {
 		}
 		
 		if(null != customerFeeParams.getMonth() && null == customerFeeParams.getYear()) {
-			condition = condition.and(DSL.month(CUSTOMER_FEE.BILLING_DATE).eq(customerFeeParams.getMonth()));
+			condition = condition.and(DSL.month(CUSTOMER_FEE.BILLING_DATE).eq(customerFeeParams.getMonth() + 1));
 		} else if(null == customerFeeParams.getMonth() && null != customerFeeParams.getYear()) {
 			Date startBillingDate = new Date(customerFeeParams.getYear(), 0, 1);
 			Date endBillingDate = new Date(customerFeeParams.getYear(), 11, 31);
