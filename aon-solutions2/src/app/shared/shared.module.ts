@@ -23,6 +23,11 @@ import { ButtonComponent } from './components/button/button.component';
 import { IconComponent } from './components/icon/icon.component';
 import { MatButtonModule } from '@angular/material/button';
 import { GlobalHoverDirective } from './directives/global-hover.directive';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatSelectModule } from '@angular/material/select';
 
 
 @NgModule({
@@ -52,7 +57,13 @@ import { GlobalHoverDirective } from './directives/global-hover.directive';
     MatGridListModule,
     MatToolbarModule,
     MatDividerModule,
-    MatButtonModule
+    MatButtonModule,
+    MatInputModule,
+    FormsModule,
+    MatIconModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatSelectModule
   ],
   exports:[
     SidenavHoverDirective,
@@ -67,7 +78,8 @@ import { GlobalHoverDirective } from './directives/global-hover.directive';
     ContentSideNavComponent,
     ListElementComponent,
     IconComponent,
-    ButtonComponent
+    ButtonComponent,
+    InputComponent
   ]
 })
 export class SharedModule { }
