@@ -32,6 +32,10 @@ export class AuthService {
     this.jwtAuth.logout();
   }
 
+  isLoggedIn(): boolean {
+    return this.jwtAuth.isLoggedIn();
+  }
+
   getUser(): Observable<User> {
     let cabeceras: HttpHeaders = new HttpHeaders(this.headers);
 

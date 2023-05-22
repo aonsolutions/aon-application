@@ -21,6 +21,7 @@ export class Enterprise {
 export class TopBarComponent implements OnInit, OnChanges {
 
   displayHomeIcon: boolean = false;
+  usserLoggged: boolean = this.auth.isLoggedIn();
   currentRoute: string = this.router.url.replace('/','');
   selectedEnterprise: string = 'Nombre de empresa 1';
   enterprises: Enterprise [] = [
