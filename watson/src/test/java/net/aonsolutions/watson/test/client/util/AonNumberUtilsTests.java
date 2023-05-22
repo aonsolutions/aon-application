@@ -72,7 +72,7 @@ class AonNumberUtilsTests {
     }
 
     @Test
-    void toIntegerTest(){
+    void toIntegerNumberTest(){
     	Long l1 = null;
     	assertNull( AonNumberUtils.toInteger(l1) );
     	l1 = Long.valueOf(1);
@@ -86,4 +86,37 @@ class AonNumberUtilsTests {
     	assertEquals( 1, AonNumberUtils.toInteger(d1) );
     }
 
+    @Test
+    void toIntegerStringTest(){
+    	String l1 = null;
+    	assertNull( AonNumberUtils.toInteger(l1) );
+    	l1 = "";
+    	assertNull( AonNumberUtils.toInteger(l1) );
+    	l1 = "a";
+    	assertNull( AonNumberUtils.toInteger(l1) );
+    	l1 = "1";
+    	assertEquals( 1, AonNumberUtils.toInteger(l1) );
+    }
+
+    @Test
+    void toIntTest(){
+    	String l1 = null;
+    	assertEquals( 0, AonNumberUtils.toInt(l1) );
+    	l1 = "";
+    	assertEquals( 0, AonNumberUtils.toInt(l1) );
+    	l1 = "a";
+    	assertEquals( 0, AonNumberUtils.toInt(l1) );
+    	l1 = "1";
+    	assertEquals( 1, AonNumberUtils.toInt(l1) );
+    	
+    	l1 = null;
+    	assertEquals( 5, AonNumberUtils.toInt(l1,5) );
+    	l1 = "";
+    	assertEquals( 5, AonNumberUtils.toInt(l1,5) );
+    	l1 = "a";
+    	assertEquals( 5, AonNumberUtils.toInt(l1,5) );
+    	l1 = "1";
+    	assertEquals( 1, AonNumberUtils.toInt(l1,5) );
+    	
+    }
 }

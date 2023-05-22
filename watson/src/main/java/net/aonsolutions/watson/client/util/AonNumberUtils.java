@@ -2,7 +2,6 @@ package net.aonsolutions.watson.client.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Optional;
 
 public class AonNumberUtils {
 
@@ -10,10 +9,6 @@ public class AonNumberUtils {
 
 	}
 	
-	public static Integer getInteger( Optional<Integer> opt) {
-		return opt.orElse(null);
-	}
-
 	public static double round(double value, int precision) {
 		return new BigDecimal(Double.toString(value)).setScale(precision, RoundingMode.HALF_UP).doubleValue();
 	}
@@ -58,4 +53,62 @@ public class AonNumberUtils {
 			return null;
 		return Integer.valueOf(number.intValue());
 	}
+
+    /**
+     * <p>Convert a {@code String} to an {@code int}, returning
+     * {@code zero} if the conversion fails.</p>
+     *
+     * <p>If the string is {@code null}, {@code zero} is returned.</p>
+     *
+     * <pre>
+     *   NumberUtils.toInt(null) = 0
+     *   NumberUtils.toInt("")   = 0
+     *   NumberUtils.toInt("1")  = 1
+     * </pre>
+     *
+     * @param str  the string to convert, may be null
+     * @return the int represented by the string, or {@code zero} if
+     *  conversion fails
+     * @since 2.1
+     */
+    public static int toInt(final String str) {
+        return toInt(str, 0);
+    }
+
+    /**
+     * <p>Convert a {@code String} to an {@code int}, returning a
+     * default value if the conversion fails.</p>
+     *
+     * <p>If the string is {@code null}, the default value is returned.</p>
+     *
+     * <pre>
+     *   NumberUtils.toInt(null, 1) = 1
+     *   NumberUtils.toInt("", 1)   = 1
+     *   NumberUtils.toInt("1", 0)  = 1
+     * </pre>
+     *
+     * @param str  the string to convert, may be null
+     * @param defaultValue  the default value
+     * @return the int represented by the string, or the default if conversion fails
+     * @since 2.1
+     */
+    public static int toInt(final String str, final int defaultValue) {
+        if (str == null) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(str);
+        } catch (final NumberFormatException nfe) {
+            return defaultValue;
+        }
+    }
+
+    public static Integer toInteger(final String str) {
+        if (str == null) return null;
+        try {
+            return Integer.parseInt(str);
+        } catch (final NumberFormatException nfe) {
+            return null;
+        }
+    }
 }
