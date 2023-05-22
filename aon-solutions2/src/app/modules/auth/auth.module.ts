@@ -9,11 +9,13 @@ import { MatInputModule } from '@angular/material/input';
 import { NgModule } from '@angular/core';
 import { SetMaterialModule } from 'libraries/setproduct-angular-material';
 import { SharedModule } from "../../shared/shared.module";
+import { SelectEnterpriseComponent } from './components/select-enterprise/select-enterprise.component';
 
 
 @NgModule({
     declarations: [
-        LoginComponent
+        LoginComponent,
+        SelectEnterpriseComponent
     ],
     imports: [
         AuthRoutingModule,

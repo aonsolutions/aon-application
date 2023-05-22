@@ -1,35 +1,6 @@
-<!-- <div class="formContent">
-  <div class="loginTitle">
-    <h5 style="margin-bottom:10px; font-size: 34px;">Inicia Sesión</h5>
-    <p id="textInitial" style="margin-top:0px; font-size:20px;">Entra en tu cuenta de AON</p>
-  </div>
-  <div class="centerContent">
-    <mat-form-field class="loginFormField" appearance="outline" mat-form-field-appearance-bold-outline>
-      <mat-label>Usuario</mat-label><span><set-icon (click)="clean()" class="eyeIcon" shape="delete" set-color
-        color="black" size="29"></set-icon></span>
-        <input matInput placeholder="Usuario" type="user" [(ngModel)]="user" />
-      </mat-form-field>
-      <mat-form-field class="loginFormField" appearance="outline" mat-form-field-appearance-bold-outline>
-        <mat-label>Contraseña</mat-label><span><set-icon class="eyeIcon" shape="eye" set-color color="black" size="29"
-          (click)="hidePassword = !hidePassword"></set-icon></span>
-          <input matInput placeholder="Contraseña" type="password" [(ngModel)]="password"
-          [type]="hidePassword ? 'password' : 'text'" />
-        </mat-form-field>
-        <div class="loginButtonSessionDiv">
-          <button class="loginButton" id="initSessionButton" color="black" mat-button
-          (click)="loginUser()">INICIAR SESIÓN</button>
-        </div>
-        <div class="line">
-          <span id="loginMiddleLine">O INICIA SESIÓN</span>
-        </div>
-        <div class="loginButtonSessionDiv">
-          <button class="loginButton" id="notPasswordButton" color="black" mat-stroked-button>SIN CONTRASEÑA</button>
-        </div>
-      </div>
-    </div> -->
 <app-content>
   <div class="containerLogin">
-    <app-list-element [widthContainer]="'41rem'" class="auxTest">
+    <app-list-element [widthContainer]="'41rem'">
       <div class="contTitleLogin">
         <!-- Pendiente de revisar tipografias y tamanyos -->
         <h4 class="titleLogin">Inicia Sesión</h4>
