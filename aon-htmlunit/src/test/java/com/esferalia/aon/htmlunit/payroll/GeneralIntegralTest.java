@@ -357,9 +357,17 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		wait4Id("cotizacion,_cero");
 
+		Calendar calendar = Calendar.getInstance();
+
+		draft("FIN, CONTRATO TEMPORAL");
+
+		calendar.set(2017, Calendar.FEBRUARY, 23);
+		settle(calendar.getTime());
+		double salarioDia = getValue("editor-salario_dia");
+		assertValue("db-amount-label-2", salarioDia * 12 * 11 / 365.00  , DELTA);
+
 		draft("COTIZACIÓN, CERO");
 
-		Calendar calendar = Calendar.getInstance();
 		calendar.set(2016, Calendar.JUNE, 25);
 		settle(calendar.getTime());
 		
@@ -385,6 +393,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 200.00);
 		assertValue("totalPaymentLabel", 300.00);
 		assertValue("totalLiquidLabel", 300.00 - (200.00 * (4.70 + 1.55 + 0.10 + 18.49) / 100.00) - ( 100.00 * 18.49 / 100.00 ));
+		
 		
 
 	}
