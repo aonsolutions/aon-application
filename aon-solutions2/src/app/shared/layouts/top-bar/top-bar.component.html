@@ -5,7 +5,7 @@
           <img src="../../../assets/images/logo/logo-aon.png" routerLink="home" class="logoAon" />
         </div>
       </mat-grid-tile>
-      <mat-grid-tile colspan="1">
+      <mat-grid-tile colspan="1" *ngIf="usserLoggged">
         <div class="breadcumb">
           <div mat-button [matMenuTriggerFor]="menuEnterprise" class="enterpriseSelector">
             {{this.selectedEnterprise}}
@@ -28,7 +28,7 @@
           </mat-menu>
         </div>
       </mat-grid-tile>
-      <mat-grid-tile colspan="1">
+      <mat-grid-tile colspan="1" *ngIf="usserLoggged">
         <div class="toolbarIcons">
           <div *ngIf="this.displayHomeIcon" class="buttonTopbar" routerLink="home">
             <div class="iconToolbar">
@@ -56,7 +56,7 @@
                   Ayuda
                 </div>
               </a>
-              <a mat-menu-item>
+              <a mat-menu-item href="#" (click)="auth.logout()">
                 <div class="hoverMenu">
                   <set-icon shape="exit_to_app"></set-icon>
                   &nbsp;&nbsp;
@@ -69,4 +69,3 @@
       </mat-grid-tile>
     </mat-grid-list>
   </mat-toolbar>
-  

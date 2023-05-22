@@ -1,1 +1,74 @@
-<p>login works!</p>
+<!-- <div class="formContent">
+  <div class="loginTitle">
+    <h5 style="margin-bottom:10px; font-size: 34px;">Inicia Sesión</h5>
+    <p id="textInitial" style="margin-top:0px; font-size:20px;">Entra en tu cuenta de AON</p>
+  </div>
+  <div class="centerContent">
+    <mat-form-field class="loginFormField" appearance="outline" mat-form-field-appearance-bold-outline>
+      <mat-label>Usuario</mat-label><span><set-icon (click)="clean()" class="eyeIcon" shape="delete" set-color
+        color="black" size="29"></set-icon></span>
+        <input matInput placeholder="Usuario" type="user" [(ngModel)]="user" />
+      </mat-form-field>
+      <mat-form-field class="loginFormField" appearance="outline" mat-form-field-appearance-bold-outline>
+        <mat-label>Contraseña</mat-label><span><set-icon class="eyeIcon" shape="eye" set-color color="black" size="29"
+          (click)="hidePassword = !hidePassword"></set-icon></span>
+          <input matInput placeholder="Contraseña" type="password" [(ngModel)]="password"
+          [type]="hidePassword ? 'password' : 'text'" />
+        </mat-form-field>
+        <div class="loginButtonSessionDiv">
+          <button class="loginButton" id="initSessionButton" color="black" mat-button
+          (click)="loginUser()">INICIAR SESIÓN</button>
+        </div>
+        <div class="line">
+          <span id="loginMiddleLine">O INICIA SESIÓN</span>
+        </div>
+        <div class="loginButtonSessionDiv">
+          <button class="loginButton" id="notPasswordButton" color="black" mat-stroked-button>SIN CONTRASEÑA</button>
+        </div>
+      </div>
+    </div> -->
+<app-content>
+  <div class="containerLogin">
+    <app-list-element [widthContainer]="'41rem'" class="auxTest">
+      <div class="contTitleLogin">
+        <!-- Pendiente de revisar tipografias y tamanyos -->
+        <h4 class="titleLogin">Inicia Sesión</h4>
+        <span>Entra en tu cuenta de AON</span>
+      </div>
+
+      <app-list-element padding="1rem" widthContainer="'100%'" heightContainer="22rem" [border]="'1px'" color="gray">
+        <input class="inputLogin" type="text" name="nameUser" id="nameUser" placeholder="Usuario" [(ngModel)]="user">
+        <input class="inputLogin" type="password" name="passsUser" id="passsUser" [(ngModel)]="password">
+
+        <app-button [width]="'100%'"
+        [height]="'auto'"
+        [border]="'.0625rem solid black'"
+        [borderRadius]="'0.4rem'"
+        [backgroundColor]="'white'"
+        [color]="'black'"
+        [hoverBackgroundColor]="'black'"
+        [hoverBorderColor]="'black'"
+        [padding]="'.5rem'"
+        [align]="'center'"
+        [fontSize]="'1rem'"
+        [hoverColor]="'white'"
+        (click)="loginUser()"
+        >INICIAR SESIÓN</app-button>
+        <div class="divider">O INICIA SESIÓN</div>
+        <app-button [width]="'100%'"
+        [height]="'auto'"
+        [border]="'.0625rem solid black'"
+        [borderRadius]="'0.4rem'"
+        [backgroundColor]="'black'"
+        [color]="'white'"
+        [hoverBackgroundColor]="'#292a31'"
+        [hoverBorderColor]="'#292a31'"
+        [padding]="'.5rem'"
+        [align]="'center'"
+        [fontSize]="'1rem'"
+        [hoverColor]="'white'"
+        >SIN CONTRASEÑA</app-button>
+      </app-list-element>
+    </app-list-element>
+  </div>
+</app-content>

@@ -1,6 +1,7 @@
+import { AuthGuard } from './guards/auth.guard';
+import { BasicLayoutComponent } from '../shared/layouts/basic-layout/basic-layout.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { BasicLayoutComponent } from '../shared/layouts/basic-layout/basic-layout.component';
 import { SidenavLayoutComponent } from '../shared/layouts/sidenav-layout/sidenav-layout.component';
 
 const routes: Routes = [
@@ -46,7 +47,7 @@ const routes: Routes = [
       {
         path: '', redirectTo: 'home', pathMatch: 'full'
       },
-    ]//, canActivate: [AuthGuard],
+    ], canActivate: [AuthGuard],
   },
   // { path: 'auth', component: AuthComponent },
   {
@@ -59,7 +60,7 @@ const routes: Routes = [
           import('src/app/modules/auth/auth.module').then((m) => m.AuthModule),
       }
     ]
-    
+
   },
   { path: '**', redirectTo: 'home', pathMatch: 'full' },
 ];
