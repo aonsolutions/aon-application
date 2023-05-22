@@ -374,6 +374,7 @@ public class IRPFDAO {
 		return ctx.getDslContext().select(
 				 SALARY.ID	
 				,SALARY.ISSUE_DATE
+				,SALARY.CHARGE_DATE
 				,SALARY.EMPLOYEE_DOCUMENT
 				,SALARY.EMPLOYEE_NAME
 				,SALARY.IRPF_BASE
@@ -474,6 +475,7 @@ public class IRPFDAO {
 				.setRegistryDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
 				.setName(rec.getValue(SALARY.EMPLOYEE_NAME))
 				.setIssueDate(rec.getValue(SALARY.ISSUE_DATE))
+				.setChargeDate(rec.getValue(SALARY.CHARGE_DATE))
 				.setTaxDate(rec.getValue(SALARY.ISSUE_DATE));
 			double base = rec.getValue(SALARY.IRPF_BASE);
 			double quota = rec.getValue(SALARY.TOTAL_IRPF);
@@ -499,6 +501,7 @@ public class IRPFDAO {
 						.setRegistryDocument(rec.getValue(SALARY.EMPLOYEE_DOCUMENT))
 						.setName(rec.field(SALARY.EMPLOYEE_NAME) != null ? rec.getValue(SALARY.EMPLOYEE_NAME) : null)
 						.setIssueDate(rec.getValue(SALARY.ISSUE_DATE))
+						.setChargeDate(rec.getValue(SALARY.CHARGE_DATE))
 						.setTaxDate(rec.getValue(SALARY.ISSUE_DATE))
 						.setInKind(false)
 						.setBase(AonMathUtils.round( moneyBase))
