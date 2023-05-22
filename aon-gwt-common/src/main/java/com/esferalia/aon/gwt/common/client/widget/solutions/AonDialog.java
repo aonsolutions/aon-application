@@ -80,7 +80,7 @@ public class AonDialog extends AonCustomDialog {
 	private void getBtnPanel() {
 		okButton = new Button();
     	okButton.setStyleName(AON.CSS.aonOkButton());
-    	okButton.setText( AON.MSG.cancelAction() );
+    	okButton.setText( AON.MSG.accept() );
     	okButton.ensureDebugId("acceptDialogButton");
     	
     	okButton.addKeyUpHandler(e -> {

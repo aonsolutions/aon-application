@@ -1,8 +1,9 @@
-package com.esferalia.aon.gwt.template.server.imports;
+package net.aonsolutions.aon.templates;
 
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -10,12 +11,11 @@ import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
-import com.esferalia.aon.gwt.template.shared.Error;
-import com.esferalia.aon.gwt.template.shared.FeeInfo;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Filter;
+import com.esferalia.aon.occam.api.model.ImportError;
 import com.esferalia.aon.occam.api.model.Properties.CustomerProperties;
 import com.esferalia.aon.occam.api.model.Properties.InvoicingGroupProperties;
 import com.esferalia.aon.occam.api.model.Properties.ItemProperties;
@@ -41,6 +41,11 @@ import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.watson.util.AonArrayUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import net.aonsolutions.aon.templates.importation.IConstants;
+import net.aonsolutions.aon.templates.importation.Import;
+import net.aonsolutions.aon.templates.importation.Utils;
+
+
 public class FeeImport extends Import {
 	
 	public static FeeImport getInstance() {
@@ -51,7 +56,7 @@ public class FeeImport extends Import {
 
 	}
 	
-	public LinkedList<FeeInfo> importation(Domain domain, String login, byte[] data){
+	public List<Fee> importation(Domain domain, String login, byte[] data){
 		try {
 			return importation(domain, login, rowIterator(data));
 		} catch (OfficeXmlFileException e){
@@ -59,17 +64,16 @@ public class FeeImport extends Import {
 		} 
 	}
 
-	public LinkedList<FeeInfo> importationX(Domain domain, String login, byte[] data){
+	public List<Fee> importationX(Domain domain, String login, byte[] data){
 		return importation(domain, login, rowIteratorX(data));
 	}
 	
-	FeeInfo feeInfo; 
 	Fee fee;	
 	Integer indexTitle;
 	
-	private LinkedList<FeeInfo> importation(Domain domain, String login, Iterator<Row> rowIterator) {
-		LinkedList<FeeInfo> list = new LinkedList<>();
-		LinkedList<String> titleList = new LinkedList<>();
+	private List<Fee> importation(Domain domain, String login, Iterator<Row> rowIterator) {
+		List<Fee> list = new LinkedList<>();
+		List<String> titleList = new LinkedList<>();
 		Iterable<Row> rowIterable = () -> rowIterator;
 		Stream<Row> rowStream = StreamSupport.stream(rowIterable.spliterator(),false);
 
@@ -78,8 +82,6 @@ public class FeeImport extends Import {
 			Iterator<Cell> cellIterator = row.cellIterator();
 			Iterable<Cell> cellIterable = () -> cellIterator;
 			Stream<Cell> cellStream = StreamSupport.stream(cellIterable.spliterator(),false);
-			feeInfo = new FeeInfo();
-			feeInfo.setLine(row.getRowNum() + 1);
 			fee = new Fee();
 			Object obj = Utils.getObjectValue(row.getCell(0));
 			if(obj == null || (titleList.isEmpty() && !AonArrayUtils.constainsIgnoreCase(IConstants.FEE_TITLES, obj.toString().trim()))) {
@@ -94,8 +96,7 @@ public class FeeImport extends Import {
 				}
 			});
 			if(row.getRowNum() > indexTitle) {	
-				feeInfo.setFee(fee);
-				list.add(feeInfo);
+				list.add(fee);
 			}
 		});
 
@@ -215,47 +216,49 @@ public class FeeImport extends Import {
 		}
 	}
 
-	public static Error insertFees(Domain domain, User user, Integer index, LinkedList<FeeInfo> fees) {
-		Error error = new Error().setLine(index).setError(true);
+	public static ImportError insertFees(Domain domain, User user, Integer index, List<Fee> fees) {
+		ImportError error = new ImportError().setLine(index).setError(true);
 	
 		if(index >= fees.size()) {
 			return error;
 		}
 		
-		FeeInfo feeInfo = fees.get(index);	
-		return insertFee(domain, user, index, feeInfo);
+		Fee fee = fees.get(index);	
+		return insertFee(domain, user, index, fee);
 	}
 	
-	public static Error insertFee(Domain domain, User user, Integer index, FeeInfo feeInfo) {
-		Error error = new Error().setLine(index).setError(true);
+	public static ImportError insertFee(Domain domain, User user, Integer index, Fee fee) {
+		ImportError error = new ImportError().setLine(index).setError(true);
 	
-		Fee fee = feeInfo.getFee();
 		fee.setDomain(domain);
 		if(fee.getPeriod() == null) {
 			fee.setPeriod(BillingPeriod.NO_PERIOD);
 		}
 
 		// CUSTOMER
-		fee.setCustomer(AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f -> customerFilter(domain, user, feeInfo.getFee().getCustomer(), f)));
+		Customer customer = fee.getCustomer();
+		fee.setCustomer(AON.getCustomer(domain.getName(), domain.getId(), user.getLogin(), f -> customerFilter(domain, user, customer, f)));
 		if(fee.getCustomer().getId() == null) {
 			error.setError(false);
-			error.setTextError("Línea " + feeInfo.getLine() + ": El cliente introducido no existe.");
+			error.setTextError("Línea " + index + ": El cliente introducido no existe.");
 			return error;
 		}
 		
 		// SELLER
 		if(fee.getSeller().getAlias() != null) {
-			fee.setSeller(AON.getSeller(domain.getName(), domain.getId(), user.getLogin(), f -> sellerFilter(domain, user, feeInfo.getFee().getSeller(), f)));
+			Seller seller = fee.getSeller();
+			fee.setSeller(AON.getSeller(domain.getName(), domain.getId(), user.getLogin(), f -> sellerFilter(domain, user, seller, f)));
 			if(fee.getSeller().getId() == null) {
 				error.setError(false);
-				error.setTextError("Línea " + feeInfo.getLine() + ": El comercial introducido no existe.");
+				error.setTextError("Línea " + index + ": El comercial introducido no existe.");
 				return error;
 			}
 		}
 		
 		// PROJECT
+		Fee feeCopy = fee;
 		if(fee.getProject().getAlias() != null) {
-			Project project = AON.getProject(domain.getName(), domain.getId(), user.getLogin(), f -> projectFilter(domain, user, feeInfo.getFee(), f));			
+			Project project = AON.getProject(domain.getName(), domain.getId(), user.getLogin(), f -> projectFilter(domain, user, feeCopy, f));			
 			if(project.getId() == null) {
 				project = AON.saveProject(domain, user, new Project()
 						.setDomain(domain)
@@ -268,20 +271,21 @@ public class FeeImport extends Import {
 		
 		// WORKPLACE
 		if(fee.getWorkplace().getDescription() != null){
-			fee.setWorkplace(AON.getWorkplace(domain.getName(), domain.getId(), user.getLogin(), f -> workplaceFilter(domain, user, feeInfo.getFee().getWorkplace(), f)));
+			Workplace workplace = fee.getWorkplace();
+			fee.setWorkplace(AON.getWorkplace(domain.getName(), domain.getId(), user.getLogin(), f -> workplaceFilter(domain, user, workplace, f)));
 			if(fee.getWorkplace().getId() == null) {
 				error.setError(false);
-				error.setTextError("Línea " + feeInfo.getLine() + ": El centro de trabajo introducido no existe.");
+				error.setTextError("Línea " + index + ": El centro de trabajo introducido no existe.");
 				return error;
 			}
 		} else {
 			LinkedList<Workplace> list = AON.getWorkplaceList(domain.getName(), domain.getId(), user.getLogin(), f -> f.getDomainProperty().eq(domain.getId()));
 			if(list != null && (list.size() < 1 || list.size() > 1 )) {
 				error.setError(false);
-				error.setTextError("Línea " + feeInfo.getLine() + ": Hay que introducir el centro de trabajo.");
+				error.setTextError("Línea " + index + ": Hay que introducir el centro de trabajo.");
 				return error;
 			} else {
-				error.setTextWarning("Línea " + feeInfo.getLine() + ": Se ha asignado el centro de trabajo " +list.getFirst().getDescription() + ".");
+				error.setTextWarning("Línea " + index + ": Se ha asignado el centro de trabajo " +list.getFirst().getDescription() + ".");
 				fee.setWorkplace(list.getFirst());
 			}
 		}
@@ -290,10 +294,11 @@ public class FeeImport extends Import {
 		String productCode = fee.getItem().getProduct().getCode();
 		if(AonStringUtils.isEmpty(productCode) || productCode.length() > 15){
 			error.setError(false);
-			error.setTextError("Línea " + feeInfo.getLine() + ": El código de producto está vacío o es demasiado largo.");
+			error.setTextError("Línea " + index + ": El código de producto está vacío o es demasiado largo.");
 			return error;
 		}
-		OldProduct product = AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> productFilter(domain, user, feeInfo.getFee().getItem(), f));			
+		OldItem oldItem = fee.getItem();
+		OldProduct product = AON.getProduct(domain.getName(), domain.getId(), user.getLogin(), f -> productFilter(domain, user, oldItem, f));			
 		if(product.getId() == null) {
 			Tax tax = AON.getTax(domain.getName(), domain.getId(), user.getLogin(), f -> vatFilter(domain, user, f));
 			
@@ -320,18 +325,18 @@ public class FeeImport extends Import {
 					.setStatus(ProductStatus.ACTIVE.value())
 					.setPrice(fee.getPrice() != null ? fee.getPrice() : 0.0));
 			
-			error.setTextWarning("Línea " + feeInfo.getLine() + ": El producto introducido no existe. Se ha creado un nuevo producto con código " + product.getCode() + ".");
+			error.setTextWarning("Línea " + index + ": El producto introducido no existe. Se ha creado un nuevo producto con código " + product.getCode() + ".");
 		}
 		OldProduct p = product;
 		// ITEM
-		OldItem item = AON.getItem(domain.getName(), domain.getId(), user.getLogin(), f -> itemFilter(domain, user, p, feeInfo.getFee().getItem(), f));
+		OldItem item = AON.getItem(domain.getName(), domain.getId(), user.getLogin(), f -> itemFilter(domain, user, p, oldItem, f));
 		if(item.getId() == null) {			
 			item = AON.insertItem(domain.getName(), domain.getId(), user.getLogin(), fee.getItem()
 					.setDomain(domain.getId())
 					.setProduct(product)
 					.setProductId(product.getId())
 					.setPrice(fee.getPrice() != null ? fee.getPrice() : 0.0));	
-			error.setTextWarning("Línea " + feeInfo.getLine() + ": El detalle del producto (detalles, código de barras o número de serie) no existe. Se ha creado un nuevo detalle para el producto " + product.getCode() + ".");	
+			error.setTextWarning("Línea " + index + ": El detalle del producto (detalles, código de barras o número de serie) no existe. Se ha creado un nuevo detalle para el producto " + product.getCode() + ".");	
 		}
 		fee.setItem(item);
 		fee.getItem().setProduct(product);
@@ -340,14 +345,14 @@ public class FeeImport extends Import {
 
 		// INVOICING GROUP
 		if(fee.getInvoicingGroup().getDescription() != null) {
-			InvoicingGroup ig = AON.getInvoicingGroup(domain.getName(), domain.getId(), user.getLogin(), f -> invoicingGroupFilter(domain, user, feeInfo.getFee(), f));
+			InvoicingGroup ig = AON.getInvoicingGroup(domain.getName(), domain.getId(), user.getLogin(), f -> invoicingGroupFilter(domain, user, feeCopy, f));
 			if(ig.getId() == null) {
 				ig = AON.save(domain.getName(), domain.getId(), user.getLogin(), new InvoicingGroup()
 						.setDomain(domain.getId())
 						.setCustomer(fee.getCustomer().getId())
 						.setCustomerGrouped((byte) 1)
 						.setDescription(fee.getInvoicingGroup().getDescription()));
-				error.setTextWarning("Línea " + feeInfo.getLine() + ": El grupo de facturación introducido no existe. Se ha creado un nuevo grupo " + ig.getDescription() + ".");
+				error.setTextWarning("Línea " + index + ": El grupo de facturación introducido no existe. Se ha creado un nuevo grupo " + ig.getDescription() + ".");
 			}
 			fee.setInvoicingGroup(ig);
 		}

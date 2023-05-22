@@ -1,7 +1,7 @@
 package com.code.aon.faces.component.richfaces.lookup;
 
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
+import jakarta.el.MethodExpression;
+import jakarta.el.ValueExpression;
 
 import com.code.aon.ui.form.event.IControllerListener;
 

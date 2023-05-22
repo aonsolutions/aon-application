@@ -132,6 +132,11 @@ public class IdcCompositeParserListener implements IdcParserListener {
 		idcParserListeners.forEach(l -> l.onContractAgrarianRealJourneyProvided(realJourneyProvided));
 	}
 	
+	@Override
+	public void onEmployeeBenefitsLoss(String ssNum, String ccc, String cause, Date start, Date end) {
+		idcParserListeners.forEach(l -> l.onEmployeeBenefitsLoss(ssNum, ccc, cause, start, end));
+	}
+	
 	
 	
 	

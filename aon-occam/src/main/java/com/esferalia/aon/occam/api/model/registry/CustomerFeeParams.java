@@ -1,6 +1,7 @@
 package com.esferalia.aon.occam.api.model.registry;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class CustomerFeeParams implements Serializable {
 
@@ -11,14 +12,32 @@ public class CustomerFeeParams implements Serializable {
 	private Integer month;
 	private Integer year;
 	
+	private Byte periodicity;
+	
 	private String customer;
 	private Byte customerStatus;
 	
-	private String productCode;
+	private Integer product;
+	private Integer productCategory;
+	private Integer productTag;
 	
 	private String price;
 	private String discount;
 	
+	private Byte startCompare;
+	private Date startDate;
+	private Byte endCompare;
+	private Date endDate;
+	
+	private String quantity;
+	
+	private String workplace;
+	private String seller;
+	private String invoicingGroup;
+	private Integer project;
+	
+	private Integer segment;
+
 	private Integer limit;
 	private Integer offset;
 	
@@ -34,7 +53,7 @@ public class CustomerFeeParams implements Serializable {
 		return this;
 	}
 	public Integer getMonth() {
-		return month;
+		return null == month ? null : month + 1;
 	}
 	public CustomerFeeParams setMonth(Integer month) {
 		this.month = month;
@@ -45,6 +64,13 @@ public class CustomerFeeParams implements Serializable {
 	}
 	public CustomerFeeParams setYear(Integer year) {
 		this.year = year;
+		return this;
+	}
+	public Byte getPeriodicity() {
+		return periodicity;
+	}
+	public CustomerFeeParams setPeriodicity(Byte periodicity) {
+		this.periodicity = periodicity;
 		return this;
 	}
 	public String getCustomer() {
@@ -61,11 +87,25 @@ public class CustomerFeeParams implements Serializable {
 		this.customerStatus = customerStatus;
 		return this;
 	}
-	public String getProductCode() {
-		return productCode;
+	public Integer getProduct() {
+		return product;
 	}
-	public CustomerFeeParams setProductCode(String productCode) {
-		this.productCode = productCode;
+	public CustomerFeeParams setProduct(Integer product) {
+		this.product = product;
+		return this;
+	}
+	public Integer getProductCategory() {
+		return productCategory;
+	}
+	public CustomerFeeParams setProductCategory(Integer productCategory) {
+		this.productCategory = productCategory;
+		return this;
+	}
+	public Integer getProductTag() {
+		return productTag;
+	}
+	public CustomerFeeParams setProductTag(Integer productTag) {
+		this.productTag = productTag;
 		return this;
 	}
 	public String getPrice() {
@@ -82,6 +122,69 @@ public class CustomerFeeParams implements Serializable {
 		this.discount = discount;
 		return this;
 	}
+	public Byte getStartCompare() {
+		return startCompare;
+	}
+	public CustomerFeeParams setStartCompare(Byte startCompare) {
+		this.startCompare = startCompare;
+		return this;
+	}
+	public Date getStartDate() {
+		return startDate;
+	}
+	public CustomerFeeParams setStartDate(Date startDate) {
+		this.startDate = startDate;
+		return this;
+	}
+	public Byte getEndCompare() {
+		return endCompare;
+	}
+	public CustomerFeeParams setEndCompare(Byte endCompare) {
+		this.endCompare = endCompare;
+		return this;
+	}
+	public Date getEndDate() {
+		return endDate;
+	}
+	public CustomerFeeParams setEndDate(Date endDate) {
+		this.endDate = endDate;
+		return this;
+	}
+	public String getQuantity() {
+		return quantity;
+	}
+	public CustomerFeeParams setQuantity(String quantity) {
+		this.quantity = quantity;
+		return this;
+	}
+	public String getWorkplace() {
+		return workplace;
+	}
+	public CustomerFeeParams setWorkplace(String workplace) {
+		this.workplace = workplace;
+		return this;
+	}
+	public String getSeller() {
+		return seller;
+	}
+	public CustomerFeeParams setSeller(String seller) {
+		this.seller = seller;
+		return this;
+	}
+	public String getInvoicingGroup() {
+		return invoicingGroup;
+	}
+	public CustomerFeeParams setInvoicingGroup(String invoicingGroup) {
+		this.invoicingGroup = invoicingGroup;
+		return this;
+	}
+	public Integer getProject() {
+		return project;
+	}
+	public CustomerFeeParams setProject(Integer project) {
+		this.project = project;
+		return this;
+	}
 	public Integer getLimit() {
 		return limit;
 	}
@@ -94,6 +197,14 @@ public class CustomerFeeParams implements Serializable {
 	}
 	public CustomerFeeParams setOffset(Integer offset) {
 		this.offset = offset;
+		return this;
+	}
+
+	public Integer getSegment() {
+		return this.segment;
+	}
+	public CustomerFeeParams setSegment(Integer segment) {
+		this.segment = segment;
 		return this;
 	}
 }

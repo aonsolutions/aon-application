@@ -11,13 +11,14 @@ import org.jooq.exception.DataAccessException;
 
 import com.esferalia.aon.occam.api.AONContext.CloseableAONContext;
 import com.esferalia.aon.occam.api.model.ConsoleDomain;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.DomainParams;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.impl.jooq.ConsoleImpl;
 import com.esferalia.aon.occam.impl.jooq.console.ConsoleConnectionParams;
@@ -176,6 +177,18 @@ public class CONSOLE {
 	public static Boolean delete(ConsoleTableRow row) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(row.getSchema())) {
 			return getConsole().delete(ctx,row);
+		}
+	}
+	
+	public static DomainLinked saveDomainLink(Domain domain, User user, DomainLinked domainLinked) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			return getConsole().saveDomainLink(ctx, domainLinked);
+		}
+	}
+	
+	public static void deleteDomainLink(Domain domain, User user, DomainLinked domainLinked) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domain, user)) {
+			getConsole().deleteDomainLink(ctx, domainLinked);
 		}
 	}
 

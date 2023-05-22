@@ -3,7 +3,7 @@ package com.code.aon.webmail.bean;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import javax.mail.Folder;
+import jakarta.mail.Folder;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;

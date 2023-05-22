@@ -1,8 +1,8 @@
 package com.esferalia.aon.payroll;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Transient;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
 
 import com.code.aon.AonVersion;
 import com.code.aon.common.BeanManager;

@@ -789,8 +789,12 @@ public class Mod349DAO {
 					vat.setRectificateYear(0);
 					vat.setRectificatePeriod(Period.M01);	
 					
+					// Comprobar si el nombre está cumplimentado y no supera los 64 caracteres
 					if (AonStringUtils.isBlank(vat.getRegistryName()))
 						vat.setRegistryName("");
+					
+					if (vat.getRegistryName().length() > 64) 
+						vat.setRegistryName(AonStringUtils.left(vat.getRegistryName(), 64));
 					
 					// Si es una factura rectificativa, hay que obtener el periodo de la factura rectificada
 					// para poder guardarlo posteriormente como rectificacion en el modelo 349

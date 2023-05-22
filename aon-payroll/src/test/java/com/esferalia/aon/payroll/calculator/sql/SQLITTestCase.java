@@ -16,6 +16,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MENSTRUATION_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.NATURAL_MONTH_DAYS;
@@ -23,6 +24,8 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.OCCUPATIONAL
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PARTIAL_FACTOR;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PATERNITY_FACTOR;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREGNANCY_39_WEEK_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREGNANCY_STOP_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.PREST_IT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
@@ -568,6 +571,207 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals(0.00, salary.getTotalPayment());
 		Assert.assertEquals(0.00, salary.getTotalLiquid());
 		Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00, salary.getCommonBase());
+
+	}
+
+	@Test
+	public void testPregnancyCostIT() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext,
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT,  "BASE_REGULADORA * 0.60 * DIAS_INTERRUPCION_EMBARAZO_1_20",	"BASE_REGULADORA * DIAS_COTIZADOS" );
+		addPayment(aonContext, contract, prestIT,  "BASE_REGULADORA * 0.75 * DIAS_INTERRUPCION_EMBARAZO_21",	"BASE_REGULADORA * DIAS_COTIZADOS" );
+		
+		Date startITDate = getToday();
+		addIT(aonContext, contract, LeaveType.PREGNANCY_STOP, startITDate,
+				null, null);
+
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ISalaryCalculator<Salary, ISQLContractSalaryCalculatorContext> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+		int activeDays = get(startITDate, Calendar.DAY_OF_MONTH);
+		int itDays = monthDays -activeDays;
+		double br = 1750.00 / monthDays ;
+		org.junit.Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals( 
+			1750.00 * activeDays / monthDays 
+			+ ( Math.min(20.00, itDays ) * br * 0.60 ) 
+			+ ( Math.max(0.00, itDays - 20) * br * 0.75 ) 
+			, salary.getTotalPayment(), DELTA);
+		
+		
+		startDate = add(startDate, Calendar.MONTH,2);
+		endDate = getLastDayOfMonth(startDate);
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+		
+		org.junit.Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals( 1750.00 * 0.75 , salary.getTotalPayment(), DELTA);
+
+	}
+
+	@Test
+	public void testPregnancy39WeekIT() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext,
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT,  "BASE_REGULADORA * 0.60 * DIAS_SEMANA_39_EMBARAZO_1_20",	"BASE_REGULADORA * DIAS_COTIZADOS" );
+		addPayment(aonContext, contract, prestIT,  "BASE_REGULADORA * 0.75 * DIAS_SEMANA_39_EMBARAZO_21",	"BASE_REGULADORA * DIAS_COTIZADOS" );
+		
+		Date startITDate = getToday();
+		addIT(aonContext, contract, LeaveType.PREGNANCY_39_WEEK, startITDate,
+				null, null);
+
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ISalaryCalculator<Salary, ISQLContractSalaryCalculatorContext> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+		int activeDays = get(startITDate, Calendar.DAY_OF_MONTH);
+		int itDays = monthDays -activeDays;
+		double br = 1750.00 / monthDays ;
+		org.junit.Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals( 
+			1750.00 * activeDays / monthDays 
+			+ ( Math.min(20.00, itDays ) * br * 0.60 ) 
+			+ ( Math.max(0.00, itDays - 20) * br * 0.75 ) 
+			, salary.getTotalPayment(), DELTA);
+		
+		
+		startDate = add(startDate, Calendar.MONTH,2);
+		endDate = getLastDayOfMonth(startDate);
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+		
+		org.junit.Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals( 1750.00 * 0.75 , salary.getTotalPayment(), DELTA);
+
+	}
+
+	@Test
+	public void testMenstruationIT() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext,
+				new String[] {
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" ,
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES"
+				}, 
+				new String[] {						
+				"BASE_CGC * 0.10", 
+				"BASE_CGP * 0.05",
+				"BASE_IRPF * PORCENTAJE_IRPF/100" 
+				}, null);
+		//@formatter:on
+		
+		
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT,  "BASE_REGULADORA * 0.60 * DIAS_MENSTRUACION_1_20",	"BASE_REGULADORA * DIAS_COTIZADOS" );
+		addPayment(aonContext, contract, prestIT,  "BASE_REGULADORA * 0.75 * DIAS_MENSTRUACION_21",	"BASE_REGULADORA * DIAS_COTIZADOS" );
+		
+		Date startITDate = getToday();
+		addIT(aonContext, contract, LeaveType.MENSTRUATION, startITDate,
+				null, null);
+
+		
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		ISalaryCalculator<Salary, ISQLContractSalaryCalculatorContext> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+		
+		int monthDays = get(endDate, Calendar.DAY_OF_MONTH);
+		int activeDays = get(startITDate, Calendar.DAY_OF_MONTH) -1 ;
+		int itDays = monthDays -activeDays;
+		double br = 1750.00 / monthDays ;
+		org.junit.Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals( 
+			1750.00 * activeDays / monthDays 
+			+ ( Math.min(20.00, itDays ) * br * 0.60 ) 
+			+ ( Math.max(0.00, itDays - 20) * br * 0.75 ) 
+			, salary.getTotalPayment(), DELTA);
+		
+		
+		startDate = add(startDate, Calendar.MONTH,2);
+		endDate = getLastDayOfMonth(startDate);
+		
+		ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		salary = calculator.calculate(ctx);
+		
+		org.junit.Assert.assertEquals( 1750.00 , salary.getCommonBase(), DELTA);
+		org.junit.Assert.assertEquals( 1750.00 * 0.75 , salary.getTotalPayment(), DELTA);
 
 	}
 
@@ -7384,6 +7588,18 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 				String.format("BASE_REGULADORA * 1.00 * %s * (isdef %s ? %s : 1.00)",  OCCUPATIONAL_DISEASE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR),
 				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
 				);
+		
+		for ( ContextVariable daysVariable : new ContextVariable [] {MENSTRUATION_DAYS, PREGNANCY_STOP_DAYS, PREGNANCY_39_WEEK_DAYS}  ) {
+			addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.60 * %s_1_20 * (isdef %s ? %s : 1.00)",  daysVariable, LEAVE_FACTOR, LEAVE_FACTOR),
+				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
+				);
+			addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.75 * %s_21 * (isdef %s ? %s : 1.00)",  daysVariable, LEAVE_FACTOR, LEAVE_FACTOR),
+				String.format("BASE_REGULADORA * %s * (isdef %s ? %s : 1.00)",  QUOTE_DAYS, LEAVE_FACTOR, LEAVE_FACTOR)
+				);
+		}
+
 		return prestIT;
 	}
 	

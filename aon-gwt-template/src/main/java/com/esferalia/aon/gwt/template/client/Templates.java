@@ -6,10 +6,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.gwt.api.client.API;
+import com.esferalia.aon.gwt.common.client.AON;
+import com.esferalia.aon.gwt.common.client.RegistryService;
+import com.esferalia.aon.gwt.common.client.RegistryServiceAsync;
+import com.esferalia.aon.gwt.common.client.RegistryServiceAsyncDecorator;
 import com.esferalia.aon.gwt.common.client.RootLayoutPanel;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.Upload;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonProgressBarDialog;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.gwt.template.client.marketplace.IMarketplace;
 import com.esferalia.aon.gwt.template.client.marketplace.IMarketplaceAsync;
@@ -23,6 +30,8 @@ import com.esferalia.aon.gwt.template.shared.ImportType;
 import com.esferalia.aon.gwt.template.shared.Series;
 import com.esferalia.aon.gwt.template.shared.TemplateInfo;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.ImportError;
+import com.esferalia.aon.occam.api.model.fee.Fee;
 import com.esferalia.aon.occam.api.model.office.Tag;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -41,8 +50,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Templates extends Composite implements EntryPoint {
@@ -55,6 +66,8 @@ public class Templates extends Composite implements EntryPoint {
 	private static final String DOWNLOAD_AMAZON_DELIVERY = "download_amazon_delivery";
 	private static final String CONTRACT_MEDIA = "contract_media";
 	private static final String IMPORT_ONLY= "importOnly";
+
+	private static RegistryServiceAsync SERVICE;
 	
 	final ITemplateAsync item = GWT.create(ITemplate.class);
 	final IMarketplaceAsync mpimpl = GWT.create(IMarketplace.class);
@@ -71,6 +84,7 @@ public class Templates extends Composite implements EntryPoint {
 	List<TemplateInfo> templateList;
 	TemplatesDialog popup;
 	ProgressBarDialog pbd;
+	AonProgressBarDialog aonPbd;
 	ExportInfo eiAux;
 	Boolean closeInventoryAux;	
 	TemplateInfo tiAux;
@@ -104,6 +118,9 @@ public class Templates extends Composite implements EntryPoint {
 			finalIdAux, onlyNegativeAux, detailAux, w, wAux, incomeId, seriesAux, commentsAux;
 	
 	public void onModuleLoad(String entryPoint){
+		RegistryServiceAsync registryServiceRaw = GWT.create(RegistryService.class);
+		SERVICE = new RegistryServiceAsyncDecorator(registryServiceRaw);
+		AON.ensureInjected();
 		if(entryPoint.equals(CONTRACT_MEDIA)){
 			new ContractMediaPage(aonData).onModuleLoad();
 		} else if(entryPoint.equals(IMPORT)){
@@ -206,21 +223,12 @@ public class Templates extends Composite implements EntryPoint {
 			@Override
 			protected void onAccept() {
 				hide();
-				pbd = new ProgressBarDialog("Procesando Excel...") {};
-				pbd.addStyleName("gwt-PopupPanel-template");
-				pbd.setGlassEnabled(true);
-				pbd.show();
-						
+				startProgressBar();
 				item.executeExcel(getDomain(), getUser(), null, type, null, null, null, null, null, null, null, null, new AsyncCallback<Integer>() {
 							
 					@Override
 					public void onSuccess(Integer result) {
-						pbd.completed();
-						pbd.hide();
-						pbd = new ProgressBarDialog("Importando "+ type.getName() + "...") {};
-						pbd.addStyleName("gwt-PopupPanel-template");
-						pbd.setGlassEnabled(true);
-						pbd.show();
+						loadingProgressBar(type);
 						insert(type, 0, result);
 					}
 						
@@ -232,6 +240,57 @@ public class Templates extends Composite implements EntryPoint {
 		popup.addStyleName("gwt-PopupPanel-template");
 		popup.setGlassEnabled(true);
 		popup.center();
+	}
+	
+	private void newImportation(ImportType type){
+		verror = new LinkedList<>();
+		werror = new LinkedList<>();
+		Upload upload = new Upload() {
+			
+			@Override
+			protected void onUpload(String data) {
+				startAonProgressBar();
+				if(ImportType.FEE.equals(type)) {
+					importFee(data);
+					
+				}
+			}
+		};
+		upload.upload();
+	}
+	
+	private void startProgressBar() {
+		pbd = new ProgressBarDialog("Procesando Excel...") {};
+		pbd.addStyleName("gwt-PopupPanel-template");
+		pbd.setGlassEnabled(true);
+		pbd.show();
+	}
+	
+	private void loadingProgressBar(ImportType type) {
+		pbd.completed();
+		pbd.hide();
+		pbd = new ProgressBarDialog("Importando " + type.getName() + "...") {};
+		pbd.addStyleName("gwt-PopupPanel-template");
+		pbd.setGlassEnabled(true);
+		pbd.center();
+		pbd.show();
+	}
+	
+	private void startAonProgressBar() {
+		aonPbd = new AonProgressBarDialog("Procesando Excel...") {};
+		aonPbd.addStyleName("gwt-PopupPanel-template");
+		aonPbd.setGlassEnabled(true);
+		aonPbd.show();
+	}
+	
+	private void loadingAonProgressBar(ImportType type) {
+		aonPbd.completed();
+		aonPbd.hide();
+		aonPbd = new AonProgressBarDialog("Importando " + type.getName() + "...") {};
+		aonPbd.addStyleName("gwt-PopupPanel-template");
+		aonPbd.setGlassEnabled(true);
+		aonPbd.center();
+		aonPbd.show();
 	}
 
 	private void insert(ImportType type, Integer index, Integer lines) {
@@ -293,9 +352,82 @@ public class Templates extends Composite implements EntryPoint {
 			item.insertPGC(getDomain(), getUser(), index, callback);
 		} else if(ImportType.REGISTRY.equals(type)) {
 			item.insertRegistries(getDomain(), getUser(), index, callback);
-		} else if(ImportType.FEE.equals(type)) {
-			item.insertFee(getDomain(), getUser(), index, callback);
 		}
+	}
+	
+	// IMPORT FEE
+	
+	public void fee(){
+//		importation(ImportType.FEE);
+		newImportation(ImportType.FEE);
+	}
+
+	public static native void exportFee(Templates thiz) /*-{
+		$wnd.fee = function() {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::fee(*)();
+		}
+	}-*/;
+
+	public void feex(String filter){
+		exportFee(filter);
+	}
+	
+	public static native void exportFeex(Templates thiz) /*-{
+		$wnd.feex = function(filter) {
+			thiz.@com.esferalia.aon.gwt.template.client.Templates::feex(*)(filter);
+		}
+	}-*/;
+	
+	private void importFee(String data) {
+		SERVICE.parseFeeFile(getDomain(), getUser(), data, new AsyncCallback<List<Fee>>() {
+			@Override
+			public void onSuccess(List<Fee> result) {
+				loadingAonProgressBar(ImportType.FEE);
+				insertFee(result, 0);
+			}
+				
+			@Override
+			public void onFailure(Throwable caught) {}
+		});
+	}
+
+	private void insertFee(List<Fee> fees, Integer index) {
+		Integer lines = fees.size();
+		AsyncCallback<ImportError> callback = new AsyncCallback<ImportError>() {
+			@Override
+			public void onSuccess(ImportError result) {
+				Double progress = (result.getLine().doubleValue() / lines.doubleValue()) * 100.0;
+				if(!result.getError()) {
+					verror.add(result.getTextError().getFirst());
+				}
+				if(result.getTextWarning() != null && result.getTextWarning().size() > 0) {
+					werror.addAll(result.getTextWarning());
+				}
+				aonPbd.updateProgress(progress.intValue());
+				if(result.getLine() < lines - 1) {
+					insertFee(fees, result.getLine() + 1);
+				} else {
+					aonPbd.completed();
+					aonPbd.hide();
+					ImportError error = new ImportError();
+					error.setError(verror.isEmpty());
+					error.setTextError(verror);
+					error.setTextWarning(werror);
+					VerticalPanel vPanel = new VerticalPanel();
+					error.getTextError().forEach(errorIt -> vPanel.add(new Label(errorIt)));
+					error.getTextWarning().forEach(warnIt -> vPanel.add(new Label(warnIt)));
+					AonDialog dialog = new AonDialog("Importar Cuotas", vPanel);
+					dialog.info();
+				}
+			}
+				
+			@Override public void onFailure(Throwable caught) {
+				aonPbd.completed();
+				aonPbd.hide();
+			}
+		};	
+		
+		SERVICE.importFee(getDomain(), getUser(), fees.get(index), index, callback);
 	}
 	
 	private void exportFee(String filter){		
@@ -1595,26 +1727,6 @@ public class Templates extends Composite implements EntryPoint {
 	public static native void exportStockx2(Templates thiz) /*-{
 		$wnd.stockx2 = function(warehouse, category, brand, code, description, stock, inventory) {
 			thiz.@com.esferalia.aon.gwt.template.client.Templates::stockx2(*)(warehouse, category, brand, code, description, stock, inventory);
-		}
-	}-*/;
-	
-	public void fee(){
-		importation(ImportType.FEE);
-	}
-
-	public static native void exportFee(Templates thiz) /*-{
-		$wnd.fee = function() {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::fee(*)();
-		}
-	}-*/;
-
-	public void feex(String filter){
-		exportFee(filter);
-	}
-	
-	public static native void exportFeex(Templates thiz) /*-{
-		$wnd.feex = function(filter) {
-			thiz.@com.esferalia.aon.gwt.template.client.Templates::feex(*)(filter);
 		}
 	}-*/;
 	

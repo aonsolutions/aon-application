@@ -168,6 +168,7 @@ class AccountIntegrityCheck extends OptionBase {
 		@Override public void visitWrongRecordedInvoices(AccUtilitiesItemType type) {}
 		@Override public void visitInvoiceIntegrity(AccUtilitiesItemType type) {}
 		@Override public void visitAccountChange(AccUtilitiesItemType type) {}
+		@Override public void visitOutOfDateEntry(AccUtilitiesItemType type) {}
 		
 		@Override public void visitAccountIntegrity(AccUtilitiesItemType type) {
 			FlowPanel itemPanel = new FlowPanel();
@@ -200,6 +201,7 @@ class AccountIntegrityCheck extends OptionBase {
 
 			domainPanel.add(itemPanel);
 		}
+		
 	}
 	
 }

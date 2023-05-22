@@ -3,11 +3,11 @@ package com.esferalia.aon.gwt.fiscal.server.fiscal.mod111;
 import java.io.IOException;
 import java.util.stream.Stream;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.fiscal.server.irpf.IrpfBreakdownExcelAction;
 import com.esferalia.aon.occam.api.fiscal.MODEL111;

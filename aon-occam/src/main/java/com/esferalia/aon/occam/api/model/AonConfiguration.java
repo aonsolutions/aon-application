@@ -11,6 +11,7 @@ import com.esferalia.aon.occam.api.model.finance.PayMethod;
 import com.esferalia.aon.occam.api.model.finance.PayMethodTypeDetail;
 import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.AccountingRegistry;
+import com.esferalia.aon.occam.api.model.registry.Segment;
 import com.esferalia.aon.occam.api.model.security.Scope;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonNumberUtils;
@@ -42,6 +43,7 @@ public class AonConfiguration implements Serializable {
 	private LinkedList<PayMethod> payMethods;
 	private LinkedList<PayMethodTypeDetail> payMethodTypeDetails;
 	private LinkedList<Tax> withholdingTaxes;
+	private LinkedList<Segment> segments;
 	
 	private boolean ocrActive;
 	private boolean betaEnabled;
@@ -242,7 +244,7 @@ public class AonConfiguration implements Serializable {
 		return this;
 	}
 	public boolean hasAvailableScopes() {
-		return getAvailableScopes() != null &&  getAvailableScopes().size() > 0;
+		return getAvailableScopes() != null && !getAvailableScopes().isEmpty();
 	}
 			
 	public Tax getDefaultVatPercent() {
@@ -253,6 +255,17 @@ public class AonConfiguration implements Serializable {
 		return this;
 	}
 	
+	public boolean hasSegments() {
+		return segments != null && !segments.isEmpty();
+	}
+	public LinkedList<Segment> getSegments() {
+		return segments;
+	}
+	public AonConfiguration setSegments(LinkedList<Segment> segments) {
+		this.segments = segments;
+		return this;
+	}
+
 	public LinkedList<Tax> getWithholdingTaxes() {
 		return withholdingTaxes;
 	}

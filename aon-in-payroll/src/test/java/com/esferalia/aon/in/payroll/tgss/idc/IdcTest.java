@@ -88,6 +88,8 @@ import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryData;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.calculator.GenericContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.RoundSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.SmartContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.AbstractSQLTestCase;
@@ -843,18 +845,24 @@ public class IdcTest extends AbstractSQLTestCase {
 
 	protected Salary calculate(Collection<PEC> ssPECs, Collection<Data> datas, Date date,
 			ISalaryBuilder<Salary> salaryBuilder) throws ExpressionException, SQLException, SalaryException {
-		java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(date));
-		java.sql.Date endDate = toSQL(AonDateUtils.getLastDayOfMonth(date));
+		return calculate(ssPECs, datas, date, salaryBuilder, null);
+	}
 
-		Connection connection = getConnection();
-		AONContext aonContext = new AONContext(connection);
-		ContractRecord contract = newContract(aonContext, toSQL(startDate), ssPECs, datas);
+	protected Salary calculate(Collection<PEC> ssPECs, Collection<Data> datas, Date date,
+		ISalaryBuilder<Salary> salaryBuilder, GenericContractSalaryCalculator.IListener listener) throws ExpressionException, SQLException, SalaryException {
+	    java.sql.Date startDate = toSQL(AonDateUtils.getFirstDayOfMonth(date));
+	    java.sql.Date endDate = toSQL(AonDateUtils.getLastDayOfMonth(date));
 
-		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate,
-				endDate, contract);
-		SmartContractSalaryCalculator<Salary> builder = new SmartContractSalaryCalculator<Salary>(salaryBuilder);
-		Salary salary = builder.calculate(ctx);
-		return salary;
+	    Connection connection = getConnection();
+	    AONContext aonContext = new AONContext(connection);
+	    ContractRecord contract = newContract(aonContext, toSQL(startDate), ssPECs, datas);
+
+	    ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate,
+		    endDate, contract);
+	    SmartContractSalaryCalculator<Salary> builder = new SmartContractSalaryCalculator<Salary>(salaryBuilder);
+	    builder.setListener(listener);
+	    Salary salary = builder.calculate(ctx);
+	    return salary;
 	}
 
 	protected Salary calculate(Collection<PEC> ssPECs, Collection<Data> datas, String[] payments, Date startDate,
@@ -5307,6 +5315,47 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdcXXIXBonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SalaryException, SQLException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcXXIX.pdf")) {
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
+				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
+			//Assert.assertEquals(1, ssPecs.size());
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			calendar.set(Calendar.YEAR, 2022);
+			calendar.set(Calendar.DAY_OF_MONTH, 24);
+			calendar.set(Calendar.MONTH, Calendar.AUGUST);
+			Date august282023 = calendar.getTime();
+
+			assertPECS(ssPecs, august282023, null, 1, pec -> pec.getFormula().contains("AVISO") );
+			
+			try {
+			Salary salary = calculate(ssPecs, Collections.emptyList(), august282023, new  SalaryBuilder(), new GenericContractSalaryCalculator.Listener() {
+			    public void onCheckError(IContractBonus bonus, String message) {
+				throw new Error(message); 
+			    };
+			});
+			} catch ( Error error ) {
+			    System.out.println(error.getMessage());
+			    return;
+			}
+			
+			Assert.fail();
+			
+
+		}
+	}
+
+	@Test
 	public void testIdcplnssTrabajadoresTramosXIX()
 			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnssXIX.pdf")) {
@@ -5639,6 +5688,70 @@ public class IdcTest extends AbstractSQLTestCase {
 				
 			}
 			
+	
+		}
+	}
+
+	@Test
+	public void testIdcplcccTrabajadoresTramosXXIV()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplcccXXIV.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is,
+				new TrabajadoresTramosCallback() {
+			    
+			    		@Override
+			    		public boolean isQuoteByRealDays(String ssNum, String ccc, Date start, Date end) {
+			    		    return true;
+			    		}
+			    
+			    		@Override
+			    		public boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
+			    		    return true;
+			    		}
+			    		
+			    		
+				});
+	
+			marshal(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0163", liquidacion.getCcc().getRegimen());
+			assertEquals("25", liquidacion.getCcc().getProvincia());
+			assertEquals("107094626", liquidacion.getCcc().getNumero());
+	
+			assertEquals("04", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2023", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("04", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2023", liquidacion.getPeriodoHasta().getAnho());
+	
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+	
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("04", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2023", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			assertEquals(1, trabajadores.getTrabajador().size());
+	
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+			    	assertEquals("251021626115", trabajador.getNaf());
+				assertEquals(1, trabajador.getTramos().getTramo().size());
+	
+				Tramo tramo = trabajador.getTramos().getTramo().get(0);
+				
+				assertEquals("10", tramo.getInformacionAfiliacion().getGrupoCotizacion());
+				
+				assertEquals("01", tramo.getFechaDesde().getDia());
+				assertEquals("04", tramo.getFechaDesde().getMes());
+				assertEquals("2023", tramo.getFechaDesde().getAnho());
+				assertEquals("30", tramo.getFechaHasta().getDia());
+				assertEquals("04", tramo.getFechaHasta().getMes());
+				assertEquals("2023", tramo.getFechaHasta().getAnho());
+				assertTramoActivoNormal(tramo);	
+				assertNoDatosSolicitado(tramo, "C", "51");
+				assertNoDatosSolicitado(tramo, "H", "01");
+			}
 	
 		}
 	}

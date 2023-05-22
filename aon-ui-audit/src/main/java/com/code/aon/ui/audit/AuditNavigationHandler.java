@@ -2,7 +2,7 @@ package com.code.aon.ui.audit;
 
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -5,9 +5,9 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -169,7 +169,9 @@ public class InvoicesServlet extends AonApiHttpServlet {
 		JSONObject vars = JsonUtils.getJSONObject(api.getData(), IJsonNames.VARIABLES);
 		Integer invoiceId = vars.getInt(IJsonNames.ID);
 		Invoice invoice = AON_SOLUTIONS.getInvoice(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), invoiceId);
-		return InvoiceJSON.toJSON(invoice);
+		JSONObject json = InvoiceJSON.toJSON(invoice);
+		json.put(IJsonNames.FILE, InvoiceServlet.buildInvoiceFileJSON(api.getDomain(), api.getUser().getLogin(), invoice));
+		return json;
     }
     
     private static JSONObject getRawdoc(AonApiData api) {

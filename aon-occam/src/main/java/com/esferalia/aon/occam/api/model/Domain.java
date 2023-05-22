@@ -2,7 +2,10 @@ package com.esferalia.aon.occam.api.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import com.esferalia.aon.occam.api.model.aonsolutions.DomainApp;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 
@@ -35,6 +38,26 @@ public class Domain implements Serializable {
 	private Integer aonCustomer;
 	private AonStatus aonStatus;
 	
+	private List<User> users;
+	private List<DomainApp> apps;
+	
+	public List<User> getUsers() {
+		return users;
+	}
+	
+	public Domain setUsers(List<User> users) {
+		this.users = users;
+		return this;
+	}
+	
+	public List<DomainApp> getApps() {
+		return apps;
+	}
+	
+	public Domain setApps(List<DomainApp> apps) {
+		this.apps = apps;
+		return this;
+	}
 	
 	public Integer getId() {
 		return id;

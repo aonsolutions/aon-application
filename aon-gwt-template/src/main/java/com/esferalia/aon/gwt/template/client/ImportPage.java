@@ -3,6 +3,8 @@ package com.esferalia.aon.gwt.template.client;
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.polymer.AonTemplate2;
 import com.esferalia.aon.gwt.common.client.widget.Toolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.shared.AonData;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.security.User;
@@ -49,49 +51,31 @@ public class ImportPage extends AonTemplate2{
 	}
 	
 	private void toolbar() {
-		getDockLayoutPanel().setWidgetSize(getToolbar(), 23);
-		Toolbar toolbar = new Toolbar("Importar Excel");		
-		Button downloadTemplate = toolbar.addButton("Descargar Plantillas", AON.AON_CSS.aonIconExcel());
-		downloadTemplate.setVisible(true);
-		downloadTemplate.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				downloadInvoiceTemplate();
-			}
-		});
+		getDockLayoutPanel().setWidgetSize(getToolbar(), 50);
 		
-		Button infoButton = toolbar.addButton("Ayuda", AON.AON_CSS.aonIconInfo());
-		infoButton.setVisible(true);
-		infoButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				info();
-			}
-		});
+		AonToolbar toolbar = new AonToolbar("Importar Excel");
+		
+		AonToolbarButton downloadTemplate = new AonToolbarButton("Descargar Plantillas", AON.CSS.aonIconExcel());
+		downloadTemplate.addClickHandler(e -> downloadInvoiceTemplate());
+		
+		AonToolbarButton infoButton = new AonToolbarButton("Descargar Plantillas", AON.CSS.aonIconInfo());
+		infoButton.addClickHandler(e -> info());
 		
 		Boolean showFixButton = getDomain().getName().contains("auditors") || getDomain().getName().contains("ayudat");
-		Button fixButton = toolbar.addButton("Regenerar Clientes/Proveedores/Acreedores", "aon-icon-segment");
+		AonToolbarButton fixButton = new AonToolbarButton("Regenerar Clientes/Proveedores/Acreedores", "aon-icon-segment");
 		fixButton.setVisible(showFixButton);
-		fixButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				importFix();
-			}
-		});
+		fixButton.addClickHandler(e -> importFix());
 		
 		Boolean showRegistryEmptyFixButton = getDomain().getName().equals("b06844062-cezaragoza.aonsolutions.net");
-		Button registryEmptyFixButton = toolbar.addButton("Regenerar Clientes Vacíos", "aon-icon-segment");
+		AonToolbarButton registryEmptyFixButton = new AonToolbarButton("Regenerar Clientes Vacíos", "aon-icon-segment");
 		registryEmptyFixButton.setVisible(showRegistryEmptyFixButton);
-		registryEmptyFixButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				importRegistryEmptyFix();
-			}
-		});
+		registryEmptyFixButton.addClickHandler(e -> importRegistryEmptyFix());
+		
+		toolbar.add(downloadTemplate);
+		toolbar.add(infoButton);
+		toolbar.add(fixButton);
+		toolbar.add(registryEmptyFixButton);
+		
 		setToolbar(toolbar);
 	}
 	

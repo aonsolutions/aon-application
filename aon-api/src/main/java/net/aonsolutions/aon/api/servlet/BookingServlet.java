@@ -1,9 +1,9 @@
 package net.aonsolutions.aon.api.servlet;
 import java.util.logging.Logger;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
@@ -25,17 +25,17 @@ public class BookingServlet extends AonApiHttpServlet {
 	public static final String BOOKING= "/";
 	
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
 		get(req, resp);
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		get(req, resp);
 	}
 	
 	@Override
-	protected void doPut(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPut(HttpServletRequest req, HttpServletResponse resp) {
 		put(req, resp);
 	}
 	

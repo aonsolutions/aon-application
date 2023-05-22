@@ -210,6 +210,8 @@
 .aon_icon_trash_list { background-image: iconTrashList;}
 @url iconPaste aonIconPaste;
 .aon_icon_paste { background-image: iconPaste;}
+@url iconTune aonIconTune;
+.aon_icon_tune { background-image: iconTune;}
 @url iconPin aonIconPin;
 .aon_icon_pin { background-image: iconPin;}
 @url iconPerson aonIconPerson;
@@ -312,6 +314,8 @@
 .aon_icon_download { background-image: iconDownload;}
 @url iconUpload aonIconUpload;
 .aon_icon_upload { background-image: iconUpload;}
+@url iconUploadFile aonIconUploadFile;
+.aon_icon_upload_file { background-image: iconUploadFile;}
 @url iconWizard aonIconWizard;
 .aon_icon_wizard { background-image: iconWizard;}
 @url iconMinus aonIconMinus;

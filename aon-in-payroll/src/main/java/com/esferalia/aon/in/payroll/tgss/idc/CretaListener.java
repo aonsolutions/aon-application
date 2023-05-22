@@ -87,7 +87,11 @@ public class CretaListener implements IdcParserListener {
 	protected TipoIpf getTipoIpf( String naf ) {
 		return TipoIpf.DNI;
 	}
-	
+
+	protected boolean isQuoteByRealDays(String ssNum, String ccc, Date start, Date end) {
+		return false;
+	}
+
 	protected boolean isPartTimeEmployee(String ssNum, String ccc, Date start, Date end) {
 		return false;
 	}
@@ -183,15 +187,19 @@ public class CretaListener implements IdcParserListener {
 		tramoBuilder.ifPresent( b -> addActivoNormal(ssNum, ccc, start, end, b) );
 	}
 
-	protected void addActivoNormal(String ssNum, String ccc, Date start, Date end, TramoBuilder b) {
-		if ( isPartTimeEmployee(ssNum, ccc, start, end ))
+	protected void addActivoNormal(String ssNum, String ccc, Date start, Date end, CretaTramoBuilder b) {
+		if ( isQuoteByRealDays(ssNum, ccc, start, end )) {
+		    	b.filter(d -> AonStringUtils.equals( d.getCodigo(),"51"));
+		    	addTiempoCompletoNormal(b) ; // REG.GRAL.(SIST.ESP.AGRARIO CCC) COTIZACION POR JR
+		}else if ( isPartTimeEmployee(ssNum, ccc, start, end )) {
 			addTiempoParcialNormal(b);
-		else if ( isScholarEmployee(ssNum, ccc, start, end))
+		} else if ( isScholarEmployee(ssNum, ccc, start, end)) {
 			addBecariosNormal(b);
-		else if ( isTraining421Employee(ssNum, ccc, start, end))
+		} else if ( isTraining421Employee(ssNum, ccc, start, end)) {
 			addFormacionNormal(b);
-		else 
+		} else { 
 			addTiempoCompletoNormal(b);
+		}
 	}
 
 	@Override

@@ -1,10 +1,12 @@
 package com.esferalia.aon.gwt.common.client;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.ImportError;
 import com.esferalia.aon.occam.api.model.RegistryParams;
 import com.esferalia.aon.occam.api.model.Workplace;
 import com.esferalia.aon.occam.api.model.fee.Fee;
@@ -18,6 +20,7 @@ import com.esferalia.aon.occam.api.model.registry.Project;
 import com.esferalia.aon.occam.api.model.registry.Seller;
 import com.esferalia.aon.occam.api.model.registry.Supplier;
 import com.esferalia.aon.occam.api.model.registry.SupplierFull;
+import com.esferalia.aon.occam.api.model.security.User;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
@@ -109,6 +112,18 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		AON.start();
 		serviceAsync.getProductsSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, OldItem>>(callback));
 	}
+
+	@Override
+	public void getProductCategoriesSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Integer>> callback) {
+		AON.start();
+		serviceAsync.getProductCategoriesSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, Integer>>(callback));
+	}
+
+	@Override
+	public void getProductTagsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Integer>> callback) {
+		AON.start();
+		serviceAsync.getProductTagsSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, Integer>>(callback));
+	}
 	
 	@Override
 	public void getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<Map<Integer, Integer>> callback) {
@@ -185,6 +200,18 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 	public void getProjectsSuggestion(String domainName, int domain, String user, Integer customerId, String query, AsyncCallback<Map<String, Project>> callback) {
 		AON.start();
 		serviceAsync.getProjectsSuggestion(domainName, domain, user, customerId, query, new AsyncCallbackWrapper<Map<String, Project>>(callback));
+	}
+
+	@Override
+	public void parseFeeFile(Domain domain, User user, String data, AsyncCallback<List<Fee>> callback) {
+		AON.start();
+		serviceAsync.parseFeeFile(domain, user, data, new AsyncCallbackWrapper<List<Fee>>(callback));
+	}
+
+	@Override
+	public void importFee(Domain domain, User user, Fee fee, Integer index, AsyncCallback<ImportError> callback) {
+		AON.start();
+		serviceAsync.importFee(domain, user, fee, index, new AsyncCallbackWrapper<ImportError>(callback));
 	}
 
 }

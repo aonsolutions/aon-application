@@ -4,8 +4,8 @@ import static com.code.aon.faces.controller.IRichConstants.SELECTED_MENU_CONTROL
 
 import java.io.Serializable;
 
-import javax.el.ExpressionFactory;
-import javax.el.MethodExpression;
+import jakarta.el.ExpressionFactory;
+import jakarta.el.MethodExpression;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;

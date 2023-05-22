@@ -106,6 +106,35 @@
 							<f:selectItems value="#{currentUserScopes}" />
 						</aon:selectOneMenu>
 					</aon:if>
+					
+					<aon:outputLabel for="CustomerFee_Customer_Segment" value="#{bundle.aon_segment}" />				
+					<aon:div id="segmentDiv">
+						<a4j:repeat value="#{preInvoicing.invoicingParams.segments}" rowKeyVar="index" var="segmentTo">
+							<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+								<aon:selectOneMenu id="CustomerFee_Customer_Segment"
+									value="#{preInvoicing.invoicingParams.segments[index]}">
+									<f:selectItem itemLabel="-" itemValue="#{preInvoicing.invoicingParams.emptySegment}"/>
+									<f:selectItems value="#{registryCollections.segments}" />
+									<a4j:support actionListener="#{preInvoicing.onCheckSegment}" 
+										event="onchange" ajaxSingle="true" 
+										reRender="aonMessagesContainer,segmentDiv"/>
+								</aon:selectOneMenu>
+								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
+									actionListener="#{preInvoicing.onRemoveSegment}" reRender="segmentDiv" value="&#160;"
+									rendered="#{segmentTo.id != null}">
+									<f:param name="index" value="#{index}" />
+								</aon:commandButton>
+								<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" ajaxSingle="true"
+									actionListener="#{preInvoicing.onAddSegment}" reRender="segmentDiv" value="&#160;"
+									rendered="#{(segmentTo.id != null) and (index == (preInvoicing.invoicingParams.segmentsSize-1))}"/>					
+							</aon:div>
+						</a4j:repeat>
+							<aon:div>
+								<aon:outputText style="color:red; font-weight: bold;"
+									value="#{preInvoicing.segmentsWarning}"/>
+							</aon:div>
+					</aon:div>						
+					
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>

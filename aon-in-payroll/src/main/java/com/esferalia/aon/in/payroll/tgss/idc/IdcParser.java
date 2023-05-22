@@ -165,6 +165,11 @@ public class IdcParser {
 				listener.onContractAgrarianRealJourneyProvided(matcher.group("realJourneyProvided"));
 			}
 			
+			matcher = find(reader, BENEFITS_LOSS_BY_EMPLOYEE);
+			if ( hasData(matcher.group("cause"))) {
+			    listener.onEmployeeBenefitsLoss(nss, enterpriseCCC, matcher.group("cause"), periodStart, periodEnd);   
+			}
+
 			matcher = find(reader, PECULIARITIES_HEADER);
 			
 			Date endDate = null;
@@ -386,5 +391,11 @@ public class IdcParser {
 	Pattern.compile(
 	"^TIPOS\\s*DE\\s*COTIZACIÓN\\*\\s*CONTINGENCIAS\\s*PROFESIONALES:\\s*IT:\\s*(?<it>[0-9,]+)?\\s*I\\.M\\.S\\.:\\s*(?<ims>[0-9,]+)?.*DESEMPLEO:\\s*(?<unemployment>[0-9,]+)?(EXCLUIDO)?$"
 	, Pattern.CASE_INSENSITIVE);
+	
+	// POR TRABAJADOR:CAUSA:ALTA 3 MESES PREVIOS CONTRATO INDEFINIDO
+	protected static final Pattern BENEFITS_LOSS_BY_EMPLOYEE = 
+	Pattern.compile("^POR\\s*TRABAJADOR\\s*:\\s*CAUSA\\s*:\\s*(?<cause>.*)$" , Pattern.CASE_INSENSITIVE);
+	
+	
 			
 }

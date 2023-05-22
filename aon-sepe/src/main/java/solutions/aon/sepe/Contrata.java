@@ -645,9 +645,9 @@ public class Contrata {
 					form.getInputByName("pagina2").setValue(page.toString());
 
 					HtmlCheckBoxInput check = (HtmlCheckBoxInput) form.getInputByName("checkBonificacion");
-					check.click();
+					htmlPage = check.click();
 						
-					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
+//					htmlPage = ((HtmlSubmitInput) form.querySelector("[name=aceptar]")).click();
 					handleSepeAlert(alertHandler.getCollectedAlerts());
 					handleSepeExceptions(htmlPage);
 					
