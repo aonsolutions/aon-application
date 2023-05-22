@@ -343,7 +343,6 @@ export class AonApplication extends AonElement {
     let div = this.createElement(TAG.DIV);
     div.id = sidenav.id + data.id;
     div.style.paddingBottom = "10px";
-  s
     sidenav.appendChild(div);
 
     if (newButton && !this.isMobile()) {
