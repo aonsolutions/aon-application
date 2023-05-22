@@ -2,8 +2,8 @@ package com.esferalia.aon.gwt.mod200.server;
 
 import java.util.LinkedList;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
 import com.esferalia.aon.gwt.mod200.client.mod200.Mod2002017Service;

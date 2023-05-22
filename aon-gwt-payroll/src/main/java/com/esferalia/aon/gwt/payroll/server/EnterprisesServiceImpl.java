@@ -43,7 +43,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import org.jooq.DSLContext;
 import org.jooq.tools.json.JSONObject;

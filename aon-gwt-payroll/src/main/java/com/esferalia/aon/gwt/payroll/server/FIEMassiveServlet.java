@@ -23,14 +23,15 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -67,8 +68,9 @@ import com.google.gson.GsonBuilder;
 		}
 )
 public class FIEMassiveServlet extends HttpServlet implements FIEService {
-	private static Logger LOGGER = Logger
-			.getLogger(FIEMassiveServlet.class.getName());
+	private static Logger LOGGER = Logger.getLogger(FIEMassiveServlet.class.getName());
+	private static Condition condition;
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		doPost(req, resp);
@@ -551,6 +553,12 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 		java.sql.Date itConfirmationDate = new java.sql.Date(it.getConfirmationDate().getTime());
 		
 		try {
+			condition = PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf());
+			condition = condition.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)));
+			condition = condition.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)));
+			
+			if(AonStringUtils.isNotBlank(it.getCcc()))
+				condition = condition.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()));
 			
 			ContractRecord contractRecord = 
 			ctx
@@ -558,11 +566,8 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			.from(REGISTRY)
 			.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 			.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-			.innerJoin(ENTERPRISE_CCC).onKey()
-			.where(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
-			.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
-			.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
-			.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
+			.innerJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
+			.where(condition)
 			.fetchOptionalInto(CONTRACT)
 			.orElseGet(() -> 			
 					ctx
@@ -572,10 +577,7 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 					.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
 					.innerJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
 					.innerJoin(DOMAIN).on(DOMAIN.ID.eq(ENTERPRISE_CCC.DOMAIN))
-					.where(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
-					.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
-					.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
-					.and(DSL.condition(itEndDate == null ).or(CONTRACT.START_DATE.le(itEndDate)))
+					.where(condition)
 					.fetchOptionalInto(CONTRACT)
 					.orElseThrow(() -> new EmployeeNotFoundexception() ) 
 			);
@@ -626,15 +628,19 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 	public static ContractRecord getContract(DSLContext ctx, IT it) {
 		java.sql.Date itStartDate = normalizeStartDateToSave(it.getContingency(), it.getStartDate());
 		
+		Condition condition = PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf());
+		condition = condition.and(CONTRACT.START_DATE.le(itStartDate));
+		condition = condition.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)));
+		
+		if(AonStringUtils.isNotBlank(it.getCcc()))
+			condition = condition.and(ENTERPRISE_CCC.CCC.eq(it.getCcc()));
+		
 		return ctx.select()
 				.from(REGISTRY)
 				.innerJoin(PERSON).on(PERSON.REGISTRY.eq(REGISTRY.ID))
 				.innerJoin(CONTRACT).on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
-				.innerJoin(ENTERPRISE_CCC).onKey()
-				.where(ENTERPRISE_CCC.CCC.eq(it.getCcc()))
-				.and(PERSON.SOCIAL_SECURITY_NUM.eq(it.getNaf()))
-				.and(CONTRACT.START_DATE.le(itStartDate))
-				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.ge(itStartDate)))
+				.innerJoin(ENTERPRISE_CCC).on(ENTERPRISE_CCC.ID.eq(CONTRACT.ENTERPRISE_CCC))
+				.where(condition)
 				.orderBy(CONTRACT.ID.desc())
 				.fetchOptionalInto(CONTRACT)
 				.orElseThrow(() -> new EmployeeNotFoundexception() );

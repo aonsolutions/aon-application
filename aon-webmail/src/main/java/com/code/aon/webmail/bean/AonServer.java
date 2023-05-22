@@ -1,6 +1,6 @@
 package com.code.aon.webmail.bean;
 
-import static javax.mail.Folder.READ_WRITE;
+import static jakarta.mail.Folder.READ_WRITE;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
@@ -11,17 +11,17 @@ import java.util.ResourceBundle;
 
 import javax.activation.CommandMap;
 import javax.activation.MailcapCommandMap;
-import javax.mail.Address;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Quota;
-import javax.mail.SendFailedException;
-import javax.mail.Service;
-import javax.mail.Session;
-import javax.mail.Store;
-import javax.mail.Transport;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Address;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Quota;
+import jakarta.mail.SendFailedException;
+import jakarta.mail.Service;
+import jakarta.mail.Session;
+import jakarta.mail.Store;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;

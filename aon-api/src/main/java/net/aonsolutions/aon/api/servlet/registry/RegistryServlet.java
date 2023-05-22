@@ -5,9 +5,9 @@ import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -213,7 +213,7 @@ public class RegistryServlet extends AonApiHttpServlet {
 				
 				if(RegistryAdditionalInfo.BILLABLE.equals(rai)) {
 					Optional<RegistryAddInfo> addinfo = AON.getRegistryAddInfo(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), f -> f.getAttributeProperty().eq("AON_BILLABLE").and(f.getRegistryProperty().eq(registryId)));
-					object.put(IJsonNames.BILLABLE, addinfo.isPresent());
+					object.put(IJsonNames.BILLABLE, addinfo.isEmpty());
 				}
 				
 				if (RegistryAdditionalInfo.DOMAIN_LINKED.equals(rai)) {

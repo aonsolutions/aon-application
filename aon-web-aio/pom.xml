@@ -429,10 +429,10 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-		<groupId>net.aonsolutions</groupId>	
-		<artifactId>aon.accounting.report</artifactId>
-      	<version>${project.version}</version>
-      	<scope>compile</scope>
+      <groupId>net.aonsolutions</groupId>	
+      <artifactId>aon.accounting.report</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>com.code.aon</groupId>
@@ -451,8 +451,8 @@
           <artifactId>servlet-api</artifactId>
         </exclusion>
         <exclusion>
-        	<groupId>com.fasterxml.jackson.core</groupId>
-        	<artifactId>jackson-core</artifactId>
+       	  <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -544,7 +544,7 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
-      <version>9.0.14</version>
+      <version>10.1.7</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -554,19 +554,19 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.1.0</version>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-servlet-api</artifactId>
+      <version>10.1.7</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>javax.faces</groupId>
+      <groupId>jakarta.faces</groupId>
       <artifactId>jsf-api</artifactId>
       <version>1.2_14</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>javax.faces</groupId>
+      <groupId>jakarta.faces</groupId>
       <artifactId>jsf-impl</artifactId>
       <version>1.2_14</version>
       <scope>runtime</scope>
@@ -643,7 +643,7 @@
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate</artifactId>
+      <artifactId>hibernate-jakarta</artifactId>
       <version>3.2.7.ga</version>
       <exclusions>
         <exclusion>
@@ -658,8 +658,8 @@
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-tools</artifactId>
-      <version>3.2.3.GA</version>
+      <artifactId>hibernate-tools-jakarta</artifactId>
+      <version>3.2.4.GA</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -888,7 +888,7 @@
     </dependency>
     <dependency>
       <groupId>org.richfaces.framework</groupId>
-      <artifactId>richfaces-api</artifactId>
+      <artifactId>richfaces-api-jakarta</artifactId>
       <version>3.3.3.Final</version>
       <exclusions>
         <exclusion>
@@ -919,7 +919,7 @@
     </dependency>
     <dependency>
       <groupId>org.richfaces.ui</groupId>
-      <artifactId>richfaces-ui</artifactId>
+      <artifactId>richfaces-ui-jakarta</artifactId>
       <version>3.3.3.Final</version>
       <exclusions>
         <exclusion>
@@ -956,7 +956,7 @@
     </dependency>
     <dependency>
       <groupId>org.richfaces.framework</groupId>
-      <artifactId>richfaces-impl</artifactId>
+      <artifactId>richfaces-impl-jakarta</artifactId>
       <version>3.3.3.aon</version>
       <exclusions>
         <exclusion>
@@ -974,8 +974,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
+      <groupId>jstl</groupId>
+      <artifactId>jstl-jakarta</artifactId>
       <version>1.2</version>
       <scope>runtime</scope>
     </dependency>

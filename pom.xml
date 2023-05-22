@@ -29,7 +29,9 @@
 	</properties>
 
 	<modules>
-
+		<!--  
+		<module>jakarta.persistence-api</module>
+		-->
 
 		<!-- MAVEN PLUGINS -->
 		<module>aon-alias-maven-plugin</module>

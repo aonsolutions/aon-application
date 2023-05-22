@@ -3,9 +3,9 @@ package com.code.aon.finance;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.AonVersion;

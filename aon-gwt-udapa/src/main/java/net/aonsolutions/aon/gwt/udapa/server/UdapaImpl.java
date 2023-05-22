@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;

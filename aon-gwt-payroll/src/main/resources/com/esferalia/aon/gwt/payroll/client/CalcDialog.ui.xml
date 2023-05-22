@@ -56,7 +56,8 @@
 	.form textarea {
 		resize: none;
 	}
-	
+
+	.dateListBox-item,
 	.monthListBox-item {
 		padding-left: 16px;
 	}
@@ -86,9 +87,25 @@
 					<g:Label text="Mes" />
 				</td>
 				<td class="{style.field}">
-					<aon:MonthListBox styleName="aon-selectOneMenu"
-						ui:field="monthListBox" monthStyles="{style.monthListBox-item}"
+					<aon:MonthListBox
+						debugId="monthListBox"  
+						ui:field="monthListBox"  
+						styleName="aon-selectOneMenu"
+						monthStyles="{style.monthListBox-item}"
 						highLightStyles="aon-bold aon-black aon-icon-accept {style.monthListBox-item}"/>
+				</td>
+			</tr>
+			<tr>
+				<td class="{style.label}">
+					<g:Label text="Pago" />
+				</td>
+				<td class="{style.field}">
+					<aon:DateListBox
+						debugId="payDateListBox"
+						ui:field="payDateListBox" 
+						styleName="aon-selectOneMenu"
+						normalStyles="{style.dateListBox-item}"
+						highlightStyles="aon-bold aon-black aon-icon-accept {style.dateListBox-item}" />
 				</td>
 			</tr>
 			<tr ui:field="extraTR"  >

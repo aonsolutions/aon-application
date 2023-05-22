@@ -1,7 +1,7 @@
 package net.aonsolutions.aon.api.test.login;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import net.aonsolutions.aon.api.servlet.LoginServlet;
 import net.aonsolutions.tests.request.IServlet;

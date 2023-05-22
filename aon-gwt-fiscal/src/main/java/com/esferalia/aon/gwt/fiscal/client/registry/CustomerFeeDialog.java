@@ -530,9 +530,9 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 			periodListBox.addItem("Mensual", "1");
 			periodListBox.addItem("Bimensual", "2");
 			periodListBox.addItem("Trimestral", "3");
-			periodListBox.addItem("Cuatrimestral", "3");
-			periodListBox.addItem("Semestral", "6");
-			periodListBox.addItem("Anual", "12");
+			periodListBox.addItem("Cuatrimestral", "4");
+			periodListBox.addItem("Semestral", "5");
+			periodListBox.addItem("Anual", "6");
 			periodListBox.addChangeHandler(e -> { if(null != fee) fee.setPeriod(BillingPeriod.safeValueOf(periodListBox.getSelectedValue()));});
 			if(null != fee) setSelectedValueLB(periodListBox, fee.getPeriod().getValue().toString());
 		}
@@ -618,6 +618,10 @@ public abstract class CustomerFeeDialog extends AonCustomDialog {
 		sellerSuggestBox.addSelectionHandler(e -> {
 			sellerSuggestBox.hideSuggestionList();
 			if(null != fee) fee.setSeller(sellerSuggestions.get(sellerSuggestBox.getValue()));
+		});
+		
+		sellerSuggestBox.addValueChangeHandler(e -> {
+			if(null != fee && AonStringUtils.isBlank(sellerSuggestBox.getValue())) fee.setSeller(null);
 		});
 		
 		sellerSuggestBox.addKeyUpHandler(e -> {

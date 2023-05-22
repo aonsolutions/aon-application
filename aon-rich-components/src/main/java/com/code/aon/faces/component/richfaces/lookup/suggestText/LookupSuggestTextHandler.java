@@ -2,8 +2,8 @@ package com.code.aon.faces.component.richfaces.lookup.suggestText;
 
 import java.net.URL;
 
-import javax.el.ValueExpression;
-import javax.el.VariableMapper;
+import jakarta.el.ValueExpression;
+import jakarta.el.VariableMapper;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 

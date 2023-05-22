@@ -4085,6 +4085,7 @@ public class SalaryDraft extends ResizeComposite
 				salarySelect.setExtras(extras);
 			}
 		});
+		
 	}
 	
 	

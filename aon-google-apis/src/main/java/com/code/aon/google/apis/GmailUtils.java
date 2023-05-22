@@ -16,14 +16,14 @@ import java.util.Vector;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
-import javax.mail.BodyPart;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Session;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.DomainGserviceaccount;
@@ -134,7 +134,7 @@ public class GmailUtils {
 	    MimeMessage email = new MimeMessage(session);
 
 	    email.setFrom(new InternetAddress(from));
-	    email.addRecipient(javax.mail.Message.RecipientType.TO,
+	    email.addRecipient(jakarta.mail.Message.RecipientType.TO,
 	                       new InternetAddress(to));
 	    email.setSubject(subject);
 	    email.setContent(bodyText, "text/html");
@@ -164,7 +164,7 @@ public class GmailUtils {
 	    InternetAddress fAddress = new InternetAddress(from);
 
 	    email.setFrom(fAddress);
-	    email.addRecipient(javax.mail.Message.RecipientType.TO, tAddress);
+	    email.addRecipient(jakarta.mail.Message.RecipientType.TO, tAddress);
 	    email.setSubject(subject);
 
 	    MimeBodyPart mimeBodyPart = new MimeBodyPart();
@@ -202,7 +202,7 @@ public class GmailUtils {
 		    InternetAddress fAddress = new InternetAddress(from);
 
 		    email.setFrom(fAddress);
-		    email.addRecipient(javax.mail.Message.RecipientType.TO, tAddress);
+		    email.addRecipient(jakarta.mail.Message.RecipientType.TO, tAddress);
 		    email.setSubject(subject);
 
 		    MimeBodyPart mimeBodyPart = new MimeBodyPart();

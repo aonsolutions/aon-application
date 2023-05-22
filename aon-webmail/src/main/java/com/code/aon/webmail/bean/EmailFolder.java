@@ -2,8 +2,8 @@ package com.code.aon.webmail.bean;
 
 import java.io.Serializable;
 
-import javax.mail.Folder;
-import javax.mail.MessagingException;
+import jakarta.mail.Folder;
+import jakarta.mail.MessagingException;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

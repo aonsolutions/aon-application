@@ -2,7 +2,7 @@ package com.esferalia.aon.gwt.fiscal.server;
 
 import java.util.LinkedList;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.client.AsyncCallbackWrapper;
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;

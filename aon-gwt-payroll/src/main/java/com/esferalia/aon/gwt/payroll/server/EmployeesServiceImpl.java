@@ -65,7 +65,7 @@ import java.util.SortedSet;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;

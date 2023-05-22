@@ -21,9 +21,9 @@
 		<!-- https://mvnrepository.com/artifact/javax.wsdl/com.springsource.javax.wsdl -->
 
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>4.0.1</version>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-servlet-api</artifactId>
+			<version>10.1.7</version>
 			<scope>provided</scope>
 		</dependency>
 

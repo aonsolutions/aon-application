@@ -11,7 +11,7 @@ import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.mail.Address;
+import jakarta.mail.Address;
 
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang.ArrayUtils;

@@ -2,7 +2,7 @@ package com.code.aon.faces.component.richfaces.dataTable;
 
 import java.io.IOException;
 
-import javax.el.ELException;
+import jakarta.el.ELException;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIData;

@@ -29,7 +29,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonProgressBarDialog
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarSmallButton;
-import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.fiscal.client.MainEntryPoint;
 import com.esferalia.aon.occam.api.model.AonConfiguration;
 import com.esferalia.aon.occam.api.model.Customer;
@@ -66,11 +65,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -104,25 +101,34 @@ public class CustomerFee extends MainEntryPoint {
 	
 	// Filter
 	private boolean expandFilter = false;
+	private Integer minYear;
+	private Integer maxYear;
 	
-	private ListBox periocityListBox;
 	private ListBox monthListBox;
 	private ListBox yearListBox;
+	private ListBox periocityListBox;
 	private SuggestBox customerSuggestBox;
 	private ListBox customerStatusListBox;
+	private ListBox segmentListBox;
+	private ListBox startCompareLB;
+	private AonDateBox startDateBox;
+	private ListBox endCompareLB;
+	private AonDateBox endDateBox;
+	
+	private HTMLPanel filterExpandPanel;
 	private SuggestBox conceptSuggestBox;
+	private SuggestBox productCategorySuggestBox;
+	private SuggestBox productTagSuggestBox;
+	private TextBox quantityTextBox;
 	private TextBox priceTextBox;
 	private TextBox discountTextBox;
 	
-	private HTMLPanel filterExpandPanel;
-	private AonDateBox startDateBox;
-	private AonDateBox endDateBox;
-	private TextBox quantityTextBox;
-	private SuggestBox workplaceSuggestBox;
+	
+	private HTMLPanel filterExpandPanel2;
 	private SuggestBox sellerSuggestBox;
+	private SuggestBox workplaceSuggestBox;
 	private SuggestBox invoicingGroupSuggestBox;
 	private SuggestBox projectSuggestBox;
-	private ListBox segmentListBox;
 	
 	// Fee Table
 	private HTMLPanel container;
@@ -141,23 +147,26 @@ public class CustomerFee extends MainEntryPoint {
 	private Date billingDate;
 	
 	private Map<String, Customer> customerSuggestions = new TreeMap<>();
-	private Map<String, OldItem> productSuggestions = new TreeMap<>();
 	
-	private Map<String, Workplace> workplaceSuggestions = new TreeMap<>();
+	private Map<String, OldItem> productSuggestions = new TreeMap<>();
+	private Map<String, Integer> productCategorySuggestions = new TreeMap<>();
+	private Map<String, Integer> productTagSuggestions = new TreeMap<>();
+	
 	private Map<String, Seller> sellerSuggestions = new TreeMap<>();
+	private Map<String, Workplace> workplaceSuggestions = new TreeMap<>();
 	private Map<String, InvoicingGroup> invoicingGroupSuggestions = new TreeMap<>();
 	private Map<String, Project> projectSuggestions = new TreeMap<>();
 	
-	final private int limit = 100;
-	final private MutableInt offset = new MutableInt(0);
-	final private MutableInt moreData = new MutableInt(0);
-	final private MutableInt searchEnabled = new MutableInt(0); 
+	private int limit = 100;
+	private MutableInt offset = new MutableInt(0);
+	private MutableInt moreData = new MutableInt(0);
+	private MutableInt searchEnabled = new MutableInt(0); 
 	private int lastScrollPos = 0;
 	
 	// Import fees
-	AonProgressBarDialog pbd;
-	LinkedList<String> verror = new LinkedList<>();
-	LinkedList<String> werror = new LinkedList<>();
+	private AonProgressBarDialog pbd;
+	private LinkedList<String> verror = new LinkedList<>();
+	private LinkedList<String> werror = new LinkedList<>();
 
 	@Override
 	public void onModuleLoad() {
@@ -297,7 +306,7 @@ public class CustomerFee extends MainEntryPoint {
 		HTMLPanel periodicityItemPanel = new HTMLPanel("");
 		periodicityItemPanel.addStyleName(AON.CSS.aonItemFlex());
 
-		Label periodicityLabel = new Label("Periocidad");
+		Label periodicityLabel = new Label("Periodicidad");
 		periodicityLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		periocityListBox = createPeriodicityListBox();
 		
@@ -320,6 +329,84 @@ public class CustomerFee extends MainEntryPoint {
 		customerItemPanel.add(customerStatusListBox);
 
 		filterDefaultPanel.add(customerItemPanel);
+		
+		// Segment
+		if (opt.getConfiguration().hasSegments()) {
+			HTMLPanel segmentItemPanel = new HTMLPanel("");
+			segmentItemPanel.addStyleName(AON.CSS.aonItemFlex());
+
+			Label segmentLabel = new Label("Segmento");
+			segmentLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			
+			segmentListBox = new ListBox();
+			segmentListBox.setHeight("2em");
+			segmentListBox.getElement().getStyle().setProperty("padding", "0 5px");
+			segmentListBox.addItem("-", "");
+			segmentListBox.setSelectedIndex(0);
+			
+			for (Segment ea : opt.getConfiguration().getSegments()) {
+				segmentListBox.addItem(ea.getName(), AonNumberUtils.toString( ea.getId()));
+			}
+			segmentListBox.addChangeHandler(event -> onSearchFees());
+			
+			segmentItemPanel.add(segmentLabel);
+			segmentItemPanel.add(segmentListBox);
+			
+			filterDefaultPanel.add(segmentItemPanel);
+		}
+		
+		// StartDate
+		HTMLPanel startDateItemPanel = new HTMLPanel("");
+		startDateItemPanel.addStyleName(AON.CSS.aonItemFlex());
+
+		Label startDateLabel = new Label("F. Inicio");
+		startDateLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		
+		startCompareLB = createCompareListBox();
+		startCompareLB.addChangeHandler(e -> {
+			if(null != startDateBox.getValue()) onSearchFees();
+		});
+		
+		startDateBox = new AonDateBox();
+		startDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		startDateBox.addStyleName("gwt-TextBox");
+		setInputStyle(startDateBox);
+		startDateBox.addValueChangeHandler(e -> onSearchFees());
+
+		startDateItemPanel.add(startDateLabel);
+		startDateItemPanel.add(startCompareLB);
+		startDateItemPanel.add(startDateBox);
+
+		filterDefaultPanel.add(startDateItemPanel);
+		
+		// EndDate
+		HTMLPanel endDateItemPanel = new HTMLPanel("");
+		endDateItemPanel.addStyleName(AON.CSS.aonItemFlex());
+
+		Label endDateLabel = new Label("F. Fin");
+		endDateLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		
+		endCompareLB = createCompareListBox();
+		endCompareLB.addChangeHandler(e -> {
+			if(null != endDateBox.getValue()) onSearchFees();
+		});
+		
+		endDateBox = new AonDateBox();
+		endDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+		endDateBox.addStyleName("gwt-TextBox");
+		setInputStyle(endDateBox);
+		endDateBox.addValueChangeHandler(e -> onSearchFees());
+
+		endDateItemPanel.add(endDateLabel);
+		endDateItemPanel.add(endCompareLB);
+		endDateItemPanel.add(endDateBox);
+
+		filterDefaultPanel.add(endDateItemPanel);
+		
+		// Filter Expand Panel
+		filterExpandPanel = new HTMLPanel("");
+		filterExpandPanel.addStyleName(AON.CSS.aonFlexWrap());
+		filterExpandPanel.getElement().getStyle().setDisplay(Display.NONE);
 
 		// Product
 		HTMLPanel conceptItemPanel = new HTMLPanel("");
@@ -332,83 +419,33 @@ public class CustomerFee extends MainEntryPoint {
 		conceptItemPanel.add(conceptLabel);
 		conceptItemPanel.add(conceptSuggestBox);
 
-		filterDefaultPanel.add(conceptItemPanel);
+		filterExpandPanel.add(conceptItemPanel);
 		
-		// Price
-		HTMLPanel priceItemPanel = new HTMLPanel("");
-		priceItemPanel.addStyleName(AON.CSS.aonItemFlex());
+		// Product Category
+		HTMLPanel conceptCategoryItemPanel = new HTMLPanel("");
+		conceptCategoryItemPanel.addStyleName(AON.CSS.aonItemFlex());
 
-		Label priceLabel = new Label("Precio");
-		priceLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		priceTextBox = new TextBox();
-		priceTextBox.setWidth("80px");
-		priceTextBox.setHeight("2em");
-		priceTextBox.getElement().getStyle().setProperty("padding", "0 5px");
-		priceTextBox.addValueChangeHandler(e -> onSearchFees());
+		Label onceptCategoryLabel = new Label("Categoria");
+		onceptCategoryLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		createProductCategorySuggestBox();
 
-		priceItemPanel.add(priceLabel);
-		priceItemPanel.add(priceTextBox);
+		conceptCategoryItemPanel.add(onceptCategoryLabel);
+		conceptCategoryItemPanel.add(productCategorySuggestBox);
 
-		filterDefaultPanel.add(priceItemPanel);
+		filterExpandPanel.add(conceptCategoryItemPanel);
 		
-		// Discount
-		HTMLPanel discountItemPanel = new HTMLPanel("");
-		discountItemPanel.addStyleName(AON.CSS.aonItemFlex());
+		// Product Tag
+		HTMLPanel productTagItemPanel = new HTMLPanel("");
+		productTagItemPanel.addStyleName(AON.CSS.aonItemFlex());
 
-		Label discountLabel = new Label("Descuento");
-		discountLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		discountTextBox = new TextBox();
-		discountTextBox.setWidth("80px");
-		discountTextBox.setHeight("2em");
-		discountTextBox.getElement().getStyle().setProperty("padding", "0 5px");
-		discountTextBox.addValueChangeHandler(e -> onSearchFees());
+		Label productTagLabel = new Label("Etiqueta");
+		productTagLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		createProductTagSuggestBox();
 
-		discountItemPanel.add(discountLabel);
-		discountItemPanel.add(discountTextBox);
+		productTagItemPanel.add(productTagLabel);
+		productTagItemPanel.add(productTagSuggestBox);
 
-		filterDefaultPanel.add(discountItemPanel);
-		
-		filterLeftPanel.add(filterDefaultPanel);
-		
-		filterExpandPanel = new HTMLPanel("");
-		filterExpandPanel.addStyleName(AON.CSS.aonFlexWrap());
-		filterExpandPanel.getElement().getStyle().setDisplay(Display.NONE);
-		
-		// StartDate
-		HTMLPanel startDateItemPanel = new HTMLPanel("");
-		startDateItemPanel.addStyleName(AON.CSS.aonItemFlex());
-
-		Label startDateLabel = new Label("F. Inicio");
-		startDateLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		
-		startDateBox = new AonDateBox();
-		startDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-		startDateBox.addStyleName("gwt-TextBox");
-		setInputStyle(startDateBox);
-		startDateBox.addValueChangeHandler(e -> onSearchFees());
-
-		startDateItemPanel.add(startDateLabel);
-		startDateItemPanel.add(startDateBox);
-
-		filterExpandPanel.add(startDateItemPanel);
-		
-		// EndDate
-		HTMLPanel endDateItemPanel = new HTMLPanel("");
-		endDateItemPanel.addStyleName(AON.CSS.aonItemFlex());
-
-		Label endDateLabel = new Label("F. Fin");
-		endDateLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		
-		endDateBox = new AonDateBox();
-		endDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-		endDateBox.addStyleName("gwt-TextBox");
-		setInputStyle(endDateBox);
-		endDateBox.addValueChangeHandler(e -> onSearchFees());
-
-		endDateItemPanel.add(endDateLabel);
-		endDateItemPanel.add(endDateBox);
-
-		filterExpandPanel.add(endDateItemPanel);
+		filterExpandPanel.add(productTagItemPanel);
 		
 		// Quantity
 		HTMLPanel quantityItemPanel = new HTMLPanel("");
@@ -427,18 +464,44 @@ public class CustomerFee extends MainEntryPoint {
 
 		filterExpandPanel.add(quantityItemPanel);
 		
-		// Workplace
-		HTMLPanel workplaceItemPanel = new HTMLPanel("");
-		workplaceItemPanel.addStyleName(AON.CSS.aonItemFlex());
+		// Price
+		HTMLPanel priceItemPanel = new HTMLPanel("");
+		priceItemPanel.addStyleName(AON.CSS.aonItemFlex());
 
-		Label workplaceLabel = new Label("C. Trabajo");
-		workplaceLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		createWorkplaceSuggestBox();
+		Label priceLabel = new Label("Precio");
+		priceLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		priceTextBox = new TextBox();
+		priceTextBox.setWidth("80px");
+		priceTextBox.setHeight("2em");
+		priceTextBox.getElement().getStyle().setProperty("padding", "0 5px");
+		priceTextBox.addValueChangeHandler(e -> onSearchFees());
 
-		workplaceItemPanel.add(workplaceLabel);
-		workplaceItemPanel.add(workplaceSuggestBox);
+		priceItemPanel.add(priceLabel);
+		priceItemPanel.add(priceTextBox);
 
-		filterExpandPanel.add(workplaceItemPanel);
+		filterExpandPanel.add(priceItemPanel);
+		
+		// Discount
+		HTMLPanel discountItemPanel = new HTMLPanel("");
+		discountItemPanel.addStyleName(AON.CSS.aonItemFlex());
+
+		Label discountLabel = new Label("Descuento");
+		discountLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		discountTextBox = new TextBox();
+		discountTextBox.setWidth("80px");
+		discountTextBox.setHeight("2em");
+		discountTextBox.getElement().getStyle().setProperty("padding", "0 5px");
+		discountTextBox.addValueChangeHandler(e -> onSearchFees());
+
+		discountItemPanel.add(discountLabel);
+		discountItemPanel.add(discountTextBox);
+
+		filterExpandPanel.add(discountItemPanel);
+		
+		// Filter Expand Panel
+		filterExpandPanel2 = new HTMLPanel("");
+		filterExpandPanel2.addStyleName(AON.CSS.aonFlexWrap());
+		filterExpandPanel2.getElement().getStyle().setDisplay(Display.NONE);
 		
 		// Seller
 		HTMLPanel sellerItemPanel = new HTMLPanel("");
@@ -451,7 +514,20 @@ public class CustomerFee extends MainEntryPoint {
 		sellerItemPanel.add(sellerLabel);
 		sellerItemPanel.add(sellerSuggestBox);
 
-		filterExpandPanel.add(sellerItemPanel);
+		filterExpandPanel2.add(sellerItemPanel);
+		
+		// Workplace
+		HTMLPanel workplaceItemPanel = new HTMLPanel("");
+		workplaceItemPanel.addStyleName(AON.CSS.aonItemFlex());
+
+		Label workplaceLabel = new Label("C. Trabajo");
+		workplaceLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		createWorkplaceSuggestBox();
+
+		workplaceItemPanel.add(workplaceLabel);
+		workplaceItemPanel.add(workplaceSuggestBox);
+
+		filterExpandPanel2.add(workplaceItemPanel);
 		
 		// Invoicing Group
 		HTMLPanel invoincingGroupItemPanel = new HTMLPanel("");
@@ -464,9 +540,9 @@ public class CustomerFee extends MainEntryPoint {
 		invoincingGroupItemPanel.add(invoincingGroupLabel);
 		invoincingGroupItemPanel.add(invoicingGroupSuggestBox);
 
-		filterExpandPanel.add(invoincingGroupItemPanel);
+		filterExpandPanel2.add(invoincingGroupItemPanel);
 		
-		// Invoicing Group
+		// Project
 		HTMLPanel projectItemPanel = new HTMLPanel("");
 		projectItemPanel.addStyleName(AON.CSS.aonItemFlex());
 
@@ -477,43 +553,25 @@ public class CustomerFee extends MainEntryPoint {
 		projectItemPanel.add(projectLabel);
 		projectItemPanel.add(projectSuggestBox);
 
-		filterExpandPanel.add(projectItemPanel);
+		filterExpandPanel2.add(projectItemPanel);	
 		
-		if (opt.getConfiguration().hasSegments()) {
-			FlowPanel segmentPanel = new FlowPanel();
-			InlineLabel segmentLabel = new InlineLabel("Segmento");
-			segmentLabel.setStyleName(AON.CSS.aonBold());
-			segmentLabel.addStyleName(AON.CSS.aonMarginRight());
-			segmentPanel.add(segmentLabel);
-			
-			segmentListBox = new ListBox();
-			
-			
-			segmentListBox.setWidth("120px");
-			segmentListBox.addItem("-- Todos --", "");
-			segmentListBox.setSelectedIndex(0);
-			for (Segment ea : opt.getConfiguration().getSegments()) {
-				segmentListBox.addItem(ea.getName(), AonNumberUtils.toString( ea.getId()));
-			}
-			segmentListBox.addChangeHandler(event -> onSearchFees());
-			
-			segmentPanel.add(segmentListBox);
-			filterExpandPanel.add(segmentPanel);
-		}
-		
-		
-		filterLeftPanel.add(filterExpandPanel);
-		
+		// Right buttons
 		HTMLPanel filterRightPanel = new HTMLPanel("");
 		filterRightPanel.addStyleName(AON.CSS.aonFlexWrap());
 		filterRightPanel.getElement().getStyle().setProperty("height", "100%");
 		filterRightPanel.getElement().getStyle().setProperty("align-items", "flex-start");
+		filterRightPanel.getElement().getStyle().setProperty("flex-wrap", "nowrap");
 		
 		AonToolbarSmallButton expandFilterBtn = new AonToolbarSmallButton("Mas filtros", AON.CSS.aonIconTune());
 		expandFilterBtn.addClickHandler(e -> {
 			expandFilter = !expandFilter;
-			if(expandFilter) filterExpandPanel.getElement().getStyle().clearDisplay();
-			else filterExpandPanel.getElement().getStyle().setDisplay(Display.NONE);
+			if(expandFilter) {
+				filterExpandPanel.getElement().getStyle().clearDisplay();
+				filterExpandPanel2.getElement().getStyle().clearDisplay();
+			} else {
+				filterExpandPanel.getElement().getStyle().setDisplay(Display.NONE);
+				filterExpandPanel2.getElement().getStyle().setDisplay(Display.NONE);
+			}
 		});
 		filterRightPanel.add(expandFilterBtn);
 		
@@ -527,6 +585,11 @@ public class CustomerFee extends MainEntryPoint {
 			showInitialMessage();
 			onSearchFees();
 		});
+		
+		filterLeftPanel.add(filterDefaultPanel);
+		filterLeftPanel.add(filterExpandPanel);
+		filterLeftPanel.add(filterExpandPanel2);
+		
 		filterRightPanel.add(resetBtn);
 		
 		filterContentPanel.add(filterLeftPanel);
@@ -575,12 +638,17 @@ public class CustomerFee extends MainEntryPoint {
 				lb.addItem("-", "");
 				
 				if(firstEntry.isPresent()) {
-					Integer minYear = firstEntry.get().getKey();
-					Integer maxYear = firstEntry.get().getValue();
+					Integer minYearEntry = firstEntry.get().getKey();
+					Integer maxYearEntry = firstEntry.get().getValue();
 					
-					while(maxYear >= minYear) {
-						lb.addItem(maxYear.toString(), (maxYear - 1900) + "");
-						maxYear--;
+					minYear = minYearEntry;
+					maxYear = maxYearEntry;
+					
+					Integer itYear = maxYear;
+					
+					while(itYear >= minYear) {
+						lb.addItem(itYear.toString(), (itYear - 1900) + "");
+						itYear--;
 					}
 				} 
 				
@@ -600,12 +668,26 @@ public class CustomerFee extends MainEntryPoint {
 		lb.addItem("Mensual", "1");
 		lb.addItem("Bimensual", "2");
 		lb.addItem("Trimestral", "3");
-		lb.addItem("Cuatrimestral", "3");
-		lb.addItem("Semestral", "6");
-		lb.addItem("Anual", "12");
+		lb.addItem("Cuatrimestral", "4");
+		lb.addItem("Semestral", "5");
+		lb.addItem("Anual", "6");
 		lb.addChangeHandler(e -> onSearchFees());
 		return lb;
 	}
+	
+	private ListBox createCompareListBox() {
+		ListBox lb = new ListBox();
+		lb.setHeight("2em");
+		lb.getElement().getStyle().setProperty("padding", "0 5px");
+
+		lb.addItem("=", "0");
+		lb.addItem("\u2264", "1");
+		lb.addItem("\u2265", "2");
+		
+		return lb;
+	}
+	
+	// ------- CUSTOMER ---------
 	
 	private void createCustomerStatusListBox() {
 		customerStatusListBox = new ListBox();
@@ -663,6 +745,8 @@ public class CustomerFee extends MainEntryPoint {
 			
 		});
 	}
+	
+	// ------- PRODUCT ---------
 
 	private void createConceptSuggestBox() {
 		conceptSuggestBox = new SuggestBox();
@@ -710,42 +794,42 @@ public class CustomerFee extends MainEntryPoint {
 		});
 	}
 	
-	private void createWorkplaceSuggestBox() {
-		workplaceSuggestBox = new SuggestBox();
-		workplaceSuggestBox.setWidth("240px");
-		workplaceSuggestBox.setHeight("2em");
-		workplaceSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
-		workplaceSuggestBox.setAutoSelectEnabled(false);
-		workplaceSuggestBox.getElement().setPropertyString("placeholder", "C. Trabajo: busque descripci\u00f3n");
+	private void createProductCategorySuggestBox() {
+		productCategorySuggestBox = new SuggestBox();
+		productCategorySuggestBox.setWidth("200px");
+		productCategorySuggestBox.setHeight("2em");
+		productCategorySuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
+		productCategorySuggestBox.setAutoSelectEnabled(false);
+		productCategorySuggestBox.getElement().setPropertyString("placeholder", "Categoria: busque por descripci\u00f3n");
 		
-		workplaceSuggestBox.addSelectionHandler(e -> {
-			workplaceSuggestBox.hideSuggestionList();
+		productCategorySuggestBox.addSelectionHandler(e -> {
+			productCategorySuggestBox.hideSuggestionList();
 			onSearchFees();
 		});
 		
-		workplaceSuggestBox.addKeyUpHandler(e -> {
-			String pworkplaceQuery = workplaceSuggestBox.getValue();
+		productCategorySuggestBox.addKeyUpHandler(e -> {
+			String productCategoryQuery = productCategorySuggestBox.getValue();
 			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
-				workplaceSuggestBox.setValue("");
-				pworkplaceQuery = null;
-				getWorkplaceSuggestion(pworkplaceQuery);
-			} else if(AonStringUtils.isNotBlank(pworkplaceQuery) && pworkplaceQuery.length() > 3)
-				getWorkplaceSuggestion(pworkplaceQuery);
+				productCategorySuggestBox.setValue("");
+				productCategoryQuery = null;
+				getProductCategoriesSuggestion(productCategoryQuery);
+			} else if(AonStringUtils.isNotBlank(productCategoryQuery) && productCategoryQuery.length() > 3)
+				getProductCategoriesSuggestion(productCategoryQuery);
 		});
 	}
 	
-	private void getWorkplaceSuggestion(String workplaceQuery) {
-		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
+	private void getProductCategoriesSuggestion(String productCategoryQuery) {
+		SERVICE.getProductCategoriesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productCategoryQuery, new AsyncCallback<Map<String, Integer>>() {
 			
 			@Override
-			public void onSuccess(Map<String, Workplace> workplaceSuggestionsDB) {
-				workplaceSuggestions = workplaceSuggestionsDB;
+			public void onSuccess(Map<String, Integer> productCategorySuggestionsDB) {
+				productCategorySuggestions = productCategorySuggestionsDB;
 				
-				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) workplaceSuggestBox.getSuggestOracle();
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) productCategorySuggestBox.getSuggestOracle();
 				orclSb.clear();
-				orclSb.addAll(workplaceSuggestions.keySet());
-				orclSb.setDefaultSuggestionsFromText(workplaceSuggestions.keySet());
-				workplaceSuggestBox.showSuggestionList();
+				orclSb.addAll(productCategorySuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(productCategorySuggestions.keySet());
+				productCategorySuggestBox.showSuggestionList();
 			}
 			
 			@Override
@@ -755,6 +839,54 @@ public class CustomerFee extends MainEntryPoint {
 			
 		});
 	}
+	
+	private void createProductTagSuggestBox() {
+		productTagSuggestBox = new SuggestBox();
+		productTagSuggestBox.setWidth("200px");
+		productTagSuggestBox.setHeight("2em");
+		productTagSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
+		productTagSuggestBox.setAutoSelectEnabled(false);
+		productTagSuggestBox.getElement().setPropertyString("placeholder", "Etiqueta: busque por descripci\u00f3n");
+		
+		productTagSuggestBox.addSelectionHandler(e -> {
+			productTagSuggestBox.hideSuggestionList();
+			onSearchFees();
+		});
+		
+		productTagSuggestBox.addKeyUpHandler(e -> {
+			String productTagQuery = productTagSuggestBox.getValue();
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				productTagSuggestBox.setValue("");
+				productTagQuery = null;
+				getProductTagsSuggestion(productTagQuery);
+			} else if(AonStringUtils.isNotBlank(productTagQuery) && productTagQuery.length() > 3)
+				getProductTagsSuggestion(productTagQuery);
+		});
+	}
+	
+	private void getProductTagsSuggestion(String productTagQuery) {
+		SERVICE.getProductTagsSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), productTagQuery, new AsyncCallback<Map<String, Integer>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Integer> productTagSuggestionsDB) {
+				productTagSuggestions = productTagSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) productTagSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(productTagSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(productTagSuggestions.keySet());
+				productTagSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+	
+	// ------- SELLER ---------
 	
 	private void createSellerSuggestBox() {
 		sellerSuggestBox = new SuggestBox();
@@ -802,6 +934,56 @@ public class CustomerFee extends MainEntryPoint {
 		});
 	}
 	
+	// ------- WORKPLACE ---------
+	
+	private void createWorkplaceSuggestBox() {
+		workplaceSuggestBox = new SuggestBox();
+		workplaceSuggestBox.setWidth("240px");
+		workplaceSuggestBox.setHeight("2em");
+		workplaceSuggestBox.getElement().getStyle().setProperty("padding", "0 5px");
+		workplaceSuggestBox.setAutoSelectEnabled(false);
+		workplaceSuggestBox.getElement().setPropertyString("placeholder", "C. Trabajo: busque descripci\u00f3n");
+		
+		workplaceSuggestBox.addSelectionHandler(e -> {
+			workplaceSuggestBox.hideSuggestionList();
+			onSearchFees();
+		});
+		
+		workplaceSuggestBox.addKeyUpHandler(e -> {
+			String pworkplaceQuery = workplaceSuggestBox.getValue();
+			if(e.isControlKeyDown() && e.getNativeKeyCode() == 32) {
+				workplaceSuggestBox.setValue("");
+				pworkplaceQuery = null;
+				getWorkplaceSuggestion(pworkplaceQuery);
+			} else if(AonStringUtils.isNotBlank(pworkplaceQuery) && pworkplaceQuery.length() > 3)
+				getWorkplaceSuggestion(pworkplaceQuery);
+		});
+	}
+	
+	private void getWorkplaceSuggestion(String workplaceQuery) {
+		SERVICE.getWorkplacesSuggestion(options.getDomainName(), options.getDomain(), options.getUser(), workplaceQuery, new AsyncCallback<Map<String, Workplace>>() {
+			
+			@Override
+			public void onSuccess(Map<String, Workplace> workplaceSuggestionsDB) {
+				workplaceSuggestions = workplaceSuggestionsDB;
+				
+				MultiWordSuggestOracle orclSb = (MultiWordSuggestOracle) workplaceSuggestBox.getSuggestOracle();
+				orclSb.clear();
+				orclSb.addAll(workplaceSuggestions.keySet());
+				orclSb.setDefaultSuggestionsFromText(workplaceSuggestions.keySet());
+				workplaceSuggestBox.showSuggestionList();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub	
+			}
+			
+		});
+	}
+	
+	// ------- INVOICING GROUP ---------
+	
 	private void createInvoicingGroupSuggestBox() {
 		invoicingGroupSuggestBox = new SuggestBox();
 		invoicingGroupSuggestBox.setWidth("240px");
@@ -848,6 +1030,8 @@ public class CustomerFee extends MainEntryPoint {
 		});
 	}
 	
+	// ------- PROJECT ---------
+	
 	private void createProjectSuggestBox() {
 		projectSuggestBox = new SuggestBox();
 		projectSuggestBox.setWidth("240px");
@@ -893,41 +1077,62 @@ public class CustomerFee extends MainEntryPoint {
 			
 		});
 	}
+	
+	// ------- RESET FILTER ---------
 
 	private void resetFilter() {
 		monthListBox.setSelectedIndex(0);
 		if (null != yearListBox) yearListBox.setSelectedIndex(0);
+		periocityListBox.setSelectedIndex(0);
 		customerSuggestBox.setValue("");
 		customerStatusListBox.setSelectedIndex(0);
+		segmentListBox.setSelectedIndex(0);
+		startCompareLB.setSelectedIndex(0);
+		startDateBox.setValue(null);
+		endCompareLB.setSelectedIndex(0);
+		endDateBox.setValue(null);
+		
 		conceptSuggestBox.setValue("");
+		productCategorySuggestBox.setValue("");
+		productTagSuggestBox.setValue("");
+		quantityTextBox.setValue("");
 		priceTextBox.setValue("");
 		discountTextBox.setValue("");
 		
-		startDateBox.setValue(null);
-		endDateBox.setValue(null);
-		quantityTextBox.setValue("");
+		sellerSuggestBox.setValue("");
+		workplaceSuggestBox.setValue("");
+		invoicingGroupSuggestBox.setValue("");
+		projectSuggestBox.setValue("");
 		
 		if(null != params) {
 			params.setMonth(null);
 			params.setYear(null);
+			params.setPeriodicity(null);
 			params.setCustomer(null);
-			params.setProductCode(null);
 			params.setCustomerStatus(null);
+			params.setSegment(null);
+			params.setStartCompare((byte)0);
+			params.setStartDate(null);
+			params.setEndCompare((byte)0);
+			params.setEndDate(null);
+			
+			params.setProduct(null);
+			params.setProductCategory(null);
+			params.setProductTag(null);
+			params.setQuantity(null);
 			params.setPrice(null);
 			params.setDiscount(null);
 			
-			params.setStartDate(null);
-			params.setEndDate(null);
-			params.setQuantity(null);
-			params.setWorkplace(null);
 			params.setSeller(null);
+			params.setWorkplace(null);
 			params.setInvoicingGroup(null);
 			params.setProject(null);
 		}
 	}
 	
+	// ------- SEARCH ---------
+	
 	private void onSearchFees() {
-		if(checkBillingDate()) return;
 		enableMoreData();
 		offset.setValue(0);
 		searchFees();
@@ -936,7 +1141,7 @@ public class CustomerFee extends MainEntryPoint {
 	}
 
 	private void searchFees() {
-		if (!isMoreData() || checkBillingDate()) return;
+		if (!isMoreData()) return;
 		
 		createParams();
 		
@@ -970,54 +1175,39 @@ public class CustomerFee extends MainEntryPoint {
 			});
 		
 	}
-	
-	private boolean checkBillingDate() {
-		Integer month = AonStringUtils.isBlank(monthListBox.getSelectedValue()) ? null : Integer.parseInt(monthListBox.getSelectedValue());
-		Integer year = AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue());
-
-		return month != null && year == null;
-	}
 
 	private void createParams() {
 		if(null == params) params = new CustomerFeeParams();
 		params.setDomain(options.getDomain());
+		
 		params.setMonth(AonStringUtils.isBlank(monthListBox.getSelectedValue()) ? null : Integer.parseInt(monthListBox.getSelectedValue()));
 		params.setYear(AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue()));
 		params.setPeriodicity(AonStringUtils.isBlank(periocityListBox.getSelectedValue()) ? null : Byte.parseByte(periocityListBox.getSelectedValue()));
 		params.setCustomer(null != customerSuggestions.get(customerSuggestBox.getValue()) ? customerSuggestions.get(customerSuggestBox.getValue()).getName() : null);
 		params.setCustomerStatus(AonStringUtils.isBlank(customerStatusListBox.getSelectedValue()) ? null : Byte.parseByte(customerStatusListBox.getSelectedValue()));
-		params.setProductCode(null != productSuggestions.get(conceptSuggestBox.getValue()) ? productSuggestions.get(conceptSuggestBox.getValue()).getProduct().getCode() : null);
+		params.setSegment(segmentListBox != null && segmentListBox.getSelectedIndex() > 0 ? AonNumberUtils.toInteger( segmentListBox.getSelectedValue()) : null);
+		params.setStartCompare(Byte.parseByte(startCompareLB.getSelectedValue()));
+		params.setStartDate(startDateBox.getValue());
+		params.setEndCompare(Byte.parseByte(endCompareLB.getSelectedValue()));
+		params.setEndDate(endDateBox.getValue());
+		
+		params.setProduct(null != productSuggestions.get(conceptSuggestBox.getValue()) ? productSuggestions.get(conceptSuggestBox.getValue()).getId() : null);
+		params.setProductCategory(null != productCategorySuggestions.get(productCategorySuggestBox.getValue()) ? productCategorySuggestions.get(productCategorySuggestBox.getValue()) : null);
+		params.setProductTag(null != productTagSuggestions.get(productTagSuggestBox.getValue()) ? productTagSuggestions.get(productTagSuggestBox.getValue()) : null);
+		params.setQuantity(quantityTextBox.getValue());
 		params.setPrice(priceTextBox.getValue());
 		params.setDiscount(discountTextBox.getValue());
 		
-		params.setStartDate(startDateBox.getValue());
-		params.setEndDate(endDateBox.getValue());
-		params.setQuantity(quantityTextBox.getValue());
-		params.setWorkplace(null != workplaceSuggestions.get(workplaceSuggestBox.getValue()) ? workplaceSuggestions.get(workplaceSuggestBox.getValue()).getDescription() : null);
 		params.setSeller(null != sellerSuggestions.get(sellerSuggestBox.getValue()) ? sellerSuggestions.get(sellerSuggestBox.getValue()).getName() : null);
+		params.setWorkplace(null != workplaceSuggestions.get(workplaceSuggestBox.getValue()) ? workplaceSuggestions.get(workplaceSuggestBox.getValue()).getDescription() : null);
 		params.setInvoicingGroup(null != invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue()) ? invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue()).getDescription() : null);
 		params.setProject(null != projectSuggestions.get(projectSuggestBox.getValue()) ? projectSuggestions.get(projectSuggestBox.getValue()).getId() : null);
-		
-		if (segmentListBox != null && segmentListBox.getSelectedIndex() > 0) {
-			params.setSegment( AonNumberUtils.toInteger( segmentListBox.getSelectedValue()));
-		} else {
-			params.setSegment( null );
-		}
-
 		
 		params.setLimit(limit);
 		params.setOffset(offset.getValue());
 	}
-
-	private Date createBillingDate() {
-		String monthStr = monthListBox.getSelectedValue();
-		String yearStr = null == yearListBox ? "" : yearListBox.getSelectedValue();
-		
-		if(AonStringUtils.isBlank(yearStr)) return null;
-		
-		if(AonStringUtils.isBlank(monthStr)) return new Date(Integer.parseInt(yearStr), 0, 1);
-		else return new Date(Integer.parseInt(yearStr), Integer.parseInt(monthStr), 1);
-	}
+	
+	// ------- MAIN PAGE ---------
 
 	private void initializeDeckPanel() {
 		deckPanel.clear();
@@ -1064,7 +1254,7 @@ public class CustomerFee extends MainEntryPoint {
 		deckPanel.add(scrollPanel);
 	}
 	
-	private void resetFeeTable () {
+	private void resetFeeTable() {
 		scrollPanel.clear();
 		createFeeHeader();
 		setColumnWidth();
@@ -1193,6 +1383,7 @@ public class CustomerFee extends MainEntryPoint {
 		});
 		
 		Label customerLabel = new Label(fee.getCustomer().getName());
+		checkFeeStatus(customerLabel, fee);
 
 		ListBox statusListBox = createStatusListBox(fee, row);
 		statusListBox.setWidth("85px");
@@ -1251,17 +1442,27 @@ public class CustomerFee extends MainEntryPoint {
 			
 		});
 		
-		AonDateBox billingDateBox = new AonDateBox();
-		billingDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
-		billingDateBox.addStyleName("gwt-TextBox");
-		setInputStyle(billingDateBox);
-		billingDateBox.setValue(fee.getBillingDate());
-		billingDateBox.addValueChangeHandler(e -> {
-			Date date = e.getValue() == null ? null : DateUtils.getFirstDayOfMonth(e.getValue());
-			billingDateBox.setValue(date);
-			fee.setBillingDate(date);
+		HTMLPanel billingDatePanel = new HTMLPanel("");
+		billingDatePanel.addStyleName(AON.CSS.aonItemFlex());
+		
+		ListBox monthLB = createMonthListBox();
+		ListBox yearLB = createYearListBox();
+		
+		monthLB.addChangeHandler(e -> {
+			fee.setBillingDate(createBillingDate(monthLB.getSelectedValue(), yearLB.getSelectedValue()));
 			setFeeModify(fee, row);
 		});
+		
+		yearLB.addChangeHandler(e -> {
+			fee.setBillingDate(createBillingDate(monthLB.getSelectedValue(), yearLB.getSelectedValue()));
+			setFeeModify(fee, row);
+		});
+		
+		setSelectedValueLB(monthLB, fee.getBillingDate().getMonth() + "");
+		setSelectedValueLB(yearLB, fee.getBillingDate().getYear() + "");
+		
+		billingDatePanel.add(monthLB);
+		billingDatePanel.add(yearLB);
 
 		AonDateBox startDateBox = new AonDateBox();
 		startDateBox.getElement().getStyle().setTextAlign(TextAlign.CENTER);
@@ -1294,7 +1495,7 @@ public class CustomerFee extends MainEntryPoint {
 		checkRowAndModify(feeTable, row, fee, quantityTextBox);
 		checkRowAndModify(feeTable, row, fee, priceTextBox);
 		checkRowAndModify(feeTable, row, fee, discountTextBox);
-		checkRowAndModify(feeTable, row, fee, billingDateBox);
+		checkRowAndModify(feeTable, row, fee, billingDatePanel);
 		checkRowAndModify(feeTable, row, fee, startDateBox);
 		checkRowAndModify(feeTable, row, fee, endDateBox);
 		checkRowAndModify(feeTable, row, fee, infoBtn);
@@ -1307,7 +1508,7 @@ public class CustomerFee extends MainEntryPoint {
 		feeTable.setWidget(row, 5, quantityTextBox);
 		feeTable.setWidget(row, 6, priceTextBox);
 		feeTable.setWidget(row, 7, discountTextBox);
-		feeTable.setWidget(row, 8, billingDateBox);
+		feeTable.setWidget(row, 8, billingDatePanel);
 		feeTable.setWidget(row, 9, startDateBox);
 		feeTable.setWidget(row, 10, endDateBox);
 		feeTable.setWidget(row, 11, infoBtn);
@@ -1342,6 +1543,37 @@ public class CustomerFee extends MainEntryPoint {
 		selectionModel.put(select, fee);
 	}
 
+	private ListBox createYearListBox() {
+		ListBox lb = new ListBox();
+		lb.setHeight("2em");
+		lb.getElement().getStyle().setProperty("padding", "0 5px");
+		lb.addItem("-", "");
+		
+		Integer itYear = maxYear;
+		
+		while(itYear >= minYear) {
+			lb.addItem(itYear.toString(), (itYear - 1900) + "");
+			itYear--;
+		}
+		
+		return lb;
+	}
+
+	private Date createBillingDate(String monthStr, String yearStr) {
+		if(AonStringUtils.isBlank(monthStr) || AonStringUtils.isBlank(yearStr))
+			return null;
+		
+		return new Date(Integer.parseInt(yearStr), Integer.parseInt(monthStr), 1);
+	}
+
+	private void checkFeeStatus(Label label, Fee fee) {
+		if(null != fee.getEndDate() && fee.getEndDate().before(fee.getBillingDate())) {
+			label.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			label.getElement().getStyle().setColor("red");
+			label.setTitle("La fecha fin es anterior a la fecha de facturaci\u00f3n");
+		}
+	}
+
 	private ListBox createStatusListBox(Fee fee, int row) {
 		ListBox lb = new ListBox();
 		lb.addItem("Activo", "Activo");
@@ -1361,9 +1593,9 @@ public class CustomerFee extends MainEntryPoint {
 		lb.addItem("Mensual", "1");
 		lb.addItem("Bimensual", "2");
 		lb.addItem("Trimestral", "3");
-		lb.addItem("Cuatrimestral", "3");
-		lb.addItem("Semestral", "6");
-		lb.addItem("Anual", "12");
+		lb.addItem("Cuatrimestral", "4");
+		lb.addItem("Semestral", "5");
+		lb.addItem("Anual", "6");
 		lb.addChangeHandler(e -> {
 			fee.setPeriod(BillingPeriod.safeValueOf(lb.getSelectedValue()));
 			setFeeModify(fee, row);
@@ -1953,22 +2185,30 @@ public class CustomerFee extends MainEntryPoint {
 		JSONObject json = new JSONObject();
 		
 		if(null == feeIds) {
-			if(!checkBillingDate() && null != createBillingDate()) json.put("from", new JSONNumber(createBillingDate().getTime()));
+			
+			if(AonStringUtils.isNotBlank(monthListBox.getSelectedValue())) json.put("month", new JSONNumber(Integer.parseInt(monthListBox.getSelectedValue())));
+			if(AonStringUtils.isNotBlank(yearListBox.getSelectedValue())) json.put("year", new JSONNumber(Integer.parseInt(yearListBox.getSelectedValue())));
+			if(AonStringUtils.isNotBlank(periocityListBox.getSelectedValue())) json.put("periodicity", new JSONNumber(Integer.parseInt(periocityListBox.getSelectedValue())));
 			if(null != customerSuggestions.get(customerSuggestBox.getValue())) json.put("customer", new JSONNumber(customerSuggestions.get(customerSuggestBox.getValue()).getId()));
 			if(AonStringUtils.isNotBlank(customerStatusListBox.getSelectedValue())) json.put("status", new JSONNumber(Integer.parseInt(customerStatusListBox.getSelectedValue())));
-			if(null != productSuggestions.get(conceptSuggestBox.getValue())) json.put("item", new JSONNumber(productSuggestions.get(conceptSuggestBox.getValue()).getId()));
-			if(AonStringUtils.isNotBlank(periocityListBox.getSelectedValue()))  json.put("period", new JSONNumber(Integer.parseInt(periocityListBox.getSelectedValue())));
+			if(null != segmentListBox && AonStringUtils.isNotBlank(segmentListBox.getSelectedValue())) json.put("segment", new JSONNumber(Integer.parseInt(segmentListBox.getSelectedValue())));
+			if(AonStringUtils.isNotBlank(startCompareLB.getSelectedValue())) json.put("startDateCompare", new JSONNumber(Integer.parseInt(startCompareLB.getSelectedValue())));
+			if(null != startDateBox.getValue()) json.put("startDate", new JSONNumber(startDateBox.getValue().getTime()));
+			if(AonStringUtils.isNotBlank(endCompareLB.getSelectedValue())) json.put("endDateCompare", new JSONNumber(Integer.parseInt(endCompareLB.getSelectedValue())));
+			if(null != endDateBox.getValue()) json.put("endDate", new JSONNumber(endDateBox.getValue().getTime()));
+			
+			if(null != productSuggestions.get(conceptSuggestBox.getValue())) json.put("product", new JSONNumber(productSuggestions.get(conceptSuggestBox.getValue()).getId()));
+			if(null != productCategorySuggestions.get(productCategorySuggestBox.getValue())) json.put("productCategory", new JSONNumber(productCategorySuggestions.get(productCategorySuggestBox.getValue())));
+			if(null != productTagSuggestions.get(productTagSuggestBox.getValue())) json.put("productTag", new JSONNumber(productTagSuggestions.get(productTagSuggestBox.getValue())));
+			if(AonStringUtils.isNotBlank(quantityTextBox.getValue()))  json.put("quantity", new JSONNumber(Double.parseDouble(quantityTextBox.getValue())));
 			if(AonStringUtils.isNotBlank(priceTextBox.getValue()))  json.put("price", new JSONNumber(Double.parseDouble(priceTextBox.getValue())));
 			if(AonStringUtils.isNotBlank(discountTextBox.getValue()))  json.put("discount", new JSONString(discountTextBox.getValue()));
 			
-			if(null != startDateBox.getValue()) json.put("startDate", new JSONNumber(startDateBox.getValue().getTime()));
-			if(null != endDateBox.getValue()) json.put("endDate", new JSONNumber(endDateBox.getValue().getTime()));
-			if(AonStringUtils.isNotBlank(quantityTextBox.getValue()))  json.put("quantity", new JSONNumber(Double.parseDouble(quantityTextBox.getValue())));
-			
-			if(null != workplaceSuggestions.get(workplaceSuggestBox.getValue())) json.put("workplace", new JSONNumber(workplaceSuggestions.get(workplaceSuggestBox.getValue()).getId()));
 			if(null != sellerSuggestions.get(sellerSuggestBox.getValue())) json.put("seller", new JSONNumber(sellerSuggestions.get(sellerSuggestBox.getValue()).getId()));
+			if(null != workplaceSuggestions.get(workplaceSuggestBox.getValue())) json.put("workplace", new JSONNumber(workplaceSuggestions.get(workplaceSuggestBox.getValue()).getId()));
 			if(null != invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue())) json.put("invoicingGroup", new JSONNumber(invoicingGroupSuggestions.get(invoicingGroupSuggestBox.getValue()).getId()));
 			if(null != projectSuggestions.get(projectSuggestBox.getValue())) json.put("project", new JSONNumber(projectSuggestions.get(projectSuggestBox.getValue()).getId()));
+			
 		} else {
 			JSONObject feeJson = new JSONObject();
 			for(int i=0; i<feeIds.size(); i++) 
@@ -1984,6 +2224,23 @@ public class CustomerFee extends MainEntryPoint {
 				+ "&username="+ options.getUser();
 		
 		Window.open( fileDownloadURL, "_blank",null);
+	}
+
+	private Date createBillingDate() {
+		String monthStr = monthListBox.getSelectedValue();
+		String yearStr = null == yearListBox ? "" : yearListBox.getSelectedValue();
+		
+		if(AonStringUtils.isBlank(yearStr)) return null;
+		
+		if(AonStringUtils.isBlank(monthStr)) return new Date(Integer.parseInt(yearStr), 0, 1);
+		else return new Date(Integer.parseInt(yearStr), Integer.parseInt(monthStr), 1);
+	}
+	
+	private boolean checkBillingDate() {
+		Integer month = AonStringUtils.isBlank(monthListBox.getSelectedValue()) ? null : Integer.parseInt(monthListBox.getSelectedValue());
+		Integer year = AonStringUtils.isBlank(yearListBox.getSelectedValue()) ? null : Integer.parseInt(yearListBox.getSelectedValue());
+
+		return month != null && year == null;
 	}
 	
 	private native String btoa(String str) /*-{

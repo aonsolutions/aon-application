@@ -97,6 +97,20 @@ public class AccountingUtilitiesServiceAsyncDecorator implements AccountingUtili
 	}
 	
 	@Override
+	public void outOfDateEntries(String domainName, String user, Domain domain,
+			AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
+		AON.start();
+		fsa.outOfDateEntries(domainName, user, domain, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
+	}
+	
+	@Override
+	public void moveOutOfDateEntries(String domainName, String user, Domain domain, AccUtilitiesResult findResult,
+			AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
+		AON.start();
+		fsa.moveOutOfDateEntries(domainName, user, domain, findResult, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));		
+	}
+	
+	@Override
 	public void wrongRecordedInvoices(String domainName, String user, Domain domain,
 			AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException {
 		AON.start();
@@ -193,4 +207,5 @@ public class AccountingUtilitiesServiceAsyncDecorator implements AccountingUtili
 		AON.start();
 		fsa.fixAccountChange(domainName, user, domain, params, accountChange, new AsyncCallbackWrapper<AccUtilitiesResult>(callback));
 	}
+
 }

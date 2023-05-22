@@ -349,6 +349,35 @@ public abstract class BaseIntegralTestCase {
 		
 	}
 
+	protected static void scroll2ListBox(Date date, String dateListBox) throws ParseException {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("d 'de' MMMMM 'de' yyyy", new Locale("es","ES"));
+
+		HtmlSpan firstSpan = (HtmlSpan)((HtmlDivision)getElementById(dateListBox+"-celllist")).getFirstByXPath("div/div/span");
+		Date firstDate = dateFormat.parse(firstSpan.getTextContent());
+		LOGGER.warning("First visible date is : " + dateFormat.format(firstDate) );
+		while ( firstDate.after(date) )  {
+			LOGGER.warning("Opps we need to scroll up to : " + dateFormat.format(date) );
+			htmlPage.setFocusedElement(firstSpan);
+			firstSpan.type(KeyboardEvent.DOM_VK_PAGE_UP);
+			firstSpan = (HtmlSpan)((HtmlDivision)getElementById(dateListBox+"-celllist")).getFirstByXPath("div/div/span");
+			firstDate = dateFormat.parse(firstSpan.getTextContent());
+			LOGGER.warning("First visible date is : " + dateFormat.format(firstDate) );
+		}
+
+		HtmlSpan lastSpan = (HtmlSpan)((HtmlDivision)getElementById(dateListBox+"-celllist")).getFirstByXPath("div/div[last()]/span");
+		Date lastDate = dateFormat.parse(lastSpan.getTextContent());
+		LOGGER.warning("Last visible date is : " + dateFormat.format(lastDate) );
+		while ( lastDate.before(date) )  {
+			LOGGER.warning("Opps we need to scroll down to : " + dateFormat.format(date) );
+			htmlPage.setFocusedElement(firstSpan);
+			lastSpan.type(KeyboardEvent.DOM_VK_PAGE_DOWN);
+			lastSpan = (HtmlSpan)((HtmlDivision)getElementById(dateListBox+"-celllist")).getFirstByXPath("div/div[last()]/span");
+			lastDate = dateFormat.parse(firstSpan.getTextContent());
+			LOGGER.warning("Last visible date is : " + dateFormat.format(lastDate) );
+		}
+		
+	}
+
 	protected static void scroll2MonthListBox(Date date) throws ParseException {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MMMMM 'de' yyyy", new Locale("es","ES"));
 		
