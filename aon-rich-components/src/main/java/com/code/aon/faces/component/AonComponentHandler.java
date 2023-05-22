@@ -5,7 +5,7 @@ import static com.code.aon.faces.controller.IRichConstants.LABELS_MAP;
 import java.net.URL;
 import java.util.Map;
 
-import javax.el.VariableMapper;
+import jakarta.el.VariableMapper;
 import javax.faces.component.EditableValueHolder;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;

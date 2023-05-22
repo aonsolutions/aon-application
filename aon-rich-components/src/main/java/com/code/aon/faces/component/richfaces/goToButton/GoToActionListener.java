@@ -1,7 +1,7 @@
 package com.code.aon.faces.component.richfaces.goToButton;
 
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
+import jakarta.el.MethodExpression;
+import jakarta.el.ValueExpression;
 import javax.faces.component.StateHolder;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;

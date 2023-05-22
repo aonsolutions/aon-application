@@ -4,8 +4,8 @@ import static com.code.aon.faces.component.richfaces.IRichFacesTags.HIDE_PAGE_SI
 import static com.code.aon.faces.component.richfaces.IRichFacesTags.ON_COMPLETE;
 import static com.code.aon.faces.component.richfaces.IRichFacesTags.PAGE;
 
-import javax.el.ValueExpression;
-import javax.el.VariableMapper;
+import jakarta.el.ValueExpression;
+import jakarta.el.VariableMapper;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIData;
 import javax.faces.component.UIViewRoot;

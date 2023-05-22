@@ -5,9 +5,9 @@ import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
@@ -132,7 +132,7 @@ public class CustomerServlet extends AonApiHttpServlet {
 			}
 		}
 		if (api.getData().opt(IJsonNames.BILLABLE) != null) {
-			Integer[] linkedCustomerRegistries = AON.getRegistryAddInfoStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
+			Integer[] notBillables = AON.getRegistryAddInfoStream(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(),
 					p -> p.getAttributeProperty().eq("AON_BILLABLE").and(p.getRegistryProperty().isNotNull()))
 					.filter(Objects::nonNull)
 					.map(RegistryAddInfo::getRegistry)
@@ -140,9 +140,9 @@ public class CustomerServlet extends AonApiHttpServlet {
 					.toArray(Integer[]::new);
 			
 			if (api.getData().optBoolean(IJsonNames.BILLABLE)) {
-				filter = filter.and(f.getRegistryProperty().in(linkedCustomerRegistries));
+				filter = filter.and(f.getRegistryProperty().notIn(notBillables));
 			} else {				
-				filter = filter.and(f.getRegistryProperty().notIn(linkedCustomerRegistries));
+				filter = filter.and(f.getRegistryProperty().in(notBillables));
 			}
 		}
 		
@@ -193,12 +193,12 @@ public class CustomerServlet extends AonApiHttpServlet {
 					}
 				});
 				
-				if (data.optBoolean(IJsonNames.BILLABLE)) {
+				if (!data.optBoolean(IJsonNames.BILLABLE)) {
 					RegistryAddInfo addInfo = new RegistryAddInfo()
 							.setRegistry(customerId)
 							.setDomain(customer.getDomain().getId())
 							.setAttribute("AON_BILLABLE")
-							.setValue("BILLABLE")
+							.setValue("NOT_BILLABLE")
 							.setDate(new Date());
 					AON.insertRegistryAddInfo(api.getDomain().getName(), api.getDomain().getId(), api.getUser().getLogin(), addInfo);
 				}

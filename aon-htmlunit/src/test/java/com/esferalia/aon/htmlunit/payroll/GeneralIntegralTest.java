@@ -9,24 +9,24 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import com.esferalia.aon.htmlunit.HtmlUnitIT;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlCheckBoxInput;
 import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlSpan;
 import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableDataCell;
 import org.htmlunit.html.HtmlTableRow;
 import org.htmlunit.html.HtmlTextArea;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 
 public class GeneralIntegralTest extends BaseIntegralTestCase {
@@ -2378,9 +2378,17 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calendar.set(Calendar.MONTH,Calendar.FEBRUARY);
 		Date endDate = calendar.getTime();
 				
+		
 		delay(startDate, endDate);
 		assertValue("totalPaymentLabel", 0.00, 0.00);
 		assertValue("totalLiquidLabel", 00.00, 0.00);
+		
+		// set pay date
+		getElementById("payDateListBox").click();
+		scroll2ListBox(endDate, "payDateListBox");
+		((HtmlSpan)((HtmlDivision)getElementById("payDateListBox-celllist"))
+		.getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", endDate)+"']")).click();
+		
 		
 		setValue("db-amount-label-5", "11.11");
 		wait4Value("totalPaymentLabel", 11.11);

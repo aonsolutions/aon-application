@@ -11,8 +11,8 @@ import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 
 import javax.faces.event.AbortProcessingException;
-import javax.mail.Address;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.Address;
+import jakarta.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;

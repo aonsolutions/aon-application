@@ -1,9 +1,9 @@
 package com.code.aon.tas;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
 
 import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.TasItemDB;

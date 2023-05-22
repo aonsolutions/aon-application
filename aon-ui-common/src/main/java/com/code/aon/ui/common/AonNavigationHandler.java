@@ -2,7 +2,7 @@ package com.code.aon.ui.common;
 
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 

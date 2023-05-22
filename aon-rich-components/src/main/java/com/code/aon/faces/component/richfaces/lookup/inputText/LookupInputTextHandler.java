@@ -3,7 +3,7 @@ package com.code.aon.faces.component.richfaces.lookup.inputText;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.el.ExpressionFactory;
+import jakarta.el.ExpressionFactory;
 import javax.faces.component.UIComponent;
 
 import org.apache.commons.lang.StringUtils;

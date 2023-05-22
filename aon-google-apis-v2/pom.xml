@@ -32,7 +32,7 @@
 		
 	    <dependency>
 	      <groupId>com.google.api-client</groupId>
-	      <artifactId>google-api-client-servlet</artifactId>
+	      <artifactId>google-api-client-servlet-jakarta</artifactId>
 	      <version>1.27.0</version>
 	    </dependency>
 
@@ -52,7 +52,7 @@
 		<!-- Google Oauth2 API -->
 		<dependency>
    			<groupId>com.google.apis</groupId>
-    		<artifactId>google-api-services-oauth2</artifactId>
+    		<artifactId>google-api-services-oauth2-jakarta</artifactId>
     		<version>v2-rev141-1.25.0</version>
 		</dependency>
 		

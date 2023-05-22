@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.fiscal.server.fiscal.mod390;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
 import com.esferalia.aon.gwt.fiscal.client.mod390.e2022.Mod3902022Service;

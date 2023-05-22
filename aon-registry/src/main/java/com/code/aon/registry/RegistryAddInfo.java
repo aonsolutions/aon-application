@@ -2,8 +2,8 @@ package com.code.aon.registry;
 
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 import com.code.aon.AonVersion;
 import com.esferalia.aon.entity.master.RegistryAddInfoDB;

@@ -563,6 +563,18 @@ public class ACCOUNTING {
 			return getAccounting().unbalancedEntries(ctx);
 		}
 	}
+	
+	public static AccUtilitiesResult outOfDateEntries(String domainName, String user, Domain domain) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+			return getAccounting().outOfDateEntries(ctx);
+		}
+	}
+	
+	public static AccUtilitiesResult moveOutOfDateEntries(String domainName, String user, Domain domain, AccUtilitiesResult findResult) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
+			return getAccounting().moveOutOfDateEntries(ctx, findResult);
+		}
+	}
 
 	public static AccUtilitiesResult wrongRecordedInvoices(String domainName, String user, Domain domain) {
 		try (CloseableAONContext ctx = AONContext.getAONContext(domainName, domain.getId(), user)) {
@@ -697,4 +709,6 @@ public class ACCOUNTING {
 			return getAccounting().generateLowerLevels(ctx, account, minLevel);
 		}
 	}
+
+
 }

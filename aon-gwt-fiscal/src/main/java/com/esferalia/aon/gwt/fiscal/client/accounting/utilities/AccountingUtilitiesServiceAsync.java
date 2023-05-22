@@ -39,6 +39,10 @@ public interface AccountingUtilitiesServiceAsync {
 	// Apuntes descuadrados
 	void unbalancedEntries(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
 	
+	// Apuntes fuera de fecha
+	void outOfDateEntries(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
+	void moveOutOfDateEntries(String domainName, String user, Domain domain, AccUtilitiesResult findResult,	AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
+	
 	// Facturas contabilizadas sin apuntes
 	void wrongRecordedInvoices(String domainName, String user, Domain domain, AsyncCallback<AccUtilitiesResult> asyncCallback) throws AonCoreException;
 	void removeWrongRecordedInvoice(String domainName,int domain, String user, Integer accountEntryId,AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
@@ -67,4 +71,5 @@ public interface AccountingUtilitiesServiceAsync {
 	// Cambio de cuentas 
 	void searchAccountChange(String domainName, String user, Integer domain, AccUtilitiesAccountChangeParams params, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
 	void fixAccountChange(String domainName, String user, Integer domain, AccUtilitiesAccountChangeParams params, AccUtilitiesAccountChangeItem accountChange, AsyncCallback<AccUtilitiesResult> callback) throws AonCoreException;
+	
 }

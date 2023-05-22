@@ -60,7 +60,7 @@ RUN set -x \
 #    done
 
 
-COPY tomcat:9-jdk17.tar /root
+COPY tomcat:10-jdk17.tar /root
 COPY openjdk:17-slim.tar /root
 
 ENV AON_CONF=/etc/aon-aio
