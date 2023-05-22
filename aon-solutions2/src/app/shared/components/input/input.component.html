@@ -1,1 +1,49 @@
-<p>input works!</p>
+<mat-form-field
+    [appearance]="appearance"
+    [ngStyle]="{
+        'width': width
+    }"
+>
+    <mat-label *ngIf="label != ''">{{label}}</mat-label>
+    <span matPrefix><ng-content select="[prefix]"></ng-content></span>
+
+    <!-- INPUTS TIPO TEXT,PASSWORD,DATETIME -->
+    <input 
+        *ngIf="type != 'select' && type != 'textarea'" 
+        matInput 
+        [(ngModel)]="value" 
+        [ngClass]="['ng-pending']" 
+        [disabled]="disabled"
+        [type]="type" 
+        [placeholder]="placeholder" 
+        (ngModelChange)="returnValue($event)"
+    />
+    
+    <!-- INPUTS TIPO SELECT -->
+    <mat-select
+        *ngIf="type=='select'"
+        [(ngModel)]="value"
+        [placeholder]="placeholder"
+        [value]="options[0].text"
+        [disabled]="disabled"
+        (ngModelChange)="returnValue($event)"
+    >
+        <mat-option *ngFor="let option of options" [value]="option.value">{{option.text}}</mat-option>
+    </mat-select>
+
+    <!-- INPUT TIPO TEXTAREA -->
+    <textarea
+        *ngIf="type=='textarea'"
+        matInput
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="3"
+        [cdkAutosizeMaxRows]="maxRow"
+        [placeholder]="placeholder"
+        [(ngModel)]="value"
+        (ngModelChange)="returnValue($event)"
+    >
+    </textarea>
+    
+    <span matSuffix *ngIf="value!=''" [ngClass]="classSuffix" (click)="this.selectFunction()"><ng-content select="[suffix]"></ng-content></span>
+    <mat-hint *ngIf="hint != ''">{{hint}}</mat-hint>
+</mat-form-field>
