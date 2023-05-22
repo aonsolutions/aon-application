@@ -23,20 +23,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.jooq.DSLContext;
-import org.jooq.DataType;
-import org.jooq.Field;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.Result;
 import org.jooq.Table;
-import org.jooq.TableField;
 import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
 
-import com.esferalia.aon.jooq.tables.SalaryData;
 import com.esferalia.aon.jooq.tables.records.SalaryBonusRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryCostRecord;
 import com.esferalia.aon.jooq.tables.records.SalaryDataRecord;
@@ -600,7 +596,7 @@ public class DSLSalaryBuilder<T extends ISalary> implements ISalaryBuilder<T> {
 	}
 
 	private <R extends Record> List<R> filter(List<R> records, Predicate<R> predicate) {
-		return records.stream().filter(predicate).toList();
+		return records.stream().filter(predicate).collect(Collectors.toList());
 	}
 
 	private void putContext(Map<String, ITimedVariable<?>> ctx) {

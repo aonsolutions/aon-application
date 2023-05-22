@@ -357,11 +357,11 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 
 		@Override
 		public void onDitContingency(Integer contingency) {
-			// 1=Enfermedad común;
+			// 1=Enfermedad com?;
 			// 2=Accidente nolaboral;
 			// 3=Accidente de Trabajo; 
 			// 4=Enfermedad Profesional; 
-			// 5=Periodo de observación.
+			// 5=Periodo de observaci?.
 			it.setContingency(ContractLeaveType.valueOfTGSS(contingency));
 		}
 
@@ -369,7 +369,7 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 		public void onDitDeficiencyIndicator(String deficiencyIndicator) {
 			// S=se acredita carencia; 
 			// N=no se acredita carencia;
-			// P=consulta la Dirección Provincial del INSS
+			// P=consulta la Direcci? Provincial del INSS
 			switch (deficiencyIndicator) {
 			case "N":
 				it.setContingency(ContractLeaveType.ENFERMEDAD_COMUN_CARENCIA);
@@ -617,13 +617,6 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			throw new TooManyEmployeesException(e);
 		}
 	}
-
-	private static java.sql.Date normalizeStartDateToSave(ContractLeaveType contingency, Date date) {
-		if(contingency!=null && contingency.equals(ContractLeaveType.ACCIDENTE_LABORAL)) 
-			date = DateUtils.addDays2Date(date, 1);
-		
-		return new java.sql.Date(date.getTime());
-	}
 	
 	public static ContractRecord getContract(DSLContext ctx, IT it) {
 		java.sql.Date itStartDate = normalizeStartDateToSave(it.getContingency(), it.getStartDate());
@@ -645,4 +638,12 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 				.fetchOptionalInto(CONTRACT)
 				.orElseThrow(() -> new EmployeeNotFoundexception() );
 	}
+
+	private static java.sql.Date normalizeStartDateToSave(ContractLeaveType contingency, Date date) {
+		if(contingency!=null && contingency.equals(ContractLeaveType.ACCIDENTE_LABORAL)) 
+			date = DateUtils.addDays2Date(date, 1);
+		
+		return new java.sql.Date(date.getTime());
+	}
+	
 }

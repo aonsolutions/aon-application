@@ -53,7 +53,7 @@ public class CustomerFeeParams implements Serializable {
 		return this;
 	}
 	public Integer getMonth() {
-		return null == month ? null : month + 1;
+		return month;
 	}
 	public CustomerFeeParams setMonth(Integer month) {
 		this.month = month;
