@@ -75,7 +75,7 @@ export class AonHeader extends AonElement {
 	build() {
 		let div = this.createElement(TAG.DIV);
 		div.id = 'aonHeaderWeb';
-		div.className = this.isBeta() ? CSS.AON_HEADER_BETA : CSS.AON_HEADER;
+		div.className = CSS.AON_HEADER_BETA;
 		this.appendChild(div);
 
 		let helpOption = new AonDialogMenu();

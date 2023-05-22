@@ -286,7 +286,11 @@ public class IngenetSalesServlet extends AbstractIngenetServlet {
 			AONContext ctx, List<Sales> pendingList) throws IOException {
 		RESPUESTAPEDIDOS pedidos = fillPedidosData(ctx, pendingList);
 		String xml = IngenetXmlValidator.convertToXml(pedidos, RESPUESTAPEDIDOS.class);
-		
+
+		Integer indez = xml.indexOf("</RESPUESTA_PEDIDOS");
+		if(!xml.substring(indez).contains(">"))
+			xml = xml.substring(0, indez+19) + ">";
+
 		httpResponse.setContentType("application/xml");
 		httpResponse.setContentLength(xml.length());
 		PrintWriter out = httpResponse.getWriter();
