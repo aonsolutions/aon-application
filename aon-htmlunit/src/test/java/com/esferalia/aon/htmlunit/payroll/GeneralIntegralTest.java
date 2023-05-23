@@ -357,9 +357,17 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 
 		wait4Id("cotizacion,_cero");
 
+		Calendar calendar = Calendar.getInstance();
+
+		draft("FIN, CONTRATO TEMPORAL");
+
+		calendar.set(2017, Calendar.FEBRUARY, 23);
+		settle(calendar.getTime());
+		double salarioDia = getValue("editor-salario_dia");
+		assertValue("db-amount-label-2", salarioDia * 12 * 11 / 365.00  , DELTA);
+
 		draft("COTIZACIÓN, CERO");
 
-		Calendar calendar = Calendar.getInstance();
 		calendar.set(2016, Calendar.JUNE, 25);
 		settle(calendar.getTime());
 		
@@ -385,6 +393,7 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("cgpBaseLabel", 200.00);
 		assertValue("totalPaymentLabel", 300.00);
 		assertValue("totalLiquidLabel", 300.00 - (200.00 * (4.70 + 1.55 + 0.10 + 18.49) / 100.00) - ( 100.00 * 18.49 / 100.00 ));
+		
 		
 
 	}
@@ -977,8 +986,16 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.JUNE,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_interrupcion_embarazo_21");
+		assertNotElement("editor-dias_interrupcion_embarazo_1_20");
+		double remuneration = getText("remunerationLabel");
+		assertText("irpfBaseLabel", remuneration);
 		calculate(Calendar.JULY,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_menstruacion_21");
+		assertNotElement("editor-dias_menstruacion_1_20");
 		click("costsCheck-input");
 		assertText("totalEnterpriseLabel", cgcBase * 31.90 / 100.00 - ( cgcBase / 30.00 * 7 * 0.75 ) );
 		click("costsCheck-input");
@@ -989,16 +1006,28 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.JUNE,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_menstruacion_21");
+		assertNotElement("editor-dias_menstruacion_1_20");
 		calculate(Calendar.JULY,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_interrupcion_embarazo_21");
+		assertNotElement("editor-dias_interrupcion_embarazo_1_20");
 
 		draft("INTERRUPCIÓN DEL, EMBARAZO");
 		calculate(Calendar.MAY,2023);
 		cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.JUNE,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_interrupcion_embarazo_21");
+		assertNotElement("editor-dias_interrupcion_embarazo_1_20");
 		calculate(Calendar.JULY,2023);
+		assertDisplay("eventsCheck", false);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertNotElement("editor-dias_menstruacion_21");
+		assertNotElement("editor-dias_menstruacion_1_20");
 	}
 
 	@Test

@@ -295,6 +295,9 @@ public class SalaryDraft extends ResizeComposite
 			"BASE_MTNAD",
 			"BASE_MTNAD_BRUTA",
 			
+			"BASE_IRPF_DINERO",
+			"BASE_IRPF_ESPECIE",
+			
 			"BASE_CGC_MAX_MES", "BASE_CGC_MIN_MES", 
 			"BASE_CGP_MAX_MES", "BASE_CGP_MIN_MES",
 			"BASE_CGC_MAX_DIA", "BASE_CGC_MIN_DIA", 
@@ -310,6 +313,12 @@ public class SalaryDraft extends ResizeComposite
 			"DIAS_ENFERMEDAD_COMUN_16_20", // internals
 			"DIAS_ENFERMEDAD_COMUN_21", // internals
 			"DIAS_ENFERMEDAD_COMUN_366", // internals
+			"DIAS_MENSTRUACION_1_20", // internals
+			"DIAS_MENSTRUACION_21", // internals
+			"DIAS_INTERRUPCION_EMBARAZO_1_20", // internals
+			"DIAS_INTERRUPCION_EMBARAZO_21", // internals
+			"DIAS_SEMANA_39_EMBARAZO_1_20", // internals
+			"DIAS_SEMANA_39_EMBARAZO_21", // internals
 			"DIAS_ENFERMEDAD_PROFESIONAL_366", // internals
 			"DIAS_ENFERMEDAD_COMUN_CARENCIA", // internals
 			"DIAS_ERE","DIAS_ERE_FZA", "DIAS_ERE_FZA_EXONERADO",
