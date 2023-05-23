@@ -28,6 +28,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
+import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
 
 
 @NgModule({
@@ -46,7 +47,8 @@ import { MatSelectModule } from '@angular/material/select';
     InputComponent,
     ButtonComponent,
     IconComponent,
-    GlobalHoverDirective
+    GlobalHoverDirective,
+    DropdownMenuComponent
   ],
   imports: [
     CommonModule,
@@ -63,7 +65,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatIconModule,
     ReactiveFormsModule,
     MatDatepickerModule,
-    MatSelectModule
+    MatSelectModule,
+    MatMenuModule
   ],
   exports:[
     SidenavHoverDirective,
@@ -79,7 +82,8 @@ import { MatSelectModule } from '@angular/material/select';
     ListElementComponent,
     IconComponent,
     ButtonComponent,
-    InputComponent
+    InputComponent,
+    DropdownMenuComponent
   ]
 })
 export class SharedModule { }
