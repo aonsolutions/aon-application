@@ -4325,7 +4325,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 
 			@Override
 			public Period getPeriod() {
-				return new Period(startDate, getIrpfDate().after(getEnd()) ? getIrpfDate() : getEnd());
+				return new Period(startDate, getEnd());
 			}
 
 			@Override
