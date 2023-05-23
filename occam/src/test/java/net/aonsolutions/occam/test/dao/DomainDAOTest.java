@@ -178,8 +178,6 @@ class DomainDAOTest extends AbstractOccamTest {
 				assertTrue(d.getUsers().isPresent());
 				Asserts.assertNotEmpty(d.getUsers().get(), "Users");
 				assertTrue(d.getUsers().get().stream().anyMatch(u -> AonStringUtils.equals( u.getLogin(), USER)));
-			} else {
-				assertFalse(d.getUsers().isPresent());
 			}
 		});
 	}

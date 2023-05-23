@@ -1,5 +1,7 @@
 package net.aonsolutions.occam.api;
 
+import java.util.Optional;
+
 public interface HasDirtyFlag<T> {
 
 	public boolean isDirty();
@@ -19,6 +21,12 @@ public interface HasDirtyFlag<T> {
 		}
 	}
 	
-
+	public default Optional<T> emptyIfNotDirty() {
+		return isDirty()
+			?Optional.of(setDirty(false))
+			:Optional.empty(); 
+	}
+	
+	
 	
 }

@@ -6,7 +6,8 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
-	 ScopeTest.class
+	ApplicationParameterTest.class
+	,ScopeTest.class
 	,GeozoneTest.class
 	,BookingTest.class
 	,UserTest.class

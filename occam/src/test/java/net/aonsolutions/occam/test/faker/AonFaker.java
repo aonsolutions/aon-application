@@ -7,6 +7,8 @@ import java.util.Locale;
 import com.github.javafaker.Faker;
 
 import net.aonsolutions.occam.api.accounting.Account;
+import net.aonsolutions.occam.api.config.Activity;
+import net.aonsolutions.occam.api.config.ApplicationParameter;
 import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
@@ -33,6 +35,22 @@ public class AonFaker {
 			.setDescription( faker.animal().name() )
 			.setAlias( faker.animal().name() )
 			.setActive( !AonRandom.gt(3) );
+	}
+
+	public static Activity getActivity( ) {
+		return  new Activity()
+			.setId(AonRandom.integer(50))
+			.setDomain(AonRandom.integer(50))
+			.setDescription( faker.animal().name() )
+			.setEpigraph( faker.animal().name() );
+	}
+
+	public static ApplicationParameter getApplicationParameter( ) {
+		return  new ApplicationParameter()
+			.setId(AonRandom.integer(50))
+			.setDomain(AonRandom.integer(50))
+			.setName( AonRandom.getAppParam(50).orElse(null))
+			.setValue( faker.animal().name());
 	}
 
 	public static Audit getAudit() {

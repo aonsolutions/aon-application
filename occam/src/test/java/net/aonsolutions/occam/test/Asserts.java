@@ -11,6 +11,7 @@ import java.util.Collection;
 
 import net.aonsolutions.occam.api.accounting.Account;
 import net.aonsolutions.occam.api.config.Activity;
+import net.aonsolutions.occam.api.config.ApplicationParameter;
 import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
@@ -83,6 +84,16 @@ public class Asserts {
 			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
 			assertEquals(expected.getDescription(), actual.getDescription(),"Description");
 			assertEquals(expected.getEpigraph(), actual.getEpigraph(),"Epigraph");
+		}
+	}
+
+	public static void assertEqualsApplicationParameter(ApplicationParameter expected, ApplicationParameter actual) {
+		assertEqualsNulls(expected, actual, "ApplicationParameter");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getName(), actual.getName(),"Name");
+			assertEquals(expected.getValue(), actual.getValue(),"Value");
 		}
 	}
 

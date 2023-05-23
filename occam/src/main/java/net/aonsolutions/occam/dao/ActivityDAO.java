@@ -26,7 +26,7 @@ public class ActivityDAO {
 				.setDescription(r.getValue(ENTERPRISE_ACTIVITY.DESCRIPTION))
 				.setEpigraph(r.getValue(IAE.EPIGRAPH))
 			;
-			return act.isDirty()?Optional.of(act.setDirty(false)):Optional.empty();
+			return act.emptyIfNotDirty();
 		}
 
 	}

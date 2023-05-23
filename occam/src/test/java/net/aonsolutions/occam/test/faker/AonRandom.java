@@ -16,6 +16,7 @@ import net.aonsolutions.occam.api.constants.AonApp;
 import net.aonsolutions.occam.api.constants.AonLanguage;
 import net.aonsolutions.occam.api.constants.AonModule;
 import net.aonsolutions.occam.api.constants.AonStatus;
+import net.aonsolutions.occam.api.constants.AppParam;
 import net.aonsolutions.occam.api.constants.Country;
 import net.aonsolutions.occam.api.constants.DocumentType;
 import net.aonsolutions.occam.api.constants.DomainType;
@@ -280,6 +281,15 @@ public class AonRandom {
 	public static Optional<AonLanguage> getAonLanguage(int nullThreshold) {
     	return gt(nullThreshold)
 			?Optional.of(AonLanguage.values()[faker.random().nextInt(AonLanguage.values().length)])
+			:Optional.empty();
+	}
+
+	public static Optional<AppParam> getAppParam() {
+		return getAppParam(REQUIRED);
+	}
+	public static Optional<AppParam> getAppParam(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(AppParam.values()[faker.random().nextInt(AppParam.values().length)])
 			:Optional.empty();
 	}
 }

@@ -63,8 +63,8 @@ public class ConfigurationDAO {
 			.stream()
 			.map( rec -> new ApplicationParameter()
 					.setId(rec.getValue(APP_PARAM.ID))
-					.setDomain(rec.getValue(APP_PARAM.DOMAIN))
-					.setName(rec.getValue(APP_PARAM.NAME))
+					.setDomain(domainId)
+					.setName(param)
 					.setValue(rec.getValue(APP_PARAM.VALUE)) )
 			.findFirst();
 		 

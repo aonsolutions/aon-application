@@ -1,5 +1,10 @@
 package net.aonsolutions.occam.api.constants;
 
+import java.util.Arrays;
+import java.util.Optional;
+
+import net.aonsolutions.watson.client.util.AonStringUtils;
+
 public enum AppParam {
 
 	ACC_DEFAULT_ALLOWANCE_ACC
@@ -263,4 +268,10 @@ public enum AppParam {
 		return toString();
 	}
 	
+	public static Optional<AppParam> safeValueOf( String i ) {
+		if(AonStringUtils.isBlank(i)) return Optional.empty();
+		return Arrays.stream(values())
+			.filter(dt -> i.equalsIgnoreCase(dt.name()))
+			.findFirst();
+	}
 }
