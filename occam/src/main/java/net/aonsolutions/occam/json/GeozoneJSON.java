@@ -12,15 +12,15 @@ import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.config.Geozone;
 import net.aonsolutions.watson.client.util.AonCollectionUtils;
 
-public class GeoZoneJSON {
+public class GeozoneJSON {
 	
-	private GeoZoneJSON() {
+	private GeozoneJSON() {
 	}
 	
 	public static List<Geozone> from(JSONArray array) {
 		if (array == null || array.isEmpty()) return new LinkedList<>();
 		return AonJSONUtils.stream(array)
-			.map(GeoZoneJSON::from)
+			.map(GeozoneJSON::from)
 			.toList();		
 	}
 	
@@ -42,7 +42,7 @@ public class GeoZoneJSON {
 	
 	public static JSONArray to(Stream<Geozone> stream) {
 		return stream
-			.map(GeoZoneJSON::to)
+			.map(GeozoneJSON::to)
 			.collect(Collector.of(JSONArray::new,JSONArray::put,JSONArray::put));
 	}
 	

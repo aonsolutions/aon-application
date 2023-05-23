@@ -7,10 +7,15 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @SelectClasses({
 	DomainTypeTest.class
+	,AonAppTest.class
+	,AonModuleTest.class
 	,AonStatusTest.class
+	,AonLanguageTest.class
+	,AdministrationTest.class
 	,DocumentTypeTest.class	
 	,InvoiceTypeTest.class
 	,SecurityLevelTest.class
+	,StreetTypeTest.class
 })
 public class ConstantsTestSuite {
 

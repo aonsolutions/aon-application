@@ -7,10 +7,11 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @SelectClasses({
 	 ScopeTest.class
-	,GeoZoneTest.class
+	,GeozoneTest.class
 	,BookingTest.class
 	,UserTest.class
 	,RegistryTest.class
+	,RegistryAddressTest.class
 	,DomainTest.class
 })
 public class ConfigTestSuite {

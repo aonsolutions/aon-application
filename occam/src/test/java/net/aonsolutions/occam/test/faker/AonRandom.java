@@ -11,12 +11,17 @@ import java.util.concurrent.TimeUnit;
 
 import com.github.javafaker.Faker;
 
+import net.aonsolutions.occam.api.constants.Administration;
+import net.aonsolutions.occam.api.constants.AonApp;
+import net.aonsolutions.occam.api.constants.AonLanguage;
+import net.aonsolutions.occam.api.constants.AonModule;
 import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.Country;
 import net.aonsolutions.occam.api.constants.DocumentType;
 import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.api.constants.InvoiceType;
 import net.aonsolutions.occam.api.constants.SecurityLevel;
+import net.aonsolutions.occam.api.constants.StreetType;
 import net.aonsolutions.watson.client.util.AonCollectionUtils;
 import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.client.util.AonStringUtils;
@@ -179,6 +184,15 @@ public class AonRandom {
 		return list.get( getInt(0, (list.size() - 1) ) );
 	}
 	
+	public static Optional<Administration> getAdministration() {
+		return getAdministration(REQUIRED);
+	}
+	public static Optional<Administration> getAdministration(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(Administration.values()[faker.random().nextInt(Administration.values().length)])
+			:Optional.empty();
+	}
+
 	public static Optional<DomainType> getDomainType() {
 		return getDomainType(REQUIRED);
 	}
@@ -233,5 +247,40 @@ public class AonRandom {
 			:Optional.empty();
 	}
 	
+	public static Optional<StreetType> getStreetType() {
+		return getStreetType(REQUIRED);
+	}
+	public static Optional<StreetType> getStreetType(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(StreetType.values()[faker.random().nextInt(StreetType.values().length)])
+			:Optional.empty();
+	}
+
+	public static Optional<AonApp> getAonApp() {
+		return getAonApp(REQUIRED);
+	}
+	public static Optional<AonApp> getAonApp(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(AonApp.values()[faker.random().nextInt(AonApp.values().length)])
+			:Optional.empty();
+	}
+
+	public static Optional<AonModule> getAonModule() {
+		return getAonModule(REQUIRED);
+	}
+	public static Optional<AonModule> getAonModule(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(AonModule.values()[faker.random().nextInt(AonModule.values().length)])
+			:Optional.empty();
+	}
+
+	public static Optional<AonLanguage> getAonLanguage() {
+		return getAonLanguage(REQUIRED);
+	}
+	public static Optional<AonLanguage> getAonLanguage(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(AonLanguage.values()[faker.random().nextInt(AonLanguage.values().length)])
+			:Optional.empty();
+	}
 }
 

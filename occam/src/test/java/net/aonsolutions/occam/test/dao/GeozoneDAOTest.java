@@ -17,7 +17,7 @@ import net.aonsolutions.occam.api.AonError;
 import net.aonsolutions.occam.api.AonLogger;
 import net.aonsolutions.occam.api.config.Geozone;
 import net.aonsolutions.occam.dao.DAOUtils;
-import net.aonsolutions.occam.dao.GeoZoneDAO;
+import net.aonsolutions.occam.dao.GeozoneDAO;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;
@@ -26,44 +26,44 @@ import net.aonsolutions.watson.server.AonEnumUtils;
 
 
 @ExtendWith(TimingExtension.class)	
-class GeoZoneDAOTest extends AbstractOccamTest {
+class GeozoneDAOTest extends AbstractOccamTest {
 	
 	private static final String GEOZONE_NAME = "Lugo";
 
 	@Test()
 	void selectOneTest() {
-		Optional<Geozone> geozone = GeoZoneDAO.get(ctx,p -> p.withName().eq( GEOZONE_NAME ), b -> b);
+		Optional<Geozone> geozone = GeozoneDAO.get(ctx,p -> p.withName().eq( GEOZONE_NAME ), b -> b);
 		assertTrue(geozone.isPresent());
 	}
 
 	@Test()
 	void selectNoneTest() {
-		Optional<Geozone> geozone = GeoZoneDAO.get(ctx,p -> p.withId().eq( Integer.MIN_VALUE ), b -> b);
+		Optional<Geozone> geozone = GeozoneDAO.get(ctx,p -> p.withId().eq( Integer.MIN_VALUE ), b -> b);
 		assertFalse(geozone.isPresent());
 	}
 
 	@Test()
 	void selectDirtyTest() {
-		Optional<Geozone> geozone = GeoZoneDAO.get(ctx,p -> p.withName().eq( GEOZONE_NAME ), b -> b);
+		Optional<Geozone> geozone = GeozoneDAO.get(ctx,p -> p.withName().eq( GEOZONE_NAME ), b -> b);
 		assertTrue(geozone.isPresent());
 		assertFalse(geozone.get().isDirty(), "Dirty flag not set" );
 	}
 
 	@Test()
 	void emptyFilterTest() {
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> GeoZoneDAO.get(ctx, null, b -> b));
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> GeozoneDAO.get(ctx, null, b -> b));
 		assertEquals(DAOUtils.NULL_FILTER_MSG, e.getMessage());
 	}
 
 	@Test()
 	void selectNoBuilderNoFacturyStreamTest() {
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> GeoZoneDAO.getStream(ctx,p -> p.withName().eq( GEOZONE_NAME ), null));
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> GeozoneDAO.getStream(ctx,p -> p.withName().eq( GEOZONE_NAME ), null));
 		assertEquals(DAOUtils.NULL_FACTORY_MSG, e.getMessage());
 	}
 
 	@Test()
 	void selectStreamTest() {
-		Stream<Geozone> domain = GeoZoneDAO.getStream(ctx
+		Stream<Geozone> domain = GeozoneDAO.getStream(ctx
 			,p -> p.withName().eq( GEOZONE_NAME )
 			,b -> b
 		);
@@ -72,11 +72,11 @@ class GeoZoneDAOTest extends AbstractOccamTest {
 	
 	@Test
 	void streamLimitTest() {
-		long max = GeoZoneDAO.getStream(ctx, p -> p.withName().like("%a%"), b -> b)
+		long max = GeozoneDAO.getStream(ctx, p -> p.withName().like("%a%"), b -> b)
 			.limit(10)
 			.count();
 		int rows = AonRandom.getInt(0, (int) max);
-		long count = GeoZoneDAO.getStream(ctx, p -> p.withName().like("%a%")
+		long count = GeozoneDAO.getStream(ctx, p -> p.withName().like("%a%")
 			,b -> b.limit(0, rows))
 		.count();
 		assertEquals(count, rows, "Limit not working" );
@@ -84,12 +84,12 @@ class GeoZoneDAOTest extends AbstractOccamTest {
 	
 	@Test
 	void filterTest() {
-		Optional<Geozone> optGeoZone = GeoZoneDAO.get(ctx
+		Optional<Geozone> optGeoZone = GeozoneDAO.get(ctx
 			,p -> p.withName().eq( GEOZONE_NAME )
 			,b -> b);
 		assertTrue(optGeoZone.isPresent());
 		Geozone expected = optGeoZone.get();
-		Optional<Geozone> optActual = GeoZoneDAO.get(ctx
+		Optional<Geozone> optActual = GeozoneDAO.get(ctx
 			,p -> p.withId().eq( expected.getId() )
 				.and(p.withDomain().eq( expected.getDomain() ))	
 				.and(p.withName().eq( expected.getName() )) 
@@ -105,7 +105,7 @@ class GeoZoneDAOTest extends AbstractOccamTest {
 	void denyReadOneTest() {
 		try {
 			ctx.denyRead();
-			SecurityException e = assertThrows(SecurityException.class, () -> GeoZoneDAO.get(ctx,p -> p.withName().eq( GEOZONE_NAME ), b -> b));
+			SecurityException e = assertThrows(SecurityException.class, () -> GeozoneDAO.get(ctx,p -> p.withName().eq( GEOZONE_NAME ), b -> b));
 			assertEquals(AonError.READ_FORBIDDEN.getMessage(), e.getMessage());
 		} finally {
 			ctx.allowRead();
@@ -128,7 +128,7 @@ class GeoZoneDAOTest extends AbstractOccamTest {
 				}
 			});
 			Geozone geozone = new Geozone();
-			GeoZoneDAO.save(ctx, geozone);
+			GeozoneDAO.save(ctx, geozone);
 			assertEquals(AonError.NOT_DIRTY.format("GeoZone",geozone.getId()), debugMessage.toString());
 		} finally {
 			ctx.setLoggerForTests( originalLogger );

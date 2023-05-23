@@ -29,7 +29,7 @@ public abstract class AbstractOccamTest {
 	protected static AONContext ctx;
 	protected static Integer DOMAIN_ID;
 
-	protected static String DOMAIN_NAME = System.getProperty("domainName", "occamtest.aonsolutions.test");	
+	protected static String DOMAIN_NAME = System.getProperty("domainName", "occamtest.aonsolutions.test");
 	protected static String USER 		= System.getProperty("domainUser", "admin");
 	private static String getDbPort() {		return System.getProperty("dbPort", "3306");	}
 	private static String getDbHost() {		return System.getProperty("dbHost", "127.0.0.1");	}
@@ -105,7 +105,7 @@ public abstract class AbstractOccamTest {
 		while (rs.next()) {
 			if (rs.getString(1).startsWith(dbName)) {
 				String schemaName = rs.getString(1); 
-				connection.createStatement().execute("use " + schemaName);
+				connection.createStatement().execute("use `" + schemaName + "`");
 				System.out.println("*******************************");
 				System.out.println("USING  [" + schemaName+ "] schema.");
 				System.out.println("*******************************");

@@ -22,22 +22,22 @@ import net.aonsolutions.occam.api.AonError;
 import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.api.config.Geozone;
 import net.aonsolutions.occam.api.filter.AonFacade.AonFillerBuilder;
-import net.aonsolutions.occam.api.filter.GeoZoneFacade.CompositeGeoZoneBuilder;
-import net.aonsolutions.occam.api.filter.GeoZoneFacade.GeoZoneBuilder;
-import net.aonsolutions.occam.api.filter.GeoZoneFacade.GeoZoneBuilderFactory;
-import net.aonsolutions.occam.api.filter.GeoZoneFacade.GeoZoneFilter;
-import net.aonsolutions.occam.api.filter.GeoZoneFacade.GeoZoneFilters;
+import net.aonsolutions.occam.api.filter.GeozoneFacade.CompositeGeozoneBuilder;
+import net.aonsolutions.occam.api.filter.GeozoneFacade.GeozoneBuilder;
+import net.aonsolutions.occam.api.filter.GeozoneFacade.GeozoneBuilderFactory;
+import net.aonsolutions.occam.api.filter.GeozoneFacade.GeozoneFilter;
+import net.aonsolutions.occam.api.filter.GeozoneFacade.GeozoneFilters;
 import net.aonsolutions.watson.client.util.AonStringUtils;
 
-public class GeoZoneDAO {
+public class GeozoneDAO {
 
 	
-	private GeoZoneDAO() {
+	private GeozoneDAO() {
 
 	}
 	
 	private static final GeoZoneFilterDAO GEOZONE_FILTER = new GeoZoneFilterDAO();
-	private static class GeoZoneFilterDAO implements GeoZoneFilters {
+	private static class GeoZoneFilterDAO implements GeozoneFilters {
 		@Override public Property<Integer> withId() {return new PropertyDAO<>(GEOZONE.ID);}
 		@Override public Property<Integer> withDomain() {return new PropertyDAO<>(GEOZONE.DOMAIN);}
 		@Override public Property<String> withCode() {return new PropertyDAO<>(GEOZONE.CODE);}
@@ -45,12 +45,12 @@ public class GeoZoneDAO {
 		@Override public Property<Byte> withSystem() {return new PropertyDAO<>(GEOZONE.SYSTEM);}
 	}
 	
-	private static class GeoZoneSelectBuilderDAO extends  CompositeGeoZoneBuilder<Stream<Geozone>> {
+	private static class GeoZoneSelectBuilderDAO extends  CompositeGeozoneBuilder<Stream<Geozone>> {
 		
 		private final ResultQuery<Record> query;
 		private final FillerBuilder fillerBuilder; 
 		
-		public GeoZoneSelectBuilderDAO( AONContext ctx, GeoZoneFilter filter ) {
+		public GeoZoneSelectBuilderDAO( AONContext ctx, GeozoneFilter filter ) {
 			
 			SelectBuilder selectBuilder = new SelectBuilder( ctx );
 			FromBuilder fromBuilder = new  FromBuilder( selectBuilder.build() );
@@ -78,7 +78,7 @@ public class GeoZoneDAO {
 		
 	}
 	
-	private static class SelectBuilder implements GeoZoneBuilder<SelectSelectStep<Record>> {
+	private static class SelectBuilder implements GeozoneBuilder<SelectSelectStep<Record>> {
 		
 		private SelectSelectStep<Record> select;
 
@@ -95,7 +95,7 @@ public class GeoZoneDAO {
 		@Override public SelectBuilder limit(int offest, int rows) {return this;}
 	}
 
-	private static class FromBuilder implements GeoZoneBuilder<SelectJoinStep<Record>> {
+	private static class FromBuilder implements GeozoneBuilder<SelectJoinStep<Record>> {
 		private SelectJoinStep<Record> from;
 		
 		public FromBuilder(SelectSelectStep<Record> select ) {
@@ -110,10 +110,10 @@ public class GeoZoneDAO {
 		@Override public FromBuilder limit(int offest, int rows) { return this; }
 	}
 
-	private static class WhereBuilder implements GeoZoneBuilder<SelectLimitStep<Record>> {
+	private static class WhereBuilder implements GeozoneBuilder<SelectLimitStep<Record>> {
 		private SelectLimitStep<Record> where;
 		
-		public WhereBuilder(SelectJoinStep<Record> from, GeoZoneFilter filter) {
+		public WhereBuilder(SelectJoinStep<Record> from, GeozoneFilter filter) {
 			where = from.where( getWhere(filter) );
 		}
 		
@@ -122,7 +122,7 @@ public class GeoZoneDAO {
 			return where;
 		}
 		
-		private Condition getWhere(GeoZoneFilter filter) {
+		private Condition getWhere(GeozoneFilter filter) {
 			if ( filter.filter(GEOZONE_FILTER) instanceof FilterDAO filterDAO) {
 				return filterDAO.getCondition();
 			}
@@ -132,7 +132,7 @@ public class GeoZoneDAO {
 		@Override public WhereBuilder limit(int offset, int rows) {return this;}
 	}
 
-	private static class LimitBuilder implements GeoZoneBuilder<ResultQuery<Record>> {
+	private static class LimitBuilder implements GeozoneBuilder<ResultQuery<Record>> {
 		private SelectLimitStep<Record> where;
 		private SelectWithTiesAfterOffsetStep<Record> limit;
 		
@@ -152,7 +152,7 @@ public class GeoZoneDAO {
 		}
 	}
 
-	private static class FillerBuilder implements GeoZoneBuilder<Function<Record, RecordMapper<Geozone>>>,AonFillerBuilder<Geozone> {
+	private static class FillerBuilder implements GeozoneBuilder<Function<Record, RecordMapper<Geozone>>>,AonFillerBuilder<Geozone> {
 		
 		private UnaryOperator<RecordMapper<Geozone>> withAudit = t -> t;
 		private UnaryOperator<RecordMapper<Geozone>> withParent = t -> t;
@@ -185,19 +185,19 @@ public class GeoZoneDAO {
 			;
 		}
 		
-		@Override public GeoZoneBuilder<Function<Record, RecordMapper<Geozone>>> limit(int offset, int rows) { return null; }
+		@Override public GeozoneBuilder<Function<Record, RecordMapper<Geozone>>> limit(int offset, int rows) { return null; }
 
 	}
 
-	private static GeoZoneSelectBuilderDAO getBuilder( AONContext ctx, GeoZoneFilter filter ) {
+	private static GeoZoneSelectBuilderDAO getBuilder( AONContext ctx, GeozoneFilter filter ) {
 		return new GeoZoneSelectBuilderDAO(ctx,filter);
 	}
 
-	public static Optional<Geozone> get(AONContext ctx, GeoZoneFilter filter, GeoZoneBuilderFactory factory){
+	public static Optional<Geozone> get(AONContext ctx, GeozoneFilter filter, GeozoneBuilderFactory factory){
 		return getStream(ctx, filter, factory).findFirst();
 	}
 
-	public static Stream<Geozone> getStream(AONContext ctx, GeoZoneFilter filter, GeoZoneBuilderFactory factory){
+	public static Stream<Geozone> getStream(AONContext ctx, GeozoneFilter filter, GeozoneBuilderFactory factory){
 		ctx.checkRead();
 		DAOUtils.checkNullFactory(factory);
 		DAOUtils.checkNullFilter(filter);

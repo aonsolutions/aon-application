@@ -208,16 +208,6 @@ class DomainDAOTest extends AbstractOccamTest {
 		}
 	}
 	
-//	@Test
-//	void saveLowerCaseNameTest() {
-//		String lDomainName = "occam.aonsolutions.net";
-//		String domainName = "OCCAM.AONSOLUTIONS.NET";
-//		Domain domain = AonFaker.getDomain( true );
-//		domain.setName(domainName);
-//		Domain saved = DomainDAO.save(ctx, domain);
-//		assertEquals(lDomainName, saved.getName());
-//	}
-	
 	@Test
 	void saveValidationEmptyTest() {
 		AonCoreException e = assertThrows(AonCoreException.class, () -> DomainDAO.save(ctx, (Domain) null));
@@ -275,6 +265,16 @@ class DomainDAOTest extends AbstractOccamTest {
 		assertEquals(AonError.INVALID_LENGTH.format( "Creador", DOMAIN.OWNER.getDataType().length() ), e.getMessage());
 	}
 	
+//	@Test
+//	void saveLowerCaseNameTest() {
+//		String lDomainName = "occam.aonsolutions.net";
+//		String domainName = "OCCAM.AONSOLUTIONS.NET";
+//		Domain domain = AonFaker.getDomain( true );
+//		domain.setName(domainName);
+//		Domain saved = DomainDAO.save(ctx, domain);
+//		assertEquals(lDomainName, saved.getName());
+//	}
+//
 //	@Test
 //	void saveTest() {
 //		Domain insertDomain = AonFaker.getDomain(true);

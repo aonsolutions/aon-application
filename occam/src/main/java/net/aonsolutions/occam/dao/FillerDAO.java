@@ -12,7 +12,7 @@ import net.aonsolutions.occam.api.config.Registry;
 import net.aonsolutions.occam.api.constants.Country;
 import net.aonsolutions.occam.api.constants.DocumentType;
 import net.aonsolutions.occam.api.constants.DomainType;
-import net.aonsolutions.occam.dao.ScopeDAO.ScopeFiller;
+import net.aonsolutions.occam.dao.SecurityDAO.ScopeFiller;
 
 class FillerDAO {
 	

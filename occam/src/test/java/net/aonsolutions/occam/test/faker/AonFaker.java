@@ -1,5 +1,7 @@
 package net.aonsolutions.occam.test.faker;
 
+import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
+
 import java.util.Locale;
 
 import com.github.javafaker.Faker;
@@ -11,6 +13,7 @@ import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
 import net.aonsolutions.occam.api.config.Geozone;
 import net.aonsolutions.occam.api.config.Registry;
+import net.aonsolutions.occam.api.config.RegistryAddress;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
 import net.aonsolutions.occam.api.constants.Country;
@@ -105,6 +108,24 @@ public class AonFaker {
 			.setConfidential( !AonRandom.gt(3) );
 	}
 	
+	public static RegistryAddress getRegistryAddress() {
+		return new RegistryAddress()
+			.setRegistry(AonRandom.integer(50))
+			.setDomain(AonRandom.integer(50))
+			.setMain(AonRandom.gt(50))
+			.setStreetType(AonRandom.getStreetType(75).orElse(null))
+			.setRecipient( AonRandom.name(20, RADDRESS.RECIPIENT.getDataType().length()) )
+			.setAddress( AonRandom.gt(10)?faker.address().streetName():null )
+			.setNumber( AonRandom.gt(12)?faker.address().streetAddressNumber():null)
+			.setAddress2( AonRandom.gt(90)?faker.address().secondaryAddress():null )
+			.setAddress3( AonRandom.gt(97)?faker.address().secondaryAddress():null )
+			.setZip( AonRandom.gt(10)?faker.address().zipCode():null )
+			.setCity( AonRandom.gt(10)?faker.address().city():null )
+			.setGeozone( getGeoZone() )
+			.setRecipient( AonRandom.alias(20, RADDRESS.ALIAS.getDataType().length()) )
+			.setMunicipalityCode(AonRandom.gt(30)?faker.address().zipCode():null);
+	}
+
 	public static Scope getScope(int nullThreshold) {
     	return AonRandom.gt(nullThreshold)?getScope():null;
 	}

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import net.aonsolutions.occam.api.AonCoreException;
 import net.aonsolutions.occam.api.AonError;
 import net.aonsolutions.occam.api.config.Geozone;
-import net.aonsolutions.occam.dao.GeoZoneDAO;
+import net.aonsolutions.occam.dao.GeozoneDAO;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
 import net.aonsolutions.occam.test.faker.AonFaker;
@@ -22,7 +22,7 @@ import net.aonsolutions.watson.client.util.AonStringUtils;
 
 
 @ExtendWith(TimingExtension.class)	
-class GeoZoneTest extends AbstractOccamTest {
+class GeozoneTest extends AbstractOccamTest {
 
 	@Test()
 	void dirtyIdTest() {
@@ -98,7 +98,7 @@ class GeoZoneTest extends AbstractOccamTest {
 	
 	@Test
 	void saveValidationEmptyTest() {
-		AonCoreException e = assertThrows(AonCoreException.class, () -> GeoZoneDAO.save(ctx, (Geozone) null));
+		AonCoreException e = assertThrows(AonCoreException.class, () -> GeozoneDAO.save(ctx, (Geozone) null));
 		assertEquals(AonError.SAVE_EMPTY.getMessage(), e.getMessage());
 	}
 	
@@ -106,7 +106,7 @@ class GeoZoneTest extends AbstractOccamTest {
 	void saveValidationEmptyDomainTest() {
 		Geozone geozone = new Geozone();
 		geozone.setDirty(true);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> GeoZoneDAO.save(ctx, geozone));
+		AonCoreException e = assertThrows(AonCoreException.class, () -> GeozoneDAO.save(ctx, geozone));
 		assertEquals(AonError.EMPTY_DOMAIN.getMessage(), e.getMessage());
 	}
 
@@ -115,11 +115,11 @@ class GeoZoneTest extends AbstractOccamTest {
 		Geozone geozone = AonFaker.getGeoZone ();
 		
 		geozone.setName(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> GeoZoneDAO.save(ctx, geozone));
+		AonCoreException e = assertThrows(AonCoreException.class, () -> GeozoneDAO.save(ctx, geozone));
 		assertEquals(AonError.EMPTY_NAME.getMessage(), e.getMessage());
 		
 		geozone.setName( AonStringUtils.repeat("A",GEOZONE.NAME.getDataType().length() + 1));
-		e = assertThrows(AonCoreException.class, () -> GeoZoneDAO.save(ctx, geozone));
+		e = assertThrows(AonCoreException.class, () -> GeozoneDAO.save(ctx, geozone));
 		assertEquals(AonError.INVALID_LENGTH.format( "Nombre", GEOZONE.NAME.getDataType().length() ), e.getMessage());
 	}
 	
@@ -128,11 +128,11 @@ class GeoZoneTest extends AbstractOccamTest {
 		Geozone geozone = AonFaker.getGeoZone ();
 		
 		geozone.setCode(null);
-		AonCoreException e = assertThrows(AonCoreException.class, () -> GeoZoneDAO.save(ctx, geozone));
+		AonCoreException e = assertThrows(AonCoreException.class, () -> GeozoneDAO.save(ctx, geozone));
 		assertEquals(AonError.EMPTY_CODE.getMessage(), e.getMessage());
 		
 		geozone.setCode( AonStringUtils.repeat("A",GEOZONE.CODE.getDataType().length() + 1));
-		e = assertThrows(AonCoreException.class, () -> GeoZoneDAO.save(ctx, geozone));
+		e = assertThrows(AonCoreException.class, () -> GeozoneDAO.save(ctx, geozone));
 		assertEquals(AonError.INVALID_LENGTH.format( "C\u00F3digo", GEOZONE.CODE.getDataType().length() ), e.getMessage());
 	}
 }

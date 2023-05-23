@@ -30,7 +30,6 @@ import net.aonsolutions.occam.api.filter.UserFacade.UserBuilder;
 import net.aonsolutions.occam.api.filter.UserFacade.UserBuilderFactory;
 import net.aonsolutions.occam.api.filter.UserFacade.UserFilter;
 import net.aonsolutions.occam.api.filter.UserFacade.UserFilters;
-import net.aonsolutions.occam.dao.ScopeDAO.ScopeFiller;
 import net.aonsolutions.watson.client.util.AonArrayUtils;
 
 public class SecurityDAO {
@@ -45,6 +44,22 @@ public class SecurityDAO {
 		
 	}
 	
+	public static class ScopeFiller  implements Function<Record,Scope> {
+		@Override
+		public Scope apply(Record r) {
+			return map(r, Scope::new);
+		}
+		
+		Scope map(Record r, Supplier<Scope> supplier) {
+			return supplier.get()
+				.setId(FillerUtils.getValue(r,SCOPE.ID))
+				.setDomain(FillerUtils.getValue(r,SCOPE.DOMAIN))
+				.setDescription(FillerUtils.getValue(r,SCOPE.DESCRIPTION))
+				.setDirty(false)
+				;	
+		}
+	}
+
 	private static final UserFilterDAO USER_FILTERS = new UserFilterDAO();
 	private static class UserFilterDAO implements UserFilters {
 		@Override public Property<Integer> withId() {return new PropertyDAO<>(USER.ID);}
