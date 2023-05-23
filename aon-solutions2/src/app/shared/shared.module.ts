@@ -29,6 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
+import { BreadcumbComponent } from './components/breadcumb/breadcumb.component';
 
 
 @NgModule({
@@ -48,7 +49,8 @@ import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.
     ButtonComponent,
     IconComponent,
     GlobalHoverDirective,
-    DropdownMenuComponent
+    DropdownMenuComponent,
+    BreadcumbComponent
   ],
   imports: [
     CommonModule,
