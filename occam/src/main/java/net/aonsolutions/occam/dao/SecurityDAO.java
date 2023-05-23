@@ -154,14 +154,13 @@ public class SecurityDAO {
 		return getUserScopesCondition(ctx, field, ctx.getUser());
 	}
 	public static Condition getUserScopesCondition(AONContext ctx, Field<Integer> field, String userLogin ) {
-		return getUserScopesCondition(ctx, field, getUser(ctx, p -> p.withLogin().eq(userLogin))
-				.orElseThrow( () -> new IllegalAccessError(AonError.USER_NOT_FOUND.getMessage())));
+		return getUserScopesCondition(ctx, field, getUser(ctx, p -> p.withLogin().eq(userLogin)).orElse(null));
 	}
 	public static Condition getUserScopesCondition(AONContext ctx, Field<Integer> field, Integer userId) {
-		return getUserScopesCondition(ctx, field, getUser(ctx, p -> p.withId().eq(userId) )
-				.orElseThrow( () -> new IllegalAccessError(AonError.USER_NOT_FOUND.getMessage())));
+		return getUserScopesCondition(ctx, field, getUser(ctx, p -> p.withId().eq(userId)).orElse(null));
 	}
 	public static Condition getUserScopesCondition (AONContext ctx, Field<Integer> field, User user) {
+		if (user == null) return DSL.falseCondition(); 
 		Integer[] ids = getUserScopes(ctx,user)
 			.stream()
 			.map( Scope::getId )

@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
+import org.jooq.impl.DSL;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -125,8 +126,8 @@ class SecurityDAOTest extends AbstractOccamTest {
 		Condition conditionByName = SecurityDAO.getUserScopesCondition(ctx, DOMAIN.SCOPE, USER);
 		assertNotNull(conditionByName);
 		
-		IllegalAccessError e = assertThrows( IllegalAccessError.class, () -> SecurityDAO.getUserScopesCondition(ctx, DOMAIN.SCOPE, "INVALID USER"));
-		assertEquals(AonError.USER_NOT_FOUND.getMessage(), e.getMessage());
+		Condition falseCondition = SecurityDAO.getUserScopesCondition(ctx, DOMAIN.SCOPE, "INVALID USER");
+		assertEquals(falseCondition, DSL.falseCondition());
 		
 		Optional<User> userOpt = SecurityDAO.getUser(ctx,p -> p.withLogin().eq( USER ));
 		assertTrue(userOpt.isPresent());
@@ -137,13 +138,13 @@ class SecurityDAOTest extends AbstractOccamTest {
 		
 		assertEquals(conditionById.toString(),conditionByName.toString());
 		
-		e = assertThrows( IllegalAccessError.class, () -> SecurityDAO.getUserScopesCondition(ctx, DOMAIN.SCOPE, Integer.MIN_VALUE));
-		assertEquals(AonError.USER_NOT_FOUND.getMessage(), e.getMessage());
+		falseCondition = SecurityDAO.getUserScopesCondition(ctx, DOMAIN.SCOPE, Integer.MIN_VALUE);
+		assertEquals(falseCondition, DSL.falseCondition());
 		
 		Collection<Scope> scopes = SecurityDAO.getUserScopes (ctx, user);
 		Asserts.assertNotEmpty(scopes ,"Empty collection");
 		
-		e = assertThrows( IllegalAccessError.class, () -> SecurityDAO.getUserScopes (ctx, null));
+		IllegalAccessError e = assertThrows( IllegalAccessError.class, () -> SecurityDAO.getUserScopes (ctx, null));
 		assertEquals(AonError.USER_INVALID.getMessage(), e.getMessage());
 		
 	}

@@ -59,11 +59,10 @@ class DomainProvider {
 				.set(DOMAIN.MAXDEFINEDUSERS, 1)
 				.set(DOMAIN.MAXDOCUMENTSIZE, 1)
 				.set(DOMAIN.MAXTOTALDOCUMENTSIZE, 16).returning(DOMAIN.ID)
-				.fetchOne().getId();
-		Domain domain = DomainDAO.get(ctx, f -> f.withId().eq(newDomainId), b -> b).get();
-		ctx.log().info("Dominio " + domain.getName() + " insertado correctamente");
+				.fetchOne()
+				.getId();
 		
-		insertGeozones(ctx, domain);
+		insertGeozones(ctx, newDomainId);
 		
 		ctx.getDslContext().insertInto(DOMAIN_APP)
 			.set(DOMAIN_APP.DOMAIN, newDomainId)
@@ -133,7 +132,7 @@ class DomainProvider {
 				.setRegistry(newCompanyId)
 				.setDomain(newDomainId)
 				.setGeozone(GeozoneDAO.get(ctx, f -> f.withCode().eq("01"), b -> b).orElse(null));
-		ctx.getDslContext().insertInto(RADDRESS)
+		int addressId = ctx.getDslContext().insertInto(RADDRESS)
 			.set(RADDRESS.DOMAIN,address.getDomain())
 			.set(RADDRESS.REGISTRY,address.getRegistry())
 			.set(RADDRESS.TYPE, (byte) (address.isMain()? 1:0))
@@ -148,7 +147,9 @@ class DomainProvider {
 			.set(RADDRESS.GEOZONE,address.getGeozone() == null ? null : address.getGeozone().getId())	
 			.set(RADDRESS.ALIAS,address.getAlias())
 			.set(RADDRESS.MUNICIPALITY_CODE,address.getMunicipalityCode())
-			.execute();
+			.returning(RADDRESS.ID).fetchOne()
+			.getId();
+		address.setId(addressId);
 
 		int newScopeId = ctx.getDslContext().insertInto(SCOPE)
 				.set(SCOPE.DESCRIPTION, "DEFAULT")
@@ -210,64 +211,66 @@ class DomainProvider {
 		.execute();
 		ctx.log().info("Workplace insertada correctamente");
 		
+		Domain domain = DomainDAO.get(ctx, f -> f.withId().eq(newDomainId), b -> b).get();
+		ctx.log().info("Dominio " + domain.getName() + " insertado correctamente");
 		return domain;
 	}
 	
-	private static void insertGeozones(AONContext ctx, Domain domain) {
-		Geozone spain = insert(ctx, new Geozone().setDomain( domain.getId() ).setCode("ES").setName("ESPAÑA"));
-		bind(ctx, domain.getId(), null, spain.getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Álava").setCode("01")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Albacete").setCode("02")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Alicante").setCode("03")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Almería").setCode("04")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Ávila").setCode("05")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Badajoz").setCode("06")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Islas Baleares").setCode("07")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Barcelona").setCode("08")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Burgos").setCode("09")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Cáceres").setCode("10")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Cádiz").setCode("11")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Castellón").setCode("12")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Ciudad Real").setCode("13")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Córdoba").setCode("14")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("La Coruña").setCode("15")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Cuenca").setCode("16")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Gerona").setCode("17")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Granada").setCode("18")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Guadalajara").setCode("19")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Guipúzcoa").setCode("20")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Huelva").setCode("21")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Huesca").setCode("22")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Jaén").setCode("23")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("León").setCode("24")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Lleida").setCode("25")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("La Rioja").setCode("26")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Lugo").setCode("27")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Madrid").setCode("28")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Málaga").setCode("29")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Murcia").setCode("30")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Navarra").setCode("31")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Orense").setCode("32")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Asturias").setCode("33")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Palencia").setCode("34")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Las Palmas").setCode("35")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Pontevedra").setCode("36")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Salamanca").setCode("37")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Santa Cruz de Tenerife").setCode("38")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Cantabria").setCode("39")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Segovia").setCode("40")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Sevilla").setCode("41")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Soria").setCode("42")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Tarragona").setCode("43")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Teruel").setCode("44")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Toledo").setCode("45")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Valencia").setCode("46")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Valladolid").setCode("47")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Vizcaya").setCode("48")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Zamora").setCode("49")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Zaragoza").setCode("50")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Ceuta").setCode("51")).getId());
-		bind(ctx, domain.getId(), spain.getId(), insert(ctx, new Geozone().setDomain( domain.getId() ).setName("Melilla").setCode("52")).getId());
+	private static void insertGeozones(AONContext ctx, int domain) {
+		Geozone spain = insert(ctx, new Geozone().setDomain( domain).setCode("ES").setName("ESPAÑA"));
+		bind(ctx, domain, null, spain.getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Álava").setCode("01")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Albacete").setCode("02")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Alicante").setCode("03")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Almería").setCode("04")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Ávila").setCode("05")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Badajoz").setCode("06")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Islas Baleares").setCode("07")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Barcelona").setCode("08")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Burgos").setCode("09")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Cáceres").setCode("10")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Cádiz").setCode("11")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Castellón").setCode("12")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Ciudad Real").setCode("13")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Córdoba").setCode("14")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("La Coruña").setCode("15")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Cuenca").setCode("16")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Gerona").setCode("17")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Granada").setCode("18")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Guadalajara").setCode("19")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Guipúzcoa").setCode("20")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Huelva").setCode("21")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Huesca").setCode("22")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Jaén").setCode("23")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("León").setCode("24")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Lleida").setCode("25")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("La Rioja").setCode("26")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Lugo").setCode("27")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Madrid").setCode("28")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Málaga").setCode("29")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Murcia").setCode("30")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Navarra").setCode("31")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Orense").setCode("32")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Asturias").setCode("33")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Palencia").setCode("34")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Las Palmas").setCode("35")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain).setName("Pontevedra").setCode("36")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Salamanca").setCode("37")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Santa Cruz de Tenerife").setCode("38")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Cantabria").setCode("39")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Segovia").setCode("40")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Sevilla").setCode("41")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Soria").setCode("42")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Tarragona").setCode("43")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Teruel").setCode("44")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Toledo").setCode("45")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Valencia").setCode("46")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Valladolid").setCode("47")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Vizcaya").setCode("48")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Zamora").setCode("49")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Zaragoza").setCode("50")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Ceuta").setCode("51")).getId());
+		bind(ctx, domain, spain.getId(), insert(ctx, new Geozone().setDomain( domain ).setName("Melilla").setCode("52")).getId());
 	}
 	public static void bind(AONContext ctx, Integer domain, Integer parentId, Integer childId) {
 		ctx.checkWrite();
