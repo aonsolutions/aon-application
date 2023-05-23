@@ -438,6 +438,37 @@ public class SalarySelect extends Composite {
 			}
 
 		});
+		
+		try {
+		    payDateLabel.setVisible(true);
+		    payDateListBox.setVisible(true);
+
+		    Date endDate = SalarySelect.this.salaryPreview.getEndDate();
+
+		    Date payStartDate = DateUtils.copyDateOnly(endDate);
+		    payStartDate = DateUtils.addDays2Date(payStartDate, -20);
+
+		    Date selectedDate = payDateListBox.getSelectedDate();
+		    if (!hasChanged && selectedDate != null)
+			return;
+
+		    Date payDate = getPayDate();
+		    Date defautlPayDate = payDate != null ? payDate : DateUtils.after(new Date(), endDate);
+
+		    int index = DateUtils.getDaysBetween(payStartDate, defautlPayDate);
+		    int length = payDateListBox.getPageSize();
+		    int start = Math.max(0, index - length / 2);
+
+		    payDateListBox.setVisibleRangeAndClearData(new Range(start, length), true);
+		    Scheduler.get().scheduleFinally(() -> payDateListBox.setSelected(defautlPayDate, true));
+		    salaryPreview.setChargeDate(defautlPayDate);
+		
+		} catch( Exception e ) {
+			payDateLabel.setVisible(false);
+			payDateListBox.setVisible(false);
+		}
+		
+		
 	}
 
 	private void syncDateListBox(Type type) {
@@ -610,34 +641,6 @@ public class SalarySelect extends Composite {
 			}
 
 		});
-		
-		try {
-			payDateLabel.setVisible(true);
-			payDateListBox.setVisible(true);
-
-        		Date endDate = SalarySelect.this.salaryPreview.getEndDate();
-        		
-        		Date payStartDate = DateUtils.copyDateOnly(endDate);
-        		payStartDate  = DateUtils.addDays2Date(payStartDate, -20);
-
-        		Date selectedDate = payDateListBox.getSelectedDate();
-        		if ( !hasChanged  && selectedDate != null ) 
-        		    return;
-        		
-        		Date payDate = getPayDate();
-        		Date defautlPayDate = payDate != null ? payDate : DateUtils.after(new Date(), endDate);
-        		
-        		int index = DateUtils.getDaysBetween(payStartDate, defautlPayDate);
-        		int length = payDateListBox.getPageSize();
-        		int start = Math.max(0, index - length / 2);
-        
-        		payDateListBox.setVisibleRangeAndClearData(new Range(start, length), true);
-        		Scheduler.get().scheduleFinally(() -> payDateListBox.setSelected(defautlPayDate, true));
-		
-		} catch( Exception e ) {
-			payDateLabel.setVisible(false);
-			payDateListBox.setVisible(false);
-		}
 		
 	}
 

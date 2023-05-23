@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 
 import net.aonsolutions.db.up2date.payroll.IndemnizacionTemporalUpdate;
 import net.aonsolutions.db.up2date.payroll.PrestITSexAndHealthInsert;
+import net.aonsolutions.db.up2date.payroll.PrestITSexAndHealthIrpfFix;
 import net.aonsolutions.db.up2date.security.UdpateAonProfessional;
 import net.aonsolutions.db.up2date.security.UdpateAonSmb;
 
@@ -356,6 +357,7 @@ public class Up2Date {
             // TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
 	    // PrestITSexAndHealthInsert.PRESTITSEXANDHEALTHINSERT,
 		IndemnizacionTemporalUpdate.INDEMNIZACIONTEMPORALUPDATE,
+		PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
 
 		
 	    //DOMAIN

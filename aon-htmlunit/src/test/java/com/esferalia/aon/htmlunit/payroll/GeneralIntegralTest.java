@@ -986,8 +986,16 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		double cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.JUNE,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_interrupcion_embarazo_21");
+		assertNotElement("editor-dias_interrupcion_embarazo_1_20");
+		double remuneration = getText("remunerationLabel");
+		assertText("irpfBaseLabel", remuneration);
 		calculate(Calendar.JULY,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_menstruacion_21");
+		assertNotElement("editor-dias_menstruacion_1_20");
 		click("costsCheck-input");
 		assertText("totalEnterpriseLabel", cgcBase * 31.90 / 100.00 - ( cgcBase / 30.00 * 7 * 0.75 ) );
 		click("costsCheck-input");
@@ -998,16 +1006,28 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.JUNE,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_menstruacion_21");
+		assertNotElement("editor-dias_menstruacion_1_20");
 		calculate(Calendar.JULY,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_interrupcion_embarazo_21");
+		assertNotElement("editor-dias_interrupcion_embarazo_1_20");
 
 		draft("INTERRUPCIÓN DEL, EMBARAZO");
 		calculate(Calendar.MAY,2023);
 		cgcBase = getValue("cgcBaseLabel");
 		calculate(Calendar.JUNE,2023);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertDisplay("eventsCheck", false);
+		assertNotElement("editor-dias_interrupcion_embarazo_21");
+		assertNotElement("editor-dias_interrupcion_embarazo_1_20");
 		calculate(Calendar.JULY,2023);
+		assertDisplay("eventsCheck", false);
 		assertValue("cgcBaseLabel", cgcBase );
+		assertNotElement("editor-dias_menstruacion_21");
+		assertNotElement("editor-dias_menstruacion_1_20");
 	}
 
 	@Test
