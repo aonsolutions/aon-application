@@ -394,7 +394,6 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		assertValue("totalPaymentLabel", 300.00);
 		assertValue("totalLiquidLabel", 300.00 - (200.00 * (4.70 + 1.55 + 0.10 + 18.49) / 100.00) - ( 100.00 * 18.49 / 100.00 ));
 		
-		
 
 	}
 
@@ -2407,16 +2406,15 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		calendar.set(Calendar.MONTH,Calendar.FEBRUARY);
 		Date endDate = calendar.getTime();
 				
-		
 		delay(startDate, endDate);
 		assertValue("totalPaymentLabel", 0.00, 0.00);
 		assertValue("totalLiquidLabel", 00.00, 0.00);
 		
 		// set pay date
-		getElementById("payDateListBox").click();
-		scroll2ListBox(endDate, "payDateListBox");
-		((HtmlSpan)((HtmlDivision)getElementById("payDateListBox-celllist"))
-		.getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", endDate)+"']")).click();
+		//getElementById("payDateListBox").click();
+		//scroll2ListBox(endDate, "payDateListBox");
+		//((HtmlSpan)((HtmlDivision)getElementById("payDateListBox-celllist"))
+		//.getFirstByXPath("//span[text()='"+String.format( new Locale("es","ES"),"%1$te de %1$tB de %1$tY", endDate)+"']")).click();
 		
 		
 		setValue("db-amount-label-5", "11.11");
@@ -2424,15 +2422,18 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		setValue("db-amount-label-4", "22.22");
 		wait4Value("totalPaymentLabel", 33.33);
 		
-		setValue("irpfPercentTexTBox", "15.00");
+		assertValue("irpfPercentTexTBox", "15,00 %" );
 		wait4Text("irpf", "5,00" );
 		
+		setValue("irpfPercentTexTBox", "30.00" );
+		wait4Text("irpf", "10,00" );
+
 		click("delayButton");
 		
 		wait4Id("dbSalaryCheck");
 		assertDisplay("dbSalaryCheck", true);
-		assertText("irpf", "5,00" );
-		assertValue("irpfPercentTexTBox", "15,00 %" );
+		assertText("irpf", "10,00" );
+		assertValue("irpfPercentTexTBox", "30,00 %" );
 		
 		
 		
