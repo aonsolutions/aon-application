@@ -83,7 +83,7 @@ public class DomainUserRolesController implements Serializable {
 	}
 	
 	public boolean isBank() {
-		return getDur().hasApp(AonApp.BANK);
+		return getDur().isBank();
 	}
 	
 	public boolean isAula() {
