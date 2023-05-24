@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 import com.esferalia.aon.watson.util.AonStringUtils;
 
-public enum InvoiceCommunicationType implements Serializable{
+@Deprecated
+public enum OldInvoiceCommunicationType implements Serializable{
 	
 	LROE_1_1,
 	LROE_1_2,
@@ -36,7 +37,7 @@ public enum InvoiceCommunicationType implements Serializable{
 	;
 	
 	
-	private InvoiceCommunicationType() {
+	private OldInvoiceCommunicationType() {
 
 	}
 	
@@ -44,20 +45,20 @@ public enum InvoiceCommunicationType implements Serializable{
 		return (byte) ordinal();
 	}
 	
-	public static InvoiceCommunicationType safeValueOf( Byte i ) {
+	public static OldInvoiceCommunicationType safeValueOf( Byte i ) {
 		if (i == null) return null;
 		return safeValueOf( i.intValue() ); 
 	}
 	
-	public static InvoiceCommunicationType safeValueOf( Integer i ) {
+	public static OldInvoiceCommunicationType safeValueOf( Integer i ) {
 		if (i == null) return null;
-		if (i < 0 || i >= InvoiceCommunicationType.values().length) return null;
-		return InvoiceCommunicationType.values()[i];
+		if (i < 0 || i >= OldInvoiceCommunicationType.values().length) return null;
+		return OldInvoiceCommunicationType.values()[i];
 	}
 	
-	public static InvoiceCommunicationType safeValueOf( String i ) {
+	public static OldInvoiceCommunicationType safeValueOf( String i ) {
 		if(AonStringUtils.isBlank(i)) return null;
-		for (InvoiceCommunicationType rs : values()) {
+		for (OldInvoiceCommunicationType rs : values()) {
 			if(i.equalsIgnoreCase(rs.name()))
 				return rs;
 		}

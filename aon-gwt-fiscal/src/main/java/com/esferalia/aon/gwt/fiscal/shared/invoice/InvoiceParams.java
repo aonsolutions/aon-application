@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.type.InvoiceType;
 
 public class InvoiceParams implements Serializable {
@@ -18,7 +18,7 @@ public class InvoiceParams implements Serializable {
 	private Date from;
 	private Date to;
 	private List<InvoiceType> type;
-	private InvoiceCommunicationType communicationType;
+	private OldInvoiceCommunicationType communicationType;
 	private InvoiceCommunicationStatus communicationStatus;
 	private int page;
 	private int perPage;
@@ -89,11 +89,11 @@ public class InvoiceParams implements Serializable {
 		return this;
 	}
 	
-	public InvoiceCommunicationType getCommunicationType() {
+	public OldInvoiceCommunicationType getCommunicationType() {
 		return communicationType;
 	}
 
-	public InvoiceParams setCommunicationType(InvoiceCommunicationType communicationType) {
+	public InvoiceParams setCommunicationType(OldInvoiceCommunicationType communicationType) {
 		this.communicationType = communicationType;
 		return this;
 	}

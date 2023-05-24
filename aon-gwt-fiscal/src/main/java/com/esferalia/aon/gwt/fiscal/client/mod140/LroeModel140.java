@@ -28,7 +28,7 @@ import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationStatus;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
@@ -124,6 +124,10 @@ public class LroeModel140 extends DockLayoutPanel {
 			.addItem(new AonMenuItem().setTitle("8.1 Alta"))
 			.addItem(new AonMenuItem().setTitle("8.2 Baja"));
 	
+	private final AonMenuItem utilities = new AonMenuItem()
+			.setTitle("Utilidades")
+			.addItem(new AonMenuItem().setTitle("Anular Factura Emitida"));
+	
 	protected FormPanel diskForm = new FormPanel("_blank");
 	private FiscalModel model;
 	private FiscalModelModuleOptions<FiscalModel> options;
@@ -183,7 +187,7 @@ public class LroeModel140 extends DockLayoutPanel {
 		this.filterParams = new InvoiceParams()
 			.setDomain(getOptions().getDomain())
 			.setType(InvoiceType.SALES)
-			.setCommunicationType(InvoiceCommunicationType.LROE_1_1);
+			.setCommunicationType(OldInvoiceCommunicationType.LROE_1_1);
 	}
 	
 	private AonMenu getMenu() {
@@ -196,6 +200,7 @@ public class LroeModel140 extends DockLayoutPanel {
 		aonMenu.addItem(chapter6);
 		aonMenu.addItem(chapter7);
 		aonMenu.addItem(chapter8);
+//		aonMenu.addItem(utilities);
 		return aonMenu;
 	}
 		
@@ -442,7 +447,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.LROE_1_1)
+				.setCommunicationType(OldInvoiceCommunicationType.LROE_1_1)
 				.setType(InvoiceType.SALES);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
@@ -455,7 +460,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.LROE_1_2)
+				.setCommunicationType(OldInvoiceCommunicationType.LROE_1_2)
 				.setType(InvoiceType.SALES);
 				invoiceGrid.setFilterParams(getFilterParams());
 			}
@@ -468,7 +473,7 @@ public class LroeModel140 extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				getFilterParams()
-				.setCommunicationType(InvoiceCommunicationType.LROE_2_1)
+				.setCommunicationType(OldInvoiceCommunicationType.LROE_2_1)
 				.setType(InvoiceType.PURCHASE)
 				.addType(InvoiceType.EXPENSES);
 				invoiceGrid.setFilterParams(getFilterParams());
@@ -560,7 +565,7 @@ public class LroeModel140 extends DockLayoutPanel {
 					getModel140().getBreakdownPanel().setWidget(vp);
 					if(alta) {
 						selectedInvoices.stream().forEach(invoice -> {
-							if(invoice.getInvoiceInfo().getStatus().isAccepted() && !InvoiceCommunicationType.LROE_2_1.equals(getFilterParams().getCommunicationType())) {
+							if(invoice.getInvoiceInfo().getStatus().isAccepted() && !OldInvoiceCommunicationType.LROE_2_1.equals(getFilterParams().getCommunicationType())) {
 								String message = "La factura " + invoice.getReferenceCode() + " ya est\u00e1 enviada.";
 								vp.add(getErrorMessage(message));
 							} else {

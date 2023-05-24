@@ -281,9 +281,9 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 			}
 		};
 
-		dataGrid.addColumn(checkColumn, new CheckboxHeader(selectionModel, dataProvider));
+		dataGrid.addColumn(checkColumn, new CheckboxHeader(selectionModel));
 		dataGrid.setColumnWidth(checkColumn, 3, Unit.PCT);
-
+		
 		/** code Column **/
 		Column<Invoice, String> codeColumn = new Column<Invoice, String>(new TextCell()) {
 
@@ -471,18 +471,15 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 	public final class CheckboxHeader extends Header {
 
 	    private final MultiSelectionModel<Invoice> selectionModel;
-	    private final ListDataProvider<Invoice> provider;
 
-	    public CheckboxHeader(MultiSelectionModel<Invoice> selectionModel,
-	    		ListDataProvider<Invoice> provider) {
+	    public CheckboxHeader(MultiSelectionModel<Invoice> selectionModel) {
 	        super(new CheckboxCell());
 	        this.selectionModel = selectionModel;
-	        this.provider = provider;
 	    }
 
 	    @Override
 	    public Boolean getValue() {
-	        boolean allItemsSelected = selectionModel.getSelectedSet().size() == provider
+	        boolean allItemsSelected = selectionModel.getSelectedSet().size() == dataProvider
 	                .getList().size();
 	        return allItemsSelected;
 	    }
@@ -493,8 +490,8 @@ public abstract class InvoiceGrid extends ResizeComposite implements RequiresRes
 	        Boolean isChecked = input.isChecked();
 //	        parent.getSend().setVisible(isChecked);
 //	        parent.getBaja().setVisible(isChecked);
-	        for (Invoice element : provider.getList()) {
-	            selectionModel.setSelected(element, isChecked);
+	        for (Invoice element : dataProvider.getList()) {
+	        	selectionModel.setSelected(element, isChecked);
 	            if(isChecked){
 					selFiles.add(element);
 				}

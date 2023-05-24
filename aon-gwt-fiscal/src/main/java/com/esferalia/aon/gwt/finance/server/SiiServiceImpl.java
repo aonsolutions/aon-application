@@ -20,7 +20,7 @@ import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
@@ -104,7 +104,9 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
     }
 
 	@Override
-	public ICResponse altaLroe140(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
+	public ICResponse altaLroe140(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
+		
+		
 		try {
 			Domain domain = AON.getDomain(domainName, domainId, user);
 			Company company = AON.getCompanyForDomain(domainName, domainId, user);
@@ -134,7 +136,7 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 					.setTbaiConfiguration(tbaiConfiguration)
 					.setType(communicationType);
 			
-			if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
+			if(OldInvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
 				TbaiMain tbai = new TbaiMain();
 				tbai.createEmisionLROE(company, invoice, tbaiConfiguration);
 				return new ICResponse().setError(false);
@@ -156,17 +158,17 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 	}
 
 	@Override
-	public String bajaLroe140(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) throws Exception {
+	public String bajaLroe140(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) throws Exception {
 		try {
 			Domain domain = AON.getDomain(domainName, domainId, user);
 			Company company = AON.getCompanyForDomain(domainName, domainId, user);
 			Person person = AON.getPerson(domain, user, f -> f.getIdProperty().eq(company.getId()));
 			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
 			
-			if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
+			if(OldInvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
 				TbaiMain tbai = new TbaiMain();
 				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
-			} else if(InvoiceCommunicationType.LROE_2_1.equals(communicationType)) {
+			} else if(OldInvoiceCommunicationType.LROE_2_1.equals(communicationType)) {
 				LROE140_2_1 lroe = new LROE140_2_1();
 				lroe.anulacion(person, tbaiConfiguration, invoice);
 			}
@@ -179,7 +181,7 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 	}
 	
 	@Override
-	public ICResponse altaLroe240(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
+	public ICResponse altaLroe240(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
 		try {
 			Domain domain = AON.getDomain(domainName, domainId, user);
 			Company company = AON.getCompanyForDomain(domainName, domainId, user);
@@ -197,7 +199,7 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 					.setTbaiConfiguration(tbaiConfiguration)
 					.setType(communicationType);
 			
-			if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
+			if(OldInvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
 				TbaiMain tbai = new TbaiMain();
 				tbai.createEmisionLROE(company, invoice, tbaiConfiguration);
 				return new ICResponse().setError(false);
@@ -219,17 +221,17 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 	}
 
 	@Override
-	public String bajaLroe240(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) throws Exception {
+	public String bajaLroe240(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) throws Exception {
 		try {
 			Domain domain = AON.getDomain(domainName, domainId, user);
 			Company company = AON.getCompanyForDomain(domainName, domainId, user);
 			TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
 			Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
 			tbaiConfiguration.setCertificate(cert);
-			if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
+			if(OldInvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
 				TbaiMain tbai = new TbaiMain();
 				tbai.createAnulacionTBAI(company, invoice, tbaiConfiguration);
-			} else if(InvoiceCommunicationType.LROE_2_1.equals(communicationType)) {
+			} else if(OldInvoiceCommunicationType.LROE_2_1.equals(communicationType)) {
 				LROE240_2 lroe = new LROE240_2();
 				lroe.anulacion(company, tbaiConfiguration, invoice);
 			}
@@ -241,27 +243,27 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 	}
 	
 	@Override
-	public String altaSii(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
+	public String altaSii(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
 		return null;
 	}
 
 	@Override
-	public String bajaSii(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
+	public String bajaSii(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
 		return null;
 	}
 
 	@Override
-	public Boolean refresh140(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
+	public Boolean refresh140(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
 		Domain domain = AON.getDomain(domainName, domainId, user);
 		Company company = AON.getCompanyForDomain(domainName, domainId, user);
 		Person person = AON.getPerson(domain, user, f -> f.getIdProperty().eq(company.getId()));
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
 		Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
 		tbaiConfiguration.setCertificate(cert);
-		if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
+		if(OldInvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
 		    LROE140_1_1 lroe = new LROE140_1_1();
 		    return lroe.consulta(tbaiConfiguration, person, invoice);
-		} else if(InvoiceCommunicationType.LROE_2_1.equals(communicationType)) {
+		} else if(OldInvoiceCommunicationType.LROE_2_1.equals(communicationType)) {
 		    LROE140_2_1 lroe = new LROE140_2_1();
             return lroe.consulta(tbaiConfiguration, person, invoice);   
 		}
@@ -269,17 +271,17 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 	}
 
 	@Override
-	public Boolean refresh240(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
+	public Boolean refresh240(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
 		Domain domain = AON.getDomain(domainName, domainId, user);
 		Company company = AON.getCompanyForDomain(domainName, domainId, user);
 		TbaiConfiguration tbaiConfiguration = AON.getTbaiConfiguration(domain, user);
 		Certificate cert = AON.getCertificates(domain, new User().setLogin(user), f -> f.getIdProperty().eq(aeatParams.getCertificateId())).findFirst().orElse(new Certificate());
 		tbaiConfiguration.setCertificate(cert);
 
-		if(InvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
+		if(OldInvoiceCommunicationType.LROE_1_1.equals(communicationType)) {
 		    LROE240_1_1 lroe = new LROE240_1_1();
 	        return lroe.consulta(tbaiConfiguration, company, invoice);  
-        } else if(InvoiceCommunicationType.LROE_2.equals(communicationType)) {
+        } else if(OldInvoiceCommunicationType.LROE_2.equals(communicationType)) {
             LROE240_2 lroe = new LROE240_2();
             return lroe.consulta(tbaiConfiguration, company, invoice);   
         }

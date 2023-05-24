@@ -10,7 +10,7 @@ public class InvoiceBatch implements Serializable{
 	private Integer id;
 	private Integer domain;
 	private Date date;
-	private InvoiceCommunicationType type;
+	private OldInvoiceCommunicationType type;
 	private InvoiceCommunicationOperation operation;
 	private Integer dataResponse;
 	private String creationUser;
@@ -42,11 +42,11 @@ public class InvoiceBatch implements Serializable{
 		return this;
 	}
 	
-	public InvoiceCommunicationType getType() {
+	public OldInvoiceCommunicationType getType() {
 		return type;
 	}
 	
-	public InvoiceBatch setType(InvoiceCommunicationType type) {
+	public InvoiceBatch setType(OldInvoiceCommunicationType type) {
 		this.type = type;
 		return this;
 	}
