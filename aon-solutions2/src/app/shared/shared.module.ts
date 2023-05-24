@@ -30,6 +30,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
 import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
 import { BreadcumbComponent } from './components/breadcumb/breadcumb.component';
+import { TabsComponent } from './components/tabs/tabs.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 
 @NgModule({
@@ -50,7 +52,8 @@ import { BreadcumbComponent } from './components/breadcumb/breadcumb.component';
     IconComponent,
     GlobalHoverDirective,
     DropdownMenuComponent,
-    BreadcumbComponent
+    BreadcumbComponent,
+    TabsComponent
   ],
   imports: [
     CommonModule,
@@ -68,7 +71,8 @@ import { BreadcumbComponent } from './components/breadcumb/breadcumb.component';
     ReactiveFormsModule,
     MatDatepickerModule,
     MatSelectModule,
-    MatMenuModule
+    MatMenuModule,
+    MatTabsModule
   ],
   exports:[
     SidenavHoverDirective,
@@ -85,7 +89,8 @@ import { BreadcumbComponent } from './components/breadcumb/breadcumb.component';
     IconComponent,
     ButtonComponent,
     InputComponent,
-    DropdownMenuComponent
+    DropdownMenuComponent,
+    TabsComponent
   ]
 })
 export class SharedModule { }
