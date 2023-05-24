@@ -17,7 +17,7 @@ import { MatMenuModule } from '@angular/material/menu';
     HomeRoutingModule,
     SharedModule,
     MatButtonModule,
-    MatMenuModule
+    MatMenuModule,
   ]
 })
 export class HomeModule { }

@@ -32,6 +32,8 @@ import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.
 import { BreadcumbComponent } from './components/breadcumb/breadcumb.component';
 import { TabsComponent } from './components/tabs/tabs.component';
 import { MatTabsModule } from '@angular/material/tabs';
+import { FileUploadButtonComponent } from './components/file-upload-button/file-upload-button.component';
+import { DragAndDropDirective } from './directives/drag-and-drop.directive';
 
 
 @NgModule({
@@ -53,7 +55,9 @@ import { MatTabsModule } from '@angular/material/tabs';
     GlobalHoverDirective,
     DropdownMenuComponent,
     BreadcumbComponent,
-    TabsComponent
+    TabsComponent,
+    FileUploadButtonComponent,
+    DragAndDropDirective
   ],
   imports: [
     CommonModule,
@@ -90,7 +94,8 @@ import { MatTabsModule } from '@angular/material/tabs';
     ButtonComponent,
     InputComponent,
     DropdownMenuComponent,
-    TabsComponent
+    TabsComponent,
+    FileUploadButtonComponent
   ]
 })
 export class SharedModule { }
