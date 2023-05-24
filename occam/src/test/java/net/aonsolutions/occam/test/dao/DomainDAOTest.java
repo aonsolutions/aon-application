@@ -143,8 +143,19 @@ class DomainDAOTest extends AbstractOccamTest {
 		assertTrue(optDomain.get().getParent().isEmpty());
 		assertTrue(optDomain.get().getBooking().isEmpty());
 		assertTrue(optDomain.get().getAudit().isEmpty());
+		assertTrue(optDomain.get().getCompany().isEmpty());
 	}
 	
+	@Test
+	void auditTest() {
+		Optional<Domain> optDomain = DomainDAO.get(ctx, p -> p.withName().eq( DOMAIN_NAME ), b -> b.withAudit());
+		assertTrue(optDomain.isPresent());
+		assertTrue(optDomain.get().getAudit().isPresent());
+		assertTrue(optDomain.get().getParent().isEmpty());
+		assertTrue(optDomain.get().getBooking().isEmpty());
+		assertTrue(optDomain.get().getCompany().isEmpty());
+	}
+
 	@Test
 	void usersGetTest() {
 		Optional<Domain> optDomain = DomainDAO.get(ctx

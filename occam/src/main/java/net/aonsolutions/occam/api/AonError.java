@@ -57,6 +57,7 @@ public enum AonError implements Serializable{
 	// ------------------------------------------------------
 	,DOMAIN_NO_BOOKING_INFO("No hay informaci\u00F3n de facturaci\u00F3n.")
 	,DOMAIN_NO_OWNER("No hay informaci\u00F3n sobre el creador del dominio.")
+	,DOMAIN_NOT_FOUND("Dominio \"{0}\" no encontrado.")
 //
 //	// -----------------------------------------------------------
 //	// --------------------- REGISTRY --------------------------

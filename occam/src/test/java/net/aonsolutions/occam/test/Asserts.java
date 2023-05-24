@@ -18,9 +18,9 @@ import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
 import net.aonsolutions.occam.api.config.Geozone;
 import net.aonsolutions.occam.api.config.Registry;
+import net.aonsolutions.occam.api.config.RegistryAddress;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
-import net.aonsolutions.occam.api.invoice.Invoice;
 
 public class Asserts {
 	
@@ -146,7 +146,7 @@ public class Asserts {
 	}
 
 
-	public static void assertEqualsGeoZone(Geozone expected, Geozone actual) {
+	public static void assertEqualsGeozone(Geozone expected, Geozone actual) {
 		assertEqualsNulls(expected, actual,"GeoZone");
 		if (expected != null && actual != null) {
 			assertEquals(expected.getId(), actual.getId(),"Id");
@@ -154,28 +154,6 @@ public class Asserts {
 			assertEquals(expected.getName(), actual.getName(),"Name");
 			assertEquals(expected.getCode(), actual.getCode(),"Code");
 			assertEquals(expected.isSystem(), actual.isSystem(),"System");
-		}
-	}
-
-	public static void assertEqualsInvoice(Invoice expected, Invoice actual) {
-		assertEqualsNulls(expected, actual, "Invoice");
-		if (expected != null && actual != null) {
-			assertEquals(expected.getId(), actual.getId(),"Id");
-			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
-			assertEquals(expected.getType(), actual.getType(),"Type");
-			assertEquals(expected.getSeries(), actual.getSeries(),"Series");
-			assertEquals(expected.getNumber(), actual.getNumber(),"Number");
-			assertEquals(expected.getReferenceCode(), actual.getReferenceCode(),"ReferenceCode");
-			assertEquals(expected.getIssueDate(), actual.getIssueDate(),"IssueDate");
-			assertEquals(expected.getTaxDate(), actual.getTaxDate(),"TaxDate");
-			assertEquals(expected.isConfidential(), actual.isConfidential(),"Confidential");
-			assertEquals(expected.getRegistry(), actual.getRegistry(),"Registry");
-			assertEquals(expected.getRegistryDocument(), actual.getRegistryDocument(),"RegistryDocument");
-			assertEquals(expected.getRegistryDocumentType(), actual.getRegistryDocumentType(),"RegistryDocumentType");
-			assertEquals(expected.getRegistryDocumentCountry(), actual.getRegistryDocumentCountry(),"RegistryDocumentCountry");
-			assertEquals(expected.getRegistryName(), actual.getRegistryName(),"RegistryName");
-			assertEqualsAudit(expected.getAudit().orElse(null), actual.getAudit().orElse(null));
-			assertEqualsActivity(expected.getActivity().orElse(null), actual.getActivity().orElse(null));
 		}
 	}
 
@@ -215,4 +193,25 @@ public class Asserts {
 		}
 	}
 	
+	public static void assertEqualsRegistryAddress (RegistryAddress expected, RegistryAddress actual) {
+		assertEqualsNulls( expected, actual, "RegistryAddress");
+		if (expected != null ) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getRegistry(), actual.getRegistry(),"Registry");
+			assertEquals(expected.isMain() , actual.isMain(),"main");
+			assertEquals(expected.getRecipient(), actual.getRecipient(),"Recipient");	
+			assertEquals(expected.getStreetType(), actual.getStreetType(),"StreetType");
+			assertEquals(expected.getAddress(), actual.getAddress(),"Address");	
+			assertEquals(expected.getNumber(), actual.getNumber(),"Number");
+			assertEquals(expected.getAddress2(), actual.getAddress2(),"Address2");
+			assertEquals(expected.getAddress3(), actual.getAddress3(),"Address3");
+			assertEqualsGeozone(expected.getGeozone().orElse(null), actual.getGeozone().orElse(null));
+			assertEqualsGeozone(expected.getParentGeozone().orElse(null), actual.getParentGeozone().orElse(null));
+			assertEquals(expected.getZip(), actual.getZip(),"Zip");
+			assertEquals(expected.getCity(), actual.getCity(),"City");	
+			assertEquals(expected.getAlias(), actual.getAlias(),"Alias");
+			assertEquals(expected.getMunicipalityCode(), actual.getMunicipalityCode(),"MunicipalityCode");	
+		}
+	}
 }

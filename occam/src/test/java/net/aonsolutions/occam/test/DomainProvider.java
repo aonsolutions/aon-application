@@ -1,6 +1,7 @@
 package net.aonsolutions.occam.test;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.AppParam.APP_PARAM;
 import static com.esferalia.aon.jooq.tables.ApplicationUser.APPLICATION_USER;
 import static com.esferalia.aon.jooq.tables.ApplicationUserProfile.APPLICATION_USER_PROFILE;
 import static com.esferalia.aon.jooq.tables.Company.COMPANY;
@@ -18,14 +19,19 @@ import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 import static com.esferalia.aon.jooq.tables.Workplace.WORKPLACE;
 
+import java.util.LinkedList;
+import java.util.Optional;
+
 import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.accounting.Account;
+import net.aonsolutions.occam.api.config.ApplicationParameter;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.Geozone;
 import net.aonsolutions.occam.api.config.Registry;
 import net.aonsolutions.occam.api.config.RegistryAddress;
 import net.aonsolutions.occam.api.constants.AonApp;
 import net.aonsolutions.occam.api.constants.AonModule;
+import net.aonsolutions.occam.api.constants.AppParam;
 import net.aonsolutions.occam.api.constants.Country;
 import net.aonsolutions.occam.api.constants.DocumentType;
 import net.aonsolutions.occam.api.constants.SecurityLevel;
@@ -34,7 +40,10 @@ import net.aonsolutions.occam.dao.DomainDAO;
 import net.aonsolutions.occam.dao.GeozoneDAO;
 import net.aonsolutions.occam.test.faker.AonFaker;
 import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.watson.client.Pair;
+import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.server.AonEnumUtils;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 class DomainProvider {
 	
@@ -147,11 +156,14 @@ class DomainProvider {
 			.set(RADDRESS.ADDRESS3,address.getAddress3())
 			.set(RADDRESS.ZIP,address.getZip())
 			.set(RADDRESS.CITY,address.getCity())
-			.set(RADDRESS.GEOZONE,address.getGeozone() == null ? null : address.getGeozone().getId())	
+			.set(RADDRESS.GEOZONE, AonObjectUtils.<Geozone,Integer>ifOptionalPresent(address.getGeozone(), g -> g.getId()) )	
 			.set(RADDRESS.ALIAS,address.getAlias())
 			.set(RADDRESS.MUNICIPALITY_CODE,address.getMunicipalityCode())
 			.returning(RADDRESS.ID).fetchOne()
 			.getId();
+		
+		
+
 		address.setId(addressId);
 
 		int newScopeId = ctx.getDslContext().insertInto(SCOPE)
@@ -215,6 +227,7 @@ class DomainProvider {
 		ctx.log().info("Workplace insertada correctamente");
 		
 		insertAccounts(ctx, newDomainId);
+		insertAppParams(ctx, newDomainId);
 		
 		Domain domain = DomainDAO.get(ctx, f -> f.withId().eq(newDomainId), b -> b).get();
 		ctx.log().info("Dominio " + domain.getName() + " insertado correctamente");
@@ -1442,7 +1455,7 @@ class DomainProvider {
 	
 	private static void insertAccounts(AONContext ctx, int domain) {
 		for (Account acc : ACCOUNTS) {
-			if (!AccountDAO.get(ctx, f -> f.withCode().eq(acc.getCode()), b -> b).isPresent() ) {
+			if (!AccountDAO.get(ctx, acc.getCode()).isPresent() ) {
 				ctx.getDslContext()
 					.insertInto(ACCOUNT)
 					.set(ACCOUNT.DOMAIN,domain )
@@ -1455,4 +1468,39 @@ class DomainProvider {
 		}
 	}
 	
+	private static void insertAppParams(AONContext ctx, int domain) {
+		LinkedList<Pair<AppParam,String>> pairs = new LinkedList<>();
+		pairs.add(Pair.of(AppParam.ACC_DEFAULT_CASH_ACC,"570000000"));
+		pairs.add(Pair.of(AppParam.ACC_DEFAULT_CHARGED_RET_ACC,"475100000"));
+		pairs.add(Pair.of(AppParam.ACC_DEFAULT_CHARGED_VAT_ACC,"477000000"));
+		pairs.add(Pair.of(AppParam.ACC_DEFAULT_COMPANY_SOC_INS_ACC,"642000000"));
+		pairs.add(Pair.of(AppParam.ACC_DEFAULT_FINAN_EXPENSES_ACC,"669000000"));
+		pairs.add(Pair.of(AppParam.ACC_DEFAULT_PAID_RET_ACC,"473000000"));
+		pairs.add(Pair.of(AppParam.ACC_DEFAULT_PAID_VAT_ACC,"472000000"));
+		pairs.add(Pair.of(AppParam.ACC_DEFAULT_PENDING_SALARY_ACC,"465000000"));
+		pairs.add(Pair.of(AppParam.ACC_DEFAULT_PURCHASE_ACC,"600000000"));
+		pairs.add(Pair.of(AppParam.ACC_DEFAULT_SALARY_ACC,"640000000"));
+		pairs.add(Pair.of(AppParam.ACC_DEFAULT_SALES_ACC,"700000000"));
+		pairs.add(Pair.of(AppParam.ACC_DEFAULT_SOCIAL_INSURANCE_ACC,"476000000"));
+		pairs.add(Pair.of(AppParam.ACC_DEFAULT_PREPAYMENT_ACC,"555900000"));
+		pairs.add(Pair.of(AppParam.ACC_VAT_NEGATIVE_ADJUST_ACC,"634100000"));
+		pairs.stream()
+			.map(p -> new ApplicationParameter().setDomain(domain).setName(p.getLeft()).setValue(p.getRight()))
+			.map(p -> {
+				Optional<Account> account = AccountDAO.get(ctx, p.getValue());
+				if (account.isPresent()) {
+					p.setValue(AonNumberUtils.toString( account.get().getId())); 	
+					return p;
+				}
+				return null;
+			})
+			.filter(p -> p != null)
+			.forEach( app -> ctx.getDslContext()
+					.insertInto(APP_PARAM)
+						.set(APP_PARAM.DOMAIN,domain)
+						.set(APP_PARAM.NAME,app.getName().toString())
+						.set(APP_PARAM.VALUE,app.getValue())
+					.execute()
+		);
+	};
 }

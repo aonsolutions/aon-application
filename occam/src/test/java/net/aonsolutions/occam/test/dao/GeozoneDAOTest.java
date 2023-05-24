@@ -98,7 +98,7 @@ class GeozoneDAOTest extends AbstractOccamTest {
 			,b -> b
 		);
 		assertTrue(optActual.isPresent(),"Domain not found!");
-		Asserts.assertEqualsGeoZone(expected, optActual.get());
+		Asserts.assertEqualsGeozone(expected, optActual.get());
 	}
 	
 	@Test()

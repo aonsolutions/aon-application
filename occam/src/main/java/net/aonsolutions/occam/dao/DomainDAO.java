@@ -31,7 +31,6 @@ import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
-import net.aonsolutions.occam.api.config.Registry;
 import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.api.filter.AonFacade.AonFillerBuilder;
@@ -317,13 +316,11 @@ public class DomainDAO {
 		
 		@Override
 		public Domain build(Record rec) {
-			
-			Function<Record, RecordMapper<Domain>> f = a -> new RecordMapper<Domain>(rec, Domain::new );
+			Function<Record, RecordMapper<Domain>> f = a -> new RecordMapper<Domain>(
+				rec
+				,() -> new FillerDAO.DomainFiller().apply(rec, DOMAIN) 
+			);
 			return f
-				.andThen( mapper -> {
-					new FillerDAO.DomainFiller().apply(mapper.getRecord(), mapper.get());
-					return mapper;
-				})
 				.andThen( withCompany )
 				.andThen( withBooking )
 				.andThen( withAudit )
@@ -352,7 +349,7 @@ public class DomainDAO {
 		@Override
 		public DomainBuilder<Function<Record, RecordMapper<Domain>>> withCompany() {
 			withCompany = mapper -> {
-				mapper.get().setCompany( new RegistryFiller( ).apply(mapper.getRecord(), new Registry()) );
+				mapper.get().setCompany( new RegistryFiller( ).apply(mapper.getRecord(), REGISTRY ) );
 				return mapper;
 			};
 			return this;
@@ -360,7 +357,9 @@ public class DomainDAO {
 		@Override
 		public DomainBuilder<Function<Record, RecordMapper<Domain>>> withParentDomain() {
 			withParent = mapper -> {
-				mapper.get().setParent(new FillerDAO.DomainFiller(PARENT_DOMAIN).apply(mapper.getRecord(), new Domain()));
+				if ( FillerUtils.getValue(mapper.getRecord(), DOMAIN.PARENT) != null) {
+					mapper.get().setParent(new FillerDAO.DomainFiller().apply(mapper.getRecord(), PARENT_DOMAIN));
+				}
 				return mapper;
 			};
 			return this;

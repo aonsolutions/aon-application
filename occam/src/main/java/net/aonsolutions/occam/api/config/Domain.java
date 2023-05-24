@@ -146,7 +146,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return this;
 	}
 
-	// ---------------------------------------------------------- HasSelector<Invoice>
+	// ---------------------------------------------------------- HasSelector<Domain>
 	@Override
 	public boolean isSelected() {
 		return selected;

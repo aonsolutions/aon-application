@@ -8,7 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -141,7 +143,8 @@ class SecurityDAOTest extends AbstractOccamTest {
 		falseCondition = SecurityDAO.getUserScopesCondition(ctx, DOMAIN.SCOPE, Integer.MIN_VALUE);
 		assertEquals(falseCondition, DSL.falseCondition());
 		
-		Collection<Scope> scopes = SecurityDAO.getUserScopes (ctx, user);
+		Collection<Scope> scopes = SecurityDAO.getUserScopes (ctx, user)
+				.collect(Collectors.toCollection(LinkedList::new));
 		Asserts.assertNotEmpty(scopes ,"Empty collection");
 		
 		IllegalAccessError e = assertThrows( IllegalAccessError.class, () -> SecurityDAO.getUserScopes (ctx, null));

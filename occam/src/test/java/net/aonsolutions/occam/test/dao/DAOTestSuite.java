@@ -11,7 +11,6 @@ import org.junit.platform.suite.api.Suite;
 	,GeozoneDAOTest.class
 	,ConfigurationDAOTest.class
 	,DomainDAOTest.class
-	,InvoiceDAOTest.class
 })
 public class DAOTestSuite {
 

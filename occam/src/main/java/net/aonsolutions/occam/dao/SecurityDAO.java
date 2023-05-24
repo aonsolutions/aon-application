@@ -4,12 +4,9 @@ import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 import static com.esferalia.aon.jooq.tables.User.USER;
 import static com.esferalia.aon.jooq.tables.UserScope.USER_SCOPE;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -22,8 +19,10 @@ import org.jooq.SelectWithTiesAfterOffsetStep;
 import org.jooq.impl.DSL;
 
 import net.aonsolutions.occam.api.AONContext;
+import net.aonsolutions.occam.api.AonCoreException;
 import net.aonsolutions.occam.api.AonError;
 import net.aonsolutions.occam.api.Filter.Property;
+import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
 import net.aonsolutions.occam.api.filter.UserFacade.UserBuilder;
@@ -162,14 +161,13 @@ public class SecurityDAO {
 	public static Condition getUserScopesCondition (AONContext ctx, Field<Integer> field, User user) {
 		if (user == null) return DSL.falseCondition(); 
 		Integer[] ids = getUserScopes(ctx,user)
-			.stream()
 			.map( Scope::getId )
 			.toArray(s -> new Integer[s]);
 		return AonArrayUtils.isEmpty(ids)
 				? DSL.trueCondition() 
 				: field.isNull().or(field.in(ids));
 	}
-	public static Collection<Scope> getUserScopes (AONContext ctx, User user) {
+	public static Stream<Scope> getUserScopes (AONContext ctx, User user) {
 		ctx.checkRead();
 		if (user == null) throw new IllegalAccessError(AonError.USER_INVALID.getMessage());
 		return ctx.getDslContext()
@@ -179,7 +177,20 @@ public class SecurityDAO {
 			.where(USER_SCOPE.USER_ID.equal(user.getId()))
 			.fetch()
 			.stream()
-			.map( r -> new ScopeFiller().apply(r) )
-			.collect(Collectors.toCollection(LinkedHashSet::new));
+			.map( r -> new ScopeFiller().apply(r) );
 	} 
+
+	public static Condition getInheritanceCondition(AONContext ctx, Field<Integer> field) {
+		return field.in(getInheritanceDomains(ctx));
+	}
+	public static Integer[] getInheritanceDomains(AONContext ctx) {
+		Optional<Domain> optDomain = DomainDAO.get(ctx, f -> f.withName().eq(ctx.getDomainName()), b -> b.withParentDomain());
+		if (!optDomain.isPresent()) throw new AonCoreException(AonError.DOMAIN_NOT_FOUND.format(ctx.getDomainName()) );
+		Domain domain = optDomain.get();
+		if (domain.isEnableHeredity() && domain.getParent().isPresent()) {
+			Domain parent = domain.getParent().get();
+			return new Integer[]{domain.getId(),parent.getId()};	
+		}
+		return new Integer[]{domain.getId()};
+	}
 }

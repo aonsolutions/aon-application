@@ -23,6 +23,7 @@ import net.aonsolutions.occam.api.filter.AccountFacade.AccountFilter;
 import net.aonsolutions.occam.api.filter.AccountFacade.AccountFilters;
 import net.aonsolutions.occam.api.filter.AccountFacade.CompositeAccountBuilder;
 import net.aonsolutions.occam.api.filter.AonFacade.AonFillerBuilder;
+import net.aonsolutions.watson.client.util.AonStringUtils;
 
 public class AccountDAO {
 
@@ -51,7 +52,7 @@ public class AccountDAO {
 			SelectBuilder selectBuilder = new SelectBuilder( ctx );
 			FromBuilder fromBuilder = new  FromBuilder( selectBuilder.build() );
 			SelectJoinStep<Record> from = fromBuilder.build();
-			WhereBuilder whereBuilder = new WhereBuilder(from,filter);
+			WhereBuilder whereBuilder = new WhereBuilder(ctx, from,filter);
 			LimitBuilder limitBuilder = new  LimitBuilder( whereBuilder.build() );
 			fillerBuilder = new  FillerBuilder();
 			query =  limitBuilder.build();
@@ -109,8 +110,9 @@ public class AccountDAO {
 	private static class WhereBuilder implements AccountBuilder<SelectLimitStep<Record>> {
 		private SelectLimitStep<Record> where;
 		
-		public WhereBuilder(SelectJoinStep<Record> from, AccountFilter filter) {
-			where = from.where( getWhere(filter) );
+		public WhereBuilder( AONContext ctx, SelectJoinStep<Record> from, AccountFilter filter) {
+			where = from.where( SecurityDAO.getInheritanceCondition(ctx, ACCOUNT.DOMAIN ) )
+					.and( getWhere(filter) );
 		}
 		
 		@Override
@@ -182,14 +184,27 @@ public class AccountDAO {
 		return new AccountSelectBuilderDAO(ctx,filter);
 	}
 
-	public static Optional<Account> get(AONContext ctx, AccountFilter filter, AccountBuilderFactory factory){
-		return getStream(ctx, filter, factory).findFirst();
+	public static Optional<Account> get(AONContext ctx, Integer accountId){
+		if (accountId == null) return Optional.empty();
+		return getStream(ctx, f -> f.withId().eq(accountId)).findFirst();
 	}
 
+	public static Optional<Account> get(AONContext ctx, String code){
+		if (AonStringUtils.isBlank(code)) return Optional.empty();
+		return getStream(ctx, f -> f.withCode().eq(code)).findFirst();
+	}
+
+	public static Optional<Account> get(AONContext ctx, AccountFilter filter){
+		return getStream(ctx, filter).findFirst();
+	}
+
+	public static Stream<Account> getStream(AONContext ctx, AccountFilter filter){
+		return getStream(ctx,filter, f -> f);
+	}
 	public static Stream<Account> getStream(AONContext ctx, AccountFilter filter, AccountBuilderFactory factory){
 		ctx.checkRead();
-		DAOUtils.checkNullFactory(factory);
 		DAOUtils.checkNullFilter(filter);
+		DAOUtils.checkNullFactory(factory);
 		return factory.create( getBuilder(ctx,filter)).build();
 	}
 }

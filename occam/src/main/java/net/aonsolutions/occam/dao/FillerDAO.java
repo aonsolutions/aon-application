@@ -1,8 +1,5 @@
 package net.aonsolutions.occam.dao;
 
-import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
-import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
-
 import java.util.function.BiFunction;
 
 import org.jooq.Record;
@@ -22,19 +19,10 @@ class FillerDAO {
 		
 	}
 	
-	static class DomainFiller implements BiFunction<Record, Domain, Domain> {
-		private com.esferalia.aon.jooq.tables.Domain table;
-		
-		public DomainFiller() {
-			this.table = DOMAIN;
-		}
-		public DomainFiller(com.esferalia.aon.jooq.tables.Domain table) {
-			this.table = table;
-		}
-		
+	static class DomainFiller implements BiFunction<Record, com.esferalia.aon.jooq.tables.Domain, Domain> {
 		@Override
-		public Domain apply(Record rec, Domain domain) {
-			return domain
+		public Domain apply(Record rec, com.esferalia.aon.jooq.tables.Domain table) {
+			return new Domain()
 				.setId(FillerUtils.getValue(rec,table.ID))
 				.setName(FillerUtils.getValue(rec,table.NAME))
 				.setDescription(FillerUtils.getValue(rec,table.DESCRIPTION))
@@ -48,18 +36,9 @@ class FillerDAO {
 		
 	}
 	
-	static class RegistryFiller implements BiFunction<Record, Registry, Registry> {
-		private com.esferalia.aon.jooq.tables.Registry table;
-		
-		public RegistryFiller() {
-			this.table = REGISTRY;
-		}
-		public RegistryFiller(com.esferalia.aon.jooq.tables.Registry table) {
-			this.table = table;
-		}
-		
+	static class RegistryFiller implements BiFunction<Record, com.esferalia.aon.jooq.tables.Registry, Registry> {
 		@Override
-		public Registry apply(Record rec, Registry registry) {
+		public Registry apply(Record rec, com.esferalia.aon.jooq.tables.Registry table) {
 			return new Registry()
 				.setId(FillerUtils.getValue(rec, table.ID))
 				.setDomain(FillerUtils.getValue(rec, table.DOMAIN))

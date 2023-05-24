@@ -11,7 +11,6 @@ import net.aonsolutions.watson.server.AonObjectUtils;
 public class Account implements Serializable, HasSelector<Account>,HasDirtyFlag<Account>{
 
 	private static final long serialVersionUID = 3940903705871158256L;
-//	private static final String EMPTY_CODE = "?????????";
 
 	private Integer id;
 	private Integer domain;
@@ -77,18 +76,6 @@ public class Account implements Serializable, HasSelector<Account>,HasDirtyFlag<
 		this.active = active;
 		return this;
 	}
-
-//	public boolean isEntryEnabled() {
-//		return getLevel() == 5;
-//	}
-//	public int getLevel() {
-//		return AonStringUtils.length(getCode()) > 4 ? 5 : AonStringUtils.length(getCode());
-//	}
-//
-//	public String getFullName() {
-//		return AonStringUtils.defaultIfEmpty(getCode(), EMPTY_CODE) + " - " +
-//				AonStringUtils.defaultIfEmpty(getDescription(), EMPTY_CODE);
-//	}
 
 	@Override
 	public boolean isDirty() {

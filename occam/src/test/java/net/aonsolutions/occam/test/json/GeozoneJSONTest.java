@@ -42,7 +42,7 @@ class GeozoneJSONTest extends AbstractOccamTest {
 		Geozone expected = AonFaker.getGeoZone( );
 		JSONObject json = GeozoneJSON.to(expected);
 		Geozone actual = GeozoneJSON.from(json);
-		Asserts.assertEqualsGeoZone(expected, actual);
+		Asserts.assertEqualsGeozone(expected, actual);
 	}
 	
 	@Test
@@ -68,7 +68,7 @@ class GeozoneJSONTest extends AbstractOccamTest {
 			.forEach(i -> {
 				JSONObject expectedGeoZoneJson = expected.getJSONObject(i);
 				Geozone expectedGeoZone = GeozoneJSON.from( expectedGeoZoneJson );
-				Asserts.assertEqualsGeoZone(actual.get(i), expectedGeoZone);		
+				Asserts.assertEqualsGeozone(actual.get(i), expectedGeoZone);		
 			});
 	}
 

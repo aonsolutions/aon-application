@@ -6,14 +6,15 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
-	ApplicationParameterTest.class
-	,ScopeTest.class
-	,GeozoneTest.class
+	ActivityTest.class
+	,ApplicationParameterTest.class
 	,BookingTest.class
-	,UserTest.class
+	,DomainTest.class
+	,GeozoneTest.class
 	,RegistryTest.class
 	,RegistryAddressTest.class
-	,DomainTest.class
+	,ScopeTest.class
+	,UserTest.class
 })
 public class ConfigTestSuite {
 

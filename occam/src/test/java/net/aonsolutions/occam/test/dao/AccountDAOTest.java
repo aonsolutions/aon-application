@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import net.aonsolutions.occam.api.AonError;
 import net.aonsolutions.occam.api.accounting.Account;
+import net.aonsolutions.occam.api.filter.AccountFacade.AccountFilter;
 import net.aonsolutions.occam.dao.AccountDAO;
 import net.aonsolutions.occam.dao.DAOUtils;
 import net.aonsolutions.occam.test.AbstractOccamTest;
@@ -29,26 +30,26 @@ class AccountDAOTest extends AbstractOccamTest {
 
 	@Test()
 	void selectOneTest() {
-		Optional<Account> account = AccountDAO.get(ctx,p -> p.withCode().eq( ACCOUNT_CODE ), b -> b);
+		Optional<Account> account = AccountDAO.get(ctx,p -> p.withCode().eq( ACCOUNT_CODE ));
 		assertTrue(account.isPresent());
 	}
 
 	@Test()
 	void selectNoneTest() {
-		Optional<Account> account = AccountDAO.get(ctx,p -> p.withId().eq( Integer.MIN_VALUE ), b -> b);
+		Optional<Account> account = AccountDAO.get(ctx,p -> p.withId().eq( Integer.MIN_VALUE ));
 		assertFalse(account.isPresent());
 	}
 
 	@Test()
 	void selectDirtyTest() {
-		Optional<Account> account = AccountDAO.get(ctx,p -> p.withCode().eq( ACCOUNT_CODE ), b -> b);
+		Optional<Account> account = AccountDAO.get(ctx,p -> p.withCode().eq( ACCOUNT_CODE ));
 		assertTrue(account.isPresent());
 		assertFalse(account.get().isDirty(), "Dirty flag not set" );
 	}
 
 	@Test()
 	void emptyFilterTest() {
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> AccountDAO.get(ctx, null, b -> b));
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> AccountDAO.get(ctx, (AccountFilter) null));
 		assertEquals(DAOUtils.NULL_FILTER_MSG, e.getMessage());
 	}
 
@@ -62,14 +63,13 @@ class AccountDAOTest extends AbstractOccamTest {
 	void selectStreamTest() {
 		Stream<Account> domain = AccountDAO.getStream(ctx
 			,p -> p.withCode().eq( ACCOUNT_CODE )
-			,b -> b
 		);
 		assertTrue(domain.findAny().isPresent());
 	}
 	
 	@Test
 	void streamLimitTest() {
-		long max = AccountDAO.getStream(ctx, p -> p.withDescription().like("%a%"), b -> b)
+		long max = AccountDAO.getStream(ctx, p -> p.withDescription().like("%a%"))
 			.limit(10)
 			.count();
 		int rows = AonRandom.getInt(0, (int) max);
@@ -82,8 +82,7 @@ class AccountDAOTest extends AbstractOccamTest {
 	@Test
 	void filterTest() {
 		Optional<Account> optAccount = AccountDAO.get(ctx
-			,p -> p.withCode().eq( ACCOUNT_CODE )
-			,b -> b);
+			,p -> p.withCode().eq( ACCOUNT_CODE ));
 		assertTrue(optAccount.isPresent());
 		Account expected = optAccount.get();
 		Optional<Account> optActual = AccountDAO.get(ctx
@@ -93,7 +92,6 @@ class AccountDAOTest extends AbstractOccamTest {
 				.and(p.withDescription().eq( expected.getDescription() ))
 				.and(p.withAlias().eq( expected.getAlias() ))
 				.and(p.withActive().eq( AonEnumUtils.getByte(expected.isActive())))
-			,b -> b
 		);
 		assertTrue(optActual.isPresent(),"Account not found!");
 		Asserts.assertEqualsAccount(expected, optActual.get());
@@ -103,7 +101,7 @@ class AccountDAOTest extends AbstractOccamTest {
 	void denyReadOneTest() {
 		try {
 			ctx.denyRead();
-			SecurityException e = assertThrows(SecurityException.class, () -> AccountDAO.get(ctx,p -> p.withCode().eq( ACCOUNT_CODE ), b -> b));
+			SecurityException e = assertThrows(SecurityException.class, () -> AccountDAO.get(ctx,p -> p.withCode().eq( ACCOUNT_CODE )));
 			assertEquals(AonError.READ_FORBIDDEN.getMessage(), e.getMessage());
 		} finally {
 			ctx.allowRead();

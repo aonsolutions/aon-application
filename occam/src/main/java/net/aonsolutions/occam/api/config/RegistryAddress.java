@@ -2,6 +2,7 @@ package net.aonsolutions.occam.api.config;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 
 import net.aonsolutions.occam.api.HasDirtyFlag;
 import net.aonsolutions.occam.api.HasSelector;
@@ -32,7 +33,6 @@ public class RegistryAddress implements Serializable, HasSelector<RegistryAddres
 
 	
 	private boolean dirty;
-	private boolean removed;
 	private boolean selected;
 	
 	public Integer getId() {
@@ -164,8 +164,8 @@ public class RegistryAddress implements Serializable, HasSelector<RegistryAddres
 		return this;
 	}
 
-	public Geozone getGeozone() {
-		return geozone;
+	public Optional<Geozone> getGeozone() {
+		return Optional.ofNullable( geozone );
 	}
 
 	public RegistryAddress setGeozone(Geozone geozone) {
@@ -174,8 +174,8 @@ public class RegistryAddress implements Serializable, HasSelector<RegistryAddres
 		return this;
 	}
 
-	public Geozone getParentGeozone() {
-		return parentGeozone;
+	public Optional<Geozone> getParentGeozone() {
+		return Optional.ofNullable( parentGeozone );
 	}
 	public RegistryAddress setParentGeozone(Geozone parentGeozone) {
 		this.dirtyMark( this.parentGeozone, parentGeozone);
@@ -191,14 +191,6 @@ public class RegistryAddress implements Serializable, HasSelector<RegistryAddres
 	@Override
 	public RegistryAddress setDirty(boolean dirty) {
 		this.dirty = dirty;
-		return this;
-	}
-	
-	public boolean isRemoved() {
-		return removed;
-	}
-	public RegistryAddress setRemoved(boolean removed) {
-		this.removed = removed;
 		return this;
 	}
 	

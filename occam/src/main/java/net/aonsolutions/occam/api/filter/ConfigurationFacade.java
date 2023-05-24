@@ -1,9 +1,8 @@
 package net.aonsolutions.occam.api.filter;
 
 import java.util.LinkedList;
-import java.util.stream.Stream;
 
-import net.aonsolutions.occam.api.config.Domain;
+import net.aonsolutions.occam.api.config.Configuration;
 
 public class ConfigurationFacade {
 	
@@ -28,11 +27,12 @@ public class ConfigurationFacade {
 			builders.stream().forEach( b -> b.withAccounting());
 			return this;
 		}
+		
 	}
 
 	@FunctionalInterface
 	public interface ConfigurationBuilderFactory {
-		public ConfigurationBuilder<Stream<Domain>> create( ConfigurationBuilder<Stream<Domain>> builder );
+		public ConfigurationBuilder<Configuration> create( ConfigurationBuilder<Configuration> builder );
 	}
 	
 }

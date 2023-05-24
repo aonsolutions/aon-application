@@ -25,10 +25,11 @@ public final class AonNames {
 	public static final String ACTIVE = "active";
 	public static final String ACTIVE_CHILD_COUNT = "activeChildCount";
 	public static final String ACTIVITY = "activity";
-	public static final String ACTIVITY_TYPE = "activity_type";
+	public static final String ACTIVITY_TYPE = "activityType";
 	public static final String ACTIVITY_DESCRIPTION = "activityDescription";
 	public static final String ADDRESS = "address";
 	public static final String ADDRESS2 = "address2";
+	public static final String ADDRESS3 = "address3";
 	public static final String ADJUST = "adjust";
 	public static final String ADMINISTRATION = "administration";
 	public static final String ADMINISTRATIVE = "administrative";
@@ -223,9 +224,12 @@ public final class AonNames {
 	public static final String FROM_NUMBER = "fromNumber";
 	public static final String FULL = "full";
 	public static final String FULL_ADDRESS = "fullAddress";
-	// ---------------------------------------------------------------------------------------------	[G] 
+	
+	// ---------------------------------------------------------------------------------------------	[G]
+	public static final String GEOZONE = "geozone";
 	public static final String GLOBAL = "global";
 	public static final String GROUPED_BY = "groupedBy";
+	
 	// ---------------------------------------------------------------------------------------------	[H]
 	public static final String HAS_BEFORE_PERIOD_AMOUNTS = "hasBeforePeriodAmounts";
 	public static final String HAS_CONFIDENTIALITY_ROLE = "hasConfidentialityRole";
@@ -320,6 +324,8 @@ public final class AonNames {
 	public static final String MODIFICATION_DATE = "modification_date";
 	public static final String MODIFICATION_USER = "modification_user";
 	public static final String MONTH = "month";
+	public static final String MUNICIPALITY_CODE = "municipalityCode";
+	
 	// ---------------------------------------------------------------------------------------------	[N] 
 	public static final String NAME = "name";
 	public static final String NATIONALITY = "nationality";
@@ -371,6 +377,7 @@ public final class AonNames {
 	public static final String PARENT = "parent";
 	public static final String PARENT_DOMAIN = "parentDomain";
 	public static final String PARENT_ID = "parentId";
+	public static final String PARENT_GEOZONE = "parentGeozone";
 	public static final String PARTICIPATION_PERCENT = "participationPercent";
 	public static final String PARTICIPATION_QUOTA = "participationQuota";
 	public static final String PASSWORD = "password";
@@ -431,6 +438,7 @@ public final class AonNames {
 	public static final String RATTACH = "rattach";
 	public static final String RDOCUMENT = "rdocument";
 	public static final String RECEIVER = "receiver";
+	public static final String RECIPIENT = "recipient";
 	public static final String RECORD_DATA = "recordData";
 	public static final String RECORD_DATE = "recordDate";
 	public static final String RECTIFICATION = "rectification";
