@@ -159,6 +159,7 @@ export const FILE = 'File';
 export const FILE_DATA = 'File Data'
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
+export const FIND_LINKED_DOMAINS = "Find linked domains";
 export const FOOTER = 'Footer';
 
 // ----- G

@@ -162,6 +162,7 @@ export const FILE = 'Fichero';
 export const FILE_DATA = 'Datos del Fichero';
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
+export const FIND_LINKED_DOMAINS = "Buscar dominios vinculados";
 export const FOOTER = 'Pie';
 
 // ----- G

@@ -19,7 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.payroll.IndemnizacionTemporalUpdate;
 import net.aonsolutions.db.up2date.payroll.PrestITSexAndHealthInsert;
+import net.aonsolutions.db.up2date.payroll.PrestITSexAndHealthIrpfFix;
 import net.aonsolutions.db.up2date.security.UdpateAonProfessional;
 import net.aonsolutions.db.up2date.security.UdpateAonSmb;
 
@@ -353,7 +355,9 @@ public class Up2Date {
 	    // Art1512023Update.ART1512023UPDATE,
 	    // FellowsPercentages2023Update.FELLOWSPERCENTAGES2023UPDATE,
             // TrainingPercentages2023Update.TRAINNINGPERCENTAGES2023UPDATE,
-	     PrestITSexAndHealthInsert.PRESTITSEXANDHEALTHINSERT,
+	    // PrestITSexAndHealthInsert.PRESTITSEXANDHEALTHINSERT,
+		IndemnizacionTemporalUpdate.INDEMNIZACIONTEMPORALUPDATE,
+		PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
 
 		
 	    //DOMAIN
@@ -363,7 +367,7 @@ public class Up2Date {
 	    // Important, not remove
 	    // AgreementPurge.AGREEMENTPURGE,
 	    // SiltraRattachOldDelete.SILTRARATTACHOLDDELETE,
-		// SagardoBusUpdate.SAGARDOBUS_UPDATE
+	    // SagardoBusUpdate.SAGARDOBUS_UPDATE
 			
 	    // AgreementPaymentStartDateUpdate.AGREEMENT_PAYMENT_START_DATE_UPDATE
 			

@@ -158,6 +158,7 @@ export const FILE = 'Fitxer';
 export const FILE_DATA = `Dades de l'Fitxer`;
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
+export const FIND_LINKED_DOMAINS = "Buscar dominis vinculats";
 export const FOOTER = 'Peu';
 
 // ----- G

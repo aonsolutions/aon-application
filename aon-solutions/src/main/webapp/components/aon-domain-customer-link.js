@@ -19,6 +19,8 @@ export class AonDomainCustomer extends AonElement {
 
   loadingPanel;
 
+  customerToSearch;
+
   customerListScrollPromise;
   customerListScrollListener;
 
@@ -594,13 +596,40 @@ export class AonDomainCustomer extends AonElement {
         || (domainCompany.company && domainCompany.company.document ? domainCompany.company.document : "").toLowerCase().includes(inputText)
         || (domainCompany.company && domainCompany.company.name ? domainCompany.company.name : "").toLowerCase().includes(inputText)
         || (domainCompany.domain && domainCompany.domain.description ? domainCompany.domain.description : "").toLowerCase().includes(inputText)
+        || (domainCompany.domain && domainCompany.domain.aonCustomer ? domainCompany.domain.aonCustomer : null) == inputText
+        || (domainCompany.domain && domainCompany.domain.id ? domainCompany.domain.id : null) == inputText
         )
+        && this.checkCustomerToSearch(domainCompany)
         && this.checkLinkStatus(domainCompany)
         && (this.domainAonStatusFilter.value ? (domainCompany.domain ? this.domainAonStatusFilter.value === domainCompany.domain.aonStatus : false) : true)
         && this.checkAccess(domainCompany)
         // && (this.noCustomerDomainsOnlyCheck.getValue() ? !(domainCompany.domain ? domainCompany.domain.aonCustomer : null): true)
         );
         this.filterDomains(filteredDomains);
+        
+        this.manageCustomersToSearch();
+  }
+
+  manageCustomersToSearch() {
+    if (this.customerToSearch) {
+      let domainElements = [...this.domainList.children];
+      let filteredDomainElements = domainElements.filter(element => element.style.display != "none")
+      if (filteredDomainElements.length === 1) {
+        let firstElement = filteredDomainElements[0];
+        if (firstElement) {
+          firstElement.click();
+        }
+      }
+    }
+    this.customerToSearch = null;
+  }
+
+  checkCustomerToSearch(domainCompany) {
+    if (this.customerToSearch) {
+      let aonCustomer = this.customerToSearch.id;
+      return (domainCompany.domain && domainCompany.domain.aonCustomer ? domainCompany.domain.aonCustomer : null) === aonCustomer;
+    }
+    return true;
   }
 
   checkAccess(domainCompany) {
@@ -785,6 +814,17 @@ export class AonDomainCustomer extends AonElement {
     }
   }
 
+  resetDomainFilters() {
+    this.domainAonStatusFilter.value = "";
+    this.linkStatusFilter.value = "";
+    this.domainStatusFilter.value = "";
+  }
+
+  resetCustomerFilters() {
+    this.customerStatusFilter.value = "";
+    this.customerAccessFilter.value = "";
+    this.customerLinkStatusFilter.value = "";
+  }
   
   // -----------------------------
   
@@ -1081,6 +1121,17 @@ export class AonDomainCustomer extends AonElement {
     
     if (this.selectedDomain) {
       unlinkDiv.appendChild(unlinkButton);
+    } else if (customer.domainLinked && customer.domainLinked.length > 0) {
+      let customerSearchButton = new AonIconButton();
+      customerSearchButton.icon = MATERIAL_ICONS.SEARCH;
+      customerSearchButton.title = `${MSG.FIND_LINKED_DOMAINS}`;
+      customerSearchButton.addEventListener("click", () => {
+        this.customerToSearch = customer;
+        this.resetDomainFilters();
+        // this.resetCustomerFilters();
+        this.searchFunction();
+      });
+      unlinkDiv.appendChild(customerSearchButton);
     }
     
     customerOptionContainer.appendChild(infoDiv);

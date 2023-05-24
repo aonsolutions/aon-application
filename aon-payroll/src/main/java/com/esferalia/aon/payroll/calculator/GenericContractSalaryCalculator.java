@@ -26,6 +26,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.INKIND_IRPF_
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IN_KIND;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_CTA_ESP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.LEAVE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONDAY_HOURS;
@@ -992,7 +993,23 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					
 					if ( deductionEnd.after(end)) {
 					    expressionContext = new ExpressionContext(expressionContext) ;
+					    
 					    ContextFunctions.loadFunctions(expressionContext, deductionStart, deductionEnd);
+					    
+					    for ( ContextVariable irpfVar : new ContextVariable  [] {
+						    IRPF_PERCENT, 
+						    IRPF_CTA_ESP, 
+						    IRPF_BASE, 
+						    INKIND_IRPF_BASE, 
+						    MONEY_IRPF_BASE } ) {
+        					    Optional<Object> varValue =
+        					    expressionContext.getVariables(irpfVar.getName()).stream()
+        					    .sorted( (v1, v2) -> v2.getPeriod().compareTo(v1.getPeriod())).findFirst()
+        					    .map ( irpfPercentVar -> irpfPercentVar.getValue(irpfPercentVar.getPeriod()) );
+        					    if ( varValue.isPresent() ) {
+        						expressionContext.setVariable(irpfVar.getName(), varValue.get(), deductionStart, deductionEnd);
+        					    }
+					    }
 					}
 					
 				} else {

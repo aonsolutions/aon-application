@@ -338,6 +338,99 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		Assert.assertEquals( 20 * (2/12.00) * br, settle.getTotalLiquid(), DELTA);
 	}
 
+	@Test
+	public void testSettleWorkedDays() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+
+		// @formatter:on
+		AgreementLevelCategoryRecord category = newAgreement(aonContext,
+				new Extra[] { new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.DECEMBER;
+						this.start = "01/01";
+						this.end = "31/12";
+						this.issue = "15/12";
+					}
+				}, new Extra() {
+					{
+						this.expression = "P_0 + P_1 + P_2";
+						this.month = Month.JULY;
+						this.start = "01/07 -1";
+						this.end = "30/06";
+						this.issue = "01/07";
+					}
+				}, });
+		
+		
+		Date contractStart = add(getToday(), Calendar.MONTH, -2);
+		ContractRecord contract = newContract(aonContext, 
+				contractStart,
+				new HashMap<String, String>() {
+					{
+						put(MONTH_DAYS.getName(), format("%d", 30));
+						put(COMPENSATION_CAUSE.getName(), ContextVariable.TEMP_COMPLETE.getName());
+					}
+				}, new String[] { "( P_1 + P_2 ) * 0.10 ",
+						"1500.00 * DIAS_TRABAJADOS / DIAS_MES",
+						"250.00 * DIAS_TRABAJADOS / DIAS_MES" }, 
+						new String[] {
+						"BASE_CGC * 0.10", 
+						"BASE_CGP * 0.05",
+						"BASE_IRPF * PORCENTAJE_IRPF/100" }, 
+				category);
+		//@formatter:off
+		
+		addSSRegimeStuff(aonContext);
+		
+		int year = get(getToday(), Calendar.YEAR);
+		AgreementRecord agreement = getAgreement(aonContext, category.getAgreementLevel());
+		
+		AgreementExtraRecord julyExtra;
+		ISQLContractSalaryCalculatorContext extraCtx;
+		JooqSalaryBuilder<Salary> jooqSalaryBuilder;
+		
+		if( get(getToday(), Calendar.MONTH) < Calendar.JULY) {
+			julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
+			extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year, getToday(), getToday());
+			jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+			new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
+			jooqSalaryBuilder.execute();
+		}
+		if( get(getToday(), Calendar.MONTH) >= Calendar.JULY) {
+			julyExtra = getExtra(aonContext, agreement.getId(), "01/07");
+			extraCtx = getExtraSalaryCalculatorContext(connection, contract, julyExtra, year+1, getToday(), getToday());
+			jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+			new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
+			jooqSalaryBuilder.execute();
+		}
+		
+		year = get(getToday(), Calendar.YEAR);
+		AgreementExtraRecord decemberExtra = getExtra(aonContext, agreement.getId(), "15/12");
+		extraCtx = getExtraSalaryCalculatorContext(connection, contract, decemberExtra, year, getToday(), getToday());
+		jooqSalaryBuilder = new JooqSalaryBuilder<Salary>(connection);
+		new SmartContractSalaryCalculator<Salary>( jooqSalaryBuilder ).calculate(extraCtx);
+		jooqSalaryBuilder.execute();
+		
+		ISQLContractSalaryCalculatorContext ctx = 
+				getSmartSQLContractSettleContext(connection, contractStart, contract);
+		
+		
+		Salary settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		settle.getSalaryPayments().forEach(p -> System.out.println( p.getExpression() + ":" + p.getAmount() + "," + p.getQuote() ));
+		
+		double br = (1750.00 * 1.10) * (1 + 1.00 / 12 + 1.00 / 12) * 12 / 365; //AonDateUtils.getMax(getToday(), DAY_OF_YEAR);
+		
+		long workedDays = new Period(contractStart, getToday()).getDays();
+		
+		org.junit.Assert.assertEquals( 12 * (workedDays/365.00) * br, settle.getTotalPayment(), DELTA);
+		
+		System.out.println( (12 * (workedDays/365.00) * br) + " = " + settle.getTotalPayment() );
+		
+		org.junit.Assert.assertEquals(12 * (workedDays/365.00) * br, settle.getTotalLiquid(), DELTA);
+	}
 
 	@Test
 	public void testSettleVacations() throws ExpressionException, SQLException, SalaryException {
@@ -3618,7 +3711,16 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 				null ,
 				null, 
 				SalaryType.SETTLE);
-		
+		// INDEMNIZACION POR FIN DE CONTRATO TEMPORAL
+		addSSRegimePayment(aonContext, 
+			SSRegimeType.GENERAL, 
+			startDate, 
+			PaymentType.CRA_0054, 
+			" (CAUSA_INDEMNIZACION == FIN_TEMPORAL ) ? DIAS_INDEMNIZACION_FIN(INICIO_CONTRATO) * SALARIO_DIA * DIAS_TRABAJADOS / 365 : REMOVE()",
+			null ,
+			null, 
+			SalaryType.SETTLE);
+
 		// VACACIONES RETRIBUIDAS NO DISFRUTADAS
 		addSSRegimePayment(aonContext, 
 				SSRegimeType.GENERAL, 
