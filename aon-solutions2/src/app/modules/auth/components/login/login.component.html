@@ -8,37 +8,59 @@
       </div>
 
       <app-list-element padding="1rem" widthContainer="'100%'" heightContainer="22rem" [border]="'1px'" color="gray">
-        <input class="inputLogin" type="text" name="nameUser" id="nameUser" placeholder="Usuario" [(ngModel)]="user">
-        <input class="inputLogin" type="password" name="passsUser" id="passsUser" [(ngModel)]="password">
+        <div class="allSize contEnterprise">
 
-        <app-button [width]="'100%'"
-        [height]="'auto'"
-        [border]="'.0625rem solid black'"
-        [borderRadius]="'0.4rem'"
-        [backgroundColor]="'white'"
-        [color]="'black'"
-        [hoverBackgroundColor]="'black'"
-        [hoverBorderColor]="'black'"
-        [padding]="'.5rem'"
-        [align]="'center'"
-        [fontSize]="'1rem'"
-        [hoverColor]="'white'"
-        (click)="loginUser()"
-        >INICIAR SESIÓN</app-button>
-        <div class="divider">O INICIA SESIÓN</div>
-        <app-button [width]="'100%'"
-        [height]="'auto'"
-        [border]="'.0625rem solid black'"
-        [borderRadius]="'0.4rem'"
-        [backgroundColor]="'black'"
-        [color]="'white'"
-        [hoverBackgroundColor]="'#292a31'"
-        [hoverBorderColor]="'#292a31'"
-        [padding]="'.5rem'"
-        [align]="'center'"
-        [fontSize]="'1rem'"
-        [hoverColor]="'white'"
-        >SIN CONTRASEÑA</app-button>
+          <!-- <input class="inputLogin" type="text" name="nameUser" id="nameUser" placeholder="Usuario" [(ngModel)]="user"> -->
+          <app-input
+              (inputValue)="user=$event"
+              [appearance]="'outline'"
+              [type]="'text'"
+              [label]="'Usuario'"
+              [placeholder]="'usuario'"
+              [width]="'100%'"
+              [class]="'inputLogin'"
+          ></app-input>
+
+          <!-- <input class="inputLogin" type="password" name="passsUser" id="passsUser" [(ngModel)]="password"> -->
+          <app-input
+              (inputValue)="password=$event"
+              [appearance]="'outline'"
+              [type]="'password'"
+              [label]="'Contraseña'"
+              [placeholder]="'Contraseña'"
+              [width]="'100%'"
+              [class]="'inputLogin'"
+          ></app-input>
+
+          <app-button [width]="'100%'"
+          [height]="'auto'"
+          [border]="'.0625rem solid black'"
+          [borderRadius]="'0.4rem'"
+          [backgroundColor]="'white'"
+          [color]="'black'"
+          [hoverBackgroundColor]="'black'"
+          [hoverBorderColor]="'black'"
+          [padding]="'.5rem'"
+          [align]="'center'"
+          [fontSize]="'1rem'"
+          [hoverColor]="'white'"
+          (click)="loginUser()"
+          >INICIAR SESIÓN</app-button>
+          <div class="divider">O INICIA SESIÓN</div>
+          <app-button [width]="'100%'"
+          [height]="'auto'"
+          [border]="'.0625rem solid black'"
+          [borderRadius]="'0.4rem'"
+          [backgroundColor]="'black'"
+          [color]="'white'"
+          [hoverBackgroundColor]="'#292a31'"
+          [hoverBorderColor]="'#292a31'"
+          [padding]="'.5rem'"
+          [align]="'center'"
+          [fontSize]="'1rem'"
+          [hoverColor]="'white'"
+          >SIN CONTRASEÑA</app-button>
+        </div>
       </app-list-element>
     </app-list-element>
   </div>
