@@ -2132,7 +2132,10 @@ public abstract class ITWidget extends ResizeComposite {
 				showDeleteMessage();
 				loadITWidget();
 			},
-			f -> {}
+			f -> {
+				showDeleteMessage();
+				loadITWidget();
+			}
 		);
 	}
 
@@ -2142,7 +2145,10 @@ public abstract class ITWidget extends ResizeComposite {
 				showDeleteMessage();
 				loadITWidget();
 			}, 
-			f -> {}
+			f -> {
+				showDeleteMessage();
+				loadITWidget();
+			}
 		);
 	}
 
