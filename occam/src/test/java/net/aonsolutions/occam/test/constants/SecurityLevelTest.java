@@ -28,7 +28,7 @@ class SecurityLevelTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		SecurityLevel dt = AonRandom.getSecurityLevel().get();
+		SecurityLevel dt = AonRandom.getSecurityLevel();
 		assertEquals(dt, SecurityLevel.safeValueOf( dt.value() ).get());
 	}
 
@@ -46,7 +46,7 @@ class SecurityLevelTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		SecurityLevel dt = AonRandom.getSecurityLevel().get();
+		SecurityLevel dt = AonRandom.getSecurityLevel();
 		assertEquals(dt, SecurityLevel.safeValueOf( dt.ordinal() ).get());
 	}
 	@Test()

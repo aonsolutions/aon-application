@@ -8,12 +8,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Collection;
+import java.util.Map;
 
 import net.aonsolutions.occam.api.accounting.Account;
+import net.aonsolutions.occam.api.config.AccountingConfiguration;
 import net.aonsolutions.occam.api.config.Activity;
 import net.aonsolutions.occam.api.config.ApplicationParameter;
 import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.config.Booking;
+import net.aonsolutions.occam.api.config.Configuration;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
 import net.aonsolutions.occam.api.config.Geozone;
@@ -21,6 +24,7 @@ import net.aonsolutions.occam.api.config.Registry;
 import net.aonsolutions.occam.api.config.RegistryAddress;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
+import net.aonsolutions.watson.client.util.AonCollectionUtils;
 
 public class Asserts {
 	
@@ -65,6 +69,17 @@ public class Asserts {
 		}
 	}
 	
+	public static void assertEqualsMap(Map<?,?> expected, Map<?,?> actual, String msg) {
+		if ( (expected == null || expected.isEmpty()) && ( (actual != null && !actual.isEmpty()))) 
+			fail( msg + " actual Map is not Empty");
+		if ( (expected != null && !expected.isEmpty()) 
+			&& (actual == null || actual.isEmpty()))  
+			fail( msg + " actual Map is Empty");
+		if ( expected != null && actual != null) {
+			assertEquals(expected.size(), actual.size()," sizes not fit");	
+		}
+	}
+
 	public static void assertEqualsAccount(Account expected, Account actual) {
 		assertEqualsNulls(expected, actual, "Account");
 		if (expected != null && actual != null) {
@@ -77,6 +92,20 @@ public class Asserts {
 		}
 	}
 
+	public static void assertEqualsAccountingConfiguration(AccountingConfiguration expected, AccountingConfiguration actual) {
+		assertEqualsNulls(expected, actual, "AccountingConfiguration");
+		if (expected != null && actual != null) {
+			assertEqualsMap(expected.getAccounts(), actual.getAccounts(), "Accounts");
+			if (AonCollectionUtils.isNotEmpty(expected.getAccounts())) {
+				expected.getAccounts().keySet()
+				.stream()
+				.forEach(appParam -> assertEqualsAccount(
+						expected.getAccounts().get(appParam)
+						,actual.getAccounts().get(appParam)));
+			}
+		}
+	}
+	
 	public static void assertEqualsActivity(Activity expected, Activity actual) {
 		assertEqualsNulls(expected, actual, "Activity");
 		if (expected != null && actual != null) {
@@ -117,6 +146,13 @@ public class Asserts {
 			assertEquals(expected.getMaxDefinedUsers(), actual.getMaxDefinedUsers(),"MaxDefinedUsers");
 			assertEquals(expected.getAonCustomer(), actual.getAonCustomer(),"AonCustomer");
 			assertEquals(expected.getAonStatus(), actual.getAonStatus(),"AonStatus");
+		}
+	}
+
+	public static void assertEqualsConfiguration(Configuration expected, Configuration actual) {
+		assertEqualsNulls(expected, actual,"Configuration");
+		if (expected != null && actual != null) {
+			assertEqualsAccountingConfiguration(expected.accounting().orElse(null), actual.accounting().orElse(null));
 		}
 	}
 
@@ -214,4 +250,5 @@ public class Asserts {
 			assertEquals(expected.getMunicipalityCode(), actual.getMunicipalityCode(),"MunicipalityCode");	
 		}
 	}
+
 }

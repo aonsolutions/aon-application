@@ -29,7 +29,7 @@ class InvoiceTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		InvoiceType dt = AonRandom.getInvoiceType().get();
+		InvoiceType dt = AonRandom.getInvoiceType();
 		assertEquals(dt, InvoiceType.safeValueOf( dt.value() ).get());
 	}
 
@@ -47,7 +47,7 @@ class InvoiceTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		InvoiceType dt = AonRandom.getInvoiceType().get();
+		InvoiceType dt = AonRandom.getInvoiceType();
 		assertEquals(dt, InvoiceType.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -61,7 +61,7 @@ class InvoiceTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightNameSafeValueTest() {
-		InvoiceType dt = AonRandom.getInvoiceType().get();
+		InvoiceType dt = AonRandom.getInvoiceType();
 		assertEquals(dt,InvoiceType.safeValueOf( dt.toString() ).get());
 	}
 	@Test()

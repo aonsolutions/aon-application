@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import net.aonsolutions.occam.api.Filter;
 import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.api.config.Domain;
+import net.aonsolutions.occam.api.filter.ConfigurationFacade.ConfigurationBuilderFactory;
 
 public class DomainFacade {
 	
@@ -46,12 +47,16 @@ public class DomainFacade {
 	
 	public interface DomainBuilder<T> {
 		DomainBuilder<T> limit(int offset, int rows);
-		DomainBuilder<T> withParentDomain();
-		DomainBuilder<T> withCompany();
 		DomainBuilder<T> withAudit();
 		DomainBuilder<T> withBooking();
-		DomainBuilder<T> full();
+		DomainBuilder<T> withCompany();
+		default DomainBuilder<T> withConfiguration() {
+			return withConfiguration( f -> f.withAccountingConfiguration()); 	
+		}
+		DomainBuilder<T> withConfiguration(ConfigurationBuilderFactory factory);
+		DomainBuilder<T> withParentDomain();
 		DomainBuilder<T> withUsers();
+		DomainBuilder<T> full();
 		T build();
 	}
 	
@@ -86,6 +91,11 @@ public class DomainFacade {
 		@Override
 		public DomainBuilder<T> withUsers(){
 			builders.stream().forEach( b -> b.withUsers());
+			return this;
+		}
+		@Override
+		public DomainBuilder<T> withConfiguration(ConfigurationBuilderFactory factory){
+			builders.stream().forEach( b -> b.withConfiguration(factory));
 			return this;
 		}
 		@Override

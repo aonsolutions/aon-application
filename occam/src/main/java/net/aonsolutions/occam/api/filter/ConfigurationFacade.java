@@ -9,22 +9,22 @@ public class ConfigurationFacade {
 	private ConfigurationFacade() {
 	}
 
-	public interface ConfigurationBuilder<T> {
-		ConfigurationBuilder<T> withAccounting();
-		T build();
+	public interface ConfigurationBuilder {
+		ConfigurationBuilder withAccountingConfiguration();
+		Configuration build();
 	}
 	
 	
-	public abstract static class CompositeConfigurationBuilder<T> implements ConfigurationBuilder<T> {
-		private LinkedList<ConfigurationBuilder<?>> builders = new LinkedList<>();
+	public abstract static class CompositeConfigurationBuilder implements ConfigurationBuilder {
+		private LinkedList<ConfigurationBuilder> builders = new LinkedList<>();
 		
-		public CompositeConfigurationBuilder<T> addBuilder(ConfigurationBuilder<?> builder) {
+		public CompositeConfigurationBuilder addBuilder(ConfigurationBuilder builder) {
 			builders.add(builder);
 			return this;
 		}
 		@Override
-		public ConfigurationBuilder<T> withAccounting() {
-			builders.stream().forEach( b -> b.withAccounting());
+		public ConfigurationBuilder withAccountingConfiguration() {
+			builders.stream().forEach( b -> b.withAccountingConfiguration());
 			return this;
 		}
 		
@@ -32,7 +32,7 @@ public class ConfigurationFacade {
 
 	@FunctionalInterface
 	public interface ConfigurationBuilderFactory {
-		public ConfigurationBuilder<Configuration> create( ConfigurationBuilder<Configuration> builder );
+		public ConfigurationBuilder create( ConfigurationBuilder builder );
 	}
 	
 }

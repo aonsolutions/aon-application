@@ -34,6 +34,7 @@ import net.aonsolutions.occam.api.config.DomainAudit;
 import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.api.filter.AonFacade.AonFillerBuilder;
+import net.aonsolutions.occam.api.filter.ConfigurationFacade.ConfigurationBuilderFactory;
 import net.aonsolutions.occam.api.filter.DomainFacade.CompositeDomainBuilder;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainBuilder;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainBuilderFactory;
@@ -76,13 +77,14 @@ public class DomainDAO {
 	}
 	
 	private static class DomainSelectBuilderDAO extends  CompositeDomainBuilder<Stream<Domain>> {
-		
-		private Stream<Domain> stream;
+		private final AONContext ctx;
 		private final ResultQuery<Record> query;
-		private final FillerBuilder fillerBuilder; 
+		private final FillerBuilder fillerBuilder;
+		private Stream<Domain> stream;
+		private UnaryOperator<Domain> withConfiguration = d -> d;
 		
-		public DomainSelectBuilderDAO( AONContext ctx, DomainFilter filter ) {
-			
+		public DomainSelectBuilderDAO( final AONContext ctx, DomainFilter filter ) {
+			this.ctx = ctx;
 			SelectBuilder selectBuilder = new SelectBuilder( ctx );
 			FromBuilder fromBuilder = new  FromBuilder( selectBuilder.build() );
 			SelectJoinStep<Record> from = fromBuilder.build();
@@ -114,15 +116,23 @@ public class DomainDAO {
 						.collect(Collectors.toCollection(LinkedList::new))));
 			return this;
 		}
+		@Override
+		public DomainSelectBuilderDAO withConfiguration(ConfigurationBuilderFactory factory) {
+			super.withConfiguration(factory);
+			withConfiguration = d -> d.setConfiguration(ConfigurationDAO.getConfiguration(ctx, d, factory ));
+			return this;
+		}
 		
 		@Override
 		public Stream<Domain> build() {
-			return this.stream != null 
-				? this.stream 
-				: this.query
-				.fetch()
-				.stream()
-				.map(fillerBuilder::build );
+			if (this.stream == null) {
+				this.stream = this.query
+					.fetch()
+					.stream()
+					.map(fillerBuilder::build ); 
+			}
+			return this.stream
+				.map( withConfiguration );
 		}
 		
 	}
@@ -203,6 +213,8 @@ public class DomainDAO {
 		public SelectSelectStep<Record> build() {
 			return select;
 		}
+		
+		@Override public SelectBuilder withConfiguration(ConfigurationBuilderFactory factory) { return this; }
 	}
 	
 	private static class FromBuilder implements DomainBuilder<SelectJoinStep<Record>> {
@@ -240,6 +252,8 @@ public class DomainDAO {
 		@Override public FromBuilder limit(int offest, int rows) { return this; }
 		@Override public FromBuilder withAudit() {return this; }
 		@Override public FromBuilder withBooking() {return this; }
+		@Override public FromBuilder withConfiguration(ConfigurationBuilderFactory factory) { return this; }
+
 		
 		@Override
 		public SelectJoinStep<Record> build() {
@@ -256,11 +270,12 @@ public class DomainDAO {
 		}
 		
 		@Override public WhereBuilder limit(int offset, int rows) {return this;}
+		@Override public WhereBuilder withAudit() {return this; }
+		@Override public WhereBuilder withBooking() {return this; }
+		@Override public WhereBuilder withConfiguration(ConfigurationBuilderFactory factory) { return this; }
 		@Override public WhereBuilder withCompany() {return this;}
 		@Override public WhereBuilder withParentDomain() {return this;}
 		@Override public WhereBuilder withUsers() {return this;}
-		@Override public WhereBuilder withAudit() {return this; }
-		@Override public WhereBuilder withBooking() {return this; }
 		@Override public WhereBuilder full() {return this; }
 		
 		@Override
@@ -290,11 +305,12 @@ public class DomainDAO {
 			return this;
 		}
 
-		@Override public LimitBuilder withCompany() {return this;}
-		@Override public LimitBuilder withParentDomain() {return this;}
-		@Override public LimitBuilder withUsers() {return this;}
 		@Override public LimitBuilder withAudit() {return this; }
 		@Override public LimitBuilder withBooking() {return this; }
+		@Override public LimitBuilder withCompany() {return this;}
+		@Override public LimitBuilder withConfiguration(ConfigurationBuilderFactory factory) { return this; }
+		@Override public LimitBuilder withParentDomain() {return this;}
+		@Override public LimitBuilder withUsers() {return this;}
 		@Override public LimitBuilder full() {return this; }
 		
 		@Override
@@ -331,7 +347,7 @@ public class DomainDAO {
 		}
 		
 		@Override
-		public DomainBuilder<Function<Record, RecordMapper<Domain>>> withAudit() {
+		public FillerBuilder withAudit() {
 			withAudit = mapper -> {
 				mapper.get().setAudit(new DomainAudit()
 					.setLastAccessUser(FillerUtils.getValue(mapper.getRecord(), DOMAIN.LASTACCESS_USER))
@@ -347,15 +363,16 @@ public class DomainDAO {
 		}
 		
 		@Override
-		public DomainBuilder<Function<Record, RecordMapper<Domain>>> withCompany() {
+		public FillerBuilder withCompany() {
 			withCompany = mapper -> {
 				mapper.get().setCompany( new RegistryFiller( ).apply(mapper.getRecord(), REGISTRY ) );
 				return mapper;
 			};
 			return this;
 		}
+		
 		@Override
-		public DomainBuilder<Function<Record, RecordMapper<Domain>>> withParentDomain() {
+		public FillerBuilder withParentDomain() {
 			withParent = mapper -> {
 				if ( FillerUtils.getValue(mapper.getRecord(), DOMAIN.PARENT) != null) {
 					mapper.get().setParent(new FillerDAO.DomainFiller().apply(mapper.getRecord(), PARENT_DOMAIN));
@@ -366,7 +383,7 @@ public class DomainDAO {
 		}
 		
 		@Override
-		public DomainBuilder<Function<Record, RecordMapper<Domain>>> withBooking() {
+		public FillerBuilder withBooking() {
 			withBooking = mapper -> {
 				mapper.get().setBooking(new Booking()
 					.setOwner(FillerUtils.getValue(mapper.getRecord(), DOMAIN.OWNER))
@@ -384,20 +401,25 @@ public class DomainDAO {
 		}
 
 		@Override
-		public DomainBuilder<Function<Record, RecordMapper<Domain>>> full() {
+		public FillerBuilder full() {
 			withBooking();
 			withParentDomain();
 			withAudit();
 			return null;
 		}
-
-		@Override public DomainBuilder<Function<Record, RecordMapper<Domain>>> limit(int offset, int rows) { return null; }
-		@Override public DomainBuilder<Function<Record, RecordMapper<Domain>>> withUsers() {return null;}
+		
+		@Override public FillerBuilder withConfiguration(ConfigurationBuilderFactory factory) { return this; }
+		@Override public FillerBuilder withUsers() {return null;}
+		@Override public FillerBuilder limit(int offset, int rows) { return null; }
 
 	}
 	
 	private static DomainSelectBuilderDAO getBuilder( AONContext ctx, DomainFilter filter ) {
 		return new DomainSelectBuilderDAO(ctx,filter);
+	}
+	
+	public static Optional<Domain> get(AONContext ctx, String domainName){
+		return getStream(ctx, f -> f.withName().eq(domainName), b -> b).findFirst();
 	}
 	
 	public static Optional<Domain> get(AONContext ctx, DomainFilter filter, DomainBuilderFactory factory){
@@ -530,31 +552,5 @@ public class DomainDAO {
 		}
 		
 	}
+	
 }
-
-//+-------------------------+--------------+------+-----+---------+----------------+
-//| id                      | int(11)      | NO   | PRI | NULL    | auto_increment |
-//| name                    | varchar(253) | NO   | UNI | NULL    |                |
-//| description             | varchar(128) | NO   |     | NULL    |                |
-//| parent                  | int(11)      | YES  | MUL | NULL    |                |
-//| type                    | tinyint(4)   | NO   |     | 0       |                |
-//| scope                   | int(11)      | YES  | MUL | NULL    |                |
-//| enableHeredity          | tinyint(1)   | NO   |     | 0       |                |
-//| domainManagement        | tinyint(1)   | NO   |     | 0       |                |
-//| disableDomainManagement | tinyint(1)   | NO   |     | 0       |                |
-//| maxDocumentSize         | int(11)      | YES  |     | NULL    |                |
-//| active                  | tinyint(1)   | NO   |     | 1       |                |
-//| owner                   | varchar(256) | NO   |     | NULL    |                |
-//| creation_user           | varchar(16)  | YES  |     | NULL    |                |
-//| creation_date           | datetime     | YES  |     | NULL    |                |
-//| subDomainSuffix         | varchar(64)  | YES  |     | NULL    |                |
-//| maxTotalDocumentSize    | int(11)      | YES  |     | NULL    |                |
-//| maxDefinedUsers         | int(11)      | YES  |     | NULL    |                |
-//| modification_user       | varchar(16)  | YES  |     | NULL    |                |
-//| modification_date       | datetime     | YES  |     | NULL    |                |
-//| expirationDate          | date         | YES  |     | NULL    |                |
-//| lastAccess_user         | varchar(16)  | YES  |     | NULL    |                |
-//| lastAccess_date         | datetime     | YES  |     | NULL    |                |
-//| aonCustomer             | int(11)      | YES  |     | NULL    |                |
-//| aonStatus               | tinyint(4)   | NO   |     | 0       |                |
-//+-------------------------+--------------+------+-----+---------+----------------+

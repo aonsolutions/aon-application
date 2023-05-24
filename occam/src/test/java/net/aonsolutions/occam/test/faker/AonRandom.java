@@ -185,8 +185,8 @@ public class AonRandom {
 		return list.get( getInt(0, (list.size() - 1) ) );
 	}
 	
-	public static Optional<Administration> getAdministration() {
-		return getAdministration(REQUIRED);
+	public static Administration getAdministration() {
+		return getAdministration(REQUIRED).get();
 	}
 	public static Optional<Administration> getAdministration(int nullThreshold) {
     	return gt(nullThreshold)
@@ -194,8 +194,8 @@ public class AonRandom {
 			:Optional.empty();
 	}
 
-	public static Optional<DomainType> getDomainType() {
-		return getDomainType(REQUIRED);
+	public static DomainType getDomainType() {
+		return getDomainType(REQUIRED).get();
 	}
 	public static Optional<DomainType> getDomainType(int nullThreshold) {
     	return gt(nullThreshold)
@@ -203,8 +203,8 @@ public class AonRandom {
 			:Optional.empty();
 	}
 	
-	public static Optional<AonStatus> getAonStatus() {
-		return getAonStatus(REQUIRED);
+	public static AonStatus getAonStatus() {
+		return getAonStatus(REQUIRED).get();
 	}
 	public static Optional<AonStatus> getAonStatus(int nullThreshold) {
     	return gt(nullThreshold)
@@ -212,8 +212,8 @@ public class AonRandom {
 			:Optional.empty();
 	}
 	
-	public static Optional<Country> getCountry() {
-		return getCountry(REQUIRED);
+	public static Country getCountry() {
+		return getCountry(REQUIRED).get();
 	}
 	public static Optional<Country> getCountry(int nullThreshold) {
     	return gt(nullThreshold)
@@ -221,8 +221,8 @@ public class AonRandom {
 			:Optional.empty();
 	}
 
-	public static Optional<DocumentType> getDocumentType() {
-		return getDocumentType(REQUIRED);
+	public static DocumentType getDocumentType() {
+		return getDocumentType(REQUIRED).get();
 	}
 	public static Optional<DocumentType> getDocumentType(int nullThreshold) {
     	return gt(nullThreshold)
@@ -230,8 +230,8 @@ public class AonRandom {
 			:Optional.empty();
 	}
 
-	public static Optional<InvoiceType> getInvoiceType() {
-		return getInvoiceType(REQUIRED);
+	public static InvoiceType getInvoiceType() {
+		return getInvoiceType(REQUIRED).get();
 	}
 	public static Optional<InvoiceType> getInvoiceType(int nullThreshold) {
     	return gt(nullThreshold)
@@ -239,8 +239,8 @@ public class AonRandom {
 			:Optional.empty();
 	}
 
-	public static Optional<SecurityLevel> getSecurityLevel() {
-		return getSecurityLevel(REQUIRED);
+	public static SecurityLevel getSecurityLevel() {
+		return getSecurityLevel(REQUIRED).get();
 	}
 	public static Optional<SecurityLevel> getSecurityLevel(int nullThreshold) {
     	return gt(nullThreshold)
@@ -248,8 +248,8 @@ public class AonRandom {
 			:Optional.empty();
 	}
 	
-	public static Optional<StreetType> getStreetType() {
-		return getStreetType(REQUIRED);
+	public static StreetType getStreetType() {
+		return getStreetType(REQUIRED).get();
 	}
 	public static Optional<StreetType> getStreetType(int nullThreshold) {
     	return gt(nullThreshold)
@@ -257,8 +257,8 @@ public class AonRandom {
 			:Optional.empty();
 	}
 
-	public static Optional<AonApp> getAonApp() {
-		return getAonApp(REQUIRED);
+	public static AonApp getAonApp() {
+		return getAonApp(REQUIRED).get();
 	}
 	public static Optional<AonApp> getAonApp(int nullThreshold) {
     	return gt(nullThreshold)
@@ -266,8 +266,8 @@ public class AonRandom {
 			:Optional.empty();
 	}
 
-	public static Optional<AonModule> getAonModule() {
-		return getAonModule(REQUIRED);
+	public static AonModule getAonModule() {
+		return getAonModule(REQUIRED).get();
 	}
 	public static Optional<AonModule> getAonModule(int nullThreshold) {
     	return gt(nullThreshold)
@@ -275,8 +275,8 @@ public class AonRandom {
 			:Optional.empty();
 	}
 
-	public static Optional<AonLanguage> getAonLanguage() {
-		return getAonLanguage(REQUIRED);
+	public static AonLanguage getAonLanguage() {
+		return getAonLanguage(REQUIRED).get();
 	}
 	public static Optional<AonLanguage> getAonLanguage(int nullThreshold) {
     	return gt(nullThreshold)
@@ -284,8 +284,8 @@ public class AonRandom {
 			:Optional.empty();
 	}
 
-	public static Optional<AppParam> getAppParam() {
-		return getAppParam(REQUIRED);
+	public static AppParam getAppParam() {
+		return getAppParam(REQUIRED).get();
 	}
 	public static Optional<AppParam> getAppParam(int nullThreshold) {
     	return gt(nullThreshold)

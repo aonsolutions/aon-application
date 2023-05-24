@@ -21,6 +21,7 @@ public final class AonNames {
 	public static final String ACCOUNT_ENTRY_PARAMS = "accountEntryParams";
 	public static final String ACCOUNT_PARAMS = "accountParams";
 	public static final String ACCOUNT_REPORT_PARAMS = "accountReportParams";
+	public static final String ACCOUNTING = "accounting";
 	public static final String ACCRUAL_REGIME = "accrualRegime";
 	public static final String ACTIVE = "active";
 	public static final String ACTIVE_CHILD_COUNT = "activeChildCount";

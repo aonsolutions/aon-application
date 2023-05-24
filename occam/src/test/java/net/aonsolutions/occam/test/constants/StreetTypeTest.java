@@ -20,7 +20,7 @@ class StreetTypeTest extends AbstractOccamTest {
 
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		StreetType dt = AonRandom.getStreetType().get();
+		StreetType dt = AonRandom.getStreetType();
 		assertEquals(dt, StreetType.safeValueOf( dt.value() ).get());
 	}
 
@@ -38,7 +38,7 @@ class StreetTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		StreetType dt = AonRandom.getStreetType().get();
+		StreetType dt = AonRandom.getStreetType();
 		assertEquals(dt, StreetType.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -54,7 +54,7 @@ class StreetTypeTest extends AbstractOccamTest {
 	
 	@Test()
 	void rightNameSafeValueTest() {
-		StreetType dt = AonRandom.getStreetType().get();
+		StreetType dt = AonRandom.getStreetType();
 		assertEquals(dt,StreetType.safeValueOf( dt.toString() ).get());
 	}
 	

@@ -35,7 +35,7 @@ class ApplicationParameterTest extends AbstractOccamTest {
 	@Test()
 	void dirtyNameTest() {
 		ApplicationParameter d = new ApplicationParameter();
-		d.setName(AonRandom.getAppParam().get());
+		d.setName(AonRandom.getAppParam());
 		assertTrue(d.isDirty());
 	}
 	@Test()

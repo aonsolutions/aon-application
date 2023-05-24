@@ -6,19 +6,22 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
-	AonJSONUtilsTest.class
-	,ApplicationParameterJSONTest.class
-	,AuditJSONTest.class
-	,GeozoneJSONTest.class
-	,AccountJSONTest.class
-	,ActivityJSONTest.class
-	,DomainAuditJSONTest.class
-	,ScopeJSONTest.class
-	,BookingJSONTest.class
-	,UserJSONTest.class
-	,RegistryJSONTest.class
-	,RegistryAddressJSONTest.class
-	,DomainJSONTest.class
+	 AonJSONUtilsTest.class
+	 
+	 ,AccountJSONTest.class
+	 ,AccountingConfigurationJSONTest.class
+	 ,ActivityJSONTest.class
+	 ,ApplicationParameterJSONTest.class
+	 ,AuditJSONTest.class
+	 ,BookingJSONTest.class
+	 ,ConfigurationJSONTest.class
+	 ,DomainJSONTest.class
+	 ,DomainAuditJSONTest.class
+	 ,GeozoneJSONTest.class
+	 ,RegistryJSONTest.class
+	 ,RegistryAddressJSONTest.class
+	 ,ScopeJSONTest.class
+	 ,UserJSONTest.class
 })
 public class JSONTestSuite {
 

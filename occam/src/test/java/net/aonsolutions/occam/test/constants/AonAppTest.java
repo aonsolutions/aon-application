@@ -28,7 +28,7 @@ class AonAppTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		AonApp dt = AonRandom.getAonApp().get();
+		AonApp dt = AonRandom.getAonApp();
 		assertEquals(dt, AonApp.safeValueOf( dt.value() ).get());
 	}
 
@@ -46,7 +46,7 @@ class AonAppTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		AonApp dt = AonRandom.getAonApp().get();
+		AonApp dt = AonRandom.getAonApp();
 		assertEquals(dt, AonApp.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -62,7 +62,7 @@ class AonAppTest extends AbstractOccamTest {
 	
 	@Test()
 	void rightNameSafeValueTest() {
-		AonApp dt = AonRandom.getAonApp().get();
+		AonApp dt = AonRandom.getAonApp();
 		assertEquals(dt,AonApp.safeValueOf( dt.toString() ).get());
 	}
 	

@@ -3,14 +3,17 @@ package net.aonsolutions.occam.test.faker;
 import static com.esferalia.aon.jooq.tables.Raddress.RADDRESS;
 
 import java.util.Locale;
+import java.util.stream.IntStream;
 
 import com.github.javafaker.Faker;
 
 import net.aonsolutions.occam.api.accounting.Account;
+import net.aonsolutions.occam.api.config.AccountingConfiguration;
 import net.aonsolutions.occam.api.config.Activity;
 import net.aonsolutions.occam.api.config.ApplicationParameter;
 import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.config.Booking;
+import net.aonsolutions.occam.api.config.Configuration;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
 import net.aonsolutions.occam.api.config.Geozone;
@@ -28,13 +31,24 @@ public class AonFaker {
     	return AonRandom.gt(nullThreshold)?getAccount():null;
 	}
 	public static Account getAccount( ) {
-		return  new Account()
+		return new Account()
 			.setId(AonRandom.integer(50))
 			.setDomain(AonRandom.integer(50))
 			.setCode( faker.regexify("\\d{9}") )
 			.setDescription( faker.animal().name() )
 			.setAlias( faker.animal().name() )
 			.setActive( !AonRandom.gt(3) );
+	}
+
+	public static AccountingConfiguration getAccountingConfiguration(int nullThreshold) {
+    	return AonRandom.gt(nullThreshold)?getAccountingConfiguration():null;
+	}
+	public static AccountingConfiguration getAccountingConfiguration() {
+		AccountingConfiguration ac = new AccountingConfiguration();
+		IntStream.range(0, AonRandom.getInt(1, 50))
+			.mapToObj(i -> AonRandom.getAppParam() )
+			.forEach( appParam -> ac.setAccount(appParam, getAccount()));
+		return ac;
 	}
 
 	public static Activity getActivity( ) {
@@ -71,6 +85,11 @@ public class AonFaker {
 			.setAonCustomer(AonRandom.integer(50))
 			.setAonStatus(AonRandom.getAonStatus(20).orElse(null))
 		;
+	}
+
+	public static Configuration getConfiguration() {
+		return new Configuration()
+			.setAccounting(getAccountingConfiguration(80));
 	}
 
 	public static Domain getDomain() {

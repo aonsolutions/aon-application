@@ -28,7 +28,7 @@ class AonLanguageTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		AonLanguage dt = AonRandom.getAonLanguage().get();
+		AonLanguage dt = AonRandom.getAonLanguage();
 		assertEquals(dt, AonLanguage.safeValueOf( dt.value() ).get());
 	}
 
@@ -46,7 +46,7 @@ class AonLanguageTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		AonLanguage dt = AonRandom.getAonLanguage().get();
+		AonLanguage dt = AonRandom.getAonLanguage();
 		assertEquals(dt, AonLanguage.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -62,7 +62,7 @@ class AonLanguageTest extends AbstractOccamTest {
 	
 	@Test()
 	void rightNameSafeValueTest() {
-		AonLanguage dt = AonRandom.getAonLanguage().get();
+		AonLanguage dt = AonRandom.getAonLanguage();
 		assertEquals(dt,AonLanguage.safeValueOf( dt.toString() ).get());
 	}
 	

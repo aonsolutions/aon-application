@@ -29,7 +29,7 @@ class DocumentTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		DocumentType dt = AonRandom.getDocumentType().get();
+		DocumentType dt = AonRandom.getDocumentType();
 		assertEquals(dt, DocumentType.safeValueOf( dt.value() ).get());
 	}
 
@@ -47,7 +47,7 @@ class DocumentTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		DocumentType dt = AonRandom.getDocumentType().get();
+		DocumentType dt = AonRandom.getDocumentType();
 		assertEquals(dt, DocumentType.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -61,7 +61,7 @@ class DocumentTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightNameSafeValueTest() {
-		DocumentType dt = AonRandom.getDocumentType().get();
+		DocumentType dt = AonRandom.getDocumentType();
 		assertEquals(dt,DocumentType.safeValueOf( dt.toString() ).get());
 	}
 	@Test()

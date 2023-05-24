@@ -29,7 +29,7 @@ class DomainTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		DomainType dt = AonRandom.getDomainType().get();
+		DomainType dt = AonRandom.getDomainType();
 		assertEquals(dt, DomainType.safeValueOf( dt.value() ).get());
 	}
 
@@ -47,7 +47,7 @@ class DomainTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		DomainType dt = AonRandom.getDomainType().get();
+		DomainType dt = AonRandom.getDomainType();
 		assertEquals(dt, DomainType.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -61,7 +61,7 @@ class DomainTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightNameSafeValueTest() {
-		DomainType dt = AonRandom.getDomainType().get();
+		DomainType dt = AonRandom.getDomainType();
 		assertEquals(dt,DomainType.safeValueOf( dt.toString() ).get());
 	}
 	@Test()

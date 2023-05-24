@@ -29,7 +29,7 @@ class AdministrationTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		Administration dt = AonRandom.getAdministration().get();
+		Administration dt = AonRandom.getAdministration();
 		assertEquals(dt, Administration.safeValueOf( dt.value() ).get());
 	}
 
@@ -47,7 +47,7 @@ class AdministrationTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		Administration dt = AonRandom.getAdministration().get();
+		Administration dt = AonRandom.getAdministration();
 		assertEquals(dt, Administration.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -63,7 +63,7 @@ class AdministrationTest extends AbstractOccamTest {
 	
 	@Test()
 	void rightNameSafeValueTest() {
-		Administration dt = AonRandom.getAdministration().get();
+		Administration dt = AonRandom.getAdministration();
 		assertEquals(dt,Administration.safeValueOf( dt.toString() ).get());
 	}
 	
