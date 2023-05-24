@@ -33,7 +33,6 @@ class ConfigurationJSONTest extends AbstractOccamTest {
 	void testSimpleConvert() {
 		Configuration expected = AonFaker.getConfiguration( );
 		JSONObject json = ConfigurationJSON.to(expected);
-		System.out.println( json.toString(1) );
 		Configuration actual = ConfigurationJSON.from(json);
 		Asserts.assertEqualsConfiguration(expected, actual);
 	}

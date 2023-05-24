@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import net.aonsolutions.occam.api.accounting.Account;
+import net.aonsolutions.occam.api.accounting.AccountingPeriod;
 import net.aonsolutions.occam.api.config.AccountingConfiguration;
 import net.aonsolutions.occam.api.config.Activity;
 import net.aonsolutions.occam.api.config.ApplicationParameter;
@@ -106,6 +107,20 @@ public class Asserts {
 		}
 	}
 	
+	public static void assertEqualsAccountingPeriod(AccountingPeriod expected, AccountingPeriod actual) {
+		assertEqualsNulls(expected, actual, "AccountingPeriod");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEquals(expected.getName(), actual.getName(),"Name");
+			assertEquals(expected.getStartDate(), actual.getStartDate(),"StartDate");
+			assertEquals(expected.getEndingDate(), actual.getEndingDate(),"EndingDate");
+			assertEquals(expected.getStatus(), actual.getStatus(),"Status");
+			assertEquals(expected.isDefaultPeriod(), actual.isDefaultPeriod(),"DefaultPeriod");
+			assertEqualsAudit(expected.getAudit().orElse(null), actual.getAudit().orElse(null));
+		}
+	}
+
 	public static void assertEqualsActivity(Activity expected, Activity actual) {
 		assertEqualsNulls(expected, actual, "Activity");
 		if (expected != null && actual != null) {

@@ -6,13 +6,14 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
-	DomainTypeTest.class
+	 AccountingPeriodStatusTest.class
 	,AonAppTest.class
 	,AonModuleTest.class
 	,AonStatusTest.class
 	,AonLanguageTest.class
 	,AdministrationTest.class
 	,DocumentTypeTest.class	
+	,DomainTypeTest.class
 	,InvoiceTypeTest.class
 	,SecurityLevelTest.class
 	,StreetTypeTest.class

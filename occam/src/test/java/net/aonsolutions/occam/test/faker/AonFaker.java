@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 import com.github.javafaker.Faker;
 
 import net.aonsolutions.occam.api.accounting.Account;
+import net.aonsolutions.occam.api.accounting.AccountingPeriod;
 import net.aonsolutions.occam.api.config.AccountingConfiguration;
 import net.aonsolutions.occam.api.config.Activity;
 import net.aonsolutions.occam.api.config.ApplicationParameter;
@@ -50,6 +51,18 @@ public class AonFaker {
 			.forEach( appParam -> ac.setAccount(appParam, getAccount()));
 		return ac;
 	}
+	
+	public static AccountingPeriod getAccountingPeriod() {
+		return new AccountingPeriod()
+			.setId(AonRandom.integer(50))
+			.setDomain(AonRandom.integer(50))
+			.setName( faker.regexify("\\d{9}") )
+			.setStartDate( AonRandom.getPastDate(-1) )
+			.setEndingDate( AonRandom.getPastDate(-1) )
+			.setDefaultPeriod( AonRandom.gt(3) )
+			.setAudit( getAudit() );
+	}
+	
 
 	public static Activity getActivity( ) {
 		return  new Activity()

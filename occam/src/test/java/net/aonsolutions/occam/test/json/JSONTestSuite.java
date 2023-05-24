@@ -10,6 +10,7 @@ import org.junit.platform.suite.api.Suite;
 	 
 	 ,AccountJSONTest.class
 	 ,AccountingConfigurationJSONTest.class
+	 ,AccountingPeriodJSONTest.class
 	 ,ActivityJSONTest.class
 	 ,ApplicationParameterJSONTest.class
 	 ,AuditJSONTest.class

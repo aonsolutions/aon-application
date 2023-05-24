@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.github.javafaker.Faker;
 
+import net.aonsolutions.occam.api.constants.AccountingPeriodStatus;
 import net.aonsolutions.occam.api.constants.Administration;
 import net.aonsolutions.occam.api.constants.AonApp;
 import net.aonsolutions.occam.api.constants.AonLanguage;
@@ -292,5 +293,15 @@ public class AonRandom {
 			?Optional.of(AppParam.values()[faker.random().nextInt(AppParam.values().length)])
 			:Optional.empty();
 	}
+	
+	public static AccountingPeriodStatus getAccountingPeriodStatus() {
+		return getAccountingPeriodStatus(REQUIRED).get();
+	}
+	public static Optional<AccountingPeriodStatus> getAccountingPeriodStatus(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(AccountingPeriodStatus.values()[faker.random().nextInt(AccountingPeriodStatus.values().length)])
+			:Optional.empty();
+	}
+	
 }
 

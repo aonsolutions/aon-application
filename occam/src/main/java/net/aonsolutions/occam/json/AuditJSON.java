@@ -28,7 +28,7 @@ public class AuditJSON {
 		if (json == null) return null; 
 		return new Audit()
 			.setCreationUser( AonJSONUtils.getString(json, AonNames.CREATION_USER))
-			.setCreationDate(AonJSONUtils.getDate(json, AonNames.CREATION_DATE))
+			.setCreationDate(AonJSONUtils.getDateTime(json, AonNames.CREATION_DATE))
 			.setModificationUser(AonJSONUtils.getString(json, AonNames.MODIFICATION_USER))
 			.setModificationDate(AonJSONUtils.getDateTime(json, AonNames.MODIFICATION_DATE))
 		;
@@ -49,7 +49,7 @@ public class AuditJSON {
 		if (audit == null) return null;
 		return new JSONObject()
 			.putOpt(AonNames.CREATION_USER, audit.getCreationUser().orElse(null))
-			.putOpt(AonNames.CREATION_DATE, AonJSONUtils.formatDate(audit.getCreationDate().orElse(null)))
+			.putOpt(AonNames.CREATION_DATE, AonJSONUtils.formatDateTime(audit.getCreationDate().orElse(null)))
 			.putOpt(AonNames.MODIFICATION_USER, audit.getModificationUser().orElse(null))
 			.putOpt(AonNames.MODIFICATION_DATE, AonJSONUtils.formatDateTime(audit.getModificationDate().orElse(null)))
 			;

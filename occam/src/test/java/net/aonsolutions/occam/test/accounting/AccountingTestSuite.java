@@ -7,6 +7,7 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @SelectClasses({
 	 AccountTest.class
+	 ,AccountingPeriodTest.class
 })
 public class AccountingTestSuite {
 

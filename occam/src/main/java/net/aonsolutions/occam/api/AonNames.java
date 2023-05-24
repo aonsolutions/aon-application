@@ -141,6 +141,7 @@ public final class AonNames {
 	public static final String DEDUCTIBLE_PERCENT = "deductiblePercent";
 	public static final String DEDUCTIBLE_QUOTA = "deductibleQuota";
 	public static final String DEFAULT_CERTIFICATE = "defaultCertificate";
+	public static final String DEFAULT_PERIOD = "defaultPeriod";
 	public static final String DEFINED_USERS = "definedUsers";
 	public static final String DELIVERY = "delivery";
 	public static final String DELIVERY_DATE = "deliveryDate";
