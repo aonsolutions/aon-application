@@ -22,6 +22,12 @@
   padding-bottom: 0.5rem;
 }
 
+.contEnterprise {
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow: scroll;
+}
+
 .itemEnterprise {
   flex-direction: row;
   justify-content: flex-start;
@@ -31,11 +37,6 @@
   padding:  1rem 2rem;
   border-radius: 4px;
   gap: 0.75rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
-.auxTest {
-  padding: 1rem;
-  box-sizing: border-box;
-  overflow: scroll;
-}
