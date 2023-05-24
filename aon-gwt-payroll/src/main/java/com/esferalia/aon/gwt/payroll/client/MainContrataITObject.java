@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -304,7 +303,9 @@ public class MainContrataITObject {
 						impl.deleteComunicateIT(affiliationNumber, regime, contributionAccount, dateFrom, dateTo, startDate, new AsyncCallback<Void>() {
 
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+								failure.accept(caught);
+							}
 
 							@Override
 							public void onSuccess(Void result) {
@@ -313,7 +314,9 @@ public class MainContrataITObject {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						failure.accept(caught);
+					}
 				});
 	}
 	

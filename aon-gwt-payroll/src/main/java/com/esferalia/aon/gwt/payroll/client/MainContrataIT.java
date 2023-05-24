@@ -90,7 +90,7 @@ public class MainContrataIT extends MainEntryPoint {
 						if(Boolean.TRUE.equals(it.isComunicate()) && mainContrataITObject.isUserComunica())
 							mainContrataITObject.deleteComunicateIT(itEmployee, it, 
 								success::accept,  
-								d -> {}
+								failure::accept
 							);
 						else
 							success.accept(s);
@@ -105,7 +105,7 @@ public class MainContrataIT extends MainEntryPoint {
 						if(Boolean.TRUE.equals(it.isComunicate()) && mainContrataITObject.isUserComunica())
 							mainContrataITObject.deleteComunicateIT(itEmployee, it, 
 								success::accept, 
-								d -> {}
+								failure::accept
 							);
 						else
 							success.accept(s);

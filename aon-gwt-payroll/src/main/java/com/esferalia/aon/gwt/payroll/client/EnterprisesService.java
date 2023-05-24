@@ -281,7 +281,7 @@ public interface EnterprisesService extends RemoteService {
 			Date dateFrom, Date dateTo, float baseCC, float baseCP, int days);
 
 	void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber, String regime,
-			String contributionAccount, Date dateFrom, Date dateTo, Date startDate);
+			String contributionAccount, Date dateFrom, Date dateTo, Date startDate) throws IllegalArgumentException;
 
 	void syncITs(String currentDomainName, String currentUser) throws IllegalArgumentException;
 	

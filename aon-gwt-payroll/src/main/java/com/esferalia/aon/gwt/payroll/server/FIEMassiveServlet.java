@@ -12,9 +12,11 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.Normalizer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -23,25 +25,21 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
-
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.jooq.JooqIT;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeFieNotFound;
 import com.esferalia.aon.gwt.payroll.shared.FIEService;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
+import com.esferalia.aon.gwt.payroll.shared.ITPart;
 import com.esferalia.aon.in.payroll.tgss.fie.FieListener;
 import com.esferalia.aon.in.payroll.tgss.fie.FieMassiveParser;
 import com.esferalia.aon.jooq.tables.records.ContractLeaveDetailRecord;
@@ -55,7 +53,14 @@ import com.esferalia.aon.occam.api.model.payroll.TooManyEmployeesException;
 import com.esferalia.aon.occam.api.model.payroll.TooManyITsException;
 import com.esferalia.aon.occam.api.model.type.ContractLeaveType;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gson.GsonBuilder;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 
 
 @MultipartConfig
@@ -68,7 +73,10 @@ import com.google.gson.GsonBuilder;
 		}
 )
 public class FIEMassiveServlet extends HttpServlet implements FIEService {
+	
 	private static Logger LOGGER = Logger.getLogger(FIEMassiveServlet.class.getName());
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private static Collection<EmployeeFieNotFound> noImportEmployees;
 	private static Condition condition;
 	
 	@Override
@@ -81,10 +89,10 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 		
 		String userLogin = req.getParameter(Parameter.USER.name());
 		String domainName = req.getParameter(Parameter.DOMAIN.name());
+		
+		noImportEmployees = new ArrayList<>();
 				
-		try (OutputStream os = resp.getOutputStream(); 
-			CloseableAONContext ctx = AONContext.getAONContext(domainName,userLogin)
-			) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(domainName,userLogin)) {
 			
 			List<Integer> itIds = new ArrayList<Integer>();
 			
@@ -103,12 +111,16 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			});
 			
 			Collection<ITEmployee> itEmployees = JooqIT.getEmployeesITInfo(ctx, itIds);
+			JSONArray importIT = toImportITJSON(itEmployees);
+			JSONArray noImportIT = toNoImportITJSON(noImportEmployees);
+			JSONObject json = new JSONObject();
+			json.put("import", importIT);
+			json.put("noImport", noImportIT);
 			
-			resp.setStatus(HttpServletResponse.SC_OK);
-			byte content [] = new GsonBuilder().setDateFormat("yyyy-MM-dd").create().toJson(itEmployees).getBytes();
-			resp.setContentType("text/html");
-			resp.setContentLength(content.length);
-			os.write(content);
+			resp.setContentType("application/json");     
+			PrintWriter out = resp.getWriter();
+			out.print(json);
+			out.flush();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -151,6 +163,9 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 		private String ccc;
 		private String naf;
 		private String ipf;
+		private String name;
+		private String surname;
+		private String secondSurname;
 
 		private ContractLeaveType contingency;
 		private Byte hightCause;
@@ -193,6 +208,36 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 
 		public void setIpf(String ipf) {
 			this.ipf = ipf;
+		}
+		
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getSurname() {
+			return surname;
+		}
+
+		public void setSurname(String surname) {
+			this.surname = surname;
+		}
+
+		public String getSecondSurname() {
+			return secondSurname;
+		}
+
+		public void setSecondSurname(String secondSurname) {
+			this.secondSurname = secondSurname;
+		}
+		
+		public String getFullName() {
+			return (null == getSurname() ? "" :  getSurname() + " ") + 
+					(null == getSecondSurname() ? "" : getSecondSurname() + ", ") + 
+					getName();
 		}
 
 		public Date getStartDate() {
@@ -318,6 +363,21 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 		public void onIPF(String ipf) {
 			it.setIpf(ipf);
 			
+		}
+		
+		@Override
+		public void onName(String name) {
+			it.setName(name);
+		}
+		
+		@Override
+		public void onFirstSurname(String firstSurname) {
+			it.setSurname(firstSurname);
+		}
+		
+		@Override
+		public void onSecondSurname(String secondSurname) {
+			it.setSecondSurname(secondSurname);
 		}
 
 		@Override
@@ -538,6 +598,14 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 				throw new TooManyITsException(e);
 			}
 		} catch (EmployeeNotFoundexception e) {
+			EmployeeFieNotFound employeeFieNotFound = new EmployeeFieNotFound()
+					.setCcc(it.getCcc())
+					.setIpf(it.getIpf())
+					.setNaf(it.getNaf())
+					.setFullName(it.getFullName());
+			
+			noImportEmployees.add(employeeFieNotFound);
+			
 			System.out.println("Contract not found --> CCC :" + it.getCcc() + ", Naf : " + it.getNaf());
 			throw new EmployeeNotFoundexception(e);
 		}
@@ -644,6 +712,74 @@ public class FIEMassiveServlet extends HttpServlet implements FIEService {
 			date = DateUtils.addDays2Date(date, 1);
 		
 		return new java.sql.Date(date.getTime());
+	}
+	
+	private JSONArray toImportITJSON(Collection<ITEmployee> itEmployees) {
+		JSONArray result = new JSONArray();
+		
+		for(ITEmployee itEmployee : itEmployees) {
+			
+			JSONObject employee = new JSONObject();
+			JSONArray its = new JSONArray();
+			
+			employee.put("enterprise", itEmployee.getContractInfo().getEnterpriseName());
+			employee.put("name", itEmployee.getEmployeeInfo().getName());
+			employee.put("surname", itEmployee.getEmployeeInfo().getSurName());
+			employee.put("secondSurname", itEmployee.getEmployeeInfo().getSecondSurName());
+			employee.put("ipf", itEmployee.getEmployeeInfo().getDocument());
+			employee.put("naf", itEmployee.getEmployeeInfo().getSsNumber());
+			
+			for(com.esferalia.aon.gwt.payroll.shared.IT it : itEmployee.getIts()) {
+				
+				JSONObject itJson = new JSONObject();
+				JSONArray itParts = new JSONArray();
+				
+				itJson.put("lowCause", it.getTypeLowPart());
+				itJson.put("highCause", it.getTypeHighPart());
+				
+				for( ITPart itPartIt : it.getITParts()) {
+					JSONObject itPart = new JSONObject();
+					
+					itPart.put("type", itPartIt.getType());
+					itPart.put("date", dateFormat.format(itPartIt.getDate()));
+					
+					itParts.put(itPart);
+				}
+				
+				itJson.put("itParts", itParts);
+				its.put(itJson);
+			}
+			
+			employee.put("its", its);
+			result.put(employee);
+		}
+		
+		return result;
+	}
+	
+	private JSONArray toNoImportITJSON(Collection<EmployeeFieNotFound> noImportEmployees) {
+		JSONArray result = new JSONArray();
+		
+		for(EmployeeFieNotFound noImportEmployee : noImportEmployees) {
+			JSONObject employee = new JSONObject();
+			
+			employee.put("ccc", noImportEmployee.getCcc());
+			employee.put("ipf", noImportEmployee.getIpf());
+			employee.put("naf", noImportEmployee.getNaf());
+			employee.put("fullName", noImportEmployee.getFullName());
+			
+			result.put(employee);
+		}
+		
+		return result;
+	}
+	
+	protected static String normalize(String input) {
+		if(AonStringUtils.isBlank(input)) return input;
+		 
+		return Normalizer
+	        .normalize(input, Normalizer.Form.NFD)
+	        .replaceAll("[^\\p{ASCII}]", "");
 	}
 	
 }
