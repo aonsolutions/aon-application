@@ -49,7 +49,6 @@ const routes: Routes = [
       },
     ], canActivate: [AuthGuard],
   },
-  // { path: 'auth', component: AuthComponent },
   {
     path: 'auth',
     component: BasicLayoutComponent,

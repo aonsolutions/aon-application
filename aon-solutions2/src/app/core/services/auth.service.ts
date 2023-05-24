@@ -24,7 +24,7 @@ export class AuthService {
     this.http.post<any>(this.urlBase+'login', user).subscribe(data => { // Subscribe actua como una 'promesa' de JS
       this.headers['session_id'] = data.session_id;
       this.jwtAuth.login(data.session_id);
-      this.router.navigateByUrl("/home");
+      this.router.navigateByUrl("/auth/selectEnterprise");
     });
   }
 
