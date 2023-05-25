@@ -110,6 +110,12 @@ public class EnumVisitors {
 		void visitM303();
 	}
 	
+	public static interface IInvoiceCommunicationTypeVisitor {
+		void visitSII();
+		void visitTBAI();
+		void visitLROE();
+	}
+	
 	public static interface IFiscalModelKeyInfoVisitor<T> {
 		T visitNone();
 		T visitCompute();

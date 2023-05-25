@@ -59,7 +59,7 @@ public class InvoiceInfo implements Serializable {
 	}
 	
 	public boolean isAnnuled() {
-		return InvoiceCommunicationStatus.ANNULLED.equals(getStatus());
+		return InvoiceCommunicationStatus.CANCELLED.equals(getStatus());
 	}
 
 	public InvoiceCommunicationStatus getStatus() {

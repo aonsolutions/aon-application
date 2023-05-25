@@ -10,7 +10,7 @@ public enum InvoiceCommunicationStatus implements Serializable{
 	ACCEPTED,
 	ACCEPTED_WITH_ERRORS,
 	WRONG,
-	ANNULLED;
+	CANCELLED;
 	
 	
 	private InvoiceCommunicationStatus() {
@@ -58,6 +58,6 @@ public enum InvoiceCommunicationStatus implements Serializable{
 	}
 	
 	public boolean isAnnulled() {
-		return InvoiceCommunicationStatus.ANNULLED.equals(this);
+		return InvoiceCommunicationStatus.CANCELLED.equals(this);
 	}
 }

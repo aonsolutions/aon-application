@@ -6,12 +6,13 @@ import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface SiiServiceAsync {
+public interface InvoiceCommunicationServiceAsync {
 
 	void getSiiConfiguration(String domainName, int domainId, String user, AsyncCallback<SiiConfiguration> callback);
 	void getInvestAssets(String domainName, int domainId, String user, AsyncCallback<List<InvestAsset>> callback);
@@ -34,4 +35,7 @@ public interface SiiServiceAsync {
 	void refresh140(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback);
 	void refresh240(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback);
 
+	void cancel(String domainName, int domainId, String user, InvoiceCommunicationType type, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback);
+	
+	
 }

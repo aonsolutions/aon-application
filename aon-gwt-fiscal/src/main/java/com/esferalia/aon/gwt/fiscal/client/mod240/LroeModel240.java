@@ -18,9 +18,9 @@ import com.esferalia.aon.gwt.common.shared.AonMenuItem;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup;
 import com.esferalia.aon.gwt.fiscal.client.AonCertificationPopup.AonCertificationPopupParams;
 import com.esferalia.aon.gwt.fiscal.client.FiscalModelModuleOptions;
-import com.esferalia.aon.gwt.fiscal.client.SiiService;
-import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsync;
-import com.esferalia.aon.gwt.fiscal.client.SiiServiceAsyncDecorator;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationService;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsync;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationServiceAsyncDecorator;
 import com.esferalia.aon.gwt.fiscal.client.invoice.InvoiceGrid;
 import com.esferalia.aon.gwt.fiscal.client.model.AonFiscalModelHeader;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
@@ -55,10 +55,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class LroeModel240 extends DockLayoutPanel {
 	
-	private static final SiiServiceAsync SII_SERVICE;
+	private static final InvoiceCommunicationServiceAsync SII_SERVICE;
 	static {
-		SiiServiceAsync siiServiceRaw = GWT.create(SiiService.class);
-		SII_SERVICE = new SiiServiceAsyncDecorator(siiServiceRaw); 
+		InvoiceCommunicationServiceAsync siiServiceRaw = GWT.create(InvoiceCommunicationService.class);
+		SII_SERVICE = new InvoiceCommunicationServiceAsyncDecorator(siiServiceRaw); 
 	}
 	
 	private final AonMenuItem chapter1 = new AonMenuItem()
@@ -450,7 +450,7 @@ public class LroeModel240 extends DockLayoutPanel {
 	private String getStatusName(InvoiceCommunicationStatus st) {
 		if(InvoiceCommunicationStatus.ACCEPTED.equals(st)) return "Aceptada";
 		else if(InvoiceCommunicationStatus.ACCEPTED_WITH_ERRORS.equals(st)) return "Aceptada con Errores";
-		else if(InvoiceCommunicationStatus.ANNULLED.equals(st)) return "Anulada";
+		else if(InvoiceCommunicationStatus.CANCELLED.equals(st)) return "Anulada";
 		else if(InvoiceCommunicationStatus.WRONG.equals(st)) return "Incorrecta";
 		else return "Pendiente";
 	}

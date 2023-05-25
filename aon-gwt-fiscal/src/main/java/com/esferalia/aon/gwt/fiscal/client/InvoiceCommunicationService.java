@@ -6,14 +6,15 @@ import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("ms/sii")
-public interface SiiService extends RemoteService {
+@RemoteServiceRelativePath("ms/invoiceCommunication")
+public interface InvoiceCommunicationService extends RemoteService {
 	
 	SiiConfiguration getSiiConfiguration(String domainName, int domainId, String user);
 	List<InvestAsset> getInvestAssets(String domainName, int domainId, String user);
@@ -29,4 +30,6 @@ public interface SiiService extends RemoteService {
 	Boolean refresh140(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams);
 	Boolean refresh240(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams);
 
+	String cancel(String domainName, int domainId, String user, InvoiceCommunicationType type, Invoice invoice, AEATParams aeatParams);
+	
 }

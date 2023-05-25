@@ -4,14 +4,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.servlet.annotation.WebServlet;
-
 import com.esferalia.aon.gwt.common.server.AonStatelessRemoteServiceServlet;
-import com.esferalia.aon.gwt.fiscal.client.SiiService;
+import com.esferalia.aon.gwt.fiscal.client.InvoiceCommunicationService;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.ICResponse;
 import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
+import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.EnterpriseActivity;
@@ -20,16 +19,18 @@ import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.Person;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationOperation;
-import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
+import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.FiscalModelType;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
-import com.esferalia.aon.occam.api.model.Certificate;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import net.aonsolutions.aon.invoice.communication.visitor.CancelInvoiceCommunicationTypeVisitor;
 import net.aonsolutions.aon.tbai.InvoiceCommunication;
 import net.aonsolutions.aon.tbai.LroeMain;
 import net.aonsolutions.aon.tbai.TbaiMain;
@@ -39,8 +40,8 @@ import net.aonsolutions.aon.tbai.lroe.LROE240_1_1;
 import net.aonsolutions.aon.tbai.lroe.LROE240_2;
 import net.aonsolutions.aon.tbai.responses.LROEResponse;
 
-@WebServlet(name = "Sii Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/sii" })
-public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements SiiService {
+@WebServlet(name = "Invoice Communication Servlet", urlPatterns = { "/aon_gwt_fiscal/ms/invoiceCommunication" })
+public class InvoiceCommunicationServiceImpl extends AonStatelessRemoteServiceServlet implements InvoiceCommunicationService {
 
 	private static final long serialVersionUID = 1249978088517559976L;
 
@@ -105,8 +106,6 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 
 	@Override
 	public ICResponse altaLroe140(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) {
-		
-		
 		try {
 			Domain domain = AON.getDomain(domainName, domainId, user);
 			Company company = AON.getCompanyForDomain(domainName, domainId, user);
@@ -157,6 +156,17 @@ public class SiiServiceImpl extends AonStatelessRemoteServiceServlet implements 
 		}
 	}
 
+	@Override
+	public String cancel(String domainName, int domainId, String login, InvoiceCommunicationType type, Invoice invoice, AEATParams aeatParams) {
+		Domain domain = AON.getDomain(domainName, domainId, login);
+		User user = new User().setLogin(login);
+
+		CancelInvoiceCommunicationTypeVisitor visitor = new CancelInvoiceCommunicationTypeVisitor(domain, user, invoice, aeatParams.getCertificateId());
+		type.visit(visitor);
+		
+		return "";
+	}
+	
 	@Override
 	public String bajaLroe140(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams) throws Exception {
 		try {
