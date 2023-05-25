@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.security.Principal;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
@@ -54,7 +54,8 @@ public class LoginServlet extends HttpServlet {
 			if ( session == null ) {
 				session = request.getSessionInternal();
 	            Manager manager = request.getContext().getManager();
-	            manager.changeSessionId(session);
+	            String sessionId  = manager.getSessionIdGenerator().generateSessionId();
+	            manager.changeSessionId(session, sessionId );
 	            request.changeSessionId(session.getId());
 			}
 			

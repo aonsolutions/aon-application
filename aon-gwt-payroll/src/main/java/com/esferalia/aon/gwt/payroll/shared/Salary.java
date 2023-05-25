@@ -163,6 +163,14 @@ public class  Salary implements Serializable{
 		return thix();
 	}
 
+	public  <T extends Salary> T setType(byte type) {
+	    	try {
+	    	    this.type = Type.values()[type];
+	    	} catch (Exception e ) {
+	    	    this.type = null;
+	    	}
+		return thix();
+	}
 
 	public Date getStartDate() {
 		return parse(startDate);

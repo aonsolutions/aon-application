@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.function.Supplier;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
 
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.iterators.FilterIterator;

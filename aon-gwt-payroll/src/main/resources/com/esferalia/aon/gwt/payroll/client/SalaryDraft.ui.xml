@@ -105,7 +105,8 @@
 		}
 
 		@if !user.agent safari {
-			.cell-label {
+			.cell-label,
+			.aon-SalarySelect-Label {
 				color:black;
 				font-size: 9px;
 				font-weight: bold;
@@ -113,7 +114,8 @@
 			}
 		}
 		@else {
-			.cell-label {
+			.cell-label,
+			.aon-SalarySelect-Label {
 				color:black;
 				font-size: 11px;
 				font-weight: bold;
@@ -298,6 +300,7 @@
 		@external aon-icon-rowSelector;
 		@external aon-icon-rowSelector-C;
 		@external aon-icon-rowSelector-S;
+		@external aon-SalarySelect-Label;
 		@external aon-icon-rowSelector-Parent;
 		@external aon-icon-rowSelector-Changed;
 		
@@ -518,8 +521,8 @@
 												<g:row>
 													<g:customCell styleName="{style.span-cell-cell}">
 														<g:HTMLPanel>
-															<g:Label styleName="{style.cell-label}">RECIBO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FECHA DE CÁLCULO</g:Label>
-															<e:SalarySelect ui:field="salarySelect" />
+															<g:Label ui:field="salarySelectLabel"  styleName="{style.cell-label}" visible="false">RECIBO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FECHA DE CÁLCULO</g:Label>
+															<e:SalarySelect ui:field="salarySelect"/>
 														</g:HTMLPanel>
 													</g:customCell>
 													<g:customCell styleName="{style.span-cell-cell}">
@@ -643,7 +646,7 @@
 													<g:Label styleName="{style.cell-label}">BASE IRPF</g:Label>
 													<g:HTMLPanel tag="div" styleName="aon-text-center">
 														<e:ValueInlineHTML
-															changeDisplayStyleName="{style.value-changed}" ui:field="irpfBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
+															changeDisplayStyleName="{style.value-changed}" debugId="irpfBaseLabel" ui:field="irpfBaseLabel" htmlNull="&nbsp;" >&nbsp; </e:ValueInlineHTML>
 														<g:InlineHTML ui:field="dbIrpfBaseLabel"
 															visible="false" />
 													</g:HTMLPanel>

@@ -121,7 +121,7 @@ public class ComunicaActivityCccTest {
 		LOGGER.warning("Cick on: " + gwtEmployeeAnchor.asNormalizedText());
 		htmlPage = gwtEmployeeAnchor.click();
 		
-		wait4Id("tgss-content");
+		wait4Id("tgss");
 	}
 
 	@AfterClass
@@ -131,7 +131,7 @@ public class ComunicaActivityCccTest {
 	
 	@Test
 	public void TestActivityUp2Date() throws Exception {
-		loadActiviry("servicios_cloud/saas-content");
+		loadActivity("servicios_cloud/saas-content");
 		
 		wait4InputText("activityNameTB", "SERVICIOS CLOUD/SAAS");
 		
@@ -150,7 +150,7 @@ public class ComunicaActivityCccTest {
 
 	@Test
 	public void TestCccEmployeesWorking() throws Exception {
-		loadActiviry("servicios_cloud/saas-content");
+		loadActivity("servicios_cloud/saas-content");
 		
 		wait4InputText("activityNameTB", "SERVICIOS CLOUD/SAAS");
 		
@@ -172,7 +172,7 @@ public class ComunicaActivityCccTest {
 	
 	@Test
 	public void TestCccEmployeePrevMov() throws Exception {
-		loadActiviry("servicios_cloud/saas-content");
+		loadActivity("servicios_cloud/saas-content");
 		
 		wait4InputText("activityNameTB", "SERVICIOS CLOUD/SAAS");
 		
@@ -194,7 +194,7 @@ public class ComunicaActivityCccTest {
 	
 	@Test
 	public void TestCccIdc() throws Exception {
-		loadActiviry("servicios_cloud/saas-content");
+		loadActivity("servicios_cloud/saas-content");
 		
 		wait4InputText("activityNameTB", "SERVICIOS CLOUD/SAAS");
 		
@@ -216,7 +216,7 @@ public class ComunicaActivityCccTest {
 	
 	@Test
 	public void TestCccLaboralLife() throws Exception {
-		loadActiviry("servicios_cloud/saas-content");
+		loadActivity("servicios_cloud/saas-content");
 		
 		wait4InputText("activityNameTB", "SERVICIOS CLOUD/SAAS");
 		
@@ -236,7 +236,7 @@ public class ComunicaActivityCccTest {
 		wait4Id("pdfNotLoaded");
 	}
 
-	private void loadActiviry(String activityId) throws InterruptedException, IOException {
+	private void loadActivity(String activityId) throws InterruptedException, IOException {
 		wait4Id(activityId);
 		htmlPage = getElementById(activityId).click();
 	}

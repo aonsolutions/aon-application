@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.annotation.WebServlet;
+import jakarta.servlet.annotation.WebServlet;
 
 import com.esferalia.aon.gwt.common.client.RegistryService;
 import com.esferalia.aon.occam.api.AON;
@@ -103,6 +103,16 @@ public class RegistryServiceImpl extends AonStatelessRemoteServiceServlet implem
 	@Override
 	public Map<String, OldItem> getProductsSuggestion(String domainName, int domain, String user, String query) {
 		return AON.getProductsSuggestion(domainName, domain, user, query);
+	}
+	
+	@Override
+	public Map<String, Integer> getProductCategoriesSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getProductCategoriesSuggestion(domainName, domain, user, query);
+	}
+	
+	@Override
+	public Map<String, Integer> getProductTagsSuggestion(String domainName, int domain, String user, String query) {
+		return AON.getProductTagsSuggestion(domainName, domain, user, query);
 	}
 	
 	@Override

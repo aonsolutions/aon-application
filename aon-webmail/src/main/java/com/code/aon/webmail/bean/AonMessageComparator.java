@@ -3,7 +3,7 @@ package com.code.aon.webmail.bean;
 import java.util.Comparator;
 import java.util.Date;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

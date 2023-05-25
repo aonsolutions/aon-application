@@ -244,6 +244,18 @@ public class FinanceImpl implements IFinance {
 	}
 	
 	@Override
+	public Map<String, Integer> getProductCategoriesSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getProductCategoriesSuggestion(ctx, domainId, query));
+	}
+
+	@Override
+	public Map<String, Integer> getProductTagsSuggestion(CloseableAONContext ctx, int domainId, String query) {
+		return ctx.getDslContext().transactionResult(configuration
+				-> FeeDAO.getProductTagsSuggestion(ctx, domainId, query));
+	}
+	
+	@Override
 	public Map<Integer, Integer> getCustomerProductsUpdates(CloseableAONContext ctx, int domainId, CustomerFeeParams customerFeeParamsy) {
 		return ctx.getDslContext().transactionResult(configuration
 				-> FeeDAO.getCustomerProductsUpdates(ctx, customerFeeParamsy));

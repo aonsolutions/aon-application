@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.el.MethodExpression;
+import jakarta.el.MethodExpression;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 import javax.faces.event.AbortProcessingException;

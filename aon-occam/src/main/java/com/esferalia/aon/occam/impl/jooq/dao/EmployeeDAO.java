@@ -90,7 +90,7 @@ public class EmployeeDAO {
 	public  static Registry ENTERPRISE_REGISTRY = REGISTRY.as("enterprise");
 	
 
-	private static String EMPLOYEE_DATA [] = {"TC2", "GRUPO_COTIZACION", "COEFICIENTE_PARCIALIDAD", "OCUPACION", "RLCE"};
+	private static String EMPLOYEE_DATA [] = {"TC2", "GRUPO_COTIZACION", "COEFICIENTE_PARCIALIDAD", "OCUPACION", "RLCE", "JORNADAS_REALES"};
 	
 
 	public  static Optional<Employee> getEmployee(AONContext aonContext, EmployeeFilter filter ) {

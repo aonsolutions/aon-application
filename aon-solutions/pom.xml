@@ -33,7 +33,7 @@
            <goal>install-node-and-npm</goal>
          </goals>
          <configuration>
-           <nodeVersion>v20.1.0</nodeVersion>
+           <nodeVersion>v19.7.0</nodeVersion>
            </configuration>
        </execution>
 

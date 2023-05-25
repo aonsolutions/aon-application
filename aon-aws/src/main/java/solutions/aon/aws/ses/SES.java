@@ -12,12 +12,12 @@ import java.util.logging.Logger;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
@@ -77,13 +77,13 @@ public class SES {
         	message.setFrom(new InternetAddress(msg.getAliasFrom()));
         
         	String to =  String.join(",", msg.getTo().toArray(String[]::new));
-        	message.setRecipients(javax.mail.Message.RecipientType.TO, InternetAddress.parse(to));
+        	message.setRecipients(jakarta.mail.Message.RecipientType.TO, InternetAddress.parse(to));
         	
         	String bcc =  String.join(",", msg.getBcc().toArray(String[]::new));
-        	message.setRecipients(javax.mail.Message.RecipientType.BCC, InternetAddress.parse(bcc));
+        	message.setRecipients(jakarta.mail.Message.RecipientType.BCC, InternetAddress.parse(bcc));
 
         	String cc =  String.join(",", msg.getCc().toArray(String[]::new));
-        	message.setRecipients(javax.mail.Message.RecipientType.CC, InternetAddress.parse(cc));
+        	message.setRecipients(jakarta.mail.Message.RecipientType.CC, InternetAddress.parse(cc));
         	
         	if(msg.isReplyTo()) {
             	message.setReplyTo(InternetAddress.parse(msg.getReplyTo()));

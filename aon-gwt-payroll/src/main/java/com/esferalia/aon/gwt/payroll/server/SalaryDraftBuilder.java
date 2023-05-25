@@ -242,6 +242,8 @@ public class SalaryDraftBuilder
 
 		salaryDraft.setDbId(dbSalary.getId());
 
+		salaryDraft.setDbChargeDate(dbSalary.getChargeDate());
+
 		salaryDraft.setDbIrpfBase(dbSalary.getIrpfBase());
 		salaryDraft.setDbInkindIrpfBase(dbSalary.getInKindIrpfBase());
 		salaryDraft.setDbGgcBase(dbSalary.getCommonBase());
@@ -1608,7 +1610,7 @@ public class SalaryDraftBuilder
 				name, 
 				value, 
 				todayStartDate, 
-				todayStartDate)
+				todayEndDate)
 			)
 		);
 		

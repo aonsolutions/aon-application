@@ -634,7 +634,7 @@ public class CalendarDaysType implements Serializable {
 			dayType = dayTypeList.get(dayTypeList.size()-1).getDayType();
 			expression = dayTypeList.get(dayTypeList.size()-1).getExpession();
 			
-			if(validDayType(dayType) && !startDate.equals(newCalendarDayType.getStartDate()) && !endDate.equals(newCalendarDayType.getEndDate()))
+			if(validDayType(dayType) && !startDate.equals(newCalendarDayType.getStartDate()) && ((null != endDate && null != newCalendarDayType.getEndDate() && !endDate.equals(newCalendarDayType.getEndDate())) || (null == endDate || null == newCalendarDayType.getEndDate())))
 				newDayTypeList.add(new CalendarDayType(startDate, endDate, dayType, expression));
 		}
 		

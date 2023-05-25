@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.Vector;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 import javax.naming.NamingException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.code.aon.google.apis.drive.SearchFiles;
 import com.code.aon.google.apis.jooq.DBCalendar;

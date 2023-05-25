@@ -4,8 +4,8 @@ import static com.code.aon.faces.component.richfaces.IRichFacesTags.MIN_HEIGHT;
 import static com.code.aon.faces.component.richfaces.IRichFacesTags.MIN_WIDTH;
 import static com.code.aon.faces.component.richfaces.IRichFacesTags.PROPERTY;
 
-import javax.el.MethodExpression;
-import javax.el.ValueExpression;
+import jakarta.el.MethodExpression;
+import jakarta.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
 import org.ajax4jsf.component.html.HtmlAjaxCommandButton;

@@ -83,7 +83,7 @@ public class EnterpriseIT extends Composite {
 			enterpriseITObject.removeIT(itEmployee, it,
 				s -> {
 					if(Boolean.TRUE.equals(it.isComunicate()) && enterpriseITObject.isUserComunica()) {
-						enterpriseITObject.deleteComunicateIT(itEmployee, it, success::accept, d -> {});
+						enterpriseITObject.deleteComunicateIT(itEmployee, it, success::accept, failure::accept);
 				    } else {					    
 					    success.accept(s);
 					}
@@ -97,7 +97,7 @@ public class EnterpriseIT extends Composite {
 			enterpriseITObject.deleteIT(it,
 				s -> {
 					if(Boolean.TRUE.equals(it.isComunicate()) && enterpriseITObject.isUserComunica()) {
-					    enterpriseITObject.deleteComunicateIT(itEmployee, it, success::accept, d -> {});
+						enterpriseITObject.deleteComunicateIT(itEmployee, it, success::accept, failure::accept);
 					} else {
 					    success.accept(s);					    
 					}
