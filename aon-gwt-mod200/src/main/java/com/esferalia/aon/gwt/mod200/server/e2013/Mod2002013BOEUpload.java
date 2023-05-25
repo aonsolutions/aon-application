@@ -3,8 +3,8 @@ package com.esferalia.aon.gwt.mod200.server.e2013;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
 

@@ -7,17 +7,17 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import com.esferalia.aon.gwt.common.server.AonServletUtils;
 import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.mod200.api.FISCAL;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2015.Mod2002015;
-import com.esferalia.aon.occam.mod200.server.format.mod200_2015.Mod2002015Writer;
+import com.esferalia.aon.occam.mod200.server.format.Mod2002015Writer;
 import com.esferalia.aon.watson.server.io.AonIOUtils;
 
 @SuppressWarnings("serial")

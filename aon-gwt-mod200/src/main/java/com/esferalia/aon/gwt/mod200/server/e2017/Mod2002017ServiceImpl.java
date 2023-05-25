@@ -2,11 +2,11 @@ package com.esferalia.aon.gwt.mod200.server.e2017;
 
 import java.util.LinkedList;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
-import com.esferalia.aon.gwt.mod200.client.mod200.e2017.Mod2002017Service;
+import com.esferalia.aon.gwt.mod200.client.mod200.Mod2002017Service;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.mod200.api.FISCAL;
@@ -14,7 +14,7 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2016.Mod2002016;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2017.Mod2002017;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2017.jaxb.MOD2002017;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2017.jaxb.XMLtoMod2002017;
-import com.esferalia.aon.occam.mod200.server.format.mod200_2017.Mod2002017Import2016;
+import com.esferalia.aon.occam.mod200.server.format.Mod2002017Import2016;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
