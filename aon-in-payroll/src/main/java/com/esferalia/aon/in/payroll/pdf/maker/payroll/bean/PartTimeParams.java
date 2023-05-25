@@ -20,6 +20,7 @@ public class PartTimeParams {
 		private Double ordinary;
 		private Double complementary;
 		private boolean holiday;
+		private boolean notWorkingDay;
 		
 		public Double getOrdinary() {
 			return ordinary;
@@ -40,6 +41,13 @@ public class PartTimeParams {
 		}
 		public PartTimeEntry setHoliday(boolean holiday) {
 			this.holiday = holiday;
+			return this;
+		}
+		public boolean isNotWorkingDay() {
+			return notWorkingDay;
+		}
+		public PartTimeEntry setNotWorkingDay(boolean notWorkingDay) {
+			this.notWorkingDay = notWorkingDay;
 			return this;
 		}
 		
