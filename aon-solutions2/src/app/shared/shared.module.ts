@@ -34,6 +34,7 @@ import { TabsComponent } from './components/tabs/tabs.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FileUploadButtonComponent } from './components/file-upload-button/file-upload-button.component';
 import { DragAndDropDirective } from './directives/drag-and-drop.directive';
+import { TagComponent } from './components/tag/tag.component';
 
 
 @NgModule({
@@ -57,7 +58,8 @@ import { DragAndDropDirective } from './directives/drag-and-drop.directive';
     BreadcumbComponent,
     TabsComponent,
     FileUploadButtonComponent,
-    DragAndDropDirective
+    DragAndDropDirective,
+    TagComponent
   ],
   imports: [
     CommonModule,
@@ -95,7 +97,8 @@ import { DragAndDropDirective } from './directives/drag-and-drop.directive';
     InputComponent,
     DropdownMenuComponent,
     TabsComponent,
-    FileUploadButtonComponent
+    FileUploadButtonComponent,
+    TagComponent
   ]
 })
 export class SharedModule { }
