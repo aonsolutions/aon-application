@@ -114,7 +114,7 @@ public abstract class ModificationPDFDialog extends AonCustomDialog {
 		form.setAction(GWT.getModuleBaseURL() + "modification_form/");
 		form.setEncoding(FormPanel.ENCODING_MULTIPART);
 		form.setMethod(FormPanel.METHOD_POST);
-		form.getElement().setPropertyString("acceptCharset", "ISO-8859-1");
+//		form.getElement().setPropertyString("acceptCharset", "ISO-8859-1");
 		form.addSubmitCompleteHandler(e -> {
 			try {
 				hideMessage();
