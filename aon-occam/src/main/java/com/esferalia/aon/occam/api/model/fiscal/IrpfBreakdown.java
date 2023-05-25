@@ -31,6 +31,7 @@ public class IrpfBreakdown implements Serializable {
 	private Integer number;
 	private String referenceCode;
 	private Date taxDate;
+	private Date chargeDate;
 	private WithholdingType withholdingType;
 	private IRPFRegime regime;
 	private boolean inKind;
@@ -184,6 +185,14 @@ public class IrpfBreakdown implements Serializable {
 		return this;
 	}
 	
+	public Date getChargeDate() {
+		return chargeDate;
+	}
+	public IrpfBreakdown setChargeDate(Date chargeDate) {
+		this.chargeDate = chargeDate;
+		return this;
+	}
+
 	public WithholdingType getWithholdingType() {
 		return withholdingType;
 	}

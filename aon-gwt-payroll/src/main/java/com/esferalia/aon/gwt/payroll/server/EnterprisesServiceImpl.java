@@ -3256,7 +3256,7 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 	@Override
 	public void deleteComunicateIT(String domainName, String userLogin, String affiliationNumber,
 			String regime, String contributionAccount, java.util.Date dateFrom, java.util.Date dateTo,
-			java.util.Date startDate) {
+			java.util.Date startDate) throws IllegalArgumentException {
 		
 		try(Connection connection = AonServletUtils.getConnection(domainName)) {
 			Integer domainId = AonServletUtils.getDomainID(domainName);
@@ -3267,8 +3267,8 @@ public class EnterprisesServiceImpl extends AonRemoteServiceServlet implements
 			
 			SistemaRED.removePaternity(certificate.getData(), certificate.getPassword(), certificate.getType(), affiliationNumber, regime, contributionAccount, dateFrom, dateTo, Optional.of(startDate));
 		
-		} catch (SQLException | SegSocialException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
 		}
 	}
 	

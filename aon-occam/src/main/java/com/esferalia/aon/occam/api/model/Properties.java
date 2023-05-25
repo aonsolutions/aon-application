@@ -203,11 +203,15 @@ public interface Properties {
 		Property<Integer> getSellerProperty();
 		Property<Integer> getWorkplaceProperty();
 		
+		Property<Integer> getMonthBillingDateProperty();
 		Property<Integer> getCategoryProperty();
 	
 		Property<Byte> getStatusProperty(); // CUSTOMER
 		Property<Integer> getScopeProperty(); // CUSTOMER
 		Property<Integer> getSegmentProperty(); // RSEGMENT
+		
+		Property<Integer> getProductCategoryProperty(); // PRODUCT
+		Property<Integer> getProductTagProperty(); // PRODUCT
 		
 	}
 	

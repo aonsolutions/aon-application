@@ -8,8 +8,10 @@ import static com.esferalia.aon.jooq.tables.PmTypeDetail.PM_TYPE_DETAIL;
 import static com.esferalia.aon.jooq.tables.Rbank.RBANK;
 
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -25,11 +27,13 @@ import com.esferalia.aon.occam.api.model.finance.BankAccount;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.FinanceTracking;
 import com.esferalia.aon.occam.api.model.finance.PayMethodTypeDetail;
+import com.esferalia.aon.occam.api.model.fiscal.FiscalModel;
 import com.esferalia.aon.occam.api.model.registry.RegistryBank;
 import com.esferalia.aon.occam.api.model.type.FinanceStatus;
 import com.esferalia.aon.occam.api.model.type.FinanceTrackingType;
 import com.esferalia.aon.occam.api.model.type.PayMethodType;
 import com.esferalia.aon.occam.impl.jooq.dao.FinanceDAO.FullFinanceFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.fiscal.AlcatrazDAO;
 import com.esferalia.aon.occam.impl.jooq.validation.FinanceValidation;
 import com.esferalia.aon.watson.AonError;
 import com.esferalia.aon.watson.error.AonCoreException;
@@ -141,6 +145,19 @@ public class FinanceTrackingDAO {
 		if (!isLastTracking(ctx,tracking)) {
 			throw new AonCoreException(AonError.FINANCE_TRACKING_LATER_TRACKINGS.getMessage());
 		}
+		
+		
+		List<FiscalModel> models = AlcatrazDAO.isTrackingDeclared(ctx, tracking.getId() );
+		if (models != null && !models.isEmpty()) {
+			throw new AonCoreException(AonError.TRACKING_CANT_DELETE_MODEL.format(
+				models
+					.stream()
+					.map( fm -> MessageFormat.format("[Mod. {0}] ",fm.getModelFullName()))
+					.collect(StringBuilder::new, StringBuilder::append , StringBuilder::append )
+					.toString()
+					));
+		}
+		
 		
 		if (tracking.getBankStatementLink() == null ) {
 			if (tracking.isRecorded()) {

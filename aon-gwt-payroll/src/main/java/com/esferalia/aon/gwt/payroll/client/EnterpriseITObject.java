@@ -2,7 +2,6 @@ package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
@@ -12,10 +11,10 @@ import java.util.function.Consumer;
 import com.esferalia.aon.gwt.common.shared.DateUtils;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeSegSocial;
 import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus;
+import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
-import com.esferalia.aon.gwt.payroll.shared.EnterpriseITStatus.ItNotExist;
 import com.esferalia.aon.occam.api.model.aonsolutions.DomainUserRoles;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.google.gwt.regexp.shared.RegExp;
@@ -318,7 +317,9 @@ public class EnterpriseITObject {
 						impl.deleteComunicateIT(affiliationNumber, regime, contributionAccount, dateFrom, dateTo, startDate, new AsyncCallback<Void>() {
 
 							@Override
-							public void onFailure(Throwable caught) {}
+							public void onFailure(Throwable caught) {
+								failure.accept(caught);
+							}
 
 							@Override
 							public void onSuccess(Void result) {
@@ -327,7 +328,9 @@ public class EnterpriseITObject {
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {
+						failure.accept(caught);
+					}
 				});
 	}
 	

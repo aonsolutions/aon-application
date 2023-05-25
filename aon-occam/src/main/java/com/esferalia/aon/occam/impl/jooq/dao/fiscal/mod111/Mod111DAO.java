@@ -117,6 +117,7 @@ public class Mod111DAO extends FiscalModelDAO {
 		dec.ensureDetails(mod111);
 		Set<Alcatraz> invoices = dec.createFromInvoices(ctx,mod111);
 		Set<Integer> salaries = dec.createFromSalary(ctx,mod111);
+		boolean useChargeDate = mod111.mustUseChargeDate();
 		mod111.getMap().values().stream().forEach(FiscalModelDetail::calculate);
 		dec.uniqueInitialize(ctx,mod111);
 		mod111 = save(ctx, mod111);
@@ -124,6 +125,7 @@ public class Mod111DAO extends FiscalModelDAO {
 		AlcatrazDAO.saveModelInvoices(ctx, mod111, invoices);
 		AlcatrazDAO.saveModelSalaries(ctx, mod111, salaries);
 		mod111.setAlcatrazBound( AonCollectionUtils.isNotEmpty(invoices) || AonCollectionUtils.isNotEmpty(salaries) );
+		mod111.setUseChargeDate( useChargeDate );
 		return mod111;
 	}
 	

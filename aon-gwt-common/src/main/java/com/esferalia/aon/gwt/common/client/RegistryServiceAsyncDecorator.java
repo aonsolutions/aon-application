@@ -112,6 +112,18 @@ public class RegistryServiceAsyncDecorator implements RegistryServiceAsync {
 		AON.start();
 		serviceAsync.getProductsSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, OldItem>>(callback));
 	}
+
+	@Override
+	public void getProductCategoriesSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Integer>> callback) {
+		AON.start();
+		serviceAsync.getProductCategoriesSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, Integer>>(callback));
+	}
+
+	@Override
+	public void getProductTagsSuggestion(String domainName, int domain, String user, String query, AsyncCallback<Map<String, Integer>> callback) {
+		AON.start();
+		serviceAsync.getProductTagsSuggestion(domainName, domain, user, query, new AsyncCallbackWrapper<Map<String, Integer>>(callback));
+	}
 	
 	@Override
 	public void getCustomerProductsUpdates(String domainName, int domain, String user, CustomerFeeParams customerFeeParams, AsyncCallback<Map<Integer, Integer>> callback) {
