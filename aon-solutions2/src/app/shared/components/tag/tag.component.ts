@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, HostBinding, Input, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-tag',
@@ -21,8 +21,12 @@ export class TagComponent implements OnInit {
   @Input() height: string = 'fit-content';
   @Input() maxValue: number = 0;
   @Input() fontSize: string = '.8rem';
+  @HostBinding('style.--widthHost') widthHost = '';
+  @HostBinding('style.--heightHost') heightHost = '';
 
   constructor() {
+    this.widthHost = this.width;
+    this.heightHost = this.height;
   }
 
   ngOnInit(): void { 

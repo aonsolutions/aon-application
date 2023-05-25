@@ -4,3 +4,9 @@
     align-items: center;
     justify-content: center;
 }
+
+:host {
+    display: flex;
+    width: var(--widthHost);
+    height: var(--widthHeight);
+}

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-button',
@@ -19,11 +19,15 @@ export class ButtonComponent implements OnInit {
   @Input() hoverColor : string = '';
   @Input() fontSize : string = '1rem';
   @Input() align : string = '';
+  @HostBinding('style.--widthHost') widthHost = '';
+  @HostBinding('style.--heightHost') heightHost = '';
 
   constructor() {
   }
 
   ngOnInit(): void {
+    this.widthHost = this.width;
+    this.heightHost = this.height;
   }
 
 }

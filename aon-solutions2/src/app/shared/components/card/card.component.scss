@@ -1,8 +1,7 @@
-.appButton{
-    box-sizing: border-box;
-    cursor: pointer;
+.card{
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    box-sizing: border-box;
 }
 
 :host {
