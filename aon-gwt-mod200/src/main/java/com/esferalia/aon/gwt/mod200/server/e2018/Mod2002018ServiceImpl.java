@@ -2,11 +2,8 @@ package com.esferalia.aon.gwt.mod200.server.e2018;
 
 import java.util.LinkedList;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-
 import com.esferalia.aon.gwt.common.server.AonRemoteServiceServlet;
-import com.esferalia.aon.gwt.mod200.client.mod200.Mod2002018Service;
+import com.esferalia.aon.gwt.mod200.client.mod200.e2018.Mod2002018Service;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.model.CompanyBank;
 import com.esferalia.aon.occam.mod200.api.FISCAL;
@@ -14,9 +11,12 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2017.Mod2002017;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2018.Mod2002018;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2018.jaxb.MOD2002018;
 import com.esferalia.aon.occam.mod200.impl.jooq.dao.mod200_2018.jaxb.XMLtoMod2002018;
-import com.esferalia.aon.occam.mod200.server.format.Mod2002018Import2017;
+import com.esferalia.aon.occam.mod200.server.format.mod200_2018.Mod2002018Import2017;
 import com.esferalia.aon.watson.error.AonCoreException;
 import com.esferalia.aon.watson.util.AonStringUtils;
+
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
 
 @SuppressWarnings("serial")
 @WebServlet(name = "Mod200 2018 Servlet", urlPatterns = { "/aon_gwt_mod200/Mod2002018" })
