@@ -36,6 +36,8 @@ import { FileUploadButtonComponent } from './components/file-upload-button/file-
 import { DragAndDropDirective } from './directives/drag-and-drop.directive';
 import { TagComponent } from './components/tag/tag.component';
 import { CardComponent } from './components/card/card.component';
+import { AccordionComponent } from './components/accordion/accordion.component';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 
 @NgModule({
@@ -61,7 +63,8 @@ import { CardComponent } from './components/card/card.component';
     FileUploadButtonComponent,
     DragAndDropDirective,
     TagComponent,
-    CardComponent
+    CardComponent,
+    AccordionComponent
   ],
   imports: [
     CommonModule,
@@ -80,7 +83,8 @@ import { CardComponent } from './components/card/card.component';
     MatDatepickerModule,
     MatSelectModule,
     MatMenuModule,
-    MatTabsModule
+    MatTabsModule,
+    MatExpansionModule
   ],
   exports:[
     SidenavHoverDirective,
@@ -101,7 +105,8 @@ import { CardComponent } from './components/card/card.component';
     TabsComponent,
     FileUploadButtonComponent,
     TagComponent,
-    CardComponent
+    CardComponent,
+    AccordionComponent
   ]
 })
 export class SharedModule { }
