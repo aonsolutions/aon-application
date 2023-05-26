@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.esferalia.aon.gwt.common.client.widget.DateListBox;
@@ -805,6 +806,18 @@ public class SalarySelect extends Composite {
 	    }
 	    
 	    Salary [] salaries = salaryPreview.getEmployee().getSalaries();
+	    
+	    Date startDate = salaryPreview.getStartDate();
+	    
+	    Optional<Salary> salary = 
+            Arrays.stream(salaries)
+	    .filter(s -> s.getType() == type )
+	    .filter( s-> DateUtils.equals(startDate, s.getStartDate()) )
+	    .findFirst();
+	    if ( salary.isPresent() ) {
+		return salary.get().getChargeDate();
+	    }
+	    
 	    
 	    Map<String, Integer> payDays = 
             Arrays.stream(salaries)
