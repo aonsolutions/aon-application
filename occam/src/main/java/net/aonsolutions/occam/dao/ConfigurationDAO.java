@@ -52,14 +52,14 @@ public class ConfigurationDAO {
 		
 		@Override
 		public Configuration build() {
-			return null;
+			return conf;
 		}
 		
 		@Override
 		public ConfigurationBuilder withAccountingConfiguration() {
 			conf.setAccounting(new AccountingConfiguration());
 			fillAccountingParameters(ctx);
-			return null;
+			return this;
 		}
 		
 		private void fillAccountingParameters(AONContext ctx) {

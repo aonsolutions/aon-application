@@ -43,11 +43,14 @@ class PublicDomainTest extends AbstractOccamTest {
 	
 	@Test()
 	void selectFullStreamTest() {
-		Stream<Domain> domain = AON.getDomains(getOccam()
-			,p -> p.withName().eq( DOMAIN_NAME )
-			,b -> b.full()
-		);
-		assertTrue(domain.findAny().isPresent());
+		AON.getDomains(getOccam(), null ,b -> b.full())
+			.forEach(d -> {
+				assertTrue(d.getAudit().isPresent());
+				assertTrue(d.getBooking().isPresent());
+				assertTrue(d.getCompany().isPresent());
+				assertTrue(d.getConfiguration().isPresent());
+				assertTrue(d.getUsers().isPresent());
+			});
 	}
 	
 	@Test()

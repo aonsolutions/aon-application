@@ -4,10 +4,10 @@ import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
-import static com.esferalia.aon.jooq.tables.User.USER;
 
 import java.sql.Timestamp;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -23,6 +23,7 @@ import org.jooq.SelectJoinStep;
 import org.jooq.SelectLimitStep;
 import org.jooq.SelectSelectStep;
 import org.jooq.SelectWithTiesAfterOffsetStep;
+import org.jooq.impl.DSL;
 
 import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.AonCoreException;
@@ -41,7 +42,6 @@ import net.aonsolutions.occam.api.filter.DomainFacade.DomainBuilderFactory;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilter;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilters;
 import net.aonsolutions.occam.dao.FillerDAO.RegistryFiller;
-import net.aonsolutions.occam.dao.SecurityDAO.UserFiller;
 import net.aonsolutions.watson.client.util.AonStringUtils;
 
 public class DomainDAO {
@@ -77,20 +77,16 @@ public class DomainDAO {
 	}
 	
 	private static class DomainSelectBuilderDAO extends  CompositeDomainBuilder<Stream<Domain>> {
-		private final AONContext ctx;
 		private final ResultQuery<Record> query;
 		private final FillerBuilder fillerBuilder;
-		private Stream<Domain> stream;
-		private UnaryOperator<Domain> withConfiguration = d -> d;
 		
 		public DomainSelectBuilderDAO( final AONContext ctx, DomainFilter filter ) {
-			this.ctx = ctx;
 			SelectBuilder selectBuilder = new SelectBuilder( ctx );
 			FromBuilder fromBuilder = new  FromBuilder( selectBuilder.build() );
 			SelectJoinStep<Record> from = fromBuilder.build();
 			WhereBuilder whereBuilder = new WhereBuilder(ctx, from,filter);
 			LimitBuilder limitBuilder = new  LimitBuilder( whereBuilder.build() );
-			fillerBuilder = new  FillerBuilder();
+			fillerBuilder = new  FillerBuilder(ctx);
 			query =  limitBuilder.build();
 		
 			addBuilder(selectBuilder);
@@ -101,38 +97,12 @@ public class DomainDAO {
 			 
 		}
 		
-		@Override 
-		public DomainSelectBuilderDAO withUsers() {
-			super.withUsers();
-			UserFiller userFiller =  new UserFiller();
-			this.stream = query
-				.fetchGroups( fillerBuilder::build, userFiller::apply)
-				.entrySet()
-				.stream()
-				.map(e -> e.getKey().addUsers( 
-					e.getValue()
-						.stream()
-						.filter(u -> u.getId() != null )
-						.collect(Collectors.toCollection(LinkedList::new))));
-			return this;
-		}
-		@Override
-		public DomainSelectBuilderDAO withConfiguration(ConfigurationBuilderFactory factory) {
-			super.withConfiguration(factory);
-			withConfiguration = d -> d.setConfiguration(ConfigurationDAO.getConfiguration(ctx, d, factory ));
-			return this;
-		}
-		
 		@Override
 		public Stream<Domain> build() {
-			if (this.stream == null) {
-				this.stream = this.query
-					.fetch()
-					.stream()
-					.map(fillerBuilder::build ); 
-			}
-			return this.stream
-				.map( withConfiguration );
+			return this.query
+				.fetch()
+				.stream()
+				.map( fillerBuilder::build );
 		}
 		
 	}
@@ -175,7 +145,7 @@ public class DomainDAO {
 		@Override
 		public DomainBuilder<SelectSelectStep<Record>> withCompany() {
 			this.select = select.select( REGISTRY.fields() );
-			return null;
+			return this;
 		}
 		@Override
 		public SelectBuilder withParentDomain() {
@@ -196,24 +166,11 @@ public class DomainDAO {
 		}
 
 		@Override
-		public SelectBuilder full() {
-			withParentDomain();
-			withBooking();
-			withAudit();
-			return this;
-		}
-
-		@Override
-		public SelectBuilder withUsers() {
-			this.select = select.select(SecurityDAO.USER_BASIC_FIELDS);
-			return this;
-		}
-		
-		@Override
 		public SelectSelectStep<Record> build() {
 			return select;
 		}
 		
+		@Override public SelectBuilder withUsers() { return this;}
 		@Override public SelectBuilder withConfiguration(ConfigurationBuilderFactory factory) { return this; }
 	}
 	
@@ -238,18 +195,9 @@ public class DomainDAO {
 			return this;
 		}
 
-		@Override
-		public FromBuilder withUsers() {
-			from = from.leftOuterJoin(USER).on(USER.DOMAIN.eq(DOMAIN.ID));
-			return this;
-		}
-		@Override 
-		public FromBuilder full() {
-			withParentDomain();
-			return this;
-		}
-
+		
 		@Override public FromBuilder limit(int offest, int rows) { return this; }
+		@Override public FromBuilder withUsers() { return this;}
 		@Override public FromBuilder withAudit() {return this; }
 		@Override public FromBuilder withBooking() {return this; }
 		@Override public FromBuilder withConfiguration(ConfigurationBuilderFactory factory) { return this; }
@@ -276,7 +224,6 @@ public class DomainDAO {
 		@Override public WhereBuilder withCompany() {return this;}
 		@Override public WhereBuilder withParentDomain() {return this;}
 		@Override public WhereBuilder withUsers() {return this;}
-		@Override public WhereBuilder full() {return this; }
 		
 		@Override
 		public SelectLimitStep<Record> build() {
@@ -284,6 +231,7 @@ public class DomainDAO {
 		}
 		
 		private Condition getWhere(DomainFilter filter) {
+			if ( filter == null) return DSL.trueCondition();
 			if ( filter.filter(DOMAIN_FILTER) instanceof FilterDAO filterDAO) {
 				return filterDAO.getCondition();
 			}
@@ -311,7 +259,6 @@ public class DomainDAO {
 		@Override public LimitBuilder withConfiguration(ConfigurationBuilderFactory factory) { return this; }
 		@Override public LimitBuilder withParentDomain() {return this;}
 		@Override public LimitBuilder withUsers() {return this;}
-		@Override public LimitBuilder full() {return this; }
 		
 		@Override
 		public ResultQuery<Record> build() {
@@ -320,10 +267,17 @@ public class DomainDAO {
 	}
 
 	private static class FillerBuilder implements DomainBuilder<Function<Record, RecordMapper<Domain>>>,AonFillerBuilder<Domain> {
+		private final AONContext ctx;
 		private UnaryOperator<RecordMapper<Domain>> withCompany = t -> t;
 		private UnaryOperator<RecordMapper<Domain>> withAudit = t -> t;
 		private UnaryOperator<RecordMapper<Domain>> withParent = t -> t;
 		private UnaryOperator<RecordMapper<Domain>> withBooking = t -> t;
+		private UnaryOperator<RecordMapper<Domain>> withConfiguration = t -> t;
+		private UnaryOperator<RecordMapper<Domain>> withUsers = t -> t;
+		
+		public FillerBuilder(AONContext ctx) {
+			this.ctx = ctx;
+		}
 		
 		@Override
 		public Function<Record, RecordMapper<Domain>> build() {
@@ -341,6 +295,8 @@ public class DomainDAO {
 				.andThen( withBooking )
 				.andThen( withAudit )
 				.andThen( withParent )
+				.andThen( withConfiguration )
+				.andThen( withUsers )
 				.apply(rec)
 				.get()
 			;
@@ -400,88 +356,30 @@ public class DomainDAO {
 			return this;
 		}
 
-		@Override
-		public FillerBuilder full() {
-			withBooking();
-			withParentDomain();
-			withAudit();
-			return null;
+		@Override 
+		public FillerBuilder withUsers() {
+			withUsers = mapper -> {
+				mapper.get().setUsers(
+					SecurityDAO.getUserStream(ctx, f -> f.withDomain().eq(mapper.get().getId()) )
+						.collect(Collectors.toCollection(LinkedList::new)));
+				return mapper;
+			};
+			return this;
 		}
 		
-		@Override public FillerBuilder withConfiguration(ConfigurationBuilderFactory factory) { return this; }
-		@Override public FillerBuilder withUsers() {return null;}
-		@Override public FillerBuilder limit(int offset, int rows) { return null; }
-
-	}
-	
-	private static DomainSelectBuilderDAO getBuilder( AONContext ctx, DomainFilter filter ) {
-		return new DomainSelectBuilderDAO(ctx,filter);
-	}
-	
-	public static Optional<Domain> get(AONContext ctx, String domainName){
-		return getStream(ctx, f -> f.withName().eq(domainName), b -> b).findFirst();
-	}
-	
-	public static Optional<Domain> get(AONContext ctx, DomainFilter filter, DomainBuilderFactory factory){
-		return getStream(ctx, filter, factory).findFirst();
-	}
-
-	public static Stream<Domain> getStream(AONContext ctx, DomainFilter filter, DomainBuilderFactory factory){
-		ctx.checkRead();
-		DAOUtils.checkNullFactory(factory);
-		DAOUtils.checkNullFilter(filter);
-		return factory.create( getBuilder(ctx,filter)).build();
-	}
-	
-	public static Domain save(AONContext ctx, Domain domain) {
-		ctx.checkWrite();
-		if (domain == null) throw new AonCoreException(AonError.SAVE_EMPTY.getMessage());
-		if (domain.isDirty()) { 
-			DomainAutoComplete.autoComplete(ctx, domain);
-			DomainValidation.validate(ctx, domain);
-//			return (domain.getId() == null)
-//				?insert(ctx,domain)
-//				:update(ctx,domain);
-		} else {
-			ctx.log().debug(AonError.NOT_DIRTY.format("Domain",domain.getId()));
+		
+		@Override 
+		public FillerBuilder withConfiguration(ConfigurationBuilderFactory factory) {
+			withConfiguration = mapper -> {
+				mapper.get().setConfiguration(ConfigurationDAO.getConfiguration(ctx, mapper.get(), factory ));
+				return mapper;
+			};
+			return this; 
 		}
-		return domain;  
+		
+		@Override public FillerBuilder limit(int offset, int rows) { return this; }
+
 	}
-	
-//	private static Domain insert(AONContext ctx, Domain domain) {
-//		throw new UnsupportedOperationException("Not implemented!");
-//		Integer id = ctx.getDslContext().insertInto(DOMAIN)
-//			.set(DOMAIN.NAME, domain.getName())
-//			.set(DOMAIN.DESCRIPTION, domain.getDescription())
-//			.set(DOMAIN.TYPE, AonEnumUtils.getByte(domain.getType() ))
-//			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isActive() ))
-//			.set(DOMAIN.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), Scope::getId))
-//			.set(DOMAIN.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), Domain::getId))
-//			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isEnableHeredity() ))
-//			.set(DOMAIN.OWNER, AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getOwner))
-//			.set(DOMAIN.DOMAINMANAGEMENT
-//				, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDomainManagement)))
-//			.set(DOMAIN.DISABLEDOMAINMANAGEMENT
-//				, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDisableDomainManagement)))
-//			.set(DOMAIN.MAXDEFINEDUSERS
-//				,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), b -> b.getMaxDefinedUsers().orElse(null)))
-//			.<Integer>set(DOMAIN.AONCUSTOMER
-//				,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), a -> a.getAonCustomer().orElse(null)))
-//			.set(DOMAIN.AONSTATUS
-//				,AonEnumUtils.getByte(AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getAonStatus)))
-//			.set(DOMAIN.CREATION_USER, ctx.getUser())
-//			.set(DOMAIN.CREATION_DATE, new Timestamp(new Date().getTime()))
-//			.returning(DOMAIN.ID)
-//			.fetchOne().getValue(DOMAIN.ID);
-//		domain.setId(id);
-//		ctx.log().info("INSERT DOMAIN id: {0} - {1}", domain.getId(), domain.getName());	
-//		return domain;
-//	}
-//	
-//	private static Domain update(AONContext ctx, Domain domain) {
-//		throw new UnsupportedOperationException("Not implemented!");
-//	}
-	
 	
 	private static class DomainAutoComplete {
 		
@@ -552,5 +450,76 @@ public class DomainDAO {
 		}
 		
 	}
+
+	private static Stream<Domain> getStream(AONContext ctx, DomainFilter filter, DomainBuilderFactory factory){
+		ctx.checkRead();
+		DAOUtils.checkNullFactory(factory);
+		return factory.create( new DomainSelectBuilderDAO(ctx, filter) ).build();
+	}
+
+	// ************************************* [PUBLIC METHODS]
+	public static Optional<Domain> get(AONContext ctx, String domainName){
+		return getStream(ctx, f -> f.withName().eq(domainName), b -> b).findFirst();
+	}
+	public static Optional<Domain> get(AONContext ctx, DomainFilter filter, DomainBuilderFactory factory){
+		return getStream(ctx, filter, factory).findFirst();
+	}
+
+	public static List<Domain> getList(AONContext ctx, String domainName){
+		return getList(ctx, f -> f.withName().eq(domainName), b -> b);
+	}
+	public static List<Domain> getList(AONContext ctx, DomainFilter filter, DomainBuilderFactory factory){
+		return getStream(ctx, filter, factory)
+			.collect(Collectors.toCollection(LinkedList::new));
+	}
+	
+	public static Domain save(AONContext ctx, Domain domain) {
+		ctx.checkWrite();
+		if (domain == null) throw new AonCoreException(AonError.SAVE_EMPTY.getMessage());
+		if (domain.isDirty()) { 
+			DomainAutoComplete.autoComplete(ctx, domain);
+			DomainValidation.validate(ctx, domain);
+//			return (domain.getId() == null)
+//				?insert(ctx,domain)
+//				:update(ctx,domain);
+		} else {
+			ctx.log().debug(AonError.NOT_DIRTY.format("Domain",domain.getId()));
+		}
+		return domain;  
+	}
+	
+//	private static Domain insert(AONContext ctx, Domain domain) {
+//		throw new UnsupportedOperationException("Not implemented!");
+//		Integer id = ctx.getDslContext().insertInto(DOMAIN)
+//			.set(DOMAIN.NAME, domain.getName())
+//			.set(DOMAIN.DESCRIPTION, domain.getDescription())
+//			.set(DOMAIN.TYPE, AonEnumUtils.getByte(domain.getType() ))
+//			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isActive() ))
+//			.set(DOMAIN.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), Scope::getId))
+//			.set(DOMAIN.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), Domain::getId))
+//			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isEnableHeredity() ))
+//			.set(DOMAIN.OWNER, AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getOwner))
+//			.set(DOMAIN.DOMAINMANAGEMENT
+//				, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDomainManagement)))
+//			.set(DOMAIN.DISABLEDOMAINMANAGEMENT
+//				, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDisableDomainManagement)))
+//			.set(DOMAIN.MAXDEFINEDUSERS
+//				,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), b -> b.getMaxDefinedUsers().orElse(null)))
+//			.<Integer>set(DOMAIN.AONCUSTOMER
+//				,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), a -> a.getAonCustomer().orElse(null)))
+//			.set(DOMAIN.AONSTATUS
+//				,AonEnumUtils.getByte(AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getAonStatus)))
+//			.set(DOMAIN.CREATION_USER, ctx.getUser())
+//			.set(DOMAIN.CREATION_DATE, new Timestamp(new Date().getTime()))
+//			.returning(DOMAIN.ID)
+//			.fetchOne().getValue(DOMAIN.ID);
+//		domain.setId(id);
+//		ctx.log().info("INSERT DOMAIN id: {0} - {1}", domain.getId(), domain.getName());	
+//		return domain;
+//	}
+//	
+//	private static Domain update(AONContext ctx, Domain domain) {
+//		throw new UnsupportedOperationException("Not implemented!");
+//	}
 	
 }

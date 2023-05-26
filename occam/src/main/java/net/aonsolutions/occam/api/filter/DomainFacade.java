@@ -46,17 +46,30 @@ public class DomainFacade {
 	}
 	
 	public interface DomainBuilder<T> {
-		DomainBuilder<T> limit(int offset, int rows);
+		
 		DomainBuilder<T> withAudit();
 		DomainBuilder<T> withBooking();
 		DomainBuilder<T> withCompany();
-		default DomainBuilder<T> withConfiguration() {
-			return withConfiguration( f -> f.withAccountingConfiguration()); 	
-		}
 		DomainBuilder<T> withConfiguration(ConfigurationBuilderFactory factory);
 		DomainBuilder<T> withParentDomain();
 		DomainBuilder<T> withUsers();
-		DomainBuilder<T> full();
+		
+		default DomainBuilder<T> withConfiguration() {
+			return withConfiguration( f -> f.withAccountingConfiguration()); 	
+		}
+
+		default DomainBuilder<T> full() {
+			return 
+				withUsers()
+				.withAudit()
+				.withBooking()
+				.withCompany()
+				.withConfiguration()
+				.withParentDomain()
+				;
+		}
+		
+		DomainBuilder<T> limit(int offset, int rows);
 		T build();
 	}
 	

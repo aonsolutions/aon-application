@@ -122,11 +122,6 @@ public class SecurityDAO {
 			return this;
 		}
 		
-		@Override
-		public UserSelectBuilderDAO full() {
-			return this;
-		}
-
 	}
 
 	public static class UserFiller  implements Function<Record,User> {

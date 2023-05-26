@@ -41,6 +41,7 @@ public class DomainJSON {
 			.setBooking( BookingJSON.from(AonJSONUtils.getObject(json, AonNames.BOOKING)))
 			.setAudit( DomainAuditJSON.from(AonJSONUtils.getObject(json, AonNames.AUDIT)))
 			.setUsers(UserJSON.from(AonJSONUtils.getArray(json, AonNames.USERS)))
+			.setConfiguration(ConfigurationJSON.from(AonJSONUtils.getObject(json, AonNames.CONFIGURATION)))
 		;
 	}
 	
@@ -70,6 +71,7 @@ public class DomainJSON {
 			.putOpt(AonNames.BOOKING, BookingJSON.to(domain.getBooking().orElse(null)))
 			.putOpt(AonNames.AUDIT, DomainAuditJSON.to(domain.getAudit().orElse(null)))
 			.putOpt(AonNames.USERS, UserJSON.to(domain.getUsers().orElse(null)))
+			.putOpt(AonNames.CONFIGURATION,ConfigurationJSON.to(domain.getConfiguration().orElse(null)))
 			;
 	}
 }

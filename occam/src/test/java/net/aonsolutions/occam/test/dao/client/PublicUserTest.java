@@ -25,10 +25,7 @@ class PublicUserTest extends AbstractOccamTest {
 
 	@Test()
 	void selectFullTest() {
-		Optional<User> user = AON.getUser(getOccam()
-			, p -> p.withLogin().eq( USER )
-			, b -> b.full()
-			);
+		Optional<User> user = AON.getUser(getOccam(), p -> p.withLogin().eq( USER ));
 		assertTrue(user.isPresent());
 	}
 
@@ -42,10 +39,7 @@ class PublicUserTest extends AbstractOccamTest {
 	
 	@Test()
 	void selectFullStreamTest() {
-		Stream<User> user = AON.getUsers(getOccam()
-			,p -> p.withLogin().eq( USER )
-			,b -> b.full()
-		);
+		Stream<User> user = AON.getUsers(getOccam(),p -> p.withLogin().eq( USER ));
 		assertTrue(user.findAny().isPresent());
 	}
 	

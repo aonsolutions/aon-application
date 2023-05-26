@@ -23,7 +23,6 @@ public interface UserFacade extends Serializable{
 
 	public interface UserBuilder<T>  {
 		public UserBuilder<T> limit(int offest, int rows);
-		public UserBuilder<T> full();
 		public T build();
 	}
 

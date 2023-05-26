@@ -91,9 +91,7 @@ class SecurityDAOTest extends AbstractOccamTest {
 	
 	@Test
 	void filterTest() {
-		Optional<User> optUser = SecurityDAO.getUser(ctx
-			,p -> p.withLogin().eq( USER )
-			,b -> b.full());
+		Optional<User> optUser = SecurityDAO.getUser(ctx,p -> p.withLogin().eq( USER ));
 		assertTrue(optUser.isPresent());
 		User expected = optUser.get();
 		
@@ -103,7 +101,6 @@ class SecurityDAOTest extends AbstractOccamTest {
 				.and(p.withName().eq( expected.getName() )) 
 				.and(p.withLogin().eq( expected.getLogin() ))
 				.and(p.withActive().eq( AonEnumUtils.getByte(expected.isActive())))
-			,b -> b.full()
 		);
 		assertTrue(optActual.isPresent(),"User not found!");
 		Asserts.assertEqualsUser(expected, optActual.get());

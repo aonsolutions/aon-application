@@ -110,6 +110,7 @@ public final class AonNames {
 	public static final String CON = "con";
 	public static final String CONCEPT = "concept";
 	public static final String CONFIDENTIAL = "confidential";
+	public static final String CONFIGURATION = "configuration";
 	public static final String CONFIGURED_VISIBLE = "configuredVisible";
 	public static final String CONSOLE_DOMAIN_MESSAGE = "consoleDomainMessage";
 	public static final String CONSOLIDATION = "consolidation";

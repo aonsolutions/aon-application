@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +26,7 @@ import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;
 import net.aonsolutions.occam.test.faker.AonFaker;
 import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.watson.client.util.AonCollectionUtils;
 import net.aonsolutions.watson.client.util.AonStringUtils;
 import net.aonsolutions.watson.server.AonDateUtils;
 import net.aonsolutions.watson.server.AonEnumUtils;
@@ -54,36 +55,38 @@ class DomainDAOTest extends AbstractOccamTest {
 		assertFalse(domain.get().isDirty(), "Dirty flag not set" );
 	}
 
-	@Test()
-	void emptyFilterTest() {
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> DomainDAO.get(ctx, null, b -> b));
-		assertEquals(DAOUtils.NULL_FILTER_MSG, e.getMessage());
-	}
+//	@Test()
+//	void emptyFilterTest() {
+//		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> DomainDAO.get(ctx, null, b -> b));
+//		assertEquals(DAOUtils.NULL_FILTER_MSG, e.getMessage());
+//	}
 
 	@Test()
 	void selectNoBuilderNoFacturyStreamTest() {
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> DomainDAO.getStream(ctx,p -> p.withName().eq( DOMAIN_NAME ), null));
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class
+			, () -> DomainDAO.getList(ctx,p -> p.withName().eq( DOMAIN_NAME ), null));
 		assertEquals(DAOUtils.NULL_FACTORY_MSG, e.getMessage());
 	}
 
 	@Test()
 	void selectStreamTest() {
-		Stream<Domain> domain = DomainDAO.getStream(ctx
+		List<Domain> domains = DomainDAO.getList(ctx
 			,p -> p.withName().eq( DOMAIN_NAME )
 			,b -> b
 		);
-		assertTrue(domain.findAny().isPresent());
+		assertTrue(AonCollectionUtils.isNotEmpty(domains));
 	}
 	
 	@Test
 	void streamLimitTest() {
-		long max = DomainDAO.getStream(ctx, p -> p.withName().like("a%"), b -> b)
+		long max = DomainDAO.getList(ctx, p -> p.withName().like("a%"), b -> b)
+			.stream()
 			.limit(10)
 			.count();
 		int rows = AonRandom.getInt(0, (int) max);
-		long count = DomainDAO.getStream(ctx, p -> p.withName().like("a%")
+		long count = DomainDAO.getList(ctx, p -> p.withName().like("a%")
 			,b -> b.limit(0, rows))
-		.count();
+		.size();
 		assertEquals(count, rows, "Limit not working" );
 	}
 	
@@ -194,10 +197,11 @@ class DomainDAOTest extends AbstractOccamTest {
 
 	@Test
 	void usersStreamTest() {
-		DomainDAO.getStream(ctx
+		DomainDAO.getList(ctx
 			, p -> p.withId().gt( 0 )
 			, b -> b.withUsers().withParentDomain().withBooking().withAudit()
 			)
+		.stream()
 		.forEach(d -> {
 			if (AonStringUtils.equals(d.getName(),DOMAIN_NAME)) {
 				assertTrue(d.getUsers().isPresent());
