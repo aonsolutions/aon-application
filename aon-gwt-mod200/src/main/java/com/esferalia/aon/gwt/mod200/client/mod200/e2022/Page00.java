@@ -1,4 +1,4 @@
-// IDENTIFICACION, TIPO DE DECLARACION, CARACTERES 
+// IDENTIFICACION, TIPO DE DECLARACION, ESTADOS DE CUENTAS, PERSONAL ASALARIADO, CARACTERES 
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Character.CHARACTERS_KEYS;
@@ -19,6 +19,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.mod200.api.model.BalanceType;
@@ -41,6 +42,7 @@ public class Page00 extends PageAbs {
 	public static final HashSet<Mod2002022Key> NOT_SUPPORTED_CHARACTERS = new HashSet<Mod2002022Key>();
 	static {
 		NOT_SUPPORTED_CHARACTERS.add(Mod2002022Key.C0003);
+		NOT_SUPPORTED_CHARACTERS.add(Mod2002022Key.C0008); // FALTA - EL NUEVO CARACTER 8 CREO QUE TAMBIEN OBLIGA A LOS ESTADOS CONTABLES DE IIC
 		NOT_SUPPORTED_CHARACTERS.add(Mod2002022Key.C0004);
 		NOT_SUPPORTED_CHARACTERS.add(Mod2002022Key.C0007);
 		NOT_SUPPORTED_CHARACTERS.add(Mod2002022Key.C0024);
@@ -77,7 +79,8 @@ public class Page00 extends PageAbs {
 		Mod2002022Key.C0060,
 		Mod2002022Key.C0066,
 		Mod2002022Key.C0078,
-		Mod2002022Key.C0056
+		Mod2002022Key.C0056,
+		Mod2002022Key.C0083  // FALTA - NO ESTOY SEGURO DE SI VA EN ESTE APARTADO
 	};
 
 	public static final Mod2002022Key[] DECLARATION_CHARACTERS_BLOCK2 = new Mod2002022Key[] {
@@ -121,7 +124,7 @@ public class Page00 extends PageAbs {
 		Mod2002022Key.C0070,
 		Mod2002022Key.C0059,
 		Mod2002022Key.C0065,
-		Mod2002022Key.C0077, // FALTA - ESTA CLAVE ESTA DUPLICADA CON LOS ESTADOS CONTABLES, VER SI AL FINAL SE QUEDA CON ESTE CODIGO O NO
+		Mod2002022Key.C0084, // FALTA - ESTA CLAVE ESTA DUPLICADA CON LOS ESTADOS CONTABLES, VER SI AL FINAL SE QUEDA CON ESTE CODIGO O NO
 		Mod2002022Key.C0072,
 		Mod2002022Key.C0073,
 		Mod2002022Key.C0037,
@@ -150,6 +153,7 @@ public class Page00 extends PageAbs {
 	private AonDoubleBox c041;
 	private AonDoubleBox c042;	
 	private ListBox opeVol;
+	private CheckBox agriculturalActivities;
 	
 	public Page00( Model200PageCallback callback ) {
 		super(callback);		
@@ -164,6 +168,8 @@ public class Page00 extends PageAbs {
 		phone2.setValue(callback.getMod200Object().getMod200().getEnterprisePhone2());
 		complementary.setValue(callback.getMod200Object().getMod200().isComplementary());
 		complementaryReceipt.setValue(callback.getMod200Object().getMod200().getReplacedNumber());
+		
+		agriculturalActivities.setValue(callback.getMod200Object().getMod200().getBooleanValue(Mod2002022Key.X0001));
 		
 		periodType.setSelectedIndex(callback.getMod200Object().getMod200().getPeriodType() - 1 );
 		periodPanel.setVisible((periodType.getSelectedIndex() != 0));
@@ -190,8 +196,8 @@ public class Page00 extends PageAbs {
 		cnaeLabel.setText(null);
 		cnae.setValue(callback.getMod200Object().getMod200().getCnae());
 		if (!AonStringUtils.isEmpty(callback.getMod200Object().getMod200().getCnae())) {
-			CNAE2009 cnae = CNAE2009.valueOfCode(callback.getMod200Object().getMod200().getCnae());
-			cnaeLabel.setText(cnae == null ? null : cnae.getDescription());	
+			CNAE2009 cnae2009 = CNAE2009.valueOfCode(callback.getMod200Object().getMod200().getCnae());
+			cnaeLabel.setText(cnae2009 == null ? null : cnae2009.getDescription());	
 		}
 		
 		for (Mod2002022Key key : inputsCheckBox.keySet()) {
@@ -403,13 +409,25 @@ public class Page00 extends PageAbs {
 		complementaryPanel.add(complementaryLabel);
 		complementaryPanel.add(complementaryReceipt);
 		
+		agriculturalActivities = new CheckBox();
+		agriculturalActivities.addClickHandler(event -> {			
+			callback.getMod200Object().getMod200().setBooleanValue(Mod2002022Key.X0001, agriculturalActivities.getValue());
+			callback.markAsDirty();
+		});
+		otherInputs.add(agriculturalActivities);
+		
+		FlowPanel agriculturalPanel = new FlowPanel();
+		agriculturalPanel.add(new Label(Mod2002022Key.X0001.getDescription()));
+		agriculturalPanel.add(agriculturalActivities);
+		
 		tab.addLabelWidgetRow(AON.MSG.document(), nif)
 		   .addLabelWidgetRow("Apellidos y nombre o raz\u00F3n social", companyName)
 		   .addLabelWidgetRow(AON.MSG.phone(), phones)
 		   .addLabelWidgetRow(AON.MSG.mainActivityCNAE(), cnaePanel)
 		   .addLabelWidgetRow(AON.MSG.periodType(), periodType)
 		   .addLabelWidgetRow("", periodPanel)
-		   .addLabelWidgetRow(AON.MSG.complementary(), complementaryPanel);
+		   .addLabelWidgetRow(AON.MSG.complementary(), complementaryPanel)
+		   .addLabelWidgetRow(Mod2002022Key.X0001.getDescription(), agriculturalActivities);
 		
 		// ESTADOS DE CUENTAS
 		

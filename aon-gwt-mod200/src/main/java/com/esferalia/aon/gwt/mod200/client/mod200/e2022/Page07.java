@@ -130,8 +130,7 @@ public class Page07 extends PageAbs {
 		basePanel.clear();
 		basePanel.add(getTitle(AON.MSG.patrimonioCambios() + " (*)"));
 		
-		FlexTable table = new FlexTable();
-		table = new FlexTable();
+		FlexTable table = new FlexTable();		
 		table.setStyleName(AON.AON_CSS.aonMarginBottom());
 		
 		FlowPanel tableContainer = new FlowPanel();

@@ -35,9 +35,8 @@ public class Page05 extends PageAbs {
 
 	@Override
 	protected boolean isAvailable() {
-		boolean av = super.isAvailable()
-  		  && (callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0026));
-		return av;
+		return super.isAvailable()
+  		  && (callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0026));		
 	}
 }
 

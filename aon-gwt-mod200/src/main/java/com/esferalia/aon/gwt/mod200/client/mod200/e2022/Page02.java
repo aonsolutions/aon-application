@@ -1,4 +1,4 @@
-// PARTICIPACIONES
+// PARTICIPACIONES, ENTIDADES MENORES, EP O UTE, SOCIOS DE SICAV 
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -156,7 +156,9 @@ public class Page02 extends PageAbs {
 		
 		basePanel.add(getTitle(AON.MSG.participationsIn()));
 		
-		addLabel("Participaciones de importe a fin de per\u00EDodo igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.", true);
+		// FALTA - VER MODELO
+		//addLabel("Participaciones de importe a fin de per\u00EDodo igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.", true);
+		addLabel("Participaciones que a fin de per\u00EDodo sean igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.", true);
 		addLabel("En caso de sociedades de responsabilidad limitada (SL) se deber\u00E1n cumplimentar, al menos, los datos correspondientes a uno de los socios aunque el porcentaje de participaci\u00F3n sea inferior al indicado.");
 		
 		AonDisplayTable tab2 = new AonDisplayTable();
@@ -467,6 +469,105 @@ public class Page02 extends PageAbs {
 		});		
 		otherInputs.add(addButtonForeign);
 		basePanel.add(addButtonForeign);
+		
+		// FALTA - QUE SOLO SALGA CUANDO ESTA EL CARACTER 84 MARCADO
+		// E. SOCIOS DE SICAV EN RÉGIMEN ESPECIAL DE DISOLUCIÓN Y LIQUIDACIÓN (DT 41ª LIS)
+		// Sólo se podrá cumplimentar este apartado cuando se haya marcado la clave 00084 Régimen especial de disolución y liquidación de SICAV (DT 41ª LIS).
+		
+		basePanel.add(getTitle("SOCIOS DE SICAV EN R\u00C9GIMEN ESPECIAL DE DISOLUCI\u00D3N Y LIQUIDACI\u00D3N (DT 41\u00AA LIS)"));
+		addLabel("Los socios de SICAV en r\u00E9gimen especial de disoluci\u00F3n y liquidaci\u00F3n (DT 41\u00AA LIS) consignar\u00E1n, a continuaci\u00F3n, los siguientes datos:");
+		
+		// NIF de la sociedad/es disuelta/s
+		
+		AonDisplayTable tabSicav1 = new AonDisplayTable();
+		tabSicav1.setWidth("30%");
+		tabSicav1.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tabSicav1);
+		
+		tabSicav1.addRow()
+			.addCell( new Label("NIF de la sociedad/es disuelta/s"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
+			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+		
+		for (int i = 0; i < callback.getMod200Object().getMod200().getSicav1().size(); i++) {
+			final int idx = i;
+			
+			AonDocumentTextBox document = new AonDocumentTextBox();			
+			document.setValue(callback.getMod200Object().getMod200().getSicav1().get(idx));
+			document.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().getSicav1().set(idx, document.getValue());
+				callback.markAsDirty();
+			});
+			otherInputs.add(document);
+			
+			// Boton borrar linea
+			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+			deleteButton.addClickHandler(event -> {
+				callback.getMod200Object().getMod200().getSicav1().remove(idx);
+				paint();
+				callback.markAsDirty();
+			});
+			otherInputs.add(deleteButton);
+
+			tabSicav1.addRow()
+				.addCell(document)
+				.addCell(deleteButton);
+			
+		}
+		
+		// Botón añadir 
+		AonTableButton addButtonSicav1 = new AonTableButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
+		addButtonSicav1.addClickHandler(event -> {
+			callback.getMod200Object().getMod200().getSicav1().add(new String());
+			paint();
+		});
+		otherInputs.add(addButtonSicav1);
+		tabSicav1.addRow().addCell(addButtonSicav1);
+		
+		// NIF de la sociedad/es donde reinvierte
+		
+		AonDisplayTable tabSicav2 = new AonDisplayTable();
+		tabSicav2.setWidth("30%");
+		tabSicav2.addStyleName(AON.CSS.aonBlockCenter());
+		basePanel.add(tabSicav2);
+		
+		tabSicav2.addRow()
+			.addCell( new Label("NIF de la sociedad/es donde reinvierte"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
+			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+		
+		for (int i = 0; i < callback.getMod200Object().getMod200().getSicav2().size(); i++) {
+			final int idx = i;
+			
+			AonDocumentTextBox document = new AonDocumentTextBox();			
+			document.setValue(callback.getMod200Object().getMod200().getSicav2().get(idx));
+			document.addValueChangeHandler(event -> {
+				callback.getMod200Object().getMod200().getSicav2().set(idx, document.getValue());
+				callback.markAsDirty();
+			});
+			otherInputs.add(document);
+			
+			// Boton borrar linea
+			AonTableButton deleteButton = new AonTableButton(AON.MSG.deleteAction(),AON.CSS.aonIconDelete());
+			deleteButton.addClickHandler(event -> {
+				callback.getMod200Object().getMod200().getSicav2().remove(idx);
+				paint();
+				callback.markAsDirty();
+			});
+			otherInputs.add(deleteButton);
+
+			tabSicav2.addRow()
+				.addCell(document)
+				.addCell(deleteButton);
+			
+		}
+		
+		// Botón añadir 
+		AonTableButton addButtonSicav2 = new AonTableButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
+		addButtonSicav2.addClickHandler(event -> {
+			callback.getMod200Object().getMod200().getSicav2().add(new String());
+			paint();
+		});
+		otherInputs.add(addButtonSicav2);
+		tabSicav2.addRow().addCell(addButtonSicav2);
 		
 	}
 

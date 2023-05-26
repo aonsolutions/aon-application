@@ -857,13 +857,13 @@ public class Model2002022 extends DockLayoutPanel {
 		 
 		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Personal Asalariado, Caracteres de la declaraci\u00F3n"));
 		linkContainer.add(new WestFocusPanel( 2,"Secretario, Grupo Fiscal o Mercantil, Representantes y Administradores"));
-		linkContainer.add(new WestFocusPanel( 3,"Participaciones, Entidades menores, Informaci\u00F3n detalle EP y UTE"));
+		linkContainer.add(new WestFocusPanel( 3,"Participaciones, Entidades menores, Informaci\u00F3n detalle EP y UTE, Socios SICAV"));
 		linkContainer.add(new WestFocusPanel( 4,AON.MSG.balanceActivo()));
 		linkContainer.add(new WestFocusPanel( 5,AON.MSG.balancePasivo()));
 		linkContainer.add(new WestFocusPanel( 6,AON.MSG.pyg()));
 		linkContainer.add(new WestFocusPanel( 7,AON.MSG.patrimonioIngresos()));
 		linkContainer.add(new WestFocusPanel( 8,AON.MSG.patrimonioCambios()));
-		linkContainer.add(new WestFocusPanel( 9,AON.MSG.liquidacionI() + ": Resultado PyG, Cifra de negocios, Correcciones"));
+		linkContainer.add(new WestFocusPanel( 9,AON.MSG.liquidacionI() + ": Resultado PyG, Correcciones"));
 		linkContainer.add(new WestFocusPanel(10,AON.MSG.liquidacionII() + ": Base imponible, Cuota \u00EDntegra"));
 		linkContainer.add(new WestFocusPanel(11,AON.MSG.liquidacionIII() + ": Bonificaciones, Deducciones por doble imposici\u00F3n"));
 		linkContainer.add(new WestFocusPanel(12,AON.MSG.liquidacionIV() + ": Otras deducciones"));

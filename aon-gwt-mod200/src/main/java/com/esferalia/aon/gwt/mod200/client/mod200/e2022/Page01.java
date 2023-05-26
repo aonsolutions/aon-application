@@ -16,10 +16,6 @@ import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.api.model.type.Province;
 import com.esferalia.aon.occam.mod200.api.model.Mod200CompanyAdministrator;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
 
@@ -170,12 +166,9 @@ public class Page01 extends PageAbs {
 			
 			ultimateDocumentCountry.setWidth("240px");
 			ultimateDocumentCountry.setValue(callback.getMod200Object().getMod200().getUltimateDocumentCountry());
-			ultimateDocumentCountry.addChangeHandler(new ChangeHandler() {			
-				@Override
-				public void onChange(ChangeEvent event) {
-					callback.getMod200Object().getMod200().setUltimateDocumentCountry(Country.safeValueOf(ultimateDocumentCountry.getSelectedValue()));
-					callback.markAsDirty();
-				}
+			ultimateDocumentCountry.addChangeHandler( event -> {
+				callback.getMod200Object().getMod200().setUltimateDocumentCountry(Country.safeValueOf(ultimateDocumentCountry.getSelectedValue()));
+				callback.markAsDirty();				
 			});
 			otherInputs.add(ultimateDocumentCountry);
 			
@@ -190,12 +183,9 @@ public class Page01 extends PageAbs {
 			
 			ultimateCountry.setWidth("240px");
 			ultimateCountry.setValue(callback.getMod200Object().getMod200().getUltimateCountry());
-			ultimateCountry.addChangeHandler(new ChangeHandler() {			
-				@Override
-				public void onChange(ChangeEvent event) {
-					callback.getMod200Object().getMod200().setUltimateCountry(Country.safeValueOf(ultimateCountry.getSelectedValue()));
-					callback.markAsDirty();
-				}
+			ultimateCountry.addChangeHandler( event -> {						
+				callback.getMod200Object().getMod200().setUltimateCountry(Country.safeValueOf(ultimateCountry.getSelectedValue()));
+				callback.markAsDirty();				
 			});
 			otherInputs.add(ultimateCountry);
 			
@@ -332,12 +322,9 @@ public class Page01 extends PageAbs {
 			
 			CheckBox rep = new CheckBox();
 			rep.setValue(callback.getMod200Object().getMod200().getAdministrators().get(idx).isRepresentative());
-			rep.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					callback.getMod200Object().getMod200().getAdministrators().get(idx).setRepresentative(rep.getValue());
-					callback.markAsDirty();
-				}
+			rep.addClickHandler( event -> { 
+				callback.getMod200Object().getMod200().getAdministrators().get(idx).setRepresentative(rep.getValue());
+				callback.markAsDirty();				
 			});
 			otherInputs.add(rep);
 			
@@ -345,7 +332,7 @@ public class Page01 extends PageAbs {
 			name.setMaxLength(40);  
 			name.setVisibleLength(45);	
 			name.setValue(callback.getMod200Object().getMod200().getAdministrators().get(idx).getName());
-			name.addValueChangeHandler(event -> {
+			name.addValueChangeHandler( event -> {
 				callback.getMod200Object().getMod200().getAdministrators().get(idx).setName(name.getValue());
 				callback.markAsDirty();
 			});
@@ -362,12 +349,9 @@ public class Page01 extends PageAbs {
 			
 			ProvinceListBox province = new ProvinceListBox();
 			province.setValue(Province.safeValueOf(callback.getMod200Object().getMod200().getAdministrators().get(idx).getProvince()));
-			province.addChangeHandler(new ChangeHandler() {			
-				@Override
-				public void onChange(ChangeEvent event) {
-					callback.getMod200Object().getMod200().getAdministrators().get(idx).setProvince(province.getSelectedIndex());
-					callback.markAsDirty();
-				}
+			province.addChangeHandler(event -> {
+				callback.getMod200Object().getMod200().getAdministrators().get(idx).setProvince(province.getSelectedIndex());
+				callback.markAsDirty();
 			});
 			otherInputs.add(province);
 

@@ -48,7 +48,7 @@ public class Mod2002022Description {
 		DESCRIPTION_MAP.put(Mod2002022Key.C0078,"Di\u00F3cesis, provincia religiosa o entidad eclesi\u00E1stica que integra entidades menores de ellas dependientes");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0056,"Entidad en r\u00E9gimen de atribuci\u00F3n de rentas con tributaci\u00F3n por el Impuesto sobre Sociedades");
 		
-		DESCRIPTION_MAP.put(Mod2002022Key.C0083,"Empresa emergente");
+		DESCRIPTION_MAP.put(Mod2002022Key.C0083,"Empresa emergente"); // FALTA - NO SE A QUE APARTADO VA
 		
 		DESCRIPTION_MAP.put(Mod2002022Key.C0006,"Incentivos entidad de reducida dimensi\u00F3n (Cap. XI, T\u00EDt. VII LIS)");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0015,"Entidad ZEC (sin consolidaci\u00F3n fiscal)");
@@ -105,7 +105,7 @@ public class Mod2002022Description {
 		DESCRIPTION_MAP.put(Mod2002022Key.C0054,"P\u00E9rdidas y ganancias. Abreviado");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0055,"P\u00E9rdidas y ganancias. PYMES");
 		
-		DESCRIPTION_MAP.put(Mod2002022Key.C0061,"Entidades utilicen los estados de cuentas aplicables a las IIC");
+		DESCRIPTION_MAP.put(Mod2002022Key.C0061,"Entidades que utilicen los estados de cuentas aplicables a las IIC (excepto claves 00003, 00004 y 00008)");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0068,"Entidades que sin ser Entidades de Cr\u00E9dito utilicen los estados de cuentas aplicables a estas");
 		
 		DESCRIPTION_MAP.put(Mod2002022Key.C0041,"Personal fijo");
