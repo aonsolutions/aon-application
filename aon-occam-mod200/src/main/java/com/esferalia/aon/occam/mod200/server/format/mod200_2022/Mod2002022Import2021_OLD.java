@@ -562,7 +562,7 @@ public class Mod2002022Import2021_OLD {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN1638, mod200old.getDoubleValue(Mod2002021Key.BN1640)) // 2021: V Centenario de la expedición de la primera vuelta al mundo de Fernando de Magallanes y Juan Sebastián Elcano (EPVM)
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN1707, mod200old.getDoubleValue(Mod2002021Key.BN1709)) // 2021: Plan Decenio Millarium Montserrat 1025-2025 (PDMM)
 //			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN1800, mod200old.getDoubleValue(Mod2002021Key.BN1802)) // 2021: Programa de preparación de los deportistas españoles de los Juegos de Tokio 2020 (T20)
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN1874, mod200old.getDoubleValue(Mod2002021Key.BN1876)) // 2021: Andalucía Valderrama Masters (AVM)
+//			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN1874, mod200old.getDoubleValue(Mod2002021Key.BN1876)) // 2021: Andalucía Valderrama Masters (AVM)
 //			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN1889, mod200old.getDoubleValue(Mod2002021Key.BN1891)) // 2021: Badminton World Tour (BWT)
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN1892, mod200old.getDoubleValue(Mod2002021Key.BN1894)) // 2021: Nuevas Metas (NM)
 //			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN1901, mod200old.getDoubleValue(Mod2002021Key.BN1903)) // 2021: Logroño 2021, nuestro V Centenario (L21)

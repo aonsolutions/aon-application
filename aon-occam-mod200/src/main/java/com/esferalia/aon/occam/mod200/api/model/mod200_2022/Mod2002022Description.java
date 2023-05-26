@@ -19,6 +19,7 @@ public class Mod2002022Description {
 
 	static {		
 		DESCRIPTION_MAP.put(Mod2002022Key.X0000, "Tipo de ejercicio");
+		DESCRIPTION_MAP.put(Mod2002022Key.X0001, "Realiza actividades agr\u00EDcolas y/o ganaderas");
 		
 		DESCRIPTION_MAP.put(Mod2002022Key.C0001,"Entidad sin \u00E1nimo de lucro acogida r\u00E9gimen fiscal T\u00EDtulo II Ley 49/2002");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0002,"Entidad parcialmente exenta");
@@ -47,6 +48,8 @@ public class Mod2002022Description {
 		DESCRIPTION_MAP.put(Mod2002022Key.C0078,"Di\u00F3cesis, provincia religiosa o entidad eclesi\u00E1stica que integra entidades menores de ellas dependientes");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0056,"Entidad en r\u00E9gimen de atribuci\u00F3n de rentas con tributaci\u00F3n por el Impuesto sobre Sociedades");
 		
+		DESCRIPTION_MAP.put(Mod2002022Key.C0083,"Empresa emergente");
+		
 		DESCRIPTION_MAP.put(Mod2002022Key.C0006,"Incentivos entidad de reducida dimensi\u00F3n (Cap. XI, T\u00EDt. VII LIS)");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0015,"Entidad ZEC (sin consolidaci\u00F3n fiscal)");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0079,"Entidad ZEC en consolidaci\u00F3n fiscal");		
@@ -56,7 +59,7 @@ public class Mod2002022Description {
 		DESCRIPTION_MAP.put(Mod2002022Key.C0049,"Reg\u00EDmenes especiales de normativa foral");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0035,"Aplicaci\u00F3n r\u00E9g. especial fusiones, escisiones, aportaciones y canjes valores (Cap.VII, T\u00EDt.VII)");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0029,"R\u00E9gimen especial Canarias");
-		DESCRIPTION_MAP.put(Mod2002022Key.C0069,"R\u00E9gimen de entidades navieras en Canarias");
+		DESCRIPTION_MAP.put(Mod2002022Key.C0069,"R\u00E9gimen especial de buques y empresas navieras en Canarias");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0033,"R\u00E9gimen especial miner\u00EDa");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0034,"R\u00E9gimen especial hidrocarburos");		
 		DESCRIPTION_MAP.put(Mod2002022Key.C0038,"Entidad dedicada al arrend. de viviendas");
@@ -85,7 +88,7 @@ public class Mod2002022Description {
 		DESCRIPTION_MAP.put(Mod2002022Key.C0070,"Compensaci\u00F3n bases imponibles negativas para entidades de nueva creaci\u00F3n (art. 26.3 LIS)");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0059,"Opciones arts. 39.2 y 39.3 LIS");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0065,"Bonificaci\u00F3n personal investigador (R.D. 475/2014)");
-		DESCRIPTION_MAP.put(Mod2002022Key.C0077,"R\u00E9gimen especial de disoluci\u00F3n y liquidaci\u00F3n de SICAV (DT 41\u00AA LIS)");		
+		DESCRIPTION_MAP.put(Mod2002022Key.C0084,"R\u00E9gimen especial de disoluci\u00F3n y liquidaci\u00F3n de SICAV (DT 41\u00AA LIS)");		
 		DESCRIPTION_MAP.put(Mod2002022Key.C0072,"Extinci\u00F3n de entidad");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0073,"Opci\u00F3n del 0,7% de la cuota \u00EDntegra para fines sociales");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0037,"Opci\u00F3n de fraccionamiento art. 19.1 LIS");
@@ -102,7 +105,7 @@ public class Mod2002022Description {
 		DESCRIPTION_MAP.put(Mod2002022Key.C0054,"P\u00E9rdidas y ganancias. Abreviado");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0055,"P\u00E9rdidas y ganancias. PYMES");
 		
-		DESCRIPTION_MAP.put(Mod2002022Key.C0061,"Entidades que sin ser Instituciones de inversi\u00F3n colectiva utilicen los estados de cuentas aplicables a estas");
+		DESCRIPTION_MAP.put(Mod2002022Key.C0061,"Entidades utilicen los estados de cuentas aplicables a las IIC");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0068,"Entidades que sin ser Entidades de Cr\u00E9dito utilicen los estados de cuentas aplicables a estas");
 		
 		DESCRIPTION_MAP.put(Mod2002022Key.C0041,"Personal fijo");
@@ -458,8 +461,8 @@ public class Mod2002022Description {
 		DESCRIPTION_MAP.put(Mod2002022Key.LQ545, "Rentas correspondientes a quitas por acuerdo con acreedores (art. 26.1 LIS)");
 		DESCRIPTION_MAP.put(Mod2002022Key.LQ1509,"Rentas correspondientes a la reversi\u00F3n de deterioros (DT 16\u00AA.8 LIS)");
 		
-		DESCRIPTION_MAP.put(Mod2002022Key.LQ1576, "Parte de la base imponible que proceda de la realizaci\u00F3n de actividades a las que se aplica el r\u00E9gimen especial"); 
-		DESCRIPTION_MAP.put(Mod2002022Key.LQ1577, "Parte de la base imponible que proceda de la realizaci\u00F3n del resto de actividades"); 
+		DESCRIPTION_MAP.put(Mod2002022Key.LQ1576, "Parte de la base imponible que proceda de la realizaci\u00F3n de actividades a las que se aplica el r\u00E9gimen especial, despu\u00E9s de la reserva de nivelaci\u00F3n"); 
+		DESCRIPTION_MAP.put(Mod2002022Key.LQ1577, "Parte de la base imponible que proceda de la realizaci\u00F3n del resto de actividades, despu\u00E9s de la reserva de nivelaci\u00F3n"); 
 		
 		DESCRIPTION_MAP.put(Mod2002022Key.LQ558, "Tipo de gravamen");
 		
@@ -512,7 +515,7 @@ public class Mod2002022Description {
 		DESCRIPTION_MAP.put(Mod2002022Key.BN082, "Deducciones excluidas l\u00EDmite I + D + i");
 		DESCRIPTION_MAP.put(Mod2002022Key.BN1040,"Deducci\u00F3n por reversi\u00F3n de medidas temporales DT 37\u00AA.1 LIS");
 		DESCRIPTION_MAP.put(Mod2002022Key.BN1041,"Deducci\u00F3n por reversi\u00F3n de medidas temporales DT 37\u00AA.2 LIS");
-		DESCRIPTION_MAP.put(Mod2002022Key.BN619, "Cuota l\u00EDquida m\u00EDnima (art. 30 bis.2 LIS)");
+		DESCRIPTION_MAP.put(Mod2002022Key.BN619, "Cuota l\u00EDquida m\u00EDnima (art. 30 bis LIS)");
 		DESCRIPTION_MAP.put(Mod2002022Key.BN592, "Cuota l\u00EDquida");
 		
 		DESCRIPTION_MAP.put(Mod2002022Key.BN1785,"Retenciones por rendimientos del capital mobiliario");

@@ -24,7 +24,7 @@ public enum Mod2002022LQ243Key implements Serializable, IMod200KeysProvider  {
 	,C06(new Mod2002022Key[]{Mod2002022Key.LQ1889, Mod2002022Key.LQ1890, Mod2002022Key.LQ1891}, "Subtotal de compensaci\u00F3n de base imponible resto actividades")
 	,C07(new Mod2002022Key[]{Mod2002022Key.LQ216 , Mod2002022Key.LQ243 , Mod2002022Key.LQ265 }, "Total")
 	,C08(new Mod2002022Key[]{Mod2002022Key.LQ266 , null		           , Mod2002022Key.LQ267 }, "Compensaci\u00F3n de base imponible especial a\u00F1o 2022")
-	,C09(new Mod2002022Key[]{Mod2002022Key.LQ290 , null		           , Mod2002022Key.LQ344 }, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2022")
+	,C09(new Mod2002022Key[]{Mod2002022Key.LQ290 , Mod2002022Key.LQ2465, Mod2002022Key.LQ344 }, "Compensaci\u00F3n de base imponible resto actividades a\u00F1o 2022")
 	;
 	 
     private String description;

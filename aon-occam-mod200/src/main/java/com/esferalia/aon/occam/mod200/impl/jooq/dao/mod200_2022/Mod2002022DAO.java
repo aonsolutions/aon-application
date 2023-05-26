@@ -148,6 +148,10 @@ public class Mod2002022DAO  {
 					.setName( reg.getName())))
 		,FILM_PRODUCTIONS( 
 			(mod,reg) -> mod.getFilmProductions().add(reg.getDocument()))
+		,SICAV_1( 
+			(mod,reg) -> mod.getSicav1().add(reg.getDocument()))
+		,SICAV_2( 
+			(mod,reg) -> mod.getSicav2().add(reg.getDocument()))
 		;
 		
 		private IPopulater populater;
@@ -506,7 +510,35 @@ public class Mod2002022DAO  {
 					list.add(detail);
 				}
 			}
-		}		
+		}
+		
+		// E. Socios SICAV: Nif sociedades disueltas
+		if (mod200.getSicav1() != null) {
+			for ( String s1 : mod200.getSicav1() ) {
+				if (AonStringUtils.isNotBlank(s1)) {
+					detail = new FsModel200RegistryRecord();
+					detail.setFsModel200(mod200.getId());
+					detail.setDomain(mod200.getDomain());
+					detail.setType(Mod2002022RegistryType.SICAV_1.byteValue());
+					detail.setDocument(AonStringUtils.substring(s1,0,9));  
+					list.add(detail);
+				}
+			}
+		}
+		
+		// E. Socios SICAV: Nif de la/las IIC donde reinvierte
+		if (mod200.getSicav2() != null) {
+			for ( String s2 : mod200.getSicav2() ) {
+				if (AonStringUtils.isNotBlank(s2)) {
+					detail = new FsModel200RegistryRecord();
+					detail.setFsModel200(mod200.getId());
+					detail.setDomain(mod200.getDomain());
+					detail.setType(Mod2002022RegistryType.SICAV_2.byteValue());
+					detail.setDocument(AonStringUtils.substring(s2,0,9));  
+					list.add(detail);
+				}
+			}
+		}				
 		
 		if (!list.isEmpty()) {
 			ctx.getDslContext().batchStore(list).execute();

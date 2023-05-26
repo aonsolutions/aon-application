@@ -63,7 +63,16 @@ public class Mod2002022 extends Mod200 {
 	private LinkedList<UteParticipation> uteParticipations = new LinkedList<UteParticipation>();   // UTES - Relación de socios
 	private LinkedList<GroupEntitie> groupEntities = new LinkedList<GroupEntitie>();               // Grupos de Sociedades- NIF de las entidades del grupo 
 	private LinkedList<String> establishments = new LinkedList<String>();	                       // No residentes - NIF de los establecimientos permanentes, en caso de entidad titular
-	private LinkedList<String> filmProductions = new LinkedList<String>();                         // Información adicional producciones cinematográficas españolas y espectáculos en vivo 
+	private LinkedList<String> filmProductions = new LinkedList<String>();                         // Información adicional producciones cinematográficas españolas y espectáculos en vivo
+	
+	// FALTA - APARTADO E PAGINA 2 BIS 
+	// E. Socios de SICAV en régimen especial de disolución y liquidación (DT 41ª LIS)
+	// Realmente son dos listas de NIF:
+	// 
+	// 
+	// LUEGO HABRA QUE HACER DOS LIST
+	private LinkedList<String> sicav1 = new LinkedList<String>(); // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la sociedad/es disuelta/s
+	private LinkedList<String> sicav2 = new LinkedList<String>(); // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la/las IIC donde reinvierte
 	
 	private String devType;
 	private String payType;
@@ -239,6 +248,18 @@ public class Mod2002022 extends Mod200 {
 	}
 	public void setFilmProductions(LinkedList<String> filmProductions) {
 		this.filmProductions = filmProductions;		
+	}
+	public LinkedList<String> getSicav1() {
+		return sicav1;
+	}
+	public void setSicav1(LinkedList<String> sicav1) {
+		this.sicav1 = sicav1;		
+	}
+	public LinkedList<String> getSicav2() {
+		return sicav2;
+	}
+	public void setSicav2(LinkedList<String> sicav2) {
+		this.sicav2 = sicav2;		
 	}
 	public String getDevType() {
 		return devType;

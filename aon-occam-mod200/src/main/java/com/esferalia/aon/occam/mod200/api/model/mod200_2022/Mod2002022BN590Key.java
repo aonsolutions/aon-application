@@ -28,13 +28,13 @@ public enum Mod2002022BN590Key implements Serializable, IMod200KeysProvider {
 	 ,C11(new Mod2002022Key[]{Mod2002022Key.BN2209,Mod2002022Key.BN2210,Mod2002022Key.BN2211},"2020: Activos fijos (Ley 20/1991)")
 	 ,C12(new Mod2002022Key[]{Mod2002022Key.BN2332,Mod2002022Key.BN2333,Mod2002022Key.BN2334},"2021: Activos fijos (Ley 20/1991)")
 	 ,C13(new Mod2002022Key[]{Mod2002022Key.BN237 ,Mod2002022Key.BN238 ,Mod2002022Key.BN239 },"2022(*): Activos fijos (Ley 20/1991)")
-	 ,C14(new Mod2002022Key[]{Mod2002022Key.BN711 ,Mod2002022Key.BN712 ,Mod2002022Key.BN1911A},"2022: Activos fijos (Ley 20/1991)")	 
+	 ,C14(new Mod2002022Key[]{Mod2002022Key.BN711 ,Mod2002022Key.BN712 ,Mod2002022Key.BN2077},"2022: Activos fijos (Ley 20/1991)")	 
 	 ,C15(new Mod2002022Key[]{Mod2002022Key.BN2335,Mod2002022Key.BN2336,Mod2002022Key.BN2337},"2018: Activos fijos en La Palma, La Gomera y El Hierro")
 	 ,C16(new Mod2002022Key[]{Mod2002022Key.BN2338,Mod2002022Key.BN2339,Mod2002022Key.BN2340},"2019: Activos fijos en La Palma, La Gomera y El Hierro")
 	 ,C17(new Mod2002022Key[]{Mod2002022Key.BN2341,Mod2002022Key.BN2342,Mod2002022Key.BN2343},"2020: Activos fijos en La Palma, La Gomera y El Hierro")
 	 ,C18(new Mod2002022Key[]{Mod2002022Key.BN2344,Mod2002022Key.BN2345,Mod2002022Key.BN2346},"2021: Activos fijos en La Palma, La Gomera y El Hierro")
 	 ,C19(new Mod2002022Key[]{Mod2002022Key.BN244 ,Mod2002022Key.BN245 ,Mod2002022Key.BN2497},"2022(*): Activos fijos en La Palma, La Gomera y El Hierro")
-	 ,C20(new Mod2002022Key[]{Mod2002022Key.BN1912A,Mod2002022Key.BN1913A,Mod2002022Key.BN766 },"2022: Activos fijos en La Palma, La Gomera y El Hierro")
+	 ,C20(new Mod2002022Key[]{Mod2002022Key.BN2078,Mod2002022Key.BN1913,Mod2002022Key.BN766 },"2022: Activos fijos en La Palma, La Gomera y El Hierro")
 	 ,C21(new Mod2002022Key[]{Mod2002022Key.BN880 ,Mod2002022Key.BN881 ,null                },"2004: Inversiones en Canarias (Ley 20/1991)")
 	 ,C22(new Mod2002022Key[]{Mod2002022Key.BN866 ,Mod2002022Key.BN867 ,Mod2002022Key.BN870 },"2005: Inversiones en Canarias (Ley 20/1991)")
 	 ,C23(new Mod2002022Key[]{Mod2002022Key.BN939 ,Mod2002022Key.BN940 ,Mod2002022Key.BN941 },"2006: Inversiones en Canarias (Ley 20/1991)")
@@ -65,8 +65,10 @@ public enum Mod2002022BN590Key implements Serializable, IMod200KeysProvider {
 
 	 ,C48(new Mod2002022Key[]{Mod2002022Key.BN2287,null                ,null                },"2022: Deducci\u00F3n por investigaci\u00F3n y desarrollo en Canarias generada en el per\u00EDodo impositivo")	 		
 	 ,C49(new Mod2002022Key[]{Mod2002022Key.BN2288,null                ,null                },"2022: Deducci\u00F3n por innovaci\u00F3n tecnol\u00F3gica en Canarias generada en el per\u00EDodo impositivo")
-	 ,C50(new Mod2002022Key[]{Mod2002022Key.BN2495,null                ,null                },"2022: Deducci\u00F3n por producciones cinematogr\u00E1ficas espa\u00F1olas en Canarias generada en el per\u00EDodo impositivo")
-	 ,C51(new Mod2002022Key[]{Mod2002022Key.BN2496,null                ,null                },"2022: Deducci\u00F3n por espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales en Canarias generada en el per\u00EDodo impositivo")
+	 ,C50(new Mod2002022Key[]{Mod2002022Key.BN2495,null                ,null                },"2022: Productor: Deducci\u00F3n por producciones cinematogr\u00E1ficas espa\u00F1olas en Canarias generada en el per\u00EDodo impositivo")
+	 ,C51(new Mod2002022Key[]{Mod2002022Key.BN2079,null                ,null                },"2022: Financiador: Deducci\u00F3n por producciones cinematogr\u00E1ficas espa\u00F1olas en Canarias generada en el per\u00EDodo impositivo")
+	 ,C52(new Mod2002022Key[]{Mod2002022Key.BN2496,null                ,null                },"2022: Productor: Deducci\u00F3n por espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales en Canarias generada en el per\u00EDodo impositivo")
+	 ,C53(new Mod2002022Key[]{Mod2002022Key.BN2080,null                ,null                },"2022: Financiador: Deducci\u00F3n por espect\u00E1culos en vivo de artes esc\u00E9nicas y musicales en Canarias generada en el per\u00EDodo impositivo")
 	 
 	;
 	
