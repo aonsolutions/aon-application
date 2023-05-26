@@ -16,7 +16,8 @@ public class Mod110Bizkaia2023Declaration extends Mod111Declaration {
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
-		 BZ_C01 (Mod111Key.BZ_C01,false
+		 CM_002(Mod111Key.CM_002,false,null,null,null,null,null)
+		,BZ_C01 (Mod111Key.BZ_C01,false
 			, (mod,br) ->  isSalaryRetention(mod,br)
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.BZ_C01,mod,docs,pdocs,br)
 			,null,null,null)

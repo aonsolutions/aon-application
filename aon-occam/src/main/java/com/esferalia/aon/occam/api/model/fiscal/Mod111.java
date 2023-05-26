@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Mod111Key;
 
-public class Mod111 extends FiscalModel implements Serializable {
+public class Mod111 extends FiscalModel implements Serializable, ISalaryFiscalModel {
 	
 	private static final long serialVersionUID = -6579562925389189514L;
 	
@@ -38,6 +38,14 @@ public class Mod111 extends FiscalModel implements Serializable {
 		return this;
 	}
 
+	@Override
+	public boolean mustUseChargeDate() {
+		return getAmount(Mod111Key.CM_002) == 1;
+	}
+	public void setUseChargeDate(boolean useChargeDate) {
+		putAmount(Mod111Key.CM_002, useChargeDate ? 1 : 0 );
+	}
+	
 	@Override
 	@Deprecated
 	public double getResult() {

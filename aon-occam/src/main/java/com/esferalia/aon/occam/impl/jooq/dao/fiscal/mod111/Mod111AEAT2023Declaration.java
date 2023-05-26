@@ -16,8 +16,9 @@ public class Mod111AEAT2023Declaration extends Mod111Declaration {
 	}
 	
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
+		 CM_002(Mod111Key.CM_002,false,null,null,null,null,null)
 		// Rendimientos del trabajo. Rendimientos dinerarios.
-		 CT_C01(Mod111Key.CT_C01,false
+		,CT_C01(Mod111Key.CT_C01,false
 			, Mod111AEAT2023Declaration::isSalaryRetention  
 			, (ctx,mod,docs,pdocs,br) -> addPerceptor(Mod111Key.CT_C01,mod,docs,pdocs,br))
 		,CT_C02(Mod111Key.CT_C02,true
