@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 
 public class Model190NewDeclarationPopup extends AonCustomDialog {
 	
@@ -20,6 +21,7 @@ public class Model190NewDeclarationPopup extends AonCustomDialog {
 	private CheckBox replacement = new CheckBox();
 	private CheckBox complementary = new CheckBox();
 	private AonTextBox replacedReceiptBox = new AonTextBox();
+	private ListBox useChargeDateBox = new ListBox();
 	
 	public Model190NewDeclarationPopup(final Mod190 mod190, final Model190Callback callback) {
 		this(mod190, false, false, callback);	
@@ -111,6 +113,13 @@ public class Model190NewDeclarationPopup extends AonCustomDialog {
 		replacedReceiptBox.setEnabled(mod190.isComplementary() || mod190.isReplacement()); 
 		replacedReceiptBox.addValueChangeHandler(event -> mod190.setReplacedReceipt(replacedReceiptBox.getValue()));
 		
+
+		useChargeDateBox = new ListBox();
+		useChargeDateBox.addItem("Fecha de emisi\u00F3n");
+		useChargeDateBox.addItem("Fecha de pago");
+		useChargeDateBox.setSelectedIndex(0);
+		useChargeDateBox.addChangeHandler( event -> mod190.setUseChargeDate( useChargeDateBox.getSelectedIndex() == 1));
+		
 		AonDisplayTable tab = new AonDisplayTable();
 		tab.addStyleName(AON.CSS.aonMarginTop());
 		tab.addStyleName(AON.CSS.aonMarginBottom());
@@ -131,6 +140,10 @@ public class Model190NewDeclarationPopup extends AonCustomDialog {
 		tab.addRow( )	
 			.addCell( new Label( AON.MSG.previousDeclaration()), AON.CSS. aonTableLabel())
 			.addCell(replacedReceiptBox);
+		tab.addRow()
+			.addCell(new Label("Seleccionar las n\u00F3minas por"),AON.CSS.aonTableLabel())
+			.addCell(useChargeDateBox);
+		
 		
 		rootPanel.add(tab);
 		
