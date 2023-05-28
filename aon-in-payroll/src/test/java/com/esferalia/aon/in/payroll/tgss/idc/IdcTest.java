@@ -5866,6 +5866,137 @@ public class IdcTest extends AbstractSQLTestCase {
 		}
 	}
 
+	@Test
+	public void testIdcplcccTrabajadoresTramos421IT()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		
+		
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplccc421IT.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
+			    @Override
+			    public boolean isTraining421Employee(String ssNum, String ccc, Date start, Date end) {
+				switch (ssNum) {
+				case "411111039336":
+				    return true ;
+
+				default:
+				    return false;
+				}
+			    }
+			});
+	
+			//marshall(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("41", liquidacion.getCcc().getProvincia());
+			assertEquals("134937520", liquidacion.getCcc().getNumero());
+	
+			assertEquals("05", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2023", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("05", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2023", liquidacion.getPeriodoHasta().getAnho());
+	
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+	
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("05", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2023", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			
+			
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+				switch (trabajador.getNaf()) {
+				// ISABEL BARBERO OVIEDO
+				case "411111039336":
+				    trabajador.getTramos().getTramo().sort((t1,t2) -> t1.getFechaDesde().getDia().compareTo(t2.getFechaDesde().getDia()) );
+				    assertTramoITPagoDelegado (trabajador.getTramos().getTramo().get(0));
+				    assertTramoMaternidadTiempoCompleto(trabajador.getTramos().getTramo().get(1));
+				    break;
+				// EDUARDO ALCON SALAMANCA
+				case "411068669332" : 
+				    marshal(trabajador, System.out);
+				    trabajador.getTramos().getTramo().sort((t1,t2) -> t1.getFechaDesde().getDia().compareTo(t2.getFechaDesde().getDia()) );
+				    assertTramoActivoNormal(trabajador.getTramos().getTramo().get(0));
+				    assertTramoMaternidadTiempoCompleto(trabajador.getTramos().getTramo().get(1));
+				    break;
+				// JOSE GUILLERMO ALCON SALAMANCA
+				default:
+				    trabajador.getTramos().getTramo().forEach(IdcTest::assertTramoActivoNormal);
+				    break;
+				}
+				
+			}
+			
+	
+		}
+	}
+
+	@Test
+	public void testIdcplcccTrabajadoresTramos421ITIII()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		
+		
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplccc421ITIII.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
+			    @Override
+			    public boolean isTraining421Employee(String ssNum, String ccc, Date start, Date end) {
+				switch (ssNum) {
+				case "411111039336":
+				    return true ;
+
+				default:
+				    return false;
+				}
+			    }
+			});
+	
+			//marshall(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("41", liquidacion.getCcc().getProvincia());
+			assertEquals("134937520", liquidacion.getCcc().getNumero());
+	
+			assertEquals("03", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2023", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("03", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2023", liquidacion.getPeriodoHasta().getAnho());
+	
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+	
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("03", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2023", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			
+			
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+				switch (trabajador.getNaf()) {
+				// ISABEL BARBERO OVIEDO
+				case "411111039336":
+				    marshal(trabajador, System.out);
+				    trabajador.getTramos().getTramo().sort((t1,t2) -> t1.getFechaDesde().getDia().compareTo(t2.getFechaDesde().getDia()) );
+				    assertTramoActivoNormalFormacionEnAlternancia(trabajador.getTramos().getTramo().get(0));
+				    assertTramoIT15PrimerosDias(trabajador.getTramos().getTramo().get(1));
+				    break;
+				// EDUARDO ALCON SALAMANCA
+				// JOSE GUILLERMO ALCON SALAMANCA
+				default:
+				    trabajador.getTramos().getTramo().forEach(IdcTest::assertTramoActivoNormal);
+				    break;
+				}
+				
+			}
+			
+	
+		}
+	}
+
 	private static java.sql.Date toSQL(java.util.Date date) {
 		return date == null ? null : new java.sql.Date(date.getTime());
 	}
