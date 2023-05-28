@@ -4855,6 +4855,20 @@ public class IdcTest extends AbstractSQLTestCase {
 		return 2;
 	}
 
+	private static void assertTramoActivoNormalFormacionEnAlternancia(Tramo tramo) {
+		List<DatoSolicitado> datoSolicitados = tramo.getDatosTramo().getDatoSolicitado();
+		assertNoDatosSolicitado(datoSolicitados, "I", "51");
+		assertDatosSolicitado(datoSolicitados, "C", "500", "B");
+		assertDatosSolicitado(datoSolicitados, "C", "301", "P");
+		assertDatosSolicitado(datoSolicitados, "C", "601", "B");
+		assertDatosSolicitado(datoSolicitados, "H", "03", "P");
+		assertDatosSolicitado(datoSolicitados, "H", "04", "P");
+		assertDatosSolicitado(datoSolicitados, "H", "06", "P");
+		assertDatosSolicitado(datoSolicitados, "C", "737", "P");
+		assertDatosSolicitado(datoSolicitados, "C", "501", "P");
+
+	}
+
 	private static void assertDatosSolicitado(Tramo tramo, String tipoDato, String codigo,
 			String indicadorObligatoriedad) {
 		assertDatosSolicitado(tramo.getDatosTramo().getDatoSolicitado(), tipoDato, codigo, indicadorObligatoriedad);
@@ -5752,6 +5766,233 @@ public class IdcTest extends AbstractSQLTestCase {
 				assertNoDatosSolicitado(tramo, "C", "51");
 				assertNoDatosSolicitado(tramo, "H", "01");
 			}
+	
+		}
+	}
+
+	@Test
+	public void testIdcplcccTrabajadoresTramos421()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		
+		
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplccc421.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
+			    @Override
+			    public boolean isTraining421Employee(String ssNum, String ccc, Date start, Date end) {
+				switch (ssNum) {
+				case "111078364778":
+				case "111035757934":
+				case "111052508016":
+				case "111072485770":
+				case "111061715235":
+				case "111048258911":
+				case "111067053972":
+				case "111030755259":
+				case "111087431349":
+				case "111093814454":
+				case "111046070246":
+				    return true ;
+
+				default:
+				    return false;
+				}
+			    }
+			});
+	
+			//marshall(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("11", liquidacion.getCcc().getProvincia());
+			assertEquals("120424045", liquidacion.getCcc().getNumero());
+	
+			assertEquals("05", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2023", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("05", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2023", liquidacion.getPeriodoHasta().getAnho());
+	
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+	
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("05", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2023", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			
+			
+//			| 111078364778           | FORNELL SUAREZ, DIEGO ALEJANDRO  |
+//			| 111035757934           | ANDRADES GONZALEZ, ESTELA        |
+//			| 111052508016           | PEREZ BAREA, DANIELA MARIA       |
+//			| 111072485770           | ZUÑIGA ZAMORANO, PATRICIO ELIAS  |
+//			| 111061715235           | MARÍN RUEDA, LAURA               |
+//			| 111048258911           | GONZALEZ RONDAN, MIRIAM          |
+//			| 111067053972           | HERRERA PICAZO, SARA CASARES     |
+//			| 111030755259           | GALAN MARROQUIN, ALBA            |
+//			| 111087431349           | PEREZ PEREZ, ISABEL MARIA        |
+//			| 111093814454           | DIAZ BAREA, ADRIAN               |
+//			| 111046070246           | PEREZ ENRIQUEZ, REGINA           |
+
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+				switch (trabajador.getNaf()) {
+				case "111078364778":
+				case "111035757934":
+				case "111052508016":
+				case "111072485770":
+				case "111061715235":
+				case "111048258911":
+				case "111067053972":
+				case "111030755259":
+				case "111087431349":
+				case "111093814454":
+				case "111046070246":
+				    //marshal(trabajador, System.out);
+				    trabajador.getTramos().getTramo().forEach(IdcTest::assertTramoActivoNormalFormacionEnAlternancia);
+				    break;
+				case "111046297689" :
+				case "111064282806" : 
+				    assertTramoActivoNormal(trabajador.getTramos().getTramo().get(0));
+				    assertTramoIT15PrimerosDias(trabajador.getTramos().getTramo().get(1));
+				    assertTramoActivoNormal(trabajador.getTramos().getTramo().get(2));
+				    break;
+				default:
+				    trabajador.getTramos().getTramo().forEach(IdcTest::assertTramoActivoNormal);
+				    break;
+				}
+				
+			}
+			
+	
+		}
+	}
+
+	@Test
+	public void testIdcplcccTrabajadoresTramos421IT()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		
+		
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplccc421IT.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
+			    @Override
+			    public boolean isTraining421Employee(String ssNum, String ccc, Date start, Date end) {
+				switch (ssNum) {
+				case "411111039336":
+				    return true ;
+
+				default:
+				    return false;
+				}
+			    }
+			});
+	
+			//marshall(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("41", liquidacion.getCcc().getProvincia());
+			assertEquals("134937520", liquidacion.getCcc().getNumero());
+	
+			assertEquals("05", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2023", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("05", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2023", liquidacion.getPeriodoHasta().getAnho());
+	
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+	
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("05", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2023", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			
+			
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+				switch (trabajador.getNaf()) {
+				// ISABEL BARBERO OVIEDO
+				case "411111039336":
+				    trabajador.getTramos().getTramo().sort((t1,t2) -> t1.getFechaDesde().getDia().compareTo(t2.getFechaDesde().getDia()) );
+				    assertTramoITPagoDelegado (trabajador.getTramos().getTramo().get(0));
+				    assertTramoMaternidadTiempoCompleto(trabajador.getTramos().getTramo().get(1));
+				    break;
+				// EDUARDO ALCON SALAMANCA
+				case "411068669332" : 
+				    marshal(trabajador, System.out);
+				    trabajador.getTramos().getTramo().sort((t1,t2) -> t1.getFechaDesde().getDia().compareTo(t2.getFechaDesde().getDia()) );
+				    assertTramoActivoNormal(trabajador.getTramos().getTramo().get(0));
+				    assertTramoMaternidadTiempoCompleto(trabajador.getTramos().getTramo().get(1));
+				    break;
+				// JOSE GUILLERMO ALCON SALAMANCA
+				default:
+				    trabajador.getTramos().getTramo().forEach(IdcTest::assertTramoActivoNormal);
+				    break;
+				}
+				
+			}
+			
+	
+		}
+	}
+
+	@Test
+	public void testIdcplcccTrabajadoresTramos421ITIII()
+			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
+		
+		
+		try (InputStream is = IdcTest.class.getResourceAsStream("idcplccc421ITIII.pdf")) {
+			TrabajadoresTramos trabajadoresTramos = Idcplccc.geTrabajadoresTramos(is, new TrabajadoresTramosCallback() {
+			    @Override
+			    public boolean isTraining421Employee(String ssNum, String ccc, Date start, Date end) {
+				switch (ssNum) {
+				case "411111039336":
+				    return true ;
+
+				default:
+				    return false;
+				}
+			    }
+			});
+	
+			//marshall(trabajadoresTramos, System.out);
+	
+			Liquidacion liquidacion = trabajadoresTramos.getLiquidacion();
+	
+			assertEquals("0111", liquidacion.getCcc().getRegimen());
+			assertEquals("41", liquidacion.getCcc().getProvincia());
+			assertEquals("134937520", liquidacion.getCcc().getNumero());
+	
+			assertEquals("03", liquidacion.getPeriodoDesde().getMes());
+			assertEquals("2023", liquidacion.getPeriodoDesde().getAnho());
+			assertEquals("03", liquidacion.getPeriodoHasta().getMes());
+			assertEquals("2023", liquidacion.getPeriodoHasta().getAnho());
+	
+			assertEquals(1, liquidacion.getLiquidacionMes().size());
+	
+			LiquidacionMes liquidacionesMes = liquidacion.getLiquidacionMes().get(0);
+			assertEquals("03", liquidacionesMes.getMesLiquidativo().getMes());
+			assertEquals("2023", liquidacionesMes.getMesLiquidativo().getAnho());
+	
+			Trabajadores trabajadores = liquidacionesMes.getTrabajadores();
+			
+			
+			for (Trabajador trabajador : trabajadores.getTrabajador()) {
+				switch (trabajador.getNaf()) {
+				// ISABEL BARBERO OVIEDO
+				case "411111039336":
+				    marshal(trabajador, System.out);
+				    trabajador.getTramos().getTramo().sort((t1,t2) -> t1.getFechaDesde().getDia().compareTo(t2.getFechaDesde().getDia()) );
+				    assertTramoActivoNormalFormacionEnAlternancia(trabajador.getTramos().getTramo().get(0));
+				    assertTramoIT15PrimerosDias(trabajador.getTramos().getTramo().get(1));
+				    break;
+				// EDUARDO ALCON SALAMANCA
+				// JOSE GUILLERMO ALCON SALAMANCA
+				default:
+				    trabajador.getTramos().getTramo().forEach(IdcTest::assertTramoActivoNormal);
+				    break;
+				}
+				
+			}
+			
 	
 		}
 	}
