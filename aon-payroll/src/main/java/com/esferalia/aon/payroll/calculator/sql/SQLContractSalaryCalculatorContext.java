@@ -1983,7 +1983,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public <T> void addVariable(String name, T t) {
-		this.contractExpressionContext.setVariable(name, t, this.contractStartDate, this.contractEndDate);
+	    	Period defPeriod = new Period(this.contractStartDate, this.contractEndDate); 
+	    	this.contractExpressionContext.getVariables(name).stream().map( v -> v.getPeriod())
+	    	.collect(() -> new HashSet<Period>(Collections.singleton(defPeriod)), Set::add, Set::addAll)
+	    	.forEach( p -> this.contractExpressionContext.setVariable(name, t, p.getStart(), p.getEnd()));
 	}
 
 	public <T> T getVariable(ContextVariable var, Class<T> toType) {
