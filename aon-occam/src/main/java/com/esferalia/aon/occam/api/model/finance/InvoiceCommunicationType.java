@@ -2,37 +2,15 @@ package com.esferalia.aon.occam.api.model.finance;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.occam.api.model.finance.EnumVisitors.IInvoiceCommunicationTypeVisitor;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+
 public enum InvoiceCommunicationType implements Serializable{
-	
-	LROE_1_1,
-	LROE_1_2,
-	LROE_1_3,
-	LROE_2,
-	LROE_2_1,
-	LROE_2_2,
-	LROE_3,
-	LROE_3_1,
-	LROE_3_2,
-	LROE_3_3,
-	LROE_3_4,
-	LROE_4_1,
-	LROE_4_2,
-	LROE_5_1,
-	LROE_5_2,
-	LROE_6,
-	LROE_6_1,
-	LROE_6_2,
-	LROE_6_3,
-	LROE_7_1,
-	LROE_7_2,
-	LROE_7_3,
-	LROE_7_4,
-	LROE_8_1,
-	LROE_8_2,
-	SII,
-	TBAI,
+ 
+	SII(){ @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitSII();} },
+	TBAI{ @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitTBAI();} },
+	LROE{ @Override public void visit(IInvoiceCommunicationTypeVisitor visitor) { visitor.visitLROE();} },
 	;
 	
 	
@@ -42,6 +20,10 @@ public enum InvoiceCommunicationType implements Serializable{
 	
 	public Byte value(){
 		return (byte) ordinal();
+	}
+	
+	public void visit(IInvoiceCommunicationTypeVisitor visitor) {
+		// Redefine
 	}
 	
 	public static InvoiceCommunicationType safeValueOf( Byte i ) {

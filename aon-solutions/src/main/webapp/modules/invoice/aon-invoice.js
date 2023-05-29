@@ -1383,7 +1383,7 @@ export class AonInvoice extends AonElement {
 				getItems(data).then(r => {
 					description.buildOptions(r.map(r => {return {
 						name: r.name,
-						value: r.id,
+						value: r,
 						item: r};}));
 				}).catch(e => this.showError(e));
 			  }
@@ -1396,7 +1396,7 @@ export class AonInvoice extends AonElement {
 
 		description.addEventListener(EVENT.SELECT,(e) => {
 			detail.description = e.detail.name;
-			detail.item = e.detail.item.id;
+			detail.item = e.detail.item;
 			detail.price = e.detail.item.price;
 			this.invoice.setDetail(detail, i);
 			this.setFocus(this.DETAIL_DESCRIPTION + i);
@@ -1500,7 +1500,7 @@ export class AonInvoice extends AonElement {
 					description.buildOptions(r.map(r => {
 						return {
 							name: r.description && r.description !== '' ? r.description : r.name,
-							value: r.id,
+							value: r,
 							item: r};}));
 				}).catch(e => this.showError(e));
 			  }
@@ -1513,7 +1513,7 @@ export class AonInvoice extends AonElement {
 
 		description.addEventListener(EVENT.SELECT,(e) => {
 			detail.description = e.detail.name;
-			detail.item = e.detail.item.id;
+			detail.item = e.detail.item;
 			detail.price = e.detail.item.price;
 			this.invoice.setDetail(detail, i);
 			this.setFocus(this.DETAIL_DESCRIPTION + i);
@@ -1642,7 +1642,7 @@ export class AonInvoice extends AonElement {
 				getItems(data).then(r => {
 					description.buildOptions(r.map(r => {return {
 						name: r.name,
-						value: r.id,
+						value: r,
 						item: r};}));
 				}).catch(e => this.showError(e));
 			  } 
@@ -1654,7 +1654,7 @@ export class AonInvoice extends AonElement {
 		
 		description.addEventListener(EVENT.SELECT,(e) => {
 			detail.description = e.detail.name; 
-			detail.item = e.detail.item.id;
+			detail.item = e.detail.item;
 			detail.price = e.detail.item.price;
 			this.invoice.setDetail(detail, i);
 			this.reload();
