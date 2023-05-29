@@ -38,6 +38,8 @@ import { TagComponent } from './components/tag/tag.component';
 import { CardComponent } from './components/card/card.component';
 import { AccordionComponent } from './components/accordion/accordion.component';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { ModalControllerComponent } from './components/modal-controller/modal-controller.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 
 @NgModule({
@@ -64,7 +66,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     DragAndDropDirective,
     TagComponent,
     CardComponent,
-    AccordionComponent
+    AccordionComponent,
+    ModalControllerComponent,
   ],
   imports: [
     CommonModule,
@@ -84,7 +87,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     MatSelectModule,
     MatMenuModule,
     MatTabsModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatDialogModule
   ],
   exports:[
     SidenavHoverDirective,
@@ -106,7 +110,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
     FileUploadButtonComponent,
     TagComponent,
     CardComponent,
-    AccordionComponent
+    AccordionComponent,
+    ModalControllerComponent,
   ]
 })
 export class SharedModule { }
