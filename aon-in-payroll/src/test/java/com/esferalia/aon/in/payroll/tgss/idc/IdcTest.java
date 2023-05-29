@@ -4302,7 +4302,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			Assert.assertNull(imsData);
 
 			Deduction[] deductions = PAYROLL.getDeductions(domainName, contract.getDomain(), "login", contract.getId());
-			Assert.assertEquals(3, deductions.length);
+			Assert.assertEquals(4, deductions.length);
 			for (Deduction deduction : deductions) {
 				if (deduction.getType() == UNEMPLOYMENT) {
 					Assert.assertTrue(AonStringUtils.containsIgnoreCase(deduction.getExpression(), "REMOVE"));
