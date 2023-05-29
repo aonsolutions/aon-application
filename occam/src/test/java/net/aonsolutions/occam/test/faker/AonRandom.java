@@ -21,9 +21,16 @@ import net.aonsolutions.occam.api.constants.AppParam;
 import net.aonsolutions.occam.api.constants.Country;
 import net.aonsolutions.occam.api.constants.DocumentType;
 import net.aonsolutions.occam.api.constants.DomainType;
+import net.aonsolutions.occam.api.constants.InvoiceSource;
 import net.aonsolutions.occam.api.constants.InvoiceType;
+import net.aonsolutions.occam.api.constants.RectificationType;
 import net.aonsolutions.occam.api.constants.SecurityLevel;
 import net.aonsolutions.occam.api.constants.StreetType;
+import net.aonsolutions.occam.api.constants.TaxType;
+import net.aonsolutions.occam.api.constants.TransactionType;
+import net.aonsolutions.occam.api.constants.VatDeductionType;
+import net.aonsolutions.occam.api.constants.WithholdingType;
+import net.aonsolutions.occam.api.constants.WithholdingTypeGroup;
 import net.aonsolutions.watson.client.util.AonCollectionUtils;
 import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.client.util.AonStringUtils;
@@ -303,5 +310,68 @@ public class AonRandom {
 			:Optional.empty();
 	}
 	
+	public static RectificationType getRectificationType() {
+		return getRectificationType(REQUIRED).get();
+	}
+	public static Optional<RectificationType> getRectificationType(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(RectificationType.values()[faker.random().nextInt(RectificationType.values().length)])
+			:Optional.empty();
+	}
+
+	public static TransactionType getTransactionType() {
+		return getTransactionType(REQUIRED).get();
+	}
+	public static Optional<TransactionType> getTransactionType(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(TransactionType.values()[faker.random().nextInt(TransactionType.values().length)])
+			:Optional.empty();
+	}
+
+	public static TaxType getTaxType() {
+		return getTaxType(REQUIRED).get();
+	}
+	public static Optional<TaxType> getTaxType(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(TaxType.values()[faker.random().nextInt(TaxType.values().length)])
+			:Optional.empty();
+	}
+
+	public static WithholdingTypeGroup getWithholdingTypeGroup() {
+		return getWithholdingTypeGroup(REQUIRED).get();
+	}
+	public static Optional<WithholdingTypeGroup> getWithholdingTypeGroup(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(WithholdingTypeGroup.values()[faker.random().nextInt(WithholdingTypeGroup.values().length)])
+			:Optional.empty();
+	}
+
+	public static WithholdingType getWithholdingType() {
+		return getWithholdingType(REQUIRED).get();
+	}
+	public static Optional<WithholdingType> getWithholdingType(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(WithholdingType.values()[faker.random().nextInt(WithholdingType.values().length)])
+			:Optional.empty();
+	}
+
+	public static VatDeductionType getVatDeductionType() {
+		return getVatDeductionType(REQUIRED).get();
+	}
+	public static Optional<VatDeductionType> getVatDeductionType(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(VatDeductionType.values()[faker.random().nextInt(VatDeductionType.values().length)])
+			:Optional.empty();
+	}
+
+	public static InvoiceSource getInvoiceSource() {
+		return getInvoiceSource(REQUIRED).get();
+	}
+	public static Optional<InvoiceSource> getInvoiceSource(int nullThreshold) {
+    	return gt(nullThreshold)
+			?Optional.of(InvoiceSource.values()[faker.random().nextInt(InvoiceSource.values().length)])
+			:Optional.empty();
+	}
 }
+
 

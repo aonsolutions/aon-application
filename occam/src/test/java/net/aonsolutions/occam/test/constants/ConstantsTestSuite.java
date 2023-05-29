@@ -14,9 +14,16 @@ import org.junit.platform.suite.api.Suite;
 	,AdministrationTest.class
 	,DocumentTypeTest.class	
 	,DomainTypeTest.class
+	,InvoiceSourceTest.class
 	,InvoiceTypeTest.class
+	,RectificationTypeTest.class
 	,SecurityLevelTest.class
 	,StreetTypeTest.class
+	,TaxTypeTest.class
+	,TransactionTypeTest.class
+	,VatDeductionTypeTest.class
+	,WithholdingTypeTest.class
+	,WithholdingTypeGroupTest.class
 })
 public class ConstantsTestSuite {
 

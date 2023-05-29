@@ -15,8 +15,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import net.aonsolutions.occam.api.config.Geozone;
-import net.aonsolutions.occam.json.GeozoneJSON;
+import net.aonsolutions.occam.api.invoicing.Invoice;
+import net.aonsolutions.occam.json.InvoiceJSON;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;
@@ -25,30 +25,30 @@ import net.aonsolutions.occam.test.faker.AonRandom;
 
 
 @ExtendWith(TimingExtension.class)
-class GeozoneJSONTest extends AbstractOccamTest {
+class InvoiceJSONTest extends AbstractOccamTest {
 
 	@Test
 	void testNullConvert() {
 		JSONObject json = null;
-		Geozone expected = GeozoneJSON.from( json );
+		Invoice expected = InvoiceJSON.from( json );
 		assertNull(expected);
 		expected = null;
-		json = GeozoneJSON.to( expected );
+		json = InvoiceJSON.to( expected );
 		assertNull(json);
 	}
 
 	@RepeatedTest(20)
 	void testSimpleConvert() {
-		Geozone expected = AonFaker.getGeozone( );
-		JSONObject json = GeozoneJSON.to(expected);
-		Geozone actual = GeozoneJSON.from(json);
-		Asserts.assertEqualsGeozone(expected, actual);
+		Invoice expected = AonFaker.getInvoice( );
+		JSONObject json = InvoiceJSON.to(expected);
+		Invoice actual = InvoiceJSON.from(json);
+		Asserts.assertEqualsInvoice(expected, actual);
 	}
 	
 	@Test
 	void testEmptyArrayConvert() {
 		JSONArray expected = null;
-		List<Geozone> actual = GeozoneJSON.from(expected);
+		List<Invoice> actual = InvoiceJSON.from(expected);
 		assertNotNull( actual );
 		assertTrue(actual.isEmpty());
 	}
@@ -56,38 +56,38 @@ class GeozoneJSONTest extends AbstractOccamTest {
 	@Test
 	void testArrayConvert() {
 		JSONArray expected = IntStream.range(0, AonRandom.getInt(1, 50))
-			.mapToObj(i -> AonFaker.getGeozone())
-			.map(s -> GeozoneJSON.to(s))
+			.mapToObj(i -> AonFaker.getInvoice())
+			.map(r -> InvoiceJSON.to(r))
 			.collect( JSONArray::new,JSONArray::put,JSONArray::put )
 		;
 		assertNotNull( expected );
-		List<Geozone> actual = GeozoneJSON.from(expected);
+		List<Invoice> actual = InvoiceJSON.from(expected);
 		assertNotNull( actual );
 		assertEquals(expected.length(), actual.size());
 		IntStream.range(0, expected.length())
 			.forEach(i -> {
-				JSONObject expectedGeoZoneJson = expected.getJSONObject(i);
-				Geozone expectedGeoZone = GeozoneJSON.from( expectedGeoZoneJson );
-				Asserts.assertEqualsGeozone(actual.get(i), expectedGeoZone);		
+				JSONObject expectedInvoiceJson = expected.getJSONObject(i);
+				Invoice expectedInvoice = InvoiceJSON.from( expectedInvoiceJson );
+				Asserts.assertEqualsInvoice(actual.get(i), expectedInvoice);		
 			});
 	}
 
 	@Test
 	void testEmptyListConvert() {
-		List<Geozone> expected = null;
-		JSONArray array = GeozoneJSON.to(expected);
-		List<Geozone> actual = GeozoneJSON.from(array);
-		Asserts.assertEqualsCollection(expected, actual, "JSON Empty GeoZone collections");
+		List<Invoice> expected = null;
+		JSONArray array = InvoiceJSON.to(expected);
+		List<Invoice> actual = InvoiceJSON.from(array);
+		Asserts.assertEqualsCollection(expected, actual, "JSON Empty Invoice collections");
 	}
 
 	@Test
 	void testListConvert() {
-		List<Geozone> expected = IntStream.range(1, AonRandom.getInt(2, 50))
-			.mapToObj(i -> AonFaker.getGeozone())
+		List<Invoice> expected = IntStream.range(1, AonRandom.getInt(2, 50))
+			.mapToObj(i -> AonFaker.getInvoice())
 			.toList()
 		;
-		JSONArray array = GeozoneJSON.to(expected);
-		List<Geozone> actual = GeozoneJSON.from(array);
-		Asserts.assertEqualsCollection(expected, actual, "JSON Scope collections");
+		JSONArray array = InvoiceJSON.to(expected);
+		List<Invoice> actual = InvoiceJSON.from(array);
+		Asserts.assertEqualsCollection(expected, actual, "JSON Invoice collections");
 	}
 }

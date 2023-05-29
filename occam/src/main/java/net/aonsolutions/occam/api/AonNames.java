@@ -41,6 +41,7 @@ public final class AonNames {
 	public static final String AMORTIZATION_INITIAL_DATE = "amortizationInitialDate";
 	public static final String AMOUNT = "amount";
 	public static final String AMOUNT_347 = "amount347";
+	public static final String ANNULLED = "annulled";
 	public static final String AON_CUSTOMER = "aonCustomer";
 	public static final String AON_STATUS = "aonStatus";
 	public static final String AP1 = "ap1";
@@ -82,6 +83,7 @@ public final class AonNames {
 	public static final String BOX_TITLE_TEXT_COLOR = "boxTitleTextColor";
 	public static final String BRAND = "brand";
 	public static final String BRAND_IDS = "brandIds";
+	public static final String BREAKDOWN = "breakdown";
 	public static final String BREAKDOWN_ENABLED = "breakdownEnabled";
 	public static final String BY_MONTH = "byMonth";
 	// ---------------------------------------------------------------------------------------------	[C] 
@@ -546,6 +548,7 @@ public final class AonNames {
 	public static final String TASK = "task";
 	public static final String TASK_HOLDER = "task_holder";
 	public static final String TASK_HOLDERS = "taskHolders";
+	public static final String TAXABLE_BASE = "taxableBase";
 	public static final String TAXES = "taxes";
 	public static final String TAX = "tax";
 	public static final String TAG = "tag";

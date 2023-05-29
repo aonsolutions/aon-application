@@ -54,7 +54,13 @@ public class AonNumberUtils {
 		return Integer.valueOf(number.intValue());
 	}
 
-    /**
+	public static Double toDouble(Number number) {
+		if (number == null)
+			return null;
+		return Double.valueOf(number.doubleValue());
+	}
+
+	/**
      * <p>Convert a {@code String} to an {@code int}, returning
      * {@code zero} if the conversion fails.</p>
      *

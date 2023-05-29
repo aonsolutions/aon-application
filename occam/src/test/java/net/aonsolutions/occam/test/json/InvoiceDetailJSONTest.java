@@ -15,8 +15,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import net.aonsolutions.occam.api.config.Geozone;
-import net.aonsolutions.occam.json.GeozoneJSON;
+import net.aonsolutions.occam.api.invoicing.InvoiceDetail;
+import net.aonsolutions.occam.json.InvoiceDetailJSON;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;
@@ -25,30 +25,30 @@ import net.aonsolutions.occam.test.faker.AonRandom;
 
 
 @ExtendWith(TimingExtension.class)
-class GeozoneJSONTest extends AbstractOccamTest {
+class InvoiceDetailJSONTest extends AbstractOccamTest {
 
 	@Test
 	void testNullConvert() {
 		JSONObject json = null;
-		Geozone expected = GeozoneJSON.from( json );
+		InvoiceDetail expected = InvoiceDetailJSON.from( json );
 		assertNull(expected);
 		expected = null;
-		json = GeozoneJSON.to( expected );
+		json = InvoiceDetailJSON.to( expected );
 		assertNull(json);
 	}
 
 	@RepeatedTest(20)
 	void testSimpleConvert() {
-		Geozone expected = AonFaker.getGeozone( );
-		JSONObject json = GeozoneJSON.to(expected);
-		Geozone actual = GeozoneJSON.from(json);
-		Asserts.assertEqualsGeozone(expected, actual);
+		InvoiceDetail expected = AonFaker.getInvoiceDetail( );
+		JSONObject json = InvoiceDetailJSON.to(expected);
+		InvoiceDetail actual = InvoiceDetailJSON.from(json);
+		Asserts.assertEqualsInvoiceDetail(expected, actual);
 	}
 	
 	@Test
 	void testEmptyArrayConvert() {
 		JSONArray expected = null;
-		List<Geozone> actual = GeozoneJSON.from(expected);
+		List<InvoiceDetail> actual = InvoiceDetailJSON.from(expected);
 		assertNotNull( actual );
 		assertTrue(actual.isEmpty());
 	}
@@ -56,38 +56,38 @@ class GeozoneJSONTest extends AbstractOccamTest {
 	@Test
 	void testArrayConvert() {
 		JSONArray expected = IntStream.range(0, AonRandom.getInt(1, 50))
-			.mapToObj(i -> AonFaker.getGeozone())
-			.map(s -> GeozoneJSON.to(s))
+			.mapToObj(i -> AonFaker.getInvoiceDetail())
+			.map(r -> InvoiceDetailJSON.to(r))
 			.collect( JSONArray::new,JSONArray::put,JSONArray::put )
 		;
 		assertNotNull( expected );
-		List<Geozone> actual = GeozoneJSON.from(expected);
+		List<InvoiceDetail> actual = InvoiceDetailJSON.from(expected);
 		assertNotNull( actual );
 		assertEquals(expected.length(), actual.size());
 		IntStream.range(0, expected.length())
 			.forEach(i -> {
-				JSONObject expectedGeoZoneJson = expected.getJSONObject(i);
-				Geozone expectedGeoZone = GeozoneJSON.from( expectedGeoZoneJson );
-				Asserts.assertEqualsGeozone(actual.get(i), expectedGeoZone);		
+				JSONObject expectedInvoiceDetailJson = expected.getJSONObject(i);
+				InvoiceDetail expectedInvoiceDetail = InvoiceDetailJSON.from( expectedInvoiceDetailJson );
+				Asserts.assertEqualsInvoiceDetail(actual.get(i), expectedInvoiceDetail);		
 			});
 	}
 
 	@Test
 	void testEmptyListConvert() {
-		List<Geozone> expected = null;
-		JSONArray array = GeozoneJSON.to(expected);
-		List<Geozone> actual = GeozoneJSON.from(array);
-		Asserts.assertEqualsCollection(expected, actual, "JSON Empty GeoZone collections");
+		List<InvoiceDetail> expected = null;
+		JSONArray array = InvoiceDetailJSON.to(expected);
+		List<InvoiceDetail> actual = InvoiceDetailJSON.from(array);
+		Asserts.assertEqualsCollection(expected, actual, "JSON Empty InvoiceDetail collections");
 	}
 
 	@Test
 	void testListConvert() {
-		List<Geozone> expected = IntStream.range(1, AonRandom.getInt(2, 50))
-			.mapToObj(i -> AonFaker.getGeozone())
+		List<InvoiceDetail> expected = IntStream.range(1, AonRandom.getInt(2, 50))
+			.mapToObj(i -> AonFaker.getInvoiceDetail())
 			.toList()
 		;
-		JSONArray array = GeozoneJSON.to(expected);
-		List<Geozone> actual = GeozoneJSON.from(array);
-		Asserts.assertEqualsCollection(expected, actual, "JSON Scope collections");
+		JSONArray array = InvoiceDetailJSON.to(expected);
+		List<InvoiceDetail> actual = InvoiceDetailJSON.from(array);
+		Asserts.assertEqualsCollection(expected, actual, "JSON InvoiceDetail collections");
 	}
 }

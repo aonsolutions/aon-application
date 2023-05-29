@@ -25,6 +25,10 @@ import net.aonsolutions.occam.api.config.Registry;
 import net.aonsolutions.occam.api.config.RegistryAddress;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
+import net.aonsolutions.occam.api.invoicing.Invoice;
+import net.aonsolutions.occam.api.invoicing.InvoiceBreakdown;
+import net.aonsolutions.occam.api.invoicing.InvoiceDetail;
+import net.aonsolutions.occam.api.invoicing.InvoiceTax;
 import net.aonsolutions.watson.client.util.AonCollectionUtils;
 
 public class Asserts {
@@ -184,6 +188,7 @@ public class Asserts {
 			assertEqualsScope(expected.getScope().orElse(null), actual.getScope().orElse(null));
 			assertEqualsBooking(expected.getBooking().orElse(null), actual.getBooking().orElse(null));
 			assertEqualsDomainAudit(expected.getAudit().orElse(null), actual.getAudit().orElse(null));
+			assertEqualsCollection(expected.getUsers().orElse(null), actual.getUsers().orElse(null), "User");
 		}
 	}
 
@@ -196,6 +201,89 @@ public class Asserts {
 		}
 	}
 
+	public static void assertEqualsInvoiceBreakdown(InvoiceBreakdown expected, InvoiceBreakdown actual) {
+		assertEqualsNulls(expected, actual,"InvoiceBreakdown");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getTaxType(), actual.getTaxType(),"TaxType");
+			assertEquals(expected.getBase(), actual.getBase(),"Base");
+			assertEquals(expected.getPercent(), actual.getPercent(),"Percent");
+			assertEquals(expected.getQuota(), actual.getQuota(),"Quota");
+			assertEquals(expected.getSurchargePercent(), actual.getSurchargePercent(),"SurchargePercent");
+			assertEquals(expected.getSurchargeQuota(), actual.getSurchargeQuota(),"SurchargeQuota");
+			assertEquals(expected.getDeductiblePercent(), actual.getDeductiblePercent(),"DeductiblePercent");
+			assertEquals(expected.getDeductibleQuota(), actual.getDeductibleQuota(),"DeductibleQuota");
+			assertEquals(expected.getVatDeductionType(), actual.getVatDeductionType(),"VatDeductionType");
+			assertEquals(expected.getWithholdingType(), actual.getWithholdingType(),"WithholdingType");
+		}
+	}
+
+	public static void assertEqualsInvoice(Invoice expected, Invoice actual) {
+		assertEqualsNulls(expected, actual,"Invoice");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
+			assertEqualsActivity(expected.getActivity().orElse(null), actual.getActivity().orElse(null));
+			assertEquals(expected.getSeries(), actual.getSeries(),"Series");
+			assertEquals(expected.getNumber(), actual.getNumber(),"Number");
+			assertEquals(expected.getReferenceCode(), actual.getReferenceCode(),"ReferenceCode");
+			assertEquals(expected.getIssueDate(), actual.getIssueDate(),"IssueDate");
+			assertEquals(expected.getTaxDate(), actual.getTaxDate(),"TaxDate");
+			assertEquals(expected.isConfidential(), actual.isConfidential(),"Confidential");
+			assertEquals(expected.getRegistry(), actual.getRegistry(),"Registry");
+			assertEquals(expected.getDocument(), actual.getDocument(),"Document");
+			assertEquals(expected.getDocumentType(), actual.getDocumentType(),"DocumentType");
+			assertEquals(expected.getDocumentCountry(), actual.getDocumentCountry(),"DocumentCountry");
+			assertEquals(expected.getName(), actual.getName(),"Name");
+			assertEqualsScope(expected.getScope().orElse(null), actual.getScope().orElse(null));
+			assertEquals(expected.getType(), actual.getType(),"Type");
+			assertEquals(expected.getTransaction(), actual.getTransaction(),"Transaction");
+			assertEquals(expected.isSurcharge(), actual.isSurcharge(),"Surcharge");
+			assertEquals(expected.isWithholding(), actual.isWithholding(),"Withholding");
+			assertEquals(expected.isWithholdingFarmer(), actual.isWithholdingFarmer(),"WithholdingFarmer");
+			assertEquals(expected.isVatAccrualPayment(), actual.isVatAccrualPayment(),"VatAccrualPayment");
+			assertEquals(expected.isInvestment(), actual.isInvestment(),"Investment");
+			assertEquals(expected.isService(), actual.isService(),"Service");
+			assertEquals(expected.isAnnulled(), actual.isAnnulled(),"Annulled");
+			assertEquals(expected.getTotal(), actual.getTotal(),"Total");
+			assertEqualsAudit(expected.getAudit().orElse(null), actual.getAudit().orElse(null));
+			assertEqualsCollection(expected.getDetails().orElse(null), actual.getDetails().orElse(null), "Details");
+			assertEqualsCollection(expected.getBreakdown().orElse(null), actual.getBreakdown().orElse(null), "Breakdown");
+		}
+	}
+
+	public static void assertEqualsInvoiceDetail(InvoiceDetail expected, InvoiceDetail actual) {
+		assertEqualsNulls(expected, actual,"InvoiceDetail");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getItem(), actual.getItem(),"Item");
+			assertEquals(expected.getLine(), actual.getLine(),"Line");
+			assertEquals(expected.getDescription(), actual.getDescription(),"Description");
+			assertEquals(expected.getQuantity(), actual.getQuantity(),"Quantity");
+			assertEquals(expected.getPrice(), actual.getPrice(),"Price");
+			assertEquals(expected.getDiscountExpression(), actual.getDiscountExpression(),"DiscountExpression");
+			assertEquals(expected.getTaxableBase(), actual.getTaxableBase(),"TaxableBase");
+			assertEquals(expected.isPrepayment(), actual.isPrepayment(),"Prepayment");
+			assertEquals(expected.getSource(), actual.getSource(),"Source");
+			assertEquals(expected.getSourceId(), actual.getSourceId(),"SourceId");
+			assertEqualsCollection(expected.getTaxes().orElse(null), actual.getTaxes().orElse(null), "User");
+			assertEqualsAudit(expected.getAudit().orElse(null), actual.getAudit().orElse(null));
+		}
+	}
+
+	public static void assertEqualsInvoiceTax(InvoiceTax expected, InvoiceTax actual) {
+		assertEqualsNulls(expected, actual,"InvoiceTax");
+		if (expected != null && actual != null) {
+			assertEquals(expected.getId(), actual.getId(),"Id");
+			assertEquals(expected.getTaxType(), actual.getTaxType(),"TaxType");
+			assertEquals(expected.getPercent(), actual.getPercent(),"Percent");
+			assertEquals(expected.getSurchargePercent(), actual.getSurchargePercent(),"SurchargePercent");
+			assertEquals(expected.getDeductiblePercent(), actual.getDeductiblePercent(),"DeductiblePercent");
+			assertEquals(expected.getVatDeductionType(), actual.getVatDeductionType(),"VatDeductionType");
+			assertEquals(expected.getWithholdingType(), actual.getWithholdingType(),"WithholdingType");
+		}
+	}
 
 	public static void assertEqualsGeozone(Geozone expected, Geozone actual) {
 		assertEqualsNulls(expected, actual,"GeoZone");

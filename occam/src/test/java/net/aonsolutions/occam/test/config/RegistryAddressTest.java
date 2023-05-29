@@ -91,14 +91,14 @@ class RegistryAddressTest extends AbstractOccamTest {
 	@Test()
 	void dirtyGeozoneTest() {
 		RegistryAddress d = new RegistryAddress();
-		d.setGeozone(AonFaker.getGeoZone());
+		d.setGeozone(AonFaker.getGeozone());
 		assertTrue(d.isDirty());
 	}
 	
 	@Test()
 	void dirtyParentGeozoneTest() {
 		RegistryAddress d = new RegistryAddress();
-		d.setParentGeozone(AonFaker.getGeoZone());
+		d.setParentGeozone(AonFaker.getGeozone());
 		assertTrue(d.isDirty());
 	}
 

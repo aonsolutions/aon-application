@@ -23,6 +23,11 @@ import net.aonsolutions.occam.api.config.RegistryAddress;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
 import net.aonsolutions.occam.api.constants.Country;
+import net.aonsolutions.occam.api.invoicing.Invoice;
+import net.aonsolutions.occam.api.invoicing.InvoiceBreakdown;
+import net.aonsolutions.occam.api.invoicing.InvoiceDetail;
+import net.aonsolutions.occam.api.invoicing.InvoiceTax;
+import net.aonsolutions.watson.client.util.AonNumberUtils;
 
 public class AonFaker {
 	private static Faker faker = Faker.instance(Locale.of("es"));
@@ -133,13 +138,91 @@ public class AonFaker {
 			.setModificationDate(AonRandom.getPastDate(50));
 	}
 	
-	public static Geozone getGeoZone( ) {
+	public static Geozone getGeozone( ) {
 		return new Geozone()
 			.setId(AonRandom.integer(50))
 			.setDomain(AonRandom.integer())
 			.setName(faker.country().name())
 			.setCode(faker.country().countryCode2())
 			;
+	}
+
+	public static InvoiceBreakdown getInvoiceBreakdown() {
+		return new InvoiceBreakdown()
+			.setId(AonRandom.integer(50))
+			.setTaxType(AonRandom.getTaxType())
+			.setBase(AonRandom.getDouble(0, 100))
+			.setPercent(AonRandom.getDouble(0, 100))
+			.setQuota(AonRandom.getDouble(0, 100))
+			.setSurchargePercent(AonRandom.getDouble(0, 100))
+			.setSurchargeQuota(AonRandom.getDouble(0, 100))
+			.setDeductiblePercent( AonRandom.getDouble(0, 80))
+			.setDeductibleQuota(AonRandom.getDouble(0, 100))
+			.setWithholdingType(AonRandom.getWithholdingType())
+			.setVatDeductionType(AonRandom.getVatDeductionType())
+			;
+	}
+
+	public static Invoice getInvoice() {
+		return new Invoice()
+			.setId(AonRandom.integer(50))
+			.setDomain(AonRandom.integer(50))
+			.setActivity(AonFaker.getActivity())
+			.setSeries(AonRandom.string(50, 10))
+			.setNumber(AonRandom.integer(50))
+			.setReferenceCode(AonRandom.string(50, 10))
+			.setIssueDate(AonRandom.today())
+			.setTaxDate(AonRandom.today())
+			.setConfidential(AonRandom.gt(98))
+			.setRegistry(AonRandom.integer(50))
+			.setDocument(AonRandom.string(50, 10))
+			.setDocumentType(AonRandom.getDocumentType(40).orElse(null)) 
+			.setDocumentCountry(AonRandom.getCountry(30).orElse(null))
+			.setName(AonRandom.string(50, 10))
+			.setScope(AonFaker.getScope())
+			.setType(AonRandom.getInvoiceType(40).orElse(null)) 
+			.setTransaction(AonRandom.getTransactionType(40).orElse(null))
+			.setSurcharge(AonRandom.gt(50))
+			.setWithholding(AonRandom.gt(50))
+			.setWithholdingFarmer(AonRandom.gt(50))
+			.setVatAccrualPayment(AonRandom.gt(50))
+			.setInvestment(AonRandom.gt(50))
+			.setService(AonRandom.gt(50))
+			.setAnnulled(AonRandom.gt(50))
+			.setTotal(AonRandom.getDouble(0, 10))
+			.setAudit(AonFaker.getAudit())
+			.setDetails( IntStream.range(0, AonRandom.getInt(1, 10)).mapToObj(i -> AonFaker.getInvoiceDetail() ).toList() )
+			.setBreakdown( IntStream.range(0, AonRandom.getInt(1, 5)).mapToObj(i -> AonFaker.getInvoiceBreakdown() ).toList() )
+		;
+	}
+
+	public static InvoiceDetail getInvoiceDetail() {
+		return new InvoiceDetail()
+			.setId(AonRandom.integer(50))
+			.setItem(AonRandom.integer(50))
+			.setLine(AonRandom.integer(50))
+			.setDescription(AonRandom.string(50, 10))
+			.setQuantity(AonRandom.getDouble(0, 10))
+			.setDiscountExpression( AonRandom.gt(10)?null:AonNumberUtils.toString( AonRandom.getDouble(0, 100)))
+			.setPrice(AonRandom.getDouble(0, 100))
+			.setTaxableBase(AonRandom.getDouble(0, 100))
+			.setSource(AonRandom.getInvoiceSource()) 
+			.setPrepayment(AonRandom.gt(98))
+			.setSourceId(AonRandom.integer(50))
+			.addTax( getInvoiceTax())
+		;
+	}
+	
+	public static InvoiceTax getInvoiceTax() {
+		return new InvoiceTax()
+			.setId(AonRandom.integer(50))
+			.setTaxType(AonRandom.getTaxType())
+			.setPercent(AonRandom.getDouble(0, 100))
+			.setSurchargePercent(AonRandom.getDouble(0, 100))
+			.setDeductiblePercent( AonRandom.getDouble(0, 80))
+			.setWithholdingType(AonRandom.getWithholdingType())
+			.setVatDeductionType(AonRandom.getVatDeductionType())
+		;
 	}
 
 	public static Registry getRegistry(int nullThreshold) {
@@ -171,7 +254,7 @@ public class AonFaker {
 			.setAddress3( AonRandom.gt(97)?faker.address().secondaryAddress():null )
 			.setZip( AonRandom.gt(10)?faker.address().zipCode():null )
 			.setCity( AonRandom.gt(10)?faker.address().city():null )
-			.setGeozone( getGeoZone() )
+			.setGeozone( getGeozone() )
 			.setRecipient( AonRandom.alias(20, RADDRESS.ALIAS.getDataType().length()) )
 			.setMunicipalityCode(AonRandom.gt(30)?faker.address().zipCode():null);
 	}

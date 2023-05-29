@@ -19,6 +19,10 @@ import org.junit.platform.suite.api.Suite;
 	 ,DomainJSONTest.class
 	 ,DomainAuditJSONTest.class
 	 ,GeozoneJSONTest.class
+	 ,InvoiceJSONTest.class
+	 ,InvoiceBreakdownJSONTest.class
+	 ,InvoiceDetailJSONTest.class
+	 ,InvoiceTaxJSONTest.class
 	 ,RegistryJSONTest.class
 	 ,RegistryAddressJSONTest.class
 	 ,ScopeJSONTest.class

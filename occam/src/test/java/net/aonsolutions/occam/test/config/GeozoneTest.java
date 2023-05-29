@@ -112,7 +112,7 @@ class GeozoneTest extends AbstractOccamTest {
 
 	@Test
 	void saveValidationNameTest() {
-		Geozone geozone = AonFaker.getGeoZone ();
+		Geozone geozone = AonFaker.getGeozone ();
 		
 		geozone.setName(null);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> GeozoneDAO.save(ctx, geozone));
@@ -125,7 +125,7 @@ class GeozoneTest extends AbstractOccamTest {
 	
 	@Test
 	void saveValidationCodeTest() {
-		Geozone geozone = AonFaker.getGeoZone().setName("Pontevedra");
+		Geozone geozone = AonFaker.getGeozone().setName("Pontevedra");
 		
 		geozone.setCode(null);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> GeozoneDAO.save(ctx, geozone));

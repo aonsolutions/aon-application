@@ -47,6 +47,12 @@ public class AonJSONUtils {
 			, t -> AonNumberUtils.toInteger(json.optNumber(key, null)));
 	}
 	
+	public static Double getDouble(JSONObject json, String key ) {
+		if(json == null) return null;
+		return AonObjectUtils.ifNotNullDo(json.opt(key)
+			, t -> AonNumberUtils.toDouble(json.optNumber(key, null)));
+	}
+
 	public static String getString(JSONObject json, String key ) {
 		if(json == null) return null;
 		return json.optString(key,null);
