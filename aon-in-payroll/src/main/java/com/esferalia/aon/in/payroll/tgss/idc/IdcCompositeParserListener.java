@@ -64,6 +64,11 @@ public class IdcCompositeParserListener implements IdcParserListener {
 	public void onNoEmployeeQuotePEC(String ssNum, String ccc, Date start, Date end) {
 		idcParserListeners.forEach(l -> l.onNoEmployeeQuotePEC(ssNum, ccc, start, end));
 	}
+	
+	@Override
+	public void onEmployeeQuoteTRL(String ssNum, String ccc, String description, Date start, Date end) {
+	    	idcParserListeners.forEach(l -> l.onEmployeeQuoteTRL(ssNum, ccc, description, start, end));
+	}
 
 	@Override
 	public void onEmployeeQuotePEC(String ssNum, String ccc, String code, String description, String portTipo,
