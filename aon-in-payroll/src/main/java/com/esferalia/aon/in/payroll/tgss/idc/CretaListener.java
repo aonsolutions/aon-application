@@ -189,14 +189,15 @@ public class CretaListener implements IdcParserListener {
 
 	protected void addActivoNormal(String ssNum, String ccc, Date start, Date end, CretaTramoBuilder b) {
 		if ( isQuoteByRealDays(ssNum, ccc, start, end )) {
-		    	b.filter(d -> AonStringUtils.equals( d.getCodigo(),"51"));
+		    	b.filter(CretaListener::skipI51);
 		    	addTiempoCompletoNormal(b) ; // REG.GRAL.(SIST.ESP.AGRARIO CCC) COTIZACION POR JR
 		}else if ( isPartTimeEmployee(ssNum, ccc, start, end )) {
 			addTiempoParcialNormal(b);
 		} else if ( isScholarEmployee(ssNum, ccc, start, end)) {
 			addBecariosNormal(b);
 		} else if ( isTraining421Employee(ssNum, ccc, start, end)) {
-			addFormacionNormal(b);
+			addFormacionEnAlternanciaNormal(b);
+		    	b.filter(CretaListener::skipI51);
 		} else { 
 			addTiempoCompletoNormal(b);
 		}
@@ -271,6 +272,10 @@ public class CretaListener implements IdcParserListener {
 		return trabajadoresTramosBuilder.create();
 	}
 	
+	private static boolean  skipI51(DatoSolicitado d ) {
+	    return AonStringUtils.equals( d.getCodigo(),"51");
+	}
+
 	private static boolean isMonthlySEA(String colective) {
 		return AonStringUtils.equals("4216", colective); 
 	}
@@ -400,6 +405,53 @@ public class CretaListener implements IdcParserListener {
 		tramoBuilder.addDato(dataSolicitadoBuilder.create());
 	}
 	
+	private static void addFormacionEnAlternanciaNormal(TramoBuilder tramoBuilder) {
+		
+		DatoSolicitadoBuilder dataSolicitadoBuilder = new DatoSolicitadoBuilder();
+	    	// 3.1 Contratos formativos en alternancia (TRL 087 )
+	    	// 3.1.1 Tramo en situación de activo "normal" (PEC 0978 o 0979)
+		// Base de contingencias comunes
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("500");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Aportación plan pensiones
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("301");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Accidentes de Trabajo
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("601");
+		dataSolicitadoBuilder.setObligatorio(true);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Base de Horas Extras Fuerza Mayor
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("501");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// N horas formación teórica presencial 
+		dataSolicitadoBuilder.setTipo("H");
+		dataSolicitadoBuilder.setCodigo("03");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// N horas formación teórica a distancia 
+		dataSolicitadoBuilder.setTipo("H");
+		dataSolicitadoBuilder.setCodigo("04");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// N horas tutoría 
+		dataSolicitadoBuilder.setTipo("H");
+		dataSolicitadoBuilder.setCodigo("06");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+		// Bonificación tutoría
+		dataSolicitadoBuilder.setTipo("C");
+		dataSolicitadoBuilder.setCodigo("737");
+		dataSolicitadoBuilder.setObligatorio(false);
+		tramoBuilder.addDato(dataSolicitadoBuilder.create());
+	}
+
 	private static void addBecariosNormal(TramoBuilder tramoBuilder) {
 		
 	}
