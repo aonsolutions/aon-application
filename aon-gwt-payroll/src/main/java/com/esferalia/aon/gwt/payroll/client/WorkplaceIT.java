@@ -91,7 +91,7 @@ public class WorkplaceIT extends Composite {
 						if(Boolean.TRUE.equals(it.isComunicate()) && workplaceITObject.isUserComunica())
 							workplaceITObject.deleteComunicateIT(itEmployee, it, 
 									success::accept, 
-									d -> {}
+									failure::accept
 							);
 						else
 							success.accept(s);
@@ -106,7 +106,7 @@ public class WorkplaceIT extends Composite {
 						if(Boolean.TRUE.equals(it.isComunicate()) && workplaceITObject.isUserComunica())
 							workplaceITObject.deleteComunicateIT(itEmployee, it, 
 									success::accept, 
-									d -> {}
+									failure::accept
 							);
 						else
 							success.accept(s);

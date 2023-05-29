@@ -717,6 +717,7 @@ public class Asserts {
 			assertEquals("registryDocumentCountry", expected.getRegistryDocumentCountry(), actual.getRegistryDocumentCountry());
 			assertEquals("name", expected.getName(), actual.getName());
 			assertEquals("issueDate", expected.getIssueDate(), actual.getIssueDate());
+			assertEquals("chargeDate", expected.getChargeDate(), actual.getChargeDate());
 			assertEquals("fromSalary", expected.isFromSalary(), actual.isFromSalary());
 			assertEquals("insidePeriod", expected.isInsidePeriod(), actual.isInsidePeriod()); 
 			assertEquals("salary", expected.getSalary(), actual.getSalary());

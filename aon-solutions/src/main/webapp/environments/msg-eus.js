@@ -159,6 +159,7 @@ export const FILE = 'Fitxategia';
 export const FILE_DATA = 'Fitxategiaren Datuak';
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
+export const FIND_LINKED_DOMAINS = "Estekatutako domeinuak bilatu";
 export const FOOTER = 'Oina';
 
 // ----- G

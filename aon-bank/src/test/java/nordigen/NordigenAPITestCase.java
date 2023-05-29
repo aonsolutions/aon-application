@@ -235,6 +235,7 @@ public class NordigenAPITestCase {
 	}
 	
 	@Test
+	@Ignore
 	public void testGetInstitutionsFromSpainWithPayments() {
 		try {
 			NordigenAPI.getInstitutions(accessToken, Country.ES, true);

@@ -1610,7 +1610,7 @@ public class SalaryDraftBuilder
 				name, 
 				value, 
 				todayStartDate, 
-				todayStartDate)
+				todayEndDate)
 			)
 		);
 		

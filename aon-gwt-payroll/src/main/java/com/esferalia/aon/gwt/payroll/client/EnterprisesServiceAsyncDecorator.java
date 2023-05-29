@@ -770,7 +770,7 @@ public class EnterprisesServiceAsyncDecorator implements
 	@Override
 	public void deleteComunicateIT(String currentDomainName, String currentUser, String affiliationNumber,
 			String regime, String contributionAccount, Date dateFrom, Date dateTo, Date startDate,
-			AsyncCallback<Void> callback) {
+			AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.deleteComunicateIT(currentDomainName, currentUser, affiliationNumber,
 				regime, contributionAccount, dateFrom, dateTo, startDate, new AsyncCallbackWrapper<Void>(callback));

@@ -160,6 +160,7 @@ export const FILE = 'Ficheiro';
 export const FILE_DATA = 'Datos do Ficheiro';
 export const FILTER = "Filtro";
 export const FILTERS = "Filtros";
+export const FIND_LINKED_DOMAINS = "Buscar dominios vinculados";
 export const FOOTER = 'Pé';
 
 // ----- G

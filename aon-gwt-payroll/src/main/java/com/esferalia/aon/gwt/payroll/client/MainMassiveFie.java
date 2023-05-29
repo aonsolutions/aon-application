@@ -13,24 +13,21 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.ContractInfo;
+import com.esferalia.aon.gwt.payroll.shared.EmployeeFieNotFound;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.FIEService;
-import com.esferalia.aon.gwt.payroll.shared.FIEService.JsContractInfo;
-import com.esferalia.aon.gwt.payroll.shared.FIEService.JsEmployeeInfo;
-import com.esferalia.aon.gwt.payroll.shared.FIEService.JsIT;
-import com.esferalia.aon.gwt.payroll.shared.FIEService.JsITEmployee;
-import com.esferalia.aon.gwt.payroll.shared.FIEService.JsITPart;
 import com.esferalia.aon.gwt.payroll.shared.IT;
 import com.esferalia.aon.gwt.payroll.shared.ITEmployee;
 import com.esferalia.aon.gwt.payroll.shared.ITPart;
-import com.esferalia.aon.watson.util.AonStringUtils;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -121,22 +118,22 @@ public class MainMassiveFie extends MainEntryPoint{
 		showFIEMessage();
 	}
 	
-	private void initPreview(List<ITEmployee> itEmployees) {
-		if(itEmployees.isEmpty())
+	private void initPreview(List<ITEmployee> itEmployees, List<EmployeeFieNotFound> employeeFieNotFounds) {
+		if(itEmployees.isEmpty() && employeeFieNotFounds.isEmpty())
 			showFIEMessage();
 		else {
 			
 			showFIETable();
 			fieDataTableHeader.clear();
 			fieDataTableHeader.resize(0, 0);
-			fieDataTableHeader.resizeColumns(9);
+			fieDataTableHeader.resizeColumns(10);
 			
 			fieDataTable.clear();
 			fieDataTable.resize(0, 0);
-			fieDataTable.resizeColumns(9);
+			fieDataTable.resizeColumns(10);
 			
 			paintHeader();
-			fillFIETable(itEmployees);
+			fillFIETable(itEmployees, employeeFieNotFounds);
 			setColumnWidth();
 			setScrollHeight();
 		}
@@ -145,6 +142,7 @@ public class MainMassiveFie extends MainEntryPoint{
 	private void paintHeader() {
 		int row = fieDataTableHeader.insertRow(fieDataTableHeader.getRowCount());
 		
+		Label status = new Label("");
 		Label enterprise = new Label("EMPRESA");
 		Label name = new Label("NOMBRE");
 		Label document = new Label("DOCUMENTO");
@@ -155,6 +153,8 @@ public class MainMassiveFie extends MainEntryPoint{
 		Label lowCause = new Label("M.BAJA");
 		Label highCause = new Label("M.ALTA");
 		
+		status.addStyleName(style.gridTitle());
+		status.addStyleName(style.headerFSize());
 		enterprise.addStyleName(style.gridTitle());
 		enterprise.addStyleName(style.headerFSize());
 		name.addStyleName(style.gridTitle());
@@ -174,15 +174,16 @@ public class MainMassiveFie extends MainEntryPoint{
 		highCause.addStyleName(style.gridTitle());
 		highCause.addStyleName(style.headerFSize());
 		
-		fieDataTableHeader.setWidget(row, 0, enterprise);
-		fieDataTableHeader.setWidget(row, 1, name);
-		fieDataTableHeader.setWidget(row, 2, document);
-		fieDataTableHeader.setWidget(row, 3, nss);
-		fieDataTableHeader.setWidget(row, 4, type);
-		fieDataTableHeader.setWidget(row, 5, startDate);
-		fieDataTableHeader.setWidget(row, 6, endDate);
-		fieDataTableHeader.setWidget(row, 7, lowCause);
-		fieDataTableHeader.setWidget(row, 8, highCause);
+		fieDataTableHeader.setWidget(row, 0, status);
+		fieDataTableHeader.setWidget(row, 1, enterprise);
+		fieDataTableHeader.setWidget(row, 2, name);
+		fieDataTableHeader.setWidget(row, 3, document);
+		fieDataTableHeader.setWidget(row, 4, nss);
+		fieDataTableHeader.setWidget(row, 5, type);
+		fieDataTableHeader.setWidget(row, 6, startDate);
+		fieDataTableHeader.setWidget(row, 7, endDate);
+		fieDataTableHeader.setWidget(row, 8, lowCause);
+		fieDataTableHeader.setWidget(row, 9, highCause);
 		
 		fieDataTableHeader.getCellFormatter().addStyleName(row, 0, style.headerFixed());
 		fieDataTableHeader.getCellFormatter().addStyleName(row, 1, style.headerFixed());
@@ -193,9 +194,10 @@ public class MainMassiveFie extends MainEntryPoint{
 		fieDataTableHeader.getCellFormatter().addStyleName(row, 6, style.headerFixed());
 		fieDataTableHeader.getCellFormatter().addStyleName(row, 7, style.headerFixed());
 		fieDataTableHeader.getCellFormatter().addStyleName(row, 8, style.headerFixed());
+		fieDataTableHeader.getCellFormatter().addStyleName(row, 9, style.headerFixed());
 	}
 	
-	private void fillFIETable(List<ITEmployee> itEmployees) {
+	private void fillFIETable(List<ITEmployee> itEmployees, List<EmployeeFieNotFound> employeeFieNotFounds) {
 		for (ITEmployee itEmployee : itEmployees) {
 			
 			String enterpriseName = itEmployee.getContractInfo().getEnterpriseName();
@@ -212,45 +214,53 @@ public class MainMassiveFie extends MainEntryPoint{
 					
 					int row = fieDataTable.insertRow(fieDataTable.getRowCount());
 					
-					fieDataTable.setWidget(row, 0, new Label(enterpriseName));
-					fieDataTable.setWidget(row, 1, new Label(fullName));
-					fieDataTable.setWidget(row, 2, new Label(document));
-					fieDataTable.getWidget(row, 2).getElement().getStyle().setTextAlign(TextAlign.CENTER);
-					fieDataTable.setWidget(row, 3, new Label(nss));
+					Label status = new Label("I");
+					status.setTitle("Importado");
+					status.getElement().getStyle().setColor("green");
+					status.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+					fieDataTable.setWidget(row, 0, status);
+					fieDataTable.getWidget(row, 0).getElement().getStyle().setTextAlign(TextAlign.CENTER);
+					
+					fieDataTable.setWidget(row, 1, new Label(enterpriseName));
+					fieDataTable.setWidget(row, 2, new Label(fullName));
+					fieDataTable.setWidget(row, 3, new Label(document));
 					fieDataTable.getWidget(row, 3).getElement().getStyle().setTextAlign(TextAlign.CENTER);
+					fieDataTable.setWidget(row, 4, new Label(nss));
+					fieDataTable.getWidget(row, 4).getElement().getStyle().setTextAlign(TextAlign.CENTER);
+					
 					
 					if(itPart.getType() == (byte) 0) {
-						fieDataTable.setWidget(row, 4, new Label("Baja"));
-						fieDataTable.setWidget(row, 5, new Label(parseDate(itPart.getDate())));
-						fieDataTable.getWidget(row, 5).getElement().getStyle().setTextAlign(TextAlign.CENTER);
-						fieDataTable.setWidget(row, 6, new Label());
-						
-						Label label = new Label(parseShortLowCauseByte(lowCause));
-						label.setTitle(parseShortLowCauseByteTitle(lowCause));
-						fieDataTable.setWidget(row, 7, label);
-						fieDataTable.getWidget(row, 7).getElement().getStyle().setTextAlign(TextAlign.CENTER);
-						fieDataTable.setWidget(row, 8, new Label());
-						
-						
-					} else if(itPart.getType() == (byte) 1) {
-						fieDataTable.setWidget(row, 4, new Label("Confirmaci\u00f3n"));
-						fieDataTable.setWidget(row, 5, new Label(parseDate(itPart.getDate())));
-						fieDataTable.getWidget(row, 5).getElement().getStyle().setTextAlign(TextAlign.CENTER);
-						fieDataTable.setWidget(row, 6, new Label());
-						fieDataTable.setWidget(row, 7, new Label());
-						fieDataTable.setWidget(row, 8, new Label());
-						
-					} else if(itPart.getType() == (byte) 2) {
-						fieDataTable.setWidget(row, 4, new Label("Alta"));
-						fieDataTable.setWidget(row, 5, new Label());
+						fieDataTable.setWidget(row, 5, new Label("Baja"));
 						fieDataTable.setWidget(row, 6, new Label(parseDate(itPart.getDate())));
 						fieDataTable.getWidget(row, 6).getElement().getStyle().setTextAlign(TextAlign.CENTER);
 						fieDataTable.setWidget(row, 7, new Label());
 						
-						Label label = new Label(parseShortHighCauseByte(highCause));
-						label.setTitle(parseShortHighCauseByteTitle(highCause));
+						Label label = new Label(parseShortLowCauseByte(lowCause));
+						label.setTitle(parseShortLowCauseByteTitle(lowCause));
 						fieDataTable.setWidget(row, 8, label);
 						fieDataTable.getWidget(row, 8).getElement().getStyle().setTextAlign(TextAlign.CENTER);
+						fieDataTable.setWidget(row, 9, new Label());
+						
+						
+					} else if(itPart.getType() == (byte) 1) {
+						fieDataTable.setWidget(row, 5, new Label("Confirmaci\u00f3n"));
+						fieDataTable.setWidget(row, 6, new Label(parseDate(itPart.getDate())));
+						fieDataTable.getWidget(row, 6).getElement().getStyle().setTextAlign(TextAlign.CENTER);
+						fieDataTable.setWidget(row, 7, new Label());
+						fieDataTable.setWidget(row, 8, new Label());
+						fieDataTable.setWidget(row, 9, new Label());
+						
+					} else if(itPart.getType() == (byte) 2) {
+						fieDataTable.setWidget(row, 5, new Label("Alta"));
+						fieDataTable.setWidget(row, 6, new Label());
+						fieDataTable.setWidget(row, 7, new Label(parseDate(itPart.getDate())));
+						fieDataTable.getWidget(row, 7).getElement().getStyle().setTextAlign(TextAlign.CENTER);
+						fieDataTable.setWidget(row, 8, new Label());
+						
+						Label label = new Label(parseShortHighCauseByte(highCause));
+						label.setTitle(parseShortHighCauseByteTitle(highCause));
+						fieDataTable.setWidget(row, 9, label);
+						fieDataTable.getWidget(row, 9).getElement().getStyle().setTextAlign(TextAlign.CENTER);
 					}
 					
 					if (row % 2 == 0) {
@@ -263,34 +273,75 @@ public class MainMassiveFie extends MainEntryPoint{
 						fieDataTable.getCellFormatter().addStyleName(row, 6, style.oddRow());
 						fieDataTable.getCellFormatter().addStyleName(row, 7, style.oddRow());
 						fieDataTable.getCellFormatter().addStyleName(row, 8, style.oddRow());
+						fieDataTable.getCellFormatter().addStyleName(row, 9, style.oddRow());
 					}
 					
 					fieDataTable.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 				}
 			}
 		}
+		
+		for(EmployeeFieNotFound employeeFieNotFound : employeeFieNotFounds) {
+			int row = fieDataTable.insertRow(fieDataTable.getRowCount());
+			
+			Label status = new Label("N");
+			status.setTitle("No Importado");
+			status.getElement().getStyle().setColor("red");
+			status.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			fieDataTable.setWidget(row, 0, status);
+			fieDataTable.getWidget(row, 0).getElement().getStyle().setTextAlign(TextAlign.CENTER);
+			
+			fieDataTable.setWidget(row, 1, new Label());
+			fieDataTable.setWidget(row, 2, new Label(employeeFieNotFound.getFullName()));
+			fieDataTable.setWidget(row, 3, new Label(employeeFieNotFound.getIpf()));
+			fieDataTable.getWidget(row, 3).getElement().getStyle().setTextAlign(TextAlign.CENTER);
+			fieDataTable.setWidget(row, 4, new Label(employeeFieNotFound.getNaf()));
+			fieDataTable.getWidget(row, 4).getElement().getStyle().setTextAlign(TextAlign.CENTER);
+			fieDataTable.setWidget(row, 5, new Label());
+			fieDataTable.setWidget(row, 6, new Label());
+			fieDataTable.setWidget(row, 7, new Label());
+			fieDataTable.setWidget(row, 8, new Label());
+			fieDataTable.setWidget(row, 9, new Label());
+			
+			if (row % 2 == 0) {
+				fieDataTable.getCellFormatter().addStyleName(row, 0, style.oddRow());
+				fieDataTable.getCellFormatter().addStyleName(row, 1, style.oddRow());
+				fieDataTable.getCellFormatter().addStyleName(row, 2, style.oddRow());
+				fieDataTable.getCellFormatter().addStyleName(row, 3, style.oddRow());
+				fieDataTable.getCellFormatter().addStyleName(row, 4, style.oddRow());
+				fieDataTable.getCellFormatter().addStyleName(row, 5, style.oddRow());
+				fieDataTable.getCellFormatter().addStyleName(row, 6, style.oddRow());
+				fieDataTable.getCellFormatter().addStyleName(row, 7, style.oddRow());
+				fieDataTable.getCellFormatter().addStyleName(row, 8, style.oddRow());
+				fieDataTable.getCellFormatter().addStyleName(row, 9, style.oddRow());
+			}
+			
+			fieDataTable.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
+		}
 	}
 	
 	private void setColumnWidth() {
-		fieDataTableHeader.getColumnFormatter().getElement(0).getStyle().setWidth(20, Unit.PCT);
-		fieDataTableHeader.getColumnFormatter().getElement(1).getStyle().setWidth(20, Unit.PCT);
-		fieDataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(10, Unit.PCT);
+		fieDataTableHeader.getColumnFormatter().getElement(0).getStyle().setWidth(2, Unit.PCT);
+		fieDataTableHeader.getColumnFormatter().getElement(1).getStyle().setWidth(18, Unit.PCT);
+		fieDataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(20, Unit.PCT);
 		fieDataTableHeader.getColumnFormatter().getElement(3).getStyle().setWidth(10, Unit.PCT);
-		fieDataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(7, Unit.PCT);
+		fieDataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(10, Unit.PCT);
 		fieDataTableHeader.getColumnFormatter().getElement(5).getStyle().setWidth(7, Unit.PCT);
 		fieDataTableHeader.getColumnFormatter().getElement(6).getStyle().setWidth(7, Unit.PCT);
 		fieDataTableHeader.getColumnFormatter().getElement(7).getStyle().setWidth(7, Unit.PCT);
 		fieDataTableHeader.getColumnFormatter().getElement(8).getStyle().setWidth(7, Unit.PCT);
+		fieDataTableHeader.getColumnFormatter().getElement(9).getStyle().setWidth(7, Unit.PCT);
 		
-		fieDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(20, Unit.PCT);
-		fieDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(20, Unit.PCT);
-		fieDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(10, Unit.PCT);
+		fieDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(2, Unit.PCT);
+		fieDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(18, Unit.PCT);
+		fieDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(20, Unit.PCT);
 		fieDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(10, Unit.PCT);
-		fieDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(7, Unit.PCT);
+		fieDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(10, Unit.PCT);
 		fieDataTable.getColumnFormatter().getElement(5).getStyle().setWidth(7, Unit.PCT);
 		fieDataTable.getColumnFormatter().getElement(6).getStyle().setWidth(7, Unit.PCT);
 		fieDataTable.getColumnFormatter().getElement(7).getStyle().setWidth(7, Unit.PCT);
 		fieDataTable.getColumnFormatter().getElement(8).getStyle().setWidth(7, Unit.PCT);
+		fieDataTable.getColumnFormatter().getElement(9).getStyle().setWidth(7, Unit.PCT);
 	}
 	
 	private String parseShortLowCauseByte(Byte typeLowPart) {
@@ -447,21 +498,18 @@ public class MainMassiveFie extends MainEntryPoint{
 			
 		});
 		msjFIEFormPanel.addSubmitCompleteHandler(e -> {
-			String json = e.getResults();
-
-			JsArray<JsITEmployee> jsITEmployees = eval("(" + json + ")");
-		
-			List<ITEmployee> itEmployees = new ArrayList<>(jsITEmployees.length());
+			String jsonStr = e.getResults().split(">")[1].split("<")[0];
+			JSONValue json = JSONParser.parseStrict(jsonStr);
+			List<ITEmployee> itEmployees = parseImportJson(json.isObject().get("import"));
+			List<EmployeeFieNotFound> employeeFieNotFounds = parseNoImportJson(json.isObject().get("noImport"));
 			
-			for (int i = 0; i < jsITEmployees.length(); i++ ) {
-				JsITEmployee jsITEmployee = jsITEmployees.get(i);			
-				ITEmployee itEmployee = fromJsITEmployee(jsITEmployee);
-				itEmployees.add(itEmployee); 		
-			}
+//			Window.alert("json : "+ json);
+//			Window.alert("itEmployees size : "+ itEmployees.size());
+//			Window.alert("employeeFieNotFounds size : "+ employeeFieNotFounds.size());
 			
 			AonMessagePanel.showLoading(messagePanel, "Cargando partes I.T. importados ...");
 			
-			initPreview(itEmployees);
+			initPreview(itEmployees, employeeFieNotFounds);
 			
 			AonMessagePanel.showSuccess(messagePanel, "FIE importado correctamente. Puede visualizar los datos importados en la tabla.");
 		});
@@ -483,178 +531,75 @@ public class MainMassiveFie extends MainEntryPoint{
 	
 	// --------------------------------------------------- FromJS to ITEmployee, IT, ContractInfo, EmployeeInfo
 	
-	private static ITEmployee fromJsITEmployee(JsITEmployee jsITEmployee) {
-		ITEmployee itEmployee = new ITEmployee();
+	private List<ITEmployee> parseImportJson(JSONValue jsonValue) {
+		List<ITEmployee> employees = new ArrayList<>();
 		
-		JsEmployeeInfo jsEmployeeInfo = jsITEmployee.getEmployeeInfo();
-		EmployeeInfo employeeInfo = fromJsEmployeeInfo(jsEmployeeInfo);
-		
-		JsContractInfo jsContractInfo = jsITEmployee.getContractInfo();
-		ContractInfo contractInfo = fromJsContractInfo(jsContractInfo);
-		
-		JsArray<JsIT> jsITs = jsITEmployee.getITs();
-		List<IT> its = new ArrayList<>();
-		for ( int i = 0; i < jsITs.length(); i++ )
-			its.add(fromJsIT(jsITs.get(i)));
-
-		itEmployee.setEmployeeInfo(employeeInfo);
-		itEmployee.setContractInfo(contractInfo);
-		itEmployee.setIts(its);
-		
-		itEmployee.setStatus(jsITEmployee.getStatus());
-
-		return itEmployee;
-	}
-	
-	private static IT fromJsIT(JsIT jsIT) {
-		
-		IT it = new IT();
-		it.setContract(jsIT.getContract());
-		it.setDailyCGCBase(jsIT.getDailyCGCBase());
-		it.setDailyCGPBase(jsIT.getDailyCGPBase());
-		it.setDailyREGBase(jsIT.getDailyREGBase());
-		it.setDescription(jsIT.getDescription());
-		it.setDomain(jsIT.getDomain());
-		it.setEndDate(jsIT.getEndDate());
-		it.setFullName(jsIT.getFullName());
-		it.setMaternityReason(jsIT.getMaternityReason());
-		it.setMaternityType(jsIT.getMaternityType());
-		it.setId(jsIT.getId());
-		it.setIsParent(jsIT.isParent());
-		it.setITParts(createDefaultITParts(jsIT));
-		it.setParent(jsIT.getParent());
-		it.setStartDate(jsIT.getStartDate());
-		it.setTypeHighPart(jsIT.getTypeHighPart());
-		it.setTypeLowPart(jsIT.getTypeLowPart());
-		return it;
-	}
-	
-	private static List<ITPart> createDefaultITParts(JsIT jsIT) {
-		List<ITPart> itParts = new ArrayList<>();
-		
-		for ( int i = 0; i < jsIT.getITParts().length(); i++ ) {
-			JsITPart jsITPart = jsIT.getITParts().get(i);
+		for(int i=0; i < jsonValue.isArray().size(); i++) {
+			JSONObject entryJson = jsonValue.isArray().get(i).isObject();
 			
-			// Low ITPart
-			ITPart itPart = new ITPart();
-			itPart.setId(jsITPart.getId());
-			itPart.setDomain(jsITPart.getDomain());
-			itPart.setType(jsITPart.getType());
-			itPart.setIt(jsITPart.getIt());
-			itPart.setCollegeNumber(jsITPart.getCollegeNumber());
-			itPart.setConfirmOrderNumber(jsITPart.getConfirmOrderNumber());
-			itPart.setCias(jsITPart.getCias());
-			itPart.setDate(jsITPart.getDate());
-			itPart.setStatus(jsITPart.getStatus());
+			ITEmployee itEmployee = new ITEmployee();
+			ContractInfo contractInfo = new ContractInfo();
+			EmployeeInfo employeeInfo = new EmployeeInfo();
+			List<IT> its = new ArrayList<>();
 			
-			itParts.add(itPart);
+			contractInfo.setEnterpriseName(getJsonValue(entryJson.get("enterprise")));
+			employeeInfo.setName(getJsonValue(entryJson.get("name")));
+			employeeInfo.setSurName(getJsonValue(entryJson.get("surname")));
+			employeeInfo.setSecondSurName(getJsonValue(entryJson.get("secondSurname")));
+			employeeInfo.setDocument(getJsonValue(entryJson.get("ipf")));
+			employeeInfo.setSsNumber(getJsonValue(entryJson.get("naf")));
+			
+			
+			for(int j=0; j < entryJson.get("its").isArray().size(); j++) {
+				JSONObject itJson = entryJson.get("its").isArray().get(j).isObject();
+				
+				IT it = new IT();
+				it.setTypeLowPart(null == getJsonValue(itJson.get("lowCause")) ? null : Byte.parseByte(getJsonValue(itJson.get("lowCause"))));
+				it.setTypeHighPart(null == getJsonValue(itJson.get("highCause")) ? null : Byte.parseByte(getJsonValue(itJson.get("highCause"))));
+				
+				for(int k=0; k < itJson.get("itParts").isArray().size(); k++) {
+					JSONObject itPartJson = itJson.get("itParts").isArray().get(k).isObject();
+					
+					ITPart itPart = new ITPart();
+					itPart.setType(null == getJsonValue(itPartJson.get("type")) ? null : Byte.parseByte(getJsonValue(itPartJson.get("type"))));
+					itPart.setDate(null == getJsonValue(itPartJson.get("date")) ? null : formatDate.parse(getJsonValue(itPartJson.get("date"))));
+					
+					it.addITPart(itPart);
+				}
+				
+				its.add(it);
+			}
+			
+			itEmployee.setEmployeeInfo(employeeInfo);
+			itEmployee.setContractInfo(contractInfo);
+			itEmployee.setIts(its);
+			
+			employees.add(itEmployee);
 		}
 		
-		itParts.sort((o1, o2) -> o1.getType().compareTo(o2.getType()));
-		return itParts;
+		return employees;
 	}
 
-	private static ContractInfo fromJsContractInfo(JsContractInfo jsContractInfo) {
-		ContractInfo contractInfo = new ContractInfo();	
-		contractInfo.setActivityId(jsContractInfo.getActivityId());
-		contractInfo.setEnterpriseCIF(jsContractInfo.getEnterpriseCIF());
-		contractInfo.setEnterpriseName(jsContractInfo.getEnterpriseName());
-		contractInfo.setCccId(jsContractInfo.getCccId());
-		contractInfo.setCompleteCCC(jsContractInfo.getCompleteCCC());
-		contractInfo.setCccType(jsContractInfo.getCccType());
-		contractInfo.setWorkplaceId(jsContractInfo.getWorkplaceId());
-		contractInfo.setWorkplaceZIP(jsContractInfo.getWorkplaceZIP());
-		contractInfo.setWorkplaceFullAddress(jsContractInfo.getWorkplaceFullAddress());
-		contractInfo.setContractType(jsContractInfo.getContractType());
-		contractInfo.setContractModel(jsContractInfo.getContractModel());
-		contractInfo.setStartDate(jsContractInfo.getStartDate());
-		contractInfo.setEndDate(jsContractInfo.getEndDate());
-		contractInfo.setSeniorityDate(jsContractInfo.getSeniorityDate());
-		contractInfo.setAgreementId(jsContractInfo.getAgreementId());
-		contractInfo.setAgreementLevelId(jsContractInfo.getAgreementLevelId());
-		contractInfo.setAgreementCategory(jsContractInfo.getAgreementCategory());
-		contractInfo.setQuoteGroup(jsContractInfo.getQuoteGroup());
-		contractInfo.setOcupation(jsContractInfo.getOcupation());
-		contractInfo.setJourneyType(jsContractInfo.getJourneyType());
-		contractInfo.setSsRegimen(jsContractInfo.getSsRegimen());
-		contractInfo.setContractId(jsContractInfo.getContractId());
-		contractInfo.setContracttypeId(jsContractInfo.getContracttypeId());
-		contractInfo.setQuotegroupId(jsContractInfo.getQuotegroupId());
-		contractInfo.setOcupationId(jsContractInfo.getOcupationId());
-		contractInfo.setJourneytypeId(jsContractInfo.getJourneytypeId());
-		contractInfo.setContractmodelId(jsContractInfo.getContractmodelId());
-		contractInfo.setRetaId(jsContractInfo.getRetaId());
-		contractInfo.setHasPayroll(jsContractInfo.getHasPayroll());
-		contractInfo.setPayrollDate(jsContractInfo.getPayrollDate());
-		return contractInfo;
-	}
-
-	private static EmployeeInfo fromJsEmployeeInfo(JsEmployeeInfo jsEmployeeInfo) {		
-		EmployeeInfo employeeInfo = new EmployeeInfo();
+	private List<EmployeeFieNotFound> parseNoImportJson(JSONValue jsonValue) {
+		List<EmployeeFieNotFound> employeeFieNotFounds = new ArrayList<>();
 		
-		employeeInfo.setAccount(jsEmployeeInfo.getAccount());
-		employeeInfo.setAddresNum(jsEmployeeInfo.getAddresNum());
-		employeeInfo.setAddress(jsEmployeeInfo.getAddress());
-		employeeInfo.setAddressCity(jsEmployeeInfo.getAddressCity());
-		employeeInfo.setAddressInfo(jsEmployeeInfo.getAddressInfo());
-		employeeInfo.setAddressZip(jsEmployeeInfo.getAddressZip());
-		employeeInfo.setBic(jsEmployeeInfo.getBic());
-		employeeInfo.setBirthdate(jsEmployeeInfo.getBirthdate());
-		employeeInfo.setCivilStatus(jsEmployeeInfo.getCivilStatus());
-		employeeInfo.setContractActive(jsEmployeeInfo.getContractActive());
-		employeeInfo.setContractId(jsEmployeeInfo.getContractId());
-		employeeInfo.setDocument(jsEmployeeInfo.getDocument());
-		employeeInfo.setDocumentType(jsEmployeeInfo.getDocumentType());
-		employeeInfo.setDomain(jsEmployeeInfo.getDomain());
-		employeeInfo.setEmail(jsEmployeeInfo.getEmail());
-		employeeInfo.setEmailId(jsEmployeeInfo.getEmailId());
-		employeeInfo.setEmployeeId(jsEmployeeInfo.getEmployeeId());
-		employeeInfo.setGender(jsEmployeeInfo.getGender());
-		employeeInfo.setIsFullTime(jsEmployeeInfo.getIsFullTime());
-		employeeInfo.setMobile(jsEmployeeInfo.getMobile());
-		employeeInfo.setMobileId(jsEmployeeInfo.getMobileId());
-		employeeInfo.setName(jsEmployeeInfo.getName());
-		employeeInfo.setNationality(jsEmployeeInfo.getNationality());
-		employeeInfo.setPaymethodId(jsEmployeeInfo.getPaymethodId());
-		employeeInfo.setPayMethodType(jsEmployeeInfo.getPayMethodType());
-		employeeInfo.setPayMethodTypeB(jsEmployeeInfo.getPayMethodTypeB());
-		employeeInfo.setPhone(jsEmployeeInfo.getPhone());
-		employeeInfo.setPhoneId(jsEmployeeInfo.getPhoneId());
-		employeeInfo.setRaddressId(jsEmployeeInfo.getRaddressId());
-		employeeInfo.setRbankId(jsEmployeeInfo.getRbankId());
-		employeeInfo.setRpaymethodId(jsEmployeeInfo.getRpaymethodId());
-		employeeInfo.setSecondSurName(jsEmployeeInfo.getSecondSurName());
-		employeeInfo.setSsNumber(jsEmployeeInfo.getSsNumber());
-		employeeInfo.setStreetType(jsEmployeeInfo.getStreetType());
-		employeeInfo.setSurName(jsEmployeeInfo.getSurName());
-		
-		return employeeInfo;
-	}
-
-	private static Date parseJsDate(String date) {
-		if(AonStringUtils.isBlank(date) || date.length() != 8)
-			return null;
-		
-		String year = date.substring(0, 4);
-		String month = date.substring(4, 6);
-		String day = date.substring(6, 8);
-		
-		return new Date(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day));
-	}
-	
-	private static Date parseDate(String str) {
-		if ( str == null || str.trim().length() == 0)
-			return null;
-		
-		try {
-			return DateTimeFormat.getFormat("yyyy-MM-dd").parse(str);
-		} catch ( IllegalArgumentException e ) {
-			return null;
+		for(int i=0; i < jsonValue.isArray().size(); i++) {
+			JSONObject entryJson = jsonValue.isArray().get(i).isObject();
+			
+			EmployeeFieNotFound employeeFieNotFound = new EmployeeFieNotFound()
+					.setCcc(getJsonValue(entryJson.get("ccc")))
+					.setIpf(getJsonValue(entryJson.get("ipf")))
+					.setNaf(getJsonValue(entryJson.get("naf")))
+					.setFullName(getJsonValue(entryJson.get("fullName")));
+			
+			employeeFieNotFounds.add(employeeFieNotFound);
 		}
+		
+		return employeeFieNotFounds;
 	}
 	
-	private static native <T extends JavaScriptObject> T eval(String javascript) /*-{
-		return eval(javascript);
-	}-*/;
+	private String getJsonValue(JSONValue jsonValue) {
+		return null == jsonValue ? null : jsonValue.toString().replaceAll("(^\")|(\"$)", "");
+	}
 
 }

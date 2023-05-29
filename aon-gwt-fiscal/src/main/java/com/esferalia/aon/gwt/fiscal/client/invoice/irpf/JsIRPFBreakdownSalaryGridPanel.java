@@ -61,7 +61,8 @@ public class JsIRPFBreakdownSalaryGridPanel extends FlowPanel implements HasSele
 		grid.addHeaderRow()
 			.addCell(new Label("Documento"),AON.CSS.aonWidth100())
 			.addCell(new Label("Nombre Empleado."),AON.CSS.aonWidthAuto())
-			.addCell(new Label("Fecha"),AON.CSS.aonWidth80())
+			.addCell(new Label("Fecha emisi\u00F3n"),AON.CSS.aonWidth120(),AON.CSS.aonNowrap())
+			.addCell(new Label("Fecha pago"),AON.CSS.aonWidth120(),AON.CSS.aonNowrap())
 			.addCell(new Label("Perceptor"),AON.CSS.aonTextRight(),AON.CSS.aonWidth40())		
 			.addCell(new Label("Percepciones."),AON.CSS.aonTextRight(),AON.CSS.aonWidth150())		
 			.addCell(new Label("Ret. / Ingr. a Cuenta"),AON.CSS.aonTextRight(),AON.CSS.aonWidth150())
@@ -77,10 +78,21 @@ public class JsIRPFBreakdownSalaryGridPanel extends FlowPanel implements HasSele
 	public void addRow(JsIRPFBreakdown br) {
 		boolean added = uniquePerceptors.add(br.getRegistryDocument());
 		AonDisplayGridRow row = grid.addRow();
+		
+		String issueDate = ensure(br.getIssueDate(), () -> AON.DATE_FORMAT.format(br.getIssueDate()), AonStringUtils.EMPTY);
+		Label issueDateLabel = new Label(issueDate);
+		
+		String chargeDate = ensure(br.getChargeDate(), () -> AON.DATE_FORMAT.format(br.getChargeDate()), AonStringUtils.EMPTY);
+		Label chargeDateLabel = new Label(chargeDate);
+		if (!AonStringUtils.equals(issueDate, chargeDate)) {
+			chargeDateLabel.addStyleName(AON.CSS.aonBackgroundHighlightedOrange());
+		}
+		
 		row.addClickHandler(event -> SelectionEvent.fire(this, br));
 		row .addCell(new Label(ensure(br.getRegistryDocument(), br::getRegistryDocument, AonStringUtils.EMPTY)))
 			.addCell(new Label(ensure(br.getRegistryName(), () -> AonStringUtils.abbreviate(br.getRegistryName(),25), AonStringUtils.EMPTY)))
-			.addCell(new Label(ensure(br.getIssueDate(), () -> AON.DATE_FORMAT.format(br.getIssueDate()), AonStringUtils.EMPTY)),AON.CSS.aonTextCenter())
+			.addCell(issueDateLabel,AON.CSS.aonTextCenter())
+			.addCell(chargeDateLabel,AON.CSS.aonTextCenter())
 			.addCell(new Label(added?"1":""),AON.CSS.aonTextCenter())			
 			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getBase())),AON.CSS.aonTextRight())
 			.addCell(new Label(AON.CURRENCY_FORMAT.format(br.getQuota())),AON.CSS.aonTextRight())
@@ -92,6 +104,7 @@ public class JsIRPFBreakdownSalaryGridPanel extends FlowPanel implements HasSele
 
 	public void addFooterRow() {
 		grid.addFooterRow()
+			.addCell(new Label())
 			.addCell(new Label())
 			.addCell(new Label())
 			.addCell(new Label(AON.MSG.total()),AON.CSS.aonTextRight(),AON.CSS.aonBold(),AON.CSS.aonTextUppercase())

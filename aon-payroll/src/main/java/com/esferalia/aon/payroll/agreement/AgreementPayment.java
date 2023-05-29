@@ -2,6 +2,8 @@ package com.esferalia.aon.payroll.agreement;
 
 import java.io.Serializable;
 
+import com.esferalia.aon.watson.util.AonStringUtils;
+
 public class AgreementPayment implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -36,7 +38,7 @@ public class AgreementPayment implements Serializable {
 	}
 
 	public String getConceptCode() {
-		return conceptCode;
+		return AonStringUtils.isBlank(conceptCode) || conceptCode.length() < 26 ? conceptCode : AonStringUtils.substring(conceptCode, 0, 25);
 	}
 
 	public AgreementPayment setConceptCode(String conceptCode) {

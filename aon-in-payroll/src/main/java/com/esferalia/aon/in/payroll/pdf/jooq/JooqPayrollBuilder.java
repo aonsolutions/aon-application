@@ -752,21 +752,18 @@ public class JooqPayrollBuilder {
 			
 
 			List<SalaryData> holidays = contractDataTmp.getOrDefault("DIAS_VACACIONES", Collections.emptyList());
+			List<SalaryData> noWorkDays = contractDataTmp.getOrDefault("NO_LABORABLE", Collections.emptyList());
 			List<Date> holidayList = listHolidays(holidays, salaryEnd);
+			List<Date> noWorkDaysList = listHolidays(noWorkDays, salaryEnd);
 			
-			params.getEntries().entrySet().stream()
-			.filter(entry -> holidayList.stream()
-					.filter(d -> salaryPeriod.intersects(new Period(d, d)))
-					.map(AonDateUtils::getDay)
-					.anyMatch(d -> AonNumberUtils.equals(d, entry.getKey()))
-			).forEach(entry -> entry.getValue().setHoliday(true));
-			
+			setHolidays(params, holidayList, salaryPeriod, entry -> entry.setHoliday(true));
+			setHolidays(params, noWorkDaysList, salaryPeriod, entry -> entry.setNotWorkingDay(true));
 			
 			Set<Date> workedDaysSet = new LinkedHashSet<>();
 			while (date.compareTo(salary.getEndDate()) <= 0) {
 				int day = AonDateUtils.getDay(date);
 				PartTimeEntry entry = new PartTimeEntry();
-				if (isWorkedDay(date, salaryData, salary.getEndDate(), holidayList)) {
+				if (isWorkedDay(date, salaryData, salary.getEndDate(), holidayList, noWorkDaysList)) {
 					Double dayHours = getDayHours(date, salaryData, salary.getEndDate());
 					entry.setOrdinary(dayHours);
 					if (dayHours != null && dayHours > 0) {
@@ -844,6 +841,20 @@ public class JooqPayrollBuilder {
 			}
 			payrollBuilder.setPartTimeParams(Optional.of(params));
 		}
+	}
+	
+	@FunctionalInterface
+	private static interface HolidayCallback {
+		void set(PartTimeEntry entry);
+	}
+	
+	private static void setHolidays(PartTimeParams params, List<Date> holidayList, Period salaryPeriod, HolidayCallback callback) {
+		params.getEntries().entrySet().stream()
+		.filter(entry -> holidayList.stream()
+				.filter(d -> salaryPeriod.intersects(new Period(d, d)))
+				.map(AonDateUtils::getDay)
+				.anyMatch(d -> AonNumberUtils.equals(d, entry.getKey()))
+		).forEach(entry -> callback.set(entry.getValue()));
 	}
 	
 	private static List<Date> listHolidays(List<SalaryData> holidaysData, Date salaryEndDate) {
@@ -959,10 +970,13 @@ public class JooqPayrollBuilder {
 		}));
 	}
 
-	private static boolean isWorkedDay(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd,List<Date> holidayList) {
+	private static boolean isWorkedDay(Date date, Map<String, List<SalaryData>> salaryData, Date salaryEnd,List<Date> holidayList, List<Date> noWorkDaysList) {
 		if (salaryData == null || date == null || salaryEnd == null)
 			return false;
 		if (holidayList != null && holidayList.contains(date)) {
+			return false;
+		}
+		if (noWorkDaysList != null && noWorkDaysList.contains(date)) {
 			return false;
 		}
 		List<SalaryData> workedDays = salaryData.getOrDefault("DIAS_TRABAJADOS", Collections.emptyList());

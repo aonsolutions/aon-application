@@ -99,6 +99,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	
 	private final AonToolbar decToolbar = new AonToolbar();
 	private final InlineLabel dirtyLabel = new InlineLabel();
+	private final InlineLabel chargeDateLabel = new InlineLabel();
 	private final InlineLabel alcatrazUnboundLabel = new InlineLabel();
 	private final InlineLabel adjLabel = new InlineLabel();
 	private final InlineLabel replacedLabel = new InlineLabel();
@@ -261,6 +262,13 @@ public abstract class Model111Base extends DockLayoutPanel {
 		dirtyLabel.getElement().getStyle().setHeight(10, Unit.PX);
 		marksPanels.add(dirtyLabel);
 		
+		chargeDateLabel.setStyleName(AON.CSS.aonIconLabel());
+		chargeDateLabel.addStyleName(AON.CSS.aonIconDraft());
+		chargeDateLabel.setTitle("Selec. por fecha de pago");
+		chargeDateLabel.getElement().getStyle().setWidth(10, Unit.PX);
+		chargeDateLabel.getElement().getStyle().setHeight(10, Unit.PX);
+		marksPanels.add(chargeDateLabel);
+		
 		alcatrazUnboundLabel.setStyleName(AON.CSS.aonMarginLeft());
 		alcatrazUnboundLabel.addStyleName(AON.CSS.aonLabelWithIcon());
 		alcatrazUnboundLabel.addStyleName(AON.CSS.aonIconWarning());
@@ -310,6 +318,7 @@ public abstract class Model111Base extends DockLayoutPanel {
 	private void styleDirtyLabel() {
 		dirtyLabel.setVisible(isDirty());
 		alcatrazUnboundLabel.setVisible(!getModel().isAlcatrazBound());
+		chargeDateLabel.setVisible(getModel().mustUseChargeDate());
 		boolean adjusted = false;
 		for (FiscalModelDetail det : this.getModel().getMap().values()) {
 			if (AonMathUtils.isNotZero( det.getAdjustAmount())) {
