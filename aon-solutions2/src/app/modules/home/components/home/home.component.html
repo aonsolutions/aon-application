@@ -29,8 +29,27 @@
             Content
         </div>
     </app-accordion> -->
-    <div style="background-color: aqua; cursor: pointer; width: fit-content; padding: 1rem;box-sizing: border-box;" (click)="showModal()">
+    <!-- <div style="background-color: aqua; cursor: pointer; width: fit-content; padding: 1rem;box-sizing: border-box;" (click)="showModal()">
         OpenModal
-    </div>
+    </div> -->
     <!-- <app-modal-controller #modal></app-modal-controller> -->
+    
+    <app-pagination-controller 
+        [style.height]="'5%'" 
+        [totalItems]="123" 
+        [maxItems]="20" 
+        (pagValue)="log($event);" 
+        (totalPags)="log($event)">
+    </app-pagination-controller>
+    <app-pagination-container width="100%" height="95%">
+        <mat-grid-list cols="24" rowHeight="5rem" gutterSize="5px">
+            <mat-grid-tile *ngFor="let item of data"
+                [colspan]="12"
+                [rowspan]="1"
+                [style.background]="'lightgrey'"
+            >
+            <app-list-element [widthContainer]="'100%'" [heightContainer]="'100%'" [style.backgroundColor]="''">{{item.index}} {{item.text}}</app-list-element>
+            </mat-grid-tile>
+        </mat-grid-list>
+    </app-pagination-container>
 </app-content>

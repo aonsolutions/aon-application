@@ -40,6 +40,8 @@ import { AccordionComponent } from './components/accordion/accordion.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ModalControllerComponent } from './components/modal-controller/modal-controller.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { PaginationContainerComponent } from './components/pagination-container/pagination-container.component';
+import { PaginationControllerComponent } from './components/pagination-controller/pagination-controller.component';
 
 
 @NgModule({
@@ -68,6 +70,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     CardComponent,
     AccordionComponent,
     ModalControllerComponent,
+    PaginationContainerComponent,
+    PaginationControllerComponent,
   ],
   imports: [
     CommonModule,
@@ -112,6 +116,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     CardComponent,
     AccordionComponent,
     ModalControllerComponent,
+    PaginationContainerComponent,
+    PaginationControllerComponent,
   ]
 })
 export class SharedModule { }

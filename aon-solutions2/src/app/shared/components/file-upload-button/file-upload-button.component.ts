@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-file-upload-button',
@@ -7,11 +7,18 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 })
 export class FileUploadButtonComponent implements OnInit {
 
+  @Input() width : string = 'auto';
+  @Input() height : string = 'auto';
+  @HostBinding('style.--widthHost') widthHost = '';
+  @HostBinding('style.--heightHost') heightHost = '';
+
   @Output()  getUploadedFiles : EventEmitter<FileList> = new EventEmitter();
 
   constructor() { }
 
   ngOnInit(): void {
+    this.widthHost = this.width;
+    this.heightHost = this.height;
   }
 
   onFileSelected(event: Event) {

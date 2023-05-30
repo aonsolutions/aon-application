@@ -7,6 +7,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
+  
+
   accordionState: boolean = false;
 
   functionHome: any = (result:any) => this.afterModalClosed(result);
@@ -24,8 +26,16 @@ export class HomeComponent implements OnInit {
   constructor() {
   }
 
+  data : any = []
+
   ngOnInit(): void {
+    for(let i = 0; i < 100; i++){
+      this.data.push({index: i, text: 'lorem ipsum asd...'})
+    }
   }
 
+  log(event : any){
+    console.log(event)
+  }
   
 }

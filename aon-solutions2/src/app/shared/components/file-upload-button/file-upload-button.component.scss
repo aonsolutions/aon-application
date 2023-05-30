@@ -10,3 +10,9 @@ input[type="file"] {
     justify-content: center;
     border-style: dashed;
 }
+
+:host {
+    display: flex;
+    width: var(--widthHost);
+    height: var(--heightHost);
+}
