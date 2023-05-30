@@ -314,52 +314,65 @@ class SistemaREDMov {
     	
 		HtmlPage htmlPage = firstPageAltaBaja(
 				webclient, mov, employee.getNss(), employee.getCtaCti(),
-				employee.getRegime(),  dni, ident
+				employee.getRegime(), dni, ident
     	);
 
 		HtmlForm form = (HtmlForm) HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("jacadaform")).orElseThrow();
 		
-		employee.getRlce().ifPresent(rlce->
-			form.getInputByName("txt_SDFRLCE_ayuda").setValue(rlce)
-		);
+		employee.getRlce().ifPresent(rlce-> {
+			form.getInputByName("txt_SDFRLCE_ayuda").setValue(rlce);
+			form.getInputByName("txt_SDFRLCE_ayuda").setValueAttribute(rlce);
+		});
 		
 		form.getInputByName("txt_SDFSITAFI_ayuda").setValue(situation); 
 		form.getInputByName("txt_SDFFREALDD").setValue(fra[0]); 
 		form.getInputByName("txt_SDFFREALMM").setValue(fra[1]); 
 		form.getInputByName("txt_SDFFREALAA").setValue(fra[2]); 
+		form.getInputByName("txt_SDFFREALDD").setValueAttribute(fra[0]); 
+		form.getInputByName("txt_SDFFREALMM").setValueAttribute(fra[1]); 
+		form.getInputByName("txt_SDFFREALAA").setValueAttribute(fra[2]); 
 		//GRUPO DE COTIZACION
-		employee.getGc().ifPresent(gc->
-			form.getInputByName("txt_SDFGRUCOT_ayuda").setValue(gc)
-		);
+		employee.getGc().ifPresent(gc-> {
+			form.getInputByName("txt_SDFGRUCOT_ayuda").setValue(gc);
+			form.getInputByName("txt_SDFGRUCOT_ayuda").setValueAttribute(gc);
+		});
 		//CONTRATO
-		employee.getContract().ifPresent(contract->
-			form.getInputByName("txt_SDFTICO_ayuda").setValue(contract)
-		);
+		employee.getContract().ifPresent(contract-> {
+			form.getInputByName("txt_SDFTICO_ayuda").setValue(contract);
+			form.getInputByName("txt_SDFTICO_ayuda").setValueAttribute(contract);
+		});
 		
 		//COLLECTIVE
-		employee.getCollective().ifPresent(collective->
-			form.getInputByName("txt_SDFCOLTRA_ayuda").setValue(collective)
-		);
+		employee.getCollective().ifPresent(collective-> {
+			form.getInputByName("txt_SDFCOLTRA_ayuda").setValue(collective);
+			form.getInputByName("txt_SDFCOLTRA_ayuda").setValueAttribute(collective);
+		});
 		
 		//CONVENIO
 		if(form.getInputByName("txt_SDFCONVCOL_ayuda").getValue().isEmpty()) {
 		    String convenio = colect.isPresent() ? colect.get() : "60888888888888";
 			form.getInputByName("txt_SDFCONVCOL_ayuda").setValue(convenio); 
+			form.getInputByName("txt_SDFCONVCOL_ayuda").setValueAttribute(convenio); 
 		}
 		//OCUPACION
-		if (employee.getOcup() != null)
+		if (employee.getOcup() != null) {
 			form.getInputByName("txt_SDFOCUPACION_ayuda").setValue(employee.getOcup().toUpperCase());
+			form.getInputByName("txt_SDFOCUPACION_ayuda").setValueAttribute(employee.getOcup().toUpperCase());
+		}
 		
 		if (employee.getRegime().equals("0163") && !mdCtz.isEmpty()) {
 			form.getInputByName("txt_SDFMODCOTI_ayuda").setValue(mdCtz.get());
+			form.getInputByName("txt_SDFMODCOTI_ayuda").setValueAttribute(mdCtz.get());
 		} else {
 			//COEFICIENTE
 			if(!factor.isEmpty()) {
 				Integer coefInt =  (int) Math.round(factor.get() * 1000);
 				form.getInputByName("txt_SDFCOEFCO_ayuda").setValue(Integer.toString(coefInt)); 
+				form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(Integer.toString(coefInt)); 
 			} else if(!employee.getCoef().isEmpty()) {
 				String coef = Integer.toString(employee.getCoef().get().intValue());
 				form.getInputByName("txt_SDFCOEFCO_ayuda").setValue(coef); 
+				form.getInputByName("txt_SDFCOEFCO_ayuda").setValueAttribute(coef); 
 			}
 		}
 		
@@ -371,7 +384,10 @@ class SistemaREDMov {
 		});
 		
 		//CNO
-		employee.getCno().ifPresent(cno-> form.getInputByName("txt_SDFCNOCUP_ayuda").setValue(cno));
+		employee.getCno().ifPresent(cno-> {
+			form.getInputByName("txt_SDFCNOCUP_ayuda").setValue(cno);
+			form.getInputByName("txt_SDFCNOCUP_ayuda").setValueAttribute(cno);
+		});
 		
 		//------------GET TA
 		DomNode printDoc = form.querySelector("select[name=\"cbo_ListaSiNo\"]");
@@ -391,36 +407,36 @@ class SistemaREDMov {
 		}
 		
 
-		Page page = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
-		if (page.isHtmlPage()) {
-			htmlPage = (HtmlPage) page;
+		htmlPage = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
+		if (htmlPage.isHtmlPage()) {
+//			htmlPage = (HtmlPage) htmlPage;
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 
 			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
 			if (msg1 != null && msg1.getTextContent().trim().toLowerCase().contains("la mecanizacion de este tipo de registros puede implicar")) {
-				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
+				htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
 			}
 
 			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
 			if (msg2 != null && msg2.getTextContent().trim().toLowerCase().contains("revise el contenido del coeficiente a tiempo parcial")) {
-				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+				htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
 			}
 			
 			DomNode msg3 = htmlPage.querySelector("#Frame");
 			if(msg3!=null && msg3.getTextContent().trim().toLowerCase().contains("aplicarse beneficios en materia")) {
-				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+				htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
 			}
 		}
 
-		if (page.isHtmlPage()) {
-			htmlPage = (HtmlPage) page;
+		if (htmlPage.isHtmlPage()) {
+//			htmlPage = (HtmlPage) htmlPage;
 			DomNode message = htmlPage.querySelector("#DIL"); 
 			if(message!=null) {
 				throw new SegSocialException(message.getTextContent().trim());
 			}
 		} else {
 			try {
-				return page.getWebResponse().getContentAsStream().readAllBytes();
+				return htmlPage.getWebResponse().getContentAsStream().readAllBytes();
 			} catch (Exception e) {
 				throw new InvalidDataException();
 			}
@@ -454,6 +470,10 @@ class SistemaREDMov {
 			form.getInputByName("txt_SDFFREALDD").setValue(frb[0]);
 			form.getInputByName("txt_SDFFREALMM").setValue(frb[1]);
 			form.getInputByName("txt_SDFFREALAA").setValue(frb[2]);
+			form.getInputByName("txt_SDFSITAFI_ayuda").setValueAttribute(situation);
+			form.getInputByName("txt_SDFFREALDD").setValueAttribute(frb[0]);
+			form.getInputByName("txt_SDFFREALMM").setValueAttribute(frb[1]);
+			form.getInputByName("txt_SDFFREALAA").setValueAttribute(frb[2]);
 		}
 
 		if (!frvOpt.isEmpty()) { // FECHA DE VACACIONES
@@ -461,9 +481,13 @@ class SistemaREDMov {
 			form.getInputByName("txt_SDFFFINVDD").setValue(fvac[0]);
 			form.getInputByName("txt_SDFFFINVMM").setValue(fvac[1]);
 			form.getInputByName("txt_SDFFFINVAA").setValue(fvac[2]);
+			form.getInputByName("txt_SDFFFINVDD").setValueAttribute(fvac[0]);
+			form.getInputByName("txt_SDFFFINVMM").setValueAttribute(fvac[1]);
+			form.getInputByName("txt_SDFFFINVAA").setValueAttribute(fvac[2]);
 			
 			//------------- Indicativo SAA       
 			employee.getAsociativeSA().ifPresent(form.getInputByName("txt_SDFINDSAA")::setValue); 
+			employee.getAsociativeSA().ifPresent(form.getInputByName("txt_SDFINDSAA")::setValueAttribute); 
 		}
 
 		//------------GET TA
@@ -477,36 +501,36 @@ class SistemaREDMov {
 			((HtmlSelect)printType).setSelectedAttribute("OnLine", true);
 		}
         
-		Page page = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
-		if (page.isHtmlPage()) {
-			htmlPage = (HtmlPage) page;
+		htmlPage = ((HtmlSubmitInput) form.querySelector("input[value=Continuar]")).click();
+		if (htmlPage.isHtmlPage()) {
+//			htmlPage = (HtmlPage) page;
 			HtmlUnitToolkit.manageStatusCode(htmlPage);
 	
 			DomNode msg1 = htmlPage.querySelector("#Sub0000201056");
 			if (msg1 != null && msg1.getTextContent().trim().toLowerCase().contains("la mecanizacion de este tipo de registros puede implicar")) {
-				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
+				htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Continuar]")).click();
 			}
 	
 			DomNode msg2 = htmlPage.querySelector("#Sub0600401054");
 			if (msg2 != null && msg2.getTextContent().trim().toLowerCase().contains("revise el contenido del coeficiente a tiempo parcial")) {
-				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+				htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
 			}
 			
 			DomNode msg3 = htmlPage.querySelector("#Frame");
 			if(msg3!=null && msg3.getTextContent().trim().toLowerCase().contains("aplicarse beneficios en materia")) {
-				page = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
+				htmlPage = ((HtmlSubmitInput) htmlPage.querySelector("input[value=Confirmar]")).click();
 			}
 		}
 					
-		if (page.isHtmlPage()) {
-			htmlPage = (HtmlPage) page;
+		if (htmlPage.isHtmlPage()) {
+//			htmlPage = (HtmlPage) page;
 			DomNode message = htmlPage.querySelector("#DIL"); 
 			if(message!=null) {
 				throw new SegSocialException(message.getTextContent().trim());
 			}
 		} else {
 			try {
-				return page.getWebResponse().getContentAsStream().readAllBytes();
+				return htmlPage.getWebResponse().getContentAsStream().readAllBytes();
 			} catch (Exception e) {
 				throw new InvalidDataException();
 			}
