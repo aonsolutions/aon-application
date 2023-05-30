@@ -80,7 +80,7 @@ public class Page00 extends PageAbs {
 		Mod2002022Key.C0066,
 		Mod2002022Key.C0078,
 		Mod2002022Key.C0056,
-		Mod2002022Key.C0083  // FALTA - NO ESTOY SEGURO DE SI VA EN ESTE APARTADO
+		Mod2002022Key.C0083  
 	};
 
 	public static final Mod2002022Key[] DECLARATION_CHARACTERS_BLOCK2 = new Mod2002022Key[] {
@@ -124,7 +124,7 @@ public class Page00 extends PageAbs {
 		Mod2002022Key.C0070,
 		Mod2002022Key.C0059,
 		Mod2002022Key.C0065,
-		Mod2002022Key.C0084, // FALTA - ESTA CLAVE ESTA DUPLICADA CON LOS ESTADOS CONTABLES, VER SI AL FINAL SE QUEDA CON ESTE CODIGO O NO
+		Mod2002022Key.C0084, 
 		Mod2002022Key.C0072,
 		Mod2002022Key.C0073,
 		Mod2002022Key.C0037,
@@ -416,10 +416,6 @@ public class Page00 extends PageAbs {
 		});
 		otherInputs.add(agriculturalActivities);
 		
-		FlowPanel agriculturalPanel = new FlowPanel();
-		agriculturalPanel.add(new Label(Mod2002022Key.X0001.getDescription()));
-		agriculturalPanel.add(agriculturalActivities);
-		
 		tab.addLabelWidgetRow(AON.MSG.document(), nif)
 		   .addLabelWidgetRow("Apellidos y nombre o raz\u00F3n social", companyName)
 		   .addLabelWidgetRow(AON.MSG.phone(), phones)
@@ -514,7 +510,8 @@ public class Page00 extends PageAbs {
 		tab3.addLabelWidgetRow(AON.MSG.fixedPersonal(), c041)
 	    	.addLabelWidgetRow(AON.MSG.nonFixedPersonal(), c042);
 		
-		// CIFRA DE NEGOCIOS		
+		// CIFRA DE NEGOCIOS
+		// FALTA - ESTE APARTADO ES OBLIGATORIO POR LO TANTO TAL VEZ SEA NECESARIO FORZAR QUE SE INDIQUE UNA DE LAS TRES OPCIONES AUNQUE AL COPIARLO DEL AÑO ANTERIOR, PUEDE SER QUE ESTE SIN CUMPLIMENTAR
 		
 		basePanel.add(getTitle("Cifra de negocios"));
 		
@@ -537,7 +534,7 @@ public class Page00 extends PageAbs {
 		
 		basePanel.add(opeVol);
 		tableVol.setWidget(1, 0, opeVol);
-		
+
 		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si proceden, la aplicaci\u00F3n de la tributaci\u00F3n m\u00EDnima, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstos en los art\u00EDculos 30 bis, 31, 32, 100.11 y DT 23\u00AA LIS.");
 		
 		// CARACTERES DE LA DECLARACION

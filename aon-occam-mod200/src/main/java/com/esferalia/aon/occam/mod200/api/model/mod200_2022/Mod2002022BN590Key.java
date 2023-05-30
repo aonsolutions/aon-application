@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 
-// Deducciones inversión en Canarias.
+// Deducciones inversión en Canarias con límites incrementados
 public enum Mod2002022BN590Key implements Serializable, IMod200KeysProvider {
 	// Á --> \u00C1 á --> \u00E1
 	// É --> \u00C9 é --> \u00E9

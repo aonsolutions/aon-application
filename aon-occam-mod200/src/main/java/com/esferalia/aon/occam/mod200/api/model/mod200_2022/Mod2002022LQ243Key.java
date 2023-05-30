@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.esferalia.aon.occam.mod200.api.model.IMod200KeysProvider;
 
-// Régimen especial de entidades navieras en Canarias: desglose de la compensación de bases imponibles negativas
+// Régimen especial de buques y empresas navieras en Canarias: desglose de la compensación de bases imponibles negativas
 public enum Mod2002022LQ243Key implements Serializable, IMod200KeysProvider  {
 	
 	// Á --> \u00C1 á --> \u00E1

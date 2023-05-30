@@ -75,7 +75,7 @@ public class Page02 extends PageAbs {
 		
 		basePanel.add(getTitle(AON.MSG.participationsOut()));
 		
-		addLabel("Participaciones de importe a fin de per\u00EDodo igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.", true);
+		addLabel("Participaciones que a fin de per\u00EDodo sean igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.", true);
 		
 		AonDisplayGrid grid = new AonDisplayGrid();
 		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
@@ -156,8 +156,6 @@ public class Page02 extends PageAbs {
 		
 		basePanel.add(getTitle(AON.MSG.participationsIn()));
 		
-		// FALTA - VER MODELO
-		//addLabel("Participaciones de importe a fin de per\u00EDodo igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.", true);
 		addLabel("Participaciones que a fin de per\u00EDodo sean igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.", true);
 		addLabel("En caso de sociedades de responsabilidad limitada (SL) se deber\u00E1n cumplimentar, al menos, los datos correspondientes a uno de los socios aunque el porcentaje de participaci\u00F3n sea inferior al indicado.");
 		
@@ -484,7 +482,7 @@ public class Page02 extends PageAbs {
 		tabSicav1.addStyleName(AON.CSS.aonBlockCenter());
 		basePanel.add(tabSicav1);
 		
-		tabSicav1.addRow()
+		tabSicav1.addRow()   
 			.addCell( new Label("NIF de la sociedad/es disuelta/s"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
 			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
 		
@@ -530,8 +528,8 @@ public class Page02 extends PageAbs {
 		tabSicav2.addStyleName(AON.CSS.aonBlockCenter());
 		basePanel.add(tabSicav2);
 		
-		tabSicav2.addRow()
-			.addCell( new Label("NIF de la sociedad/es donde reinvierte"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
+		tabSicav2.addRow()  // FALTA - DIFIERE DE LO QUE PONE EN EL DISEÑO DEL FICHERO
+			.addCell( new Label("NIF de la/las IIC donde reinvierte"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
 			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getSicav2().size(); i++) {

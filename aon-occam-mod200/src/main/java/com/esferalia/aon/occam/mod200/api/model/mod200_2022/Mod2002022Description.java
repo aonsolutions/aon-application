@@ -46,9 +46,8 @@ public class Mod2002022Description {
 		DESCRIPTION_MAP.put(Mod2002022Key.C0060,"Fondos o activos de titulizaci\u00F3n");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0066,"Entidad patrimonial");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0078,"Di\u00F3cesis, provincia religiosa o entidad eclesi\u00E1stica que integra entidades menores de ellas dependientes");
-		DESCRIPTION_MAP.put(Mod2002022Key.C0056,"Entidad en r\u00E9gimen de atribuci\u00F3n de rentas con tributaci\u00F3n por el Impuesto sobre Sociedades");
-		
-		DESCRIPTION_MAP.put(Mod2002022Key.C0083,"Empresa emergente"); // FALTA - NO SE A QUE APARTADO VA
+		DESCRIPTION_MAP.put(Mod2002022Key.C0056,"Entidad en r\u00E9gimen de atribuci\u00F3n de rentas con tributaci\u00F3n por el Impuesto sobre Sociedades");		
+		DESCRIPTION_MAP.put(Mod2002022Key.C0083,"Empresa emergente"); 
 		
 		DESCRIPTION_MAP.put(Mod2002022Key.C0006,"Incentivos entidad de reducida dimensi\u00F3n (Cap. XI, T\u00EDt. VII LIS)");
 		DESCRIPTION_MAP.put(Mod2002022Key.C0015,"Entidad ZEC (sin consolidaci\u00F3n fiscal)");
