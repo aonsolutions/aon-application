@@ -467,6 +467,16 @@ public class InvoiceAutoComplete {
 
 			detail.setDomain(inv.getDomain());
 			
+			if(detail.getItem() == null || detail.getItem().isEmpty()) {
+				String code = detail.getItem().getProduct().getCode();
+				if(!AonStringUtils.isBlank(code)) {
+					Item i = ItemDAO.get(ctx.getContext(), f -> 
+						f.getDomainProperty().eq(inv.getDomain())
+						.and(f.getProductCodeProperty().eq(code)));
+					detail.setItem(i);
+				}
+			}
+			
 			InvoiceTax it = new InvoiceTax();
 			for(Integer i = 0;  i< detail.getInvoiceTaxes().size() ; i++ ) {
 				detail.getInvoiceTaxes().get(i).setDomain(inv.getDomain());
