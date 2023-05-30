@@ -7,7 +7,6 @@ import com.esferalia.aon.occam.api.model.HasAudit;
 import com.esferalia.aon.occam.api.model.type.Administration;
 import com.esferalia.aon.occam.api.model.type.FiscalModelDeclarationType;
 import com.esferalia.aon.occam.api.model.type.Period;
-import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class Mod190 implements IFiscalModel, HasAudit {
 
@@ -43,7 +42,8 @@ public class Mod190 implements IFiscalModel, HasAudit {
 	private String modificationUser;
 	private Date modificationDate;
 	
-
+	private boolean useChargeDate;
+	
 	@Override
 	public Integer getId() { 
 		return id;
@@ -255,6 +255,13 @@ public class Mod190 implements IFiscalModel, HasAudit {
 	@Override
 	public double getResult() {
 		return 0;
+	}
+
+	public boolean mustUseChargeDate() {
+		return useChargeDate;
+	}
+	public void setUseChargeDate(boolean useChargeDate) {
+		this.useChargeDate = useChargeDate;
 	}
 
 	// ---------------------------------------------------------- AUDIT

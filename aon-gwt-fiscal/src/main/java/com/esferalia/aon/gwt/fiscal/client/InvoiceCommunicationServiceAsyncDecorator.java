@@ -9,15 +9,16 @@ import com.esferalia.aon.gwt.fiscal.shared.invoice.InvoiceParams;
 import com.esferalia.aon.occam.api.model.InvestAsset;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
+import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.fiscal.aeat.AEATParams;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class SiiServiceAsyncDecorator implements SiiServiceAsync {
+public class InvoiceCommunicationServiceAsyncDecorator implements InvoiceCommunicationServiceAsync {
 
-	private SiiServiceAsync ssa;
+	private InvoiceCommunicationServiceAsync ssa;
 
-	public SiiServiceAsyncDecorator(SiiServiceAsync siiServiceAsync) {
+	public InvoiceCommunicationServiceAsyncDecorator(InvoiceCommunicationServiceAsync siiServiceAsync) {
 		this.ssa = siiServiceAsync;
 	}
 	
@@ -47,7 +48,7 @@ public class SiiServiceAsyncDecorator implements SiiServiceAsync {
 	}
 
 	@Override
-	public void altaLroe140(String domainName, int domainId, String user, InvoiceCommunicationType communicationType,
+	public void altaLroe140(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType,
 			Invoice invoice, AEATParams aeatParams, AsyncCallback<ICResponse> callback) {
 		AON.start();
 		ssa.altaLroe140(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));
@@ -55,14 +56,14 @@ public class SiiServiceAsyncDecorator implements SiiServiceAsync {
 	}
 
 	@Override
-	public void bajaLroe140(String domainName, int domainId, String user, InvoiceCommunicationType communicationType,
+	public void bajaLroe140(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType,
 			Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
 		AON.start();
 		ssa.bajaLroe140(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
 	}
 	
 	@Override
-	public void altaLroe240(String domainName, int domainId, String user, InvoiceCommunicationType communicationType,
+	public void altaLroe240(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType,
 			Invoice invoice, AEATParams aeatParams, AsyncCallback<ICResponse> callback) {
 		AON.start();
 		ssa.altaLroe240(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));
@@ -70,14 +71,14 @@ public class SiiServiceAsyncDecorator implements SiiServiceAsync {
 	}
 
 	@Override
-	public void bajaLroe240(String domainName, int domainId, String user, InvoiceCommunicationType communicationType,
+	public void bajaLroe240(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType,
 			Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
 		AON.start();
 		ssa.bajaLroe240(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
 	}
 	
 	@Override
-	public void altaSii(String domainName, int domainId, String user, InvoiceCommunicationType communicationType,
+	public void altaSii(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType,
 			Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
 		AON.start();
 		ssa.altaSii(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));
@@ -85,22 +86,28 @@ public class SiiServiceAsyncDecorator implements SiiServiceAsync {
 	}
 
 	@Override
-	public void bajaSii(String domainName, int domainId, String user, InvoiceCommunicationType communicationType,
+	public void bajaSii(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType,
 			Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
 		AON.start();
 		ssa.bajaSii(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
 	}
 	
 	@Override
-	public void refresh140(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback) {
+	public void refresh140(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback) {
 		AON.start();
 		ssa.refresh140(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
 	}
 	
 	@Override
-	public void refresh240(String domainName, int domainId, String user, InvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback) {
+	public void refresh240(String domainName, int domainId, String user, OldInvoiceCommunicationType communicationType, Invoice invoice, AEATParams aeatParams, AsyncCallback<Boolean> callback) {
 		AON.start();
 		ssa.refresh240(domainName, domainId, user, communicationType, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
+	}
+	
+	@Override
+	public void cancel(String domainName, int domainId, String user, InvoiceCommunicationType type, Invoice invoice, AEATParams aeatParams, AsyncCallback<String> callback) {
+		AON.start();
+		ssa.cancel(domainName, domainId, user, type, invoice, aeatParams, new AsyncCallbackWrapper<>(callback));		
 	}
 	
 }

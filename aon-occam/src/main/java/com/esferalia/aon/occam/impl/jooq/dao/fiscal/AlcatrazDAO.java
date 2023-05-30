@@ -214,4 +214,22 @@ public class AlcatrazDAO {
 			.isPresent();
 	}
 	
+	public static List<FiscalModel> isTrackingDeclared(AONContext ctx, Integer id) {
+		return ctx.getDslContext()
+			.select()
+			.from(ALCATRAZ)
+			.leftOuterJoin(FS_MODEL).on(FS_MODEL.ID.equal(ALCATRAZ.FS_MODEL))
+			.leftOuterJoin(DOMAIN).on(DOMAIN.ID.equal(FS_MODEL.DOMAIN))
+			.leftOuterJoin(FINANCE).on(FINANCE.ID.equal(FS_MODEL.FINANCE))
+			.leftOuterJoin(REGISTRY).on(REGISTRY.ID.equal(FINANCE.REGISTRY))
+			.leftOuterJoin(SCOPE).on(FINANCE.SCOPE.equal(SCOPE.ID))
+			.leftOuterJoin(PAY_METHOD).on(FINANCE.PAY_METHOD.equal(PAY_METHOD.ID))
+			.where(ALCATRAZ.FINANCE_TRACKING.eq(id))
+			.fetch()
+			.stream()
+			.map(rec -> new FiscalModelFiller<FiscalModel>().apply(rec,FiscalModel::new))
+			.collect(Collectors.toCollection(LinkedList::new))
+		;
+	}
+	
 }

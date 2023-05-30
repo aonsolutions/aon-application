@@ -16,7 +16,8 @@ public class Mod111Gipuzkoa2023Declaration extends Mod111Declaration {
 	}
 
 	private enum Mod111KeyDAO  implements IMod111KeyDAO{
-		 GP_X00 (Mod111Key.GP_X00,false
+		 CM_002(Mod111Key.CM_002,false,null,null,null,null,null)
+		,GP_X00 (Mod111Key.GP_X00,false
 			, null
 			, null
 			, Mod111Declaration::addDeponentDocument

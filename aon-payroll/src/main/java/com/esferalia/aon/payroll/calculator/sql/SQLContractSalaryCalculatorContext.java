@@ -1080,10 +1080,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			if (p.getEnd().before(lastLeaveEnd))
 				return workDays;
 
-			if (p.getStart().equals(getStart()) && p.getEnd().equals(getEnd()))
+			if (p.getStart().equals(getStart())/* && p.getEnd().equals(getEnd())*/)
 				return workDays;
 
-			if (p.getStart().equals(getStartDate()) && p.getEnd().equals(getEndDate()))
+			if (p.getStart().equals(getStartDate()) /*&& p.getEnd().equals(getEndDate())*/)
 				return workDays;
 
 			return super.leaveLoader.getAdjustDays(ctx, p, workDays.longValue());
@@ -1983,7 +1983,10 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 	}
 
 	public <T> void addVariable(String name, T t) {
-		this.contractExpressionContext.setVariable(name, t, this.contractStartDate, this.contractEndDate);
+	    	Period defPeriod = new Period(this.contractStartDate, this.contractEndDate); 
+	    	this.contractExpressionContext.getVariables(name).stream().map( v -> v.getPeriod())
+	    	.collect(() -> new HashSet<Period>(Collections.singleton(defPeriod)), Set::add, Set::addAll)
+	    	.forEach( p -> this.contractExpressionContext.setVariable(name, t, p.getStart(), p.getEnd()));
 	}
 
 	public <T> T getVariable(ContextVariable var, Class<T> toType) {
@@ -5345,6 +5348,30 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			} else {
 			}
 
+		}
+		
+		for ( Period period : nons ) {
+			
+		    ITimedVariable<Double> quoteDays = new ITimedVariable<Double>() {
+			@Override
+			public Period getPeriod() {
+			    return period;
+			}
+
+			@Override
+			public Double getValue(Period p) {
+			    return getQuoteDays(ctx, p, 1.00);
+			}
+
+		    };
+		    ITimedVariable<?> userQuoteDays = getExpressionContext().getVariable(QUOTE_DAYS, period.getStart(),
+			    period.getEnd());
+
+		    if (userQuoteDays == null) {
+			ctx.putVariable(QUOTE_DAYS, quoteDays);
+		    } else {
+		    }
+		    
 		}
 		
 		// TGSS Periods ...

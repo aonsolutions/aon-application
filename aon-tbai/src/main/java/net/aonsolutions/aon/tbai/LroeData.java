@@ -207,7 +207,7 @@ public class LroeData {
 				.setInvoice(invoice.getId())
 				.setType(info.getCommunicationType());
 			if(invoiceBatch.getOperation().isAnnulment() && response.isOk()) {
-				invoiceInfo.setStatus(InvoiceCommunicationStatus.ANNULLED);
+				invoiceInfo.setStatus(InvoiceCommunicationStatus.CANCELLED);
 			} else if(invoiceInfo.getStatus().isPending()) {
 				invoiceInfo.setStatus(response.isOk() ? InvoiceCommunicationStatus.ACCEPTED : InvoiceCommunicationStatus.WRONG);
 			} else if(invoiceInfo.getStatus().isWrong() && response.isOk()) {
