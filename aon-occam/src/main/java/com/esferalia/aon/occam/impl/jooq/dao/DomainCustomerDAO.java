@@ -5,6 +5,8 @@ import static com.esferalia.aon.jooq.tables.Company.COMPANY;
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
 import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -14,18 +16,20 @@ import org.jooq.impl.DSL;
 
 import com.esferalia.aon.jooq.tables.AppParam;
 import com.esferalia.aon.occam.api.AONContext;
-import com.esferalia.aon.occam.api.model.Customer;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
+import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
 import com.esferalia.aon.occam.impl.jooq.dao.CompanyDAO.CompanyFiller;
+import com.esferalia.aon.occam.impl.jooq.dao.DomainDAO.DomainPropertiesDAO;
 import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class DomainCustomerDAO {
+	private static final DomainPropertiesDAO DOMAIN_PROPERTIES = new DomainPropertiesDAO();
 	
-	private static Stream<DomainCompany> getDomains(AONContext ctx, Condition condition) {
+	private static Stream<DomainCompany> getDomains(AONContext ctx, Condition... condition) {
 		return ctx.getDslContext().select()
 				.from(DOMAIN)
 				.leftJoin(COMPANY).on(COMPANY.DOMAIN.eq(DOMAIN.ID))
@@ -45,6 +49,16 @@ public class DomainCustomerDAO {
 	
 	public static Stream<DomainCompany> getAllDomains(AONContext ctx){
 		return getDomains(ctx, DOMAIN.ID.gt(0).and(DOMAIN.PARENT.isNull().or(AppParam.APP_PARAM.ID.isNotNull())));
+	}
+	
+	public static Stream<DomainCompany> getDomains(AONContext ctx, DomainFilter filter){
+		Condition mainCondition = DOMAIN.PARENT.isNull().or(AppParam.APP_PARAM.ID.isNotNull());
+		Condition[] filterConditions = DOMAIN_PROPERTIES.getConditions(filter);
+		List<Condition> cndLst = new ArrayList<>(filterConditions.length + 1);
+		Arrays.asList(filterConditions).forEach(cndLst::add);
+		cndLst.add(mainCondition);
+		Condition[] allConditions = cndLst.stream().toArray(Condition[]::new);
+		return getDomains(ctx, allConditions);
 	}
 	
 	public static Stream<DomainCompany> getAllLinkedDomains(AONContext ctx){

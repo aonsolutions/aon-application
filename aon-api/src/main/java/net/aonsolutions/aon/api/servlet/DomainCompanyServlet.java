@@ -2,10 +2,6 @@ package net.aonsolutions.aon.api.servlet;
 import java.util.List;
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -17,11 +13,16 @@ import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.DomainLinked;
+import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
+import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.ewok.AonApiData;
 
 @SuppressWarnings("serial")
@@ -108,14 +109,30 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	
 	private static JSONArray getDomains(AonApiData api) {
 		JSONArray domains = new JSONArray();
-		String customerDocument = api.getData().optString(IJsonNames.REGISTRY_DOCUMENT);
-		int customerId = api.getData().optInt("customerId");
-		if (AonStringUtils.isBlank(customerDocument)) {
-			CONSOLE.getAllDomains().map(DomainCompanyJSON::toJSON).forEach(domains::put);
-		} else {
-			CONSOLE.getDomainsByDocument(customerDocument, customerId).map(DomainCompanyJSON::toJSON).forEach(domains::put);
-		}
+//		String customerDocument = api.getData().optString(IJsonNames.REGISTRY_DOCUMENT);
+//		boolean linked = api.getData().optBoolean(IJsonNames.LINKED);
+//		int customerId = api.getData().optInt("customerId");
+		
+		CONSOLE.getDomains(f -> domainFilter(api, f)).map(DomainCompanyJSON::toJSON).forEach(domains::put);
+//		CONSOLE.getAllDomains().map(DomainCompanyJSON::toJSON).forEach(domains::put);
+//		if (AonStringUtils.isBlank(customerDocument)) {
+//			CONSOLE.getAllDomains().map(DomainCompanyJSON::toJSON).forEach(domains::put);
+//		} else {
+//			CONSOLE.getDomainsByDocument(customerDocument, customerId).map(DomainCompanyJSON::toJSON).forEach(domains::put);
+//		}
 		return domains;
+	}
+	
+	private static Filter domainFilter(AonApiData api, DomainProperties f) {
+		Filter filter = f.getIdProperty().gt(0);
+		if (api.getData().opt(IJsonNames.LINKED) != null) {
+			boolean linked = api.getData().optBoolean(IJsonNames.LINKED);
+			filter = filter.and(linked ? f.getAonCustomerProperty().isNotNull() : f.getAonCustomerProperty().isNull());
+		}
+		if (api.getData().opt(IJsonNames.AON_CUSTOMER) != null) {
+			filter = filter.and(f.getAonCustomerProperty().eq(api.getData().optInt(IJsonNames.AON_CUSTOMER)));
+		}
+		return filter;
 	}
 	
 	private static JSONArray getCustomerDomains(AonApiData api) {
