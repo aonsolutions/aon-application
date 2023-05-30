@@ -1,6 +1,7 @@
 package com.esferalia.aon.gwt.payroll.client;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,44 +53,44 @@ public class MainMassiveContractsObject {
 			@Override
 			public void onSuccess(EnterpriseContext enterpriseContextDB) {
 				enterpriseContext = enterpriseContextDB;
-				success.accept(enterpriseContext);
+				
+				impl.getDomain(new AsyncCallback<Integer>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						failure.accept(caught);
+					}
+
+					@Override
+					public void onSuccess(Integer domainIdDB) {
+						domainId = domainIdDB;
+						success.accept(enterpriseContext);
+					}});
 			}}
 		);
 	}
 	
 	public void getEmployees(String dataType, boolean allEmployees, Consumer<List<EmployeeContractInfo>> success, Consumer<Throwable> failure) {
-		impl.getEmployeesInfo(allEmployees, new AsyncCallback<List<EmployeeContractInfo>>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				failure.accept(caught);
-			}
-
-			@Override
-			public void onSuccess(List<EmployeeContractInfo> employeesDB) {
-				initEmployeeList(employeesDB);
-				employees.sort((o1, o2) -> o1.getEmployeeInfo().getFullName().compareTo(o2.getEmployeeInfo().getFullName()));
-				
-				impl.getDomain(new AsyncCallback<Integer>() {
-					
+		switch (dataType) {
+			case "CNO":
+				impl.getEmployeesInfo(allEmployees, new AsyncCallback<List<EmployeeContractInfo>>() {
+	
 					@Override
-					public void onSuccess(Integer domainIdDB) {
-						domainId = domainIdDB;
+					public void onFailure(Throwable caught) {
+						failure.accept(caught);
+					}
+	
+					@Override
+					public void onSuccess(List<EmployeeContractInfo> employeesDB) {
+						initEmployeeList(employeesDB);
+						employees.sort((o1, o2) -> o1.getEmployeeInfo().getFullName().compareTo(o2.getEmployeeInfo().getFullName()));
 						
 						impl.getCNOs(new AsyncCallback<Map<String,CNO>>() {
 							
 							@Override
 							public void onSuccess(Map<String, CNO> cnosDB) {
 								cnos = cnosDB;
-								
-								switch (dataType) {
-									case "CNO":
-										getContractsCNO(s -> success.accept(employeesDB), f -> failure.accept(f));
-										break;
-									default:
-										success.accept(null);
-										break;
-								}
+								getContractsCNO(s -> success.accept(employeesDB), f -> failure.accept(f));
 							}
 							
 							@Override
@@ -98,17 +99,28 @@ public class MainMassiveContractsObject {
 							}
 						});
 					}
+				});
+				break;
+			case "Llamamiento":
+				impl.getFJEmployeesInfo(new AsyncCallback<List<EmployeeContractInfo>>() {
 					
 					@Override
 					public void onFailure(Throwable caught) {
-						// TODO Auto-generated method stub
-						
+						failure.accept(caught);
+					}
+	
+					@Override
+					public void onSuccess(List<EmployeeContractInfo> employeesDB) {
+						initEmployeeList(employeesDB);
+						employees.sort((o1, o2) -> o1.getEmployeeInfo().getFullName().compareTo(o2.getEmployeeInfo().getFullName()));
+						success.accept(employeesDB);
 					}
 				});
-				
-			}
-		});
-		
+				break;
+			default:
+				success.accept(null);
+				break;
+		}
 	}
 	
 	public void updateContractData(String dataType, Consumer<Void> success, Consumer<Throwable> failure) {
@@ -154,6 +166,38 @@ public class MainMassiveContractsObject {
 			}
 		});
 		
+	}
+	
+	public void duplicateContract(EmployeeContractInfo employee, Date newStartDate, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.duplicateContract(employee, newStartDate, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
+	}
+	
+	public void duplicateContract(List<EmployeeContractInfo> employees, Date newStartDate, Consumer<Void> success, Consumer<Throwable> failure) {
+		impl.duplicateContract(employees, newStartDate, new AsyncCallback<Void>() {
+			
+			@Override
+			public void onSuccess(Void result) {
+				success.accept(result);
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				failure.accept(caught);
+			}
+		});
 	}
 	
 	// -------------------------------------------- Getters

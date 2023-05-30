@@ -551,6 +551,12 @@ public class EnterprisesServiceAsyncDecorator implements
 	}
 	
 	@Override
+	public void getFJEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> callback) {
+		AON.start();
+		enterprisesServiceAsync.getFJEmployeesInfo(currentDomainName, new AsyncCallbackWrapper<List<EmployeeContractInfo>>(callback));
+	}
+	
+	@Override
 	public void getEmployeeInfo(String currentDomainName, Integer contractId, AsyncCallback<EmployeeContractInfo> callback) {
 		AON.start();
 		enterprisesServiceAsync.getEmployeeInfo(currentDomainName, contractId, new AsyncCallbackWrapper<EmployeeContractInfo>(callback));
@@ -1204,6 +1210,18 @@ public class EnterprisesServiceAsyncDecorator implements
 	public void updateMassiveCNOs(String domainName, String currentUser, List<ContractData> contractDatas, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		enterprisesServiceAsync.updateMassiveCNOs(domainName, currentUser, contractDatas, callback);
+	}
+	
+	@Override
+	public void duplicateContract(String domainName, String currentUser, EmployeeContractInfo employee, Date newStartDate, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.duplicateContract(domainName, currentUser, employee, newStartDate, callback);
+	}
+	
+	@Override
+	public void duplicateContract(String domainName, String currentUser, List<EmployeeContractInfo> employees, Date newStartDate, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		enterprisesServiceAsync.duplicateContract(domainName, currentUser, employees, newStartDate, callback);
 	}
 
 }
