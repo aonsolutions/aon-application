@@ -1,12 +1,12 @@
-.listElement{ 
-    height: auto;
-    width: auto;
+.appButton{
     box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
 }
 
 :host {
     display: flex;
     width: var(--widthHost);
     height: var(--heightHost);
-    box-sizing: border-box;
 }

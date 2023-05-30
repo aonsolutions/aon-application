@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-list-element',
@@ -13,6 +13,8 @@ export class ListElementComponent implements OnInit {
   @Input() color : string;
   @Input() border : string;
   @Input() borderRadius : string;
+  @HostBinding('style.--widthHost') widthHost = '';
+  @HostBinding('style.--heightHost') heightHost = '';
 
   constructor() {
     this.heightContainer = '';
@@ -27,6 +29,8 @@ export class ListElementComponent implements OnInit {
     if(this.border != ''){
       this.border = this.border + ' solid';
     }
+    this.widthHost = this.widthContainer;
+    this.heightHost = this.heightContainer;
   }
 
 }
