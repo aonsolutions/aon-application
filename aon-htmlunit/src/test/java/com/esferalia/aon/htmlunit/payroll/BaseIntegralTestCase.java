@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 
@@ -175,6 +176,10 @@ public abstract class BaseIntegralTestCase {
 
 	protected static <T extends DomElement> T getElementById(String id) {
 		return (T) htmlPage.getElementById(GWT_DEBUG_ID_PREFIX +id);
+	}
+
+	protected static <T extends DomElement> List<T> getElementsById(String id) {
+		return (List<T>) htmlPage.getElementsById(GWT_DEBUG_ID_PREFIX +id);
 	}
 
 	protected static void calculate(int month) throws IOException, InterruptedException, ParseException {
