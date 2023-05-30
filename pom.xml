@@ -36,6 +36,7 @@
 		<!-- NET AONSULTIONS PLUGINS -->
 		<module>watson</module>
 		<module>occam</module>
+		<module>api</module>
 
 		<!-- MAVEN PLUGINS -->
 		<module>aon-alias-maven-plugin</module>
