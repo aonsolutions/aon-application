@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import net.aonsolutions.occam.api.constants.AonApp;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
-import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.occam.test.faker.AonEnumRandom;
 
 
 @ExtendWith(TimingExtension.class)	
@@ -28,7 +28,7 @@ class AonAppTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		AonApp dt = AonRandom.getAonApp();
+		AonApp dt = AonEnumRandom.getAonApp();
 		assertEquals(dt, AonApp.safeValueOf( dt.value() ).get());
 	}
 
@@ -46,7 +46,7 @@ class AonAppTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		AonApp dt = AonRandom.getAonApp();
+		AonApp dt = AonEnumRandom.getAonApp();
 		assertEquals(dt, AonApp.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -62,7 +62,7 @@ class AonAppTest extends AbstractOccamTest {
 	
 	@Test()
 	void rightNameSafeValueTest() {
-		AonApp dt = AonRandom.getAonApp();
+		AonApp dt = AonEnumRandom.getAonApp();
 		assertEquals(dt,AonApp.safeValueOf( dt.toString() ).get());
 	}
 	

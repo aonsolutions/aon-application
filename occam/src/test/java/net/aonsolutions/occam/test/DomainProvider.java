@@ -38,8 +38,8 @@ import net.aonsolutions.occam.api.constants.SecurityLevel;
 import net.aonsolutions.occam.dao.AccountDAO;
 import net.aonsolutions.occam.dao.DomainDAO;
 import net.aonsolutions.occam.dao.GeozoneDAO;
+import net.aonsolutions.occam.test.faker.AonEnumRandom;
 import net.aonsolutions.occam.test.faker.AonFaker;
-import net.aonsolutions.occam.test.faker.AonRandom;
 import net.aonsolutions.watson.client.Pair;
 import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.server.AonEnumUtils;
@@ -222,7 +222,7 @@ class DomainProvider {
 		.set(WORKPLACE.ADDRESS, address.getId())
 		.set(WORKPLACE.ENTERPRISE, newCompanyId )
 		.set(WORKPLACE.SCOPE, newScopeId)
-		.set(WORKPLACE.ECONOMICAGREEMENT, AonEnumUtils.getByte( AonRandom.getAdministration(10).orElse(null) ))
+		.set(WORKPLACE.ECONOMICAGREEMENT, AonEnumUtils.getByte( AonEnumRandom.getAdministration(10).orElse(null) ))
 		.execute();
 		ctx.log().info("Workplace insertada correctamente");
 		

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import net.aonsolutions.occam.api.constants.VatDeductionType;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
-import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.occam.test.faker.AonEnumRandom;
 
 
 @ExtendWith(TimingExtension.class)	
@@ -28,7 +28,7 @@ class VatDeductionTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		VatDeductionType dt = AonRandom.getVatDeductionType();
+		VatDeductionType dt = AonEnumRandom.getVatDeductionType();
 		assertEquals(dt, VatDeductionType.safeValueOf( dt.value() ).get());
 	}
 
@@ -46,7 +46,7 @@ class VatDeductionTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		VatDeductionType dt = AonRandom.getVatDeductionType();
+		VatDeductionType dt = AonEnumRandom.getVatDeductionType();
 		assertEquals(dt, VatDeductionType.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -60,7 +60,7 @@ class VatDeductionTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightNameSafeValueTest() {
-		VatDeductionType dt = AonRandom.getVatDeductionType();
+		VatDeductionType dt = AonEnumRandom.getVatDeductionType();
 		assertEquals(dt,VatDeductionType.safeValueOf( dt.toString() ).get());
 	}
 	@Test()

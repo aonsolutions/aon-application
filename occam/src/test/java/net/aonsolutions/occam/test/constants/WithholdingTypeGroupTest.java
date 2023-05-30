@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import net.aonsolutions.occam.api.constants.WithholdingTypeGroup;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
-import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.occam.test.faker.AonEnumRandom;
 
 
 @ExtendWith(TimingExtension.class)	
@@ -28,7 +28,7 @@ class WithholdingTypeGroupTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		WithholdingTypeGroup dt = AonRandom.getWithholdingTypeGroup();
+		WithholdingTypeGroup dt = AonEnumRandom.getWithholdingTypeGroup();
 		assertEquals(dt, WithholdingTypeGroup.safeValueOf( dt.value() ).get());
 	}
 
@@ -46,7 +46,7 @@ class WithholdingTypeGroupTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		WithholdingTypeGroup dt = AonRandom.getWithholdingTypeGroup();
+		WithholdingTypeGroup dt = AonEnumRandom.getWithholdingTypeGroup();
 		assertEquals(dt, WithholdingTypeGroup.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -60,7 +60,7 @@ class WithholdingTypeGroupTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightNameSafeValueTest() {
-		WithholdingTypeGroup dt = AonRandom.getWithholdingTypeGroup();
+		WithholdingTypeGroup dt = AonEnumRandom.getWithholdingTypeGroup();
 		assertEquals(dt,WithholdingTypeGroup.safeValueOf( dt.toString() ).get());
 	}
 	@Test()

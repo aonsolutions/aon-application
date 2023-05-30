@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import net.aonsolutions.occam.api.constants.SecurityLevel;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
-import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.occam.test.faker.AonEnumRandom;
 
 
 @ExtendWith(TimingExtension.class)	
@@ -28,7 +28,7 @@ class SecurityLevelTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		SecurityLevel dt = AonRandom.getSecurityLevel();
+		SecurityLevel dt = AonEnumRandom.getSecurityLevel();
 		assertEquals(dt, SecurityLevel.safeValueOf( dt.value() ).get());
 	}
 
@@ -46,7 +46,7 @@ class SecurityLevelTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		SecurityLevel dt = AonRandom.getSecurityLevel();
+		SecurityLevel dt = AonEnumRandom.getSecurityLevel();
 		assertEquals(dt, SecurityLevel.safeValueOf( dt.ordinal() ).get());
 	}
 	@Test()

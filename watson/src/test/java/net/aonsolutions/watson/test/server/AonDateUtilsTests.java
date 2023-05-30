@@ -1,5 +1,6 @@
 package net.aonsolutions.watson.test.server;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -84,6 +85,12 @@ class AonDateUtilsTests {
 		date = AonDateUtils.getYearFirstDay(date);
 		second = AonDateUtils.toLocalDate(date);
 		assertTrue(thisYearFirstDay.isEqual(second));
+		
+		int y = AonDateUtils.getYear(new Date());
+		assertEquals(thisYear, y);
+		
+		LocalDate aDay = LocalDate.of(2015,12, 31);
+		assertEquals(2015, AonDateUtils.getYear(AonDateUtils.toDate(aDay)));
 	}
 	
 	@Test()

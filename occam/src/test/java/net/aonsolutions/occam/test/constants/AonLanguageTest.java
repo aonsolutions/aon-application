@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import net.aonsolutions.occam.api.constants.AonLanguage;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
-import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.occam.test.faker.AonEnumRandom;
 
 
 @ExtendWith(TimingExtension.class)	
@@ -28,7 +28,7 @@ class AonLanguageTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		AonLanguage dt = AonRandom.getAonLanguage();
+		AonLanguage dt = AonEnumRandom.getAonLanguage();
 		assertEquals(dt, AonLanguage.safeValueOf( dt.value() ).get());
 	}
 
@@ -46,7 +46,7 @@ class AonLanguageTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		AonLanguage dt = AonRandom.getAonLanguage();
+		AonLanguage dt = AonEnumRandom.getAonLanguage();
 		assertEquals(dt, AonLanguage.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -62,7 +62,7 @@ class AonLanguageTest extends AbstractOccamTest {
 	
 	@Test()
 	void rightNameSafeValueTest() {
-		AonLanguage dt = AonRandom.getAonLanguage();
+		AonLanguage dt = AonEnumRandom.getAonLanguage();
 		assertEquals(dt,AonLanguage.safeValueOf( dt.toString() ).get());
 	}
 	

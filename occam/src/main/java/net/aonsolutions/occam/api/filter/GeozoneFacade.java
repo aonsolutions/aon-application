@@ -27,6 +27,9 @@ public class GeozoneFacade {
 	}
 	
 	public interface GeozoneBuilder<T> {
+		GeozoneBuilder<T> orderByCode();
+		GeozoneBuilder<T> orderByName();
+		GeozoneBuilder<T> orderByRandom();
 		GeozoneBuilder<T> limit(int offset, int rows);
 		T build();
 	}
@@ -38,7 +41,24 @@ public class GeozoneFacade {
 			builders.add(builder);
 			return this;
 		}
+		@Override
+		public GeozoneBuilder<T> orderByCode() {
+			builders.stream().forEach( b -> b.orderByCode());
+			return this;
+		}
 		
+		@Override
+		public GeozoneBuilder<T> orderByName() {
+			builders.stream().forEach( b -> b.orderByName());
+			return this;
+		}
+		
+		@Override
+		public GeozoneBuilder<T> orderByRandom() {
+			builders.stream().forEach( b -> b.orderByRandom());
+			return this;
+		}
+
 		@Override
 		public GeozoneBuilder<T> limit(int offset, int rows){
 			builders.stream().forEach( b -> b.limit(offset,rows));

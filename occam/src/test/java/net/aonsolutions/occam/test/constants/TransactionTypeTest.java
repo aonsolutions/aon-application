@@ -13,7 +13,7 @@ import net.aonsolutions.occam.api.constants.TransactionType;
 import net.aonsolutions.occam.api.constants.TransactionType.TransactionTypeVisitor;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
-import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.occam.test.faker.AonEnumRandom;
 
 
 @ExtendWith(TimingExtension.class)	
@@ -29,7 +29,7 @@ class TransactionTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		TransactionType dt = AonRandom.getTransactionType();
+		TransactionType dt = AonEnumRandom.getTransactionType();
 		assertEquals(dt, TransactionType.safeValueOf( dt.value() ).get());
 	}
 
@@ -47,7 +47,7 @@ class TransactionTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		TransactionType dt = AonRandom.getTransactionType();
+		TransactionType dt = AonEnumRandom.getTransactionType();
 		assertEquals(dt, TransactionType.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -61,7 +61,7 @@ class TransactionTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightNameSafeValueTest() {
-		TransactionType dt = AonRandom.getTransactionType();
+		TransactionType dt = AonEnumRandom.getTransactionType();
 		assertEquals(dt,TransactionType.safeValueOf( dt.toString() ).get());
 	}
 	@Test()

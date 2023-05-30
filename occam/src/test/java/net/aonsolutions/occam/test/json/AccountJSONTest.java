@@ -55,7 +55,7 @@ class AccountJSONTest extends AbstractOccamTest {
 
 	@Test
 	void testArrayConvert() {
-		JSONArray expected = IntStream.range(0, AonRandom.getInt(1, 50))
+		JSONArray expected = IntStream.range(0, AonRandom.number(1, 50))
 			.mapToObj(i -> AonFaker.getAccount())
 			.map(r -> AccountJSON.to(r))
 			.collect( JSONArray::new,JSONArray::put,JSONArray::put )
@@ -82,7 +82,7 @@ class AccountJSONTest extends AbstractOccamTest {
 
 	@Test
 	void testListConvert() {
-		List<Account> expected = IntStream.range(1, AonRandom.getInt(2, 50))
+		List<Account> expected = IntStream.range(1, AonRandom.number(2, 50))
 			.mapToObj(i -> AonFaker.getAccount())
 			.toList()
 		;

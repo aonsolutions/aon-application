@@ -1,6 +1,7 @@
 package net.aonsolutions.occam.test.dao;
 
 import static com.esferalia.aon.jooq.tables.Domain.DOMAIN;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -55,12 +56,6 @@ class DomainDAOTest extends AbstractOccamTest {
 		assertFalse(domain.get().isDirty(), "Dirty flag not set" );
 	}
 
-//	@Test()
-//	void emptyFilterTest() {
-//		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> DomainDAO.get(ctx, null, b -> b));
-//		assertEquals(DAOUtils.NULL_FILTER_MSG, e.getMessage());
-//	}
-
 	@Test()
 	void selectNoBuilderNoFacturyStreamTest() {
 		IllegalArgumentException e = assertThrows(IllegalArgumentException.class
@@ -83,7 +78,7 @@ class DomainDAOTest extends AbstractOccamTest {
 			.stream()
 			.limit(10)
 			.count();
-		int rows = AonRandom.getInt(0, (int) max);
+		int rows = AonRandom.number(0, (int) max);
 		long count = DomainDAO.getList(ctx, p -> p.withName().like("a%")
 			,b -> b.limit(0, rows))
 		.size();
@@ -269,7 +264,7 @@ class DomainDAOTest extends AbstractOccamTest {
 	
 	@Test
 	void saveValidationBookingTest() {
-		Domain domain = AonFaker.getDomain();
+		Domain domain = AonFaker.getDomain().setId(null);
 		domain.setBooking(null);
 		AonCoreException e = assertThrows(AonCoreException.class, () -> DomainDAO.save(ctx, domain));
 		assertEquals(AonError.DOMAIN_NO_BOOKING_INFO.getMessage(), e.getMessage());
@@ -278,7 +273,7 @@ class DomainDAOTest extends AbstractOccamTest {
 
 	@Test
 	void saveValidationOwnerTest() {
-		Domain domain = AonFaker.getDomain();
+		Domain domain = AonFaker.getDomain().setId(null);
 		if (!domain.getBooking().isPresent()) {
 			domain.setBooking(AonFaker.getBooking());
 		}
@@ -292,24 +287,33 @@ class DomainDAOTest extends AbstractOccamTest {
 		assertEquals(AonError.INVALID_LENGTH.format( "Creador", DOMAIN.OWNER.getDataType().length() ), e.getMessage());
 	}
 	
-//	@Test
-//	void saveLowerCaseNameTest() {
-//		String lDomainName = "occam.aonsolutions.net";
-//		String domainName = "OCCAM.AONSOLUTIONS.NET";
-//		Domain domain = AonFaker.getDomain( true );
-//		domain.setName(domainName);
-//		Domain saved = DomainDAO.save(ctx, domain);
-//		assertEquals(lDomainName, saved.getName());
-//	}
-//
-//	@Test
-//	void saveTest() {
-//		Domain insertDomain = AonFaker.getDomain(true);
-//		assertDoesNotThrow(() -> DomainDAO.save(ctx, insertDomain));
-//
-//		Domain updateDomain = AonFaker.getDomain(true);
-//		updateDomain.setId(1);
-//		assertDoesNotThrow(() -> DomainDAO.save(ctx, updateDomain));
-//	}
+	@Test
+	void saveLowerCaseNameTest() {
+		String uuid = AonRandom.uuid(10);
+		String lDomainName = uuid + "occam.aonsolutions.net";
+		String domainName =  uuid + "OCCAM.AONSOLUTIONS.NET";
+		Domain domain = AonFaker.getDomainStandalone()
+			.setId(null)
+			.setName(domainName);
+		Domain saved = DomainDAO.save(ctx, domain);
+		assertEquals(lDomainName, saved.getName());
+	}
+
+	@Test
+	void saveTest() {
+		Domain newDomain = AonFaker.getDomainStandalone().setId(null);
+		assertDoesNotThrow(() -> DomainDAO.save(ctx, newDomain));
+		Optional<Domain> savedDomain = DomainDAO.get(ctx, newDomain.getName() );
+		assertTrue(savedDomain.isPresent());
+
+		String description = "NEW DOMAIN DESCRIPTION";
+		savedDomain.get().setDescription(description);
+		assertDoesNotThrow(() -> DomainDAO.save(ctx, savedDomain.get()));
+		Optional<Domain> updatedDomain = DomainDAO.get(ctx, newDomain.getName() );
+		assertTrue(updatedDomain.isPresent());
+		assertEquals(description, updatedDomain.get().getDescription());
+		
+		
+	}
 	
 }

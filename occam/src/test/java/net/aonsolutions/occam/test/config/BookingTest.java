@@ -25,7 +25,7 @@ class BookingTest extends AbstractOccamTest {
 	@Test()
 	void dirtyexpirationDateTest() {
 		Booking d = new Booking();
-		d.setExpirationDate(AonRandom.getFutureDate());
+		d.setExpirationDate(AonRandom.futureDate());
 		assertTrue(d.isDirty());
 	}
 	@Test()

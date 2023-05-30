@@ -12,6 +12,7 @@ import net.aonsolutions.occam.api.config.ApplicationParameter;
 import net.aonsolutions.occam.api.constants.AppParam;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
+import net.aonsolutions.occam.test.faker.AonEnumRandom;
 import net.aonsolutions.occam.test.faker.AonRandom;
 
 
@@ -35,7 +36,7 @@ class ApplicationParameterTest extends AbstractOccamTest {
 	@Test()
 	void dirtyNameTest() {
 		ApplicationParameter d = new ApplicationParameter();
-		d.setName(AonRandom.getAppParam());
+		d.setName(AonEnumRandom.getAppParam());
 		assertTrue(d.isDirty());
 	}
 	@Test()

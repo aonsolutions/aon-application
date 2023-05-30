@@ -82,7 +82,7 @@ class SecurityDAOTest extends AbstractOccamTest {
 		long max = SecurityDAO.getUserStream(ctx, p -> p.withLogin().like("%"))
 			.limit(10)
 			.count();
-		int rows = AonRandom.getInt(0, (int) max);
+		int rows = AonRandom.number(0, (int) max);
 		long count = SecurityDAO.getUserStream(ctx, p -> p.withLogin().like("%")
 			,b -> b.limit(0, rows))
 		.count();

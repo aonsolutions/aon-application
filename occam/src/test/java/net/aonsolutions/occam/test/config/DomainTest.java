@@ -144,7 +144,7 @@ class DomainTest extends AbstractOccamTest {
 	void dirtyAuditTest() {
 		Domain d = new Domain();
 		DomainAudit b = new DomainAudit(); 
-		b.setLastAccessDate(AonRandom.getFutureDate());
+		b.setLastAccessDate(AonRandom.futureDate());
 		assertTrue(b.isDirty());
 		d.setAudit(b);
 		assertTrue(d.isDirty());
@@ -173,7 +173,7 @@ class DomainTest extends AbstractOccamTest {
 	void dirtyAudit4Test() {
 		Domain d = new Domain();
 		DomainAudit b = new DomainAudit();
-		b.setLastAccessDate(AonRandom.getFutureDate());
+		b.setLastAccessDate(AonRandom.futureDate());
 		d.setAudit(b);
 		b.setDirty(false);
 		d.setDirty(false);

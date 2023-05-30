@@ -13,7 +13,7 @@ import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.api.constants.DomainType.DomainTypeVisitor;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
-import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.occam.test.faker.AonEnumRandom;
 
 
 @ExtendWith(TimingExtension.class)	
@@ -29,7 +29,7 @@ class DomainTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		DomainType dt = AonRandom.getDomainType();
+		DomainType dt = AonEnumRandom.getDomainType();
 		assertEquals(dt, DomainType.safeValueOf( dt.value() ).get());
 	}
 
@@ -47,7 +47,7 @@ class DomainTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		DomainType dt = AonRandom.getDomainType();
+		DomainType dt = AonEnumRandom.getDomainType();
 		assertEquals(dt, DomainType.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -61,7 +61,7 @@ class DomainTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightNameSafeValueTest() {
-		DomainType dt = AonRandom.getDomainType();
+		DomainType dt = AonEnumRandom.getDomainType();
 		assertEquals(dt,DomainType.safeValueOf( dt.toString() ).get());
 	}
 	@Test()

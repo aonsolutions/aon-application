@@ -55,7 +55,7 @@ class GeozoneJSONTest extends AbstractOccamTest {
 
 	@Test
 	void testArrayConvert() {
-		JSONArray expected = IntStream.range(0, AonRandom.getInt(1, 50))
+		JSONArray expected = IntStream.range(0, AonRandom.number(1, 50))
 			.mapToObj(i -> AonFaker.getGeozone())
 			.map(s -> GeozoneJSON.to(s))
 			.collect( JSONArray::new,JSONArray::put,JSONArray::put )
@@ -82,7 +82,7 @@ class GeozoneJSONTest extends AbstractOccamTest {
 
 	@Test
 	void testListConvert() {
-		List<Geozone> expected = IntStream.range(1, AonRandom.getInt(2, 50))
+		List<Geozone> expected = IntStream.range(1, AonRandom.number(2, 50))
 			.mapToObj(i -> AonFaker.getGeozone())
 			.toList()
 		;

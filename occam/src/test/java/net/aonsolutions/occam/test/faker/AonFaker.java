@@ -23,6 +23,7 @@ import net.aonsolutions.occam.api.config.RegistryAddress;
 import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.config.User;
 import net.aonsolutions.occam.api.constants.Country;
+import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.api.invoicing.Invoice;
 import net.aonsolutions.occam.api.invoicing.InvoiceBreakdown;
 import net.aonsolutions.occam.api.invoicing.InvoiceDetail;
@@ -51,8 +52,8 @@ public class AonFaker {
 	}
 	public static AccountingConfiguration getAccountingConfiguration() {
 		AccountingConfiguration ac = new AccountingConfiguration();
-		IntStream.range(0, AonRandom.getInt(1, 50))
-			.mapToObj(i -> AonRandom.getAppParam() )
+		IntStream.range(0, AonRandom.number(1, 50))
+			.mapToObj(i -> AonEnumRandom.getAppParam() )
 			.forEach( appParam -> ac.setAccount(appParam, getAccount()));
 		return ac;
 	}
@@ -62,8 +63,8 @@ public class AonFaker {
 			.setId(AonRandom.integer(50))
 			.setDomain(AonRandom.integer(50))
 			.setName( faker.regexify("\\d{9}") )
-			.setStartDate( AonRandom.getPastDate(-1) )
-			.setEndingDate( AonRandom.getPastDate(-1) )
+			.setStartDate( AonRandom.pastDate(-1) )
+			.setEndingDate( AonRandom.pastDate(-1) )
 			.setDefaultPeriod( AonRandom.gt(3) )
 			.setAudit( getAudit() );
 	}
@@ -81,33 +82,41 @@ public class AonFaker {
 		return  new ApplicationParameter()
 			.setId(AonRandom.integer(50))
 			.setDomain(AonRandom.integer(50))
-			.setName( AonRandom.getAppParam(50).orElse(null))
+			.setName( AonEnumRandom.getAppParam(50).orElse(null))
 			.setValue( faker.animal().name());
 	}
 
 	public static Audit getAudit() {
 		return new Audit()
 			.setCreationUser(AonRandom.string(50, 10))
-			.setCreationDate(AonRandom.getPastDate(50))
+			.setCreationDate(AonRandom.pastDate(50))
 			.setModificationUser(AonRandom.string(50, 10))
-			.setModificationDate(AonRandom.getPastDate(50));
+			.setModificationDate(AonRandom.pastDate(50));
 	}
 
 	public static Booking getBooking() {
 		return new Booking()
-			.setOwner((AonRandom.string(50)))
-			.setExpirationDate(AonRandom.getPastDate(50))
+			.setOwner(AonRandom.string(50))
+			.setExpirationDate(AonRandom.pastDate(50))
 			.setDomainManagement(AonRandom.gt(50))
 			.setDisableDomainManagement(AonRandom.gt(50))
 			.setMaxDefinedUsers(AonRandom.integer(50))
 			.setAonCustomer(AonRandom.integer(50))
-			.setAonStatus(AonRandom.getAonStatus(20).orElse(null))
+			.setAonStatus(AonEnumRandom.getAonStatus(20).orElse(null))
 		;
 	}
 
 	public static Configuration getConfiguration() {
 		return new Configuration()
 			.setAccounting(getAccountingConfiguration(80));
+	}
+
+	public static Domain getDomainStandalone() {
+		return getDomain(true)
+				.setParent(null)
+				.setEnableHeredity(false)
+				.setType( DomainType.ENTERPRISE )
+				;
 	}
 
 	public static Domain getDomain() {
@@ -119,7 +128,7 @@ public class AonFaker {
 			.setName(AonRandom.domainName())
 			.setDescription(AonRandom.lorem(50))
 			.setParent( AonRandom.gt(50) ? getDomain() : null)
-			.setType(AonRandom.getDomainType(20).orElse(null))
+			.setType(AonEnumRandom.getDomainType(20).orElse(null))
 			.setEnableHeredity(AonRandom.gt(50))
 			.setActive(AonRandom.gt(50))
 			.setId(AonRandom.integer(50))
@@ -131,11 +140,11 @@ public class AonFaker {
 	public static DomainAudit getDomainAudit() {
 		return new DomainAudit()
 			.setLastAccessUser(AonRandom.string(50, 10))
-			.setLastAccessDate(AonRandom.getPastDate(50))
+			.setLastAccessDate(AonRandom.pastDate(50))
 			.setCreationUser(AonRandom.string(50, 10))
-			.setCreationDate(AonRandom.getPastDate(50))
+			.setCreationDate(AonRandom.pastDate(50))
 			.setModificationUser(AonRandom.string(50, 10))
-			.setModificationDate(AonRandom.getPastDate(50));
+			.setModificationDate(AonRandom.pastDate(50));
 	}
 	
 	public static Geozone getGeozone( ) {
@@ -150,7 +159,7 @@ public class AonFaker {
 	public static InvoiceBreakdown getInvoiceBreakdown() {
 		return new InvoiceBreakdown()
 			.setId(AonRandom.integer(50))
-			.setTaxType(AonRandom.getTaxType())
+			.setTaxType(AonEnumRandom.getTaxType())
 			.setBase(AonRandom.getDouble(0, 100))
 			.setPercent(AonRandom.getDouble(0, 100))
 			.setQuota(AonRandom.getDouble(0, 100))
@@ -158,8 +167,8 @@ public class AonFaker {
 			.setSurchargeQuota(AonRandom.getDouble(0, 100))
 			.setDeductiblePercent( AonRandom.getDouble(0, 80))
 			.setDeductibleQuota(AonRandom.getDouble(0, 100))
-			.setWithholdingType(AonRandom.getWithholdingType())
-			.setVatDeductionType(AonRandom.getVatDeductionType())
+			.setWithholdingType(AonEnumRandom.getWithholdingType())
+			.setVatDeductionType(AonEnumRandom.getVatDeductionType())
 			;
 	}
 
@@ -176,12 +185,12 @@ public class AonFaker {
 			.setConfidential(AonRandom.gt(98))
 			.setRegistry(AonRandom.integer(50))
 			.setDocument(AonRandom.string(50, 10))
-			.setDocumentType(AonRandom.getDocumentType(40).orElse(null)) 
-			.setDocumentCountry(AonRandom.getCountry(30).orElse(null))
+			.setDocumentType(AonEnumRandom.getDocumentType(40).orElse(null)) 
+			.setDocumentCountry(AonEnumRandom.getCountry(30).orElse(null))
 			.setName(AonRandom.string(50, 10))
 			.setScope(AonFaker.getScope())
-			.setType(AonRandom.getInvoiceType(40).orElse(null)) 
-			.setTransaction(AonRandom.getTransactionType(40).orElse(null))
+			.setType(AonEnumRandom.getInvoiceType(40).orElse(null)) 
+			.setTransaction(AonEnumRandom.getTransactionType(40).orElse(null))
 			.setSurcharge(AonRandom.gt(50))
 			.setWithholding(AonRandom.gt(50))
 			.setWithholdingFarmer(AonRandom.gt(50))
@@ -191,8 +200,8 @@ public class AonFaker {
 			.setAnnulled(AonRandom.gt(50))
 			.setTotal(AonRandom.getDouble(0, 10))
 			.setAudit(AonFaker.getAudit())
-			.setDetails( IntStream.range(0, AonRandom.getInt(1, 10)).mapToObj(i -> AonFaker.getInvoiceDetail() ).toList() )
-			.setBreakdown( IntStream.range(0, AonRandom.getInt(1, 5)).mapToObj(i -> AonFaker.getInvoiceBreakdown() ).toList() )
+			.setDetails( IntStream.range(0, AonRandom.number(1, 10)).mapToObj(i -> AonFaker.getInvoiceDetail() ).toList() )
+			.setBreakdown( IntStream.range(0, AonRandom.number(1, 5)).mapToObj(i -> AonFaker.getInvoiceBreakdown() ).toList() )
 		;
 	}
 
@@ -206,7 +215,7 @@ public class AonFaker {
 			.setDiscountExpression( AonRandom.gt(10)?null:AonNumberUtils.toString( AonRandom.getDouble(0, 100)))
 			.setPrice(AonRandom.getDouble(0, 100))
 			.setTaxableBase(AonRandom.getDouble(0, 100))
-			.setSource(AonRandom.getInvoiceSource()) 
+			.setSource(AonEnumRandom.getInvoiceSource()) 
 			.setPrepayment(AonRandom.gt(98))
 			.setSourceId(AonRandom.integer(50))
 			.addTax( getInvoiceTax())
@@ -216,12 +225,12 @@ public class AonFaker {
 	public static InvoiceTax getInvoiceTax() {
 		return new InvoiceTax()
 			.setId(AonRandom.integer(50))
-			.setTaxType(AonRandom.getTaxType())
+			.setTaxType(AonEnumRandom.getTaxType())
 			.setPercent(AonRandom.getDouble(0, 100))
 			.setSurchargePercent(AonRandom.getDouble(0, 100))
 			.setDeductiblePercent( AonRandom.getDouble(0, 80))
-			.setWithholdingType(AonRandom.getWithholdingType())
-			.setVatDeductionType(AonRandom.getVatDeductionType())
+			.setWithholdingType(AonEnumRandom.getWithholdingType())
+			.setVatDeductionType(AonEnumRandom.getVatDeductionType())
 		;
 	}
 
@@ -233,11 +242,11 @@ public class AonFaker {
 			.setId(AonRandom.integer(50))
 			.setDomain(AonRandom.integer(50))
 			.setDocument(faker.regexify(DOCUMENT_REGEXP))
-			.setDocumentType( AonRandom.getDocumentType(90).orElse(null) )
-			.setDocumentCountry( AonRandom.gt(5) ? Country.ES: AonRandom.getCountry(10).orElse(null))
+			.setDocumentType( AonEnumRandom.getDocumentType(90).orElse(null) )
+			.setDocumentCountry( AonRandom.gt(5) ? Country.ES: AonEnumRandom.getCountry(10).orElse(null))
 			.setName( faker.company().name() )
 			.setAlias( faker.company().profession() )
-			.setNationality( AonRandom.gt(5) ? Country.ES: AonRandom.getCountry(50).orElse(null))
+			.setNationality( AonRandom.gt(5) ? Country.ES: AonEnumRandom.getCountry(50).orElse(null))
 			.setConfidential( !AonRandom.gt(3) );
 	}
 	
@@ -246,7 +255,7 @@ public class AonFaker {
 			.setRegistry(AonRandom.integer(50))
 			.setDomain(AonRandom.integer(50))
 			.setMain(AonRandom.gt(50))
-			.setStreetType(AonRandom.getStreetType(75).orElse(null))
+			.setStreetType(AonEnumRandom.getStreetType(75).orElse(null))
 			.setRecipient( AonRandom.name(20, RADDRESS.RECIPIENT.getDataType().length()) )
 			.setAddress( AonRandom.gt(10)?faker.address().streetName():null )
 			.setNumber( AonRandom.gt(12)?faker.address().streetAddressNumber():null)

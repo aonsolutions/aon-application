@@ -13,7 +13,7 @@ import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.AonStatus.AonStatusVisitor;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
-import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.occam.test.faker.AonEnumRandom;
 
 
 @ExtendWith(TimingExtension.class)	
@@ -29,7 +29,7 @@ class AonStatusTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		AonStatus dt = AonRandom.getAonStatus();
+		AonStatus dt = AonEnumRandom.getAonStatus();
 		assertEquals(dt, AonStatus.safeValueOf( dt.value() ).get());
 	}
 
@@ -47,7 +47,7 @@ class AonStatusTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		AonStatus dt = AonRandom.getAonStatus();
+		AonStatus dt = AonEnumRandom.getAonStatus();
 		assertEquals(dt, AonStatus.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -63,7 +63,7 @@ class AonStatusTest extends AbstractOccamTest {
 	
 	@Test()
 	void rightNameSafeValueTest() {
-		AonStatus dt = AonRandom.getAonStatus();
+		AonStatus dt = AonEnumRandom.getAonStatus();
 		assertEquals(dt,AonStatus.safeValueOf( dt.toString() ).get());
 	}
 	

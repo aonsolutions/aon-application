@@ -11,10 +11,13 @@ import java.util.stream.Stream;
 import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.ResultQuery;
+import org.jooq.SelectConditionStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectLimitStep;
+import org.jooq.SelectSeekStepN;
 import org.jooq.SelectSelectStep;
 import org.jooq.SelectWithTiesAfterOffsetStep;
+import org.jooq.impl.DSL;
 
 import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.AonCoreException;
@@ -56,13 +59,15 @@ public class GeozoneDAO {
 			FromBuilder fromBuilder = new  FromBuilder( selectBuilder.build() );
 			SelectJoinStep<Record> from = fromBuilder.build();
 			WhereBuilder whereBuilder = new WhereBuilder(from,filter);
-			LimitBuilder limitBuilder = new  LimitBuilder( whereBuilder.build() );
+			OrderByBuilder orderByBuilder = new OrderByBuilder( whereBuilder.build() );
+			LimitBuilder limitBuilder = new  LimitBuilder( orderByBuilder.build() );
 			fillerBuilder = new  FillerBuilder();
 			query =  limitBuilder.build();
 		
 			addBuilder(selectBuilder);
 			addBuilder(fromBuilder);
 			addBuilder(whereBuilder);
+			addBuilder(orderByBuilder);
 			addBuilder(limitBuilder);
 			addBuilder(fillerBuilder);
 			 
@@ -91,7 +96,9 @@ public class GeozoneDAO {
 		public SelectSelectStep<Record> build() {
 			return select;
 		}
-		
+		@Override public SelectBuilder orderByCode() {return this;}
+		@Override public SelectBuilder orderByName() {return this;}
+		@Override public SelectBuilder orderByRandom() {return this;}
 		@Override public SelectBuilder limit(int offest, int rows) {return this;}
 	}
 
@@ -107,18 +114,21 @@ public class GeozoneDAO {
 			return from;
 		}
 		
+		@Override public FromBuilder orderByCode() {return this;}
+		@Override public FromBuilder orderByName() {return this;}
+		@Override public FromBuilder orderByRandom() {return this;}
 		@Override public FromBuilder limit(int offest, int rows) { return this; }
 	}
 
-	private static class WhereBuilder implements GeozoneBuilder<SelectLimitStep<Record>> {
-		private SelectLimitStep<Record> where;
+	private static class WhereBuilder implements GeozoneBuilder<SelectConditionStep<Record>> {
+		private SelectConditionStep<Record> where;
 		
 		public WhereBuilder(SelectJoinStep<Record> from, GeozoneFilter filter) {
 			where = from.where( getWhere(filter) );
 		}
 		
 		@Override
-		public SelectLimitStep<Record> build() {
+		public SelectConditionStep<Record> build() {
 			return where;
 		}
 		
@@ -129,7 +139,42 @@ public class GeozoneDAO {
 			throw new IllegalArgumentException("Filter can not be null.");
 		}
 		
+		@Override public WhereBuilder orderByCode() {return this;}
+		@Override public WhereBuilder orderByName() {return this;}
+		@Override public WhereBuilder orderByRandom() {return this;}
 		@Override public WhereBuilder limit(int offset, int rows) {return this;}
+	}
+
+	private static class OrderByBuilder implements GeozoneBuilder<SelectLimitStep<Record>> {
+		private SelectConditionStep<Record> where;
+		private SelectSeekStepN<Record> orderBy;
+		
+		public OrderByBuilder(SelectConditionStep<Record> where) {
+			this.where = where;
+		}
+
+		@Override
+		public SelectLimitStep<Record> build() {
+			return orderBy == null ? where : orderBy; 
+		}
+		
+		@Override 
+		public OrderByBuilder orderByCode() {
+			orderBy = where.orderBy( Stream.of(GEOZONE.CODE).toList() );
+			return this;
+		}
+		
+		@Override public OrderByBuilder orderByName() {
+			orderBy = where.orderBy( Stream.of(GEOZONE.NAME).toList() );
+			return this;
+		}
+		
+		@Override public OrderByBuilder orderByRandom() {
+			orderBy = where.orderBy( Stream.of(DSL.rand()).toList() );
+			return this;
+		}
+		
+		@Override public OrderByBuilder limit(int offest, int rows) { return this; }
 	}
 
 	private static class LimitBuilder implements GeozoneBuilder<ResultQuery<Record>> {
@@ -150,6 +195,10 @@ public class GeozoneDAO {
 		public ResultQuery<Record> build() {
 			return limit==null?where:limit;
 		}
+		
+		@Override public LimitBuilder orderByCode() {return this;}
+		@Override public LimitBuilder orderByName() {return this;}
+		@Override public LimitBuilder orderByRandom() {return this;}
 	}
 
 	private static class FillerBuilder implements GeozoneBuilder<Function<Record, RecordMapper<Geozone>>>,AonFillerBuilder<Geozone> {
@@ -185,7 +234,10 @@ public class GeozoneDAO {
 			;
 		}
 		
-		@Override public GeozoneBuilder<Function<Record, RecordMapper<Geozone>>> limit(int offset, int rows) { return null; }
+		@Override public FillerBuilder orderByCode() {return this;}
+		@Override public FillerBuilder orderByName() {return this;}
+		@Override public FillerBuilder orderByRandom() {return this;}
+		@Override public FillerBuilder limit(int offset, int rows) { return null; }
 
 	}
 
@@ -276,6 +328,7 @@ public class GeozoneDAO {
 		}
 		
 	}
+	
 }
 
 

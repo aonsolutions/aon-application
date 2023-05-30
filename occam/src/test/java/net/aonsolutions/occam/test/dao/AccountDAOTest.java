@@ -72,7 +72,7 @@ class AccountDAOTest extends AbstractOccamTest {
 		long max = AccountDAO.getStream(ctx, p -> p.withDescription().like("%a%"))
 			.limit(10)
 			.count();
-		int rows = AonRandom.getInt(0, (int) max);
+		int rows = AonRandom.number(0, (int) max);
 		long count = AccountDAO.getStream(ctx, p -> p.withDescription().like("%a%")
 			,b -> b.limit(0, rows))
 		.count();

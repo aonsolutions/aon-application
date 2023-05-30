@@ -24,14 +24,14 @@ class DomainAuditTest extends AbstractOccamTest {
 	@Test()
 	void dirtyLastAccessDateTest() {
 		DomainAudit d = new DomainAudit();
-		d.setLastAccessDate(AonRandom.getFutureDate());
+		d.setLastAccessDate(AonRandom.futureDate());
 		assertTrue(d.isDirty());
 	}
 
 	@Test()
 	void dirtyMarkTrueTest() {
 		DomainAudit d = new DomainAudit();
-		d.setLastAccessDate(AonRandom.getFutureDate());
+		d.setLastAccessDate(AonRandom.futureDate());
 		d.setLastAccessUser( null );
 		assertTrue(d.isDirty());
 	}

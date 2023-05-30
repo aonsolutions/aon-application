@@ -33,6 +33,11 @@ public class AonDateUtils {
 		return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
 
+	public static Integer getYear(Date date) {
+		if (date == null) return null;
+		return toLocalDate(date).getYear();
+	}
+
 	public static Date getYearFirstDay(int year) {
 		return toDate(Year.of(year).atDay(1));
 	}

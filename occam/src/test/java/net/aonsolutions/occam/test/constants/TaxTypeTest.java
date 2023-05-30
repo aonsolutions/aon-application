@@ -13,7 +13,7 @@ import net.aonsolutions.occam.api.constants.TaxType;
 import net.aonsolutions.occam.api.constants.TaxType.TaxTypeVisitor;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
-import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.occam.test.faker.AonEnumRandom;
 
 
 @ExtendWith(TimingExtension.class)	
@@ -29,7 +29,7 @@ class TaxTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		TaxType dt = AonRandom.getTaxType();
+		TaxType dt = AonEnumRandom.getTaxType();
 		assertEquals(dt, TaxType.safeValueOf( dt.value() ).get());
 	}
 
@@ -47,7 +47,7 @@ class TaxTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		TaxType dt = AonRandom.getTaxType();
+		TaxType dt = AonEnumRandom.getTaxType();
 		assertEquals(dt, TaxType.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -61,7 +61,7 @@ class TaxTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightNameSafeValueTest() {
-		TaxType dt = AonRandom.getTaxType();
+		TaxType dt = AonEnumRandom.getTaxType();
 		assertEquals(dt,TaxType.safeValueOf( dt.toString() ).get());
 	}
 	@Test()

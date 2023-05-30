@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.text.Collator;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -70,12 +71,52 @@ class GeozoneDAOTest extends AbstractOccamTest {
 		assertTrue(domain.findAny().isPresent());
 	}
 	
+	@Test()
+	void selectByCodeTest() {
+		Stream<Geozone> domain = GeozoneDAO.getStream(ctx
+			,p -> p.withDomain().eq( DOMAIN_ID )
+			,b -> b.orderByCode().limit(0, 25)
+		);
+		String[] codes = domain.map(g -> g.getCode()).toArray(String[]::new);
+		assertsSorted(codes);
+	}
+	
+	@Test()
+	void selectByNameTest() {
+		Stream<Geozone> domain = GeozoneDAO.getStream(ctx
+			,p -> p.withDomain().eq( DOMAIN_ID )
+			,b -> b.orderByName().limit(0, 5)
+		);
+		String[] names = domain.map(g -> g.getName()).toArray(String[]::new);
+		assertsSorted(names);
+	}
+
+	@Test()
+	void selectRandomTest() {
+		Stream<Geozone> domain = GeozoneDAO.getStream(ctx
+			,p -> p.withDomain().eq( DOMAIN_ID )
+			,b -> b.orderByRandom().limit(0, 5)
+		);
+		assertTrue(domain.findAny().isPresent());
+	}
+
+	private void assertsSorted(String[] array) {
+		final Collator instance = Collator.getInstance();
+	    instance.setStrength(Collator.PRIMARY);
+	    for (int i = 0; i < array.length - 1; ++i) {
+	    	String current = array[i];
+	    	String next = array[i + 1];
+	    	String msg = "\"" + current + "\" > \"" + next +"\"";
+	    	assertFalse(instance.compare(current, next) > 0, msg);
+	    }
+	}
+
 	@Test
 	void streamLimitTest() {
 		long max = GeozoneDAO.getStream(ctx, p -> p.withName().like("%a%"), b -> b)
 			.limit(10)
 			.count();
-		int rows = AonRandom.getInt(0, (int) max);
+		int rows = AonRandom.number(0, (int) max);
 		long count = GeozoneDAO.getStream(ctx, p -> p.withName().like("%a%")
 			,b -> b.limit(0, rows))
 		.count();

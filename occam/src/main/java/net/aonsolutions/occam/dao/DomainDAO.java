@@ -6,6 +6,7 @@ import static com.esferalia.aon.jooq.tables.Registry.REGISTRY;
 import static com.esferalia.aon.jooq.tables.Scope.SCOPE;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,7 @@ import net.aonsolutions.occam.api.Filter.Property;
 import net.aonsolutions.occam.api.config.Booking;
 import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.api.config.DomainAudit;
+import net.aonsolutions.occam.api.config.Scope;
 import net.aonsolutions.occam.api.constants.AonStatus;
 import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.occam.api.filter.AonFacade.AonFillerBuilder;
@@ -43,6 +45,8 @@ import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilter;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilters;
 import net.aonsolutions.occam.dao.FillerDAO.RegistryFiller;
 import net.aonsolutions.watson.client.util.AonStringUtils;
+import net.aonsolutions.watson.server.AonEnumUtils;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class DomainDAO {
 	
@@ -441,14 +445,18 @@ public class DomainDAO {
 		};
 
 		
-		public static void validate(AONContext ctx, Domain domain) throws AonCoreException{
+		public static void validateUpdate(AONContext ctx, Domain domain) throws AonCoreException{
 			VALIDATE_NAME
 			.andThen(VALIDATE_DESCRIPTION)
-			.andThen(VALIDATE_BOOKING_EMPTY)
-			.andThen(VALIDATE_BOOKING_OWNER_EMPTY)
 			.accept(ctx, domain);
 		}
 		
+		public static void validateInsert(AONContext ctx, Domain domain) throws AonCoreException{
+			validateUpdate(ctx, domain);
+			VALIDATE_BOOKING_EMPTY
+				.andThen(VALIDATE_BOOKING_OWNER_EMPTY)
+				.accept(ctx, domain);
+		}
 	}
 
 	private static Stream<Domain> getStream(AONContext ctx, DomainFilter filter, DomainBuilderFactory factory){
@@ -469,8 +477,7 @@ public class DomainDAO {
 		return getList(ctx, f -> f.withName().eq(domainName), b -> b);
 	}
 	public static List<Domain> getList(AONContext ctx, DomainFilter filter, DomainBuilderFactory factory){
-		return getStream(ctx, filter, factory)
-			.collect(Collectors.toCollection(LinkedList::new));
+		return getStream(ctx, filter, factory).toList();
 	}
 	
 	public static Domain save(AONContext ctx, Domain domain) {
@@ -478,48 +485,69 @@ public class DomainDAO {
 		if (domain == null) throw new AonCoreException(AonError.SAVE_EMPTY.getMessage());
 		if (domain.isDirty()) { 
 			DomainAutoComplete.autoComplete(ctx, domain);
-			DomainValidation.validate(ctx, domain);
-//			return (domain.getId() == null)
-//				?insert(ctx,domain)
-//				:update(ctx,domain);
+			return (domain.getId() == null)
+				?insert(ctx,domain)
+				:update(ctx,domain);
 		} else {
 			ctx.log().debug(AonError.NOT_DIRTY.format("Domain",domain.getId()));
 		}
 		return domain;  
 	}
 	
-//	private static Domain insert(AONContext ctx, Domain domain) {
-//		throw new UnsupportedOperationException("Not implemented!");
-//		Integer id = ctx.getDslContext().insertInto(DOMAIN)
-//			.set(DOMAIN.NAME, domain.getName())
-//			.set(DOMAIN.DESCRIPTION, domain.getDescription())
-//			.set(DOMAIN.TYPE, AonEnumUtils.getByte(domain.getType() ))
-//			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isActive() ))
-//			.set(DOMAIN.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), Scope::getId))
-//			.set(DOMAIN.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), Domain::getId))
-//			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isEnableHeredity() ))
-//			.set(DOMAIN.OWNER, AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getOwner))
-//			.set(DOMAIN.DOMAINMANAGEMENT
-//				, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDomainManagement)))
-//			.set(DOMAIN.DISABLEDOMAINMANAGEMENT
-//				, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDisableDomainManagement)))
-//			.set(DOMAIN.MAXDEFINEDUSERS
-//				,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), b -> b.getMaxDefinedUsers().orElse(null)))
-//			.<Integer>set(DOMAIN.AONCUSTOMER
-//				,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), a -> a.getAonCustomer().orElse(null)))
-//			.set(DOMAIN.AONSTATUS
-//				,AonEnumUtils.getByte(AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getAonStatus)))
-//			.set(DOMAIN.CREATION_USER, ctx.getUser())
-//			.set(DOMAIN.CREATION_DATE, new Timestamp(new Date().getTime()))
-//			.returning(DOMAIN.ID)
-//			.fetchOne().getValue(DOMAIN.ID);
-//		domain.setId(id);
-//		ctx.log().info("INSERT DOMAIN id: {0} - {1}", domain.getId(), domain.getName());	
-//		return domain;
-//	}
-//	
-//	private static Domain update(AONContext ctx, Domain domain) {
-//		throw new UnsupportedOperationException("Not implemented!");
-//	}
+	private static Domain insert(AONContext ctx, Domain domain) {
+		DomainValidation.validateInsert(ctx, domain);
+		DomainAudit audit = domain.getAudit().orElse(new DomainAudit());
+		audit.setCreationUser(ctx.getUser());
+		audit.setCreationDate(new Timestamp(new Date().getTime()));
+		domain.setAudit(audit);
+		Integer id = ctx.getDslContext().insertInto(DOMAIN)
+			.set(DOMAIN.NAME, domain.getName())
+			.set(DOMAIN.DESCRIPTION, domain.getDescription())
+			.set(DOMAIN.TYPE, AonEnumUtils.getByte(domain.getType() ))
+			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isActive() ))
+			.set(DOMAIN.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), Scope::getId))
+			.set(DOMAIN.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), Domain::getId))
+			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isEnableHeredity() ))
+			.set(DOMAIN.OWNER, AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getOwner))
+			.set(DOMAIN.DOMAINMANAGEMENT
+				, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDomainManagement)))
+			.set(DOMAIN.DISABLEDOMAINMANAGEMENT
+				, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDisableDomainManagement)))
+			.set(DOMAIN.MAXDEFINEDUSERS
+				,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), b -> b.getMaxDefinedUsers().orElse(null)))
+			.<Integer>set(DOMAIN.AONCUSTOMER
+				,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), a -> a.getAonCustomer().orElse(null)))
+			.set(DOMAIN.AONSTATUS
+				,AonEnumUtils.getByte(AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getAonStatus)))
+			.set(DOMAIN.CREATION_USER, audit.getCreationUser().orElse(ctx.getUser()) )
+			.set(DOMAIN.CREATION_DATE, new Timestamp(audit.getCreationDate().orElse(new Date()).getTime())) 
+			.returning(DOMAIN.ID)
+			.fetchOne().getValue(DOMAIN.ID);
+		domain.setId(id);
+		ctx.log().info("INSERT DOMAIN id: {0} - {1}", domain.getId(), domain.getName());	
+		return domain;
+	}
+	
+	private static Domain update(AONContext ctx, Domain domain) {
+		DomainValidation.validateUpdate(ctx, domain);
+		DomainAudit audit = domain.getAudit().orElse(new DomainAudit());
+		audit.setModificationUser(ctx.getUser());
+		audit.setModificationDate(new Timestamp(new Date().getTime()));
+		domain.setAudit(audit);
+		int count = ctx.getDslContext().update(DOMAIN)
+			.set(DOMAIN.NAME, domain.getName())
+			.set(DOMAIN.DESCRIPTION, domain.getDescription())
+			.set(DOMAIN.TYPE, AonEnumUtils.getByte(domain.getType() ))
+			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isActive() ))
+			.set(DOMAIN.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), Scope::getId))
+			.set(DOMAIN.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), Domain::getId))
+			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isEnableHeredity() ))
+			.set(DOMAIN.MODIFICATION_USER, audit.getModificationUser().orElse(ctx.getUser()) )
+			.set(DOMAIN.MODIFICATION_DATE, new Timestamp(audit.getModificationDate().orElse(new Date()).getTime())) 
+			.where(DOMAIN.ID.eq(domain.getId()))
+			.execute();
+		ctx.log().debug("UPDATE DOMAIN id: {0}. ({1} rows)", domain.getId(),count);
+		return domain;
+	}
 	
 }

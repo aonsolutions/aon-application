@@ -13,7 +13,7 @@ import net.aonsolutions.occam.api.constants.InvoiceType;
 import net.aonsolutions.occam.api.constants.InvoiceType.InvoiceTypeVisitor;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
-import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.occam.test.faker.AonEnumRandom;
 
 
 @ExtendWith(TimingExtension.class)	
@@ -29,7 +29,7 @@ class InvoiceTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		InvoiceType dt = AonRandom.getInvoiceType();
+		InvoiceType dt = AonEnumRandom.getInvoiceType();
 		assertEquals(dt, InvoiceType.safeValueOf( dt.value() ).get());
 	}
 
@@ -47,7 +47,7 @@ class InvoiceTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		InvoiceType dt = AonRandom.getInvoiceType();
+		InvoiceType dt = AonEnumRandom.getInvoiceType();
 		assertEquals(dt, InvoiceType.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -61,7 +61,7 @@ class InvoiceTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightNameSafeValueTest() {
-		InvoiceType dt = AonRandom.getInvoiceType();
+		InvoiceType dt = AonEnumRandom.getInvoiceType();
 		assertEquals(dt,InvoiceType.safeValueOf( dt.toString() ).get());
 	}
 	@Test()

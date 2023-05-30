@@ -13,7 +13,7 @@ import net.aonsolutions.occam.api.constants.DocumentType;
 import net.aonsolutions.occam.api.constants.DocumentType.DocumentTypeVisitor;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
-import net.aonsolutions.occam.test.faker.AonRandom;
+import net.aonsolutions.occam.test.faker.AonEnumRandom;
 
 
 @ExtendWith(TimingExtension.class)	
@@ -29,7 +29,7 @@ class DocumentTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeByteValueTest() {
-		DocumentType dt = AonRandom.getDocumentType();
+		DocumentType dt = AonEnumRandom.getDocumentType();
 		assertEquals(dt, DocumentType.safeValueOf( dt.value() ).get());
 	}
 
@@ -47,7 +47,7 @@ class DocumentTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightIndexSafeValueTest() {
-		DocumentType dt = AonRandom.getDocumentType();
+		DocumentType dt = AonEnumRandom.getDocumentType();
 		assertEquals(dt, DocumentType.safeValueOf( dt.ordinal() ).get());
 	}
 	
@@ -61,7 +61,7 @@ class DocumentTypeTest extends AbstractOccamTest {
 	}
 	@Test()
 	void rightNameSafeValueTest() {
-		DocumentType dt = AonRandom.getDocumentType();
+		DocumentType dt = AonEnumRandom.getDocumentType();
 		assertEquals(dt,DocumentType.safeValueOf( dt.toString() ).get());
 	}
 	@Test()
