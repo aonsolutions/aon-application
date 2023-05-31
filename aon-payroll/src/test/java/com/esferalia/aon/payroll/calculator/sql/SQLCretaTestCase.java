@@ -474,20 +474,20 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		List<Dato> datos = bases.get(0).getDatosTramo().getDato();
 		
 		org.junit.Assert.assertEquals(4, datos.size());
-
+		
 		double c500 =
 		datos.stream()
 		.filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-		org.junit.Assert.assertEquals(175000 * 15 / 30, c500, DELTA);
+		org.junit.Assert.assertEquals(175000 * 15 / monthDays, c500, DELTA);
 
 		double c601 =
 		datos.stream()
 		.filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-		org.junit.Assert.assertEquals(175000 * 15 / 30, c601, DELTA);
+		org.junit.Assert.assertEquals(175000 * 15 / monthDays, c601, DELTA);
 
 		double c737 =
 		datos.stream()
@@ -512,14 +512,14 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		.filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-		org.junit.Assert.assertEquals(175000 * 15 / 30, c500, DELTA);
+		org.junit.Assert.assertEquals(175000 * (monthDays - 15 ) / monthDays, c500, 1);
 
 		c601 =
 		datos.stream()
 		.filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
 
-		org.junit.Assert.assertEquals(175000 * 15 / 30, c601, DELTA);
+		org.junit.Assert.assertEquals(175000 * (monthDays - 15 ) / monthDays, c601, 1);
 
 		c737 =
 		datos.stream()
@@ -1100,13 +1100,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		datos.stream()
 		.filter(d -> d.getCodigo().equals("509")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-		org.junit.Assert.assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c509, DELTA);
+		org.junit.Assert.assertEquals(Math.round(1750.00 * (30 - workedDays) / 30 * 100.00), c509, DELTA);
 		
 		double c603 =
 		datos.stream()
 		.filter(d -> d.getCodigo().equals("603")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-		org.junit.Assert.assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c603, DELTA);
+		org.junit.Assert.assertEquals(Math.round(1750.00 * (30 - workedDays) / 30 * 100.00), c603, DELTA);
 
 		datos = bases.get(2).getDatosTramo().getDato();
 		
@@ -1116,13 +1116,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		datos.stream()
 		.filter(d -> d.getCodigo().equals("500")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-		org.junit.Assert.assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c500, DELTA);
+		org.junit.Assert.assertEquals(Math.round(1750.00 * (workedDays-10) / 30 * 100.00), c500, DELTA);
 		
 		c601 =
 		datos.stream()
 		.filter(d -> d.getCodigo().equals("601")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-		org.junit.Assert.assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c601, DELTA);
+		org.junit.Assert.assertEquals(Math.round(1750.00 * (workedDays-10) / 30 * 100.00), c601, DELTA);
 
 		h4 =
 		datos.stream()
@@ -1257,7 +1257,6 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		int workedDays = AonDateUtils.getMax(endDate, DAY_OF_MONTH) - 10; 
 		org.junit.Assert.assertEquals(Math.round(100.00/ workedDays * 10.00 * 100.00), h4, DELTA);
 
-		org.junit.Assert.assertEquals(Math.round(100.00/ workedDays * ( workedDays -10 )* 100.00), h4, DELTA);
 
 		datos = bases.get(1).getDatosTramo().getDato();
 		
@@ -1267,13 +1266,13 @@ public class SQLCretaTestCase extends AbstractSQLTestCase {
 		datos.stream()
 		.filter(d -> d.getCodigo().equals("509")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-		org.junit.Assert.assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c509, DELTA);
+		org.junit.Assert.assertEquals(Math.round(1750.00 * (30-workedDays)/ 30 * 100.00), c509, DELTA);
 		
 		double c603 =
 		datos.stream()
 		.filter(d -> d.getCodigo().equals("603")).map(d -> d.getValor())
 		.collect(Collectors.summingDouble(Double::parseDouble));
-		org.junit.Assert.assertEquals(Math.round(1750.00 * 10 / 30 * 100.00), c603, DELTA);
+		org.junit.Assert.assertEquals(Math.round(1750.00 * (30-workedDays) / 30 * 100.00), c603, DELTA);
 
 		datos = bases.get(2).getDatosTramo().getDato();
 		
