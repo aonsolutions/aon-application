@@ -26,6 +26,7 @@ if(Language.ENGLISH === language) {
 
 // ----- A
 
+export const ABOUT = MSG.ABOUT;
 export const ACCEPT = MSG.ACCEPT;
 export const ACCESS = MSG.ACCESS;
 export const ACCOUNT = MSG.ACCOUNT;
