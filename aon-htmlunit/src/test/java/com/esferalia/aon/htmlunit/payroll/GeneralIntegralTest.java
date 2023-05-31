@@ -3,12 +3,14 @@ package com.esferalia.aon.htmlunit.payroll;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_PASSWORD;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.INTEGRATION_BASE_USER;
 import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -18,6 +20,7 @@ import org.htmlunit.html.HtmlButton;
 import org.htmlunit.html.HtmlCheckBoxInput;
 import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlInput;
+import org.htmlunit.html.HtmlPage;
 import org.htmlunit.html.HtmlSpan;
 import org.htmlunit.html.HtmlTable;
 import org.htmlunit.html.HtmlTableDataCell;
@@ -2439,6 +2442,24 @@ public class GeneralIntegralTest extends BaseIntegralTestCase {
 		
 	}
 
+	@Test
+	public void TestIrpfIngresoAcuenta() throws Exception {
+		
+
+		if (!isDisplayed("i.r.p.f_ingreso_a_cuenta,_empresa"))
+			open("i.r.p.f_-_estatal");
+
+		wait4Id("i.r.p.f_ingreso_a_cuenta,_empresa");
+
+		draft("I.R.P.F INGRESO A CUENTA, EMPRESA");
+		
+		calculate(Calendar.APRIL, 2023);
+		
+		assertText("in_kind", 1000.00);
+		
+		List<DomElement> irpfs = getElementsById("irpf");
+		assertEquals(3,irpfs.size() );
+	}
 
 	@Test
 	public void TestEmbargos() throws Exception {

@@ -704,6 +704,137 @@ public class JooqContrataContract {
 		return employeesInfo;
 	}
 	
+	public static List<EmployeeContractInfo> getFJEmployeesInfo(Connection conn, Integer domainId) {
+		return getFJEmployeesInfoDB(DSL.using(conn, getDefaultSettings()), domainId);
+	}
+	
+	private static List<EmployeeContractInfo> getFJEmployeesInfoDB(DSLContext dslContext, Integer domainId) {
+		List<EmployeeContractInfo> employeesInfo = new ArrayList<>();
+		
+		List<String> fjTypes = new ArrayList<>();
+		fjTypes.add("\"300\"");
+		fjTypes.add("\"309\"");
+		fjTypes.add("\"330\"");
+		fjTypes.add("\"350\"");
+		fjTypes.add("\"389\"");
+		
+		Calendar cal = Calendar.getInstance();
+		
+		Result<Record> contractRecords = dslContext.select().from(PERSON)
+				.innerJoin(REGISTRY)
+				.on(PERSON.REGISTRY.eq(REGISTRY.ID))
+				.innerJoin(CONTRACT)
+				.on(CONTRACT.PERSON.eq(PERSON.REGISTRY))
+				.innerJoin(WORKPLACE)
+				.on(WORKPLACE.ID.eq(CONTRACT.WORKPLACE))
+				.join(CONTRACT_DATA)
+				.on(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID))
+				.where(CONTRACT.DOMAIN.eq(domainId))
+				.and(CONTRACT.ID.gt(0))
+				.and(CONTRACT.END_DATE.isNotNull().and(CONTRACT.END_DATE.le(new Date(cal.getTimeInMillis()))))
+				.and(CONTRACT_DATA.NAME.eq("TC2"))
+				.and(CONTRACT_DATA.EXPRESSION.in(fjTypes))
+				.orderBy(CONTRACT.PERSON, CONTRACT.START_DATE)
+				.fetch();
+		
+		
+		for(Record contractRecord : contractRecords) {
+			
+			// Filter if person has active contract
+			
+			Result<Record> activeCotract = dslContext.select().from(CONTRACT)
+				.where(CONTRACT.PERSON.eq(contractRecord.get(CONTRACT.PERSON)))
+				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.gt(new Date(cal.getTimeInMillis()))))
+				.fetch();
+			
+			if(activeCotract.isNotEmpty()) continue;
+			
+			// --------------------------------------------- Init
+			
+			EmployeeContractInfo employeeContractInfo = new EmployeeContractInfo();
+			ContractInfo contractData = new ContractInfo();
+			EmployeeInfo employeeData = new EmployeeInfo();
+			
+			// --------------------------------------------- Employee Info
+			
+			employeeData.setEmployeeId(contractRecord.get(PERSON.REGISTRY));
+			employeeData.setDomain(contractRecord.get(PERSON.DOMAIN));
+			employeeData.setSsNumber(contractRecord.get(PERSON.SOCIAL_SECURITY_NUM));
+			employeeData.setName(contractRecord.get(PERSON.NAME));
+			employeeData.setSurName(contractRecord.get(PERSON.FIRST_SURNAME));
+			employeeData.setSecondSurName(contractRecord.get(PERSON.SECOND_SURNAME));
+			employeeData.setDocument(contractRecord.get(REGISTRY.DOCUMENT));
+			
+			// --------------------------------------------- Contract Info
+			
+			// CONTRACT TABLE
+			contractData.setContractId(contractRecord.get(CONTRACT.ID));
+			contractData.setStartDate(contractRecord.get(CONTRACT.START_DATE));
+			contractData.setEndDate(contractRecord.get(CONTRACT.END_DATE));
+			contractData.setSsRegimen(contractRecord.get(CONTRACT.SS_REGIME));
+			contractData.setAgreementCategory(contractRecord.get(CONTRACT.CATEGORY_DESCRIPTION));
+			
+			// ENTERPRISE CCC
+			Record enterpriseCCCRecord = dslContext.select().from(ENTERPRISE_CCC)
+				.where(ENTERPRISE_CCC.ID.eq(contractRecord.get(CONTRACT.ENTERPRISE_CCC)))
+				.fetchOne();
+			
+			if(null!= enterpriseCCCRecord) {
+				contractData.setCccId(enterpriseCCCRecord.get(ENTERPRISE_CCC.ID));
+				contractData.setCccType(enterpriseCCCRecord.get(ENTERPRISE_CCC.TYPE));
+				contractData.setCompleteCCC(getCCCRegimeCode(contractData.getCccType())+enterpriseCCCRecord.get(ENTERPRISE_CCC.CCC));	
+			}
+			
+			// WORKPLACE TABLE		
+			contractData.setWorkplaceId(contractRecord.get(WORKPLACE.ID));
+			contractData.setWorkplaceName(contractRecord.get(WORKPLACE.DESCRIPTION));
+			
+			employeeContractInfo.setEmployeeInfo(employeeData);
+			employeeContractInfo.setContractInfo(contractData);
+			
+			// --------------------------------------------- Add employeeContractInfo
+						
+			employeesInfo.add(employeeContractInfo);
+			
+		}
+		
+		return employeesInfo;
+	}
+	
+	public static void duplicateContract(Connection conn, EmployeeContractInfo employeeContractInfo, java.util.Date newStartDate) {
+		try {
+			JooqEmployees.paste(
+					conn, 
+					employeeContractInfo.getEmployeeInfo().getDomain(), 
+					employeeContractInfo.getContractInfo().getWorkplaceId(), 
+					employeeContractInfo.getContractInfo().getContractId(), 
+					employeeContractInfo.getEmployeeInfo().getDocument(), 
+					newStartDate, 
+					null, 
+					true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void duplicateContract(Connection conn, List<EmployeeContractInfo> employees, java.util.Date newStartDate) {
+		for(EmployeeContractInfo employeeContractInfo : employees) {
+			try {
+				JooqEmployees.paste(
+						conn, 
+						employeeContractInfo.getEmployeeInfo().getDomain(), 
+						employeeContractInfo.getContractInfo().getWorkplaceId(), 
+						employeeContractInfo.getContractInfo().getContractId(), 
+						employeeContractInfo.getEmployeeInfo().getDocument(), 
+						newStartDate, 
+						null, 
+						true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public static EmployeeContractInfo getEmployeeInfo(Connection conn, Integer contractId) {
 		return getEmployeeInfoDB(DSL.using(conn, getDefaultSettings()), contractId);
 	}

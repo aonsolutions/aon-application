@@ -208,6 +208,8 @@ public interface EnterprisesService extends RemoteService {
 	List<CCCInfo> getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime);
 
 	List<EmployeeContractInfo> getEmployeesInfo(String currentDomainName, Boolean allEmployees);
+	
+	List<EmployeeContractInfo> getFJEmployeesInfo(String currentDomainName);
 
 	List<ITEmployee> getEmployeesITInfo(String currentDomainName, Boolean allEmployees);
 
@@ -444,5 +446,9 @@ public interface EnterprisesService extends RemoteService {
 	List<ContractData> getMassiveCNOs(String currentDomainName, String currentUser) throws IllegalArgumentException;
 
 	void updateMassiveCNOs(String currentDomainName, String currentUser, List<ContractData> contractDatas) throws IllegalArgumentException;
+	
+	void duplicateContract(String currentDomainName, String currentUser, EmployeeContractInfo employee, Date newStartDate) throws IllegalArgumentException;
+	
+	void duplicateContract(String currentDomainName, String currentUser, List<EmployeeContractInfo> employees, Date newStartDate) throws IllegalArgumentException;
 
 }

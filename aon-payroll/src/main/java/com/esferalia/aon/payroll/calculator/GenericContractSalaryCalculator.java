@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.calculator;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ADDITIONAL_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ADDITIONAL_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ALL;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.BASE_CTA_ESP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
@@ -24,6 +25,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.FRIDAY_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.GUARENTEED;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.INKIND_IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IN_KIND;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TMP_IN_KIND;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_CTA_ESP;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_PERCENT;
@@ -987,7 +989,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 				Date deductionStart = null;
 				Date deductionEnd = null;
 
-				if (type.isTaxDeduction()) {
+				if (type.isTaxDeduction() || AonStringUtils.equals(contractDeduction.getName(), IN_KIND.getName())) {
 					deductionStart = ctx.getIrpfDate();
 					deductionEnd = ctx.getIrpfDate();
 					
@@ -997,9 +999,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					    ContextFunctions.loadFunctions(expressionContext, deductionStart, deductionEnd);
 					    
 					    for ( ContextVariable irpfVar : new ContextVariable  [] {
+						    TMP_IN_KIND,
 						    IRPF_PERCENT, 
 						    IRPF_CTA_ESP, 
 						    IRPF_BASE, 
+						    BASE_CTA_ESP,
 						    INKIND_IRPF_BASE, 
 						    MONEY_IRPF_BASE } ) {
         					    Optional<Object> varValue =
@@ -1806,7 +1810,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 			
 			@Override
 			public void visitSalaryInKind(PaymentType paymentType) {
-				addResult(expressionContext, IN_KIND.getName(), resultStart, resultEnd, resultValue);
+				addResult(expressionContext, TMP_IN_KIND.getName(), resultStart, resultEnd, resultValue);
 			}
 			
 			@Override
