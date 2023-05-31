@@ -1,7 +1,6 @@
 package net.aonsolutions.api.http;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,11 +11,10 @@ import net.aonsolutions.occam.api.AON;
 import net.aonsolutions.occam.api.AonConstants;
 import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.Occam;
-import net.aonsolutions.occam.api.config.Domain;
 import net.aonsolutions.occam.json.DomainJSON;
 
-@WebServlet(name = "XXDomainHttpServlet", urlPatterns = {"/ms/api/XXDomain/*"})
-public class XXDomainHttpServlet extends HttpServlet{
+@WebServlet(name = "APIHttpServlet", urlPatterns = {"/ms/api/aon/*"})
+public class APIHttpServlet extends HttpServlet{
 
 	private static final long serialVersionUID = 5807589402121022731L;
 
@@ -29,10 +27,16 @@ public class XXDomainHttpServlet extends HttpServlet{
         resp.setContentType(AonConstants.APPLICATION_JSON);
         resp.setHeader(AonConstants.CACHE_CONTROL, AonConstants.NO_CACHE);
         Occam occam = new Occam().setDomainName(domainName).setUser(user);
-        Optional<Domain> domain = AON.getDomain(occam, f -> f.withName().eq(domainName));
-        if (domain.isPresent()) {
-        	resp.getWriter().write(DomainJSON.to(domain.get()).toString());
-        }
-        
+        resp.getWriter().write( DomainJSON.to( 
+	        AON.getDomains(occam
+	    		, f -> f.withId().gt(0)
+	    		, b -> b.withUsers()
+	    			.withAudit()
+	    			.withBooking()
+	    			.withCompany()
+	    			.withParentDomain()
+	    			.withConfiguration( a -> a.withAccountingConfiguration())
+	    			.limit(0, 3)
+   		)).toString());
 	}
 }

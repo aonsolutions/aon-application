@@ -48,7 +48,7 @@ public final class AonNames {
 	public static final String DOMAIN_NAME = "domainName";
 
 	// ---------------------------------------------------------------------------------------------	[E] 
-	public static final String ENABLE_HEREDITY = "enableHeredity";
+	public static final String INHERITS = "inherits";
 	public static final String END_DATE = "end_date";
 	public static final String EPIGRAPH = "epigraph";
 	public static final String EXPIRATION_DATE = "expirationDate";

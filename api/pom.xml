@@ -33,7 +33,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
  					<includes>
- 						<include>**/WatsonTestSuite.class</include>
+ 						<include>**/APITestSuite.class</include>
  					</includes>
 				</configuration>
 			</plugin>
@@ -98,12 +98,20 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		<!--
 	    <dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-servlet-api</artifactId>
 			<version>10.1.7</version>
 			<scope>provided</scope>
 	    </dependency>
+	    -->
+		<dependency>
+			<groupId>jakarta.platform</groupId>
+			<artifactId>jakarta.jakartaee-api</artifactId>
+			<version>10.0.0</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
@@ -139,6 +147,28 @@
 			<version>5.3.1</version>
 			<scope>test</scope>
 		</dependency>
+		
+		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+ 			<artifactId>resteasy-undertow-cdi</artifactId>
+ 			<version>6.2.4.Final</version>
+ 			<scope>test</scope>
+		</dependency>
+		<dependency>             
+		    <groupId>org.jboss.resteasy</groupId>             
+		    <artifactId>resteasy-client</artifactId>
+ 			<version>6.2.4.Final</version>
+ 			<scope>test</scope>
+		</dependency>
+		 
+		<!--
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+    		<artifactId>resteasy-jackson2-provider</artifactId>
+			<version>6.2.4.Final</version>
+ 			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-core</artifactId>
@@ -151,6 +181,7 @@
 			<version>1.0.2</version>
 			<scope>test</scope>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
