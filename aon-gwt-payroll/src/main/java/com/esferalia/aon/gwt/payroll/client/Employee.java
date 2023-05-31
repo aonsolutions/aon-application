@@ -1354,10 +1354,10 @@ public abstract class Employee extends ResizeComposite {
 	public void reformatAccount(SuggestBox accountField) {
 	    String accountText = accountField.getText();
 	    accountText = accountText.replaceAll("\\W+", "");
-	    if (accountText.length() >= 24) {
+	    if (accountText.length() == 24) {
 	    	accountField.setText(accountText.substring(0, 4) + "  " + accountText.substring(4, 8) + "  " + accountText.substring(8, 12) + "  " + accountText.substring(12, 16)
 	    	+ "  " + accountText.substring(16, 20) + "  " + accountText.substring(20, 24));
-	    }
+	    } else accountField.setText(accountText);
 	}
 	
 	public void initIbans(ArrayList<String> employeeIbans) {
