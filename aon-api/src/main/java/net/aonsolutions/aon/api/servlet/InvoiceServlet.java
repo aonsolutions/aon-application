@@ -525,6 +525,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 										
 					JSONObject f = new JSONObject();
 				    f.put("url", url);
+				    f.put("path", url);
 				    f.put("content_type", r.getMimeType().getName());
 				    json.put("file", f);
 				}
