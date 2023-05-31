@@ -409,7 +409,7 @@ public class Mod2002022Description {
 	
 	static {
 		DESCRIPTION_MAP.put(Mod2002022Key.LQ500, "Resultado de la cuenta de p\u00E9rdidas y ganancias");
-		DESCRIPTION_MAP.put(Mod2002022Key.LQ301, "Correcciones por Impuesto sobre Sociedades.");
+		DESCRIPTION_MAP.put(Mod2002022Key.LQ301, "Correcciones por Impuesto sobre Sociedades");
 		DESCRIPTION_MAP.put(Mod2002022Key.LQ501, "Resultado de la cuenta de p\u00E9rdidas y ganancias antes de Impuesto sobre Sociedades");
 		DESCRIPTION_MAP.put(Mod2002022Key.LQ1230,"Correcciones al resultado contable al considerar los requisitos o calificaciones contables referidos al grupo fiscal (art. 62.1a) LIS) (i.e., operaciones con acciones propias a nivel de grupo fiscal, coberturas, etc.)");
 		DESCRIPTION_MAP.put(Mod2002022Key.I0417, "Total correcciones al resultado de la cuenta de p\u00E9rdidas y ganancias (excluida la correcci\u00F3n por IS)");

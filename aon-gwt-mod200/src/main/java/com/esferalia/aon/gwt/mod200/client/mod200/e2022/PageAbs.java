@@ -171,6 +171,9 @@ public abstract class PageAbs extends ResizeComposite {
 		ScrollPanel scroll = new ScrollPanel();
 		basePanel = new FlowPanel();		
 		basePanel.addStyleName(AON.CSS.aonPaddingBottom());
+		// FALTA - PRUEBA
+		basePanel.getElement().getStyle().setProperty("max-width", "fit-content");
+		
 		scroll.add(basePanel);
 		initWidget(scroll);		
 	}
@@ -485,7 +488,7 @@ public abstract class PageAbs extends ResizeComposite {
 		
 		FlexTable tab = new FlexTable();
 		tab.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab.addStyleName(AON.CSS.aonMargin());
+		tab.addStyleName(AON.CSS.aonMargin());		
 		
 		// Ancho de las columnas de importes
 		for (int i = 0; i < numAmountCols; i++) {
@@ -538,7 +541,7 @@ public abstract class PageAbs extends ResizeComposite {
 	protected void paintFooterNote(Panel container, String... notes) {
  
 		for (String text : notes) {
-			Label footernote = new Label(text);
+			Label footernote = new Label(text);			
 			footernote.setWidth("95%");
 			footernote.addStyleName(AON.CSS.aonFontSmaller());
 			footernote.addStyleName(AON.CSS.aonBlockCenter());

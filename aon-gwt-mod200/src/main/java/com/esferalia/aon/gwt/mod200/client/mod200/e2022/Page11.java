@@ -1,4 +1,4 @@
-// LIQUIDACION (IV): OTRAS DEDUCCIONES, CUOTA LIQUIDA POSITIVA
+// LIQUIDACION (IV): OTRAS DEDUCCIONES, CUOTA LIQUIDA
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import com.esferalia.aon.gwt.common.client.AON;
@@ -87,7 +87,7 @@ public class Page11 extends PageAbs {
 		
 		basePanel.clear();	
 		
-		basePanel.add(getTitle(AON.MSG.otherDeductions()));
+		basePanel.add(getTitle("Otras deducciones. Cuota l\u00EDquida"));
 		
 		FlexTable table = addTable();
 		

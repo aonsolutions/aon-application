@@ -24,7 +24,7 @@ public class Page08 extends PageAbs {
 		 	,"Disminuciones futuras"		 	
 	};
 	
-	private static enum CorrectionKey implements Serializable,IMod200KeysProvider {
+	private enum CorrectionKey implements Serializable,IMod200KeysProvider {
 		 DC01(false,Mod2002022Key.DC2305,Mod2002022Key.DC2306,"Saldo pendiente de correcciones temporarias a principio de ejercicio")
 		,DC02(false,Mod2002022Key.DC2301,Mod2002022Key.DC2302,"Correcciones del ejercicio: Correcciones permanentes (excluida correcci\u00F3n I. Sociedades)")
 		,DC03(false,Mod2002022Key.DC2303,Mod2002022Key.DC2304,"Correcciones del ejercicio: Correcciones temporarias con origen en el ejercicio")
@@ -108,7 +108,7 @@ public class Page08 extends PageAbs {
 			paintKeyField(tab1, Mod2002022Key.LQ1230, row, 1);
 			paintKeyField(tab1, Mod2002022Key.LQ1231, row, 2);
 			paintEmptyCell(tab1, row, 3);
-			++row;
+//			++row;
 		}
 		
 		// Volumen de operaciones
@@ -197,15 +197,15 @@ public class Page08 extends PageAbs {
 		}
 	}
 	
-	@Override
-	public void dump() {
-		super.dump();
+//	@Override
+//	public void dump() {
+//		super.dump();
 //		DoubleVariableEx dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002022Key.VOLOPE);
 //		int index = 0;
 //		if (dv != null) {
 //			index = dv.getValue().intValue();
 //		}
 //		opeVol.setSelectedIndex(index);
-	}
+//	}
 	
 }

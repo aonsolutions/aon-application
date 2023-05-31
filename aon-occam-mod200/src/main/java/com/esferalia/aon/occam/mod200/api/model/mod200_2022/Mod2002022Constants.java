@@ -349,7 +349,7 @@ public class Mod2002022Constants {
 		Mod2002022Key.LQ545, 
 		Mod2002022Key.LQ1509,
 		
-		// Régimen especial de entidades navieras en Canarias
+		// Régimen especial de buques y empresas navieras en Canarias
 		Mod2002022Key.LQ1576, 
 		Mod2002022Key.LQ1577,		
 		

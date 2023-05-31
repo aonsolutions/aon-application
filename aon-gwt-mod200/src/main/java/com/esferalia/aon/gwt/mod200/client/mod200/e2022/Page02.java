@@ -75,9 +75,10 @@ public class Page02 extends PageAbs {
 		addLabel(PARTICIPATIONS_LABEL, true);
 		
 		AonDisplayGrid grid = new AonDisplayGrid();
-		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
-		grid.addStyleName(AON.CSS.aonBlockCenter());
-		grid.addStyleName(AON.CSS.aonMarginTop());		
+//		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		grid.addStyleName(AON.CSS.aonBlockCenter());
+		grid.addStyleName(AON.CSS.aonMarginTop());
+		grid.getElement().getStyle().setProperty("margin-left", "1%");
 		basePanel.add(grid);
 		
 		grid.addHeaderRow()
@@ -172,7 +173,7 @@ public class Page02 extends PageAbs {
 //			.addCell( new Label("%"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth40())
 //			.addCell( new Label(AON.MSG.nominalValue()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
 //			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
-		AonDisplayTable tab2 = addRegistryTable(AON.MSG.document(), "Rpte.", "F/J/Otra", AON.MSG.companyName(), AON.MSG.province() + "/" + AON.MSG.country(), "%", AON.MSG.nominalValue());	
+		AonDisplayTable tab2 = addRegistryTable(AON.MSG.document(), "Rpte.", "F/J/Otra", AON.MSG.companyName(), AON.MSG.province() + "/" + AON.MSG.country(), "% Particip.", AON.MSG.nominalValue());	
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getParticipationsIn().size(); i++) {
 			final int idx = i;
@@ -320,15 +321,17 @@ public class Page02 extends PageAbs {
 		
 		basePanel.add(getTitle(AON.MSG.minorEntities()));
 		
-		AonDisplayTable tab4 = new AonDisplayTable();
-		tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab4.addStyleName(AON.CSS.aonBlockCenter());
-		basePanel.add(tab4);
-		
-		tab4.addRow()
-			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
-			.addCell( new Label(AON.MSG.companyName()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
-			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+//		AonDisplayTable tab4 = new AonDisplayTable();
+//		tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		tab4.addStyleName(AON.CSS.aonBlockCenter());
+//		basePanel.add(tab4);
+//		
+//		tab4.addRow()
+//			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
+//			.addCell( new Label(AON.MSG.companyName()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
+//			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+
+		AonDisplayTable tab4 = addRegistryTable(AON.MSG.document(), AON.MSG.companyName());
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getMinorEntities().size(); i++) {
 			final int idx = i;
@@ -382,19 +385,30 @@ public class Page02 extends PageAbs {
 		
 		basePanel.add(getTitle(AON.MSG.utefor()));
 		
-		AonDisplayTable tabForeign = new AonDisplayTable();
-		tabForeign.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tabForeign.addStyleName(AON.CSS.aonBlockCenter());
-		basePanel.add(tabForeign);
+//		AonDisplayTable tabForeign = new AonDisplayTable();
+//		tabForeign.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		tabForeign.addStyleName(AON.CSS.aonBlockCenter());
+//		basePanel.add(tabForeign);
+//		
+//		tabForeign.addRow()
+//			.addCell( new Label(AON.MSG.identification()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
+//			.addCell( new Label(AON.MSG.utefor1()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+//			.addCell( new Label(AON.MSG.utefor2()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+//			.addCell( new Label(AON.MSG.utefor3()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+//			.addCell( new Label(AON.MSG.utefor4()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+//			.addCell( new Label(AON.MSG.utefor5()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+//			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+		
+		AonDisplayTable tabForeign = addRegistryTable();
 		
 		tabForeign.addRow()
-			.addCell( new Label(AON.MSG.identification()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
-			.addCell( new Label(AON.MSG.utefor1()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.utefor2()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.utefor3()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.utefor4()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-			.addCell( new Label(AON.MSG.utefor5()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+				.addCell( new Label(AON.MSG.identification()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom())
+				.addCell( new Label(AON.MSG.utefor1()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+				.addCell( new Label(AON.MSG.utefor2()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
+				.addCell( new Label(AON.MSG.utefor3()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
+				.addCell( new Label(AON.MSG.utefor4()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
+				.addCell( new Label(AON.MSG.utefor5()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
+				.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom());
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getUteForeign().size(); i++) {
 			final int idx = i;
@@ -496,14 +510,16 @@ public class Page02 extends PageAbs {
 		
 		// NIF de la/las sociedad/es disuelta/s
 		
-		AonDisplayTable tabSicav1 = new AonDisplayTable();
-		tabSicav1.setWidth("30%");
-		tabSicav1.addStyleName(AON.CSS.aonBlockCenter());
-		basePanel.add(tabSicav1);
+//		AonDisplayTable tabSicav1 = new AonDisplayTable();
+//		tabSicav1.setWidth("30%");
+//		tabSicav1.addStyleName(AON.CSS.aonBlockCenter());
+//		basePanel.add(tabSicav1);
+//		
+//		tabSicav1.addRow()   
+//			.addCell( new Label("NIF de la/las sociedad/es disuelta/s"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
+//			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
 		
-		tabSicav1.addRow()   
-			.addCell( new Label("NIF de la/las sociedad/es disuelta/s"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
-			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+		AonDisplayTable tabSicav1 = addRegistryTable("NIF de la/las sociedad/es disuelta/s");
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getSicav1().size(); i++) {
 			final int idx = i;
@@ -542,14 +558,16 @@ public class Page02 extends PageAbs {
 		
 		// NIF de la/las IIC donde reinvierte
 		
-		AonDisplayTable tabSicav2 = new AonDisplayTable();
-		tabSicav2.setWidth("30%");
-		tabSicav2.addStyleName(AON.CSS.aonBlockCenter());
-		basePanel.add(tabSicav2);
+//		AonDisplayTable tabSicav2 = new AonDisplayTable();
+//		tabSicav2.setWidth("30%");
+//		tabSicav2.addStyleName(AON.CSS.aonBlockCenter());
+//		basePanel.add(tabSicav2);
+//		
+//		tabSicav2.addRow()  
+//			.addCell( new Label("NIF de la/las IIC donde reinvierte"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
+//			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
 		
-		tabSicav2.addRow()  
-			.addCell( new Label("NIF de la/las IIC donde reinvierte"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
-			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+		AonDisplayTable tabSicav2 = addRegistryTable("NIF de la/las IIC donde reinvierte");		
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getSicav2().size(); i++) {
 			final int idx = i;

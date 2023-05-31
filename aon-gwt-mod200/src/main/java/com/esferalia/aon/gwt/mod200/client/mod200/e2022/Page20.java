@@ -15,10 +15,6 @@ import com.esferalia.aon.occam.mod200.api.model.IMod200Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -73,7 +69,7 @@ public class Page20 extends PageAbs {
 		paintKeyField(table, Mod2002022Key.BN621, row++, 1, false);
 		paintDescription(table, "Opci\u00F3n de fraccionamiento art. 19.1 LIS", row++, 0, true);
 		paintDescription(table, Mod2002022Key.LQ2489.getDescription() + ": Estado", row, 0, false);
-		paintKeyField(table, Mod2002022Key.LQ2489, row++, 1, false);
+		paintKeyField(table, Mod2002022Key.LQ2489, row, 1, false);
 		
 		// Panel Devolución
 		
@@ -86,40 +82,29 @@ public class Page20 extends PageAbs {
 		
 		devTypeR = new RadioButton("devTypeButton");		
 		devTypeR.setText(AON.MSG.payBackRefuse());
-		devTypeR.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.getMod200Object().getMod200().setDevType("R");
-				callback.markAsDirty();				
-			}
+		devTypeR.addClickHandler(event -> {
+			callback.getMod200Object().getMod200().setDevType("R");
+			callback.markAsDirty();				
 		});
 		otherInputs.add(devTypeR);
 
 		devTypeD = new RadioButton("devTypeButton");
 		devTypeD.addStyleName(AON.CSS.aonMarginLeft());
 		devTypeD.setText(AON.MSG.payBackTransfer());
-		devTypeD.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.getMod200Object().getMod200().setDevType("D");
-				callback.markAsDirty();				
-			}
+		devTypeD.addClickHandler(event -> {
+			callback.getMod200Object().getMod200().setDevType("D");
+			callback.markAsDirty();			
 		});
 		otherInputs.add(devTypeD);
 
 		devTypeV = new RadioButton("devTypeButton");
 		devTypeV.addStyleName(AON.CSS.aonMarginLeft());
 		devTypeV.setText(AON.MSG.payBackCCT());
-		devTypeV.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.getMod200Object().getMod200().setDevType("V");
-				callback.markAsDirty();				
-			}
+		devTypeV.addClickHandler(event -> {
+			callback.getMod200Object().getMod200().setDevType("V");
+			callback.markAsDirty();				
 		});
+		
 		otherInputs.add(devTypeV);
 		
 		devPanel1.add(devTypeR);
@@ -144,20 +129,17 @@ public class Page20 extends PageAbs {
 		
 		ibanD = new AonIbanTextBox(getSuggestOracle(),true);
 		ibanD.addStyleName(AON.CSS.aonMarginLeft());
-		ibanD.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
-			@Override
-			public void onSelection(SelectionEvent<Suggestion> event) {
-				Suggestion suggestion = event.getSelectedItem();
-				if (suggestion instanceof IbanSuggestion) {
-					IbanSuggestion is = (IbanSuggestion) suggestion;
-					ibanD.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());
-					callback.getMod200Object().getMod200().setIban(ibanD.getValue());
-					callback.getMod200Object().getMod200().setBic(ibanD.getBic());
-				} else {
-					ibanD.setValue(suggestion.getReplacementString());	
-				}
-				callback.markAsDirty();
+		ibanD.addSelectionHandler(event -> {
+			Suggestion suggestion = event.getSelectedItem();
+			if (suggestion instanceof IbanSuggestion) {
+				IbanSuggestion is = (IbanSuggestion) suggestion;
+				ibanD.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());
+				callback.getMod200Object().getMod200().setIban(ibanD.getValue());
+				callback.getMod200Object().getMod200().setBic(ibanD.getBic());
+			} else {
+				ibanD.setValue(suggestion.getReplacementString());	
 			}
+			callback.markAsDirty();			
 		});		
 		otherInputs.add(ibanD);
 		addValueChangeHandlerIban(ibanD);
@@ -178,52 +160,36 @@ public class Page20 extends PageAbs {
 		
 		payTypeI = new RadioButton("devTypeButton");
 		payTypeI.setText(AON.MSG.payInAccount());
-		payTypeI.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.getMod200Object().getMod200().setPayType("I");
-				callback.markAsDirty();				
-			}
+		payTypeI.addClickHandler(event -> {
+			callback.getMod200Object().getMod200().setPayType("I");
+			callback.markAsDirty();				
 		});
 		otherInputs.add(payTypeI);
 		
 		payTypeH = new RadioButton("devTypeButton");
 		payTypeH.addStyleName(AON.CSS.aonMarginLeft());
 		payTypeH.setText(AON.MSG.cash());
-		payTypeH.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.getMod200Object().getMod200().setPayType("H");
-				callback.markAsDirty();				
-			}
+		payTypeH.addClickHandler(event -> {
+			callback.getMod200Object().getMod200().setPayType("H");
+			callback.markAsDirty();				
 		});
 		otherInputs.add(payTypeH);
 		
 		payTypeU = new RadioButton("devTypeButton");
 		payTypeU.addStyleName(AON.CSS.aonMarginLeft());
 		payTypeU.setText(AON.MSG.directDebit());
-		payTypeU.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.getMod200Object().getMod200().setPayType("U");
-				callback.markAsDirty();				
-			}
+		payTypeU.addClickHandler(event -> {
+			callback.getMod200Object().getMod200().setPayType("U");
+			callback.markAsDirty();				
 		});
 		otherInputs.add(payTypeU);
 		
 		payTypeG = new RadioButton("devTypeButton");
 		payTypeG.addStyleName(AON.CSS.aonMarginLeft());
 		payTypeG.setText(AON.MSG.payCCT());
-		payTypeG.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				callback.getMod200Object().getMod200().setPayType("G");
-				callback.markAsDirty();				
-			}
+		payTypeG.addClickHandler(event -> {
+			callback.getMod200Object().getMod200().setPayType("G");
+			callback.markAsDirty();				
 		});
 		otherInputs.add(payTypeG);
 		
@@ -250,20 +216,17 @@ public class Page20 extends PageAbs {
 		
 		ibanP = new AonIbanTextBox(getSuggestOracle(),true);
 		ibanP.addStyleName(AON.CSS.aonMarginLeft());
-		ibanP.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
-			@Override
-			public void onSelection(SelectionEvent<Suggestion> event) {
-				Suggestion suggestion = event.getSelectedItem();
-				if (suggestion instanceof IbanSuggestion) {
-					IbanSuggestion is = (IbanSuggestion) suggestion;
-					ibanP.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());
-					callback.getMod200Object().getMod200().setIban(ibanP.getValue());
-					callback.getMod200Object().getMod200().setBic(ibanP.getBic());
-				} else {
-					ibanP.setValue(suggestion.getReplacementString());
-				}
-				callback.markAsDirty();
+		ibanP.addSelectionHandler(event -> {
+			Suggestion suggestion = event.getSelectedItem();
+			if (suggestion instanceof IbanSuggestion) {
+				IbanSuggestion is = (IbanSuggestion) suggestion;
+				ibanP.setValue(is.getIbanContainer().getIBan(), is.getIbanContainer().getBic());
+				callback.getMod200Object().getMod200().setIban(ibanP.getValue());
+				callback.getMod200Object().getMod200().setBic(ibanP.getBic());
+			} else {
+				ibanP.setValue(suggestion.getReplacementString());
 			}
+			callback.markAsDirty();
 		});		
 		otherInputs.add(ibanP);
 		addValueChangeHandlerIban(ibanP);		
