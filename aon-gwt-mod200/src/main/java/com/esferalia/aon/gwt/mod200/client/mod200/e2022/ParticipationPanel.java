@@ -137,7 +137,9 @@ public class ParticipationPanel extends AonCustomDialog {
 			cd.confirm(AON.MSG.cancelAction(), new AonConfirmDialogCallback() {
 				
 				@Override
-				public void onCancel() {}
+				public void onCancel() { 
+					/* DO NOTHING */ 
+				}
 				
 				@Override
 				public void onAccept() {
@@ -187,7 +189,8 @@ public class ParticipationPanel extends AonCustomDialog {
 		
 		rootPanel.clear();
 		
-		Label label = new Label("Participaciones que a fin de per\u00EDodo sean igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.");
+//		Label label = new Label("Participaciones que a fin de per\u00EDodo sean igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.");
+		Label label = new Label(PageAbs.PARTICIPATIONS_LABEL);
 		label.setStyleName(AON.CSS.aonMargin());
 		label.addStyleName(AON.CSS.aonBold());
 		label.addStyleName(AON.CSS.aonWidthAlmostAll());
@@ -205,21 +208,15 @@ public class ParticipationPanel extends AonCustomDialog {
 		
 		document = new AonDocumentTextBox();
 		document.setVisibleLength(9);
-		document.addValueChangeHandler(event -> {
-			setModified(true);
-		});
+		document.addValueChangeHandler(event -> setModified(true));
 		
 		name = new AonTextBox();
 		name.setVisibleLength(40);
 		name.setMaxLength(30);
-		name.addValueChangeHandler(event -> {
-			setModified(true);
-		});
+		name.addValueChangeHandler(event -> setModified(true));
 		
 		province = new ProvinceCountryListBox();
-		province.addChangeHandler(event -> {
-			setModified(true);
-		});		
+		province.addChangeHandler(event -> setModified(true));		
 		
 		addRow(tab1, AON.MSG.nif(), document);
 		addRow(tab1, AON.MSG.companyName(), name);
@@ -236,24 +233,16 @@ public class ParticipationPanel extends AonCustomDialog {
 		
 		percent = new AonDoubleBox();
 		percent.setMaxLength(6);
-		percent.addValueChangeHandler(event -> {
-			setModified(true);
-		});
+		percent.addValueChangeHandler(event -> setModified(true));
 		
 		nominalValue = new AonDoubleBox();
-		nominalValue.addValueChangeHandler(event -> {
-			setModified(true);
-		});
+		nominalValue.addValueChangeHandler(event -> setModified(true));
 		
 		bookValue = new AonDoubleBox();
-		bookValue.addValueChangeHandler(event -> {
-			setModified(true);
-		});
+		bookValue.addValueChangeHandler(event -> setModified(true));
 		
 		incomes = new AonDoubleBox();
-		incomes.addValueChangeHandler(event -> {
-			setModified(true);
-		});		
+		incomes.addValueChangeHandler(event -> setModified(true));		
 		
 		addRow(tab2, AON.MSG.partMsg4(), percent);
 		addRow(tab2, Mod2002022Key.P1501.getDescription(), nominalValue);
@@ -274,31 +263,21 @@ public class ParticipationPanel extends AonCustomDialog {
 		rootPanel.add(tab3);
 		
 		aValue = new AonDoubleBox();                         
-		aValue.addValueChangeHandler(event -> {
-			eValueCompute();
-		});
+		aValue.addValueChangeHandler(event -> eValueCompute());
 		
 		bValue = new AonDoubleBox();                                 
-		bValue.addValueChangeHandler(event -> {
-			eValueCompute();
-		});
+		bValue.addValueChangeHandler(event -> eValueCompute());
 
 		cValue = new AonDoubleBox(); 
-		cValue.addValueChangeHandler(event -> {
-			eValueCompute();
-		});
+		cValue.addValueChangeHandler(event -> eValueCompute());
 		
 		dValue = new AonDoubleBox();         
-		dValue.addValueChangeHandler(event -> {
-			eValueCompute();
-		});
+		dValue.addValueChangeHandler(event -> eValueCompute());
 		
 		eValue = new AonDoubleBox();          
 
 		fValue = new AonDoubleBox();                                                       
-		fValue.addValueChangeHandler(event -> {
-			setModified(true);
-		});	
+		fValue.addValueChangeHandler(event -> setModified(true));	
 		
 		addRow(tab3, Mod2002022Key.P1504.getDescription()+" (**)", aValue);
 		addRow(tab3, Mod2002022Key.P1506.getDescription(), bValue);
@@ -323,24 +302,16 @@ public class ParticipationPanel extends AonCustomDialog {
 		rootPanel.add(tab4);
 		
 		capital = new AonDoubleBox();
-		capital.addValueChangeHandler(event -> {
-			setModified(true);
-		});
+		capital.addValueChangeHandler(event -> setModified(true));
 		
 		reserve = new AonDoubleBox();
-		reserve.addValueChangeHandler(event -> {
-			setModified(true);
-		});		
+		reserve.addValueChangeHandler(event -> setModified(true));		
 
 		otherAmounts = new AonDoubleBox();
-		otherAmounts.addValueChangeHandler(event -> {
-			setModified(true);
-		});		
+		otherAmounts.addValueChangeHandler(event -> setModified(true));		
 
 		result = new AonDoubleBox();
-		result.addValueChangeHandler(event -> {
-			setModified(true);
-		});		
+		result.addValueChangeHandler(event -> setModified(true));		
 		
 		addRow(tab4, AON.MSG.partMsg14(), capital);
 		addRow(tab4, AON.MSG.partMsg15(), reserve);
@@ -357,17 +328,13 @@ public class ParticipationPanel extends AonCustomDialog {
 		Button acceptButton = new Button();
 		acceptButton.setStyleName(AON.CSS.aonOkButton());
 		acceptButton.setText(AON.MSG.accept());
-		acceptButton.addClickHandler(event -> {
-			onAccept();
-		});
+		acceptButton.addClickHandler(event -> onAccept());
 		
 		Button cancelButton = new Button();
     	cancelButton.setStyleName(AON.CSS.aonCancelButton());
     	cancelButton.addStyleName(AON.CSS.aonMarginLeft());
     	cancelButton.setText( AON.MSG.cancelAction());
-		cancelButton.addClickHandler(event -> {
-			onCancel();
-		});
+		cancelButton.addClickHandler(event -> onCancel());
 		
 		buttonsPanel.add(acceptButton);
 		buttonsPanel.add(cancelButton);

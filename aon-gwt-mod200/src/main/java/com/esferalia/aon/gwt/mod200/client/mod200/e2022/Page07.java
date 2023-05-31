@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.Label;
 
 public class Page07 extends PageAbs {
 
-	private static enum Page7Column {
+	private enum Page7Column {
 		 COL00(""                 ,true ,true ,true )
 		,COL01(AON.MSG.ecpnMsg1() ,true ,true ,true )
 		,COL02(AON.MSG.ecpnMsg2() ,true ,true ,true )
@@ -60,7 +60,7 @@ public class Page07 extends PageAbs {
 		}
 	}
 	
-	private static enum Page7Row {
+	private enum Page7Row {
 		 ROW1 (""                 ,false,true ,true ,true ,null )
 		,ROW2 (AON.MSG.ecpnMsg15(),true ,true ,true ,true ,new Mod2002022Key[] {Mod2002022Key.TC380,Mod2002022Key.TC381,Mod2002022Key.TC382,Mod2002022Key.TC383,Mod2002022Key.TC384,Mod2002022Key.TC385,Mod2002022Key.TC386,Mod2002022Key.TC387,Mod2002022Key.TC388,Mod2002022Key.TC389,Mod2002022Key.TC390,Mod2002022Key.TC391,Mod2002022Key.TC392,Mod2002022Key.TC393})
 		,ROW3 (AON.MSG.ecpnMsg16(),false,true ,true ,true ,new Mod2002022Key[] {Mod2002022Key.TC394,Mod2002022Key.TC395,Mod2002022Key.TC396,Mod2002022Key.TC397,Mod2002022Key.TC398,Mod2002022Key.TC399,Mod2002022Key.TC400,Mod2002022Key.TC401,Mod2002022Key.TC402,Mod2002022Key.TC403,Mod2002022Key.TC404,Mod2002022Key.TC405,Mod2002022Key.TC406,Mod2002022Key.TC407})

@@ -855,7 +855,7 @@ public class Model2002022 extends DockLayoutPanel {
 		linkContainer.setStyleName(AON.CSS.aonPaddingLeft());
 		linkContainer.addStyleName(AON.CSS.aonPaddingBottom());
 		 
-		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Personal Asalariado, Caracteres de la declaraci\u00F3n"));
+		linkContainer.add(new WestFocusPanel( 1,AON.MSG.identification() + ", Estados de Cuentas, Personal Asalariado, Cifra de negocios, Caracteres"));
 		linkContainer.add(new WestFocusPanel( 2,"Secretario, Grupo Fiscal o Mercantil, Representantes y Administradores"));
 		linkContainer.add(new WestFocusPanel( 3,"Participaciones, Entidades menores, Informaci\u00F3n detalle EP y UTE, Socios SICAV"));
 		linkContainer.add(new WestFocusPanel( 4,AON.MSG.balanceActivo()));

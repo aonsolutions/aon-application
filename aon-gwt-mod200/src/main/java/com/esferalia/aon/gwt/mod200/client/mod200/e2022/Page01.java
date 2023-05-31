@@ -208,17 +208,19 @@ public class Page01 extends PageAbs {
 		
 		basePanel.add(getTitle(AON.MSG.legalRepresentativeData()));
 		
-		AonDisplayTable tab4 = new AonDisplayTable();
-		tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab4.addStyleName(AON.CSS.aonBlockCenter());
-		basePanel.add(tab4);		
-		
-		tab4.addRow()
-			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
-			.addCell( new Label(AON.MSG.nameAndSurname()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
-			.addCell( new Label(AON.MSG.notary()+"/Otros"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
-			.addCell( new Label(AON.MSG.registrationDate()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
-			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+		// FALTA - PRUEBA		
+//		AonDisplayTable tab4 = new AonDisplayTable();
+//		tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		tab4.addStyleName(AON.CSS.aonBlockCenter());
+//		basePanel.add(tab4);
+//		
+//		tab4.addRow()
+//			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
+//			.addCell( new Label(AON.MSG.nameAndSurname()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
+//			.addCell( new Label(AON.MSG.notary()+"/Otros"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
+//			.addCell( new Label(AON.MSG.registrationDate()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
+//			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+		AonDisplayTable tab4 = addRegistryTable(AON.MSG.document(), AON.MSG.nameAndSurname(), AON.MSG.notary()+"/Otros", AON.MSG.registrationDate());
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getRepresentatives().size(); i++) {
 			final int idx = i;
@@ -296,18 +298,20 @@ public class Page01 extends PageAbs {
 		
 		basePanel.add(getTitle(AON.MSG.administratorList()));
 		
-		AonDisplayTable tab5 = new AonDisplayTable();
-		tab5.addStyleName(AON.CSS.aonWidthAlmostAll());
-		tab5.addStyleName(AON.CSS.aonBlockCenter());
-		basePanel.add(tab5);
-		
-		tab5.addRow()
-			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
-			.addCell( new Label("Rpte."),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth40())			
-			.addCell( new Label("Apellidos y nombre o raz\u00F3n social"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
-			.addCell( new Label(AON.MSG.fiscalAddress()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
-			.addCell( new Label(AON.MSG.province()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
-			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+		// FALTA - PRUEBA
+//		AonDisplayTable tab5 = new AonDisplayTable();
+//		tab5.addStyleName(AON.CSS.aonWidthAlmostAll());
+//		tab5.addStyleName(AON.CSS.aonBlockCenter());
+//		basePanel.add(tab5);
+//		
+//		tab5.addRow()
+//			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
+//			.addCell( new Label("Rpte."),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth40())			
+//			.addCell( new Label("Apellidos y nombre o raz\u00F3n social"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
+//			.addCell( new Label(AON.MSG.fiscalAddress()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
+//			.addCell( new Label(AON.MSG.province()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
+//			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
+		AonDisplayTable tab5 = addRegistryTable(AON.MSG.document(), "Rpte.", "Apellidos y nombre o raz\u00F3n social", AON.MSG.fiscalAddress(), AON.MSG.province());
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getAdministrators().size(); i++) {
 			final int idx = i;
@@ -320,7 +324,7 @@ public class Page01 extends PageAbs {
 			});
 			otherInputs.add(document);
 			
-			CheckBox rep = new CheckBox();
+			CheckBox rep = new CheckBox();			
 			rep.setValue(callback.getMod200Object().getMod200().getAdministrators().get(idx).isRepresentative());
 			rep.addClickHandler( event -> { 
 				callback.getMod200Object().getMod200().getAdministrators().get(idx).setRepresentative(rep.getValue());

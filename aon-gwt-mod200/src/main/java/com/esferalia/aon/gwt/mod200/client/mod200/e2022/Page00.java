@@ -1,4 +1,4 @@
-// IDENTIFICACION, TIPO DE DECLARACION, ESTADOS DE CUENTAS, PERSONAL ASALARIADO, CARACTERES 
+// IDENTIFICACION, TIPO DE DECLARACION, ESTADOS DE CUENTAS, PERSONAL ASALARIADO, CIFRA DE NEGOCIOS, CARACTERES 
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
 import static com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Character.CHARACTERS_KEYS;
@@ -19,7 +19,6 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDoubleBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessageDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonTextBox;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonDisplayTable.AonDisplayTableRow;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
 import com.esferalia.aon.occam.api.model.type.CNAE2009;
 import com.esferalia.aon.occam.mod200.api.model.BalanceType;
@@ -51,7 +50,7 @@ public class Page00 extends PageAbs {
 		NOT_SUPPORTED_CHARACTERS.add(Mod2002022Key.C0036);
 		NOT_SUPPORTED_CHARACTERS.add(Mod2002022Key.C0058);
 		NOT_SUPPORTED_CHARACTERS.add(Mod2002022Key.C0061);
-	};
+	}
 
 	public static final Mod2002022Key[] DECLARATION_CHARACTERS_BLOCK1 = new Mod2002022Key[] {
 		Mod2002022Key.C0001,
@@ -427,7 +426,7 @@ public class Page00 extends PageAbs {
 		
 		// ESTADOS DE CUENTAS
 		
-		basePanel.add(getSubtitle("Estados de Cuentas"));
+		basePanel.add(getTitle("Estados de Cuentas"));
 		
 		AonDisplayTable tab2 = new AonDisplayTable();
 		tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
@@ -480,7 +479,7 @@ public class Page00 extends PageAbs {
 		
 		// PERSONAL ASALARIADO
 		
-		basePanel.add(getSubtitle("Personal asalariado"));
+		basePanel.add(getTitle("Personal asalariado"));
 		
 		AonDisplayTable tab3 = new AonDisplayTable();
 		tab3.addStyleName(AON.CSS.aonWidthAlmostAll());
@@ -512,6 +511,7 @@ public class Page00 extends PageAbs {
 		
 		// CIFRA DE NEGOCIOS
 		// FALTA - ESTE APARTADO ES OBLIGATORIO POR LO TANTO TAL VEZ SEA NECESARIO FORZAR QUE SE INDIQUE UNA DE LAS TRES OPCIONES AUNQUE AL COPIARLO DEL AÑO ANTERIOR, PUEDE SER QUE ESTE SIN CUMPLIMENTAR
+		// ADEMAS ES PROBABLE QUE SI SE MODIFICA ESTE VALOR SEA NECESARIO RECALCULAR EL MODELO, HABRA QUE VERLO AL REVISAR LOS CALCULOS
 		
 		basePanel.add(getTitle("Cifra de negocios"));
 		

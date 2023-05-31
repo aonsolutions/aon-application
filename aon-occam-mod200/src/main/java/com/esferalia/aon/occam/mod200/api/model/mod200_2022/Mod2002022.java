@@ -400,11 +400,11 @@ public class Mod2002022 extends Mod200 {
 	}
 	
 	public DoubleVariableEx getVariable(IMod200Key key) {
-		DoubleVariableEx var = getDraftMap().get(key);
-		if (var == null ) {
-			var = getKeysMap().get(key);
+		DoubleVariableEx v = getDraftMap().get(key);
+		if (v == null ) {
+			v = getKeysMap().get(key);
 		}
-		return var; 
+		return v; 
 	}
 	
 	public DoubleVariableEx getKey(IMod200Key key) {
