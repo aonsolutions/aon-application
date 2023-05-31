@@ -1433,8 +1433,6 @@ public class SQLFunctionsTestCase extends
 		Connection connection = getConnection();
 		AONContext aonContext = new AONContext(connection);
 		
-		Date startDate = getFirstDayOfMonth(getToday());
-		Date endDate = getLastDayOfMonth(getToday());
 		ContractRecord contract = newContract(aonContext, add(getToday(), Calendar.YEAR, -5), Collections.emptyMap());
 		
 		
@@ -1446,6 +1444,9 @@ public class SQLFunctionsTestCase extends
 			contract);
 		//@formatter:on
 		
+		Date startDate = contract.getStartDate(); //getFirstDayOfMonth(getToday());
+		Date endDate = getToday(); //getLastDayOfMonth(getToday());
+
 		List<ITimedResult<Object>> results =  ctx.getExpressionContext().eval("CGPJ_INDEMNIZACIONES = CALCULO_INDEMNIZACIONES(INICIO_NOMINA, FIN_NOMINA, 66.66);", 
 				startDate,
 				endDate, 
