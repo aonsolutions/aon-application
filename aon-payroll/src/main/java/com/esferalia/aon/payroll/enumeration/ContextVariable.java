@@ -310,7 +310,7 @@ public enum ContextVariable implements IResourceable {
 	SLD_C763("BONIFICACION_FORMACION_CONTINUA", VariableType.DOUBLE, false),
 
 	
-//	DO_DAYS("JORNADAS_REALES", VariableType.DOUBLE, false),
+	DO_DAYS("JORNADAS_REALES", VariableType.DOUBLE, false),
 	IF_DAYS("JORNADAS_TEORICAS", VariableType.DOUBLE, false),
 
 	
@@ -320,7 +320,8 @@ public enum ContextVariable implements IResourceable {
 	EFECTIVE_START("INICIO_EFECTIVO", VariableType.DATE, false),
 	EFECTIVE_END("FIN_EFECTIVO", VariableType.DATE, false),
 	
-	IN_KIND("_EN_ESPECIE",  VariableType.DOUBLE, false),
+	IN_KIND("EN_ESPECIE",  VariableType.DOUBLE, false),
+	TMP_IN_KIND("_EN_ESPECIE",  VariableType.DOUBLE, false),
 	IRPF_CTA_ESP("IRPF_CTA_ESP",  VariableType.DOUBLE, false),
 	BASE_CTA_ESP("BASE_CTA_ESP",  VariableType.DOUBLE, false),
 

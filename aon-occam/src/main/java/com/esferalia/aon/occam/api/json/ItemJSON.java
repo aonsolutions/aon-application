@@ -29,6 +29,7 @@ public class ItemJSON {
 	}
 	
 	public static Item fromJSON(JSONObject json) {
+		if(json == null) return new Item();
 		return new Item()
 				.setId(JsonUtils.getInteger(json, IJsonNames.ID))
 				.setDomain(DomainJSON.fromJSON(JsonUtils.getJSONObject(json, IJsonNames.DOMAIN)))
