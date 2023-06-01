@@ -82,6 +82,7 @@ import com.esferalia.aon.watson.util.AonStringUtils;
 public class JooqPayrollBuilder {
 	
 	private static String[] WEEK_DAYS = {"DOMINGO", "LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO"};
+	private static List<String> PRESTATION_CONCEPTS = Arrays.asList("PREST_IT", "MTNAD", "ERE");
 	
 	/**
 	 * Method to generate a PDF payroll from database data and place it on the
@@ -361,17 +362,26 @@ public class JooqPayrollBuilder {
 					if(null == p.getPaymentType())
 						p.setPaymentType(com.esferalia.aon.occam.api.model.type.PaymentType.CRA_0001);
 					
-					if (!paymentMap.containsKey(p.getPaymentType().ordinal()))
-						paymentMap.put(p.getPaymentType().ordinal(), new ArrayList<PDFPayment>());
+					
+					int craKey = p.getPaymentType().ordinal();
+					if (com.esferalia.aon.occam.api.model.type.PaymentType.CRA_0001.equals(p.getPaymentType())) {
+						//TODO: COMPROBAR PREST_IT, ERE% Y MTNAD
+						if (PRESTATION_CONCEPTS.contains(p.getName()) || AonStringUtils.substring(p.getName(), 0, 4).equals("ERE_")) {
+							craKey = 100;
+						}
+					}
+					if (!paymentMap.containsKey(craKey)) {
+						paymentMap.put(craKey, new ArrayList<PDFPayment>());						
+					}
 					
 					
-					Optional<PDFPayment> repeated = paymentMap.get(p.getPaymentType().ordinal()).stream().filter(acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().orElse(null))).findFirst();
+					Optional<PDFPayment> repeated = paymentMap.get(craKey).stream().filter(acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().orElse(null))).findFirst();
 					
 					if (repeated.isPresent()) {
 						PDFPayment repAcc = repeated.get();
 						repAcc.setAmount(repAcc.getAmount().orElse(0d) + p.getAmount());
 					} else {
-						paymentMap.get(p.getPaymentType().ordinal()).add(accrual);						
+						paymentMap.get(craKey).add(accrual);						
 					}
 				});
 				payrollBuilder.setAccruals(paymentMap);
