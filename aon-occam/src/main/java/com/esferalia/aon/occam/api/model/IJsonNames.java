@@ -71,7 +71,8 @@ public final class IJsonNames {
 	public static final String BEFORE_PERIOD_CREDIT = "beforePeriodCredit";
 	public static final String BIC = "bic";
 	public static final String BILLABLE = "billable";
-	public static final String BLOCKED = "blocked";
+	public static final String BLOCKED = "blocked";	
+	public static final String BOOKING = "booking";
 	public static final String BORDER = "border";
 	public static final String BOX_BORDER_COLOR = "boxBorderColor";
 	public static final String BOX_BODY_BACKGROUND_COLOR = "boxBodyBackgroundColor";
