@@ -46,6 +46,9 @@ import com.esferalia.aon.watson.util.AonStringUtils;
  * Class containing method/s to print payrolls from a Salary and a SalaryDraft object
  */
 public class DraftPayrollBuilder {
+	
+	private static List<String> PRESTATION_CONCEPTS = Arrays.asList("PREST_IT", "MTNAD", "ERE");
+	
 	/**
 	 * Method to generate a PDF payroll from an ISalary and place it on the OutputStream passed as parameter
 	 * @param outputStream The OutputStream on which will be written the PDF
@@ -153,17 +156,26 @@ public class DraftPayrollBuilder {
 				}
 				
 				
-				PDFPayment accrual = new PDFPayment(p.getAmount(), description);					
-				if (!paymentMap.containsKey(p.getType().ordinal()))
-					paymentMap.put(p.getType().ordinal(), new ArrayList<PDFPayment>());
+				PDFPayment accrual = new PDFPayment(p.getAmount(), description);
 				
-				Optional<PDFPayment> repeated = paymentMap.get(p.getType().ordinal()).stream().filter(acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().get())).findFirst();
+				int craKey = p.getType().ordinal();
+				if (PaymentType.CRA_0001.equals(p.getType())) {
+					//TODO: COMPROBAR PREST_IT, ERE% Y MTNAD
+					if (PRESTATION_CONCEPTS.contains(p.getName()) || AonStringUtils.substring(p.getName(), 0, 4).equals("ERE_")) {
+						craKey = 100;
+					}
+				}
+				if (!paymentMap.containsKey(craKey)) {
+					paymentMap.put(craKey, new ArrayList<PDFPayment>());						
+				}
+				
+				Optional<PDFPayment> repeated = paymentMap.get(craKey).stream().filter(acc -> AonStringUtils.equalsIgnoreCase(p.getDescription(), acc.getDescription().get())).findFirst();
 				
 				if (repeated.isPresent()) {
 					PDFPayment repAcc = repeated.get();
 					repAcc.setAmount(repAcc.getAmount().orElse(0d)+p.getAmount());
 				} else {
-					paymentMap.get(p.getType().ordinal()).add(accrual);						
+					paymentMap.get(craKey).add(accrual);						
 				}
 			});
 			dpb.setAccruals(paymentMap);
