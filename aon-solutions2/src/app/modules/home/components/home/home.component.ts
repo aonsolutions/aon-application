@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { ContainerService } from 'src/app/shared/services/container.service';
 
 @Component({
   selector: 'app-home',
@@ -7,7 +8,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  
+  detail: boolean = false;
 
   accordionState: boolean = false;
 
@@ -23,7 +24,8 @@ export class HomeComponent implements OnInit {
     // this.modalComponent.openDialog(ModalComponent,this.functionHome, 'Data from home');
   }
 
-  constructor() {
+  constructor(public containerService: ContainerService) {
+
   }
 
   data : any = []
