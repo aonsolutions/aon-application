@@ -85,7 +85,6 @@ public enum ContextVariable implements IResourceable {
 	// ADVANCE_NOTICE_DATE("FECHA_PREAVISO", VariableType.DATE, false),
 	// ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),
 
-	COMPENSATION_DAYS("DIAS_INDEMNIZACION", VariableType.INTEGER, false),
 	COMPENSATION_CAUSE("CAUSA_INDEMNIZACION", VariableType.INTEGER, false),
 	WORKED_YEARS("AÑOS_TRABAJADOS", VariableType.INTEGER, false),
 
@@ -262,6 +261,9 @@ public enum ContextVariable implements IResourceable {
 	MONTH_END("FIN_MES", VariableType.DATE),
 	YEAR_END("FIN_AÑO", VariableType.DATE),
 	TODAY("TODAY", VariableType.DATE),
+	EVAL_TEMPLATE("EVAL_TEMPLATE", VariableType.UNKNOWN),
+	CGPJ_COMPENSATIONS("CGPJ_INDEMNIZACIONES", VariableType.UNKNOWN),
+	CALC_COMPENSATIONS("CALCULO_INDEMNIZACIONES", VariableType.UNKNOWN),
 
 	OLD("ANTIGÜEDAD", VariableType.DOUBLE), EXCESS("EXCESO", VariableType.DOUBLE),
 	EVERYTHING("TODO", VariableType.DOUBLE),
