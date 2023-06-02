@@ -6498,6 +6498,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// sendAlta
 			SistemaRED.sendAlta(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
 					certificate.getType(), employee);
+			
+			JooqContrataContract.setSSStatus(domainName, employeeContractInfo.getContractInfo().getContractId());
 
 		} catch (Exception e) {
 			if (e instanceof solutions.aon.seg.social.exception.CertificateNotFoundException)
@@ -6917,6 +6919,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				JooqContrataContract.setSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), ide);
 				employeeContractInfo.getContractInfo().setSepeId(ide);
 			}
+			
+			JooqContrataContract.setSepeStatus(domainName, employeeContractInfo.getContractInfo().getContractId());
 
 		} catch (Exception e) {
 			e.printStackTrace();
