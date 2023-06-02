@@ -361,7 +361,7 @@ public class Up2Date {
 	    // IndemnizacionTemporalUpdate.INDEMNIZACIONTEMPORALUPDATE,
             // PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
 	    //	TrainningBases2023Fix.TRAINNINGBASES2023FIX,
-		CGPJInsert.CGPJINSERT,
+	    //	CGPJInsert.CGPJINSERT,
 
 		
 	    //DOMAIN
