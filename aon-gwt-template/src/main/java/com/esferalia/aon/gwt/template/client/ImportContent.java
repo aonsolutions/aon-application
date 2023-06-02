@@ -320,8 +320,19 @@ public class ImportContent extends Composite {
 		error.setTextWarning(werror);
 		
 		VerticalPanel vPanel = new VerticalPanel();
-		error.getTextError().forEach(errorIt -> vPanel.add(new Label(errorIt)));
-		error.getTextWarning().forEach(warnIt -> vPanel.add(new Label(warnIt)));
+		error.getTextError().forEach(errorIt -> {
+			Label label = new Label(errorIt);
+			label.getElement().getStyle().setColor("red");
+			vPanel.add(label);
+		});
+		error.getTextWarning().forEach(warnIt -> {
+			Label label = new Label(warnIt);
+			label.getElement().getStyle().setColor("orange");
+			vPanel.add(label);
+		});
+		if(verror.isEmpty() && werror.isEmpty()) {
+			vPanel.add(new Label("La importaci\u00f3n se ha realizado correctamente."));
+		}
 		AonDialog dialog = new AonDialog("Importar " + type.getName(), vPanel);
 		dialog.info();
 	}

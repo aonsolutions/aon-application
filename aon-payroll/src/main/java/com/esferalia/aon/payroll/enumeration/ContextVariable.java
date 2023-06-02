@@ -85,7 +85,6 @@ public enum ContextVariable implements IResourceable {
 	// ADVANCE_NOTICE_DATE("FECHA_PREAVISO", VariableType.DATE, false),
 	// ADVANCE_NOTICE_DAYS("DIAS_PREAVISO", VariableType.INTEGER, false),
 
-	COMPENSATION_DAYS("DIAS_INDEMNIZACION", VariableType.INTEGER, false),
 	COMPENSATION_CAUSE("CAUSA_INDEMNIZACION", VariableType.INTEGER, false),
 	WORKED_YEARS("AÑOS_TRABAJADOS", VariableType.INTEGER, false),
 
@@ -262,6 +261,9 @@ public enum ContextVariable implements IResourceable {
 	MONTH_END("FIN_MES", VariableType.DATE),
 	YEAR_END("FIN_AÑO", VariableType.DATE),
 	TODAY("TODAY", VariableType.DATE),
+	EVAL_TEMPLATE("EVAL_TEMPLATE", VariableType.UNKNOWN),
+	CGPJ_COMPENSATIONS("CGPJ_INDEMNIZACIONES", VariableType.UNKNOWN),
+	CALC_COMPENSATIONS("CALCULO_INDEMNIZACIONES", VariableType.UNKNOWN),
 
 	OLD("ANTIGÜEDAD", VariableType.DOUBLE), EXCESS("EXCESO", VariableType.DOUBLE),
 	EVERYTHING("TODO", VariableType.DOUBLE),
@@ -310,7 +312,7 @@ public enum ContextVariable implements IResourceable {
 	SLD_C763("BONIFICACION_FORMACION_CONTINUA", VariableType.DOUBLE, false),
 
 	
-//	DO_DAYS("JORNADAS_REALES", VariableType.DOUBLE, false),
+	DO_DAYS("JORNADAS_REALES", VariableType.DOUBLE, false),
 	IF_DAYS("JORNADAS_TEORICAS", VariableType.DOUBLE, false),
 
 	
@@ -320,7 +322,8 @@ public enum ContextVariable implements IResourceable {
 	EFECTIVE_START("INICIO_EFECTIVO", VariableType.DATE, false),
 	EFECTIVE_END("FIN_EFECTIVO", VariableType.DATE, false),
 	
-	IN_KIND("_EN_ESPECIE",  VariableType.DOUBLE, false),
+	IN_KIND("EN_ESPECIE",  VariableType.DOUBLE, false),
+	TMP_IN_KIND("_EN_ESPECIE",  VariableType.DOUBLE, false),
 	IRPF_CTA_ESP("IRPF_CTA_ESP",  VariableType.DOUBLE, false),
 	BASE_CTA_ESP("BASE_CTA_ESP",  VariableType.DOUBLE, false),
 
