@@ -161,8 +161,12 @@ public class DraftPayrollBuilder {
 				int craKey = p.getType().ordinal();
 				if (PaymentType.CRA_0001.equals(p.getType())) {
 					//TODO: COMPROBAR PREST_IT, ERE% Y MTNAD
-					if (PRESTATION_CONCEPTS.contains(p.getName()) || AonStringUtils.substring(p.getName(), 0, 4).equals("ERE_")) {
-						craKey = 100;
+					try {						
+						if (PRESTATION_CONCEPTS.contains(p.getName()) || AonStringUtils.equals("ERE_", AonStringUtils.substring(p.getName(), 0, 4))) {
+							craKey = 100;
+						}
+					} catch (Exception e) {
+						System.out.println("dd");
 					}
 				}
 				if (!paymentMap.containsKey(craKey)) {

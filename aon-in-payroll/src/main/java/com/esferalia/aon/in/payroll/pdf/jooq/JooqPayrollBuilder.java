@@ -366,7 +366,7 @@ public class JooqPayrollBuilder {
 					int craKey = p.getPaymentType().ordinal();
 					if (com.esferalia.aon.occam.api.model.type.PaymentType.CRA_0001.equals(p.getPaymentType())) {
 						//TODO: COMPROBAR PREST_IT, ERE% Y MTNAD
-						if (PRESTATION_CONCEPTS.contains(p.getName()) || AonStringUtils.substring(p.getName(), 0, 4).equals("ERE_")) {
+						if (PRESTATION_CONCEPTS.contains(p.getName()) || AonStringUtils.equals("ERE_", AonStringUtils.substring(p.getName(), 0, 4))) {
 							craKey = 100;
 						}
 					}
@@ -873,9 +873,13 @@ public class JooqPayrollBuilder {
 			holidaysData.stream().filter(Objects::nonNull).forEach(data -> {
 				Date sd = data.getStartDate();
 				Date ed = data.getEndDate() != null ? data.getEndDate() : salaryEndDate;
-				new Period(sd, ed).forEachDay(cal -> {
-					dateList.add(cal.getTime());
-				});
+				try {
+					new Period(sd, ed).forEachDay(cal -> {
+						dateList.add(cal.getTime());
+					});					
+				} catch (Exception e) {
+					//Falla porque alguien ha puesto la fecha de fin menor que la de inicio
+				}
 			});
 			return dateList;
 		}
