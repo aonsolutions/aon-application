@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
@@ -110,6 +111,8 @@ public class MainMassiveContracts extends MainEntryPoint{
 	private CheckBox inactiveContractsCB;
 	private HTMLPanel noValuePanel;
 	private CheckBox noValueCB;
+	private HTMLPanel statusPanel;
+	private ListBox statusLB;
 	
 	
 	private AonToolbarButton saveBtn;
@@ -218,6 +221,26 @@ public class MainMassiveContracts extends MainEntryPoint{
 		noValuePanel.add(noValueL);
 		noValuePanel.add(noValueCB);
 		
+		statusPanel = new HTMLPanel("");
+		statusPanel.addStyleName(style.flex());
+		
+		Label statusL = new Label("Estado : ");
+		statusL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		statusLB = new ListBox();
+		statusLB.addItem("Todo");
+		statusLB.addItem("Llamamiento");
+		statusLB.addItem("Pediente comunicar");
+		statusLB.addItem("Comunicado");
+		statusLB.addChangeHandler(e -> {
+			mainMassiveContractsObject.filterEmployeesStatusList(statusLB.getSelectedIndex());
+			initPreview();
+		});
+		
+
+		statusPanel.add(statusL);
+		statusPanel.add(statusLB);
+		statusPanel.setVisible(false);
+		
 		leftPanel.add(typePanel);
 		leftPanel.add(employeePanel);
 
@@ -225,6 +248,7 @@ public class MainMassiveContracts extends MainEntryPoint{
 		showPanel.add(workplaceLB);
 		showPanel.add(inactiveContractsPanel);
 		showPanel.add(noValuePanel);
+		showPanel.add(statusPanel);
 
 		filterPanel.add(leftPanel);
 		filterPanel.add(showPanel);
@@ -245,6 +269,7 @@ public class MainMassiveContracts extends MainEntryPoint{
 			
 			inactiveContractsPanel.setVisible(isCNOSelected);
 			noValuePanel.setVisible(isCNOSelected);
+			statusPanel.setVisible(!isCNOSelected);
 		});
 	}
 	
@@ -316,17 +341,7 @@ public class MainMassiveContracts extends MainEntryPoint{
 	
 	private void initPreview() {
 		if(this.mainMassiveContractsObject.getEmployees().isEmpty()) {
-			switch (dataType.getSelectedValue()) {
-				case "CNO":
-					showContractMessage();
-					break;
-				case "Llamamiento":
-					showContractFDMessage();
-					break;
-				default:
-					showContractMessage();
-					break;
-			}
+			showContractMessage();
 		} else {
 			selectionModel.clear();
 			
@@ -514,34 +529,49 @@ public class MainMassiveContracts extends MainEntryPoint{
 	}
 	
 	private Widget createFJWidget(EmployeeContractInfo employee) {
-		AonDateBox dateBox = new AonDateBox();
-		dateBox.setWidth("100%");
-		dateBox.addValueChangeHandler(e -> {
-			if(null != e.getValue()) {
-				AonDialog fdDialog = new AonDialog("Llamamiento (Fijo/Discontinuo)", new HTMLPanel("\u00bfDesea realmente hacer un llamamiento al trabajador " + employee.getEmployeeInfo().getFullName() + " con fecha de inicio " + formatDate.format(e.getValue()) + "\u003f"));
-				fdDialog.confirm(new AonAcceptDialogCallback() {
-
-					@Override
-					public void onCancel() {
-						// Not use here
-					}
-
-					@Override
-					public void onAccept() {
-						AonMessagePanel.showLoading(messagePanel, "Creando contrato del llamamiento ...");
-						mainMassiveContractsObject.duplicateContract(
-								employee, 
-								e.getValue(), 
-								s -> {
-									AonMessagePanel.showSuccess(messagePanel, new HashMap<String, String>(){{ put("Llamamiento (Fijo/Discontinuo)", "Se ha generado el llamamiento correctamente, puede encontrar el nuevo contrato en la parte Laboral > Contratos"); }});
-									dataTypeChange();
-								}, 
-								f -> AonMessagePanel.showError(messagePanel, new HashMap<String, String>(){{ put("Error Llamamiento", f.getMessage()); }}));
-					}
-				});
-			}
-		});
-		return dateBox;
+		if(null == employee.getContractInfo().getEndDate() || employee.getContractInfo().getStartDate().after(new Date())) {
+			HTMLPanel panel = new HTMLPanel("");
+			panel.addStyleName(AON.CSS.aonItemFlex());
+			panel.getElement().getStyle().setProperty("justify-content", "center");
+			
+			AonTableButton tgss = new AonTableButton(employee.getContractInfo().isSSComunicate() ? "Descargar TA" : "Comunicar Contrato TGSS", AON.CSS.aonIconTgss());
+			AonTableButton sepe = new AonTableButton(employee.getContractInfo().isSepeComunicate() ? "Descargar Copia Contrato" : "Comunicar Contrato SEPE", AON.CSS.aonIconSepe());
+			
+			panel.add(tgss);
+			panel.add(sepe);
+			
+			return panel;
+		} else {
+			AonDateBox dateBox = new AonDateBox();
+			dateBox.setWidth("100%");
+			dateBox.addValueChangeHandler(e -> {
+				if(null != e.getValue()) {
+					AonDialog fdDialog = new AonDialog("Llamamiento (Fijo/Discontinuo)", new HTMLPanel("\u00bfDesea realmente hacer un llamamiento al trabajador " + employee.getEmployeeInfo().getFullName() + " con fecha de inicio " + formatDate.format(e.getValue()) + "\u003f"));
+					fdDialog.confirm(new AonAcceptDialogCallback() {
+	
+						@Override
+						public void onCancel() {
+							// Not use here
+						}
+	
+						@Override
+						public void onAccept() {
+							AonMessagePanel.showLoading(messagePanel, "Creando contrato del llamamiento ...");
+							mainMassiveContractsObject.duplicateContract(
+									employee, 
+									e.getValue(), 
+									s -> {
+										AonMessagePanel.showSuccess(messagePanel, new HashMap<String, String>(){{ put("Llamamiento (Fijo/Discontinuo)", "Se ha generado el llamamiento correctamente, puede encontrar el nuevo contrato en la parte Laboral > Contratos"); }});
+										dataTypeChange();
+									}, 
+									f -> AonMessagePanel.showError(messagePanel, new HashMap<String, String>(){{ put("Error Llamamiento", f.getMessage()); }}));
+						}
+					});
+				}
+			});
+			
+			return dateBox;
+		}
 	}
 	
 	private void checkRowAndModify(Grid grid, int row, EmployeeContractInfo employee, Widget widget) {
@@ -607,11 +637,6 @@ public class MainMassiveContracts extends MainEntryPoint{
 	
 	private void showContractMessage() {
 		deckPanel.showWidget(1);
-		cnoAFIBtn.setEnabled(false);
-	}
-	
-	private void showContractFDMessage() {
-		deckPanel.showWidget(2);
 		cnoAFIBtn.setEnabled(false);
 	}
 	

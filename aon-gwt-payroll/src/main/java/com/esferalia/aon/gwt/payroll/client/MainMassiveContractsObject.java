@@ -235,6 +235,19 @@ public class MainMassiveContractsObject {
 	
 		filterHasValue();		
 	}
+	
+	public void filterEmployeesStatusList(Integer status) {
+		if(status == 0) resetEmployeesList();
+		else {
+			this.employees.clear();
+		
+			for(EmployeeContractInfo employee : allEmployeesList) {
+				if(status == 1 && null != employee.getContractInfo().getEndDate()  && employee.getContractInfo().getEndDate().before(new Date())) this.employees.add(employee);
+				else if(status == 2 && (null == employee.getContractInfo().getEndDate()  || employee.getContractInfo().getEndDate().after(new Date())) && (!employee.getContractInfo().isSSComunicate() || !employee.getContractInfo().isSepeComunicate())) this.employees.add(employee);
+				else if(status == 3 && (null == employee.getContractInfo().getEndDate()  || employee.getContractInfo().getEndDate().after(new Date())) && employee.getContractInfo().isSSComunicate() && employee.getContractInfo().isSepeComunicate()) this.employees.add(employee);
+			}
+		}
+	}
 
 	private boolean isEmployeeByPattern(EmployeeContractInfo employee, String pattern) {
 		String fullName = employee.getEmployeeInfo().getFullName();

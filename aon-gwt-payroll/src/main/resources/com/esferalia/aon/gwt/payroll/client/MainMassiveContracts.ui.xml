@@ -86,7 +86,6 @@
 		    			<g:DeckPanel styleName="{style.widthAll} {style.heigthAll}" ui:field="deckPanel">
 		    				<g:Grid ui:field="contractDataTable" styleName="{style.heigthAuto}"/>
 		    				<g:Label text="No existe contratos para este filtro" styleName="{style.emptyMessage}" />
-		    				<g:Label text="No existen contratos inativos para realizar un llamamiento" styleName="{style.emptyMessage}" />
 		    			</g:DeckPanel>
 		    		</g:ScrollPanel>
 				</g:HTMLPanel>
