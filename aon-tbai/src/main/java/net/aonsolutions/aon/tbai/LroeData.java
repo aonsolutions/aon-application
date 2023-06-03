@@ -121,7 +121,7 @@ public class LroeData {
 		DataRequest request = new DataRequest()
 			.setDomain(domain.getId())
 			.setDate(new Date())
-			.setBlackBox(json.toString())
+			.setBlackBox("")
 			.setType(DataRequestType.LROE);
 		String md5 = getMd5(request.getDomain() + request.getDate().toString() + request.getBlackBox() + request.getType().value());
 		request.setMd5(md5);
@@ -148,7 +148,7 @@ public class LroeData {
 		DataRequest request = new DataRequest()
 			.setDomain(domain.getId())
 			.setDate(new Date())
-			.setBlackBox(json.toString())
+			.setBlackBox("")
 			.setType(DataRequestType.LROE);
 		String md5 = getMd5(request.getDomain() + request.getDate().toString() + request.getBlackBox() + request.getType().value());
 		request.setMd5(md5);
