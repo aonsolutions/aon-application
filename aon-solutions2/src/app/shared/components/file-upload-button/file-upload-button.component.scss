@@ -1,0 +1,18 @@
+input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+    border: .1rem solid lightgrey;
+    border-radius: .4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-style: dashed;
+}
+
+:host {
+    display: flex;
+    width: var(--widthHost);
+    height: var(--heightHost);
+}

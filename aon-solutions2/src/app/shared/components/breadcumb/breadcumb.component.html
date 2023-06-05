@@ -1,0 +1,11 @@
+<div class="breadcumb">
+    <div mat-button class="enterpriseSelector" (click)="this.dropdownMenuComponent.openDropdownMenu();">
+      {{this.selectedEnterprise}}
+      <set-icon shape="arrow_drop_down"></set-icon>
+      <app-dropdown-menu #enterpriseSelector [menuItem]="this.menuItem"></app-dropdown-menu>
+    </div>
+    <div class="currentRoute" *ngIf="this.currentRoute != 'home'">
+      {{this.currentRoute}}
+      <set-icon shape="arrow_right"></set-icon>
+    </div>
+</div>

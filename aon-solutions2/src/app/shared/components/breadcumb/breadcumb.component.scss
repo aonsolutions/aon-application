@@ -1,0 +1,44 @@
+.breadcumb {
+    width: calc(100%);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+}
+
+.enterpriseSelector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: 0.44px;
+    text-align: right;
+    color: #787885;
+}
+
+.enterpriseSelector:hover {
+    cursor: pointer;
+}
+
+.currentRoute {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #b4b4bb;
+    border-radius: 4px;
+    background-color: #f9f9fa;
+    padding: .5rem;
+    font-size: 1rem;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: 0.44px;
+    text-align: right;
+    color: #5a5b6a;
+}

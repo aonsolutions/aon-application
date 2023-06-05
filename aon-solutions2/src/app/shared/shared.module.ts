@@ -28,6 +28,21 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSelectModule } from '@angular/material/select';
+import { DropdownMenuComponent } from './components/dropdown-menu/dropdown-menu.component';
+import { BreadcumbComponent } from './components/breadcumb/breadcumb.component';
+import { TabsComponent } from './components/tabs/tabs.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { FileUploadButtonComponent } from './components/file-upload-button/file-upload-button.component';
+import { DragAndDropDirective } from './directives/drag-and-drop.directive';
+import { TagComponent } from './components/tag/tag.component';
+import { CardComponent } from './components/card/card.component';
+import { AccordionComponent } from './components/accordion/accordion.component';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { ModalControllerComponent } from './components/modal-controller/modal-controller.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { PaginationContainerComponent } from './components/pagination-container/pagination-container.component';
+import { PaginationControllerComponent } from './components/pagination-controller/pagination-controller.component';
+import { GridLayoutComponent } from './layouts/grid-layout/grid-layout.component';
 
 
 @NgModule({
@@ -46,7 +61,19 @@ import { MatSelectModule } from '@angular/material/select';
     InputComponent,
     ButtonComponent,
     IconComponent,
-    GlobalHoverDirective
+    GlobalHoverDirective,
+    DropdownMenuComponent,
+    BreadcumbComponent,
+    TabsComponent,
+    FileUploadButtonComponent,
+    DragAndDropDirective,
+    TagComponent,
+    CardComponent,
+    AccordionComponent,
+    ModalControllerComponent,
+    PaginationContainerComponent,
+    PaginationControllerComponent,
+    GridLayoutComponent,
   ],
   imports: [
     CommonModule,
@@ -63,7 +90,11 @@ import { MatSelectModule } from '@angular/material/select';
     MatIconModule,
     ReactiveFormsModule,
     MatDatepickerModule,
-    MatSelectModule
+    MatSelectModule,
+    MatMenuModule,
+    MatTabsModule,
+    MatExpansionModule,
+    MatDialogModule
   ],
   exports:[
     SidenavHoverDirective,
@@ -79,7 +110,17 @@ import { MatSelectModule } from '@angular/material/select';
     ListElementComponent,
     IconComponent,
     ButtonComponent,
-    InputComponent
+    InputComponent,
+    DropdownMenuComponent,
+    TabsComponent,
+    FileUploadButtonComponent,
+    TagComponent,
+    CardComponent,
+    AccordionComponent,
+    ModalControllerComponent,
+    PaginationContainerComponent,
+    PaginationControllerComponent,
+    GridLayoutComponent
   ]
 })
 export class SharedModule { }

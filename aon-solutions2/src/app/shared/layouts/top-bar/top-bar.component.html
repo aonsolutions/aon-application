@@ -6,30 +6,29 @@
         </div>
       </mat-grid-tile>
       <mat-grid-tile colspan="1" *ngIf="usserLoggged">
-        <div class="breadcumb">
-          <div mat-button [matMenuTriggerFor]="menuEnterprise" class="enterpriseSelector">
-            {{this.selectedEnterprise}}
-            <set-icon shape="arrow_drop_down"></set-icon>
-          </div>
-          <div class="currentRoute" *ngIf="this.currentRoute != 'home'">
-            {{this.currentRoute}}
-            <set-icon shape="arrow_right"></set-icon>
-          </div>
-          <mat-menu #menuEnterprise="matMenu">
-            <ng-container>
-              <a mat-menu-item *ngFor="let item of enterprises" (click)="this.selectedEnterprise = item.name">
-                <div class="hoverMenu">
-                  <set-icon shape="business"></set-icon>
-                  &nbsp;&nbsp;
-                  {{item.name}}
-                </div>
-              </a>
-            </ng-container>
-          </mat-menu>
-        </div>
+        <app-breadcumb></app-breadcumb>
       </mat-grid-tile>
       <mat-grid-tile colspan="1" *ngIf="usserLoggged">
-        <div class="toolbarIcons">
+        <div class="allSize" style="display:flex; justify-content: right; align-items: center;">
+          <app-button 
+          width="2rem"
+          height="2rem"
+          [backgroundColor]="'#f9f9fa'" 
+          [border]="'#f9f9fa solid .05rem'" 
+          [borderRadius]="'1rem'"
+          [align]="'center'"
+          (click)="this.dropdownMenuComponent.openDropdownMenu();"
+          >
+          <app-icon 
+          [shape]="'person'" 
+          [color]="'#292a31'"
+          size="1.2rem"
+          >
+          </app-icon>
+          <app-dropdown-menu #first [menuItem]="this.menuItem"></app-dropdown-menu>
+        </app-button>
+        </div>
+        <!-- <div class="toolbarIcons">
           <div *ngIf="this.displayHomeIcon" class="buttonTopbar" routerLink="home">
             <div class="iconToolbar">
               <set-icon shape="home" set-color color="black"> </set-icon>
@@ -65,7 +64,7 @@
               </a>
             </ng-container>
           </mat-menu>
-        </div>
+        </div> -->
       </mat-grid-tile>
     </mat-grid-list>
   </mat-toolbar>

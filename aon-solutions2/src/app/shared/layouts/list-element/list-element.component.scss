@@ -3,3 +3,10 @@
     width: auto;
     box-sizing: border-box;
 }
+
+:host {
+    display: flex;
+    width: var(--widthHost);
+    height: var(--heightHost);
+    box-sizing: border-box;
+}

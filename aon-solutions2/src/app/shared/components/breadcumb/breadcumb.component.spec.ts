@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SharedComponentComponent } from './shared-component.component';
+import { BreadcumbComponent } from './breadcumb.component';
 
-describe('SharedComponentComponent', () => {
-  let component: SharedComponentComponent;
-  let fixture: ComponentFixture<SharedComponentComponent>;
+describe('BreadcumbComponent', () => {
+  let component: BreadcumbComponent;
+  let fixture: ComponentFixture<BreadcumbComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SharedComponentComponent ]
+      declarations: [ BreadcumbComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SharedComponentComponent);
+    fixture = TestBed.createComponent(BreadcumbComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

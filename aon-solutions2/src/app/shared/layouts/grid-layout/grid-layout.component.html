@@ -1,0 +1,16 @@
+<mat-grid-list *ngIf="headerHeight != ''" [cols]="'24'" rowHeight="fit" [style.height]="headerHeight">
+    <mat-grid-tile [colspan]="24" [style.borderBottom]="'.05rem solid lightgrey'" [style.boxSizing]="'border-box'">
+        <ng-content class="allSize" select="[header]"></ng-content>
+    </mat-grid-tile>
+</mat-grid-list>
+<mat-grid-list [cols]="'24'" rowHeight="fit" [style.height]="'calc(100% - ' + (headerHeight == '' ? '0px' : headerHeight) + ')'">
+    <mat-grid-tile *ngIf="navCols != 0" [colspan]="navCols" [style.borderRight]="'.05rem solid lightgrey'" [style.boxSizing]="'border-box'">
+        <ng-content class="allSize" select="[nav]"></ng-content>
+    </mat-grid-tile>
+    <mat-grid-tile *ngIf="contentCols != 0" [colspan]="liveContentCols" [style.boxSizing]="'border-box'">
+        <ng-content class="allSize" select="[content]"></ng-content>
+    </mat-grid-tile>
+    <mat-grid-tile *ngIf="liveDetailCols != 0" [colspan]="liveDetailCols" [style.borderLeft]="'.05rem solid lightgrey'" [style.boxSizing]="'border-box'">
+        <ng-content class="allSize" select="[detail]"></ng-content>
+    </mat-grid-tile>
+</mat-grid-list>
