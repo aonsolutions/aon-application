@@ -994,7 +994,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					deductionStart = ctx.getIrpfDate();
 					deductionEnd = ctx.getIrpfDate();
 					
-					if ( deductionEnd.after(end)) {
+					if ( deductionEnd.after(end) || deductionStart.before(start) ) {
 					    Period irpfPeriod = new Period(deductionStart, deductionEnd);
 					    
 					    ExpressionContext irpfExpressionContext = new ExpressionContext(expressionContext) ;

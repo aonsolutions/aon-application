@@ -24,6 +24,7 @@ import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -53,6 +54,7 @@ import com.esferalia.aon.jooq.tables.records.AgreementRecord;
 import com.esferalia.aon.jooq.tables.records.ContractRecord;
 import com.esferalia.aon.jooq.tables.records.IrpfDataRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AONContext;
 import com.esferalia.aon.payroll.IrpfData;
@@ -77,6 +79,7 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -3856,6 +3859,88 @@ public class SQLIrpfTestCase extends AbstractSQLTestCase {
 		System.out.println( irpfDataIrpf + " == " + nullIrpf);
 		org.junit.Assert.assertTrue(irpfDataIrpf == nullIrpf);
 
+	}
+
+	@Test
+	public void testWrongBirthDate() throws ExpressionException, SQLException, SalaryException {
+
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		cleanSystemData(aonContext);
+		
+		ContractRecord contract = newContract(aonContext, SSRegimeType.GENERAL,
+			CCCType.PRINCIPAL, 
+			getFirstDayOfYear(getToday()),
+			null,
+			new HashMap<String, String>() {
+			{
+				put(TC2.getName(), C401.getValue());
+				put(ContextVariable.QUOTE_GROUP.getName(), "'07'");
+			}
+			}, new String[] { 
+				"2000.00 * DIAS_TRABAJADOS / DIAS_MES",
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES" 
+			},
+			new String[] {
+				"BASE_CGC * 0.10", "BASE_CGP * 0.05",
+				"BASE_ESTR * 0.10", "BASE_NESTR * 0.20",
+				"BASE_IRPF * PORCENTAJE_IRPF / 100.00" 
+			}
+			,null
+			,null);
+		
+		PersonRecord person = getPerson(aonContext, contract.getPerson());
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, 1190);
+		person.setBirthDate(new java.sql.Date (calendar.getTimeInMillis()));
+		person.update();
+
+		Date startDate = getFirstDayOfMonth(getToday());
+		Date endDate = getLastDayOfMonth(add(startDate, Calendar.MONTH, 1));
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		ctx.setListener(new IListener() {
+			
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				System.out.println(irpfOutcome.getIrpfResult().getIrpf());
+			    	org.junit.Assert.assertEquals(1190, irpfOutcome.getBirthYear());
+			}
+		});
+		ctx.getIrpf();
+		
+
+		
+		calendar.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR)+25);
+		person.setBirthDate(new java.sql.Date (calendar.getTimeInMillis()));
+		person.update();
+		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		ctx.setListener(new IListener() {
+			
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				System.out.println(irpfOutcome.getIrpfResult().getIrpf());
+			    	org.junit.Assert.assertEquals(Calendar.getInstance().get(Calendar.YEAR)+25, irpfOutcome.getBirthYear());
+			}
+			
+			
+		});
+		ctx.getIrpf();
+
+		calendar.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR)-30);
+		person.setBirthDate(new java.sql.Date (calendar.getTimeInMillis()));
+		person.update();
+		ctx = getContractSalaryCalculatorContext(connection, startDate, endDate, endDate, contract);
+		ctx.setListener(new IListener() {
+			
+			@Override
+			public void onIrpf(IrpfOutcome irpfOutcome) {
+				System.out.println(irpfOutcome.getIrpfResult().getIrpf());
+			    	org.junit.Assert.assertEquals(Calendar.getInstance().get(Calendar.YEAR)-30, irpfOutcome.getBirthYear());
+			}
+		});
+		ctx.getIrpf();
 	}
 
 	@Test
