@@ -45,7 +45,7 @@ public class NordigenAPI extends NordigenAPIAbstract {
 	public static JSONArray getInstitutions(String token, Country country, Boolean paymentsEnabled) throws NordigenException {
 		JSONObject paramJson = new JSONObject();
 		paramJson.put(COUNTRY_PARAM, country != null ? country.getIso2() : null);
-		paramJson.put(PAYMENTS_SUPPORTED_PARAM, paymentsEnabled);
+		paramJson.put(PAYMENTS_ENABLED_PARAM, paymentsEnabled);
 		return  getInstitutions(token, paramJson);
 	}
 	

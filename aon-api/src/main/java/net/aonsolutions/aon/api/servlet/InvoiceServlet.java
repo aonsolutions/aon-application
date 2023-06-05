@@ -10,10 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,10 +39,10 @@ import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.attachment.InvoiceAttachmentType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
-import com.esferalia.aon.occam.api.model.finance.InvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.InvoiceInfo;
 import com.esferalia.aon.occam.api.model.finance.InvoiceProperties;
 import com.esferalia.aon.occam.api.model.finance.InvoiceStatus;
+import com.esferalia.aon.occam.api.model.finance.OldInvoiceCommunicationType;
 import com.esferalia.aon.occam.api.model.finance.PrintInvoiceConfiguration;
 import com.esferalia.aon.occam.api.model.finance.SiiConfiguration;
 import com.esferalia.aon.occam.api.model.finance.TbaiConfiguration;
@@ -67,6 +63,9 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
 import es.translogia.tedi.json.TediInvoiceJSON;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -349,7 +348,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 		if(tbaiConfiguration.isBizkaia() && invoice.isSales()) {
 			InvoiceInfo info = AON.getInvoiceInfo(api.getDomain(), api.getUser(), f -> 
 				f.getInvoiceProperty().eq(invoiceId)
-				.and(f.getTypeProperty().eq(InvoiceCommunicationType.LROE_1_1.value())));
+				.and(f.getTypeProperty().eq(OldInvoiceCommunicationType.LROE_1_1.value())));
 			accepted = info.isAccepted() || info.isAcceptedWithErrors();
 		}
 
@@ -526,6 +525,7 @@ public class InvoiceServlet extends AonApiHttpServlet{
 										
 					JSONObject f = new JSONObject();
 				    f.put("url", url);
+				    f.put("path", url);
 				    f.put("content_type", r.getMimeType().getName());
 				    json.put("file", f);
 				}

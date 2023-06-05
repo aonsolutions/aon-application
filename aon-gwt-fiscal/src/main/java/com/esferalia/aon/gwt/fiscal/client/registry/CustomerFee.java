@@ -343,6 +343,7 @@ public class CustomerFee extends MainEntryPoint {
 			segmentListBox.setHeight("2em");
 			segmentListBox.getElement().getStyle().setProperty("padding", "0 5px");
 			segmentListBox.addItem("-", "");
+			segmentListBox.addItem("SIN SEGMENTO", "-1");
 			segmentListBox.setSelectedIndex(0);
 			
 			for (Segment ea : opt.getConfiguration().getSegments()) {

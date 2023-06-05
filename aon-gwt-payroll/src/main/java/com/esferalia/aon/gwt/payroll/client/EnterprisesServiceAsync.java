@@ -138,6 +138,7 @@ public interface EnterprisesServiceAsync {
 			AsyncCallback<String> asyncCallback);
 	void getEnterprisesCCCInfo(String currentDomainName, String user, long findPeriodTime, AsyncCallback<List<CCCInfo>> asyncCallback);
 	void getEmployeesInfo(String currentDomainName, Boolean allEmployees, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
+	void getFJEmployeesInfo(String currentDomainName, AsyncCallback<List<EmployeeContractInfo>> asyncCallback);
 	void getEmployeesITInfo(String currentDomainName, Boolean allEmployees,
 			AsyncCallback<List<ITEmployee>> asyncCallback);
 	void getEmployeesITInfo(String currentDomainName, Integer ids [],
@@ -317,5 +318,9 @@ public interface EnterprisesServiceAsync {
 	void getMassiveCNOs(String currentDomainName, String currentUser, AsyncCallback<List<ContractData>> asyncCallback) throws IllegalArgumentException;
 	
 	void updateMassiveCNOs(String currentDomainName, String currentUser, List<ContractData> contractDatas, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	void duplicateContract(String currentDomainName, String currentUser, EmployeeContractInfo employee, Date newStartDate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
+	
+	void duplicateContract(String currentDomainName, String currentUser, List<EmployeeContractInfo> employees, Date newStartDate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException;
 	
 }

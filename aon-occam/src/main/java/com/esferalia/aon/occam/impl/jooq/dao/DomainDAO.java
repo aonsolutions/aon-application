@@ -58,7 +58,7 @@ import net.aonsolutions.core.pool.AonConnectionException;
 public class DomainDAO {
 	private static final DomainPropertiesDAO DOMAIN_PROPERTIES = new DomainPropertiesDAO();
 
-	protected static class DomainPropertiesDAO implements DomainProperties {
+	public static class DomainPropertiesDAO implements DomainProperties {
 		protected Condition[] getConditions(DomainFilter filter) {
 			FilterDAO filterDAO = (FilterDAO) filter.filter(this);
 			if (filterDAO == null) return new Condition[0];

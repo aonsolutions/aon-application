@@ -7,14 +7,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
@@ -33,6 +36,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
@@ -60,7 +64,6 @@ public class MainMassiveContracts extends MainEntryPoint{
 	MyStyle style;
 
 	interface MyStyle extends CssResource {
-		String dockLayoutPanel();
 		String filterPanel();
 		String flex();
 		String gridTitle();
@@ -101,16 +104,21 @@ public class MainMassiveContracts extends MainEntryPoint{
 	
 	private boolean hasChange = false;
 	
+	private ListBox dataType;
 	private TextBox employeeSB;
-	private CheckBox inactiveContractsCB;
-	private CheckBox noValueCB;
 	private ListBox workplaceLB;
+	private HTMLPanel inactiveContractsPanel;
+	private CheckBox inactiveContractsCB;
+	private HTMLPanel noValuePanel;
+	private CheckBox noValueCB;
+	private HTMLPanel statusPanel;
+	private ListBox statusLB;
+	
 	
 	private AonToolbarButton saveBtn;
 	private AonToolbarButton undoAllButton;
 	private AonToolbarButton addMasiveValueBtn;
 	private AonToolbarButton cnoAFIBtn;
-	private ListBox dataType;
 	
 	// ----------------------------------------------- Constructor
 
@@ -125,7 +133,6 @@ public class MainMassiveContracts extends MainEntryPoint{
 		GWT.<AonGwtTemplateResources>create(AonGwtTemplateResources.class).css().ensureInjected();
 	
 		Widget ui = binder.createAndBindUi(this);
-		ui.addStyleName(style.dockLayoutPanel());
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 
 		getFilterEmployeePanel();
@@ -136,21 +143,28 @@ public class MainMassiveContracts extends MainEntryPoint{
 	// ------------------------------------------ Filter Panel
 
 	private void getFilterEmployeePanel() {
-		filterEmployeePanel.setStyleName(AON.CSS.aonSearchPanel());
-		filterEmployeePanel.addStyleName(AON.CSS.aonScrollArea());
-		filterEmployeePanel.addStyleName(AON.CSS.aonMarginBottom());
-		filterEmployeePanel.addStyleName(AON.CSS.aonMarginLeft());
-		filterEmployeePanel.addStyleName(AON.CSS.aonMarginRight());
-		filterEmployeePanel.addStyleName(AON.CSS.aonBlockCenter());
+		filterEmployeePanel.addStyleName(AON.CSS.aonSearchPanel());
 
 		HTMLPanel filterPanel = new HTMLPanel("");
 		filterPanel.addStyleName(style.filterPanel());
+		
+		HTMLPanel leftPanel = new HTMLPanel("");
+		leftPanel.addStyleName(style.flex());
+		
+		HTMLPanel typePanel = new HTMLPanel("");
+		typePanel.addStyleName(style.flex());
+		Label typeL = new Label("Tipo : ");
+		typeL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		dataType = createDataTypes();
+		dataType.addChangeHandler(e -> dataTypeChange());
+		
+		typePanel.add(typeL);
+		typePanel.add(dataType);
 
 		HTMLPanel employeePanel = new HTMLPanel("");
 		employeePanel.addStyleName(style.flex());
 		Label employeeL = new Label("Persona : ");
 		employeeL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		employeeL.getElement().getStyle().setMarginRight(10, Unit.PX);
 		employeeSB = new TextBox();
 		employeeSB.getElement().getStyle().setWidth(300, Unit.PX);
 		employeeSB.addKeyUpHandler(e -> {
@@ -168,37 +182,31 @@ public class MainMassiveContracts extends MainEntryPoint{
 
 		HTMLPanel showPanel = new HTMLPanel("");
 		showPanel.addStyleName(style.flex());
+		
 		Label workplaceL = new Label("Centro Trabajo : ");
 		workplaceL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		workplaceL.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		workplaceLB = new ListBox();
 		workplaceLB.setStyleName("aon-selectOneMenu");
-		workplaceLB.getElement().getStyle().setMarginLeft(5, Unit.PX);
-		workplaceLB.getElement().getStyle().setMarginRight(5, Unit.PX);
 
+		inactiveContractsPanel = new HTMLPanel("");
+		inactiveContractsPanel.addStyleName(style.flex());
+		
 		Label inactiveL = new Label("Empleados Inactivos");
 		inactiveL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		inactiveL.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		inactiveContractsCB = new CheckBox();
 		inactiveContractsCB.addValueChangeHandler(e -> {
 			AonMessagePanel.showLoading(messagePanel, e.getValue() ? "Cargando trabajadores (inactivos incluidos) ..." : "Cargando trabajadores activos ...");
-		this.mainMassiveContractsObject.getEmployees(dataType.getSelectedValue(), e.getValue(),
-				employees -> {
-					selectionModel = new HashMap<>();
-					employeeSB.setValue("");
-					workplaceLB.setSelectedIndex(0);
-					noValueCB.setValue(false);
-					
-					initPreview();
-					addMasiveValueBtn.setEnabled(false);
-					setHasChange(false);
-					AonMessagePanel.showWarning(messagePanel, new HashMap<String, String>(){{ put("Remesa AFI CNO", "Se recomienda notificar la remesa AFI, con el dato CNO actualizado para todos los contratos, antes del 22/03/2023.\nYa que es necesario antes de confirmar las liquidaciones de Seguridad Social de Marzo."); }});
-				}, f -> AonMessagePanel.showWarning(messagePanel, new HashMap<String, String>(){{ put("Error Contratos", f.getMessage()); }}));
+			getEmployees(false, finish -> {});
 		});
+		
+		inactiveContractsPanel.add(inactiveL);
+		inactiveContractsPanel.add(inactiveContractsCB);
+		
+		noValuePanel = new HTMLPanel("");
+		noValuePanel.addStyleName(style.flex());
 		
 		Label noValueL = new Label("Sin Valor");
 		noValueL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		noValueL.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		noValueCB = new CheckBox();
 		noValueCB.addValueChangeHandler(e -> {
 			this.mainMassiveContractsObject.setHasValue(!e.getValue());
@@ -208,20 +216,82 @@ public class MainMassiveContracts extends MainEntryPoint{
 				initPreview();
 			} else DomEvent.fireNativeEvent(Document.get().createChangeEvent(), this.workplaceLB);
 		});
+		
+
+		noValuePanel.add(noValueL);
+		noValuePanel.add(noValueCB);
+		
+		statusPanel = new HTMLPanel("");
+		statusPanel.addStyleName(style.flex());
+		
+		Label statusL = new Label("Estado : ");
+		statusL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		statusLB = new ListBox();
+		statusLB.addItem("Todo");
+		statusLB.addItem("Llamamiento");
+		statusLB.addItem("Pediente comunicar");
+		statusLB.addItem("Comunicado");
+		statusLB.addChangeHandler(e -> {
+			mainMassiveContractsObject.filterEmployeesStatusList(statusLB.getSelectedIndex());
+			initPreview();
+		});
+		
+
+		statusPanel.add(statusL);
+		statusPanel.add(statusLB);
+		statusPanel.setVisible(false);
+		
+		leftPanel.add(typePanel);
+		leftPanel.add(employeePanel);
 
 		showPanel.add(workplaceL);
 		showPanel.add(workplaceLB);
-		showPanel.add(inactiveL);
-		showPanel.add(inactiveContractsCB);
-		showPanel.add(noValueL);
-		showPanel.add(noValueCB);
+		showPanel.add(inactiveContractsPanel);
+		showPanel.add(noValuePanel);
+		showPanel.add(statusPanel);
 
-		filterPanel.add(employeePanel);
+		filterPanel.add(leftPanel);
 		filterPanel.add(showPanel);
 
 		filterEmployeePanel.add(filterPanel);
 	}
 	
+	private void dataTypeChange() {
+		AonMessagePanel.hideMessage(messagePanel);
+		getEmployees(inactiveContractsCB.getValue(), finish -> {
+			this.inactiveContractsCB.setValue(false);
+			
+			boolean isCNOSelected = AonStringUtils.equalsIgnoreCase(this.dataType.getSelectedValue(), "CNO");
+			
+			saveBtn.setVisible(isCNOSelected);
+			undoAllButton.setVisible(isCNOSelected);
+			cnoAFIBtn.setVisible(isCNOSelected);
+			
+			inactiveContractsPanel.setVisible(isCNOSelected);
+			noValuePanel.setVisible(isCNOSelected);
+			statusPanel.setVisible(!isCNOSelected);
+		});
+	}
+	
+	private void getEmployees(boolean allEmployees, Consumer<Void> success) {
+		mainMassiveContractsObject.getEmployees(dataType.getSelectedValue(), allEmployees,
+				employees -> {
+					selectionModel = new HashMap<>();
+					this.employeeSB.setValue("");
+					this.noValueCB.setValue(false);
+					this.workplaceLB.setSelectedIndex(0);
+					
+					initPreview();
+					addMasiveValueBtn.setEnabled(false);
+					setHasChange(false);
+					
+					if( AonStringUtils.equalsIgnoreCase(this.dataType.getSelectedValue(), "CNO"))
+						AonMessagePanel.showWarning(messagePanel, new HashMap<String, String>(){{ put("Remesa AFI CNO", "Se recomienda notificar la remesa AFI, con el dato CNO actualizado para todos los contratos, antes del 22/03/2023.\nYa que es necesario antes de confirmar las liquidaciones de Seguridad Social de Marzo."); }});
+				
+					success.accept(null);
+				}, f -> AonMessagePanel.showWarning(messagePanel, new HashMap<String, String>(){{ put("Error Contratos", f.getMessage()); }}));
+	}
+
 	private void initWorkplaceLB() {
 		workplaceLB.clear();
 		workplaceLB.addItem("-", "");
@@ -246,6 +316,7 @@ public class MainMassiveContracts extends MainEntryPoint{
 	private ListBox createDataTypes() {
 		ListBox types = new ListBox();
 		types.addItem("CNO", "CNO");
+		types.addItem("Fijo/Discontinuo", "Llamamiento");
 		return types;
 	}
 
@@ -256,32 +327,22 @@ public class MainMassiveContracts extends MainEntryPoint{
 
 	public void onModuleLoad(MainMassiveContractsObject mainMassiveContractsObject) {
 		this.mainMassiveContractsObject = mainMassiveContractsObject;
-		AonMessagePanel.showLoading(messagePanel, "Cargando CNO contratos");
+		AonMessagePanel.showLoading(messagePanel, "Cargando contratos");
 		this.mainMassiveContractsObject.getContextInfo(
 				s -> {
 					initWorkplaceLB();
-					mainMassiveContractsObject.getEmployees(dataType.getSelectedValue(), false,
-							employees -> {
-								selectionModel = new HashMap<>();
-								this.employeeSB.setValue("");
-								this.inactiveContractsCB.setValue(false);
-								this.noValueCB.setValue(false);
-								this.workplaceLB.setSelectedIndex(0);
-								
-								initPreview();
-								addMasiveValueBtn.setEnabled(false);
-								setHasChange(false);
-								AonMessagePanel.showWarning(messagePanel, new HashMap<String, String>(){{ put("Remesa AFI CNO", "Se recomienda notificar la remesa AFI, con el dato CNO actualizado para todos los contratos, antes del 22/03/2023.\nYa que es necesario antes de confirmar las liquidaciones de Seguridad Social de Marzo."); }});
-							}, f -> AonMessagePanel.showWarning(messagePanel, new HashMap<String, String>(){{ put("Error Contratos", f.getMessage()); }}));
+					getEmployees(false, finish -> {
+						this.inactiveContractsCB.setValue(false);
+					});
 				}, f -> {}
 		);
 		
 	}
 	
 	private void initPreview() {
-		if(this.mainMassiveContractsObject.getEmployees().isEmpty())
+		if(this.mainMassiveContractsObject.getEmployees().isEmpty()) {
 			showContractMessage();
-		else {
+		} else {
 			selectionModel.clear();
 			
 			showContractTable();
@@ -309,13 +370,14 @@ public class MainMassiveContracts extends MainEntryPoint{
 			checkAddButton();
 		});
 		
+		boolean isCNOSelected = AonStringUtils.equalsIgnoreCase(this.dataType.getSelectedValue(), "CNO");
 		
 		Label name = new Label("NOMBRE");
 		Label document = new Label("DOCUMENTO");
 		Label nss = new Label("NSS");
 		Label startDate = new Label("F.INICIO");
 		Label endDate = new Label("F.FIN");
-		Label data = new Label(dataType.getSelectedValue());
+		Label data = new Label(isCNOSelected ? "C.N.O." : "F. LLAMAMIENTO");
 		
 		select.addStyleName(style.gridTitle());
 		select.addStyleName(style.headerFSize());
@@ -416,6 +478,8 @@ public class MainMassiveContracts extends MainEntryPoint{
 		switch (dataType.getSelectedValue()) {
 		case "CNO":
 			return createCNOWidget(employee);
+		case "Llamamiento":
+			return createFJWidget(employee);
 		default:
 			return null;
 		}
@@ -423,7 +487,7 @@ public class MainMassiveContracts extends MainEntryPoint{
 
 	private Widget createCNOWidget(EmployeeContractInfo employee) {
 		SuggestBox cnoSB = new SuggestBox();
-		cnoSB.setWidth("95%");
+		cnoSB.setWidth("100%");
 		
 		List<String> cnoSuggest = new ArrayList<>();
 		for(Entry<String, CNO> entry : mainMassiveContractsObject.getCNOs().entrySet())
@@ -464,6 +528,52 @@ public class MainMassiveContracts extends MainEntryPoint{
 		return cnoSB;
 	}
 	
+	private Widget createFJWidget(EmployeeContractInfo employee) {
+		if(null == employee.getContractInfo().getEndDate() || employee.getContractInfo().getStartDate().after(new Date())) {
+			HTMLPanel panel = new HTMLPanel("");
+			panel.addStyleName(AON.CSS.aonItemFlex());
+			panel.getElement().getStyle().setProperty("justify-content", "center");
+			
+			AonTableButton tgss = new AonTableButton(employee.getContractInfo().isSSComunicate() ? "Descargar TA" : "Comunicar Contrato TGSS", AON.CSS.aonIconTgss());
+			AonTableButton sepe = new AonTableButton(employee.getContractInfo().isSepeComunicate() ? "Descargar Copia Contrato" : "Comunicar Contrato SEPE", AON.CSS.aonIconSepe());
+			
+			panel.add(tgss);
+			panel.add(sepe);
+			
+			return panel;
+		} else {
+			AonDateBox dateBox = new AonDateBox();
+			dateBox.setWidth("100%");
+			dateBox.addValueChangeHandler(e -> {
+				if(null != e.getValue()) {
+					AonDialog fdDialog = new AonDialog("Llamamiento (Fijo/Discontinuo)", new HTMLPanel("\u00bfDesea realmente hacer un llamamiento al trabajador " + employee.getEmployeeInfo().getFullName() + " con fecha de inicio " + formatDate.format(e.getValue()) + "\u003f"));
+					fdDialog.confirm(new AonAcceptDialogCallback() {
+	
+						@Override
+						public void onCancel() {
+							// Not use here
+						}
+	
+						@Override
+						public void onAccept() {
+							AonMessagePanel.showLoading(messagePanel, "Creando contrato del llamamiento ...");
+							mainMassiveContractsObject.duplicateContract(
+									employee, 
+									e.getValue(), 
+									s -> {
+										AonMessagePanel.showSuccess(messagePanel, new HashMap<String, String>(){{ put("Llamamiento (Fijo/Discontinuo)", "Se ha generado el llamamiento correctamente, puede encontrar el nuevo contrato en la parte Laboral > Contratos"); }});
+										dataTypeChange();
+									}, 
+									f -> AonMessagePanel.showError(messagePanel, new HashMap<String, String>(){{ put("Error Llamamiento", f.getMessage()); }}));
+						}
+					});
+				}
+			});
+			
+			return dateBox;
+		}
+	}
+	
 	private void checkRowAndModify(Grid grid, int row, EmployeeContractInfo employee, Widget widget) {
 		if (row % 2 == 0)
 			widget.addStyleName(style.oddRow());
@@ -493,21 +603,23 @@ public class MainMassiveContracts extends MainEntryPoint{
 	}
 
 	private void setColumnWidth() {
+		boolean isCNOSelected = AonStringUtils.equalsIgnoreCase(this.dataType.getSelectedValue(), "CNO");
+		
 		contractsDataTableHeader.getColumnFormatter().getElement(0).getStyle().setWidth(3, Unit.PCT);
-		contractsDataTableHeader.getColumnFormatter().getElement(1).getStyle().setWidth(27, Unit.PCT);
+		contractsDataTableHeader.getColumnFormatter().getElement(1).getStyle().setWidth(isCNOSelected ? 27 : 47, Unit.PCT);
 		contractsDataTableHeader.getColumnFormatter().getElement(2).getStyle().setWidth(10, Unit.PCT);
 		contractsDataTableHeader.getColumnFormatter().getElement(3).getStyle().setWidth(10, Unit.PCT);
 		contractsDataTableHeader.getColumnFormatter().getElement(4).getStyle().setWidth(10, Unit.PCT);
 		contractsDataTableHeader.getColumnFormatter().getElement(5).getStyle().setWidth(10, Unit.PCT);
-		contractsDataTableHeader.getColumnFormatter().getElement(6).getStyle().setWidth(30, Unit.PCT);
+		contractsDataTableHeader.getColumnFormatter().getElement(6).getStyle().setWidth(isCNOSelected ? 30 : 10, Unit.PCT);
 		
 		contractDataTable.getColumnFormatter().getElement(0).getStyle().setWidth(3, Unit.PCT);
-		contractDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(27, Unit.PCT);
+		contractDataTable.getColumnFormatter().getElement(1).getStyle().setWidth(isCNOSelected ? 27 : 47, Unit.PCT);
 		contractDataTable.getColumnFormatter().getElement(2).getStyle().setWidth(10, Unit.PCT);
 		contractDataTable.getColumnFormatter().getElement(3).getStyle().setWidth(10, Unit.PCT);
 		contractDataTable.getColumnFormatter().getElement(4).getStyle().setWidth(10, Unit.PCT);
 		contractDataTable.getColumnFormatter().getElement(5).getStyle().setWidth(10, Unit.PCT);
-		contractDataTable.getColumnFormatter().getElement(6).getStyle().setWidth(30, Unit.PCT);
+		contractDataTable.getColumnFormatter().getElement(6).getStyle().setWidth(isCNOSelected ? 30 : 10, Unit.PCT);
 	}
 	
 	private String parseDate(Date date) {
@@ -581,8 +693,16 @@ public class MainMassiveContracts extends MainEntryPoint{
 				
 				@Override
 				protected void onAccept() {
-					// For now only CNO
-					updateSelectedContractsCNO(getCNOCode());
+					switch (dataType.getSelectedValue()) {
+					case "CNO":
+						updateSelectedContractsCNO(getCNOCode());
+						break;
+					case "Llamamiento":
+						updateSelectedContractsFD(getStartDate());
+						break;
+					default:
+						break;
+					}
 				}
 			};
 		});
@@ -593,12 +713,8 @@ public class MainMassiveContracts extends MainEntryPoint{
 			Window.open(fileDownloadURL, "_blank", null);
 		});
 		
-		dataType = createDataTypes();
-		dataType.setVisible(false);
-		
 		toolbar.add(addMasiveValueBtn);
 		toolbar.add(cnoAFIBtn);
-		toolbar.add(dataType);
 	}
 
 	private void updateSelectedContractsCNO(String cnoCode) {
@@ -607,6 +723,33 @@ public class MainMassiveContracts extends MainEntryPoint{
 		});
 		initPreview();
 		setHasChange(true);
+	}
+	
+	private void updateSelectedContractsFD(Date startDate) {
+		List<EmployeeContractInfo> selectedEmployees = new ArrayList<>();
+		this.selectionModel.forEach((checkBox, employee) -> {
+			if(checkBox.getValue()) selectedEmployees.add(employee);
+		});
+		
+		AonMessagePanel.showLoading(messagePanel, "Creando contratos del llamamiento ...");
+		mainMassiveContractsObject.duplicateContract(
+				selectedEmployees, 
+				startDate, 
+				s -> {
+					AonMessagePanel.showSuccess(messagePanel, new HashMap<String, String>(){{ put("Llamamiento (Fijo/Discontinuo)", "Se ha generado el llamamiento correctamente, puede encontrar los nuevos contratos en la parte Laboral > Contratos"); }});
+					reloadAfterTimer();
+				}, 
+				f -> AonMessagePanel.showError(messagePanel, new HashMap<String, String>(){{ put("Error Llamamiento", f.getMessage()); }}));
+	}
+	
+	private void reloadAfterTimer() {
+		Timer delay = new Timer() {
+			@Override
+			public void run() {
+				dataTypeChange();
+			}
+		};
+		delay.schedule(2500);
 	}
 	
 	// ------------------------------------------ HasChange

@@ -346,6 +346,10 @@ public class DomainEnterprisesServiceAsync {
 		enterprisesServiceAsync.getEmployeesInfo(getCurrentDomainName(), allEmployees, asyncCallback);
 	}
 	
+	public void getFJEmployeesInfo(AsyncCallback<List<EmployeeContractInfo>> asyncCallback) {
+		enterprisesServiceAsync.getFJEmployeesInfo(getCurrentDomainName(), asyncCallback);
+	}
+	
 	public void getEmployeeInfo(Integer contractId, AsyncCallback<EmployeeContractInfo> asyncCallback) {
 		enterprisesServiceAsync.getEmployeeInfo(getCurrentDomainName(), contractId, asyncCallback);
 	}
@@ -776,6 +780,14 @@ public class DomainEnterprisesServiceAsync {
 
 	public void updateMassiveCNOs(List<ContractData> contractDatas, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
 		enterprisesServiceAsync.updateMassiveCNOs(getCurrentDomainName(), getCurrentUser(), contractDatas, asyncCallback);
+	}
+	
+	public void duplicateContract(EmployeeContractInfo employee, Date newStartDate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.duplicateContract(getCurrentDomainName(), getCurrentUser(), employee, newStartDate, asyncCallback);
+	}
+	
+	public void duplicateContract(List<EmployeeContractInfo> employees, Date newStartDate, AsyncCallback<Void> asyncCallback) throws IllegalArgumentException {
+		enterprisesServiceAsync.duplicateContract(getCurrentDomainName(), getCurrentUser(), employees, newStartDate, asyncCallback);
 	}
 	
 	// ----------------------------------------------------------------- static

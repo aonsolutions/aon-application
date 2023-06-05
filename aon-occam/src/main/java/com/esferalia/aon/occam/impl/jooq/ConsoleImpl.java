@@ -14,6 +14,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
@@ -115,6 +116,11 @@ public class ConsoleImpl implements IConsole {
 	@Override
 	public void deleteDomainLink(AONContext ctx, DomainLinked domainLinked) {
 		DomainLinkedDAO.delete(ctx, domainLinked);
+	}
+
+	@Override
+	public Stream<DomainCompany> getDomains(AONContext ctx, DomainFilter filter) {
+		return DomainCustomerDAO.getDomains(ctx, filter);
 	}
 	
 }

@@ -143,6 +143,7 @@ public class ContractInfo extends ContractInfoDB implements IExpression, IAudita
 	public enum ContractSsStatus implements IStringEnum, IResourceable {
 		PENDING("PENDING"),
 		BATCHED("BATCHED"),
+		ACCEPTED("ACCEPTED"),
 		RECORDED("RECORDED"),
 		DENIED("DENIED"),
 		BLOCKED("BLOCKED"),
@@ -165,6 +166,8 @@ public class ContractInfo extends ContractInfoDB implements IExpression, IAudita
 				return "Pendiente";
 			} else if(this==BATCHED){
 				return "Remesado";
+			} else if(this==ACCEPTED){
+				return "Aceptado";
 			} else if(this==RECORDED){
 				return "Grabado en AFI";
 			} else if(this==DENIED){

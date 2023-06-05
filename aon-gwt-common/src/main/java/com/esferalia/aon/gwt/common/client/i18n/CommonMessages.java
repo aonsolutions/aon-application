@@ -671,6 +671,9 @@ public interface CommonMessages extends Messages {
 	@DefaultMessage("Fecha IVA")
 	String taxDate();
 
+	@DefaultMessage("Fecha de Expedici\u00F3n")
+	String expeditionDate();
+
 	@DefaultMessage("Acci\u00F3n")
 	String action();
 

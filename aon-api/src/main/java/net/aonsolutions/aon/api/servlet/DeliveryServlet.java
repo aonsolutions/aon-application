@@ -1,25 +1,30 @@
 package net.aonsolutions.aon.api.servlet;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
-
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
+import com.esferalia.aon.occam.api.SERFRUIT;
+import com.esferalia.aon.occam.api.json.CarrierPackingJSON;
 import com.esferalia.aon.occam.api.json.DeliveryJSON;
+import com.esferalia.aon.occam.api.json.DeliveryPackagingJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.DeliveryProperties;
 import com.esferalia.aon.occam.api.model.type.DeliveryStatus;
+import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
 import com.esferalia.aon.occam.api.model.warehouse.Delivery;
+import com.esferalia.aon.occam.api.model.warehouse.DeliveryPackaging;
 import com.esferalia.aon.watson.server.AonDateUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.aonsolutions.aon.api.error.AonApiError;
 import net.aonsolutions.aon.api.error.AonApiException;
 import net.aonsolutions.aon.api.ewok.AonApiData;
@@ -106,6 +111,18 @@ public class DeliveryServlet extends AonApiHttpServlet {
 	private JSONObject saveDelivery(AonApiData api) {
 		Delivery delivery = DeliveryJSON.fromJSON(api.getData());
 		delivery = AON.saveDelivery(api.getDomain(), api.getUser(), delivery);
+			
+		if(JsonUtils.has(api.getData(), IJsonNames.PACKAGING)) {
+			List<DeliveryPackaging> list =  DeliveryPackagingJSON.fromJSON(JsonUtils.getJSONArray(api.getData(), IJsonNames.PACKAGING));
+			SERFRUIT.saveDeliveryPackaging(api.getDomain(), api.getUser()
+					, delivery, list);
+		}
+		
+		if(JsonUtils.has(api.getData(), IJsonNames.CARRIER_PACKING)) {
+			CarrierPacking carrierPacking = CarrierPackingJSON.fromJSON(JsonUtils.getJSONObject(api.getData(), IJsonNames.CARRIER_PACKING));
+			SERFRUIT.saveCarrierPacking(api.getDomain(), api.getUser(), delivery, carrierPacking);
+		}
+
 		return DeliveryJSON.toJSON(delivery);
 	}
 	

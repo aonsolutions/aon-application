@@ -152,6 +152,11 @@ public class IdcParser {
 				listener.onContractOcupation(matcher.group("ocupation"));
 			}
 			
+			matcher = find(reader, CONTRACT_TRL);
+			if(hasData(matcher.group("trl"))) {
+				listener.onEmployeeQuoteTRL(nss, enterpriseCCC, matcher.group("trl"), periodStart, periodEnd);
+			}
+
 			matcher = find(reader, CONTRACT_QUOTEMODALITY);
 			if(hasData(matcher.group("quoteModality"))) {
 				listener.onContractAgrarianQuoteModality(matcher.group("quoteModality"));
@@ -355,6 +360,12 @@ public class IdcParser {
 	"^TRABAJADOR\\s*SUSTITUTO\\*:\\s*(?<sustituteEmployee>.*)OCUPACION\\*\\s*:\\s*(?<ocupation>([a-z](?!\\.TRAB))?).*$"
 	, Pattern.CASE_INSENSITIVE);
 	
+	//COLECTIVO S/EXCLUSIÓN EN COTIZACIÓN:  PROGRAMAS DE FORMACION:   
+	protected static final Pattern CONTRACT_TRL =
+	Pattern.compile(
+	"^COLECTIVO\\s*S/EXCLUSIÓN\\s*EN\\s*COTIZACIÓN\\s*:\\s*(?<trl>.*?)\\s*FECHA.*$"
+	, Pattern.CASE_INSENSITIVE);
+
 	//MODALIDAD DE COTIZACIÓN:   DISCAPACIDAD -GRADO Y TIPO-
 	protected static final Pattern CONTRACT_QUOTEMODALITY =
 	Pattern.compile(

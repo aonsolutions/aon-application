@@ -1,5 +1,6 @@
 // ----- A
 
+export const ABOUT = 'About';
 export const ACCEPT = 'Accept';
 export const ACCESS = "Access";
 export const ACCOUNT = 'Account';

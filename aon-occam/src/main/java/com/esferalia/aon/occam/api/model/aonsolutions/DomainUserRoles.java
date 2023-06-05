@@ -635,8 +635,14 @@ public class DomainUserRoles implements Serializable {
 				 || hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.TASK_MONITORING));
 	}
 	
+	public boolean hasCallCenter() {
+	    return hasOldModule(Module.CALL_CENTER);
+	}
+	
 	public boolean isCallCenter() {
-		return hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER)
-			|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER_MANAGER);
+		return hasCallCenter()
+			&& (isAdmin() 
+				||hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER)
+				|| hasOldRole(com.esferalia.aon.occam.api.model.type.AonRole.CALL_CENTER_MANAGER));
 	}
 }

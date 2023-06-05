@@ -10,6 +10,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
@@ -29,6 +30,7 @@ public interface IConsole {
 	public ConsoleTableRow update(CloseableAONContext ctx, ConsoleTableRow row, ConsoleTableField field);
 	public Boolean delete(CloseableAONContext ctx, ConsoleTableRow row);
 	public Stream<DomainCompany> getAllDomains(AONContext ctx);
+	public Stream<DomainCompany> getDomains(AONContext ctx, DomainFilter filter);
 	public Stream<DomainCompany> getCustomerDomains(AONContext ctx, Integer customer);
 	public List<Domain> updateDomainCustomer(AONContext ctx, List<DomainCompany> domainCompanies, Integer customer);
 	public DomainCompany updateDomainStatus(AONContext ctx, DomainCompany domainCompany, AonStatus aonStatus);

@@ -151,6 +151,46 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 
 
 	@Test
+	public void TestEnAlternancia() throws Exception {
+
+		close("cotizacion_formacion_y_el_aprendizaje");
+		open("cotizacion_formacion_y_el_aprendizaje");
+
+		wait4Id("formacion_aprendizaje,_alternancia_(superior)");
+
+		draft("FORMACIÓN APRENDIZAJE, ALTERNANCIA (SUPERIOR)");
+		calculate(Calendar.MAY, 2023);
+		double cgcBase = getValue("cgcBaseLabel");
+		assertText("common_contingency", 10.18);
+		assertText("unemployment", cgcBase * 1.55 / 100.00);
+		assertText("job_training", 0.25);
+		assertText("mei", 1.26);
+		
+		
+		calculate(Calendar.JUNE, 2023);
+		double totalPayment = getValue("totalPaymentLabel");
+		assertValue("cgcBaseLabel", totalPayment);
+		assertValue("cgpBaseLabel", totalPayment);
+		assertText("common_contingency", 10.18);
+		assertText("unemployment", 19.53);
+		assertText("job_training", 0.25);
+		assertText("mei", 1.26);
+		if ( !isDisplayed("it_cost") )
+			click("costsCheck-input");
+		wait4Id("it_cost");
+		assertText("common_contingency_cost", "51,06");
+		assertText("job_training_cost", "1,90");
+		assertText("fogasa_cost", "3,88");
+		assertText("it_cost", "3,93");
+		assertText("ims_cost", "3,10");
+		assertText("unemployment_cost", 69.30);
+		click("costsCheck-input");
+		
+
+	}
+
+
+	@Test
 	public void TestSettle() throws Exception {
 
 		close("cotizacion_formacion_y_el_aprendizaje");

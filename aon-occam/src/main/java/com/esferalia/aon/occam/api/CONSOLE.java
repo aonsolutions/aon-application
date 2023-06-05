@@ -15,6 +15,7 @@ import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.DomainCompany;
 import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.DomainParams;
+import com.esferalia.aon.occam.api.model.Filter.DomainFilter;
 import com.esferalia.aon.occam.api.model.Occam;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableField;
 import com.esferalia.aon.occam.api.model.console.ConsoleTableRow;
@@ -62,6 +63,24 @@ public class CONSOLE {
 		}
 		return list.stream();
 
+	}
+	
+	public static Stream<DomainCompany> getDomains(DomainFilter filter) {
+		List<DomainCompany> list = new LinkedList<>();
+		List<String> schemas = AONContext.getSchemas();
+		for(String schema: schemas) {
+			try (CloseableAONContext ctx = AONContext.getAONContext(schema)) {
+				List<DomainCompany> domains = getConsole().getDomains(ctx, filter).collect(Collectors.toList());
+				domains.forEach(domain -> {
+					domain.setSchema(schema);
+					list.add(domain);						
+				});
+			} catch (DataAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		return list.stream();
+		
 	}
 	
 	public static Stream<DomainCompany> getCustomerDomains(Integer customer) {

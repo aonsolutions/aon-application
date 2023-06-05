@@ -1054,7 +1054,7 @@ public class IdcTest extends AbstractSQLTestCase {
 
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcVI.pdf")) {
 			Collection<PEC> ssPECs = Idc.getSSPECs(is);
-			assertEquals(1 + 2 + 3 + 1, ssPECs.size());
+			assertEquals(1 + 2 + 3 + 1 + 2 , ssPECs.size());
 
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -4302,7 +4302,7 @@ public class IdcTest extends AbstractSQLTestCase {
 			Assert.assertNull(imsData);
 
 			Deduction[] deductions = PAYROLL.getDeductions(domainName, contract.getDomain(), "login", contract.getId());
-			Assert.assertEquals(3, deductions.length);
+			Assert.assertEquals(4, deductions.length);
 			for (Deduction deduction : deductions) {
 				if (deduction.getType() == UNEMPLOYMENT) {
 					Assert.assertTrue(AonStringUtils.containsIgnoreCase(deduction.getExpression(), "REMOVE"));
@@ -5370,6 +5370,47 @@ public class IdcTest extends AbstractSQLTestCase {
 	}
 
 	@Test
+	public void testIdc986Bonus() throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException,
+			ExpressionException, SalaryException, SQLException {
+
+		try (InputStream is = IdcTest.class.getResourceAsStream("idc986.pdf")) {
+			Collection<PEC> ssPecs = Idc.getSSPECs(is);
+
+			ssPecs.forEach(pec -> System.out.println("[" + pec.getName() + "] " + pec.getDescription() + " = "
+				+ pec.getFormula() + ", " + pec.getStartDate() + ".." + pec.getEndDate()));
+
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			calendar.set(Calendar.YEAR, 2023);
+			calendar.set(Calendar.DAY_OF_MONTH, 24);
+			calendar.set(Calendar.MONTH, Calendar.APRIL);
+			Date april242023 = calendar.getTime();
+
+			assertPECS(ssPecs, april242023, null, 1, pec -> AonStringUtils.equals(pec.getName(),"FP") );
+			assertPECS(ssPecs, april242023, null, 1, pec -> AonStringUtils.equals(pec.getName(),"FP_E") );
+			assertPECS(ssPecs, april242023, null, 1, pec -> AonStringUtils.equals(pec.getName(),"DESMPL") );
+			assertPECS(ssPecs, april242023, null, 1, pec -> AonStringUtils.equals(pec.getName(),"DESMPL_E") );
+			assertPECS(ssPecs, april242023, null, 1, pec -> AonStringUtils.equals(pec.getName(),"FOGASA_E") );
+			
+			//assertPECS(ssPecs, april242023, null, 1, pec -> AonStringUtils.contains(pec.getFormula(),"-1 * CGC") );
+			//assertPECS(ssPecs, april242023, null, 1, pec -> AonStringUtils.contains(pec.getFormula(),"CGC_E + IT_E + IMS_E") );
+
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.MONTH, Calendar.MAY);
+			Date may012023 = calendar.getTime();
+			Salary salary = calculate(ssPecs, Collections.emptyList(), may012023, new  SalaryBuilder(), new GenericContractSalaryCalculator.Listener() );
+			
+			assertEquals(0.00 , salary.getTotalEnterprise(), DELTA);
+			assertEquals(0.00 , salary.getSocialSecurityContributions(), DELTA);
+
+		}
+	}
+
+	@Test
 	public void testIdcplnssTrabajadoresTramosXIX()
 			throws com.esferalia.aon.in.payroll.pdf.UnknownPDFException, IOException, JAXBException {
 		try (InputStream is = IdcTest.class.getResourceAsStream("idcplnssXIX.pdf")) {
@@ -6021,6 +6062,7 @@ public class IdcTest extends AbstractSQLTestCase {
              ssPecs.stream()
 	    .filter( pec -> Objects.equals(pec.getEndDate(),endDate))
 	    .filter( pec -> Objects.equals(pec.getStartDate(),startDate))
+	    .filter(test)
 	    .toArray(PEC[]::new);
 	    
 	    Assert.assertEquals(1, pecs.length);
