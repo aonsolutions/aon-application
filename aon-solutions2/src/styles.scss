@@ -5,5 +5,18 @@ $roboto-font-path: "~roboto-fontface/fonts" !default;
 @import "~roboto-fontface/css/roboto/sass/roboto-fontface";
 
 html {
-   font-size: 16px!important;
+   font-size: 20px!important;
+}
+
+.allSize {
+   width: calc(100%);
+   height: calc(100%);
+}
+
+a, u {
+  text-decoration: none;
+}
+
+a:visited {
+  color: black;
 }

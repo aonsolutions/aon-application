@@ -1,5 +1,6 @@
 import { Component, OnChanges, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 export class Enterprise {
   name: string;
@@ -20,6 +21,7 @@ export class Enterprise {
 export class TopBarComponent implements OnInit, OnChanges {
 
   displayHomeIcon: boolean = false;
+  usserLoggged: boolean = this.auth.isLoggedIn();
   currentRoute: string = this.router.url.replace('/','');
   selectedEnterprise: string = 'Nombre de empresa 1';
   enterprises: Enterprise [] = [
@@ -29,9 +31,9 @@ export class TopBarComponent implements OnInit, OnChanges {
     {name: 'Nombre de empresa 4'},
   ];
 
-  constructor(private router: Router) { 
-    this.router.events.subscribe((event) => {       
-      event instanceof NavigationEnd ? this.checkCurrentRoute() : null     
+  constructor(private router: Router, public auth: AuthService) {
+    this.router.events.subscribe((event) => {
+      event instanceof NavigationEnd ? this.checkCurrentRoute() : null
     })
   }
 

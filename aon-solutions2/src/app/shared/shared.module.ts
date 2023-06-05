@@ -17,6 +17,17 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatDividerModule } from '@angular/material/divider';
+import { InputComponent } from './components/input/input.component';
+import { ButtonComponent } from './components/button/button.component';
+import { IconComponent } from './components/icon/icon.component';
+import { MatButtonModule } from '@angular/material/button';
+import { GlobalHoverDirective } from './directives/global-hover.directive';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatSelectModule } from '@angular/material/select';
 
 
 @NgModule({
@@ -31,7 +42,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     ContentSideNavComponent,
     ListElementComponent,
     BasicLayoutComponent,
-    SidenavLayoutComponent
+    SidenavLayoutComponent,
+    InputComponent,
+    ButtonComponent,
+    IconComponent,
+    GlobalHoverDirective
   ],
   imports: [
     CommonModule,
@@ -40,14 +55,31 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatSidenavModule,
     RouterModule,
     MatGridListModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatDividerModule,
+    MatButtonModule,
+    MatInputModule,
+    FormsModule,
+    MatIconModule,
+    ReactiveFormsModule,
+    MatDatepickerModule,
+    MatSelectModule
   ],
   exports:[
     SidenavHoverDirective,
     SideNavComponent,
     TopBarComponent,
     BasicLayoutComponent,
-    SidenavLayoutComponent
+    SidenavLayoutComponent,
+    ContentComponent,
+    ContentHeaderComponent,
+    ContentMainComponent,
+    ContentDetailComponent,
+    ContentSideNavComponent,
+    ListElementComponent,
+    IconComponent,
+    ButtonComponent,
+    InputComponent
   ]
 })
 export class SharedModule { }
