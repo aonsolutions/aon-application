@@ -1,12 +1,12 @@
-.appButton{
+.tag{
     box-sizing: border-box;
-    cursor: pointer;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 :host {
     display: flex;
     width: var(--widthHost);
-    height: var(--heightHost);
+    height: var(--widthHeight);
 }

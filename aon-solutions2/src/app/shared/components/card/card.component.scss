@@ -1,0 +1,11 @@
+.card{
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+:host {
+    display: flex;
+    width: var(--widthHost);
+    height: var(--widthHeight);
+}

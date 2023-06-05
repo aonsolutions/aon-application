@@ -16,15 +16,6 @@
     justify-content: left;
 }
 
-.breadcumb {
-    width: calc(100%);
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: .5rem;
-}
-
 .toolbarIcons {
     width: calc(100%);
     height: 100%;
@@ -63,80 +54,43 @@
     background-color: #fff;
 }
 
-.enterpriseSelector {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.5;
-    letter-spacing: 0.44px;
-    text-align: right;
-    color: #787885;
-}
-
-.enterpriseSelector:hover {
-    cursor: pointer;
-}
-
-.currentRoute {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #b4b4bb;
-    border-radius: 4px;
-    background-color: #f9f9fa;
-    padding: .5rem;
-    font-size: 1rem;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.5;
-    letter-spacing: 0.44px;
-    text-align: right;
-    color: #5a5b6a;
-}
-
-
 
 
 ///// DROPDOWN MENU
 
-.hoverMenu:hover {
-    background-color: #f0f0f1;
-    border-radius: 7px;
-}
+// .hoverMenu:hover {
+//     background-color: #f0f0f1;
+//     border-radius: 7px;
+// }
 
-.hoverMenu {
-    padding-left: .5rem;
-    padding-right: .5rem;
-}
+// .hoverMenu {
+//     padding-left: .5rem;
+//     padding-right: .5rem;
+// }
 
-.mat-menu-item:hover:not(.set-menu-item-active) {
-    background:none;
-}
+// .mat-menu-item:hover:not(.set-menu-item-active) {
+//     background:none;
+// }
 
-.mat-menu-item:hover {
-    background:none;
-}
+// .mat-menu-item:hover {
+//     background:none;
+// }
 
-.mat-menu-item {
-    margin: .5rem;
-    width: calc(auto);
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color:#19191d!important;
-    height: 2.5rem!important;
-    line-height: 2.5rem!important;
-    padding: 0rem 0rem!important;
-    font-size: 1rem;
-    font-weight: normal;
-    font-stretch: normal;
-    font-style: normal;
-    line-height: 1.5;
-    letter-spacing: 0.44px;
-    text-align: left;
-    color: #19191d;
-}
+// .mat-menu-item {
+//     margin: .5rem;
+//     width: calc(auto);
+//     text-overflow: ellipsis;
+//     white-space: nowrap;
+//     color:#19191d!important;
+//     height: 2.5rem!important;
+//     line-height: 2.5rem!important;
+//     padding: 0rem 0rem!important;
+//     font-size: 1rem;
+//     font-weight: normal;
+//     font-stretch: normal;
+//     font-style: normal;
+//     line-height: 1.5;
+//     letter-spacing: 0.44px;
+//     text-align: left;
+//     color: #19191d;
+// }

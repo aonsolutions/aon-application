@@ -23,13 +23,6 @@ export class TopBarComponent implements OnInit, OnChanges {
   displayHomeIcon: boolean = false;
   usserLoggged: boolean = this.auth.isLoggedIn();
   currentRoute: string = this.router.url.replace('/','');
-  selectedEnterprise: string = 'Nombre de empresa 1';
-  enterprises: Enterprise [] = [
-    {name: 'Nombre de empresa 1'},
-    {name: 'Nombre de empresa 2'},
-    {name: 'Nombre de empresa 3'},
-    {name: 'Nombre de empresa 4'},
-  ];
 
   constructor(private router: Router, public auth: AuthService) {
     this.router.events.subscribe((event) => {

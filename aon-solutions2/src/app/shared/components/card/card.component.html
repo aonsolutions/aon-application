@@ -1,0 +1,34 @@
+<div class="card"
+[ngStyle]="{
+    'border': border,
+    'width': '100%',
+    'height': height,
+    'padding': padding,
+    'borderRadius': borderRadius
+}"
+>
+    <div class="cardHeader"
+    [ngStyle]="{
+        'width': '100%',
+        'height': headerHeight
+    }"
+    >
+        <ng-content select="[header]"></ng-content>
+    </div>
+    <div class="cardBody"
+    [ngStyle]="{
+        'width': '100%',
+        'height': 'calc(100% - '+headerHeight+' - '+footerHeight+')'
+    }"
+    >
+        <ng-content select="[body]"></ng-content>
+    </div>
+    <div class="cardFooter"
+    [ngStyle]="{
+        'width': '100%',
+        'height': footerHeight
+    }"
+    >
+        <ng-content select="[footer]"></ng-content>
+    </div>
+</div>

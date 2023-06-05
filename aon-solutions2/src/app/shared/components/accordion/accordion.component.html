@@ -1,0 +1,17 @@
+<mat-accordion>
+    <mat-expansion-panel hideToggle 
+    (opened)="panelOpenState = true"
+    (closed)="panelOpenState = false"
+    (click)="sendValue()"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <ng-content select="[header]"></ng-content>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <ng-content select="[content]"></ng-content>
+    </mat-expansion-panel>
+</mat-accordion>
+<div style="padding: 0rem 1rem">
+    <mat-divider></mat-divider>
+</div>
