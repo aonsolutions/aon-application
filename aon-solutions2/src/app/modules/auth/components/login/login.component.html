@@ -1,16 +1,18 @@
 <app-content>
-  <div class="containerLogin">
-    <app-list-element [widthContainer]="'41rem'">
+  <mat-grid-list [cols]="24" rowHeight="fit" [style.height]="'100%'">
+    <!-- TODO: Buscar si es posible usar offset parecdio a como se realiza en Bootstrap -->
+    <mat-grid-tile [colspan]="8"></mat-grid-tile>
+    <mat-grid-tile [colspan]="8">
       <div class="contTitleLogin">
-        <!-- Pendiente de revisar tipografias y tamanyos -->
-        <h4 class="titleLogin">Inicia Sesión</h4>
-        <span>Entra en tu cuenta de AON</span>
-      </div>
+        <div class="titleLogin">
+          <!-- Pendiente de revisar tipografias y tamanyos -->
+          <h4 class="">Inicia Sesión</h4>
+          <span>Entra en tu cuenta de AON</span>
+        </div>
 
-      <app-list-element padding="1rem" widthContainer="'100%'" heightContainer="22rem" [border]="'1px'" color="gray">
-        <div class="allSize contEnterprise">
+        <app-list-element padding="1.75rem 1.25rem" widthContainer="'100%'" [border]="'1px'" color="gray">
+        <div class="cardBody">
 
-          <!-- <input class="inputLogin" type="text" name="nameUser" id="nameUser" placeholder="Usuario" [(ngModel)]="user"> -->
           <app-input
               (inputValue)="username=$event"
               [appearance]="'outline'"
@@ -19,9 +21,11 @@
               [placeholder]="'usuario'"
               [width]="'100%'"
               [class]="'inputLogin'"
+              class="inputLogin"
+              style="margin-bottom: 1.6rem;"
+              color="danger"
           ></app-input>
 
-          <!-- <input class="inputLogin" type="password" name="passsUser" id="passsUser" [(ngModel)]="password"> -->
           <app-input
               (inputValue)="password=$event"
               [appearance]="'outline'"
@@ -30,6 +34,8 @@
               [placeholder]="'Contraseña'"
               [width]="'100%'"
               [class]="'inputLogin'"
+              class="inputLogin"
+              style="margin-bottom: 0.95rem;"
           ></app-input>
 
           <app-button [width]="'100%'"
@@ -62,6 +68,8 @@
           >SIN CONTRASEÑA</app-button>
         </div>
       </app-list-element>
-    </app-list-element>
-  </div>
+      </div>
+
+    </mat-grid-tile>
+  </mat-grid-list>
 </app-content>

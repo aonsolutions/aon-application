@@ -6,25 +6,21 @@
   align-items: center;
 }
 
-.contTitleLogin, .inputLogin {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
+.contTitleLogin {
+  width: 100%;
 }
 
-.contTitleLogin {
-  padding-bottom: 2rem;
-}
 
 .titleLogin {
-  margin-bottom: 0;
-  padding-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  margin: 0 5.05rem 1.35rem 5.3rem;
 }
 
 .inputLogin {
-  width: 100%;
-  margin: 1rem 0;
+  display: flex;
 }
 
 .divider {
@@ -36,13 +32,8 @@
 .divider::before, .divider::after {
   flex: 1;
   content: '';
-  padding: 0.5px;
+  padding: 0.025rem;
   background-color: #5a5b6a;
-  margin: 5px;
+  margin: 0.25rem;
 }
 
-.contEnterprise {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-}

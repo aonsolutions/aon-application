@@ -8,17 +8,17 @@
     <span matPrefix><ng-content select="[prefix]"></ng-content></span>
 
     <!-- INPUTS TIPO TEXT,PASSWORD,DATETIME -->
-    <input 
-        *ngIf="type != 'select' && type != 'textarea'" 
-        matInput 
-        [(ngModel)]="value" 
-        [ngClass]="['ng-pending']" 
+    <input
+        *ngIf="type != 'select' && type != 'textarea'"
+        matInput
+        [(ngModel)]="value"
+        [ngClass]="['ng-pending']"
         [disabled]="disabled"
-        [type]="type" 
-        [placeholder]="placeholder" 
+        [type]="type"
+        [placeholder]="placeholder"
         (ngModelChange)="returnValue($event)"
     />
-    
+
     <!-- INPUTS TIPO SELECT -->
     <mat-select
         *ngIf="type=='select'"
@@ -43,7 +43,7 @@
         (ngModelChange)="returnValue($event)"
     >
     </textarea>
-    
+
     <span matSuffix *ngIf="value!=''" [ngClass]="classSuffix" (click)="this.selectFunction()"><ng-content select="[suffix]"></ng-content></span>
     <mat-hint *ngIf="hint != ''">{{hint}}</mat-hint>
 </mat-form-field>
