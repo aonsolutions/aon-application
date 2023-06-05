@@ -44,6 +44,7 @@ public final class IJsonNames {
 	public static final String AP1 = "ap1";
 	public static final String AP2 = "ap2";
 	public static final String APA = "apa";
+	public static final String APP = "app";
 	public static final String APPS = "apps";
 	public static final String ATTACH = "attach";
 	public static final String ATTACH_MODULE = "attachModule";
@@ -197,6 +198,7 @@ public final class IJsonNames {
 	public static final String EPIGRAPH = "epigraph";
 	public static final String EPIGRAPH_SECTION = "epigraphSection";
 	public static final String ERROR = "error";
+	public static final String ERRORS = "errors";
 	public static final String EXPENSES = "expenses";
 	public static final String EXPENSES_FIXED = "expensesFixed";
 	public static final String EXPENSES_PERCENT = "expensesPercent";
