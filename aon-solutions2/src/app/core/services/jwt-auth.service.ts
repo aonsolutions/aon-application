@@ -9,9 +9,6 @@ export class JwtAuthService {
 
   constructor(private router: Router) { }
 
-  login(token: string):void {
-    sessionStorage.setItem(environment.localStorageJwt.accessToken, token);
-  }
 
   logout() {
     sessionStorage.removeItem(environment.localStorageJwt.accessToken);
@@ -31,6 +28,10 @@ export class JwtAuthService {
 
   getJwt() {
     return (sessionStorage.getItem(environment.localStorageJwt.accessToken) !== null);
+  }
+
+  setJwt(token: string):void {
+    sessionStorage.setItem(environment.localStorageJwt.accessToken, token);
   }
 
 }

@@ -15,7 +15,7 @@ export class AuthService {
   auxEmpresas!: IEnterprise[];
 
 
-  constructor(private http: HttpClient, private jwtAuth: JwtAuthService, private apiService: ApiService, private router: Router) { }
+  constructor(private http: HttpClient, private jwtAuthService: JwtAuthService, private apiService: ApiService, private router: Router) { }
 
 
   login(email: string, password: string): void{
@@ -28,7 +28,8 @@ export class AuthService {
       (response) => {
         // Si ha ido bien la petición de login
         if (response.session_id) {
-          sessionStorage.setItem(environment.localStorageJwt.accessToken, response.session_id);
+          this.jwtAuthService.setJwt(response.session_id)
+          // sessionStorage.setItem(environment.localStorageJwt.accessToken, response.session_id);
           this.router.navigate(['/auth/selectEnterprise']);
         }
       },
@@ -40,11 +41,26 @@ export class AuthService {
   }
 
   logout() {
-    this.jwtAuth.logout();
+    this.jwtAuthService.logout();
   }
 
   isLoggedIn(): boolean {
-    return this.jwtAuth.isLoggedIn();
+    return this.jwtAuthService.isLoggedIn();
+  }
+
+  getListEnterprises(): Observable<any> {
+    let token = sessionStorage.getItem(environment.localStorageJwt.accessToken);
+    let domainName = environment.headerApi.domainName;
+    let headers = new HttpHeaders();
+
+    if (token !== null) {
+      headers = headers.set('session_id', token);
+    }
+    headers = headers.set('domain_name', domainName);
+
+    return this.apiService.getWithHeaders('company', headers);
+
+
   }
 
 }
