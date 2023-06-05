@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.irpf;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Ascendiente.Convivencia;
@@ -12,6 +13,7 @@ import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.Discapacidad;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.SituacionFamiliar;
 import com.esferalia.aon.payroll.irpf.IIrpfCalculatorContext.SituacionLaboral;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.watson.server.AonDateUtils;
 
 import es.aeat.pret.rw13.jaxb.AEATRetencionesEntrada2013;
 import es.aeat.pret.rw13.jaxb.TipoDiscapacidad;
@@ -190,7 +192,7 @@ public class AEATRetencionesEntradaFactory {
 
 		retenido.setNif(ctx.getNif());
 		retenido.setApellidosNombre(ctx.getApellidosNombre());
-		retenido.setAñoNacimiento(ctx.getAñoNacimiento());
+		retenido.setAñoNacimiento(getAñoNacimiento(ctx, 2023));
 
 		if (ctx.getResidenciaCeutaMelilla()) {
 			retenido.setResidenciaCeutaMelilla(new ResidenciaCeutaMelilla());
@@ -361,7 +363,7 @@ public class AEATRetencionesEntradaFactory {
 
 		retenido.setNif(ctx.getNif());
 		retenido.setApellidosNombre(ctx.getApellidosNombre());
-		retenido.setAñoNacimiento(ctx.getAñoNacimiento());
+		retenido.setAñoNacimiento(getAñoNacimiento(ctx, 2020));
 
 		if (ctx.getResidenciaCeutaMelilla()) {
 
@@ -448,7 +450,7 @@ public class AEATRetencionesEntradaFactory {
 
 		retenido.setNif(ctx.getNif());
 		retenido.setApellidosNombre(ctx.getApellidosNombre());
-		retenido.setAñoNacimiento(ctx.getAñoNacimiento());
+		retenido.setAñoNacimiento(getAñoNacimiento(ctx, 2021));
 
 		if (ctx.getResidenciaCeutaMelilla()) {
 
@@ -535,7 +537,7 @@ public class AEATRetencionesEntradaFactory {
 
 		retenido.setNif(ctx.getNif());
 		retenido.setApellidosNombre(ctx.getApellidosNombre());
-		retenido.setAñoNacimiento(ctx.getAñoNacimiento());
+		retenido.setAñoNacimiento(getAñoNacimiento(ctx, 2022));
 
 		if (ctx.getResidenciaCeutaMelilla()) {
 
@@ -622,7 +624,7 @@ public class AEATRetencionesEntradaFactory {
         
         	retenido.setNif(ctx.getNif());
         	retenido.setApellidosNombre(ctx.getApellidosNombre());
-        	retenido.setAñoNacimiento(ctx.getAñoNacimiento());
+        	retenido.setAñoNacimiento(getAñoNacimiento(ctx, 2023));
         
         	if (ctx.getResidenciaCeutaMelilla()) {
         
@@ -1058,4 +1060,17 @@ public class AEATRetencionesEntradaFactory {
         	}
         	return situacionLaboral;
         }
+	
+	private static int getAñoNacimiento(IIrpfCalculatorContext ctx, int todayYear ) {
+	    int birthYear = ctx.getAñoNacimiento();
+	    int minInclusiveYear  = 1910 ; //todayYear - 100;  
+	    int maxInclusiveYear  = todayYear;
+	    int defaultYear  = todayYear - 50;
+	    
+	    if ( birthYear < minInclusiveYear || birthYear > maxInclusiveYear ) {
+		birthYear = defaultYear;
+	    } 
+	    
+	    return birthYear;
+	}
 }
