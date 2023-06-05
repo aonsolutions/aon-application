@@ -107,16 +107,23 @@ public class IrpfCalculator {
 	public static IrpfOutcome calculateIrpf(IIrpfCalculatorContext ctx, Date date) {
 		int year = AonDateUtils.get(date, Calendar.YEAR);
 		int month = AonDateUtils.get(date, Calendar.MONTH);
-		if ( year == 2020 )
-			return calculateIrpf2020(ctx);
-		if ( year == 2021 )
-			return calculateIrpf2021(ctx);
-		if ( year == 2022 )
-			return calculateIrpf2022(ctx);
-		if ( year == 2023 && month == JANUARY )  
-		    return calculateIrpfJanuary2023(ctx);
+		IrpfOutcome irpfOutcome;
+		if ( year == 2020 ) {
+		    irpfOutcome = calculateIrpf2020(ctx);
+		} else if ( year == 2021 ) {
+		    irpfOutcome = calculateIrpf2021(ctx);
+		} else if ( year == 2022 ) {
+		    irpfOutcome = calculateIrpf2022(ctx);
+		} else if ( year == 2023 && month == JANUARY ) {  
+		    irpfOutcome = calculateIrpfJanuary2023(ctx);
+		} else {		
+		    irpfOutcome = calculateIrpf2023(ctx);
+		}
 		
-		return calculateIrpf2023(ctx);
+		irpfOutcome.getIrpfResult()
+		.setEffectiveDate(date);
+		
+		return irpfOutcome;
 	}
 	
 	
