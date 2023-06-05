@@ -425,7 +425,7 @@
 								<!-- Gestión de Cobros -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="financeCharge-accounting"
-										action="finance_search-charge-treasury"
+										action="finance_search-charge-accounting"
 										actionListener="#{finance.onEditSearchCharge}"
 										value="#{bundle.finance_charge_module}" />
 								</aon:div>
@@ -433,7 +433,7 @@
 								<!-- Remesas de Cobro -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="fbatchCharge-accounting" 
-										action="fbatch_search-charge-treasury"
+										action="fbatch_search-charge-accounting"
 										actionListener="#{fbatch.onEditSearchCharge}"
 										value="#{bundle.finance_fbatch_charge_module}">
 										<f:setPropertyActionListener target="#{fbatch.payroll}"
@@ -444,7 +444,7 @@
 								<!-- Gestión de Pagos -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="financePayment-accounting"
-										action="finance_search-payment-treasury"
+										action="finance_search-payment-accounting"
 										actionListener="#{finance.onEditSearchPayment}"
 										value="#{bundle.finance_payment_module}" />
 								</aon:div>
@@ -452,7 +452,7 @@
 								<!-- Remesas de Pago -->
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="fbatchPayment-accounting" 
-										action="fbatch_search-payment-treasury"
+										action="fbatch_search-payment-accounting"
 										actionListener="#{fbatch.onEditSearchPayment}"
 										value="#{bundle.finance_fbatch_payment_module}">
 										<f:setPropertyActionListener target="#{fbatch.payroll}"

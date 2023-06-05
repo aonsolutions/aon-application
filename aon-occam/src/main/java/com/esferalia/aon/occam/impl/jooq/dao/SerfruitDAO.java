@@ -16,6 +16,9 @@ import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.Elaboration;
 import com.esferalia.aon.occam.api.model.Filter.SalesFilter;
+import com.esferalia.aon.occam.api.model.attachment.Attach;
+import com.esferalia.aon.occam.api.model.attachment.AttachType;
+import com.esferalia.aon.occam.api.model.attachment.DataAttachSource;
 import com.esferalia.aon.occam.api.model.management.Sales;
 import com.esferalia.aon.occam.api.model.product.Item;
 import com.esferalia.aon.occam.api.model.product.Product;
@@ -25,6 +28,7 @@ import com.esferalia.aon.occam.api.model.product.Tax;
 import com.esferalia.aon.occam.api.model.registry.Carrier;
 import com.esferalia.aon.occam.api.model.type.AppParam;
 import com.esferalia.aon.occam.api.model.type.ElaborationStatus;
+import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.ProductType;
 import com.esferalia.aon.occam.api.model.type.TaxType;
 import com.esferalia.aon.occam.api.model.warehouse.CarrierPacking;
@@ -56,29 +60,78 @@ public class SerfruitDAO {
 	
 	public static void saveDeliveryPackaging(AONContext ctx, Delivery delivery, List<DeliveryPackaging> packaging) {
 		Warehouse w = getWarehouse(ctx, delivery);
-		packaging.stream().forEach(dp -> {
-			Item p = getPackage(ctx, dp);
-			Integer maxLine = delivery.getDetails().stream().mapToInt(r -> r.getLine()).max().getAsInt() + 1;
-			if(p != null) {
-				DeliveryDetail detail = new DeliveryDetail();
-				detail.setDomain(ctx.getDomainId());
-				detail.setDelivery(delivery);
-				detail.setLine(maxLine.shortValue());
-				detail.setItem(p);
-				String description = p.getProduct().getName();
-				detail.setDescription(description);
-				detail.setWarehouse(w.getId());
-				detail.setDiscountExpression("0");
-				detail.setQuantity(Double.valueOf(dp.getQuantity()));
-				detail.setCreationUser(ctx.getUser());
-				detail.setCreationDate(new Date());
-				delivery.getDetails().add(detail);
-			}
-			
-		});
-		
+		StringBuilder builder = new StringBuilder();
+		processPackaging(ctx, delivery, packaging, w, null, builder);
+		insertAttachPackaging(ctx, delivery, builder);
 	}
 
+	private static void processPackaging(AONContext ctx, Delivery delivery, List<DeliveryPackaging> packaging, Warehouse w, Integer parentLine, StringBuilder builder) {
+	
+		packaging.stream().forEach(dp -> {
+			if(dp.getDeliveryLine() == null) {
+				Integer maxLine = delivery.getDetails().stream().mapToInt(r -> r.getLine()).max().getAsInt() + 1;
+				insertDetail(ctx, delivery, dp, maxLine, w);
+
+				processPackaging(ctx, delivery, dp.getContent(), w, maxLine, builder);
+			
+				if(dp.getSscc() != null) {
+					builder.append("[ENV=" + maxLine + ";LIN=" + getLine(dp) +";SSCC=" + dp.getSscc()+ "]");
+				} else {
+					builder.append("[ENV=" + maxLine + ";CONT=" + parentLine + "]");
+				}
+			}
+ 		});
+		
+	}
+	
+	private static void insertAttachPackaging(AONContext ctx, Delivery delivery, StringBuilder builder) {
+		Attach attach = new Attach();
+		attach.setAttachType(AttachType.DATA);
+		attach.setDomain(new Domain().setId(delivery.getDomain()));
+		attach.setDate(new Date());
+		attach.setData(builder.toString().getBytes());
+		attach.setMimeType(MimeType.TXT);
+		attach.setSourceType(DataAttachSource.DELIVERY.value());
+		attach.setSourceBatch(delivery.getId());
+		attach.setType((byte)0);
+		
+		AttachmentDAO.insertDataAttach(ctx, attach);
+	}
+	
+	private static DeliveryDetail insertDetail(AONContext ctx, Delivery delivery, DeliveryPackaging dp, Integer line, Warehouse w) {
+		Item p = getPackage(ctx, dp);
+		if(p != null) {
+			DeliveryDetail detail = new DeliveryDetail();
+			detail.setDomain(ctx.getDomainId());
+			detail.setDelivery(delivery);
+			detail.setLine(line.shortValue());
+			detail.setItem(p);
+			String description = p.getProduct().getName();
+			detail.setDescription(description);
+			detail.setWarehouse(w.getId());
+			detail.setDiscountExpression("0");
+			detail.setQuantity(Double.valueOf(dp.getQuantity()));
+			detail.setCreationUser(ctx.getUser());
+			detail.setCreationDate(new Date());
+			delivery.getDetails().add(detail);
+			return DeliveryDetailDAO.save(ctx, detail);
+		}
+		return null;
+
+	}
+	
+	private static Integer getLine(DeliveryPackaging dp ) {
+		if(dp.getDeliveryLine() != null) return dp.getDeliveryLine();
+		
+		Integer line = null;
+		Integer indez = 0;
+		while(line == null){
+			line = getLine(dp.getContent().get(indez));
+			indez++;
+		}
+		
+		return line;
+	}
 	
 	private static Warehouse getWarehouse(AONContext ctx, Delivery delivery) {
 		Warehouse warehouse = WarehouseDAO.getWarehouse(

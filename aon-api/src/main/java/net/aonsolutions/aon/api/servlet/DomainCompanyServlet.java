@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.CONSOLE;
+import com.esferalia.aon.occam.api.json.BookingJSON;
 import com.esferalia.aon.occam.api.json.DomainCompanyJSON;
 import com.esferalia.aon.occam.api.json.DomainJSON;
 import com.esferalia.aon.occam.api.json.JsonUtils;
@@ -16,7 +17,17 @@ import com.esferalia.aon.occam.api.model.DomainLinked;
 import com.esferalia.aon.occam.api.model.Filter;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.Properties.DomainProperties;
+import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
+import com.esferalia.aon.occam.api.model.product.Item;
+import com.esferalia.aon.occam.api.model.product.Product;
+import com.esferalia.aon.occam.api.model.product.ProductKind;
+import com.esferalia.aon.occam.api.model.registry.RegistryItem;
+import com.esferalia.aon.occam.api.model.registry.RegistryItemStatus;
+import com.esferalia.aon.occam.api.model.registry.RegistryMode;
+import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
+import com.esferalia.aon.occam.api.model.type.DomainType;
+import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
@@ -34,6 +45,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 	public static final String DOMAINS = "/";
 //	public static final String CUSTOMER_DOMAINS = "/:customer"; //buscar entre todos los schemas los que tengan ese aonCustomer
 	public static final String DOMAIN_LINKED = "/link/";
+	public static final String BOOKING = "/booking/";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -59,13 +71,13 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
-			
 			Object object = new AonRouting(api)
-				.addRoute(DOMAINS, DomainCompanyServlet::getDomains)
+					.addRoute(DOMAINS, DomainCompanyServlet::getDomains)
 //				.addRoute(CUSTOMER_DOMAINS, DomainCompanyServlet::getCustomerDomains)
-				.apply();
+					.apply();
 			
 			response(req, resp, object);
+			
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
@@ -79,6 +91,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			Object object = new AonRouting(api)
 				.addRoute(DOMAINS, DomainCompanyServlet::updateCustomerDomains)
 				.addRoute(DOMAIN_LINKED, DomainCompanyServlet::saveDomainLinked)
+				.addRoute(BOOKING, DomainCompanyServlet::updateBookingRitems)
 				.apply();
 			
 			response(req, resp, object);
@@ -103,23 +116,9 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private static JSONObject getAction(AonApiData api) {
-		return new JSONObject();
-	}
-	
 	private static JSONArray getDomains(AonApiData api) {
 		JSONArray domains = new JSONArray();
-//		String customerDocument = api.getData().optString(IJsonNames.REGISTRY_DOCUMENT);
-//		boolean linked = api.getData().optBoolean(IJsonNames.LINKED);
-//		int customerId = api.getData().optInt("customerId");
-		
 		CONSOLE.getDomains(f -> domainFilter(api, f)).map(DomainCompanyJSON::toJSON).forEach(domains::put);
-//		CONSOLE.getAllDomains().map(DomainCompanyJSON::toJSON).forEach(domains::put);
-//		if (AonStringUtils.isBlank(customerDocument)) {
-//			CONSOLE.getAllDomains().map(DomainCompanyJSON::toJSON).forEach(domains::put);
-//		} else {
-//			CONSOLE.getDomainsByDocument(customerDocument, customerId).map(DomainCompanyJSON::toJSON).forEach(domains::put);
-//		}
 		return domains;
 	}
 	
@@ -190,11 +189,116 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		return new JSONObject();
 	}
 	
-	private static JSONObject putAction(AonApiData api) {
-		return new JSONObject();
+	private static JSONObject updateBookingRitems(AonApiData api) {
+		JSONObject errJson = new JSONObject();
+		JSONObject domainJson = api.getData().optJSONObject(IJsonNames.DOMAIN);
+		JSONObject bookingJson = api.getData().optJSONObject(IJsonNames.BOOKING);
+
+		JSONArray errors = new JSONArray();
+		errJson.put(IJsonNames.DOMAIN, domainJson);
+		
+		errJson.put(IJsonNames.ERRORS, errors);		
+		
+		if (domainJson != null && bookingJson != null) {
+			DomainCompany domainCompany = DomainCompanyJSON.fromJSON(domainJson);
+			Booking booking = BookingJSON.fromJSON(bookingJson);
+			Domain domain = domainCompany.getDomain();
+			if (domain != null) {
+				List<AonApp> apps = booking.getApps();
+				DomainType domainType = domain.getDomainType();
+				Integer aonCustomer = domain.getAonCustomer();
+				for (AonApp app : apps) {
+					String barCode = getBarCode(domainType, app);
+					Item item = AON.getItem(api.getDomain(), api.getUser().getLogin(), f -> f.getBarcodeProperty().eq(barCode));
+//					if (item == null || item.getId() == null) {
+//						item = createItem(api, domain, app);
+//					}
+					Integer itemId = item != null ? item.getId() : null;
+					if (item != null && itemId != null) {
+						RegistryItem ritem = AON.getRItem(
+								api.getDomain().getName(),
+								api.getDomain().getId(),
+								api.getUser().getLogin(),
+								f -> f.getRegistryProperty().eq(aonCustomer).and(f.getItemProperty().eq(itemId))
+						);
+						if (ritem == null || ritem.getId() == null) {
+							RegistryItem newRitem = new RegistryItem()
+									.setDomain(api.getDomain().getId())
+									.setRegistry(aonCustomer)
+									.setItem(item.getId())
+									.setType(RegistryMode.CUSTOMER)
+									.setStatus(RegistryItemStatus.ACTIVE)
+									.setPriority(Priority.NONE);
+							try {
+								AON.saveRItem(api.getDomain(), api.getUser(), newRitem);								
+							} catch (Exception e) {
+								errors.put(createError(barCode, domainType, app, "No se pudo insertar guardar [" + e.getMessage() + "]"));
+							}
+							
+						}
+					} else {
+						errors.put(createError(barCode, domainType, app, "Item no encontrado"));
+					}
+				}
+			}
+		} else if (bookingJson == null || bookingJson.isEmpty()) {
+			errors.put(createError(null, null, null, "Contratación no encontrada"));
+		}
+		if (!errors.isEmpty()) {			
+			return errJson;
+		} else {
+			return new JSONObject();
+		}
 	}
 	
-	private static JSONObject deleteAction(AonApiData api) {
-		return new JSONObject();
+	private static JSONObject createError(String barCode, DomainType domainType, AonApp app, String error) {
+		JSONObject itemErr = new JSONObject();
+		if (AonStringUtils.isNotBlank(barCode)) {
+			itemErr.put(IJsonNames.BARCODE, barCode);
+		}
+		if (domainType != null) {
+			itemErr.put(IJsonNames.DOMAIN_TYPE, domainType.name());			
+		}
+		if (app != null) {
+			itemErr.put(IJsonNames.APP, app.name());
+		}
+		if (AonStringUtils.isNotBlank(error)) {
+			itemErr.put(IJsonNames.ERROR, error);
+		}
+		
+		return itemErr.isEmpty() ? null : itemErr;
 	}
+	
+	private static Product createProduct(AonApiData api, Domain domain, AonApp app) {
+		if (domain == null || app == null) {
+			return null;
+		}
+		Product product = new Product().setName(app.name()).setCode(""/*no lo sé*/).setKind(ProductKind.SALE);
+		return AON.saveProduct(api.getDomain(), api.getUser().getLogin(), product);
+	}
+	
+	private static Item createItem(AonApiData api, Domain domain, AonApp app) {
+		if (domain == null || app == null) {
+			return null;
+		}
+		Product product = AON.getProduct(api.getDomain(), api.getUser().getLogin(), f -> f.getNameProperty().eq(app.name()));
+		if (product == null || product.getId() == null) {
+			product = createProduct(api, domain, app);
+		}
+		Item item = new Item().setBarcode(getBarCode(domain.getDomainType(), app)).setProduct(product);
+		return AON.saveItem(api.getDomain(), api.getUser().getLogin(), item);
+	}
+	
+	private static String getBarCode(DomainType domainType, AonApp app) {
+		StringBuilder sb = new StringBuilder();
+		if (domainType != null && app != null) {
+			int domainTypeOrdinal = domainType.ordinal();
+			int appOrdinal = app.ordinal();
+			sb.append(AonStringUtils.leftPad(AonNumberUtils.toString(domainTypeOrdinal), 2, '0'));
+			sb.append(".");
+			sb.append(AonStringUtils.leftPad(AonNumberUtils.toString(appOrdinal), 2, '0'));
+		}
+		return sb.toString();
+	}
+	
 }
