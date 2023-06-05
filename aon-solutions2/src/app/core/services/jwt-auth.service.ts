@@ -1,0 +1,37 @@
+import { Router } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { environment } from 'src/environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class JwtAuthService {
+
+  constructor(private router: Router) { }
+
+
+  logout() {
+    sessionStorage.removeItem(environment.localStorageJwt.accessToken);
+    this.router.navigateByUrl("/auth");
+  }
+
+  isLoggedIn(): boolean {
+    const isLoggged = this.getJwt();
+
+    if(isLoggged) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  getJwt() {
+    return (sessionStorage.getItem(environment.localStorageJwt.accessToken) !== null);
+  }
+
+  setJwt(token: string):void {
+    sessionStorage.setItem(environment.localStorageJwt.accessToken, token);
+  }
+
+}

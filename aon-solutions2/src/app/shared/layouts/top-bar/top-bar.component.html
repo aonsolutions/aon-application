@@ -5,11 +5,30 @@
           <img src="../../../assets/images/logo/logo-aon.png" routerLink="home" class="logoAon" />
         </div>
       </mat-grid-tile>
-      <mat-grid-tile colspan="1">
+      <mat-grid-tile colspan="1" *ngIf="usserLoggged">
         <app-breadcumb></app-breadcumb>
       </mat-grid-tile>
-      <mat-grid-tile colspan="1">
-        <div class="toolbarIcons">
+      <mat-grid-tile colspan="1" *ngIf="usserLoggged">
+        <div class="allSize" style="display:flex; justify-content: right; align-items: center;">
+          <app-button 
+          width="2rem"
+          height="2rem"
+          [backgroundColor]="'#f9f9fa'" 
+          [border]="'#f9f9fa solid .05rem'" 
+          [borderRadius]="'1rem'"
+          [align]="'center'"
+          (click)="this.dropdownMenuComponent.openDropdownMenu();"
+          >
+          <app-icon 
+          [shape]="'person'" 
+          [color]="'#292a31'"
+          size="1.2rem"
+          >
+          </app-icon>
+          <app-dropdown-menu #first [menuItem]="this.menuItem"></app-dropdown-menu>
+        </app-button>
+        </div>
+        <!-- <div class="toolbarIcons">
           <div *ngIf="this.displayHomeIcon" class="buttonTopbar" routerLink="home">
             <div class="iconToolbar">
               <set-icon shape="home" set-color color="black"> </set-icon>
@@ -36,7 +55,7 @@
                   Ayuda
                 </div>
               </a>
-              <a mat-menu-item>
+              <a mat-menu-item href="#" (click)="auth.logout()">
                 <div class="hoverMenu">
                   <set-icon shape="exit_to_app"></set-icon>
                   &nbsp;&nbsp;
@@ -45,8 +64,7 @@
               </a>
             </ng-container>
           </mat-menu>
-        </div>
+        </div> -->
       </mat-grid-tile>
     </mat-grid-list>
   </mat-toolbar>
-  

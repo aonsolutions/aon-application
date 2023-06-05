@@ -1,5 +1,16 @@
-import { Component, OnChanges, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnChanges, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { MenuItem } from 'src/app/core/models/interface/menu-item';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { DropdownMenuComponent } from '../../components/dropdown-menu/dropdown-menu.component';
+
+export class Enterprise {
+  name: string;
+  constructor(name: string){
+    this.name = name;
+  }
+}
+
 @Component({
   selector: 'app-topbar',
   templateUrl: './top-bar.component.html',
@@ -11,12 +22,19 @@ import { Router, NavigationEnd } from '@angular/router';
 })
 export class TopBarComponent implements OnInit, OnChanges {
 
+  @ViewChild('first') dropdownMenuComponent: DropdownMenuComponent = new DropdownMenuComponent;
+  menuItem: MenuItem [] = [
+    {root:true, text:'Editar perfil', icon:'home', colorIcon:'black'},
+    {root:true, text:'Ayuda', icon:'person', colorIcon:'black', click:() => this.logout()},
+    {root:true, text:'Cerrar sesión', icon:'person_pin', colorIcon:'black'},
+  ]
   displayHomeIcon: boolean = false;
+  usserLoggged: boolean = this.auth.isLoggedIn();
   currentRoute: string = this.router.url.replace('/','');
 
-  constructor(private router: Router) { 
-    this.router.events.subscribe((event) => {       
-      event instanceof NavigationEnd ? this.checkCurrentRoute() : null     
+  constructor(private router: Router, public auth: AuthService) {
+    this.router.events.subscribe((event) => {
+      event instanceof NavigationEnd ? this.checkCurrentRoute() : null
     })
   }
 
@@ -33,6 +51,10 @@ export class TopBarComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
+  }
+
+  logout() {
+    this.auth.logout();
   }
 
 }
