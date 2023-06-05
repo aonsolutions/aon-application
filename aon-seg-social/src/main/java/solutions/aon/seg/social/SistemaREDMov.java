@@ -883,8 +883,9 @@ class SistemaREDMov {
 			final String certificatePassword, final String certificateType, String ipf, String regimen, String ctaCti,
 			String nss, Date fecha, Optional<String> contract, String coef) throws Exception {
 
-		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,
-				certificateType)) {
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword,certificateType)) {
+			
+			webClient.getOptions().setUseInsecureSSL(true);
 
 			Integer ident = Integer.parseInt(Toolkit.getIdentityType(ipf));
 
