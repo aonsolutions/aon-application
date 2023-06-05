@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { Enterprise } from 'src/app/shared/layouts/top-bar/top-bar.component';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { Component, Input, OnInit, Output } from '@angular/core';
+import { ApiService } from 'src/app/core/services/api.service';
+import { IEnterprise } from 'src/app/core/models/interface/enterprise';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-select-enterprise',
@@ -8,16 +11,25 @@ import { Enterprise } from 'src/app/shared/layouts/top-bar/top-bar.component';
 })
 export class SelectEnterpriseComponent implements OnInit {
 
-  enterprises: Enterprise [] = [
-    {name: 'Nombre de empresa 1'},
-    {name: 'Nombre de empresa 2'},
-    {name: 'Nombre de empresa 3'},
-    {name: 'Nombre de empresa 4'},
-  ];
+ empresas: IEnterprise[] = [];
 
-  constructor() { }
 
-  ngOnInit(): void {
+  constructor(private authService: AuthService, private apiService: ApiService, private router: Router) {
+    // this.empresas = this.auth.auxEmpresas();
+
   }
+
+  ngOnInit() {
+    this.authService.getListEnterprises().subscribe((enterprises) => {
+      this.empresas = enterprises;
+    });
+  }
+
+  selectEnterprise(enterprise: IEnterprise) {
+    // TODO: Llamar servicio JWT(generico) para que establezca empresa seleccionada en session
+    // TODO: Establecer si guardamos toda la empresa, o por el contrario usar id/document
+    this.router.navigate(['']);
+  }
+
 
 }
