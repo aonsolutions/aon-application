@@ -1,5 +1,6 @@
 package net.aonsolutions.occam.api;
 
+@Deprecated
 public interface HasDirtyFlag<T> {
 
 	public boolean isDirty();

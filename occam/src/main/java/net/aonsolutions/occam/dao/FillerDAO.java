@@ -28,9 +28,9 @@ class FillerDAO {
 				.setDescription(FillerUtils.getValue(rec,table.DESCRIPTION))
 				.setType( DomainType.safeValueOf( FillerUtils.getValue(rec,table.TYPE)).orElse(null))
 				.setScope( FillerUtils.getValue(rec,table.SCOPE) == null ? null : new ScopeFiller().apply(rec))
-				.setEnableHeredity(FillerUtils.getBoolean(rec, table.ENABLEHEREDITY))
+				.setInheritance(FillerUtils.getBoolean(rec, table.ENABLEHEREDITY))
 				.setActive(FillerUtils.getBoolean(rec, table.ACTIVE))
-				.setDirty(false)
+				.markAsClean()
 			;
 		}
 		
@@ -49,7 +49,7 @@ class FillerDAO {
 				.setAlias(FillerUtils.getValue(rec, table.ALIAS))
 				.setNationality( Country.safeValueOf( FillerUtils.getValue(rec,table.NATIONALITY)).orElse(null))
 				.setConfidential(FillerUtils.getConfidential(rec, table.SECURITY_LEVEL))
-				.setDirty(false)
+				.markAsClean()
 			;
 		}
 	}

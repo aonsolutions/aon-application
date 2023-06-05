@@ -40,15 +40,19 @@ public class AonObjectUtils {
 		return ifPresent(value.orElse(null), action);
 	}
 
+	/**
+	 * @Deprecated use ifNotNullDo
+	 */
+	@Deprecated 
 	public static <T, R> R ifPresent(T value, Function<T, R> action) {
-		if (value != null) {
-			return action.apply(value);
-		}
-		return null;
+		return ifNotNullDo(value, action);
 	}
 
 	public static <T, R> R ifNotNullDo(final T object, Function<T, R> value) {
 		return object == null ? null : value.apply(object);
 	}
 
+	public static void ifTrue(boolean cond, Runnable action) {
+		if (cond ) action.run();
+	}
 }

@@ -1,16 +1,14 @@
 package net.aonsolutions.occam.api.config;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-import net.aonsolutions.occam.api.HasDirtyFlag;
-import net.aonsolutions.occam.api.HasSelector;
+import net.aonsolutions.occam.api.OccamEntity;
+import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.constants.Country;
 import net.aonsolutions.occam.api.constants.DocumentType;
-import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Registry implements Serializable, HasSelector<Registry>,HasDirtyFlag<Registry>{
+public class Registry extends OccamEntity  {
 	
 	private static final long serialVersionUID = 9114564405091033572L;
 	
@@ -24,14 +22,21 @@ public class Registry implements Serializable, HasSelector<Registry>,HasDirtyFla
 	private Country nationality;
 	private boolean confidential;
 	
-	private boolean dirty;
-	private boolean selected;
-	
+	@Override
+	protected Object getUuid() {
+		return getId();
+	}
+	@Override
+	public Registry markAsClean() {
+		super.markAsClean();
+		return this;
+	}
+
 	public Integer getId() {
 		return id;
 	}
 	public Registry setId(Integer id) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.id,id) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
 		this.id = id;
 		return this;
 	}
@@ -40,7 +45,7 @@ public class Registry implements Serializable, HasSelector<Registry>,HasDirtyFla
 		return domain;
 	}
 	public Registry setDomain(Integer domain) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.domain, domain) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(AonNames.DOMAIN));
 		this.domain = domain;
 		return this;
 	}
@@ -49,7 +54,7 @@ public class Registry implements Serializable, HasSelector<Registry>,HasDirtyFla
 		return document;
 	}
 	public Registry setDocument(String document) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.document, document) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.document,document), () -> markAsDirty(AonNames.DOCUMENT));
 		this.document = document;
 		return this;
 	}
@@ -58,7 +63,7 @@ public class Registry implements Serializable, HasSelector<Registry>,HasDirtyFla
 		return documentType;
 	}
 	public Registry setDocumentType(DocumentType documentType) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.documentType, documentType) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.documentType,documentType), () -> markAsDirty(AonNames.DOCUMENT_TYPE));
 		this.documentType = documentType;
 		return this;
 	}
@@ -67,7 +72,7 @@ public class Registry implements Serializable, HasSelector<Registry>,HasDirtyFla
 		return documentCountry;
 	}
 	public Registry setDocumentCountry(Country documentCountry) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.documentCountry, documentCountry) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.documentCountry,documentCountry), () -> markAsDirty(AonNames.DOCUMENT_COUNTRY));
 		this.documentCountry = documentCountry;
 		return this;
 	}
@@ -76,7 +81,7 @@ public class Registry implements Serializable, HasSelector<Registry>,HasDirtyFla
 		return name;
 	}
 	public Registry setName(String name) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.name, name) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(AonNames.NAME));
 		this.name = name;
 		return this;
 	}
@@ -85,7 +90,7 @@ public class Registry implements Serializable, HasSelector<Registry>,HasDirtyFla
 		return alias;
 	}
 	public Registry setAlias(String alias) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.alias, alias) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.alias,alias), () -> markAsDirty(AonNames.ALIAS));
 		this.alias = alias;
 		return this;
 	}
@@ -94,7 +99,7 @@ public class Registry implements Serializable, HasSelector<Registry>,HasDirtyFla
 		return nationality;
 	}
 	public Registry setNationality(Country nationality) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.nationality, nationality) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.nationality,nationality), () -> markAsDirty(AonNames.NATIONALITY));
 		this.nationality = nationality;
 		return this;
 	}
@@ -103,28 +108,8 @@ public class Registry implements Serializable, HasSelector<Registry>,HasDirtyFla
 		return confidential;
 	}
 	public Registry setConfidential(boolean confidential) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.confidential, confidential) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.confidential,confidential), () -> markAsDirty(AonNames.CONFIDENTIAL));
 		this.confidential = confidential;
-		return this;
-	}
-
-	@Override
-	public boolean isDirty() {
-		return dirty;
-	}
-	@Override
-	public Registry setDirty(boolean dirty) {
-		this.dirty = dirty;
-		return this;
-	}
-
-	@Override
-	public boolean isSelected() {
-		return selected;
-	}
-	@Override
-	public Registry setSelected(boolean selected) {
-		this.selected = selected;
 		return this;
 	}
 
@@ -132,13 +117,13 @@ public class Registry implements Serializable, HasSelector<Registry>,HasDirtyFla
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
 		if (obj instanceof Registry other) {
-			return AonNumberUtils.equals(this.id,other.id);
+			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(id, 0).hashCode();
+	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
 	}
 }

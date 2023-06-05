@@ -58,8 +58,8 @@ class DomainTest extends AbstractOccamTest {
 		assertTrue(d.isDirty());
 	}
 	@Test()
-	void dirtyEnableHeredityTest() {
-		Domain d = new Domain().setEnableHeredity(true);
+	void dirtyInheritanceTest() {
+		Domain d = new Domain().setInheritance(true);
 		assertTrue(d.isDirty());
 	}
 
@@ -135,8 +135,8 @@ class DomainTest extends AbstractOccamTest {
 		Booking b = new Booking();
 		b.setMaxDefinedUsers( Integer.MAX_VALUE );
 		d.setBooking(b);
-		b.setDirty(false);
-		d.setDirty(false);
+		b.markAsClean();
+		d.markAsClean();
 		d.setBooking(null);
 		assertTrue(d.isDirty());
 	}
@@ -175,8 +175,8 @@ class DomainTest extends AbstractOccamTest {
 		DomainAudit b = new DomainAudit();
 		b.setLastAccessDate(AonRandom.futureDate());
 		d.setAudit(b);
-		b.setDirty(false);
-		d.setDirty(false);
+		b.markAsClean();
+		d.markAsClean();
 		d.setAudit(null);
 		assertTrue(d.isDirty());
 	}

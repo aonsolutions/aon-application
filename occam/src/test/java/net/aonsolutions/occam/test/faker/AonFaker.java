@@ -114,7 +114,7 @@ public class AonFaker {
 	public static Domain getDomainStandalone() {
 		return getDomain(true)
 				.setParent(null)
-				.setEnableHeredity(false)
+				.setInheritance(false)
 				.setType( DomainType.ENTERPRISE )
 				;
 	}
@@ -129,7 +129,7 @@ public class AonFaker {
 			.setDescription(AonRandom.lorem(50))
 			.setParent( AonRandom.gt(50) ? getDomain() : null)
 			.setType(AonEnumRandom.getDomainType(20).orElse(null))
-			.setEnableHeredity(AonRandom.gt(50))
+			.setInheritance(AonRandom.gt(50))
 			.setActive(AonRandom.gt(50))
 			.setId(AonRandom.integer(50))
 			.setBooking( bookingRequired || AonRandom.gt(50) ? getBooking() : null)

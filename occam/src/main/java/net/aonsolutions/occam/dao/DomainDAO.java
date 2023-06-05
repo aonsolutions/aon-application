@@ -63,7 +63,7 @@ public class DomainDAO {
 		@Override public Property<Integer> withParent() {return new PropertyDAO<>(DOMAIN.PARENT);}
 		@Override public Property<Byte> withType() {return new PropertyDAO<>(DOMAIN.TYPE);}
 		@Override public Property<Integer> withScope() {return new PropertyDAO<>(DOMAIN.SCOPE);}
-		@Override public Property<Byte> withEnableHeredity() {return new PropertyDAO<>(DOMAIN.ENABLEHEREDITY);}
+		@Override public Property<Byte> withInheritance() {return new PropertyDAO<>(DOMAIN.ENABLEHEREDITY);}
 		@Override public Property<Byte> withDomainManagement() {return new PropertyDAO<>(DOMAIN.DOMAINMANAGEMENT);}
 		@Override public Property<Byte> withDisableDomainManagement() {return new PropertyDAO<>(DOMAIN.DISABLEDOMAINMANAGEMENT);}
 		@Override public Property<Integer> withMaxDefinedUsers() {return new PropertyDAO<>(DOMAIN.MAXDEFINEDUSERS);}
@@ -346,6 +346,7 @@ public class DomainDAO {
 		public FillerBuilder withBooking() {
 			withBooking = mapper -> {
 				mapper.get().setBooking(new Booking()
+					.setId(FillerUtils.getValue(mapper.getRecord(), DOMAIN.ID))
 					.setOwner(FillerUtils.getValue(mapper.getRecord(), DOMAIN.OWNER))
 					.setExpirationDate(FillerUtils.getValue(mapper.getRecord(), DOMAIN.EXPIRATIONDATE))
 					.setDomainManagement(FillerUtils.getBoolean(mapper.getRecord(), DOMAIN.DOMAINMANAGEMENT))
@@ -353,8 +354,8 @@ public class DomainDAO {
 					.setMaxDefinedUsers(FillerUtils.getValue(mapper.getRecord(),DOMAIN.MAXDEFINEDUSERS))
 					.setAonCustomer(FillerUtils.getValue(mapper.getRecord(),DOMAIN.AONCUSTOMER))
 					.setAonStatus( AonStatus.safeValueOf( FillerUtils.getValue(mapper.getRecord(),DOMAIN.AONSTATUS)).orElse(null)))
-					.setDirty(false)
-				;
+					.markAsClean()
+					;
 				return mapper;
 			};
 			return this;
@@ -397,17 +398,17 @@ public class DomainDAO {
 			}
 		};
  
-		public static final BiConsumer<AONContext,Domain> COMPLETE_ENABLE_HEREDITY = (ctx,domain) -> {
-			if (domain.isEnableHeredity() && !domain.getParent().isPresent()) {
-				ctx.log().debug("\t Saving domain: EnableHeredity to false (no parent)");
-				domain.setEnableHeredity(false);
+		public static final BiConsumer<AONContext,Domain> COMPLETE_INHERITANCE = (ctx,domain) -> {
+			if (domain.hasInheritance() && !domain.getParent().isPresent()) {
+				ctx.log().debug("\t Saving domain: Inheritance to false (no parent)");
+				domain.setInheritance(false);
 			}
 		};
 
 		public static void autoComplete(AONContext ctx, Domain domain) throws AonCoreException {
 			LOWCASE_NAME
 				.andThen(COMPLETE_TYPE)
-				.andThen(COMPLETE_ENABLE_HEREDITY)
+				.andThen(COMPLETE_INHERITANCE)
 				.accept(ctx, domain);
 		}
 
@@ -507,7 +508,7 @@ public class DomainDAO {
 			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isActive() ))
 			.set(DOMAIN.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), Scope::getId))
 			.set(DOMAIN.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), Domain::getId))
-			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isEnableHeredity() ))
+			.set(DOMAIN.ENABLEHEREDITY, AonEnumUtils.getByte(domain.hasInheritance() ))
 			.set(DOMAIN.OWNER, AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getOwner))
 			.set(DOMAIN.DOMAINMANAGEMENT
 				, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDomainManagement)))
@@ -541,7 +542,7 @@ public class DomainDAO {
 			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isActive() ))
 			.set(DOMAIN.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), Scope::getId))
 			.set(DOMAIN.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), Domain::getId))
-			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isEnableHeredity() ))
+			.set(DOMAIN.ENABLEHEREDITY, AonEnumUtils.getByte(domain.hasInheritance() ))
 			.set(DOMAIN.MODIFICATION_USER, audit.getModificationUser().orElse(ctx.getUser()) )
 			.set(DOMAIN.MODIFICATION_DATE, new Timestamp(audit.getModificationDate().orElse(new Date()).getTime())) 
 			.where(DOMAIN.ID.eq(domain.getId()))

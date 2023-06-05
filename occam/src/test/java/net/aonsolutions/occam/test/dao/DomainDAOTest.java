@@ -99,7 +99,7 @@ class DomainDAOTest extends AbstractOccamTest {
 				.and(p.withParent().eq( AonObjectUtils.ifOptionalPresent(expected.getParent(), o -> o.getId()) ))
 				.and(p.withType().eq( AonEnumUtils.getByte(expected.getType())))
 				.and(p.withScope().eq( AonObjectUtils.ifOptionalPresent(expected.getScope(), o -> o.getId()) ))
-				.and(p.withEnableHeredity().eq( AonEnumUtils.getByte(expected.isEnableHeredity())))
+				.and(p.withInheritance().eq( AonEnumUtils.getByte(expected.hasInheritance())))
 				.and(p.withActive().eq( AonEnumUtils.getByte(expected.isActive())))
 				// Booking
 				.and(p.withOwner().eq( AonObjectUtils.ifOptionalPresent(expected.getBooking(), a -> a.getOwner())))

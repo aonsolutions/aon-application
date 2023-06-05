@@ -1,19 +1,17 @@
 package net.aonsolutions.occam.api.config;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
 
-import net.aonsolutions.occam.api.HasDirtyFlag;
-import net.aonsolutions.occam.api.HasSelector;
+import net.aonsolutions.occam.api.OccamEntity;
+import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.constants.DomainType;
 import net.aonsolutions.watson.client.util.AonCollectionUtils;
-import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Domain> {
+public class Domain extends OccamEntity {
 
 	private static final long serialVersionUID = 2356532157666489635L;
 	
@@ -24,23 +22,30 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 	private boolean active;
 	private Scope scope;
 	private Domain parent;
-	private boolean enableHeredity;
+	private boolean inheritance;
 	
 	private Configuration configuration;
 	private Registry company;
 	private Booking booking;
 	private DomainAudit audit;
 	
-	private LinkedHashSet<User> users; 
-	
-	private boolean dirty;
-	private boolean selected;
+	private LinkedHashSet<User> users;
 
+	@Override
+	protected Object getUuid() {
+		return getId();
+	}
+	@Override
+	public Domain markAsClean() {
+		super.markAsClean();
+		return this;
+	}
+	
 	public Integer getId() {
 		return id;
 	}
 	public Domain setId(Integer id) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.id,id) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
 		this.id = id;
 		return this;
 	}
@@ -49,7 +54,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return name;
 	}
 	public Domain setName(String name) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.name,name) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(AonNames.NAME));
 		this.name = name;
 		return this;
 	}
@@ -58,7 +63,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return description;
 	}
 	public Domain setDescription(String description) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.description,description) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.description,description), () -> markAsDirty(AonNames.DESCRIPTION));
 		this.description = description;
 		return this;
 	}
@@ -67,7 +72,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return Optional.ofNullable(parent);
 	}
 	public Domain setParent(Domain parent) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.parent,parent) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.parent,parent), () -> markAsDirty(AonNames.PARENT));
 		this.parent = parent;
 		return this;
 	}
@@ -76,17 +81,17 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return type;
 	}
 	public Domain setType(DomainType type) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.type,type) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.type,type), () -> markAsDirty(AonNames.TYPE));
 		this.type = type;
 		return this;
 	}
 	
-	public boolean isEnableHeredity() {
-		return enableHeredity;
+	public boolean hasInheritance() {
+		return inheritance;
 	}
-	public Domain setEnableHeredity(Boolean enableHeredity) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.enableHeredity,enableHeredity) );
-		this.enableHeredity = enableHeredity;
+	public Domain setInheritance(Boolean inheritance) {
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.inheritance,inheritance), () -> markAsDirty(AonNames.INHERITANCE));
+		this.inheritance = inheritance;
 		return this;
 	}
 
@@ -94,7 +99,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return active;
 	}
 	public Domain setActive(boolean active) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.active,active) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.active,active), () -> markAsDirty(AonNames.ACTIVE));
 		this.active = active;
 		return this;
 	}
@@ -103,7 +108,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return Optional.ofNullable(scope);
 	}
 	public Domain setScope(Scope scope) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.scope,scope) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.scope,scope), () -> markAsDirty(AonNames.SCOPE));
 		this.scope = scope;
 		return this;
 	}
@@ -112,7 +117,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return Optional.ofNullable(configuration);
 	}
 	public Domain setConfiguration(Configuration configuration) {
-		this.dirtyMark( this.configuration, configuration);
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.configuration,configuration), () -> markAsDirty(AonNames.CONFIGURATION));
 		this.configuration = configuration;
 		return this;
 	}
@@ -121,7 +126,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 		return Optional.ofNullable(company);
 	}
 	public Domain setCompany(Registry company) {
-		this.dirtyMark( this.company, company);
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.company,company), () -> markAsDirty(AonNames.COMPANY));
 		this.company = company;
 		return this;
 	}
@@ -131,7 +136,7 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 	}
 
 	public Domain setBooking(Booking booking) {
-		this.dirtyMark( this.booking, booking );
+		AonObjectUtils.ifTrue( mustMarkaAsDirty(this.booking,booking), () -> markAsDirty(AonNames.BOOKING));
 		this.booking = booking;
 		return this;
 	}
@@ -141,32 +146,11 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 	}
 
 	public Domain setAudit(DomainAudit audit) {
-		this.dirtyMark( this.audit, audit);
+		AonObjectUtils.ifTrue( mustMarkaAsDirty(this.audit,audit), () -> markAsDirty(AonNames.AUDIT));
 		this.audit = audit;
 		return this;
 	}
 
-	@Override
-	public boolean isDirty() {
-		return dirty;
-	}
-	@Override
-	public Domain setDirty(boolean dirty) {
-		this.dirty = dirty;
-		return this;
-	}
-
-	// ---------------------------------------------------------- HasSelector<Domain>
-	@Override
-	public boolean isSelected() {
-		return selected;
-	}
-	@Override
-	public Domain setSelected(boolean selected) {
-		this.selected = selected;
-		return this;
-	}
-	
 	// ---------------------------------------------------------- 
 	public Optional<Collection<User>> getUsers() {
 		return Optional.ofNullable(users);
@@ -189,13 +173,14 @@ public class Domain implements Serializable, HasSelector<Domain>,HasDirtyFlag<Do
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
 		if (obj instanceof Domain other) {
-			return AonNumberUtils.equals(this.id,other.id);
+			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(id, 0).hashCode();
+	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
 	}
+	
 }

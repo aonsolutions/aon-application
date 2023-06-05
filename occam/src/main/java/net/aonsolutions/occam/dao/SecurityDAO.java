@@ -183,7 +183,7 @@ public class SecurityDAO {
 		if (!optDomain.isPresent()) throw new AonCoreException(AonError.DOMAIN_NOT_FOUND.format(ctx.getDomainName()) );
 		Domain domain = optDomain.get();
 		Optional<Domain> optParentDomain = domain.getParent();
-		if (domain.isEnableHeredity() && optParentDomain.isPresent()) {
+		if (domain.hasInheritance() && optParentDomain.isPresent()) {
 			return new Integer[]{domain.getId(),optParentDomain.get().getId()};	
 		}
 		return new Integer[]{domain.getId()};

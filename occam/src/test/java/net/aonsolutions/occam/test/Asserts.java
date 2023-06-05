@@ -183,7 +183,7 @@ public class Asserts {
 			assertEquals(expected.getDescription(), actual.getDescription(),"Description");
 			assertEqualsDomain(expected.getParent().orElse(null), actual.getParent().orElse(null));
 			assertEquals(expected.getType(), actual.getType(),"DomainType");
-			assertEquals(expected.isEnableHeredity(), actual.isEnableHeredity(),"EnableHeredity");
+			assertEquals(expected.hasInheritance(), actual.hasInheritance(),"Inheritance");
 			assertEquals(expected.isActive(), actual.isActive(),"Active");
 			assertEqualsScope(expected.getScope().orElse(null), actual.getScope().orElse(null));
 			assertEqualsBooking(expected.getBooking().orElse(null), actual.getBooking().orElse(null));
@@ -197,7 +197,10 @@ public class Asserts {
 		if (expected != null && actual != null) {
 			assertEquals(expected.getLastAccessUser(), actual.getLastAccessUser(),"LastAccessUser");
 			assertEquals(expected.getLastAccessDate(), actual.getLastAccessDate(),"LastAccessDate");
-			assertEqualsAudit(expected, actual);
+			assertEquals(expected.getCreationUser(), actual.getCreationUser(),"CreationUser");
+			assertEquals(expected.getCreationDate(), actual.getCreationDate(),"CreationDate");
+			assertEquals(expected.getModificationUser(), actual.getModificationUser(),"ModificationUser");
+			assertEquals(expected.getModificationDate(), actual.getModificationDate(),"ModificationDate");
 		}
 	}
 
