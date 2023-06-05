@@ -220,6 +220,11 @@ public class AonApiHttpServlet extends HttpServlet{
 		responseFile(resp, attach.getDescription(), is, attach.getMimeType());
 	}
 	
+	public void responseFile(HttpServletResponse resp, File file, MimeType mimetype, String contentDisposition) throws IOException {
+		FileInputStream is =  new FileInputStream(file);
+		responseFile(resp, file.getName(), is, mimetype, contentDisposition);
+	}
+	
 	public void responseFile(HttpServletResponse resp, File file, MimeType mimetype ) throws IOException {
 		FileInputStream is =  new FileInputStream(file);
 		responseFile(resp, file.getName(), is, mimetype);

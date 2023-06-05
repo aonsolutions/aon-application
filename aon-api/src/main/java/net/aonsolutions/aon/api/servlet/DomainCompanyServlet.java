@@ -1,7 +1,4 @@
 package net.aonsolutions.aon.api.servlet;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -30,7 +27,6 @@ import com.esferalia.aon.occam.api.model.registry.RegistryMode;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.type.DomainType;
-import com.esferalia.aon.occam.api.model.type.MimeType;
 import com.esferalia.aon.occam.api.model.type.Priority;
 import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
@@ -50,7 +46,6 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 //	public static final String CUSTOMER_DOMAINS = "/:customer"; //buscar entre todos los schemas los que tengan ese aonCustomer
 	public static final String DOMAIN_LINKED = "/link/";
 	public static final String BOOKING = "/booking/";
-	public static final String LOG = "/log/";
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
@@ -76,41 +71,17 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
 		try {
 			AonApiData api = initialize(req);
-			
-//			if (api.getPath().contains("/log")) {
-//				System.out.println(api.getPath());
-//				File file = serializeError(api);
-//				responseFile(resp, file, MimeType.TXT);
-//			} else {				
-				Object object = new AonRouting(api)
-						.addRoute(DOMAINS, DomainCompanyServlet::getDomains)
+			Object object = new AonRouting(api)
+					.addRoute(DOMAINS, DomainCompanyServlet::getDomains)
 //				.addRoute(CUSTOMER_DOMAINS, DomainCompanyServlet::getCustomerDomains)
-						.apply();
-				
-				response(req, resp, object);
-//			}
+					.apply();
+			
+			response(req, resp, object);
 			
 		} catch (Exception e) {
 			error(req, resp, e);
 		}
 	}
-	
-//	private void post(HttpServletRequest req, HttpServletResponse resp) {
-//		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
-//		try {
-//			AonApiData api = initialize(req);
-//			switch (api.getPath()) {
-//				case "/log":
-//				case "/log/":
-//					responseFile(resp, serializeError(api), MimeType.PDF);
-//					break;
-//			}
-//		} catch (Exception e) {
-//			error(req, resp, e);
-//		}
-//	}
-	
-	
 	
 	private void put(HttpServletRequest req, HttpServletResponse resp) {
 		LOGGER.info("[" + req.getMethod() + "] " + req.getRequestURI());
@@ -145,23 +116,9 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 		}
 	}
 	
-	private static JSONObject getAction(AonApiData api) {
-		return new JSONObject();
-	}
-	
 	private static JSONArray getDomains(AonApiData api) {
 		JSONArray domains = new JSONArray();
-//		String customerDocument = api.getData().optString(IJsonNames.REGISTRY_DOCUMENT);
-//		boolean linked = api.getData().optBoolean(IJsonNames.LINKED);
-//		int customerId = api.getData().optInt("customerId");
-		
 		CONSOLE.getDomains(f -> domainFilter(api, f)).map(DomainCompanyJSON::toJSON).forEach(domains::put);
-//		CONSOLE.getAllDomains().map(DomainCompanyJSON::toJSON).forEach(domains::put);
-//		if (AonStringUtils.isBlank(customerDocument)) {
-//			CONSOLE.getAllDomains().map(DomainCompanyJSON::toJSON).forEach(domains::put);
-//		} else {
-//			CONSOLE.getDomainsByDocument(customerDocument, customerId).map(DomainCompanyJSON::toJSON).forEach(domains::put);
-//		}
 		return domains;
 	}
 	
@@ -239,7 +196,8 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 
 		JSONArray errors = new JSONArray();
 		errJson.put(IJsonNames.DOMAIN, domainJson);
-		errJson.put("errors", errors);		
+		
+		errJson.put(IJsonNames.ERRORS, errors);		
 		
 		if (domainJson != null && bookingJson != null) {
 			DomainCompany domainCompany = DomainCompanyJSON.fromJSON(domainJson);
@@ -257,7 +215,8 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 //					}
 					Integer itemId = item != null ? item.getId() : null;
 					if (item != null && itemId != null) {
-						RegistryItem ritem = AON.getRItem(api.getDomain().getName(),
+						RegistryItem ritem = AON.getRItem(
+								api.getDomain().getName(),
 								api.getDomain().getId(),
 								api.getUser().getLogin(),
 								f -> f.getRegistryProperty().eq(aonCustomer).and(f.getItemProperty().eq(itemId))
@@ -270,28 +229,44 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 									.setType(RegistryMode.CUSTOMER)
 									.setStatus(RegistryItemStatus.ACTIVE)
 									.setPriority(Priority.NONE);
-							AON.saveRItem(api.getDomain(), api.getUser(), newRitem);
+							try {
+								AON.saveRItem(api.getDomain(), api.getUser(), newRitem);								
+							} catch (Exception e) {
+								errors.put(createError(barCode, domainType, app, "No se pudo insertar guardar [" + e.getMessage() + "]"));
+							}
+							
 						}
 					} else {
-						JSONObject itemErr = new JSONObject();
-						itemErr.put("barcode", barCode);
-						itemErr.put("domainType", domainType.name());
-						itemErr.put("app", app.name());
-						itemErr.put("error", "Item no encontrado");
-						errors.put(itemErr);
+						errors.put(createError(barCode, domainType, app, "Item no encontrado"));
 					}
 				}
 			}
 		} else if (bookingJson == null || bookingJson.isEmpty()) {
-			JSONObject bookingErr = new JSONObject();
-			bookingErr.put("error", "Contratación no encontrada");
-			errors.put(bookingErr);
+			errors.put(createError(null, null, null, "Contratación no encontrada"));
 		}
 		if (!errors.isEmpty()) {			
 			return errJson;
 		} else {
 			return new JSONObject();
 		}
+	}
+	
+	private static JSONObject createError(String barCode, DomainType domainType, AonApp app, String error) {
+		JSONObject itemErr = new JSONObject();
+		if (AonStringUtils.isNotBlank(barCode)) {
+			itemErr.put(IJsonNames.BARCODE, barCode);
+		}
+		if (domainType != null) {
+			itemErr.put(IJsonNames.DOMAIN_TYPE, domainType.name());			
+		}
+		if (app != null) {
+			itemErr.put(IJsonNames.APP, app.name());
+		}
+		if (AonStringUtils.isNotBlank(error)) {
+			itemErr.put(IJsonNames.ERROR, error);
+		}
+		
+		return itemErr.isEmpty() ? null : itemErr;
 	}
 	
 	private static Product createProduct(AonApiData api, Domain domain, AonApp app) {
@@ -324,57 +299,6 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			sb.append(AonStringUtils.leftPad(AonNumberUtils.toString(appOrdinal), 2, '0'));
 		}
 		return sb.toString();
-	}
-	
-	private static JSONObject putAction(AonApiData api) {
-		return new JSONObject();
-	}
-	
-	private static JSONObject deleteAction(AonApiData api) {
-		return new JSONObject();
-	}
-	
-	private File serializeError(AonApiData api) throws Exception {
-		String errorLogStr = api.getData().optString("log");
-		JSONArray errorLog = new JSONArray(errorLogStr);
-		File file = File.createTempFile("log", "");
-		if (errorLog != null && !errorLog.isEmpty()) {
-			try (PrintWriter pw = new PrintWriter(new FileWriter(file))) {
-				for (int i=0; i<errorLog.length(); i++) {
-					JSONObject domainError = errorLog.optJSONObject(i);
-					JSONObject domainJson = domainError.optJSONObject(IJsonNames.DOMAIN);
-					DomainCompany domainCompany = DomainCompanyJSON.fromJSON(domainJson);
-					Domain domain = domainCompany.getDomain();
-					JSONArray errors = domainError.optJSONArray("errors");
-					pw.println("DOMAIN: Name: " + AonStringUtils.trimToEmpty(domain.getName()) + "; id: " + AonStringUtils.trimToEmpty(AonNumberUtils.toString(domain.getId())) + "; schema: " + AonStringUtils.trimToEmpty(domainCompany.getSchema()) + " :");
-					for (int j=0; j<errors.length(); j++) {
-						JSONObject error = errors.optJSONObject(j);
-						String barcode = error.optString("barcode");
-						String domainType = error.optString("domainType");
-						String app = error.optString("app");
-						String msg = error.optString("error");
-						pw.println("\t{");
-						
-						if (AonStringUtils.isNotBlank(barcode)) {
-							pw.println("\t\tBarcode: " + barcode);
-						}
-						if (AonStringUtils.isNotBlank(domainType)) {
-							pw.println("\t\tDomainType: " + domainType);
-						}
-						if (AonStringUtils.isNotBlank(app)) {
-							pw.println("\t\tApp: " + app);							
-						}
-						if (AonStringUtils.isNotBlank(msg)) {
-							pw.println("\t\tError: " + msg);							
-						}
-						
-						pw.println("\t}");
-					}
-				}
-			}
-		}
-		
-		return file;
 	}
 	
 }

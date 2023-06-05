@@ -40,6 +40,7 @@ import com.esferalia.aon.occam.impl.jooq.dao.FillerDAO.DomainFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.SecurityDAO.DomainAppFiller;
 import com.esferalia.aon.occam.impl.jooq.dao.UserDAO.UserFiller;
 import com.esferalia.aon.watson.server.AonDateUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
 import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class BookingDAO {
@@ -85,9 +86,9 @@ public class BookingDAO {
 			List<Domain> childs = getActiveChildDomains(ctx, domain.getId());
 			BookingResume resume = new BookingResume();
 
-			Integer childBillingUsers = childs.stream().mapToInt(r -> r.getMaxDefinedUsers() > 0 
-					? r.getMaxDefinedUsers() - 1 : 0).sum();
-			Integer childDefinedUsers = childs.stream().mapToInt(Domain::getMaxDefinedUsers).sum();
+			Integer childBillingUsers = childs.stream().mapToInt(r -> AonNumberUtils.zeroIfNull(r.getMaxDefinedUsers()) > 0 
+					? AonNumberUtils.zeroIfNull(r.getMaxDefinedUsers()) - 1 : 0).sum();
+			Integer childDefinedUsers = childs.stream().mapToInt(d -> AonNumberUtils.zeroIfNull(d.getMaxDefinedUsers())).sum();
 
 			resume.setChildBillingUsers(childBillingUsers);
 			resume.setChildDefinedUsers(childDefinedUsers);
