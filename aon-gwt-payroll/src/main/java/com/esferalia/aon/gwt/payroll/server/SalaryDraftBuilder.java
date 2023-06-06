@@ -1910,7 +1910,7 @@ public class SalaryDraftBuilder
                 //<xs:maxInclusive value="2023" fixed="false"/>
         	int birthYear = irpfOutcome.getBirthYear();
         	if ( birthYear == 0 ) {
-        	    salaryDraft.addWarning(String.format("Retenciones IRPF : A\u00F1o de nacimiento desconocido.", birthYear ));
+        	    //salaryDraft.addWarning(String.format("Retenciones IRPF : A\u00F1o de nacimiento desconocido.", birthYear ));
         	    return;
         	}
         	
