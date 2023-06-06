@@ -4,13 +4,13 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.OccamEntity;
 import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.constants.AccountingPeriodStatus;
+import net.aonsolutions.occam.api.metadata.AccountingPeriodMetadata;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class AccountingPeriod extends OccamEntity {
+public class AccountingPeriod extends OccamEntity<AccountingPeriodMetadata> {
 
 	private static final long serialVersionUID = -1686197262238560337L;
 	
@@ -38,7 +38,7 @@ public class AccountingPeriod extends OccamEntity {
 		return this.id;
 	}
 	public AccountingPeriod setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AccountingPeriodMetadata.ID));
 		this.id = id;
 		return this; 
 	}
@@ -47,7 +47,7 @@ public class AccountingPeriod extends OccamEntity {
 		return this.domain;
 	}
 	public AccountingPeriod setDomain(Integer domain) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(AonNames.DOMAIN));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(AccountingPeriodMetadata.DOMAIN));
 		this.domain = domain;
 		return this; 
 	}
@@ -56,7 +56,7 @@ public class AccountingPeriod extends OccamEntity {
 		return this.name;
 	}
 	public AccountingPeriod setName(String name) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(AonNames.NAME));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(AccountingPeriodMetadata.NAME));
 		this.name = name;
 		return this; 
 	}
@@ -65,7 +65,7 @@ public class AccountingPeriod extends OccamEntity {
 		return this.startDate;
 	}
 	public AccountingPeriod setStartDate(Date startDate) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.startDate,startDate), () -> markAsDirty(AonNames.START_DATE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.startDate,startDate), () -> markAsDirty(AccountingPeriodMetadata.START_DATE));
 		this.startDate = startDate;
 		return this; 
 	}
@@ -74,7 +74,7 @@ public class AccountingPeriod extends OccamEntity {
 		return this.endDate;
 	}
 	public AccountingPeriod setEndDate(Date endDate) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.endDate,endDate), () -> markAsDirty(AonNames.END_DATE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.endDate,endDate), () -> markAsDirty(AccountingPeriodMetadata.END_DATE));
 		this.endDate = endDate;
 		return this; 
 	}
@@ -83,7 +83,7 @@ public class AccountingPeriod extends OccamEntity {
 		return this.status;
 	}
 	public AccountingPeriod setStatus(AccountingPeriodStatus status) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.status,status), () -> markAsDirty(AonNames.STATUS));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.status,status), () -> markAsDirty(AccountingPeriodMetadata.STATUS));
 		this.status = status;
 		return this; 
 	}
@@ -92,6 +92,7 @@ public class AccountingPeriod extends OccamEntity {
 		return defaultPeriod;
 	}
 	public AccountingPeriod setDefaultPeriod(boolean defaultPeriod) {
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.defaultPeriod,defaultPeriod), () -> markAsDirty(AccountingPeriodMetadata.DEFAULT_PERIOD));
 		this.defaultPeriod = defaultPeriod;
 		return this;
 	}

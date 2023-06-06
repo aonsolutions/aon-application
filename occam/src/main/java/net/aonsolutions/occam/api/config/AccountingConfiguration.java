@@ -4,13 +4,13 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.OccamEntity;
 import net.aonsolutions.occam.api.accounting.Account;
 import net.aonsolutions.occam.api.constants.AppParam;
+import net.aonsolutions.occam.api.metadata.AccountingConfigurationMetadata;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class AccountingConfiguration extends OccamEntity {
+public class AccountingConfiguration extends OccamEntity<AccountingConfigurationMetadata> {
 
 	private static final long serialVersionUID = -4608981705550453419L;
 
@@ -34,7 +34,7 @@ public class AccountingConfiguration extends OccamEntity {
 	}
 
 	public AccountingConfiguration setAccount(AppParam param, Account account) {
-		AonObjectUtils.ifTrue(mustMarkaAsDirty(accounts.get(param), account), () -> markAsDirty(AonNames.ACCOUNTS));
+		AonObjectUtils.ifTrue(mustMarkaAsDirty(accounts.get(param), account), () -> markAsDirty(AccountingConfigurationMetadata.ACCOUNTS));
 		accounts.put(param, account);
 		return this;
 	}

@@ -6,13 +6,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 import net.aonsolutions.occam.api.OccamEntity;
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.constants.DomainType;
+import net.aonsolutions.occam.api.metadata.DomainMetadata;
 import net.aonsolutions.watson.client.util.AonCollectionUtils;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Domain extends OccamEntity {
-
+public class Domain extends OccamEntity<DomainMetadata> {
+	
 	private static final long serialVersionUID = 2356532157666489635L;
 	
 	private Integer id;
@@ -45,7 +45,7 @@ public class Domain extends OccamEntity {
 		return id;
 	}
 	public Domain setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(DomainMetadata.ID));
 		this.id = id;
 		return this;
 	}
@@ -54,7 +54,7 @@ public class Domain extends OccamEntity {
 		return name;
 	}
 	public Domain setName(String name) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(AonNames.NAME));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(DomainMetadata.NAME));
 		this.name = name;
 		return this;
 	}
@@ -63,7 +63,7 @@ public class Domain extends OccamEntity {
 		return description;
 	}
 	public Domain setDescription(String description) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.description,description), () -> markAsDirty(AonNames.DESCRIPTION));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.description,description), () -> markAsDirty(DomainMetadata.DESCRIPTION));
 		this.description = description;
 		return this;
 	}
@@ -72,7 +72,7 @@ public class Domain extends OccamEntity {
 		return Optional.ofNullable(parent);
 	}
 	public Domain setParent(Domain parent) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.parent,parent), () -> markAsDirty(AonNames.PARENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.parent,parent), () -> markAsDirty(DomainMetadata.PARENT));
 		this.parent = parent;
 		return this;
 	}
@@ -81,7 +81,7 @@ public class Domain extends OccamEntity {
 		return type;
 	}
 	public Domain setType(DomainType type) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.type,type), () -> markAsDirty(AonNames.TYPE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.type,type), () -> markAsDirty(DomainMetadata.TYPE));
 		this.type = type;
 		return this;
 	}
@@ -90,7 +90,7 @@ public class Domain extends OccamEntity {
 		return inheritance;
 	}
 	public Domain setInheritance(Boolean inheritance) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.inheritance,inheritance), () -> markAsDirty(AonNames.INHERITANCE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.inheritance,inheritance), () -> markAsDirty(DomainMetadata.INHERITANCE));
 		this.inheritance = inheritance;
 		return this;
 	}
@@ -99,7 +99,7 @@ public class Domain extends OccamEntity {
 		return active;
 	}
 	public Domain setActive(boolean active) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.active,active), () -> markAsDirty(AonNames.ACTIVE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.active,active), () -> markAsDirty(DomainMetadata.ACTIVE));
 		this.active = active;
 		return this;
 	}
@@ -108,7 +108,7 @@ public class Domain extends OccamEntity {
 		return Optional.ofNullable(scope);
 	}
 	public Domain setScope(Scope scope) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.scope,scope), () -> markAsDirty(AonNames.SCOPE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.scope,scope), () -> markAsDirty(DomainMetadata.SCOPE));
 		this.scope = scope;
 		return this;
 	}
@@ -117,7 +117,7 @@ public class Domain extends OccamEntity {
 		return Optional.ofNullable(configuration);
 	}
 	public Domain setConfiguration(Configuration configuration) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.configuration,configuration), () -> markAsDirty(AonNames.CONFIGURATION));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.configuration,configuration), () -> markAsDirty(DomainMetadata.CONFIGURATION));
 		this.configuration = configuration;
 		return this;
 	}
@@ -126,7 +126,7 @@ public class Domain extends OccamEntity {
 		return Optional.ofNullable(company);
 	}
 	public Domain setCompany(Registry company) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.company,company), () -> markAsDirty(AonNames.COMPANY));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.company,company), () -> markAsDirty(DomainMetadata.COMPANY));
 		this.company = company;
 		return this;
 	}
@@ -136,7 +136,7 @@ public class Domain extends OccamEntity {
 	}
 
 	public Domain setBooking(Booking booking) {
-		AonObjectUtils.ifTrue( mustMarkaAsDirty(this.booking,booking), () -> markAsDirty(AonNames.BOOKING));
+		AonObjectUtils.ifTrue( mustMarkaAsDirty(this.booking,booking), () -> markAsDirty(DomainMetadata.BOOKING));
 		this.booking = booking;
 		return this;
 	}
@@ -146,7 +146,7 @@ public class Domain extends OccamEntity {
 	}
 
 	public Domain setAudit(DomainAudit audit) {
-		AonObjectUtils.ifTrue( mustMarkaAsDirty(this.audit,audit), () -> markAsDirty(AonNames.AUDIT));
+		AonObjectUtils.ifTrue( mustMarkaAsDirty(this.audit,audit), () -> markAsDirty(DomainMetadata.AUDIT));
 		this.audit = audit;
 		return this;
 	}

@@ -7,12 +7,16 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import net.aonsolutions.occam.api.AonCoreException;
 import net.aonsolutions.occam.api.AonError;
 import net.aonsolutions.occam.api.config.Geozone;
+import net.aonsolutions.occam.api.metadata.GeozoneMetadata;
+import net.aonsolutions.occam.api.metadata.GeozoneMetadata.GeozoneMetadataVisitor;
 import net.aonsolutions.occam.dao.GeozoneDAO;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
@@ -29,6 +33,7 @@ class GeozoneTest extends AbstractOccamTest {
 		Geozone u = new Geozone();
 		u.setId(1);
 		assertTrue(u.isDirty());
+		assertTrue(u.getDirtySet().contains( GeozoneMetadata.ID ));
 	}
 	
 	@Test()
@@ -36,6 +41,7 @@ class GeozoneTest extends AbstractOccamTest {
 		Geozone u = new Geozone();
 		u.setDomain(1);
 		assertTrue(u.isDirty());
+		assertTrue(u.getDirtySet().contains( GeozoneMetadata.DOMAIN));
 	}
 
 	@Test()
@@ -43,6 +49,7 @@ class GeozoneTest extends AbstractOccamTest {
 		Geozone u = new Geozone();
 		u.setCode(AonRandom.string(10));
 		assertTrue(u.isDirty());
+		assertTrue(u.getDirtySet().contains( GeozoneMetadata.CODE));
 	}
 
 	@Test()
@@ -50,6 +57,7 @@ class GeozoneTest extends AbstractOccamTest {
 		Geozone u = new Geozone();
 		u.setName(AonRandom.string(10));
 		assertTrue(u.isDirty());
+		assertTrue(u.getDirtySet().contains( GeozoneMetadata.NAME));
 	}
 
 	@Test()
@@ -57,6 +65,7 @@ class GeozoneTest extends AbstractOccamTest {
 		Geozone u = new Geozone();
 		u.setSystem( true );
 		assertTrue(u.isDirty());
+		assertTrue(u.getDirtySet().contains( GeozoneMetadata.SYSTEM));
 	}
 
 	@Test()
@@ -75,6 +84,18 @@ class GeozoneTest extends AbstractOccamTest {
 		assertFalse(d.isDirty());
 	}
 	
+	@Test()
+	void metadataVisitorTest() {
+		GeozoneMetadataVisitor<Boolean,GeozoneMetadata> visitor = new GeozoneMetadataVisitor<Boolean, GeozoneMetadata>() {
+			@Override public Boolean visitId(GeozoneMetadata t) {return t == GeozoneMetadata.ID;}
+			@Override public Boolean visitDomain(GeozoneMetadata t) {return t == GeozoneMetadata.DOMAIN;}
+			@Override public Boolean visitName(GeozoneMetadata t) {return t == GeozoneMetadata.NAME;}
+			@Override public Boolean visitCode(GeozoneMetadata t) {return t == GeozoneMetadata.CODE;}
+			@Override public Boolean visitSystem(GeozoneMetadata t) {return t == GeozoneMetadata.SYSTEM;}
+		}; 
+		Arrays.stream(GeozoneMetadata.values()).forEach( dt -> assertTrue(dt.visit(visitor, dt)));		
+	}
+
 	@Test()
 	void selectedMarkTest() {
 		Geozone d = new Geozone();

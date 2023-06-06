@@ -145,23 +145,6 @@ public enum WithholdingType implements Serializable {
 			.findFirst();
 	}
 
-	public static WithholdingType[] ORDERED_VALUES = new WithholdingType[] { 
-			 // PROFESIONAL 
-		PROFESSIONAL,M190_G_02,M190_G_03
-		// CAPITAL_INMOBILIARIO
-		,RENTING
-		//  OTRAS
-		,FARMER,M190_H_02,M190_H_03,TRANSPORT_OPERATOR,M190_I_01,M190_I_02
-		// TRABAJO
-		,M190_F_01,M190_F_02_1,M190_F_02_2
-		// CAPITAL_MOBILIARIO
-		,MOVABLE_CAPITAL,M193_C1,M193_C2,M193_C3
-		// DERECHOS_IMAGEN
-		,M190_J
-		// GANANCIAS_PATRIMONIALES
-		,M190_K_01,M190_K_03,M190_K_02
-	};
-
 	public static WithholdingType[] getTypes(WithholdingTypeGroup group) {
 		return Arrays.stream(WithholdingType.values())
 			.filter(t -> t.getGroup() == group)

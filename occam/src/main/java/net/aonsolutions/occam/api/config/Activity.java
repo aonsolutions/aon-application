@@ -2,11 +2,11 @@ package net.aonsolutions.occam.api.config;
 
 import java.util.Objects;
 
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.OccamEntity;
+import net.aonsolutions.occam.api.metadata.ActivityMetadata;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Activity extends OccamEntity {
+public class Activity extends OccamEntity<ActivityMetadata> {
 
 	private static final long serialVersionUID = 8605536086019198332L;
 	
@@ -29,7 +29,7 @@ public class Activity extends OccamEntity {
 		return id;
 	}
 	public Activity setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(ActivityMetadata.ID));
 		this.id = id;
 		return this;
 	}
@@ -38,7 +38,7 @@ public class Activity extends OccamEntity {
 		return domain;
 	}
 	public Activity setDomain(Integer domain) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(AonNames.DOMAIN));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(ActivityMetadata.DOMAIN));
 		this.domain = domain;
 		return this;
 	}
@@ -47,7 +47,7 @@ public class Activity extends OccamEntity {
 		return description;
 	}
 	public Activity setDescription(String description) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.description,description), () -> markAsDirty(AonNames.DESCRIPTION));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.description,description), () -> markAsDirty(ActivityMetadata.DESCRIPTION));
 		this.description = description;
 		return this;
 	}
@@ -56,7 +56,7 @@ public class Activity extends OccamEntity {
 		return epigraph;
 	}
 	public Activity setEpigraph(String epigraph) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.epigraph,epigraph), () -> markAsDirty(AonNames.EPIGRAPH));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.epigraph,epigraph), () -> markAsDirty(ActivityMetadata.EPIGRAPH));
 		this.epigraph = epigraph;
 		return this;
 	}

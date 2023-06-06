@@ -2,14 +2,14 @@ package net.aonsolutions.occam.api.invoicing;
 
 import java.util.Objects;
 
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.OccamEntity;
 import net.aonsolutions.occam.api.constants.TaxType;
 import net.aonsolutions.occam.api.constants.VatDeductionType;
 import net.aonsolutions.occam.api.constants.WithholdingType;
+import net.aonsolutions.occam.api.metadata.InvoiceBreakdownMetadata;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class InvoiceBreakdown extends OccamEntity {
+public class InvoiceBreakdown extends OccamEntity<InvoiceBreakdownMetadata> {
 
 	private static final long serialVersionUID = -6917677513733867353L;
 	
@@ -39,7 +39,7 @@ public class InvoiceBreakdown extends OccamEntity {
 		return id;
 	}
 	public InvoiceBreakdown setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(InvoiceBreakdownMetadata.ID));
 		this.id = id;
 		return this;
 	}
@@ -48,7 +48,7 @@ public class InvoiceBreakdown extends OccamEntity {
 		return taxType;
 	}
 	public InvoiceBreakdown setTaxType(TaxType taxType) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.taxType,taxType), () -> markAsDirty(AonNames.TAX_TYPE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.taxType,taxType), () -> markAsDirty(InvoiceBreakdownMetadata.TAX_TYPE));
 		this.taxType = taxType;
 		return this;
 	}
@@ -57,7 +57,7 @@ public class InvoiceBreakdown extends OccamEntity {
 	}
 
 	public InvoiceBreakdown setVatDeductionType(VatDeductionType vatDeductionType) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.vatDeductionType,vatDeductionType), () -> markAsDirty(AonNames.VAT_DEDUCTION_TYPE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.vatDeductionType,vatDeductionType), () -> markAsDirty(InvoiceBreakdownMetadata.VAT_DEDUCTION_TYPE));
 		this.vatDeductionType = vatDeductionType;
 		return this;
 	}
@@ -67,7 +67,7 @@ public class InvoiceBreakdown extends OccamEntity {
 	}
 
 	public InvoiceBreakdown setBase(Double base) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.base,base), () -> markAsDirty(AonNames.BASE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.base,base), () -> markAsDirty(InvoiceBreakdownMetadata.BASE));
 		this.base = base;
 		return this;
 	}
@@ -77,7 +77,7 @@ public class InvoiceBreakdown extends OccamEntity {
 	}
 
 	public InvoiceBreakdown setPercent(Double percent) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.percent,percent), () -> markAsDirty(AonNames.PERCENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.percent,percent), () -> markAsDirty(InvoiceBreakdownMetadata.PERCENT));
 		this.percent = percent;
 		return this;
 	}
@@ -87,7 +87,7 @@ public class InvoiceBreakdown extends OccamEntity {
 	}
 
 	public InvoiceBreakdown setQuota(Double quota) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.quota,quota), () -> markAsDirty(AonNames.QUOTA));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.quota,quota), () -> markAsDirty(InvoiceBreakdownMetadata.QUOTA));
 		this.quota = quota;
 		return this;
 	}
@@ -96,7 +96,7 @@ public class InvoiceBreakdown extends OccamEntity {
 		return surchargePercent;
 	}
 	public InvoiceBreakdown setSurchargePercent(Double surchargePercent) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.surchargePercent,surchargePercent), () -> markAsDirty(AonNames.SURCHARGE_PERCENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.surchargePercent,surchargePercent), () -> markAsDirty(InvoiceBreakdownMetadata.SURCHARGE_PERCENT));
 		this.surchargePercent = surchargePercent;
 		return this;
 	}
@@ -106,7 +106,7 @@ public class InvoiceBreakdown extends OccamEntity {
 	}
 
 	public InvoiceBreakdown setSurchargeQuota(Double surchargeQuota) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.surchargeQuota,surchargeQuota), () -> markAsDirty(AonNames.SURCHARGE_QUOTA));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.surchargeQuota,surchargeQuota), () -> markAsDirty(InvoiceBreakdownMetadata.SURCHARGE_QUOTA));
 		this.surchargeQuota = surchargeQuota;
 		return this;
 	}
@@ -115,7 +115,7 @@ public class InvoiceBreakdown extends OccamEntity {
 		return deductibleQuota;
 	}
 	public InvoiceBreakdown setDeductibleQuota(Double deductibleQuota) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.deductibleQuota,deductibleQuota), () -> markAsDirty(AonNames.DEDUCTIBLE_QUOTA));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.deductibleQuota,deductibleQuota), () -> markAsDirty(InvoiceBreakdownMetadata.DEDUCTIBLE_QUOTA));
 		this.deductibleQuota = deductibleQuota;
 		return this;
 	}
@@ -124,7 +124,7 @@ public class InvoiceBreakdown extends OccamEntity {
 		return deductiblePercent;
 	}
 	public InvoiceBreakdown setDeductiblePercent(Double deductiblePercent) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.deductiblePercent,deductiblePercent), () -> markAsDirty(AonNames.DEDUCTIBLE_PERCENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.deductiblePercent,deductiblePercent), () -> markAsDirty(InvoiceBreakdownMetadata.DEDUCTIBLE_PERCENT));
 		this.deductiblePercent = deductiblePercent;
 		return this;
 	}
@@ -133,7 +133,7 @@ public class InvoiceBreakdown extends OccamEntity {
 		return withholdingType;
 	}
 	public InvoiceBreakdown setWithholdingType(WithholdingType withholdingType) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.withholdingType,withholdingType), () -> markAsDirty(AonNames.WITHHOLDING_TYPE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.withholdingType,withholdingType), () -> markAsDirty(InvoiceBreakdownMetadata.WITHHOLDING_TYPE));
 		this.withholdingType = withholdingType;
 		return this;
 	}

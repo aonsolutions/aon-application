@@ -2,14 +2,14 @@ package net.aonsolutions.occam.api.invoicing;
 
 import java.util.Objects;
 
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.OccamEntity;
 import net.aonsolutions.occam.api.constants.TaxType;
 import net.aonsolutions.occam.api.constants.VatDeductionType;
 import net.aonsolutions.occam.api.constants.WithholdingType;
+import net.aonsolutions.occam.api.metadata.InvoiceTaxMetadata;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class InvoiceTax extends OccamEntity {
+public class InvoiceTax extends OccamEntity<InvoiceTaxMetadata> {
 
 	private static final long serialVersionUID = 7037774854336091259L;
 
@@ -35,7 +35,7 @@ public class InvoiceTax extends OccamEntity {
 		return id;
 	}
 	public InvoiceTax setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(InvoiceTaxMetadata.ID));
 		this.id = id;
 		return this;
 	}
@@ -44,7 +44,7 @@ public class InvoiceTax extends OccamEntity {
 		return taxType;
 	}
 	public InvoiceTax setTaxType(TaxType taxType) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.taxType,taxType), () -> markAsDirty(AonNames.TAX_TYPE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.taxType,taxType), () -> markAsDirty(InvoiceTaxMetadata.TAX_TYPE));
 		this.taxType = taxType;
 		return this;
 	}
@@ -53,7 +53,7 @@ public class InvoiceTax extends OccamEntity {
 	}
 
 	public InvoiceTax setVatDeductionType(VatDeductionType vatDeductionType) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.vatDeductionType,vatDeductionType), () -> markAsDirty(AonNames.VAT_DEDUCTION_TYPE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.vatDeductionType,vatDeductionType), () -> markAsDirty(InvoiceTaxMetadata.VAT_DEDUCTION_TYPE));
 		this.vatDeductionType = vatDeductionType;
 		return this;
 	}
@@ -62,7 +62,7 @@ public class InvoiceTax extends OccamEntity {
 		return percent;
 	}
 	public InvoiceTax setPercent(Double percent) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.percent,percent), () -> markAsDirty(AonNames.PERCENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.percent,percent), () -> markAsDirty(InvoiceTaxMetadata.PERCENT));
 		this.percent = percent;
 		return this;
 	}
@@ -71,7 +71,7 @@ public class InvoiceTax extends OccamEntity {
 		return surchargePercent;
 	}
 	public InvoiceTax setSurchargePercent(Double surchargePercent) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.surchargePercent,surchargePercent), () -> markAsDirty(AonNames.SURCHARGE_PERCENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.surchargePercent,surchargePercent), () -> markAsDirty(InvoiceTaxMetadata.SURCHARGE_PERCENT));
 		this.surchargePercent = surchargePercent;
 		return this;
 	}
@@ -80,7 +80,7 @@ public class InvoiceTax extends OccamEntity {
 		return deductiblePercent;
 	}
 	public InvoiceTax setDeductiblePercent(Double deductiblePercent) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.deductiblePercent,deductiblePercent), () -> markAsDirty(AonNames.DEDUCTIBLE_PERCENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.deductiblePercent,deductiblePercent), () -> markAsDirty(InvoiceTaxMetadata.DEDUCTIBLE_PERCENT));
 		this.deductiblePercent = deductiblePercent;
 		return this;
 	}
@@ -89,7 +89,7 @@ public class InvoiceTax extends OccamEntity {
 		return withholdingType;
 	}
 	public InvoiceTax setWithholdingType(WithholdingType withholdingType) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.withholdingType,withholdingType), () -> markAsDirty(AonNames.WITHHOLDING_TYPE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.withholdingType,withholdingType), () -> markAsDirty(InvoiceTaxMetadata.WITHHOLDING_TYPE));
 		this.withholdingType = withholdingType;
 		return this;
 	}

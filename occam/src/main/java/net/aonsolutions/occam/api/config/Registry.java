@@ -3,12 +3,12 @@ package net.aonsolutions.occam.api.config;
 import java.util.Objects;
 
 import net.aonsolutions.occam.api.OccamEntity;
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.constants.Country;
 import net.aonsolutions.occam.api.constants.DocumentType;
+import net.aonsolutions.occam.api.metadata.RegistryMetadata;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Registry extends OccamEntity  {
+public class Registry extends OccamEntity<RegistryMetadata>  {
 	
 	private static final long serialVersionUID = 9114564405091033572L;
 	
@@ -36,7 +36,7 @@ public class Registry extends OccamEntity  {
 		return id;
 	}
 	public Registry setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(RegistryMetadata.ID));
 		this.id = id;
 		return this;
 	}
@@ -45,7 +45,7 @@ public class Registry extends OccamEntity  {
 		return domain;
 	}
 	public Registry setDomain(Integer domain) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(AonNames.DOMAIN));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(RegistryMetadata.DOMAIN));
 		this.domain = domain;
 		return this;
 	}
@@ -54,7 +54,7 @@ public class Registry extends OccamEntity  {
 		return document;
 	}
 	public Registry setDocument(String document) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.document,document), () -> markAsDirty(AonNames.DOCUMENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.document,document), () -> markAsDirty(RegistryMetadata.DOCUMENT));
 		this.document = document;
 		return this;
 	}
@@ -63,7 +63,7 @@ public class Registry extends OccamEntity  {
 		return documentType;
 	}
 	public Registry setDocumentType(DocumentType documentType) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.documentType,documentType), () -> markAsDirty(AonNames.DOCUMENT_TYPE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.documentType,documentType), () -> markAsDirty(RegistryMetadata.DOCUMENT_TYPE));
 		this.documentType = documentType;
 		return this;
 	}
@@ -72,7 +72,7 @@ public class Registry extends OccamEntity  {
 		return documentCountry;
 	}
 	public Registry setDocumentCountry(Country documentCountry) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.documentCountry,documentCountry), () -> markAsDirty(AonNames.DOCUMENT_COUNTRY));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.documentCountry,documentCountry), () -> markAsDirty(RegistryMetadata.DOCUMENT_COUNTRY));
 		this.documentCountry = documentCountry;
 		return this;
 	}
@@ -81,7 +81,7 @@ public class Registry extends OccamEntity  {
 		return name;
 	}
 	public Registry setName(String name) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(AonNames.NAME));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(RegistryMetadata.NAME));
 		this.name = name;
 		return this;
 	}
@@ -90,7 +90,7 @@ public class Registry extends OccamEntity  {
 		return alias;
 	}
 	public Registry setAlias(String alias) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.alias,alias), () -> markAsDirty(AonNames.ALIAS));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.alias,alias), () -> markAsDirty(RegistryMetadata.ALIAS));
 		this.alias = alias;
 		return this;
 	}
@@ -99,7 +99,7 @@ public class Registry extends OccamEntity  {
 		return nationality;
 	}
 	public Registry setNationality(Country nationality) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.nationality,nationality), () -> markAsDirty(AonNames.NATIONALITY));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.nationality,nationality), () -> markAsDirty(RegistryMetadata.NATIONALITY));
 		this.nationality = nationality;
 		return this;
 	}
@@ -108,7 +108,7 @@ public class Registry extends OccamEntity  {
 		return confidential;
 	}
 	public Registry setConfidential(boolean confidential) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.confidential,confidential), () -> markAsDirty(AonNames.CONFIDENTIAL));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.confidential,confidential), () -> markAsDirty(RegistryMetadata.CONFIDENTIAL));
 		this.confidential = confidential;
 		return this;
 	}

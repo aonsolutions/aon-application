@@ -5,10 +5,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 import net.aonsolutions.occam.api.OccamEntity;
-import net.aonsolutions.occam.api.AonNames;
+import net.aonsolutions.occam.api.metadata.DomainAuditMetadata;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class DomainAudit extends OccamEntity {
+public class DomainAudit extends OccamEntity<DomainAuditMetadata> {
 
 	private static final long serialVersionUID = 6995049003419969497L;
 
@@ -35,7 +35,7 @@ public class DomainAudit extends OccamEntity {
 		return id;
 	}
 	public DomainAudit setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(DomainAuditMetadata.ID));
 		this.id = id;
 		return this;
 	}
@@ -44,7 +44,7 @@ public class DomainAudit extends OccamEntity {
 		return Optional.ofNullable(lastAccessUser);
 	}
 	public DomainAudit setLastAccessUser(String lastAccessUser) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.lastAccessUser,lastAccessUser), () -> markAsDirty(AonNames.LAST_ACCESS_USER));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.lastAccessUser,lastAccessUser), () -> markAsDirty(DomainAuditMetadata.LAST_ACCESS_USER));
 		this.lastAccessUser = lastAccessUser;
 		return this;
 	}
@@ -54,7 +54,7 @@ public class DomainAudit extends OccamEntity {
 	}
 
 	public DomainAudit setLastAccessDate(Date lastAccessDate) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.lastAccessDate,lastAccessDate), () -> markAsDirty(AonNames.LAST_ACCESS_DATE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.lastAccessDate,lastAccessDate), () -> markAsDirty(DomainAuditMetadata.LAST_ACCESS_DATE));
 		this.lastAccessDate = lastAccessDate;
 		return this;
 	}

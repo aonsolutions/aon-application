@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.OccamEntity;
 import net.aonsolutions.occam.api.config.Activity;
 import net.aonsolutions.occam.api.config.Audit;
@@ -16,11 +15,12 @@ import net.aonsolutions.occam.api.constants.DocumentType;
 import net.aonsolutions.occam.api.constants.InvoiceType;
 import net.aonsolutions.occam.api.constants.InvoiceType.InvoiceTypeVisitor;
 import net.aonsolutions.occam.api.constants.TransactionType;
+import net.aonsolutions.occam.api.metadata.InvoiceMetadata;
 import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.client.util.AonStringUtils;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Invoice extends OccamEntity {
+public class Invoice extends OccamEntity<InvoiceMetadata> {
 	
 	private static final long serialVersionUID = 5304852840915732613L;
 	
@@ -67,7 +67,7 @@ public class Invoice extends OccamEntity {
 		return id;
 	}
 	public Invoice setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(InvoiceMetadata.ID));
 		this.id = id;
 		return this;
 	}
@@ -76,7 +76,7 @@ public class Invoice extends OccamEntity {
 		return domain;
 	}
 	public Invoice setDomain(Integer domain) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(AonNames.DOMAIN));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(InvoiceMetadata.DOMAIN));
 		this.domain = domain;
 		return this;
 	}
@@ -85,7 +85,7 @@ public class Invoice extends OccamEntity {
 		return Optional.ofNullable(activity);
 	}
 	public Invoice setActivity(Activity activity) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.activity,activity), () -> markAsDirty(AonNames.ACTIVITY));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.activity,activity), () -> markAsDirty(InvoiceMetadata.ACTIVITY));
 		this.activity = activity;
 		return this;
 	}
@@ -94,7 +94,7 @@ public class Invoice extends OccamEntity {
 		return series;
 	}
 	public Invoice setSeries(String series) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.series,series), () -> markAsDirty(AonNames.SERIES));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.series,series), () -> markAsDirty(InvoiceMetadata.SERIES));
 		this.series = series;
 		return this;
 	}
@@ -103,7 +103,7 @@ public class Invoice extends OccamEntity {
 		return number;
 	}
 	public Invoice setNumber(Integer number) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.number,number), () -> markAsDirty(AonNames.NUMBER));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.number,number), () -> markAsDirty(InvoiceMetadata.NUMBER));
 		this.number = number;
 		return this;
 	}
@@ -112,7 +112,7 @@ public class Invoice extends OccamEntity {
 		return referenceCode;
 	}
 	public Invoice setReferenceCode(String referenceCode) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.referenceCode,referenceCode), () -> markAsDirty(AonNames.REFERENCE_CODE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.referenceCode,referenceCode), () -> markAsDirty(InvoiceMetadata.REFERENCE_CODE));
 		this.referenceCode = referenceCode;
 		return this;
 	}
@@ -121,7 +121,7 @@ public class Invoice extends OccamEntity {
 		return issueDate;
 	}
 	public Invoice setIssueDate(Date issueDate) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.issueDate,issueDate), () -> markAsDirty(AonNames.ISSUE_DATE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.issueDate,issueDate), () -> markAsDirty(InvoiceMetadata.ISSUE_DATE));
 		this.issueDate = issueDate;
 		return this;
 	}
@@ -130,7 +130,7 @@ public class Invoice extends OccamEntity {
 		return taxDate;
 	}
 	public Invoice setTaxDate(Date taxDate) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.taxDate,taxDate), () -> markAsDirty(AonNames.TAX_DATE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.taxDate,taxDate), () -> markAsDirty(InvoiceMetadata.TAX_DATE));
 		this.taxDate = taxDate;
 		return this;
 	}
@@ -139,7 +139,7 @@ public class Invoice extends OccamEntity {
 		return registry;
 	}
 	public Invoice setRegistry(Integer registry) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.registry,registry), () -> markAsDirty(AonNames.REGISTRY));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.registry,registry), () -> markAsDirty(InvoiceMetadata.REGISTRY));
 		this.registry = registry;
 		return this;
 	}
@@ -148,7 +148,7 @@ public class Invoice extends OccamEntity {
 		return document;
 	}
 	public Invoice setDocument(String document) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.document,document), () -> markAsDirty(AonNames.DOCUMENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.document,document), () -> markAsDirty(InvoiceMetadata.DOCUMENT));
 		this.document = document;
 		return this;
 	}
@@ -157,7 +157,7 @@ public class Invoice extends OccamEntity {
 		return documentType;
 	}
 	public Invoice setDocumentType(DocumentType documentType) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.documentType,documentType), () -> markAsDirty(AonNames.DOCUMENT_TYPE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.documentType,documentType), () -> markAsDirty(InvoiceMetadata.DOCUMENT_TYPE));
 		this.documentType = documentType;
 		return this;
 	}
@@ -166,7 +166,7 @@ public class Invoice extends OccamEntity {
 		return documentCountry;
 	}
 	public Invoice setDocumentCountry(Country documentCountry) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.documentCountry,documentCountry), () -> markAsDirty(AonNames.DOCUMENT_COUNTRY));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.documentCountry,documentCountry), () -> markAsDirty(InvoiceMetadata.DOCUMENT_COUNTRY));
 		this.documentCountry = documentCountry;
 		return this;
 	}
@@ -175,7 +175,7 @@ public class Invoice extends OccamEntity {
 		return name;
 	}
 	public Invoice setName(String name) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(AonNames.NAME));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(InvoiceMetadata.NAME));
 		this.name = name;
 		return this;
 	}
@@ -184,7 +184,7 @@ public class Invoice extends OccamEntity {
 		return Optional.ofNullable(scope);
 	}
 	public Invoice setScope(Scope scope) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.scope,scope), () -> markAsDirty(AonNames.SCOPE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.scope,scope), () -> markAsDirty(InvoiceMetadata.SCOPE));
 		this.scope = scope;
 		return this;
 	}
@@ -193,7 +193,7 @@ public class Invoice extends OccamEntity {
 		return type;
 	}
 	public Invoice setType(InvoiceType type) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.type,type), () -> markAsDirty(AonNames.TYPE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.type,type), () -> markAsDirty(InvoiceMetadata.TYPE));
 		this.type = type;
 		return this;
 	}
@@ -202,7 +202,7 @@ public class Invoice extends OccamEntity {
 		return transaction;
 	}
 	public Invoice setTransaction(TransactionType transaction) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.transaction,transaction), () -> markAsDirty(AonNames.TRANSACTION));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.transaction,transaction), () -> markAsDirty(InvoiceMetadata.TRANSACTION));
 		this.transaction = transaction;
 		return this;
 	}
@@ -211,7 +211,7 @@ public class Invoice extends OccamEntity {
 		return surcharge;
 	}
 	public Invoice setSurcharge(boolean surcharge) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.surcharge,surcharge), () -> markAsDirty(AonNames.SURCHARGE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.surcharge,surcharge), () -> markAsDirty(InvoiceMetadata.SURCHARGE));
 		this.surcharge = surcharge;
 		return this;
 	}
@@ -220,7 +220,7 @@ public class Invoice extends OccamEntity {
 		return withholding;
 	}
 	public Invoice setWithholding(boolean withholding) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.withholding,withholding), () -> markAsDirty(AonNames.WITHHOLDING));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.withholding,withholding), () -> markAsDirty(InvoiceMetadata.WITHHOLDING));
 		this.withholding = withholding;
 		return this;
 	}
@@ -229,7 +229,7 @@ public class Invoice extends OccamEntity {
 		return withholdingFarmer;
 	}
 	public Invoice setWithholdingFarmer(boolean withholdingFarmer) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.withholdingFarmer,withholdingFarmer), () -> markAsDirty(AonNames.WITHHOLDING_FARMER));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.withholdingFarmer,withholdingFarmer), () -> markAsDirty(InvoiceMetadata.WITHHOLDING_FARMER));
 		this.withholdingFarmer = withholdingFarmer;
 		return this;
 	}
@@ -238,7 +238,7 @@ public class Invoice extends OccamEntity {
 		return vatAccrualPayment;
 	}
 	public Invoice setVatAccrualPayment(boolean vatAccrualPayment) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.vatAccrualPayment,vatAccrualPayment), () -> markAsDirty(AonNames.VAT_ACCRUAL_PAYMENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.vatAccrualPayment,vatAccrualPayment), () -> markAsDirty(InvoiceMetadata.VAT_ACCRUAL_PAYMENT));
 		this.vatAccrualPayment = vatAccrualPayment;
 		return this;
 	}
@@ -247,7 +247,7 @@ public class Invoice extends OccamEntity {
 		return investment;
 	}
 	public Invoice setInvestment(boolean investment) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.investment,investment), () -> markAsDirty(AonNames.INVESTMENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.investment,investment), () -> markAsDirty(InvoiceMetadata.INVESTMENT));
 		this.investment = investment;
 		return this;
 	}
@@ -256,7 +256,7 @@ public class Invoice extends OccamEntity {
 		return service;
 	}
 	public Invoice setService(boolean service) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.service,service), () -> markAsDirty(AonNames.SERVICE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.service,service), () -> markAsDirty(InvoiceMetadata.SERVICE));
 		this.service = service;
 		return this;
 	}
@@ -265,7 +265,7 @@ public class Invoice extends OccamEntity {
 		return annulled;
 	}
 	public Invoice setAnnulled(boolean annulled) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.annulled,annulled), () -> markAsDirty(AonNames.ANNULLED));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.annulled,annulled), () -> markAsDirty(InvoiceMetadata.ANNULLED));
 		this.annulled = annulled;
 		return this;
 	}
@@ -274,7 +274,7 @@ public class Invoice extends OccamEntity {
 		return total;
 	}
 	public Invoice setTotal(Double total) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.total,total), () -> markAsDirty(AonNames.TOTAL));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.total,total), () -> markAsDirty(InvoiceMetadata.TOTAL));
 		this.total = total;
 		return this;
 	}
@@ -283,25 +283,32 @@ public class Invoice extends OccamEntity {
 		return confidential;
 	}
 	public Invoice setConfidential(boolean confidential) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.confidential,confidential), () -> markAsDirty(AonNames.CONFIDENTIAL));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.confidential,confidential), () -> markAsDirty(InvoiceMetadata.CONFIDENTIAL));
 		this.confidential = confidential;
 		return this;
 	}
 	
 	public String getDocumentNumber() {
 		StringBuilder buf = new StringBuilder();
-		Optional.of(getType())
-			.ifPresent(t -> t.visit(new InvoiceTypeVisitor<StringBuilder,StringBuilder>() {
-				@Override public StringBuilder visitPurchase(StringBuilder t) { return t.append("R"); }
-				@Override public StringBuilder visitSales(StringBuilder t) { return t.append("E"); }
-				@Override public StringBuilder visitExpenses(StringBuilder t) { return t.append("R"); }
-				@Override public StringBuilder visitUndeductible(StringBuilder t) { return t.append("G"); }
-			}, buf ));
+		Optional.ofNullable(getType())
+			.ifPresentOrElse(t -> t.visit(
+				new InvoiceTypeVisitor<StringBuilder,StringBuilder>() {
+					@Override public StringBuilder visitPurchase(StringBuilder t) { return t.append("R"); }
+					@Override public StringBuilder visitSales(StringBuilder t) { return t.append("E"); }
+					@Override public StringBuilder visitExpenses(StringBuilder t) { return t.append("R"); } 
+					@Override public StringBuilder visitUndeductible(StringBuilder t) { return t.append("G"); }
+				}
+				, buf )
+			, () -> buf.append("?"));
 		buf.append("-");
 		if (AonStringUtils.isNotEmpty(getSeries())) {
 			buf.append(getSeries()).append("/");
 		}
-		buf.append(AonStringUtils.leftPad(AonNumberUtils.toString(getNumber()), 6, "0"));
+		if ( getNumber() == null) {
+			buf.append(AonStringUtils.repeat("?",6));
+		} else {
+			buf.append(AonStringUtils.leftPad(AonNumberUtils.toString(getNumber()), 6, "0"));
+		}
 		return buf.toString();
 	}
 	
@@ -323,7 +330,7 @@ public class Invoice extends OccamEntity {
 		return this;
 	}
 	public Invoice addDetail(InvoiceDetail invoiceDetail) {
-		AonObjectUtils.ifTrue(invoiceDetail.isDirty(), () -> markAsDirty(AonNames.DETAILS));
+		AonObjectUtils.ifTrue(invoiceDetail.isDirty(), () -> markAsDirty(InvoiceMetadata.DETAILS));
 		getDetails().orElse(new LinkedList<>()).add(invoiceDetail);
 		return this;
 	}
@@ -337,7 +344,7 @@ public class Invoice extends OccamEntity {
 		return this;
 	}
 	public Invoice addBreakdown(InvoiceBreakdown invoiceBreakdown) {
-		AonObjectUtils.ifTrue(invoiceBreakdown.isDirty(), () -> markAsDirty(AonNames.BREAKDOWN));
+		AonObjectUtils.ifTrue(invoiceBreakdown.isDirty(), () -> markAsDirty(InvoiceMetadata.BREAKDOWN));
 		getBreakdown().orElse(new LinkedList<>()).add(invoiceBreakdown);
 		return this;
 	}

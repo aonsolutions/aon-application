@@ -3,12 +3,12 @@ package net.aonsolutions.occam.api.config;
 import java.util.Objects;
 import java.util.Optional;
 
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.OccamEntity;
 import net.aonsolutions.occam.api.constants.StreetType;
+import net.aonsolutions.occam.api.metadata.RegistryAddressMetadata;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class RegistryAddress extends OccamEntity {
+public class RegistryAddress extends OccamEntity<RegistryAddressMetadata> {
 
 	private static final long serialVersionUID = 5907689386464778213L;
 	
@@ -44,7 +44,7 @@ public class RegistryAddress extends OccamEntity {
 	}
 	
 	public RegistryAddress setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(RegistryAddressMetadata.ID));
 		this.id = id;
 		return this;
 	}
@@ -53,7 +53,7 @@ public class RegistryAddress extends OccamEntity {
 		return domain;
 	}
 	public RegistryAddress setDomain(Integer domain) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(AonNames.DOMAIN));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(RegistryAddressMetadata.DOMAIN));
 		this.domain = domain;
 		return this;
 	}
@@ -63,7 +63,7 @@ public class RegistryAddress extends OccamEntity {
 	}
 	
 	public RegistryAddress setRegistry(Integer registry) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.registry,registry), () -> markAsDirty(AonNames.REGISTRY));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.registry,registry), () -> markAsDirty(RegistryAddressMetadata.REGISTRY));
 		this.registry = registry;
 		return this;
 	}
@@ -72,7 +72,7 @@ public class RegistryAddress extends OccamEntity {
 		return main;
 	}
 	public RegistryAddress setMain(boolean main) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.main,main), () -> markAsDirty(AonNames.MAIN));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.main,main), () -> markAsDirty(RegistryAddressMetadata.MAIN));
 		this.main = main;
 		return this;
 	}
@@ -81,7 +81,7 @@ public class RegistryAddress extends OccamEntity {
 		return recipient;
 	}
 	public RegistryAddress setRecipient(String recipient) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.recipient,recipient), () -> markAsDirty(AonNames.RECIPIENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.recipient,recipient), () -> markAsDirty(RegistryAddressMetadata.RECIPIENT));
 		this.recipient = recipient;
 		return this;
 	}
@@ -90,7 +90,7 @@ public class RegistryAddress extends OccamEntity {
 		return streetType;
 	}
 	public RegistryAddress setStreetType(StreetType streetType) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.streetType,streetType), () -> markAsDirty(AonNames.STREET_TYPE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.streetType,streetType), () -> markAsDirty(RegistryAddressMetadata.STREET_TYPE));
 		this.streetType = streetType;
 		return this;
 	}
@@ -99,7 +99,7 @@ public class RegistryAddress extends OccamEntity {
 		return address;
 	}
 	public RegistryAddress setAddress(String address) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.address,address), () -> markAsDirty(AonNames.ADDRESS));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.address,address), () -> markAsDirty(RegistryAddressMetadata.ADDRESS));
 		this.address = address;
 		return this;
 	}
@@ -109,7 +109,7 @@ public class RegistryAddress extends OccamEntity {
 	}
 	
 	public RegistryAddress setNumber(String number) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.number,number), () -> markAsDirty(AonNames.NUMBER));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.number,number), () -> markAsDirty(RegistryAddressMetadata.NUMBER));
 		this.number = number;
 		return this;
 	}
@@ -118,7 +118,7 @@ public class RegistryAddress extends OccamEntity {
 		return address2;
 	}
 	public RegistryAddress setAddress2(String address2) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.address2,address2), () -> markAsDirty(AonNames.ADDRESS2));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.address2,address2), () -> markAsDirty(RegistryAddressMetadata.ADDRESS2));
 		this.address2 = address2;
 		return this;
 	}
@@ -127,7 +127,7 @@ public class RegistryAddress extends OccamEntity {
 		return address3;
 	}
 	public RegistryAddress setAddress3(String address3) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.address3,address3), () -> markAsDirty(AonNames.ADDRESS3));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.address3,address3), () -> markAsDirty(RegistryAddressMetadata.ADDRESS3));
 		this.address3 = address3;
 		return this;
 	}
@@ -136,7 +136,7 @@ public class RegistryAddress extends OccamEntity {
 		return zip;
 	}
 	public RegistryAddress setZip(String zip) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.zip,zip), () -> markAsDirty(AonNames.ZIP));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.zip,zip), () -> markAsDirty(RegistryAddressMetadata.ZIP));
 		this.zip = zip;
 		return this;
 	}
@@ -145,7 +145,7 @@ public class RegistryAddress extends OccamEntity {
 		return city;
 	}
 	public RegistryAddress setCity(String city) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.city,city), () -> markAsDirty(AonNames.CITY));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.city,city), () -> markAsDirty(RegistryAddressMetadata.CITY));
 		this.city = city;
 		return this;
 	}
@@ -154,7 +154,7 @@ public class RegistryAddress extends OccamEntity {
 		return alias;
 	}
 	public RegistryAddress setAlias(String alias) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.alias,alias), () -> markAsDirty(AonNames.ALIAS));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.alias,alias), () -> markAsDirty(RegistryAddressMetadata.ALIAS));
 		this.alias = alias;
 		return this;
 	}
@@ -163,7 +163,7 @@ public class RegistryAddress extends OccamEntity {
 		return municipalityCode;
 	}
 	public RegistryAddress setMunicipalityCode(String municipalityCode) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.municipalityCode,municipalityCode), () -> markAsDirty(AonNames.MUNICIPALITY_CODE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.municipalityCode,municipalityCode), () -> markAsDirty(RegistryAddressMetadata.MUNICIPALITY_CODE));
 		this.municipalityCode = municipalityCode;
 		return this;
 	}
@@ -173,7 +173,7 @@ public class RegistryAddress extends OccamEntity {
 	}
 
 	public RegistryAddress setGeozone(Geozone geozone) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.geozone,geozone), () -> markAsDirty(AonNames.GEOZONE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.geozone,geozone), () -> markAsDirty(RegistryAddressMetadata.GEOZONE));
 		this.geozone = geozone;
 		return this;
 	}
@@ -182,7 +182,7 @@ public class RegistryAddress extends OccamEntity {
 		return Optional.ofNullable( parentGeozone );
 	}
 	public RegistryAddress setParentGeozone(Geozone parentGeozone) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.parentGeozone,parentGeozone), () -> markAsDirty(AonNames.PARENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.parentGeozone,parentGeozone), () -> markAsDirty(RegistryAddressMetadata.PARENT_GEOZONE));
 		this.parentGeozone = parentGeozone;
 		return this;
 	}

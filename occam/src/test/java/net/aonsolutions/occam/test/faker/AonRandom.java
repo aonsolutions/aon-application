@@ -18,7 +18,7 @@ import net.aonsolutions.watson.server.AonDateUtils;
 public class AonRandom {
 
 	private static Faker faker = Faker.instance(Locale.of("es"));
-	private static final int REQUIRED = -1;
+	static final int REQUIRED = -1;
 
 	// ----------------------- [BOOLEAN]
 	public static boolean gt(int threshold) {

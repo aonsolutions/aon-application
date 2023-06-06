@@ -5,11 +5,11 @@ import java.util.Objects;
 import java.util.Optional;
 
 import net.aonsolutions.occam.api.OccamEntity;
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.constants.AonStatus;
+import net.aonsolutions.occam.api.metadata.BookingMetadata;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Booking extends OccamEntity {
+public class Booking extends OccamEntity<BookingMetadata> {
 
 	private static final long serialVersionUID = 1103864813445453030L;
 	
@@ -37,7 +37,7 @@ public class Booking extends OccamEntity {
 		return id;
 	}
 	public Booking setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(BookingMetadata.ID));
 		this.id = id;
 		return this;
 	}
@@ -46,7 +46,7 @@ public class Booking extends OccamEntity {
 		return Optional.ofNullable(expirationDate);  
 	}
 	public Booking setExpirationDate(Date expirationDate) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.expirationDate,expirationDate), () -> markAsDirty(AonNames.EXPIRATION_DATE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.expirationDate,expirationDate), () -> markAsDirty(BookingMetadata.EXPIRATION_DATE));
 		this.expirationDate = expirationDate;
 		return this;
 	}
@@ -55,7 +55,7 @@ public class Booking extends OccamEntity {
 		return owner;
 	}
 	public Booking setOwner(String owner) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.owner,owner), () -> markAsDirty(AonNames.OWNER));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.owner,owner), () -> markAsDirty(BookingMetadata.OWNER));
 		this.owner = owner;
 		return this;
 	}
@@ -64,7 +64,7 @@ public class Booking extends OccamEntity {
 		return domainManagement;
 	}
 	public Booking setDomainManagement(boolean domainManagement) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domainManagement,domainManagement), () -> markAsDirty(AonNames.DOMAIN_MANAGEMENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domainManagement,domainManagement), () -> markAsDirty(BookingMetadata.DOMAIN_MANAGEMENT));
 		this.domainManagement = domainManagement;
 		return this;
 	}
@@ -73,7 +73,7 @@ public class Booking extends OccamEntity {
 		return disableDomainManagement;
 	}
 	public Booking setDisableDomainManagement(boolean disableDomainManagement) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.disableDomainManagement,disableDomainManagement), () -> markAsDirty(AonNames.DISABLE_DOMAIN_MANAGEMENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.disableDomainManagement,disableDomainManagement), () -> markAsDirty(BookingMetadata.DISABLE_DOMAIN_MANAGEMENT));
 		this.disableDomainManagement = disableDomainManagement;
 		return this;
 	}
@@ -82,7 +82,7 @@ public class Booking extends OccamEntity {
 		return Optional.ofNullable(maxDefinedUsers);
 	}
 	public Booking setMaxDefinedUsers(Integer maxDefinedUsers) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.maxDefinedUsers,maxDefinedUsers), () -> markAsDirty(AonNames.MAX_DEFINED_USERS));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.maxDefinedUsers,maxDefinedUsers), () -> markAsDirty(BookingMetadata.MAX_DEFINED_USERS));
 		this.maxDefinedUsers = maxDefinedUsers;
 		return this;
 	}
@@ -91,7 +91,7 @@ public class Booking extends OccamEntity {
 		return Optional.ofNullable(aonCustomer);
 	}
 	public Booking setAonCustomer(Integer aonCustomer) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.aonCustomer,aonCustomer), () -> markAsDirty(AonNames.AON_CUSTOMER));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.aonCustomer,aonCustomer), () -> markAsDirty(BookingMetadata.AON_CUSTOMER));
 		this.aonCustomer = aonCustomer;
 		return this;
 	}
@@ -100,7 +100,7 @@ public class Booking extends OccamEntity {
 		return aonStatus;
 	}
 	public Booking setAonStatus(AonStatus aonStatus) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.aonStatus,aonStatus), () -> markAsDirty(AonNames.AON_STATUS));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.aonStatus,aonStatus), () -> markAsDirty(BookingMetadata.AON_STATUS));
 		this.aonStatus = aonStatus;
 		return this;
 	}

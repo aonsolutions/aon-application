@@ -2,11 +2,11 @@ package net.aonsolutions.occam.api.config;
 
 import java.util.Objects;
 
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.OccamEntity;
+import net.aonsolutions.occam.api.metadata.GeozoneMetadata;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Geozone extends OccamEntity {
+public class Geozone extends OccamEntity<GeozoneMetadata> {
 
 	private static final long serialVersionUID = 100071842215890945L;
 	
@@ -30,7 +30,7 @@ public class Geozone extends OccamEntity {
 		return id;
 	}
 	public Geozone setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(GeozoneMetadata.ID));
 		this.id = id;
 		return this;
 	}
@@ -39,7 +39,7 @@ public class Geozone extends OccamEntity {
 		return domain;
 	}
 	public Geozone setDomain(Integer domain) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(AonNames.DOMAIN));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(GeozoneMetadata.DOMAIN));
 		this.domain = domain;
 		return this;
 	}
@@ -48,7 +48,7 @@ public class Geozone extends OccamEntity {
 		return code;
 	}
 	public Geozone setCode(String code) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.code,code), () -> markAsDirty(AonNames.CODE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.code,code), () -> markAsDirty(GeozoneMetadata.CODE));
 		this.code = code;
 		return this;
 	}
@@ -57,7 +57,7 @@ public class Geozone extends OccamEntity {
 		return name;
 	}
 	public Geozone setName(String name) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(AonNames.NAME));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(GeozoneMetadata.NAME));
 		this.name = name;
 		return this;
 	}
@@ -66,7 +66,7 @@ public class Geozone extends OccamEntity {
 		return system;
 	}
 	public Geozone setSystem(boolean system) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.system,system), () -> markAsDirty(AonNames.SYSTEM));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.system,system), () -> markAsDirty(GeozoneMetadata.SYSTEM));
 		this.system = system;
 		return this;
 	}

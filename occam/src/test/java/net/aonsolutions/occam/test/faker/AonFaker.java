@@ -96,7 +96,7 @@ public class AonFaker {
 
 	public static Booking getBooking() {
 		return new Booking()
-			.setOwner(AonRandom.string(50))
+			.setOwner(AonRandom.string(AonRandom.REQUIRED,1,50))
 			.setExpirationDate(AonRandom.pastDate(50))
 			.setDomainManagement(AonRandom.gt(50))
 			.setDisableDomainManagement(AonRandom.gt(50))

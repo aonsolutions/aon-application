@@ -543,6 +543,7 @@ public class DomainDAO {
 		audit.setModificationUser(ctx.getUser());
 		audit.setModificationDate(new Timestamp(new Date().getTime()));
 		domain.setAudit(audit);
+		domain.getDirtySet().stream();
 		int count = ctx.getDslContext().update(DOMAIN)
 			.set(DOMAIN.NAME, domain.getName())
 			.set(DOMAIN.DESCRIPTION, domain.getDescription())
@@ -558,5 +559,4 @@ public class DomainDAO {
 		ctx.log().debug("UPDATE DOMAIN id: {0}. ({1} rows)", domain.getId(),count);
 		return domain;
 	}
-	
 }

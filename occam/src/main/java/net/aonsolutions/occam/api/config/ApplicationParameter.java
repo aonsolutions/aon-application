@@ -2,12 +2,12 @@ package net.aonsolutions.occam.api.config;
 
 import java.util.Objects;
 
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.OccamEntity;
 import net.aonsolutions.occam.api.constants.AppParam;
+import net.aonsolutions.occam.api.metadata.ApplicationParameterMetadata;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class ApplicationParameter extends OccamEntity {
+public class ApplicationParameter extends OccamEntity<ApplicationParameterMetadata> {
 
 	private static final long serialVersionUID = 3940903705871158256L;
 
@@ -31,7 +31,7 @@ public class ApplicationParameter extends OccamEntity {
 		return id;
 	}
 	public ApplicationParameter setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(ApplicationParameterMetadata.ID));
 		this.id = id;
 		return this;
 	}
@@ -40,7 +40,7 @@ public class ApplicationParameter extends OccamEntity {
 		return domain;
 	}
 	public ApplicationParameter setDomain(Integer domain) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(AonNames.DOMAIN));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(ApplicationParameterMetadata.DOMAIN));
 		this.domain = domain;
 		return this;
 	}
@@ -49,7 +49,7 @@ public class ApplicationParameter extends OccamEntity {
 		return name;
 	}
 	public ApplicationParameter setName(AppParam name) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(AonNames.NAME));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(ApplicationParameterMetadata.NAME));
 		this.name = name;
 		return this;
 	}
@@ -58,7 +58,7 @@ public class ApplicationParameter extends OccamEntity {
 		return value;
 	}
 	public ApplicationParameter setValue(String value) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.value,value), () -> markAsDirty(AonNames.VALUE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.value,value), () -> markAsDirty(ApplicationParameterMetadata.VALUE));
 		this.value = value;
 		return this;
 	}

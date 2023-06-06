@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -13,6 +15,8 @@ import net.aonsolutions.occam.api.constants.DocumentType;
 import net.aonsolutions.occam.api.constants.InvoiceType;
 import net.aonsolutions.occam.api.constants.TransactionType;
 import net.aonsolutions.occam.api.invoicing.Invoice;
+import net.aonsolutions.occam.api.metadata.InvoiceMetadata;
+import net.aonsolutions.occam.api.metadata.InvoiceMetadata.InvoiceMetadataVisitor;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.TimingExtension;
 import net.aonsolutions.occam.test.faker.AonFaker;
@@ -27,6 +31,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setId(1);
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.ID ));
 	}
 	
 	@Test()
@@ -34,6 +39,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setDomain(1);
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.DOMAIN ));
 	}
 	
 	@Test()
@@ -41,6 +47,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setActivity( AonFaker.getActivity());
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.ACTIVITY));
 	}
 
 	@Test()
@@ -48,13 +55,15 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setSeries(AonRandom.string(9));
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.SERIES));
 	}
 	
 	@Test()
-	void dirtynumberTest() {
+	void dirtyNumberTest() {
 		Invoice d = new Invoice();
 		d.setNumber(1);
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.NUMBER));
 	}
 
 	@Test()
@@ -62,6 +71,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setReferenceCode(AonRandom.string(9));
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.REFERENCE_CODE));
 	}
 	
 	@Test()
@@ -69,6 +79,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setIssueDate(AonRandom.today());
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.ISSUE_DATE));
 	}
 
 	@Test()
@@ -76,6 +87,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setTaxDate(AonRandom.today());
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.TAX_DATE));
 	}
 
 	@Test()
@@ -83,6 +95,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setConfidential( true );
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.CONFIDENTIAL));
 	}
 
 	@Test()
@@ -90,6 +103,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setRegistry(1);
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.REGISTRY));
 	}
 
 	@Test()
@@ -97,6 +111,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setDocument(AonRandom.string(9));
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.DOCUMENT));
 	}
 
 	@Test()
@@ -104,6 +119,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setDocumentType(DocumentType.NIE);
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.DOCUMENT_TYPE));
 	}
 
 	@Test()
@@ -111,6 +127,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setDocumentCountry(Country.NA);
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.DOCUMENT_COUNTRY));
 	}
 	
 	@Test()
@@ -118,6 +135,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setName(AonRandom.string(9));
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.NAME));
 	}
 
 	@Test()
@@ -125,6 +143,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setScope(AonFaker.getScope());
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.SCOPE));
 	}
 	
 	@Test()
@@ -132,6 +151,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setType(InvoiceType.EXPENSES);
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.TYPE));
 	}
 	
 	@Test()
@@ -139,6 +159,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setTransaction(TransactionType.EXTRACOMMUNITY);
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.TRANSACTION));
 	}
 
 	@Test()
@@ -146,6 +167,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setSurcharge( true );
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.SURCHARGE));
 	}
 
 	@Test()
@@ -153,6 +175,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setWithholding( true );
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.WITHHOLDING));
 	}
 
 	@Test()
@@ -160,6 +183,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setWithholdingFarmer( true );
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.WITHHOLDING_FARMER));
 	}
 
 	@Test()
@@ -167,6 +191,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setVatAccrualPayment( true );
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.VAT_ACCRUAL_PAYMENT));
 	}
 	
 	@Test()
@@ -174,6 +199,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setInvestment( true );
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.INVESTMENT));
 	}
 
 	@Test()
@@ -181,6 +207,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setService( true );
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.SERVICE));
 	}
 
 	@Test()
@@ -188,6 +215,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setAnnulled( true );
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.ANNULLED));
 	}
 
 	@Test()
@@ -195,6 +223,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.setTotal( 1.0 );
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.TOTAL));
 	}
 
 	@Test()
@@ -202,6 +231,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.addDetail( AonFaker.getInvoiceDetail());
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.DETAILS));
 	}
 
 	@Test()
@@ -209,6 +239,7 @@ class InvoiceTest extends AbstractOccamTest {
 		Invoice d = new Invoice();
 		d.addBreakdown( AonFaker.getInvoiceBreakdown());
 		assertTrue(d.isDirty());
+		assertTrue(d.getDirtySet().contains( InvoiceMetadata.BREAKDOWN));
 	}
 
 	@Test()
@@ -226,6 +257,48 @@ class InvoiceTest extends AbstractOccamTest {
 		d.setName( null );
 		assertFalse(d.isDirty());
 	}
+	
+	@Test()
+	void documentNumberTest() {
+		Invoice d = new Invoice();
+		assertEquals("?-??????", d.getDocumentNumber());
+	}
+
+	@Test()
+	void metadataVisitorTest() {
+		InvoiceMetadataVisitor<Boolean,InvoiceMetadata> visitor = new InvoiceMetadataVisitor<Boolean, InvoiceMetadata>() {
+			@Override public Boolean visitId(InvoiceMetadata t) {return t == InvoiceMetadata.ID; }
+			@Override public Boolean visitDomain(InvoiceMetadata t) {return t == InvoiceMetadata.DOMAIN; }
+			@Override public Boolean visitActivity(InvoiceMetadata t) {return t == InvoiceMetadata.ACTIVITY; }
+			@Override public Boolean visitSeries(InvoiceMetadata t) {return t == InvoiceMetadata.SERIES; }
+			@Override public Boolean visitNumber(InvoiceMetadata t) {return t == InvoiceMetadata.NUMBER; }
+			@Override public Boolean visitReferenceCode(InvoiceMetadata t) {return t == InvoiceMetadata.REFERENCE_CODE; }
+			@Override public Boolean visitIssueDate(InvoiceMetadata t) {return t == InvoiceMetadata.ISSUE_DATE; }
+			@Override public Boolean visitTaxDate(InvoiceMetadata t) {return t == InvoiceMetadata.TAX_DATE; }
+			@Override public Boolean visitConfidential(InvoiceMetadata t) {return t == InvoiceMetadata.CONFIDENTIAL; }
+			@Override public Boolean visitRegistry(InvoiceMetadata t) {return t == InvoiceMetadata.REGISTRY; }
+			@Override public Boolean visitDocument(InvoiceMetadata t) {return t == InvoiceMetadata.DOCUMENT; }
+			@Override public Boolean visitDocumentType(InvoiceMetadata t) {return t == InvoiceMetadata.DOCUMENT_TYPE; }
+			@Override public Boolean visitDocumentCountry(InvoiceMetadata t) {return t == InvoiceMetadata.DOCUMENT_COUNTRY; }
+			@Override public Boolean visitName(InvoiceMetadata t) {return t == InvoiceMetadata.NAME; }
+			@Override public Boolean visitScope(InvoiceMetadata t) {return t == InvoiceMetadata.SCOPE; }
+			@Override public Boolean visitType(InvoiceMetadata t) {return t == InvoiceMetadata.TYPE; }
+			@Override public Boolean visitTransaction(InvoiceMetadata t) {return t == InvoiceMetadata.TRANSACTION; }
+			@Override public Boolean visitSurcharge(InvoiceMetadata t) {return t == InvoiceMetadata.SURCHARGE; }
+			@Override public Boolean visitWithholding(InvoiceMetadata t) {return t == InvoiceMetadata.WITHHOLDING; }
+			@Override public Boolean visitWithholdingFarmer(InvoiceMetadata t) {return t == InvoiceMetadata.WITHHOLDING_FARMER; }
+			@Override public Boolean visitVatAccrualPayment(InvoiceMetadata t) {return t == InvoiceMetadata.VAT_ACCRUAL_PAYMENT; }
+			@Override public Boolean visitInvestment(InvoiceMetadata t) {return t == InvoiceMetadata.INVESTMENT; }
+			@Override public Boolean visitService(InvoiceMetadata t) {return t == InvoiceMetadata.SERVICE; }
+			@Override public Boolean visitAnnulled(InvoiceMetadata t) {return t == InvoiceMetadata.ANNULLED; }
+			@Override public Boolean visitTotal(InvoiceMetadata t) {return t == InvoiceMetadata.TOTAL; }
+			@Override public Boolean visitAudit(InvoiceMetadata t) {return t == InvoiceMetadata.AUDIT; }
+			@Override public Boolean visitDetails(InvoiceMetadata t) {return t == InvoiceMetadata.DETAILS; }
+			@Override public Boolean visitBreakdown(InvoiceMetadata t) {return t == InvoiceMetadata.BREAKDOWN; }
+		}; 
+		Arrays.stream(InvoiceMetadata.values()).forEach( dt -> assertTrue(dt.visit(visitor, dt)));		
+	}
+	
 	
 	@Test()
 	void equalsTest() {

@@ -2,11 +2,11 @@ package net.aonsolutions.occam.api.accounting;
 
 import java.util.Objects;
 
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.OccamEntity;
+import net.aonsolutions.occam.api.metadata.AccountMetadata;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Account extends OccamEntity {
+public class Account extends OccamEntity<AccountMetadata> {
 
 	private static final long serialVersionUID = 3940903705871158256L;
 
@@ -31,7 +31,7 @@ public class Account extends OccamEntity {
 		return id;
 	}
 	public Account setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AccountMetadata.ID));
 		this.id = id;
 		return this;
 	}
@@ -40,7 +40,7 @@ public class Account extends OccamEntity {
 		return domain;
 	}
 	public Account setDomain(Integer domain) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(AonNames.DOMAIN));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(AccountMetadata.DOMAIN));
 		this.domain = domain;
 		return this;
 	}
@@ -49,7 +49,7 @@ public class Account extends OccamEntity {
 		return code;
 	}
 	public Account setCode(String code) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.code,code), () -> markAsDirty(AonNames.CODE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.code,code), () -> markAsDirty(AccountMetadata.CODE));
 		this.code = code;
 		return this;
 	}
@@ -58,7 +58,7 @@ public class Account extends OccamEntity {
 		return description;
 	}
 	public Account setDescription(String description) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.description,description), () -> markAsDirty(AonNames.DESCRIPTION));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.description,description), () -> markAsDirty(AccountMetadata.DESCRIPTION));
 		this.description = description;
 		return this;
 	}
@@ -67,7 +67,7 @@ public class Account extends OccamEntity {
 		return alias;
 	}
 	public Account setAlias(String alias) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.alias,alias), () -> markAsDirty(AonNames.ALIAS));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.alias,alias), () -> markAsDirty(AccountMetadata.ALIAS));
 		this.alias = alias;
 		return this;
 	}
@@ -77,7 +77,7 @@ public class Account extends OccamEntity {
 	}
 
 	public Account setActive(boolean active) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.active,active), () -> markAsDirty(AonNames.ACTIVE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.active,active), () -> markAsDirty(AccountMetadata.ACTIVE));
 		this.active = active;
 		return this;
 	}

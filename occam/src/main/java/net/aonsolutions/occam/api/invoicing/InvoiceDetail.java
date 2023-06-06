@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import net.aonsolutions.occam.api.AonNames;
 import net.aonsolutions.occam.api.OccamEntity;
 import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.constants.InvoiceSource;
+import net.aonsolutions.occam.api.metadata.InvoiceDetailMetadata;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class InvoiceDetail extends OccamEntity {
+public class InvoiceDetail extends OccamEntity<InvoiceDetailMetadata> {
 
 	private static final long serialVersionUID = 7597157186868662372L;
 	
@@ -44,7 +44,7 @@ public class InvoiceDetail extends OccamEntity {
 		return id;
 	}
 	public InvoiceDetail setId(Integer id) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(InvoiceDetailMetadata.ID));
 		this.id = id;
 		return this;
 	}
@@ -53,7 +53,7 @@ public class InvoiceDetail extends OccamEntity {
 		return item;
 	}
 	public InvoiceDetail setItem(Integer item) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.item,item), () -> markAsDirty(AonNames.ITEM));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.item,item), () -> markAsDirty(InvoiceDetailMetadata.ITEM));
 		this.item = item;
 		return this;
 	}
@@ -61,7 +61,7 @@ public class InvoiceDetail extends OccamEntity {
 		return line;
 	}
 	public InvoiceDetail setLine(Integer line) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.line,line), () -> markAsDirty(AonNames.LINE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.line,line), () -> markAsDirty(InvoiceDetailMetadata.LINE));
 		this.line = line;
 		return this;
 	}
@@ -69,7 +69,7 @@ public class InvoiceDetail extends OccamEntity {
 		return description;
 	}
 	public InvoiceDetail setDescription(String description) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.description,description), () -> markAsDirty(AonNames.DESCRIPTION));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.description,description), () -> markAsDirty(InvoiceDetailMetadata.DESCRIPTION));
 		this.description = description;
 		return this;
 	}
@@ -77,7 +77,7 @@ public class InvoiceDetail extends OccamEntity {
 		return quantity;
 	}
 	public InvoiceDetail setQuantity(Double quantity) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.quantity,quantity), () -> markAsDirty(AonNames.QUANTITY));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.quantity,quantity), () -> markAsDirty(InvoiceDetailMetadata.QUANTITY));
 		this.quantity = quantity;
 		return this;
 	}
@@ -85,7 +85,7 @@ public class InvoiceDetail extends OccamEntity {
 		return price;
 	}
 	public InvoiceDetail setPrice(Double price) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.price,price), () -> markAsDirty(AonNames.PRICE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.price,price), () -> markAsDirty(InvoiceDetailMetadata.PRICE));
 		this.price = price;
 		return this;
 	}
@@ -96,7 +96,7 @@ public class InvoiceDetail extends OccamEntity {
 		return discountExpression;
 	}
 	public InvoiceDetail setDiscountExpression(String discountExpression) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.discountExpression,discountExpression), () -> markAsDirty(AonNames.DISCOUNT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.discountExpression,discountExpression), () -> markAsDirty(InvoiceDetailMetadata.DISCOUNT_EXPRESSION));
 		this.discountExpression = discountExpression;
 		return this;
 	}
@@ -104,7 +104,7 @@ public class InvoiceDetail extends OccamEntity {
 		return source;
 	}
 	public InvoiceDetail setSource(InvoiceSource source) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.source,source), () -> markAsDirty(AonNames.SOURCE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.source,source), () -> markAsDirty(InvoiceDetailMetadata.SOURCE));
 		this.source = source;
 		return this;
 	}
@@ -112,7 +112,7 @@ public class InvoiceDetail extends OccamEntity {
 		return sourceId;
 	}
 	public InvoiceDetail setSourceId(Integer sourceId) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.sourceId,sourceId), () -> markAsDirty(AonNames.SOURCE_ID));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.sourceId,sourceId), () -> markAsDirty(InvoiceDetailMetadata.SOURCE_ID));
 		this.sourceId = sourceId;
 		return this;
 	}
@@ -120,7 +120,7 @@ public class InvoiceDetail extends OccamEntity {
 		return taxableBase;
 	}
 	public InvoiceDetail setTaxableBase(Double taxableBase) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.taxableBase,taxableBase), () -> markAsDirty(AonNames.TAXABLE_BASE));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.taxableBase,taxableBase), () -> markAsDirty(InvoiceDetailMetadata.TAXABLE_BASE));
 		this.taxableBase = taxableBase;
 		return this;
 	}
@@ -128,7 +128,7 @@ public class InvoiceDetail extends OccamEntity {
 		return prepayment;
 	}
 	public InvoiceDetail setPrepayment(boolean prepayment) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.prepayment,prepayment), () -> markAsDirty(AonNames.PREPAYMENT));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.prepayment,prepayment), () -> markAsDirty(InvoiceDetailMetadata.PREPAYMENT));
 		this.prepayment = prepayment;
 		return this;
 	}
@@ -137,13 +137,13 @@ public class InvoiceDetail extends OccamEntity {
 		return Optional.ofNullable(taxes);
 	}
 	public InvoiceDetail setTaxes(List<InvoiceTax> taxes) {
-		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.taxes,taxes), () -> markAsDirty(AonNames.TAXES));
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.taxes,taxes), () -> markAsDirty(InvoiceDetailMetadata.TAXES));
 		this.taxes = new LinkedList<>();
 		this.taxes.addAll(taxes);
 		return this;
 	}
 	public InvoiceDetail addTax(InvoiceTax invoiceTax) {
-		AonObjectUtils.ifTrue(invoiceTax.isDirty(), () -> markAsDirty(AonNames.TAXES));
+		AonObjectUtils.ifTrue(invoiceTax.isDirty(), () -> markAsDirty(InvoiceDetailMetadata.TAXES));
 		getTaxes().orElse(new LinkedList<>()).add(invoiceTax);
 		return this;
 	}
