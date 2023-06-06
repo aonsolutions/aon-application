@@ -16,3 +16,5 @@ export const saveDomainLinked = (data) => put(`${API_URL}/domain/link`, data);
 export const deleteDomainLinked = (data) => remove(`${API_URL}/domain/link`, data);
 
 export const updateCustomerBillable = (data) => put(`${API_URL}/customer/billable`, data);
+
+export const updateDomainBooking = (data) => put(`${API_URL}/domain/booking`, data);

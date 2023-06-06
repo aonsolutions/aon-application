@@ -259,3 +259,16 @@ export const InvestAssetTypeOptions = [
 	{value: 'ACCOUNT_GROUP_23_ASSET', name: 'Bienes Grupo 23 PGC'}, //MSG.ACCOUNT_GROUP_23_ASSET},
 	{value: 'BUILDING_PLOT', name: 'Solar'} //MSG.BUILDING_PLOT}
 ]
+
+export const DomainType = {
+	ENTERPRISE: "Empresa",
+	CONSULTANCY: "Asesoría",
+	GARAGE: "Garaje",
+	ACADEMY: "Academia",
+	HOTEL: "Hotel",
+	ADMIN: "Administración",
+	OFFICE: "Despacho",
+	GENERIC: "Genérico",
+	COMMERCE: "Comercio",
+	KIT_DIGITAL: "Kit Digital"
+}
