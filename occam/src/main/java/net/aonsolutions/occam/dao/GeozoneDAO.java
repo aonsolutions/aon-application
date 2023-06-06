@@ -230,7 +230,7 @@ public class GeozoneDAO {
 				.andThen( withParent )
 				.apply(rec)
 				.get()
-				.setDirty(false)
+				.markAsClean()
 			;
 		}
 		

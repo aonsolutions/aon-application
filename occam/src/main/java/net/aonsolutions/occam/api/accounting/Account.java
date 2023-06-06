@@ -1,14 +1,12 @@
 package net.aonsolutions.occam.api.accounting;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-import net.aonsolutions.occam.api.HasDirtyFlag;
-import net.aonsolutions.occam.api.HasSelector;
-import net.aonsolutions.watson.client.util.AonNumberUtils;
+import net.aonsolutions.occam.api.AonNames;
+import net.aonsolutions.occam.api.OccamEntity;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Account implements Serializable, HasSelector<Account>,HasDirtyFlag<Account>{
+public class Account extends OccamEntity {
 
 	private static final long serialVersionUID = 3940903705871158256L;
 
@@ -19,14 +17,21 @@ public class Account implements Serializable, HasSelector<Account>,HasDirtyFlag<
 	private String alias;
 	private boolean active;
 
-	private boolean dirty;
-	private boolean selected;
-
+	@Override
+	protected Object getUuid() {
+		return getId();
+	}
+	@Override
+	public Account markAsClean() {
+		super.markAsClean();
+		return this;
+	}
+	
 	public Integer getId() {
 		return id;
 	}
 	public Account setId(Integer id) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.id,id) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
 		this.id = id;
 		return this;
 	}
@@ -35,7 +40,7 @@ public class Account implements Serializable, HasSelector<Account>,HasDirtyFlag<
 		return domain;
 	}
 	public Account setDomain(Integer domain) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.domain,domain) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(AonNames.DOMAIN));
 		this.domain = domain;
 		return this;
 	}
@@ -44,7 +49,7 @@ public class Account implements Serializable, HasSelector<Account>,HasDirtyFlag<
 		return code;
 	}
 	public Account setCode(String code) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.code,code) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.code,code), () -> markAsDirty(AonNames.CODE));
 		this.code = code;
 		return this;
 	}
@@ -53,7 +58,7 @@ public class Account implements Serializable, HasSelector<Account>,HasDirtyFlag<
 		return description;
 	}
 	public Account setDescription(String description) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.description,description) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.description,description), () -> markAsDirty(AonNames.DESCRIPTION));
 		this.description = description;
 		return this;
 	}
@@ -62,7 +67,7 @@ public class Account implements Serializable, HasSelector<Account>,HasDirtyFlag<
 		return alias;
 	}
 	public Account setAlias(String alias) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.alias,alias) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.alias,alias), () -> markAsDirty(AonNames.ALIAS));
 		this.alias = alias;
 		return this;
 	}
@@ -72,28 +77,8 @@ public class Account implements Serializable, HasSelector<Account>,HasDirtyFlag<
 	}
 
 	public Account setActive(boolean active) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.active,active) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.active,active), () -> markAsDirty(AonNames.ACTIVE));
 		this.active = active;
-		return this;
-	}
-
-	@Override
-	public boolean isDirty() {
-		return dirty;
-	}
-	@Override
-	public Account setDirty(boolean dirty) {
-		this.dirty = dirty;
-		return this;
-	}
-
-	@Override
-	public boolean isSelected() {
-		return selected;
-	}
-	@Override
-	public Account setSelected(boolean selected) {
-		this.selected = selected;
 		return this;
 	}
 
@@ -101,13 +86,14 @@ public class Account implements Serializable, HasSelector<Account>,HasDirtyFlag<
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
 		if (obj instanceof Account other) {
-			return AonNumberUtils.equals(this.id,other.id);
+			return AonObjectUtils.equals( this.getUuid(),other.getUuid() );
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(id, 0).hashCode();
+	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
 	}
+	
 }

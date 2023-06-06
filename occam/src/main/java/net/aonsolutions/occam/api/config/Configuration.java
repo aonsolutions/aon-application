@@ -1,35 +1,32 @@
 package net.aonsolutions.occam.api.config;
 
-import java.io.Serializable;
 import java.util.Optional;
 
-import net.aonsolutions.occam.api.HasDirtyFlag;
+import net.aonsolutions.occam.api.AonNames;
+import net.aonsolutions.occam.api.OccamEntity;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class Configuration implements Serializable, HasDirtyFlag<Configuration> {
+public class Configuration extends OccamEntity {
 
 	private static final long serialVersionUID = 7723888010939038114L;
 
+	private Integer uuid;
 	private AccountingConfiguration accountingConfiguration;
-
-	private boolean dirty;
 
 	public Optional<AccountingConfiguration> accounting() {
 		return Optional.ofNullable(accountingConfiguration);
 	}
 	public Configuration setAccounting(AccountingConfiguration accountingConfiguration) {
-		this.dirtyMark( this.accountingConfiguration, accountingConfiguration );
+		AonObjectUtils.ifTrue(mustMarkaAsDirty(this.accountingConfiguration, accountingConfiguration), () -> markAsDirty(AonNames.ID));
 		this.accountingConfiguration = accountingConfiguration; 
 		return this;
 	}
 	
 	@Override
-	public boolean isDirty() {
-		return dirty;
+	protected Object getUuid() {
+		return uuid;
 	}
-	@Override
-	public Configuration setDirty(boolean dirty) {
-		this.dirty = dirty;
-		return this;
+	public void setUuid(Integer uuid) {
+		this.uuid = uuid;
 	}
-	
 }

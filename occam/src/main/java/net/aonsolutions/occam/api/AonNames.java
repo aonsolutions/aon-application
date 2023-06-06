@@ -124,6 +124,7 @@ public final class AonNames {
 	public static final String TAXABLE_BASE = "taxableBase";
 	public static final String TAXES = "taxes";
 	public static final String TAX_DATE = "taxDate";
+	public static final String TAX_TYPE = "taxType";
 	public static final String TOTAL = "total";
 	public static final String TRANSACTION = "transaction";
 	public static final String TYPE = "type";

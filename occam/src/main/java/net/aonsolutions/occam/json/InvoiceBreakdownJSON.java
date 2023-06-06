@@ -32,7 +32,7 @@ public class InvoiceBreakdownJSON {
 		if (json == null) return null; 
 		return new InvoiceBreakdown()
 			.setId(AonJSONUtils.getInteger(json, AonNames.ID))
-			.setTaxType( TaxType.safeValueOf(AonJSONUtils.getString(json, AonNames.TYPE)).orElse(null) )
+			.setTaxType( TaxType.safeValueOf(AonJSONUtils.getString(json, AonNames.TAX_TYPE)).orElse(null) )
 			.setBase(AonJSONUtils.getDouble(json, AonNames.BASE))
 			.setPercent(AonJSONUtils.getDouble(json, AonNames.PERCENT))
 			.setQuota(AonJSONUtils.getDouble(json, AonNames.QUOTA))
@@ -60,7 +60,7 @@ public class InvoiceBreakdownJSON {
 		if (tax == null) return null;
 		return new JSONObject()
 			.put(AonNames.ID, tax.getId())
-			.putOpt(AonNames.TYPE, AonObjectUtils.ifNotNullDo(tax.getTaxType(), Object::toString ))
+			.putOpt(AonNames.TAX_TYPE, AonObjectUtils.ifNotNullDo(tax.getTaxType(), Object::toString ))
 			.putOpt(AonNames.BASE, tax.getBase())
 			.putOpt(AonNames.PERCENT, tax.getPercent())
 			.putOpt(AonNames.QUOTA, tax.getQuota())

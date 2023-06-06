@@ -105,7 +105,7 @@ class GeozoneTest extends AbstractOccamTest {
 	@Test
 	void saveValidationEmptyDomainTest() {
 		Geozone geozone = new Geozone();
-		geozone.setDirty(true);
+		geozone.setName("dddd");
 		AonCoreException e = assertThrows(AonCoreException.class, () -> GeozoneDAO.save(ctx, geozone));
 		assertEquals(AonError.EMPTY_DOMAIN.getMessage(), e.getMessage());
 	}

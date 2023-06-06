@@ -172,7 +172,7 @@ public class AccountDAO {
 				})
 				.apply(rec)
 				.get()
-				.setDirty(false)
+				.markAsClean()
 			;
 		}
 		

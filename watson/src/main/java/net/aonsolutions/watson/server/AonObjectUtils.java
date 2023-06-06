@@ -37,15 +37,7 @@ public class AonObjectUtils {
 	}
 
 	public static <T, R> R ifOptionalPresent(Optional<T> value, Function<T, R> action) {
-		return ifPresent(value.orElse(null), action);
-	}
-
-	/**
-	 * @Deprecated use ifNotNullDo
-	 */
-	@Deprecated 
-	public static <T, R> R ifPresent(T value, Function<T, R> action) {
-		return ifNotNullDo(value, action);
+		return ifNotNullDo(value.orElse(null), action);
 	}
 
 	public static <T, R> R ifNotNullDo(final T object, Function<T, R> value) {

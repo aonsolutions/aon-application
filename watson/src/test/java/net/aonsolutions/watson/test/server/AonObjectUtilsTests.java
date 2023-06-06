@@ -74,4 +74,14 @@ class AonObjectUtilsTests {
 		assertTrue( bool.booleanValue() );
 	}
 	
+	@Test()
+	void ifTrueTest() {
+		MutableBoolean bool = new MutableBoolean( false );
+		AonObjectUtils.ifTrue(true, () -> bool.setValue(true));
+		assertTrue( bool.booleanValue() );
+		
+		MutableBoolean bool1 = new MutableBoolean( false );
+		AonObjectUtils.ifTrue(false, () -> bool1.setValue(true));
+		assertFalse( bool1.booleanValue() );
+	}
 }

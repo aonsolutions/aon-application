@@ -32,7 +32,7 @@ public class InvoiceTaxJSON {
 		if (json == null) return null; 
 		return new InvoiceTax()
 			.setId(AonJSONUtils.getInteger(json, AonNames.ID))
-			.setTaxType( TaxType.safeValueOf(AonJSONUtils.getString(json, AonNames.TYPE)).orElse(null) )
+			.setTaxType( TaxType.safeValueOf(AonJSONUtils.getString(json, AonNames.TAX_TYPE)).orElse(null) )
 			.setPercent(AonJSONUtils.getDouble(json, AonNames.PERCENT))
 			.setSurchargePercent(AonJSONUtils.getDouble(json, AonNames.SURCHARGE_PERCENT))
 			.setDeductiblePercent(AonJSONUtils.getDouble(json, AonNames.DEDUCTIBLE_PERCENT))
@@ -56,7 +56,7 @@ public class InvoiceTaxJSON {
 		if (tax == null) return null;
 		return new JSONObject()
 			.put(AonNames.ID, tax.getId())
-			.putOpt(AonNames.TYPE, AonObjectUtils.ifNotNullDo(tax.getTaxType(), Object::toString ))
+			.putOpt(AonNames.TAX_TYPE, AonObjectUtils.ifNotNullDo(tax.getTaxType(), Object::toString ))
 			.putOpt(AonNames.PERCENT, tax.getPercent())
 			.putOpt(AonNames.SURCHARGE_PERCENT, tax.getSurchargePercent())
 			.putOpt(AonNames.DEDUCTIBLE_PERCENT, tax.getDeductiblePercent())

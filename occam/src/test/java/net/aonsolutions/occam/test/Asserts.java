@@ -118,7 +118,7 @@ public class Asserts {
 			assertEquals(expected.getDomain(), actual.getDomain(),"Domain");
 			assertEquals(expected.getName(), actual.getName(),"Name");
 			assertEquals(expected.getStartDate(), actual.getStartDate(),"StartDate");
-			assertEquals(expected.getEndingDate(), actual.getEndingDate(),"EndingDate");
+			assertEquals(expected.getEndDate(), actual.getEndDate(),"EndDate");
 			assertEquals(expected.getStatus(), actual.getStatus(),"Status");
 			assertEquals(expected.isDefaultPeriod(), actual.isDefaultPeriod(),"DefaultPeriod");
 			assertEqualsAudit(expected.getAudit().orElse(null), actual.getAudit().orElse(null));

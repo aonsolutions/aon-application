@@ -47,9 +47,9 @@ class AccountingPeriodTest extends AbstractOccamTest {
 	}
 
 	@Test()
-	void dirtyEndingDateTest() {
+	void dirtyEndDateTest() {
 		AccountingPeriod d = new AccountingPeriod();
-		d.setEndingDate( AonRandom.today());
+		d.setEndDate( AonRandom.today());
 		assertTrue(d.isDirty());
 	}
 

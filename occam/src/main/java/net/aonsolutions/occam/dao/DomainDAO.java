@@ -405,10 +405,18 @@ public class DomainDAO {
 			}
 		};
 
+		public static final BiConsumer<AONContext,Domain> COMPLETE_AON_STATUS = (ctx,domain) -> {
+			if (domain.getBooking().isPresent() && domain.getBooking().get().getAonStatus() == null) {
+				ctx.log().debug("\t Saving domain: AonStatus to BILLABLE");
+				domain.getBooking().get().setAonStatus(AonStatus.BILLABLE);
+			}
+		};
+
 		public static void autoComplete(AONContext ctx, Domain domain) throws AonCoreException {
 			LOWCASE_NAME
 				.andThen(COMPLETE_TYPE)
 				.andThen(COMPLETE_INHERITANCE)
+				.andThen(COMPLETE_AON_STATUS)
 				.accept(ctx, domain);
 		}
 

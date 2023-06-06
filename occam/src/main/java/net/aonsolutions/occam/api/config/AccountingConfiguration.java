@@ -1,21 +1,29 @@
 package net.aonsolutions.occam.api.config;
 
-import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 
-import net.aonsolutions.occam.api.HasDirtyFlag;
+import net.aonsolutions.occam.api.AonNames;
+import net.aonsolutions.occam.api.OccamEntity;
 import net.aonsolutions.occam.api.accounting.Account;
 import net.aonsolutions.occam.api.constants.AppParam;
+import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class AccountingConfiguration implements Serializable, HasDirtyFlag<AccountingConfiguration> {
+public class AccountingConfiguration extends OccamEntity {
 
 	private static final long serialVersionUID = -4608981705550453419L;
 
+	private Integer uuid;
 	private EnumMap<AppParam, Account> accounts = new EnumMap<>(AppParam.class);
 
-	private boolean dirty;
+	@Override
+	protected Object getUuid() {
+		return uuid;
+	}
+	public void setUuid(Integer uuid) {
+		this.uuid = uuid;
+	}
 
 	public Map<AppParam, Account> getAccounts() {
 		return accounts;
@@ -26,19 +34,9 @@ public class AccountingConfiguration implements Serializable, HasDirtyFlag<Accou
 	}
 
 	public AccountingConfiguration setAccount(AppParam param, Account account) {
-		this.dirtyMark(accounts.get(param), account);
+		AonObjectUtils.ifTrue(mustMarkaAsDirty(accounts.get(param), account), () -> markAsDirty(AonNames.ACCOUNTS));
 		accounts.put(param, account);
 		return this;
 	}
 
-	@Override
-	public boolean isDirty() {
-		return dirty;
-	}
-
-	@Override
-	public AccountingConfiguration setDirty(boolean dirty) {
-		this.dirty = dirty;
-		return this;
-	}
 }

@@ -54,7 +54,7 @@ public class SecurityDAO {
 				.setId(FillerUtils.getValue(r,SCOPE.ID))
 				.setDomain(FillerUtils.getValue(r,SCOPE.DOMAIN))
 				.setDescription(FillerUtils.getValue(r,SCOPE.DESCRIPTION))
-				.setDirty(false)
+				.markAsClean()
 				;	
 		}
 	}

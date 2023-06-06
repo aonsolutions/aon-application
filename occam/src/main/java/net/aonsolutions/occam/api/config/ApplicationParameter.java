@@ -1,14 +1,13 @@
 package net.aonsolutions.occam.api.config;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-import net.aonsolutions.occam.api.HasDirtyFlag;
+import net.aonsolutions.occam.api.AonNames;
+import net.aonsolutions.occam.api.OccamEntity;
 import net.aonsolutions.occam.api.constants.AppParam;
-import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class ApplicationParameter implements Serializable,HasDirtyFlag<ApplicationParameter> {
+public class ApplicationParameter extends OccamEntity {
 
 	private static final long serialVersionUID = 3940903705871158256L;
 
@@ -17,13 +16,22 @@ public class ApplicationParameter implements Serializable,HasDirtyFlag<Applicati
 	private AppParam name;
 	private String value;
 
-	private boolean dirty;
+
+	@Override
+	protected Object getUuid() {
+		return getId();
+	}
+	@Override
+	public ApplicationParameter markAsClean() {
+		super.markAsClean();
+		return this;
+	}
 
 	public Integer getId() {
 		return id;
 	}
 	public ApplicationParameter setId(Integer id) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.id,id) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
 		this.id = id;
 		return this;
 	}
@@ -32,7 +40,7 @@ public class ApplicationParameter implements Serializable,HasDirtyFlag<Applicati
 		return domain;
 	}
 	public ApplicationParameter setDomain(Integer domain) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.domain,domain) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.domain,domain), () -> markAsDirty(AonNames.DOMAIN));
 		this.domain = domain;
 		return this;
 	}
@@ -41,7 +49,7 @@ public class ApplicationParameter implements Serializable,HasDirtyFlag<Applicati
 		return name;
 	}
 	public ApplicationParameter setName(AppParam name) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.name,name) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.name,name), () -> markAsDirty(AonNames.NAME));
 		this.name = name;
 		return this;
 	}
@@ -50,18 +58,8 @@ public class ApplicationParameter implements Serializable,HasDirtyFlag<Applicati
 		return value;
 	}
 	public ApplicationParameter setValue(String value) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.value,value) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.value,value), () -> markAsDirty(AonNames.VALUE));
 		this.value = value;
-		return this;
-	}
-
-	@Override
-	public boolean isDirty() {
-		return dirty;
-	}
-	@Override
-	public ApplicationParameter setDirty(boolean dirty) {
-		this.dirty = dirty;
 		return this;
 	}
 	
@@ -69,14 +67,14 @@ public class ApplicationParameter implements Serializable,HasDirtyFlag<Applicati
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
 		if (obj instanceof ApplicationParameter other) {
-			return AonNumberUtils.equals(this.id,other.id);
+			return AonObjectUtils.equals(this.getUuid(),other.getUuid());
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(id, 0).hashCode();
+	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
 	}
 	
 }

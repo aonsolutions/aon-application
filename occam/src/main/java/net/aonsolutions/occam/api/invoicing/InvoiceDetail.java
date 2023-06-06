@@ -1,18 +1,17 @@
 package net.aonsolutions.occam.api.invoicing;
 
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import net.aonsolutions.occam.api.HasDirtyFlag;
+import net.aonsolutions.occam.api.AonNames;
+import net.aonsolutions.occam.api.OccamEntity;
 import net.aonsolutions.occam.api.config.Audit;
 import net.aonsolutions.occam.api.constants.InvoiceSource;
-import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> {
+public class InvoiceDetail extends OccamEntity {
 
 	private static final long serialVersionUID = 7597157186868662372L;
 	
@@ -30,13 +29,22 @@ public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> 
 	private LinkedList<InvoiceTax> taxes;
 	private Audit audit;	
 	
-	private boolean dirty;
+
+	@Override
+	protected Object getUuid() {
+		return getId();
+	}
+	@Override
+	public InvoiceDetail markAsClean() {
+		super.markAsClean();
+		return this;
+	}
 
 	public Integer getId() {
 		return id;
 	}
 	public InvoiceDetail setId(Integer id) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.id,id) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
 		this.id = id;
 		return this;
 	}
@@ -45,7 +53,7 @@ public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> 
 		return item;
 	}
 	public InvoiceDetail setItem(Integer item) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.item,item) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.item,item), () -> markAsDirty(AonNames.ITEM));
 		this.item = item;
 		return this;
 	}
@@ -53,7 +61,7 @@ public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> 
 		return line;
 	}
 	public InvoiceDetail setLine(Integer line) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.line,line) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.line,line), () -> markAsDirty(AonNames.LINE));
 		this.line = line;
 		return this;
 	}
@@ -61,7 +69,7 @@ public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> 
 		return description;
 	}
 	public InvoiceDetail setDescription(String description) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.description,description) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.description,description), () -> markAsDirty(AonNames.DESCRIPTION));
 		this.description = description;
 		return this;
 	}
@@ -69,7 +77,7 @@ public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> 
 		return quantity;
 	}
 	public InvoiceDetail setQuantity(Double quantity) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.quantity,quantity) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.quantity,quantity), () -> markAsDirty(AonNames.QUANTITY));
 		this.quantity = quantity;
 		return this;
 	}
@@ -77,7 +85,7 @@ public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> 
 		return price;
 	}
 	public InvoiceDetail setPrice(Double price) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.price,price) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.price,price), () -> markAsDirty(AonNames.PRICE));
 		this.price = price;
 		return this;
 	}
@@ -88,7 +96,7 @@ public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> 
 		return discountExpression;
 	}
 	public InvoiceDetail setDiscountExpression(String discountExpression) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.discountExpression,discountExpression) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.discountExpression,discountExpression), () -> markAsDirty(AonNames.DISCOUNT));
 		this.discountExpression = discountExpression;
 		return this;
 	}
@@ -96,7 +104,7 @@ public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> 
 		return source;
 	}
 	public InvoiceDetail setSource(InvoiceSource source) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.source,source) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.source,source), () -> markAsDirty(AonNames.SOURCE));
 		this.source = source;
 		return this;
 	}
@@ -104,7 +112,7 @@ public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> 
 		return sourceId;
 	}
 	public InvoiceDetail setSourceId(Integer sourceId) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.sourceId,sourceId) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.sourceId,sourceId), () -> markAsDirty(AonNames.SOURCE_ID));
 		this.sourceId = sourceId;
 		return this;
 	}
@@ -112,7 +120,7 @@ public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> 
 		return taxableBase;
 	}
 	public InvoiceDetail setTaxableBase(Double taxableBase) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.taxableBase,taxableBase) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.taxableBase,taxableBase), () -> markAsDirty(AonNames.TAXABLE_BASE));
 		this.taxableBase = taxableBase;
 		return this;
 	}
@@ -120,7 +128,7 @@ public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> 
 		return prepayment;
 	}
 	public InvoiceDetail setPrepayment(boolean prepayment) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.prepayment,prepayment) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.prepayment,prepayment), () -> markAsDirty(AonNames.PREPAYMENT));
 		this.prepayment = prepayment;
 		return this;
 	}
@@ -128,14 +136,14 @@ public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> 
 	public Optional<List<InvoiceTax>> getTaxes() {
 		return Optional.ofNullable(taxes);
 	}
-	public InvoiceDetail setTaxes(List<InvoiceTax> invoiceTaxes) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.taxes,invoiceTaxes) );
+	public InvoiceDetail setTaxes(List<InvoiceTax> taxes) {
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.taxes,taxes), () -> markAsDirty(AonNames.TAXES));
 		this.taxes = new LinkedList<>();
 		this.taxes.addAll(taxes);
 		return this;
 	}
 	public InvoiceDetail addTax(InvoiceTax invoiceTax) {
-		this.dirtyMark( invoiceTax.isDirty() );
+		AonObjectUtils.ifTrue(invoiceTax.isDirty(), () -> markAsDirty(AonNames.TAXES));
 		getTaxes().orElse(new LinkedList<>()).add(invoiceTax);
 		return this;
 	}
@@ -150,26 +158,16 @@ public class InvoiceDetail implements Serializable, HasDirtyFlag<InvoiceDetail> 
 	}
 	
 	@Override
-	public boolean isDirty() {
-		return dirty;
-	}
-	@Override
-	public InvoiceDetail setDirty(boolean dirty) {
-		this.dirty = dirty;
-		return this;
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
 		if (obj instanceof InvoiceDetail other) {
-			return AonNumberUtils.equals(this.id,other.id);
+			return AonObjectUtils.equals(this.getUuid(),other.getUuid());
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(id, 0).hashCode();
+	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
 	}
 }

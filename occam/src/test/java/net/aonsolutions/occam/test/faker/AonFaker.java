@@ -64,7 +64,7 @@ public class AonFaker {
 			.setDomain(AonRandom.integer(50))
 			.setName( faker.regexify("\\d{9}") )
 			.setStartDate( AonRandom.pastDate(-1) )
-			.setEndingDate( AonRandom.pastDate(-1) )
+			.setEndDate( AonRandom.pastDate(-1) )
 			.setDefaultPeriod( AonRandom.gt(3) )
 			.setAudit( getAudit() );
 	}

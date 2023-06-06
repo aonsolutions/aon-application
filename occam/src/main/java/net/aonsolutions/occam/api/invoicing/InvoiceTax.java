@@ -1,16 +1,15 @@
 package net.aonsolutions.occam.api.invoicing;
 
-import java.io.Serializable;
 import java.util.Objects;
 
-import net.aonsolutions.occam.api.HasDirtyFlag;
+import net.aonsolutions.occam.api.AonNames;
+import net.aonsolutions.occam.api.OccamEntity;
 import net.aonsolutions.occam.api.constants.TaxType;
 import net.aonsolutions.occam.api.constants.VatDeductionType;
 import net.aonsolutions.occam.api.constants.WithholdingType;
-import net.aonsolutions.watson.client.util.AonNumberUtils;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
-public class InvoiceTax implements Serializable, HasDirtyFlag<InvoiceTax> {
+public class InvoiceTax extends OccamEntity {
 
 	private static final long serialVersionUID = 7037774854336091259L;
 
@@ -22,13 +21,21 @@ public class InvoiceTax implements Serializable, HasDirtyFlag<InvoiceTax> {
 	private VatDeductionType vatDeductionType;
 	private WithholdingType withholdingType;
 	
-	private boolean dirty;
+	@Override
+	protected Object getUuid() {
+		return getId();
+	}
+	@Override
+	public InvoiceTax markAsClean() {
+		super.markAsClean();
+		return this;
+	}
 
 	public Integer getId() {
 		return id;
 	}
 	public InvoiceTax setId(Integer id) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.id,id) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.id,id), () -> markAsDirty(AonNames.ID));
 		this.id = id;
 		return this;
 	}
@@ -37,7 +44,7 @@ public class InvoiceTax implements Serializable, HasDirtyFlag<InvoiceTax> {
 		return taxType;
 	}
 	public InvoiceTax setTaxType(TaxType taxType) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.taxType,taxType) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.taxType,taxType), () -> markAsDirty(AonNames.TAX_TYPE));
 		this.taxType = taxType;
 		return this;
 	}
@@ -46,7 +53,7 @@ public class InvoiceTax implements Serializable, HasDirtyFlag<InvoiceTax> {
 	}
 
 	public InvoiceTax setVatDeductionType(VatDeductionType vatDeductionType) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.vatDeductionType,vatDeductionType) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.vatDeductionType,vatDeductionType), () -> markAsDirty(AonNames.VAT_DEDUCTION_TYPE));
 		this.vatDeductionType = vatDeductionType;
 		return this;
 	}
@@ -55,7 +62,7 @@ public class InvoiceTax implements Serializable, HasDirtyFlag<InvoiceTax> {
 		return percent;
 	}
 	public InvoiceTax setPercent(Double percent) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.percent,percent) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.percent,percent), () -> markAsDirty(AonNames.PERCENT));
 		this.percent = percent;
 		return this;
 	}
@@ -64,7 +71,7 @@ public class InvoiceTax implements Serializable, HasDirtyFlag<InvoiceTax> {
 		return surchargePercent;
 	}
 	public InvoiceTax setSurchargePercent(Double surchargePercent) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.surchargePercent,surchargePercent) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.surchargePercent,surchargePercent), () -> markAsDirty(AonNames.SURCHARGE_PERCENT));
 		this.surchargePercent = surchargePercent;
 		return this;
 	}
@@ -73,7 +80,7 @@ public class InvoiceTax implements Serializable, HasDirtyFlag<InvoiceTax> {
 		return deductiblePercent;
 	}
 	public InvoiceTax setDeductiblePercent(Double deductiblePercent) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.deductiblePercent,deductiblePercent) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.deductiblePercent,deductiblePercent), () -> markAsDirty(AonNames.DEDUCTIBLE_PERCENT));
 		this.deductiblePercent = deductiblePercent;
 		return this;
 	}
@@ -82,32 +89,22 @@ public class InvoiceTax implements Serializable, HasDirtyFlag<InvoiceTax> {
 		return withholdingType;
 	}
 	public InvoiceTax setWithholdingType(WithholdingType withholdingType) {
-		this.dirtyMark( AonObjectUtils.notEquals(this.withholdingType,withholdingType) );
+		AonObjectUtils.ifTrue(AonObjectUtils.notEquals(this.withholdingType,withholdingType), () -> markAsDirty(AonNames.WITHHOLDING_TYPE));
 		this.withholdingType = withholdingType;
 		return this;
 	}
 	
 	@Override
-	public boolean isDirty() {
-		return dirty;
-	}
-	@Override
-	public InvoiceTax setDirty(boolean dirty) {
-		this.dirty = dirty;
-		return this;
-	}
-
-	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) return true;
 		if (obj instanceof InvoiceTax other) {
-			return AonNumberUtils.equals(this.id,other.id);
+			return AonObjectUtils.equals(this.getUuid(),other.getUuid());
 		}
 	    return false;
 	}
 	
 	@Override
 	public int hashCode() {
-	    return 31 * 7 + Objects.requireNonNullElse(id, 0).hashCode();
+	    return 31 * 7 + Objects.requireNonNullElse(getUuid(), 0).hashCode();
 	}
 }
