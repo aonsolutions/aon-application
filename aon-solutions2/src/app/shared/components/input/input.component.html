@@ -1,8 +1,10 @@
 <mat-form-field
     [appearance]="appearance"
+    apparenceDetail
     [ngStyle]="{
-        'width': width
+      'width': width
     }"
+    [class]="appearanceDetail"
 >
     <mat-label *ngIf="label != ''">{{label}}</mat-label>
     <span matPrefix><ng-content select="[prefix]"></ng-content></span>
@@ -17,6 +19,7 @@
         [type]="type"
         [placeholder]="placeholder"
         (ngModelChange)="returnValue($event)"
+        [class]="appearanceDetail"
     />
 
     <!-- INPUTS TIPO SELECT -->

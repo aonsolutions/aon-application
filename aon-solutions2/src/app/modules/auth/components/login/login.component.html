@@ -16,6 +16,7 @@
           <app-input
               (inputValue)="username=$event"
               [appearance]="'outline'"
+              appearanceDetail= "mat-form-field-appearance-bold-outline"
               [type]="'text'"
               [label]="'Usuario'"
               [placeholder]="'usuario'"
@@ -24,11 +25,13 @@
               class="inputLogin"
               style="margin-bottom: 1.6rem;"
               color="danger"
+
           ></app-input>
 
           <app-input
               (inputValue)="password=$event"
               [appearance]="'outline'"
+              appearanceDetail= "mat-form-field-appearance-bold-outline"
               [type]="'password'"
               [label]="'Contraseña'"
               [placeholder]="'Contraseña'"
