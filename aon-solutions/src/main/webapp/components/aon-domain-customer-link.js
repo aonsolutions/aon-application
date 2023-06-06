@@ -1144,6 +1144,9 @@ export class AonDomainCustomer extends AonElement {
 
   createBookingElement(booking) {
     if (booking) {
+
+      let domain = this.selectedDomain.domain;
+
       let bookingContainer = document.createElement("div");
       bookingContainer.style.display = "flex";
       bookingContainer.style.flexDirection = "column";
@@ -1221,7 +1224,40 @@ export class AonDomainCustomer extends AonElement {
         });
       }
 
-      appsContainer.appendChild(parentAppsContainer);
+      if (domain && domain.parentId) {
+        appsContainer.appendChild(parentAppsContainer);
+      } else if (domain && !domain.parentId) {
+        childAppsContainer.style.width = "40%";
+
+        let summaryContainer = document.createElement("div");
+        summaryContainer.style.display = "flex";
+        summaryContainer.style.flexDirection = "column";
+        summaryContainer.style.justifyContent = "flex-start";
+        summaryContainer.style.alignItems = "center";
+        summaryContainer.style.width = "57%";
+
+        let summaryTitleContainer = document.createElement("div");
+        summaryTitleContainer.style.display = "block";
+        summaryTitleContainer.style.width = "100%";
+        summaryTitleContainer.style.textAlign = "left";
+        summaryTitleContainer.style.fontWeight = "bold";
+        summaryTitleContainer.innerText = "Resumen de contratación";
+
+        summaryContainer.appendChild(summaryTitleContainer);
+
+        let summary = booking.resume;
+        let summaryApps = summary ? summary.apps : null;
+        let summaryUsers = summary ? summary.user : null;
+        let summaryDomains = summary ? summary.domain : null;
+
+        this.createSummaryItem(summaryContainer, MSG.APPLICATIONS, summaryApps);
+        this.createSummaryItem(summaryContainer, MSG.USERS, summaryUsers);
+        this.createSummaryItem(summaryContainer, "Dominios", summaryDomains);
+
+
+
+        appsContainer.appendChild(summaryContainer);
+      }
       
       let numberOfUsersContainer = document.createElement("div");
       numberOfUsersContainer.style.display = "block";
@@ -1242,6 +1278,33 @@ export class AonDomainCustomer extends AonElement {
       this.customerList.appendChild(bookingContainer);
     }
   }
+
+  createSummaryItem(summaryContainer, title, summaryElements) {
+    if (summaryElements) {
+      let summaryElementsContainer = document.createElement("div");
+      summaryElementsContainer.style.display = "flex";
+      summaryElementsContainer.style.flexDirection = "column";
+      summaryElementsContainer.style.width = "100%";
+      summaryContainer.appendChild(summaryElementsContainer);
+      let summaryElementsTitle = document.createElement("div");
+      summaryElementsTitle.style.display = "block";
+      summaryElementsTitle.style.width = "100%";
+      summaryElementsTitle.style.fontWeight = "bold";
+      summaryElementsTitle.style.marginLeft = "5px";
+      summaryElementsTitle.innerText = title;
+      summaryElementsContainer.appendChild(summaryElementsTitle);
+
+      for (const summaryElement in summaryElements) {
+        let summaryElementsItem = document.createElement("div");
+        summaryElementsItem.style.display = "block";
+        summaryElementsItem.style.width = "100%";
+        summaryElementsItem.style.marginLeft = "10px";
+        summaryElementsItem.innerText = `${summaryElement}: ${summaryElements[summaryElement]}`;
+        summaryElementsContainer.appendChild(summaryElementsItem);
+      }
+    }
+  }
+
   // -----------------------------
 
   // --- MANEJADORES DE EVENTOS ---
