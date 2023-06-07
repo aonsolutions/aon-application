@@ -846,6 +846,13 @@ public class EmployeesServiceTestImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
+	public void sendLlamamientoSEPE(String currentDomainName, String currentUser,
+			EmployeeContractInfo employeeContractInfo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void sendContractoSEPE(String currentDomainName, String currentUser,
 			EmployeeContractInfo employeeContractInfo) {
 		// TODO Auto-generated method stub

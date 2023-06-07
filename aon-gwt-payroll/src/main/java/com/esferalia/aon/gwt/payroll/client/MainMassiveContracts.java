@@ -13,7 +13,6 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
-import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
@@ -464,7 +463,10 @@ public class MainMassiveContracts extends MainEntryPoint{
 			endDate.getElement().getStyle().setTextAlign(TextAlign.CENTER);
 			dataWidget.addStyleName(style.pl05());
 			
-			contractDataTable.setWidget(row, 0, select);
+			if(AonStringUtils.equalsIgnoreCase(dataType.getSelectedValue(), "CNO") || 
+				(AonStringUtils.equalsIgnoreCase(dataType.getSelectedValue(), "Llamamiento") && (null != employee.getContractInfo().getEndDate() || employee.getContractInfo().getStartDate().before(new Date()))))
+				contractDataTable.setWidget(row, 0, select);
+			
 			contractDataTable.setWidget(row, 1, name);
 			contractDataTable.setWidget(row, 2, document);
 			contractDataTable.setWidget(row, 3, nss);
@@ -484,7 +486,9 @@ public class MainMassiveContracts extends MainEntryPoint{
 			
 			contractDataTable.getRowFormatter().getElement(row).getStyle().setHeight(25.00, Unit.PX);
 			
-			selectionModel.put(select, employee);
+			if(AonStringUtils.equalsIgnoreCase(dataType.getSelectedValue(), "CNO") || 
+					(AonStringUtils.equalsIgnoreCase(dataType.getSelectedValue(), "Llamamiento") && (null != employee.getContractInfo().getEndDate() || employee.getContractInfo().getStartDate().before(new Date()))))
+				selectionModel.put(select, employee);
 		}
 	}
 	
@@ -642,7 +646,7 @@ public class MainMassiveContracts extends MainEntryPoint{
 //						
 //						@Override
 //						public void onSuccess(EmployeeContractInfo employeeDB) {
-//							impl.sendContractoSEPE(employeeDB, new AsyncCallback<Void>() {
+//							impl.sendLlamamientoSEPE(employeeDB, new AsyncCallback<Void>() {
 //
 //								@Override
 //								public void onFailure(Throwable caught) {
