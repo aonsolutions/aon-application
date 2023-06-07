@@ -13,6 +13,7 @@ import com.esferalia.aon.gwt.common.client.AON;
 import com.esferalia.aon.gwt.common.client.css.AonGwtTemplateResources;
 import com.esferalia.aon.gwt.common.client.css.AonResources;
 import com.esferalia.aon.gwt.common.client.css.GWTResources;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonCustomDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
@@ -47,6 +48,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -102,6 +104,9 @@ public class MainMassiveContracts extends MainEntryPoint{
 	Grid contractDataTable;
 	
 	@UiField
+	SimpleLayoutPanel scrolledPDFPanel;
+	
+	@UiField
 	FullViewer pdfViewer;
 	
 	// ----------------------------------------------- Variables
@@ -148,6 +153,8 @@ public class MainMassiveContracts extends MainEntryPoint{
 
 		getFilterEmployeePanel();
 		showList();
+		
+		scrolledPDFPanel.setHeight((Window.getClientHeight() - 200) + "px");
 		
 		AonMessagePanel.hideMessage(messagePanel);
 	}
@@ -628,32 +635,34 @@ public class MainMassiveContracts extends MainEntryPoint{
 						}
 					});
 				} else {
-					AonMessagePanel.showLoading(messagePanel, "Comunicando contrato SEPE ...");
-					impl.getEmployeeInfoDataBase(employee.getContractInfo().getContractId(), null, new AsyncCallback<EmployeeContractInfo>() {
-						
-						@Override
-						public void onSuccess(EmployeeContractInfo employeeDB) {
-							impl.sendContractoSEPE(employeeDB, new AsyncCallback<Void>() {
-
-								@Override
-								public void onFailure(Throwable caught) {
-									AonMessagePanel.showError(messagePanel, new HashMap<String, String>(){{ put("Error Comunicaci\u00f3n Contrato SEPE", caught.getMessage()); }});
-								}
-
-								@Override
-								public void onSuccess(Void result) {
-									AonMessagePanel.showSuccess(messagePanel, new HashMap<String, String>(){{ put("Comunicaci\u00f3n Contrato SEPE", "Se ha comunicado correctamente el contrato al SEPE"); }});
-									reloadAfterTimer();
-								}
-								
-							});
-						}
-						
-						@Override
-						public void onFailure(Throwable arg0) {
-							// Nothing to do
-						}
-					});
+					AonDialog dialog = new AonDialog("Desarrollo", new Label("Esta opci\u00f3n est\u00e1 en desarrollo"));
+					dialog.info();
+//					AonMessagePanel.showLoading(messagePanel, "Comunicando contrato SEPE ...");
+//					impl.getEmployeeInfoDataBase(employee.getContractInfo().getContractId(), null, new AsyncCallback<EmployeeContractInfo>() {
+//						
+//						@Override
+//						public void onSuccess(EmployeeContractInfo employeeDB) {
+//							impl.sendContractoSEPE(employeeDB, new AsyncCallback<Void>() {
+//
+//								@Override
+//								public void onFailure(Throwable caught) {
+//									AonMessagePanel.showError(messagePanel, new HashMap<String, String>(){{ put("Error Comunicaci\u00f3n Contrato SEPE", caught.getMessage()); }});
+//								}
+//
+//								@Override
+//								public void onSuccess(Void result) {
+//									AonMessagePanel.showSuccess(messagePanel, new HashMap<String, String>(){{ put("Comunicaci\u00f3n Contrato SEPE", "Se ha comunicado correctamente el contrato al SEPE"); }});
+//									reloadAfterTimer();
+//								}
+//								
+//							});
+//						}
+//						
+//						@Override
+//						public void onFailure(Throwable arg0) {
+//							// Nothing to do
+//						}
+//					});
 				}
 			});
 
@@ -768,12 +777,12 @@ public class MainMassiveContracts extends MainEntryPoint{
 		saveBtn.setVisible(isCNOSelected);
 		undoAllButton.setVisible(isCNOSelected);
 		cnoAFIBtn.setVisible(isCNOSelected);
+		addMasiveValueBtn.setVisible(true);
+		backBtn.setVisible(false);
 		
 		inactiveContractsPanel.setVisible(isCNOSelected);
 		noValuePanel.setVisible(isCNOSelected);
 		statusPanel.setVisible(!isCNOSelected);
-		
-		backBtn.setVisible(false);
 	}
 	
 	private void showPdf() {
