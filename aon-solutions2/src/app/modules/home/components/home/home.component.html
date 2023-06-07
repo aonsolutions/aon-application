@@ -1,13 +1,13 @@
 <app-content>
     <!-- [headerHeight]="'5rem'"  -->
-    <app-grid-layout 
-    [navCols]="4" 
+    <app-grid-layout
+    [navCols]="4"
     [contentCols]="10"
     [detailCols]="10"
     [showDetail]="detail"
     >
         <div class="allSize" header>Header</div>
-        <div class="allSize" nav>Nav</div>
+        <div class="prueba" nav>Nav</div>
         <div class="allSize" content>
             <button (click)="detail ? detail = false : detail = true">showDetail</button>
             Content
@@ -21,7 +21,7 @@
     </mat-grid-list> -->
     <!-- <app-content-side-nav [cols]="6">
         <div nav class="allSize">
-            //Contenido de la sidenav 
+            //Contenido de la sidenav
         </div>
         <div content class="allSize">
             <app-content>
@@ -75,7 +75,7 @@
         </div>
         <div content></div>
     </app-grid-base> -->
-    <!-- <app-tag 
+    <!-- <app-tag
     [padding]="'.3rem'"
     [backgroundColor]="'lightgrey'"
     [color]="'black'"
@@ -97,11 +97,11 @@
         </div>
     </app-card> -->
     <!-- <app-accordion (getState)="accordionState = $event">
-        <div header style="display: flex;"> 
+        <div header style="display: flex;">
             Header&nbsp;&nbsp;
-            <div *ngIf="accordionState == false">Show/hide content with accordion state</div> 
+            <div *ngIf="accordionState == false">Show/hide content with accordion state</div>
         </div>
-        <div content> 
+        <div content>
             Content
         </div>
     </app-accordion> -->
@@ -109,12 +109,12 @@
         OpenModal
     </div> -->
     <!-- <app-modal-controller #modal></app-modal-controller> -->
-    
-    <!-- <app-pagination-controller 
-        [style.height]="'5%'" 
-        [totalItems]="123" 
-        [maxItems]="20" 
-        (pagValue)="log($event);" 
+
+    <!-- <app-pagination-controller
+        [style.height]="'5%'"
+        [totalItems]="123"
+        [maxItems]="20"
+        (pagValue)="log($event);"
         (totalPags)="log($event)">
     </app-pagination-controller>
     <app-pagination-container width="100%" height="95%">
