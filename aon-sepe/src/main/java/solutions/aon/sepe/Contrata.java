@@ -64,6 +64,18 @@ public class Contrata {
 	private Contrata() {
 		throw new IllegalStateException("Utility class");
 	}
+	
+	public static void sendLlamamiento(final InputStream certificateInputStream, final String certificatePassword, final String certificateType, String cif, String ccc,
+			String nif, Date startDate, Date endDate, String ide) throws SepeException {
+		try {
+			sendLlamamientoImpl(certificateInputStream, certificatePassword, certificateType, cif, ccc, nif, startDate, endDate, ide);
+		} catch (FailingHttpStatusCodeException e) {
+			StatusCodeException.HandleStatusCodeException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SepeException(e);
+		}
+	}
 
 	public static String sendContrata(final InputStream certificateInputStream, final String certificatePassword,
 			final String certificateType, Contract cto) throws SepeException {
@@ -324,6 +336,80 @@ public class Contrata {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new SepeException(e);
+		}
+	}
+	
+	private static void sendLlamamientoImpl(final InputStream certificateInputStream, final String certificatePassword, final String certificateType, String cif, String ccc,
+			String nif, Date startDate, Date endDate, String ide) throws SepeException, FailingHttpStatusCodeException,
+			InterruptedException, IOException {
+
+		try (WebClient webClient = HtmlUnitToolkit.getWebClient(certificateInputStream, certificatePassword, certificateType)) {
+			webClient.getOptions().setUseInsecureSSL(true);
+
+			CollectingAlertHandler alertHandler = new CollectingAlertHandler();
+			webClient.setAlertHandler(alertHandler);
+
+			HtmlPage htmlPage = getFirstPageSepeContrata(webClient);
+
+			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/actionLogin.do?pagina=comunicacion").click();
+			handleSepeExceptions(htmlPage);
+
+			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/comunicacto/jsp/tipos_comunicacion_contratacion.jsp").click();
+			handleSepeExceptions(htmlPage);
+
+			htmlPage = htmlPage.getAnchorByHref("/ccomunicacto/servlet/ServletLlamamientos?pagina=inicio").click();
+			handleSepeExceptions(htmlPage);
+
+			
+//			String[] fB = Toolkit.dateString(endDate);
+			
+			HtmlForm form = HtmlUnitToolkit.wait4(htmlPage, p -> p.getFormByName("datos")).orElseThrow();
+			
+			{// -------------------------DATA ENTERPRISE----------------------------
+				((HtmlSelect) form.querySelector("select[name=tipodocumentoaux]")).setSelectedAttribute(getCifType(cif), true);
+				form.getInputByName("cifnifnie").setValue(cif);
+				
+				form.getInputByName("cuentacotizacion").setValue(ccc.substring(0, 4));
+				form.getInputByName("cuentacotizacion1").setValue(ccc.substring(4, 6));
+				form.getInputByName("cuentacotizacion2").setValue(ccc.substring(6, 13));
+				form.getInputByName("cuentacotizacion3").setValue(ccc.substring(13));
+			}
+			
+			{// -------------------------DATA LLAMAMIENTO----------------------------
+				String[] fA = Toolkit.dateString(startDate);
+				
+				String tipodoc = Toolkit.getIdentityType(nif).equals("6") ? "E" : "D"; //NIE OR DNI
+				((HtmlSelect) form.querySelector("select[name=tipodocumento0]")).setSelectedAttribute(tipodoc, true);
+				
+				form.getInputByName("nifnietrabajador0").setValue(nif);
+				
+				form.getInputByName("diainicio0").setValue(fA[0]);
+				form.getInputByName("mesinicio0").setValue(fA[1]);
+				form.getInputByName("annoinicio0").setValue(fA[2]);
+				
+				if(null != endDate) {
+					String[] fB = Toolkit.dateString(endDate);
+					
+					form.getInputByName("diafin0").setValue(fB[0]);
+					form.getInputByName("mesfin0").setValue(fB[1]);
+					form.getInputByName("annofin0").setValue(fB[2]);
+				}
+				
+				if(null != ide) {
+					form.getInputByName("tipoidcontrato0").setValue(ide.substring(0, 1));
+					form.getInputByName("provinciaid0").setValue(ide.substring(1, 3));
+					form.getInputByName("añoid0").setValue(ide.substring(3, 7));
+					form.getInputByName("numeroid0").setValue(ide.substring(7, 14));
+					form.getInputByName("transformaid0").setValue(ide.substring(14));
+				}
+				
+				((HtmlSelect) form.querySelector("select[name=preguntaactividad0]")).setSelectedAttribute("S", true);
+			}
+			
+			htmlPage = ((HtmlSubmitInput) form.querySelector("[name=enviar]")).click();
+			handleSepeAlert(alertHandler.getCollectedAlerts());
+			
+			// TODO: ver que hay en la siguiente pantalla
 		}
 	}
 

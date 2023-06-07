@@ -607,6 +607,10 @@ public class DomainEmployeesServiceAsync {
 	
 	// ------------------------------------------------- SEPE Comunications
 	
+	public void sendLlamamientoSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		employeesServiceAsync.sendContractoSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
+	}
+	
 	public void sendContractoSEPE(EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		employeesServiceAsync.sendContractoSEPE(getCurrentDomainName(), getCurrentUser(), employeeContractInfo, callback);
 	}

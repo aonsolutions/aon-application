@@ -915,6 +915,12 @@ public class EmployeesServiceAsyncDecorator extends AgreementServiceAsyncDecorat
 	// ------------------------------------------------- SEPE Comunications
 
 	@Override
+	public void sendLlamamientoSEPE(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
+		AON.start();
+		employeesServiceAsync.sendLlamamientoSEPE(currentDomainName, user, employeeContractInfo, new AsyncCallbackWrapper<Void>(callback));
+	}
+
+	@Override
 	public void sendContractoSEPE(String currentDomainName, String user, EmployeeContractInfo employeeContractInfo, AsyncCallback<Void> callback) throws IllegalArgumentException {
 		AON.start();
 		employeesServiceAsync.sendContractoSEPE(currentDomainName, user, employeeContractInfo, new AsyncCallbackWrapper<Void>(callback));
