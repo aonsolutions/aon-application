@@ -467,7 +467,7 @@ public class InvoiceAutoComplete {
 
 			detail.setDomain(inv.getDomain());
 			
-			if(detail.getItem() == null || detail.getItem().isEmpty()) {
+			if(detail.getItem() != null && detail.getItem().isEmpty()) {
 				String code = detail.getItem().getProduct().getCode();
 				if(!AonStringUtils.isBlank(code)) {
 					Item i = ItemDAO.get(ctx.getContext(), f -> 
