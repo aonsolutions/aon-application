@@ -137,7 +137,7 @@ public class SmartSQLContractSettleCalculatorContext extends SQLContractSettleCa
 	
 	@Override
 	protected void loadDaysContextVariables(ContractExpressionContext ctx) throws ExpressionException {
-	    	Date endDate = SmartSQLContractSettleCalculatorContext.this.getEndDate();
+	    	Date endDate = SmartSQLContractSettleCalculatorContext.this.settleEndDate;
 	    	Date startDate = SmartSQLContractSettleCalculatorContext.this.getStartDate();
 		ITimedVariable<Double> days = new ITimedVariable<Double>() {
 			@Override
