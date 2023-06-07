@@ -1,3 +1,21 @@
+@import 'src/app/app.component.scss';
+
 .cursor {
     cursor: pointer;
+}
+
+/* Color border input */
+::ng-deep .mat-form-field-outline-start, ::ng-deep .mat-form-field-outline-end  {
+  border-color: $col-gray !important;
+  z-index: -0;
+}
+
+::ng-deep .mat-form-field-outline-gap {
+  border-bottom-color: $col-gray !important;
+}
+
+/* Color label focus y Color label por defecto */
+::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-label,
+::ng-deep .mat-form-field-label-wrapper .mat-form-field-label {
+  color: $col-black-light !important;
 }
