@@ -1121,7 +1121,10 @@ public class SalaryDraftBuilder
 
 	@Override
 	public void onIrpf(IrpfOutcome irpfOutcome) {
+	    	checkIrpfOutcome(irpfOutcome);
 		salaryDraft.setCommunity(irpfOutcome.getComunidadAutonoma());
+		
+		
 	}
 	
 	@Override
@@ -1901,6 +1904,27 @@ public class SalaryDraftBuilder
 		return isNotZero(payment.getAmount()) || isNotZero(payment.getQuote()) || isNotZero(payment.getIrpf()) ;
 	}
 
+	private void checkIrpfOutcome(IrpfOutcome irpfOutcome) {
+	    try {
+		//<xs:minInclusive value="1910" fixed="false"/>
+                //<xs:maxInclusive value="2023" fixed="false"/>
+        	int birthYear = irpfOutcome.getBirthYear();
+        	if ( birthYear == 0 ) {
+        	    //salaryDraft.addWarning(String.format("Retenciones IRPF : A\u00F1o de nacimiento desconocido.", birthYear ));
+        	    return;
+        	}
+        	
+        	Date irpfDate = irpfOutcome.getIrpfResult().getEffectiveDate();
+        	int todayYear = AonDateUtils.getYear(irpfDate); 
+        	if ( birthYear < 1910 || birthYear > todayYear ) { 
+        	    salaryDraft.addWarning(String.format("Retenciones IRPF: A\u00F1o de nacimiento '%d' no v\u00E1lido.", birthYear ));
+        	}
+	    } catch ( Exception e ) {
+		
+	    }
+	}
+
+
 	private static String getDescription(Deduction deduction, String def) {
 		if ( deduction.getName() != null ) {
 		
@@ -1961,6 +1985,7 @@ public class SalaryDraftBuilder
 			return var.getName();
 		}
 	}
-
+	
+	
 
 }

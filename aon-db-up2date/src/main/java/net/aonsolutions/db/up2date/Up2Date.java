@@ -19,6 +19,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import net.aonsolutions.db.up2date.cgpj.CGPJInsert;
 import net.aonsolutions.db.up2date.payroll.IndemnizacionTemporalUpdate;
 import net.aonsolutions.db.up2date.payroll.PrestITSexAndHealthInsert;
 import net.aonsolutions.db.up2date.payroll.PrestITSexAndHealthIrpfFix;
@@ -359,7 +360,8 @@ public class Up2Date {
 	    // PrestITSexAndHealthInsert.PRESTITSEXANDHEALTHINSERT,
 	    // IndemnizacionTemporalUpdate.INDEMNIZACIONTEMPORALUPDATE,
             // PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
-		TrainningBases2023Fix.TRAINNINGBASES2023FIX,
+	    //	TrainningBases2023Fix.TRAINNINGBASES2023FIX,
+	    //	CGPJInsert.CGPJINSERT,
 
 		
 	    //DOMAIN

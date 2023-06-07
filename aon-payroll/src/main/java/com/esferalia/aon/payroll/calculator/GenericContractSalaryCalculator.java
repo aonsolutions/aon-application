@@ -115,6 +115,7 @@ import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.IExpressionVariable;
 import com.esferalia.aon.salary.expression.ITimedResult;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.IWrapTimedVariable;
 import com.esferalia.aon.salary.expression.InterruptedException;
 import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
@@ -993,10 +994,11 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 					deductionStart = ctx.getIrpfDate();
 					deductionEnd = ctx.getIrpfDate();
 					
-					if ( deductionEnd.after(end)) {
-					    expressionContext = new ExpressionContext(expressionContext) ;
+					if ( deductionEnd.after(end) || deductionStart.before(start) ) {
+					    Period irpfPeriod = new Period(deductionStart, deductionEnd);
 					    
-					    ContextFunctions.loadFunctions(expressionContext, deductionStart, deductionEnd);
+					    ExpressionContext irpfExpressionContext = new ExpressionContext(expressionContext) ;
+					    ContextFunctions.loadFunctions(irpfExpressionContext, deductionStart, deductionEnd);
 					    
 					    for ( ContextVariable irpfVar : new ContextVariable  [] {
 						    TMP_IN_KIND,
@@ -1006,14 +1008,20 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 						    BASE_CTA_ESP,
 						    INKIND_IRPF_BASE, 
 						    MONEY_IRPF_BASE } ) {
-        					    Optional<Object> varValue =
-        					    expressionContext.getVariables(irpfVar.getName()).stream()
-        					    .sorted( (v1, v2) -> v2.getPeriod().compareTo(v1.getPeriod())).findFirst()
-        					    .map ( irpfPercentVar -> irpfPercentVar.getValue(irpfPercentVar.getPeriod()) );
-        					    if ( varValue.isPresent() ) {
-        						expressionContext.setVariable(irpfVar.getName(), varValue.get(), deductionStart, deductionEnd);
-        					    }
-					    }
+
+						     irpfExpressionContext.getVariables(irpfVar.getName()).stream()
+        					    .sorted( (v1, v2) -> v2.getPeriod().compareTo(v1.getPeriod()))
+        					    .map( v -> new ITimedVariable<Object>() {
+        						public Period getPeriod() {
+        						    return irpfPeriod;
+        						}
+        						public Object getValue(Period period) {
+        						    return v.getValue(v.getPeriod());
+        						}
+        					    }).findFirst().ifPresent( v -> irpfExpressionContext.putVariable(irpfVar.getName(), v) );
+    					    }
+
+					    expressionContext = irpfExpressionContext;
 					}
 					
 				} else {

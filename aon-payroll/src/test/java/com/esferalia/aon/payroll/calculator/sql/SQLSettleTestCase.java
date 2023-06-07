@@ -430,6 +430,23 @@ public class SQLSettleTestCase extends AbstractSQLTestCase {
 		System.out.println( (12 * (workedDays/365.00) * br) + " = " + settle.getTotalPayment() );
 		
 		org.junit.Assert.assertEquals(12 * (workedDays/365.00) * br, settle.getTotalLiquid(), DELTA);
+		
+		setData(aonContext, contract, 
+			add(getToday(), Calendar.DAY_OF_MONTH,1)
+			, null
+			, new HashMap<String, String>() {
+		    	{
+		    	    put("DIAS_VACACIONES_NO_DISFRUTADOS", format("%d", 4));
+		    	}
+		});
+
+		ctx = getSmartSQLContractSettleContext(connection, contractStart, contract);
+		settle = new SmartContractSalaryCalculator<Salary>( new SalaryBuilder()).calculate(ctx);
+		
+		org.junit.Assert.assertEquals(12 * (workedDays/365.00) * br + 4 * br, settle.getTotalPayment(), DELTA);
+		
+		System.out.println( (12 * (workedDays/365.00) * br + 4 * br) + " = " + settle.getTotalPayment() );
+		
 	}
 
 	@Test

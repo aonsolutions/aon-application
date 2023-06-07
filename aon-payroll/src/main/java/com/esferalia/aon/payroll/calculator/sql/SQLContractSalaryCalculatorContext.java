@@ -3087,7 +3087,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 							@Override
 							public int getAñoNacimiento() {
 								Date birthDate = SQLContractSalaryCalculatorContext.this.getDate(SQLConstants.PERSON, SQLConstants.PersonColumns.BIRTH_DATE);
-								return birthDate != null ? AonDateUtils.get(birthDate, Calendar.YEAR) : 1969;
+								return birthDate != null ? AonDateUtils.get(birthDate, Calendar.YEAR) : 0;
 							};
 
 						};
@@ -3330,7 +3330,7 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 				@Override
 				public int getAñoNacimiento() {
 					Date birthDate = SQLContractSalaryCalculatorContext.this.getDate(SQLConstants.PERSON, SQLConstants.PersonColumns.BIRTH_DATE);
-					return birthDate != null ? AonDateUtils.get(birthDate, Calendar.YEAR) : 1969;
+					return birthDate != null ? AonDateUtils.get(birthDate, Calendar.YEAR) : 0;
 				}
 
 				@Override

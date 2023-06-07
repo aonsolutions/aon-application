@@ -1773,7 +1773,7 @@ public class EmployeesServiceHelper {
 						@Override
 						public int getAñoNacimiento() {
 							Date birthDate = SalaryCalculatorContextImpl.this.getDate(SQLConstants.PERSON, SQLConstants.PersonColumns.BIRTH_DATE);
-							return birthDate != null ? AonDateUtils.get(birthDate, Calendar.YEAR) : 1969;
+							return birthDate != null ? AonDateUtils.get(birthDate, Calendar.YEAR) : 0;
 						}
 
 					};

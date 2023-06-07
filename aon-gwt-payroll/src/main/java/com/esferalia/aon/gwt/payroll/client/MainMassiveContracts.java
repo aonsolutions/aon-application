@@ -17,6 +17,7 @@ import com.esferalia.aon.gwt.common.client.widget.solutions.AonDateBox;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonDialog.AonAcceptDialogCallback;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonMessagePanel;
+import com.esferalia.aon.gwt.common.client.widget.solutions.AonTableButton;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbar;
 import com.esferalia.aon.gwt.common.client.widget.solutions.AonToolbarButton;
 import com.esferalia.aon.gwt.payroll.shared.CNO;
@@ -37,6 +38,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.Grid;
@@ -48,6 +50,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
 public class MainMassiveContracts extends MainEntryPoint{
 	
@@ -77,6 +81,9 @@ public class MainMassiveContracts extends MainEntryPoint{
 	AonToolbar toolbar;
 	
 	@UiField
+	DeckPanel mainDeckPanel;
+	
+	@UiField
 	HTMLPanel messagePanel;
 	
 	@UiField
@@ -94,7 +101,12 @@ public class MainMassiveContracts extends MainEntryPoint{
 	@UiField
 	Grid contractDataTable;
 	
+	@UiField
+	FullViewer pdfViewer;
+	
 	// ----------------------------------------------- Variables
+	
+	private DomainEmployeesServiceAsync impl = DomainEmployeesServiceAsync.newInstance();
 	
 	private DateTimeFormat formatDate = DateTimeFormat.getFormat("dd/MM/yyyy");
 	private MainMassiveContractsObject mainMassiveContractsObject;
@@ -110,12 +122,14 @@ public class MainMassiveContracts extends MainEntryPoint{
 	private CheckBox inactiveContractsCB;
 	private HTMLPanel noValuePanel;
 	private CheckBox noValueCB;
-	
+	private HTMLPanel statusPanel;
+	private ListBox statusLB;
 	
 	private AonToolbarButton saveBtn;
 	private AonToolbarButton undoAllButton;
 	private AonToolbarButton addMasiveValueBtn;
 	private AonToolbarButton cnoAFIBtn;
+	private AonToolbarButton backBtn;
 	
 	// ----------------------------------------------- Constructor
 
@@ -133,6 +147,7 @@ public class MainMassiveContracts extends MainEntryPoint{
 		RootLayoutPanel.get(getRootPanel() != null ? getRootPanel() : "rootPanel").add(ui);
 
 		getFilterEmployeePanel();
+		showList();
 		
 		AonMessagePanel.hideMessage(messagePanel);
 	}
@@ -218,6 +233,26 @@ public class MainMassiveContracts extends MainEntryPoint{
 		noValuePanel.add(noValueL);
 		noValuePanel.add(noValueCB);
 		
+		statusPanel = new HTMLPanel("");
+		statusPanel.addStyleName(style.flex());
+		
+		Label statusL = new Label("Estado : ");
+		statusL.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		statusLB = new ListBox();
+		statusLB.addItem("Todo");
+		statusLB.addItem("Llamamiento");
+		statusLB.addItem("Pediente comunicar");
+		statusLB.addItem("Comunicado");
+		statusLB.addChangeHandler(e -> {
+			mainMassiveContractsObject.filterEmployeesStatusList(statusLB.getSelectedIndex());
+			initPreview();
+		});
+		
+
+		statusPanel.add(statusL);
+		statusPanel.add(statusLB);
+		statusPanel.setVisible(false);
+		
 		leftPanel.add(typePanel);
 		leftPanel.add(employeePanel);
 
@@ -225,6 +260,7 @@ public class MainMassiveContracts extends MainEntryPoint{
 		showPanel.add(workplaceLB);
 		showPanel.add(inactiveContractsPanel);
 		showPanel.add(noValuePanel);
+		showPanel.add(statusPanel);
 
 		filterPanel.add(leftPanel);
 		filterPanel.add(showPanel);
@@ -245,6 +281,7 @@ public class MainMassiveContracts extends MainEntryPoint{
 			
 			inactiveContractsPanel.setVisible(isCNOSelected);
 			noValuePanel.setVisible(isCNOSelected);
+			statusPanel.setVisible(!isCNOSelected);
 		});
 	}
 	
@@ -316,17 +353,7 @@ public class MainMassiveContracts extends MainEntryPoint{
 	
 	private void initPreview() {
 		if(this.mainMassiveContractsObject.getEmployees().isEmpty()) {
-			switch (dataType.getSelectedValue()) {
-				case "CNO":
-					showContractMessage();
-					break;
-				case "Llamamiento":
-					showContractFDMessage();
-					break;
-				default:
-					showContractMessage();
-					break;
-			}
+			showContractMessage();
 		} else {
 			selectionModel.clear();
 			
@@ -514,34 +541,157 @@ public class MainMassiveContracts extends MainEntryPoint{
 	}
 	
 	private Widget createFJWidget(EmployeeContractInfo employee) {
-		AonDateBox dateBox = new AonDateBox();
-		dateBox.setWidth("100%");
-		dateBox.addValueChangeHandler(e -> {
-			if(null != e.getValue()) {
-				AonDialog fdDialog = new AonDialog("Llamamiento (Fijo/Discontinuo)", new HTMLPanel("\u00bfDesea realmente hacer un llamamiento al trabajador " + employee.getEmployeeInfo().getFullName() + " con fecha de inicio " + formatDate.format(e.getValue()) + "\u003f"));
-				fdDialog.confirm(new AonAcceptDialogCallback() {
+		if(null == employee.getContractInfo().getEndDate() || employee.getContractInfo().getStartDate().after(new Date())) {
+			HTMLPanel panel = new HTMLPanel("");
+			panel.addStyleName(AON.CSS.aonItemFlex());
+			panel.getElement().getStyle().setProperty("justify-content", "center");
+			
+			AonTableButton tgss = new AonTableButton(employee.getContractInfo().isSSComunicate() ? "Descargar TA" : "Comunicar Contrato TGSS", AON.CSS.aonIconTgss());
+			tgss.addClickHandler(e -> {
+				if(employee.getContractInfo().isSSComunicate()) {
+					AonMessagePanel.showLoading(messagePanel, "Obteniendo TA ...");
+					impl.getEmployeeTa(
+							employee.getContractInfo().getContractId(), 
+							"ALTA", 
+							employee.getContractInfo().getCompleteCCC().substring(0, 4), 
+							employee.getContractInfo().getCompleteCCC().substring(4, employee.getContractInfo().getCompleteCCC().length()), 
+							employee.getEmployeeInfo().getSsNumber(), 
+							employee.getContractInfo().getStartDate(), 
+							new AsyncCallback<String>() {
+						
+								@Override
+								public void onSuccess(String dataURI) {
+									AonMessagePanel.hideMessage(messagePanel);
+									showPdf();
+									pdfViewer.open(dataURI);
+								}
+								@Override
+								public void onFailure(Throwable caught) {
+									AonMessagePanel.showError(messagePanel, new HashMap<String, String>(){{ put("Error Obtenci\u00f3n TA", caught.getMessage()); }});
+								}
+					});
+				} else {
+					AonMessagePanel.showLoading(messagePanel, "Comunicando contrato TGSS ...");
+					impl.getEmployeeInfoDataBase(employee.getContractInfo().getContractId(), null, new AsyncCallback<EmployeeContractInfo>() {
+						
+						@Override
+						public void onSuccess(EmployeeContractInfo employeeDB) {
+							impl.sendEmployeeAlta(employeeDB, new AsyncCallback<Void>() {
+								
+								@Override
+								public void onSuccess(Void result) {
+									AonMessagePanel.showSuccess(messagePanel, new HashMap<String, String>(){{ put("Comunicaci\u00f3n Contrato TGSS", "Se ha comunicado correctamente el contrato a la TGSS"); }});
+									reloadAfterTimer();
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									AonMessagePanel.showError(messagePanel, new HashMap<String, String>(){{ put("Error Comunicaci\u00f3n Contrato TGSS", caught.getMessage()); }});
+								}
+							});
+						}
+						
+						@Override
+						public void onFailure(Throwable arg0) {
+							// Nothing to do
+						}
+					});
+	
+				}
+			});
+			
+			AonTableButton sepe = new AonTableButton(employee.getContractInfo().isSepeComunicate() ? "Descargar Copia Contrato" : "Comunicar Contrato SEPE", AON.CSS.aonIconSepe());
+			sepe.addClickHandler(e -> {
+				if(employee.getContractInfo().isSepeComunicate()) {
+					AonMessagePanel.showLoading(messagePanel, "Obteniendo CTO ...");
+					impl.getEmployeeInfoDataBase(employee.getContractInfo().getContractId(), null, new AsyncCallback<EmployeeContractInfo>() {
+						
+						@Override
+						public void onSuccess(EmployeeContractInfo employeeDB) {
+							impl.getEmployeeCto(employeeDB.getEmployeeInfo().getDocument(), employeeDB.getContractInfo().getContractId(), employeeDB.getContractInfo().getStartDate(), employeeDB.getContractInfo().getStartDate(), employeeDB.getContractInfo().getSepeId(), new AsyncCallback<String>() {
+								@Override
+								public void onSuccess(String dataURI) {
+									AonMessagePanel.hideMessage(messagePanel);
+									showPdf();
+									pdfViewer.open(dataURI);
+								}
+								@Override
+								public void onFailure(Throwable caught) {
+									AonMessagePanel.showError(messagePanel, new HashMap<String, String>(){{ put("Error Obtenci\u00f3n CTO", caught.getMessage()); }});
+								}
+							});
+						}
+						
+						@Override
+						public void onFailure(Throwable arg0) {
+							// Nothing to do
+						}
+					});
+				} else {
+					AonMessagePanel.showLoading(messagePanel, "Comunicando contrato SEPE ...");
+					impl.getEmployeeInfoDataBase(employee.getContractInfo().getContractId(), null, new AsyncCallback<EmployeeContractInfo>() {
+						
+						@Override
+						public void onSuccess(EmployeeContractInfo employeeDB) {
+							impl.sendContractoSEPE(employeeDB, new AsyncCallback<Void>() {
 
-					@Override
-					public void onCancel() {
-						// Not use here
-					}
+								@Override
+								public void onFailure(Throwable caught) {
+									AonMessagePanel.showError(messagePanel, new HashMap<String, String>(){{ put("Error Comunicaci\u00f3n Contrato SEPE", caught.getMessage()); }});
+								}
 
-					@Override
-					public void onAccept() {
-						AonMessagePanel.showLoading(messagePanel, "Creando contrato del llamamiento ...");
-						mainMassiveContractsObject.duplicateContract(
-								employee, 
-								e.getValue(), 
-								s -> {
-									AonMessagePanel.showSuccess(messagePanel, new HashMap<String, String>(){{ put("Llamamiento (Fijo/Discontinuo)", "Se ha generado el llamamiento correctamente, puede encontrar el nuevo contrato en la parte Laboral > Contratos"); }});
-									dataTypeChange();
-								}, 
-								f -> AonMessagePanel.showError(messagePanel, new HashMap<String, String>(){{ put("Error Llamamiento", f.getMessage()); }}));
-					}
-				});
-			}
-		});
-		return dateBox;
+								@Override
+								public void onSuccess(Void result) {
+									AonMessagePanel.showSuccess(messagePanel, new HashMap<String, String>(){{ put("Comunicaci\u00f3n Contrato SEPE", "Se ha comunicado correctamente el contrato al SEPE"); }});
+									reloadAfterTimer();
+								}
+								
+							});
+						}
+						
+						@Override
+						public void onFailure(Throwable arg0) {
+							// Nothing to do
+						}
+					});
+				}
+			});
+
+			panel.add(tgss);
+			panel.add(sepe);
+			
+			return panel;
+		} else {
+			AonDateBox dateBox = new AonDateBox();
+			dateBox.setWidth("100%");
+			dateBox.addValueChangeHandler(e -> {
+				if(null != e.getValue()) {
+					AonDialog fdDialog = new AonDialog("Llamamiento (Fijo/Discontinuo)", new HTMLPanel("\u00bfDesea realmente hacer un llamamiento al trabajador " + employee.getEmployeeInfo().getFullName() + " con fecha de inicio " + formatDate.format(e.getValue()) + "\u003f"));
+					fdDialog.confirm(new AonAcceptDialogCallback() {
+	
+						@Override
+						public void onCancel() {
+							// Not use here
+						}
+	
+						@Override
+						public void onAccept() {
+							AonMessagePanel.showLoading(messagePanel, "Creando contrato del llamamiento ...");
+							mainMassiveContractsObject.duplicateContract(
+									employee, 
+									e.getValue(), 
+									s -> {
+										AonMessagePanel.showSuccess(messagePanel, new HashMap<String, String>(){{ put("Llamamiento (Fijo/Discontinuo)", "Se ha generado el llamamiento correctamente, puede encontrar el nuevo contrato en la parte Laboral > Contratos"); }});
+										reloadAfterTimer();
+									}, 
+									f -> AonMessagePanel.showError(messagePanel, new HashMap<String, String>(){{ put("Error Llamamiento", f.getMessage()); }}));
+						}
+					});
+				}
+			});
+			
+			return dateBox;
+		}
 	}
 	
 	private void checkRowAndModify(Grid grid, int row, EmployeeContractInfo employee, Widget widget) {
@@ -610,9 +760,30 @@ public class MainMassiveContracts extends MainEntryPoint{
 		cnoAFIBtn.setEnabled(false);
 	}
 	
-	private void showContractFDMessage() {
-		deckPanel.showWidget(2);
-		cnoAFIBtn.setEnabled(false);
+	private void showList() {
+		mainDeckPanel.showWidget(0);
+		
+		boolean isCNOSelected = AonStringUtils.equalsIgnoreCase(this.dataType.getSelectedValue(), "CNO");
+		
+		saveBtn.setVisible(isCNOSelected);
+		undoAllButton.setVisible(isCNOSelected);
+		cnoAFIBtn.setVisible(isCNOSelected);
+		
+		inactiveContractsPanel.setVisible(isCNOSelected);
+		noValuePanel.setVisible(isCNOSelected);
+		statusPanel.setVisible(!isCNOSelected);
+		
+		backBtn.setVisible(false);
+	}
+	
+	private void showPdf() {
+		mainDeckPanel.showWidget(1);
+		
+		saveBtn.setVisible(false);
+		undoAllButton.setVisible(false);
+		addMasiveValueBtn.setVisible(false);
+		cnoAFIBtn.setVisible(false);
+		backBtn.setVisible(true);
 	}
 	
 	// ----------------------------------------------- Toolbar
@@ -690,6 +861,13 @@ public class MainMassiveContracts extends MainEntryPoint{
 		
 		toolbar.add(addMasiveValueBtn);
 		toolbar.add(cnoAFIBtn);
+		
+		backBtn = new AonToolbarButton("Listado", AON.CSS.aonIconBack());
+		backBtn.addClickHandler(e -> {
+			showList();
+		});
+		
+		toolbar.add(backBtn);
 	}
 
 	private void updateSelectedContractsCNO(String cnoCode) {

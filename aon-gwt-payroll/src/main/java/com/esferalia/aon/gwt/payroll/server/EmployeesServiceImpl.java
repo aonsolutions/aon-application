@@ -6372,6 +6372,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 				pdfBytes = AonStringUtils.isBlank(sepeIde) ? Sepe.getTransformationPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), ipf, cif, startDate)
 						: Sepe.getTransformationPdf(certificateInputStream, certificate.getPassword(), certificate.getType(), sepeIde);
+				
 				JooqContractAttach.setCopyContractTransform(connection, domainId, contractId, pdfBytes);
 			}
 
@@ -6498,6 +6499,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 			// sendAlta
 			SistemaRED.sendAlta(new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
 					certificate.getType(), employee);
+			
+			JooqContrataContract.setSSStatus(domainName, employeeContractInfo.getContractInfo().getContractId());
 
 		} catch (Exception e) {
 			if (e instanceof solutions.aon.seg.social.exception.CertificateNotFoundException)
@@ -6632,13 +6635,18 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					+ "\n" + coef + "\n" + fecha);
 
 			// Get employee nafxipf
-			solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
-					new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
-					certificate.getType(), employeeContractInfo.getEmployeeInfo().getDocument(),
-					employeeContractInfo.getEmployeeInfo().getSurName(),
-					employeeContractInfo.getEmployeeInfo().getSecondSurName());
-
-			System.out.println(employeeAux.getNss());
+			if(AonStringUtils.isBlank(employeeContractInfo.getEmployeeInfo().getSsNumber())) {
+				solutions.aon.seg.social.object.Employee employeeAux = SistemaRED.nafxipf(
+						new ByteArrayInputStream(certificate.getData()), certificate.getPassword(),
+						certificate.getType(), employeeContractInfo.getEmployeeInfo().getDocument(),
+						employeeContractInfo.getEmployeeInfo().getSurName(),
+						employeeContractInfo.getEmployeeInfo().getSecondSurName());
+	
+				System.out.println(employeeAux.getNss());
+				
+				employeeContractInfo.getEmployeeInfo().setSsNumber(employeeAux.getNss());
+			
+			}
 
 			// Parse coef
 			Double coefD = Double.parseDouble(coef);
@@ -6654,7 +6662,7 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					employeeContractInfo.getContractInfo().getCompleteCCC().substring(0, 4),
 					employeeContractInfo.getContractInfo().getCompleteCCC().substring(4,
 							employeeContractInfo.getContractInfo().getCompleteCCC().length()),
-					employeeAux.getNss(), fecha, Optional.empty(), coef);
+					employeeContractInfo.getEmployeeInfo().getSsNumber(), fecha, Optional.empty(), coef);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -6917,6 +6925,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 				JooqContrataContract.setSepeId(domainName, employeeContractInfo.getContractInfo().getContractId(), ide);
 				employeeContractInfo.getContractInfo().setSepeId(ide);
 			}
+			
+			JooqContrataContract.setSepeStatus(domainName, employeeContractInfo.getContractInfo().getContractId());
 
 		} catch (Exception e) {
 			e.printStackTrace();

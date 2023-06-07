@@ -508,7 +508,10 @@ public class ContractFill {
 						String newValue = contractFillInfo.getOrDefault(renderFieldName, "");
 						setField(field, newValue);
 					} else {
-					
+						if(AonStringUtils.equalsIgnoreCase(fieldName, "TEXTOCasilla de verificaci\u00f3n25") && null != contractOtherInfo.get("T_EMPLOYEE_CONTRACT_DIST_ADDR")) {
+							 ((PDCheckBox) field).check();
+						}
+						
 						if(!StringUtils.isBlank(valueStr) && StringUtils.containsIgnoreCase(valueStr, "$aon:")) {
 							valueStr = valueStr.replace("$aon:", "");
 							

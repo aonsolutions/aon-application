@@ -105,6 +105,7 @@ import com.esferalia.aon.jooq.tables.records.EnterpriseActivityRecord;
 import com.esferalia.aon.jooq.tables.records.EnterpriseCccRecord;
 import com.esferalia.aon.jooq.tables.records.HolidayRecord;
 import com.esferalia.aon.jooq.tables.records.PaymentConceptRecord;
+import com.esferalia.aon.jooq.tables.records.PersonRecord;
 import com.esferalia.aon.jooq.tables.records.RaddressRecord;
 import com.esferalia.aon.jooq.tables.records.RegistryRecord;
 import com.esferalia.aon.jooq.tables.records.ScopeRecord;
@@ -1032,8 +1033,10 @@ public abstract class AbstractSQLTestCase {
 
 	}
 
-
-
+	public static PersonRecord getPerson(AONContext aonContext, int personId) {
+	    return aonContext.getDslContext().select().from(PERSON).where(PERSON.REGISTRY.eq(personId)).fetchOneInto(PERSON);
+	}
+	
 	public static final RegistryRecord newPerson(AONContext aonContext, int domainId, String document) {
 		return newPerson(aonContext, domainId, document, "");
 	}

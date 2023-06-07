@@ -1,5 +1,6 @@
 // ----- A
 
+export const ABOUT = 'Guri buruz';
 export const ACCEPT = 'Onartu';
 export const ACCESS = "Sarbidea";
 export const ACCOUNT = 'Kuenta';

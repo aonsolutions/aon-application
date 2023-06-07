@@ -301,10 +301,13 @@ public class PayrollTemplate implements IPayrollTemplate{
 								.mapToDouble(accrual -> safeDouble(accrual.getAmount())).sum();
 						if (localTotal != 0)
 						{
-							String paymentTxt = m.getKey() + ". " + getType(m.getKey(), lang);
+							String craNumber = m.getKey() < 100 ? (m.getKey() + ".") : "";
+							String paymentTxt = getType(m.getKey(), lang);
 							String paymentTotalTxt = toLatinNumber(localTotal) + " " + text("MONEDA");
 
-							drawText(contents, paymentTxt, x, y, BLACK, HELVETICA_BOLD, fontSize);
+							drawText(contents, craNumber, x, y, BLACK, HELVETICA_BOLD, fontSize);
+							
+							drawText(contents, paymentTxt, x + 15, y, BLACK, HELVETICA_BOLD, fontSize);
 							drawTextRight(contents, new PDRectangle(x + 355, y - 5, 100, 10), paymentTotalTxt, BLACK,
 									HELVETICA, fontSize, 5, 5);
 							drawBox(contents, x, y - 2, 455, .2f, BLACK);

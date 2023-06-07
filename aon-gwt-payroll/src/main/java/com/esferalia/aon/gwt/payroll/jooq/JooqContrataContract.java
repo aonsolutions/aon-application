@@ -52,6 +52,8 @@ import com.esferalia.aon.gwt.payroll.shared.ContractSpecificData;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeContractInfo;
 import com.esferalia.aon.gwt.payroll.shared.EmployeeInfo;
 import com.esferalia.aon.gwt.payroll.shared.JourneyDuration;
+import com.esferalia.aon.jooq.tables.records.ContractInfoRecord;
+import com.esferalia.aon.jooq.tables.records.ContractRecord;
 
 public class JooqContrataContract {
 	
@@ -710,6 +712,7 @@ public class JooqContrataContract {
 	
 	private static List<EmployeeContractInfo> getFJEmployeesInfoDB(DSLContext dslContext, Integer domainId) {
 		List<EmployeeContractInfo> employeesInfo = new ArrayList<>();
+		List<Integer> visitedPerson = new ArrayList<>();
 		
 		List<String> fjTypes = new ArrayList<>();
 		fjTypes.add("\"300\"");
@@ -717,8 +720,6 @@ public class JooqContrataContract {
 		fjTypes.add("\"330\"");
 		fjTypes.add("\"350\"");
 		fjTypes.add("\"389\"");
-		
-		Calendar cal = Calendar.getInstance();
 		
 		Result<Record> contractRecords = dslContext.select().from(PERSON)
 				.innerJoin(REGISTRY)
@@ -731,23 +732,15 @@ public class JooqContrataContract {
 				.on(CONTRACT_DATA.CONTRACT.eq(CONTRACT.ID))
 				.where(CONTRACT.DOMAIN.eq(domainId))
 				.and(CONTRACT.ID.gt(0))
-				.and(CONTRACT.END_DATE.isNotNull().and(CONTRACT.END_DATE.le(new Date(cal.getTimeInMillis()))))
 				.and(CONTRACT_DATA.NAME.eq("TC2"))
 				.and(CONTRACT_DATA.EXPRESSION.in(fjTypes))
-				.orderBy(CONTRACT.PERSON, CONTRACT.START_DATE)
+				.orderBy(CONTRACT.PERSON, CONTRACT.START_DATE.desc())
 				.fetch();
 		
 		
 		for(Record contractRecord : contractRecords) {
 			
-			// Filter if person has active contract
-			
-			Result<Record> activeCotract = dslContext.select().from(CONTRACT)
-				.where(CONTRACT.PERSON.eq(contractRecord.get(CONTRACT.PERSON)))
-				.and(CONTRACT.END_DATE.isNull().or(CONTRACT.END_DATE.gt(new Date(cal.getTimeInMillis()))))
-				.fetch();
-			
-			if(activeCotract.isNotEmpty()) continue;
+			if(visitedPerson.contains(contractRecord.get(CONTRACT.PERSON))) continue;
 			
 			// --------------------------------------------- Init
 			
@@ -789,11 +782,20 @@ public class JooqContrataContract {
 			contractData.setWorkplaceId(contractRecord.get(WORKPLACE.ID));
 			contractData.setWorkplaceName(contractRecord.get(WORKPLACE.DESCRIPTION));
 			
+			// SS & Sepe status
+			Result<ContractInfoRecord> ssRecords = dslContext.selectFrom(CONTRACT_INFO).where(CONTRACT_INFO.CONTRACT.eq(contractData.getContractId())).and(CONTRACT_INFO.NAME.eq("SS_ALTA")).fetch();
+			Result<ContractInfoRecord> sepeRecords = dslContext.selectFrom(CONTRACT_INFO).where(CONTRACT_INFO.CONTRACT.eq(contractData.getContractId())).and(CONTRACT_INFO.NAME.eq("SEPE_CONTRATO")).fetch();
+			
+			contractData.setSSComunicate(ssRecords.isNotEmpty() && ssRecords.get(0).getExpression().equals("ACCEPTED"));
+			contractData.setSepeComunicate(sepeRecords.isNotEmpty() && sepeRecords.get(0).getExpression().equals("ACCEPTED"));
+			
 			employeeContractInfo.setEmployeeInfo(employeeData);
 			employeeContractInfo.setContractInfo(contractData);
 			
 			// --------------------------------------------- Add employeeContractInfo
-						
+		
+			visitedPerson.add(contractRecord.get(CONTRACT.PERSON));
+			
 			employeesInfo.add(employeeContractInfo);
 			
 		}
@@ -1765,6 +1767,68 @@ public class JooqContrataContract {
 		}catch (SQLException e) {
 			throw new RuntimeException(e);
 		} 
+	}
+	
+	public static void setSepeStatus(String domainName, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+		
+			ContractRecord contractRecord = dslContext.selectFrom(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
+			
+			Result<ContractInfoRecord> contractInfos = dslContext.selectFrom(CONTRACT_INFO).where(CONTRACT_INFO.CONTRACT.eq(contractId)).and(CONTRACT_INFO.NAME.eq("SEPE_CONTRATO")).fetch();
+			
+			if(contractInfos.isEmpty()) {
+				dslContext.insertInto(CONTRACT_INFO)
+					.set(CONTRACT_INFO.DOMAIN, domainId)
+					.set(CONTRACT_INFO.CONTRACT, contractId)
+					.set(CONTRACT_INFO.NAME, "SEPE_CONTRATO")
+					.set(CONTRACT_INFO.EXPRESSION, "ACCEPTED")
+					.set(CONTRACT_INFO.START_DATE, contractRecord.getStartDate())
+					.set(CONTRACT_INFO.END_DATE, contractRecord.getEndDate())
+					.execute();
+			} else {
+				dslContext.update(CONTRACT_INFO)
+					.set(CONTRACT_INFO.EXPRESSION, "ACCEPTED")
+					.where(CONTRACT_INFO.ID.eq(contractInfos.get(0).getId()))
+					.execute();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		
+	}
+	
+	public static void setSSStatus(String domainName, Integer contractId) {
+		try(Connection connection = AonServletUtils.getConnection(domainName)) {
+			DSLContext dslContext = DSL.using(connection, getDefaultSettings());
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+		
+			ContractRecord contractRecord = dslContext.selectFrom(CONTRACT).where(CONTRACT.ID.eq(contractId)).fetchOne();
+			
+			Result<ContractInfoRecord> contractInfos = dslContext.selectFrom(CONTRACT_INFO).where(CONTRACT_INFO.CONTRACT.eq(contractId)).and(CONTRACT_INFO.NAME.eq("SS_ALTA")).fetch();
+			
+			if(contractInfos.isEmpty()) {
+				dslContext.insertInto(CONTRACT_INFO)
+					.set(CONTRACT_INFO.DOMAIN, domainId)
+					.set(CONTRACT_INFO.CONTRACT, contractId)
+					.set(CONTRACT_INFO.NAME, "SS_ALTA")
+					.set(CONTRACT_INFO.EXPRESSION, "ACCEPTED")
+					.set(CONTRACT_INFO.START_DATE, contractRecord.getStartDate())
+					.set(CONTRACT_INFO.END_DATE, contractRecord.getEndDate())
+					.execute();
+			} else {
+				dslContext.update(CONTRACT_INFO)
+					.set(CONTRACT_INFO.EXPRESSION, "ACCEPTED")
+					.where(CONTRACT_INFO.ID.eq(contractInfos.get(0).getId()))
+					.execute();
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+		
 	}
 
 	public static void removeSepeId(String domainName, Integer contractId, String sepeId) {
