@@ -1,21 +1,26 @@
 <app-content>
-  <div class="containerSelectEnterprise">
-    <app-list-element [widthContainer]="'41erm'">
-      <div class="contTitleSelectEnterprise">
-        <h4 class="titleLogin">Selecciona una empresa</h4>
-        <span>Entra en la empresa que desees operar</span>
-      </div>
-      <app-list-element widthContainer="'100%'" heightContainer="22rem" [border]="'1px'" color="gray" class="auxTest">
-        <div class="allSize contEnterprise">
-          <div class="" *ngFor="let enterprise of empresas">
-            <div class="itemEnterprise" (click)="selectEnterprise(enterprise)">
-              <app-icon [shape]="'business'"></app-icon>
-              <caption>{{ enterprise.name }}</caption>
-              <span>{{ enterprise.document }}</span>
-            </div>
+  <mat-grid-list [cols]="24" rowHeight="fit" [style.height]="'100%'">
+    <mat-grid-tile [colspan]="8"></mat-grid-tile>
+    <mat-grid-tile [colspan]="8">
+      <div class="containerSelectEnterprise">
+        <app-list-element [widthContainer]="'100%'">
+          <div class="contTitleSelectEnterprise">
+            <h4 class="titleLogin">Selecciona una empresa</h4>
+            <span>Entra en la empresa que desees operar</span>
           </div>
-        </div>
-      </app-list-element>
-    </app-list-element>
-  </div>
+          <app-list-element widthContainer="'100%'" heightContainer="22rem" [border]="'1px'" color="gray" class="auxTest">
+            <div class="allSize contEnterprise">
+              <div class="" *ngFor="let enterprise of empresas">
+                <div class="itemEnterprise" (click)="selectEnterprise(enterprise)">
+                  <app-icon [shape]="'business'"></app-icon>
+                  <caption>{{ enterprise.name }}</caption>
+                  <span>{{ enterprise.document }}</span>
+                </div>
+              </div>
+            </div>
+          </app-list-element>
+        </app-list-element>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
 </app-content>

@@ -1,3 +1,5 @@
+@import 'src/app/app.component.scss';
+
 .containerSelectEnterprise {
   display: flex;
   width: 100%;
@@ -25,18 +27,19 @@
 .contEnterprise {
   padding: 1rem;
   box-sizing: border-box;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .itemEnterprise {
   flex-direction: row;
   justify-content: flex-start;
-  border: solid 1px #d2d2d6;
+  border: solid 1px $col-gray-light;
   display: flex;
   align-items: center;
   padding:  1rem 2rem;
   border-radius: 4px;
-  gap: 0.75rem;
+  gap: 2.3rem;
   margin-bottom: 1rem;
+  cursor: pointer;
 }
 
