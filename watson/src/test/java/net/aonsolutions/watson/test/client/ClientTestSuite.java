@@ -7,6 +7,7 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
 	 PairTest.class
 	 ,MutableBooleanTest.class
+	 ,MutableObjectTest.class
 })
 public class ClientTestSuite {
 
