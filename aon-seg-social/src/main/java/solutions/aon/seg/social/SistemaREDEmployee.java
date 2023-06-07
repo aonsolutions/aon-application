@@ -738,12 +738,9 @@ class SistemaREDEmployee {
 
 			onlineOption.click();
 
-			Page pageAux = formSubmit.click();
-			System.out.println(pageAux.getUrl());
-			HtmlElement elementPrueba = (HtmlElement) document.createElement("prueba");
-			elementPrueba.setAttribute("href", pageAux.getUrl().toString());
+			formSubmit.click();
 
-			return getPDFDocumentPage(pageAux);
+			return getPDFDocument((HtmlElement) formSubmit);
 
 		} catch (FailingHttpStatusCodeException e) {
 			HandleStatusCodeException(e);
@@ -803,19 +800,8 @@ class SistemaREDEmployee {
 		return null;
 	}
 
-	// Creado para manejar la imposibilidad de castear de UnexpectedPage a HtmlPage
-	private static byte[] getPDFDocumentPage(Page page) throws IllegalArgumentException {
-		try {
-			return page.getWebResponse().getContentAsStream().readAllBytes();
-		} catch (IOException e) {
-			// Exception
-			throw new IllegalArgumentException(e.getMessage());
-		}
-	}
-
 	private static byte[] getPDFDocument(HtmlElement linkElement) throws IllegalArgumentException {
 		try {
-
 			UnexpectedPage docPage = linkElement.dblClick();
 			return docPage.getWebResponse().getContentAsStream().readAllBytes();
 		} catch (IOException e) {
