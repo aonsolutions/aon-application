@@ -9,6 +9,7 @@ import { AonButton } from './aon-button.js';
 import { AonSelect } from './aon-select.js';
 import { AonCheckbox } from './aon-checkbox.js';
 import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
+import { getApp } from '../services/app.js';
 
 export class AonDomainCustomer extends AonElement {
 
@@ -463,7 +464,7 @@ export class AonDomainCustomer extends AonElement {
     this.loadingPanel.style.justifyContent = "center";
     this.loadingPanel.style.alignItems = "center";
     this.loadingPanel.style.backgroundColor = "rgba(240,248,255,0.5)";
-    this.loadingPanel.style.zIndex = "9999";
+    this.loadingPanel.style.zIndex = "2";
 
     let loadingLine = document.createElement('div');
     loadingLine.style.display = "flex";
@@ -1144,6 +1145,9 @@ export class AonDomainCustomer extends AonElement {
 
   createBookingElement(booking) {
     if (booking) {
+
+      let domain = this.selectedDomain.domain;
+
       let bookingContainer = document.createElement("div");
       bookingContainer.style.display = "flex";
       bookingContainer.style.flexDirection = "column";
@@ -1189,7 +1193,8 @@ export class AonDomainCustomer extends AonElement {
           let childApp = document.createElement("div");
           childApp.style.display = "block";
           childApp.style.width = "100%";
-          childApp.innerText = app;
+          let application = getApp(app);
+          childApp.innerText = application ? application.title : app;
           childAppsContainer.appendChild(childApp);
         });
       }
@@ -1221,7 +1226,40 @@ export class AonDomainCustomer extends AonElement {
         });
       }
 
-      appsContainer.appendChild(parentAppsContainer);
+      if (domain && domain.parentId) {
+        appsContainer.appendChild(parentAppsContainer);
+      } else if (domain && !domain.parentId) {
+        childAppsContainer.style.width = "40%";
+
+        let summaryContainer = document.createElement("div");
+        summaryContainer.style.display = "flex";
+        summaryContainer.style.flexDirection = "column";
+        summaryContainer.style.justifyContent = "flex-start";
+        summaryContainer.style.alignItems = "center";
+        summaryContainer.style.width = "57%";
+
+        let summaryTitleContainer = document.createElement("div");
+        summaryTitleContainer.style.display = "block";
+        summaryTitleContainer.style.width = "100%";
+        summaryTitleContainer.style.textAlign = "left";
+        summaryTitleContainer.style.fontWeight = "bold";
+        summaryTitleContainer.innerText = "Resumen de contratación";
+
+        summaryContainer.appendChild(summaryTitleContainer);
+
+        let summary = booking.resume;
+        let summaryApps = summary ? summary.apps : null;
+        let summaryUsers = summary ? summary.user : null;
+        let summaryDomains = summary ? summary.domain : null;
+
+        this.createSummaryItem(summaryContainer, MSG.APPLICATIONS, summaryApps);
+        this.createSummaryItem(summaryContainer, MSG.USERS, summaryUsers, "user");
+        this.createSummaryItem(summaryContainer, "Dominios", summaryDomains, "domain");
+
+
+
+        appsContainer.appendChild(summaryContainer);
+      }
       
       let numberOfUsersContainer = document.createElement("div");
       numberOfUsersContainer.style.display = "block";
@@ -1242,6 +1280,59 @@ export class AonDomainCustomer extends AonElement {
       this.customerList.appendChild(bookingContainer);
     }
   }
+
+  createSummaryItem(summaryContainer, title, summaryElements, type) {
+    if (summaryElements) {
+      let summaryElementsContainer = document.createElement("div");
+      summaryElementsContainer.style.display = "flex";
+      summaryElementsContainer.style.flexDirection = "column";
+      summaryElementsContainer.style.width = "100%";
+      summaryContainer.appendChild(summaryElementsContainer);
+      let summaryElementsTitle = document.createElement("div");
+      summaryElementsTitle.style.display = "block";
+      summaryElementsTitle.style.width = "100%";
+      summaryElementsTitle.style.fontWeight = "bold";
+      summaryElementsTitle.style.marginLeft = "5px";
+      summaryElementsTitle.innerText = title;
+      summaryElementsContainer.appendChild(summaryElementsTitle);
+
+      for (const summaryElement in summaryElements) {
+        let summaryElementsItem = document.createElement("div");
+        summaryElementsItem.style.display = "block";
+        summaryElementsItem.style.width = "100%";
+        summaryElementsItem.style.marginLeft = "10px";
+        
+        let itemTitle = "";
+        if (type === "domain") {
+          itemTitle = this.getDomainTypeDescription(summaryElement);
+        } else if (type === "user") {
+          let elementName = (summaryElement ? summaryElement : "").toLowerCase().trim();
+          switch (elementName) {
+            case "shared":
+              itemTitle = "Compartido"
+              break;
+            case "childdefinedusers":
+              itemTitle = "Usuarios contratados";
+              break;
+            case "childbillingusers":
+              itemTitle = "Usuarios facturables";
+              break;
+            default:
+              itemTitle = summaryElement;
+              break;
+          }
+        } else  {
+          let application = getApp(summaryElement);
+          itemTitle = application ? application.title : summaryElement;
+        }
+
+
+        summaryElementsItem.innerText = `${itemTitle}: ${summaryElements[summaryElement]}`;
+        summaryElementsContainer.appendChild(summaryElementsItem);
+      }
+    }
+  }
+
   // -----------------------------
 
   // --- MANEJADORES DE EVENTOS ---
