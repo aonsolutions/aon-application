@@ -1,4 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Enterprise } from 'src/app/core/models/class/enterprise';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { EnterpriseService } from 'src/app/core/services/enterprise.service';
+import { ExampleServiceService } from 'src/app/core/services/example-service.service';
 import { ContainerService } from 'src/app/shared/services/container.service';
 
 @Component({
@@ -8,36 +12,11 @@ import { ContainerService } from 'src/app/shared/services/container.service';
 })
 export class HomeComponent implements OnInit {
 
-  detail: boolean = false;
-
-  accordionState: boolean = false;
-
-  functionHome: any = (result:any) => this.afterModalClosed(result);
-  
-  @ViewChild('modal') modalComponent: any = '';
-
-  afterModalClosed(result?: any){
-    console.log(result);
+  constructor() {
   }
-
-  showModal(){
-    // this.modalComponent.openDialog(ModalComponent,this.functionHome, 'Data from home');
-  }
-
-  constructor(public containerService: ContainerService) {
-
-  }
-
-  data : any = []
 
   ngOnInit(): void {
-    for(let i = 0; i < 100; i++){
-      this.data.push({index: i, text: 'lorem ipsum asd...'})
-    }
-  }
-
-  log(event : any){
-    console.log(event)
+    
   }
   
 }
