@@ -304,6 +304,8 @@ public interface EmployeesService  extends RemoteService, CalendarService, Emplo
 
 	// ------------------------------------------------- SEPE Comunications
 	
+	void sendLlamamientoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException;
+
 	void sendContractoSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException;
 
 	void sendContractoCBSEPE(String currentDomainName, String currentUser, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException;

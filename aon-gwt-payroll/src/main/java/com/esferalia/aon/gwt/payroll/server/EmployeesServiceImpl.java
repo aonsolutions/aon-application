@@ -6896,6 +6896,36 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 	}
 
 	// ------------------------------------------------- SEPE Comunications
+	
+	@Override
+	public void sendLlamamientoSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {
+		try (Connection connection = AonServletUtils.getConnection(domainName)) {
+
+			Integer domainId = AonServletUtils.getDomainID(domainName);
+			Integer parentDomainId = AonServletUtils.getParentDomainID(domainName);
+			Integer userId = AonServletUtils.getUserID(connection, userLogin, domainId, parentDomainId);
+
+			Certificate certificate = AON.getCertificate(domainName, domainId, userLogin, userId, "SEPE");
+			InputStream certificateIS = new ByteArrayInputStream(certificate.getData());
+			
+			String cif = employeeContractInfo.getContractInfo().getEnterpriseCIF();
+			String ccc = employeeContractInfo.getContractInfo().getCompleteCCC();
+			String nif = employeeContractInfo.getEmployeeInfo().getDocument();
+			Date startDate = employeeContractInfo.getContractInfo().getStartDate();
+			Date endDate = employeeContractInfo.getContractInfo().getEndDate();
+			
+			// Esto a lo mejor hay que consultarlo por que no se si es el IDE del ultimo contrato existente
+			String ide = employeeContractInfo.getContractInfo().getSepeId();
+
+			Sepe.sendLlamamiento(certificateIS, certificate.getPassword(), certificate.getType(), cif, ccc, nif, startDate, endDate, ide);
+
+			JooqContrataContract.setSepeStatus(domainName, employeeContractInfo.getContractInfo().getContractId());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException(e.getMessage());
+		}
+	}
 
 	@Override
 	public void sendContractoSEPE(String domainName, String userLogin, EmployeeContractInfo employeeContractInfo) throws IllegalArgumentException {

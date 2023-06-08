@@ -1,6 +1,6 @@
 import {AonElement} from '../../components/AonElement.js';
 import { AonApplication } from '../../components/aon-application.js';
-import { getDomains, getCustomers, getBooking, updateDomainBooking, updateDomainBookingLog } from '../../services/domainsService.js';
+import { getDomains, getCustomers, getBooking, updateDomainBooking, updateDomainBookingLog, deleteDomainBooking } from '../../services/domainsService.js';
 import { get } from '../../services/request.js';
 import { AonDomainCustomer } from '../../components/aon-domain-customer-link.js';
 import { App, DomainType, ToolbarType } from '../../models/enums.js';
@@ -44,6 +44,46 @@ export class AonLinkDomains extends AonElement {
 		this.DOMAINS_TOOLBAR.title = "Dominios";
 		this.appendChild(this.DOMAINS_TOOLBAR);
 		this.DOMAINS_TOOLBAR.removeButtons();
+
+		let toolbarButton2Params = {
+			id: "DeleteClientItemsButton",
+			name: "Eliminar relaciones de productos",
+			title: "Eliminar relaciones de productos",
+			icon: MATERIAL_ICONS.DELETE
+		}
+		this.DOMAINS_TOOLBAR.addButton2(toolbarButton2Params, () => {
+			let dialog = this.getApplication().getDialog();
+    		dialog.clear();
+    		dialog.setTitle(`Eliminar relaciones de productos contratados`);
+			dialog.width = "500px";
+
+			let itemDeleteContainer = document.createElement("div");
+			itemDeleteContainer.style.display = "flex";
+			itemDeleteContainer.style.flexDirection = "column";
+			itemDeleteContainer.style.justifyContent = "center";
+			itemDeleteContainer.style.alignItems = "center";
+
+			let itemDeleteSpan = document.createElement("span");
+			itemDeleteSpan.innerText = "Esta acción eliminará todas las relaciones de productos contratados. ¿Desea continuar?";
+			itemDeleteContainer.appendChild(itemDeleteSpan);
+
+			let aonButtonDelete = new AonButton();
+			aonButtonDelete.title = MSG.ACCEPT;
+			aonButtonDelete.addEventListener("click", async () => {
+				aonButtonDelete.disabled = true;
+				await deleteDomainBooking({
+					all: true
+				});
+				dialog.close();
+			});
+
+			itemDeleteContainer.appendChild(aonButtonDelete);
+
+			dialog.setContent(itemDeleteContainer);
+			dialog.autoclose = false;
+			dialog.open();
+		});
+
 		let toolbarButtonParams = {
 			id: "UpdateClientItemsButton",
 			name: "Actualizar productos",
@@ -62,6 +102,8 @@ export class AonLinkDomains extends AonElement {
 			dialog.open();
 		});
 		button.querySelector("i").classList.add("material-icons-outlined");
+
+
 		let adcContainer = document.createElement("div");
 		adcContainer.style.width = "100%";
 		adcContainer.style.height = "calc(100% - 40px)";
