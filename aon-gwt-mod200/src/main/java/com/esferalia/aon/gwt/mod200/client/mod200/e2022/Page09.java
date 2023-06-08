@@ -15,8 +15,6 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ547Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ554Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ561Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022LQ579Key;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -181,14 +179,12 @@ public class Page09 extends PageAbs {
 					row = paintKeyBreakdownLink(table, row, Mod2002022Key.LQ547, Mod2002022LQ547Key.values(), HEADERS_4, FOOTER_547);    				
 				}    			
     			if (key == Mod2002022Key.LQ1034) {
-					//row = paintKeyBreakdownLinkLQ1033(table, row, Mod2002022Key.LQ1033.getDescription());
-    				row = paintKeyBreakdownLinkLQ1033(table, row);
+					row = paintKeyBreakdownLinkLQ1033(table, row);
 				}
 			}
 		}
 	}
 	
-	//protected int paintKeyBreakdownLinkLQ1033(final FlexTable tab,int row,final String label) {
 	protected int paintKeyBreakdownLinkLQ1033(FlexTable tab, int row) {
 		final int boxRow = row-1;
 		final int boxCell = tab.getCellCount(boxRow) - 1;
@@ -244,7 +240,6 @@ public class Page09 extends PageAbs {
 				});
 		tableDetail2.addStyleName(AON.CSS.aonPaddingTop());
 		r = 1;
-//		col = 0;
 		for (IMod200KeysProvider key : Mod2002022LQ1033_2Key.values()) {
 			Label desc = new Label(key.getDescription() );
 			if ("Total".equals(key.getDescription()))
@@ -264,20 +259,6 @@ public class Page09 extends PageAbs {
 		tab.setWidget(row, 0, container);
 		tab.getFlexCellFormatter().setColSpan(row, 0, 2);
 		
-//		breakdown.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				container.setVisible( !container.isVisible() );
-//				for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {
-//					tab.getCellFormatter().getElement(boxRow , i).getStyle().setBackgroundColor(
-//							container.isVisible()?backgroundColor:"#FFFFFF");	
-//				}
-//				container.getElement().getStyle().setBackgroundColor(
-//						container.isVisible()?backgroundColor:"#FFFFFF");
-//			}
-//			
-//		});
 		breakdown.addClickHandler(event -> {
 			container.setVisible( !container.isVisible() );
 			for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {

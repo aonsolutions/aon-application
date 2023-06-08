@@ -30,18 +30,8 @@ public class Page18 extends PageAbs {
 	private FlowPanel panelB11; 
 
 	public Page18( Model200PageCallback callback ) {
-		super(callback);
-		
-//		callback.getMod200Object().register( new IMod200ChangeListener() {
-//			
-//			@Override
-//			public void mod200Changed(Mod2002022 mod200) {
-//				paintB11Panel(); // La tabla del panel del apartado B11 lleva un dato calculado, por lo tanto es necesario repintarlo, si se recalcula el modelo por cualquier otra casilla
-//			}
-//		});
-		
+		super(callback);		
 		callback.getMod200Object().register( mod200 -> paintB11Panel() ); // La tabla del panel del apartado B11 lleva un dato calculado, por lo tanto es necesario repintarlo, si se recalcula el modelo por cualquier otra casilla
-		
 	}
 
 	@Override

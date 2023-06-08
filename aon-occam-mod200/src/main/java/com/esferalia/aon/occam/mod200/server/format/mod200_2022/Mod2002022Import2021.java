@@ -1,7 +1,5 @@
 package com.esferalia.aon.occam.mod200.server.format.mod200_2022;
 
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -155,9 +153,10 @@ public class Mod2002022Import2021 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.C0070, mod200old.getDoubleValue(Mod2002021Key.C0070))			
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.C0059, mod200old.getDoubleValue(Mod2002021Key.C0059))  
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.C0065, mod200old.getDoubleValue(Mod2002021Key.C0065))  
-//			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.C0067, mod200old.getDoubleValue(Mod2002021Key.C0067))  
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.C0072, mod200old.getDoubleValue(Mod2002021Key.C0072))
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.C0073, mod200old.getDoubleValue(Mod2002021Key.C0073))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.C0044, mod200old.getDoubleValue(Mod2002021Key.C0044))
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.C0074, mod200old.getDoubleValue(Mod2002021Key.C0074))
 			
 			// IMPORTE NETO DE LA CIFRA DE NEGOCIOS
 			
@@ -183,8 +182,7 @@ public class Mod2002022Import2021 {
 
 			,(mod200old,mod200new) -> mod200new.setEcpnType( mod200old.getEcpnType().ordinal() )        // ECPN
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.C0075, mod200old.getDoubleValue(Mod2002021Key.C0075))
-			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.C0076, mod200old.getDoubleValue(Mod2002021Key.C0076))
-			// FALTA - ESTA CLAVE ESTA DUPLICADA CON UNA DE LOS CARACTERES, VER SI AL FINAL SE QUEDA CON ESTA CLAVE O CON OTRA
+			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.C0076, mod200old.getDoubleValue(Mod2002021Key.C0076))			
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.C0077, mod200old.getDoubleValue(Mod2002021Key.C0077))
 
 			,(mod200old,mod200new) -> mod200new.setPygType(mod200old.getPygType().ordinal() )           // Pérdidas y ganancias 
@@ -221,14 +219,13 @@ public class Mod2002022Import2021 {
             
             ,(mod200old,mod200new) -> mod200new.getSecretary().setName(mod200old.getSecretary().getName())              // Nombre o Razón social - Secretario del Consejo de Administración 
 			,(mod200old,mod200new) -> mod200new.getSecretary().setDocument(mod200old.getSecretary().getDocument())      // N.I.F. - Secretario del Consejo de Administración
-			,(mod200old,mod200new) -> mod200new.getSecretary().setIrnr( addOneYear(mod200old.getSecretary().getIrnr())) // Fecha - Contribuyentes por el I.R.N.R.
+			,(mod200old,mod200new) -> mod200new.getSecretary().setIrnr(addOneYear(mod200old.getSecretary().getIrnr()))  // Fecha - Contribuyentes por el I.R.N.R.
 			
 			// REPRESENTANTES LEGALES
 						
 			,(mod200old,mod200new) -> mod200new.getRepresentatives().addAll(mod200old.getRepresentatives())  // Declaración representantes legales entidad
 		    
-		})
-		
+		})		
 		
 		,PAG14 ( new IPropertyFiller[] {
 				
@@ -323,7 +320,7 @@ public class Mod2002022Import2021 {
 						mod200old.getDoubleValue(Mod2002021Key.BN2200), mod200old.getDoubleValue(Mod2002021Key.BN2197), mod200old.getDoubleValue(Mod2002021Key.BN103B) ) )
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN2319, adjustDoubleTax( // 2020
 						mod200old.getDoubleValue(Mod2002021Key.BN2323), mod200old.getDoubleValue(Mod2002021Key.BN2320), mod200old.getDoubleValue(Mod2002021Key.BN103B) ) )
-				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN199, adjustDoubleTax( // 2021
+				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN199 , adjustDoubleTax( // 2021
 						mod200old.getDoubleValue(Mod2002021Key.BN206)+mod200old.getDoubleValue(Mod2002021Key.BN129), mod200old.getDoubleValue(Mod2002021Key.BN203), mod200old.getDoubleValue(Mod2002021Key.BN103B) ) )
 
 				,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN102 , mod200old.getDoubleValue(Mod2002021Key.BN102) ) // 2015
@@ -683,7 +680,7 @@ public class Mod2002022Import2021 {
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN2234, AonMathUtils.round(mod200old.getDoubleValue(Mod2002021Key.BN2237)/0.05)) // 2020
 			,(mod200old,mod200new) -> setDoubleValue( mod200new, Mod2002022Key.BN2387, AonMathUtils.round(mod200old.getDoubleValue(Mod2002021Key.BN2390)/0.05)+
        			   																	   AonMathUtils.round(mod200old.getDoubleValue(Mod2002021Key.BN1089)/0.05)) // 2021
-			
+
 		})
 
 		,PAG20 ( new IPropertyFiller[] {
@@ -1104,7 +1101,7 @@ public class Mod2002022Import2021 {
 				,AonStringUtils.SPACE
 				,lr.getName()
 				,AonStringUtils.SPACE
-				,formatDate(lr.getNotaryDate()).toString()				
+				,formatDate(lr.getNotaryDate()) 				
 				,AonStringUtils.SPACE
 				,lr.getNotary()));
 		}
@@ -1195,50 +1192,48 @@ public class Mod2002022Import2021 {
 		
 	}
 	
-	public static void main(String argv[]) throws UnsupportedEncodingException, FileNotFoundException {
+	public static void main(String[] argv) {
 		
 		// Esta prueba unicamente crea un objeto del año anterior e inicializa sus casillas con 
 		// los códigos, posteriormente llama a la importacion para ver que se trasladan correctamente
 		try {			
-				Mod2002021 mod200old = new Mod2002021();
-				if (mod200old!=null) {				
-					
-					// PRUEBA - Inicializamos todas las claves con sus numeros
-					
-					mod200old.setBalanceType(2); // PYMES
-					mod200old.setPygType(2); // PYMES
-					mod200old.setEcpnType(3); // No consta
-					 
-					for (Mod2002021Key key : Mod2002021Key.values()) {						
-						try {
-							setDoubleValue2021(mod200old, key, Double.parseDouble(key.name().substring(2)));
-						} catch (NumberFormatException e) {							
-							// nothing
-						}
-					}
-					for (Mod2002021KeyDC key : Mod2002021KeyDC.values()) {						
-						try {
-							setDoubleValue2021(mod200old, key, Double.parseDouble(key.name().substring(2)));
-						} catch (NumberFormatException e) {							
-							//// nothing
-						}
-					}					
-					
-					
-					// Prueba base imponible negativa (casilla 552)
-					setDoubleValue2021(mod200old, Mod2002021Key.LQ552, -552 );
-					
-					// Cooperativas Casillas 17, 18 y 19. Cuota compensacion negativa (casilla 560) 
-					setDoubleValue2021(mod200old, Mod2002021Key.C0017, 0 );
-					setDoubleValue2021(mod200old, Mod2002021Key.C0018, 0 );
-					setDoubleValue2021(mod200old, Mod2002021Key.C0019, 0 );
-					setDoubleValue2021(mod200old, Mod2002021Key.LQ560, 0 );
-					
-					// FIN PRUEBA
-					
-					Mod2002022 mod200new = import2021(mod200old);					
-					toString(mod200new);
+			Mod2002021 mod200old = new Mod2002021();
+
+			// PRUEBA - Inicializamos todas las claves con sus numeros
+
+			mod200old.setBalanceType(2); // PYMES
+			mod200old.setPygType(2); // PYMES
+			mod200old.setEcpnType(3); // No consta
+
+			for (Mod2002021Key key : Mod2002021Key.values()) {
+				try {
+					setDoubleValue2021(mod200old, key, Double.parseDouble(key.name().substring(2)));
+				} catch (NumberFormatException e) {
+					// nothing
 				}
+			}
+			for (Mod2002021KeyDC key : Mod2002021KeyDC.values()) {
+				try {
+					setDoubleValue2021(mod200old, key, Double.parseDouble(key.name().substring(2)));
+				} catch (NumberFormatException e) {
+					//// nothing
+				}
+			}
+
+			// Prueba base imponible negativa (casilla 552)
+			setDoubleValue2021(mod200old, Mod2002021Key.LQ552, -552);
+
+			// Cooperativas Casillas 17, 18 y 19. Cuota compensacion negativa (casilla 560)
+			setDoubleValue2021(mod200old, Mod2002021Key.C0017, 0);
+			setDoubleValue2021(mod200old, Mod2002021Key.C0018, 0);
+			setDoubleValue2021(mod200old, Mod2002021Key.C0019, 0);
+			setDoubleValue2021(mod200old, Mod2002021Key.LQ560, 0);
+
+			// FIN PRUEBA
+
+			Mod2002022 mod200new = import2021(mod200old);
+			toString(mod200new);
+				
 		}
         catch (Exception e) {
 		    e.printStackTrace();

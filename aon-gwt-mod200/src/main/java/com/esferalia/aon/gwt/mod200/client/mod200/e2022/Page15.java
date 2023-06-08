@@ -66,25 +66,11 @@ public class Page15 extends PageAbs {
 		addHeaderCell(table1,row, 3,AON.MSG.liquiMsg4());
 		table1.getFlexCellFormatter().setColSpan(row, 3, 2);
 		++row;
-//		paintKeysProvider(Mod2002022LM1212Key.values(), table1, row, false, new String[] {
-//				AON.MSG.liquiMsg1(),
-//				AON.MSG.liquiMsg21(),
-//				AON.MSG.remainder() ,
-//				AON.MSG.liquiMsg3() ,
-//				AON.MSG.liquiMsg21(),
-//				AON.MSG.remainder()
-//			});
 		paintKeysProvider(Mod2002022LM1212Key.values(), table1, row, false, AON.MSG.liquiMsg1(), AON.MSG.liquiMsg21(), AON.MSG.remainder(), AON.MSG.liquiMsg3(), AON.MSG.liquiMsg21(), AON.MSG.remainder());
 		paintFooterNote(basePanel, FOOTER_1212_1, FOOTER_1212_2);
 		
 		// Pendiente de adición por límite beneficio operativo no aplicado
 		
-//		paintKeysProvider(Mod2002022LM538Key.values(), addTable(AON.MSG.pendingAddinngs(), 3), new String[] {
-//				AON.MSG.liquiMsg1(),
-//				"Importe generado. Pendiente de aplicaci\u00F3n a principio del periodo",
-//				AON.MSG.liquiMsg3(),
-//				AON.MSG.liquiMsg4()				
-//			});
 		paintKeysProvider(Mod2002022LM538Key.values(), addTable(AON.MSG.pendingAddinngs(), 3), AON.MSG.liquiMsg1(), "Importe generado. Pendiente de aplicaci\u00F3n a principio del periodo", AON.MSG.liquiMsg3(), AON.MSG.liquiMsg4());
 		paintFooterNote(basePanel, FOOTER_538_1, FOOTER_538_2);
 		

@@ -23,8 +23,6 @@ import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN588Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022BN590Key;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Constants;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -120,12 +118,12 @@ public class Page11 extends PageAbs {
 					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN1041,Mod2002022BN1041Key.values(),HEADERS_3, FOOTER_1);
 				}	
 				
-				// FALTA - DESGLOSE CLAVE 2315
+				// FALTA - DESGLOSE CLAVE 2315 VER SI TIENE QUE APARECER SOLO EN DETERMINADOS CASOS
 				if (key == Mod2002022Key.BN2315) {
 					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN2315,Mod2002022BN2315Key.values(),HEADERS_1, FOOTER_1);
 				}
 				
-				if (key == Mod2002022Key.BN1039) {  // FALTA - DESGLOSE CLAVE 1039
+				if (key == Mod2002022Key.BN1039) {  // FALTA - DESGLOSE CLAVE 1039 IDEM ANTERIOR
 					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN1039,Mod2002022BN1039Key.values(),HEADERS_1039_2314, FOOTER_1);
 					FlexTable table2 = new FlexTable();
 					table2.setWidth("100%");
@@ -137,7 +135,7 @@ public class Page11 extends PageAbs {
 					row++;
 				}	
 				
-				if (key == Mod2002022Key.BN2314) {  // FALTA - DESGLOSE CLAVE 2314
+				if (key == Mod2002022Key.BN2314) {  // FALTA - DESGLOSE CLAVE 2314 IDEM ANTERIOR
 					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN2314,Mod2002022BN2314Key.values(),HEADERS_1039_2314, FOOTER_1);
 					FlexTable table2 = new FlexTable();
 					table2.setWidth("100%");
@@ -148,7 +146,6 @@ public class Page11 extends PageAbs {
 					table.setWidget(row, 0, table2);
 					row++;
 				}
-				
 				
 			}
 		}
@@ -262,19 +259,14 @@ public class Page11 extends PageAbs {
 		tab.setWidget(row, 0, container);
 		tab.getFlexCellFormatter().setColSpan(row, 0, tab.getCellCount(boxRow)); 
 		
-		breakdown.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				container.setVisible( !container.isVisible() );
-				for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {
-					tab.getCellFormatter().getElement(boxRow , i).getStyle().setBackgroundColor(
-							container.isVisible()?backgroundColor:"#FFFFFF");	
-				}
-				container.getElement().getStyle().setBackgroundColor(
-						container.isVisible()?backgroundColor:"#FFFFFF");
+		breakdown.addClickHandler(event -> {
+			container.setVisible( !container.isVisible() );
+			for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {
+				tab.getCellFormatter().getElement(boxRow , i).getStyle().setBackgroundColor(
+						container.isVisible()?backgroundColor:"#FFFFFF");	
 			}
-			
+			container.getElement().getStyle().setBackgroundColor(
+					container.isVisible()?backgroundColor:"#FFFFFF");
 		});
 		
 		return ++row;

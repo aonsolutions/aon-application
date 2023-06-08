@@ -53,10 +53,6 @@ public class Page08 extends PageAbs {
 		}
 	}
 	
-	
-//	private ListBox opeVol;
-	
-
 	public Page08( Model200PageCallback callback ) {
 		super(callback);
 	}
@@ -108,33 +104,7 @@ public class Page08 extends PageAbs {
 			paintKeyField(tab1, Mod2002022Key.LQ1230, row, 1);
 			paintKeyField(tab1, Mod2002022Key.LQ1231, row, 2);
 			paintEmptyCell(tab1, row, 3);
-//			++row;
 		}
-		
-		// Volumen de operaciones
-//		basePanel.add(getTitle("Cifra de negocios"));
-//		
-//		FlexTable tableVol = addTable();
-//
-//		tableVol.setWidget(0, 0, new Label("Importe neto de la cifra de negocios durante los doce meses anteriores a la fecha de inicio del periodo impositivo"));
-//		
-//		opeVol = new ListBox();
-//		opeVol.addItem("0 - No consta");
-//		opeVol.addItem("1 - Inferior a 20 millones de euros");
-//		opeVol.addItem("2 - Al menos 20 millones de euros pero inferior a 60 millones de euros");
-//		opeVol.addItem("3 - Al menos 60 millones de euros");
-//		opeVol.addChangeHandler( event -> {
-//			DoubleVariableEx bv = new DoubleVariableEx(Mod2002022Key.VOLOPE);
-//			bv.setValue((double)opeVol.getSelectedIndex());
-//			callback.getMod200Object().getMod200().addVariable(bv);
-//			callback.markAsDirty();
-//		});
-//		otherInputs.add(opeVol);
-//		
-//		basePanel.add(opeVol);
-//		tableVol.setWidget(1, 0, opeVol);
-//		
-//		paintFooterNote(basePanel, "Indique el importe neto de la cifra de negocios de los doce meses anteriores a la fecha de inicio del per\u00EDodo impositivo, a efectos de determinar, si proceden, los l\u00EDmites de compensaci\u00F3n de bases imponibles negativas, correcciones contables sujetas al l\u00EDmite del art. 11.12 LIS y/o los l\u00EDmites para las deducciones por doble imposici\u00F3n previstas en los art\u00EDculos 31, 32, 100.11 y DT 23\u00AA LIS.");
 		
 		basePanel.add(getTitle(AON.MSG.liquidation1Label2()));
 		
@@ -196,16 +166,5 @@ public class Page08 extends PageAbs {
 			++row;
 		}
 	}
-	
-//	@Override
-//	public void dump() {
-//		super.dump();
-//		DoubleVariableEx dv = callback.getMod200Object().getMod200().getKeysMap().get(Mod2002022Key.VOLOPE);
-//		int index = 0;
-//		if (dv != null) {
-//			index = dv.getValue().intValue();
-//		}
-//		opeVol.setSelectedIndex(index);
-//	}
 	
 }

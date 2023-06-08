@@ -71,10 +71,10 @@ public class Page02 extends PageAbs {
 		
 		basePanel.add(getTitle(AON.MSG.participationsOut()));
 		
-		//addLabel("Participaciones que a fin de per\u00EDodo sean igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.", true);
 		addLabel(PARTICIPATIONS_LABEL, true);
 		
 		AonDisplayGrid grid = new AonDisplayGrid();
+// FALTA 
 //		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
 //		grid.addStyleName(AON.CSS.aonBlockCenter());
 		grid.addStyleName(AON.CSS.aonMarginTop());
@@ -153,26 +153,10 @@ public class Page02 extends PageAbs {
 		// PARTICIPACIONES DE PERSONAS O ENTIDADES EN LA DECLARANTE
 		
 		basePanel.add(getTitle(AON.MSG.participationsIn()));
-		
-//		addLabel("Participaciones que a fin de per\u00EDodo sean igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.", true);
+
 		addLabel(PARTICIPATIONS_LABEL, true);
 		addLabel("En caso de sociedades de responsabilidad limitada (SL) se deber\u00E1n cumplimentar, al menos, los datos correspondientes a uno de los socios aunque el porcentaje de participaci\u00F3n sea inferior al indicado.");
 		
-		// FALTA - PRUEBA
-//		AonDisplayTable tab2 = new AonDisplayTable();
-//		tab2.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		tab2.addStyleName(AON.CSS.aonBlockCenter());
-//		basePanel.add(tab2);
-//		
-//		tab2.addRow()
-//			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
-//			.addCell( new Label("Rpte."),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20())
-//			.addCell( new Label("F/J/Otra"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20())
-//			.addCell( new Label(AON.MSG.companyName()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
-//			.addCell( new Label(AON.MSG.province() + "/" + AON.MSG.country()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-//			.addCell( new Label("%"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth40())
-//			.addCell( new Label(AON.MSG.nominalValue()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
-//			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
 		AonDisplayTable tab2 = addRegistryTable(AON.MSG.document(), "Rpte.", "F/J/Otra", AON.MSG.companyName(), AON.MSG.province() + "/" + AON.MSG.country(), "% Particip.", AON.MSG.nominalValue());	
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getParticipationsIn().size(); i++) {
@@ -188,13 +172,6 @@ public class Page02 extends PageAbs {
 			
 			CheckBox rep = new CheckBox();			
 			rep.setValue(callback.getMod200Object().getMod200().getParticipationsIn().get(idx).isRepresentative());
-//			rep.addClickHandler(new ClickHandler() {
-//				@Override
-//				public void onClick(ClickEvent event) {
-//					callback.getMod200Object().getMod200().getParticipationsIn().get(idx).setRepresentative(rep.getValue());
-//					callback.markAsDirty();
-//				}
-//			});
 			rep.addClickHandler(event -> {
 				callback.getMod200Object().getMod200().getParticipationsIn().get(idx).setRepresentative(rep.getValue());
 				callback.markAsDirty();
@@ -232,20 +209,6 @@ public class Page02 extends PageAbs {
 			} else if (c != null) {				
 				provinceCountry.setSelectedIndex(Province.values().length + c.ordinal());
 			}			
-//			provinceCountry.addChangeHandler(new ChangeHandler() {			
-//				@Override
-//				public void onChange(ChangeEvent event) {
-//					int index = provinceCountry.getSelectedIndex();
-//					if (index < Province.values().length) {
-//						callback.getMod200Object().getMod200().getParticipationsIn().get(idx).setProvince(index);
-//						callback.getMod200Object().getMod200().getParticipationsIn().get(idx).setCountry(null);
-//					} else {				
-//						callback.getMod200Object().getMod200().getParticipationsIn().get(idx).setProvince(0);
-//						callback.getMod200Object().getMod200().getParticipationsIn().get(idx).setCountry(Country.safeIso2(Country.values()[index-Province.values().length]));
-//					}
-//					callback.markAsDirty();
-//				}
-//			});
 			provinceCountry.addChangeHandler(event -> {
 				int index = provinceCountry.getSelectedIndex();
 				if (index < Province.values().length) {
@@ -321,16 +284,6 @@ public class Page02 extends PageAbs {
 		
 		basePanel.add(getTitle(AON.MSG.minorEntities()));
 		
-//		AonDisplayTable tab4 = new AonDisplayTable();
-//		tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		tab4.addStyleName(AON.CSS.aonBlockCenter());
-//		basePanel.add(tab4);
-//		
-//		tab4.addRow()
-//			.addCell( new Label(AON.MSG.document()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth100())
-//			.addCell( new Label(AON.MSG.companyName()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth300())
-//			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
-
 		AonDisplayTable tab4 = addRegistryTable(AON.MSG.document(), AON.MSG.companyName());
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getMinorEntities().size(); i++) {
@@ -385,20 +338,6 @@ public class Page02 extends PageAbs {
 		
 		basePanel.add(getTitle(AON.MSG.utefor()));
 		
-//		AonDisplayTable tabForeign = new AonDisplayTable();
-//		tabForeign.addStyleName(AON.CSS.aonWidthAlmostAll());
-//		tabForeign.addStyleName(AON.CSS.aonBlockCenter());
-//		basePanel.add(tabForeign);
-//		
-//		tabForeign.addRow()
-//			.addCell( new Label(AON.MSG.identification()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth200())
-//			.addCell( new Label(AON.MSG.utefor1()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-//			.addCell( new Label(AON.MSG.utefor2()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-//			.addCell( new Label(AON.MSG.utefor3()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-//			.addCell( new Label(AON.MSG.utefor4()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-//			.addCell( new Label(AON.MSG.utefor5()),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())
-//			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
-		
 		AonDisplayTable tabForeign = addRegistryTable();
 		
 		tabForeign.addRow()
@@ -426,13 +365,6 @@ public class Page02 extends PageAbs {
 			CountryListBox country = new CountryListBox();
 			country.setWidth("140px");
 			country.setValue(Country.safeValueOf(callback.getMod200Object().getMod200().getUteForeign().get(idx).getCountry()));
-//			country.addChangeHandler(new ChangeHandler() {			
-//				@Override
-//				public void onChange(ChangeEvent event) {
-//					callback.getMod200Object().getMod200().getUteForeign().get(idx).setCountry(Country.safeIso2(country.getValue()));
-//					callback.markAsDirty();
-//				}
-//			});
 			country.addChangeHandler(event -> {				
 				callback.getMod200Object().getMod200().getUteForeign().get(idx).setCountry(Country.safeIso2(country.getValue()));
 				callback.markAsDirty();				
@@ -510,15 +442,6 @@ public class Page02 extends PageAbs {
 		
 		// NIF de la/las sociedad/es disuelta/s
 		
-//		AonDisplayTable tabSicav1 = new AonDisplayTable();
-//		tabSicav1.setWidth("30%");
-//		tabSicav1.addStyleName(AON.CSS.aonBlockCenter());
-//		basePanel.add(tabSicav1);
-//		
-//		tabSicav1.addRow()   
-//			.addCell( new Label("NIF de la/las sociedad/es disuelta/s"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
-//			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
-		
 		AonDisplayTable tabSicav1 = addRegistryTable("NIF de la/las sociedad/es disuelta/s");
 		
 		for (int i = 0; i < callback.getMod200Object().getMod200().getSicav1().size(); i++) {
@@ -557,15 +480,6 @@ public class Page02 extends PageAbs {
 		tabSicav1.addRow().addCell(addButtonSicav1);
 		
 		// NIF de la/las IIC donde reinvierte
-		
-//		AonDisplayTable tabSicav2 = new AonDisplayTable();
-//		tabSicav2.setWidth("30%");
-//		tabSicav2.addStyleName(AON.CSS.aonBlockCenter());
-//		basePanel.add(tabSicav2);
-//		
-//		tabSicav2.addRow()  
-//			.addCell( new Label("NIF de la/las IIC donde reinvierte"),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth150())			
-//			.addCell( new Label(""),AON.CSS.aonBold(),AON.CSS.aonBorderBottom(),AON.CSS.aonWidth20());
 		
 		AonDisplayTable tabSicav2 = addRegistryTable("NIF de la/las IIC donde reinvierte");		
 		

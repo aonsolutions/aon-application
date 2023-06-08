@@ -39,15 +39,6 @@ public class Page17 extends PageAbs {
 		addHeaderCell(table, row, 4, AON.MSG.dot2());
 		table.getFlexCellFormatter().setColSpan(row, 4, 2);
 		row++;
-//		paintKeysProvider(Mod2002022LM1494Key.values(), table, row, false, new String[] {
-//				AON.MSG.liquiMsg1(),
-//				AON.MSG.dot11(),
-//				AON.MSG.dot12(),
-//				AON.MSG.dot22(),
-//				AON.MSG.dot23(),
-//				AON.MSG.dot11(),
-//				AON.MSG.dot12()
-//			});
 		paintKeysProvider(Mod2002022LM1494Key.values(), table, row, false, 
 				AON.MSG.liquiMsg1(),
 				AON.MSG.dot11(),
@@ -70,17 +61,6 @@ public class Page17 extends PageAbs {
 		addHeaderCell(table2,row, 5,AON.MSG.dot4_2());
 		table2.getFlexCellFormatter().setColSpan(row, 5, 4);
 		row++;
-//		paintKeysProvider(Mod2002022LM1535Key.values(), table2, row, false, new String[] {
-//				AON.MSG.liquiMsg1(),  
-//				AON.MSG.dot30() + " (*)",
-//				AON.MSG.dot41(),
-//				AON.MSG.dot31(),
-//				AON.MSG.dot32(),
-//				AON.MSG.dot33(),
-//				AON.MSG.dot34(),
-//				AON.MSG.dot35(),
-//				AON.MSG.dot36() + " (*)"
-//			});
 		paintKeysProvider(Mod2002022LM1535Key.values(), table2, row, false, 
 				AON.MSG.liquiMsg1(),  
 				AON.MSG.dot30() + " (*)",
@@ -107,19 +87,6 @@ public class Page17 extends PageAbs {
 		addHeaderCell(table3,row, 6,AON.MSG.dot4_2());
 		table3.getFlexCellFormatter().setColSpan(row, 6, 3);
 		row++;
-//		paintKeysProvider(Mod2002022LM1561Key.values(), table3, row, false, new String[] {
-//				AON.MSG.liquiMsg1(),
-//				AON.MSG.dot40(),
-//				AON.MSG.dot41(),
-//				AON.MSG.dot42(),
-//				AON.MSG.dot43(),
-//				AON.MSG.dot44(),
-//				AON.MSG.dot45(),
-//				AON.MSG.dot46(),
-//				AON.MSG.dot47(),
-//				AON.MSG.dot48(),
-//				AON.MSG.dot49()
-//			});
 		paintKeysProvider(Mod2002022LM1561Key.values(), table3, row, false, 
 				AON.MSG.liquiMsg1(),
 				AON.MSG.dot40(),
@@ -162,13 +129,6 @@ public class Page17 extends PageAbs {
 		FlexTable table5 = addTable("", 4);
 		paintAmountLabel(table5);
 		
-//		paintKeysProvider(Mod2002022LM1579Key.values(), table5, 1, false, new String[] {
-//				AON.MSG.liquiMsg1(),
-//				AON.MSG.dot50(),
-//				AON.MSG.dot51(),
-//				AON.MSG.dot52(),
-//				AON.MSG.dot53()
-//			});
 		paintKeysProvider(Mod2002022LM1579Key.values(), table5, 1, false, 
 				AON.MSG.liquiMsg1(),
 				AON.MSG.dot50(),

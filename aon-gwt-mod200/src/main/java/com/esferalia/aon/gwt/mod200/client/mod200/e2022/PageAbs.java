@@ -36,13 +36,6 @@ public abstract class PageAbs extends ResizeComposite {
 	protected static final String PARTICIPATIONS_LABEL = "Participaciones que a fin de per\u00EDodo sean igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.";
 	protected static final int BOX_LENGTH = 5;	
 
-//	private ExpressionResolver resolver = new ExpressionResolver() {
-//		@Override
-//		public void resolve(String expression, AsyncCallback<Double> callback) {
-//			PageAbs.this.callback.getMod200Object().mathExpression(expression,callback);
-//		}
-//	};
-	
 	private ExpressionResolver resolver = (expression, callback) -> 
 		PageAbs.this.callback.getMod200Object().mathExpression(expression,callback);			
 	
@@ -54,29 +47,6 @@ public abstract class PageAbs extends ResizeComposite {
 	protected PageAbs() {
 		super();
 	}
-	
-//	protected PageAbs(Model200PageCallback callback) {
-//		this.callback = callback;
-//		
-//		callback.getMod200Object().register(new IMod200ChangeListener() {
-//			
-//			@Override
-//			public void mod200Changed(Mod2002022 mod200) {
-//				for (IMod200Key key : inputs.keySet()) {
-//					DoubleVariableEx v = mod200.getDraftMap().get(key);
-//					if (v != null && !v.isChangedByUser()) {
-//						// Se repintan los valores calculados automaticamente
-//						AonDoubleBox input = inputs.get(key);
-//						input.setValue(v.getValue());						
-//					}
-//				}
-//			}
-//		});
-//		
-//		addBasePanel();
-//		initializeTable();
-//
-//	}
 	
 	protected PageAbs(Model200PageCallback callback) {
 		this.callback = callback;
@@ -171,7 +141,7 @@ public abstract class PageAbs extends ResizeComposite {
 		ScrollPanel scroll = new ScrollPanel();
 		basePanel = new FlowPanel();		
 		basePanel.addStyleName(AON.CSS.aonPaddingBottom());
-		// FALTA - PRUEBA
+		// FALTA - PRUEBA PARA QUE NO OCUPEN TODA LA PANTALLA DE ANCHO SINO QUE COMO MAXIMO SE AJUSTE MAS O MENOS AL CONTENIDO QUE TIENE
 		basePanel.getElement().getStyle().setProperty("max-width", "fit-content");
 		
 		scroll.add(basePanel);
@@ -363,21 +333,6 @@ public abstract class PageAbs extends ResizeComposite {
 		
 		tab.setWidget(row, 0, container);
 		tab.getFlexCellFormatter().setColSpan(row, 0, tab.getCellCount(boxRow)); 
-		
-//		breakdown.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				container.setVisible( !container.isVisible() );
-//				for ( int i = 0 ; i < tab.getCellCount(boxRow); i++) {
-//					tab.getCellFormatter().getElement(boxRow , i).getStyle().setBackgroundColor(
-//							container.isVisible()?backgroundColor:"#FFFFFF");	
-//				}
-//				container.getElement().getStyle().setBackgroundColor(
-//						container.isVisible()?backgroundColor:"#FFFFFF");
-//			}
-//			
-//		});
 		
 		breakdown.addClickHandler(event -> {
 			container.setVisible( !container.isVisible() );
@@ -578,6 +533,7 @@ public abstract class PageAbs extends ResizeComposite {
 	
 	public AonDisplayTable addRegistryTable(String... headers) {
 		AonDisplayTable tab = new AonDisplayTable();
+// FALTA - PRUEBA PARA QUE NO OCUPE TODA LA PANTALLA SINO LA PARTE IZQUIERDA UNICAMENTE, ASI LAS COLUMNAS SALEN MAS JUNTAS
 //		tab4.addStyleName(AON.CSS.aonWidthAlmostAll());
 //		tab4.addStyleName(AON.CSS.aonBlockCenter());
 		tab.getElement().getStyle().setProperty("margin-left", "1%");		

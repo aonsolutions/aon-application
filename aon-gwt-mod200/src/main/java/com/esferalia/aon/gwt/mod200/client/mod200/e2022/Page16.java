@@ -27,14 +27,6 @@ public class Page16 extends PageAbs {
 		addHeaderCell(table1, row, 2, "Aplicado/materializado en esta liquidaci\u00F3n");
 		table1.getFlexCellFormatter().setColSpan(row, 2, 3);
 		row++;
-//		paintKeysProvider(Mod2002022RIC_1Key.values(), table1, row, false, new String[] {
-//				"",
-//				"Pendiente de materializar RIC a principio de per\u00EDodo", 
-//				"Inversiones previstas letras A y B, art. 27.4 Ley 19/1994",
-//				"Inversiones previstas letras B bis, C y D, art. 27.4 Ley 19/1994",
-//				"Inversiones anticipadas consideradas materializaci\u00F3n de la RIC en esta liquidaci\u00F3n",
-//				"Pendiente de materializar RIC al final de per\u00EDodo"	
-//			});
 		paintKeysProvider(Mod2002022RIC_1Key.values(), table1, row, false, 
 				"",
 				"Pendiente de materializar RIC a principio de per\u00EDodo", 
@@ -55,13 +47,6 @@ public class Page16 extends PageAbs {
 		
 		// Inversiones anticipadas
 
-//		paintKeysProvider(Mod2002022RIC_2Key.values(), addTable("", 4, "150px"), 0, false, new String[] {
-//				"",
-//				"Pendiente de dotar RIC a principio de per\u00EDodo",
-//				"Inversiones previstas letras A y B, art. 27.4 Ley 19/1994",
-//				"Inversiones previstas letras B bis, C y D, art. 27.4 Ley 19/1994",
-//				"Pendiente de dotar RIC al final de per\u00EDodo"
-//			});
 		paintKeysProvider(Mod2002022RIC_2Key.values(), addTable("", 4, "150px"), 0, false, 
 				"",
 				"Pendiente de dotar RIC a principio de per\u00EDodo",

@@ -420,8 +420,6 @@ public class Model2002022 extends DockLayoutPanel {
 							public void onFailure(Throwable caught) {
 							}
 						});				
-				
-				
 			}
 
 			@Override
@@ -643,7 +641,7 @@ public class Model2002022 extends DockLayoutPanel {
 							
 							@Override
 							public void onSuccess(Void result) {
-								// Si todo ha ido bien, creamos el nuevo modelo
+								// Si el borrado ha ido bien, creamos el nuevo modelo
 								Model200.getMod2002022Service().createMod2002022(options.getOccam(), 2022
 										, new AsyncCallback<Mod2002022>() {
 

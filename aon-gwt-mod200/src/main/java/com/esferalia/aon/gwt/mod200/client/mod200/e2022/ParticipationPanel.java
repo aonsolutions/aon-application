@@ -189,7 +189,6 @@ public class ParticipationPanel extends AonCustomDialog {
 		
 		rootPanel.clear();
 		
-//		Label label = new Label("Participaciones que a fin de per\u00EDodo sean igual o superior al 5% del capital o al 1% si se trata de valores que coticen en un mercado secundario organizado.");
 		Label label = new Label(PageAbs.PARTICIPATIONS_LABEL);
 		label.setStyleName(AON.CSS.aonMargin());
 		label.addStyleName(AON.CSS.aonBold());

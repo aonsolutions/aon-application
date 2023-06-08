@@ -144,7 +144,7 @@ public class Mod2002022Object implements Serializable {
 	}
 
 	public boolean isVisible(Mod2002022Key key) {
-		return mod200.getVisibleMap().containsKey(key);
+		return mod200.getVisibleMap().containsKey(key);		
 	}
 	
 	public void doubleValueChanged(IMod200Key k, double value) {
@@ -163,7 +163,7 @@ public class Mod2002022Object implements Serializable {
 		try {
 			double ret = Model200.resolve(expression);
 			callback.onSuccess(ret);
-		} catch (Throwable t) {
+		} catch (Throwable t) {		
 			callback.onFailure(t);
 		}
 	}

@@ -10,8 +10,6 @@ import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200Pag
 import com.esferalia.aon.occam.api.model.type.Country;
 import com.esferalia.aon.occam.mod200.api.model.GroupEntitie;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 
@@ -67,13 +65,6 @@ public class Page19 extends PageAbs {
 			CountryListBox country = new CountryListBox();
 			country.setWidth("140px");
 			country.setValue(Country.safeValueOf(callback.getMod200Object().getMod200().getGroupEntities().get(idx).getCountry()));
-//			country.addChangeHandler(new ChangeHandler() {			
-//				@Override
-//				public void onChange(ChangeEvent event) {
-//					callback.getMod200Object().getMod200().getGroupEntities().get(idx).setCountry(Country.safeIso2(country.getValue()));
-//					callback.markAsDirty();
-//				}
-//			});
 			country.addChangeHandler(event -> {
 				callback.getMod200Object().getMod200().getGroupEntities().get(idx).setCountry(Country.safeIso2(country.getValue()));
 				callback.markAsDirty();
@@ -157,7 +148,6 @@ public class Page19 extends PageAbs {
 		// Botón añadir 
 		AonTableButton addButton4 = new AonTableButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
 		addButton4.addClickHandler(event -> {
-			//callback.getMod200Object().getMod200().getEstablishments().add(new String());
 			callback.getMod200Object().getMod200().getEstablishments().add("");
 			paint();
 		});
