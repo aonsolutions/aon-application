@@ -108,6 +108,7 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			Object object = new AonRouting(api)
 //				.addRoute(CUSTOMER_DOMAINS, DomainCompanyServlet::deleteAction)
 				.addRoute(DOMAIN_LINKED, DomainCompanyServlet::deleteDomainLinked)
+				.addRoute(BOOKING, DomainCompanyServlet::deleteBookingRitems)
 				.apply();
 			
 			response(req, resp, object);
@@ -226,13 +227,14 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 									.setDomain(api.getDomain().getId())
 									.setRegistry(aonCustomer)
 									.setItem(item.getId())
-									.setType(RegistryMode.CUSTOMER)
+									.setType(RegistryMode.TARGET)
 									.setStatus(RegistryItemStatus.ACTIVE)
-									.setPriority(Priority.NONE);
+									.setPriority(Priority.NONE)
+									.setCode("CONSOLE");
 							try {
 								AON.saveRItem(api.getDomain(), api.getUser(), newRitem);								
 							} catch (Exception e) {
-								errors.put(createError(barCode, domainType, app, "No se pudo insertar guardar [" + e.getMessage() + "]"));
+								errors.put(createError(barCode, domainType, app, "No se pudo guardar [" + e.getMessage() + "]"));
 							}
 							
 						}
@@ -250,6 +252,18 @@ public class DomainCompanyServlet extends AonApiHttpServlet {
 			return new JSONObject();
 		}
 	}
+	
+	private static JSONObject deleteBookingRitems(AonApiData api) {
+		int customer = api.getData().optInt(IJsonNames.CUSTOMER);
+		boolean removeAll = api.getData().optBoolean("all");
+		if (!removeAll && customer > 0) {
+			AON.deleteRItem(api.getDomain(), api.getUser(), f -> f.getRegistryProperty().eq(customer).and(f.getCodeProperty().eq("CONSOLE").and(f.getTypeProperty().eq(RegistryMode.TARGET.value()))));
+		} else if (removeAll){
+			AON.deleteRItem(api.getDomain(), api.getUser(), f -> f.getCodeProperty().eq("CONSOLE").and(f.getTypeProperty().eq(RegistryMode.TARGET.value())));
+		}
+		return new JSONObject();
+	}
+	
 	
 	private static JSONObject createError(String barCode, DomainType domainType, AonApp app, String error) {
 		JSONObject itemErr = new JSONObject();
