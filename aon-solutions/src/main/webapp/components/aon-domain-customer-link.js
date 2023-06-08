@@ -9,6 +9,7 @@ import { AonButton } from './aon-button.js';
 import { AonSelect } from './aon-select.js';
 import { AonCheckbox } from './aon-checkbox.js';
 import { AonDateUtils } from '../modules/utils/AonDateUtils.js';
+import { getApp } from '../services/app.js';
 
 export class AonDomainCustomer extends AonElement {
 
@@ -463,7 +464,7 @@ export class AonDomainCustomer extends AonElement {
     this.loadingPanel.style.justifyContent = "center";
     this.loadingPanel.style.alignItems = "center";
     this.loadingPanel.style.backgroundColor = "rgba(240,248,255,0.5)";
-    this.loadingPanel.style.zIndex = "9999";
+    this.loadingPanel.style.zIndex = "2";
 
     let loadingLine = document.createElement('div');
     loadingLine.style.display = "flex";
@@ -1192,7 +1193,8 @@ export class AonDomainCustomer extends AonElement {
           let childApp = document.createElement("div");
           childApp.style.display = "block";
           childApp.style.width = "100%";
-          childApp.innerText = app;
+          let application = getApp(app);
+          childApp.innerText = application ? application.title : app;
           childAppsContainer.appendChild(childApp);
         });
       }
@@ -1251,8 +1253,8 @@ export class AonDomainCustomer extends AonElement {
         let summaryDomains = summary ? summary.domain : null;
 
         this.createSummaryItem(summaryContainer, MSG.APPLICATIONS, summaryApps);
-        this.createSummaryItem(summaryContainer, MSG.USERS, summaryUsers);
-        this.createSummaryItem(summaryContainer, "Dominios", summaryDomains);
+        this.createSummaryItem(summaryContainer, MSG.USERS, summaryUsers, "user");
+        this.createSummaryItem(summaryContainer, "Dominios", summaryDomains, "domain");
 
 
 
@@ -1279,7 +1281,7 @@ export class AonDomainCustomer extends AonElement {
     }
   }
 
-  createSummaryItem(summaryContainer, title, summaryElements) {
+  createSummaryItem(summaryContainer, title, summaryElements, type) {
     if (summaryElements) {
       let summaryElementsContainer = document.createElement("div");
       summaryElementsContainer.style.display = "flex";
@@ -1299,7 +1301,33 @@ export class AonDomainCustomer extends AonElement {
         summaryElementsItem.style.display = "block";
         summaryElementsItem.style.width = "100%";
         summaryElementsItem.style.marginLeft = "10px";
-        summaryElementsItem.innerText = `${summaryElement}: ${summaryElements[summaryElement]}`;
+        
+        let itemTitle = "";
+        if (type === "domain") {
+          itemTitle = this.getDomainTypeDescription(summaryElement);
+        } else if (type === "user") {
+          let elementName = (summaryElement ? summaryElement : "").toLowerCase().trim();
+          switch (elementName) {
+            case "shared":
+              itemTitle = "Compartido"
+              break;
+            case "childdefinedusers":
+              itemTitle = "Usuarios contratados";
+              break;
+            case "childbillingusers":
+              itemTitle = "Usuarios facturables";
+              break;
+            default:
+              itemTitle = summaryElement;
+              break;
+          }
+        } else  {
+          let application = getApp(summaryElement);
+          itemTitle = application ? application.title : summaryElement;
+        }
+
+
+        summaryElementsItem.innerText = `${itemTitle}: ${summaryElements[summaryElement]}`;
         summaryElementsContainer.appendChild(summaryElementsItem);
       }
     }
