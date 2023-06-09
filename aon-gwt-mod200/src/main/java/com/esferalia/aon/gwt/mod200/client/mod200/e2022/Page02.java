@@ -74,7 +74,6 @@ public class Page02 extends PageAbs {
 		addLabel(PARTICIPATIONS_LABEL, true);
 		
 		AonDisplayGrid grid = new AonDisplayGrid();
-// FALTA 
 //		grid.addStyleName(AON.CSS.aonWidthAlmostAll());
 //		grid.addStyleName(AON.CSS.aonBlockCenter());
 		grid.addStyleName(AON.CSS.aonMarginTop());
@@ -433,9 +432,7 @@ public class Page02 extends PageAbs {
 		otherInputs.add(addButtonForeign);
 		basePanel.add(addButtonForeign);
 		
-		// FALTA - QUE SOLO SALGA CUANDO ESTA EL CARACTER 84 MARCADO ??
 		// E. SOCIOS DE SICAV EN RÉGIMEN ESPECIAL DE DISOLUCIÓN Y LIQUIDACIÓN (DT 41ª LIS)
-		// Sólo se podrá cumplimentar este apartado cuando se haya marcado la clave 00084 Régimen especial de disolución y liquidación de SICAV (DT 41ª LIS).
 		
 		basePanel.add(getTitle("SOCIOS DE SICAV EN R\u00C9GIMEN ESPECIAL DE DISOLUCI\u00D3N Y LIQUIDACI\u00D3N (DT 41\u00AA LIS)"));
 		addLabel("Los socios de SICAV en r\u00E9gimen especial de disoluci\u00F3n y liquidaci\u00F3n (DT 41\u00AA LIS) consignar\u00E1n, a continuaci\u00F3n, los siguientes datos:");

@@ -223,10 +223,11 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		throw new UnsupportedOperationException();
 	}
 
-	@Override
-	protected void finalize() throws Throwable {
-		context = null;
-	}
+// FALTA - VER QUE NO TIENE EFECTOS SECUNDARIOS QUITAR ESTO	
+//	@Override
+//	protected void finalize() throws Throwable {
+//		context = null;
+//	}
 	
 	// ***********************************************************************
 	// Métodos disponibles en las expresiones MVEL.
@@ -580,7 +581,7 @@ public class Mod2002022MVELContext implements Map<String, Object> {
 		return AonMathUtils.round( (double) limit * getDays() / 365);	
 	}
 	
-	// FALTA - CREO QUE NO SE USA
+	// FALTA - CREO QUE NO SE USA, PERO DEBERIA USARSE PARA NO CALCULAR EL DESGLOSE DE ESTA CASILLA CUANDO ESTA MARCADO 9 O 10 PUES ES DE CUMPLIMENTACION DIRECTA
 //	public double computeLQ1032() throws AonCoreException {
 //		if (isGroup() && getContainsKey(Mod2002022Key.LQ1032)) {
 //			return getValue(Mod2002022Key.LQ1032);

@@ -47,7 +47,7 @@ public enum Mod2002022BN588Key implements Serializable, IMod200KeysProvider {
 	,C037(new Mod2002022Key[]{Mod2002022Key.BN228 ,Mod2002022Key.BN229 ,Mod2002022Key.BN230 },"2020: Investigaci\u00F3n y desarrollo (CT)")
 	,C038(new Mod2002022Key[]{Mod2002022Key.BN234 ,Mod2002022Key.BN235 ,Mod2002022Key.BN236 },"2020: Innovaci\u00F3n tecnol\u00F3gica (IT)")
 	,C039(new Mod2002022Key[]{Mod2002022Key.BN1922,Mod2002022Key.BN1923,Mod2002022Key.BN1924},"2020: Inversiones en territ. Africa Occidental y gastos de propaganda y publicidad (art. 27 bis Ley 19/1994) (TAP)") 
-	,C040(new Mod2002022Key[]{Mod2002022Key.BN2145,Mod2002022Key.BN2146,Mod2002022Key.BN2148},"2021: Suma deducciones Cap. IV Tit. VI Ley 43/95, RDLeg. 4/2004 y LIS (excepto I+D+i y TAP)")
+	,C040(new Mod2002022Key[]{Mod2002022Key.BN2145,Mod2002022Key.BN2146,Mod2002022Key.BN2448},"2021: Suma deducciones Cap. IV Tit. VI Ley 43/95, RDLeg. 4/2004 y LIS (excepto I+D+i y TAP)")
 	,C041(new Mod2002022Key[]{Mod2002022Key.BN780 ,Mod2002022Key.BN781 ,Mod2002022Key.BN782 },"2021: Investigaci\u00F3n y desarrollo (CT)")                        
 	,C042(new Mod2002022Key[]{Mod2002022Key.BN786 ,Mod2002022Key.BN787 ,Mod2002022Key.BN788 },"2021: Innovaci\u00F3n tecnol\u00F3gica (IT)")                              
 	,C043(new Mod2002022Key[]{Mod2002022Key.BN1925,Mod2002022Key.BN1926,Mod2002022Key.BN1927},"2021: Inversiones en territ. \u00E1frica Occidental y gastos de propaganda y publicidad (art. 27 bis Ley 19/1994) (TAP)") 

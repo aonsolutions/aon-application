@@ -154,9 +154,8 @@ public class Page09 extends PageAbs {
 				
 				if (margin) {
 					table.getCellFormatter().addStyleName(row-1, 0, AON.AON_CSS.aonPaddingLeft20());
-				}
+				}				
 				
-				// FALTA - DESGLOSES CASILLAS 1887 Y 1890 - ESTE DESGLOSE TIENE 2 SUBTOTALES Y UN TOTAL VER CUANDO DEBE APARECER
 				if (key == Mod2002022Key.LQ1890) {
 					row = paintKeyBreakdownLink(table, row, Mod2002022Key.LQ1887, Mod2002022LQ243Key.values(), HEADERS_4, FOOTER_547);
 				}

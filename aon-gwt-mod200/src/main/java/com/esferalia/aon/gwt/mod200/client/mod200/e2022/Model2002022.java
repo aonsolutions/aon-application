@@ -78,11 +78,11 @@ public class Model2002022 extends DockLayoutPanel {
 	Label statusLabel;
 	SimpleLayoutPanel pageContainer = new SimpleLayoutPanel();
 	
-	FormPanel diskForm;
-	Hidden modIdHidden;
-	Hidden domainIdHidden;
-	Hidden domainNameHidden;
-	Hidden userHidden;
+//	FormPanel diskForm;
+//	Hidden modIdHidden;
+//	Hidden domainIdHidden;
+//	Hidden domainNameHidden;
+//	Hidden userHidden;
 
 	private Model200ModuleOptions options;
 	
@@ -104,18 +104,18 @@ public class Model2002022 extends DockLayoutPanel {
 		
 		AON.ensureInjected();
 
-		diskForm = new FormPanel("_blank");
-		diskForm.setMethod(FormPanel.METHOD_POST);
-		FlowPanel formFlowPanel = new FlowPanel();
-		diskForm.add(formFlowPanel);
-		modIdHidden = new Hidden("modId");
-		formFlowPanel.add(modIdHidden);
-		domainIdHidden = new Hidden("domainId");
-		formFlowPanel.add(domainIdHidden);
-		domainNameHidden = new Hidden("domainName");
-		formFlowPanel.add(domainNameHidden);
-		userHidden = new Hidden("user");
-		formFlowPanel.add(userHidden);		
+//		diskForm = new FormPanel("_blank");
+//		diskForm.setMethod(FormPanel.METHOD_POST);
+//		FlowPanel formFlowPanel = new FlowPanel();
+//		diskForm.add(formFlowPanel);
+//		modIdHidden = new Hidden("modId");
+//		formFlowPanel.add(modIdHidden);
+//		domainIdHidden = new Hidden("domainId");
+//		formFlowPanel.add(domainIdHidden);
+//		domainNameHidden = new Hidden("domainName");
+//		formFlowPanel.add(domainNameHidden);
+//		userHidden = new Hidden("user");
+//		formFlowPanel.add(userHidden);		
 		
 		mod200Object = new Mod2002022Object(options, mod200);
 		
@@ -130,7 +130,7 @@ public class Model2002022 extends DockLayoutPanel {
 		addWest(getLinksPanel(), 300);
 		add(pageContainer);		
 		
-		dumpP00((mod200Object.getMod200().getId() == null));
+		dumpP00();
 		popup.hide();
 		if (mod200Object.getMod200().getId() == null) 
 			markAsDirty();
@@ -155,36 +155,10 @@ public class Model2002022 extends DockLayoutPanel {
 		
 	}
 
-	private void dumpP00( boolean charactersEnabled) {
-//		ensurePage(P00, new Model200PageCallback(){
-//
-//			@Override
-//			public Mod2002022Object getMod200Object() {
-//				return mod200Object;
-//			}
-//
-//			@Override
-//			public void markAsDirty() {
-//				Model2002022.this.markAsDirty();
-//			}
-//
-//			@Override
-//			public Model200Callback getMod200Callback() {				
-//				return mod200Callback;
-//			}
-//
-//			@Override
-//			public boolean isDirty() {
-//				// FALTA
-//				// TODO Auto-generated method stub
-//				return Model2002022.this.isDirty();
-//			}
-//			
-//		}).dump();
+	private void dumpP00() {
 		ensurePage(P00).dump();		
 		pageContainer.setWidget(getPage(P00));
 		refreshButtonsVisibility();
-		
 	}
 	
 	private void refreshButtonsVisibility() {
@@ -275,33 +249,11 @@ public class Model2002022 extends DockLayoutPanel {
 		}
 		
 		private void showPage(int page) {
+			
 			FlowPanel parent = 	(FlowPanel) getParent();
 			for (int i = 0 ; i < parent.getWidgetCount(); i++) {
 				parent.getWidget(i).removeStyleName(AON.CSS.aonBackgroundLigthGray());
-			}
-			
-//			PageAbs pageAbs = ensurePage(page, new Model200PageCallback(){
-//													@Override 
-//													public Mod2002022Object getMod200Object() {
-//														return mod200Object;
-//													}
-//							
-//													@Override
-//													public void markAsDirty() {
-//														Model2002022.this.markAsDirty();						
-//													}
-//
-//													@Override
-//													public Model200Callback getMod200Callback() {
-//														return mod200Callback;
-//													}
-//
-//													@Override
-//													public boolean isDirty() {
-//														// TODO Auto-generated method stub
-//														return Model2002022.this.isDirty();
-//													}
-//												});
+			}			
 			PageAbs pageAbs = ensurePage(page);			
 			if (pageAbs.isAvailable()) {
 				pageAbs.dump();
@@ -341,70 +293,61 @@ public class Model2002022 extends DockLayoutPanel {
 			public void markAsDirty() {
 				Model2002022.this.markAsDirty();
 			}
+			
+			// FALTA - AQUI ESTAN LAS OPCIONES PARA LA PAGINA DE LA AGENCIA TRIBUTARIA
 
 			@Override
 			public String getCheckAction() {
-				// TODO Auto-generated method stub
 				return GWT.getHostPageBaseURL() +"aon_gwt_mod200/ms/Mod2002022CheckAEAT";
 			}
 
 			@Override
 			public String getCheckDataResponseDataAction() {
-				// TODO Auto-generated method stub
-				return GWT.getHostPageBaseURL() +"aon_gwt_mod200/ms/Mod2002022CheckDataResponseData";
+				return GWT.getHostPageBaseURL() +"/aon_gwt_mod200/ms/Mod2002022CheckDataResponseData";
 			}
 
 			@Override
 			public IFiscalModel getModel() {
-				// TODO Auto-generated method stub
 				return mod200Object.getMod200();
 			}
 
 			@Override
 			public String getDownloadFileAction() {
-				// TODO Auto-generated method stub
 				return "/aon_gwt_mod200/ms/Model2002022File";
 			}
 
 			@Override
 			public void showError(String msg) {
-				// TODO Auto-generated method stub
 				mod200Callback.showError(msg);
 			}
 
 			@Override
 			public String getExportAccountingAction() {
-				// TODO Auto-generated method stub
 				return "/aon_gwt_mod200/ms/Model2002022AccountingFile";
 			}
 
 			@Override
 			public String getModelInformationURL() {
-				// TODO Auto-generated method stub
 				return "https://sede.agenciatributaria.gob.es/Sede/procedimientoini/GE04.shtml";
 			}
 
 			@Override
 			public Model200ModuleOptions getOptions() {
-				// TODO Auto-generated method stub
 				return Model2002022.this.options;
 			}
 
 			@Override
 			public String getValidatePrintAction() {
-				// TODO Auto-generated method stub
 				return GWT.getHostPageBaseURL() +"aon_gwt_mod200/ms/Mod2002022ValidatePrintAEAT";
 			}
 
 			@Override
 			public String getSendAction() {
-				// TODO Auto-generated method stub
 				return GWT.getHostPageBaseURL() +"aon_gwt_mod200/ms/Mod2002022SendAEAT";
 			}
 
 			@Override
 			public void sendSuccessfully() {
-				// TODO Auto-generated method stub
 				// FALTA - RECARGAR EL MODELO UNA VEZ QUE SE HA ENVIADO CORRECTAMENTE A LA AEAT (SE HABRA GRABADO EL ESTADO Y EL NUMERO DE DECLARACION)
 				Model200.getMod2002022Service().getMod2002022ById(options.getOccam(), mod200Object.getMod200().getId()
 						, new AsyncCallback<Mod2002022>() {
@@ -424,13 +367,11 @@ public class Model2002022 extends DockLayoutPanel {
 
 			@Override
 			public boolean isDirty() {
-				// TODO Auto-generated method stub
 				return Model2002022.this.isDirty();
 			}
 
 			@Override
 			public void importAccountingFile() {
-				// TODO Auto-generated method stub
 				// FALTA - SI DA ERROR LA CARGA PORQUE EL ARCHIVO NO ES CORRECTO O ALGO ASI, NO SALE NADA EN PANTALLA
 				mod200Callback.cleanErrorPanel();			
 				Upload upload = new Upload() {
@@ -451,18 +392,6 @@ public class Model2002022 extends DockLayoutPanel {
 				
 			}
 
-//			@Override
-//			public Model200Callback getMod200Callback() {				
-//				return mod200Callback;
-//			}
-//
-//			@Override
-//			public boolean isDirty() {
-//				// FALTA
-//				// TODO Auto-generated method stub
-//				return Model2002022.this.isDirty();
-//			}
-			
 		};		
 		
 		if (PAGES[i] == null) {
@@ -529,7 +458,7 @@ public class Model2002022 extends DockLayoutPanel {
 				@Override
 				public void onSuccess(Mod2002022 result) {
 					popup.hide();
-					dumpP00(false);
+					dumpP00();
 					markAsDirty();
 				}
 				
@@ -829,7 +758,7 @@ public class Model2002022 extends DockLayoutPanel {
 		styleDirtyLabel();
 		toolbarPanel.getMessagePanel().add(dirtyLabel);		
 
-		toolbarPanel.add(diskForm);		
+//		toolbarPanel.add(diskForm);		
 		return toolbarPanel;
 	}
 	

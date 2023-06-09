@@ -41,7 +41,7 @@ import com.google.gwt.xhr.client.XMLHttpRequest;
 
 import net.aonsolutions.gwt.pdfjs.client.FullViewer;
 
-public class FiscalModel200AdmonPanel extends DockLayoutPanel {
+public class FiscalModelAdmonPanel extends DockLayoutPanel {
 	
 //	public static interface IFiscalModelAdmonPanelCallback<T,O> {
 //		O getOptions();
@@ -97,7 +97,7 @@ public class FiscalModel200AdmonPanel extends DockLayoutPanel {
 	private boolean checkingAEAT;
 	private boolean uploadingPDFData;
 	
-	public FiscalModel200AdmonPanel(IModel200PageCallback callback) {
+	public FiscalModelAdmonPanel(IModel200PageCallback callback) {
 		super(Unit.PX);
 		this.callback = callback;
 		this.api = new API(GWT.getModuleBaseURL(), 

@@ -1,6 +1,6 @@
 package com.esferalia.aon.gwt.mod200.client.mod200.e2022;
 
-import com.esferalia.aon.gwt.mod200.client.FiscalModel200AdmonPanel;
+import com.esferalia.aon.gwt.mod200.client.FiscalModelAdmonPanel;
 import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200PageCallback;
 
 public class PageAEAT extends PageAbs {
@@ -76,12 +76,12 @@ public class PageAEAT extends PageAbs {
 //				}
 //		};
 //		admonPanel = new FiscalModel200AdmonPanel<>(cbk);
-	FiscalModel200AdmonPanel admonPanel;
+	FiscalModelAdmonPanel admonPanel;
 
 	public PageAEAT(Model200PageCallback callback) {		
 		super();
 		
-		admonPanel = new FiscalModel200AdmonPanel(callback);		
+		admonPanel = new FiscalModelAdmonPanel(callback);		
 	
 		initWidget(admonPanel);
 	}

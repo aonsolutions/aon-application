@@ -10,8 +10,6 @@ import com.esferalia.aon.gwt.mod200.client.mod200.e2022.Model2002022.Model200Pag
 import com.esferalia.aon.occam.mod200.api.model.EcpnType;
 import com.esferalia.aon.occam.mod200.api.model.mod200_2022.Mod2002022Key;
 import com.esferalia.aon.watson.util.AonStringUtils;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -186,21 +184,18 @@ public class Page07 extends PageAbs {
 							panel.add(code);
 							
 							final AonDoubleBox text = new AonDoubleBox(8);
-							text.addChangeHandler(new ChangeHandler() {
-								@Override
-								public void onChange(ChangeEvent event) {
-									try {
-										if (AonStringUtils.isEmpty(text.getText())) {
-											text.setValue(0.0,false);
-										}
-										Double d = text.getValueOrThrow();
-										text.addStyleName(AON.AON_CSS.aonChanged());
-										callback.getMod200Object().doubleValueChanged(key, d);
-										callback.markAsDirty();
-									} catch (ParseException e) {
-										// nothing.
+							text.addChangeHandler(event -> {
+								try {
+									if (AonStringUtils.isEmpty(text.getText())) {
+										text.setValue(0.0,false);
 									}
-								}
+									Double d = text.getValueOrThrow();
+									text.addStyleName(AON.AON_CSS.aonChanged());
+									callback.getMod200Object().doubleValueChanged(key, d);
+									callback.markAsDirty();
+								} catch (ParseException e) {
+									// nothing.
+								}								
 							});
 							text.setValue(callback.getMod200Object().getDoubleValue(key));
 							text.addStyleName(AON.AON_CSS.aonFiscalMarginLeft());

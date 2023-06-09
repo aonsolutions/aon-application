@@ -66,11 +66,7 @@ public class Mod2002022DAO  {
 		boolean populate(Mod2002022 mod, FsModel200RegistryRecord reg);
 	}
 
-	// FALTA - NUEVOS APARTADOS DE LA PAGINA 2 BIS:
-	//  E. Actividades desarrolladas por el declarante
-	//  F. Socios de SICAV en régimen especial de disolución y liquidación (DT 41ª LIS)
-	
-	private static enum Mod2002022RegistryType {
+	private enum Mod2002022RegistryType {
 		 ADMINISTRATOR ( 
 			(mod,reg) -> mod.getAdministrators().add(new Mod200CompanyAdministrator()
 				.setDocument( reg.getDocument())
@@ -194,23 +190,19 @@ public class Mod2002022DAO  {
 		
 	}
 	
-	private static final IAccMiningKeyAccept ACCEPTER = new IAccMiningKeyAccept() {
-		
-		@Override
-		public boolean acceptKey(Object key) {
+	private static final IAccMiningKeyAccept ACCEPTER = key -> {
+		try {
+			// Comprobar si la clave está en Mod2002022Key
+			return (Mod2002022Key.valueOf((String) key) != null);
+		} catch (IllegalArgumentException e) {
 			try {
-				// Comprobar si la clave está en Mod2002022Key
-				return (Mod2002022Key.valueOf((String) key) != null);	
-			} catch (IllegalArgumentException e) {
-				try {
-					// Si no lo está, comprobar si está en Mod2002022KeyDC (Detalle correcciones)
-					return (Mod2002022KeyDC.valueOf((String) key) != null);	
-				} catch (IllegalArgumentException e2) {
-					return false;
-				}				
+				// Si no lo está, comprobar si está en Mod2002022KeyDC (Detalle correcciones)
+				return (Mod2002022KeyDC.valueOf((String) key) != null);
+			} catch (IllegalArgumentException e2) {
+				return false;
 			}
 		}
-	};
+	};	
 
 	public static Mod2002022 save(AONContext ctx, Mod2002022 mod200) {
 		try {
@@ -679,11 +671,11 @@ public class Mod2002022DAO  {
 	}
 
 	public static Mod2002022 getById(AONContext ctx, int id ) {
-		FsModel200Record record = ctx.getDslContext()
+		FsModel200Record rec = ctx.getDslContext()
 				.selectFrom(FS_MODEL200)
 				.where(FS_MODEL200.ID.equal(id))
 				.fetchOne();
-		Mod2002022 mod200 = populateMod200(ctx,record);
+		Mod2002022 mod200 = populateMod200(ctx,rec);
 		initializeActiveMap(mod200);
 		return mod200;
 	}
@@ -714,11 +706,11 @@ public class Mod2002022DAO  {
 				.where(FS_MODEL200.DOMAIN.equal(ctx.getDomainId()))
 				.and(FS_MODEL200.YEAR.equal(year))
 				.fetch();
-		FsModel200Record record = null;
+		FsModel200Record rec = null;
 		Mod2002022 mod200 = null; 
 		if (result != null && result.isNotEmpty()) {
-			record = result.get(0);
-			mod200 = populateMod200(ctx,record);
+			rec = result.get(0);
+			mod200 = populateMod200(ctx,rec);
 		}
 		if (initialize) {
 			if (mod200 == null) {
@@ -733,7 +725,6 @@ public class Mod2002022DAO  {
 	private static Mod2002022 getMod200(FsModel200Record record) {
 		
 		Mod2002022 mod200 = new Mod2002022();
-		mod200 = new Mod2002022();
 		mod200.setId(record.getId());
 		mod200.setYear(record.getYear());
 		mod200.setDomain(record.getDomain());
@@ -1027,12 +1018,12 @@ public class Mod2002022DAO  {
 					key = Mod2002022Key.BN601;
 				} else if (mod202.getPeriod() == Period.T2) {
 					key = Mod2002022Key.BN603;
-				} if (mod202.getPeriod() == Period.T3) {
+				} else if (mod202.getPeriod() == Period.T3) {
 					key = Mod2002022Key.BN605;
 				}
 				if (key != null) {
 					DoubleVariableEx dv = new DoubleVariableEx( key );
-					dv.setValue( (Double) mod202.getResult() );
+					dv.setValue( mod202.getResult() );
 					mod200.addVariable( dv );
 				}
 			});
@@ -1183,7 +1174,7 @@ public class Mod2002022DAO  {
 		return Mod2002022Import2021.import2021(old);
 	}
 	
-	// FALTA
+	// FALTA - REVISARLO CUANDO ESTE ACTIVO EL ENTORNO DE PRUEBAS PARA EL 2022
 	// Presentación Directa del Modelo: Grabar Respuesta AEAT (PDF) y marcar el modelo como enviado
 	public static Mod2002022 aeatPresentation(AONContext ctx, Mod2002022 mod, String aeatResponse) {
 		if (AonStringUtils.isNotBlank(aeatResponse)) {

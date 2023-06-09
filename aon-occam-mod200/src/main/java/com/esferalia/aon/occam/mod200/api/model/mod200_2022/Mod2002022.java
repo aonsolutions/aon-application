@@ -29,7 +29,7 @@ public class Mod2002022 extends Mod200 {
 
 	private boolean initializedFromLastYear;
 	
-	private String cnae;  // FALTA - SE PERMITE INDICAR MAS DE UNA ACTIVIDAD, VER SI SE QUEDA ASI PARA VER SI ES NECESARIO AÑADIR MAS CAMPOS O SE PONE EN REGISTRY
+	private String cnae;  
 	
 	private int periodType;
 	private Date periodStart;
@@ -64,13 +64,6 @@ public class Mod2002022 extends Mod200 {
 	private LinkedList<GroupEntitie> groupEntities = new LinkedList<GroupEntitie>();               // Grupos de Sociedades- NIF de las entidades del grupo 
 	private LinkedList<String> establishments = new LinkedList<String>();	                       // No residentes - NIF de los establecimientos permanentes, en caso de entidad titular
 	private LinkedList<String> filmProductions = new LinkedList<String>();                         // Información adicional producciones cinematográficas españolas y espectáculos en vivo
-	
-	// FALTA - APARTADO E PAGINA 2 BIS 
-	// E. Socios de SICAV en régimen especial de disolución y liquidación (DT 41ª LIS)
-	// Realmente son dos listas de NIF:
-	// 
-	// 
-	// LUEGO HABRA QUE HACER DOS LIST
 	private LinkedList<String> sicav1 = new LinkedList<String>(); // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la sociedad/es disuelta/s
 	private LinkedList<String> sicav2 = new LinkedList<String>(); // E. Socios de SICAV en régimen especial de disolución y liquidación - NIF de la/las IIC donde reinvierte
 	

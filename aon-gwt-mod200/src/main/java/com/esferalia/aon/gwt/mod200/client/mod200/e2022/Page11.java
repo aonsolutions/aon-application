@@ -118,13 +118,17 @@ public class Page11 extends PageAbs {
 					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN1041,Mod2002022BN1041Key.values(),HEADERS_3, FOOTER_1);
 				}	
 				
-				// FALTA - DESGLOSE CLAVE 2315 VER SI TIENE QUE APARECER SOLO EN DETERMINADOS CASOS
-				if (key == Mod2002022Key.BN2315) {
+				if (key == Mod2002022Key.BN2315
+						&& callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0009) 
+						&& callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0010)) {
 					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN2315,Mod2002022BN2315Key.values(),HEADERS_1, FOOTER_1);
 				}
 				
-				if (key == Mod2002022Key.BN1039) {  // FALTA - DESGLOSE CLAVE 1039 IDEM ANTERIOR
-					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN1039,Mod2002022BN1039Key.values(),HEADERS_1039_2314, FOOTER_1);
+				if (key == Mod2002022Key.BN1039) {  
+					if (callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0009) && 
+						callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0010))
+						row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN1039,Mod2002022BN1039Key.values(),HEADERS_1039_2314, FOOTER_1);
+					// Casilla Importe Máximo para la casilla 1039
 					FlexTable table2 = new FlexTable();
 					table2.setWidth("100%");
 					table2.setCellSpacing(0);
@@ -135,8 +139,11 @@ public class Page11 extends PageAbs {
 					row++;
 				}	
 				
-				if (key == Mod2002022Key.BN2314) {  // FALTA - DESGLOSE CLAVE 2314 IDEM ANTERIOR
-					row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN2314,Mod2002022BN2314Key.values(),HEADERS_1039_2314, FOOTER_1);
+				if (key == Mod2002022Key.BN2314) {  
+					if (callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0009) && 
+						callback.getMod200Object().getMod200().isNotChecked(Mod2002022Key.C0010))
+						row = paintKeyBreakdownLink(table,row,Mod2002022Key.BN2314,Mod2002022BN2314Key.values(),HEADERS_1039_2314, FOOTER_1);
+					// Casilla Importe Máximo para la casilla 2314
 					FlexTable table2 = new FlexTable();
 					table2.setWidth("100%");
 					table2.setCellSpacing(0);
@@ -205,7 +212,7 @@ public class Page11 extends PageAbs {
 		// Botón añadir 
 		AonTableButton addButton = new AonTableButton(AON.MSG.newAction(),AON.CSS.aonIconAdd());
 		addButton.addClickHandler(event -> {
-			callback.getMod200Object().getMod200().getFilmProductions().add(new String());
+			callback.getMod200Object().getMod200().getFilmProductions().add("");
 			paintFilmPanel();
 		});
 		tab.addRow().addCell(addButton);
@@ -309,6 +316,16 @@ public class Page11 extends PageAbs {
 		if (footernote != null)
 			paintFooterNote(container, footernote);
 		
+	}
+	
+	@Override
+	protected boolean isDisabled(IMod200Key key) {
+		// Si están marcados los caracteres 9 o 10, estas casillas se cumplimentan directamente, no a través de desglose
+		if ((key == Mod2002022Key.BN2315 || key == Mod2002022Key.BN1039 || key == Mod2002022Key.BN2314 ) && 
+			(callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0009) || callback.getMod200Object().getMod200().isChecked(Mod2002022Key.C0010))) {
+			return false;
+		}
+		return super.isDisabled(key);
 	}
 	
 }
