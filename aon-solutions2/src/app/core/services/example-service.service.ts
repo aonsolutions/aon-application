@@ -14,19 +14,4 @@ export class ExampleServiceService {
 
   constructor(private apiService: ApiService, private router: Router) { }
 
-  getInvoices(): Observable<any> {
-    let token = sessionStorage.getItem(environment.localStorageJwt.accessToken);
-    let domainName = environment.headerApi.domainName;
-    let headers = new HttpHeaders();
-
-    if (token !== null) {
-      headers = headers.set('session_id', token);
-    }
-    headers = headers.set('domain_name', domainName);
-
-    let params = {"status": "inbox", "per_page": 25, "page" : 2}
-    let paramsAux = {"id": "2133"}
-
-    return this.apiService.get('invoice', params);
-  }
 }
