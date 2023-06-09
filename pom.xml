@@ -37,6 +37,7 @@
 		<module>watson</module>
 		<module>occam</module>
 		<module>api</module>
+		<module>invofox.sdk</module>
 
 		<!-- MAVEN PLUGINS -->
 		<module>aon-alias-maven-plugin</module>
