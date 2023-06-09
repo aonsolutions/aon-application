@@ -8,6 +8,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_ENTERPRISE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.EXCESS_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.INKIND_IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.MONEY_IRPF_BASE;
@@ -206,6 +207,7 @@ public class SalaryDraftBuilder
 		}
 		
 		for ( ContextVariable contextVar : new ContextVariable [] {
+				EXCESS_BASE, 
 				CGC_BASE, 
 				CGC_BASE_ENTERPRISE, 
 				CGP_BASE, 
@@ -797,13 +799,15 @@ public class SalaryDraftBuilder
 		draftCost.setAmount(amount);
 		draftCost.setEndDate(endDate);
 		draftCost.setStartDate(startDate);
-		draftCost.setDescription(getDescription(draftCost,cost.getDescription()));
+		draftCost.setDescription(getDescription(draftCost,description));
 
-		CompositeDeduction compositeCost = getCost(contractCost.getId());
+		CompositeDeduction compositeCost = getCost(contractCost);
 
 		if (compositeCost != null) {
 			compositeCost.addChild(draftCost);
-			compositeCost.setDescription(draftCost.getDescription());
+			compositeCost.setDescription(getDescription(compositeCost, description));
+			draftCost.setDescription( getChildDescription(draftCost, context));
+
 		}
 		else {
 			salaryDraft.addCost(draftCost);
@@ -888,7 +892,8 @@ public class SalaryDraftBuilder
 
 		if (compositeDeduction != null) {
 			compositeDeduction.addChild(deduction);
-			compositeDeduction.setDescription(deduction.getDescription());
+			compositeDeduction.setDescription(getDescription(compositeDeduction, description));
+			deduction.setDescription( getChildDescription(deduction, context));
 		} else {
 			salaryDraft.addDeduction(deduction);
 		}
@@ -1489,6 +1494,8 @@ public class SalaryDraftBuilder
 			if ((deduction.getId().equals(d.getId()))
 			    ||( "IRPF".equals(deduction.getName()) 
 				    && "IRPF".equals(d.getName()))
+			    || ( AonStringUtils.isNotBlank(d.getName()) 
+		    			&& AonStringUtils.equals(d.getName(), deduction.getName()))
 			    ) {
 				if (deduction instanceof CompositeDeduction)
 					return (CompositeDeduction) deduction;
@@ -1504,11 +1511,15 @@ public class SalaryDraftBuilder
 		return null;
 	}
 
-	private CompositeDeduction getCost(Integer id) {
+	private CompositeDeduction getCost(IContractDeduction contractCost) {
 		List<Deduction> costs = salaryDraft.getCosts();
 		for (int i = 0; i < costs.size(); i++) {
 			Deduction cost = costs.get(i);
-			if (cost.getId().equals(id)) {
+			if (Objects.equals(contractCost.getId(), cost.getId()) 
+		    		|| ( AonStringUtils.isNotBlank(contractCost.getName()) 
+		    			&& AonStringUtils.equals(contractCost.getName(), cost.getName()))
+		    		
+				) {
 				if (cost instanceof CompositeDeduction)
 					return (CompositeDeduction) cost;
 
@@ -1521,7 +1532,7 @@ public class SalaryDraftBuilder
 		}
 		return null;
 	}
-	
+
 	private CompositeBonus getBonus(Integer id) {
 		List<Bonus> bonuses = salaryDraft.getBonuses();
 		for (int i = 0; i < bonuses.size(); i++) {
@@ -1924,14 +1935,26 @@ public class SalaryDraftBuilder
 	    }
 	}
 
+	private static String getChildDescription(Deduction deduction, Map<String, ITimedVariable<?>> context) {
+	    StringBuilder description = new StringBuilder(deduction.getDescription());
+	    if ( context.containsKey(ContextVariable.EXCESS_BASE.getName() ))  {
+		description.append(" Cotizaci\u00f3n por Exceso");
+	    }
+	    return description.toString();
+	}
 
 	private static String getDescription(Deduction deduction, String def) {
+	    	
 		if ( deduction.getName() != null ) {
 		
 			switch (deduction.getName()) {
 			case "MEI" :
 			case "MEI_E" :
 				return "Mecanismo de Equidad Intergeneracional (MEI)";
+			case "FP_E" :
+				return "Formaci\u00f3n Profesional";
+			case "DESMPL_E" :
+				return "Desempleo";
 			case "ECSS_E" :
 				return "Prestaci\u00f3n por Incapacidad Temporal a cargo del INSS";
 //			case "ATEP_E" :
@@ -1942,6 +1965,8 @@ public class SalaryDraftBuilder
 				return "IMS de Accidentes de Trabajo";
 			case "FOGASA_E" :
 				return "FOGASA";
+			case "CGC_E" :
+				return "Contingencias Comunes";
 			case "CGC_E_TEMP" :
 				return "Contingencias Comunes Contratos de Corta Duraci\u00f3n";
 			default:
