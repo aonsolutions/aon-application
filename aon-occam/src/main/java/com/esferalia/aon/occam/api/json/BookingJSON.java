@@ -81,7 +81,7 @@ public class BookingJSON {
 			JSONObject user = new JSONObject();
 			resume.getUserTypes().keySet().forEach(r -> user.put(r.name(), resume.getUserTypes().get(r)));
 			user.put("childDefinedUsers", resume.getChildDefinedUsers());
-			user.put("childBillingUsers", resume.getChildDefinedUsers());
+			user.put("childBillingUsers", resume.getChildBillingUsers());
 			o.put(IJsonNames.USER, user);
 		}
 		return o;

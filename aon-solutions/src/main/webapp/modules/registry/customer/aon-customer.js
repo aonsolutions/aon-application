@@ -35,7 +35,7 @@ export class AonCustomer extends AonReg {
 		];
 
 
-		if(this.isSig() || this.isLocal()){
+		if(this.isBeta()){
 			this.options.push({ title: MSG.PRODUCTS, fn: () => this.buildItemData()});
 		}
 	}

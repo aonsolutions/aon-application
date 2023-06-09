@@ -591,7 +591,7 @@ export const KIT_DIGITAL_ERP = {
 export const BASIC_MANAGEMENT = {
   app: "basic_management",
   icon: AON_ICONS.AON_MANAGEMENT,
-  title: "Básico",
+  title: "Gestión Básica",
   subtitle: " Facturas | Comercial",
   color: "#002469",
   apps: [Apps.INVOICE, COMMERCIAL],
@@ -601,7 +601,7 @@ export const BASIC_MANAGEMENT = {
 export const STANDAR_MANAGEMENT = {
   app: "standar_management",
   icon: AON_ICONS.AON_MANAGEMENT,
-  title: "Estándar",
+  title: "Gestión Estándar",
   subtitle: " Gestión Básica | Marketing | Tesoreria ",
   color: "#002469",
   apps: [Apps.INVOICE, COMMERCIAL, TREASURY, MARKETING],
@@ -611,7 +611,7 @@ export const STANDAR_MANAGEMENT = {
 export const PROFESSIONAL_MANAGEMENT = {
   app: "professional_management",
   icon: AON_ICONS.AON_MANAGEMENT,
-  title: "Profesional",
+  title: "Gestión Profesional",
   subtitle: " Gestión Estándar | Expedientes | Almacén ",
   color: "#002469",
   apps: [Apps.INVOICE, COMMERCIAL, TREASURY, MARKETING, Apps.WAREHOUSE, GROUPWARE],
