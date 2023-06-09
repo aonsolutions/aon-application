@@ -242,13 +242,23 @@
 									<aon:commandLink id="amortization" action="amortization_list"
 										value="#{bundle.accounting_amortization_form_module}" />
 								</aon:div>
-								<aon:if test="#{aonRole.config}">
+								
+								<!-- <aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="amortizationType"
 											action="amortizationType_list"
 											value="#{bundle.accounting_amortization_type_module}" />
 									</aon:div>
+								</aon:if> -->
+								
+								<aon:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="gwt_amortizationType"
+											action="gwt_amortization_type"
+											value="#{bundle.accounting_amortization_type_module}" />
+									</aon:div>
 								</aon:if>
+								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="investAsset" action="investAsset_search"
 										value="#{bundle.accounting_invest_asset_form_module}" />

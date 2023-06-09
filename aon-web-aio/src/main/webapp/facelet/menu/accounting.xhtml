@@ -237,13 +237,15 @@
 									<aon:commandLink id="amortization" action="amortization_list"
 										value="#{bundle.accounting_amortization_form_module}" />
 								</aon:div>
+								
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="amortizationType"
-											action="amortizationType_list"
+										<aon:commandLink id="gwt_amortizationType"
+											action="gwt_amortization_type"
 											value="#{bundle.accounting_amortization_type_module}" />
 									</aon:div>
 								</aon:if>
+								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="investAsset" action="investAsset_search"
 										value="#{bundle.accounting_invest_asset_form_module}" />
@@ -792,6 +794,21 @@
 											</aon:div>
  -->							
 										</aon:div>
+									</aon:panelGrid>
+									
+									<aon:panelGrid id="group_fixed_assets2"
+										styleClass="aon-width-all" columnClasses="aon-padding"
+										headerClass="aon-icon-utilities aon-direct-access-panel">
+										<f:facet name="header">
+											<aon:outputText value="#{bundle.menu_fixed_assets}" />
+										</f:facet>
+										<aon:if test="#{aonRole.config}">
+											<aon:div styleClass="aon-direct-access-list-element">
+												<aon:commandLink id="amortizationType"
+													action="amortizationType_list"
+													value="#{bundle.accounting_amortization_type_module}" />
+											</aon:div>
+										</aon:if>
 									</aon:panelGrid>
 
 							</aon:panelGroup>
