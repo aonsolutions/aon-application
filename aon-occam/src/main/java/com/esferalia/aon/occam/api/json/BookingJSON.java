@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.occam.api.model.Domain;
 import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.security.Booking;
@@ -82,9 +83,26 @@ public class BookingJSON {
 			resume.getUserTypes().keySet().forEach(r -> user.put(r.name(), resume.getUserTypes().get(r)));
 			user.put("childDefinedUsers", resume.getChildDefinedUsers());
 			user.put("childBillingUsers", resume.getChildBillingUsers());
+			
 			o.put(IJsonNames.USER, user);
+			
+			o.put("childs", childJson(resume.getChilds()));
 		}
 		return o;
+	}
+	
+	private static JSONArray childJson(List<Domain> childs) {
+		JSONArray array = new JSONArray();
+		childs.stream().forEach(d -> {
+			JSONArray apps = new JSONArray();
+			d.getApps().stream().forEach(app -> apps.put(app.getApp().name()));
+			JSONObject json = new JSONObject();
+			json.put(IJsonNames.ID, d.getId());
+			json.put(IJsonNames.NAME, d.getName());
+			json.put(IJsonNames.APPS, apps);
+			array.put(json);
+		});
+		return array;
 	}
 
 }

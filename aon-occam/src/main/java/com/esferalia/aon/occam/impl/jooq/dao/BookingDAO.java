@@ -84,7 +84,10 @@ public class BookingDAO {
 		
 		if(domain.isParent()) {
 			List<Domain> childs = getActiveChildDomains(ctx, domain.getId());
+			
 			BookingResume resume = new BookingResume();
+			
+			resume.setChilds(childs);
 
 			Integer childBillingUsers = childs.stream().mapToInt(r -> AonNumberUtils.zeroIfNull(r.getMaxDefinedUsers()) > 0 
 					? AonNumberUtils.zeroIfNull(r.getMaxDefinedUsers()) - 1 : 0).sum();
