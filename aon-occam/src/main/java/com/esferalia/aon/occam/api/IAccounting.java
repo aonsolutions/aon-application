@@ -59,6 +59,7 @@ public interface IAccounting {
 	public Account delete(AONContext ctx, Account account);
 	public String getAccountNextCode(AONContext ctx, String prefix);
 	public Stream<Account> getAccounts(AONContext ctx, AccountParams params);
+	public List<Account> getAccountsList(AONContext ctx, AccountParams params);
 	
 	// **************************************************
 	// ********************************* [ACCOUNT PERIOD]
