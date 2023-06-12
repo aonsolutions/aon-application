@@ -702,47 +702,29 @@ public class ContractLeaveLoader {
         		    return days;
         	} catch (Exception e) {
         	}
-
-		String tc2 = ctx.getVariable(TC2, p.getStart(), p.getEnd(), String.class );
-		// Not adjust for : 
-		// * '300 IND.FIJO.DISCONTINUO' with  'COEF.TIEMPO PARCIAL' 
-		// * '502 - DURACION DETERMINADA, TIEMPO PARCIAL, EVENTUAL POR CIRCUNSTANCIAS'
-		// * '501 - DURACION DETERMINADA, TIEMPO PARCIAL, OBRA O SERVICIO DETERMINADO'
-		// * '520 - DURACION DETERMINADA, TIEMPO PARCIAL, PRÁCTICAS'
-		if ( AonStringUtils.contains("300,502,501,520", tc2)) {
-		    
-        		try {
-        			if (!ctx.getVariable(FULL_TIME, p.getStart(), p.getEnd(), Boolean.class))
-        				return days;
-        		} catch (Exception e) {
-        		}
-
-        		try {
-        			boolean isPartial = 
-        			ctx.getVariables(PARTIAL_FACTOR, p.getStart(), p.getEnd())
-        			.stream().map( v -> v.getValue(v.getPeriod()))
-        			.filter( v -> v != null && v instanceof Number )
-        			.anyMatch( v -> ((Number)v).doubleValue() < 1.00) ;
-        			if (isPartial)
-        				return days;
-        		} catch (Exception e) {
-        		}
-
-        		try {
-        			Number paternityFactor =  ctx.getVariable(PATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
-        			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )
-        				return days;
-        		} catch (Exception e) {
-        		}
-        		try {
-        			Number paternityFactor =  ctx.getVariable(MATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
-        			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )
-        				return days;
-        		} catch (Exception e) {
-        		}
-
+		
+		try {
+			boolean isPartial = 
+			ctx.getVariables(PARTIAL_FACTOR, p.getStart(), p.getEnd())
+			.stream().map( v -> v.getValue(v.getPeriod()))
+			.filter( Number.class::isInstance )
+			.anyMatch( v -> ((Number)v).doubleValue() < 1.00) ;
+			if (isPartial)
+				return days;
+		} catch (Exception e) {
 		}
-
+//		try {
+//			Number paternityFactor =  ctx.getVariable(PATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
+//			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )
+//				return days;
+//		} catch (Exception e) {
+//		}
+//		try {
+//			Number paternityFactor =  ctx.getVariable(MATERNITY_FACTOR, p.getStart(), p.getEnd(), Number.class);
+//			if ( paternityFactor != null && paternityFactor.doubleValue() < 1.00 )
+//				return days;
+//		} catch (Exception e) {
+//		}
 
 		double naturalMonthDays = getMax(p.getStart(), DAY_OF_MONTH);
 
