@@ -655,8 +655,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 		Connection conn = null;
 		try {
 			conn = AonServletUtils.getConnection(domain);
-			return notAtEnterpriseSite() ? getSiteWorkplaceCosts(conn, workplaceId)
+			List<Cost> costs = notAtEnterpriseSite() ? getSiteWorkplaceCosts(conn, workplaceId)
 					: getSLDWorkplaceCosts(conn, workplaceId);
+			return costs;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException(e);
@@ -844,8 +845,6 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 					cost.getEnterpriseId(), cost.getWorkplaceId(), occamTypes);
 
 			byte bytes[] = oos.toByteArray();
-			
-			
 			
 			FileOutputStream is = new FileOutputStream("/tmp/x.pdf");
 			is.write(bytes);
@@ -2774,8 +2773,8 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// We asume that one enterprise one domain. This way SELECT it's
 			// more clear.
-			String sql = "SELECT" + " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol + ", YEAR("
-					+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol + " FROM " + ENTERPRISE + ", " + SALARY
+			String sql = "SELECT" + " MONTH(" + SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + monthCol + ", YEAR("
+					+ SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + yearCol + " FROM " + ENTERPRISE + ", " + SALARY
 					+ " WHERE " + ENTERPRISE + "." + EnterpriseColumns.DOMAIN + " = " + SALARY + "."
 					+ SalaryColumns.DOMAIN + " AND " + ENTERPRISE + "." + EnterpriseColumns.REGISTRY + " = ?" + " AND "
 					+ SALARY + "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal() + " GROUP BY 1, 2"
@@ -2921,8 +2920,9 @@ public class EmployeesServiceImpl extends AonRemoteServiceServlet
 
 			// We asume that one enterprise one domain. This way SELECT it's
 			// more clear.
-			String sql = "SELECT" + " MONTH(" + SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + monthCol + ", YEAR("
-					+ SALARY + "." + SalaryColumns.CHARGE_DATE + ") " + yearCol + " FROM " + WORKPLACE + ", " + SALARY
+			
+			String sql = "SELECT" + " MONTH(" + SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + monthCol + ", YEAR("
+					+ SALARY + "." + SalaryColumns.ISSUE_DATE + ") " + yearCol + " FROM " + WORKPLACE + ", " + SALARY
 					+ " WHERE " + WORKPLACE + "." + WorkplaceColumns.DOMAIN + " = " + SALARY + "."
 					+ SalaryColumns.DOMAIN + " AND " + WORKPLACE + "." + WorkplaceColumns.ID + " = ?" + " AND " + SALARY
 					+ "." + SalaryColumns.TYPE + " < " + SalaryType.L00.ordinal() + " GROUP BY 1, 2"
