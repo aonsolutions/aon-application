@@ -43,7 +43,9 @@ public class DefaultPayrollFuseBox {
 	}
 	
 	public static boolean isPrestIt(int cra, PDFPayment payment) {
-		if (cra != 1 || payment == null || isEmpty(payment.getDescription().orElse("")))
+		if (cra == 100) {
+			return true;
+		} else if (cra != 1 || payment == null || isEmpty(payment.getDescription().orElse("")))
 			return false;
 		return AonStringUtils.equalsIgnoreCase("PREST_IT", payment.getDescription().orElse(""));
 	}
@@ -82,9 +84,9 @@ public class DefaultPayrollFuseBox {
 
 	public static List<PDFPayment> getPrestSS(Optional<Map<Integer, ArrayList<PDFPayment>>> allPayments) {
 		return allPayments.orElse(Collections.emptyMap())
-				.getOrDefault(1, new ArrayList<>())
+				.getOrDefault(100, new ArrayList<>())
 				.stream()
-				.filter(p -> isPrestIt(1, p))
+				.filter(p -> isPrestIt(100, p))
 				.collect(Collectors.toUnmodifiableList());
 	}
 
@@ -111,6 +113,7 @@ public class DefaultPayrollFuseBox {
 		List<PDFPayment> payments = new ArrayList<>();
 		Set<Integer> filteredCras = new HashSet<>();
 		filteredCras.add(1);
+		filteredCras.add(100);
 		filteredCras.addAll(Arrays.asList(EXTRA_HOUR_CRAS));
 		filteredCras.addAll(Arrays.asList(EXTRA_GRATIFICATIONS_CRAS));
 		filteredCras.addAll(Arrays.asList(IN_KIND_CRAS));
