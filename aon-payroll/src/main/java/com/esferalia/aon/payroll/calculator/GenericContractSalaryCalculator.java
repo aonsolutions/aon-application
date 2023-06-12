@@ -57,6 +57,7 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.TUESDAY_HOUR
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WEDNESDAY_HOURS;
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.WORKED_DAYS;
 import static com.esferalia.aon.salary.expression.ExpressionScope.APPLICATION;
+import static com.esferalia.aon.watson.util.AonStringUtils.defaultIfBlank;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1207,7 +1208,7 @@ public class GenericContractSalaryCalculator<T extends ISalary, C extends ISalar
 							Period period = amount.getPeriod();
 							try {
 								
-								description = expressionContext.evalTemplate(contractCost.getDescription(),
+								description = expressionContext.evalTemplate(defaultIfBlank(contractCost.getDescription(), ""),
 										period.getStart(), period.getEnd());
 							} catch (CompileException e) {
 								onCompileError(contractCost, DESCRIPTION_SYNTAX_ERROR);
