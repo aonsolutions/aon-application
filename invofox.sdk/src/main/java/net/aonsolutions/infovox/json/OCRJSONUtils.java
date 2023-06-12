@@ -42,6 +42,11 @@ public class OCRJSONUtils {
 			, t -> json.optJSONArray(key));
 	}
 
+	public static Object getRawObject(JSONObject json, String key ) {
+		if(json == null) return null;
+		return json.opt(key);
+	}
+
 	public static Integer getInteger(JSONObject json, String key ) {
 		if(json == null) return null;
 		return AonObjectUtils.ifNotNullDo(json.opt(key)

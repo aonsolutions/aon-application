@@ -28,8 +28,11 @@ public class OCRResponseJSON {
 		if (json == null) return null; 
 		return new OCRResponse()
 			.setHttpCode(OCRJSONUtils.getInteger(json, OCRNames.HTTP_CODE))
-			.setResult(OCRDocumentJSON.from(OCRJSONUtils.getObject(json, OCRNames.RESULT)))
+			.setResult(OCRDocumentJSON.from(OCRJSONUtils.getRawObject(json, OCRNames.RESULT)))
 			.setError(OCRErrorJSON.from(OCRJSONUtils.getObject(json, OCRNames.ERROR)))
+			.setSkip(OCRJSONUtils.getInteger(json, OCRNames.SKIP))		
+			.setLimit(OCRJSONUtils.getInteger(json, OCRNames.LIMIT)) 
+			.setCount(OCRJSONUtils.getInteger(json, OCRNames.COUNT))
 		;
 	}
 	

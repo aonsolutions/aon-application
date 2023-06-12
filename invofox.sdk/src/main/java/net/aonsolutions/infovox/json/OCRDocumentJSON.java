@@ -1,5 +1,6 @@
 package net.aonsolutions.infovox.json;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collector;
@@ -20,7 +21,7 @@ public class OCRDocumentJSON {
 	}
 	
 	public static List<OCRDocument> from(JSONArray array) {
-		if (array == null || array.isEmpty()) return new LinkedList<>();
+		if (array == null || array.isEmpty()) return Collections.emptyList();
 		return OCRJSONUtils.stream(array)
 			.map(OCRDocumentJSON::from)
 			.toList();		
@@ -89,5 +90,17 @@ public class OCRDocumentJSON {
 			.putOpt(OCRNames.GEOMETRY, OCRGeometryJSON.to(document.getGeometry().orElse(null)))
 			.putOpt(OCRNames.DATA, OCRInvoiceJSON.to(document.getData().orElse(null)))
 		;
+	}
+
+	public static List<OCRDocument> from(Object rawObject) {
+		if (rawObject instanceof JSONArray array) {
+			return from(array);
+		}
+		if (rawObject instanceof JSONObject obj) {
+			LinkedList<OCRDocument> list = new LinkedList<OCRDocument>();
+			list.add(from(obj));
+			return list;
+		}
+		return Collections.emptyList();
 	}
 }

@@ -1,6 +1,7 @@
 package net.aonsolutions.infovox.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -52,7 +53,19 @@ class InfovoxRESTTestCase {
 		assertNotNull(response);
 		assertTrue(response.getHttpCode().isPresent());
 		assertEquals( 200, response.getHttpCode().get());
-		System.out.println( OCRResponseJSON.to(response).toString(1) );
+		// System.out.println( OCRResponseJSON.to(response).toString(1) );
 	}
 	
+	@Test
+	void validDocuments() throws IOException, InterruptedException, URISyntaxException {
+		OCRResponse response = OCRInvofox.getDocuments();
+		assertNotNull(response);
+		assertTrue(response.getHttpCode().isPresent());
+		assertEquals( 200, response.getHttpCode().get());
+		assertTrue(response.getResult().isPresent());
+		assertNotEquals(0 , response.getResult().get().size());
+		System.out.println( OCRResponseJSON.to(response).toString(1) );
+		
+		System.out.println( "Documents ..: " + response.getResult().get().size() );
+	}
 }

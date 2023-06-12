@@ -66,4 +66,7 @@ public class OCRInvofox {
 		return get( MessageFormat.format(DOCUMENT,documentId) );
 	}
 
+	public static OCRResponse getDocuments( ) {
+		return get( DOCUMENTS );
+	}
 }

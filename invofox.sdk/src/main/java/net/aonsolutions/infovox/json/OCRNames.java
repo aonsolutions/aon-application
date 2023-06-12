@@ -31,6 +31,7 @@ public final class OCRNames {
 	public static final String CONFIDENCE = "confidence";
 	public static final String CONTRACT_REF = "contractRef";
 	public static final String COORDINATES = "coordinates";
+	public static final String COUNT = "count";
 	public static final String COUNTRY = "country";
 	public static final String CREATION = "creation";
 	public static final String CREATOR = "creator";
@@ -93,6 +94,7 @@ public final class OCRNames {
 	// ---------------------------------------------------------------------------------------------	[L] 
 	public static final String LANGUAGE = "language";
 	public static final String LEGAL_NOTES = "legalNotes";
+	public static final String LIMIT = "limit";
 	public static final String LINES = "lines";
 	// ---------------------------------------------------------------------------------------------	[M] 
 	public static final String MESSAGE = "message";
@@ -138,6 +140,7 @@ public final class OCRNames {
 	public static final String SERVICE_ADDRESS = "serviceAddress";
 	public static final String SEVERITY = "severity";
 	public static final String SHIPPING_ADDRESS = "shippingAddress";
+	public static final String SKIP = "skip";	
 	public static final String SPLIT_INDEX = "splitIndex";
 	public static final String STEPS = "Steps";
 	public static final String STREET = "street";
