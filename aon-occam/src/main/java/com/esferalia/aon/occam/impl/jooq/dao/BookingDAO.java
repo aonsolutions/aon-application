@@ -110,7 +110,7 @@ public class BookingDAO {
 					DomainTypeInfo dti = new DomainTypeInfo();
 					dti.setChilds(dtChilds);
 					dti.setNumber(dtChilds.size());
-					Map<AonApp, Long> dtChildApps = childs.stream().map(r -> r.getApps())
+					Map<AonApp, Long> dtChildApps = dtChilds.stream().map(r -> r.getApps())
 						.flatMap(apps -> apps.stream().map(DomainApp::getApp))
 						.filter(r -> !booking.getApps().contains(r))
 						.collect(Collectors.groupingBy(f -> f, Collectors.counting()));
