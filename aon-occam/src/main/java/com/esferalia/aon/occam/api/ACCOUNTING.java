@@ -85,6 +85,12 @@ public class ACCOUNTING {
 			return getAccounting().getAccounts(ctx, params);
 		}
 	}
+	
+	public static List<Account> getAccountsList(AccountParams params) {
+		try (CloseableAONContext ctx = AONContext.getAONContext(params.getDomainName(), params.getDomain(), params.getUser())) {
+			return getAccounting().getAccountsList(ctx, params);
+		}
+	}
 
 	public static Stream<Account> getAccounts(String domainName, int domainId,
 			String login, AccountFilter filter) {
