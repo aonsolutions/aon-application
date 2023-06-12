@@ -6,11 +6,15 @@ import static com.esferalia.aon.htmlunit.HtmlUnitIT.LOGGER;
 
 import java.util.Calendar;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.esferalia.aon.htmlunit.HtmlUnitIT;
+
+import org.htmlunit.html.HtmlOption;
 import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
 
 public class TrainningIntegralTest extends BaseIntegralTestCase {
 
@@ -186,6 +190,29 @@ public class TrainningIntegralTest extends BaseIntegralTestCase {
 		assertText("unemployment_cost", 69.30);
 		click("costsCheck-input");
 		
+		draft("FORMACION APRENDIZAJE, ALTERNANCIA (EXCESO 1)");
+		calculate(Calendar.JUNE, 2023);
+		((HtmlSelect) getElementById("editor-cotiza_exceso")).getOptionByText("SI").click();
+		assertElement("structural_overtime");
+		Assert.assertEquals(3, getElementsById("common_contingency").size());
+		Assert.assertEquals(3, getElementsById("unemployment").size());
+		Assert.assertEquals(3, getElementsById("job_training").size());
+		
+		
+		draft("FORMACION APRENDIZAJE, ALTERNANCIA (EXCESO 2)");
+		calculate(Calendar.JUNE, 2023);
+		((HtmlSelect) getElementById("editor-cotiza_exceso")).getOptionByText("SI").click();
+		Assert.assertEquals(3, getElementsById("common_contingency").size());
+		Assert.assertEquals(3, getElementsById("unemployment").size());
+		Assert.assertEquals(3, getElementsById("job_training").size());
+		
+		draft("FORMACION APRENDIZAJE, ALTERNANCIA (EXCESO 3)");
+		calculate(Calendar.JUNE, 2023);
+		((HtmlSelect) getElementById("editor-cotiza_exceso")).getOptionByText("SI").click();
+		assertElement("structural_overtime");
+		Assert.assertEquals(1, getElementsById("common_contingency").size());
+		Assert.assertEquals(1, getElementsById("unemployment").size());
+		Assert.assertEquals(1, getElementsById("job_training").size());
 
 	}
 
