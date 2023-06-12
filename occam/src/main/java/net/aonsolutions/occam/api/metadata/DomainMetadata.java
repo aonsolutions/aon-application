@@ -4,44 +4,44 @@ import java.io.Serializable;
 
 public enum DomainMetadata implements Serializable {
 	 ID
-		{ @Override public <R,T> R visit(DomainMetadataVisitor<R,T> v, T t) { return v.visitId(t);} }
+		{ @Override public void visit(DomainMetadataVisitor v) { v.visitId();} }
 	,NAME
-		{ @Override public <R,T> R visit(DomainMetadataVisitor<R,T> v, T t) { return v.visitName(t);} }
+		{ @Override public void visit(DomainMetadataVisitor v) { v.visitName();} }
 	,DESCRIPTION
-		{ @Override public <R,T> R visit(DomainMetadataVisitor<R,T> v, T t) { return v.visitDescription(t);} }
+		{ @Override public void visit(DomainMetadataVisitor v) { v.visitDescription();} }
 	,TYPE
-		{ @Override public <R,T> R visit(DomainMetadataVisitor<R,T> v, T t) { return v.visitType(t);} }
+		{ @Override public void visit(DomainMetadataVisitor v) { v.visitType();} }
 	,ACTIVE
-		{ @Override public <R,T> R visit(DomainMetadataVisitor<R,T> v, T t) { return v.visitActive(t);} }
+		{ @Override public void visit(DomainMetadataVisitor v) { v.visitActive();} }
 	,SCOPE
-		{ @Override public <R,T> R visit(DomainMetadataVisitor<R,T> v, T t) { return v.visitScope(t);} }
+		{ @Override public void visit(DomainMetadataVisitor v) { v.visitScope();} }
 	,PARENT
-		{ @Override public <R,T> R visit(DomainMetadataVisitor<R,T> v, T t) { return v.visitParent(t);} }
+		{ @Override public void visit(DomainMetadataVisitor v) { v.visitParent();} }
 	,INHERITANCE
-		{ @Override public <R,T> R visit(DomainMetadataVisitor<R,T> v, T t) { return v.visitInheritance(t);} }
+		{ @Override public void visit(DomainMetadataVisitor v) { v.visitInheritance();} }
 	, BOOKING
-		{ @Override public <R,T> R visit(DomainMetadataVisitor<R,T> v, T t) { return v.visitBooking(t);} }
+		{ @Override public void visit(DomainMetadataVisitor v) { v.visitBooking();} }
 	, AUDIT
-		{ @Override public <R,T> R visit(DomainMetadataVisitor<R,T> v, T t) { return v.visitAudit(t);} }
+		{ @Override public void visit(DomainMetadataVisitor v) { v.visitAudit();} }
 	, CONFIGURATION
-		{ @Override public <R,T> R visit(DomainMetadataVisitor<R,T> v, T t) { return v.visitConfiguration(t);} }
+		{ @Override public void visit(DomainMetadataVisitor v) { v.visitConfiguration();} }
 	, COMPANY
-		{ @Override public <R,T> R visit(DomainMetadataVisitor<R,T> v, T t) { return v.visitCompany(t);} }
+		{ @Override public void visit(DomainMetadataVisitor v) { v.visitCompany();} }
 	;
-	public abstract <R,T> R visit(DomainMetadataVisitor<R,T> visitor, T t);
+	public abstract void visit(DomainMetadataVisitor visitor);
 
-	public static interface DomainMetadataVisitor<R,T> {
-		 R visitId( T t );
-		 R visitName( T t );
-		 R visitDescription( T t );
-		 R visitType( T t );
-		 R visitActive( T t );
-		 R visitScope( T t );
-		 R visitParent( T t );
-		 R visitInheritance( T t );
-		 R visitBooking( T t );
-		 R visitAudit( T t );
-		 R visitConfiguration( T t );
-		 R visitCompany( T t );
+	public static interface DomainMetadataVisitor {
+		void visitId();
+		void visitName();
+		void visitDescription();
+		void visitType();
+		void visitActive();
+		void visitScope();
+		void visitParent();
+		void visitInheritance();
+		void visitBooking();
+		void visitAudit();
+		void visitConfiguration();
+		void visitCompany();
 	}
 }

@@ -4,32 +4,32 @@ import java.io.Serializable;
 
 public enum BookingMetadata implements Serializable {
 	 ID
-		{ @Override public <R,T> R visit(BookingMetadataVisitor<R,T> v, T t) { return v.visitId(t);} }
+		{ @Override public void visit(BookingMetadataVisitor v) { v.visitId();} }
 	,EXPIRATION_DATE
-		{ @Override public <R,T> R visit(BookingMetadataVisitor<R,T> v, T t) { return v.visitExpirationDate(t);} }
+		{ @Override public void visit(BookingMetadataVisitor v) { v.visitExpirationDate();} }
 	,OWNER
-		{ @Override public <R,T> R visit(BookingMetadataVisitor<R,T> v, T t) { return v.visitOwner(t);} }
+		{ @Override public void visit(BookingMetadataVisitor v) { v.visitOwner();} }
 	,DOMAIN_MANAGEMENT
-		{ @Override public <R,T> R visit(BookingMetadataVisitor<R,T> v, T t) { return v.visitDomainManagement(t);} }
+		{ @Override public void visit(BookingMetadataVisitor v) { v.visitDomainManagement();} }
 	,DISABLE_DOMAIN_MANAGEMENT
-		{ @Override public <R,T> R visit(BookingMetadataVisitor<R,T> v, T t) { return v.visitDisableDomainManagement(t);} }
+		{ @Override public void visit(BookingMetadataVisitor v) { v.visitDisableDomainManagement();} }
 	,MAX_DEFINED_USERS
-		{ @Override public <R,T> R visit(BookingMetadataVisitor<R,T> v, T t) { return v.visitMaxDefinedUsers(t);} }
+		{ @Override public void visit(BookingMetadataVisitor v) { v.visitMaxDefinedUsers();} }
 	,AON_CUSTOMER
-		{ @Override public <R,T> R visit(BookingMetadataVisitor<R,T> v, T t) { return v.visitAonCustomer(t);} }
+		{ @Override public void visit(BookingMetadataVisitor v) { v.visitAonCustomer();} }
 	,AON_STATUS
-		{ @Override public <R,T> R visit(BookingMetadataVisitor<R,T> v, T t) { return v.visitAonStatus(t);} }
+		{ @Override public void visit(BookingMetadataVisitor v) { v.visitAonStatus();} }
 	;
-	public abstract <R,T> R visit(BookingMetadataVisitor<R,T> visitor, T t);
+	public abstract void visit(BookingMetadataVisitor visitor);
 
-	public static interface BookingMetadataVisitor<R,T> {
-		 R visitId( T t );
-		 R visitExpirationDate( T t );
-		 R visitOwner( T t );
-		 R visitDomainManagement( T t );
-		 R visitDisableDomainManagement( T t );
-		 R visitMaxDefinedUsers( T t );
-		 R visitAonCustomer( T t );
-		 R visitAonStatus( T t );
+	public static interface BookingMetadataVisitor {
+		 void visitId();
+		 void visitExpirationDate();
+		 void visitOwner();
+		 void visitDomainManagement();
+		 void visitDisableDomainManagement();
+		 void visitMaxDefinedUsers();
+		 void visitAonCustomer();
+		 void visitAonStatus();
 	}
 }

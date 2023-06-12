@@ -306,14 +306,12 @@ class DomainDAOTest extends AbstractOccamTest {
 		Optional<Domain> savedDomain = DomainDAO.get(ctx, newDomain.getName() );
 		assertTrue(savedDomain.isPresent());
 
-		String description = "NEW DOMAIN DESCRIPTION";
+		String description = "CURRENT OCCAM TEST DOMAIN DESCRIPTION";
 		savedDomain.get().setDescription(description);
 		assertDoesNotThrow(() -> DomainDAO.save(ctx, savedDomain.get()));
 		Optional<Domain> updatedDomain = DomainDAO.get(ctx, newDomain.getName() );
 		assertTrue(updatedDomain.isPresent());
 		assertEquals(description, updatedDomain.get().getDescription());
-		
-		
 	}
 	
 }

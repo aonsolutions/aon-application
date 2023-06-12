@@ -24,7 +24,11 @@ import org.jooq.SelectJoinStep;
 import org.jooq.SelectLimitStep;
 import org.jooq.SelectSelectStep;
 import org.jooq.SelectWithTiesAfterOffsetStep;
+import org.jooq.UpdateSetMoreStep;
+import org.jooq.conf.ParamType;
 import org.jooq.impl.DSL;
+
+import com.esferalia.aon.jooq.tables.records.DomainRecord;
 
 import net.aonsolutions.occam.api.AONContext;
 import net.aonsolutions.occam.api.AonCoreException;
@@ -43,8 +47,12 @@ import net.aonsolutions.occam.api.filter.DomainFacade.DomainBuilder;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainBuilderFactory;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilter;
 import net.aonsolutions.occam.api.filter.DomainFacade.DomainFilters;
+import net.aonsolutions.occam.api.metadata.BookingMetadata.BookingMetadataVisitor;
+import net.aonsolutions.occam.api.metadata.DomainMetadata.DomainMetadataVisitor;
 import net.aonsolutions.occam.dao.FillerDAO.RegistryFiller;
+import net.aonsolutions.watson.client.MutableObject;
 import net.aonsolutions.watson.client.util.AonStringUtils;
+import net.aonsolutions.watson.server.AonDateUtils;
 import net.aonsolutions.watson.server.AonEnumUtils;
 import net.aonsolutions.watson.server.AonObjectUtils;
 
@@ -518,16 +526,11 @@ public class DomainDAO {
 			.set(DOMAIN.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), Domain::getId))
 			.set(DOMAIN.ENABLEHEREDITY, AonEnumUtils.getByte(domain.hasInheritance() ))
 			.set(DOMAIN.OWNER, AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getOwner))
-			.set(DOMAIN.DOMAINMANAGEMENT
-				, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDomainManagement)))
-			.set(DOMAIN.DISABLEDOMAINMANAGEMENT
-				, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDisableDomainManagement)))
-			.set(DOMAIN.MAXDEFINEDUSERS
-				,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), b -> b.getMaxDefinedUsers().orElse(null)))
-			.<Integer>set(DOMAIN.AONCUSTOMER
-				,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), a -> a.getAonCustomer().orElse(null)))
-			.set(DOMAIN.AONSTATUS
-				,AonEnumUtils.getByte(AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getAonStatus)))
+			.set(DOMAIN.DOMAINMANAGEMENT, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDomainManagement)))
+			.set(DOMAIN.DISABLEDOMAINMANAGEMENT, AonEnumUtils.getByte( AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::isDisableDomainManagement)))
+			.set(DOMAIN.MAXDEFINEDUSERS,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), b -> b.getMaxDefinedUsers().orElse(null)))
+			.set(DOMAIN.AONCUSTOMER,AonObjectUtils.<Booking,Integer>ifOptionalPresent(domain.getBooking(), a -> a.getAonCustomer().orElse(null)))
+			.set(DOMAIN.AONSTATUS,AonEnumUtils.getByte(AonObjectUtils.ifOptionalPresent(domain.getBooking(), Booking::getAonStatus)))
 			.set(DOMAIN.CREATION_USER, audit.getCreationUser().orElse(ctx.getUser()) )
 			.set(DOMAIN.CREATION_DATE, new Timestamp(audit.getCreationDate().orElse(new Date()).getTime())) 
 			.returning(DOMAIN.ID)
@@ -543,17 +546,53 @@ public class DomainDAO {
 		audit.setModificationUser(ctx.getUser());
 		audit.setModificationDate(new Timestamp(new Date().getTime()));
 		domain.setAudit(audit);
-		domain.getDirtySet().stream();
-		int count = ctx.getDslContext().update(DOMAIN)
-			.set(DOMAIN.NAME, domain.getName())
-			.set(DOMAIN.DESCRIPTION, domain.getDescription())
-			.set(DOMAIN.TYPE, AonEnumUtils.getByte(domain.getType() ))
-			.set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isActive() ))
-			.set(DOMAIN.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), Scope::getId))
-			.set(DOMAIN.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), Domain::getId))
-			.set(DOMAIN.ENABLEHEREDITY, AonEnumUtils.getByte(domain.hasInheritance() ))
+		UpdateSetMoreStep<DomainRecord> updateStmt = ctx.getDslContext().update(DOMAIN)
 			.set(DOMAIN.MODIFICATION_USER, audit.getModificationUser().orElse(ctx.getUser()) )
-			.set(DOMAIN.MODIFICATION_DATE, new Timestamp(audit.getModificationDate().orElse(new Date()).getTime())) 
+			.set(DOMAIN.MODIFICATION_DATE, new Timestamp(audit.getModificationDate().orElse(new Date()).getTime()));
+		MutableObject<UpdateSetMoreStep<DomainRecord>> sw = new MutableObject<>(updateStmt);
+		
+		DomainMetadataVisitor updateVisitor = new  DomainMetadataVisitor() {
+			private <T> void set(Field<T> field,T value) {
+				sw.setValue( sw.getValue().set(field,value));	
+			}
+			@Override public void visitName() { set(DOMAIN.NAME, domain.getName()); }
+			@Override public void visitDescription() {set(DOMAIN.DESCRIPTION, domain.getDescription());}
+			@Override public void visitType() {set(DOMAIN.TYPE, AonEnumUtils.getByte(domain.getType()));}
+			@Override public void visitActive() {set(DOMAIN.ACTIVE, AonEnumUtils.getByte(domain.isActive()));}
+			@Override public void visitScope() {set(DOMAIN.SCOPE, AonObjectUtils.ifOptionalPresent(domain.getScope(), Scope::getId));}
+			@Override public void visitParent() {set(DOMAIN.PARENT, AonObjectUtils.ifOptionalPresent(domain.getParent(), Domain::getId));}
+			@Override public void visitInheritance() {set(DOMAIN.ENABLEHEREDITY, AonEnumUtils.getByte(domain.hasInheritance()));}
+			@Override public void visitBooking() {
+				if (domain.getBooking().isPresent()) {
+					Booking booking = domain.getBooking().get(); 
+					BookingMetadataVisitor updateBookingVisitor = new  BookingMetadataVisitor() {
+						@Override public void visitId() { /* Nothing */ }
+						@Override public void visitExpirationDate() { set(DOMAIN.EXPIRATIONDATE, AonDateUtils.toSql( booking.getExpirationDate().orElse(null)));}
+						@Override public void visitOwner() {set(DOMAIN.OWNER,  booking.getOwner());}
+						@Override public void visitDomainManagement() {set(DOMAIN.DOMAINMANAGEMENT,  AonEnumUtils.getByte(booking.isDomainManagement()));}
+						@Override public void visitDisableDomainManagement() {set(DOMAIN.DISABLEDOMAINMANAGEMENT,  AonEnumUtils.getByte(booking.isDisableDomainManagement()));}
+						@Override public void visitMaxDefinedUsers() {set(DOMAIN.MAXDEFINEDUSERS,  booking.getMaxDefinedUsers().orElse(null));}
+						@Override public void visitAonCustomer() {set(DOMAIN.AONCUSTOMER,  booking.getAonCustomer().orElse(null));}
+						@Override public void visitAonStatus() {set(DOMAIN.AONSTATUS,  AonEnumUtils.getByte(booking.getAonStatus()));}
+					};
+					booking.getDirtySet().stream().forEach(dm -> dm.visit(updateBookingVisitor));
+				}
+			}
+			@Override public void visitId() { /* Nothing */ }
+			@Override public void visitAudit() { /* Nothing */ }
+			@Override public void visitConfiguration() { /* Nothing */ }
+			@Override public void visitCompany() { /* Nothing */ }
+	
+		};
+		
+		domain.getDirtySet().stream().forEach(dm -> dm.visit(updateVisitor));
+		
+		System.out.println( sw.getValue()
+			.where(DOMAIN.ID.eq(domain.getId()))
+			.getSQL(ParamType.INLINED) 
+		);
+		
+		int count = updateStmt
 			.where(DOMAIN.ID.eq(domain.getId()))
 			.execute();
 		ctx.log().debug("UPDATE DOMAIN id: {0}. ({1} rows)", domain.getId(),count);

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import net.aonsolutions.occam.api.AON;
 import net.aonsolutions.occam.api.config.Domain;
+import net.aonsolutions.occam.json.DomainJSON;
 import net.aonsolutions.occam.test.AbstractOccamTest;
 import net.aonsolutions.occam.test.Asserts;
 import net.aonsolutions.occam.test.TimingExtension;
@@ -63,4 +64,18 @@ class PublicDomainTest extends AbstractOccamTest {
 		Domain saved = AON.save(getOccam(),toSave);
 		Asserts.assertEqualsDomain(toSave, saved);
 	}
+	
+	
+	@Test()
+	void selectStreamTest1() {
+		AON.getDomains(getOccam(),
+			f -> f.withName().eq( DOMAIN_NAME )
+			,b -> b.withCompany()
+				.withBooking()
+				.limit(0, 2)
+				)
+		.forEach(d ->  System.out.println( DomainJSON.to(d).toString(1)));
+	}
+	
+	
 }
