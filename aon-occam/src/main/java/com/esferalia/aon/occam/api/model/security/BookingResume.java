@@ -14,7 +14,9 @@ public class BookingResume implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private List<Domain> childs;
-	private Map<DomainType, Long> domainTypes;
+	
+	
+	private Map<DomainType, DomainTypeInfo> domainTypes;
 	private Map<UserType, Long> userTypes;
 	private Map<AonApp, Long> childApps;
 	
@@ -38,11 +40,11 @@ public class BookingResume implements Serializable {
 		return this;
 	}
 	
-	public Map<DomainType, Long> getDomainTypes() {
+	public Map<DomainType, DomainTypeInfo> getDomainTypes() {
 		return domainTypes;
 	}
 	
-	public BookingResume setDomainTypes(Map<DomainType, Long> domainTypes) {
+	public BookingResume setDomainTypes(Map<DomainType, DomainTypeInfo> domainTypes) {
 		this.domainTypes = domainTypes;
 		return this;
 	}

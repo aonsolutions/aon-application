@@ -12,6 +12,7 @@ import com.esferalia.aon.occam.api.model.IJsonNames;
 import com.esferalia.aon.occam.api.model.aonsolutions.AonApp;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.BookingResume;
+import com.esferalia.aon.occam.api.model.security.DomainTypeInfo;
 import com.esferalia.aon.occam.api.model.type.DomainType;
 
 public class BookingJSON {
@@ -71,12 +72,20 @@ public class BookingJSON {
 	private static JSONObject bookingResume(BookingResume resume) {
 		JSONObject o = new JSONObject();
 		if(resume != null) { 
-			JSONObject apps = new JSONObject();
-			resume.getChildApps().keySet().forEach(r -> apps.put(r.name(), resume.getChildApps().get(r)));
-			o.put(IJsonNames.APPS, apps);
-		
 			JSONObject domain = new JSONObject();
-			resume.getDomainTypes().keySet().forEach(r -> domain.put(r.name(), resume.getDomainTypes().get(r)));
+			resume.getDomainTypes().keySet().forEach(r ->{
+				DomainTypeInfo dti = resume.getDomainTypes().get(r);
+				JSONObject oa = new JSONObject();
+				oa.put("number", dti.getNumber());
+				
+				JSONObject apps = new JSONObject();
+				dti.getChildApps().keySet().forEach(r2 -> apps.put(r2.name(), dti.getChildApps().get(r2)));
+				oa.put(IJsonNames.APPS, apps);
+
+				oa.put("childs", childJson(dti.getChilds()));
+
+				domain.put(r.name(), oa);	
+			});
 			o.put(IJsonNames.DOMAIN, domain);
 
 			JSONObject user = new JSONObject();
@@ -85,8 +94,6 @@ public class BookingJSON {
 			user.put("childBillingUsers", resume.getChildBillingUsers());
 			
 			o.put(IJsonNames.USER, user);
-			
-			o.put("childs", childJson(resume.getChilds()));
 		}
 		return o;
 	}
