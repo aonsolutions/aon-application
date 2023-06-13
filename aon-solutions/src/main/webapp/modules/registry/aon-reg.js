@@ -217,6 +217,41 @@ export class AonReg extends AonElement {
 
 		table.addRow();
 
+		let registrySegment = this.registry.getRegistrySegments()
+		.map(s =>  new RegistrySegment(s))
+		.filter(s => !s.isRemoved());
+
+		let segmentsDiv = document.createElement(TAG.DIV);
+		segmentsDiv.style.display = "flex";
+		segmentsDiv.style.flexDirection = "row"
+		segmentsDiv.style.width = "100%";
+		segmentsDiv.style.flexWrap = "wrap";
+		segmentsDiv.style.justifyContent = "flex-start";
+		segmentsDiv.style.alignItems = "flex-start";
+		segmentsDiv.style.gap = "10px";
+		registrySegment.forEach((seg, ind) => {
+			let segment = seg ? seg.segment : null;
+			let segmentName = segment ? segment.name : '';
+			if (segmentName) {
+				let segmentLabel = document.createElement(TAG.DIV);
+				segmentLabel.style.display = "flex";
+				segmentLabel.style.alignItems = "center";
+				segmentLabel.style.width = "fit-content";
+				segmentLabel.style.height =  "25px";
+				segmentLabel.style.padding = "5px";
+				segmentLabel.style.borderRadius  = "5px";
+				segmentLabel.style.backgroundColor = "lavender";
+				segmentLabel.style.textAlign = "center";
+				segmentLabel.innerText = segmentName;
+				segmentsDiv.appendChild(segmentLabel);
+			}
+		});
+		let segmentsCell = table.addCell(segmentsDiv, 3);
+
+
+
+		table.addRow();
+
 		let nameInput = new AonInput();
 		nameInput.id = 'aonConfigurationGeneralName';
 		nameInput.description = MSG.BUSINESS_NAME + ' / ' + MSG.NAME;
