@@ -77,6 +77,7 @@ public class Trainning421ExcessQuote implements Update {
 		dslContext.update(SYSTEM_DEDUCTION)
 		.set(SYSTEM_DEDUCTION.START_DATE, start2023Date)
 		.where(SYSTEM_DEDUCTION.DOMAIN.eq(DOMAIN))
+		.and(SYSTEM_DEDUCTION.END_DATE.isNull())
 		.and(SYSTEM_DEDUCTION.DEDUCTION_CONCEPT.in(DSL.select(DEDUCTION_CONCEPT.ID).from(DEDUCTION_CONCEPT).where(DEDUCTION_CONCEPT.CODE.eq("DESMPL")).and(DEDUCTION_CONCEPT.DOMAIN.eq(0))));
 		
 		InsertOnDuplicateStep<SystemDeductionRecord> insertExcessSystemDeductions =
@@ -109,6 +110,13 @@ public class Trainning421ExcessQuote implements Update {
 		;
 		
 		
+		UpdateConditionStep<SystemCostRecord> updateConstantDesmplSystemCost = 
+		dslContext.update(SYSTEM_COST)
+		.set(SYSTEM_COST.START_DATE, start2023Date)
+		.where(SYSTEM_COST.DOMAIN.eq(DOMAIN))
+		.and(SYSTEM_COST.END_DATE.isNull())
+		.and(SYSTEM_COST.CODE.eq("DESMPL_E"));
+
 		InsertOnDuplicateStep<SystemCostRecord> insertExcessSystemCosts = 
 		dslContext
 		.insertInto(SYSTEM_COST)
@@ -151,6 +159,7 @@ public class Trainning421ExcessQuote implements Update {
 			
 			insert2023ExcessQuote.execute();
 			
+			updateConstantDesmplSystemCost.execute();
 			updateConstantDesmplSystemDeduciton.execute();
 			
 			insertExcessSystemCosts.execute();

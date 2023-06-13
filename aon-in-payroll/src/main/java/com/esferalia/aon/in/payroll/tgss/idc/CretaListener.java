@@ -1,6 +1,7 @@
 package com.esferalia.aon.in.payroll.tgss.idc;
 
 import static com.esferalia.aon.watson.util.AonDateUtils.get;
+import static com.esferalia.aon.watson.util.AonStringUtils.normalized;
 
 import java.time.Month;
 import java.util.ArrayList;
@@ -148,9 +149,9 @@ public class CretaListener implements IdcParserListener {
 		TrabajadorBuilder builder = new TrabajadorBuilder();
 		builder.setNaf(nss);
 		
-		builder.setName(getName(name));		
-		builder.setFirstSurname(getFirstSurname(name));		
-		builder.setSecondSurname(getSecondSurname(name));		
+		builder.setName(normalized(getName(name)));		
+		builder.setFirstSurname(normalized(getFirstSurname(name)));		
+		builder.setSecondSurname(normalized(getSecondSurname(name)));		
 		
 		builder.setNumeroIpf(getIpf(nss));
 		builder.setTipoIpf(getTipoIpf(nss));

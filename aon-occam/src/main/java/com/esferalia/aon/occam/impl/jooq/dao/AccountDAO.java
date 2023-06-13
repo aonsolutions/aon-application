@@ -1,10 +1,14 @@
 package com.esferalia.aon.occam.impl.jooq.dao;
 
 import static com.esferalia.aon.jooq.tables.Account.ACCOUNT;
+import static com.esferalia.aon.jooq.tables.Creditor.CREDITOR;
+import static com.esferalia.aon.jooq.tables.Customer.CUSTOMER;
+import static com.esferalia.aon.jooq.tables.Supplier.SUPPLIER;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jooq.Condition;
@@ -71,7 +75,8 @@ public class AccountDAO {
 				.setEntryEnabled( AonEnumUtils.getBoolean(r.getValue(alias.ENTRYENABLED)))
 				.setLevel(getByte(r, alias.LEVEL))
 				.setActive(AonEnumUtils.getBoolean(r.getValue(alias.ACTIVE)))
-				.setCostCenter(r.getValue(alias.COST_CENTER));
+				.setCostCenter(r.getValue(alias.COST_CENTER))
+				.setHasRegistry((checkField(r, CUSTOMER.REGISTRY) || checkField(r, SUPPLIER.REGISTRY) || checkField(r, CREDITOR.REGISTRY)) && (null != r.getValue(CUSTOMER.REGISTRY) || null != r.getValue(SUPPLIER.REGISTRY) || null != r.getValue(CREDITOR.REGISTRY)));
 		}
 	}
 	private static SelectConditionStep<AccountRecord> select(AONContext ctx, AccountFilter filter) {
@@ -104,11 +109,35 @@ public class AccountDAO {
 			.stream()
 			.map(new FullAccountFiller());			
 	}
+	public static List<Account> getAccountsList(AONContext ctx, AccountParams params) {
+		ctx.checkRead();
+		Condition condition = getFilter( params );
+		List<Account> accounts = ctx.getDslContext() 
+			.select().from(ACCOUNT)
+			.leftJoin(CUSTOMER)
+			.on(ACCOUNT.ID.eq(CUSTOMER.ACCOUNT))
+			.leftJoin(SUPPLIER)
+			.on(ACCOUNT.ID.eq(SUPPLIER.ACCOUNT))
+			.leftJoin(CREDITOR)
+			.on(ACCOUNT.ID.eq(CREDITOR.ACCOUNT))
+			.where(condition)
+			.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
+			.orderBy(ACCOUNT.CODE)
+			.offset(params.getOffset())
+			.limit(params.getLimit())
+			.fetch()
+			.stream()
+			.map(new FullAccountFiller())
+			.collect(Collectors.toList());
+		
+		return accounts;
+	}
+	
 	public static Stream<Account> getAccounts(AONContext ctx, AccountParams params) {
 		ctx.checkRead();
 		Condition condition = getFilter( params );
 		return ctx.getDslContext() 
-			.selectFrom(ACCOUNT)
+			.select().from(ACCOUNT)
 			.where(condition)
 			.and(ACCOUNT.DOMAIN.in(SecurityDAO.getInheritanceDomainIds(ctx)))
 			.orderBy(ACCOUNT.CODE)
