@@ -94,12 +94,12 @@ public class OCRDocumentJSON {
 	}
 
 	public static List<OCRDocument> from(Object rawObject) {
-		if (rawObject instanceof JSONArray array) {
-			return from(array);
+		if (rawObject instanceof JSONArray) {
+			return from((JSONArray) rawObject);
 		}
-		if (rawObject instanceof JSONObject obj) {
+		if (rawObject instanceof JSONObject) {
 			LinkedList<OCRDocument> list = new LinkedList<>();
-			list.add(from(obj));
+			list.add(from( (JSONObject) rawObject));
 			return list;
 		}
 		return Collections.emptyList();
