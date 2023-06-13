@@ -8,8 +8,9 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+
 import net.aonsolutions.infovox.model.OCRCompany;
-import net.aonsolutions.watson.client.util.AonCollectionUtils;
 
 public class OCRCompanyJSON {
 	

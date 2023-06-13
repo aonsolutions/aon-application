@@ -8,9 +8,9 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+
 import net.aonsolutions.infovox.model.OCRCompaniesResponse;
-import net.aonsolutions.watson.client.util.AonCollectionUtils;
-import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class OCRCompaniesResponseJSON {
 	
@@ -49,10 +49,11 @@ public class OCRCompaniesResponseJSON {
 	
 	public static JSONObject to(OCRCompaniesResponse response) {
 		if (response == null) return null;
+		;
 		return new JSONObject()
 			.putOpt(OCRNames.HTTP_CODE, response.getHttpCode().orElse(null))
-			.putOpt(OCRNames.RESULT, AonObjectUtils.ifOptionalPresent(response.getCompanies(), OCRCompanyJSON::to ) )
-			.putOpt(OCRNames.ERROR, AonObjectUtils.ifOptionalPresent(response.getError(), OCRErrorJSON::to ) )
+			.putOpt(OCRNames.RESULT, response.getCompanies().map( OCRCompanyJSON::to ))
+			.putOpt(OCRNames.ERROR, response.getError().map(OCRErrorJSON::to))
 			;
 	}
 }

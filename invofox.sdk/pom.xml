@@ -86,8 +86,8 @@
 	
 	<dependencies>
 		<dependency>
-			<groupId>net.aonsolutions</groupId>
-			<artifactId>watson</artifactId>
+			<groupId>com.esferalia.aon</groupId>
+			<artifactId>aon.watson</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>

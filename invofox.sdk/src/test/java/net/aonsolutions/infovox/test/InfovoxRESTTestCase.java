@@ -71,6 +71,4 @@ class InfovoxRESTTestCase {
 		System.out.println( OCRCompaniesResponseJSON.to(response).toString(1) );
 		System.out.println( "Companies..: " + response.getCompanies().get().size() );
 	}
-	
-	
 }

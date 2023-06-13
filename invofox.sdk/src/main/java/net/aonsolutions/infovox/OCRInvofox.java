@@ -46,6 +46,13 @@ public class OCRInvofox {
 			.send(request, BodyHandlers.ofString());
 	}
 
+	private static <T extends OCRResponse> T errorResponse(int statusCode,JSONObject responseJson, Supplier<T> supplier) {
+		T t = supplier.get(); 
+		t.setError(OCRErrorJSON.from(responseJson));
+		t.setHttpCode(statusCode);
+		return t;
+	}
+
 	private static <T extends OCRResponse> T internalErrorResponse(Exception e, Supplier<T> supplier) {
 		T resp = supplier.get(); 
 		resp.setHttpCode(500);
@@ -59,15 +66,13 @@ public class OCRInvofox {
 		try {
 			HttpResponse<String> response = get(MessageFormat.format(DOCUMENT, documentId)); 
 			JSONObject responseJson = new JSONObject(response.body());
-			if (STATUS_OK == response.statusCode()) {
-				return OCRDocumentResponseJSON
-					.from(responseJson)
-					.setHttpCode(response.statusCode());
-			} else {
-				return new OCRDocumentResponse()
-					.setError(OCRErrorJSON.from(responseJson))
-					.setHttpCode(response.statusCode());
-			}
+			if (STATUS_OK != response.statusCode()) {
+				return errorResponse(response.statusCode(), responseJson, OCRDocumentResponse::new);
+			} 
+			return OCRDocumentResponseJSON
+				.from(responseJson)
+				.setHttpCode(response.statusCode());
+			
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			return internalErrorResponse(e, OCRDocumentResponse::new);
@@ -76,19 +81,19 @@ public class OCRInvofox {
 		}
 	}
 
+	// ******************************************************************
+	// *************************************************** [DOCUMENTS] **
+	// ******************************************************************
 	public static OCRDocumentsResponse getDocuments() {
 		try {
 			HttpResponse<String> response = get(DOCUMENTS); 
 			JSONObject responseJson = new JSONObject(response.body());
-			if (STATUS_OK == response.statusCode()) {
-				return OCRDocumentsResponseJSON
-					.from(responseJson)
-					.setHttpCode(response.statusCode());
-			} else {
-				return new OCRDocumentsResponse()
-					.setError(OCRErrorJSON.from(responseJson))
-					.setHttpCode(response.statusCode());
-			}
+			if (STATUS_OK != response.statusCode()) {
+				return errorResponse(response.statusCode(), responseJson, OCRDocumentsResponse::new);
+			} 
+			return OCRDocumentsResponseJSON
+				.from(responseJson)
+				.setHttpCode(response.statusCode());
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			return internalErrorResponse(e, OCRDocumentsResponse::new);
@@ -101,15 +106,12 @@ public class OCRInvofox {
 		try {
 			HttpResponse<String> response = get(COMPANIES); 
 			JSONObject responseJson = new JSONObject(response.body());
-			if (STATUS_OK == response.statusCode()) {
-				return OCRCompaniesResponseJSON
+			if (STATUS_OK != response.statusCode()) {
+				return errorResponse(response.statusCode(), responseJson, OCRCompaniesResponse::new);
+			} 
+			return OCRCompaniesResponseJSON
 					.from(responseJson)
 					.setHttpCode(response.statusCode());
-			} else {
-				return new OCRCompaniesResponse()
-					.setError(OCRErrorJSON.from(responseJson))
-					.setHttpCode(response.statusCode());
-			}
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 			return internalErrorResponse(e, OCRCompaniesResponse::new);

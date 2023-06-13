@@ -12,9 +12,8 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import net.aonsolutions.watson.client.util.AonNumberUtils;
-import net.aonsolutions.watson.client.util.AonStringUtils;
-import net.aonsolutions.watson.server.AonObjectUtils;
+import com.esferalia.aon.watson.util.AonNumberUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public class OCRJSONUtils {
 	private static final String DATE_PATTERN = "yyyy-MM-dd";
@@ -32,16 +31,14 @@ public class OCRJSONUtils {
 	
 	public static JSONObject getObject(JSONObject json, String key ) {
 		if(json == null) return null;
-		return AonObjectUtils.ifNotNullDo(json.opt(key)
-			, t -> json.optJSONObject(key, null));
+		return json.optJSONObject(key);
 	}
 	
 	public static JSONArray getArray(JSONObject json, String key ) {
 		if(json == null) return null;
-		return AonObjectUtils.ifNotNullDo(json.opt(key)
-			, t -> json.optJSONArray(key));
+		return json.optJSONArray(key);
 	}
-
+	
 	public static Object getRawObject(JSONObject json, String key ) {
 		if(json == null) return null;
 		return json.opt(key);
@@ -49,14 +46,12 @@ public class OCRJSONUtils {
 
 	public static Integer getInteger(JSONObject json, String key ) {
 		if(json == null) return null;
-		return AonObjectUtils.ifNotNullDo(json.opt(key)
-			, t -> AonNumberUtils.toInteger(json.optNumber(key, null)));
+		return AonNumberUtils.toInteger(json.optNumber(key));
 	}
 	
 	public static Double getDouble(JSONObject json, String key ) {
 		if(json == null) return null;
-		return AonObjectUtils.ifNotNullDo(json.opt(key)
-			, t -> AonNumberUtils.toDouble(json.optNumber(key, null)));
+		return AonNumberUtils.toDouble(json.optNumber(key));
 	}
 
 	public static String getString(JSONObject json, String key ) {

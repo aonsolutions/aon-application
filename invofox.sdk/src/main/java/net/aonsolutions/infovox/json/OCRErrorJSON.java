@@ -8,10 +8,10 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+
 import net.aonsolutions.infovox.model.OCRError;
 import net.aonsolutions.infovox.model.OCRSeverity;
-import net.aonsolutions.watson.client.util.AonCollectionUtils;
-import net.aonsolutions.watson.server.AonObjectUtils;
 
 public class OCRErrorJSON {
 	
@@ -55,7 +55,7 @@ public class OCRErrorJSON {
 		return new JSONObject()
 			.putOpt(OCRNames.SEVERITY, error.getSeverity().orElse(null))
 			.putOpt(OCRNames.CODE, error.getCode().orElse(null))
-			.putOpt(OCRNames.ADDITIONAL_INFO, AonObjectUtils.ifOptionalPresent(error.getAdditionalInfo(), OCRAdditionalInfoJSON::to ) )
+			.putOpt(OCRNames.ADDITIONAL_INFO, error.getAdditionalInfo().map(OCRAdditionalInfoJSON::to).orElse(null))
 			.putOpt(OCRNames.TIMESTAMP, error.getTimestamp().orElse(null))
 			.putOpt(OCRNames.USER, error.getUser().orElse(null))
 			.putOpt(OCRNames.INFO, error.getInfo().orElse(null))

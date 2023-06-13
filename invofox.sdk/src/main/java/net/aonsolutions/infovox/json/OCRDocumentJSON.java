@@ -9,11 +9,12 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.esferalia.aon.watson.util.AonCollectionUtils;
+
 import net.aonsolutions.infovox.model.OCRConfidence;
 import net.aonsolutions.infovox.model.OCRDocument;
 import net.aonsolutions.infovox.model.OCRSeverity;
 import net.aonsolutions.infovox.model.OCRType;
-import net.aonsolutions.watson.client.util.AonCollectionUtils;
 
 public class OCRDocumentJSON {
 	

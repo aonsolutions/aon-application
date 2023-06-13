@@ -3,7 +3,7 @@ package net.aonsolutions.infovox.model;
 import java.util.Arrays;
 import java.util.Optional;
 
-import net.aonsolutions.watson.client.util.AonStringUtils;
+import com.esferalia.aon.watson.util.AonStringUtils;
 
 public enum OCRSeverity {
 	 processing
