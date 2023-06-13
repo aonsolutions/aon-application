@@ -35,8 +35,9 @@ public class OCRInvofox {
 	}
 
 	private static HttpResponse<String> get(String url) throws URISyntaxException, IOException, InterruptedException {
+		
 		HttpRequest request = HttpRequest.newBuilder()
-			.uri(new URI(url))
+			.uri( URI.create(url) )
 			.header("x-api-key", TOKEN)
 			.GET()
 			.build();

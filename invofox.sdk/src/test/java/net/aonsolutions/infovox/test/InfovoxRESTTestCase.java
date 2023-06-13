@@ -6,9 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import org.junit.jupiter.api.Test;
 
 import net.aonsolutions.infovox.OCRInvofox;
@@ -24,7 +21,7 @@ import net.aonsolutions.infovox.model.OCRError;
 class InfovoxRESTTestCase {
 	
 	@Test
-	void invalidDocument() throws IOException, InterruptedException, URISyntaxException {
+	void getInvalidDocument() {
 		String documentId = "DOCUMENTO_NO_VALIDO";
 		OCRDocumentResponse response = OCRInvofox.getDocument(documentId);
 		assertNotNull(response);
@@ -39,7 +36,7 @@ class InfovoxRESTTestCase {
 	}
 	
 	@Test
-	void validDocument() throws IOException, InterruptedException, URISyntaxException {
+	void getValidDocument() {
 		String documentId = "648088d6c632f4000891fa82";
 		OCRDocumentResponse response = OCRInvofox.getDocument(documentId);
 		assertNotNull(response);
@@ -52,7 +49,7 @@ class InfovoxRESTTestCase {
 	}
 	
 	@Test
-	void validDocuments() throws IOException, InterruptedException, URISyntaxException {
+	void getDocuments() {
 		OCRDocumentsResponse response = OCRInvofox.getDocuments();
 		assertNotNull(response);
 		assertTrue(response.getHttpCode().isPresent());
@@ -64,7 +61,7 @@ class InfovoxRESTTestCase {
 	}
 	
 	@Test
-	void getCompanies() throws IOException, InterruptedException, URISyntaxException {
+	void getCompanies() {
 		OCRCompaniesResponse response = OCRInvofox.getCompanies();
 		assertNotNull(response);
 		assertTrue(response.getHttpCode().isPresent());
