@@ -1,131 +1,26 @@
 <app-content>
-    <!-- [headerHeight]="'5rem'"  -->
-    <app-grid-layout
-    [navCols]="4"
-    [contentCols]="10"
-    [detailCols]="10"
-    [showDetail]="detail"
-    >
-        <div class="allSize" header>Header</div>
-        <div class="prueba" nav>Nav</div>
-        <div class="allSize" content>
-            <button (click)="detail ? detail = false : detail = true">showDetail</button>
-            Content
-            <!-- <app-pagination-container [width]="'100%'" [height]="'100%'" [style.background]="'white'">asd</app-pagination-container> -->
-        </div>
-        <div class="allSize" detail>detail</div>
-    </app-grid-layout>
-    <!-- <mat-grid-list cols="24" rowHeight="5rem" [gutterSize]="'0px'">
-        <mat-grid-tile [colspan]="6" [style.backgroundColor]="'lightgrey'">3 cols</mat-grid-tile>
-        <mat-grid-tile [colspan]="18" [style.backgroundColor]="'aqua'">21 cols</mat-grid-tile>
-    </mat-grid-list> -->
-    <!-- <app-content-side-nav [cols]="6">
-        <div nav class="allSize">
-            //Contenido de la sidenav
-        </div>
-        <div content class="allSize">
-            <app-content>
-                <app-content-main>
-                    //Contenido principal de la vista
-                    <app-button (click)="containerService.showDetails()">Abrir</app-button>
-                    <app-button (click)="containerService.hideDetails()">Cerrar</app-button>
-                </app-content-main>
-                <app-content-detail [heightHeader]="'0'">
-                    //Contenido de la vista de detalle
-                </app-content-detail>
-            </app-content>
-        </div>
-    </app-content-side-nav> -->
-    <!-- <div style="height:10%">
-        <mat-grid-list cols="24" rowHeight="100%" [gutterSize]="'0px'">
-            <mat-grid-tile [colspan]="24" [style.backgroundColor]="'lightgrey'">
-                <div style="width: 100%; height: 100%;">
-                    Header
-                </div>
-            </mat-grid-tile>
-        </mat-grid-list>
+  <div class="custom-grid">
+    <div class="upload">Subir archivos</div>
+    <div class="dashboard">Dashboard</div>
+    <div class="buttons">
+      <div class="button-style">MIS ÚLTIMAS FACTURAS</div>
+      <div class="button-style">CREAR FACTURA</div>
+      <div class="button-style">DAR DE ALTA EMPLEADO</div>
+      <div class="button-style">CREAR CONSULTA</div>
+      <div class="button-style">CONTRATAR SERVICIOS</div>
+      <div class="button-style">MARCAJE</div>
     </div>
-    <div style="height:90%">
-        <mat-grid-list cols="24" rowHeight="100%" [gutterSize]="'0px'">
-            <mat-grid-tile [colspan]="3" rowspan="1" [style.backgroundColor]="'aqua'">
-                SideNav
-                <ng-content select="[sidenav]"></ng-content>
-            </mat-grid-tile>
-            <mat-grid-tile [colspan]="11" rowspan="1" [style.backgroundColor]="'lightblue'">
-                Content
-            </mat-grid-tile>
-            <mat-grid-tile [colspan]="10" rowspan="1" [style.backgroundColor]="'lightgreen'">
-                <div style="width: 100%; height: 100%;">
-                    <div style="width: 100%; height: 10%;">
-                        <mat-grid-list cols="24" rowHeight="1:3">
-                            <mat-grid-tile [colspan]="12" rowspan="1" [style.backgroundColor]="'red'"></mat-grid-tile>
-                            <mat-grid-tile [colspan]="12" rowspan="1" [style.backgroundColor]="'red'"></mat-grid-tile>
-                            <mat-grid-tile [colspan]="12" rowspan="1" [style.backgroundColor]="'red'"></mat-grid-tile>
-                            <mat-grid-tile [colspan]="12" rowspan="1" [style.backgroundColor]="'red'"></mat-grid-tile>
-                            <mat-grid-tile [colspan]="12" rowspan="1" [style.backgroundColor]="'red'"></mat-grid-tile>
-                        </mat-grid-list>
-                    </div>
-                </div>
-            </mat-grid-tile>
-        </mat-grid-list>
-    </div> -->
-    <!-- <app-grid-base>
-        <div sidenav>
-            <mat-grid-list cols="10"></mat-grid-list>
-        </div>
-        <div content></div>
-    </app-grid-base> -->
-    <!-- <app-tag
-    [padding]="'.3rem'"
-    [backgroundColor]="'lightgrey'"
-    [color]="'black'"
-    [borderRadius]="'5rem'"
-    [maxValue]="99"
-    [fontSize]="'.7rem'"
-    [width]="'2rem'"
-    [height]="'2rem'"
-    >999</app-tag>
-    <app-card [headerHeight]="'4rem'" [footerHeight]="'4rem'" [padding]="'1rem'" [width]="'50%'" [height]="'35rem'" [border]="'.05rem solid black'">
-        <div header class="allSize" style="background-color: aqua;">
-            HEADER
-        </div>
-        <div body class="allSize" style="background-color:bisque;">
-            BODY
-        </div>
-        <div footer class="allSize" style="background-color:cadetblue;">
-            FOOTER
-        </div>
-    </app-card> -->
-    <!-- <app-accordion (getState)="accordionState = $event">
-        <div header style="display: flex;">
-            Header&nbsp;&nbsp;
-            <div *ngIf="accordionState == false">Show/hide content with accordion state</div>
-        </div>
-        <div content>
-            Content
-        </div>
-    </app-accordion> -->
-    <!-- <div style="background-color: aqua; cursor: pointer; width: fit-content; padding: 1rem;box-sizing: border-box;" (click)="showModal()">
-        OpenModal
-    </div> -->
-    <!-- <app-modal-controller #modal></app-modal-controller> -->
-
-    <!-- <app-pagination-controller
-        [style.height]="'5%'"
-        [totalItems]="123"
-        [maxItems]="20"
-        (pagValue)="log($event);"
-        (totalPags)="log($event)">
-    </app-pagination-controller>
-    <app-pagination-container width="100%" height="95%">
-        <mat-grid-list cols="24" rowHeight="5rem" gutterSize="5px">
-            <mat-grid-tile *ngFor="let item of data"
-                [colspan]="12"
-                [rowspan]="1"
-                [style.background]="'lightgrey'"
-            >
-            <app-list-element [widthContainer]="'100%'" [heightContainer]="'100%'" [style.backgroundColor]="''">{{item.index}} {{item.text}}</app-list-element>
-            </mat-grid-tile>
-        </mat-grid-list>
-    </app-pagination-container> -->
+    <div class="summary">
+      <div class="summary-view">Ventas/Gastos</div>
+      <div class="summary-view">Cobros/Pagos</div>
+      <div class="summary-view">Impuestos</div>
+      <div class="summary-view">Tus bancos</div>
+    </div>
+    <hr class="line" style="width: calc(100% - 32px);">
+    <div class="email-table">Bandeja</div>
+    <div class="panel">Bandeja</div>
+    <div></div>
+  </div>
 </app-content>
+
+

@@ -1,4 +1,104 @@
-.prueba{
-  font-family: 'Roboto-Thin' ;
-  font-size: 100px;
+.custom-grid {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  grid-gap: 10px;
+  height: 100%;
+  padding-right: 32px;
+}
+
+.upload {
+  grid-column: 1 / span 24;
+  height: 56px;
+  margin: 26.7px 4px 32px 33px;
+  padding: 16px 763px;
+  border-radius: 4px;
+  border-style: dashed;
+  border-color: gray;
+  border-width: 2px;
+  background-color: #fff;
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dashboard {
+  grid-column: 1 / span 24;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  gap: 19px;
+  border: 1px solid blue;
+  height: 44px;
+  margin-left: 32px;
+  margin-bottom: 21px;
+  width: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttons {
+  grid-column: 1 / span 24;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 32px;
+  margin-bottom: 22px;
+}
+
+.button-style{
+  flex: 1;
+  border: 1px solid red;
+  width: 253px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 26px;
+}
+
+.summary{
+  grid-column: 1 / span 24;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 32px;
+  margin-bottom: 39px;
+
+
+}
+
+.summary-view{
+  flex: 1;
+  border: 1px solid red;
+  width: 253px;
+  margin-right: 20px;
+  height: 332px;
+}
+
+.line {
+  grid-column: 1 / span 24;
+  border: none;
+  border-top: 1px solid gray; /* Agregado: Línea horizontal continua de color gris */
+  margin-left: 32px;
+  margin-bottom: 39px;
+}
+
+
+.email-table {
+  grid-column: 1 / span 24;
+  border: 1px solid black;
+  height: 250px;
+  margin-left: 32px;
+  margin-bottom: 22px;
+
+}
+
+.panel{
+  grid-column: 1 / span 24;
+  border: 1px solid black;
+  height: 250px;
+  margin-left: 32px;
+  margin-bottom: 22px;
+
 }
