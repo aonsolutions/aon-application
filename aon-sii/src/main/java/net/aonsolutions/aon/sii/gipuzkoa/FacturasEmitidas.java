@@ -20,6 +20,7 @@ import com.esferalia.aon.occam.api.model.AccountingInvoice;
 import com.esferalia.aon.occam.api.model.ApplicationParameter;
 import com.esferalia.aon.occam.api.model.Company;
 import com.esferalia.aon.occam.api.model.Domain;
+import com.esferalia.aon.occam.api.model.EnterpriseActivity;
 import com.esferalia.aon.occam.api.model.finance.Finance;
 import com.esferalia.aon.occam.api.model.finance.Invoice;
 import com.esferalia.aon.occam.api.model.fiscal.VatContext;
@@ -177,11 +178,16 @@ public class FacturasEmitidas extends SIIBuilt {
 		suministro.setCabecera(cabecera(company, mod, terceros));
 		
 		// BODY
-			Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
-					.mapToDouble(f -> f.getBase()).sum();
-			Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
-					.mapToDouble(f -> f.getBase()).sum();
-			LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && f.getPercentage() > 0  && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+		VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());
+
+		EnterpriseActivity activity = AON.getEnterpriseActivity(domain.getName(), domain.getId(), login, vat.getActivity());
+		boolean exempt = activity.getVatRegime().isExempt() || vat.isIntracommunity() || vat.isExtracommunity();
+		
+		Double exenta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && exempt && f.getPercentage() == 0  && ! VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+			.mapToDouble(f -> f.getBase()).sum();
+		Double noSujeta =  contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
+			.mapToDouble(f -> f.getBase()).sum();
+			LinkedList<VatData> noExenta = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId) && (!exempt || f.getPercentage() > 0) && !VatDeductionType.NON_TAXABLE.equals(f.getVatDeductionType()))
 					.map(f -> new VatData().setBase(f.getBase())
 							.setPercentage(f.getPercentage())
 							.setQuota(f.getQuota())
@@ -189,7 +195,6 @@ public class FacturasEmitidas extends SIIBuilt {
 							.setSurchargeQuota(f.getSurchargeQuota()))
 					.collect(Collectors.toCollection(LinkedList::new));
 			
-			VatContext vat = contextList.stream().filter(f -> f.getInvoice().equals(invoiceId)).findFirst().orElse(new VatContext());
 
 			LRfacturasEmitidasType factura = new LRfacturasEmitidasType();
 			
