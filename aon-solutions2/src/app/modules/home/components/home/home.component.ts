@@ -1,5 +1,7 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ContainerService } from 'src/app/shared/services/container.service';
+import {Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -8,36 +10,21 @@ import { ContainerService } from 'src/app/shared/services/container.service';
 })
 export class HomeComponent implements OnInit {
 
-  detail: boolean = false;
+  // constructor(public invoiceService: InvoiceService) {
+  //   this.invoiceService.getInvoices().subscribe((response)=>{
+  //     console.log(response)
+  //   })
+  // }
 
-  accordionState: boolean = false;
 
-  functionHome: any = (result:any) => this.afterModalClosed(result);
-  
-  @ViewChild('modal') modalComponent: any = '';
-
-  afterModalClosed(result?: any){
-    console.log(result);
-  }
-
-  showModal(){
-    // this.modalComponent.openDialog(ModalComponent,this.functionHome, 'Data from home');
-  }
-
-  constructor(public containerService: ContainerService) {
+  constructor(breakpointObserver: BreakpointObserver){
 
   }
-
-  data : any = []
 
   ngOnInit(): void {
-    for(let i = 0; i < 100; i++){
-      this.data.push({index: i, text: 'lorem ipsum asd...'})
-    }
+    
   }
 
-  log(event : any){
-    console.log(event)
-  }
+  
   
 }

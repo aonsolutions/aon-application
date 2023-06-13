@@ -7,6 +7,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
     SharedModule,
     MatButtonModule,
     MatMenuModule,
-    MatGridListModule
+    MatGridListModule,
+    FormsModule
   ]
 })
 export class HomeModule { }

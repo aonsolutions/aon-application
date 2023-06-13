@@ -43,6 +43,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { PaginationContainerComponent } from './components/pagination-container/pagination-container.component';
 import { PaginationControllerComponent } from './components/pagination-controller/pagination-controller.component';
 import { GridLayoutComponent } from './layouts/grid-layout/grid-layout.component';
+import { GridColsDirective } from './directives/grid-cols.directive';
 
 
 @NgModule({
@@ -74,6 +75,7 @@ import { GridLayoutComponent } from './layouts/grid-layout/grid-layout.component
     PaginationContainerComponent,
     PaginationControllerComponent,
     GridLayoutComponent,
+    GridColsDirective
   ],
   imports: [
     CommonModule,
@@ -120,7 +122,8 @@ import { GridLayoutComponent } from './layouts/grid-layout/grid-layout.component
     ModalControllerComponent,
     PaginationContainerComponent,
     PaginationControllerComponent,
-    GridLayoutComponent
+    GridLayoutComponent,
+    GridColsDirective
   ]
 })
 export class SharedModule { }

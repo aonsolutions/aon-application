@@ -11,7 +11,8 @@ export const environment = {
     domainLogin: 87811999
   },
   localStorageJwt: {
-    accessToken: "session_id"
+    accessToken: "session_id",
+    selectedEnterprise: "selectedEnterprise"
   }
 };
 

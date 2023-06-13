@@ -81,3 +81,14 @@ font-size: 20px!important;
 
 
 
+   width: calc(100%);
+   height: calc(100%);
+}
+
+a, u {
+  text-decoration: none;
+}
+
+a:visited {
+  color: black;
+}
