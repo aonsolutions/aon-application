@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import com.esferalia.aon.occam.api.model.attachment.AttachType;
 import com.esferalia.aon.occam.api.model.attachment.RegistryAttachmentType;
 import com.esferalia.aon.occam.api.model.security.Booking;
 import com.esferalia.aon.occam.api.model.security.BookingResume;
+import com.esferalia.aon.occam.api.model.security.DomainTypeInfo;
 import com.esferalia.aon.occam.api.model.security.User;
 import com.esferalia.aon.occam.api.model.security.UserType;
 import com.esferalia.aon.occam.api.model.type.AonStatus;
@@ -84,7 +86,10 @@ public class BookingDAO {
 		
 		if(domain.isParent()) {
 			List<Domain> childs = getActiveChildDomains(ctx, domain.getId());
+			
 			BookingResume resume = new BookingResume();
+			
+			resume.setChilds(childs);
 
 			Integer childBillingUsers = childs.stream().mapToInt(r -> AonNumberUtils.zeroIfNull(r.getMaxDefinedUsers()) > 0 
 					? AonNumberUtils.zeroIfNull(r.getMaxDefinedUsers()) - 1 : 0).sum();
@@ -93,19 +98,27 @@ public class BookingDAO {
 			resume.setChildBillingUsers(childBillingUsers);
 			resume.setChildDefinedUsers(childDefinedUsers);
 			
-			Map<AonApp, Long> childApps = childs.stream().map(r -> r.getApps())
-				.flatMap(apps -> apps.stream().map(DomainApp::getApp))
-				.filter(r -> !booking.getApps().contains(r))
-				.collect(Collectors.groupingBy(f -> f, Collectors.counting()));
-			resume.setChildApps(childApps);
-			
 			Map<UserType, Long> userTypes = childs.stream().map(r -> r.getUsers())
 				.flatMap(l -> l.stream().map(User::getType))
 				.collect(Collectors.groupingBy(f -> f, Collectors.counting()));
 			resume.setUserTypes(userTypes);
 		
-			Map<DomainType, Long> domainTypes = childs.stream().map(Domain::getDomainType)
-			.collect(Collectors.groupingBy(f -> f, Collectors.counting()));
+			Map<DomainType, DomainTypeInfo> domainTypes = new HashMap<>();
+			for (DomainType dt : DomainType.values()) {
+				List<Domain> dtChilds = childs.stream().filter(d -> d.getDomainType().equals(dt)).toList();
+				if(dtChilds.size() > 0) {
+					DomainTypeInfo dti = new DomainTypeInfo();
+					dti.setChilds(dtChilds);
+					dti.setNumber(dtChilds.size());
+					Map<AonApp, Long> dtChildApps = dtChilds.stream().map(r -> r.getApps())
+						.flatMap(apps -> apps.stream().map(DomainApp::getApp))
+						.filter(r -> !booking.getApps().contains(r))
+						.collect(Collectors.groupingBy(f -> f, Collectors.counting()));
+					dti.setChildApps(dtChildApps);
+					domainTypes.put(dt, dti);
+				}
+			} 
+			
 			resume.setDomainTypes(domainTypes);
 
 			booking.setResume(resume);
