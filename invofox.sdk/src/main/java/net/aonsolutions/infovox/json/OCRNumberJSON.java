@@ -27,7 +27,7 @@ public class OCRNumberJSON {
 	public static OCRNumber from(JSONObject json) {
 		if (json == null) return null; 
 		return new OCRNumber()
-			.setValue(OCRJSONUtils.getNumber(json, OCRNames.NAME))
+			.setValue(OCRJSONUtils.getNumber(json, OCRNames.VALUE))
 			.setConfidence(OCRJSONUtils.getNumber(json, OCRNames.CONFIDENCE))
 		;
 	}

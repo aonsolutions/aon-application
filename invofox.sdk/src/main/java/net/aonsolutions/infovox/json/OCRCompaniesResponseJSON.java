@@ -52,8 +52,8 @@ public class OCRCompaniesResponseJSON {
 		;
 		return new JSONObject()
 			.putOpt(OCRNames.HTTP_CODE, response.getHttpCode().orElse(null))
-			.putOpt(OCRNames.RESULT, response.getCompanies().map( OCRCompanyJSON::to ))
-			.putOpt(OCRNames.ERROR, response.getError().map(OCRErrorJSON::to))
+			.putOpt(OCRNames.RESULT, response.getCompanies().map( OCRCompanyJSON::to ).orElse(null))
+			.putOpt(OCRNames.ERROR, response.getError().map(OCRErrorJSON::to).orElse(null))
 			;
 	}
 }
