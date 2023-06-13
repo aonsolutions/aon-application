@@ -2083,6 +2083,7 @@ public abstract class ITDialog extends AonCustomDialog {
         for (ITPart itPart: this.it.getITParts()) {
             if(itPart.getId().equals(itPartTmp.getId())) {
                 itPart.setStatus(status.value());
+                itPart.setModify(true);
                 break;
             }
         }

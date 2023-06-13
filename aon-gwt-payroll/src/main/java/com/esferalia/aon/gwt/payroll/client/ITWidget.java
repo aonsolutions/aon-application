@@ -2171,7 +2171,8 @@ public abstract class ITWidget extends ResizeComposite {
 		            + "&dateFromStr=" + dateFromStr
 					+ "&dateToStr=" + dateToStr
 					+ "&startDateStr=" + startDateStr
-					+ "&itType=" + it.getTypeLowPart();
+					+ "&itType=" + it.getTypeLowPart()
+					+ "&itPartType=0";
 			
 			Window.open(fileDownloadURL+query, "ITExporter", "resizable=yes,scrollbars=yes,status=yes");
 		}, f -> {});
