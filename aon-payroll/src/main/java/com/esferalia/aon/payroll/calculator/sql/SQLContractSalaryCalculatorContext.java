@@ -2739,6 +2739,9 @@ public class SQLContractSalaryCalculatorContext extends AbstractContractSalaryCa
 			calculator.calculate(ctx);
 			throwGuarenteeException(ctx);
 		} catch (GuarenteeException e) {
+			Double extraPayment = getVariable(ContextVariable.EXTRA_PAYMENT, Double.class);
+			if ( totalPayment != null && extraPayment != null )
+			    totalPayment -= extraPayment;
 			
 			List<ITimedResult<Double>> guarenteeResults = e.getGuarentees(guaranteePeriod);
 			

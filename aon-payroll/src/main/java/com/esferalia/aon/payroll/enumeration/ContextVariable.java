@@ -375,7 +375,10 @@ public enum ContextVariable implements IResourceable {
 	
 	PAY_PRORRATED("PAGAS_PRORRATEADAS", VariableType.BOOLEAN),
 	
-	MONTHLY_ADJUST("AJUSTE_MENSUAL", VariableType.BOOLEAN)
+	MONTHLY_ADJUST("AJUSTE_MENSUAL", VariableType.BOOLEAN),
+	
+	EXTRA_PAYMENT("EXTRA_DEVENGADO", VariableType.DOUBLE),
+
 	
 	;
 

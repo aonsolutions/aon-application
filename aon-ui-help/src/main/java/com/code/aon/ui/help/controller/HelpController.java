@@ -1,9 +1,11 @@
 package com.code.aon.ui.help.controller;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Collection;
@@ -24,6 +26,7 @@ import com.code.aon.web.help.service.drive.DriveService;
 import com.code.aon.web.help.service.drive.GFile;
 import com.code.aon.web.help.service.drive.MimeTypes;
 import com.code.aon.web.help.service.drive.exception.GoogleDriveException;
+import com.code.aon.web.help.servlet.NewsServlet;
 import com.esferalia.aon.occam.api.AON;
 import com.esferalia.aon.occam.api.AON_SOLUTIONS;
 import com.esferalia.aon.occam.api.model.Domain;
@@ -339,37 +342,15 @@ public class HelpController implements Serializable {
 		}
 		return "";
 	}
-	
 	//NEWS
 	public Map<String, List<News>> getNews() {
-		Domain domain = new Domain().setName(AonUtil.getDomainName()).setId(DomainManager.getCurrentDomain());
-		User user = new User().setName(AonUtil.getRemoteUser());
-		
-		Timestamp now = new Timestamp(new Date().getTime());
-		
-		NewsDateComparator comparator = new NewsDateComparator();
-		
-		Map<String, List<News>> newsMap = new LinkedHashMap<>();
-		AON_SOLUTIONS
-		.getNewsStream(domain,
-				user,
-				f -> f.getDomainProperty().eq(domain.getId())//SAME DOMAIN
-					  .and(f.getCategoryProperty().isNotNull())//CATEGORY NOT NULL
-					  .and(f.getTypeProperty().eq(NewsType.COMMUNICATION.value()))//MUST BE OF TYPE 'COMMUNICATION'
-					  .and(f.getInitDateProperty().isNotNull().and(f.getInitDateProperty().le(now)))//INIT DATE NOT NULL AND LOWER THAN TODAY
-					  .and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(now)))//END DATE NULL OR HIGHER THAN TODAY
-					  
-		)
-		.sorted(comparator)
-		.forEach(news -> {
-			Category cat = news.getCategory();
-			List<News> newsList = newsMap.getOrDefault(cat.getName(), new LinkedList<>());
-			newsList.add(news);
-			newsMap.put(cat.getName(), newsList);
-		});
-		
-		return newsMap;
+	    try {
+		return getRemoteNews();
+	    } catch (Exception e ) {
+		return getLocalNews();
+	    }
 	}
+	
 	
 	private class NewsDateComparator implements Comparator<News> {
 
@@ -506,4 +487,48 @@ public class HelpController implements Serializable {
 		return "";
 	}
 
+	//LOCAL NEWS
+	private Map<String, List<News>> getLocalNews() {
+		Domain domain = new Domain().setName(AonUtil.getDomainName()).setId(DomainManager.getCurrentDomain());
+		User user = new User().setName(AonUtil.getRemoteUser());
+		
+		Timestamp now = new Timestamp(new Date().getTime());
+		
+		NewsDateComparator comparator = new NewsDateComparator();
+		
+		Map<String, List<News>> newsMap = new LinkedHashMap<>();
+		AON_SOLUTIONS
+		.getNewsStream(domain,
+				user,
+				f -> f.getDomainProperty().eq(domain.getId())//SAME DOMAIN
+					  .and(f.getCategoryProperty().isNotNull())//CATEGORY NOT NULL
+					  .and(f.getTypeProperty().eq(NewsType.COMMUNICATION.value()))//MUST BE OF TYPE 'COMMUNICATION'
+					  .and(f.getInitDateProperty().isNotNull().and(f.getInitDateProperty().le(now)))//INIT DATE NOT NULL AND LOWER THAN TODAY
+					  .and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(now)))//END DATE NULL OR HIGHER THAN TODAY
+					  
+		)
+		.sorted(comparator)
+		.forEach(news -> {
+			Category cat = news.getCategory();
+			List<News> newsList = newsMap.getOrDefault(cat.getName(), new LinkedList<>());
+			newsList.add(news);
+			newsMap.put(cat.getName(), newsList);
+		});
+		
+		return newsMap;
+	}
+
+	private Map<String, List<News>> getRemoteNews() throws ClassNotFoundException, IOException {
+	    NewsDateComparator comparator = new NewsDateComparator();
+	    Map<String, List<News>> newsMap = new LinkedHashMap<>();
+	    Arrays.stream(NewsServlet.getNews())
+	    .sorted(comparator).forEach(news -> {
+		Category cat = news.getCategory();
+		List<News> newsList = newsMap.getOrDefault(cat.getName(), new LinkedList<>());
+		newsList.add(news);
+		newsMap.put(cat.getName(), newsList);
+	    });
+
+	    return newsMap;
+	}
 }
