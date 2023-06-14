@@ -1,18 +1,16 @@
 <app-content>
   <mat-grid-list [cols]="24" rowHeight="fit" [style.height]="'100%'">
-    <!-- TODO: Buscar si es posible usar offset parecdio a como se realiza en Bootstrap -->
-    <mat-grid-tile [colspan]="8"></mat-grid-tile>
-    <mat-grid-tile [colspan]="8">
+    <!-- Tratar de omitir primet tiel, a favor de un offset o colspan -->
+    <mat-grid-tile [gridCols]="{xs:0,sm:8,md:8,lg:8,xl:8}"></mat-grid-tile>
+    <mat-grid-tile [gridCols]="{xs:24,sm:8,md:8,lg:8,xl:8}">
       <div class="contTitleLogin">
         <div class="titleLogin">
-          <!-- Pendiente de revisar tipografias y tamanyos -->
           <h4 class="">Inicia Sesión</h4>
           <span>Entra en tu cuenta de AON</span>
         </div>
 
         <app-list-element padding="1.75rem 1.25rem" widthContainer="'100%'" [border]="'1px'" color="gray">
         <div class="cardBody">
-
           <app-input
               (inputValue)="username=$event"
               [appearance]="'outline'"
@@ -23,7 +21,6 @@
               [width]="'100%'"
               class="inputLogin"
               style="margin-bottom: 1.6rem;"
-
           ></app-input>
 
           <app-input
@@ -39,37 +36,45 @@
           ></app-input>
 
           <app-button [width]="'100%'"
-          [height]="'auto'"
-          [border]="'.0625rem solid black'"
-          [borderRadius]="'0.4rem'"
-          [backgroundColor]="'white'"
-          [color]="'black'"
-          [hoverBackgroundColor]="'black'"
-          [hoverBorderColor]="'black'"
-          [padding]="'.5rem'"
-          [align]="'center'"
-          [fontSize]="'1rem'"
-          [hoverColor]="'white'"
-          (click)="loginUser()"
-          >INICIAR SESIÓN</app-button>
-          <div class="divider">O INICIA SESIÓN</div>
-          <app-button [width]="'100%'"
-          [height]="'auto'"
-          [border]="'.0625rem solid black'"
-          [borderRadius]="'0.4rem'"
-          [backgroundColor]="'black'"
-          [color]="'white'"
-          [hoverBackgroundColor]="'#292a31'"
-          [hoverBorderColor]="'#292a31'"
-          [padding]="'.5rem'"
-          [align]="'center'"
-          [fontSize]="'1rem'"
-          [hoverColor]="'white'"
-          >SIN CONTRASEÑA</app-button>
+            [height]="'auto'"
+            [border]="'.0625rem solid black'"
+            [borderRadius]="'0.4rem'"
+            [backgroundColor]="'white'"
+            [color]="'black'"
+            [hoverBackgroundColor]="'black'"
+            [hoverBorderColor]="'black'"
+            [padding]="'.5rem'"
+            [align]="'center'"
+            [fontSize]="'1rem'"
+            [hoverColor]="'white'"
+            (click)="loginUser()"
+          >
+          INICIAR SESIÓN
+          </app-button>
+          <div class="divider">
+            O INICIA SESIÓN
+          </div>
+          <app-button
+            [width]="'100%'"
+            [height]="'auto'"
+            [border]="'.0625rem solid black'"
+            [borderRadius]="'0.4rem'"
+            [backgroundColor]="'black'"
+            [color]="'white'"
+            [hoverBackgroundColor]="'#292a31'"
+            [hoverBorderColor]="'#292a31'"
+            [padding]="'.5rem'"
+            [align]="'center'"
+            [fontSize]="'1rem'"
+            [hoverColor]="'white'"
+          >
+          SIN CONTRASEÑA
+        </app-button>
         </div>
       </app-list-element>
       </div>
 
     </mat-grid-tile>
+
   </mat-grid-list>
 </app-content>
