@@ -131,6 +131,7 @@ public enum ContextVariable implements IResourceable {
 	ERE_BASE_FORCE_OFF("BASE_ERE_FZA_EXONERADO", VariableType.DOUBLE), 
 	DIRECT_BASE("BASE_PAGO_DIRECTO", VariableType.DOUBLE),
 	ADDITIONAL_BASE("BASE_HORAS_COMPL", VariableType.DOUBLE),
+	EXCESS_BASE("BASE_EXCESO", VariableType.DOUBLE, false), 
 
 	CGC_BASE_RAW("BASE_CGC_BRUTA", VariableType.DOUBLE), CGP_BASE_RAW("BASE_CGP_BRUTA", VariableType.DOUBLE),
 	CGC_BASE_ENTERPRISE("BASE_CGC_E", VariableType.DOUBLE, false), CGP_BASE_ENTERPRISE("BASE_CGP_E", VariableType.DOUBLE, false),
@@ -265,7 +266,8 @@ public enum ContextVariable implements IResourceable {
 	CGPJ_COMPENSATIONS("CGPJ_INDEMNIZACIONES", VariableType.UNKNOWN),
 	CALC_COMPENSATIONS("CALCULO_INDEMNIZACIONES", VariableType.UNKNOWN),
 
-	OLD("ANTIGÜEDAD", VariableType.DOUBLE), EXCESS("EXCESO", VariableType.DOUBLE),
+	OLD("ANTIGÜEDAD", VariableType.DOUBLE), 
+	EXCESS("EXCESO", VariableType.DOUBLE),
 	EVERYTHING("TODO", VariableType.DOUBLE),
 
 	IT_START("INICIO_IT", VariableType.DATE),
@@ -373,7 +375,10 @@ public enum ContextVariable implements IResourceable {
 	
 	PAY_PRORRATED("PAGAS_PRORRATEADAS", VariableType.BOOLEAN),
 	
-	MONTHLY_ADJUST("AJUSTE_MENSUAL", VariableType.BOOLEAN)
+	MONTHLY_ADJUST("AJUSTE_MENSUAL", VariableType.BOOLEAN),
+	
+	EXTRA_PAYMENT("EXTRA_DEVENGADO", VariableType.DOUBLE),
+
 	
 	;
 

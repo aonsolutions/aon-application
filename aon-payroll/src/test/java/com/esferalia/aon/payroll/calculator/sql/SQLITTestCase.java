@@ -1643,12 +1643,12 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		.count();
 		Assert.assertEquals(1, count);
 		
-		// + 6 ( ADJUST PARTIAL)
+		// + 7 ( NOT ADJUST PARTIAL)
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
 		.filter(data->data.getStartDate().getDate() == 25)
 		.peek(data->Assert.assertEquals(data.getEndDate().getDate(),31))
-		.peek(data->Assert.assertEquals(100.00 * 6.00, Double.parseDouble(data.getExpression())))
+		.peek(data->Assert.assertEquals(100.00 * 7.00, Double.parseDouble(data.getExpression())))
 		.count();
 		Assert.assertEquals(1, count);
 		
@@ -1679,10 +1679,10 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		salary = calculator.calculate(ctx);
 		
-		// One period , 30 ( adjust partial ) 
+		// One period , 31 ( NO adjust partial ) 
 		count = salary.getSalaryDatas().stream()
 		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
-		.peek(data->Assert.assertEquals(100.00 * 30.00, Double.parseDouble(data.getExpression())))
+		.peek(data->Assert.assertEquals(100.00 * 31.00, Double.parseDouble(data.getExpression())))
 		.count();
 		Assert.assertEquals(1, count);
 	}
@@ -2116,6 +2116,110 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 		.count();
 		Assert.assertEquals(1, count);
 		
+	}
+
+	@Test
+	public void testCommonDiseaseITQuoteDaysIX() throws ExpressionException, SQLException,
+			SalaryException {
+		Connection connection = getConnection();
+		AONContext aonContext = new AONContext(connection);
+		
+		Date contractStartDate = getFirstDayOfYear(getToday());
+		
+		cleanSystemData(aonContext);
+		
+		addSystemData(aonContext, 
+				contractStartDate, 
+				null, 
+				new HashMap<String, String>(){
+			{
+				put(MONTH_DAYS.getName(), 
+					String.format("[ \"01\": %s ][%s]", "30", QUOTE_GROUP.getName() ) );
+			}
+		});
+		
+		//@formatter:off
+		ContractRecord contract = newContract(aonContext,
+				contractStartDate,
+				null,
+				new HashMap<String, String>(){
+					{
+						put(QUOTE_GROUP.getName(), "'01'" );
+						put(TC2.getName(), format("\"%s\"",
+							C200.getValue()));
+        					put(MONDAY_HOURS.getName(), format("%d", 4));
+        					put(TUESDAY_HOURS.getName(), format("%d", 4));
+        					put(WEDNESDAY_HOURS.getName(), format("%d", 4));
+        					put(THURSDAY_HOURS.getName(), format("%d", 4));
+        					put(FRIDAY_HOURS.getName(), format("%d", 4));
+					}
+				},
+				new String[] {}, 
+				new String[] {
+				"TRACE('BASE_REGULADORA=%f\r\n', BASE_REGULADORA);0.00",
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 1.55 / 100",
+				"TRACE('BASE_CGP=%f\r\n', BASE_CGP);BASE_CGC * 0.10 / 100",
+				"TRACE('DIAS_COTIZADOS=%f\r\n', DIAS_COTIZADOS);0.00",
+				}, null);
+		//@formatter:on
+		
+		
+		
+		//@formatter:off
+		PaymentConceptRecord prestIT = addConcept(aonContext, PREST_IT);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_1_3",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_4_15",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_16_20",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract, prestIT, 
+				String.format("BASE_REGULADORA * 0.00 * %s_21",  COMMON_DISEASE_DAYS),
+				String.format("BASE_REGULADORA * 1.00 * %s",  QUOTE_DAYS)
+				);
+		addPayment(aonContext, contract,  
+				"250.00 * DIAS_TRABAJADOS / DIAS_MES", "_P"
+				);
+		addPayment(aonContext, contract,  
+				"1500.00 * DIAS_TRABAJADOS / DIAS_MES", "_P"
+				);
+		//@formatter:on
+
+
+		Date startITDate = add(contractStartDate, DAY_OF_MONTH, 4);
+		Date endITDate = add(startITDate, DAY_OF_MONTH, 9);
+		
+		addIT(aonContext, contract, LeaveType.COMMON_DISEASE, startITDate,endITDate, 100.00);
+
+		Date startDate = getFirstDayOfMonth(startITDate);
+		Date endDate = getLastDayOfMonth(startDate);
+		
+		ISQLContractSalaryCalculatorContext ctx = getContractSalaryCalculatorContext(
+				connection, startDate, endDate, endDate, contract);
+		SmartContractSalaryCalculator<Salary> calculator = new SmartContractSalaryCalculator<Salary>();
+
+		calculator.setSalaryBuilder(new SalaryBuilder());
+		Salary salary = calculator.calculate(ctx);
+
+		
+		salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.CGC_BASE.getName()))
+		.forEach(data->System.out.println(data.getName() + " = " + data.getExpression() + "(" + data.getStartDate() + "..." + data.getEndDate() + ")"));
+		;
+
+		// (No ADJUST)
+		double quotaDays = salary.getSalaryDatas().stream()
+		.filter(data->data.getName().equals(ContextVariable.QUOTE_DAYS.getName()))
+		.map( SalaryData::getExpression )
+		.peek(e -> System.out.println("DIAS_COTIZADOS = "+ e))
+		.collect(Collectors.summingDouble(Double::parseDouble));
+		org.junit.Assert.assertEquals(31, quotaDays, 0.00);
 	}
 
 	@Test
@@ -4109,7 +4213,8 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		calculator.setSalaryBuilder(new SalaryBuilder());
 		Salary salary = calculator.calculate(ctx);
-
+		
+		int monthDays = get(startDate, Calendar.DAY_OF_MONTH);
 		Assert.assertEquals(1750.00 * 9 / 30 + 1750.00 * 21 / 30 * 0.5 , salary.getTotalPayment(), DELTA);
 		Assert.assertEquals(1750.00, salary.getCommonBase(), DELTA);
 		//Assert.assertEquals(get(endDate, DAY_OF_MONTH) * 100.00 * 0.50 + 1750.00 * 1/2 , salary.getCommonBase());
@@ -6713,7 +6818,7 @@ public class SQLITTestCase extends AbstractSQLTestCase {
 
 		
 		Assert.assertEquals( (1750.00 / 30.00 ) * 31 * 0.5 , salary.getTotalPayment(), 0.05);
-		Assert.assertEquals( (1750.00 / 30.00 ) * 30 * 0.5 , salary.getCommonBase(), 0.05);
+		Assert.assertEquals( (1750.00 / 30.00 ) * 31 * 0.5 , salary.getCommonBase(), 0.05);
 
 	}
 

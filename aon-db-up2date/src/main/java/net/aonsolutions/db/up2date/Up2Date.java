@@ -25,6 +25,7 @@ import net.aonsolutions.db.up2date.payroll.PrestITSexAndHealthInsert;
 import net.aonsolutions.db.up2date.payroll.PrestITSexAndHealthIrpfFix;
 import net.aonsolutions.db.up2date.security.UdpateAonProfessional;
 import net.aonsolutions.db.up2date.security.UdpateAonSmb;
+import net.aonsolutions.db.up2date.tgss.Trainning421ExcessQuote;
 import net.aonsolutions.db.up2date.tgss.TrainningBases2023Fix;
 
 public class Up2Date {
@@ -362,6 +363,7 @@ public class Up2Date {
             // PrestITSexAndHealthIrpfFix.PRESTITSEXANDHEALTHIRPFFIX,
 	    //	TrainningBases2023Fix.TRAINNINGBASES2023FIX,
 	    //	CGPJInsert.CGPJINSERT,
+		Trainning421ExcessQuote.TRAINNING421EXCESSQUOTE,
 
 		
 	    //DOMAIN

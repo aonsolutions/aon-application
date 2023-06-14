@@ -91,6 +91,10 @@ public class AccountingImpl implements IAccounting {
 	public Stream<Account> getAccounts(AONContext ctx, AccountParams params) {
 		return AccountDAO.getAccounts(ctx, params);
 	}
+	@Override
+	public List<Account> getAccountsList(AONContext ctx, AccountParams params) {
+		return AccountDAO.getAccountsList(ctx, params);
+	}
 	public Stream<Account> getAccounts(AONContext ctx,AccountFilter filter) {
 		return AccountDAO.getAccounts(ctx, filter);
 	}
