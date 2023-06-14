@@ -20,6 +20,7 @@
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.saleOperator}">
 							<aon:panelGrid id="group_sales_aonFinance"
+								rendered="#{actionDenied.renderedGroup('group_sales_aonFinance')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-sales aon-direct-access-panel">
 								<f:facet name="header">
@@ -28,21 +29,21 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="customer-aonFinance"
-											rendered="#{actionDenied.renderedGroup('customer_search')}"
+											rendered="#{actionDenied.renderedOption('customer_search-aonFinance')}"
 											action="customer_search-aonFinance"
 											actionListener="#{customer.onEditSearch}"
 											value="#{bundle.customer_finance_checking}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleInvoice-aonFinance"
-											rendered="#{actionDenied.renderedGroup('saleInvoice_search')}"
+											rendered="#{actionDenied.renderedOption('saleInvoice_search-aonFinance')}"
 											action="saleInvoice_search-aonFinance"
 											actionListener="#{saleInvoice.onEditSearch}"
 											value="#{bundle.finance_sale_invoice_management_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="invoicePrint-aonFinance"
-											rendered="#{actionDenied.renderedGroup('invoicePrint_search')}"
+											rendered="#{actionDenied.renderedOption('invoicePrint_search-aonFinance')}"
 											action="invoicePrint_search-aonFinance"
 											actionListener="#{invoicePrint.onEditSearch}"
 											value="#{bundle.finance_invoice_print_module}"/>
@@ -55,6 +56,7 @@
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.purchaseOperator}">
 							<aon:panelGrid id="group_purchase_aonFinance"
+								rendered="#{actionDenied.renderedGroup('group_purchase_aonFinance')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-purchase aon-direct-access-panel">
 								<f:facet name="header">
@@ -63,14 +65,14 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="supplier-aonFinance" 
-											rendered="#{actionDenied.renderedGroup('supplier_search')}"
+											rendered="#{actionDenied.renderedOption('supplier_search-aonFinance')}"
 											action="supplier_search-aonFinance"
 											actionListener="#{supplier.onEditSearch}"
 											value="#{bundle.aon_suppliers}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="purchaseInvoice-aonFinance"
-											rendered="#{actionDenied.renderedGroup('purchaseInvoice_search')}"
+											rendered="#{actionDenied.renderedOption('purchaseInvoice_search-aonFinance')}"
 											action="purchaseInvoice_search-aonFinance"
 											actionListener="#{purchaseInvoice.onEditSearch}"
 											value="#{bundle.finance_purchase_invoice_management_module}" />
@@ -83,6 +85,7 @@
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.purchaseOperator}">				
 							<aon:panelGrid id="group_expenses_aonFinance"
+								rendered="#{actionDenied.renderedGroup('group_expenses_aonFinance')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-expenses aon-direct-access-panel">
 								<f:facet name="header">
@@ -91,7 +94,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="creditor-aonFinance" 
-											rendered="#{actionDenied.renderedGroup('creditor_search')}"
+											rendered="#{actionDenied.renderedOption('creditor_search-aonFinance')}"
 											action="creditor_search-aonFinance"
 											actionListener="#{creditor.onEditSearch}"
 											value="#{bundle.finance_creditor_module}" >
@@ -99,14 +102,14 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="expenseInvoice-aonFinance"
-											rendered="#{actionDenied.renderedGroup('expenseInvoice_search')}"
+											rendered="#{actionDenied.renderedOption('expenseInvoice_search-aonFinance')}"
 											action="expenseInvoice_search-aonFinance"
 											actionListener="#{expenseInvoice.onEditSearch}"
 											value="#{bundle.finance_expense_invoice_management_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="undeductibleInvoice-aonFinance"
-											rendered="#{actionDenied.renderedGroup('undeductibleInvoice_search')}"
+											rendered="#{actionDenied.renderedOption('undeductibleInvoice_search-aonFinance')}"
 											action="undeductibleInvoice_search-aonFinance"
 											actionListener="#{undeductibleInvoice.onEditSearch}"
 											value="#{bundle.finance_undeductible_invoice_management_module}" />
@@ -119,6 +122,7 @@
 					<aon:panelGroup>						
 						<aon:if test="#{aonRole.financeOperator}">
 							<aon:panelGrid id="group_treasury_charge_aonFinance"
+								rendered="#{actionDenied.renderedGroup('group_treasury_charge_aonFinance')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-charge aon-direct-access-panel">
 								<f:facet name="header">
@@ -127,14 +131,14 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financeCharge-aonFinance"
-											rendered="#{actionDenied.renderedGroup('finance_search-charge')}"
+											rendered="#{actionDenied.renderedOption('finance_search-charge-aonFinance')}"
 											action="finance_search-charge-aonFinance"
 											actionListener="#{finance.onEditSearchCharge}"
 											value="#{bundle.finance_charge_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="fbatchCharge-aonFinance" 
-											rendered="#{actionDenied.renderedGroup('fbatch_search-charge')}"
+											rendered="#{actionDenied.renderedOption('fbatch_search-charge-aonFinance')}"
 											action="fbatch_search-charge-aonFinance"
 											actionListener="#{fbatch.onEditSearchCharge}"
 											value="#{bundle.finance_fbatch_charge_module}">
@@ -150,6 +154,7 @@
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.financeOperator}">
 							<aon:panelGrid id="group_treasury_payment_aonFinance"
+								rendered="#{actionDenied.renderedGroup('group_treasury_payment_aonFinance')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-payment aon-direct-access-panel">
 								<f:facet name="header">
@@ -158,14 +163,14 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financePayment-aonFinance"
-											rendered="#{actionDenied.renderedGroup('finance_search-payment')}"
+											rendered="#{actionDenied.renderedOption('finance_search-payment-aonFinance')}"
 											action="finance_search-payment-aonFinance"
 											actionListener="#{finance.onEditSearchPayment}"
 											value="#{bundle.finance_payment_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="fbatchPayment-aonFinance" 
-											rendered="#{actionDenied.renderedGroup('fbatch_search-payment')}"
+											rendered="#{actionDenied.renderedOption('fbatch_search-payment-aonFinance')}"
 											action="fbatch_search-payment-aonFinance"
 											actionListener="#{fbatch.onEditSearchPayment}"
 											value="#{bundle.finance_fbatch_payment_module}">
@@ -181,6 +186,7 @@
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.financeOperator}">
 							<aon:panelGrid id="group_treasury_forecast_aonFinance"
+								rendered="#{actionDenied.renderedGroup('group_treasury_forecast_aonFinance')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-forecast aon-direct-access-panel">
 								<f:facet name="header">
@@ -190,14 +196,14 @@
 									<aon:if test="#{cashFlowForecast.availableRegistryBanks > 0}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="cashFlowForecast-aonFinance"
-												rendered="#{actionDenied.renderedGroup('cashFlowForecast_search')}"
+												rendered="#{actionDenied.renderedOption('cashFlowForecast_search-aonFinance')}"
 												action="cashFlowForecast_search-aonFinance"
 												actionListener="#{cashFlowForecast.onEditSearch}"
 												value="#{bundle.finance_cashflow_forecast_module}"/>
 										</aon:div>
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="cashFlowForecastReport-aonFinance"
-												rendered="#{actionDenied.renderedGroup('cashFlowForecastReport_search')}"
+												rendered="#{actionDenied.renderedOption('cashFlowForecastReport_search-aonFinance')}"
 												action="cashFlowForecastReport_search-aonFinance"
 												actionListener="#{cashFlowForecastReport.onEditSearch}"
 												value="#{bundle.finance_cashflow_forecast_report_module}"/>
@@ -211,6 +217,7 @@
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.productOperator or aonRole.config}">
 							<aon:panelGrid id="group_product_aonFinance"
+								rendered="#{actionDenied.renderedGroup('group_product_aonFinance')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-product">
 								<f:facet name="header">
@@ -220,7 +227,7 @@
 									<aon:if test="#{aonRole.productOperator}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="product-aonFinance"
-												rendered="#{actionDenied.renderedGroup('product_search')}"
+												rendered="#{actionDenied.renderedOption('product_search-aonFinance')}"
 												action="product_search-aonFinance"
 												actionListener="#{product.onEditSearch}"
 												value="#{bundle.aon_role_product}" />
@@ -229,7 +236,7 @@
 									<aon:if test="#{aonRole.config}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="productCategory-aonFinance"
-												rendered="#{actionDenied.renderedGroup('productCategory')}"
+												rendered="#{actionDenied.renderedOption('productCategory-aonFinance')}"
 												action="productCategory-aonFinance"
 												value="#{bundle.aon_categories}" />
 										</aon:div>
@@ -242,6 +249,7 @@
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.fiscal}">
 							<aon:panelGrid id="group_taxes_aonFinance"
+								rendered="#{actionDenied.renderedGroup('group_taxes_aonFinance')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-aeat aon-direct-access-panel">
 								<f:facet name="header">
@@ -250,21 +258,21 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="vat_report-aonFinance"
-											rendered="#{actionDenied.renderedGroup('vat_report_search')}"
+											rendered="#{actionDenied.renderedOption('vat_report_search-aonFinance')}"
 											action="vat_report_search-aonFinance"
 											actionListener="#{vatReport.onReset}"
 											value="#{bundle.finance_vat_report_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="retention_report-aonFinance"
-											rendered="#{actionDenied.renderedGroup('retention_report_search')}"
+											rendered="#{actionDenied.renderedOption('retention_report_search-aonFinance')}"
 											action="retention_report_search-aonFinance"
 											actionListener="#{retentionReport.onReset}"
 											value="#{bundle.fiscal_retention_report_module}" />
 									</aon:div>	
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_sii-aonFinance"
-											rendered="#{actionDenied.renderedGroup('gwt_sii')}"
+											rendered="#{actionDenied.renderedOption('gwt_sii-aonFinance')}"
 											action="gwt_sii-aonFinance"
 											title="SII - Suministro Inmediato de Información"
 											value="SII - Suministro Inmediato de Información" />
@@ -272,7 +280,7 @@
 									<!-- *********************** [MODELO 347] --> 
 									<aon:div styleClass="aon-direct-access-list-element"> 
 										<aon:commandLink id="gwt_mod347-smb" 
-											rendered="#{actionDenied.renderedGroup('gwt_mod347')}"
+											rendered="#{actionDenied.renderedOption('gwt_mod347-smb')}"
 											action="gwt_mod347-smb" 
 											title="#{bundle.fiscal_model_347_module}"
 											value="Modelo 347 - #{bundle.fiscal_model_347_module}"/>
@@ -285,6 +293,7 @@
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_auxiliary_aonFinance"
+								rendered="#{actionDenied.renderedGroup('group_auxiliary_aonFinance')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-config">
 								<f:facet name="header">
@@ -294,20 +303,20 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="payMethod-aonFinance"
-											rendered="#{actionDenied.renderedGroup('payMethod')}"
+											rendered="#{actionDenied.renderedOption('payMethod-aonFinance')}"
 											action="payMethod-aonFinance"
 											value="#{bundle.config_paymethod_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="geotreeParent_list-aonFinance"
-											rendered="#{actionDenied.renderedGroup('geotreeParent_list')}"
+											rendered="#{actionDenied.renderedOption('geotreeParent_list-aonFinance')}"
 											action="geotreeParent_list-aonFinance"
 											actionListener="#{geotreeParent.onSearch}"
 											value="#{bundle.geozone_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="segment_form-aonFinance"
-											rendered="#{actionDenied.renderedGroup('segment_form')}"
+											rendered="#{actionDenied.renderedOption('segment_form-aonFinance')}"
 											action="segment_form-aonFinance"
 											value="#{bundle.registry_segment_module}" />
 									</aon:div>				
@@ -318,7 +327,9 @@
 
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.financeOperator or aonRole.accountingOperator}">
-							<aon:panelGrid id="group_conecta_aonFinance" styleClass="aon-width-all"
+							<aon:panelGrid id="group_conecta_aonFinance" 
+								rendered="#{actionDenied.renderedGroup('group_conecta_aonFinance')}"
+								styleClass="aon-width-all"
 								columnClasses="aon-padding"
 								headerClass="aon-icon-accounting aon-direct-access-panel">
 								<f:facet name="header">
@@ -328,7 +339,7 @@
 									<aon:if test="#{aonRole.financeOperator and bankStatement.availableRegistryBanks > 0}">
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="bankStatement-aonFinance"
-												rendered="#{actionDenied.renderedGroup('bankStatement_search')}"
+												rendered="#{actionDenied.renderedOption('bankStatement_search-aonFinance')}"
 												action="bankStatement_search-aonFinance"
 												actionListener="#{bankStatement.onEditSearch}"
 												value="Conciliador Bancario"/>
@@ -377,6 +388,7 @@
 					<aon:panelGroup>
 						<aon:if test="#{aonRole.statisticsOperator}">
 							<aon:panelGrid id="group_statistics_aonFinance"
+								rendered="#{actionDenied.renderedGroup('group_statistics_aonFinance')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-statistics aon-direct-access-panel">
 								<f:facet name="header">
@@ -385,7 +397,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_invoiceStats-aonFinance"
-											rendered="#{actionDenied.renderedGroup('gwt_invoiceStat')}"
+											rendered="#{actionDenied.renderedOption('gwt_invoiceStat-aonFinance')}"
 											action="gwt_invoiceStat-aonFinance"
 											title="#{bundle.aon_global_statistics}"
 											value="#{bundle.aon_global_statistics}" />												
@@ -396,7 +408,9 @@
 					</aon:panelGroup>					
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_utilities_aonFinance" styleClass="aon-width-all"
+						<aon:panelGrid id="group_utilities_aonFinance" 
+							rendered="#{actionDenied.renderedGroup('group_statistics_aonFinance')}"
+							styleClass="aon-width-all"
 							columnClasses="aon-padding"
 							headerClass="aon-icon-utilities aon-direct-access-panel">
 							<f:facet name="header">
@@ -406,7 +420,7 @@
 								<aon:if test="#{aonRole.accountingOperator and (domainSwitcher.parentDomainUserInChildDomain or domainSwitcher.parentDomain) and !actionDenied.moduleEnabled['accounting']}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="account-aonFinance"
-											rendered="#{actionDenied.renderedGroup('account_list')}"
+											rendered="#{actionDenied.renderedOption('account_list-aonFinance')}"
 											action="account_list-aonFinance"
 											value="#{bundle.account_module}" />
 									</aon:div>
@@ -414,14 +428,14 @@
 								<aon:if test="#{aonRole.config}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="globalConfiguration-aonFinance"
-											rendered="#{actionDenied.renderedGroup('globalConfig_form')}"
+											rendered="#{actionDenied.renderedOption('globalConfig_form-aonFinance')}"
 											action="globalConfig_form-aonFinance"
 											actionListener="#{globalConfig.onInit}"
 											value="#{bundle.admin_global_configuration}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="aonLoader-aonFinance"
-											rendered="#{actionDenied.renderedGroup('aonLoader_form')}"
+											rendered="#{actionDenied.renderedOption('aonLoader_form-aonFinance')}"
 											action="aonLoader_form-aonFinance"
 											actionListener="#{aonLoader.onStart}"
 											value="#{bundle.aon_loader_module}" />
@@ -430,7 +444,7 @@
 								<aon:if test="#{domainSwitcher.parentDomainUserInChildDomain}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="invoiceRemover"
-											rendered="#{actionDenied.renderedGroup('invoiceRemover_search')}"
+											rendered="#{actionDenied.renderedOption('invoiceRemover_search')}"
 											action="invoiceRemover_search"
 											actionListener="#{invoiceRemover.onEditSearch}"
 											value="#{bundle.finance_invoice_removing_module}"/>
@@ -439,7 +453,7 @@
 								<aon:if test="#{aonRole.ESignature and company.EInvoice and certificate.certificateCount > 0}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="saleInvoiceSigner-aonFinance"
-											rendered="#{actionDenied.renderedGroup('invoiceSigner_search')}"
+											rendered="#{actionDenied.renderedOption('invoiceSigner_search-aonFinance')}"
 											action="invoiceSigner_search-aonFinance"
 											actionListener="#{invoiceSigner.onEditSearch}"
 											value="#{bundle.finance_invoice_signing_module}"/>

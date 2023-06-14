@@ -23,6 +23,7 @@
 						columnClasses="aon-vertical-align-top aon-width-half, aon-vertical-align-top aon-width-half">
 						<aon:panelGroup>
 							<aon:panelGrid id="group_fiscal_vat_tax_statement_new"
+								rendered="#{actionDenied.renderedGroup('group_fiscal_vat_tax_statement_new')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-fiscal-header">
 								<f:facet name="header">
@@ -92,7 +93,7 @@
 										<!-- *********************** [MODELO 303] -->
 										<aon:div>
 											<aon:commandLink id="gwt_mod303-new" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod303-new')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod303-new')}"
 												action="gwt_mod303-new"
 												title="#{bundle.fiscal_model_303_module}"
 												styleClass="aon-menu-fiscal">
@@ -120,7 +121,7 @@
 										<aon:div
 											rendered="#{fiscalParams.bizkaia and fiscalParams.personaFisica}">
 											<aon:commandLink id="gwt_mod140-new" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod140-new')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod140-new')}"
 												action="gwt_mod140-new"
 												title="#{bundle.fiscal_model_140_module}"
 												styleClass="aon-menu-fiscal">
@@ -148,7 +149,7 @@
 										<aon:div
 											rendered="#{fiscalParams.bizkaia and !fiscalParams.personaFisica}">
 											<aon:commandLink id="gwt_mod240-new" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod240-new')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod240-new')}"
 												action="gwt_mod240-new"
 												title="#{bundle.fiscal_model_240_module}"
 												styleClass="aon-menu-fiscal">
@@ -175,7 +176,7 @@
 										<!-- *********************** [MODELO 347] -->
 										<aon:div>
 											<aon:commandLink id="gwt_mod347-new" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod347-new')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod347-new')}"
 												action="gwt_mod347-new"
 												title="#{bundle.fiscal_model_347_module}"
 												styleClass="aon-menu-fiscal">
@@ -202,7 +203,7 @@
 										<!-- *********************** [MODELO 349] -->
 										<aon:div>
 											<aon:commandLink id="gwt_mod349-new" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod349-new')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod349-new')}"
 												action="gwt_mod349-new"
 												title="#{bundle.fiscal_model_349_module}"
 												styleClass="aon-menu-fiscal">
@@ -228,7 +229,7 @@
 										<!-- *********************** [MODELO 390] -->
 										<aon:div rendered="#{fiscalParams.aeat}">
 											<aon:commandLink id="gwt_mod390-new" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod390-new')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod390-new')}"
 												action="gwt_mod390-new"
 												title="#{bundle.fiscal_model_390_module}"
 												styleClass="aon-menu-fiscal">
@@ -256,7 +257,7 @@
 										<aon:div
 											rendered="#{fiscalParams.bizkaia || fiscalParams.araba || fiscalParams.gipuzkoa}">
 											<aon:commandLink id="gwt_mod390HF-new"
-												rendered="#{actionDenied.renderedGroup('gwt_mod390HF-new')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod390HF-new')}"
 												action="gwt_mod390HF-new"
 												title="Haciendas Forales. #{bundle.fiscal_model_390_module}"
 												styleClass="aon-menu-fiscal">
@@ -283,7 +284,7 @@
 										<!-- *********************** [MODELO 111] -->
 										<aon:div style="margin-top: 15px;">
 											<aon:commandLink id="gwt_mod111" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod111')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod111')}"
 												action="gwt_mod111"
 												title="#{bundle.fiscal_model_111_module}"
 												styleClass="aon-menu-fiscal">
@@ -310,7 +311,7 @@
 										<!-- *********************** [MODELO 115] -->
 										<aon:div>
 											<aon:commandLink id="gwt_mod115" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod115')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod115')}"
 												action="gwt_mod115"
 												title="#{bundle.fiscal_model_115_module}"
 												styleClass="aon-menu-fiscal">
@@ -337,7 +338,7 @@
 										<!-- *********************** [MODELO 123]  -->
 										<aon:div>
 											<aon:commandLink id="gwt_mod123" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod123')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod123')}"
 												action="gwt_mod123"
 												title="#{bundle.fiscal_model_123_module}"
 												styleClass="aon-menu-fiscal">
@@ -365,7 +366,7 @@
 										<aon:div
 											rendered="#{fiscalParams.aeat or fiscalParams.bizkaia}">
 											<aon:commandLink id="gwt_mod130" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod130')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod130')}"
 												action="gwt_mod130"
 												title="#{bundle.fiscal_model_130_module}"
 												styleClass="aon-menu-fiscal">
@@ -392,7 +393,7 @@
 										<!-- *********************** [MODELO 131] -->
 										<aon:div rendered="#{fiscalParams.aeat}">
 											<aon:commandLink id="gwt_mod131" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod131')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod131')}"
 												action="gwt_mod131"
 												title="#{bundle.fiscal_model_131_module}"
 												styleClass="aon-menu-fiscal">
@@ -419,7 +420,7 @@
 										<!-- *********************** [MODELO 180] -->
 										<aon:div>
 											<aon:commandLink id="gwt_mod180-new" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod180-new')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod180-new')}"
 												action="gwt_mod180-new"
 												title="#{bundle.fiscal_model_180_module}"
 												styleClass="aon-menu-fiscal">
@@ -446,7 +447,7 @@
 										<!-- *********************** [MODELO 184] -->
 										<aon:div>
 											<aon:commandLink id="gwt_mod184-new" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod184-new')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod184-new')}"
 												action="gwt_mod184-new"
 												title="#{bundle.fiscal_model_184_module}"
 												styleClass="aon-menu-fiscal">
@@ -473,7 +474,7 @@
 										<!-- *********************** [MODELO 190] -->
 										<aon:div>
 											<aon:commandLink id="gwt_mod190-new" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod190-new')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod190-new')}"
 												action="gwt_mod190-new"
 												title="#{bundle.fiscal_model_190_module}"
 												styleClass="aon-menu-fiscal">
@@ -500,7 +501,7 @@
 										<!-- *********************** [MODELO 193] -->
 										<aon:div>
 											<aon:commandLink id="gwt_mod193-new" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod193-new')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod193-new')}"
 												action="gwt_mod193-new"
 												title="#{bundle.fiscal_model_193_module}"
 												styleClass="aon-menu-fiscal">
@@ -527,7 +528,7 @@
 										<!-- *********************** [MODELO 202] -->
 										<aon:div rendered="#{fiscalParams.aeat}">
 											<aon:commandLink id="gwt_mod202-new" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod202-new')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod202-new')}"
 												action="gwt_mod202-new"
 												title="#{bundle.fiscal_model_202_module}"
 												styleClass="aon-menu-fiscal">
@@ -568,7 +569,7 @@
 										<!-- *********************** [MODELO 200 - NEW ] -->
 										<aon:div rendered="#{fiscalParams.aeat}">
 											<aon:commandLink id="gwt_mod200-new" 
-												rendered="#{actionDenied.renderedGroup('gwt_mod200')}"
+												rendered="#{actionDenied.renderedOption('gwt_mod200')}"
 												action="gwt_mod200"
 												title="#{bundle.fiscal_model_200_module}"
 												styleClass="aon-menu-fiscal">
@@ -593,7 +594,7 @@
 										</aon:div>
 										<aon:div>
 											<aon:commandLink id="gwt_sii-fiscal" 
-												rendered="#{actionDenied.renderedGroup('gwt_sii-fiscal')}"
+												rendered="#{actionDenied.renderedOption('gwt_sii-fiscal')}"
 												action="gwt_sii-fiscal"
 												title="SII - Suministro Inmediato de Información"
 												styleClass="aon-menu-fiscal">
@@ -659,6 +660,7 @@
 							aon-vertical-align-top aon-width-200,aon-vertical-align-top aon-width-200">
 						<aon:panelGroup>
 							<aon:panelGrid id="group_fiscal_modules_module_matrix"
+								rendered="#{actionDenied.renderedGroup('group_fiscal_modules_module_matrix')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-tree-root aon-direct-access-panel">
 								<f:facet name="header">
@@ -667,7 +669,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_modelMatrix" 
-											rendered="#{actionDenied.renderedGroup('gwt_modelMatrix')}"
+											rendered="#{actionDenied.renderedOption('gwt_modelMatrix')}"
 											action="gwt_modelMatrix"
 											value="Matriz de empresas y modelos fiscales">
 										</aon:commandLink>

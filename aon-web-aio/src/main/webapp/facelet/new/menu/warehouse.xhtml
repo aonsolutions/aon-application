@@ -21,6 +21,7 @@
 
 					<aon:panelGroup>
 						<aon:panelGrid id="group_warehouse_movements"
+							rendered="#{actionDenied.renderedGroup('group_warehouse_movements')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-refresh aon-direct-access-panel">
 							<f:facet name="header">
@@ -29,28 +30,28 @@
 							<aon:div styleClass="aon-direct-access-list">
  								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="income" 
-										rendered="#{actionDenied.renderedGroup('income_search')}"
+										rendered="#{actionDenied.renderedOption('income_search')}"
 										action="income_search"
 										actionListener="#{income.onEditSearch}"
 										value="#{bundle.warehouse_income_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="delivery" 
-										rendered="#{actionDenied.renderedGroup('delivery_search')}"
+										rendered="#{actionDenied.renderedOption('delivery_search')}"
 										action="delivery_search"
 										actionListener="#{delivery.onEditSearch}"
 										value="#{bundle.warehouse_delivery_module}" />
 								</aon:div>								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="warehouseTransfer" 
-										rendered="#{actionDenied.renderedGroup('warehouseTransfer_search')}"
+										rendered="#{actionDenied.renderedOption('warehouseTransfer_search')}"
 										action="warehouseTransfer_search"
 										actionListener="#{warehouseTransfer.onEditSearch}"
 										value="#{bundle.warehouse_transfer_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="orderServer" 
-										rendered="#{actionDenied.renderedGroup('orderServer_search')}"
+										rendered="#{actionDenied.renderedOption('orderServer_search')}"
 										action="orderServer_search"
 										actionListener="#{orderServer.onEditSearch}"
 										value="#{bundle.sales_orderServer_module}" />
@@ -59,6 +60,7 @@
 						</aon:panelGrid>
 						
 						<aon:panelGrid id="group_warehouse_inventory"
+							rendered="#{actionDenied.renderedGroup('group_warehouse_inventory')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-warehouse aon-direct-access-panel">
 							<f:facet name="header">
@@ -67,28 +69,28 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="inventory_close" 
-										rendered="#{actionDenied.renderedGroup('inventory_close')}"
+										rendered="#{actionDenied.renderedOption('inventory_close')}"
 										action="inventory_close"
 										actionListener="#{inventory.onStartClosing}"
 										value="#{bundle.warehouse_inventory_close_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="inventory" 
-										rendered="#{actionDenied.renderedGroup('inventory_search')}"
+										rendered="#{actionDenied.renderedOption('inventory_search')}"
 										action="inventory_search"
 										actionListener="#{inventory.onEditSearch}"
 										value="#{bundle.warehouse_inventory_closed_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="stock" 
-										rendered="#{actionDenied.renderedGroup('stock_search')}"
+										rendered="#{actionDenied.renderedOption('stock_search')}"
 										action="stock_search"
 										actionListener="#{stock.onEditSearch}"
 										value="#{bundle.warehouse_stock_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="orderProposal" 
-										rendered="#{actionDenied.renderedGroup('orderProposal_search')}"
+										rendered="#{actionDenied.renderedOption('orderProposal_search')}"
 										action="orderProposal_search"
 										actionListener="#{orderProposal.onEditSearch}"
 										value="#{bundle.warehouse_order_proposal_module}" />
@@ -97,6 +99,7 @@
 						</aon:panelGrid>
 						
 						<aon:panelGrid id="group_warehouse_manufacture"
+							rendered="#{actionDenied.renderedGroup('group_warehouse_manufacture')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-task aon-direct-access-panel">
 							<f:facet name="header">
@@ -106,7 +109,7 @@
 								<aon:if test="#{domainSwitcher.paturpat}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_dataSheet"
-											rendered="#{actionDenied.renderedGroup('gwt_dataSheet')}"
+											rendered="#{actionDenied.renderedOption('gwt_dataSheet')}"
 											action="gwt_dataSheet"
 											title="Ficha Técnica">
 											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
@@ -117,7 +120,7 @@
 								</aon:if>			
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_elaboration"
-										rendered="#{actionDenied.renderedGroup('gwt_elaboration')}"
+										rendered="#{actionDenied.renderedOption('gwt_elaboration')}"
 										action="gwt_elaboration"
 										title="#{bundle.warehouse_manufacturing_order}">
 										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
@@ -131,6 +134,7 @@
 						
 						<aon:if test="#{domainSwitcher.udapa || domainSwitcher.paturpat}">
 							<aon:panelGrid id="group_statistics_warehouse"
+								rendered="#{actionDenied.renderedGroup('group_statistics_warehouse')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-statistics aon-direct-access-panel">
 								<f:facet name="header">
@@ -139,7 +143,7 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_directSalesStats-warehouse"
-											rendered="#{actionDenied.renderedGroup('gwt_directSalesStat-warehouse')}"
+											rendered="#{actionDenied.renderedOption('gwt_directSalesStat-warehouse')}"
 											action="gwt_directSalesStat-warehouse"
 											title="Estadística de ventas/compras directas">
 											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
@@ -154,6 +158,7 @@
 
 					<aon:panelGroup>
 						<aon:panelGrid id="group_warehouse_stock"
+							rendered="#{actionDenied.renderedGroup('group_warehouse_stock')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-report aon-direct-access-panel">
 							<f:facet name="header">
@@ -162,7 +167,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="stock_report_by_warehouse" 
-										rendered="#{actionDenied.renderedGroup('stock_report_search-warehouse')}"
+										rendered="#{actionDenied.renderedOption('stock_report_search-warehouse')}"
 										action="stock_report_search-warehouse"
 										actionListener="#{stockReport.onReportByWarehouse}"
 										value="#{bundle.warehouse_stock_by_warehouse_module}" />
@@ -170,7 +175,7 @@
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="stock_report_by_item" 
-										rendered="#{actionDenied.renderedGroup('stock_report_search-item')}"
+										rendered="#{actionDenied.renderedOption('stock_report_search-item')}"
 										action="stock_report_search-item"
 										actionListener="#{stockReport.onReportByItem}"
 										value="#{bundle.warehouse_stock_by_item_module}" />
@@ -178,7 +183,7 @@
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="stock_report_by_warehouse_valued" 
-										rendered="#{actionDenied.renderedGroup('stock_report_search-warehouseValued')}"
+										rendered="#{actionDenied.renderedOption('stock_report_search-warehouseValued')}"
 										action="stock_report_search-warehouseValued"
 										actionListener="#{stockReport.onReportByWarehouseValued}"
 										value="#{bundle.warehouse_stock_by_warehouse_valued_module}" />
@@ -186,7 +191,7 @@
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="stock_report_by_item_valued" 
-										rendered="#{actionDenied.renderedGroup('stock_report_search-itemValued')}"
+										rendered="#{actionDenied.renderedOption('stock_report_search-itemValued')}"
 										action="stock_report_search-itemValued"
 										actionListener="#{stockReport.onReportByItemValued}"
 										value="#{bundle.warehouse_stock_by_item_valued_module}" />
@@ -195,7 +200,7 @@
 		 							
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="consumptionControlAggregate"
-											rendered="#{actionDenied.renderedGroup('')}"
+											rendered="#{actionDenied.renderedOption('')}"
 											action="gwt_consumption_templates" title="#{bundle.warehouse_consumption_control}">
 											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
 												style="margin-left: 5px; padding-left: 20px;" 
@@ -207,7 +212,7 @@
 								<aon:if test="#{domainSwitcher.udapa}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_udapa_quality"
-											rendered="#{actionDenied.renderedGroup('')}"
+											rendered="#{actionDenied.renderedOption('')}"
 											action="gwt_udapa_quality"
 											title="Ficha de Calidad (Udapa)"
 											value="Ficha de Calidad (Udapa)" 
@@ -218,7 +223,7 @@
 								<aon:if test="#{domainSwitcher.paturpat}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_paturpat_quality"
-											rendered="#{actionDenied.renderedGroup('gwt_paturpat_quality')}"
+											rendered="#{actionDenied.renderedOption('gwt_paturpat_quality')}"
 											action="gwt_paturpat_quality"
 											title="Ficha de Calidad (Paturpat)">
 											<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
@@ -232,6 +237,7 @@
 						</aon:panelGrid>
 
 						<aon:panelGrid id="group_warehouse_utilities"
+							rendered="#{actionDenied.renderedGroup('group_warehouse_utilities')}"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-direct-access-panel aon-icon-utilities">
 							<f:facet name="header">
@@ -241,7 +247,7 @@
 
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_carrier_packing"
-										rendered="#{actionDenied.renderedGroup('gwt_carrier_packing')}"
+										rendered="#{actionDenied.renderedOption('gwt_carrier_packing')}"
 										action="gwt_carrier_packing"
 										title="carrier_packing">
 										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
@@ -252,7 +258,7 @@
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="corporateIdentityLabel"
-										rendered="#{actionDenied.renderedGroup('corporateIdentity_label')}"
+										rendered="#{actionDenied.renderedOption('corporateIdentity_label')}"
 										action="corporateIdentity_label"
 										actionListener="#{corporateIdentity.onInit}"
 										value="#{bundle.registry_corporateIdentity_label}" />
@@ -260,7 +266,7 @@
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="itemTagPrint-warehouse" 
-										rendered="#{actionDenied.renderedGroup('itemTagPrint_search-warehouse')}"
+										rendered="#{actionDenied.renderedOption('itemTagPrint_search-warehouse')}"
 										action="itemTagPrint_search-warehouse"
 										actionListener="#{itemTagPrint.onEditSearch}"
 										value="#{bundle.product_tag_print_module}"/>	
@@ -268,7 +274,7 @@
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_stockForecast"
-										rendered="#{actionDenied.renderedGroup('gwt_stockForecast')}"
+										rendered="#{actionDenied.renderedOption('gwt_stockForecast')}"
 										action="gwt_stockForecast"
 										title="#{bundle.warehouse_stockForecast}">
 										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
@@ -279,7 +285,7 @@
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="gwt_movementList"
-										rendered="#{actionDenied.renderedGroup('gwt_movementList')}"
+										rendered="#{actionDenied.renderedOption('gwt_movementList')}"
 										action="gwt_movementList"
 										title="#{bundle.warehouse_movementList}">
 										<aon:outputText styleClass="aon-fiscal-link-label aon-icon-new-text"
@@ -292,6 +298,7 @@
 						</aon:panelGrid>									
 						<aon:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_warehouse_warehouses"
+								rendered="#{actionDenied.renderedGroup('group_warehouse_warehouses')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-direct-access-panel aon-icon-general">
 								<f:facet name="header">
@@ -300,13 +307,13 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="warehouse" 
-											rendered="#{actionDenied.renderedGroup('warehouse')}"
+											rendered="#{actionDenied.renderedOption('warehouse')}"
 											action="warehouse" 
 											value="#{bundle.warehouse_warehouse_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="carrier" 
-											rendered="#{actionDenied.renderedGroup('carrier_search')}"
+											rendered="#{actionDenied.renderedOption('carrier_search')}"
 											action="carrier_search" 
 											value="#{bundle.carrier_carrier_module}" />
 									</aon:div>

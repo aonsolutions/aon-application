@@ -23,6 +23,7 @@
 						<aon:panelGroup>
 	
 							<aon:panelGrid id="group_treasury_charge-treasury"
+								rendered="#{actionDenied.renderedGroup('group_treasury_charge-treasury')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-charge aon-direct-access-panel">
 								<f:facet name="header">
@@ -33,7 +34,7 @@
 									<!-- Gestión de Cobros -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="financeCharge-treasury"
-											rendered="#{actionDenied.renderedGroup('finance_search-charge-treasury')}"
+											rendered="#{actionDenied.renderedOption('finance_search-charge-treasury')}"
 											action="finance_search-charge-treasury"
 											actionListener="#{finance.onEditSearchCharge}"
 											value="#{bundle.finance_charge_module}" />
@@ -42,7 +43,7 @@
 									<!-- Remesas de Cobro -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="fbatchCharge-treasury" 
-											rendered="#{actionDenied.renderedGroup('fbatch_search-charge-treasury')}"
+											rendered="#{actionDenied.renderedOption('fbatch_search-charge-treasury')}"
 											action="fbatch_search-charge-treasury"
 											actionListener="#{fbatch.onEditSearchCharge}"
 											value="#{bundle.finance_fbatch_charge_module}">
@@ -55,7 +56,7 @@
 										<!-- Remesar Cobros de Cajas -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="pos_finance_batch-treasury" 
-												rendered="#{actionDenied.renderedGroup('posFinance_search-treasury')}"
+												rendered="#{actionDenied.renderedOption('posFinance_search-treasury')}"
 												action="posFinance_search-treasury"
 												actionListener="#{posFinance.onEditSearch}"
 												value="#{bundle.finance_posFinance_module}" />
@@ -64,7 +65,7 @@
 										<!-- Remesar Cobros de Reservas -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="reservation_finance_batch-treasury" 
-												rendered="#{actionDenied.renderedGroup('reservationFinanceBatch-treasury')}"
+												rendered="#{actionDenied.renderedOption('reservationFinanceBatch-treasury')}"
 												action="reservationFinanceBatch-treasury"
 												actionListener="#{reservationFinanceBatch.onEditSearch}"
 												value="#{bundle.pms_reservation_finance_batch_module}" />
@@ -73,7 +74,7 @@
 										<!-- Registro Cartas de Cliente -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="paymentCardSettle-treasury" 
-												rendered="#{actionDenied.renderedGroup('paymentCardSettle_search-treasury')}"
+												rendered="#{actionDenied.renderedOption('paymentCardSettle_search-treasury')}"
 												action="paymentCardSettle_search-treasury"
 												actionListener="#{paymentCardSettle.onInit}"
 												value="#{bundle.pms_paymentCardSettle_module}" />
@@ -83,7 +84,7 @@
 									<!-- Orden de domiciliación de adeudo directo SEPA -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="sddMandate-treasury"
-											rendered="#{actionDenied.renderedGroup('sddMandate_search-treasury')}"
+											rendered="#{actionDenied.renderedOption('sddMandate_search-treasury')}"
 											action="sddMandate_search-treasury"
 											actionListener="#{sddMandate.onEditSearch}"
 											value="#{bundle.finance_sddMandate_module}" />
@@ -93,6 +94,7 @@
 							
 							<aon:if test="#{aonRole.financeOperator}">
 								<aon:panelGrid id="group_treasury_bank_statement_treasury"
+									rendered="#{actionDenied.renderedGroup('group_treasury_bank_statement_treasury')}"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-icon-statement aon-direct-access-panel">
 									<f:facet name="header">
@@ -102,7 +104,7 @@
 										<!-- Conciliador Bancario -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="bankStatement-treasury"
-												rendered="#{actionDenied.renderedGroup('bankStatement_search-treasury')}"
+												rendered="#{actionDenied.renderedOption('bankStatement_search-treasury')}"
 												action="bankStatement_search-treasury"
 												actionListener="#{bankStatement.onEditSearch}"
 												value="Conciliador Bancario"/>
@@ -112,7 +114,7 @@
 											<!-- Agregador Bancario -->								
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="gwt_nordigen-treasury"
-													rendered="#{actionDenied.renderedGroup('gwt_nordigen-treasury')}"
+													rendered="#{actionDenied.renderedOption('gwt_nordigen-treasury')}"
 													action="gwt_nordigen-treasury"
 													title="Agregador Bancario">
 													<aon:outputText value="Agregador Bancario" />
@@ -123,7 +125,7 @@
 										<!-- Gestion de Suplidos -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="prepayment-treasury"
-												rendered="#{actionDenied.renderedGroup('prepayment_search-treasury')}"
+												rendered="#{actionDenied.renderedOption('prepayment_search-treasury')}"
 												action="prepayment_search-treasury"
 												actionListener="#{prepayment.onEditSearch}"
 												value="#{bundle.finance_prepayment_module}" />
@@ -136,6 +138,7 @@
 						<aon:panelGroup>
 							<aon:if test="#{aonRole.financeOperator}">
 								<aon:panelGrid id="group_treasury_payment_treasury"
+									rendered="#{actionDenied.renderedGroup('group_treasury_payment_treasury')}"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-icon-payment aon-direct-access-panel">
 									<f:facet name="header">
@@ -146,7 +149,7 @@
 										<!-- Gestión de Pagos -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="financePayment-treasury"
-												rendered="#{actionDenied.renderedGroup('finance_search-payment-treasury')}"
+												rendered="#{actionDenied.renderedOption('finance_search-payment-treasury')}"
 												action="finance_search-payment-treasury"
 												actionListener="#{finance.onEditSearchPayment}"
 												value="#{bundle.finance_payment_module}" />
@@ -155,7 +158,7 @@
 										<!-- Remesas de Pago -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="fbatchPayment-treasury" 
-												rendered="#{actionDenied.renderedGroup('fbatch_search-payment-treasury')}"
+												rendered="#{actionDenied.renderedOption('fbatch_search-payment-treasury')}"
 												action="fbatch_search-payment-treasury"
 												actionListener="#{fbatch.onEditSearchPayment}"
 												value="#{bundle.finance_fbatch_payment_module}">
@@ -167,7 +170,7 @@
 										<!-- Impresión de Pagarés -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="fPaymentPrint-treasury" 
-												rendered="#{actionDenied.renderedGroup('fPaymentPrint_search-treasury')}"
+												rendered="#{actionDenied.renderedOption('fPaymentPrint_search-treasury')}"
 												action="fPaymentPrint_search-treasury"
 												actionListener="#{fPaymentPrint.onEditSearchPayment}"
 												value="#{bundle.finance_fPaymentPrint_module}" />
@@ -178,6 +181,7 @@
 							
 							<aon:if test="#{aonRole.saleOperator}">
 								<aon:panelGrid id="group_fee_treasury"
+									rendered="#{actionDenied.renderedGroup('group_fee_treasury')}"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-icon-auxiliary aon-direct-access-panel">
 									<f:facet name="header">
@@ -188,7 +192,7 @@
 										<!-- Listado de Pre-facturación -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="aon_pre_invoicing-treasury"
-												rendered="#{actionDenied.renderedGroup('feePreInvoicing-treasury')}"
+												rendered="#{actionDenied.renderedOption('feePreInvoicing-treasury')}"
 												action="feePreInvoicing-treasury"
 												actionListener="#{preInvoicing.onInitialize}"
 												value="#{bundle.finance_pre_invoicing_module}"/>
@@ -197,7 +201,7 @@
 										<!-- Facturación de Cuotas -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="aon_invoicing-treasury"
-												rendered="#{actionDenied.renderedGroup('feeInvoicing-treasury')}"
+												rendered="#{actionDenied.renderedOption('feeInvoicing-treasury')}"
 												action="feeInvoicing-treasury"
 												actionListener="#{feeInvoicing.onInitialize}"
 												value="#{bundle.finance_fee_invoicing_module}"/>
@@ -206,7 +210,7 @@
 										<!-- Asignar Cuotas a Clientes -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="aon_fee_assignment-treasury" 
-												rendered="#{actionDenied.renderedGroup('feeAssignment_search-treasury')}"
+												rendered="#{actionDenied.renderedOption('feeAssignment_search-treasury')}"
 												action="feeAssignment_search-treasury"
 												actionListener="#{feeAssignment.onEditSearch}"
 												value="#{bundle.finance_fee_assignment_module}" />
@@ -215,7 +219,7 @@
 										<!-- Listado de Cuotas -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="aon_fee_print-treasury"
-												rendered="#{actionDenied.renderedGroup('feePrint_search-treasury')}"
+												rendered="#{actionDenied.renderedOption('feePrint_search-treasury')}"
 												action="feePrint_search-treasury"
 												actionListener="#{feePrint.onEditSearch}"
 												value="#{bundle.finance_fee_print_module}">
@@ -227,7 +231,7 @@
 										<!-- Listado de Clientes sin Cuota -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="no_fee_customers-treasury"
-												rendered="#{actionDenied.renderedGroup('noFeeCustomer_list-treasury')}"
+												rendered="#{actionDenied.renderedOption('noFeeCustomer_list-treasury')}"
 												action="noFeeCustomer_list-treasury"
 												actionListener="#{customerFee.onNoFeeCustomers}"
 												value="#{bundle.finance_fee_no_fee_customer_module}"/>
@@ -236,7 +240,7 @@
 										<!-- Panel Facturación -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_customer_fee_list"
-												rendered="#{actionDenied.renderedGroup('gwt_main_customer_fee_list')}"
+												rendered="#{actionDenied.renderedOption('gwt_main_customer_fee_list')}"
 												action="gwt_main_customer_fee_list"
 												title="Panel Facturación de Cuotas"
 												value="Panel Facturación de Cuotas" target="gwt">
@@ -249,6 +253,7 @@
 						</aon:panelGroup>
 						<aon:panelGroup>
 							<aon:panelGrid id="group_treasury_forecast_treasury"
+								rendered="#{actionDenied.renderedGroup('group_treasury_forecast_treasury')}"
 								styleClass="aon-width-all" columnClasses="aon-padding"
 								headerClass="aon-icon-forecast aon-direct-access-panel">
 								<f:facet name="header">
@@ -258,7 +263,7 @@
 									<!-- Gestión de Previsiones -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="cashFlowForecast-treasury"
-											rendered="#{actionDenied.renderedGroup('cashFlowForecast_search-treasury')}"
+											rendered="#{actionDenied.renderedOption('cashFlowForecast_search-treasury')}"
 											action="cashFlowForecast_search-treasury"
 											actionListener="#{cashFlowForecast.onEditSearch}"
 											value="#{bundle.finance_cashflow_forecast_module}"/>
@@ -267,7 +272,7 @@
 									<!-- Listado de Previsión -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="cashFlowForecastReport-treasury"
-											rendered="#{actionDenied.renderedGroup('cashFlowForecastReport_search-treasury')}"
+											rendered="#{actionDenied.renderedOption('cashFlowForecastReport_search-treasury')}"
 											action="cashFlowForecastReport_search-treasury"
 											actionListener="#{cashFlowForecastReport.onEditSearch}"
 											value="#{bundle.finance_cashflow_forecast_report_module}"/>
@@ -276,7 +281,7 @@
 									<!-- Proyección de Cuotas -->
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="gwt_fee_print_anual-treasury"
-											rendered="#{actionDenied.renderedGroup('gwt_fee_projection-treasury')}"
+											rendered="#{actionDenied.renderedOption('gwt_fee_projection-treasury')}"
 											action="gwt_fee_projection-treasury"
 											title="#{bundle.finance_fee_print_proy_module}"
 											value="#{bundle.finance_fee_print_proy_module}">
@@ -287,6 +292,7 @@
 							
 							<aon:if test="#{aonRole.saleOperator}">
 								<aon:panelGrid id="group_utilities-treasury"
+									rendered="#{actionDenied.renderedGroup('group_utilities-treasury')}"
 									styleClass="aon-width-all" columnClasses="aon-padding"
 									headerClass="aon-icon-utilities aon-direct-access-panel">
 									<f:facet name="header">
@@ -297,7 +303,7 @@
 										<!-- Recargos en Facturas -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="increaseItem-treasury" 
-												rendered="#{actionDenied.renderedGroup('increaseItem-treasury')}"
+												rendered="#{actionDenied.renderedOption('increaseItem-treasury')}"
 												action="increaseItem-treasury" 
 												value="#{bundle.aon_increases}" />
 										</aon:div>
@@ -305,7 +311,7 @@
 										<!-- Grupos de Facturación -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="aon_invoicing_group-treasury"
-												rendered="#{actionDenied.renderedGroup('invoicingGroup_list-treasury')}"
+												rendered="#{actionDenied.renderedOption('invoicingGroup_list-treasury')}"
 												action="invoicingGroup_list-treasury"
 												actionListener="#{invoicingGroup.onEditSearch}"
 												value="#{bundle.customer_invoicing_group_module}">
@@ -317,7 +323,7 @@
 											<!-- Firma de Facturas -->
 											<aon:div styleClass="aon-direct-access-list-element">
 												<aon:commandLink id="saleInvoiceSigner-treasury"
-													rendered="#{actionDenied.renderedGroup('invoiceSigner_search-treasury')}"
+													rendered="#{actionDenied.renderedOption('invoiceSigner_search-treasury')}"
 													action="invoiceSigner_search-treasury"
 													actionListener="#{invoiceSigner.onEditSearch}"
 													value="#{bundle.finance_invoice_signing_module}"/>
@@ -327,7 +333,7 @@
 										<!-- Utilidades Tesorería -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="gwt_financeUtilities-treasury"
-												rendered="#{actionDenied.renderedGroup('gwt_financeUtilities-treasury')}"
+												rendered="#{actionDenied.renderedOption('gwt_financeUtilities-treasury')}"
 												action="gwt_financeUtilities-treasury"
 												title="#{bundle.aon_utilities_treasury}">
 												<aon:outputText styleClass="aon-fiscal-link-label aon-icon-beta-text"
@@ -339,7 +345,7 @@
 										<!-- Chequeo de Datos Financieros -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="checks-treasury"
-												rendered="#{actionDenied.renderedGroup('financePrint_checking-treasury')}"
+												rendered="#{actionDenied.renderedOption('financePrint_checking-treasury')}"
 												action="financePrint_checking-treasury"
 												value="#{bundle.finance_checking_module}" />
 										</aon:div>
@@ -347,7 +353,7 @@
 										<!-- Chequeo de Facturas / Vencimientos -->
 										<aon:div styleClass="aon-direct-access-list-element">
 											<aon:commandLink id="checks2-treasury"
-												rendered="#{actionDenied.renderedGroup('financeChecking_form-treasury')}"
+												rendered="#{actionDenied.renderedOption('financeChecking_form')}"
 												action="financeChecking_form-treasury"
 												value="#{bundle.finance_invoice_checking_module}" />
 										</aon:div>

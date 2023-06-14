@@ -291,6 +291,10 @@ public class ActionDeniedController implements Serializable {
 		return false;
 	}
 	
+	public boolean renderedOption(String component) {
+		return !getManager().isDenied(component);
+	}
+	
 	public void renderedModule( UIComponent component, UIComponent parent ) {
 		if ( component.isRendered() ) {
 			String id = StringUtils.removeStart(component.getId(), MenuParser.MENU_ACTION_PREFFIX);
