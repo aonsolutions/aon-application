@@ -42,6 +42,7 @@ public class NewsServlet extends HttpServlet {
     
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	String url = getUrl(req);
 	String login = req.getParameter(USER_PARAM);
 	Domain domain = getDomain(req.getServerName(), login);
 	User user = getUser(domain, login);
@@ -58,7 +59,9 @@ public class NewsServlet extends HttpServlet {
 		  .and(f.getInitDateProperty().isNotNull().and(f.getInitDateProperty().le(now)))	// Start date not null and lower than today, skip future news
 		  .and(f.getEndDateProperty().isNull().or(f.getEndDateProperty().ge(now)))		// End date null or higher than today, skip old news  
 		  .and(f.getInitDateProperty().gt(time))
-	).toArray(News[]::new);
+	)
+	.map( n -> n.setUrl(url) )
+	.toArray(News[]::new);
 	
 	ByteArrayOutputStream byteArrayOs = new ByteArrayOutputStream();
 	try ( ObjectOutputStream os =  new ObjectOutputStream(byteArrayOs) ){
@@ -130,6 +133,13 @@ public class NewsServlet extends HttpServlet {
 	    throw new ServletException(String.format("Domain %s not found", domainName));
 	}
 	
+	
+    }
+    
+    private static String getUrl( HttpServletRequest req) {
+	String path = req.getServletPath();
+	StringBuffer url = req.getRequestURL();
+	return url.substring(0, url.lastIndexOf(path));
 	
     }
     

@@ -7,7 +7,51 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 
+	<script type="text/javascript">
+  		//<![CDATA[
+		hideNewsPopup = function () {
+			#{rich:element('newsPopup')}.style.display = 'none';
+			#{rich:element('newsButton')}.style.display = 'block';
+		}
+		
+		showNewsPopup = function () {
+			#{rich:element('newsPopup')}.style.display = 'block';
+			#{rich:element('newsButton')}.style.display = 'none';
+		}
+      	//]]>
+	</script>
+    	
+
 	<ui:include	src="/facelet/shared/array.prototype.js.xhtml" />
+
+	<style>
+		.aon-news-popup {
+			z-index:60; 
+			opacity:0.94;	
+			min-width:50%; 
+			max-width:50%; 
+			max-height: 60%; 
+			margin-top: 50px; 
+			border-radius: 16px;
+			box-shadow: 0px 6px 6px #f6f8fc; 
+			background-color: #f6f8fc !important;
+		}
+	</style>	
+	 	
+
+	<aon:div id="newsPopup" styleClass="aon-news-popup"  style="position:fixed;  right: 0px; overflow-y: scroll; background-color: #f6f8fc !important; display:none; " >
+		<aon:div styleClass="aon-margin-left aon-margin-top aon-margin-right" >
+			<span class="material-icons aon-vertical-middle" style="cursor: pointer;" onclick="javascript:hideNewsPopup()" >rss_feed</span>
+			<span class="aon-outputText aon-bold">NOTIFICACIONES</span>
+			<span class="material-icons aon-vertical-middle" style="float:right; cursor: pointer;" onclick="javascript:hideNewsPopup()" >close</span>
+		</aon:div>
+		<ui:include src="/com/code/aon/web/help/facelet/notifications.xhtml" />
+	</aon:div>
+	<aon:div id="newsButton" styleClass="aon-news-popup" style="position:fixed;  right: 0px; min-width:0%; background-color: #f6f8fc !important;" >
+		<aon:div styleClass="aon-margin-left aon-margin-top aon-margin-right" >
+			<span class="material-icons aon-vertical-middle" onclick="javascript:showNewsPopup()" title="NOTIFICACIONES" >rss_feed</span>
+		</aon:div>
+	</aon:div>
 
 	<aon:form id="mainForm">
 
@@ -130,6 +174,7 @@
 					<ui:include src="/facelet/homepage/portlet/infoRightGroupPortlet.xhtml" />
 				</aon:if>
 			</aon:panelGrid>
+	
 
 		</aon:div>
 	</aon:form>
