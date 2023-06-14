@@ -8,20 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
+import net.aonsolutions.infovox.OCRCompanyParams;
 import net.aonsolutions.infovox.OCRInvofox;
-import net.aonsolutions.infovox.json.OCRCompaniesResponseJSON;
 import net.aonsolutions.infovox.json.OCRCompanyJSON;
 import net.aonsolutions.infovox.json.OCRCompanyResponseJSON;
-import net.aonsolutions.infovox.json.OCRDocumentResponseJSON;
-import net.aonsolutions.infovox.json.OCRDocumentsResponseJSON;
-import net.aonsolutions.infovox.json.OCRErrorJSON;
 import net.aonsolutions.infovox.model.OCRCompaniesResponse;
 import net.aonsolutions.infovox.model.OCRCompany;
 import net.aonsolutions.infovox.model.OCRCompanyResponse;
 import net.aonsolutions.infovox.model.OCRDocumentResponse;
 import net.aonsolutions.infovox.model.OCRDocumentsResponse;
 import net.aonsolutions.infovox.model.OCRError;
-import net.aonsolutions.infovox.model.OCRResponse;
 
 class InfovoxRESTTestCase {
 	
@@ -83,7 +79,8 @@ class InfovoxRESTTestCase {
 
 	@Test
 	void getCompanies() {
-		OCRCompaniesResponse response = OCRInvofox.getCompanies();
+		OCRCompaniesResponse response = OCRInvofox.getCompanies( OCRCompanyParams.get().withTaxId("B01487271") );
+		
 		assertNotNull(response);
 		assertTrue(response.getHttpCode().isPresent());
 		assertEquals( 200, response.getHttpCode().get());
