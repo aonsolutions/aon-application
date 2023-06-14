@@ -1184,6 +1184,29 @@ export class AonDomainCustomer extends AonElement {
     return customerOptionContainer;
   }
 
+  generateUsersFile(applicationName, users) {
+    let text = "";
+    if (users) {
+      users.forEach(user => {
+        text += `${user.name}\n`;
+      })
+    }
+
+    let file = new Blob([text], { type: "text/plain" });
+
+    let a = document.createElement("a");
+    let url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = `usuarios_de_${applicationName}.txt`;
+    a.style.display = "none";
+    this.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      this.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, 0);
+  }
+
   createBookingElement(booking) {
     if (booking) {
 
@@ -1295,13 +1318,13 @@ export class AonDomainCustomer extends AonElement {
         let summaryDomains = summary ? summary.domain : {};
 
         this.createSummaryItem(summaryContainer, MSG.APPLICATIONS, summaryApps);
-        this.createSummaryItem(summaryContainer, MSG.USERS, summaryUsers, "user");
+        this.createSummaryItem(summaryContainer, MSG.USERS, summaryUsers, [], "user");
 
         for (let dt in summaryDomains) {
           let domainType = this.getDomainTypeDescription(dt);
           let application = summaryDomains[dt];
           
-          this.createSummaryItem(summaryContainer, `${domainType}: ${application.number}`, application.apps, "domain");
+          this.createSummaryItem(summaryContainer, `${domainType}: ${application.number}`, application.apps, application.childs, "domain");
         }
         
 
@@ -1330,7 +1353,7 @@ export class AonDomainCustomer extends AonElement {
     }
   }
 
-  createSummaryItem(summaryContainer, title, summaryElements, type) {
+  createSummaryItem(summaryContainer, title, summaryElements, childs, type) {
     if (summaryElements) {
       let summaryElementsContainer = document.createElement("div");
       summaryElementsContainer.style.display = "flex";
@@ -1344,6 +1367,12 @@ export class AonDomainCustomer extends AonElement {
       summaryElementsTitle.style.marginLeft = "5px";
       summaryElementsTitle.innerText = title;
       summaryElementsContainer.appendChild(summaryElementsTitle);
+      if (type === "domain" && childs && childs.length > 0)  {
+        summaryElementsTitle.style.cursor = "pointer";
+        summaryElementsTitle.addEventListener("click", event => {
+          this.createUsersList(childs, title ? title.split(":")[0] : "");
+        });
+      }
 
       for (const summaryElement in summaryElements) {
         let summaryElementsItem = document.createElement("div");
@@ -1376,8 +1405,52 @@ export class AonDomainCustomer extends AonElement {
 
         summaryElementsItem.innerText = `${itemTitle}: ${summaryElements[summaryElement]}`;
         summaryElementsContainer.appendChild(summaryElementsItem);
+        if (type === "domain" && childs && childs.length > 0)  {
+          summaryElementsItem.style.cursor = "pointer";
+          summaryElementsItem.addEventListener("click", event => {
+            let users = childs.filter(c => c.apps && c.apps.includes(summaryElement))
+            this.createUsersList(users, itemTitle);
+          });
+        }
       }
     }
+  }
+
+  createUsersList(users, applicationName) {
+
+    let dialog = this.getApplication().getDialog();
+    dialog.clear();
+    dialog.setTitle(`Usuarios de "${applicationName}"`);
+
+    let usersContainer = document.createElement("div");
+    usersContainer.style.display = "flex";
+    usersContainer.style.flexDirection = "column";
+    usersContainer.style.gap = "3px";
+
+    users.forEach((user, ind) => {
+
+      let userContainer = document.createElement("div");
+      userContainer.style.display = "flex";
+      userContainer.style.justifyContent = "flex-start";
+      userContainer.style.alignItems = "center";
+      userContainer.style.marginLeft = "10px";
+      userContainer.style.fontSize = "1.2em";
+      userContainer.innerText = user.name;
+      usersContainer.appendChild(userContainer);
+
+    });
+
+    let downloadButton = new AonButton();
+    downloadButton.title = MSG.DOWNLOAD;
+    downloadButton.addEventListener("click", event => {
+      this.generateUsersFile(itemTitle, users);
+    });
+    usersContainer.appendChild(downloadButton);
+
+    dialog.width = "500px";
+    dialog.setContent(usersContainer);
+    dialog.autoclose = true;
+    dialog.open();
   }
 
   // -----------------------------
